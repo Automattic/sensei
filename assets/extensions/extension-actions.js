@@ -2,8 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
 import { useDispatch } from '@wordpress/data';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -20,25 +20,20 @@ import { UpdateIcon } from '../icons';
  */
 const ExtensionActions = ( { actions } ) => (
 	<ul className="sensei-extensions__extension-actions">
-		{ actions.map( ( { key, children, ...actionProps } ) => {
-			const ActionComponent = actionProps.href ? 'a' : 'button';
-
-			return (
-				<li
-					key={ key }
-					className="sensei-extensions__extension-actions__item"
+		{ actions.map( ( { key, children, ...actionProps } ) => (
+			<li
+				key={ key }
+				className="sensei-extensions__extension-actions__item"
+			>
+				<Button
+					isPrimary={ ! actionProps.href }
+					isLink={ !! actionProps.href }
+					{ ...actionProps }
 				>
-					<ActionComponent
-						className={
-							actionProps.className || 'button button-primary'
-						}
-						{ ...actionProps }
-					>
-						{ children }
-					</ActionComponent>
-				</li>
-			);
-		} ) }
+					{ children }
+				</Button>
+			</li>
+		) ) }
 	</ul>
 );
 
@@ -58,11 +53,10 @@ export const useExtensionActions = ( extension ) => {
 		return null;
 	}
 
-	let buttonLabel = '';
-	let buttonAction = () => {};
+	const mainButtonProps = {};
 
 	if ( isLoadingStatus( extension.status ) ) {
-		buttonLabel = (
+		mainButtonProps.children = (
 			<>
 				<UpdateIcon
 					width="20"
@@ -73,22 +67,14 @@ export const useExtensionActions = ( extension ) => {
 			</>
 		);
 	} else if ( extension.canUpdate ) {
-		buttonLabel = __( 'Update', 'sensei-lms' );
-		buttonAction = () =>
+		mainButtonProps.children = __( 'Update', 'sensei-lms' );
+		mainButtonProps.onClick = () =>
 			updateExtensions( [ extension ], extension.product_slug );
 	} else if ( extension.is_installed ) {
-		buttonLabel = (
-			<>
-				<Icon
-					className="sensei-extensions__extension-actions__button-icon"
-					icon={ checked }
-					size={ 14 }
-				/>{ ' ' }
-				{ __( 'Installed', 'sensei-lms' ) }
-			</>
-		);
+		mainButtonProps.icon = checked;
+		mainButtonProps.children = __( 'Installed', 'sensei-lms' );
 	} else {
-		buttonLabel = `${ __( 'Install', 'sensei-lms' ) } - ${
+		mainButtonProps.children = `${ __( 'Install', 'sensei-lms' ) } - ${
 			extension.price !== '0'
 				? extension.price
 				: __( 'Free', 'sensei-lms' )
@@ -101,8 +87,7 @@ export const useExtensionActions = ( extension ) => {
 			disabled:
 				isLoadingStatus( extension.status ) ||
 				( extension.is_installed && ! extension.canUpdate ),
-			children: buttonLabel,
-			onClick: buttonAction,
+			...mainButtonProps,
 		},
 	];
 

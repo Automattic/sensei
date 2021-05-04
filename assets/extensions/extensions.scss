@@ -41,429 +41,429 @@ $wordpress-break: 961px;
 			left: 175px;
 		}
 	}
-}
 
-.sensei-extensions {
-	.button-primary {
-		min-width: 112px;
-		min-height: 36px;
-	}
-
-	&__loader {
-		height: 80vh;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	&__section {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		margin-bottom: 38px;
-
-		&--with-inner-sections {
-			margin-bottom: 0;
+	.sensei-extensions {
+		.components-button.is-primary {
+			min-width: 112px;
+			min-height: 36px;
 		}
 
-		&__title {
-			margin: 0 0 17px;
+		&__loader {
+			height: 80vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 
-		&__description {
-			margin: 0 0 17px;
-		}
-
-		&__body {
-			flex: 1;
-		}
-	}
-
-	&__grid {
-		display: flex;
-		flex-wrap: wrap;
-		margin: 0 -9px;
-
-		&__col {
-			box-sizing: border-box;
+		&__section {
+			display: flex;
+			flex-direction: column;
 			width: 100%;
-			padding: 0 9px;
+			margin-bottom: 38px;
 
-			&.--col-12 {
-				@include col-width( 12 );
+			&--with-inner-sections {
+				margin-bottom: 0;
 			}
 
-			&.--col-11 {
-				@include col-width( 11 );
+			&__title {
+				margin: 0 0 17px;
 			}
 
-			&.--col-10 {
-				@include col-width( 10 );
+			&__description {
+				margin: 0 0 17px;
 			}
 
-			&.--col-9 {
-				@include col-width( 9 );
-			}
-
-			&.--col-8 {
-				@include col-width( 8 );
-			}
-
-			&.--col-7 {
-				@include col-width( 7 );
-			}
-
-			&.--col-6 {
-				@include col-width( 6 );
-			}
-
-			&.--col-5 {
-				@include col-width( 5 );
-			}
-
-			&.--col-4 {
-				@include col-width( 4 );
-			}
-
-			&.--col-3 {
-				@include col-width( 3 );
-			}
-
-			&.--col-2 {
-				@include col-width( 2 );
-			}
-
-			&.--col-1 {
-				@include col-width( 1 );
-			}
-		}
-	}
-
-	&__tabs {
-		float: none;
-
-		&__tab {
-			&:not(:last-child)::after {
-				content: '|';
+			&__body {
+				flex: 1;
 			}
 		}
 
-		&__count::before {
-			content: ' ';
-		}
-	}
+		&__grid {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0 -9px;
 
-	&__update-badge {
-		display: flex;
-		align-items: center;
-		font-size: 14px;
-		font-weight: 500;
-		color: inherit;
+			&__col {
+				box-sizing: border-box;
+				width: 100%;
+				padding: 0 9px;
 
-		svg {
-			width: 24px;
-			height: 24px;
-			margin-right: 5px;
-		}
-	}
+				&.--col-12 {
+					@include col-width( 12 );
+				}
 
-	&__update-notification {
-		@include white-box;
-		padding: 17px 50px;
-		border-left: solid 5px $primary;
+				&.--col-11 {
+					@include col-width( 11 );
+				}
 
-		.sensei-extensions__update-badge {
-			margin-left: -29px;
-		}
+				&.--col-10 {
+					@include col-width( 10 );
+				}
 
-		&__title {
-			margin: 10px 0;
-			font-size: 18px;
-		}
+				&.--col-9 {
+					@include col-width( 9 );
+				}
 
-		&__description {
-			margin: 0 0 30px;
-			font-size: 14px;
-		}
+				&.--col-8 {
+					@include col-width( 8 );
+				}
 
-		&__list {
-			margin: 10px 0 30px;
+				&.--col-7 {
+					@include col-width( 7 );
+				}
 
-			&__item {
-				margin: 0;
+				&.--col-6 {
+					@include col-width( 6 );
+				}
 
-				&::before {
-					content: "- "
+				&.--col-5 {
+					@include col-width( 5 );
+				}
+
+				&.--col-4 {
+					@include col-width( 4 );
+				}
+
+				&.--col-3 {
+					@include col-width( 3 );
+				}
+
+				&.--col-2 {
+					@include col-width( 2 );
+				}
+
+				&.--col-1 {
+					@include col-width( 1 );
 				}
 			}
 		}
 
-		&__version-link {
-			color: inherit;
-		}
-	}
+		&__tabs {
+			float: none;
 
-	&__featured-list {
-		@include white-box;
-		padding: 15px;
-		margin: 0;
+			&__tab {
+				&:not(:last-child)::after {
+					content: '|';
+				}
+			}
+
+			&__count::before {
+				content: ' ';
+			}
+		}
+
+		&__update-badge {
+			display: flex;
+			align-items: center;
+			font-size: 14px;
+			font-weight: 500;
+			color: inherit;
+
+			svg {
+				width: 24px;
+				height: 24px;
+				margin-right: 5px;
+			}
+		}
+
+		&__update-notification {
+			@include white-box;
+			padding: 17px 50px;
+			border-left: solid 5px $primary;
+
+			.sensei-extensions__update-badge {
+				margin-left: -29px;
+			}
+
+			&__title {
+				margin: 10px 0;
+				font-size: 18px;
+			}
+
+			&__description {
+				margin: 0 0 30px;
+				font-size: 14px;
+			}
+
+			&__list {
+				margin: 10px 0 30px;
+
+				&__item {
+					margin: 0;
+
+					&::before {
+						content: "- "
+					}
+				}
+			}
+
+			&__version-link {
+				color: inherit;
+			}
+		}
+
+		&__featured-list {
+			@include white-box;
+			padding: 15px;
+			margin: 0;
+
+			@media (min-width: $wordpress-break) {
+				display: flex;
+				flex-wrap: wrap;
+			}
+
+			@media (min-width: 1200px) {
+				padding: 50px 45px;
+			}
+
+			.sensei-extensions__list-item {
+				box-sizing: border-box;
+				padding: 10px;
+				margin: 0;
+
+				@media (min-width: $wordpress-break) {
+					@include col-width(6);
+					padding: 15px;
+				}
+
+				@media (min-width: 1200px) {
+					@include col-width(4);
+				}
+			}
+
+			.sensei-extensions__card {
+				border-radius: 8px;
+				flex-direction: column;
+
+				&__image {
+					border-radius: 8px 8px 0 0;
+				}
+			}
+
+			.sensei-extensions__card-wrapper {
+				height: 100%;
+				box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
+				border-radius: 8px;
+			}
+
+			&__card-wrapper, .sensei-extensions__card {
+				height: 100%;
+			}
+
+		}
+
+		&__small-list,
+		&__large-list {
+			@include white-box;
+			margin: 0;
+
+			.sensei-extensions__list-item {
+				margin: 0;
+
+				&:not(:last-child) {
+					border-bottom: solid 1px $gray-5;
+				}
+			}
+		}
+
+		&__small-list {
+			.sensei-extensions__card__image {
+				display: none;
+			}
+		}
+
+		&__large-list {
+			&__item:first-child .sensei-extensions__card__image {
+				border-radius: 2px 2px 0 0;
+				@media (min-width: $wordpress-break) {
+					border-radius: 2px 0 0 0;
+				}
+			}
+			&__item:last-child .sensei-extensions__card__image {
+				@media (min-width: $wordpress-break) {
+					border-radius: 0 0 0 2px;
+				}
+			}
+			@media (max-width: $wordpress-break) {
+				.sensei-extensions__card {
+					flex-direction: column;
+				}
+			}
+		}
+
+		@media (min-width: $wordpress-break) and (max-width: 1100px) {
+			&__small-list {
+				.sensei-extensions__card__header {
+					display: block;
+				}
+				.sensei-extensions__card__new-badge {
+					display: block;
+					text-align: right;
+					padding-left: 0;
+				}
+			}
+		}
 
 		@media (min-width: $wordpress-break) {
-			display: flex;
-			flex-wrap: wrap;
-		}
+			&__large-list {
+				.sensei-extensions__card {
+				}
+				.sensei-extensions__card__body {
 
-		@media (min-width: 1200px) {
-			padding: 50px 45px;
-		}
+				}
+				.sensei-extensions__card__image {
+				}
+				.sensei-extensions__card__description {
 
-		.sensei-extensions__list-item {
-			box-sizing: border-box;
-			padding: 10px;
-			margin: 0;
+				}
+				.sensei-extensions__extension-actions {
 
-			@media (min-width: $wordpress-break) {
-				@include col-width(6);
-				padding: 15px;
-			}
+				}
+				.sensei-extensions__extension-actions__details-link {
 
-			@media (min-width: 1200px) {
-				@include col-width(4);
+				}
 			}
 		}
 
-		.sensei-extensions__card {
-			border-radius: 8px;
-			flex-direction: column;
+		&__grid-list {
+			padding: 0;
+			margin-bottom: -15px;
 
-			&__image {
-				border-radius: 8px 8px 0 0;
+			@extend .sensei-extensions__grid;
+
+			.sensei-extensions__list-item {
+				margin: 0 0 15px;
+
+				@extend .sensei-extensions__grid__col;
+
+				@media (min-width: $wordpress-break) {
+					@include col-width(6);
+				}
+
+				@media (min-width: 1200px) {
+					@include col-width(4);
+				}
 			}
-		}
 
-		.sensei-extensions__card-wrapper {
-			height: 100%;
-			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
-			border-radius: 8px;
-		}
-
-		&__card-wrapper, .sensei-extensions__card {
-			height: 100%;
-		}
-
-	}
-
-	&__small-list,
-	&__large-list {
-		@include white-box;
-		margin: 0;
-
-		.sensei-extensions__list-item {
-			margin: 0;
-
-			&:not(:last-child) {
-				border-bottom: solid 1px $gray-5;
+			.sensei-extensions__card-wrapper {
+				@include white-box(2px);
+				height: 100%
 			}
-		}
-	}
 
-	&__small-list {
-		.sensei-extensions__card__image {
-			display: none;
-		}
-	}
-
-	&__large-list {
-		&__item:first-child .sensei-extensions__card__image {
-			border-radius: 2px 2px 0 0;
-			@media (min-width: $wordpress-break) {
-				border-radius: 2px 0 0 0;
-			}
-		}
-		&__item:last-child .sensei-extensions__card__image {
-			@media (min-width: $wordpress-break) {
-				border-radius: 0 0 0 2px;
-			}
-		}
-		@media (max-width: $wordpress-break) {
 			.sensei-extensions__card {
 				flex-direction: column;
-			}
-		}
-	}
-
-	@media (min-width: $wordpress-break) and (max-width: 1100px) {
-		&__small-list {
-			.sensei-extensions__card__header {
-				display: block;
-			}
-			.sensei-extensions__card__new-badge {
-				display: block;
-				text-align: right;
-				padding-left: 0;
-			}
-		}
-	}
-
-	@media (min-width: $wordpress-break) {
-		&__large-list {
-			.sensei-extensions__card {
-			}
-			.sensei-extensions__card__body {
-
-			}
-			.sensei-extensions__card__image {
-			}
-			.sensei-extensions__card__description {
-
-			}
-			.sensei-extensions__extension-actions {
-
-			}
-			.sensei-extensions__extension-actions__details-link {
-
-			}
-		}
-	}
-
-	&__grid-list {
-		padding: 0;
-		margin-bottom: -15px;
-
-		@extend .sensei-extensions__grid;
-
-		.sensei-extensions__list-item {
-			margin: 0 0 15px;
-
-			@extend .sensei-extensions__grid__col;
-
-			@media (min-width: $wordpress-break) {
-				@include col-width(6);
-			}
-
-			@media (min-width: 1200px) {
-				@include col-width(4);
+				&__image {
+					border-radius: 2px 2px 0 0;
+				}
 			}
 		}
 
-		.sensei-extensions__card-wrapper {
-			@include white-box(2px);
-			height: 100%
-		}
+		&__card {
+			display: flex;
+			align-items: stretch;
+			height: 100%;
 
-		.sensei-extensions__card {
-			flex-direction: column;
+			&__header {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 10px;
+			}
+
+			&__content {
+				padding: 25px;
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+
+				@media (min-width: $wordpress-break) {
+					min-height: 170px;
+				}
+			}
+
+			&__body {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+			}
+
+			&__title {
+				margin: 0;
+				font-size: 16px;
+				font-weight: bold;
+				color: inherit;
+			}
+
+			&__price {
+				margin-bottom: 10px;
+				font-size: 16px;
+			}
+
 			&__image {
-				border-radius: 2px 2px 0 0;
+				background-color: $gray-0;
+				background-size: cover;
+				background-position: center center;
+				flex: 0 0 220px;
+			}
+
+			&__new-badge {
+				padding-left: 10px;
+				font-size: 12px;
+				white-space: nowrap;
+
+				&::before {
+					content: "";
+					display: inline-block;
+					width: 8px;
+					height: 8px;
+					margin-right: 7px;
+					background-color: $primary;
+					border-radius: 50%;
+				}
+			}
+
+			&__description {
+				margin: 0 0 10px;
+				font-size: 14px;
+				flex: 1;
 			}
 		}
-	}
 
-	&__card {
-		display: flex;
-		align-items: stretch;
-		height: 100%;
-
-		&__header {
+		&__extension-actions {
 			display: flex;
-			justify-content: space-between;
-			margin-bottom: 10px;
-		}
-
-		&__content {
-			padding: 25px;
-			display: flex;
-			flex-direction: column;
-			flex: 1;
-
-			@media (min-width: $wordpress-break) {
-				min-height: 170px;
-			}
-		}
-
-		&__body {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-		}
-
-		&__title {
+			align-items: center;
 			margin: 0;
-			font-size: 16px;
-			font-weight: bold;
-			color: inherit;
-		}
+			padding: 0;
 
-		&__price {
-			margin-bottom: 10px;
-			font-size: 16px;
-		}
+			&__item {
+				margin: 0;
 
-		&__image {
-			background-color: $gray-0;
-			background-size: cover;
-			background-position: center center;
-			flex: 0 0 220px;
-		}
+				a.button {
+					display: inline-flex;
+					justify-content: center;
+					align-items: center;
+				}
+			}
 
-		&__new-badge {
-			padding-left: 10px;
-			font-size: 12px;
-			white-space: nowrap;
-
-			&::before {
-				content: "";
+			&__details-link {
 				display: inline-block;
-				width: 8px;
-				height: 8px;
-				margin-right: 7px;
-				background-color: $primary;
-				border-radius: 50%;
+				padding: 0 10px;
+				margin-left: 10px;
+				font-size: 13px;
+				color: inherit;
+			}
+
+			&__button-icon {
+				vertical-align: middle;
 			}
 		}
 
-		&__description {
-			margin: 0 0 10px;
-			font-size: 14px;
-			flex: 1;
-		}
-	}
-
-	&__extension-actions {
-		display: flex;
-		align-items: center;
-		margin: 0;
-		padding: 0;
-
-		&__item {
-			margin: 0;
-
-			a.button {
-				display: inline-flex;
-				justify-content: center;
-				align-items: center;
-			}
+		&__rotating-icon {
+			animation: rotation 2s infinite linear;
+			margin-right: 6px;
 		}
 
-		&__details-link {
-			display: inline-block;
-			padding: 0 10px;
-			margin-left: 10px;
-			font-size: 13px;
-			color: inherit;
+		.components-notice {
+			margin: 10px 0 0;
 		}
-
-		&__button-icon {
-			vertical-align: middle;
-		}
-	}
-
-	&__rotating-icon {
-		animation: rotation 2s infinite linear;
-		margin-right: 6px;
-	}
-
-	.components-notice {
-		margin: 10px 0 0;
 	}
 }
