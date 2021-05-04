@@ -80,7 +80,7 @@ final class Sensei_Extensions {
 
 		if ( ! Sensei_Utils::is_woocommerce_installed() ) {
 			$data['installUrl'] = self_admin_url( 'plugin-install.php?s=woocommerce&tab=search&type=term&plugin_details=woocommerce' );
-		} else if ( ! Sensei_Utils::is_woocommerce_active() ) {
+		} elseif ( ! Sensei_Utils::is_woocommerce_active() ) {
 			$plugin_file         = 'woocommerce/woocommerce.php';
 			$data['activateUrl'] = wp_nonce_url(
 				add_query_arg(
