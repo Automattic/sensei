@@ -62,31 +62,33 @@ const renderSections = ( layout, extensions ) =>
 							itemProps = {},
 							wrapperProps = {},
 							cardProps = {},
-						} ) => (
-							<li
-								{ ...itemProps }
-								key={ key }
-								className={ classnames(
-									'sensei-extensions__list-item',
-									itemProps?.className
-								) }
-							>
-								<div
-									{ ...wrapperProps }
+						} ) =>
+							( ! extensionSlug ||
+								extensions[ extensionSlug ] ) && (
+								<li
+									{ ...itemProps }
+									key={ key }
 									className={ classnames(
-										'sensei-extensions__card-wrapper',
-										wrapperProps?.className
+										'sensei-extensions__list-item',
+										itemProps?.className
 									) }
 								>
-									<Card
-										{ ...( extensionSlug
-											? extensions[ extensionSlug ]
-											: {} ) }
-										{ ...cardProps }
-									/>
-								</div>
-							</li>
-						)
+									<div
+										{ ...wrapperProps }
+										className={ classnames(
+											'sensei-extensions__card-wrapper',
+											wrapperProps?.className
+										) }
+									>
+										<Card
+											{ ...( extensionSlug
+												? extensions[ extensionSlug ]
+												: {} ) }
+											{ ...cardProps }
+										/>
+									</div>
+								</li>
+							)
 					) }
 				</ul>
 			) }
