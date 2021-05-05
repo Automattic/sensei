@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import ExtensionActions from '../extension-actions';
+import { logEvent } from '../../shared/helpers/log-event';
 
 /**
  * Multiple update notification.
@@ -44,10 +45,12 @@ const Multiple = ( { extensions } ) => (
 				{
 					key: 'update-button',
 					children: __( 'Update all', 'sensei-lms' ),
-					onClick: () => {
-						// eslint-disable-next-line no-console
-						console.log( 'TODO: Update all' );
-					},
+					onClick: () =>
+						extensions.forEach( ( extension ) => {
+							logEvent( 'extensions_update', {
+								slug: extension.product_slug,
+							} );
+						} ),
 				},
 			] }
 		/>
