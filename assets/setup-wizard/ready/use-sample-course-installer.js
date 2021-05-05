@@ -8,7 +8,7 @@ import apiFetch from '@wordpress/api-fetch';
  * Internal dependencies
  */
 import { buildJobEndpointUrl } from '../../data-port/import/helpers/url';
-import { logEvent } from '../log-event';
+import { logEvent } from '../../shared/helpers/log-event';
 
 const useSampleCourseInstaller = () => {
 	const [ isInstalling, setIsInstalling ] = useState( false );

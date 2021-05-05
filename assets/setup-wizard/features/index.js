@@ -14,7 +14,7 @@ import { Card, CardBody } from '@wordpress/components';
  * Internal dependencies
  */
 import { INSTALLED_STATUS } from './feature-status';
-import { logEvent } from '../log-event';
+import { logEvent } from '../../shared/helpers/log-event';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import {
