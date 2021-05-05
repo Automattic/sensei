@@ -18,8 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class Sensei_WCCOM_Connect_Notice
  */
 class Sensei_WCCOM_Connect_Notice {
-	const DISMISS_NOTICE_NONCE_ACTION   = 'sensei-lms-cancelled-wccom-connect-dismiss';
-	const DISMISSED_NOTIFICATION_OPTION = 'sensei-cancelled-wccom-connect-dismissed';
+	const DISMISS_NOTICE_NONCE_ACTION   = 'sensei-lms-wccom-connect-dismiss';
+	const DISMISSED_NOTIFICATION_OPTION = 'sensei-wccom-connect-dismissed';
 
 	/**
 	 * Class constructor.
@@ -92,7 +92,7 @@ class Sensei_WCCOM_Connect_Notice {
 				</a>
 				<?php
 				esc_html_e(
-					'Get notified about new features and updates by connecting your WooCommerce.com account.',
+					'Your site needs to be connected to your WooCommerce.com account before Sensei extensions can be updated.',
 					'sensei-lms'
 				);
 				?>
