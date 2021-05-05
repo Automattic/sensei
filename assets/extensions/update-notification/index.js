@@ -20,7 +20,7 @@ import updateIcon from '../../icons/update-icon';
  */
 const UpdateNotification = ( { extensions } ) => {
 	const extensionsWithUpdate = extensions.filter(
-		( extension ) => extension.canUpdate
+		( extension ) => extension.can_update && extension.has_update
 	);
 
 	const updatesCount = extensionsWithUpdate.length;

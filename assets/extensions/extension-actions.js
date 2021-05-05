@@ -63,12 +63,12 @@ export const useExtensionActions = ( extension ) => {
 			disabled: true,
 			...actionProps,
 		};
-	} else if ( extension.canUpdate ) {
+	} else if ( extension.has_update ) {
 		actionProps = {
 			children: __( 'Update', 'sensei-lms' ),
 			onClick: () =>
 				updateExtensions( [ extension ], extension.product_slug ),
-			disabled: ! extension.canUpdate,
+			disabled: ! extension.can_update,
 			...actionProps,
 		};
 	} else if ( extension.is_installed ) {

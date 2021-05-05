@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy } from 'lodash';
+import { keyBy, merge } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -33,7 +33,7 @@ export const EXTENSIONS_STORE = 'sensei/extensions';
  */
 const DEFAULT_STATE = {
 	// Extensions list to be mapped using the entities.
-	extensionsSlugs: [],
+	extensionSlugs: [],
 	entities: { extensions: {} },
 	layout: [],
 	error: null,
@@ -54,33 +54,26 @@ export const isLoadingStatus = ( status ) =>
  */
 const actions = {
 	/**
-	 * Sets the extensions.
+	 * Sets the extensions list.
 	 *
-	 * @param {Object}  response                 The response returned from the extensions endpoint.
-	 * @param {Array}   response.extensions      The extensions array.
-	 * @param {boolean} response.wccom_connected True if the site is connected to WC.com.
-	 * @param {boolean} onlyEntities             Whether should update only the extension entities.
+	 * @param {Array} extensionSlugs The extensions slugs array.
 	 */
-	setExtensions(
-		{ extensions, wccom_connected: wcccomConnected },
-		onlyEntities
-	) {
-		const enrichedExtensions = extensions.map( ( extension ) => {
-			let canUpdate = false;
-			// If the extension is hosted in WC.com, check that the site is connected and the subscription is not expired.
-			if ( extension.has_update ) {
-				canUpdate =
-					! extension.wccom_product_id ||
-					( wcccomConnected && ! extension.wccom_expired );
-			}
-
-			return { ...extension, canUpdate };
-		} );
-
+	setExtensions( extensionSlugs ) {
 		return {
 			type: 'SET_EXTENSIONS',
-			extensions: enrichedExtensions,
-			onlyEntities,
+			extensionSlugs,
+		};
+	},
+
+	/**
+	 * Sets entities.
+	 *
+	 * @param {Object} entities Entities to set.
+	 */
+	setEntities( entities ) {
+		return {
+			type: 'SET_ENTITIES',
+			entities,
 		};
 	},
 
@@ -112,13 +105,9 @@ const actions = {
 			} );
 
 			yield actions.setError( null );
-			yield actions.setExtensions(
-				{
-					extensions: response.completed,
-					wccom_connected: response.wccom_connected,
-				},
-				true
-			);
+			yield actions.setEntities( {
+				extensions: keyBy( response.completed, 'product_slug' ),
+			} );
 
 			yield dispatch( 'core/notices' ).createNotice(
 				'success',
@@ -128,7 +117,6 @@ const actions = {
 				}
 			);
 		} catch ( error ) {
-			yield actions.setExtensionsStatus( slugs, '' );
 			yield actions.setError(
 				sprintf(
 					// translators: Placeholder is underlying error message.
@@ -140,6 +128,8 @@ const actions = {
 				)
 			);
 		} finally {
+			yield actions.setExtensionsStatus( slugs, '' );
+
 			// Update queue extensions, if exists.
 			const queuedExtensions = yield select(
 				EXTENSIONS_STORE
@@ -197,8 +187,8 @@ const actions = {
  * Extension store selectors.
  */
 const selectors = {
-	getExtensions: ( { extensionsSlugs, entities } ) =>
-		extensionsSlugs.map( ( slug ) => entities.extensions[ slug ] ),
+	getExtensions: ( { extensionSlugs, entities } ) =>
+		extensionSlugs.map( ( slug ) => entities.extensions[ slug ] ),
 	getExtensionsByStatus: ( args, status ) =>
 		selectors
 			.getExtensions( args )
@@ -220,7 +210,12 @@ const resolvers = {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
-		return actions.setExtensions( response );
+		yield actions.setEntities( {
+			extensions: keyBy( response.extensions, 'product_slug' ),
+		} );
+		yield actions.setExtensions(
+			response.extensions.map( ( extension ) => extension.product_slug )
+		);
 	},
 
 	/**
@@ -239,54 +234,35 @@ const resolvers = {
  * Store reducer.
  */
 const reducer = {
-	SET_EXTENSIONS: ( { extensions, onlyEntities }, state ) => {
-		let newState = { ...state };
-
-		if ( ! onlyEntities ) {
-			// Update extension array (slugs).
-			newState = {
-				...newState,
-				extensionsSlugs: [
-					...extensions.map(
-						( extension ) => extension.product_slug
-					),
-				],
-			};
-		}
-
-		// Update extension entities.
-		return {
-			...newState,
-			entities: {
-				...newState.entities,
-				extensions: {
-					...newState.entities.extensions,
-					...keyBy( extensions, 'product_slug' ),
-				},
-			},
-		};
-	},
-	SET_EXTENSIONS_STATUS: ( { slugs, status }, state ) => {
-		const extensionsWithStatus = { ...state.entities.extensions };
-
-		slugs.forEach( ( slug ) => {
-			extensionsWithStatus[ slug ] = {
-				...extensionsWithStatus[ slug ],
-				status,
-			};
-		} );
-
-		return {
-			...state,
-			entities: {
-				...state.entities,
-				extensions: extensionsWithStatus,
-			},
-		};
-	},
+	SET_EXTENSIONS: ( { extensionSlugs }, state ) => ( {
+		...state,
+		extensionSlugs,
+	} ),
+	SET_EXTENSIONS_STATUS: ( { slugs, status }, state ) => ( {
+		...state,
+		entities: {
+			...state.entities,
+			extensions: Object.keys( state.entities.extensions ).reduce(
+				( acc, slug ) => ( {
+					...acc,
+					[ slug ]: {
+						...state.entities.extensions[ slug ],
+						status: slugs.includes( slug )
+							? status
+							: state.entities.extensions[ slug ].status,
+					},
+				} ),
+				{}
+			),
+		},
+	} ),
 	SET_LAYOUT: ( { layout }, state ) => ( {
 		...state,
 		layout,
+	} ),
+	SET_ENTITIES: ( { entities }, state ) => ( {
+		...state,
+		entities: merge( {}, state.entities, entities ),
 	} ),
 	SET_ERROR: ( { error }, state ) => ( {
 		...state,
