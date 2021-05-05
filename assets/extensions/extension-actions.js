@@ -8,6 +8,7 @@ import { Icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import { checked } from '../icons/wordpress-icons';
+import { logLink } from '../shared/helpers/log-event';
 
 /**
  * Extension actions component.
@@ -54,9 +55,11 @@ export const getExtensionActions = ( extension ) => {
 	}
 
 	let buttonLabel = '';
+	let eventName = '';
 
 	if ( extension.has_update ) {
 		buttonLabel = __( 'Update', 'sensei-lms' );
+		eventName = 'extensions_update';
 	} else if ( extension.is_installed ) {
 		buttonLabel = (
 			<>
@@ -74,6 +77,7 @@ export const getExtensionActions = ( extension ) => {
 				? extension.price
 				: __( 'Free', 'sensei-lms' )
 		}`;
+		eventName = 'extensions_install';
 	}
 
 	let buttons = [
@@ -81,6 +85,10 @@ export const getExtensionActions = ( extension ) => {
 			key: 'main-button',
 			disabled: extension.is_installed && ! extension.has_update,
 			children: buttonLabel,
+			...( eventName &&
+				logLink( eventName, {
+					slug: extension.product_slug,
+				} ) ),
 		},
 	];
 
