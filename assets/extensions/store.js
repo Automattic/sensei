@@ -117,14 +117,18 @@ const actions = {
 				}
 			);
 		} catch ( error ) {
+			const errorMessage = Object.keys( error.errors )
+				.map( ( key ) => error.errors[ key ].join( ' ' ) )
+				.join( ' ' );
+
 			yield actions.setError(
 				sprintf(
 					// translators: Placeholder is underlying error message.
 					__(
-						'There was an error while updating the plugin: %1$s.',
+						'There was an error while updating the plugin: %1$s',
 						'sensei-lms'
 					),
-					error.message
+					errorMessage
 				)
 			);
 		} finally {
