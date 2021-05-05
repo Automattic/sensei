@@ -10,9 +10,32 @@ import { registerStore, select, dispatch } from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import { createReducerFromActionMap } from '../shared/data/store-helpers';
+
+/**
+ * Extension statuses.
+ */
 const STATUS = {
 	IN_PROGRESS: 'in-progress',
 	IN_QUEUE: 'in-queue',
+};
+
+/**
+ * Store name.
+ */
+export const EXTENSIONS_STORE = 'sensei/extensions';
+
+/**
+ * Default store state.
+ */
+const DEFAULT_STATE = {
+	extensions: [],
+	entities: { extensions: {} },
+	layout: [],
+	error: null,
 };
 
 /**
@@ -212,83 +235,67 @@ const resolvers = {
 };
 
 /**
- * Extensions store reducer.
- *
- * @param {Object} state  The store state.
- * @param {Object} action The action to handle.
+ * Store reducer.
  */
-const reducer = (
-	state = {
-		extensions: [],
-		entities: { extensions: {} },
-		layout: [],
-		error: null,
-	},
-	action
-) => {
-	switch ( action.type ) {
-		case 'SET_EXTENSIONS':
-			let newState = { ...state };
+const reducer = {
+	SET_EXTENSIONS: ( { extensions, onlyEntities }, state ) => {
+		let newState = { ...state };
 
-			if ( ! action.onlyEntities ) {
-				// Update extension array (slugs).
-				newState = {
-					...newState,
-					extensions: [
-						...action.extensions.map(
-							( extension ) => extension.product_slug
-						),
-					],
-				};
-			}
-
-			// Update extension entities.
-			return {
+		if ( ! onlyEntities ) {
+			// Update extension array (slugs).
+			newState = {
 				...newState,
-				entities: {
-					...newState.entities,
-					extensions: {
-						...newState.entities.extensions,
-						...keyBy( action.extensions, 'product_slug' ),
-					},
-				},
+				extensions: [
+					...extensions.map(
+						( extension ) => extension.product_slug
+					),
+				],
 			};
-		case 'SET_EXTENSIONS_STATUS':
-			const extensionsWithStatus = { ...state.entities.extensions };
+		}
 
-			action.slugs.forEach( ( slug ) => {
-				extensionsWithStatus[ slug ] = {
-					...extensionsWithStatus[ slug ],
-					status: action.status,
-				};
-			} );
-
-			return {
-				...state,
-				entities: {
-					...state.entities,
-					extensions: extensionsWithStatus,
+		// Update extension entities.
+		return {
+			...newState,
+			entities: {
+				...newState.entities,
+				extensions: {
+					...newState.entities.extensions,
+					...keyBy( extensions, 'product_slug' ),
 				},
+			},
+		};
+	},
+	SET_EXTENSIONS_STATUS: ( { slugs, status }, state ) => {
+		const extensionsWithStatus = { ...state.entities.extensions };
+
+		slugs.forEach( ( slug ) => {
+			extensionsWithStatus[ slug ] = {
+				...extensionsWithStatus[ slug ],
+				status,
 			};
-		case 'SET_LAYOUT':
-			return {
-				...state,
-				layout: action.layout,
-			};
-		case 'SET_ERROR':
-			return {
-				...state,
-				error: action.error,
-			};
-		default:
-			return state;
-	}
+		} );
+
+		return {
+			...state,
+			entities: {
+				...state.entities,
+				extensions: extensionsWithStatus,
+			},
+		};
+	},
+	SET_LAYOUT: ( { layout }, state ) => ( {
+		...state,
+		layout,
+	} ),
+	SET_ERROR: ( { error }, state ) => ( {
+		...state,
+		error,
+	} ),
+	DEFAULT: ( action, state ) => state,
 };
 
-export const EXTENSIONS_STORE = 'sensei/extensions';
-
 registerStore( EXTENSIONS_STORE, {
-	reducer,
+	reducer: createReducerFromActionMap( reducer, DEFAULT_STATE ),
 	actions,
 	selectors,
 	resolvers,
