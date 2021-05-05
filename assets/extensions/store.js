@@ -203,10 +203,9 @@ const actions = {
 	/**
 	 * Set the extensions layout.
 	 *
-	 * @param {Object} obj        Layout object.
-	 * @param {Array}  obj.layout Extensions layout.
+	 * @param {Array} layout Extensions layout.
 	 */
-	setLayout( { layout = [] } ) {
+	setLayout( layout = [] ) {
 		return {
 			type: 'SET_LAYOUT',
 			layout,
@@ -297,6 +296,7 @@ const resolvers = {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
+		yield actions.setLayout( response.layout );
 		yield actions.setWccom( response.wccom );
 		yield actions.setEntities( {
 			extensions: keyBy( response.extensions, 'product_slug' ),
@@ -304,17 +304,6 @@ const resolvers = {
 		yield actions.setExtensions(
 			response.extensions.map( ( extension ) => extension.product_slug )
 		);
-	},
-
-	/**
-	 * Loads the extensions layout.
-	 */
-	*getLayout() {
-		const response = yield apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions/layout',
-		} );
-
-		return actions.setLayout( response );
 	},
 };
 
