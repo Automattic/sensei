@@ -53,18 +53,14 @@ export const useExtensionActions = ( extension ) => {
 		return null;
 	}
 
-	let actionProps = {
-		key: 'main-button',
-		disabled:
-			isLoadingStatus( extension.status ) ||
-			( extension.is_installed && ! extension.canUpdate ),
-	};
+	let actionProps = { key: 'main-button' };
 
 	if ( isLoadingStatus( extension.status ) ) {
 		actionProps = {
 			children: __( 'Updating…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
 			icon: updateIcon,
+			disabled: true,
 			...actionProps,
 		};
 	} else if ( extension.canUpdate ) {
@@ -72,12 +68,14 @@ export const useExtensionActions = ( extension ) => {
 			children: __( 'Update', 'sensei-lms' ),
 			onClick: () =>
 				updateExtensions( [ extension ], extension.product_slug ),
+			disabled: ! extension.canUpdate,
 			...actionProps,
 		};
 	} else if ( extension.is_installed ) {
 		actionProps = {
 			children: __( 'Installed', 'sensei-lms' ),
 			icon: checked,
+			disabled: true,
 			...actionProps,
 		};
 	} else {

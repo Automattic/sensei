@@ -26,7 +26,6 @@ const Multiple = ( { extensions } ) => {
 
 	let actionProps = {
 		key: 'update-button',
-		disabled: inProgress,
 		onClick: () => {
 			updateExtensions( extensions );
 		},
@@ -37,6 +36,7 @@ const Multiple = ( { extensions } ) => {
 			children: __( 'Updating…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
 			icon: updateIcon,
+			disabled: true,
 			...actionProps,
 		};
 	} else {
