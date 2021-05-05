@@ -113,7 +113,6 @@ class Sensei_WCCOM_Connect_Notice {
 			'plugins',
 			'plugins-network',
 			'sensei-lms_page_sensei_learners',
-			'sensei-lms_page_sensei-extensions',
 		];
 
 		if (
