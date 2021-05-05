@@ -297,6 +297,7 @@ const resolvers = {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
+		yield actions.setWccom( response.wccom );
 		yield actions.setEntities( {
 			extensions: keyBy( response.extensions, 'product_slug' ),
 		} );
