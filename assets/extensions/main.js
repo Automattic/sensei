@@ -51,9 +51,7 @@ const Main = () => {
 			id: 'all',
 			label: __( 'All', 'sensei-lms' ),
 			count: extensions.length,
-			content: (
-				<AllExtensions extensions={ extensions } layout={ layout } />
-			),
+			content: <AllExtensions layout={ layout } />,
 		},
 		{
 			id: 'free',

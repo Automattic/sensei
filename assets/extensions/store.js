@@ -179,6 +179,7 @@ const selectors = {
 		selectors
 			.getExtensions( args )
 			.filter( ( extension ) => status === extension.status ),
+	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getLayout: ( { layout } ) => layout,
 	getError: ( { error } ) => error,
 };

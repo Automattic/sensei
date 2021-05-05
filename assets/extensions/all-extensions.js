@@ -2,21 +2,26 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { keyBy } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import Card from './card';
 import { Grid, Col } from './grid';
+import { EXTENSIONS_STORE } from './store';
 
 /**
  * Renders the sections based on the skeleton structure. It can also render subsections recursively.
  *
- * @param {Array}  layout           Layout skeleton.
- * @param {Object} extensionsBySlug Extensions by slug to be rendered.
+ * @param {Array}  layout     Layout skeleton.
+ * @param {Object} extensions Extensions by slug to be rendered.
  */
-const renderSections = ( layout, extensionsBySlug ) =>
+const renderSections = ( layout, extensions ) =>
 	layout.map( ( section ) => (
 		<Col
 			key={ section.key }
@@ -41,10 +46,7 @@ const renderSections = ( layout, extensionsBySlug ) =>
 
 			{ section.innerSections ? (
 				<Grid>
-					{ renderSections(
-						section.innerSections,
-						extensionsBySlug
-					) }
+					{ renderSections( section.innerSections, extensions ) }
 				</Grid>
 			) : (
 				<ul
@@ -78,7 +80,7 @@ const renderSections = ( layout, extensionsBySlug ) =>
 								>
 									<Card
 										{ ...( extensionSlug
-											? extensionsBySlug[ extensionSlug ]
+											? extensions[ extensionSlug ]
 											: {} ) }
 										{ ...cardProps }
 									/>
@@ -94,14 +96,15 @@ const renderSections = ( layout, extensionsBySlug ) =>
 /**
  * All extensions component.
  *
- * @param {Object} props            Component props.
- * @param {Array}  props.extensions All extensions.
- * @param {Array}  props.layout     Layout to render the extensions page.
+ * @param {Object} props        Component props.
+ * @param {Array}  props.layout Layout to render the extensions page.
  */
-const AllExtensions = ( { extensions, layout } ) => {
-	const extensionsBySlug = keyBy( extensions, 'product_slug' );
+const AllExtensions = ( { layout } ) => {
+	const { extensions } = useSelect( ( select ) => ( {
+		extensions: select( EXTENSIONS_STORE ).getEntities( 'extensions' ),
+	} ) );
 
-	return renderSections( layout, extensionsBySlug );
+	return renderSections( layout, extensions );
 };
 
 export default AllExtensions;
