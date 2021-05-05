@@ -226,7 +226,7 @@ final class Sensei_Extensions {
 			$extensions,
 			function( $extension ) use ( $only_woo ) {
 				if (
-					! $extension->installed_version
+					empty( $extension->installed_version )
 					|| ( $only_woo && empty( $extension->wccom_product_id ) )
 				) {
 					return false;
