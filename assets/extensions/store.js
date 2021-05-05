@@ -32,7 +32,8 @@ export const EXTENSIONS_STORE = 'sensei/extensions';
  * Default store state.
  */
 const DEFAULT_STATE = {
-	extensions: [],
+	// Extensions list to be mapped using the entities.
+	extensionsSlugs: [],
 	entities: { extensions: {} },
 	layout: [],
 	error: null,
@@ -196,8 +197,8 @@ const actions = {
  * Extension store selectors.
  */
 const selectors = {
-	getExtensions: ( { extensions, entities } ) =>
-		extensions.map( ( slug ) => entities.extensions[ slug ] ),
+	getExtensions: ( { extensionsSlugs, entities } ) =>
+		extensionsSlugs.map( ( slug ) => entities.extensions[ slug ] ),
 	getExtensionsByStatus: ( args, status ) =>
 		selectors
 			.getExtensions( args )
@@ -245,7 +246,7 @@ const reducer = {
 			// Update extension array (slugs).
 			newState = {
 				...newState,
-				extensions: [
+				extensionsSlugs: [
 					...extensions.map(
 						( extension ) => extension.product_slug
 					),
