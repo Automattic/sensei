@@ -26,6 +26,12 @@ export default {
 	],
 	icon,
 	...metadata,
+	example: {
+		attributes: {
+			difficulty: 'easy',
+			length: 10,
+		},
+	},
 	edit,
 	save: () => {
 		return null;
