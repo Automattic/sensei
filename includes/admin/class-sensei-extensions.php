@@ -52,7 +52,7 @@ final class Sensei_Extensions {
 		$screen = get_current_screen();
 		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
-			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css' );
+			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
 		}
 	}
 

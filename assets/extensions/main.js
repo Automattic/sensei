@@ -1,48 +1,37 @@
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
-import { Spinner } from '@wordpress/components';
+import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
+import { EditorNotices } from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
+import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import Header from './header';
 import Tabs from './tabs';
 import UpdateNotification from './update-notification';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
+import { EXTENSIONS_STORE } from './store';
 import { Grid, Col } from './grid';
 
 const Main = () => {
-	const [ extensions, setExtensions ] = useState( false );
+	useSenseiColorTheme();
 
-	useEffect( () => {
-		apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
-		} )
-			.then( ( result ) => {
-				setExtensions( result.extensions || [] );
-			} )
-			.catch( () => setExtensions( [] ) );
-	}, [] );
+	const { extensions, layout, error } = useSelect( ( select ) => {
+		const store = select( EXTENSIONS_STORE );
+		return {
+			extensions: store.getExtensions(),
+			layout: store.getLayout(),
+			error: store.getError(),
+		};
+	} );
 
-	const [ layout, setLayout ] = useState( false );
-
-	useEffect( () => {
-		apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions/layout',
-		} )
-			.then( ( result ) => {
-				setLayout( result.layout || [] );
-			} )
-			.catch( () => setLayout( [] ) );
-	}, [] );
-
-	if ( false === extensions || false === layout ) {
+	if ( 0 === extensions.length || 0 === layout.length ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />
@@ -51,10 +40,6 @@ const Main = () => {
 	}
 
 	const freeExtensions = extensions.filter(
-		( extension ) => extension.price === '0'
-	);
-	// TODO: Specify which plugins are third party
-	const thirdPartyExtensions = extensions.filter(
 		( extension ) => extension.price === '0'
 	);
 	const installedExtensions = extensions.filter(
@@ -66,21 +51,13 @@ const Main = () => {
 			id: 'all',
 			label: __( 'All', 'sensei-lms' ),
 			count: extensions.length,
-			content: (
-				<AllExtensions extensions={ extensions } layout={ layout } />
-			),
+			content: <AllExtensions layout={ layout } />,
 		},
 		{
 			id: 'free',
 			label: __( 'Free', 'sensei-lms' ),
 			count: freeExtensions.length,
 			content: <FilteredExtensions extensions={ freeExtensions } />,
-		},
-		{
-			id: 'third-party',
-			label: __( 'Third Party', 'sensei-lms' ),
-			count: thirdPartyExtensions.length,
-			content: <FilteredExtensions extensions={ thirdPartyExtensions } />,
 		},
 		{
 			id: 'installed',
@@ -91,21 +68,29 @@ const Main = () => {
 	];
 
 	return (
-		<Grid as="main" className="sensei-extensions">
-			<QueryStringRouter paramName="tab" defaultRoute="all">
-				<Col className="sensei-extensions__section" cols={ 12 }>
-					<Header />
-					<Tabs tabs={ tabs } />
-				</Col>
+		<>
+			<Grid as="main" className="sensei-extensions">
+				<QueryStringRouter paramName="tab" defaultRoute="all">
+					<Col className="sensei-extensions__section" cols={ 12 }>
+						<Header />
+						<Tabs tabs={ tabs } />
+						{ error !== null && (
+							<Notice status="error" isDismissible={ false }>
+								{ error }
+							</Notice>
+						) }
+					</Col>
 
-				<UpdateNotification extensions={ extensions } />
-				{ tabs.map( ( tab ) => (
-					<Route key={ tab.id } route={ tab.id }>
-						{ tab.content }
-					</Route>
-				) ) }
-			</QueryStringRouter>
-		</Grid>
+					<UpdateNotification extensions={ extensions } />
+					{ tabs.map( ( tab ) => (
+						<Route key={ tab.id } route={ tab.id }>
+							{ tab.content }
+						</Route>
+					) ) }
+				</QueryStringRouter>
+			</Grid>
+			<EditorNotices />
+		</>
 	);
 };
 

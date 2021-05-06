@@ -3,8 +3,8 @@
  */
 import { Path, SVG } from '@wordpress/components';
 
-export const UpdateIcon = ( props ) => (
-	<SVG { ...props } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+const updateIcon = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 		<Path
 			fillRule="evenodd"
 			clipRule="evenodd"
@@ -19,3 +19,5 @@ export const UpdateIcon = ( props ) => (
 		/>
 	</SVG>
 );
+
+export default updateIcon;

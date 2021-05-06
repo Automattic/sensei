@@ -220,6 +220,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 		WP_Filesystem();
 
+		wp_update_plugins();
+
 		$skin     = new WP_Ajax_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
 		$result   = $upgrader->bulk_upgrade( wp_list_pluck( $plugins_to_update, 'plugin_file' ) );
@@ -230,7 +232,14 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			return $error;
 		}
 
-		return $this->create_extensions_response( Sensei_Extensions::instance()->get_extensions( 'plugin' ) );
+		$updated_plugins = array_filter(
+			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			function( $plugin ) use ( $plugins_arg ) {
+				return in_array( $plugin->product_slug, $plugins_arg, true );
+			}
+		);
+
+		return $this->create_extensions_response( $updated_plugins, 'completed' );
 	}
 
 	/**
@@ -285,20 +294,12 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Generate a REST response from an array of plugins.
 	 *
-	 * @param array $plugins The plugins.
+	 * @param array  $plugins      The plugins.
+	 * @param string $response_key Response key for the extensions array.
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function create_extensions_response( array $plugins ): WP_REST_Response {
-		$mapped_plugins = array_map(
-			function ( $plugin ) {
-				$plugin->price = html_entity_decode( $plugin->price );
-				$plugin->image = $plugin->image_large ?? 'https://senseilms.com/wp-content/uploads/2021/04/' . $plugin->product_slug . '.png';
-				return $plugin;
-			},
-			$plugins
-		);
-
+	private function create_extensions_response( array $plugins, string $response_key = 'extensions' ): WP_REST_Response {
 		$wccom_connected = false;
 
 		if ( class_exists( 'WC_Helper_Options' ) ) {
@@ -306,13 +307,21 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			$wccom_connected = ! empty( $auth['access_token'] );
 		}
 
-		$response = new WP_REST_Response();
-		$response->set_data(
-			[
-				'extensions'      => array_values( $mapped_plugins ),
-				'wccom_connected' => $wccom_connected,
-			]
+		$mapped_plugins = array_map(
+			function ( $plugin ) use ( $wccom_connected ) {
+				$plugin->price      = html_entity_decode( $plugin->price );
+				$plugin->image      = $plugin->image_large ?? 'https://senseilms.com/wp-content/uploads/2021/04/' . $plugin->product_slug . '.png';
+				$plugin->can_update = ! $plugin->wccom_product_id || ( $wccom_connected && ! $plugin->wccom_expired );
+				return $plugin;
+			},
+			$plugins
 		);
+
+		$response_json                  = [ 'wccom_connected' => $wccom_connected ];
+		$response_json[ $response_key ] = array_values( $mapped_plugins );
+
+		$response = new WP_REST_Response();
+		$response->set_data( $response_json );
 
 		return $response;
 	}

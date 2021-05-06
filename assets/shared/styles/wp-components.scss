@@ -10,8 +10,24 @@
 
 body.sensei-color {
 
-	.components-button.is-primary.is-busy {
-		background-size: 100px 100%;
+	.components-button.is-primary {
+		&,
+		&:hover,
+		&:active,
+		&:focus,
+		&:disabled {
+			color: #000;
+		}
+		&:disabled {
+			background-color: rgba($primary, 0.7);
+		}
+		&.is-busy {
+			background-size: 100px 100%;
+		}
+	}
+
+	.components-button {
+		justify-content: center;
 	}
 
 	a, .button-link, .components-button.is-link {
