@@ -34,41 +34,45 @@ const NumberControl = ( {
 	onChange,
 	suffix,
 	...props
-} ) => (
-	<BaseControl id={ id } label={ label } help={ help }>
-		<div className="sensei-number-control">
-			<div className="sensei-number-control__input-container">
-				<input
-					className={ classnames(
-						'sensei-number-control__input',
-						className
+} ) => {
+	const setValue = ( e ) => {
+		onChange( parseInt( e.target.value, 10 ) || props.min || 0 );
+	};
+
+	return (
+		<BaseControl id={ id } label={ label } help={ help }>
+			<div className="sensei-number-control">
+				<div className="sensei-number-control__input-container">
+					<input
+						className={ classnames(
+							'sensei-number-control__input components-text-control__input',
+							className
+						) }
+						type="number"
+						id={ id }
+						onChange={ setValue }
+						value={ null === value ? '' : value }
+						{ ...props }
+					/>
+					{ suffix && (
+						<span className="sensei-number-control__input-suffix">
+							{ suffix }
+						</span>
 					) }
-					type="number"
-					id={ id }
-					onChange={ ( e ) =>
-						onChange( parseInt( e.target.value, 10 ) )
-					}
-					value={ null === value ? '' : value }
-					{ ...props }
-				/>
-				{ suffix && (
-					<span className="sensei-number-control__input-suffix">
-						{ suffix }
-					</span>
+				</div>
+				{ allowReset && (
+					<Button
+						className="sensei-number-control__button"
+						isSmall
+						isSecondary
+						onClick={ () => onChange( null ) }
+					>
+						{ resetLabel || __( 'Reset', 'sensei-lms' ) }
+					</Button>
 				) }
 			</div>
-			{ allowReset && (
-				<Button
-					className="sensei-number-control__button"
-					isSmall
-					isSecondary
-					onClick={ () => onChange( null ) }
-				>
-					{ resetLabel || __( 'Reset', 'sensei-lms' ) }
-				</Button>
-			) }
-		</div>
-	</BaseControl>
-);
+		</BaseControl>
+	);
+};
 
 export default NumberControl;

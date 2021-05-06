@@ -5,11 +5,11 @@
 	justify-content: space-between;
 
 	&__input {
-		flex: 1;
 		min-width: 0;
 	}
 
 	&__input-container {
+		flex: 1;
 		position: relative;
 	}
 

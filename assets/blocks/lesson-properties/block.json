@@ -1,0 +1,17 @@
+{
+	"name": "sensei-lms/lesson-properties",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"attributes": {
+		"difficulty": {
+			"type": "string",
+			"source": "meta",
+			"meta": "_lesson_complexity"
+		},
+		"length": {
+			"type": "number",
+			"source": "meta",
+			"meta": "_lesson_length"
+		}
+	}
+}

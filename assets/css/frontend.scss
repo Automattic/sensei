@@ -233,7 +233,15 @@ a.sensei-certificate-link {
   }
 }
 
-.lesson  {
+.lesson {
+  .wp-block-sensei-lms-lesson-properties {
+    font-size: .9em;
+    font-style: italic;
+
+    &__separator {
+      margin: 0 0.5em 0;
+    }
+  }
   .lesson-meta  {
     margin: 0 0 1.618em;
   }

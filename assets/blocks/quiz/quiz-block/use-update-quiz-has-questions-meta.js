@@ -22,31 +22,21 @@ export const useUpdateQuizHasQuestionsMeta = ( clientId ) => {
 			.filter( ( block ) => ! isQuestionEmpty( block.attributes ) )
 	);
 
-	const { editedValue: quizHasQuestionsMeta, currentValue } = useSelect(
-		( select ) => {
-			const editor = select( 'core/editor' );
-			return {
-				editedValue: editor.getEditedPostAttribute( 'meta' )[
-					META_KEY
-				],
-				currentValue: editor.getCurrentPostAttribute( 'meta' )[
-					META_KEY
-				],
-			};
-		}
-	);
+	const { editedValue: quizHasQuestionsMeta } = useSelect( ( select ) => {
+		const editor = select( 'core/editor' );
+		return {
+			editedValue: editor.getEditedPostAttribute( 'meta' )[ META_KEY ],
+		};
+	} );
 
 	const { editPost } = useDispatch( 'core/editor' );
 	const setQuizHasQuestionsMeta = useCallback(
 		( enable ) => {
-			// Don't send an update to null if the meta is already unset.
-			const disabledValue = currentValue ? null : undefined;
-
 			return editPost( {
-				meta: { [ META_KEY ]: enable ? 1 : disabledValue },
+				meta: { [ META_KEY ]: enable ? 1 : 0 },
 			} );
 		},
-		[ editPost, currentValue ]
+		[ editPost ]
 	);
 
 	// Monitor for valid questions.
