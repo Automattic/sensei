@@ -92,12 +92,17 @@ export const useExtensionActions = ( extension ) => {
 
 	let buttons = [ actionProps ];
 
-	if ( extension.link ) {
+	const href =
+		extension.is_installed && extension.has_update
+			? extension.changelog_url
+			: extension.link;
+
+	if ( href ) {
 		buttons = [
 			...buttons,
 			{
 				key: 'more-details',
-				href: extension.link,
+				href,
 				className: 'sensei-extensions__extension-actions__details-link',
 				target: '_blank',
 				rel: 'noreferrer external',
