@@ -351,11 +351,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @param array   $plugins        The plugins.
 	 * @param string  $extensions_key Response key for the extensions array.
-	 * @param boolean $main_fetch     Whether it's creating the response for the main fetch.
+	 * @param boolean $full_response  Whether it's creating the response for the main fetch.
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function create_extensions_response( array $plugins, string $extensions_key, bool $main_fetch = false ): WP_REST_Response {
+	private function create_extensions_response( array $plugins, string $extensions_key, bool $full_response = false ): WP_REST_Response {
 		$wccom_connected = false;
 
 		if ( class_exists( 'WC_Helper_Options' ) ) {
@@ -375,7 +375,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 		$response_json = [];
 
-		if ( $main_fetch ) {
+		if ( $full_response ) {
 			$response_json = [
 				'layout'          => Sensei_Extensions::instance()->get_layout(),
 				'wccom'           => Sensei_Utils::get_woocommerce_connect_data(),
