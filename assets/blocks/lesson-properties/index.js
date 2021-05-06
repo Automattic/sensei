@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { LessonPropertiesIcon as icon } from '../../icons';
 import metadata from './block.json';
 import edit from './lesson-properties-edit';
 
@@ -23,6 +24,7 @@ export default {
 		__( 'Lesson Information', 'sensei-lms' ),
 		__( 'Lesson Properties', 'sensei-lms' ),
 	],
+	icon,
 	...metadata,
 	edit,
 	save: () => {
