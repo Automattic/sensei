@@ -137,7 +137,7 @@ const actions = {
 			);
 			// translators: Placeholder is the underlying error message.
 			errorMessage = __(
-				'There was an error while updating the plugin: %1$s.',
+				'There was an error while updating the plugin: %1$s',
 				'sensei-lms'
 			);
 		} else {
@@ -148,7 +148,7 @@ const actions = {
 			);
 			// translators: Placeholder is the underlying error message.
 			errorMessage = __(
-				'There was an error while installing the plugin: %1$s.',
+				'There was an error while installing the plugin: %1$s',
 				'sensei-lms'
 			);
 		}
@@ -173,11 +173,7 @@ const actions = {
 				}
 			);
 		} catch ( error ) {
-			const serverError = Object.keys( error.errors )
-				.map( ( key ) => error.errors[ key ].join( ' ' ) )
-				.join( ' ' );
-
-			yield actions.setError( sprintf( errorMessage, serverError ) );
+			yield actions.setError( sprintf( errorMessage, error.message ) );
 		} finally {
 			yield actions.setExtensionsStatus( slugs, '' );
 			yield actions.removeFromQueue( process );

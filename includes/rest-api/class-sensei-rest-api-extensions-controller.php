@@ -215,15 +215,10 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			wp_clean_plugins_cache();
 			Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
 		} catch ( Exception $e ) {
-			$response = new WP_REST_Response();
-			$response->set_data(
-				new WP_Error(
-					'sensei_extensions_install_error',
-					$e->getMessage()
-				)
+			return new WP_Error(
+				'sensei_extensions_install_error',
+				$e->getMessage()
 			);
-
-			return $response;
 		}
 
 		$installed_plugins = array_filter(
@@ -258,16 +253,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		);
 
 		if ( empty( $plugins_to_update ) ) {
-			$response = new WP_REST_Response();
-			$response->set_data(
-				new WP_Error(
-					'sensei_extensions_no_plugins_to_update',
-					__( 'No plugins to update found.', 'sensei-lms' )
-				)
+			return new WP_Error(
+				'sensei_extensions_no_plugins_to_update',
+				__( 'No plugins to update found.', 'sensei-lms' ),
+				[ 'status' => 404 ]
 			);
-			$response->set_status( 404 );
-
-			return $response;
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
