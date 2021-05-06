@@ -53,6 +53,8 @@ final class Sensei_Extensions {
 		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
+
+			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
 		}
 	}
 

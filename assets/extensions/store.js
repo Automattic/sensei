@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { createReducerFromActionMap } from '../shared/data/store-helpers';
+import '../shared/data/api-fetch-preloaded-once';
 
 /**
  * Extension statuses.
