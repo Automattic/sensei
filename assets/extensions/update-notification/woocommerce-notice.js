@@ -31,49 +31,53 @@ const WooCommerceNotice = ( { extensions, isConnected } ) => {
 		return null;
 	}
 
+	let title = '';
+	let actions = [];
 	const showConnectionNotice = ! isConnected && isInstalled && isActive;
-	const title =
-		( showConnectionNotice &&
-			_n(
-				'Your site needs to be connected to your WooCommerce.com account before this extension can be updated.',
-				'Your site needs to be connected to your WooCommerce.com account before these extensions can be updated.',
-				updatesCount,
-				'sensei-lms'
-			) ) ||
-		( ! isInstalled &&
-			_n(
-				'WooCommerce needs to be installed before this extension can be updated.',
-				'WooCommerce needs to be installed before these extensions can be updated.',
-				updatesCount,
-				'sensei-lms'
-			) ) ||
-		( ! isActive &&
-			_n(
-				'WooCommerce needs to be activated before this extension can be updated.',
-				'WooCommerce needs to be activated before these extensions can be updated.',
-				updatesCount,
-				'sensei-lms'
-			) );
 
-	const actions = [
-		{
-			key:
-				( showConnectionNotice && 'connect' ) ||
-				( ! isInstalled && 'install' ) ||
-				( ! isActive && 'activate' ),
-			children:
-				( showConnectionNotice &&
-					__( 'Connect account', 'sensei-lms' ) ) ||
-				( ! isInstalled &&
-					__( 'Install WooCommerce', 'sensei-lms' ) ) ||
-				( ! isActive && __( 'Activate WooCommerce', 'sensei-lms' ) ),
-			href:
-				( showConnectionNotice &&
-					window.sensei_extensions?.connectUrl ) ||
-				window.sensei_extensions?.installUrl ||
-				window.sensei_extensions?.activateUrl,
-		},
-	];
+	if ( showConnectionNotice ) {
+		title = _n(
+			'Your site needs to be connected to your WooCommerce.com account before this extension can be updated.',
+			'Your site needs to be connected to your WooCommerce.com account before these extensions can be updated.',
+			updatesCount,
+			'sensei-lms'
+		);
+		actions = [
+			{
+				key: 'connect',
+				children: __( 'Connect account', 'sensei-lms' ),
+				href: window.sensei_extensions?.connectUrl,
+			},
+		];
+	} else if ( ! isInstalled ) {
+		title = _n(
+			'WooCommerce needs to be installed before this extension can be updated.',
+			'WooCommerce needs to be installed before these extensions can be updated.',
+			updatesCount,
+			'sensei-lms'
+		);
+		actions = [
+			{
+				key: 'install',
+				children: __( 'Install WooCommerce', 'sensei-lms' ),
+				href: window.sensei_extensions?.installUrl,
+			},
+		];
+	} else if ( ! isActive ) {
+		title = _n(
+			'WooCommerce needs to be activated before this extension can be updated.',
+			'WooCommerce needs to be activated before these extensions can be updated.',
+			updatesCount,
+			'sensei-lms'
+		);
+		actions = [
+			{
+				key: 'activate',
+				children: __( 'Activate WooCommerce', 'sensei-lms' ),
+				href: window.sensei_extensions?.activateUrl,
+			},
+		];
+	}
 
 	return (
 		<Col as="section" className="sensei-extensions__section" cols={ 12 }>
