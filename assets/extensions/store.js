@@ -47,7 +47,7 @@ const DEFAULT_STATE = {
  * @return {string} Whether is a loading status.
  */
 export const isLoadingStatus = ( status ) =>
-	Object.values( STATUS ).includes( status );
+	[ STATUS.IN_PROGRESS, STATUS.IN_QUEUE ].includes( status );
 
 /**
  * Extension store actions.
