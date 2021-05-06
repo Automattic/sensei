@@ -66,8 +66,7 @@ const UpdateNotification = ( { extensions } ) => {
 				role="alert"
 				className="sensei-extensions__update-notification"
 			>
-				<UpdateAvailableLabel updatesCount={ updatesCount } />
-
+				<UpdateAvailable updatesCount={ updatesCount } />
 				{ 1 === updatesCount ? (
 					<Single extension={ extensionsWithUpdate[ 0 ] } />
 				) : (

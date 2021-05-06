@@ -9,7 +9,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import Multiple from './multiple';
 import UpdateAvailable from './update-available';
 import { Col } from '../grid';
-import { UpdateIcon } from '../../icons';
 import ExtensionActions from '../extension-actions';
 
 /**
