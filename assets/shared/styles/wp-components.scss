@@ -19,7 +19,7 @@ body.sensei-color {
 			color: #000;
 		}
 		&:disabled {
-			background-color: rgba(70, 200, 173, 0.7);
+			background-color: rgba($primary, 0.7);
 		}
 		&.is-busy {
 			background-size: 100px 100%;
