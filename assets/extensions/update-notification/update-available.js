@@ -4,13 +4,20 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import { UpdateIcon } from '../../icons';
+
+/**
  * Update available label component.
  *
  * @param {Object} props              Component props.
  * @param {number} props.updatesCount Number of extension updates.
  */
-const updateAvailableLabel = ( { updatesCount } ) => (
-	<>
+const UpdateAvailable = ( { updatesCount } ) => (
+	<small className="sensei-extensions__update-badge">
+		<UpdateIcon />
+
 		{ 1 === updatesCount
 			? __( 'Update available', 'sensei-lms' )
 			: sprintf(
@@ -23,7 +30,7 @@ const updateAvailableLabel = ( { updatesCount } ) => (
 					),
 					updatesCount
 			  ) }
-	</>
+	</small>
 );
 
-export default updateAvailableLabel;
+export default UpdateAvailable;

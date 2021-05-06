@@ -9,7 +9,7 @@ import { Icon } from '@wordpress/components';
  */
 import Single from './single';
 import Multiple from './multiple';
-import UpdateAvailableLabel from './update-available-label';
+import UpdateAvailable from './update-available';
 import { Col } from '../grid';
 import updateIcon from '../../icons/update-icon';
 import ExtensionActions from '../extension-actions';
@@ -69,10 +69,8 @@ const UpdateNotification = ( { extensions } ) => {
 				role="alert"
 				className="sensei-extensions__update-notification"
 			>
-				<small className="sensei-extensions__update-badge">
-					<Icon icon={ updateIcon } />
-					<UpdateAvailableLabel updatesCount={ updatesCount } />
-				</small>
+				<UpdateAvailable updatesCount={ updatesCount } />
+
 				{ 1 === updatesCount ? (
 					<Single extension={ extensionsWithUpdate[ 0 ] } />
 				) : (

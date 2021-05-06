@@ -7,9 +7,8 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import Multiple from './multiple';
-import UpdateAvailableLabel from './update-available-label';
+import UpdateAvailable from './update-available';
 import { Col } from '../grid';
-import { UpdateIcon } from '../../icons';
 import ExtensionActions from '../extension-actions';
 
 /**
@@ -43,10 +42,7 @@ const WCCOMConnection = ( { extensions } ) => {
 				role="alert"
 				className="sensei-extensions__update-notification"
 			>
-				<small className="sensei-extensions__update-badge">
-					<UpdateIcon />
-					<UpdateAvailableLabel updatesCount={ updatesCount } />
-				</small>
+				<UpdateAvailable updatesCount={ updatesCount } />
 
 				<h3 className="sensei-extensions__update-notification__title">
 					{ __(
