@@ -32,8 +32,14 @@ export const EXTENSIONS_STORE = 'sensei/extensions';
  * Default store state.
  */
 const DEFAULT_STATE = {
-	// Extensions list to be mapped using the entities.
+	/**
+	 * Extensions list. It is mapped with the entities and served through the selectors.
+	 */
 	extensionSlugs: [],
+	/**
+	 * Store entities to be used based on the entities key (it can be accessed directly,
+	 * or mapped based in a key list).
+	 */
 	entities: { extensions: {} },
 	layout: [],
 	queue: [],
