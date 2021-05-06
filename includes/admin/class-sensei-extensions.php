@@ -254,6 +254,31 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Get installed Sensei plugins.
+	 *
+	 * @param bool $only_woo Only include WooCommerce.com extensions.
+	 *
+	 * @return array
+	 */
+	public function get_installed_plugins( $only_woo = false ) {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		return array_filter(
+			$extensions,
+			function( $extension ) use ( $only_woo ) {
+				if (
+					empty( $extension->installed_version )
+					|| ( $only_woo && empty( $extension->wccom_product_id ) )
+				) {
+					return false;
+				}
+
+				return true;
+			}
+		);
+	}
+
+	/**
 	 * Adds the menu item for the Extensions page.
 	 *
 	 * @since  2.0.0

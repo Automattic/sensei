@@ -2,6 +2,32 @@
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
+
+/* Sensei Notice */
+.sensei-notice {
+	@import '../shared/styles/wp-admin';
+
+	border-left-color: $primary;
+	padding: 10px;
+	background-size: 35px;
+	background-origin: content-box;
+
+	p {
+		padding: 0;
+		font-size: 14px;
+	}
+
+	.button {
+		float: right;
+		padding: 3px 12px;
+		margin-top: -7px;
+	}
+
+	.notice-dismiss {
+		margin: .7em 0;
+	}
+}
+
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
   	content: "\f118" !important;

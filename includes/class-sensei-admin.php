@@ -293,6 +293,8 @@ class Sensei_Admin {
 	public function register_scripts( $hook ) {
 		$screen = get_current_screen();
 
+		Sensei()->assets->register( 'sensei-dismiss-notices', 'js/admin/sensei-notice-dismiss.js', [] );
+
 		// Select2 script used to enhance all select boxes.
 		Sensei()->assets->register( 'sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
 
