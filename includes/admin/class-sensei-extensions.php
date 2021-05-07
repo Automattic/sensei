@@ -180,7 +180,9 @@ final class Sensei_Extensions {
 						if ( (int) $extension->wccom_product_id === $wccom_subscription['product_id'] ) {
 							$extension->wccom_expired = $wccom_subscription['expired'];
 
-							break;
+							if ( ! $extension->wccom_expired ) {
+								break;
+							}
 						}
 					}
 				}
