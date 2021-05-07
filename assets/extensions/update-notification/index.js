@@ -1,16 +1,18 @@
 /**
  * WordPress dependencies
  */
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import Single from './single';
 import Multiple from './multiple';
+import UpdateAvailable from './update-available';
 import { Col } from '../grid';
 import updateIcon from '../../icons/update-icon';
+import { useDispatch } from '@wordpress/data';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
 
 /**
  * Update notification component.
@@ -24,24 +26,39 @@ const UpdateNotification = ( { extensions } ) => {
 	);
 
 	const updatesCount = extensionsWithUpdate.length;
+	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
 
 	if ( 0 === updatesCount ) {
 		return null;
 	}
 
-	const updateAvailableLabel =
-		1 === updatesCount
-			? __( 'Update available', 'sensei-lms' )
-			: sprintf(
-					// translators: placeholder is number of updates available.
-					_n(
-						'%d update available',
-						'%d updates available',
-						updatesCount,
-						'sensei-lms'
-					),
-					updatesCount
-			  );
+	const inProgress = extensionsWithUpdate.some( ( extension ) =>
+		isLoadingStatus( extension.status )
+	);
+
+	let actionProps = {
+		key: 'update-button',
+		onClick: () => {
+			updateExtensions( extensions );
+		},
+	};
+
+	if ( inProgress ) {
+		actionProps = {
+			children: __( 'Updating…', 'sensei-lms' ),
+			className: 'sensei-extensions__rotating-icon',
+			icon: updateIcon,
+			disabled: true,
+			...actionProps,
+		};
+	} else {
+		actionProps = {
+			children: __( 'Update all', 'sensei-lms' ),
+			...actionProps,
+		};
+	}
+
+	const actions = [ actionProps ];
 
 	return (
 		<Col as="section" className="sensei-extensions__section" cols={ 12 }>
@@ -49,14 +66,15 @@ const UpdateNotification = ( { extensions } ) => {
 				role="alert"
 				className="sensei-extensions__update-notification"
 			>
-				<small className="sensei-extensions__update-badge">
-					<Icon icon={ updateIcon } />
-					{ updateAvailableLabel }
-				</small>
+				<UpdateAvailable updatesCount={ updatesCount } />
+
 				{ 1 === updatesCount ? (
 					<Single extension={ extensionsWithUpdate[ 0 ] } />
 				) : (
-					<Multiple extensions={ extensionsWithUpdate } />
+					<Multiple
+						extensions={ extensionsWithUpdate }
+						actions={ actions }
+					/>
 				) }
 			</div>
 		</Col>

@@ -13,6 +13,7 @@ import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import Header from './header';
 import Tabs from './tabs';
 import UpdateNotification from './update-notification';
+import WCCOMConnection from './update-notification/wccom-connection';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
@@ -22,10 +23,12 @@ import { Grid, Col } from './grid';
 const Main = () => {
 	useSenseiColorTheme();
 
-	const { extensions, layout, error } = useSelect( ( select ) => {
+	const { extensions, connected, layout, error } = useSelect( ( select ) => {
 		const store = select( EXTENSIONS_STORE );
+
 		return {
 			extensions: store.getExtensions(),
+			connected: store.getConnectionStatus(),
 			layout: store.getLayout(),
 			error: store.getError(),
 		};
@@ -44,6 +47,12 @@ const Main = () => {
 	);
 	const installedExtensions = extensions.filter(
 		( extension ) => extension.is_installed
+	);
+	const wooExtensions = extensions.filter(
+		( extension ) => extension.wccom_product_id
+	);
+	const nonWooExtensions = extensions.filter(
+		( extension ) => ! extension.wccom_product_id
 	);
 
 	const tabs = [
@@ -81,7 +90,13 @@ const Main = () => {
 						) }
 					</Col>
 
-					<UpdateNotification extensions={ extensions } />
+					{ ! connected && (
+						<WCCOMConnection extensions={ wooExtensions } />
+					) }
+
+					<UpdateNotification
+						extensions={ connected ? extensions : nonWooExtensions }
+					/>
 					{ tabs.map( ( tab ) => (
 						<Route key={ tab.id } route={ tab.id }>
 							{ tab.content }

@@ -42,6 +42,7 @@ const DEFAULT_STATE = {
 	 * or mapped based in a key list).
 	 */
 	entities: { extensions: {} },
+	connected: false,
 	layout: [],
 	queue: [],
 	wccom: {},
@@ -83,6 +84,18 @@ const actions = {
 		return {
 			type: 'SET_ENTITIES',
 			entities,
+		};
+	},
+
+	/**
+	 * Sets the WC.com connection status.
+	 *
+	 * @param {Object} connected Whether the site is connected to WC.com.
+	 */
+	setConnectionStatus( connected ) {
+		return {
+			type: 'SET_CONNECTION_STATUS',
+			connected,
 		};
 	},
 
@@ -281,6 +294,7 @@ const selectors = {
 			.getExtensions( args )
 			.filter( ( extension ) => status === extension.status ),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
+	getConnectionStatus: ( { connected } ) => connected,
 	getLayout: ( { layout } ) => layout,
 	getNextProcess: ( { queue } ) => queue[ 0 ] || null,
 	getWccomData: ( { wccom } ) => wccom,
@@ -307,6 +321,7 @@ const resolvers = {
 		yield actions.setExtensions(
 			response.extensions.map( ( extension ) => extension.product_slug )
 		);
+		yield actions.setConnectionStatus( response.wccom_connected );
 	},
 };
 
@@ -335,6 +350,10 @@ const reducer = {
 				{}
 			),
 		},
+	} ),
+	SET_CONNECTION_STATUS: ( { connected }, state ) => ( {
+		...state,
+		connected,
 	} ),
 	SET_LAYOUT: ( { layout }, state ) => ( {
 		...state,
