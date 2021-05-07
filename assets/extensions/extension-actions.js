@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 
 /**
@@ -11,6 +11,7 @@ import { Button } from '@wordpress/components';
 import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
 import updateIcon from '../icons/update-icon';
+import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
 
 /**
  * Extension actions component.
@@ -47,7 +48,12 @@ export default ExtensionActions;
  * @return {Array|null} Array of actions, or null if it's not a valid extension.
  */
 export const useExtensionActions = ( extension ) => {
-	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
+	const { wccom } = useSelect( ( select ) => ( {
+		wccom: select( EXTENSIONS_STORE ).getWccomData(),
+	} ) );
+	const { installExtension, updateExtensions } = useDispatch(
+		EXTENSIONS_STORE
+	);
 
 	if ( ! extension.product_slug ) {
 		return null;
@@ -57,7 +63,7 @@ export const useExtensionActions = ( extension ) => {
 
 	if ( isLoadingStatus( extension.status ) ) {
 		actionProps = {
-			children: __( 'Updating…', 'sensei-lms' ),
+			children: __( 'In progress…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
 			icon: updateIcon,
 			disabled: true,
@@ -66,8 +72,7 @@ export const useExtensionActions = ( extension ) => {
 	} else if ( extension.has_update ) {
 		actionProps = {
 			children: __( 'Update', 'sensei-lms' ),
-			onClick: () =>
-				updateExtensions( [ extension ], extension.product_slug ),
+			onClick: () => updateExtensions( [ extension.product_slug ] ),
 			disabled: ! extension.can_update,
 			...actionProps,
 		};
@@ -86,6 +91,19 @@ export const useExtensionActions = ( extension ) => {
 
 		actionProps = {
 			children: `${ __( 'Install', 'sensei-lms' ) } - ${ price }`,
+			onClick: () => {
+				if ( extension.wccom_product_id ) {
+					const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
+						[ extension ],
+						wccom
+					);
+					window.open( wcPurchaseUrl );
+
+					return;
+				}
+
+				installExtension( extension.product_slug );
+			},
 			...actionProps,
 		};
 	}

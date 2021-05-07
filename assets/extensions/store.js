@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, merge } from 'lodash';
+import { keyBy, merge, isEqual } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -33,10 +33,18 @@ export const EXTENSIONS_STORE = 'sensei/extensions';
  * Default store state.
  */
 const DEFAULT_STATE = {
-	// Extensions list to be mapped using the entities.
+	/**
+	 * Extensions list. It is mapped with the entities and served through the selectors.
+	 */
 	extensionSlugs: [],
+	/**
+	 * Store entities to be used based on the entities key (it can be accessed directly,
+	 * or mapped based in a key list).
+	 */
 	entities: { extensions: {} },
 	layout: [],
+	queue: [],
+	wccom: {},
 	error: null,
 };
 
@@ -79,30 +87,78 @@ const actions = {
 	},
 
 	/**
+	 * Install extensions.
+	 *
+	 * @param {string} slug The extension slug to install.
+	 */
+	*installExtension( slug ) {
+		yield actions.runProcess( { slugs: [ slug ], actionType: 'install' } );
+	},
+
+	/**
 	 * Updates the provided extensions.
 	 *
-	 * @param {Array} extensions The extensions to update.
+	 * @param {string[]} slugs The extension slugs to update.
 	 */
-	*updateExtensions( extensions ) {
-		const slugs = extensions.map( ( extension ) => extension.product_slug );
+	*updateExtensions( slugs ) {
+		yield actions.runProcess( { slugs, actionType: 'update' } );
+	},
+
+	/**
+	 * Run extension process (install or update).
+	 *
+	 * @param {Object}   process            The process.
+	 * @param {string[]} process.slugs      Extension slugs.
+	 * @param {string}   process.actionType Action type (`install` or `update`).
+	 */
+	*runProcess( process ) {
+		const { slugs, actionType } = process;
 
 		const inProgressExtensions = yield select(
 			EXTENSIONS_STORE
 		).getExtensionsByStatus( STATUS.IN_PROGRESS );
 
-		// Add extensions to queue and skip if extensions are already updating.
+		// Add to process to queue and skip if a process is already running.
 		if ( inProgressExtensions.length > 0 ) {
-			yield actions.setExtensionsStatus( slugs, STATUS.IN_QUEUE );
+			yield actions.addToQueue( process );
 			return;
 		}
 
 		yield actions.setExtensionsStatus( slugs, STATUS.IN_PROGRESS );
 
+		let data;
+		let successMessage;
+		let errorMessage;
+
+		if ( actionType === 'update' ) {
+			data = { plugins: slugs };
+			successMessage = __(
+				'Update completed succesfully!',
+				'sensei-lms'
+			);
+			// translators: Placeholder is the underlying error message.
+			errorMessage = __(
+				'There was an error while updating the plugin: %1$s',
+				'sensei-lms'
+			);
+		} else {
+			data = { plugin: slugs[ 0 ] };
+			successMessage = __(
+				'Installation completed succesfully!',
+				'sensei-lms'
+			);
+			// translators: Placeholder is the underlying error message.
+			errorMessage = __(
+				'There was an error while installing the plugin: %1$s',
+				'sensei-lms'
+			);
+		}
+
 		try {
 			const response = yield apiFetch( {
-				path: '/sensei-internal/v1/sensei-extensions/update',
+				path: `/sensei-internal/v1/sensei-extensions/${ actionType }`,
 				method: 'POST',
-				data: { plugins: slugs },
+				data,
 			} );
 
 			yield actions.setError( null );
@@ -112,39 +168,24 @@ const actions = {
 
 			yield dispatch( 'core/notices' ).createNotice(
 				'success',
-				__( 'Update completed succesfully!', 'sensei-lms' ),
+				successMessage,
 				{
 					type: 'snackbar',
 				}
 			);
 		} catch ( error ) {
-			const errorMessage = Object.keys( error.errors )
-				.map( ( key ) => error.errors[ key ].join( ' ' ) )
-				.join( ' ' );
-
-			yield actions.setError(
-				sprintf(
-					// translators: Placeholder is underlying error message.
-					__(
-						'There was an error while updating the plugin: %1$s',
-						'sensei-lms'
-					),
-					errorMessage
-				)
-			);
+			yield actions.setError( sprintf( errorMessage, error.message ) );
 		} finally {
 			yield actions.setExtensionsStatus( slugs, '' );
+			yield actions.removeFromQueue( process );
 
-			// Update queue extensions, if exists.
-			const queuedExtensions = yield select(
+			const nextProcess = yield select(
 				EXTENSIONS_STORE
-			).getExtensionsByStatus( STATUS.IN_QUEUE );
+			).getNextProcess();
 
-			if ( 0 === queuedExtensions.length ) {
-				return;
+			if ( nextProcess ) {
+				yield actions.runProcess( nextProcess );
 			}
-
-			yield actions.updateExtensions( queuedExtensions );
 		}
 	},
 
@@ -165,13 +206,54 @@ const actions = {
 	/**
 	 * Set the extensions layout.
 	 *
-	 * @param {Object} obj        Layout object.
-	 * @param {Array}  obj.layout Extensions layout.
+	 * @param {Array} layout Extensions layout.
 	 */
-	setLayout( { layout = [] } ) {
+	setLayout( layout = [] ) {
 		return {
 			type: 'SET_LAYOUT',
 			layout,
+		};
+	},
+
+	/**
+	 * Set WooCommerce.com data.
+	 *
+	 * @param {Object} wccom WooCommerce.com data.
+	 */
+	setWccom( wccom ) {
+		return {
+			type: 'SET_WCCOM',
+			wccom,
+		};
+	},
+
+	/**
+	 * Add process (update/install) to queue.
+	 *
+	 * @param {Object}   process            The process.
+	 * @param {string}   process.actionType Action type.
+	 * @param {string[]} process.slugs      Extension slugs.
+	 */
+	*addToQueue( process ) {
+		yield actions.setExtensionsStatus( process.slugs, STATUS.IN_QUEUE );
+
+		return {
+			type: 'ADD_TO_QUEUE',
+			process,
+		};
+	},
+
+	/**
+	 * Add process (update/install) to queue.
+	 *
+	 * @param {Object}   process       The process.
+	 * @param {string}   process.type  Process type.
+	 * @param {string[]} process.slugs Extension slugs.
+	 */
+	removeFromQueue( process ) {
+		return {
+			type: 'REMOVE_FROM_QUEUE',
+			process,
 		};
 	},
 
@@ -200,6 +282,8 @@ const selectors = {
 			.filter( ( extension ) => status === extension.status ),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getLayout: ( { layout } ) => layout,
+	getNextProcess: ( { queue } ) => queue[ 0 ] || null,
+	getWccomData: ( { wccom } ) => wccom,
 	getError: ( { error } ) => error,
 };
 
@@ -215,23 +299,14 @@ const resolvers = {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
+		yield actions.setLayout( response.layout );
+		yield actions.setWccom( response.wccom );
 		yield actions.setEntities( {
 			extensions: keyBy( response.extensions, 'product_slug' ),
 		} );
 		yield actions.setExtensions(
 			response.extensions.map( ( extension ) => extension.product_slug )
 		);
-	},
-
-	/**
-	 * Loads the extensions layout.
-	 */
-	*getLayout() {
-		const response = yield apiFetch( {
-			path: '/sensei-internal/v1/sensei-extensions/layout',
-		} );
-
-		return actions.setLayout( response );
 	},
 };
 
@@ -268,6 +343,18 @@ const reducer = {
 	SET_ENTITIES: ( { entities }, state ) => ( {
 		...state,
 		entities: merge( {}, state.entities, entities ),
+	} ),
+	SET_WCCOM: ( { wccom }, state ) => ( {
+		...state,
+		wccom,
+	} ),
+	ADD_TO_QUEUE: ( { process }, state ) => ( {
+		...state,
+		queue: [ ...state.queue, process ],
+	} ),
+	REMOVE_FROM_QUEUE: ( { process }, state ) => ( {
+		...state,
+		queue: state.queue.filter( ( item ) => ! isEqual( item, process ) ),
 	} ),
 	SET_ERROR: ( { error }, state ) => ( {
 		...state,

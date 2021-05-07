@@ -87,14 +87,20 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/layout',
+			$this->rest_base . '/install',
 			[
 				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_layout' ],
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'install_extension' ],
 					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+					'args'                => [
+						'plugin' => [
+							'type'              => 'string',
+							'required'          => true,
+							'sanitize_callback' => 'sanitize_title',
+						],
+					],
 				],
-				'schema' => [ $this, 'get_layout_schema' ],
 			]
 		);
 
@@ -178,7 +184,51 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			}
 		);
 
-		return $this->create_extensions_response( $filtered_plugins );
+		return $this->create_extensions_response( $filtered_plugins, 'extensions', true );
+	}
+
+	/**
+	 * Install extension.
+	 *
+	 * @access private
+	 *
+	 * @param WP_REST_Request $request The request.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function install_extension( WP_REST_Request $request ) {
+		$json_params    = $request->get_json_params();
+		$plugin_slug    = $json_params['plugin'];
+		$sensei_plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+
+		$plugin_to_install = array_values(
+			array_filter(
+				$sensei_plugins,
+				function( $plugin ) use ( $plugin_slug ) {
+					return $plugin->product_slug === $plugin_slug;
+				}
+			)
+		)[0];
+
+		try {
+			Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			wp_clean_plugins_cache();
+			Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
+		} catch ( Exception $e ) {
+			return new WP_Error(
+				'sensei_extensions_install_error',
+				$e->getMessage()
+			);
+		}
+
+		$installed_plugins = array_filter(
+			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			function( $plugin ) use ( $plugin_slug ) {
+				return $plugin->product_slug === $plugin_slug;
+			}
+		);
+
+		return $this->create_extensions_response( $installed_plugins, 'completed' );
 	}
 
 	/**
@@ -203,16 +253,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		);
 
 		if ( empty( $plugins_to_update ) ) {
-			$response = new WP_REST_Response();
-			$response->set_data(
-				new WP_Error(
-					'sensei_extensions_no_plugins_to_update',
-					__( 'No plugins to update found.', 'sensei-lms' )
-				)
+			return new WP_Error(
+				'sensei_extensions_no_plugins_to_update',
+				__( 'No plugins to update found.', 'sensei-lms' ),
+				[ 'status' => 404 ]
 			);
-			$response->set_status( 404 );
-
-			return $response;
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -294,12 +339,13 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Generate a REST response from an array of plugins.
 	 *
-	 * @param array  $plugins      The plugins.
-	 * @param string $response_key Response key for the extensions array.
+	 * @param array   $plugins        The plugins.
+	 * @param string  $extensions_key Response key for the extensions array.
+	 * @param boolean $full_response  Whether it's creating the response for the main fetch.
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function create_extensions_response( array $plugins, string $response_key = 'extensions' ): WP_REST_Response {
+	private function create_extensions_response( array $plugins, string $extensions_key, bool $full_response = false ): WP_REST_Response {
 		$wccom_connected = false;
 
 		if ( class_exists( 'WC_Helper_Options' ) ) {
@@ -317,8 +363,17 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 			$plugins
 		);
 
-		$response_json                  = [ 'wccom_connected' => $wccom_connected ];
-		$response_json[ $response_key ] = array_values( $mapped_plugins );
+		$response_json = [];
+
+		if ( $full_response ) {
+			$response_json = [
+				'layout'          => Sensei_Extensions::instance()->get_layout(),
+				'wccom'           => Sensei_Utils::get_woocommerce_connect_data(),
+				'wccom_connected' => $wccom_connected,
+			];
+		}
+
+		$response_json[ $extensions_key ] = array_values( $mapped_plugins );
 
 		$response = new WP_REST_Response();
 		$response->set_data( $response_json );
@@ -333,10 +388,6 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 */
 	public function get_extensions_schema() : array {
 		return [
-			'wccom_connected' => [
-				'type'        => 'boolean',
-				'description' => 'Whether the site is connected to WC.com.',
-			],
 			'extensions'      => [
 				'type'  => 'array',
 				'items' => [
@@ -409,21 +460,16 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 					],
 				],
 			],
+			'wccom'           => [
+				'type'        => 'object',
+				'description' => 'WC.com data.',
+			],
+			'wccom_connected' => [
+				'type'        => 'boolean',
+				'description' => 'Whether the site is connected to WC.com.',
+			],
+			'layout'          => [ $this, 'get_layout_schema' ],
 		];
-	}
-
-	/**
-	 * Returns the extensions layout.
-	 *
-	 * @return WP_REST_Response The response which contains the extensions layout.
-	 */
-	public function get_layout() : WP_REST_Response {
-		$layout_json = [ 'layout' => Sensei_Extensions::instance()->get_layout() ];
-
-		$response = new WP_REST_Response();
-		$response->set_data( $layout_json );
-
-		return $response;
 	}
 
 	/**
@@ -431,7 +477,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_layout_schema() : array {
+	private function get_layout_schema() : array {
 		return [
 			'type'  => 'array',
 			'items' => [
