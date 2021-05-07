@@ -1,8 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -12,7 +11,6 @@ import Multiple from './multiple';
 import UpdateAvailable from './update-available';
 import { Col } from '../grid';
 import updateIcon from '../../icons/update-icon';
-import ExtensionActions from '../extension-actions';
 import { useDispatch } from '@wordpress/data';
 import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
 
@@ -28,12 +26,11 @@ const UpdateNotification = ( { extensions } ) => {
 	);
 
 	const updatesCount = extensionsWithUpdate.length;
+	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
 
 	if ( 0 === updatesCount ) {
 		return null;
 	}
-
-	const { updateExtensions } = useDispatch( EXTENSIONS_STORE );
 
 	const inProgress = extensionsWithUpdate.some( ( extension ) =>
 		isLoadingStatus( extension.status )

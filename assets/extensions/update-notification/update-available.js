@@ -2,11 +2,12 @@
  * WordPress dependencies
  */
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Icon } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { UpdateIcon } from '../../icons';
+import updateIcon from '../../icons/update-icon';
 
 /**
  * Update available label component.
@@ -16,7 +17,7 @@ import { UpdateIcon } from '../../icons';
  */
 const UpdateAvailable = ( { updatesCount } ) => (
 	<small className="sensei-extensions__update-badge">
-		<UpdateIcon />
+		<Icon icon={ updateIcon } />
 
 		{ 1 === updatesCount
 			? __( 'Update available', 'sensei-lms' )

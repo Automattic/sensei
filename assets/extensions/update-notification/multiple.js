@@ -4,6 +4,11 @@
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import ExtensionActions from '../extension-actions';
+
+/**
  * Multiple update notification.
  *
  * @param {Object} props            Component props.

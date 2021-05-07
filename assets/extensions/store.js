@@ -97,6 +97,7 @@ const actions = {
 			type: 'SET_CONNECTION_STATUS',
 			connected,
 		}
+	},
 
 	/**
 	 * Install extensions.
