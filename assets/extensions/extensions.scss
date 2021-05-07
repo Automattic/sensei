@@ -209,6 +209,7 @@ $wordpress-break: 961px;
 
 			@media (min-width: $wordpress-break) {
 				display: flex;
+				justify-content: space-around;
 				flex-wrap: wrap;
 			}
 
