@@ -14,11 +14,11 @@ import ExtensionActions from '../extension-actions';
 /**
  * WooCommerce notice component.
  *
- * @param {Object} props             Component props.
- * @param {Array}  props.extensions  Extensions list.
- * @param {Array}  props.isConnected Whether the site is connected to WC.com.
+ * @param {Object} props            Component props.
+ * @param {Array}  props.extensions Extensions list.
+ * @param {Array}  props.connected  Whether the site is connected to WC.com.
  */
-const WooCommerceNotice = ( { extensions, isConnected } ) => {
+const WooCommerceNotice = ( { extensions, connected } ) => {
 	const extensionsWithUpdate = extensions.filter(
 		( extension ) => extension.has_update
 	);
@@ -27,13 +27,13 @@ const WooCommerceNotice = ( { extensions, isConnected } ) => {
 	const isInstalled = ! window.sensei_extensions?.installUrl;
 	const isActive = ! window.sensei_extensions?.activateUrl;
 
-	if ( 0 === updatesCount || ( isInstalled && isActive && isConnected ) ) {
+	if ( 0 === updatesCount || ( isInstalled && isActive && connected ) ) {
 		return null;
 	}
 
 	let title = '';
 	let actions = [];
-	const showConnectionNotice = ! isConnected && isInstalled && isActive;
+	const showConnectionNotice = ! connected && isInstalled && isActive;
 
 	if ( showConnectionNotice ) {
 		title = _n(

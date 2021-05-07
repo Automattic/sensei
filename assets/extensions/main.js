@@ -91,7 +91,7 @@ const Main = () => {
 					</Col>
 
 					<WooCommerceNotice
-						isConnected={ isConnected }
+						connected={ connected }
 						extensions={ wooExtensions }
 					/>
 
