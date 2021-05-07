@@ -437,19 +437,13 @@ $wordpress-break: 961px;
 			&__item {
 				margin: 0;
 
-				a.button {
-					display: inline-flex;
-					justify-content: center;
-					align-items: center;
+				&:not(:first-child) {
+					margin-left: 20px;
 				}
-			}
 
-			&__details-link {
-				display: inline-block;
-				padding: 0 10px;
-				margin-left: 10px;
-				font-size: 13px;
-				color: inherit;
+				a {
+					color: inherit;
+				}
 			}
 		}
 

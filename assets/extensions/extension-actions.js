@@ -121,7 +121,6 @@ export const useExtensionActions = ( extension ) => {
 			{
 				key: 'more-details',
 				href,
-				className: 'sensei-extensions__extension-actions__details-link',
 				target: '_blank',
 				rel: 'noreferrer external',
 				children: __( 'More details', 'sensei-lms' ),
