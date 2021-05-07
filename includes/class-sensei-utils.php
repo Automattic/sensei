@@ -2513,6 +2513,17 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Check if WooCommerce is installed.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @return bool
+	 */
+	public static function is_woocommerce_installed() {
+		return file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' );
+	}
+
+	/**
 	 * Checks if the given version pf WooCommerce plugin is installed and activated.
 	 *
 	 * @param string $minimum_version

@@ -13,7 +13,7 @@ import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import Header from './header';
 import Tabs from './tabs';
 import UpdateNotification from './update-notification';
-import WCCOMConnection from './update-notification/wccom-connection';
+import WooCommerceNotice from './update-notification/woocommerce-notice';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
@@ -90,13 +90,15 @@ const Main = () => {
 						) }
 					</Col>
 
-					{ ! connected && (
-						<WCCOMConnection extensions={ wooExtensions } />
-					) }
+					<WooCommerceNotice
+						connected={ connected }
+						extensions={ wooExtensions }
+					/>
 
 					<UpdateNotification
 						extensions={ connected ? extensions : nonWooExtensions }
 					/>
+
 					{ tabs.map( ( tab ) => (
 						<Route key={ tab.id } route={ tab.id }>
 							{ tab.content }
