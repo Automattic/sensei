@@ -40,7 +40,9 @@ const UpdateNotification = ( { extensions } ) => {
 		key: 'update-button',
 		onClick: () => {
 			updateExtensions(
-				extensions.map( ( extension ) => extension.product_slug )
+				extensionsWithUpdate.map(
+					( extension ) => extension.product_slug
+				)
 			);
 		},
 	};
