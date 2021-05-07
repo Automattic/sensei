@@ -96,7 +96,7 @@ const actions = {
 		return {
 			type: 'SET_CONNECTION_STATUS',
 			connected,
-		}
+		};
 	},
 
 	/**
