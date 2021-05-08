@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { logLink } from '../log-event';
+import { logLink } from '../../shared/helpers/log-event';
 
 /**
  * Feature description component

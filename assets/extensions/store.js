@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { createReducerFromActionMap } from '../shared/data/store-helpers';
+import { logEvent } from '../shared/helpers/log-event';
 import '../shared/data/api-fetch-preloaded-once';
 
 /**
@@ -105,6 +106,7 @@ const actions = {
 	 * @param {string} slug The extension slug to install.
 	 */
 	*installExtension( slug ) {
+		logEvent( 'extensions_install', { slug } );
 		yield actions.runProcess( { slugs: [ slug ], actionType: 'install' } );
 	},
 
@@ -114,6 +116,7 @@ const actions = {
 	 * @param {string[]} slugs The extension slugs to update.
 	 */
 	*updateExtensions( slugs ) {
+		slugs.map( ( slug ) => logEvent( 'extensions_update', { slug } ) );
 		yield actions.runProcess( { slugs, actionType: 'update' } );
 	},
 
@@ -146,7 +149,7 @@ const actions = {
 		if ( actionType === 'update' ) {
 			data = { plugins: slugs };
 			successMessage = __(
-				'Update completed succesfully!',
+				'Update completed successfully!',
 				'sensei-lms'
 			);
 			// translators: Placeholder is the underlying error message.
@@ -157,7 +160,7 @@ const actions = {
 		} else {
 			data = { plugin: slugs[ 0 ] };
 			successMessage = __(
-				'Installation completed succesfully!',
+				'Installation completed successfully!',
 				'sensei-lms'
 			);
 			// translators: Placeholder is the underlying error message.

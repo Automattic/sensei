@@ -11,6 +11,7 @@ import { Button } from '@wordpress/components';
 import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
 import updateIcon from '../icons/update-icon';
+import { logEvent } from '../shared/helpers/log-event';
 import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
 
 /**
@@ -97,6 +98,10 @@ export const useExtensionActions = ( extension ) => {
 						[ extension ],
 						wccom
 					);
+
+					logEvent( 'extensions_install', {
+						slug: extension.product_slug,
+					} );
 					window.open( wcPurchaseUrl );
 
 					return;

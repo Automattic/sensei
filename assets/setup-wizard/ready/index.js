@@ -10,7 +10,7 @@ import { Button, Card, CardBody } from '@wordpress/components';
  */
 import { MailingListSignupForm } from './mailinglist-signup-form';
 import { formatString } from '../../shared/helpers/format-string.js';
-import { logLink } from '../log-event';
+import { logLink } from '../../shared/helpers/log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import useSampleCourseInstaller from './use-sample-course-installer';
 import { H, Section } from '../../shared/components/section';
