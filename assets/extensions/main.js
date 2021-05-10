@@ -5,6 +5,7 @@ import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { EditorNotices } from '@wordpress/editor';
+import { RawHTML } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -85,7 +86,7 @@ const Main = () => {
 						<Tabs tabs={ tabs } />
 						{ error !== null && (
 							<Notice status="error" isDismissible={ false }>
-								{ error }
+								<RawHTML>{ error }</RawHTML>
 							</Notice>
 						) }
 					</Col>
