@@ -356,7 +356,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		$mapped_plugins = array_map(
 			function ( $plugin ) use ( $wccom_connected ) {
 				$plugin->price      = html_entity_decode( $plugin->price );
-				$plugin->image      = $plugin->image_large ?? 'https://senseilms.com/wp-content/uploads/2021/04/' . $plugin->product_slug . '.png';
+				$plugin->image      = $plugin->image_large;
 				$plugin->can_update = empty( $plugin->wccom_product_id ) || ( $wccom_connected && ! $plugin->wccom_expired );
 				return $plugin;
 			},
