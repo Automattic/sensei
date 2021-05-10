@@ -1,6 +1,40 @@
 *** Changelog ***
 
-2021.04.14. - version 3.10.0
+2021.05.10 - version 3.11.0
+* New: Extensions Page Redesign
+	* Add counter to Extensions menu to display the number of available plugin updates [#4156](https://github.com/Automattic/sensei/pull/4156)
+	* Add missing WooCommerce.com connection notice [#4161](https://github.com/Automattic/sensei/pull/4161)
+	* Add extensions page structure [#4162](https://github.com/Automattic/sensei/pull/4162)
+	* Improve extensions page responsive styles [#4163](https://github.com/Automattic/sensei/pull/4163)
+	* Add filters to the Extensions page [#4164](https://github.com/Automattic/sensei/pull/4164)
+	* Add extensions update banner [#4167](https://github.com/Automattic/sensei/pull/4167)
+	* Add extension card logic [#4180](https://github.com/Automattic/sensei/pull/4180)
+	* Integrate extensions page with real data [#4183](https://github.com/Automattic/sensei/pull/4183)
+	* Tweak extensions page design [#4185](https://github.com/Automattic/sensei/pull/4185)
+	* Create Extensions page dynamically [#4197](https://github.com/Automattic/sensei/pull/4197)
+	* Minor tweaks to copy on Extensions page [#4199](https://github.com/Automattic/sensei/pull/4199)
+	* Add images to extensions page [#4201](https://github.com/Automattic/sensei/pull/4201)
+	* Add extension update endpoint [#4203](https://github.com/Automattic/sensei/pull/4203)
+	* Get extensions layout from SenseiLMS.com [#4204](https://github.com/Automattic/sensei/pull/4204)
+	* Enable updating plugins on Extensions page [#4205](https://github.com/Automattic/sensei/pull/4205)
+	* Add changelog links to extensions with update available [#4210](https://github.com/Automattic/sensei/pull/4210)
+	* Handle connecting to WooCommerce.com from Extensions page [#4213](https://github.com/Automattic/sensei/pull/4213)
+	* Enable installing plugins on Extensions page [#4214](https://github.com/Automattic/sensei/pull/4214)
+	* Handle activating / installing WooCommerce from the Extensions page [#4215](https://github.com/Automattic/sensei/pull/4215)
+	* Preload extensions data [#4217](https://github.com/Automattic/sensei/pull/4217)
+	* Simplify ExtensionActions component styles [#4219](https://github.com/Automattic/sensei/pull/4219)
+	* Add space between featured cards [#4221](https://github.com/Automattic/sensei/pull/4221)
+	* Log when extensions are installed or updated on the Extensions page [#4222](https://github.com/Automattic/sensei/pull/4222)
+	* Update extensions error message to be formatted [#4225](https://github.com/Automattic/sensei/pull/4225)
+* New: Add Lesson Properties block [#4196](https://github.com/Automattic/sensei/pull/4196)
+* Tweak: Ignore "Course Archive Image" setting when rendering featured image in Learner Courses block [#4184](https://github.com/Automattic/sensei/pull/4184)
+* Tweak: Remove WooCommerce Components dependency [#4189](https://github.com/Automattic/sensei/pull/4189)
+* Tweak: Deprecate experimental REST API [#4190](https://github.com/Automattic/sensei/pull/4190)
+* Tweak: Filter arguments when duplicating a Sensei post [#4198](https://github.com/Automattic/sensei/pull/4198)
+* Fix: Fix sporadic unit test failure [#4195](https://github.com/Automattic/sensei/pull/4195)
+
+
+2021.04.14 - version 3.10.0
 * New: Learner Courses block (My Courses) [#4126](https://github.com/Automattic/sensei/pull/4126)
 * New: Add View Results block [#4155](https://github.com/Automattic/sensei/pull/4155)
 * New: Add blocks to My Courses page on setup [#4137](https://github.com/Automattic/sensei/pull/4137)
