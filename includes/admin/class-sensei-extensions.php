@@ -224,68 +224,6 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Get resources (such as categories and product types) for the extensions screen.
-	 *
-	 * @since  2.0.0
-	 *
-	 * @return array of objects.
-	 */
-	private function get_resources() {
-		$extension_resources = get_transient( 'sensei_extensions_resources' );
-		if ( false === $extension_resources ) {
-			$raw_resources = wp_safe_remote_get(
-				add_query_arg(
-					array(
-						'version' => Sensei()->version,
-						'lang'    => determine_locale(),
-					),
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/resources'
-				)
-			);
-			if ( ! is_wp_error( $raw_resources ) ) {
-				$extension_resources = json_decode( wp_remote_retrieve_body( $raw_resources ) );
-				if ( $extension_resources ) {
-					set_transient( 'sensei_extensions_resources', $extension_resources, DAY_IN_SECONDS );
-				}
-			}
-		}
-
-		return $extension_resources;
-	}
-
-	/**
-	 * Get messages for the extensions page.
-	 *
-	 * @since  2.0.0
-	 *
-	 * @return array
-	 */
-	private function get_messages() {
-		$transient_key      = implode( '_', [ 'sensei_extensions_messages', Sensei()->version, determine_locale() ] );
-		$extension_messages = get_transient( $transient_key );
-		if ( false === $extension_messages ) {
-			$raw_messages = wp_safe_remote_get(
-				add_query_arg(
-					array(
-						'version' => Sensei()->version,
-						'lang'    => determine_locale(),
-					),
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/messages'
-				)
-			);
-
-			if ( ! is_wp_error( $raw_messages ) ) {
-				$extension_messages = json_decode( wp_remote_retrieve_body( $raw_messages ) );
-				if ( $extension_messages ) {
-					set_transient( $transient_key, $extension_messages, DAY_IN_SECONDS );
-				}
-			}
-		}
-
-		return $extension_messages;
-	}
-
-	/**
 	 * Get updates count.
 	 *
 	 * @return int Updates count.
