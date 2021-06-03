@@ -123,6 +123,7 @@ class Sensei_Autoloader {
 			'Sensei_Plugins_Installation'                => 'admin/class-sensei-plugins-installation.php',
 			'Sensei_Status'                              => 'admin/class-sensei-status.php',
 			'Sensei_WCCOM_Connect_Notice'                => 'admin/class-sensei-wccom-connect-notice.php',
+			'Sensei_Admin_Notices'                       => 'admin/class-sensei-admin-notices.php',
 
 			/**
 			 * Admin Tools

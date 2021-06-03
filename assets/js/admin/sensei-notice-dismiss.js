@@ -15,6 +15,9 @@ domReady( () => {
 
 			if ( event.target.classList.contains( 'notice-dismiss' ) ) {
 				const formData = new FormData();
+				if ( element.dataset.dismissNotice ) {
+					formData.append( 'notice', element.dataset.dismissNotice );
+				}
 				formData.append( 'action', element.dataset.dismissAction );
 				formData.append( 'nonce', element.dataset.dismissNonce );
 

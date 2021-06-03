@@ -2,7 +2,6 @@
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
-
 /* Sensei Notice */
 .sensei-notice {
 	@import '../shared/styles/wp-admin';
@@ -21,41 +20,58 @@
 		float: right;
 		padding: 3px 12px;
 		margin-top: -7px;
+		margin-left: 5px;
 	}
 
 	.notice-dismiss {
-		margin: .7em 0;
+		margin: 0.7em 0;
 	}
 }
 
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
-  	content: "\f118" !important;
+	content: '\f118' !important;
 }
 
 /* Lessons Icon */
 body #menu-posts-lesson div.wp-menu-image:before {
-    content: "\f163" !important;
+	content: '\f163' !important;
 }
 
 /* Course Icon */
 body #menu-posts-course div.wp-menu-image:before {
-    content: "\f331" !important;
+	content: '\f331' !important;
 }
 
 /* Questions Icon */
 body #menu-posts-question div.wp-menu-image:before {
-  	content: "\f223" !important;
+	content: '\f223' !important;
 }
 
-#dashboard_right_now a.course-count:before, #dashboard_right_now span.course-count:before { content: "\f118"; }
-#dashboard_right_now a.lesson-count:before, #dashboard_right_now span.lesson-count:before { content: "\f331"; }
-#dashboard_right_now a.question-count:before, #dashboard_right_now span.question-count:before { content: "\f223"; }
+#dashboard_right_now a.course-count:before,
+#dashboard_right_now span.course-count:before {
+	content: '\f118';
+}
+#dashboard_right_now a.lesson-count:before,
+#dashboard_right_now span.lesson-count:before {
+	content: '\f331';
+}
+#dashboard_right_now a.question-count:before,
+#dashboard_right_now span.question-count:before {
+	content: '\f223';
+}
 
 /* Sensei Menu */
-#toplevel_page_sensei li.wp-first-item { display: none; }
+#toplevel_page_sensei li.wp-first-item {
+	display: none;
+}
 
 /* Course Menu Icons */
-li.menu-icon-lesson .wp-menu-image img, li.menu-icon-course .wp-menu-image img { display: none; }
+li.menu-icon-lesson .wp-menu-image img,
+li.menu-icon-course .wp-menu-image img {
+	display: none;
+}
 
-.edit-php.post-type-quiz .add-new-h2 { display: none; }
+.edit-php.post-type-quiz .add-new-h2 {
+	display: none;
+}
