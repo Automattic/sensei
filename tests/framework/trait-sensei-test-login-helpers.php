@@ -36,6 +36,10 @@ trait Sensei_Test_Login_Helpers {
 		return $this->login_as( $this->get_user_by_role( 'administrator' ) );
 	}
 
+	protected function login_as_editor() {
+		return $this->login_as( $this->get_user_by_role( 'editor' ) );
+	}
+
 	protected function login_as_teacher() {
 		return $this->login_as( $this->get_user_by_role( 'teacher' ) );
 	}
