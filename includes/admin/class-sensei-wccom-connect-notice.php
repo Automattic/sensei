@@ -86,17 +86,21 @@ class Sensei_WCCOM_Connect_Notice {
 		?>
 		<div id="sensei-lms-wccom-connect-notice" class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_wccom_connect_notice"
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
-			<p>
+			<div class='sensei-notice__wrapper'>
+				<div class='sensei-notice__content'>
+					<?php
+					esc_html_e(
+						'Your site needs to be connected to your WooCommerce.com account before Sensei extensions can be updated.',
+						'sensei-lms'
+					);
+					?>
+				</div>
+			</div>
+			<div class='sensei-notice__actions'>
 				<a href="<?php echo esc_url( $wccom_connect_url ); ?>" class="button button-primary">
 					<?php esc_html_e( 'Connect account', 'sensei-lms' ); ?>
 				</a>
-				<?php
-				esc_html_e(
-					'Your site needs to be connected to your WooCommerce.com account before Sensei extensions can be updated.',
-					'sensei-lms'
-				);
-				?>
-			</p>
+			</div>
 		</div>
 		<?php
 	}
