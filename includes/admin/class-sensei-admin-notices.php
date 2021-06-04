@@ -396,20 +396,20 @@ class Sensei_Admin_Notices {
 					break;
 				}
 			} elseif ( isset( $plugin_condition['min'] ) || isset( $plugin_condition['max'] ) ) {
-				// There is a plugin version condition, but we expect the plugin to be installed.
+				// There is a plugin version condition, but we expect the plugin to be activated.
 				if ( ! $plugin_active ) {
 					$condition_pass = false;
 					break;
 				}
 
 				if ( isset( $plugin_condition['min'] ) && version_compare( $plugin_version, $plugin_condition['min'], '<' ) ) {
-					// If the installed plugin version is older than the minimum required, do not show the notice.
+					// If the activated plugin version is older than the minimum required, do not show the notice.
 					$condition_pass = false;
 					break;
 				}
 
 				if ( isset( $plugin_condition['max'] ) && version_compare( $plugin_version, $plugin_condition['max'], '>' ) ) {
-					// If the installed plugin version is newer than the maximum required, do not show the notice.
+					// If the activated plugin version is newer than the maximum required, do not show the notice.
 					$condition_pass = false;
 					break;
 				}
