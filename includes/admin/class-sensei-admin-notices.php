@@ -27,6 +27,11 @@ class Sensei_Admin_Notices {
 	const ALLOWED_HTML = [
 		'strong' => [],
 		'em'     => [],
+		'a'      => [
+			'target' => [],
+			'href'   => [],
+			'rel'    => [],
+		],
 	];
 
 	const ALLOWED_CAP_CHECKS = [
@@ -155,23 +160,32 @@ class Sensei_Admin_Notices {
 		?>
 		<div id="sensei-lms-wccom-connect-notice" class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_notice"  data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
-			<p>
-				<?php
-				foreach ( array_reverse( $notice['actions'] ) as $action ) {
+			<?php
+			echo '<div class="sensei-notice__wrapper">';
+			if ( ! empty( $notice['heading'] ) ) {
+				echo '<div class="sensei-notice__heading">';
+				echo wp_kses( $notice['heading'], self::ALLOWED_HTML );
+				echo '</div>';
+			}
+			echo '<div class="sensei-notice__content">';
+			echo wp_kses( $notice['message'], self::ALLOWED_HTML );
+			echo '</div>';
+			echo '</div>';
+			if ( ! empty( $notice['actions'] ) ) {
+				echo '<div class="sensei-notice__actions">';
+				foreach ( $notice['actions'] as $action ) {
 					if ( ! isset( $action['label'], $action['url'] ) ) {
 						continue;
 					}
 
 					$button_class = ! isset( $action['primary'] ) || $action['primary'] ? 'button-primary' : 'button-secondary';
-					?>
-				<a href="<?php echo esc_url( $action['url'] ); ?>" target="<?php echo esc_attr( $action['target'] ?? '_self' ); ?>" rel="noopener noreferrer" class="button <?php echo esc_attr( $button_class ); ?>">
-					<?php echo esc_html( $action['label'] ); ?>
-				</a>
-					<?php
+					echo '<a href="' . esc_url( $action['url'] ) . '" target="' . esc_attr( $action['target'] ?? '_self' ) . '" rel="noopener noreferrer" class="button ' . esc_attr( $button_class ) . '">';
+					echo esc_html( $action['label'] );
+					echo '</a>';
 				}
-				echo wp_kses( $notice['message'], self::ALLOWED_HTML );
-				?>
-			</p>
+				echo '</div>';
+			}
+			?>
 		</div>
 		<?php
 	}
