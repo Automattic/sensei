@@ -143,7 +143,7 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 				'message'    => 'Important message to include on plugins and WC addons page.',
 				'conditions' => [
 					[
-						'type'    => 'screen',
+						'type'    => 'screens',
 						'screens' => [ 'woocommerce_page_wc-addons', 'plugins', 'themes' ],
 					],
 					[
@@ -156,7 +156,7 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 				'message'    => 'Important message to include on plugins page.',
 				'conditions' => [
 					[
-						'type'    => 'screen',
+						'type'    => 'screens',
 						'screens' => [ 'plugins', 'themes' ],
 					],
 					[

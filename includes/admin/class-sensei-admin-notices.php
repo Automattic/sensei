@@ -269,7 +269,7 @@ class Sensei_Admin_Notices {
 					}
 
 					break;
-				case 'screen':
+				case 'screens':
 					if ( ! isset( $condition['screens'] ) || ! is_array( $condition['screens'] ) ) {
 						break;
 					}
