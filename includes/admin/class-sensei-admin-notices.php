@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class Sensei_Admin_Notices
  */
 class Sensei_Admin_Notices {
-	const SENSEILMS_NOTICES_API_URL      = 'https://senseilms.com/wp-json/senseilms-notices/1.0';
+	const SENSEILMS_NOTICES_API_URL      = 'https://senseilms.com/wp-json/senseilms-notices/1.0/notices';
 	const DISMISS_NOTICE_NONCE_ACTION    = 'sensei-lms-dismiss-notice';
 	const DISMISSED_NOTICES_OPTION       = 'sensei-dismissed-notices';
 	const DISMISSED_NOTICES_USER_META    = 'sensei-dismissed-notices';
@@ -109,7 +109,7 @@ class Sensei_Admin_Notices {
 		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
 		$notices       = get_transient( $transient_key );
 		if ( false === $notices ) {
-			$raw_messages = wp_safe_remote_get(
+			$raw_notices = wp_safe_remote_get(
 				add_query_arg(
 					array(
 						'version' => Sensei()->version,
@@ -119,10 +119,10 @@ class Sensei_Admin_Notices {
 				)
 			);
 
-			if ( ! is_wp_error( $raw_messages ) ) {
-				$notices = json_decode( wp_remote_retrieve_body( $raw_messages ), true );
-				if ( $notices ) {
-					set_transient( $transient_key, $notices, DAY_IN_SECONDS );
+			if ( ! is_wp_error( $raw_notices ) ) {
+				$notices = json_decode( wp_remote_retrieve_body( $raw_notices ), true );
+				if ( $notices && isset( $notices['notices'] ) ) {
+					set_transient( $transient_key, $notices['notices'], DAY_IN_SECONDS );
 				}
 			}
 		}
