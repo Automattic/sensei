@@ -122,8 +122,8 @@ class Sensei_Admin_Notices {
 			if ( ! is_wp_error( $notices_response ) && 200 === wp_remote_retrieve_response_code( $notices_response ) ) {
 				$notices_response_body = json_decode( wp_remote_retrieve_body( $notices_response ), true );
 				if ( $notices_response_body && isset( $notices_response_body['notices'] ) ) {
-					set_transient( $transient_key, $notices_response_body['notices'], DAY_IN_SECONDS );
 					$notices = $notices_response_body['notices'];
+					set_transient( $transient_key, $notices, DAY_IN_SECONDS );
 				}
 			}
 		}
