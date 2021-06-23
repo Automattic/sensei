@@ -1,5 +1,8 @@
 *** Changelog ***
 
+2021.05.10 - version 3.11.1
+* Tweak: Update SenseiLMS.com notices integration.
+
 2021.05.10 - version 3.11.0
 * New: Extensions Page Redesign
 	* Add counter to Extensions menu to display the number of available plugin updates [#4156](https://github.com/Automattic/sensei/pull/4156)
