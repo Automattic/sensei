@@ -1,7 +1,7 @@
 *** Changelog ***
 
-2021.05.10 - version 3.11.1
-* Tweak: Update SenseiLMS.com notices integration.
+2021.06.23 - version 3.11.1
+* Tweak: Update SenseiLMS.com notices integration [#4233](https://github.com/Automattic/sensei/pull/4233)
 
 2021.05.10 - version 3.11.0
 * New: Extensions Page Redesign
