@@ -123,7 +123,7 @@ class Sensei_Admin_Notices {
 				$notices_response_body = json_decode( wp_remote_retrieve_body( $notices_response ), true );
 				if ( $notices_response_body && isset( $notices_response_body['notices'] ) ) {
 					$notices = $notices_response_body['notices'];
-					set_transient( $transient_key, $notices, DAY_IN_SECONDS );
+					set_transient( $transient_key, $notices, HOUR_IN_SECONDS );
 				}
 			}
 		}
