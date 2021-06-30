@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import {
-	// BlockControls,
+	BlockControls,
 	InspectorControls,
 	PanelColorSettings,
 } from '@wordpress/block-editor';
@@ -10,11 +10,11 @@ import {
 	PanelBody,
 	PanelRow,
 	ToggleControl,
-	// ToolbarGroup,
-	// ToolbarButton,
-	// SelectControl,
+	ToolbarGroup,
+	ToolbarButton,
+	SelectControl,
 } from '@wordpress/components';
-// import { grid, list } from '@wordpress/icons';
+import { grid, list } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -49,18 +49,18 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 		},
 	];
 
-	// const layoutViewTogglers = [
-	// 	{
-	// 		view: 'list',
-	// 		label: __( 'List view', 'sensei-lms' ),
-	// 		icon: list,
-	// 	},
-	// 	{
-	// 		view: 'grid',
-	// 		label: __( 'Grid view', 'sensei-lms' ),
-	// 		icon: grid,
-	// 	},
-	// ];
+	const layoutViewTogglers = [
+		{
+			view: 'list',
+			label: __( 'List view', 'sensei-lms' ),
+			icon: list,
+		},
+		{
+			view: 'grid',
+			label: __( 'Grid view', 'sensei-lms' ),
+			icon: grid,
+		},
+	];
 
 	const colorSettings = [
 		{
@@ -96,26 +96,28 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 						</PanelRow>
 					) ) }
 				</PanelBody>
-				{ /* <PanelBody
-					title={ __( 'Styling', 'sensei-lms' ) }
-					initialOpen={ true }
-				>
-					<PanelRow>
-						<SelectControl
-							label={ __( 'Layout', 'sensei-lms' ) }
-							options={ layoutViewTogglers.map(
-								( { view, label } ) => ( {
-									value: view,
-									label,
-								} )
-							) }
-							value={ options.layoutView }
-							onChange={ ( value ) => {
-								setOptions( { layoutView: value } );
-							} }
-						/>
-					</PanelRow>
-				</PanelBody> */ }
+				{
+					<PanelBody
+						title={ __( 'Styling', 'sensei-lms' ) }
+						initialOpen={ true }
+					>
+						<PanelRow>
+							<SelectControl
+								label={ __( 'Layout', 'sensei-lms' ) }
+								options={ layoutViewTogglers.map(
+									( { view, label } ) => ( {
+										value: view,
+										label,
+									} )
+								) }
+								value={ options.layoutView }
+								onChange={ ( value ) => {
+									setOptions( { layoutView: value } );
+								} }
+							/>
+						</PanelRow>
+					</PanelBody>
+				}
 				{ options.progressBarEnabled && (
 					<CourseProgressSettings
 						borderRadius={ options.progressBarBorderRadius }
@@ -145,22 +147,24 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 					) }
 				/>
 			</InspectorControls>
-			{ /* <BlockControls>
-				<ToolbarGroup>
-					{ layoutViewTogglers.map( ( { view, label, icon } ) => (
-						<ToolbarButton
-							key={ view }
-							extraProps={ { 'data-testid': view } }
-							isActive={ view === options.layoutView }
-							icon={ icon }
-							label={ label }
-							onClick={ () => {
-								setOptions( { layoutView: view } );
-							} }
-						/>
-					) ) }
-				</ToolbarGroup>
-			</BlockControls> */ }
+			{
+				<BlockControls>
+					<ToolbarGroup>
+						{ layoutViewTogglers.map( ( { view, label, icon } ) => (
+							<ToolbarButton
+								key={ view }
+								extraProps={ { 'data-testid': view } }
+								isActive={ view === options.layoutView }
+								icon={ icon }
+								label={ label }
+								onClick={ () => {
+									setOptions( { layoutView: view } );
+								} }
+							/>
+						) ) }
+					</ToolbarGroup>
+				</BlockControls>
+			}
 		</>
 	);
 };
