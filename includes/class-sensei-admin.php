@@ -1581,7 +1581,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Get course structure.
+	 * Get or filter course structure for lesson ordering.
 	 *
 	 * @param int|array   $course_structure Structure array or course ID to get the structure.
 	 * @param null|string $type             Optional type to filter the content.
@@ -1591,7 +1591,7 @@ class Sensei_Admin {
 	private function get_course_structure( $course_structure = null, $type = null ) {
 		$course_structure = is_array( $course_structure )
 			? $course_structure
-			: Sensei_Course_Structure::instance( $course_structure )->get( 'edit' );
+			: Sensei_Course_Structure::instance( $course_structure )->get( 'edit', wp_using_ext_object_cache() );
 
 		if ( isset( $type ) ) {
 			$course_structure = array_filter(
