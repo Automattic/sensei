@@ -119,7 +119,9 @@ class Sensei_Course_Structure {
 	 * @return string Where with extra condition to avoid cache.
 	 */
 	public function filter_no_cache_where( $where ) {
-		return $where . ' AND ' . time() . ' = ' . time();
+		$time = time();
+
+		return $where . ' AND ' . $time . ' = ' . $time;
 	}
 
 	/**
