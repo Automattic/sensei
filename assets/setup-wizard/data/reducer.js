@@ -67,8 +67,8 @@ const updatePreInstallation = ( selected, options ) =>
 /**
  * Setup wizard reducer.
  *
- * @param {Object} state    Current state.
- * @param {{type:  string}} action Action to update the state.
+ * @param {Object}         state  Current state.
+ * @param {{type: string}} action Action to update the state.
  *
  * @return {Object} State updated.
  */
