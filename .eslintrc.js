@@ -15,8 +15,17 @@ module.exports = {
 			},
 		],
 		'import/no-extraneous-dependencies': 'off',
-		'jsdoc-alignment/lines-alignment': 'error',
+		'jsdoc/check-line-alignment': [
+			'warn',
+			'always',
+			{
+				tags: [ 'param', 'arg', 'argument', 'property', 'prop' ],
+				preserveMainDescriptionPostDelimiter: true,
+			},
+		],
+		'jsdoc/require-yields': 'off',
+		'jsdoc/tag-lines': 'off',
 		'react-hooks/exhaustive-deps': 'warn',
 	},
-	plugins: [ 'jest', 'jsdoc-alignment' ],
+	plugins: [ 'jest' ],
 };
