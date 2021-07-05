@@ -189,7 +189,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		}
 
 		$response = new WP_REST_Response();
-		$response->set_data( $course_structure->get( 'edit' ) );
+		$response->set_data( $course_structure->get( 'edit', wp_using_ext_object_cache() ) );
 
 		return $response;
 	}
