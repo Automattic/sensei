@@ -39,7 +39,7 @@ export const parseCompletedSteps = ( data ) => {
 };
 
 /**
- *  * Normalize importer data.
+ * Normalize importer data.
  *
  * @param {Object} input         Importer data.
  * @param {number} input.id      The job id.
