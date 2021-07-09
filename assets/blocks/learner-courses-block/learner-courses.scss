@@ -4,20 +4,10 @@ $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
 /* Spacing defaults */
-
 .sensei .entry-content {
 	section {
 		padding: 0;
 	}
-}
-
-.sensei-block-wrapper {
-	margin-top: 28px;
-	margin-bottom: 28px;
-}
-
-.clearfix {
-	clear: both;
 }
 
 .sensei-pagination {
@@ -29,8 +19,7 @@ $courses-list: '#{$block}__courses-list';
 	}
 }
 
-/* Learner courses styles */
-
+/* Filters */
 .editor-styles-wrapper #{$block}__filter,
 #user-course-status-toggle {
 	display: flex;
@@ -74,138 +63,150 @@ $courses-list: '#{$block}__courses-list';
 	}
 }
 
+/* Course list */
 #{$courses-list},
 .editor-styles-wrapper #{$courses-list} {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-
-	&__item {
-		margin: 0;
-		padding: 0;
-
-		.sensei-block-wrapper {
-			display: none;
-		}
-	}
-
-	&__featured-image {
-		float: left;
-		margin: 0 24px 12px 0;
-	}
-
 	&__category {
 		font-size: 70%;
 		text-transform: uppercase;
 	}
-
-	&__title {
-		&, .editor-styles-wrapper .wp-block & {
-			margin: 0 0 16px;
-		}
-
-		.has-primary-color & a {
-			color: var(--sensei-primary-color, inherit);
-		}
-	}
-
-	&__badge {
-		&__wrapper {
-			margin: 16px 0;
-		}
-		display: inline-block;
-		padding: 2px 8px;
-		color: var(--sensei-accent-color, inherit);
-		border: 1px solid currentColor;
-		border-radius: 4px;
-		font-size: 70%;
-		text-transform: uppercase;
-		font-style: normal;
-	}
-
-	&__description {
-		margin: 9px 0 18px;
-	}
 }
 
-
-#{$block} {
-
-	.course,
-	.course-container {
+/* List and grid view
+   Use #sensei-user-courses selector to override some theme styles (Divi). */
+#{$block} #sensei-user-courses {
+	.course-container,
+	.course {
 		margin: 0;
 		padding: 0;
 		list-style: none;
 
-		.entry {
-			margin: 24px 0;
-		}
-		.thumbnail {
-			margin-bottom: 6px;
-		}
-
+		// Progress bar
 		.sensei-block-wrapper {
-			clear: both;
-			margin: 16px 0;
-		}
-
-		.course-excerpt:empty {
-			padding-top: 28px;
+			margin-top: 10px;
 		}
 	}
 
 	.course {
-		border-bottom: 1px solid #e2e2e2;
-		clear: both;
-
-		.course-title {
-			margin: 0 0 16px;
-		}
-	}
-
-	.sensei-results-links {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		margin-right: -12px;
-		clear: both;
-
-		.entry-content & {
-			margin-bottom: 0;
-
+		.course-title,
+		.course-excerpt {
+			margin: 0;
 		}
 
-		flex-wrap: wrap;
+		.entry-actions {
+			margin-top: auto; // Push buttons to bottom of card.
+			padding-top: 20px;
 
-		&, .entry-content & {
-			* {
-				margin: 6px 12px;
+			.button,
+			.course-complete,
+			.course-delete {
+				border: 0;
+				display: inline-block;
+				line-height: normal;
+				padding: 10px 20px;
+			}
+		}
+
+		form {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 5px;
+		}
+
+		.sensei-results-links {
+			.button:not(:first-child) {
+				margin-left: 5px;
 			}
 		}
 	}
 
+	.sensei-results-links {
+		margin: 0;
+	}
 }
 
-#{$courses-list}.--is-grid-view, #{$block}--is-grid-view .course-container {
-	@media (min-width: 920px) {
-		display: flex;
-		flex-flow: row wrap;
-		margin: 0 -7px;
+/* List view - Editor and front end */
+.editor-styles-wrapper #{$courses-list}--is-list-view,
+#{$block}--is-list-view #sensei-user-courses .course-container {
+	margin: 2rem 0;
+	overflow: auto;
+}
 
-		#{$courses-list}__item, .course {
-			display: block;
-			flex: 1 0 calc(50% - 22px);
-			margin: 0 11px;
+.editor-styles-wrapper #{$courses-list}--is-list-view,
+#{$block}--is-list-view #sensei-user-courses {
+	.course {
+		border-bottom: 1px solid #e2e2e2;
+		padding-bottom: 2rem;
+
+		&:not(:first-child) {
+			padding-top: 2rem;
+		}
+
+		.entry {
+			display: flex;
+		}
+
+		img {
+			width: 150px;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		#{$courses-list}__details {
+			display: flex;
+			flex-direction: column;
+			flex: 2;
+
+			&:not(:only-child) {
+				margin-left: 15px;
+			}
 		}
 	}
 }
 
-.sensei-course-progress {
+/* Grid view - Editor and front end */
+.editor-styles-wrapper #{$courses-list}--is-grid-view,
+#{$block}--is-grid-view #sensei-user-courses .course-container {
+	display: grid;
+	gap: 2rem;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	padding: 2rem 0;
 
-	&__heading {
-		clear: both;
+	.course {
+		display: flex;
+		border: 0;
+		box-shadow: 0 1px 10px 0 rgb(25, 30, 35);
+
+		.course-content,
+		.entry,
+		#{$courses-list}__details {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+		}
+
+		#{$courses-list}__details {
+			padding: 10px;
+		}
+
+		.entry-actions {
+			margin-top: auto; // Push buttons to bottom of card.
+			padding-top: 20px;
+		}
 	}
+}
 
+/* Grid view - Front end */
+#{$block}--is-grid-view .course-content {
+	img {
+		height: 200px;
+		width: 100%;
+		object-fit: cover;
+	}
+}
+
+/* Progress bar */
+.sensei-course-progress {
 	&__bar {
 		height: var(--sensei-progress-bar-height, 14px);
 		border-radius: var(--sensei-progress-bar-border-radius, 10px);
@@ -218,13 +219,16 @@ $courses-list: '#{$block}__courses-list';
 	}
 }
 
+/* Colors */
 #{$block}.has-sensei-primary-color {
-
-	.course-title a, #{$courses-list}__title a, a {
+	a {
 		color: var(--sensei-primary-color, inherit);
 	}
 
-	.wp-block-button__link, .button {
+	.button,
+	.course-complete,
+	.course-delete,
+	.wp-block-button__link {
 		background-color: var(--sensei-primary-color, inherit);
 		color: #fff;
 	}
