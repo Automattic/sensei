@@ -32,16 +32,16 @@ import { CourseProgressSettings } from '../../shared/blocks/course-progress';
 const LearnerCoursesSettings = ( { options, setOptions } ) => {
 	const courseSettingsTogglers = [
 		{
-			optionKey: 'courseDescriptionEnabled',
-			label: __( 'Description', 'sensei-lms' ),
-		},
-		{
 			optionKey: 'featuredImageEnabled',
 			label: __( 'Featured image', 'sensei-lms' ),
 		},
 		{
 			optionKey: 'courseCategoryEnabled',
 			label: __( 'Category', 'sensei-lms' ),
+		},
+		{
+			optionKey: 'courseDescriptionEnabled',
+			label: __( 'Description', 'sensei-lms' ),
 		},
 		{
 			optionKey: 'progressBarEnabled',
