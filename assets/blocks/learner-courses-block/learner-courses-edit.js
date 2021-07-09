@@ -129,53 +129,59 @@ const LearnerCoursesEdit = ( {
 				key={ index }
 			>
 				<section className="entry">
-					{ options.courseCategoryEnabled && (
-						<small className="wp-block-sensei-lms-learner-courses__courses-list__category">
-							{ __( 'Category Name', 'sensei-lms' ) }
-						</small>
-					) }
-					<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
-						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-						<a href="#">{ __( 'Course Title', 'sensei-lms' ) }</a>
-					</h3>
 					{ options.featuredImageEnabled && (
 						<FeaturedImagePlaceholder />
 					) }
 
-					{ completed && (
-						<div className="wp-block-sensei-lms-learner-courses__courses-list__badge__wrapper">
-							<em className="wp-block-sensei-lms-learner-courses__courses-list__badge">
-								{ __( 'Completed', 'sensei-lms' ) }
-							</em>
-						</div>
-					) }
+					<div className="wp-block-sensei-lms-learner-courses__courses-list__details">
+						<h3 className="wp-block-sensei-lms-learner-courses__courses-list__title">
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+							<a href="#">
+								{ __( 'Course Title', 'sensei-lms' ) }
+							</a>
+						</h3>
 
-					{ options.courseDescriptionEnabled && (
-						<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
-							{ __(
-								'This is a preview of the course description…',
-								'sensei-lms'
-							) }
-						</p>
-					) }
-					{ options.progressBarEnabled && (
-						<CourseProgress
-							lessonsCount={ 3 }
-							completedCount={ completed ? 3 : 1 }
-							hidePercentage
-						/>
-					) }
-					{ completed && (
-						<div className="sensei-results-links wp-block-buttons is-content-justification-right">
-							<div className="wp-block-button">
-								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-								<a className="wp-block-button__link" href="#">
-									{ __( 'View Results', 'sensei-lms' ) }
-								</a>
+						{ options.courseCategoryEnabled && (
+							<span className="wp-block-sensei-lms-learner-courses__courses-list__category">
+								{ __( 'Category Name', 'sensei-lms' ) }
+							</span>
+						) }
+
+						{ options.courseDescriptionEnabled && (
+							<p className="wp-block-sensei-lms-learner-courses__courses-list__description">
+								{ __(
+									'This is a preview of the course description…',
+									'sensei-lms'
+								) }
+							</p>
+						) }
+
+						{ options.progressBarEnabled && (
+							<CourseProgress
+								lessonsCount={ 3 }
+								completedCount={ completed ? 3 : 1 }
+								wrapperAttributes={ {
+									className:
+										'wp-block-sensei-lms-course-progress',
+								} }
+								hidePercentage
+							/>
+						) }
+
+						{ completed && (
+							<div className="sensei-results-links wp-block-buttons">
+								<div className="wp-block-button">
+									{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+									<a
+										className="wp-block-button__link"
+										href="#"
+									>
+										{ __( 'View Results', 'sensei-lms' ) }
+									</a>
+								</div>
 							</div>
-						</div>
-					) }
-					<div className="clearfix" />
+						) }
+					</div>
 				</section>
 			</li>
 		);
@@ -213,7 +219,7 @@ const LearnerCoursesEdit = ( {
 				<ul
 					className={ classnames(
 						'wp-block-sensei-lms-learner-courses__courses-list',
-						`--is-${ options.layoutView }-view`
+						`wp-block-sensei-lms-learner-courses__courses-list--is-${ options.layoutView }-view`
 					) }
 				>
 					{ Array.from( { length: 2 } ).map( coursesPlaceholderMap ) }
