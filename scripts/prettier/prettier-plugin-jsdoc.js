@@ -10,7 +10,7 @@ const {
 	transforms: { flow },
 } = require( 'comment-parser' );
 
-const jsdocPrettierPlugin = {
+const prettierPluginJsdoc = {
 	languages: prettier
 		.getSupportInfo()
 		.languages.filter( ( { name } ) =>
@@ -69,4 +69,4 @@ const getParserWithJSDoc = ( parser ) => ( {
 	},
 } );
 
-module.exports = jsdocPrettierPlugin;
+module.exports = prettierPluginJsdoc;
