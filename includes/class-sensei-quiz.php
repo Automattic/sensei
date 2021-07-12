@@ -201,7 +201,7 @@ class Sensei_Quiz {
 	 *
 	 * @return false or int $answers_saved
 	 */
-	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id, $user_id = 0 ) {
+	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id = 0, $user_id = 0 ) {
 
 		if ( ! ( $user_id > 0 ) ) {
 			$user_id = get_current_user_id();
@@ -601,7 +601,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool $answers_submitted
 	 */
-	public static function submit_answers_for_grading( $quiz_answers, $files = array(), $lesson_id, $user_id = 0 ) {
+	public static function submit_answers_for_grading( $quiz_answers, $files = array(), $lesson_id = 0, $user_id = 0 ) {
 
 		$answers_submitted = false;
 
