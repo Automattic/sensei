@@ -366,6 +366,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		add_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
 
 		if ( $this->is_block ) {
+			// Remove default WordPress theme hook that overrides Sensei styles.
+			remove_filter( 'wp_get_attachment_image_attributes', 'twenty_twenty_one_get_attachment_image_attributes', 10 );
+
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30 );
 
