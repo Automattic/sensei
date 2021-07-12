@@ -3,83 +3,93 @@ name: PHP Linting and Tests
 on: pull_request
 
 jobs:
-  lint:
-    name:    PHP Linting
-    runs-on: ubuntu-16.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/composer/
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-      - uses: actions/cache@v2
-        with:
-          path: vendor/
-          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-          tools:       composer
-          coverage:    none
-      - name: Set up branches
-        run: git checkout -b master refs/remotes/origin/master && git checkout -
-      - name: Install PHP dependencies
-        run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
-      - name: Check for new issues
-        run: ./scripts/linter-ci
-      - name: Check for escaping
-        run: ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax,WordPress.Security.EscapeOutput .
-      - name: Check for nonces
-        run: ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
-      - name: Check WPCOM rules
-        run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
-  test:
-    name: PHP Unit Tests
-    runs-on: ubuntu-16.04
-    strategy:
-      fail-fast: false
-      max-parallel: 10
-      matrix:
-        wp: [ 'latest' ]
-        wpmu: [ 0 ]
-        php: [ '7.3', '7.4', '8.0 ]
-        include:
-          - php: 7.4
-            wp: 5.4
-          - php: 7.4
-            wp: 5.5
-          - php: 7.4
-            wp: latest
-            wpmu: 1
-    env:
-      WP_VERSION: ${{ matrix.wp }}
-      WP_MULTISITE: ${{ matrix.wpmu }}
-      PHP_VERSION: ${{ matrix.php }}
-    steps:
-      # clone the repository
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/composer/
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-      - uses: actions/cache@v2
-        with:
-          path: vendor/
-          key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: mysql
-          tools: composer
-          coverage: none
-      # run CI checks
-      - name: Start mysql service
-        run: sudo /etc/init.d/mysql start
-      - name: Install PHP dependencies
-        run: composer install --no-ansi --no-interaction --prefer-dist --no-progress
-      - name: Setup test environment
-        run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root localhost $WP_VERSION
-      - name: Run tests
-        run: ./vendor/bin/phpunit
+    lint:
+        name: PHP Linting
+        runs-on: ubuntu-16.04
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - uses: actions/cache@v2
+              with:
+                  path: ~/.cache/composer/
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+            - uses: actions/cache@v2
+              with:
+                  path: vendor/
+                  key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '7.4'
+                  tools: composer
+                  coverage: none
+            - name: Set up branches
+              run: git checkout -b master refs/remotes/origin/master && git checkout -
+            - name: Install PHP dependencies
+              run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
+            - name: Check for new issues
+              run: ./scripts/linter-ci
+            - name: Check for escaping
+              run: ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax,WordPress.Security.EscapeOutput .
+            - name: Check for nonces
+              run: ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
+            - name: Check WPCOM rules
+              run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
+    test:
+        name: PHP Unit Tests
+        runs-on: ubuntu-16.04
+        strategy:
+            fail-fast: false
+            max-parallel: 10
+            matrix:
+                wp: ['latest']
+                wpmu: [0]
+                php: ['7.3', '7.4', '8.0']
+                include:
+                    - php: 7.4
+                      wp: 5.4
+                    - php: 7.4
+                      wp: 5.5
+                    - php: 7.4
+                      wp: latest
+                      wpmu: 1
+        env:
+            WP_VERSION: ${{ matrix.wp }}
+            WP_MULTISITE: ${{ matrix.wpmu }}
+            PHP_VERSION: ${{ matrix.php }}
+        steps:
+            # clone the repository
+            - uses: actions/checkout@v2
+            - uses: actions/cache@v2
+              with:
+                  path: ~/.cache/composer/
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+            - uses: actions/cache@v2
+              with:
+                  path: vendor/
+                  key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php }}
+                  extensions: mysql
+                  tools: composer
+                  coverage: none
+            # run CI checks
+            - name: Start mysql service
+              run: sudo /etc/init.d/mysql start
+            - name: Install PHP dependencies
+              run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
+            - name: Add PHP8 Compatibility
+              run: |
+                  if [ "$(php -r "echo version_compare(PHP_VERSION,'8.0','>=');")" ]; then
+                      curl -L https://github.com/woocommerce/phpunit/archive/add-compatibility-with-php8-to-phpunit-7.zip -o /tmp/phpunit-7.5-fork.zip
+                      unzip -d /tmp/phpunit-7.5-fork /tmp/phpunit-7.5-fork.zip
+                      rm ./vendor/bin/phpunit
+                      composer bin phpunit config --unset platform
+                      composer bin phpunit config repositories.0 '{"type": "path", "url": "/tmp/phpunit-7.5-fork/phpunit-add-compatibility-with-php8-to-phpunit-7", "options": {"symlink": false}}'
+                      composer bin phpunit require --dev -W phpunit/phpunit:@dev --ignore-platform-reqs
+                  fi
+            - name: Setup test environment
+              run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root localhost $WP_VERSION
+            - name: Run tests
+              run: ./vendor/bin/phpunit
