@@ -46,6 +46,7 @@ $courses-list: '#{$block}__courses-list';
 		.wp-block-button__link {
 			border-radius: inherit;
 			line-height: normal;
+			text-decoration: none;
 		}
 	}
 }
