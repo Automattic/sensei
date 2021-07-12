@@ -10,7 +10,7 @@ import domReady from '@wordpress/dom-ready';
 import './post-edit';
 
 domReady( () => {
-	window.sensei_toggle_legacy_metaboxes( 'lesson' );
+	window.sensei_toggle_legacy_metaboxes( 'lesson', 'pageload' );
 
 	// Lessons Write Panel.
 	const complexityOptionElements = jQuery( '#lesson-complexity-options' );

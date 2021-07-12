@@ -25,9 +25,10 @@ const ToggleLegacyMetaboxesWrapper = ( {
 			return;
 		}
 
-		window.sensei_toggle_legacy_metaboxes( postType );
+		window.sensei_toggle_legacy_metaboxes( postType, 'add' );
 
-		return () => window.sensei_toggle_legacy_metaboxes( postType );
+		return () =>
+			window.sensei_toggle_legacy_metaboxes( postType, 'remove' );
 	}, [ isPreview ] );
 
 	return children;

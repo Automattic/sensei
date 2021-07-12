@@ -37,7 +37,7 @@ import './post-edit';
 } )();
 
 domReady( () => {
-	window.sensei_toggle_legacy_metaboxes( 'course' );
+	window.sensei_toggle_legacy_metaboxes( 'course', 'pageload' );
 
 	jQuery( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
