@@ -100,14 +100,14 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title'] = strip_tags( $new_instance['title'] ?? '' );
 
 		/* The select box is returning a text value, so we escape it. */
-		$instance['limit'] = esc_attr( $new_instance['limit'] );
+		$instance['limit'] = (int) $new_instance['limit'] ?? 3;
 
 		/* The check box is returning a boolean value. */
-		$instance['count']        = $new_instance['count'];
-		$instance['hierarchical'] = $new_instance['hierarchical'];
+		$instance['count']        = $new_instance['count'] ?? 0;
+		$instance['hierarchical'] = $new_instance['hierarchical'] ?? 0;
 
 		return $instance;
 	}
