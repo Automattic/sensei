@@ -2,42 +2,15 @@
  * WordPress dependencies
  */
 import { select, dispatch } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
 
-( () => {
-	const blockEditorSelector = select( 'core/block-editor' );
-	const editPostSelector = select( 'core/edit-post' );
-	const editPostDispatcher = dispatch( 'core/edit-post' );
+/**
+ * Internal dependencies
+ */
+import './post-edit';
 
-	/**
-	 * Toggle Lesson Information metabox depending on whether the Lesson Properties block has been
-	 * added to the lesson.
-	 */
-	window.sensei_toggle_legacy_lesson_metaboxes = () => {
-		if ( ! blockEditorSelector ) {
-			return;
-		}
-
-		const metaboxName = 'meta-box-lesson-info';
-		const lessonPropertiesBlockCount = blockEditorSelector.getGlobalBlockCount(
-			'sensei-lms/lesson-properties'
-		);
-		const enable = lessonPropertiesBlockCount === 0;
-
-		if ( enable !== editPostSelector.isEditorPanelEnabled( metaboxName ) ) {
-			editPostDispatcher.toggleEditorPanelEnabled( metaboxName );
-		}
-
-		// Don't submit lesson length and complexity values in metaboxes.
-		document
-			.querySelectorAll( '#lesson-info input, #lesson-info select' )
-			.forEach( ( input ) => {
-				input.disabled = lessonPropertiesBlockCount > 0;
-			} );
-	};
-} )();
-
-jQuery( document ).ready( function () {
-	window.sensei_toggle_legacy_lesson_metaboxes();
+domReady( () => {
+	window.sensei_toggle_legacy_metaboxes( 'lesson' );
 
 	// Lessons Write Panel.
 	const complexityOptionElements = jQuery( '#lesson-complexity-options' );
