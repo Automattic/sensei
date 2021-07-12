@@ -104,12 +104,18 @@ abstract class Sensei_Export_Task
 
 	/**
 	 * Run export task.
+	 *
+	 * @throws Exception Caught exception when empty file is passed in tests.
 	 */
 	public function run() {
 		$posts = $this->query->posts;
 		$job   = $this->get_job();
 
 		try {
+			if ( empty( $this->file ) ) {
+				throw new Exception( 'Missing output file' );
+			}
+
 			$output_file = new SplFileObject( $this->file, 'a' );
 		} catch ( Exception $e ) {
 			$this->is_aborted = true;
