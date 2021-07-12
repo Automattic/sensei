@@ -169,7 +169,7 @@ $courses-list: '#{$block}__courses-list';
 #{$block}--is-grid-view #sensei-user-courses .course-container {
 	display: grid;
 	gap: 2rem;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 	padding: 2rem 0;
 
 	.course {
