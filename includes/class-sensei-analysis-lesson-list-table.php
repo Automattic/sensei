@@ -200,6 +200,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$user_start_date = get_comment_meta( $item->comment_ID, 'start', true );
 		$user_end_date   = $item->comment_date;
 
+		$grade = null;
 		if ( 'complete' == $item->comment_approved ) {
 			$status = __( 'Completed', 'sensei-lms' );
 			$grade  = __( 'No Grade', 'sensei-lms' );

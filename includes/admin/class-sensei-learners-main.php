@@ -354,6 +354,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				// in this case the item passed in is actually the users activity on course of lesson.
 				$user_activity = $item;
 				$post_id       = false;
+				$post_type     = false;
+				$object_type   = false;
 
 				if ( $this->lesson_id ) {
 
@@ -1102,6 +1104,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		$is_selected = 'learners' === $this->view && $enrolment_status === $this->enrolment_status;
 		$url         = add_query_arg( $query_args, admin_url( 'admin.php' ) );
+		$link_title  = false;
 
 		switch ( $enrolment_status ) {
 			case 'enrolled':
@@ -1116,6 +1119,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			case 'all':
 				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
 				break;
+		}
+
+		if ( ! $link_title ) {
+			return '';
 		}
 
 		return '<a ' . ( $is_selected ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . $link_title . '</a>';
@@ -1208,7 +1215,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						submit_button( sprintf( __( 'Add to \'%1$s\'', 'sensei-lms' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
 						?>
 					</p>
-					<?php if ( 'lesson' === $form_post_type ) { ?>
+					<?php if ( 'lesson' === $form_post_type && isset( $course_title ) ) { ?>
 						<p><span class="description">
 							<?php
 							// translators: Placeholder is the course title.
