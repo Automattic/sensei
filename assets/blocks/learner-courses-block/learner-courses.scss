@@ -112,6 +112,7 @@ $courses-list: '#{$block}__courses-list';
 			display: flex;
 			flex-wrap: wrap;
 			gap: 5px;
+			margin: 0;
 		}
 
 		.sensei-results-links {
@@ -150,6 +151,7 @@ $courses-list: '#{$block}__courses-list';
 		img {
 			width: 150px;
 			height: 100%;
+			margin: 0;
 			object-fit: cover;
 		}
 
@@ -202,6 +204,7 @@ $courses-list: '#{$block}__courses-list';
 	img {
 		height: 200px;
 		width: 100%;
+		margin: 0;
 		object-fit: cover;
 	}
 }
