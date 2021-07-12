@@ -60,10 +60,7 @@ import { __, sprintf } from '@wordpress/i18n';
 			}
 		);
 
-		if ( 'pageload' !== action ) {
-			// Toggle legacy or blocks warning notice.
-			toggleLegacyOrBlocksNotice( postType, action );
-		}
+		toggleLegacyOrBlocksNotice( postType, action );
 
 		// Prevent submit course modules.
 		document
