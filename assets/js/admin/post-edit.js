@@ -94,13 +94,9 @@ import { __, sprintf } from '@wordpress/i18n';
 		);
 
 		if ( allBlocksCount === 1 && action === 'add' ) {
-			const message = sprintf(
-				/* translators: Post type. */
-				__(
-					'When you add at least one %s block to the editor, the frontend page stops loading the default template. It means you will see only the blocks you added in the frontend.',
-					'sensei-lms'
-				),
-				postType
+			const message = __(
+				'This page contains a Sensei LMS block. When viewed, only the blocks will be displayed and the rest of the page will be empty.',
+				'sensei-lms'
 			);
 			removeNotice( 'sensei-using-template' );
 			createWarningNotice( message, {
@@ -108,13 +104,9 @@ import { __, sprintf } from '@wordpress/i18n';
 				isDismissible: true,
 			} );
 		} else if ( allBlocksCount === 0 && action === 'remove' ) {
-			const message = sprintf(
-				/* translators: Post type. */
-				__(
-					'When you remove all the %s blocks from the editor, your page loads the default template. It means you will see a default page structure in the frontend.',
-					'sensei-lms'
-				),
-				postType
+			const message = __(
+				'This page does not contain any Sensei LMS blocks. When viewed, it will display some details that cannot be easily customized. If you would like to have more control over the look and feel of this page, we recommend that you add some Sensei LMS blocks from the block inserter.',
+				'sensei-lms'
 			);
 			removeNotice( 'sensei-using-blocks' );
 			createWarningNotice( message, {
