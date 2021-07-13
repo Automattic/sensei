@@ -500,7 +500,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 *
 	 * @throws Exception 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
 	 */
-	protected function attach_lessons_questions( $number = 10, $lesson_id, $question_args = array(), $quiz_args = array(), $reuse_questions = true ) {
+	protected function attach_lessons_questions( $number = 10, $lesson_id = 0, $question_args = array(), $quiz_args = array(), $reuse_questions = true ) {
 
 		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
 			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
@@ -563,7 +563,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @return int[]
 	 * @throws Exception
 	 */
-	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id, $multiple_question_args = array(), $quiz_args = array() ) {
+	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id = 0, $multiple_question_args = array(), $quiz_args = array() ) {
 		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
 			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
 			throw new Exception( 'Generate questions needs a valid lesson ID.' );

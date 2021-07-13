@@ -1199,6 +1199,7 @@ class Sensei_Admin {
 	public function handle_order_courses() {
 		check_admin_referer( 'order_courses' );
 
+		$ordered = null;
 		if ( isset( $_POST['course-order'] ) && 0 < strlen( $_POST['course-order'] ) ) {
 			$ordered = $this->save_course_order( esc_attr( $_POST['course-order'] ) );
 		}
@@ -1355,6 +1356,7 @@ class Sensei_Admin {
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
 
+		$ordered = null;
 		if ( isset( $_POST['lesson-order'] ) ) {
 			$ordered = $this->save_lesson_order( esc_attr( $_POST['lesson-order'] ), esc_attr( $_POST['course_id'] ) );
 		}

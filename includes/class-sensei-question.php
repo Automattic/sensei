@@ -661,13 +661,13 @@ class Sensei_Question {
 				$output .= self::question_media_kses( $question_media_link );
 				$output .= '<dl>';
 
-			if ( $question_media_title ) {
+			if ( ! empty( $question_media_title ) ) {
 
 				$output .= '<dt>' . wp_kses_post( $question_media_title ) . '</dt>';
 
 			}
 
-			if ( $question_media_description ) {
+			if ( ! empty( $question_media_description ) ) {
 
 				$output .= '<dd>' . wp_kses_post( $question_media_description ) . '</dd>';
 

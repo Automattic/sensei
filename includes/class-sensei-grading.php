@@ -823,16 +823,18 @@ class Sensei_Grading {
 	}
 
 	public function add_grading_notices() {
-		if ( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
-			if ( 'graded' == $_GET['message'] ) {
-				$msg = array(
-					'updated',
-					__( 'Quiz Graded Successfully!', 'sensei-lms' ),
-				);
-			}
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
+		$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : false;
+
+		if (
+			$page
+			&& $message
+			&& $this->page_slug === $page
+			&& 'graded' === $message
+		) {
 			?>
-			<div class="grading-notice <?php echo esc_attr( $msg[0] ); ?>">
-				<p><?php echo esc_html( $msg[1] ); ?></p>
+			<div class="grading-notice updated">
+				<p><?php echo esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ); ?></p>
 			</div>
 			<?php
 		}
