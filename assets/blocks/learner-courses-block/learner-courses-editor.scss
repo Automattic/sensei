@@ -3,19 +3,64 @@
 $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
 
-
 .editor-styles-wrapper #{$courses-list} {
+	list-style: none;
+	padding: 0;
+	margin: 0;
 
 	&__featured-image {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 100px;
-		height: 100px;
-		flex-shrink: 0;
 		background-color: #C3C4C7;
-		background-size: cover;
-		background-position: 50% 50%;
 		fill: #FFF;
+	}
+
+	&__title {
+		&,
+		.editor-styles-wrapper .wp-block & {
+			margin: 0;
+		}
+
+		.has-primary-color & a {
+			color: var(--sensei-primary-color, inherit);
+		}
+	}
+
+	&__description {
+		margin: 0;
+	}
+
+	.wp-block-sensei-lms-course-progress {
+		margin-top: 10px;
+	}
+
+	.sensei-results-links {
+		margin-top: auto; // Push button to bottom of card.
+		padding-top: 20px;
+
+		.wp-block-button {
+			margin: 0;
+		}
+
+		.wp-block-button__link {
+			border-radius: inherit;
+			line-height: normal;
+			text-decoration: none;
+		}
+	}
+}
+
+/* List view */
+.editor-styles-wrapper #{$courses-list}--is-list-view {
+	#{$courses-list}__featured-image {
+		width: 150px;
+	}
+}
+
+/* Grid view */
+.editor-styles-wrapper #{$courses-list}--is-grid-view {
+	#{$courses-list}__featured-image {
+		height: 200px;
 	}
 }

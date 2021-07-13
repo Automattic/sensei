@@ -50,8 +50,8 @@ class Sensei_Learner_Courses_Block {
 			]
 		);
 
-		if ( isset( $attributes['options']['layoutView'] ) && 'grid' === $attributes['options']['layoutView'] ) {
-			$class .= ' wp-block-sensei-lms-learner-courses--is-grid-view';
+		if ( isset( $attributes['options']['layoutView'] ) ) {
+			$class .= ' wp-block-sensei-lms-learner-courses--is-' . $attributes['options']['layoutView'] . '-view';
 		}
 
 		return '<div class="wp-block-sensei-lms-learner-courses ' . $class . ' " style="' . esc_attr( $style ) . '">' . $shortcode->render() . '</div>';

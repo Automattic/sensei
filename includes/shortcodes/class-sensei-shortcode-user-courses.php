@@ -366,17 +366,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		add_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
 
 		if ( $this->is_block ) {
+			// Remove default WordPress theme hook that overrides Sensei styles.
+			remove_filter( 'wp_get_attachment_image_attributes', 'twenty_twenty_one_get_attachment_image_attributes', 10 );
 
 			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30 );
 
-			if ( ! $this->options['featuredImageEnabled'] ) {
-				remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30 );
+			if ( $this->options['featuredImageEnabled'] ) {
+				add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 1 );
 			}
 
-			add_action( 'sensei_course_content_inside_before', array( $this, 'course_completed_badge' ), 40 );
+			add_action( 'sensei_course_content_inside_before', array( $this, 'add_course_details_wrapper_start' ), 2 );
 
 			if ( $this->options['courseCategoryEnabled'] ) {
-				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
+				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 6 );
 			}
 
 			if ( ! $this->options['courseDescriptionEnabled'] ) {
@@ -389,6 +392,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		}
 
 		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
+		$this->is_block && add_action( 'sensei_course_content_inside_after', array( $this, 'add_course_details_wrapper_end' ) );
 	}
 
 	/**
@@ -400,7 +404,6 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		// Remove all hooks after the output is generated.
 		remove_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
-		remove_action( 'sensei_course_content_inside_before', array( $this, 'course_completed_badge' ), 40 );
 		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
 		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
 		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20 );
@@ -448,31 +451,29 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	}
 
 	/**
-	 * Add Completed badge to completed courses.
-	 *
-	 * @param int|WP_Post $course
-	 */
-	public function course_completed_badge( $course ) {
-		if ( Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
-			echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__badge__wrapper">
-						<em class="wp-block-sensei-lms-learner-courses__courses-list__badge">
-							' . esc_html__( 'Completed', 'sensei-lms' ) . '
-						</em>
-					</div>';
-		}
-	}
-
-	/**
 	 * Display course categories.
 	 *
 	 * @param int|WP_Post $course
 	 */
 	public function course_category( $course ) {
 		$category_output = get_the_term_list( $course, 'course-category', '', ', ', '' );
-		echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__category">
-						' . wp_kses_post( $category_output ) . '
-					</div>';
+		echo '<span class="wp-block-sensei-lms-learner-courses__courses-list__category">
+					' . wp_kses_post( $category_output ) . '
+				</span>';
+	}
 
+	/**
+	 * Add an opening wrapper element around the course details.
+	 */
+	public function add_course_details_wrapper_start() {
+		echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__details">';
+	}
+
+	/**
+	 * Add a closing wrapper element around the course details.
+	 */
+	public function add_course_details_wrapper_end() {
+		echo '</div>';
 	}
 
 	/**

@@ -1025,9 +1025,19 @@ class Sensei_Course {
 
 		$img_html         = '';
 		$used_placeholder = false;
+		$classes          = '';
+
+		if ( ! $sensei_is_block ) {
+			$classes = 'woo-image thumbnail alignleft';
+		}
+
 		if ( has_post_thumbnail( $course_id ) ) {
 			// Get Featured Image
-			$img_html = get_the_post_thumbnail( $course_id, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft' ) );
+			if ( $sensei_is_block ) {
+				$img_html = get_the_post_thumbnail( $course_id, 'medium', array( 'class' => $classes ) );
+			} else {
+				$img_html = get_the_post_thumbnail( $course_id, array( $width, $height ), array( 'class' => $classes ) );
+			}
 		} else {
 
 			// Check for a Lesson Image
@@ -1036,7 +1046,12 @@ class Sensei_Course {
 			foreach ( $course_lessons as $lesson_item ) {
 				if ( has_post_thumbnail( $lesson_item->ID ) ) {
 					// Get Featured Image
-					$img_html = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => 'woo-image thumbnail alignleft' ) );
+					if ( $sensei_is_block ) {
+						$img_html = get_the_post_thumbnail( $lesson_item->ID, 'medium', array( 'class' => $classes ) );
+					} else {
+						$img_html = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => $classes ) );
+					}
+
 					if ( '' !== $img_html ) {
 						break;
 					}
@@ -1059,7 +1074,7 @@ class Sensei_Course {
 					 * @param int    $width     Requested image width.
 					 * @param int    $height    Requested image height.
 					 */
-					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="woo-image thumbnail alignleft" />', $course_id, $width, $height );
+					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="' . esc_attr( $classes ) . '" />', $course_id, $width, $height );
 					$used_placeholder = true;
 
 				}
@@ -1700,7 +1715,7 @@ class Sensei_Course {
 
 							$results_link = '<a class="button view-results" href="'
 								. esc_url( Sensei()->course_results->get_permalink( $course_item->ID ) )
-								. '">' . esc_html__( 'View results', 'sensei-lms' )
+								. '">' . esc_html__( 'View Results', 'sensei-lms' )
 								. '</a>';
 						}
 						/**
@@ -2321,87 +2336,112 @@ class Sensei_Course {
 	 * @param WP_Post $course
 	 */
 	public static function the_course_action_buttons( $course ) {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
 
-		if ( is_user_logged_in() ) {
-			?>
+		$has_course_complete_button = false;
+		$has_delete_course_button   = false;
+		$has_results_button         = false;
 
+		if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
+			&& Sensei()->settings->settings['course_completion'] == 'complete'
+			&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
+			$has_course_complete_button = true;
+		}
+
+		$course_purchased = false;
+
+		if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
+			// Get the product ID.
+			$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
+
+			if ( 0 < $wc_post_id ) {
+				$user             = wp_get_current_user();
+				$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
+			}
+		}
+
+		/**
+		 * Hide or show the delete course button.
+		 *
+		 * This button on shows in certain instances, but this filter will hide it in those
+		 * cases. For other instances the button will be hidden.
+		 *
+		 * @since 1.9.0
+		 *
+		 * @deprecated 2.0.0
+		 *
+		 * @param bool $show_delete_course_button defaults to false
+		 */
+		$show_delete_course_button = apply_filters_deprecated(
+			'sensei_show_delete_course_button',
+			[ false ],
+			'2.0.0',
+			null,
+			'Sensei LMS "Delete Course" button will be removed in version 4.0.'
+		);
+
+		if ( ! $course_purchased
+				&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
+				&& $show_delete_course_button ) {
+			$has_delete_course_button = true;
+		}
+
+		$has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
+
+		if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+			$has_results_button = true;
+		}
+
+		if ( ! $has_course_complete_button && ! $has_delete_course_button && ! $has_results_button ) {
+			return;
+		}
+
+		?>
 			<section class="entry-actions">
 				<form method="POST" action="<?php echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
 
 					<input type="hidden"
-							name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
-							id="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
-							value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
-						/>
+						name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+						id="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
+						value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ); ?>"
+					/>
 
 					<input type="hidden" name="course_complete_id" id="course-complete-id" value="<?php echo esc_attr( intval( $course->ID ) ); ?>" />
 
 			<?php
-			if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
-				&& Sensei()->settings->settings['course_completion'] == 'complete'
-				&& ! Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
-
+			if ( $has_course_complete_button ) {
 				wp_enqueue_script( 'sensei-stop-double-submission' );
 
 				?>
-					<span><input name="course_complete" type="submit" class="course-complete sensei-stop-double-submission" value="<?php esc_attr_e( 'Mark as Complete', 'sensei-lms' ); ?>" /></span>
+					<span>
+						<input name="course_complete" type="submit" class="course-complete sensei-stop-double-submission"
+							value="<?php esc_attr_e( 'Mark as Complete', 'sensei-lms' ); ?>" />
+					</span>
 
 				<?php
 			}
 
-			$course_purchased = false;
-			if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() ) {
-				// Get the product ID
-				$wc_post_id = get_post_meta( intval( $course->ID ), '_course_woocommerce_product', true );
-				if ( 0 < $wc_post_id ) {
-
-					$user             = wp_get_current_user();
-					$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
-
-				}
-			}
-
-			/**
-			 * Hide or show the delete course button.
-			 *
-			 * This button on shows in certain instances, but this filter will hide it in those
-			 * cases. For other instances the button will be hidden.
-			 *
-			 * @since 1.9.0
-			 *
-			 * @deprecated 2.0.0
-			 *
-			 * @param bool $show_delete_course_button defaults to false
-			 */
-			$show_delete_course_button = apply_filters_deprecated(
-				'sensei_show_delete_course_button',
-				[ false ],
-				'2.0.0',
-				null,
-				'Sensei LMS "Delete Course" button will be removed in version 4.0.'
-			);
-
-			if ( ! $course_purchased
-					&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
-					&& $show_delete_course_button ) {
+			if ( $has_delete_course_button ) {
 				?>
-
-					<span><input name="course_complete" type="submit" class="course-delete" value="<?php echo esc_attr__( 'Delete Course', 'sensei-lms' ); ?>"/></span>
-
+					<span>
+						<input name="course_complete" type="submit" class="course-delete"
+							value="<?php echo esc_attr__( 'Delete Course', 'sensei-lms' ); ?>"/>
+					</span>
 				<?php
 			}
 
-			$has_quizzes  = Sensei()->course->course_quizzes( $course->ID, true );
 			$results_link = '';
+
 			if ( $has_quizzes ) {
 				$results_link = '<a class="button view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $course->ID ) ) . '">' .
-					esc_html__( 'View results', 'sensei-lms' ) . '</a>';
+					esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 			}
 
 			// Output only if there is content to display.
-			if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+			if ( $has_results_button ) {
 				?>
-
 					<p class="sensei-results-links">
 				<?php
 				/**
@@ -2421,8 +2461,6 @@ class Sensei_Course {
 			</section>
 
 			<?php
-		}
-
 	}
 
 	/**
@@ -3030,7 +3068,7 @@ class Sensei_Course {
 						<?php
 						$results_link = '';
 						if ( $has_quizzes ) {
-							$results_link = '<a class="view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $post->ID ) ) . '">' . esc_html__( 'View results', 'sensei-lms' ) . '</a>';
+							$results_link = '<a class="view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $post->ID ) ) . '">' . esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 						}
 						/**
 						 * Filter documented in Sensei_Course::the_course_action_buttons
