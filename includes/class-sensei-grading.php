@@ -829,7 +829,7 @@ class Sensei_Grading {
 		if (
 			$page
 			&& $message
-			&& $this->page_slug == $page
+			&& $this->page_slug === $page
 			&& 'graded' === $message
 		) {
 			?>
