@@ -214,11 +214,11 @@ $courses-list: '#{$block}__courses-list';
 	&__bar {
 		height: var(--sensei-progress-bar-height, 14px);
 		border-radius: var(--sensei-progress-bar-border-radius, 10px);
+		overflow: hidden;
 
 		div {
 			background-color: currentColor;
 			background-color: var(--sensei-accent-color, currentColor);
-			border-radius: var(--sensei-progress-bar-border-radius, 10px);
 		}
 	}
 }

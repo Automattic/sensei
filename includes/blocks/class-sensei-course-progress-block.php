@@ -73,8 +73,7 @@ class Sensei_Course_Progress_Block {
 			[
 				'textColor' => null,
 				'barColor'  => 'background-color',
-			],
-			[ 'borderRadius' => 'border-radius' ]
+			]
 		);
 
 		$bar_css['inline_styles'][] = 'width: ' . $percentage . '%';
