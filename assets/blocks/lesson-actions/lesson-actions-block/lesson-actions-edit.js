@@ -22,6 +22,7 @@ import {
 	INNER_BLOCKS_TEMPLATE,
 	IN_PROGRESS_PREVIEW,
 } from './constants';
+import ToggleLegacyMetaboxesWrapper from '../../toggle-legacy-metaboxes-wrapper';
 
 /**
  * Edit lesson actions block component.
@@ -33,12 +34,13 @@ import {
  * @param {Object}   props.attributes               Block attributes.
  * @param {Object}   props.attributes.toggledBlocks Toggled blocks, where the key is the block name.
  */
-const LessonActionsEdit = ( {
-	className,
-	clientId,
-	setAttributes,
-	attributes: { toggledBlocks },
-} ) => {
+const LessonActionsEdit = ( props ) => {
+	const {
+		className,
+		clientId,
+		setAttributes,
+		attributes: { toggledBlocks },
+	} = props;
 	const [ previewState, onPreviewChange ] = usePreviewState(
 		IN_PROGRESS_PREVIEW
 	);
@@ -69,7 +71,7 @@ const LessonActionsEdit = ( {
 	);
 
 	return (
-		<>
+		<ToggleLegacyMetaboxesWrapper { ...props }>
 			<LessonActionsSettings
 				previewState={ previewState }
 				onPreviewChange={ onPreviewChange }
@@ -92,7 +94,7 @@ const LessonActionsEdit = ( {
 					/>
 				</div>
 			</div>
-		</>
+		</ToggleLegacyMetaboxesWrapper>
 	);
 };
 
