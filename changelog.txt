@@ -1,5 +1,13 @@
 *** Changelog ***
 
+2021.07.14 - version 3.12.0
+* New: Add grid view to Learner Courses block and update list view [#4243](https://github.com/Automattic/sensei/pull/4243)
+* New: PHP 8 compatibility [#4244](https://github.com/Automattic/sensei/pull/4244)
+* Tweak: Don't set minimum width for course progress bar on front end [#4247](https://github.com/Automattic/sensei/pull/4247)
+* Tweak: Add notice when adding first Sensei block or removing last block for a course or lesson [#4246](https://github.com/Automattic/sensei/pull/4246)
+* Fix: Caching course structure order [#4326](https://github.com/Automattic/sensei/pull/4236)
+* Fix: Use standard way of getting quiz ID on grading page [#4240](https://github.com/Automattic/sensei/pull/4240)
+
 2021.06.23 - version 3.11.1
 * Tweak: Update SenseiLMS.com notices integration [#4233](https://github.com/Automattic/sensei/pull/4233)
 
