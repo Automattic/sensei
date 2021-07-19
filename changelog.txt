@@ -1,6 +1,6 @@
 *** Changelog ***
 
-2021.07.15 - version 3.12.0
+2021.07.19 - version 3.12.0
 * New: Add grid view to Learner Courses block and update list view [#4243](https://github.com/Automattic/sensei/pull/4243)
 * New: PHP 8 compatibility [#4244](https://github.com/Automattic/sensei/pull/4244)
 * Tweak: Don't set minimum width for course progress bar on front end [#4247](https://github.com/Automattic/sensei/pull/4247)
