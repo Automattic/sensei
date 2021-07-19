@@ -173,7 +173,10 @@ class Sensei_Analysis {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
-		$this->analysis_headers();
+
+		$this->analysis_default_nav();
+		do_action( 'sensei_analysis_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap">
 			<div class="sensei-analysis-sidebar">
@@ -211,7 +214,10 @@ class Sensei_Analysis {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
-		$this->analysis_headers( array( 'nav' => 'user_profile' ) );
+
+		$this->analysis_user_profile_nav();
+		do_action( 'sensei_analysis_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap user-profile">
 			<div class="sensei-analysis-main">
@@ -240,7 +246,10 @@ class Sensei_Analysis {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
-		$this->analysis_headers( array( 'nav' => 'course' ) );
+
+		$this->analysis_course_nav();
+		do_action( 'sensei_analysis_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap course-profile">
 			<div class="sensei-analysis-main">
@@ -270,7 +279,10 @@ class Sensei_Analysis {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
-		$this->analysis_headers( array( 'nav' => 'user_course' ) );
+
+		$this->analysis_user_course_nav();
+		do_action( 'sensei_analysis_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap course-profile">
 			<div class="sensei-analysis-main">
@@ -299,7 +311,10 @@ class Sensei_Analysis {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
-		$this->analysis_headers( array( 'nav' => 'course_users' ) );
+
+		$this->analysis_course_users_nav();
+		do_action( 'sensei_analysis_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap course-profile">
 			<div class="sensei-analysis-main">
@@ -328,7 +343,10 @@ class Sensei_Analysis {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
-		$this->analysis_headers( array( 'nav' => 'lesson_users' ) );
+
+		$this->analysis_lesson_users_nav();
+		do_action( 'sensei_analysis_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap course-profile">
 			<div class="sensei-analysis-main">
@@ -363,12 +381,17 @@ class Sensei_Analysis {
 	}
 
 	/**
-	 * analysis_headers outputs analysis general headers
+	 * Analysis_headers outputs analysis general headers.
 	 *
+	 * @deprecated 3.11.0
 	 * @since  1.2.0
+	 *
+	 * @param array $args
+	 *
 	 * @return void
 	 */
 	public function analysis_headers( $args = array( 'nav' => 'default' ) ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
 
 		$function = 'analysis_' . $args['nav'] . '_nav';
 		$this->$function();
