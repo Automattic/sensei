@@ -7,6 +7,7 @@ import CourseProgressBlock from './course-progress-block';
 import { OutlineBlock, LessonBlock, ModuleBlock } from './course-outline';
 import ConditionalContentBlock from './conditional-content-block';
 import ViewResults from './view-results-block';
+import './course-expiration';
 
 registerSenseiBlocks( [
 	OutlineBlock,
