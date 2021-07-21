@@ -126,6 +126,14 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			Sensei()->assets->preload_data( [ sprintf( '/sensei-internal/v1/course-structure/%d?context=edit', $post->ID ) ] );
 		}
 
+		// Feature flag for Course Expiration.
+		wp_localize_script(
+			'sensei-single-course-blocks',
+			'sensei_single_course_blocks',
+			[
+				'feature_flag_course_expiration' => Sensei()->feature_flags->is_enabled( 'course_expiration' ),
+			]
+		);
 	}
 
 	/**
