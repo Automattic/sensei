@@ -243,6 +243,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'options'     => $pages_array,
 		);
 
+		$fields['course_completion_page'] = array(
+			'name'        => __( 'Course Completion Page', 'sensei-lms' ),
+			'description' => __( 'The page that is displayed after a learner completes a course.', 'sensei-lms' ),
+			'type'        => 'select',
+			'default'     => get_option( 'woothemes-sensei_course_completion_page_id', 0 ),
+			'section'     => 'default-settings',
+			'required'    => 0,
+			'options'     => $pages_array,
+		);
+
 		$fields['placeholder_images_enable'] = array(
 			'name'        => __( 'Use placeholder images', 'sensei-lms' ),
 			'description' => __( 'Output a placeholder image when no featured image has been specified for Courses and Lessons.', 'sensei-lms' ),
