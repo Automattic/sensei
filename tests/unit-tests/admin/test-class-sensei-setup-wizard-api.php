@@ -145,9 +145,11 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$courses_page    = get_page_by_path( 'courses-overview' );
 		$my_courses_page = get_page_by_path( 'my-courses' );
+		$course_completion_page = get_page_by_path( 'course-completion' );
 
-		$this->assertNotNull( $courses_page );
-		$this->assertNotNull( $my_courses_page );
+		$this->assertNotNull( $courses_page, 'Course archive page' );
+		$this->assertNotNull( $my_courses_page, 'My Courses page' );
+		$this->assertNotNull( $course_completion_page, 'Course completion page' );
 	}
 
 	/**
