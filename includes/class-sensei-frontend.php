@@ -67,6 +67,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		add_action( 'wp', array( $this, 'sensei_complete_lesson' ), 10 );
 		add_action( 'wp_head', array( $this, 'sensei_complete_course' ), 10 );
+		add_action( 'sensei_course_status_updated', array( $this, 'redirect_to_course_completion_page' ) );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );
@@ -769,6 +770,30 @@ class Sensei_Frontend {
 
 		if ( $redirect_url ) {
 			wp_safe_redirect( esc_url_raw( $redirect_url ) );
+			exit;
+		}
+	}
+
+	/**
+	 * Redirect to the course completion page, if applicable.
+	 *
+	 * @since 3.13.0
+	 * @access private
+	 *
+	 * @param string $status    Course status.
+	 * @param int    $user_id   User ID.
+	 * @param int    $course_id Course ID.
+	 */
+	public function redirect_to_course_completion_page( $status ) {
+		if ( 'complete' !== $status ) {
+			return;
+		}
+
+		$page_id = intval( Sensei()->settings->settings['course_completion_page'] );
+		$url     = get_permalink( $page_id );
+
+		if ( $url ) {
+			wp_safe_redirect( esc_url_raw( $url ) );
 			exit;
 		}
 	}
