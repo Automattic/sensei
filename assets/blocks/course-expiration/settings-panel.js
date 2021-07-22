@@ -3,29 +3,66 @@
  */
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
 import { RadioControl, SelectControl } from '@wordpress/components';
+import { useEntityProp } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
  */
+import {
+	EXPIRY_TYPE,
+	EXPIRY_LENGTH,
+	EXPIRY_PERIOD,
+} from './expiry-meta-fields';
 import { NO_EXPIRATION, EXPIRES_AFTER } from './expiry-types';
 import { MONTH, WEEK, DAY } from './expiry-period';
 import NumberControl from '../editor-components/number-control';
 
+/**
+ * A hook that provides a value from course meta and a setter for that value.
+ *
+ * @param {string} metaName     The name of the meta.
+ * @param {*}      defaultValue The default value of the meta.
+ * @return {Array} An array containing the value and the setter.
+ */
+const useCourseMeta = ( metaName, defaultValue ) => {
+	const [ meta, setMeta ] = useEntityProp( 'postType', 'course', 'meta' );
+
+	const value = meta[ metaName ];
+	const setter = ( newValue ) =>
+		setMeta( { ...meta, [ metaName ]: newValue } );
+
+	if ( ! value ) {
+		setter( defaultValue );
+	}
+
+	return [ value, setter ];
+};
+
 const SettingsPanel = () => {
-	const [ expiryType, setExpiryType ] = useState( NO_EXPIRATION );
-	const [ expiresAfterNumber, setExpiresAfterNumber ] = useState( 1 );
-	const [ expiresAfterPeriod, setExpiresAfterPeriod ] = useState( MONTH );
+	const [ expiryType, onExpiryTypeChange ] = useCourseMeta(
+		EXPIRY_TYPE,
+		NO_EXPIRATION
+	);
+
+	const [ expiryLength, onExpiryLengthChange ] = useCourseMeta(
+		EXPIRY_LENGTH,
+		1
+	);
+
+	const [ expiryPeriod, onExpiryPeriodChange ] = useCourseMeta(
+		EXPIRY_PERIOD,
+		MONTH
+	);
 
 	const expireAfterForm = (
 		<>
 			<NumberControl
-				value={ expiresAfterNumber }
-				onChange={ ( value ) => setExpiresAfterNumber( value ) }
+				value={ expiryLength }
+				onChange={ onExpiryLengthChange }
 			/>
 			<SelectControl
-				value={ expiresAfterPeriod }
+				value={ expiryPeriod }
 				options={ [
 					{
 						label: __( 'Month(s)', 'sensei-lms' ),
@@ -40,7 +77,7 @@ const SettingsPanel = () => {
 						value: DAY,
 					},
 				] }
-				onChange={ ( value ) => setExpiresAfterPeriod( value ) }
+				onChange={ onExpiryPeriodChange }
 			/>
 		</>
 	);
@@ -63,7 +100,7 @@ const SettingsPanel = () => {
 						value: EXPIRES_AFTER,
 					},
 				] }
-				onChange={ ( value ) => setExpiryType( value ) }
+				onChange={ onExpiryTypeChange }
 			/>
 
 			{ EXPIRES_AFTER === expiryType ? expireAfterForm : '' }
