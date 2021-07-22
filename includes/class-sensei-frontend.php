@@ -781,8 +781,6 @@ class Sensei_Frontend {
 	 * @access private
 	 *
 	 * @param string $status    Course status.
-	 * @param int    $user_id   User ID.
-	 * @param int    $course_id Course ID.
 	 */
 	public function redirect_to_course_completion_page( $status ) {
 		if ( 'complete' !== $status ) {
