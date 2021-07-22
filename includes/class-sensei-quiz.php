@@ -35,7 +35,7 @@ class Sensei_Quiz {
 		add_action( 'template_redirect', array( $this, 'reset_button_click_listener' ) );
 
 		// Fire the complete quiz button submit for grading action.
-		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_quiz_submit_listener' ) );
+		add_action( 'template_redirect', array( $this, 'user_quiz_submit_listener' ) );
 
 		// Fire the save user answers quiz button click responder.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
