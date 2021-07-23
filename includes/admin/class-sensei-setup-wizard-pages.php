@@ -65,8 +65,8 @@ class Sensei_Setup_Wizard_Pages {
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
 		// Course Completion Page.
-		$new_course_completion_page_id = $this->create_page( esc_sql( _x( 'course-completion', 'page_slug', 'sensei-lms' ) ), __( 'Course Completion', 'sensei-lms' ) );
-		Sensei()->settings->set( 'course_completion_page', $new_course_completion_page_id );
+		$new_course_completed_page_id = $this->create_page( esc_sql( _x( 'course-completed', 'page_slug', 'sensei-lms' ) ), __( 'Course Completed', 'sensei-lms' ) );
+		Sensei()->settings->set( 'course_completed_page', $new_course_completed_page_id );
 
 		Sensei()->initiate_rewrite_rules_flush();
 	}
