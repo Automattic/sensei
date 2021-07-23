@@ -55,7 +55,11 @@ class Sensei_Blocks {
 		// Register generic blocks assets.
 		add_action( 'init', [ $this, 'register_generic_assets' ] );
 
-		add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
+		if ( is_wp_version_compatible( '5.8' ) ) {
+			add_filter( 'block_categories_all', [ $this, 'sensei_block_categories' ], 10, 2 );
+		} else {
+			add_filter( 'block_categories', [ $this, 'sensei_block_categories' ], 10, 2 );
+		}
 
 		// Init blocks.
 		$this->course = new Sensei_Course_Blocks();
@@ -84,13 +88,20 @@ class Sensei_Blocks {
 	 *
 	 * @access private
 	 *
-	 * @param array   $categories Current categories.
-	 * @param WP_Post $post       Filtered post.
+	 * @param array                           $categories Current categories.
+	 * @param WP_Post|WP_Block_Editor_Context $context    Either the WP Post (pre-WP 5.8) or the context object.
 	 *
 	 * @return array Filtered categories.
 	 */
-	public function sensei_block_categories( $categories, $post ) {
-		if ( ! in_array( $post->post_type, [ 'course', 'lesson', 'question', 'page' ], true ) ) {
+	public function sensei_block_categories( $categories, $context ) {
+		$post = null;
+		if ( class_exists( 'WP_Block_Editor_Context' ) && $context instanceof WP_Block_Editor_Context ) {
+			$post = $context->post;
+		} elseif ( $context instanceof WP_Post ) {
+			$post = $context;
+		}
+
+		if ( ! $post || ! in_array( $post->post_type, [ 'course', 'lesson', 'question', 'page' ], true ) ) {
 			return $categories;
 		}
 
