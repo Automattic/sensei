@@ -787,6 +787,10 @@ class Sensei_Frontend {
 			return;
 		}
 
+		if ( ! isset( Sensei()->settings->settings['course_completed_page'] ) ) {
+			return;
+		}
+
 		$page_id = intval( Sensei()->settings->settings['course_completed_page'] );
 		$url     = get_permalink( $page_id );
 
