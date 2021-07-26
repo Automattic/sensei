@@ -54,6 +54,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		// Prevent requests.
 		add_filter( 'pre_http_request', '__return_empty_array' );
+
+		add_filter( 'sensei_feature_flag_course_completed_page', '__return_true' );
 	}
 
 	/**
@@ -67,6 +69,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		// Restore Usage tracking option.
 		Sensei()->usage_tracking->set_tracking_enabled( true );
+
+		remove_filter( 'sensei_feature_flag_course_completed_page', '__return_true' );
 	}
 
 	/**
