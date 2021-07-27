@@ -54,6 +54,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		// Prevent requests.
 		add_filter( 'pre_http_request', '__return_empty_array' );
+
+		add_filter( 'sensei_feature_flag_course_completed_page', '__return_true' );
 	}
 
 	/**
@@ -67,6 +69,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		// Restore Usage tracking option.
 		Sensei()->usage_tracking->set_tracking_enabled( true );
+
+		remove_filter( 'sensei_feature_flag_course_completed_page', '__return_true' );
 	}
 
 	/**
@@ -143,11 +147,13 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
 
-		$courses_page    = get_page_by_path( 'courses-overview' );
-		$my_courses_page = get_page_by_path( 'my-courses' );
+		$courses_page          = get_page_by_path( 'courses-overview' );
+		$my_courses_page       = get_page_by_path( 'my-courses' );
+		$course_completed_page = get_page_by_path( 'course-completed' );
 
-		$this->assertNotNull( $courses_page );
-		$this->assertNotNull( $my_courses_page );
+		$this->assertNotNull( $courses_page, 'Course archive page' );
+		$this->assertNotNull( $my_courses_page, 'My Courses page' );
+		$this->assertNotNull( $course_completed_page, 'Course completed page' );
 	}
 
 	/**

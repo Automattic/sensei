@@ -77,6 +77,7 @@ class Sensei_Data_Cleaner {
 		'sensei_courses_page_id',
 		'woothemes-sensei_courses_page_id',
 		'woothemes-sensei_user_dashboard_page_id',
+		'woothemes-sensei_course_completed_page_id',
 		'sensei-legacy-flags',
 		'sensei-scheduler-calculation-version',
 		'widget_sensei_course_component',
