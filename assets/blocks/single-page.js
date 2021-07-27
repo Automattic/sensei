@@ -13,4 +13,5 @@ if ( window.sensei_single_page_blocks.course_completed_page_enabled ) {
 	blocks.push( CourseCompletedActionsBlock );
 	blocks.push( CourseResultsBlock );
 }
+
 registerSenseiBlocks( blocks );
