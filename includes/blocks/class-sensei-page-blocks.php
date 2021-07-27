@@ -28,6 +28,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Learner_Messages_Button_Block();
 
 		if ( Sensei()->feature_flags->is_enabled( 'course_completed_page' ) ) {
+			new Sensei_Course_Completed_Actions_Block();
 			new Sensei_Course_Results_Block();
 		}
 	}
