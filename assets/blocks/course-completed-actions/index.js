@@ -1,4 +1,10 @@
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+/**
+ * Internal dependencies
+ */
 import icon from '../../icons/buttons-icon';
 import metadata from './block.json';
 import edit from './edit';
@@ -22,7 +28,7 @@ export default {
 				name: 'core/button',
 				attributes: { text: __( 'Find More Courses', 'sensei-lms' ) },
 			},
-		]
+		],
 	},
 	...metadata,
 	icon,

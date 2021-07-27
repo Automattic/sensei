@@ -36,7 +36,7 @@ class Sensei_Course_Completed_Actions_Block {
 			'sensei_course_completed_actions',
 			[
 				'course_archive_page_url' => Sensei_Course::get_courses_page_url(),
-				'feature_flag' => Sensei()->feature_flags->is_enabled( 'course_completed_page' ),
+				'feature_flag'            => Sensei()->feature_flags->is_enabled( 'course_completed_page' ),
 			]
 		);
 	}
