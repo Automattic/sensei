@@ -1,0 +1,85 @@
+$moduleSelector: '.wp-block-sensei-lms-course-results-module';
+$lessonSelector: '.wp-block-sensei-lms-course-results-lesson';
+$dark-gray: #1a1d20;
+$spacing: 16px;
+
+.wp-block-sensei-lms-course-results {
+	&__module {
+		margin: 1em 0;
+
+		&__header {
+			padding: $spacing;
+			font-weight: bold;
+			display: flex;
+			align-items: center;
+			background: var( --sensei-module-header-bg-color );
+			color: var( --sensei-module-header-text-color );
+		}
+
+		&__bordered {
+			border: 1px solid var( --sensei-module-border-color, $dark-gray );
+		}
+
+		&__separator {
+			display: block;
+			border: none;
+			height: 4px;
+			margin-left: 4px;
+			margin-right: 4px;
+			background-color: var( --sensei-module-border-color, $dark-gray );
+		}
+
+		&__title,
+		.wp-block-sensei-lms-course-results &__title {
+			font-size: 1.1em;
+			font-weight: inherit;
+			flex: 1;
+			margin: 0;
+			color: inherit;
+			&::before,
+			&::after {
+				content: none;
+			}
+		}
+	}
+
+	&__lesson {
+		display: flex;
+		align-items: center;
+		margin: 1px 0;
+		position: relative;
+
+		&__title {
+			flex: 1;
+			padding: $spacing;
+		}
+
+		&__score {
+			display: inline-block;
+			flex: 0 0 40px;
+			margin: 0 $spacing;
+			flex-shrink: 0;
+			opacity: 0.9;
+		}
+	}
+
+	&__gradeWrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	&__grade {
+		text-align: center;
+		display: inline-block;
+		margin: $spacing auto;
+		padding: $spacing;
+
+		&__preface {
+			font-size: 1.1em;
+		}
+
+		&__score {
+			font-size: 1.5em;
+		}
+	}
+}
