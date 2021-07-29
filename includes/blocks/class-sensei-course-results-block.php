@@ -62,6 +62,7 @@ class Sensei_Course_Results_Block {
 	 * @return string Block HTML.
 	 */
 	public function render_course_results_block( $attributes ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only used safely if the user completed course.
 		$course_id = isset( $_GET['course_id'] ) ? (int) $_GET['course_id'] : false;
 
 		// Check that a course has been passed to the page this block is on and the user has completed that course.
@@ -78,18 +79,18 @@ class Sensei_Course_Results_Block {
 			return $this->block_content;
 		}
 
-		$structure         = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
-		$block_content     = [];
-		$section_content[] = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper">';
-		$block_content[]   = $this->render_total_score( $course_id );
+		$structure       = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
+		$block_content   = [];
+		$block_content[] = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper">';
+		$block_content[] = $this->render_total_score( $course_id );
 
 		foreach ( $structure as $item ) {
 			if ( 'module' === $item['type'] ) {
-				$block_content[] = $this->render_module( $item, $course_id, $attributes );
+				$block_content[] = $this->render_module( $item, $attributes );
 			}
 
 			if ( 'lesson' === $item['type'] ) {
-				$block_content[] = $this->render_lesson( $item, $course_id );
+				$block_content[] = $this->render_lesson( $item );
 			}
 		}
 		$block_content[] = '</section>';
@@ -116,11 +117,10 @@ class Sensei_Course_Results_Block {
 	 * Render a module in the course results block.
 	 *
 	 * @param array $item       The course structure item.
-	 * @param int   $course_id  The course ID.
 	 * @param array $attributes The block attributes.
 	 * @return string
 	 */
-	private function render_module( $item, $course_id, $attributes ) {
+	private function render_module( $item, $attributes ) {
 		if ( empty( $item['lessons'] ) ) {
 			return '';
 		}
@@ -168,7 +168,7 @@ class Sensei_Course_Results_Block {
 		}
 
 		foreach ( $item['lessons'] as $lesson ) {
-			$section_content[] = $this->render_lesson( $lesson, $course_id );
+			$section_content[] = $this->render_lesson( $lesson );
 		}
 
 		$section_content[] = '</section>';
@@ -213,8 +213,10 @@ class Sensei_Course_Results_Block {
 
 	/**
 	 * Render a lesson in the course results block.
+	 *
+	 * @param array $item The course structure item.
 	 */
-	private function render_lesson( $item, $course_id ) {
+	private function render_lesson( $item ) {
 		$section_content   = [];
 		$section_content[] = '<div class="wp-block-sensei-lms-course-results__lesson">';
 		$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson__title">';
