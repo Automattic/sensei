@@ -25,7 +25,7 @@ class Sensei_Course_Results_Block {
 	 * Sensei_Course_Results_Block constructor.
 	 */
 	public function __construct() {
-		$this->register_blocks();
+		$this->register_block();
 	}
 
 	/**
@@ -40,7 +40,7 @@ class Sensei_Course_Results_Block {
 	/**
 	 * Register course results block.
 	 */
-	private function register_blocks() {
+	private function register_block() {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-results',
 			[
