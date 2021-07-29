@@ -26,6 +26,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	public function initialize_blocks() {
 		new Sensei_Learner_Courses_Block();
 		new Sensei_Learner_Messages_Button_Block();
+		new Sensei_Course_Results_Block();
 	}
 
 	/**
