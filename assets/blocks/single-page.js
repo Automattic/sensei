@@ -6,8 +6,9 @@ import LearnerCoursesBlock from './learner-courses-block';
 import LearnerMessagesButtonBlock from './learner-messages-button-block';
 import CourseResultsBlock from './course-results-block';
 
-registerSenseiBlocks( [
-	LearnerCoursesBlock,
-	LearnerMessagesButtonBlock,
-	CourseResultsBlock,
-] );
+const blocks = [ LearnerCoursesBlock, LearnerMessagesButtonBlock ];
+
+if ( window.sensei_single_page_blocks.course_completed_page_enabled ) {
+	blocks.push( CourseResultsBlock );
+}
+registerSenseiBlocks( blocks );
