@@ -248,6 +248,11 @@ class Sensei_Course_Results_Block {
 			'status'  => [ 'graded', 'passed', 'failed' ],
 		];
 		$lesson_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
+
+		if ( empty( $lesson_activity ) ) {
+			return null;
+		}
+
 		if ( is_array( $lesson_activity ) ) {
 			$lesson_activity = $lesson_activity[0];
 		}
