@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { compose } from '@wordpress/compose';
@@ -14,11 +19,6 @@ import {
 } from '../../shared/blocks/settings';
 import { dispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
-
-/**
- * External dependencies
- */
-import classnames from 'classnames';
 
 /**
  * Sample lesson component.
