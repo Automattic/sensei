@@ -20,6 +20,12 @@ import { sprintf, __ } from '@wordpress/i18n';
  */
 import classnames from 'classnames';
 
+/**
+ * Sample lesson component.
+ *
+ * @param {Object} props              Component props.
+ * @param {Array}  props.lessonNumber The lesson number to use in the sample title.
+ */
 const SampleLesson = ( props ) => {
 	const { lessonNumber } = props;
 
@@ -41,6 +47,15 @@ const SampleLesson = ( props ) => {
 	);
 };
 
+/**
+ * Sample module component.
+ *
+ * @param {Object}  props               Component props.
+ * @param {string}  props.moduleName    The name of the module.
+ * @param {Array}   props.lessonNumbers The lesson numbers to include in the sample module.
+ * @param {string}  props.style         The style selected for the results block.
+ * @param {boolean} props.moduleBorder  If modules have borders.
+ */
 const SampleModule = ( props ) => {
 	const { moduleName, lessonNumbers, style, moduleBorder } = props;
 
