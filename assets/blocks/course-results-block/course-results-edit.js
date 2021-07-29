@@ -24,18 +24,16 @@ import classnames from 'classnames';
 /**
  * Edit course results block component.
  *
- * @param {Object}   props                         Component props.
- * @param {string}   props.clientId                Block client ID.
- * @param {string}   props.className               Custom class name.
- * @param {Object}   props.mainColor               Header main color.
- * @param {Object}   props.textColor               Header text color.
- * @param {Object}   props.borderColor             Default border color.
- * @param {Object}   props.defaultMainColor        Default main color.
- * @param {Object}   props.defaultTextColor        Default text color.
- * @param {Object}   props.defaultBorderColor      Default border color.
- * @param {Object}   props.attributes              Block attributes.
- * @param {boolean}  props.attributes.moduleBorder True if a modules should have a border.
- * @param {Function} props.setAttributes           Block setAttributes callback.
+ * @param {Object}  props                         Component props.
+ * @param {string}  props.className               Custom class name.
+ * @param {Object}  props.defaultMainColor        Default main color.
+ * @param {Object}  props.defaultTextColor        Default text color.
+ * @param {Object}  props.defaultBorderColor      Default border color.
+ * @param {Object}  props.mainColor               Header main color.
+ * @param {Object}  props.textColor               Header text color.
+ * @param {Object}  props.borderColor             Default border color.
+ * @param {Object}  props.attributes              Block attributes.
+ * @param {boolean} props.attributes.moduleBorder True if a modules should have a border.
  */
 const CourseResultsEdit = ( props ) => {
 	const {
@@ -43,8 +41,8 @@ const CourseResultsEdit = ( props ) => {
 		defaultMainColor,
 		defaultTextColor,
 		defaultBorderColor,
-		textColor,
 		mainColor,
+		textColor,
 		borderColor,
 		attributes: { moduleBorder },
 	} = props;
