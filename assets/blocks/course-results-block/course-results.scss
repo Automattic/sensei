@@ -26,7 +26,10 @@ $spacing: 16px;
 			height: 4px;
 			margin-left: 4px;
 			margin-right: 4px;
-			background-color: var( --sensei-module-border-color, $dark-gray );
+			background-color: var(
+				--sensei-module-header-separator-color,
+				$dark-gray
+			);
 		}
 
 		&__title,

@@ -31,6 +31,18 @@
 		},
 		"customBorderColor": {
 			"type": "string"
+		},
+		"borderColorValue": {
+			"type": "string"
+		},
+		"defaultMainColor": {
+			"type": "string"
+		},
+		"defaultTextColor": {
+			"type": "string"
+		},
+		"defaultBorderColor": {
+			"type": "string"
 		}
 	}
 }

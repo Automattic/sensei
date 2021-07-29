@@ -13,6 +13,7 @@ import {
 	withDefaultBlockStyle,
 } from '../../shared/blocks/settings';
 import { useCallback } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 
 /**
  * External dependencies
@@ -118,6 +119,7 @@ const CourseResultsEdit = ( props ) => {
 		'--sensei-module-header-bg-color':
 			headerStyles?.background || 'inherit',
 		'--sensei-module-header-text-color': headerStyles?.color || 'inherit',
+		'--sensei-module-header-separator-color': mainColor?.color || 'inherit',
 		'--sensei-module-border-color':
 			borderColor?.color || defaultBorderColor?.color,
 	};
@@ -159,7 +161,7 @@ export default compose(
 	withColorSettings( {
 		mainColor: {
 			style: 'background-color',
-			label: __( 'Module background color', 'sensei-lms' ),
+			label: __( 'Module color', 'sensei-lms' ),
 		},
 		textColor: {
 			style: 'color',
@@ -168,6 +170,11 @@ export default compose(
 		borderColor: {
 			style: 'border-color',
 			label: __( 'Module border color', 'sensei-lms' ),
+			onChange: ( { clientId, colorValue } ) =>
+				dispatch( 'core/block-editor' ).updateBlockAttributes(
+					clientId,
+					{ borderColorValue: colorValue }
+				),
 		},
 	} ),
 	withDefaultColor( {
