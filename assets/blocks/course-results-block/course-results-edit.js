@@ -26,26 +26,20 @@ import { sprintf, __ } from '@wordpress/i18n';
  * @param {Object} props              Component props.
  * @param {Array}  props.lessonNumber The lesson number to use in the sample title.
  */
-const SampleLesson = ( props ) => {
-	const { lessonNumber } = props;
-
-	const lessonName = sprintf(
-		/* translators: Mock lesson number. */
-		__( 'Lesson %s', 'sensei-lms' ),
-		lessonNumber
-	);
-
-	return (
-		<div className="wp-block-sensei-lms-course-results__lesson">
-			<span className="wp-block-sensei-lms-course-results__lesson__title">
-				{ lessonName }
-			</span>
-			<span className="wp-block-sensei-lms-course-results__lesson__score">
-				xx%
-			</span>
-		</div>
-	);
-};
+const SampleLesson = ( { lessonNumber } ) => (
+	<div className="wp-block-sensei-lms-course-results__lesson">
+		<span className="wp-block-sensei-lms-course-results__lesson__title">
+			{ sprintf(
+				/* translators: Mock lesson number. */
+				__( 'Lesson %s', 'sensei-lms' ),
+				lessonNumber
+			) }
+		</span>
+		<span className="wp-block-sensei-lms-course-results__lesson__score">
+			xx%
+		</span>
+	</div>
+);
 
 /**
  * Sample module component.
@@ -56,34 +50,27 @@ const SampleLesson = ( props ) => {
  * @param {string}  props.style         The style selected for the results block.
  * @param {boolean} props.moduleBorder  If modules have borders.
  */
-const SampleModule = ( props ) => {
-	const { moduleName, lessonNumbers, style, moduleBorder } = props;
+const SampleModule = ( { moduleName, lessonNumbers, style, moduleBorder } ) => (
+	<section
+		className={ classnames( 'wp-block-sensei-lms-course-results__module', {
+			'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
+		} ) }
+	>
+		<header className="wp-block-sensei-lms-course-results__module__header">
+			<h2 className="wp-block-sensei-lms-course-results__module__title">
+				{ moduleName }
+			</h2>
+		</header>
 
-	return (
-		<section
-			className={ classnames(
-				'wp-block-sensei-lms-course-results__module',
-				{
-					'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
-				}
-			) }
-		>
-			<header className="wp-block-sensei-lms-course-results__module__header">
-				<h2 className="wp-block-sensei-lms-course-results__module__title">
-					{ moduleName }
-				</h2>
-			</header>
+		{ 'minimal' === style && (
+			<div className="wp-block-sensei-lms-course-results__module__separator" />
+		) }
 
-			{ 'minimal' === style && (
-				<div className="wp-block-sensei-lms-course-results__module__separator" />
-			) }
-
-			{ lessonNumbers.map( ( lessonNumber, index ) => (
-				<SampleLesson key={ index } lessonNumber={ lessonNumber } />
-			) ) }
-		</section>
-	);
-};
+		{ lessonNumbers.map( ( lessonNumber, index ) => (
+			<SampleLesson key={ index } lessonNumber={ lessonNumber } />
+		) ) }
+	</section>
+);
 
 /**
  * Edit course results block component.
