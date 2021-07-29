@@ -12,7 +12,6 @@ import {
 	withDefaultColor,
 	withDefaultBlockStyle,
 } from '../../shared/blocks/settings';
-import { useCallback } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 
@@ -20,6 +19,56 @@ import { sprintf, __ } from '@wordpress/i18n';
  * External dependencies
  */
 import classnames from 'classnames';
+
+const SampleLesson = ( props ) => {
+	const { lessonNumber } = props;
+
+	const lessonName = sprintf(
+		/* translators: Mock lesson number. */
+		__( 'Lesson %s', 'sensei-lms' ),
+		lessonNumber
+	);
+
+	return (
+		<div className="wp-block-sensei-lms-course-results__lesson">
+			<span className="wp-block-sensei-lms-course-results__lesson__title">
+				{ lessonName }
+			</span>
+			<span className="wp-block-sensei-lms-course-results__lesson__score">
+				xx%
+			</span>
+		</div>
+	);
+};
+
+const SampleModule = ( props ) => {
+	const { moduleName, lessonNumbers, style, moduleBorder } = props;
+
+	return (
+		<section
+			className={ classnames(
+				'wp-block-sensei-lms-course-results__module',
+				{
+					'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
+				}
+			) }
+		>
+			<header className="wp-block-sensei-lms-course-results__module__header">
+				<h2 className="wp-block-sensei-lms-course-results__module__title">
+					{ moduleName }
+				</h2>
+			</header>
+
+			{ 'minimal' === style && (
+				<div className="wp-block-sensei-lms-course-results__module__separator" />
+			) }
+
+			{ lessonNumbers.map( ( lessonNumber, index ) => (
+				<SampleLesson key={ index } lessonNumber={ lessonNumber } />
+			) ) }
+		</section>
+	);
+};
 
 /**
  * Edit course results block component.
@@ -49,58 +98,6 @@ const CourseResultsEdit = ( props ) => {
 
 	const styleRegex = /is-style-(\w+)/;
 	const style = className.match( styleRegex )?.[ 1 ];
-
-	// Minimal border element.
-	let minimalBorder;
-	if ( 'minimal' === style ) {
-		minimalBorder = (
-			<div className="wp-block-sensei-lms-course-results__module__separator" />
-		);
-	}
-
-	const renderSampleLesson = useCallback( ( lessonNumber ) => {
-		const lessonName = sprintf(
-			/* translators: Mock lesson number. */
-			__( 'Lesson %s', 'sensei-lms' ),
-			lessonNumber
-		);
-
-		return (
-			<div className="wp-block-sensei-lms-course-results__lesson">
-				<span className="wp-block-sensei-lms-course-results__lesson__title">
-					{ lessonName }
-				</span>
-				<span className="wp-block-sensei-lms-course-results__lesson__score">
-					xx%
-				</span>
-			</div>
-		);
-	}, [] );
-
-	const renderSampleModule = useCallback(
-		( moduleName, lessonNumbers ) => (
-			<section
-				className={ classnames(
-					'wp-block-sensei-lms-course-results__module',
-					{
-						'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
-					}
-				) }
-			>
-				<header className="wp-block-sensei-lms-course-results__module__header">
-					<h2 className="wp-block-sensei-lms-course-results__module__title">
-						{ moduleName }
-					</h2>
-				</header>
-				{ minimalBorder }
-
-				{ lessonNumbers.map( ( lessonNumber ) =>
-					renderSampleLesson( lessonNumber )
-				) }
-			</section>
-		),
-		[ moduleBorder, minimalBorder, renderSampleLesson ]
-	);
 
 	// Header styles.
 	const headerStyles = {
@@ -136,19 +133,24 @@ const CourseResultsEdit = ( props ) => {
 						</div>
 					</div>
 				</div>
-				{ renderSampleModule( __( 'Module A', 'sensei-lms' ), [
-					1,
-					2,
-					3,
-				] ) }
-				{ renderSampleModule( __( 'Module B', 'sensei-lms' ), [
-					4,
-					5,
-				] ) }
-				{ renderSampleModule( __( 'Module C', 'sensei-lms' ), [
-					6,
-					7,
-				] ) }
+				<SampleModule
+					moduleName={ __( 'Module A', 'sensei-lms' ) }
+					lessonNumbers={ [ 1, 2, 3 ] }
+					moduleBorder={ moduleBorder }
+					style={ style }
+				/>
+				<SampleModule
+					moduleName={ __( 'Module B', 'sensei-lms' ) }
+					lessonNumbers={ [ 4, 5, 6 ] }
+					moduleBorder={ moduleBorder }
+					style={ style }
+				/>
+				<SampleModule
+					moduleName={ __( 'Module C', 'sensei-lms' ) }
+					lessonNumbers={ [ 7, 8 ] }
+					moduleBorder={ moduleBorder }
+					style={ style }
+				/>
 			</section>
 		</>
 	);
