@@ -46,10 +46,17 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-page-style.css'
 		);
 
-		wp_localize_script(
+		wp_add_inline_script(
 			'sensei-single-page-blocks',
-			'sensei_single_page_blocks',
-			[ 'course_completed_page_enabled' => Sensei()->feature_flags->is_enabled( 'course_completed_page' ) ]
+			sprintf(
+				'window.sensei_single_page_blocks = %s',
+				wp_json_encode(
+					[
+						'course_completed_page_enabled' => Sensei()->feature_flags->is_enabled( 'course_completed_page' ),
+					]
+				)
+			),
+			'before'
 		);
 	}
 
