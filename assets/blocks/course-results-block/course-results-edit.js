@@ -14,12 +14,12 @@ import {
 } from '../../shared/blocks/settings';
 import { useCallback } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
+import { sprintf, __ } from '@wordpress/i18n';
 
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-import { sprintf, __ } from '@wordpress/i18n';
 
 /**
  * Edit course results block component.
