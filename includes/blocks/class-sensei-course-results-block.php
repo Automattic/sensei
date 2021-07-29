@@ -39,10 +39,8 @@ class Sensei_Course_Results_Block {
 
 	/**
 	 * Register course results block.
-	 *
-	 * @access private
 	 */
-	public function register_blocks() {
+	private function register_blocks() {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-results',
 			[
