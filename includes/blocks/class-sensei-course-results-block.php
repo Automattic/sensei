@@ -256,7 +256,7 @@ class Sensei_Course_Results_Block {
 
 		$grade = get_comment_meta( $lesson_activity->comment_ID, 'grade', true );
 
-		if ( null === $grade || '' === $grade ) {
+		if ( false === $grade || '' === $grade ) {
 			return null;
 		}
 
