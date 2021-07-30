@@ -19,9 +19,6 @@ const TEMPLATE = [
 				'core/button',
 				{
 					text: __( 'Find More Courses', 'sensei-lms' ),
-					url:
-						window.sensei_course_completed_actions
-							.course_archive_page_url,
 				},
 			],
 		] ),
