@@ -24,7 +24,7 @@ const TEMPLATE = [
 		] ),
 	],
 ];
-const ALLOWED_BLOCKS = [ 'core/buttons' ];
+const ALLOWED_BLOCKS = [];
 
 /**
  * Edit Course Completed Actions block.
