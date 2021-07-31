@@ -1465,7 +1465,9 @@ class Sensei_Admin {
 							$html .= '<li class="lesson"><span rel="' . esc_attr( $other_lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $other_lesson['title'] ) . '</span></li>' . "\n";
 						}
 						$html .= '</ul>' . "\n";
-					} else {
+					}
+
+					if ( ! $has_lessons ) {
 						$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei-lms' ) . '</em></p>';
 					}
 
