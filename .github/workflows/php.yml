@@ -5,7 +5,7 @@ on: pull_request
 jobs:
     lint:
         name: PHP Linting
-        runs-on: ubuntu-16.04
+        runs-on: ubuntu-18.04
         steps:
             - uses: actions/checkout@v2
               with:
@@ -37,7 +37,7 @@ jobs:
               run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     test:
         name: PHP Unit Tests
-        runs-on: ubuntu-16.04
+        runs-on: ubuntu-18.04
         strategy:
             fail-fast: false
             max-parallel: 10
