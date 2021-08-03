@@ -789,15 +789,10 @@ class Sensei_Frontend {
 			return;
 		}
 
-		if ( ! isset( Sensei()->settings->settings['course_completed_page'] ) ) {
-			return;
-		}
-
-		$page_id = intval( Sensei()->settings->settings['course_completed_page'] );
-		$url     = get_permalink( $page_id );
+		$url = Sensei_Course::get_course_completed_page_url( $course_id );
 
 		if ( $url ) {
-			wp_safe_redirect( esc_url_raw( add_query_arg( 'course_id', $course_id, $url ) ) );
+			wp_safe_redirect( esc_url_raw( $url ) );
 			exit;
 		}
 	}

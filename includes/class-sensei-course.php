@@ -1706,18 +1706,19 @@ class Sensei_Course {
 
 				if ( $manage ) {
 					$has_quizzes = Sensei()->course->course_quizzes( $course_item->ID, true );
+
 					// Output only if there is content to display
 					if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
-
 						$complete_html .= '<p class="sensei-results-links">';
 						$results_link   = '';
-						if ( $has_quizzes ) {
 
+						if ( $has_quizzes ) {
 							$results_link = '<a class="button view-results" href="'
-								. esc_url( Sensei()->course_results->get_permalink( $course_item->ID ) )
+								. esc_url( self::get_view_results_link( $course_item->ID ) )
 								. '">' . esc_html__( 'View Results', 'sensei-lms' )
 								. '</a>';
 						}
+
 						/**
 						 * Filter documented in Sensei_Course::the_course_action_buttons
 						 */
@@ -2435,7 +2436,7 @@ class Sensei_Course {
 			$results_link = '';
 
 			if ( $has_quizzes ) {
-				$results_link = '<a class="button view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $course->ID ) ) . '">' .
+				$results_link = '<a class="button view-results" href="' . esc_url( self::get_view_results_link( $course->ID ) ) . '">' .
 					esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 			}
 
@@ -2780,6 +2781,50 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Get the link to the course completed page.
+	 *
+	 * @since 3.13.0
+	 * @param int $course_id Course ID to append to URL.
+	 *
+	 * @return string The URL or empty string if page is not set or does not exist.
+	 */
+	public static function get_course_completed_page_url( $course_id = 0 ) {
+		$page_id = isset( Sensei()->settings->settings['course_completed_page'] ) ? intval( Sensei()->settings->settings['course_completed_page'] ) : 0;
+		$url     = $page_id ? get_permalink( $page_id ) : '';
+
+		if ( $url && 0 < $course_id ) {
+			$url = add_query_arg( 'course_id', $course_id, $url );
+		}
+
+		/**
+		 * Filter the course completed page URL.
+		 *
+		 * @since 3.13.0
+		 *
+		 * @param string $url Course completed page URL.
+		 */
+		return apply_filters( 'sensei_course_completed_page_url', $url );
+	}
+
+	/**
+	 * Get the link for the View Results button.
+	 *
+	 * @since 3.13.0
+	 * @param int $course_id Course ID.
+	 *
+	 * @return string The URL for the View Results button.
+	 */
+	public static function get_view_results_link( $course_id ) {
+		$url = self::get_course_completed_page_url( $course_id );
+
+		if ( ! $url ) {
+			$url = Sensei()->course_results->get_permalink( $course_id );
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Output the headers on the course archive page
 	 *
 	 * @since 1.9.0
@@ -3067,9 +3112,11 @@ class Sensei_Course {
 					<p class="sensei-results-links">
 						<?php
 						$results_link = '';
+
 						if ( $has_quizzes ) {
-							$results_link = '<a class="view-results" href="' . esc_url( Sensei()->course_results->get_permalink( $post->ID ) ) . '">' . esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
+							$results_link = '<a class="view-results" href="' . esc_url( self::get_view_results_link( $post->ID ) ) . '">' . esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 						}
+
 						/**
 						 * Filter documented in Sensei_Course::the_course_action_buttons
 						 */

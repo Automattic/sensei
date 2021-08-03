@@ -48,11 +48,9 @@ class Sensei_Block_View_Results {
 			return '';
 		}
 
-		$results_link = esc_url( Sensei()->course_results->get_permalink( get_the_ID() ) );
-
 		return preg_replace(
 			'/<a(.*)>/',
-			'<a href="' . $results_link . '" $1>',
+			'<a href="' . esc_url( Sensei_Course::get_view_results_link( get_the_ID() ) ) . '" $1>',
 			$content,
 			1
 		);
