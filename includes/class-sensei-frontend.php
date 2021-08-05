@@ -161,20 +161,17 @@ class Sensei_Frontend {
 	 * @return void
 	 */
 	public function enqueue_styles() {
+		Sensei()->assets->enqueue( 'pages-frontend', 'css/pages-frontend.css' );
 
 		$disable_styles = Sensei_Utils::get_setting_as_flag( 'styles_disable', 'sensei_disable_styles' );
 
 		if ( ! $disable_styles ) {
-
 			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
 
 			// Allow additional stylesheets to be loaded.
 			do_action( 'sensei_additional_styles' );
-
 		}
-
 	}
-
 
 	/**
 	 * Get template part.
