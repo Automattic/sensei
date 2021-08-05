@@ -174,9 +174,9 @@ class Sensei_Course_Results_Block {
 
 		$section_content[] = '<section ' . $this->get_module_html_attributes( $class_name, $attributes ) . '>';
 		$section_content[] = '<header ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-results__module__header' ], $module_header_css ) . '>';
-		$section_content[] = '<h2 class="wp-block-sensei-lms-course-results__module__title">';
+		$section_content[] = '<h3 class="wp-block-sensei-lms-course-results__module__title">';
 		$section_content[] = esc_html( $item['title'] );
-		$section_content[] = '</h2>';
+		$section_content[] = '</h3>';
 		$section_content[] = '</header>';
 
 		if ( $is_minimal_style ) {

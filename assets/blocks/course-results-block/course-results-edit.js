@@ -57,9 +57,9 @@ const SampleModule = ( { moduleName, lessonNumbers, style, moduleBorder } ) => (
 		} ) }
 	>
 		<header className="wp-block-sensei-lms-course-results__module__header">
-			<h2 className="wp-block-sensei-lms-course-results__module__title">
+			<h3 className="wp-block-sensei-lms-course-results__module__title">
 				{ moduleName }
-			</h2>
+			</h3>
 		</header>
 
 		{ 'minimal' === style && (
@@ -130,9 +130,12 @@ const CourseResultsEdit = ( props ) => {
 						{ __( 'Your Total Grade', 'sensei-lms' ) }
 					</span>
 					<span className="wp-block-sensei-lms-course-results__grade__score">
-						xx%
+						XX%
 					</span>
 				</div>
+				<h2 className="wp-block-sensei-lms-course-results__title">
+					{ __( 'Course Title', 'sensei-lms' ) }
+				</h2>
 				<SampleModule
 					moduleName={ __( 'Module A', 'sensei-lms' ) }
 					lessonNumbers={ [ 1, 2, 3 ] }
