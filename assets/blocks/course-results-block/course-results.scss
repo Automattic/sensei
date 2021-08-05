@@ -2,6 +2,28 @@ $dark-gray: #1a1d20;
 $spacing: 16px;
 
 .wp-block-sensei-lms-course-results {
+	&__grade {
+		margin: auto 0;
+		text-align: center;
+		width: 100%;
+
+		&__label {
+			font-size: 1.1em;
+		}
+
+		&__score {
+			display: block;
+			font-size: 2em;
+			font-weight: bold;
+			line-height: normal;
+		}
+	}
+
+	&__title {
+		margin: 1em 0 0.5em;
+		text-align: center;
+	}
+
 	&__module {
 		margin: 1em 0;
 
@@ -61,26 +83,6 @@ $spacing: 16px;
 			margin: 0 $spacing;
 			flex-shrink: 0;
 			opacity: 0.9;
-		}
-	}
-
-	&__gradeWrapper {
-		display: flex;
-		align-items: center;
-	}
-
-	&__grade {
-		text-align: center;
-		display: inline-block;
-		margin: $spacing auto;
-		padding: $spacing;
-
-		&__preface {
-			font-size: 1.1em;
-		}
-
-		&__score {
-			font-size: 1.5em;
 		}
 	}
 }
