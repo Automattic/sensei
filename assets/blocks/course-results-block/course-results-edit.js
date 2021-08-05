@@ -125,15 +125,13 @@ const CourseResultsEdit = ( props ) => {
 		<>
 			<CourseResultsSettings { ...props } />
 			<section className={ className } style={ styleVars }>
-				<div className="wp-block-sensei-lms-course-results__gradeWrapper">
-					<div className="wp-block-sensei-lms-course-results__grade">
-						<div className="wp-block-sensei-lms-course-results__grade__preface">
-							{ __( 'Your Total Grade', 'sensei-lms' ) }
-						</div>
-						<div className="wp-block-sensei-lms-course-results__grade__score">
-							xx%
-						</div>
-					</div>
+				<div className="wp-block-sensei-lms-course-results__grade">
+					<span className="wp-block-sensei-lms-course-results__grade__label">
+						{ __( 'Your Total Grade', 'sensei-lms' ) }
+					</span>
+					<span className="wp-block-sensei-lms-course-results__grade__score">
+						xx%
+					</span>
 				</div>
 				<SampleModule
 					moduleName={ __( 'Module A', 'sensei-lms' ) }
