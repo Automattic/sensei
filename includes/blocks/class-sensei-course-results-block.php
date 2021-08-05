@@ -125,6 +125,13 @@ class Sensei_Course_Results_Block {
 		return implode( $content );
 	}
 
+	/**
+	 * Render the course title.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return string HTML for the course title.
+	 */
 	private function render_course_title( $course_id ) {
 		$content      = [];
 		$course_title = $course_id ? get_the_title( $course_id ) : '';
@@ -143,6 +150,7 @@ class Sensei_Course_Results_Block {
 	 *
 	 * @param array $item       The course structure item.
 	 * @param array $attributes The block attributes.
+	 *
 	 * @return string
 	 */
 	private function render_module( $item, $attributes ) {
