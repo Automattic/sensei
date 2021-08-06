@@ -29,9 +29,11 @@ function is_sensei() {
 	) {
 		$is_sensei = true;
 	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
-		$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
-		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) )
+		$course_page_id           = intval( Sensei()->settings->settings['course_page'] );
+		$my_courses_page_id       = intval( Sensei()->settings->settings['my_course_page'] );
+		$course_completed_page_id = intval( Sensei()->settings->settings['course_completed_page'] );
+
+		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id, $course_completed_page_id ) )
 			|| Sensei_Utils::is_learner_profile_page()
 			|| Sensei_Utils::is_course_results_page()
 			|| Sensei_Utils::is_teacher_archive_page()

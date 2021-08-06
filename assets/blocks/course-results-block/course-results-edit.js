@@ -57,9 +57,9 @@ const SampleModule = ( { moduleName, lessonNumbers, style, moduleBorder } ) => (
 		} ) }
 	>
 		<header className="wp-block-sensei-lms-course-results__module__header">
-			<h2 className="wp-block-sensei-lms-course-results__module__title">
+			<h3 className="wp-block-sensei-lms-course-results__module__title">
 				{ moduleName }
-			</h2>
+			</h3>
 		</header>
 
 		{ 'minimal' === style && (
@@ -125,16 +125,17 @@ const CourseResultsEdit = ( props ) => {
 		<>
 			<CourseResultsSettings { ...props } />
 			<section className={ className } style={ styleVars }>
-				<div className="wp-block-sensei-lms-course-results__gradeWrapper">
-					<div className="wp-block-sensei-lms-course-results__grade">
-						<div className="wp-block-sensei-lms-course-results__grade__preface">
-							{ __( 'Your Total Grade', 'sensei-lms' ) }
-						</div>
-						<div className="wp-block-sensei-lms-course-results__grade__score">
-							xx%
-						</div>
-					</div>
+				<div className="wp-block-sensei-lms-course-results__grade">
+					<span className="wp-block-sensei-lms-course-results__grade__label">
+						{ __( 'Your Total Grade', 'sensei-lms' ) }
+					</span>
+					<span className="wp-block-sensei-lms-course-results__grade__score">
+						XX%
+					</span>
 				</div>
+				<h2 className="wp-block-sensei-lms-course-results__title">
+					{ __( 'Course Title', 'sensei-lms' ) }
+				</h2>
 				<SampleModule
 					moduleName={ __( 'Module A', 'sensei-lms' ) }
 					lessonNumbers={ [ 1, 2, 3 ] }

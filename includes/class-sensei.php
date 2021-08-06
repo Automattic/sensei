@@ -1268,12 +1268,18 @@ class Sensei_Main {
 	public function body_class( $classes ) {
 		if ( is_sensei() ) {
 			$classes[] = 'sensei';
-
 			$post_type = get_post_type();
+
 			if ( ! empty( $post_type ) ) {
 				$classes[] = $post_type;
 			}
+
+			// Add class to Course Completed page.
+			if ( get_the_ID() === intval( Sensei()->settings->settings['course_completed_page'] ) ) {
+				$classes[] = 'course-completed';
+			}
 		}
+
 		return $classes;
 	}
 

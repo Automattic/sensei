@@ -44,7 +44,7 @@ class Sensei_Course_Results_Block {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-results',
 			[
-				'render_callback' => [ $this, 'render_course_results_block' ],
+				'render_callback' => [ $this, 'render_block' ],
 			],
 			Sensei()->assets->src_path( 'blocks/course-results-block' )
 		);
@@ -59,7 +59,7 @@ class Sensei_Course_Results_Block {
 	 *
 	 * @return string Block HTML.
 	 */
-	public function render_course_results_block( $attributes ) {
+	public function render_block( $attributes ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only used safely if the user completed course.
 		$course_id = isset( $_GET['course_id'] ) ? (int) $_GET['course_id'] : false;
 
@@ -80,7 +80,8 @@ class Sensei_Course_Results_Block {
 		$structure       = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
 		$block_content   = [];
 		$block_content[] = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper">';
-		$block_content[] = $this->render_total_score( $course_id );
+		$block_content[] = $this->render_total_grade( $course_id );
+		$block_content[] = $this->render_course_title( $course_id );
 
 		foreach ( $structure as $item ) {
 			if ( 'module' === $item['type'] ) {
@@ -99,16 +100,49 @@ class Sensei_Course_Results_Block {
 	}
 
 	/**
-	 * Get the total score.
+	 * Render the total grade.
 	 *
-	 * @todo Needs to be implemented. This should only show if there is at least one quiz and all quizzes are graded.
+	 * @param int $course_id Course ID.
 	 *
-	 * @param int $course_id The course ID.
-	 *
-	 * @return string
+	 * @return string HTML for the total grade.
 	 */
-	private function render_total_score( $course_id ) {
-		return '';
+	private function render_total_grade( $course_id ) {
+		// Course does not have a quiz.
+		if ( ! Sensei()->course->course_quizzes( $course_id, true ) ) {
+			return '';
+		}
+
+		$content   = [];
+		$content[] = '<div class="wp-block-sensei-lms-course-results__grade">';
+		$content[] = '<span class="wp-block-sensei-lms-course-results__grade__label">';
+		$content[] = __( 'Your Total Grade', 'sensei-lms' );
+		$content[] = '</span>';
+		$content[] = '<span class="wp-block-sensei-lms-course-results__grade__score">';
+		$content[] = Sensei_Utils::sensei_course_user_grade( $course_id, get_current_user_id() ) . '%';
+		$content[] = '</span>';
+		$content[] = '</div>';
+
+		return implode( $content );
+	}
+
+	/**
+	 * Render the course title.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return string HTML for the course title.
+	 */
+	private function render_course_title( $course_id ) {
+		$content      = [];
+		$course_title = $course_id ? get_the_title( $course_id ) : '';
+
+		if ( $course_title ) {
+			$content[] = '<h2 class="wp-block-sensei-lms-course-results__title">';
+			$content[] = $course_title;
+			$content[] = '</h2>';
+		}
+
+		return implode( $content );
 	}
 
 	/**
@@ -116,6 +150,7 @@ class Sensei_Course_Results_Block {
 	 *
 	 * @param array $item       The course structure item.
 	 * @param array $attributes The block attributes.
+	 *
 	 * @return string
 	 */
 	private function render_module( $item, $attributes ) {
@@ -147,9 +182,9 @@ class Sensei_Course_Results_Block {
 
 		$section_content[] = '<section ' . $this->get_module_html_attributes( $class_name, $attributes ) . '>';
 		$section_content[] = '<header ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-results__module__header' ], $module_header_css ) . '>';
-		$section_content[] = '<h2 class="wp-block-sensei-lms-course-results__module__title">';
+		$section_content[] = '<h3 class="wp-block-sensei-lms-course-results__module__title">';
 		$section_content[] = esc_html( $item['title'] );
-		$section_content[] = '</h2>';
+		$section_content[] = '</h3>';
 		$section_content[] = '</header>';
 
 		if ( $is_minimal_style ) {
