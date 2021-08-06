@@ -2788,13 +2788,10 @@ class Sensei_Course {
 	 *
 	 * @return string The URL or empty string if page is not set or does not exist.
 	 */
-	public static function get_course_completed_page_url( $course_id = 0 ) {
+	public static function get_course_completed_page_url( $course_id ) {
 		$page_id = isset( Sensei()->settings->settings['course_completed_page'] ) ? intval( Sensei()->settings->settings['course_completed_page'] ) : 0;
 		$url     = $page_id ? get_permalink( $page_id ) : '';
-
-		if ( $url && 0 < $course_id ) {
-			$url = add_query_arg( 'course_id', $course_id, $url );
-		}
+		$url     = $url && 0 < $course_id ? add_query_arg( 'course_id', $course_id, $url ) : '';
 
 		/**
 		 * Filter the course completed page URL.

@@ -402,27 +402,6 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	/**
 	 * Test that the course completed page URL is returned.
 	 *
-	 * @covers Sensei_Course::get_course_completed_page_url
-	 */
-	public function testGetCourseCompletedPageUrl() {
-		$course_id = $this->factory->course->create();
-		$page_id   = $this->factory->post->create(
-			[
-				'post_type'  => 'page',
-				'post_title' => 'Course Completed',
-			]
-		);
-		Sensei()->settings->set( 'course_completed_page', $page_id );
-
-		$expected = "http://example.org/?page_id={$page_id}";
-		$actual   = Sensei_Course::get_course_completed_page_url();
-
-		$this->assertEquals( $expected, $actual );
-	}
-
-	/**
-	 * Test that the course completed page URL is returned.
-	 *
 	 * @covers Sensei_Course::get_view_results_link
 	 * @covers Sensei_Course::get_course_completed_page_url
 	 */
