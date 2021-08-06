@@ -2800,10 +2800,14 @@ class Sensei_Course {
 		 * Filter the course completed page URL.
 		 *
 		 * @since 3.13.0
+		 * @hook sensei_course_completed_page_url
 		 *
-		 * @param string $url Course completed page URL.
+		 * @param {string} $url       Course completed page URL.
+		 * @param {int}    $course_id ID of the course that was completed.
+		 *
+		 * @return {string} Course completed page URL.
 		 */
-		return apply_filters( 'sensei_course_completed_page_url', $url );
+		return apply_filters( 'sensei_course_completed_page_url', $url, $course_id );
 	}
 
 	/**
