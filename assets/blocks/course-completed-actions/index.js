@@ -9,7 +9,17 @@ export const registerCourseCompletedActionsBlock = () =>
 	registerBlockVariation( 'core/buttons', {
 		name: 'course-completed-actions',
 		title: __( 'Course Completed Actions', 'sensei-lms' ),
+		description: __(
+			'Prompt learners to take action after completing a course.',
+			'sensei-lms'
+		),
 		category: 'sensei-lms',
+		keywords: [
+			__( 'Course', 'sensei-lms' ),
+			__( 'Completed', 'sensei-lms' ),
+			__( 'Actions', 'sensei-lms' ),
+			__( 'Buttons', 'sensei-lms' ),
+		],
 		innerBlocks: applyFilters( 'sensei-lms.Course.completedActions', [
 			[
 				'core/button',
