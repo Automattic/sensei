@@ -1,8 +1,0 @@
-{
-  "name": "sensei-lms/course-completed-actions",
-  "category": "sensei-lms",
-  "textdomain": "sensei-lms",
-  "supports": {
-    "html": false
-  }
-}
