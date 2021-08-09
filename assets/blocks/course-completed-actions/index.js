@@ -7,7 +7,7 @@ import { applyFilters } from '@wordpress/hooks';
 
 export const registerCourseCompletedActionsBlock = () =>
 	registerBlockVariation( 'core/buttons', {
-		name: 'course-completed-actions',
+		name: 'sensei-lms/course-completed-actions',
 		title: __( 'Course Completed Actions', 'sensei-lms' ),
 		description: __(
 			'Prompt learners to take action after completing a course.',
