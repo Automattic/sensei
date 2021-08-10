@@ -275,9 +275,9 @@ class Sensei_Course_Results_Block {
 	private function render_lesson( $item ) {
 		$section_content   = [];
 		$section_content[] = '<li class="wp-block-sensei-lms-course-results__lesson">';
-		$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson__title">';
+		$section_content[] = '<a class="wp-block-sensei-lms-course-results__lesson__title" href="' . esc_url( get_permalink( $item['id'] ) ) . '">';
 		$section_content[] = esc_html( $item['title'] );
-		$section_content[] = '</span>';
+		$section_content[] = '</a>';
 
 		$grade = $this->get_lesson_grade( $item['id'] );
 		if ( null !== $grade ) {

@@ -28,13 +28,17 @@ import { sprintf, __ } from '@wordpress/i18n';
  */
 const SampleLesson = ( { lessonNumber } ) => (
 	<li className="wp-block-sensei-lms-course-results__lesson">
-		<span className="wp-block-sensei-lms-course-results__lesson__title">
+		{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+		<a
+			href="#"
+			className="wp-block-sensei-lms-course-results__lesson__title"
+		>
 			{ sprintf(
 				/* translators: Mock lesson number. */
 				__( 'Lesson %s', 'sensei-lms' ),
 				lessonNumber
 			) }
-		</span>
+		</a>
 		<span className="wp-block-sensei-lms-course-results__lesson__score">
 			xx%
 		</span>

@@ -75,14 +75,15 @@ $block: '.wp-block-sensei-lms-course-results';
 		padding: 0;
 
 		#{$block}__lesson {
-			display: flex;
 			align-items: center;
+			display: flex;
 			margin: 1px 0;
 			position: relative;
 
 			&__title {
 				flex: 1;
 				padding: $spacing;
+				text-decoration: none;
 			}
 
 			&__score {
