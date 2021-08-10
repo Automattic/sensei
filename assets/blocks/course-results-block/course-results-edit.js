@@ -44,13 +44,12 @@ const SampleLesson = ( { lessonNumber } ) => (
 /**
  * Sample module component.
  *
- * @param {Object}  props               Component props.
- * @param {string}  props.moduleName    The name of the module.
- * @param {Array}   props.lessonNumbers The lesson numbers to include in the sample module.
- * @param {string}  props.style         The style selected for the results block.
- * @param {boolean} props.moduleBorder  If modules have borders.
+ * @param {Object}  props              Component props.
+ * @param {string}  props.moduleName   The name of the module.
+ * @param {string}  props.style        The style selected for the results block.
+ * @param {boolean} props.moduleBorder If modules have borders.
  */
-const SampleModule = ( { moduleName, lessonNumbers, style, moduleBorder } ) => (
+const SampleModule = ( { moduleName, style, moduleBorder } ) => (
 	<section
 		className={ classnames( 'wp-block-sensei-lms-course-results__module', {
 			'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
@@ -66,7 +65,7 @@ const SampleModule = ( { moduleName, lessonNumbers, style, moduleBorder } ) => (
 			<div className="wp-block-sensei-lms-course-results__module__separator" />
 		) }
 
-		{ lessonNumbers.map( ( lessonNumber, index ) => (
+		{ [ 1, 2 ].map( ( lessonNumber, index ) => (
 			<SampleLesson key={ index } lessonNumber={ lessonNumber } />
 		) ) }
 	</section>
@@ -138,19 +137,16 @@ const CourseResultsEdit = ( props ) => {
 				</h2>
 				<SampleModule
 					moduleName={ __( 'Module A', 'sensei-lms' ) }
-					lessonNumbers={ [ 1, 2, 3 ] }
 					moduleBorder={ moduleBorder }
 					style={ style }
 				/>
 				<SampleModule
 					moduleName={ __( 'Module B', 'sensei-lms' ) }
-					lessonNumbers={ [ 4, 5, 6 ] }
 					moduleBorder={ moduleBorder }
 					style={ style }
 				/>
 				<SampleModule
 					moduleName={ __( 'Module C', 'sensei-lms' ) }
-					lessonNumbers={ [ 7, 8 ] }
 					moduleBorder={ moduleBorder }
 					style={ style }
 				/>
