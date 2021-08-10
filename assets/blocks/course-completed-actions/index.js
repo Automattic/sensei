@@ -24,7 +24,7 @@ export const registerCourseCompletedActionsBlock = () =>
 			[
 				'core/button',
 				{
-					className: 'find-courses',
+					className: 'more-courses',
 					text: __( 'Find More Courses', 'sensei-lms' ),
 				},
 			],
