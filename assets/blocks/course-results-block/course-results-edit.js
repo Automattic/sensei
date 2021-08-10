@@ -27,7 +27,7 @@ import { sprintf, __ } from '@wordpress/i18n';
  * @param {Array}  props.lessonNumber The lesson number to use in the sample title.
  */
 const SampleLesson = ( { lessonNumber } ) => (
-	<div className="wp-block-sensei-lms-course-results__lesson">
+	<li className="wp-block-sensei-lms-course-results__lesson">
 		<span className="wp-block-sensei-lms-course-results__lesson__title">
 			{ sprintf(
 				/* translators: Mock lesson number. */
@@ -38,7 +38,7 @@ const SampleLesson = ( { lessonNumber } ) => (
 		<span className="wp-block-sensei-lms-course-results__lesson__score">
 			xx%
 		</span>
-	</div>
+	</li>
 );
 
 /**
@@ -65,9 +65,11 @@ const SampleModule = ( { moduleName, style, moduleBorder } ) => (
 			<div className="wp-block-sensei-lms-course-results__module__separator" />
 		) }
 
-		{ [ 1, 2 ].map( ( lessonNumber, index ) => (
-			<SampleLesson key={ index } lessonNumber={ lessonNumber } />
-		) ) }
+		<ul className="wp-block-sensei-lms-course-results__lessons">
+			{ [ 1, 2 ].map( ( lessonNumber, index ) => (
+				<SampleLesson key={ index } lessonNumber={ lessonNumber } />
+			) ) }
+		</ul>
 	</section>
 );
 

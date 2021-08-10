@@ -1,8 +1,9 @@
 $dark-gray: #1a1d20;
 $spacing: 16px;
+$block: '.wp-block-sensei-lms-course-results';
 
-.wp-block-sensei-lms-course-results,
-.editor-styles-wrapper .wp-block-sensei-lms-course-results {
+#{$block},
+.editor-styles-wrapper #{$block} {
 	&__grade {
 		margin: auto 0;
 		text-align: center;
@@ -55,7 +56,7 @@ $spacing: 16px;
 		}
 
 		&__title,
-		.wp-block-sensei-lms-course-results &__title {
+		#{$block} &__title {
 			font-size: 1.1em;
 			font-weight: inherit;
 			flex: 1;
@@ -68,23 +69,29 @@ $spacing: 16px;
 		}
 	}
 
-	&__lesson {
-		display: flex;
-		align-items: center;
-		margin: 1px 0;
-		position: relative;
+	&__lessons {
+		list-style: none;
+		margin: 0;
+		padding: 0;
 
-		&__title {
-			flex: 1;
-			padding: $spacing;
-		}
+		#{$block}__lesson {
+			display: flex;
+			align-items: center;
+			margin: 1px 0;
+			position: relative;
 
-		&__score {
-			display: inline-block;
-			flex: 0 0 40px;
-			margin: 0 $spacing;
-			flex-shrink: 0;
-			opacity: 0.9;
+			&__title {
+				flex: 1;
+				padding: $spacing;
+			}
+
+			&__score {
+				display: inline-block;
+				flex: 0 0 40px;
+				margin: 0 $spacing;
+				flex-shrink: 0;
+				opacity: 0.9;
+			}
 		}
 	}
 }
