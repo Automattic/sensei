@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { select, dispatch } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 // Legacy metaboxes toggle control.
 ( () => {
@@ -33,6 +33,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 	// WordPress data.
 	const blockEditorSelector = select( 'core/block-editor' );
+	const coreEditorSelector = select( 'core/editor' );
 	const editPostSelector = select( 'core/edit-post' );
 	const editPostDispatcher = dispatch( 'core/edit-post' );
 	const { createWarningNotice, removeNotice } = dispatch( 'core/notices' );
@@ -60,7 +61,9 @@ import { __, sprintf } from '@wordpress/i18n';
 			}
 		);
 
-		toggleLegacyOrBlocksNotice( postType, action );
+		if ( coreEditorSelector.isEditedPostDirty() ) {
+			toggleLegacyOrBlocksNotice( postType, action );
+		}
 
 		// Prevent submit course modules.
 		document
