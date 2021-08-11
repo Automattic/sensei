@@ -26,11 +26,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	public function initialize_blocks() {
 		new Sensei_Learner_Courses_Block();
 		new Sensei_Learner_Messages_Button_Block();
-
-		if ( Sensei()->feature_flags->is_enabled( 'course_completed_page' ) ) {
-			new Sensei_Course_Completed_Actions_Block();
-			new Sensei_Course_Results_Block();
-		}
+		new Sensei_Course_Completed_Actions_Block();
+		new Sensei_Course_Results_Block();
 	}
 
 	/**
@@ -45,19 +42,6 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		Sensei()->assets->enqueue(
 			'sensei-single-page-blocks-style',
 			'blocks/single-page-style.css'
-		);
-
-		wp_add_inline_script(
-			'sensei-single-page-blocks',
-			sprintf(
-				'window.sensei_single_page_blocks = %s',
-				wp_json_encode(
-					[
-						'course_completed_page_enabled' => Sensei()->feature_flags->is_enabled( 'course_completed_page' ),
-					]
-				)
-			),
-			'before'
 		);
 	}
 

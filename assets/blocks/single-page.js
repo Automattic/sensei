@@ -9,9 +9,6 @@ import { registerCourseCompletedActionsBlock } from './course-completed-actions'
 
 const blocks = [ LearnerCoursesBlock, LearnerMessagesButtonBlock ];
 
-if ( window.sensei_single_page_blocks.course_completed_page_enabled ) {
-	registerCourseCompletedActionsBlock();
-	blocks.push( CourseResultsBlock );
-}
-
+registerCourseCompletedActionsBlock();
+blocks.push( CourseResultsBlock );
 registerSenseiBlocks( blocks );
