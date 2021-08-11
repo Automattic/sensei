@@ -5,7 +5,7 @@ $block: '.wp-block-sensei-lms-course-results';
 #{$block},
 .editor-styles-wrapper #{$block} {
 	&.is-style-default {
-		#{$block}__module__header:not(.has-background) {
+		#{$block}__module-header:not(.has-background) {
 			background-color: $dark-gray;
 		}
 	}
@@ -15,11 +15,11 @@ $block: '.wp-block-sensei-lms-course-results';
 		text-align: center;
 		width: 100%;
 
-		&__label {
+		&-label {
 			font-size: 1.1em;
 		}
 
-		&__score {
+		&-score {
 			display: block;
 			font-size: 2em;
 			font-weight: bold;
@@ -27,7 +27,7 @@ $block: '.wp-block-sensei-lms-course-results';
 		}
 	}
 
-	&__title {
+	&__course-title {
 		margin: 1em 0 0.5em;
 		padding: 0;
 		text-align: center;
@@ -48,7 +48,11 @@ $block: '.wp-block-sensei-lms-course-results';
 	&__module {
 		margin: 1em 0;
 
-		&__header {
+		&--has-border {
+			border: 1px solid var( --sensei-module-border-color, $dark-gray );
+		}
+
+		&-header {
 			padding: $spacing;
 			font-weight: bold;
 			display: flex;
@@ -57,12 +61,8 @@ $block: '.wp-block-sensei-lms-course-results';
 			color: var( --sensei-module-header-text-color );
 		}
 
-		&__bordered {
-			border: 1px solid var( --sensei-module-border-color, $dark-gray );
-		}
-
-		&__title,
-		#{$block} &__title {
+		&-title,
+		#{$block} &-title {
 			font-size: 1.1em;
 			font-weight: inherit;
 			flex: 1;
@@ -86,13 +86,13 @@ $block: '.wp-block-sensei-lms-course-results';
 			margin: 1px 0;
 			position: relative;
 
-			&__title {
+			&-title {
 				flex: 1;
 				padding: $spacing;
 				text-decoration: none;
 			}
 
-			&__score {
+			&-score {
 				display: inline-block;
 				flex: 0 0 40px;
 				margin: 0 $spacing;

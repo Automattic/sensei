@@ -31,7 +31,7 @@ const SampleLesson = ( { lessonNumber } ) => (
 		{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 		<a
 			href="#"
-			className="wp-block-sensei-lms-course-results__lesson__title"
+			className="wp-block-sensei-lms-course-results__lesson-title"
 		>
 			{ sprintf(
 				/* translators: Mock lesson number. */
@@ -39,7 +39,7 @@ const SampleLesson = ( { lessonNumber } ) => (
 				lessonNumber
 			) }
 		</a>
-		<span className="wp-block-sensei-lms-course-results__lesson__score">
+		<span className="wp-block-sensei-lms-course-results__lesson-score">
 			xx%
 		</span>
 	</li>
@@ -57,14 +57,14 @@ const SampleLesson = ( { lessonNumber } ) => (
 const SampleModule = ( { moduleName, moduleBorder, headerStyles, style } ) => (
 	<section
 		className={ classnames( 'wp-block-sensei-lms-course-results__module', {
-			'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
+			'wp-block-sensei-lms-course-results__module--has-border': moduleBorder,
 		} ) }
 	>
 		<header
-			className="wp-block-sensei-lms-course-results__module__header"
+			className="wp-block-sensei-lms-course-results__module-header"
 			style={ headerStyles }
 		>
-			<h3 className="wp-block-sensei-lms-course-results__module__title">
+			<h3 className="wp-block-sensei-lms-course-results__module-title">
 				{ moduleName }
 			</h3>
 		</header>
@@ -135,14 +135,14 @@ const CourseResultsEdit = ( props ) => {
 			<CourseResultsSettings { ...props } />
 			<section className={ className } style={ styleVars }>
 				<div className="wp-block-sensei-lms-course-results__grade">
-					<span className="wp-block-sensei-lms-course-results__grade__label">
+					<span className="wp-block-sensei-lms-course-results__grade-label">
 						{ __( 'Your Total Grade', 'sensei-lms' ) }
 					</span>
-					<span className="wp-block-sensei-lms-course-results__grade__score">
+					<span className="wp-block-sensei-lms-course-results__grade-score">
 						XX%
 					</span>
 				</div>
-				<h2 className="wp-block-sensei-lms-course-results__title">
+				<h2 className="wp-block-sensei-lms-course-results__course-title">
 					{ __( 'Course Title', 'sensei-lms' ) }
 				</h2>
 				<SampleModule
