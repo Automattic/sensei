@@ -226,13 +226,11 @@ class Sensei_Course_Results_Block {
 
 		if ( 0 < count( $item['lessons'] ) ) {
 			$section_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons">';
-		}
 
-		foreach ( $item['lessons'] as $lesson ) {
-			$section_content[] = $this->render_lesson( $lesson );
-		}
+			foreach ( $item['lessons'] as $lesson ) {
+				$section_content[] = $this->render_lesson( $lesson );
+			}
 
-		if ( 0 < count( $item['lessons'] ) ) {
 			$section_content[] = '</ul>';
 		}
 
