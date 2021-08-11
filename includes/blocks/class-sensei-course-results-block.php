@@ -96,15 +96,13 @@ class Sensei_Course_Results_Block {
 		// Render other lessons.
 		if ( $has_other_lessons ) {
 			$block_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons wp-block-sensei-lms-course-results__lessons--has-other">';
-		}
 
-		foreach ( $structure as $item ) {
-			if ( 'lesson' === $item['type'] ) {
-				$block_content[] = $this->render_lesson( $item );
+			foreach ( $structure as $item ) {
+				if ( 'lesson' === $item['type'] ) {
+					$block_content[] = $this->render_lesson( $item );
+				}
 			}
-		}
 
-		if ( $has_other_lessons ) {
 			$block_content[] = '</ul>';
 		}
 
