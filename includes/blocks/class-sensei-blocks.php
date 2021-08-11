@@ -190,7 +190,12 @@ class Sensei_Blocks {
 	 * @return string Block HTML.
 	 */
 	public static function update_button_block_url( $block_content, $block, $class_name, $url ): string {
-		if ( ! isset( $block['blockName'] ) || 'core/button' !== $block['blockName'] ) {
+		if (
+			! isset( $block['blockName'] )
+			|| 'core/button' !== $block['blockName']
+			|| ! isset( $block['attrs']['className'] )
+			|| false === strpos( $block['attrs']['className'], $class_name )
+		) {
 			return $block_content;
 		}
 
@@ -206,21 +211,13 @@ class Sensei_Blocks {
 			return $block_content;
 		}
 
-		// Locate correct button using CSS class as identifier.
-		foreach ( $parent_node->attributes as $attribute ) {
-			if ( 'class' === $attribute->name ) {
-				if ( false !== strpos( $attribute->value, $class_name ) ) {
-					$anchor_node = $parent_node->getElementsByTagName( 'a' )->length > 0 ? $parent_node->getElementsByTagName( 'a' )[0] : '';
+		// Get anchor node.
+		$anchor_node = $parent_node->getElementsByTagName( 'a' )->length > 0 ? $parent_node->getElementsByTagName( 'a' )[0] : '';
 
-					// Open the appropriate page when the button is clicked.
-					if ( $anchor_node ) {
-						$anchor_node->setAttribute( 'href', $url );
-						$block_content = $dom->saveHTML( $parent_node );
-					}
-				}
-
-				break;
-			}
+		// Open the appropriate page when the button is clicked.
+		if ( $anchor_node ) {
+			$anchor_node->setAttribute( 'href', $url );
+			$block_content = $dom->saveHTML( $parent_node );
 		}
 
 		return $block_content;
