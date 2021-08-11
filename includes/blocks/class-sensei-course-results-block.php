@@ -79,8 +79,7 @@ class Sensei_Course_Results_Block {
 
 		$class_name        = Sensei_Block_Helpers::block_class_with_default_style( $attributes, [] );
 		$structure         = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
-		$other_lessons     = array_count_values( array_column( $structure, 'type' ) );
-		$has_other_lessons = array_key_exists( 'lesson', $other_lessons ) && 0 < $other_lessons['lesson'];
+		$has_other_lessons = $this->course_structure_has_type( $structure, 'lesson' );
 		$block_content     = [];
 		$block_content[]   = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper ' . $class_name . '">';
 		$block_content[]   = $this->render_total_grade( $course_id );
@@ -159,8 +158,7 @@ class Sensei_Course_Results_Block {
 		}
 
 		// Render separator for courses that don't have any modules.
-		$type_counts = array_count_values( array_column( $structure, 'type' ) );
-		$has_modules = array_key_exists( 'module', $type_counts ) && 0 < $type_counts['module'];
+		$has_modules = $this->course_structure_has_type( $structure, 'module' );
 
 		if ( ! $has_modules ) {
 			$content[] = '<div class="wp-block-sensei-lms-course-results__separator"></div>';
@@ -333,4 +331,17 @@ class Sensei_Course_Results_Block {
 		return $grade;
 	}
 
+	/**
+	 * Check whether the course structure contains an item of the specified type.
+	 *
+	 * @param array  $structure  Course structure information.
+	 * @param string $type       Type to check (module, lesson).
+	 *
+	 * @return bool Whether an item of the specified type exists in the course structure.
+	 */
+	private function course_structure_has_type( $structure, $type ) {
+		$type_counts = array_count_values( array_column( $structure, 'type' ) );
+
+		return array_key_exists( $type, $type_counts ) && 0 < $type_counts[ $type ];
+	}
 }
