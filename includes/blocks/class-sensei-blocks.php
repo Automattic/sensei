@@ -178,4 +178,48 @@ class Sensei_Blocks {
 
 		return false !== strpos( (string) $post, '<!-- wp:sensei-lms/' );
 	}
+
+	/**
+	 * Update the URL of a button block.
+	 *
+	 * @param string $block_content The block content about to be appended.
+	 * @param array  $block         The full block, including name and attributes.
+	 * @param string $class_name    The CSS class name used to identify the correct block.
+	 * @param string $url           The URL to navigate to when the button is clicked.
+	 *
+	 * @return string Block HTML.
+	 */
+	public static function update_button_block_url( $block_content, $block, $class_name, $url ): string {
+		if (
+			! isset( $block['blockName'] )
+			|| 'core/button' !== $block['blockName']
+			|| ! isset( $block['attrs']['className'] )
+			|| false === strpos( $block['attrs']['className'], $class_name )
+		) {
+			return $block_content;
+		}
+
+		if ( ! $url ) {
+			return $block_content;
+		}
+
+		$dom = new DomDocument();
+		$dom->loadHTML( $block_content );
+		$parent_node = $dom->getElementsByTagName( 'div' )->length > 0 ? $dom->getElementsByTagName( 'div' )[0] : '';
+
+		if ( ! $parent_node || ! $parent_node->hasAttributes() ) {
+			return $block_content;
+		}
+
+		// Get anchor node.
+		$anchor_node = $parent_node->getElementsByTagName( 'a' )->length > 0 ? $parent_node->getElementsByTagName( 'a' )[0] : '';
+
+		// Open the appropriate page when the button is clicked.
+		if ( $anchor_node ) {
+			$anchor_node->setAttribute( 'href', $url );
+			$block_content = $dom->saveHTML( $parent_node );
+		}
+
+		return $block_content;
+	}
 }
