@@ -80,6 +80,10 @@ $block: '.wp-block-sensei-lms-course-results';
 		margin: 0;
 		padding: 0;
 
+		&--has-other #{$block}__lesson {
+			border-bottom: 1px solid $dark-gray;
+		}
+
 		#{$block}__lesson {
 			align-items: center;
 			display: flex;

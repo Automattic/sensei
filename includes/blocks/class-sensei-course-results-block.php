@@ -95,7 +95,7 @@ class Sensei_Course_Results_Block {
 
 		// Render other lessons.
 		if ( $has_other_lessons ) {
-			$block_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons">';
+			$block_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons wp-block-sensei-lms-course-results__lessons--has-other">';
 		}
 
 		foreach ( $structure as $item ) {
@@ -161,18 +161,11 @@ class Sensei_Course_Results_Block {
 		}
 
 		// Render separator for courses that don't have any modules.
-		$type_counts   = array_count_values( array_column( $structure, 'type' ) );
-		$has_modules   = array_key_exists( 'module', $type_counts ) && 0 < $type_counts['module'];
-		$separator_css = Sensei_Block_Helpers::build_styles(
-			$attributes,
-			[
-				'mainColor'   => 'background-color',
-				'borderColor' => null,
-			]
-		);
+		$type_counts = array_count_values( array_column( $structure, 'type' ) );
+		$has_modules = array_key_exists( 'module', $type_counts ) && 0 < $type_counts['module'];
 
 		if ( ! $has_modules ) {
-			$content[] = '<div ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-results__separator', $separator_css ) . '></div>';
+			$content[] = '<div class="wp-block-sensei-lms-course-results__separator"></div>';
 		}
 
 		return implode( $content );
