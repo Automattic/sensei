@@ -55,8 +55,6 @@ $block: '.wp-block-sensei-lms-course-results';
 		&-header {
 			padding: $spacing;
 			font-weight: bold;
-			display: flex;
-			align-items: center;
 			background: var( --sensei-module-header-bg-color );
 			color: var( --sensei-module-header-text-color );
 		}
@@ -65,7 +63,6 @@ $block: '.wp-block-sensei-lms-course-results';
 		#{$block} &-title {
 			font-size: 1.1em;
 			font-weight: inherit;
-			flex: 1;
 			margin: 0;
 			color: inherit;
 			&::before,
@@ -85,15 +82,18 @@ $block: '.wp-block-sensei-lms-course-results';
 		}
 
 		#{$block}__lesson {
-			align-items: center;
-			display: flex;
 			margin: 1px 0;
 			position: relative;
+
+			#{$block}__lesson-link {
+				align-items: center;
+				display: flex;
+				text-decoration: none;
+			}
 
 			&-title {
 				flex: 1;
 				padding: $spacing;
-				text-decoration: none;
 			}
 
 			&-score {
