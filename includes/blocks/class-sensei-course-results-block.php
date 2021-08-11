@@ -77,11 +77,12 @@ class Sensei_Course_Results_Block {
 			return $this->block_content;
 		}
 
+		$class_name        = Sensei_Block_Helpers::block_class_with_default_style( $attributes, [] );
 		$structure         = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
 		$other_lessons     = array_count_values( array_column( $structure, 'type' ) );
 		$has_other_lessons = array_key_exists( 'lesson', $other_lessons ) && 0 < $other_lessons['lesson'];
 		$block_content     = [];
-		$block_content[]   = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper">';
+		$block_content[]   = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper' . $class_name . '">';
 		$block_content[]   = $this->render_total_grade( $course_id );
 		$block_content[]   = $this->render_course_title( $course_id );
 
@@ -241,7 +242,7 @@ class Sensei_Course_Results_Block {
 	 * @return string The html attributes.
 	 */
 	private function get_module_html_attributes( $class_name, $attributes ) : string {
-		$class_names   = [ 'wp-block-sensei-lms-course-results__module', $class_name ];
+		$class_names   = [ 'wp-block-sensei-lms-course-results__module' ];
 		$inline_styles = [];
 		$css           = Sensei_Block_Helpers::build_styles(
 			$attributes,

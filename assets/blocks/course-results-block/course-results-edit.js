@@ -50,16 +50,20 @@ const SampleLesson = ( { lessonNumber } ) => (
  *
  * @param {Object}  props              Component props.
  * @param {string}  props.moduleName   The name of the module.
- * @param {string}  props.style        The style selected for the results block.
  * @param {boolean} props.moduleBorder If modules have borders.
+ * @param {string}  props.headerStyles The module header styles.
+ * @param {string}  props.style        The style selected for the results block.
  */
-const SampleModule = ( { moduleName, style, moduleBorder } ) => (
+const SampleModule = ( { moduleName, moduleBorder, headerStyles, style } ) => (
 	<section
 		className={ classnames( 'wp-block-sensei-lms-course-results__module', {
 			'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
 		} ) }
 	>
-		<header className="wp-block-sensei-lms-course-results__module__header">
+		<header
+			className="wp-block-sensei-lms-course-results__module__header"
+			style={ headerStyles }
+		>
 			<h3 className="wp-block-sensei-lms-course-results__module__title">
 				{ moduleName }
 			</h3>
@@ -144,16 +148,19 @@ const CourseResultsEdit = ( props ) => {
 				<SampleModule
 					moduleName={ __( 'Module A', 'sensei-lms' ) }
 					moduleBorder={ moduleBorder }
+					headerStyles={ headerStyles }
 					style={ style }
 				/>
 				<SampleModule
 					moduleName={ __( 'Module B', 'sensei-lms' ) }
 					moduleBorder={ moduleBorder }
+					headerStyles={ headerStyles }
 					style={ style }
 				/>
 				<SampleModule
 					moduleName={ __( 'Module C', 'sensei-lms' ) }
 					moduleBorder={ moduleBorder }
+					headerStyles={ headerStyles }
 					style={ style }
 				/>
 			</section>

@@ -4,6 +4,12 @@ $block: '.wp-block-sensei-lms-course-results';
 
 #{$block},
 .editor-styles-wrapper #{$block} {
+	&.is-style-default {
+		#{$block}__module__header:not(.has-background) {
+			background-color: $dark-gray;
+		}
+	}
+
 	&__grade {
 		margin: auto 0;
 		text-align: center;
