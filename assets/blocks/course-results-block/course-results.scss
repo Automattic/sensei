@@ -33,6 +33,18 @@ $block: '.wp-block-sensei-lms-course-results';
 		text-align: center;
 	}
 
+	&__separator {
+		display: block;
+		border: none;
+		height: 4px;
+		margin-left: 4px;
+		margin-right: 4px;
+		background-color: var(
+			--sensei-module-header-separator-color,
+			$dark-gray
+		);
+	}
+
 	&__module {
 		margin: 1em 0;
 
@@ -47,18 +59,6 @@ $block: '.wp-block-sensei-lms-course-results';
 
 		&__bordered {
 			border: 1px solid var( --sensei-module-border-color, $dark-gray );
-		}
-
-		&__separator {
-			display: block;
-			border: none;
-			height: 4px;
-			margin-left: 4px;
-			margin-right: 4px;
-			background-color: var(
-				--sensei-module-header-separator-color,
-				$dark-gray
-			);
 		}
 
 		&__title,

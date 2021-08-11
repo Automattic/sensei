@@ -70,7 +70,7 @@ const SampleModule = ( { moduleName, moduleBorder, headerStyles, style } ) => (
 		</header>
 
 		{ 'minimal' === style && (
-			<div className="wp-block-sensei-lms-course-results__module__separator" />
+			<div className="wp-block-sensei-lms-course-results__separator" />
 		) }
 
 		<ul className="wp-block-sensei-lms-course-results__lessons">
