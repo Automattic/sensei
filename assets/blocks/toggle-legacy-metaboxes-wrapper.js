@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useEffect } from '@wordpress/element';
+import { useLayoutEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -20,7 +20,7 @@ const ToggleLegacyMetaboxesWrapper = ( {
 		select( 'core/editor' ).getCurrentPostType()
 	);
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		if ( isPreview || ! window.sensei_toggle_legacy_metaboxes ) {
 			return;
 		}
@@ -29,7 +29,7 @@ const ToggleLegacyMetaboxesWrapper = ( {
 
 		return () =>
 			window.sensei_toggle_legacy_metaboxes( postType, 'remove' );
-	}, [ isPreview ] );
+	}, [ isPreview, postType ] );
 
 	return children;
 };
