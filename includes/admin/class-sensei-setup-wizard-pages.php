@@ -107,7 +107,7 @@ class Sensei_Setup_Wizard_Pages {
 		$blocks[] = serialize_block(
 			[
 				'blockName'    => 'core/paragraph',
-				'innerContent' => [ '<p class="has-text-align-center has-large-font-size">' . __( 'Congratulations on completing the course! 🥳', 'sensei-lms' ) . '</p>' ],
+				'innerContent' => [ '<p class="has-text-align-center has-large-font-size">' . __( 'Congratulations on completing this course! 🥳', 'sensei-lms' ) . '</p>' ],
 				'attrs'        => [
 					'align'    => 'center',
 					'fontSize' => 'large',
