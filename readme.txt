@@ -1,10 +1,10 @@
 === Sensei LMS ===
 Contributors: automattic, alexsanford1, donnapep, jakeom, gikaragia, renathoc, yscik, dwainm, panosktn, jeffikus
 Tags: elearning, lms, learning management system, teach, tutor
-Requires at least: 5.5
-Tested up to: 5.7
+Requires at least: 5.6
+Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 3.12.0
+Stable tag: 3.13.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
