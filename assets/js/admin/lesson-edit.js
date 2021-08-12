@@ -1,4 +1,17 @@
-jQuery( document ).ready( function () {
+/**
+ * WordPress dependencies
+ */
+import { select, dispatch } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
+
+/**
+ * Internal dependencies
+ */
+import './post-edit';
+
+domReady( () => {
+	window.sensei_toggle_legacy_metaboxes( 'lesson', 'pageload' );
+
 	// Lessons Write Panel.
 	const complexityOptionElements = jQuery( '#lesson-complexity-options' );
 	if ( complexityOptionElements.length > 0 ) {

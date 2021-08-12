@@ -50,9 +50,55 @@ final class Sensei_Extensions {
 	 */
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
-		if ( in_array( $screen->id, array( 'sensei-lms_page_sensei-extensions' ), true ) ) {
-			Sensei()->assets->enqueue( 'sensei-admin-extensions', 'css/extensions.css', [], 'screen' );
+
+		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
+			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
+			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
+			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
+
+			$this->localize_script();
 		}
+	}
+
+	/**
+	 * Localize extensions script.
+	 *
+	 * @since 3.11.0
+	 */
+	private function localize_script() {
+		$data = array(
+			'connectUrl' => add_query_arg(
+				array(
+					'page'              => 'wc-addons',
+					'section'           => 'helper',
+					'wc-helper-connect' => 1,
+					'wc-helper-nonce'   => wp_create_nonce( 'connect' ),
+				),
+				admin_url( 'admin.php' )
+			),
+		);
+
+		if ( ! Sensei_Utils::is_woocommerce_installed() ) {
+			$data['installUrl'] = self_admin_url( 'plugin-install.php?s=woocommerce&tab=search&type=term&plugin_details=woocommerce' );
+		} elseif ( ! Sensei_Utils::is_woocommerce_active() ) {
+			$plugin_file         = 'woocommerce/woocommerce.php';
+			$data['activateUrl'] = wp_nonce_url(
+				add_query_arg(
+					array(
+						'action' => 'activate',
+						'plugin' => $plugin_file,
+					),
+					self_admin_url( 'plugins.php' )
+				),
+				'activate-plugin_' . $plugin_file
+			);
+		}
+
+		wp_localize_script(
+			'sensei-extensions',
+			'sensei_extensions',
+			$data
+		);
 	}
 
 	/**
@@ -67,7 +113,7 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	public function get_extensions( $type = null, $category = null, $additional_query_args = [] ) {
-		$extension_request_key = md5( $type . '|' . $category . '|' . wp_json_encode( $additional_query_args ) );
+		$extension_request_key = md5( $type . '|' . $category . '|' . determine_locale() . '|' . wp_json_encode( $additional_query_args ) );
 		$extensions            = get_transient( 'sensei_extensions_' . $extension_request_key );
 
 		if ( false === $extensions ) {
@@ -77,6 +123,7 @@ final class Sensei_Extensions {
 						[
 							'category' => $category,
 							'type'     => $type,
+							'lang'     => determine_locale(),
 						],
 						$additional_query_args
 					),
@@ -93,67 +140,127 @@ final class Sensei_Extensions {
 			}
 		}
 
+		if ( 'plugin' === $type ) {
+			return $this->add_installed_extensions_properties( $extensions );
+		}
+
 		return $extensions;
 	}
 
 	/**
-	 * Get resources (such as categories and product types) for the extensions screen.
+	 * Map the extensions array, adding the installed properties.
 	 *
-	 * @since  2.0.0
+	 * @param array $extensions Extensions.
 	 *
-	 * @return array of objects.
+	 * @return array Extensions with installed properties.
 	 */
-	private function get_resources() {
-		$extension_resources = get_transient( 'sensei_extensions_resources' );
-		if ( false === $extension_resources ) {
-			$raw_resources = wp_safe_remote_get(
-				add_query_arg(
-					array(
-						'version' => Sensei()->version,
-						'lang'    => get_locale(),
-					),
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/resources'
-				)
-			);
-			if ( ! is_wp_error( $raw_resources ) ) {
-				$extension_resources = json_decode( wp_remote_retrieve_body( $raw_resources ) );
-				if ( $extension_resources ) {
-					set_transient( 'sensei_extensions_resources', $extension_resources, DAY_IN_SECONDS );
-				}
-			}
+	private function add_installed_extensions_properties( $extensions ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$installed_plugins = get_plugins();
+
+		$wccom_subscriptions = [];
+
+		if ( class_exists( 'WC_Helper_Options' ) ) {
+			$wccom_subscriptions = WC_Helper::get_subscriptions();
 		}
 
-		return $extension_resources;
+		// Includes installed version, whether it has update and WC.com metadata.
+		$extensions = array_map(
+			function( $extension ) use ( $installed_plugins, $wccom_subscriptions ) {
+				$extension->is_installed = isset( $installed_plugins[ $extension->plugin_file ] );
+
+				if ( $extension->is_installed ) {
+					$extension->installed_version = $installed_plugins[ $extension->plugin_file ]['Version'];
+					$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
+				}
+
+				if ( isset( $extension->wccom_product_id ) ) {
+					foreach ( $wccom_subscriptions as $wccom_subscription ) {
+						if ( (int) $extension->wccom_product_id === $wccom_subscription['product_id'] ) {
+							$extension->wccom_expired = $wccom_subscription['expired'];
+
+							if ( ! $extension->wccom_expired ) {
+								break;
+							}
+						}
+					}
+				}
+
+				return $extension;
+			},
+			$extensions
+		);
+
+		return $extensions;
 	}
 
 	/**
-	 * Get messages for the extensions page.
+	 * Get extensions page layout.
 	 *
-	 * @since  2.0.0
+	 * @since 3.11.0
 	 *
 	 * @return array
 	 */
-	private function get_messages() {
-		$extension_messages = get_transient( 'sensei_extensions_messages' );
-		if ( false === $extension_messages ) {
-			$raw_messages = wp_safe_remote_get(
+	public function get_layout() {
+		$transient_key    = implode( '_', [ 'sensei_extensions_layout', determine_locale() ] );
+		$extension_layout = get_transient( $transient_key );
+		if ( false === $extension_layout ) {
+			$raw_layout = wp_safe_remote_get(
 				add_query_arg(
-					array(
-						'version' => Sensei()->version,
-						'lang'    => get_locale(),
-					),
-					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/messages'
+					[ 'lang' => determine_locale() ],
+					self::SENSEILMS_PRODUCTS_API_BASE_URL . '/layout'
 				)
 			);
-			if ( ! is_wp_error( $raw_messages ) ) {
-				$extension_messages = json_decode( wp_remote_retrieve_body( $raw_messages ) );
-				if ( $extension_messages ) {
-					set_transient( 'sensei_extensions_messages', $extension_messages, DAY_IN_SECONDS );
-				}
+
+			if ( ! is_wp_error( $raw_layout ) ) {
+				$json             = json_decode( wp_remote_retrieve_body( $raw_layout ) );
+				$extension_layout = isset( $json->layout ) ? $json->layout : [];
+				set_transient( $transient_key, $extension_layout, DAY_IN_SECONDS );
 			}
 		}
 
-		return $extension_messages;
+		return $extension_layout;
+	}
+
+	/**
+	 * Get updates count.
+	 *
+	 * @return int Updates count.
+	 */
+	private function get_has_update_count() {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		return count(
+			array_filter(
+				array_column( $extensions, 'has_update' )
+			)
+		);
+	}
+
+	/**
+	 * Get installed Sensei plugins.
+	 *
+	 * @param bool $only_woo Only include WooCommerce.com extensions.
+	 *
+	 * @return array
+	 */
+	public function get_installed_plugins( $only_woo = false ) {
+		$extensions = $this->get_extensions( 'plugin' );
+
+		return array_filter(
+			$extensions,
+			function( $extension ) use ( $only_woo ) {
+				if (
+					empty( $extension->installed_version )
+					|| ( $only_woo && empty( $extension->wccom_product_id ) )
+				) {
+					return false;
+				}
+
+				return true;
+			}
+		);
 	}
 
 	/**
@@ -163,7 +270,21 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
-		add_submenu_page( 'sensei', __( 'Sensei LMS Extensions', 'sensei-lms' ), __( 'Extensions', 'sensei-lms' ), 'install_plugins', 'sensei-extensions', array( $this, 'render' ) );
+		$updates_html = '';
+		$updates      = $this->get_has_update_count();
+
+		if ( $updates > 0 ) {
+			$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
+		}
+
+		add_submenu_page(
+			'sensei',
+			__( 'Sensei LMS Extensions', 'sensei-lms' ),
+			__( 'Extensions', 'sensei-lms' ) . $updates_html,
+			'install_plugins',
+			'sensei-extensions',
+			[ $this, 'render' ]
+		);
 	}
 
 	/**
@@ -174,25 +295,14 @@ final class Sensei_Extensions {
 	 */
 	public function render() {
 		// phpcs:ignore WordPress.Security.NonceVerification
-		$category = isset( $_GET['category'] ) ? sanitize_text_field( $_GET['category'] ) : null;
-
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : null;
-
-		// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- used in view
-		$messages   = $this->get_messages();
-		$resources  = $this->get_resources();
-		$extensions = $this->get_extensions( $type, $category );
-		// phpcs:enable
+		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : null;
 
 		sensei_log_event(
 			'extensions_view',
-			[
-				'view' => $category ? $category : '_all',
-			]
+			[ 'view' => $tab ? $tab : '_all' ]
 		);
 
-		include_once dirname( __FILE__ ) . '/views/html-admin-page-extensions.php';
+		echo '<div id="sensei-extensions-page" class="sensei-extensions-page"></div>';
 	}
 
 	/**

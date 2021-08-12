@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Link } from '@woocommerce/components';
 import interpolateComponents from 'interpolate-components';
 
 /**
@@ -36,14 +35,17 @@ export const UsageModal = ( {
 			'sensei-lms'
 		),
 		components: {
+			/* eslint-disable jsx-a11y/anchor-has-content */
 			link: (
-				<Link
+				<a
 					href="https://senseilms.com/documentation/what-data-does-sensei-track/"
 					className="link__color-secondary"
 					target="_blank"
+					rel="noreferrer"
 					type="external"
 				/>
 			),
+			/* eslint-enable jsx-a11y/anchor-has-content */
 		},
 	} );
 

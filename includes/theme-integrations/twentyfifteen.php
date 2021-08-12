@@ -115,4 +115,4 @@ class Sensei_Twentyfifteen extends Sensei__S {
 		<?php
 	}
 
-} // end class
+}

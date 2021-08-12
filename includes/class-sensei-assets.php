@@ -193,11 +193,15 @@ class Sensei_Assets {
 	 * @param string[] $rest_routes REST routes to preload.
 	 */
 	public function preload_data( $rest_routes ) {
+		// Temporarily removes the user filter when loading from preload.
+		remove_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
 		$preload_data = array_reduce(
 			$rest_routes,
 			'rest_preload_api_request',
 			[]
 		);
+		add_action( 'pre_get_posts', array( Sensei()->teacher, 'filter_queries' ) );
+
 		wp_add_inline_script(
 			'wp-api-fetch',
 			sprintf( 'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );', wp_json_encode( $preload_data ) ),
@@ -214,8 +218,12 @@ class Sensei_Assets {
 	 * @param array  $deps   Specify to change script dependencies.
 	 *
 	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
 	public function override_script( $handle, $src, $deps = null ) {
+		_deprecated_function( __METHOD__, '3.10.0' );
+
 		$scripts = wp_scripts();
 		$script  = $scripts->query( $handle, 'registered' );
 
@@ -235,34 +243,19 @@ class Sensei_Assets {
 	 * Use bundled WordPress client libraries for older versions.
 	 *
 	 * @since 3.3.1
+	 *
+	 * @deprecated 3.10.0
 	 */
 	public function wp_compat() {
+		_deprecated_function( __METHOD__, '3.10.0' );
+	}
 
-		if ( version_compare( $GLOBALS['wp_version'], '5.4', '<' ) ) {
 
-			$this->override_script( 'react', '../vendor/gutenberg/react.min.js' );
-			$this->override_script( 'react-dom', '../vendor/gutenberg/react-dom.min.js' );
-			$this->override_script( 'wp-redux-routine', '../vendor/gutenberg/redux-routine.min.js' );
-			$this->override_script( 'wp-priority-queue', '../vendor/gutenberg/priority-queue.min.js' );
-			$this->override_script( 'wp-primitives', '../vendor/gutenberg/primitives.min.js', [ 'wp-element' ] );
-			$this->override_script( 'wp-warning', '../vendor/gutenberg/warning.min.js', [] );
-			$this->override_script( 'wp-polyfill', '../vendor/gutenberg/wp-polyfill.min.js', [] );
-			$this->override_script( 'wp-compose', '../vendor/gutenberg/compose.min.js' );
-			$this->override_script( 'wp-element', '../vendor/gutenberg/element.min.js' );
-			$this->override_script( 'wp-api-fetch', '../vendor/gutenberg/api-fetch.min.js' );
-
-			$this->override_script(
-				'wp-components',
-				'../vendor/gutenberg/components.min.js',
-				[ 'lodash', 'moment', 'react', 'react-dom', 'wp-a11y', 'wp-compose', 'wp-deprecated', 'wp-dom', 'wp-element', 'wp-hooks', 'wp-i18n', 'wp-is-shallow-equal', 'wp-keycodes', 'wp-polyfill', 'wp-primitives', 'wp-rich-text', 'wp-warning' ]
-			);
-
-			$this->override_script(
-				'wp-data',
-				'../vendor/gutenberg/data.min.js',
-				[ 'lodash', 'react', 'wp-compose', 'wp-deprecated', 'wp-element', 'wp-is-shallow-equal', 'wp-polyfill', 'wp-priority-queue', 'wp-redux-routine' ]
-			);
-		}
+	/**
+	 * Disable loading frontend.css for the current page.
+	 */
+	public function disable_frontend_styles() {
+		add_filter( 'sensei_disable_styles', '__return_true' );
 	}
 
 }

@@ -285,7 +285,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		switch ( $this->view ) {
 			case 'learners':
@@ -323,7 +323,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			)
 		);
 
-	} // End prepare_items()
+	}
 
 	/**
 	 * Generates content for a single row of the table in the user management
@@ -354,6 +354,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				// in this case the item passed in is actually the users activity on course of lesson.
 				$user_activity = $item;
 				$post_id       = false;
+				$post_type     = false;
+				$object_type   = false;
 
 				if ( $this->lesson_id ) {
 
@@ -800,7 +802,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
-	} // End get_courses()
+	}
 
 	/**
 	 * Return array of lessons.
@@ -836,7 +838,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;
-	} // End get_lessons()
+	}
 
 	/**
 	 * Return array of learners
@@ -910,7 +912,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		$this->total_items = $total_learners;
 		return $learners;
-	} // End get_learners()
+	}
 
 	/**
 	 * Returns a list of user ids to filter sensei activities. If no filtering is required, false is returned.
@@ -1000,7 +1002,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				break;
 		}
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
-	} // End no_items()
+	}
 
 	/**
 	 * Output for table heading
@@ -1102,6 +1104,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		$is_selected = 'learners' === $this->view && $enrolment_status === $this->enrolment_status;
 		$url         = add_query_arg( $query_args, admin_url( 'admin.php' ) );
+		$link_title  = false;
 
 		switch ( $enrolment_status ) {
 			case 'enrolled':
@@ -1116,6 +1119,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			case 'all':
 				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
 				break;
+		}
+
+		if ( ! $link_title ) {
+			return '';
 		}
 
 		return '<a ' . ( $is_selected ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . $link_title . '</a>';
@@ -1208,7 +1215,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						submit_button( sprintf( __( 'Add to \'%1$s\'', 'sensei-lms' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
 						?>
 					</p>
-					<?php if ( 'lesson' === $form_post_type ) { ?>
+					<?php if ( 'lesson' === $form_post_type && isset( $course_title ) ) { ?>
 						<p><span class="description">
 							<?php
 							// translators: Placeholder is the course title.

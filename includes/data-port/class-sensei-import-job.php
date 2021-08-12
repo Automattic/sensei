@@ -295,13 +295,16 @@ class Sensei_Import_Job extends Sensei_Data_Port_Job {
 			return false;
 		}
 
-		$real_mime = false;
-
 		// Validate file.
 		if ( extension_loaded( 'fileinfo' ) ) {
 			$finfo     = finfo_open( FILEINFO_MIME_TYPE );
 			$real_mime = finfo_file( $finfo, $file );
 			finfo_close( $finfo );
+
+			// Some versions of PHP 8 return `application/csv` instead of `text/csv`.
+			if ( in_array( 'text/csv', $allowed, true ) ) {
+				$allowed[] = 'application/csv';
+			}
 
 			// When importing a CSV with HTML content, it can be interpreted as `text/html`.
 			$allowed_with_html = array_merge( $allowed, [ 'text/html' ] );

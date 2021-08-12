@@ -1,7 +1,14 @@
+/**
+ * External dependencies
+ */
 const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+
+/**
+ * Internal dependencies
+ */
 const GenerateChunksMapPlugin = require( './scripts/webpack/generate-chunks-map-plugin' );
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -15,6 +22,7 @@ const files = [
 	'js/admin/meta-box-quiz-editor.js',
 	'js/admin/lesson-edit.js',
 	'js/admin/ordering.js',
+	'js/admin/sensei-notice-dismiss.js',
 	'js/frontend/course-archive.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
@@ -27,12 +35,16 @@ const files = [
 	'js/stop-double-submission.js',
 	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
+	'extensions/index.js',
+	'extensions/extensions.scss',
 	'shared/styles/wp-components.scss',
-	'shared/styles/wc-components.scss',
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',
 	'blocks/editor-components/editor-components-style.scss',
+	'blocks/single-page.js',
+	'blocks/single-page-style.scss',
+	'blocks/single-page-style-editor.scss',
 	'blocks/single-course.js',
 	'blocks/single-course-style.scss',
 	'blocks/single-course-style-editor.scss',
@@ -51,10 +63,11 @@ const files = [
 	'css/frontend.scss',
 	'css/admin-custom.css',
 	'css/extensions.scss',
-	'css/global.css',
+	'css/global.scss',
 	'css/jquery-ui.css',
 	'css/modules-admin.css',
 	'css/modules-frontend.scss',
+	'css/pages-frontend.scss',
 	'css/ranges.css',
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
@@ -65,10 +78,10 @@ function getName( filename ) {
 }
 
 const FileLoader = {
-	test: /\.(?:gif|jpg|jpeg|png|svg|woff|woff2|eot|ttf|otf)$/i,
+	test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
 	loader: 'file-loader',
 	options: {
-		name: '[path]/[name]-[contenthash].[ext]',
+		name: '[path][name]-[contenthash].[ext]',
 		context: 'assets',
 		publicPath: '..',
 	},
@@ -87,6 +100,8 @@ const baseDist = 'assets/dist/';
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
+	webpackConfig.module.rules[ 3 ].use[ 0 ].options.publicPath = '../images';
+
 	return {
 		...webpackConfig,
 		entry: mapFilesToEntries( files ),

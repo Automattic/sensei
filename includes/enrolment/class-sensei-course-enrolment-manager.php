@@ -17,6 +17,13 @@ class Sensei_Course_Enrolment_Manager {
 	const LEARNER_CALCULATION_META_NAME     = 'sensei_learner_calculated_version';
 
 	/**
+	 * Update this when releasing a version that requires user enrolment to get checked.
+	 * Calculated and stored enrolments will only get updated if enrolment provider
+	 * versions have changed.
+	 */
+	const ENROLMENT_VERSION = '3.8.1';
+
+	/**
 	 * Instance of singleton.
 	 *
 	 * @var self
@@ -457,9 +464,7 @@ class Sensei_Course_Enrolment_Manager {
 		$hash_components[] = $this->get_site_salt();
 		$hash_components[] = $this->get_enrolment_provider_versions_hash();
 
-		$current_hash = md5( implode( '-', $hash_components ) );
-
-		return $current_hash . '-' . Sensei()->version;
+		return md5( implode( '-', $hash_components ) ) . '-' . self::ENROLMENT_VERSION;
 	}
 
 	/**

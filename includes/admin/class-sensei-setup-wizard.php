@@ -130,7 +130,6 @@ class Sensei_Setup_Wizard {
 	 */
 	public function enqueue_scripts() {
 		$handle = 'sensei-setup-wizard';
-		Sensei()->assets->wp_compat();
 		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
 
@@ -147,7 +146,7 @@ class Sensei_Setup_Wizard {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/style.css', [ 'sensei-wc-components', 'sensei-wp-components' ] );
+		Sensei()->assets->enqueue( 'sensei-setup-wizard', 'setup-wizard/style.css', [ 'sensei-wp-components' ] );
 	}
 
 	/**

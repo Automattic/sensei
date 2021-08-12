@@ -10,11 +10,11 @@ module.exports = {
 			},
 			themes: {
 				'sensei-color': {
-					primary: '#32af7d',
-					secondary: '#32af7d',
-					toggle: '#32af7d',
-					button: '#32af7d',
-					outlines: '#32af7d',
+					primary: '#46c8ad',
+					secondary: '#46c8ad',
+					toggle: '#46c8ad',
+					button: '#46c8ad',
+					outlines: '#46c8ad',
 				},
 			},
 		} ),

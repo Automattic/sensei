@@ -102,4 +102,4 @@ class Sensei_Class_Lesson_Modules_Test extends WP_UnitTestCase {
 		$this->assertEquals( wp_get_object_terms( $this->lesson_id, $this->module_taxonomy ), array() );
 	}
 
-} // end class
+}

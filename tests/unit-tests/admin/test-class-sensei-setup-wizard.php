@@ -410,6 +410,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Setup_Wizard::get_sensei_extensions
 	 */
 	public function testGetSenseiExtensionsAllExtensions() {
+		tests_add_filter( 'locale', [ $this, 'return_en_US' ] );
 
 		// Mock fetch from senseilms.com.
 		$request_url = null;
@@ -422,10 +423,9 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			10,
 			3
 		);
-
 		$extensions = Sensei()->setup_wizard->get_sensei_extensions();
 
-		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin', $request_url );
+		$this->assertEquals( 'https://senseilms.com/wp-json/senseilms-products/1.0/search?category=setup-wizard-extensions&type=plugin&lang=en_US', $request_url );
 	}
 
 	/**
@@ -510,21 +510,25 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'product_slug' => 'slug-1',
 				'status'       => 'installing',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 			(object) [
 				'product_slug' => 'slug-2',
 				'status'       => 'error',
 				'error'        => 'Error message',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 			(object) [
 				'product_slug' => 'slug-3',
 				'status'       => 'installed',
 				'plugin_file'  => 'test/test-installed.php',
+				'is_installed' => false,
 			],
 			(object) [
 				'product_slug' => 'slug-4',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 			get_transient( Sensei_Utils::WC_INFORMATION_TRANSIENT ),
 		];
@@ -560,6 +564,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			(object) [
 				'product_slug' => 'allowed',
 				'plugin_file'  => 'test/test.php',
+				'is_installed' => false,
 			],
 		];
 
@@ -580,5 +585,14 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 
 		// Revert mocked instance.
 		$property->setValue( $real_instance );
+	}
+
+	/**
+	 * Return 'en_US' to be used in filters.
+	 *
+	 * @return string
+	 */
+	public function return_en_US() {
+		return 'en_US';
 	}
 }

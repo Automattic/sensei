@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import { Spinner } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
 import { render, useLayoutEffect } from '@wordpress/element';
-import { Notice } from '@wordpress/components';
+import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -18,7 +13,7 @@ import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import '../shared/data/api-fetch-preloaded-once';
 import registerSetupWizardStore from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
-import QueryStringRouter, { Route } from './query-string-router';
+import QueryStringRouter, { Route } from '../shared/query-string-router';
 import Navigation from './navigation';
 
 /**

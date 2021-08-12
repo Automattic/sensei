@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Domain_Models_Field_Declaration
  *
+ * @deprecated 3.11.0
+ *
  * @package Sensei\Domain Models\Field
  */
 class Sensei_Domain_Models_Field_Declaration {
@@ -120,12 +122,16 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Constructor
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param array $args Field properties.
 	 * @throws Sensei_Domain_Models_Exception If the provided argument does not have a 'name' or
 	 *                                        'type' property, or if the 'type' is not one of the
 	 *                                        accepted types.
 	 */
 	public function __construct( $args ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		if ( ! isset( $args['name'] ) ) {
 			throw new Sensei_Domain_Models_Exception( 'every field should have a name' );
 		}
@@ -161,14 +167,20 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Gets whether or not the field is a meta field.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return bool Whether or not the field is a meta field.
 	 */
 	public function is_meta_field() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return self::META === $this->type;
 	}
 
 	/**
 	 * Gets whether the field is a derived field.
+	 *
+	 * @deprecated 3.11.0
 	 *
 	 * @return bool Whether or not the field is a derived field.
 	 */
@@ -179,6 +191,8 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Gets whether or not the field is a regular field.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return bool Whether or not the field is a regular field.
 	 */
 	public function is_field() {
@@ -188,9 +202,13 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Gets the field name.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return string Field name.
 	 */
 	public function get_name_to_map_from() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		if ( isset( $this->map_from ) && ! empty( $this->map_from ) ) {
 			return $this->map_from;
 		}
@@ -201,9 +219,13 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Gets the default value.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return mixed Default value.
 	 */
 	public function get_default_value() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		if ( isset( $this->default_value ) && ! empty( $this->default_value ) ) {
 			return ( is_array( $this->default_value ) && is_callable( $this->default_value ) ) ? call_user_func( $this->default_value ) : $this->default_value;
 		}
@@ -230,10 +252,14 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Gets the field value.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param mixed $value Field value.
 	 * @return mixed Field value casted to the proper type.
 	 */
 	public function cast_value( $value ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		if ( self::INT_VALUE === $this->value_type ) {
 			return intval( $value, 10 );
 		}
@@ -252,19 +278,27 @@ class Sensei_Domain_Models_Field_Declaration {
 	/**
 	 * Checks if the field supports a particular output type.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @param string $type Output type.
 	 * @return bool true if the output type is supported, false otherwise.
 	 */
 	public function suppports_output_type( $type ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return in_array( $type, $this->supported_outputs, true );
 	}
 
 	/**
 	 * Gets the schema for a field.
 	 *
+	 * @deprecated 3.11.0
+	 *
 	 * @return array Field schema.
 	 */
 	public function as_item_schema_property() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$schema = array(
 			'description' => $this->description,
 			'type'        => $this->value_type,

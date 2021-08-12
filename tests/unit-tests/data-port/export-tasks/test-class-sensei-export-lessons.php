@@ -119,7 +119,7 @@ class Sensei_Export_Lessons_Tests extends WP_UnitTestCase {
 			[
 				'prerequisite' => 'id:' . $prerequisite_lesson->ID,
 			],
-			$result[0]
+			$result[1]
 		);
 	}
 

@@ -1,0 +1,23 @@
+{
+  "name": "sensei-lms/learner-courses",
+  "category": "sensei-lms",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "options": {
+      "type": "object",
+      "default": {
+        "layoutView": "list",
+        "courseDescriptionEnabled": true,
+        "featuredImageEnabled": false,
+        "courseCategoryEnabled": false,
+        "progressBarEnabled": true,
+        "progressBarBorderRadius": 10,
+        "progressBarHeight": 14,
+        "primaryColor": null,
+        "accentColor": null
+      }
+    }
+  }
+}

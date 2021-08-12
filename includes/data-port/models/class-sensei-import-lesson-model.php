@@ -152,7 +152,7 @@ class Sensei_Import_Lesson_Model extends Sensei_Import_Model {
 						'code' => 'sensei_data_port_lesson_num_questions_negative',
 					]
 				);
-				$value = null;
+				$value = '';
 			}
 			$meta['_show_questions'] = $value;
 		}

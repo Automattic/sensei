@@ -36,12 +36,20 @@ trait Sensei_Test_Login_Helpers {
 		return $this->login_as( $this->get_user_by_role( 'administrator' ) );
 	}
 
+	protected function login_as_editor() {
+		return $this->login_as( $this->get_user_by_role( 'editor' ) );
+	}
+
 	protected function login_as_teacher() {
 		return $this->login_as( $this->get_user_by_role( 'teacher' ) );
 	}
 
 	protected function login_as_teacher_b() {
 		return $this->login_as( $this->get_user_by_role( 'teacher', '_b' ) );
+	}
+
+	protected function login_as_teacher_c() {
+		return $this->login_as( $this->get_user_by_role( 'teacher', '_c' ) );
 	}
 
 	protected function login_as_student() {
@@ -54,6 +62,7 @@ trait Sensei_Test_Login_Helpers {
 
 	protected function login_as( $user_id ) {
 		wp_set_current_user( $user_id );
+
 		return $this;
 	}
 

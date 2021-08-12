@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, uniq } from 'lodash';
+import { keyBy, uniq, omitBy } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -19,22 +19,30 @@ import questionTypesConfig from '../../answer-blocks';
  * Questions for selection.
  *
  * @param {Object}   props
+ * @param {string}   props.clientId               Quiz block ID.
  * @param {Array}    props.questionCategories     Question categories.
  * @param {Object}   props.filters                Filters object.
  * @param {number[]} props.selectedQuestionIds    Seleted question IDs.
  * @param {Object}   props.setSelectedQuestionIds Seleted question IDs state setter.
  */
 const Questions = ( {
+	clientId,
 	questionCategories,
 	filters,
 	selectedQuestionIds,
 	setSelectedQuestionIds,
 } ) => {
-	const questions = useSelect(
+	// Ids of the already added questions.
+	const addedQuestionIds = useSelect( ( select ) =>
+		select( 'core/block-editor' ).getBlocks( clientId )
+	).map( ( block ) => block.attributes?.id );
+
+	// Questions by current filter.
+	let questions = useSelect(
 		( select ) =>
 			select( 'core' ).getEntityRecords( 'postType', 'question', {
 				per_page: 100,
-				...filters,
+				...omitBy( filters, ( v ) => v === '' ),
 			} ),
 		[ filters ]
 	);
@@ -46,6 +54,11 @@ const Questions = ( {
 			</div>
 		);
 	}
+
+	// Filter out already added questions.
+	questions = questions.filter(
+		( question ) => ! addedQuestionIds.includes( question.id )
+	);
 
 	const questionCategoriesById = keyBy( questionCategories, 'id' );
 

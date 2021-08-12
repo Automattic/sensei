@@ -122,6 +122,8 @@ class Sensei_Autoloader {
 			'Sensei_Setup_Wizard_Pages'                  => 'admin/class-sensei-setup-wizard-pages.php',
 			'Sensei_Plugins_Installation'                => 'admin/class-sensei-plugins-installation.php',
 			'Sensei_Status'                              => 'admin/class-sensei-status.php',
+			'Sensei_WCCOM_Connect_Notice'                => 'admin/class-sensei-wccom-connect-notice.php',
+			'Sensei_Admin_Notices'                       => 'admin/class-sensei-admin-notices.php',
 
 			/**
 			 * Admin Tools
@@ -157,6 +159,12 @@ class Sensei_Autoloader {
 			 */
 			'Sensei_Renderer_Interface'                  => 'renderers/interface-sensei-renderer.php',
 			'Sensei_Renderer_Single_Post'                => 'renderers/class-sensei-renderer-single-post.php',
+
+			/**
+			 * Update tasks.
+			 */
+			'Sensei_Update_Fix_Question_Author'          => 'update-tasks/class-sensei-update-fix-question-author.php',
+			'Sensei_Update_Remove_Abandoned_Multiple_Question' => 'update-tasks/class-sensei-update-remove-abandoned-multiple-question.php',
 
 			/**
 			 * Unsupported theme handlers.

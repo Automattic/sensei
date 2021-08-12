@@ -13,6 +13,47 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	InspectorControls: ( { children } ) => children,
 } ) );
 
+jest.mock( '@wordpress/data', () => {
+	const module = jest.requireActual( '@wordpress/data' );
+
+	return {
+		combineReducers: module.combineReducers,
+		registerStore: module.registerStore,
+		useSelect: () => [
+			{
+				attributes: {
+					title: 'Question 1',
+					type: 'multiple-choice',
+				},
+			},
+			{
+				attributes: {
+					title: 'Question 2',
+					type: 'multiple-choice',
+				},
+			},
+			{
+				attributes: {
+					type: 'category-question',
+					options: {
+						number: 2,
+					},
+				},
+			},
+			{
+				attributes: {
+					type: 'category-question',
+					options: {
+						number: 3,
+					},
+				},
+			},
+		],
+	};
+} );
+
+const setAttributesMock = jest.fn();
+
 describe( '<QuizSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
@@ -27,6 +68,7 @@ describe( '<QuizSettings />', () => {
 						showQuestions: 5,
 					},
 				} }
+				setAttributes={ setAttributesMock }
 			/>
 		);
 
@@ -58,6 +100,18 @@ describe( '<QuizSettings />', () => {
 		expect( queryByLabelText( 'Passing Grade (%)' ) ).toBeFalsy();
 	} );
 
+	it( 'Should have the maximum number of questions defined by the the number of questions added to the quiz', () => {
+		const { queryByLabelText } = render(
+			<QuizSettings
+				attributes={ {
+					options: {},
+				} }
+			/>
+		);
+
+		expect( queryByLabelText( 'Number of Questions' ).max ).toEqual( '7' );
+	} );
+
 	it( 'Should call the setAttributes correctly when changing the fields', () => {
 		const defaultOptions = {
 			passRequired: true,
@@ -67,7 +121,6 @@ describe( '<QuizSettings />', () => {
 			randomQuestionOrder: true,
 			showQuestions: 0,
 		};
-		const setAttributesMock = jest.fn();
 
 		const { queryByLabelText, queryAllByLabelText } = render(
 			<QuizSettings

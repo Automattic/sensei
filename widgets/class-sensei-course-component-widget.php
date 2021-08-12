@@ -67,7 +67,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 
 		/* Create the widget. */
 		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
-	} // End __construct()
+	}
 
 	/**
 	 * Display the widget on the frontend.
@@ -118,7 +118,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 
 		add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
 
-	} // End widget()
+	}
 
 	/**
 	 * Method to update the settings from the form() method.
@@ -141,7 +141,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		$instance['limit'] = esc_attr( $new_instance['limit'] );
 
 		return $instance;
-	} // End update()
+	}
 
 	/**
 	 * The form on the widget control in the widget administration area.
@@ -185,7 +185,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		</p>
 
 		<?php
-	} // End form()
+	}
 
 	/**
 	 * Load the desired component, if a method is available for it.
@@ -234,7 +234,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 
 		$this->display_courses( $courses );
 
-	} // End load_component()
+	}
 
 
 	/**
@@ -309,7 +309,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php } // End If Statement ?>
+					<?php } ?>
 
 					<span class="course-lesson-count">
 						<?php
@@ -328,14 +328,14 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 				</li>
 
 				<?php
-			} // End For Loop
+			}
 
 			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
 				$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
 				echo '<li class="my-account fix"><a href="' . esc_url( get_permalink( $my_account_page_id ) ) . '">'
 					 . esc_html__( 'My Courses', 'sensei-lms' )
 					 . '<span class="meta-nav"></span></a></li>';
-			} // End If Statement
+			}
 
 			?>
 		</ul>
@@ -437,4 +437,4 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		return get_posts( $query_args );
 
 	}
-} // End Class
+}

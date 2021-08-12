@@ -29,6 +29,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Filters for for events to watch and report.
 		add_action( 'activated_plugin', [ $this, 'log_wccom_plugin_install' ] );
+
+		// Log when Sensei is updated.
+		add_action( 'sensei_log_update', [ $this, 'log_update' ] );
 	}
 
 	/*
@@ -120,6 +123,28 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Hooks.
 	 */
 
+	/**
+	 * Log an update event.
+	 *
+	 * @since 3.9.0
+	 * @access internal
+	 *
+	 * @param array $args Deferred event parameters.
+	 */
+	public function log_update( $args ) {
+		sensei_log_event(
+			'plugin_update',
+			$args
+		);
+	}
+
+	/**
+	 * Add setting field.
+	 *
+	 * @param array $fields Setting fields.
+	 *
+	 * @return array
+	 */
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
@@ -233,14 +258,55 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	}
 
 	/**
+	 * Get the template override data.
+	 *
+	 * @return array
+	 */
+	public function get_template_data() {
+		$theme              = wp_get_theme();
+		$template_overrides = Sensei_Status::instance()->get_template_override_status();
+
+		$data = [
+			'version'       => Sensei()->version,
+			'theme'         => $theme['Name'],
+			'theme_version' => $theme['Version'],
+			'templates'     => count( $template_overrides ),
+			'mismatch'      => 0,
+		];
+
+		foreach ( $template_overrides as $template_path => $versions ) {
+			// Sanitize the template path as a tracks property and remove anything unexpected from the `@version` tag.
+			$property_key          = preg_replace( '/[^0-9_a-z]/', '_', strtr( strtolower( $template_path ), [ '.php' => '' ] ) );
+			$data[ $property_key ] = preg_replace( '/[^0-9.]/', '', $versions['theme_version'] );
+
+			if ( empty( $data[ $property_key ] ) ) {
+				$data[ $property_key ] = 'unknown';
+			}
+
+			if ( $versions['theme_version'] !== $versions['sensei_version'] ) {
+				$data['mismatch']++;
+				$data[ $property_key ] .= '*';
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Collect system data to track.
 	 *
 	 * @return array
 	 */
 	public function get_system_data() {
-		$system_data                 = [];
-		$system_data['version']      = Sensei()->version;
-		$system_data['wcpc_version'] = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
+		$system_data                          = [];
+		$system_data['version']               = Sensei()->version;
+		$system_data['wcpc_version']          = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
+		$system_data['is_legacy_quiz_editor'] = Sensei()->quiz->is_block_based_editor_enabled() ? 0 : 1;
+
+		$legacy_flags = Sensei()->get_legacy_flags();
+		foreach ( $legacy_flags as $flag => $value ) {
+			$system_data[ 'legacy_flag_' . sanitize_key( $flag ) ] = $value ? 1 : 0;
+		}
 
 		return array_merge( $system_data, parent::get_system_data() );
 	}

@@ -77,6 +77,7 @@ class Sensei_Data_Cleaner {
 		'sensei_courses_page_id',
 		'woothemes-sensei_courses_page_id',
 		'woothemes-sensei_user_dashboard_page_id',
+		'woothemes-sensei_course_completed_page_id',
 		'sensei-legacy-flags',
 		'sensei-scheduler-calculation-version',
 		'widget_sensei_course_component',
@@ -84,6 +85,7 @@ class Sensei_Data_Cleaner {
 		'widget_sensei_course_categories',
 		'widget_sensei_category_courses',
 		'sensei_dismiss_wcpc_prompt',
+		'sensei-cancelled-wccom-connect-dismissed',
 	);
 
 	/**
@@ -221,6 +223,7 @@ class Sensei_Data_Cleaner {
 		'sensei_activation_redirect',
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
+		'sensei_background_job_.*',
 	);
 
 	/**
@@ -254,6 +257,9 @@ class Sensei_Data_Cleaner {
 	 * @access public
 	 */
 	public static function cleanup_all() {
+		// Ensure module taxonomy is created before calling functions that rely on its existence.
+		Sensei()->modules->setup_modules_taxonomy();
+
 		self::cleanup_custom_post_types();
 		self::cleanup_post_meta();
 		self::cleanup_pages();

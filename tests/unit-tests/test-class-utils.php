@@ -24,7 +24,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// remove this action so that no emails are sent during this test
 		remove_all_actions( 'sensei_user_course_start' );
 
-	}//end setup()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
@@ -38,7 +38,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// setup the test
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( class_exists( 'WooThemes_Sensei_Utils' ), 'Sensei Utils class constant is not loaded' );
-	} // end testClassInstance
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::update_user_data
@@ -99,7 +99,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// is the data saved still intact
 		$this->assertEquals( $test_array, $retrieved_array, 'The saved and retrieved data does not match' );
 
-	}//end testUpdateUserData()
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::get_user_data
@@ -152,7 +152,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// doest this function return the data that was saved?
 		$this->assertEquals( $test_array, $retrieved_value, 'This function does not retrieve the data that was saved' );
 
-	}//end testGetUserData()
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::delete_user_data
@@ -205,7 +205,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertTrue( $deleted, 'The user data should have been deleted, but was not' );
 		$this->assertEmpty( $retrieved_value, 'After deleting the user data should return false' );
 
-	}//end testDeleteUserData()
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::round
@@ -217,7 +217,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertTrue( doubleval( 2.13 ) == WooThemes_Sensei_Utils::round( 2.1256, 2 ), '2.1256 rounded with 2 precision should be 2.12' );
 		$this->assertTrue( 3 == WooThemes_Sensei_Utils::round( 2.5, 0 ), '2.5 rounded with 0 precision should be 3' );
 
-	}//end testRound()
+	}
 
 	/**
 	 * Test the array zip utility function
@@ -236,4 +236,4 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $array_zipped );
 	}
 
-}//end class
+}

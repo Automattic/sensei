@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { Card, H } from '@woocommerce/components';
 import { uniq } from 'lodash';
 
 /**
@@ -9,21 +8,23 @@ import { uniq } from 'lodash';
  */
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { INSTALLED_STATUS } from './feature-status';
-import { logEvent } from '../log-event';
-import { useQueryStringRouter } from '../query-string-router';
+import { logEvent } from '../../shared/helpers/log-event';
+import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import {
 	getWccomProductId,
 	getWoocommerceComPurchaseUrl,
-} from '../helpers/woocommerce-com';
+} from '../../shared/helpers/woocommerce-com';
 import ConfirmationModal from './confirmation-modal';
 import InstallationFeedback from './installation-feedback';
 import FeaturesSelection from './features-selection';
+import { H } from '../../shared/components/section';
 
 /**
  * @typedef  {Object} Feature
@@ -206,22 +207,24 @@ const Features = () => {
 					) }
 				</H>
 			</div>
-			<Card className="sensei-setup-wizard__card">
-				{ feedbackActive ? (
-					<InstallationFeedback
-						onContinue={ goToNextStep }
-						onRetry={ retryInstallation }
-					/>
-				) : (
-					<FeaturesSelection
-						features={ features }
-						isSubmitting={ isSubmitting }
-						errorNotice={ errorNotice }
-						selectedSlugs={ selectedSlugs }
-						onChange={ setSelectedSlugs }
-						onContinue={ finishSelection }
-					/>
-				) }
+			<Card className="sensei-setup-wizard__card" isElevated={ true }>
+				<CardBody>
+					{ feedbackActive ? (
+						<InstallationFeedback
+							onContinue={ goToNextStep }
+							onRetry={ retryInstallation }
+						/>
+					) : (
+						<FeaturesSelection
+							features={ features }
+							isSubmitting={ isSubmitting }
+							errorNotice={ errorNotice }
+							selectedSlugs={ selectedSlugs }
+							onChange={ setSelectedSlugs }
+							onContinue={ finishSelection }
+						/>
+					) }
+				</CardBody>
 			</Card>
 
 			{ confirmationActive && (

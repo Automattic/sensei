@@ -40,7 +40,7 @@ class Sensei_Course_Results {
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'body_class' ), 10, 1 );
 
-	} // End __construct()
+	}
 
 	/**
 	 * Setup permalink structure for course results
@@ -154,7 +154,7 @@ class Sensei_Course_Results {
 
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Course_Results

@@ -12,7 +12,7 @@ import {
 } from './constants';
 
 import { EXTERNAL_STATUS, INSTALLING_STATUS } from '../features/feature-status';
-import { getWccomProductId } from '../helpers/woocommerce-com';
+import { getWccomProductId } from '../../shared/helpers/woocommerce-com';
 
 const DEFAULT_STATE = {
 	isFetching: true,
@@ -67,8 +67,8 @@ const updatePreInstallation = ( selected, options ) =>
 /**
  * Setup wizard reducer.
  *
- * @param {Object} state    Current state.
- * @param {{type:  string}} action Action to update the state.
+ * @param {Object}         state  Current state.
+ * @param {{type: string}} action Action to update the state.
  *
  * @return {Object} State updated.
  */

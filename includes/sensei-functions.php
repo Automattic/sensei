@@ -29,12 +29,15 @@ function is_sensei() {
 	) {
 		$is_sensei = true;
 	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
-		$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
-		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) )
+		$course_page_id           = intval( Sensei()->settings->settings['course_page'] );
+		$my_courses_page_id       = intval( Sensei()->settings->settings['my_course_page'] );
+		$course_completed_page_id = intval( Sensei()->settings->settings['course_completed_page'] );
+
+		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id, $course_completed_page_id ) )
 			|| Sensei_Utils::is_learner_profile_page()
 			|| Sensei_Utils::is_course_results_page()
 			|| Sensei_Utils::is_teacher_archive_page()
+			|| Sensei()->blocks->has_sensei_blocks()
 		) {
 			$is_sensei = true;
 		}
@@ -243,7 +246,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	}
 
-}//end sensei_do_deprecated_action()
+}
 
 /**
  * Check the given post or post type id is a of the
@@ -284,7 +287,7 @@ function sensei_user_login_url() {
 
 	}
 
-}//end sensei_user_login_url()
+}
 
 /**
  * Checks the settings to see

@@ -28,6 +28,8 @@ import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { ModuleStatus } from './module-status';
 import ModuleSettings from './module-settings';
 
+const ALLOWED_BLOCKS = [ 'sensei-lms/course-outline-lesson' ];
+
 /**
  * Edit module block component.
  *
@@ -70,7 +72,12 @@ export const ModuleEdit = ( props ) => {
 		outlineClassName: '',
 	};
 
-	useAutoInserter( { name: 'sensei-lms/course-outline-lesson' }, props );
+	const isEmptyBlock = ( attributes ) => ! attributes.title;
+
+	useAutoInserter(
+		{ name: 'sensei-lms/course-outline-lesson', isEmptyBlock },
+		props
+	);
 
 	/**
 	 * Handle update name.
@@ -191,7 +198,7 @@ export const ModuleEdit = ( props ) => {
 						{ __( 'Lessons', 'sensei-lms' ) }
 					</h3>
 					<InnerBlocks
-						allowedBlocks={ [ 'sensei-lms/course-outline-lesson' ] }
+						allowedBlocks={ ALLOWED_BLOCKS }
 						templateInsertUpdatesSelection={ false }
 						renderAppender={ () => null }
 					/>

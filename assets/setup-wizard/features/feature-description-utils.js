@@ -6,7 +6,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { getWccomProductId } from '../helpers/woocommerce-com';
+import { getWccomProductId } from '../../shared/helpers/woocommerce-com';
 
 /**
  * @typedef  {Object} Feature

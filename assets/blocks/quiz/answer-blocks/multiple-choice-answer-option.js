@@ -16,8 +16,8 @@ import { OptionToggle } from './option-toggle';
  *
  * @param {Object}   props
  * @param {Object}   props.attributes         Answer attributes.
- * @param {string}   props.attributes.title   Answer title.
- * @param {boolean}  props.attributes.isRight Is this a right answer.
+ * @param {string}   props.attributes.label   Answer title.
+ * @param {boolean}  props.attributes.correct Is this a right answer.
  * @param {Function} props.setAttributes      Update answer attributes.
  * @param {Function} props.onEnter            Add a new answer after this.
  * @param {Function} props.onRemove           Remove this answer.
@@ -27,7 +27,7 @@ import { OptionToggle } from './option-toggle';
  */
 const MultipleChoiceAnswerOption = ( props ) => {
 	const {
-		attributes: { title, isRight },
+		attributes: { label, correct },
 		setAttributes,
 		hasFocus,
 		hasSelected,
@@ -44,19 +44,19 @@ const MultipleChoiceAnswerOption = ( props ) => {
 		}
 	}, [ hasFocus, ref ] );
 
-	const toggleRight = () => setAttributes( { isRight: ! isRight } );
+	const toggleCorrect = () => setAttributes( { correct: ! correct } );
 
 	return (
 		<div className="sensei-lms-question-block__multiple-choice-answer-option">
-			<OptionToggle isChecked={ isRight } isCheckbox={ isCheckbox } />
+			<OptionToggle isChecked={ correct } isCheckbox={ isCheckbox } />
 			<SingleLineInput
 				ref={ ref }
 				placeholder={ __( 'Add Answer', 'sensei-lms' ) }
 				className="sensei-lms-question-block__multiple-choice-answer-option__input"
 				onChange={ ( nextValue ) =>
-					setAttributes( { title: nextValue } )
+					setAttributes( { label: nextValue } )
 				}
-				value={ title }
+				value={ label }
 				{ ...inputProps }
 			/>
 			{ hasSelected && (
@@ -64,9 +64,9 @@ const MultipleChoiceAnswerOption = ( props ) => {
 					<Button
 						isPrimary
 						className="sensei-lms-question-block__answer--multiple-choice__toggle"
-						onClick={ toggleRight }
+						onClick={ toggleCorrect }
 					>
-						{ isRight
+						{ correct
 							? __( 'Right', 'sensei-lms' )
 							: __( 'Wrong', 'sensei-lms' ) }
 					</Button>

@@ -233,7 +233,15 @@ a.sensei-certificate-link {
   }
 }
 
-.lesson  {
+.lesson {
+  .wp-block-sensei-lms-lesson-properties {
+    font-size: .9em;
+    font-style: italic;
+
+    &__separator {
+      margin: 0 0.5em 0;
+    }
+  }
   .lesson-meta  {
     margin: 0 0 1.618em;
   }
@@ -362,14 +370,26 @@ a.sensei-certificate-link {
   }
 }
 
-.quiz, .lesson  {
-  input.quiz-submit  {
+.quiz:not(.quiz-blocks), .lesson {
+  button.quiz-submit  {
     &.complete  {
       background: $success;
     }
     &.reset  {
       background: $error;
     }
+  }
+}
+
+.quiz-blocks {
+  .wp-block-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .wp-block-button {
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -889,7 +909,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   }
 }
 
-.course-container, .course, .lesson, .quiz  {
+.course-container, .course, .lesson, .quiz:not(.quiz-blocks)  {
   a.button, a.button:visited,
   a.comment-reply-link,
   #commentform #submit,

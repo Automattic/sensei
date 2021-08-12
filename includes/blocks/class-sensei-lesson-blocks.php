@@ -53,6 +53,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-lesson-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
+
 	}
 
 	/**
@@ -62,7 +63,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		$post_type_object = get_post_type_object( 'lesson' );
 
-		$post_type_object->template = [
+		$block_template = [
+			[ 'sensei-lms/lesson-properties' ],
 			[ 'sensei-lms/button-contact-teacher' ],
 			[
 				'core/paragraph',
@@ -72,14 +74,28 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		];
 
 		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
-			$post_type_object->template[] = [ 'sensei-lms/quiz', [ 'isPostTemplate' => true ] ];
+			$block_template[] = [ 'sensei-lms/quiz', [ 'isPostTemplate' => true ] ];
 		}
+
+		/**
+		 * Customize the lesson block template.
+		 *
+		 * @hook  sensei_lesson_block_template
+		 * @since 3.9.0
+		 *
+		 * @param {string[][]} $template          Array of blocks to use as the default initial state for a lesson.
+		 * @param {string[][]} $original_template Original block template.
+		 *
+		 * @return {string[][]} Array of blocks to use as the default initial state for a lesson.
+		 */
+		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? [] );
 
 		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
 			return;
 		}
 
 		new Sensei_Lesson_Actions_Block();
+		new Sensei_Lesson_Properties_Block();
 		new Sensei_Next_Lesson_Block();
 		new Sensei_Complete_Lesson_Block();
 		new Sensei_Reset_Lesson_Block();

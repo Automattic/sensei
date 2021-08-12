@@ -47,7 +47,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		/* Create the widget. */
 		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 
-	} // End __construct()
+	}
 
 	/**
 	 * Display the widget on the frontend.
@@ -81,7 +81,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 
 		if ( 0 < intval( $instance['course_category'] ) ) {
 			$this->load_component( $instance );
-		} // End If Statement
+		}
 
 		// Add actions for plugins/themes to hook onto.
 		do_action( $this->widget_cssclass . '_bottom' );
@@ -89,7 +89,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $after_widget );
 
-	} // End widget()
+	}
 
 	/**
 	 * Method to update the settings from the form() method.
@@ -112,7 +112,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		$instance['limit'] = strip_tags( $new_instance['limit'] );
 
 		return $instance;
-	} // End update()
+	}
 
 	/**
 	 * The form on the widget control in the widget administration area.
@@ -164,7 +164,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		</p>
 
 		<?php
-	} // End form()
+	}
 
 	/**
 	 * Load the output.
@@ -224,7 +224,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php } // End If Statement ?>
+					<?php } ?>
 					<span class="course-lesson-count">
 						<?php
 						// translators: Placeholder %d is the lesson count.
@@ -237,9 +237,9 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 					do_action( 'sensei_course_meta_inside_after', $post_id );
 					?>
 				</li>
-			<?php } // End For Loop ?>
+			<?php } ?>
 			</ul>
 			<?php
-		} // End If Statement
-	} // End load_component()
-} // End Class
+		}
+	}
+}

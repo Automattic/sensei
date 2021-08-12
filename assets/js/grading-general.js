@@ -178,9 +178,7 @@ jQuery( document ).ready( function ( $ ) {
 	};
 
 	/**
-	 * Resets all graded questions
-	 * @param obj scope Scope of questions to reset
-	 * @return void
+	 * Resets all graded questions.
 	 */
 	jQuery.fn.resetGrades = function () {
 		jQuery( '.question_box' )

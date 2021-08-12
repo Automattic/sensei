@@ -2,12 +2,18 @@
  * WordPress dependencies
  */
 import { createBlock, getBlockContent, rawHandler } from '@wordpress/blocks';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { createQuestionBlockAttributes } from './question-block/question-block-attributes';
 import questionBlock from './question-block';
+import categoryQuestionBlock from './category-question-block';
+
+/**
+ * External dependencies
+ */
+import { mapKeys, mapValues, isObject } from 'lodash';
 
 /**
  * Quiz settings and questions data.
@@ -26,7 +32,18 @@ import questionBlock from './question-block';
  * @property {string} title       Question title
  * @property {string} description Question description blocks
  * @property {Object} answers     Question answer settings
- * @property {Object} settings    Question settings
+ * @property {Object} options     Question options.
+ */
+
+/**
+ * Quiz category question data.
+ *
+ * @typedef {Object} QuizCategoryQuestion
+ * @property {number} id               Question ID.
+ * @property {string} type             Question type
+ * @property {Object} options          Question settings
+ * @property {number} options.category Category for question.
+ * @property {number} options.number   Number of questions to show from category.
  */
 
 /**
@@ -39,25 +56,30 @@ import questionBlock from './question-block';
  * @return {Object[]} Updated blocks.
  */
 export function syncQuestionBlocks( structure, blocks ) {
+	if ( ! structure || structure.length === 0 ) {
+		return [ createBlock( 'sensei-lms/quiz-question', {} ) ];
+	}
+
 	return ( structure || [] ).map( ( item ) => {
-		const { description, ...question } = item;
+		const { description, ...attributes } = item;
 
 		let block = blocks ? findQuestionBlock( blocks, item ) : null;
 
-		const innerBlocks =
-			( description && rawHandler( { HTML: description } ) ) ||
-			block?.innerBlocks;
-
-		const attributes = createQuestionBlockAttributes( question );
-
 		if ( ! block ) {
-			block = createBlock( questionBlock.name, attributes, innerBlocks );
+			block = createQuestionBlock( item );
 		} else {
 			block.attributes = {
 				...block.attributes,
 				...attributes,
 			};
-			block.innerBlocks = innerBlocks;
+
+			const innerBlocks =
+				( description && rawHandler( { HTML: description } ) ) || [];
+
+			dispatch( 'core/block-editor' ).replaceInnerBlocks(
+				block.clientId,
+				innerBlocks
+			);
 		}
 
 		return block;
@@ -65,36 +87,75 @@ export function syncQuestionBlocks( structure, blocks ) {
 }
 
 /**
+ * Manually run our deprecated migrations for the question block.
+ *
+ * @param {Object} attributes  Block attributes.
+ * @param {Array}  innerBlocks Inner blocks.
+ * @return {Array} Tuple of attributes and innerBlocks
+ */
+function prepareQuestionBlock( attributes, innerBlocks ) {
+	questionBlock.deprecated.forEach( ( item ) => {
+		// Check our flag for deprecations that should run here.
+		if (
+			item.onProgrammaticCreation &&
+			item.isEligible( attributes, innerBlocks )
+		) {
+			[ attributes, innerBlocks ] = item.migrate(
+				attributes,
+				innerBlocks
+			);
+		}
+	} );
+
+	return [ attributes, innerBlocks ];
+}
+
+/**
  * Convert blocks to question structure.
  *
  * @param {Object[]} blocks Blocks.
+ *
  * @return {QuizQuestion[]} Question structure
  */
 export function parseQuestionBlocks( blocks ) {
-	return blocks
-		?.map( ( block ) => {
-			return {
-				...block.attributes,
-				description: getBlockContent( block ),
-			};
-		} )
-		.filter( ( block ) => !! block.title );
+	const questions = blocks?.map( ( block ) => {
+		if ( block.attributes.type === 'category-question' ) {
+			return block.attributes;
+		}
+
+		return {
+			...block.attributes,
+			description: getBlockContent( block ),
+		};
+	} );
+
+	const lastQuestion = questions.pop();
+
+	if ( ! isQuestionEmpty( lastQuestion ) ) {
+		questions.push( lastQuestion );
+	}
+
+	return questions;
 }
 
 /**
  * Create a new question block.
  *
- * @param {Object} item Question item.
+ * @param {Object} question Question item.
  *
  * @return {QuizQuestion} Block.
  */
-export function createQuestionBlock( item ) {
-	const { description, ...question } = item;
+export function createQuestionBlock( question ) {
+	if ( question.type === 'category-question' ) {
+		return createBlock( categoryQuestionBlock.name, question, [] );
+	}
 
-	const innerBlocks =
-		( description && rawHandler( { HTML: description } ) ) || [];
-
-	const attributes = createQuestionBlockAttributes( question );
+	const [ attributes, innerBlocks ] = prepareQuestionBlock(
+		question,
+		( question.description &&
+			rawHandler( { HTML: question.description } ) ) ||
+			[]
+	);
 
 	return createBlock( questionBlock.name, attributes, innerBlocks );
 }
@@ -102,32 +163,52 @@ export function createQuestionBlock( item ) {
 /**
  * Find a question block based on question ID, or title if ID is missing.
  *
- * @param {Array}        blocks
- * @param {QuizQuestion} item
+ * @param {Array}                             blocks
+ * @param {QuizQuestion|QuizCategoryQuestion} item
  */
-export const findQuestionBlock = ( blocks, { id, title } ) => {
+export const findQuestionBlock = ( blocks, { id, title, options } ) => {
+	const category = options?.category;
+
 	const compare = ( { attributes } ) =>
 		id === attributes.id ||
-		( ! attributes.id && attributes.title && attributes.title === title );
+		( ! attributes.id && attributes.title && attributes.title === title ) ||
+		( ! attributes.id &&
+			attributes.options?.category &&
+			attributes.options?.category === category );
 	return blocks.find( compare );
 };
 
 /**
- * Normalize quiz options attribute coming from REST API.
+ * Normalize an object by applying a mapping function to it's keys, including nested ones.
  *
- * @param {Object}  options                       Quiz options.
- * @param {boolean} options.pass_required         Whether is pass required.
- * @param {number}  options.quiz_passmark         Percentage quiz passmark.
- * @param {boolean} options.auto_grade            Whether auto grade.
- * @param {boolean} options.allow_retakes         Whether allow retakes.
- * @param {boolean} options.ramdom_question_order Whether random question order.
- * @param {number}  options.show_questions        Number of questions to show.
+ * @param {Object}   options     Options object to normalize.
+ * @param {Function} mapFunction Function to apply.
  */
-export const normalizeQuizOptionsAttribute = ( options ) => ( {
-	passRequired: options.pass_required,
-	quizPassmark: options.quiz_passmark,
-	autoGrade: options.auto_grade,
-	allowRetakes: options.allow_retakes,
-	randomQuestionOrder: options.ramdom_question_order,
-	showQuestions: options.show_questions,
-} );
+export const normalizeAttributes = ( options, mapFunction ) => {
+	const normalizedOptions = mapKeys( options, ( value, key ) =>
+		mapFunction( key )
+	);
+
+	return mapValues( normalizedOptions, ( value ) => {
+		if ( isObject( value ) ) {
+			return normalizeAttributes( value, mapFunction );
+		}
+
+		return value;
+	} );
+};
+
+/**
+ * Checks whether a block is empty.
+ *
+ * @param {Array} attributes Question attributes.
+ *
+ * @return {boolean} If the question is empty.
+ */
+export const isQuestionEmpty = ( attributes ) => {
+	if ( attributes.type === 'category-question' ) {
+		return ! attributes.options.category;
+	}
+
+	return ! attributes.title;
+};

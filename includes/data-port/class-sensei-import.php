@@ -36,7 +36,6 @@ class Sensei_Import {
 			add_action(
 				'admin_print_scripts',
 				function() {
-					Sensei()->assets->wp_compat();
 					Sensei()->assets->enqueue( 'sensei-import', 'data-port/import.js', [], true );
 					Sensei()->assets->preload_data( [ '/sensei-internal/v1/import/active' ] );
 				}
@@ -45,7 +44,7 @@ class Sensei_Import {
 			add_action(
 				'admin_print_styles',
 				function() {
-					Sensei()->assets->enqueue( 'sensei-import', 'data-port/style.css', [ 'sensei-wc-components', 'sensei-wp-components' ] );
+					Sensei()->assets->enqueue( 'sensei-import', 'data-port/style.css', [ 'sensei-wp-components' ] );
 				}
 			);
 		}

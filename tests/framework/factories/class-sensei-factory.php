@@ -108,7 +108,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$this->module            = new WP_UnitTest_Factory_For_Module( $this );
 		$this->message           = new WP_UnitTest_Factory_For_Message( $this );
 		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
-	}//end __construct()
+	}
 
 	/**
 	 * Create basic courses, lessons, and quizzes.
@@ -193,9 +193,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			'lesson_args'             => array(),
 			'question_args'           => array(),
 			'multiple_question_args'  => array(),
+			'reuse_questions'         => false,
 		);
-		$args         = wp_parse_args( $args, $default_args );
-		$module_ids   = [];
+
+		$args       = wp_parse_args( $args, $default_args );
+		$module_ids = [];
 		if ( $args['module_count'] ) {
 			$module_ids = $this->module->create_many( $args['module_count'] );
 		}
@@ -209,6 +211,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		}
 		$args['lesson_args']['meta_input']['_lesson_course'] = $course_id;
 
+		$quiz_ids   = [];
 		$lesson_ids = $this->lesson->create_many( $args['lesson_count'], $args['lesson_args'] );
 		foreach ( $lesson_ids as $key => $lesson_id ) {
 			if ( ! empty( $module_ids ) ) {
@@ -226,7 +229,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				}
 			}
 
-			$this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], $args['quiz_args'], false );
+			$quiz_ids[] = $this->attach_lessons_questions( $question_count, $lesson_id, $args['question_args'], $args['quiz_args'], $args['reuse_questions'] );
 
 			$multiple_question_count = $args['multiple_question_count'];
 			if ( is_array( $multiple_question_count ) ) {
@@ -242,6 +245,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		return array(
 			'course_id'  => $course_id,
 			'lesson_ids' => $lesson_ids,
+			'quiz_ids'   => $quiz_ids,
 			'modules'    => $module_ids,
 		);
 	}
@@ -264,7 +268,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			$random_index_s = array_rand( $this->basic_test_lesson_ids, $number_of_items );
 			foreach ( $random_index_s as $index ) {
 				array_push( $result, $this->basic_test_lesson_ids[ $index ] );
-			}// end for each
+			}
 		} else {
 
 			$random_index = array_rand( $this->basic_test_lesson_ids );
@@ -274,7 +278,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $result;
 
-	} // end get_random_valid_lesson_id()
+	}
 
 	/**
 	 * Accesses the test_data course_id's and return any one of them
@@ -294,7 +298,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			$random_index_s = array_rand( $this->basic_test_course_ids, $number_of_items );
 			foreach ( $random_index_s as $index ) {
 				array_push( $result, $this->basic_test_course_ids[ $index ] );
-			}// end for each
+			}
 		} else {
 
 			$random_index = array_rand( $this->basic_test_course_ids );
@@ -304,7 +308,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $result;
 
-	} // end get_random_course_id()
+	}
 
 	/**
 	 * Attach modules and lessons to each course.
@@ -340,7 +344,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $lesson_ids;
 
-	}//end get_lessons()
+	}
 
 	/**
 	 * @since 1.9.20
@@ -365,7 +369,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $course_ids;
 
-	}//end get_courses()
+	}
 
 	/**
 	 * Get a course that has modules.
@@ -449,11 +453,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				$user_quiz_answers[ $question->ID ] = '';
 
 			}
-		}// end for quiz_question_posts
+		}
 
 		return $user_quiz_answers;
 
-	}//end generate_user_quiz_answers()
+	}
 
 	/**
 	 * Generate an array of user quiz grades
@@ -475,11 +479,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 			$quiz_grades[ $question_id ] = rand( 1, 5 );
 
-		}//  end foreach
+		}
 
 		return $quiz_grades;
 
-	}//end generate_user_quiz_grades()
+	}
 
 	/**
 	 * Generate and attach lesson questions.
@@ -488,15 +492,15 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * So all lessons the makes use of this function will have the same set of questions in their
 	 * quiz.
 	 *
-	 * @param int   $number number of questions to generate. Default 10
-	 * @param int   $lesson_id
-	 * @param array $question_args
-	 * @param array $quiz_args
-	 * @param bool  $reuse_questions
+	 * @param int                 $number number of questions to generate. Default 10
+	 * @param int                 $lesson_id
+	 * @param array               $question_args
+	 * @param array               $quiz_args
+	 * @param bool|array|callable $reuse_questions
 	 *
 	 * @throws Exception 'Generate questions needs a valid lesson ID.' if the ID passed in is not a valid lesson
 	 */
-	protected function attach_lessons_questions( $number = 10, $lesson_id, $question_args = array(), $quiz_args = array(), $reuse_questions = true ) {
+	protected function attach_lessons_questions( $number = 10, $lesson_id = 0, $question_args = array(), $quiz_args = array(), $reuse_questions = true ) {
 
 		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
 			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
@@ -513,7 +517,16 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		// the existing questions to the passed in lesson id's lesson
 		$questions = array();
 		if ( $reuse_questions ) {
-			$question_post_query = new WP_Query( array( 'post_type' => 'question' ) );
+			$reuse_questions_args = [];
+			if ( is_array( $reuse_questions ) ) {
+				$reuse_questions_args = $reuse_questions;
+			} elseif ( is_callable( $reuse_questions ) ) {
+				$reuse_questions_args = call_user_func( $reuse_questions );
+			}
+
+			$reuse_questions_args['post_type'] = 'question';
+
+			$question_post_query = new WP_Query( $reuse_questions_args );
 			$questions           = $question_post_query->get_posts();
 		}
 
@@ -537,9 +550,9 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				add_post_meta( $question->ID, '_quiz_question_order' . $quiz_id, $question_order );
 
 			}
-		} // end if count
+		}
 
-		return;
+		return $quiz_id;
 	}
 
 	/**
@@ -550,7 +563,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 * @return int[]
 	 * @throws Exception
 	 */
-	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id, $multiple_question_args = array(), $quiz_args = array() ) {
+	protected function attach_lessons_multiple_questions( $number = 10, $lesson_id = 0, $multiple_question_args = array(), $quiz_args = array() ) {
 		if ( empty( $lesson_id ) || ! intval( $lesson_id ) > 0
 			 || ! get_post( $lesson_id ) || 'lesson' != get_post_type( $lesson_id ) ) {
 			throw new Exception( 'Generate questions needs a valid lesson ID.' );
@@ -633,11 +646,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				// pop the file on top of the car
 				$files[ 'file_upload_' . $question_id ] = $file;
 			}
-		} // end for each $test_user_quiz_answers
+		}
 
 		return $files;
 
-	}//end generate_test_files()
+	}
 
 	/**
 	 * Returns a random none file question id from the given user input array
@@ -666,12 +679,12 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			if ( 'file-upload' != $type ) {
 				$answers_without_files[ $question_id ] = $answer;
 			}
-		}// end foreach
+		}
 
 		$index = array_rand( $answers_without_files );
 
 		return $index;
-	}//end get_random_none_file_question_index()
+	}
 
 
 	/**
@@ -701,12 +714,12 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			if ( 'file-upload' == $type ) {
 				$file_type_answers[ $question_id ] = $answer;
 			}
-		}// end foreach
+		}
 
 		$index = array_rand( $file_type_answers );
 
 		return $index;
-	}//end get_random_file_question_index()
+	}
 
 
 	/**
@@ -740,7 +753,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		return $answers_feedback;
 
-	} // end generate_user_answers_feedback
+	}
 
 	/**
 	 * @return int|WP_Error
@@ -782,4 +795,4 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		return $lesson_id;
 	}
 
-}//end class
+}

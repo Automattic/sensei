@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import icon from '../../../icons/question-icon';
+import icon from '../../../icons/quiz-icon';
 import edit from './quiz-edit';
 import metadata from './block.json';
 
@@ -29,6 +29,9 @@ const quizBlock = {
 		__( 'Assessment', 'sensei-lms' ),
 		__( 'Evaluation', 'sensei-lms' ),
 	],
+	providesContext: {
+		'sensei-lms/quizId': 'id',
+	},
 	example: {
 		innerBlocks: [
 			{

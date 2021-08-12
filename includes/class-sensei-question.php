@@ -37,10 +37,10 @@ class Sensei_Question {
 			add_filter( 'request', array( $this, 'filter_actions' ) );
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
-		} // End If Statement
+		}
 
 		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
-	} // End __construct()
+	}
 
 	public function question_types() {
 		$types = array(
@@ -57,11 +57,8 @@ class Sensei_Question {
 		 *
 		 * @hook sensei_question_types
 		 *
-		 * @param {array} $types {
-		 *  @type {string} $id   Question type ID.
-		 *  @type {string} $text Question type text.
-		 * }
-		 * @return {array} Associative array of question types.
+		 * @param {string[]} $types Question types.
+		 * @return {string[]} Associative array of question types.
 		 */
 		return apply_filters( 'sensei_question_types', $types );
 	}
@@ -138,7 +135,7 @@ class Sensei_Question {
 
 		}
 
-	} // End add_column_data()
+	}
 
 	public function question_edit_panel_metabox( $post_type, $post ) {
 		if ( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
@@ -468,7 +465,7 @@ class Sensei_Question {
 
 		return $question_type;
 
-	}//end get_question_type()
+	}
 
 	/**
 	 * Given a question ID, return the grade that can be achieved.
@@ -664,13 +661,13 @@ class Sensei_Question {
 				$output .= self::question_media_kses( $question_media_link );
 				$output .= '<dl>';
 
-			if ( $question_media_title ) {
+			if ( ! empty( $question_media_title ) ) {
 
 				$output .= '<dt>' . wp_kses_post( $question_media_title ) . '</dt>';
 
 			}
 
-			if ( $question_media_description ) {
+			if ( ! empty( $question_media_description ) ) {
 
 				$output .= '<dd>' . wp_kses_post( $question_media_description ) . '</dd>';
 
@@ -683,7 +680,7 @@ class Sensei_Question {
 
 		return $output;
 
-	} // end get_the_question_media
+	}
 
 	/**
 	 * Output the question media
@@ -806,9 +803,9 @@ class Sensei_Question {
 
 				<?php
 			}
-		}// end if we can show answer feedback
+		}
 
-	}//end answer_feedback_notes()
+	}
 
 	/**
 	 * This function has to be run inside the quiz question loop on the single quiz page.
@@ -1139,7 +1136,7 @@ class Sensei_Question {
 						$checked = checked( $answer, $question_data['user_answer_entry'], false );
 
 					}
-				} // End If Statement
+				}
 
 				// Load the answer option data
 				$question_option['ID']           = Sensei()->lesson->get_answer_id( $answer );
@@ -1152,7 +1149,7 @@ class Sensei_Question {
 				// add the speci  fic option to the list of options for this question
 				$question_answers_options[ $question_option['ID'] ] = $question_option;
 
-			} // end for each option
+			}
 
 			// Shuffle the array depending on the settings
 			$answer_options_sorted = array();
@@ -1197,8 +1194,8 @@ class Sensei_Question {
 
 					$answer_options_sorted = $question_answers_options;
 
-				} // end if $answer_order_string
-			} // end if random order
+				}
+			}
 
 			// assemble and setup the data for the templates data array
 			$question_data['answer_options'] = $answer_options_sorted;
@@ -1207,7 +1204,7 @@ class Sensei_Question {
 
 		return $question_data;
 
-	}//end multiple_choice_load_question_data()
+	}
 
 	/**
 	 * Load the gap fill question data on the sensei_get_question_template_data
@@ -1234,7 +1231,7 @@ class Sensei_Question {
 
 		return $question_data;
 
-	}//end gap_fill_load_question_data()
+	}
 
 
 	/**
@@ -1373,7 +1370,68 @@ class Sensei_Question {
 		sensei_log_event( 'question_add', $event_properties );
 	}
 
-} // End Class
+	/**
+	 * Check if a question can change to a new author. For normal questions, this is only possible if it
+	 * doesn't belong to any other quiz that has a different author.
+	 *
+	 * @param int $question_id   The question post ID.
+	 * @param int $new_author_id The new author ID.
+	 *
+	 * @return bool
+	 */
+	private function can_question_change_author( int $question_id, int $new_author_id ) {
+		$question = get_post( $question_id );
+
+		if ( ! $question || ! in_array( $question->post_type, [ 'question', 'multiple_question' ], true ) ) {
+			return false;
+		}
+
+		if ( 'multiple_question' === $question->post_type ) {
+			// These stick to the quiz. However, we don't attempt to change the questions in the category.
+			return true;
+		}
+
+		$can_question_change_author = true;
+		$quiz_ids                   = array_filter( get_post_meta( $question->ID, '_quiz_id' ) );
+		foreach ( $quiz_ids as $quiz_id ) {
+			$quiz = get_post( $quiz_id );
+			if (
+				$quiz
+				&& 'quiz' === $quiz->post_type
+				&& $new_author_id !== (int) $quiz->post_author
+			) {
+				$can_question_change_author = false;
+				break;
+			}
+		}
+
+		return $can_question_change_author;
+	}
+
+	/**
+	 * Update the question author if possible.
+	 *
+	 * @param int $question_id   Question post ID.
+	 * @param int $new_author_id New author.
+	 *
+	 * @return bool Whether the question author could be changed.
+	 */
+	public function maybe_update_question_author( int $question_id, int $new_author_id ) {
+		if ( ! $question_id || ! $this->can_question_change_author( $question_id, $new_author_id ) ) {
+			return false;
+		}
+
+		wp_update_post(
+			[
+				'ID'          => $question_id,
+				'post_author' => $new_author_id,
+			]
+		);
+
+		return true;
+	}
+
+}
 
 /**
  * Class WooThemes_Sensei_Question

@@ -61,6 +61,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	protected $status;
 
 	/**
+	 *  Rendering options.
+	 *
+	 * @var array
+	 */
+	protected $options;
+
+	/**
 	 * Are we in my-courses?
 	 *
 	 * @var bool
@@ -73,6 +80,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 * @var int
 	 */
 	private $page_id = 0;
+
+	/**
+	 * Rendering as a block.
+	 *
+	 * @var bool
+	 */
+	private $is_block = false;
 
 	/**
 	 * Setup the shortcode object
@@ -92,6 +106,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 				'status'  => 'all',
 				'orderby' => 'title',
 				'order'   => 'ASC',
+				'options' => [],
 			),
 			$attributes,
 			$shortcode
@@ -134,6 +149,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			$this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
 
 		}
+
+		$this->is_block = ! empty( $attributes['options'] );
+
+		$this->options = wp_parse_args(
+			$attributes['options'],
+			[
+				'featuredImageEnabled'     => true,
+				'courseCategoryEnabled'    => true,
+				'courseDescriptionEnabled' => true,
+				'progressBarEnabled'       => true,
+				'columns'                  => 2,
+				'layoutView'               => 'list',
+			]
+		);
 
 	}
 
@@ -273,6 +302,9 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	public function render() {
 		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		global $wp_query;
+		global $sensei_is_block;
+
+		$sensei_is_block = $this->is_block;
 
 		if ( false === is_user_logged_in() ) {
 			// show the login form
@@ -293,7 +325,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		ob_start();
 		echo '<section id="sensei-user-courses">';
 
-		Sensei_Messages::the_my_messages_link();
+		if ( ! $sensei_is_block ) {
+			Sensei_Messages::the_my_messages_link();
+		}
+
 		do_action( 'sensei_my_courses_content_inside_before' );
 		Sensei_Templates::get_template( 'loop-course.php' );
 		do_action( 'sensei_my_courses_content_inside_after' );
@@ -310,10 +345,11 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		wp_reset_query();
 
 		$this->detach_shortcode_hooks();
+		$sensei_is_block = false;
 
 		return $shortcode_output;
 
-	}//end render()
+	}
 
 	/**
 	 * Add hooks for the shortcode
@@ -322,22 +358,41 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function attach_shortcode_hooks() {
 
-		// attach the toggle functionality
-		// don't show the toggle action if the user specified complete or active for this shortcode
+		// Don't show the toggle action if the user specified complete or active for this shortcode.
 		if ( $this->is_shortcode_initial_status_all ) {
-
 			add_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
-			add_action( 'wp_footer', array( $this, 'print_course_toggle_actions_inline_script' ), 90 );
-
 		}
 
-		// add extra classes to distinguish the course based on user completed or active
 		add_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
 
-		// attach progress meter below course
-		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
-		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
+		if ( $this->is_block ) {
+			// Remove default WordPress theme hook that overrides Sensei styles.
+			remove_filter( 'wp_get_attachment_image_attributes', 'twenty_twenty_one_get_attachment_image_attributes', 10 );
 
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30 );
+
+			if ( $this->options['featuredImageEnabled'] ) {
+				add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 1 );
+			}
+
+			add_action( 'sensei_course_content_inside_before', array( $this, 'add_course_details_wrapper_start' ), 2 );
+
+			if ( $this->options['courseCategoryEnabled'] ) {
+				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 6 );
+			}
+
+			if ( ! $this->options['courseDescriptionEnabled'] ) {
+				add_filter( 'get_the_excerpt', '__return_false' );
+			}
+
+			if ( $this->options['progressBarEnabled'] ) {
+				add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
+			}
+		}
+
+		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
+		$this->is_block && add_action( 'sensei_course_content_inside_after', array( $this, 'add_course_details_wrapper_end' ) );
 	}
 
 	/**
@@ -347,24 +402,39 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 */
 	public function detach_shortcode_hooks() {
 
-		// remove all hooks after the output is generated
+		// Remove all hooks after the output is generated.
+		remove_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
 		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
 		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
-		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
+		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20 );
 		remove_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
+		remove_filter( 'get_the_excerpt', '__return_false' );
+
+		if ( false === $this->options['featuredImageEnabled'] ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
+		}
+
+		if ( $this->is_block ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+		}
 	}
 
 	/**
 	 * Hooks into sensei_course_content_inside_after
 	 *
-	 * @param $course
+	 * @param int $course_id Course ID.
 	 */
 	public function attach_course_progress( $course_id ) {
 
-		$percentage = Sensei()->course->get_completion_percentage( $course_id, get_current_user_id() );
-		echo wp_kses_post( Sensei()->course->get_progress_meter( $percentage ) );
+		if ( $this->is_block ) {
+			$progress_block = ( new Sensei_Course_Progress_Block() )->render_course_progress( [ 'postId' => $course_id ] );
+			echo wp_kses_post( $progress_block );
+		} else {
+			$percentage = Sensei()->course->get_completion_percentage( $course_id, get_current_user_id() );
+			echo wp_kses_post( Sensei()->course->get_progress_meter( $percentage ) );
+		}
 
-	}//end attach_course_progress()
+	}
 
 
 	/**
@@ -378,7 +448,33 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		Sensei()->course->the_course_action_buttons( get_post( $course_id ) );
 
-	}//end attach_course_buttons()
+	}
+
+	/**
+	 * Display course categories.
+	 *
+	 * @param int|WP_Post $course
+	 */
+	public function course_category( $course ) {
+		$category_output = get_the_term_list( $course, 'course-category', '', ', ', '' );
+		echo '<span class="wp-block-sensei-lms-learner-courses__courses-list__category">
+					' . wp_kses_post( $category_output ) . '
+				</span>';
+	}
+
+	/**
+	 * Add an opening wrapper element around the course details.
+	 */
+	public function add_course_details_wrapper_start() {
+		echo '<div class="wp-block-sensei-lms-learner-courses__courses-list__details">';
+	}
+
+	/**
+	 * Add a closing wrapper element around the course details.
+	 */
+	public function add_course_details_wrapper_end() {
+		echo '</div>';
+	}
 
 	/**
 	 * Add a the user status class for the given course.
@@ -403,7 +499,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		return $classes;
 
-	}//end course_status_class_tagging()
+	}
 
 	/**
 	 * Output the course toggle functionality
@@ -444,6 +540,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		<?php
 	}
+
 
 	/**
 	 * Load the javascript for the toggle functionality

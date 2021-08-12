@@ -59,15 +59,29 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		$this->contact_teacher = new Sensei_Block_Contact_Teacher();
 		$this->take_course     = new Sensei_Block_Take_Course();
 		new Sensei_Conditional_Content_Block();
+		new Sensei_Block_View_Results();
 
 		$post_type_object = get_post_type_object( 'course' );
 
-		$post_type_object->template = [
+		$block_template = [
 			[ 'sensei-lms/button-take-course' ],
 			[ 'sensei-lms/button-contact-teacher' ],
 			[ 'sensei-lms/course-progress' ],
 			[ 'sensei-lms/course-outline' ],
 		];
+
+		/**
+		 * Customize the course block template.
+		 *
+		 * @hook  sensei_course_block_template
+		 * @since 3.9.0
+		 *
+		 * @param {string[][]} $template          Array of blocks to use as the default initial state for a course.
+		 * @param {string[][]} $original_template Original block template.
+		 *
+		 * @return {string[][]} Array of blocks to use as the default initial state for a course.
+		 */
+		$post_type_object->template = apply_filters( 'sensei_course_block_template', $block_template, $post_type_object->template ?? [] );
 	}
 
 	/**
@@ -106,6 +120,12 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-course-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
+
+		global $post;
+		if ( null !== $post ) {
+			Sensei()->assets->preload_data( [ sprintf( '/sensei-internal/v1/course-structure/%d?context=edit', $post->ID ) ] );
+		}
+
 	}
 
 	/**
@@ -118,7 +138,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 * @return bool
 	 */
 	public static function skip_single_course_template( $enabled ) {
-		return is_single() && 'course' === get_post_type() && ! Sensei()->course->is_legacy_course( get_post() )
+		return is_single() && 'course' === get_post_type() && Sensei()->course->has_sensei_blocks( get_post() )
 			? false
 			: $enabled;
 	}

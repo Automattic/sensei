@@ -32,7 +32,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
-	} // End __construct()
+	}
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -140,7 +140,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -156,7 +156,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		$args = array(
 			'number'  => $per_page,
@@ -213,7 +213,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -323,7 +323,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 					$course_average_percent .= '%';
-				} // End If Statement
+				}
 
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
@@ -407,7 +407,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					if ( is_numeric( $lesson_average_grade ) ) {
 						$lesson_average_grade .= '%';
 					}
-				} // End If Statement
+				}
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
@@ -471,7 +471,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					);
 					$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
 					$user_average_grade .= '%';
-				} // End If Statement
+				}
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
@@ -486,7 +486,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$this
 				);
 				break;
-		} // end switch
+		}
 
 		$escaped_column_data = array();
 
@@ -527,7 +527,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
 
-	} // End get_courses()
+	}
 
 	/**
 	 * Return array of lessons
@@ -558,7 +558,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$lessons_query     = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
 		$this->total_items = $lessons_query->found_posts;
 		return $lessons_query->posts;
-	} // End get_lessons()
+	}
 
 	/**
 	 * Return array of learners
@@ -590,7 +590,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		return $learners;
 
-	} // End get_learners()
+	}
 
 	/**
 	 * Sets the stats boxes to render
@@ -635,7 +635,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			__( 'Total Completed Courses', 'sensei-lms' ) => $total_courses_ended,
 		);
 		return apply_filters( 'sensei_analysis_stats_boxes', $stats_to_render );
-	} // End stats_boxes()
+	}
 
 	/**
 	 * Sets output when no items are found
@@ -652,7 +652,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 		// translators: Placeholders %1$s and %3$s are opening and closing <em> tages, %2$s is the view type.
 		echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' ) );
-	} // End no_items()
+	}
 
 	/**
 	 * Output for table heading
@@ -698,7 +698,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
-	} // End data_table_header()
+	}
 
 	/**
 	 * Output for table footer
@@ -720,7 +720,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			default:
 				$report = 'user-overview';
 				break;
-		} // End Switch Statement
+		}
 		$url = add_query_arg(
 			array(
 				'page'                   => $this->page_slug,
@@ -730,7 +730,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			admin_url( 'admin.php' )
 		);
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
-	} // End data_table_footer()
+	}
 
 	/**
 	 * The text for the search button
@@ -752,12 +752,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			default:
 				$text = __( 'Search Learners', 'sensei-lms' );
 				break;
-		} // End Switch Statement
+		}
 
 		return $text;
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Analysis_Overview_List_Table

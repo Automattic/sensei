@@ -24,7 +24,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
-	}//end setup()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
@@ -44,10 +44,10 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->course ), 'Sensei Course class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
-	 * This tests Sensei_Courses::get_all_course
+	 * This tests Sensei_Courses::get_all_courses
 	 *
 	 * @since 1.8.0
 	 */
@@ -70,7 +70,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			'The number of course returned is not equal to what is actually available'
 		);
 
-	}//end testGetAllCourses()
+	}
 
 	/**
 	 *
@@ -111,7 +111,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// does it return all lessons
 		$this->assertEquals( count( $test_lessons ), count( Sensei()->course->get_completed_lesson_ids( $test_course_id, $test_user_id ) ), 'Course completed lesson count not accurate' );
 
-	}//end testGetCompletedLessonIds()
+	}
 
 	/**
 	 * This tests Sensei_Courses::get_completion_percentage
@@ -398,4 +398,45 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are enrolled should have access to course content' );
 	}
-}//end class
+
+	/**
+	 * Test that the course completed page URL is returned.
+	 *
+	 * @covers Sensei_Course::get_view_results_link
+	 * @covers Sensei_Course::get_course_completed_page_url
+	 */
+	public function testGetViewResultsLinkCourseCompletedPage() {
+		$course_id = $this->factory->course->create();
+		$page_id   = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$expected = "http://example.org/?page_id={$page_id}&course_id={$course_id}";
+		$actual   = Sensei_Course::get_view_results_link( $course_id );
+
+		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * Test that the course results page URL is returned.
+	 *
+	 * @covers Sensei_Course::get_view_results_link
+	 * @covers Sensei_Course::get_course_completed_page_url
+	 */
+	public function testGetViewResultsLinkCourseResultsPage() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_name' => 'a-course',
+			]
+		);
+
+		$expected = 'http://example.org/?course_results=a-course';
+		$actual   = Sensei_Course::get_view_results_link( $course_id );
+
+		$this->assertEquals( $expected, $actual );
+	}
+}

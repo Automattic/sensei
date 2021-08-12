@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { List } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { useState, useEffect } from '@wordpress/element';
@@ -21,6 +16,7 @@ import FeatureStatus, {
 	EXTERNAL_STATUS,
 } from './feature-status';
 import useFeaturesPolling from './use-features-polling';
+import List from '../../shared/components/list';
 
 /**
  * Installation feedback component.

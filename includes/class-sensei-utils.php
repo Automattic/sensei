@@ -26,7 +26,7 @@ class Sensei_Utils {
 	public static function get_placeholder_image() {
 
 		return esc_url( apply_filters( 'sensei_placeholder_thumbnail', Sensei()->plugin_url . 'assets/images/placeholder.png' ) );
-	} // End get_placeholder_image()
+	}
 
 	/**
 	 * Log an activity item.
@@ -85,7 +85,7 @@ class Sensei_Utils {
 				$data['comment_date'] = current_time( 'mysql' );
 			}
 			wp_update_comment( $data );
-		} // End If Statement
+		}
 
 		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
 
@@ -96,8 +96,8 @@ class Sensei_Utils {
 			return $comment_id;
 		} else {
 			return false;
-		} // End If Statement
-	} // End sensei_log_activity()
+		}
+	}
 
 
 	/**
@@ -169,10 +169,10 @@ class Sensei_Utils {
 			}
 
 			return $comments;
-		} // End If Statement
+		}
 		// Count comments
 		return intval( $comments ); // This is the count, check the return from WP_Comment_Query
-	} // End sensei_check_for_activity()
+	}
 
 
 	/**
@@ -202,15 +202,15 @@ class Sensei_Utils {
 					array_push( $post_ids, $value->user_id );
 				} else {
 					array_push( $post_ids, $value->comment_post_ID );
-				} // End If Statement
-			} // End For Loop
+				}
+			}
 			// Reset array indexes
 			$post_ids = array_unique( $post_ids );
 			$post_ids = array_values( $post_ids );
-		} // End If Statement
+		}
 
 		return $post_ids;
-	} // End sensei_activity_ids()
+	}
 
 
 	/**
@@ -242,14 +242,14 @@ class Sensei_Utils {
 			foreach ( $comments as $key => $value ) {
 				if ( isset( $value->comment_ID ) && 0 < $value->comment_ID ) {
 					$dataset_changes = wp_delete_comment( intval( $value->comment_ID ), true );
-				} // End If Statement
-			} // End For Loop
-		} // End If Statement
+				}
+			}
+		}
 
 		Sensei()->flush_comment_counts_cache( $args['post_id'] );
 
 		return $dataset_changes;
-	} // End sensei_delete_activities()
+	}
 
 	/**
 	 * Delete all activity for specified user.
@@ -266,7 +266,7 @@ class Sensei_Utils {
 		_deprecated_function( __METHOD__, '3.0.0', 'Sensei_Learner::delete_all_user_activity' );
 
 		return \Sensei_Learner::instance()->delete_all_user_activity( $user_id );
-	} // End delete_all_user_activity()
+	}
 
 	/**
 	 * Get value for a specified activity.
@@ -284,10 +284,10 @@ class Sensei_Utils {
 
 			if ( isset( $comment->{$args['field']} ) && '' != $comment->{$args['field']} ) {
 				$activity_value = $comment->{$args['field']};
-			} // End If Statement
+			}
 		}
 		return $activity_value;
-	} // End sensei_get_activity_value()
+	}
 
 	/**
 	 * Load the WordPress rich text editor
@@ -322,7 +322,7 @@ class Sensei_Utils {
 
 		wp_editor( $content, $editor_id, $settings );
 
-	} // End sensei_text_editor()
+	}
 
 	/**
 	 * Save quiz answers submitted by users
@@ -400,7 +400,7 @@ class Sensei_Utils {
 
 		return $answers_saved;
 
-	} // End sensei_save_quiz_answers()
+	}
 
 	public static function upload_file( $file = array() ) {
 
@@ -490,7 +490,7 @@ class Sensei_Utils {
 
 		return Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, $total_questions, $quiz_grade_type );
 
-	} // End sensei_grade_quiz_auto()
+	}
 
 	/**
 	 * Grade quiz
@@ -541,7 +541,7 @@ class Sensei_Utils {
 
 		return Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id );
 
-	} // end sensei_grade_question_auto
+	}
 
 	/**
 	 * Grade question
@@ -615,7 +615,7 @@ class Sensei_Utils {
 
 		return self::sensei_start_lesson( $lesson_id, $user_id, $complete );
 
-	}//end user_start_lesson()
+	}
 
 	/**
 	 * Mark a lesson as started for user
@@ -964,13 +964,13 @@ class Sensei_Utils {
 					self::sort_array_by_key( $return_array, $sort_key );
 				if ( isset( $_GET['order'] ) && 'desc' == esc_html( $_GET['order'] ) ) {
 					$return_array = array_reverse( $return_array, true );
-				} // End If Statement
-			} // End If Statement
+				}
+			}
 			return $return_array;
 		} else {
 			return $return_array;
-		} // End If Statement
-	} // End array_sort_reorder()
+		}
+	}
 
 	/**
 	 * sort_array_by_key sorts array by key
@@ -986,13 +986,13 @@ class Sensei_Utils {
 		reset( $array );
 		foreach ( $array as $ii => $va ) {
 			$sorter[ $ii ] = $va[ $key ];
-		} // End For Loop
+		}
 		asort( $sorter );
 		foreach ( $sorter as $ii => $va ) {
 			$ret[ $ii ] = $array[ $ii ];
-		} // End For Loop
+		}
 		$array = $ret;
-	} // End sort_array_by_key()
+	}
 
 	/**
 	 * This function returns an array of lesson quiz questions
@@ -1024,9 +1024,9 @@ class Sensei_Utils {
 			$question_args = wp_parse_args( $query_args, $defaults );
 
 			$questions_array = get_posts( $question_args );
-		} // End If Statement
+		}
 		return $questions_array;
-	} // End lesson_quiz_questions()
+	}
 
 	/**
 	 * Complete this course forcefully for this user by passing all the lessons.
@@ -1789,7 +1789,7 @@ class Sensei_Utils {
 						}
 						return false;
 				}
-			} // End If Statement
+			}
 		}
 
 		return false;
@@ -2076,7 +2076,7 @@ class Sensei_Utils {
 
 		return self::update_user_data( $data_key, $post_id, $value, $user_id );
 
-	}//end add_user_data()
+	}
 
 	/**
 	 * add user specific data to the passed in sensei post type id
@@ -2129,7 +2129,7 @@ class Sensei_Utils {
 
 		return $success;
 
-	}//end update_user_data()
+	}
 
 	/**
 	 * Get the user data stored on the passed in post type
@@ -2175,7 +2175,7 @@ class Sensei_Utils {
 
 		return $user_data_value;
 
-	}//end get_user_data()
+	}
 
 	/**
 	 * Delete the Sensei user data for the given key, Sensei post type and user combination.
@@ -2216,7 +2216,7 @@ class Sensei_Utils {
 
 		return $deleted;
 
-	}//end delete_user_data()
+	}
 
 
 	/**
@@ -2266,7 +2266,7 @@ class Sensei_Utils {
 
 			$combined_attributes .= $attribute . '="' . esc_attr( $value ) . '"' . ' ';
 
-		}// end for each
+		}
 
 		// create the select element
 		$drop_down_element .= '<select ' . $combined_attributes . ' >' . "\n";
@@ -2287,8 +2287,8 @@ class Sensei_Utils {
 
 				// add the element to the select html
 				$drop_down_element .= $element;
-			} // End For Loop
-		} // End If Statement
+			}
+		}
 
 		$drop_down_element .= '</select>' . "\n";
 
@@ -2513,6 +2513,17 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Check if WooCommerce is installed.
+	 *
+	 * @since 3.11.0
+	 *
+	 * @return bool
+	 */
+	public static function is_woocommerce_installed() {
+		return file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' );
+	}
+
+	/**
 	 * Checks if the given version pf WooCommerce plugin is installed and activated.
 	 *
 	 * @param string $minimum_version
@@ -2718,7 +2729,7 @@ class Sensei_Utils {
 		return false;
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Utils

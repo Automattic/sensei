@@ -61,7 +61,8 @@ class Sensei_Course_Structure {
 	 * @see Sensei_Course_Structure::prepare_lesson()
 	 * @see Sensei_Course_Structure::prepare_module()
 	 *
-	 * @param string $context Context that structure is being retrieved for. Possible values: edit, view.
+	 * @param string  $context  Context that structure is being retrieved for. Possible values: edit, view.
+	 * @param boolean $no_cache Avoid query cache.
 	 *
 	 * @return array {
 	 *     An array which has course structure information.
@@ -70,7 +71,11 @@ class Sensei_Course_Structure {
 	 *                 and prepare_module().
 	 * }
 	 */
-	public function get( $context = 'view' ) {
+	public function get( $context = 'view', $no_cache = false ) {
+		if ( $no_cache ) {
+			add_filter( 'posts_where', [ $this, 'filter_no_cache_where' ] );
+		}
+
 		$context = in_array( $context, [ 'view', 'edit' ], true ) ? $context : 'view';
 
 		$structure = [];
@@ -97,7 +102,26 @@ class Sensei_Course_Structure {
 			$structure[] = $this->prepare_lesson( $lesson );
 		}
 
+		if ( $no_cache ) {
+			remove_filter( 'posts_where', [ $this, 'filter_no_cache_where' ] );
+		}
+
 		return $structure;
+	}
+
+	/**
+	 * Filter where adding an extra condition to avoid cache.
+	 *
+	 * @access private
+	 *
+	 * @param string $where Current where.
+	 *
+	 * @return string Where with extra condition to avoid cache.
+	 */
+	public function filter_no_cache_where( $where ) {
+		$time = time();
+
+		return $where . ' AND ' . $time . ' = ' . $time;
 	}
 
 	/**

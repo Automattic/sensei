@@ -67,10 +67,37 @@ class Sensei_Status {
 		$section['fields']['template_overrides']     = $this->get_template_overrides_info();
 		$section['fields']['is_calculation_pending'] = $this->get_is_calculation_pending_info();
 		$section['fields']['legacy_enrolment']       = $this->get_legacy_enrolment_info();
+		$section['fields']['legacy_flags']           = $this->get_legacy_flags_info();
 
 		$info['sensei-lms'] = $section;
 
 		return $info;
+	}
+
+	/**
+	 * Adds information on which legacy update flags have been set in Sensei.
+	 *
+	 * @return array
+	 */
+	private function get_legacy_flags_info() {
+		$legacy_flags       = Sensei()->get_legacy_flags();
+		$legacy_flags_human = [];
+
+		if ( ! empty( $legacy_flags[ Sensei_Main::LEGACY_FLAG_WITH_FRONT ] ) ) {
+			$legacy_flags_human[] = esc_html__( 'Permalink structure for CPTs will be prepended with site/post slug prefix', 'sensei-lms' );
+		}
+
+		if ( empty( $legacy_flags_human ) ) {
+			$value_legacy_flags = esc_html__( 'No legacy update flags have been set', 'sensei-lms' );
+		} else {
+			$value_legacy_flags = implode( '; ', $legacy_flags_human );
+		}
+
+		return [
+			'label' => __( 'Legacy update flags', 'sensei-lms' ),
+			'value' => $value_legacy_flags,
+			'debug' => wp_json_encode( $legacy_flags ),
+		];
 	}
 
 	/**

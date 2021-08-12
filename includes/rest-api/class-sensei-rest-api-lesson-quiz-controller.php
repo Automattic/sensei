@@ -166,7 +166,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function save_quiz( WP_REST_Request $request ) {
-		$lesson  = get_post( (int) $request->get_param( 'lesson_id' ) );
+		$lesson = get_post( (int) $request->get_param( 'lesson_id' ) );
+
+		if ( 'auto-draft' === $lesson->post_status ) {
+			return new WP_Error(
+				'sensei_lesson_quiz_lesson_auto_draft',
+				__( 'Cannot update the quiz of an Auto Draft lesson.', 'sensei-lms' ),
+				[ 'status' => 400 ]
+			);
+		}
+
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
 
@@ -186,7 +195,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		);
 
 		if ( is_wp_error( $quiz_id ) ) {
-			return new WP_REST_Response( $quiz_id );
+			return $quiz_id;
 		}
 
 		if ( $is_new ) {
@@ -194,18 +203,33 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			wp_set_post_terms( $quiz_id, [ 'multiple-choice' ], 'quiz-type' );
 		}
 
+		$existing_question_ids = array_map( 'intval', wp_list_pluck( Sensei()->quiz->get_questions( $quiz_id ), 'ID' ) );
+
 		$question_ids = [];
 		foreach ( $json_params['questions'] as $question ) {
-			$question_id = $this->save_question( $question );
+			if ( isset( $question['type'] ) && 'category-question' === $question['type'] ) {
+				$question_id = $this->save_category_question( $question );
+			} else {
+				$question_id = $this->save_question( $question );
+			}
 
 			if ( is_wp_error( $question_id ) ) {
-				return new WP_REST_Response( $question_id );
+				if ( 'sensei_lesson_quiz_question_not_available' === $question_id->get_error_code() ) {
+					// Gracefully ignore this error and include it (unchanged) in the quiz if it already exists.
+					$question_id = (int) $question_id->get_error_data();
+
+					if ( ! in_array( $question_id, $existing_question_ids, true ) ) {
+						$question_id = null;
+					}
+				} else {
+					return $question_id;
+				}
 			}
 
 			$question_ids[] = $question_id;
 		}
 
-		Sensei()->quiz->set_questions( $quiz_id, $question_ids );
+		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
 
 		$response = new WP_REST_Response();
 		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ) ) );
@@ -240,8 +264,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta_input['_enable_quiz_reset'] = true === $quiz_options['allow_retakes'] ? 'on' : '';
 		}
 
-		if ( isset( $quiz_options['show_questions'] ) ) {
-			$meta_input['_show_questions'] = $quiz_options['show_questions'];
+		if ( array_key_exists( 'show_questions', $quiz_options ) ) {
+			$meta_input['_show_questions'] = empty( $quiz_options['show_questions'] ) ? '' : $quiz_options['show_questions'];
 		}
 
 		if ( isset( $quiz_options['random_question_order'] ) ) {
@@ -332,18 +356,13 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			return [];
 		}
 
-		$quiz_questions     = [];
-		$multiple_questions = [];
+		$quiz_questions = [];
 		foreach ( $questions as $question ) {
 			if ( 'multiple_question' === $question->post_type ) {
-				$multiple_questions[] = $question;
+				$quiz_questions[] = $this->get_category_question( $question );
 			} else {
 				$quiz_questions[] = $this->get_question( $question );
 			}
-		}
-
-		foreach ( $multiple_questions as $multiple_question ) {
-			$quiz_questions = array_merge( $quiz_questions, $this->get_questions_from_category( $multiple_question, wp_list_pluck( $quiz_questions, 'id' ) ) );
 		}
 
 		return $quiz_questions;

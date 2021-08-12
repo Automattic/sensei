@@ -2,6 +2,7 @@ $block: '.sensei-lms-question-block';
 
 @import '../answer-blocks/option-toggle';
 @import './question-grade-toolbar';
+@import '../../../shared/styles/wp-colors';
 
 .sensei-lms-question-block {
 
@@ -14,6 +15,9 @@ $block: '.sensei-lms-question-block';
 
 	.editor-styles-wrapper .wp-block &__title {
 		margin-right: 56px;
+		textarea:focus {
+			color: inherit;
+		}
 	}
 
 	&__index {
@@ -22,6 +26,7 @@ $block: '.sensei-lms-question-block';
 		text-align: right;
 		top: 0;
 		font-weight: bold;
+		white-space: nowrap;
 
 		#{$block}.is-draft & {
 			opacity: .62;
@@ -58,6 +63,7 @@ $block: '.sensei-lms-question-block';
 		border-radius: 2px;
 		padding: 5px;
 		min-height: 52px;
+		display: flex;
 
 		&.multi-line {
 			min-height: 200px;
@@ -89,6 +95,9 @@ $block: '.sensei-lms-question-block';
 	}
 
 	&__answer--multiple-choice, &__answer--true-false {
+		.editor-styles-wrapper & li {
+			min-height: 35px;
+		}
 		&__toggle {
 
 			&__wrapper {
@@ -102,15 +111,19 @@ $block: '.sensei-lms-question-block';
 				font-size: 12px;
 				height: auto;
 				text-transform: uppercase;
-				background: #111;
+				background: #fff;
+				border: 1px solid $gray-900;
+				&:not(:hover) {
+					color: $gray-900!important;
+				}
 			}
 		}
 	}
 
 	&__answer--multiple-choice {
 		&__option.is-draft {
-			.sensei-lms-question-block__option-toggle, .sensei-lms-question-block__answer--multiple-choice__toggle {
-				opacity: 0.5;
+			.sensei-lms-question-block__answer--multiple-choice__toggle__wrapper {
+				display: none;
 			}
 		}
 	}
@@ -122,13 +135,14 @@ $block: '.sensei-lms-question-block';
 			&__control {
 				margin-right: 12px;
 			}
-		}
 
+		}
 		.editor-styles-wrapper & li {
 			min-height: 45px;
 			display: flex;
 			align-items: baseline;
 		}
+
 	}
 
 	&__multiple-choice-answer-option {
@@ -201,7 +215,15 @@ $block: '.sensei-lms-question-block';
 			padding: 4px;
 			height: auto;
 			line-height: inherit;
-			text-align: right;
+		}
+
+		&__token {
+			font-size: inherit;
+			background: var(--wp-admin-theme-color, #333);
+			color: #fff;
+			padding: 6px;
+			margin-right: 4px;
+			border-radius: 2px;
 		}
 	}
 

@@ -83,7 +83,7 @@ class Sensei_Admin {
 		Sensei_Tools::instance()->init();
 		Sensei_Status::instance()->init();
 
-	} // End __construct()
+	}
 
 	/**
 	 * Add items to admin menu
@@ -267,9 +267,6 @@ class Sensei_Admin {
 		// WordPress component styles with Sensei theming.
 		Sensei()->assets->register( 'sensei-wp-components', 'shared/styles/wp-components.css', [], 'screen' );
 
-		// WooCommerce component styles with Sensei theming.
-		Sensei()->assets->register( 'sensei-wc-components', 'shared/styles/wc-components.css', [], 'screen' );
-
 		// Select 2 styles
 		Sensei()->assets->enqueue( 'sensei-core-select2', '../vendor/select2/select2.min.css', [], 'screen' );
 
@@ -282,7 +279,7 @@ class Sensei_Admin {
 
 		}
 
-	} // End admin_styles_global()
+	}
 
 
 	/**
@@ -295,6 +292,8 @@ class Sensei_Admin {
 	 */
 	public function register_scripts( $hook ) {
 		$screen = get_current_screen();
+
+		Sensei()->assets->register( 'sensei-dismiss-notices', 'js/admin/sensei-notice-dismiss.js', [] );
 
 		// Select2 script used to enhance all select boxes.
 		Sensei()->assets->register( 'sensei-core-select2', '../vendor/select2/select2.full.js', [ 'jquery' ] );
@@ -705,7 +704,7 @@ class Sensei_Admin {
 			}
 		}
 
-		$new_post['post_title']       .= empty( $suffix ) ? __( '(Duplicate)', 'sensei-lms' ) : $suffix;
+		$new_post['post_title']       .= $suffix;
 		$new_post['post_date']         = current_time( 'mysql' );
 		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
 		$new_post['post_modified']     = $new_post['post_date'];
@@ -728,6 +727,20 @@ class Sensei_Admin {
 
 		// As per wp_update_post() we need to escape the data from the db.
 		$new_post = wp_slash( $new_post );
+
+		/**
+		 * Filter arguments for `wp_insert_post` when duplicating a Sensei
+		 * post. This may be a Course, Lesson, or Quiz.
+		 *
+		 * @hook  sensei_duplicate_post_args
+		 * @since 3.11.0
+		 *
+		 * @param {array}   $new_post The arguments for duplicating the post.
+		 * @param {WP_Post} $post     The original post being duplicated.
+		 *
+		 * @return {array}  The new arguments to be handed to `wp_insert_post`.
+		 */
+		$new_post = apply_filters( 'sensei_duplicate_post_args', $new_post, $post );
 
 		$new_post_id = wp_insert_post( $new_post );
 
@@ -1186,6 +1199,7 @@ class Sensei_Admin {
 	public function handle_order_courses() {
 		check_admin_referer( 'order_courses' );
 
+		$ordered = null;
 		if ( isset( $_POST['course-order'] ) && 0 < strlen( $_POST['course-order'] ) ) {
 			$ordered = $this->save_course_order( esc_attr( $_POST['course-order'] ) );
 		}
@@ -1342,6 +1356,7 @@ class Sensei_Admin {
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
 
+		$ordered = null;
 		if ( isset( $_POST['lesson-order'] ) ) {
 			$ordered = $this->save_lesson_order( esc_attr( $_POST['lesson-order'] ), esc_attr( $_POST['course_id'] ) );
 		}
@@ -1568,7 +1583,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Get course structure.
+	 * Get or filter course structure for lesson ordering.
 	 *
 	 * @param int|array   $course_structure Structure array or course ID to get the structure.
 	 * @param null|string $type             Optional type to filter the content.
@@ -1578,7 +1593,7 @@ class Sensei_Admin {
 	private function get_course_structure( $course_structure = null, $type = null ) {
 		$course_structure = is_array( $course_structure )
 			? $course_structure
-			: Sensei_Course_Structure::instance( $course_structure )->get( 'edit' );
+			: Sensei_Course_Structure::instance( $course_structure )->get( 'edit', wp_using_ext_object_cache() );
 
 		if ( isset( $type ) ) {
 			$course_structure = array_filter(
@@ -1811,7 +1826,7 @@ class Sensei_Admin {
 		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
-} // End Class
+}
 
 /**
  * Legacy Class WooThemes_Sensei_Admin

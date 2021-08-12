@@ -9,17 +9,17 @@ import { __ } from '@wordpress/i18n';
  *
  * @param {Object}   props
  * @param {Object}   props.options
- * @param {string}   props.options.gradingNotes Notes for teacher when grading.
+ * @param {string}   props.options.teacherNotes Notes for teacher when grading.
  * @param {Function} props.setOptions
  */
 const QuestionGradingNotesSettings = ( {
-	options: { gradingNotes },
+	options: { teacherNotes },
 	setOptions,
 } ) => (
 	<TextareaControl
 		label={ __( 'Grading Notes', 'sensei-lms' ) }
-		onChange={ ( value ) => setOptions( { gradingNotes: value } ) }
-		value={ gradingNotes }
+		onChange={ ( value ) => setOptions( { teacherNotes: value } ) }
+		value={ teacherNotes || '' }
 		help={ __(
 			'Displayed to the teacher when grading the question.',
 			'sensei-lms'

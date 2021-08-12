@@ -32,7 +32,7 @@ const getEditorOutlineStructure = () => {
 		return null;
 	}
 
-	return extractStructure( outlineBlock.innerBlocks );
+	return { structure: extractStructure( outlineBlock.innerBlocks ) };
 };
 
 export const COURSE_STORE = 'sensei/course-structure';
@@ -76,5 +76,20 @@ registerStructureStore( {
 	clearError() {
 		// Clear error notices.
 		dispatch( 'core/notices' ).removeNotice( 'course-outline-save-error' );
+	},
+
+	/**
+	 * Prepend structure in server's response.
+	 *
+	 * @param {Object} structure The structure response.
+	 *
+	 * @return {Object} The modified response.
+	 */
+	setServerStructure( structure ) {
+		if ( ! structure ) {
+			return {};
+		}
+
+		return { structure };
 	},
 } );

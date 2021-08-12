@@ -12,10 +12,15 @@ import { createContext, useEffect } from '@wordpress/element';
 import OutlinePlaceholder from './outline-placeholder';
 import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
-import ToggleLegacyCourseMetaboxesWrapper from '../../toggle-legacy-course-metaboxes-wrapper';
+import ToggleLegacyMetaboxesWrapper from '../../toggle-legacy-metaboxes-wrapper';
 import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons-status-sync';
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
+
+const ALLOWED_BLOCKS = [
+	'sensei-lms/course-outline-module',
+	'sensei-lms/course-outline-lesson',
+];
 
 /**
  * A React context which contains the attributes and the setAttributes callback of the Outline block.
@@ -67,20 +72,15 @@ const OutlineEdit = ( props ) => {
 			<OutlineSettings { ...props } />
 
 			<section className={ className }>
-				<InnerBlocks
-					allowedBlocks={ [
-						'sensei-lms/course-outline-module',
-						'sensei-lms/course-outline-lesson',
-					] }
-				/>
+				<InnerBlocks allowedBlocks={ ALLOWED_BLOCKS } />
 			</section>
 		</OutlineAttributesContext.Provider>
 	);
 
 	return (
-		<ToggleLegacyCourseMetaboxesWrapper { ...props }>
+		<ToggleLegacyMetaboxesWrapper { ...props }>
 			{ content }
-		</ToggleLegacyCourseMetaboxesWrapper>
+		</ToggleLegacyMetaboxesWrapper>
 	);
 };
 

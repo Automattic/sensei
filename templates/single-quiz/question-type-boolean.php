@@ -58,8 +58,8 @@ $boolean_options = array( 'true', 'false' );
 					$answer_class = 'user_wrong';
 
 				}
-			} // end if right answer == current booloean options
-		}// end if $user_correct .. $question_grade
+			}
+		}
 
 		$option_value = $option ? 'true' : 'false';
 

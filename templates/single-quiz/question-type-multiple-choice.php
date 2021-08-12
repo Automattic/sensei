@@ -45,7 +45,7 @@ foreach ( $question_data['answer_options'] as $option ) {
 		</label>
 
 	</li>
-<?php } // End For Loop ?>
+<?php } ?>
 
 </ul>
 

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { Section } from '@woocommerce/components';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -14,6 +9,7 @@ import { Button, Spinner, Notice } from '@wordpress/components';
  */
 import { ImportLog } from './import-log';
 import ImportSuccessResults from './import-success-results';
+import { Section } from '../../../shared/components/section';
 
 /**
  * Done page of the importer.

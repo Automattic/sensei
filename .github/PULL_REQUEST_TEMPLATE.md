@@ -6,6 +6,13 @@ Fixes #
 
 ### Testing instructions
 
+<!--
+If the functionality of this PR is behind a feature flag, please include the
+following testing step, using the correct name for the feature flag. (If you
+aren't sure, just ignore this step)
+
+* Enable the feature flag: `add_filter( 'sensei_feature_flag_{THE_FLAG_NAME}', '__return_true' );`
+-->
 *
 
 <!-- Add the following only if there are new/updated actions or filters. Please provide a brief description of what they do and any arguments they may take. Be sure to also add the "Hooks" label to this PR. -->

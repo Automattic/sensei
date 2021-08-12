@@ -14,8 +14,18 @@ module.exports = {
 				allowedTextDomain: 'sensei-lms',
 			},
 		],
+		'import/no-extraneous-dependencies': 'off',
+		'jsdoc/check-line-alignment': [
+			'warn',
+			'always',
+			{
+				tags: [ 'param', 'arg', 'argument', 'property', 'prop' ],
+				preserveMainDescriptionPostDelimiter: true,
+			},
+		],
+		'jsdoc/require-yields': 'off',
+		'jsdoc/tag-lines': 'off',
 		'react-hooks/exhaustive-deps': 'warn',
-		'jsdoc-alignment/lines-alignment': 'error',
 	},
-	plugins: [ 'jest', 'jsdoc-alignment' ],
+	plugins: [ 'jest' ],
 };

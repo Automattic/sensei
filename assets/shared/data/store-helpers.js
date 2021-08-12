@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { createReduxStore, register, registerStore } from '@wordpress/data';
+
+/**
  * Compose an action creator with the given start, success and error actions.
  *
  * @param {string}   startAction   Start action type.
@@ -42,4 +47,23 @@ export const createReducerFromActionMap = ( reducers, defaultState ) => {
 		const reducer = reducers[ action.type ] || reducers.DEFAULT;
 		return reducer( action, state );
 	};
+};
+
+/**
+ * Create and register a WP data store.
+ *
+ * Uses the available newest @wordpress/data API to register the store and provide the constant to use it.
+ *
+ * @param {string} name     Store name.
+ * @param {Object} settings Store definition.
+ * @return {string|Object} Store key.
+ */
+export const createStore = ( name, settings ) => {
+	if ( createReduxStore ) {
+		const store = createReduxStore( name, settings );
+		register( store );
+		return store;
+	}
+	registerStore( name, settings );
+	return name;
 };

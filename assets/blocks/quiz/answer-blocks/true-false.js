@@ -14,12 +14,12 @@ import { OptionToggle } from './option-toggle';
  *
  * @param {Object}   props
  * @param {Object}   props.attributes
- * @param {boolean}  props.attributes.rightAnswer The correct answer.
+ * @param {boolean}  props.attributes.correct The correct answer.
  * @param {Function} props.setAttributes
- * @param {boolean}  props.hasSelected            Is question block selected.
+ * @param {boolean}  props.hasSelected        Is question block selected.
  */
 const TrueFalseAnswer = ( {
-	attributes: { rightAnswer = true },
+	attributes: { correct = true },
 	setAttributes,
 	hasSelected,
 } ) => {
@@ -34,12 +34,7 @@ const TrueFalseAnswer = ( {
 					key={ value }
 					className="sensei-lms-question-block__answer--true-false__option"
 				>
-					<OptionToggle
-						onClick={ () =>
-							setAttributes( { rightAnswer: value } )
-						}
-						isChecked={ rightAnswer === value }
-					>
+					<OptionToggle isChecked={ correct === value }>
 						<span>{ label }</span>
 					</OptionToggle>
 					{ hasSelected && (
@@ -49,19 +44,45 @@ const TrueFalseAnswer = ( {
 								className="sensei-lms-question-block__answer--true-false__toggle"
 								onClick={ () =>
 									setAttributes( {
-										rightAnswer:
-											value === rightAnswer
-												? ! value
-												: value,
+										correct:
+											value === correct ? ! value : value,
 									} )
 								}
 							>
-								{ rightAnswer === value
+								{ correct === value
 									? __( 'Right', 'sensei-lms' )
 									: __( 'Wrong', 'sensei-lms' ) }
 							</Button>
 						</div>
 					) }
+				</li>
+			) ) }
+		</ul>
+	);
+};
+
+/**
+ * Read-only answer component true/false question block.
+ *
+ * @param {Object}  props
+ * @param {Object}  props.attributes
+ * @param {boolean} props.attributes.correct The correct answer.
+ */
+TrueFalseAnswer.view = ( { attributes: { correct = true } } ) => {
+	const options = [
+		{ label: __( 'True', 'sensei-lms' ), value: true },
+		{ label: __( 'False', 'sensei-lms' ), value: false },
+	];
+	return (
+		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--true-false">
+			{ options.map( ( { label, value } ) => (
+				<li
+					key={ value }
+					className="sensei-lms-question-block__answer--true-false__option"
+				>
+					<OptionToggle isChecked={ correct === value }>
+						<span>{ label }</span>
+					</OptionToggle>
 				</li>
 			) ) }
 		</ul>

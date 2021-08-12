@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { camelCase, snakeCase, omit, keyBy } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { dispatch, select, useDispatch } from '@wordpress/data';
@@ -12,10 +17,18 @@ import { registerStructureStore } from '../../shared/structure/structure-store';
 import {
 	parseQuestionBlocks,
 	syncQuestionBlocks,
-	normalizeQuizOptionsAttribute,
+	normalizeAttributes,
 } from './data';
 
 export const QUIZ_STORE = 'sensei/quiz-structure';
+
+const READ_ONLY_ATTRIBUTES = [
+	'categories',
+	'shared',
+	'options.studentHelp',
+	'media',
+	'categoryName',
+];
 
 /**
  * Syncronize this block with quiz data.
@@ -57,8 +70,12 @@ registerStructureStore( {
 		}
 
 		yield dispatch( 'core/block-editor' ).updateBlockAttributes( clientId, {
-			options: normalizeQuizOptionsAttribute( structure.options ),
+			options: normalizeAttributes( structure.options, camelCase ),
 		} );
+
+		if ( ! structure.questions?.length ) {
+			return;
+		}
 
 		const questionBlocks = yield select( 'core/block-editor' ).getBlocks(
 			clientId
@@ -77,16 +94,41 @@ registerStructureStore( {
 	 */
 	readBlock() {
 		const clientId = select( QUIZ_STORE ).getBlock();
-		if ( ! clientId ) return;
+
+		if ( ! clientId ) {
+			return;
+		}
+
 		const quizBlock = select( 'core/block-editor' ).getBlock( clientId );
-		if ( ! quizBlock ) return;
+
+		if ( ! quizBlock ) {
+			return;
+		}
+
+		const options = normalizeAttributes(
+			quizBlock.attributes.options,
+			snakeCase
+		);
+
 		const questionBlocks = select( 'core/block-editor' ).getBlocks(
 			clientId
 		);
-		throw {
-			code: 'not-implemented',
-			options: quizBlock.attributes.options,
-			questions: parseQuestionBlocks( questionBlocks ),
+
+		const questionBlockAttributes = parseQuestionBlocks( questionBlocks );
+
+		const serverQuestionsById = keyBy(
+			select( QUIZ_STORE ).getServerStructure().questions,
+			'id'
+		);
+
+		return {
+			options,
+			questions: questionBlockAttributes.map( ( question ) =>
+				// Avoid overriding non-editable question.
+				false === question.editable
+					? serverQuestionsById[ question.id ]
+					: omit( question, READ_ONLY_ATTRIBUTES )
+			),
 		};
 	},
 
@@ -128,5 +170,25 @@ registerStructureStore( {
 	 */
 	clearError() {
 		dispatch( 'core/notices' ).removeNotice( 'quiz-structure-save-error' );
+	},
+
+	/**
+	 * Remove derived elements from quiz response.
+	 *
+	 * @param {Object} structure The quiz response.
+	 *
+	 * @return {Object} The modified response.
+	 */
+	setServerStructure( structure ) {
+		if ( ! structure ) {
+			return {};
+		}
+
+		return {
+			...structure,
+			questions: structure.questions.map( ( question ) =>
+				omit( question, READ_ONLY_ATTRIBUTES )
+			),
+		};
 	},
 } );

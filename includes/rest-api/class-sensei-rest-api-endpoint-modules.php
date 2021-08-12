@@ -1,15 +1,23 @@
 <?php
-
+// phpcs:ignoreFile
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
+/**
+ * @deprecated 3.11.0
+ */
 class Sensei_REST_API_Endpoint_Modules extends Sensei_REST_API_Controller {
 
 	protected $base               = '/modules';
 	protected $domain_model_class = 'Sensei_Domain_Models_Module';
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function register() {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$prefix = $this->api->get_api_prefix();
 		register_rest_route(
 			$prefix,
@@ -35,7 +43,16 @@ class Sensei_REST_API_Endpoint_Modules extends Sensei_REST_API_Controller {
 		);
 	}
 
+	/**
+	 * @deprecated 3.11.0
+	 */
 	public function get_items( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
+		if ( ! headers_sent() ) {
+			header( 'Warning: 299 - Deprecated API' );
+		}
+
 		$item_id = isset( $request['id'] ) ? absint( $request['id'] ) : null;
 
 		if ( null === $item_id ) {
@@ -53,10 +70,14 @@ class Sensei_REST_API_Endpoint_Modules extends Sensei_REST_API_Controller {
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param WP_REST_Request $request
 	 * @return bool
 	 */
 	public function get_items_permissions_check( $request ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		return $this->admin_permissions_check( $request );
 	}
 
@@ -66,10 +87,14 @@ class Sensei_REST_API_Endpoint_Modules extends Sensei_REST_API_Controller {
 	}
 
 	/**
+	 * @deprecated 3.11.0
+	 *
 	 * @param $model Sensei_Domain_Models_Model_Abstract
 	 * @return array
 	 */
 	protected function add_links( $model ) {
+		_deprecated_function( __METHOD__, '3.11.0' );
+
 		$helper = $this->api->get_helper();
 		return array(
 			'self'       => array(

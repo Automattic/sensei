@@ -34,7 +34,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$this->menu_label = __( 'Settings', 'sensei-lms' );
 			$this->page_slug  = 'sensei-settings';
 
-		} // End If Statement
+		}
 
 		$this->register_hook_listener();
 		$this->get_settings();
@@ -44,7 +44,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
 		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
-	} // End __construct()
+	}
 
 	/**
 	 * Get settings value
@@ -100,7 +100,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
-	} // End register_settings_screen()
+	}
 
 	/**
 	 * Add legacy options to alloptions if they don't exist.
@@ -159,7 +159,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
-	} // End init_sections()
+	}
 
 	/**
 	 * Add settings fields.
@@ -238,6 +238,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
 			'type'        => 'select',
 			'default'     => get_option( 'woothemes-sensei_user_dashboard_page_id', 0 ),
+			'section'     => 'default-settings',
+			'required'    => 0,
+			'options'     => $pages_array,
+		);
+
+		$fields['course_completed_page'] = array(
+			'name'        => __( 'Course Completed Page', 'sensei-lms' ),
+			'description' => __( 'The page that is displayed after a learner completes a course.', 'sensei-lms' ),
+			'type'        => 'select',
+			'default'     => get_option( 'woothemes-sensei_course_completed_page_id', 0 ),
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
@@ -640,7 +650,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$this->fields = apply_filters( 'sensei_settings_fields', $fields );
 
-	} // End init_fields()
+	}
 
 	/**
 	 * Get options for the duration fields.
@@ -667,7 +677,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		}
 
 		return $options;
-	} // End get_duration_options()
+	}
 
 	/**
 	 * Return an array of pages.
@@ -708,13 +718,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			if ( isset( $matches[1] ) ) {
 				$id                = $matches[1];
 				$page_items[ $id ] = trim( strip_tags( $v ) );
-			} // End If Statement
-		} // End For Loop
+			}
+		}
 
 		$pages_array = $page_items;
 
 		return $pages_array;
-	} // End pages_array()
+	}
 
 	/**
 	 * Flush the rewrite rules after the settings have been updated.
@@ -736,7 +746,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		}
 
-	}//end flush_rewrite_rules()
+	}
 
 	/**
 	 * Logs settings update from the Settings form.
@@ -830,7 +840,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		return array_filter( array_merge( $added, $removed ) );
 	}
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Settings
