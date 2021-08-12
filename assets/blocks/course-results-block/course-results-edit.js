@@ -27,48 +27,56 @@ import { sprintf, __ } from '@wordpress/i18n';
  * @param {Array}  props.lessonNumber The lesson number to use in the sample title.
  */
 const SampleLesson = ( { lessonNumber } ) => (
-	<div className="wp-block-sensei-lms-course-results__lesson">
-		<span className="wp-block-sensei-lms-course-results__lesson__title">
-			{ sprintf(
-				/* translators: Mock lesson number. */
-				__( 'Lesson %s', 'sensei-lms' ),
-				lessonNumber
-			) }
-		</span>
-		<span className="wp-block-sensei-lms-course-results__lesson__score">
-			xx%
-		</span>
-	</div>
+	<li className="wp-block-sensei-lms-course-results__lesson">
+		{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+		<a href="#" className="wp-block-sensei-lms-course-results__lesson-link">
+			<span className="wp-block-sensei-lms-course-results__lesson-title">
+				{ sprintf(
+					/* translators: Mock lesson number. */
+					__( 'Lesson %s', 'sensei-lms' ),
+					lessonNumber
+				) }
+			</span>
+			<span className="wp-block-sensei-lms-course-results__lesson-score">
+				xx%
+			</span>
+		</a>
+	</li>
 );
 
 /**
  * Sample module component.
  *
- * @param {Object}  props               Component props.
- * @param {string}  props.moduleName    The name of the module.
- * @param {Array}   props.lessonNumbers The lesson numbers to include in the sample module.
- * @param {string}  props.style         The style selected for the results block.
- * @param {boolean} props.moduleBorder  If modules have borders.
+ * @param {Object}  props              Component props.
+ * @param {string}  props.moduleName   The name of the module.
+ * @param {boolean} props.moduleBorder If modules have borders.
+ * @param {string}  props.headerStyles The module header styles.
+ * @param {string}  props.style        The style selected for the results block.
  */
-const SampleModule = ( { moduleName, lessonNumbers, style, moduleBorder } ) => (
+const SampleModule = ( { moduleName, moduleBorder, headerStyles, style } ) => (
 	<section
 		className={ classnames( 'wp-block-sensei-lms-course-results__module', {
-			'wp-block-sensei-lms-course-results__module__bordered': moduleBorder,
+			'wp-block-sensei-lms-course-results__module--has-border': moduleBorder,
 		} ) }
 	>
-		<header className="wp-block-sensei-lms-course-results__module__header">
-			<h3 className="wp-block-sensei-lms-course-results__module__title">
+		<header
+			className="wp-block-sensei-lms-course-results__module-header"
+			style={ headerStyles }
+		>
+			<h3 className="wp-block-sensei-lms-course-results__module-title">
 				{ moduleName }
 			</h3>
 		</header>
 
 		{ 'minimal' === style && (
-			<div className="wp-block-sensei-lms-course-results__module__separator" />
+			<div className="wp-block-sensei-lms-course-results__separator" />
 		) }
 
-		{ lessonNumbers.map( ( lessonNumber, index ) => (
-			<SampleLesson key={ index } lessonNumber={ lessonNumber } />
-		) ) }
+		<ul className="wp-block-sensei-lms-course-results__lessons">
+			{ [ 1, 2 ].map( ( lessonNumber, index ) => (
+				<SampleLesson key={ index } lessonNumber={ lessonNumber } />
+			) ) }
+		</ul>
 	</section>
 );
 
@@ -126,32 +134,32 @@ const CourseResultsEdit = ( props ) => {
 			<CourseResultsSettings { ...props } />
 			<section className={ className } style={ styleVars }>
 				<div className="wp-block-sensei-lms-course-results__grade">
-					<span className="wp-block-sensei-lms-course-results__grade__label">
+					<span className="wp-block-sensei-lms-course-results__grade-label">
 						{ __( 'Your Total Grade', 'sensei-lms' ) }
 					</span>
-					<span className="wp-block-sensei-lms-course-results__grade__score">
+					<span className="wp-block-sensei-lms-course-results__grade-score">
 						XX%
 					</span>
 				</div>
-				<h2 className="wp-block-sensei-lms-course-results__title">
+				<h2 className="wp-block-sensei-lms-course-results__course-title">
 					{ __( 'Course Title', 'sensei-lms' ) }
 				</h2>
 				<SampleModule
 					moduleName={ __( 'Module A', 'sensei-lms' ) }
-					lessonNumbers={ [ 1, 2, 3 ] }
 					moduleBorder={ moduleBorder }
+					headerStyles={ headerStyles }
 					style={ style }
 				/>
 				<SampleModule
 					moduleName={ __( 'Module B', 'sensei-lms' ) }
-					lessonNumbers={ [ 4, 5, 6 ] }
 					moduleBorder={ moduleBorder }
+					headerStyles={ headerStyles }
 					style={ style }
 				/>
 				<SampleModule
 					moduleName={ __( 'Module C', 'sensei-lms' ) }
-					lessonNumbers={ [ 7, 8 ] }
 					moduleBorder={ moduleBorder }
+					headerStyles={ headerStyles }
 					style={ style }
 				/>
 			</section>

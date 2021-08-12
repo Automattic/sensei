@@ -77,21 +77,34 @@ class Sensei_Course_Results_Block {
 			return $this->block_content;
 		}
 
-		$structure       = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
-		$block_content   = [];
-		$block_content[] = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper">';
-		$block_content[] = $this->render_total_grade( $course_id );
-		$block_content[] = $this->render_course_title( $course_id );
+		$class_name        = Sensei_Block_Helpers::block_class_with_default_style( $attributes, [] );
+		$structure         = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
+		$has_other_lessons = $this->course_structure_has_type( $structure, 'lesson' );
+		$block_content     = [];
+		$block_content[]   = '<section class="wp-block-sensei-lms-course-results sensei-block-wrapper ' . $class_name . '">';
+		$block_content[]   = $this->render_total_grade( $course_id );
+		$block_content[]   = $this->render_course_title( $course_id, $structure, $attributes );
 
+		// Render modules and associated lessons.
 		foreach ( $structure as $item ) {
 			if ( 'module' === $item['type'] ) {
 				$block_content[] = $this->render_module( $item, $attributes );
 			}
-
-			if ( 'lesson' === $item['type'] ) {
-				$block_content[] = $this->render_lesson( $item );
-			}
 		}
+
+		// Render other lessons.
+		if ( $has_other_lessons ) {
+			$block_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons wp-block-sensei-lms-course-results__lessons--has-other">';
+
+			foreach ( $structure as $item ) {
+				if ( 'lesson' === $item['type'] ) {
+					$block_content[] = $this->render_lesson( $item );
+				}
+			}
+
+			$block_content[] = '</ul>';
+		}
+
 		$block_content[] = '</section>';
 
 		$this->block_content = implode( $block_content );
@@ -114,10 +127,10 @@ class Sensei_Course_Results_Block {
 
 		$content   = [];
 		$content[] = '<div class="wp-block-sensei-lms-course-results__grade">';
-		$content[] = '<span class="wp-block-sensei-lms-course-results__grade__label">';
+		$content[] = '<span class="wp-block-sensei-lms-course-results__grade-label">';
 		$content[] = __( 'Your Total Grade', 'sensei-lms' );
 		$content[] = '</span>';
-		$content[] = '<span class="wp-block-sensei-lms-course-results__grade__score">';
+		$content[] = '<span class="wp-block-sensei-lms-course-results__grade-score">';
 		$content[] = Sensei_Utils::sensei_course_user_grade( $course_id, get_current_user_id() ) . '%';
 		$content[] = '</span>';
 		$content[] = '</div>';
@@ -128,18 +141,27 @@ class Sensei_Course_Results_Block {
 	/**
 	 * Render the course title.
 	 *
-	 * @param int $course_id Course ID.
+	 * @param int   $course_id  Course ID.
+	 * @param array $structure  Course structure information.
+	 * @param array $attributes The block attributes.
 	 *
 	 * @return string HTML for the course title.
 	 */
-	private function render_course_title( $course_id ) {
+	private function render_course_title( $course_id, $structure, $attributes ) {
 		$content      = [];
 		$course_title = $course_id ? get_the_title( $course_id ) : '';
 
 		if ( $course_title ) {
-			$content[] = '<h2 class="wp-block-sensei-lms-course-results__title">';
+			$content[] = '<h2 class="wp-block-sensei-lms-course-results__course-title">';
 			$content[] = $course_title;
 			$content[] = '</h2>';
+		}
+
+		// Render separator for courses that don't have any modules.
+		$has_modules = $this->course_structure_has_type( $structure, 'module' );
+
+		if ( ! $has_modules ) {
+			$content[] = '<div class="wp-block-sensei-lms-course-results__separator"></div>';
 		}
 
 		return implode( $content );
@@ -181,8 +203,8 @@ class Sensei_Course_Results_Block {
 		}
 
 		$section_content[] = '<section ' . $this->get_module_html_attributes( $class_name, $attributes ) . '>';
-		$section_content[] = '<header ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-results__module__header' ], $module_header_css ) . '>';
-		$section_content[] = '<h3 class="wp-block-sensei-lms-course-results__module__title">';
+		$section_content[] = '<header ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-results__module-header' ], $module_header_css ) . '>';
+		$section_content[] = '<h3 class="wp-block-sensei-lms-course-results__module-title">';
 		$section_content[] = esc_html( $item['title'] );
 		$section_content[] = '</h3>';
 		$section_content[] = '</header>';
@@ -196,12 +218,18 @@ class Sensei_Course_Results_Block {
 				]
 			);
 
-			$section_content[] = '<div ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-results__module__separator', $header_border_css ) . '></div>';
+			$section_content[] = '<div ' . Sensei_Block_Helpers::render_style_attributes( 'wp-block-sensei-lms-course-results__separator', $header_border_css ) . '></div>';
 
 		}
 
-		foreach ( $item['lessons'] as $lesson ) {
-			$section_content[] = $this->render_lesson( $lesson );
+		if ( 0 < count( $item['lessons'] ) ) {
+			$section_content[] = '<ul class="wp-block-sensei-lms-course-results__lessons">';
+
+			foreach ( $item['lessons'] as $lesson ) {
+				$section_content[] = $this->render_lesson( $lesson );
+			}
+
+			$section_content[] = '</ul>';
 		}
 
 		$section_content[] = '</section>';
@@ -218,7 +246,7 @@ class Sensei_Course_Results_Block {
 	 * @return string The html attributes.
 	 */
 	private function get_module_html_attributes( $class_name, $attributes ) : string {
-		$class_names   = [ 'wp-block-sensei-lms-course-results__module', $class_name ];
+		$class_names   = [ 'wp-block-sensei-lms-course-results__module' ];
 		$inline_styles = [];
 		$css           = Sensei_Block_Helpers::build_styles(
 			$attributes,
@@ -228,7 +256,7 @@ class Sensei_Course_Results_Block {
 		);
 
 		if ( ! empty( $attributes['moduleBorder'] ) ) {
-			$class_names[] = 'wp-block-sensei-lms-course-results__module__bordered';
+			$class_names[] = 'wp-block-sensei-lms-course-results__module--has-border';
 
 			if ( ! empty( $attributes['borderColorValue'] ) ) {
 				$inline_styles[] = sprintf( 'border-color: %s;', $attributes['borderColorValue'] );
@@ -251,19 +279,21 @@ class Sensei_Course_Results_Block {
 	 */
 	private function render_lesson( $item ) {
 		$section_content   = [];
-		$section_content[] = '<div class="wp-block-sensei-lms-course-results__lesson">';
-		$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson__title">';
+		$section_content[] = '<li class="wp-block-sensei-lms-course-results__lesson">';
+		$section_content[] = '<a href="' . esc_url( get_permalink( $item['id'] ) ) . '" class="wp-block-sensei-lms-course-results__lesson-link">';
+		$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson-title">';
 		$section_content[] = esc_html( $item['title'] );
 		$section_content[] = '</span>';
 
 		$grade = $this->get_lesson_grade( $item['id'] );
 		if ( null !== $grade ) {
-			$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson__score">';
+			$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson-score">';
 			$section_content[] = $grade . '%';
 			$section_content[] = '</span>';
 		}
 
-		$section_content[] = '</div>';
+		$section_content[] = '</a>';
+		$section_content[] = '</li>';
 
 		return implode( $section_content );
 	}
@@ -301,4 +331,17 @@ class Sensei_Course_Results_Block {
 		return $grade;
 	}
 
+	/**
+	 * Check whether the course structure contains an item of the specified type.
+	 *
+	 * @param array  $structure  Course structure information.
+	 * @param string $type       Type to check (module, lesson).
+	 *
+	 * @return bool Whether an item of the specified type exists in the course structure.
+	 */
+	private function course_structure_has_type( $structure, $type ) {
+		$type_counts = array_count_values( array_column( $structure, 'type' ) );
+
+		return array_key_exists( $type, $type_counts ) && 0 < $type_counts[ $type ];
+	}
 }

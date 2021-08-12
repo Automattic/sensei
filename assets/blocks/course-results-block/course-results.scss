@@ -1,18 +1,25 @@
 $dark-gray: #1a1d20;
 $spacing: 16px;
+$block: '.wp-block-sensei-lms-course-results';
 
-.wp-block-sensei-lms-course-results,
-.editor-styles-wrapper .wp-block-sensei-lms-course-results {
+#{$block},
+.editor-styles-wrapper #{$block} {
+	&.is-style-default {
+		#{$block}__module-header:not(.has-background) {
+			background-color: $dark-gray;
+		}
+	}
+
 	&__grade {
 		margin: auto 0;
 		text-align: center;
 		width: 100%;
 
-		&__label {
+		&-label {
 			font-size: 1.1em;
 		}
 
-		&__score {
+		&-score {
 			display: block;
 			font-size: 2em;
 			font-weight: bold;
@@ -20,45 +27,42 @@ $spacing: 16px;
 		}
 	}
 
-	&__title {
+	&__course-title {
 		margin: 1em 0 0.5em;
 		padding: 0;
 		text-align: center;
 	}
 
+	&__separator {
+		display: block;
+		border: none;
+		height: 4px;
+		margin-left: 4px;
+		margin-right: 4px;
+		background-color: var(
+			--sensei-module-header-separator-color,
+			$dark-gray
+		);
+	}
+
 	&__module {
 		margin: 1em 0;
 
-		&__header {
+		&--has-border {
+			border: 1px solid var( --sensei-module-border-color, $dark-gray );
+		}
+
+		&-header {
 			padding: $spacing;
 			font-weight: bold;
-			display: flex;
-			align-items: center;
 			background: var( --sensei-module-header-bg-color );
 			color: var( --sensei-module-header-text-color );
 		}
 
-		&__bordered {
-			border: 1px solid var( --sensei-module-border-color, $dark-gray );
-		}
-
-		&__separator {
-			display: block;
-			border: none;
-			height: 4px;
-			margin-left: 4px;
-			margin-right: 4px;
-			background-color: var(
-				--sensei-module-header-separator-color,
-				$dark-gray
-			);
-		}
-
-		&__title,
-		.wp-block-sensei-lms-course-results &__title {
+		&-title,
+		#{$block} &-title {
 			font-size: 1.1em;
 			font-weight: inherit;
-			flex: 1;
 			margin: 0;
 			color: inherit;
 			&::before,
@@ -68,23 +72,42 @@ $spacing: 16px;
 		}
 	}
 
-	&__lesson {
-		display: flex;
-		align-items: center;
-		margin: 1px 0;
-		position: relative;
+	#left-area &__lessons, // Divi
+	&__lessons {
+		list-style: none;
+		margin: 0;
+		padding: 0;
 
-		&__title {
-			flex: 1;
-			padding: $spacing;
+		&--has-other {
+			margin-bottom: 1em;
 		}
 
-		&__score {
-			display: inline-block;
-			flex: 0 0 40px;
-			margin: 0 $spacing;
-			flex-shrink: 0;
-			opacity: 0.9;
+		&--has-other #{$block}__lesson {
+			border-bottom: 1px solid $dark-gray;
+		}
+
+		#{$block}__lesson {
+			margin: 1px 0;
+			position: relative;
+
+			#{$block}__lesson-link {
+				align-items: center;
+				display: flex;
+				text-decoration: none;
+			}
+
+			&-title {
+				flex: 1;
+				padding: $spacing;
+			}
+
+			&-score {
+				display: inline-block;
+				flex: 0 0 40px;
+				margin: 0 $spacing;
+				flex-shrink: 0;
+				opacity: 0.9;
+			}
 		}
 	}
 }
