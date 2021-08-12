@@ -65,7 +65,7 @@ class Sensei_Setup_Wizard_Pages {
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
 		// Course Completion Page.
-		$new_course_completed_page_id = $this->create_page( esc_sql( _x( 'course-completed', 'page_slug', 'sensei-lms' ) ), __( 'Course Completed', 'sensei-lms' ) );
+		$new_course_completed_page_id = $this->create_page( esc_sql( _x( 'course-completed', 'page_slug', 'sensei-lms' ) ), __( 'Course Completed', 'sensei-lms' ), $this->get_course_completed_page_content() );
 		Sensei()->settings->set( 'course_completed_page', $new_course_completed_page_id );
 
 		Sensei()->initiate_rewrite_rules_flush();
@@ -89,6 +89,43 @@ class Sensei_Setup_Wizard_Pages {
 		$blocks[] = serialize_block(
 			[
 				'blockName'    => 'sensei-lms/learner-courses',
+				'innerContent' => [],
+				'attrs'        => [],
+			]
+		);
+
+		return implode( $blocks );
+	}
+
+	/**
+	 * Get the block content for course completed.
+	 *
+	 * @return string
+	 */
+	private function get_course_completed_page_content() {
+		$blocks   = [];
+		$blocks[] = serialize_block(
+			[
+				'blockName'    => 'core/paragraph',
+				'innerContent' => [ '<p class="has-text-align-center has-large-font-size">' . __( 'Congratulations on completing this course! 🥳', 'sensei-lms' ) . '</p>' ],
+				'attrs'        => [
+					'align'    => 'center',
+					'fontSize' => 'large',
+				],
+			]
+		);
+
+		$blocks[] = serialize_block(
+			[
+				'blockName'    => 'core/buttons',
+				'innerContent' => [ '<div class="wp-block-buttons is-content-justification-center"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div><!-- /wp:button --></div>' ],
+				'attrs'        => [ 'contentJustification' => 'center' ],
+			]
+		);
+
+		$blocks[] = serialize_block(
+			[
+				'blockName'    => 'sensei-lms/course-results',
 				'innerContent' => [],
 				'attrs'        => [],
 			]
