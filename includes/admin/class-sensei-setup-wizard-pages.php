@@ -114,18 +114,16 @@ class Sensei_Setup_Wizard_Pages {
 
 		$blocks[] = serialize_block(
 			[
-				'blockName'    => 'sensei-lms/course-results',
-				'innerContent' => [],
+				'blockName'    => 'core/buttons',
+				'innerContent' => [ '<div class="wp-block-buttons"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div><!-- /wp:button --></div>' ],
 				'attrs'        => [],
 			]
 		);
 
-		$find_my_courses_label = __( 'Find More Courses', 'sensei-lms' );
-
 		$blocks[] = serialize_block(
 			[
-				'blockName'    => 'core/buttons',
-				'innerContent' => [ '<div class="wp-block-buttons"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">Find More Courses</a></div><!-- /wp:button --></div>' ],
+				'blockName'    => 'sensei-lms/course-results',
+				'innerContent' => [],
 				'attrs'        => [],
 			]
 		);
