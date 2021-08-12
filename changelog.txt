@@ -1,5 +1,14 @@
 *** Changelog ***
 
+2021.08.12- version 3.13.0
+* New: Course Completed Page
+	* Add Course Completed page [#4254](https://github.com/Automattic/sensei/pull/4254), [#4280](https://github.com/Automattic/sensei/pull/4280)
+	* Add Course Completed Actions block [#4266](https://github.com/Automattic/sensei/pull/4266)
+	* Add Course Results block [#4267](https://github.com/Automattic/sensei/pull/4267), [#4273](https://github.com/Automattic/sensei/pull/4273), [#4279](https://github.com/Automattic/sensei/pull/4279)
+	* Update View Results button link [#4270](https://github.com/Automattic/sensei/pull/4270)
+	* Add default blocks to Course Completed page [#4281](https://github.com/Automattic/sensei/pull/4281)
+* Fix: Use new filter for block categories in WordPress 5.8 [#4264](https://github.com/Automattic/sensei/pull/4264)
+
 2021.07.19 - version 3.12.0
 * New: Add grid view to Learner Courses block and update list view [#4243](https://github.com/Automattic/sensei/pull/4243)
 * New: PHP 8 compatibility [#4244](https://github.com/Automattic/sensei/pull/4244)
