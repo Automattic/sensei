@@ -4,6 +4,11 @@
 import { select, dispatch, subscribe } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import onPostSave from '../../shared/helpers/on-post-save';
+
 // Sensei blocks by post type.
 const SENSEI_BLOCKS = {
 	course: {
@@ -51,18 +56,16 @@ export const startBlocksTogglingControl = ( postType ) => {
 		return;
 	}
 
-	let initialBlocks;
 	let initialSenseiBlocksCount;
 	let lastBlocks;
 
 	subscribe( () => {
-		// Get initial blocks.
-		if ( coreEditorSelector.isEditedPostDirty() && ! initialBlocks ) {
-			initialBlocks = lastBlocks;
-
-			initialSenseiBlocksCount = getBlocksCount(
-				Object.values( SENSEI_BLOCKS[ postType ] )
-			);
+		// Set initial blocks.
+		if (
+			coreEditorSelector.isEditedPostDirty() &&
+			undefined === initialSenseiBlocksCount
+		) {
+			updateInitialCount();
 		}
 
 		const newBlocks = select( 'core/editor' ).getBlocks();
@@ -71,7 +74,28 @@ export const startBlocksTogglingControl = ( postType ) => {
 		if ( newBlocks !== lastBlocks ) {
 			lastBlocks = newBlocks;
 			toggleLegacyMetaboxes();
+
+			if ( undefined !== initialSenseiBlocksCount ) {
+				toggleLegacyOrBlocksNotice();
+			}
 		}
+	} );
+
+	/**
+	 * Update initial blocks.
+	 */
+	const updateInitialCount = () => {
+		initialSenseiBlocksCount = getBlocksCount(
+			Object.values( SENSEI_BLOCKS[ postType ] )
+		);
+	};
+
+	/**
+	 * Update initial blocks on post save.
+	 */
+	onPostSave( () => {
+		updateInitialCount();
+		toggleLegacyOrBlocksNotice();
 	} );
 
 	/**
@@ -107,10 +131,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 					'meta-box-lesson-info'
 				);
 			} );
-
-		if ( initialBlocks ) {
-			toggleLegacyOrBlocksNotice();
-		}
 	};
 
 	/**
@@ -134,6 +154,8 @@ export const startBlocksTogglingControl = ( postType ) => {
 					id: 'sensei-using-blocks',
 					isDismissible: true,
 				} );
+			} else {
+				removeNotice( 'sensei-using-blocks' );
 			}
 		} else if ( senseiBlocksCount === 0 ) {
 			removeNotice( 'sensei-using-blocks' );
@@ -147,6 +169,8 @@ export const startBlocksTogglingControl = ( postType ) => {
 					id: 'sensei-using-template',
 					isDismissible: true,
 				} );
+			} else {
+				removeNotice( 'sensei-using-template' );
 			}
 		}
 	};
