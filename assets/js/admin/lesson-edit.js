@@ -1,16 +1,15 @@
 /**
  * WordPress dependencies
  */
-import { select, dispatch } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 
 /**
  * Internal dependencies
  */
-import './post-edit';
+import { startBlocksTogglingControl } from './blocks-toggling-control';
 
 domReady( () => {
-	window.sensei_toggle_legacy_metaboxes( 'lesson', 'pageload' );
+	startBlocksTogglingControl( 'lesson' );
 
 	// Lessons Write Panel.
 	const complexityOptionElements = jQuery( '#lesson-complexity-options' );
