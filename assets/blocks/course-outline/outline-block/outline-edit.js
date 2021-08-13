@@ -12,7 +12,6 @@ import { createContext, useEffect } from '@wordpress/element';
 import OutlinePlaceholder from './outline-placeholder';
 import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
-import ToggleLegacyMetaboxesWrapper from '../../toggle-legacy-metaboxes-wrapper';
 import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons-status-sync';
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
@@ -57,7 +56,7 @@ const OutlineEdit = ( props ) => {
 
 	useCourseLessonsStatusSync( clientId, attributes.isPreview );
 
-	const content = isEmpty ? (
+	return isEmpty ? (
 		<OutlinePlaceholder
 			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
 		/>
@@ -75,12 +74,6 @@ const OutlineEdit = ( props ) => {
 				<InnerBlocks allowedBlocks={ ALLOWED_BLOCKS } />
 			</section>
 		</OutlineAttributesContext.Provider>
-	);
-
-	return (
-		<ToggleLegacyMetaboxesWrapper { ...props }>
-			{ content }
-		</ToggleLegacyMetaboxesWrapper>
 	);
 };
 
