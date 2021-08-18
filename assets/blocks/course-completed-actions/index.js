@@ -30,6 +30,7 @@ export const registerCourseCompletedActionsBlock = () =>
 			],
 		] ),
 		attributes: {
+			contentJustification: 'center',
 			anchor: 'course-completed-actions',
 		},
 		isActive: ( blockAttributes, variationAttributes ) =>
