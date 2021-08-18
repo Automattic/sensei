@@ -77,24 +77,36 @@ class Sensei_Setup_Wizard_Pages {
 	 * @return string
 	 */
 	private function get_learner_courses_page_content() {
-		$blocks   = [];
-		$blocks[] = serialize_block(
-			[
-				'blockName'    => 'sensei-lms/button-learner-messages',
-				'innerContent' => [],
-				'attrs'        => [],
-			]
+		$blocks = serialize_blocks(
+			/**
+			 * Filter the learner courses page content when auto-creating it
+			 * through setup wizard.
+			 *
+			 * @hook  sensei_default_learner_courses_page_template
+			 * @since 3.13.1
+			 *
+			 * @param {array} $blocks Blocks array.
+			 *
+			 * @return {array} Blocks array.
+			 */
+			apply_filters(
+				'sensei_default_learner_courses_page_template',
+				[
+					[
+						'blockName'    => 'sensei-lms/button-learner-messages',
+						'innerContent' => [],
+						'attrs'        => [],
+					],
+					[
+						'blockName'    => 'sensei-lms/learner-courses',
+						'innerContent' => [],
+						'attrs'        => [],
+					],
+				]
+			)
 		);
 
-		$blocks[] = serialize_block(
-			[
-				'blockName'    => 'sensei-lms/learner-courses',
-				'innerContent' => [],
-				'attrs'        => [],
-			]
-		);
-
-		return implode( $blocks );
+		return $blocks;
 	}
 
 	/**
@@ -103,35 +115,47 @@ class Sensei_Setup_Wizard_Pages {
 	 * @return string
 	 */
 	private function get_course_completed_page_content() {
-		$blocks   = [];
-		$blocks[] = serialize_block(
-			[
-				'blockName'    => 'core/paragraph',
-				'innerContent' => [ '<p class="has-text-align-center has-large-font-size">' . __( 'Congratulations on completing this course! 🥳', 'sensei-lms' ) . '</p>' ],
-				'attrs'        => [
-					'align'    => 'center',
-					'fontSize' => 'large',
-				],
-			]
+		$blocks = serialize_blocks(
+			/**
+			 * Filter the course completed page content when auto-creating it
+			 * through setup wizard.
+			 *
+			 * @hook  sensei_default_course_completed_page_template
+			 * @since 3.13.1
+			 *
+			 * @param {array} $blocks Blocks array.
+			 *
+			 * @return {array} Blocks array.
+			 */
+			apply_filters(
+				'sensei_default_course_completed_page_template',
+				[
+					[
+						'blockName'    => 'core/paragraph',
+						'innerContent' => [ '<p class="has-text-align-center has-large-font-size">' . __( 'Congratulations on completing this course! 🥳', 'sensei-lms' ) . '</p>' ],
+						'attrs'        => [
+							'align'    => 'center',
+							'fontSize' => 'large',
+						],
+					],
+					[
+						'blockName'    => 'core/buttons',
+						'innerContent' => [ '<div class="wp-block-buttons is-content-justification-center" id="course-completed-actions"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div><!-- /wp:button --></div>' ],
+						'attrs'        => [
+							'contentJustification' => 'center',
+							'anchor'               => 'course-completed-actions',
+						],
+					],
+					[
+						'blockName'    => 'sensei-lms/course-results',
+						'innerContent' => [],
+						'attrs'        => [],
+					],
+				]
+			)
 		);
 
-		$blocks[] = serialize_block(
-			[
-				'blockName'    => 'core/buttons',
-				'innerContent' => [ '<div class="wp-block-buttons is-content-justification-center"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div><!-- /wp:button --></div>' ],
-				'attrs'        => [ 'contentJustification' => 'center' ],
-			]
-		);
-
-		$blocks[] = serialize_block(
-			[
-				'blockName'    => 'sensei-lms/course-results',
-				'innerContent' => [],
-				'attrs'        => [],
-			]
-		);
-
-		return implode( $blocks );
+		return $blocks;
 	}
 
 }
