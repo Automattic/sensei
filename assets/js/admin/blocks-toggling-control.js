@@ -142,17 +142,28 @@ export const startBlocksTogglingControl = ( postType ) => {
 			Object.values( SENSEI_BLOCKS[ postType ] )
 		);
 
+		const noticeOptions = {
+			isDismissible: true,
+			actions: [
+				{
+					label: __( 'Learn more', 'sensei-lms' ),
+					url:
+						'https://senseilms.com/documentation/course-page-blocks/',
+				},
+			],
+		};
+
 		if ( senseiBlocksCount > 0 ) {
 			removeNotice( 'sensei-using-template' );
 
 			if ( initialSenseiBlocksCount === 0 ) {
 				const message = __(
-					'This page contains a Sensei LMS block. When viewed, only the blocks will be displayed and the rest of the page will be empty.',
+					"You've just added your first Sensei block. This will change how your course page appears. Be sure to preview your page before saving changes.",
 					'sensei-lms'
 				);
 				createWarningNotice( message, {
 					id: 'sensei-using-blocks',
-					isDismissible: true,
+					...noticeOptions,
 				} );
 			} else {
 				removeNotice( 'sensei-using-blocks' );
@@ -162,12 +173,12 @@ export const startBlocksTogglingControl = ( postType ) => {
 
 			if ( initialSenseiBlocksCount > 0 ) {
 				const message = __(
-					'This page does not contain any Sensei LMS blocks. When viewed, it will display some details that cannot be easily customized. If you would like to have more control over the look and feel of this page, we recommend that you add some Sensei LMS blocks from the block inserter.',
+					'Are you sure you want to remove all Sensei blocks? This will change the way your course page appears. Be sure to preview your page before saving changes.',
 					'sensei-lms'
 				);
 				createWarningNotice( message, {
 					id: 'sensei-using-template',
-					isDismissible: true,
+					...noticeOptions,
 				} );
 			} else {
 				removeNotice( 'sensei-using-template' );
