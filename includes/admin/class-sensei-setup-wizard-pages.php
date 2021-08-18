@@ -82,7 +82,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * Filter the learner courses page content when auto-creating it
 			 * through setup wizard.
 			 *
-			 * @hook  sensei_default_learner_courses_page_content
+			 * @hook  sensei_default_learner_courses_page_template
 			 * @since 3.13.1
 			 *
 			 * @param {array} $blocks Blocks array.
@@ -90,7 +90,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * @return {array} Blocks array.
 			 */
 			apply_filters(
-				'sensei_default_learner_courses_page_content',
+				'sensei_default_learner_courses_page_template',
 				[
 					[
 						'blockName'    => 'sensei-lms/button-learner-messages',
@@ -120,7 +120,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * Filter the course completed page content when auto-creating it
 			 * through setup wizard.
 			 *
-			 * @hook  sensei_default_course_completed_page_content
+			 * @hook  sensei_default_course_completed_page_template
 			 * @since 3.13.1
 			 *
 			 * @param {array} $blocks Blocks array.
@@ -128,7 +128,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * @return {array} Blocks array.
 			 */
 			apply_filters(
-				'sensei_default_course_completed_page_content',
+				'sensei_default_course_completed_page_template',
 				[
 					[
 						'blockName'    => 'core/paragraph',
