@@ -119,7 +119,10 @@ class Sensei_Setup_Wizard_Pages {
 			[
 				'blockName'    => 'core/buttons',
 				'innerContent' => [ '<div class="wp-block-buttons is-content-justification-center"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div><!-- /wp:button --></div>' ],
-				'attrs'        => [ 'contentJustification' => 'center' ],
+				'attrs'        => [
+					'contentJustification' => 'center',
+					'anchor'               => 'course-completed-actions',
+				],
 			]
 		);
 

@@ -29,4 +29,9 @@ export const registerCourseCompletedActionsBlock = () =>
 				},
 			],
 		] ),
+		attributes: {
+			anchor: 'course-completed-actions',
+		},
+		isActive: ( blockAttributes, variationAttributes ) =>
+			blockAttributes.anchor === variationAttributes.anchor,
 	} );
