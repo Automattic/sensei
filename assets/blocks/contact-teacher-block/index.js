@@ -10,7 +10,7 @@ import { BlockStyles, createButtonBlockType } from '../button';
 import ToggleLegacyMetaboxesWrapper from '../toggle-legacy-metaboxes-wrapper';
 
 /**
- * Take course button block.
+ * Contact teacher button block.
  */
 export default createButtonBlockType( {
 	tagName: 'a',
