@@ -61,28 +61,28 @@ class Sensei_Setup_Wizard_Pages {
 		Sensei()->settings->set( 'course_page', $new_course_page_id );
 
 		// My Courses page.
-		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), $this->get_learner_courses_page_content() );
+		$new_my_course_page_id = $this->create_page( esc_sql( _x( 'my-courses', 'page_slug', 'sensei-lms' ) ), __( 'My Courses', 'sensei-lms' ), $this->get_learner_courses_page_template() );
 		Sensei()->settings->set( 'my_course_page', $new_my_course_page_id );
 
 		// Course Completion Page.
-		$new_course_completed_page_id = $this->create_page( esc_sql( _x( 'course-completed', 'page_slug', 'sensei-lms' ) ), __( 'Course Completed', 'sensei-lms' ), $this->get_course_completed_page_content() );
+		$new_course_completed_page_id = $this->create_page( esc_sql( _x( 'course-completed', 'page_slug', 'sensei-lms' ) ), __( 'Course Completed', 'sensei-lms' ), $this->get_course_completed_page_template() );
 		Sensei()->settings->set( 'course_completed_page', $new_course_completed_page_id );
 
 		Sensei()->initiate_rewrite_rules_flush();
 	}
 
 	/**
-	 * Get the block content for learner courses.
+	 * Get the template for learner courses page.
 	 *
 	 * @return string
 	 */
-	private function get_learner_courses_page_content() {
+	private function get_learner_courses_page_template() {
 		$blocks = serialize_blocks(
 			/**
-			 * Filter the learner courses page content when auto-creating it
+			 * Filter the learner courses page template when auto-creating it
 			 * through setup wizard.
 			 *
-			 * @hook  sensei_default_learner_courses_page_template
+			 * @hook  sensei_learner_courses_page_template
 			 * @since 3.13.1
 			 *
 			 * @param {array} $blocks Blocks array.
@@ -90,7 +90,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * @return {array} Blocks array.
 			 */
 			apply_filters(
-				'sensei_default_learner_courses_page_template',
+				'sensei_learner_courses_page_template',
 				[
 					[
 						'blockName'    => 'sensei-lms/button-learner-messages',
@@ -110,17 +110,17 @@ class Sensei_Setup_Wizard_Pages {
 	}
 
 	/**
-	 * Get the block content for course completed.
+	 * Get the template for course completed page.
 	 *
 	 * @return string
 	 */
-	private function get_course_completed_page_content() {
+	private function get_course_completed_page_template() {
 		$blocks = serialize_blocks(
 			/**
-			 * Filter the course completed page content when auto-creating it
+			 * Filter the course completed page template when auto-creating it
 			 * through setup wizard.
 			 *
-			 * @hook  sensei_default_course_completed_page_template
+			 * @hook  sensei_course_completed_page_template
 			 * @since 3.13.1
 			 *
 			 * @param {array} $blocks Blocks array.
@@ -128,7 +128,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * @return {array} Blocks array.
 			 */
 			apply_filters(
-				'sensei_default_course_completed_page_template',
+				'sensei_course_completed_page_template',
 				[
 					[
 						'blockName'    => 'core/paragraph',
