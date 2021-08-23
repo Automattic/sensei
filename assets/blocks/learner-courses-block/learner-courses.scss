@@ -93,6 +93,10 @@ $courses-list: '#{$block}__courses-list';
 			margin: 0;
 		}
 
+		.course-excerpt {
+			margin: 16px 0 16px;
+		}
+
 		.entry-actions {
 			margin-top: auto; // Push buttons to bottom of card.
 			padding-top: 20px;
