@@ -9,7 +9,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.12.2
+ * @version     3.13.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,11 +50,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			do_action( 'sensei_course_content_inside_before', get_the_ID() );
 			?>
 
+			<?php if ( get_the_excerpt() ) : ?>
+
 			<p class="course-excerpt">
 
 				<?php echo wp_kses_post( get_the_excerpt() ); ?>
 
 			</p>
+
+			<?php endif; ?>
 
 			<?php
 			/**

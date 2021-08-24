@@ -1,3 +1,4 @@
+@import 'learner-courses-mixins';
 @import '../../shared/blocks/course-progress/course-progress-settings';
 
 $block: '.wp-block-sensei-lms-learner-courses';
@@ -28,7 +29,7 @@ $courses-list: '#{$block}__courses-list';
 	}
 
 	&__description {
-		margin: 0;
+		margin: 16px 0 16px;
 	}
 
 	.wp-block-sensei-lms-course-progress {
@@ -36,8 +37,7 @@ $courses-list: '#{$block}__courses-list';
 	}
 
 	.sensei-results-links {
-		margin-top: auto; // Push button to bottom of card.
-		padding-top: 20px;
+		@include buttons-wrapper;
 
 		.wp-block-button {
 			margin: 0;

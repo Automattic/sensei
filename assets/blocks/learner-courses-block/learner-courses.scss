@@ -1,3 +1,4 @@
+@import 'learner-courses-mixins';
 @import '../../shared/blocks/course-progress/course-progress';
 
 $block: '.wp-block-sensei-lms-learner-courses';
@@ -93,9 +94,12 @@ $courses-list: '#{$block}__courses-list';
 			margin: 0;
 		}
 
+		.course-excerpt {
+			margin: 16px 0 16px;
+		}
+
 		.entry-actions {
-			margin-top: auto; // Push buttons to bottom of card.
-			padding-top: 20px;
+			@include buttons-wrapper;
 
 			.button,
 			.course-complete,
@@ -178,7 +182,7 @@ $courses-list: '#{$block}__courses-list';
 	.course {
 		display: flex;
 		border: 0;
-		box-shadow: 0 1px 10px 0 rgb(25, 30, 35);
+		box-shadow: 0 1px 10px 0 rgba(25, 30, 35, 0.15);
 
 		.course-content,
 		.entry,
@@ -193,8 +197,7 @@ $courses-list: '#{$block}__courses-list';
 		}
 
 		.entry-actions {
-			margin-top: auto; // Push buttons to bottom of card.
-			padding-top: 20px;
+			@include buttons-wrapper;
 		}
 	}
 }
