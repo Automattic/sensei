@@ -173,7 +173,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 
 			if ( initialSenseiBlocksCount > 0 ) {
 				const message = __(
-					'Are you sure you want to remove all Sensei blocks? This will change the way your course page appears. Be sure to preview your page before saving changes.',
+					'Are you sure you want to remove all Sensei blocks? This will change how your course page appears. Be sure to preview your page before saving changes.',
 					'sensei-lms'
 				);
 				createWarningNotice( message, {
