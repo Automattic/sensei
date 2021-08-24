@@ -16,6 +16,7 @@ const SENSEI_BLOCKS = {
 		takeCourse: 'sensei-lms/button-take-course',
 		contactTeacher: 'sensei-lms/button-contact-teacher',
 		courseProgress: 'sensei-lms/course-progress',
+		viewResults: 'sensei-lms/button-view-results',
 	},
 	lesson: {
 		lessonActions: 'sensei-lms/lesson-actions',

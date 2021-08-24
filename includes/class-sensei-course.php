@@ -3806,6 +3806,7 @@ class Sensei_Course {
 			'sensei-lms/course-progress',
 			'sensei-lms/button-take-course',
 			'sensei-lms/button-contact-teacher',
+			'sensei-lms/button-view-results',
 		];
 
 		foreach ( $course_blocks as $block ) {
