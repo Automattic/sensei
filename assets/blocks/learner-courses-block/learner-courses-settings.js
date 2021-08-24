@@ -66,12 +66,12 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 		{
 			optionKey: 'primaryColor',
 			label: __( 'Primary color', 'sensei-lms' ),
-			value: options.primaryColor,
+			value: options.primaryColor || undefined,
 		},
 		{
 			optionKey: 'accentColor',
 			label: __( 'Accent color', 'sensei-lms' ),
-			value: options.accentColor,
+			value: options.accentColor || undefined,
 		},
 	];
 
