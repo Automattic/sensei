@@ -1,13 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { select, dispatch, subscribe } from '@wordpress/data';
+import { select, dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import onPostSave from '../../shared/helpers/on-post-save';
+import editorLifecycle from '../../shared/helpers/editor-lifecycle';
 
 // Sensei blocks by post type.
 const SENSEI_BLOCKS = {
@@ -60,26 +60,34 @@ export const startBlocksTogglingControl = ( postType ) => {
 	let initialSenseiBlocksCount;
 	let lastBlocks;
 
-	subscribe( () => {
-		// Set initial blocks.
-		if (
-			coreEditorSelector.isEditedPostDirty() &&
-			undefined === initialSenseiBlocksCount
-		) {
-			updateInitialCount();
-		}
+	editorLifecycle( {
+		subscribeListener: () => {
+			const newBlocks = select( 'core/editor' ).getBlocks();
 
-		const newBlocks = select( 'core/editor' ).getBlocks();
+			// Check if blocks were changed.
+			if ( newBlocks !== lastBlocks ) {
+				lastBlocks = newBlocks;
+				toggleLegacyMetaboxes();
 
-		// Check if blocks were changed.
-		if ( newBlocks !== lastBlocks ) {
-			lastBlocks = newBlocks;
-			toggleLegacyMetaboxes();
-
-			if ( undefined !== initialSenseiBlocksCount ) {
-				toggleLegacyOrBlocksNotice();
+				if ( undefined !== initialSenseiBlocksCount ) {
+					toggleLegacyOrBlocksNotice();
+				}
 			}
-		}
+		},
+		onSetDirty: () => {
+			// Set initial blocks count.
+			if (
+				coreEditorSelector.isEditedPostDirty() &&
+				undefined === initialSenseiBlocksCount
+			) {
+				updateInitialCount();
+			}
+		},
+		onSave: () => {
+			// Update initial blocks on post save.
+			updateInitialCount();
+			toggleLegacyOrBlocksNotice();
+		},
 	} );
 
 	/**
@@ -90,14 +98,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 			Object.values( SENSEI_BLOCKS[ postType ] )
 		);
 	};
-
-	/**
-	 * Update initial blocks on post save.
-	 */
-	onPostSave( () => {
-		updateInitialCount();
-		toggleLegacyOrBlocksNotice();
-	} );
 
 	/**
 	 * Toggle metaboxes if a replacement block is present or not.
