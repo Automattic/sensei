@@ -14,7 +14,6 @@ import { __, _n } from '@wordpress/i18n';
  * Internal dependencies
  */
 import NumberControl from '../editor-components/number-control';
-import ToggleLegacyMetaboxesWrapper from '../toggle-legacy-metaboxes-wrapper';
 import { DIFFICULTIES } from './constants';
 
 const LessonPropertiesEdit = ( props ) => {
@@ -25,7 +24,7 @@ const LessonPropertiesEdit = ( props ) => {
 	} = props;
 
 	return (
-		<ToggleLegacyMetaboxesWrapper { ...props }>
+		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Properties', 'sensei-lms' ) }>
 					<NumberControl
@@ -96,7 +95,7 @@ const LessonPropertiesEdit = ( props ) => {
 						)?.label }
 				</span>
 			</div>
-		</ToggleLegacyMetaboxesWrapper>
+		</>
 	);
 };
 

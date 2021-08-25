@@ -21,7 +21,6 @@ import { COURSE_STATUS_STORE } from '../course-outline/status-preview/status-sto
 import CourseProgress, {
 	CourseProgressSettings,
 } from '../../shared/blocks/course-progress';
-import ToggleLegacyMetaboxesWrapper from '../toggle-legacy-metaboxes-wrapper';
 
 /**
  * Edit course progress bar component.
@@ -79,7 +78,7 @@ export const CourseProgressEdit = ( props ) => {
 	};
 
 	return (
-		<ToggleLegacyMetaboxesWrapper { ...props }>
+		<>
 			<CourseProgress
 				lessonsCount={ totalLessonsCount }
 				completedCount={ completedLessonsCount }
@@ -100,7 +99,7 @@ export const CourseProgressEdit = ( props ) => {
 					setAttributes( { height: newHeight } )
 				}
 			/>
-		</ToggleLegacyMetaboxesWrapper>
+		</>
 	);
 };
 

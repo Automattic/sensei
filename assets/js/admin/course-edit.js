@@ -8,7 +8,7 @@ import domReady from '@wordpress/dom-ready';
 /**
  * Internal dependencies
  */
-import './post-edit';
+import { startBlocksTogglingControl } from './blocks-toggling-control';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -37,7 +37,7 @@ import './post-edit';
 } )();
 
 domReady( () => {
-	window.sensei_toggle_legacy_metaboxes( 'course', 'pageload' );
+	startBlocksTogglingControl( 'course' );
 
 	jQuery( '#course-prerequisite-options' ).select2( { width: '100%' } );
 
