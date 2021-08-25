@@ -140,10 +140,19 @@ class Sensei_Setup_Wizard_Pages {
 					],
 					[
 						'blockName'    => 'core/buttons',
-						'innerContent' => [ '<div class="wp-block-buttons is-content-justification-center" id="course-completed-actions"><!-- wp:button {"className":"more-courses"} --><div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div><!-- /wp:button --></div>' ],
+						'innerContent' => [ '<div class="wp-block-buttons is-content-justification-center" id="course-completed-actions">', null, '</div>' ],
 						'attrs'        => [
 							'contentJustification' => 'center',
 							'anchor'               => 'course-completed-actions',
+						],
+						'innerBlocks'  => [
+							[
+								'blockName'    => 'core/button',
+								'innerContent' => [ '<div class="wp-block-button more-courses"><a class="wp-block-button__link">' . __( 'Find More Courses', 'sensei-lms' ) . '</a></div>' ],
+								'attrs'        => [
+									'className' => 'more-courses',
+								],
+							],
 						],
 					],
 					[
