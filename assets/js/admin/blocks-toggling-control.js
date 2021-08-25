@@ -58,6 +58,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 	}
 
 	let initialSenseiBlocksCount;
+	let previousSenseiBlocksCount;
 	let lastBlocks;
 
 	editorLifecycle( {
@@ -68,6 +69,8 @@ export const startBlocksTogglingControl = ( postType ) => {
 			if ( newBlocks !== lastBlocks ) {
 				lastBlocks = newBlocks;
 				toggleLegacyMetaboxes();
+
+				previousSenseiBlocksCount = getSenseiBlocksCount();
 
 				if ( undefined !== initialSenseiBlocksCount ) {
 					toggleLegacyOrBlocksNotice();
@@ -80,24 +83,21 @@ export const startBlocksTogglingControl = ( postType ) => {
 				coreEditorSelector.isEditedPostDirty() &&
 				undefined === initialSenseiBlocksCount
 			) {
-				updateInitialCount();
+				initialSenseiBlocksCount = previousSenseiBlocksCount;
 			}
 		},
 		onSave: () => {
 			// Update initial blocks on post save.
-			updateInitialCount();
+			initialSenseiBlocksCount = getSenseiBlocksCount();
 			toggleLegacyOrBlocksNotice();
 		},
 	} );
 
 	/**
-	 * Update initial blocks.
+	 * Get Sensei blocks count.
 	 */
-	const updateInitialCount = () => {
-		initialSenseiBlocksCount = getBlocksCount(
-			Object.values( SENSEI_BLOCKS[ postType ] )
-		);
-	};
+	const getSenseiBlocksCount = () =>
+		getBlocksCount( Object.values( SENSEI_BLOCKS[ postType ] ) );
 
 	/**
 	 * Toggle metaboxes if a replacement block is present or not.
