@@ -39,7 +39,15 @@ export const registerCourseCompletedActionsBlock = () => {
 	registerBlockVariation( 'core/button', {
 		name: 'sensei-lms/more-courses-button',
 		title: __( 'Find More Courses', 'sensei-lms' ),
-		description: __( 'Allow a user to view more courses.', 'sensei-lms' ),
+		description: __(
+			'Prompt learners to find more courses.',
+			'sensei-lms'
+		),
+		keywords: [
+			__( 'Courses', 'sensei-lms' ),
+			__( 'Archive', 'sensei-lms' ),
+		],
+		category: 'sensei-lms',
 		attributes: moreCoursesAttributes,
 		isActive: ( blockAttributes, variationAttributes ) =>
 			blockAttributes.className.match( variationAttributes.className ),
