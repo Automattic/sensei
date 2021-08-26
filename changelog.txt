@@ -1,6 +1,15 @@
 *** Changelog ***
 
-2021.08.12- version 3.13.0
+2021.08.26 - version 3.13.1
+* New: Add filters to customize the My Courses and Course Completed page content [#4286](https://github.com/Automattic/sensei/pull/4286), [#4290](https://github.com/Automattic/sensei/pull/4290)
+* New: Add "Find More Courses" block variation [#4293](https://github.com/Automattic/sensei/pull/4293)
+* Tweak: Rename Take Course block to Course Sign Up [#4288](https://github.com/Automattic/sensei/pull/4288)
+* Tweak: Update Learner Courses block styles [#4291](https://github.com/Automattic/sensei/pull/4291)
+* Tweak: Clarify editor notice when adding first Sensei block or removing last Sensei block [#4276](https://github.com/Automattic/sensei/pull/4276)
+* Fix: "No lessons message" on Order Lessons page when lessons exist [#4269](https://github.com/Automattic/sensei/pull/4269) 👏 @timwiel
+* Fix: Custom color selector in Learner Courses block [#4289](https://github.com/Automattic/sensei/pull/4289)
+
+2021.08.12 - version 3.13.0
 * New: Course Completed Page
 	* Add Course Completed page [#4254](https://github.com/Automattic/sensei/pull/4254), [#4280](https://github.com/Automattic/sensei/pull/4280)
 	* Add Course Completed Actions block [#4266](https://github.com/Automattic/sensei/pull/4266)
