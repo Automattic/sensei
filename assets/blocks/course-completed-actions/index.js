@@ -24,6 +24,8 @@ export const registerCourseCompletedActionsBlock = () => {
 			__( 'Completed', 'sensei-lms' ),
 			__( 'Actions', 'sensei-lms' ),
 			__( 'Buttons', 'sensei-lms' ),
+			__( 'Find More Courses', 'sensei-lms' ),
+			__( 'View Certificate', 'sensei-lms' ),
 		],
 		innerBlocks: applyFilters( 'sensei-lms.Course.completedActions', [
 			[ 'core/button', moreCoursesAttributes ],
