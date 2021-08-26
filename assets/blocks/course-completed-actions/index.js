@@ -50,6 +50,6 @@ export const registerCourseCompletedActionsBlock = () => {
 		category: 'sensei-lms',
 		attributes: moreCoursesAttributes,
 		isActive: ( blockAttributes, variationAttributes ) =>
-			blockAttributes.className.match( variationAttributes.className ),
+			blockAttributes.className?.match( variationAttributes.className ),
 	} );
 };
