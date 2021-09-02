@@ -112,17 +112,12 @@ $courses-list: '#{$block}__courses-list';
 			}
 		}
 
-		form {
+		form,
+		.sensei-results-links {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 5px;
 			margin: 0;
-		}
-
-		.sensei-results-links {
-			.button:not(:first-child) {
-				margin-left: 5px;
-			}
 		}
 	}
 
