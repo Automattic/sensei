@@ -21,7 +21,6 @@ import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
-import QuestionAnswerFeedback from './question-answer-feedback';
 import {
 	QuestionValidationNotice,
 	SharedQuestionNotice,
@@ -158,12 +157,7 @@ const QuestionEdit = ( props ) => {
 								}
 								hasSelected={ hasSelected }
 							/>
-							<QuestionAnswerFeedback
-								questionType={ type }
-								{ ...props }
-							/>
 						</>
-
 					) }
 				</>
 			) }
