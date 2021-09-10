@@ -14,7 +14,6 @@ import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
 import TrueFalseAnswer from './true-false';
 import {
-	QuestionAnswerFeedbackSettings,
 	QuestionGradingNotesSettings,
 	QuestionMultipleChoiceSettings,
 } from '../question-block/settings';
@@ -42,7 +41,6 @@ const questionTypes = {
 		view: MultipleChoiceAnswer.view,
 		settings: [
 			QuestionMultipleChoiceSettings,
-			//QuestionAnswerFeedbackSettings,
 		],
 		validate: ( { answers = [] } = {} ) => {
 			return {
@@ -74,7 +72,6 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
-		//settings: [ QuestionAnswerFeedbackSettings ],
 		settings: [ ],
 	},
 	'gap-fill': {
@@ -82,7 +79,6 @@ const questionTypes = {
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
-		//settings: [ QuestionAnswerFeedbackSettings ],
 		settings: [ ],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
@@ -128,7 +124,6 @@ const questionTypes = {
 
 // Commonly used core settings for use in custom question types.
 const availableCoreSettings = {
-	QuestionAnswerFeedbackSettings,
 	QuestionGradingNotesSettings,
 };
 
