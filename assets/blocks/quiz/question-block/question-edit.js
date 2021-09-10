@@ -134,17 +134,50 @@ const QuestionEdit = ( props ) => {
 					<InnerBlocks
 						template={ [
 							[
-								'core/paragraph',
-								{
-									placeholder: __(
-										'Question Description',
-										'sensei-lms'
-									),
-								},
+								'sensei-lms/question-description', {},
+								[
+									[
+										'core/paragraph',
+										{
+											placeholder: __(
+												'Question Description',
+												'sensei-lms'
+											),
+										},
+									],
+								],
+							],
+							[
+								'sensei-lms/answer-feedback-correct', {},
+								[
+									[
+										'core/paragraph',
+										{
+											placeholder: __(
+												'Correct Answer Feedback',
+												'sensei-lms'
+											),
+										},
+									],
+								],
+							],
+							[
+								'sensei-lms/answer-feedback-failed', {},
+								[
+									[
+										'core/paragraph',
+										{
+											placeholder: __(
+												'Failed Answer Feedback',
+												'sensei-lms'
+											),
+										},
+									],
+								],
 							],
 						] }
 						templateInsertUpdatesSelection={ false }
-						templateLock={ false }
+						templateLock={ 'any' }
 					/>
 					{ AnswerBlock?.edit && (
 						<>

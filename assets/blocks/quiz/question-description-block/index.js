@@ -19,7 +19,7 @@ export default {
 	title: __( 'Question Description Block', 'sensei-lms' ),
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
-	description: __( 'Question Desription.', 'sensei-lms' ),
+	description: __( 'Question Description.', 'sensei-lms' ),
 	/*example: {
 		attributes: {
 			categoryName: __( 'Example Category', 'sensei-lms' ),
