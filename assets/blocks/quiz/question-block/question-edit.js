@@ -21,6 +21,7 @@ import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 import { useHasSelected } from '../../../shared/helpers/blocks';
 import types from '../answer-blocks';
+import QuestionAnswerFeedback from './question-answer-feedback';
 import {
 	QuestionValidationNotice,
 	SharedQuestionNotice,
@@ -147,15 +148,22 @@ const QuestionEdit = ( props ) => {
 						templateLock={ false }
 					/>
 					{ AnswerBlock?.edit && (
-						<AnswerBlock.edit
-							attributes={ answer }
-							setAttributes={ ( next ) =>
-								setAttributes( {
-									answer: { ...answer, ...next },
-								} )
-							}
-							hasSelected={ hasSelected }
-						/>
+						<>
+							<AnswerBlock.edit
+								attributes={ answer }
+								setAttributes={ ( next ) =>
+									setAttributes( {
+										answer: { ...answer, ...next },
+									} )
+								}
+								hasSelected={ hasSelected }
+							/>
+							<QuestionAnswerFeedback
+								questionType={ type }
+								{ ...props }
+							/>
+						</>
+
 					) }
 				</>
 			) }

@@ -42,7 +42,7 @@ const questionTypes = {
 		view: MultipleChoiceAnswer.view,
 		settings: [
 			QuestionMultipleChoiceSettings,
-			QuestionAnswerFeedbackSettings,
+			//QuestionAnswerFeedbackSettings,
 		],
 		validate: ( { answers = [] } = {} ) => {
 			return {
@@ -74,14 +74,16 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		//settings: [ QuestionAnswerFeedbackSettings ],
+		settings: [ ],
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		//settings: [ QuestionAnswerFeedbackSettings ],
+		settings: [ ],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
 				noGap: ! gap?.length,
