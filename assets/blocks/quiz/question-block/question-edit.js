@@ -35,6 +35,12 @@ import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
 
+const ALLOWED_BLOCKS = [
+	'sensei-lms/question-description',
+	'sensei-lms/answer-feedback-correct',
+	'sensei-lms/answer-feedback-failed',
+];
+
 /**
  * Format the question grade as `X points`.
  *
@@ -132,6 +138,7 @@ const QuestionEdit = ( props ) => {
 			{ showContent && (
 				<>
 					<InnerBlocks
+						allowedBlocks={ ALLOWED_BLOCKS }
 						template={ [
 							[
 								'sensei-lms/question-description', {},
@@ -177,7 +184,7 @@ const QuestionEdit = ( props ) => {
 							],
 						] }
 						templateInsertUpdatesSelection={ false }
-						templateLock={ 'any' }
+						templateLock={ false }
 					/>
 					{ AnswerBlock?.edit && (
 						<>

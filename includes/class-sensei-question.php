@@ -582,11 +582,17 @@ class Sensei_Question {
 	public static function get_the_question_description( $question_id ) {
 
 		$question = get_post( $question_id );
+		$blocks = parse_blocks($question->post_content);
+		foreach ( $blocks as $block ) {
+			if ( 'sensei-lms/question-description' == $block['blockName'] ) {
+				$question_description =  render_block($block);
+			}
+		}
 
 		/**
 		 * Already documented within WordPress Core
 		 */
-		return apply_filters( 'the_content', wp_kses_post( $question->post_content ) );
+		return apply_filters( 'the_content', wp_kses_post( $question_description ) );
 	}
 
 	/**

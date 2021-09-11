@@ -25,9 +25,9 @@ import { withBlockMeta } from '../../../shared/blocks/block-metadata';
  * @param {string}   props.attributes.options Block options attribute.
  * @param {Function} props.setAttributes      Update block attributes.
  */
-const QuestionAnswerFeedback = ( ) => {
+const QuestionDescription = ( ) => {
 	return (
-		<div className={ cn( 'sensei-lms-question-answer-feedback-block' ) }>
+		<div className={ cn( 'sensei-lms-question-description-block' ) }>
 			<InnerBlocks
 				template={ [
 					[
@@ -49,4 +49,4 @@ const QuestionAnswerFeedback = ( ) => {
 
 export default compose(
 	withBlockMeta,
-)( QuestionAnswerFeedback );
+)( QuestionDescription );
