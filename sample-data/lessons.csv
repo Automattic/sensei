@@ -1,5 +1,9 @@
 Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image,Length,Complexity,Video,"Pass Required",Passmark,"Number Of Questions","Random Question Order",Auto-grade,"Quiz Reset","Allow Comments",Questions
-3941,Courses,courses,"<!-- wp:paragraph -->
+3941,Courses,courses,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>To add a course, go to <em>Courses&nbsp;</em>&gt;&nbsp;<em>Add New</em>. You will see that some blocks have already been added to the page for you. (<em>Note</em>: If you use Divi, you will need to go to <em>Divi</em> &gt; <em>Theme Options</em> &gt; <em>Builder</em> and disable <em>Courses</em> in order to see the blocks.)</p>
 <!-- /wp:paragraph -->
 
@@ -260,9 +264,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>If you decide that your course needs a refresh with new lessons or more quizzes, the best solution would be to either create a new version of the course from scratch, or <a href=""http://senseilms.com/lesson/courses#duplicate"">duplicate&nbsp;the existing course</a> and make the required updates before publishing.</p>
-<!-- /wp:paragraph -->","Learn how to create and manage courses in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3690,Export,export,"<!-- wp:paragraph -->
+<p>If you decide that your course needs a refresh with new lessons or more quizzes, the best solution would be to either create a new version of the course from scratch, or <a href=""http://senseilms.com/lesson/courses#duplicate"">duplicate the existing course</a> and make the required updates before publishing.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to create and manage courses in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3690,Export,export,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Sensei LMS has native functionality that enables you to export courses, lessons and questions. This means you can export course data from a staging site, for example, and then <a href=""https://senseilms.com/lesson/import/"" data-type=""lesson"" data-id=""3473"">import</a> it into your live site.</p>
 <!-- /wp:paragraph -->
 
@@ -272,8 +298,30 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 
 <!-- wp:paragraph -->
 <p>You can initiate a new download directly from the confirmation page by clicking the file name, or click <em>Export More Content</em> to export additional content.</p>
-<!-- /wp:paragraph -->","Learn how to export course content in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3566,Settings,settings,"<!-- wp:paragraph -->
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to export course content in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3566,Settings,settings,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>To enable site visitors to register for and log in to your courses, go to <em>Settings &gt; General</em> in your WordPress admin and ensure the <em>Membership</em> checkbox is selected:</p>
 <!-- /wp:paragraph -->
 
@@ -742,9 +790,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Logs Sensei LMS and WooCommerce events to <em>WooCommerce</em> &gt; <em>Status</em> &gt; <em>Logs</em> for easier debugging of plugin issues.</p>
-<!-- /wp:paragraph -->",,publish,,,0,,,,,,0,0,,0,0,0,0,
-3520,Messages,messages,"<!-- wp:paragraph -->
+<p>Logs Sensei LMS and WooCommerce events to <em>WooCommerce</em> > <em>Status</em> > <em>Logs</em> for easier debugging of plugin issues.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->",,publish,,,0,,,,,,0,0,,0,0,0,0,
+3520,Messages,messages,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Registered users have the ability to send a private message to teachers, regardless of whether or not they are enrolled in a particular course. This allows enrolled learners to ask questions about course materials, while also enabling those who are not enrolled to get answers to their general course questions.</p>
 <!-- /wp:paragraph -->
 
@@ -829,7 +899,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Teachers and learners can access their messages by going to <em>My Courses</em> and clicking the <em>My Messages</em> button. You can also add a direct link to the <em>My Messages</em> page in your main menu by going to <em>Appearance</em><strong> </strong>><strong> </strong><em>Menus</em>, and adding a custom link that goes to <code>https://yoursite.com/messages/</code> (be sure to change <code>yoursite.com</code> to your own domain).</p>
+<p>Teachers and learners can access their messages by going to <em>My Courses</em> and clicking the <em>My Messages</em> button. You can also add a direct link to the <em>My Messages</em> page in your main menu by going to <em>Appearance</em> &gt; <em>Menus</em>, and adding a custom link that goes to <code>https://yoursite.com/messages/</code> (be sure to change <code>yoursite.com</code> to your own domain).</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {""level"":3} -->
@@ -837,9 +907,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Private messages are enabled by default. To disable them, go to <em>Sensei LMS</em> &gt; <em>Settings</em> and check the <em>Disable Private Messages</em> box. This removes the <em>My Messages</em> page, the <em>Contact Teacher</em> buttons, and the <em>Sensei LMS</em> &gt; <em>Messages</em> menu in WordPress admin.</p>
-<!-- /wp:paragraph -->","Learn how to manage messages from learners in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3473,Import,import,"<!-- wp:paragraph -->
+<p>Private messages are enabled by default. To disable them, go to <em>Sensei LMS</em> > <em>Settings</em> and check the <em>Disable Private Messages</em> box. This removes the <em>My Messages</em> page, the <em>Contact Teacher</em> buttons, and the <em>Sensei LMS</em> > <em>Messages</em> menu in WordPress admin.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to manage messages from learners in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3473,Import,import,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Sensei LMS has native functionality that enables you to import courses, lessons and questions. For first-time course creators, this means you can get started more quickly by importing course content during setup, while existing sites can update their course content more easily.</p>
 <!-- /wp:paragraph -->
 
@@ -901,13 +993,35 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 
 <!-- wp:paragraph -->
 <p>To help you fix partially imported content, a link to the content, as well as the line number in the CSV file and the warning are displayed. Clicking on any of the links will open the content in a new tab, where you can make the necessary updates.</p>
-<!-- /wp:paragraph -->","Learn how to import course content in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3324,"Learner Management",learner-management,"<!-- wp:paragraph -->
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to import course content in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3324,"Learner Management",learner-management,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Learner Management enables you to manage everything about your learners, from enrolling new learners to resetting their progress.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Go to <em>Sensei LMS</em> > <em>Learner Management</em> to see a list of courses. You can filter by course category or search for a particular course:</p>
+<p>Go to <em>Sensei LMS</em> &gt; <em>Learner Management</em>&nbsp;to see a list of courses. You can filter by course category or search for a particular course:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3336,""width"":735,""height"":194,""sizeSlug"":""large""} -->
@@ -935,7 +1049,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>To remove a learner's enrollment in a course, find the appropriate learner and hover over their name. Click the <em>Remove Enrollment</em> link that appears. This will unenroll the learner and revoke their access to the course:</p>
+<p>To remove a learner's enrollment in a course, find the appropriate learner and hover over their name. Click the&nbsp;<em>Remove Enrollment</em>&nbsp;link that appears. This will unenroll the learner and revoke their access to the course:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:image {""id"":3627,""width"":735,""sizeSlug"":""large""} -->
@@ -1048,8 +1162,30 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 
 <!-- wp:paragraph -->
 <p>You can edit the lesson start date by locating the learner, clicking in the text box that displays the current start date, selecting a new date from the calendar that appears, and clicking the <em>Edit Start Date</em> button.</p>
-<!-- /wp:paragraph -->","Learn how to manage your learners in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3210,Analysis,analysis,"<!-- wp:paragraph -->
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to manage your learners in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3210,Analysis,analysis,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Sensei LMS offers drill-down reporting for you to see how learners are progressing across all courses, lessons and quizzes. To access this area, go to&nbsp;<em>Sensei LMS</em> &gt; <em>Analysis</em>.</p>
 <!-- /wp:paragraph -->
 
@@ -1167,13 +1303,35 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 
 <!-- wp:paragraph -->
 <p>Drilling down into a particular lesson displays a page that lists all of the learners who are currently taking or have already completed the lesson. The view is the same as <a href=""#course-lesson-learners"">this one</a>.</p>
-<!-- /wp:paragraph -->","Learn how to track your learners' course progress in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3175,Questions,questions,"<!-- wp:paragraph -->
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to track your learners' course progress in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3175,Questions,questions,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Questions can be added in one of two ways - by going to <em>Questions</em> &gt; <em>Add New</em>, or by adding them directly to a quiz. Although this lesson covers the latter, configuring questions is the same regardless of which method is used.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>To add questions to a quiz, create a new lesson by going to <em>Lessons</em> > <em>Add New</em>. You will see that the quiz block has already been added to the page for you. <em>(Note: For managing questions using the legacy meta box rather than blocks, please refer to <a href=""#legacy"">this documentation</a>.)</em></p>
+<p>To add questions to a quiz, create a new lesson by going to <em>Lessons</em> &gt; <em>Add New</em>. You will see that the quiz block has already been added to the page for you. <em>(Note: For managing questions using the legacy meta box rather than blocks, please refer to <a href=""#legacy"">this documentation</a>.)</em></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading -->
@@ -1437,9 +1595,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Question categories can be managed by going to <em>Questions</em> &gt; <em>Categories</em>.</p>
-<!-- /wp:paragraph -->","Learn how to create and manage questions in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
-3162,Grading,grading,"<!-- wp:paragraph -->
+<p>Question categories can be managed by going to <em>Questions</em> > <em>Categories</em>.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to create and manage questions in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
+3162,Grading,grading,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Sensei LMS enables teachers to manually grade a lesson. To access this area, go to&nbsp;<em>Sensei LMS</em> &gt; <em>Grading</em>.</p>
 <!-- /wp:paragraph -->
 
@@ -1509,8 +1689,30 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 
 <!-- wp:image {""id"":3294,""width"":735,""height"":576,""sizeSlug"":""large""} -->
 <figure class=""wp-block-image size-large is-resized""><img src=""https://senseilms.com/wp-content/uploads/2020/05/learner-graded-quiz.jpg?w=980"" alt=""Graded quiz"" class=""wp-image-3294"" width=""735"" height=""576""/></figure>
-<!-- /wp:image -->","Learn how to grade quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
-3106,Quizzes,quizzes,"<!-- wp:paragraph -->
+<!-- /wp:image -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to grade quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
+3106,Quizzes,quizzes,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>Quizzes are associated with an individual lesson. That means that in order to add a quiz, you will need to create a lesson first. To do that, go to <em>Lessons&nbsp;</em>&gt;&nbsp;<em>Add New</em>. You will see that the <em>Quiz</em> block has already been added at the bottom of the lesson. (<em>Note</em>: For managing quizzes using the legacy meta boxes, please refer to <a href=""#legacy"">this documentation</a>.)</p>
 <!-- /wp:paragraph -->
 
@@ -1743,9 +1945,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:image -->
 
 <!-- wp:list -->
-<ul id=""block-e7a6b510-ef38-44aa-ae0e-ee440ff08597""><li><em><strong>Pass </strong>required to complete lesson</em> - Checking <em>Pass required to complete lesson</em> forces learners to achieve a particular grade before the lesson can be marked as completed. If left unchecked, the passmark defaults to 0, and the learner can complete the lesson without passing the quiz.</li><li><strong><em>Quiz passmark percentage</em></strong> - Quiz passmark percentage is the grade that must be obtained by the learner in order to pass the quiz. This setting is only visible if Pass required to complete lesson is checked.</li><li><strong><em>Number of questions to show</em></strong> - You can optionally choose to&nbsp;limit the number of questions that are displayed when the quiz is taken by entering a value for <em>Number of questions to show</em>.</li><li><strong><em>Randomise question order</em></strong> - Selecting <em>Randomise question order</em> will display the questions in a different&nbsp;order every time the quiz is viewed.</li><li><strong><em>Grade quiz automatically</em></strong> - All multiple choice, true/false, and gap fill questions will be auto-graded if <em>Grade quiz automatically</em> is checked.</li><li><strong><em>Allow user to retake the quiz</em></strong> - If <em>Allow user to retake the quiz</em> is selected, the learner is able to reset and take the quiz again if they like.</li></ul>
-<!-- /wp:list -->","Learn how to create and manage quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
-3063,Lessons,lessons,"<!-- wp:paragraph -->
+<ul id=""block-e7a6b510-ef38-44aa-ae0e-ee440ff08597""><li><em><strong>Pass </strong>required to complete lesson</em> - Checking <em>Pass required to complete lesson</em> forces learners to achieve a particular grade before the lesson can be marked as completed. If left unchecked, the passmark defaults to 0, and the learner can complete the lesson without passing the quiz.</li><li><strong><em>Quiz passmark percentage</em></strong> - Quiz passmark percentage is the grade that must be obtained by the learner in order to pass the quiz. This setting is only visible if Pass required to complete lesson is checked.</li><li><strong><em>Number of questions to show</em></strong> - You can optionally choose to limit the number of questions that are displayed when the quiz is taken by entering a value for <em>Number of questions to show</em>.</li><li><strong><em>Randomise question order</em></strong> - Selecting <em>Randomise question order</em> will display the questions in a different order every time the quiz is viewed.</li><li><strong><em>Grade quiz automatically</em></strong> - All multiple choice, true/false, and gap fill questions will be auto-graded if <em>Grade quiz automatically</em> is checked.</li><li><strong><em>Allow user to retake the quiz</em></strong> - If <em>Allow user to retake the quiz</em> is selected, the learner is able to reset and take the quiz again if they like.</li></ul>
+<!-- /wp:list -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to create and manage quizzes in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+3063,Lessons,lessons,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>To add a lesson, go to <em>Lessons&nbsp;</em>&gt;&nbsp;<em>Add New</em>. You will see that some blocks have already been added to the page for you. (<em>Note</em>: If you use Divi, you will need to go to <em>Divi</em> &gt; <em>Theme Options</em> &gt; <em>Builder</em> and disable <em>Lessons</em> in order to see the blocks.)</p>
 <!-- /wp:paragraph -->
 
@@ -1926,9 +2150,31 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:list {""ordered"":true} -->
-<ol><li>Go to&nbsp;<em>Lessons</em>&nbsp;&gt; <em>All Lessons</em>.</li><li>Hover over a lesson.</li><li>Click the <em>Duplicate</em> link.</li><li>In the dialog box that appears, click <em>OK</em>.</li></ol>
-<!-- /wp:list -->","Learn how to create and manage lessons in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
-3043,Modules,modules,"<!-- wp:paragraph -->
+<ol><li>Go to <em>Lessons</em> > <em>All Lessons</em>.</li><li>Hover over a lesson.</li><li>Click the <em>Duplicate</em> link.</li><li>In the dialog box that appears, click <em>OK</em>.</li></ol>
+<!-- /wp:list -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to create and manage lessons in Sensei LMS.",publish,,,0,,,,,,0,0,,0,1,0,0,
+3043,Modules,modules,"<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:paragraph -->
 <p>A module is a container for a group of lessons in a course. Conceptually, they exist as an additional level between courses and lessons in the <a href=""https://senseilms.com/documentation/content-hierarchy/"">content hierarchy</a>. A course can contain any number of modules, and every lesson in the course can be assigned to a single module.</p>
 <!-- /wp:paragraph -->
 
@@ -1989,5 +2235,23 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>By default, any modules that are added to a course are displayed in alphabetical order. To use a custom order, go to <em>Courses</em>&nbsp;&gt; <em>Order Modules</em>. Select a course, drag and drop the modules into the desired order, and then click the <em>Save module order</em> button.</p>
-<!-- /wp:paragraph -->","Learn how to create and manage modules in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
+<p>By default, any modules that are added to a course are displayed in alphabetical order. To use a custom order, go to <em>Courses</em> > <em>Order Modules</em>. Select a course, drag and drop the modules into the desired order, and then click the <em>Save module order</em> button.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/lesson-actions -->
+<div class=""wp-block-sensei-lms-lesson-actions""><div class=""sensei-buttons-container""><!-- wp:sensei-lms/button-view-quiz {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper""><div class=""wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">View Quiz</button></div></div>
+<!-- /wp:sensei-lms/button-view-quiz -->
+
+<!-- wp:sensei-lms/button-complete-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-complete-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-complete-lesson__wrapper""><div class=""wp-block-sensei-lms-button-complete-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Complete Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-complete-lesson -->
+
+<!-- wp:sensei-lms/button-next-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-next-lesson is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-next-lesson__wrapper""><div class=""wp-block-sensei-lms-button-next-lesson is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Next Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-next-lesson -->
+
+<!-- wp:sensei-lms/button-reset-lesson {""inContainer"":true} -->
+<div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper""><div class=""wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link sensei-stop-double-submission"">Reset Lesson</button></div></div>
+<!-- /wp:sensei-lms/button-reset-lesson --></div></div>
+<!-- /wp:sensei-lms/lesson-actions -->","Learn how to create and manage modules in Sensei LMS.",publish,,,0,,,,,,0,0,,0,0,0,0,
