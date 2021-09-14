@@ -3,7 +3,7 @@
  */
 import { createBlock } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
-import { select, withSelect, withDispatch } from '@wordpress/data';
+import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
@@ -18,40 +18,27 @@ import { __ } from '@wordpress/i18n';
  * @param innerBlocks
  * @param {Object} props
  */
-const QuestionBlockAppender = ( { buttonText = __( 'Add Item' ), onClick, clientId, allowedBlocks, allowedBlock, innerBlocks, ...props } ) => {
-  const insertableBlocks = [];
-  allowedBlocks.map( ( allowedBlockName ) => {
-    if ( innerBlocks.map( theBlock => theBlock.name ).indexOf( allowedBlockName ) === -1 ) {
-      insertableBlocks.push ( allowedBlockName );
-    }
-  });
-  console.log(insertableBlocks)
-
-  return(
-    <>
-      <Button
-        onClick={ onClick }
-        { ...props}
-      >
-        {buttonText}
-      </Button>
-    </>
-  );
+const QuestionBlockAppenderButton = ( { buttonText = __( 'Add Item' ), onClick, clientId, allowedBlock, innerBlocks, ...props } ) => {
+		return(
+				<Button onClick={ onClick } { ...props} >
+						{buttonText}
+				</Button>
+		);
 };
 
 
 export default compose( [
-    withSelect( ( select, ownProps ) => {
-        return {
-            innerBlocks: select( 'core/block-editor' ).getBlock( ownProps.clientId ).innerBlocks
-        };
-    } ),
-    withDispatch( ( dispatch, ownProps ) => {
-        return {
-            onClick() {
-                const newBlock = createBlock( ownProps.allowedBlock );
-                dispatch( 'core/block-editor' ).insertBlock( newBlock, ownProps.innerBlocks.length, ownProps.clientId );
-            }
-        };
-    } )
-] )( QuestionBlockAppender );
+		withSelect( ( select, ownProps ) => {
+				return {
+						innerBlocks: select( 'core/block-editor' ).getBlock( ownProps.clientId ).innerBlocks
+				};
+		} ),
+		withDispatch( ( dispatch, ownProps ) => {
+				return {
+						onClick() {
+								const newBlock = createBlock( ownProps.allowedBlock );
+								dispatch( 'core/block-editor' ).insertBlock( newBlock, ownProps.innerBlocks.length, ownProps.clientId );
+						}
+				};
+		} )
+] )( QuestionBlockAppenderButton );

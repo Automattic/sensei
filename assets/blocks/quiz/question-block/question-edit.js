@@ -30,7 +30,7 @@ import {
 	validateQuestionBlock,
 	getQuestionBlockValidationErrorMessages,
 } from './question-validation';
-import QuestionRenderAppender from './question-renderappender';
+import QuestionBlockAppenderButton from './question-renderappender';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
@@ -40,6 +40,20 @@ const ALLOWED_BLOCKS = [
 	'sensei-lms/question-description',
 	'sensei-lms/answer-feedback-correct',
 	'sensei-lms/answer-feedback-failed',
+];
+const ALLOWED_BLOCKS_EXTENDED = [
+	{
+		blockName: 'sensei-lms/question-description',
+		blockTitle: 'Question Description',
+	},
+	{
+		blockName: 'sensei-lms/answer-feedback-correct',
+		blockTitle: 'Correct Answer Feedback',
+	},
+	{
+		blockName: 'sensei-lms/answer-feedback-failed',
+		blockTitle: 'Failed Answer Feedback',
+	},
 ];
 
 /**
@@ -105,6 +119,36 @@ const QuestionEdit = ( props ) => {
 		</div>
 	);
 
+	const questionAppender = () => {
+		const innerBlocks = select( 'core/block-editor' ).getBlock( clientId ).innerBlocks
+		const insertableBlocks = [];
+
+		ALLOWED_BLOCKS_EXTENDED.map( ( allowedBlock ) => {
+			if ( innerBlocks.map( theBlock => theBlock.name ).indexOf( allowedBlock.blockName ) === -1 ) {
+				insertableBlocks.push ( allowedBlock );
+			}
+		});
+
+		if ( insertableBlocks.length ) {
+			return(
+				<>
+					{ insertableBlocks.map(function( theBlock, index ) {
+						return (
+							<QuestionBlockAppenderButton
+								key={ index }
+								allowedBlock={ theBlock.blockName }
+								buttonText={ theBlock.blockTitle }
+								clientId={ clientId }
+								/>
+						);
+					} ) }
+				</>
+			);
+		} else {
+			return false;
+		}
+	};
+
 	if ( ! editable ) {
 		return (
 			<QuestionView
@@ -141,12 +185,7 @@ const QuestionEdit = ( props ) => {
 					<InnerBlocks
 						allowedBlocks={ ALLOWED_BLOCKS }
 						renderAppender={ () =>
-							<QuestionRenderAppender
-									buttonText="Add Question Description"
-									allowedBlocks= { ALLOWED_BLOCKS }
-									allowedBlock='sensei-lms/question-description'
-									clientId={ clientId }
-							/>
+							questionAppender()
 						}
 						template={ [
 							[
