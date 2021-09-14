@@ -30,6 +30,7 @@ class Sensei_Course_Enrolment {
 	const META_PREFIX_ENROLMENT_RESULTS = 'sensei_course_enrolment_';
 	const META_COURSE_ENROLMENT_VERSION = '_course_enrolment_version';
 	const META_REMOVED_LEARNERS         = 'sensei_removed_learners';
+	const REMOVAL_REASON_MANUAL         = 'manual';
 
 	/**
 	 * Courses instances.
@@ -458,18 +459,22 @@ class Sensei_Course_Enrolment {
 	/**
 	 * Remove learner from the course, overriding the providers rule.
 	 *
-	 * @param int $user_id User ID.
+	 * @param int    $user_id User ID.
+	 * @param string $reason  Removal reason.
 	 *
 	 * @return boolean Success flag.
 	 */
-	public function remove_learner( $user_id ) {
+	public function remove_learner( $user_id, $reason = null ) {
 		$removed_learners = $this->get_removed_learners();
 
 		if ( isset( $removed_learners[ $user_id ] ) ) {
 			return false;
 		}
 
-		$removed_learners[ $user_id ] = [ 'date' => time() ];
+		$removed_learners[ $user_id ] = [
+			'date'   => time(),
+			'reason' => $reason ?? self::REMOVAL_REASON_MANUAL,
+		];
 
 		$this->save_enrolment( $user_id, false );
 
@@ -553,11 +558,12 @@ class Sensei_Course_Enrolment {
 	 * Withdraw learner. It removes the manual enrolment and/or remove the learner,
 	 * depending on the user enrollment situation.
 	 *
-	 * @param int $user_id User ID.
+	 * @param int    $user_id User ID.
+	 * @param string $reason  Removal reason.
 	 *
 	 * @return boolean If user is withdrawn.
 	 */
-	public function withdraw( $user_id ) {
+	public function withdraw( $user_id, $reason = null ) {
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
 
@@ -570,7 +576,7 @@ class Sensei_Course_Enrolment {
 		}
 
 		// If user is still enrolled for some reason, remove them.
-		$this->remove_learner( $user_id );
+		$this->remove_learner( $user_id, $reason );
 
 		return ! $this->is_enrolled( $user_id, false );
 	}
