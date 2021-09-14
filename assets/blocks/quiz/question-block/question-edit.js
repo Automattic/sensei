@@ -30,11 +30,17 @@ import {
 	validateQuestionBlock,
 	getQuestionBlockValidationErrorMessages,
 } from './question-validation';
-import QuestionBlockAppenderButton from './question-renderappender';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
+import QuestionAppender from './question-appender'
+import QuestionDescription from '../question-description-block/question-description'
+import QuestionDescriptionIcon from '../../../icons/question-description-icon';
+import AnswerFeedbackCorrect from '../answer-feedback-correct-block/answer-feedback-correct'
+import AnswerFeedbackCorrectIcon from '../../../icons/answer-feedback-correct';
+import AnswerFeedbackFailed from '../answer-feedback-failed-block/answer-feedback-failed'
+import AnswerFeedbackFailedIcon from '../../../icons/answer-feedback-failed';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/question-description',
@@ -43,16 +49,22 @@ const ALLOWED_BLOCKS = [
 ];
 const ALLOWED_BLOCKS_EXTENDED = [
 	{
-		blockName: 'sensei-lms/question-description',
-		blockTitle: 'Question Description',
+		name: 'sensei-lms/question-description',
+		title: 'Question Description',
+		icon: QuestionDescriptionIcon,
+		block: QuestionDescription,
 	},
 	{
-		blockName: 'sensei-lms/answer-feedback-correct',
-		blockTitle: 'Correct Answer Feedback',
+		name: 'sensei-lms/answer-feedback-correct',
+		title: 'Correct Answer Feedback',
+		icon: AnswerFeedbackCorrectIcon,
+		block: AnswerFeedbackCorrect,
 	},
 	{
-		blockName: 'sensei-lms/answer-feedback-failed',
-		blockTitle: 'Failed Answer Feedback',
+		name: 'sensei-lms/answer-feedback-failed',
+		title: 'Failed Answer Feedback',
+		icon: AnswerFeedbackFailedIcon,
+		block: AnswerFeedbackFailed,
 	},
 ];
 
@@ -119,34 +131,22 @@ const QuestionEdit = ( props ) => {
 		</div>
 	);
 
-	const questionAppender = () => {
+	const AppenderComponent = () => {
 		const innerBlocks = select( 'core/block-editor' ).getBlock( clientId ).innerBlocks
 		const insertableBlocks = [];
 
 		ALLOWED_BLOCKS_EXTENDED.map( ( allowedBlock ) => {
-			if ( innerBlocks.map( theBlock => theBlock.name ).indexOf( allowedBlock.blockName ) === -1 ) {
+			if ( innerBlocks.map( theBlock => theBlock.name ).indexOf( allowedBlock.name ) === -1 ) {
 				insertableBlocks.push ( allowedBlock );
 			}
 		});
 
-		if ( insertableBlocks.length ) {
-			return(
-				<>
-					{ insertableBlocks.map(function( theBlock, index ) {
-						return (
-							<QuestionBlockAppenderButton
-								key={ index }
-								allowedBlock={ theBlock.blockName }
-								buttonText={ theBlock.blockTitle }
-								clientId={ clientId }
-								/>
-						);
-					} ) }
-				</>
-			);
-		} else {
-			return false;
-		}
+		return (
+			<QuestionAppender
+				clientId={ clientId }
+				insertableBlocks={ insertableBlocks }
+			/>
+		);
 	};
 
 	if ( ! editable ) {
@@ -184,9 +184,7 @@ const QuestionEdit = ( props ) => {
 				<>
 					<InnerBlocks
 						allowedBlocks={ ALLOWED_BLOCKS }
-						renderAppender={ () =>
-							questionAppender()
-						}
+						renderAppender={ AppenderComponent }
 						template={ [
 							[
 								'sensei-lms/question-description', {},
@@ -196,34 +194,6 @@ const QuestionEdit = ( props ) => {
 										{
 											placeholder: __(
 												'Question Description',
-												'sensei-lms'
-											),
-										},
-									],
-								],
-							],
-							[
-								'sensei-lms/answer-feedback-correct', {},
-								[
-									[
-										'core/paragraph',
-										{
-											placeholder: __(
-												'Correct Answer Feedback',
-												'sensei-lms'
-											),
-										},
-									],
-								],
-							],
-							[
-								'sensei-lms/answer-feedback-failed', {},
-								[
-									[
-										'core/paragraph',
-										{
-											placeholder: __(
-												'Failed Answer Feedback',
 												'sensei-lms'
 											),
 										},

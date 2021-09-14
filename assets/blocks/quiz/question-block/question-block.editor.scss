@@ -253,3 +253,21 @@ $block: '.sensei-lms-question-block';
 		margin-bottom: 28px;
 	}
 }
+
+.sensei-lms-question-meta-block {
+
+	&__appender {
+
+		text-align: center;
+
+		.editor-styles-wrapper &__placeholder {
+			opacity: 0.62;
+			margin: 0;
+			line-height: 1;
+
+			&::after {
+				content: attr(data-placeholder);
+			}
+		}
+	}
+}
