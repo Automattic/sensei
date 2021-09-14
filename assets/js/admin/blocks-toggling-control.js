@@ -171,7 +171,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 			} else {
 				removeNotice( 'sensei-using-blocks' );
 			}
-		} else if ( ! withSenseiBlocks ) {
+		} else {
 			removeNotice( 'sensei-using-blocks' );
 
 			if ( initialWithSenseiBlocks ) {
