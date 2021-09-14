@@ -472,7 +472,7 @@ class Sensei_Course_Enrolment {
 		}
 
 		$removed_learners[ $user_id ] = [
-			'date'   => time(),
+			'date'   => current_datetime()->getTimestamp(),
 			'reason' => $reason ?? self::REMOVAL_REASON_MANUAL,
 		];
 
