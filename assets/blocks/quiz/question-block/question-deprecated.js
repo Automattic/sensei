@@ -61,6 +61,8 @@ export default [
 			...metadata.attributes,
 		},
 		migrate( attributes, innerBlocks ) {
+			const migratedInnerBlocks = [ ];
+
 			// Shift the description into the new question description block container.
 			migratedInnerBlocks.push(
 				createBlock( 'sensei-lms/question-description', {}, innerBlocks )
