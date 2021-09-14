@@ -510,6 +510,25 @@ class Sensei_Course_Enrolment {
 	}
 
 	/**
+	 * Get learner removal reason.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return string|false Learner removal reason.
+	 *                      Or `false` if learner is not removed in the removed learners.
+	 *                      Default is self::REMOVAL_REASON_MANUAL if the reason is not set.
+	 */
+	public function get_learner_removal_reason( $user_id ) {
+		$removed_learners = $this->get_removed_learners();
+
+		if ( ! array_key_exists( $user_id, $removed_learners ) ) {
+			return false;
+		}
+
+		return $removed_learners[ $user_id ]['reason'] ?? self::REMOVAL_REASON_MANUAL;
+	}
+
+	/**
 	 * Get removed learners meta.
 	 *
 	 * @return array Removed learners array.
