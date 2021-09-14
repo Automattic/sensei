@@ -42,32 +42,6 @@ import AnswerFeedbackCorrectIcon from '../../../icons/answer-feedback-correct';
 import AnswerFeedbackFailed from '../answer-feedback-failed-block/answer-feedback-failed'
 import AnswerFeedbackFailedIcon from '../../../icons/answer-feedback-failed';
 
-const ALLOWED_BLOCKS = [
-	'sensei-lms/question-description',
-	'sensei-lms/answer-feedback-correct',
-	'sensei-lms/answer-feedback-failed',
-];
-const ALLOWED_BLOCKS_EXTENDED = [
-	{
-		name: 'sensei-lms/question-description',
-		title: 'Question Description',
-		icon: QuestionDescriptionIcon,
-		block: QuestionDescription,
-	},
-	{
-		name: 'sensei-lms/answer-feedback-correct',
-		title: 'Correct Answer Feedback',
-		icon: AnswerFeedbackCorrectIcon,
-		block: AnswerFeedbackCorrect,
-	},
-	{
-		name: 'sensei-lms/answer-feedback-failed',
-		title: 'Failed Answer Feedback',
-		icon: AnswerFeedbackFailedIcon,
-		block: AnswerFeedbackFailed,
-	},
-];
-
 /**
  * Format the question grade as `X points`.
  *
@@ -111,6 +85,51 @@ const QuestionEdit = ( props ) => {
 
 	const questionNumber = useQuestionNumber( clientId );
 	const AnswerBlock = type && types[ type ];
+
+	// Filter the Allowed Blocks for the render Appender to use based on answerBlock type.
+	if (
+		'boolean' == type
+		|| 'gap-fill' == type
+		|| 'multiple-choice' == type
+	) {
+		var ALLOWED_BLOCKS = [
+			'sensei-lms/question-description',
+			'sensei-lms/answer-feedback-correct',
+			'sensei-lms/answer-feedback-failed',
+		];
+		var ALLOWED_BLOCKS_EXTENDED = [
+			{
+				name: 'sensei-lms/question-description',
+				title: 'Question Description',
+				icon: QuestionDescriptionIcon,
+				block: QuestionDescription,
+			},
+			{
+				name: 'sensei-lms/answer-feedback-correct',
+				title: 'Correct Answer Feedback',
+				icon: AnswerFeedbackCorrectIcon,
+				block: AnswerFeedbackCorrect,
+			},
+			{
+				name: 'sensei-lms/answer-feedback-failed',
+				title: 'Failed Answer Feedback',
+				icon: AnswerFeedbackFailedIcon,
+				block: AnswerFeedbackFailed,
+			},
+		];
+	} else {
+		var ALLOWED_BLOCKS = [
+			'sensei-lms/question-description',
+		];
+		var ALLOWED_BLOCKS_EXTENDED = [
+			{
+				name: 'sensei-lms/question-description',
+				title: 'Question Description',
+				icon: QuestionDescriptionIcon,
+				block: QuestionDescription,
+			},
+		];
+	}
 
 	const hasSelected = useHasSelected( props );
 	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
