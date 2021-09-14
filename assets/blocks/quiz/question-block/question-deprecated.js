@@ -54,6 +54,48 @@ export default [
 		onProgrammaticCreation: true,
 		isEligible( attributes ) {
 			return (
+				attributes.options?.answerFeedback
+			);
+		},
+		attributes: {
+			...metadata.attributes,
+		},
+		migrate( attributes, innerBlocks ) {
+			// Shift the description into the new question description block container.
+			migratedInnerBlocks.push(
+				createBlock( 'sensei-lms/question-description', {}, innerBlocks )
+			);
+
+			// Add the answer feedback attribute to the innerBlock container (if it exists).
+			if ( !! attributes.options?.answerFeedback ) {
+				const theParagraph = createBlock( 'core/paragraph', {
+					content: attributes.options.answerFeedback,
+				} );
+
+				migratedInnerBlocks.push(
+					createBlock( 'sensei-lms/answer-feedback-correct', {}, [ theParagraph ] )
+				);
+				migratedInnerBlocks.push(
+					createBlock( 'sensei-lms/answer-feedback-failed', {}, [ theParagraph ] )
+				);
+			}
+
+			return [
+				{
+					...attributes,
+					options: omit( attributes.options, 'answerFeedback' ),
+				},
+				migratedInnerBlocks
+			];
+		},
+		save() {
+			return <InnerBlocks.Content />;
+		},
+	},
+	{
+		onProgrammaticCreation: true,
+		isEligible( attributes ) {
+			return (
 				attributes.media ||
 				( attributes.type === 'file-upload' &&
 					!! attributes.options?.studentHelp )
