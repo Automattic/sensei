@@ -60,12 +60,14 @@ body #menu-posts-question div.wp-menu-image:before {
 
 #dashboard_right_now a.course-count:before,
 #dashboard_right_now span.course-count:before {
-	content: '\f118';
-}
-#dashboard_right_now a.lesson-count:before,
-#dashboard_right_now span.lesson-count:before {
 	content: '\f331';
 }
+
+#dashboard_right_now a.lesson-count:before,
+#dashboard_right_now span.lesson-count:before {
+	content: '\f163';
+}
+
 #dashboard_right_now a.question-count:before,
 #dashboard_right_now span.question-count:before {
 	content: '\f223';
