@@ -30,6 +30,7 @@ import {
 	validateQuestionBlock,
 	getQuestionBlockValidationErrorMessages,
 } from './question-validation';
+import QuestionRenderAppender from './question-renderappender';
 import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
@@ -139,6 +140,14 @@ const QuestionEdit = ( props ) => {
 				<>
 					<InnerBlocks
 						allowedBlocks={ ALLOWED_BLOCKS }
+						renderAppender={ () =>
+							<QuestionRenderAppender
+									buttonText="Add Question Description"
+									allowedBlocks= { ALLOWED_BLOCKS }
+									allowedBlock='sensei-lms/question-description'
+									clientId={ clientId }
+							/>
+						}
 						template={ [
 							[
 								'sensei-lms/question-description', {},
