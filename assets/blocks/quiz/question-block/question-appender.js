@@ -14,8 +14,8 @@ import { plus } from '@wordpress/icons';
  * Question block inserter for adding description, correct answer feedback and failed answer feedback
  *
  * @param {Object} props
- * @param {string} props.clientId  Question block ID.
- * @param {Object} insertableBlocks  Blocks that can be inserted.
+ * @param {string} props.clientId         Question block ID.
+ * @param {Object} props.insertableBlocks Blocks that can be inserted.
  */
 const QuestionAppender = ( { clientId, insertableBlocks } ) => {
 	const { insertBlock } = useDispatch( 'core/block-editor' );
@@ -41,7 +41,7 @@ const QuestionAppender = ( { clientId, insertableBlocks } ) => {
 			onClick: () => addNewQuestionMetaBlock( theBlock ),
 		} );
 		return true;
-	 } );
+	} );
 
 	return (
 		<div className="sensei-lms-question-meta-block__appender block-editor-default-block-appender">

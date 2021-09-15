@@ -12,12 +12,12 @@ import quizBlock from './quiz-block';
 import './quiz-store';
 
 const blocks = [
-  quizBlock,
-  questionBlock,
-  categoryQuestionBlock,
-  QuestionDescriptionBlock,
-  AnswerFeedbackCorrectBlock,
-  AnswerFeedbackFailedBlock,
+	quizBlock,
+	questionBlock,
+	categoryQuestionBlock,
+	QuestionDescriptionBlock,
+	AnswerFeedbackCorrectBlock,
+	AnswerFeedbackFailedBlock,
 ];
 
 registerSenseiBlocks( blocks );

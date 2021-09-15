@@ -152,14 +152,18 @@ const QuestionEdit = ( props ) => {
 
 	const AppenderComponent = () => {
 		const innerBlocks = select( 'core/block-editor' ).getBlock( clientId )
-			.innerBlocks
+			.innerBlocks;
 		const insertableBlocks = [];
 
 		ALLOWED_BLOCKS_EXTENDED.map( ( allowedBlock ) => {
-			if ( innerBlocks.map( theBlock => theBlock.name ).indexOf( allowedBlock.name ) === -1 ) {
+			if (
+				innerBlocks
+					.map( theBlock => theBlock.name )
+					.indexOf( allowedBlock.name ) === -1
+			) {
 				insertableBlocks.push( allowedBlock );
-				return true;
 			}
+			return true;
 		} );
 
 		return (
