@@ -7,9 +7,6 @@ import { select, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 
-
-
-
 /**
  * Question block inserter for adding description, correct answer feedback and failed answer feedback
  *

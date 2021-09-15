@@ -158,7 +158,7 @@ const QuestionEdit = ( props ) => {
 		ALLOWED_BLOCKS_EXTENDED.map( ( allowedBlock ) => {
 			if (
 				innerBlocks
-					.map( theBlock => theBlock.name )
+					.map( ( theBlock ) => theBlock.name )
 					.indexOf( allowedBlock.name ) === -1
 			) {
 				insertableBlocks.push( allowedBlock );

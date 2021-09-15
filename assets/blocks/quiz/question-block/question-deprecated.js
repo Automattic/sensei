@@ -65,7 +65,7 @@ export default [
 				return true;
 			} );
 
-			return ( attributes.options?.answerFeedback || notMigrated );
+			return attributes.options?.answerFeedback || notMigrated;
 		},
 		attributes: {
 			...metadata.attributes,
@@ -89,18 +89,14 @@ export default [
 				} );
 
 				migratedInnerBlocks.push(
-					createBlock( 'sensei-lms/answer-feedback-correct', {},
-						[
-							theParagraph,
-						]
-					)
+					createBlock( 'sensei-lms/answer-feedback-correct', {}, [
+						theParagraph,
+					] )
 				);
 				migratedInnerBlocks.push(
-					createBlock( 'sensei-lms/answer-feedback-failed', {},
-						[
-							theParagraph,
-						]
-					)
+					createBlock( 'sensei-lms/answer-feedback-failed', {}, [
+						theParagraph,
+					] )
 				);
 			}
 

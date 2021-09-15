@@ -582,10 +582,10 @@ class Sensei_Question {
 	public static function get_the_question_description( $question_id ) {
 
 		$question = get_post( $question_id );
-		$blocks = parse_blocks($question->post_content);
+		$blocks   = parse_blocks( $question->post_content );
 		foreach ( $blocks as $block ) {
-			if ( 'sensei-lms/question-description' == $block['blockName'] ) {
-				$question_description =  render_block($block);
+			if ( 'sensei-lms/question-description' === $block['blockName'] ) {
+				$question_description = render_block( $block );
 			}
 		}
 
