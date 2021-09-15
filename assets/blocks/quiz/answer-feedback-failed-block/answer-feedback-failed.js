@@ -16,16 +16,10 @@ import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 
 /**
  * Question Answer Feedback control.
- *
- * @param {string}   questionType             Question type.
- * @param {Object}   props                    Block props.
- * @param {Object}   props.attributes         Block attributes.
- * @param {string}   props.attributes.options Block options attribute.
- * @param {Function} props.setAttributes      Update block attributes.
  */
-const QuestionAnswerFeedback = ( ) => {
+const AnswerFailedFeedback = ( ) => {
 	return (
-		<div className={ cn( 'sensei-lms-question-answer-feedback-block' ) }>
+		<div className={ cn( 'sensei-lms-question-answer-feedback-failed-block' ) }>
 			<h4>{ __( 'Failed Answer Feedback', 'sensei-lms' ) }</h4>
 			<InnerBlocks
 				template={ [
@@ -48,4 +42,4 @@ const QuestionAnswerFeedback = ( ) => {
 
 export default compose(
 	withBlockMeta,
-)( QuestionAnswerFeedback );
+)( AnswerFailedFeedback );

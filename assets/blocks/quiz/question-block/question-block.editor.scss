@@ -254,12 +254,36 @@ $block: '.sensei-lms-question-block';
 	}
 }
 
+
+.sensei-lms-question-description-block {
+	border-left:  3px solid #8c8f94;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+.sensei-lms-question-answer-feedback-correct-block {
+	border-left:  3px solid #63a95f;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+
+.sensei-lms-question-answer-feedback-failed-block {
+	border-left:  3px solid #ed6c6c;
+	margin-left: 10px;
+	padding-left: 10px;
+}
+
+
 .sensei-lms-question-meta-block {
 
 	&__appender {
 
 		text-align: center;
 
+		.editor-styles-wrapper &__placeholder {
+			&:first-child {
+				display: none;
+			}
+		}
 		.editor-styles-wrapper &__placeholder {
 			opacity: 0.62;
 			margin: 0;

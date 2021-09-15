@@ -17,17 +17,12 @@ import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 
 
 /**
- * Question Answer Feedback control.
- *
- * @param {string}   questionType             Question type.
- * @param {Object}   props                    Block props.
- * @param {Object}   props.attributes         Block attributes.
- * @param {string}   props.attributes.options Block options attribute.
- * @param {Function} props.setAttributes      Update block attributes.
+ * Question Description control.
  */
 const QuestionDescription = ( ) => {
 	return (
 		<div className={ cn( 'sensei-lms-question-description-block' ) }>
+			<h4>{ __( 'Question Description', 'sensei-lms' ) }</h4>
 			<InnerBlocks
 				template={ [
 					[
