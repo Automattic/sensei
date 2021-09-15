@@ -12,6 +12,14 @@
 	align-items: center;
 	min-height: 40px;
 
+	&__icon {
+		background: url( '../images/sensei.svg' ) no-repeat;
+		background-size: 30px 30px;
+		height: 30px;
+		margin-right: 5px;
+		width: 30px;
+	}
+
 	&__wrapper {
 		padding: 0;
 		font-size: 14px;
