@@ -34,12 +34,12 @@ import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
-import QuestionAppender from './question-appender'
-import QuestionDescription from '../question-description-block/question-description'
+import QuestionAppender from './question-appender';
+import QuestionDescription from '../question-description-block/question-description';
 import QuestionDescriptionIcon from '../../../icons/question-description-icon';
-import AnswerFeedbackCorrect from '../answer-feedback-correct-block/answer-feedback-correct'
+import AnswerFeedbackCorrect from '../answer-feedback-correct-block/answer-feedback-correct';
 import AnswerFeedbackCorrectIcon from '../../../icons/answer-feedback-correct';
-import AnswerFeedbackFailed from '../answer-feedback-failed-block/answer-feedback-failed'
+import AnswerFeedbackFailed from '../answer-feedback-failed-block/answer-feedback-failed';
 import AnswerFeedbackFailedIcon from '../../../icons/answer-feedback-failed';
 
 /**
@@ -87,17 +87,19 @@ const QuestionEdit = ( props ) => {
 	const AnswerBlock = type && types[ type ];
 
 	// Filter the Allowed Blocks for the render Appender to use based on answerBlock type.
+	let ALLOWED_BLOCKS = [];
+	let ALLOWED_BLOCKS_EXTENDED = [];
 	if (
-		'boolean' == type
-		|| 'gap-fill' == type
-		|| 'multiple-choice' == type
+		'boolean' === type ||
+		'gap-fill' === type ||
+		'multiple-choice' === type
 	) {
-		var ALLOWED_BLOCKS = [
+		ALLOWED_BLOCKS = [
 			'sensei-lms/question-description',
 			'sensei-lms/answer-feedback-correct',
 			'sensei-lms/answer-feedback-failed',
 		];
-		var ALLOWED_BLOCKS_EXTENDED = [
+		ALLOWED_BLOCKS_EXTENDED = [
 			{
 				name: 'sensei-lms/question-description',
 				title: 'Question Description',
@@ -118,10 +120,8 @@ const QuestionEdit = ( props ) => {
 			},
 		];
 	} else {
-		var ALLOWED_BLOCKS = [
-			'sensei-lms/question-description',
-		];
-		var ALLOWED_BLOCKS_EXTENDED = [
+		ALLOWED_BLOCKS = [ 'sensei-lms/question-description' ];
+		ALLOWED_BLOCKS_EXTENDED = [
 			{
 				name: 'sensei-lms/question-description',
 				title: 'Question Description',
@@ -151,14 +151,16 @@ const QuestionEdit = ( props ) => {
 	);
 
 	const AppenderComponent = () => {
-		const innerBlocks = select( 'core/block-editor' ).getBlock( clientId ).innerBlocks
+		const innerBlocks = select( 'core/block-editor' ).getBlock( clientId )
+			.innerBlocks
 		const insertableBlocks = [];
 
 		ALLOWED_BLOCKS_EXTENDED.map( ( allowedBlock ) => {
 			if ( innerBlocks.map( theBlock => theBlock.name ).indexOf( allowedBlock.name ) === -1 ) {
-				insertableBlocks.push ( allowedBlock );
+				insertableBlocks.push( allowedBlock );
+				return true;
 			}
-		});
+		} );
 
 		return (
 			<QuestionAppender
@@ -206,7 +208,8 @@ const QuestionEdit = ( props ) => {
 						renderAppender={ AppenderComponent }
 						template={ [
 							[
-								'sensei-lms/question-description', {},
+								'sensei-lms/question-description',
+								{},
 								[
 									[
 										'core/paragraph',

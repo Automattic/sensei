@@ -14,14 +14,16 @@ import cn from 'classnames';
  */
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 
-
-
 /**
  * Correct Answer Feedback control.
  */
-const AnswerFeedbackCorrect = ( ) => {
+const AnswerFeedbackCorrect = () => {
 	return (
-		<div className={ cn( 'sensei-lms-question-answer-feedback-correct-block' ) }>
+		<div
+			className={ cn(
+				'sensei-lms-question-answer-feedback-correct-block'
+			) }
+		>
 			<h4>{ __( 'Correct Answer Feedback', 'sensei-lms' ) }</h4>
 			<InnerBlocks
 				template={ [
@@ -42,6 +44,4 @@ const AnswerFeedbackCorrect = ( ) => {
 	);
 };
 
-export default compose(
-	withBlockMeta,
-)( AnswerFeedbackCorrect );
+export default compose( withBlockMeta )( AnswerFeedbackCorrect );

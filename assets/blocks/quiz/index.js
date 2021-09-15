@@ -11,6 +11,13 @@ import categoryQuestionBlock from './category-question-block';
 import quizBlock from './quiz-block';
 import './quiz-store';
 
-const blocks = [ quizBlock, questionBlock, categoryQuestionBlock, QuestionDescriptionBlock, AnswerFeedbackCorrectBlock, AnswerFeedbackFailedBlock ];
+const blocks = [
+  quizBlock,
+  questionBlock,
+  categoryQuestionBlock,
+  QuestionDescriptionBlock,
+  AnswerFeedbackCorrectBlock,
+  AnswerFeedbackFailedBlock,
+];
 
 registerSenseiBlocks( blocks );

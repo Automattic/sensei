@@ -14,12 +14,10 @@ import cn from 'classnames';
  */
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 
-
-
 /**
  * Question Description control.
  */
-const QuestionDescription = ( ) => {
+const QuestionDescription = () => {
 	return (
 		<div className={ cn( 'sensei-lms-question-description-block' ) }>
 			<h4>{ __( 'Question Description', 'sensei-lms' ) }</h4>
@@ -42,6 +40,4 @@ const QuestionDescription = ( ) => {
 	);
 };
 
-export default compose(
-	withBlockMeta,
-)( QuestionDescription );
+export default compose( withBlockMeta )( QuestionDescription );

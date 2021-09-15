@@ -53,31 +53,35 @@ export default [
 	{
 		onProgrammaticCreation: true,
 		isEligible( attributes, innerBlocks ) {
-			var notMigrated = true;
+			let notMigrated = true;
 			innerBlocks.map( ( theBlock ) => {
 				if (
-					'sensei-lms/question-description' == theBlock.name
-					|| 'sensei-lms/answer-feedback-correct' == theBlock.name
-					|| 'sensei-lms/answer-feedback-failed' == theBlock.name
+					'sensei-lms/question-description' === theBlock.name ||
+					'sensei-lms/answer-feedback-correct' === theBlock.name ||
+					'sensei-lms/answer-feedback-failed' === theBlock.name
 				) {
 					notMigrated = false;
 				}
-			});
+				return true;
+			} );
 
 			return (
-				attributes.options?.answerFeedback
-				|| notMigrated
+				attributes.options?.answerFeedback || notMigrated
 			);
 		},
 		attributes: {
 			...metadata.attributes,
 		},
 		migrate( attributes, innerBlocks ) {
-			const migratedInnerBlocks = [ ];
+			const migratedInnerBlocks = [];
 
 			// Shift the description into the new question description block container.
 			migratedInnerBlocks.push(
-				createBlock( 'sensei-lms/question-description', {}, innerBlocks )
+				createBlock(
+					'sensei-lms/question-description',
+					{},
+					innerBlocks
+				)
 			);
 
 			// Add the answer feedback attribute to the innerBlock container (if it exists).
@@ -87,10 +91,22 @@ export default [
 				} );
 
 				migratedInnerBlocks.push(
-					createBlock( 'sensei-lms/answer-feedback-correct', {}, [ theParagraph ] )
+					createBlock(
+						'sensei-lms/answer-feedback-correct',
+						{},
+						[
+							theParagraph,
+						]
+					)
 				);
 				migratedInnerBlocks.push(
-					createBlock( 'sensei-lms/answer-feedback-failed', {}, [ theParagraph ] )
+					createBlock(
+						'sensei-lms/answer-feedback-failed',
+						{},
+						[
+							theParagraph,
+						]
+					)
 				);
 			}
 

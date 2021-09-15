@@ -39,9 +39,7 @@ const questionTypes = {
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
 		view: MultipleChoiceAnswer.view,
-		settings: [
-			QuestionMultipleChoiceSettings,
-		],
+		settings: [ QuestionMultipleChoiceSettings ],
 		validate: ( { answers = [] } = {} ) => {
 			return {
 				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
@@ -72,14 +70,14 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
-		settings: [ ],
+		settings: [],
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
-		settings: [ ],
+		settings: [],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
 				noGap: ! gap?.length,

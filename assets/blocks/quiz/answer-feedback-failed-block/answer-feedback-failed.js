@@ -17,9 +17,13 @@ import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 /**
  * Question Answer Feedback control.
  */
-const AnswerFailedFeedback = ( ) => {
+const AnswerFailedFeedback = () => {
 	return (
-		<div className={ cn( 'sensei-lms-question-answer-feedback-failed-block' ) }>
+		<div
+			className={ cn(
+				'sensei-lms-question-answer-feedback-failed-block'
+			) }
+		>
 			<h4>{ __( 'Failed Answer Feedback', 'sensei-lms' ) }</h4>
 			<InnerBlocks
 				template={ [
@@ -40,6 +44,4 @@ const AnswerFailedFeedback = ( ) => {
 	);
 };
 
-export default compose(
-	withBlockMeta,
-)( AnswerFailedFeedback );
+export default compose( withBlockMeta )( AnswerFailedFeedback );
