@@ -51,21 +51,23 @@ const getMediaBlock = ( media ) => {
 
 export default [
 	{
-		onProgrammaticCreation: true,
 		isEligible( attributes, innerBlocks ) {
-			let notMigrated = true;
+			let isEligible = true;
+			if ( !! attributes.options?.answerFeedback ) {
+				isEligible = true;
+			}
 			innerBlocks.map( ( theBlock ) => {
 				if (
 					'sensei-lms/question-description' === theBlock.name ||
 					'sensei-lms/answer-feedback-correct' === theBlock.name ||
 					'sensei-lms/answer-feedback-failed' === theBlock.name
 				) {
-					notMigrated = false;
+					isEligible = false;
 				}
 				return true;
 			} );
 
-			return attributes.options?.answerFeedback || notMigrated;
+			return isEligible;
 		},
 		attributes: {
 			...metadata.attributes,
