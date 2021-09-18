@@ -783,11 +783,17 @@ class Sensei_Question {
 		// Show answers if allowed
 		if ( $show_answers ) {
 			$answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
+			$answer_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
 			if ( $answer_notes ) {
+				if ( is_int( $answer_grade ) ) {
+					$answer_notes_classname = ' answer-feedback-correct';
+				} else {
+					$answer_notes_classname = ' answer-feedback-failed';
+				}
 				?>
 
-				<div class="sensei-message info info-special answer-feedback">
+				<div class="sensei-message info info-special answer-feedback<?php echo $answer_notes_classname; ?>">
 
 					<?php
 						/**
