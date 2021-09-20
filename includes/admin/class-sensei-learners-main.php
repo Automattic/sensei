@@ -1199,16 +1199,23 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
+						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'sensei-lms' ); ?></span>
 						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;">
 						</select>
-						<?php if ( 'lesson' === $form_post_type ) { ?>
-							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'sensei-lms' ); ?></label>
-						<?php } elseif ( 'course' === $form_post_type ) { ?>
-							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'sensei-lms' ); ?></label>
-						<?php } ?>
-						<br/>
-						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'sensei-lms' ); ?></span>
 					</p>
+						<?php
+						/**
+						 * Fire action when the 'Add Learner to Course' box is generated.
+						 *
+						 * @since 3.13.2
+						 */
+						do_action( 'sensei_learners_add_learner_form_controls' );
+						?>
+						<?php if ( 'lesson' === $form_post_type ) { ?>
+							<label class="checkbox-label" for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'sensei-lms' ); ?></label>
+						<?php } elseif ( 'course' === $form_post_type ) { ?>
+							<label class="checkbox-label" for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'sensei-lms' ); ?></label>
+						<?php } ?>
 					<p>
 						<?php
 						// translators: Placeholder is the post title.
