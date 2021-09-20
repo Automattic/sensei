@@ -793,7 +793,7 @@ class Sensei_Question {
 				}
 				?>
 
-				<div class="sensei-message info info-special answer-feedback<?php echo $answer_notes_classname; ?>">
+				<div class="sensei-message info info-special answer-feedback<?php echo esc_attr( $answer_notes_classname ); ?>">
 
 					<?php
 						/**
