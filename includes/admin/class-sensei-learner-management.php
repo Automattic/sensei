@@ -692,15 +692,12 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		foreach ( $user_ids as $user_id ) {
 			$result = false;
 
-			if ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
-				$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
-			}
+			$course_enrolment->enrol( $user_id );
 
 			switch ( $post_type ) {
 				case 'course':
