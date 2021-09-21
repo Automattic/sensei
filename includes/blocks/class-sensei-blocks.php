@@ -189,17 +189,15 @@ class Sensei_Blocks {
 	 *
 	 * @return string Block HTML.
 	 */
-	public static function update_button_block_url( $block_content, $block, $class_name, $url ): string {
+	public static function update_button_block_url( $block_content, $block, $class_name, $url ) {
 		if (
 			! isset( $block['blockName'] )
 			|| 'core/button' !== $block['blockName']
 			|| ! isset( $block['attrs']['className'] )
 			|| false === strpos( $block['attrs']['className'], $class_name )
+			|| ! $url
+			|| empty( $block_content )
 		) {
-			return $block_content;
-		}
-
-		if ( ! $url ) {
 			return $block_content;
 		}
 

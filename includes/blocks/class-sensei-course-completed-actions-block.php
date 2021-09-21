@@ -32,7 +32,7 @@ class Sensei_Course_Completed_Actions_Block {
 	 *
 	 * @return string Block HTML.
 	 */
-	public function update_more_courses_button_url( $block_content, $block ): string {
+	public function update_more_courses_button_url( $block_content, $block ) {
 		return Sensei_Blocks::update_button_block_url(
 			$block_content,
 			$block,
