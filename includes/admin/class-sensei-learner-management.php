@@ -695,9 +695,7 @@ class Sensei_Learner_Management {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		foreach ( $user_ids as $user_id ) {
-			$result = false;
-
-			$course_enrolment->enrol( $user_id );
+			$result = $course_enrolment->enrol( $user_id );
 
 			switch ( $post_type ) {
 				case 'course':
