@@ -3100,8 +3100,11 @@ class Sensei_Course {
 		<?php
 
 		// Check if course is completed.
-		$user_course_status = Sensei_Utils::user_course_status( $course_id, $user_id );
-		$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
+		$completed_course = false;
+		if ( ! empty( $user_id ) ) {
+			$user_course_status = Sensei_Utils::user_course_status( $course_id, $user_id );
+			$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
+		}
 
 		/**
 		 * Display course enrollment actions.
