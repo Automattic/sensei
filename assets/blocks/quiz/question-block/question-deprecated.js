@@ -51,6 +51,7 @@ const getMediaBlock = ( media ) => {
 
 export default [
 	{
+		onProgrammaticCreation: true,
 		isEligible( attributes, innerBlocks ) {
 			let isEligible = true;
 			if ( !! attributes.options?.answerFeedback ) {
