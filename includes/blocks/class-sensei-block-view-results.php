@@ -44,7 +44,25 @@ class Sensei_Block_View_Results {
 	 * @return string The HTML of the block.
 	 */
 	public function render( $attributes, $content ): string {
-		if ( ! Sensei()->course::is_user_enrolled( get_the_ID() ) ) {
+		/**
+		 * Whether render the view results block.
+		 *
+		 * @since 3.13.2
+		 *
+		 * @param {boolean} $render     Whether render the view results block.
+		 * @param {array}   $attributes Block attributes.
+		 * @param {string}  $content    Block HTML.
+		 *
+		 * @return {boolean} Whether render the view results block.
+		 */
+		$render = apply_filters(
+			'sensei_render_view_results_block',
+			Sensei()->course::is_user_enrolled( get_the_ID() ),
+			$attributes,
+			$content
+		);
+
+		if ( ! $render ) {
 			return '';
 		}
 
