@@ -1713,6 +1713,32 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Get the number of lessons of a course that a user started.
+	 *
+	 * @since  3.13.2
+	 *
+	 * @param int $course_id The course id.
+	 * @param int $user_id   The user id.
+	 *
+	 * @return int Lesson count.
+	 */
+	public static function user_started_lesson_count( int $course_id, int $user_id ) : int {
+		$lessons = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+
+		if ( empty( $lessons ) ) {
+			return 0;
+		}
+
+		$activity_args = array(
+			'post__in' => $lessons,
+			'user_id'  => $user_id,
+			'type'     => 'sensei_lesson_status',
+		);
+
+		return self::sensei_check_for_activity( $activity_args );
+	}
+
+	/**
 	 * Check if a user has completed a lesson or not
 	 *
 	 * @uses  Sensei()

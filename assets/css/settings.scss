@@ -185,24 +185,6 @@
 				@include border_radius(3px);
 				white-space: nowrap;
 			}
-			.ungraded  {
-				background: darken($bg_light, 5%);
-			}
-			.in-progress  {
-				background: #ffffe0;
-			}
-			.graded  {
-				background: #52a8e8;
-				color: #fff;
-			}
-			.passed  {
-				background: $success;
-				color: #fff;
-			}
-			.failed  {
-				background: #ed6c6c;
-				color: #fff;
-			}
 		}
 
 		.enrolment_status  {
@@ -224,6 +206,58 @@
 		.row-actions {
 			a {
 				cursor: pointer;
+			}
+		}
+	}
+}
+
+.sensei-grading-wrap  {
+	table  {
+		.user_status  {
+			.ungraded  {
+				background: darken($bg_light, 5%);
+			}
+			.in-progress  {
+				background: #ffffe0;
+			}
+			.graded  {
+				background: #52a8e8;
+				color: #fff;
+			}
+			.passed  {
+				background: $success;
+				color: #fff;
+			}
+			.failed  {
+				background: #ed6c6c;
+				color: #fff;
+			}
+		}
+	}
+}
+
+.sensei-learners-wrap  {
+	table .user_status  {
+		.in-progress::before, .graded::before, .not-started::before  {
+			font-family: FontAwesomeSensei;
+			font-size: 14px;
+			margin-right: 5px;
+		}
+		.in-progress  {
+			&:before {
+				content: "\f042";
+				display:inline-block;
+				transform: rotate(90deg);
+			}
+		}
+		.graded  {
+			&:before {
+				content: "\f058";
+			}
+		}
+		.not-started {
+			&:before {
+				content: "\f10c";
 			}
 		}
 	}
