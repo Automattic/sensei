@@ -117,7 +117,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
 				$course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
 
-				if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
+				if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array_keys( $this->get_filter_options() ), true ) ) {
 					$attributes['status'] = $course_filter_by_status;
 				}
 			}
@@ -516,14 +516,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 */
 		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
 		if ( false === $should_display_course_toggles ) {
-			   return;
+			return;
 		}
 
-		$active_filter_options = array(
-			'all'      => __( 'All Courses', 'sensei-lms' ),
-			'active'   => __( 'Active Courses', 'sensei-lms' ),
-			'complete' => __( 'Completed Courses', 'sensei-lms' ),
-		);
+		$active_filter_options = $this->get_filter_options();
 
 		$base_url = get_page_link( $this->page_id );
 		?>
@@ -541,6 +537,18 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<?php
 	}
 
+	/**
+	 * Get the filter options.
+	 *
+	 * @return array The filter options.
+	 */
+	private function get_filter_options() {
+		return [
+			'all'      => __( 'All', 'sensei-lms' ),
+			'active'   => __( 'Active', 'sensei-lms' ),
+			'complete' => __( 'Completed', 'sensei-lms' ),
+		];
+	}
 
 	/**
 	 * Load the javascript for the toggle functionality
