@@ -543,11 +543,23 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	 * @return array The filter options.
 	 */
 	private function get_filter_options() {
-		return [
+		$filter_options = [
 			'all'      => __( 'All', 'sensei-lms' ),
 			'active'   => __( 'Active', 'sensei-lms' ),
 			'complete' => __( 'Completed', 'sensei-lms' ),
 		];
+
+		/**
+		 * Filters the the user courses filter options.
+		 *
+		 * @since 3.13.2
+		 * @hook sensei_user_courses_filter_options
+		 *
+		 * @param {array} $filter_options The filter options.
+		 *
+		 * @return {array} The filter options.
+		 */
+		return apply_filters( 'sensei_user_courses_filter_options', $filter_options );
 	}
 
 	/**
