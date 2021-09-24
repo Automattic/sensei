@@ -210,14 +210,35 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			'posts_per_page' => $number_of_posts,
 		);
 
-		if ( 'complete' === $this->status ) {
-			$this->query    = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
-			$empty_callback = [ $this, 'completed_no_course_message_output' ];
+		/**
+		 * Filters the the query which fetches the user courses.
+		 *
+		 * @since 3.13.2
+		 * @hook sensei_user_courses_query
+		 *
+		 * @param {null}   $query
+		 * @param {int}    $user_id         The user id.
+		 * @param {string} $status          Status of query to run.
+		 * @param {array}  $base_query_args Base query args.
+		 *
+		 * @return {WP_Query} The query.
+		 */
+		$filtered_query = apply_filters( 'sensei_user_courses_query', null, $user_id, $this->status, $base_query_args );
+
+		if ( ! empty( $filtered_query ) ) {
+			$this->query = $filtered_query;
+		} elseif ( 'complete' === $this->status ) {
+			$this->query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
 		} elseif ( 'active' === $this->status ) {
-			$this->query    = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
-			$empty_callback = [ $this, 'active_no_course_message_output' ];
+			$this->query = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
 		} else {
 			$this->query = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
+		}
+
+		if ( 'complete' === $this->status ) {
+			$empty_callback = [ $this, 'completed_no_course_message_output' ];
+		} elseif ( 'active' === $this->status ) {
+			$empty_callback = [ $this, 'active_no_course_message_output' ];
 		}
 
 		if ( empty( $this->query->found_posts ) ) {
