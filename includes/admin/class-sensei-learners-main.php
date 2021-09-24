@@ -165,10 +165,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			case 'learners':
 				$columns = array(
 					'title'            => __( 'Learner', 'sensei-lms' ),
+					'enrolment_status' => __( 'Enrollment', 'sensei-lms' ),
+					'user_status'      => __( 'Status', 'sensei-lms' ),
 					'date_started'     => __( 'Date Started', 'sensei-lms' ),
 					'date_completed'   => __( 'Date Completed', 'sensei-lms' ),
-					'user_status'      => __( 'Status', 'sensei-lms' ),
-					'enrolment_status' => __( 'Enrollment', 'sensei-lms' ),
 				);
 				break;
 
@@ -359,13 +359,13 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				if ( $this->lesson_id ) {
 
-					$post_id     = intval( $this->lesson_id );
+					$post_id     = $this->lesson_id;
 					$object_type = __( 'lesson', 'sensei-lms' );
 					$post_type   = 'lesson';
 
 				} elseif ( $this->course_id ) {
 
-					$post_id     = intval( $this->course_id );
+					$post_id     = $this->course_id;
 					$object_type = __( 'course', 'sensei-lms' );
 					$post_type   = 'course';
 
@@ -380,11 +380,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				} else {
 
-					$progress_status_html =
-						'<span class="in-progress">' .
+					if ( 'course' === $post_type && 0 === Sensei_Utils::user_started_lesson_count( $post_id, $user_activity->user_id ) ) {
+						$progress_status_html =
+							'<span class="not-started">' .
+							esc_html__( 'Not Started', 'sensei-lms' ) .
+							'</span>';
+					} else {
+						$progress_status_html =
+							'<span class="in-progress">' .
 							esc_html__( 'In Progress', 'sensei-lms' ) .
-						'</span>';
-
+							'</span>';
+					}
 				}
 
 				$is_user_enrolled  = Sensei_Course::is_user_enrolled( $this->course_id, $user_activity->user_id );
