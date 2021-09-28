@@ -1427,6 +1427,17 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Has results links check.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return boolean
+	 */
+	private static function has_results_links( $course_id ) {
+		return ! empty( apply_filters( 'sensei_results_links', '', $course_id ) );
+	}
+
+	/**
 	 * load_user_courses_content generates HTML for user's active & completed courses
 	 *
 	 * This function also ouputs the html so no need to echo the content.
@@ -1708,7 +1719,7 @@ class Sensei_Course {
 					$has_quizzes = Sensei()->course->course_quizzes( $course_item->ID, true );
 
 					// Output only if there is content to display
-					if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+					if ( self::has_results_links( $course_item->ID ) || $has_quizzes ) {
 						$complete_html .= '<p class="sensei-results-links">';
 						$results_link   = '';
 
@@ -2391,7 +2402,7 @@ class Sensei_Course {
 
 		$has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
 
-		if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+		if ( self::has_results_links( $course->ID ) || $has_quizzes ) {
 			$has_results_button = true;
 		}
 
@@ -3134,7 +3145,7 @@ class Sensei_Course {
 				<div class="status completed"><?php esc_html_e( 'Completed', 'sensei-lms' ); ?></div>
 				<?php
 				$has_quizzes = Sensei()->course->course_quizzes( $course_id, true );
-				if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+				if ( self::has_results_links( $course_id ) || $has_quizzes ) {
 					?>
 					<p class="sensei-results-links">
 						<?php
