@@ -593,7 +593,7 @@ class Sensei_Course_Enrolment {
 		 * @param int $course_id Course that the user will be enrolled to.
 		 * @param int $user_id   User ID.
 		 */
-		do_action( 'sensei_enrol_user', $this->course_id, $user_id );
+		do_action( 'sensei_admin_enrol_user', $this->course_id, $user_id );
 
 		// If user is removed, just restore.
 		if ( $this->is_learner_removed( $user_id ) ) {
