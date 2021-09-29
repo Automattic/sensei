@@ -206,8 +206,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 *
 		 * Filters the columns that are displayed in learner management
 		 *
-		 * @param {array}   $columns The default columns.
-		 * @param {object}  $this       Sensei_Learners_Main instance.
+		 * @param {array}   $columns              The default columns.
+		 * @param {object}  $sensei_learners_main Sensei_Learners_Main instance.
 		 *
 		 * @return {array} The modified default columns
 		 */
