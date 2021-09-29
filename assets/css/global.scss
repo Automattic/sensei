@@ -22,11 +22,11 @@ $sensei-notice-icon-width: 30px;
 
 	&__icon {
 		background: url( '../images/sensei.svg' ) no-repeat;
-		background-size: $sensei-notice-icon-width $sensei-notice-icon-height;
-		height: $sensei-notice-icon-height;
+		background-size: contain;
+		flex: 0 0 auto;
 		margin-right: 5px;
-		min-width: $sensei-notice-icon-width;
 		width: $sensei-notice-icon-width;
+		height: $sensei-notice-icon-height;
 	}
 
 	&__wrapper {
