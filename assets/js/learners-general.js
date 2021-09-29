@@ -12,8 +12,19 @@ jQuery( document ).ready( function ( $ ) {
 		return this.length > 0;
 	};
 
-	jQuery( '.edit-start-date-date-picker' ).datepicker( {
-		dateFormat: 'yy-mm-dd',
+	jQuery( '.edit-date-date-picker' ).datepicker( {
+		// The space and colon characters are added to allow users typing a datetime manually.
+		dateFormat: 'yy-mm-dd :',
+		onSelect: function ( newDate ) {
+			let oldDate = $( this ).attr( 'value' ).split( ' ' );
+			newDate = newDate.substring( 0, newDate.length - 2 );
+
+			if ( oldDate[ 1 ] ) {
+				newDate = newDate + ' ' + oldDate[ 1 ];
+			}
+
+			$( this ).val( newDate );
+		},
 	} );
 
 	/***************************************************************************************************
@@ -60,29 +71,37 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	$( '.edit-start-date-submit' ).click( function () {
-		var $this = $( this );
-		var new_date = $this.prev( '.edit-start-date-date-picker' ).val();
-		var user_id = $this.attr( 'data-user-id' );
-		var post_id = $this.attr( 'data-post-id' );
-		var post_type = $this.attr( 'data-post-type' );
-		var comment_id = $this.attr( 'data-comment-id' );
-		var dataToPost = '';
+		let $this = $( this );
+		let userId = $this.attr( 'data-user-id' );
+		let postId = $this.attr( 'data-post-id' );
+		let postType = $this.attr( 'data-post-type' );
+		let commentId = $this.attr( 'data-comment-id' );
+		let newDates = {};
+
+		$this
+			.parents( 'tr' )
+			.find( '.edit-date-date-picker' )
+			.each( ( index, element ) => {
+				newDates[ element.getAttribute( 'data-name' ) ] = element.value;
+			} );
 
 		if (
-			! user_id ||
-			! post_id ||
-			! post_type ||
-			! new_date ||
-			! comment_id
+			! userId ||
+			! postId ||
+			! postType ||
+			! commentId ||
+			Object.keys( newDates ).length === 0
 		) {
 			return;
 		}
 
-		dataToPost += 'user_id=' + user_id;
-		dataToPost += '&post_id=' + post_id;
-		dataToPost += '&post_type=' + post_type;
-		dataToPost += '&new_date=' + new_date;
-		dataToPost += '&comment_id=' + comment_id;
+		let dataToPost = {
+			user_id: userId,
+			post_id: postId,
+			post_type: postType,
+			comment_id: commentId,
+			new_dates: newDates,
+		};
 
 		$.post(
 			ajaxurl,

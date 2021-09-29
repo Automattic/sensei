@@ -459,7 +459,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
 				// translators: Placeholder is the full name of the learner.
 				$a_title              = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
-				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type );
+				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type );
 
 				$actions     = [];
 				$row_actions = [];
@@ -564,6 +564,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$actions[] = $edit_start_date_form;
 				}
 
+				$date_started = get_comment_meta( $user_activity->comment_ID, 'start', true );
+				$date_input   = '<input class="edit-date-date-picker" data-name="start-date" type="text" value="' . esc_attr( $date_started ) . '">';
+
 				/**
 				 * Filter sensei_learners_main_column_data
 				 *
@@ -596,7 +599,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'<div class="row-actions">' .
 								implode( ' | ', $row_actions ) .
 							'</div>',
-						'date_started'     => get_comment_meta( $user_activity->comment_ID, 'start', true ),
+						'date_started'     => $date_input,
 						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
@@ -626,9 +629,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'class' => array(),
 						),
 						'input' => array(
-							'class' => array(),
-							'type'  => array(),
-							'value' => array(),
+							'class'     => array(),
+							'type'      => array(),
+							'value'     => array(),
+							'data-name' => array(),
 						),
 					)
 				);
@@ -759,7 +763,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$escaped_column_data = Sensei_Wp_Kses::wp_kses_array( $column_data );
 
 				break;
-		} // switch
+		}
 
 		return $escaped_column_data;
 	}
@@ -770,19 +774,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @param WP_Comment $user_activity The sensei user activity.
 	 * @param integer    $post_id       The post id.
 	 * @param string     $post_type     The post type (lesson or course).
-	 * @param string     $object_type   The object type.
 	 *
 	 * @return string The form.
 	 */
-	private function get_edit_start_date_form( $user_activity, $post_id, $post_type, $object_type ) {
-		$comment_id   = $user_activity->comment_ID;
-		$date_started = get_comment_meta( $comment_id, 'start', true );
-		$form         = '<form class="edit-start-date">';
-		$form        .= '<input class="edit-start-date-date-picker" type="text" value="' . esc_attr( $date_started ) . '">';
-		$form        .= '<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $comment_id ) . '">' . sprintf( esc_html__( 'Edit Start Date', 'sensei-lms' ), esc_html( $object_type ) ) . '</a>';
-		$form        .= '</form>';
+	private function get_edit_start_date_form( $user_activity, $post_id, $post_type ) : string {
+		$submit_button_text = __( 'Update Learner', 'sensei-lms' );
 
-		return $form;
+		return '<form class="edit-start-date">
+				<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $user_activity->comment_ID ) . '">' . esc_html( $submit_button_text ) . '</a>
+			</form>';
 	}
 
 	/**
