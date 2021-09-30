@@ -24,10 +24,19 @@ import { Grid, Col } from './grid';
 const Main = () => {
 	useSenseiColorTheme();
 
-	const { extensions, connected, layout, error } = useSelect( ( select ) => {
+	const {
+		extensions,
+		connected,
+		layout,
+		isExtensionsLoading,
+		error,
+	} = useSelect( ( select ) => {
 		const store = select( EXTENSIONS_STORE );
 
 		return {
+			isExtensionsLoading: ! store.hasFinishedResolution(
+				'getExtensions'
+			),
 			extensions: store.getExtensions(),
 			connected: store.getConnectionStatus(),
 			layout: store.getLayout(),
@@ -35,12 +44,16 @@ const Main = () => {
 		};
 	} );
 
-	if ( 0 === extensions.length || 0 === layout.length ) {
+	if ( isExtensionsLoading ) {
 		return (
 			<div className="sensei-extensions__loader">
 				<Spinner />
 			</div>
 		);
+	}
+
+	if ( 0 === extensions.length || 0 === layout.length ) {
+		return <div>{ __( 'No extensions found.', 'sensei-lms' ) }</div>;
 	}
 
 	const freeExtensions = extensions.filter(
