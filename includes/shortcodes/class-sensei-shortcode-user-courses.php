@@ -117,7 +117,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
 				$course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
 
-				if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array( 'all', 'active', 'complete' ), true ) ) {
+				if ( ! empty( $course_filter_by_status ) && in_array( $course_filter_by_status, array_keys( $this->get_filter_options() ), true ) ) {
 					$attributes['status'] = $course_filter_by_status;
 				}
 			}
@@ -210,14 +210,35 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			'posts_per_page' => $number_of_posts,
 		);
 
-		if ( 'complete' === $this->status ) {
-			$this->query    = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
-			$empty_callback = [ $this, 'completed_no_course_message_output' ];
+		/**
+		 * Filters the query which fetches the user courses.
+		 *
+		 * @since 3.13.2
+		 * @hook sensei_user_courses_query
+		 *
+		 * @param {null}   $query
+		 * @param {int}    $user_id         The user id.
+		 * @param {string} $status          Status of query to run.
+		 * @param {array}  $base_query_args Base query args.
+		 *
+		 * @return {WP_Query} The query.
+		 */
+		$filtered_query = apply_filters( 'sensei_user_courses_query', null, $user_id, $this->status, $base_query_args );
+
+		if ( ! empty( $filtered_query ) ) {
+			$this->query = $filtered_query;
+		} elseif ( 'complete' === $this->status ) {
+			$this->query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
 		} elseif ( 'active' === $this->status ) {
-			$this->query    = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
-			$empty_callback = [ $this, 'active_no_course_message_output' ];
+			$this->query = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
 		} else {
 			$this->query = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
+		}
+
+		if ( 'complete' === $this->status ) {
+			$empty_callback = [ $this, 'completed_no_course_message_output' ];
+		} elseif ( 'active' === $this->status ) {
+			$empty_callback = [ $this, 'active_no_course_message_output' ];
 		}
 
 		if ( empty( $this->query->found_posts ) ) {
@@ -516,14 +537,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 */
 		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
 		if ( false === $should_display_course_toggles ) {
-			   return;
+			return;
 		}
 
-		$active_filter_options = array(
-			'all'      => __( 'All Courses', 'sensei-lms' ),
-			'active'   => __( 'Active Courses', 'sensei-lms' ),
-			'complete' => __( 'Completed Courses', 'sensei-lms' ),
-		);
+		$active_filter_options = $this->get_filter_options();
 
 		$base_url = get_page_link( $this->page_id );
 		?>
@@ -541,6 +558,30 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		<?php
 	}
 
+	/**
+	 * Get the filter options.
+	 *
+	 * @return array The filter options.
+	 */
+	private function get_filter_options() {
+		$filter_options = [
+			'all'      => __( 'All', 'sensei-lms' ),
+			'active'   => __( 'Active', 'sensei-lms' ),
+			'complete' => __( 'Completed', 'sensei-lms' ),
+		];
+
+		/**
+		 * Filters the the user courses filter options.
+		 *
+		 * @since 3.13.2
+		 * @hook sensei_user_courses_filter_options
+		 *
+		 * @param {array} $filter_options The filter options.
+		 *
+		 * @return {array} The filter options.
+		 */
+		return apply_filters( 'sensei_user_courses_filter_options', $filter_options );
+	}
 
 	/**
 	 * Load the javascript for the toggle functionality

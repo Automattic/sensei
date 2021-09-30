@@ -45,9 +45,9 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( 'All Courses', $result );
-		$this->assertContains( 'Active Courses', $result );
-		$this->assertContains( 'Completed Courses', $result );
+		$this->assertContains( 'All', $result );
+		$this->assertContains( 'Active', $result );
+		$this->assertContains( 'Completed', $result );
 	}
 
 	/**
