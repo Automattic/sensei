@@ -15,16 +15,17 @@ $sensei-notice-icon-width: 30px;
 .sensei-notice {
 	@import '../shared/styles/wp-admin';
 
-	align-items: center;
+	align-items: flex-start;
 	border-left-color: $primary;
 	display: flex;
+	gap: 10px;
 	min-height: 40px;
 
 	&__icon {
 		background: url( '../images/sensei.svg' ) no-repeat;
 		background-size: contain;
 		flex: 0 0 auto;
-		margin-right: 5px;
+		margin-top: 0.5em;
 		width: $sensei-notice-icon-width;
 		height: $sensei-notice-icon-height;
 	}
@@ -32,6 +33,12 @@ $sensei-notice-icon-width: 30px;
 	&__wrapper {
 		padding: 0;
 		font-size: 14px;
+
+		@media (min-width: 960px) {
+			display: flex;
+			flex: 1 1 auto;
+			gap: 10px;
+		}
 	}
 
 	&__content a {
@@ -43,15 +50,16 @@ $sensei-notice-icon-width: 30px;
 	}
 
 	&__actions {
-		margin-left: auto;
+		margin: 0.5em 0 0.5em auto;
+
 		.button {
-			margin-left: 5px;
 			padding: 3px 12px;
 		}
 	}
 
 	.notice-dismiss {
-		padding: 0 0 0 10px;
+		margin: 0.5em 0 0 auto;
+		padding: 0;
 		position: static;
 	}
 }

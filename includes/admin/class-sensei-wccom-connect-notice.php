@@ -96,11 +96,11 @@ class Sensei_WCCOM_Connect_Notice {
 					);
 					?>
 				</p>
-			</div>
-			<div class='sensei-notice__actions'>
-				<a href="<?php echo esc_url( $wccom_connect_url ); ?>" class="button button-primary">
-					<?php esc_html_e( 'Connect account', 'sensei-lms' ); ?>
-				</a>
+				<div class='sensei-notice__actions'>
+					<a href="<?php echo esc_url( $wccom_connect_url ); ?>" class="button button-primary">
+						<?php esc_html_e( 'Connect account', 'sensei-lms' ); ?>
+					</a>
+				</div>
 			</div>
 		</div>
 		<?php

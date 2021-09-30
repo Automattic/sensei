@@ -59,11 +59,11 @@ class Sensei_WCPC_Prompt {
 						);
 					?>
 				</p>
-			</div>
-			<div class='sensei-notice__actions'>
-				<a href="<?php echo esc_url( $install_url ); ?>" class="button button-primary" data-sensei-log-event="wcpc_upgrade_install">
-					<?php esc_html_e( 'Install extension', 'sensei-lms' ); ?>
-				</a>
+				<div class='sensei-notice__actions'>
+					<a href="<?php echo esc_url( $install_url ); ?>" class="button button-primary" data-sensei-log-event="wcpc_upgrade_install">
+						<?php esc_html_e( 'Install extension', 'sensei-lms' ); ?>
+					</a>
+				</div>
 			</div>
 		</div>
 		<?php
