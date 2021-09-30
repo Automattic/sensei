@@ -211,7 +211,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		);
 
 		/**
-		 * Filters the the query which fetches the user courses.
+		 * Filters the query which fetches the user courses.
 		 *
 		 * @since 3.13.2
 		 * @hook sensei_user_courses_query
