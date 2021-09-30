@@ -140,6 +140,10 @@ final class Sensei_Extensions {
 			}
 		}
 
+		if ( empty( $extensions ) ) {
+			return [];
+		}
+
 		if ( 'plugin' === $type ) {
 			return $this->add_installed_extensions_properties( $extensions );
 		}
