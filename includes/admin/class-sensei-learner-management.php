@@ -450,7 +450,19 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$updated = update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+		$updated = (bool) update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+
+		/**
+		 * Filter sensei_learners_default_columns
+		 *
+		 * Filters the columns that are displayed in learner management
+		 *
+		 * @param {array}   $columns              The default columns.
+		 * @param {object}  $sensei_learners_main Sensei_Learners_Main instance.
+		 *
+		 * @return {array} The modified default columns
+		 */
+		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, $comment_id );
 
 		if ( false === $updated ) {
 			exit( '' );
