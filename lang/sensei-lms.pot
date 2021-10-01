@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.13.1\n"
+"Project-Id-Version: Sensei LMS 3.13.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-08-26T16:09:55+00:00\n"
+"POT-Creation-Date: 2021-10-01T18:52:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: sensei-lms\n"
@@ -1706,7 +1706,7 @@ msgid "Display a random selection of questions."
 msgstr ""
 
 #: assets/blocks/quiz/quiz-block/quiz-settings.js:141
-#: assets/extensions/main.js:62
+#: assets/extensions/main.js:75
 #: includes/admin/views/html-admin-page-extensions-categories.php:33
 #: includes/class-sensei-course.php:2687
 #: includes/class-sensei-grading-main.php:487
@@ -2063,7 +2063,7 @@ msgid "Update"
 msgstr ""
 
 #: assets/extensions/extension-actions.js:82
-#: assets/extensions/main.js:74
+#: assets/extensions/main.js:87
 #: assets/setup-wizard/data/normalizer.js:25
 #: assets/dist/extensions/index.js:1
 #: assets/dist/setup-wizard/index.js:1
@@ -2071,7 +2071,7 @@ msgid "Installed"
 msgstr ""
 
 #: assets/extensions/extension-actions.js:91
-#: assets/extensions/main.js:68
+#: assets/extensions/main.js:81
 #: assets/setup-wizard/data/normalizer.js:29
 #: includes/admin/views/html-admin-page-extensions-results.php:38
 #: assets/dist/extensions/index.js:1
@@ -2085,10 +2085,15 @@ msgid "Install"
 msgstr ""
 
 #: assets/extensions/header.js:9
-#: includes/admin/class-sensei-extensions.php:282
+#: includes/admin/class-sensei-extensions.php:286
 #: includes/admin/views/html-admin-page-extensions.php:13
 #: assets/dist/extensions/index.js:1
 msgid "Sensei LMS Extensions"
+msgstr ""
+
+#: assets/extensions/main.js:56
+#: assets/dist/extensions/index.js:1
+msgid "No extensions found."
 msgstr ""
 
 #: assets/extensions/store.js:151
@@ -2586,7 +2591,7 @@ msgstr ""
 msgid "https://automattic.com"
 msgstr ""
 
-#: includes/admin/class-sensei-extensions.php:283
+#: includes/admin/class-sensei-extensions.php:287
 msgid "Extensions"
 msgstr ""
 
@@ -4120,7 +4125,6 @@ msgstr ""
 
 #: includes/class-sensei-frontend.php:1219
 #: widgets/class-sensei-lesson-component-widget.php:223
-#. translators: Placeholder is a link to the Course permalink.
 msgid "View course"
 msgstr ""
 
@@ -5171,7 +5175,6 @@ msgid "%1$s updated. %2$sView %1$s%3$s."
 msgstr ""
 
 #: includes/class-sensei-posttypes.php:867
-#. translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
 msgid "Custom field updated."
 msgstr ""
 
@@ -6342,7 +6345,6 @@ msgid "[%1$s] You have completed a course"
 msgstr ""
 
 #: includes/emails/class-sensei-email-learner-completed-course.php:64
-#. translators: Placeholder is the blog name.
 msgid "You have completed a course"
 msgstr ""
 
@@ -6364,7 +6366,6 @@ msgid "[%1$s] Your quiz has been graded"
 msgstr ""
 
 #: includes/emails/class-sensei-email-learner-graded-quiz.php:66
-#. translators: Placeholder is the blog name.
 msgid "Your quiz has been graded"
 msgstr ""
 
@@ -6374,7 +6375,6 @@ msgid "[%1$s] You have completed a quiz"
 msgstr ""
 
 #: includes/emails/class-sensei-email-learner-graded-quiz.php:80
-#. translators: Placeholder is the blog name.
 msgid "You have completed a quiz"
 msgstr ""
 
@@ -6384,7 +6384,6 @@ msgid "[%1$s] You have a new message"
 msgstr ""
 
 #: includes/emails/class-sensei-email-new-message-reply.php:98
-#. translators: Placeholder is the blog name.
 msgid "You have received a reply to your private message"
 msgstr ""
 
@@ -6394,7 +6393,6 @@ msgid "[%1$s] Your student has completed a course"
 msgstr ""
 
 #: includes/emails/class-sensei-email-teacher-completed-course.php:65
-#. translators: Placeholder is the blog name.
 msgid "Your student has completed a course"
 msgstr ""
 
@@ -6404,7 +6402,6 @@ msgid "[%1$s] Your student has completed a lesson"
 msgstr ""
 
 #: includes/emails/class-sensei-email-teacher-completed-lesson.php:35
-#. translators: Placeholder is the blog name.
 msgid "Your student has completed a lesson"
 msgstr ""
 
@@ -6422,7 +6419,6 @@ msgid "[%1$s] You have received a new private message"
 msgstr ""
 
 #: includes/emails/class-sensei-email-teacher-new-message.php:61
-#. translators: Placeholder is the blog name.
 msgid "Your student has sent you a private message"
 msgstr ""
 
@@ -6432,7 +6428,6 @@ msgid "[%1$s] Your student has submitted a quiz for grading"
 msgstr ""
 
 #: includes/emails/class-sensei-email-teacher-quiz-submitted.php:67
-#. translators: Placeholder is the blog name.
 msgid "Your student has submitted a quiz for grading"
 msgstr ""
 
@@ -6442,7 +6437,6 @@ msgid "[%1$s] Your student has started a course"
 msgstr ""
 
 #: includes/emails/class-sensei-email-teacher-started-course.php:60
-#. translators: Placeholder is the blog name.
 msgid "Your student has started a course"
 msgstr ""
 
