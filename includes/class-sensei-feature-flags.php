@@ -43,7 +43,7 @@ class Sensei_Feature_Flags {
 		/**
 		 * Filters the default feature flag settings.
 		 *
-		 * @since 3.13.2
+		 * @since 3.13.3
 		 * @hook sensei_default_feature_flag_settings
 		 *
 		 * @param {array} $default_feature_flag_settings Default feature flag settings.

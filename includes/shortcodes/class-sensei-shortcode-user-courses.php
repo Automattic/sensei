@@ -213,7 +213,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		/**
 		 * Filters the query which fetches the user courses.
 		 *
-		 * @since 3.13.2
+		 * @since 3.13.3
 		 * @hook sensei_user_courses_query
 		 *
 		 * @param {null}   $query
@@ -573,7 +573,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		/**
 		 * Filters the the user courses filter options.
 		 *
-		 * @since 3.13.2
+		 * @since 3.13.3
 		 * @hook sensei_user_courses_filter_options
 		 *
 		 * @param {array} $filter_options The filter options.

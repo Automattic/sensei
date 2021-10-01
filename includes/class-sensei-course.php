@@ -3109,7 +3109,7 @@ class Sensei_Course {
 		/**
 		 * Display course enrollment actions.
 		 *
-		 * @since 3.13.2
+		 * @since 3.13.3
 		 *
 		 * @param {boolean} $display_actions  Whether display the actions.
 		 * @param {int}     $course_id        Course ID.
