@@ -1,5 +1,9 @@
 *** Changelog ***
 
+2021.10.01 - version 3.13.2
+
+* Fix: Handle extensions fetch error [#4324](https://github.com/Automattic/sensei/pull/4324)
+
 2021.08.26 - version 3.13.1
 * New: Add filters to customize the My Courses and Course Completed page content [#4286](https://github.com/Automattic/sensei/pull/4286), [#4290](https://github.com/Automattic/sensei/pull/4290)
 * New: Add "Find More Courses" block variation [#4293](https://github.com/Automattic/sensei/pull/4293)
