@@ -17,7 +17,10 @@ jQuery( document ).ready( function ( $ ) {
 		dateFormat: 'yy-mm-dd :',
 		onSelect: function ( newDate ) {
 			let oldDate = $( this ).attr( 'value' ).split( ' ' );
-			newDate = newDate.substring( 0, newDate.length - 2 );
+
+			if ( newDate.indexOf( ' :' ) > -1 ) {
+				newDate = newDate.substring( 0, newDate.length - 2 );
+			}
 
 			if ( oldDate[ 1 ] ) {
 				newDate = newDate + ' ' + oldDate[ 1 ];
