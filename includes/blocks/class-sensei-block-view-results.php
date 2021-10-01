@@ -47,7 +47,7 @@ class Sensei_Block_View_Results {
 		/**
 		 * Whether render the view results block.
 		 *
-		 * @since 3.13.2
+		 * @since 3.13.3
 		 *
 		 * @param {boolean} $render     Whether render the view results block.
 		 * @param {array}   $attributes Block attributes.
