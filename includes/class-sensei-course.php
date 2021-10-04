@@ -2435,7 +2435,7 @@ class Sensei_Course {
 
 			$results_link = '';
 
-			if ( $has_quizzes ) {
+			if ( $has_quizzes && Sensei_Utils::user_completed_course( $course, wp_get_current_user()->ID ) ) {
 				$results_link = '<a class="button view-results" href="' . esc_url( self::get_view_results_link( $course->ID ) ) . '">' .
 					esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 			}
