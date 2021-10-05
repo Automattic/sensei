@@ -1434,7 +1434,7 @@ class Sensei_Course {
 	 * @return boolean
 	 */
 	private static function has_results_links( $course_id ) {
-		return ! empty( apply_filters( 'sensei_results_links', '', $course_id ) );
+		return has_filter( 'sensei_results_links' ) && ! empty( apply_filters( 'sensei_results_links', '', $course_id ) );
 	}
 
 	/**
