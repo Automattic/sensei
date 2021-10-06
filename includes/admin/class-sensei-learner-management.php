@@ -389,18 +389,26 @@ class Sensei_Learner_Management {
 	public function edit_date_started() {
 		check_ajax_referer( 'edit_date_nonce', 'security' );
 
-		$data        = sanitize_text_field( $_POST['data'] );
-		$action_data = array();
-		parse_str( $data, $action_data );
+		if ( ! empty( $_POST['data']['post_id'] ) && is_numeric( $_POST['data']['post_id'] ) ) {
+			$post_id = (int) sanitize_key( $_POST['data']['post_id'] );
+		} else {
+			exit( '' );
+		}
 
-		$post = get_post( intval( $action_data['post_id'] ) );
+		$post = get_post( $post_id );
 
 		if ( empty( $post ) || ! is_a( $post, 'WP_Post' ) ) {
 			exit( '' );
 		}
 
-		$comment_id = isset( $action_data['comment_id'] ) ? absint( $action_data['comment_id'] ) : 0;
-		$comment    = get_comment( intval( $action_data['comment_id'] ) );
+		if ( ! empty( $_POST['data']['comment_id'] ) && is_numeric( $_POST['data']['comment_id'] ) ) {
+			$comment_id = (int) sanitize_key( $_POST['data']['comment_id'] );
+		} else {
+			exit( '' );
+		}
+
+		$comment = get_comment( $comment_id );
+
 		if ( empty( $comment ) ) {
 			exit( '' );
 		}
@@ -408,7 +416,7 @@ class Sensei_Learner_Management {
 		// validate we can edit date.
 		$may_edit_date = false;
 
-		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === intval( $post->post_author ) ) {
+		if ( current_user_can( 'manage_sensei' ) || get_current_user_id() === (int) $post->post_author ) {
 			$may_edit_date = true;
 		}
 
@@ -416,19 +424,24 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$date_started = get_comment_meta( $comment_id, 'start', true );
-		$date_string  = esc_html( $action_data['new_date'] );
+		if ( ! empty( $_POST['data']['new_dates']['start-date'] ) ) {
+			$date_string = sanitize_text_field( wp_unslash( $_POST['data']['new_dates']['start-date'] ) );
+		} else {
+			exit( '' );
+		}
 
 		if ( empty( $date_string ) ) {
 			exit( '' );
 		}
+
+		$date_started = get_comment_meta( $comment_id, 'start', true );
 
 		$expected_date_format = 'Y-m-d H:i:s';
 		if ( false === strpos( $date_string, ' ' ) ) {
 			$expected_date_format = 'Y-m-d';
 		}
 
-		$date = DateTime::createFromFormat( $expected_date_format, $date_string );
+		$date = DateTimeImmutable::createFromFormat( $expected_date_format, $date_string );
 		if ( false === $date ) {
 			exit( '' );
 		}
@@ -437,7 +450,20 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$updated = update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+		$updated = (bool) update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+
+		/**
+		 * Filter sensei_learners_learner_updated
+		 *
+		 * This filter should return false if there was no update in the learner row.
+		 *
+		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
+		 * @param {int}  $post_id    Lesson or course id.
+		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
+		 *
+		 * @return {bool} False if there were no updates.
+		 */
+		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, $comment_id );
 
 		if ( false === $updated ) {
 			exit( '' );
@@ -692,15 +718,10 @@ class Sensei_Learner_Management {
 			return $result;
 		}
 
-		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
 		foreach ( $user_ids as $user_id ) {
-			$result = false;
-
-			if ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) {
-				$result = $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
-			}
+			$result = $course_enrolment->enrol( $user_id );
 
 			switch ( $post_type ) {
 				case 'course':

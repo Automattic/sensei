@@ -584,6 +584,17 @@ class Sensei_Course_Enrolment {
 	 * @return boolean If user is enrolled.
 	 */
 	public function enrol( $user_id ) {
+
+		/**
+		 * Notify when a user should be enrolled to the course.
+		 *
+		 * @since 3.13.3
+		 *
+		 * @param int $course_id Course that the user will be enrolled to.
+		 * @param int $user_id   User ID.
+		 */
+		do_action( 'sensei_admin_enrol_user', $this->course_id, $user_id );
+
 		// If user is removed, just restore.
 		if ( $this->is_learner_removed( $user_id ) ) {
 			$this->restore_learner( $user_id );
