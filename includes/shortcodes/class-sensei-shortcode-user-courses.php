@@ -408,12 +408,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			}
 
 			if ( $this->options['progressBarEnabled'] ) {
-				add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
+				add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ), 20 );
 			}
 		}
 
-		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
-		$this->is_block && add_action( 'sensei_course_content_inside_after', array( $this, 'add_course_details_wrapper_end' ) );
+		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ), 30 );
+		$this->is_block && add_action( 'sensei_course_content_inside_after', array( $this, 'add_course_details_wrapper_end' ), 40 );
 	}
 
 	/**
@@ -425,8 +425,8 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		// Remove all hooks after the output is generated.
 		remove_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
-		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ) );
-		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ) );
+		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ), 20 );
+		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ), 30 );
 		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20 );
 		remove_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
 		remove_filter( 'get_the_excerpt', '__return_false' );
