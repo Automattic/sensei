@@ -588,7 +588,7 @@ class Sensei_Course_Enrolment {
 		/**
 		 * Notify when a user should be enrolled to the course.
 		 *
-		 * @since 3.13.2
+		 * @since 3.13.3
 		 *
 		 * @param int $course_id Course that the user will be enrolled to.
 		 * @param int $user_id   User ID.
