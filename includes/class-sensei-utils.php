@@ -1715,7 +1715,7 @@ class Sensei_Utils {
 	/**
 	 * Get the number of lessons of a course that a user started.
 	 *
-	 * @since  3.13.2
+	 * @since  3.13.3
 	 *
 	 * @param int $course_id The course id.
 	 * @param int $user_id   The user id.
