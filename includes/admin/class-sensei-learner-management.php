@@ -453,14 +453,15 @@ class Sensei_Learner_Management {
 		$updated = (bool) update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
 
 		/**
-		 * Filter sensei_learners_default_columns
+		 * Filter sensei_learners_learner_updated
 		 *
-		 * Filters the columns that are displayed in learner management
+		 * This filter should return false if there was no update in the learner row.
 		 *
-		 * @param {array}   $columns              The default columns.
-		 * @param {object}  $sensei_learners_main Sensei_Learners_Main instance.
+		 * @param {bool} $updated    A flag indicating if there was an update in the learner row.
+		 * @param {int}  $post_id    Lesson or course id.
+		 * @param {int}  $comment_id The comment id which tracks the progress of the learner.
 		 *
-		 * @return {array} The modified default columns
+		 * @return {bool} False if there were no updates.
 		 */
 		$updated = apply_filters( 'sensei_learners_learner_updated', $updated, $post_id, $comment_id );
 
