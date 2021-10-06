@@ -238,6 +238,9 @@
 
 .sensei-learners-wrap  {
 	table .user_status  {
+		span {
+			padding: 0 10px;
+		}
 		.in-progress::before, .graded::before, .not-started::before  {
 			font-family: FontAwesomeSensei;
 			font-size: 14px;
