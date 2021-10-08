@@ -697,6 +697,12 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function module_archive_filter( $query ) {
+		// If there is already an "orderby" property set
+		// then no need to do anything.
+		if ( $query->get( 'orderby' ) ) {
+			return;
+		}
+
 		if ( $query->is_main_query() && is_tax( $this->taxonomy ) ) {
 
 			// Limit to lessons only
