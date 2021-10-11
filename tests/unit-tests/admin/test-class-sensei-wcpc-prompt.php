@@ -172,8 +172,7 @@ class Sensei_WCPC_Prompt_Test extends WP_UnitTestCase {
 		$this->factory->course->create();
 
 		// Dismiss prompt.
-		$_GET['sensei_dismiss_wcpc_prompt'] = '1';
-		$_GET['_wpnonce']                   = wp_create_nonce( 'sensei_dismiss_wcpc_prompt' );
+		$_REQUEST['nonce'] = wp_create_nonce( 'sensei-lms-wcpc-prompt-dismiss' );
 		$instance->dismiss_prompt();
 
 		ob_start();
