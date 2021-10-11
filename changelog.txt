@@ -1,5 +1,20 @@
 *** Changelog ***
 
+2021.10.12 - version 3.13.3
+* New: Additional hooks for course expiration
+	* Add clock notice type [#4302](https://github.com/Automattic/sensei/pull/4302)
+	* Add filters to show enrollment actions and view results block [#4318](https://github.com/Automattic/sensei/pull/4318)
+	* Add filters to extend learner courses page [#4319](https://github.com/Automattic/sensei/pull/4319)
+	* Update learner courses priorities [#4322](https://github.com/Automattic/sensei/pull/4322)
+* Tweak: Add Sensei icon to admin notices [#4314](https://github.com/Automattic/sensei/pull/4314)
+* Tweak: Allow expansion of manual enrollments [#4317](https://github.com/Automattic/sensei/pull/4317)
+* Tweak: Update Sensei LMS icon in WordPress admin sidebar [#4310](https://github.com/Automattic/sensei/pull/4310)
+* Fix: Fix learner management alignment [#4333](https://github.com/Automattic/sensei/pull/4333)
+* Fix: Allow sorting of lessons with other fields [#4323](https://github.com/Automattic/sensei/pull/4323)
+* Fix: Fix notice of blocks state (have or not Sensei blocks) in dynamic lesson [#4309](https://github.com/Automattic/sensei/pull/4309)
+* Fix: Update sample course [#4308](https://github.com/Automattic/sensei/pull/4308)
+* Fix: Learner Courses block styling issues [#4298](https://github.com/Automattic/sensei/pull/4298)
+
 2021.10.01 - version 3.13.2
 
 * Fix: Handle extensions fetch error [#4324](https://github.com/Automattic/sensei/pull/4324)
