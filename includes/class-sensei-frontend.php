@@ -291,6 +291,10 @@ class Sensei_Frontend {
 
 			Sensei_Templates::get_template( 'globals/pagination-quiz.php' );
 
+		} elseif ( Sensei_Utils::is_course_results_page() ) {
+			// Pagination content for legacy course results page here.
+			return;
+
 		} else {
 
 			// backwards compatibility check for old location under the wrappers directory of the active theme.
