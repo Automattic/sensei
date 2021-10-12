@@ -116,6 +116,7 @@ class Sensei_Quiz {
 			'ID'          => $quiz_id,
 			'post_author' => $new_lesson_author_id,
 			'post_name'   => $saved_lesson->post_name,
+			'post_title'  => $saved_lesson->post_title,
 		);
 
 		// Remove the action so that it doesn't fire again.
