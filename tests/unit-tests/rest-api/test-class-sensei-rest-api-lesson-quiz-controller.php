@@ -173,7 +173,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	public function testGetQuizProperties() {
 		$this->login_as_teacher();
 
-		$quiz_args = [
+		$quiz_args         = [
 			'meta_input' => [
 				'_enable_quiz_reset'         => 'on',
 				'_random_question_order'     => 'yes',
@@ -199,7 +199,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertTrue( $response_data['options']['fail_indicate_incorrect'] );
 		$this->assertTrue( $response_data['options']['fail_show_answer_feedback'] );
 		$this->assertFalse( $response_data['options']['fail_show_correct_answers'] );
-
 
 		$another_quiz_args = [
 			'meta_input' => [
@@ -428,7 +427,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$lesson_id = $this->factory->lesson->create();
 
 		$body = [
-			'options' => [
+			'options'   => [
 				'pass_required'             => true,
 				'quiz_passmark'             => 10,
 				'auto_grade'                => false,
@@ -437,7 +436,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'random_question_order'     => true,
 				'fail_indicate_incorrect'   => true,
 				'fail_show_answer_feedback' => true,
-				'fail_show_correct_answers'  => false,
+				'fail_show_correct_answers' => false,
 			],
 			'questions' => [],
 		];
