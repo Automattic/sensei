@@ -6,6 +6,7 @@ import { select, useDispatch } from '@wordpress/data';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 /**
  * External dependencies
  */
@@ -41,6 +42,7 @@ import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
+import { useQuizSettings } from './question-quiz-settings';
 
 /**
  * Format the question grade as `X points`.
@@ -98,6 +100,8 @@ const QuestionEdit = ( props ) => {
 			{ questionNumber }.
 		</h2>
 	);
+
+	const { onOpenQuizSettings } = useQuizSettings( clientId );
 
 	const isInvalid =
 		props.meta.showValidationErrors && props.meta.validationErrors?.length;
@@ -219,6 +223,14 @@ const QuestionEdit = ( props ) => {
 							} )
 						}
 					/>
+					<ToolbarGroup>
+						<ToolbarButton
+							label={ __( 'Quiz Settings', 'sensei-lms' ) }
+							onClick={ onOpenQuizSettings }
+						>
+							{ __( 'Quiz Settings', 'sensei-lms' ) }
+						</ToolbarButton>
+					</ToolbarGroup>
 				</>
 			</BlockControls>
 			<QuestionSettings controls={ AnswerBlock?.settings } { ...props } />
