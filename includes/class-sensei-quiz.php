@@ -1469,7 +1469,7 @@ class Sensei_Quiz {
 	 * @param int    $lesson_id Lesson ID.
 	 * @param string $option Option name.
 	 *
-	 * @return bool
+	 * @return mixed
 	 */
 	public static function get_option( $lesson_id, $option ) {
 
