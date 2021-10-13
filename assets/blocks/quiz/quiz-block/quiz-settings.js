@@ -5,6 +5,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	PanelRow,
+	BaseControl,
 	RangeControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -39,6 +40,9 @@ const QuizSettings = ( {
 		allowRetakes = true,
 		randomQuestionOrder = false,
 		showQuestions = null,
+		failShowAnswerFeedback = false,
+		failShowCorrectAnswers = false,
+		failIndicateIncorrect = false,
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
@@ -86,16 +90,69 @@ const QuizSettings = ( {
 					/>
 				</PanelRow>
 				{ passRequired && (
-					<PanelRow>
-						<RangeControl
-							label={ 'Passing Grade (%)' }
-							value={ quizPassmark }
-							onChange={ createChangeHandler( 'quizPassmark' ) }
-							min={ 0 }
-							max={ 100 }
-							initialPosition={ 100 }
-						/>
-					</PanelRow>
+					<>
+						<PanelRow>
+							<RangeControl
+								label={ 'Passing Grade (%)' }
+								value={ quizPassmark }
+								onChange={ createChangeHandler(
+									'quizPassmark'
+								) }
+								min={ 0 }
+								max={ 100 }
+								initialPosition={ 100 }
+							/>
+						</PanelRow>
+						<PanelRow>
+							<div>
+								<BaseControl
+									className="sensei-lms-subsection-control"
+									help={ __(
+										'What learners see when reviewing their quiz after grading.',
+										'sensei-lms'
+									) }
+								>
+									<strong>
+										{ __(
+											'If learner does not pass quiz',
+											'sensei-lms'
+										) }
+									</strong>
+								</BaseControl>
+								<ToggleControl
+									checked={ failIndicateIncorrect }
+									onChange={ createChangeHandler(
+										'failIndicateIncorrect'
+									) }
+									label={ __(
+										'Indicate which questions are incorrect.',
+										'sensei-lms'
+									) }
+								/>
+								<ToggleControl
+									checked={ failShowCorrectAnswers }
+									onChange={ createChangeHandler(
+										'failShowCorrectAnswers'
+									) }
+									label={ __(
+										' Show correct answers.',
+										'sensei-lms'
+									) }
+								/>
+								<ToggleControl
+									checked={ failShowAnswerFeedback }
+									onChange={ createChangeHandler(
+										'failShowAnswerFeedback'
+									) }
+									label={ __(
+										'Show “Answer Feedback” text.',
+										'sensei-lms'
+									) }
+								/>
+							</div>
+						</PanelRow>
+						<hr />
+					</>
 				) }
 				<PanelRow>
 					<ToggleControl
