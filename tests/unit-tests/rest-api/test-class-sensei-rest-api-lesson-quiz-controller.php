@@ -220,9 +220,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertFalse( $response_data['options']['random_question_order'] );
 		$this->assertEquals( 0, $response_data['options']['quiz_passmark'] );
 		$this->assertEquals( 3, $response_data['options']['show_questions'] );
-		$this->assertNull( $response_data['options']['fail_indicate_incorrect'] );
-		$this->assertNull( $response_data['options']['fail_show_answer_feedback'] );
-		$this->assertNull( $response_data['options']['fail_show_correct_answers'] );
+		$this->assertFalse( $response_data['options']['fail_indicate_incorrect'] );
+		$this->assertFalse( $response_data['options']['fail_show_answer_feedback'] );
+		$this->assertFalse( $response_data['options']['fail_show_correct_answers'] );
 	}
 
 	/**
