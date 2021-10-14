@@ -383,7 +383,7 @@ class Sensei_Analysis {
 	/**
 	 * Analysis_headers outputs analysis general headers.
 	 *
-	 * @deprecated 3.11.0
+	 * @deprecated 3.13.4
 	 * @since  1.2.0
 	 *
 	 * @param array $args
@@ -391,7 +391,7 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_headers( $args = array( 'nav' => 'default' ) ) {
-		_deprecated_function( __METHOD__, '3.11.0' );
+		_deprecated_function( __METHOD__, '3.13.4' );
 
 		$function = 'analysis_' . $args['nav'] . '_nav';
 		$this->$function();

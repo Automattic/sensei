@@ -267,13 +267,13 @@ class Sensei_Grading {
 	 * Outputs Grading general headers.
 	 *
 	 * @since  1.3.0
-	 * @deprecated 3.11.0
+	 * @deprecated 3.13.4
 	 *
 	 * @param array $args
 	 * @return void
 	 */
 	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
-		_deprecated_function( __METHOD__, '3.11.0' );
+		_deprecated_function( __METHOD__, '3.13.4' );
 
 		$function = 'grading_' . $args['nav'] . '_nav';
 		$this->$function();

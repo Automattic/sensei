@@ -1978,14 +1978,14 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 *
-	 * @deprecated 3.11.0
+	 * @deprecated 3.13.4
 	 *
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
 	public static function comment_any_status_filter( $pieces ) {
-		_deprecated_function( __FUNCTION__, '3.11.0' );
+		_deprecated_function( __FUNCTION__, '3.13.4' );
 
 		$pieces['where'] = str_replace( array( "( comment_approved = '0' OR comment_approved = '1' ) AND", "comment_approved = 'any' AND" ), '', $pieces['where'] );
 
@@ -1997,14 +1997,14 @@ class Sensei_Utils {
 	 *
 	 * @access public
 	 *
-	 * @deprecated 3.11.0
+	 * @deprecated 3.13.4
 	 *
 	 * @since  1.7.0
 	 * @param  array $pieces (default: array())
 	 * @return array
 	 */
 	public static function comment_multiple_status_filter( $pieces ) {
-		_deprecated_function( __FUNCTION__, '3.11.0' );
+		_deprecated_function( __FUNCTION__, '3.13.4' );
 
 		preg_match( "/^comment_approved = '([a-z\-\,]+)'/", $pieces['where'], $placeholder );
 		if ( ! empty( $placeholder[1] ) ) {
