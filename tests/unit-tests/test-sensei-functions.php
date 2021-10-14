@@ -47,6 +47,22 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 		$this->assertTrue( sensei_does_theme_support_templates() );
 	}
 
+	public function testIsSenseiReturnsFalseWhenPostIdEmpty() {
+		global $post;
+
+		$post = $this->factory->post->create_and_get();
+		Sensei()->settings->settings['course_completed_page'] = $post->ID;
+
+		$post->ID = 0;
+		$this->assertFalse( is_sensei() );
+
+		$post->ID = '';
+		$this->assertFalse( is_sensei() );
+
+		$post->ID = Sensei()->settings->settings['course_completed_page'];
+		$this->assertTrue( is_sensei() );
+	}
+
 	/**
 	 * Filter for setting theme to Twenty Sixteen.
 	 *
