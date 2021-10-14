@@ -275,6 +275,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		foreach ( [ 'fail_indicate_incorrect', 'fail_show_correct_answers', 'fail_show_answer_feedback' ] as $option ) {
 			if ( isset( $quiz_options[ $option ] ) ) {
 				$meta_input[ '_' . $option ] = $quiz_options[ $option ] ? 'yes' : 'no';
+			} else {
+				$meta_input[ '_' . $option ] = null;
 			}
 		}
 
@@ -343,9 +345,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'allow_retakes'             => ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0],
 				'show_questions'            => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
 				'random_question_order'     => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
-				'fail_indicate_incorrect'   => ! empty( $post_meta['_fail_indicate_incorrect'][0] ) && 'yes' === $post_meta['_fail_indicate_incorrect'][0],
-				'fail_show_correct_answers' => ! empty( $post_meta['_fail_show_correct_answers'][0] ) && 'yes' === $post_meta['_fail_show_correct_answers'][0],
-				'fail_show_answer_feedback' => ! empty( $post_meta['_fail_show_answer_feedback'][0] ) && 'yes' === $post_meta['_fail_show_answer_feedback'][0],
+				'fail_indicate_incorrect'   => empty( $post_meta['_fail_indicate_incorrect'][0] ) ? null : 'yes' === $post_meta['_fail_indicate_incorrect'][0],
+				'fail_show_correct_answers' => empty( $post_meta['_fail_show_correct_answers'][0] ) ? null : 'yes' === $post_meta['_fail_show_correct_answers'][0],
+				'fail_show_answer_feedback' => empty( $post_meta['_fail_show_answer_feedback'][0] ) ? null : 'yes' === $post_meta['_fail_show_answer_feedback'][0],
 			],
 			'questions' => $this->get_quiz_questions( $quiz ),
 		];
@@ -421,19 +423,19 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 							'default'     => false,
 						],
 						'fail_indicate_incorrect'   => [
-							'type'        => 'boolean',
+							'type'        => [ 'boolean', 'null' ],
 							'description' => 'Indicate which questions are incorrect',
-							'default'     => false,
+							'default'     => null,
 						],
 						'fail_show_correct_answers' => [
-							'type'        => 'boolean',
+							'type'        => [ 'boolean', 'null' ],
 							'description' => 'Show correct answers',
-							'default'     => false,
+							'default'     => null,
 						],
 						'fail_show_answer_feedback' => [
-							'type'        => 'boolean',
+							'type'        => [ 'boolean', 'null' ],
 							'description' => 'Show answer feedback text',
-							'default'     => false,
+							'default'     => null,
 						],
 					],
 				],
