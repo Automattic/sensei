@@ -755,10 +755,10 @@ class Sensei_Question {
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
 
-		$failed_and_reset_not_allowed = ! $succeeded && ! $reset_quiz_allowed && ! Sensei_Quiz::is_disabled( $lesson_id, 'fail_show_answer_feedback' );
+		$failed_and_reset_not_allowed = ! $succeeded && ! $reset_quiz_allowed && ! Sensei_Quiz::is_disabled( $lesson_id, 'failed_show_answer_feedback' );
 
 		// Check if answers must be shown
-		$show_answers = $quiz_graded && ( $succeeded || $failed_and_reset_not_allowed || Sensei_Quiz::is_enabled( $lesson_id, 'fail_show_answer_feedback' ) );
+		$show_answers = $quiz_graded && ( $succeeded || $failed_and_reset_not_allowed || Sensei_Quiz::is_enabled( $lesson_id, 'failed_show_answer_feedback' ) );
 
 		/**
 		 * Allow dynamic overriding of whether to show question answers or not
@@ -844,7 +844,7 @@ class Sensei_Question {
 			$show_answers = true;
 		}
 
-		if ( ! $user_passed && Sensei_Quiz::is_disabled( $lesson_id, 'fail_indicate_incorrect' ) ) {
+		if ( ! $user_passed && Sensei_Quiz::is_disabled( $lesson_id, 'failed_indicate_incorrect' ) ) {
 			$show_answers = false;
 		}
 
@@ -871,7 +871,7 @@ class Sensei_Question {
 		// Defaults
 		$answer_message = __( 'Incorrect - Right Answer:', 'sensei-lms' ) . ' ' . self::get_correct_answer( $question_id );
 
-		if ( Sensei_Quiz::is_disabled( $lesson_id, 'fail_show_correct_answers' ) ) {
+		if ( Sensei_Quiz::is_disabled( $lesson_id, 'failed_show_correct_answers' ) ) {
 			$answer_message = __( 'Incorrect', 'sensei-lms' );
 		}
 
