@@ -8,21 +8,21 @@ import { __ } from '@wordpress/i18n';
  * Answer feedback settings for the quiz block.
  *
  * @param {Object}   props
- * @param {Object}   props.options
+ * @param {Object}   props.options       Quiz options.
  * @param {Function} props.setAttributes
  */
 const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
-	const failShowAnswerFeedback =
-		options.failShowAnswerFeedback ?? ! options.allowRetakes;
-	const failShowCorrectAnswers =
-		options.failShowCorrectAnswers ?? ! options.allowRetakes;
-	const failIndicateIncorrect =
-		options.failIndicateIncorrect ?? ! options.allowRetakes;
+	const failedShowAnswerFeedback =
+		options.failedShowAnswerFeedback ?? ! options.allowRetakes;
+	const failedShowCorrectAnswers =
+		options.failedShowCorrectAnswers ?? ! options.allowRetakes;
+	const failedIndicateIncorrect =
+		options.failedIndicateIncorrect ?? ! options.allowRetakes;
 
 	const hasAnyOptionSet =
-		null !== options.failShowAnswerFeedback ||
-		null !== options.failShowCorrectAnswers ||
-		null !== options.failIndicateIncorrect;
+		null !== options.failedShowAnswerFeedback ||
+		null !== options.failedShowCorrectAnswers ||
+		null !== options.failedIndicateIncorrect;
 
 	/**
 	 * Reset options to their default 'unset' behavior.
@@ -31,9 +31,9 @@ const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
 		setAttributes( {
 			options: {
 				...options,
-				failShowAnswerFeedback: null,
-				failShowCorrectAnswers: null,
-				failIndicateIncorrect: null,
+				failedShowAnswerFeedback: null,
+				failedShowCorrectAnswers: null,
+				failedIndicateIncorrect: null,
 			},
 		} );
 	};
@@ -47,9 +47,9 @@ const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
 		setAttributes( {
 			options: {
 				...options,
-				failShowAnswerFeedback,
-				failShowCorrectAnswers,
-				failIndicateIncorrect,
+				failedShowAnswerFeedback,
+				failedShowCorrectAnswers,
+				failedIndicateIncorrect,
 				[ optionKey ]: value,
 			},
 		} );
@@ -68,21 +68,21 @@ const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
 				</strong>
 			</BaseControl>
 			<ToggleControl
-				checked={ failIndicateIncorrect }
-				onChange={ createChangeHandler( 'failIndicateIncorrect' ) }
+				checked={ failedIndicateIncorrect }
+				onChange={ createChangeHandler( 'failedIndicateIncorrect' ) }
 				label={ __(
 					'Indicate which questions are incorrect.',
 					'sensei-lms'
 				) }
 			/>
 			<ToggleControl
-				checked={ failShowCorrectAnswers }
-				onChange={ createChangeHandler( 'failShowCorrectAnswers' ) }
+				checked={ failedShowCorrectAnswers }
+				onChange={ createChangeHandler( 'failedShowCorrectAnswers' ) }
 				label={ __( ' Show correct answers.', 'sensei-lms' ) }
 			/>
 			<ToggleControl
-				checked={ failShowAnswerFeedback }
-				onChange={ createChangeHandler( 'failShowAnswerFeedback' ) }
+				checked={ failedShowAnswerFeedback }
+				onChange={ createChangeHandler( 'failedShowAnswerFeedback' ) }
 				label={ __( 'Show “Answer Feedback” text.', 'sensei-lms' ) }
 			/>
 			{ hasAnyOptionSet && (
