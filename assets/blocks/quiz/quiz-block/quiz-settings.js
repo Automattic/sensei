@@ -5,7 +5,6 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	PanelRow,
-	BaseControl,
 	RangeControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -18,6 +17,7 @@ import { __ } from '@wordpress/i18n';
  */
 import NumberControl from '../../editor-components/number-control';
 import { isQuestionEmpty } from '../data';
+import QuizAnswerFeedbackSettings from './quiz-settings-answer-feedback';
 
 /**
  * Quiz settings.
@@ -40,9 +40,6 @@ const QuizSettings = ( {
 		allowRetakes = true,
 		randomQuestionOrder = false,
 		showQuestions = null,
-		failShowAnswerFeedback = false,
-		failShowCorrectAnswers = false,
-		failIndicateIncorrect = false,
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
@@ -104,52 +101,10 @@ const QuizSettings = ( {
 							/>
 						</PanelRow>
 						<PanelRow>
-							<div>
-								<BaseControl
-									className="sensei-lms-subsection-control"
-									help={ __(
-										'What learners see when reviewing their quiz after grading.',
-										'sensei-lms'
-									) }
-								>
-									<strong>
-										{ __(
-											'If learner does not pass quiz',
-											'sensei-lms'
-										) }
-									</strong>
-								</BaseControl>
-								<ToggleControl
-									checked={ failIndicateIncorrect }
-									onChange={ createChangeHandler(
-										'failIndicateIncorrect'
-									) }
-									label={ __(
-										'Indicate which questions are incorrect.',
-										'sensei-lms'
-									) }
-								/>
-								<ToggleControl
-									checked={ failShowCorrectAnswers }
-									onChange={ createChangeHandler(
-										'failShowCorrectAnswers'
-									) }
-									label={ __(
-										' Show correct answers.',
-										'sensei-lms'
-									) }
-								/>
-								<ToggleControl
-									checked={ failShowAnswerFeedback }
-									onChange={ createChangeHandler(
-										'failShowAnswerFeedback'
-									) }
-									label={ __(
-										'Show “Answer Feedback” text.',
-										'sensei-lms'
-									) }
-								/>
-							</div>
+							<QuizAnswerFeedbackSettings
+								options={ options }
+								setAttributes={ setAttributes }
+							/>
 						</PanelRow>
 						<hr />
 					</>
