@@ -1181,6 +1181,13 @@ class Sensei_Utils {
 			if ( $started_course ) {
 				$passmark   = self::sensei_course_pass_grade( $course_id ); // This happens inside sensei_user_passed_course()!
 				$user_grade = self::sensei_course_user_grade( $course_id, $user_id ); // This happens inside sensei_user_passed_course()!
+
+				// if the user has started the course but there is no passmark
+				// then do not show passed/failed messages.
+				if ( ! $passmark ) {
+					return;
+				}
+
 				if ( $user_grade >= $passmark ) {
 					$status    = 'passed';
 					$box_class = 'tick';
