@@ -99,8 +99,6 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
-		global $wp_version;
-
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
@@ -158,11 +156,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( $this->lesson_id ) {
 			$activity_args['post_id'] = $this->lesson_id;
 		} elseif ( $this->course_id ) {
-			// Currently not possible to restrict to a single Course, as that requires WP_Comment to support multiple
-			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$activity_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
-			}
+			$activity_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 		}
 		// Sub select to group of learners
 		if ( $this->user_ids ) {
@@ -288,7 +282,8 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$course_id    = get_post_meta( $item->comment_post_ID, '_lesson_course', true );
 		$course_title = '';
-		if ( ! empty( $course_id ) && version_compare( $wp_version, '4.1', '>=' ) ) {
+
+		if ( ! empty( $course_id ) ) {
 			$course_title = '<a href="' . esc_url(
 				add_query_arg(
 					array(
@@ -298,9 +293,8 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 					admin_url( 'admin.php' )
 				)
 			) . '">' . esc_html( get_the_title( $course_id ) ) . '</a>';
-		} elseif ( ! empty( $course_id ) ) {
-			$course_title = get_the_title( $course_id );
 		}
+
 		$lesson_title = '<a href="' . esc_url(
 			add_query_arg(
 				array(
@@ -426,12 +420,8 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			'page' => $this->page_slug,
 		);
 		if ( $this->course_id ) {
-			// Currently not possible to restrict to a single Course, as that requires WP_Comment to support multiple
-			// post_ids (i.e. every lesson within the Course), WP 4.1 ( https://core.trac.wordpress.org/changeset/29808 )
 			$query_args['course_id'] = $this->course_id;
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$count_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
-			}
+			$count_args['post__in']  = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 		}
 		if ( $this->lesson_id ) {
 			$query_args['lesson_id'] = $this->lesson_id;

@@ -202,7 +202,10 @@ class Sensei_Grading {
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers();
+
+		$this->grading_default_nav();
+		do_action( 'sensei_grading_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-grading-wrap">
 			<div class="sensei-grading-main">
@@ -245,7 +248,10 @@ class Sensei_Grading {
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
+
+		$this->grading_user_quiz_nav();
+		do_action( 'sensei_grading_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
@@ -258,13 +264,16 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Outputs Grading general headers
+	 * Outputs Grading general headers.
 	 *
 	 * @since  1.3.0
+	 * @deprecated 3.13.4
+	 *
 	 * @param array $args
 	 * @return void
 	 */
 	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
+		_deprecated_function( __METHOD__, '3.13.4' );
 
 		$function = 'grading_' . $args['nav'] . '_nav';
 		$this->$function();
@@ -297,18 +306,11 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_nav() {
-
-		global  $wp_version;
-
 		$title = esc_html( $this->name );
 
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$title .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
-			} else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
-			}
+			$title    .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
 		}
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
@@ -332,26 +334,21 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_nav() {
-		global  $wp_version;
-
 		$title = esc_html( $this->name );
 
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id   = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$url    = add_query_arg(
-					array(
-						'page'      => $this->page_slug,
-						'course_id' => $course_id,
-					),
-					admin_url( 'admin.php' )
-				);
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
-			} else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
-			}
+			$url       = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'course_id' => $course_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+
 			$url    = add_query_arg(
 				array(
 					'page'      => $this->page_slug,

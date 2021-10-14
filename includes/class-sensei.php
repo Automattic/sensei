@@ -570,10 +570,9 @@ class Sensei_Main {
 	 * @return  void
 	 */
 	public function load_plugin_textdomain() {
-		global $wp_version;
 		$domain = 'sensei-lms';
 
-		if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
+		if ( is_admin() ) {
 			$wp_user_locale = get_user_locale();
 		} else {
 			$wp_user_locale = get_locale();
