@@ -1,7 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { BaseControl, ToggleControl, Button } from '@wordpress/components';
+import { BaseControl, ToggleControl } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -12,34 +13,47 @@ import { __ } from '@wordpress/i18n';
  * @param {Function} props.setAttributes
  */
 const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
-	const failedShowAnswerFeedback =
-		options.failedShowAnswerFeedback ?? ! options.allowRetakes;
-	const failedShowCorrectAnswers =
-		options.failedShowCorrectAnswers ?? ! options.allowRetakes;
-	const failedIndicateIncorrect =
-		options.failedIndicateIncorrect ?? ! options.allowRetakes;
+	let {
+		failedShowAnswerFeedback = null,
+		failedShowCorrectAnswers = null,
+		failedIndicateIncorrect = null,
+		allowRetakes,
+	} = options;
 
 	const hasAnyOptionSet =
-		null !== options.failedShowAnswerFeedback ||
-		null !== options.failedShowCorrectAnswers ||
-		null !== options.failedIndicateIncorrect;
+		null !== failedShowAnswerFeedback ||
+		null !== failedShowCorrectAnswers ||
+		null !== failedIndicateIncorrect;
+
+	failedShowAnswerFeedback = failedShowAnswerFeedback ?? ! allowRetakes;
+	failedShowCorrectAnswers = failedShowCorrectAnswers ?? ! allowRetakes;
+	failedIndicateIncorrect = failedIndicateIncorrect ?? ! allowRetakes;
 
 	/**
-	 * Reset options to their default 'unset' behavior.
+	 * Set default values based on 'Allow Retakes' if nothing was set.
 	 */
-	const clearExplicitOptions = () => {
-		setAttributes( {
-			options: {
-				...options,
-				failedShowAnswerFeedback: null,
-				failedShowCorrectAnswers: null,
-				failedIndicateIncorrect: null,
-			},
-		} );
-	};
+	useEffect( () => {
+		if ( ! hasAnyOptionSet ) {
+			setAttributes( {
+				options: {
+					...options,
+					failedShowAnswerFeedback,
+					failedShowCorrectAnswers,
+					failedIndicateIncorrect,
+				},
+			} );
+		}
+	}, [
+		hasAnyOptionSet,
+		setAttributes,
+		failedShowAnswerFeedback,
+		options,
+		failedShowCorrectAnswers,
+		failedIndicateIncorrect,
+	] );
 
 	/**
-	 * Set selected option, and make sure all of them become explicit.
+	 * Set selected option.
 	 *
 	 * @param {string} optionKey
 	 */
@@ -47,9 +61,6 @@ const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
 		setAttributes( {
 			options: {
 				...options,
-				failedShowAnswerFeedback,
-				failedShowCorrectAnswers,
-				failedIndicateIncorrect,
 				[ optionKey ]: value,
 			},
 		} );
@@ -85,26 +96,6 @@ const QuizAnswerFeedbackSettings = ( { options, setAttributes } ) => {
 				onChange={ createChangeHandler( 'failedShowAnswerFeedback' ) }
 				label={ __( 'Show “Answer Feedback” text.', 'sensei-lms' ) }
 			/>
-			{ hasAnyOptionSet && (
-				<BaseControl
-					help={ __(
-						"Let these settings be controlled by 'Allow Retakes'.",
-						'sensei-lms'
-					) }
-				>
-					<Button onClick={ clearExplicitOptions } isLink>
-						{ __( 'Clear', 'sensei-lms' ) }
-					</Button>
-				</BaseControl>
-			) }
-			{ ! hasAnyOptionSet && (
-				<BaseControl
-					help={ __(
-						"When unset, these are only shown if 'Allow Retakes' is off.",
-						'sensei-lms'
-					) }
-				/>
-			) }
 		</div>
 	);
 };

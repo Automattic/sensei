@@ -102,7 +102,7 @@ const QuizSettings = ( {
 						</PanelRow>
 						<PanelRow>
 							<QuizAnswerFeedbackSettings
-								options={ options }
+								options={ { ...options, allowRetakes } }
 								setAttributes={ setAttributes }
 							/>
 						</PanelRow>
