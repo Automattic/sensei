@@ -82,7 +82,8 @@ export default [
 					'sensei-lms/question-description',
 					{},
 					innerBlocks
-				)
+				),
+				createBlock( 'sensei-lms/question-answers', {} )
 			);
 
 			// Add the answer feedback attribute to the innerBlock container (if it exists).
