@@ -2,8 +2,9 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Icon } from '@wordpress/icons';
+
 /**
  * External dependencies
  */
@@ -12,7 +13,7 @@ import cn from 'classnames';
 /**
  * Internal dependencies
  */
-import { withBlockMeta } from '../../../shared/blocks/block-metadata';
+import icon from '../../../icons/answer-feedback-failed';
 
 /**
  * Question Answer Feedback control.
@@ -24,7 +25,7 @@ const AnswerFailedFeedback = () => {
 				'sensei-lms-question-answer-feedback-failed-block'
 			) }
 		>
-			<h4>{ __( 'Failed Answer Feedback', 'sensei-lms' ) }</h4>
+			<Icon icon={ icon } className={ 'icon' } />
 			<InnerBlocks
 				template={ [
 					[
@@ -44,4 +45,4 @@ const AnswerFailedFeedback = () => {
 	);
 };
 
-export default compose( withBlockMeta )( AnswerFailedFeedback );
+export default AnswerFailedFeedback;

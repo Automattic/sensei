@@ -2,17 +2,17 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { Icon } from '@wordpress/icons';
+
 /**
  * External dependencies
  */
 import cn from 'classnames';
-
 /**
  * Internal dependencies
  */
-import { withBlockMeta } from '../../../shared/blocks/block-metadata';
+import icon from '../../../icons/answer-feedback-correct';
 
 /**
  * Correct Answer Feedback control.
@@ -24,7 +24,7 @@ const AnswerFeedbackCorrect = () => {
 				'sensei-lms-question-answer-feedback-correct-block'
 			) }
 		>
-			<h4>{ __( 'Correct Answer Feedback', 'sensei-lms' ) }</h4>
+			<Icon icon={ icon } className={ 'icon' } />
 			<InnerBlocks
 				template={ [
 					[
@@ -44,4 +44,4 @@ const AnswerFeedbackCorrect = () => {
 	);
 };
 
-export default compose( withBlockMeta )( AnswerFeedbackCorrect );
+export default AnswerFeedbackCorrect;
