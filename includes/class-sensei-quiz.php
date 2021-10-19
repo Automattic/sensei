@@ -1114,15 +1114,19 @@ class Sensei_Quiz {
 
 			// finally use the default question feedback
 			if ( empty( $feedback ) ) {
-				$feedback   = '';
-				$user_grade = $this->get_user_question_grade( $lesson_id, $question_id, $user_id );
-				$question   = get_post( $question_id );
-				$blocks     = parse_blocks( $question->post_content );
-				foreach ( $blocks as $block ) {
-					if ( is_int( $user_grade ) && 'sensei-lms/answer-feedback-correct' === $block['blockName'] ) {
-						$feedback = render_block( $block );
-					} elseif ( ! $user_grade && 'sensei-lms/answer-feedback-failed' === $block['blockName'] ) {
-						$feedback = render_block( $block );
+				$feedback       = get_post_meta( $question_id, '_answer_feedback', true );
+				$user_grade     = $this->get_user_question_grade( $lesson_id, $question_id, $user_id );
+				$question       = get_post( $question_id );
+				$answer_correct = is_int( $user_grade ) && $user_grade > 0;
+
+				if ( has_blocks( $question->post_content ) ) {
+					$blocks = parse_blocks( $question->post_content );
+					foreach ( $blocks as $block ) {
+						if ( $answer_correct && 'sensei-lms/answer-feedback-correct' === $block['blockName'] ) {
+							$feedback = render_block( $block );
+						} elseif ( ! $answer_correct && 'sensei-lms/answer-feedback-failed' === $block['blockName'] ) {
+							$feedback = render_block( $block );
+						}
 					}
 				}
 			}
