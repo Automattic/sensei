@@ -87,18 +87,18 @@ export default [
 
 			// Add the answer feedback attribute to the innerBlock container (if it exists).
 			if ( !! attributes.options?.answerFeedback ) {
-				const theParagraph = createBlock( 'core/paragraph', {
-					content: attributes.options.answerFeedback,
-				} );
-
 				migratedInnerBlocks.push(
 					createBlock( 'sensei-lms/answer-feedback-correct', {}, [
-						theParagraph,
+						createBlock( 'core/paragraph', {
+							content: attributes.options.answerFeedback,
+						} ),
 					] )
 				);
 				migratedInnerBlocks.push(
 					createBlock( 'sensei-lms/answer-feedback-failed', {}, [
-						theParagraph,
+						createBlock( 'core/paragraph', {
+							content: attributes.options.answerFeedback,
+						} ),
 					] )
 				);
 			}
