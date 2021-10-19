@@ -24,6 +24,7 @@ import {
  * @property {string}   title       Question type name.
  * @property {string}   description Question type description.
  * @property {Function} edit        Editor component.
+ * @property {boolean}  feedback    Question type can have answer feedback.
  * @property {Function} validate    Validation callback.
  * @property {Object}   messages    Message string.s
  */
@@ -40,6 +41,7 @@ const questionTypes = {
 		edit: MultipleChoiceAnswer,
 		view: MultipleChoiceAnswer.view,
 		settings: [ QuestionMultipleChoiceSettings ],
+		feedback: true,
 		validate: ( { answers = [] } = {} ) => {
 			return {
 				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
@@ -70,6 +72,7 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
+		feedback: true,
 		settings: [],
 	},
 	'gap-fill': {
@@ -77,6 +80,7 @@ const questionTypes = {
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
+		feedback: true,
 		settings: [],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
