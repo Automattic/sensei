@@ -16,15 +16,9 @@ import icon from '../../../icons/answer-feedback-correct';
  */
 export default {
 	...metadata,
-	title: __( 'Correct Answer Feedback Block', 'sensei-lms' ),
+	title: __( 'Correct Answer Feedback', 'sensei-lms' ),
 	icon,
-	usesContext: [ 'sensei-lms/quizId' ],
 	description: __( 'Display correct answer feedback.', 'sensei-lms' ),
-	/*example: {
-		attributes: {
-			categoryName: __( 'Example Category', 'sensei-lms' ),
-		},
-	},*/
 	edit,
 	save: () => <InnerBlocks.Content />,
 };
