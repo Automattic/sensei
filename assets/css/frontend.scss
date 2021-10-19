@@ -898,6 +898,12 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
         content: '\f0f6';
       }
     }
+    &.clock {
+      background:#eee;
+      &:before {
+        content: '\f017';
+      }
+    }
     &.normal {
       background:#eee; padding:9px 15px;
     }

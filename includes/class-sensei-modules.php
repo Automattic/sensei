@@ -697,6 +697,12 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function module_archive_filter( $query ) {
+		// If there is already an "orderby" property set
+		// then no need to do anything.
+		if ( $query->get( 'orderby' ) ) {
+			return;
+		}
+
 		if ( $query->is_main_query() && is_tax( $this->taxonomy ) ) {
 
 			// Limit to lessons only
@@ -2233,7 +2239,7 @@ class Sensei_Core_Modules {
 	 */
 	public function append_teacher_name_to_module( $terms, $taxonomies, $args ) {
 		// only for admin users ont he module taxonomy
-		if ( empty( $terms ) || ! current_user_can( 'manage_options' ) || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
+		if ( empty( $terms ) || ! is_array( $taxonomies ) || ! current_user_can( 'manage_options' ) || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
 			return $terms;
 		}
 

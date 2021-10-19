@@ -57,47 +57,51 @@ export const startBlocksTogglingControl = ( postType ) => {
 		return;
 	}
 
-	let initialSenseiBlocksCount;
-	let previousSenseiBlocksCount;
+	let initialWithSenseiBlocks; // Whether initial state has Sensei Blocks.
+	let previousWithSenseiBlocks; // Whether previous state has Sensei Blocks.
 	let lastBlocks;
 
 	editorLifecycle( {
 		subscribeListener: () => {
-			const newBlocks = select( 'core/editor' ).getBlocks();
+			const newBlocks = coreEditorSelector.getBlocks();
 
 			// Check if blocks were changed.
 			if ( newBlocks !== lastBlocks ) {
 				lastBlocks = newBlocks;
 				toggleLegacyMetaboxes();
 
-				previousSenseiBlocksCount = getSenseiBlocksCount();
+				previousWithSenseiBlocks = hasSenseiBlocks();
 
-				if ( undefined !== initialSenseiBlocksCount ) {
+				if ( undefined !== initialWithSenseiBlocks ) {
 					toggleLegacyOrBlocksNotice();
 				}
 			}
 		},
 		onSetDirty: () => {
-			// Set initial blocks count.
+			// Set initial blocks state.
 			if (
 				coreEditorSelector.isEditedPostDirty() &&
-				undefined === initialSenseiBlocksCount
+				undefined === initialWithSenseiBlocks
 			) {
-				initialSenseiBlocksCount = previousSenseiBlocksCount;
+				// If it will fill the template (needs_template is true),
+				// we consider that it has Sensei blocks initially.
+				initialWithSenseiBlocks =
+					coreEditorSelector.getCurrentPostAttribute( 'meta' )
+						?._needs_template || previousWithSenseiBlocks;
 			}
 		},
 		onSave: () => {
-			// Update initial blocks on post save.
-			initialSenseiBlocksCount = getSenseiBlocksCount();
+			// Update initial blocks state on save.
+			initialWithSenseiBlocks = hasSenseiBlocks();
 			toggleLegacyOrBlocksNotice();
 		},
 	} );
 
 	/**
-	 * Get Sensei blocks count.
+	 * Check whether it has Sensei blocks.
 	 */
-	const getSenseiBlocksCount = () =>
-		getBlocksCount( Object.values( SENSEI_BLOCKS[ postType ] ) );
+	const hasSenseiBlocks = () =>
+		hasSomeBlocks( Object.values( SENSEI_BLOCKS[ postType ] ) );
 
 	/**
 	 * Toggle metaboxes if a replacement block is present or not.
@@ -105,7 +109,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 	const toggleLegacyMetaboxes = () => {
 		Object.entries( metaboxReplacements[ postType ] ).forEach(
 			( [ metaboxName, blockDeps ] ) => {
-				const enable = getBlocksCount( blockDeps ) === 0;
+				const enable = ! hasSomeBlocks( blockDeps );
 				if (
 					enable !==
 					editPostSelector.isEditorPanelEnabled( metaboxName )
@@ -139,9 +143,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 	 * will start using the legacy template or the blocks.
 	 */
 	const toggleLegacyOrBlocksNotice = () => {
-		const senseiBlocksCount = getBlocksCount(
-			Object.values( SENSEI_BLOCKS[ postType ] )
-		);
+		const withSenseiBlocks = hasSenseiBlocks();
 
 		const noticeOptions = {
 			isDismissible: true,
@@ -154,10 +156,10 @@ export const startBlocksTogglingControl = ( postType ) => {
 			],
 		};
 
-		if ( senseiBlocksCount > 0 ) {
+		if ( withSenseiBlocks ) {
 			removeNotice( 'sensei-using-template' );
 
-			if ( initialSenseiBlocksCount === 0 ) {
+			if ( ! initialWithSenseiBlocks ) {
 				const message = __(
 					"You've just added your first Sensei block. This will change how your course page appears. Be sure to preview your page before saving changes.",
 					'sensei-lms'
@@ -169,10 +171,10 @@ export const startBlocksTogglingControl = ( postType ) => {
 			} else {
 				removeNotice( 'sensei-using-blocks' );
 			}
-		} else if ( senseiBlocksCount === 0 ) {
+		} else {
 			removeNotice( 'sensei-using-blocks' );
 
-			if ( initialSenseiBlocksCount > 0 ) {
+			if ( initialWithSenseiBlocks ) {
 				const message = __(
 					'Are you sure you want to remove all Sensei blocks? This will change how your course page appears. Be sure to preview your page before saving changes.',
 					'sensei-lms'
@@ -188,16 +190,15 @@ export const startBlocksTogglingControl = ( postType ) => {
 	};
 
 	/**
-	 * Get blocks count.
+	 * Check whether it has at least one block.
 	 *
-	 * @param {string[]} blocks Blocks to count.
+	 * @param {string[]} blocks Blocks to check.
 	 *
-	 * @return {number} Number of blocks found.
+	 * @return {boolean} Whether it has at least one block.
 	 */
-	const getBlocksCount = ( blocks ) =>
-		blocks.reduce(
-			( sum, blockName ) =>
-				sum + blockEditorSelector.getGlobalBlockCount( blockName ),
-			0
+	const hasSomeBlocks = ( blocks ) =>
+		blocks.some(
+			( blockName ) =>
+				blockEditorSelector.getGlobalBlockCount( blockName ) > 0
 		);
 };

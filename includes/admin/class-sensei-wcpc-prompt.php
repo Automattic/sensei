@@ -16,14 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.7.0
  */
 class Sensei_WCPC_Prompt {
-	const DISMISS_PROMPT_OPTION = 'sensei_dismiss_wcpc_prompt';
+	const DISMISS_PROMPT_NONCE_ACTION = 'sensei-lms-wcpc-prompt-dismiss';
+	const DISMISS_PROMPT_OPTION       = 'sensei_dismiss_wcpc_prompt';
 
 	/**
 	 * Sensei_WCPC_Prompt constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'wcpc_prompt' ] );
-		add_action( 'admin_init', [ $this, 'dismiss_prompt' ] );
+		add_action( 'wp_ajax_sensei_dismiss_wcpc_prompt', [ $this, 'dismiss_prompt' ] );
 		add_action( 'admin_init', [ $this, 'redirect_to_install' ] );
 
 		$this->wcpc_extension = $this->get_wcpc_extension();
@@ -39,33 +40,31 @@ class Sensei_WCPC_Prompt {
 			return;
 		}
 
-		$dismiss_url = add_query_arg( 'sensei_dismiss_wcpc_prompt', '1' );
-		$dismiss_url = wp_nonce_url( $dismiss_url, 'sensei_dismiss_wcpc_prompt' );
-
 		$install_url = add_query_arg( 'sensei_wcpc_prompt_install', '1' );
 		$install_url = wp_nonce_url( $install_url, 'sensei_wcpc_prompt_install' );
 
 		$link = '<a href="https://woocommerce.com/products/woocommerce-paid-courses/" target="_blank" rel="noopener noreferrer" data-sensei-log-event="wcpc_upgrade_learn_more">' . __( 'WooCommerce Paid Courses extension', 'sensei-lms' ) . '</a>';
 
 		?>
-		<div class="notice notice-info is-dismissible">
-			<p>
-				<?php
-					echo sprintf(
-						// translators: Placeholder is the learn more link.
-						esc_html__( 'Monetize and sell your courses by installing the %s.', 'sensei-lms' ),
-						wp_kses_post( $link )
-					);
-				?>
-			</p>
-			<p>
-				<a href="<?php echo esc_url( $install_url ); ?>" class="button-primary" data-sensei-log-event="wcpc_upgrade_install">
-					<?php esc_html_e( 'Install extension', 'sensei-lms' ); ?>
-				</a>
-			</p>
-			<a href="<?php echo esc_url( $dismiss_url ); ?>" class="notice-dismiss sensei-dismissible-link">
-				<span class="screen-reader-text"><?php esc_html_e( 'Dismiss this notice.', 'sensei-lms' ); ?></span>
-			</a>
+		<div class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_wcpc_prompt"
+			data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_PROMPT_NONCE_ACTION ) ); ?>">
+			<div class="sensei-notice__icon"></div>
+			<div class='sensei-notice__wrapper'>
+				<p class='sensei-notice__content'>
+					<?php
+						echo sprintf(
+							// translators: Placeholder is the learn more link.
+							esc_html__( 'Monetize and sell your courses by installing the %s.', 'sensei-lms' ),
+							wp_kses_post( $link )
+						);
+					?>
+				</p>
+				<div class='sensei-notice__actions'>
+					<a href="<?php echo esc_url( $install_url ); ?>" class="button button-primary" data-sensei-log-event="wcpc_upgrade_install">
+						<?php esc_html_e( 'Install extension', 'sensei-lms' ); ?>
+					</a>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -76,16 +75,13 @@ class Sensei_WCPC_Prompt {
 	 * @access private
 	 */
 	public function dismiss_prompt() {
-		if (
-			isset( $_GET['sensei_dismiss_wcpc_prompt'] )
-			&& '1' === $_GET['sensei_dismiss_wcpc_prompt']
-			&& isset( $_GET['_wpnonce'] )
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
-			&& wp_verify_nonce( wp_unslash( $_GET['_wpnonce'] ), 'sensei_dismiss_wcpc_prompt' )
-			&& current_user_can( 'manage_sensei' )
-		) {
-			update_option( self::DISMISS_PROMPT_OPTION, 1 );
+		check_ajax_referer( self::DISMISS_PROMPT_NONCE_ACTION, 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( '', '', 403 );
 		}
+
+		update_option( self::DISMISS_PROMPT_OPTION, 1 );
 	}
 
 	/**

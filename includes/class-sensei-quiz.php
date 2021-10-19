@@ -116,6 +116,7 @@ class Sensei_Quiz {
 			'ID'          => $quiz_id,
 			'post_author' => $new_lesson_author_id,
 			'post_name'   => $saved_lesson->post_name,
+			'post_title'  => $saved_lesson->post_title,
 		);
 
 		// Remove the action so that it doesn't fire again.
@@ -165,7 +166,9 @@ class Sensei_Quiz {
 		if ( ! isset( $_POST['quiz_save'] )
 			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_save_quiz_nonce'], 'woothemes_sensei_save_quiz_nonce' ) ) {
+			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' ) ) {
 			return;
 		}
 
@@ -315,7 +318,9 @@ class Sensei_Quiz {
 	public function reset_button_click_listener() {
 
 		if ( ! isset( $_POST['quiz_reset'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_nonce'], 'woothemes_sensei_reset_quiz_nonce' ) ) {
+			|| ! isset( $_POST['woothemes_sensei_reset_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_reset_quiz_nonce'] ), 'woothemes_sensei_reset_quiz_nonce' ) ) {
 
 			return; // exit
 		}
@@ -350,7 +355,9 @@ class Sensei_Quiz {
 		if ( ! isset( $_POST['quiz_complete'] )
 			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_complete_quiz_nonce'], 'woothemes_sensei_complete_quiz_nonce' ) ) {
+			|| ! isset( $_POST['woothemes_sensei_complete_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_complete_quiz_nonce'] ), 'woothemes_sensei_complete_quiz_nonce' ) ) {
 			return;
 		}
 

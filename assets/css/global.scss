@@ -2,19 +2,47 @@
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
+$sensei-notice-icon-height: 30px;
+$sensei-notice-icon-width: 30px;
+
 /* Sensei Notice */
+.wp-core-ui .notice {
+	&.is-dismissible {
+		padding: 10px 16px;
+	}
+}
+
 .sensei-notice {
 	@import '../shared/styles/wp-admin';
 
+	align-items: flex-start;
 	border-left-color: $primary;
-	padding: 10px;
 	display: flex;
-	align-items: center;
+	gap: 10px;
 	min-height: 40px;
+
+	&__icon {
+		background: url( '../images/sensei.svg' ) no-repeat;
+		background-size: contain;
+		flex: 0 0 auto;
+		margin-top: 0.5em;
+		width: $sensei-notice-icon-width;
+		height: $sensei-notice-icon-height;
+	}
 
 	&__wrapper {
 		padding: 0;
 		font-size: 14px;
+
+		@media (min-width: 500px) {
+			display: flex;
+			flex: 1 1 auto;
+			gap: 10px;
+		}
+	}
+
+	&__content a {
+		color: #000;
 	}
 
 	&__heading {
@@ -22,21 +50,27 @@
 	}
 
 	&__actions {
-		margin-left: auto;
+		margin: 0.5em 0 0.5em auto;
+
 		.button {
-			margin-left: 5px;
 			padding: 3px 12px;
 		}
 	}
 
 	.notice-dismiss {
-		margin: 0.7em 0;
+		margin: 0.5em 0 0 auto;
+		padding: 0;
+		position: static;
 	}
 }
 
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
-	content: '\f118' !important;
+	content: '';
+	background:
+		url( 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQ5IiBoZWlnaHQ9IjM0OSIgdmlld0JveD0iMCAwIDM0OSAzNDkiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+Cgk8Y2lyY2xlIGN4PSIxNzQuNSIgY3k9IjE3NC41IiByPSIxNzQuNSIgZmlsbD0iI0YwRjZGQyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KCTxwYXRoIGQ9Ik0xNzEuMzYzIDI4MC44NDVDMjIwLjMwOSAyODAuODQ1IDI0OC43NTYgMjU1LjU4OCAyNDguNzU2IDIxNi4wMThDMjQ4Ljc1NiAxNjUuOTI2IDIwMS45MDIgMTUxLjYxMyAxNjguMDE2IDE0MC42NjlDMTQ5LjYwOSAxMzUuMTk2IDEzNS4zODYgMTMwLjk4NyAxMzUuMzg2IDEyMi4xNDdDMTM1LjM4NiAxMDcuNDE0IDE1MS4yODMgOTcuMzExIDE3NS4xMjggOTcuMzExQzIwMi4zMiA5Ny4zMTEgMjI0LjQ5MiAxMDYuNTcyIDI0Mi4wNjIgMTIxLjMwNUMyNDIuNDgxIDExOC4zNTggMjQyLjQ4MSAxMTUuNDEyIDI0Mi40ODEgMTEyLjQ2NUMyNDEuNjQ0IDg0LjI2MTYgMjE3LjM4IDY4LjY4NjUgMTc1Ljk2NSA2OC42ODY1QzEzMi4wMzkgNjguNjg2NSAxMDAuMjQ1IDk1LjYyNzIgMTAwLjI0NSAxMzYuNDU5QzEwMC4yNDUgMTg2LjEzMSAxNDguNzczIDIwMS43MDYgMTgyLjY1OCAyMTIuNjUxQzIwMS4wNjUgMjE4LjU0NCAyMTUuMjg5IDIyMy4xNzUgMjE1LjI4OSAyMzEuMTczQzIxNS4yODkgMjQ1LjA2NCAxOTcuNzE4IDI1NC4zMjUgMTczLjg3MyAyNTQuMzI1QzE0OC4zNTQgMjU0LjMyNSAxMjQuOTI3IDI0NS40ODUgMTAzLjE3MyAyMjguMjI2VjIzMy42OThDMTAzLjU5MiAyNjUuNjkgMTI5LjExMSAyODAuODQ1IDE3MS4zNjMgMjgwLjg0NVoiIGZpbGw9IiMxRDIzMjciLz4KPC9zdmc+Cg==' )
+		center/20px
+		no-repeat;
 }
 
 /* Lessons Icon */
@@ -56,12 +90,14 @@ body #menu-posts-question div.wp-menu-image:before {
 
 #dashboard_right_now a.course-count:before,
 #dashboard_right_now span.course-count:before {
-	content: '\f118';
-}
-#dashboard_right_now a.lesson-count:before,
-#dashboard_right_now span.lesson-count:before {
 	content: '\f331';
 }
+
+#dashboard_right_now a.lesson-count:before,
+#dashboard_right_now span.lesson-count:before {
+	content: '\f163';
+}
+
 #dashboard_right_now a.question-count:before,
 #dashboard_right_now span.question-count:before {
 	content: '\f223';

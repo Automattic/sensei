@@ -1427,6 +1427,17 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Has results links check.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return boolean
+	 */
+	private static function has_results_links( $course_id ) {
+		return has_filter( 'sensei_results_links' ) && ! empty( apply_filters( 'sensei_results_links', '', $course_id ) );
+	}
+
+	/**
 	 * load_user_courses_content generates HTML for user's active & completed courses
 	 *
 	 * This function also ouputs the html so no need to echo the content.
@@ -1708,7 +1719,7 @@ class Sensei_Course {
 					$has_quizzes = Sensei()->course->course_quizzes( $course_item->ID, true );
 
 					// Output only if there is content to display
-					if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+					if ( self::has_results_links( $course_item->ID ) || $has_quizzes ) {
 						$complete_html .= '<p class="sensei-results-links">';
 						$results_link   = '';
 
@@ -2391,7 +2402,7 @@ class Sensei_Course {
 
 		$has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
 
-		if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+		if ( self::has_results_links( $course->ID ) || $has_quizzes ) {
 			$has_results_button = true;
 		}
 
@@ -2435,7 +2446,7 @@ class Sensei_Course {
 
 			$results_link = '';
 
-			if ( $has_quizzes ) {
+			if ( $has_quizzes && Sensei_Utils::user_completed_course( $course, wp_get_current_user()->ID ) ) {
 				$results_link = '<a class="button view-results" href="' . esc_url( self::get_view_results_link( $course->ID ) ) . '">' .
 					esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 			}
@@ -3092,36 +3103,62 @@ class Sensei_Course {
 			return;
 		}
 
+		$course_id = $post->ID;
+		$user_id   = $current_user->ID;
+
 		?>
 		<section class="course-meta course-enrolment">
 		<?php
-		$is_user_taking_course = self::is_user_enrolled( $post->ID, $current_user->ID );
 
-		// If user is taking course, display progress.
-		if ( $is_user_taking_course ) {
-			// Check if course is completed
-			$user_course_status = Sensei_Utils::user_course_status( $post->ID, $current_user->ID );
+		// Check if course is completed.
+		$completed_course = false;
+		if ( ! empty( $user_id ) ) {
+			$user_course_status = Sensei_Utils::user_course_status( $course_id, $user_id );
 			$completed_course   = Sensei_Utils::user_completed_course( $user_course_status );
+		}
+
+		/**
+		 * Display course enrollment actions.
+		 *
+		 * @since 3.13.3
+		 *
+		 * @param {boolean} $display_actions  Whether display the actions.
+		 * @param {int}     $course_id        Course ID.
+		 * @param {int}     $user_id          User ID.
+		 * @param {boolean} $completed_course Whether user completed the course.
+		 *
+		 * @return {boolean} Whether display course enrollment actions.
+		 */
+		$display_actions = apply_filters(
+			'sensei_display_course_enrollment_actions',
+			self::is_user_enrolled( $course_id, $user_id ),
+			$course_id,
+			$user_id,
+			$completed_course
+		);
+
+		if ( $display_actions ) {
+
 			// Success message
 			if ( $completed_course ) {
 				?>
 				<div class="status completed"><?php esc_html_e( 'Completed', 'sensei-lms' ); ?></div>
 				<?php
-				$has_quizzes = Sensei()->course->course_quizzes( $post->ID, true );
-				if ( has_filter( 'sensei_results_links' ) || $has_quizzes ) {
+				$has_quizzes = Sensei()->course->course_quizzes( $course_id, true );
+				if ( self::has_results_links( $course_id ) || $has_quizzes ) {
 					?>
 					<p class="sensei-results-links">
 						<?php
 						$results_link = '';
 
 						if ( $has_quizzes ) {
-							$results_link = '<a class="view-results" href="' . esc_url( self::get_view_results_link( $post->ID ) ) . '">' . esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
+							$results_link = '<a class="view-results" href="' . esc_url( self::get_view_results_link( $course_id ) ) . '">' . esc_html__( 'View Results', 'sensei-lms' ) . '</a>';
 						}
 
 						/**
 						 * Filter documented in Sensei_Course::the_course_action_buttons
 						 */
-						$results_link = apply_filters( 'sensei_results_links', $results_link, $post->ID );
+						$results_link = apply_filters( 'sensei_results_links', $results_link, $course_id );
 						echo wp_kses_post( $results_link );
 						?>
 						</p>
