@@ -3,7 +3,7 @@
  */
 import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
 import { select, useDispatch } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 /**
@@ -25,6 +25,7 @@ import {
 	QuestionValidationNotice,
 	SharedQuestionNotice,
 } from './question-block-helpers';
+import { QuestionContext } from './question-context';
 import { QuestionGradeToolbar } from './question-grade-toolbar';
 import {
 	validateQuestionBlock,
@@ -34,13 +35,6 @@ import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
-import QuestionAppender from './question-appender';
-import QuestionDescription from '../question-description-block/question-description';
-import QuestionDescriptionIcon from '../../../icons/question-description-icon';
-import AnswerFeedbackCorrect from '../answer-feedback-correct-block/answer-feedback-correct';
-import AnswerFeedbackCorrectIcon from '../../../icons/answer-feedback-correct';
-import AnswerFeedbackFailed from '../answer-feedback-failed-block/answer-feedback-failed';
-import AnswerFeedbackFailedIcon from '../../../icons/answer-feedback-failed';
 
 /**
  * Format the question grade as `X points`.
@@ -59,6 +53,7 @@ const formatGradeLabel = ( grade ) =>
  * @param {Object}   props.attributes       Block attributes.
  * @param {Object}   props.attributes.title Question title.
  * @param {Function} props.setAttributes    Set block attributes.
+ * @param {Object}   props.meta             Block metadata.
  */
 const QuestionEdit = ( props ) => {
 	const {
@@ -86,50 +81,7 @@ const QuestionEdit = ( props ) => {
 	const questionNumber = useQuestionNumber( clientId );
 	const AnswerBlock = type && types[ type ];
 
-	// Filter the Allowed Blocks for the render Appender to use based on answerBlock type.
-	let ALLOWED_BLOCKS = [];
-	let ALLOWED_BLOCKS_EXTENDED = [];
-	if (
-		'boolean' === type ||
-		'gap-fill' === type ||
-		'multiple-choice' === type
-	) {
-		ALLOWED_BLOCKS = [
-			'sensei-lms/question-description',
-			'sensei-lms/answer-feedback-correct',
-			'sensei-lms/answer-feedback-failed',
-		];
-		ALLOWED_BLOCKS_EXTENDED = [
-			{
-				name: 'sensei-lms/question-description',
-				title: 'Question Description',
-				icon: QuestionDescriptionIcon,
-				block: QuestionDescription,
-			},
-			{
-				name: 'sensei-lms/answer-feedback-correct',
-				title: 'Correct Answer Feedback',
-				icon: AnswerFeedbackCorrectIcon,
-				block: AnswerFeedbackCorrect,
-			},
-			{
-				name: 'sensei-lms/answer-feedback-failed',
-				title: 'Failed Answer Feedback',
-				icon: AnswerFeedbackFailedIcon,
-				block: AnswerFeedbackFailed,
-			},
-		];
-	} else {
-		ALLOWED_BLOCKS = [ 'sensei-lms/question-description' ];
-		ALLOWED_BLOCKS_EXTENDED = [
-			{
-				name: 'sensei-lms/question-description',
-				title: 'Question Description',
-				icon: QuestionDescriptionIcon,
-				block: QuestionDescription,
-			},
-		];
-	}
+	const canHaveFeedback = AnswerBlock?.feedback;
 
 	const hasSelected = useHasSelected( props );
 	const isSingle = context && ! ( 'sensei-lms/quizId' in context );
@@ -150,29 +102,37 @@ const QuestionEdit = ( props ) => {
 		</div>
 	);
 
-	const AppenderComponent = () => {
-		const innerBlocks = select( 'core/block-editor' ).getBlock( clientId )
-			.innerBlocks;
-		const insertableBlocks = [];
+	const questionContext = useMemo(
+		() => ( {
+			answer,
+			setAttributes,
+			AnswerBlock,
+			hasSelected,
+		} ),
+		[ AnswerBlock, answer, hasSelected, setAttributes ]
+	);
 
-		ALLOWED_BLOCKS_EXTENDED.map( ( allowedBlock ) => {
-			if (
-				innerBlocks
-					.map( ( theBlock ) => theBlock.name )
-					.indexOf( allowedBlock.name ) === -1
-			) {
-				insertableBlocks.push( allowedBlock );
-			}
-			return true;
-		} );
-
-		return (
-			<QuestionAppender
-				clientId={ clientId }
-				insertableBlocks={ insertableBlocks }
-			/>
-		);
-	};
+	const template = [
+		[
+			'sensei-lms/question-description',
+			{},
+			[
+				[
+					'core/paragraph',
+					{
+						placeholder: __( 'Question Description', 'sensei-lms' ),
+					},
+				],
+			],
+		],
+		[ 'sensei-lms/question-answers', {} ],
+		...( canHaveFeedback
+			? [
+					[ 'sensei-lms/answer-feedback-correct', {} ],
+					[ 'sensei-lms/answer-feedback-failed', {} ],
+			  ]
+			: [] ),
+	];
 
 	if ( ! editable ) {
 		return (
@@ -206,44 +166,14 @@ const QuestionEdit = ( props ) => {
 			{ showContent && questionGrade }
 			{ hasSelected && shared && <SharedQuestionNotice /> }
 			{ showContent && (
-				<>
+				<QuestionContext.Provider value={ questionContext }>
 					<InnerBlocks
-						allowedBlocks={ ALLOWED_BLOCKS }
-						renderAppender={ AppenderComponent }
-						template={ [
-							[
-								'sensei-lms/question-description',
-								{},
-								[
-									[
-										'core/paragraph',
-										{
-											placeholder: __(
-												'Question Description',
-												'sensei-lms'
-											),
-										},
-									],
-								],
-							],
-						] }
+						template={ template }
 						templateInsertUpdatesSelection={ false }
-						templateLock={ false }
+						templateLock={ 'all' }
+						renderAppender={ null }
 					/>
-					{ AnswerBlock?.edit && (
-						<>
-							<AnswerBlock.edit
-								attributes={ answer }
-								setAttributes={ ( next ) =>
-									setAttributes( {
-										answer: { ...answer, ...next },
-									} )
-								}
-								hasSelected={ hasSelected }
-							/>
-						</>
-					) }
-				</>
+				</QuestionContext.Provider>
 			) }
 			<QuestionValidationNotice
 				{ ...props }
