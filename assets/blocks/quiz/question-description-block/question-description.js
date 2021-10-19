@@ -20,7 +20,6 @@ import { withBlockMeta } from '../../../shared/blocks/block-metadata';
 const QuestionDescription = () => {
 	return (
 		<div className={ cn( 'sensei-lms-question-description-block' ) }>
-			<h4>{ __( 'Question Description', 'sensei-lms' ) }</h4>
 			<InnerBlocks
 				template={ [
 					[
