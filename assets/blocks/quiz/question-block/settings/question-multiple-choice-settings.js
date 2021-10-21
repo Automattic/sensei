@@ -28,7 +28,7 @@ const QuestionMultipleChoiceSettings = ( {
 	return (
 		<CheckboxControl
 			label={ __( 'Random Order', 'sensei-lms' ) }
-			checked={ randomOrder }
+			checked={ randomOrder || false }
 			onChange={ ( value ) => setOptions( { randomOrder: value } ) }
 		/>
 	);
