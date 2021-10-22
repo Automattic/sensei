@@ -46,7 +46,7 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function setup_permastruct() {
-		// Setup learner profile URL base.
+		// Setup course results URL base.
 		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei-lms' ) );
 
 		// Setup permalinks structure.
