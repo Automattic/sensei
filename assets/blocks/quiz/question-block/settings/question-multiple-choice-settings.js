@@ -3,7 +3,6 @@
  */
 import { CheckboxControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Question block settings for multiple choice questions.
@@ -17,14 +16,6 @@ const QuestionMultipleChoiceSettings = ( {
 	options: { randomOrder },
 	setOptions,
 } ) => {
-	// randomOrder is a specific option for the multiple choice question.
-	// We can't add it to the block.json as it applies for all blocks.
-	useEffect( () => {
-		if ( undefined === randomOrder ) {
-			setOptions( { randomOrder: true } );
-		}
-	}, [ randomOrder, setOptions ] );
-
 	return (
 		<CheckboxControl
 			label={ __( 'Random Order', 'sensei-lms' ) }

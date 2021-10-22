@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * External dependencies
@@ -42,8 +42,16 @@ const MultipleChoiceAnswer = ( props ) => {
 	const { setAttributes, hasSelected } = props;
 
 	let {
-		attributes: { answers = [] },
+		attributes: { answers = [], options = {} },
 	} = props;
+
+	// randomOrder is a specific option for the multiple choice question.
+	// We can't add it to the block.json as it applies for all blocks
+	useEffect( () => {
+		if ( undefined === options.randomOrder ) {
+			setAttributes( { options: { ...options, randomOrder: true } } );
+		}
+	}, [ options, setAttributes ] );
 
 	if ( 0 === answers.length ) {
 		answers = DEFAULT_ANSWERS;
