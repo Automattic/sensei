@@ -68,8 +68,13 @@
 }
 /* Analysis */
 .sensei-analysis-wrap {
-	margin-left: 300px;
 	padding-top: 18px;
+	display: flex;
+	gap: 20px;
+	flex-flow: row;
+	@media (max-width: 850px) {
+		flex-direction: column;
+	}
 	&.user-profile  {
 		margin-left: 0;
 	}
@@ -77,15 +82,9 @@
 		margin-left: 0;
 	}
 	.sensei-analysis-sidebar {
-		display: inline;
-		width: 281px;
-		margin-left: -300px;
-		clear: both;
-		float: left;
+		min-width: 281px;
 	}
 	.sensei-analysis-main {
-		float: left;
-		min-width: 100%;
 		.tablenav {
 			.tablenav-pages {
 				line-height: 25px;
