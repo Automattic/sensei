@@ -62,6 +62,15 @@
 		background: #f5f5f5;
 		@include border_radius(10px);
 	}
+	@media screen and (max-width: 782px) {
+		.tablenav {
+			&.top {
+				p.search-box {
+					position: static;
+				}
+			}
+		}
+	}
 }
 #screen-meta-links .screen-meta-toggle {
 	z-index: 2;
