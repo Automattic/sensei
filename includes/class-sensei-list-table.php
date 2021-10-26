@@ -229,22 +229,34 @@ class Sensei_List_Table extends WP_List_Table {
 
 		$column_data = $this->get_row_data( $item );
 
-		list( $columns, $hidden ) = $this->get_column_info();
+		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		foreach ( $columns as $column_name => $column_display_name ) {
-			$style = '';
+			$classes = esc_attr( $column_name ) . ' column-' . esc_attr( $column_name );
+			if ( $primary === $column_name ) {
+				$classes .= ' column-primary';
+			}
 
+			$style = '';
 			if ( in_array( $column_name, $hidden ) ) {
 				$style = 'display:none;';
 			}
 
-			echo '<td class="' . esc_attr( $column_name ) . ' column-' . esc_attr( $column_name ) .
-				'" style="' . esc_attr( $style ) . '">';
+			// Comments column uses HTML in the display name with screen reader text.
+			// Strip tags to get closer to a user-friendly string.
+			$data = 'data-colname="' . esc_attr( wp_strip_all_tags( $column_display_name ) ) . '"';
+
+			$attributes = "class='$classes' $data style='$style'";
+
+			echo "<td $attributes>";
 			if ( isset( $column_data[ $column_name ] ) ) {
 				// $column_data is escaped in the individual get_row_data functions.
 
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in `get_row_data` method implementations.
 				echo $column_data[ $column_name ];
+			}
+			if ( $column_name === $primary ) {
+				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>';
 			}
 			echo '</td>';
 		}
