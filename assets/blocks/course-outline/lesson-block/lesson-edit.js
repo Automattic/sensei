@@ -38,7 +38,7 @@ import { useLessonPreviewStatus } from './use-lesson-preview-status';
 export const LessonEdit = ( props ) => {
 	const {
 		className,
-		attributes: { title, id, fontSize, draft, preview },
+		attributes: { title, id, fontSize, draft, preview, placeholder },
 		backgroundColor,
 		textColor,
 		setAttributes,
@@ -89,7 +89,9 @@ export const LessonEdit = ( props ) => {
 				/>
 				<SingleLineInput
 					className="wp-block-sensei-lms-course-outline-lesson__input"
-					placeholder={ __( 'Lesson name', 'sensei-lms' ) }
+					placeholder={
+						placeholder || __( 'Add Lesson', 'sensei-lms' )
+					}
 					value={ title }
 					onChange={ updateTitle }
 					onKeyDown={ onKeyDown }

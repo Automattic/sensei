@@ -30,7 +30,9 @@ const OutlineAppender = ( { clientId } ) => {
 			icon: LessonIcon,
 			onClick: () =>
 				insertBlock(
-					createBlock( 'sensei-lms/course-outline-lesson' ),
+					createBlock( 'sensei-lms/course-outline-lesson', {
+						placeholder: __( 'Lesson name', 'sensei-lms' ),
+					} ),
 					internalBlockCount,
 					clientId,
 					true
