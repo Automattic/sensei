@@ -64,7 +64,7 @@ describe( '<LessonEdit />', () => {
 			/>
 		);
 
-		expect( getByPlaceholderText( 'Lesson name' ) ).toBeTruthy();
+		expect( getByPlaceholderText( 'Add Lesson' ) ).toBeTruthy();
 		expect( container.querySelector( '.custom-class' ) ).toBeTruthy();
 	} );
 
@@ -88,7 +88,7 @@ describe( '<LessonEdit />', () => {
 			/>
 		);
 
-		fireEvent.change( getByPlaceholderText( 'Lesson name' ), {
+		fireEvent.change( getByPlaceholderText( 'Add Lesson' ), {
 			target: { value: 'Test' },
 		} );
 		expect( setAttributesMock ).toBeCalledWith( { title: 'Test' } );
@@ -105,7 +105,7 @@ describe( '<LessonEdit />', () => {
 			/>
 		);
 
-		fireEvent.keyDown( getByPlaceholderText( 'Lesson name' ), {
+		fireEvent.keyDown( getByPlaceholderText( 'Add Lesson' ), {
 			keyCode: 13,
 		} );
 
@@ -129,7 +129,7 @@ describe( '<LessonEdit />', () => {
 			/>
 		);
 
-		fireEvent.keyDown( getByPlaceholderText( 'Lesson name' ), {
+		fireEvent.keyDown( getByPlaceholderText( 'Add Lesson' ), {
 			keyCode: 13,
 		} );
 
@@ -154,7 +154,7 @@ describe( '<LessonEdit />', () => {
 			/>
 		);
 
-		fireEvent.keyDown( getByPlaceholderText( 'Lesson name' ), {
+		fireEvent.keyDown( getByPlaceholderText( 'Add Lesson' ), {
 			keyCode: 13,
 		} );
 
@@ -168,7 +168,7 @@ describe( '<LessonEdit />', () => {
 			<LessonEdit attributes={ { title: '' } } />
 		);
 
-		fireEvent.keyDown( getByPlaceholderText( 'Lesson name' ), {
+		fireEvent.keyDown( getByPlaceholderText( 'Add Lesson' ), {
 			keyCode: 8,
 		} );
 
@@ -180,7 +180,7 @@ describe( '<LessonEdit />', () => {
 			<LessonEdit attributes={ { title: 'Test' } } />
 		);
 
-		fireEvent.keyDown( getByPlaceholderText( 'Lesson name' ), {
+		fireEvent.keyDown( getByPlaceholderText( 'Add Lesson' ), {
 			keyCode: 8,
 		} );
 
