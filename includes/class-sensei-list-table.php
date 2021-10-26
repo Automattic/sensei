@@ -248,6 +248,7 @@ class Sensei_List_Table extends WP_List_Table {
 
 			$attributes = "class='$classes' $data style='$style'";
 
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped while preparation.
 			echo "<td $attributes>";
 			if ( isset( $column_data[ $column_name ] ) ) {
 				// $column_data is escaped in the individual get_row_data functions.
@@ -256,7 +257,7 @@ class Sensei_List_Table extends WP_List_Table {
 				echo $column_data[ $column_name ];
 			}
 			if ( $column_name === $primary ) {
-				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>';
+				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '</span></button>';
 			}
 			echo '</td>';
 		}
