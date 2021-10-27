@@ -13,21 +13,14 @@ import { __ } from '@wordpress/i18n';
  * @param {Function} props.setOptions          Sets the options.
  */
 const QuestionMultipleChoiceSettings = ( {
-	options: { randomOrder },
+	options: { randomOrder = false },
 	setOptions,
-} ) => {
-	// randomOrder is a specific option for the multiple choice question.
-	// We can't add it to the block.json as it applies for all blocks.
-	if ( undefined === randomOrder ) {
-		setOptions( { randomOrder: true } );
-	}
-	return (
-		<CheckboxControl
-			label={ __( 'Random Order', 'sensei-lms' ) }
-			checked={ randomOrder }
-			onChange={ ( value ) => setOptions( { randomOrder: value } ) }
-		/>
-	);
-};
+} ) => (
+	<CheckboxControl
+		label={ __( 'Random Order', 'sensei-lms' ) }
+		checked={ randomOrder }
+		onChange={ ( value ) => setOptions( { randomOrder: value } ) }
+	/>
+);
 
 export default QuestionMultipleChoiceSettings;
