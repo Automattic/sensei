@@ -338,9 +338,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	private function get_multiple_choice_meta( array $question ): array {
 		$meta = [];
 
-		if ( isset( $question['options']['randomOrder'] ) ) {
-			$meta['_random_order'] = $question['options']['randomOrder'] ? 'yes' : 'no';
-		}
+		$meta['_random_order'] = empty( $question['options']['randomOrder'] ) ? 'no' : 'yes';
 
 		if ( isset( $question['answer'] ) ) {
 			$meta['_question_right_answer']  = [];
@@ -612,7 +610,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ): array {
 		$type_specific_properties = [
-			'options' => [ 'randomOrder' => 'no' !== get_post_meta( $question->ID, '_random_order', true ) ],
+			'options' => [ 'randomOrder' => 'yes' === get_post_meta( $question->ID, '_random_order', true ) ],
 		];
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
