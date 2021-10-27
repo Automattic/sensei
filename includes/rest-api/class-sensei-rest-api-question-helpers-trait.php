@@ -610,7 +610,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 */
 	private function get_multiple_choice_properties( WP_Post $question ): array {
 		$type_specific_properties = [
-			'options' => [ 'randomOrder' => 'no' !== get_post_meta( $question->ID, '_random_order', true ) ],
+			'options' => [ 'randomOrder' => 'yes' === get_post_meta( $question->ID, '_random_order', true ) ],
 		];
 
 		$correct_answers = $this->get_answers_array( $question, '_question_right_answer', true );
