@@ -2126,7 +2126,7 @@ class Sensei_Core_Modules {
 	public function filter_module_terms( $terms, $taxonomies, $args ) {
 
 		// dont limit for admins and other taxonomies. This should also only apply to admin
-		if ( current_user_can( 'manage_options' ) || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
+		if ( current_user_can( 'manage_options' ) || ! $taxonomies || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
 			return $terms;
 		}
 
