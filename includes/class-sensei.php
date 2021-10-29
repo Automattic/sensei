@@ -416,7 +416,7 @@ class Sensei_Main {
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
 		Sensei_Data_Port_Manager::instance()->init();
-		Sensei_Course_Navigation::instance()->init();
+		Sensei_Course_Navigation::instance()->init( $this );
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();

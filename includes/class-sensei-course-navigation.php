@@ -43,6 +43,13 @@ class Sensei_Course_Navigation {
 
 	/**
 	 * Initializes the Course Navigation.
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init() {}
+	public function init( $sensei ) {
+		if ( ! $sensei->feature_flags->is_enabled( 'course_navigation' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			return;
+		}
+	}
 }
