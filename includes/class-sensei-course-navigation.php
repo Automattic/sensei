@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.16.0
  */
 class Sensei_Course_Navigation {
+	const TEMPLATE_POST_META_NAME = '_course_navigation_template';
+
 	/**
 	 * Instance of class.
 	 *
@@ -51,5 +53,27 @@ class Sensei_Course_Navigation {
 			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
 			return;
 		}
+
+		add_action( 'init', [ $this, 'register_post_meta' ] );
+	}
+
+	/**
+	 * Register post meta.
+	 *
+	 * @access private
+	 */
+	public function register_post_meta() {
+		register_post_meta(
+			'course',
+			self::TEMPLATE_POST_META_NAME,
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
 	}
 }
