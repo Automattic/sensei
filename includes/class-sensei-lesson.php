@@ -670,6 +670,15 @@ class Sensei_Lesson {
 
 			}
 		}
+
+		$new_pass_required     = sanitize_text_field( $_POST['pass_required'] );
+		$new_pass_percentage   = sanitize_text_field( $_POST['quiz_passmark'] );
+		$new_enable_quiz_reset = sanitize_text_field( $_POST['enable_quiz_reset'] );
+
+		$this->save_quiz_settings( $post_id, $new_pass_required, $new_pass_percentage, $new_enable_quiz_reset );
+
+		return  $post_id;
+
 	}
 
 	/**
@@ -4076,8 +4085,6 @@ class Sensei_Lesson {
 		// store the values for all selected posts
 		foreach ( $_POST['post_ids'] as $lesson_id ) {
 
-			// get the quiz id needed for the quiz meta
-			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 			// do not save the items if the value is -1 as this
 			// means it was not changed
@@ -4090,35 +4097,8 @@ class Sensei_Lesson {
 				update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
 			}
 
-			// Quiz Related settings
-			if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
+			$this->save_quiz_settings( $lesson_id, $new_pass_required, $new_pass_percentage, $new_enable_quiz_reset );
 
-				// update pass required
-				if ( -1 != $new_pass_required ) {
-
-					$checked = $new_pass_required ? 'on' : '';
-					update_post_meta( $quiz_id, '_pass_required', $checked );
-					unset( $checked );
-				}
-
-				// update pass percentage
-				if ( ! empty( $new_pass_percentage ) && is_numeric( $new_pass_percentage ) ) {
-
-						update_post_meta( $quiz_id, '_quiz_passmark', $new_pass_percentage );
-
-				}
-
-				//
-				// update enable quiz reset
-				//
-				if ( -1 != $new_enable_quiz_reset ) {
-
-					$checked = $new_enable_quiz_reset ? 'on' : '';
-					update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
-					unset( $checked );
-
-				}
-			}
 		}
 
 		die();
@@ -5070,6 +5050,47 @@ class Sensei_Lesson {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param int|null $lesson_id
+	 * @param string   $new_pass_required
+	 * @param          $new_pass_percentage
+	 * @param string   $new_enable_quiz_reset
+	 */
+	private function save_quiz_settings( ?int $lesson_id, string $new_pass_required, $new_pass_percentage, string $new_enable_quiz_reset ): void {
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		// Quiz Related settings
+		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
+
+			// update pass required
+			if ( -1 != $new_pass_required ) {
+
+				$checked = $new_pass_required ? 'on' : 'off';
+				update_post_meta( $quiz_id, '_pass_required', $checked );
+				unset( $checked );
+			}
+
+			// update pass percentage
+			if ( ! empty( $new_pass_percentage ) && is_numeric( $new_pass_percentage ) ) {
+
+				update_post_meta( $quiz_id, '_quiz_passmark', $new_pass_percentage );
+
+			}
+
+			//
+			// update enable quiz reset
+			//
+			if ( -1 != $new_enable_quiz_reset ) {
+
+				$checked = $new_enable_quiz_reset ? 'on' : '';
+				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
+				unset( $checked );
+
+			}
+		}
 	}
 }
 
