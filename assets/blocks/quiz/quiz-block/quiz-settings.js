@@ -106,18 +106,19 @@ const QuizSettings = ( {
 						<PanelRow>
 							<div>
 								<BaseControl
+									id={ 'failedFeedbackOptions' }
 									className="sensei-lms-subsection-control"
 									help={ __(
 										'What learners see when reviewing their quiz after grading.',
 										'sensei-lms'
 									) }
 								>
-									<strong>
+									<h3>
 										{ __(
 											'If learner does not pass quiz',
 											'sensei-lms'
 										) }
-									</strong>
+									</h3>
 								</BaseControl>
 								<ToggleControl
 									checked={ failedIndicateIncorrect }
