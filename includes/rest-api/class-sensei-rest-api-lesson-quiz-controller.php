@@ -337,17 +337,21 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 */
 	private function get_quiz_data( WP_Post $quiz ): array {
 		$post_meta = get_post_meta( $quiz->ID );
+
+		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
+		$failed_feedback_default = ! $allow_retakes;
+
 		return [
 			'options'   => [
 				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
 				'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
 				'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
-				'allow_retakes'               => ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0],
+				'allow_retakes'               => $allow_retakes,
 				'show_questions'              => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
 				'random_question_order'       => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
-				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? null : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
-				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? null : 'yes' === $post_meta['_failed_show_correct_answers'][0],
-				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? null : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
+				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
+				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
+				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
 			],
 			'questions' => $this->get_quiz_questions( $quiz ),
 		];

@@ -7,6 +7,7 @@ import {
 	PanelRow,
 	RangeControl,
 	ToggleControl,
+	BaseControl,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -17,7 +18,6 @@ import { __ } from '@wordpress/i18n';
  */
 import NumberControl from '../../editor-components/number-control';
 import { isQuestionEmpty } from '../data';
-import QuizAnswerFeedbackSettings from './quiz-settings-answer-feedback';
 
 /**
  * Quiz settings.
@@ -40,6 +40,9 @@ const QuizSettings = ( {
 		allowRetakes = true,
 		randomQuestionOrder = false,
 		showQuestions = null,
+		failedShowAnswerFeedback = false,
+		failedShowCorrectAnswers = false,
+		failedIndicateIncorrect = false,
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
@@ -101,10 +104,52 @@ const QuizSettings = ( {
 							/>
 						</PanelRow>
 						<PanelRow>
-							<QuizAnswerFeedbackSettings
-								options={ { ...options, allowRetakes } }
-								setAttributes={ setAttributes }
-							/>
+							<div>
+								<BaseControl
+									className="sensei-lms-subsection-control"
+									help={ __(
+										'What learners see when reviewing their quiz after grading.',
+										'sensei-lms'
+									) }
+								>
+									<strong>
+										{ __(
+											'If learner does not pass quiz',
+											'sensei-lms'
+										) }
+									</strong>
+								</BaseControl>
+								<ToggleControl
+									checked={ failedIndicateIncorrect }
+									onChange={ createChangeHandler(
+										'failedIndicateIncorrect'
+									) }
+									label={ __(
+										'Indicate which questions are incorrect.',
+										'sensei-lms'
+									) }
+								/>
+								<ToggleControl
+									checked={ failedShowCorrectAnswers }
+									onChange={ createChangeHandler(
+										'failedShowCorrectAnswers'
+									) }
+									label={ __(
+										'Show correct answers.',
+										'sensei-lms'
+									) }
+								/>
+								<ToggleControl
+									checked={ failedShowAnswerFeedback }
+									onChange={ createChangeHandler(
+										'failedShowAnswerFeedback'
+									) }
+									label={ __(
+										'Show “Answer Feedback” text.',
+										'sensei-lms'
+									) }
+								/>
+							</div>
 						</PanelRow>
 						<hr />
 					</>
