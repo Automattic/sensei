@@ -706,11 +706,15 @@ class Sensei_Main {
 	 * @return void
 	 */
 	public function activate_sensei() {
-
+		// First time activation.
 		if ( false === get_option( 'sensei_installed', false ) ) {
 			set_transient( 'sensei_activation_redirect', 1, 30 );
 
 			update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
+
+			if ( Sensei()->feature_flags->is_enabled( 'course_navigation' ) ) {
+				update_option( Sensei_Course_Navigation::INSTALLED_AFTER_COURSE_NAVIGATION_OPTION_NAME, 1 );
+			}
 		}
 
 		update_option( 'sensei_installed', 1 );

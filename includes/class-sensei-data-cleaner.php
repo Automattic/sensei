@@ -55,6 +55,7 @@ class Sensei_Data_Cleaner {
 	 */
 	private static $options = array(
 		'sensei_installed',
+		'sensei_installed_after_course_navigation',
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages', // @deprecated since 3.1.0.
