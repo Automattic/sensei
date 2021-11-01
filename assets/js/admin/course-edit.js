@@ -74,7 +74,9 @@ domReady( () => {
 /**
  * Plugins
  */
-registerPlugin( 'sensei-course-navigation-template-plugin', {
-	render: CourseNavigationTemplateSidebar,
-	icon: null,
-} );
+if ( window.senseiCourseNavigationFeatureFlagEnabled ) {
+	registerPlugin( 'sensei-course-navigation-template-plugin', {
+		render: CourseNavigationTemplateSidebar,
+		icon: null,
+	} );
+}
