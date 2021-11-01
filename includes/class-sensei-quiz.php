@@ -1587,7 +1587,7 @@ class Sensei_Quiz {
 	 *
 	 * @return mixed
 	 */
-	public static function get_option( $lesson_id, $option ) {
+	private static function get_option( $lesson_id, $option ) {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
