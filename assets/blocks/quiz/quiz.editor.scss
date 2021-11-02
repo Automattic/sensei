@@ -72,6 +72,28 @@ $gray-400: #ccc;
 	}
 }
 
+.sensei-lms-quiz-block-panel {
+	&__row-title {
+		flex-wrap: wrap;
+
+		h2 {
+			flex-basis: 100%;
+			font-size: calc( #{$default-font-size} + 1px );
+			font-weight: normal;
+		}
+
+		.components-base-control {
+			flex-basis: 48%;
+			margin-bottom: 8px;
+		}
+	}
+
+	&__row-item.components-base-control {
+		flex-basis: 100%;
+		margin-bottom: 12px;
+	}
+}
+
 .sensei-lms-block-validation-notice {
 
 	display: inline-block;
