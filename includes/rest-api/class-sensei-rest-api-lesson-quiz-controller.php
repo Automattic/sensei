@@ -179,8 +179,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
 
-		$json_params  = $request->get_json_params();
-		$quiz_options = $json_params['options'];
+		$json_params = $request->get_json_params();
 
 		$quiz_id = wp_insert_post(
 			[
@@ -190,7 +189,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'post_title'   => $lesson->post_title,
 				'post_type'    => 'quiz',
 				'post_parent'  => $lesson->ID,
-				'meta_input'   => $this->get_quiz_meta( $quiz_options, $lesson ),
+				'meta_input'   => $this->get_quiz_meta( $json_params, $lesson ),
 			]
 		);
 
@@ -240,13 +239,15 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Helper method to translate input to quiz meta.
 	 *
-	 * @param array   $quiz_options The input coming from JSON data.
+	 * @param array   $json_params The input coming from JSON data.
 	 * @param WP_Post $lesson       The parent lesson.
 	 *
 	 * @return array The meta.
 	 */
-	private function get_quiz_meta( array $quiz_options, WP_Post $lesson ) : array {
+	private function get_quiz_meta( array $json_params, WP_Post $lesson ) : array {
 		$meta_input = [ '_quiz_lesson' => $lesson->ID ];
+
+		$quiz_options = $json_params['options'];
 
 		if ( isset( $quiz_options['pass_required'] ) ) {
 			$meta_input['_pass_required'] = true === $quiz_options['pass_required'] ? 'on' : '';
@@ -270,6 +271,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		if ( isset( $quiz_options['random_question_order'] ) ) {
 			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
+		}
+
+		if ( isset( $json_params['pagination'] ) ) {
+			$meta_input['_pagination'] = wp_json_encode( $json_params['pagination'] );
 		}
 
 		return $meta_input;
@@ -329,8 +334,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 */
 	private function get_quiz_data( WP_Post $quiz ) : array {
 		$post_meta = get_post_meta( $quiz->ID );
-		return [
-			'options'   => [
+		$quiz_data = [
+			'options'    => [
 				'pass_required'         => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
 				'quiz_passmark'         => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
 				'auto_grade'            => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
@@ -338,8 +343,29 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'show_questions'        => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
 				'random_question_order' => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
 			],
-			'questions' => $this->get_quiz_questions( $quiz ),
+			'questions'  => $this->get_quiz_questions( $quiz ),
+			'pagination' => ! empty( $post_meta['_pagination'] ) ? $post_meta['_pagination'] : [],
 		];
+
+		$quiz_data['pagination'] = [
+			'pagination_number'       => null,
+			'show_progress_bar'       => false,
+			'progress_bar_radius'     => 5,
+			'progress_bar_height'     => 5,
+			'progress_bar_color'      => null,
+			'progress_bar_background' => null,
+		];
+
+		if ( empty( $post_meta['_pagination'][0] ) || ! is_string( $post_meta['_pagination'][0] ) ) {
+			return $quiz_data;
+		}
+
+		$json_array = json_decode( $post_meta['_pagination'][0], true );
+		if ( $json_array ) {
+			$quiz_data['pagination'] = $json_array;
+		}
+
+		return $quiz_data;
 	}
 
 	/**
@@ -420,6 +446,40 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				],
 			],
 		];
+
+		if ( Sensei()->feature_flags->is_enabled( 'quiz_pagination' ) ) {
+			$schema['properties']['pagination'] = [
+				'type'       => 'object',
+				'required'   => true,
+				'properties' => [
+					'pagination_number'       => [
+						'type'        => 'integer',
+						'description' => 'Number of questions per page',
+						'default'     => null,
+					],
+					'show_progress_bar'       => [
+						'type'        => 'boolean',
+						'description' => 'Whether to show the progress bar in the frontend',
+						'default'     => false,
+					],
+					'progress_bar_radius'     => [
+						'type'        => 'integer',
+						'description' => 'Progress bar radius',
+						'default'     => 5,
+					],
+					'progress_bar_height'     => [
+						'type'        => 'integer',
+						'description' => 'Progress bar height',
+						'default'     => 5,
+					],
+					'progress_bar_background' => [
+						'type'        => 'string',
+						'description' => 'Progress bar background color',
+						'default'     => null,
+					],
+				],
+			];
+		}
 
 		return $schema;
 	}
