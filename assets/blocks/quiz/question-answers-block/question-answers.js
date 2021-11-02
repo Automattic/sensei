@@ -2,13 +2,16 @@
  * WordPress dependencies
  */
 import { useContext } from '@wordpress/element';
+
 /**
  * External dependencies
  */
 import cn from 'classnames';
+
 /**
  * Internal dependencies
  */
+import { AnswerFeedbackToggle } from '../answer-feedback-block/answer-feedback-toggle';
 import { QuestionContext } from '../question-block/question-context';
 
 /**
@@ -16,9 +19,13 @@ import { QuestionContext } from '../question-block/question-context';
  *
  */
 const QuestionAnswers = () => {
-	const { answer, setAttributes, AnswerBlock, hasSelected } = useContext(
-		QuestionContext
-	);
+	const {
+		answer,
+		setAttributes,
+		AnswerBlock,
+		hasSelected,
+		canHaveFeedback,
+	} = useContext( QuestionContext );
 	return (
 		<div className={ cn( 'sensei-lms-question-answers-block' ) }>
 			{ AnswerBlock?.edit && (
@@ -32,6 +39,9 @@ const QuestionAnswers = () => {
 						}
 						hasSelected={ hasSelected }
 					/>
+					{ canHaveFeedback && hasSelected && (
+						<AnswerFeedbackToggle />
+					) }
 				</>
 			) }
 		</div>
