@@ -16,6 +16,12 @@ import cn from 'classnames';
  */
 
 import { withBlockValidation } from '../../../shared/blocks/block-validation';
+import {
+	answerFeedbackCorrectBlock,
+	answerFeedbackIncorrectBlock,
+} from '../answer-feedback-block';
+import questionDescriptionBlock from '../question-description-block';
+import questionAnswersBlock from '../question-answers-block';
 import { useQuestionNumber } from '../question-number';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { withBlockMeta } from '../../../shared/blocks/block-metadata';
@@ -114,7 +120,7 @@ const QuestionEdit = ( props ) => {
 
 	const template = [
 		[
-			'sensei-lms/question-description',
+			questionDescriptionBlock.name,
 			{},
 			[
 				[
@@ -125,11 +131,11 @@ const QuestionEdit = ( props ) => {
 				],
 			],
 		],
-		[ 'sensei-lms/question-answers', {} ],
+		[ questionAnswersBlock.name, {} ],
 		...( canHaveFeedback
 			? [
-					[ 'sensei-lms/answer-feedback-correct', {} ],
-					[ 'sensei-lms/answer-feedback-failed', {} ],
+					[ answerFeedbackCorrectBlock.name, {} ],
+					[ answerFeedbackIncorrectBlock.name, {} ],
 			  ]
 			: [] ),
 	];

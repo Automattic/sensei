@@ -3,8 +3,10 @@
  */
 import registerSenseiBlocks from '../register-sensei-blocks';
 
-import answerFeedbackCorrectBlock from './answer-feedback-correct-block';
-import answerFeedbackFailedBlock from './answer-feedback-failed-block';
+import {
+	answerFeedbackCorrectBlock,
+	answerFeedbackIncorrectBlock,
+} from './answer-feedback-block';
 import questionDescriptionBlock from './question-description-block';
 import questionAnswersBlock from './question-answers-block';
 import questionBlock from './question-block';
@@ -18,7 +20,7 @@ const blocks = [
 	categoryQuestionBlock,
 	questionDescriptionBlock,
 	answerFeedbackCorrectBlock,
-	answerFeedbackFailedBlock,
+	answerFeedbackIncorrectBlock,
 	questionAnswersBlock,
 ];
 
