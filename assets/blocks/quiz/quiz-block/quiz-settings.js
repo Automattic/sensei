@@ -145,7 +145,8 @@ const QuizSettings = ( {
 					/>
 				</PanelRow>
 			</PanelBody>
-			{ window.sensei_single_lesson_blocks.quiz_pagination_enabled && (
+			{ /* eslint-disable-next-line camelcase */ }
+			{ window.sensei_single_lesson_blocks?.quiz_pagination_enabled && (
 				<PaginationSettings
 					settings={ paginationSettings }
 					onChange={ ( newSettings ) =>
