@@ -1,6 +1,7 @@
 $block: '.sensei-lms-question-block';
 
 @import '../answer-blocks/option-toggle';
+@import './question';
 @import './question-grade-toolbar';
 @import '../../../shared/styles/wp-colors';
 
@@ -252,22 +253,7 @@ $block: '.sensei-lms-question-block';
 		margin-top: 28px;
 		margin-bottom: 28px;
 	}
-}
 
-.sensei-lms-question-answer-feedback-correct-block, .sensei-lms-question-answer-feedback-failed-block {
-	background: rgba(#ccc, 0.2);
-	padding: 0 8px;
-	border-radius: 4px;
-	margin-left: -6px;
-	padding-left: 40px;
-	min-height: 32px;
-
-	.icon {
-		position: absolute;
-		top: 6px;
-		left: 2px;
-	}
-}
 
 .sensei-lms-question-answer-feedback-correct-block {
 	.icon {
@@ -281,26 +267,11 @@ $block: '.sensei-lms-question-block';
 	}
 }
 
-
-.sensei-lms-question-meta-block {
-
-	&__appender {
-
-		text-align: center;
-
-		.editor-styles-wrapper &__placeholder {
-			&:first-child {
-				display: none;
-			}
-		}
-		.editor-styles-wrapper &__placeholder {
-			opacity: 0.62;
-			margin: 0;
-			line-height: 1;
-
-			&::after {
-				content: attr(data-placeholder);
-			}
+.sensei-lms-question {
+	&__answer-feedback {
+		&__content {
+			padding-top: 0;
+			padding-bottom: 0;
 		}
 	}
 }
