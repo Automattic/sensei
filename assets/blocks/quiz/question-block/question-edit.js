@@ -3,7 +3,7 @@
  */
 import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
 import { select, useDispatch } from '@wordpress/data';
-import { useCallback, useMemo } from '@wordpress/element';
+import { useCallback, useMemo, useState } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
 /**
@@ -108,14 +108,28 @@ const QuestionEdit = ( props ) => {
 		</div>
 	);
 
+	const [ showAnswerFeedback, toggleAnswerFeedback ] = useState( false );
+
 	const questionContext = useMemo(
 		() => ( {
 			answer,
 			setAttributes,
 			AnswerBlock,
 			hasSelected,
+			canHaveFeedback,
+			answerFeedback: {
+				showAnswerFeedback,
+				toggleAnswerFeedback,
+			},
 		} ),
-		[ AnswerBlock, answer, hasSelected, setAttributes ]
+		[
+			AnswerBlock,
+			answer,
+			hasSelected,
+			setAttributes,
+			showAnswerFeedback,
+			canHaveFeedback,
+		]
 	);
 
 	const template = [
@@ -154,6 +168,7 @@ const QuestionEdit = ( props ) => {
 			className={ cn( 'sensei-lms-question-block', {
 				'is-draft': ! title,
 				'is-invalid': isInvalid,
+				'show-answer-feedback': showAnswerFeedback,
 			} ) }
 		>
 			{ questionIndex }
