@@ -145,12 +145,14 @@ const QuizSettings = ( {
 					/>
 				</PanelRow>
 			</PanelBody>
-			<PaginationSettings
-				settings={ paginationSettings }
-				onChange={ ( newSettings ) =>
-					setAttributes( { paginationSettings: newSettings } )
-				}
-			/>
+			{ window.sensei_single_lesson_blocks.quiz_pagination_enabled && (
+				<PaginationSettings
+					settings={ paginationSettings }
+					onChange={ ( newSettings ) =>
+						setAttributes( { paginationSettings: newSettings } )
+					}
+				/>
+			) }
 		</InspectorControls>
 	);
 };
