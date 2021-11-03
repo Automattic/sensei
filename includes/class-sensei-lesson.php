@@ -671,13 +671,13 @@ class Sensei_Lesson {
 			}
 		}
 
-		$new_pass_required     = sanitize_text_field( $_POST['pass_required'] );
-		$new_pass_percentage   = sanitize_text_field( $_POST['quiz_passmark'] );
-		$new_enable_quiz_reset = sanitize_text_field( $_POST['enable_quiz_reset'] );
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( $_POST['pass_required'] ) : '-1';
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( $_POST['quiz_passmark'] ) : '-1';
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( $_POST['enable_quiz_reset'] ) : '-1';
 		// add 3 other quiz settings
-		$show_questions        = sanitize_text_field( $_POST['show_questions'] );
-		$random_question_order = sanitize_text_field( $_POST['random_question_order'] );
-		$quiz_grade_type       = sanitize_text_field( $_POST['quiz_grade_type'] );
+		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( $_POST['show_questions'] ) : '-1';
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( $_POST['random_question_order'] ) : '-1';
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( $_POST['quiz_grade_type'] ) : '-1';
 
 		$this->save_quiz_settings( $post_id, $new_pass_required, $new_pass_percentage, $new_enable_quiz_reset, $random_question_order, $quiz_grade_type, $show_questions );
 
