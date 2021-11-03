@@ -21,7 +21,7 @@
 			var senseiFieldValues = window[ 'sensei_quick_edit_' + postId ];
 
 			//load the relod function on the save button click
-			editRow.find( 'a.save' ).on( 'click', function () {
+			editRow.find( '.save' ).on( 'click', function () {
 				location.reload();
 			} );
 
@@ -71,6 +71,37 @@
 					'"] ',
 				editRow
 			).attr( 'selected', true );
+
+			if ( 'auto' === senseiFieldValues.quiz_grade_type ) {
+				senseiFieldValues.quiz_grade_type = 1;
+			} else {
+				senseiFieldValues.quiz_grade_type = 0;
+			}
+			$(
+				':input[name="quiz_grade_type"] option[value="' +
+					senseiFieldValues.quiz_grade_type +
+					'"] ',
+				editRow
+			).attr( 'selected', true );
+
+			if (
+				'yes' == senseiFieldValues.random_question_order ||
+				'1' == senseiFieldValues.random_question_order
+			) {
+				senseiFieldValues.random_question_order = 1;
+			} else {
+				senseiFieldValues.random_question_order = 0;
+			}
+			$(
+				':input[name="random_question_order"] option[value="' +
+					senseiFieldValues.random_question_order +
+					'"] ',
+				editRow
+			).attr( 'selected', true );
+
+			$( ':input[name="show_questions"]', editRow ).val(
+				senseiFieldValues.show_questions
+			);
 		}
 	};
 } )( jQuery );
