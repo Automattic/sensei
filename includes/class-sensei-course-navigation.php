@@ -16,8 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.16.0
  */
 class Sensei_Course_Navigation {
-	const TEMPLATE_POST_META_NAME                       = '_course_navigation_template';
-	const INSTALLED_AFTER_COURSE_NAVIGATION_OPTION_NAME = 'sensei_installed_after_course_navigation';
+	const TEMPLATE_POST_META_NAME = '_course_navigation_template';
 
 	/**
 	 * Instance of class.
@@ -80,8 +79,6 @@ class Sensei_Course_Navigation {
 	 * @access private
 	 */
 	public function register_post_meta() {
-		$installed_after_course_navigation = 1 === intval( get_option( self::INSTALLED_AFTER_COURSE_NAVIGATION_OPTION_NAME ) );
-
 		register_post_meta(
 			'course',
 			self::TEMPLATE_POST_META_NAME,
@@ -89,7 +86,6 @@ class Sensei_Course_Navigation {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'string',
-				'default'       => $installed_after_course_navigation ? 'sensei-lesson-template' : 'default-post-template',
 				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},
