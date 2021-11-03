@@ -86,6 +86,7 @@ class Sensei_Course_Navigation {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'string',
+				'default'       => 'default-post-template',
 				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},
