@@ -5107,19 +5107,24 @@ class Sensei_Lesson {
 	}
 
 	/**
+	 *
+	 * Saves the quiz post meta settings
+	 *
 	 * @param int|null $lesson_id
-	 * @param string   $new_pass_required
-	 * @param          $new_pass_percentage
-	 * @param string   $new_enable_quiz_reset
+	 * @param string $new_pass_required
+	 * @param int $new_pass_percentage
+	 * @param string $new_enable_quiz_reset
+	 * @param string $random_question_order
+	 * @param string $quiz_grade_type
+	 * @param int $show_questions
 	 */
-	private function save_quiz_settings( ?int $lesson_id, string $new_pass_required, $new_pass_percentage, string $new_enable_quiz_reset, string $random_question_order, string $quiz_grade_type, $show_questions ): void {
+	private function save_quiz_settings( ?int $lesson_id, string $new_pass_required, int $new_pass_percentage, string $new_enable_quiz_reset, string $random_question_order, string $quiz_grade_type, int $show_questions ): void {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		// Quiz Related settings
 		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
 
-			// update pass required
+			// update pass required.
 			if ( - 1 != $new_pass_required ) {
 
 				$checked = $new_pass_required ? 'on' : 'off';
@@ -5127,16 +5132,14 @@ class Sensei_Lesson {
 				unset( $checked );
 			}
 
-			// update pass percentage
+			// update pass percentage.
 			if ( ! empty( $new_pass_percentage ) && is_numeric( $new_pass_percentage ) ) {
 
 				update_post_meta( $quiz_id, '_quiz_passmark', $new_pass_percentage );
 
 			}
 
-			//
-			// update enable quiz reset
-			//
+			// update enable quiz reset.
 			if ( - 1 != $new_enable_quiz_reset ) {
 
 				$checked = $new_enable_quiz_reset ? 'on' : '';
@@ -5145,7 +5148,7 @@ class Sensei_Lesson {
 
 			}
 
-			// update random question order
+			// update random question order.
 			if ( - 1 != $random_question_order ) {
 
 				$checked = $random_question_order ? 'yes' : 'no';
@@ -5153,7 +5156,7 @@ class Sensei_Lesson {
 				unset( $checked );
 			}
 
-			// update quiz grade type
+			// update quiz grade type.
 			if ( - 1 != $quiz_grade_type ) {
 
 				$checked = $quiz_grade_type ? 'auto' : 'manual';
@@ -5161,8 +5164,8 @@ class Sensei_Lesson {
 				unset( $checked );
 			}
 
-			// update number of questions to show
-			if ( ! empty( $show_questions ) && is_numeric( $show_questions ) ) {
+			// update number of questions to show.
+			if ( ! empty( $show_questions ) ) {
 
 				update_post_meta( $quiz_id, '_show_questions', $show_questions );
 
