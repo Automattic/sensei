@@ -29,20 +29,20 @@ import { isQuestionEmpty } from '../data';
  * @param {string}   props.clientId           Block ID.
  */
 const QuizSettings = ( {
-	attributes: { options = {} },
+	attributes: { options },
 	setAttributes,
 	clientId,
 } ) => {
 	const {
-		passRequired = false,
-		quizPassmark = 100,
-		autoGrade = true,
-		allowRetakes = true,
-		randomQuestionOrder = false,
-		showQuestions = null,
-		failedShowAnswerFeedback = false,
-		failedShowCorrectAnswers = false,
-		failedIndicateIncorrect = false,
+		passRequired,
+		quizPassmark,
+		autoGrade,
+		allowRetakes,
+		randomQuestionOrder,
+		showQuestions,
+		failedShowAnswerFeedback,
+		failedShowCorrectAnswers,
+		failedIndicateIncorrect,
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
