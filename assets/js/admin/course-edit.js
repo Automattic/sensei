@@ -4,11 +4,13 @@
 import { select, subscribe } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
+import { registerPlugin } from '@wordpress/plugins';
 
 /**
  * Internal dependencies
  */
 import { startBlocksTogglingControl } from './blocks-toggling-control';
+import CourseNavigationTemplateSidebar from './course-navigation-template-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -68,3 +70,13 @@ domReady( () => {
 		trackLinkClickCallback( 'course_edit_lesson_click' )
 	);
 } );
+
+/**
+ * Plugins
+ */
+if ( window.senseiCourseNavigationFeatureFlagEnabled ) {
+	registerPlugin( 'sensei-course-navigation-template-plugin', {
+		render: CourseNavigationTemplateSidebar,
+		icon: null,
+	} );
+}

@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.16.0
  */
 class Sensei_Course_Navigation {
+	const TEMPLATE_POST_META_NAME = '_course_navigation_template';
+
 	/**
 	 * Instance of class.
 	 *
@@ -47,9 +49,48 @@ class Sensei_Course_Navigation {
 	 * @param Sensei_Main $sensei Sensei object.
 	 */
 	public function init( $sensei ) {
+		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
+
 		if ( ! $sensei->feature_flags->is_enabled( 'course_navigation' ) ) {
 			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
 			return;
 		}
+
+		add_action( 'init', [ $this, 'register_post_meta' ] );
+	}
+
+	/**
+	 * Add feature flag inline script.
+	 *
+	 * @access private
+	 */
+	public function add_feature_flag_inline_script() {
+		$screen  = get_current_screen();
+		$enabled = Sensei()->feature_flags->is_enabled( 'course_navigation' ) ? 'true' : 'false';
+
+		if ( 'course' === $screen->id ) {
+			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseNavigationFeatureFlagEnabled = ' . $enabled, 'before' );
+		}
+	}
+
+	/**
+	 * Register post meta.
+	 *
+	 * @access private
+	 */
+	public function register_post_meta() {
+		register_post_meta(
+			'course',
+			self::TEMPLATE_POST_META_NAME,
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'default'       => 'default-post-template',
+				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
 	}
 }
