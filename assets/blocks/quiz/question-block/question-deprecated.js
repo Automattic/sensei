@@ -52,6 +52,71 @@ const getMediaBlock = ( media ) => {
 export default [
 	{
 		onProgrammaticCreation: true,
+		isEligible( attributes, innerBlocks ) {
+			let isEligible = true;
+			if ( !! attributes.options?.answerFeedback ) {
+				isEligible = true;
+			}
+			innerBlocks.map( ( theBlock ) => {
+				if (
+					'sensei-lms/question-description' === theBlock.name ||
+					'sensei-lms/answer-feedback-correct' === theBlock.name ||
+					'sensei-lms/answer-feedback-failed' === theBlock.name
+				) {
+					isEligible = false;
+				}
+				return true;
+			} );
+
+			return isEligible;
+		},
+		attributes: {
+			...metadata.attributes,
+		},
+		migrate( attributes, innerBlocks ) {
+			const migratedInnerBlocks = [];
+
+			// Shift the description into the new question description block container.
+			migratedInnerBlocks.push(
+				createBlock(
+					'sensei-lms/question-description',
+					{},
+					innerBlocks
+				)
+			);
+
+			// Add the answer feedback attribute to the innerBlock container (if it exists).
+			if ( !! attributes.options?.answerFeedback ) {
+				migratedInnerBlocks.push(
+					createBlock( 'sensei-lms/answer-feedback-correct', {}, [
+						createBlock( 'core/paragraph', {
+							content: attributes.options.answerFeedback,
+						} ),
+					] )
+				);
+				migratedInnerBlocks.push(
+					createBlock( 'sensei-lms/answer-feedback-failed', {}, [
+						createBlock( 'core/paragraph', {
+							content: attributes.options.answerFeedback,
+						} ),
+					] )
+				);
+			}
+
+			return [
+				{
+					...attributes,
+					options: omit( attributes.options, 'answerFeedback' ),
+				},
+				migratedInnerBlocks,
+			];
+		},
+		save() {
+			return <InnerBlocks.Content />;
+		},
+	},
+	{
+		onProgrammaticCreation: true,
 		isEligible( attributes ) {
 			return (
 				attributes.media ||

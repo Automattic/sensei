@@ -33,8 +33,11 @@ function is_sensei() {
 		$my_courses_page_id       = intval( Sensei()->settings->settings['my_course_page'] );
 		$course_completed_page_id = intval( Sensei()->settings->settings['course_completed_page'] );
 
-		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id, $course_completed_page_id ) )
-			|| Sensei_Utils::is_learner_profile_page()
+		if ( ! empty( $post->ID ) && in_array( $post->ID, [ $course_page_id, $my_courses_page_id, $course_completed_page_id ], true ) ) {
+			$is_sensei = true;
+		}
+
+		if ( Sensei_Utils::is_learner_profile_page()
 			|| Sensei_Utils::is_course_results_page()
 			|| Sensei_Utils::is_teacher_archive_page()
 			|| Sensei()->blocks->has_sensei_blocks()
