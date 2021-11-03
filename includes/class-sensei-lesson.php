@@ -4014,17 +4014,17 @@ class Sensei_Lesson {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
 				echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field );
 
-				//
-				// Number of questions to show
-				//
+				/*
+				/* Number of questions to show
+				*/
 				$show_questions_field = '<input name="show_questions" id="sensei-edit-show-questions" type="number" />';
 
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
 				echo $this->generate_all_lessons_edit_field( esc_html__( 'Number of questions to show', 'sensei-lms' ), $show_questions_field );
 
-				//
-				// Randomise question order
-				//
+				/*
+				/* Randomise question order
+				*/
 				$random_question_order_options = array(
 					'-1' => $no_change_text,
 					'0'  => esc_html__( 'No', 'sensei-lms' ),
@@ -4041,9 +4041,9 @@ class Sensei_Lesson {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
 				echo $this->generate_all_lessons_edit_field( esc_html__( 'Randomise question order', 'sensei-lms' ), $random_question_order_field );
 
-				//
-				// Grade quiz automatically
-				//
+				/*
+				/* Grade quiz automatically
+				*/
 				$grade_quiz_automatically_options = array(
 					'-1' => $no_change_text,
 					'0'  => esc_html__( 'No', 'sensei-lms' ),
