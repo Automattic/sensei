@@ -6,8 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 
-const SENSEI_LESSON_TEMPLATE = 'sensei-lesson-template';
-const DEFAULT_POST_TEMPLATE = 'default-post-template';
+const SENSEI_THEME = 'sensei-theme';
+const WORDPRESS_THEME = 'wordpress-theme';
 
 /**
  * A hook that provides a value from course meta and a setter for that value.
@@ -26,36 +26,40 @@ const useCourseMeta = ( metaName ) => {
 };
 
 /**
- * Course Navigation Template Sidebar component.
+ * Course Theme Sidebar component.
  */
-const CourseNavigationTemplateSidebar = () => {
-	const [ template, setTemplate ] = useCourseMeta(
-		'_course_navigation_template'
-	);
+const CourseThemeSidebar = () => {
+	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
 	return (
 		<PluginDocumentSettingPanel
-			name="sensei-course-navigation-template"
-			title={ __( 'Lesson Template', 'sensei-lms' ) }
+			name="sensei-course-theme"
+			title={ __( 'Course Theme', 'sensei-lms' ) }
 		>
+			<p>
+				{ __(
+					'This does not change the theme of your site. It only applies to logged in users when viewing the course.',
+					'sensei-lms'
+				) }
+			</p>
 			<SelectControl
-				label={ __( 'Template', 'sensei-lms' ) }
+				label={ __( 'Theme', 'sensei-lms' ) }
 				hideLabelFromVision
-				value={ template }
+				value={ theme }
 				options={ [
 					{
-						label: __( 'Sensei Lesson Template', 'sensei-lms' ),
-						value: SENSEI_LESSON_TEMPLATE,
+						label: __( 'Sensei Theme', 'sensei-lms' ),
+						value: SENSEI_THEME,
 					},
 					{
-						label: __( 'Default Post Template', 'sensei-lms' ),
-						value: DEFAULT_POST_TEMPLATE,
+						label: __( 'WordPress Theme', 'sensei-lms' ),
+						value: WORDPRESS_THEME,
 					},
 				] }
-				onChange={ setTemplate }
+				onChange={ setTheme }
 			/>
 		</PluginDocumentSettingPanel>
 	);
 };
 
-export default CourseNavigationTemplateSidebar;
+export default CourseThemeSidebar;
