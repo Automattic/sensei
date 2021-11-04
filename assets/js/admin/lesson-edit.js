@@ -19,9 +19,7 @@ domReady( () => {
 
 	const prerequisiteOptionElements = jQuery( '#lesson-prerequisite-options' );
 	if ( prerequisiteOptionElements.length > 0 ) {
-		prerequisiteOptionElements.select2( {
-			width: 'resolve',
-		} );
+		prerequisiteOptionElements.select2( { width: 'resolve' } );
 	}
 
 	const courseOptionElements = jQuery( '#lesson-course-options' );
@@ -33,4 +31,33 @@ domReady( () => {
 	if ( moduleOptionElements.length > 0 ) {
 		moduleOptionElements.select2( { width: 'resolve' } );
 	}
+
+	// Refresh the prerequisite meta box when the course changes in order to get the relevant prerequisites.
+	jQuery( '#lesson-course-options' ).on( 'change', function () {
+		const lessonId = jQuery( '#post_ID' ).val();
+		const courseId = jQuery( this ).val();
+
+		jQuery.get(
+			ajaxurl,
+			{
+				action: 'get_prerequisite_meta_box_content',
+				lesson_id: lessonId,
+				course_id: courseId,
+				security:
+					window.sensei_lesson_metadata
+						.get_prerequisite_meta_box_content_nonce,
+			},
+			function ( response ) {
+				if ( '' !== response ) {
+					// Replace the meta box and re-initialize select2.
+					jQuery( '> .inside', '#lesson-prerequisite' ).html(
+						response
+					);
+					jQuery( '#lesson-prerequisite-options' ).select2( {
+						width: 'resolve',
+					} );
+				}
+			}
+		);
+	} );
 } );
