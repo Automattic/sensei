@@ -2,4 +2,9 @@
 
 .sensei-course-theme {
 	background-color: #fff;
+
+	&__header,
+	&__sidebar {
+		font-family: 'Inter', serif;;
+	}
 }
