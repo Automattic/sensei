@@ -105,6 +105,8 @@ class Sensei_Course_Theme {
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
 		add_filter( 'the_content', [ $this, 'override_template_content' ] );
+		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 	}
 
 	/**
@@ -136,6 +138,30 @@ class Sensei_Course_Theme {
 
 		// Return template content with rendered blocks.
 		return do_blocks( $output );
+	}
+
+	/**
+	 * Add Sensei theme body class.
+	 *
+	 * @access private
+	 *
+	 * @param string[] $classes
+	 *
+	 * @return string[] $classes
+	 */
+	public function add_sensei_theme_body_class( $classes ) {
+		$classes[] = 'sensei-course-theme';
+
+		return $classes;
+	}
+
+	/**
+	 * Enqueue styles.
+	 *
+	 * @access private
+	 */
+	public function enqueue_styles() {
+		Sensei()->assets->enqueue( 'sensei-course-theme', 'css/sensei-course-theme.css' );
 	}
 
 	/**
