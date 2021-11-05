@@ -3,7 +3,7 @@
  * File containing Sensei_Course_Theme class.
  *
  * @package sensei-lms
- * @since 3.16.0
+ * @since 3.13.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei_Course_Theme class.
  *
- * @since 3.16.0
+ * @since 3.13.4
  */
 class Sensei_Course_Theme {
 	const THEME_POST_META_NAME = '_course_theme';

@@ -9,7 +9,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.16.0
+ * @version     3.13.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
