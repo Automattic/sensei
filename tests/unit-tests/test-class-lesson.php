@@ -507,4 +507,42 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		Sensei_Quiz::submit_answers_for_grading( [], [], $lesson_id, $user_id );
 		$this->assertTrue( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) );
 	}
+
+	/**
+	 * Ensure that when getting the lesson prerequisites, they are filtered based on the lesson's course.
+	 * The prerequisites should be lessons linked to that course.
+	 *
+	 * @covers Sensei_Lesson::get_prerequisites
+	 */
+	public function testLessonsAssignedToACourseShouldHavePrerequisitesFromThatCourse() {
+		/* Arrange */
+		$course_with_lessons = $this->factory->get_course_with_lessons(
+			[
+				'lesson_count'   => 3,
+				'question_count' => 0,
+			]
+		);
+
+		// Populate the database with an additional course and lessons.
+		$this->factory->get_course_with_lessons(
+			[
+				'lesson_count'   => 3,
+				'question_count' => 0,
+			]
+		);
+
+		$lesson_id       = $course_with_lessons['lesson_ids'][0];
+		$lesson_instance = new Sensei_Lesson();
+		$method          = new ReflectionMethod( $lesson_instance, 'get_prerequisites' );
+		$method->setAccessible( true );
+
+		/* Act */
+		$prerequisites = $method->invoke( $lesson_instance, $lesson_id, $course_with_lessons['course_id'] );
+
+		/* Assert */
+		$this->assertCount(
+			2, // Excluding the original lesson from the count.
+			$prerequisites
+		);
+	}
 }
