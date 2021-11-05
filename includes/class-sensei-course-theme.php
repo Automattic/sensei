@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Navigation class.
+ * File containing Sensei_Course_Theme class.
  *
  * @package sensei-lms
  * @since 3.16.0
@@ -11,12 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Course_Navigation class.
+ * Sensei_Course_Theme class.
  *
  * @since 3.16.0
  */
-class Sensei_Course_Navigation {
-	const TEMPLATE_POST_META_NAME = '_course_navigation_template';
+class Sensei_Course_Theme {
+	const THEME_POST_META_NAME = '_course_theme';
 
 	/**
 	 * Instance of class.
@@ -26,7 +26,7 @@ class Sensei_Course_Navigation {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Navigation constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {}
 
@@ -44,14 +44,14 @@ class Sensei_Course_Navigation {
 	}
 
 	/**
-	 * Initializes the Course Navigation.
+	 * Initializes the Course Theme.
 	 *
 	 * @param Sensei_Main $sensei Sensei object.
 	 */
 	public function init( $sensei ) {
 		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
 
-		if ( ! $sensei->feature_flags->is_enabled( 'course_navigation' ) ) {
+		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
 			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
 			return;
 		}
@@ -66,10 +66,10 @@ class Sensei_Course_Navigation {
 	 */
 	public function add_feature_flag_inline_script() {
 		$screen  = get_current_screen();
-		$enabled = Sensei()->feature_flags->is_enabled( 'course_navigation' ) ? 'true' : 'false';
+		$enabled = Sensei()->feature_flags->is_enabled( 'course_theme' ) ? 'true' : 'false';
 
 		if ( 'course' === $screen->id ) {
-			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseNavigationFeatureFlagEnabled = ' . $enabled, 'before' );
+			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseThemeFeatureFlagEnabled = ' . $enabled, 'before' );
 		}
 	}
 
@@ -81,12 +81,12 @@ class Sensei_Course_Navigation {
 	public function register_post_meta() {
 		register_post_meta(
 			'course',
-			self::TEMPLATE_POST_META_NAME,
+			self::THEME_POST_META_NAME,
 			[
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'string',
-				'default'       => 'default-post-template',
+				'default'       => 'wordpress-theme',
 				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},

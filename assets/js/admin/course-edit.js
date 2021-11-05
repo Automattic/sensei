@@ -10,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import { startBlocksTogglingControl } from './blocks-toggling-control';
-import CourseNavigationTemplateSidebar from './course-navigation-template-sidebar';
+import CourseThemeSidebar from './course-theme-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -74,9 +74,9 @@ domReady( () => {
 /**
  * Plugins
  */
-if ( window.senseiCourseNavigationFeatureFlagEnabled ) {
-	registerPlugin( 'sensei-course-navigation-template-plugin', {
-		render: CourseNavigationTemplateSidebar,
+if ( window.senseiCourseThemeFeatureFlagEnabled ) {
+	registerPlugin( 'sensei-course-theme-plugin', {
+		render: CourseThemeSidebar,
 		icon: null,
 	} );
 }
