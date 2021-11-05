@@ -1267,15 +1267,15 @@ class Sensei_Main {
 
 				if ( 'lesson' === $post_type ) {
 					$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
-					$classes[] = 'courseid-' . $course_id;
+					$classes[] = 'course-id-' . $course_id;
 				}
 
 				if ( 'quiz' === $post_type ) {
 					$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
-					$classes[] = 'lessonid-' . $lesson_id;
+					$classes[] = 'lesson-id-' . $lesson_id;
 
 					$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-					$classes[] = 'courseid-' . $course_id;
+					$classes[] = 'course-id-' . $course_id;
 				}
 			}
 
