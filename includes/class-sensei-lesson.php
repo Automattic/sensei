@@ -4079,8 +4079,8 @@ class Sensei_Lesson {
 	 */
 	public function generate_all_lessons_edit_field( $title, $field ) {
 
-		$html = '';
-		$html = '<div class="inline-edit-group" >';
+		$html  = '';
+		$html  = '<div class="inline-edit-group quiz-settings" >';
 		$html .= '<span class="title">' . esc_html( $title ) . '</span> ';
 		$html .= '<span class="input-text-wrap">';
 		$html .= $field;
