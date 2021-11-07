@@ -1265,6 +1265,19 @@ class Sensei_Main {
 
 			if ( ! empty( $post_type ) ) {
 				$classes[] = $post_type;
+
+				if ( 'lesson' === $post_type ) {
+					$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+					$classes[] = 'course-id-' . $course_id;
+				}
+
+				if ( 'quiz' === $post_type ) {
+					$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+					$classes[] = 'lesson-id-' . $lesson_id;
+
+					$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+					$classes[] = 'course-id-' . $course_id;
+				}
 			}
 
 			// Add class to Course Completed page.
