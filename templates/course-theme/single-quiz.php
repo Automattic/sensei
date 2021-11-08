@@ -17,7 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( have_posts() ) {
 	the_post();
 }
+?>
 
+<!-- wp:html -->
+<?php
 /**
  * Hook inside the single quiz post above the content
  *
@@ -135,3 +138,5 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
  * @since 1.9.0
  */
 do_action( 'sensei_single_quiz_content_inside_after', get_the_ID() );
+?>
+<!-- /wp:html -->
