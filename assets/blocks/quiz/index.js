@@ -9,6 +9,7 @@ import {
 } from './answer-feedback-block';
 import questionDescriptionBlock from './question-description-block';
 import questionAnswersBlock from './question-answers-block';
+import questionAnswerChoiceBlock from './answer-blocks/multiple-block-option';
 import questionBlock from './question-block';
 import categoryQuestionBlock from './category-question-block';
 import quizBlock from './quiz-block';
@@ -22,6 +23,7 @@ const blocks = [
 	answerFeedbackCorrectBlock,
 	answerFeedbackIncorrectBlock,
 	questionAnswersBlock,
+	questionAnswerChoiceBlock,
 ];
 
 registerSenseiBlocks( blocks );

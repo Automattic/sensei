@@ -17,8 +17,9 @@ import { QuestionContext } from '../question-block/question-context';
 /**
  * Question Description control.
  *
+ * @param {Object} props
  */
-const QuestionAnswers = () => {
+const QuestionAnswers = ( props ) => {
 	const {
 		answer,
 		setAttributes,
@@ -38,6 +39,7 @@ const QuestionAnswers = () => {
 							} )
 						}
 						hasSelected={ hasSelected }
+						blockProps={ props }
 					/>
 					{ canHaveFeedback && hasSelected && (
 						<AnswerFeedbackToggle />

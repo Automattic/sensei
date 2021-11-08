@@ -103,6 +103,8 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			);
 		}
 
+		// TODO Update to new question innerblocks structure (feedback, answer blocks).
+
 		$question_block = [
 			'blockName'    => 'sensei-lms/quiz-question',
 			'innerContent' => [ $description ],

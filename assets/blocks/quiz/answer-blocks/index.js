@@ -10,7 +10,7 @@ import { applyFilters } from '@wordpress/hooks';
 import FileUploadAnswer from './file-upload';
 import GapFillAnswer from './gap-fill';
 import MultiLineAnswer from './multi-line';
-import MultipleChoiceAnswer from './multiple-choice';
+import MultipleChoiceAnswer from './multiple-block';
 import SingleLineAnswer from './single-line';
 import TrueFalseAnswer from './true-false';
 import {

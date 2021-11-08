@@ -7,6 +7,11 @@ $block: '.sensei-lms-question-block';
 
 .sensei-lms-question-block {
 
+	.sensei-lms-question-description-block .block-editor-inner-blocks {
+		margin-top: 28px;
+		margin-bottom: 28px;
+	}
+
 	.editor-styles-wrapper .wp-block &__title, .editor-styles-wrapper .wp-block &__index {
 		font-size: 24px;
 		margin-top: 0;
@@ -159,6 +164,15 @@ $block: '.sensei-lms-question-block';
 			flex: 1;
 		}
 
+		.block-editor-inner-blocks {
+			margin: 0;
+		}
+
+		.editor-styles-wrapper .wp-block & * {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
 	}
 
 	&__answer--gap-fill {
@@ -253,11 +267,6 @@ $block: '.sensei-lms-question-block';
 		}
 	}
 
-	.block-editor-inner-blocks {
-		margin-top: 28px;
-		margin-bottom: 28px;
-	}
-
 	&__answer-feedback-toggle {
 		font-size: $default-font-size;
 		font-family: $default-font;
@@ -296,6 +305,11 @@ $block: '.sensei-lms-question-block';
 			display: none;
 		}
 	}
+}
+
+.wp-block[data-type="sensei-lms/quiz-question-answer-choice"] {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 .sensei-lms-question {
