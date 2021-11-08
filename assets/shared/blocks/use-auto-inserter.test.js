@@ -26,7 +26,7 @@ describe( 'useAutoInserter', () => {
 		useAutoInserter(
 			{
 				name: 'sensei-lms/course-outline-lesson',
-				isEmptyBlock: ( attributes ) => ! attributes.title,
+				isEmptyBlock: ( { attributes } ) => ! attributes.title,
 			},
 			props
 		);

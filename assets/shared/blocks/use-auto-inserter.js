@@ -51,7 +51,7 @@ export const useAutoInserter = (
 	] );
 
 	const lastBlock = blocks.length && blocks[ blocks.length - 1 ];
-	const hasEmptyLastBlock = lastBlock && isEmptyBlock( lastBlock.attributes );
+	const hasEmptyLastBlock = lastBlock && isEmptyBlock( lastBlock );
 
 	useEffect( () => {
 		if ( ! hasEmptyLastBlock ) {

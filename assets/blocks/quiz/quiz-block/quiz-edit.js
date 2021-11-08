@@ -37,7 +37,7 @@ const QuizEdit = ( props ) => {
 		{
 			name: questionBlock.name,
 			selectFirstBlock: ! props.attributes.isPostTemplate,
-			isEmptyBlock: isQuestionEmpty,
+			isEmptyBlock: ( { attributes } ) => isQuestionEmpty( attributes ),
 		},
 		props
 	);

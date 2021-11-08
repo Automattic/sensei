@@ -72,7 +72,7 @@ export const ModuleEdit = ( props ) => {
 		outlineClassName: '',
 	};
 
-	const isEmptyBlock = ( attributes ) => ! attributes.title;
+	const isEmptyBlock = ( { attributes } ) => ! attributes.title;
 
 	useAutoInserter(
 		{ name: 'sensei-lms/course-outline-lesson', isEmptyBlock },
