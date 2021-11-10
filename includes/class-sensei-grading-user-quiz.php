@@ -229,10 +229,10 @@ class Sensei_Grading_User_Quiz {
 				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id );
 
 				if( null !== $possibly_new_args && 0 < count( $possibly_new_args ) ) {
-					$type_name           = $possibly_new_args['type_name'];
-					$right_answer        = $possibly_new_args['right_answer'];
-					$user_answer_content = $possibly_new_args['user_answer_content'];
-					$grade_type          = $possibly_new_args['grade_type'];
+					$type_name           = $possibly_new_args['type_name'] ?? $type_name;
+					$right_answer        = $possibly_new_args['right_answer'] ?? $right_answer;
+					$user_answer_content = $possibly_new_args['user_answer_content'] ?? $user_answer_content;
+					$grade_type          = $possibly_new_args['grade_type'] ?? $grade_type;
 				}
 
 				$quiz_grade_type = get_post_meta( $this->quiz_id, '_quiz_grade_type', true );
