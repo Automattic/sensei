@@ -218,7 +218,7 @@ class Sensei_Grading_User_Quiz {
 				/**
 				 * Other question type filters.
 				 *
-				 * adds a filter that other question types can hook into before display on the admin grading page.
+				 * Adds a filter that other question types can hook into before display on the admin grading page.
 				 *
 				 * @since
 				 *
