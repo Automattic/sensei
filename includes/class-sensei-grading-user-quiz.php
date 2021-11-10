@@ -226,7 +226,7 @@ class Sensei_Grading_User_Quiz {
 				 * @param string $type
 				 * @param int $question_id
 				 */
-				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id );
+				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id, $right_answer, $user_answer_content );
 
 				if ( null !== $possibly_new_args && 0 < count( $possibly_new_args ) ) {
 					$type_name           = $possibly_new_args['type_name'] ?? $type_name;
