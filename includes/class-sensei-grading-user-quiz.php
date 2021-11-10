@@ -215,6 +215,26 @@ class Sensei_Grading_User_Quiz {
 						break;
 				}
 
+				/**
+				 * Other question type filters.
+				 *
+				 * adds a filter that other question types can hook into before display on the admin grading page.
+				 *
+				 * @since
+				 *
+				 * @param null
+				 * @param string $type
+				 * @param int $question_id
+				 */
+				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id );
+
+				if( null !== $possibly_new_args && 0 < count( $possibly_new_args ) ) {
+					$type_name           = $possibly_new_args['type_name'];
+					$right_answer        = $possibly_new_args['right_answer'];
+					$user_answer_content = $possibly_new_args['user_answer_content'];
+					$grade_type          = $possibly_new_args['grade_type'];
+				}
+
 				$quiz_grade_type = get_post_meta( $this->quiz_id, '_quiz_grade_type', true );
 
 				// Don't auto-grade if "Grade quiz automatically" isn't selected in Quiz Settings,
