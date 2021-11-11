@@ -263,7 +263,7 @@ class Sensei_Teacher {
 			<?php foreach ( $users as $user_data ) { ?>
 
 					<?php
-						$user_id = $user_data->id;
+						$user_id           = $user_data->id;
 						$user_display_name = $user_data->display_name;
 					?>
 					<option <?php selected( $current_author, $user_id, true ); ?> value="<?php echo esc_attr( $user_id ); ?>" >
@@ -329,7 +329,7 @@ class Sensei_Teacher {
 			[
 				'blog_id' => $GLOBALS['blog_id'],
 				'include' => $ids,
-				'fields' => $fields,
+				'fields'  => $fields,
 			]
 		);
 	}
