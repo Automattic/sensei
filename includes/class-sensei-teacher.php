@@ -254,19 +254,20 @@ class Sensei_Teacher {
 		$current_author = $post->post_author;
 
 		// get the users authorised to author courses
-		$users = $this->get_teachers_and_authors();
+		$users = $this->get_teachers_and_authors_with_fields( [ 'id', 'display_name' ] );
 
 		?>
 		<input type="hidden" name="post_author_override" value="<?php echo intval( $current_author ); ?>" />
 		<select name="sensei-course-teacher-author" class="sensei course teacher">
 
-			<?php foreach ( $users as $user_id ) { ?>
+			<?php foreach ( $users as $user_data ) { ?>
 
 					<?php
-						$user = get_user_by( 'id', $user_id );
+						$user_id = $user_data->id;
+						$user_display_name = $user_data->display_name;
 					?>
 					<option <?php selected( $current_author, $user_id, true ); ?> value="<?php echo esc_attr( $user_id ); ?>" >
-						<?php echo esc_html( $user->display_name ); ?>
+						<?php echo esc_html( $user_display_name ); ?>
 					</option>
 
 				<?php
@@ -309,6 +310,28 @@ class Sensei_Teacher {
 
 		return array_unique( array_merge( $teachers, $authors ) );
 
+	}
+
+	/**
+	 * Get list of users who can author courses, lessons, and quizzes.
+	 * Optionally specify the fields to return from the DB.
+	 *
+	 * @since 3.13.4
+	 * @access private
+	 *
+	 * @param  string|array $fields Fields to return from DB. Defaults to 'id'.
+	 * @return array
+	 */
+	private function get_teachers_and_authors_with_fields( $fields = 'id' ) {
+		$ids = $this->get_teachers_and_authors();
+
+		return get_users(
+			[
+				'blog_id' => $GLOBALS['blog_id'],
+				'include' => $ids,
+				'fields' => $fields,
+			]
+		);
 	}
 
 	/**
