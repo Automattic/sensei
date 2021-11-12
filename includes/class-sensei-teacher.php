@@ -319,7 +319,7 @@ class Sensei_Teacher {
 	 * @since 3.13.4
 	 * @access private
 	 *
-	 * @param  string|array $fields Fields to return from DB. Defaults to 'id'.
+	 * @param  string|array $fields Fields to return from DB. Defaults to 'ID'.
 	 * @return array
 	 */
 	private function get_teachers_and_authors_with_fields( $fields = 'ID' ) {
