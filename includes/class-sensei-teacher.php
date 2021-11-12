@@ -254,7 +254,7 @@ class Sensei_Teacher {
 		$current_author = $post->post_author;
 
 		// get the users authorised to author courses
-		$users = $this->get_teachers_and_authors_with_fields( [ 'id', 'display_name' ] );
+		$users = $this->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] );
 
 		?>
 		<input type="hidden" name="post_author_override" value="<?php echo intval( $current_author ); ?>" />
@@ -263,7 +263,7 @@ class Sensei_Teacher {
 			<?php foreach ( $users as $user_data ) { ?>
 
 					<?php
-						$user_id           = $user_data->id;
+						$user_id           = $user_data->ID;
 						$user_display_name = $user_data->display_name;
 					?>
 					<option <?php selected( $current_author, $user_id, true ); ?> value="<?php echo esc_attr( $user_id ); ?>" >
@@ -322,7 +322,7 @@ class Sensei_Teacher {
 	 * @param  string|array $fields Fields to return from DB. Defaults to 'id'.
 	 * @return array
 	 */
-	private function get_teachers_and_authors_with_fields( $fields = 'id' ) {
+	private function get_teachers_and_authors_with_fields( $fields = 'ID' ) {
 		$ids = $this->get_teachers_and_authors();
 
 		return get_users(
