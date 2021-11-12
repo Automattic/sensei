@@ -286,7 +286,7 @@ class Sensei_Teacher {
 	 * Get a list of users who can author courses, lessons and quizes.
 	 *
 	 * @since 1.8.0
-	 * @access public
+	 * @access private
 	 * @parameters
 	 * @return array $users user id array
 	 */
