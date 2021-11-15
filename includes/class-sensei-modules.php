@@ -93,7 +93,7 @@ class Sensei_Core_Modules {
 
 		// store new modules created on the course edit screen
 		add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules', 'add_new_module_term' ) );
-		add_action( 'wp_ajax_sensei_get_course_modules', array( $this, 'ajax_get_course_modules' ) );
+		add_action( 'wp_ajax_sensei_get_lesson_module_metabox', array( $this, 'handle_get_lesson_module_metabox' ) );
 
 		// for non admin users, only show taxonomies that belong to them
 		add_filter( 'get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
@@ -137,27 +137,29 @@ class Sensei_Core_Modules {
 	 * Build content for custom module meta box
 	 *
 	 * @since 1.8.0
-	 * @param  object $post Current post object
+	 * @param  WP_Post $post Current post object.
 	 * @return void
 	 */
 	public function lesson_module_metabox( $post ) {
-		// Get lesson course
-		$lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id = (int) get_post_meta( $post->ID, '_lesson_course', true );
 
-		$html = '<div id="lesson-module-metabox-select">';
+		$this->output_lesson_module_metabox( $post, $course_id );
+	}
 
-		// Only show module selection if this lesson is part of a course
-		if ( $lesson_course && $lesson_course > 0 ) {
+	/**
+	 * Outputs the lesson module meta box HTML.
+	 *
+	 * @since 3.14.0
+	 *
+	 * @param WP_Post $lesson_post The lesson post object.
+	 * @param int     $course_id   The course id.
+	 */
+	private function output_lesson_module_metabox( WP_Post $lesson_post, int $course_id ) {
+		// Get current lesson module.
+		$module_id = $course_id ? $this->get_lesson_module_if_exists( $lesson_post ) : null;
 
-			// Get existing lesson module
-			$lesson_module = $this->get_lesson_module_if_exists( $post );
-
-			$html .= $this->render_module_select_for_course( $lesson_course, $lesson_module );
-
-		} else {
-			// translators: The placeholders are opening and closing <em> tags.
-			$html .= '<p>' . sprintf( __( 'No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'sensei-lms' ), '<em>', '</em>' ) . '</p>';
-		}
+		$html  = '<div id="lesson-module-metabox-select">';
+		$html .= $this->render_lesson_module_select_for_course( $course_id, $module_id );
 		$html .= '</div>';
 
 		echo wp_kses(
@@ -205,34 +207,57 @@ class Sensei_Core_Modules {
 		return $lesson_module;
 	}
 
-	private function render_module_select_for_course( $lesson_course, $lesson_module = 0 ) {
-		// Get the available modules for this lesson's course
-		$modules = $this->get_course_modules( $lesson_course );
+	/**
+	 * Renders the lesson module select input.
+	 *
+	 * @param int|null $course_id
+	 * @param int|null $current_module_id
+	 *
+	 * @return string
+	 */
+	private function render_lesson_module_select_for_course( int $course_id = null, int $current_module_id = null ) {
+		// Get the available modules for this lesson's course.
+		$modules = $course_id ? $this->get_course_modules( $course_id ) : [];
+
+		// Build the HTML.
+		$input_name = 'lesson_module';
 
 		$html  = '';
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_lesson_' . $this->taxonomy . '_nonce' ) . '" id="' . esc_attr( 'woo_lesson_' . $this->taxonomy . '_nonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename( $this->file ) ) ) . '" />';
 
-		// Build the HTML to output
-		if ( is_array( $modules ) && count( $modules ) > 0 ) {
-			$html .= '<select id="lesson-module-options" name="lesson_module" class="widefat" style="width: 100%">' . "\n";
+		if ( $modules ) {
+			$html .= '<select id="lesson-module-options" name="' . esc_attr( $input_name ) . '" class="widefat" style="width: 100%">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
 			foreach ( $modules as $module ) {
-				$html .= '<option value="' . esc_attr( absint( $module->term_id ) ) . '"' . selected( $module->term_id, $lesson_module, false ) . '>' . esc_html( $module->name ) . '</option>' . "\n";
+				$html .= '<option value="' . esc_attr( absint( $module->term_id ) ) . '"' . selected( $module->term_id, $current_module_id, false ) . '>' . esc_html( $module->name ) . '</option>' . "\n";
 			}
 			$html .= '</select>' . "\n";
 		} else {
-			$course_url = admin_url( 'post.php?post=' . urlencode( $lesson_course ) . '&action=edit' );
+			$html .= '<input type="hidden" name="' . esc_attr( $input_name ) . '" value="">';
 
-			/*
-			 * translators: The placeholders are as follows:
-			 *
-			 * %1$s - <em>
-			 * %2$s - </em>
-			 * %3$s - Opening <a> tag to link to the Course URL.
-			 * %4$s - </a>
-			 */
-			$html .= '<p>' . wp_kses_post( sprintf( __( 'No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'sensei-lms' ), '<em>', '</em>', '<a href="' . esc_url( $course_url ) . '">', '</a>' ) ) . '</p>';
+			if ( $course_id ) {
+				$course_url = admin_url( 'post.php?post=' . $course_id . '&action=edit' );
+
+				/*
+				 * translators: The placeholders are as follows:
+				 *
+				 * %1$s - <em>
+				 * %2$s - </em>
+				 * %3$s - Opening <a> tag to link to the Course URL.
+				 * %4$s - </a>
+				 */
+				$html .= '<p>' . wp_kses_post( sprintf( __( 'No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'sensei-lms' ), '<em>', '</em>', '<a href="' . esc_url( $course_url ) . '">', '</a>' ) ) . '</p>';
+			} else {
+				/*
+				 * translators: The placeholders are as follows:
+				 *
+				 * %1$s - <em>
+				 * %2$s - </em>
+				 */
+				$html .= '<p>' . sprintf( __( 'No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'sensei-lms' ), '<em>', '</em>' ) . '</p>';
+			}
 		}
+
 		return $html;
 	}
 
@@ -1563,8 +1588,14 @@ class Sensei_Core_Modules {
 			array( 'course_page_module-order' )
 		);
 
-		// Only load module scripts when adding, editing or ordering modules or editing course.
-		$screen_related = $screen && ( 'module' === $screen->taxonomy || 'course' === $screen->id );
+		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
+		$screen_related =
+			$screen &&
+			(
+				'module' === $screen->taxonomy
+				|| 'course' === $screen->id
+				|| 'lesson' === $screen->id
+			);
 
 		if ( ! ( in_array( $hook, $script_on_pages_white_list ) || $screen_related ) ) {
 			return;
@@ -1580,9 +1611,9 @@ class Sensei_Core_Modules {
 
 		// localized module data
 		$localize_modulesAdmin = array(
-			'search_courses_nonce'  => wp_create_nonce( 'search-courses' ),
-			'getCourseModulesNonce' => wp_create_nonce( 'get-course-modules' ),
-			'selectPlaceholder'     => __( 'Search for courses', 'sensei-lms' ),
+			'search_courses_nonce'        => wp_create_nonce( 'search-courses' ),
+			'getLessonModuleMetaBoxNonce' => wp_create_nonce( 'get_lesson_module_metabox_nonce' ),
+			'selectPlaceholder'           => __( 'Search for courses', 'sensei-lms' ),
 		);
 
 		wp_localize_script( $this->taxonomy . '-admin', 'modulesAdmin', $localize_modulesAdmin );
@@ -2099,20 +2130,20 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Get course modules
+	 * Handles the lesson module meta box ajax request by outputting the box content HTML.
 	 */
-	public function ajax_get_course_modules() {
-		// Security check
-		check_ajax_referer( 'get-course-modules', 'security' );
+	public function handle_get_lesson_module_metabox() {
+		// Security check.
+		check_ajax_referer( 'get_lesson_module_metabox_nonce', 'security' );
 
-		$course_id = isset( $_POST['course_id'] ) ? absint( $_POST['course_id'] ) : null;
-		if ( null === $course_id ) {
-			wp_send_json_error( array( 'error' => 'invalid course id' ) );
+		if ( isset( $_GET['lesson_id'] ) && isset( $_GET['course_id'] ) ) {
+			$this->output_lesson_module_metabox(
+				get_post( (int) $_GET['lesson_id'] ),
+				(int) $_GET['course_id']
+			);
 		}
 
-		$html_content = $this->render_module_select_for_course( $course_id );
-
-		wp_send_json_success( array( 'content' => $html_content ) );
+		wp_die(); // This is required to terminate immediately and return a proper response.
 	}
 
 	/**
