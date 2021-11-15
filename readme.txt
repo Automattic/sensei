@@ -42,7 +42,7 @@ Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocom
 
 [Learn more about Sensei LMS Certificates](https://wordpress.org/plugins/sensei-certificates/).
 
-**Media & Attachments:** Upload media and files like PDFs to a separate uploads area of your course.
+**Media & Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
 
 [Learn more about Sensei LMS Media Uploads](https://wordpress.org/plugins/sensei-media-attachments/).
 
