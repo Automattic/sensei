@@ -33,7 +33,7 @@ Choose from many question types and quiz settings, including multiple-choice, fi
 = Sell Your Courses =
 Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) lets you sell your courses using the most popular eCommerce platform on the web – WooCommerce.
 
-= Other Extensions=
+= Other Extensions =
 **Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
 
 [Learn more about Sensei LMS Content Drip](https://woocommerce.com/products/sensei-content-drip/).
