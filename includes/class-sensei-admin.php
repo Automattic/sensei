@@ -1326,18 +1326,22 @@ class Sensei_Admin {
 	}
 
 	public function save_course_order( $order_string = '' ) {
+		global $wpdb;
 		$order = array();
 
 		$i = 1;
 		foreach ( explode( ',', $order_string ) as $course_id ) {
 			if ( $course_id ) {
-				$order[]     = $course_id;
-				$update_args = array(
-					'ID'         => absint( $course_id ),
-					'menu_order' => $i,
-				);
+				$order[] = $course_id;
 
-				wp_update_post( $update_args );
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+				$wpdb->query(
+					$wpdb->prepare(
+						"UPDATE $wpdb->posts SET menu_order = %d WHERE ID = %d",
+						$i,
+						absint( $course_id )
+					)
+				);
 
 				++$i;
 			}
