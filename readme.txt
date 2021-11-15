@@ -44,7 +44,7 @@ Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocom
 
 **Media & Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
 
-[Learn more about Sensei LMS Media Uploads](https://wordpress.org/plugins/sensei-media-attachments/).
+[Learn more about Sensei LMS Media Attachments](https://wordpress.org/plugins/sensei-media-attachments/).
 
 **Post To Course Creator:** Create courses quickly by converting existing blog posts into course lessons in just a few clicks.
 
