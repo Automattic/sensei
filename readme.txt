@@ -1,4 +1,4 @@
-=== Sensei LMS - Online Courses, Quizzes, & Learning ==
+=== Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, alexsanford1, donnapep, jakeom, gikaragia, renathoc, yscik, dwainm, panosktn, jeffikus, burtrw
 Tags: elearning, lms, learning management system, teach, courses, woocommerce
 Requires at least: 5.6
