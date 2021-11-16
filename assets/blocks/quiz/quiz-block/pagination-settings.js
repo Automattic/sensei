@@ -38,7 +38,7 @@ const PaginationSettings = ( { settings, onChange } ) => {
 	return (
 		<>
 			<PanelBody
-				title={ __( 'Quiz front end', 'sensei-lms' ) }
+				title={ __( 'Quiz styling', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
 				<p>
@@ -59,7 +59,7 @@ const PaginationSettings = ( { settings, onChange } ) => {
 								value: SINGLE,
 							},
 							{
-								label: __( 'Multi page', 'sensei-lms' ),
+								label: __( 'Multi-Page', 'sensei-lms' ),
 								value: MULTI,
 							},
 						] }
@@ -82,7 +82,7 @@ const PaginationSettings = ( { settings, onChange } ) => {
 						min={ 1 }
 						step={ 1 }
 						hideLabelFromVision
-						suffix={ __( 'QNS', 'sensei-lms' ) }
+						suffix={ __( 'Questions', 'sensei-lms' ) }
 						value={ paginationNumber }
 						onChange={ ( value ) =>
 							onChange( { ...settings, paginationNumber: value } )
