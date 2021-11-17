@@ -145,7 +145,7 @@ class Sensei_Grading_User_Quiz {
 				}
 
 				$question_grade_total = Sensei()->question->get_question_grade( $question_id );
-				$quiz_grade_total     += $question_grade_total;
+				$quiz_grade_total    += $question_grade_total;
 
 				$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 				$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
