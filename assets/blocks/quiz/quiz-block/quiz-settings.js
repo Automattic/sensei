@@ -1,7 +1,9 @@
+/* eslint-disable camelcase */
+
 /**
  * WordPress dependencies
  */
-import { InspectorControls } from '@wordpress/block-editor';
+import { BlockControls, InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	PanelRow,
@@ -17,7 +19,10 @@ import { __ } from '@wordpress/i18n';
  */
 import NumberControl from '../../editor-components/number-control';
 import { isQuestionEmpty } from '../data';
-import PaginationSettings from './pagination-settings';
+import {
+	PaginationSettings,
+	PaginationToolbarSettings,
+} from './pagination-settings';
 
 /**
  * Quiz settings.
@@ -75,86 +80,103 @@ const QuizSettings = ( {
 	}, [ options, questionCount, setAttributes, showQuestions ] );
 
 	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Quiz Settings', 'sensei-lms' ) }
-				initialOpen={ true }
-			>
-				<PanelRow>
-					<ToggleControl
-						checked={ passRequired }
-						onChange={ createChangeHandler( 'passRequired' ) }
-						label={ __( 'Pass Required', 'sensei-lms' ) }
-					/>
-				</PanelRow>
-				{ passRequired && (
+		<>
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Quiz Settings', 'sensei-lms' ) }
+					initialOpen={ true }
+				>
 					<PanelRow>
-						<RangeControl
-							label={ 'Passing Grade (%)' }
-							value={ quizPassmark }
-							onChange={ createChangeHandler( 'quizPassmark' ) }
-							min={ 0 }
-							max={ 100 }
-							initialPosition={ 100 }
+						<ToggleControl
+							checked={ passRequired }
+							onChange={ createChangeHandler( 'passRequired' ) }
+							label={ __( 'Pass Required', 'sensei-lms' ) }
 						/>
 					</PanelRow>
+					{ passRequired && (
+						<PanelRow>
+							<RangeControl
+								label={ 'Passing Grade (%)' }
+								value={ quizPassmark }
+								onChange={ createChangeHandler(
+									'quizPassmark'
+								) }
+								min={ 0 }
+								max={ 100 }
+								initialPosition={ 100 }
+							/>
+						</PanelRow>
+					) }
+					<PanelRow>
+						<ToggleControl
+							checked={ autoGrade }
+							onChange={ createChangeHandler( 'autoGrade' ) }
+							label={ __( 'Auto Grade', 'sensei-lms' ) }
+							help={ __(
+								'Automatically grade Multiple Choice, True/False and Gap Fill questions that have a non-zero point value.',
+								'sensei-lms'
+							) }
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							checked={ allowRetakes }
+							onChange={ createChangeHandler( 'allowRetakes' ) }
+							label={ __( 'Allow Retakes', 'sensei-lms' ) }
+						/>
+					</PanelRow>
+					<PanelRow>
+						<ToggleControl
+							checked={ randomQuestionOrder }
+							onChange={ createChangeHandler(
+								'randomQuestionOrder'
+							) }
+							label={ __(
+								'Random Question Order',
+								'sensei-lms'
+							) }
+						/>
+					</PanelRow>
+					<PanelRow>
+						<NumberControl
+							id="sensei-quiz-settings-show-questions"
+							label={ __( 'Number of Questions', 'sensei-lms' ) }
+							help={ __(
+								'Display a random selection of questions.',
+								'sensei-lms'
+							) }
+							allowReset
+							resetLabel={ __( 'All', 'sensei-lms' ) }
+							min={ 0 }
+							max={ questionCount }
+							step={ 1 }
+							value={ showQuestions }
+							placeholder={ __( 'All', 'sensei-lms' ) }
+							onChange={ createChangeHandler( 'showQuestions' ) }
+						/>
+					</PanelRow>
+				</PanelBody>
+				{ window.sensei_single_lesson_blocks
+					?.quiz_pagination_enabled && (
+					<PaginationSettings
+						settings={ paginationSettings }
+						onChange={ ( newSettings ) =>
+							setAttributes( { paginationSettings: newSettings } )
+						}
+					/>
 				) }
-				<PanelRow>
-					<ToggleControl
-						checked={ autoGrade }
-						onChange={ createChangeHandler( 'autoGrade' ) }
-						label={ __( 'Auto Grade', 'sensei-lms' ) }
-						help={ __(
-							'Automatically grade Multiple Choice, True/False and Gap Fill questions that have a non-zero point value.',
-							'sensei-lms'
-						) }
-					/>
-				</PanelRow>
-				<PanelRow>
-					<ToggleControl
-						checked={ allowRetakes }
-						onChange={ createChangeHandler( 'allowRetakes' ) }
-						label={ __( 'Allow Retakes', 'sensei-lms' ) }
-					/>
-				</PanelRow>
-				<PanelRow>
-					<ToggleControl
-						checked={ randomQuestionOrder }
-						onChange={ createChangeHandler(
-							'randomQuestionOrder'
-						) }
-						label={ __( 'Random Question Order', 'sensei-lms' ) }
-					/>
-				</PanelRow>
-				<PanelRow>
-					<NumberControl
-						id="sensei-quiz-settings-show-questions"
-						label={ __( 'Number of Questions', 'sensei-lms' ) }
-						help={ __(
-							'Display a random selection of questions.',
-							'sensei-lms'
-						) }
-						allowReset
-						resetLabel={ __( 'All', 'sensei-lms' ) }
-						min={ 0 }
-						max={ questionCount }
-						step={ 1 }
-						value={ showQuestions }
-						placeholder={ __( 'All', 'sensei-lms' ) }
-						onChange={ createChangeHandler( 'showQuestions' ) }
-					/>
-				</PanelRow>
-			</PanelBody>
-			{ /* eslint-disable-next-line camelcase */ }
+			</InspectorControls>
 			{ window.sensei_single_lesson_blocks?.quiz_pagination_enabled && (
-				<PaginationSettings
-					settings={ paginationSettings }
-					onChange={ ( newSettings ) =>
-						setAttributes( { paginationSettings: newSettings } )
-					}
-				/>
+				<BlockControls>
+					<PaginationToolbarSettings
+						settings={ paginationSettings }
+						onChange={ ( newSettings ) =>
+							setAttributes( { paginationSettings: newSettings } )
+						}
+					/>
+				</BlockControls>
 			) }
-		</InspectorControls>
+		</>
 	);
 };
 
