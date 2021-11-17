@@ -1501,7 +1501,7 @@ class Sensei_Quiz {
 	public static function get_option( $lesson_id, $option, $default = null ) {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$option = get_post_meta( $quiz_id, '_' . $option, true );
+		$option  = get_post_meta( $quiz_id, '_' . $option, true );
 
 		if ( ! $option ) {
 			return $default;
