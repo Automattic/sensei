@@ -134,10 +134,10 @@ class Sensei_Grading_User_Quiz {
 
 				$type = Sensei()->question->get_question_type( $question_id );
 
-				$custom_feedback    = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
-				$custom_feedback    = $custom_feedback[ $question_id ] ?? "";
-				$correct_feedback   = Sensei_Quiz::get_correct_answer_feedback( $question_id );
-				$incorrect_feedback = Sensei_Quiz::get_incorrect_answer_feedback( $question_id );
+				$custom_feedback       = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
+				$custom_feedback       = $custom_feedback[ $question_id ] ?? '';
+				$correct_feedback      = Sensei_Quiz::get_correct_answer_feedback( $question_id );
+				$incorrect_feedback    = Sensei_Quiz::get_incorrect_answer_feedback( $question_id );
 				$question_answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
 
 				if ( ! $correct_feedback && ! $incorrect_feedback ) {

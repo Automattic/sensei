@@ -1151,7 +1151,7 @@ class Sensei_Quiz {
 	/**
 	 * Get a top-level inner block.
 	 *
-	 * @param int $question_id
+	 * @param int    $question_id
 	 * @param string $block_name
 	 *
 	 * @return array|null
