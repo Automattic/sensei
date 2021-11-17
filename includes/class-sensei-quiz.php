@@ -1533,11 +1533,17 @@ class Sensei_Quiz {
 	 *
 	 * @return mixed
 	 */
-	private static function get_option( $lesson_id, $option ) {
+	public static function get_option( $lesson_id, $option, $default = null ) {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		return get_post_meta( $quiz_id, '_' . $option, true );
+		$option = get_post_meta( $quiz_id, '_' . $option, true );
+
+		if ( ! $option ) {
+			return $default;
+		}
+
+		else return 'yes' === $option;
 
 	}
 

@@ -35,8 +35,32 @@
 		flex: 1;
 	}
 
+	&__points {
+		font-weight: bold;
+	}
+
 	&__content {
 		padding: 12px $horizontal-padding;
+	}
+
+	&__correct-answer {
+		.highlight {
+			background: var(--color);
+			padding: 5px;
+			border-radius: 2px;
+		}
+	}
+
+	&__correct-answer + &__answer-notes {
+		border-top: 1px solid  var(--color);
+		margin-top: 12px;
+		padding-top: 12px;
+	}
+
+	&__answer-notes {
+		.entry-content & > *:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	&__icon:after {

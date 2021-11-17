@@ -740,13 +740,14 @@ class Sensei_Question {
 	}
 
 	/**
-	 * This function can only be run withing the single quiz question loop
+	 * Answer feedback (including correctness, grade, right answer and feedback notes) for a question.
+	 *
+	 * @since 3.15.0
 	 *
 	 * @param $question_id
 	 */
-	public static function answer_feedback_notes( $question_id ) {
+	public static function the_answer_feedback( $question_id ) {
 
-		// IDS
 		$quiz_id   = get_the_ID();
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -756,7 +757,6 @@ class Sensei_Question {
 			return;
 		}
 
-		// Data to check before showing feedback
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
@@ -765,63 +765,91 @@ class Sensei_Question {
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
 
-		$failed_and_show_answers = ! $succeeded && ! $reset_quiz_allowed && ! Sensei_Quiz::is_disabled( $lesson_id, 'failed_show_answer_feedback' );
-
-		// Check if answers must be shown
-		$show_answers = $quiz_graded && ( $succeeded || $failed_and_show_answers || Sensei_Quiz::is_enabled( $lesson_id, 'failed_show_answer_feedback' ) );
-
-		// Show answers if allowed
-		if ( $show_answers ) {
-			$answer_notes   = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
-			$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
-			$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
-
-
-			if ( $answer_correct ) {
-				$answer_notes_classname = 'sensei-lms-question__answer-feedback--correct';
-				$answer_feedback_title = __('Correct', 'sensei-lms');
-			} else {
-				$answer_notes_classname = 'sensei-lms-question__answer-feedback--incorrect';
-				$answer_feedback_title = __('Incorrect', 'sensei-lms');
-			}
-
-			/**
-			 * Filter the answer feedback.
-			 *
-			 * @since 1.9.0
-			 * @hook sensei_question_answer_notes
-			 *
-			 * @param {bool|string} $answer_notes Answer notes.
-			 * @param {int}         $question_id  Question ID.
-			 * @param {int}         $lesson_id    Lesson ID.
-			 * @return {string} Answer notes.
-			 */
-			$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
-
-			$question_grade = Sensei()->question->get_question_grade( $question_id );
-
-			$points = Sensei()->view_helper->format_question_points( $answer_grade . '/' . $question_grade );
-
-			?>
-
-			<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( $answer_notes_classname ); ?>">
-				<div class="sensei-lms-question__answer-feedback__header">
-					<span class="sensei-lms-question__answer-feedback__icon"></span>
-					<span class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
-					<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $points ); ?></span>
-				</div>
-
-				<?php if( $answer_notes ) { ?>
-					<div class="sensei-lms-question__answer-feedback__content">
-						<?php echo wp_kses_post( $answer_notes ); ?>
-					</div>
-				<?php } ?>
-			</div>
-
-			<?php
-
+		if( ! $quiz_graded ) {
+			return;
 		}
 
+		$default = ! $reset_quiz_allowed;
+
+		// Explicit gradual feedback options.
+		$indicate_incorrect = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', $default );
+		$show_correct_answers = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
+		$show_feedback_notes  = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_answer_feedback', $default );
+
+		if ( ! $indicate_incorrect ) {
+			return;
+		}
+
+		$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+		$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
+
+		if ( $answer_correct ) {
+			$answer_notes_classname = 'sensei-lms-question__answer-feedback--correct';
+			$answer_feedback_title = __('Correct', 'sensei-lms');
+		} else {
+			$answer_notes_classname = 'sensei-lms-question__answer-feedback--incorrect';
+			$answer_feedback_title = __('Incorrect', 'sensei-lms');
+		}
+
+		$answer_notes = $show_feedback_notes ? Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() ) : null;
+
+		/**
+		 * Filter the answer feedback.
+		 *
+		 * @since 1.9.0
+		 * @hook sensei_question_answer_notes
+		 *
+		 * @param {bool|string} $answer_notes Answer notes.
+		 * @param {int}         $question_id  Question ID.
+		 * @param {int}         $lesson_id    Lesson ID.
+		 * @return {string} Answer notes.
+		 */
+		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
+
+		$question_grade = Sensei()->question->get_question_grade( $question_id );
+
+		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
+
+		$points = Sensei()->view_helper->format_question_points( $answer_grade . '/' . $question_grade );
+
+		?>
+
+		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( $answer_notes_classname ); ?>">
+			<div class="sensei-lms-question__answer-feedback__header">
+				<span class="sensei-lms-question__answer-feedback__icon"></span>
+				<span
+					class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+				<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $points ); ?></span>
+			</div>
+			<?php if ( $answer_notes || $correct_answer ) { ?>
+				<div class="sensei-lms-question__answer-feedback__content">
+					<?php if ( $correct_answer ) { ?>
+						<div class="sensei-lms-question__answer-feedback__correct-answer">
+							<?php echo __( 'Right Answer:', 'sensei-lms' ); ?>
+							<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
+						</div>
+					<?php } ?>
+					<?php if ( $answer_notes && wp_strip_all_tags( $answer_notes ) ) { ?>
+						<div class="sensei-lms-question__answer-feedback__answer-notes">
+							<?php echo wp_kses_post( $answer_notes ); ?>
+						</div>
+					<?php } ?>
+				</div>
+			<?php } ?>
+		</div>
+		<style> .question-title .grade { display: none; } </style>
+
+		<?php
+
+	}
+
+	/**
+	 * Answer feedback.
+	 *
+	 * @param $question_id
+	 */
+	public static function answer_feedback_notes( $question_id ) {
+		self::the_answer_feedback( $question_id );
 	}
 
 	/**
@@ -833,6 +861,8 @@ class Sensei_Question {
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
 	 * @since 1.9.0
+	 *
+	 * @deprecated 3.15.0 Moved into the_answer_feedback
 	 */
 	public static function the_answer_result_indication() {
 		global $sensei_question_loop;
@@ -875,6 +905,7 @@ class Sensei_Question {
 
 	/**
 	 * @since 1.9.5
+	 * @deprecated 3.15.0 Moved into the_answer_feedback
 	 *
 	 * @param integer $lesson_id
 	 * @param integer $question_id
