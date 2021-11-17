@@ -1529,21 +1529,21 @@ class Sensei_Quiz {
 	 * @since 3.14.0
 	 *
 	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
+	 * @param string $option    Option name.
+	 * @param mixed  $default   Default value to be returned if the option is unset.
 	 *
 	 * @return mixed
 	 */
 	public static function get_option( $lesson_id, $option, $default = null ) {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-
 		$option = get_post_meta( $quiz_id, '_' . $option, true );
 
 		if ( ! $option ) {
 			return $default;
+		} else {
+			return 'yes' === $option;
 		}
-
-		else return 'yes' === $option;
 
 	}
 

@@ -894,7 +894,7 @@ class Sensei_Question {
 				<div class="sensei-lms-question__answer-feedback__content">
 					<?php if ( $correct_answer ) { ?>
 						<div class="sensei-lms-question__answer-feedback__correct-answer">
-							<?php echo __( 'Right Answer:', 'sensei-lms' ); ?>
+							<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
 							<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
 						</div>
 					<?php } ?>
@@ -915,7 +915,7 @@ class Sensei_Question {
 	/**
 	 * Answer feedback.
 	 *
-	 * @param $question_id
+	 * @param int $question_id Question ID.
 	 */
 	public static function answer_feedback_notes( $question_id ) {
 		self::the_answer_feedback( $question_id );
