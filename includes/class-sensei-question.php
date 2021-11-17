@@ -742,7 +742,7 @@ class Sensei_Question {
 	/**
 	 * Answer feedback (including correctness, grade, right answer and feedback notes) for a question.
 	 *
-	 * @since 3.15.0
+	 * @since 3.14
 	 *
 	 * @param $question_id
 	 */
@@ -765,43 +765,77 @@ class Sensei_Question {
 		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
 
-		if( ! $quiz_graded ) {
+		if ( ! $quiz_graded ) {
 			return;
 		}
 
 		$default = ! $reset_quiz_allowed;
 
 		// Explicit gradual feedback options.
-		$indicate_incorrect = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', $default );
+		$indicate_incorrect   = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', $default );
 		$show_correct_answers = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
 		$show_feedback_notes  = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_answer_feedback', $default );
 
-		if ( ! $indicate_incorrect ) {
-			return;
-		}
+		/**
+		 * Allow dynamic overriding of whether to show question answers or not
+		 *
+		 * @hook  sensei_question_show_answers
+		 * @since 1.9.7
+		 *
+		 * @param {bool} $show_answers Whether to show the answer to the question.
+		 * @param {int}  $question_id  Question ID.
+		 * @param {int}  $quiz_id      Quiz ID.
+		 * @param {int}  $lesson_id    Lesson ID.
+		 * @param {int}  $user_id      User ID.
+		 *
+		 * @return {bool} Whether to show the answer to the question.
+		 */
+		$show_correct_answers = apply_filters( 'sensei_question_show_answers', $show_correct_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
 
 		$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 		$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
 
-		if ( $answer_correct ) {
-			$answer_notes_classname = 'sensei-lms-question__answer-feedback--correct';
-			$answer_feedback_title = __('Correct', 'sensei-lms');
-		} else {
-			$answer_notes_classname = 'sensei-lms-question__answer-feedback--incorrect';
-			$answer_feedback_title = __('Incorrect', 'sensei-lms');
+		$answer_notes_classname = "";
+		$answer_feedback_title  = "";
+
+		if ( $indicate_incorrect ) {
+			if ( $answer_correct ) {
+				$answer_notes_classname = 'sensei-lms-question__answer-feedback--correct';
+				$answer_feedback_title  = __( 'Correct', 'sensei-lms' );
+			} else {
+				$answer_notes_classname = 'sensei-lms-question__answer-feedback--incorrect';
+				$answer_feedback_title  = __( 'Incorrect', 'sensei-lms' );
+			}
 		}
+
+		/**
+		 * Filter the answer message CSS classes.
+		 *
+		 * @hook  sensei_question_answer_message_css_class
+		 * @since  1.9.0
+		 *
+		 * @param {string} $answer_notes_classname Space-separated CSS classes to apply to answer message.
+		 * @param {int}    $lesson_id              Lesson ID.
+		 * @param {int}    $question_id            Question ID.
+		 * @param {int}    $user_id                User ID.
+		 * @param {bool}   $answer_correct         Whether this is the correct answer.
+		 *
+		 * @return {string} Space-separated CSS classes to apply to answer message.
+		 */
+		$answer_notes_classname = apply_filters( 'sensei_question_answer_message_css_class', $answer_notes_classname, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
 
 		$answer_notes = $show_feedback_notes ? Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() ) : null;
 
 		/**
 		 * Filter the answer feedback.
 		 *
-		 * @since 1.9.0
-		 * @hook sensei_question_answer_notes
+		 * @since  1.9.0
+		 * @hook   sensei_question_answer_notes
 		 *
-		 * @param {bool|string} $answer_notes Answer notes.
-		 * @param {int}         $question_id  Question ID.
-		 * @param {int}         $lesson_id    Lesson ID.
+		 * @param  {bool|string} $answer_notes Answer notes.
+		 * @param  {int}         $question_id  Question ID.
+		 * @param  {int}         $lesson_id    Lesson ID.
+		 *
 		 * @return {string} Answer notes.
 		 */
 		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
@@ -810,17 +844,52 @@ class Sensei_Question {
 
 		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
 
-		$points = Sensei()->view_helper->format_question_points( $answer_grade . '/' . $question_grade );
+		$grade = Sensei()->view_helper->format_question_points( $answer_grade . '/' . $question_grade );
+
+		/**
+		 * Filter the learner grade displayed.
+		 *
+		 * @hook  sensei_question_answer_message_grade
+		 * @since 3.14
+		 *
+		 * @param {string} $grade          Formatted grade (eg "0/3 points")
+		 * @param {int}    $lesson_id      Lesson ID.
+		 * @param {int}    $question_id    Question ID.
+		 * @param {int}    $user_id        User ID.
+		 * @param {bool}   $answer_correct Whether this is the correct answer.
+		 *
+		 * @return {string} Answer message.
+		 */
+		$grade = apply_filters( 'sensei_question_answer_message_grade', $grade, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
+
+		/**
+		 * Filter the correct answer.
+		 *
+		 * @hook  sensei_question_answer_message_correct_answer
+		 * @since 1.9.0
+		 *
+		 * @param {string} $answer_message Answer message.
+		 * @param {int}    $lesson_id      Lesson ID.
+		 * @param {int}    $question_id    Question ID.
+		 * @param {int}    $user_id        User ID.
+		 * @param {bool}   $answer_correct Whether this is the correct answer.
+		 *
+		 * @return {string} Answer message.
+		 */
+		$correct_answer = apply_filters( 'sensei_question_answer_message_correct_answer', $correct_answer, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
 
 		?>
-
 		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( $answer_notes_classname ); ?>">
-			<div class="sensei-lms-question__answer-feedback__header">
-				<span class="sensei-lms-question__answer-feedback__icon"></span>
-				<span
-					class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
-				<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $points ); ?></span>
-			</div>
+			<?php if ( $indicate_incorrect ) { ?>
+				<div class="sensei-lms-question__answer-feedback__header">
+					<span class="sensei-lms-question__answer-feedback__icon"></span>
+					<span
+						class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+					<?php if ( $grade ) { ?>
+						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
+					<?php } ?>
+				</div>
+			<?php } ?>
 			<?php if ( $answer_notes || $correct_answer ) { ?>
 				<div class="sensei-lms-question__answer-feedback__content">
 					<?php if ( $correct_answer ) { ?>
@@ -837,10 +906,10 @@ class Sensei_Question {
 				</div>
 			<?php } ?>
 		</div>
-		<style> .question-title .grade { display: none; } </style>
-
+		<?php if ( $grade ) { ?>
+			<style> .question-title .grade { display: none; } </style>
+		<?php } ?>
 		<?php
-
 	}
 
 	/**
@@ -862,7 +931,7 @@ class Sensei_Question {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @deprecated 3.15.0 Moved into the_answer_feedback
+	 * @deprecated 3.14 Moved into the_answer_feedback
 	 */
 	public static function the_answer_result_indication() {
 		global $sensei_question_loop;
@@ -894,7 +963,7 @@ class Sensei_Question {
 			$show_answers = false;
 		}
 
-		/** This filter is documented in self::answer_feedback_notes */
+		/** This filter is documented in self::the_answer_feedback */
 		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_item->ID, $quiz_id, $lesson_id, get_current_user_id() );
 
 		if ( $show_answers ) {
@@ -905,7 +974,7 @@ class Sensei_Question {
 
 	/**
 	 * @since 1.9.5
-	 * @deprecated 3.15.0 Moved into the_answer_feedback
+	 * @deprecated 3.14 Moved into the_answer_feedback
 	 *
 	 * @param integer $lesson_id
 	 * @param integer $question_id
@@ -943,24 +1012,14 @@ class Sensei_Question {
 			$answer_message_class .= ' has_notes';
 		}
 
-		/**
-		 * Filter the answer message CSS classes.
-		 *
-		 * @hook sensei_question_answer_message_css_class
-		 *
-		 * @param {string} $answer_message_class Space-separated CSS classes to apply to answer message.
-		 * @param {int}    $lesson_id            Lesson ID.
-		 * @param {int}    $question_id          Question ID.
-		 * @param {int}    $user_id              User ID.
-		 * @param {bool}   $user_correct         Whether this is the correct answer.
-		 * @return {string} Space-separated CSS classes to apply to answer message.
-		 */
+		/** This filter is documented in self::the_answer_feedback */
 		$final_css_classes = apply_filters( 'sensei_question_answer_message_css_class', $answer_message_class, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 
 		/**
 		 * Filter the answer message.
 		 *
 		 * @hook sensei_question_answer_message_text
+		 * @deprecated
 		 *
 		 * @param {string} $answer_message Answer message.
 		 * @param {int}    $lesson_id      Lesson ID.
