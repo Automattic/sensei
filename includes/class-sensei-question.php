@@ -959,7 +959,7 @@ class Sensei_Question {
 			$show_answers = true;
 		}
 
-		if ( ! $user_passed && Sensei_Quiz::is_disabled( $lesson_id, 'failed_indicate_incorrect' ) ) {
+		if ( ! $user_passed && ! Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', true ) ) {
 			$show_answers = false;
 		}
 
@@ -987,7 +987,7 @@ class Sensei_Question {
 		// Defaults
 		$answer_message = __( 'Incorrect - Right Answer:', 'sensei-lms' ) . ' ' . self::get_correct_answer( $question_id );
 
-		if ( Sensei_Quiz::is_disabled( $lesson_id, 'failed_show_correct_answers' ) ) {
+		if ( ! Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', true ) ) {
 			$answer_message = __( 'Incorrect', 'sensei-lms' );
 		}
 
