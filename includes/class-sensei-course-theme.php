@@ -56,6 +56,9 @@ class Sensei_Course_Theme {
 			return;
 		}
 
+		// Init blocks.
+		new \Sensei\Blocks\Course_Theme();
+
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 	}
 
