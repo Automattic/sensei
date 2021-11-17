@@ -795,8 +795,8 @@ class Sensei_Question {
 		$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 		$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
 
-		$answer_notes_classname = "";
-		$answer_feedback_title  = "";
+		$answer_notes_classname = '';
+		$answer_feedback_title  = '';
 
 		if ( $indicate_incorrect ) {
 			if ( $answer_correct ) {
