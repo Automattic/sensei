@@ -20,7 +20,7 @@ import { __ } from '@wordpress/i18n';
 import NumberControl from '../../editor-components/number-control';
 import { isQuestionEmpty } from '../data';
 import {
-	PaginationSettings,
+	PaginationSidebarSettings,
 	PaginationToolbarSettings,
 } from './pagination-settings';
 
@@ -72,9 +72,16 @@ const QuizSettings = ( {
 	);
 
 	useEffect( () => {
-		if ( showQuestions > questionCount ) {
+		if (
+			showQuestions > questionCount ||
+			paginationSettings.paginationNumber > questionCount
+		) {
 			setAttributes( {
 				options: { ...options, showQuestions: questionCount },
+				paginationSettings: {
+					...paginationSettings,
+					paginationNumber: questionCount,
+				},
 			} );
 		}
 	}, [ options, questionCount, setAttributes, showQuestions ] );
@@ -158,11 +165,12 @@ const QuizSettings = ( {
 				</PanelBody>
 				{ window.sensei_single_lesson_blocks
 					?.quiz_pagination_enabled && (
-					<PaginationSettings
+					<PaginationSidebarSettings
 						settings={ paginationSettings }
 						onChange={ ( newSettings ) =>
 							setAttributes( { paginationSettings: newSettings } )
 						}
+						questionCount={ questionCount }
 					/>
 				) }
 			</InspectorControls>
@@ -173,6 +181,7 @@ const QuizSettings = ( {
 						onChange={ ( newSettings ) =>
 							setAttributes( { paginationSettings: newSettings } )
 						}
+						questionCount={ questionCount }
 					/>
 				</BlockControls>
 			) }
