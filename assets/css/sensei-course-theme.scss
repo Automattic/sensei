@@ -1,1 +1,11 @@
 @import './sensei-course-theme/prev-next-lesson';
+@import './sensei-course-theme/fonts';
+
+.sensei-course-theme {
+	background-color: #fff;
+
+	&__header,
+	&__sidebar {
+		font-family: 'Inter', serif;;
+	}
+}
