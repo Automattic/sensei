@@ -8,16 +8,19 @@
 	&__header,
 	&__sidebar {
 		font-family: 'Inter', sans-serif;
-		padding: 24px;
+
 	}
 
 	&__header {
 		border-bottom: 10px solid #eee;
+		padding: 24px;
 	}
 
 	&__sidebar {
 		border-right: 1px solid #ccc;
 		flex: 0 0 300px!important;
+		padding: 24px;
+		padding-right: 16px;
 	}
 
 	&__main-content {

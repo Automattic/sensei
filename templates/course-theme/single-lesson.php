@@ -22,7 +22,7 @@ if ( have_posts() ) {
 <!-- wp:group {"className":"sensei-course-theme__header"} -->
 <div class="wp-block-group sensei-course-theme__header">
 	<!-- wp:paragraph -->
-	<p>Header here</p>
+	<h2>Course Title</h2>
 	<!-- /wp:paragraph -->
 </div>
 <!-- /wp:group -->
@@ -31,9 +31,6 @@ if ( have_posts() ) {
 <div class="wp-block-columns">
 	<!-- wp:column {"width":"33.33%","className":"sensei-course-theme__sidebar"} -->
 	<div class="wp-block-column sensei-course-theme__sidebar" style="flex-basis:33.33%">
-		<!-- wp:paragraph -->
-		<p>Sidebar</p>
-		<!-- /wp:paragraph -->
 		<!-- wp:sensei-lms/course-outline-view /-->
 	</div>
 	<!-- /wp:column -->
