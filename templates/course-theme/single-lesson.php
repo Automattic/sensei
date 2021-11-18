@@ -29,14 +29,14 @@ if ( have_posts() ) {
 
 <!-- wp:columns -->
 <div class="wp-block-columns">
-	<!-- wp:column {"width":"33.33%","className":"sensei-course-theme__sidebar"} -->
-	<div class="wp-block-column sensei-course-theme__sidebar" style="flex-basis:33.33%">
+	<!-- wp:column {"width":"300px","className":"sensei-course-theme__sidebar"} -->
+	<div class="wp-block-column sensei-course-theme__sidebar" style="flex-basis:300px">
 		<!-- wp:sensei-lms/course-navigation /-->
 	</div>
 	<!-- /wp:column -->
 
-	<!-- wp:column {"width":"66.66%","className":"sensei-course-theme__main-content"} -->
-	<div class="wp-block-column sensei-course-theme__main-content" style="flex-basis:66.66%">
+	<!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
+	<div class="wp-block-column sensei-course-theme__main-content">
 		<!-- wp:post-title /-->
 		<!-- wp:html -->
 		<?php
