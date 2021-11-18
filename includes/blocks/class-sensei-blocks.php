@@ -67,7 +67,7 @@ class Sensei_Blocks {
 		$this->quiz   = new Sensei_Quiz_Blocks();
 		$this->page   = new Sensei_Page_Blocks();
 
-		new Sensei_Course_Outline_View_Block();
+		new Sensei_Course_Navigation_Block();
 	}
 
 	/**

@@ -31,12 +31,13 @@ if ( have_posts() ) {
 <div class="wp-block-columns">
 	<!-- wp:column {"width":"33.33%","className":"sensei-course-theme__sidebar"} -->
 	<div class="wp-block-column sensei-course-theme__sidebar" style="flex-basis:33.33%">
-		<!-- wp:sensei-lms/course-outline-view /-->
+		<!-- wp:sensei-lms/course-navigation /-->
 	</div>
 	<!-- /wp:column -->
 
 	<!-- wp:column {"width":"66.66%","className":"sensei-course-theme__main-content"} -->
 	<div class="wp-block-column sensei-course-theme__main-content" style="flex-basis:66.66%">
+		<!-- wp:post-title /-->
 		<!-- wp:html -->
 		<div>TODO: Replace the content with a lesson content block</div>
 		<?php

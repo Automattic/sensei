@@ -1,4 +1,4 @@
-.sensei-lms-course-outline-view {
+.sensei-lms-course-navigation {
 
 	--theme-color: #6933dd;
 	--primary-color: #30968B;
@@ -22,6 +22,7 @@
 		color: var(--primary-color);
 		fill: var(--primary-color);
 	}
+
 	button:hover, button:focus {
 		background: initial;
 	}
@@ -39,7 +40,7 @@
 
 }
 
-.sensei-lms-course-outline-view-module {
+.sensei-lms-course-navigation-module {
 	&__header {
 		display: flex;
 		align-items: flex-start;
@@ -50,20 +51,24 @@
 				width: 24px;
 				height: 24px;
 			}
+
 			&.collapsed {
 				transform: rotate(180deg);
 			}
+
 			height: 24px;
 		}
 	}
 
 	&__title {
 		flex: 1;
+
 		a {
 			color: var(--primary-color);
 			font-weight: 600;
 			font-size: 18px;
 			line-height: 22px;
+
 			&:hover {
 				text-decoration: underline;
 			}
@@ -88,35 +93,42 @@
 
 }
 
-.sensei-lms-course-outline-view-lesson {
+.sensei-lms-course-navigation-lesson {
 
 	display: flex;
 	align-items: center;
+
 	&__link {
 		flex: 1;
 		display: flex;
 		align-items: center;
 	}
+
 	&__title {
 		flex: 1;
 		padding: 6px 12px;
 		font-size: 14px;
 	}
+
 	&__quiz {
 		font-size: 13px;
 		color: var(--gray);
 	}
+
 	&__status {
 		width: 18px;
 		height: 18px;
 	}
+
 	&.status-not-started &__status {
 		fill: var(--gray);
 	}
+
 	&.current-lesson &__status {
 		fill: currentColor;
 	}
+
 	&.current-lesson &__title {
-			font-weight: 700;
+		font-weight: 700;
 	}
 }

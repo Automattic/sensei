@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Course_Outline_View_Block class.
+ * File containing the Sensei_Course_Navigation_Block class.
  *
  * @package sensei
  */
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Course_Outline_View_Block
+ * Class Sensei_Course_Navigation_Block
  */
-class Sensei_Course_Outline_View_Block {
+class Sensei_Course_Navigation_Block {
 
 	/**
 	 * Settings placeholder.
@@ -23,7 +23,7 @@ class Sensei_Course_Outline_View_Block {
 
 
 	/**
-	 * Sensei_Course_Outline_Block constructor.
+	 * Sensei_Course_Navigation_Block constructor.
 	 */
 	public function __construct() {
 
@@ -34,27 +34,27 @@ class Sensei_Course_Outline_View_Block {
 
 
 	/**
-	 * Register course outline block.
+	 * Register course navigation block.
 	 *
 	 * @access private
 	 */
 	public function register_block() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-outline-view',
+			'sensei-lms/course-navigation',
 			[
-				'render_callback' => [ $this, 'render_course_outline_view' ],
+				'render_callback' => [ $this, 'render_course_navigation' ],
 			]
 		);
 	}
 
 	/**
-	 * Render Course Outline View block.
+	 * Render Course Navigation View block.
 	 *
 	 * @access private
 	 *
 	 * @return string Block HTML.
 	 */
-	public function render_course_outline_view() {
+	public function render_course_navigation() {
 
 		$course_id = Sensei_Utils::get_current_course();
 		$structure = Sensei_Course_Structure::instance( $course_id )->get();
@@ -85,11 +85,11 @@ class Sensei_Course_Outline_View_Block {
 			)
 		);
 
-		return '<div class="sensei-lms-course-outline-view">
-			<div class="sensei-lms-course-outline-view__modules">
+		return '<div class="sensei-lms-course-navigation">
+			<div class="sensei-lms-course-navigation__modules">
 				' . $modules_html . '
 			</div>
-			<div class="sensei-lms-course-outline-view__lessons">
+			<div class="sensei-lms-course-navigation__lessons">
 				' . $lessons_html . '
 			</div>
 			' . $this->render_svg_icon_library() . '
@@ -148,7 +148,7 @@ class Sensei_Course_Outline_View_Block {
 		$summary_quizzes = _n( '%d quiz', '%d quizzes', $quiz_count, 'sensei-lms' );
 		$summary         = sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
 
-		$classes   = [ 'sensei-lms-course-outline-view-module sensei-collapsible' ];
+		$classes   = [ 'sensei-lms-course-navigation-module sensei-collapsible' ];
 		$collapsed = '';
 		if ( ! $is_current_module ) {
 			$collapsed = 'collapsed';
@@ -156,7 +156,7 @@ class Sensei_Course_Outline_View_Block {
 
 		$collapse_toggle = '';
 		if ( ! empty( $this->settings['collapsibleModules'] ) ) {
-			$collapse_toggle = '<button type="button" class="sensei-lms-course-outline-view__arrow sensei-collapsible__toggle ' . $collapsed . '">
+			$collapse_toggle = '<button type="button" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
 						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
 						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 					</button>';
@@ -164,16 +164,16 @@ class Sensei_Course_Outline_View_Block {
 
 		return '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
-				<header class="sensei-lms-course-outline-view-module__header">
-					<h2 class="sensei-lms-course-outline-view-module__title">
+				<header class="sensei-lms-course-navigation-module__header">
+					<h2 class="sensei-lms-course-navigation-module__title">
 						<a href="' . esc_url( $module_url ) . '">' . $title . '</a>
 					</h2>
 					' . $collapse_toggle .
 			'</header>
-				<div class="sensei-lms-course-outline-view-module__lessons sensei-collapsible__content ' . $collapsed . '">
+				<div class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
 					' . $lessons_html . '
 				</div>
-				<div class="sensei-lms-course-outline-view-module__summary">
+				<div class="sensei-lms-course-navigation-module__summary">
 				' . wp_kses_post( $summary ) . '
 				</div>
 			</section>
@@ -194,7 +194,7 @@ class Sensei_Course_Outline_View_Block {
 		$has_quiz   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 		$quiz_id    = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		$classes = [ 'sensei-lms-course-outline-view-lesson', 'status-' . $status ];
+		$classes = [ 'sensei-lms-course-navigation-lesson', 'status-' . $status ];
 
 		if ( $is_current ) {
 			$classes[] = 'current-lesson';
@@ -203,14 +203,14 @@ class Sensei_Course_Outline_View_Block {
 		$lesson_quiz_html = '';
 
 		if ( $has_quiz ) {
-			$lesson_quiz_html = '<a class="sensei-lms-course-outline-view-lesson__quiz" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
+			$lesson_quiz_html = '<a class="sensei-lms-course-navigation-lesson__quiz" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
 		}
 
 		return '
 		<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
-			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-outline-view-lesson__link">
+			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-navigation-lesson__link">
 				' . self::lesson_status_icon( $status ) . '
-				<span class="sensei-lms-course-outline-view-lesson__title">
+				<span class="sensei-lms-course-navigation-lesson__title">
 					' . esc_html( $lesson['title'] ) . '
 				</span>
 			</a>
@@ -225,7 +225,7 @@ class Sensei_Course_Outline_View_Block {
 	 * @return string Icon HTML.
 	 */
 	public static function lesson_status_icon( $status ) {
-		return '<svg class="sensei-lms-course-outline-view-lesson__status">
+		return '<svg class="sensei-lms-course-navigation-lesson__status">
 					<use xlink:href="#sensei-lesson-status-' . $status . '"></use>
 				</svg>';
 	}
