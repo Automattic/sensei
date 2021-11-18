@@ -102,6 +102,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 global $woothemes_sensei;
 $woothemes_sensei = Sensei();
 
+
 /**
  * Sensei Activation Hook registration
  *
