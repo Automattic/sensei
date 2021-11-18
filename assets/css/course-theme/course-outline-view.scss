@@ -31,9 +31,15 @@
 	font-weight: 300;
 	font-size: 13px;
 
+	&__modules:not(:empty) ~ &__lessons:not(:empty) {
+		border-top: 1px dotted #ccc;
+		margin-top: 6px;
+		padding-top: 6px;
+	}
+
 }
 
-.wp-block-sensei-lms-course-outline-module {
+.sensei-lms-course-outline-view-module {
 	&__header {
 		display: flex;
 		align-items: flex-start;
@@ -58,11 +64,31 @@
 			font-weight: 600;
 			font-size: 18px;
 			line-height: 22px;
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
+
+	&__summary {
+		font-size: 13px;
+		color: var(--gray);
+		visibility: hidden;
+		overflow: hidden;
+		max-height: 0;
+		position: relative;
+		top: -12px;
+	}
+
+	&__lessons.collapsed ~ &__summary {
+		visibility: visible;
+		max-height: 50px;
+		transition-delay: 150ms;
+	}
+
 }
 
-.wp-block-sensei-lms-course-outline-lesson {
+.sensei-lms-course-outline-view-lesson {
 
 	display: flex;
 	align-items: center;

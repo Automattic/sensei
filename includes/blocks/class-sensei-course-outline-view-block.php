@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Outline_View_Block {
 
 	/**
+	 * Settings placeholder.
+	 *
 	 * @var array
 	 */
 	private $settings;
@@ -40,52 +42,63 @@ class Sensei_Course_Outline_View_Block {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-outline-view',
 			[
-				'render_callback' => [ $this, 'render_course_outline_view_block' ],
+				'render_callback' => [ $this, 'render_course_outline_view' ],
 			]
 		);
-
-
 	}
 
 	/**
-	 * Render Course Outline block.
+	 * Render Course Outline View block.
 	 *
 	 * @access private
 	 *
-	 * @param array $attributes Block attributes.
-	 *
 	 * @return string Block HTML.
 	 */
-	public function render_course_outline_view_block( $attributes ) {
+	public function render_course_outline_view() {
 
 		$course_id = Sensei_Utils::get_current_course();
-
 		$structure = Sensei_Course_Structure::instance( $course_id )->get();
 
-		$outline_html = implode(
+		$modules_html = implode(
 			'',
 			array_map(
 				function( $item ) use ( $course_id ) {
-					switch ( $item['type'] ) {
-						case 'module':
-							return $this->render_module( $item, $course_id );
-						case 'lesson':
-							return $this->render_lesson( $item, $course_id );
+					if ( 'module' === $item['type'] ) {
+						return $this->render_module( $item, $course_id );
 					}
+					return '';
+				},
+				$structure
+			)
+		);
+
+		$lessons_html = implode(
+			'',
+			array_map(
+				function( $item ) use ( $course_id ) {
+					if ( 'lesson' === $item['type'] ) {
+						return $this->render_lesson( $item );
+					}
+					return '';
 				},
 				$structure
 			)
 		);
 
 		return '<div class="sensei-lms-course-outline-view">
-			' . $outline_html . '
+			<div class="sensei-lms-course-outline-view__modules">
+				' . $modules_html . '
+			</div>
+			<div class="sensei-lms-course-outline-view__lessons">
+				' . $lessons_html . '
+			</div>
 			' . $this->render_svg_icon_library() . '
 		</div>';
 	}
 
 
 	/**
-	 * Get module block HTML.
+	 * Build module block HTML.
 	 *
 	 * @param array $module    Module data.
 	 * @param int   $course_id The course id.
@@ -94,55 +107,94 @@ class Sensei_Course_Outline_View_Block {
 	 */
 	public function render_module( $module, $course_id ) {
 
-		$module_id = $module['id'];
-		$title     = esc_html( $module['title'] );
-		$lessons   = $module['lessons'];
-		//$user_progress = Sensei()->modules->get_user_module_progress( $module_id, $course_id, get_current_user_id() );
-
+		$module_id  = $module['id'];
+		$title      = esc_html( $module['title'] );
+		$lessons    = $module['lessons'];
 		$module_url = add_query_arg( 'course_id', $course_id, get_term_link( $module_id, 'module' ) );
-
-		$collapse_toggle = '<button type="button" class="wp-block-sensei-lms-course-outline__arrow sensei-collapsible__toggle">
-						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
-						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
-					</button>';
 
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $lesson ) use ( $course_id ) {
-					return $this->render_lesson( $lesson, $course_id );
+				function( $lesson ) {
+					return $this->render_lesson( $lesson );
 				},
 				$lessons
 			)
 		);
 
+		$has_current_lesson = count(
+			array_filter(
+				$lessons,
+				function( $lesson ) {
+					return Sensei_Utils::get_current_lesson() === $lesson['id'];
+				}
+			)
+		);
+		$is_current_module  = get_the_ID() === $module_id || $has_current_lesson;
+
+		$lesson_count = count( $lessons );
+		$quiz_count   = count(
+			array_filter(
+				$lessons,
+				function( $lesson ) {
+					return Sensei_Lesson::lesson_quiz_has_questions( $lesson['id'] );
+				}
+			)
+		);
+
+		// Translators: placeholder is number of lessons.
+		$summary_lessons = _n( '%d lesson', '%d lessons', $lesson_count, 'sensei-lms' );
+		// Translators: placeholder is number of quizzes.
+		$summary_quizzes = _n( '%d quiz', '%d quizzes', $quiz_count, 'sensei-lms' );
+		$summary         = sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
+
+		$classes   = [ 'sensei-lms-course-outline-view-module sensei-collapsible' ];
+		$collapsed = '';
+		if ( ! $is_current_module ) {
+			$collapsed = 'collapsed';
+		}
+
+		$collapse_toggle = '';
+		if ( ! empty( $this->settings['collapsibleModules'] ) ) {
+			$collapse_toggle = '<button type="button" class="sensei-lms-course-outline-view__arrow sensei-collapsible__toggle ' . $collapsed . '">
+						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
+						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
+					</button>';
+		}
+
 		return '
-			<section class="sensei-collapsible">
-				<header class="wp-block-sensei-lms-course-outline-module__header">
-					<h2 class="wp-block-sensei-lms-course-outline-module__title">
+			<section ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+				<header class="sensei-lms-course-outline-view-module__header">
+					<h2 class="sensei-lms-course-outline-view-module__title">
 						<a href="' . esc_url( $module_url ) . '">' . $title . '</a>
 					</h2>
-					' .
-			( ! empty( $this->settings['collapsibleModules'] ) ? $collapse_toggle : '' ) .
+					' . $collapse_toggle .
 			'</header>
-				<div class="wp-block-sensei-lms-collapsible sensei-collapsible__content">
-					' .
-			$lessons_html
-			. '
+				<div class="sensei-lms-course-outline-view-module__lessons sensei-collapsible__content ' . $collapsed . '">
+					' . $lessons_html . '
+				</div>
+				<div class="sensei-lms-course-outline-view-module__summary">
+				' . wp_kses_post( $summary ) . '
 				</div>
 			</section>
 		';
 	}
 
-
-	public function render_lesson( $lesson, $course_id ) {
+	/**
+	 * Build lesson HTML.
+	 *
+	 * @param array $lesson Lesson data.
+	 *
+	 * @return string
+	 */
+	public function render_lesson( $lesson ) {
 		$lesson_id  = $lesson['id'];
 		$status     = $this->get_user_lesson_status( $lesson_id );
-		$is_current = $lesson_id === Sensei_Utils::get_current_lesson();
+		$is_current = Sensei_Utils::get_current_lesson() === $lesson_id;
 		$has_quiz   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 		$quiz_id    = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		$classes = [ 'wp-block-sensei-lms-course-outline-lesson', 'status-' . $status ];
+		$classes = [ 'sensei-lms-course-outline-view-lesson', 'status-' . $status ];
 
 		if ( $is_current ) {
 			$classes[] = 'current-lesson';
@@ -150,15 +202,15 @@ class Sensei_Course_Outline_View_Block {
 
 		$lesson_quiz_html = '';
 
-		if( $has_quiz ) {
-			$lesson_quiz_html = '<a class="wp-block-sensei-lms-course-outline-lesson__quiz" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . __( 'Quiz', 'sensei-lms' ) . '</a>';
+		if ( $has_quiz ) {
+			$lesson_quiz_html = '<a class="sensei-lms-course-outline-view-lesson__quiz" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
 		}
 
 		return '
 		<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
-			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="wp-block-sensei-lms-course-outline-lesson__link">
+			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-outline-view-lesson__link">
 				' . self::lesson_status_icon( $status ) . '
-				<span class="wp-block-sensei-lms-course-outline-lesson__title">
+				<span class="sensei-lms-course-outline-view-lesson__title">
 					' . esc_html( $lesson['title'] ) . '
 				</span>
 			</a>
@@ -166,16 +218,22 @@ class Sensei_Course_Outline_View_Block {
 		</div>';
 	}
 
+	/**
+	 * Get the lesson status icon.
+	 *
+	 * @param string $status
+	 * @return string Icon HTML.
+	 */
 	public static function lesson_status_icon( $status ) {
-		return '<svg class="wp-block-sensei-lms-course-outline-lesson__status">
+		return '<svg class="sensei-lms-course-outline-view-lesson__status">
 					<use xlink:href="#sensei-lesson-status-' . $status . '"></use>
 				</svg>';
 	}
 
 	/**
-	 * Get the lesson status for the user.
+	 * Get the lesson status string for the user.
 	 *
-	 * @param $lesson_id
+	 * @param int $lesson_id
 	 *
 	 * @return string
 	 */
