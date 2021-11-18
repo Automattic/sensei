@@ -113,6 +113,19 @@ $gray-400: #ccc;
 	}
 }
 
+.sensei-lms-quiz-block-toolbar {
+	&__group {
+		align-items: baseline;
+		justify-content: space-between;
+		padding: 0 1em;
+		width: 17em;
+
+		.components-base-control {
+			flex-basis: 62%;
+		}
+	}
+}
+
 .sensei-lms-block-validation-notice {
 
 	display: inline-block;

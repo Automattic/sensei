@@ -216,7 +216,7 @@ export const PaginationToolbarSettings = ( { settings, onChange } ) => {
 					onChange={ onDropdownChange( settings, onChange ) }
 				/>
 			</Toolbar>
-			<ToolbarGroup>
+			<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
 				<QuestionsControl settings={ settings } onChange={ onChange } />
 			</ToolbarGroup>
 		</>
