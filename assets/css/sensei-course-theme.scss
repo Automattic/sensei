@@ -7,6 +7,21 @@
 
 	&__header,
 	&__sidebar {
-		font-family: 'Inter', serif;;
+		font-family: 'Inter', sans-serif;
+		padding: 24px;
+	}
+
+	&__header {
+		border-bottom: 10px solid #eee;
+	}
+
+	&__sidebar {
+		border-right: 1px solid #ccc;
+		flex: 0 0 300px!important;
+	}
+
+	&__main-content {
+		padding: 24px;
+		flex: 1 1 auto !important;
 	}
 }
