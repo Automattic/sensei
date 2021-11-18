@@ -67,7 +67,7 @@ const QuestionsControl = ( {
 			<NumberControl
 				label={ __( 'Number of Questions', 'sensei-lms' ) }
 				min={ 1 }
-				max={ questionCount }
+				max={ questionCount - 1 }
 				step={ 1 }
 				hideLabelFromVision
 				suffix={ __( 'Questions', 'sensei-lms' ) }
@@ -143,14 +143,16 @@ export const PaginationSidebarSettings = ( {
 							disabled={ ! paginationPossible }
 						/>
 					</div>
-					<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
-						<QuestionsControl
-							settings={ settings }
-							onChange={ onChange }
-							questionCount={ questionCount }
-							disabled={ ! paginationPossible }
-						/>
-					</div>
+					{ paginationNumber < questionCount && (
+						<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
+							<QuestionsControl
+								settings={ settings }
+								onChange={ onChange }
+								questionCount={ questionCount }
+								disabled={ ! paginationPossible }
+							/>
+						</div>
+					) }
 				</PanelRow>
 				<PanelRow className="sensei-lms-quiz-block-panel">
 					<h2 className="sensei-lms-quiz-block-panel__row">
@@ -266,14 +268,16 @@ export const PaginationToolbarSettings = ( {
 					) }
 				/>
 			</Toolbar>
-			<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
-				<QuestionsControl
-					settings={ settings }
-					onChange={ onChange }
-					questionCount={ questionCount }
-					disabled={ ! paginationPossible }
-				/>
-			</ToolbarGroup>
+			{ paginationNumber < questionCount && (
+				<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
+					<QuestionsControl
+						settings={ settings }
+						onChange={ onChange }
+						questionCount={ questionCount }
+						disabled={ ! paginationPossible }
+					/>
+				</ToolbarGroup>
+			) }
 		</>
 	);
 };
