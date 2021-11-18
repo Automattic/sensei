@@ -257,7 +257,10 @@ export const PaginationToolbarSettings = ( {
 		<>
 			<Toolbar>
 				<ToolbarDropdown
-					toggleProps={ { disabled: ! paginationPossible } }
+					toggleProps={ {
+						disabled: ! paginationPossible,
+						__experimentalIsFocusable: ! paginationPossible,
+					} }
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
 					value={ paginationNumber >= questionCount ? SINGLE : MULTI }
