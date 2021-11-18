@@ -39,7 +39,6 @@ if ( have_posts() ) {
 	<div class="wp-block-column sensei-course-theme__main-content" style="flex-basis:66.66%">
 		<!-- wp:post-title /-->
 		<!-- wp:html -->
-		<div>TODO: Replace the content with a lesson content block</div>
 		<?php
 		if ( sensei_can_user_view_lesson() ) {
 			the_content();
