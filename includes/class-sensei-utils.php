@@ -2391,6 +2391,31 @@ class Sensei_Utils {
 		return $course_id ? $course_id : null;
 	}
 
+
+	/**
+	 * Get the lesson id of the current post, if it's a lesson or quiz.
+	 *
+	 * @return int|null The lesson id or null if it was not found.
+	 */
+	public static function get_current_lesson() {
+		global $post;
+
+		if( empty( $post ) ) {
+			return null;
+		}
+
+		switch ( get_post_type( $post ) ) {
+
+			case 'lesson':
+				return $post->ID;
+
+			case 'quiz':
+				return Sensei()->quiz->get_lesson_id( $post->ID );
+		}
+
+		return null;
+	}
+
 	/**
 	 * Restore the global WP_Query
 	 *
