@@ -34,6 +34,7 @@ if ( have_posts() ) {
 		<!-- wp:paragraph -->
 		<p>Sidebar</p>
 		<!-- /wp:paragraph -->
+		<!-- wp:sensei-lms/course-outline-view /-->
 	</div>
 	<!-- /wp:column -->
 
