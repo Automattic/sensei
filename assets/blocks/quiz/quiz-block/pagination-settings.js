@@ -54,7 +54,12 @@ const onDropdownChange = ( settings, onChange, questionCount ) => ( value ) => {
  * @param {Function} props.onChange      Callback called when a setting changed.
  * @param {number}   props.questionCount Number of questions in the quiz.
  */
-const QuestionsControl = ( { settings, onChange, questionCount } ) => {
+const QuestionsControl = ( {
+	settings,
+	onChange,
+	questionCount,
+	...props
+} ) => {
 	const { paginationNumber } = settings;
 
 	return (
@@ -73,6 +78,7 @@ const QuestionsControl = ( { settings, onChange, questionCount } ) => {
 						paginationNumber: value,
 					} )
 				}
+				{ ...props }
 			/>
 			<p>{ __( 'per page', 'sensei-lms' ) }</p>
 		</>
@@ -100,6 +106,7 @@ export const PaginationSidebarSettings = ( {
 		progressBarColor,
 		progressBarBackground,
 	} = settings;
+	const paginationPossible = questionCount > 1;
 
 	return (
 		<>
@@ -133,6 +140,7 @@ export const PaginationSidebarSettings = ( {
 								onChange,
 								questionCount
 							) }
+							disabled={ ! paginationPossible }
 						/>
 					</div>
 					<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
@@ -140,6 +148,7 @@ export const PaginationSidebarSettings = ( {
 							settings={ settings }
 							onChange={ onChange }
 							questionCount={ questionCount }
+							disabled={ ! paginationPossible }
 						/>
 					</div>
 				</PanelRow>
@@ -240,11 +249,13 @@ export const PaginationToolbarSettings = ( {
 	questionCount,
 } ) => {
 	const { paginationNumber } = settings;
+	const paginationPossible = questionCount > 1;
 
 	return (
 		<>
 			<Toolbar>
 				<ToolbarDropdown
+					toggleProps={ { disabled: ! paginationPossible } }
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
 					value={ paginationNumber >= questionCount ? SINGLE : MULTI }
@@ -260,6 +271,7 @@ export const PaginationToolbarSettings = ( {
 					settings={ settings }
 					onChange={ onChange }
 					questionCount={ questionCount }
+					disabled={ ! paginationPossible }
 				/>
 			</ToolbarGroup>
 		</>
