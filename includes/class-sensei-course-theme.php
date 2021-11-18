@@ -161,8 +161,6 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- External dependency that should be cached.
-		wp_enqueue_style( 'inter-googlefonts', 'https://fonts.googleapis.com/css?family=Inter:normal,bold' );
 		Sensei()->assets->enqueue( 'sensei-course-theme', 'css/sensei-course-theme.css' );
 	}
 
