@@ -2400,15 +2400,13 @@ class Sensei_Utils {
 	public static function get_current_lesson() {
 		global $post;
 
-		if( empty( $post ) ) {
+		if ( empty( $post ) ) {
 			return null;
 		}
 
 		switch ( get_post_type( $post ) ) {
-
 			case 'lesson':
 				return $post->ID;
-
 			case 'quiz':
 				return Sensei()->quiz->get_lesson_id( $post->ID );
 		}
