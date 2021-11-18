@@ -32,7 +32,7 @@ const paginationOptions = [
 	},
 ];
 
-const onDropdownChange = ( settings, onChange, questionCount ) => ( value ) => {
+const onDropdownChange = ( settings, onChange ) => ( value ) => {
 	if ( value === MULTI ) {
 		onChange( {
 			...settings,
@@ -41,7 +41,7 @@ const onDropdownChange = ( settings, onChange, questionCount ) => ( value ) => {
 	} else {
 		onChange( {
 			...settings,
-			paginationNumber: questionCount,
+			paginationNumber: null,
 		} );
 	}
 };
@@ -129,11 +129,7 @@ export const PaginationSidebarSettings = ( {
 						<SelectControl
 							label={ __( 'Pagination', 'sensei-lms' ) }
 							hideLabelFromVision
-							value={
-								paginationNumber >= questionCount
-									? SINGLE
-									: MULTI
-							}
+							value={ paginationNumber === null ? SINGLE : MULTI }
 							options={ paginationOptions }
 							onChange={ onDropdownChange(
 								settings,
@@ -143,7 +139,7 @@ export const PaginationSidebarSettings = ( {
 							disabled={ ! paginationPossible }
 						/>
 					</div>
-					{ paginationNumber < questionCount && (
+					{ paginationNumber && paginationNumber < questionCount && (
 						<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
 							<QuestionsControl
 								settings={ settings }
@@ -263,7 +259,7 @@ export const PaginationToolbarSettings = ( {
 					} }
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
-					value={ paginationNumber >= questionCount ? SINGLE : MULTI }
+					value={ paginationNumber === null ? SINGLE : MULTI }
 					onChange={ onDropdownChange(
 						settings,
 						onChange,
@@ -271,7 +267,7 @@ export const PaginationToolbarSettings = ( {
 					) }
 				/>
 			</Toolbar>
-			{ paginationNumber < questionCount && (
+			{ paginationNumber && paginationNumber < questionCount && (
 				<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
 					<QuestionsControl
 						settings={ settings }

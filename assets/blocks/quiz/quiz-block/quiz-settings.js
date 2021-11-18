@@ -74,14 +74,14 @@ const QuizSettings = ( {
 	useEffect( () => {
 		if (
 			showQuestions > questionCount ||
-			paginationSettings.paginationNumber > questionCount ||
-			! paginationSettings.paginationNumber
+			( paginationSettings.paginationNumber &&
+				paginationSettings.paginationNumber >= questionCount )
 		) {
 			setAttributes( {
 				options: { ...options, showQuestions: questionCount },
 				paginationSettings: {
 					...paginationSettings,
-					paginationNumber: questionCount,
+					paginationNumber: null,
 				},
 			} );
 		}
