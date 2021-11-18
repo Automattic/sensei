@@ -1,9 +1,7 @@
 .sensei-lms-course-navigation {
 
-	--theme-color: #6933dd;
-	--primary-color: #30968B;
 	--gray: #787C82;
-	--primary-color: var(--theme-color);
+	--primary-color: var(--theme-color, #30968B);
 
 	// Reset theme CSS.
 	* {
