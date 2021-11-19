@@ -85,8 +85,25 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function maybe_use_sensei_theme_template() {
-		if ( ! is_single() || ! in_array( get_post_type(), [ 'lesson', 'quiz' ], true ) ) {
+		if ( ! $this->should_use_sensei_theme_template() ) {
 			return;
+		}
+
+		add_filter( 'sensei_use_sensei_template', '__return_false' );
+		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
+		add_filter( 'the_content', [ $this, 'override_template_content' ] );
+		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+	}
+
+	/**
+	 * Check if it should use Sensei Theme template.
+	 *
+	 * @return boolean
+	 */
+	public function should_use_sensei_theme_template() {
+		if ( ! is_single() || ! in_array( get_post_type(), [ 'lesson', 'quiz' ], true ) ) {
+			return false;
 		}
 
 		$course_id = \Sensei_Utils::get_current_course();
@@ -98,14 +115,10 @@ class Sensei_Course_Theme {
 		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 
 		if ( self::SENSEI_THEME !== $theme ) {
-			return;
+			return false;
 		}
 
-		add_filter( 'sensei_use_sensei_template', '__return_false' );
-		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
-		add_filter( 'the_content', [ $this, 'override_template_content' ] );
-		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		return true;
 	}
 
 	/**

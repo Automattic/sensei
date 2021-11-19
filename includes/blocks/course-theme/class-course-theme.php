@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Sensei_Blocks_Initializer;
+use \Sensei_Course_Theme;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
 use \Sensei\Blocks\Course_Theme\Next_Lesson;
 use \Sensei\Blocks\Course_Theme\Prev_Next_Lesson;
@@ -45,12 +46,22 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	}
 
 	/**
+	 * Check if it should initialize the blocks.
+	 */
+	protected function should_initialize_blocks() {
+		return Sensei_Course_Theme::instance()->should_use_sensei_theme_template();
+	}
+
+	/**
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
-		$prev = new Prev_Lesson();
-		$next = new Next_Lesson();
-		new Prev_Next_Lesson( $prev, $next );
-		new Quiz_Back_To_Lesson();
+		if ( 'lesson' === get_post_type() ) {
+			$prev = new Prev_Lesson();
+			$next = new Next_Lesson();
+			new Prev_Next_Lesson( $prev, $next );
+		} elseif ( 'quiz' === get_post_type() ) {
+			new Quiz_Back_To_Lesson();
+		}
 	}
 }
