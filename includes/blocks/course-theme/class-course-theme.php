@@ -73,6 +73,5 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		} elseif ( 'quiz' === get_post_type() ) {
 			new Quiz_Back_To_Lesson();
 		}
-
 	}
 }
