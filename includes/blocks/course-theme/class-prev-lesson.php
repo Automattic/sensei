@@ -15,18 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Class Prev_Lesson is responsible for rendering the '< Prev Lesson | Next Lesson >' blocks.
+ * Class Prev_Lesson is responsible for rendering the '< Prev Lesson' block.
  */
 class Prev_Lesson {
-
-	/**
-	 * The left chevron icon.
-	 *
-	 * @var string
-	 */
-	public static $icon = '<svg viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M7 1.00002L2 6.50002L7 12" stroke="#1E1E1E" stroke-width="1.5"/>
-						   </svg>';
 
 	/**
 	 * Prev_Lesson constructor.
@@ -64,7 +55,7 @@ class Prev_Lesson {
 		$url  = esc_url( $urls['previous']['url'] );
 		$text = $attributes['text'] ?? __( 'Previous Lesson', 'sensei-lms' );
 		$text = wp_kses_post( $text );
-		$icon = self::$icon;
+		$icon = \Sensei_Utils::icon( 'chevron-left' );
 
 		return ( "
 			<a class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev' href='{$url}'>

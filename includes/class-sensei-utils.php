@@ -2714,6 +2714,34 @@ class Sensei_Utils {
 		return false;
 	}
 
+	/**
+	 * Gets the contents of the icon file at assets/images/<name>.svg
+	 * for the given name. Or empty string if file not found.
+	 *
+	 * @param string $name The name of the icon file at "assets/images/<name>.svg".
+	 * @return string The icon markup.
+	 */
+	public static function icon( string $name = '' ) {
+		$dir     = realpath( __DIR__ . '/../assets/images' );
+		$file    = "{$dir}/{$name}.svg";
+		$content = '';
+
+		// Read file inside try/catch in case the
+		// icon file is not there.
+		try {
+			ob_start();
+			include $file;
+			$content = ob_get_clean();
+		} catch ( Exception $e ) {
+			$content = false;
+		}
+
+		if ( false !== $content ) {
+			return $content;
+		}
+
+		return '';
+	}
 }
 
 /**

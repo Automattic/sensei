@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_CT_Blocks.
+ * File containing the class Course_Theme.
  *
  * @package sensei
  */
@@ -20,11 +20,11 @@ use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
 use \Sensei\Blocks\Course_Theme\Course_Progress_Counter;
 
 /**
- * Class Sensei_Course_Theme_Blocks
+ * Class Course_Theme
  */
 class Course_Theme extends Sensei_Blocks_Initializer {
 	/**
-	 * Sensei_Blocks constructor.
+	 * Course_Theme constructor.
 	 */
 	public function __construct() {
 		parent::__construct( [ 'lesson', 'course', 'quiz' ] );
