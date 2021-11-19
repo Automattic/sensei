@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import edit from './answer-feedback';
 import icon from '../../../icons/question-icon';
 
-const metadata = {
+const sharedMetadata = {
 	parent: [ 'sensei-lms/quiz-question' ],
 	category: 'sensei-lms',
 	supports: {
@@ -27,7 +27,7 @@ const metadata = {
  * Correct Answer Feedback block definition.
  */
 export const answerFeedbackCorrectBlock = {
-	...metadata,
+	...sharedMetadata,
 	name: 'sensei-lms/quiz-question-feedback-correct',
 	title: __( 'Correct Answer Feedback', 'sensei-lms' ),
 	icon,
@@ -40,7 +40,7 @@ export const answerFeedbackCorrectBlock = {
  * Incorrect Answer Feedback block definition.
  */
 export const answerFeedbackIncorrectBlock = {
-	...metadata,
+	...sharedMetadata,
 	name: 'sensei-lms/quiz-question-feedback-incorrect',
 	title: __( 'Incorrect Answer Feedback', 'sensei-lms' ),
 	icon,
