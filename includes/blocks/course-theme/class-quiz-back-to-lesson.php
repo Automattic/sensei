@@ -3,7 +3,7 @@
  * File containing the Prev_Lesson class.
  *
  * @package sensei
- * @since
+ * @since 3.13.4
  */
 
 namespace Sensei\Blocks\Course_Theme;
