@@ -161,11 +161,6 @@ class Sensei_Main {
 	public $analysis;
 
 	/**
-	 * @var Sensei_REST_API_V1
-	 */
-	public $rest_api;
-
-	/**
 	 * Internal REST API.
 	 *
 	 * @var Sensei_REST_API_Internal
@@ -466,8 +461,6 @@ class Sensei_Main {
 		// Load WPML compatibility class
 		$this->Sensei_WPML = new Sensei_WPML();
 
-		$this->rest_api = new Sensei_REST_API_V1();
-
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 	}
 
@@ -577,10 +570,9 @@ class Sensei_Main {
 	 * @return  void
 	 */
 	public function load_plugin_textdomain() {
-		global $wp_version;
 		$domain = 'sensei-lms';
 
-		if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
+		if ( is_admin() ) {
 			$wp_user_locale = get_user_locale();
 		} else {
 			$wp_user_locale = get_locale();

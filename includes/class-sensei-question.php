@@ -581,12 +581,23 @@ class Sensei_Question {
 	 */
 	public static function get_the_question_description( $question_id ) {
 
-		$question = get_post( $question_id );
+		$question             = get_post( $question_id );
+		$question_description = $question->post_content;
+
+		if ( has_blocks( $question_description ) ) {
+			$blocks = parse_blocks( $question_description );
+
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/question-description' === $block['blockName'] ) {
+					$question_description = render_block( $block );
+				}
+			}
+		}
 
 		/**
 		 * Already documented within WordPress Core
 		 */
-		return apply_filters( 'the_content', wp_kses_post( $question->post_content ) );
+		return apply_filters( 'the_content', wp_kses_post( $question_description ) );
 	}
 
 	/**
@@ -777,12 +788,19 @@ class Sensei_Question {
 
 		// Show answers if allowed
 		if ( $show_answers ) {
-			$answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
+			$answer_notes   = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
+			$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+			$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
 
 			if ( $answer_notes ) {
+				if ( $answer_correct ) {
+					$answer_notes_classname = 'answer-feedback-correct';
+				} else {
+					$answer_notes_classname = 'answer-feedback-failed';
+				}
 				?>
 
-				<div class="sensei-message info info-special answer-feedback">
+				<div class="sensei-message info info-special answer-feedback <?php echo esc_attr( $answer_notes_classname ); ?>">
 
 					<?php
 						/**

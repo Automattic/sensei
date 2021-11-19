@@ -166,7 +166,9 @@ class Sensei_Quiz {
 		if ( ! isset( $_POST['quiz_save'] )
 			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_save_quiz_nonce'], 'woothemes_sensei_save_quiz_nonce' ) ) {
+			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' ) ) {
 			return;
 		}
 
@@ -316,7 +318,9 @@ class Sensei_Quiz {
 	public function reset_button_click_listener() {
 
 		if ( ! isset( $_POST['quiz_reset'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_reset_quiz_nonce'], 'woothemes_sensei_reset_quiz_nonce' ) ) {
+			|| ! isset( $_POST['woothemes_sensei_reset_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_reset_quiz_nonce'] ), 'woothemes_sensei_reset_quiz_nonce' ) ) {
 
 			return; // exit
 		}
@@ -351,7 +355,9 @@ class Sensei_Quiz {
 		if ( ! isset( $_POST['quiz_complete'] )
 			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
-			|| ! wp_verify_nonce( $_POST['woothemes_sensei_complete_quiz_nonce'], 'woothemes_sensei_complete_quiz_nonce' ) ) {
+			|| ! isset( $_POST['woothemes_sensei_complete_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_complete_quiz_nonce'] ), 'woothemes_sensei_complete_quiz_nonce' ) ) {
 			return;
 		}
 
@@ -1115,7 +1121,21 @@ class Sensei_Quiz {
 
 			// finally use the default question feedback
 			if ( empty( $feedback ) ) {
-				$feedback = get_post_meta( $question_id, '_answer_feedback', true );
+				$feedback       = get_post_meta( $question_id, '_answer_feedback', true );
+				$user_grade     = $this->get_user_question_grade( $lesson_id, $question_id, $user_id );
+				$question       = get_post( $question_id );
+				$answer_correct = is_int( $user_grade ) && $user_grade > 0;
+
+				if ( has_blocks( $question->post_content ) ) {
+					$blocks = parse_blocks( $question->post_content );
+					foreach ( $blocks as $block ) {
+						if ( $answer_correct && 'sensei-lms/answer-feedback-correct' === $block['blockName'] ) {
+							$feedback = render_block( $block );
+						} elseif ( ! $answer_correct && 'sensei-lms/answer-feedback-failed' === $block['blockName'] ) {
+							$feedback = render_block( $block );
+						}
+					}
+				}
 			}
 		} else {
 			$feedback = $all_feedback[ $question_id ];

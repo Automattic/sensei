@@ -346,8 +346,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return array Escaped column data.
 	 */
 	protected function get_row_data( $item ) {
-		global $wp_version;
-
 		if ( ! $item ) {
 			return array(
 				'title'        => esc_html__( 'No results found', 'sensei-lms' ),
@@ -713,18 +711,15 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				// translators: Placeholder is the item title.
 				$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
 
-				$grading_action = '';
-				if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-					$grading_action = ' <a class="button" href="' . esc_url(
-						add_query_arg(
-							array(
-								'page'      => 'sensei_grading',
-								'course_id' => $item->ID,
-							),
-							admin_url( 'admin.php' )
-						)
-					) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
-				}
+				$grading_action = ' <a class="button" href="' . esc_url(
+					add_query_arg(
+						array(
+							'page'      => 'sensei_grading',
+							'course_id' => $item->ID,
+						),
+						admin_url( 'admin.php' )
+					)
+				) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
 
 				$column_data = apply_filters(
 					'sensei_learners_main_column_data',

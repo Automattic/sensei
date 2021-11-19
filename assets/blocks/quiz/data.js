@@ -13,7 +13,7 @@ import categoryQuestionBlock from './category-question-block';
 /**
  * External dependencies
  */
-import { mapKeys, mapValues, isObject } from 'lodash';
+import { mapKeys, mapValues, isObject, omit } from 'lodash';
 
 /**
  * Quiz settings and questions data.
@@ -119,12 +119,13 @@ function prepareQuestionBlock( attributes, innerBlocks ) {
  */
 export function parseQuestionBlocks( blocks ) {
 	const questions = blocks?.map( ( block ) => {
+		const attributes = omit( block.attributes, [ 'className' ] );
 		if ( block.attributes.type === 'category-question' ) {
-			return block.attributes;
+			return attributes;
 		}
 
 		return {
-			...block.attributes,
+			...attributes,
 			description: getBlockContent( block ),
 		};
 	} );
