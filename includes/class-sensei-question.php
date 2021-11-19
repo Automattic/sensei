@@ -763,12 +763,13 @@ class Sensei_Question {
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
-		$quiz_required_pass_grade     = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-		$succeeded                    = $user_quiz_grade >= $quiz_required_pass_grade;
-		$failed_and_reset_not_allowed = ! $succeeded && ! $reset_quiz_allowed;
+		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
+
+		$failed_and_show_answers = ! $succeeded && ! $reset_quiz_allowed && ! Sensei_Quiz::is_disabled( $lesson_id, 'failed_show_answer_feedback' );
 
 		// Check if answers must be shown
-		$show_answers = $quiz_graded && ( $succeeded || $failed_and_reset_not_allowed );
+		$show_answers = $quiz_graded && ( $succeeded || $failed_and_show_answers || Sensei_Quiz::is_enabled( $lesson_id, 'failed_show_answer_feedback' ) );
 
 		/**
 		 * Allow dynamic overriding of whether to show question answers or not
@@ -861,6 +862,10 @@ class Sensei_Question {
 			$show_answers = true;
 		}
 
+		if ( ! $user_passed && Sensei_Quiz::is_disabled( $lesson_id, 'failed_indicate_incorrect' ) ) {
+			$show_answers = false;
+		}
+
 		/** This filter is documented in self::answer_feedback_notes */
 		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_item->ID, $quiz_id, $lesson_id, get_current_user_id() );
 
@@ -883,6 +888,10 @@ class Sensei_Question {
 
 		// Defaults
 		$answer_message = __( 'Incorrect - Right Answer:', 'sensei-lms' ) . ' ' . self::get_correct_answer( $question_id );
+
+		if ( Sensei_Quiz::is_disabled( $lesson_id, 'failed_show_correct_answers' ) ) {
+			$answer_message = __( 'Incorrect', 'sensei-lms' );
+		}
 
 		// For zero grade mark as 'correct' but add no classes
 		if ( 0 == $question_grade ) {
