@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * External dependencies
  */
-import cn from 'classnames';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -19,7 +19,9 @@ import { withBlockMeta } from '../../../shared/blocks/block-metadata';
  */
 const QuestionDescription = () => {
 	return (
-		<div className={ cn( 'sensei-lms-question-description-block' ) }>
+		<div
+			className={ classnames( 'sensei-lms-question-description-block' ) }
+		>
 			<InnerBlocks
 				template={ [
 					[

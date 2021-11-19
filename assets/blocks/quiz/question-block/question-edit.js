@@ -9,7 +9,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * External dependencies
  */
-import cn from 'classnames';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -165,7 +165,7 @@ const QuestionEdit = ( props ) => {
 
 	return (
 		<div
-			className={ cn( 'sensei-lms-question-block', {
+			className={ classnames( 'sensei-lms-question-block', {
 				'is-draft': ! title,
 				'is-invalid': isInvalid,
 				'show-answer-feedback': showAnswerFeedback,

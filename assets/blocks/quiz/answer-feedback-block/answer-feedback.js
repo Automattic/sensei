@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * External dependencies
  */
-import cn from 'classnames';
+import classnames from 'classnames';
 /**
  * Internal dependencies
  */
@@ -39,7 +39,7 @@ const AnswerFeedback = ( { type } ) => {
 	const { title, placeholder } = config[ type ];
 	return (
 		<div
-			className={ cn(
+			className={ classnames(
 				'sensei-lms-question__answer-feedback',
 				`sensei-lms-question__answer-feedback--${ type }`
 			) }

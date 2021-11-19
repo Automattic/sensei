@@ -6,7 +6,7 @@ import { useContext } from '@wordpress/element';
 /**
  * External dependencies
  */
-import cn from 'classnames';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ const QuestionAnswers = () => {
 		canHaveFeedback,
 	} = useContext( QuestionContext );
 	return (
-		<div className={ cn( 'sensei-lms-question-answers-block' ) }>
+		<div className={ classnames( 'sensei-lms-question-answers-block' ) }>
 			{ AnswerBlock?.edit && (
 				<>
 					<AnswerBlock.edit

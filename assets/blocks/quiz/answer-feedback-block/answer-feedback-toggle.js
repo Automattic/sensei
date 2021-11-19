@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * External dependencies
  */
-import cn from 'classnames';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export const AnswerFeedbackToggle = () => {
 
 	return (
 		<div
-			className={ cn(
+			className={ classnames(
 				'sensei-lms-question-block__answer-feedback-toggle',
 				{ 'is-visible': showAnswerFeedback }
 			) }
