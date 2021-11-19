@@ -60,6 +60,11 @@ class Prev_Next_Lesson {
 	public function render() : string {
 		$prev = $this->prev->render();
 		$next = $this->next->render();
-		return "<div  class='sensei-course-theme-prev-next-lesson-container'>$prev $next</div>";
+		return ( "
+			<div class='sensei-course-theme-prev-next-lesson-container'>
+				{$prev}
+				{$next}
+			</div>
+		" );
 	}
 }
