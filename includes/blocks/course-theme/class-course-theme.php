@@ -34,7 +34,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
-		Sensei()->assets->enqueue( 'sensei-course-theme', 'css/sensei-course-theme.css' );
 	}
 
 	/**
