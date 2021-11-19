@@ -15,6 +15,7 @@ use \Sensei_Blocks_Initializer;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
 use \Sensei\Blocks\Course_Theme\Next_Lesson;
 use \Sensei\Blocks\Course_Theme\Prev_Next_Lesson;
+use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
 
 /**
  * Class Sensei_Course_Theme_Blocks
@@ -24,7 +25,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * Sensei_Blocks constructor.
 	 */
 	public function __construct() {
-		parent::__construct( [ 'lesson' ] );
+		parent::__construct( [ 'lesson', 'quiz' ] );
 	}
 
 	/**
@@ -51,5 +52,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		$prev = new Prev_Lesson();
 		$next = new Next_Lesson();
 		new Prev_Next_Lesson( $prev, $next );
+		new Quiz_Back_To_Lesson();
 	}
 }
