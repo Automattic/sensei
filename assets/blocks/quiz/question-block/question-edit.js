@@ -140,7 +140,10 @@ const QuestionEdit = ( props ) => {
 				[
 					'core/paragraph',
 					{
-						placeholder: __( 'Question Description', 'sensei-lms' ),
+						placeholder: __(
+							'Add question description or type / to choose a block.',
+							'sensei-lms'
+						),
 					},
 				],
 			],

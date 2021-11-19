@@ -16,14 +16,14 @@ const config = {
 	correct: {
 		title: __( 'Correct', 'sensei-lms' ),
 		placeholder: __(
-			'Enter feedback to be displayed if a student gets this answer right. You can add text, images, video, or any content you want.',
+			'Enter feedback to be displayed if a student gets this answer right. Type / to choose a block.',
 			'sensei-lms'
 		),
 	},
 	incorrect: {
 		title: __( 'Incorrect', 'sensei-lms' ),
 		placeholder: __(
-			'Enter feedback to be displayed if a student gets this answer wrong. You can add text, images, video, or any content you want.',
+			'Enter feedback to be displayed if a student gets this answer wrong. Type / to choose a block.',
 			'sensei-lms'
 		),
 	},
