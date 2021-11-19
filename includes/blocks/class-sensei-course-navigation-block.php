@@ -57,6 +57,11 @@ class Sensei_Course_Navigation_Block {
 	public function render_course_navigation() {
 
 		$course_id = Sensei_Utils::get_current_course();
+
+		if ( ! $course_id ) {
+			return '';
+		}
+
 		$structure = Sensei_Course_Structure::instance( $course_id )->get();
 
 		$modules_html = implode(
