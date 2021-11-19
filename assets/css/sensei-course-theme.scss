@@ -1,11 +1,17 @@
-@import './sensei-course-theme/prev-next-lesson';
 @import './sensei-course-theme/fonts';
 
+@import './sensei-course-theme/prev-next-lesson';
+@import './sensei-course-theme/quiz-back-to-lesson';
+
 .sensei-course-theme {
+
+	--gray: #787C82;
+	--font-family: 'Inter', sans-serif;
+
 	background-color: #fff;
 
 	&__header,
 	&__sidebar {
-		font-family: 'Inter', serif;;
+		font-family: var(--font-family);
 	}
 }
