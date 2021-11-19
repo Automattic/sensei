@@ -106,9 +106,7 @@ const QuizSettings = ( {
 						<PanelRow>
 							<div>
 								<BaseControl
-									id={
-										'sensei-lms-quiz-block-failed-feedback-options'
-									}
+									id="sensei-lms-quiz-block-failed-feedback-options"
 									className="sensei-lms-subsection-control"
 									help={ __(
 										'What learners see when reviewing their quiz after grading.',
