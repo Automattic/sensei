@@ -1512,60 +1512,6 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Check if an option is explicitly enabled.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
-	 *
-	 * @return bool
-	 */
-	public static function is_enabled( $lesson_id, $option ) {
-
-		$value = self::get_option( $lesson_id, $option );
-
-		return 'yes' === $value;
-
-	}
-
-	/**
-	 * Check if an option is explicitly disabled.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
-	 *
-	 * @return bool
-	 */
-	public static function is_disabled( $lesson_id, $option ) {
-
-		$value = self::get_option( $lesson_id, $option );
-
-		return 'no' === $value;
-
-	}
-
-	/**
-	 * Get a quiz option's value.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
-	 *
-	 * @return mixed
-	 */
-	private static function get_option( $lesson_id, $option ) {
-
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
-
-		return get_post_meta( $quiz_id, '_' . $option, true );
-
-	}
-
-	/**
 	 * @param $lesson_id
 	 *
 	 * @return bool
