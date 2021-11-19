@@ -23,7 +23,7 @@ class Course_Progress_Counter {
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-theme-course-progress',
+			'sensei-lms/course-theme-course-progress-counter',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
