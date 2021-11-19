@@ -76,6 +76,8 @@ abstract class Sensei_Blocks_Initializer {
 
 	/**
 	 * Check if it should initialize the blocks.
+	 *
+	 * @since 3.13.4
 	 */
 	protected function should_initialize_blocks() {
 		return true;
