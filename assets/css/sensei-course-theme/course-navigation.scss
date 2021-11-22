@@ -2,7 +2,7 @@
 
 	--gray: #787C82;
 
-	&__modules:not(:empty) ~ &__lessons:not(:empty) {
+	&__modules + &__lessons {
 		border-top: 1px dotted #ccc;
 		margin-top: 6px;
 		padding-top: 6px;
@@ -17,7 +17,11 @@
 		margin: 12px 0;
 
 		.sensei-collapsible__toggle {
+			&:hover {
+				color: var(--primary-color);
+			}
 			svg {
+				fill: currentColor;
 				width: 24px;
 				height: 24px;
 			}
@@ -72,6 +76,7 @@
 		flex: 1;
 		display: flex;
 		align-items: center;
+		color: inherit;
 	}
 
 	&__title {

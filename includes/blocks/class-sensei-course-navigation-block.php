@@ -90,13 +90,21 @@ class Sensei_Course_Navigation_Block {
 			)
 		);
 
-		return '<div class="sensei-lms-course-navigation">
-			<div class="sensei-lms-course-navigation__modules">
+		if ( $modules_html ) {
+			$modules_html = '<div class="sensei-lms-course-navigation__modules">
 				' . $modules_html . '
-			</div>
-			<div class="sensei-lms-course-navigation__lessons">
+			</div>';
+		}
+
+		if ( $lessons_html ) {
+			$lessons_html = '<div class="sensei-lms-course-navigation__lessons">
 				' . $lessons_html . '
-			</div>
+			</div>';
+		}
+
+		return '<div class="sensei-lms-course-navigation">
+			' . $modules_html . '
+			' . $lessons_html . '
 			' . $this->render_svg_icon_library() . '
 		</div>';
 	}
@@ -127,11 +135,12 @@ class Sensei_Course_Navigation_Block {
 			)
 		);
 
+		$current_lesson_id  = Sensei_Utils::get_current_lesson();
 		$has_current_lesson = count(
 			array_filter(
 				$lessons,
-				function( $lesson ) {
-					return Sensei_Utils::get_current_lesson() === $lesson['id'];
+				function( $lesson ) use ( $current_lesson_id ) {
+					return $current_lesson_id === $lesson['id'];
 				}
 			)
 		);
