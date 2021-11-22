@@ -46,16 +46,14 @@ class Course_Progress_Counter {
 			$course    = get_post( $course_id );
 		}
 
-		$lessons_count                = count( \Sensei()->course->course_lessons( $course->ID, null, 'ids' ) );
-		$completed_lessons_count      = count( \Sensei()->course->get_completed_lesson_ids( $course->ID ) );
-		$completed_lessons_percentage = \Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed_lessons_count, $lessons_count, 2 );
+		$stats = \Sensei()->course->get_progress_stats( $course->ID );
 
 		$output = sprintf(
 			/* translators: Placeholder %1$d is the completed lessons count, %2$d is the total lessons count and %3$d is the percentage of completed lessons. */
 			__( '%1$d of %2$d lessons complete (%3$d%%)', 'sensei-lms' ),
-			$completed_lessons_count,
-			$lessons_count,
-			$completed_lessons_percentage
+			$stats['completed_lessons_count'],
+			$stats['lessons_count'],
+			$stats['completed_lessons_percentage']
 		);
 
 		return ( "
