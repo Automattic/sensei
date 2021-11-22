@@ -39,8 +39,12 @@ class Course_Progress_Counter {
 	 */
 	public function render() : string {
 		$course_id = \Sensei_Utils::get_current_course();
-		$stats     = \Sensei()->course->get_progress_stats( $course_id );
-		$output    = sprintf(
+		if ( ! $course_id ) {
+			return '';
+		}
+
+		$stats  = \Sensei()->course->get_progress_stats( $course_id );
+		$output = sprintf(
 			/* translators: Placeholder %1$d is the completed lessons count, %2$d is the total lessons count and %3$d is the percentage of completed lessons. */
 			__( '%1$d of %2$d lessons complete (%3$d%%)', 'sensei-lms' ),
 			$stats['completed_lessons_count'],
