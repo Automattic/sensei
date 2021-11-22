@@ -28,6 +28,7 @@ const READ_ONLY_ATTRIBUTES = [
 	'options.studentHelp',
 	'media',
 	'categoryName',
+	'lock',
 ];
 
 /**
