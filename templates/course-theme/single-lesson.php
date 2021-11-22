@@ -24,6 +24,8 @@ if ( have_posts() ) {
 	<!-- wp:paragraph -->
 	<p>Header here</p>
 	<!-- /wp:paragraph -->
+
+	<!-- wp:sensei-lms/course-theme-quiz-button /-->
 </div>
 <!-- /wp:group -->
 
