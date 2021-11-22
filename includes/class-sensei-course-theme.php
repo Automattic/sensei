@@ -89,14 +89,13 @@ class Sensei_Course_Theme {
 			return;
 		}
 
-		if ( get_post_type() === 'quiz' ) {
-			$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
-		} else {
-			$lesson_id = get_the_ID();
+		$course_id = \Sensei_Utils::get_current_course();
+
+		if ( null === $course_id ) {
+			return;
 		}
 
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-		$theme     = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
+		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 
 		if ( self::SENSEI_THEME !== $theme ) {
 			return;
