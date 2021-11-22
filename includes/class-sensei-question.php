@@ -914,7 +914,9 @@ class Sensei_Question {
 
 	/**
 	 * Answer feedback.
+	 *
 	 * @deprecated 3.14.0 Renamed to the_answer_feedback
+	 *
 	 * @param int $question_id Question ID.
 	 */
 	public static function answer_feedback_notes( $question_id ) {
