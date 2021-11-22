@@ -20,4 +20,16 @@
 	&__main-content {
 		padding: 24px;
 	}
+
+	&__header {
+		align-items: center;
+		justify-content: space-between;
+
+		&:not(.is-not-stacked-on-mobile) > &__left {
+			flex: 1 1 0;
+		}
+		&:not(.is-not-stacked-on-mobile) > &__right {
+			flex: 0 0 auto;
+		}
+	}
 }
