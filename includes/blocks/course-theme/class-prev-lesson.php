@@ -55,7 +55,7 @@ class Prev_Lesson {
 		$url  = esc_url( $urls['previous']['url'] );
 		$text = $attributes['text'] ?? __( 'Previous Lesson', 'sensei-lms' );
 		$text = wp_kses_post( $text );
-		$icon = \Sensei_Utils::icon( 'chevron-left' );
+		$icon = \Sensei()->assets->get_icon( 'chevron-left' );
 
 		return ( "
 			<a class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev' href='{$url}'>
