@@ -55,15 +55,15 @@ class Prev_Next_Lesson {
 	/**
 	 * Renders the block.
 	 *
+	 * @param array  $attributes The attributes that were saved for this block.
+	 * @param string $content The content that is rendered by the inner blocks.
+	 *
 	 * @return string The block HTML.
 	 */
-	public function render() : string {
-		$prev = $this->prev->render();
-		$next = $this->next->render();
+	public function render( array $attributes, string $content ) : string {
 		return ( "
 			<div class='sensei-course-theme-prev-next-lesson-container'>
-				{$prev}
-				{$next}
+				{$content}
 			</div>
 		" );
 	}
