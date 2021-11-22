@@ -1,0 +1,10 @@
+.sensei-course-theme__header .wp-block-sensei-lms-course-title {
+	a:not(:hover) {
+		color: currentColor;
+	}
+	font-size: 24px;
+	font-weight: 600;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}

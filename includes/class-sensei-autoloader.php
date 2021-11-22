@@ -201,10 +201,11 @@ class Sensei_Autoloader {
 			/**
 			 * Course Theme
 			 */
-			'Sensei\Blocks\Course_Theme'                  => 'blocks/course-theme/class-course-theme.php',
-			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson' => 'blocks/course-theme/class-prev-next-lesson.php',
-			'Sensei\Blocks\Course_Theme\Prev_Lesson'      => 'blocks/course-theme/class-prev-lesson.php',
-			'Sensei\Blocks\Course_Theme\Next_Lesson'      => 'blocks/course-theme/class-next-lesson.php',
+			'Sensei\Blocks\Course_Theme'                   => 'blocks/course-theme/class-course-theme.php',
+			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson'  => 'blocks/course-theme/class-prev-next-lesson.php',
+			'Sensei\Blocks\Course_Theme\Prev_Lesson'       => 'blocks/course-theme/class-prev-lesson.php',
+			'Sensei\Blocks\Course_Theme\Next_Lesson'       => 'blocks/course-theme/class-next-lesson.php',
+			'Sensei\Blocks\Course_Theme\Course_Title'      => 'blocks/course-theme/class-course-title.php',
 		);
 	}
 
