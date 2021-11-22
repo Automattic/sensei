@@ -9,10 +9,15 @@ import { renderToString } from '@wordpress/element';
  * External dependencies
  */
 import { omit } from 'lodash';
-
 /**
  * Internal dependencies
  */
+import {
+	answerFeedbackCorrectBlock,
+	answerFeedbackIncorrectBlock,
+} from '../answer-feedback-block';
+import questionDescriptionBlock from '../question-description-block';
+import questionAnswersBlock from '../question-answers-block';
 import metadata from './block.json';
 
 /**
@@ -59,9 +64,11 @@ export default [
 			}
 			innerBlocks.map( ( theBlock ) => {
 				if (
-					'sensei-lms/question-description' === theBlock.name ||
-					'sensei-lms/answer-feedback-correct' === theBlock.name ||
-					'sensei-lms/answer-feedback-failed' === theBlock.name
+					[
+						questionDescriptionBlock.name,
+						answerFeedbackCorrectBlock.name,
+						answerFeedbackIncorrectBlock.name,
+					].includes( theBlock.name )
 				) {
 					isEligible = false;
 				}
@@ -78,24 +85,21 @@ export default [
 
 			// Shift the description into the new question description block container.
 			migratedInnerBlocks.push(
-				createBlock(
-					'sensei-lms/question-description',
-					{},
-					innerBlocks
-				)
+				createBlock( questionDescriptionBlock.name, {}, innerBlocks ),
+				createBlock( questionAnswersBlock.name, {} )
 			);
 
-			// Add the answer feedback attribute to the innerBlock container (if it exists).
+			// Replace the answerFeedback attribute with dedicated blocks.
 			if ( !! attributes.options?.answerFeedback ) {
 				migratedInnerBlocks.push(
-					createBlock( 'sensei-lms/answer-feedback-correct', {}, [
+					createBlock( answerFeedbackCorrectBlock.name, {}, [
 						createBlock( 'core/paragraph', {
 							content: attributes.options.answerFeedback,
 						} ),
 					] )
 				);
 				migratedInnerBlocks.push(
-					createBlock( 'sensei-lms/answer-feedback-failed', {}, [
+					createBlock( answerFeedbackIncorrectBlock.name, {}, [
 						createBlock( 'core/paragraph', {
 							content: attributes.options.answerFeedback,
 						} ),

@@ -3,9 +3,12 @@
  */
 import registerSenseiBlocks from '../register-sensei-blocks';
 
-import AnswerFeedbackCorrectBlock from './answer-feedback-correct-block';
-import AnswerFeedbackFailedBlock from './answer-feedback-failed-block';
-import QuestionDescriptionBlock from './question-description-block';
+import {
+	answerFeedbackCorrectBlock,
+	answerFeedbackIncorrectBlock,
+} from './answer-feedback-block';
+import questionDescriptionBlock from './question-description-block';
+import questionAnswersBlock from './question-answers-block';
 import questionBlock from './question-block';
 import categoryQuestionBlock from './category-question-block';
 import quizBlock from './quiz-block';
@@ -15,9 +18,10 @@ const blocks = [
 	quizBlock,
 	questionBlock,
 	categoryQuestionBlock,
-	QuestionDescriptionBlock,
-	AnswerFeedbackCorrectBlock,
-	AnswerFeedbackFailedBlock,
+	questionDescriptionBlock,
+	answerFeedbackCorrectBlock,
+	answerFeedbackIncorrectBlock,
+	questionAnswersBlock,
 ];
 
 registerSenseiBlocks( blocks );

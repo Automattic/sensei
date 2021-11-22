@@ -7,19 +7,18 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import edit from './question-description';
+import edit from './question-answers';
 import metadata from './block.json';
 import icon from '../../../icons/question-icon';
 
 /**
- * Question description block.
+ * Question answers block.
  */
 export default {
 	...metadata,
-	title: __( 'Description', 'sensei-lms' ),
+	title: __( 'Answers', 'sensei-lms' ),
 	icon,
-	usesContext: [ 'sensei-lms/quizId' ],
-	description: __( 'Question Description.', 'sensei-lms' ),
+	description: __( 'Question Answers.', 'sensei-lms' ),
 	edit,
 	save: () => <InnerBlocks.Content />,
 };
