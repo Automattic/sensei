@@ -3279,6 +3279,32 @@ class Sensei_Lesson {
 
 
 	/**
+	 * Get quiz permalink.
+	 *
+	 * @since 3.14.0
+	 *
+	 * @param int|WP_Post $lesson Lesson ID or lesson post object.
+	 *
+	 * @return string|null Quiz permalink. Null if quiz doesn't exist or doesn't have questions.
+	 */
+	public function get_quiz_permalink( $lesson ) {
+		$lesson = get_post( $lesson );
+
+		if ( empty( $lesson ) ) {
+			return null;
+		}
+
+		$quiz_id = $this->lesson_quizzes( $lesson->ID );
+
+		if ( ! $quiz_id || ! self::lesson_quiz_has_questions( $lesson->ID ) ) {
+			return null;
+		}
+
+		return get_permalink( $quiz_id );
+	}
+
+
+	/**
 	 * Fetches all the questions for a quiz depending on certain conditions.
 	 *
 	 * Determine which questions should be shown depending on:
