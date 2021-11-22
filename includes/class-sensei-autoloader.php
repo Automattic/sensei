@@ -71,6 +71,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'data-port/export-tasks' ),
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 			new Sensei_Autoloader_Bundle( 'blocks' ),
+			new Sensei_Autoloader_Bundle( 'blocks/course-theme' ),
 		);
 
 		// Add Sensei custom auto loader.
@@ -197,14 +198,6 @@ class Sensei_Autoloader {
 			* WPML
 			*/
 			'Sensei_WPML'                                 => 'wpml/class-sensei-wpml.php',
-
-			/**
-			 * Course Theme
-			 */
-			'Sensei\Blocks\Course_Theme'                  => 'blocks/course-theme/class-course-theme.php',
-			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson' => 'blocks/course-theme/class-prev-next-lesson.php',
-			'Sensei\Blocks\Course_Theme\Prev_Lesson'      => 'blocks/course-theme/class-prev-lesson.php',
-			'Sensei\Blocks\Course_Theme\Next_Lesson'      => 'blocks/course-theme/class-next-lesson.php',
 		);
 	}
 

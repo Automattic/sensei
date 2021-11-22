@@ -59,7 +59,7 @@ class Sensei_Course_Theme {
 		}
 
 		// Init blocks.
-		new \Sensei\Blocks\Course_Theme();
+		new \Sensei\Blocks\Course_Theme_Blocks();
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'maybe_use_sensei_theme_template' ] );

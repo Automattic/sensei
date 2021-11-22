@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_CT_Blocks.
+ * File containing the class Sensei_Course_Theme_Blocks.
  *
  * @package sensei
  */
@@ -15,11 +15,12 @@ use \Sensei_Blocks_Initializer;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
 use \Sensei\Blocks\Course_Theme\Next_Lesson;
 use \Sensei\Blocks\Course_Theme\Prev_Next_Lesson;
+use \Sensei\Blocks\Course_Theme\Course_Title;
 
 /**
  * Class Sensei_Course_Theme_Blocks
  */
-class Course_Theme extends Sensei_Blocks_Initializer {
+class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * Sensei_Blocks constructor.
 	 */
@@ -51,5 +52,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		$prev = new Prev_Lesson();
 		$next = new Next_Lesson();
 		new Prev_Next_Lesson( $prev, $next );
+		new Course_Title();
 	}
 }
