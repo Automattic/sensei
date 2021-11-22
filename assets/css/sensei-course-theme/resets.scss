@@ -10,12 +10,12 @@
 	 */
 
 	/**
-	 * Twenty Twenty One
+	 * Twenty Twenty, Twenty Twenty One
 	 */
-	[class*="__inner-container"] > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide) {
-		max-width: unset;
-		width: unset;
-		margin: unset;
+	&.sensei-course-theme__header > .wp-block-group__inner-container > * {
+		max-width: unset !important;
+		width: unset !important;
+		margin: unset !important;
 	}
 
 	button {
