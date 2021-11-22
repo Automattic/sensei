@@ -914,10 +914,11 @@ class Sensei_Question {
 
 	/**
 	 * Answer feedback.
-	 *
+	 * @deprecated 3.14.0 Renamed to the_answer_feedback
 	 * @param int $question_id Question ID.
 	 */
 	public static function answer_feedback_notes( $question_id ) {
+		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
 		self::the_answer_feedback( $question_id );
 	}
 
@@ -930,10 +931,12 @@ class Sensei_Question {
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
 	 * @since 1.9.0
-	 *
-	 * @deprecated 3.14 Moved into the_answer_feedback
+	 * @deprecated 3.14.0 Moved into the_answer_feedback
 	 */
 	public static function the_answer_result_indication() {
+
+		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
+
 		global $sensei_question_loop;
 
 		$quiz_id            = $sensei_question_loop['quiz_id'];
@@ -974,12 +977,14 @@ class Sensei_Question {
 
 	/**
 	 * @since 1.9.5
-	 * @deprecated 3.14 Moved into the_answer_feedback
+	 * @deprecated 3.14.0 Moved into the_answer_feedback
 	 *
 	 * @param integer $lesson_id
 	 * @param integer $question_id
 	 */
 	public static function output_result_indication( $lesson_id, $question_id ) {
+
+		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
 
 		$question_grade      = Sensei()->question->get_question_grade( $question_id );
 		$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
