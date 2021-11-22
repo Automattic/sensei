@@ -54,12 +54,7 @@ const onDropdownChange = ( settings, onChange ) => ( value ) => {
  * @param {Function} props.onChange      Callback called when a setting changed.
  * @param {number}   props.questionCount Number of questions in the quiz.
  */
-const QuestionsControl = ( {
-	settings,
-	onChange,
-	questionCount,
-	...props
-} ) => {
+const QuestionsControl = ( { settings, onChange, ...props } ) => {
 	const { paginationNumber } = settings;
 
 	return (
@@ -67,7 +62,6 @@ const QuestionsControl = ( {
 			<NumberControl
 				label={ __( 'Number of Questions', 'sensei-lms' ) }
 				min={ 1 }
-				max={ questionCount - 1 }
 				step={ 1 }
 				hideLabelFromVision
 				suffix={ __( 'Questions', 'sensei-lms' ) }
@@ -106,7 +100,6 @@ export const PaginationSidebarSettings = ( {
 		progressBarColor,
 		progressBarBackground,
 	} = settings;
-	const paginationPossible = questionCount > 1;
 
 	return (
 		<>
@@ -136,16 +129,14 @@ export const PaginationSidebarSettings = ( {
 								onChange,
 								questionCount
 							) }
-							disabled={ ! paginationPossible }
 						/>
 					</div>
-					{ paginationNumber && paginationNumber < questionCount && (
+					{ paginationNumber !== null && (
 						<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
 							<QuestionsControl
 								settings={ settings }
 								onChange={ onChange }
 								questionCount={ questionCount }
-								disabled={ ! paginationPossible }
 							/>
 						</div>
 					) }
@@ -247,16 +238,11 @@ export const PaginationToolbarSettings = ( {
 	questionCount,
 } ) => {
 	const { paginationNumber } = settings;
-	const paginationPossible = questionCount > 1;
 
 	return (
 		<>
 			<Toolbar>
 				<ToolbarDropdown
-					toggleProps={ {
-						disabled: ! paginationPossible,
-						__experimentalIsFocusable: ! paginationPossible,
-					} }
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
 					value={ paginationNumber === null ? SINGLE : MULTI }
@@ -267,13 +253,12 @@ export const PaginationToolbarSettings = ( {
 					) }
 				/>
 			</Toolbar>
-			{ paginationNumber && paginationNumber < questionCount && (
+			{ paginationNumber !== null && (
 				<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
 					<QuestionsControl
 						settings={ settings }
 						onChange={ onChange }
 						questionCount={ questionCount }
-						disabled={ ! paginationPossible }
 					/>
 				</ToolbarGroup>
 			) }
