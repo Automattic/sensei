@@ -115,13 +115,17 @@ $gray-400: #ccc;
 
 .sensei-lms-quiz-block-toolbar {
 	&__group {
-		align-items: baseline;
+		align-items: center;
 		padding: 0 1em;
 		width: 17em;
 
 		.components-base-control {
 			flex-basis: 62%;
 			margin-right: 1em;
+
+			&__field {
+				margin-bottom: 0;
+			}
 		}
 	}
 }

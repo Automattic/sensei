@@ -74,7 +74,7 @@ const QuestionsControl = ( { settings, onChange, ...props } ) => {
 				}
 				{ ...props }
 			/>
-			<p>{ __( 'per page', 'sensei-lms' ) }</p>
+			<div>{ __( 'per page', 'sensei-lms' ) }</div>
 		</>
 	);
 };
