@@ -1488,56 +1488,26 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Check if an option is explicitly enabled.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
-	 *
-	 * @return bool
-	 */
-	public static function is_enabled( $lesson_id, $option ) {
-
-		$value = self::get_option( $lesson_id, $option );
-
-		return 'yes' === $value;
-
-	}
-
-	/**
-	 * Check if an option is explicitly disabled.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
-	 *
-	 * @return bool
-	 */
-	public static function is_disabled( $lesson_id, $option ) {
-
-		$value = self::get_option( $lesson_id, $option );
-
-		return 'no' === $value;
-
-	}
-
-	/**
 	 * Get a quiz option's value.
 	 *
 	 * @since 3.14.0
 	 *
 	 * @param int    $lesson_id Lesson ID.
-	 * @param string $option Option name.
+	 * @param string $option    Option name.
+	 * @param mixed  $default   Default value to be returned if the option is unset.
 	 *
 	 * @return mixed
 	 */
-	private static function get_option( $lesson_id, $option ) {
+	public static function get_option( $lesson_id, $option, $default = null ) {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$option  = get_post_meta( $quiz_id, '_' . $option, true );
 
-		return get_post_meta( $quiz_id, '_' . $option, true );
+		if ( ! $option ) {
+			return $default;
+		} else {
+			return 'yes' === $option;
+		}
 
 	}
 
