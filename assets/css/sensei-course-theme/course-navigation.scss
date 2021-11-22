@@ -102,10 +102,6 @@
 		fill: var(--gray);
 	}
 
-	&.current-lesson &__status {
-		fill: currentColor;
-	}
-
 	&.current-lesson &__title {
 		font-weight: 700;
 	}

@@ -4,7 +4,6 @@
 @import './sensei-course-theme/base';
 @import './sensei-course-theme/layout';
 
-.sensei-course-theme__frame {
-	@import './sensei-course-theme/prev-next-lesson';
-	@import './sensei-course-theme/course-navigation';
-}
+@import './sensei-course-theme/prev-next-lesson';
+@import './sensei-course-theme/course-navigation';
+@import './sensei-course-theme/course-title';
