@@ -416,6 +416,7 @@ class Sensei_Main {
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
 		Sensei_Data_Port_Manager::instance()->init();
+		Sensei_Course_Theme::instance()->init( $this );
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
@@ -1264,6 +1265,19 @@ class Sensei_Main {
 
 			if ( ! empty( $post_type ) ) {
 				$classes[] = $post_type;
+
+				if ( 'lesson' === $post_type ) {
+					$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+					$classes[] = 'course-id-' . $course_id;
+				}
+
+				if ( 'quiz' === $post_type ) {
+					$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+					$classes[] = 'lesson-id-' . $lesson_id;
+
+					$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+					$classes[] = 'course-id-' . $course_id;
+				}
 			}
 
 			// Add class to Course Completed page.

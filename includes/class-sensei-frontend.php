@@ -67,7 +67,7 @@ class Sensei_Frontend {
 		add_action( 'sensei_lesson_archive_lesson_title', array( $this, 'sensei_lesson_archive_lesson_title' ), 10 );
 		add_action( 'wp', array( $this, 'sensei_complete_lesson' ), 10 );
 		add_action( 'wp_head', array( $this, 'sensei_complete_course' ), 10 );
-		add_action( 'sensei_course_status_updated', array( $this, 'redirect_to_course_completed_page' ), 10, 3 );
+		add_action( 'sensei_course_status_updated', array( $this, 'redirect_to_course_completed_page' ), 1000, 3 );
 		add_action( 'sensei_frontend_messages', array( $this, 'sensei_frontend_messages' ) );
 		add_action( 'sensei_lesson_video', array( $this, 'sensei_lesson_video' ), 10, 1 );
 		add_action( 'sensei_complete_lesson_button', array( $this, 'sensei_complete_lesson_button' ) );

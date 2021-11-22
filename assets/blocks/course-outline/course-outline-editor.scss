@@ -43,6 +43,10 @@ $dark-gray: #1a1d20;
 
 	textarea.wp-block-sensei-lms-course-outline-lesson__input {
 		color: inherit;
+
+		&::placeholder {
+			color: #a5a5a5;
+		}
 	}
 
 	.wp-block-sensei-lms-course-outline-status-control {
