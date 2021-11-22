@@ -21,11 +21,20 @@ class Sensei_Autoloader_Bundle {
 	private $include_path;
 
 	/**
+	 * Directory for the bundle.
+	 *
+	 * @var string
+	 */
+	private $directory;
+
+	/**
 	 * Sensei_Autoloader_Bundle constructor.
 	 *
-	 * @param string $bundle_identifier_path  Path relative to includes.
+	 * @param string $bundle_identifier_path Path relative to includes.
 	 */
 	public function __construct( $bundle_identifier_path = '' ) {
+
+		$this->directory = $bundle_identifier_path;
 		// Setup a relative path for the current autoload instance.
 		$this->include_path = trailingslashit( trailingslashit( untrailingslashit( __DIR__ ) ) . $bundle_identifier_path );
 	}
@@ -34,25 +43,31 @@ class Sensei_Autoloader_Bundle {
 	 * Load a class of bundle.
 	 *
 	 * @param string $class The class name.
+	 *
 	 * @return bool
 	 */
 	public function load_class( $class ) {
 
-		// Check for file in the main includes directory.
-		$class_file_path = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $class ) ) . '.php';
+		$basename  = preg_replace( '/[_\\\]/', '-', strtolower( $class ) );
+		$filenames = [ $basename ];
 
-		if ( file_exists( $class_file_path ) ) {
-			require_once $class_file_path;
-			return true;
+		if ( ! empty( $this->directory ) ) {
+			$namespace = 'sensei-' . str_replace( '/', '-', $this->directory ) . '-';
+
+			if ( 0 === strpos( $basename, $namespace ) ) {
+				$filenames[] = substr( $basename, strlen( $namespace ) );
+			}
 		}
 
-		// Lastly check legacy types.
-		$stripped_woothemes_from_class = str_replace( 'woothemes_', '', strtolower( $class ) ); // Remove woothemes.
-		$legacy_class_file_path        = $this->include_path . 'class-' . str_replace( '_', '-', strtolower( $stripped_woothemes_from_class ) ) . '.php';
+		// Legacy woothemes prefixed.
+		$filenames[] = str_replace( 'woothemes-', '', $basename );
 
-		if ( file_exists( $legacy_class_file_path ) ) {
-			require_once $legacy_class_file_path;
-			return true;
+		foreach ( $filenames as $filename ) {
+			$class_file_path = $this->include_path . 'class-' . $filename . '.php';
+			if ( file_exists( $class_file_path ) ) {
+				require_once $class_file_path;
+				return true;
+			}
 		}
 
 		return false;
