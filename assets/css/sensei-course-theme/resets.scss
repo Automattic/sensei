@@ -1,0 +1,24 @@
+.sensei-course-theme__frame {
+	// Reset theme CSS.
+	* {
+		all: unset;
+		display: revert;
+	}
+
+	/**
+	 * Theme-specific resets.
+	 */
+
+	/**
+	 * Twenty Twenty One
+	 */
+	[class*="__inner-container"] > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide) {
+		max-width: unset;
+		width: unset;
+		margin: unset;
+	}
+
+	button {
+		background: none;
+	}
+}

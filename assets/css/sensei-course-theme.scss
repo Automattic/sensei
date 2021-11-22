@@ -1,28 +1,10 @@
-@import './sensei-course-theme/prev-next-lesson';
+
 @import './sensei-course-theme/fonts';
-@import './sensei-course-theme/course-navigation';
+@import './sensei-course-theme/resets';
+@import './sensei-course-theme/base';
+@import './sensei-course-theme/layout';
 
-.sensei-course-theme {
-	background-color: #fff;
-
-	&__header,
-	&__sidebar {
-		font-family: 'Inter', sans-serif;
-
-	}
-
-	&__header {
-		border-bottom: 10px solid #eee;
-		padding: 24px;
-	}
-
-	&__sidebar {
-		border-right: 1px solid #ccc;
-		padding: 24px;
-		padding-right: 16px;
-	}
-
-	&__main-content {
-		padding: 24px;
-	}
+.sensei-course-theme__frame {
+	@import './sensei-course-theme/prev-next-lesson';
+	@import './sensei-course-theme/course-navigation';
 }

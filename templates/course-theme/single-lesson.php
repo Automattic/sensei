@@ -20,17 +20,17 @@ if ( have_posts() ) {
 ?>
 
 <!-- wp:group {"className":"sensei-course-theme__header"} -->
-<div class="wp-block-group sensei-course-theme__header">
+<div class="wp-block-group sensei-course-theme__header sensei-course-theme__frame">
 	<!-- wp:paragraph -->
 	<h2>Course Title</h2>
 	<!-- /wp:paragraph -->
 </div>
 <!-- /wp:group -->
 
-<!-- wp:columns -->
-<div class="wp-block-columns">
+<!-- wp:columns {"className":"sensei-course-theme__columns"} -->
+<div class="wp-block-columns sensei-course-theme__columns">
 	<!-- wp:column {"width":"300px","className":"sensei-course-theme__sidebar"} -->
-	<div class="wp-block-column sensei-course-theme__sidebar" style="flex-basis:300px">
+	<div class="wp-block-column sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
 		<!-- wp:sensei-lms/course-navigation /-->
 	</div>
 	<!-- /wp:column -->

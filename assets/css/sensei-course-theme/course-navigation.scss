@@ -1,34 +1,6 @@
 .sensei-lms-course-navigation {
 
 	--gray: #787C82;
-	--primary-color: var(--theme-color, #30968B);
-
-	// Reset theme CSS.
-	* {
-		font-family: inherit;
-		font-size: initial;
-		color: initial;
-		border: initial;
-		font-weight: initial;
-		background: initial;
-		padding: initial;
-		margin: initial;
-		transition: all 300ms;
-	}
-
-	a:hover, a:hover * {
-		color: var(--primary-color);
-		fill: var(--primary-color);
-	}
-
-	button:hover, button:focus {
-		background: initial;
-	}
-
-	@import '../../blocks/shared-style';
-
-	font-weight: 300;
-	font-size: 13px;
 
 	&__modules:not(:empty) ~ &__lessons:not(:empty) {
 		border-top: 1px dotted #ccc;
