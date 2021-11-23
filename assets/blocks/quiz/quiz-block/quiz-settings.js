@@ -27,15 +27,14 @@ import {
 /**
  * Quiz settings.
  *
- * @param {Object}   props                               Block props.
- * @param {Object}   props.attributes                    Block attributes
- * @param {Object}   props.attributes.options            Current setting options.
- * @param {Function} props.setAttributes                 Set attributes function.
- * @param {string}   props.clientId                      Block ID.
- * @param {Object}   props.attributes.paginationSettings Pagination settings.
+ * @param {Object}   props                    Block props.
+ * @param {Object}   props.attributes         Block attributes
+ * @param {Object}   props.attributes.options Current setting options.
+ * @param {Function} props.setAttributes      Set attributes function.
+ * @param {string}   props.clientId           Block ID.
  */
 const QuizSettings = ( {
-	attributes: { options = {}, paginationSettings = {} },
+	attributes: { options = {} },
 	setAttributes,
 	clientId,
 } ) => {
@@ -46,6 +45,7 @@ const QuizSettings = ( {
 		allowRetakes = true,
 		randomQuestionOrder = false,
 		showQuestions = null,
+		pagination = {},
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
@@ -159,10 +159,8 @@ const QuizSettings = ( {
 				{ window.sensei_single_lesson_blocks
 					?.quiz_pagination_enabled && (
 					<PaginationSidebarSettings
-						settings={ paginationSettings }
-						onChange={ ( newSettings ) =>
-							setAttributes( { paginationSettings: newSettings } )
-						}
+						settings={ pagination }
+						onChange={ createChangeHandler( 'pagination' ) }
 						questionCount={ questionCount }
 					/>
 				) }
@@ -170,10 +168,8 @@ const QuizSettings = ( {
 			{ window.sensei_single_lesson_blocks?.quiz_pagination_enabled && (
 				<BlockControls>
 					<PaginationToolbarSettings
-						settings={ paginationSettings }
-						onChange={ ( newSettings ) =>
-							setAttributes( { paginationSettings: newSettings } )
-						}
+						settings={ pagination }
+						onChange={ createChangeHandler( 'pagination' ) }
 						questionCount={ questionCount }
 					/>
 				</BlockControls>

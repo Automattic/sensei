@@ -273,8 +273,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
 		}
 
-		if ( isset( $json_params['pagination'] ) ) {
-			$meta_input['_pagination'] = wp_json_encode( $json_params['pagination'] );
+		if ( isset( $quiz_options['pagination'] ) ) {
+			$meta_input['_pagination'] = wp_json_encode( $quiz_options['pagination'] );
 		}
 
 		return $meta_input;
@@ -335,7 +335,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	private function get_quiz_data( WP_Post $quiz ) : array {
 		$post_meta = get_post_meta( $quiz->ID );
 		$quiz_data = [
-			'options'    => [
+			'options'   => [
 				'pass_required'         => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
 				'quiz_passmark'         => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
 				'auto_grade'            => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
@@ -343,11 +343,10 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'show_questions'        => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
 				'random_question_order' => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
 			],
-			'questions'  => $this->get_quiz_questions( $quiz ),
-			'pagination' => ! empty( $post_meta['_pagination'] ) ? $post_meta['_pagination'] : [],
+			'questions' => $this->get_quiz_questions( $quiz ),
 		];
 
-		$quiz_data['pagination'] = [
+		$quiz_data['options']['pagination'] = [
 			'pagination_number'       => null,
 			'show_progress_bar'       => false,
 			'progress_bar_radius'     => 5,
@@ -362,7 +361,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		$json_array = json_decode( $post_meta['_pagination'][0], true );
 		if ( $json_array ) {
-			$quiz_data['pagination'] = $json_array;
+			$quiz_data['options']['pagination'] = $json_array;
 		}
 
 		return $quiz_data;
@@ -448,7 +447,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		];
 
 		if ( Sensei()->feature_flags->is_enabled( 'quiz_pagination' ) ) {
-			$schema['properties']['pagination'] = [
+			$schema['properties']['options']['pagination'] = [
 				'type'       => 'object',
 				'required'   => true,
 				'properties' => [
