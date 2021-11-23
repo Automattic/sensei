@@ -2713,6 +2713,7 @@ class Sensei_Utils {
 		}
 		return false;
 	}
+
 }
 
 /**

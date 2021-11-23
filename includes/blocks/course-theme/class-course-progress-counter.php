@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Class Course_Progress_Counter is responsible for rendering the '< Prev Lesson | Next Lesson >' blocks.
+ * Class Course_Progress_Counter is responsible for rendering the '1 of 10 lessons complete (10%)' block.
  */
 class Course_Progress_Counter {
 	/**
