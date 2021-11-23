@@ -72,6 +72,47 @@ $gray-400: #ccc;
 	}
 }
 
+.sensei-lms-quiz-block-styling .sensei-lms-quiz-block-panel {
+	flex-wrap: wrap;
+
+	h2 {
+		font-size: calc( #{$default-font-size} + 1px );
+		font-weight: normal;
+	}
+
+	&__row {
+		flex-basis: 100%;
+		margin-right: 1em;
+	}
+
+	.components-base-control {
+		margin-bottom: 1em;
+	}
+
+	&__questions {
+		display: flex;
+		align-items: baseline;
+
+		.components-base-control {
+			flex-basis: 62%;
+			margin-right: 1em;
+		}
+
+		p {
+			flex-basis: 30%;
+		}
+	}
+
+	&__progress-bar {
+		display: flex;
+		justify-content: space-between;
+
+		.components-base-control {
+			flex-basis: 48%;
+		}
+	}
+}
+
 .sensei-lms-block-validation-notice {
 
 	display: inline-block;

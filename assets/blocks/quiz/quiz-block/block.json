@@ -11,7 +11,10 @@
     },
     "options": {
       "type": "object"
-		},
+    },
+    "paginationSettings": {
+      "type": "object"
+    },
     "isPostTemplate": {
       "type": "boolean",
       "default": false
