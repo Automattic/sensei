@@ -30,6 +30,8 @@ if ( have_posts() ) {
 	<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
 	<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
 
+	<!-- wp:sensei-lms/course-theme-course-progress-bar /-->
+
 	<!-- /wp:paragraph -->
 </div>
 <!-- /wp:group -->
