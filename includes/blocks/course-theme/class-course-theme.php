@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Sensei\Blocks\Course_Theme\Course_Title;
+use Sensei\Blocks\Course_Theme\Site_Logo;
 use \Sensei_Blocks_Initializer;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
 use \Sensei\Blocks\Course_Theme\Next_Lesson;
@@ -53,5 +54,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		$next = new Next_Lesson();
 		new Prev_Next_Lesson( $prev, $next );
 		new Course_Title();
+		new Site_Logo();
 	}
 }

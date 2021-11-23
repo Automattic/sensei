@@ -206,6 +206,7 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Prev_Lesson'      => 'blocks/course-theme/class-prev-lesson.php',
 			'Sensei\Blocks\Course_Theme\Next_Lesson'      => 'blocks/course-theme/class-next-lesson.php',
 			'Sensei\Blocks\Course_Theme\Course_Title'     => 'blocks/course-theme/class-course-title.php',
+			'Sensei\Blocks\Course_Theme\Site_Logo'        => 'blocks/course-theme/class-site-logo.php',
 		);
 	}
 

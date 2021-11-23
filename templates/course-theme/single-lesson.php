@@ -23,7 +23,7 @@ if ( have_posts() ) {
 <div class="wp-block-columns sensei-course-theme__header sensei-course-theme__frame">
 	<!-- wp:column {"className":"sensei-course-theme__header__left"} -->
 	<div class="wp-block-column sensei-course-theme__header__left">
-		<!-- wp:sensei-lms/course-logo /-->
+		<!-- wp:sensei-lms/site-logo /-->
 		<!-- wp:sensei-lms/course-title /-->
 		<!-- wp:sensei-lms/progress-counter /-->
 	</div>
