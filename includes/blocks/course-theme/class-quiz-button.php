@@ -57,6 +57,8 @@ class Quiz_Button {
 			return '';
 		}
 
-		return '<a href="' . esc_url( $quiz_permalink ) . '" class="">' . esc_html__( 'Take quiz', 'sensei-lms' ) . '</a>';
+		return '<a href="' . esc_url( $quiz_permalink ) . '" class="sensei-course-theme__button is-primary">'
+			. esc_html__( 'Take quiz', 'sensei-lms' ) .
+		'</a>';
 	}
 }

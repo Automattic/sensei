@@ -2,10 +2,32 @@
 @import './sensei-course-theme/fonts';
 
 .sensei-course-theme {
+	--primary-color: var(--theme-color, #30968B);
+	--primary-contrast-color: var(--theme-color, #FFF);
+
 	background-color: #fff;
 
 	&__header,
 	&__sidebar {
 		font-family: 'Inter', serif;;
+	}
+
+	&__button {
+		display: inline-block;
+		padding: 8px 11px;
+		border: solid 1px var(--primary-color);
+		font-size: 14px;
+		font-weight: 700;
+		text-decoration: none;
+		border-radius: 2px;
+
+		&.is-primary {
+			background-color: var(--primary-color);
+			color: var(--primary-contrast-color);
+		}
+
+		&.is-secondary {
+			color: var(--primary-color);
+		}
 	}
 }
