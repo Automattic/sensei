@@ -3305,6 +3305,23 @@ class Sensei_Lesson {
 
 
 	/**
+	 * Check if quiz was already submitted.
+	 *
+	 * @since 3.14.0
+	 *
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $user_id   User ID.
+	 *
+	 * @return bool Whether quiz is submitted.
+	 */
+	public function is_quiz_submitted( int $lesson_id, int $user_id ) : bool {
+		$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		return ! empty( $user_lesson_status ) && in_array( $user_lesson_status->comment_approved, [ 'ungraded', 'passed', 'failed', 'graded' ], true );
+	}
+
+
+	/**
 	 * Fetches all the questions for a quiz depending on certain conditions.
 	 *
 	 * Determine which questions should be shown depending on:
