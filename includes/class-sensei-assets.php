@@ -262,6 +262,8 @@ class Sensei_Assets {
 	 * Gets the contents of the icon file at assets/images/<name>.svg
 	 * for the given name. Or empty string if file not found.
 	 *
+	 * @since 3.13.4
+	 *
 	 * @param string $name The name of the icon file at "assets/images/<name>.svg".
 	 * @return string The icon markup.
 	 */
@@ -273,6 +275,7 @@ class Sensei_Assets {
 		// Read file inside try/catch in case the
 		// icon file is not there.
 		try {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 			$content = file_get_contents( $file );
 		} catch ( Exception $e ) {
 			$content = false;

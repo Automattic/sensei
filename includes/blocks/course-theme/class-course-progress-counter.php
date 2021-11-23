@@ -1,9 +1,9 @@
 <?php
 /**
- * File containing the Course_Progress class.
+ * File containing the Course_Progress_Counter class.
  *
  * @package sensei
- * @since
+ * @since 3.13.4
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Class Course_Progress is responsible for rendering the '< Prev Lesson | Next Lesson >' blocks.
+ * Class Course_Progress_Counter is responsible for rendering the '< Prev Lesson | Next Lesson >' blocks.
  */
 class Course_Progress_Counter {
 	/**
-	 * Course_Progress constructor.
+	 * Course_Progress_Counter constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(

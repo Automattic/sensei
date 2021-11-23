@@ -58,7 +58,9 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 */
 	public function initialize_blocks() {
 		if ( 'lesson' === get_post_type() ) {
-			new Prev_Next_Lesson( new Prev_Lesson(), new Next_Lesson() );
+			new Prev_Lesson();
+			new Next_Lesson();
+			new Prev_Next_Lesson();
 		} elseif ( 'quiz' === get_post_type() ) {
 			new Quiz_Back_To_Lesson();
 		}

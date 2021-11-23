@@ -2032,8 +2032,9 @@ class Sensei_Course {
 		 *              $stats['lessons_count'] The total number of lessons in the course.
 		 *              $stats['completed_lessons_count'] The total number of completed lessons of the course by the user.
 		 *              $stats['completed_lessons_percentage'] The completed lessons percentage relative to total number of lessons.
+		 * @param int   $course_id The id of the course.
 		 */
-		return apply_filters( 'sensei_course_progress_stats', $stats );
+		return apply_filters( 'sensei_course_progress_stats', $stats, $course_id );
 	}
 
 	/**
