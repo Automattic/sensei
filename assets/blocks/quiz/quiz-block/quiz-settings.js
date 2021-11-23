@@ -18,18 +18,20 @@ import { __ } from '@wordpress/i18n';
  */
 import NumberControl from '../../editor-components/number-control';
 import { isQuestionEmpty } from '../data';
+import PaginationSettings from './pagination-settings';
 
 /**
  * Quiz settings.
  *
- * @param {Object}   props                    Block props.
- * @param {Object}   props.attributes         Block attributes
- * @param {Object}   props.attributes.options Current setting options.
- * @param {Function} props.setAttributes      Set attributes function.
- * @param {string}   props.clientId           Block ID.
+ * @param {Object}   props                               Block props.
+ * @param {Object}   props.attributes                    Block attributes
+ * @param {Object}   props.attributes.options            Current setting options.
+ * @param {Function} props.setAttributes                 Set attributes function.
+ * @param {string}   props.clientId                      Block ID.
+ * @param {Object}   props.attributes.paginationSettings Pagination settings.
  */
 const QuizSettings = ( {
-	attributes: { options },
+	attributes: { options, paginationSettings = {} },
 	setAttributes,
 	clientId,
 } ) => {
@@ -201,6 +203,15 @@ const QuizSettings = ( {
 					/>
 				</PanelRow>
 			</PanelBody>
+			{ /* eslint-disable-next-line camelcase */ }
+			{ window.sensei_single_lesson_blocks?.quiz_pagination_enabled && (
+				<PaginationSettings
+					settings={ paginationSettings }
+					onChange={ ( newSettings ) =>
+						setAttributes( { paginationSettings: newSettings } )
+					}
+				/>
+			) }
 		</InspectorControls>
 	);
 };

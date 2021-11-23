@@ -12,16 +12,17 @@ import { __ } from '@wordpress/i18n';
 /**
  * Number control component.
  *
- * @param {Object}   props                    Component props.
- * @param {string}   [props.className]        Additional classnames for the input.
- * @param {string}   [props.id]               Component id used to connect label and input - required if label is set.
- * @param {string}   [props.label]            Input label.
- * @param {number}   [props.value]            Input value.
- * @param {string}   [props.help]             Help text.
- * @param {boolean}  [props.allowReset=false] Whether reset is allowed.
- * @param {string}   [props.resetLabel]       Reset button custom label.
- * @param {Function} props.onChange           Change function, which receives number as argument.
- * @param {string}   props.suffix             Input suffix.
+ * @param {Object}   props                     Component props.
+ * @param {string}   [props.className]         Additional classnames for the input.
+ * @param {string}   [props.id]                Component id used to connect label and input - required if label is set.
+ * @param {string}   [props.label]             Input label.
+ * @param {number}   [props.value]             Input value.
+ * @param {string}   [props.help]              Help text.
+ * @param {boolean}  [props.allowReset=false]  Whether reset is allowed.
+ * @param {string}   [props.resetLabel]        Reset button custom label.
+ * @param {Function} props.onChange            Change function, which receives number as argument.
+ * @param {string}   props.suffix              Input suffix.
+ * @param {boolean}  props.hideLabelFromVision Hides label.
  */
 const NumberControl = ( {
 	className,
@@ -33,6 +34,7 @@ const NumberControl = ( {
 	resetLabel,
 	onChange,
 	suffix,
+	hideLabelFromVision,
 	...props
 } ) => {
 	const setValue = ( e ) => {
@@ -40,7 +42,12 @@ const NumberControl = ( {
 	};
 
 	return (
-		<BaseControl id={ id } label={ label } help={ help }>
+		<BaseControl
+			id={ id }
+			label={ label }
+			help={ help }
+			hideLabelFromVision={ hideLabelFromVision }
+		>
 			<div className="sensei-number-control">
 				<div className="sensei-number-control__input-container">
 					<input

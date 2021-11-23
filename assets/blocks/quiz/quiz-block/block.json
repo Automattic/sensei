@@ -22,7 +22,10 @@
         "failedShowCorrectAnswers": false,
         "failedIndicateIncorrect": false
       }
-		},
+    },
+    "paginationSettings": {
+      "type": "object"
+    },
     "isPostTemplate": {
       "type": "boolean",
       "default": false

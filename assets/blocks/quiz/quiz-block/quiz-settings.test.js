@@ -11,6 +11,7 @@ import QuizSettings from './quiz-settings';
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: ( { children } ) => children,
+	PanelColorSettings: () => null,
 } ) );
 
 jest.mock( '@wordpress/data', () => {
