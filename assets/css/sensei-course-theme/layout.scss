@@ -9,12 +9,21 @@
 		border-bottom: 10px solid #eee;
 		padding: 24px;
 		margin: 0;
+		height: 75px;
+		position: sticky;
+		top: 0;
+		background-color: #fff;
+		z-index: 100;
+		body.admin-bar & {
+			top: 32px;
+		}
 	}
 
 	&__sidebar {
 		border-right: 1px solid #ccc;
 		padding: 24px;
 		padding-right: 16px;
+		background-color: #fff;
 	}
 
 	&__main-content {
@@ -25,6 +34,7 @@
 		align-items: center;
 		justify-content: space-between;
 
+		&__left {
 			display: flex;
 			align-items: center;
 		}
