@@ -347,7 +347,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$failed_feedback_default = ! $allow_retakes;
 
 		$quiz_data = [
-			'options'   => [
+			'options'    => [
 				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
 				'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
 				'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
