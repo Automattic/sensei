@@ -1103,7 +1103,7 @@ class Sensei_Quiz {
 		$all_feedback = $this->get_user_answers_feedback( $lesson_id, $user_id );
 
 		if ( ! $all_feedback || empty( $all_feedback )
-			|| ! is_array( $all_feedback ) || ! isset( $all_feedback[ $question_id ] ) ) {
+			|| ! is_array( $all_feedback ) || empty( $all_feedback[ $question_id ] ) ) {
 
 			// fallback to data pre 1.7.4
 			// setup the sensei data query
@@ -1121,7 +1121,15 @@ class Sensei_Quiz {
 
 			// finally use the default question feedback
 			if ( empty( $feedback ) ) {
-				$feedback = get_post_meta( $question_id, '_answer_feedback', true );
+				$feedback       = get_post_meta( $question_id, '_answer_feedback', true );
+				$user_grade     = $this->get_user_question_grade( $lesson_id, $question_id, $user_id );
+				$answer_correct = is_int( $user_grade ) && $user_grade > 0;
+
+				$feedback_block = $answer_correct ? self::get_correct_answer_feedback( $question_id ) : self::get_incorrect_answer_feedback( $question_id );
+
+				if ( $feedback_block ) {
+					$feedback = $feedback_block;
+				}
 			}
 		} else {
 			$feedback = $all_feedback[ $question_id ];
@@ -1138,6 +1146,54 @@ class Sensei_Quiz {
 		 */
 		return apply_filters( 'sensei_user_question_feedback', $feedback, $lesson_id, $question_id, $user_id );
 
+	}
+
+	/**
+	 * Get a top-level inner block.
+	 *
+	 * @param int    $question_id
+	 * @param string $block_name
+	 *
+	 * @return array|null
+	 */
+	public static function get_question_inner_block( $question_id, $block_name ) {
+
+		$question = get_post( $question_id );
+
+		if ( has_blocks( $question->post_content ) ) {
+			$blocks = parse_blocks( $question->post_content );
+			foreach ( $blocks as $block ) {
+				if ( $block_name === $block['blockName'] ) {
+					return $block;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the contents for the correct answer feedback block.
+	 *
+	 * @param int $question_id
+	 *
+	 * @return string
+	 */
+	public static function get_correct_answer_feedback( $question_id ) {
+		$block = self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-correct' );
+		return $block ? render_block( $block ) : '';
+	}
+
+	/**
+	 * Get the contents for the incorrect answer feedback block.
+	 *
+	 * @param int $question_id
+	 *
+	 * @return string
+	 */
+	public static function get_incorrect_answer_feedback( $question_id ) {
+		$block = self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
+		return $block ? render_block( $block ) : '';
 	}
 
 	/**
@@ -1428,6 +1484,30 @@ class Sensei_Quiz {
 		}
 
 		return (bool) $reset_allowed;
+
+	}
+
+	/**
+	 * Get a quiz option's value.
+	 *
+	 * @since 3.14.0
+	 *
+	 * @param int    $lesson_id Lesson ID.
+	 * @param string $option    Option name.
+	 * @param mixed  $default   Default value to be returned if the option is unset.
+	 *
+	 * @return mixed
+	 */
+	public static function get_option( $lesson_id, $option, $default = null ) {
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$option  = get_post_meta( $quiz_id, '_' . $option, true );
+
+		if ( ! $option ) {
+			return $default;
+		} else {
+			return 'yes' === $option;
+		}
 
 	}
 

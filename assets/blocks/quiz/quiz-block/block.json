@@ -10,7 +10,18 @@
       "type": "integer"
     },
     "options": {
-      "type": "object"
+      "type": "object",
+      "default": {
+        "passRequired": false,
+        "quizPassmark": 100,
+        "autoGrade": true,
+        "allowRetakes": true,
+        "randomQuestionOrder": false,
+        "showQuestions": null,
+        "failedShowAnswerFeedback": false,
+        "failedShowCorrectAnswers": false,
+        "failedIndicateIncorrect": false
+      }
     },
     "paginationSettings": {
       "type": "object"

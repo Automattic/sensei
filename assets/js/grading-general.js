@@ -63,6 +63,27 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	};
 
+	jQuery.fn.updateFeedback = function () {
+		jQuery( '.question_box' ).each( function () {
+			var question_id = jQuery( this ).find( '.question_id' ).val();
+			var question_grade = parseInt(
+				jQuery( this )
+					.find( '#question_' + question_id + '_grade' )
+					.val()
+			);
+
+			var correctFeedback = jQuery( this ).find(
+				'.answer-feedback-correct'
+			);
+			var incorrectFeedback = jQuery( this ).find(
+				'.answer-feedback-incorrect'
+			);
+
+			correctFeedback.toggle( 0 < question_grade );
+			incorrectFeedback.toggle( ! question_grade );
+		} );
+	};
+
 	/**
 	 * Automatically grades questions where possible
 	 * @return void
@@ -175,6 +196,7 @@ jQuery( document ).ready( function ( $ ) {
 		} );
 
 		$.fn.calculateTotalGrade();
+		$.fn.updateFeedback();
 	};
 
 	/**
@@ -193,6 +215,7 @@ jQuery( document ).ready( function ( $ ) {
 			.removeClass( 'ungraded' );
 		jQuery( '.question-grade' ).val( '0' );
 		jQuery.fn.calculateTotalGrade();
+		jQuery.fn.updateFeedback();
 	};
 
 	jQuery.fn.getQueryVariable = function ( variable ) {
@@ -314,6 +337,7 @@ jQuery( document ).ready( function ( $ ) {
 				.val( 0 );
 		}
 		jQuery.fn.calculateTotalGrade();
+		jQuery.fn.updateFeedback();
 	} );
 
 	/**
@@ -363,6 +387,7 @@ jQuery( document ).ready( function ( $ ) {
 			).attr( 'checked', false );
 		}
 		jQuery.fn.calculateTotalGrade();
+		jQuery.fn.updateFeedback();
 	} );
 
 	/**
@@ -399,6 +424,10 @@ jQuery( document ).ready( function ( $ ) {
 			jQuery.fn.autoGrade();
 		}
 	);
+
+	if ( jQuery( '.sensei-grading-main' ).length ) {
+		jQuery.fn.updateFeedback();
+	}
 
 	/***************************************************************************************************
 	 * 	4 - Load Select2 Dropdowns.

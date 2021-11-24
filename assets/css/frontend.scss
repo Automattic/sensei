@@ -874,6 +874,22 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
       }
       &.info-special {
         background:#dbf1ff;
+        &.answer-feedback {
+          ol, ol > li {
+            list-style: decimal !important;
+            margin-left: 10px !important;
+          }
+          ul, ul > li {
+            list-style: initial !important;
+            margin-left: 10px !important;
+          }
+          &.answer-feedback-correct {
+            border-left:  3px solid #63a95f !important;
+          }
+          &.answer-feedback.answer-feedback-failed {
+            border-left:  3px solid #ed6c6c !important;
+          }
+        }
       }
     }
     &.note {
@@ -1113,3 +1129,5 @@ body.tax-module #main .lesson-content .lesson-meta {
  * Imports
  */
 @import 'grid';
+
+@import '../blocks/quiz/question-block/question';
