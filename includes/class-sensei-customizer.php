@@ -1,4 +1,10 @@
 <?php
+/**
+ * Sensei_Customizer class.
+ *
+ * @package sensei-lms
+ * @since 4.0.0
+ */
 
 /**
  * Add customizer settings.
