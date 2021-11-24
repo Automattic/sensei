@@ -1359,6 +1359,9 @@ class Sensei_Admin {
 	 */
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
+		if ( ! current_user_can( 'manage_sensei_grades') ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
 
 		$ordered = null;
 		if ( isset( $_POST['lesson-order'] ) ) {
