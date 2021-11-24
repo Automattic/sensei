@@ -742,7 +742,7 @@ class Sensei_Question {
 	/**
 	 * Answer feedback (including correctness, grade, right answer and feedback notes) for a question.
 	 *
-	 * @since 3.14
+	 * @since 3.14.0
 	 *
 	 * @param $question_id
 	 */
@@ -850,7 +850,7 @@ class Sensei_Question {
 		 * Filter the learner grade displayed.
 		 *
 		 * @hook  sensei_question_answer_message_grade
-		 * @since 3.14
+		 * @since 3.14.0
 		 *
 		 * @param {string} $grade          Formatted grade (eg "0/3 points")
 		 * @param {int}    $lesson_id      Lesson ID.
