@@ -1,0 +1,42 @@
+.sensei-course-theme-complete-lesson-form {
+	padding: 0;
+	margin: 0;
+}
+.sensei-course-theme-complete-lesson {
+	font-size: 14px;
+	line-height: 17px;
+	font-weight: 700;
+	padding: 11px 18px;
+	background-color: transparent;
+	border: 1px solid #000;
+	border-radius: 2px;
+	background-color: #fff;
+	&:hover {
+		border: 1px solid #000;
+		background-color: #f9f9f9;
+	}
+}
+.sensei-course-theme-completed-lesson {
+	display: inline-block;
+}
+.sensei-course-theme-completed-lesson-inner {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 11px 18px;
+	background-color: #fff;
+	border: 1px solid #000;
+	border-radius: 2px;
+
+	span {
+		font-size: 14px;
+		line-height: 17px;
+		font-weight: 700;
+		margin-left: 6px;
+		color: #000;
+	}
+
+	svg {
+		width: 17px;
+	}
+}

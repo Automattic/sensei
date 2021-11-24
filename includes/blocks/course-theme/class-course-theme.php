@@ -22,6 +22,7 @@ use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
 use \Sensei\Blocks\Course_Theme\Course_Progress_Counter;
 use \Sensei\Blocks\Course_Theme\Course_Progress_Bar;
 use \Sensei\Blocks\Course_Theme\Quiz_Button;
+use \Sensei\Blocks\Course_Theme\Complete_Lesson;
 
 /**
  * Class Course_Theme
@@ -70,6 +71,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 			new Course_Progress_Counter();
 			new Course_Progress_Bar();
 			new Quiz_Button();
+			new Complete_lesson();
 		} elseif ( 'quiz' === get_post_type() ) {
 			new Quiz_Back_To_Lesson();
 		}
