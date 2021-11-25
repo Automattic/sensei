@@ -1,0 +1,20 @@
+.sensei-course-theme__frame {
+
+	--primary-color: var(--theme-color, #30968B);
+	
+	a:hover, a:hover * {
+		color: var(--primary-color);
+		fill: var(--primary-color);
+		cursor: pointer;
+		background: none;
+	}
+	button:hover {
+		cursor: pointer;
+	}
+
+	font-family: 'Inter', sans-serif;
+	font-weight: 300;
+	font-size: 13px;
+	line-height: 1.5;
+	letter-spacing: normal;
+}

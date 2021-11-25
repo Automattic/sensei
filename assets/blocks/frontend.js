@@ -25,7 +25,12 @@ domReady( () => {
 		let originalHeight = content.offsetHeight + 'px';
 
 		if ( content.classList.contains( 'collapsed' ) ) {
-			originalHeight = '100vh';
+			const transition = content.style.transition;
+			content.style.transition = 'unset';
+			content.style.maxHeight = 'unset';
+			originalHeight = content.offsetHeight + 'px';
+			content.style.maxHeight = 0;
+			content.style.transition = transition;
 		} else {
 			content.style.maxHeight = originalHeight;
 		}

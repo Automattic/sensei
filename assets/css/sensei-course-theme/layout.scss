@@ -1,0 +1,23 @@
+.sensei-course-theme {
+	background-color: #fff;
+
+	&__columns, &__header {
+		margin: 0 !important;
+	}
+
+	&__header {
+		border-bottom: 10px solid #eee;
+		padding: 24px;
+		margin: 0;
+	}
+
+	&__sidebar {
+		border-right: 1px solid #ccc;
+		padding: 24px;
+		padding-right: 16px;
+	}
+
+	&__main-content {
+		padding: 24px;
+	}
+}

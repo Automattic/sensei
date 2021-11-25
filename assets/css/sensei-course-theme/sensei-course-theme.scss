@@ -1,18 +1,9 @@
-@import 'fonts';
+@import './fonts';
+@import './resets';
+@import './base';
+@import './layout';
+@import './buttons';
 
-@import 'prev-next-lesson';
-@import 'quiz-back-to-lesson';
-@import 'buttons';
-
-.sensei-course-theme {
-
-	--gray: #787C82;
-	--font-family: 'Inter', sans-serif;
-
-	background-color: #fff;
-
-	&__header,
-	&__sidebar {
-		font-family: var(--font-family);
-	}
-}
+@import './prev-next-lesson';
+@import './course-navigation';
+@import './quiz-back-to-lesson';
