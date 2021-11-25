@@ -21,9 +21,14 @@ if ( have_posts() ) {
 
 <!-- wp:group {"className":"sensei-course-theme__header"} -->
 <div class="wp-block-group sensei-course-theme__header sensei-course-theme__frame">
-	<!-- wp:paragraph -->
-	<h2>Course Title</h2>
-	<!-- /wp:paragraph -->
+	<!-- wp:sensei-lms/course-theme-course-progress-counter /-->
+
+	<!-- wp:sensei-lms/course-theme-prev-next-lesson -->
+	<!-- wp:sensei-lms/course-theme-prev-lesson {"inContainer":true} /-->
+	<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
+	<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
+
+	<!-- wp:sensei-lms/course-theme-quiz-button /-->
 </div>
 <!-- /wp:group -->
 

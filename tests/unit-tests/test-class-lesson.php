@@ -478,4 +478,33 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$first_lesson = Sensei()->lesson::find_first_prerequisite_lesson( $course_with_lessons['lesson_ids'][3], $user_id );
 		$this->assertEquals( $course_with_lessons['lesson_ids'][1], $first_lesson );
 	}
+
+	/**
+	 * Test get lesson quiz permalink.
+	 *
+	 * @covers Sensei_Lesson::get_quiz_permalink()
+	 */
+	public function testGetLessonQuizPermalink() {
+		$lesson_id_empty_quiz = $this->factory->get_lesson_empty_quiz();
+		$this->assertNull( Sensei()->lesson->get_quiz_permalink( $lesson_id_empty_quiz ) );
+
+		$lesson_id_with_quiz = $this->factory->get_lesson_with_quiz_and_questions();
+		$this->assertNotEmpty( Sensei()->lesson->get_quiz_permalink( $lesson_id_with_quiz ) );
+	}
+
+	/**
+	 * Test quiz submitted.
+	 *
+	 * @covers Sensei_Lesson::is_quiz_submitted()
+	 */
+	public function testQuizSubmitted() {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id   = $this->factory->user->create();
+
+		$this->assertFalse( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) );
+
+		Sensei_Quiz::submit_answers_for_grading( [], [], $lesson_id, $user_id );
+		$this->assertTrue( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) );
+	}
 }
