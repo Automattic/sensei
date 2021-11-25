@@ -15,23 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Navigation_Block {
 
 	/**
-	 * Settings placeholder.
-	 *
-	 * @var array
-	 */
-	private $settings;
-
-
-	/**
 	 * Sensei_Course_Navigation_Block constructor.
 	 */
 	public function __construct() {
 
 		$this->register_block();
 
-		$this->settings = [ 'collapsibleModules' => true ];
 	}
-
 
 	/**
 	 * Register course navigation block.
@@ -92,7 +82,7 @@ class Sensei_Course_Navigation_Block {
 
 		if ( $modules_html ) {
 			$modules_html = '<div class="sensei-lms-course-navigation__modules">
-				' . $modules_html . '
+				' . $modules_html . ' 
 			</div>';
 		}
 
@@ -168,13 +158,10 @@ class Sensei_Course_Navigation_Block {
 			$collapsed = 'collapsed';
 		}
 
-		$collapse_toggle = '';
-		if ( ! empty( $this->settings['collapsibleModules'] ) ) {
-			$collapse_toggle = '<button type="button" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
-						<svg><use xlink:href="#sensei-chevron-up"></use></svg>
-						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
-					</button>';
-		}
+		$collapse_toggle = '<button type="button" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
+				<svg><use xlink:href="#sensei-chevron-up"></use></svg>
+				<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
+			</button>';
 
 		return '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
@@ -236,6 +223,7 @@ class Sensei_Course_Navigation_Block {
 	 * Get the lesson status icon.
 	 *
 	 * @param string $status
+	 *
 	 * @return string Icon HTML.
 	 */
 	public static function lesson_status_icon( $status ) {
