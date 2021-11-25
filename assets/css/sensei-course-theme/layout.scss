@@ -6,8 +6,6 @@
 	}
 
 	&__header {
-		border-bottom: 10px solid #eee;
-		padding: 24px;
 		margin: 0;
 		height: 75px;
 		position: sticky;
@@ -31,17 +29,31 @@
 	}
 
 	&__header {
-		align-items: center;
-		justify-content: space-between;
+		&__container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 24px;
+			margin: 0!important;
+			gap: 24px;
+			height: 65px;
+		}
 
 		&__left {
 			display: flex;
 			align-items: center;
+			gap: 12px;
 		}
-		&:not(.is-not-stacked-on-mobile) > &__left {
-			flex: 1 1 0;
+		&__right {
+			display: flex;
+			align-items: center;
+			gap: 24px;
 		}
-		&:not(.is-not-stacked-on-mobile) > &__right {
+		&__container:not(.is-not-stacked-on-mobile) > &__left {
+			flex: 1;
+		}
+		&__container:not(.is-not-stacked-on-mobile) > &__right {
+
 			flex: 0 0 auto;
 		}
 	}
