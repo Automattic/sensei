@@ -55,6 +55,7 @@ class Sensei_Feature_Flags {
 			[
 				'enrolment_provider_tooltip' => false,
 				'course_theme'               => false,
+				'quiz_pagination'            => false,
 			]
 		);
 	}

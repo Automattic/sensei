@@ -16,7 +16,10 @@ export const useHasSelected = ( { isSelected, clientId } ) => {
 	return (
 		useSelect(
 			( select ) =>
-				select( 'core/block-editor' ).hasSelectedInnerBlock( clientId ),
+				select( 'core/block-editor' ).hasSelectedInnerBlock(
+					clientId,
+					true
+				),
 			[ clientId ]
 		) || isSelected
 	);

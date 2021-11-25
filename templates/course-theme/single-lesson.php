@@ -31,7 +31,7 @@ if ( have_posts() ) {
 	<!-- wp:column {"className":"sensei-course-theme__header__right"} -->
 	<div class="wp-block-column sensei-course-theme__header__right">
 		<!-- wp:sensei-lms/course-theme-prev-next-lesson /-->
-		<!-- wp:sensei-lms/lesson-actions /-->
+		<!-- wp:sensei-lms/course-theme-quiz-button /-->
 	</div>
 	<!-- /wp:column -->
 </div>
