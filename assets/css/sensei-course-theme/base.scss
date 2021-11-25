@@ -1,7 +1,7 @@
 .sensei-course-theme__frame {
 
-	--primary-color: var(--theme-color, #30968B);
-	
+	--primary-color: var(--sensei-course-theme-primary-color, #30968B);
+
 	a:hover, a:hover * {
 		color: var(--primary-color);
 		fill: var(--primary-color);
