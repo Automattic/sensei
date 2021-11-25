@@ -6,18 +6,55 @@
 	}
 
 	&__header {
-		border-bottom: 10px solid #eee;
-		padding: 24px;
 		margin: 0;
+		height: 75px;
+		position: sticky;
+		top: 0;
+		background-color: #fff;
+		z-index: 100;
+		body.admin-bar & {
+			top: 32px;
+		}
 	}
 
 	&__sidebar {
 		border-right: 1px solid #ccc;
 		padding: 24px;
 		padding-right: 16px;
+		background-color: #fff;
 	}
 
 	&__main-content {
 		padding: 24px;
+	}
+
+	&__header {
+		&__container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 24px;
+			margin: 0!important;
+			gap: 24px;
+			height: 65px;
+		}
+
+		&__left {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+		&__right {
+			display: flex;
+			align-items: center;
+			gap: 24px;
+		}
+		&__container:not(.is-not-stacked-on-mobile) > &__left {
+			flex: 1;
+		}
+		&__container:not(.is-not-stacked-on-mobile) > &__right {
+
+			flex: 0 0 auto;
+		}
 	}
 }

@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Sensei\Blocks\Course_Theme\Course_Title;
+use Sensei\Blocks\Course_Theme\Site_Logo;
 use \Sensei_Blocks_Initializer;
 use \Sensei_Course_Theme;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
@@ -59,6 +61,8 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
+		new Course_Title();
+		new Site_Logo();
 		if ( 'lesson' === get_post_type() ) {
 			new Prev_Lesson();
 			new Next_Lesson();
@@ -69,5 +73,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		} elseif ( 'quiz' === get_post_type() ) {
 			new Quiz_Back_To_Lesson();
 		}
+
 	}
 }
