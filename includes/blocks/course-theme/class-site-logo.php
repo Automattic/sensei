@@ -41,7 +41,7 @@ class Site_Logo {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ): string {
-		$course_id = \Sensei_Utils::get_current_course();
+		$course_id      = \Sensei_Utils::get_current_course();
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 
 		if ( ! $course_id || ! $custom_logo_id ) {
