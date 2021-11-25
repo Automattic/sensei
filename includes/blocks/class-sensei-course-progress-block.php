@@ -51,9 +51,11 @@ class Sensei_Course_Progress_Block {
 			return '';
 		}
 
-		$completed     = count( Sensei()->course->get_completed_lesson_ids( $course_id ) );
-		$total_lessons = count( Sensei()->course->course_lessons( $course_id ) );
-		$percentage    = Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed, $total_lessons );
+		list(
+			'lessons_count'                => $total_lessons,
+			'completed_lessons_count'      => $completed,
+			'completed_lessons_percentage' => $percentage,
+		) = \Sensei()->course->get_progress_stats( $course_id );
 
 		$text_css           = Sensei_Block_Helpers::build_styles( $attributes );
 		$bar_background_css = Sensei_Block_Helpers::build_styles(

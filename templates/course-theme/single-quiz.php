@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
+<!-- wp:sensei-lms/quiz-back-to-lesson /-->
+
 <!-- wp:html -->
 <div>[TODO: Quiz content here]</div>
 <!-- /wp:html -->

@@ -54,6 +54,19 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
 
+		wp_add_inline_script(
+			'sensei-single-lesson-blocks',
+			sprintf(
+				'window.sensei_single_lesson_blocks = %s',
+				wp_json_encode(
+					[
+						'quiz_pagination_enabled' => Sensei()->feature_flags->is_enabled( 'quiz_pagination' ),
+					]
+				)
+			),
+			'before'
+		);
+
 	}
 
 	/**

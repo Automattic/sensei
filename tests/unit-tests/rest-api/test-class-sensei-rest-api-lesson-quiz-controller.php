@@ -175,12 +175,15 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$quiz_args         = [
 			'meta_input' => [
-				'_enable_quiz_reset'     => 'on',
-				'_random_question_order' => 'yes',
-				'_pass_required'         => 'on',
-				'_quiz_passmark'         => 10,
-				'_quiz_grade_type'       => 'auto',
-				'_show_questions'        => '',
+				'_enable_quiz_reset'           => 'on',
+				'_random_question_order'       => 'yes',
+				'_pass_required'               => 'on',
+				'_quiz_passmark'               => 10,
+				'_quiz_grade_type'             => 'auto',
+				'_show_questions'              => '',
+				'_failed_indicate_incorrect'   => 'yes',
+				'_failed_show_answer_feedback' => 'yes',
+				'_failed_show_correct_answers' => 'no',
 			],
 		];
 		list( $lesson_id ) = $this->create_lesson_with_quiz( $quiz_args );
@@ -193,6 +196,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertTrue( $response_data['options']['random_question_order'] );
 		$this->assertEquals( 10, $response_data['options']['quiz_passmark'] );
 		$this->assertNull( $response_data['options']['show_questions'] );
+		$this->assertTrue( $response_data['options']['failed_indicate_incorrect'] );
+		$this->assertTrue( $response_data['options']['failed_show_answer_feedback'] );
+		$this->assertFalse( $response_data['options']['failed_show_correct_answers'] );
 
 		$another_quiz_args = [
 			'meta_input' => [
@@ -214,6 +220,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertFalse( $response_data['options']['random_question_order'] );
 		$this->assertEquals( 0, $response_data['options']['quiz_passmark'] );
 		$this->assertEquals( 3, $response_data['options']['show_questions'] );
+		$this->assertTrue( $response_data['options']['failed_indicate_incorrect'] );
+		$this->assertTrue( $response_data['options']['failed_show_answer_feedback'] );
+		$this->assertTrue( $response_data['options']['failed_show_correct_answers'] );
 	}
 
 	/**
@@ -412,19 +421,22 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	/**
 	 * Tests that a simple post request works.
 	 */
-	public function testPostSimple() {
+	public function testSetQuizProperties() {
 		$this->login_as_teacher();
 
 		$lesson_id = $this->factory->lesson->create();
 
 		$body = [
 			'options'   => [
-				'pass_required'         => true,
-				'quiz_passmark'         => 10,
-				'auto_grade'            => false,
-				'allow_retakes'         => false,
-				'show_questions'        => 3,
-				'random_question_order' => true,
+				'pass_required'               => true,
+				'quiz_passmark'               => 10,
+				'auto_grade'                  => false,
+				'allow_retakes'               => false,
+				'show_questions'              => 3,
+				'random_question_order'       => true,
+				'failed_indicate_incorrect'   => true,
+				'failed_show_answer_feedback' => true,
+				'failed_show_correct_answers' => false,
 			],
 			'questions' => [],
 		];
@@ -438,6 +450,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertEquals( '', $quiz_meta['_enable_quiz_reset'][0] );
 		$this->assertEquals( '3', $quiz_meta['_show_questions'][0] );
 		$this->assertEquals( 'yes', $quiz_meta['_random_question_order'][0] );
+		$this->assertEquals( 'yes', $quiz_meta['_failed_indicate_incorrect'][0] );
+		$this->assertEquals( 'yes', $quiz_meta['_failed_show_answer_feedback'][0] );
+		$this->assertEquals( 'no', $quiz_meta['_failed_show_correct_answers'][0] );
 	}
 
 	/**
@@ -763,6 +778,59 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertEquals( 'Will it blend?', $questions[0]->post_title );
 		$this->assertEquals( 'Teacher notes', get_post_meta( $questions[0]->ID, '_question_right_answer', true ) );
 		$this->assertEquals( 'Upload instructions', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
+	}
+
+	/**
+	 * Tests updating quiz pagination settings.
+	 */
+	public function testUpdatingPaginationSettings() {
+		$this->login_as_teacher();
+
+		$lesson_id = $this->factory->lesson->create();
+
+		$body = [
+			'options'    => [],
+			'questions'  => [],
+			'pagination' => [
+				'pagination_number'       => 3,
+				'show_progress_bar'       => true,
+				'progress_bar_radius'     => 10,
+				'progress_bar_height'     => 10,
+				'progress_bar_color'      => '#ffffff',
+				'progress_bar_background' => '#eeeeee',
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$pagination_meta = get_post_meta( Sensei()->lesson->lesson_quizzes( $lesson_id ), '_pagination', true );
+		$json_array      = json_decode( $pagination_meta, true );
+
+		$this->assertEquals( 3, $json_array['pagination_number'] );
+		$this->assertEquals( true, $json_array['show_progress_bar'] );
+		$this->assertEquals( 10, $json_array['progress_bar_radius'] );
+		$this->assertEquals( 10, $json_array['progress_bar_height'] );
+		$this->assertEquals( '#ffffff', $json_array['progress_bar_color'] );
+		$this->assertEquals( '#eeeeee', $json_array['progress_bar_background'] );
+	}
+
+	/**
+	 * Tests default values for quiz pagination settings.
+	 */
+	public function testPaginationSettingsDefaultValues() {
+		$this->login_as_teacher();
+
+		list( $lesson_id ) = $this->create_lesson_with_quiz();
+
+		$response_data       = $this->send_get_request( $lesson_id );
+		$pagination_settings = $response_data['pagination'];
+
+		$this->assertNull( $pagination_settings['pagination_number'] );
+		$this->assertFalse( $pagination_settings['show_progress_bar'] );
+		$this->assertEquals( 5, $pagination_settings['progress_bar_radius'] );
+		$this->assertEquals( 5, $pagination_settings['progress_bar_height'] );
+		$this->assertNull( $pagination_settings['progress_bar_color'] );
+		$this->assertNull( $pagination_settings['progress_bar_background'] );
 	}
 
 	/**

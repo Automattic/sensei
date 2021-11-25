@@ -14,7 +14,6 @@ import MultipleChoiceAnswer from './multiple-choice';
 import SingleLineAnswer from './single-line';
 import TrueFalseAnswer from './true-false';
 import {
-	QuestionAnswerFeedbackSettings,
 	QuestionGradingNotesSettings,
 	QuestionMultipleChoiceSettings,
 } from '../question-block/settings';
@@ -25,6 +24,7 @@ import {
  * @property {string}   title       Question type name.
  * @property {string}   description Question type description.
  * @property {Function} edit        Editor component.
+ * @property {boolean}  feedback    Question type can have answer feedback.
  * @property {Function} validate    Validation callback.
  * @property {Object}   messages    Message string.s
  */
@@ -40,10 +40,8 @@ const questionTypes = {
 		description: __( 'Select from a list of options.', 'sensei-lms' ),
 		edit: MultipleChoiceAnswer,
 		view: MultipleChoiceAnswer.view,
-		settings: [
-			QuestionMultipleChoiceSettings,
-			QuestionAnswerFeedbackSettings,
-		],
+		settings: [ QuestionMultipleChoiceSettings ],
+		feedback: true,
 		validate: ( { answers = [] } = {} ) => {
 			return {
 				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
@@ -74,14 +72,16 @@ const questionTypes = {
 		),
 		edit: TrueFalseAnswer,
 		view: TrueFalseAnswer.view,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		feedback: true,
+		settings: [],
 	},
 	'gap-fill': {
 		title: __( 'Gap Fill', 'sensei-lms' ),
 		description: __( 'Fill in the blank.', 'sensei-lms' ),
 		edit: GapFillAnswer,
 		view: GapFillAnswer.view,
-		settings: [ QuestionAnswerFeedbackSettings ],
+		feedback: true,
+		settings: [],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
 				noGap: ! gap?.length,
@@ -126,7 +126,6 @@ const questionTypes = {
 
 // Commonly used core settings for use in custom question types.
 const availableCoreSettings = {
-	QuestionAnswerFeedbackSettings,
 	QuestionGradingNotesSettings,
 };
 

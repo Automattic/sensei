@@ -9,10 +9,15 @@ import { renderToString } from '@wordpress/element';
  * External dependencies
  */
 import { omit } from 'lodash';
-
 /**
  * Internal dependencies
  */
+import {
+	answerFeedbackCorrectBlock,
+	answerFeedbackIncorrectBlock,
+} from '../answer-feedback-block';
+import questionDescriptionBlock from '../question-description-block';
+import questionAnswersBlock from '../question-answers-block';
 import metadata from './block.json';
 
 /**
@@ -50,6 +55,70 @@ const getMediaBlock = ( media ) => {
 };
 
 export default [
+	{
+		onProgrammaticCreation: true,
+		isEligible( attributes, innerBlocks ) {
+			let isEligible = true;
+			if ( !! attributes.options?.answerFeedback ) {
+				isEligible = true;
+			}
+			innerBlocks.map( ( theBlock ) => {
+				if (
+					[
+						questionDescriptionBlock.name,
+						answerFeedbackCorrectBlock.name,
+						answerFeedbackIncorrectBlock.name,
+					].includes( theBlock.name )
+				) {
+					isEligible = false;
+				}
+				return true;
+			} );
+
+			return isEligible;
+		},
+		attributes: {
+			...metadata.attributes,
+		},
+		migrate( attributes, innerBlocks ) {
+			const migratedInnerBlocks = [];
+
+			// Shift the description into the new question description block container.
+			migratedInnerBlocks.push(
+				createBlock( questionDescriptionBlock.name, {}, innerBlocks ),
+				createBlock( questionAnswersBlock.name, {} )
+			);
+
+			// Replace the answerFeedback attribute with dedicated blocks.
+			if ( !! attributes.options?.answerFeedback ) {
+				migratedInnerBlocks.push(
+					createBlock( answerFeedbackCorrectBlock.name, {}, [
+						createBlock( 'core/paragraph', {
+							content: attributes.options.answerFeedback,
+						} ),
+					] )
+				);
+				migratedInnerBlocks.push(
+					createBlock( answerFeedbackIncorrectBlock.name, {}, [
+						createBlock( 'core/paragraph', {
+							content: attributes.options.answerFeedback,
+						} ),
+					] )
+				);
+			}
+
+			return [
+				{
+					...attributes,
+					options: omit( attributes.options, 'answerFeedback' ),
+				},
+				migratedInnerBlocks,
+			];
+		},
+		save() {
+			return <InnerBlocks.Content />;
+		},
+	},
 	{
 		onProgrammaticCreation: true,
 		isEligible( attributes ) {

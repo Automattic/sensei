@@ -61,6 +61,10 @@ abstract class Sensei_Blocks_Initializer {
 			return;
 		}
 
+		if ( ! $this->should_initialize_blocks() ) {
+			return;
+		}
+
 		$this->initialize_blocks();
 
 		if ( is_admin() || Sensei()->blocks->has_sensei_blocks() ) {
@@ -68,6 +72,15 @@ abstract class Sensei_Blocks_Initializer {
 		}
 
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+	}
+
+	/**
+	 * Check if it should initialize the blocks.
+	 *
+	 * @since 3.13.4
+	 */
+	protected function should_initialize_blocks() {
+		return true;
 	}
 
 	/**

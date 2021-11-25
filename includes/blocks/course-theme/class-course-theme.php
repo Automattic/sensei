@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_CT_Blocks.
+ * File containing the class Course_Theme.
  *
  * @package sensei
  */
@@ -12,20 +12,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Sensei_Blocks_Initializer;
+use \Sensei_Course_Theme;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
 use \Sensei\Blocks\Course_Theme\Next_Lesson;
 use \Sensei\Blocks\Course_Theme\Prev_Next_Lesson;
+use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
+use \Sensei\Blocks\Course_Theme\Course_Progress_Counter;
 use \Sensei\Blocks\Course_Theme\Quiz_Button;
 
 /**
- * Class Sensei_Course_Theme_Blocks
+ * Class Course_Theme
  */
 class Course_Theme extends Sensei_Blocks_Initializer {
 	/**
-	 * Sensei_Blocks constructor.
+	 * Course_Theme constructor.
 	 */
 	public function __construct() {
-		parent::__construct( [ 'lesson' ] );
+		parent::__construct( [ 'lesson', 'course', 'quiz' ] );
 	}
 
 	/**
@@ -34,7 +37,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
-		Sensei()->assets->enqueue( 'sensei-course-theme', 'css/sensei-course-theme.css' );
 	}
 
 	/**
@@ -46,12 +48,24 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	}
 
 	/**
+	 * Check if it should initialize the blocks.
+	 */
+	protected function should_initialize_blocks() {
+		return Sensei_Course_Theme::instance()->should_use_sensei_theme_template();
+	}
+
+	/**
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
-		$prev = new Prev_Lesson();
-		$next = new Next_Lesson();
-		new Prev_Next_Lesson( $prev, $next );
-		new Quiz_Button();
+		if ( 'lesson' === get_post_type() ) {
+			new Prev_Lesson();
+			new Next_Lesson();
+			new Prev_Next_Lesson();
+			new Course_Progress_Counter();
+			new Quiz_Button();
+		} elseif ( 'quiz' === get_post_type() ) {
+			new Quiz_Back_To_Lesson();
+		}
 	}
 }
