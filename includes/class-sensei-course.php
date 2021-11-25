@@ -1143,12 +1143,12 @@ class Sensei_Course {
 	 *
 	 * @access public
 	 *
-	 * @param int    $course_id   (default: 0)
-	 * @param string $post_status (default: 'publish')
-	 * @param string $fields      (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
-	 * @param array  $query_args  Base arguments for the WP query.
+	 * @param int          $course_id   (default: 0).         The course id.
+	 * @param string|array $post_status (default: 'publish'). The post status.
+	 * @param string       $fields      (default: 'all').     WP only allows 3 types, but we will limit it to only 'ids' or 'all'.
+	 * @param array        $query_args  Base arguments for the WP query.
 	 *
-	 * @return array{ type WP_Post }  $posts_array
+	 * @return WP_Post[]
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all', $query_args = [] ) {
 

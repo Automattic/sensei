@@ -1737,8 +1737,8 @@ class Sensei_Core_Modules {
 	 * Find the lesson in the given course that doesn't belong
 	 * to any of the courses modules
 	 *
-	 * @param int    $course_id    The course id.
-	 * @param string $post_status  The status of the lessons.
+	 * @param int          $course_id    The course id.
+	 * @param string|array $post_status  The status of the lessons.
 	 *
 	 * @return array $non_module_lessons
 	 */
