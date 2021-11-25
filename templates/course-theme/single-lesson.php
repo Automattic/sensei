@@ -48,6 +48,7 @@ if ( have_posts() ) {
 <div class="wp-block-columns sensei-course-theme__columns">
 	<!-- wp:column {"width":"300px","className":"sensei-course-theme__sidebar"} -->
 	<div class="wp-block-column sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
+		<!-- wp:sensei-lms/focus-mode-toggle /-->
 		<!-- wp:sensei-lms/course-navigation /-->
 	</div>
 	<!-- /wp:column -->

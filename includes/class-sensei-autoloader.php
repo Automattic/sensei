@@ -196,21 +196,22 @@ class Sensei_Autoloader {
 			/**
 			 * WPML
 			 */
-			'Sensei_WPML'                                 => 'wpml/class-sensei-wpml.php',
+			'Sensei_WPML' => 'wpml/class-sensei-wpml.php',
 
 			/**
 			 * Course Theme
 			 */
-			'Sensei\Blocks\Course_Theme'                  => 'blocks/course-theme/class-course-theme.php',
-			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson' => 'blocks/course-theme/class-prev-next-lesson.php',
-			'Sensei\Blocks\Course_Theme\Prev_Lesson'      => 'blocks/course-theme/class-prev-lesson.php',
-			'Sensei\Blocks\Course_Theme\Next_Lesson'      => 'blocks/course-theme/class-next-lesson.php',
-			'Sensei\Blocks\Course_Theme\Course_Title'     => 'blocks/course-theme/class-course-title.php',
-			'Sensei\Blocks\Course_Theme\Site_Logo'        => 'blocks/course-theme/class-site-logo.php',
-			'Sensei\Blocks\Course_Theme\Quiz_Button'      => 'blocks/course-theme/class-quiz-button.php',
-			'Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson' => 'blocks/course-theme/class-quiz-back-to-lesson.php',
+			'Sensei\Blocks\Course_Theme'                         => 'blocks/course-theme/class-course-theme.php',
+			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson'        => 'blocks/course-theme/class-prev-next-lesson.php',
+			'Sensei\Blocks\Course_Theme\Prev_Lesson'             => 'blocks/course-theme/class-prev-lesson.php',
+			'Sensei\Blocks\Course_Theme\Next_Lesson'             => 'blocks/course-theme/class-next-lesson.php',
+			'Sensei\Blocks\Course_Theme\Course_Title'            => 'blocks/course-theme/class-course-title.php',
+			'Sensei\Blocks\Course_Theme\Site_Logo'               => 'blocks/course-theme/class-site-logo.php',
+			'Sensei\Blocks\Course_Theme\Focus_Mode'              => 'blocks/course-theme/class-focus-mode.php',
+			'Sensei\Blocks\Course_Theme\Quiz_Button'             => 'blocks/course-theme/class-quiz-button.php',
+			'Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson'     => 'blocks/course-theme/class-quiz-back-to-lesson.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Counter' => 'blocks/course-theme/class-course-progress-counter.php',
-			'Sensei\Blocks\Course_Theme\Course_Progress_Bar' => 'blocks/course-theme/class-course-progress-bar.php',
+			'Sensei\Blocks\Course_Theme\Course_Progress_Bar'     => 'blocks/course-theme/class-course-progress-bar.php',
 		);
 	}
 

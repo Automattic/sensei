@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Sensei\Blocks\Course_Theme\Course_Title;
+use Sensei\Blocks\Course_Theme\Focus_Mode;
 use Sensei\Blocks\Course_Theme\Site_Logo;
 use \Sensei_Blocks_Initializer;
 use \Sensei_Course_Theme;
@@ -63,6 +64,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	public function initialize_blocks() {
 		new Course_Title();
 		new Site_Logo();
+		new Focus_Mode();
 		if ( 'lesson' === get_post_type() ) {
 			new Prev_Lesson();
 			new Next_Lesson();
