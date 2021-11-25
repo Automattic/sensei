@@ -57,12 +57,12 @@
 		max-height: 0;
 		position: relative;
 		top: -12px;
+		transition-delay: 150ms;
 	}
 
 	&__lessons.collapsed ~ &__summary {
 		visibility: visible;
 		max-height: 50px;
-		transition-delay: 150ms;
 	}
 
 }
