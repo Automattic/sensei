@@ -31,6 +31,8 @@ if ( have_posts() ) {
 	<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
 
 	<!-- /wp:paragraph -->
+
+	<!-- wp:sensei-lms/course-theme-quiz-button /-->
 </div>
 <!-- /wp:group -->
 
