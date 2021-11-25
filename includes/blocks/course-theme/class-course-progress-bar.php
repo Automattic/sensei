@@ -1,0 +1,54 @@
+<?php
+/**
+ * File containing the Course_Progress_Bar class.
+ *
+ * @package sensei
+ * @since 3.13.4
+ */
+
+namespace Sensei\Blocks\Course_Theme;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use \Sensei_Blocks;
+
+/**
+ * Class Course_Progress_Bar is responsible for rendering the '[==========----------]' block.
+ */
+class Course_Progress_Bar {
+	/**
+	 * Course_Progress_Bar constructor.
+	 */
+	public function __construct() {
+		Sensei_Blocks::register_sensei_block(
+			'sensei-lms/course-theme-course-progress-bar',
+			[
+				'render_callback' => [ $this, 'render' ],
+			]
+		);
+	}
+
+	/**
+	 * Renders the block.
+	 *
+	 * @access private
+	 *
+	 * @return string The block HTML.
+	 */
+	public function render() : string {
+		$course_id = \Sensei_Utils::get_current_course();
+		if ( ! $course_id ) {
+			return '';
+		}
+
+		list( 'completed_lessons_percentage' => $width ) = \Sensei()->course->get_progress_stats( $course_id );
+
+		return ( "
+			<div class='sensei-course-theme-course-progress-bar'>
+				<div class='sensei-course-theme-course-progress-bar-inner' style='width: {$width}%;'></div>
+			</div>
+		" );
+	}
+}

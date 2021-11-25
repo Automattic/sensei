@@ -26,8 +26,8 @@ if ( have_posts() ) {
 	<!-- wp:sensei-lms/course-theme-prev-next-lesson -->
 	<!-- wp:sensei-lms/course-theme-prev-lesson {"inContainer":true} /-->
 	<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
-	<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
-
+	<!-- /wp:sensei-lms/course-theme-prev-next-lesson /-->
+	<!-- wp:sensei-lms/course-theme-course-progress-bar /-->
 	<!-- wp:sensei-lms/course-theme-quiz-button /-->
 </div>
 <!-- /wp:group -->
