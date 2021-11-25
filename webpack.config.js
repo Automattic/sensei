@@ -72,6 +72,7 @@ const files = [
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
 	'css/sensei-course-theme.scss',
+	'course-theme/course-theme.js',
 ];
 
 function getName( filename ) {
