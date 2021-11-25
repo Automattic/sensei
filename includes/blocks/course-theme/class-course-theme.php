@@ -64,7 +64,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 			new Next_Lesson();
 			new Prev_Next_Lesson();
 			new Course_Progress_Counter();
-		    new Course_Progress_Bar();
+			new Course_Progress_Bar();
 			new Quiz_Button();
 		} elseif ( 'quiz' === get_post_type() ) {
 			new Quiz_Back_To_Lesson();
