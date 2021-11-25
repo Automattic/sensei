@@ -1,4 +1,13 @@
 .sensei-course-theme {
+
+	--header-height: 75px;
+	--sidebar-width: 300px;
+	--top-offset: 0px;
+
+	@at-root body.admin-bar {
+		--top-offset: 32px;
+	}
+
 	background-color: #fff;
 
 	&__columns, &__header {
@@ -7,17 +16,20 @@
 
 	&__header {
 		margin: 0;
-		height: 75px;
 		position: sticky;
-		top: 0;
+		top: var(--top-offset);
 		background-color: #fff;
 		z-index: 100;
-		body.admin-bar & {
-			top: 32px;
-		}
+
 	}
 
 	&__sidebar {
+		position: fixed;
+		top: calc( var(--header-height) + var(--top-offset) );
+
+		bottom: 0;
+		left: 0;
+		width: var(--sidebar-width);
 		border-right: 1px solid #ccc;
 		padding: 24px;
 		padding-right: 16px;
@@ -25,7 +37,13 @@
 	}
 
 	&__main-content {
-		padding: 24px;
+		padding: 32px;
+		margin-left: var(--sidebar-width) !important;
+		> * {
+			max-width: 900px;
+			margin-left: auto;
+			margin-right: auto;
+		}
 	}
 
 	&__header {
@@ -36,7 +54,7 @@
 			padding: 0 24px;
 			margin: 0!important;
 			gap: 24px;
-			height: 65px;
+			height: calc( var(--header-height) - 10px );
 		}
 
 		&__left {
