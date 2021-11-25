@@ -1,0 +1,108 @@
+@import '../../shared/styles/collapsible-content';
+
+.sensei-lms-course-navigation {
+
+	--gray: #787C82;
+
+	&__modules + &__lessons {
+		border-top: 1px dotted #ccc;
+		margin-top: 6px;
+		padding-top: 6px;
+	}
+
+}
+
+.sensei-lms-course-navigation-module {
+	&__header {
+		display: flex;
+		align-items: flex-start;
+		margin: 12px 0;
+
+		.sensei-collapsible__toggle {
+			&:hover {
+				color: var(--primary-color);
+			}
+			svg {
+				fill: currentColor;
+				width: 24px;
+				height: 24px;
+			}
+
+			&.collapsed {
+				transform: rotate(180deg);
+			}
+
+			height: 24px;
+		}
+	}
+
+	&__title {
+		flex: 1;
+
+		a {
+			color: var(--primary-color);
+			font-weight: 600;
+			font-size: 18px;
+			line-height: 22px;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	&__summary {
+		font-size: 13px;
+		color: var(--gray);
+		visibility: hidden;
+		overflow: hidden;
+		max-height: 0;
+		position: relative;
+		top: -12px;
+	}
+
+	&__lessons.collapsed ~ &__summary {
+		visibility: visible;
+		max-height: 50px;
+		transition-delay: 150ms;
+	}
+
+}
+
+.sensei-lms-course-navigation-lesson {
+
+	display: flex;
+	align-items: center;
+
+	&__link {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		color: inherit;
+	}
+
+	&__title {
+		flex: 1;
+		padding: 6px 12px;
+		font-size: 14px;
+	}
+
+	&__quiz {
+		font-size: 13px;
+		color: var(--gray);
+	}
+
+	&__status {
+		width: 18px;
+		height: 18px;
+		fill: currentColor;
+	}
+
+	&.status-not-started &__status {
+		fill: var(--gray);
+	}
+
+	&.current-lesson &__title {
+		font-weight: 700;
+	}
+}
