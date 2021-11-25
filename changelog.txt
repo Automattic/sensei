@@ -1,5 +1,39 @@
 *** Changelog ***
 
+2021.11.24 - version 3.14.0
+* New: Answer feedback improvements
+  * Add answer feedback editor settings [#4344](https://github.com/Automattic/sensei/pull/4344)
+  * Update answer feedback display to use new options [#4349](https://github.com/Automattic/sensei/pull/4349)
+  * Revitalisation of Answer Feedback [#4313](https://github.com/Automattic/sensei/pull/4313)
+  * Update grading screen with answer feedback changes [#4427](https://github.com/Automattic/sensei/pull/4427)
+  * Refine answer feedback blocks [#4354](https://github.com/Automattic/sensei/pull/4354)
+  * Re-style answer feedback frontend [#4408](https://github.com/Automattic/sensei/pull/4408)
+* Fix: Remove pagination from legacy course results page [#4328](https://github.com/Automattic/sensei/pull/4328)
+* Fix: Update Quiz title when parent Lesson title is updated. #4292 [#4331](https://github.com/Automattic/sensei/pull/4331)
+* Fix: Add is_array check to avoid warnings [#4340](https://github.com/Automattic/sensei/pull/4340)
+* Tweak: Remove experimental rest api [#4191](https://github.com/Automattic/sensei/pull/4191)
+* Tweak: Remove old WP version checks [#4194](https://github.com/Automattic/sensei/pull/4194)
+* Fix: Do not show "View results" in course summary if course is not complete [#4330](https://github.com/Automattic/sensei/pull/4330)
+* Fix: Omit className attribute from quiz structure sync [#4347](https://github.com/Automattic/sensei/pull/4347)
+* Fix: Fix is_sensei() false positives [#4343](https://github.com/Automattic/sensei/pull/4343)
+* Fix: Fix PHPCS issues [#4352](https://github.com/Automattic/sensei/pull/4352)
+* Fix: Fix random order for new questions with multiple choice [#4356](https://github.com/Automattic/sensei/pull/4356)
+* Fix: Fix custom URL slug for course results link [#4358](https://github.com/Automattic/sensei/pull/4358)
+* Tweak: Add a custom appender in course outline block [#4350](https://github.com/Automattic/sensei/pull/4350)
+* Fix: Use flexbox to display the analysis page correctly on wide and narrow screens [#4360](https://github.com/Automattic/sensei/pull/4360)
+* Fix: Fix random order for new questions with multiple choice [#4364](https://github.com/Automattic/sensei/pull/4364)
+* Fix: $taxonomies can be null, don't always treat it as an array [#4329](https://github.com/Automattic/sensei/pull/4329)
+* Fix: Fix single page blocks script loading on the front-end [#4402](https://github.com/Automattic/sensei/pull/4402)
+* Fix: Fix PHP linter throws an error when the project folder has spaces [#4403](https://github.com/Automattic/sensei/pull/4403)
+* Tweak: Add course ID class to lesson pages [#4388](https://github.com/Automattic/sensei/pull/4388)
+* Tweak: Update README.md to link to senseilms.com [#4418](https://github.com/Automattic/sensei/pull/4418)
+* Fix: Load less User data for Teacher metabox [#4417](https://github.com/Automattic/sensei/pull/4417)
+* Tweak: Add quiz block in the lessons when the block is not there [#4420](https://github.com/Automattic/sensei/pull/4420)
+* Tweak: Update readme.txt with new description content [#4423](https://github.com/Automattic/sensei/pull/4423)
+* Fix: Fix missing space for 'Extensions' heading [#4424](https://github.com/Automattic/sensei/pull/4424)
+* Tweak: Improve performance on course ordering [#4422](https://github.com/Automattic/sensei/pull/4422)
+* Fix: Fix course complete emails not being sent [#4425](https://github.com/Automattic/sensei/pull/4425)
+
 2021.10.12 - version 3.13.3
 * New: Additional hooks for course expiration
 	* Add clock notice type [#4302](https://github.com/Automattic/sensei/pull/4302)

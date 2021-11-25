@@ -179,8 +179,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
 		$is_new  = null === $quiz_id;
 
-		$json_params  = $request->get_json_params();
-		$quiz_options = $json_params['options'];
+		$json_params = $request->get_json_params();
 
 		$quiz_id = wp_insert_post(
 			[
@@ -190,7 +189,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'post_title'   => $lesson->post_title,
 				'post_type'    => 'quiz',
 				'post_parent'  => $lesson->ID,
-				'meta_input'   => $this->get_quiz_meta( $quiz_options, $lesson ),
+				'meta_input'   => $this->get_quiz_meta( $json_params, $lesson ),
 			]
 		);
 
@@ -240,13 +239,15 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Helper method to translate input to quiz meta.
 	 *
-	 * @param array   $quiz_options The input coming from JSON data.
+	 * @param array   $json_params The input coming from JSON data.
 	 * @param WP_Post $lesson       The parent lesson.
 	 *
 	 * @return array The meta.
 	 */
-	private function get_quiz_meta( array $quiz_options, WP_Post $lesson ) : array {
+	private function get_quiz_meta( array $json_params, WP_Post $lesson ) : array {
 		$meta_input = [ '_quiz_lesson' => $lesson->ID ];
+
+		$quiz_options = $json_params['options'];
 
 		if ( isset( $quiz_options['pass_required'] ) ) {
 			$meta_input['_pass_required'] = true === $quiz_options['pass_required'] ? 'on' : '';
@@ -270,6 +271,18 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		if ( isset( $quiz_options['random_question_order'] ) ) {
 			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
+		}
+
+		foreach ( [ 'failed_indicate_incorrect', 'failed_show_correct_answers', 'failed_show_answer_feedback' ] as $option ) {
+			if ( isset( $quiz_options[ $option ] ) ) {
+				$meta_input[ '_' . $option ] = $quiz_options[ $option ] ? 'yes' : 'no';
+			} else {
+				$meta_input[ '_' . $option ] = null;
+			}
+		}
+
+		if ( isset( $json_params['pagination'] ) ) {
+			$meta_input['_pagination'] = wp_json_encode( $json_params['pagination'] );
 		}
 
 		return $meta_input;
@@ -327,19 +340,47 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @return array
 	 */
-	private function get_quiz_data( WP_Post $quiz ) : array {
+	private function get_quiz_data( WP_Post $quiz ): array {
 		$post_meta = get_post_meta( $quiz->ID );
-		return [
-			'options'   => [
-				'pass_required'         => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
-				'quiz_passmark'         => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
-				'auto_grade'            => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
-				'allow_retakes'         => ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0],
-				'show_questions'        => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
-				'random_question_order' => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
+
+		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
+		$failed_feedback_default = ! $allow_retakes;
+
+		$quiz_data = [
+			'options'    => [
+				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
+				'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
+				'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
+				'allow_retakes'               => $allow_retakes,
+				'show_questions'              => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
+				'random_question_order'       => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
+				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
+				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
+				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
 			],
-			'questions' => $this->get_quiz_questions( $quiz ),
+			'questions'  => $this->get_quiz_questions( $quiz ),
+			'pagination' => ! empty( $post_meta['_pagination'] ) ? $post_meta['_pagination'] : [],
 		];
+
+		$quiz_data['pagination'] = [
+			'pagination_number'       => null,
+			'show_progress_bar'       => false,
+			'progress_bar_radius'     => 5,
+			'progress_bar_height'     => 5,
+			'progress_bar_color'      => null,
+			'progress_bar_background' => null,
+		];
+
+		if ( empty( $post_meta['_pagination'][0] ) || ! is_string( $post_meta['_pagination'][0] ) ) {
+			return $quiz_data;
+		}
+
+		$json_array = json_decode( $post_meta['_pagination'][0], true );
+		if ( $json_array ) {
+			$quiz_data['pagination'] = $json_array;
+		}
+
+		return $quiz_data;
 	}
 
 	/**
@@ -373,7 +414,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_item_schema() : array {
+	public function get_item_schema(): array {
 		$schema = [
 			'type'       => 'object',
 			'properties' => [
@@ -381,35 +422,50 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'type'       => 'object',
 					'required'   => true,
 					'properties' => [
-						'pass_required'         => [
+						'pass_required'               => [
 							'type'        => 'boolean',
 							'description' => 'Pass required to complete lesson',
 							'default'     => false,
 						],
-						'quiz_passmark'         => [
+						'quiz_passmark'               => [
 							'type'        => 'integer',
 							'description' => 'Score grade between 0 and 100 required to pass the quiz',
 							'default'     => 100,
 						],
-						'auto_grade'            => [
+						'auto_grade'                  => [
 							'type'        => 'boolean',
 							'description' => 'Whether auto-grading should take place',
 							'default'     => true,
 						],
-						'allow_retakes'         => [
+						'allow_retakes'               => [
 							'type'        => 'boolean',
 							'description' => 'Allow quizzes to be taken again',
 							'default'     => true,
 						],
-						'show_questions'        => [
+						'show_questions'              => [
 							'type'        => [ 'integer', 'null' ],
 							'description' => 'Number of questions to show randomly',
 							'default'     => null,
 						],
-						'random_question_order' => [
+						'random_question_order'       => [
 							'type'        => 'boolean',
 							'description' => 'Show questions in a random order',
 							'default'     => false,
+						],
+						'failed_indicate_incorrect'   => [
+							'type'        => [ 'boolean', 'null' ],
+							'description' => 'Indicate which questions are incorrect',
+							'default'     => null,
+						],
+						'failed_show_correct_answers' => [
+							'type'        => [ 'boolean', 'null' ],
+							'description' => 'Show correct answers',
+							'default'     => null,
+						],
+						'failed_show_answer_feedback' => [
+							'type'        => [ 'boolean', 'null' ],
+							'description' => 'Show answer feedback text',
+							'default'     => null,
 						],
 					],
 				],
@@ -420,6 +476,40 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				],
 			],
 		];
+
+		if ( Sensei()->feature_flags->is_enabled( 'quiz_pagination' ) ) {
+			$schema['properties']['pagination'] = [
+				'type'       => 'object',
+				'required'   => true,
+				'properties' => [
+					'pagination_number'       => [
+						'type'        => 'integer',
+						'description' => 'Number of questions per page',
+						'default'     => null,
+					],
+					'show_progress_bar'       => [
+						'type'        => 'boolean',
+						'description' => 'Whether to show the progress bar in the frontend',
+						'default'     => false,
+					],
+					'progress_bar_radius'     => [
+						'type'        => 'integer',
+						'description' => 'Progress bar radius',
+						'default'     => 5,
+					],
+					'progress_bar_height'     => [
+						'type'        => 'integer',
+						'description' => 'Progress bar height',
+						'default'     => 5,
+					],
+					'progress_bar_background' => [
+						'type'        => 'string',
+						'description' => 'Progress bar background color',
+						'default'     => null,
+					],
+				],
+			];
+		}
 
 		return $schema;
 	}

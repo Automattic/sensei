@@ -28,6 +28,7 @@ const READ_ONLY_ATTRIBUTES = [
 	'options.studentHelp',
 	'media',
 	'categoryName',
+	'lock',
 ];
 
 /**
@@ -71,6 +72,10 @@ registerStructureStore( {
 
 		yield dispatch( 'core/block-editor' ).updateBlockAttributes( clientId, {
 			options: normalizeAttributes( structure.options, camelCase ),
+			paginationSettings: normalizeAttributes(
+				structure.pagination,
+				camelCase
+			),
 		} );
 
 		if ( ! structure.questions?.length ) {
@@ -110,6 +115,11 @@ registerStructureStore( {
 			snakeCase
 		);
 
+		const pagination = normalizeAttributes(
+			quizBlock.attributes.paginationSettings,
+			snakeCase
+		);
+
 		const questionBlocks = select( 'core/block-editor' ).getBlocks(
 			clientId
 		);
@@ -129,6 +139,7 @@ registerStructureStore( {
 					? serverQuestionsById[ question.id ]
 					: omit( question, READ_ONLY_ATTRIBUTES )
 			),
+			pagination,
 		};
 	},
 

@@ -133,12 +133,8 @@ add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_hidden_fields' ), 40 );
 
 // @since 1.9.0
-// hook in incorrect / correct message below questions if the quiz has been graded
-add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Question', 'the_answer_result_indication' ) );
-
-// @since 1.9.0
 // add answer grading feedback at the bottom of the question
-add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Question', 'answer_feedback_notes' ) );
+add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Question', 'the_answer_feedback' ) );
 
 // @since 1.9.0
 // add extra question data for different quesiton types when get_question_template_data_is_called.
