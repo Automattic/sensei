@@ -210,6 +210,7 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Button'      => 'blocks/course-theme/class-quiz-button.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson' => 'blocks/course-theme/class-quiz-back-to-lesson.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Counter' => 'blocks/course-theme/class-course-progress-counter.php',
+			'Sensei\Blocks\Course_Theme\Course_Progress_Bar' => 'blocks/course-theme/class-course-progress-bar.php',
 		);
 	}
 
