@@ -8,24 +8,32 @@
 .sensei-course-theme-prev-next-lesson-a {
 	font-size: 14px;
 	line-height: 17px;
-	color: #000;
+	color: inherit;
+	padding: 12px 5px;
+	text-decoration: none;
+	&:hover .sensei-course-theme-prev-next-lesson-text {
+		text-decoration: underline;
+	}
+
 	&:nth-child(2) {
 		margin-left: 27px;
 	}
+
 	&:hover {
 		text-decoration: underline;
 	}
+
 	svg {
 		height: 11px;
 	}
+}
+
+.sensei-course-theme-prev-next-lesson-text {
 	&__prev {
-		svg {
-			margin-right: 14px;
-		}
+		margin-left: 14px;
 	}
+
 	&__next {
-		svg {
-			margin-left: 14px;
-		}
+		margin-right: 14px;
 	}
 }
