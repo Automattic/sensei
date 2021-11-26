@@ -1,31 +1,44 @@
-.sensei-course-theme-prev-next-lesson-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
-}
+.sensei-course-theme-prev-next-lesson {
+	&-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+	}
 
-.sensei-course-theme-prev-next-lesson-a {
-	font-size: 14px;
-	line-height: 17px;
-	color: #000;
-	&:nth-child(2) {
-		margin-left: 27px;
-	}
-	&:hover {
-		text-decoration: underline;
-	}
-	svg {
-		height: 11px;
-	}
-	&__prev {
-		svg {
-			margin-right: 14px;
+    &-a {
+		span, &:hover span {
+			font-size: 14px;
+			line-height: 17px;
+			color: #000;
 		}
-	}
-	&__next {
-		svg {
-			margin-left: 14px;
+		&:hover span {
+			text-decoration: underline;
+		}
+
+		&:nth-child( 2 ) {
+			margin-left: 27px;
+		}
+
+		svg, &:hover svg {
+			height: 11px;
+			path {
+				fill: transparent;
+				stroke: #000;
+				stroke-width: 1.5;
+			}
+		}
+
+		&__prev {
+			svg {
+				margin-right: 14px;
+			}
+		}
+
+		&__next {
+			svg {
+				margin-left: 14px;
+			}
 		}
 	}
 }
