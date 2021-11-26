@@ -1409,6 +1409,11 @@ class Sensei_Admin {
 				'order'          => 'ASC',
 			);
 
+			// Ensure that the user either has permission to edit other's courses or is the author of the course.
+			if ( ! current_user_can( 'edit_others_courses' ) ) {
+				$args['author'] = get_current_user_id();
+			}
+
 			$courses = get_posts( $args );
 
 			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
@@ -1418,13 +1423,11 @@ class Sensei_Admin {
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
 			foreach ( $courses as $course ) {
-				if ( current_user_can( 'edit_others_posts' ) || get_current_user_id() === (int) $course->post_author ) {
-					$course_id = '';
-					if ( isset( $_GET['course_id'] ) ) {
-						$course_id = intval( $_GET['course_id'] );
-					}
-					$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
+				$course_id = '';
+				if ( isset( $_GET['course_id'] ) ) {
+					$course_id = intval( $_GET['course_id'] );
 				}
+				$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
 			}
 
 			$html .= '</select>' . "\n";
