@@ -69,6 +69,7 @@ $sensei-notice-icon-width: 30px;
 	font-family: 'sensei';
 	src: url( '../css/fonts/sensei/sensei.eot' );
 	src: url( '../css/fonts/sensei/sensei.eot?#iefix' ) format( 'embedded-opentype' ),
+		url("../css/fonts/sensei/sensei.woff2") format("woff2"),
 		url( '../css/fonts/sensei/sensei.woff' ) format( 'woff' ),
 		url( '../css/fonts/sensei/sensei.ttf' ) format( 'truetype' ),
 		url( '../css/fonts/sensei/sensei.svg#sensei' ) format( 'svg' );
@@ -79,7 +80,7 @@ $sensei-notice-icon-width: 30px;
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
 	font-family: 'sensei' !important;
-	content: '\e900';
+	content: "\f101";
 }
 
 /* Lessons Icon */
