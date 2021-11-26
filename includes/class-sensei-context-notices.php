@@ -54,7 +54,7 @@ class Sensei_Context_Notices {
 		$this->context             = $context;
 		$this->notices[ $context ] = [];
 
-		if ( $$css_class_prefix ) {
+		if ( ! empty( $css_class_prefix ) ) {
 			$this->css_class_prefix = $css_class_prefix;
 		}
 	}
@@ -63,12 +63,13 @@ class Sensei_Context_Notices {
 	 * Get an instance of the class.
 	 *
 	 * @param string $context The context of the notices.
+	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
 	 *
 	 * @return self
 	 */
-	public static function instance( string $context ) : self {
+	public static function instance( string $context, string $css_class_prefix = null ) : self {
 		if ( ! isset( self::$instances[ $context ] ) ) {
-			self::$instances[ $context ] = new self( $context );
+			self::$instances[ $context ] = new self( $context, $css_class_prefix );
 		}
 
 		return self::$instances[ $context ];
