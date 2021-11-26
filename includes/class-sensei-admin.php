@@ -1418,11 +1418,13 @@ class Sensei_Admin {
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
 			foreach ( $courses as $course ) {
-				$course_id = '';
-				if ( isset( $_GET['course_id'] ) ) {
-					$course_id = intval( $_GET['course_id'] );
+				if ( current_user_can( 'edit_others_posts') || get_current_user_id() == $course->post_author ) {
+					$course_id = '';
+					if ( isset( $_GET['course_id'] ) ) {
+						$course_id = intval( $_GET['course_id'] );
+					}
+					$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
 				}
-				$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
 			}
 
 			$html .= '</select>' . "\n";
