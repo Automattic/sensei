@@ -1412,6 +1412,11 @@ class Sensei_Admin {
 				'order'          => 'ASC',
 			);
 
+			// Ensure that the user either has permission to edit other's courses or is the author of the course.
+			if ( ! current_user_can( 'edit_others_courses' ) ) {
+				$args['author'] = get_current_user_id();
+			}
+
 			$courses = get_posts( $args );
 
 			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
