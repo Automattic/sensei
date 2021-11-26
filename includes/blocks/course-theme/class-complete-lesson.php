@@ -46,7 +46,8 @@ class Complete_Lesson {
 			return '';
 		}
 
-		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+		$lesson_id = $post->ID;
+		$course_id = \Sensei()->lesson->get_course_id( $lesson_id );
 
 		if (
 			// Return empty if it is not a lesson post.
@@ -56,35 +57,36 @@ class Complete_Lesson {
 			! \Sensei_Course::is_user_enrolled( $course_id ) ||
 
 			// Return empty if the lesson requires a quiz pass.
-			Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $post->ID )
+			\Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ||
+
+			// Return empty if user already completed the lesson.
+			\Sensei_Utils::user_completed_lesson( $lesson_id )
 		) {
 			return '';
 		}
 
-		// Render "Completed" if user already completed the lesson.
-		if ( \Sensei_Utils::user_completed_lesson( $post->ID ) ) {
-			$text = esc_html( __( 'Completed', 'sensei-lms' ) );
-			$icon = \Sensei()->assets->get_icon( 'check' );
+		// The button is disabled if the lesson requires a pre-requisite.
+		$disabled = '';
+		if ( ! \Sensei_Lesson::is_prerequisite_complete( $lesson_id, get_current_user_id() ) ) {
+			$disabled = 'disabled';
+		}
 
-			return ( "
-				<div class='sensei-course-theme-completed-lesson'>
-					<div class='sensei-course-theme-completed-lesson-inner'>
-						{$icon}<span>{$text}</span>
-					</div>
-				</div>
-			" );
+		// The button is a secondary CTA if there is a quiz but not required to take/pass it.
+		$secondary = '';
+		if ( \Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
+			$secondary = 'sensei-course-theme-complete-lesson__secondary';
 		}
 
 		// Render "Mark Complete" button.
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink() );
-		$text      = esc_html( __( 'Mark complete', 'sensei-lms' ) );
+		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
 
 		return ( "
 			<form class='sensei-course-theme-complete-lesson-form' method='POST' action='{$permalink}'>
 				{$nonce}
 				<input type='hidden' name='quiz_action' value='lesson-complete' />
-				<button type='submit' class='sensei-course-theme-complete-lesson'>
+				<button type='submit' class='sensei-course-theme-complete-lesson {$secondary}' {$disabled}>
 					{$text}
 				</button>
 			</form>

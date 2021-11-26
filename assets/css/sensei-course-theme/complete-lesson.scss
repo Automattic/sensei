@@ -2,41 +2,29 @@
 	padding: 0;
 	margin: 0;
 }
-.sensei-course-theme-complete-lesson {
+
+button.sensei-course-theme-complete-lesson {
+	box-sizing: border-box;
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: 700;
 	padding: 11px 18px;
-	background-color: transparent;
-	border: 1px solid #000;
 	border-radius: 2px;
-	background-color: #fff;
-	&:hover {
-		border: 1px solid #000;
-		background-color: #f9f9f9;
-	}
-}
-.sensei-course-theme-completed-lesson {
-	display: inline-block;
-}
-.sensei-course-theme-completed-lesson-inner {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding: 11px 18px;
-	background-color: #fff;
-	border: 1px solid #000;
-	border-radius: 2px;
+	background-color: var(--primary-color);
+	color: var(--primary-contrast-color);
 
-	span {
-		font-size: 14px;
-		line-height: 17px;
-		font-weight: 700;
-		margin-left: 6px;
-		color: #000;
+	&:disabled {
+		background-color: var(--primary-color);
+		color: var(--primary-contrast-color);
+		cursor: not-allowed;
 	}
 
-	svg {
-		width: 17px;
+	&__secondary {
+		border: 1px solid var(--primary-color);
+		background-color: rgba(0, 0, 0, 0);
+		color: var(--primary-color);
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.02);
+		}
 	}
 }
