@@ -69,7 +69,7 @@ class Complete_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test complete lesson block when the post is not lesson.
+	 * Test complete lesson block when the user is not enrolled.
 	 */
 	public function testNotEnrolled() {
 		$course = $this->factory->course->create_and_get();
@@ -82,6 +82,34 @@ class Complete_Lesson_Test extends WP_UnitTestCase {
 
 		// Check for empty response.
 		$this->assertEquals( '', $block->render(), 'Should render empty string if user is not enrolled.' );
+	}
+
+	/**
+	 * Test complete lesson block when lesson has a quiz.
+	 *
+	 * @group course-theme-one
+	 */
+	public function testQuiz() {
+		$course      = $this->factory->course->create_and_get();
+		$lesson_args = [
+			'meta_input' => [
+				'_lesson_course'      => $course->ID,
+				'_quiz_has_questions' => 1,
+			],
+		];
+		$lesson      = $this->factory->lesson->create_and_get( $lesson_args );
+		$quiz_args   = [
+			'post_parent' => $lesson->ID,
+		];
+		$this->factory->quiz->create( $quiz_args );
+		$this->login_as_student();
+		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+
+		$GLOBALS['post'] = $lesson;
+		$block           = new Complete_Lesson();
+
+		// Check for __secondary class suffix.
+		$this->assertContains( '__secondary', $block->render(), 'Should render as a secondary CTA if lesson has quiz but not required to pass.' );
 	}
 
 	/**
@@ -128,7 +156,37 @@ class Complete_Lesson_Test extends WP_UnitTestCase {
 		$block           = new Complete_Lesson();
 
 		// Check for empty response.
-		$this->assertContains( 'Completed', $block->render(), 'Should render empty string if user is not enrolled.' );
+		$this->assertContains( '', $block->render(), 'Should render empty string if user already completed the lesson.' );
+	}
+
+	/**
+	 * Test complete lesson block for a lesson with a pre-requisite lesson.
+	 */
+	public function testHasPreRequisite() {
+		$course  = $this->factory->course->create_and_get();
+		$lesson1 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course->ID,
+				],
+			]
+		);
+		$lesson2 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course->ID,
+					'_lesson_prerequisite' => $lesson1->ID,
+				],
+			]
+		);
+		$this->login_as_student();
+		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+
+		$GLOBALS['post'] = $lesson2;
+		$block           = new Complete_Lesson();
+
+		// Check for disabled button
+		$this->assertContains( 'disabled', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
 	}
 
 	/**
@@ -144,7 +202,7 @@ class Complete_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson;
 		$block           = new Complete_Lesson();
 
-		// Check for empty response.
-		$this->assertContains( 'Mark complete', $block->render(), 'Should render empty string if user is not enrolled.' );
+		// Check for Complete lesson button.
+		$this->assertContains( 'Complete lesson', $block->render(), 'Should render "Complete lesson" button if user can mark lesson as complete.' );
 	}
 }
