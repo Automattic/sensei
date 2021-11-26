@@ -1418,7 +1418,7 @@ class Sensei_Admin {
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
 			foreach ( $courses as $course ) {
-				if ( current_user_can( 'edit_others_posts') || get_current_user_id() == $course->post_author ) {
+				if ( current_user_can( 'edit_others_posts' ) || get_current_user_id() === (int) $course->post_author ) {
 					$course_id = '';
 					if ( isset( $_GET['course_id'] ) ) {
 						$course_id = intval( $_GET['course_id'] );
