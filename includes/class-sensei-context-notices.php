@@ -106,8 +106,8 @@ class Sensei_Context_Notices {
 	 * @return bool Whether notice was removed.
 	 */
 	public function remove_notice( string $key ) : bool {
-		if ( isset( $notice[ $context ][ $key ] ) ) {
-			unset( $notice[ $context ][ $key ] );
+		if ( isset( $this->notices[ $this->context ][ $key ] ) ) {
+			unset( $this->notices[ $this->context ][ $key ] );
 			return true;
 		}
 

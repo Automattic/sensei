@@ -45,6 +45,22 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a notice is removed.
+	 */
+	public function testRemoveNotice() {
+		$notices = \Sensei_Context_Notices::instance( 'context_x' );
+
+		$notices->add_notice( 'key', 'Text' );
+
+		$this->assertTrue( $notices->remove_notice( 'key' ) );
+		$this->assertFalse( $notices->remove_notice( 'no-exist' ) );
+
+		$html = $notices->get_notices_html();
+
+		$this->assertNotContains( 'Text', $html );
+	}
+
+	/**
 	 * Test that notice is updated when using the same key.
 	 */
 	public function testUpdateNotice() {
