@@ -57,6 +57,9 @@ if ( have_posts() ) {
 	<!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
 	<div class="wp-block-column sensei-course-theme__main-content">
 		<!-- wp:post-title /-->
+
+		<!-- wp:sensei-lms/course-theme-notices /-->
+
 		<!-- wp:html -->
 		<?php
 		if ( sensei_can_user_view_lesson() ) {
