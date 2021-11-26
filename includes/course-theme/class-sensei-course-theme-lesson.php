@@ -3,7 +3,7 @@
  * File containing Sensei_Course_Theme_Lesson class.
  *
  * @package sensei-lms
- * @since 3.13.4
+ * @since 3.15.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei_Course_Theme_Lesson class.
  *
- * @since 3.13.4
+ * @since 3.15.0
  */
 class Sensei_Course_Theme_Lesson {
 	/**
