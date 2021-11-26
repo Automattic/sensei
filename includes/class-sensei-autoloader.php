@@ -71,6 +71,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'data-port/export-tasks' ),
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 			new Sensei_Autoloader_Bundle( 'blocks' ),
+			new Sensei_Autoloader_Bundle( 'course-theme' ),
 		);
 
 		// Add Sensei custom auto loader.
