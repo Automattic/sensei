@@ -20,8 +20,14 @@ $base: '.sensei-course-theme';
 			&__container {
 				height: 39px;
 			}
-			.wp-block-sensei-lms-site-logo, .sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
+			.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
 				display: none;
+			}
+			.wp-block-sensei-lms-site-logo {
+				margin-right: -12px;
+				img {
+					max-height: 0;
+				}
 			}
 			.wp-block-sensei-lms-course-title {
 				font-size: 16px;
