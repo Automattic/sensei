@@ -4141,11 +4141,10 @@ class Sensei_Lesson {
 		$new_pass_required     = sanitize_text_field( $_POST['sensei_edit_pass_required'] );
 		$new_pass_percentage   = sanitize_text_field( $_POST['sensei_edit_pass_percentage'] );
 		$new_enable_quiz_reset = sanitize_text_field( $_POST['sensei_edit_enable_quiz_reset'] );
-		// add the 3 other quiz settings
 		$show_questions        = sanitize_text_field( $_POST['sensei_edit_show_questions'] );
 		$random_question_order = sanitize_text_field( $_POST['sensei_edit_random_question_order'] );
 		$quiz_grade_type       = sanitize_text_field( $_POST['sensei_edit_quiz_grade_type'] );
-		// store the values for all selected posts
+		// store the values for all selected posts.
 		foreach ( $_POST['post_ids'] as $lesson_id ) {
 
 
