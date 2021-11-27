@@ -678,7 +678,16 @@ class Sensei_Lesson {
 		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : '-1';
 		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : '-1';
 
-		$this->save_quiz_settings( $post_id, $new_pass_required, $new_pass_percentage, $new_enable_quiz_reset, $random_question_order, $quiz_grade_type, $show_questions );
+		$new_settings = array(
+			'pass_required'         => $new_pass_required,
+			'pass_percentage'       => $new_pass_percentage,
+			'enable_quiz_reset'     => $new_enable_quiz_reset,
+			'show_questions'        => $show_questions,
+			'random_question_order' => $random_question_order,
+			'quiz_grade_type'       => $quiz_grade_type,
+		);
+
+		$this->save_quiz_settings( $post_id, $new_settings );
 
 		return $post_id;
 
@@ -4151,7 +4160,16 @@ class Sensei_Lesson {
 				update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
 			}
 
-			$this->save_quiz_settings( $lesson_id, $new_pass_required, $new_pass_percentage, $new_enable_quiz_reset, $random_question_order, $quiz_grade_type, $show_questions );
+			$new_settings = array(
+				'pass_required'         => $new_pass_required,
+				'pass_percentage'       => $new_pass_percentage,
+				'enable_quiz_reset'     => $new_enable_quiz_reset,
+				'show_questions'        => $show_questions,
+				'random_question_order' => $random_question_order,
+				'quiz_grade_type'       => $quiz_grade_type,
+			);
+
+			$this->save_quiz_settings( $lesson_id, $new_settings );
 
 		}
 
@@ -5111,63 +5129,58 @@ class Sensei_Lesson {
 	 * Saves the quiz post meta settings
 	 *
 	 * @param int|null $lesson_id
-	 * @param string $new_pass_required
-	 * @param int $new_pass_percentage
-	 * @param string $new_enable_quiz_reset
-	 * @param string $random_question_order
-	 * @param string $quiz_grade_type
-	 * @param int $show_questions
+	 * @param string $new_settings
 	 */
-	private function save_quiz_settings( ?int $lesson_id, string $new_pass_required, int $new_pass_percentage, string $new_enable_quiz_reset, string $random_question_order, string $quiz_grade_type, int $show_questions ): void {
+	private function save_quiz_settings( ?int $lesson_id, array $new_settings ): void {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
 
 			// update pass required.
-			if ( - 1 != $new_pass_required ) {
+			if ( - 1 != $new_settings['pass_required'] ) {
 
-				$checked = $new_pass_required ? 'on' : 'off';
+				$checked = $new_settings['pass_required'] ? 'on' : 'off';
 				update_post_meta( $quiz_id, '_pass_required', $checked );
 				unset( $checked );
 			}
 
 			// update pass percentage.
-			if ( ! empty( $new_pass_percentage ) && is_numeric( $new_pass_percentage ) ) {
+			if ( ! empty( $new_settings['pass_percentage'] ) && is_numeric( $new_settings['pass_percentage'] ) ) {
 
-				update_post_meta( $quiz_id, '_quiz_passmark', $new_pass_percentage );
+				update_post_meta( $quiz_id, '_quiz_passmark', $new_settings['pass_percentage'] );
 
 			}
 
 			// update enable quiz reset.
-			if ( - 1 != $new_enable_quiz_reset ) {
+			if ( - 1 != $new_settings['enable_quiz_reset'] ) {
 
-				$checked = $new_enable_quiz_reset ? 'on' : '';
+				$checked = $new_settings['enable_quiz_reset'] ? 'on' : '';
 				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
 				unset( $checked );
 
 			}
 
 			// update random question order.
-			if ( - 1 != $random_question_order ) {
+			if ( - 1 != $new_settings['random_question_order'] ) {
 
-				$checked = $random_question_order ? 'yes' : 'no';
+				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
 				update_post_meta( $quiz_id, '_random_question_order', $checked );
 				unset( $checked );
 			}
 
 			// update quiz grade type.
-			if ( - 1 != $quiz_grade_type ) {
+			if ( - 1 != $new_settings['quiz_grade_type'] ) {
 
-				$checked = $quiz_grade_type ? 'auto' : 'manual';
+				$checked = $new_settings['quiz_grade_type'] ? 'auto' : 'manual';
 				update_post_meta( $quiz_id, '_quiz_grade_type', $checked );
 				unset( $checked );
 			}
 
 			// update number of questions to show.
-			if ( ! empty( $show_questions ) ) {
+			if ( ! empty( $new_settings['show_questions'] ) ) {
 
-				update_post_meta( $quiz_id, '_show_questions', $show_questions );
+				update_post_meta( $quiz_id, '_show_questions', $new_settings['show_questions'] );
 
 			}
 		}
