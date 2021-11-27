@@ -76,7 +76,6 @@ jQuery( function ( $ ) {
 				sensei_edit_pass_required: newPassRequired,
 				sensei_edit_pass_percentage: newPassPercentage,
 				sensei_edit_enable_quiz_reset: newEnableQuizReset,
-				// other values not originally included
 				sensei_edit_show_questions: newShowQuestions,
 				sensei_edit_random_question_order: newRandomQuestionOrder,
 				sensei_edit_quiz_grade_type: newQuizGradeType,
