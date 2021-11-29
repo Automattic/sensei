@@ -57,6 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 			<?php
 		},
+		// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- A template variable
 		$notices
 	);
 	?>
