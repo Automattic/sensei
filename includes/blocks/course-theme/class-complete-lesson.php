@@ -82,14 +82,14 @@ class Complete_Lesson {
 		$permalink = esc_url( get_permalink() );
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
 
-		return ( "
-			<form class='sensei-course-theme-complete-lesson-form' method='POST' action='{$permalink}'>
-				{$nonce}
-				<input type='hidden' name='quiz_action' value='lesson-complete' />
-				<button type='submit' class='sensei-course-theme-complete-lesson {$secondary}' {$disabled}>
-					{$text}
+		return ( '
+			<form class="sensei-course-theme-complete-lesson-form" method="POST" action="' . $permalink . '">
+				' . $nonce . '
+				<input type="hidden" name="quiz_action" value="lesson-complete" />
+				<button type="submit" class="sensei-course-theme-complete-lesson ' . $secondary . '" ' . $disabled . '>
+					' . $text . '
 				</button>
 			</form>
-		" );
+		' );
 	}
 }
