@@ -60,17 +60,17 @@ class Sensei_Course_Theme_Lesson {
 		$user_id   = wp_get_current_user()->ID;
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
-			return '';
+			return;
 		}
 
 		$quiz_permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
 
 		if ( empty( $quiz_permalink ) ) {
-			return '';
+			return;
 		}
 
 		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
-			return '';
+			return;
 		}
 
 		$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
