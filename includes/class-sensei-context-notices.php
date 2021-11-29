@@ -38,38 +38,25 @@ class Sensei_Context_Notices {
 	private $notices = [];
 
 	/**
-	 * CSS class prefix.
-	 *
-	 * @var string
-	 */
-	private $css_class_prefix = 'sensei-lms';
-
-	/**
 	 * Sensei_Context_Notices constructor. Prevents other instances from being created outside of `self::instance()`.
 	 *
 	 * @param string $context          The context of the notices.
-	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
 	 */
-	private function __construct( string $context, string $css_class_prefix = null ) {
+	private function __construct( string $context ) {
 		$this->context = $context;
 		$this->notices = [];
-
-		if ( ! empty( $css_class_prefix ) ) {
-			$this->css_class_prefix = $css_class_prefix;
-		}
 	}
 
 	/**
 	 * Get an instance of the class.
 	 *
 	 * @param string $context The context of the notices.
-	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
 	 *
 	 * @return self
 	 */
-	public static function instance( string $context, string $css_class_prefix = null ) : self {
+	public static function instance( string $context ) : self {
 		if ( ! isset( self::$instances[ $context ] ) ) {
-			self::$instances[ $context ] = new self( $context, $css_class_prefix );
+			self::$instances[ $context ] = new self( $context );
 		}
 
 		return self::$instances[ $context ];
@@ -137,21 +124,22 @@ class Sensei_Context_Notices {
 	/**
 	 * Get actions HTML.
 	 *
-	 * @param array $actions
+	 * @param array  $actions          Actions array.
+	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
 	 *
 	 * @return string HTML with the actions.
 	 */
-	private function get_actions_html( $actions ) {
+	private function get_actions_html( array $actions, string $css_class_prefix ) {
 		if ( empty( $actions ) ) {
 			return '';
 		}
 
 		$html = array_map(
-			function( $action ) {
+			function( $action ) use ( $css_class_prefix ) {
 				return '<li>
 					<a
 						href="' . esc_url( $action['url'] ) . '"
-						class="' . $this->css_class_prefix . '__button is-' . esc_attr( $action['style'] ) . '"
+						class="' . $css_class_prefix . '__button is-' . esc_attr( $action['style'] ) . '"
 					>
 						' . wp_kses_post( $action['label'] ) . '
 					</a>
@@ -160,15 +148,17 @@ class Sensei_Context_Notices {
 			$actions
 		);
 
-		return '<ul class="' . $this->css_class_prefix . '-notice__actions">' . implode( '', $html ) . '</ul>';
+		return '<ul class="' . $css_class_prefix . '-notice__actions">' . implode( '', $html ) . '</ul>';
 	}
 
 	/**
 	 * Get notices HTML.
 	 *
+	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
+	 *
 	 * @return string HTML with the added notices.
 	 */
-	public function get_notices_html() {
+	public function get_notices_html( string $css_class_prefix = 'sensei-lms' ) {
 		$notices = $this->get_notices();
 
 		if ( empty( $notices ) ) {
@@ -176,13 +166,13 @@ class Sensei_Context_Notices {
 		}
 
 		$notices_html = array_map(
-			function( $notice ) {
-				$title = empty( $notice['title'] ) ? '' : '<h3 class="' . $this->css_class_prefix . '-notice__title">' . wp_kses_post( $notice['title'] ) . '</h3>';
+			function( $notice ) use ( $css_class_prefix ) {
+				$title = empty( $notice['title'] ) ? '' : '<h3 class="' . $css_class_prefix . '-notice__title">' . wp_kses_post( $notice['title'] ) . '</h3>';
 
-				return '<div class="' . $this->css_class_prefix . '-notice">
+				return '<div class="' . $css_class_prefix . '-notice">
 					' . $title . '
-					<p class="' . $this->css_class_prefix . '-notice__text">' . wp_kses_post( $notice['text'] ) . '</p>
-					' . $this->get_actions_html( $notice['actions'] ) . '
+					<p class="' . $css_class_prefix . '-notice__text">' . wp_kses_post( $notice['text'] ) . '</p>
+					' . $this->get_actions_html( $notice['actions'], $css_class_prefix ) . '
 				</div>';
 			},
 			$notices

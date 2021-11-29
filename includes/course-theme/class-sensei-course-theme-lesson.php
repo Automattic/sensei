@@ -96,7 +96,7 @@ class Sensei_Course_Theme_Lesson {
 			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong>' . $user_grade . '</strong>' );
 		}
 
-		$notices = \Sensei_Context_Notices::instance( 'course_theme', 'sensei-course-theme' );
+		$notices = \Sensei_Context_Notices::instance( 'course_theme' );
 		$actions = [
 			[
 				'label' => __( 'View quiz', 'sensei-lms' ),
