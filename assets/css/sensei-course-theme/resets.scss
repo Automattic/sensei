@@ -1,4 +1,11 @@
 .sensei-course-theme__frame {
+
+	// Reset browser styles.
+
+	@at-root body {
+		margin: 0;
+	}
+
 	// Reset theme CSS.
 	* {
 		all: unset;

@@ -1,24 +1,14 @@
 <?php
 /**
- * The Template for displaying all single lessons when using Course Theme.
- *
- * Override this template by copying it to yourtheme/sensei/course-theme/single-lesson.php
+ * Single page template.
  *
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.13.4
+ * @version     4.0.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
-if ( have_posts() ) {
-	the_post();
-}
 ?>
-
 <!-- wp:sensei-lms/container {"className":"sensei-course-theme__header"} -->
 <div class="wp-block-sensei-lms-container sensei-course-theme__header sensei-course-theme__frame">
 	<!-- wp:columns {"className":"sensei-course-theme__header"} -->
@@ -54,19 +44,7 @@ if ( have_posts() ) {
 	<!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
 	<div class="wp-block-column sensei-course-theme__main-content">
 		<!-- wp:post-title /-->
-		<!-- wp:html -->
-		<?php
-		if ( sensei_can_user_view_lesson() ) {
-			the_content();
-		} else {
-			?>
-			<p>
-				<?php echo wp_kses_post( get_the_excerpt() ); ?>
-			</p>
-			<?php
-		}
-		?>
-		<!-- /wp:html -->
+		<?php get_template_part( 'content', get_post_type() ); ?>
 	</div>
 	<!-- /wp:column -->
 </div>
