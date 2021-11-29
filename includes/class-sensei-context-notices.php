@@ -142,6 +142,10 @@ class Sensei_Context_Notices {
 	 * @return string HTML with the actions.
 	 */
 	private function get_actions_html( $actions ) {
+		if ( empty( $actions ) ) {
+			return '';
+		}
+
 		$html = array_map(
 			function( $action ) {
 				return '<li>
