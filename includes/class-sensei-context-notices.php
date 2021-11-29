@@ -31,7 +31,7 @@ class Sensei_Context_Notices {
 	private static $instances = [];
 
 	/**
-	 * Array with notices to show in the specific context.
+	 * Notices array.
 	 *
 	 * @var array
 	 */
@@ -51,8 +51,8 @@ class Sensei_Context_Notices {
 	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
 	 */
 	private function __construct( string $context, string $css_class_prefix = null ) {
-		$this->context             = $context;
-		$this->notices[ $context ] = [];
+		$this->context = $context;
+		$this->notices = [];
 
 		if ( ! empty( $css_class_prefix ) ) {
 			$this->css_class_prefix = $css_class_prefix;
@@ -91,7 +91,7 @@ class Sensei_Context_Notices {
 	 * }
 	 */
 	public function add_notice( string $key, string $text, string $title = null, array $actions = [] ) {
-		$this->notices[ $this->context ][ $key ] = [
+		$this->notices[ $key ] = [
 			'text'    => $text,
 			'title'   => $title,
 			'actions' => $actions,
@@ -106,8 +106,8 @@ class Sensei_Context_Notices {
 	 * @return bool Whether notice was removed.
 	 */
 	public function remove_notice( string $key ) : bool {
-		if ( isset( $this->notices[ $this->context ][ $key ] ) ) {
-			unset( $this->notices[ $this->context ][ $key ] );
+		if ( isset( $this->notices[ $key ] ) ) {
+			unset( $this->notices[ $key ] );
 			return true;
 		}
 
@@ -131,7 +131,7 @@ class Sensei_Context_Notices {
 		 *
 		 * @return {array} Filtered Course Theme notices.
 		 */
-		return apply_filters( 'sensei_context_notices', $this->notices[ $this->context ], $this->context );
+		return apply_filters( 'sensei_context_notices', $this->notices, $this->context );
 	}
 
 	/**
