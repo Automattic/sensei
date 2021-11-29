@@ -1,23 +1,33 @@
-.sensei-course-theme-notice {
-	background-color: #F6F7F7;
-	border: solid 1px #DCDCDE;
-	margin-bottom: 21px;
-	padding: 17px 26px;
+.sensei-course-theme-lesson-quiz-notice {
+	display: flex;
+	justify-content: space-between;
+	flex-flow: wrap;
+	gap: 15px;
+	font-size: 14px;
+
+	&__content {
+		display: flex;
+		align-items: center;
+	}
 
 	&__title {
-		margin-bottom: 6px;
-		font-size: 30px;
-		font-weight: 700;
+		flex-shrink: 0;
+		margin-right: 15px;
+		text-transform: uppercase;
+		font-size: inherit;
+		font-weight: 400;
 	}
 
 	&__text {
-		margin: 0;
-		font-size: 16px;
+		margin: 0 15px 0 0;
+	}
+
+	&__grade {
+		padding-left: 5px;
 	}
 
 	&__actions {
 		display: flex;
-		margin-top: 15px;
 		list-style: none;
 		margin: 0;
 		padding: 0;

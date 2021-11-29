@@ -90,10 +90,10 @@ class Sensei_Course_Theme_Lesson {
 			$text = __( 'Awaiting grade', 'sensei-lms' );
 		} elseif ( 'failed' === $user_lesson_status->comment_approved ) {
 			// translators: Placeholders are the required grade and the actual grade, respectively.
-			$text = sprintf( __( 'You require %1$d%% to pass this course. Your grade is %2$s%%.', 'sensei-lms' ), $quiz_passmark, $user_grade );
+			$text = sprintf( __( 'You require %1$s%% to pass this course. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $quiz_passmark . '</strong>', '<strong>' . $user_grade . '</strong>' );
 		} else {
 			// translators: Placeholder is the quiz grade.
-			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong>' . $user_grade . '</strong>' );
+			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $user_grade . '</strong>' );
 		}
 
 		$notices = \Sensei_Context_Notices::instance( 'course_theme' );

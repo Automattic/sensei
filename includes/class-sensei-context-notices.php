@@ -122,62 +122,21 @@ class Sensei_Context_Notices {
 	}
 
 	/**
-	 * Get actions HTML.
-	 *
-	 * @param array  $actions          Actions array.
-	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
-	 *
-	 * @return string HTML with the actions.
-	 */
-	private function get_actions_html( array $actions, string $css_class_prefix ) {
-		if ( empty( $actions ) ) {
-			return '';
-		}
-
-		$html = array_map(
-			function( $action ) use ( $css_class_prefix ) {
-				return '<li>
-					<a
-						href="' . esc_url( $action['url'] ) . '"
-						class="' . $css_class_prefix . '__button is-' . esc_attr( $action['style'] ) . '"
-					>
-						' . wp_kses_post( $action['label'] ) . '
-					</a>
-				</li>';
-			},
-			$actions
-		);
-
-		return '<ul class="' . $css_class_prefix . '-notice__actions">' . implode( '', $html ) . '</ul>';
-	}
-
-	/**
 	 * Get notices HTML.
 	 *
-	 * @param string $css_class_prefix CSS class prefix to be applied in the HTML.
+	 * @param string $template The template to render the notices.
 	 *
 	 * @return string HTML with the added notices.
 	 */
-	public function get_notices_html( string $css_class_prefix = 'sensei-lms' ) {
+	public function get_notices_html( string $template ) {
 		$notices = $this->get_notices();
 
 		if ( empty( $notices ) ) {
 			return '';
 		}
 
-		$notices_html = array_map(
-			function( $notice ) use ( $css_class_prefix ) {
-				$title = empty( $notice['title'] ) ? '' : '<h3 class="' . $css_class_prefix . '-notice__title">' . wp_kses_post( $notice['title'] ) . '</h3>';
-
-				return '<div class="' . $css_class_prefix . '-notice">
-					' . $title . '
-					<p class="' . $css_class_prefix . '-notice__text">' . wp_kses_post( $notice['text'] ) . '</p>
-					' . $this->get_actions_html( $notice['actions'], $css_class_prefix ) . '
-				</div>';
-			},
-			$notices
-		);
-
-		return '<div>' . implode( '', $notices_html ) . '</div>';
+		ob_start();
+		Sensei_Templates::get_template( $template, [ 'notices' => $notices ] );
+		return ob_get_clean();
 	}
 }

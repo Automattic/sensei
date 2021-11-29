@@ -6,6 +6,8 @@
  * @group context-notices
  */
 class Sensei_Context_Notices_Test extends WP_UnitTestCase {
+	const TEMPLATE = 'course-theme/lesson-quiz-notice.php';
+
 	/**
 	 * Testing the Course Theme class to make sure it is loaded.
 	 */
@@ -28,7 +30,7 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 		];
 		$notices->add_notice( 'key', 'Text', 'Title', $actions );
 
-		$html = $notices->get_notices_html();
+		$html = $notices->get_notices_html( self::TEMPLATE );
 
 		$this->assertContains( 'Text', $html );
 		$this->assertContains( 'Title', $html );
@@ -46,7 +48,7 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 		$this->assertTrue( $notices->remove_notice( 'key' ) );
 		$this->assertFalse( $notices->remove_notice( 'no-exist' ) );
 
-		$html = $notices->get_notices_html();
+		$html = $notices->get_notices_html( self::TEMPLATE );
 
 		$this->assertNotContains( 'Text', $html );
 	}
@@ -61,7 +63,7 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 		$notices->add_notice( 'key', 'Y' );
 		$notices->add_notice( 'key2', 'Z' );
 
-		$html = $notices->get_notices_html();
+		$html = $notices->get_notices_html( self::TEMPLATE );
 
 		$this->assertNotContains( 'X', $html );
 		$this->assertContains( 'Y', $html );
@@ -78,8 +80,8 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 		$notices_x->add_notice( 'key', 'X' );
 		$notices_y->add_notice( 'key', 'Y' );
 
-		$html_x = $notices_x->get_notices_html();
-		$html_y = $notices_y->get_notices_html();
+		$html_x = $notices_x->get_notices_html( self::TEMPLATE );
+		$html_y = $notices_y->get_notices_html( self::TEMPLATE );
 
 		$this->assertContains( 'X', $html_x );
 		$this->assertNotContains( 'Y', $html_x );
