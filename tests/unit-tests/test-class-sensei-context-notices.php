@@ -7,15 +7,6 @@
  */
 class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 	/**
-	 * Set up the test.
-	 */
-	public function setUp() {
-		parent::setUp();
-
-		$this->factory = new Sensei_Factory();
-	}
-
-	/**
 	 * Testing the Course Theme class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
