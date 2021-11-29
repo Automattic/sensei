@@ -54,7 +54,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * Check if it should initialize the blocks.
 	 */
 	protected function should_initialize_blocks() {
-		return Sensei_Course_Theme::instance()->should_use_sensei_theme_template();
+		return Sensei_Course_Theme::instance()->should_use_sensei_theme();
 	}
 
 	/**
