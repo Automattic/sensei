@@ -124,7 +124,7 @@ class Sensei_Context_Notices {
 	/**
 	 * Get notices HTML.
 	 *
-	 * @param string $template The template to render the notices.
+	 * @param string $template The template path to render the notices.
 	 *
 	 * @return string HTML with the added notices.
 	 */
