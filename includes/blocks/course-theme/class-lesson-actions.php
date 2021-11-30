@@ -42,12 +42,7 @@ class Lesson_Actions {
 	 * @return string The complete lesson button.
 	 */
 	private function render_complete_lesson( $lesson_id, $has_incomplete_prerequisite ) {
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-
 		if (
-			// Return empty if user is not enrolled.
-			! Sensei_Course::is_user_enrolled( $course_id ) ||
-
 			// Return empty if the lesson requires a quiz pass.
 			Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ||
 
@@ -125,6 +120,12 @@ class Lesson_Actions {
 		$user_id   = get_current_user_id();
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
+			return '';
+		}
+
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
 			return '';
 		}
 
