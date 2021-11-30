@@ -111,10 +111,10 @@ class Sensei_Course_Theme {
 	 */
 	private function override_theme() {
 
-		add_action( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
-		add_action( 'template', [ $this, 'theme_template' ] );
-		add_action( 'stylesheet', [ $this, 'theme_stylesheet' ] );
-		add_action( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
+		add_filter( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
+		add_filter( 'template', [ $this, 'theme_template' ] );
+		add_filter( 'stylesheet', [ $this, 'theme_stylesheet' ] );
+		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
