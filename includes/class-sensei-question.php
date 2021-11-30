@@ -1185,11 +1185,12 @@ class Sensei_Question {
 			}
 
 			// Merge right and wrong answers
+			$merged_options = [];
 			if ( is_array( $question_data['question_right_answer'] ) ) {
 
 				$merged_options = array_merge( $question_data['question_wrong_answers'], $question_data['question_right_answer'] );
 
-			} else {
+			} elseif ( is_array( $question_data['question_wrong_answers'] ) ) {
 
 				array_push( $question_data['question_wrong_answers'], $question_data['question_right_answer'] );
 				$merged_options = $question_data['question_wrong_answers'];
