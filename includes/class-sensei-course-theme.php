@@ -11,25 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Course_Theme class.
+ * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
- * @since 3.13.4
+ * @since 4.0.0
  */
 class Sensei_Course_Theme {
 	/**
-	 * Course post meta for theme preference.
+	 * URL prefix for loading the course theme.
 	 */
-	const THEME_POST_META_NAME = '_course_theme';
+	const QUERY_VAR = 'learn';
 
 	/**
-	 * Default theme setting value.
+	 * Directory for the course theme.
 	 */
-	const WORDPRESS_THEME = 'wordpress-theme';
-
-	/**
-	 * Course theme setting value.
-	 */
-	const SENSEI_THEME = 'sensei-theme';
+	const THEME_NAME = 'sensei-course-theme';
 
 	/**
 	 * Instance of class.
@@ -41,7 +36,8 @@ class Sensei_Course_Theme {
 	/**
 	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+	}
 
 	/**
 	 * Fetches an instance of the class.
@@ -58,98 +54,197 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Initializes the Course Theme.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
+	public function init() {
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
 
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+	}
+
+	/**
+	 * Is the theme active for the current request.
+	 *
+	 * @return bool
+	 */
+	public function is_active() {
+		return get_query_var( self::QUERY_VAR );
+	}
+
+	/**
+	 * Add the URL prefix the theme is active under.
+	 *
+	 * @param string $path
+	 *
+	 * @return string|void
+	 */
+	public function prefix_url( $path = '' ) {
+
+		// TODO also support non-pretty permalink version.
+
+		return home_url( '/' . self::QUERY_VAR . '/' . $path );
+	}
+
+	/**
+	 * Replace theme for the current request if it's for course theme mode.
+	 */
+	public function maybe_override_theme() {
+
+		// Do a cheaper preliminary check first.
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value used for comparison.
+		if ( ! preg_match( '#' . preg_quote( '/' . self::QUERY_VAR . '/', '#' ) . '#i', $uri ) && ! isset( $_GET[ self::QUERY_VAR ] ) ) {
 			return;
 		}
 
-		// Init blocks.
-		new \Sensei\Blocks\Course_Theme();
+		// Then parse the request and make sure the query var is correct.
+		wp();
 
-		add_action( 'init', [ $this, 'register_post_meta' ] );
-		add_action( 'template_redirect', [ $this, 'maybe_redirect_to_course_theme' ] );
+		if ( get_query_var( self::QUERY_VAR ) ) {
+			$this->override_theme();
+		}
+	}
+
+	/**
+	 * Load a bundled theme for the request.
+	 */
+	private function override_theme() {
+
+		add_action( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
+		add_action( 'template', [ $this, 'theme_template' ] );
+		add_action( 'stylesheet', [ $this, 'theme_stylesheet' ] );
+		add_action( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
+
+		add_filter( 'sensei_use_sensei_template', '__return_false' );
+		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
+		add_filter( 'the_content', [ $this, 'override_template_content' ] );
+		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
 	}
 
 	/**
-	 * Add feature flag inline script.
+	 * Add a route for loading the course theme.
 	 *
 	 * @access private
 	 */
-	public function add_feature_flag_inline_script() {
-		$screen  = get_current_screen();
-		$enabled = Sensei()->feature_flags->is_enabled( 'course_theme' ) ? 'true' : 'false';
-
-		if ( 'course' === $screen->id ) {
-			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseThemeFeatureFlagEnabled = ' . $enabled, 'before' );
-		}
+	public function add_rewrite_rules() {
+		add_rewrite_rule( '^' . self::QUERY_VAR . '/([^/]*)/([^/]*)/?', 'index.php?' . self::QUERY_VAR . '=1&post_type=$matches[1]&name=$matches[2]', 'top' );
+		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
+		// TODO 4.0.0 Make sure new rewrite rules are flushed after update.
 	}
 
 	/**
-	 * Use Sensei Theme template if the theme is set for the current page.
+	 * Get course theme name.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function theme_template() {
+		return self::THEME_NAME;
+	}
+
+	/**
+	 * Get course theme name.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function theme_stylesheet() {
+		return self::THEME_NAME;
+	}
+
+	/**
+	 * Root URL for bundled themes.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function theme_root_uri() {
+		return Sensei()->plugin_url . '/themes';
+	}
+
+	/**
+	 * Root directory for bundled themes.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_plugin_themes_root() {
+		return Sensei()->plugin_path() . 'themes';
+	}
+
+	/**
+	 * Directory for course theme.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_course_theme_root() {
+		return $this->get_plugin_themes_root() . '/' . self::THEME_NAME;
+	}
+
+	/**
+	 * Get the wrapper template.
+	 *
+	 * @access private
+	 *
+	 * @return string The wrapper template path.
+	 */
+	public function get_wrapper_template() {
+		return locate_template( 'index.php' );
+	}
+
+	/**
+	 * It overrides the template content, loading the respective
+	 * template and rendering the blocks from the template.
+	 *
+	 * @access private
+	 *
+	 * @return string The content with template and rendered blocks.
+	 */
+	public function override_template_content() {
+		// Remove filter to avoid infinite loop.
+		remove_filter( 'the_content', [ $this, 'override_template_content' ] );
+
+		ob_start();
+		$template = get_single_template();
+		load_template( $template );
+		$output = ob_get_clean();
+
+		// Return template content with rendered blocks.
+		return do_blocks( $output );
+	}
+
+	/**
+	 * Add Sensei theme body class.
+	 *
+	 * @access private
+	 *
+	 * @param string[] $classes
+	 *
+	 * @return string[] $classes
+	 */
+	public function add_sensei_theme_body_class( $classes ) {
+		$classes[] = self::THEME_NAME;
+
+		return $classes;
+	}
+
+	/**
+	 * Enqueue styles.
 	 *
 	 * @access private
 	 */
-	public function maybe_redirect_to_course_theme() {
-
-		if ( Sensei_Course_Theme_Theme::instance()->is_active() || ! $this->should_use_sensei_theme() ) {
-			return;
+	public function enqueue_styles() {
+		Sensei()->assets->enqueue( self::THEME_NAME, 'css/sensei-course-theme/sensei-course-theme.css' );
+		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 		}
-
-		$url = str_replace( trailingslashit( home_url() ), '', get_permalink() );
-		wp_redirect( Sensei_Course_Theme_Theme::instance()->prefix_url( $url ) );
 	}
 
-	/**
-	 * Check if it should use Sensei Theme template.
-	 *
-	 * @return boolean
-	 */
-	public function should_use_sensei_theme() {
-
-		if ( ! is_single() || ! in_array( get_post_type(), [ 'lesson', 'quiz' ], true ) ) {
-			return false;
-		}
-
-		$course_id = \Sensei_Utils::get_current_course();
-
-		if ( null === $course_id ) {
-			return false;
-		}
-
-		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
-
-		if ( self::SENSEI_THEME !== $theme ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Register post meta.
-	 *
-	 * @access private
-	 */
-	public function register_post_meta() {
-		register_post_meta(
-			'course',
-			self::THEME_POST_META_NAME,
-			[
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'string',
-				'default'       => self::WORDPRESS_THEME,
-				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
-			]
-		);
-	}
 }

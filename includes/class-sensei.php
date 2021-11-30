@@ -416,8 +416,8 @@ class Sensei_Main {
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
 		Sensei_Data_Port_Manager::instance()->init();
-		Sensei_Course_Theme::instance()->init( $this );
-		Sensei_Course_Theme_Theme::instance()->init();
+		Sensei_Course_Theme_Option::instance()->init( $this );
+		Sensei_Course_Theme::instance()->init();
 		new Sensei_Customizer( $this );
 
 		// Setup Wizard.

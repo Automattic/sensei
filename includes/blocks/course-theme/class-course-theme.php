@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Sensei\Blocks\Course_Theme\Course_Title;
 use Sensei\Blocks\Course_Theme\Site_Logo;
 use \Sensei_Blocks_Initializer;
-use \Sensei_Course_Theme;
+use \Sensei_Course_Theme_Option;
 use \Sensei\Blocks\Course_Theme\Prev_Lesson;
 use \Sensei\Blocks\Course_Theme\Next_Lesson;
 use \Sensei\Blocks\Course_Theme\Prev_Next_Lesson;
@@ -54,7 +54,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * Check if it should initialize the blocks.
 	 */
 	protected function should_initialize_blocks() {
-		return Sensei_Course_Theme::instance()->should_use_sensei_theme();
+		return Sensei_Course_Theme_Option::instance()->should_use_sensei_theme();
 	}
 
 	/**

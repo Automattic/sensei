@@ -58,7 +58,7 @@ class Sensei_Customizer {
 		);
 
 		$wp_customize->add_section(
-			'sensei_course_theme',
+			'Sensei_Course_Theme_Option',
 			[
 				'title'    => __( 'Course Theme', 'sensei-lms' ),
 				'priority' => 30,
@@ -80,7 +80,7 @@ class Sensei_Customizer {
 				self::COURSE_THEME_PRIMARY_COLOR,
 				array(
 					'label'    => __( 'Primary Color', 'sensei-lms' ),
-					'section'  => 'sensei_course_theme',
+					'section'  => 'Sensei_Course_Theme_Option',
 					'settings' => self::COURSE_THEME_PRIMARY_COLOR,
 				)
 			)
