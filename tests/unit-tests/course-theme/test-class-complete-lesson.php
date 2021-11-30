@@ -108,8 +108,8 @@ class Complete_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson;
 		$block           = new Complete_Lesson();
 
-		// Check for __secondary class suffix.
-		$this->assertContains( '__secondary', $block->render(), 'Should render as a secondary CTA if lesson has quiz but not required to pass.' );
+		// Check for is-secondary class.
+		$this->assertContains( 'is-secondary', $block->render(), 'Should render as a secondary CTA if lesson has quiz but not required to pass.' );
 	}
 
 	/**
