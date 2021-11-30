@@ -71,7 +71,8 @@ const files = [
 	'css/ranges.css',
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
-	'css/sensei-course-theme/sensei-course-theme.scss',
+	'css/sensei-course-theme.scss',
+	'course-theme/course-theme.js',
 ];
 
 function getName( filename ) {

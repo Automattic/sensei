@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use \Sensei\Blocks\Course_Theme;
+
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
@@ -241,8 +243,9 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( self::THEME_NAME, 'css/sensei-course-theme/sensei-course-theme.css' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme/sensei-course-theme.css' );
 		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue( 'sensei-course-theme' . '-script', 'course-theme/course-theme.js' );
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 		}
 	}

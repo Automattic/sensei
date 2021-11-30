@@ -40,8 +40,8 @@ const IncompleteQuestionsNotice = ( { count, onClick } ) => (
 			{ sprintf(
 				// Translators: placeholder is the numer of incomplete questions.
 				_n(
-					'There is %d incomplete question in your lesson quiz.',
-					'There are %d incomplete questions in your lesson quiz.',
+					"There is %d incomplete question in this lesson's quiz.",
+					"There are %d incomplete questions in this lesson's quiz.",
 					count,
 					'sensei-lms'
 				),

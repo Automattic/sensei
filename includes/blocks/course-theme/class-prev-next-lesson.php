@@ -39,10 +39,6 @@ class Prev_Next_Lesson {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes, string $content ) : string {
-		return ( "
-			<div class='sensei-course-theme-prev-next-lesson-container'>
-				{$content}
-			</div>
-		" );
+		return $content;
 	}
 }
