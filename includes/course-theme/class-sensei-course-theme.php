@@ -176,8 +176,9 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'sensei-course-theme', 'css/sensei-course-theme/sensei-course-theme.css' );
+		Sensei()->assets->enqueue( 'sensei-course-theme-style', 'css/sensei-course-theme.css' );
 		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue( 'sensei-course-theme-script', 'course-theme/course-theme.js' );
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 		}
 	}

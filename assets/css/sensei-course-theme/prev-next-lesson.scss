@@ -10,22 +10,21 @@
 		span {
 			font-size: 14px;
 			line-height: 17px;
-			color: #000;
+			color: inherit;
+			padding: 12px 5px;
+			text-decoration: none;
 		}
 		&:hover span {
 			color: var(--primary-color);
-			text-decoration: underline;
 		}
 
-		&:nth-child( 2 ) {
-			margin-left: 27px;
-		}
 
 		svg {
 			height: 11px;
+			vertical-align: baseline;
 			path {
 				fill: transparent;
-				stroke: #000;
+				stroke: currentColor;
 				stroke-width: 1.5;
 			}
 		}
@@ -39,13 +38,14 @@
 
 		&__prev {
 			svg {
-				margin-right: 14px;
+				margin-right: 4px;
 			}
 		}
 
 		&__next {
 			svg {
-				margin-left: 14px;
+				margin-left: 4px;
+				margin-bottom: -1px;
 			}
 		}
 	}

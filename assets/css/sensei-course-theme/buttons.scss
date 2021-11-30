@@ -8,23 +8,35 @@
 		&.is-primary,
 		&.is-secondary {
 			padding: 8px 11px;
-			border: solid 1px #30968B;
+			border: solid 1px var(--sensei-course-theme-primary-color);
 			font-weight: 700;
 			text-decoration: none;
 			border-radius: 2px;
 		}
 
 		&.is-primary {
-			background-color: #30968B;
+			background-color: var(--sensei-course-theme-primary-color);
 			color: #FFFFFF;
+			&:hover {
+				color: var(--sensei-course-theme-primary-color);
+				background: none;
+			}
 		}
 
 		&.is-secondary {
-			color: #30968B;
+			color: var(--sensei-course-theme-primary-color);
+			&:hover {
+				background-color: var(--sensei-course-theme-primary-color);
+				color: #fff;
+
+			}
 		}
 
 		&.is-link {
-			color: #30968B;
+			color: var(--sensei-course-theme-primary-color);
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 }
