@@ -19,6 +19,7 @@ $base: '.sensei-course-theme';
 		&__header {
 			&__container {
 				height: 39px;
+				overflow: hidden;
 			}
 			.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
 				display: none;
@@ -49,8 +50,9 @@ $base: '.sensei-course-theme';
 			margin-left: 0 !important;
 		}
 		&__focus-mode-toggle {
-			left: 424px;
-			top: -24px;
+			left: 420px;
+			top: -28px;
+			padding: 4px;
 			&__enable {
 				display: none;
 			}
