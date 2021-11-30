@@ -91,7 +91,7 @@ class Sensei_Course_Theme {
 
 		// Do a cheaper preliminary check first.
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Value used for comparison.
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! preg_match( '#' . preg_quote( '/' . self::QUERY_VAR . '/', '#' ) . '#i', $uri ) && ! isset( $_GET[ self::QUERY_VAR ] ) ) {
 			return;
 		}
