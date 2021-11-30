@@ -103,7 +103,7 @@ class Sensei_Course_Theme_Option {
 		}
 
 		$url = str_replace( trailingslashit( home_url() ), '', get_permalink() );
-		wp_safe_redirect( Sensei_Course_Theme::instance()->prefix_url( $url ) );
+		wp_safe_redirect( Sensei_Course_Theme::instance()->get_theme_redirect_url( $url ) );
 	}
 
 	/**

@@ -79,9 +79,11 @@ class Sensei_Course_Theme {
 	 *
 	 * @return string|void
 	 */
-	public function prefix_url( $path = '' ) {
+	public function get_theme_redirect_url( $path = '' ) {
 
-		// TODO also support non-pretty permalink version.
+		if ( '' === get_option( 'permalink_structure' ) ) {
+			return add_query_arg( [ self::QUERY_VAR => 1 ], $path );
+		}
 
 		return home_url( '/' . self::QUERY_VAR . '/' . $path );
 	}
@@ -130,9 +132,15 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function add_rewrite_rules() {
+		global $wp;
+		$wp->add_query_var( self::QUERY_VAR );
 		add_rewrite_rule( '^' . self::QUERY_VAR . '/([^/]*)/([^/]*)/?', 'index.php?' . self::QUERY_VAR . '=1&post_type=$matches[1]&name=$matches[2]', 'top' );
 		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
-		// TODO 4.0.0 Make sure new rewrite rules are flushed after update.
+
+		if ( ! get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+			flush_rewrite_rules( false );
+			update_option( 'sensei_course_theme_query_var_flushed', 1 );
+		}
 	}
 
 	/**
