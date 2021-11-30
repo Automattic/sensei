@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Prev_Lesson class.
+ * File containing the Quiz_Back_To_Lesson class.
  *
  * @package sensei
  * @since 3.13.4

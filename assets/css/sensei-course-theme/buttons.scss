@@ -3,20 +3,28 @@
 
 	&__button {
 		display: inline-block;
-		padding: 8px 11px;
-		border: solid 1px var(--primary-color);
 		font-size: 14px;
-		font-weight: 700;
-		text-decoration: none;
-		border-radius: 2px;
+
+		&.is-primary,
+		&.is-secondary {
+			padding: 8px 11px;
+			border: solid 1px #30968B;
+			font-weight: 700;
+			text-decoration: none;
+			border-radius: 2px;
+		}
 
 		&.is-primary {
-			background-color: var(--primary-color);
-			color: var(--primary-contrast-color);
+			background-color: #30968B;
+			color: #FFFFFF;
 		}
 
 		&.is-secondary {
-			color: var(--primary-color);
+			color: #30968B;
+		}
+
+		&.is-link {
+			color: #30968B;
 		}
 	}
 }
