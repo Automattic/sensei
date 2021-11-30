@@ -109,7 +109,7 @@ class Sensei_Admin {
 		}
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
+		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_published_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**
@@ -1359,6 +1359,9 @@ class Sensei_Admin {
 	 */
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
+		if ( ! current_user_can( 'edit_published_lessons' ) ) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
+		}
 
 		$ordered = null;
 		if ( isset( $_POST['lesson-order'] ) ) {
@@ -1408,6 +1411,11 @@ class Sensei_Admin {
 				'orderby'        => 'name',
 				'order'          => 'ASC',
 			);
+
+			// Ensure that the user either has permission to edit other's courses or is the author of the course.
+			if ( ! current_user_can( 'edit_others_courses' ) ) {
+				$args['author'] = get_current_user_id();
+			}
 
 			$courses = get_posts( $args );
 

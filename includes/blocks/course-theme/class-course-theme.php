@@ -23,6 +23,8 @@ use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
 use \Sensei\Blocks\Course_Theme\Course_Progress_Counter;
 use \Sensei\Blocks\Course_Theme\Course_Progress_Bar;
 use \Sensei\Blocks\Course_Theme\Quiz_Button;
+use \Sensei\Blocks\Course_Theme\Complete_Lesson;
+use \Sensei\Blocks\Course_Theme\Notices;
 
 /**
  * Class Course_Theme
@@ -64,6 +66,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	public function initialize_blocks() {
 		new Course_Title();
 		new Site_Logo();
+		new Notices();
 		new Focus_Mode();
 		if ( 'lesson' === get_post_type() ) {
 			new Prev_Lesson();
@@ -72,9 +75,9 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 			new Course_Progress_Counter();
 			new Course_Progress_Bar();
 			new Quiz_Button();
+			new Complete_lesson();
 		} elseif ( 'quiz' === get_post_type() ) {
 			new Quiz_Back_To_Lesson();
 		}
-
 	}
 }

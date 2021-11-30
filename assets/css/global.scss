@@ -64,13 +64,23 @@ $sensei-notice-icon-width: 30px;
 	}
 }
 
+/*  Sensei Icon Font */
+@font-face {
+	font-family: 'sensei';
+	src: url( '../css/fonts/sensei/sensei.eot' );
+	src: url( '../css/fonts/sensei/sensei.eot?#iefix' ) format( 'embedded-opentype' ),
+		url( '../css/fonts/sensei/sensei.woff2' ) format( 'woff2' ),
+		url( '../css/fonts/sensei/sensei.woff' ) format( 'woff' ),
+		url( '../css/fonts/sensei/sensei.ttf' ) format( 'truetype' ),
+		url( '../css/fonts/sensei/sensei.svg#sensei' ) format( 'svg' );
+	font-weight: normal;
+	font-style: normal;
+}
+
 /*  Sensei icon */
 body #toplevel_page_sensei div.wp-menu-image:before {
-	content: '';
-	background:
-		url( 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQ5IiBoZWlnaHQ9IjM0OSIgdmlld0JveD0iMCAwIDM0OSAzNDkiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+Cgk8Y2lyY2xlIGN4PSIxNzQuNSIgY3k9IjE3NC41IiByPSIxNzQuNSIgZmlsbD0iI0YwRjZGQyIgZmlsbC1vcGFjaXR5PSIwLjYiLz4KCTxwYXRoIGQ9Ik0xNzEuMzYzIDI4MC44NDVDMjIwLjMwOSAyODAuODQ1IDI0OC43NTYgMjU1LjU4OCAyNDguNzU2IDIxNi4wMThDMjQ4Ljc1NiAxNjUuOTI2IDIwMS45MDIgMTUxLjYxMyAxNjguMDE2IDE0MC42NjlDMTQ5LjYwOSAxMzUuMTk2IDEzNS4zODYgMTMwLjk4NyAxMzUuMzg2IDEyMi4xNDdDMTM1LjM4NiAxMDcuNDE0IDE1MS4yODMgOTcuMzExIDE3NS4xMjggOTcuMzExQzIwMi4zMiA5Ny4zMTEgMjI0LjQ5MiAxMDYuNTcyIDI0Mi4wNjIgMTIxLjMwNUMyNDIuNDgxIDExOC4zNTggMjQyLjQ4MSAxMTUuNDEyIDI0Mi40ODEgMTEyLjQ2NUMyNDEuNjQ0IDg0LjI2MTYgMjE3LjM4IDY4LjY4NjUgMTc1Ljk2NSA2OC42ODY1QzEzMi4wMzkgNjguNjg2NSAxMDAuMjQ1IDk1LjYyNzIgMTAwLjI0NSAxMzYuNDU5QzEwMC4yNDUgMTg2LjEzMSAxNDguNzczIDIwMS43MDYgMTgyLjY1OCAyMTIuNjUxQzIwMS4wNjUgMjE4LjU0NCAyMTUuMjg5IDIyMy4xNzUgMjE1LjI4OSAyMzEuMTczQzIxNS4yODkgMjQ1LjA2NCAxOTcuNzE4IDI1NC4zMjUgMTczLjg3MyAyNTQuMzI1QzE0OC4zNTQgMjU0LjMyNSAxMjQuOTI3IDI0NS40ODUgMTAzLjE3MyAyMjguMjI2VjIzMy42OThDMTAzLjU5MiAyNjUuNjkgMTI5LjExMSAyODAuODQ1IDE3MS4zNjMgMjgwLjg0NVoiIGZpbGw9IiMxRDIzMjciLz4KPC9zdmc+Cg==' )
-		center/20px
-		no-repeat;
+	font-family: 'sensei' !important;
+	content: "\f101";
 }
 
 /* Lessons Icon */

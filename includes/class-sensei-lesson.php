@@ -117,6 +117,9 @@ class Sensei_Lesson {
 			add_action( 'wp_ajax_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 			add_action( 'wp_ajax_nopriv_filter_existing_questions', array( $this, 'quiz_panel_filter_existing_questions' ) );
 
+			// Get the prerequisite meta box content.
+			add_action( 'wp_ajax_get_prerequisite_meta_box_content', array( $this, 'handle_get_prerequisite_meta_box_content' ) );
+
 			// output bulk edit fields
 			add_action( 'bulk_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
 			add_action( 'quick_edit_custom_box', array( $this, 'all_lessons_edit_fields' ), 10, 2 );
@@ -310,30 +313,42 @@ class Sensei_Lesson {
 	 */
 	public function lesson_prerequisite_meta_box_content() {
 		global $post;
-		// Get existing post meta
-		$select_lesson_prerequisite = get_post_meta( $post->ID, '_lesson_prerequisite', true );
-		// Get the Lesson Posts
-		$post_args   = array(
-			'post_type'        => 'lesson',
-			'posts_per_page'   => -1,
-			'orderby'          => 'title',
-			'order'            => 'ASC',
-			'exclude'          => $post->ID,
-			'suppress_filters' => 0,
-			'post_status'      => [ 'publish', 'draft', 'future' ],
+
+		$this->output_prerequisite_meta_box_content(
+			$post->ID,
+			$this->get_course_id( $post->ID )
 		);
-		$posts_array = get_posts( $post_args );
-		// Build the HTML to Output
+	}
+
+	/**
+	 * Outputs the prerequisite meta box HTML.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int      $lesson_id The lesson id.
+	 * @param int|null $course_id The course id.
+	 */
+	private function output_prerequisite_meta_box_content( int $lesson_id, int $course_id = null ) {
+		// Get all the possible prerequisite lessons.
+		$posts_array = $course_id ? $this->get_prerequisites( $lesson_id, $course_id ) : [];
+
+		// Get the currently selected prerequisite.
+		$selected_prerequisite = get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+
+		// Build the HTML to Output.
+		$input_name = 'lesson_prerequisite';
+
 		$html  = '';
 		$html .= wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
 		if ( count( $posts_array ) > 0 ) {
-			$html .= '<select id="lesson-prerequisite-options" name="lesson_prerequisite" class="chosen_select widefat" style="width: 100%">' . "\n";
+			$html .= '<select id="lesson-prerequisite-options" name="' . esc_attr( $input_name ) . '" class="chosen_select widefat" style="width: 100%">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
 			foreach ( $posts_array as $post_item ) {
-				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $select_lesson_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
+				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $selected_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 			}
 			$html .= '</select>' . "\n";
 		} else {
+			$html .= '<input type="hidden" name="' . esc_attr( $input_name ) . '" value="">';
 			$html .= '<p>' . esc_html__( 'No lessons exist yet. Please add some first.', 'sensei-lms' ) . '</p>';
 		}
 
@@ -361,6 +376,66 @@ class Sensei_Lesson {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Returns all the lesson prerequisite posts, ordered by modules.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int $lesson_id The lesson id.
+	 * @param int $course_id The course id.
+	 *
+	 * @return WP_Post[]
+	 */
+	private function get_prerequisites( int $lesson_id, int $course_id ): array {
+		$lesson_status = [ 'publish', 'draft', 'future' ];
+		$modules       = Sensei()->modules->get_course_modules( $course_id );
+		$lessons       = Sensei()->modules->get_none_module_lessons( $course_id, $lesson_status );
+
+		// If the course has modules, make sure the lessons order is correct.
+		if ( $modules ) {
+			$in_module_lessons = [];
+			foreach ( $modules as $module_term ) {
+				$module_lessons_query = Sensei()->modules->get_lessons_query(
+					$course_id,
+					$module_term->term_id,
+					$lesson_status
+				);
+
+				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->get_posts() );
+			}
+
+			$lessons = array_merge( $in_module_lessons, $lessons );
+		}
+
+		// Exclude the lesson that we are getting the prerequisites for.
+		$lessons = array_filter(
+			$lessons,
+			function( $lesson ) use ( $lesson_id ) {
+				return $lesson->ID !== $lesson_id;
+			}
+		);
+
+		return $lessons;
+	}
+
+	/**
+	 * Handles the prerequisite meta box ajax request by outputting the box content HTML.
+	 *
+	 * @since 3.15.0
+	 */
+	public function handle_get_prerequisite_meta_box_content() {
+		check_ajax_referer( 'get_prerequisite_meta_box_content_nonce', 'security' );
+
+		if ( isset( $_GET['lesson_id'] ) && isset( $_GET['course_id'] ) ) {
+			$this->output_prerequisite_meta_box_content(
+				(int) $_GET['lesson_id'],
+				(int) $_GET['course_id']
+			);
+		}
+
+		wp_die(); // This is required to terminate immediately and return a proper response.
 	}
 
 	/**
@@ -2231,6 +2306,14 @@ class Sensei_Lesson {
 
 		// Load the lessons script.
 		Sensei()->assets->enqueue( 'sensei-lesson-metadata', 'js/admin/lesson-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
+
+		wp_localize_script(
+			'sensei-lesson-metadata',
+			'sensei_lesson_metadata',
+			[
+				'get_prerequisite_meta_box_content_nonce' => wp_create_nonce( 'get_prerequisite_meta_box_content_nonce' ),
+			]
+		);
 
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			$this->enqueue_scripts_meta_box_quiz_editor();

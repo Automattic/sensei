@@ -3,7 +3,7 @@
  * File containing the Course_Progress_Counter class.
  *
  * @package sensei
- * @since 3.13.4
+ * @since 3.15.0
  */
 
 namespace Sensei\Blocks\Course_Theme;

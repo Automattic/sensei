@@ -1,40 +1,54 @@
-.sensei-course-theme-prev-next-lesson-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
-}
-
-.sensei-course-theme-prev-next-lesson-a {
-	font-size: 14px;
-	line-height: 17px;
-	color: inherit;
-	padding: 12px 5px;
-	text-decoration: none;
-	&:hover .sensei-course-theme-prev-next-lesson-text {
-		text-decoration: underline;
+.sensei-course-theme-prev-next-lesson {
+	&-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
 	}
 
-	&:nth-child(2) {
-		margin-left: 27px;
-	}
+    &-a {
+		span {
+			font-size: 14px;
+			line-height: 17px;
+			color: inherit;
+			padding: 12px 5px;
+			text-decoration: none;
+		}
+		&:hover span {
+			color: var(--primary-color);
+			text-decoration: underline;
+		}
 
-	&:hover {
-		text-decoration: underline;
-	}
+		&:nth-child( 2 ) {
+			margin-left: 27px;
+		}
 
-	svg {
-		height: 11px;
-	}
-}
+		svg {
+			height: 11px;
+			path {
+				fill: transparent;
+				stroke: currentColor;
+				stroke-width: 1.5;
+			}
+		}
 
-.sensei-course-theme-prev-next-lesson-text {
-	display: inline-block;
-	&__prev {
-		margin-left: 14px;
-	}
+		&:hover svg {
+			path {
+				fill: transparent;
+				stroke: var(--primary-color);
+			}
+		}
 
-	&__next {
-		margin-right: 14px;
+		&__prev {
+			svg {
+				margin-right: 14px;
+			}
+		}
+
+		&__next {
+			svg {
+				margin-left: 14px;
+			}
+		}
 	}
 }
