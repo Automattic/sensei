@@ -93,6 +93,7 @@ class Sensei_Core_Modules {
 
 		// store new modules created on the course edit screen
 		add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules', 'add_new_module_term' ) );
+		add_action( 'wp_ajax_sensei_get_course_modules', array( $this, 'ajax_get_course_modules' ) );
 		add_action( 'wp_ajax_sensei_get_lesson_module_metabox', array( $this, 'handle_get_lesson_module_metabox' ) );
 
 		// for non admin users, only show taxonomies that belong to them
@@ -2127,6 +2128,27 @@ class Sensei_Core_Modules {
 			)
 		);
 
+	}
+
+	/**
+	 * Get course modules
+	 *
+	 * @deprecated 3.15.0
+	 */
+	public function ajax_get_course_modules() {
+		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Core_Modules::handle_get_lesson_module_metabox' );
+
+		// Security check
+		check_ajax_referer( 'get-course-modules', 'security' );
+
+		$course_id = isset( $_POST['course_id'] ) ? absint( $_POST['course_id'] ) : null;
+		if ( null === $course_id ) {
+			wp_send_json_error( array( 'error' => 'invalid course id' ) );
+		}
+
+		$html_content = $this->render_lesson_module_select_for_course( $course_id );
+
+		wp_send_json_success( array( 'content' => $html_content ) );
 	}
 
 	/**
