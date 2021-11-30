@@ -1,6 +1,4 @@
-
 .sensei-course-theme {
-
 	&__button {
 		display: inline-block;
 		font-size: 14px;
@@ -37,6 +35,13 @@
 			&:hover {
 				text-decoration: underline;
 			}
+		}
+
+		&[aria-disabled="true"],
+		&:disabled {
+			opacity: 0.4;
+			pointer-events: none;
+			cursor: not-allowed;
 		}
 	}
 }
