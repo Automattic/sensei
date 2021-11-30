@@ -211,12 +211,12 @@ class Sensei_Core_Modules {
 	/**
 	 * Renders the lesson module select input.
 	 *
-	 * @param int|null $course_id
-	 * @param int|null $current_module_id
+	 * @param int|null $course_id         The course post ID.
+	 * @param int|null $current_module_id The currently selected module post ID.
 	 *
-	 * @return string
+	 * @return string The lesson module select HTML.
 	 */
-	private function render_lesson_module_select_for_course( int $course_id = null, int $current_module_id = null ) {
+	private function render_lesson_module_select_for_course( int $course_id = null, int $current_module_id = null ): string {
 		// Get the available modules for this lesson's course.
 		$modules = $course_id ? $this->get_course_modules( $course_id ) : [];
 
