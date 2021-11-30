@@ -72,9 +72,9 @@ class Complete_Lesson {
 		}
 
 		// The button is a secondary CTA if there is a quiz but not required to take/pass it.
-		$secondary = '';
+		$level = 'is-primary';
 		if ( \Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
-			$secondary = 'sensei-course-theme-complete-lesson__secondary';
+			$level = 'is-secondary';
 		}
 
 		// Render "Mark Complete" button.
@@ -86,7 +86,7 @@ class Complete_Lesson {
 			<form class="sensei-course-theme-complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" class="sensei-course-theme-complete-lesson ' . $secondary . '" ' . $disabled . '>
+				<button type="submit" class="sensei-course-theme__button sensei-course-theme__complete-lesson ' . $level . '" ' . $disabled . '>
 					' . $text . '
 				</button>
 			</form>

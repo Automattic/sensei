@@ -16,15 +16,12 @@
 		}
 		&:hover span {
 			color: var(--primary-color);
-			text-decoration: underline;
 		}
 
-		&:nth-child( 2 ) {
-			margin-left: 27px;
-		}
 
 		svg {
 			height: 11px;
+			vertical-align: baseline;
 			path {
 				fill: transparent;
 				stroke: currentColor;
@@ -41,13 +38,14 @@
 
 		&__prev {
 			svg {
-				margin-right: 14px;
+				margin-right: 4px;
 			}
 		}
 
 		&__next {
 			svg {
-				margin-left: 14px;
+				margin-left: 4px;
+				margin-bottom: -1px;
 			}
 		}
 	}
