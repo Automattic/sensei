@@ -150,7 +150,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Outputs the lesson module meta box HTML.
 	 *
-	 * @since 3.14.0
+	 * @since 3.15.0
 	 *
 	 * @param WP_Post $lesson_post The lesson post object.
 	 * @param int     $course_id   The course id.
@@ -210,6 +210,8 @@ class Sensei_Core_Modules {
 
 	/**
 	 * Renders the lesson module select input.
+	 *
+	 * @since 3.15.0
 	 *
 	 * @param int|null $course_id         The course post ID.
 	 * @param int|null $current_module_id The currently selected module post ID.
@@ -2153,6 +2155,8 @@ class Sensei_Core_Modules {
 
 	/**
 	 * Handles the lesson module meta box ajax request by outputting the box content HTML.
+	 *
+	 * @since 3.15.0
 	 */
 	public function handle_get_lesson_module_metabox() {
 		// Security check.
