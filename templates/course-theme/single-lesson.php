@@ -32,7 +32,10 @@ if ( have_posts() ) {
 		<!-- /wp:column -->
 		<!-- wp:column {"className":"sensei-course-theme__header__right"} -->
 		<div class="wp-block-column sensei-course-theme__header__right">
-			<!-- wp:sensei-lms/course-theme-prev-next-lesson /-->
+			<!-- wp:sensei-lms/course-theme-prev-next-lesson -->
+			<!-- wp:sensei-lms/course-theme-prev-lesson {"inContainer":true} /-->
+			<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
+			<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
 			<!-- wp:sensei-lms/course-theme-complete-lesson /-->
 			<!-- wp:sensei-lms/course-theme-quiz-button /-->
 		</div>

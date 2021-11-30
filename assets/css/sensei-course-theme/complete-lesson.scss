@@ -1,0 +1,30 @@
+.sensei-course-theme-complete-lesson-form {
+	padding: 0;
+	margin: 0;
+}
+
+button.sensei-course-theme-complete-lesson {
+	box-sizing: border-box;
+	font-size: 14px;
+	line-height: 17px;
+	font-weight: 700;
+	padding: 11px 18px;
+	border-radius: 2px;
+	background-color: var(--primary-color);
+	color: var(--primary-contrast-color);
+
+	&:disabled {
+		background-color: var(--primary-color);
+		color: var(--primary-contrast-color);
+		cursor: not-allowed;
+	}
+
+	&__secondary {
+		border: 1px solid var(--primary-color);
+		background-color: rgba(0, 0, 0, 0);
+		color: var(--primary-color);
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.02);
+		}
+	}
+}
