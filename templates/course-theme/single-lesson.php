@@ -35,8 +35,7 @@ if ( have_posts() ) {
 			<!-- wp:sensei-lms/course-theme-prev-lesson {"inContainer":true} /-->
 			<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
 			<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
-			<!-- wp:sensei-lms/course-theme-complete-lesson /-->
-			<!-- wp:sensei-lms/course-theme-quiz-button /-->
+			<!-- wp:sensei-lms/course-theme-lesson-actions /-->
 		</div>
 		<!-- /wp:column -->
 	</div>
