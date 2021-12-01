@@ -9,25 +9,11 @@
 		box-sizing: border-box;
 	}
 
-	// Reset theme CSS.
 	* {
 		all: unset;
 		display: revert;
 	}
 
-	/**
-	 * Theme-specific resets.
-	 */
-
-	/**
-	 * Twenty Twenty, Twenty Twenty One
-	 */
-
-
-	button {
-		background: none;
-	}
-	
 	.screen-reader-text {
 		border: 0;
 		clip: rect(1px, 1px, 1px, 1px);
