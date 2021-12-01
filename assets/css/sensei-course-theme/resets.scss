@@ -5,6 +5,9 @@
 	@at-root body {
 		margin: 0;
 	}
+	@at-root * {
+		box-sizing: border-box;
+	}
 
 	// Reset theme CSS.
 	* {
