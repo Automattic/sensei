@@ -130,10 +130,16 @@ class Lesson_Actions {
 		}
 
 		$has_incomplete_prerequisite = ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+		$complete_lesson_button      = $this->render_complete_lesson( $lesson_id, $has_incomplete_prerequisite );
+		$take_quiz_button            = $this->render_take_quiz( $lesson_id, $user_id, $has_incomplete_prerequisite );
+
+		if ( empty( $complete_lesson_button ) && empty( $take_quiz_button ) ) {
+			return '';
+		}
 
 		return '<ul class="sensei-course-theme-lesson-actions">
-			<li>' . $this->render_complete_lesson( $lesson_id, $has_incomplete_prerequisite ) . '</li>
-			<li>' . $this->render_take_quiz( $lesson_id, $user_id, $has_incomplete_prerequisite ) . '</li>
+			<li>' . $complete_lesson_button . '</li>
+			<li>' . $take_quiz_button . '</li>
 		</ul>';
 	}
 }

@@ -42,7 +42,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$lesson = $this->factory->lesson->create_and_get();
 		add_post_meta( $lesson->ID, '_lesson_course', $course->ID );
 		$this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 
 		$GLOBALS['post'] = null;
 		$block           = new Lesson_Actions();
@@ -59,7 +59,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$lesson = $this->factory->lesson->create_and_get();
 		add_post_meta( $lesson->ID, '_lesson_course', $course->ID );
 		$this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 
 		$GLOBALS['post'] = $course;
 		$block           = new Lesson_Actions();
@@ -101,7 +101,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		];
 		$this->factory->quiz->create( $quiz_args );
 		$this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 
 		$GLOBALS['post'] = $lesson;
 		$block           = new Lesson_Actions();
@@ -132,7 +132,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		];
 		$this->factory->quiz->create( $quiz_args );
 		$this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 
 		$GLOBALS['post'] = $lesson;
 		$block           = new Lesson_Actions();
@@ -143,6 +143,35 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test lesson actions block for a lesson with quiz that requires passing and is submitted.
+	 */
+	public function testQuizPassRequiredSubmitted() {
+		$course      = $this->factory->course->create_and_get();
+		$lesson_args = [
+			'meta_input' => [
+				'_lesson_course'      => $course->ID,
+				'_quiz_has_questions' => 1,
+			],
+		];
+		$lesson      = $this->factory->lesson->create_and_get( $lesson_args );
+		$quiz_args   = [
+			'post_parent' => $lesson->ID,
+			'meta_input'  => [
+				'_pass_required' => 'on',
+			],
+		];
+		$this->factory->quiz->create( $quiz_args );
+		$this->login_as_student();
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei_Quiz::submit_answers_for_grading( [], [], $lesson->ID, get_current_user_id() );
+
+		$GLOBALS['post'] = $lesson;
+		$block           = new Lesson_Actions();
+
+		$this->assertEmpty( $block->render(), 'Should render empty string if quiz requires passing and it is submitted.' );
+	}
+
+	/**
 	 * Test lesson actions block when user already completed the lesson.
 	 */
 	public function testAlreadyCompleted() {
@@ -150,7 +179,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$lesson = $this->factory->lesson->create_and_get();
 		add_post_meta( $lesson->ID, '_lesson_course', $course->ID );
 		$student = $this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
 
 		$GLOBALS['post'] = $lesson;
@@ -185,7 +214,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		];
 		$this->factory->quiz->create( $quiz_args );
 		$this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 
 		$GLOBALS['post'] = $lesson2;
 		$block           = new Lesson_Actions();
@@ -203,7 +232,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$lesson = $this->factory->lesson->create_and_get();
 		add_post_meta( $lesson->ID, '_lesson_course', $course->ID );
 		$student = $this->login_as_student();
-		\Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
 
 		$GLOBALS['post'] = $lesson;
 		$block           = new Lesson_Actions();
