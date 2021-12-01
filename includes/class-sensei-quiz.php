@@ -1280,17 +1280,45 @@ class Sensei_Quiz {
 		global $sensei_question_loop;
 
 		// Initialise the questions loop object.
-		$sensei_question_loop['current']   = -1;
-		$sensei_question_loop['total']     = 0;
-		$sensei_question_loop['questions'] = array();
+		$sensei_question_loop['current']        = -1;
+		$sensei_question_loop['total']          = 0;
+		$sensei_question_loop['questions']      = [];
+		$sensei_question_loop['posts_per_page'] = -1;
+		$sensei_question_loop['current_page']   = 1;
 
-		$questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID(), 'publish' );
+		// Get the pagination settings and populate the loop object.
+		$pagination = json_decode(
+			get_post_meta( get_the_ID(), '_pagination', true ),
+			true
+		);
 
-		if ( count( $questions ) > 0 ) {
-			$sensei_question_loop['total']     = count( $questions );
-			$sensei_question_loop['questions'] = $questions;
-			$sensei_question_loop['quiz_id']   = get_the_ID();
+		if ( ! empty( $pagination['pagination_number'] ) ) {
+			$sensei_question_loop['posts_per_page'] = (int) $pagination['pagination_number'];
 		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for pagination in the frontend.
+		if ( ! empty( $_GET['questions-page'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$sensei_question_loop['current_page'] = max( 1, (int) $_GET['questions-page'] );
+		}
+
+		// Fetch the questions.
+		$all_questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID(), 'publish' );
+		if ( ! $all_questions ) {
+			return;
+		}
+
+		// Paginate the questions.
+		if ( $sensei_question_loop['posts_per_page'] > 0 ) {
+			$offset              = $sensei_question_loop['posts_per_page'] * ( $sensei_question_loop['current_page'] - 1 );
+			$paginated_questions = array_slice( $all_questions, $offset, $sensei_question_loop['posts_per_page'] );
+		} else {
+			$paginated_questions = $all_questions;
+		}
+
+		$sensei_question_loop['total']     = count( $all_questions );
+		$sensei_question_loop['questions'] = $paginated_questions;
+		$sensei_question_loop['quiz_id']   = get_the_ID();
 	}
 
 	/**
@@ -1306,10 +1334,12 @@ class Sensei_Quiz {
 
 		_deprecated_function( __METHOD__, '3.10.0' );
 
-		$sensei_question_loop              = [];
-		$sensei_question_loop['total']     = 0;
-		$sensei_question_loop['questions'] = array();
-		$sensei_question_loop['quiz_id']   = '';
+		$sensei_question_loop                   = [];
+		$sensei_question_loop['total']          = 0;
+		$sensei_question_loop['questions']      = array();
+		$sensei_question_loop['quiz_id']        = '';
+		$sensei_question_loop['posts_per_page'] = -1;
+		$sensei_question_loop['current_page']   = 1;
 
 	}
 

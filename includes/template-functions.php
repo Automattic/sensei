@@ -770,11 +770,13 @@ function sensei_quiz_has_questions() {
 
 	global $sensei_question_loop;
 
-	if ( ! isset( $sensei_question_loop['total'] ) ) {
+	$questions_count = count( $sensei_question_loop['questions'] );
+
+	if ( 0 === $questions_count ) {
 		return false;
 	}
 
-	return $sensei_question_loop['current'] + 1 < $sensei_question_loop['total'];
+	return $sensei_question_loop['current'] + 1 < $questions_count;
 }
 
 /**
