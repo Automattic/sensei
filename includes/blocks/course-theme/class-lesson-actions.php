@@ -44,10 +44,7 @@ class Lesson_Actions {
 	private function render_complete_lesson( $lesson_id, $has_incomplete_prerequisite ) {
 		if (
 			// Return empty if the lesson requires a quiz pass.
-			Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ||
-
-			// Return empty if user already completed the lesson.
-			Sensei_Utils::user_completed_lesson( $lesson_id )
+			Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id )
 		) {
 			return '';
 		}
@@ -125,7 +122,10 @@ class Lesson_Actions {
 
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
-		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+		if (
+			! Sensei_Course::is_user_enrolled( $course_id )
+			|| Sensei_Utils::user_completed_lesson( $lesson_id )
+		) {
 			return '';
 		}
 
