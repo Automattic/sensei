@@ -20,11 +20,9 @@
         "showQuestions": null,
         "failedShowAnswerFeedback": false,
         "failedShowCorrectAnswers": false,
-        "failedIndicateIncorrect": false
+        "failedIndicateIncorrect": false,
+        "pagination": {}
       }
-    },
-    "paginationSettings": {
-      "type": "object"
     },
     "isPostTemplate": {
       "type": "boolean",

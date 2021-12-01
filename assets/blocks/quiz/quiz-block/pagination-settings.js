@@ -7,6 +7,8 @@ import {
 	PanelRow,
 	ToggleControl,
 	SelectControl,
+	Toolbar,
+	ToolbarGroup,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -14,18 +16,82 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import NumberControl from '../../editor-components/number-control';
+import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
 
 const SINGLE = 'single';
 const MULTI = 'multi';
 
+const paginationOptions = [
+	{
+		label: __( 'Single page', 'sensei-lms' ),
+		value: SINGLE,
+	},
+	{
+		label: __( 'Multi-Page', 'sensei-lms' ),
+		value: MULTI,
+	},
+];
+
+const onDropdownChange = ( settings, onChange ) => ( value ) => {
+	if ( value === MULTI ) {
+		onChange( {
+			...settings,
+			paginationNumber: 1,
+		} );
+	} else {
+		onChange( {
+			...settings,
+			paginationNumber: null,
+		} );
+	}
+};
+
 /**
- * Quiz settings.
+ * A component which contains a NumberControl and the 'per page' accompanying text.
  *
- * @param {Object}   props          Block props.
- * @param {Object}   props.settings Pagination settings object.
- * @param {Function} props.onChange Callback called when a setting changed.
+ * @param {Object}   props               Component props.
+ * @param {Object}   props.settings      Pagination settings object.
+ * @param {Function} props.onChange      Callback called when a setting changed.
+ * @param {number}   props.questionCount Number of questions in the quiz.
  */
-const PaginationSettings = ( { settings, onChange } ) => {
+const QuestionsControl = ( { settings, onChange, ...props } ) => {
+	const { paginationNumber } = settings;
+
+	return (
+		<>
+			<NumberControl
+				label={ __( 'Number of Questions', 'sensei-lms' ) }
+				min={ 1 }
+				step={ 1 }
+				hideLabelFromVision
+				suffix={ __( 'Questions', 'sensei-lms' ) }
+				value={ paginationNumber }
+				onChange={ ( value ) =>
+					onChange( {
+						...settings,
+						paginationNumber: value,
+					} )
+				}
+				{ ...props }
+			/>
+			<div>{ __( 'per page', 'sensei-lms' ) }</div>
+		</>
+	);
+};
+
+/**
+ * Quiz sidebar settings.
+ *
+ * @param {Object}   props               Component props.
+ * @param {Object}   props.settings      Pagination settings object.
+ * @param {Function} props.onChange      Callback called when a setting changed.
+ * @param {number}   props.questionCount Number of questions in the quiz.
+ */
+export const PaginationSidebarSettings = ( {
+	settings,
+	onChange,
+	questionCount,
+} ) => {
 	const {
 		paginationNumber,
 		showProgressBar,
@@ -55,51 +121,25 @@ const PaginationSettings = ( { settings, onChange } ) => {
 					<div className="sensei-lms-quiz-block-panel__row">
 						<SelectControl
 							label={ __( 'Pagination', 'sensei-lms' ) }
-							className="test"
 							hideLabelFromVision
-							value={ paginationNumber !== null ? MULTI : SINGLE }
-							options={ [
-								{
-									label: __( 'Single page', 'sensei-lms' ),
-									value: SINGLE,
-								},
-								{
-									label: __( 'Multi-Page', 'sensei-lms' ),
-									value: MULTI,
-								},
-							] }
-							onChange={ ( value ) => {
-								if ( value === MULTI ) {
-									onChange( {
-										...settings,
-										paginationNumber: 1,
-									} );
-								} else {
-									onChange( {
-										...settings,
-										paginationNumber: null,
-									} );
-								}
-							} }
+							value={ paginationNumber === null ? SINGLE : MULTI }
+							options={ paginationOptions }
+							onChange={ onDropdownChange(
+								settings,
+								onChange,
+								questionCount
+							) }
 						/>
 					</div>
-					<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
-						<NumberControl
-							label={ __( 'Number of Questions', 'sensei-lms' ) }
-							min={ 1 }
-							step={ 1 }
-							hideLabelFromVision
-							suffix={ __( 'Questions', 'sensei-lms' ) }
-							value={ paginationNumber }
-							onChange={ ( value ) =>
-								onChange( {
-									...settings,
-									paginationNumber: value,
-								} )
-							}
-						/>
-						<p>{ __( 'per page', 'sensei-lms' ) }</p>
-					</div>
+					{ paginationNumber !== null && (
+						<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
+							<QuestionsControl
+								settings={ settings }
+								onChange={ onChange }
+								questionCount={ questionCount }
+							/>
+						</div>
+					) }
 				</PanelRow>
 				<PanelRow className="sensei-lms-quiz-block-panel">
 					<h2 className="sensei-lms-quiz-block-panel__row">
@@ -111,7 +151,10 @@ const PaginationSettings = ( { settings, onChange } ) => {
 						label={ __( 'Show Progress Bar', 'sensei-lms' ) }
 						value={ progressBarRadius }
 						onChange={ ( value ) =>
-							onChange( { ...settings, showProgressBar: value } )
+							onChange( {
+								...settings,
+								showProgressBar: value,
+							} )
 						}
 					/>
 					<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__progress-bar">
@@ -181,4 +224,44 @@ const PaginationSettings = ( { settings, onChange } ) => {
 	);
 };
 
-export default PaginationSettings;
+/**
+ * Quiz toolbar settings.
+ *
+ * @param {Object}   props               Component props.
+ * @param {Object}   props.settings      Pagination settings object.
+ * @param {Function} props.onChange      Callback called when a setting changed.
+ * @param {number}   props.questionCount Number of questions in the quiz.
+ */
+export const PaginationToolbarSettings = ( {
+	settings,
+	onChange,
+	questionCount,
+} ) => {
+	const { paginationNumber } = settings;
+
+	return (
+		<>
+			<Toolbar>
+				<ToolbarDropdown
+					options={ paginationOptions }
+					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
+					value={ paginationNumber === null ? SINGLE : MULTI }
+					onChange={ onDropdownChange(
+						settings,
+						onChange,
+						questionCount
+					) }
+				/>
+			</Toolbar>
+			{ paginationNumber !== null && (
+				<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
+					<QuestionsControl
+						settings={ settings }
+						onChange={ onChange }
+						questionCount={ questionCount }
+					/>
+				</ToolbarGroup>
+			) }
+		</>
+	);
+};
