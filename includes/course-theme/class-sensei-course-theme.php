@@ -134,7 +134,7 @@ class Sensei_Course_Theme {
 	public function add_rewrite_rules() {
 		global $wp;
 		$wp->add_query_var( self::QUERY_VAR );
-		add_rewrite_rule( '^' . self::QUERY_VAR . '/([^/]*)/([^/]*)/?', 'index.php?' . self::QUERY_VAR . '=1&post_type=$matches[1]&name=$matches[2]', 'top' );
+		add_rewrite_rule( '^' . self::QUERY_VAR . '/([^/]*)/([^/]*)/?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&post_type=$matches[1]&name=$matches[2]&$matches[3]', 'top' );
 		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
 
 		if ( ! get_option( 'sensei_course_theme_query_var_flushed' ) ) {
