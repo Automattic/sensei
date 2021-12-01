@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Sensei\Blocks\Course_Theme\The_Content;
 use Sensei\Blocks\Course_Theme\Course_Title;
 use Sensei\Blocks\Course_Theme\Focus_Mode;
 use Sensei\Blocks\Course_Theme\Site_Logo;
@@ -67,15 +68,13 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		new Site_Logo();
 		new Notices();
 		new Focus_Mode();
-		if ( 'lesson' === get_post_type() ) {
-			new Prev_Lesson();
-			new Next_Lesson();
-			new Prev_Next_Lesson();
-			new Course_Progress_Counter();
-			new Course_Progress_Bar();
-			new Lesson_Actions();
-		} elseif ( 'quiz' === get_post_type() ) {
-			new Quiz_Back_To_Lesson();
-		}
+		new The_Content();
+		new Prev_Lesson();
+		new Next_Lesson();
+		new Prev_Next_Lesson();
+		new Course_Progress_Counter();
+		new Course_Progress_Bar();
+		new Lesson_Actions();
+		new Quiz_Back_To_Lesson();
 	}
 }
