@@ -84,7 +84,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 						/**
 						 * Action inside before the question content on single-quiz page
 						 *
-						 * @hooked Sensei_Question::answer_feedback_notes
+						 * @hooked Sensei_Question::the_answer_feedback
 						 *
 						 * @param string $the_question_id
 						 */

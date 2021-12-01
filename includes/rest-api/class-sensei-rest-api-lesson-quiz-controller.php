@@ -273,6 +273,14 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$meta_input['_random_question_order'] = true === $quiz_options['random_question_order'] ? 'yes' : 'no';
 		}
 
+		foreach ( [ 'failed_indicate_incorrect', 'failed_show_correct_answers', 'failed_show_answer_feedback' ] as $option ) {
+			if ( isset( $quiz_options[ $option ] ) ) {
+				$meta_input[ '_' . $option ] = $quiz_options[ $option ] ? 'yes' : 'no';
+			} else {
+				$meta_input[ '_' . $option ] = null;
+			}
+		}
+
 		if ( isset( $quiz_options['pagination'] ) ) {
 			$meta_input['_pagination'] = wp_json_encode( $quiz_options['pagination'] );
 		}
@@ -332,16 +340,23 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @return array
 	 */
-	private function get_quiz_data( WP_Post $quiz ) : array {
+	private function get_quiz_data( WP_Post $quiz ): array {
 		$post_meta = get_post_meta( $quiz->ID );
+
+		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
+		$failed_feedback_default = ! $allow_retakes;
+
 		$quiz_data = [
 			'options'   => [
-				'pass_required'         => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
-				'quiz_passmark'         => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
-				'auto_grade'            => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
-				'allow_retakes'         => ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0],
-				'show_questions'        => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
-				'random_question_order' => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
+				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
+				'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
+				'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
+				'allow_retakes'               => $allow_retakes,
+				'show_questions'              => empty( $post_meta['_show_questions'][0] ) ? null : (int) $post_meta['_show_questions'][0],
+				'random_question_order'       => ! empty( $post_meta['_random_question_order'][0] ) && 'yes' === $post_meta['_random_question_order'][0],
+				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
+				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
+				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
 			],
 			'questions' => $this->get_quiz_questions( $quiz ),
 		];
@@ -398,7 +413,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	 *
 	 * @return array Schema object.
 	 */
-	public function get_item_schema() : array {
+	public function get_item_schema(): array {
 		$schema = [
 			'type'       => 'object',
 			'properties' => [
@@ -406,35 +421,50 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 					'type'       => 'object',
 					'required'   => true,
 					'properties' => [
-						'pass_required'         => [
+						'pass_required'               => [
 							'type'        => 'boolean',
 							'description' => 'Pass required to complete lesson',
 							'default'     => false,
 						],
-						'quiz_passmark'         => [
+						'quiz_passmark'               => [
 							'type'        => 'integer',
 							'description' => 'Score grade between 0 and 100 required to pass the quiz',
 							'default'     => 100,
 						],
-						'auto_grade'            => [
+						'auto_grade'                  => [
 							'type'        => 'boolean',
 							'description' => 'Whether auto-grading should take place',
 							'default'     => true,
 						],
-						'allow_retakes'         => [
+						'allow_retakes'               => [
 							'type'        => 'boolean',
 							'description' => 'Allow quizzes to be taken again',
 							'default'     => true,
 						],
-						'show_questions'        => [
+						'show_questions'              => [
 							'type'        => [ 'integer', 'null' ],
 							'description' => 'Number of questions to show randomly',
 							'default'     => null,
 						],
-						'random_question_order' => [
+						'random_question_order'       => [
 							'type'        => 'boolean',
 							'description' => 'Show questions in a random order',
 							'default'     => false,
+						],
+						'failed_indicate_incorrect'   => [
+							'type'        => [ 'boolean', 'null' ],
+							'description' => 'Indicate which questions are incorrect',
+							'default'     => null,
+						],
+						'failed_show_correct_answers' => [
+							'type'        => [ 'boolean', 'null' ],
+							'description' => 'Show correct answers',
+							'default'     => null,
+						],
+						'failed_show_answer_feedback' => [
+							'type'        => [ 'boolean', 'null' ],
+							'description' => 'Show answer feedback text',
+							'default'     => null,
 						],
 					],
 				],

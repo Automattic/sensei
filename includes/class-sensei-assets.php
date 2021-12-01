@@ -258,4 +258,33 @@ class Sensei_Assets {
 		add_filter( 'sensei_disable_styles', '__return_true' );
 	}
 
+	/**
+	 * Gets the contents of the icon file at assets/images/<name>.svg
+	 * for the given name. Or empty string if file not found.
+	 *
+	 * @since 3.13.4
+	 *
+	 * @param string $name The name of the icon file at "assets/images/<name>.svg".
+	 * @return string The icon markup.
+	 */
+	public function get_icon( string $name = '' ) {
+		$dir     = realpath( $this->plugin_path . './assets/images' );
+		$file    = "{$dir}/{$name}.svg";
+		$content = '';
+
+		// Read file inside try/catch in case the
+		// icon file is not there.
+		try {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+			$content = file_get_contents( $file );
+		} catch ( Exception $e ) {
+			$content = false;
+		}
+
+		if ( false !== $content ) {
+			return $content;
+		}
+
+		return '';
+	}
 }

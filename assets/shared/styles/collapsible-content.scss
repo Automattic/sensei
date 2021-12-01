@@ -1,0 +1,13 @@
+
+.sensei-collapsible__content {
+	display: block;
+	opacity: 1;
+	overflow: hidden;
+
+	transition: max-height 350ms ease-in-out, opacity 350ms ease-in-out;
+
+	&.collapsed {
+		opacity: 0;
+		max-height: 0;
+	}
+}

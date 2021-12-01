@@ -1,0 +1,13 @@
+{
+	"name": "sensei-lms/question-description",
+	"parent": [ "sensei-lms/quiz-question" ],
+	"category": "sensei-lms",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"id": {
+			"type": "integer"
+		}
+	}
+}

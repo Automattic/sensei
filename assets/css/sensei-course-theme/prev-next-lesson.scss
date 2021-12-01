@@ -1,0 +1,52 @@
+.sensei-course-theme-prev-next-lesson {
+	&-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+	}
+
+    &-a {
+		span {
+			font-size: 14px;
+			line-height: 17px;
+			color: inherit;
+			padding: 12px 5px;
+			text-decoration: none;
+		}
+		&:hover span {
+			color: var(--primary-color);
+		}
+
+
+		svg {
+			height: 11px;
+			vertical-align: baseline;
+			path {
+				fill: transparent;
+				stroke: currentColor;
+				stroke-width: 1.5;
+			}
+		}
+
+		&:hover svg {
+			path {
+				fill: transparent;
+				stroke: var(--primary-color);
+			}
+		}
+
+		&__prev {
+			svg {
+				margin-right: 4px;
+			}
+		}
+
+		&__next {
+			svg {
+				margin-left: 4px;
+				margin-bottom: -1px;
+			}
+		}
+	}
+}

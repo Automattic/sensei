@@ -1,0 +1,42 @@
+
+.sensei-course-theme {
+
+	&__button {
+		display: inline-block;
+		font-size: 14px;
+
+		&.is-primary,
+		&.is-secondary {
+			padding: 8px 11px;
+			border: solid 1px var(--sensei-course-theme-primary-color);
+			font-weight: 700;
+			text-decoration: none;
+			border-radius: 2px;
+		}
+
+		&.is-primary {
+			background-color: var(--sensei-course-theme-primary-color);
+			color: #FFFFFF;
+			&:hover {
+				color: var(--sensei-course-theme-primary-color);
+				background: none;
+			}
+		}
+
+		&.is-secondary {
+			color: var(--sensei-course-theme-primary-color);
+			&:hover {
+				background-color: var(--sensei-course-theme-primary-color);
+				color: #fff;
+
+			}
+		}
+
+		&.is-link {
+			color: var(--sensei-course-theme-primary-color);
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}

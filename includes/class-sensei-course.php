@@ -1143,12 +1143,12 @@ class Sensei_Course {
 	 *
 	 * @access public
 	 *
-	 * @param int    $course_id   (default: 0)
-	 * @param string $post_status (default: 'publish')
-	 * @param string $fields      (default: 'all'). WP only allows 3 types, but we will limit it to only 'ids' or 'all'
-	 * @param array  $query_args  Base arguments for the WP query.
+	 * @param int          $course_id   (default: 0).         The course id.
+	 * @param string|array $post_status (default: 'publish'). The post status.
+	 * @param string       $fields      (default: 'all').     WP only allows 3 types, but we will limit it to only 'ids' or 'all'.
+	 * @param array        $query_args  Base arguments for the WP query.
 	 *
-	 * @return array{ type WP_Post }  $posts_array
+	 * @return WP_Post[]
 	 */
 	public function course_lessons( $course_id = 0, $post_status = 'publish', $fields = 'all', $query_args = [] ) {
 
@@ -2003,6 +2003,38 @@ class Sensei_Course {
 		 */
 		return apply_filters( 'sensei_course_completion_statement', $statement );
 
+	}
+
+	/**
+	 * Returns a summary of course progress statistics in keyed array.
+	 *
+	 * @param int $course_id The id of the course.
+	 *
+	 * @return array $stats An array of progress stats.
+	 *               $stats['lessons_count'] The total number of lessons in the course.
+	 *               $stats['completed_lessons_count'] The total number of completed lessons of the course by the user.
+	 *               $stats['completed_lessons_percentage'] The completed lessons percentage relative to total number of lessons.
+	 */
+	public function get_progress_stats( int $course_id ): array {
+		$lessons_count           = count( \Sensei()->course->course_lessons( $course_id, null, 'ids' ) );
+		$completed_lessons_count = count( \Sensei()->course->get_completed_lesson_ids( $course_id ) );
+		$stats                   = [
+			'lessons_count'                => $lessons_count,
+			'completed_lessons_count'      => $completed_lessons_count,
+			'completed_lessons_percentage' => \Sensei_Utils::quotient_as_absolute_rounded_percentage( $completed_lessons_count, $lessons_count, 2 ),
+		];
+
+		/**
+		 * Filter the course progress stats.
+		 *
+		 * @since 3.14.4
+		 * @param array $stat An array of course progress stats.
+		 *              $stats['lessons_count'] The total number of lessons in the course.
+		 *              $stats['completed_lessons_count'] The total number of completed lessons of the course by the user.
+		 *              $stats['completed_lessons_percentage'] The completed lessons percentage relative to total number of lessons.
+		 * @param int   $course_id The id of the course.
+		 */
+		return apply_filters( 'sensei_course_progress_stats', $stats, $course_id );
 	}
 
 	/**
