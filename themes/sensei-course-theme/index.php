@@ -12,6 +12,8 @@
  * @version     3.13.4
  */
 
+namespace Sensei\Themes\Course_Theme;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -27,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <?php
-	the_content();
+	the_course_theme_layout();
 	wp_footer();
 ?>
 </body>
