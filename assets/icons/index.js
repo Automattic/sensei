@@ -5,3 +5,4 @@ export { LessonPropertiesIcon } from './lesson-properties-icon';
 export { ModuleIcon } from './module-icon';
 export { ProgressIcon } from './progress-icon';
 export { SenseiIcon } from './sensei-icon';
+export { SuccessIcon } from './success-icon';

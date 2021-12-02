@@ -44,6 +44,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="wp-block-column sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
 		<!-- wp:sensei-lms/focus-mode-toggle /-->
 		<!-- wp:sensei-lms/course-navigation /-->
+		<!-- wp:sensei-lms/course-theme-contact-teacher /-->
+		<!-- wp:sensei-lms/course-theme-contact-teacher /-->
+		<!-- wp:sensei-lms/course-theme-contact-teacher /-->
 	</div>
 	<!-- /wp:column -->
 
