@@ -1297,9 +1297,9 @@ class Sensei_Quiz {
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for pagination in the frontend.
-		if ( ! empty( $_GET['questions-page'] ) ) {
+		if ( ! empty( $_GET['quiz-page'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$sensei_question_loop['current_page'] = max( 1, (int) $_GET['questions-page'] );
+			$sensei_question_loop['current_page'] = max( 1, (int) $_GET['quiz-page'] );
 		}
 
 		// Fetch the questions.
