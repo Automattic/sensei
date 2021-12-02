@@ -87,7 +87,7 @@ class Lesson_Actions {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
-		$lesson_id = get_the_ID();
+		$lesson_id = Sensei_Utils::get_current_lesson();
 		$user_id   = get_current_user_id();
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
