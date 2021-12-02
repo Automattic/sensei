@@ -1248,6 +1248,35 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * Ensure that when the quiz pagination is enabled, that is reflected in the loop object.
+	 *
+	 * @covers Sensei_Quiz::start_quiz_questions_loop
+	 * @group  questions
+	 */
+	public function testQuizQuestionsLoopShouldPaginate() {
+		/* Arrange */
+		global $post, $sensei_question_loop;
 
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$post      = get_post( $quiz_id );
+
+		$this->factory->question->create_many( 10, [ 'quiz_id' => $quiz_id ] );
+
+		update_post_meta(
+			$quiz_id,
+			'_pagination',
+			wp_json_encode( [ 'pagination_number' => 2 ] )
+		);
+
+		/* Act */
+		Sensei_Quiz::start_quiz_questions_loop();
+
+		/* Assert */
+		$this->assertEquals( 2, $sensei_question_loop['posts_per_page'] );
+		$this->assertCount( 2, $sensei_question_loop['questions'] );
+		$this->assertEquals( 10, $sensei_question_loop['total'] );
+	}
 
 }
