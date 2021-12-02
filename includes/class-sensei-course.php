@@ -132,6 +132,9 @@ class Sensei_Course {
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
 
+		// filter the redirect url after enrolment
+		add_filter( 'sensei_start_course_redirect_url', array( __CLASS__, 'alter_redirect_url_after_enrolment' ), 10, 2 );
+
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
@@ -3885,6 +3888,28 @@ class Sensei_Course {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Alters the redirect url after a user enrols to a course.
+	 *
+	 * @param String  $url  Default redirect url.
+	 * @param WP_Post $post Post object for course.
+	 *
+	 * @return String
+	 */
+	public static function alter_redirect_url_after_enrolment( $url, $post ) {
+
+		$course_id = $post->ID;
+		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+			$lessons = Sensei()->course->course_lessons( $course_id );
+			if ( count( $lessons ) > 0 ) {
+				$url = get_permalink( $lessons[0]->ID );
+			}
+		}
+
+		return $url;
+
 	}
 }
 

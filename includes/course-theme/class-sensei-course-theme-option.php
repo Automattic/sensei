@@ -123,13 +123,25 @@ class Sensei_Course_Theme_Option {
 			return false;
 		}
 
-		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
-
-		if ( self::SENSEI_THEME !== $theme ) {
+		if ( ! self::has_sensei_theme_enabled( $course_id ) ) {
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check if the given course has the Sensei Theme enabled or not.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return bool
+	 */
+	public static function has_sensei_theme_enabled( $course_id ) {
+
+		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
+
+		return self::SENSEI_THEME === $theme;
 	}
 
 	/**
