@@ -12,7 +12,7 @@
  * @version     3.13.4
  */
 
-namespace Sensei\Themes\Course_Theme;
+namespace Sensei\Themes\Sensei_Course_Theme;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

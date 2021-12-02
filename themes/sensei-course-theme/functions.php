@@ -5,11 +5,22 @@
  * @package sensei
  */
 
-namespace Sensei\Themes\Course_Theme;
+namespace Sensei\Themes\Sensei_Course_Theme;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+/**
+ * Set up the theme.
+ */
+function setup_theme() {
+
+	add_theme_support( 'title-tag' );
+
+}
+add_action( 'after_setup_theme', '\Sensei\Themes\Sensei_Course_Theme\setup_theme' );
+
 
 /**
  * Load the layout and render its blocks.
@@ -51,7 +62,7 @@ function use_quiz_template() {
 
 	if ( $post && 'quiz' === $post->post_type ) {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$status = \Sensei_Utils::user_lesson_status( $lesson_id );
+		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
 		if ( $status && 'in-progress' === $status->comment_approved ) {
 			return true;
 		}
