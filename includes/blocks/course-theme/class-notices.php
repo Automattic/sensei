@@ -41,6 +41,6 @@ class Notices {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
-		return Sensei_Context_Notices::instance( 'course_theme' )->get_notices_html( 'lesson-quiz-notice.php' );
+		return Sensei_Context_Notices::instance( 'course_theme' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 	}
 }
