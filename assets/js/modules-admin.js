@@ -204,7 +204,7 @@ jQuery( document ).ready( function () {
 
 	// Refresh the modules meta box on course select change.
 	jQuery( '#lesson-course-options' ).on( 'change', function () {
-		const lessonId = jQuery( '#post_ID' ).val();
+		const lessonId = wp.data.select( 'core/editor' ).getCurrentPostId();
 		const courseId = jQuery( this ).val();
 
 		jQuery.get(
