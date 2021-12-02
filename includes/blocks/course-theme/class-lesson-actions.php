@@ -36,29 +36,14 @@ class Lesson_Actions {
 	/**
 	 * Renders complete lesson button.
 	 *
-	 * @param int  $lesson_id                   Lesson ID.
-	 * @param bool $has_incomplete_prerequisite Whether it has incomplete prerequisite.
+	 * @param string $button_class Button class.
+	 * @param bool   $is_disabled  Whether it is disabled.
 	 *
 	 * @return string The complete lesson button.
 	 */
-	private function render_complete_lesson( $lesson_id, $has_incomplete_prerequisite ) {
-		if (
-			// Return empty if the lesson requires a quiz pass.
-			Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id )
-		) {
-			return '';
-		}
+	private function render_complete_lesson( string $button_class, bool $is_disabled ) : string {
+		$disabled_attribute = $is_disabled ? 'disabled' : '';
 
-		// The button is disabled if the lesson requires a pre-requisite.
-		$disabled = $has_incomplete_prerequisite ? 'disabled' : '';
-
-		// The button is a secondary CTA if there is a quiz but not required to take/pass it.
-		$button_style = 'is-primary';
-		if ( Sensei_Lesson::lesson_quiz_has_questions( $lesson_id ) ) {
-			$button_style = 'is-secondary';
-		}
-
-		// Render "Mark Complete" button.
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink() );
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
@@ -67,7 +52,7 @@ class Lesson_Actions {
 			<form class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" class="sensei-course-theme__button ' . $button_style . '" ' . $disabled . '>
+				<button type="submit" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
 					' . $text . '
 				</button>
 			</form>
@@ -77,24 +62,13 @@ class Lesson_Actions {
 	/**
 	 * Renders take quiz button.
 	 *
-	 * @param int  $lesson_id                   Lesson ID.
-	 * @param int  $user_id                     User ID.
-	 * @param bool $has_incomplete_prerequisite Whether it has incomplete prerequisite.
+	 * @param string $quiz_permalink Quiz permalink.
+	 * @param bool   $is_disabled    Whether it is disabled.
 	 *
 	 * @return string The take quiz button.
 	 */
-	private function render_take_quiz( $lesson_id, $user_id, $has_incomplete_prerequisite ) {
-		$quiz_permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
-
-		if ( empty( $quiz_permalink ) ) {
-			return '';
-		}
-
-		if ( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
-			return '';
-		}
-
-		$disabled       = $has_incomplete_prerequisite ? 'aria-disabled="true"' : '';
+	private function render_take_quiz( string $quiz_permalink, bool $is_disabled ) : string {
+		$disabled       = $is_disabled ? 'aria-disabled="true"' : '';
 		$quiz_permalink = esc_url( $quiz_permalink );
 		$text           = esc_html__( 'Take quiz', 'sensei-lms' );
 
@@ -130,16 +104,22 @@ class Lesson_Actions {
 		}
 
 		$has_incomplete_prerequisite = ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
-		$complete_lesson_button      = $this->render_complete_lesson( $lesson_id, $has_incomplete_prerequisite );
-		$take_quiz_button            = $this->render_take_quiz( $lesson_id, $user_id, $has_incomplete_prerequisite );
+		$quiz_permalink              = Sensei()->lesson->get_quiz_permalink( $lesson_id );
+		$is_quiz_submitted           = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
+		$is_pass_required            = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 		$actions                     = [];
 
-		if ( ! empty( $complete_lesson_button ) ) {
-			$actions[] = '<li>' . $complete_lesson_button . '</li>';
+		// Quiz button.
+		if ( ! empty( $quiz_permalink ) && ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
+			$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
+			$actions[]        = '<li>' . $take_quiz_button . '</li>';
 		}
 
-		if ( ! empty( $take_quiz_button ) ) {
-			$actions[] = $take_quiz_button;
+		// Complete button.
+		if ( ! $is_pass_required ) {
+			$complete_button_class  = isset( $take_quiz_button ) ? 'is-secondary' : 'is-primary';
+			$complete_lesson_button = $this->render_complete_lesson( $complete_button_class, $has_incomplete_prerequisite );
+			$actions[]              = '<li>' . $complete_lesson_button . '</li>';
 		}
 
 		if ( empty( $actions ) ) {
