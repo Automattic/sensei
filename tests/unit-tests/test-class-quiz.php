@@ -1274,9 +1274,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei_Quiz::start_quiz_questions_loop();
 
 		/* Assert */
-		$this->assertEquals( 2, $sensei_question_loop['posts_per_page'] );
-		$this->assertCount( 2, $sensei_question_loop['questions'] );
-		$this->assertEquals( 10, $sensei_question_loop['total'] );
+		$this->assertEquals( 2, $sensei_question_loop['posts_per_page'], 'The loop `posts_per_page` should be the same as the number defined in the quiz pagination setting.' );
+		$this->assertCount( 2, $sensei_question_loop['questions'], 'The loop questions count should be equal to the questions per page.' );
+		$this->assertEquals( 10, $sensei_question_loop['total'], 'The loop total questions count should be equal to the total questions count of the quiz.' );
 	}
 
 }
