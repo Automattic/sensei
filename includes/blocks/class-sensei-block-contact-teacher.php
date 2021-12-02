@@ -88,7 +88,7 @@ class Sensei_Block_Contact_Teacher {
 	 */
 	private function teacher_contact_form( $post ) {
 
-		$nonce = wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
+		$nonce = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
 
 		return '
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
