@@ -70,7 +70,7 @@ const SingleQuestion = ( props ) => {
 				{ notice }
 				<p>
 					{ __(
-						"Incomplete questions added to a quiz won't be displayed to the learner.",
+						"Incomplete questions added to a quiz won't be displayed to the student.",
 						'sensei-lms'
 					) }
 				</p>

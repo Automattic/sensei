@@ -99,7 +99,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Learner Admin', 'sensei-lms' ), __( 'Learner Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
+			add_submenu_page( 'sensei', __( 'Student Admin', 'sensei-lms' ), __( 'Student Admin', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_learner_admin', array( $this, 'learner_admin_page' ) );
 		}
 	}
 
@@ -109,7 +109,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @param Sensei_Learner_Management $management The learner managemnt object.
 	 */
 	public function __construct( $management ) {
-		$this->name               = __( 'Bulk Learner Actions', 'sensei-lms' );
+		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
 		$this->view               = 'sensei_learner_admin';
 		$this->learner_management = $management;
@@ -402,7 +402,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 				break;
 			case 'action-success':
 				$msg_class = 'notice notice-success';
-				$msg       = __( 'Bulk learner action succeeded', 'sensei-lms' );
+				$msg       = __( 'Bulk student action succeeded', 'sensei-lms' );
 				break;
 		}
 

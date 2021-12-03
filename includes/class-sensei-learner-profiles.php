@@ -25,7 +25,7 @@ class Sensei_Learner_Profiles {
 	public function __construct() {
 
 		// Setup learner profile URL base
-		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
+		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'student', 'sensei-lms' ) );
 
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );

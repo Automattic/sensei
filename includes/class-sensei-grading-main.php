@@ -60,7 +60,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'title'       => __( 'Learner', 'sensei-lms' ),
+			'title'       => __( 'Student', 'sensei-lms' ),
 			'course'      => __( 'Course', 'sensei-lms' ),
 			'lesson'      => __( 'Lesson', 'sensei-lms' ),
 			'updated'     => __( 'Updated', 'sensei-lms' ),

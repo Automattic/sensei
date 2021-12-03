@@ -164,7 +164,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
-					'title'            => __( 'Learner', 'sensei-lms' ),
+					'title'            => __( 'Student', 'sensei-lms' ),
 					'enrolment_status' => __( 'Enrollment', 'sensei-lms' ),
 					'user_status'      => __( 'Status', 'sensei-lms' ),
 					'date_started'     => __( 'Date Started', 'sensei-lms' ),
@@ -175,7 +175,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			case 'lessons':
 				$columns = array(
 					'title'        => __( 'Lesson', 'sensei-lms' ),
-					'num_learners' => __( '# Learners', 'sensei-lms' ),
+					'num_learners' => __( '# Students', 'sensei-lms' ),
 					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
@@ -184,7 +184,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			default:
 				$columns = array(
 					'title'        => __( 'Course', 'sensei-lms' ),
-					'num_learners' => __( '# Learners', 'sensei-lms' ),
+					'num_learners' => __( '# Students', 'sensei-lms' ),
 					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
@@ -686,7 +686,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								),
 								admin_url( 'admin.php' )
 							)
-						) . '">' . esc_html__( 'Manage learners', 'sensei-lms' ) . '</a> ' . $grading_action,
+						) . '">' . esc_html__( 'Manage students', 'sensei-lms' ) . '</a> ' . $grading_action,
 					),
 					$item,
 					$this->course_id
@@ -750,7 +750,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								),
 								admin_url( 'admin.php' )
 							)
-						) . '">' . esc_html__( 'Manage learners', 'sensei-lms' ) . '</a> ' . $grading_action,
+						) . '">' . esc_html__( 'Manage students', 'sensei-lms' ) . '</a> ' . $grading_action,
 					),
 					$item
 				);
@@ -773,7 +773,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return string The form.
 	 */
 	private function get_edit_start_date_form( $user_activity, $post_id, $post_type ) : string {
-		$submit_button_text = __( 'Update Learner', 'sensei-lms' );
+		$submit_button_text = __( 'Update Student', 'sensei-lms' );
 
 		return '<form class="edit-start-date">
 				<a class="edit-start-date-submit button" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" data-comment-id="' . esc_attr( $user_activity->comment_ID ) . '">' . esc_html( $submit_button_text ) . '</a>
@@ -1001,7 +1001,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	public function no_items() {
 		switch ( $this->view ) {
 			case 'learners':
-				$text = __( 'No learners found.', 'sensei-lms' );
+				$text = __( 'No students found.', 'sensei-lms' );
 				break;
 
 			case 'lessons':
@@ -1121,16 +1121,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		switch ( $enrolment_status ) {
 			case 'enrolled':
-				$link_title = esc_html__( 'Enrolled Learners', 'sensei-lms' );
+				$link_title = esc_html__( 'Enrolled Students', 'sensei-lms' );
 				break;
 			case 'unenrolled':
-				$link_title = esc_html__( 'Unenrolled Learners', 'sensei-lms' );
+				$link_title = esc_html__( 'Unenrolled Students', 'sensei-lms' );
 				break;
 			case 'manual':
-				$link_title = esc_html__( 'Manually Enrolled Learners', 'sensei-lms' );
+				$link_title = esc_html__( 'Manually Enrolled Students', 'sensei-lms' );
 				break;
 			case 'all':
-				$link_title = esc_html__( 'All Learners', 'sensei-lms' );
+				$link_title = esc_html__( 'All Students', 'sensei-lms' );
 				break;
 		}
 
@@ -1206,7 +1206,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			<h2 class="postbox-title">
 				<?php
 				// translators: Placeholder is the post type.
-				printf( esc_html__( 'Add Learner to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
+				printf( esc_html__( 'Add Student to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
 				?>
 			</h2>
 			<div class="inside">
@@ -1215,9 +1215,9 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;">
 						</select>
 						<?php if ( 'lesson' === $form_post_type ) { ?>
-							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for learner', 'sensei-lms' ); ?></label>
+							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for student', 'sensei-lms' ); ?></label>
 						<?php } elseif ( 'course' === $form_post_type ) { ?>
-							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for learner', 'sensei-lms' ); ?></label>
+							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for student', 'sensei-lms' ); ?></label>
 						<?php } ?>
 						<br/>
 						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'sensei-lms' ); ?></span>
@@ -1232,7 +1232,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						<p><span class="description">
 							<?php
 							// translators: Placeholder is the course title.
-							printf( esc_html__( 'Learner will also be added to the course \'%1$s\' if they are not already taking it.', 'sensei-lms' ), esc_html( $course_title ) );
+							printf( esc_html__( 'Student will also be added to the course \'%1$s\' if they are not already taking it.', 'sensei-lms' ), esc_html( $course_title ) );
 							?>
 						</span></p>
 					<?php } ?>
@@ -1260,7 +1260,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		switch ( $this->view ) {
 			case 'learners':
-				$text = __( 'Search Learners', 'sensei-lms' );
+				$text = __( 'Search Students', 'sensei-lms' );
 				break;
 
 			case 'lessons':
@@ -1276,7 +1276,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method which calculates if the 'Manually Enrolled Learners' filter should be displayed.
+	 * Helper method which calculates if the 'Manually Enrolled Students' filter should be displayed.
 	 *
 	 * @return bool
 	 * @throws Exception If the providers weren't initialized yet.

@@ -133,7 +133,7 @@ class Sensei_Messages {
 			array(
 				'id'          => 'sender',
 				'label'       => __( 'Message sent by:', 'sensei-lms' ),
-				'description' => __( 'The username of the learner who sent this message.', 'sensei-lms' ),
+				'description' => __( 'The username of the student who sent this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_sender', true ),
 			),

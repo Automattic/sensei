@@ -117,13 +117,13 @@ const QuizSettings = ( {
 										id="sensei-lms-quiz-block-failed-feedback-options"
 										className="sensei-lms-subsection-control"
 										help={ __(
-											'What learners see when reviewing their quiz after grading.',
+											'What students see when reviewing their quiz after grading.',
 											'sensei-lms'
 										) }
 									>
 										<h3>
 											{ __(
-												'If learner does not pass quiz',
+												'If student does not pass quiz',
 												'sensei-lms'
 											) }
 										</h3>

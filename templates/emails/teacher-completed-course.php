@@ -46,7 +46,7 @@ printf( esc_html__( 'has completed and %1$s the course', 'sensei-lms' ), esc_htm
 <p style="<?php echo esc_attr( $small ); ?>">
 <?php
 // translators: Placeholders are an opening and closing <a> tag linking to the course's learners page in wp-admin.
-printf( esc_html__( 'Manage this course\'s learners %1$shere%2$s.', 'sensei-lms' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
+printf( esc_html__( 'Manage this course\'s students %1$shere%2$s.', 'sensei-lms' ), '<a href="' . esc_url( admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id ) ) . '">', '</a>' );
 ?>
 </p>
 

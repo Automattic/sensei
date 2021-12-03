@@ -17,7 +17,7 @@ export default createButtonBlockType( {
 		parent: [ 'sensei-lms/lesson-actions' ],
 		title: __( 'Complete Lesson', 'sensei-lms' ),
 		description: __(
-			'Enable a learner to mark the lesson as complete. This block is only displayed if the lesson has no quiz or the quiz is optional.',
+			'Enable a student to mark the lesson as complete. This block is only displayed if the lesson has no quiz or the quiz is optional.',
 			'sensei-lms'
 		),
 		keywords: [

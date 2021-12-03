@@ -59,7 +59,7 @@ class Sensei_Course_Outline_Course_Block {
 		$css        = Sensei_Block_Helpers::build_styles( $attributes );
 
 		if ( ! empty( $attributes['preview_drafts'] ) ) {
-			Sensei()->notices->add_notice( __( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to learners.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
+			Sensei()->notices->add_notice( __( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to students.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
 		}
 
 		$icons = $this->render_svg_icon_library();

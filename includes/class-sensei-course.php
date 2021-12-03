@@ -1786,8 +1786,8 @@ class Sensei_Course {
 			$no_active_message   = __( 'You have no active courses.', 'sensei-lms' );
 			$no_complete_message = __( 'You have not completed any courses yet.', 'sensei-lms' );
 		} else {
-			$no_active_message   = __( 'This learner has no active courses.', 'sensei-lms' );
-			$no_complete_message = __( 'This learner has not completed any courses yet.', 'sensei-lms' );
+			$no_active_message   = __( 'This student has no active courses.', 'sensei-lms' );
+			$no_complete_message = __( 'This student has not completed any courses yet.', 'sensei-lms' );
 		}
 
 		ob_start();
