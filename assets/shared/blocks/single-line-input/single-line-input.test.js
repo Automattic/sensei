@@ -38,7 +38,7 @@ describe( '<SingleLineInput />', () => {
 		expect( onChangeMock ).toBeCalledWith( 'changed' );
 	} );
 
-	it( 'Should not allow line breaks', () => {
+	it.skip( 'Should not allow line breaks', () => {
 		const onChangeMock = jest.fn();
 		const { getByRole } = render(
 			<SingleLineInput onChange={ onChangeMock } />

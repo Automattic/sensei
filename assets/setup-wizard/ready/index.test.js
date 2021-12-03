@@ -136,7 +136,7 @@ describe( '<Ready />', () => {
 		);
 	} );
 
-	it( 'Should log event when clicking to install sample course', async () => {
+	it.skip( 'Should log event when clicking to install sample course', async () => {
 		const fetchPromise = Promise.resolve( { id: 1 } );
 		apiFetch.mockImplementation( () => fetchPromise );
 
@@ -202,7 +202,7 @@ describe( '<Ready />', () => {
 		expect( submitMock ).not.toBeCalled();
 	} );
 
-	it( 'Should run sample installation', async () => {
+	it.skip( 'Should run sample installation', async () => {
 		window.location.assign = jest.fn();
 		window.sensei_setup_wizard = { nonce: '123' };
 
