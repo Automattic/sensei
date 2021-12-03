@@ -38,8 +38,7 @@
     "select2": "4.0.13"
   },
   "devDependencies": {
-    "@automattic/calypso-build": "6.5.0",
-    "@automattic/puppeteer-utils": "github:Automattic/puppeteer-utils",
+    "@automattic/calypso-build": "10.0.0",
     "@babel/cli": "7.13.14",
     "@babel/core": "7.13.14",
     "@babel/preset-env": "7.13.12",
@@ -103,7 +102,7 @@
     "lint-js:fix": "npm run lint-js -- --fix",
     "lint-pkg-json": "wp-scripts lint-pkg-json",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
-    "start": "calypso-build --watch",
+    "start": "NODE_ENV=development calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
     "test-js": "wp-scripts test-unit-js",
     "test-php": "./vendor/bin/phpunit",
