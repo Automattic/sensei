@@ -1285,6 +1285,7 @@ class Sensei_Quiz {
 		$sensei_question_loop['questions']      = [];
 		$sensei_question_loop['posts_per_page'] = -1;
 		$sensei_question_loop['current_page']   = 1;
+		$sensei_question_loop['total_pages']    = 1;
 
 		// Get the pagination settings and populate the loop object.
 		$pagination = json_decode(
@@ -1308,16 +1309,22 @@ class Sensei_Quiz {
 			return;
 		}
 
+		$sensei_question_loop['total'] = count( $all_questions );
+
 		// Paginate the questions.
 		if ( $sensei_question_loop['posts_per_page'] > 0 ) {
-			$offset              = $sensei_question_loop['posts_per_page'] * ( $sensei_question_loop['current_page'] - 1 );
-			$paginated_questions = array_slice( $all_questions, $offset, $sensei_question_loop['posts_per_page'] );
+			$offset         = $sensei_question_loop['posts_per_page'] * ( $sensei_question_loop['current_page'] - 1 );
+			$loop_questions = array_slice( $all_questions, $offset, $sensei_question_loop['posts_per_page'] );
+
+			// Calculate the number of pages.
+			$sensei_question_loop['total_pages'] = (int) ceil(
+				$sensei_question_loop['total'] / $sensei_question_loop['posts_per_page']
+			);
 		} else {
-			$paginated_questions = $all_questions;
+			$loop_questions = $all_questions;
 		}
 
-		$sensei_question_loop['total']     = count( $all_questions );
-		$sensei_question_loop['questions'] = $paginated_questions;
+		$sensei_question_loop['questions'] = $loop_questions;
 		$sensei_question_loop['quiz_id']   = get_the_ID();
 	}
 
@@ -1340,6 +1347,7 @@ class Sensei_Quiz {
 		$sensei_question_loop['quiz_id']        = '';
 		$sensei_question_loop['posts_per_page'] = -1;
 		$sensei_question_loop['current_page']   = 1;
+		$sensei_question_loop['total_pages']    = 1;
 
 	}
 
