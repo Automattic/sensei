@@ -1270,6 +1270,16 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			wp_json_encode( [ 'pagination_number' => 2 ] )
 		);
 
+		$sensei_quiz_mock = $this->getMockBuilder( Sensei_Quiz::class )
+			->setMethods( [ 'can_take_quiz' ] )
+			->getMock();
+
+		$sensei_quiz_mock
+			->method( 'can_take_quiz' )
+			->will( $this->returnValue( true ) );
+
+		Sensei()->quiz = $sensei_quiz_mock;
+
 		/* Act */
 		Sensei_Quiz::start_quiz_questions_loop();
 

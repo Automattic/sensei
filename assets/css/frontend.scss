@@ -370,6 +370,88 @@ a.sensei-certificate-link {
   }
 }
 
+.sensei-quiz-pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1.5em;
+	margin: 1.618em 0;
+
+	@media (max-width: 667px) {
+		flex-direction: column;
+	}
+}
+
+.sensei-quiz-pagination__list {
+	flex-grow: 1;
+	gap: 0.5em;
+
+	@media (max-width: 667px) {
+		margin-bottom: 1em;
+	}
+
+	ul {
+		display: flex;
+		gap: 0.5em;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li, span {
+			margin: 0;
+			padding: 0;
+		}
+	}
+}
+
+.sensei-quiz-pagination__actions {
+	display: flex;
+
+	@media (max-width: 667px) {
+		order: 1;
+	}
+}
+
+.sensei-quiz-pagination__nav {
+	display: flex;
+	align-items: center;
+
+	.wp-block-buttons {
+		gap: 0.5em;
+
+		.wp-block-button {
+			margin: 0;
+		}
+	}
+}
+
+.sensei-quiz-pagination__button-link {
+	display: inline-flex;
+
+	&:not(:first-child) {
+		margin-left: 0.5em;
+		padding-left: 0.5em;
+		border-left: 2px solid;
+	}
+
+	button {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		color: inherit;
+		background-color: transparent;
+		text-decoration: underline;
+		text-transform: none;
+		font-weight: normal;
+
+		&:hover {
+			color: inherit;
+			background-color: transparent;
+			text-decoration: none;
+		}
+	}
+}
+
 .quiz:not(.quiz-blocks), .lesson {
   button.quiz-submit  {
     &.complete  {

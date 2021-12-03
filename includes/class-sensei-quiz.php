@@ -1343,14 +1343,19 @@ class Sensei_Quiz {
 		$sensei_question_loop['current_page']   = 1;
 		$sensei_question_loop['total_pages']    = 1;
 
-		// Get the pagination settings and populate the loop object.
-		$pagination = json_decode(
-			get_post_meta( get_the_ID(), '_pagination', true ),
-			true
-		);
+		$quiz_id             = get_the_ID();
+		$pagination_settings = [];
 
-		if ( ! empty( $pagination['pagination_number'] ) ) {
-			$sensei_question_loop['posts_per_page'] = (int) $pagination['pagination_number'];
+		// Paginate the questions only if the user is taking the quiz.
+		if ( Sensei()->quiz->can_take_quiz( $quiz_id ) ) {
+			$pagination_settings = json_decode(
+				get_post_meta( $quiz_id, '_pagination', true ),
+				true
+			);
+		}
+
+		if ( ! empty( $pagination_settings['pagination_number'] ) ) {
+			$sensei_question_loop['posts_per_page'] = (int) $pagination_settings['pagination_number'];
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for pagination in the frontend.
@@ -1360,7 +1365,7 @@ class Sensei_Quiz {
 		}
 
 		// Fetch the questions.
-		$all_questions = Sensei()->lesson->lesson_quiz_questions( get_the_ID(), 'publish' );
+		$all_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' );
 		if ( ! $all_questions ) {
 			return;
 		}
@@ -1381,7 +1386,7 @@ class Sensei_Quiz {
 		}
 
 		$sensei_question_loop['questions'] = $loop_questions;
-		$sensei_question_loop['quiz_id']   = get_the_ID();
+		$sensei_question_loop['quiz_id']   = $quiz_id;
 	}
 
 	/**
@@ -1451,6 +1456,30 @@ class Sensei_Quiz {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
 		echo $message;
+	}
+
+	/**
+	 * Displays the quiz questions pagination when enabled from the quiz pagination settings.
+	 * Replaces the default action buttons.
+	 *
+	 * @since 3.15.0
+	 */
+	public static function the_quiz_pagination() {
+
+		global $sensei_question_loop;
+
+		if ( $sensei_question_loop['total_pages'] <= 1 ) {
+			return;
+		}
+
+		wp_enqueue_script( 'sensei-stop-double-submission' );
+
+		// Remove the default action buttons. We will replace them in the pagination template.
+		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_buttons' ), 10 );
+
+		// Load the pagination template.
+		Sensei_Templates::get_template( 'single-quiz/pagination.php' );
+
 	}
 
 	/**
