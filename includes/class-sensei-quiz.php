@@ -1232,6 +1232,62 @@ class Sensei_Quiz {
 	}
 
 	/**
+	 * Check if the user is allowed to take the quiz.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int|null $quiz_id (Optional) The quiz post ID. Defaults to the current post ID.
+	 * @param int|null $user_id (Optional) The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
+	public function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
+
+		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $user_id ) {
+			return false;
+		}
+
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$course_id = (int) get_post_meta( $lesson_id, '_lesson_course', true );
+
+		// Check if the user has enrolled in the course.
+		if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
+			return false;
+		}
+
+		// Check if there is a lesson prerequisite and if the user has completed it.
+		$prerequisite_id = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
+		if (
+			$prerequisite_id
+			&& ! Sensei_Utils::user_completed_lesson( $prerequisite_id, $user_id )
+		) {
+			return false;
+		}
+
+		// Check the lesson status.
+		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		if ( $lesson_status && 'ungraded' === $lesson_status->comment_approved ) {
+			return false;
+		}
+
+		$lesson_status_comment_id = is_array( $lesson_status )
+			? $lesson_status[0]->comment_ID
+			: $lesson_status->comment_ID;
+
+		// Check for a quiz grade.
+		$quiz_grade = get_comment_meta( $lesson_status_comment_id, 'grade', true );
+		if ( $quiz_grade ) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	/**
 	 * Filter the single title and add the Quiz to it.
 	 *
 	 * @param string $title
@@ -1405,75 +1461,49 @@ class Sensei_Quiz {
 	 */
 	public static function action_buttons() {
 
-		global $post, $current_user;
+		$quiz_id   = get_the_ID();
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
-		$lesson_id           = Sensei()->quiz->get_lesson_id( $post->ID );
-		$lesson_course_id    = (int) get_post_meta( $lesson_id, '_lesson_course', true );
-		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-		$show_actions        = true;
-		$user_lesson_status  = Sensei_Utils::user_lesson_status( $lesson_id, $current_user->ID );
+		$can_take_quiz  = Sensei()->quiz->can_take_quiz( $quiz_id );
+		$can_reset_quiz = self::is_reset_allowed( $lesson_id );
 
-		// setup quiz grade
-		$user_quiz_grade = '';
-		if ( ! empty( $user_lesson_status ) ) {
-
-			// user lesson status can return as an array.
-			if ( is_array( $user_lesson_status ) ) {
-				$comment_ID = $user_lesson_status[0]->comment_ID;
-
-			} else {
-				$comment_ID = $user_lesson_status->comment_ID;
-			}
-
-			$user_quiz_grade = get_comment_meta( $comment_ID, 'grade', true );
+		if ( ! $can_take_quiz && ! $can_reset_quiz ) {
+			return;
 		}
 
-		if ( intval( $lesson_prerequisite ) > 0 ) {
+		wp_enqueue_script( 'sensei-stop-double-submission' );
+		?>
 
-			// If the user hasn't completed the prereq then hide the current actions
-			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $current_user->ID );
+		<div class="wp-block-buttons">
+			<?php if ( $can_take_quiz ) : ?>
+				<div class="wp-block-button">
+					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
+						<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
+					</button>
 
-		}
-		if ( $show_actions && is_user_logged_in() && Sensei_Course::is_user_enrolled( $lesson_course_id, $current_user->ID ) ) {
-			wp_enqueue_script( 'sensei-stop-double-submission' );
-			// Get Reset Settings
-			$reset_quiz_allowed = get_post_meta( $post->ID, '_enable_quiz_reset', true );
-			?>
+					<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
+				</div>
 
-			<!-- Action Nonce's -->
-			<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce"
-				value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
-			<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce"
-				value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
-			<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce"
-				value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-			<!-- End Action Nonce's -->
-			<div class="wp-block-buttons">
-				<?php if ( '' == $user_quiz_grade && ( ! $user_lesson_status || 'ungraded' !== $user_lesson_status->comment_approved ) ) { ?>
+				<div class="wp-block-button is-style-outline">
+					<button type="submit" name="quiz_save" class="wp-block-button__link button quiz-submit save sensei-stop-double-submission">
+						<?php esc_attr_e( 'Save Quiz', 'sensei-lms' ); ?>
+					</button>
 
-					<div class="wp-block-button">
-						<button type="submit" name="quiz_complete"
-							class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"><?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?></button>
-					</div>
+					<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+				</div>
+			<?php endif ?>
 
-					<div class="wp-block-button is-style-outline">
-						<button type="submit" name="quiz_save"
-							class="wp-block-button__link button quiz-submit save sensei-stop-double-submission"><?php esc_attr_e( 'Save Quiz', 'sensei-lms' ); ?></button>
-					</div>
+			<?php if ( $can_reset_quiz ) : ?>
+				<div class="wp-block-button is-style-outline">
+					<button type="submit" name="quiz_reset" class="wp-block-button__link button quiz-submit reset sensei-stop-double-submission">
+						<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>
+					</button>
 
-				<?php } ?>
-
-				<?php if ( isset( $reset_quiz_allowed ) && $reset_quiz_allowed ) { ?>
-
-					<div class="wp-block-button is-style-outline">
-						<button type="submit" name="quiz_reset"
-							class="wp-block-button__link button quiz-submit reset sensei-stop-double-submission"><?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?></button>
-					</div>
-
-				<?php } ?>
-			</div>
-			<?php
-		}
+					<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+				</div>
+			<?php endif ?>
+		</div>
+		<?php
 
 	}
 

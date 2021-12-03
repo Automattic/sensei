@@ -1280,4 +1280,93 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEquals( 10, $sensei_question_loop['total'], 'The loop total questions count should be equal to the total questions count of the quiz.' );
 	}
 
+	/**
+	 * Ensure that only course enrolled users can take a quiz.
+	 *
+	 * @covers Sensei_Quiz::can_take_quiz
+	 */
+	public function testOnlyCourseEnrolledUsersCanTakeTheQuiz() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		$quiz_id          = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
+
+		/* Assert */
+		$this->assertFalse( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Users not enrolled in a course, should not be able to take the quiz.' );
+		$course_enrolment->enrol( $user_id );
+		$this->assertTrue( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Users enrolled in a course, should be able to take the quiz.' );
+	}
+
+	/**
+	 * Ensure that the user is able to take the quiz only after completing the prerequisite lesson.
+	 *
+	 * @covers Sensei_Quiz::can_take_quiz
+	 */
+	public function testCanTakeTheQuizIfPrerequisiteIsCompleted() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$prerequisite_lesson_id = $this->factory->lesson->create();
+		$lesson_id              = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course'       => $course_id,
+					'_lesson_prerequisite' => $prerequisite_lesson_id,
+				],
+			]
+		);
+
+		$quiz_id          = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
+
+		/* Assert */
+		$this->assertFalse( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should not be able to take the quiz if there is a uncompleted prerequisite lesson.' );
+		Sensei_Utils::update_lesson_status( $user_id, $prerequisite_lesson_id, 'complete' );
+		$this->assertTrue( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should be able to take the quiz if the prerequisite lesson is completed.' );
+	}
+
+	/**
+	 * Ensure that the user is not able to take the quiz if the lesson status is "ungraded".
+	 *
+	 * @covers Sensei_Quiz::can_take_quiz
+	 */
+	public function testCantTakeTheQuizIfLessonIsUngraded() {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		$quiz_id          = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
+
+		/* Assert */
+		$this->assertTrue( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should be able to take the quiz if the lesson status is not ungraded.' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
+		$this->assertFalse( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should not be able to take the quiz if the lesson status is ungraded.' );
+	}
+
 }
