@@ -21,12 +21,14 @@ const useHasQuiz = () => {
 			setHasQuiz( event.detail.questions > 0 );
 		};
 
+		// eslint-disable-next-line @wordpress/no-global-event-listener
 		window.addEventListener(
 			'sensei-quiz-editor-question-count-updated',
 			quizToggleEventHandler
 		);
 
 		return () => {
+			// eslint-disable-next-line @wordpress/no-global-event-listener
 			window.removeEventListener(
 				'sensei-quiz-editor-question-count-updated',
 				quizToggleEventHandler
