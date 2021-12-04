@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import 'learner-courses-mixins';
 @import '../../shared/blocks/course-progress/course-progress';
 
@@ -30,7 +31,7 @@ $courses-list: '#{$block}__courses-list';
 	list-style: none;
 
 	&__item, a {
-		margin: 0 (34px/2);
+		margin: 0 math.div(34px, 2);
 		padding: 5px 0;
 		line-height: 1.25;
 
