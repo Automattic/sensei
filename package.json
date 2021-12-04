@@ -67,7 +67,7 @@
     "extract-zip": "2.0.1",
     "gettext-parser": "4.0.4",
     "husky": "6.0.0",
-    "jsdoc": "3.6.5",
+    "jsdoc": "3.6.7",
     "lint-staged": "10.2.11",
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
