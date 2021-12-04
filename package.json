@@ -15,6 +15,9 @@
   "bugs": {
     "url": "https://github.com/Automattic/sensei/issues"
   },
+  "engines": {
+    "npm": ">=7"
+  },
   "dependencies": {
     "@wordpress/api-fetch": "3.18.0",
     "@wordpress/base-styles": "1.9.0",
