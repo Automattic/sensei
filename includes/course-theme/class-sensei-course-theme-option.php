@@ -113,7 +113,7 @@ class Sensei_Course_Theme_Option {
 	 */
 	public function should_use_sensei_theme() {
 
-		$is_course_content = is_singular( 'lesson' ) || is_singular( 'quiz' );
+		$is_course_content = is_singular( 'lesson' ) || is_singular( 'quiz' ) || is_tax( 'module' );
 
 		if ( ! $is_course_content ) {
 			return false;
