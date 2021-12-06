@@ -1356,12 +1356,12 @@ class Sensei_Quiz {
 
 		if ( ! empty( $pagination_settings['pagination_number'] ) ) {
 			$sensei_question_loop['posts_per_page'] = (int) $pagination_settings['pagination_number'];
-		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for pagination in the frontend.
-		if ( ! empty( $_GET['quiz-page'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$sensei_question_loop['current_page'] = max( 1, (int) $_GET['quiz-page'] );
+			// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for pagination in the frontend.
+			if ( ! empty( $_GET['quiz-page'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification
+				$sensei_question_loop['current_page'] = max( 1, (int) $_GET['quiz-page'] );
+			}
 		}
 
 		// Fetch the questions.
