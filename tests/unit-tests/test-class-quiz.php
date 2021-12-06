@@ -1248,6 +1248,35 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * Ensure that when the quiz pagination is enabled, that is reflected in the loop object.
+	 *
+	 * @covers Sensei_Quiz::start_quiz_questions_loop
+	 * @group  questions
+	 */
+	public function testQuizQuestionsLoopShouldPaginate() {
+		/* Arrange */
+		global $post, $sensei_question_loop;
 
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$post      = get_post( $quiz_id );
+
+		$this->factory->question->create_many( 10, [ 'quiz_id' => $quiz_id ] );
+
+		update_post_meta(
+			$quiz_id,
+			'_pagination',
+			wp_json_encode( [ 'pagination_number' => 2 ] )
+		);
+
+		/* Act */
+		Sensei_Quiz::start_quiz_questions_loop();
+
+		/* Assert */
+		$this->assertEquals( 2, $sensei_question_loop['posts_per_page'], 'The loop `posts_per_page` should be the same as the number defined in the quiz pagination setting.' );
+		$this->assertCount( 2, $sensei_question_loop['questions'], 'The loop questions count should be equal to the questions per page.' );
+		$this->assertEquals( 10, $sensei_question_loop['total'], 'The loop total questions count should be equal to the total questions count of the quiz.' );
+	}
 
 }

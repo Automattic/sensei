@@ -789,16 +789,17 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$lesson_id = $this->factory->lesson->create();
 
 		$body = [
-			'options'    => [],
-			'questions'  => [],
-			'pagination' => [
-				'pagination_number'       => 3,
-				'show_progress_bar'       => true,
-				'progress_bar_radius'     => 10,
-				'progress_bar_height'     => 10,
-				'progress_bar_color'      => '#ffffff',
-				'progress_bar_background' => '#eeeeee',
+			'options'   => [
+				'pagination' => [
+					'pagination_number'       => 3,
+					'show_progress_bar'       => true,
+					'progress_bar_radius'     => 10,
+					'progress_bar_height'     => 10,
+					'progress_bar_color'      => '#ffffff',
+					'progress_bar_background' => '#eeeeee',
+				],
 			],
+			'questions' => [],
 		];
 
 		$this->send_post_request( $lesson_id, $body );
@@ -823,7 +824,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		list( $lesson_id ) = $this->create_lesson_with_quiz();
 
 		$response_data       = $this->send_get_request( $lesson_id );
-		$pagination_settings = $response_data['pagination'];
+		$pagination_settings = $response_data['options']['pagination'];
 
 		$this->assertNull( $pagination_settings['pagination_number'] );
 		$this->assertFalse( $pagination_settings['show_progress_bar'] );

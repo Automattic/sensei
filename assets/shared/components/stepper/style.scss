@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '../../styles/variables';
 
 .sensei-stepper {
@@ -117,7 +118,7 @@
 		align-self: flex-start;
 		flex-grow: 1;
 		border-bottom: 1px solid $gray-5;
-		margin-top: $step-icon-size / 2 + $gap-smaller;
+		margin-top: math.div($step-icon-size, 2) + $gap-smaller;
 
 		&:last-child {
 			display: none;

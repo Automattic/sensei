@@ -1126,7 +1126,7 @@ class Sensei_Question {
 			$answer_media_filename = '';
 
 			$question_helptext = '';
-			if ( isset( $question_data['question_wrong_answers'][0] ) ) {
+			if ( is_array( $question_data['question_wrong_answers'] ) && isset( $question_data['question_wrong_answers'][0] ) ) {
 
 				$question_helptext = $question_data['question_wrong_answers'][0];
 
@@ -1185,6 +1185,9 @@ class Sensei_Question {
 			}
 
 			// Merge right and wrong answers
+			if ( ! is_array( $question_data['question_wrong_answers'] ) ) {
+				$question_data['question_wrong_answers'] = [];
+			}
 			if ( is_array( $question_data['question_right_answer'] ) ) {
 
 				$merged_options = array_merge( $question_data['question_wrong_answers'], $question_data['question_right_answer'] );

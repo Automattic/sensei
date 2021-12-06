@@ -41,6 +41,8 @@ To install MySQL follow the instructions provided [here](https://dev.mysql.com/d
 
 To install the WP test suite you need to first run `composer install` and `npm install` in the top level directory. Then you need to use the `tests/bin/install-wp-tests.sh` script to install the WP test suite.
 
+`install-wp-tests.sh` script needs `svn` to be installed in order to create test files. You can find instructions for installing ``svn`` [here](https://subversion.apache.org/packages.html).
+
 If you used Docker to create a database, you need to pass the database name and the user credentials from the previous step. You also need to skip creating a new database:
 
 `TMPDIR=/tmp ./tests/bin/install-wp-tests.sh <test_db_name> <test_user_name> <test_user_password> 127.0.0.1 latest true`
