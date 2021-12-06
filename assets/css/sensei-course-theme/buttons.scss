@@ -1,6 +1,4 @@
-
 .sensei-course-theme {
-
 	&__button {
 		display: inline-block;
 		font-size: 14px;
@@ -8,35 +6,41 @@
 		&.is-primary,
 		&.is-secondary {
 			padding: 8px 11px;
-			border: solid 1px var(--sensei-course-theme-primary-color);
+			border: solid 1px var(--primary-color);
 			font-weight: 700;
 			text-decoration: none;
 			border-radius: 2px;
 		}
 
 		&.is-primary {
-			background-color: var(--sensei-course-theme-primary-color);
-			color: #FFFFFF;
+			background-color: var(--primary-color);
+			color: var(--primary-contrast-color);
 			&:hover {
-				color: var(--sensei-course-theme-primary-color);
+				color: var(--primary-color);
 				background: none;
 			}
 		}
 
 		&.is-secondary {
-			color: var(--sensei-course-theme-primary-color);
+			color: var(--primary-color);
 			&:hover {
-				background-color: var(--sensei-course-theme-primary-color);
-				color: #fff;
-
+				background-color: var(--primary-color);
+				color: var(--primary-contrast-color);
 			}
 		}
 
 		&.is-link {
-			color: var(--sensei-course-theme-primary-color);
+			color: var(--primary-color);
 			&:hover {
 				text-decoration: underline;
 			}
+		}
+
+		&[aria-disabled="true"],
+		&:disabled {
+			opacity: 0.4;
+			pointer-events: none;
+			cursor: not-allowed;
 		}
 	}
 }
