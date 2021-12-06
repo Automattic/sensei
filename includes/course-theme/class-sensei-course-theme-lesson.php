@@ -57,7 +57,7 @@ class Sensei_Course_Theme_Lesson {
 	 * Maybe add lesson quiz results notice.
 	 */
 	private function maybe_add_quiz_results_notice() {
-		$lesson_id = get_the_ID();
+		$lesson_id = \Sensei_Utils::get_current_lesson();
 		$user_id   = wp_get_current_user()->ID;
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
@@ -113,9 +113,13 @@ class Sensei_Course_Theme_Lesson {
 	 * Maybe add lesson prerequisite notice.
 	 */
 	private function maybe_add_prerequisite_notice() {
-		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( get_the_ID(), get_current_user_id() );
+		$user_id             = get_current_user_id();
+		$lesson_id           = \Sensei_Utils::get_current_lesson();
+		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
+			$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
+
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
 				. '" title="'
@@ -125,10 +129,13 @@ class Sensei_Course_Theme_Lesson {
 				. esc_html__( 'prerequisites', 'sensei-lms' )
 				. '</a>';
 
-			// translators: Placeholder is the link to the prerequisite lesson.
-			$text    = sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
-			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+			$text = ! empty( $user_lesson_status ) && 'ungraded' === $user_lesson_status->comment_approved
+				// translators: Placeholder is the link to the prerequisite lesson.
+				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed. And a prerequisite is waiting for quiz grading.', 'sensei-lms' ), $prerequisite_lesson_link )
+				// translators: Placeholder is the link to the prerequisite lesson.
+				: sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
 
+			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
 			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ) );
 		}
 	}
