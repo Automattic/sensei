@@ -45,7 +45,7 @@ function the_course_theme_layout() {
  * @return string
  */
 function get_layout_template() {
-	if ( use_quiz_template() ) {
+	if ( should_use_quiz_template() ) {
 		return 'single-quiz.php';
 	}
 
@@ -57,7 +57,7 @@ function get_layout_template() {
  *
  * @return bool
  */
-function use_quiz_template() {
+function should_use_quiz_template() {
 	$post = get_post();
 
 	if ( $post && 'quiz' === $post->post_type ) {

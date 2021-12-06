@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Block to render the content for the current lesson, quiz or module page.
+ * Block to render the content for the current lesson or quiz page.
  */
 class The_Content {
 
@@ -41,17 +41,11 @@ class The_Content {
 	public function render_content() {
 		$type = get_post_type();
 
-		if ( is_tax( 'module' ) ) {
-			$type = 'module';
-		}
-
 		switch ( $type ) {
 			case 'quiz':
 				return $this->render_quiz_content();
 			case 'lesson':
 				return $this->render_lesson_content();
-			case 'module':
-				return $this->render_module_content();
 		}
 
 		return '';
@@ -74,15 +68,6 @@ class The_Content {
 
 		}
 		return ob_get_clean();
-	}
-
-	/**
-	 * Render the current module page's content.
-	 *
-	 * @return string
-	 */
-	private function render_module_content() {
-		return get_the_content();
 	}
 
 	/**
