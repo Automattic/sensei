@@ -347,9 +347,13 @@ class Sensei_Lesson {
 				$html .= '<option value="' . esc_attr( absint( $post_item->ID ) ) . '"' . selected( $post_item->ID, $selected_prerequisite, false ) . '>' . esc_html( $post_item->post_title ) . '</option>' . "\n";
 			}
 			$html .= '</select>' . "\n";
-		} else {
+		} elseif ( ! $course_id ) {
 			$html .= '<input type="hidden" name="' . esc_attr( $input_name ) . '" value="">';
-			$html .= '<p>' . esc_html__( 'No lessons exist yet. Please add some first.', 'sensei-lms' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Please select a course first.', 'sensei-lms' ) . '</p>';
+		} else {
+			$edit_course_url = esc_url( sprintf( 'post.php?post=%d&action=edit', $course_id ) );
+			$html           .= '<input type="hidden" name="' . esc_attr( $input_name ) . '" value="">';
+			$html           .= '<p>' . esc_html__( 'No lessons exist yet. Please add some to ', 'sensei-lms' ) . '<a href="' . $edit_course_url . '">' . esc_html__( 'the course', 'sensei-lms' ) . '</a>.</p>';
 		}
 
 		echo wp_kses(
