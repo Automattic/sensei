@@ -21,15 +21,36 @@ if ( ! function_exists( 'sensei_loked_lesson_notices_map' ) ) {
 	function sensei_loked_lesson_notices_map( $notice ) {
 		?>
 		<div class="sensei-lms-notice sensei-course-theme-locked-lesson-notice">
-			<?php
-			if ( ! empty( $notice['title'] ) ) {
-				?>
+			<?php if ( ! empty( $notice['title'] ) ) { ?>
+			<div class="sensei-course-theme-locked-lesson-notice__header">
+				<?php if ( ! empty( $notice['icon'] ) ) { ?>
+				<div class="sensei-course-theme-locked-lesson-notice__icon">
+					<?php
+					echo wp_kses(
+						Sensei()->assets->get_icon( $notice['icon'] ),
+						[
+							'svg'  => [
+								'width'   => true,
+								'height'  => true,
+								'viewBox' => true,
+								'xmlns'   => true,
+							],
+							'path' => [
+								'clip-rule' => true,
+								'fill-rule' => true,
+								'd'         => true,
+								'fill'      => true,
+							],
+						]
+					);
+					?>
+				</div>
+				<?php } ?>
 				<h3 class="sensei-course-theme-locked-lesson-notice__title">
 					<?php echo wp_kses_post( $notice['title'] ); ?>
 				</h3>
-				<?php
-			}
-			?>
+			</div>
+			<?php } ?>
 			<p class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></p>
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>

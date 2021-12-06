@@ -136,7 +136,7 @@ class Sensei_Course_Theme_Lesson {
 				: sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
 
 			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
-			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ) );
+			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ), [], 'lock' );
 		}
 	}
 }
