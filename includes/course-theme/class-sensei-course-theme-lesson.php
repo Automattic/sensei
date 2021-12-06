@@ -79,7 +79,10 @@ class Sensei_Course_Theme_Lesson {
 
 		if ( $user_lesson_status ) {
 			if ( isset( $user_lesson_status->comment_ID ) ) {
-				$user_grade = \Sensei_Utils::round( get_comment_meta( $user_lesson_status->comment_ID, 'grade', true ) );
+				$grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+				if ( ! empty( $grade ) ) {
+					$user_grade = \Sensei_Utils::round( $grade );
+				}
 			}
 		}
 
