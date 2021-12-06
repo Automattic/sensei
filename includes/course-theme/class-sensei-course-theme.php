@@ -3,7 +3,7 @@
  * File containing Sensei_Course_Theme class.
  *
  * @package sensei-lms
- * @since   4.0.0
+ * @since   3.13.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ use \Sensei\Blocks\Course_Theme;
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
- * @since 4.0.0
+ * @since 3.13.4
  */
 class Sensei_Course_Theme {
 	/**

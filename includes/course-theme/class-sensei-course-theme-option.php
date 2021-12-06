@@ -3,7 +3,7 @@
  * File containing Sensei_Course_Theme_Option class.
  *
  * @package sensei-lms
- * @since   4.0.0
+ * @since   3.13.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
