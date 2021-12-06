@@ -79,21 +79,11 @@ function getName( filename ) {
 	return filename.replace( /\.\w*$/, '' );
 }
 
-const FileLoader = {
-	test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
-	loader: 'file-loader',
-	options: {
-		name: '[path][name]-[contenthash].[ext]',
-		context: 'assets',
-		publicPath: '..',
-	},
-};
-
 function mapFilesToEntries( filenames ) {
 	return fromPairs(
 		filenames.map( ( filename ) => [
 			getName( filename ),
-			`./assets/${ filename }`,
+			`./${ filename }`,
 		] )
 	);
 }
@@ -102,10 +92,11 @@ const baseDist = 'assets/dist/';
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
-	webpackConfig.module.rules[ 3 ].use[ 0 ].options.publicPath = '../images';
+	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
 
 	return {
 		...webpackConfig,
+		context: path.resolve( __dirname, 'assets' ),
 		entry: mapFilesToEntries( files ),
 		output: {
 			path: path.resolve( '.', baseDist ),
@@ -114,10 +105,17 @@ function getWebpackConfig( env, argv ) {
 			process.env.SOURCEMAP ||
 			( isDevelopment ? 'eval-source-map' : false ),
 		module: {
-			rules: [ FileLoader, ...webpackConfig.module.rules ],
-		},
-		node: {
-			crypto: 'empty',
+			rules: [
+				...webpackConfig.module.rules,
+				{
+					test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
+					type: 'asset/resource',
+					generator: {
+						filename: '[path][name]-[contenthash].[ext]',
+						publicPath: '../',
+					},
+				},
+			],
 		},
 		plugins: [
 			...webpackConfig.plugins,
