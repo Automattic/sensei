@@ -1278,7 +1278,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			->method( 'can_take_quiz' )
 			->will( $this->returnValue( true ) );
 
-		Sensei()->quiz = $sensei_quiz_mock;
+		$sensei_quiz_instance = Sensei()->quiz;
+		Sensei()->quiz        = $sensei_quiz_mock;
 
 		/* Act */
 		Sensei_Quiz::start_quiz_questions_loop();
@@ -1288,6 +1289,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEquals( 5, $sensei_question_loop['total_pages'], 'The loop `total_pages` should be calculated properly`.' );
 		$this->assertCount( 2, $sensei_question_loop['questions'], 'The loop questions count should be equal to the questions per page.' );
 		$this->assertEquals( 10, $sensei_question_loop['total'], 'The loop total questions count should be equal to the total questions count of the quiz.' );
+
+		/* Reset */
+		Sensei()->quiz = $sensei_quiz_instance;
 	}
 
 	/**
