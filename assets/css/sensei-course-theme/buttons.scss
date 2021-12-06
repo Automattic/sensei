@@ -1,5 +1,9 @@
 
-.sensei-course-theme__button {
+.wp-block-button .wp-block-button__link {
+	all: unset;
+}
+
+.sensei-course-theme__button, .wp-block-button {
 
 	font-family: 'Inter', sans-serif;
 	font-weight: 400;
@@ -11,7 +15,8 @@
 	font-size: 14px;
 
 	&.is-primary,
-	&.is-secondary {
+	&.is-secondary,
+	&.wp-block-button {
 		padding: 8px 11px;
 		border: solid 1px var(--primary-color);
 		font-weight: 700;
@@ -19,7 +24,8 @@
 		border-radius: 2px;
 	}
 
-	&.is-primary {
+	&.is-primary,
+	&.wp-block-button:not(.is-style-outline) {
 		background-color: var(--primary-color);
 		color: var(--primary-contrast-color);
 		&:hover {
@@ -28,7 +34,8 @@
 		}
 	}
 
-	&.is-secondary {
+	&.is-secondary,
+	&.wp-block-button.is-style-outline {
 		color: var(--primary-color);
 		&:hover {
 			background-color: var(--primary-color);
@@ -49,20 +56,6 @@
 		opacity: 0.4;
 		pointer-events: none;
 		cursor: not-allowed;
-	}
-}
-
-.wp-block-button {
-	.wp-block-button__link {
-		all: unset;
-	}
-	@extend .sensei-course-theme__button;
-
-	&:not(.is-style-outline) {
-		@extend .sensei-course-theme__button.is-primary;
-	}
-	&.is-style-outline {
-		@extend .sensei-course-theme__button.is-secondary;
 	}
 }
 
