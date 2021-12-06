@@ -1,23 +1,19 @@
 .sensei-course-theme__frame {
-	// Reset theme CSS.
+
+	// Reset browser styles.
+
+	@at-root body {
+		margin: 0;
+	}
+	@at-root * {
+		box-sizing: border-box;
+	}
+
 	* {
 		all: unset;
 		display: revert;
 	}
 
-	/**
-	 * Theme-specific resets.
-	 */
-
-	/**
-	 * Twenty Twenty, Twenty Twenty One
-	 */
-
-
-	button {
-		background: none;
-	}
-	
 	.screen-reader-text {
 		border: 0;
 		clip: rect(1px, 1px, 1px, 1px);

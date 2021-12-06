@@ -15,8 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<!-- wp:sensei-lms/quiz-back-to-lesson /-->
-
-<!-- wp:html -->
-<div>[TODO: Quiz content here]</div>
-<!-- /wp:html -->
+<?php
+if ( sensei_can_user_view_lesson() ) {
+	the_content();
+} else {
+	?>
+	<p>
+		<?php echo wp_kses_post( get_the_excerpt() ); ?>
+	</p>
+	<?php
+}
+?>

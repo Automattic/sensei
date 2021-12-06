@@ -3,7 +3,7 @@
  * File containing Sensei_Course_Theme class.
  *
  * @package sensei-lms
- * @since 3.13.4
+ * @since   3.13.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,14 +13,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei\Blocks\Course_Theme;
 
 /**
- * Sensei_Course_Theme class.
+ * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
  * @since 3.13.4
  */
 class Sensei_Course_Theme {
-	const THEME_POST_META_NAME = '_course_theme';
-	const WORDPRESS_THEME      = 'wordpress-theme';
-	const SENSEI_THEME         = 'sensei-theme';
+	/**
+	 * URL prefix for loading the course theme.
+	 */
+	const QUERY_VAR = 'learn';
+
+	/**
+	 * Directory for the course theme.
+	 */
+	const THEME_NAME = 'sensei-course-theme';
 
 	/**
 	 * Instance of class.
@@ -32,7 +38,8 @@ class Sensei_Course_Theme {
 	/**
 	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+	}
 
 	/**
 	 * Fetches an instance of the class.
@@ -53,75 +60,150 @@ class Sensei_Course_Theme {
 	 * @param Sensei_Main $sensei Sensei object.
 	 */
 	public function init( $sensei ) {
-		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
 
 		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
 			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
 			return;
 		}
 
-		// Init blocks.
-		new Course_Theme();
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
 
-		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
-		add_action( 'init', [ $this, 'register_post_meta' ] );
-		add_action( 'template_redirect', [ $this, 'maybe_use_sensei_theme_template' ] );
 	}
 
 	/**
-	 * Add feature flag inline script.
+	 * Is the theme active for the current request.
 	 *
-	 * @access private
+	 * @return bool
 	 */
-	public function add_feature_flag_inline_script() {
-		$screen  = get_current_screen();
-		$enabled = Sensei()->feature_flags->is_enabled( 'course_theme' ) ? 'true' : 'false';
+	public function is_active() {
+		return get_query_var( self::QUERY_VAR );
+	}
 
-		if ( 'course' === $screen->id ) {
-			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseThemeFeatureFlagEnabled = ' . $enabled, 'before' );
+	/**
+	 * Add the URL prefix the theme is active under.
+	 *
+	 * @param string $path
+	 *
+	 * @return string|void
+	 */
+	public function get_theme_redirect_url( $path = '' ) {
+
+		if ( '' === get_option( 'permalink_structure' ) ) {
+			return add_query_arg( [ self::QUERY_VAR => 1 ], $path );
 		}
+
+		return home_url( '/' . self::QUERY_VAR . '/' . $path );
 	}
 
 	/**
-	 * Use Sensei Theme template if the theme is set for the current page.
-	 *
-	 * @access private
+	 * Replace theme for the current request if it's for course theme mode.
 	 */
-	public function maybe_use_sensei_theme_template() {
-		if ( ! $this->should_use_sensei_theme_template() ) {
+	public function maybe_override_theme() {
+
+		// Do a cheaper preliminary check first.
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! preg_match( '#' . preg_quote( '/' . self::QUERY_VAR . '/', '#' ) . '#i', $uri ) && ! isset( $_GET[ self::QUERY_VAR ] ) ) {
 			return;
 		}
+
+		// Then parse the request and make sure the query var is correct.
+		wp();
+
+		if ( get_query_var( self::QUERY_VAR ) ) {
+			$this->override_theme();
+		}
+	}
+
+	/**
+	 * Load a bundled theme for the request.
+	 */
+	private function override_theme() {
+
+		add_filter( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
+		add_filter( 'template', [ $this, 'theme_template' ] );
+		add_filter( 'stylesheet', [ $this, 'theme_stylesheet' ] );
+		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
 		add_filter( 'the_content', [ $this, 'override_template_content' ] );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+
 	}
 
 	/**
-	 * Check if it should use Sensei Theme template.
+	 * Add a route for loading the course theme.
 	 *
-	 * @return boolean
+	 * @access private
 	 */
-	public function should_use_sensei_theme_template() {
-		if ( ! is_single() || ! in_array( get_post_type(), [ 'lesson', 'quiz' ], true ) ) {
-			return false;
+	public function add_rewrite_rules() {
+		global $wp;
+		$wp->add_query_var( self::QUERY_VAR );
+		add_rewrite_rule( '^' . self::QUERY_VAR . '/([^/]*)/([^/]*)/?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&post_type=$matches[1]&name=$matches[2]&$matches[3]', 'top' );
+		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
+
+		if ( ! get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+			flush_rewrite_rules( false );
+			update_option( 'sensei_course_theme_query_var_flushed', 1 );
 		}
+	}
 
-		$course_id = \Sensei_Utils::get_current_course();
+	/**
+	 * Get course theme name.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function theme_template() {
+		return self::THEME_NAME;
+	}
 
-		if ( null === $course_id ) {
-			return;
-		}
+	/**
+	 * Get course theme name.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function theme_stylesheet() {
+		return self::THEME_NAME;
+	}
 
-		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
+	/**
+	 * Root URL for bundled themes.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function theme_root_uri() {
+		return Sensei()->plugin_url . '/themes';
+	}
 
-		if ( self::SENSEI_THEME !== $theme ) {
-			return false;
-		}
+	/**
+	 * Root directory for bundled themes.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_plugin_themes_root() {
+		return Sensei()->plugin_path() . 'themes';
+	}
 
-		return true;
+	/**
+	 * Directory for course theme.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_course_theme_root() {
+		return $this->get_plugin_themes_root() . '/' . self::THEME_NAME;
 	}
 
 	/**
@@ -132,7 +214,7 @@ class Sensei_Course_Theme {
 	 * @return string The wrapper template path.
 	 */
 	public function get_wrapper_template() {
-		return Sensei_Templates::locate_template( 'course-theme/index.php' );
+		return locate_template( 'index.php' );
 	}
 
 	/**
@@ -148,7 +230,8 @@ class Sensei_Course_Theme {
 		remove_filter( 'the_content', [ $this, 'override_template_content' ] );
 
 		ob_start();
-		Sensei_Templates::get_template( 'course-theme/single-' . get_post_type() . '.php' );
+		$template = get_single_template();
+		load_template( $template );
 		$output = ob_get_clean();
 
 		// Return template content with rendered blocks.
@@ -165,7 +248,7 @@ class Sensei_Course_Theme {
 	 * @return string[] $classes
 	 */
 	public function add_sensei_theme_body_class( $classes ) {
-		$classes[] = 'sensei-course-theme';
+		$classes[] = self::THEME_NAME;
 
 		return $classes;
 	}
@@ -176,31 +259,11 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( 'sensei-course-theme-style', 'css/sensei-course-theme.css' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
 		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue( 'sensei-course-theme-script', 'course-theme/course-theme.js' );
+			Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 		}
 	}
 
-	/**
-	 * Register post meta.
-	 *
-	 * @access private
-	 */
-	public function register_post_meta() {
-		register_post_meta(
-			'course',
-			self::THEME_POST_META_NAME,
-			[
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'string',
-				'default'       => self::WORDPRESS_THEME,
-				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
-			]
-		);
-	}
 }
