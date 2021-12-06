@@ -76,12 +76,14 @@ class Sensei_Context_Notices {
 	 *     @type string $url   Action URL.
 	 *     @type string $style Action style.
 	 * }
+	 * @param string $icon    Notice icon.
 	 */
-	public function add_notice( string $key, string $text, string $title = null, array $actions = [] ) {
+	public function add_notice( string $key, string $text, string $title = null, array $actions = [], $icon = null ) {
 		$this->notices[ $key ] = [
 			'text'    => $text,
 			'title'   => $title,
 			'actions' => $actions,
+			'icon'    => $icon,
 		];
 	}
 
