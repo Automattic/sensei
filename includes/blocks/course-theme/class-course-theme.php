@@ -64,7 +64,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		new Blocks\Course_Progress_Counter();
 		new Blocks\Course_Progress_Bar();
 		new Blocks\Lesson_Actions();
-		new Blocks\Contact_Teacher();
 		new Blocks\Quiz_Back_To_Lesson();
 	}
 }

@@ -122,12 +122,6 @@ class Sensei_REST_API_Messages_Routes_Controller extends \WP_REST_Controller {
 			'post_id' => $post_id,
 			'contact_message' => $message,
 		) = $request->get_params();
-		sleep( 2 );
-		return [
-			'success'    => true,
-			'message_id' => 1234,
-			'message'    => $message,
-		];
 
 		$fail_response = [
 			'success' => false,

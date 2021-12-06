@@ -361,7 +361,8 @@ class Sensei_Messages {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST[ self::NONCE_FIELD_NAME ], self::NONCE_ACTION_NAME ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Argument is used for comparison only.
+		if ( ! wp_verify_nonce( wp_unslash( $_POST[ self::NONCE_FIELD_NAME ] ), self::NONCE_ACTION_NAME ) ) {
 			return;
 		}
 
