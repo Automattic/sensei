@@ -49,13 +49,14 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$this->maybe_add_lesson_quiz_results_notice();
+		$this->maybe_add_quiz_results_notice();
+		$this->maybe_add_prerequisite_notice();
 	}
 
 	/**
 	 * Maybe add lesson quiz results notice.
 	 */
-	private function maybe_add_lesson_quiz_results_notice() {
+	private function maybe_add_quiz_results_notice() {
 		$lesson_id = get_the_ID();
 		$user_id   = wp_get_current_user()->ID;
 
@@ -96,7 +97,7 @@ class Sensei_Course_Theme_Lesson {
 			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $user_grade . '</strong>' );
 		}
 
-		$notices = \Sensei_Context_Notices::instance( 'course_theme' );
+		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		$actions = [
 			[
 				'label' => __( 'View quiz', 'sensei-lms' ),
@@ -106,5 +107,29 @@ class Sensei_Course_Theme_Lesson {
 		];
 
 		$notices->add_notice( 'lesson_quiz_results', $text, __( 'Quiz completed', 'sensei-lms' ), $actions );
+	}
+
+	/**
+	 * Maybe add lesson prerequisite notice.
+	 */
+	private function maybe_add_prerequisite_notice() {
+		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( get_the_ID(), get_current_user_id() );
+
+		if ( $lesson_prerequisite > 0 ) {
+			$prerequisite_lesson_link = '<a href="'
+				. esc_url( get_permalink( $lesson_prerequisite ) )
+				. '" title="'
+				// translators: Placeholder is the lesson prerequisite title.
+				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+				. '">'
+				. esc_html__( 'prerequisites', 'sensei-lms' )
+				. '</a>';
+
+			// translators: Placeholder is the link to the prerequisite lesson.
+			$text    = sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
+			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+
+			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ) );
+		}
 	}
 }
