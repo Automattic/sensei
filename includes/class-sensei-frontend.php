@@ -1557,7 +1557,7 @@ class Sensei_Frontend {
 					wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 					exit;
 				} else { // on login success.
-					$redirect_to = $_REQUEST['redirect_to'] ?? remove_query_arg( 'login', $referrer );
+					$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : remove_query_arg( 'login', $referrer );
 
 					/**
 					 * Change the redirect url programatically.
@@ -1695,7 +1695,7 @@ class Sensei_Frontend {
 			$redirect = esc_url( home_url( $wp->request ) );
 		}
 
-		$redirect_to = $_REQUEST['redirect_to'] ?? $redirect;
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : $redirect;
 
 		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
 		exit;
