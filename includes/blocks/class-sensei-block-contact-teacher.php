@@ -85,7 +85,7 @@ class Sensei_Block_Contact_Teacher {
 						<p>' . __( 'Your message has been sent', 'sensei-lms' ) . '</p>
 					</div>
 					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close="' . $uuid . '">
-						<svg><use xlink:href="#sensei-close"></use></svg>
+						' . \Sensei()->assets->get_icon( 'close' ) . '
 					</a>
 				</div>
 			</div>';
