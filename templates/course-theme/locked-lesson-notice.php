@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! function_exists( 'sensei_loked_lesson_notices_map' ) ) {
+if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 	/**
 	 * Notices map to echo notices HTML.
 	 *
 	 * @param array $notice
 	 */
-	function sensei_loked_lesson_notices_map( $notice ) {
+	function sensei_locked_lesson_notices_map( $notice ) {
 		?>
 		<div class="sensei-lms-notice sensei-course-theme-locked-lesson-notice">
 			<?php if ( ! empty( $notice['title'] ) ) { ?>
@@ -55,7 +55,7 @@ if ( ! function_exists( 'sensei_loked_lesson_notices_map' ) ) {
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>
 				<ul class="sensei-course-theme-locked-lesson-notice__actions">
-				<?php implode( '', array_map( 'sensei_loked_lesson_notice_actions_map', $notice['actions'] ) ); ?>
+				<?php implode( '', array_map( 'sensei_locked_lesson_notice_actions_map', $notice['actions'] ) ); ?>
 				</ul>
 			<?php } ?>
 		</div>
@@ -63,13 +63,13 @@ if ( ! function_exists( 'sensei_loked_lesson_notices_map' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sensei_loked_lesson_notice_actions_map' ) ) {
+if ( ! function_exists( 'sensei_locked_lesson_notice_actions_map' ) ) {
 	/**
 	 * Notice actions map to echo the actions.
 	 *
 	 * @param array $action
 	 */
-	function sensei_loked_lesson_notice_actions_map( $action ) {
+	function sensei_locked_lesson_notice_actions_map( $action ) {
 		?>
 		<li>
 			<a href="<?php echo esc_url( $action['url'] ); ?>" class="button is-<?php echo esc_attr( $action['style'] ); ?>">
@@ -84,6 +84,6 @@ if ( ! function_exists( 'sensei_loked_lesson_notice_actions_map' ) ) {
 <div>
 	<?php
 	// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable -- A template variable
-	implode( '', array_map( 'sensei_loked_lesson_notices_map', $notices ) );
+	implode( '', array_map( 'sensei_locked_lesson_notices_map', $notices ) );
 	?>
 </div>
