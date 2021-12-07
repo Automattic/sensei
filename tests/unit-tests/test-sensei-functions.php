@@ -69,6 +69,7 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 	 * @since 3.15.0
 	 */
 	public function testSenseiUserRegistrationUrl() {
+		Sensei()->settings->set( 'my_course_page', false );
 		$this->assertFalse(
 			sensei_user_registration_url(),
 			'Should return false when My Course page is not set'
