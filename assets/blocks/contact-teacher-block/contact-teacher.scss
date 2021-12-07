@@ -23,7 +23,13 @@
 			margin-bottom: 30px;
 		}
 
-
+		&__submit {
+			padding: 10px 14px;
+			border: none;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+		}
 	}
 
 	a.sensei-contact-teacher-close {
