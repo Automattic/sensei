@@ -291,11 +291,13 @@ class Sensei_Teacher {
 	 * @return array $users user id array
 	 */
 	public function get_teachers_and_authors() {
+		global $wp_version;
 
+		$authors_field     = version_compare( $wp_version, '5.9.0', '>=' ) ? 'capability' : 'who';
 		$author_query_args = array(
-			'blog_id' => $GLOBALS['blog_id'],
-			'fields'  => 'any',
-			'who'     => 'authors',
+			'blog_id'      => $GLOBALS['blog_id'],
+			'fields'       => 'any',
+			$authors_field => 'authors',
 		);
 
 		$authors = get_users( $author_query_args );
