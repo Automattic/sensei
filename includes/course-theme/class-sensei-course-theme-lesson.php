@@ -49,14 +49,15 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$this->maybe_add_lesson_quiz_results_notice();
+		$this->maybe_add_quiz_results_notice();
+		$this->maybe_add_prerequisite_notice();
 	}
 
 	/**
 	 * Maybe add lesson quiz results notice.
 	 */
-	private function maybe_add_lesson_quiz_results_notice() {
-		$lesson_id = get_the_ID();
+	private function maybe_add_quiz_results_notice() {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
 		$user_id   = wp_get_current_user()->ID;
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
@@ -78,7 +79,10 @@ class Sensei_Course_Theme_Lesson {
 
 		if ( $user_lesson_status ) {
 			if ( isset( $user_lesson_status->comment_ID ) ) {
-				$user_grade = \Sensei_Utils::round( get_comment_meta( $user_lesson_status->comment_ID, 'grade', true ) );
+				$grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+				if ( ! empty( $grade ) ) {
+					$user_grade = \Sensei_Utils::round( $grade );
+				}
 			}
 		}
 
@@ -96,7 +100,7 @@ class Sensei_Course_Theme_Lesson {
 			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $user_grade . '</strong>' );
 		}
 
-		$notices = \Sensei_Context_Notices::instance( 'course_theme' );
+		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		$actions = [
 			[
 				'label' => __( 'View quiz', 'sensei-lms' ),
@@ -106,5 +110,36 @@ class Sensei_Course_Theme_Lesson {
 		];
 
 		$notices->add_notice( 'lesson_quiz_results', $text, __( 'Quiz completed', 'sensei-lms' ), $actions );
+	}
+
+	/**
+	 * Maybe add lesson prerequisite notice.
+	 */
+	private function maybe_add_prerequisite_notice() {
+		$user_id             = get_current_user_id();
+		$lesson_id           = \Sensei_Utils::get_current_lesson();
+		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
+
+		if ( $lesson_prerequisite > 0 ) {
+			$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
+
+			$prerequisite_lesson_link = '<a href="'
+				. esc_url( get_permalink( $lesson_prerequisite ) )
+				. '" title="'
+				// translators: Placeholder is the lesson prerequisite title.
+				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+				. '">'
+				. esc_html__( 'prerequisites', 'sensei-lms' )
+				. '</a>';
+
+			$text = ! empty( $user_lesson_status ) && 'ungraded' === $user_lesson_status->comment_approved
+				// translators: Placeholder is the link to the prerequisite lesson.
+				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
+				// translators: Placeholder is the link to the prerequisite lesson.
+				: sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
+
+			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ), [], 'lock' );
+		}
 	}
 }
