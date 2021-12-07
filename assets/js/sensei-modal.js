@@ -93,6 +93,20 @@ function attachModalEvents() {
 			}
 			closeButton.addEventListener( 'click', closeModal( modalId ) );
 		} );
+
+	document
+		.querySelectorAll( '[data-sensei-modal-open]' )
+		.forEach( ( openButton ) => {
+			const modalId = openButton.getAttribute( 'data-sensei-modal-open' );
+			if ( ! modalId ) {
+				return;
+			}
+			openButton.addEventListener( 'keydown', ( ev ) => {
+				if ( 'Escape' === ev.key ) {
+					closeModal( modalId )();
+				}
+			} );
+		} );
 }
 
 // Init modal when the DOM is fully ready.
