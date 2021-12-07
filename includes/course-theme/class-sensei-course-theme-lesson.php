@@ -116,8 +116,14 @@ class Sensei_Course_Theme_Lesson {
 	 * Maybe add lesson prerequisite notice.
 	 */
 	private function maybe_add_prerequisite_notice() {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			return;
+		}
+
 		$user_id             = get_current_user_id();
-		$lesson_id           = \Sensei_Utils::get_current_lesson();
 		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
