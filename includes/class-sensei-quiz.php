@@ -1269,18 +1269,18 @@ class Sensei_Quiz {
 
 		// Check the lesson status.
 		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		if ( $lesson_status && 'ungraded' === $lesson_status->comment_approved ) {
-			return false;
-		}
+		if ( $lesson_status ) {
+			$lesson_status = is_array( $lesson_status ) ? $lesson_status[0] : $lesson_status;
 
-		$lesson_status_comment_id = is_array( $lesson_status )
-			? $lesson_status[0]->comment_ID
-			: $lesson_status->comment_ID;
+			if ( 'ungraded' === $lesson_status->comment_approved ) {
+				return false;
+			}
 
-		// Check for a quiz grade.
-		$quiz_grade = get_comment_meta( $lesson_status_comment_id, 'grade', true );
-		if ( $quiz_grade ) {
-			return false;
+			// Check for a quiz grade.
+			$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
+			if ( $quiz_grade ) {
+				return false;
+			}
 		}
 
 		return true;
