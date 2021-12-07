@@ -134,7 +134,7 @@ class Sensei_Course_Theme_Lesson {
 
 			$text = ! empty( $user_lesson_status ) && 'ungraded' === $user_lesson_status->comment_approved
 				// translators: Placeholder is the link to the prerequisite lesson.
-				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed. And a prerequisite is waiting for quiz grading.', 'sensei-lms' ), $prerequisite_lesson_link )
+				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 				// translators: Placeholder is the link to the prerequisite lesson.
 				: sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
 

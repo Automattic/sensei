@@ -116,7 +116,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
-		$this->assertContains( 'a prerequisite is waiting for quiz grading', $html, 'Should return ungraded prerequisite notice' );
+		$this->assertRegExp( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
 	}
 
 	/**
