@@ -271,7 +271,7 @@ function sensei_is_a_course( $post ) {
  *
  * @since 3.15.0
  *
- * @return string|false The registration link of false for wp registration.
+ * @return string|null The registration link of NULL for wp registration.
  */
 function sensei_user_registration_url() {
 	/**
@@ -286,7 +286,7 @@ function sensei_user_registration_url() {
 	$settings         = Sensei()->settings->get_settings();
 
 	if ( empty( $settings['my_course_page'] ) || $wp_register_link ) {
-		return false;
+		return null;
 	}
 
 	$my_courses_url = get_permalink( intval( $settings['my_course_page'] ) );

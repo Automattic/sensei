@@ -70,9 +70,9 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 	 */
 	public function testSenseiUserRegistrationUrl() {
 		Sensei()->settings->set( 'my_course_page', false );
-		$this->assertFalse(
+		$this->assertNull(
 			sensei_user_registration_url(),
-			'Should return false when My Course page is not set'
+			'Should return NULL when My Course page is not set'
 		);
 
 		$my_courses_page_id = $this->factory->post->create(
@@ -92,9 +92,9 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 
 		tests_add_filter( 'sensei_use_wp_register_link', '__return_true' );
 
-		$this->assertFalse(
+		$this->assertNull(
 			sensei_user_registration_url(),
-			'Should return false when filter is set to use wp registration link'
+			'Should return NULL when filter is set to use wp registration link'
 		);
 	}
 

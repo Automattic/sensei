@@ -118,8 +118,7 @@ class Sensei_Block_Take_Course {
 	 * @return string
 	 */
 	private function render_with_login( $content ) {
-		$sensei_registration_link = sensei_user_registration_url();
-		$target                   = ! empty( $sensei_registration_link ) ? $sensei_registration_link : wp_registration_url();
+		$target = sensei_user_registration_url() ?? wp_registration_url();
 
 		return ( '
 			<form method="GET" action="' . esc_url( $target ) . '">
