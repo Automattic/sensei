@@ -156,13 +156,15 @@ class Sensei_Course_Theme_Lesson {
 	 * @return void
 	 */
 	private function maybe_add_not_enrolled_notice() {
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-		$notices   = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
-		$actions   = [
+		$lesson_id        = \Sensei_Utils::get_current_lesson();
+		$course_id        = Sensei()->lesson->get_course_id( $lesson_id );
+		$notices          = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+		$registration_url = sensei_user_registration_url() ?? wp_registration_url();
+		$registration_url = add_query_arg( 'redirect_to', get_permalink(), $registration_url );
+		$actions          = [
 			[
 				'label' => __( 'Take course', 'sensei-lms' ),
-				'url'   => '',
+				'url'   => $registration_url,
 				'style' => 'primary',
 			],
 		];
@@ -170,7 +172,7 @@ class Sensei_Course_Theme_Lesson {
 		if ( ! is_user_logged_in() ) {
 			$actions[] = [
 				'label' => __( 'Sign in', 'sensei-lms' ),
-				'url'   => sensei_user_registration_url(),
+				'url'   => $registration_url,
 				'style' => 'secondary',
 			];
 
