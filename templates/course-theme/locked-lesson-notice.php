@@ -26,23 +26,8 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 				<?php if ( ! empty( $notice['icon'] ) ) { ?>
 				<div class="sensei-course-theme-locked-lesson-notice__icon">
 					<?php
-					echo wp_kses(
-						Sensei()->assets->get_icon( $notice['icon'] ),
-						[
-							'svg'  => [
-								'width'   => true,
-								'height'  => true,
-								'viewBox' => true,
-								'xmlns'   => true,
-							],
-							'path' => [
-								'clip-rule' => true,
-								'fill-rule' => true,
-								'd'         => true,
-								'fill'      => true,
-							],
-						]
-					);
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in the function.
+					echo Sensei()->assets->get_icon( $notice['icon'] );
 					?>
 				</div>
 				<?php } ?>
