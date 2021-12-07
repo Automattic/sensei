@@ -51,6 +51,7 @@ class Sensei_Course_Theme_Lesson {
 
 		$this->maybe_add_quiz_results_notice();
 		$this->maybe_add_prerequisite_notice();
+		$this->maybe_add_not_enrolled_notice();
 	}
 
 	/**
@@ -146,6 +147,52 @@ class Sensei_Course_Theme_Lesson {
 
 			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
 			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ), [], 'lock' );
+		}
+	}
+
+	/**
+	 * Maybe add not enrolled notice.
+	 *
+	 * @return void
+	 */
+	private function maybe_add_not_enrolled_notice() {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		$notices   = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+		$actions   = [
+			[
+				'label' => __( 'Take course', 'sensei-lms' ),
+				'url'   => '',
+				'style' => 'primary',
+			],
+		];
+
+		if ( ! is_user_logged_in() ) {
+			$actions[] = [
+				'label' => __( 'Sign in', 'sensei-lms' ),
+				'url'   => sensei_user_registration_url(),
+				'style' => 'secondary',
+			];
+
+			$notices->add_notice(
+				'locked_lesson',
+				__( 'Please register or sign in to access the course content.', 'sensei-lms' ),
+				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+				$actions,
+				'lock'
+			);
+
+			return;
+		}
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			$notices->add_notice(
+				'locked_lesson',
+				__( 'Please register for this course to access the content.', 'sensei-lms' ),
+				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+				$actions,
+				'lock'
+			);
 		}
 	}
 }
