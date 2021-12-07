@@ -94,3 +94,20 @@
 		font-size: 14px;
 	}
 }
+
+.sensei-course-theme__frame {
+	.sensei-course-theme-contact-teacher {
+		&__button {
+			display: block;
+			width: 100%;
+			border: 1px solid #000;
+			border-radius: 2px;
+			padding: 11px;
+			box-sizing: border-box;
+			text-align: center;
+			font-size: 14px;
+			line-height: 17px;
+			font-weight: 700;
+		}
+	}
+}

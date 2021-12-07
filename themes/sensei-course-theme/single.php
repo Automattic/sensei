@@ -44,9 +44,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="wp-block-column sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
 		<!-- wp:sensei-lms/focus-mode-toggle /-->
 		<!-- wp:sensei-lms/course-navigation /-->
+
 		<!-- wp:sensei-lms/button-contact-teacher -->
-		<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">Contacttt Teacher</a></div>
+		<a class="sensei-course-theme-contact-teacher__button">Contact Teacher</a>
 		<!-- /wp:sensei-lms/button-contact-teacher -->
+
 	</div>
 	<!-- /wp:column -->
 
