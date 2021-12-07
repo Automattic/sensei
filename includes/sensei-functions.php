@@ -267,6 +267,34 @@ function sensei_is_a_course( $post ) {
 }
 
 /**
+ * Get registration link.
+ *
+ * @since 3.15.0
+ *
+ * @return string|false The registration link of false for wp registration.
+ */
+function sensei_user_registration_url() {
+	/**
+	 * Filter to force Sensei to output the default WordPress user
+	 * registration link.
+	 *
+	 * @param bool $wp_register_link default false
+	 *
+	 * @since 1.9.0
+	 */
+	$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
+	$settings         = Sensei()->settings->get_settings();
+
+	if ( empty( $settings['my_course_page'] ) || $wp_register_link ) {
+		return false;
+	}
+
+	$my_courses_url = get_permalink( intval( $settings['my_course_page'] ) );
+
+	return esc_url( $my_courses_url );
+}
+
+/**
  * Determine the login link
  * on the frontend.
  *

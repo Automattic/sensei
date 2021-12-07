@@ -64,6 +64,40 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test user registration URL.
+	 *
+	 * @since 3.15.0
+	 */
+	public function testSenseiUserRegistrationUrl() {
+		$this->assertFalse(
+			sensei_user_registration_url(),
+			'Should return false when My Course page is not set'
+		);
+
+		$my_courses_page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'My Courses',
+				'post_name'  => 'my-courses',
+			]
+		);
+		Sensei()->settings->set( 'my_course_page', $my_courses_page_id );
+
+		$this->assertEquals(
+			get_permalink( $my_courses_page_id ),
+			sensei_user_registration_url(),
+			'Should get the my courses page permalink as registration page'
+		);
+
+		tests_add_filter( 'sensei_use_wp_register_link', '__return_true' );
+
+		$this->assertFalse(
+			sensei_user_registration_url(),
+			'Should return false when filter is set to use wp registration link'
+		);
+	}
+
+	/**
 	 * Filter for setting theme to Twenty Sixteen.
 	 *
 	 * @since 1.12.0
