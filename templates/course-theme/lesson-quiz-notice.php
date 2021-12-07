@@ -49,7 +49,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notice_actions_map' ) ) {
 	function sensei_lesson_quiz_notice_actions_map( $action ) {
 		?>
 		<li>
-			<a href="<?php echo esc_url( $action['url'] ); ?>" class="button is-<?php echo esc_attr( $action['style'] ); ?>">
+			<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
 				<?php echo wp_kses_post( $action['label'] ); ?>
 			</a>
 		</li>
