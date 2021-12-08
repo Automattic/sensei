@@ -215,6 +215,7 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Course_Progress_Counter' => 'blocks/course-theme/class-course-progress-counter.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Bar' => 'blocks/course-theme/class-course-progress-bar.php',
 			'Sensei\Blocks\Course_Theme\The_Content'      => 'blocks/course-theme/class-the-content.php',
+			'Sensei\Blocks\Course_Theme\The_Quiz'         => 'blocks/course-theme/class-the-quiz.php',
 		);
 	}
 
