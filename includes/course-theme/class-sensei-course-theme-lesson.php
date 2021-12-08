@@ -161,24 +161,19 @@ class Sensei_Course_Theme_Lesson {
 		$notices          = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
 		$registration_url = sensei_user_registration_url() ?? wp_registration_url();
 		$registration_url = add_query_arg( 'redirect_to', get_permalink(), $registration_url );
-		$actions          = [
-			[
-				'label' => __( 'Take course', 'sensei-lms' ),
-				'url'   => $registration_url,
-				'style' => 'primary',
-			],
-		];
 
 		if ( ! is_user_logged_in() ) {
-			$actions[] = [
-				'label' => __( 'Sign in', 'sensei-lms' ),
-				'url'   => $registration_url,
-				'style' => 'secondary',
+			$actions = [
+				[
+					'label' => __( 'Sign in', 'sensei-lms' ),
+					'url'   => $registration_url,
+					'style' => 'primary',
+				],
 			];
 
 			$notices->add_notice(
 				'locked_lesson',
-				__( 'Please register or sign in to access the course content.', 'sensei-lms' ),
+				__( 'Please sign in to access the course content.', 'sensei-lms' ),
 				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
 				$actions,
 				'lock'
@@ -188,6 +183,15 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			$nonce   = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
+			$actions = [
+				'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
+					<input type="hidden" name="course_start" value="1" />
+					' . $nonce . '
+					<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+				</form>',
+			];
+
 			$notices->add_notice(
 				'locked_lesson',
 				__( 'Please register for this course to access the content.', 'sensei-lms' ),
