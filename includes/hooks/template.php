@@ -125,12 +125,15 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 's
 // Hook in the quiz user message.
 add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
 
+// @since 3.15.0
+// Add the quiz hidden fields.
+add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_hidden_fields' ), 10 );
+
 // @since 1.9.0
 // hook in the question title, description and quesiton media
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_title' ), 10 );
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_description' ), 20 );
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_media' ), 30 );
-add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_hidden_fields' ), 40 );
 
 // @since 1.9.0
 // add answer grading feedback at the bottom of the question

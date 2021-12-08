@@ -726,17 +726,21 @@ class Sensei_Question {
 	/**
 	 * Output a special field for the question needed for question submission.
 	 *
-	 * @since 1.9.0
+	 * @since      1.9.0
+	 * @deprecated 3.15.0 use Sensei_Quiz::the_quiz_hidden_fields
 	 *
 	 * @param $question_id
 	 */
 	public static function the_question_hidden_fields( $question_id ) {
-		?>
 
+		// To be removed in 5.0.0.
+		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Quiz::the_quiz_hidden_fields' );
+
+		?>
 			<input type="hidden" name="question_id_<?php echo esc_attr( $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 			<input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
-
 		<?php
+
 	}
 
 	/**

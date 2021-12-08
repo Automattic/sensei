@@ -1336,12 +1336,13 @@ class Sensei_Quiz {
 		global $sensei_question_loop;
 
 		// Initialise the questions loop object.
-		$sensei_question_loop['current']        = -1;
-		$sensei_question_loop['total']          = 0;
-		$sensei_question_loop['questions']      = [];
-		$sensei_question_loop['posts_per_page'] = -1;
-		$sensei_question_loop['current_page']   = 1;
-		$sensei_question_loop['total_pages']    = 1;
+		$sensei_question_loop['current']         = -1;
+		$sensei_question_loop['total']           = 0;
+		$sensei_question_loop['questions']       = [];
+		$sensei_question_loop['questions_asked'] = [];
+		$sensei_question_loop['posts_per_page']  = -1;
+		$sensei_question_loop['current_page']    = 1;
+		$sensei_question_loop['total_pages']     = 1;
 
 		$quiz_id             = get_the_ID();
 		$pagination_settings = json_decode(
@@ -1365,7 +1366,8 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$sensei_question_loop['total'] = count( $all_questions );
+		$sensei_question_loop['questions_asked'] = wp_list_pluck( $all_questions, 'ID' );
+		$sensei_question_loop['total']           = count( $all_questions );
 
 		// Paginate the questions.
 		if ( $sensei_question_loop['posts_per_page'] > 0 ) {
@@ -1397,13 +1399,14 @@ class Sensei_Quiz {
 
 		_deprecated_function( __METHOD__, '3.10.0' );
 
-		$sensei_question_loop                   = [];
-		$sensei_question_loop['total']          = 0;
-		$sensei_question_loop['questions']      = array();
-		$sensei_question_loop['quiz_id']        = '';
-		$sensei_question_loop['posts_per_page'] = -1;
-		$sensei_question_loop['current_page']   = 1;
-		$sensei_question_loop['total_pages']    = 1;
+		$sensei_question_loop                    = [];
+		$sensei_question_loop['total']           = 0;
+		$sensei_question_loop['questions']       = [];
+		$sensei_question_loop['questions_asked'] = [];
+		$sensei_question_loop['quiz_id']         = '';
+		$sensei_question_loop['posts_per_page']  = -1;
+		$sensei_question_loop['current_page']    = 1;
+		$sensei_question_loop['total_pages']     = 1;
 
 	}
 
@@ -1451,6 +1454,23 @@ class Sensei_Quiz {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
 		echo $message;
+	}
+
+	/**
+	 * Adds the quiz hidden fields.
+	 *
+	 * @since 3.15.0
+	 */
+	public static function the_quiz_hidden_fields() {
+
+		global $sensei_question_loop;
+
+		foreach ( $sensei_question_loop['questions_asked'] as $question_id ) {
+			?>
+			<input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>">
+			<?php
+		}
+
 	}
 
 	/**
