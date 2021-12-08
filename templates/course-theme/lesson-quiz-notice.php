@@ -20,7 +20,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notices_map' ) ) {
 	 */
 	function sensei_lesson_quiz_notices_map( $notice ) {
 		?>
-		<div class="sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
+		<div class="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
 			<div class="sensei-course-theme-lesson-quiz-notice__content">
 				<?php
 				if ( ! empty( $notice['title'] ) ) {
@@ -53,7 +53,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notice_actions_map' ) ) {
 	function sensei_lesson_quiz_notice_actions_map( $action ) {
 		?>
 		<li>
-			<a href="<?php echo esc_url( $action['url'] ); ?>" class="button is-<?php echo esc_attr( $action['style'] ); ?>">
+			<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
 				<?php echo wp_kses_post( $action['label'] ); ?>
 			</a>
 		</li>
