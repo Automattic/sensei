@@ -226,10 +226,10 @@ class Sensei_Grading_User_Quiz {
 				 * @param {array|null}   $display_values {
 				 *     Optional. An array of arguments or null.
 				 *
-				 *     @type {string}       $type_name           The question type.
-				 *     @type {string|array} $right_answer        The right answer to the quiz.
-				 *     @type {string|array} $user_answer_content The user supplied answer to the quiz.
-				 *     @type {string}       $grade_type          Auto or manual grading.
+				 *     @key {string}       $type_name           The question type.
+				 *     @key {string|array} $right_answer        The right answer to the quiz.
+				 *     @key {string|array} $user_answer_content The user supplied answer to the quiz.
+				 *     @key {string}       $grade_type          Auto or manual grading.
 				 * }
 				 * @param {string} $type
 				 * @param {int}    $question_id
