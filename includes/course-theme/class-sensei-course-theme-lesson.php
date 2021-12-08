@@ -156,24 +156,31 @@ class Sensei_Course_Theme_Lesson {
 	 * @return void
 	 */
 	private function maybe_add_not_enrolled_notice() {
-		$lesson_id        = \Sensei_Utils::get_current_lesson();
-		$course_id        = Sensei()->lesson->get_course_id( $lesson_id );
-		$notices          = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
-		$registration_url = sensei_user_registration_url() ?? wp_registration_url();
-		$registration_url = add_query_arg( 'redirect_to', get_permalink(), $registration_url );
+		$lesson_id                = \Sensei_Utils::get_current_lesson();
+		$course_id                = Sensei()->lesson->get_course_id( $lesson_id );
+		$notices                  = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+		$registration_url         = sensei_user_registration_url() ?? wp_registration_url();
+		$sign_in_url              = add_query_arg( 'redirect_to', get_permalink(), $registration_url );
+		$take_course_redirect_url = add_query_arg( 'take_course_sign_in', '1', get_permalink( $course_id ) );
+		$take_course_url          = add_query_arg( 'redirect_to', $take_course_redirect_url, $registration_url );
 
 		if ( ! is_user_logged_in() ) {
 			$actions = [
 				[
-					'label' => __( 'Sign in', 'sensei-lms' ),
-					'url'   => $registration_url,
+					'label' => __( 'Take course', 'sensei-lms' ),
+					'url'   => $take_course_url,
 					'style' => 'primary',
+				],
+				[
+					'label' => __( 'Sign in', 'sensei-lms' ),
+					'url'   => $sign_in_url,
+					'style' => 'secondary',
 				],
 			];
 
 			$notices->add_notice(
 				'locked_lesson',
-				__( 'Please sign in to access the course content.', 'sensei-lms' ),
+				__( 'Please register or sign in to access the course content.', 'sensei-lms' ),
 				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
 				$actions,
 				'lock'

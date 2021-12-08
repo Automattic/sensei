@@ -55,6 +55,16 @@ class Sensei_Block_Take_Course {
 				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );
 				$html = $this->render_disabled( $content );
 			} else {
+				// Replace button label in case it's coming from a sign in with redirect to take course.
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+				if ( isset( $_GET['take_course_sign_in'] ) ) {
+					$content = preg_replace(
+						'/(.*)<button(.*)>(.*)<\/button>(.*)/',
+						'$1<button$2>' . __( 'Start course', 'sensei-lms' ) . '</button>$4',
+						$content,
+						1
+					);
+				}
 				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
 		} elseif ( ! is_user_logged_in() ) {
