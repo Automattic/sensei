@@ -44,7 +44,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notice_actions_map' ) ) {
 	/**
 	 * Notice actions map to echo the actions.
 	 *
-	 * @param array $action
+	 * @param array|string $action
 	 */
 	function sensei_lesson_quiz_notice_actions_map( $action ) {
 		?>
