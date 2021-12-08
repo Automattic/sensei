@@ -216,7 +216,6 @@ class Sensei_Grading_User_Quiz {
 				}
 
 				/**
-				 * Filter quiz right answer and user answer content for grading page display.
 				 * Filters the various values which are displayed in the grading admin page for each quiz question.
 				 * The expected values are type_name, right_answer, user_answer_content and grade_type
 				 *
@@ -224,11 +223,7 @@ class Sensei_Grading_User_Quiz {
 				 *
 				 * @hook sensei_grading_display_quiz_question
 				 *
-				 * @param {null}   $display_values
-				 * @param {string} $type
-				 * @param {int}    $question_id
-				 *
-				 * @return {array|null} {
+				 * @param {array|null}   $display_values {
 				 *     Optional. An array of arguments or null.
 				 *
 				 *     @type {string}       $type_name           The question type.
@@ -236,6 +231,10 @@ class Sensei_Grading_User_Quiz {
 				 *     @type {string|array} $user_answer_content The user supplied answer to the quiz.
 				 *     @type {string}       $grade_type          Auto or manual grading.
 				 * }
+				 * @param {string} $type
+				 * @param {int}    $question_id
+				 *
+				 * @return {array|null}
 				 */
 				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id, $right_answer, $user_answer_content );
 
