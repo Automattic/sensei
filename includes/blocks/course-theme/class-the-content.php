@@ -90,9 +90,11 @@ class The_Content {
 
 		$content = $this->render_questions_loop();
 
-		return "<form method='post' enctype='multipart/form-data'>
-				<ol id='sensei-quiz-list'>{$content}</ol>
-			</form>";
+		return "<div class='quiz'>
+			<form method='post' enctype='multipart/form-data'>
+					<ol id='sensei-quiz-list'>{$content}</ol>
+				</form>
+		</div>";
 	}
 
 	/**
@@ -109,13 +111,11 @@ class The_Content {
 			sensei_setup_the_question();
 			?>
 			<li class="sensei-quiz-question <?php sensei_the_question_class(); ?>">
-				<div>
-					<?php
-					do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
-					sensei_the_question_content();
-					do_action( 'sensei_quiz_question_inside_after', sensei_get_the_question_id() );
-					?>
-				</div>
+				<?php
+				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
+				sensei_the_question_content();
+				do_action( 'sensei_quiz_question_inside_after', sensei_get_the_question_id() );
+				?>
 			</li>
 			<?php
 		}
