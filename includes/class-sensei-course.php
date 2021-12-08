@@ -132,7 +132,7 @@ class Sensei_Course {
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
 
-		// filter the redirect url after enrolment
+		// Filter the redirect url after enrolment.
 		add_filter( 'sensei_start_course_redirect_url', array( __CLASS__, 'alter_redirect_url_after_enrolment' ), 10, 2 );
 
 		// Allow course archive to be setup as the home page
