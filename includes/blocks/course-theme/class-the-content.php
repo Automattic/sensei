@@ -90,10 +90,8 @@ class The_Content {
 
 		$content = $this->render_questions_loop();
 
-		return "<div class='quiz'>
-			<form method='post' enctype='multipart/form-data'>
-					<ol id='sensei-quiz-list'>{$content}</ol>
-				</form>
+		return "<div>
+			<ol id='sensei-quiz-list'>{$content}</ol>
 		</div>";
 	}
 
