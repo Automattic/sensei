@@ -11,6 +11,7 @@ import { registerPlugin } from '@wordpress/plugins';
  */
 import { startBlocksTogglingControl } from './blocks-toggling-control';
 import CourseThemeSidebar from './course-theme-sidebar';
+import CourseVideoProgressionSidebar from './course-video-progression-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -77,6 +78,12 @@ domReady( () => {
 if ( window.senseiCourseThemeFeatureFlagEnabled ) {
 	registerPlugin( 'sensei-course-theme-plugin', {
 		render: CourseThemeSidebar,
+		icon: null,
+	} );
+}
+if ( window.senseiVideoCourseProgressionFeatureFlagEnabled ) {
+	registerPlugin( 'sensei-course-video-progression-plugin', {
+		render: CourseVideoProgressionSidebar,
 		icon: null,
 	} );
 }
