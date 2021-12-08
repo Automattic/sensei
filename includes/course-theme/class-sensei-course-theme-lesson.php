@@ -50,7 +50,7 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		$this->maybe_add_quiz_results_notice();
-		$this->maybe_add_prerequisite_notice();
+		$this->maybe_add_lesson_prerequisite_notice();
 		$this->maybe_add_not_enrolled_notice();
 	}
 
@@ -116,7 +116,7 @@ class Sensei_Course_Theme_Lesson {
 	/**
 	 * Maybe add lesson prerequisite notice.
 	 */
-	private function maybe_add_prerequisite_notice() {
+	private function maybe_add_lesson_prerequisite_notice() {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
@@ -190,22 +190,32 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
-			$nonce   = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
-			$actions = [
-				'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
-					<input type="hidden" name="course_start" value="1" />
-					' . $nonce . '
-					<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
-				</form>',
-			];
+			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
+				$notices->add_notice(
+					'locked_lesson',
+					Sensei()->course::get_course_prerequisite_message( $course_id ),
+					__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+					[],
+					'lock'
+				);
+			} else {
+				$nonce   = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
+				$actions = [
+					'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
+						<input type="hidden" name="course_start" value="1" />
+						' . $nonce . '
+						<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+					</form>',
+				];
 
-			$notices->add_notice(
-				'locked_lesson',
-				__( 'Please register for this course to access the content.', 'sensei-lms' ),
-				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
-				$actions,
-				'lock'
-			);
+				$notices->add_notice(
+					'locked_lesson',
+					__( 'Please register for this course to access the content.', 'sensei-lms' ),
+					__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+					$actions,
+					'lock'
+				);
+			}
 		}
 	}
 }
