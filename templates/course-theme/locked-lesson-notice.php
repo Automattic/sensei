@@ -52,14 +52,22 @@ if ( ! function_exists( 'sensei_locked_lesson_notice_actions_map' ) ) {
 	/**
 	 * Notice actions map to echo the actions.
 	 *
-	 * @param array $action
+	 * @param array|string $action
 	 */
 	function sensei_locked_lesson_notice_actions_map( $action ) {
 		?>
 		<li>
-			<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
-				<?php echo wp_kses_post( $action['label'] ); ?>
-			</a>
+			<?php
+			if ( ! is_array( $action ) ) {
+				echo wp_kses_post( $action );
+			} else {
+				?>
+				<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
+					<?php echo wp_kses_post( $action['label'] ); ?>
+				</a>
+				<?php
+			}
+			?>
 		</li>
 		<?php
 	}

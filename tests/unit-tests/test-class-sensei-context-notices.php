@@ -27,6 +27,7 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 				'url'   => 'http://action',
 				'style' => 'link',
 			],
+			'Custom action',
 		];
 		$notices->add_notice( 'key', 'Text', 'Title', $actions );
 
@@ -35,6 +36,7 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 		$this->assertContains( 'Text', $html );
 		$this->assertContains( 'Title', $html );
 		$this->assertContains( 'Action label', $html );
+		$this->assertContains( 'Custom action', $html );
 	}
 
 	/**
