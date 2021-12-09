@@ -164,7 +164,6 @@ class Sensei_Quiz {
 	public function user_save_quiz_answers_listener() {
 
 		if ( ! isset( $_POST['quiz_save'] )
-			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
 			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
@@ -355,7 +354,6 @@ class Sensei_Quiz {
 
 		// only respond to valid quiz completion submissions
 		if ( ! isset( $_POST['quiz_complete'] )
-			|| ! isset( $_POST['sensei_question'] )
 			|| empty( $_POST['sensei_question'] )
 			|| ! isset( $_POST['woothemes_sensei_complete_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
