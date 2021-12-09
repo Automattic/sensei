@@ -1504,10 +1504,10 @@ class Sensei_Teacher {
 		if ( user_can( $user, 'edit_courses' ) ) {
 
 			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-			if ( isset( $_POST['redirect_to'] ) ) {
+			if ( isset( $_REQUEST['redirect_to'] ) ) {
 
 				// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-				wp_safe_redirect( $_POST['redirect_to'], 303 );
+				wp_safe_redirect( wp_unslash( $_REQUEST['redirect_to'] ), 303 );
 
 				exit;
 
