@@ -1,9 +1,20 @@
 /**
- * WordPress dependencies
+ * @module ContactTeacher
+ * @description Responsible for making a seamless ajax post of the
+ * contact teacher form, without refreshing the whole page.
  */
-import apiFetch from '@wordpress/api-fetch';
 
+/**
+ * Handles the contact teacher submit event.
+ *
+ * @param {Object} ev The contact teacher form submit event.
+ */
 function handleSubmit( ev ) {
+	// If the fetch api is not available then bail.
+	if ( ! window.fetch ) {
+		return;
+	}
+
 	ev.preventDefault();
 	const form = ev.target;
 	const submitButton = ev.target.querySelector(
@@ -14,6 +25,7 @@ function handleSubmit( ev ) {
 
 	const fieldNames = [
 		'sensei_message_teacher_nonce',
+		'_wpnonce',
 		'post_id',
 		'contact_message',
 	];
@@ -25,11 +37,15 @@ function handleSubmit( ev ) {
 		{}
 	);
 
-	apiFetch( {
-		path: '/sensei-internal/v1/messages',
-		method: 'POST',
-		data: values,
-	} )
+	window
+		.fetch( '/wp-json/sensei-internal/v1/messages?_locale=user', {
+			method: 'POST',
+			body: JSON.stringify( values ),
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': values._wpnonce,
+			},
+		} )
 		.then( () => {
 			form.parentElement
 				.querySelector( '.sensei-contact-teacher-success' )

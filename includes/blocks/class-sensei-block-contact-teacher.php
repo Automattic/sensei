@@ -100,7 +100,8 @@ class Sensei_Block_Contact_Teacher {
 	 */
 	private function teacher_contact_form( $post ) {
 
-		$nonce = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
+		$nonce         = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
+		$wp_rest_nonce = wp_nonce_field( 'wp_rest' );
 
 		return '
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
@@ -109,6 +110,7 @@ class Sensei_Block_Contact_Teacher {
 
 				<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />
 				' . $nonce . '
+				' . $wp_rest_nonce . '
 				<p class="sensei-contact-teacher-form__actions">
 				<button class="sensei-contact-teacher-form__submit">' . esc_html__( 'Send Message', 'sensei-lms' ) . '</button>
 				</p>
