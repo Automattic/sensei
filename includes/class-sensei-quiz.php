@@ -173,8 +173,10 @@ class Sensei_Quiz {
 		}
 
 		global $post;
-		$lesson_id    = $this->get_lesson_id( $post->ID );
-		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST, $post->ID );
+		$lesson_id = $this->get_lesson_id( $post->ID );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST['sensei_question'], $_POST['questions_asked'] );
 
 		// call the save function
 		$answers_saved = self::save_user_answers( $quiz_answers, $_FILES, $lesson_id, get_current_user_id() );
@@ -362,8 +364,10 @@ class Sensei_Quiz {
 		}
 
 		global $post, $current_user;
-		$lesson_id    = $this->get_lesson_id( $post->ID );
-		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST, $post->ID );
+		$lesson_id = $this->get_lesson_id( $post->ID );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST['sensei_question'], $_POST['questions_asked'] );
 
 		self::submit_answers_for_grading( $quiz_answers, $_FILES, $lesson_id, $current_user->ID );
 
@@ -1659,22 +1663,20 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Merge quiz answers with questions asked
+	 * Merge quiz answers with questions asked.
 	 *
 	 * Also, remove any question_ids not part of
-	 * the question set for this lesson quiz
+	 * the question set for this lesson quiz.
 	 *
-	 * @param $post_global
-	 * @param $quiz_id
+	 * @param  array $questions_answered The user answers.
+	 * @param  array $questions_asked    The ID's of all the asked quiz questions.
 	 * @return array
 	 */
-	private function merge_quiz_answers_with_questions_asked( $post_global, $quiz_id ) {
-		$quiz_answers              = isset( $post_global['sensei_question'] ) ? $post_global['sensei_question'] : array();
-		$questions_asked_this_time = isset( $post_global['questions_asked'] ) ? $post_global['questions_asked'] : array();
-		$merged                    = array();
+	private function merge_quiz_answers_with_questions_asked( array $questions_answered, array $questions_asked ): array {
+		$merged = [];
 
-		foreach ( array_unique( $questions_asked_this_time ) as $question_id ) {
-			$merged[ $question_id ] = isset( $quiz_answers[ $question_id ] ) ? $quiz_answers[ $question_id ] : '';
+		foreach ( array_unique( $questions_asked ) as $question_id ) {
+			$merged[ $question_id ] = $questions_answered[ $question_id ] ?? '';
 		}
 
 		return $merged;
