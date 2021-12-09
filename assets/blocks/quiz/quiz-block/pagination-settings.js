@@ -74,7 +74,7 @@ const QuestionsControl = ( { settings, onChange, ...props } ) => {
 				}
 				{ ...props }
 			/>
-			<div>{ __( 'per page', 'sensei-lms' ) }</div>
+			<span>{ __( 'per page', 'sensei-lms' ) }</span>
 		</>
 	);
 };
@@ -104,49 +104,39 @@ export const PaginationSidebarSettings = ( {
 	return (
 		<>
 			<PanelBody
-				className="sensei-lms-quiz-block-styling"
-				title={ __( 'Quiz styling', 'sensei-lms' ) }
+				title={ __( 'Pagination', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
-				<p>
-					{ __(
-						'Adjust how your quiz is displayed to your learners.',
-						'sensei-lms'
-					) }
-				</p>
-				<PanelRow className="sensei-lms-quiz-block-panel">
-					<h2 className="sensei-lms-quiz-block-panel__row">
-						{ __( 'Pagination', 'sensei-lms' ) }
-					</h2>
-					<div className="sensei-lms-quiz-block-panel__row">
-						<SelectControl
-							label={ __( 'Pagination', 'sensei-lms' ) }
-							hideLabelFromVision
-							value={ paginationNumber === null ? SINGLE : MULTI }
-							options={ paginationOptions }
-							onChange={ onDropdownChange(
-								settings,
-								onChange,
-								questionCount
-							) }
-						/>
-					</div>
-					{ paginationNumber !== null && (
-						<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__questions">
-							<QuestionsControl
-								settings={ settings }
-								onChange={ onChange }
-								questionCount={ questionCount }
-							/>
-						</div>
-					) }
+				<PanelRow className="sensei-lms-quiz-block__pagination">
+					<SelectControl
+						label={ __( 'Pagination', 'sensei-lms' ) }
+						hideLabelFromVision
+						value={ paginationNumber === null ? SINGLE : MULTI }
+						options={ paginationOptions }
+						onChange={ onDropdownChange(
+							settings,
+							onChange,
+							questionCount
+						) }
+					/>
 				</PanelRow>
-				<PanelRow className="sensei-lms-quiz-block-panel">
-					<h2 className="sensei-lms-quiz-block-panel__row">
-						{ __( 'Progress Bar', 'sensei-lms' ) }
-					</h2>
+				{ paginationNumber !== null && (
+					<PanelRow className="sensei-lms-quiz-block__question-count">
+						<QuestionsControl
+							settings={ settings }
+							onChange={ onChange }
+							questionCount={ questionCount }
+						/>
+					</PanelRow>
+				) }
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Progress bar settings', 'sensei-lms' ) }
+				initialOpen={ true }
+			>
+				<PanelRow>
 					<ToggleControl
-						className="sensei-lms-quiz-block-panel__row"
 						checked={ showProgressBar }
 						label={ __( 'Show Progress Bar', 'sensei-lms' ) }
 						value={ progressBarRadius }
@@ -157,36 +147,37 @@ export const PaginationSidebarSettings = ( {
 							} )
 						}
 					/>
-					<div className="sensei-lms-quiz-block-panel__row sensei-lms-quiz-block-panel__progress-bar">
-						<NumberControl
-							label={ __( 'Radius', 'sensei-lms' ) }
-							min={ 1 }
-							step={ 1 }
-							suffix={ __( 'PX', 'sensei-lms' ) }
-							value={ progressBarRadius }
-							onChange={ ( value ) =>
-								onChange( {
-									...settings,
-									progressBarRadius: value,
-								} )
-							}
-						/>
-						<NumberControl
-							label={ __( 'Height', 'sensei-lms' ) }
-							min={ 1 }
-							step={ 1 }
-							suffix={ __( 'PX', 'sensei-lms' ) }
-							value={ progressBarHeight }
-							onChange={ ( value ) =>
-								onChange( {
-									...settings,
-									progressBarHeight: value,
-								} )
-							}
-						/>
-					</div>
+				</PanelRow>
+				<PanelRow className="sensei-lms-quiz-block__progress-bar">
+					<NumberControl
+						label={ __( 'Radius', 'sensei-lms' ) }
+						min={ 1 }
+						step={ 1 }
+						suffix={ __( 'PX', 'sensei-lms' ) }
+						value={ progressBarRadius }
+						onChange={ ( value ) =>
+							onChange( {
+								...settings,
+								progressBarRadius: value,
+							} )
+						}
+					/>
+					<NumberControl
+						label={ __( 'Height', 'sensei-lms' ) }
+						min={ 1 }
+						step={ 1 }
+						suffix={ __( 'PX', 'sensei-lms' ) }
+						value={ progressBarHeight }
+						onChange={ ( value ) =>
+							onChange( {
+								...settings,
+								progressBarHeight: value,
+							} )
+						}
+					/>
 				</PanelRow>
 			</PanelBody>
+
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
 				initialOpen={ false }
@@ -254,7 +245,7 @@ export const PaginationToolbarSettings = ( {
 				/>
 			</Toolbar>
 			{ paginationNumber !== null && (
-				<ToolbarGroup className="sensei-lms-quiz-block-toolbar__group">
+				<ToolbarGroup className="sensei-lms-quiz-block__toolbar-group">
 					<QuestionsControl
 						settings={ settings }
 						onChange={ onChange }
