@@ -21,10 +21,10 @@
  */
 
 /**
- * Opens the modal.
+ * Creates a modal opener handler.
  * @param {string} modalId The id of the modal.
  */
-const openModal = ( modalId ) => ( ev ) => {
+const createOpenModal = ( modalId ) => ( ev ) => {
 	ev?.preventDefault();
 
 	document
@@ -36,10 +36,10 @@ const openModal = ( modalId ) => ( ev ) => {
 };
 
 /**
- * Closes the modal.
+ * Creates a modal closer handler.
  * @param {string} modalId The id of theh modal.
  */
-const closeModal = ( modalId ) => ( ev ) => {
+const createCloseModal = ( modalId ) => ( ev ) => {
 	ev?.preventDefault();
 
 	document
@@ -62,7 +62,7 @@ function attachModalEvents() {
 			if ( ! modalId ) {
 				return;
 			}
-			openButton.addEventListener( 'click', openModal( modalId ) );
+			openButton.addEventListener( 'click', createOpenModal( modalId ) );
 		} );
 
 	// Attach close events.
@@ -75,7 +75,10 @@ function attachModalEvents() {
 			if ( ! modalId ) {
 				return;
 			}
-			modalOverlay.addEventListener( 'click', closeModal( modalId ) );
+			modalOverlay.addEventListener(
+				'click',
+				createCloseModal( modalId )
+			);
 		} );
 	document
 		.querySelectorAll( '[data-sensei-modal-close]' )
@@ -86,7 +89,10 @@ function attachModalEvents() {
 			if ( ! modalId ) {
 				return;
 			}
-			closeButton.addEventListener( 'click', closeModal( modalId ) );
+			closeButton.addEventListener(
+				'click',
+				createCloseModal( modalId )
+			);
 		} );
 
 	document
@@ -98,7 +104,7 @@ function attachModalEvents() {
 			}
 			openButton.addEventListener( 'keydown', ( ev ) => {
 				if ( 'Escape' === ev.key ) {
-					closeModal( modalId )();
+					createCloseModal( modalId )();
 				}
 			} );
 		} );
