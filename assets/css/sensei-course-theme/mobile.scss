@@ -1,0 +1,136 @@
+
+.sensei-course-theme__sidebar-toggle {
+	display: none;
+}
+
+@media screen and (max-width: 782px) {
+
+	@at-root body.admin-bar  {
+		--top-offset: 0px;
+	}
+
+	.sensei-course-theme__focus-mode-toggle {
+		display: none;
+	}
+
+
+	.sensei-course-theme {
+
+		--header-height: 60px;
+
+		&.sidebar-open {
+			--header-height: 90px;
+			.sensei-course-theme__header__container {
+				padding-bottom: var(--header-open-height);
+
+			}
+
+			.sensei-course-theme__sidebar {
+
+
+			}
+
+			.sensei-course-theme-course-progress-bar {
+				margin: 0 24px;
+			}
+
+			.sensei-course-theme__header .sensei-course-theme-course-progress {
+				display: block;
+				position: absolute;
+				left: 24px;
+				bottom: 22px;
+			}
+		}
+
+		&__header {
+
+			top: 0;
+
+			&__container {
+				align-items: flex-start;
+				padding-top: 12px;
+				overflow: hidden;
+			}
+
+			.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
+				display: none;
+			}
+
+			.sensei-course-theme-prev-next-lesson-a {
+				padding: 2px;
+			}
+
+			&__left {
+				gap: 12px;
+				flex-wrap: wrap;
+				height: 30px;
+			}
+			&__right {
+				gap: 12px;
+				height: 30px;
+			}
+
+			.wp-block-sensei-lms-site-logo {
+				&, img {
+					max-height: 30px;
+				}
+			}
+			.wp-block-sensei-lms-course-title {
+				font-size: 14px;
+			}
+			.sensei-course-theme-course-progress-bar {
+				height: 10px;
+			}
+		}
+
+		&__sidebar-toggle {
+			font-size: 24px;
+			&:hover {
+				transform: rotate(180deg);
+			}
+			.sidebar-open & {
+				transform: rotate(360deg);
+			}
+		}
+
+		&__sidebar {
+			z-index: 90;
+			background: #FFFFFF;
+			left: 0;
+			right: 0;
+			width: unset;
+			overflow: auto;
+			body:not(.sidebar-open) & {
+				bottom: 100vh;
+				top: -100vh;
+			}
+		}
+		&__main-content {
+			margin-left: 0!important;
+			flex: 1 !important;
+		}
+
+		&__actions {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: #fff;
+			padding: 24px;
+			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
+			.sensei-course-theme-lesson-actions {
+				display: flex;
+				gap: 24px;
+				> * {
+					flex: 1;
+				}
+				button {
+					width: 100%;
+				}
+			}
+		}
+		&.sidebar-open &__actions {
+			bottom: -30vh;
+		}
+	}
+}
