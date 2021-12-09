@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei\Blocks\Course_Theme\The_Content class.
+ * File containing the Sensei\Blocks\Course_Theme\Course_Content class.
  *
  * @package sensei
  * @since 4.0.0
@@ -17,14 +17,14 @@ use \Sensei_Blocks;
 /**
  * Block to render the content for the current lesson or quiz page.
  */
-class The_Content {
+class Course_Content {
 
 	/**
 	 * Content constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/the-content',
+			'sensei-lms/course-content',
 			[
 				'render_callback' => [ $this, 'render_content' ],
 			]
@@ -43,7 +43,7 @@ class The_Content {
 
 		switch ( $type ) {
 			case 'quiz':
-				return The_Quiz::render_quiz();
+				return Quiz_Content::render_quiz();
 			case 'lesson':
 				return $this->render_lesson_content();
 		}

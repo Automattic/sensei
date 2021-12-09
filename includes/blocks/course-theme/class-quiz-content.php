@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei\Blocks\Course_Theme\Quiz class.
+ * File containing the Sensei\Blocks\Course_Theme\Quiz_Content class.
  *
  * @package sensei
  * @since 4.0.0
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Render the current quiz.
  * Uses Sensei templates.
  */
-class The_Quiz {
+class Quiz_Content {
 
 	/**
 	 * Render the current quiz page's content.

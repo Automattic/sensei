@@ -52,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:post-title /-->
 
 		<!-- wp:sensei-lms/course-theme-notices /-->
-		<!-- wp:sensei-lms/the-content /-->
+		<!-- wp:sensei-lms/course-content /-->
 	</div>
 	<!-- /wp:column -->
 </div>

@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:sensei-lms/container {"className":"sensei-course-theme__quiz__main-content"} -->
 		<div class="wp-block-sensei-lms-container sensei-course-theme__quiz__main-content">
 			<!-- wp:sensei-lms/course-theme-notices /-->
-			<!-- wp:sensei-lms/the-content /-->
+			<!-- wp:sensei-lms/course-content /-->
 		</div>
 		<!-- /wp:sensei-lms/container -->
 
