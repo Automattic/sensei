@@ -22,28 +22,30 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 	<div class="sensei-quiz-pagination__list">
 		<?php
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination links.
-		echo paginate_links(
-			/**
-			 * Filters the quiz questions paginate links arguments.
-			 *
-			 * @see   https://developer.wordpress.org/reference/functions/paginate_links/
-			 * @hook  sensei_quiz_pagination_args
-			 * @since 3.15.0
-			 *
-			 * @param {array} $args The pagination arguments.
-			 *
-			 * @return {array}
-			 */
-			apply_filters(
-				'sensei_quiz_pagination_args',
-				[
-					'total'     => $sensei_question_loop['total_pages'],
-					'current'   => $sensei_question_loop['current_page'],
-					'format'    => '?quiz-page=%#%',
-					'type'      => 'list',
-					'mid_size'  => 1,
-					'prev_next' => false,
-				]
+		echo Sensei()->quiz->replace_pagination_links_with_buttons(
+			paginate_links(
+				/**
+				 * Filters the quiz questions paginate links arguments.
+				 *
+				 * @see   https://developer.wordpress.org/reference/functions/paginate_links/
+				 * @hook  sensei_quiz_pagination_args
+				 * @since 3.15.0
+				 *
+				 * @param {array} $args The pagination arguments.
+				 *
+				 * @return {array}
+				 */
+				apply_filters(
+					'sensei_quiz_pagination_args',
+					[
+						'total'     => $sensei_question_loop['total_pages'],
+						'current'   => $sensei_question_loop['current_page'],
+						'format'    => '?quiz-page=%#%',
+						'type'      => 'list',
+						'mid_size'  => 1,
+						'prev_next' => false,
+					]
+				)
 			)
 		);
 		?>
@@ -75,23 +77,27 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 		<div class="wp-block-buttons">
 			<?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
 				<div class="wp-block-button is-style-outline">
-					<a
-						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
-						class="wp-block-button__link button sensei-quiz-pagination__prev-button"
+					<button
+						type="submit"
+						name="quiz_target_page"
+						value="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
+						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
 					>
 						<?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
-					</a>
+					</button>
 				</div>
 			<?php endif ?>
 
 			<?php if ( $sensei_question_loop['current_page'] < $sensei_question_loop['total_pages'] ) : ?>
 				<div class="wp-block-button">
-					<a
-						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
-						class="wp-block-button__link button sensei-quiz-pagination__next-button"
+					<button
+						type="submit"
+						name="quiz_target_page"
+						value="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
+						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
 					>
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
-					</a>
+					</button>
 				</div>
 			<?php elseif ( $sensei_can_take_quiz ) : ?>
 				<div class="wp-block-button">

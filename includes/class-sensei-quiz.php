@@ -31,6 +31,9 @@ class Sensei_Quiz {
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required', 'enable_quiz_reset' );
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
+		// Listen for a page change.
+		add_action( 'template_redirect', array( $this, 'page_change_listener' ) );
+
 		// Listen to the reset button click.
 		add_action( 'template_redirect', array( $this, 'reset_button_click_listener' ) );
 
@@ -368,6 +371,69 @@ class Sensei_Quiz {
 		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST['sensei_question'], $_POST['questions_asked'] );
 
 		self::submit_answers_for_grading( $quiz_answers, $_FILES, $lesson_id, $current_user->ID );
+
+	}
+
+	/**
+	 * Handle the page change form submission and redirects to the target page.
+	 *
+	 * The quiz form is submitted on each page change.
+	 * This is needed to save the answers for each page.
+	 * Used when the quiz pagination is enabled.
+	 *
+	 * @since 3.15.0
+	 */
+	public function page_change_listener() {
+
+		if (
+			! isset( $_POST['quiz_target_page'] )
+			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' )
+		) {
+			return;
+		}
+
+		// Save the answers of the current page.
+		$this->save_current_page_answers(
+			$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$_POST['questions_asked'],       // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$_FILES
+		);
+
+		// And redirect to the target page.
+		wp_safe_redirect(
+			wp_unslash( $_POST['quiz_target_page'] )
+		);
+
+	}
+
+	/**
+	 * Save the answers for the current page.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param array $page_answers    The submitted answers from the current page.
+	 * @param array $questions_asked The ID's of all the asked quiz questions.
+	 * @param array $files           Global $_FILES.
+	 */
+	private function save_current_page_answers( array $page_answers, array $questions_asked, array $files ) {
+
+		$quiz_id   = get_the_ID();
+		$user_id   = get_current_user_id();
+		$lesson_id = $this->get_lesson_id( $quiz_id );
+
+		// Retrieve the previously saved answers.
+		$previous_answers = self::get_user_answers( $lesson_id, $user_id );
+		$previous_answers = $previous_answers ? $previous_answers : [];
+
+		// And merge them with the current page answers.
+		$all_answers = $this->merge_quiz_answers_with_questions_asked(
+			array_replace( $previous_answers, $page_answers ), // Merge and preserve the indexes.
+			$questions_asked
+		);
+
+		self::save_user_answers( $all_answers, $files, $lesson_id, $user_id );
 
 	}
 
@@ -1843,6 +1909,23 @@ class Sensei_Quiz {
 
 			Sensei()->question->maybe_update_question_author( $question->ID, $new_author_id );
 		}
+	}
+
+	/**
+	 * Replace all pagination links with buttons (<a> => <button>).
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param string $html The pagination html.
+	 *
+	 * @return string
+	 */
+	public function replace_pagination_links_with_buttons( $html ): string {
+		return preg_replace(
+			'/<a.+?href="(.+?)">(.+?)<\/a>/',
+			'<button type="submit" name="quiz_target_page" value="$1" class="page-numbers">$2</button>',
+			$html
+		);
 	}
 }
 
