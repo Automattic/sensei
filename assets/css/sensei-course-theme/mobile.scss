@@ -65,7 +65,7 @@
 				flex-wrap: wrap;
 				height: 30px;
 			}
-			&__right {
+			&__navigation {
 				gap: 12px;
 				height: 30px;
 			}
@@ -84,13 +84,9 @@
 		}
 
 		&__sidebar-toggle {
+			display: block;
 			font-size: 24px;
-			&:hover {
-				transform: rotate(180deg);
-			}
-			.sidebar-open & {
-				transform: rotate(360deg);
-			}
+			margin-top: -5px;
 		}
 
 		&__sidebar {
