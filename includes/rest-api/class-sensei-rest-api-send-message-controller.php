@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Sensei_REST_API_Messages_Routes_Controller.
+ * File containing the class Sensei_REST_API_Send_Message_Controller.
  *
  * @package sensei
  */
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author  Automattic
  * @since   3.6.0
  */
-class Sensei_REST_API_Messages_Routes_Controller extends \WP_REST_Controller {
+class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Routes namespace.
@@ -33,7 +33,7 @@ class Sensei_REST_API_Messages_Routes_Controller extends \WP_REST_Controller {
 	protected $rest_base = 'messages';
 
 	/**
-	 * Sensei_REST_API_Messages_Routes_Controller constructor.
+	 * Sensei_REST_API_Send_Message_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
 	 */
