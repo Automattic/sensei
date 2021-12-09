@@ -1182,6 +1182,8 @@ class Sensei_Frontend {
 						<!-- Spam Trap -->
 						<div style="left:-999em; position:absolute;"><label for="trap"><?php esc_html_e( 'Anti-spam', 'sensei-lms' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
 
+						<input type="hidden" id="sensei_reg_http_referer" name="sensei_reg_http_referer" value="<?php echo wp_get_referer() ? esc_url( wp_get_referer() ) : ''; ?>">
+
 						<?php do_action( 'sensei_register_form_fields' ); ?>
 						<?php do_action( 'register_form' ); ?>
 
@@ -1625,6 +1627,10 @@ class Sensei_Frontend {
 		$new_user_email    = $_POST['sensei_reg_email'];
 		$new_user_password = $_POST['sensei_reg_password'];
 
+		if ( isset( $_POST['sensei_reg_http_referer'] ) && '' !== $_POST['sensei_reg_http_referer'] ) {
+			$new_user_http_referer = esc_url_raw( wp_unslash( $_POST['sensei_reg_http_referer'] ) );
+		}
+
 		// Check the username.
 		$username_error_notice = '';
 		if ( $new_user_name == '' ) {
@@ -1679,13 +1685,13 @@ class Sensei_Frontend {
 
 		// Redirect.
 		global $wp;
-		if ( wp_get_referer() ) {
-			$redirect = esc_url( wp_get_referer() );
+		if ( ! empty( $new_user_http_referer ) ) {
+			$redirect = $new_user_http_referer;
 		} else {
-			$redirect = esc_url( home_url( $wp->request ) );
+			$redirect = home_url( $wp->request );
 		}
 
-		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect ) );
+		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', esc_url_raw( $redirect ) ) );
 		exit;
 
 	}
