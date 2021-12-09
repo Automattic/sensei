@@ -40,19 +40,10 @@
 			}
 		}
 
-		&__prev {
+		&__prev, &__next {
 			svg {
-				margin-right: 14px;
-				width: 5px;
-				height: 11px;
-			}
-		}
-
-		&__next {
-			svg {
-				margin-left: 14px;
-				width: 5px;
-				height: 11px;
+				width: 24px;
+				height: 24px;
 			}
 		}
 	}

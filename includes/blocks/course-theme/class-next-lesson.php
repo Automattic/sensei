@@ -53,7 +53,7 @@ class Next_Lesson {
 			return '';
 		}
 		$url  = esc_url( $urls['next']['url'] );
-		$text = $attributes['text'] ?? __( 'Next Lesson', 'sensei-lms' );
+		$text = $attributes['text'] ?? __( 'Next', 'sensei-lms' );
 		$text = wp_kses_post( $text );
 		$icon = \Sensei()->assets->get_icon( 'chevron-right' );
 
