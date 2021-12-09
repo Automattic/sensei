@@ -12,16 +12,16 @@
 <!-- wp:sensei-lms/container {"className":"sensei-course-theme__header"} -->
 <div class="wp-block-sensei-lms-container sensei-course-theme__header sensei-course-theme__frame">
 	<!-- wp:columns {"className":"sensei-course-theme__header"} -->
-	<div class="wp-block-columns sensei-course-theme__header__container">
+	<div class="sensei-course-theme__header__container">
 		<!-- wp:column {"className":"sensei-course-theme__header__left"} -->
-		<div class="wp-block-column sensei-course-theme__header__left">
+		<div class="sensei-course-theme__header__left">
 			<!-- wp:sensei-lms/site-logo /-->
 			<!-- wp:sensei-lms/course-title /-->
 			<!-- wp:sensei-lms/course-theme-course-progress-counter /-->
 		</div>
 		<!-- /wp:column -->
-		<!-- wp:column {"className":"sensei-course-theme__header__right"} -->
-		<div class="wp-block-column sensei-course-theme__header__right">
+		<!-- wp:column {"className":"sensei-course-theme__header__navigation"} -->
+		<div class="sensei-course-theme__header__navigation">
 			<!-- wp:sensei-lms/course-theme-prev-next-lesson -->
 			<!-- wp:sensei-lms/course-theme-prev-lesson {"inContainer":true} /-->
 			<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
@@ -35,16 +35,18 @@
 </div>
 <!-- /wp:sensei-lms/container -->
 <!-- wp:columns {"className":"sensei-course-theme__columns"} -->
-<div class="wp-block-columns sensei-course-theme__columns">
+<div class="sensei-course-theme__columns">
 	<!-- wp:column {"width":"300px","className":"sensei-course-theme__sidebar"} -->
-	<div class="wp-block-column sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
+	<div class="sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
+		<!-- wp:sensei-lms/sidebar-toggle /-->
+
 		<!-- wp:sensei-lms/focus-mode-toggle /-->
 		<!-- wp:sensei-lms/course-navigation /-->
 	</div>
 	<!-- /wp:column -->
 
 	<!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
-	<div class="wp-block-column sensei-course-theme__main-content">
+	<div class="sensei-course-theme__main-content">
 		<!-- wp:post-title /-->
 
 		<!-- wp:sensei-lms/course-theme-notices /-->
