@@ -112,22 +112,22 @@ class Lesson_Actions {
 		// Quiz button.
 		if ( ! empty( $quiz_permalink ) && ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
 			$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
-			$actions[]        = '<li>' . $take_quiz_button . '</li>';
+			$actions[]        = $take_quiz_button;
 		}
 
 		// Complete button.
 		if ( ! $is_pass_required ) {
 			$complete_button_class  = isset( $take_quiz_button ) ? 'is-secondary' : 'is-primary';
 			$complete_lesson_button = $this->render_complete_lesson( $complete_button_class, $has_incomplete_prerequisite );
-			$actions[]              = '<li>' . $complete_lesson_button . '</li>';
+			$actions[]              = $complete_lesson_button;
 		}
 
 		if ( empty( $actions ) ) {
 			return '';
 		}
 
-		return '<ul class="sensei-course-theme-lesson-actions">
+		return '<div class="sensei-course-theme-lesson-actions">
 			' . implode( '', $actions ) . '
-		</ul>';
+		</div>';
 	}
 }
