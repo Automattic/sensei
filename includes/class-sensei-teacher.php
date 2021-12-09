@@ -291,27 +291,20 @@ class Sensei_Teacher {
 	 * @return array $users user id array
 	 */
 	public function get_teachers_and_authors() {
-		global $wp_version;
+		$edit_course_roles = [];
+		foreach ( wp_roles()->roles as $role_slug => $role ) {
+			if ( ! empty( $role['capabilities']['edit_courses'] ) ) {
+				$edit_course_roles[] = $role_slug;
+			}
+		}
 
-		$authors_field     = version_compare( $wp_version, '5.9.0', '>=' ) ? 'capability' : 'who';
-		$author_query_args = array(
-			'blog_id'      => $GLOBALS['blog_id'],
-			'fields'       => 'any',
-			$authors_field => 'authors',
+		return get_users(
+			[
+				'blog_id'  => $GLOBALS['blog_id'],
+				'fields'   => 'any',
+				'role__in' => $edit_course_roles,
+			]
 		);
-
-		$authors = get_users( $author_query_args );
-
-		$teacher_query_args = array(
-			'blog_id' => $GLOBALS['blog_id'],
-			'fields'  => 'any',
-			'role'    => 'teacher',
-		);
-
-		$teachers = get_users( $teacher_query_args );
-
-		return array_unique( array_merge( $teachers, $authors ) );
-
 	}
 
 	/**
