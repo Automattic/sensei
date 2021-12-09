@@ -1,17 +1,17 @@
+
 .sensei-course-theme__frame {
 
-	// Reset browser styles.
+	* {
+		all: unset;
+		display: revert;
+		box-sizing: border-box;
+	}
 
 	@at-root body {
 		margin: 0;
 	}
 	@at-root * {
 		box-sizing: border-box;
-	}
-
-	* {
-		all: unset;
-		display: revert;
 	}
 
 	.screen-reader-text {
