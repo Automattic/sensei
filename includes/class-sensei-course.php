@@ -3305,7 +3305,7 @@ class Sensei_Course {
 					return;
 				}
 
-				$my_courses_url = sensei_user_registration_url();
+				$my_courses_url = sensei_user_registration_url( false );
 
 				if ( ! empty( $my_courses_url ) ) {
 					echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .

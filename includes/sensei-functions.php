@@ -267,13 +267,18 @@ function sensei_is_a_course( $post ) {
 }
 
 /**
- * Get registration link.
+ * Get registration url.
  *
  * @since 3.15.0
  *
- * @return string|null The registration link of NULL for wp registration.
+ * @param bool   $return_wp_registration_url Whether return the url if it should use the WP registration url.
+ * @param string $redirect                   Redirect url after registration.
+ *
+ * @return string|null The registration url.
+ *                     If wp registration is the return case and $return_wp_registration_url is
+ *                     true, it returns the url, otherwise it returns null.
  */
-function sensei_user_registration_url() {
+function sensei_user_registration_url( bool $return_wp_registration_url = true, string $redirect = '' ) {
 	/**
 	 * Filter to force Sensei to output the default WordPress user
 	 * registration link.
@@ -283,15 +288,24 @@ function sensei_user_registration_url() {
 	 * @since 1.9.0
 	 */
 	$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
+	$registration_url = '';
 	$settings         = Sensei()->settings->get_settings();
 
 	if ( empty( $settings['my_course_page'] ) || $wp_register_link ) {
-		return null;
+		if ( ! $return_wp_registration_url ) {
+			return null;
+		}
+
+		$registration_url = wp_registration_url();
+	} else {
+		$registration_url = get_permalink( intval( $settings['my_course_page'] ) );
 	}
 
-	$my_courses_url = get_permalink( intval( $settings['my_course_page'] ) );
+	if ( ! empty( $redirect ) ) {
+		$registration_url = add_query_arg( 'redirect_to', $redirect, $registration_url );
+	}
 
-	return esc_url( $my_courses_url );
+	return $registration_url;
 }
 
 /**
@@ -302,19 +316,29 @@ function sensei_user_registration_url() {
  * or the wp-login link.
  *
  * @since 1.9.0
+ * @since 3.15.0 Introduce redirect param.
+ *
+ * @param string $redirect Redirect url after login.
+ *
+ * @return string The login url.
  */
-function sensei_user_login_url() {
+function sensei_user_login_url( string $redirect = '' ) {
 
 	$my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
 	$page               = get_post( $my_courses_page_id );
 
 	if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID ) ) {
 
-		return get_permalink( $page->ID );
+		$my_courses_url = get_permalink( $page->ID );
+		if ( ! empty( $redirect ) ) {
+			$my_courses_url = add_query_arg( 'redirect_to', $redirect, $my_courses_url );
+		}
+
+		return $my_courses_url;
 
 	} else {
 
-		return wp_login_url();
+		return wp_login_url( $redirect );
 
 	}
 
