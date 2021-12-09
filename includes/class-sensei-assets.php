@@ -289,7 +289,7 @@ class Sensei_Assets {
 						'width'   => true,
 						'height'  => true,
 						'fill'    => true,
-						'viewBox' => true,
+						'viewbox' => true,
 						'xmlns'   => true,
 					],
 					'path'   => [
