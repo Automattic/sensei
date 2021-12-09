@@ -21,11 +21,6 @@
  */
 
 /**
- * Internal dependencies
- */
-import { onWindowLoad } from '../shared/helpers/DOM';
-
-/**
  * Opens the modal.
  * @param {string} modalId The id of the modal.
  */
@@ -110,4 +105,5 @@ function attachModalEvents() {
 }
 
 // Init modal when the DOM is fully ready.
-onWindowLoad( attachModalEvents );
+// eslint-disable-next-line @wordpress/no-global-event-listener
+window.addEventListener( 'load', attachModalEvents );

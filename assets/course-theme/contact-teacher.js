@@ -3,11 +3,6 @@
  */
 import apiFetch from '@wordpress/api-fetch';
 
-/**
- * Internal dependencies
- */
-import { onWindowLoad } from '../shared/helpers/DOM';
-
 function handleSubmit( ev ) {
 	ev.preventDefault();
 	const form = ev.target;
@@ -49,7 +44,8 @@ function handleSubmit( ev ) {
 		} );
 }
 
-onWindowLoad( function () {
+// eslint-disable-next-line @wordpress/no-global-event-listener
+window.addEventListener( 'load', function () {
 	document
 		.querySelectorAll(
 			'.sensei-course-theme__frame .sensei-contact-teacher-form'
