@@ -43,10 +43,17 @@
 <div class="sensei-course-theme__columns">
 	<!-- wp:column {"width":"300px","className":"sensei-course-theme__sidebar"} -->
 	<div class="sensei-course-theme__sidebar sensei-course-theme__frame" style="flex-basis:300px">
-		<!-- wp:sensei-lms/sidebar-toggle /-->
-
-		<!-- wp:sensei-lms/focus-mode-toggle /-->
-		<!-- wp:sensei-lms/course-navigation /-->
+		<!-- wp:sensei-lms/sidebar-content -->
+		<div class="sensei-course-theme__sidebar__content">
+			<!-- wp:sensei-lms/focus-mode-toggle /-->
+			<!-- wp:sensei-lms/course-navigation /-->
+		</div>
+		<!-- wp:sensei-lms/sidebar-footer -->
+		<div class="sensei-course-theme__sidebar__footer">
+			<button class="sensei-course-theme__button is-secondary">Contact Teacher</button>
+			<a href="/">Exit Course</a>
+		</div>
+		<!-- /wp:sensei-lms/sidebar-footer -->
 	</div>
 	<!-- /wp:column -->
 

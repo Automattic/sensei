@@ -29,9 +29,28 @@
 		left: 0;
 		width: var(--sidebar-width);
 		border-right: 1px solid #ccc;
-		padding: 24px;
-		padding-right: 16px;
 		background-color: #fff;
+
+		display: flex;
+		flex-direction: column;
+
+		&__content, &__footer {
+			padding: 24px;
+			padding-right: 16px;
+			padding-bottom: 12px;
+		}
+
+		&__content {
+			flex: 1;
+			overflow: auto;
+			overscroll-behavior: contain;
+		}
+		&__footer {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 12px;
+		}
 	}
 
 	&__main-content {
@@ -73,5 +92,6 @@
 
 	&__actions {
 		flex: 0 0 auto!important;
+
 	}
 }

@@ -5,31 +5,24 @@
 
 @media screen and (max-width: 782px) {
 
-	@at-root body.admin-bar  {
-		--top-offset: 0px;
+	body.admin-bar  {
+		--top-offset: 46px;
 	}
 
 	.sensei-course-theme__focus-mode-toggle {
 		display: none;
 	}
 
-
 	.sensei-course-theme {
 
 		--header-height: 60px;
 
-		&.sidebar-open {
+		&--sidebar-open {
 			--header-height: 90px;
 			.sensei-course-theme__header__container {
 				padding-bottom: var(--header-open-height);
 
 			}
-
-			.sensei-course-theme__sidebar {
-
-
-			}
-
 			.sensei-course-theme-course-progress-bar {
 				margin: 0 24px;
 			}
@@ -43,8 +36,6 @@
 		}
 
 		&__header {
-
-			top: 0;
 
 			&__container {
 				align-items: flex-start;
@@ -102,15 +93,19 @@
 			left: 0;
 			right: 0;
 			width: unset;
-			overflow: auto;
-			body:not(.sidebar-open) & {
-				bottom: 100vh;
-				top: -100vh;
-			}
+			transition: all 300ms;
+
 		}
+		&:not(&--sidebar-open) &__sidebar {
+			bottom: 100vh;
+			top: -100vh;
+		}
+
 		&__main-content {
 			margin-left: 0!important;
 			flex: 1 !important;
+			padding-bottom: 82px;
+			position: relative;
 		}
 
 		&__actions {
@@ -119,9 +114,10 @@
 			left: 0;
 			right: 0;
 			background: #fff;
-			padding: 24px;
 			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
+			transition: bottom 800ms ease-in;
 			.sensei-course-theme-lesson-actions {
+				padding: 24px;
 				display: flex;
 				gap: 24px;
 				> * {
@@ -132,8 +128,35 @@
 				}
 			}
 		}
-		&.sidebar-open &__actions {
+		&--sidebar-open &__actions {
 			bottom: -30vh;
+		}
+		&:not(&--sidebar-open) &__actions {
+
+		}
+		&.scroll-down &__actions {
+			transition-delay: 200ms;
+			bottom: -100px;
+		}
+
+		&.scroll-bottom &__actions {
+			bottom: 0;
+		}
+		&.scroll-bottom &__main-content {
+
+
+		}
+	}
+}
+
+@media screen and (max-width: 600px) {
+	body.admin-bar  {
+		--top-offset: 0px;
+	}
+	.sensei-course-theme {
+		&--sidebar-open &__sidebar {
+			transition: all 400ms, padding-top 0ms 0ms;
+			padding-top: calc(24px + var(--sensei-wpadminbar-offset, 0px));
 		}
 	}
 }
