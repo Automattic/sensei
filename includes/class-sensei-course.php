@@ -3901,10 +3901,10 @@ class Sensei_Course {
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
 
 		$course_id = $post->ID;
-		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
-			$lessons = Sensei()->course->course_lessons( $course_id );
-			if ( count( $lessons ) > 0 ) {
-				$url = get_permalink( $lessons[0]->ID );
+		if ( Sensei_Course_Theme_Option::instance()->has_sensei_theme_enabled( $course_id ) ) {
+			$first_incomplete_lesson_id = Sensei_Course_Structure::instance( $course_id )->get_first_incomplete_lesson_id();
+			if ( false !== $first_incomplete_lesson_id ) {
+				$url = get_permalink( $first_incomplete_lesson_id );
 			}
 		}
 

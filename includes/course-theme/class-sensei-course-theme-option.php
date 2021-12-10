@@ -137,7 +137,7 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @return bool
 	 */
-	public static function has_sensei_theme_enabled( $course_id ) {
+	public function has_sensei_theme_enabled( int $course_id ) {
 
 		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 

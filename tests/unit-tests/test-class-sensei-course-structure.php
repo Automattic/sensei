@@ -1471,6 +1471,105 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		];
 	}
 
+	public function testGetFirstIncompleteLessonIdReturnsFalseIfNoLessonsAvailable() {
+		$course_id     = $this->factory->course->create();
+		$new_structure = [];
+		$this->saveStructure( $course_id, $new_structure );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$this->assertFalse( $course_structure->get_first_incomplete_lesson_id() );
+	}
+
+	public function testGetFirstIncompleteLessonIdReturnsFirstLessonAvailable() {
+		$course_id     = $this->factory->course->create();
+		$lesson_ids    = $this->factory->lesson->create_many( 2 );
+		$new_structure = [
+			[
+				'type'  => 'lesson',
+				'title' => 'Lesson 1',
+				'id'    => $lesson_ids[0],
+			],
+			[
+				'type'  => 'lesson',
+				'title' => 'Lesson 1',
+				'id'    => $lesson_ids[1],
+			],
+		];
+		$this->saveStructure( $course_id, $new_structure );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$this->assertEquals( $lesson_ids[0], $course_structure->get_first_incomplete_lesson_id() );
+	}
+
+	public function testGetFirstIncompleteLessonIdReturnsFirstIncompleteLessonAvailable() {
+		$course_id     = $this->factory->course->create();
+		$lessons       = $this->factory->lesson->create_many( 2 );
+		$new_structure = [
+			[
+				'type'  => 'lesson',
+				'title' => 'Lesson 1',
+				'id'    => $lessons[0],
+			],
+			[
+				'type'  => 'lesson',
+				'title' => 'Lesson 1',
+				'id'    => $lessons[1],
+			],
+		];
+		$this->saveStructure( $course_id, $new_structure );
+
+		$this->login_as_student();
+		$student_user_id = wp_get_current_user()->ID;
+		Sensei_Utils::update_lesson_status( $student_user_id, $lessons[0], 'complete' );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$this->assertEquals( $lessons[1], $course_structure->get_first_incomplete_lesson_id() );
+	}
+
+	public function testGetFirstIncompleteLessonIdReturnsFirstLessonAvailableAfterChangingModulesOrder() {
+		$course_id     = $this->factory->course->create();
+		$module_ids    = $this->factory->module->create_many( 2 );
+		$lesson_ids    = $this->factory->lesson->create_many( 2 );
+		$new_structure = [
+			[
+				'type'    => 'module',
+				'title'   => 'Module A',
+				'id'      => $module_ids[0],
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson A',
+						'id'    => $lesson_ids[0]
+					],
+				],
+			],
+			[
+				'type'    => 'module',
+				'title'   => 'Module B',
+				'id'      => $module_ids[1],
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson B',
+						'id'    => $lesson_ids[1]
+					],
+				],
+			],
+		];
+		$this->saveStructure( $course_id, $new_structure );
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$this->assertEquals( $lesson_ids[0], $course_structure->get_first_incomplete_lesson_id() );
+
+		$updated_structure = [
+			$new_structure[1],
+			$new_structure[0],
+		];
+		$this->saveStructure( $course_id, $updated_structure );
+
+		$this->assertEquals( $lesson_ids[1], $course_structure->get_first_incomplete_lesson_id() );
+	}
+
 	/**
 	 * Reset the course structure instances array.
 	 */
