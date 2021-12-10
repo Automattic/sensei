@@ -10,7 +10,7 @@ import {
 	Toolbar,
 	ToolbarGroup,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -64,7 +64,12 @@ const QuestionsControl = ( { settings, onChange, ...props } ) => {
 				min={ 1 }
 				step={ 1 }
 				hideLabelFromVision
-				suffix={ __( 'Questions', 'sensei-lms' ) }
+				suffix={ _n(
+					'question',
+					'questions',
+					paginationNumber,
+					'sensei-lms'
+				) }
 				value={ paginationNumber }
 				onChange={ ( value ) =>
 					onChange( {
