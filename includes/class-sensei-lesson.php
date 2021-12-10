@@ -813,6 +813,12 @@ class Sensei_Lesson {
 			return;
 		}
 
+		// Parse the value for `lesson_length` field as integer.
+		if ( 'lesson_length' === $post_key ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$new_meta_value = isset( $_POST[ $post_key ] ) ? intval( $_POST[ $post_key ] ) : '';
+		}
+
 		// update field with the new value
 		if ( -1 != $new_meta_value ) {
 			return update_post_meta( $post_id, $meta_key, $new_meta_value );
