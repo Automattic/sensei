@@ -132,6 +132,9 @@ class Sensei_Course {
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
 
+		// Filter the redirect url after enrolment.
+		add_filter( 'sensei_start_course_redirect_url', array( __CLASS__, 'alter_redirect_url_after_enrolment' ), 10, 2 );
+
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
 			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
@@ -3294,25 +3297,6 @@ class Sensei_Course {
 
 				self::add_course_access_permission_message( $notice );
 
-				$my_courses_page_id = '';
-
-				/**
-				 * Filter to force Sensei to output the default WordPress user
-				 * registration link.
-				 *
-				 * @since 1.9.0
-				 * @param bool $wp_register_link default false
-				 */
-				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-
-				$settings = Sensei()->settings->get_settings();
-				if ( isset( $settings['my_course_page'] )
-					&& 0 < intval( $settings['my_course_page'] ) ) {
-
-					$my_courses_page_id = $settings['my_course_page'];
-
-				}
-
 				if (
 					! (bool) apply_filters_deprecated(
 						'sensei_user_can_register_for_course',
@@ -3323,14 +3307,14 @@ class Sensei_Course {
 				) {
 					return;
 				}
-				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
-				// is false, link to My Courses. If not, link to default WordPress registration page.
-				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-						$my_courses_url = get_permalink( $my_courses_page_id );
-						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-							esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
+
+				$my_courses_url = sensei_user_registration_url( false );
+
+				if ( ! empty( $my_courses_url ) ) {
+					echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
+						esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
 				} else {
-						wp_register( '<div class="status register">', '</div>' );
+					wp_register( '<div class="status register">', '</div>' );
 				}
 			}
 		}
@@ -3885,6 +3869,28 @@ class Sensei_Course {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Alters the redirect url after a user enrols to a course.
+	 *
+	 * @param String  $url  Default redirect url.
+	 * @param WP_Post $post Post object for course.
+	 *
+	 * @return String
+	 */
+	public static function alter_redirect_url_after_enrolment( $url, $post ) {
+
+		$course_id = $post->ID;
+		if ( Sensei_Course_Theme_Option::instance()->has_sensei_theme_enabled( $course_id ) ) {
+			$first_incomplete_lesson_id = Sensei_Course_Structure::instance( $course_id )->get_first_incomplete_lesson_id();
+			if ( false !== $first_incomplete_lesson_id ) {
+				$url = get_permalink( $first_incomplete_lesson_id );
+			}
+		}
+
+		return $url;
+
 	}
 }
 

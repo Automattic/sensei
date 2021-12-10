@@ -282,7 +282,32 @@ class Sensei_Assets {
 		}
 
 		if ( false !== $content ) {
-			return $content;
+			return wp_kses(
+				$content,
+				[
+					'svg'    => [
+						'width'   => true,
+						'height'  => true,
+						'fill'    => true,
+						'viewBox' => true,
+						'xmlns'   => true,
+					],
+					'path'   => [
+						'clip-rule'    => true,
+						'fill-rule'    => true,
+						'd'            => true,
+						'fill'         => true,
+						'stroke'       => true,
+						'stroke-width' => true,
+					],
+					'circle' => [
+						'cx'   => true,
+						'cy'   => true,
+						'r'    => true,
+						'fill' => true,
+					],
+				]
+			);
 		}
 
 		return '';

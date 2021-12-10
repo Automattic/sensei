@@ -828,10 +828,27 @@ class Sensei_Course_Structure {
 						return 1;
 					}
 
-					return false === $b_position || $a_position < $b_position ? -1 : 1;
+					return false === $b_position || $a_position < $b_position ? - 1 : 1;
 				}
 			);
 		}
+
 		return $structure;
+	}
+
+	/**
+	 * Get first incomplete lesson ID or `false` if there is none.
+	 *
+	 * @return int|false
+	 */
+	public function get_first_incomplete_lesson_id() {
+		list( $lesson_ids, ) = $this->flatten_structure( $this->get() );
+		foreach ( $lesson_ids as $lesson_id ) {
+			if ( ! Sensei_Utils::user_completed_lesson( $lesson_id ) ) {
+				return $lesson_id;
+			}
+		}
+
+		return false;
 	}
 }

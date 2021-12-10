@@ -56,8 +56,16 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Initializes the Course Theme.
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init() {
+	public function init( $sensei ) {
+
+		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			return;
+		}
+
 		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
 

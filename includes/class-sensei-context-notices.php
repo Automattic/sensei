@@ -70,18 +70,21 @@ class Sensei_Context_Notices {
 	 * @param string $text    Notice text.
 	 * @param string $title   Notice title.
 	 * @param array  $actions {
-	 *     Actions to display inside the notice.
+	 *     Actions to display inside the notice. It can contains strings with custom actions,
+	 *     or arrays with the following properties.
 	 *
 	 *     @type string $label Action label.
 	 *     @type string $url   Action URL.
 	 *     @type string $style Action style.
 	 * }
+	 * @param string $icon    Notice icon.
 	 */
-	public function add_notice( string $key, string $text, string $title = null, array $actions = [] ) {
+	public function add_notice( string $key, string $text, string $title = null, array $actions = [], $icon = null ) {
 		$this->notices[ $key ] = [
 			'text'    => $text,
 			'title'   => $title,
 			'actions' => $actions,
+			'icon'    => $icon,
 		];
 	}
 

@@ -22,22 +22,18 @@ if ( ! function_exists( 'sensei_lesson_quiz_notices_map' ) ) {
 		?>
 		<div class="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
 			<div class="sensei-course-theme-lesson-quiz-notice__content">
-				<?php
-				if ( ! empty( $notice['title'] ) ) {
-					?>
-					<h3 class="sensei-course-theme-lesson-quiz-notice__title">
-						<?php echo wp_kses_post( $notice['title'] ); ?>
-					</h3>
-					<?php
-				}
-				?>
+				<?php if ( ! empty( $notice['title'] ) ) { ?>
+				<h3 class="sensei-course-theme-lesson-quiz-notice__title">
+					<?php echo wp_kses_post( $notice['title'] ); ?>
+				</h3>
+				<?php } ?>
 				<p class="sensei-course-theme-lesson-quiz-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></p>
 			</div>
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>
-				<ul class="sensei-course-theme-lesson-quiz-notice__actions">
+			<ul class="sensei-course-theme-lesson-quiz-notice__actions">
 				<?php implode( '', array_map( 'sensei_lesson_quiz_notice_actions_map', $notice['actions'] ) ); ?>
-				</ul>
+			</ul>
 			<?php } ?>
 		</div>
 		<?php
@@ -48,14 +44,22 @@ if ( ! function_exists( 'sensei_lesson_quiz_notice_actions_map' ) ) {
 	/**
 	 * Notice actions map to echo the actions.
 	 *
-	 * @param array $action
+	 * @param array|string $action
 	 */
 	function sensei_lesson_quiz_notice_actions_map( $action ) {
 		?>
 		<li>
-			<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
-				<?php echo wp_kses_post( $action['label'] ); ?>
-			</a>
+			<?php
+			if ( ! is_array( $action ) ) {
+				echo wp_kses_post( $action );
+			} else {
+				?>
+				<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
+					<?php echo wp_kses_post( $action['label'] ); ?>
+				</a>
+				<?php
+			}
+			?>
 		</li>
 		<?php
 	}
