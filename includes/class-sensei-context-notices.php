@@ -70,7 +70,8 @@ class Sensei_Context_Notices {
 	 * @param string $text    Notice text.
 	 * @param string $title   Notice title.
 	 * @param array  $actions {
-	 *     Actions to display inside the notice.
+	 *     Actions to display inside the notice. It can contains strings with custom actions,
+	 *     or arrays with the following properties.
 	 *
 	 *     @type string $label Action label.
 	 *     @type string $url   Action URL.

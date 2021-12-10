@@ -50,7 +50,8 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		$this->maybe_add_quiz_results_notice();
-		$this->maybe_add_prerequisite_notice();
+		$this->maybe_add_lesson_prerequisite_notice();
+		$this->maybe_add_not_enrolled_notice();
 	}
 
 	/**
@@ -115,9 +116,15 @@ class Sensei_Course_Theme_Lesson {
 	/**
 	 * Maybe add lesson prerequisite notice.
 	 */
-	private function maybe_add_prerequisite_notice() {
+	private function maybe_add_lesson_prerequisite_notice() {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			return;
+		}
+
 		$user_id             = get_current_user_id();
-		$lesson_id           = \Sensei_Utils::get_current_lesson();
 		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
@@ -140,6 +147,81 @@ class Sensei_Course_Theme_Lesson {
 
 			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
 			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ), [], 'lock' );
+		}
+	}
+
+	/**
+	 * Maybe add not enrolled notice.
+	 *
+	 * @return void
+	 */
+	private function maybe_add_not_enrolled_notice() {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		$notices   = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+
+		if ( ! is_user_logged_in() ) {
+			$user_can_register = get_option( 'users_can_register' );
+
+			// Take course URL.
+			$course_url      = add_query_arg( 'take_course_sign_in', '1', get_permalink( $course_id ) );
+			$take_course_url = $user_can_register ? sensei_user_registration_url( true, $course_url ) : sensei_user_login_url( $course_url );
+
+			// Sign in URL.
+			$current_link = get_permalink();
+			$sign_in_url  = $user_can_register ? sensei_user_registration_url( true, $current_link ) : sensei_user_login_url( $current_link );
+
+			$actions = [
+				[
+					'label' => __( 'Take course', 'sensei-lms' ),
+					'url'   => $take_course_url,
+					'style' => 'primary',
+				],
+				[
+					'label' => __( 'Sign in', 'sensei-lms' ),
+					'url'   => $sign_in_url,
+					'style' => 'secondary',
+				],
+			];
+
+			$notices->add_notice(
+				'locked_lesson',
+				__( 'Please register or sign in to access the course content.', 'sensei-lms' ),
+				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+				$actions,
+				'lock'
+			);
+
+			return;
+		}
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
+				$notices->add_notice(
+					'locked_lesson',
+					Sensei()->course::get_course_prerequisite_message( $course_id ),
+					__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+					[],
+					'lock'
+				);
+			} else {
+				$nonce   = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
+				$actions = [
+					'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
+						<input type="hidden" name="course_start" value="1" />
+						' . $nonce . '
+						<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+					</form>',
+				];
+
+				$notices->add_notice(
+					'locked_lesson',
+					__( 'Please register for this course to access the content.', 'sensei-lms' ),
+					__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+					$actions,
+					'lock'
+				);
+			}
 		}
 	}
 }

@@ -3294,25 +3294,6 @@ class Sensei_Course {
 
 				self::add_course_access_permission_message( $notice );
 
-				$my_courses_page_id = '';
-
-				/**
-				 * Filter to force Sensei to output the default WordPress user
-				 * registration link.
-				 *
-				 * @since 1.9.0
-				 * @param bool $wp_register_link default false
-				 */
-				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-
-				$settings = Sensei()->settings->get_settings();
-				if ( isset( $settings['my_course_page'] )
-					&& 0 < intval( $settings['my_course_page'] ) ) {
-
-					$my_courses_page_id = $settings['my_course_page'];
-
-				}
-
 				if (
 					! (bool) apply_filters_deprecated(
 						'sensei_user_can_register_for_course',
@@ -3323,14 +3304,14 @@ class Sensei_Course {
 				) {
 					return;
 				}
-				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
-				// is false, link to My Courses. If not, link to default WordPress registration page.
-				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-						$my_courses_url = get_permalink( $my_courses_page_id );
-						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-							esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
+
+				$my_courses_url = sensei_user_registration_url( false );
+
+				if ( ! empty( $my_courses_url ) ) {
+					echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
+						esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
 				} else {
-						wp_register( '<div class="status register">', '</div>' );
+					wp_register( '<div class="status register">', '</div>' );
 				}
 			}
 		}

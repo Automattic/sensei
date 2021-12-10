@@ -1,9 +1,10 @@
-.sensei-course-theme__frame {
-
+.sensei-course-theme {
 	--primary-color: var(--sensei-course-theme-primary-color, #30968B);
 	--primary-contrast-color: var(--sensei-course-theme-button-text-color, #FFFFFF);
 	--gray: #787C82;
+}
 
+.sensei-course-theme__frame {
 	a:hover, a:hover * {
 		color: var(--primary-color);
 		fill: var(--primary-color);
@@ -20,4 +21,3 @@
 	line-height: 1.5;
 	letter-spacing: normal;
 }
-
