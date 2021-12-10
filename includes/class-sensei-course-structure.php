@@ -839,7 +839,7 @@ class Sensei_Course_Structure {
 	/**
 	 * Get first incomplete lesson ID or `false` if there is none.
 	 *
-	 * @return mixed|false
+	 * @return int|false
 	 */
 	public function get_first_incomplete_lesson_id() {
 		list( $lesson_ids, ) = $this->flatten_structure( $this->get() );

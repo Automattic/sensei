@@ -1539,7 +1539,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 					[
 						'type'  => 'lesson',
 						'title' => 'Lesson A',
-						'id'    => $lesson_ids[0]
+						'id'    => $lesson_ids[0],
 					],
 				],
 			],
@@ -1551,7 +1551,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 					[
 						'type'  => 'lesson',
 						'title' => 'Lesson B',
-						'id'    => $lesson_ids[1]
+						'id'    => $lesson_ids[1],
 					],
 				],
 			],
