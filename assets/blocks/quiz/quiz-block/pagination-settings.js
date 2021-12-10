@@ -138,7 +138,7 @@ export const PaginationSidebarSettings = ( {
 
 			<PanelBody
 				title={ __( 'Progress bar settings', 'sensei-lms' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<PanelRow>
 					<ToggleControl
