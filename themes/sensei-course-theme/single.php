@@ -22,11 +22,11 @@
 		<!-- /wp:column -->
 		<!-- wp:column {"className":"sensei-course-theme__header__navigation"} -->
 		<div class="sensei-course-theme__header__navigation">
-			<button class="sensei-course-theme__sidebar-toggle" onclick="document.body.classList.toggle('sidebar-open')">🍔</button>
 			<!-- wp:sensei-lms/course-theme-prev-next-lesson -->
 			<!-- wp:sensei-lms/course-theme-prev-lesson {"inContainer":true} /-->
 			<!-- wp:sensei-lms/course-theme-next-lesson {"inContainer":true} /-->
 			<!-- /wp:sensei-lms/course-theme-prev-next-lesson -->
+			<!-- wp:sensei-lms/sidebar-toggle-button /-->
 		</div>
 		<!-- /wp:column -->
 		<!-- wp:column {"className":"sensei-course-theme__actions"} -->

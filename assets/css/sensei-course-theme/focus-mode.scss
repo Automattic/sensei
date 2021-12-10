@@ -10,8 +10,10 @@ $base: '.sensei-course-theme';
 		display: none;
 	}
 }
-.sensei-course-theme__sidebar {
-	padding-top: 32px;
+@media screen and (min-width: 782px) {
+	.sensei-course-theme__sidebar {
+		padding-top: 32px;
+	}
 }
 
 .sensei-course-theme--focus-mode {

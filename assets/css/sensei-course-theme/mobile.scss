@@ -85,8 +85,15 @@
 
 		&__sidebar-toggle {
 			display: block;
-			font-size: 24px;
-			margin-top: -5px;
+			width: 24px;
+			height: 24px;
+			svg {
+				width: 24px;
+				height: 24px;
+			}
+			&:hover {
+				fill: var(--primary-color);
+			}
 		}
 
 		&__sidebar {
