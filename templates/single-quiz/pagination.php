@@ -21,33 +21,35 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 <div id="sensei-quiz-pagination">
 	<div class="sensei-quiz-pagination__list">
 		<?php
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination links.
-		echo Sensei()->quiz->replace_pagination_links_with_buttons(
-			paginate_links(
-				/**
-				 * Filters the quiz questions paginate links arguments.
-				 *
-				 * @see   https://developer.wordpress.org/reference/functions/paginate_links/
-				 * @hook  sensei_quiz_pagination_args
-				 * @since 3.15.0
-				 *
-				 * @param {array} $args The pagination arguments.
-				 *
-				 * @return {array}
-				 */
-				apply_filters(
-					'sensei_quiz_pagination_args',
-					[
-						'total'     => $sensei_question_loop['total_pages'],
-						'current'   => $sensei_question_loop['current_page'],
-						'format'    => '?quiz-page=%#%',
-						'type'      => 'list',
-						'mid_size'  => 1,
-						'prev_next' => false,
-					]
-				)
+
+		$sensei_pagination_list = paginate_links(
+			/**
+			 * Filters the quiz questions paginate links arguments.
+			 *
+			 * @see   https://developer.wordpress.org/reference/functions/paginate_links/
+			 * @hook  sensei_quiz_pagination_args
+			 * @since 3.15.0
+			 *
+			 * @param {array} $args The pagination arguments.
+			 *
+			 * @return {array}
+			 */
+			apply_filters(
+				'sensei_quiz_pagination_args',
+				[
+					'total'     => $sensei_question_loop['total_pages'],
+					'current'   => $sensei_question_loop['current_page'],
+					'format'    => '?quiz-page=%#%',
+					'type'      => 'list',
+					'mid_size'  => 1,
+					'prev_next' => false,
+				]
 			)
 		);
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination.
+		echo Sensei()->quiz->replace_pagination_links_with_buttons( $sensei_pagination_list );
+
 		?>
 	</div>
 
