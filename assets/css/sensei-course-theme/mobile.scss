@@ -129,6 +129,7 @@
 			}
 		}
 		&--sidebar-open &__actions {
+			transition: bottom 300ms 0ms;
 			bottom: -30vh;
 		}
 		&:not(&--sidebar-open) &__actions {
