@@ -40,8 +40,8 @@ class Sidebar_Toggle_Button {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
-		$icon = \Sensei()->assets->get_icon( 'menu' );
-		$label = __('Toggle course navigation', 'sensei-lms');
+		$icon  = \Sensei()->assets->get_icon( 'menu' );
+		$label = __( 'Toggle course navigation', 'sensei-lms' );
 		return "<button class='sensei-course-theme__sidebar-toggle' onclick=\"sensei.courseTheme.toggleSidebar()\" title='{$label}'>{$icon}</button>";
 	}
 }
