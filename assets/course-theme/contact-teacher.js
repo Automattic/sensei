@@ -15,7 +15,17 @@ function handleSubmit( ev ) {
 		return;
 	}
 
+	const apiBaseUrl = document.querySelector(
+		'link[rel="https://api.w.org/"]'
+	)?.href;
+	// If the rest api is not available then bail.
+	if ( ! apiBaseUrl ) {
+		return;
+	}
+
+	// Prevent browser from refreshing.
 	ev.preventDefault();
+
 	const form = ev.target;
 	const submitButton = ev.target.querySelector(
 		'button.sensei-contact-teacher-form__submit'
@@ -38,7 +48,7 @@ function handleSubmit( ev ) {
 	);
 
 	window
-		.fetch( '/wp-json/sensei-internal/v1/messages?_locale=user', {
+		.fetch( `${ apiBaseUrl }sensei-internal/v1/messages?_locale=user`, {
 			method: 'POST',
 			body: JSON.stringify( values ),
 			headers: {
@@ -62,13 +72,15 @@ function handleSubmit( ev ) {
 
 // eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'load', function () {
-	document
-		.querySelectorAll(
-			'.sensei-course-theme__frame .sensei-contact-teacher-form'
-		)
-		.forEach( ( form ) => {
-			form.addEventListener( 'submit', handleSubmit );
-		} );
+	document.body.addEventListener( 'sensei-modal-open', ( ev ) => {
+		const modalId = ev.detail;
+		document
+			.querySelector( `[data-sensei-modal-content-clone="${ modalId }"]` )
+			?.querySelectorAll( 'form.sensei-contact-teacher-form' )
+			.forEach( ( form ) => {
+				form.addEventListener( 'submit', handleSubmit );
+			} );
+	} );
 
 	document
 		.querySelectorAll( '.sensei-contact-teacher-open' )
