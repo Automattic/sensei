@@ -162,7 +162,6 @@ class Sensei_Quiz {
 	 * This function hooks into the quiz page and accepts the answer form save post.
 	 *
 	 * @since 1.7.3
-	 * @return bool $saved;
 	 */
 	public function user_save_quiz_answers_listener() {
 
@@ -174,16 +173,21 @@ class Sensei_Quiz {
 			return;
 		}
 
-		global $post;
-		$lesson_id = $this->get_lesson_id( $post->ID );
+		$quiz_id   = get_the_ID();
+		$lesson_id = $this->get_lesson_id( $quiz_id );
+		$user_id   = get_current_user_id();
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST['sensei_question'], $_POST['questions_asked'] );
+		$answers = $this->parse_form_answers(
+			$_POST['sensei_question'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$lesson_id,
+			$user_id
+		);
 
 		// call the save function
-		$answers_saved = self::save_user_answers( $quiz_answers, $_FILES, $lesson_id, get_current_user_id() );
+		$success = self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
 
-		if ( intval( $answers_saved ) > 0 ) {
+		if ( $success ) {
 			// update the message showed to user
 			Sensei()->frontend->messages = '<div class="sensei-message note">' . __( 'Quiz Saved Successfully.', 'sensei-lms' ) . '</div>';
 		}
@@ -191,6 +195,37 @@ class Sensei_Quiz {
 		// remove the hook as it should only fire once per click
 		remove_action( 'sensei_single_quiz_content_inside_before', 'user_save_quiz_answers_listener' );
 
+	}
+
+	/**
+	 * Parse the provided answers by filling in missing answers or removing answers not part of the quiz.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param array $answers         The submitted answers.
+	 * @param array $questions_asked The ID's of all the asked quiz questions.
+	 * @param int   $lesson_id       The lesson ID.
+	 * @param int   $user_id         The user ID.
+	 *
+	 * @return array
+	 */
+	private function parse_form_answers( array $answers, array $questions_asked, int $lesson_id, int $user_id ): array {
+
+		// If we have a fraction of the answers (e.g. pagination), include the previously saved answers.
+		if ( count( $answers ) !== count( $questions_asked ) ) {
+			$previous_answers = self::get_user_answers( $lesson_id, $user_id );
+
+			if ( $previous_answers ) {
+				// Merge and preserve the indexes.
+				$answers = array_replace( $previous_answers, $answers );
+			}
+		}
+
+		// Merge with the questions asked.
+		return $this->merge_quiz_answers_with_questions_asked(
+			$answers,
+			$questions_asked
+		);
 	}
 
 	/**
@@ -336,8 +371,11 @@ class Sensei_Quiz {
 		// reset all user data
 		$this->reset_user_lesson_data( $lesson_id, get_current_user_id() );
 
-		// this function should only run once
-		remove_action( 'template_redirect', array( $this, 'reset_button_click_listener' ) );
+		// Redirect to the start of the quiz.
+		wp_safe_redirect(
+			remove_query_arg( 'quiz-page' )
+		);
+		exit;
 
 	}
 
@@ -364,13 +402,24 @@ class Sensei_Quiz {
 			return;
 		}
 
-		global $post, $current_user;
-		$lesson_id = $this->get_lesson_id( $post->ID );
+		$quiz_id   = get_the_ID();
+		$lesson_id = $this->get_lesson_id( $quiz_id );
+		$user_id   = get_current_user_id();
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$quiz_answers = $this->merge_quiz_answers_with_questions_asked( $_POST['sensei_question'], $_POST['questions_asked'] );
+		$answers = $this->parse_form_answers(
+			$_POST['sensei_question'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$lesson_id,
+			$user_id
+		);
 
-		self::submit_answers_for_grading( $quiz_answers, $_FILES, $lesson_id, $current_user->ID );
+		self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id );
+
+		// Redirect to the start of the quiz.
+		wp_safe_redirect(
+			remove_query_arg( 'quiz-page' )
+		);
+		exit;
 
 	}
 
@@ -394,46 +443,24 @@ class Sensei_Quiz {
 			return;
 		}
 
-		// Save the answers of the current page.
-		$this->save_current_page_answers(
+		$quiz_id   = get_the_ID();
+		$lesson_id = $this->get_lesson_id( $quiz_id );
+		$user_id   = get_current_user_id();
+
+		$answers = $this->parse_form_answers(
 			$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$_POST['questions_asked'],       // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$_FILES
+			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$lesson_id,
+			$user_id
 		);
 
-		// And redirect to the target page.
+		self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
+
+		// Redirect to the target page.
 		wp_safe_redirect(
 			wp_unslash( $_POST['quiz_target_page'] )
 		);
-
-	}
-
-	/**
-	 * Save the answers for the current page.
-	 *
-	 * @since 3.15.0
-	 *
-	 * @param array $page_answers    The submitted answers from the current page.
-	 * @param array $questions_asked The ID's of all the asked quiz questions.
-	 * @param array $files           Global $_FILES.
-	 */
-	private function save_current_page_answers( array $page_answers, array $questions_asked, array $files ) {
-
-		$quiz_id   = get_the_ID();
-		$user_id   = get_current_user_id();
-		$lesson_id = $this->get_lesson_id( $quiz_id );
-
-		// Retrieve the previously saved answers.
-		$previous_answers = self::get_user_answers( $lesson_id, $user_id );
-		$previous_answers = $previous_answers ? $previous_answers : [];
-
-		// And merge them with the current page answers.
-		$all_answers = $this->merge_quiz_answers_with_questions_asked(
-			array_replace( $previous_answers, $page_answers ), // Merge and preserve the indexes.
-			$questions_asked
-		);
-
-		self::save_user_answers( $all_answers, $files, $lesson_id, $user_id );
+		exit;
 
 	}
 
