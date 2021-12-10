@@ -52,7 +52,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
 	<div class="wp-block-column sensei-course-theme__main-content">
-		<!-- wp:post-title /-->
+		<!-- wp:sensei-lms/course-theme-module-title /-->
+		<!-- wp:sensei-lms/course-theme-lesson-title /-->
 
 		<!-- wp:sensei-lms/course-theme-notices /-->
 		<!-- wp:sensei-lms/course-content /-->
