@@ -27,12 +27,48 @@
 const createOpenModal = ( modalId ) => ( ev ) => {
 	ev?.preventDefault();
 
-	document
-		.querySelector( `[data-sensei-modal-content="${ modalId }"]` )
-		?.setAttribute( 'data-sensei-modal-content-is-open', '' );
-	document
-		.querySelector( `[data-sensei-modal-overlay="${ modalId }"]` )
-		?.setAttribute( 'data-sensei-modal-overlay-is-open', '' );
+	[ 'content', 'overlay' ].forEach( ( type ) => {
+		const modalElement = document.querySelector(
+			`[data-sensei-modal-${ type }="${ modalId }"]`
+		);
+		if ( ! modalElement ) {
+			return;
+		}
+
+		// Put element's copy at the end of the body element.
+		const modalElementCopy = modalElement.cloneNode( true );
+		modalElementCopy.setAttribute(
+			`data-sensei-modal-${ type }-clone`,
+			modalId
+		);
+		document.body.appendChild( modalElementCopy );
+
+		// Get the close event handler.
+		const closeModal = createCloseModal( modalId );
+
+		// Attach close event for the overlay.
+		if ( 'overlay' === type ) {
+			modalElementCopy.addEventListener( 'click', closeModal );
+		}
+
+		// Attach close event to close button in case it is inside the
+		// modal content.
+		if ( 'content' === type ) {
+			modalElementCopy
+				.querySelector( `[data-sensei-modal-close="${ modalId }"]` )
+				?.addEventListener( 'click', closeModal );
+		}
+
+		// Open the modal.
+		setTimeout( () => {
+			modalElementCopy.setAttribute(
+				`data-sensei-modal-${ type }-is-open`,
+				''
+			);
+			// Make sure the elements are opened only after they are painted by
+			// the browser first. Otherwise the transition effects do not work.
+		}, 20 );
+	} );
 };
 
 /**
@@ -42,12 +78,13 @@ const createOpenModal = ( modalId ) => ( ev ) => {
 const createCloseModal = ( modalId ) => ( ev ) => {
 	ev?.preventDefault();
 
-	document
-		.querySelector( `[data-sensei-modal-overlay="${ modalId }"]` )
-		?.removeAttribute( 'data-sensei-modal-overlay-is-open' );
-	document
-		.querySelector( `[data-sensei-modal-content="${ modalId }"]` )
-		?.removeAttribute( 'data-sensei-modal-content-is-open' );
+	[ 'overlay', 'content' ].forEach( ( type ) => {
+		document
+			.querySelector(
+				`[data-sensei-modal-${ type }-clone="${ modalId }"]`
+			)
+			?.remove();
+	} );
 };
 
 /**
@@ -65,36 +102,7 @@ function attachModalEvents() {
 			openButton.addEventListener( 'click', createOpenModal( modalId ) );
 		} );
 
-	// Attach close events.
-	document
-		.querySelectorAll( '[data-sensei-modal-overlay]' )
-		.forEach( ( modalOverlay ) => {
-			const modalId = modalOverlay.getAttribute(
-				'data-sensei-modal-overlay'
-			);
-			if ( ! modalId ) {
-				return;
-			}
-			modalOverlay.addEventListener(
-				'click',
-				createCloseModal( modalId )
-			);
-		} );
-	document
-		.querySelectorAll( '[data-sensei-modal-close]' )
-		.forEach( ( closeButton ) => {
-			const modalId = closeButton.getAttribute(
-				'data-sensei-modal-close'
-			);
-			if ( ! modalId ) {
-				return;
-			}
-			closeButton.addEventListener(
-				'click',
-				createCloseModal( modalId )
-			);
-		} );
-
+	// Attach close event on Escape key.
 	document
 		.querySelectorAll( '[data-sensei-modal-open]' )
 		.forEach( ( openButton ) => {
