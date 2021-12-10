@@ -81,16 +81,20 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	 * Testing prerequisite notice.
 	 */
 	public function testPrerequisiteNotice() {
+		$course_id           = $this->factory->course->create();
 		$prerequisite_lesson = $this->factory->lesson->create_and_get();
 		$lesson              = $this->factory->lesson->create_and_get(
 			[
 				'meta_input' => [
+					'_lesson_course'       => $course_id,
 					'_lesson_prerequisite' => $prerequisite_lesson->ID,
 				],
 			]
 		);
 		$GLOBALS['post']     = $lesson;
 
+		$this->login_as_student();
+		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
 		\Sensei_Course_Theme_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
@@ -102,21 +106,55 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	 * Testing ungraded prerequisite notice.
 	 */
 	public function testUngradedPrerequisiteNotice() {
+		$course_id           = $this->factory->course->create();
 		$prerequisite_lesson = $this->create_lesson_with_submitted_answers();
 		$lesson              = $this->factory->lesson->create_and_get(
 			[
 				'meta_input' => [
+					'_lesson_course'       => $course_id,
 					'_lesson_prerequisite' => $prerequisite_lesson->ID,
 				],
 			]
 		);
 		$GLOBALS['post']     = $lesson;
 
+		$this->login_as_student();
+		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
 		\Sensei_Course_Theme_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
 		$this->assertRegExp( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
+	}
+
+	/**
+	 * Testing logged out notice.
+	 */
+	public function testLoggedOutNotice() {
+		$lesson          = $this->factory->lesson->create_and_get();
+		$GLOBALS['post'] = $lesson;
+
+		wp_logout();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		$this->assertContains( 'Please register or sign in to access the course content.', $html, 'Should return logged out notice' );
+	}
+
+	/**
+	 * Testing not enrolled notice.
+	 */
+	public function testNotEnrolledNotice() {
+		$lesson          = $this->factory->lesson->create_and_get();
+		$GLOBALS['post'] = $lesson;
+
+		$this->login_as_student();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		$this->assertContains( 'Please register for this course to access the content.', $html, 'Should return not enrolled notice' );
 	}
 
 	/**
@@ -147,7 +185,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 
 		$user_id = get_current_user_id();
-		Sensei()->frontend->manually_enrol_learner( get_current_user_id(), $course->ID );
+		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
 		Sensei_Quiz::submit_answers_for_grading( [], [], $lesson->ID, $user_id );
 
 		return $lesson;

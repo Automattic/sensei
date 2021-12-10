@@ -55,6 +55,16 @@ class Sensei_Block_Take_Course {
 				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );
 				$html = $this->render_disabled( $content );
 			} else {
+				// Replace button label in case it's coming from a sign in with redirect to take course.
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+				if ( isset( $_GET['take_course_sign_in'] ) ) {
+					$content = preg_replace(
+						'/(.*)<button(.*)>(.*)<\/button>(.*)/',
+						'$1<button$2>' . __( 'Start course', 'sensei-lms' ) . '</button>$4',
+						$content,
+						1
+					);
+				}
 				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
 		} elseif ( ! is_user_logged_in() ) {
@@ -118,24 +128,7 @@ class Sensei_Block_Take_Course {
 	 * @return string
 	 */
 	private function render_with_login( $content ) {
-
-		/**
-		 * Filter to force Sensei to output the default WordPress user
-		 * registration link.
-		 *
-		 * @param bool $wp_register_link default false
-		 *
-		 * @since 1.9.0
-		 */
-		$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-
-		$settings = Sensei()->settings->get_settings();
-		if ( ! empty( $settings['my_course_page'] ) && ! $wp_register_link ) {
-			$my_courses_url = get_permalink( intval( $settings['my_course_page'] ) );
-			$target         = esc_url( $my_courses_url );
-		} else {
-			$target = wp_registration_url();
-		}
+		$target = sensei_user_registration_url();
 
 		return ( '
 			<form method="GET" action="' . esc_url( $target ) . '">

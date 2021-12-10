@@ -3,6 +3,7 @@
 	--header-height: 75px;
 	--sidebar-width: 300px;
 	--top-offset: 0px;
+	--content-padding: 32px;
 
 	@at-root body.admin-bar {
 		--top-offset: 32px;
@@ -54,13 +55,24 @@
 	}
 
 	&__main-content {
-		padding: 32px;
+		padding: --content-padding;
 		margin-left: var(--sidebar-width) !important;
 
 		> * {
 			max-width: 900px;
 			margin-left: auto;
 			margin-right: auto;
+		}
+
+		.alignfull {
+			margin-left: -(--content-padding);
+			margin-right: -(--content-padding);
+			max-width: 100%;
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
 		}
 	}
 
