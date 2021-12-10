@@ -57,17 +57,26 @@ const createOpenModal = ( modalId ) => ( ev ) => {
 			modalElementCopy
 				.querySelector( `[data-sensei-modal-close="${ modalId }"]` )
 				?.addEventListener( 'click', closeModal );
+
+			// Dispatch open event.
+			document.body.dispatchEvent(
+				new CustomEvent( 'sensei-modal-open', { detail: modalId } )
+			);
 		}
 
 		// Open the modal.
-		setTimeout( () => {
-			modalElementCopy.setAttribute(
-				`data-sensei-modal-${ type }-is-open`,
-				''
-			);
+		setTimeout(
+			() => {
+				modalElementCopy.setAttribute(
+					`data-sensei-modal-${ type }-is-open`,
+					''
+				);
+			},
+
 			// Make sure the elements are opened only after they are painted by
 			// the browser first. Otherwise the transition effects do not work.
-		}, 20 );
+			20
+		);
 	} );
 };
 
@@ -84,6 +93,13 @@ const createCloseModal = ( modalId ) => ( ev ) => {
 				`[data-sensei-modal-${ type }-clone="${ modalId }"]`
 			)
 			?.remove();
+
+		if ( 'content' === type ) {
+			// Dispatch close event.
+			document.body.dispatchEvent(
+				new CustomEvent( 'sensei-modal-close', { detail: modalId } )
+			);
+		}
 	} );
 };
 
