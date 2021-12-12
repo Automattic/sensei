@@ -3,7 +3,7 @@
  */
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
-import { SelectControl, ToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 
 /**
