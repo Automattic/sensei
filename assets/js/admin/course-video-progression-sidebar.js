@@ -43,17 +43,14 @@ const CourseVideoProgressionSidebar = () => {
 				label={ __( 'Autocomplete lesson', 'sensei-lms' ) }
 				checked={ autocomplete }
 				onChange={ setAutocomplete }
-				help={ __(
-					'When enabled, the lesson will be completed automatically when the video is complete.',
-					'sensei-lms'
-				) }
+				help={ __( 'Complete lesson when video ends.', 'sensei-lms' ) }
 			/>
 			<ToggleControl
 				label={ __( 'Autopause', 'sensei-lms' ) }
 				checked={ autopause }
 				onChange={ setAutopause }
 				help={ __(
-					'When enabled, the video will be paused when the user navigates away from the lesson.',
+					'Pause video when student navigates away.',
 					'sensei-lms'
 				) }
 			/>
@@ -62,7 +59,7 @@ const CourseVideoProgressionSidebar = () => {
 				checked={ required }
 				onChange={ setRequired }
 				help={ __(
-					'When enabled, watching the video will be required to complete the lesson.',
+					'Video must be viewed before completing the lesson.',
 					'sensei-lms'
 				) }
 			/>
