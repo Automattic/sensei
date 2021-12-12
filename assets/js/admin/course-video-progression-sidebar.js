@@ -23,7 +23,7 @@ const useCourseMeta = ( metaName ) => {
 };
 
 /**
- * Course Theme Sidebar component.
+ * Video-Based Course Progression Sidebar component.
  */
 const CourseVideoProgressionSidebar = () => {
 	const [ autocomplete, setAutocomplete ] = useCourseMeta(
@@ -36,7 +36,7 @@ const CourseVideoProgressionSidebar = () => {
 
 	return (
 		<PluginDocumentSettingPanel
-			name="sensei-course-theme"
+			name="sensei-course-video-progression"
 			title={ __( 'Video-Based Course Progression', 'sensei-lms' ) }
 		>
 			<ToggleControl
