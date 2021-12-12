@@ -37,7 +37,7 @@ const CourseVideoProgressionSidebar = () => {
 	return (
 		<PluginDocumentSettingPanel
 			name="sensei-course-video-progression"
-			title={ __( 'Video-Based Course Progression', 'sensei-lms' ) }
+			title={ __( 'Video', 'sensei-lms' ) }
 		>
 			<ToggleControl
 				label={ __( 'Autocomplete lesson', 'sensei-lms' ) }
