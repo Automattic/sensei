@@ -566,6 +566,9 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		// Sensei meta that needs to be deleted directly.
 		update_post_meta( $this->post_ids[0], 'sensei_payment_complete', true );
 		update_post_meta( $this->post_ids[1], 'sensei_products_processed', 3 );
+		update_post_meta( $this->post_ids[0], 'sensei_course_video_autocomplete', true );
+		update_post_meta( $this->post_ids[1], 'sensei_course_video_autopause', true );
+		update_post_meta( $this->post_ids[0], 'sensei_course_video_required', true );
 
 		Sensei_Data_Cleaner::cleanup_all();
 
@@ -581,7 +584,10 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		// Ensure other Sensei meta is deleted.
 		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_payment_complete', true ), 'sensei_payment_complete should be deleted' );
-		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_products_processed', true ), 'sensei_products_processed should not be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_products_processed', true ), 'sensei_products_processed should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_course_video_autocomplete', true ), 'sensei_course_video_autocomplete should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_course_video_autopause', true ), 'sensei_course_video_autopause should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_course_video_required', true ), 'sensei_course_video_required should be deleted' );
 	}
 
 	/* Helper functions. */
