@@ -23,9 +23,9 @@ const useCourseMeta = ( metaName ) => {
 };
 
 /**
- * Video-Based Course Progression Sidebar component.
+ * Video-Based Course Sidebar component.
  */
-const CourseVideoProgressionSidebar = () => {
+const CourseVideoSidebar = () => {
 	const [ autocomplete, setAutocomplete ] = useCourseMeta(
 		'sensei_course_video_autocomplete'
 	);
@@ -69,4 +69,4 @@ const CourseVideoProgressionSidebar = () => {
 	);
 };
 
-export default CourseVideoProgressionSidebar;
+export default CourseVideoSidebar;
