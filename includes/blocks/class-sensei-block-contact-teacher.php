@@ -76,19 +76,18 @@ class Sensei_Block_Contact_Teacher {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		$contact_form_open = isset( $_GET['contact'] ) && ! ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] );
 
-		$uuid         = wp_generate_uuid4();
 		$contact_form = $this->teacher_contact_form( $post );
 
-		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible">
-				' . ( $this->add_button_attributes( $content, $contact_form_link, $uuid ) ) . '
-				<a href="' . $post_link . '" data-sensei-modal-overlay="' . $uuid . '" ' . ( $contact_form_open ? 'data-sensei-modal-overlay-is-open' : '' ) . '></a>
-				<div data-sensei-modal-content="' . $uuid . '" ' . ( $contact_form_open ? 'data-sensei-modal-content-is-open' : '' ) . '>
+		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
+				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
+				<a href="' . $post_link . '" data-sensei-modal-overlay></a>
+				<div data-sensei-modal-content>
 					' . $contact_form . '
 					<div class="sensei-contact-teacher-success">
 						<svg><use xlink:href="#sensei-contact-teacher-success"></use></svg>
 						<p>' . __( 'Your message has been sent', 'sensei-lms' ) . '</p>
 					</div>
-					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close="' . $uuid . '">
+					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close>
 						' . \Sensei()->assets->get_icon( 'close' ) . '
 					</a>
 				</div>
@@ -126,14 +125,13 @@ class Sensei_Block_Contact_Teacher {
 	 *
 	 * @param string $content Block HTML.
 	 * @param string $href    Link URL.
-	 * @param string $uuid    The unique identifier for this block.
 	 *
 	 * @return string Block HTML with additional href attribute.
 	 */
-	private function add_button_attributes( $content, $href, $uuid ) {
+	private function add_button_attributes( $content, $href ) {
 		return preg_replace(
 			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
-			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-contact-teacher-open $2" data-sensei-modal-open="' . $uuid . '" $1 $3>$4</a>',
+			'<a href="' . esc_url( $href ) . '" class="sensei-contact-teacher-open $2" data-sensei-modal-open $1 $3>$4</a>',
 			$content,
 			1
 		);

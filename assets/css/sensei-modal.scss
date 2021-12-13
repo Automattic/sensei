@@ -1,5 +1,4 @@
-.sensei-course-theme__frame, .sensei-course-theme--focus-mode--animated, * {
-
+[data-sensei-modal] {
 	[data-sensei-modal-overlay] {
 		position: fixed;
 		z-index: 1000;
@@ -11,14 +10,6 @@
 		background-color: rgba(0, 0, 0, 0);
 		transition: unset;
 		transition: background-color 120ms ease-in-out;
-	}
-
-	[data-sensei-modal-overlay-is-open] {
-		top: 0%;
-		background-color: rgba(0, 0, 0, 0.5);
-		&:hover {
-			background-color: rgba(0, 0, 0, 0.5);
-		}
 	}
 
 	[data-sensei-modal-content] {
@@ -37,10 +28,19 @@
 		transition: transform 120ms ease-in-out;
 		box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
 	}
+}
 
-	[data-sensei-modal-content-is-open] {
+[data-sensei-modal-is-open] {
+	[data-sensei-modal-overlay] {
+		top: 0%;
+		background-color: rgba(0, 0, 0, 0.5);
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+	}
+
+	[data-sensei-modal-content] {
 		top: 50%;
 		transform: translate( -50%, -50% );
 	}
-
 }

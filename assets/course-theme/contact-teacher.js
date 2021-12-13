@@ -73,10 +73,9 @@ function handleSubmit( ev ) {
 // eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'load', function () {
 	document.body.addEventListener( 'sensei-modal-open', ( ev ) => {
-		const modalId = ev.detail;
-		document
-			.querySelector( `[data-sensei-modal-content-clone="${ modalId }"]` )
-			?.querySelectorAll( 'form.sensei-contact-teacher-form' )
+		const modalElement = ev.detail;
+		modalElement
+			.querySelectorAll( 'form.sensei-contact-teacher-form' )
 			.forEach( ( form ) => {
 				form.addEventListener( 'submit', handleSubmit );
 			} );
