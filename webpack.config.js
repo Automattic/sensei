@@ -24,6 +24,7 @@ const files = [
 	'js/admin/ordering.js',
 	'js/admin/sensei-notice-dismiss.js',
 	'js/frontend/course-archive.js',
+	'js/disable-complete-lesson-button.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
 	'js/learners-bulk-actions.js',

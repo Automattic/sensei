@@ -68,6 +68,7 @@ class Sensei_Complete_Lesson_Block {
 	 */
 	private function render_with_form( array $attributes, string $content ) : string {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
+		wp_enqueue_script( 'sensei-disable-complete-lesson-button' );
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink() );
 

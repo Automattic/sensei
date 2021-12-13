@@ -145,6 +145,7 @@ class Sensei_Frontend {
 			}
 
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
+			Sensei()->assets->register( 'sensei-disable-complete-lesson-button', 'js/disable-complete-lesson-button.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
 			// Allow additional scripts to be loaded.
@@ -959,6 +960,7 @@ class Sensei_Frontend {
 		if ( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
 
 			wp_enqueue_script( 'sensei-stop-double-submission' );
+			wp_enqueue_script( 'sensei-disable-complete-lesson-button' );
 
 			?>
 			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
