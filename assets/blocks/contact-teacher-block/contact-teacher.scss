@@ -1,6 +1,5 @@
 .sensei-contact-teacher-form {
 	position: relative;
-	z-index: 2;
 
 	label {
 		display: block;
@@ -34,7 +33,7 @@
 
 a.sensei-contact-teacher-close {
 	position: absolute;
-	z-index: 5;
+	z-index: 2;
 	top: 19px;
 	right: 24px;
 	width: 20px;

@@ -9,7 +9,7 @@
  *
  * @param {Object} ev The contact teacher form submit event.
  */
-function handleSubmit( ev ) {
+export function submitContactTeacher( ev ) {
 	// If the fetch api is not available then bail.
 	if ( ! window.fetch ) {
 		return;
@@ -42,7 +42,7 @@ function handleSubmit( ev ) {
 	const values = fieldNames.reduce(
 		( acc, name ) => ( {
 			...acc,
-			[ name ]: form.querySelector( `[name="${ name }"]` ).value,
+			[ name ]: form.elements[ name ].value,
 		} ),
 		{}
 	);
@@ -57,39 +57,9 @@ function handleSubmit( ev ) {
 			},
 		} )
 		.then( () => {
-			form.parentElement
-				.querySelector( '.sensei-contact-teacher-success' )
-				.classList.add( 'show' );
-			submitButton.classList.remove( 'is-busy' );
-			submitButton.disabled = false;
+			form.classList.add( 'is-success' );
 		} )
 		.catch( () => {
 			// TODO: Show submit failed message.
-			submitButton.classList.remove( 'is-busy' );
-			submitButton.disabled = false;
 		} );
 }
-
-// eslint-disable-next-line @wordpress/no-global-event-listener
-window.addEventListener( 'load', function () {
-	document.body.addEventListener( 'sensei-modal-open', ( ev ) => {
-		const modalElement = ev.detail;
-		modalElement
-			.querySelectorAll( 'form.sensei-contact-teacher-form' )
-			.forEach( ( form ) => {
-				form.addEventListener( 'submit', handleSubmit );
-			} );
-	} );
-
-	document
-		.querySelectorAll( '.sensei-contact-teacher-open' )
-		.forEach( ( openButton ) => {
-			openButton.addEventListener( 'click', () => {
-				document
-					.querySelectorAll( '.sensei-contact-teacher-success' )
-					.forEach( ( successElement ) => {
-						successElement.classList.remove( 'show' );
-					} );
-			} );
-		} );
-} );

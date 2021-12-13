@@ -83,10 +83,6 @@ class Sensei_Block_Contact_Teacher {
 				<a href="' . $post_link . '" data-sensei-modal-overlay></a>
 				<div data-sensei-modal-content>
 					' . $contact_form . '
-					<div class="sensei-contact-teacher-success">
-						<svg><use xlink:href="#sensei-contact-teacher-success"></use></svg>
-						<p>' . __( 'Your message has been sent', 'sensei-lms' ) . '</p>
-					</div>
 					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close>
 						' . \Sensei()->assets->get_icon( 'close' ) . '
 					</a>
@@ -107,7 +103,7 @@ class Sensei_Block_Contact_Teacher {
 		$wp_rest_nonce = wp_nonce_field( 'wp_rest' );
 
 		return '
-			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
+			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form" onsubmit="sensei.submitContactTeacher(event)">
 				<label>' . esc_html__( 'Contact your teacher', 'sensei-lms' ) . '</label>
 				<textarea rows="5" name="contact_message" required placeholder="' . esc_attr__( 'Enter your message', 'sensei-lms' ) . '"></textarea>
 
@@ -117,6 +113,10 @@ class Sensei_Block_Contact_Teacher {
 				<p class="sensei-contact-teacher-form__actions">
 				<button class="sensei-contact-teacher-form__submit">' . esc_html__( 'Send Message', 'sensei-lms' ) . '</button>
 				</p>
+				<div class="sensei-contact-teacher-success">
+					<svg><use xlink:href="#sensei-contact-teacher-success"></use></svg>
+					<p>' . __( 'Your message has been sent', 'sensei-lms' ) . '</p>
+				</div>
 			</form>';
 	}
 
@@ -131,7 +131,7 @@ class Sensei_Block_Contact_Teacher {
 	private function add_button_attributes( $content, $href ) {
 		return preg_replace(
 			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
-			'<a href="' . esc_url( $href ) . '" class="sensei-contact-teacher-open $2" data-sensei-modal-open $1 $3>$4</a>',
+			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-contact-teacher-open $2" data-sensei-modal-open $1 $3>$4</a>',
 			$content,
 			1
 		);
