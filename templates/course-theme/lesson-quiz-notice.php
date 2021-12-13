@@ -20,7 +20,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notices_map' ) ) {
 	 */
 	function sensei_lesson_quiz_notices_map( $notice ) {
 		?>
-		<div class="sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
+		<div class="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
 			<div class="sensei-course-theme-lesson-quiz-notice__content">
 				<?php if ( ! empty( $notice['title'] ) ) { ?>
 				<h3 class="sensei-course-theme-lesson-quiz-notice__title">

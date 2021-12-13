@@ -1,0 +1,73 @@
+.sensei-course-theme__quiz {
+	display: block;
+
+	&__main-content {
+		padding: 32px;
+		margin-bottom: 100px;
+
+		> * {
+			display: block;
+			max-width: 900px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	&__header, &__footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 24px;
+		gap: 24px;
+
+		margin: 0 auto;
+		max-width: 1200px;
+	}
+
+	&__header {
+		position: sticky;
+		top: var(--top-offset);
+		background-color: #fff;
+		z-index: 100;
+
+		.wp-block-post-title {
+			font-size: 24px;
+			font-weight: 600;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		&__left {
+			min-width: 0;
+		}
+
+		&__right {
+			flex: 1;
+		}
+	}
+
+	&__footer {
+
+		&__wrapper {
+			display: block;
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 100;
+			background-color: #fff;
+			border-top: 1px solid #F6F7F7;
+			box-shadow: 2px 10px 30px 5px rgba(#E2E4E7, 0.5);
+		}
+
+		&__left {
+			flex: 1;
+
+		}
+
+		&__right {
+
+		}
+	}
+}

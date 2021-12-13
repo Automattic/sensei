@@ -41,13 +41,13 @@ class Next_Lesson {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
-		$lesson = get_post();
+		$lesson_id = \Sensei_Utils::get_current_lesson();
 
-		if ( empty( $lesson ) ) {
+		if ( empty( $lesson_id ) ) {
 			return '';
 		}
 
-		$urls = sensei_get_prev_next_lessons( $lesson->ID );
+		$urls = sensei_get_prev_next_lessons( $lesson_id );
 
 		if ( empty( $urls['next']['url'] ) ) {
 			return '';

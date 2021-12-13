@@ -8,6 +8,10 @@
  * @version     4.0.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <!-- wp:sensei-lms/container {"className":"sensei-course-theme__header"} -->
 <div class="wp-block-sensei-lms-container sensei-course-theme__header sensei-course-theme__frame">
@@ -48,8 +52,7 @@
 		<!-- wp:post-title /-->
 
 		<!-- wp:sensei-lms/course-theme-notices /-->
-
-		<?php get_template_part( 'content', get_post_type() ); ?>
+		<!-- wp:sensei-lms/course-content /-->
 	</div>
 	<!-- /wp:column -->
 </div>

@@ -11,19 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Sensei\Blocks\Course_Theme\Course_Title;
-use Sensei\Blocks\Course_Theme\Focus_Mode;
-use Sensei\Blocks\Course_Theme\Site_Logo;
 use \Sensei_Blocks_Initializer;
 use \Sensei_Course_Theme_Option;
-use \Sensei\Blocks\Course_Theme\Prev_Lesson;
-use \Sensei\Blocks\Course_Theme\Next_Lesson;
-use \Sensei\Blocks\Course_Theme\Prev_Next_Lesson;
-use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
-use \Sensei\Blocks\Course_Theme\Course_Progress_Counter;
-use \Sensei\Blocks\Course_Theme\Course_Progress_Bar;
-use \Sensei\Blocks\Course_Theme\Lesson_Actions;
-use \Sensei\Blocks\Course_Theme\Notices;
+use \Sensei\Blocks\Course_Theme as Blocks;
 
 /**
  * Class Course_Theme
@@ -63,19 +53,17 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
-		new Course_Title();
-		new Site_Logo();
-		new Notices();
-		new Focus_Mode();
-		if ( 'lesson' === get_post_type() ) {
-			new Prev_Lesson();
-			new Next_Lesson();
-			new Prev_Next_Lesson();
-			new Course_Progress_Counter();
-			new Course_Progress_Bar();
-			new Lesson_Actions();
-		} elseif ( 'quiz' === get_post_type() ) {
-			new Quiz_Back_To_Lesson();
-		}
+		new Blocks\Course_Title();
+		new Blocks\Site_Logo();
+		new Blocks\Notices();
+		new Blocks\Focus_Mode();
+		new Blocks\Course_Content();
+		new Blocks\Prev_Lesson();
+		new Blocks\Next_Lesson();
+		new Blocks\Prev_Next_Lesson();
+		new Blocks\Course_Progress_Counter();
+		new Blocks\Course_Progress_Bar();
+		new Blocks\Lesson_Actions();
+		new Blocks\Quiz_Back_To_Lesson();
 	}
 }

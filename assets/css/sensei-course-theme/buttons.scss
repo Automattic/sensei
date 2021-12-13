@@ -1,47 +1,67 @@
-.sensei-course-theme {
-	&__button {
-		display: inline-block;
-		font-size: 14px;
-		cursor: pointer;
 
-		&.is-primary,
-		&.is-secondary {
-			padding: 8px 11px;
-			border: solid 1px var(--primary-color);
-			font-weight: 700;
-			text-decoration: none;
-			border-radius: 2px;
-		}
+.wp-block-button .wp-block-button__link {
+	all: unset;
+}
 
-		&.is-primary {
-			background-color: var(--primary-color);
-			color: var(--primary-contrast-color);
-			&:hover {
-				color: var(--primary-color);
-				background: none;
-			}
-		}
+.sensei-course-theme__button, .wp-block-button {
 
-		&.is-secondary {
+	font-family: 'Inter', sans-serif;
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 1.5;
+	letter-spacing: normal;
+
+	display: inline-block;
+	font-size: 14px;
+	cursor: pointer;
+
+	&.is-primary,
+	&.is-secondary,
+	&.wp-block-button {
+		padding: 8px 11px;
+		border: solid 1px var(--primary-color);
+		font-weight: 700;
+		text-decoration: none;
+		border-radius: 2px;
+	}
+
+	&.is-primary,
+	&.wp-block-button:not(.is-style-outline) {
+		background-color: var(--primary-color);
+		color: var(--primary-contrast-color);
+		&:hover {
 			color: var(--primary-color);
-			&:hover {
-				background-color: var(--primary-color);
-				color: var(--primary-contrast-color);
-			}
-		}
-
-		&.is-link {
-			color: var(--primary-color);
-			&:hover {
-				text-decoration: underline;
-			}
-		}
-
-		&[aria-disabled="true"],
-		&:disabled {
-			opacity: 0.4;
-			pointer-events: none;
-			cursor: not-allowed;
+			background: none;
 		}
 	}
+
+	&.is-secondary,
+	&.wp-block-button.is-style-outline {
+		color: var(--primary-color);
+		&:hover {
+			background-color: var(--primary-color);
+			color: var(--primary-contrast-color);
+
+		}
+	}
+
+	&.is-link {
+		color: var(--primary-color);
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	&[aria-disabled="true"],
+	&:disabled {
+		opacity: 0.4;
+		pointer-events: none;
+		cursor: not-allowed;
+	}
+}
+
+.wp-block-buttons {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
