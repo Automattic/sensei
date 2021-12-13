@@ -50,7 +50,7 @@ global $sensei_question_loop;
 	<div class="sensei-quiz-pagination__actions">
 		<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
 			<div class="sensei-quiz-pagination__button-link">
-				<button type="submit" name="quiz_reset" class="sensei-stop-double-submission has-background has-text-color">
+				<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
 					<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
 				</button>
 
@@ -59,7 +59,7 @@ global $sensei_question_loop;
 		<?php endif ?>
 
 		<div class="sensei-quiz-pagination__button-link">
-			<button type="submit" name="quiz_save" class="sensei-stop-double-submission has-background has-text-color">
+			<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
 				<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
 			</button>
 
