@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.0.0
  */
-class Sensei_Course_Progression_Settings {
+class Sensei_Course_Video_Settings {
 
 	/**
 	 * Sensei course progression video autocomplete meta field.

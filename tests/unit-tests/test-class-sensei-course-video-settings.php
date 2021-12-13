@@ -1,8 +1,8 @@
 <?php
 
-class Test_Sensei_Course_Progression_Settings extends WP_UnitTestCase {
+class Test_Sensei_Course_Video_Settings extends WP_UnitTestCase {
 	public function testMetaFieldsExist() {
-		$settings = Sensei_Course_Progression_Settings::instance();
+		$settings = Sensei_Course_Video_Settings::instance();
 		$settings->register_post_meta();
 		$keys = get_registered_meta_keys( 'post', 'course' );
 		$this->assertArrayHasKey( 'sensei_course_video_autocomplete', $keys, 'Autocomplete key was not found in meta' );
