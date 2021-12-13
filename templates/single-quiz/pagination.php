@@ -22,13 +22,15 @@ global $sensei_question_loop;
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination links.
 		echo paginate_links(
 			/**
-			 * Filters the quiz questions paginate links args.
+			 * Filters the quiz questions paginate links arguments.
 			 *
 			 * @see https://developer.wordpress.org/reference/functions/paginate_links/
-			 *
+			 * @hook sensei_add_comment_indexes
 			 * @since 3.15.0
 			 *
-			 * @param array $args The pagination arguments.
+			 * @param {array} $args The pagination arguments.
+			 *
+			 * @return {array}
 			 */
 			apply_filters(
 				'sensei_quiz_pagination_args',
