@@ -109,7 +109,7 @@ class Sensei_Course_Progression_Settings {
 					'type'          => 'boolean',
 					'default'       => false,
 					'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
-						return current_user_can( 'edit_post', $post_id );
+						return current_user_can( 'edit_course', $post_id );
 					},
 				]
 			);
