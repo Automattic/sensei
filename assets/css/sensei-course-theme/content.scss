@@ -10,9 +10,10 @@
 		}
 
 		.alignfull {
-			margin-left: -(--content-padding);
-			margin-right: -(--content-padding);
-			max-width: 100%;
+			margin-left: calc( -1 * var(--content-padding));
+			margin-right: calc( -1 * var(--content-padding));
+			max-width: unset;
+			width: auto;
 		}
 
 		img {
