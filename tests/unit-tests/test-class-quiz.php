@@ -1258,28 +1258,30 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		/* Arrange */
 		global $post, $sensei_question_loop;
 
-		$lesson_id = $this->factory->lesson->create();
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
 		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
 		$post      = get_post( $quiz_id );
 
 		$this->factory->question->create_many( 10, [ 'quiz_id' => $quiz_id ] );
+
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
 
 		update_post_meta(
 			$quiz_id,
 			'_pagination',
 			wp_json_encode( [ 'pagination_number' => 2 ] )
 		);
-
-		$sensei_quiz_mock = $this->getMockBuilder( Sensei_Quiz::class )
-			->setMethods( [ 'can_take_quiz' ] )
-			->getMock();
-
-		$sensei_quiz_mock
-			->method( 'can_take_quiz' )
-			->will( $this->returnValue( true ) );
-
-		$sensei_quiz_instance = Sensei()->quiz;
-		Sensei()->quiz        = $sensei_quiz_mock;
 
 		/* Act */
 		Sensei_Quiz::start_quiz_questions_loop();
@@ -1289,9 +1291,6 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEquals( 5, $sensei_question_loop['total_pages'], 'The loop `total_pages` should be calculated properly`.' );
 		$this->assertCount( 2, $sensei_question_loop['questions'], 'The loop questions count should be equal to the questions per page.' );
 		$this->assertEquals( 10, $sensei_question_loop['total'], 'The loop total questions count should be equal to the total questions count of the quiz.' );
-
-		/* Reset */
-		Sensei()->quiz = $sensei_quiz_instance;
 	}
 
 	/**
@@ -1316,10 +1315,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
 
+		$method = new ReflectionMethod( Sensei_Quiz::class, 'can_take_quiz' );
+		$method->setAccessible( true );
+
 		/* Assert */
-		$this->assertFalse( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Users not enrolled in a course, should not be able to take the quiz.' );
+		$this->assertFalse( $method->invoke( Sensei()->quiz, $quiz_id, $user_id ), 'Users not enrolled in a course, should not be able to take the quiz.' );
 		$course_enrolment->enrol( $user_id );
-		$this->assertTrue( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Users enrolled in a course, should be able to take the quiz.' );
+		$this->assertTrue( $method->invoke( Sensei()->quiz, $quiz_id, $user_id ), 'Users enrolled in a course, should be able to take the quiz.' );
 	}
 
 	/**
@@ -1348,10 +1350,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
 
+		$method = new ReflectionMethod( Sensei_Quiz::class, 'can_take_quiz' );
+		$method->setAccessible( true );
+
 		/* Assert */
-		$this->assertFalse( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should not be able to take the quiz if there is a uncompleted prerequisite lesson.' );
+		$this->assertFalse( $method->invoke( Sensei()->quiz, $quiz_id, $user_id ), 'Should not be able to take the quiz if there is a uncompleted prerequisite lesson.' );
 		Sensei_Utils::update_lesson_status( $user_id, $prerequisite_lesson_id, 'complete' );
-		$this->assertTrue( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should be able to take the quiz if the prerequisite lesson is completed.' );
+		$this->assertTrue( $method->invoke( Sensei()->quiz, $quiz_id, $user_id ), 'Should be able to take the quiz if the prerequisite lesson is completed.' );
 	}
 
 	/**
@@ -1377,10 +1382,13 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'passed' );
 
+		$method = new ReflectionMethod( Sensei_Quiz::class, 'can_take_quiz' );
+		$method->setAccessible( true );
+
 		/* Assert */
-		$this->assertTrue( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should be able to take the quiz if the lesson status is not ungraded.' );
+		$this->assertTrue( $method->invoke( Sensei()->quiz, $quiz_id, $user_id ), 'Should be able to take the quiz if the lesson status is not ungraded.' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'ungraded' );
-		$this->assertFalse( Sensei()->quiz->can_take_quiz( $quiz_id, $user_id ), 'Should not be able to take the quiz if the lesson status is ungraded.' );
+		$this->assertFalse( $method->invoke( Sensei()->quiz, $quiz_id, $user_id ), 'Should not be able to take the quiz if the lesson status is ungraded.' );
 	}
 
 }

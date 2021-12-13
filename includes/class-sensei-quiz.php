@@ -1241,7 +1241,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
+	private static function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1347,7 +1347,7 @@ class Sensei_Quiz {
 		$pagination_settings = [];
 
 		// Paginate the questions only if the user is taking the quiz.
-		if ( Sensei()->quiz->can_take_quiz( $quiz_id ) ) {
+		if ( self::can_take_quiz( $quiz_id ) ) {
 			$pagination_settings = json_decode(
 				get_post_meta( $quiz_id, '_pagination', true ),
 				true
@@ -1493,7 +1493,7 @@ class Sensei_Quiz {
 		$quiz_id   = get_the_ID();
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
-		$can_take_quiz  = Sensei()->quiz->can_take_quiz( $quiz_id );
+		$can_take_quiz  = self::can_take_quiz( $quiz_id );
 		$can_reset_quiz = self::is_reset_allowed( $lesson_id );
 
 		if ( ! $can_take_quiz && ! $can_reset_quiz ) {
