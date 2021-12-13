@@ -391,12 +391,12 @@ a.sensei-certificate-link {
 		margin-bottom: 0;
 	}
 
-	ul {
+	ul.page-numbers {
 		display: flex;
 		gap: 0.5em;
-		list-style: none;
+		list-style: none !important;
 		margin: 0;
-		padding: 0;
+		padding: 0 !important;
 
 		li, span {
 			margin: 0;
@@ -436,7 +436,7 @@ a.sensei-certificate-link {
 		border-left: 2px solid;
 	}
 
-	button {
+	button[type="submit"] {
 		margin: 0;
 		padding: 0;
 		border: 0;
@@ -445,6 +445,7 @@ a.sensei-certificate-link {
 		text-decoration: underline;
 		text-transform: none;
 		font-weight: normal;
+		cursor: pointer;
 
 		&:hover {
 			color: inherit;
