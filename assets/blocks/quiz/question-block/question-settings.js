@@ -31,7 +31,7 @@ const QuestionSettings = ( {
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Question Settings', 'sensei-lms' ) }
+				title={ __( 'Question settings', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
 				{ [ QuestionGradeSettings, ...controls ].map(
