@@ -57,7 +57,10 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 					sensei_setup_the_question();
 					?>
 
-					<li class="<?php sensei_the_question_class(); ?>">
+					<li
+						class="<?php sensei_the_question_class(); ?>"
+						value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+					>
 
 						<?php
 
