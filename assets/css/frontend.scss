@@ -372,22 +372,23 @@ a.sensei-certificate-link {
 
 .sensei-quiz-pagination {
 	display: flex;
-	flex-wrap: wrap;
+	flex-flow: column wrap;
 	align-items: center;
 	gap: 1.5em;
 	margin: 1.618em 0;
 
-	@media (max-width: 667px) {
-		flex-direction: column;
+	@media only screen and (min-width: 768px) {
+		flex-direction: row;
 	}
 }
 
 .sensei-quiz-pagination__list {
 	flex-grow: 1;
 	gap: 0.5em;
+	margin-bottom: 1em;
 
-	@media (max-width: 667px) {
-		margin-bottom: 1em;
+	@media only screen and (min-width: 768px) {
+		margin-bottom: 0;
 	}
 
 	ul {
@@ -406,9 +407,10 @@ a.sensei-certificate-link {
 
 .sensei-quiz-pagination__actions {
 	display: flex;
+	order: 1;
 
-	@media (max-width: 667px) {
-		order: 1;
+	@media only screen and (min-width: 768px) {
+		order: 0;
 	}
 }
 
