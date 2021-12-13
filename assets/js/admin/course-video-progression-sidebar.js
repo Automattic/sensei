@@ -27,12 +27,14 @@ const useCourseMeta = ( metaName ) => {
  */
 const CourseVideoProgressionSidebar = () => {
 	const [ autocomplete, setAutocomplete ] = useCourseMeta(
-		'_video_course_autocomplete'
+		'sensei_course_video_autocomplete'
 	);
 	const [ autopause, setAutopause ] = useCourseMeta(
-		'_video_course_autopause'
+		'sensei_course_video_autopause'
 	);
-	const [ required, setRequired ] = useCourseMeta( '_video_course_required' );
+	const [ required, setRequired ] = useCourseMeta(
+		'sensei_course_video_required'
+	);
 
 	return (
 		<PluginDocumentSettingPanel

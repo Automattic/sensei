@@ -17,9 +17,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Progression_Settings {
 
-	const VIDEO_COURSE_AUTOCOMPLETE = '_video_course_autocomplete';
-	const VIDEO_COURSE_AUTOPAUSE    = '_video_course_autopause';
-	const VIDEO_COURSE_REQUIRED     = '_video_course_required';
+	/**
+	 * Sensei course progression video autocomplete meta field.
+	 */
+	const COURSE_VIDEO_AUTOCOMPLETE = 'sensei_course_video_autocomplete';
+
+	/**
+	 * Sensei course progression video autopause meta field.
+	 */
+	const COURSE_VIDEO_AUTOPAUSE = 'sensei_course_video_autopause';
+
+	/**
+	 * Sensei course progression required video meta field.
+	 */
+	const COURSE_VIDEO_REQUIRED = 'sensei_course_video_required';
 
 	/**
 	 * Instance of class.
@@ -84,9 +95,9 @@ class Sensei_Course_Progression_Settings {
 	 */
 	public function register_post_meta() {
 		$settings = [
-			self::VIDEO_COURSE_AUTOCOMPLETE,
-			self::VIDEO_COURSE_AUTOPAUSE,
-			self::VIDEO_COURSE_REQUIRED,
+			self::COURSE_VIDEO_AUTOCOMPLETE,
+			self::COURSE_VIDEO_AUTOPAUSE,
+			self::COURSE_VIDEO_REQUIRED,
 		];
 		foreach ( $settings as $setting ) {
 			register_post_meta(
