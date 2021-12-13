@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Module_Title class.
+ * File containing the Lesson_Title class.
  *
  * @package sensei
  * @since
@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Display the title of the current module for the current lesson.
+ * Display the title of the current lesson for the current lesson/quiz.
  */
-class Module_Title {
+class Post_Title {
 
 	/**
 	 * Allowed HTML wrapper tag names for this block.
@@ -31,14 +31,14 @@ class Module_Title {
 	 *
 	 * @var string
 	 */
-	const DEFAULT_HTML_TAG_NAME = 'p';
+	const DEFAULT_HTML_TAG_NAME = 'h1';
 
 	/**
-	 * Module_Title constructor.
+	 * Lesson_Title constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-theme-module-title',
+			'sensei-lms/course-theme-post-title',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
@@ -55,17 +55,14 @@ class Module_Title {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ): string {
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		if ( ! $lesson_id ) {
+		$post_id = get_the_ID();
+
+		if ( ! $post_id ) {
 			return '';
 		}
 
-		$module_term = \Sensei()->modules->get_lesson_module( $lesson_id );
-		if ( ! $module_term ) {
-			return '';
-		}
+		$title = get_the_title( $post_id );
 
-		$title = $module_term->name;
 		if ( ! $title ) {
 			return '';
 		}
@@ -77,7 +74,11 @@ class Module_Title {
 		}
 
 		// Determine the output class.
-		$class = 'sensei-course-theme-module-title';
+		$class     = 'sensei-course-theme-lesson-title';
+		$post_type = get_post_type( $post_id );
+		if ( 'quiz' === $post_type ) {
+			$class = 'sensei-course-theme-quiz-title';
+		}
 		if ( isset( $attributes['className'] ) ) {
 			$class = sanitize_html_class( $attributes['className'], $class );
 		}
