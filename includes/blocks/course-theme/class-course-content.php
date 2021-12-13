@@ -63,10 +63,9 @@ class Course_Content {
 		if ( sensei_can_user_view_lesson() ) {
 			the_content();
 		} else {
-
-			wp_kses_post( get_the_excerpt() );
-
+			the_excerpt();
 		}
+
 		return ob_get_clean();
 	}
 
