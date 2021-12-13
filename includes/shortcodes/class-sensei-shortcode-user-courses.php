@@ -551,7 +551,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 				$css_class = $key === $this->status ? 'active' : 'inactive';
 				$url       = add_query_arg( self::MY_COURSES_STATUS_FILTER, $key, $base_url );
 				?>
-				<a id="sensei-user-courses-all-action" href="<?php echo esc_url( $url ); ?>" class="<?php echo esc_attr( $css_class ); ?>"><?php echo esc_html( $option ); ?></a>
+				<a href="<?php echo esc_url( $url ); ?>" class="<?php echo esc_attr( $css_class ); ?>"><?php echo esc_html( $option ); ?></a>
 			<?php } ?>
 		</section>
 
