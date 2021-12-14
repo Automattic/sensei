@@ -126,8 +126,10 @@ class Sensei_Course {
 		// filter the course query when featured filter is applied
 		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_featured_filter' ), 10, 1 );
 
-		// handle the order by title post submission.
-		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
+		// Handle the ordering for the courses archive page.
+		if ( is_post_type_archive( 'course' ) ) {
+			add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
+		}
 
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
@@ -2655,7 +2657,7 @@ class Sensei_Course {
 	public static function course_archive_sorting( $query ) {
 
 		// don't show on category pages and other pages
-		if ( ! is_archive( 'course ' ) || is_tax( 'course-category' ) ) {
+		if ( ! is_post_type_archive( 'course' ) || is_tax( 'course-category' ) ) {
 			return;
 		}
 
@@ -2785,9 +2787,9 @@ class Sensei_Course {
 	}
 
 	/**
-	 * Set the sorting options based on the query parameter and configuration.
+	 * Set the sorting options based on the query parameter and configuration in the Courses archive page.
 	 *
-	 * Hooked into pre_get_posts
+	 * Hooked into pre_get_posts for the courses archive only.
 	 *
 	 * @since 1.9.0
 	 * @param WP_Query $query
@@ -2795,7 +2797,7 @@ class Sensei_Course {
 	 */
 	public static function course_archive_set_order_by( $query ) {
 
-		// Default sort order depends on course order being set or not.
+		// Default sort order depends on custom course order being set or not.
 		$orderby = 'date';
 		$order   = 'DESC';
 		if ( ! empty( get_option( 'sensei_course_order', '' ) ) ) {
