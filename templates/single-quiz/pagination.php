@@ -75,7 +75,7 @@ global $sensei_question_loop;
 						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
 						class="wp-block-button__link button"
 					>
-						<?php esc_attr_e( '&lt; Prev', 'sensei-lms' ); ?>
+						<?php esc_attr_e( '&lt; Previous', 'sensei-lms' ); ?>
 					</a>
 				</div>
 			<?php endif ?>
