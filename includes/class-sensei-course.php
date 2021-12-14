@@ -2787,7 +2787,7 @@ class Sensei_Course {
 	/**
 	 * Set the sorting options based on the query parameter and configuration in the Courses archive page.
 	 *
-	 * Hooked into pre_get_posts for the courses archive only.
+	 * Hooked into pre_get_posts.
 	 *
 	 * @since 1.9.0
 	 * @param WP_Query $query
@@ -3490,8 +3490,8 @@ class Sensei_Course {
 		return array(
 			'post_type'        => 'course',
 			'posts_per_page'   => 1000,
-			'orderby'          => 'menu_order',
-			'order'            => 'ASC',
+			'orderby'          => 'date',
+			'order'            => 'DESC',
 			'suppress_filters' => 0,
 		);
 	}
