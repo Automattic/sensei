@@ -126,8 +126,8 @@ class Sensei_Course {
 		// filter the course query when featured filter is applied
 		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_featured_filter' ), 10, 1 );
 
-		// handle the order by title post submission
-		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_order_by_title' ), 10, 1 );
+		// handle the order by title post submission.
+		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
 
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
@@ -2671,13 +2671,14 @@ class Sensei_Course {
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
 			array(
+				'default' => __( 'Sort by default', 'sensei-lms' ),
 				'newness' => __( 'Sort by newest first', 'sensei-lms' ),
 				'title'   => __( 'Sort by title A-Z', 'sensei-lms' ),
 			)
 		);
 
-		// setup the currently selected item
-		$selected = 'newness';
+		// setup the currently selected item.
+		$selected = 'default';
 		if ( isset( $_REQUEST['course-orderby'] ) && in_array( $selected, array_keys( $course_order_by_options ), true ) ) {
 
 			$selected = sanitize_text_field( $_REQUEST['course-orderby'] );
@@ -2784,7 +2785,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * if the course order drop down is changed
+	 * Set the sorting options based on the query parameter and configuration.
 	 *
 	 * Hooked into pre_get_posts
 	 *
@@ -2792,14 +2793,34 @@ class Sensei_Course {
 	 * @param WP_Query $query
 	 * @return WP_Query $query
 	 */
-	public static function course_archive_order_by_title( $query ) {
+	public static function course_archive_set_order_by( $query ) {
 
-		if ( isset( $_REQUEST['course-orderby'] ) && 'title' == $_REQUEST['course-orderby']
-			&& 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
-			// setup the order by title for this query
-			$query->set( 'orderby', 'title' );
-			$query->set( 'order', 'ASC' );
+		// Default sort order depends on course order being set or not.
+		$orderby = 'date';
+		$order   = 'DESC';
+		if ( ! empty( get_option( 'sensei_course_order', '' ) ) ) {
+			$orderby = 'menu_order';
+			$order   = 'ASC';
 		}
+
+		if ( isset( $_REQUEST['course-orderby'] ) ) {
+			$request_orderby = $_REQUEST['course-orderby'];
+			switch ( $request_orderby ) {
+				case 'title':
+					$orderby = 'title';
+					$order   = 'ASC';
+					break;
+				case 'newness':
+					$orderby = 'date';
+					$order   = 'DESC';
+					break;
+				case 'default':
+					// Use default values (initialized above).
+					break;
+			}
+		}
+		$query->set( 'orderby', $orderby );
+		$query->set( 'order', $order );
 
 		return $query;
 	}
@@ -3030,7 +3051,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * This function loads the global wp_query object with with lessons
+	 * This function loads the global wp_query object with lessons
 	 * of the current course. It is designed to be used on the single-course template
 	 * and expects the global post to be a singular course.
 	 *
@@ -3464,8 +3485,8 @@ class Sensei_Course {
 		return array(
 			'post_type'        => 'course',
 			'posts_per_page'   => 1000,
-			'orderby'          => 'date',
-			'order'            => 'DESC',
+			'orderby'          => 'menu_order',
+			'order'            => 'ASC',
 			'suppress_filters' => 0,
 		);
 	}
