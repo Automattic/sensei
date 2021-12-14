@@ -85,14 +85,15 @@ const questionTypes = {
 		validate: ( { before, after, gap } = {} ) => {
 			return {
 				noGap: ! gap?.length,
-				noBefore: ! before,
-				noAfter: ! after,
+				noBeforeAndNoAfter: ! before && ! after,
 			};
 		},
 		messages: {
 			noGap: __( 'Add a right answer to this question.', 'sensei-lms' ),
-			noBefore: __( 'Add text before and after the gap.', 'sensei-lms' ),
-			noAfter: __( 'Add text before and after the gap.', 'sensei-lms' ),
+			noBeforeAndNoAfter: __(
+				'Add text before or after the gap.',
+				'sensei-lms'
+			),
 		},
 	},
 	'single-line': {
