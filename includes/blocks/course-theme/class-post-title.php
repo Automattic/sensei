@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Lesson_Title class.
+ * File containing the Post_Title class.
  *
  * @package sensei
  * @since
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Display the title of the current lesson for the current lesson/quiz.
+ * Display the title of the current lesson for the current post.
  */
 class Post_Title {
 
@@ -34,7 +34,7 @@ class Post_Title {
 	const DEFAULT_HTML_TAG_NAME = 'h1';
 
 	/**
-	 * Lesson_Title constructor.
+	 * Post_Title constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
@@ -74,7 +74,7 @@ class Post_Title {
 		}
 
 		// Determine the output class.
-		$class     = 'sensei-course-theme-lesson-title';
+		$class     = 'sensei-course-theme-post-title';
 		$post_type = get_post_type( $post_id );
 		if ( 'quiz' === $post_type ) {
 			$class = 'sensei-course-theme-quiz-title';

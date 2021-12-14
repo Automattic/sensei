@@ -217,7 +217,7 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Course_Content'   => 'blocks/course-theme/class-course-content.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Content'     => 'blocks/course-theme/class-quiz-content.php',
 			'Sensei\Blocks\Course_Theme\Post_Title'       => 'blocks/course-theme/class-post-title.php',
-			'Sensei\Blocks\Course_Theme\Module_Title'     => 'blocks/course-theme/class-module-title.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Module'    => 'blocks/course-theme/class-lesson-module.php',
 		);
 	}
 

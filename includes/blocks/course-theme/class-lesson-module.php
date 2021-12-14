@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Module_Title class.
+ * File containing the Lesson_Module class.
  *
  * @package sensei
  * @since
@@ -17,7 +17,7 @@ use \Sensei_Blocks;
 /**
  * Display the title of the current module for the current lesson.
  */
-class Module_Title {
+class Lesson_Module {
 
 	/**
 	 * Allowed HTML wrapper tag names for this block.
@@ -31,14 +31,14 @@ class Module_Title {
 	 *
 	 * @var string
 	 */
-	const DEFAULT_HTML_TAG_NAME = 'p';
+	const DEFAULT_HTML_TAG_NAME = 'em';
 
 	/**
-	 * Module_Title constructor.
+	 * Lesson_Module constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-theme-module-title',
+			'sensei-lms/course-theme-lesson-module',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
@@ -77,7 +77,7 @@ class Module_Title {
 		}
 
 		// Determine the output class.
-		$class = 'sensei-course-theme-module-title';
+		$class = 'sensei-course-theme-lesson-module';
 		if ( isset( $attributes['className'] ) ) {
 			$class = sanitize_html_class( $attributes['className'], $class );
 		}

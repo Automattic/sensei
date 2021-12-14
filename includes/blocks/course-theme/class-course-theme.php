@@ -58,7 +58,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		new Blocks\Notices();
 		new Blocks\Focus_Mode();
 		new Blocks\Post_Title();
-		new Blocks\Module_Title();
+		new Blocks\Lesson_Module();
 		new Blocks\Course_Content();
 		new Blocks\Prev_Lesson();
 		new Blocks\Next_Lesson();
