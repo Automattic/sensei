@@ -22,7 +22,7 @@ export default {
 		__( 'Dashboard', 'sensei-lms' ),
 		__( 'Courses', 'sensei-lms' ),
 		__( 'Enrolled', 'sensei-lms' ),
-		__( 'Student', 'sensei-lms' ),
+		__( 'Learner', 'sensei-lms' ),
 		__( 'Student', 'sensei-lms' ),
 	],
 	example: {},
