@@ -2809,7 +2809,7 @@ class Sensei_Course {
 		}
 
 		if ( isset( $_REQUEST['course-orderby'] ) ) {
-			$request_orderby = $_REQUEST['course-orderby'];
+			$request_orderby = sanitize_text_field( $_REQUEST['course-orderby'] );
 			switch ( $request_orderby ) {
 				case 'title':
 					$orderby = 'title';

@@ -466,6 +466,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @dataProvider data_testCourseArchiveOrderSetOrderBy
 	 */
 	public function testCourseArchiveOrderSetOrderBy( $request_parameters, $course_order_option, $expected_order_by, $expected_order ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$original_request_object = $_REQUEST;
 		$_REQUEST                = $request_parameters;
 		$wp_query                = $this->createMock( 'WP_Query' );
