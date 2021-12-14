@@ -439,6 +439,23 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the parameters are not added when hook function called out of the course archive page.
+	 */
+	public function testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage() {
+		$wp_query = $this->createMock( 'WP_Query' );
+		// Mock request is *not* for the course archive page.
+		$wp_query->expects( $this->once() )
+			->method( 'is_post_type_archive' )
+			->with( 'course' )
+			->willReturn( false );
+		// We dont expect any parameter to be set the query.
+		$wp_query->expects( $this->never() )
+			->method( 'set' );
+
+		Sensei_Course::course_archive_set_order_by( $wp_query );
+	}
+
+	/**
 	 * Test that the correct order parameter values are set for the WP_Query used in the course archive page.
 	 *
 	 * @param array  $request_parameters  $_REQUEST contents for the test. After the test the original values are restored.
@@ -451,15 +468,27 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	public function testCourseArchiveOrderSetOrderBy( $request_parameters, $course_order_option, $expected_order_by, $expected_order ) {
 		$original_request_object = $_REQUEST;
 		$_REQUEST                = $request_parameters;
-		$wp_query                = new WP_Query();
+		$wp_query                = $this->createMock( 'WP_Query' );
 
+		// Mock request is for the course archive page.
+		$wp_query->expects( $this->once() )
+			->method( 'is_post_type_archive' )
+			->with( 'course' )
+			->willReturn( true );
+		// Set whether custom course order has been set or not.
 		update_option( 'sensei_course_order', $course_order_option );
+		// Create expectations for the correct 'orderby' and 'order' attributes.
+		$wp_query->expects( $this->exactly( 2 ) )
+			->method( 'set' )
+			->withConsecutive(
+				array( $this->equalTo( 'orderby' ), $this->equalTo( $expected_order_by ) ),
+				array( $this->equalTo( 'order' ), $this->equalTo( $expected_order ) )
+			);
 
-		$wp_query = Sensei_Course::course_archive_set_order_by( $wp_query );
-		$_REQUEST = $original_request_object; // Restore original requests.
+		Sensei_Course::course_archive_set_order_by( $wp_query );
 
-		$this->assertEquals( $expected_order_by, $wp_query->get( 'orderby' ) );
-		$this->assertEquals( $expected_order, $wp_query->get( 'order' ) );
+		// Restore original requests.
+		$_REQUEST = $original_request_object;
 	}
 
 	/**

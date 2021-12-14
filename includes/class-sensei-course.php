@@ -127,9 +127,7 @@ class Sensei_Course {
 		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_featured_filter' ), 10, 1 );
 
 		// Handle the ordering for the courses archive page.
-		if ( is_post_type_archive( 'course' ) ) {
-			add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
-		}
+		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
 
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
@@ -2796,6 +2794,11 @@ class Sensei_Course {
 	 * @return WP_Query $query
 	 */
 	public static function course_archive_set_order_by( $query ) {
+
+		// Applies only to Course archive page.
+		if ( ! $query->is_post_type_archive( 'course' ) ) {
+			return;
+		}
 
 		// Default sort order depends on custom course order being set or not.
 		$orderby = 'date';
