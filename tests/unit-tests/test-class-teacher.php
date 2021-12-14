@@ -385,57 +385,26 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 *
+	 * Asserts that only users with edit course capabilities are returned
+	 *
+	 * @covers Sensei_Teacher::get_teachers_and_authors
+	 */
 	public function testGetTeachersAndAuthors() {
-		$this->create_use_with_role( 'subscriberName', 'subscriberPass', 'subscriber@email.com', 'subscriber' );
-		$this->create_use_with_role( 'subscriberBName', 'subscriberBPass', 'subscriberB@email.com', 'subscriber', '_b' );
-		$this->create_use_with_role( 'teacher', 'teacherPass', 'teacher@email.com', 'teacher' );
-		$this->create_use_with_role( 'teacherB', 'teacherBPass', 'teacherB@email.com', 'teacher', '_b' );
-		$this->create_use_with_role( 'teacherC', 'teacherCPass', 'teacherC@email.com', 'teacher', '_c' );
-		$this->create_use_with_role( 'editor', 'editorPass', 'editor@email.com', 'editor' );
-		$this->create_use_with_role( 'administrator', 'administratorPass', 'administrator@email.com', 'administrator' );
-		$users_with_edit_courses_rights_ids = Sensei()->teacher->get_teachers_and_authors();
-		$users                              = get_users(
-			[
-				'blog_id' => $GLOBALS['blog_id'],
-				'include' => $users_with_edit_courses_rights_ids,
-			]
-		);
-		$roles                              = array_merge( ...array_column( $users, 'roles' ) );
-		$teachers                           = array_filter(
-			$roles,
-			function( $item ) {
-				return 'teacher' === $item;
-			}
-		);
-		$this->assertCount( 3, $teachers );
-		$administrators = array_filter(
-			$roles,
-			function( $item ) {
-				return 'administrator' === $item;
-			}
-		);
-		$this->assertCount( 2, $administrators );
-		$editors = array_filter(
-			$roles,
-			function( $item ) {
-				return 'editor' === $item;
-			}
-		);
-		$this->assertCount( 1, $editors );
-		$subscribers = array_filter(
-			$roles,
-			function( $item ) {
-				return 'subscriber' === $item;
-			}
-		);
-		$this->assertCount( 0, $subscribers );
-	}
+		$subscribers    = $this->factory->user->create_many( 2, [ 'role' => 'subscriber' ] );
+		$teachers       = $this->factory->user->create_many( 3, [ 'role' => 'teacher' ] );
+		$editors        = $this->factory->user->create_many( 1, [ 'role' => 'editor' ] );
+		$administrators = $this->factory->user->create_many( 1, [ 'role' => 'administrator' ] );
 
-	private function create_use_with_role( $user_name, $user_password, $user_email, $user_role, $role_variant = '' ): WP_User {
-		$user_id      = wp_create_user( $user_name, $user_password, $user_email );
-		$user_id_role = new WP_User( $user_id );
-		$user_id_role->set_role( $user_role, $role_variant );
-		return $user_id_role;
+		$users_with_edit_courses_rights_ids = Sensei()->teacher->get_teachers_and_authors();
+
+		foreach ( array_merge( $administrators, $editors, $teachers ) as $user_id ) {
+			$this->assertContains( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
+		}
+		foreach ( $subscribers as $subscriber_id ) {
+			$this->assertNotContains( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
+		}
 	}
 
 }
