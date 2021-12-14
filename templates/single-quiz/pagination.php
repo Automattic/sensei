@@ -73,9 +73,9 @@ global $sensei_question_loop;
 				<div class="wp-block-button is-style-outline">
 					<a
 						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
-						class="wp-block-button__link button"
+						class="wp-block-button__link button sensei-quiz-pagination__prev-button"
 					>
-						<?php esc_attr_e( '&lt; Previous', 'sensei-lms' ); ?>
+						<?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
 					</a>
 				</div>
 			<?php endif ?>
@@ -92,9 +92,9 @@ global $sensei_question_loop;
 				<div class="wp-block-button">
 					<a
 						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
-						class="wp-block-button__link button"
+						class="wp-block-button__link button sensei-quiz-pagination__next-button"
 					>
-						<?php esc_attr_e( 'Next &gt;', 'sensei-lms' ); ?>
+						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
 					</a>
 				</div>
 			<?php endif ?>
