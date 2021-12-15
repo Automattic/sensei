@@ -44,3 +44,10 @@
 		transform: translate( -50%, -50% );
 	}
 }
+
+[data-sensei-modal-clone] {
+	margin: 0;
+	padding: 0;
+	height: 0;
+	overflow: hidden;
+}
