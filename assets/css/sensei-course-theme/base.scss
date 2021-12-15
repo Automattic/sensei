@@ -1,6 +1,9 @@
+$default-primary-color: #30968B;
+$default-primary-contrast-color: #FFFFFF;
+
 :root {
-	--primary-color: var(--sensei-course-theme-primary-color, #30968B);
-	--primary-contrast-color: var(--sensei-course-theme-button-text-color, #FFFFFF);
+	--primary-color: var(--sensei-course-theme-primary-color, $default-primary-color);
+	--primary-contrast-color: var(--sensei-course-theme-button-text-color, $default-primary-contrast-color);
 	--gray: #787C82;
 }
 

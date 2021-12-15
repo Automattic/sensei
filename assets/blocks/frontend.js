@@ -3,6 +3,11 @@
  */
 import domReady from '@wordpress/dom-ready';
 
+/**
+ * Internal dependencies
+ */
+import '../js/sensei-modal';
+
 domReady( () => {
 	if (
 		0 === document.querySelectorAll( '.sensei-collapsible__toggle' ).length
