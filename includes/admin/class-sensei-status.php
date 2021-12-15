@@ -172,7 +172,7 @@ class Sensei_Status {
 		}
 
 		return [
-			'label' => __( 'Learner calculation job', 'sensei-lms' ),
+			'label' => __( 'Student calculation job', 'sensei-lms' ),
 			'value' => $status,
 		];
 	}
@@ -276,9 +276,9 @@ class Sensei_Status {
 	 * @return array
 	 */
 	public function test_enrolment_cache_warmed() {
-		$description = __( 'Sensei LMS attempts to calculate whether learners are enrolled in all courses ahead of time to speed up loading.', 'sensei-lms' );
+		$description = __( 'Sensei LMS attempts to calculate whether students are enrolled in all courses ahead of time to speed up loading.', 'sensei-lms' );
 		$result      = [
-			'label'       => __( 'Learner enrollment has been calculated', 'sensei-lms' ),
+			'label'       => __( 'Student enrollment has been calculated', 'sensei-lms' ),
 			'status'      => 'good',
 			'badge'       => [
 				'label' => __( 'Sensei LMS', 'sensei-lms' ),
@@ -292,7 +292,7 @@ class Sensei_Status {
 		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
 		if ( get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME ) !== $enrolment_manager->get_enrolment_calculation_version() ) {
 			$result['status'] = 'recommended';
-			$result['label']  = __( 'Learner enrollment has not been calculated', 'sensei-lms' );
+			$result['label']  = __( 'Student enrollment has not been calculated', 'sensei-lms' );
 			$description     .= ' ' . __( 'This could be in progress. Until this process is complete, some pages may load more slowly.', 'sensei-lms' );
 		}
 

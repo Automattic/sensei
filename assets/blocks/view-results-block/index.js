@@ -16,7 +16,7 @@ export default createButtonBlockType( {
 	settings: {
 		name: 'sensei-lms/button-view-results',
 		description: __(
-			'Enable a learner to view their course results.',
+			'Enable a student to view their course results.',
 			'sensei-lms'
 		),
 		title: __( 'View Results', 'sensei-lms' ),

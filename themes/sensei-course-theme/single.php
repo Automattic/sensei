@@ -63,7 +63,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
 	<div class="sensei-course-theme__main-content">
-		<!-- wp:post-title /-->
+		<!-- wp:sensei-lms/course-theme-lesson-module /-->
+		<!-- wp:sensei-lms/course-theme-post-title /-->
 
 		<!-- wp:sensei-lms/course-theme-notices /-->
 		<!-- wp:sensei-lms/course-content /-->

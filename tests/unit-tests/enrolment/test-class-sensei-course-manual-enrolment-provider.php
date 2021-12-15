@@ -188,7 +188,7 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$debug          = $provider->debug( $student_id, $course_id );
 		$expected_debug = [
-			__( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' ),
+			__( 'Student manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' ),
 		];
 
 		$this->assertEquals( $expected_debug, $debug );
@@ -210,8 +210,8 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$debug          = $provider->debug( $student_id, $course_id );
 		$expected_debug = [
-			__( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
-			__( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+			__( 'Student <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was not provided</strong> to the student on legacy migration.', 'sensei-lms' ),
 		];
 
 		$this->assertEquals( $expected_debug, $debug );
@@ -233,8 +233,8 @@ class Sensei_Course_Manual_Enrolment_Provider_Test extends WP_UnitTestCase {
 
 		$debug          = $provider->debug( $student_id, $course_id );
 		$expected_debug = [
-			__( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
-			__( 'Manual enrollment <strong>was provided</strong> to the learner on legacy migration.', 'sensei-lms' ),
+			__( 'Student <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' ),
+			__( 'Manual enrollment <strong>was provided</strong> to the student on legacy migration.', 'sensei-lms' ),
 		];
 
 		$this->assertEquals( $expected_debug, $debug );

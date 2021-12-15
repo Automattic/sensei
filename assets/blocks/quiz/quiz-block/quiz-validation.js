@@ -118,7 +118,7 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 				{ notice }
 				<p>
 					{ __(
-						"Incomplete questions won't be displayed to the learner when taking the quiz.",
+						"Incomplete questions won't be displayed to the student when taking the quiz.",
 						'sensei-lms'
 					) }
 				</p>

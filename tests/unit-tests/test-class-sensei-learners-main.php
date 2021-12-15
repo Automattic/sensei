@@ -83,10 +83,10 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 
 	public function enrolmentFilterTestCases() {
 		return [
-			'All learners'               => [ 'all', 9 ],
-			'Enrolled learners'          => [ 'enrolled', 6 ],
-			'Unenrolled learners'        => [ 'unenrolled', 3 ],
-			'Manually enrolled learners' => [ 'manual', 2 ],
+			'All students'               => [ 'all', 9 ],
+			'Enrolled students'          => [ 'enrolled', 6 ],
+			'Unenrolled students'        => [ 'unenrolled', 3 ],
+			'Manually enrolled students' => [ 'manual', 2 ],
 		];
 	}
 }

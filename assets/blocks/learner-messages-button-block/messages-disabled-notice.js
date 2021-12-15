@@ -31,7 +31,7 @@ const MessagesDisabledNotice = ( { children, attributes: { isPreview } } ) => {
 		if ( '1' === window.sensei_messages.disabled ) {
 			createWarningNotice(
 				__(
-					'You have added the "Learner Messages Button" block to your editor, but messages are disabled in your settings.',
+					'You have added the "Student Messages Button" block to your editor, but messages are disabled in your settings.',
 					'sensei-lms'
 				),
 				{

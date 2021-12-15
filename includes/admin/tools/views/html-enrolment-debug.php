@@ -64,7 +64,7 @@ $allowed_debug_html = [
 				echo ' <a href="' . esc_url( $edit_course_url ) . '" class="button">' . esc_html__( 'Edit Course', 'sensei-lms' ) . '</a>';
 
 				$manage_learners_url = admin_url( sprintf( 'admin.php?page=sensei_learners&course_id=%d&view=learners', $results['course_id'] ) );
-				echo ' <a href="' . esc_url( $manage_learners_url ) . '" class="button">' . esc_html__( 'Manage Learners', 'sensei-lms' ) . '</a>';
+				echo ' <a href="' . esc_url( $manage_learners_url ) . '" class="button">' . esc_html__( 'Manage Students', 'sensei-lms' ) . '</a>';
 				?>
 			</div>
 		</td>
@@ -84,7 +84,7 @@ $allowed_debug_html = [
 
 				if ( $results['is_removed'] ) {
 					echo '<div class="info info-neutral">';
-					echo esc_html__( 'Learner manually removed', 'sensei-lms' );
+					echo esc_html__( 'Student manually removed', 'sensei-lms' );
 					echo '</div>';
 				}
 			}
@@ -174,11 +174,11 @@ $allowed_debug_html = [
 							echo '</div>';
 						} elseif ( $provider['is_enrolled'] ) {
 							echo '<div class="tag">';
-							echo esc_html__( 'Enrolls Learner', 'sensei-lms' );
+							echo esc_html__( 'Enrolls Student', 'sensei-lms' );
 							echo '</div>';
 						} else {
 							echo '<div class="tag">';
-							echo esc_html__( 'Does Not Enroll Learner', 'sensei-lms' );
+							echo esc_html__( 'Does Not Enroll Student', 'sensei-lms' );
 							echo '</div>';
 						}
 						?>

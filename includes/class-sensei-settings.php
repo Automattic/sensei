@@ -154,8 +154,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$sections['learner-profile-settings'] = array(
-			'name'        => __( 'Learner Profiles', 'sensei-lms' ),
-			'description' => __( 'Settings for public Learner Profiles.', 'sensei-lms' ),
+			'name'        => __( 'Student Profiles', 'sensei-lms' ),
+			'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
 		);
 
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
@@ -217,7 +217,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['messages_disable'] = array(
 			'name'        => __( 'Disable Private Messages', 'sensei-lms' ),
-			'description' => __( 'Disable the private message functions between learners and teachers.', 'sensei-lms' ),
+			'description' => __( 'Disable the private message functions between students and teachers.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
@@ -245,7 +245,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['course_completed_page'] = array(
 			'name'        => __( 'Course Completed Page', 'sensei-lms' ),
-			'description' => __( 'The page that is displayed after a learner completes a course.', 'sensei-lms' ),
+			'description' => __( 'The page that is displayed after a student completes a course.', 'sensei-lms' ),
 			'type'        => 'select',
 			'default'     => get_option( 'woothemes-sensei_course_completed_page_id', 0 ),
 			'section'     => 'default-settings',
@@ -420,7 +420,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Lesson Settings
 		$fields['lesson_comments'] = array(
 			'name'        => __( 'Allow Comments for Lessons', 'sensei-lms' ),
-			'description' => __( 'This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment.', 'sensei-lms' ),
+			'description' => __( 'This will allow students to post comments on the single Lesson page, only student who have access to the Lesson will be allowed to comment.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'lesson-settings',
@@ -509,17 +509,17 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
 
 		$fields['learner_profile_enable'] = array(
-			'name'        => __( 'Public learner profiles', 'sensei-lms' ),
+			'name'        => __( 'Public student profiles', 'sensei-lms' ),
 			// translators: Placeholder is a profile URL example.
-			'description' => sprintf( __( 'Enable public learner profiles that will be accessible to everyone. Profile URL format: %s', 'sensei-lms' ), $profile_url_example ),
+			'description' => sprintf( __( 'Enable public student profiles that will be accessible to everyone. Profile URL format: %s', 'sensei-lms' ), $profile_url_example ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'learner-profile-settings',
 		);
 
 		$fields['learner_profile_show_courses'] = array(
-			'name'        => __( 'Show learner\'s courses', 'sensei-lms' ),
-			'description' => __( 'Display the learner\'s active and completed courses on their profile.', 'sensei-lms' ),
+			'name'        => __( 'Show student\'s courses', 'sensei-lms' ),
+			'description' => __( 'Display the student\'s active and completed courses on their profile.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'learner-profile-settings',
@@ -532,11 +532,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$teacher_email_options = array(
-			'teacher-started-course'   => __( 'A learner starts their course', 'sensei-lms' ),
-			'teacher-completed-course' => __( 'A learner completes their course', 'sensei-lms' ),
-			'teacher-completed-lesson' => __( 'A learner completes a lesson', 'sensei-lms' ),
-			'teacher-quiz-submitted'   => __( 'A learner submits a quiz for grading', 'sensei-lms' ),
-			'teacher-new-message'      => __( 'A learner sends a private message to a teacher', 'sensei-lms' ),
+			'teacher-started-course'   => __( 'A student starts their course', 'sensei-lms' ),
+			'teacher-completed-course' => __( 'A student completes their course', 'sensei-lms' ),
+			'teacher-completed-lesson' => __( 'A student completes a lesson', 'sensei-lms' ),
+			'teacher-quiz-submitted'   => __( 'A student submits a quiz for grading', 'sensei-lms' ),
+			'teacher-new-message'      => __( 'A student sends a private message to a teacher', 'sensei-lms' ),
 		);
 
 		$global_email_options = array(
@@ -544,8 +544,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_learners'] = array(
-			'name'        => __( 'Emails Sent to Learners', 'sensei-lms' ),
-			'description' => __( 'Select the notifications that will be sent to learners.', 'sensei-lms' ),
+			'name'        => __( 'Emails Sent to Students', 'sensei-lms' ),
+			'description' => __( 'Select the notifications that will be sent to students.', 'sensei-lms' ),
 			'type'        => 'multicheck',
 			'options'     => $learner_email_options,
 			'defaults'    => array( 'learner-graded-quiz', 'learner-completed-course' ),

@@ -49,7 +49,7 @@ class Sensei_Tool_Enrolment_Debug implements Sensei_Tool_Interface, Sensei_Tool_
 	 * @return string
 	 */
 	public function get_description() {
-		return __( 'Check what the enrollment status is between a course and learner.', 'sensei-lms' );
+		return __( 'Check what the enrollment status is between a course and student.', 'sensei-lms' );
 	}
 
 	/**
