@@ -385,4 +385,26 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 *
+	 * Asserts that only users with edit course capabilities are returned
+	 *
+	 * @covers Sensei_Teacher::get_teachers_and_authors
+	 */
+	public function testGetTeachersAndAuthors() {
+		$subscribers    = $this->factory->user->create_many( 2, [ 'role' => 'subscriber' ] );
+		$teachers       = $this->factory->user->create_many( 3, [ 'role' => 'teacher' ] );
+		$editors        = $this->factory->user->create_many( 1, [ 'role' => 'editor' ] );
+		$administrators = $this->factory->user->create_many( 1, [ 'role' => 'administrator' ] );
+
+		$users_with_edit_courses_rights_ids = Sensei()->teacher->get_teachers_and_authors();
+
+		foreach ( array_merge( $administrators, $editors, $teachers ) as $user_id ) {
+			$this->assertContains( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
+		}
+		foreach ( $subscribers as $subscriber_id ) {
+			$this->assertNotContains( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
+		}
+	}
+
 }

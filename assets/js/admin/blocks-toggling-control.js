@@ -42,7 +42,6 @@ const blockEditorSelector = select( 'core/block-editor' );
 const coreEditorSelector = select( 'core/editor' );
 const editPostSelector = select( 'core/edit-post' );
 const editPostDispatcher = dispatch( 'core/edit-post' );
-const { createWarningNotice, removeNotice } = dispatch( 'core/notices' );
 
 /**
  * Start blocks toggling control.
@@ -56,6 +55,8 @@ export const startBlocksTogglingControl = ( postType ) => {
 	if ( ! blockEditorSelector ) {
 		return;
 	}
+
+	const { createWarningNotice, removeNotice } = dispatch( 'core/notices' );
 
 	let initialWithSenseiBlocks; // Whether initial state has Sensei Blocks.
 	let previousWithSenseiBlocks; // Whether previous state has Sensei Blocks.

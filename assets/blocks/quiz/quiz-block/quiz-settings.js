@@ -87,7 +87,7 @@ const QuizSettings = ( {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Quiz Settings', 'sensei-lms' ) }
+					title={ __( 'Quiz settings', 'sensei-lms' ) }
 					initialOpen={ true }
 				>
 					<PanelRow>

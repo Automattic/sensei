@@ -82,7 +82,7 @@ class Sensei_Course_Navigation_Block {
 
 		if ( $modules_html ) {
 			$modules_html = '<div class="sensei-lms-course-navigation__modules">
-				' . $modules_html . ' 
+				' . $modules_html . '
 			</div>';
 		}
 
@@ -275,6 +275,13 @@ class Sensei_Course_Navigation_Block {
 			</symbol>
 			<symbol id="sensei-lesson-status-completed" viewBox="0 0 24 24">
         <path fill-rule="evenodd" d="M12 20a8 8 0 100-16 8 8 0 000 16zm-1.024-3.949l5.764-7.753-.802-.596-5.466 7.351-2.942-2.187-.596.802 3.342 2.486.402.298.298-.401z"/>
+			</symbol>
+			<symbol id="sensei-contact-teacher-success" viewBox="0 0 24 24" fill="none">
+				<path stroke-width="1.5" d="M 41.248047 21 C 41.248047 32.183594 32.183594 41.248047 21 41.248047 C 9.816406 41.248047 0.751953 32.183594 0.751953 21 C 0.751953 9.816406 9.816406 0.751953 21 0.751953 C 32.183594 0.751953 41.248047 9.816406 41.248047 21 Z M 41.248047 21 " transform="matrix(0.571429,0,0,0.571429,0,0)" />
+				<path stroke-width="2" d="M 27.111328 15.148438 L 18.880859 26.222656 L 14.109375 22.674805 " transform="matrix(0.571429,0,0,0.571429,0,0)" />
+			</symbol>
+			<symbol id="sensei-close" viewBox="0 0 16 16" fill="none">
+				<path d="M1.40456 1L15 15M1 15L14.5954 1" stroke="#1E1E1E" stroke-width="1.5" />
 			</symbol>
 		</svg>';
 	}
