@@ -2796,7 +2796,7 @@ class Sensei_Course {
 	public static function course_archive_order_by_title( $query ) {
 
 		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) )
-			 && 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
+			&& 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
 			// Setup the order by title for this query.
 			$query->set( 'orderby', 'title' );
 			$query->set( 'order', 'ASC' );
