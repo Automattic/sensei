@@ -14,7 +14,7 @@ import icon from '../../../icons/buttons-icon';
 export default {
 	title: __( 'Lesson Actions', 'sensei-lms' ),
 	description: __(
-		'Enable a learner to perform specific actions for a lesson.',
+		'Enable a student to perform specific actions for a lesson.',
 		'sensei-lms'
 	),
 	keywords: [

@@ -1934,7 +1934,7 @@ class Sensei_Lesson {
 					}
 						$html .= '<label>' . esc_html__( 'Upload notes:', 'sensei-lms' ) . '</label> ';
 						$html .= '<textarea id="' . esc_attr( $wrong_field_id ) . '" name="add_question_wrong_answer_fileupload" rows="4" cols="40" class="widefat">' . esc_textarea( $wrong_answer ) . '</textarea>';
-						$html .= '<p class="question-field-helper-text">' . esc_html__( 'Displayed to the learner to describe what to upload.', 'sensei-lms' ) . '</p>';
+						$html .= '<p class="question-field-helper-text">' . esc_html__( 'Displayed to the student to describe what to upload.', 'sensei-lms' ) . '</p>';
 
 						// Guides for grading
 						$html .= '<label>' . esc_html__( 'Grading Notes:', 'sensei-lms' ) . '</label> ';

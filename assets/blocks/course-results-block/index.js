@@ -13,7 +13,7 @@ import edit from './course-results-edit';
 export default {
 	title: __( 'Course Results', 'sensei-lms' ),
 	description: __(
-		'Show course results to learners on the course completion page.',
+		'Show course results to students on the course completion page.',
 		'sensei-lms'
 	),
 	keywords: [

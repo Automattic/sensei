@@ -43,7 +43,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	function get_columns() {
 		$columns = array(
-			'title'     => __( 'Learner', 'sensei-lms' ),
+			'title'     => __( 'Student', 'sensei-lms' ),
 			'started'   => __( 'Date Started', 'sensei-lms' ),
 			'completed' => __( 'Date Completed', 'sensei-lms' ),
 			'status'    => __( 'Status', 'sensei-lms' ),
@@ -330,7 +330,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		esc_html_e( 'No learners found.', 'sensei-lms' );
+		esc_html_e( 'No students found.', 'sensei-lms' );
 	}
 
 	/**
@@ -340,7 +340,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<strong>' . esc_html__( 'Learners taking this Lesson', 'sensei-lms' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Students taking this Lesson', 'sensei-lms' ) . '</strong>';
 	}
 
 	/**
@@ -371,7 +371,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	public function search_button( $text = '' ) {
 
-		$text = __( 'Search Learners', 'sensei-lms' );
+		$text = __( 'Search Students', 'sensei-lms' );
 
 		return $text;
 

@@ -17,7 +17,7 @@ export default createButtonBlockType( {
 		title: __( 'Next Lesson', 'sensei-lms' ),
 		parent: [ 'sensei-lms/lesson-actions' ],
 		description: __(
-			'Enable a learner to move to the next lesson. This block is only displayed if the current lesson has been completed.',
+			'Enable a student to move to the next lesson. This block is only displayed if the current lesson has been completed.',
 			'sensei-lms'
 		),
 		keywords: [
