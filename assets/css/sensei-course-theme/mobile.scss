@@ -14,7 +14,7 @@
 	}
 
 	.sensei-course-theme {
-
+		--content-padding: 12px;
 		--header-height: 60px;
 
 		&--sidebar-open {
@@ -111,7 +111,8 @@
 
 		&__main-content {
 			flex: 1 !important;
-			margin: 12px !important;
+			margin-left: 0!important;
+
 			padding-bottom: 82px;
 			position: relative;
 		}

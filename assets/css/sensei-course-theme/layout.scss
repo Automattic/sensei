@@ -55,7 +55,7 @@
 	}
 
 	&__main-content {
-		padding: --content-padding;
+		padding: var(--content-padding);
 		margin-left: var(--sidebar-width) !important;
 
 		> * {
