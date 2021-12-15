@@ -1,0 +1,61 @@
+.sensei-course-theme-quiz-graded {
+	&__container {
+		border: 1px solid #DCDCDE;
+		background-color: #F6F7F7;
+		padding: 30px;
+		font-family: 'Inter', sans-serif;
+		margin-bottom: 40px;
+
+		.sensei-block-wrapper {
+			margin: 0;
+		}
+	}
+
+	&__title {
+		font-size: 30px;
+		font-weight: 700;
+		line-height: 1.2;
+		margin: 0;
+		margin-bottom: 6px;
+	}
+
+	&__message {
+		font-size: 16px;
+		line-height: 1.75;
+		margin: 0;
+		margin-bottom: 42px;
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 24px;
+	}
+
+	&__reset-quiz-button {
+		border: none;
+		color: #26212E;
+		background-color: transparent;
+		text-decoration: underline;
+		font-size: 14px;
+		line-height: 1.05;
+		font-weight: 600;
+		cursor: pointer;
+		&:hover {
+			color: var(--primary-color);
+		}
+	}
+
+	&__contact-teacher-link {
+		color: #26212E;
+		font-size: 14px;
+		line-height: 1.05;
+		font-weight: 600;
+		cursor: pointer;
+		&:hover {
+			color: var(--primary-color);
+		}
+	}
+}
