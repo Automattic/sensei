@@ -2785,13 +2785,34 @@ class Sensei_Course {
 	}
 
 	/**
+	 * If the course order drop down is changed.
+	 * In versions previous to 3.14.1 this method was hooked into pre_get_posts.
+	 *
+	 * @since      1.9.0
+	 * @deprecated 3.14.1
+	 * @param WP_Query $query WordPress query.
+	 * @return WP_Query
+	 */
+	public static function course_archive_order_by_title( $query ) {
+
+		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) )
+			 && 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
+			// Setup the order by title for this query.
+			$query->set( 'orderby', 'title' );
+			$query->set( 'order', 'ASC' );
+		}
+
+		return $query;
+	}
+
+	/**
 	 * Set the sorting options based on the query parameter and configuration in the Courses archive page.
 	 *
 	 * Hooked into pre_get_posts.
 	 *
-	 * @since 1.9.0
-	 * @param WP_Query $query
-	 * @return WP_Query $query
+	 * @since 3.14.1
+	 * @param WP_Query $query WordPress query.
+	 * @return WP_Query
 	 */
 	public static function course_archive_set_order_by( $query ) {
 
