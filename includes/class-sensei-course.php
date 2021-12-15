@@ -2829,7 +2829,9 @@ class Sensei_Course {
 			$order   = 'ASC';
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_REQUEST['course-orderby'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			$request_orderby = sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) );
 			switch ( $request_orderby ) {
 				case 'title':
