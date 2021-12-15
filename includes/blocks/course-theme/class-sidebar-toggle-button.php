@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Class Sidebar_Toggle_Button the back to lesson block in the quiz.
+ * A button to toggle the sidebar in mobile view.
  */
 class Sidebar_Toggle_Button {
 	/**
-	 * Quiz_Back_To_Lesson constructor.
+	 * Sidebar_Toggle_Button constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
@@ -42,6 +42,6 @@ class Sidebar_Toggle_Button {
 	public function render( array $attributes = [] ) : string {
 		$icon  = \Sensei()->assets->get_icon( 'menu' );
 		$label = __( 'Toggle course navigation', 'sensei-lms' );
-		return "<button class='sensei-course-theme__sidebar-toggle' onclick=\"sensei.courseTheme.toggleSidebar()\" title='{$label}'>{$icon}</button>";
+		return "<button class='sensei-course-theme__sidebar-toggle' onclick='sensei.courseTheme.toggleSidebar()' title='{$label}'>{$icon}</button>";
 	}
 }
