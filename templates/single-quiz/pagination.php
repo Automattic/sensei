@@ -24,8 +24,8 @@ global $sensei_question_loop;
 			/**
 			 * Filters the quiz questions paginate links arguments.
 			 *
-			 * @see https://developer.wordpress.org/reference/functions/paginate_links/
-			 * @hook sensei_add_comment_indexes
+			 * @see   https://developer.wordpress.org/reference/functions/paginate_links/
+			 * @hook  sensei_quiz_pagination_args
 			 * @since 3.15.0
 			 *
 			 * @param {array} $args The pagination arguments.
