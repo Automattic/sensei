@@ -6,8 +6,8 @@ body.sensei-course-theme {
 
 	.sensei-contact-teacher-form__submit {
 		padding: 10px 20px;
-		background-color: var(--sensei-course-theme-primary-color, $default-primary-color);
-		color: var(--sensei-course-theme-button-text-color, $default-primary-contrast-color);
+		background-color: var(--primary-color);
+		color: var(--primary-contrast-color);
 		font-weight: 700;
 		font-size: 14px;
 		&.is-busy {
