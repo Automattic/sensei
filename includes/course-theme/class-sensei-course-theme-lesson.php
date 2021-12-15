@@ -158,8 +158,27 @@ class Sensei_Course_Theme_Lesson {
 	private function maybe_add_not_enrolled_notice() {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-		$notices   = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
 
+		if ( Sensei_Course::is_user_enrolled( $course_id ) ) {
+			return;
+		}
+
+		$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+
+		// Course prerequisite notice.
+		if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
+			$notices->add_notice(
+				'locked_lesson',
+				Sensei()->course::get_course_prerequisite_message( $course_id ),
+				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+				[],
+				'lock'
+			);
+
+			return;
+		}
+
+		// Logged-out notice.
 		if ( ! is_user_logged_in() ) {
 			$user_can_register = get_option( 'users_can_register' );
 
@@ -195,33 +214,22 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
-			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
-				$notices->add_notice(
-					'locked_lesson',
-					Sensei()->course::get_course_prerequisite_message( $course_id ),
-					__( 'You don\'t have access to this lesson', 'sensei-lms' ),
-					[],
-					'lock'
-				);
-			} else {
-				$nonce   = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
-				$actions = [
-					'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
-						<input type="hidden" name="course_start" value="1" />
-						' . $nonce . '
-						<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
-					</form>',
-				];
+		// Not enrolled notice.
+		$nonce   = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
+		$actions = [
+			'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
+				<input type="hidden" name="course_start" value="1" />
+				' . $nonce . '
+				<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+			</form>',
+		];
 
-				$notices->add_notice(
-					'locked_lesson',
-					__( 'Please register for this course to access the content.', 'sensei-lms' ),
-					__( 'You don\'t have access to this lesson', 'sensei-lms' ),
-					$actions,
-					'lock'
-				);
-			}
-		}
+		$notices->add_notice(
+			'locked_lesson',
+			__( 'Please register for this course to access the content.', 'sensei-lms' ),
+			__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+			$actions,
+			'lock'
+		);
 	}
 }

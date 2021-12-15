@@ -78,9 +78,9 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Testing prerequisite notice.
+	 * Testing lesson prerequisite notice.
 	 */
-	public function testPrerequisiteNotice() {
+	public function testLessonPrerequisiteNotice() {
 		$course_id           = $this->factory->course->create();
 		$prerequisite_lesson = $this->factory->lesson->create_and_get();
 		$lesson              = $this->factory->lesson->create_and_get(
@@ -103,9 +103,9 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Testing ungraded prerequisite notice.
+	 * Testing ungraded lesson prerequisite notice.
 	 */
-	public function testUngradedPrerequisiteNotice() {
+	public function testUngradedLessonPrerequisiteNotice() {
 		$course_id           = $this->factory->course->create();
 		$prerequisite_lesson = $this->create_lesson_with_submitted_answers();
 		$lesson              = $this->factory->lesson->create_and_get(
@@ -125,6 +125,35 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
 		$this->assertRegExp( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
+	}
+
+	/**
+	 * Testing course prerequisite notice.
+	 */
+	public function testCoursePrerequisiteNotice() {
+		$prerequisite_course_id = $this->factory->course->create();
+		$course_id              = $this->factory->course->create(
+			[
+				'meta_input' => [
+					'_course_prerequisite' => $prerequisite_course_id,
+				],
+			]
+		);
+		$lesson                 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+		$GLOBALS['post']        = $lesson;
+
+		$this->login_as_student();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		$this->assertRegExp( '/You must first complete .* before taking this course./', $html, 'Should return course prerequisite notice' );
 	}
 
 	/**
