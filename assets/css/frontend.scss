@@ -371,6 +371,9 @@ a.sensei-certificate-link {
   }
 }
 
+/**
+ * Quiz Pagination
+ */
 #sensei-quiz-pagination {
 	display: flex;
 	flex-flow: column wrap;
@@ -398,9 +401,23 @@ a.sensei-certificate-link {
 			padding: 0;
 			list-style: none;
 
-			li, span {
+			li {
+				display: flex;
 				margin: 0;
 				padding: 0;
+			}
+
+			.page-numbers {
+				@include button-link;
+			}
+
+			span.page-numbers {
+				text-decoration: none;
+				cursor: inherit;
+
+				&.current {
+					font-weight: 500;
+				}
 			}
 		}
 	}
@@ -424,21 +441,7 @@ a.sensei-certificate-link {
 		}
 
 		button {
-			margin: 0;
-			padding: 0;
-			border: 0;
-			color: inherit;
-			background-color: transparent;
-			text-decoration: underline;
-			text-transform: none;
-			font-weight: normal;
-			cursor: pointer;
-
-			&:hover {
-				color: inherit;
-				background-color: transparent;
-				text-decoration: none;
-			}
+			@include button-link;
 		}
 	}
 
