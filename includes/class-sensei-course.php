@@ -2671,7 +2671,7 @@ class Sensei_Course {
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
 			array(
-				'default' => __( 'Sort by default', 'sensei-lms' ),
+				'default' => __( 'Default sort', 'sensei-lms' ),
 				'newness' => __( 'Sort by newest first', 'sensei-lms' ),
 				'title'   => __( 'Sort by title A-Z', 'sensei-lms' ),
 			)
