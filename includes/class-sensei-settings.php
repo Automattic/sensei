@@ -505,7 +505,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		// Learner Profile settings
-		$profile_url_base    = apply_filters( 'sensei_learner_profiles_url_base', __( 'student', 'sensei-lms' ) );
+		$profile_url_base    = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
 		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
 
 		$fields['learner_profile_enable'] = array(
