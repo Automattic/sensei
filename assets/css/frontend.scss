@@ -6,6 +6,7 @@
 /**
  * Variables
  */
+$tablet-breakpoint: 768px;
 
 /**
  * Functions
@@ -377,7 +378,7 @@ a.sensei-certificate-link {
 	gap: 1.5em;
 	margin: 1.618em 0;
 
-	@media only screen and (min-width: 768px) {
+	@media only screen and (min-width: $tablet-breakpoint) {
 		flex-direction: row;
 	}
 
@@ -386,7 +387,7 @@ a.sensei-certificate-link {
 		gap: 0.5em;
 		margin-bottom: 1em;
 
-		@media only screen and (min-width: 768px) {
+		@media only screen and (min-width: $tablet-breakpoint) {
 			margin-bottom: 0;
 		}
 
@@ -408,7 +409,7 @@ a.sensei-certificate-link {
 		display: flex;
 		order: 1;
 
-		@media only screen and (min-width: 768px) {
+		@media only screen and (min-width: $tablet-breakpoint) {
 			order: 0;
 		}
 	}
@@ -445,7 +446,7 @@ a.sensei-certificate-link {
 		display: flex;
 		align-items: center;
 
-		@media only screen and (min-width: 768px) {
+		@media only screen and (min-width: $tablet-breakpoint) {
 			margin-left: auto;
 		}
 
@@ -1144,7 +1145,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   }
 
 /* RESPOND */
-@media only screen and (min-width: 768px)  {
+@media only screen and (min-width: $tablet-breakpoint)  {
   #main .course  {
     .course-meta  {
       .course-start  {
