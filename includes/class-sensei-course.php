@@ -2786,10 +2786,10 @@ class Sensei_Course {
 
 	/**
 	 * If the course order drop down is changed.
-	 * In versions previous to 3.14.1 this method was hooked into pre_get_posts.
+	 * In versions previous to 3.15.0 this method was hooked into pre_get_posts.
 	 *
 	 * @since      1.9.0
-	 * @deprecated 3.14.1
+	 * @deprecated 3.15.0
 	 * @param WP_Query $query WordPress query.
 	 * @return WP_Query
 	 */
@@ -2810,7 +2810,7 @@ class Sensei_Course {
 	 *
 	 * Hooked into pre_get_posts.
 	 *
-	 * @since 3.14.1
+	 * @since 3.15.0
 	 * @param WP_Query $query WordPress query.
 	 * @return WP_Query
 	 */
