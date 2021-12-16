@@ -47,7 +47,7 @@ class Course_Progress_Bar {
 
 		return sprintf(
 			'<div class="sensei-course-theme-course-progress-bar">
-				<div class="sensei-course-theme-course-progress-bar-inner" style="width: %f%%;" data-completed="%d" data-count="%d"></div>
+				<div class="sensei-course-theme-course-progress-bar-inner" style="width: %s%%;" data-completed="%d" data-count="%d"></div>
 			</div>',
 			$stats['completed_lessons_percentage'],
 			$stats['completed_lessons_count'],
