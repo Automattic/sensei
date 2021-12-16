@@ -16,7 +16,7 @@ global $sensei_question_loop;
 
 ?>
 
-<div class="sensei-quiz-pagination">
+<div id="sensei-quiz-pagination">
 	<div class="sensei-quiz-pagination__list">
 		<?php
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination links.
@@ -49,7 +49,7 @@ global $sensei_question_loop;
 
 	<div class="sensei-quiz-pagination__actions">
 		<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
-			<div class="sensei-quiz-pagination__button-link">
+			<div class="sensei-quiz-pagination__action">
 				<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
 					<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
 				</button>
@@ -58,7 +58,7 @@ global $sensei_question_loop;
 			</div>
 		<?php endif ?>
 
-		<div class="sensei-quiz-pagination__button-link">
+		<div class="sensei-quiz-pagination__action">
 			<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
 				<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
 			</button>
