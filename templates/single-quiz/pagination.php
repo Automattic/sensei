@@ -47,25 +47,27 @@ global $sensei_question_loop;
 		?>
 	</div>
 
-	<div class="sensei-quiz-pagination__actions">
-		<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
+	<?php if ( $can_take_quiz ) : ?>
+		<div class="sensei-quiz-pagination__actions">
+			<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
+				<div class="sensei-quiz-pagination__action">
+					<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
+						<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
+					</button>
+
+					<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+				</div>
+			<?php endif ?>
+
 			<div class="sensei-quiz-pagination__action">
-				<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
-					<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
+				<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
+					<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
 				</button>
 
-				<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+				<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
 			</div>
-		<?php endif ?>
-
-		<div class="sensei-quiz-pagination__action">
-			<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
-				<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
-			</button>
-
-			<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
 		</div>
-	</div>
+	<?php endif ?>
 
 	<div class="sensei-quiz-pagination__nav">
 		<div class="wp-block-buttons">
@@ -80,15 +82,7 @@ global $sensei_question_loop;
 				</div>
 			<?php endif ?>
 
-			<?php if ( $sensei_question_loop['current_page'] === $sensei_question_loop['total_pages'] ) : ?>
-				<div class="wp-block-button">
-					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
-						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
-					</button>
-
-					<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
-				</div>
-			<?php else : ?>
+			<?php if ( $sensei_question_loop['current_page'] < $sensei_question_loop['total_pages'] ) : ?>
 				<div class="wp-block-button">
 					<a
 						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
@@ -96,6 +90,14 @@ global $sensei_question_loop;
 					>
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
 					</a>
+				</div>
+			<?php elseif ( $can_take_quiz ) : ?>
+				<div class="wp-block-button">
+					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
+						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
+					</button>
+
+					<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
 				</div>
 			<?php endif ?>
 		</div>

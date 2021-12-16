@@ -1344,15 +1344,10 @@ class Sensei_Quiz {
 		$sensei_question_loop['total_pages']    = 1;
 
 		$quiz_id             = get_the_ID();
-		$pagination_settings = [];
-
-		// Paginate the questions only if the user is taking the quiz.
-		if ( self::can_take_quiz( $quiz_id ) ) {
-			$pagination_settings = json_decode(
-				get_post_meta( $quiz_id, '_pagination', true ),
-				true
-			);
-		}
+		$pagination_settings = json_decode(
+			get_post_meta( $quiz_id, '_pagination', true ),
+			true
+		);
 
 		if ( ! empty( $pagination_settings['pagination_number'] ) ) {
 			$sensei_question_loop['posts_per_page'] = (int) $pagination_settings['pagination_number'];
@@ -1478,7 +1473,12 @@ class Sensei_Quiz {
 		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_buttons' ), 10 );
 
 		// Load the pagination template.
-		Sensei_Templates::get_template( 'single-quiz/pagination.php' );
+		Sensei_Templates::get_template(
+			'single-quiz/pagination.php',
+			[
+				'can_take_quiz' => self::can_take_quiz(),
+			]
+		);
 
 	}
 
