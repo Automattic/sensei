@@ -5,6 +5,7 @@
 
 .sensei-course-theme-lesson-completion-notice {
 	position: fixed;
+	z-index: 1;
 	height: calc(100vh - var(--full-header-height));
 	left: var(--sidebar-width);
 	right: 0;
