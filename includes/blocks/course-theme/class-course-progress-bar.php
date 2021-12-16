@@ -43,13 +43,15 @@ class Course_Progress_Bar {
 			return '';
 		}
 
-		$stats = \Sensei()->course->get_progress_stats( $course_id );
+		$stats = Sensei()->course->get_progress_stats( $course_id );
 
 		return sprintf(
 			'<div class="sensei-course-theme-course-progress-bar">
-				<div class="sensei-course-theme-course-progress-bar-inner" style="width: %f%%;"></div>
+				<div class="sensei-course-theme-course-progress-bar-inner" style="width: %f%%;" data-completed="%d" data-count="%d"></div>
 			</div>',
-			$stats['completed_lessons_percentage']
+			$stats['completed_lessons_percentage'],
+			$stats['completed_lessons_count'],
+			$stats['lessons_count']
 		);
 	}
 }
