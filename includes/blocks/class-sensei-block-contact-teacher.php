@@ -114,7 +114,7 @@ class Sensei_Block_Contact_Teacher {
 				<button class="sensei-contact-teacher-form__submit">' . esc_html__( 'Send Message', 'sensei-lms' ) . '</button>
 				</p>
 				<div class="sensei-contact-teacher-success">
-					<svg><use xlink:href="#sensei-contact-teacher-success"></use></svg>
+					' . Sensei()->assets->get_icon( 'check-circle' ) . '
 					<p>' . __( 'Your message has been sent', 'sensei-lms' ) . '</p>
 				</div>
 			</form>';

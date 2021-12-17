@@ -60,10 +60,7 @@ body.sensei-course-theme {
 			width: 42px;
 			height: 42px;
 			margin-bottom: 20px;
-			* {
-				stroke: #30968B;
-				stroke-width: 1.5;
-			}
+			color: var(--primary-color);
 		}
 
 		p {

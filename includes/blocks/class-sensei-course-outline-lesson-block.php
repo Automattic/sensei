@@ -43,19 +43,18 @@ class Sensei_Course_Outline_Lesson_Block {
 			';
 		}
 
-		$draft = ( ! empty( $block['draft'] ) ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
+		$draft              = ( ! empty( $block['draft'] ) ? '<em>' . esc_html__( '(Draft)', 'sensei-lms' ) . '</em>' : '' );
+		$checked_icon_class = 'wp-block-sensei-lms-course-outline-lesson__status';
 
 		return '
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" ' . Sensei_Block_Helpers::render_style_attributes( $classes, $css ) . '>
-				<svg class="wp-block-sensei-lms-course-outline-lesson__status">
-					' . ( $completed ? '<use xlink:href="#sensei-checked"></use>' : '' ) . '
-				</svg>
+				' . ( $completed ? Sensei()->assets->get_icon( 'checked', $checked_icon_class ) : '<svg class="' . $checked_icon_class . '"></svg>' ) . '
 				<span>
 					' . esc_html( $block['title'] ) . '
 					' . $draft . '
 				</span>
 				' . $preview_badge . '
-				<svg class="wp-block-sensei-lms-course-outline-lesson__chevron"><use xlink:href="#sensei-chevron-right"></use></svg>
+				' . Sensei()->assets->get_icon( 'chevron-right', 'wp-block-sensei-lms-course-outline-lesson__chevron' ) . '
 			</a>
 		';
 	}
