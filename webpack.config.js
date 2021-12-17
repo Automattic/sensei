@@ -4,6 +4,7 @@
 const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
+const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 
 /**
@@ -125,6 +126,17 @@ function getWebpackConfig( env, argv ) {
 				),
 				ignoreSrcPattern: /^node_modules/,
 				baseDist,
+			} ),
+			new SVGSpritemapPlugin( 'assets/images/svg-icons/**/*.svg', {
+				output: {
+					filename: 'images/svg-icons/sensei-sprite.svg',
+				},
+				sprite: {
+					generate: {
+						title: false,
+					},
+					prefix: 'sensei-sprite-',
+				},
 			} ),
 		],
 	};
