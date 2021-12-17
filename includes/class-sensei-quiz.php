@@ -1694,7 +1694,36 @@ class Sensei_Quiz {
 
 		$questions_query = new WP_Query( $question_query_args );
 
-		return $questions_query->posts;
+		$posts     = $questions_query->posts;
+
+		$questions = array();
+		foreach ( $posts as $post ) {
+			$question_id   = $post->ID;
+			$question_type = Sensei()->question->get_question_type( $question_id );
+			if ( 'multiple-choice' === $question_type ) {
+				$right_answers = get_post_meta( $question_id, '_question_right_answer', true );
+				$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
+				if ( !is_array($right_answers) || count( $right_answers ) < 1 || !is_array($wrong_answers) || count( $wrong_answers ) < 1 ) {
+					if ( ! empty( $attributes['preview_drafts'] ) ) {
+						Sensei()->notices->add_notice( __( 'Multiple options question not valid', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
+					}
+					continue;
+				}
+				array_push( $questions, $post );
+			}
+			if ( 'gap-fill' === $question_type ) {
+				$gapfill_array = explode( '||', get_post_meta( $question_id, '_question_right_answer', true ) );
+				$text_before   = $gapfill_array[0] ?? '';
+				$answer_text   = $gapfill_array[1] ?? '';
+				$text_after    = $gapfill_array[2] ?? '';
+				if ( '' === $answer_text || ( '' === $text_before && '' === $text_after ) ) {
+					Sensei()->notices->add_notice( __( 'Multiple options question not valid', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
+					continue;
+				}
+				array_push( $questions, $post );
+			}
+		}
+		return $questions;
 	}
 
 	/**
