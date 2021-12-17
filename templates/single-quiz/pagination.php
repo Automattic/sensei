@@ -14,7 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $sensei_question_loop;
 
-$sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
+$sensei_is_quiz_available = Sensei_Quiz::is_available();
+$sensei_can_take_quiz     = Sensei_Quiz::can_take_quiz();
+$sensei_is_reset_allowed  = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
+$sensei_has_actions       = $sensei_can_take_quiz || $sensei_is_reset_allowed;
 
 ?>
 
@@ -55,9 +58,9 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 		?>
 	</div>
 
-	<?php if ( $sensei_can_take_quiz ) : ?>
+	<?php if ( $sensei_is_quiz_available && $sensei_has_actions ) : ?>
 		<div class="sensei-quiz-pagination__actions">
-			<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
+			<?php if ( $sensei_is_reset_allowed ) : ?>
 				<div class="sensei-quiz-pagination__action">
 					<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
 						<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
@@ -67,13 +70,15 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 				</div>
 			<?php endif ?>
 
-			<div class="sensei-quiz-pagination__action">
-				<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
-					<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
-				</button>
+			<?php if ( $sensei_can_take_quiz ) : ?>
+				<div class="sensei-quiz-pagination__action">
+					<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
+						<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
+					</button>
 
-				<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-			</div>
+					<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+				</div>
+			<?php endif ?>
 		</div>
 	<?php endif ?>
 

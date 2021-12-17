@@ -134,10 +134,10 @@ class Sensei_Quiz {
 	 * Get the lesson this quiz belongs to.
 	 *
 	 * @since 1.7.2
-	 * @param int $quiz_id Quiz ID.
+	 * @param int|null $quiz_id (Optional) The quiz post ID. Defaults to the current post ID.
 	 * @return int|bool Lesson ID or false if not found.
 	 */
-	public function get_lesson_id( $quiz_id ) {
+	public function get_lesson_id( $quiz_id = null ) {
 
 		if ( empty( $quiz_id ) || ! intval( $quiz_id ) > 0 ) {
 			global $post;
@@ -1336,7 +1336,10 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Check if the user is allowed to take the quiz.
+	 * Check if the quiz is available to the user.
+	 *
+	 * The quiz becomes available to the user if he is enrolled to the course
+	 * and has completed the prerequisite (if any).
 	 *
 	 * @since 3.15.0
 	 *
@@ -1345,7 +1348,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_available( int $quiz_id = null, int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1370,6 +1373,31 @@ class Sensei_Quiz {
 		) {
 			return false;
 		}
+
+		return true;
+
+	}
+
+	/**
+	 * Check if the user is allowed to take the quiz.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int|null $quiz_id (Optional) The quiz post ID. Defaults to the current post ID.
+	 * @param int|null $user_id (Optional) The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
+	public static function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
+
+		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! self::is_available( $quiz_id, $user_id ) ) {
+			return false;
+		}
+
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
 		// Check the lesson status.
 		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
@@ -1609,13 +1637,16 @@ class Sensei_Quiz {
 	 */
 	public static function action_buttons() {
 
-		$quiz_id   = get_the_ID();
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		if ( ! self::is_available() ) {
+			return;
+		}
 
-		$can_take_quiz  = self::can_take_quiz( $quiz_id );
-		$can_reset_quiz = self::is_reset_allowed( $lesson_id );
+		$lesson_id        = Sensei()->quiz->get_lesson_id();
+		$can_take_quiz    = self::can_take_quiz();
+		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
+		$has_actions      = $can_take_quiz || $is_reset_allowed;
 
-		if ( ! $can_take_quiz && ! $can_reset_quiz ) {
+		if ( ! $has_actions ) {
 			return;
 		}
 
@@ -1641,7 +1672,7 @@ class Sensei_Quiz {
 				</div>
 			<?php endif ?>
 
-			<?php if ( $can_reset_quiz ) : ?>
+			<?php if ( $is_reset_allowed ) : ?>
 				<div class="wp-block-button is-style-outline">
 					<button type="submit" name="quiz_reset" class="wp-block-button__link button quiz-submit reset sensei-stop-double-submission">
 						<?php esc_attr_e( 'Reset Quiz', 'sensei-lms' ); ?>
