@@ -138,15 +138,19 @@ class Sensei_Course_Theme_Option {
 
 		$course_id = \Sensei_Utils::get_current_course();
 
-		if ( null === $course_id ) {
+		if ( empty( $course_id ) ) {
 			return false;
 		}
 
-		if ( ! $this->has_sensei_theme_enabled( $course_id ) ) {
-			return false;
+		if ( Sensei_Course_Theme::is_sensei_theme_preview_mode( $course_id ) ) {
+			return true;
 		}
 
-		return true;
+		if ( self::has_sensei_theme_enabled( $course_id ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -156,7 +160,7 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @return bool
 	 */
-	public function has_sensei_theme_enabled( int $course_id ) {
+	public static function has_sensei_theme_enabled( int $course_id ) {
 
 		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 

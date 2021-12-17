@@ -1,0 +1,27 @@
+.sensei-course-theme-toggle {
+	margin-bottom: 20px;
+
+	.components-base-control__field {
+		align-items: flex-start;
+	}
+
+	&__label {
+		margin-bottom: 2px;
+	}
+
+	&__description {
+		color: #757575;
+		margin-bottom: 6px;
+	}
+
+	&__preview {
+		margin-bottom: 0;
+	}
+
+	&__note {
+		margin-bottom: 13px;
+	}
+	&__customize {
+		margin-bottom: 0;
+	}
+}

@@ -24,6 +24,11 @@ class Sensei_Course_Theme {
 	const QUERY_VAR = 'learn';
 
 	/**
+	 * Course theme preview query var.
+	 */
+	const PREVIEW_QUERY_VAR = 'sensei_theme_preview';
+
+	/**
 	 * Directory for the course theme.
 	 */
 	const THEME_NAME = 'sensei-course-theme';
@@ -246,5 +251,35 @@ class Sensei_Course_Theme {
 			$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
 			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
 		}
+	}
+
+	/**
+	 * Tells if sensei theme is in preview mode.
+	 *
+	 * @param int $course_id The id of the course.
+	 *
+	 * @return bool
+	 */
+	public static function is_sensei_theme_preview_mode( $course_id ) {
+		// Do not allow sensei preview if not an administrator.
+		if ( ! in_array( 'administrator', wp_get_current_user()->roles, true ) ) {
+			return false;
+		}
+
+		// Do not allow sensei preview if it is not a course related page.
+		$course_id = intval( \Sensei_Utils::get_current_course() );
+		if ( ! $course_id ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The user is administrator at this point. No need.
+		$query_var = isset( $_GET[ self::PREVIEW_QUERY_VAR ] ) ? intval( $_GET[ self::PREVIEW_QUERY_VAR ] ) : 0;
+
+		// Do not allow sensei preview if requested course id does not match.
+		if ( ! $course_id || $query_var !== $course_id ) {
+			return false;
+		}
+
+		return true;
 	}
 }

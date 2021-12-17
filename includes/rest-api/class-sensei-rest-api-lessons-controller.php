@@ -26,6 +26,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
 		$this->init_post_meta();
+		add_filter( 'rest_lesson_query', [ $this, 'filter_lesson_meta_args' ] );
 	}
 
 	/**
@@ -138,5 +139,14 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		}
 
 		return $prepared;
+	}
+
+	/**
+	 * Handle meta args.
+	 *
+	 * @param array $args The args.
+	 */
+	public function filter_lesson_meta_args( $args ) {
+		return $args;
 	}
 }
