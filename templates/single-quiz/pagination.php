@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $sensei_question_loop;
 
+$sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
+
 ?>
 
 <div id="sensei-quiz-pagination">
@@ -47,7 +49,7 @@ global $sensei_question_loop;
 		?>
 	</div>
 
-	<?php if ( $can_take_quiz ) : ?>
+	<?php if ( $sensei_can_take_quiz ) : ?>
 		<div class="sensei-quiz-pagination__actions">
 			<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
 				<div class="sensei-quiz-pagination__action">
@@ -91,7 +93,7 @@ global $sensei_question_loop;
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
 					</a>
 				</div>
-			<?php elseif ( $can_take_quiz ) : ?>
+			<?php elseif ( $sensei_can_take_quiz ) : ?>
 				<div class="wp-block-button">
 					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
 						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>

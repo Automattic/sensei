@@ -1241,7 +1241,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	private static function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
+	public static function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1473,12 +1473,7 @@ class Sensei_Quiz {
 		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_buttons' ), 10 );
 
 		// Load the pagination template.
-		Sensei_Templates::get_template(
-			'single-quiz/pagination.php',
-			[
-				'can_take_quiz' => self::can_take_quiz(),
-			]
-		);
+		Sensei_Templates::get_template( 'single-quiz/pagination.php' );
 
 	}
 
