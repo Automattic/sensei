@@ -395,7 +395,6 @@ class Sensei_Quiz {
 
 		// only respond to valid quiz completion submissions
 		if ( ! isset( $_POST['quiz_complete'] )
-			|| empty( $_POST['sensei_question'] )
 			|| ! isset( $_POST['woothemes_sensei_complete_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
 			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_complete_quiz_nonce'] ), 'woothemes_sensei_complete_quiz_nonce' ) ) {
@@ -407,11 +406,18 @@ class Sensei_Quiz {
 		$user_id   = get_current_user_id();
 
 		$answers = $this->parse_form_answers(
-			$_POST['sensei_question'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			$lesson_id,
 			$user_id
 		);
+
+		// Make sure there is at least one answer.
+		if ( empty( array_filter( $answers ) ) ) {
+			Sensei()->frontend->messages = '<div class="sensei-message alert">' . __( 'Please, answer at least one question.', 'sensei-lms' ) . '</div>';
+
+			return;
+		}
 
 		self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id );
 
