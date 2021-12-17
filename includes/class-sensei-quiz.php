@@ -436,25 +436,28 @@ class Sensei_Quiz {
 
 		if (
 			! isset( $_POST['quiz_target_page'] )
-			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
+			|| ! isset( $_POST['woothemes_sensei_quiz_page_change_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' )
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_quiz_page_change_nonce'] ), 'woothemes_sensei_quiz_page_change_nonce' )
 		) {
 			return;
 		}
 
-		$quiz_id   = get_the_ID();
-		$lesson_id = $this->get_lesson_id( $quiz_id );
-		$user_id   = get_current_user_id();
+		$quiz_id = get_the_ID();
+		$user_id = get_current_user_id();
 
-		$answers = $this->parse_form_answers(
-			$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$lesson_id,
-			$user_id
-		);
+		if ( self::can_take_quiz( $quiz_id, $user_id ) ) {
+			$lesson_id = $this->get_lesson_id( $quiz_id );
 
-		self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
+			$answers = $this->parse_form_answers(
+				$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				$lesson_id,
+				$user_id
+			);
+
+			self::save_user_answers( $answers, $_FILES, $lesson_id, $user_id );
+		}
 
 		// Redirect to the target page.
 		wp_safe_redirect(

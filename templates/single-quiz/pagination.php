@@ -19,6 +19,8 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 ?>
 
 <div id="sensei-quiz-pagination">
+	<input type="hidden" name="woothemes_sensei_quiz_page_change_nonce" id="woothemes_sensei_quiz_page_change_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_quiz_page_change_nonce' ) ); ?>" />
+
 	<div class="sensei-quiz-pagination__list">
 		<?php
 
