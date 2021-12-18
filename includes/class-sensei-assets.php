@@ -269,7 +269,7 @@ class Sensei_Assets {
 	 * @return string The icon href.
 	 */
 	private function get_icon_href( string $name ) : string {
-		$sprite_file = $this->plugin_url . 'assets/dist/images/svg-icons/sensei-sprite.svg';
+		$sprite_file = $this->plugin_url . 'assets/dist/images/svg-icons/sensei-sprite.svg?v=' . $this->version;
 
 		return "{$sprite_file}#sensei-sprite-{$name}";
 	}
