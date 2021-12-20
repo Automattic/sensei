@@ -88,7 +88,7 @@ class Sensei_WCCOM_Connect_Notice {
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<?php
 				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returning svg only.
-				echo Sensei()->assets->get_icon( 'sensei', 'sensei-notice__icon' )
+				echo Sensei()->assets->get_icon( 'sensei', 'sensei-notice__icon' );
 			?>
 			<div class='sensei-notice__wrapper'>
 				<p class='sensei-notice__content'>
