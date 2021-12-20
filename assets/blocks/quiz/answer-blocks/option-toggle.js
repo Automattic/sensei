@@ -4,9 +4,9 @@
 import classnames from 'classnames';
 
 /**
- * Internal dependencies
+ * WordPress dependencies
  */
-import { checked } from '../../../icons/wordpress-icons';
+import { check } from '@wordpress/icons';
 
 export const OptionToggle = ( {
 	className,
@@ -28,7 +28,7 @@ export const OptionToggle = ( {
 				{ 'is-checked': isChecked, 'is-checkbox': isCheckbox }
 			) }
 		>
-			{ isChecked && isCheckbox && checked }
+			{ isChecked && isCheckbox && check }
 		</div>
 		{ children }
 	</div>
