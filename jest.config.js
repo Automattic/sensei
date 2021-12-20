@@ -9,4 +9,7 @@ module.exports = {
 		'<rootDir>/assets/dist/',
 		'<rootDir>/tests/e2e/',
 	],
+	moduleNameMapper: {
+		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
+	},
 };
