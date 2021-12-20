@@ -95,6 +95,17 @@ function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
 	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
 
+	// Handle SVG images only in CSS files.
+	webpackConfig.module.rules[ 3 ].test = /\.(?:gif|jpg|jpeg|png)$/i;
+	webpackConfig.module.rules = [
+		...webpackConfig.module.rules,
+		{
+			...webpackConfig.module.rules[ 3 ],
+			issuer: /\.(sc|sa|c)ss$/,
+			test: /\.svg$/,
+		},
+	];
+
 	return {
 		...webpackConfig,
 		context: path.resolve( __dirname, 'assets' ),
@@ -115,6 +126,11 @@ function getWebpackConfig( env, argv ) {
 						filename: '[path][name]-[contenthash].[ext]',
 						publicPath: '../',
 					},
+				},
+				{
+					test: /\.svg$/,
+					issuer: /\.[jt]sx?$/,
+					use: [ '@svgr/webpack' ],
 				},
 			],
 		},
