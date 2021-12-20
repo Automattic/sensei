@@ -4,10 +4,11 @@
 import { Notice, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
-import { alert } from '../../../icons/wordpress-icons';
+import AlertIcon from '../../../images/svg-icons/alert.svg';
 
 /**
  * Display a notice about the question being shared across quizzes.
@@ -63,10 +64,7 @@ export const BlockValidationNotice = ( { errors = [] } ) => {
 			status="warning"
 			className="sensei-lms-block-validation-notice"
 		>
-			<Icon
-				icon={ alert }
-				className="sensei-lms-block-validation-notice__icon"
-			/>
+			<AlertIcon className="sensei-lms-block-validation-notice__icon" />
 			{ error }
 		</Notice>
 	);
