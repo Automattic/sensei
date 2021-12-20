@@ -10,7 +10,7 @@ import Single from './single';
 import Multiple from './multiple';
 import UpdateAvailable from './update-available';
 import { Col } from '../grid';
-import updateIcon from '../../icons/update-icon';
+import UpdateIcon from '../../images/svg-icons/update.svg';
 import { useDispatch } from '@wordpress/data';
 import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
 
@@ -51,7 +51,7 @@ const UpdateNotification = ( { extensions } ) => {
 		actionProps = {
 			children: __( 'Updating…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
-			icon: updateIcon,
+			icon: UpdateIcon,
 			disabled: true,
 			...actionProps,
 		};

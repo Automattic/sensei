@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
  */
 import edit from './learner-courses-edit';
 import metadata from './block.json';
-import { LearnerCoursesIcon as icon } from '../../icons';
+import icon from '../../images/svg-icons/learner-courses.svg';
 
 export default {
 	title: __( 'Student Courses', 'sensei-lms' ),

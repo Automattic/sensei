@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import edit from './question-edit';
 import deprecated from './question-deprecated';
 import metadata from './block.json';
-import icon from '../../../icons/question-icon';
+import icon from '../../../images/svg-icons/question.svg';
 
 /**
  * Quiz question block definition.

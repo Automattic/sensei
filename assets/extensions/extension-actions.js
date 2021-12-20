@@ -10,7 +10,7 @@ import { Button } from '@wordpress/components';
  */
 import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
-import updateIcon from '../icons/update-icon';
+import UpdateIcon from '../images/svg-icons/update.svg';
 import { logEvent } from '../shared/helpers/log-event';
 import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
 
@@ -66,7 +66,7 @@ export const useExtensionActions = ( extension ) => {
 		actionProps = {
 			children: __( 'In progress…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
-			icon: updateIcon,
+			icon: UpdateIcon,
 			disabled: true,
 			...actionProps,
 		};

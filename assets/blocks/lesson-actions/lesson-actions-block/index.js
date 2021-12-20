@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import edit from './lesson-actions-edit';
 import save from './lesson-actions-save';
-import ButtonsIcon from '../../../images/svg-icons/buttons.svg';
+import icon from '../../../images/svg-icons/buttons.svg';
 
 export default {
 	title: __( 'Lesson Actions', 'sensei-lms' ),
@@ -33,7 +33,7 @@ export default {
 		],
 	},
 	...metadata,
-	icon: <ButtonsIcon />,
+	icon,
 	edit,
 	save,
 };

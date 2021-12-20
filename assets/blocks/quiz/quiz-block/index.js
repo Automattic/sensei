@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import icon from '../../../icons/quiz-icon';
+import icon from '../../../images/svg-icons/quiz.svg';
 import edit from './quiz-edit';
 import metadata from './block.json';
 
