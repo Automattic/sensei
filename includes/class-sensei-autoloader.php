@@ -72,6 +72,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 			new Sensei_Autoloader_Bundle( 'blocks' ),
 			new Sensei_Autoloader_Bundle( 'course-theme' ),
+			new Sensei_Autoloader_Bundle( 'course-video' ),
 		);
 
 		// Add Sensei custom auto loader.

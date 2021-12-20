@@ -4,26 +4,14 @@
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
-import { useEntityProp } from '@wordpress/core-data';
+
+/**
+ * Internal dependencies
+ */
+import useCourseMeta from '../../react-hooks/use-course-meta';
 
 const SENSEI_THEME = 'sensei-theme';
 const WORDPRESS_THEME = 'wordpress-theme';
-
-/**
- * A hook that provides a value from course meta and a setter for that value.
- *
- * @param {string} metaName The name of the meta.
- *
- * @return {Array} An array containing the value and the setter.
- */
-const useCourseMeta = ( metaName ) => {
-	const [ meta, setMeta ] = useEntityProp( 'postType', 'course', 'meta' );
-
-	const value = meta[ metaName ];
-	const setter = ( newValue ) => setMeta( { [ metaName ]: newValue } );
-
-	return [ value, setter ];
-};
 
 /**
  * Course Theme Sidebar component.

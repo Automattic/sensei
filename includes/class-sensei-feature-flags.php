@@ -53,9 +53,10 @@ class Sensei_Feature_Flags {
 		return apply_filters(
 			'sensei_default_feature_flag_settings',
 			[
-				'enrolment_provider_tooltip' => false,
-				'course_theme'               => false,
-				'quiz_pagination'            => false,
+				'enrolment_provider_tooltip'     => false,
+				'course_theme'                   => false,
+				'quiz_pagination'                => false,
+				'video_based_course_progression' => false,
 			]
 		);
 	}
