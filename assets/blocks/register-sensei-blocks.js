@@ -6,7 +6,7 @@ import { registerBlockType, updateCategory } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import { SenseiIcon } from '../icons';
+import SenseiIcon from '../images/svg-icons/sensei.svg';
 
 /**
  * Register Sensei blocks.
@@ -15,7 +15,7 @@ import { SenseiIcon } from '../icons';
  */
 const registerSenseiBlocks = ( blocks ) => {
 	updateCategory( 'sensei-lms', {
-		icon: SenseiIcon( { width: '20', height: '20' } ),
+		icon: <SenseiIcon width="20" height="20" />,
 	} );
 
 	blocks.forEach( ( block ) => {
