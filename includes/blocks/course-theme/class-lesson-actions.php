@@ -45,7 +45,8 @@ class Lesson_Actions {
 		$disabled_attribute = $is_disabled ? 'disabled' : '';
 
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
-		$permalink = esc_url( get_permalink() );
+		$lesson_id = Sensei_Utils::get_current_lesson();
+		$permalink = esc_url( get_permalink( $lesson_id ) );
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
 
 		return ( '
