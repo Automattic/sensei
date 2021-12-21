@@ -10,7 +10,7 @@ import { createBlock } from '@wordpress/blocks';
 import edit from './conditional-content-edit';
 import save from './conditional-content-save';
 import metadata from './block.json';
-import icon from '../../icons/conditional-content-icon';
+import icon from '../../images/svg-icons/conditional-content.svg';
 
 export default {
 	title: __( 'Conditional Content', 'sensei-lms' ),

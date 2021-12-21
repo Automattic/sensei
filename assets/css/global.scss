@@ -22,8 +22,6 @@ $sensei-notice-icon-width: 30px;
 	min-height: 40px;
 
 	&__icon {
-		background: url( '../images/sensei.svg' ) no-repeat;
-		background-size: contain;
 		flex: 0 0 auto;
 		margin-top: 0.5em;
 		width: $sensei-notice-icon-width;

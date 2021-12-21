@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import quizIcon from '../../../icons/quiz-icon';
+import QuizIcon from '../../../images/svg-icons/quiz.svg';
 import questionBlock from '../question-block';
 import categoryQuestionBlock from '../category-question-block';
 import { useNextQuestionIndex } from './next-question-index';
@@ -42,12 +42,12 @@ const QuizAppender = ( { clientId, openModal } ) => {
 		},
 		{
 			title: __( 'Category Question(s)', 'sensei-lms' ),
-			icon: quizIcon,
+			icon: QuizIcon,
 			onClick: () => addNewQuestionBlock( categoryQuestionBlock ),
 		},
 		{
 			title: __( 'Existing Question(s)', 'sensei-lms' ),
-			icon: quizIcon,
+			icon: QuizIcon,
 			onClick: openModal,
 		},
 	];

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { LessonPropertiesIcon as icon } from '../../icons';
+import icon from '../../images/svg-icons/lesson-properties.svg';
 import metadata from './block.json';
 import edit from './lesson-properties-edit';
 

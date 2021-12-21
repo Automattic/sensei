@@ -259,57 +259,34 @@ class Sensei_Assets {
 	}
 
 	/**
-	 * Gets the contents of the icon file at assets/images/<name>.svg
-	 * for the given name. Or empty string if file not found.
+	 * Gets the href to the file at assets/images/svg-icons/<name>.svg
+	 * inside a generated sprite.
 	 *
-	 * @since 3.13.4
+	 * @since 3.15.0
 	 *
-	 * @param string $name The name of the icon file at "assets/images/<name>.svg".
-	 * @return string The icon markup.
+	 * @param string $name The name of the icon file at "assets/images/svg-icons/<name>.svg".
+	 *
+	 * @return string The icon href.
 	 */
-	public function get_icon( string $name = '' ) {
-		$dir     = realpath( $this->plugin_path . './assets/images' );
-		$file    = "{$dir}/{$name}.svg";
-		$content = '';
+	private function get_icon_href( string $name ) : string {
+		$sprite_file = $this->plugin_url . 'assets/dist/images/svg-icons/sensei-sprite.svg?v=' . $this->version;
 
-		// Read file inside try/catch in case the
-		// icon file is not there.
-		try {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-			$content = file_get_contents( $file );
-		} catch ( Exception $e ) {
-			$content = false;
-		}
+		return "{$sprite_file}#sensei-sprite-{$name}";
+	}
 
-		if ( false !== $content ) {
-			return wp_kses(
-				$content,
-				[
-					'svg'    => [
-						'width'   => true,
-						'height'  => true,
-						'fill'    => true,
-						'viewbox' => true,
-						'xmlns'   => true,
-					],
-					'path'   => [
-						'clip-rule'    => true,
-						'fill-rule'    => true,
-						'd'            => true,
-						'fill'         => true,
-						'stroke'       => true,
-						'stroke-width' => true,
-					],
-					'circle' => [
-						'cx'   => true,
-						'cy'   => true,
-						'r'    => true,
-						'fill' => true,
-					],
-				]
-			);
-		}
+	/**
+	 * Gets SVG HTML from a generated sprite.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param string $name        The name of the icon file at "assets/images/<name>.svg".
+	 * @param string $class_names Classnames to add to the SVG element.
+	 *
+	 * @return string The SVG HTML.
+	 */
+	public function get_icon( string $name, string $class_names = '' ) : string {
+		$href = $this->get_icon_href( $name );
 
-		return '';
+		return '<svg class="' . $class_names . '"><use xlink:href="' . $href . '"></use></svg>';
 	}
 }

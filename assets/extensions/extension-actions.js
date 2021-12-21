@@ -4,13 +4,13 @@
 import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
+import { check } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-import { checked } from '../icons/wordpress-icons';
 import { EXTENSIONS_STORE, isLoadingStatus } from './store';
-import updateIcon from '../icons/update-icon';
+import UpdateIcon from '../images/svg-icons/update.svg';
 import { logEvent } from '../shared/helpers/log-event';
 import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
 
@@ -66,7 +66,7 @@ export const useExtensionActions = ( extension ) => {
 		actionProps = {
 			children: __( 'In progress…', 'sensei-lms' ),
 			className: 'sensei-extensions__rotating-icon',
-			icon: updateIcon,
+			icon: UpdateIcon,
 			disabled: true,
 			...actionProps,
 		};
@@ -80,7 +80,7 @@ export const useExtensionActions = ( extension ) => {
 	} else if ( extension.is_installed ) {
 		actionProps = {
 			children: __( 'Installed', 'sensei-lms' ),
-			icon: checked,
+			icon: check,
 			disabled: true,
 			...actionProps,
 		};
