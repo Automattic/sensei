@@ -10,7 +10,7 @@ class Test_Sensei_Course_Video_Blocks_Youtube_Extension extends WP_UnitTestCase 
 		$settings          = $this->createMock( Sensei_Course_Video_Settings::class );
 		$youtube_extension = Sensei_Course_Video_Blocks_Youtube_Extension::instance( $settings );
 
-		$result = $youtube_extension->wrap_youtube( $iframe, $url, array() );
+		$result = $youtube_extension->wrap_youtube( $iframe, $url, array(), 1 );
 
 		self::assertSame( $expected, $result );
 	}

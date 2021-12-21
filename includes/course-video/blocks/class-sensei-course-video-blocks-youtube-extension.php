@@ -68,7 +68,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension {
 	 * Initialize hooks.
 	 */
 	public function init_hooks() {
-		add_filter( 'oembed_result', [ $this, 'wrap_youtube' ], 10, 3 );
+		add_filter( 'embed_oembed_html', [ $this, 'wrap_youtube' ], 10, 4 );
 	}
 
 	/**
@@ -77,10 +77,11 @@ class Sensei_Course_Video_Blocks_Youtube_Extension {
 	 * @param string $html
 	 * @param string $url
 	 * @param array  $args
+	 * @param int    $post_id
 	 *
 	 * @return string
 	 */
-	public function wrap_youtube( $html, $url, $args ) {
+	public function wrap_youtube( $html, $url, $args, $post_id ) {
 		if ( ! $this->is_youtube_url( $url ) ) {
 			return $html;
 		}
@@ -91,7 +92,14 @@ class Sensei_Course_Video_Blocks_Youtube_Extension {
 			'/src="(.*?)"/',
 			function( $matches ) {
 				// Enable JS API and provide origin for the iframe.
-				$modified_url = $matches[1] . ( strpos( $matches[1], '?' ) !== false ? '&' : '?' ) . 'enablejsapi=1&origin=' . esc_attr( home_url() );
+				$modified_url = add_query_arg(
+					array(
+						'enablejsapi' => 1,
+						'origin'      => esc_url( home_url() ),
+					),
+					$matches[1]
+				);
+
 				return 'src="' . $modified_url . '"';
 			},
 			$html
