@@ -2,6 +2,8 @@
 
 class Test_Sensei_Course_Video_Blocks_Youtube_Extension extends WP_UnitTestCase {
 	/**
+	 * Test if only YouTube video embeds are wrapped in the block.
+	 *
 	 * @dataProvider provider_wraps_only_youtube_embeds
 	 */
 	public function test_wrap_only_youtube_embed( $iframe, $url, $expected ) {
@@ -29,7 +31,7 @@ class Test_Sensei_Course_Video_Blocks_Youtube_Extension extends WP_UnitTestCase 
 				'<iframe src="https://player.vimeo.com/video/video-id"></iframe>',
 				'https://vimeo.com/video-id',
 				'<iframe src="https://player.vimeo.com/video/video-id"></iframe>',
-			)
+			),
 		);
 	}
 }
