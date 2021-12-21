@@ -44,22 +44,26 @@ const questionTypes = {
 		feedback: true,
 		validate: ( { answers = [] } = {} ) => {
 			return {
-				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
-				noRightAnswer: ! answers.some( ( a ) => a.correct ),
-				noWrongAnswer: ! answers.some( ( a ) => ! a.correct ),
+				noAnswers: answers.filter( ( a ) => a.label.trim() ).length < 2,
+				noRightAnswer: ! answers.some(
+					( a ) => a.correct && a.label.trim()
+				),
+				noWrongAnswer: ! answers.some(
+					( a ) => ! a.correct && a.label.trim()
+				),
 			};
 		},
 		messages: {
 			noAnswers: __(
-				'Add at least one right and one wrong answer.',
+				'Add at least one right and one wrong answer. Value can not be whitespace character.',
 				'sensei-lms'
 			),
 			noRightAnswer: __(
-				'Add a right answer to this question.',
+				'Add a right answer to this question. Value can not be whitespace character.',
 				'sensei-lms'
 			),
 			noWrongAnswer: __(
-				'Add a wrong answer to this question.',
+				'Add a wrong answer to this question. Value can not be whitespace character.',
 				'sensei-lms'
 			),
 		},
@@ -84,14 +88,17 @@ const questionTypes = {
 		settings: [],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
-				noGap: ! gap?.length,
-				noBeforeAndNoAfter: ! before && ! after,
+				noGap: ! gap?.filter( ( val ) => val.trim() !== '' ).length,
+				noBeforeAndNoAfter: ! before?.trim() && ! after?.trim(),
 			};
 		},
 		messages: {
-			noGap: __( 'Add a right answer to this question.', 'sensei-lms' ),
+			noGap: __(
+				'Add a right answer to this question. Value can not be whitespace character.',
+				'sensei-lms'
+			),
 			noBeforeAndNoAfter: __(
-				'Add text before or after the gap.',
+				'Add text before or after the gap. Value can not be whitespace character.',
 				'sensei-lms'
 			),
 		},
