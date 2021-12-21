@@ -125,7 +125,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension {
 	 * @return void
 	 */
 	private function enqueue_scripts() {
-		if ( is_admin() ) {
+		if ( is_admin() || get_post_type() !== 'lesson' ) {
 			return;
 		}
 
