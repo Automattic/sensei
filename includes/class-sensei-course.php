@@ -2794,6 +2794,7 @@ class Sensei_Course {
 	 * @return WP_Query
 	 */
 	public static function course_archive_order_by_title( $query ) {
+		_deprecated_function( __METHOD__, '3.15.0' );
 
 		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) )
 			&& 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
