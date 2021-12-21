@@ -72,6 +72,7 @@ class Sensei_Course_Video_Settings {
 		}
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
+		Sensei_Course_Video_Blocks_Youtube_Extension::init( $this );
 	}
 
 	/**
@@ -114,5 +115,35 @@ class Sensei_Course_Video_Settings {
 				]
 			);
 		}
+	}
+
+	/**
+	 * Get the course video autocomplete setting.
+	 *
+	 * @return bool
+	 */
+	public function is_autocomplete_enabled() {
+		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		return get_post_meta( $lesson_course, self::COURSE_VIDEO_AUTOCOMPLETE, true );
+	}
+
+	/**
+	 * Get the course video autopause setting.
+	 *
+	 * @return mixed
+	 */
+	public function is_autopause_enabled() {
+		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		return get_post_meta( $lesson_course, self::COURSE_VIDEO_AUTOPAUSE, true );
+	}
+
+	/**
+	 * Get the course video required setting.
+	 *
+	 * @return mixed
+	 */
+	public function is_required() {
+		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		return get_post_meta( $lesson_course, self::COURSE_VIDEO_REQUIRED, true );
 	}
 }

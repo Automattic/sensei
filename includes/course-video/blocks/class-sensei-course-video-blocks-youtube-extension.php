@@ -1,0 +1,139 @@
+<?php
+/**
+ * File containing the Sensei_Course_Video_Blocks_Youtube_Extension class.
+ *
+ * @package sensei-lms
+ * @since 4.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Extends standard Embed block with YouTube specific functionality for video course progression
+ *
+ * @since 4.0.0
+ */
+class Sensei_Course_Video_Blocks_Youtube_Extension {
+	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Manages Video course-related settings.
+	 *
+	 * @var Sensei_Course_Video_Settings
+	 */
+	private $settings;
+
+	/**
+	 * Returns an instance of the class.
+	 *
+	 * @param Sensei_Course_Video_Settings $settings
+	 *
+	 * @return Sensei_Course_Video_Blocks_Youtube_Extension
+	 */
+	public static function instance( Sensei_Course_Video_Settings $settings ) {
+		if ( self::$instance ) {
+			return self::$instance;
+		}
+
+		self::$instance = new self( $settings );
+		return self::$instance;
+	}
+
+	/**
+	 * Initialize the class and hooks.
+	 *
+	 * @param Sensei_Course_Video_Settings $settings
+	 */
+	public static function init( Sensei_Course_Video_Settings $settings ) {
+		self::instance( $settings )->init_hooks();
+	}
+
+	/**
+	 * Sensei_Youtube_Extension constructor.
+	 *
+	 * @param Sensei_Course_Video_Settings $settings
+	 */
+	private function __construct( Sensei_Course_Video_Settings $settings ) {
+		$this->settings = $settings;
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	public function init_hooks() {
+		add_filter( 'oembed_result', [ $this, 'wrap_youtube' ], 10, 3 );
+	}
+
+	/**
+	 * Wrap YouTube video in a container.
+	 *
+	 * @param string $html
+	 * @param string $url
+	 * @param array  $args
+	 *
+	 * @return string
+	 */
+	public function wrap_youtube( $html, $url, $args ) {
+		if ( ! $this->is_youtube_url( $url ) ) {
+			return $html;
+		}
+
+		$this->enqueue_scripts();
+
+		$html = preg_replace_callback(
+			'/src="(.*?)"/',
+			function( $matches ) {
+				// Enable JS API and provide origin for the iframe.
+				$modified_url = $matches[1] . ( strpos( $matches[1], '?' ) !== false ? '&' : '?' ) . 'enablejsapi=1&origin=' . esc_attr( home_url() );
+				return 'src="' . $modified_url . '"';
+			},
+			$html
+		);
+		return '<div class="sensei-course-video-youtube-container">' . $html . '</div>';
+	}
+
+	/**
+	 * Check if the URL is a YouTube URL.
+	 *
+	 * @param string $url
+	 *
+	 * @return bool
+	 */
+	private function is_youtube_url( $url ) {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+		return strpos( $url, 'youtu.be' ) !== false || strpos( $host, 'youtube.com' ) !== false;
+	}
+
+	/**
+	 * Enqueue scripts.
+	 *
+	 * @return void
+	 */
+	private function enqueue_scripts() {
+		if ( is_admin() ) {
+			return;
+		}
+
+		wp_enqueue_script( 'sensei-course-video-blocks-youtube' );
+
+		if ( $this->settings->is_autocomplete_enabled() ) {
+			wp_add_inline_script( 'sensei-disable-complete-lesson-button', 'window.videoBasedCourseAutoComplete = true', 'before' );
+		}
+
+		if ( $this->settings->is_autopause_enabled() ) {
+			wp_add_inline_script( 'sensei-disable-complete-lesson-button', 'window.videoBasedCourseAutoPause = true', 'before' );
+		}
+
+		if ( $this->settings->is_required() ) {
+			wp_add_inline_script( 'sensei-disable-complete-lesson-button', 'window.videoBasedCourseDisableCompleteButton = true', 'before' );
+		}
+	}
+
+}
