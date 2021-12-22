@@ -72,7 +72,6 @@ class Sensei_Course_Video_Settings {
 		}
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
-		add_action( 'sensei_additional_scripts', [ $this, 'enqueue_frontend_scripts' ] );
 		Sensei_Course_Video_Blocks_Youtube_Extension::init( $this );
 	}
 
@@ -116,13 +115,6 @@ class Sensei_Course_Video_Settings {
 				]
 			);
 		}
-	}
-
-	/**
-	 * Enqueue frontend scripts.
-	 */
-	public function enqueue_frontend_scripts() {
-
 	}
 
 	/**
