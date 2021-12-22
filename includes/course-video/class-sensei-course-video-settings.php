@@ -122,7 +122,7 @@ class Sensei_Course_Video_Settings {
 	 * Enqueue frontend scripts.
 	 */
 	public function enqueue_frontend_scripts() {
-		if ( has_block( 'sensei-lms/button-complete-lesson' ) ) {
+		if ( has_block( 'sensei-lms/button-complete-lesson' ) && $this->is_required() ) {
 			wp_enqueue_script( 'sensei-disable-complete-lesson-button' );
 		}
 	}
