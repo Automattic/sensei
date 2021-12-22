@@ -1,9 +1,10 @@
 .sensei-course-theme {
 
-	--header-height: 75px;
+	--header-height: var(--focus-header-height, 75px);
 	--sidebar-width: 300px;
 	--top-offset: 0px;
 	--content-padding: 32px;
+	--full-header-height: calc(var(--header-height) + var(--top-offset));
 
 	@at-root body.admin-bar {
 		--top-offset: 32px;
@@ -25,7 +26,7 @@
 
 	&__sidebar {
 		position: fixed;
-		top: calc(var(--header-height) + var(--top-offset));
+		top: var(--full-header-height);
 		bottom: 0;
 		left: 0;
 		width: var(--sidebar-width);

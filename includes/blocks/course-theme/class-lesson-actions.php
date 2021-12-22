@@ -50,10 +50,10 @@ class Lesson_Actions {
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
 
 		return ( '
-			<form class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
+			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
+				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
 					' . $text . '
 				</button>
 			</form>

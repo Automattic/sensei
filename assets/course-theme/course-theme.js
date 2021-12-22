@@ -5,6 +5,7 @@ import './scroll-direction';
 import './adminbar-layout';
 import { toggleFocusMode } from './focus-mode';
 import { submitContactTeacher } from './contact-teacher';
+import { initCompleteLessonTransition } from './complete-lesson-button';
 
 if ( ! window.sensei ) {
 	window.sensei = {};
@@ -19,3 +20,5 @@ const toggleSidebar = () => {
 
 window.sensei.courseTheme = { toggleFocusMode, toggleSidebar };
 window.sensei.submitContactTeacher = submitContactTeacher;
+
+initCompleteLessonTransition();
