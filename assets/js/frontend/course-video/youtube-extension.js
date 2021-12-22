@@ -17,18 +17,18 @@
 							const playerStatus = event.data;
 
 							if (
-								window.videoBasedCourseDisableCompleteButton !==
-									undefined &&
-								window.videoBasedCourseDisableCompleteButton &&
+								window.sensei.courseVideoSettings
+									.courseVideoRequired &&
 								playerStatus === YT.PlayerState.ENDED
 							) {
-								window.videoBasedCourseDisableCompleteButton = false;
+								document.querySelector(
+									'.wp-block-sensei-lms-button-complete-lesson > button'
+								).disabled = false;
 							}
 
 							if (
-								window.videoBasedCourseAutoComplete !==
-									undefined &&
-								window.videoBasedCourseAutoComplete &&
+								window.sensei.courseVideoSettings
+									.courseVideoAutoComplete &&
 								playerStatus === YT.PlayerState.ENDED
 							) {
 								// submit complete lesson form
@@ -47,7 +47,7 @@
 						},
 					},
 				} );
-				if ( window.videoBasedCourseAutoPause ) {
+				if ( window.sensei.courseVideoSettings.courseVideoAutoPause ) {
 					// eslint-disable-next-line @wordpress/no-global-event-listener
 					window.addEventListener( 'blur', () => {
 						player.pauseVideo();
