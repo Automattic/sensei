@@ -47,25 +47,32 @@ class Quiz_Graded {
 		}
 
 		$lesson_id   = Sensei_Utils::get_current_lesson();
+		$quiz_id     = \Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_id     = get_current_user_id();
 		$quiz_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id )->comment_approved;
 
-		// If not graded then bail.
-		if ( ! in_array( $quiz_status, [ 'graded', 'passed', 'failed' ], true ) ) {
+		// If not one of the statuses that we handle then bail.
+		if ( ! in_array( $quiz_status, [ 'ungraded', 'graded', 'passed', 'failed' ], true ) ) {
 			return '';
 		}
 
-		$grade         = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
-		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-		$title         = sprintf(
-			// translators: The placeholder is the quiz grade.
-			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
-			$grade
-		);
+		// Prepare title.
+		if ( 'ungraded' === $quiz_status ) {
+			$title = __( 'Awaiting grade', 'sensei-lms' );
+		} else {
+			$grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+			$title = sprintf(
+				// translators: The placeholder is the quiz grade.
+				__( 'Your Grade: %1$s%%', 'sensei-lms' ),
+				$grade
+			);
+		}
 
+		// Prepare message.
 		$message = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
-		if ( 'failed' === $quiz_status ) {
-			$quiz_id  = \Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( 'ungraded' === $quiz_status ) {
+			$message = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
+		} elseif ( 'failed' === $quiz_status ) {
 			$passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
 			$message  = sprintf(
 				// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
@@ -75,10 +82,21 @@ class Quiz_Graded {
 			);
 		}
 
-		$is_lesson_completed = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
-		$complete_lesson     = ( 'failed' !== $quiz_status && ! $is_lesson_completed ) ? self::render_complete_lesson() : '';
-		$reset_quiz          = $reset_allowed ? self::render_reset_quiz() : '';
-		$contact_teacher     = self::render_contact_teacher();
+		// Prepare complete lesson button.
+		$should_show_complete_lesson = true;
+		if ( 'failed' === $quiz_status || Sensei_Utils::user_completed_lesson( $lesson_id, $user_id ) ) {
+			$should_show_complete_lesson = false;
+		} elseif ( 'ungraded' === $quiz_status && get_post_meta( $quiz_id, '_pass_required', true ) ) {
+			$should_show_complete_lesson = false;
+		}
+		$complete_lesson = $should_show_complete_lesson ? self::render_complete_lesson() : '';
+
+		// Prepare reset quiz button.
+		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
+		$reset_quiz    = $reset_allowed ? self::render_reset_quiz() : '';
+
+		// Prepare contact teacher button.
+		$contact_teacher = self::render_contact_teacher();
 
 		return ( "
 			<div class='sensei-course-theme-quiz-graded__container'>
