@@ -75,6 +75,7 @@ class Sensei_Course_Theme_Option {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'maybe_redirect_to_course_theme' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
+		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 	}
 
 	/**

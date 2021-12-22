@@ -1,36 +1,54 @@
 <?php
 /**
- * File containing the Quiz_Graded class.
+ * File containing Sensei_Course_Theme_Quiz class.
  *
- * @package sensei
- * @since
+ * @package sensei-lms
+ * @since 3.15.0
  */
-
-namespace Sensei\Blocks\Course_Theme;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
-use \Sensei_Quiz;
-use \Sensei_Utils;
-
 /**
  * Renders the Quiz grade results block.
  */
-class Quiz_Graded {
+class Sensei_Course_Theme_Quiz {
 
 	/**
-	 * Quiz_Graded constructor.
+	 * Instance of class.
+	 *
+	 * @var self
 	 */
-	public function __construct() {
-		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-theme-quiz-graded',
-			[
-				'render_callback' => [ $this, 'render' ],
-			]
-		);
+	private static $instance;
+
+	/**
+	 * Sensei_Course_Theme_Quiz constructor. Prevents other instances from being created outside of `self::instance()`.
+	 */
+	private function __construct() {}
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Initializes the class.
+	 */
+	public function init() {
+		if ( 'quiz' !== get_post_type() ) {
+			return;
+		}
+
+		$this->maybe_add_quiz_results_notice();
 	}
 
 	/**
@@ -40,11 +58,7 @@ class Quiz_Graded {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render(): string {
-		// If not a quiz page then bail.
-		if ( 'quiz' !== get_post_type() ) {
-			return '';
-		}
+	public function maybe_add_quiz_results_notice() {
 
 		$lesson_id   = Sensei_Utils::get_current_lesson();
 		$quiz_id     = \Sensei()->lesson->lesson_quizzes( $lesson_id );
@@ -57,30 +71,31 @@ class Quiz_Graded {
 		}
 
 		// Prepare title.
+		$grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+		$title = sprintf(
+			// translators: The placeholder is the quiz grade.
+			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
+			$grade
+		);
 		if ( 'ungraded' === $quiz_status ) {
 			$title = __( 'Awaiting grade', 'sensei-lms' );
-		} else {
-			$grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
-			$title = sprintf(
-				// translators: The placeholder is the quiz grade.
-				__( 'Your Grade: %1$s%%', 'sensei-lms' ),
-				$grade
-			);
 		}
 
 		// Prepare message.
-		$message = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
+		$text = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
 		if ( 'ungraded' === $quiz_status ) {
-			$message = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
+			$text = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
 		} elseif ( 'failed' === $quiz_status ) {
 			$passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
-			$message  = sprintf(
+			$text     = sprintf(
 				// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
 				__( 'You require %1$s%% to pass this quiz. Your grade is %2$s%%.', 'sensei-lms' ),
 				$passmark,
 				$grade
 			);
 		}
+
+		$actions = [];
 
 		// Prepare complete lesson button.
 		$should_show_complete_lesson = true;
@@ -89,26 +104,21 @@ class Quiz_Graded {
 		} elseif ( 'ungraded' === $quiz_status && get_post_meta( $quiz_id, '_pass_required', true ) ) {
 			$should_show_complete_lesson = false;
 		}
-		$complete_lesson = $should_show_complete_lesson ? self::render_complete_lesson() : '';
+		if ( $should_show_complete_lesson ) {
+			$actions[] = self::render_complete_lesson();
+		}
 
 		// Prepare reset quiz button.
 		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
-		$reset_quiz    = $reset_allowed ? self::render_reset_quiz() : '';
+		if ( $reset_allowed ) {
+			$actions[] = self::render_reset_quiz();
+		}
 
 		// Prepare contact teacher button.
-		$contact_teacher = self::render_contact_teacher();
+		$actions[] = self::render_contact_teacher();
 
-		return ( "
-			<div class='sensei-course-theme-quiz-graded__container'>
-				<h1 class='sensei-course-theme-quiz-graded__title'>{$title}</h1>
-				<p class='sensei-course-theme-quiz-graded__message'>{$message}</p>
-				<div class='sensei-course-theme-quiz-graded__actions'>
-					{$complete_lesson}
-					{$reset_quiz}
-					{$contact_teacher}
-				</div>
-			</div>
-		" );
+		$notices = \Sensei_Context_Notices::instance( 'course_theme_quiz_grade' );
+		$notices->add_notice( 'course-theme-quiz-grade', $text, $title, $actions );
 	}
 
 	/**

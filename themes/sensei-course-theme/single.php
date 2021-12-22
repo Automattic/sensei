@@ -67,7 +67,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:sensei-lms/course-theme-post-title /-->
 
 		<!-- wp:sensei-lms/course-theme-notices /-->
-		<!-- wp:sensei-lms/course-theme-quiz-graded /-->
 		<!-- wp:sensei-lms/course-content /-->
 	</div>
 	<!-- /wp:column -->
