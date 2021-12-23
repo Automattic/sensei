@@ -66,7 +66,7 @@ class Sensei_Course_Theme_Quiz {
 		$quiz_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id )->comment_approved;
 
 		// If not one of the statuses that we handle then bail.
-		if ( ! in_array( $quiz_status, [ 'ungraded', 'graded', 'passed', 'failed' ], true ) ) {
+		if ( ! \Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
 			return '';
 		}
 
