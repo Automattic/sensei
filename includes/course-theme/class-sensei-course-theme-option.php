@@ -125,7 +125,7 @@ class Sensei_Course_Theme_Option {
 			return false;
 		}
 
-		if ( ! self::has_sensei_theme_enabled( $course_id ) ) {
+		if ( ! $this->has_sensei_theme_enabled( $course_id ) ) {
 			return false;
 		}
 
