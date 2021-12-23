@@ -20,7 +20,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 	 */
 	function sensei_locked_lesson_notices_map( $notice ) {
 		?>
-		<div class="sensei-lms-notice sensei-course-theme-locked-lesson-notice">
+		<div class="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-locked-lesson-notice">
 			<?php if ( ! empty( $notice['title'] ) ) { ?>
 			<div class="sensei-course-theme-locked-lesson-notice__header">
 				<?php if ( ! empty( $notice['icon'] ) ) { ?>

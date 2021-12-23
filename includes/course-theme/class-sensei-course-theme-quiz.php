@@ -130,7 +130,7 @@ class Sensei_Course_Theme_Quiz {
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
 
 		return ( "
-			<form class='sensei-course-theme-quiz-graded__complete-lesson-form' method='POST' action='{$permalink}'>
+			<form class='sensei-course-theme-quiz-graded-notice__complete-lesson-form' method='POST' action='{$permalink}'>
 				{$nonce}
 				<input type='hidden' name='quiz_action' value='lesson-complete' />
 				<button type='submit' class='sensei-course-theme__button is-primary'>
@@ -149,10 +149,10 @@ class Sensei_Course_Theme_Quiz {
 		$text      = __( 'Restart Quiz', 'sensei-lms' );
 
 		return ( "
-			<form class='sensei-course-theme-quiz-graded__reset-quiz-form' method='POST' action='{$permalink}'>
+			<form class='sensei-course-theme-quiz-graded-notice__reset-quiz-form' method='POST' action='{$permalink}'>
 				{$nonce}
 				<input type='hidden' name='quiz_reset' value='true' />
-				<button type='submit' class='sensei-course-theme-quiz-graded__reset-quiz-button'>
+				<button type='submit' class='sensei-course-theme-quiz-graded-notice__reset-quiz-button'>
 					{$text}
 				</button>
 			</form>
@@ -163,7 +163,7 @@ class Sensei_Course_Theme_Quiz {
 	 * Renders the contact teacher button.
 	 */
 	public static function render_contact_teacher() {
-		$link  = '<a href="#" class="sensei-course-theme-quiz-graded__contact-teacher-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
+		$link  = '<a href="#" class="sensei-course-theme-quiz-graded-notice__contact-teacher-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
 		$block = new \Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );
 	}
