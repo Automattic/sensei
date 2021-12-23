@@ -10,10 +10,10 @@ import { __ } from '@wordpress/i18n';
 export const initCompleteLessonTransition = () => {
 	domReady( () => {
 		const completeForms = document.querySelectorAll(
-			'[data-id="complete-lesson-form"], .lesson_button_form'
+			'[data-id="complete-lesson-form"]'
 		);
 		const completeButtons = document.querySelectorAll(
-			'[data-id="complete-lesson-button"], .wp-block-sensei-lms-button-complete-lesson button'
+			'[data-id="complete-lesson-button"]'
 		);
 		const progressBars = document.querySelectorAll(
 			'.sensei-course-theme-course-progress-bar-inner'
@@ -67,15 +67,6 @@ export const initCompleteLessonTransition = () => {
 		 */
 		const onFormSubmit = ( e ) => {
 			const form = e.target;
-
-			// Skip if the form is not for complete lesson (Reset lesson block, for example).
-			if (
-				! form.querySelector(
-					'input[name="quiz_action"][value="lesson-complete"]'
-				)
-			) {
-				return;
-			}
 
 			delayFormSubmit( e, form );
 			runProgressBarAnimation();
