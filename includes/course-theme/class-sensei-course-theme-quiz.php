@@ -97,17 +97,6 @@ class Sensei_Course_Theme_Quiz {
 
 		$actions = [];
 
-		// Prepare complete lesson button.
-		$should_show_complete_lesson = true;
-		if ( 'failed' === $quiz_status || Sensei_Utils::user_completed_lesson( $lesson_id, $user_id ) ) {
-			$should_show_complete_lesson = false;
-		} elseif ( 'ungraded' === $quiz_status && get_post_meta( $quiz_id, '_pass_required', true ) ) {
-			$should_show_complete_lesson = false;
-		}
-		if ( $should_show_complete_lesson ) {
-			$actions[] = self::render_complete_lesson();
-		}
-
 		// Prepare reset quiz button.
 		$reset_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
 		if ( $reset_allowed ) {
@@ -119,25 +108,6 @@ class Sensei_Course_Theme_Quiz {
 
 		$notices = \Sensei_Context_Notices::instance( 'course_theme_quiz_grade' );
 		$notices->add_notice( 'course-theme-quiz-grade', $text, $title, $actions );
-	}
-
-	/**
-	 * Renders the complete lesson button.
-	 */
-	private static function render_complete_lesson() {
-		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
-		$permalink = esc_url( get_permalink( Sensei_Utils::get_current_lesson() ) );
-		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
-
-		return ( "
-			<form class='sensei-course-theme-quiz-graded-notice__complete-lesson-form' method='POST' action='{$permalink}'>
-				{$nonce}
-				<input type='hidden' name='quiz_action' value='lesson-complete' />
-				<button type='submit' class='sensei-course-theme__button is-primary'>
-					{$text}
-				</button>
-			</form>
-		" );
 	}
 
 	/**
