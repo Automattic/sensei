@@ -1663,11 +1663,11 @@ class Sensei_Quiz {
 	/**
 	 * Get all the questions of a quiz.
 	 *
-	 * @param int    $quiz_id     The quiz id.
+	 * @param int    $quiz_id The quiz id.
 	 * @param string $post_status Question post status.
-	 * @param string $orderby     Question order by.
-	 * @param string $order       Question order.
-	 *
+	 * @param string $orderby Question order by.
+	 * @param string $order Question order.
+	 * @param bool   $filter_incomplete_questions
 	 * @return WP_Post[]
 	 */
 	public function get_questions( $quiz_id, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC', $filter_incomplete_questions = false ) : array {
@@ -1730,6 +1730,7 @@ class Sensei_Quiz {
 	private function is_multiple_choice_question_complete( int $question_id ): bool {
 		$right_answers = get_post_meta( $question_id, '_question_right_answer', true );
 		$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
+
 		// Multiple choice question is incomplete if there isn't at least one right and one wrong answer.
 		if ( ! is_array( $right_answers ) || count( $right_answers ) < 1 || ! is_array( $wrong_answers ) || count( $wrong_answers ) < 1 ) {
 			return false;

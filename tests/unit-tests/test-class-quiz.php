@@ -128,6 +128,66 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertCount( 6, $questions_not_filtered );
 		$this->assertCount( 0, $questions_filtered );
 	}
+
+	/**
+	 * Testing Woothemes_Sensei()->quiz->get_questions.
+	 */
+	public function testGetQuestionsFiltersIncompleteQuestionsMultipleChoice() {
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+
+		$this->factory->question->create_many(
+			2,
+			[
+				'quiz_id'                => $quiz_id,
+				'question_type'          => 'multiple-choice',
+				'question_right_answers' => [],
+				'question_wrong_answers' => [],
+			]
+		);
+		$this->factory->question->create_many(
+			2,
+			[
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'multiple-choice',
+			]
+		);
+		$questions_filtered     = Sensei()->quiz->get_questions( $quiz_id, 'any', 'meta_value_num title', 'ASC', true );
+		$questions_not_filtered = Sensei()->quiz->get_questions( $quiz_id );
+		$this->assertCount( 4, $questions_not_filtered );
+		$this->assertCount( 2, $questions_filtered );
+	}
+
+	/**
+	 * Testing Woothemes_Sensei()->quiz->get_questions.
+	 */
+	public function testGetQuestionsFiltersIncompleteQuestionsFillGap() {
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->maybe_create_quiz_for_lesson( $lesson_id );
+		$this->factory->question->create_many(
+			2,
+			[
+				'quiz_id'                                => $quiz_id,
+				'question_type'                          => 'gap-fill',
+				'add_question_right_answer_gapfill_pre'  => '',
+				'add_question_right_answer_gapfill_gap'  => '',
+				'add_question_right_answer_gapfill_post' => '',
+			]
+		);
+		$this->factory->question->create_many(
+			2,
+			[
+				'quiz_id'       => $quiz_id,
+				'question_type' => 'gap-fill',
+			]
+		);
+
+		$questions_filtered     = Sensei()->quiz->get_questions( $quiz_id, 'any', 'meta_value_num title', 'ASC', true );
+		$questions_not_filtered = Sensei()->quiz->get_questions( $quiz_id );
+		$this->assertCount( 4, $questions_not_filtered );
+		$this->assertCount( 2, $questions_filtered );
+	}
+
 	/**
 	 * This test Woothemes_Sensei()->quiz->save_user_answers.
 	 */

@@ -67,11 +67,9 @@ class WP_UnitTest_Factory_For_Question extends WP_UnitTest_Factory_For_Post_Sens
 			$test_question_data['add_question_right_answer_singleline'] = '';
 
 		} elseif ( 'gap-fill' === $type ) {
-
-			$test_question_data['add_question_right_answer_gapfill_pre']  = '';
-			$test_question_data['add_question_right_answer_gapfill_gap']  = '';
-			$test_question_data['add_question_right_answer_gapfill_post'] = '';
-
+			$test_question_data['add_question_right_answer_gapfill_pre']  = 'Text pre';
+			$test_question_data['add_question_right_answer_gapfill_gap']  = 'Answer text';
+			$test_question_data['add_question_right_answer_gapfill_post'] = 'Text after';
 		} elseif ( 'multi-line' === $type ) {
 
 			$test_question_data['add_question_right_answer_multiline'] = '';
