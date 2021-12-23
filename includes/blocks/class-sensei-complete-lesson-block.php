@@ -82,8 +82,15 @@ class Sensei_Complete_Lesson_Block {
 			);
 		}
 
+		$content = preg_replace(
+			'/<(button|a)/',
+			'<$1 data-id="complete-lesson-button"',
+			$content,
+			1
+		);
+
 		return '
-		<form class="lesson_button_form" method="POST" action="' . $permalink . '">
+		<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="' . $permalink . '">
 			' . $nonce . '
 			<input type="hidden" name="quiz_action" value="lesson-complete" />
 			' . $content . '
