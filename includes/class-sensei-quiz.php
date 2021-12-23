@@ -1670,7 +1670,7 @@ class Sensei_Quiz {
 	 *
 	 * @return WP_Post[]
 	 */
-	public function get_questions( $quiz_id, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC' ) : array {
+	public function get_questions( $quiz_id, $post_status = 'any', $orderby = 'meta_value_num title', $order = 'ASC', $filter_incomplete_questions = false ) : array {
 
 		// Set the default question order if it has not already been set for this quiz.
 		Sensei()->lesson->set_default_question_order( $quiz_id );
@@ -1694,36 +1694,71 @@ class Sensei_Quiz {
 
 		$questions_query = new WP_Query( $question_query_args );
 
-		$posts     = $questions_query->posts;
+		$posts = $questions_query->posts;
+		return $filter_incomplete_questions ? $this->filter_out_incomplete_questions( $posts ) : $posts;
+	}
 
-		$questions = array();
-		foreach ( $posts as $post ) {
-			$question_id   = $post->ID;
+	/**
+	 * Get all the questions of a quiz.
+	 *
+	 * @param array $questions  All questions.
+	 *
+	 * @return array
+	 */
+	private function filter_out_incomplete_questions( array $questions ): array {
+		$filtered_questions = [];
+		foreach ( $questions as $question ) {
+			$question_id   = $question->ID;
 			$question_type = Sensei()->question->get_question_type( $question_id );
-			if ( 'multiple-choice' === $question_type ) {
-				$right_answers = get_post_meta( $question_id, '_question_right_answer', true );
-				$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
-				if ( !is_array($right_answers) || count( $right_answers ) < 1 || !is_array($wrong_answers) || count( $wrong_answers ) < 1 ) {
-					if ( ! empty( $attributes['preview_drafts'] ) ) {
-						Sensei()->notices->add_notice( __( 'Multiple options question not valid', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
-					}
-					continue;
-				}
-				array_push( $questions, $post );
+			if ( 'multiple-choice' === $question_type && ! $this->is_multiple_choice_question_complete( $question_id ) ) {
+				continue;
 			}
-			if ( 'gap-fill' === $question_type ) {
-				$gapfill_array = explode( '||', get_post_meta( $question_id, '_question_right_answer', true ) );
-				$text_before   = $gapfill_array[0] ?? '';
-				$answer_text   = $gapfill_array[1] ?? '';
-				$text_after    = $gapfill_array[2] ?? '';
-				if ( '' === $answer_text || ( '' === $text_before && '' === $text_after ) ) {
-					Sensei()->notices->add_notice( __( 'Multiple options question not valid', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
-					continue;
-				}
-				array_push( $questions, $post );
+			if ( 'gap-fill' === $question_type && ! $this->is_gap_fill_question_complete( $question_id ) ) {
+				continue;
 			}
+			array_push( $filtered_questions, $question );
 		}
-		return $questions;
+		return $filtered_questions;
+	}
+	/**
+	 * Return true if multiple choice question has valid answers
+	 *
+	 * @param int $question_id  question id.
+	 *
+	 * @return boolean
+	 */
+	private function is_multiple_choice_question_complete( int $question_id ): bool {
+		$right_answers = get_post_meta( $question_id, '_question_right_answer', true );
+		$wrong_answers = get_post_meta( $question_id, '_question_wrong_answers', true );
+		// Multiple choice question is incomplete if there isn't at least one right and one wrong answer.
+		if ( ! is_array( $right_answers ) || count( $right_answers ) < 1 || ! is_array( $wrong_answers ) || count( $wrong_answers ) < 1 ) {
+			return false;
+		}
+		// Wrong or right answers values can't be whitespace.
+		return ! count(
+			array_filter(
+				array_merge( $right_answers, $wrong_answers ),
+				function( $value ) {
+					return '' === trim( $value );
+				}
+			)
+		);
+	}
+
+	/**
+	 * Return true if gap fill question has valid answers
+	 *
+	 * @param int $question_id  question id.
+	 *
+	 * @return boolean
+	 */
+	private function is_gap_fill_question_complete( int $question_id ): bool {
+		$gapfill_array = explode( '||', get_post_meta( $question_id, '_question_right_answer', true ) );
+		$text_before   = $gapfill_array[0] ?? '';
+		$answer_text   = $gapfill_array[1] ?? '';
+		$text_after    = $gapfill_array[2] ?? '';
+		// Gap fill question is incomplete if gap text is null or whitespace, or if text before or text after are null or whitespace.
+		return ! ( '' === trim( $answer_text ) || ( '' === trim( $text_before ) && '' === trim( $text_after ) ) );
 	}
 
 	/**
