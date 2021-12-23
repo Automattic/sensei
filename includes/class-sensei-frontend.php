@@ -961,7 +961,7 @@ class Sensei_Frontend {
 			wp_enqueue_script( 'sensei-stop-double-submission' );
 
 			?>
-			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+			<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
 				<input type="hidden"
 					   name="woothemes_sensei_complete_lesson_noonce"
 					   id="woothemes_sensei_complete_lesson_noonce"
@@ -973,6 +973,7 @@ class Sensei_Frontend {
 				<input type="submit"
 					   name="quiz_complete"
 					   class="quiz-submit complete sensei-stop-double-submission"
+					   data-id="complete-lesson-button"
 					   value="<?php esc_attr_e( 'Complete Lesson', 'sensei-lms' ); ?>"/>
 
 			</form>
