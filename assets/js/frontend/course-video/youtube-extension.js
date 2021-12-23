@@ -66,7 +66,7 @@
 			} );
 	};
 
-	if ( window.sensei.courseVideoSettings.courseVideoRequried ) {
+	if ( window.sensei.courseVideoSettings.courseVideoRequired ) {
 		document
 			.querySelectorAll(
 				'.wp-block-sensei-lms-button-complete-lesson > button'
