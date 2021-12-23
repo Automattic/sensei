@@ -139,10 +139,6 @@ class Sensei_Course_Video_Blocks_Youtube_Extension {
 
 		wp_add_inline_script( 'sensei-course-video-blocks-youtube', $script, 'before' );
 		wp_enqueue_script( 'sensei-course-video-blocks-youtube' );
-
-		if ( has_block( 'sensei-lms/button-complete-lesson' ) && $this->settings->is_required() ) {
-			wp_enqueue_script( 'sensei-disable-complete-lesson-button' );
-		}
 	}
 
 }

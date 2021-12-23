@@ -14,9 +14,11 @@
 			window.sensei.courseVideoSettings.courseVideoRequired &&
 			playerStatus === YT.PlayerState.ENDED
 		) {
-			document.querySelector(
-				'.wp-block-sensei-lms-button-complete-lesson > button'
-			).disabled = false;
+			document
+				.querySelectorAll(
+					'.wp-block-sensei-lms-button-complete-lesson > button'
+				)
+				.forEach( ( button ) => ( button.disabled = false ) );
 		}
 
 		if (
@@ -63,4 +65,12 @@
 				}
 			} );
 	};
+
+	if ( window.sensei.courseVideoSettings.courseVideoRequried ) {
+		document
+			.querySelectorAll(
+				'.wp-block-sensei-lms-button-complete-lesson > button'
+			)
+			.forEach( ( button ) => ( button.disabled = true ) );
+	}
 } )();

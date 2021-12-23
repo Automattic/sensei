@@ -149,7 +149,6 @@ class Sensei_Frontend {
 
 			// Course Video javascript.
 			wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], Sensei()->version, true );
-			Sensei()->assets->register( 'sensei-disable-complete-lesson-button', 'js/frontend/course-video/disable-complete-lesson-button.js', [], true );
 			Sensei()->assets->register( 'sensei-course-video-blocks-youtube', 'js/frontend/course-video/youtube-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
 
 			// Allow additional scripts to be loaded.
