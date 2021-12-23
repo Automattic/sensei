@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Renders the Quiz grade results block.
+ * Sensei_Course_Theme_Quiz class.
  */
 class Sensei_Course_Theme_Quiz {
 
@@ -124,7 +124,7 @@ class Sensei_Course_Theme_Quiz {
 	/**
 	 * Renders the complete lesson button.
 	 */
-	public static function render_complete_lesson() {
+	private static function render_complete_lesson() {
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink( Sensei_Utils::get_current_lesson() ) );
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
@@ -143,7 +143,7 @@ class Sensei_Course_Theme_Quiz {
 	/**
 	 * Renders the reset quiz button.
 	 */
-	public static function render_reset_quiz() {
+	private static function render_reset_quiz() {
 		$nonce     = wp_nonce_field( 'woothemes_sensei_reset_quiz_nonce', 'woothemes_sensei_reset_quiz_nonce', false, false );
 		$permalink = esc_url( get_permalink() );
 		$text      = __( 'Restart Quiz', 'sensei-lms' );
@@ -162,7 +162,7 @@ class Sensei_Course_Theme_Quiz {
 	/**
 	 * Renders the contact teacher button.
 	 */
-	public static function render_contact_teacher() {
+	private static function render_contact_teacher() {
 		$link  = '<a href="#" class="sensei-course-theme-quiz-graded-notice__contact-teacher-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
 		$block = new \Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );
