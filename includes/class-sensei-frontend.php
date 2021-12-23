@@ -963,18 +963,19 @@ class Sensei_Frontend {
 			?>
 			<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
 				<input type="hidden"
-					   name="woothemes_sensei_complete_lesson_noonce"
-					   id="woothemes_sensei_complete_lesson_noonce"
-					   value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>"
+					name="woothemes_sensei_complete_lesson_noonce"
+					id="woothemes_sensei_complete_lesson_noonce"
+					value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>"
 				/>
 
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
 
 				<input type="submit"
-					   name="quiz_complete"
-					   class="quiz-submit complete sensei-stop-double-submission"
-					   data-id="complete-lesson-button"
-					   value="<?php esc_attr_e( 'Complete Lesson', 'sensei-lms' ); ?>"/>
+					name="quiz_complete"
+					class="quiz-submit complete sensei-stop-double-submission"
+					data-id="complete-lesson-button"
+					value="<?php esc_attr_e( 'Complete Lesson', 'sensei-lms' ); ?>"
+				/>
 
 			</form>
 			<?php
