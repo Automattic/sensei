@@ -76,7 +76,7 @@ class Sensei_Course_Video_Settings {
 
 		Sensei_Course_Video_Blocks_Youtube_Extension::instance()->init();
 		Sensei_Course_Video_Blocks_Video_Extension::instance()->init();
-
+		Sensei_Course_Video_Blocks_Vimeo_Extension::init( $this );
 	}
 
 	/**
