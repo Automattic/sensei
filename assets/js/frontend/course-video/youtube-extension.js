@@ -35,12 +35,6 @@
 			document
 				.querySelectorAll( '[data-id="complete-lesson-form"]' )
 				.forEach( ( form ) => {
-					const action = form.querySelector(
-						'input[name=quiz_action]'
-					).value;
-					if ( action !== 'lesson-complete' ) {
-						return true;
-					}
 					form.submit();
 				} );
 		}
