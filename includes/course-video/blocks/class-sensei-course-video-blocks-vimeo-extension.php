@@ -56,7 +56,7 @@ class Sensei_Course_Video_Blocks_Vimeo_Extension {
 	}
 
 	/**
-	 * Sensei_Youtube_Extension constructor.
+	 * Sensei_Course_Video_Blocks_Vimeo_Extension constructor.
 	 *
 	 * @param Sensei_Course_Video_Settings $settings
 	 */
