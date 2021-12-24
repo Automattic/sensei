@@ -116,7 +116,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension {
 	 */
 	private function is_youtube_url( $url ) {
 		$host = wp_parse_url( $url, PHP_URL_HOST );
-		return strpos( $url, 'youtu.be' ) !== false || strpos( $host, 'youtube.com' ) !== false;
+		return strpos( $host, 'youtu.be' ) !== false || strpos( $host, 'youtube.com' ) !== false;
 	}
 
 	/**
