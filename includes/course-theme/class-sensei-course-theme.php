@@ -128,7 +128,6 @@ class Sensei_Course_Theme {
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
-		add_filter( 'the_content', [ $this, 'override_template_content' ] );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
@@ -217,26 +216,6 @@ class Sensei_Course_Theme {
 		return locate_template( 'index.php' );
 	}
 
-	/**
-	 * It overrides the template content, loading the respective
-	 * template and rendering the blocks from the template.
-	 *
-	 * @access private
-	 *
-	 * @return string The content with template and rendered blocks.
-	 */
-	public function override_template_content() {
-		// Remove filter to avoid infinite loop.
-		remove_filter( 'the_content', [ $this, 'override_template_content' ] );
-
-		ob_start();
-		$template = get_single_template();
-		load_template( $template );
-		$output = ob_get_clean();
-
-		// Return template content with rendered blocks.
-		return do_blocks( $output );
-	}
 
 	/**
 	 * Add Sensei theme body class.

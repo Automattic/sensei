@@ -216,6 +216,11 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson' => 'blocks/course-theme/class-quiz-back-to-lesson.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Counter' => 'blocks/course-theme/class-course-progress-counter.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Bar' => 'blocks/course-theme/class-course-progress-bar.php',
+			'Sensei\Blocks\Course_Theme\Course_Content'   => 'blocks/course-theme/class-course-content.php',
+			'Sensei\Blocks\Course_Theme\Quiz_Content'     => 'blocks/course-theme/class-quiz-content.php',
+			'Sensei\Blocks\Course_Theme\Post_Title'       => 'blocks/course-theme/class-post-title.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Module'    => 'blocks/course-theme/class-lesson-module.php',
+			'Sensei\Blocks\Course_Theme\Sidebar_Toggle_Button' => 'blocks/course-theme/class-sidebar-toggle-button.php',
 		);
 	}
 

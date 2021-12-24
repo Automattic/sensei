@@ -18,9 +18,13 @@ class Sensei_Course_Outline_Course_Block {
 	/**
 	 * Build HTML to reference SVG icons from.
 	 *
+	 * @deprecated 3.15.0 Use `Sensei_Assets::get_icon` instead.
+	 *
 	 * @return string
 	 */
 	public function render_svg_icon_library() {
+		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Assets::get_icon' );
+
 		return '<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
 			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
 				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
@@ -59,13 +63,10 @@ class Sensei_Course_Outline_Course_Block {
 		$css        = Sensei_Block_Helpers::build_styles( $attributes );
 
 		if ( ! empty( $attributes['preview_drafts'] ) ) {
-			Sensei()->notices->add_notice( __( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to learners.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
+			Sensei()->notices->add_notice( __( 'One or more lessons in this course are not published. Unpublished lessons and empty modules are only displayed in preview mode and will not be displayed to students.', 'sensei-lms' ), 'info', 'sensei-course-outline-drafts' );
 		}
 
-		$icons = $this->render_svg_icon_library();
-
 		return '
-			' . ( ! empty( $blocks ) ? $icons : '' ) . '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-outline', 'sensei-block-wrapper', $class_name ], $css ) . '>
 				' .
 			implode(

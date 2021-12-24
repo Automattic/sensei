@@ -66,16 +66,27 @@ class Sensei_Block_Contact_Teacher {
 			return '';
 		}
 
+		if ( ! $content ) {
+			$content = '<a class="sensei-course-theme-contact-teacher__button">' . __( 'Contact Teacher', 'sensei-lms' ) . '</a>';
+		}
+
 		$contact_form_link = add_query_arg( array( 'contact' => $post->post_type ) );
+		$post_link         = remove_query_arg( 'contact' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		$contact_form_open = isset( $_GET['contact'] );
+		$contact_form_open = isset( $_GET['contact'] ) && ! ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] );
 
 		$contact_form = $this->teacher_contact_form( $post );
 
-		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible">
+		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
 				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
-				<div class="sensei-collapsible__content ' . ( $contact_form_open ? '' : 'collapsed' ) . '">' . $contact_form . '</div>
+				<a href="' . $post_link . '" data-sensei-modal-overlay></a>
+				<div data-sensei-modal-content>
+					' . $contact_form . '
+					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close>
+						' . \Sensei()->assets->get_icon( 'close' ) . '
+					</a>
+				</div>
 			</div>';
 	}
 
@@ -88,18 +99,24 @@ class Sensei_Block_Contact_Teacher {
 	 */
 	private function teacher_contact_form( $post ) {
 
-		$nonce = wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
+		$nonce         = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
+		$wp_rest_nonce = wp_nonce_field( 'wp_rest' );
 
 		return '
-			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form">
-				<label>' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</label>
-				<textarea name="contact_message" required placeholder="' . esc_attr__( 'Enter your private message.', 'sensei-lms' ) . '"></textarea>
+			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form" onsubmit="sensei.submitContactTeacher(event)">
+				<label>' . esc_html__( 'Contact your teacher', 'sensei-lms' ) . '</label>
+				<textarea rows="5" name="contact_message" required placeholder="' . esc_attr__( 'Enter your message', 'sensei-lms' ) . '"></textarea>
 
 				<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />
 				' . $nonce . '
+				' . $wp_rest_nonce . '
 				<p class="sensei-contact-teacher-form__actions">
 				<button class="sensei-contact-teacher-form__submit">' . esc_html__( 'Send Message', 'sensei-lms' ) . '</button>
 				</p>
+				<div class="sensei-contact-teacher-success">
+					' . Sensei()->assets->get_icon( 'check-circle' ) . '
+					<p>' . __( 'Your message has been sent', 'sensei-lms' ) . '</p>
+				</div>
 			</form>';
 	}
 
@@ -114,7 +131,7 @@ class Sensei_Block_Contact_Teacher {
 	private function add_button_attributes( $content, $href ) {
 		return preg_replace(
 			'/<a(.*)class="(.*)"(.*)>(.+)<\/a>/',
-			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-collapsible__toggle $2" $1 $3>$4</a>',
+			'<a href="' . esc_url( $href ) . '#private_message" class="sensei-contact-teacher-open $2" data-sensei-modal-open $1 $3>$4</a>',
 			$content,
 			1
 		);

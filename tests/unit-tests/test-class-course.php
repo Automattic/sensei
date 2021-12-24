@@ -5,16 +5,14 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
-	 * Constructor function
+	 * Helper class to create testing data.
+	 *
+	 * @var Sensei_Factory
 	 */
-	public function __construct() {
-		parent::__construct();
-
-		$this->factory = new Sensei_Factory();
-	}
+	private $factory;
 
 	/**
-	 * setup function
+	 * Setup function.
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
@@ -438,5 +436,77 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$actual   = Sensei_Course::get_view_results_link( $course_id );
 
 		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * Test that the parameters are not added when hook function called out of the course archive page.
+	 */
+	public function testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage() {
+		$wp_query = $this->createMock( 'WP_Query' );
+		// Mock request is *not* for the course archive page.
+		$wp_query->expects( $this->once() )
+			->method( 'is_post_type_archive' )
+			->with( 'course' )
+			->willReturn( false );
+		// We dont expect any parameter to be set the query.
+		$wp_query->expects( $this->never() )
+			->method( 'set' );
+
+		Sensei_Course::course_archive_set_order_by( $wp_query );
+	}
+
+	/**
+	 * Test that the correct order parameter values are set for the WP_Query used in the course archive page.
+	 *
+	 * @param array  $request_parameters  $_REQUEST contents for the test. After the test the original values are restored.
+	 * @param string $course_order_option Value for the `sensei_course_order` option. Empty means it is not specified and any other value is understood as enabled.
+	 * @param string $expected_order_by   Expected ORDER BY value.
+	 * @param string $expected_order      Expected ORDER value (ASC or DESC).
+	 *
+	 * @dataProvider data_testCourseArchiveOrderSetOrderBy
+	 */
+	public function testCourseArchiveOrderSetOrderBy( $request_parameters, $course_order_option, $expected_order_by, $expected_order ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$original_request_object = $_REQUEST;
+		$_REQUEST                = $request_parameters;
+		$wp_query                = $this->createMock( 'WP_Query' );
+
+		// Mock request is for the course archive page.
+		$wp_query->expects( $this->once() )
+			->method( 'is_post_type_archive' )
+			->with( 'course' )
+			->willReturn( true );
+		// Set whether custom course order has been set or not.
+		update_option( 'sensei_course_order', $course_order_option );
+		// Create expectations for the correct 'orderby' and 'order' attributes.
+		$wp_query->expects( $this->exactly( 2 ) )
+			->method( 'set' )
+			->withConsecutive(
+				array( $this->equalTo( 'orderby' ), $this->equalTo( $expected_order_by ) ),
+				array( $this->equalTo( 'order' ), $this->equalTo( $expected_order ) )
+			);
+
+		Sensei_Course::course_archive_set_order_by( $wp_query );
+
+		// Restore original requests.
+		$_REQUEST = $original_request_object;
+	}
+
+	/**
+	 * Data source for ::testCourseArchiveOrderSetOrderBy
+	 *
+	 * @return array
+	 */
+	public function data_testCourseArchiveOrderSetOrderBy() {
+		return array(
+			'Default when no order set'                  => array( array(), '', 'date', 'DESC' ),
+			'No order set and newness option selected'   => array( array( 'course-orderby' => 'newness' ), '', 'date', 'DESC' ),
+			'No order set and title option selected'     => array( array( 'course-orderby' => 'title' ), '', 'title', 'ASC' ),
+			'No order set and default option selected'   => array( array( 'course-orderby' => 'default' ), '', 'date', 'DESC' ),
+			'Default when courses order is set'          => array( array(), 'anything', 'menu_order', 'ASC' ),
+			'Order set and newness option selected'      => array( array( 'course-orderby' => 'newness' ), 'anything', 'date', 'DESC' ),
+			'Order set and alphabetical option selected' => array( array( 'course-orderby' => 'title' ), 'anything', 'title', 'ASC' ),
+			'Order set and default option selected'      => array( array( 'course-orderby' => 'default' ), 'anything', 'menu_order', 'ASC' ),
+		);
 	}
 }

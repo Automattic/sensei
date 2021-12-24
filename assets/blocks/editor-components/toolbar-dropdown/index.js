@@ -13,11 +13,7 @@ import {
 	MenuItem,
 	NavigableMenu,
 } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { checked } from '../../../icons/wordpress-icons';
+import { check } from '@wordpress/icons';
 
 /**
  * @typedef {Object} DropdownOption
@@ -90,7 +86,7 @@ const ToolbarDropdown = ( {
 									key={ option.value }
 									role="menuitemradio"
 									isSelected={ isSelected }
-									icon={ isSelected ? checked : null }
+									icon={ isSelected ? check : null }
 									className={ classnames(
 										'sensei-toolbar-dropdown__option',
 										{ 'is-selected': isSelected },

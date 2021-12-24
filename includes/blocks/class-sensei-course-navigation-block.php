@@ -82,7 +82,7 @@ class Sensei_Course_Navigation_Block {
 
 		if ( $modules_html ) {
 			$modules_html = '<div class="sensei-lms-course-navigation__modules">
-				' . $modules_html . ' 
+				' . $modules_html . '
 			</div>';
 		}
 
@@ -95,7 +95,6 @@ class Sensei_Course_Navigation_Block {
 		return '<div class="sensei-lms-course-navigation">
 			' . $modules_html . '
 			' . $lessons_html . '
-			' . $this->render_svg_icon_library() . '
 		</div>';
 	}
 
@@ -159,7 +158,7 @@ class Sensei_Course_Navigation_Block {
 		}
 
 		$collapse_toggle = '<button type="button" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
-				<svg><use xlink:href="#sensei-chevron-up"></use></svg>
+				' . Sensei()->assets->get_icon( 'chevron-up' ) . '
 				<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 			</button>';
 
@@ -227,9 +226,7 @@ class Sensei_Course_Navigation_Block {
 	 * @return string Icon HTML.
 	 */
 	public static function lesson_status_icon( $status ) {
-		return '<svg class="sensei-lms-course-navigation-lesson__status">
-					<use xlink:href="#sensei-lesson-status-' . $status . '"></use>
-				</svg>';
+		return Sensei()->assets->get_icon( 'lesson-status-' . $status, 'sensei-lms-course-navigation-lesson__status' );
 	}
 
 	/**
@@ -253,30 +250,4 @@ class Sensei_Course_Navigation_Block {
 		}
 		return $status;
 	}
-
-	/**
-	 * Build HTML to reference SVG icons from.
-	 *
-	 * @return string
-	 */
-	private function render_svg_icon_library() {
-		return '<svg xmlns="http://www.w3.org/2000/svg" style="display: none">
-			<symbol id="sensei-chevron-right" viewBox="0 0 24 24">
-				<path d="M10.6 6L9.4 7l4.6 5-4.6 5 1.2 1 5.4-6z" fill="" />
-			</symbol>
-			<symbol id="sensei-chevron-up" viewBox="0 0 24 24">
-				<path d="M6.5 12.4L12 8l5.5 4.4-.9 1.2L12 10l-4.5 3.6-1-1.2z" fill="" />
-			</symbol>
-			<symbol id="sensei-lesson-status-not-started" viewBox="0 0 24 24">
-        <path fill-rule="evenodd" d="M12 18.667a6.667 6.667 0 100-13.334 6.667 6.667 0 000 13.334zM12 20a8 8 0 100-16 8 8 0 000 16z"/>
-			</symbol>
-			<symbol id="sensei-lesson-status-in-progress" viewBox="0 0 24 24">
-        <path fill-rule="evenodd" d="M4 12a8 8 0 1116 0v.052A8 8 0 014 12zm1.333 0a6.667 6.667 0 0113.334 0H5.333z"/>
-			</symbol>
-			<symbol id="sensei-lesson-status-completed" viewBox="0 0 24 24">
-        <path fill-rule="evenodd" d="M12 20a8 8 0 100-16 8 8 0 000 16zm-1.024-3.949l5.764-7.753-.802-.596-5.466 7.351-2.942-2.187-.596.802 3.342 2.486.402.298.298-.401z"/>
-			</symbol>
-		</svg>';
-	}
-
 }

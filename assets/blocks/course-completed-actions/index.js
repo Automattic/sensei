@@ -15,7 +15,7 @@ export const registerCourseCompletedActionsBlock = () => {
 		name: 'sensei-lms/course-completed-actions',
 		title: __( 'Course Completed Actions', 'sensei-lms' ),
 		description: __(
-			'Prompt learners to take action after completing a course.',
+			'Prompt students to take action after completing a course.',
 			'sensei-lms'
 		),
 		category: 'sensei-lms',
@@ -42,7 +42,7 @@ export const registerCourseCompletedActionsBlock = () => {
 		name: 'sensei-lms/more-courses-button',
 		title: __( 'Find More Courses', 'sensei-lms' ),
 		description: __(
-			'Prompt learners to find more courses.',
+			'Prompt students to find more courses.',
 			'sensei-lms'
 		),
 		keywords: [

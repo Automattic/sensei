@@ -126,11 +126,14 @@ class Sensei_Course {
 		// filter the course query when featured filter is applied
 		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_featured_filter' ), 10, 1 );
 
-		// handle the order by title post submission
-		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_order_by_title' ), 10, 1 );
+		// Handle the ordering for the courses archive page.
+		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
 
 		// ensure the course category page respects the manual order set for courses
 		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
+
+		// Filter the redirect url after enrolment.
+		add_filter( 'sensei_start_course_redirect_url', array( __CLASS__, 'alter_redirect_url_after_enrolment' ), 10, 2 );
 
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
@@ -1783,8 +1786,8 @@ class Sensei_Course {
 			$no_active_message   = __( 'You have no active courses.', 'sensei-lms' );
 			$no_complete_message = __( 'You have not completed any courses yet.', 'sensei-lms' );
 		} else {
-			$no_active_message   = __( 'This learner has no active courses.', 'sensei-lms' );
-			$no_complete_message = __( 'This learner has not completed any courses yet.', 'sensei-lms' );
+			$no_active_message   = __( 'This student has no active courses.', 'sensei-lms' );
+			$no_complete_message = __( 'This student has not completed any courses yet.', 'sensei-lms' );
 		}
 
 		ob_start();
@@ -2652,7 +2655,7 @@ class Sensei_Course {
 	public static function course_archive_sorting( $query ) {
 
 		// don't show on category pages and other pages
-		if ( ! is_archive( 'course ' ) || is_tax( 'course-category' ) ) {
+		if ( ! is_post_type_archive( 'course' ) || is_tax( 'course-category' ) ) {
 			return;
 		}
 
@@ -2668,13 +2671,14 @@ class Sensei_Course {
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
 			array(
+				'default' => __( 'Default sort', 'sensei-lms' ),
 				'newness' => __( 'Sort by newest first', 'sensei-lms' ),
 				'title'   => __( 'Sort by title A-Z', 'sensei-lms' ),
 			)
 		);
 
-		// setup the currently selected item
-		$selected = 'newness';
+		// setup the currently selected item.
+		$selected = 'default';
 		if ( isset( $_REQUEST['course-orderby'] ) && in_array( $selected, array_keys( $course_order_by_options ), true ) ) {
 
 			$selected = sanitize_text_field( $_REQUEST['course-orderby'] );
@@ -2781,22 +2785,71 @@ class Sensei_Course {
 	}
 
 	/**
-	 * if the course order drop down is changed
+	 * If the course order drop down is changed.
+	 * In versions previous to 3.15.0 this method was hooked into pre_get_posts.
 	 *
-	 * Hooked into pre_get_posts
-	 *
-	 * @since 1.9.0
-	 * @param WP_Query $query
-	 * @return WP_Query $query
+	 * @since      1.9.0
+	 * @deprecated 3.15.0
+	 * @param WP_Query $query WordPress query.
+	 * @return WP_Query
 	 */
 	public static function course_archive_order_by_title( $query ) {
+		_deprecated_function( __METHOD__, '3.15.0' );
 
-		if ( isset( $_REQUEST['course-orderby'] ) && 'title' == $_REQUEST['course-orderby']
+		if ( isset( $_REQUEST['course-orderby'] ) && 'title' === sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) )
 			&& 'course' === $query->get( 'post_type' ) && $query->is_main_query() ) {
-			// setup the order by title for this query
+			// Setup the order by title for this query.
 			$query->set( 'orderby', 'title' );
 			$query->set( 'order', 'ASC' );
 		}
+
+		return $query;
+	}
+
+	/**
+	 * Set the sorting options based on the query parameter and configuration in the Courses archive page.
+	 *
+	 * Hooked into pre_get_posts.
+	 *
+	 * @since 3.15.0
+	 * @param WP_Query $query WordPress query.
+	 * @return WP_Query
+	 */
+	public static function course_archive_set_order_by( $query ) {
+
+		// Applies only to Course archive page.
+		if ( ! $query->is_post_type_archive( 'course' ) ) {
+			return;
+		}
+
+		// Default sort order depends on custom course order being set or not.
+		$orderby = 'date';
+		$order   = 'DESC';
+		if ( ! empty( get_option( 'sensei_course_order', '' ) ) ) {
+			$orderby = 'menu_order';
+			$order   = 'ASC';
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( isset( $_REQUEST['course-orderby'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification
+			$request_orderby = sanitize_text_field( wp_unslash( $_REQUEST['course-orderby'] ) );
+			switch ( $request_orderby ) {
+				case 'title':
+					$orderby = 'title';
+					$order   = 'ASC';
+					break;
+				case 'newness':
+					$orderby = 'date';
+					$order   = 'DESC';
+					break;
+				case 'default':
+					// Use default values (initialized above).
+					break;
+			}
+		}
+		$query->set( 'orderby', $orderby );
+		$query->set( 'order', $order );
 
 		return $query;
 	}
@@ -3027,7 +3080,7 @@ class Sensei_Course {
 	}
 
 	/**
-	 * This function loads the global wp_query object with with lessons
+	 * This function loads the global wp_query object with lessons
 	 * of the current course. It is designed to be used on the single-course template
 	 * and expects the global post to be a singular course.
 	 *
@@ -3294,25 +3347,6 @@ class Sensei_Course {
 
 				self::add_course_access_permission_message( $notice );
 
-				$my_courses_page_id = '';
-
-				/**
-				 * Filter to force Sensei to output the default WordPress user
-				 * registration link.
-				 *
-				 * @since 1.9.0
-				 * @param bool $wp_register_link default false
-				 */
-				$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-
-				$settings = Sensei()->settings->get_settings();
-				if ( isset( $settings['my_course_page'] )
-					&& 0 < intval( $settings['my_course_page'] ) ) {
-
-					$my_courses_page_id = $settings['my_course_page'];
-
-				}
-
 				if (
 					! (bool) apply_filters_deprecated(
 						'sensei_user_can_register_for_course',
@@ -3323,14 +3357,14 @@ class Sensei_Course {
 				) {
 					return;
 				}
-				// If a My Courses page was set in Settings, and 'sensei_use_wp_register_link'
-				// is false, link to My Courses. If not, link to default WordPress registration page.
-				if ( ! empty( $my_courses_page_id ) && $my_courses_page_id && ! $wp_register_link ) {
-						$my_courses_url = get_permalink( $my_courses_page_id );
-						echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-							esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
+
+				$my_courses_url = sensei_user_registration_url( false );
+
+				if ( ! empty( $my_courses_url ) ) {
+					echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
+						esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
 				} else {
-						wp_register( '<div class="status register">', '</div>' );
+					wp_register( '<div class="status register">', '</div>' );
 				}
 			}
 		}
@@ -3885,6 +3919,28 @@ class Sensei_Course {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Alters the redirect url after a user enrols to a course.
+	 *
+	 * @param String  $url  Default redirect url.
+	 * @param WP_Post $post Post object for course.
+	 *
+	 * @return String
+	 */
+	public static function alter_redirect_url_after_enrolment( $url, $post ) {
+
+		$course_id = $post->ID;
+		if ( Sensei_Course_Theme_Option::instance()->has_sensei_theme_enabled( $course_id ) ) {
+			$first_incomplete_lesson_id = Sensei_Course_Structure::instance( $course_id )->get_first_incomplete_lesson_id();
+			if ( false !== $first_incomplete_lesson_id ) {
+				$url = get_permalink( $first_incomplete_lesson_id );
+			}
+		}
+
+		return $url;
+
 	}
 }
 

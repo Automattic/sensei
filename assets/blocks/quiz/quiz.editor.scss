@@ -70,51 +70,25 @@ $gray-400: #ccc;
 			}
 		}
 	}
-}
 
-.sensei-lms-quiz-block-styling .sensei-lms-quiz-block-panel {
-	flex-wrap: wrap;
-
-	h2 {
-		font-size: calc( #{$default-font-size} + 1px );
-		font-weight: normal;
-	}
-
-	&__row {
-		flex-basis: 100%;
-		margin-right: 1em;
-	}
-
-	.components-base-control {
-		margin-bottom: 1em;
-	}
-
-	&__questions {
-		display: flex;
+	/* Settings */
+	&__question-count,
+	&__progress-bar {
 		align-items: baseline;
+		justify-content: flex-start;
 
 		.components-base-control {
-			flex-basis: 62%;
+			margin-bottom: 0;
 			margin-right: 1em;
 		}
-
-		p {
-			flex-basis: 30%;
-		}
 	}
 
-	&__progress-bar {
-		display: flex;
-		justify-content: space-between;
-
-		.components-base-control {
-			flex-basis: 48%;
-		}
+	&__question-count {
+		margin-bottom: 12px;
 	}
-}
 
-.sensei-lms-quiz-block-toolbar {
-	&__group {
+	/* Toolbar */
+	&__toolbar-group {
 		align-items: center;
 		padding: 0 1em;
 		width: 17em;
@@ -131,7 +105,6 @@ $gray-400: #ccc;
 }
 
 .sensei-lms-block-validation-notice {
-
 	display: inline-block;
 	margin: 4px 0;
 
@@ -143,6 +116,8 @@ $gray-400: #ccc;
 	}
 
 	&__icon {
+		width: 24px;
+		height: 24px;
 		fill: $gray-900;
 		margin-right: 4px;
 	}

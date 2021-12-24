@@ -9,6 +9,7 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 import { getBlockDefaultClassName } from '@wordpress/blocks';
+import { button as icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import { getBlockDefaultClassName } from '@wordpress/blocks';
 import './color-hooks';
 import ButtonEdit from './button-edit';
 import ButtonSave from './button-save';
-import { button as icon } from '../../icons/wordpress-icons';
 import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
 /**

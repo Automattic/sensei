@@ -19,6 +19,18 @@ class Sensei_Messages {
 	public $meta_fields;
 
 	/**
+	 * The nonce name when submitting a new message.
+	 *
+	 * @var string
+	 */
+	public const NONCE_FIELD_NAME = 'sensei_message_teacher_nonce';
+
+	/**
+	 * The nonce action name when submitting a new message.
+	 */
+	public const NONCE_ACTION_NAME = 'message_teacher';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since  1.6.0
@@ -133,7 +145,7 @@ class Sensei_Messages {
 			array(
 				'id'          => 'sender',
 				'label'       => __( 'Message sent by:', 'sensei-lms' ),
-				'description' => __( 'The username of the learner who sent this message.', 'sensei-lms' ),
+				'description' => __( 'The username of the student who sent this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_sender', true ),
 			),
@@ -334,7 +346,7 @@ class Sensei_Messages {
 			$html     .= '</p>';
 			$html     .= '<p class="form-row">';
 				$html .= '<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />';
-				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
+				$html .= wp_nonce_field( self::NONCE_ACTION_NAME, self::NONCE_FIELD_NAME, true, false );
 				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'sensei-lms' ) . '" />';
 			$html     .= '</p>';
 			$html     .= '<div class="fix"></div>';
@@ -345,11 +357,12 @@ class Sensei_Messages {
 
 	public function save_new_message() {
 
-		if ( ! isset( $_POST['sensei_message_teacher_nonce'] ) || ! isset( $_POST['post_id'] ) ) {
+		if ( ! isset( $_POST[ self::NONCE_FIELD_NAME ] ) || ! isset( $_POST['post_id'] ) ) {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST['sensei_message_teacher_nonce'], 'message_teacher' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Argument is used for comparison only.
+		if ( ! wp_verify_nonce( wp_unslash( $_POST[ self::NONCE_FIELD_NAME ] ), self::NONCE_ACTION_NAME ) ) {
 			return;
 		}
 
@@ -360,7 +373,11 @@ class Sensei_Messages {
 			return false;
 		}
 
-		$this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+
+		if ( $message_id ) {
+			do_action( 'sensei_new_private_message', $message_id );
+		}
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -418,7 +435,7 @@ class Sensei_Messages {
 	 * @param  string  $post_id     ID of post related to message
 	 * @return mixed                Message ID on success, boolean false on failure
 	 */
-	private function save_new_message_post( $sender_id = 0, $receiver_id = 0, $message = '', $post_id = 0 ) {
+	public function save_new_message_post( $sender_id = 0, $receiver_id = 0, $message = '', $post_id = 0 ) {
 
 		$message_id = false;
 
@@ -455,8 +472,6 @@ class Sensei_Messages {
 				$post = get_post( $post_id );
 				add_post_meta( $message_id, '_posttype', $post->post_type );
 				add_post_meta( $message_id, '_post', $post->ID );
-
-				do_action( 'sensei_new_private_message', $message_id );
 
 			} else {
 

@@ -93,7 +93,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'    => __( 'Learner', 'sensei-lms' ),
+			'learner'    => __( 'Student', 'sensei-lms' ),
 			'progress'   => __( 'Course Progress', 'sensei-lms' ),
 			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
 		);
@@ -248,7 +248,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @see WP_List_Table
 	 */
 	public function no_items() {
-		$text = __( 'No learners found.', 'sensei-lms' );
+		$text = __( 'No students found.', 'sensei-lms' );
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
@@ -306,7 +306,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private function render_bulk_action_select_box() {
 		$rendered     =
 			'<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
-			'<option value="">' . esc_html__( 'Bulk Learner Actions', 'sensei-lms' ) . '</option>';
+			'<option value="">' . esc_html__( 'Bulk Student Actions', 'sensei-lms' ) . '</option>';
 		$bulk_actions = $this->controller->get_known_bulk_actions();
 
 		foreach ( $bulk_actions as $value => $translation ) {
@@ -372,7 +372,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * Returns the search button text.
 	 */
 	public function search_button() {
-		return __( 'Search Learners', 'sensei-lms' );
+		return __( 'Search Students', 'sensei-lms' );
 	}
 
 	/**

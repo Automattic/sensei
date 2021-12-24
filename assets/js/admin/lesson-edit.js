@@ -34,7 +34,10 @@ domReady( () => {
 
 	// Refresh the prerequisite meta box when the course changes in order to get the relevant prerequisites.
 	jQuery( '#lesson-course-options' ).on( 'change', function () {
-		const lessonId = jQuery( '#post_ID' ).val();
+		// Try to get the lesson ID from the wp data store. If not present, fallback to getting it from the DOM.
+		const lessonId =
+			wp.data.select( 'core/editor' )?.getCurrentPostId() ||
+			jQuery( '#post_ID' ).val();
 		const courseId = jQuery( this ).val();
 
 		jQuery.get(

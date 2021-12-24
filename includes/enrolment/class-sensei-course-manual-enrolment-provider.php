@@ -257,18 +257,18 @@ class Sensei_Course_Manual_Enrolment_Provider
 		$legacy_migration_status = $provider_state->get_stored_value( self::DATA_KEY_LEGACY_MIGRATION );
 
 		if ( null === $legacy_migration_status ) {
-			$messages[] = __( 'Learner manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' );
+			$messages[] = __( 'Student manual enrollment <strong>was not migrated</strong> from a legacy version of Sensei LMS.', 'sensei-lms' );
 
 			if ( false !== get_option( 'sensei_enrolment_legacy' ) ) {
-				$messages[] = __( 'Learner <strong>did not have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
+				$messages[] = __( 'Student <strong>did not have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
 			}
 		} else {
-			$messages[] = __( 'Learner <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
+			$messages[] = __( 'Student <strong>did have</strong> course progress at the time of manual enrollment migration.', 'sensei-lms' );
 
 			if ( false === $legacy_migration_status ) {
-				$messages[] = __( 'Manual enrollment <strong>was not provided</strong> to the learner on legacy migration.', 'sensei-lms' );
+				$messages[] = __( 'Manual enrollment <strong>was not provided</strong> to the student on legacy migration.', 'sensei-lms' );
 			} else {
-				$messages[] = __( 'Manual enrollment <strong>was provided</strong> to the learner on legacy migration.', 'sensei-lms' );
+				$messages[] = __( 'Manual enrollment <strong>was provided</strong> to the student on legacy migration.', 'sensei-lms' );
 			}
 		}
 

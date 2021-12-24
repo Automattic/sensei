@@ -58,7 +58,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'user':
 				$columns = array(
-					'title'       => __( 'Learner', 'sensei-lms' ),
+					'title'       => __( 'Student', 'sensei-lms' ),
 					'started'     => __( 'Date Started', 'sensei-lms' ),
 					'completed'   => __( 'Date Completed', 'sensei-lms' ),
 					'user_status' => __( 'Status', 'sensei-lms' ),
@@ -82,7 +82,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 					$columns = array(
 						'title'         => __( 'Lesson', 'sensei-lms' ),
-						'num_learners'  => __( 'Learners', 'sensei-lms' ),
+						'num_learners'  => __( 'Students', 'sensei-lms' ),
 						'completions'   => __( 'Completed', 'sensei-lms' ),
 						'average_grade' => __( 'Average Grade', 'sensei-lms' ),
 					);
@@ -606,7 +606,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public function no_items() {
 		switch ( $this->view ) {
 			case 'user':
-				$text = __( 'No learners found.', 'sensei-lms' );
+				$text = __( 'No students found.', 'sensei-lms' );
 				break;
 
 			case 'lesson':
@@ -625,9 +625,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		if ( $this->user_id ) {
-			$learners_text = __( 'Other Learners taking this Course', 'sensei-lms' );
+			$learners_text = __( 'Other Students taking this Course', 'sensei-lms' );
 		} else {
-			$learners_text = __( 'Learners taking this Course', 'sensei-lms' );
+			$learners_text = __( 'Students taking this Course', 'sensei-lms' );
 		}
 		$lessons_text = __( 'Lessons in this Course', 'sensei-lms' );
 
@@ -703,7 +703,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public function search_button( $text = '' ) {
 		switch ( $this->view ) {
 			case 'user':
-				$text = __( 'Search Learners', 'sensei-lms' );
+				$text = __( 'Search Students', 'sensei-lms' );
 				break;
 
 			case 'lesson':

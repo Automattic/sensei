@@ -46,7 +46,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => __( 'Course', 'sensei-lms' ),
-					'students'        => __( 'Learners', 'sensei-lms' ),
+					'students'        => __( 'Students', 'sensei-lms' ),
 					'lessons'         => __( 'Lessons', 'sensei-lms' ),
 					'completions'     => __( 'Completed', 'sensei-lms' ),
 					'average_percent' => __( 'Average Percentage', 'sensei-lms' ),
@@ -57,7 +57,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$columns = array(
 					'title'         => __( 'Lesson', 'sensei-lms' ),
 					'course'        => __( 'Course', 'sensei-lms' ),
-					'students'      => __( 'Learners', 'sensei-lms' ),
+					'students'      => __( 'Students', 'sensei-lms' ),
 					'completions'   => __( 'Completed', 'sensei-lms' ),
 					'average_grade' => __( 'Average Grade', 'sensei-lms' ),
 				);
@@ -66,7 +66,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'users':
 			default:
 				$columns = array(
-					'title'             => __( 'Learner', 'sensei-lms' ),
+					'title'             => __( 'Student', 'sensei-lms' ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'registered'        => __( 'Date Registered', 'sensei-lms' ),
 					'active_courses'    => __( 'Active Courses', 'sensei-lms' ),
@@ -629,8 +629,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$stats_to_render = array(
 			__( 'Total Courses', 'sensei-lms' )           => $total_courses,
 			__( 'Total Lessons', 'sensei-lms' )           => $total_lessons,
-			__( 'Total Learners', 'sensei-lms' )          => $user_count,
-			__( 'Average Courses per Learner', 'sensei-lms' ) => $average_courses_per_learner,
+			__( 'Total Students', 'sensei-lms' )          => $user_count,
+			__( 'Average Courses per Student', 'sensei-lms' ) => $average_courses_per_learner,
 			__( 'Average Grade', 'sensei-lms' )           => $total_average_grade . '%',
 			__( 'Total Completed Courses', 'sensei-lms' ) => $total_courses_ended,
 		);
@@ -685,7 +685,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$lesson_args['view']  = 'lessons';
 		$courses_args['view'] = 'courses';
 
-		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Learners', 'sensei-lms' ) . '</a>';
+		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
 		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
 		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
 
@@ -750,7 +750,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
-				$text = __( 'Search Learners', 'sensei-lms' );
+				$text = __( 'Search Students', 'sensei-lms' );
 				break;
 		}
 

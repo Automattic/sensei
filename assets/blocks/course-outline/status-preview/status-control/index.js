@@ -43,7 +43,7 @@ export const StatusControl = ( {
 		<RadioControl
 			className="wp-block-sensei-lms-course-outline-status-control"
 			help={ __(
-				'Preview a status. The actual status that the learner sees is determined by their progress in the course.',
+				'Preview a status. The actual status that the student sees is determined by their progress in the course.',
 				'sensei-lms'
 			) }
 			{ ...props }

@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
  */
 import edit from './question-description';
 import metadata from './block.json';
-import icon from '../../../icons/question-icon';
+import icon from '../../../images/svg-icons/question.svg';
 
 /**
  * Question description block.

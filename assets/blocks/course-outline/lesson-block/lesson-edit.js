@@ -6,13 +6,12 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { Icon } from '@wordpress/components';
+import { Icon, check, chevronRight } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { checked, chevronRight } from '../../../icons/wordpress-icons';
 import { withColorSettings } from '../../../shared/blocks/settings';
 import { useKeydownInserter } from '../../../shared/blocks/use-keydown-inserter';
 import SingleLineInput from '../../../shared/blocks/single-line-input';
@@ -84,7 +83,7 @@ export const LessonEdit = ( props ) => {
 			<LessonSettings { ...props } { ...lessonStatus } />
 			<div { ...wrapperStyles }>
 				<Icon
-					icon={ checked }
+					icon={ check }
 					className="wp-block-sensei-lms-course-outline-lesson__status"
 				/>
 				<SingleLineInput

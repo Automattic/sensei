@@ -1,0 +1,91 @@
+body.sensei-course-theme {
+
+	.sensei-contact-teacher-form {
+		font-family: 'Inter', sans-serif;
+	}
+
+	.sensei-contact-teacher-form__submit {
+		padding: 10px 20px;
+		background-color: var(--primary-color);
+		color: var(--primary-contrast-color);
+		font-weight: 700;
+		font-size: 14px;
+		&.is-busy {
+			background-image: linear-gradient(
+				-45deg,
+				rgba(255, 255, 255, 0.5) 28%,
+				rgba(255, 255, 255, 0.1) 28%,
+				rgba(255, 255, 255, 0.1) 72%,
+				rgba(255, 255, 255, 0.5) 72%
+			);
+			animation: components-button__busy-animation 25000ms infinite linear;
+			&:disabled {
+				cursor: not-allowed;
+			}
+		}
+	}
+
+	.sensei-course-theme-contact-teacher__button {
+		display: block;
+		width: 100%;
+		border: 1px solid #000;
+		border-radius: 2px;
+		padding: 11px;
+		box-sizing: border-box;
+		text-align: center;
+		font-size: 14px;
+		line-height: 17px;
+		font-weight: 700;
+	}
+
+	.sensei-contact-teacher-success {
+		font-family: 'Inter', sans-serif;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		padding-top: 30px;
+		background-color: #fff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		z-index: -1;
+		opacity: 0;
+		transition: opacity 100ms ease-out;
+
+		svg {
+			width: 42px;
+			height: 42px;
+			margin-bottom: 20px;
+			color: var(--primary-color);
+		}
+
+		p {
+			font-weight: 500;
+			font-size: 24px;
+			line-height: 32px;
+			color: #1E1E1E;
+			width: 235px;
+			max-width: 100%;
+			text-align: center;
+		}
+	}
+
+	.sensei-contact-teacher-form {
+		&.is-success {
+			.sensei-contact-teacher-success {
+				z-index: 1;
+				opacity: 1;
+			}
+		}
+	}
+}
+
+@keyframes components-button__busy-animation {
+	0% {
+		background-position: 2000px 0;
+	}
+}

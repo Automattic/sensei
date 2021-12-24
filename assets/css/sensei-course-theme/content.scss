@@ -1,0 +1,24 @@
+.sensei-course-theme {
+	&__main-content {
+		padding: var(--content-padding);
+		margin-left: var(--sidebar-width) !important;
+
+		> * {
+			max-width: 900px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.alignfull {
+			margin-left: calc( -1 * var(--content-padding));
+			margin-right: calc( -1 * var(--content-padding));
+			max-width: unset;
+			width: auto;
+		}
+
+		img {
+			max-width: 100%;
+			height: auto;
+		}
+	}
+}

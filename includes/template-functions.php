@@ -859,6 +859,43 @@ function sensei_get_the_question_id() {
 
 }
 
+/**
+ * Return the number of the current question within the quiz question loop.
+ *
+ * @since 3.15.0
+ *
+ * @return int
+ */
+function sensei_get_the_question_number() {
+
+	global $sensei_question_loop;
+
+	$question_number = ( $sensei_question_loop['current_page'] - 1 )
+		* $sensei_question_loop['posts_per_page']
+		+ $sensei_question_loop['current']
+		+ 1;
+
+	/**
+	 * Filters the number of the current question within the quiz question loop.
+	 *
+	 * @hook  sensei_the_question_number
+	 * @since 3.15.0
+	 *
+	 * @param {int} $question_number The question number.
+	 * @param {int} $question_id     The question ID.
+	 * @param {int} $quiz_id         The quiz ID.
+	 *
+	 * @return {int}
+	 */
+	return apply_filters(
+		'sensei_the_question_number',
+		$question_number,
+		$sensei_question_loop['current_question']->ID,
+		$sensei_question_loop['quiz_id']
+	);
+
+}
+
 /************************
  *
  * Single Lesson Functions

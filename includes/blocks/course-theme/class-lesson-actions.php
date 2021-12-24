@@ -45,14 +45,15 @@ class Lesson_Actions {
 		$disabled_attribute = $is_disabled ? 'disabled' : '';
 
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
-		$permalink = esc_url( get_permalink() );
+		$lesson_id = Sensei_Utils::get_current_lesson();
+		$permalink = esc_url( get_permalink( $lesson_id ) );
 		$text      = esc_html( __( 'Complete lesson', 'sensei-lms' ) );
 
 		return ( '
-			<form class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
+			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
+				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
 					' . $text . '
 				</button>
 			</form>
@@ -112,22 +113,22 @@ class Lesson_Actions {
 		// Quiz button.
 		if ( ! empty( $quiz_permalink ) && ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
 			$take_quiz_button = $this->render_take_quiz( $quiz_permalink, $has_incomplete_prerequisite );
-			$actions[]        = '<li>' . $take_quiz_button . '</li>';
+			$actions[]        = $take_quiz_button;
 		}
 
 		// Complete button.
 		if ( ! $is_pass_required ) {
 			$complete_button_class  = isset( $take_quiz_button ) ? 'is-secondary' : 'is-primary';
 			$complete_lesson_button = $this->render_complete_lesson( $complete_button_class, $has_incomplete_prerequisite );
-			$actions[]              = '<li>' . $complete_lesson_button . '</li>';
+			$actions[]              = $complete_lesson_button;
 		}
 
 		if ( empty( $actions ) ) {
 			return '';
 		}
 
-		return '<ul class="sensei-course-theme-lesson-actions">
+		return '<div class="sensei-course-theme-lesson-actions">
 			' . implode( '', $actions ) . '
-		</ul>';
+		</div>';
 	}
 }

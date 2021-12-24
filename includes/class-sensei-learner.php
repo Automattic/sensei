@@ -376,7 +376,7 @@ class Sensei_Learner {
 
 			if ( empty( self::$learner_terms[ $user_id ] ) || self::$learner_terms[ $user_id ] instanceof WP_Error ) {
 				unset( self::$learner_terms[ $user_id ] );
-				throw new Exception( esc_html__( 'Learner term could not be created for user.', 'sensei-lms' ) );
+				throw new Exception( esc_html__( 'Student term could not be created for user.', 'sensei-lms' ) );
 			}
 		}
 

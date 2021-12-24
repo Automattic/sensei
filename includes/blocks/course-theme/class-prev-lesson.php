@@ -41,19 +41,19 @@ class Prev_Lesson {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
-		$lesson = get_post();
+		$lesson_id = \Sensei_Utils::get_current_lesson();
 
-		if ( empty( $lesson ) ) {
+		if ( empty( $lesson_id ) ) {
 			return '';
 		}
 
-		$urls = sensei_get_prev_next_lessons( $lesson->ID );
+		$urls = sensei_get_prev_next_lessons( $lesson_id );
 
 		if ( empty( $urls['previous']['url'] ) ) {
 			return '';
 		}
 		$url  = esc_url( $urls['previous']['url'] );
-		$text = $attributes['text'] ?? __( 'Previous Lesson', 'sensei-lms' );
+		$text = $attributes['text'] ?? __( 'Previous', 'sensei-lms' );
 		$text = wp_kses_post( $text );
 		$icon = \Sensei()->assets->get_icon( 'chevron-left' );
 

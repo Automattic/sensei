@@ -6,6 +6,7 @@
 /**
  * Variables
  */
+$tablet-breakpoint: 768px;
 
 /**
  * Functions
@@ -368,6 +369,111 @@ a.sensei-certificate-link {
       margin-right: 10px;
     }
   }
+}
+
+#sensei-quiz-pagination {
+	display: flex;
+	flex-flow: column wrap;
+	align-items: center;
+	gap: 1.5em;
+	margin: 1.618em 0;
+
+	@media only screen and (min-width: $tablet-breakpoint) {
+		flex-direction: row;
+	}
+
+	.sensei-quiz-pagination__list {
+		flex-grow: 1;
+		gap: 0.5em;
+		margin-bottom: 1em;
+
+		@media only screen and (min-width: $tablet-breakpoint) {
+			margin-bottom: 0;
+		}
+
+		ul.page-numbers {
+			display: flex;
+			gap: 0.5em;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+
+			li, span {
+				margin: 0;
+				padding: 0;
+			}
+		}
+	}
+
+	.sensei-quiz-pagination__actions {
+		display: flex;
+		order: 1;
+
+		@media only screen and (min-width: $tablet-breakpoint) {
+			order: 0;
+		}
+	}
+
+	.sensei-quiz-pagination__action {
+		display: inline-flex;
+
+		&:not(:first-child) {
+			margin-left: 0.5em;
+			padding-left: 0.5em;
+			border-left: 2px solid;
+		}
+
+		button {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			color: inherit;
+			background-color: transparent;
+			text-decoration: underline;
+			text-transform: none;
+			font-weight: normal;
+			cursor: pointer;
+
+			&:hover {
+				color: inherit;
+				background-color: transparent;
+				text-decoration: none;
+			}
+		}
+	}
+
+	.sensei-quiz-pagination__nav {
+		display: flex;
+		align-items: center;
+
+		@media only screen and (min-width: $tablet-breakpoint) {
+			margin-left: auto;
+		}
+
+		.wp-block-buttons {
+			gap: 0.5em;
+
+			.wp-block-button {
+				margin: 0;
+			}
+		}
+	}
+
+	.sensei-quiz-pagination__prev-button {
+		&:before  {
+			@include iconbefore();
+			content: '\f104';
+			margin-right: 0.25em;
+		}
+	}
+
+	.sensei-quiz-pagination__next-button {
+		&:after  {
+			@include iconafter();
+			content: '\f105';
+			margin-left: 0.25em;
+		}
+	}
 }
 
 .quiz:not(.quiz-blocks), .lesson {
@@ -1039,7 +1145,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   }
 
 /* RESPOND */
-@media only screen and (min-width: 768px)  {
+@media only screen and (min-width: $tablet-breakpoint)  {
   #main .course  {
     .course-meta  {
       .course-start  {
@@ -1132,3 +1238,5 @@ body.tax-module #main .lesson-content .lesson-meta {
 @import 'notices';
 
 @import '../blocks/quiz/question-block/question';
+
+@import './sensei-modal.scss';

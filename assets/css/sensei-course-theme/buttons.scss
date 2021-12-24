@@ -1,46 +1,86 @@
-.sensei-course-theme {
-	&__button {
-		display: inline-block;
-		font-size: 14px;
 
-		&.is-primary,
-		&.is-secondary {
-			padding: 8px 11px;
-			border: solid 1px var(--primary-color);
-			font-weight: 700;
-			text-decoration: none;
-			border-radius: 2px;
+.wp-block-button .wp-block-button__link {
+	all: unset;
+}
+
+.sensei-course-theme__button, .wp-block-button {
+
+	font-family: 'Inter', sans-serif;
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 1.5;
+	letter-spacing: normal;
+	display: inline-block;
+	font-size: 14px;
+	cursor: pointer;
+	text-align: center;
+
+	&.is-primary,
+	&.is-secondary,
+	&.wp-block-button {
+		padding: 8px 11px;
+		border: solid 1px var(--primary-color);
+		font-weight: 700;
+		text-decoration: none;
+		border-radius: 2px;
+	}
+
+	&.is-primary,
+	&.wp-block-button:not(.is-style-outline) {
+		background-color: var(--primary-color);
+		color: var(--primary-contrast-color);
+		&:hover {
+			color: var(--primary-color);
+			background: none;
 		}
+	}
 
-		&.is-primary {
+	&.is-secondary,
+	&.wp-block-button.is-style-outline {
+		color: var(--primary-color);
+		&:hover {
 			background-color: var(--primary-color);
 			color: var(--primary-contrast-color);
-			&:hover {
-				color: var(--primary-color);
-				background: none;
-			}
-		}
 
-		&.is-secondary {
-			color: var(--primary-color);
-			&:hover {
-				background-color: var(--primary-color);
-				color: var(--primary-contrast-color);
-			}
 		}
+	}
 
-		&.is-link {
-			color: var(--primary-color);
-			&:hover {
-				text-decoration: underline;
-			}
+	&.is-link {
+		color: var(--primary-color);
+		&:hover {
+			text-decoration: underline;
 		}
+	}
 
-		&[aria-disabled="true"],
-		&:disabled {
-			opacity: 0.4;
-			pointer-events: none;
+	&[aria-disabled="true"],
+	&:disabled {
+		opacity: 0.4;
+		pointer-events: none;
+		cursor: not-allowed;
+	}
+	&.is-busy {
+		background-image: linear-gradient(
+			-45deg,
+			rgba(255, 255, 255, 0.5) 28%,
+			rgba(255, 255, 255, 0.1) 28%,
+			rgba(255, 255, 255, 0.1) 72%,
+			rgba(255, 255, 255, 0.5) 72%
+		);
+		animation: components-button__busy-animation 25000ms infinite linear;
+		&:disabled{
 			cursor: not-allowed;
 		}
 	}
+}
+
+@keyframes components-button__busy-animation {
+	0% {
+		background-position: 2000px 0;
+	}
+}
+
+.wp-block-buttons {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }

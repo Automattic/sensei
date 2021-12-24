@@ -966,19 +966,21 @@ class Sensei_Frontend {
 			wp_enqueue_script( 'sensei-disable-complete-lesson-button' );
 
 			?>
-			<form class="lesson_button_form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
+			<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
 				<input type="hidden"
-					   name="woothemes_sensei_complete_lesson_noonce"
-					   id="woothemes_sensei_complete_lesson_noonce"
-					   value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>"
+					name="woothemes_sensei_complete_lesson_noonce"
+					id="woothemes_sensei_complete_lesson_noonce"
+					value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_lesson_noonce' ) ); ?>"
 				/>
 
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
 
 				<input type="submit"
-					   name="quiz_complete"
-					   class="quiz-submit complete sensei-stop-double-submission"
-					   value="<?php esc_attr_e( 'Complete Lesson', 'sensei-lms' ); ?>"/>
+					name="quiz_complete"
+					class="quiz-submit complete sensei-stop-double-submission"
+					data-id="complete-lesson-button"
+					value="<?php esc_attr_e( 'Complete Lesson', 'sensei-lms' ); ?>"
+				/>
 
 			</form>
 			<?php
@@ -1157,15 +1159,12 @@ class Sensei_Frontend {
 			<?php
 			if ( get_option( 'users_can_register' ) ) {
 
-				// get current url.
-				$action_url = get_permalink();
-
 				?>
 
 				<div class="col-2">
 					<h2><?php esc_html_e( 'Register', 'sensei-lms' ); ?></h2>
 
-					<form method="post" class="register"  action="<?php echo esc_url( $action_url ); ?>" >
+					<form method="post" class="register">
 
 						<?php do_action( 'sensei_register_form_start' ); ?>
 
@@ -1565,16 +1564,29 @@ class Sensei_Frontend {
 					wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 					exit;
 				} else { // on login success.
+					$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : remove_query_arg( 'login', $referrer );
 
 					/**
-					* Change the redirect url programatically.
-					*
-					* @since 1.6.1
-					*
-					* @param string $referrer the page where the current url wheresensei login form was posted from.
-					*/
+					 * Change the redirect url programatically.
+					 *
+					 * @since 1.6.1
+					 * @deprecated 3.15.0 Use `sensei_login_success_redirect_url` instead.
+					 *
+					 * @param string $referrer the page where the current url wheresensei login form was posted from.
+					 */
+					$success_redirect_url = apply_filters_deprecated( 'sesei_login_success_redirect_url', [ $redirect_to ], 'sensei_login_success_redirect_url', 'Use `sensei_login_success_redirect_url` instead' );
 
-					$success_redirect_url = apply_filters( 'sesei_login_success_redirect_url', remove_query_arg( 'login', $referrer ) );
+					/**
+					 * Change the redirect url programatically.
+					 *
+					 * @hook sensei_login_success_redirect_url
+					 * @since 3.15.0
+					 *
+					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
+					 *
+					 * @return {string} The redirect URL if login is successful.
+					 */
+					$success_redirect_url = apply_filters( 'sensei_login_success_redirect_url', $success_redirect_url );
 
 					wp_redirect( esc_url_raw( $success_redirect_url ) );
 					exit;
@@ -1690,7 +1702,9 @@ class Sensei_Frontend {
 			$redirect = esc_url( home_url( $wp->request ) );
 		}
 
-		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect ) );
+		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : $redirect;
+
+		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
 		exit;
 
 	}

@@ -57,11 +57,15 @@ const Card = ( props ) => {
 					<h3 className="sensei-extensions__card__title">
 						{ title }
 					</h3>
-					{ ( badgeLabel || props?.[ 'has_update' ] ) && (
-						<small className="sensei-extensions__card__new-badge">
-							{ badgeLabel || __( 'New version', 'sensei-lms' ) }
-						</small>
-					) }
+					{
+						// eslint-disable-next-line dot-notation -- Data coming from API.
+						( badgeLabel || props?.[ 'has_update' ] ) && (
+							<small className="sensei-extensions__card__new-badge">
+								{ badgeLabel ||
+									__( 'New version', 'sensei-lms' ) }
+							</small>
+						)
+					}
 				</header>
 				<div className="sensei-extensions__card__body">
 					<p className="sensei-extensions__card__description">

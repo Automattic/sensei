@@ -7,13 +7,17 @@
 	}
 
     &-a {
+		padding: 12px 5px;
+		display: flex;
+		align-items: center;
 		span {
+			display: block;
 			font-size: 14px;
 			line-height: 17px;
 			color: inherit;
-			padding: 12px 5px;
 			text-decoration: none;
 		}
+
 		&:hover span {
 			color: var(--primary-color);
 		}
@@ -36,16 +40,10 @@
 			}
 		}
 
-		&__prev {
+		&__prev, &__next {
 			svg {
-				margin-right: 4px;
-			}
-		}
-
-		&__next {
-			svg {
-				margin-left: 4px;
-				margin-bottom: -1px;
+				width: 24px;
+				height: 24px;
 			}
 		}
 	}

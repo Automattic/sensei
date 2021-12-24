@@ -3,18 +3,23 @@ $base: '.sensei-course-theme';
 
 .sensei-course-theme__focus-mode-toggle {
 	position: absolute;
-	left: 24px;
-	top: 12px;
+	left: 20px;
+	top: 8px;
+	padding: 4px;
 	white-space: nowrap;
 	&__disable {
 		display: none;
 	}
 }
-.sensei-course-theme__sidebar {
-	padding-top: 32px;
+@media screen and (min-width: 782px) {
+	.sensei-course-theme__sidebar {
+		padding-top: 32px;
+	}
 }
 
 .sensei-course-theme--focus-mode {
+	--focus-header-height: 45px;
+
 	.sensei-course-theme {
 		&__header {
 			&__container {
@@ -51,8 +56,6 @@ $base: '.sensei-course-theme';
 		}
 		&__focus-mode-toggle {
 			left: 420px;
-			top: -28px;
-			padding: 4px;
 			&__enable {
 				display: none;
 			}
