@@ -46,30 +46,32 @@
 		}
 	}
 
+	function initPlayer( iframe ) {
+		const player = new YT.Player( iframe, {
+			events: {
+				onStateChange: onYouTubePlayerStateChange,
+			},
+		} );
+
+		if (
+			window.sensei.courseVideoSettings.courseVideoAutoPause &&
+			document.hidden !== undefined
+		) {
+			// eslint-disable-next-line @wordpress/no-global-event-listener
+			document.addEventListener(
+				'visibilitychange',
+				handleVisibilityChange( player ),
+				false
+			);
+		}
+	}
+
 	window.onYouTubeIframeAPIReady = function () {
 		document
 			.querySelectorAll(
 				'.sensei-course-video-youtube-container > iframe'
 			)
-			.forEach( ( element ) => {
-				const player = new YT.Player( element, {
-					events: {
-						onStateChange: onYouTubePlayerStateChange,
-					},
-				} );
-
-				if (
-					window.sensei.courseVideoSettings.courseVideoAutoPause &&
-					document.hidden !== undefined
-				) {
-					// eslint-disable-next-line @wordpress/no-global-event-listener
-					document.addEventListener(
-						'visibilitychange',
-						handleVisibilityChange( player ),
-						false
-					);
-				}
-			} );
+			.forEach( initPlayer );
 	};
 
 	if ( window.sensei.courseVideoSettings.courseVideoRequired ) {
