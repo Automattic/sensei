@@ -7,6 +7,11 @@
 		};
 	}
 
+	function preventClick( event ) {
+		event.preventDefault();
+		return false;
+	}
+
 	function onYouTubePlayerStateChange( event ) {
 		const playerStatus = event.data;
 
@@ -18,7 +23,10 @@
 				.querySelectorAll(
 					'.wp-block-sensei-lms-button-complete-lesson > button'
 				)
-				.forEach( ( button ) => ( button.disabled = false ) );
+				.forEach( ( button ) => {
+					button.removeEventListener( 'click', preventClick );
+					button.disabled = false;
+				} );
 		}
 
 		if (
@@ -71,6 +79,9 @@
 			.querySelectorAll(
 				'.wp-block-sensei-lms-button-complete-lesson > button'
 			)
-			.forEach( ( button ) => ( button.disabled = true ) );
+			.forEach( ( button ) => {
+				button.disabled = true;
+				button.addEventListener( 'click', preventClick );
+			} );
 	}
 } )();
