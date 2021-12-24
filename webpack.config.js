@@ -26,6 +26,7 @@ const files = [
 	'js/admin/sensei-notice-dismiss.js',
 	'js/frontend/course-archive.js',
 	'js/frontend/course-video/youtube-extension.js',
+	'js/frontend/course-video/video-extension.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
 	'js/learners-bulk-actions.js',

@@ -73,6 +73,7 @@ class Sensei_Course_Video_Settings {
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		Sensei_Course_Video_Blocks_Youtube_Extension::init( $this );
+		Sensei_Course_Video_Blocks_Video_Extension::init( $this );
 	}
 
 	/**
