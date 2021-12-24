@@ -20,9 +20,7 @@
 			playerStatus === YT.PlayerState.ENDED
 		) {
 			document
-				.querySelectorAll(
-					'.wp-block-sensei-lms-button-complete-lesson > button'
-				)
+				.querySelectorAll( '[data-id="complete-lesson-button"]' )
 				.forEach( ( button ) => {
 					button.removeEventListener( 'click', preventClick );
 					button.disabled = false;
@@ -35,7 +33,7 @@
 		) {
 			// submit complete lesson form
 			document
-				.querySelectorAll( '.lesson_button_form' )
+				.querySelectorAll( '[data-id="complete-lesson-form"]' )
 				.forEach( ( form ) => {
 					const action = form.querySelector(
 						'input[name=quiz_action]'
@@ -76,9 +74,7 @@
 
 	if ( window.sensei.courseVideoSettings.courseVideoRequired ) {
 		document
-			.querySelectorAll(
-				'.wp-block-sensei-lms-button-complete-lesson > button'
-			)
+			.querySelectorAll( '[data-id="complete-lesson-button"]' )
 			.forEach( ( button ) => {
 				button.disabled = true;
 				button.addEventListener( 'click', preventClick );
