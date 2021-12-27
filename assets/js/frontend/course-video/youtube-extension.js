@@ -32,11 +32,12 @@
 			playerStatus === YT.PlayerState.ENDED
 		) {
 			// submit complete lesson form
-			document
-				.querySelectorAll( '[data-id="complete-lesson-form"]' )
-				.forEach( ( form ) => {
-					form.submit();
-				} );
+			const form = document.querySelector(
+				'[data-id="complete-lesson-form"]'
+			);
+			if ( form ) {
+				form.submit();
+			}
 		}
 	}
 
