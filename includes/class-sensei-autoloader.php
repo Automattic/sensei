@@ -73,6 +73,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'blocks' ),
 			new Sensei_Autoloader_Bundle( 'course-theme' ),
 			new Sensei_Autoloader_Bundle( 'course-video' ),
+			new Sensei_Autoloader_Bundle( 'course-video/blocks' ),
 		);
 
 		// Add Sensei custom auto loader.

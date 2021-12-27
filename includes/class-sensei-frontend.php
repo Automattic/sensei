@@ -147,6 +147,10 @@ class Sensei_Frontend {
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
+			// Course Video javascript.
+			wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
+			Sensei()->assets->register( 'sensei-course-video-blocks-youtube', 'js/frontend/course-video/youtube-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
+
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
 
@@ -959,7 +963,6 @@ class Sensei_Frontend {
 		if ( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
 
 			wp_enqueue_script( 'sensei-stop-double-submission' );
-
 			?>
 			<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
 				<input type="hidden"
