@@ -5,12 +5,10 @@
 		courseVideoAutoPause,
 	} = window.sensei.courseVideoSettings;
 
-	const handleVisibilityChange = ( player ) => {
-		return () => {
-			if ( document.hidden ) {
-				player.pauseVideo();
-			}
-		};
+	const handleVisibilityChange = ( player ) => () => {
+		if ( document.hidden ) {
+			player.pauseVideo();
+		}
 	};
 
 	const preventClick = ( event ) => {
