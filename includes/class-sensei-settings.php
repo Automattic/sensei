@@ -301,7 +301,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'default-settings',
 		);
 
-		// Course Settings
+		// Course Settings.
+		$fields['sensei_learning_mode_all'] = array(
+			'name'        => __( 'Sensei learning mode', 'sensei-lms' ),
+			'description' => __( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quiz.*', 'sensei-lms' ),
+			'form'        => 'render_learning_mode_setting',
+			'type'        => 'checkbox',
+			'default'     => false,
+			'section'     => 'course-settings',
+		);
+
 		$fields['course_completion'] = array(
 			'name'        => __( 'Courses are complete:', 'sensei-lms' ),
 			'description' => __( 'This will determine when courses are marked as complete.', 'sensei-lms' ),
@@ -839,6 +848,33 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$removed = array_diff( $old_value, $new_value );
 
 		return array_filter( array_merge( $added, $removed ) );
+	}
+
+	/**
+	 * Learning mode setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_learning_mode_setting( $args ) {
+		$options = $this->get_settings();
+		$key     = $args['key'];
+		$value   = $options[ $key ];
+		?>
+		<div class="sensei-settings-learning-mode__container">
+			<div class="sensei-settings-learning-mode__checkbox">
+				<input id="<?php echo esc_attr( $args['key'] ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
+				<label for="<?php echo esc_attr( $args['key'] ); ?>">
+					<?php esc_html_e( 'Enable for all courses', 'sensei-lms' ); ?>
+				</label>
+			</div>
+			<p class="sensei-settings-learning-mode__description">
+				<?php esc_html_e( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quiz.*', 'sensei-lms' ); ?>
+			</p>
+			<p class="sensei-settings-learning-mode__description">
+				<?php esc_html_e( '*This will not change or affect your WordPress site theme.', 'sensei-lms' ); ?>
+			</p>
+		</div>
+		<?php
 	}
 }
 
