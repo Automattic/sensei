@@ -1661,7 +1661,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Get all the questions of a quiz.
+	 * Get all the questions of a quiz or get all complete questions if filtering flag is true.
 	 *
 	 * @param int    $quiz_id The quiz id.
 	 * @param string $post_status Question post status.
@@ -1699,7 +1699,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Get all the questions of a quiz.
+	 * Filter out incomplete questions.
 	 *
 	 * @param array $questions  All questions.
 	 *
