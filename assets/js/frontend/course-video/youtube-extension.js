@@ -1,24 +1,27 @@
 ( () => {
-	function handleVisibilityChange( player ) {
-		return function () {
+	const {
+		courseVideoRequired,
+		courseVideoAutoComplete,
+		courseVideoAutoPause,
+	} = window.sensei.courseVideoSettings;
+
+	const handleVisibilityChange = ( player ) => {
+		return () => {
 			if ( document.hidden ) {
 				player.pauseVideo();
 			}
 		};
-	}
+	};
 
-	function preventClick( event ) {
+	const preventClick = ( event ) => {
 		event.preventDefault();
 		return false;
-	}
+	};
 
-	function onYouTubePlayerStateChange( event ) {
+	const onYouTubePlayerStateChange = ( event ) => {
 		const playerStatus = event.data;
 
-		if (
-			window.sensei.courseVideoSettings.courseVideoRequired &&
-			playerStatus === YT.PlayerState.ENDED
-		) {
+		if ( courseVideoRequired && playerStatus === YT.PlayerState.ENDED ) {
 			document
 				.querySelectorAll( '[data-id="complete-lesson-button"]' )
 				.forEach( ( button ) => {
@@ -28,7 +31,7 @@
 		}
 
 		if (
-			window.sensei.courseVideoSettings.courseVideoAutoComplete &&
+			courseVideoAutoComplete &&
 			playerStatus === YT.PlayerState.ENDED
 		) {
 			// submit complete lesson form
@@ -39,19 +42,16 @@
 				form.submit();
 			}
 		}
-	}
+	};
 
-	function initPlayer( iframe ) {
+	const initPlayer = ( iframe ) => {
 		const player = new YT.Player( iframe, {
 			events: {
 				onStateChange: onYouTubePlayerStateChange,
 			},
 		} );
 
-		if (
-			window.sensei.courseVideoSettings.courseVideoAutoPause &&
-			document.hidden !== undefined
-		) {
+		if ( courseVideoAutoPause && document.hidden !== undefined ) {
 			// eslint-disable-next-line @wordpress/no-global-event-listener
 			document.addEventListener(
 				'visibilitychange',
@@ -59,7 +59,7 @@
 				false
 			);
 		}
-	}
+	};
 
 	window.onYouTubeIframeAPIReady = function () {
 		document
@@ -69,7 +69,7 @@
 			.forEach( initPlayer );
 	};
 
-	if ( window.sensei.courseVideoSettings.courseVideoRequired ) {
+	if ( courseVideoRequired ) {
 		document
 			.querySelectorAll( '[data-id="complete-lesson-button"]' )
 			.forEach( ( button ) => {
