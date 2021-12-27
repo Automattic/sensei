@@ -37,7 +37,7 @@
 				'[data-id="complete-lesson-form"]'
 			);
 			if ( form ) {
-				form.submit();
+				form.dispatchEvent( new Event( 'submit' ) );
 			}
 		}
 	};
