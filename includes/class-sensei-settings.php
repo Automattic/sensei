@@ -856,9 +856,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $args The field arguments.
 	 */
 	public function render_learning_mode_setting( $args ) {
-		$options = $this->get_settings();
-		$key     = $args['key'];
-		$value   = $options[ $key ];
+		$options       = $this->get_settings();
+		$key           = $args['key'];
+		$value         = $options[ $key ];
+		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
 		?>
 		<div class="sensei-settings-learning-mode__container">
 			<div class="sensei-settings-learning-mode__checkbox">
@@ -867,9 +868,23 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<?php esc_html_e( 'Enable for all courses', 'sensei-lms' ); ?>
 				</label>
 			</div>
+			<br />
 			<p class="sensei-settings-learning-mode__description">
-				<?php esc_html_e( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quiz.*', 'sensei-lms' ); ?>
+				<?php esc_html_e( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quizzes.*', 'sensei-lms' ); ?>
 			</p>
+			<?php if ( $customize_url ) { ?>
+			<br />
+			<p class="sensei-settings-learning-mode__description">
+				<?php esc_html_e( 'Customize the colors, add a logo, and other styling options for Sensei’s learning mode.', 'sensei-lms' ); ?>
+			</p>
+			<br />
+			<p class="sensei-settings-learning-mode__description">
+				<a class="sensei-settings-learning-mode__customize-link button" href="<?php echo esc_url( $customize_url ); ?>">
+					<?php esc_html_e( 'Customize styles', 'sensei-lms' ); ?>
+				</a>
+			</p>
+			<?php } ?>
+			<br />
 			<p class="sensei-settings-learning-mode__description">
 				<?php esc_html_e( '*This will not change or affect your WordPress site theme.', 'sensei-lms' ); ?>
 			</p>

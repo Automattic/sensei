@@ -282,4 +282,33 @@ class Sensei_Course_Theme {
 
 		return true;
 	}
+
+	/**
+	 * Returns the url for sensei theme customization.
+	 */
+	public static function get_sensei_theme_customize_url() {
+		// Get the last modified lesson.
+		$result = get_posts(
+			[
+				'posts_per_page' => 1,
+				'post_type'      => 'lesson',
+				'orderby'        => 'modified',
+				'meta'           => [
+					'key'     => '_lesson_course',
+					'compare' => 'EXISTS',
+				],
+			]
+		);
+		if ( empty( $result ) || count( $result ) < 1 ) {
+			return '';
+		}
+
+		$lesson      = $result[0];
+		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+		$preview_url = '/?p=' . $lesson->ID;
+		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+			$preview_url .= '&learn=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+		}
+		return '/wp-admin/customize.php?url=' . rawurlencode( $preview_url );
+	}
 }
