@@ -1661,7 +1661,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Get all the questions of a quiz or get all complete questions if filtering flag is true.
+	 * Get all the questions of a quiz or get all complete questions if filtering flag is true and is not preview.
 	 *
 	 * @param int    $quiz_id The quiz id.
 	 * @param string $post_status Question post status.
@@ -1695,7 +1695,11 @@ class Sensei_Quiz {
 		$questions_query = new WP_Query( $question_query_args );
 
 		$posts = $questions_query->posts;
-		return $filter_incomplete_questions ? $this->filter_out_incomplete_questions( $posts ) : $posts;
+
+		if ( is_preview() || ! $filter_incomplete_questions ) {
+			return $posts;
+		}
+		return $this->filter_out_incomplete_questions( $posts );
 	}
 
 	/**
