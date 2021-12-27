@@ -963,8 +963,6 @@ class Sensei_Frontend {
 		if ( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id ) ) {
 
 			wp_enqueue_script( 'sensei-stop-double-submission' );
-			wp_enqueue_script( 'sensei-disable-complete-lesson-button' );
-
 			?>
 			<form class="lesson_button_form" data-id="complete-lesson-form" method="POST" action="<?php echo esc_url( get_permalink() ); ?>">
 				<input type="hidden"
