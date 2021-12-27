@@ -142,11 +142,11 @@ class Sensei_Course_Theme_Option {
 			return false;
 		}
 
-		if ( Sensei_Course_Theme::is_sensei_theme_preview_mode( $course_id ) ) {
+		if ( self::has_sensei_theme_enabled( $course_id ) ) {
 			return true;
 		}
 
-		if ( self::has_sensei_theme_enabled( $course_id ) ) {
+		if ( Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $course_id ) ) {
 			return true;
 		}
 
@@ -161,6 +161,10 @@ class Sensei_Course_Theme_Option {
 	 * @return bool
 	 */
 	public static function has_sensei_theme_enabled( int $course_id ) {
+		// Global learning mode setting preceeds the individual course setting.
+		if ( \Sensei()->settings->settings['sensei_learning_mode_all'] ) {
+			return true;
+		}
 
 		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 

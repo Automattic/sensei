@@ -52,6 +52,7 @@ class Sensei_Settings_API {
 		$this->tabs              = array();
 		$this->settings_version  = '';
 
+		add_action( 'init', [ $this, 'expose_sensei_settings' ] );
 	}
 
 	/**
@@ -1059,6 +1060,19 @@ class Sensei_Settings_API {
 		if ( $this->has_imageselector ) {
 			wp_enqueue_style( 'sensei-settings-imageselectors' );
 		}
+	}
+
+	/**
+	 * Exposes the sensei settings into the js runtime.
+	 */
+	public function expose_sensei_settings() {
+		$settings = wp_json_encode( $this->get_settings() );
+		wp_register_script( 'expose-sensei-settings', '', [], \false, \false );
+		wp_enqueue_script( 'expose-sensei-settings' );
+		wp_add_inline_script(
+			'expose-sensei-settings',
+			sprintf( 'window.senseiSettings = %s;', $settings ),
+		);
 	}
 }
 

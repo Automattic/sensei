@@ -26,6 +26,8 @@ const canPreview = ( block ) =>
 const CourseThemeSidebar = () => {
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
+	const globalLearningModeEnabled =
+		window.senseiSettings.sensei_learning_mode_all || false;
 	const currentPost = useSelect( ( select ) =>
 		select( 'core/editor' ).getCurrentPost()
 	);
@@ -60,7 +62,10 @@ const CourseThemeSidebar = () => {
 
 	let previewUrl = '';
 	if ( firstLesson?.id && currentPost?.id ) {
-		if ( currentPost.meta._course_theme === SENSEI_THEME ) {
+		if (
+			globalLearningModeEnabled ||
+			currentPost.meta._course_theme === SENSEI_THEME
+		) {
 			previewUrl = `/?p=${ firstLesson.id }`;
 		} else {
 			previewUrl = `/?p=${ firstLesson.id }&learn=1&${ SENSEI_PREVIEW_QUERY }=${ currentPost.id }`;
@@ -79,44 +84,62 @@ const CourseThemeSidebar = () => {
 			name="sensei-course-theme"
 			title={ __( 'Course Styles', 'sensei-lms' ) }
 		>
-			<ToggleControl
-				className="sensei-course-theme-toggle"
-				label={
-					<>
-						<p className="sensei-course-theme-toggle__label">
-							{ __( 'Sensei learning mode', 'sensei-lms' ) }
-						</p>
-						<p className="sensei-course-theme-toggle__description">
+			{ globalLearningModeEnabled ? (
+				<>
+					<p className="sensei-course-theme-toggle__global-overwrite-notice">
+						<a href="/wp-admin/admin.php?page=sensei-settings#course-settings">
 							{ __(
-								'Enable this mode to show an immersive and dedicated view for the course, lessons, and quiz.*',
+								'Learning Mode is enabled globally.',
 								'sensei-lms'
 							) }
-						</p>
-						{ previewUrl && (
-							<p className="sensei-course-theme-toggle__preview">
-								<a
-									href={ previewUrl }
-									className="sensei-course-theme-toggle__preview__link"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{ __( 'Preview', 'sensei-lms' ) }
-								</a>
-							</p>
+						</a>
+					</p>
+				</>
+			) : (
+				<>
+					<ToggleControl
+						className="sensei-course-theme-toggle"
+						label={
+							<>
+								<p className="sensei-course-theme-toggle__label">
+									{ __(
+										'Sensei learning mode',
+										'sensei-lms'
+									) }
+								</p>
+								<p className="sensei-course-theme-toggle__description">
+									{ __(
+										'Enable this mode to show an immersive and dedicated view for the course, lessons, and quiz.*',
+										'sensei-lms'
+									) }
+								</p>
+								{ previewUrl && (
+									<p className="sensei-course-theme-toggle__preview">
+										<a
+											href={ previewUrl }
+											className="sensei-course-theme-toggle__preview__link"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{ __( 'Preview', 'sensei-lms' ) }
+										</a>
+									</p>
+								) }
+							</>
+						}
+						checked={ theme === SENSEI_THEME }
+						onChange={ ( checked ) =>
+							setTheme( checked ? SENSEI_THEME : WORDPRESS_THEME )
+						}
+					/>
+					<p className="sensei-course-theme-toggle__note">
+						{ __(
+							'*This will not change or affect your WordPress site theme.',
+							'sensei-lms'
 						) }
-					</>
-				}
-				checked={ theme === SENSEI_THEME }
-				onChange={ ( checked ) =>
-					setTheme( checked ? SENSEI_THEME : WORDPRESS_THEME )
-				}
-			/>
-			<p className="sensei-course-theme-toggle__note">
-				{ __(
-					'*This will not change or affect your WordPress site theme.',
-					'sensei-lms'
-				) }
-			</p>
+					</p>
+				</>
+			) }
 			{ customizerUrl && (
 				<p className="sensei-course-theme-toggle__customize">
 					<a

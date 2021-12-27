@@ -254,15 +254,15 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Tells if sensei theme is in preview mode.
+	 * Tells if sensei theme in preview mode is allowed.
 	 *
 	 * @param int $course_id The id of the course.
 	 *
 	 * @return bool
 	 */
-	public static function is_sensei_theme_preview_mode( $course_id ) {
+	public static function is_sensei_theme_preview_mode_allowed( $course_id ) {
 		// Do not allow sensei preview if not an administrator.
-		if ( ! in_array( 'administrator', wp_get_current_user()->roles, true ) ) {
+		if ( ! current_user_can( 'manage_sensei' ) ) {
 			return false;
 		}
 
@@ -276,7 +276,7 @@ class Sensei_Course_Theme {
 		$query_var = isset( $_GET[ self::PREVIEW_QUERY_VAR ] ) ? intval( $_GET[ self::PREVIEW_QUERY_VAR ] ) : 0;
 
 		// Do not allow sensei preview if requested course id does not match.
-		if ( ! $course_id || $query_var !== $course_id ) {
+		if ( $query_var !== $course_id ) {
 			return false;
 		}
 
@@ -299,14 +299,14 @@ class Sensei_Course_Theme {
 				],
 			]
 		);
-		if ( empty( $result ) || count( $result ) < 1 ) {
+		if ( empty( $result ) ) {
 			return '';
 		}
 
 		$lesson      = $result[0];
 		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
 		$preview_url = '/?p=' . $lesson->ID;
-		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
 			$preview_url .= '&learn=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
 		return '/wp-admin/customize.php?url=' . rawurlencode( $preview_url );
