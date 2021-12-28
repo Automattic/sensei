@@ -46,10 +46,8 @@
 	}
 
 	&.is-link {
-		color: var(--primary-color);
-		&:hover {
-			text-decoration: underline;
-		}
+		font-weight: 600;
+		text-decoration: underline;
 	}
 
 	&[aria-disabled="true"],
