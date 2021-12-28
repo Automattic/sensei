@@ -3454,7 +3454,9 @@ class Sensei_Lesson {
 			}
 		}
 
-		$questions = Sensei()->quiz->get_questions( $quiz_id, $post_status, $orderby, $order );
+		// Filter out questions that are incomplete on the frontend.
+		$filter_incomplete_questions = true;
+		$questions                   = Sensei()->quiz->get_questions( $quiz_id, $post_status, $orderby, $order, $filter_incomplete_questions );
 
 		// Set the questions array that will be manipulated within this function.
 		$questions_array = $questions;
