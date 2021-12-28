@@ -27,30 +27,4 @@
 	&__reset-quiz-form {
 		margin-bottom: 0;
 	}
-
-	&__reset-quiz-button {
-		border: none;
-		color: #26212E;
-		background-color: transparent;
-		text-decoration: underline;
-		font-size: 14px;
-		line-height: 1.05;
-		font-weight: 600;
-		cursor: pointer;
-		&:hover {
-			color: var(--primary-color);
-		}
-	}
-
-	&__contact-teacher-link {
-		color: #26212E;
-		font-size: 14px;
-		line-height: 1.05;
-		font-weight: 600;
-		cursor: pointer;
-		text-decoration: underline;
-		&:hover {
-			color: var(--primary-color);
-		}
-	}
 }
