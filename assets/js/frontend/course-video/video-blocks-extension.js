@@ -29,11 +29,11 @@
 	};
 
 	const submitCompleteLessonForm = () => {
-		const form = document.querySelector(
-			'[data-id="complete-lesson-form"]'
+		const completeButton = document.querySelector(
+			'[data-id="complete-lesson-button"]'
 		);
-		if ( form ) {
-			form.dispatchEvent( new Event( 'submit' ) );
+		if ( completeButton ) {
+			completeButton.click();
 		}
 	};
 
