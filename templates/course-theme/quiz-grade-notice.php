@@ -19,26 +19,27 @@ if ( ! function_exists( 'sensei_quiz_grade_notices_map' ) ) {
 	 * @param array $notice
 	 */
 	function sensei_quiz_grade_notices_map( $notice ) {
-		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- No user data is being outputted.
 		?>
 		<div class='sensei-course-theme__frame sensei-lms-notice sensei-course-theme-quiz-graded-notice'>
 			<?php if ( isset( $notice['title'] ) && ! empty( $notice['title'] ) ) { ?>
-			<h1 class='sensei-course-theme-quiz-graded-notice__title'><?php echo $notice['title']; ?></h1>
+			<h1 class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></h1>
 			<?php } ?>
 
 			<?php if ( isset( $notice['text'] ) && ! empty( $notice['text'] ) ) { ?>
-			<p class='sensei-course-theme-quiz-graded-notice__text'><?php echo $notice['text']; ?></p>
+			<p class='sensei-course-theme-quiz-graded-notice__text'><?php echo wp_kses_post( $notice['text'] ); ?></p>
 			<?php } ?>
 
 			<?php if ( isset( $notice['actions'] ) && ! empty( $notice['actions'] ) ) { ?>
 			<div class='sensei-course-theme-quiz-graded-notice__actions'>
-				<?php echo implode( '', $notice['actions'] ); ?>
+				<?php
+					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No user data is being outputted.
+					echo implode( '', $notice['actions'] );
+				?>
 			</div>
 			<?php } ?>
 
 		</div>
 		<?php
-		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped -- No user data is being outputted.
 	}
 }
 
