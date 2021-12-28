@@ -1,24 +1,25 @@
 ( () => {
-	function handleVisibilityChange( player ) {
-		return function () {
-			if ( document.hidden ) {
-				player.pauseVideo();
-			}
-		};
-	}
+	const {
+		courseVideoRequired,
+		courseVideoAutoComplete,
+		courseVideoAutoPause,
+	} = window.sensei.courseVideoSettings;
 
-	function preventClick( event ) {
+	const handleVisibilityChange = ( player ) => () => {
+		if ( document.hidden ) {
+			player.pauseVideo();
+		}
+	};
+
+	const preventClick = ( event ) => {
 		event.preventDefault();
 		return false;
-	}
+	};
 
-	function onYouTubePlayerStateChange( event ) {
+	const onYouTubePlayerStateChange = ( event ) => {
 		const playerStatus = event.data;
 
-		if (
-			window.sensei.courseVideoSettings.courseVideoRequired &&
-			playerStatus === YT.PlayerState.ENDED
-		) {
+		if ( courseVideoRequired && playerStatus === YT.PlayerState.ENDED ) {
 			document
 				.querySelectorAll( '[data-id="complete-lesson-button"]' )
 				.forEach( ( button ) => {
@@ -28,35 +29,27 @@
 		}
 
 		if (
-			window.sensei.courseVideoSettings.courseVideoAutoComplete &&
+			courseVideoAutoComplete &&
 			playerStatus === YT.PlayerState.ENDED
 		) {
 			// submit complete lesson form
-			document
-				.querySelectorAll( '[data-id="complete-lesson-form"]' )
-				.forEach( ( form ) => {
-					const action = form.querySelector(
-						'input[name=quiz_action]'
-					).value;
-					if ( action !== 'lesson-complete' ) {
-						return true;
-					}
-					form.submit();
-				} );
+			const form = document.querySelector(
+				'[data-id="complete-lesson-form"]'
+			);
+			if ( form ) {
+				form.dispatchEvent( new Event( 'submit' ) );
+			}
 		}
-	}
+	};
 
-	function initPlayer( iframe ) {
+	const initPlayer = ( iframe ) => {
 		const player = new YT.Player( iframe, {
 			events: {
 				onStateChange: onYouTubePlayerStateChange,
 			},
 		} );
 
-		if (
-			window.sensei.courseVideoSettings.courseVideoAutoPause &&
-			document.hidden !== undefined
-		) {
+		if ( courseVideoAutoPause && document.hidden !== undefined ) {
 			// eslint-disable-next-line @wordpress/no-global-event-listener
 			document.addEventListener(
 				'visibilitychange',
@@ -64,7 +57,7 @@
 				false
 			);
 		}
-	}
+	};
 
 	window.onYouTubeIframeAPIReady = function () {
 		document
@@ -74,7 +67,7 @@
 			.forEach( initPlayer );
 	};
 
-	if ( window.sensei.courseVideoSettings.courseVideoRequired ) {
+	if ( courseVideoRequired ) {
 		document
 			.querySelectorAll( '[data-id="complete-lesson-button"]' )
 			.forEach( ( button ) => {
