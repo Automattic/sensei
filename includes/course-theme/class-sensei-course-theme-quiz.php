@@ -55,19 +55,17 @@ class Sensei_Course_Theme_Quiz {
 	 * Renders the block.
 	 *
 	 * @access private
-	 *
-	 * @return string The block HTML.
 	 */
-	public function maybe_add_quiz_results_notice() {
+	private function maybe_add_quiz_results_notice() {
 
 		$lesson_id   = Sensei_Utils::get_current_lesson();
 		$quiz_id     = \Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_id     = get_current_user_id();
 		$quiz_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id )->comment_approved;
 
-		// If not one of the statuses that we handle then bail.
+		// If quiz is not submitted, then nothing else to do.
 		if ( ! \Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
-			return '';
+			return;
 		}
 
 		// Prepare title.
