@@ -147,12 +147,6 @@ class Sensei_Frontend {
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
-			// Course Video javascript.
-			wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
-			Sensei()->assets->register( 'sensei-course-video-blocks-extension', 'js/frontend/course-video/youtube-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
-
-			Sensei()->assets->register( 'sensei-course-video-blocks-video', 'js/frontend/course-video/video-extension.js', [], true );
-
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
 

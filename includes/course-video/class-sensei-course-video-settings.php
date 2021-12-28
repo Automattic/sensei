@@ -72,11 +72,11 @@ class Sensei_Course_Video_Settings {
 		}
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
 
 		Sensei_Course_Video_Blocks_Youtube_Extension::instance()->init();
-		Sensei_Course_Video_Blocks_Video_Extension::init( $this );
+		Sensei_Course_Video_Blocks_Video_Extension::instance()->init();
 
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_settings_scripts' ] );
 	}
 
 	/**
@@ -98,10 +98,13 @@ class Sensei_Course_Video_Settings {
 	 *
 	 * @return void
 	 */
-	public function enqueue_settings_scripts() {
+	public function enqueue_frontend_scripts() {
 		if ( is_admin() || get_post_type() !== 'lesson' ) {
 			return;
 		}
+
+		wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
+		Sensei()->assets->register( 'sensei-course-video-blocks-extension', 'js/frontend/course-video/video-blocks-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
 
 		$video_settings      = [
 			'courseVideoAutoComplete' => (bool) $this->is_autocomplete_enabled(),
