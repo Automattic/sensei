@@ -72,8 +72,11 @@ class Sensei_Course_Video_Settings {
 		}
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
-		Sensei_Course_Video_Blocks_Youtube_Extension::init( $this );
+
+		Sensei_Course_Video_Blocks_Youtube_Extension::instance()->init();
 		Sensei_Course_Video_Blocks_Video_Extension::init( $this );
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_settings_scripts' ] );
 	}
 
 	/**
@@ -88,6 +91,27 @@ class Sensei_Course_Video_Settings {
 		if ( 'course' === $screen->id ) {
 			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiVideoCourseProgressionFeatureFlagEnabled = ' . $enabled, 'before' );
 		}
+	}
+
+	/**
+	 * Enqueues settings scripts on the frontend.
+	 *
+	 * @return void
+	 */
+	public function enqueue_settings_scripts() {
+		if ( is_admin() || get_post_type() !== 'lesson' ) {
+			return;
+		}
+
+		$video_settings      = [
+			'courseVideoAutoComplete' => (bool) $this->is_autocomplete_enabled(),
+			'courseVideoAutoPause'    => (bool) $this->is_autopause_enabled(),
+			'courseVideoRequired'     => (bool) $this->is_required(),
+		];
+		$video_settings_json = wp_json_encode( $video_settings );
+		$script              = "window.sensei = window.sensei || {}; window.sensei.courseVideoSettings = $video_settings_json;";
+
+		wp_add_inline_script( 'sensei-course-video-blocks-extension', $script, 'before' );
 	}
 
 	/**
@@ -121,7 +145,7 @@ class Sensei_Course_Video_Settings {
 	/**
 	 * Get the course video autocomplete setting.
 	 *
-	 * @return bool
+	 * @return mixed
 	 */
 	public function is_autocomplete_enabled() {
 		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );

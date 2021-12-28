@@ -149,7 +149,7 @@ class Sensei_Frontend {
 
 			// Course Video javascript.
 			wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
-			Sensei()->assets->register( 'sensei-course-video-blocks-youtube', 'js/frontend/course-video/youtube-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
+			Sensei()->assets->register( 'sensei-course-video-blocks-extension', 'js/frontend/course-video/youtube-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
 
 			Sensei()->assets->register( 'sensei-course-video-blocks-video', 'js/frontend/course-video/video-extension.js', [], true );
 

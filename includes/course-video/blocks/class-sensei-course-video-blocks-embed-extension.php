@@ -1,0 +1,90 @@
+<?php
+/**
+ * File containing the Sensei_Course_Video_Blocks_Embed_Extension class.
+ *
+ * @package sensei-lms
+ * @since 4.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Provides common logic for video block extensions to implement functionality for video course progression
+ *
+ * @since 4.0.0
+ */
+abstract class Sensei_Course_Video_Blocks_Embed_Extension {
+	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Returns an instance of the class.
+	 *
+	 * @return static
+	 */
+	public static function instance() {
+		if ( static::$instance ) {
+			return static::$instance;
+		}
+
+		static::$instance = new static();
+		return static::$instance;
+	}
+
+	/**
+	 * Sensei_Youtube_Extension constructor.
+	 */
+	private function __construct() {
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	public function init() {
+		add_filter( 'embed_oembed_html', [ $this, 'wrap_block' ], 10, 2 );
+	}
+
+	/**
+	 * Returns wrapped video block.
+	 *
+	 * @param string $html
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	public function wrap_block( $html, $url ): string {
+		if ( ! $this->is_supported( $url ) ) {
+			return $html;
+		}
+
+		if ( is_admin() || get_post_type() !== 'lesson' ) {
+			return $html;
+		}
+
+		wp_enqueue_script( 'sensei-course-video-blocks-extension' );
+
+		return "<div class='sensei-course-video-container {$this->get_extension_class_name()}'>$html</div>";
+	}
+
+	/**
+	 * Returns if the URL is supported by the extension.
+	 *
+	 * @param string $url
+	 *
+	 * @return bool
+	 */
+	abstract protected function is_supported( string $url ): bool;
+
+	/**
+	 * Returns a class name for the extension.
+	 *
+	 * @return string
+	 */
+	abstract protected function get_extension_class_name(): string;
+}
