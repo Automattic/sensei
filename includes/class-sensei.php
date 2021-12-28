@@ -418,7 +418,6 @@ class Sensei_Main {
 		Sensei_Data_Port_Manager::instance()->init();
 		Sensei_Course_Theme_Option::instance()->init( $this );
 		Sensei_Course_Theme::instance()->init( $this );
-		Sensei_Course_Video_Settings::instance()->init( $this );
 		new Sensei_Customizer( $this );
 
 		// Setup Wizard.
@@ -449,6 +448,7 @@ class Sensei_Main {
 			$this->theme_integration_loader = new Sensei_Theme_Integration_Loader();
 
 		}
+		Sensei_Course_Video_Settings::instance()->init( $this );
 
 		// Load notice Class
 		$this->notices = new Sensei_Notices();
