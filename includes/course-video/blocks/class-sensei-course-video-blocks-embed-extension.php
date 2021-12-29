@@ -47,7 +47,7 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	 * Initialize hooks.
 	 */
 	public function init() {
-		add_filter( 'embed_oembed_html', [ $this, 'wrap_block' ], 10, 2 );
+		add_filter( 'embed_oembed_html', [ $this, 'wrap_video' ], 10, 2 );
 	}
 
 	/**
@@ -58,12 +58,8 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	 *
 	 * @return string
 	 */
-	public function wrap_block( $html, $url ): string {
+	public function wrap_video( $html, $url ): string {
 		if ( ! $this->is_supported( $url ) ) {
-			return $html;
-		}
-
-		if ( is_admin() || get_post_type() !== 'lesson' ) {
 			return $html;
 		}
 
