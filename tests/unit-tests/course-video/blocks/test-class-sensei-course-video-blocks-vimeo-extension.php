@@ -10,7 +10,7 @@ class Test_Sensei_Course_Video_Blocks_Vimeo_Extension extends WP_UnitTestCase {
 		$settings        = $this->createMock( Sensei_Course_Video_Settings::class );
 		$vimeo_extension = Sensei_Course_Video_Blocks_Vimeo_Extension::instance( $settings );
 
-		$result = $vimeo_extension->wrap_vimeo( $iframe, $url, array(), 1 );
+		$result = $vimeo_extension->wrap_video( $iframe, $url );
 
 		self::assertSame( $expected, $result );
 	}
@@ -20,12 +20,12 @@ class Test_Sensei_Course_Video_Blocks_Vimeo_Extension extends WP_UnitTestCase {
 			'player.vimeo.com' => array(
 				'<iframe src="https://player.vimeo.com/abc"></iframe>',
 				'https://player.vimeo.com/abc',
-				'<div class="sensei-course-video-vimeo-container"><iframe src="https://player.vimeo.com/abc"></iframe></div>',
+				'<div class=\'sensei-course-video-container vimeo-extension\'><iframe src="https://player.vimeo.com/abc"></iframe></div>',
 			),
 			'vimeo.com'        => array(
 				'<iframe src="https://player.vimeo.com/abc"></iframe>',
 				'https://vimeo.com/video-id',
-				'<div class="sensei-course-video-vimeo-container"><iframe src="https://player.vimeo.com/abc"></iframe></div>',
+				'<div class=\'sensei-course-video-container vimeo-extension\'><iframe src="https://player.vimeo.com/abc"></iframe></div>',
 			),
 			'youtube.com'      => array(
 				'<iframe src="https://www.youtube.com/embed/video-id"></iframe>',

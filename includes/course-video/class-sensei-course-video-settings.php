@@ -76,7 +76,7 @@ class Sensei_Course_Video_Settings {
 
 		Sensei_Course_Video_Blocks_Youtube_Extension::instance()->init();
 		Sensei_Course_Video_Blocks_Video_Extension::instance()->init();
-		Sensei_Course_Video_Blocks_Vimeo_Extension::init( $this );
+		Sensei_Course_Video_Blocks_Vimeo_Extension::instance()->init();
 	}
 
 	/**
@@ -104,7 +104,13 @@ class Sensei_Course_Video_Settings {
 		}
 
 		wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
-		Sensei()->assets->register( 'sensei-course-video-blocks-extension', 'js/frontend/course-video/video-blocks-extension.js', [ 'sensei-course-video-youtube-iframe-api' ], true );
+		wp_register_script( 'sensei-course-video-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', true );
+		Sensei()->assets->register(
+			'sensei-course-video-blocks-extension',
+			'js/frontend/course-video/video-blocks-extension.js',
+			[ 'sensei-course-video-youtube-iframe-api', 'sensei-course-video-vimeo-iframe-api' ],
+			true
+		);
 
 		$video_settings      = [
 			'courseVideoAutoComplete' => (bool) $this->is_autocomplete_enabled(),
