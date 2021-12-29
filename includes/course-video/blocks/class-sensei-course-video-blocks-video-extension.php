@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Course_Video_Blocks_Youtube_Extension class.
+ * File containing the Sensei_Course_Video_Blocks_Video_Extension class.
  *
  * @package sensei-lms
  * @since 4.0.0
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Extends standard Embed block with YouTube specific functionality for video course progression
+ * Extends standard Video block with functionality for video course progression
  *
  * @since 4.0.0
  */
