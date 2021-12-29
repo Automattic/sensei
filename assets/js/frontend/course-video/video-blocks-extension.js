@@ -10,14 +10,14 @@
 		return false;
 	};
 
-	function disableCompleteLessonButton() {
+	const disableCompleteLessonButton = () => {
 		document
 			.querySelectorAll( '[data-id="complete-lesson-button"]' )
 			.forEach( ( button ) => {
 				button.disabled = true;
 				button.addEventListener( 'click', preventClick );
 			} );
-	}
+	};
 
 	const enableCompleteLessonButton = () => {
 		document
@@ -99,12 +99,10 @@
 			// eslint-disable-next-line @wordpress/no-global-event-listener
 			document.addEventListener(
 				'visibilitychange',
-				( video ) => () => {
-					return function () {
-						if ( document.hidden ) {
-							video.pause();
-						}
-					};
+				() => {
+					if ( document.hidden ) {
+						video.pause();
+					}
 				},
 				false
 			);
