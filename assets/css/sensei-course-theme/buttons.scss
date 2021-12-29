@@ -48,6 +48,10 @@
 	&.is-link {
 		font-weight: 600;
 		text-decoration: underline;
+
+		&:hover {
+			color: var(--primary-color);
+		}
 	}
 
 	&[aria-disabled="true"],
