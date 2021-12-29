@@ -113,6 +113,30 @@
 		.querySelectorAll( '.sensei-course-video-container video' )
 		.forEach( initVideoPlayer );
 
+	const initVimeoPlayer = ( iframe ) => {
+		const player = new Vimeo.Player( iframe );
+		player.on( 'ended', onEnded );
+
+		if ( courseVideoAutoPause && document.hidden !== undefined ) {
+			// eslint-disable-next-line @wordpress/no-global-event-listener
+			document.addEventListener(
+				'visibilitychange',
+				() => {
+					if ( document.hidden ) {
+						player.pause();
+					}
+				},
+				false
+			);
+		}
+	};
+
+	document
+		.querySelectorAll(
+			'.sensei-course-video-container.vimeo-extension iframe'
+		)
+		.forEach( initVimeoPlayer );
+
 	if ( courseVideoRequired ) {
 		disableCompleteLessonButton();
 	}
