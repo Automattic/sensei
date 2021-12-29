@@ -17,6 +17,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Returns an instance of the class.
+	 *
+	 * @return static
+	 */
+	public static function instance() {
+		if ( self::$instance ) {
+			return self::$instance;
+		}
+
+		self::$instance = new static();
+		return self::$instance;
+	}
+
+	/**
+	 * Sensei_Youtube_Extension constructor.
+	 */
+	private function __construct() {
+	}
+	/**
 	 * Initialize the class and hooks.
 	 */
 	public function init() {

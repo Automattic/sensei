@@ -17,33 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
-	 * Instance of class.
-	 *
-	 * @var self
-	 */
-	private static $instance;
-
-	/**
-	 * Returns an instance of the class.
-	 *
-	 * @return static
-	 */
-	public static function instance() {
-		if ( static::$instance ) {
-			return static::$instance;
-		}
-
-		static::$instance = new static();
-		return static::$instance;
-	}
-
-	/**
-	 * Sensei_Youtube_Extension constructor.
-	 */
-	private function __construct() {
-	}
-
-	/**
 	 * Initialize hooks.
 	 */
 	public function init() {
