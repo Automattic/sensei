@@ -67,15 +67,15 @@ const questionTypes = {
 				'sensei-lms'
 			),
 			noRightAnswerWhitespace: __(
-				'The value of the right answer can not be whitespace character.',
+				'The value of the right answer can not be blank space.',
 				'sensei-lms'
 			),
 			noWrongAnswer: __(
-				'Add a wrong answer to this question. Value can not be whitespace character.',
+				'Add a wrong answer to this question. Value can not be blank space.',
 				'sensei-lms'
 			),
 			noWrongAnswerWhitespace: __(
-				'The value of the wrong answer can not be whitespace character.',
+				'The value of the wrong answer can not be blank space.',
 				'sensei-lms'
 			),
 		},
@@ -111,15 +111,15 @@ const questionTypes = {
 		messages: {
 			noGap: __( 'Add a right answer to this question.', 'sensei-lms' ),
 			noGapWhitespace: __(
-				'The value of a right answer can not be whitespace character.',
+				'The value of a right answer can not be blank space.',
 				'sensei-lms'
 			),
 			noBeforeAndNoAfter: __(
-				'Add text before or after the gap. Value can not be whitespace character.',
+				'Add text before or after the gap. Value can not be blank space.',
 				'sensei-lms'
 			),
 			noBeforeAndNoAfterWhitespace: __(
-				'Value of the text before or after the gap can not be whitespace character.',
+				'Value of the text before or after the gap can not be blank space.',
 				'sensei-lms'
 			),
 		},
