@@ -1451,6 +1451,18 @@ class Sensei_Quiz {
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above.
 		echo $message;
+
+		// show incomplete questions info message if there are incomplete questions and is preview.
+		if ( is_preview() ) {
+			$lesson_id          = Sensei()->quiz->get_lesson_id( $quiz_id );
+			$all_questions      = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+			$filtered_questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ), 'any', 'meta_value_num title', 'ASC', true );
+
+			if ( count( $all_questions ) !== count( $filtered_questions ) ) {
+				Sensei()->notices->add_notice( __( 'One or more questions in this lesson are incomplete. Incomplete questions are only displayed in preview mode and will not be displayed to students.', 'sensei-lms' ), 'info', 'incomplete-keys-messages' );
+				Sensei()->notices->maybe_print_notices();
+			}
+		}
 	}
 
 	/**
@@ -1543,7 +1555,7 @@ class Sensei_Quiz {
 	 */
 	public static function get_user_quiz_grade( $lesson_id, $user_id ) {
 
-		// get the quiz grade
+		// get the quiz grade.
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 		$user_quiz_grade    = 0;
 		if ( isset( $user_lesson_status->comment_ID ) ) {
@@ -1570,7 +1582,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
@@ -1604,7 +1616,9 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * @param $lesson_id
+	 * Is password required
+	 *
+	 * @param int $lesson_id Lesson ID.
 	 *
 	 * @return bool
 	 */
@@ -1613,7 +1627,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_pass_required', true );
-		// backwards compatibility
+		// backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
@@ -1622,9 +1636,11 @@ class Sensei_Quiz {
 	}
 
 	/**
+	 * Will maybe delete the quiz
+	 *
 	 * @since 1.9.5
 	 *
-	 * @param integer $post_id of the post being permanently deleted
+	 * @param integer $post_id of the post being permanently deleted.
 	 */
 	public function maybe_delete_quiz( $post_id ) {
 
@@ -1644,8 +1660,8 @@ class Sensei_Quiz {
 	 * Also, remove any question_ids not part of
 	 * the question set for this lesson quiz
 	 *
-	 * @param $post_global
-	 * @param $quiz_id
+	 * @param array $post_global Post global data.
+	 * @param int   $quiz_id Quiz ID.
 	 * @return array
 	 */
 	private function merge_quiz_answers_with_questions_asked( $post_global, $quiz_id ) {
