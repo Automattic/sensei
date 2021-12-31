@@ -1461,6 +1461,7 @@ class Sensei_Quiz {
 	 */
 	public static function the_quiz_pagination() {
 
+
 		global $sensei_question_loop;
 
 		if ( $sensei_question_loop['total_pages'] <= 1 ) {
@@ -1475,6 +1476,10 @@ class Sensei_Quiz {
 		// Load the pagination template.
 		Sensei_Templates::get_template( 'single-quiz/pagination.php' );
 
+	}
+
+	public static function the_quiz_progress_bar() {
+		Sensei_Templates::get_template( 'globals/progress-bar.php' );
 	}
 
 	/**

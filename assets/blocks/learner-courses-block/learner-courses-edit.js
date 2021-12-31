@@ -14,7 +14,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import CourseProgress from '../../shared/blocks/course-progress';
+import ProgressBar from '../../shared/blocks/progress-bar';
 import LearnerCoursesSettings from './learner-courses-settings';
 
 /**
@@ -157,12 +157,12 @@ const LearnerCoursesEdit = ( {
 						) }
 
 						{ options.progressBarEnabled && (
-							<CourseProgress
+							<ProgressBar
 								lessonsCount={ 3 }
 								completedCount={ completed ? 3 : 1 }
 								wrapperAttributes={ {
 									className:
-										'wp-block-sensei-lms-course-progress',
+										'wp-block-sensei-lms-progress-bar',
 								} }
 								hidePercentage
 							/>

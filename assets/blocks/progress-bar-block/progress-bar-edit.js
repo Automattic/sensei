@@ -18,9 +18,9 @@ import {
 	withDefaultColor,
 } from '../../shared/blocks/settings';
 import { COURSE_STATUS_STORE } from '../course-outline/status-preview/status-store';
-import CourseProgress, {
-	CourseProgressSettings,
-} from '../../shared/blocks/course-progress';
+import ProgressBar, {
+	ProgressBarSettings,
+} from '../../shared/blocks/progress-bar';
 
 /**
  * Edit course progress bar component.
@@ -36,7 +36,7 @@ import CourseProgress, {
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
  * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
-export const CourseProgressEdit = ( props ) => {
+export const ProgressBarEdit = ( props ) => {
 	const {
 		className,
 		barColor,
@@ -79,7 +79,7 @@ export const CourseProgressEdit = ( props ) => {
 
 	return (
 		<>
-			<CourseProgress
+			<ProgressBar
 				lessonsCount={ totalLessonsCount }
 				completedCount={ completedLessonsCount }
 				wrapperAttributes={ wrapperAttributes }
@@ -89,7 +89,7 @@ export const CourseProgressEdit = ( props ) => {
 				lessonsCountClassName="wp-block-sensei-lms-progress-heading__lessons"
 				completedCountClassName="wp-block-sensei-lms-progress-heading__completed"
 			/>
-			<CourseProgressSettings
+			<ProgressBarSettings
 				borderRadius={ borderRadius }
 				setBorderRadius={ ( newRadius ) =>
 					setAttributes( { borderRadius: newRadius } )
@@ -124,4 +124,4 @@ export default compose(
 			probeKey: 'primaryColor',
 		},
 	} )
-)( CourseProgressEdit );
+)( ProgressBarEdit );

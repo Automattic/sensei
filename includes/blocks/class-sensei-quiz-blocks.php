@@ -54,10 +54,10 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes quiz blocks.
 	 */
 	public function initialize_blocks() {
+		error_log("Tu sam ja u quiz initialize");
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 			return;
 		}
-
 		new Sensei_Block_Quiz();
 		new Sensei_Block_Quiz_Question();
 		new Sensei_Block_Quiz_Category_Question();

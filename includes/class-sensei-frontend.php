@@ -86,6 +86,7 @@ class Sensei_Frontend {
 
 		// Scripts and Styles.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'sensei_before_main_content', array( $this, 'progress_bar_script' ), 30 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Custom Menu Item filters.
@@ -125,6 +126,12 @@ class Sensei_Frontend {
 		return null;
 	}
 
+	public function progress_bar_script() {
+					Sensei()->assets->register( 'sensei-quiz-progress', '/blocks/progress-bar.js', [ 'wp-element', 'react' ], null, true );
+			error_log( 'Pozvan sam ja drugi' );
+			wp_enqueue_script( 'sensei-quiz-progress' );
+	}
+
 	/**
 	 * Enqueue frontend JavaScripts.
 	 *
@@ -143,6 +150,7 @@ class Sensei_Frontend {
 				wp_enqueue_script( 'sensei-course-archive-js' );
 
 			}
+			// wp_localize_script( 'sensei-quiz-timer-frontend', 'php_vars', array('timeLeft' => $time_left, 'time' => $time, 'isNotStarted'=> $isNotStarted));
 
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
@@ -252,7 +260,6 @@ class Sensei_Frontend {
 	 * @return void
 	 */
 	public static function load_content_pagination() {
-
 		if ( is_singular( 'course' ) ) {
 
 			// backwards compatibility check for old location under the wrappers directory of the active theme.
@@ -267,6 +274,7 @@ class Sensei_Frontend {
 			Sensei_Templates::get_template( 'globals/pagination-posts.php' );
 
 		} elseif ( is_tax( 'module' ) || is_singular( 'lesson' ) ) {
+
 			// Backwards compatibility check for old location under the wrappers directory of the active theme.
 			$template = locate_template( array( Sensei()->template_url . 'wrappers/pagination-lesson.php' ) );
 			if ( ! empty( $template ) ) {

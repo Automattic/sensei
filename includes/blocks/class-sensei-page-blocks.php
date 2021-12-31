@@ -24,6 +24,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Initialize blocks that are used in page post types.
 	 */
 	public function initialize_blocks() {
+
+		error_log("TU sam ja page blocks");
 		new Sensei_Learner_Courses_Block();
 		new Sensei_Learner_Messages_Button_Block();
 		new Sensei_Course_Completed_Actions_Block();

@@ -22,7 +22,7 @@ import { sprintf, _n } from '@wordpress/i18n';
  * @param {string}  props.lessonsCountClassName   Lessons count class name.
  * @param {string}  props.completedCountClassName Completed count class name.
  */
-const CourseProgress = ( {
+const ProgressBar = ( {
 	lessonsCount,
 	completedCount,
 	hidePercentage,
@@ -41,13 +41,13 @@ const CourseProgress = ( {
 		<div { ...wrapperAttributes }>
 			<section
 				className={ classnames(
-					'sensei-course-progress__heading',
+					'sensei-progress-bar__heading',
 					countersClassName
 				) }
 			>
 				<div
 					className={ classnames(
-						'sensei-course-progress__lessons',
+						'sensei-progress-bar__lessons',
 						lessonsCountClassName
 					) }
 				>
@@ -64,7 +64,7 @@ const CourseProgress = ( {
 				</div>
 				<div
 					className={ classnames(
-						'sensei-course-progress__completed',
+						'sensei-progress-bar__completed',
 						completedCountClassName
 					) }
 				>
@@ -89,7 +89,7 @@ const CourseProgress = ( {
 				{ ...{
 					...barWrapperAttributes,
 					className: classnames(
-						'sensei-course-progress__bar',
+						'sensei-progress-bar__bar',
 						barWrapperAttributes?.className
 					),
 				} }
@@ -108,4 +108,4 @@ const CourseProgress = ( {
 	);
 };
 
-export default CourseProgress;
+export default ProgressBar;

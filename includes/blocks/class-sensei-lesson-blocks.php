@@ -73,7 +73,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
-
 		$post_type_object = get_post_type_object( 'lesson' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
