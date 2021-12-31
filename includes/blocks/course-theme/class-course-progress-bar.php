@@ -23,7 +23,7 @@ class Course_Progress_Bar {
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-theme-course-progress-bar',
+			'sensei-lms/course-theme-progress-bar-bar',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
@@ -46,8 +46,8 @@ class Course_Progress_Bar {
 		$stats = Sensei()->course->get_progress_stats( $course_id );
 
 		return sprintf(
-			'<div class="sensei-course-theme-course-progress-bar">
-				<div class="sensei-course-theme-course-progress-bar-inner" style="width: %s%%;" data-completed="%d" data-count="%d"></div>
+			'<div class="sensei-course-theme-progress-bar-bar">
+				<div class="sensei-course-theme-progress-bar-bar-inner" style="width: %s%%;" data-completed="%d" data-count="%d"></div>
 			</div>',
 			$stats['completed_lessons_percentage'],
 			$stats['completed_lessons_count'],

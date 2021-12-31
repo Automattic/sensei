@@ -14,7 +14,7 @@ import { __ } from '@wordpress/i18n';
  * @param {number}   props.height          The value of the bar height.
  * @param {Function} props.setHeight       Callback to set the value of height.
  */
-const CourseProgressSettings = ( {
+const ProgressBarSettings = ( {
 	borderRadius,
 	setBorderRadius,
 	height,
@@ -32,7 +32,7 @@ const CourseProgressSettings = ( {
 			<PanelBody
 				title={ __( 'Progress bar settings', 'sensei-lms' ) }
 				initialOpen={ false }
-				className="sensei-course-progress-settings"
+				className="sensei-progress-bar-settings"
 			>
 				<PanelRow>
 					<RangeControl
@@ -61,4 +61,4 @@ const CourseProgressSettings = ( {
 	);
 };
 
-export default CourseProgressSettings;
+export default ProgressBarSettings;

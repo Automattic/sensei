@@ -16,7 +16,7 @@ export const initCompleteLessonTransition = () => {
 			'[data-id="complete-lesson-button"]'
 		);
 		const progressBars = document.querySelectorAll(
-			'.sensei-course-theme-course-progress-bar-inner'
+			'.sensei-course-theme-progress-bar-bar-inner'
 		);
 		const mainContent = document.querySelector(
 			'.sensei-course-theme__main-content'
