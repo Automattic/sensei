@@ -20,7 +20,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { CourseProgressSettings } from '../../shared/blocks/course-progress';
+import { ProgressBarSettings } from '../../shared/blocks/progress-bar';
 
 /**
  * Learner Settings component.
@@ -119,7 +119,7 @@ const LearnerCoursesSettings = ( { options, setOptions } ) => {
 					</PanelBody>
 				}
 				{ options.progressBarEnabled && (
-					<CourseProgressSettings
+					<ProgressBarSettings
 						borderRadius={ options.progressBarBorderRadius }
 						setBorderRadius={ ( value ) => {
 							setOptions( {
