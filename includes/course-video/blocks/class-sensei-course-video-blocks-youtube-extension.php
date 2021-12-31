@@ -38,7 +38,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	}
 
 	/**
-	 * Sensei_Youtube_Extension constructor.
+	 * Sensei_Course_Video_Blocks_Youtube_Extension constructor.
 	 */
 	private function __construct() {
 	}
