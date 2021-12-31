@@ -139,6 +139,46 @@
 		)
 		.forEach( initVimeoPlayer );
 
+	const initVideoPressPlayer = ( iframe ) => {
+		iframe.addEventListener( 'load', () => {
+			// eslint-disable-next-line @wordpress/no-global-event-listener
+			window.addEventListener(
+				'message',
+				( event ) => {
+					if ( event.source !== iframe.contentWindow ) {
+						return;
+					}
+					if ( event.data.event === 'ended' ) {
+						onEnded();
+					}
+				},
+				false
+			);
+
+			// eslint-disable-next-line @wordpress/no-global-event-listener
+			document.addEventListener(
+				'visibilitychange',
+				() => {
+					if ( document.hidden ) {
+						iframe.contentWindow.postMessage(
+							{
+								event: 'videopress_action_pause',
+							},
+							'*'
+						);
+					}
+				},
+				false
+			);
+		} );
+	};
+
+	document
+		.querySelectorAll(
+			'.sensei-course-video-container.videopress-extension iframe'
+		)
+		.forEach( initVideoPressPlayer );
+
 	if ( courseVideoRequired ) {
 		disableCompleteLessonButton();
 	}
