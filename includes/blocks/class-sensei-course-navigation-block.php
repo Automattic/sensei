@@ -13,6 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_Course_Navigation_Block
  */
 class Sensei_Course_Navigation_Block {
+	/**
+	 * Course ID.
+	 *
+	 * @var int
+	 */
+	private $course_id;
 
 	/**
 	 * Sensei_Course_Navigation_Block constructor.
@@ -41,21 +47,20 @@ class Sensei_Course_Navigation_Block {
 	 * @return string Block HTML.
 	 */
 	public function render_course_navigation() {
+		$this->course_id = Sensei_Utils::get_current_course();
 
-		$course_id = Sensei_Utils::get_current_course();
-
-		if ( ! $course_id ) {
+		if ( ! $this->course_id ) {
 			return '';
 		}
 
-		$structure = Sensei_Course_Structure::instance( $course_id )->get();
+		$structure = Sensei_Course_Structure::instance( $this->course_id )->get();
 
 		$modules_html = implode(
 			'',
 			array_map(
-				function( $item ) use ( $course_id ) {
+				function( $item ) {
 					if ( 'module' === $item['type'] ) {
-						return $this->render_module( $item, $course_id );
+						return $this->render_module( $item );
 					}
 					return '';
 				},
@@ -66,7 +71,7 @@ class Sensei_Course_Navigation_Block {
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $item ) use ( $course_id ) {
+				function( $item ) {
 					if ( 'lesson' === $item['type'] ) {
 						return $this->render_lesson( $item );
 					}
@@ -98,17 +103,15 @@ class Sensei_Course_Navigation_Block {
 	/**
 	 * Build module block HTML.
 	 *
-	 * @param array $module    Module data.
-	 * @param int   $course_id The course id.
+	 * @param array $module Module data.
 	 *
 	 * @return string Module HTML
 	 */
-	private function render_module( $module, $course_id ) {
-
+	private function render_module( $module ) {
 		$module_id  = $module['id'];
 		$title      = esc_html( $module['title'] );
 		$lessons    = $module['lessons'];
-		$module_url = add_query_arg( 'course_id', $course_id, get_term_link( $module_id, 'module' ) );
+		$module_url = add_query_arg( 'course_id', $this->course_id, get_term_link( $module_id, 'module' ) );
 
 		$lessons_html = implode(
 			'',
