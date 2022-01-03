@@ -30,6 +30,13 @@ class Sensei_Course_Navigation_Block {
 	private $course_id;
 
 	/**
+	 * Whether user is enrolled.
+	 *
+	 * @var bool
+	 */
+	private $is_enrolled;
+
+	/**
 	 * Sensei_Course_Navigation_Block constructor.
 	 */
 	public function __construct() {
@@ -62,7 +69,8 @@ class Sensei_Course_Navigation_Block {
 			return '';
 		}
 
-		$structure = Sensei_Course_Structure::instance( $this->course_id )->get();
+		$this->is_enrolled = Sensei_Course::is_user_enrolled( $this->course_id );
+		$structure         = Sensei_Course_Structure::instance( $this->course_id )->get();
 
 		$modules_html = implode(
 			'',
@@ -245,6 +253,10 @@ class Sensei_Course_Navigation_Block {
 	 * @return string
 	 */
 	private function get_user_lesson_status( $lesson_id ): string {
+		if ( ! $this->is_enrolled ) {
+			return 'locked';
+		}
+
 		$status               = 'not-started';
 		$user_id              = get_current_user_id();
 		$completed            = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );

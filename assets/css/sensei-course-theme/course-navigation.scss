@@ -68,7 +68,6 @@
 }
 
 .sensei-lms-course-navigation-lesson {
-
 	display: flex;
 	align-items: center;
 
@@ -96,8 +95,9 @@
 		fill: currentColor;
 	}
 
+	&.status-locked,
 	&.status-not-started &__status {
-		fill: var(--gray);
+		color: var(--gray);
 	}
 
 	&.current-lesson &__title {
