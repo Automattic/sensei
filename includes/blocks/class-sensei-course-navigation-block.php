@@ -233,8 +233,9 @@ class Sensei_Course_Navigation_Block {
 	 * @return string
 	 */
 	private function get_user_lesson_status( $lesson_id ): string {
-		$status    = 'not-started';
-		$completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+		$status               = 'not-started';
+		$completed            = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+		$in_progress_statuses = [ 'failed', 'ungraded' ];
 
 		if ( $completed ) {
 			$status = 'completed';
@@ -242,8 +243,13 @@ class Sensei_Course_Navigation_Block {
 			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 			if ( isset( $user_lesson_status->comment_approved ) ) {
 				$status = $user_lesson_status->comment_approved;
+
+				if ( in_array( $status, $in_progress_statuses, true ) ) {
+					$status = 'in-progress';
+				}
 			}
 		}
+
 		return $status;
 	}
 }
