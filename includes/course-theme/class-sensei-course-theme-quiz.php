@@ -61,6 +61,11 @@ class Sensei_Course_Theme_Quiz {
 		$lesson_id   = Sensei_Utils::get_current_lesson();
 		$quiz_id     = \Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_id     = get_current_user_id();
+
+		if ( empty( $user_id ) ) {
+			return;
+		}
+
 		$quiz_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id )->comment_approved;
 
 		// If quiz is not submitted, then nothing else to do.

@@ -230,7 +230,7 @@ class Sensei_Course_Navigation_Block {
 
 		if ( $lesson['preview'] && $locked_lesson ) {
 			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $lesson_id ) ) . '">' . esc_html__( 'Preview', 'sensei-lms' ) . '</a>';
-		} elseif ( $has_quiz ) {
+		} elseif ( $has_quiz && ! $locked_lesson ) {
 			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
 		}
 
