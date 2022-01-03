@@ -146,6 +146,10 @@ add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question', 'file
 // Add the quiz pagination.
 add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'the_quiz_pagination' ), 9, 0 );
 
+// @since 3.15.0
+// Add the quiz progress bar.
+add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ),20);
+
 // @since 1.9.0
 // deprecate the quiz button action
 add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'action_buttons' ), 10, 0 );

@@ -1477,6 +1477,10 @@ class Sensei_Quiz {
 
 	}
 
+	public static function the_quiz_progress_bar() {
+		Sensei_Templates::get_template( 'globals/progress-bar.php' );
+	}
+
 	/**
 	 * The quiz action buttons needed to output quiz
 	 * action such as reset complete and save.

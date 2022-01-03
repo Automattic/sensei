@@ -58,6 +58,7 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
+	'blocks/progress-bar.js',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'css/tools.scss',

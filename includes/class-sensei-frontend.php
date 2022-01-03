@@ -86,6 +86,7 @@ class Sensei_Frontend {
 
 		// Scripts and Styles.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'sensei_before_main_content', array( $this, 'progress_bar_script' ), 30 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Custom Menu Item filters.
@@ -123,6 +124,24 @@ class Sensei_Frontend {
 		}
 
 		return null;
+	}
+
+	public function progress_bar_script() {
+		// 1. Get if progress bar should be displayed
+		// Get settup: colors with height
+		// Get themes?
+		// Pass the values to component
+		// Get additional css
+
+		error_log(			"Vrijednost: " . $this->options['progressBarEnabled'] );
+		Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js' );
+		Sensei()->assets->enqueue(
+			'sensei-shared-blocks-style',
+			'blocks/shared-style.scss',
+			[ 'sensei-shared-blocks-style' ]
+		);
+		wp_enqueue_script( 'sensei-quiz-progress' );
+		// wp_localize_script( 'sensei-quiz-timer-frontend', 'php_vars', array('timeLeft' => $time_left, 'time' => $time, 'isNotStarted'=> $isNotStarted));
 	}
 
 	/**
