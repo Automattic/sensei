@@ -18,17 +18,13 @@ class Sensei_Course_Navigation_Block {
 	 * Sensei_Course_Navigation_Block constructor.
 	 */
 	public function __construct() {
-
 		$this->register_block();
-
 	}
 
 	/**
 	 * Register course navigation block.
-	 *
-	 * @access private
 	 */
-	public function register_block() {
+	private function register_block() {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-navigation',
 			[
@@ -107,7 +103,7 @@ class Sensei_Course_Navigation_Block {
 	 *
 	 * @return string Module HTML
 	 */
-	public function render_module( $module, $course_id ) {
+	private function render_module( $module, $course_id ) {
 
 		$module_id  = $module['id'];
 		$title      = esc_html( $module['title'] );
@@ -187,7 +183,7 @@ class Sensei_Course_Navigation_Block {
 	 *
 	 * @return string
 	 */
-	public function render_lesson( $lesson ) {
+	private function render_lesson( $lesson ) {
 		$lesson_id  = $lesson['id'];
 		$status     = $this->get_user_lesson_status( $lesson_id );
 		$is_current = Sensei_Utils::get_current_lesson() === $lesson_id;
@@ -209,7 +205,7 @@ class Sensei_Course_Navigation_Block {
 		return '
 		<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-navigation-lesson__link">
-				' . self::lesson_status_icon( $status ) . '
+				' . $this->lesson_status_icon( $status ) . '
 				<span class="sensei-lms-course-navigation-lesson__title">
 					' . esc_html( $lesson['title'] ) . '
 				</span>
@@ -225,7 +221,7 @@ class Sensei_Course_Navigation_Block {
 	 *
 	 * @return string Icon HTML.
 	 */
-	public static function lesson_status_icon( $status ) {
+	private function lesson_status_icon( $status ) {
 		return Sensei()->assets->get_icon( 'lesson-status-' . $status, 'sensei-lms-course-navigation-lesson__status' );
 	}
 
