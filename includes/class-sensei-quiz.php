@@ -1469,7 +1469,7 @@ class Sensei_Quiz {
 	 * @since 1.9.0
 	 */
 	public static function start_quiz_questions_loop() {
-
+		error_log("Ovdje sam sad");
 		global $sensei_question_loop;
 
 		// Initialise the questions loop object.
@@ -1496,6 +1496,18 @@ class Sensei_Quiz {
 				$sensei_question_loop['current_page'] = max( 1, (int) $_GET['quiz-page'] );
 			}
 		}
+		$user_id   = get_current_user_id();
+
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+
+		error_log('$user_id: ' . $user_id);
+		error_log('lesson id: ' . $lesson_id);
+		$answers = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		if(is_array($answers)) {
+			error_log( 'User answers: ' .  count(Sensei()->quiz->get_user_answers( $lesson_id, $user_id )) );
+		}
+		$user_answered_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' );
+		error_log('user questions: '  . count($user_answered_questions));
 
 		// Fetch the questions.
 		$all_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' );
@@ -1632,6 +1644,10 @@ class Sensei_Quiz {
 		// Load the pagination template.
 		Sensei_Templates::get_template( 'single-quiz/pagination.php' );
 
+	}
+
+	public static function the_quiz_progress_bar() {
+		Sensei_Templates::get_template( 'globals/progress-bar.php' );
 	}
 
 	/**

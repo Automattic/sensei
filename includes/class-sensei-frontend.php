@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Frontend {
+
 	/**
 	 * Messages to display to the user.
 	 *
@@ -86,6 +87,7 @@ class Sensei_Frontend {
 
 		// Scripts and Styles.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+		add_action( 'sensei_before_main_content', array( $this, 'progress_bar_script' ), 30 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Custom Menu Item filters.
@@ -123,6 +125,36 @@ class Sensei_Frontend {
 		}
 
 		return null;
+	}
+
+	public function progress_bar_script() {
+		// 1. Get if progress bar should be displayed
+		// Get settup: colors with height
+		// Get themes?
+		// Pass the values to component
+		// Get additional css
+
+		global  $post;
+
+		global $sensei_question_loop;
+		\Sensei_Quiz::start_quiz_questions_loop();
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $post->ID );
+		// Fetch user answere questions.
+//		$user_id   = get_current_user_id();
+//		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+//		error_log('$user_id: ' . $user_id);
+//		error_log('lesson id: ' . $lesson_id);
+//		error_log( 'User answers: ' .  Sensei()->quiz->get_user_answers( $lesson_id, $user_id ) );
+//		$user_answered_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' );
+//		error_log('user questions: '  . count($user_answered_questions));
+		Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js' );
+		Sensei()->assets->enqueue(
+			'sensei-shared-blocks-style',
+			'blocks/shared-style.scss',
+			[ 'sensei-shared-blocks-style' ]
+		);
+		wp_enqueue_script( 'sensei-quiz-progress' );
+		// wp_localize_script( 'sensei-quiz-timer-frontend', 'php_vars', array('timeLeft' => $time_left, 'time' => $time, 'isNotStarted'=> $isNotStarted));
 	}
 
 	/**

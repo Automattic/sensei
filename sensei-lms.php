@@ -35,6 +35,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+add_filter( 'sensei_feature_flag_quiz_pagination', '__return_true' );
+
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
