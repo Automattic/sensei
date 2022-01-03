@@ -13,6 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_Course_Navigation_Block
  */
 class Sensei_Course_Navigation_Block {
+	const ICONS = [
+		'not-started' => 'circle',
+		'in-progress' => 'half-filled-circle',
+		'ungraded'    => 'half-filled-circle',
+		'completed'   => 'check-filled-circle',
+		'failed'      => 'half-filled-circle',
+		'locked'      => 'lock',
+	];
+
 	/**
 	 * Course ID.
 	 *
@@ -225,7 +234,7 @@ class Sensei_Course_Navigation_Block {
 	 * @return string Icon HTML.
 	 */
 	private function lesson_status_icon( $status ) {
-		return Sensei()->assets->get_icon( 'lesson-status-' . $status, 'sensei-lms-course-navigation-lesson__status' );
+		return Sensei()->assets->get_icon( self::ICONS[ $status ], 'sensei-lms-course-navigation-lesson__status' );
 	}
 
 	/**
@@ -237,13 +246,14 @@ class Sensei_Course_Navigation_Block {
 	 */
 	private function get_user_lesson_status( $lesson_id ): string {
 		$status               = 'not-started';
-		$completed            = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+		$user_id              = get_current_user_id();
+		$completed            = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
 		$in_progress_statuses = [ 'failed', 'ungraded' ];
 
 		if ( $completed ) {
 			$status = 'completed';
 		} else {
-			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 			if ( isset( $user_lesson_status->comment_approved ) ) {
 				$status = $user_lesson_status->comment_approved;
 
