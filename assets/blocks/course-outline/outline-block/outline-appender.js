@@ -8,8 +8,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import LessonIcon from '../../../images/svg-icons/lesson.svg';
-import ModuleIcon from '../../../images/svg-icons/module.svg';
+import LessonIcon from '../../../icons/lesson.svg';
+import ModuleIcon from '../../../icons/module.svg';
 import TextAppender from '../../../shared/components/text-appender';
 
 /**

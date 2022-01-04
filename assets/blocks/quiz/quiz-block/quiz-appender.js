@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import QuizIcon from '../../../images/svg-icons/quiz.svg';
+import QuizIcon from '../../../icons/quiz.svg';
 import questionBlock from '../question-block';
 import categoryQuestionBlock from '../category-question-block';
 import { useNextQuestionIndex } from './next-question-index';

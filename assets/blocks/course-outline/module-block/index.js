@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import icon from '../../../images/svg-icons/module.svg';
+import icon from '../../../icons/module.svg';
 import edit from './module-edit';
 import transforms from './transforms';
 import metadata from './block.json';
