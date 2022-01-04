@@ -74,10 +74,7 @@ export const initCompleteLessonTransition = () => {
 			mainContent.insertAdjacentHTML(
 				'beforebegin',
 				`<div class="sensei-course-theme-lesson-completion-notice">
-					<svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg" class="sensei-course-theme-lesson-completion-notice__icon">
-						<circle cx="35" cy="35" r="34.25" stroke="currentColor" stroke-width="1.5" />
-						<path d="M45.1909 25.2503L31.4692 43.7045L23.5125 37.7883" stroke="currentColor" stroke-width="2" />
-					</svg>
+					${ window.sensei.checkCircleIcon }
 					<p role="alert" class="sensei-course-theme-lesson-completion-notice__text">
 						${ __( 'Lesson complete', 'sensei-lms' ) }
 					</p>

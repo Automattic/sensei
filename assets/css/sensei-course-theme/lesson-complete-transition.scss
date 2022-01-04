@@ -21,7 +21,9 @@
 		font-weight: 700;
 	}
 
-	&__icon {
+	> svg {
+		width: 70px;
+		height: 70px;
 		color: var(--primary-color);
 	}
 
