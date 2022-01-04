@@ -102,14 +102,11 @@ const CourseThemeSidebar = () => {
 						label={
 							<>
 								<p className="sensei-course-theme-toggle__label">
-									{ __(
-										'Sensei learning mode',
-										'sensei-lms'
-									) }
+									{ __( 'Learning mode', 'sensei-lms' ) }
 								</p>
 								<p className="sensei-course-theme-toggle__description">
 									{ __(
-										'Enable this mode to show an immersive and dedicated view for the course, lessons, and quiz.*',
+										'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
 										'sensei-lms'
 									) }
 								</p>
@@ -132,12 +129,6 @@ const CourseThemeSidebar = () => {
 							setTheme( checked ? SENSEI_THEME : WORDPRESS_THEME )
 						}
 					/>
-					<p className="sensei-course-theme-toggle__note">
-						{ __(
-							'*This will not change or affect your WordPress site theme.',
-							'sensei-lms'
-						) }
-					</p>
 				</>
 			) }
 			{ customizerUrl && (

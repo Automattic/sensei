@@ -303,7 +303,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Course Settings.
 		$fields['sensei_learning_mode_all'] = array(
-			'name'        => __( 'Sensei learning mode', 'sensei-lms' ),
+			'name'        => __( 'Learning mode', 'sensei-lms' ),
 			'description' => __( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quiz.*', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_setting',
 			'type'        => 'checkbox',
@@ -885,9 +885,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			</p>
 			<?php } ?>
 			<br />
-			<p class="sensei-settings-learning-mode__description">
-				<?php esc_html_e( '*This will not change or affect your WordPress site theme.', 'sensei-lms' ); ?>
-			</p>
 		</div>
 		<?php
 	}
