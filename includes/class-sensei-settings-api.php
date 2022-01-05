@@ -1071,7 +1071,7 @@ class Sensei_Settings_API {
 		wp_enqueue_script( 'expose-sensei-settings' );
 		wp_add_inline_script(
 			'expose-sensei-settings',
-			sprintf( 'window.senseiSettings = %s;', $settings ),
+			sprintf( 'window.sensei = window.sensei || {}; window.sensei.senseiSettings = %s;', $settings ),
 		);
 	}
 }

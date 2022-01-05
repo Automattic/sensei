@@ -27,7 +27,7 @@ const CourseThemeSidebar = () => {
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
 	const globalLearningModeEnabled =
-		window.senseiSettings.sensei_learning_mode_all || false;
+		window.sensei?.senseiSettings?.sensei_learning_mode_all || false;
 	const currentPost = useSelect( ( select ) =>
 		select( 'core/editor' ).getCurrentPost()
 	);
