@@ -10,10 +10,15 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import useCourseMeta from '../../../react-hooks/use-course-meta';
-import { SENSEI_THEME, WORDPRESS_THEME } from './constants';
+import {
+	SENSEI_THEME,
+	WORDPRESS_THEME,
+	SENSEI_PREVIEW_QUERY,
+} from './constants';
 import { name as courseOutlineBlockName } from '../../../blocks/course-outline/outline-block/block.json';
 import { name as courseModuleBlockName } from '../../../blocks/course-outline/module-block/block.json';
 import { name as courseLessonBlockName } from '../../../blocks/course-outline/lesson-block/block.json';
+import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 
 const canPreview = ( block ) =>
 	block.name === courseLessonBlockName &&
@@ -35,8 +40,9 @@ const CourseThemeSidebar = () => {
 	const firstLesson = useSelect( ( select ) => {
 		const { getBlocks, getBlockAttributes } = select( 'core/block-editor' );
 		const blocks = getBlocks();
-		const courseOutline = blocks.find(
-			( block ) => block.name === courseOutlineBlockName
+		const courseOutline = getFirstBlockByName(
+			courseOutlineBlockName,
+			blocks
 		);
 
 		if ( ! courseOutline ) {
