@@ -152,4 +152,16 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 		$output = $this->instance->has_sensei_theme_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course on.' );
 	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns true if enabled via filter.
+	 */
+	public function testSenseiThemeGloballyOffAndCourseOffAndFilterOn() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
+		add_filter( 'sensei_has_learning_mode_enabled', '__return_true' );
+		$output = $this->instance->has_sensei_theme_enabled( $course_id );
+		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally off for course off and via filter on.' );
+	}
 }

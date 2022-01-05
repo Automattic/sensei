@@ -6,6 +6,8 @@
  * @since   3.13.4
  */
 
+use phpDocumentor\Reflection\Types\Boolean;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -161,14 +163,23 @@ class Sensei_Course_Theme_Option {
 	 * @return bool
 	 */
 	public static function has_sensei_theme_enabled( int $course_id ) {
-		// Global learning mode setting preceeds the individual course setting.
-		if ( \Sensei()->settings->settings['sensei_learning_mode_all'] ) {
-			return true;
-		}
+		$theme              = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
+		$enabled_for_course = self::SENSEI_THEME === $theme;
+		$enabled_globally   = (bool) \Sensei()->settings->settings['sensei_learning_mode_all'];
 
-		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
+		/**
+		 * Filters if a course has learning mode enabled.
+		 *
+		 * @since 4.0.0
+		 * @hook sensei_has_learning_mode_enabled
+		 *
+		 * @param {bool} $enabled_for_course True if the learning mode is enabled for the course.
+		 * @param {bool} $enabled_globally   True if the learning mode is enabled globally.
+		 * @param {int}  $course_id          The id of the course.
+		 */
+		$enabled_via_filter = (bool) apply_filters( 'sensei_has_learning_mode_enabled', $enabled_for_course, $enabled_globally, $course_id );
 
-		return self::SENSEI_THEME === $theme;
+		return $enabled_for_course || $enabled_globally || $enabled_via_filter;
 	}
 
 	/**
