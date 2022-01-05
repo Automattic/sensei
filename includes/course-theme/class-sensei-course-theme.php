@@ -95,7 +95,7 @@ class Sensei_Course_Theme {
 	public function get_theme_redirect_url( $path = '' ) {
 
 		if ( '' === get_option( 'permalink_structure' ) ) {
-			return add_query_arg( [ self::QUERY_VAR => 1 ], $path );
+			return home_url( add_query_arg( [ self::QUERY_VAR => 1 ], $path ) );
 		}
 
 		return home_url( '/' . self::QUERY_VAR . '/' . $path );
