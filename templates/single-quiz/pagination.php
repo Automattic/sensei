@@ -108,7 +108,7 @@ $sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_comple
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
 					</button>
 				</div>
-			<?php elseif ( ! $sensei_is_quiz_completed ) : ?>
+			<?php elseif ( $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) : ?>
 				<div class="wp-block-button">
 					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
 						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
