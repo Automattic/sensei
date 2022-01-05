@@ -5,6 +5,7 @@
  */
 import { BlockControls, InspectorControls } from '@wordpress/block-editor';
 import {
+	Button,
 	PanelBody,
 	PanelRow,
 	RangeControl,
@@ -24,6 +25,8 @@ import {
 	PaginationSidebarSettings,
 	PaginationToolbarSettings,
 } from './pagination-settings';
+import { useOpenQuizSettings } from './use-open-quiz-settings';
+import CogIcon from '../../../icons/cog.svg';
 
 /**
  * Quiz settings.
@@ -55,6 +58,8 @@ const QuizSettings = ( {
 	const createChangeHandler = ( optionKey ) => ( value ) =>
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
 
+	const openQuizSettings = useOpenQuizSettings( clientId );
+
 	const questions = useSelect(
 		( select ) =>
 			select( 'core/block-editor' )
@@ -85,6 +90,13 @@ const QuizSettings = ( {
 
 	return (
 		<>
+			<Button
+				className="sensei-lms-quiz-block__settings-link"
+				onClick={ openQuizSettings }
+				icon={ CogIcon }
+			>
+				{ __( 'Quiz settings', 'sensei-lms' ) }
+			</Button>
 			<InspectorControls>
 				<PanelBody
 					title={ __( 'Quiz settings', 'sensei-lms' ) }

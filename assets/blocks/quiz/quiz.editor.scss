@@ -72,6 +72,12 @@ $gray-400: #ccc;
 	}
 
 	/* Settings */
+	&__settings-link {
+		display: flex;
+		margin: 0 auto;
+		text-decoration: underline;
+	}
+
 	&__question-count,
 	&__progress-bar {
 		align-items: baseline;
