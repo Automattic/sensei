@@ -111,12 +111,9 @@ const CourseThemeSidebar = () => {
 				</p>
 			) : (
 				<ToggleControl
-					className="sensei-course-theme-toggle"
-					label={
+					label={ __( 'Learning mode', 'sensei-lms' ) }
+					help={
 						<>
-							<p className="sensei-course-theme-toggle__label">
-								{ __( 'Learning mode', 'sensei-lms' ) }
-							</p>
 							<p className="sensei-course-theme-toggle__description">
 								{ __(
 									'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
