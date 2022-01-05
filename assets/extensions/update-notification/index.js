@@ -10,7 +10,7 @@ import Single from './single';
 import Multiple from './multiple';
 import UpdateAvailable from './update-available';
 import { Col } from '../grid';
-import UpdateIcon from '../../images/svg-icons/update.svg';
+import UpdateIcon from '../../icons/update.svg';
 import { useDispatch } from '@wordpress/data';
 import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
 

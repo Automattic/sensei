@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import edit from './answer-feedback';
-import icon from '../../../images/svg-icons/question.svg';
+import icon from '../../../icons/question.svg';
 
 const sharedMetadata = {
 	parent: [ 'sensei-lms/quiz-question' ],

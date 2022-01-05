@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import icon from '../../images/svg-icons/course.svg';
+import icon from '../../icons/course.svg';
 import metadata from './block.json';
 import edit from './course-results-edit';
 

@@ -6,7 +6,7 @@ import { registerBlockType, updateCategory } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import SenseiIcon from '../images/svg-icons/sensei.svg';
+import SenseiIcon from '../icons/sensei.svg';
 
 /**
  * Register Sensei blocks.

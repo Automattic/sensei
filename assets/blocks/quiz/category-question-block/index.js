@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
  */
 import edit from './category-question-edit';
 import metadata from './block.json';
-import icon from '../../../images/svg-icons/question.svg';
+import icon from '../../../icons/question.svg';
 
 /**
  * Quiz category question block definition.

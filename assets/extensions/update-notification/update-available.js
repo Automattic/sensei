@@ -6,7 +6,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import UpdateIcon from '../../images/svg-icons/update.svg';
+import UpdateIcon from '../../icons/update.svg';
 
 /**
  * Update available label component.

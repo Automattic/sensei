@@ -144,9 +144,9 @@ function getWebpackConfig( env, argv ) {
 				ignoreSrcPattern: /^node_modules/,
 				baseDist,
 			} ),
-			new SVGSpritemapPlugin( 'assets/images/svg-icons/**/*.svg', {
+			new SVGSpritemapPlugin( 'assets/icons/**/*.svg', {
 				output: {
-					filename: 'images/svg-icons/sensei-sprite.svg',
+					filename: 'icons/sensei-sprite.svg',
 				},
 				sprite: {
 					generate: {
