@@ -1616,7 +1616,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Is password required
+	 * Is password required.
 	 *
 	 * @param int $lesson_id Lesson ID.
 	 *
@@ -1636,7 +1636,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Will maybe delete the quiz
+	 * Will maybe delete the quiz.
 	 *
 	 * @since 1.9.5
 	 *
