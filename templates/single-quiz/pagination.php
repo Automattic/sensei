@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $sensei_question_loop;
 
-$sensei_is_quiz_available = Sensei_Quiz::is_available();
-$sensei_can_take_quiz     = Sensei_Quiz::can_take_quiz();
+$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
+$sensei_is_quiz_completed = Sensei_Quiz::is_quiz_completed();
 $sensei_is_reset_allowed  = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
-$sensei_has_actions       = $sensei_can_take_quiz || $sensei_is_reset_allowed;
+$sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
 
 ?>
 
@@ -70,7 +70,7 @@ $sensei_has_actions       = $sensei_can_take_quiz || $sensei_is_reset_allowed;
 				</div>
 			<?php endif ?>
 
-			<?php if ( $sensei_can_take_quiz ) : ?>
+			<?php if ( ! $sensei_is_quiz_completed ) : ?>
 				<div class="sensei-quiz-pagination__action">
 					<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
 						<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
@@ -108,7 +108,7 @@ $sensei_has_actions       = $sensei_can_take_quiz || $sensei_is_reset_allowed;
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
 					</button>
 				</div>
-			<?php elseif ( $sensei_can_take_quiz ) : ?>
+			<?php elseif ( ! $sensei_is_quiz_completed ) : ?>
 				<div class="wp-block-button">
 					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
 						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>

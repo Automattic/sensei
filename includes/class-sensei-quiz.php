@@ -449,10 +449,9 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$quiz_id = get_the_ID();
-		$user_id = get_current_user_id();
-
-		if ( self::can_take_quiz( $quiz_id, $user_id ) ) {
+		if ( self::is_quiz_available() && ! self::is_quiz_completed() ) {
+			$quiz_id   = get_the_ID();
+			$user_id   = get_current_user_id();
 			$lesson_id = $this->get_lesson_id( $quiz_id );
 
 			$answers = $this->parse_form_answers(
@@ -1348,7 +1347,7 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function is_available( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_quiz_available( int $quiz_id = null, int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
@@ -1379,7 +1378,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Check if the user is allowed to take the quiz.
+	 * Check if the user has completed the quiz.
 	 *
 	 * @since 3.15.0
 	 *
@@ -1388,14 +1387,10 @@ class Sensei_Quiz {
 	 *
 	 * @return bool
 	 */
-	public static function can_take_quiz( int $quiz_id = null, int $user_id = null ): bool {
+	public static function is_quiz_completed( int $quiz_id = null, int $user_id = null ): bool {
 
 		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
 		$user_id = $user_id ? $user_id : get_current_user_id();
-
-		if ( ! self::is_available( $quiz_id, $user_id ) ) {
-			return false;
-		}
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -1405,17 +1400,17 @@ class Sensei_Quiz {
 			$lesson_status = is_array( $lesson_status ) ? $lesson_status[0] : $lesson_status;
 
 			if ( 'ungraded' === $lesson_status->comment_approved ) {
-				return false;
+				return true;
 			}
 
 			// Check for a quiz grade.
 			$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
 			if ( $quiz_grade ) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 
 	}
 
@@ -1637,14 +1632,14 @@ class Sensei_Quiz {
 	 */
 	public static function action_buttons() {
 
-		if ( ! self::is_available() ) {
+		if ( ! self::is_quiz_available() ) {
 			return;
 		}
 
-		$lesson_id        = Sensei()->quiz->get_lesson_id();
-		$can_take_quiz    = self::can_take_quiz();
-		$is_reset_allowed = self::is_reset_allowed( $lesson_id );
-		$has_actions      = $can_take_quiz || $is_reset_allowed;
+		$lesson_id         = Sensei()->quiz->get_lesson_id();
+		$is_quiz_completed = self::is_quiz_completed();
+		$is_reset_allowed  = self::is_reset_allowed( $lesson_id );
+		$has_actions       = $is_reset_allowed || ! $is_quiz_completed;
 
 		if ( ! $has_actions ) {
 			return;
@@ -1654,7 +1649,7 @@ class Sensei_Quiz {
 		?>
 
 		<div class="wp-block-buttons">
-			<?php if ( $can_take_quiz ) : ?>
+			<?php if ( ! $is_quiz_completed ) : ?>
 				<div class="wp-block-button">
 					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
 						<?php esc_attr_e( 'Complete Quiz', 'sensei-lms' ); ?>
