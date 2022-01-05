@@ -21,9 +21,7 @@ import { name as courseLessonBlockName } from '../../../blocks/course-outline/le
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 
 const canPreview = ( block ) =>
-	block.name === courseLessonBlockName &&
-	block.attributes.id &&
-	! block.attributes.draft;
+	block.name === courseLessonBlockName && block.attributes.id;
 
 const usePreviewAndCustomizerLinks = () => {
 	const currentPost = useSelect( ( select ) =>
@@ -71,6 +69,10 @@ const usePreviewAndCustomizerLinks = () => {
 			previewUrl = `/?p=${ firstLesson.id }`;
 		} else {
 			previewUrl = `/?p=${ firstLesson.id }&learn=1&${ SENSEI_PREVIEW_QUERY }=${ currentPost.id }`;
+		}
+
+		if ( firstLesson.draft ) {
+			previewUrl = `${ previewUrl }&post_type=lesson`;
 		}
 	}
 
