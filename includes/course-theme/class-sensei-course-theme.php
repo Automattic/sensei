@@ -242,6 +242,9 @@ class Sensei_Course_Theme {
 		if ( ! is_admin() ) {
 			Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
+
+			$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
+			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';" );
 		}
 	}
 

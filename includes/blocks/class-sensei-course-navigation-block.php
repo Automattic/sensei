@@ -13,22 +13,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_Course_Navigation_Block
  */
 class Sensei_Course_Navigation_Block {
+	const ICONS = [
+		'not-started' => 'circle',
+		'in-progress' => 'half-filled-circle',
+		'ungraded'    => 'half-filled-circle',
+		'completed'   => 'check-filled-circle',
+		'failed'      => 'half-filled-circle',
+		'locked'      => 'lock',
+		'preview'     => 'eye',
+	];
+
+	/**
+	 * Course ID.
+	 *
+	 * @var int
+	 */
+	private $course_id;
+
+	/**
+	 * User ID.
+	 *
+	 * @var int
+	 */
+	private $user_id;
+
+	/**
+	 * Whether user is enrolled.
+	 *
+	 * @var bool
+	 */
+	private $is_enrolled;
 
 	/**
 	 * Sensei_Course_Navigation_Block constructor.
 	 */
 	public function __construct() {
-
 		$this->register_block();
-
 	}
 
 	/**
 	 * Register course navigation block.
-	 *
-	 * @access private
 	 */
-	public function register_block() {
+	private function register_block() {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-navigation',
 			[
@@ -45,21 +71,22 @@ class Sensei_Course_Navigation_Block {
 	 * @return string Block HTML.
 	 */
 	public function render_course_navigation() {
+		$this->course_id = Sensei_Utils::get_current_course();
 
-		$course_id = Sensei_Utils::get_current_course();
-
-		if ( ! $course_id ) {
+		if ( ! $this->course_id ) {
 			return '';
 		}
 
-		$structure = Sensei_Course_Structure::instance( $course_id )->get();
+		$this->is_enrolled = Sensei_Course::is_user_enrolled( $this->course_id );
+		$this->user_id     = get_current_user_id();
+		$structure         = Sensei_Course_Structure::instance( $this->course_id )->get();
 
 		$modules_html = implode(
 			'',
 			array_map(
-				function( $item ) use ( $course_id ) {
+				function( $item ) {
 					if ( 'module' === $item['type'] ) {
-						return $this->render_module( $item, $course_id );
+						return $this->render_module( $item );
 					}
 					return '';
 				},
@@ -70,7 +97,7 @@ class Sensei_Course_Navigation_Block {
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $item ) use ( $course_id ) {
+				function( $item ) {
 					if ( 'lesson' === $item['type'] ) {
 						return $this->render_lesson( $item );
 					}
@@ -102,17 +129,15 @@ class Sensei_Course_Navigation_Block {
 	/**
 	 * Build module block HTML.
 	 *
-	 * @param array $module    Module data.
-	 * @param int   $course_id The course id.
+	 * @param array $module Module data.
 	 *
 	 * @return string Module HTML
 	 */
-	public function render_module( $module, $course_id ) {
-
+	private function render_module( $module ) {
 		$module_id  = $module['id'];
 		$title      = esc_html( $module['title'] );
 		$lessons    = $module['lessons'];
-		$module_url = add_query_arg( 'course_id', $course_id, get_term_link( $module_id, 'module' ) );
+		$module_url = add_query_arg( 'course_id', $this->course_id, get_term_link( $module_id, 'module' ) );
 
 		$lessons_html = implode(
 			'',
@@ -187,12 +212,13 @@ class Sensei_Course_Navigation_Block {
 	 *
 	 * @return string
 	 */
-	public function render_lesson( $lesson ) {
-		$lesson_id  = $lesson['id'];
-		$status     = $this->get_user_lesson_status( $lesson_id );
-		$is_current = Sensei_Utils::get_current_lesson() === $lesson_id;
-		$has_quiz   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
-		$quiz_id    = Sensei()->lesson->lesson_quizzes( $lesson_id );
+	private function render_lesson( $lesson ) {
+		$lesson_id     = $lesson['id'];
+		$locked_lesson = ! $this->is_enrolled || ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, $this->user_id );
+		$status        = $this->get_user_lesson_status( $lesson, $locked_lesson );
+		$is_current    = Sensei_Utils::get_current_lesson() === $lesson_id;
+		$has_quiz      = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
+		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$classes = [ 'sensei-lms-course-navigation-lesson', 'status-' . $status ];
 
@@ -200,21 +226,23 @@ class Sensei_Course_Navigation_Block {
 			$classes[] = 'current-lesson';
 		}
 
-		$lesson_quiz_html = '';
+		$extra_html = '';
 
-		if ( $has_quiz ) {
-			$lesson_quiz_html = '<a class="sensei-lms-course-navigation-lesson__quiz" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
+		if ( $lesson['preview'] && $locked_lesson ) {
+			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $lesson_id ) ) . '">' . esc_html__( 'Preview', 'sensei-lms' ) . '</a>';
+		} elseif ( $has_quiz && ! $locked_lesson ) {
+			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
 		}
 
 		return '
 		<div ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-navigation-lesson__link">
-				' . self::lesson_status_icon( $status ) . '
+				' . $this->lesson_status_icon( $status ) . '
 				<span class="sensei-lms-course-navigation-lesson__title">
 					' . esc_html( $lesson['title'] ) . '
 				</span>
 			</a>
-			' . $lesson_quiz_html . '
+			' . $extra_html . '
 		</div>';
 	}
 
@@ -225,29 +253,45 @@ class Sensei_Course_Navigation_Block {
 	 *
 	 * @return string Icon HTML.
 	 */
-	public static function lesson_status_icon( $status ) {
-		return Sensei()->assets->get_icon( 'lesson-status-' . $status, 'sensei-lms-course-navigation-lesson__status' );
+	private function lesson_status_icon( $status ) {
+		return Sensei()->assets->get_icon( self::ICONS[ $status ], 'sensei-lms-course-navigation-lesson__status' );
 	}
 
 	/**
 	 * Get the lesson status string for the user.
 	 *
-	 * @param int $lesson_id
+	 * @param array $lesson        Lesson object.
+	 * @param bool  $locked_lesson Whether lesson is locked.
 	 *
 	 * @return string
 	 */
-	private function get_user_lesson_status( $lesson_id ): string {
-		$status    = 'not-started';
-		$completed = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+	private function get_user_lesson_status( $lesson, $locked_lesson ): string {
+		if ( $locked_lesson ) {
+			if ( $lesson['preview'] ) {
+				return 'preview';
+			}
+
+			return 'locked';
+		}
+
+		$lesson_id            = $lesson['id'];
+		$status               = 'not-started';
+		$completed            = Sensei_Utils::user_completed_lesson( $lesson_id, $this->user_id );
+		$in_progress_statuses = [ 'failed', 'ungraded' ];
 
 		if ( $completed ) {
 			$status = 'completed';
 		} else {
-			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
+			$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $this->user_id );
 			if ( isset( $user_lesson_status->comment_approved ) ) {
 				$status = $user_lesson_status->comment_approved;
+
+				if ( in_array( $status, $in_progress_statuses, true ) ) {
+					$status = 'in-progress';
+				}
 			}
 		}
+
 		return $status;
 	}
 }
