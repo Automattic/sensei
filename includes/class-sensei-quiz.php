@@ -394,10 +394,14 @@ class Sensei_Quiz {
 	public function user_quiz_submit_listener() {
 
 		// only respond to valid quiz completion submissions
-		if ( ! isset( $_POST['quiz_complete'] )
+		if (
+			! isset( $_POST['quiz_complete'] )
 			|| ! isset( $_POST['woothemes_sensei_complete_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_complete_quiz_nonce'] ), 'woothemes_sensei_complete_quiz_nonce' ) ) {
+			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_complete_quiz_nonce'] ), 'woothemes_sensei_complete_quiz_nonce' )
+			|| ! self::is_quiz_available()
+			|| self::is_quiz_completed()
+		) {
 			return;
 		}
 
