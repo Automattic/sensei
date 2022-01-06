@@ -421,7 +421,7 @@ class Sensei_Quiz {
 
 		// Make sure there is at least one answer.
 		if ( empty( array_filter( $answers ) ) ) {
-			Sensei()->frontend->messages = '<div class="sensei-message alert">' . __( 'Please, answer at least one question.', 'sensei-lms' ) . '</div>';
+			Sensei()->notices->add_notice( __( 'Please answer at least one question.', 'sensei-lms' ), 'alert' );
 
 			return;
 		}

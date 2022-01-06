@@ -318,3 +318,4 @@ add_action( 'sensei_course_results_content_inside_before', array( $sensei->notic
 add_action( 'sensei_single_course_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 40 );
+add_action( 'sensei_single_quiz_content_inside_before', array( $sensei->notices, 'maybe_print_notices' ), 50 );

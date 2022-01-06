@@ -25,6 +25,7 @@ get_sensei_header();
  *
  * @hooked Sensei_Quiz::the_title               - 20
  * @hooked Sensei_Quiz::the_user_status_message - 40
+ * @hooked Sensei_Notices::maybe_print_notices  - 50
  */
 do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 
