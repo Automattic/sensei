@@ -32,7 +32,7 @@ class Sensei_Course_Progress_Block {
 			[
 				'render_callback' => [ $this, 'render_course_progress' ],
 			],
-			Sensei()->assets->src_path( 'blocks/progress-bar-block' )
+			Sensei()->assets->src_path( 'blocks/course-progress-block' )
 		);
 	}
 
@@ -97,7 +97,7 @@ class Sensei_Course_Progress_Block {
 					<div class="wp-block-sensei-lms-progress-heading__lessons sensei-progress-bar__lessons">' . $lessons_text . '</div>
 					<div class="wp-block-sensei-lms-progress-heading__completed sensei-progress-bar__completed">' . $completed_text . '</div>
 				</section>
-				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-progress-bar', 'sensei-progress-bar__bar' ], $bar_background_css ) . '>
+				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-progress', 'sensei-progress-bar__bar' ], $bar_background_css ) . '>
 					<div ' . Sensei_Block_Helpers::render_style_attributes( [], $bar_css ) . '></div>
 				</div>
 			</div>

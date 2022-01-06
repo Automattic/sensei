@@ -162,7 +162,7 @@ const LearnerCoursesEdit = ( {
 								completedCount={ completed ? 3 : 1 }
 								wrapperAttributes={ {
 									className:
-										'wp-block-sensei-lms-progress-bar',
+										'wp-block-sensei-lms-course-progress',
 								} }
 								hidePercentage
 							/>
