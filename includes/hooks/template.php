@@ -127,7 +127,7 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 't
 
 // @since 3.15.0
 // Add the quiz hidden fields.
-add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_hidden_fields' ), 10 );
+add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'output_quiz_hidden_fields' ), 10 );
 
 // @since 1.9.0
 // hook in the question title, description and quesiton media

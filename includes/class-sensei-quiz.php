@@ -1589,11 +1589,11 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Adds the quiz hidden fields.
+	 * Outputs the quiz hidden fields.
 	 *
 	 * @since 3.15.0
 	 */
-	public static function the_quiz_hidden_fields() {
+	public static function output_quiz_hidden_fields() {
 
 		global $sensei_question_loop;
 
