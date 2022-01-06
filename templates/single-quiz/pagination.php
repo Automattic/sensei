@@ -63,7 +63,7 @@ $sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_comple
 			<div class="sensei-quiz-actions-secondary">
 				<?php if ( $sensei_is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
+						<button type="submit" name="quiz_reset" class="quiz-submit reset sensei-stop-double-submission">
 							<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
 						</button>
 
@@ -73,7 +73,7 @@ $sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_comple
 
 				<?php if ( ! $sensei_is_quiz_completed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
+						<button type="submit" name="quiz_save" class="quiz-submit save sensei-stop-double-submission">
 							<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
 						</button>
 
