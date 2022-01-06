@@ -230,6 +230,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
 
+		/**
+		 * Fire action when a the lesson-quiz controller updates the data of the quiz.
+		 *
+		 * @hook sensei_rest_api_lesson_quiz_update
+		 *
+		 * @param {WP_Post} $lesson         The lesson.
+		 * @param {array}   $request_params The request parameters.
+		 */
+		do_action( 'sensei_rest_api_lesson_quiz_update', $lesson, $json_params );
+
 		$response = new WP_REST_Response();
 		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ), $lesson ) );
 
@@ -382,7 +392,17 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$quiz_data['options']['pagination'] = $json_array;
 		}
 
-		return $quiz_data;
+		/**
+		 * Filters the response of lesson-quiz requests.
+		 *
+		 * @hook sensei_rest_api_lesson_quiz_response
+		 *
+		 * @param {array}   $quiz_data The response data.
+		 * @param {WP_Post} $quiz      The quiz post.default interval.
+		 *
+		 * @return {array} $quiz_data The modified response data.
+		 */
+		return apply_filters( 'sensei_rest_api_lesson_quiz_response', $quiz_data, $quiz );
 	}
 
 	/**
