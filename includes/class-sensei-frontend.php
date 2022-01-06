@@ -87,7 +87,6 @@ class Sensei_Frontend {
 
 		// Scripts and Styles.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-		add_action( 'sensei_before_main_content', array( $this, 'progress_bar_script' ), 30 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Custom Menu Item filters.
@@ -125,49 +124,6 @@ class Sensei_Frontend {
 		}
 
 		return null;
-	}
-
-	public function progress_bar_script( $quiz_id ) {
-		// 1. Get if progress bar should be displayed
-		// Get settup: colors with height
-		// Get themes?
-		// Get additional css
-
-		global  $post;
-
-		\Sensei_Quiz::start_quiz_questions_loop();
-		$user_id             = get_current_user_id();
-		$lesson_id           = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$answers             = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
-		$answersCount        = is_array( $answers ) ? count(
-			array_filter(
-				$answers,
-				function( $item ) {
-					return is_array( $item );
-				}
-			)
-		) : 0;
-		$all_questions_count = count( Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' ) );
-		$pagination_settings = json_decode(
-			get_post_meta( $quiz_id, '_pagination', true ),
-			true
-		);
-		error_log($pagination_settings['show_progress_bar']);
-		Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js' );
-		Sensei()->assets->enqueue(
-			'sensei-shared-blocks-style',
-			'blocks/shared-style.scss',
-			[ 'sensei-shared-blocks-style' ]
-		);
-		wp_enqueue_script( 'sensei-quiz-progress' );
-		wp_localize_script(
-			'sensei-quiz-progress',
-			'php_vars',
-			array(
-				'totalNumber'     => $all_questions_count,
-				'completedNumber' => $answersCount,
-			)
-		);
 	}
 
 	/**

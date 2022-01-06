@@ -1,4 +1,4 @@
-<div id="progress-bar-quiz">TESTING TESTING</div>
+<div id="progress-bar-quiz"></div>
 
 
 

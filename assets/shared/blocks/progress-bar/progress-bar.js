@@ -100,6 +100,7 @@ const ProgressBar = ( {
 						style: {
 							...( barAttributes?.style && barAttributes.style ),
 							width: `${ barPercentage }%`,
+							borderRadius: '5px',
 						},
 					} }
 				/>

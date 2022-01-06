@@ -1485,6 +1485,9 @@ class Sensei_Quiz {
 			get_post_meta( $quiz_id, '_pagination', true ),
 			true
 		);
+		if ( $pagination_settings['show_progress_bar'] ) {
+			self::display_progress_bar( $quiz_id, $pagination_settings );
+		}
 
 		if ( ! empty( $pagination_settings['pagination_number'] ) ) {
 			$sensei_question_loop['posts_per_page'] = (int) $pagination_settings['pagination_number'];
@@ -1521,6 +1524,55 @@ class Sensei_Quiz {
 
 		$sensei_question_loop['questions'] = $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;
+	}
+
+	/**
+	 * Display quiz progress bar.
+	 *
+	 * @param $quiz_id Quiz id.
+	 *
+	 * @since 3.15.0
+	 */
+	public static function display_progress_bar( $quiz_id, $pagination_settings ) {
+
+		$user_id             = get_current_user_id();
+		$lesson_id           = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$all_questions_count = count( Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' ) );
+		$answers             = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		$answers_count       = is_array( $answers ) ? count(
+			array_filter(
+				$answers,
+				function( $item ) {
+					return is_array( $item );
+				}
+			)
+		) : 0;
+		Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js' );
+		Sensei()->assets->enqueue(
+			'sensei-shared-blocks-style',
+			'blocks/shared-style.scss',
+			[ 'sensei-shared-blocks-style' ]
+		);
+		wp_enqueue_script( 'sensei-quiz-progress' );
+
+		$radius           = $pagination_settings['progress_bar_radius'];
+		$height           = $pagination_settings['progress_bar_height'];
+		$color            = empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'];
+		$background_color = empty( $pagination_settings['progress_bar_background']) ? '' : $pagination_settings['progress_bar_background'];
+		error_log( 'radius: ' . $radius );
+		error_log( 'height: ' . $height );
+		error_log( 'Color: ' . $color );
+		error_log( 'background color: ' . $background_color );
+		wp_localize_script(
+			'sensei-quiz-progress',
+			'php_vars',
+			array(
+				'totalNumber'     => $all_questions_count,
+				'completedNumber' => $answers_count,
+				'radius'          => $radius,
+				'backgroundColor' => $background_color,
+			)
+		);
 	}
 
 	/**
