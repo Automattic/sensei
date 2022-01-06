@@ -158,6 +158,8 @@ class Sensei_Course {
 
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
+
+			wp_add_inline_script( 'sensei-admin-course-edit', "window.sensei = window.sensei || {}; window.sensei.pluginUrl = '" . Sensei()->plugin_url . "';", 'before' );
 		}
 	}
 
