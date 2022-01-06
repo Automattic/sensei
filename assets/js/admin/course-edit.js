@@ -10,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import { startBlocksTogglingControl } from './blocks-toggling-control';
-import CourseThemeSidebar from './course-theme-sidebar';
+import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
 
 ( () => {
@@ -77,7 +77,7 @@ domReady( () => {
  */
 if ( window.senseiCourseThemeFeatureFlagEnabled ) {
 	registerPlugin( 'sensei-course-theme-plugin', {
-		render: CourseThemeSidebar,
+		render: CourseTheme,
 		icon: null,
 	} );
 }
