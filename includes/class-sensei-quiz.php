@@ -440,7 +440,8 @@ class Sensei_Quiz {
 	 * This is needed to save the answers for each page.
 	 * Used when the quiz pagination is enabled.
 	 *
-	 * @since 3.15.0
+	 * @since  3.15.0
+	 * @access private
 	 */
 	public function page_change_listener() {
 
