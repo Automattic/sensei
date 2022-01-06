@@ -86,11 +86,14 @@ const CourseThemeOnboarding = () => {
 	const { toggleFeature, toggleEditorPanelOpened } = useDispatch(
 		'core/edit-post'
 	);
+	const { savePost } = useDispatch( 'core/editor' );
+
 	const { isCourseThemePanelOpen } = useSelect( ( select ) => ( {
 		isCourseThemePanelOpen: select( 'core/edit-post' ).isEditorPanelOpened(
 			courseThemePanelName
 		),
 	} ) );
+
 	const isOnboardingOpen = useOnboardingOpen();
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
@@ -109,6 +112,7 @@ const CourseThemeOnboarding = () => {
 				}
 
 				setTheme( SENSEI_THEME );
+				savePost();
 				toggleFeature( completedFeatureName );
 			} }
 			pages={ [
@@ -165,13 +169,13 @@ const CourseThemeOnboarding = () => {
 						<>
 							<h1 className="sensei-course-theme-onboarding__heading">
 								{ __(
-									'Remember to save your course after enabling learning mode!',
+									'Enable learning mode for this course!',
 									'sensei-lms'
 								) }
 							</h1>
 							<p className="sensei-course-theme-onboarding__text">
 								{ __(
-									'It will affect only your current course. For more options you can access the ‘course styles’ setting in the course sidebar.',
+									'For more options you can access the ‘course styles’ setting in the course sidebar.',
 									'sensei-lms'
 								) }
 							</p>
