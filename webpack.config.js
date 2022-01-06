@@ -71,6 +71,7 @@ const files = [
 	'css/modules-admin.css',
 	'css/modules-frontend.scss',
 	'css/pages-frontend.scss',
+	'css/course-editor.scss',
 	'css/ranges.css',
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',

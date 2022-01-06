@@ -1,0 +1,85 @@
+$primary: #6FCFB2;
+
+/* Course Theme Onboarding */
+.sensei-course-theme-onboarding {
+	&.components-guide {
+		width: 325px;
+		height: 504px;
+	}
+
+	&__image-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 253px;
+		margin-bottom: 16px;
+		background-color: $primary;
+	}
+
+	&__heading {
+		font-size: 20px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #1e1e1e;
+		margin: 16px 0 8px 0;
+		padding: 0 24px;
+	}
+
+	&__text {
+		font-size: 13px;
+		line-height: 1.4;
+		color: #757575;
+		margin: 0 0 24px 0;
+		padding: 0 24px;
+	}
+
+	.components-guide__page-control li[aria-current="step"] circle {
+		fill: $primary;
+	}
+
+	.components-guide__footer .components-button {
+		height: 36px;
+
+		&.components-guide {
+			&__forward-button,
+			&__finish-button {
+				display: inline-block;
+				width: 164px;
+				text-align: center;
+				font-weight: 400;
+				background-color: $primary;
+				border-color: $primary;
+				color: #000;
+
+				&:hover,
+				&:active {
+					background-color: lighten($primary, 5%);
+					border-color: lighten($primary, 5%);
+					text-decoration: none;
+				}
+
+				&:focus {
+					background-color: darken($primary, 5%);
+					border-color: darken($primary, 5%);
+					box-shadow: 0 0 0 1px #fff, 0 0 0 3px $primary;
+				}
+
+				&:hover,
+				&:active,
+				&:focus {
+					color: #000;
+				}
+			}
+
+			&__back-button {
+				&:hover {
+					color: $primary;
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 1px $primary;
+				}
+			}
+		}
+	}
+}
