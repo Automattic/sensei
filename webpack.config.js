@@ -4,6 +4,7 @@
 const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 
@@ -143,6 +144,14 @@ function getWebpackConfig( env, argv ) {
 				),
 				ignoreSrcPattern: /^node_modules/,
 				baseDist,
+			} ),
+			new CopyPlugin( {
+				patterns: [
+					{
+						from: path.resolve( '.', 'assets/images' ),
+						to: path.resolve( '.', baseDist, 'images' ),
+					},
+				],
 			} ),
 			new SVGSpritemapPlugin( 'assets/icons/**/*.svg', {
 				output: {
