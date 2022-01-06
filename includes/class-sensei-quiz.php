@@ -155,7 +155,6 @@ class Sensei_Quiz {
 
 	}
 
-
 	/**
 	 * user_save_quiz_answers_listener
 	 *
@@ -167,6 +166,7 @@ class Sensei_Quiz {
 
 		if ( ! isset( $_POST['quiz_save'] )
 			|| empty( $_POST['sensei_question'] )
+			|| empty( $_POST['questions_asked'] )
 			|| ! isset( $_POST['woothemes_sensei_save_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
 			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_save_quiz_nonce'] ), 'woothemes_sensei_save_quiz_nonce' ) ) {
@@ -178,8 +178,9 @@ class Sensei_Quiz {
 		$user_id   = get_current_user_id();
 
 		$answers = $this->parse_form_answers(
-			$_POST['sensei_question'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The answers value can vary, so we do the sanitization on output.
+			wp_unslash( $_POST['sensei_question'] ),
+			array_map( 'intval', wp_unslash( $_POST['questions_asked'] ) ),
 			$lesson_id,
 			$user_id
 		);
@@ -396,6 +397,7 @@ class Sensei_Quiz {
 		// only respond to valid quiz completion submissions
 		if (
 			! isset( $_POST['quiz_complete'] )
+			|| empty( $_POST['questions_asked'] )
 			|| ! isset( $_POST['woothemes_sensei_complete_quiz_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
 			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_complete_quiz_nonce'] ), 'woothemes_sensei_complete_quiz_nonce' )
@@ -410,8 +412,9 @@ class Sensei_Quiz {
 		$user_id   = get_current_user_id();
 
 		$answers = $this->parse_form_answers(
-			$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The answers value can vary, so we do the sanitization on output.
+			wp_unslash( $_POST['sensei_question'] ?? [] ),
+			array_map( 'intval', wp_unslash( $_POST['questions_asked'] ) ),
 			$lesson_id,
 			$user_id
 		);
@@ -447,6 +450,7 @@ class Sensei_Quiz {
 
 		if (
 			! isset( $_POST['quiz_target_page'] )
+			|| empty( $_POST['questions_asked'] )
 			|| ! isset( $_POST['sensei_quiz_page_change_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
 			|| ! wp_verify_nonce( wp_unslash( $_POST['sensei_quiz_page_change_nonce'] ), 'sensei_quiz_page_change_nonce' )
@@ -460,8 +464,9 @@ class Sensei_Quiz {
 			$lesson_id = $this->get_lesson_id( $quiz_id );
 
 			$answers = $this->parse_form_answers(
-				$_POST['sensei_question'] ?? [], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-				$_POST['questions_asked'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The answers value can vary, so we do the sanitization on output.
+				wp_unslash( $_POST['sensei_question'] ?? [] ),
+				array_map( 'intval', wp_unslash( $_POST['questions_asked'] ) ),
 				$lesson_id,
 				$user_id
 			);
