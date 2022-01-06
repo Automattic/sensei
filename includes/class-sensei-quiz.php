@@ -301,11 +301,11 @@ class Sensei_Quiz {
 	 * @param int $lesson_id
 	 * @param int $user_id
 	 *
-	 * @return array|false $answers or false
+	 * @return array $answers or false
 	 */
 	public function get_user_answers( $lesson_id, $user_id ) {
 
-		$answers = [];
+		$answers = false;
 
 		if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
 		|| ! intval( $user_id ) > 0 || ! get_userdata( $user_id ) ) {
