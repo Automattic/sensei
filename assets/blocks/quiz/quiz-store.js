@@ -9,7 +9,6 @@ import { camelCase, snakeCase, omit, keyBy } from 'lodash';
 import { dispatch, select, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -46,19 +45,7 @@ export function useQuizStructure( { clientId } ) {
 	}, [ setBlock, loadStructure, clientId ] );
 }
 
-/**
- * Filters the quiz structure store to allow modifications on the interactions with the lesson-quiz REST API.
- *
- * @param {string}   opts.storeName          Name of quiz store.
- * @param {Function} opts.getEndpoint        REST API endpoint.
- * @param {Function} opts.saveError          Handler for displaying save errors.
- * @param {Function} opts.fetchError         Handler for displaying fetch errors.
- * @param {Function} opts.clearError         Handler for clearing errors.
- * @param {Function} opts.updateBlock        Update block with given structure.
- * @param {Function} opts.readBlock          Extract structure from block.
- * @param {Function} opts.setServerStructure Set the server structure which is used to track differences.
- */
-const quizStructureStore = applyFilters( 'sensei-lms.quizStructureStore', {
+registerStructureStore( {
 	storeName: QUIZ_STORE,
 	*getEndpoint() {
 		const lessonId = yield select( 'core/editor' ).getCurrentPostId();
@@ -210,5 +197,3 @@ const quizStructureStore = applyFilters( 'sensei-lms.quizStructureStore', {
 		};
 	},
 } );
-
-registerStructureStore( quizStructureStore );
