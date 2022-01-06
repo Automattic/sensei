@@ -14,6 +14,7 @@ import { SENSEI_THEME } from './constants';
 
 const imagesPath = `${ window.sensei.pluginUrl }assets/dist/images`;
 const completedFeatureName = 'senseiCourseThemeOnboardingCompleted';
+const courseThemePanelName = 'sensei-course-theme-plugin/sensei-course-theme';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -82,7 +83,14 @@ const useOnboardingOpen = () => {
  * Course Theme Onboarding component.
  */
 const CourseThemeOnboarding = () => {
-	const { toggleFeature } = useDispatch( 'core/edit-post' );
+	const { toggleFeature, toggleEditorPanelOpened } = useDispatch(
+		'core/edit-post'
+	);
+	const { isCourseThemePanelOpen } = useSelect( ( select ) => ( {
+		isCourseThemePanelOpen: select( 'core/edit-post' ).isEditorPanelOpened(
+			courseThemePanelName
+		),
+	} ) );
 	const isOnboardingOpen = useOnboardingOpen();
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
@@ -96,6 +104,10 @@ const CourseThemeOnboarding = () => {
 			contentLabel={ __( 'New learning experience!', 'sensei-lms' ) }
 			finishButtonText={ __( 'Enable learning mode', 'sensei-lms' ) }
 			onFinish={ () => {
+				if ( ! isCourseThemePanelOpen ) {
+					toggleEditorPanelOpened( courseThemePanelName );
+				}
+
 				setTheme( SENSEI_THEME );
 				toggleFeature( completedFeatureName );
 			} }
