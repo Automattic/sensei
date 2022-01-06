@@ -33,6 +33,20 @@ $primary: #6FCFB2;
 		padding: 0 24px;
 	}
 
+	&__learn-more {
+		position: absolute;
+		bottom: -32px;
+		left: 30px;
+		z-index: 1;
+		color: inherit;
+		text-decoration: none;
+
+		&:hover {
+			color: $primary;
+			text-decoration: underline;
+		}
+	}
+
 	.components-guide__page-control li[aria-current="step"] circle {
 		fill: $primary;
 	}

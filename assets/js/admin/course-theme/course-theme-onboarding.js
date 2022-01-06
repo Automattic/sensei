@@ -138,6 +138,14 @@ const CourseThemeOnboarding = () => {
 									'sensei-lms'
 								) }
 							</p>
+							<a
+								className="sensei-course-theme-onboarding__learn-more"
+								href="https://senseilms.com/docs/"
+								rel="noreferrer external"
+								target="_blank"
+							>
+								{ __( 'Learn more', 'sensei-lms' ) }
+							</a>
 						</>
 					),
 				},
