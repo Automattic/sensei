@@ -180,7 +180,7 @@ class Sensei_Quiz {
 		$answers = $this->parse_form_answers(
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The answers value can vary, so we do the sanitization on output.
 			wp_unslash( $_POST['sensei_question'] ),
-			array_map( 'intval', wp_unslash( $_POST['questions_asked'] ) ),
+			array_map( 'intval', $_POST['questions_asked'] ),
 			$lesson_id,
 			$user_id
 		);
@@ -414,7 +414,7 @@ class Sensei_Quiz {
 		$answers = $this->parse_form_answers(
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The answers value can vary, so we do the sanitization on output.
 			wp_unslash( $_POST['sensei_question'] ?? [] ),
-			array_map( 'intval', wp_unslash( $_POST['questions_asked'] ) ),
+			array_map( 'intval', $_POST['questions_asked'] ),
 			$lesson_id,
 			$user_id
 		);
@@ -466,7 +466,7 @@ class Sensei_Quiz {
 			$answers = $this->parse_form_answers(
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The answers value can vary, so we do the sanitization on output.
 				wp_unslash( $_POST['sensei_question'] ?? [] ),
-				array_map( 'intval', wp_unslash( $_POST['questions_asked'] ) ),
+				array_map( 'intval', $_POST['questions_asked'] ),
 				$lesson_id,
 				$user_id
 			);
