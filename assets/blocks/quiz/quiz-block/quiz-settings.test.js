@@ -8,6 +8,9 @@ import { render, fireEvent } from '@testing-library/react';
  */
 import QuizSettings from './quiz-settings';
 
+const mockSetAttributes = jest.fn();
+const mockOpenGeneralSidebar = jest.fn();
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: ( { children } ) => children,
@@ -20,6 +23,12 @@ jest.mock( '@wordpress/data', () => {
 	return {
 		combineReducers: module.combineReducers,
 		registerStore: module.registerStore,
+		useDispatch: () => {
+			return {
+				openGeneralSidebar: mockOpenGeneralSidebar,
+				selectBlock: jest.fn(),
+			};
+		},
 		useSelect: () => [
 			{
 				attributes: {
@@ -53,8 +62,6 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
-const setAttributesMock = jest.fn();
-
 describe( '<QuizSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
@@ -69,7 +76,7 @@ describe( '<QuizSettings />', () => {
 						showQuestions: 5,
 					},
 				} }
-				setAttributes={ setAttributesMock }
+				setAttributes={ mockSetAttributes }
 			/>
 		);
 
@@ -126,12 +133,12 @@ describe( '<QuizSettings />', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
 			<QuizSettings
 				attributes={ { options: defaultOptions } }
-				setAttributes={ setAttributesMock }
+				setAttributes={ mockSetAttributes }
 			/>
 		);
 
 		fireEvent.click( queryByLabelText( 'Pass Required' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( mockSetAttributes ).toBeCalledWith( {
 			options: {
 				...defaultOptions,
 				passRequired: false,
@@ -141,7 +148,7 @@ describe( '<QuizSettings />', () => {
 		fireEvent.change( queryAllByLabelText( 'Passing Grade (%)' )[ 0 ], {
 			target: { value: '50' },
 		} );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( mockSetAttributes ).toBeCalledWith( {
 			options: {
 				...defaultOptions,
 				quizPassmark: 50,
@@ -149,7 +156,7 @@ describe( '<QuizSettings />', () => {
 		} );
 
 		fireEvent.click( queryByLabelText( 'Auto Grade' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( mockSetAttributes ).toBeCalledWith( {
 			options: {
 				...defaultOptions,
 				passRequired: false,
@@ -157,7 +164,7 @@ describe( '<QuizSettings />', () => {
 		} );
 
 		fireEvent.click( queryByLabelText( 'Allow Retakes' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( mockSetAttributes ).toBeCalledWith( {
 			options: {
 				...defaultOptions,
 				allowRetakes: false,
@@ -165,7 +172,7 @@ describe( '<QuizSettings />', () => {
 		} );
 
 		fireEvent.click( queryByLabelText( 'Random Question Order' ) );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( mockSetAttributes ).toBeCalledWith( {
 			options: {
 				...defaultOptions,
 				randomQuestionOrder: false,
@@ -175,11 +182,27 @@ describe( '<QuizSettings />', () => {
 		fireEvent.change( queryByLabelText( 'Number of Questions' ), {
 			target: { value: '10' },
 		} );
-		expect( setAttributesMock ).toBeCalledWith( {
+		expect( mockSetAttributes ).toBeCalledWith( {
 			options: {
 				...defaultOptions,
 				showQuestions: 10,
 			},
 		} );
+	} );
+
+	it( 'Should open the siderbar when the quiz settings button is clicked', () => {
+		const { getAllByRole } = render(
+			<QuizSettings
+				attributes={ {
+					options: {},
+				} }
+			/>
+		);
+
+		fireEvent.click(
+			getAllByRole( 'button', { name: 'Quiz settings' } )[ 0 ]
+		);
+
+		expect( mockOpenGeneralSidebar ).toBeCalledTimes( 1 );
 	} );
 } );
