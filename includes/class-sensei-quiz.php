@@ -242,7 +242,7 @@ class Sensei_Quiz {
 	 * @param int   $lesson_id
 	 * @param int   $user_id
 	 *
-	 * @return bool Success.
+	 * @return false or int $answers_saved
 	 */
 	public static function save_user_answers( $quiz_answers, $files = array(), $lesson_id = 0, $user_id = 0 ) {
 
@@ -286,7 +286,7 @@ class Sensei_Quiz {
 			}
 		}
 
-		return (bool) $answers_saved;
+		return $answers_saved;
 
 	}
 
