@@ -447,9 +447,9 @@ class Sensei_Quiz {
 
 		if (
 			! isset( $_POST['quiz_target_page'] )
-			|| ! isset( $_POST['woothemes_sensei_quiz_page_change_nonce'] )
+			|| ! isset( $_POST['sensei_quiz_page_change_nonce'] )
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-			|| ! wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_quiz_page_change_nonce'] ), 'woothemes_sensei_quiz_page_change_nonce' )
+			|| ! wp_verify_nonce( wp_unslash( $_POST['sensei_quiz_page_change_nonce'] ), 'sensei_quiz_page_change_nonce' )
 		) {
 			return;
 		}

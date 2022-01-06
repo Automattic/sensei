@@ -22,7 +22,7 @@ $sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_comple
 ?>
 
 <div id="sensei-quiz-pagination">
-	<input type="hidden" name="woothemes_sensei_quiz_page_change_nonce" id="woothemes_sensei_quiz_page_change_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_quiz_page_change_nonce' ) ); ?>" />
+	<input type="hidden" name="sensei_quiz_page_change_nonce" id="sensei_quiz_page_change_nonce" value="<?php echo esc_attr( wp_create_nonce( 'sensei_quiz_page_change_nonce' ) ); ?>" />
 
 	<div class="sensei-quiz-pagination__list">
 		<?php
