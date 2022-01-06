@@ -36,7 +36,7 @@ import ProgressBar, {
  * @param {number}   props.attributes.borderRadius The border radius of the progress bar.
  * @param {Function} props.setAttributes           Callback to set the component attributes.
  */
-export const ProgressBarEdit = ( props ) => {
+export const CourseProgressEdit = ( props ) => {
 	const {
 		className,
 		barColor,
@@ -124,4 +124,4 @@ export default compose(
 			probeKey: 'primaryColor',
 		},
 	} )
-)( ProgressBarEdit );
+)( CourseProgressEdit );
