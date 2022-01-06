@@ -3,12 +3,13 @@
  */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Guide } from '@wordpress/components';
 import { useState, useEffect, useLayoutEffect } from '@wordpress/element';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
+import Guide from './guide';
 import useCourseMeta from '../../../react-hooks/use-course-meta';
 import { SENSEI_THEME } from './constants';
 
@@ -105,14 +106,7 @@ const CourseThemeOnboarding = () => {
 		<Guide
 			className="sensei-course-theme-onboarding"
 			contentLabel={ __( 'New learning experience!', 'sensei-lms' ) }
-			finishButtonText={ __( 'Enable learning mode', 'sensei-lms' ) }
 			onFinish={ () => {
-				if ( ! isCourseThemePanelOpen ) {
-					toggleEditorPanelOpened( courseThemePanelName );
-				}
-
-				setTheme( SENSEI_THEME );
-				savePost();
 				toggleFeature( completedFeatureName );
 			} }
 			pages={ [
@@ -142,14 +136,35 @@ const CourseThemeOnboarding = () => {
 									'sensei-lms'
 								) }
 							</p>
+						</>
+					),
+					footer: ( { goForward } ) => (
+						<>
 							<a
-								className="sensei-course-theme-onboarding__learn-more"
+								className="sensei-course-theme-onboarding__learn-more components-button components-guide__back-button"
 								href="https://senseilms.com/docs/"
 								rel="noreferrer external"
 								target="_blank"
 							>
 								{ __( 'Learn more', 'sensei-lms' ) }
 							</a>
+							<Button
+								className="components-guide__forward-button"
+								onClick={ () => {
+									// Open sidebar panel
+									if ( ! isCourseThemePanelOpen ) {
+										toggleEditorPanelOpened(
+											courseThemePanelName
+										);
+									}
+
+									setTheme( SENSEI_THEME );
+									savePost();
+									goForward();
+								} }
+							>
+								{ __( 'Enable learning mode' ) }
+							</Button>
 						</>
 					),
 				},
@@ -169,7 +184,7 @@ const CourseThemeOnboarding = () => {
 						<>
 							<h1 className="sensei-course-theme-onboarding__heading">
 								{ __(
-									'Enable learning mode for this course!',
+									'We’ve enabled learning mode for this course!',
 									'sensei-lms'
 								) }
 							</h1>
@@ -180,6 +195,14 @@ const CourseThemeOnboarding = () => {
 								) }
 							</p>
 						</>
+					),
+					footer: ( { onFinish } ) => (
+						<Button
+							className="components-guide__forward-button"
+							onClick={ onFinish }
+						>
+							{ __( 'Sounds good' ) }
+						</Button>
 					),
 				},
 			] }

@@ -34,16 +34,12 @@ $primary: #6FCFB2;
 	}
 
 	&__learn-more {
-		position: absolute;
-		bottom: -32px;
-		left: 30px;
-		z-index: 1;
-		color: inherit;
-		text-decoration: none;
+		padding: 10px;
+		color: #1e1e1e;
+		text-decoration: underline;
 
 		&:hover {
 			color: $primary;
-			text-decoration: underline;
 		}
 	}
 
@@ -86,12 +82,11 @@ $primary: #6FCFB2;
 			}
 
 			&__back-button {
-				&:hover {
-					color: $primary;
-				}
+				padding: 10px;
 
 				&:focus {
 					box-shadow: 0 0 0 1px $primary;
+					color: $primary;
 				}
 			}
 		}
