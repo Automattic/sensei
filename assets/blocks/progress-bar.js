@@ -1,10 +1,10 @@
-import { render } from 'react-dom';
+import { render } from '@wordpress/element';
 import ProgressBar from '../shared/blocks/progress-bar';
 
 render(
 	<ProgressBar
-		lessonsCount={ 3 }
-		completedCount={ 1 }
+		lessonsCount={ window.php_vars.totalNumber }
+		completedCount={ window.php_vars.completedNumber }
 		wrapperAttributes={ {
 			className: 'wp-block-sensei-lms-progress-bar',
 		} }
