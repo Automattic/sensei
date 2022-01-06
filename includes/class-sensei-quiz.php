@@ -1672,16 +1672,6 @@ class Sensei_Quiz {
 			<?php endif ?>
 
 			<div class="sensei-quiz-actions-secondary">
-				<?php if ( ! $is_quiz_completed ) : ?>
-					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
-							<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
-						</button>
-
-						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-					</div>
-				<?php endif ?>
-
 				<?php if ( $is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
 						<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
@@ -1689,6 +1679,16 @@ class Sensei_Quiz {
 						</button>
 
 						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+					</div>
+				<?php endif ?>
+
+				<?php if ( ! $is_quiz_completed ) : ?>
+					<div class="sensei-quiz-action">
+						<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
+							<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
+						</button>
+
+						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
 					</div>
 				<?php endif ?>
 			</div>
