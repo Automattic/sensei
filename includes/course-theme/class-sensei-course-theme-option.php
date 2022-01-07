@@ -73,7 +73,7 @@ class Sensei_Course_Theme_Option {
 		new \Sensei\Blocks\Course_Theme();
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
-		add_action( 'template_redirect', [ $this, 'maybe_redirect_to_correct_mode' ] );
+		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 	}
@@ -93,11 +93,12 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
-	 * Redirect to the correct mode if needed.
+	 * Ensure the learning mode prefix is set if required or removed
+	 * if not allowed.
 	 *
 	 * @access private
 	 */
-	public function maybe_redirect_to_correct_mode() {
+	public function ensure_learning_mode_url_prefix() {
 		if (
 			is_admin() ||
 			( Sensei_Course_Theme::instance()->is_active() && $this->should_use_sensei_theme() ) ||
