@@ -67,7 +67,7 @@ export const CourseProgressEdit = ( props ) => {
 	};
 	const barWrapperAttributes = {
 		className: classnames(
-			'wp-block-sensei-lms-progress-bar',
+			'wp-block-sensei-lms-course-progress',
 			barBackgroundColor?.class
 		),
 		style: {
