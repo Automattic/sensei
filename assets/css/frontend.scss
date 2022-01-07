@@ -422,46 +422,6 @@ a.sensei-certificate-link {
 		}
 	}
 
-	.sensei-quiz-pagination__actions {
-		display: flex;
-		order: 1;
-
-		@media only screen and (min-width: $tablet-breakpoint) {
-			order: 0;
-		}
-	}
-
-	.sensei-quiz-pagination__action {
-		display: inline-flex;
-
-		&:not(:first-child) {
-			margin-left: 0.5em;
-			padding-left: 0.5em;
-			border-left: 2px solid;
-		}
-
-		button {
-			@include button-link;
-		}
-	}
-
-	.sensei-quiz-pagination__nav {
-		display: flex;
-		align-items: center;
-
-		@media only screen and (min-width: $tablet-breakpoint) {
-			margin-left: auto;
-		}
-
-		.wp-block-buttons {
-			gap: 0.5em;
-
-			.wp-block-button {
-				margin: 0;
-			}
-		}
-	}
-
 	.sensei-quiz-pagination__prev-button {
 		&:before  {
 			@include iconbefore();
@@ -478,6 +438,54 @@ a.sensei-certificate-link {
 		}
 	}
 }
+
+/**
+ * Quiz Actions
+ */
+#sensei-quiz-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5em;
+
+	@media only screen and (min-width: $tablet-breakpoint) {
+		flex-direction: row;
+		margin-left: auto;
+	}
+
+	.sensei-quiz-action {
+		margin: 0;
+	}
+
+	.sensei-quiz-actions-primary {
+		display: flex;
+		gap: 0.5em;
+	}
+
+	.sensei-quiz-actions-secondary {
+		display: flex;
+		order: 1;
+
+		@media only screen and (min-width: $tablet-breakpoint) {
+			order: 0;
+		}
+
+		.sensei-quiz-action {
+			display: flex;
+
+			&:not(:first-child) {
+				margin-left: 0.5em;
+				padding-left: 0.5em;
+				border-left: 2px solid;
+			}
+
+			button {
+				@include button-link;
+			}
+		}
+	}
+}
+
 
 .quiz:not(.quiz-blocks), .lesson {
   button.quiz-submit  {
