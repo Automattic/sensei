@@ -75,6 +75,7 @@ class Sensei_Course_Theme_Quiz {
 		// Prepare title.
 		$quiz_status = $user_lesson_status->comment_approved;
 		$grade       = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+		$grade       = Sensei_Utils::round( $grade, 2 );
 		$title       = sprintf(
 			// translators: The placeholder is the quiz grade.
 			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
@@ -89,7 +90,8 @@ class Sensei_Course_Theme_Quiz {
 		if ( 'ungraded' === $quiz_status ) {
 			$text = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
 		} elseif ( 'failed' === $quiz_status ) {
-			$passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
+			$passmark = get_post_meta( $quiz_id, '_quiz_passmark', true );
+			$passmark = Sensei_Utils::round( $passmark, 2 );
 			$text     = sprintf(
 				// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
 				__( 'You require %1$s%% to pass this quiz. Your grade is %2$s%%.', 'sensei-lms' ),
