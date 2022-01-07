@@ -14,15 +14,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $sensei_question_loop;
 
-$sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
+$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
+$sensei_is_quiz_completed = Sensei_Quiz::is_quiz_completed();
+$sensei_is_reset_allowed  = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
+$sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
 
 ?>
 
 <div id="sensei-quiz-pagination">
+	<input type="hidden" name="sensei_quiz_page_change_nonce" id="sensei_quiz_page_change_nonce" value="<?php echo esc_attr( wp_create_nonce( 'sensei_quiz_page_change_nonce' ) ); ?>" />
+
 	<div class="sensei-quiz-pagination__list">
 		<?php
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination links.
-		echo paginate_links(
+
+		$sensei_pagination_list = paginate_links(
 			/**
 			 * Filters the quiz questions paginate links arguments.
 			 *
@@ -46,12 +51,16 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 				]
 			)
 		);
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination.
+		echo Sensei()->quiz->replace_pagination_links_with_buttons( $sensei_pagination_list );
+
 		?>
 	</div>
 
-	<?php if ( $sensei_can_take_quiz ) : ?>
+	<?php if ( $sensei_is_quiz_available && $sensei_has_actions ) : ?>
 		<div class="sensei-quiz-pagination__actions">
-			<?php if ( Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id( get_the_ID() ) ) ) : ?>
+			<?php if ( $sensei_is_reset_allowed ) : ?>
 				<div class="sensei-quiz-pagination__action">
 					<button type="submit" name="quiz_reset" class="sensei-stop-double-submission">
 						<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
@@ -61,13 +70,15 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 				</div>
 			<?php endif ?>
 
-			<div class="sensei-quiz-pagination__action">
-				<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
-					<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
-				</button>
+			<?php if ( ! $sensei_is_quiz_completed ) : ?>
+				<div class="sensei-quiz-pagination__action">
+					<button type="submit" name="quiz_save" class="sensei-stop-double-submission">
+						<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
+					</button>
 
-				<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-			</div>
+					<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+				</div>
+			<?php endif ?>
 		</div>
 	<?php endif ?>
 
@@ -75,25 +86,29 @@ $sensei_can_take_quiz = Sensei_Quiz::can_take_quiz();
 		<div class="wp-block-buttons">
 			<?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
 				<div class="wp-block-button is-style-outline">
-					<a
-						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
-						class="wp-block-button__link button sensei-quiz-pagination__prev-button"
+					<button
+						type="submit"
+						name="quiz_target_page"
+						value="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
+						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
 					>
 						<?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
-					</a>
+					</button>
 				</div>
 			<?php endif ?>
 
 			<?php if ( $sensei_question_loop['current_page'] < $sensei_question_loop['total_pages'] ) : ?>
 				<div class="wp-block-button">
-					<a
-						href="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
-						class="wp-block-button__link button sensei-quiz-pagination__next-button"
+					<button
+						type="submit"
+						name="quiz_target_page"
+						value="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
+						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
 					>
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
-					</a>
+					</button>
 				</div>
-			<?php elseif ( $sensei_can_take_quiz ) : ?>
+			<?php elseif ( $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) : ?>
 				<div class="wp-block-button">
 					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
 						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>

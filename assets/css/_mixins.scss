@@ -188,6 +188,30 @@ $fontpath:          'includes/fonts/';
     width: -o-calc(#{$val});
 }
 
+@mixin button-link()
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	color: inherit;
+	background-color: transparent;
+	text-decoration: underline;
+	text-transform: none;
+	font-weight: normal;
+	line-height: initial;
+	cursor: pointer;
+
+	&:hover {
+		color: inherit;
+		background-color: transparent;
+		text-decoration: none;
+	}
+
+	&:focus {
+		outline-offset: initial;
+	}
+}
+
 /**
  * Animations
  */
