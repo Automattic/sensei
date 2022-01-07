@@ -76,6 +76,10 @@ $gray-400: #ccc;
 		display: flex;
 		margin: 0 auto;
 		text-decoration: underline;
+
+		&:focus:not(:disabled) {
+			box-shadow: none;
+		}
 	}
 
 	&__question-count,
