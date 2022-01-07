@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="wp-block-column sensei-course-theme__quiz__header__right">
 				<!-- wp:sensei-lms/quiz-progress-counter /-->
 				<!-- wp:sensei-lms/quiz-progress-bar /-->
+				<!-- wp:sensei-lms/quiz-timer /-->
 			</div>
 			<!-- /wp:column -->
 		</div>
