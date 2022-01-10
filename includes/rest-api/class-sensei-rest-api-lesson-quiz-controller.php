@@ -357,6 +357,19 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
 		$failed_feedback_default = ! $allow_retakes;
 
+		$pagination = [
+			'pagination_number'       => null,
+			'show_progress_bar'       => false,
+			'progress_bar_radius'     => 5,
+			'progress_bar_height'     => 5,
+			'progress_bar_color'      => null,
+			'progress_bar_background' => null,
+		];
+
+		if ( ! empty( $post_meta['_pagination'][0] ) ) {
+			$pagination = json_decode( $post_meta['_pagination'][0], true ) ?? $pagination;
+		}
+
 		$quiz_data = [
 			'options'       => [
 				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
@@ -368,29 +381,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
 				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
 				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
+				'pagination'                  => $pagination,
 			],
 			'questions'     => $this->get_quiz_questions( $quiz ),
 			'lesson_title'  => $lesson->post_title,
 			'lesson_status' => $lesson->post_status,
 		];
-
-		$quiz_data['options']['pagination'] = [
-			'pagination_number'       => null,
-			'show_progress_bar'       => false,
-			'progress_bar_radius'     => 5,
-			'progress_bar_height'     => 5,
-			'progress_bar_color'      => null,
-			'progress_bar_background' => null,
-		];
-
-		if ( empty( $post_meta['_pagination'][0] ) || ! is_string( $post_meta['_pagination'][0] ) ) {
-			return $quiz_data;
-		}
-
-		$json_array = json_decode( $post_meta['_pagination'][0], true );
-		if ( $json_array ) {
-			$quiz_data['options']['pagination'] = $json_array;
-		}
 
 		/**
 		 * Filters the response of lesson-quiz requests.
@@ -489,6 +485,37 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 							'description' => 'Show answer feedback text',
 							'default'     => null,
 						],
+						'pagination'                  => [
+							'type'       => 'object',
+							'required'   => true,
+							'properties' => [
+								'pagination_number'       => [
+									'type'        => 'integer',
+									'description' => 'Number of questions per page',
+									'default'     => null,
+								],
+								'show_progress_bar'       => [
+									'type'        => 'boolean',
+									'description' => 'Whether to show the progress bar in the frontend',
+									'default'     => false,
+								],
+								'progress_bar_radius'     => [
+									'type'        => 'integer',
+									'description' => 'Progress bar radius',
+									'default'     => 5,
+								],
+								'progress_bar_height'     => [
+									'type'        => 'integer',
+									'description' => 'Progress bar height',
+									'default'     => 5,
+								],
+								'progress_bar_background' => [
+									'type'        => 'string',
+									'description' => 'Progress bar background color',
+									'default'     => null,
+								],
+							],
+						],
 					],
 				],
 				'questions'     => [
@@ -506,40 +533,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				],
 			],
 		];
-
-		if ( Sensei()->feature_flags->is_enabled( 'quiz_pagination' ) ) {
-			$schema['properties']['options']['pagination'] = [
-				'type'       => 'object',
-				'required'   => true,
-				'properties' => [
-					'pagination_number'       => [
-						'type'        => 'integer',
-						'description' => 'Number of questions per page',
-						'default'     => null,
-					],
-					'show_progress_bar'       => [
-						'type'        => 'boolean',
-						'description' => 'Whether to show the progress bar in the frontend',
-						'default'     => false,
-					],
-					'progress_bar_radius'     => [
-						'type'        => 'integer',
-						'description' => 'Progress bar radius',
-						'default'     => 5,
-					],
-					'progress_bar_height'     => [
-						'type'        => 'integer',
-						'description' => 'Progress bar height',
-						'default'     => 5,
-					],
-					'progress_bar_background' => [
-						'type'        => 'string',
-						'description' => 'Progress bar background color',
-						'default'     => null,
-					],
-				],
-			];
-		}
 
 		return $schema;
 	}

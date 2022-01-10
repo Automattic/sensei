@@ -224,25 +224,19 @@ const QuizSettings = ( {
 						/>
 					</PanelRow>
 				</PanelBody>
-				{ /* eslint-disable-next-line camelcase */ }
-				{ window.sensei_single_lesson_blocks
-					?.quiz_pagination_enabled && (
-					<PaginationSidebarSettings
-						settings={ pagination }
-						onChange={ createChangeHandler( 'pagination' ) }
-						questionCount={ questionCount }
-					/>
-				) }
+				<PaginationSidebarSettings
+					settings={ pagination }
+					onChange={ createChangeHandler( 'pagination' ) }
+					questionCount={ questionCount }
+				/>
 			</InspectorControls>
-			{ window.sensei_single_lesson_blocks?.quiz_pagination_enabled && (
-				<BlockControls>
-					<PaginationToolbarSettings
-						settings={ pagination }
-						onChange={ createChangeHandler( 'pagination' ) }
-						questionCount={ questionCount }
-					/>
-				</BlockControls>
-			) }
+			<BlockControls>
+				<PaginationToolbarSettings
+					settings={ pagination }
+					onChange={ createChangeHandler( 'pagination' ) }
+					questionCount={ questionCount }
+				/>
+			</BlockControls>
 		</>
 	);
 };
