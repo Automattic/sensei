@@ -65,38 +65,37 @@ class Sensei_Course_Theme_Quiz {
 			return;
 		}
 
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 
 		// If quiz is not submitted, then nothing else to do.
-		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) || empty( $user_lesson_status ) ) {
+		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) || empty( $lesson_status ) ) {
 			return;
 		}
 
 		// Prepare title.
-		$quiz_status = $user_lesson_status->comment_approved;
-		$grade       = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
-		$grade       = Sensei_Utils::round( $grade, 2 );
-		$title       = sprintf(
+		$grade         = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+		$grade_rounded = Sensei_Utils::round( $grade, 2 );
+		$title         = sprintf(
 			// translators: The placeholder is the quiz grade.
 			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
-			$grade
+			$grade_rounded
 		);
-		if ( 'ungraded' === $quiz_status ) {
+		if ( 'ungraded' === $lesson_status->comment_approved ) {
 			$title = __( 'Awaiting grade', 'sensei-lms' );
 		}
 
 		// Prepare message.
 		$text = __( "You've passed the quiz and can continue to the next lesson.", 'sensei-lms' );
-		if ( 'ungraded' === $quiz_status ) {
+		if ( 'ungraded' === $lesson_status->comment_approved ) {
 			$text = __( 'Your answers have been submitted and your teacher will grade this quiz shortly.', 'sensei-lms' );
-		} elseif ( 'failed' === $quiz_status ) {
-			$passmark = get_post_meta( $quiz_id, '_quiz_passmark', true );
-			$passmark = Sensei_Utils::round( $passmark, 2 );
-			$text     = sprintf(
+		} elseif ( 'failed' === $lesson_status->comment_approved ) {
+			$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
+			$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
+			$text             = sprintf(
 				// translators: The first placeholder is the minimum grade required, and the second placeholder is the actual grade.
 				__( 'You require %1$s%% to pass this quiz. Your grade is %2$s%%.', 'sensei-lms' ),
-				$passmark,
-				$grade
+				$passmark_rounded,
+				$grade_rounded
 			);
 		}
 

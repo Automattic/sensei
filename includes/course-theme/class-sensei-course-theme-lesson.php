@@ -75,23 +75,22 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		$user_grade         = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
-		$user_grade         = Sensei_Utils::round( $user_grade, 2 );
+		$lesson_status    = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+		$grade            = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+		$grade_rounded    = Sensei_Utils::round( $grade, 2 );
+		$quiz_id          = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
+		$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
+		$pass_required    = get_post_meta( $quiz_id, '_pass_required', true );
 
-		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$quiz_passmark = get_post_meta( $quiz_id, '_quiz_passmark', true );
-		$quiz_passmark = Sensei_Utils::round( $quiz_passmark, 2 );
-		$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
-
-		if ( 'ungraded' === $user_lesson_status->comment_approved ) {
+		if ( 'ungraded' === $lesson_status->comment_approved ) {
 			$text = __( 'Awaiting grade', 'sensei-lms' );
-		} elseif ( 'failed' === $user_lesson_status->comment_approved ) {
+		} elseif ( 'failed' === $lesson_status->comment_approved ) {
 			// translators: Placeholders are the required grade and the actual grade, respectively.
-			$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $quiz_passmark . '</strong>', '<strong>' . $user_grade . '</strong>' );
+			$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
 		} else {
 			// translators: Placeholder is the quiz grade.
-			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $user_grade . '</strong>' );
+			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $grade_rounded . '</strong>' );
 		}
 
 		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
@@ -121,7 +120,7 @@ class Sensei_Course_Theme_Lesson {
 		$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
 
 		if ( $lesson_prerequisite > 0 ) {
-			$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
+			$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
 
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
@@ -132,7 +131,7 @@ class Sensei_Course_Theme_Lesson {
 				. esc_html__( 'prerequisites', 'sensei-lms' )
 				. '</a>';
 
-			$text = ! empty( $user_lesson_status ) && 'ungraded' === $user_lesson_status->comment_approved
+			$text = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
 				// translators: Placeholder is the link to the prerequisite lesson.
 				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 				// translators: Placeholder is the link to the prerequisite lesson.
