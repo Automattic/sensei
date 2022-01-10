@@ -33,7 +33,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 			return self::$instance;
 		}
 
-		self::$instance = new static();
+		self::$instance = new self();
 		return self::$instance;
 	}
 
