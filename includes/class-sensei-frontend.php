@@ -23,7 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Frontend {
-
 	/**
 	 * Messages to display to the user.
 	 *

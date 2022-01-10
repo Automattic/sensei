@@ -1485,7 +1485,9 @@ class Sensei_Quiz {
 			get_post_meta( $quiz_id, '_pagination', true ),
 			true
 		);
-		if ( $pagination_settings['show_progress_bar'] ) {
+
+		// Display progress bar if pagination is enabled and progress bar is enabled.
+		if ( ! empty( $pagination_settings['pagination_number'] ) && array_key_exists( 'show_progress_bar', $pagination_settings ) && $pagination_settings['show_progress_bar'] ) {
 			self::display_progress_bar( $quiz_id, $pagination_settings );
 		}
 
@@ -1529,8 +1531,8 @@ class Sensei_Quiz {
 	/**
 	 * Display quiz progress bar.
 	 *
-	 * @param $quiz_id Quiz id.
-	 *
+	 * @param int   $quiz_id quiz id.
+	 * @param array $pagination_settings pagination settings.
 	 * @since 3.15.0
 	 */
 	public static function display_progress_bar( $quiz_id, $pagination_settings ) {
@@ -1558,11 +1560,7 @@ class Sensei_Quiz {
 		$radius           = $pagination_settings['progress_bar_radius'];
 		$height           = $pagination_settings['progress_bar_height'];
 		$color            = empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'];
-		$background_color = empty( $pagination_settings['progress_bar_background']) ? '' : $pagination_settings['progress_bar_background'];
-		error_log( 'radius: ' . $radius );
-		error_log( 'height: ' . $height );
-		error_log( 'Color: ' . $color );
-		error_log( 'background color: ' . $background_color );
+		$background_color = empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'];
 		wp_localize_script(
 			'sensei-quiz-progress',
 			'php_vars',
@@ -1570,7 +1568,9 @@ class Sensei_Quiz {
 				'totalNumber'     => $all_questions_count,
 				'completedNumber' => $answers_count,
 				'radius'          => $radius,
+				'color'           => $color,
 				'backgroundColor' => $background_color,
+				'height'          => $height,
 			)
 		);
 	}
@@ -1627,7 +1627,7 @@ class Sensei_Quiz {
 	/**
 	 * Output the sensei quiz status message.
 	 *
-	 * @param $quiz_id
+	 * @param int $quiz_id quiz id.
 	 */
 	public static function the_user_status_message( $quiz_id ) {
 
@@ -1686,6 +1686,11 @@ class Sensei_Quiz {
 
 	}
 
+	/**
+	 * Rendering html element that will be replaced with Progress Bar.
+	 *
+	 * @since 3.15.0
+	 */
 	public static function the_quiz_progress_bar() {
 		Sensei_Templates::get_template( 'globals/progress-bar.php' );
 	}
@@ -1765,7 +1770,7 @@ class Sensei_Quiz {
 	 */
 	public static function get_user_quiz_grade( $lesson_id, $user_id ) {
 
-		// get the quiz grade
+		// get the quiz grade.
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 		$user_quiz_grade    = 0;
 		if ( isset( $user_lesson_status->comment_ID ) ) {
@@ -1792,7 +1797,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
@@ -1826,7 +1831,9 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * @param $lesson_id
+	 * Checking if passwor is required.
+	 *
+	 * @param int $lesson_id lesson id.
 	 *
 	 * @return bool
 	 */
@@ -1835,7 +1842,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_pass_required', true );
-		// backwards compatibility
+		// backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
@@ -1844,9 +1851,11 @@ class Sensei_Quiz {
 	}
 
 	/**
+	 * Maybe delete the quiz post after checking if the post exists.
+	 *
 	 * @since 1.9.5
 	 *
-	 * @param integer $post_id of the post being permanently deleted
+	 * @param integer $post_id of the post being permanently deleted.
 	 */
 	public function maybe_delete_quiz( $post_id ) {
 

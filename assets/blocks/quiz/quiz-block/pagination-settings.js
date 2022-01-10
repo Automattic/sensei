@@ -123,88 +123,91 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 						/>
 					</PanelRow>
 				) }
+				{ paginationNumber !== null && (
+					<>
+						<PanelRow>
+							<ToggleControl
+								checked={ showProgressBar }
+								label={ __(
+									'Show Progress Bar',
+									'sensei-lms'
+								) }
+								value={ progressBarRadius }
+								onChange={ ( value ) =>
+									onChange( {
+										...settings,
+										showProgressBar: value,
+									} )
+								}
+							/>
+						</PanelRow>
+						<PanelRow className="sensei-lms-quiz-block__progress-bar">
+							<NumberControl
+								label={ __( 'Radius', 'sensei-lms' ) }
+								min={ 1 }
+								step={ 1 }
+								suffix={ __( 'PX', 'sensei-lms' ) }
+								value={ progressBarRadius }
+								onChange={ ( value ) =>
+									onChange( {
+										...settings,
+										progressBarRadius: value,
+									} )
+								}
+							/>
+							<NumberControl
+								label={ __( 'Height', 'sensei-lms' ) }
+								min={ 1 }
+								step={ 1 }
+								suffix={ __( 'PX', 'sensei-lms' ) }
+								value={ progressBarHeight }
+								onChange={ ( value ) =>
+									onChange( {
+										...settings,
+										progressBarHeight: value,
+									} )
+								}
+							/>
+						</PanelRow>
+						<PanelColorSettings
+							title={ __( 'Color settings', 'sensei-lms' ) }
+							initialOpen={ false }
+							colorSettings={ [
+								{
+									value: progressBarColor,
+									onChange: ( value ) =>
+										onChange( {
+											...settings,
+											progressBarColor: value,
+										} ),
+									label: __(
+										'Progress bar color',
+										'sensei-lms'
+									),
+								},
+								{
+									value: progressBarBackground,
+									onChange: ( value ) =>
+										onChange( {
+											...settings,
+											progressBarBackground: value,
+										} ),
+									label: __(
+										'Progress bar background color',
+										'sensei-lms'
+									),
+								},
+							] }
+						>
+							<ContrastChecker
+								textColor={ progressBarColor }
+								backgroundColor={ progressBarBackground }
+								isLargeText={ false }
+							/>
+						</PanelColorSettings>
+					</>
+				) }
 			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Progress bar settings', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<PanelRow>
-					<ToggleControl
-						checked={ showProgressBar }
-						label={ __( 'Show Progress Bar', 'sensei-lms' ) }
-						value={ progressBarRadius }
-						onChange={ ( value ) =>
-							onChange( {
-								...settings,
-								showProgressBar: value,
-							} )
-						}
-					/>
-				</PanelRow>
-				<PanelRow className="sensei-lms-quiz-block__progress-bar">
-					<NumberControl
-						label={ __( 'Radius', 'sensei-lms' ) }
-						min={ 1 }
-						step={ 1 }
-						suffix={ __( 'PX', 'sensei-lms' ) }
-						value={ progressBarRadius }
-						onChange={ ( value ) =>
-							onChange( {
-								...settings,
-								progressBarRadius: value,
-							} )
-						}
-					/>
-					<NumberControl
-						label={ __( 'Height', 'sensei-lms' ) }
-						min={ 1 }
-						step={ 1 }
-						suffix={ __( 'PX', 'sensei-lms' ) }
-						value={ progressBarHeight }
-						onChange={ ( value ) =>
-							onChange( {
-								...settings,
-								progressBarHeight: value,
-							} )
-						}
-					/>
-				</PanelRow>
-			</PanelBody>
-
-			<PanelColorSettings
-				title={ __( 'Color settings', 'sensei-lms' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: progressBarColor,
-						onChange: ( value ) =>
-							onChange( {
-								...settings,
-								progressBarColor: value,
-							} ),
-						label: __( 'Progress bar color', 'sensei-lms' ),
-					},
-					{
-						value: progressBarBackground,
-						onChange: ( value ) =>
-							onChange( {
-								...settings,
-								progressBarBackground: value,
-							} ),
-						label: __(
-							'Progress bar background color',
-							'sensei-lms'
-						),
-					},
-				] }
-			>
-				<ContrastChecker
-					textColor={ progressBarColor }
-					backgroundColor={ progressBarBackground }
-					isLargeText={ false }
-				/>
-			</PanelColorSettings>
 		</>
 	);
 };
