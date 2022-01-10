@@ -64,6 +64,7 @@ class Quiz_Content {
 			<?php
 		}
 
+		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'the_quiz_pagination' ), 9 );
 		do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 
 		return ob_get_clean();
