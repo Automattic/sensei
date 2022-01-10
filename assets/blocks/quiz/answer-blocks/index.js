@@ -45,8 +45,16 @@ const questionTypes = {
 		validate: ( { answers = [] } = {} ) => {
 			return {
 				noAnswers: answers.filter( ( a ) => a.label ).length < 2,
-				noRightAnswer: ! answers.some( ( a ) => a.correct ),
-				noWrongAnswer: ! answers.some( ( a ) => ! a.correct ),
+				noRightAnswer: ! answers.some( ( a ) => a.correct && a.label ),
+				noRightAnswerWhitespace: ! answers.some(
+					( a ) => a.correct && a.label.trim()
+				),
+				noWrongAnswer: ! answers.some(
+					( a ) => ! a.correct && a.label
+				),
+				noWrongAnswerWhitespace: ! answers.some(
+					( a ) => ! a.correct && a.label.trim()
+				),
 			};
 		},
 		messages: {
@@ -58,8 +66,16 @@ const questionTypes = {
 				'Add a right answer to this question.',
 				'sensei-lms'
 			),
+			noRightAnswerWhitespace: __(
+				'The value of the right answer can not be blank space.',
+				'sensei-lms'
+			),
 			noWrongAnswer: __(
-				'Add a wrong answer to this question.',
+				'Add a wrong answer to this question. Value can not be blank space.',
+				'sensei-lms'
+			),
+			noWrongAnswerWhitespace: __(
+				'The value of the wrong answer can not be blank space.',
 				'sensei-lms'
 			),
 		},
@@ -84,15 +100,28 @@ const questionTypes = {
 		settings: [],
 		validate: ( { before, after, gap } = {} ) => {
 			return {
-				noGap: ! gap?.length,
-				noBefore: ! before,
-				noAfter: ! after,
+				noGap: ! gap?.filter( ( val ) => val !== '' ).length,
+				noGapWhitespace: ! gap?.filter( ( val ) => val.trim() !== '' )
+					.length,
+				noBeforeAndNoAfter: ! before && ! after,
+				noBeforeAndNoAfterWhitespace:
+					! before?.trim() && ! after?.trim(),
 			};
 		},
 		messages: {
 			noGap: __( 'Add a right answer to this question.', 'sensei-lms' ),
-			noBefore: __( 'Add text before and after the gap.', 'sensei-lms' ),
-			noAfter: __( 'Add text before and after the gap.', 'sensei-lms' ),
+			noGapWhitespace: __(
+				'The value of a right answer can not be blank space.',
+				'sensei-lms'
+			),
+			noBeforeAndNoAfter: __(
+				'Add text before or after the gap. Value can not be blank space.',
+				'sensei-lms'
+			),
+			noBeforeAndNoAfterWhitespace: __(
+				'Value of the text before or after the gap can not be blank space.',
+				'sensei-lms'
+			),
 		},
 	},
 	'single-line': {

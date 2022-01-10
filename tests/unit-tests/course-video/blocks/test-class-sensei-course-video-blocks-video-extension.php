@@ -1,7 +1,7 @@
 <?php
 
 class Test_Sensei_Course_Video_Blocks_Video_Extension extends WP_UnitTestCase {
-	public function test_wrap_only_youtube_embed() {
+	public function test_wrap_video_block() {
 		$video_extension = Sensei_Course_Video_Blocks_Video_Extension::instance();
 
 		$result = $video_extension->wrap_video(

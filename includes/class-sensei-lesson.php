@@ -139,7 +139,7 @@ class Sensei_Lesson {
 		} else {
 			// Frontend actions
 			// Starts lesson when the student visits for the first time and prerequisite courses have been met.
-			add_action( 'sensei_single_lesson_content_inside_before', array( __CLASS__, 'maybe_start_lesson' ) );
+			add_action( 'wp', array( __CLASS__, 'maybe_start_lesson' ) );
 		}
 
 		// Log event on the initial publish for a lesson.
@@ -4325,11 +4325,11 @@ class Sensei_Lesson {
 	 * @param int|string $user_id
 	 */
 	public static function maybe_start_lesson( $lesson_id = '', $user_id = '' ) {
-		if ( empty( $lesson_id ) ) {
+		if ( empty( $lesson_id ) || ! is_int( $lesson_id ) ) {
 			$lesson_id = get_the_ID();
 		}
 
-		if ( empty( $user_id ) ) {
+		if ( empty( $user_id ) || ! is_int( $user_id ) ) {
 			$user_id = get_current_user_id();
 		}
 

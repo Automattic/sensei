@@ -57,20 +57,25 @@ class Sensei_Course_Theme_Quiz {
 	 * @access private
 	 */
 	private function maybe_add_quiz_results_notice() {
+		$lesson_id = Sensei_Utils::get_current_lesson();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_id   = get_current_user_id();
 
-		$lesson_id   = Sensei_Utils::get_current_lesson();
-		$quiz_id     = \Sensei()->lesson->lesson_quizzes( $lesson_id );
-		$user_id     = get_current_user_id();
-		$quiz_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id )->comment_approved;
+		if ( empty( $user_id ) ) {
+			return;
+		}
+
+		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 
 		// If quiz is not submitted, then nothing else to do.
-		if ( ! \Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
+		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) || empty( $user_lesson_status ) ) {
 			return;
 		}
 
 		// Prepare title.
-		$grade = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
-		$title = sprintf(
+		$quiz_status = $user_lesson_status->comment_approved;
+		$grade       = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
+		$title       = sprintf(
 			// translators: The placeholder is the quiz grade.
 			__( 'Your Grade: %1$s%%', 'sensei-lms' ),
 			$grade
@@ -132,7 +137,7 @@ class Sensei_Course_Theme_Quiz {
 	 */
 	private static function render_contact_teacher() {
 		$link  = '<a href="#" class="sensei-course-theme__button is-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
-		$block = new \Sensei_Block_Contact_Teacher();
+		$block = new Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );
 	}
 }

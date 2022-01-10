@@ -230,8 +230,18 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 
 		Sensei()->quiz->set_questions( $quiz_id, array_filter( $question_ids ) );
 
+		/**
+		 * Fire action when a the lesson-quiz controller updates the data of the quiz.
+		 *
+		 * @hook sensei_rest_api_lesson_quiz_update
+		 *
+		 * @param {WP_Post} $lesson         The lesson.
+		 * @param {array}   $request_params The request parameters.
+		 */
+		do_action( 'sensei_rest_api_lesson_quiz_update', $lesson, $json_params );
+
 		$response = new WP_REST_Response();
-		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ) ) );
+		$response->set_data( $this->get_quiz_data( get_post( $quiz_id ), $lesson ) );
 
 		return $response;
 	}
@@ -328,7 +338,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		}
 
 		$response = new WP_REST_Response();
-		$response->set_data( $this->get_quiz_data( get_post( $quiz ) ) );
+		$response->set_data( $this->get_quiz_data( get_post( $quiz ), $lesson ) );
 
 		return $response;
 	}
@@ -336,18 +346,19 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 	/**
 	 * Helper method which retrieves quiz options.
 	 *
-	 * @param WP_Post $quiz
+	 * @param WP_Post $quiz   The quiz post.
+	 * @param WP_Post $lesson The lesson post.
 	 *
 	 * @return array
 	 */
-	private function get_quiz_data( WP_Post $quiz ): array {
+	private function get_quiz_data( WP_Post $quiz, WP_Post $lesson ) : array {
 		$post_meta = get_post_meta( $quiz->ID );
 
 		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
 		$failed_feedback_default = ! $allow_retakes;
 
 		$quiz_data = [
-			'options'   => [
+			'options'       => [
 				'pass_required'               => ! empty( $post_meta['_pass_required'][0] ) && 'on' === $post_meta['_pass_required'][0],
 				'quiz_passmark'               => empty( $post_meta['_quiz_passmark'][0] ) ? 0 : (int) $post_meta['_quiz_passmark'][0],
 				'auto_grade'                  => ! empty( $post_meta['_quiz_grade_type'][0] ) && 'auto' === $post_meta['_quiz_grade_type'][0],
@@ -358,7 +369,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
 				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
 			],
-			'questions' => $this->get_quiz_questions( $quiz ),
+			'questions'     => $this->get_quiz_questions( $quiz ),
+			'lesson_title'  => $lesson->post_title,
+			'lesson_status' => $lesson->post_status,
 		];
 
 		$quiz_data['options']['pagination'] = [
@@ -379,7 +392,17 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			$quiz_data['options']['pagination'] = $json_array;
 		}
 
-		return $quiz_data;
+		/**
+		 * Filters the response of lesson-quiz requests.
+		 *
+		 * @hook sensei_rest_api_lesson_quiz_response
+		 *
+		 * @param {array}   $quiz_data The response data.
+		 * @param {WP_Post} $quiz      The quiz post.default interval.
+		 *
+		 * @return {array} $quiz_data The modified response data.
+		 */
+		return apply_filters( 'sensei_rest_api_lesson_quiz_response', $quiz_data, $quiz );
 	}
 
 	/**
@@ -417,7 +440,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$schema = [
 			'type'       => 'object',
 			'properties' => [
-				'options'   => [
+				'options'       => [
 					'type'       => 'object',
 					'required'   => true,
 					'properties' => [
@@ -468,10 +491,18 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'questions' => [
+				'questions'     => [
 					'type'     => 'array',
 					'required' => true,
 					'items'    => $this->get_single_question_schema(),
+				],
+				'lesson_title'  => [
+					'type'        => 'string',
+					'description' => 'The lesson title',
+				],
+				'lesson_status' => [
+					'type'        => 'string',
+					'description' => 'The lesson status',
 				],
 			],
 		];

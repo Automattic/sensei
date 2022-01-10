@@ -8,7 +8,7 @@ import { Icon, info } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import AlertIcon from '../../../images/svg-icons/alert.svg';
+import AlertIcon from '../../../icons/alert.svg';
 
 /**
  * Display a notice about the question being shared across quizzes.

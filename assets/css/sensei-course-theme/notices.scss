@@ -36,6 +36,16 @@
 			margin-right: 12px;
 		}
 	}
+
+	&__action {
+		display: flex;
+		align-items: center;
+	}
+
+	&__link-chevron {
+		width: 24px;
+		height: 24px;
+	}
 }
 
 .sensei-course-theme-locked-lesson-notice {
@@ -66,6 +76,7 @@
 
 		a {
 			color: inherit;
+			text-decoration: underline;
 		}
 	}
 
