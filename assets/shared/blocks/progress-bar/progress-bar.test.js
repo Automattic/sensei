@@ -7,16 +7,16 @@ import { render } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import CourseProgress from './index';
+import ProgressBar from './index';
 
-describe( '<CourseProgress />', () => {
+describe( '<ProgressBar />', () => {
 	it( 'Should render the numbers and progress bar correctly', () => {
 		const { queryByText, queryByRole, container } = render(
-			<CourseProgress lessonsCount={ 10 } completedCount={ 5 } />
+			<ProgressBar lessonsCount={ 10 } completedCount={ 5 } />
 		);
 
 		const completedText = container.querySelector(
-			'.sensei-course-progress__completed'
+			'.sensei-progress-bar__completed'
 		).innerHTML;
 
 		expect( queryByText( '10 Lessons' ) ).toBeTruthy();
@@ -30,7 +30,7 @@ describe( '<CourseProgress />', () => {
 
 	it( 'Should render without the completed percentage', () => {
 		const { queryByText } = render(
-			<CourseProgress
+			<ProgressBar
 				lessonsCount={ 10 }
 				completedCount={ 5 }
 				hidePercentage

@@ -1,6 +1,6 @@
 @use 'sass:math';
 @import 'learner-courses-mixins';
-@import '../../shared/blocks/course-progress/course-progress';
+@import '../../shared/blocks/progress-bar/progress-bar';
 
 $block: '.wp-block-sensei-lms-learner-courses';
 $courses-list: '#{$block}__courses-list';
@@ -209,7 +209,7 @@ $courses-list: '#{$block}__courses-list';
 }
 
 /* Progress bar */
-.sensei-course-progress {
+.sensei-progress-bar {
 	&__bar {
 		height: var(--sensei-progress-bar-height, 14px);
 		border-radius: var(--sensei-progress-bar-border-radius, 10px);
