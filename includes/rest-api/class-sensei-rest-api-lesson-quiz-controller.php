@@ -490,7 +490,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 							'required'   => true,
 							'properties' => [
 								'pagination_number'       => [
-									'type'        => 'integer',
+									'type'        => [ 'integer', 'null' ],
 									'description' => 'Number of questions per page',
 									'default'     => null,
 								],
@@ -510,7 +510,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 									'default'     => 5,
 								],
 								'progress_bar_background' => [
-									'type'        => 'string',
+									'type'        => [ 'string', 'null' ],
 									'description' => 'Progress bar background color',
 									'default'     => null,
 								],
