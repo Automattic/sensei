@@ -49,12 +49,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<!-- wp:sensei-lms/quiz-pagination /-->
 				</div>
 				<!-- /wp:column -->
-				<!-- wp:column {"className":"sensei-course-theme__quiz__footer__right"} -->
-				<div class="wp-block-column sensei-course-theme__quiz__footer__right">
-					<!-- wp:sensei-lms/quiz-actions /-->
-					<?php Sensei_Quiz::action_buttons(); ?>
-				</div>
-				<!-- /wp:column -->
 			</div>
 			<!-- /wp:columns -->
 		</div>
