@@ -10,7 +10,8 @@
 		"wp-coding-standards/wpcs": "2.3.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.2",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
-		"yoast/phpunit-polyfills": "1.0.1"
+		"yoast/phpunit-polyfills": "1.0.1",
+		"bamarni/composer-bin-plugin": "^1.4"
 	},
 	"prefer-stable": true,
 	"archive": {
