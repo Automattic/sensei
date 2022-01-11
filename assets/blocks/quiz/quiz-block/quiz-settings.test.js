@@ -11,9 +11,20 @@ import QuizSettings from './quiz-settings';
 const mockSetAttributes = jest.fn();
 const mockOpenGeneralSidebar = jest.fn();
 
+const defaultOptions = {
+	passRequired: true,
+	quizPassmark: 0,
+	autoGrade: true,
+	allowRetakes: true,
+	randomQuestionOrder: true,
+	showQuestions: 0,
+	pagination: {},
+};
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: ( { children } ) => children,
+	BlockControls: ( { children } ) => children,
 	PanelColorSettings: () => null,
 } ) );
 
@@ -68,6 +79,7 @@ describe( '<QuizSettings />', () => {
 			<QuizSettings
 				attributes={ {
 					options: {
+						...defaultOptions,
 						passRequired: true,
 						quizPassmark: 50,
 						autoGrade: false,
@@ -99,6 +111,7 @@ describe( '<QuizSettings />', () => {
 			<QuizSettings
 				attributes={ {
 					options: {
+						...defaultOptions,
 						passRequired: false,
 					},
 				} }
@@ -110,26 +123,13 @@ describe( '<QuizSettings />', () => {
 
 	it( 'Should have the maximum number of questions defined by the the number of questions added to the quiz', () => {
 		const { queryByLabelText } = render(
-			<QuizSettings
-				attributes={ {
-					options: {},
-				} }
-			/>
+			<QuizSettings attributes={ { options: defaultOptions } } />
 		);
 
 		expect( queryByLabelText( 'Number of Questions' ).max ).toEqual( '7' );
 	} );
 
 	it( 'Should call the setAttributes correctly when changing the fields', () => {
-		const defaultOptions = {
-			passRequired: true,
-			quizPassmark: 0,
-			autoGrade: true,
-			allowRetakes: true,
-			randomQuestionOrder: true,
-			showQuestions: 0,
-		};
-
 		const { queryByLabelText, queryAllByLabelText } = render(
 			<QuizSettings
 				attributes={ { options: defaultOptions } }
@@ -192,11 +192,7 @@ describe( '<QuizSettings />', () => {
 
 	it( 'Should open the siderbar when the quiz settings button is clicked', () => {
 		const { getAllByRole } = render(
-			<QuizSettings
-				attributes={ {
-					options: {},
-				} }
-			/>
+			<QuizSettings attributes={ { options: defaultOptions } } />
 		);
 
 		fireEvent.click(
