@@ -174,6 +174,10 @@ class Sensei_Admin_Notices {
 		<div class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<?php
+			if ( ! empty( $notice['icon'] ) ) {
+				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
+				echo Sensei()->assets->get_icon( $notice['icon'], 'sensei-notice__icon' );
+			}
 			echo '<div class="sensei-notice__wrapper">';
 			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['heading'] ) ) {
