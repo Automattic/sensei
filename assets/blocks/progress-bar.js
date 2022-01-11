@@ -8,25 +8,22 @@ import { render } from '@wordpress/element';
 import ProgressBar from '../shared/blocks/progress-bar';
 const barAttributes = {
 	style: {
-		...( window.progress_bar_properties.color && {
-			backgroundColor: window.progress_bar_properties.color,
-		} ),
-		...( window.progress_bar_properties.radius && {
-			borderRadius: parseInt( window.progress_bar_properties.radius ),
+		...( window.sensei_quiz_progress.color && {
+			backgroundColor: window.sensei_quiz_progress.color,
 		} ),
 	},
 };
 
 const barWrapperAttributes = {
 	style: {
-		...( window.progress_bar_properties.backgroundColor && {
-			backgroundColor: window.progress_bar_properties.backgroundColor,
+		...( window.sensei_quiz_progress.backgroundColor && {
+			backgroundColor: window.sensei_quiz_progress.backgroundColor,
 		} ),
-		...( window.progress_bar_properties.height && {
-			height: parseInt( window.progress_bar_properties.height ),
+		...( window.sensei_quiz_progress.height && {
+			height: parseInt( window.sensei_quiz_progress.height ),
 		} ),
-		...( window.progress_bar_properties.radius && {
-			borderRadius: parseInt( window.progress_bar_properties.radius ),
+		...( window.sensei_quiz_progress.radius && {
+			borderRadius: parseInt( window.sensei_quiz_progress.radius ),
 		} ),
 	},
 };
@@ -36,8 +33,8 @@ const wrapperAttributes = {
 };
 render(
 	<ProgressBar
-		lessonsCount={ window.progress_bar_properties.totalNumber }
-		completedCount={ window.progress_bar_properties.completedNumber }
+		lessonsCount={ window.sensei_quiz_progress.totalNumber }
+		completedCount={ window.sensei_quiz_progress.completedNumber }
 		hidePercentage={ false }
 		barAttributes={ barAttributes }
 		barWrapperAttributes={ barWrapperAttributes }

@@ -169,45 +169,42 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 								}
 							/>
 						</PanelRow>
-						<PanelColorSettings
-							title={ __( 'Color settings', 'sensei-lms' ) }
-							initialOpen={ false }
-							colorSettings={ [
-								{
-									value: progressBarColor,
-									onChange: ( value ) =>
-										onChange( {
-											...settings,
-											progressBarColor: value,
-										} ),
-									label: __(
-										'Progress bar color',
-										'sensei-lms'
-									),
-								},
-								{
-									value: progressBarBackground,
-									onChange: ( value ) =>
-										onChange( {
-											...settings,
-											progressBarBackground: value,
-										} ),
-									label: __(
-										'Progress bar background color',
-										'sensei-lms'
-									),
-								},
-							] }
-						>
-							<ContrastChecker
-								textColor={ progressBarColor }
-								backgroundColor={ progressBarBackground }
-								isLargeText={ false }
-							/>
-						</PanelColorSettings>
 					</>
 				) }
 			</PanelBody>
+			<PanelColorSettings
+				title={ __( 'Color settings', 'sensei-lms' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: progressBarColor,
+						onChange: ( value ) =>
+							onChange( {
+								...settings,
+								progressBarColor: value,
+							} ),
+						label: __( 'Progress bar color', 'sensei-lms' ),
+					},
+					{
+						value: progressBarBackground,
+						onChange: ( value ) =>
+							onChange( {
+								...settings,
+								progressBarBackground: value,
+							} ),
+						label: __(
+							'Progress bar background color',
+							'sensei-lms'
+						),
+					},
+				] }
+			>
+				<ContrastChecker
+					textColor={ progressBarColor }
+					backgroundColor={ progressBarBackground }
+					isLargeText={ false }
+				/>
+			</PanelColorSettings>
 		</>
 	);
 };

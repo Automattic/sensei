@@ -1522,50 +1522,6 @@ class Sensei_Quiz {
 		$sensei_question_loop['questions'] = $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;
 
-		// Display progress bar if pagination is enabled and progress bar is enabled.
-		if ( ! empty( $pagination_settings['pagination_number'] ) && array_key_exists( 'show_progress_bar', $pagination_settings ) && $pagination_settings['show_progress_bar'] ) {
-			self::display_progress_bar( $quiz_id, $pagination_settings, $sensei_question_loop['total'] );
-		}
-
-	}
-
-	/**
-	 * Display quiz progress bar.
-	 *
-	 * @param int   $quiz_id quiz id.
-	 * @param array $pagination_settings pagination settings.
-	 * @since 3.15.0
-	 */
-	public static function display_progress_bar( $quiz_id, $pagination_settings, $totalQuestions ) {
-
-		$user_id       = get_current_user_id();
-		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$answers       = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
-		$answers_count = is_array($answers) ? count( array_filter( $answers ) ) : 0;
-
-		Sensei()->assets->enqueue(
-			'sensei-shared-blocks-style',
-			'blocks/shared-style.scss',
-			[ 'sensei-shared-blocks-style' ]
-		);
-		wp_enqueue_script( 'sensei-quiz-progress' );
-
-		$radius           = $pagination_settings['progress_bar_radius'];
-		$height           = $pagination_settings['progress_bar_height'];
-		$color            = empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'];
-		$background_color = empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'];
-		wp_localize_script(
-			'sensei-quiz-progress',
-			'progress_bar_properties',
-			array(
-				'totalNumber'     => $totalQuestions,
-				'completedNumber' => $answers_count,
-				'radius'          => $radius,
-				'color'           => $color,
-				'backgroundColor' => $background_color,
-				'height'          => $height,
-			)
-		);
 	}
 
 	/**
@@ -1685,6 +1641,43 @@ class Sensei_Quiz {
 	 * @since 3.15.0
 	 */
 	public static function the_quiz_progress_bar() {
+		$quiz_id             = get_the_ID();
+		$pagination_settings = json_decode(
+			get_post_meta( $quiz_id, '_pagination', true ),
+			true
+		);
+
+		if ( empty( $pagination_settings['pagination_number'] )
+			|| ! array_key_exists( 'show_progress_bar', $pagination_settings )
+			|| ! $pagination_settings['show_progress_bar'] ) {
+			return;
+		}
+		global $sensei_question_loop;
+
+		// Make sure the quiz is paginated and the progress bar enabled.
+		if ( $sensei_question_loop['total_pages'] <= 1 || empty( $pagination_settings['show_progress_bar'] ) ) {
+			return;
+		}
+
+		$user_id       = get_current_user_id();
+		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$answers       = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		$answers_count = is_array( $answers ) ? count( array_filter( $answers ) ) : 0;
+
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.scss' );
+		wp_enqueue_script( 'sensei-quiz-progress' );
+		wp_localize_script(
+			'sensei-quiz-progress',
+			'sensei_quiz_progress',
+			array(
+				'totalNumber'     => $sensei_question_loop['total'],
+				'completedNumber' => $answers_count,
+				'radius'          => $pagination_settings['progress_bar_radius'],
+				'height'          => $pagination_settings['progress_bar_height'],
+				'color'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
+				'backgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
+			)
+		);
 		Sensei_Templates::get_template( 'globals/progress-bar.php' );
 	}
 
