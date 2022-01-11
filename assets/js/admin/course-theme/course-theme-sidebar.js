@@ -101,7 +101,7 @@ const CourseThemeSidebar = () => {
 			title={ __( 'Course Styles', 'sensei-lms' ) }
 		>
 			{ globalLearningModeEnabled ? (
-				<p className="sensei-course-theme-toggle__global-overwrite-notice">
+				<p>
 					<a href="/wp-admin/admin.php?page=sensei-settings#course-settings">
 						{ __(
 							'Learning Mode is enabled globally.',
@@ -114,17 +114,16 @@ const CourseThemeSidebar = () => {
 					label={ __( 'Learning mode', 'sensei-lms' ) }
 					help={
 						<>
-							<p className="sensei-course-theme-toggle__description">
+							<p>
 								{ __(
 									'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
 									'sensei-lms'
 								) }
 							</p>
 							{ previewUrl && (
-								<p className="sensei-course-theme-toggle__preview">
+								<p>
 									<a
 										href={ previewUrl }
-										className="sensei-course-theme-toggle__preview__link"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -141,11 +140,8 @@ const CourseThemeSidebar = () => {
 				/>
 			) }
 			{ customizerUrl && (
-				<p className="sensei-course-theme-toggle__customize">
-					<a
-						href={ customizerUrl }
-						className="sensei-course-theme-toggle__customize__link"
-					>
+				<p>
+					<a href={ customizerUrl }>
 						{ __( 'Customize Learning mode', 'sensei-lms' ) }
 					</a>
 				</p>
