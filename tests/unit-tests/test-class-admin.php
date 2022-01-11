@@ -192,7 +192,8 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	 */
 	private function duplicate_course_with_lessons_setup( $qty_lessons ) {
 		// Mock the safe_redirect method
-		Sensei()->admin = $this->getMockBuilder( 'WooThemes_Sensei_Admin' )
+		Sensei()->admin = $this->getMockBuilder( Sensei_Admin::class )
+			->setConstructorArgs( [ Sensei() ] )
 			->setMethods( [ 'safe_redirect' ] )
 			->getMock();
 

@@ -32,7 +32,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		parent::setUp();
 
 		if ( ! isset( Sensei()->admin ) ) {
-			Sensei()->admin = new Sensei_Admin();
+			Sensei()->admin = new Sensei_Admin( Sensei() );
 		}
 
 		$this->factory = new Sensei_Factory();

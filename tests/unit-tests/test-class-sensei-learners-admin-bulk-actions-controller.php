@@ -19,7 +19,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 		$this->factory = new Sensei_Factory();
 
 		$this->controller = $this->getMockBuilder( Sensei_Learners_Admin_Bulk_Actions_Controller::class )
-			->setConstructorArgs( [ new Sensei_Learner_Management( '' ) ] )
+			->setConstructorArgs( [ new Sensei_Learner_Management( '', Sensei() ) ] )
 			->setMethods( [ 'check_nonce', 'is_current_page', 'redirect_to_learner_admin_index' ] )
 			->getMock();
 

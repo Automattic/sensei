@@ -35,7 +35,7 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 	public function testUserMessagesCapCheckNonMessage() {
 		$this->login_as_teacher();
 
-		$instance  = new Sensei_Messages();
+		$instance  = new Sensei_Messages( Sensei() );
 		$course_id = $this->factory->course->create();
 
 		$this->assertEquals( [], $instance->user_messages_cap_check( [], [ 'read' ], [ 'read_post', get_current_user_id(), $course_id ] ) );
@@ -52,7 +52,7 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 		$student_id = get_current_user_id();
 
-		$instance   = new Sensei_Messages();
+		$instance   = new Sensei_Messages( Sensei() );
 		$message_id = $this->factory->message->create(
 			[
 				'meta_input' => [
@@ -79,7 +79,7 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 		$student_id = get_current_user_id();
 
-		$instance   = new Sensei_Messages();
+		$instance   = new Sensei_Messages( Sensei() );
 		$message_id = $this->factory->message->create(
 			[
 				'meta_input' => [

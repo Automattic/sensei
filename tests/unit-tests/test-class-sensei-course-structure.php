@@ -15,7 +15,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		if ( ! isset( Sensei()->admin ) ) {
-			Sensei()->admin = new Sensei_Admin();
+			Sensei()->admin = new Sensei_Admin( Sensei() );
 		}
 
 		$this->factory = new Sensei_Factory();

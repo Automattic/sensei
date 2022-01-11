@@ -10,7 +10,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setup();
 
-		Sensei()->grading = new WooThemes_Sensei_Grading( '' );
+		Sensei()->grading = new WooThemes_Sensei_Grading( '', Sensei() );
 		$this->factory    = new Sensei_Factory();
 	}
 
