@@ -433,8 +433,8 @@ class Sensei_Main {
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name, $this );
 
-			new Sensei_Import();
-			new Sensei_Export();
+			new Sensei_Import( $this );
+			new Sensei_Export( $this );
 			new Sensei_Exit_Survey();
 			new Sensei_WCPC_Prompt();
 			new Sensei_WCCOM_Connect_Notice();
