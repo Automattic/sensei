@@ -175,12 +175,12 @@ class Sensei_Admin_Notices {
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<?php
 			echo '<div class="sensei-notice__wrapper">';
+			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['heading'] ) ) {
 				echo '<div class="sensei-notice__heading">';
 				echo wp_kses( $notice['heading'], self::ALLOWED_HTML );
 				echo '</div>';
 			}
-			echo '<div class="sensei-notice__content">';
 			echo wp_kses( $notice['message'], self::ALLOWED_HTML );
 			echo '</div>';
 			echo '</div>';
