@@ -6,8 +6,6 @@
  * @since   3.13.4
  */
 
-use phpDocumentor\Reflection\Types\Boolean;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -177,7 +175,7 @@ class Sensei_Course_Theme_Option {
 		 * @param {bool} $enabled_globally   True if the learning mode is enabled globally.
 		 * @param {int}  $course_id          The id of the course.
 		 */
-		$enabled_via_filter = (bool) apply_filters( 'sensei_has_learning_mode_enabled', $enabled_for_course, $enabled_globally, $course_id );
+		$enabled_via_filter = (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled_for_course, $enabled_globally, $course_id );
 
 		return $enabled_for_course || $enabled_globally || $enabled_via_filter;
 	}
