@@ -129,6 +129,10 @@ add_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 't
 // Add the quiz hidden fields.
 add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'output_quiz_hidden_fields' ), 10 );
 
+// @since 3.15.0
+// Add the quiz progress bar.
+add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
+
 // @since 1.9.0
 // hook in the question title, description and quesiton media
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_title' ), 10 );
@@ -148,10 +152,6 @@ add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question', 'file
 // @since 3.15.0
 // Add the quiz pagination.
 add_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'the_quiz_pagination' ), 9, 0 );
-
-// @since 3.15.0
-// Add the quiz progress bar.
-add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
 
 // @since 1.9.0
 // deprecate the quiz button action
