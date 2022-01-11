@@ -1,26 +1,32 @@
+/**
+ * WordPress dependencies
+ */
 import { render } from '@wordpress/element';
+/**
+ * Internal dependencies
+ */
 import ProgressBar from '../shared/blocks/progress-bar';
 const barAttributes = {
 	style: {
-		...( window.php_vars.color && {
-			backgroundColor: window.php_vars.color,
+		...( window.progress_bar_properties.color && {
+			backgroundColor: window.progress_bar_properties.color,
 		} ),
-		...( window.php_vars.radius && {
-			borderRadius: parseInt( window.php_vars.radius ),
+		...( window.progress_bar_properties.radius && {
+			borderRadius: parseInt( window.progress_bar_properties.radius ),
 		} ),
 	},
 };
 
 const barWrapperAttributes = {
 	style: {
-		...( window.php_vars.backgroundColor && {
-			backgroundColor: window.php_vars.backgroundColor,
+		...( window.progress_bar_properties.backgroundColor && {
+			backgroundColor: window.progress_bar_properties.backgroundColor,
 		} ),
-		...( window.php_vars.height && {
-			height: parseInt( window.php_vars.height ),
+		...( window.progress_bar_properties.height && {
+			height: parseInt( window.progress_bar_properties.height ),
 		} ),
-		...( window.php_vars.radius && {
-			borderRadius: parseInt( window.php_vars.radius ),
+		...( window.progress_bar_properties.radius && {
+			borderRadius: parseInt( window.progress_bar_properties.radius ),
 		} ),
 	},
 };
@@ -30,12 +36,13 @@ const wrapperAttributes = {
 };
 render(
 	<ProgressBar
-		lessonsCount={ window.php_vars.totalNumber }
-		completedCount={ window.php_vars.completedNumber }
+		lessonsCount={ window.progress_bar_properties.totalNumber }
+		completedCount={ window.progress_bar_properties.completedNumber }
 		hidePercentage={ false }
 		barAttributes={ barAttributes }
 		barWrapperAttributes={ barWrapperAttributes }
 		wrapperAttributes={ wrapperAttributes }
+		hideDefault={ true }
 	/>,
 	document.getElementById( 'progress-bar-quiz' )
 );

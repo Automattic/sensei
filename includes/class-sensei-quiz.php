@@ -1486,11 +1486,6 @@ class Sensei_Quiz {
 			true
 		);
 
-		// Display progress bar if pagination is enabled and progress bar is enabled.
-		if ( ! empty( $pagination_settings['pagination_number'] ) && array_key_exists( 'show_progress_bar', $pagination_settings ) && $pagination_settings['show_progress_bar'] ) {
-			self::display_progress_bar( $quiz_id, $pagination_settings );
-		}
-
 		if ( ! empty( $pagination_settings['pagination_number'] ) ) {
 			$sensei_question_loop['posts_per_page'] = (int) $pagination_settings['pagination_number'];
 
@@ -1526,6 +1521,12 @@ class Sensei_Quiz {
 
 		$sensei_question_loop['questions'] = $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;
+
+		// Display progress bar if pagination is enabled and progress bar is enabled.
+		if ( ! empty( $pagination_settings['pagination_number'] ) && array_key_exists( 'show_progress_bar', $pagination_settings ) && $pagination_settings['show_progress_bar'] ) {
+			self::display_progress_bar( $quiz_id, $pagination_settings, $sensei_question_loop['total'] );
+		}
+
 	}
 
 	/**
@@ -1535,21 +1536,13 @@ class Sensei_Quiz {
 	 * @param array $pagination_settings pagination settings.
 	 * @since 3.15.0
 	 */
-	public static function display_progress_bar( $quiz_id, $pagination_settings ) {
+	public static function display_progress_bar( $quiz_id, $pagination_settings, $totalQuestions ) {
 
-		$user_id             = get_current_user_id();
-		$lesson_id           = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$all_questions_count = count( Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' ) );
-		$answers             = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
-		$answers_count       = is_array( $answers ) ? count(
-			array_filter(
-				$answers,
-				function( $item ) {
-					return is_array( $item );
-				}
-			)
-		) : 0;
-		Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js' );
+		$user_id       = get_current_user_id();
+		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$answers       = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		$answers_count = is_array($answers) ? count( array_filter( $answers ) ) : 0;
+
 		Sensei()->assets->enqueue(
 			'sensei-shared-blocks-style',
 			'blocks/shared-style.scss',
@@ -1563,9 +1556,9 @@ class Sensei_Quiz {
 		$background_color = empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'];
 		wp_localize_script(
 			'sensei-quiz-progress',
-			'php_vars',
+			'progress_bar_properties',
 			array(
-				'totalNumber'     => $all_questions_count,
+				'totalNumber'     => $totalQuestions,
 				'completedNumber' => $answers_count,
 				'radius'          => $radius,
 				'color'           => $color,

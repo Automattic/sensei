@@ -143,7 +143,7 @@ class Sensei_Frontend {
 				wp_enqueue_script( 'sensei-course-archive-js' );
 
 			}
-
+			Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js');
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
