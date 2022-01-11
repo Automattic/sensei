@@ -34,14 +34,20 @@ class Sensei_Messages {
 	 * Constructor.
 	 *
 	 * @since  1.6.0
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function __construct() {
+	public function __construct( $sensei ) {
 		$this->token       = 'messages';
 		$this->post_type   = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
 
-		// Add Messages page to admin menu
-		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 40 );
+		// Add Messages page to admin menu.
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			add_action( 'admin_menu', array( $this, 'add_menu_item' ), 40 );
+		}
+
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
@@ -122,9 +128,18 @@ class Sensei_Messages {
 	}
 
 	public function add_menu_item() {
-
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'sensei-lms' ), __( 'Messages', 'sensei-lms' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
+			$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+				'edit.php?post_type=course' :
+				'sensei';
+
+			add_submenu_page(
+				$parent_slug,
+				__( 'Messages', 'sensei-lms' ),
+				__( 'Messages', 'sensei-lms' ),
+				'edit_courses',
+				'edit.php?post_type=sensei_message'
+			);
 		}
 	}
 

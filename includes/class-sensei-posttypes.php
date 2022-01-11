@@ -92,7 +92,9 @@ class Sensei_PostTypes {
 			'question' => 'Question',
 			'messages' => 'Messages',
 		);
-		$this->load_posttype_objects( $default_post_types );
+
+		// As soon as the 'menu_restructure' feature flag is removed, the `$sensei` argument can also be removed.
+		$this->load_posttype_objects( $default_post_types, $sensei );
 		$this->set_role_cap_defaults( $default_post_types );
 
 		// Admin functions
@@ -131,13 +133,19 @@ class Sensei_PostTypes {
 	 * @param array $posttypes (default: array())
 	 * @return void
 	 */
-	public function load_posttype_objects( $posttypes = array() ) {
+	public function load_posttype_objects( $posttypes = array(), $sensei ) {
 
 		foreach ( $posttypes as $posttype_token => $posttype_name ) {
 
 			// Load the files
-			$class_name                   = 'Sensei_' . $posttype_name;
-			$this->$posttype_token        = new $class_name();
+			$class_name = 'Sensei_' . $posttype_name;
+
+			if ( 'Sensei_Messages' === $class_name ) {
+				$this->$posttype_token = new $class_name( $sensei );
+			} else {
+				$this->$posttype_token = new $class_name();
+			}
+
 			$this->$posttype_token->token = $posttype_token;
 
 		}
@@ -1054,13 +1062,9 @@ class Sensei_PostTypes {
 		Sensei()->learners->learners_admin_menu();
 		Sensei()->grading->grading_admin_menu();
 
-		add_submenu_page(
-			'edit.php?post_type=course',
-			__( 'Messages', 'sensei-lms' ),
-			__( 'Messages', 'sensei-lms' ),
-			'edit_questions',
-			'edit.php?post_type=sensei_message'
-		);
+		// Messages
+		$sensei_messages = new Sensei_Messages( Sensei() );
+		$sensei_messages->add_menu_item();
 
 		Sensei()->analysis->analysis_admin_menu();
 		Sensei()->settings->register_settings_screen();
