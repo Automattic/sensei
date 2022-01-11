@@ -76,6 +76,7 @@ class Sensei_Course_Theme_Option {
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
+		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
 	}
 
 	/**
@@ -160,6 +161,38 @@ class Sensei_Course_Theme_Option {
 		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 
 		return self::SENSEI_THEME === $theme;
+	}
+
+	/**
+	 * Adds a course theme notice.
+	 *
+	 * @access private
+	 *
+	 * @param array $notices Notices list.
+	 *
+	 * @return array Notices including the course theme notice.
+	 */
+	public function add_course_theme_notice( array $notices ) {
+		$notices['sensei-course-theme'] = [
+			'icon'       => 'sensei',
+			'heading'    => __( 'Sensei’s new learning mode is here', 'sensei-lms' ),
+			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
+			'actions'    => [
+				[
+					'label'  => __( 'Learn more', 'sensei-lms' ),
+					'url'    => 'https://senseilms.com/wordpress-course-theme',
+					'target' => '_blank',
+				],
+			],
+			'conditions' => [
+				[
+					'type'    => 'screens',
+					'screens' => [ 'sensei*' ],
+				],
+			],
+		];
+
+		return $notices;
 	}
 
 	/**
