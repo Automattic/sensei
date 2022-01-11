@@ -112,33 +112,29 @@ const CourseThemeSidebar = () => {
 			) : (
 				<ToggleControl
 					label={ __( 'Learning mode', 'sensei-lms' ) }
-					help={
-						<>
-							<p>
-								{ __(
-									'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
-									'sensei-lms'
-								) }
-							</p>
-							{ previewUrl && (
-								<p>
-									<a
-										href={ previewUrl }
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										{ __( 'Preview', 'sensei-lms' ) }
-									</a>
-								</p>
-							) }
-						</>
-					}
+					help={ __(
+						'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
+						'sensei-lms'
+					) }
 					checked={ theme === SENSEI_THEME }
 					onChange={ ( checked ) =>
 						setTheme( checked ? SENSEI_THEME : WORDPRESS_THEME )
 					}
 				/>
 			) }
+
+			{ previewUrl && (
+				<p>
+					<a
+						href={ previewUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ __( 'Preview', 'sensei-lms' ) }
+					</a>
+				</p>
+			) }
+
 			{ customizerUrl && (
 				<p>
 					<a href={ customizerUrl }>
