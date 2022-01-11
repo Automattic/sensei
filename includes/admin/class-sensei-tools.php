@@ -55,9 +55,15 @@ class Sensei_Tools {
 	 * Adds all filters and actions.
 	 *
 	 * @since 3.7.0
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init() {
-		add_action( 'admin_menu', [ $this, 'add_menu_pages' ], 90 );
+	public function init( $sensei ) {
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			add_action( 'admin_menu', [ $this, 'add_menu_pages' ], 90 );
+		}
+
 		add_filter( 'sensei_learners_main_column_data', [ Sensei_Tool_Enrolment_Debug::class, 'add_debug_action' ], 10, 3 );
 	}
 
@@ -101,9 +107,24 @@ class Sensei_Tools {
 	 * Adds admin menu pages.
 	 */
 	public function add_menu_pages() {
-		$title = esc_html__( 'Tools', 'sensei-lms' );
-		add_submenu_page( 'sensei', $title, $title, 'manage_sensei', 'sensei-tools', [ $this, 'output' ] );
-		add_action( 'load-sensei-lms_page_sensei-tools', [ $this, 'process' ] );
+		$title       = esc_html__( 'Tools', 'sensei-lms' );
+		$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+			'edit.php?post_type=course' :
+			'sensei';
+
+		add_submenu_page(
+			$parent_slug,
+			$title,
+			$title,
+			'manage_sensei',
+			'sensei-tools',
+			[ $this, 'output' ]
+		);
+
+		$page_hook = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+			'course_page_sensei-tools' :
+			'sensei-lms_page_sensei-tools';
+		add_action( "load-{$page_hook}", [ $this, 'process' ] );
 	}
 
 	/**
@@ -219,6 +240,10 @@ class Sensei_Tools {
 	 * @return string
 	 */
 	public function get_tools_url() {
+		if ( Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			return admin_url( 'edit.php?post_type=course&page=sensei-tools' );
+		}
+
 		return admin_url( 'admin.php?page=sensei-tools' );
 	}
 

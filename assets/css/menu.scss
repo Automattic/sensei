@@ -1,0 +1,24 @@
+/* Sensei LMS menu */
+body #menu-posts-course {
+	div.wp-menu-image:before {
+		font-family: 'sensei';
+		content: "\f101";
+	}
+
+	ul li a {
+		&[href="post-new.php?post_type=course"] {
+			display: none;
+		}
+
+		&[href="edit.php?post_type=question"],
+		&[href="edit.php?post_type=sensei_message"] {
+			padding-bottom: 10px;
+		}
+
+		&[href="edit.php?post_type=course&page=sensei_learners"],
+		&[href="edit.php?post_type=course&page=sensei_analysis"] {
+			border-top: solid 1px;
+			padding-top: 10px;
+		}
+	}
+}

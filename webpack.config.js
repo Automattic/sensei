@@ -66,6 +66,7 @@ const files = [
 	'css/admin-custom.css',
 	'css/extensions.scss',
 	'css/global.scss',
+	'css/menu.scss',
 	'css/jquery-ui.css',
 	'css/modules-admin.css',
 	'css/modules-frontend.scss',

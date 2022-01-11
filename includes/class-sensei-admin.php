@@ -26,8 +26,10 @@ class Sensei_Admin {
 	 * Constructor.
 	 *
 	 * @since  1.0.0
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function __construct() {
+	public function __construct( $sensei ) {
 
 		$this->course_order_page_slug = 'course-order';
 		$this->lesson_order_page_slug = 'lesson-order';
@@ -38,10 +40,19 @@ class Sensei_Admin {
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
+		}
+
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
-		add_action( 'admin_init', array( $this, 'page_redirect' ) );
+
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			add_action( 'admin_init', array( $this, 'page_redirect' ) );
+		}
+
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
 
 		// Duplicate lesson & courses
@@ -79,8 +90,9 @@ class Sensei_Admin {
 		// Add AJAX endpoint for event logging.
 		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
 
-		Sensei_Extensions::instance()->init();
-		Sensei_Tools::instance()->init();
+		// As soon as the 'menu_restructure' feature flag is removed, the `$sensei` argument can also be removed.
+		Sensei_Extensions::instance()->init( $sensei );
+		Sensei_Tools::instance()->init( $sensei );
 		Sensei_Status::instance()->init();
 
 	}
@@ -89,9 +101,15 @@ class Sensei_Admin {
 	 * Add items to admin menu
 	 *
 	 * @since  1.4.0
+	 * @deprecated 4.0.0
+	 *
 	 * @return void
 	 */
 	public function admin_menu() {
+		if ( Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			_deprecated_function( __METHOD__, '4.0.0' );
+		}
+
 		global $menu;
 		$menu_cap = '';
 		if ( current_user_can( 'manage_sensei' ) ) {
@@ -187,9 +205,15 @@ class Sensei_Admin {
 	 * Redirect Sensei menu item to Analysis page
 	 *
 	 * @since  1.4.0
+	 * @deprecated 4.0.0
+	 *
 	 * @return void
 	 */
 	public function page_redirect() {
+		if ( Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			_deprecated_function( __METHOD__, '4.0.0' );
+		}
+
 		if ( isset( $_GET['page'] ) && $_GET['page'] == 'sensei' ) {
 			wp_safe_redirect( 'admin.php?page=sensei_analysis' );
 			exit;
@@ -263,6 +287,11 @@ class Sensei_Admin {
 
 		// Global Styles for icons and menu items
 		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
+
+		if ( Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// Could move this CSS back into global.scss when feature flag is removed.
+			Sensei()->assets->enqueue( 'sensei-menu', 'css/menu.css', [], 'screen' );
+		}
 
 		// WordPress component styles with Sensei theming.
 		Sensei()->assets->register( 'sensei-wp-components', 'shared/styles/wp-components.css', [], 'screen' );

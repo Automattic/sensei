@@ -349,7 +349,8 @@ class Sensei_Data_Cleaner {
 	 * @access private
 	 */
 	private static function cleanup_pages() {
-		$settings = new Sensei_Settings();
+		// Delete parameter when 'menu_restructure' feature flag is removed.
+		$settings = new Sensei_Settings( Sensei() );
 
 		// Trash the Course Archive page.
 		$course_archive_page_id = $settings->get( 'course_page' );

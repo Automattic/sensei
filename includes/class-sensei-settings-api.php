@@ -59,11 +59,17 @@ class Sensei_Settings_API {
 	 *
 	 * @access public
 	 * @since  1.0.0
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
+	 *
 	 * @return void
 	 */
-	public function register_hook_listener() {
+	public function register_hook_listener( $sensei ) {
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
+		}
 
-		add_action( 'admin_menu', array( $this, 'register_settings_screen' ), 60 );
 		add_action( 'admin_init', array( $this, 'settings_fields' ) );
 		add_action( 'init', array( $this, 'general_init' ), 5 );
 

@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		esc_html_e( 'Tools', 'sensei-lms' );
 
 		if ( ! empty( $tool ) ) {
-			$back_url = admin_url( 'admin.php?page=sensei-tools' );
+			$back_url = Sensei_Tools::instance()->get_tools_url();
 			?>
 			<a href="<?php echo esc_url( $back_url ); ?>" class="button"><?php echo esc_html__( 'All Tools', 'sensei-lms' ); ?></a>
 			<?php

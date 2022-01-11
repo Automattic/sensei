@@ -55,12 +55,20 @@ class Sensei_Admin_Notices {
 		'edit-question-type',
 		'edit-question-category',
 		'edit-lesson-tag',
+		'course_page_sensei_analysis',
+		'course_page_sensei_learners',
+		'course_page_sensei-settings',
+		'course_page_sensei_grading',
+		'course_page_sensei-extensions',
+		'course_page_sensei-tools',
+		// START - Delete when 'menu_restructure' feature flag is removed.
 		'sensei-lms_page_sensei_analysis',
 		'sensei-lms_page_sensei_learners',
 		'sensei-lms_page_sensei-settings',
 		'sensei-lms_page_sensei_grading',
 		'sensei-lms_page_sensei-extensions',
 		'sensei-lms_page_sensei-tools',
+		// END - Delete when 'menu_restructure' feature flag is removed.
 		'lesson_page_lesson-order',
 	];
 

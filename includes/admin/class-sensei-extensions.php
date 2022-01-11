@@ -36,10 +36,16 @@ final class Sensei_Extensions {
 	 * Initializes the class and adds all filters and actions related to the extension directory.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init() {
+	public function init( $sensei ) {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-		add_action( 'admin_menu', array( $this, 'add_admin_menu_item' ), 60 );
+
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+			add_action( 'admin_menu', array( $this, 'add_admin_menu_item' ), 60 );
+		}
 	}
 
 	/**
@@ -50,8 +56,11 @@ final class Sensei_Extensions {
 	 */
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
+		$extensions_screen_id = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+			'course_page_sensei-extensions' :
+			'sensei-lms_page_sensei-extensions';
 
-		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
+		if ( in_array( $screen->id, [ $extensions_screen_id ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
@@ -271,18 +280,22 @@ final class Sensei_Extensions {
 	 * Adds the menu item for the Extensions page.
 	 *
 	 * @since  2.0.0
+	 *
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
 		$updates_html = '';
 		$updates      = $this->get_has_update_count();
+		$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+			'edit.php?post_type=course' :
+			'sensei';
 
 		if ( $updates > 0 ) {
 			$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
 		}
 
 		add_submenu_page(
-			'sensei',
+			$parent_slug,
 			__( 'Sensei LMS Extensions', 'sensei-lms' ),
 			__( 'Extensions', 'sensei-lms' ) . $updates_html,
 			'install_plugins',

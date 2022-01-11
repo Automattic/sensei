@@ -20,7 +20,7 @@ class Sensei_Core_Modules {
 	private $order_page_slug;
 	public $taxonomy;
 
-	public function __construct( $file ) {
+	public function __construct( $file, $sensei ) {
 		$this->file            = $file;
 		$this->taxonomy        = 'module';
 		$this->order_page_slug = 'module-order';
@@ -47,7 +47,10 @@ class Sensei_Core_Modules {
 		add_action( 'wp', array( $this, 'save_module_progress' ), 10 );
 
 		// Handle module ordering
-		add_action( 'admin_menu', array( $this, 'register_modules_admin_menu_items' ), 30 );
+		if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			add_action( 'admin_menu', array( $this, 'register_modules_admin_menu_items' ), 30 );
+		}
+
 		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
 		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
 		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
@@ -1059,10 +1062,15 @@ class Sensei_Core_Modules {
 	 * Register admin screen for ordering modules
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.0.0
 	 *
 	 * @return void
 	 */
 	public function register_modules_admin_menu_items() {
+		if ( Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ) {
+			_deprecated_function( __METHOD__, '4.0.0' );
+		}
+
 		// add the modules link under the Course main menu
 		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module', '' );
 

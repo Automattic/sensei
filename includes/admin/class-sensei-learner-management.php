@@ -61,8 +61,9 @@ class Sensei_Learner_Management {
 	 * @since  1.6.0
 	 *
 	 * @param string $file Main plugin file name.
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function __construct( $file ) {
+	public function __construct( $file, $sensei ) {
 		$this->name      = __( 'Student Management', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
@@ -70,7 +71,12 @@ class Sensei_Learner_Management {
 		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
-			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
+
+			if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+				// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+				add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
+			}
+
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
 
 			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
@@ -103,10 +109,21 @@ class Sensei_Learner_Management {
 	 */
 	public function learners_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+			$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+				'edit.php?post_type=course' :
+				'sensei';
+
+			$learners_page = add_submenu_page(
+				$parent_slug,
+				$this->name,
+				$this->name,
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'learners_page' )
+			);
+
 			add_action( "load-$learners_page", array( $this, 'load_screen_options_when_on_bulk_actions' ) );
 		}
-
 	}
 
 	/**

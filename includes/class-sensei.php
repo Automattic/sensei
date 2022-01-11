@@ -355,21 +355,21 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
+		// Feature flags.
+		$this->feature_flags = new Sensei_Feature_Flags();
+
 		// Setup settings.
-		$this->settings = new Sensei_Settings();
+		$this->settings = new Sensei_Settings( $this );
 
 		// Asset loading.
 		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
-
-		// Feature flags.
-		$this->feature_flags = new Sensei_Feature_Flags();
 
 		// Load the shortcode loader into memory, so as to listen to all for
 		// all shortcodes on the front end.
 		$this->shortcode_loader = new Sensei_Shortcode_Loader();
 
 		// Setup post types.
-		$this->post_types = new Sensei_PostTypes();
+		$this->post_types = new Sensei_PostTypes( $this );
 
 		// Load Course Results Class.
 		$this->course_results = new Sensei_Course_Results();
@@ -396,7 +396,7 @@ class Sensei_Main {
 		$this->load_modules_class();
 
 		// Load Learner Management Functionality.
-		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
+		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name, $this );
 
 		$this->view_helper = new Sensei_View_Helper();
 
@@ -428,10 +428,10 @@ class Sensei_Main {
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
-			$this->admin = new Sensei_Admin( $this->main_plugin_file_name );
+			$this->admin = new Sensei_Admin( $this );
 
 			// Load Analysis Reports
-			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name, $this );
 
 			new Sensei_Import();
 			new Sensei_Export();
@@ -454,7 +454,7 @@ class Sensei_Main {
 		$this->notices = new Sensei_Notices();
 
 		// Load Grading Functionality
-		$this->grading = new Sensei_Grading( $this->main_plugin_file_name );
+		$this->grading = new Sensei_Grading( $this->main_plugin_file_name, $this );
 
 		// Load Email Class
 		$this->emails = new Sensei_Emails( $this->main_plugin_file_name );
@@ -1340,7 +1340,7 @@ class Sensei_Main {
 		if ( ! class_exists( 'Sensei_Modules' ) && 'Sensei_Modules' !== $class ) {
 			// Load the modules class.
 			require_once dirname( __FILE__ ) . '/class-sensei-modules.php';
-			$this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name );
+			$this->modules = new Sensei_Core_Modules( $this->main_plugin_file_name, $this );
 
 		} else {
 			// fallback for people still using the modules extension.

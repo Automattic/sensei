@@ -20,8 +20,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @access public
 	 * @since 1.0.0
+	 *
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function __construct() {
+	public function __construct( $sensei ) {
 		parent::__construct(); // Required in extended classes.
 
 		add_action( 'init', array( __CLASS__, 'flush_rewrite_rules' ) );
@@ -36,7 +38,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		}
 
-		$this->register_hook_listener();
+		$this->register_hook_listener( $sensei );
 		$this->get_settings();
 
 		// Log when settings are updated by the user.
@@ -90,10 +92,20 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @return void
 	 */
 	public function register_settings_screen() {
-
 		$this->settings_version = Sensei()->version; // Use the global plugin version on this settings screen.
-		$hook                   = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
-		$this->hook             = $hook;
+
+		$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+			'edit.php?post_type=course' :
+			'sensei';
+
+		$this->hook = add_submenu_page(
+			$parent_slug,
+			$this->name,
+			$this->menu_label,
+			'manage_sensei',
+			$this->page_slug,
+			array( $this, 'settings_screen' )
+		);
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 			add_action( 'admin_notices', array( $this, 'settings_errors' ) );

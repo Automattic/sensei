@@ -57,6 +57,7 @@ class Sensei_Feature_Flags {
 				'course_theme'                   => false,
 				'quiz_pagination'                => false,
 				'video_based_course_progression' => false,
+				'menu_restructure'               => true,
 			]
 		);
 	}

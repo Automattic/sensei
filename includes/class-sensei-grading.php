@@ -25,15 +25,20 @@ class Sensei_Grading {
 	 * @since  1.3.0
 	 *
 	 * @param $file
+	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function __construct( $file ) {
+	public function __construct( $file, $sensei ) {
 		$this->name      = __( 'Grading', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_grading';
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 20 );
+			if ( ! $sensei->feature_flags->is_enabled( 'menu_restructure' ) ) {
+				// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
+				add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 20 );
+			}
+
 			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container' ) );
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
@@ -61,7 +66,18 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Grading', 'sensei-lms' ), __( 'Grading', 'sensei-lms' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
+			$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+				'edit.php?post_type=course' :
+				'sensei';
+
+			add_submenu_page(
+				$parent_slug,
+				__( 'Grading', 'sensei-lms' ),
+				__( 'Grading', 'sensei-lms' ),
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'grading_page' )
+			);
 		}
 
 	}

@@ -77,6 +77,7 @@ $sensei-notice-icon-width: 30px;
 }
 
 /*  Sensei icon */
+/* Delete when 'menu_restructure' feature flag is removed - START */
 body #toplevel_page_sensei div.wp-menu-image:before {
 	font-family: 'sensei' !important;
 	content: "\f101";
@@ -89,14 +90,16 @@ body #menu-posts-lesson div.wp-menu-image:before {
 
 /* Course Icon */
 body #menu-posts-course div.wp-menu-image:before {
-	content: '\f331' !important;
+	content: '\f331';
 }
 
 /* Questions Icon */
 body #menu-posts-question div.wp-menu-image:before {
 	content: '\f223' !important;
 }
+/* Delete when 'menu_restructure' feature flag is removed - END */
 
+/* Dashboard At a Glance */
 #dashboard_right_now a.course-count:before,
 #dashboard_right_now span.course-count:before {
 	content: '\f331';
@@ -112,6 +115,7 @@ body #menu-posts-question div.wp-menu-image:before {
 	content: '\f223';
 }
 
+/* Delete when 'menu_restructure' feature flag is removed - START */
 /* Sensei Menu */
 #toplevel_page_sensei li.wp-first-item {
 	display: none;
@@ -122,6 +126,7 @@ li.menu-icon-lesson .wp-menu-image img,
 li.menu-icon-course .wp-menu-image img {
 	display: none;
 }
+/* Delete when 'menu_restructure' feature flag is removed - END */
 
 .edit-php.post-type-quiz .add-new-h2 {
 	display: none;
