@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class that handles showing the notices from SenseiLMS.com.
+ * Class that handles showing admin notices.
+ * It also includes notices coming from SenseiLMS.com.
  *
  * @access private
  *
@@ -131,6 +132,16 @@ class Sensei_Admin_Notices {
 		if ( ! $notices || ! is_array( $notices ) ) {
 			$notices = [];
 		}
+
+		/**
+		 * Filters the admin notices.
+		 *
+		 * @hook sensei_admin_notices
+		 *
+		 * @param {array} $notices The admin notices.
+		 * @return {array} The admin notices.
+		 */
+		$notices = apply_filters( 'sensei_admin_notices', $notices );
 
 		return $notices;
 	}
