@@ -49,10 +49,9 @@ const onDropdownChange = ( settings, onChange ) => ( value ) => {
 /**
  * A component which contains a NumberControl and the 'per page' accompanying text.
  *
- * @param {Object}   props               Component props.
- * @param {Object}   props.settings      Pagination settings object.
- * @param {Function} props.onChange      Callback called when a setting changed.
- * @param {number}   props.questionCount Number of questions in the quiz.
+ * @param {Object}   props          Component props.
+ * @param {Object}   props.settings Pagination settings object.
+ * @param {Function} props.onChange Callback called when a setting changed.
  */
 const QuestionsControl = ( { settings, onChange, ...props } ) => {
 	const { paginationNumber } = settings;
@@ -87,16 +86,11 @@ const QuestionsControl = ( { settings, onChange, ...props } ) => {
 /**
  * Quiz sidebar settings.
  *
- * @param {Object}   props               Component props.
- * @param {Object}   props.settings      Pagination settings object.
- * @param {Function} props.onChange      Callback called when a setting changed.
- * @param {number}   props.questionCount Number of questions in the quiz.
+ * @param {Object}   props          Component props.
+ * @param {Object}   props.settings Pagination settings object.
+ * @param {Function} props.onChange Callback called when a setting changed.
  */
-export const PaginationSidebarSettings = ( {
-	settings,
-	onChange,
-	questionCount,
-} ) => {
+export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 	const {
 		paginationNumber,
 		showProgressBar,
@@ -118,11 +112,7 @@ export const PaginationSidebarSettings = ( {
 						hideLabelFromVision
 						value={ paginationNumber === null ? SINGLE : MULTI }
 						options={ paginationOptions }
-						onChange={ onDropdownChange(
-							settings,
-							onChange,
-							questionCount
-						) }
+						onChange={ onDropdownChange( settings, onChange ) }
 					/>
 				</PanelRow>
 				{ paginationNumber !== null && (
@@ -130,7 +120,6 @@ export const PaginationSidebarSettings = ( {
 						<QuestionsControl
 							settings={ settings }
 							onChange={ onChange }
-							questionCount={ questionCount }
 						/>
 					</PanelRow>
 				) }
@@ -223,16 +212,11 @@ export const PaginationSidebarSettings = ( {
 /**
  * Quiz toolbar settings.
  *
- * @param {Object}   props               Component props.
- * @param {Object}   props.settings      Pagination settings object.
- * @param {Function} props.onChange      Callback called when a setting changed.
- * @param {number}   props.questionCount Number of questions in the quiz.
+ * @param {Object}   props          Component props.
+ * @param {Object}   props.settings Pagination settings object.
+ * @param {Function} props.onChange Callback called when a setting changed.
  */
-export const PaginationToolbarSettings = ( {
-	settings,
-	onChange,
-	questionCount,
-} ) => {
+export const PaginationToolbarSettings = ( { settings, onChange } ) => {
 	const { paginationNumber } = settings;
 
 	return (
@@ -242,11 +226,7 @@ export const PaginationToolbarSettings = ( {
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
 					value={ paginationNumber === null ? SINGLE : MULTI }
-					onChange={ onDropdownChange(
-						settings,
-						onChange,
-						questionCount
-					) }
+					onChange={ onDropdownChange( settings, onChange ) }
 				/>
 			</Toolbar>
 			{ paginationNumber !== null && (
@@ -254,7 +234,6 @@ export const PaginationToolbarSettings = ( {
 					<QuestionsControl
 						settings={ settings }
 						onChange={ onChange }
-						questionCount={ questionCount }
 					/>
 				</ToolbarGroup>
 			) }

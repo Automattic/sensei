@@ -227,14 +227,12 @@ const QuizSettings = ( {
 				<PaginationSidebarSettings
 					settings={ pagination }
 					onChange={ createChangeHandler( 'pagination' ) }
-					questionCount={ questionCount }
 				/>
 			</InspectorControls>
 			<BlockControls>
 				<PaginationToolbarSettings
 					settings={ pagination }
 					onChange={ createChangeHandler( 'pagination' ) }
-					questionCount={ questionCount }
 				/>
 			</BlockControls>
 		</>
