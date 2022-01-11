@@ -54,7 +54,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<!-- wp:sensei-lms/sidebar-footer -->
 		<div class="sensei-course-theme__sidebar__footer">
-			<!-- wp:sensei-lms/button-contact-teacher /-->
 			<a href="/">Exit Course</a>
 		</div>
 		<!-- /wp:sensei-lms/sidebar-footer -->
