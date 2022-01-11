@@ -174,6 +174,7 @@ class Sensei_Course_Theme_Option {
 	 */
 	public function add_course_theme_notice( array $notices ) {
 		$notices['sensei-course-theme'] = [
+			'type'       => 'user',
 			'icon'       => 'sensei',
 			'heading'    => __( 'Sensei’s new learning mode is here', 'sensei-lms' ),
 			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
