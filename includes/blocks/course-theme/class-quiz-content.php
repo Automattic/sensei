@@ -64,6 +64,9 @@ class Quiz_Content {
 			<?php
 		}
 
+		// In "Learning Mode" we do not want the quiz pagination as part
+		// of the quiz post content. Because we will render it separately
+		// in the footer of the "Learning Mode" screen.
 		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'the_quiz_pagination' ), 9 );
 		do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 
