@@ -142,7 +142,7 @@ const CourseThemeOnboarding = () => {
 						<>
 							<a
 								className="sensei-course-theme-onboarding__learn-more components-button components-guide__back-button"
-								href="https://senseilms.com/docs/"
+								href="https://senseilms.com/wordpress-course-theme"
 								rel="noreferrer external"
 								target="_blank"
 							>
