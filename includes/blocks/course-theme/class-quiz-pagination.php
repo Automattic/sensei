@@ -49,6 +49,7 @@ class Quiz_Pagination {
 		ob_start();
 		if ( $pagination_enabled ) {
 			Sensei_Quiz::the_quiz_pagination();
+			Sensei_Quiz::output_quiz_hidden_fields();
 		} else {
 			Sensei_Quiz::action_buttons();
 		}
