@@ -22,7 +22,7 @@
 
 			//load the relod function on the save button click
 			editRow.find( '.save' ).on( 'click', function () {
-				location.reload();
+				setTimeout( () => location.reload(), 2000 );
 			} );
 
 			// populate the data
