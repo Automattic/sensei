@@ -5130,7 +5130,7 @@ class Sensei_Lesson {
 	 * @param int|null $lesson_id
 	 * @param string $new_settings
 	 */
-	private function save_quiz_settings( ?int $lesson_id, array $new_settings ): void {
+	private function save_quiz_settings( $lesson_id, array $new_settings ) {
 
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
