@@ -10,14 +10,10 @@ body #menu-posts-course {
 			display: none;
 		}
 
-		&[href="edit.php?post_type=question"],
-		&[href="edit.php?post_type=sensei_message"] {
-			padding-bottom: 10px;
-		}
-
 		&[href="edit.php?post_type=course&page=sensei_learners"],
 		&[href="edit.php?post_type=course&page=sensei_analysis"] {
 			border-top: solid 1px;
+			margin-top: 10px;
 			padding-top: 10px;
 		}
 	}
