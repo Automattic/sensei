@@ -51,6 +51,7 @@ class Focus_Mode {
 			'<button class="sensei-course-theme__focus-mode-toggle" %1s onclick="window.sensei.courseTheme.toggleFocusMode()">
 				<span class="sensei-course-theme__focus-mode-toggle__enable">%2s</span>
 				<span class="sensei-course-theme__focus-mode-toggle__disable">%3s</span>
+				' . Sensei()->assets->get_icon( 'double-chevron-right', 'sensei-course-theme__focus-mode-toggle-icon' ) . '
 			</button>',
 			$wrapper_attributes,
 			$label_enable,
