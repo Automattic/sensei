@@ -142,11 +142,10 @@ class Sensei_Course_Theme_Option {
 			return false;
 		}
 
-		if ( self::has_sensei_theme_enabled( $course_id ) ) {
-			return true;
-		}
-
-		if ( Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $course_id ) ) {
+		if (
+			self::has_sensei_theme_enabled( $course_id ) ||
+			Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $course_id )
+		) {
 			return true;
 		}
 
