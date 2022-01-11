@@ -78,7 +78,7 @@ const usePreviewAndCustomizerLinks = () => {
 
 	let customizerUrl = '';
 	if ( previewUrl ) {
-		customizerUrl = `/wp-admin/customize.php?url=${ encodeURIComponent(
+		customizerUrl = `/wp-admin/customize.php?autofocus[section]=Sensei_Course_Theme_Option&url=${ encodeURIComponent(
 			previewUrl
 		) }`;
 	}
