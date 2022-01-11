@@ -48,7 +48,7 @@
 	}
 
 	&__footer {
-		padding: 0px 24px;
+		padding: 24px;
 		&__wrapper {
 			display: block;
 			position: fixed;
@@ -61,13 +61,9 @@
 			box-shadow: 2px 10px 30px 5px rgba(#E2E4E7, 0.5);
 		}
 
-		&__left {
+		#sensei-quiz-pagination {
 			flex: 1;
-
-		}
-
-		&__right {
-
+			margin: 0;
 		}
 	}
 }

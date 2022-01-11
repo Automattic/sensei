@@ -39,9 +39,21 @@ class Quiz_Pagination {
 	 * @return string The block HTML.
 	 */
 	public function render() : string {
+		\Sensei_Quiz::start_quiz_questions_loop();
+		global $sensei_question_loop;
+		$pagination_enabled = $sensei_question_loop['total_pages'] > 1;
+		$pagination         = '';
+
+		// Get quiz actions. Either actions with pagination
+		// or only action if pagination is not enabled.
 		ob_start();
-		Sensei_Quiz::the_quiz_pagination();
+		if ( $pagination_enabled ) {
+			Sensei_Quiz::the_quiz_pagination();
+		} else {
+			Sensei_Quiz::action_buttons();
+		}
 		$pagination = ob_get_clean();
+
 		return ( "
 			<form method='POST' enctype='multipart/form-data'>
 				{$pagination}
