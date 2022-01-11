@@ -1495,10 +1495,9 @@ class Sensei_Quiz {
 				$sensei_question_loop['current_page'] = max( 1, (int) $_GET['quiz-page'] );
 			}
 		}
-
+		// Fetch the questions.
 		$all_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' );
 
-		// Fetch the questions.
 		if ( ! $all_questions ) {
 			return;
 		}
@@ -1647,11 +1646,6 @@ class Sensei_Quiz {
 			true
 		);
 
-		if ( empty( $pagination_settings['pagination_number'] )
-			|| ! array_key_exists( 'show_progress_bar', $pagination_settings )
-			|| ! $pagination_settings['show_progress_bar'] ) {
-			return;
-		}
 		global $sensei_question_loop;
 
 		// Make sure the quiz is paginated and the progress bar enabled.
@@ -1817,7 +1811,7 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Checking if passwor is required.
+	 * Checking if password is required.
 	 *
 	 * @param int $lesson_id lesson id.
 	 *
