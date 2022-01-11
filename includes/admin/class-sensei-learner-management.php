@@ -60,7 +60,7 @@ class Sensei_Learner_Management {
 	 *
 	 * @since  1.6.0
 	 *
-	 * @param string $file Main plugin file name.
+	 * @param string      $file Main plugin file name.
 	 * @param Sensei_Main $sensei Sensei object.
 	 */
 	public function __construct( $file, $sensei ) {

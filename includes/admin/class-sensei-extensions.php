@@ -55,7 +55,7 @@ final class Sensei_Extensions {
 	 * @access private
 	 */
 	public function enqueue_admin_assets() {
-		$screen = get_current_screen();
+		$screen               = get_current_screen();
 		$extensions_screen_id = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
 			'course_page_sensei-extensions' :
 			'sensei-lms_page_sensei-extensions';
@@ -286,7 +286,7 @@ final class Sensei_Extensions {
 	public function add_admin_menu_item() {
 		$updates_html = '';
 		$updates      = $this->get_has_update_count();
-		$parent_slug = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
+		$parent_slug  = Sensei()->feature_flags->is_enabled( 'menu_restructure' ) ?
 			'edit.php?post_type=course' :
 			'sensei';
 

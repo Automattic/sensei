@@ -130,7 +130,9 @@ class Sensei_PostTypes {
 	 * Dynamically loads post type objects for meta boxes on backend
 	 *
 	 * @access public
-	 * @param array $posttypes (default: array())
+	 * @param array       $posttypes (default: array())
+	 * @param Sensei_Main $sensei Sensei object.
+	 *
 	 * @return void
 	 */
 	public function load_posttype_objects( $posttypes = array(), $sensei ) {
@@ -766,7 +768,6 @@ class Sensei_PostTypes {
 	 *
 	 * @since  1.0.0
 	 * @param Sensei_Main $sensei Sensei object.
-	 *
 	 */
 	private function setup_post_type_labels_base( $sensei ) {
 		$this->labels = array(
@@ -1062,7 +1063,6 @@ class Sensei_PostTypes {
 		Sensei()->learners->learners_admin_menu();
 		Sensei()->grading->grading_admin_menu();
 
-		// Messages
 		$sensei_messages = new Sensei_Messages( Sensei() );
 		$sensei_messages->add_menu_item();
 

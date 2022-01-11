@@ -20,7 +20,7 @@ class Sensei_Analysis {
 	 * Constructor
 	 *
 	 * @since  1.0.0
-	 * @param string $file
+	 * @param string      $file
 	 * @param Sensei_Main $sensei Sensei object.
 	 */
 	public function __construct( $file, $sensei ) {
