@@ -229,7 +229,7 @@ class Sensei_Lesson {
 		// Add JS scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
-		// Add CSS
+		// Add CSS.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
 	}
