@@ -95,6 +95,7 @@ class Sensei_Course_Theme_Editor {
 				'slug'           => 'lesson',
 				'id'             => 'sensei-course-theme//lesson',
 				'path'           => $base_path . 'lesson.html',
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents - Local file.
 				'content'        => file_get_contents( $base_path . 'lesson.html' ),
 				'type'           => 'wp_template',
 				'theme'          => 'Sensei LMS',
@@ -111,6 +112,7 @@ class Sensei_Course_Theme_Editor {
 				'slug'           => 'quiz',
 				'id'             => 'sensei-course-theme//quiz',
 				'path'           => $base_path . 'quiz.html',
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents - Local file.
 				'content'        => file_get_contents( $base_path . 'quiz.html' ),
 				'type'           => 'wp_template',
 				'theme'          => 'Sensei LMS',
@@ -220,6 +222,8 @@ class Sensei_Course_Theme_Editor {
 
 		if ( $is_site_editor || $is_site_editor_rest ) {
 
+			add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
+			add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
 
 			if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
 				Sensei_Course_Theme::instance()->override_theme();
@@ -237,6 +241,28 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function register_plugin_templates() {
 		add_filter( 'get_block_templates', [ $this, 'add_block_templates' ], 10, 3 );
+	}
+
+	/**
+	 * Enqueue course theme blocks and styles.
+	 *
+	 * @access private
+	 */
+	public function enqueue_site_editor_assets() {
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-editor-style', 'css/sensei-course-theme.editor.css' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-blocks', 'course-theme/blocks.js' );
+	}
+
+	/**
+	 * Register course theme styles as editor styles.
+	 *
+	 * @access private
+	 */
+	public function add_editor_styles() {
+		add_editor_style( Sensei()->assets->asset_url( 'css/sensei-course-theme.css' ) );
+		add_editor_style( Sensei()->assets->asset_url( 'css/sensei-course-theme.editor.css' ) );
+
 	}
 
 }
