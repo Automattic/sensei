@@ -452,12 +452,15 @@ class Sensei_Lesson {
 	 * @return void
 	 */
 	public function lesson_video_meta_box_content() {
-		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
-		$edit_course_url = get_edit_post_link( $lesson_course );
-
 		$html  = '<p>' . esc_html__( 'Control how students progress through the course based on their interactions with lesson video.', 'sensei-lms' ) . '<p>';
-		$html .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
 
+		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		if ( $lesson_course ) {
+			$edit_course_url = get_edit_post_link( $lesson_course );
+			$html            .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
+		} else {
+			$html .= '<p>' . esc_html__( 'Please attach the lesson to a course first.', 'sensei-lms' ) . '</p>';
+		}
 		echo $html;
 	}
 
