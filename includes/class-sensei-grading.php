@@ -33,15 +33,14 @@ class Sensei_Grading {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 20 );
 			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container' ) );
+
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
 			add_action( 'admin_init', array( $this, 'admin_process_grading_submission' ) );
-
 			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
 		}
 
@@ -61,7 +60,14 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Grading', 'sensei-lms' ), __( 'Grading', 'sensei-lms' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
+			add_submenu_page(
+				'edit.php?post_type=course',
+				__( 'Grading', 'sensei-lms' ),
+				__( 'Grading', 'sensei-lms' ),
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'grading_page' )
+			);
 		}
 
 	}

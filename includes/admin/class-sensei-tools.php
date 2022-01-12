@@ -57,7 +57,6 @@ class Sensei_Tools {
 	 * @since 3.7.0
 	 */
 	public function init() {
-		add_action( 'admin_menu', [ $this, 'add_menu_pages' ], 90 );
 		add_filter( 'sensei_learners_main_column_data', [ Sensei_Tool_Enrolment_Debug::class, 'add_debug_action' ], 10, 3 );
 	}
 
@@ -101,9 +100,18 @@ class Sensei_Tools {
 	 * Adds admin menu pages.
 	 */
 	public function add_menu_pages() {
-		$title = esc_html__( 'Tools', 'sensei-lms' );
-		add_submenu_page( 'sensei', $title, $title, 'manage_sensei', 'sensei-tools', [ $this, 'output' ] );
-		add_action( 'load-sensei-lms_page_sensei-tools', [ $this, 'process' ] );
+		$title       = esc_html__( 'Tools', 'sensei-lms' );
+
+		add_submenu_page(
+			'edit.php?post_type=course',
+			$title,
+			$title,
+			'manage_sensei',
+			'sensei-tools',
+			[ $this, 'output' ]
+		);
+
+		add_action( 'load-course_page_sensei-tools', [ $this, 'process' ] );
 	}
 
 	/**
@@ -219,7 +227,7 @@ class Sensei_Tools {
 	 * @return string
 	 */
 	public function get_tools_url() {
-		return admin_url( 'admin.php?page=sensei-tools' );
+		return admin_url( 'edit.php?post_type=course&page=sensei-tools' );
 	}
 
 	/**

@@ -29,12 +29,10 @@ class Sensei_Analysis {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'analysis_admin_menu' ), 10 );
 			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container' ) );
+
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
-
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
-
 			}
 
 			add_action( 'admin_init', array( $this, 'report_download_page' ) );
@@ -53,9 +51,15 @@ class Sensei_Analysis {
 	 */
 	public function analysis_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Analysis', 'sensei-lms' ), __( 'Analysis', 'sensei-lms' ), 'manage_sensei_grades', 'sensei_analysis', array( $this, 'analysis_page' ) );
+			add_submenu_page(
+				'edit.php?post_type=course',
+				__( 'Analysis', 'sensei-lms' ),
+				__( 'Analysis', 'sensei-lms' ),
+				'manage_sensei_grades',
+				'sensei_analysis',
+				array( $this, 'analysis_page' )
+			);
 		}
-
 	}
 
 	/**
