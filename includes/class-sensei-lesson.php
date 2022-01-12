@@ -206,6 +206,9 @@ class Sensei_Lesson {
 		// Add Meta Box for Prerequisite Lesson
 		add_meta_box( 'lesson-prerequisite', esc_html__( 'Prerequisite', 'sensei-lms' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'low' );
 
+		// Add Meta Box for Video-Course Progression settings
+		add_meta_box( 'lesson-video', esc_html__( 'Video', 'sensei-lms' ), array( $this, 'lesson_video_meta_box_content' ), $this->token, 'side', 'low' );
+
 		// Add Meta Box for Lesson Preview
 		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'sensei-lms' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'low' );
 
@@ -441,6 +444,21 @@ class Sensei_Lesson {
 		}
 
 		wp_die(); // This is required to terminate immediately and return a proper response.
+	}
+
+	/**
+	 * Display the Video settings panel for the lesson.
+	 *
+	 * @return void
+	 */
+	public function lesson_video_meta_box_content() {
+		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
+		$edit_course_url = get_edit_post_link( $lesson_course );
+
+		$html  = '<p>' . esc_html__( 'Control how students progress through the course based on their interactions with lesson video.', 'sensei-lms' ) . '<p>';
+		$html .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
+
+		echo $html;
 	}
 
 	/**
