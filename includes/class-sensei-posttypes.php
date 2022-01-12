@@ -752,8 +752,6 @@ class Sensei_PostTypes {
 	 * Setup the singular, plural and menu label names for the post types.
 	 *
 	 * @since  1.0.0
-	 * @param Sensei_Main $sensei Sensei object.
-	 *
 	 */
 	private function setup_post_type_labels_base() {
 		$this->labels = array(

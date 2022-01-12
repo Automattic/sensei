@@ -100,7 +100,7 @@ class Sensei_Tools {
 	 * Adds admin menu pages.
 	 */
 	public function add_menu_pages() {
-		$title       = esc_html__( 'Tools', 'sensei-lms' );
+		$title = esc_html__( 'Tools', 'sensei-lms' );
 
 		add_submenu_page(
 			'edit.php?post_type=course',
