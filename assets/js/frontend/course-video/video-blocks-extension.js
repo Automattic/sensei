@@ -76,12 +76,17 @@
 	};
 
 	// onYouTubeIframeAPIReady is called by YouTube iframe API when it is ready.
+	const previousYouTubeIframeAPIReady =
+		window.onYouTubeIframeAPIReady !== undefined
+			? window.onYouTubeIframeAPIReady
+			: () => {};
 	window.onYouTubeIframeAPIReady = () => {
 		document
 			.querySelectorAll(
 				'.sensei-course-video-container.youtube-extension iframe'
 			)
 			.forEach( initYouTubePlayer );
+		previousYouTubeIframeAPIReady();
 	};
 
 	const onEnded = () => {
