@@ -123,55 +123,55 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 						/>
 					</PanelRow>
 				) }
+				{ paginationNumber !== null && (
+					<>
+						<PanelRow>
+							<ToggleControl
+								checked={ showProgressBar }
+								label={ __(
+									'Show Progress Bar',
+									'sensei-lms'
+								) }
+								value={ progressBarRadius }
+								onChange={ ( value ) =>
+									onChange( {
+										...settings,
+										showProgressBar: value,
+									} )
+								}
+							/>
+						</PanelRow>
+						<PanelRow className="sensei-lms-quiz-block__progress-bar">
+							<NumberControl
+								label={ __( 'Radius', 'sensei-lms' ) }
+								min={ 1 }
+								step={ 1 }
+								suffix={ __( 'PX', 'sensei-lms' ) }
+								value={ progressBarRadius }
+								onChange={ ( value ) =>
+									onChange( {
+										...settings,
+										progressBarRadius: value,
+									} )
+								}
+							/>
+							<NumberControl
+								label={ __( 'Height', 'sensei-lms' ) }
+								min={ 1 }
+								step={ 1 }
+								suffix={ __( 'PX', 'sensei-lms' ) }
+								value={ progressBarHeight }
+								onChange={ ( value ) =>
+									onChange( {
+										...settings,
+										progressBarHeight: value,
+									} )
+								}
+							/>
+						</PanelRow>
+					</>
+				) }
 			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Progress bar settings', 'sensei-lms' ) }
-				initialOpen={ false }
-			>
-				<PanelRow>
-					<ToggleControl
-						checked={ showProgressBar }
-						label={ __( 'Show Progress Bar', 'sensei-lms' ) }
-						value={ progressBarRadius }
-						onChange={ ( value ) =>
-							onChange( {
-								...settings,
-								showProgressBar: value,
-							} )
-						}
-					/>
-				</PanelRow>
-				<PanelRow className="sensei-lms-quiz-block__progress-bar">
-					<NumberControl
-						label={ __( 'Radius', 'sensei-lms' ) }
-						min={ 1 }
-						step={ 1 }
-						suffix={ __( 'PX', 'sensei-lms' ) }
-						value={ progressBarRadius }
-						onChange={ ( value ) =>
-							onChange( {
-								...settings,
-								progressBarRadius: value,
-							} )
-						}
-					/>
-					<NumberControl
-						label={ __( 'Height', 'sensei-lms' ) }
-						min={ 1 }
-						step={ 1 }
-						suffix={ __( 'PX', 'sensei-lms' ) }
-						value={ progressBarHeight }
-						onChange={ ( value ) =>
-							onChange( {
-								...settings,
-								progressBarHeight: value,
-							} )
-						}
-					/>
-				</PanelRow>
-			</PanelBody>
-
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
 				initialOpen={ false }

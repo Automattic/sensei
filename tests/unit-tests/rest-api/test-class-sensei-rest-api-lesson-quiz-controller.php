@@ -828,8 +828,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$this->assertNull( $pagination_settings['pagination_number'] );
 		$this->assertFalse( $pagination_settings['show_progress_bar'] );
-		$this->assertEquals( 5, $pagination_settings['progress_bar_radius'] );
-		$this->assertEquals( 5, $pagination_settings['progress_bar_height'] );
+		$this->assertEquals( 6, $pagination_settings['progress_bar_radius'] );
+		$this->assertEquals( 12, $pagination_settings['progress_bar_height'] );
 		$this->assertNull( $pagination_settings['progress_bar_color'] );
 		$this->assertNull( $pagination_settings['progress_bar_background'] );
 	}

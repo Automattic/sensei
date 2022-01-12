@@ -21,6 +21,7 @@ import { sprintf, _n } from '@wordpress/i18n';
  * @param {string}  props.countersClassName       Counters class name.
  * @param {string}  props.lessonsCountClassName   Lessons count class name.
  * @param {string}  props.completedCountClassName Completed count class name.
+ * @param {boolean} props.hideDefault             Hide default settings for edit view only.
  */
 const ProgressBar = ( {
 	lessonsCount,
@@ -32,10 +33,11 @@ const ProgressBar = ( {
 	countersClassName,
 	lessonsCountClassName,
 	completedCountClassName,
+	hideDefault,
 } ) => {
 	const completePercentage =
 		Math.round( ( completedCount / lessonsCount ) * 100 ) || 0;
-	const barPercentage = Math.max( 3, completePercentage );
+	const barPercentage = Math.max( hideDefault ? 0 : 3, completePercentage );
 
 	return (
 		<div { ...wrapperAttributes }>

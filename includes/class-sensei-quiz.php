@@ -1469,7 +1469,6 @@ class Sensei_Quiz {
 	 * @since 1.9.0
 	 */
 	public static function start_quiz_questions_loop() {
-
 		global $sensei_question_loop;
 
 		// Initialise the questions loop object.
@@ -1496,9 +1495,9 @@ class Sensei_Quiz {
 				$sensei_question_loop['current_page'] = max( 1, (int) $_GET['quiz-page'] );
 			}
 		}
-
 		// Fetch the questions.
 		$all_questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' );
+
 		if ( ! $all_questions ) {
 			return;
 		}
@@ -1521,6 +1520,7 @@ class Sensei_Quiz {
 
 		$sensei_question_loop['questions'] = $loop_questions;
 		$sensei_question_loop['quiz_id']   = $quiz_id;
+
 	}
 
 	/**
@@ -1575,7 +1575,7 @@ class Sensei_Quiz {
 	/**
 	 * Output the sensei quiz status message.
 	 *
-	 * @param $quiz_id
+	 * @param int $quiz_id quiz id.
 	 */
 	public static function the_user_status_message( $quiz_id ) {
 
@@ -1632,6 +1632,47 @@ class Sensei_Quiz {
 		// Load the pagination template.
 		Sensei_Templates::get_template( 'single-quiz/pagination.php' );
 
+	}
+
+	/**
+	 * Rendering html element that will be replaced with Progress Bar.
+	 *
+	 * @since 3.15.0
+	 */
+	public static function the_quiz_progress_bar() {
+		$quiz_id             = get_the_ID();
+		$pagination_settings = json_decode(
+			get_post_meta( $quiz_id, '_pagination', true ),
+			true
+		);
+
+		global $sensei_question_loop;
+
+		// Make sure the quiz is paginated and the progress bar enabled.
+		if ( $sensei_question_loop['total_pages'] <= 1 || empty( $pagination_settings['show_progress_bar'] ) ) {
+			return;
+		}
+
+		$user_id       = get_current_user_id();
+		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$answers       = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		$answers_count = is_array( $answers ) ? count( array_filter( $answers ) ) : 0;
+
+		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.scss' );
+		wp_enqueue_script( 'sensei-quiz-progress' );
+		wp_localize_script(
+			'sensei-quiz-progress',
+			'sensei_quiz_progress',
+			array(
+				'totalNumber'     => $sensei_question_loop['total'],
+				'completedNumber' => $answers_count,
+				'radius'          => $pagination_settings['progress_bar_radius'],
+				'height'          => $pagination_settings['progress_bar_height'],
+				'color'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
+				'backgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
+			)
+		);
+		Sensei_Templates::get_template( 'globals/progress-bar.php' );
 	}
 
 	/**
@@ -1709,7 +1750,7 @@ class Sensei_Quiz {
 	 */
 	public static function get_user_quiz_grade( $lesson_id, $user_id ) {
 
-		// get the quiz grade
+		// get the quiz grade.
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 		$user_quiz_grade    = 0;
 		if ( isset( $user_lesson_status->comment_ID ) ) {
@@ -1736,7 +1777,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
-		// backwards compatibility
+		// backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
@@ -1770,7 +1811,9 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * @param $lesson_id
+	 * Checking if password is required.
+	 *
+	 * @param int $lesson_id lesson id.
 	 *
 	 * @return bool
 	 */
@@ -1779,7 +1822,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		$reset_allowed = get_post_meta( $quiz_id, '_pass_required', true );
-		// backwards compatibility
+		// backwards compatibility.
 		if ( 'on' == $reset_allowed ) {
 			$reset_allowed = 1;
 		}
@@ -1788,9 +1831,11 @@ class Sensei_Quiz {
 	}
 
 	/**
+	 * Maybe delete the quiz post after checking if the post exists.
+	 *
 	 * @since 1.9.5
 	 *
-	 * @param integer $post_id of the post being permanently deleted
+	 * @param integer $post_id of the post being permanently deleted.
 	 */
 	public function maybe_delete_quiz( $post_id ) {
 
