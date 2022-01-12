@@ -33,7 +33,9 @@
 			'[data-id="complete-lesson-button"]'
 		);
 		if ( completeButton ) {
-			completeButton.click();
+			setTimeout( () => {
+				completeButton.click();
+			}, 3000 );
 		}
 	};
 
