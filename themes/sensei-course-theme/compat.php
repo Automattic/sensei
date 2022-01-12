@@ -63,7 +63,8 @@ function get_wrapper_template( $template ) {
  */
 function load_block_template( $template ) {
 
-	$template_path    = get_template_directory() . '/templates/' . $template . '.html';
+	$template_path = get_template_directory() . '/templates/' . $template . '.html';
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 	$template_content = file_get_contents( $template_path );
 
 	return get_the_block_template_html( $template_content );

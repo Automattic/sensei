@@ -95,7 +95,7 @@ class Sensei_Course_Theme_Editor {
 				'slug'           => 'lesson',
 				'id'             => 'sensei-course-theme//lesson',
 				'path'           => $base_path . 'lesson.html',
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents - Local file.
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 				'content'        => file_get_contents( $base_path . 'lesson.html' ),
 				'type'           => 'wp_template',
 				'theme'          => 'Sensei LMS',
@@ -112,7 +112,7 @@ class Sensei_Course_Theme_Editor {
 				'slug'           => 'quiz',
 				'id'             => 'sensei-course-theme//quiz',
 				'path'           => $base_path . 'quiz.html',
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents - Local file.
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 				'content'        => file_get_contents( $base_path . 'quiz.html' ),
 				'type'           => 'wp_template',
 				'theme'          => 'Sensei LMS',
