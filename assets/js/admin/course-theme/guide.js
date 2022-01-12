@@ -8,8 +8,7 @@ import classnames from 'classnames';
  */
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { LEFT, RIGHT } from '@wordpress/keycodes';
-import { Modal, Button } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 
 /**
  * This component is an adaptation of Guide component from Gutenberg.
@@ -50,13 +49,6 @@ export default function Guide( {
 			className={ classnames( 'components-guide', className ) }
 			contentLabel={ contentLabel }
 			onRequestClose={ onFinish }
-			onKeyDown={ ( event ) => {
-				if ( event.keyCode === LEFT ) {
-					goBack();
-				} else if ( event.keyCode === RIGHT ) {
-					goForward();
-				}
-			} }
 		>
 			<div className="components-guide__container">
 				<div className="components-guide__page">
