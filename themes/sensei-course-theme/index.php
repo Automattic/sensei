@@ -1,18 +1,15 @@
 <?php
 /**
- * The Template for displaying Course Theme content.
- * This is a wrapper template and the others will be loaded inside the content,
- * so we can run the `do_blocks` function, adding blocks to the PHP template.
- *
- * Override this template by copying it to yourtheme/sensei/course-theme/index.php
+ * The template for displaying Course Theme content when WordPress core block template canvas is not available.
+ * This is a wrapper template and the others will be loaded inside the content.
  *
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     3.13.4
+ * @version     3.15.0
  */
 
-namespace Sensei\Themes\Sensei_Course_Theme;
+namespace Sensei\Themes\Sensei_Course_Theme\Compat;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -1,0 +1,93 @@
+<?php
+/**
+ * Sensei Course Theme compatibility functions.
+ *
+ * @package sensei
+ */
+
+namespace Sensei\Themes\Sensei_Course_Theme\Compat;
+
+use Sensei\Themes\Sensei_Course_Theme as Theme;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Initialize theme compatibility hooks.
+ *
+ * @return void
+ */
+function init() {
+	add_filter( 'template_include', '\Sensei\Themes\Sensei_Course_Theme\Compat\get_wrapper_template' );
+}
+
+/**
+ * Load the layout and render its blocks.
+ * Used for
+ *
+ * @access private
+ */
+function the_course_theme_layout() {
+
+	$content = load_block_template( Theme\get_layout_template() );
+
+	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Theme function.
+	echo $content;
+}
+
+/**
+ * Load the wrapper template, unless the core block template canvas is already being used.
+ *
+ * @access private
+ *
+ * @param string $template Current template.
+ *
+ * @return string The wrapper template path.
+ */
+function get_wrapper_template( $template ) {
+
+	if ( ! preg_match( '/template-canvas.php$/', $template ) ) {
+		return locate_template( 'index.php' );
+	}
+
+	return $template;
+}
+
+/**
+ * Load and render a block template file.
+ *
+ * @param string $template Template name.
+ *
+ * @return string
+ */
+function load_block_template( $template ) {
+
+	$template_path    = get_template_directory() . '/templates/' . $template . '.html';
+	$template_content = file_get_contents( $template_path );
+
+	return get_the_block_template_html( $template_content );
+}
+
+/**
+ * Render a block template.
+ * Replicates WordPress core get_the_block_template_html.
+ *
+ * @param string $template_content Block template content.
+ *
+ * @return string
+ */
+function get_the_block_template_html( $template_content ) {
+	global $wp_embed;
+	$content = $wp_embed->run_shortcode( $template_content );
+	$content = $wp_embed->autoembed( $content );
+	$content = do_blocks( $content );
+	$content = wptexturize( $content );
+	$content = wp_filter_content_tags( $content );
+	$content = str_replace( ']]>', ']]&gt;', $content );
+
+	// Wrap block template in .wp-site-blocks to allow for specific descendant styles
+	// (e.g. `.wp-site-blocks > *`).
+	return '<div class="wp-site-blocks">' . $content . '</div>';
+
+}
