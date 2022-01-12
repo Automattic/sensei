@@ -17,6 +17,11 @@
 		margin: 12px 0;
 
 		.sensei-collapsible__toggle {
+			border: unset;
+			background: unset;
+			margin-right: -10px;
+			height: 24px;
+
 			&:hover {
 				color: var(--primary-color);
 			}
@@ -30,14 +35,16 @@
 				transform: rotate(180deg);
 			}
 
-			height: 24px;
 		}
 	}
 
 	&__title {
 		flex: 1;
+		margin: 0;
+		font-weight: 400;
+		font-size: 13px;
 
-		a {
+		> * {
 			color: var(--primary-color);
 			font-weight: 600;
 			font-size: 18px;

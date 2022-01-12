@@ -1,16 +1,29 @@
-:root {
-	--primary-color: var(--sensei-course-theme-primary-color, #30968B);
-	--primary-contrast-color: var(--sensei-course-theme-button-text-color, #FFFFFF);
-	--gray: #787C82;
+
+body {
+	--primary-color: var(--wp--preset--color--primary, #30968B);
+	--primary-contrast-color: var(--wp--preset--color--primary-contrast-color, #FFFFFF);
+	--gray: var(--wp--preset--color--gray, #787C82);
+	--border-color: var(--wp--preset--color--border, #CCCCCC);
+	--bg-color: var(--wp--preset--color--background, #FFFFFF);
+	--text-color: var(--wp--preset--color--foreground, #000);
 }
 
 .sensei-course-theme__frame {
+
+	--wp--style--block-gap: 0px;
+
+	a {
+		color: var(--text-color);
+		text-decoration: none;
+	}
+
 	a:hover, a:hover * {
 		color: var(--primary-color);
 		fill: var(--primary-color);
 		cursor: pointer;
 		background: none;
 	}
+
 	button:hover {
 		cursor: pointer;
 	}
@@ -20,4 +33,9 @@
 	font-size: 13px;
 	line-height: 1.5;
 	letter-spacing: normal;
+
+	* {
+		font-family: 'Inter', sans-serif;
+	}
+
 }
