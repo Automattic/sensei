@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { ContrastChecker, PanelColorSettings } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	PanelRow,
@@ -32,28 +31,20 @@ const paginationOptions = [
 	},
 ];
 
-const onDropdownChange = ( settings, onChange ) => ( value ) => {
-	if ( value === MULTI ) {
-		onChange( {
-			...settings,
-			paginationNumber: 1,
-		} );
-	} else {
-		onChange( {
-			...settings,
-			paginationNumber: null,
-		} );
-	}
+const onDropdownChange = ( updatePagination ) => ( value ) => {
+	updatePagination( {
+		paginationNumber: value === MULTI ? 1 : null,
+	} );
 };
 
 /**
  * A component which contains a NumberControl and the 'per page' accompanying text.
  *
- * @param {Object}   props          Component props.
- * @param {Object}   props.settings Pagination settings object.
- * @param {Function} props.onChange Callback called when a setting changed.
+ * @param {Object}   props                  Component props.
+ * @param {Object}   props.settings         Pagination settings object.
+ * @param {Function} props.updatePagination Update pagination options function.
  */
-const QuestionsControl = ( { settings, onChange, ...props } ) => {
+const QuestionsControl = ( { settings, updatePagination, ...props } ) => {
 	const { paginationNumber } = settings;
 
 	return (
@@ -71,10 +62,7 @@ const QuestionsControl = ( { settings, onChange, ...props } ) => {
 				) }
 				value={ paginationNumber }
 				onChange={ ( value ) =>
-					onChange( {
-						...settings,
-						paginationNumber: value,
-					} )
+					updatePagination( { paginationNumber: value } )
 				}
 				{ ...props }
 			/>
@@ -86,18 +74,16 @@ const QuestionsControl = ( { settings, onChange, ...props } ) => {
 /**
  * Quiz sidebar settings.
  *
- * @param {Object}   props          Component props.
- * @param {Object}   props.settings Pagination settings object.
- * @param {Function} props.onChange Callback called when a setting changed.
+ * @param {Object}   props                  Component props.
+ * @param {Object}   props.settings         Pagination settings object.
+ * @param {Function} props.updatePagination Update pagination options function.
  */
-export const PaginationSidebarSettings = ( { settings, onChange } ) => {
+export const PaginationSidebarSettings = ( { settings, updatePagination } ) => {
 	const {
 		paginationNumber,
 		showProgressBar,
 		progressBarRadius,
 		progressBarHeight,
-		progressBarColor,
-		progressBarBackground,
 	} = settings;
 
 	return (
@@ -112,14 +98,14 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 						hideLabelFromVision
 						value={ paginationNumber === null ? SINGLE : MULTI }
 						options={ paginationOptions }
-						onChange={ onDropdownChange( settings, onChange ) }
+						onChange={ onDropdownChange( updatePagination ) }
 					/>
 				</PanelRow>
 				{ paginationNumber !== null && (
 					<PanelRow className="sensei-lms-quiz-block__question-count">
 						<QuestionsControl
 							settings={ settings }
-							onChange={ onChange }
+							updatePagination={ updatePagination }
 						/>
 					</PanelRow>
 				) }
@@ -134,8 +120,7 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 								) }
 								value={ progressBarRadius }
 								onChange={ ( value ) =>
-									onChange( {
-										...settings,
+									updatePagination( {
 										showProgressBar: value,
 									} )
 								}
@@ -149,8 +134,7 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 								suffix={ __( 'PX', 'sensei-lms' ) }
 								value={ progressBarRadius }
 								onChange={ ( value ) =>
-									onChange( {
-										...settings,
+									updatePagination( {
 										progressBarRadius: value,
 									} )
 								}
@@ -162,8 +146,7 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 								suffix={ __( 'PX', 'sensei-lms' ) }
 								value={ progressBarHeight }
 								onChange={ ( value ) =>
-									onChange( {
-										...settings,
+									updatePagination( {
 										progressBarHeight: value,
 									} )
 								}
@@ -172,39 +155,6 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 					</>
 				) }
 			</PanelBody>
-			<PanelColorSettings
-				title={ __( 'Color settings', 'sensei-lms' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: progressBarColor,
-						onChange: ( value ) =>
-							onChange( {
-								...settings,
-								progressBarColor: value,
-							} ),
-						label: __( 'Progress bar color', 'sensei-lms' ),
-					},
-					{
-						value: progressBarBackground,
-						onChange: ( value ) =>
-							onChange( {
-								...settings,
-								progressBarBackground: value,
-							} ),
-						label: __(
-							'Progress bar background color',
-							'sensei-lms'
-						),
-					},
-				] }
-			>
-				<ContrastChecker
-					textColor={ progressBarColor }
-					backgroundColor={ progressBarBackground }
-					isLargeText={ false }
-				/>
-			</PanelColorSettings>
 		</>
 	);
 };
@@ -212,11 +162,11 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 /**
  * Quiz toolbar settings.
  *
- * @param {Object}   props          Component props.
- * @param {Object}   props.settings Pagination settings object.
- * @param {Function} props.onChange Callback called when a setting changed.
+ * @param {Object}   props                  Component props.
+ * @param {Object}   props.settings         Pagination settings object.
+ * @param {Function} props.updatePagination Update pagination options function.
  */
-export const PaginationToolbarSettings = ( { settings, onChange } ) => {
+export const PaginationToolbarSettings = ( { settings, updatePagination } ) => {
 	const { paginationNumber } = settings;
 
 	return (
@@ -226,14 +176,14 @@ export const PaginationToolbarSettings = ( { settings, onChange } ) => {
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
 					value={ paginationNumber === null ? SINGLE : MULTI }
-					onChange={ onDropdownChange( settings, onChange ) }
+					onChange={ onDropdownChange( updatePagination ) }
 				/>
 			</Toolbar>
 			{ paginationNumber !== null && (
 				<ToolbarGroup className="sensei-lms-quiz-block__toolbar-group">
 					<QuestionsControl
 						settings={ settings }
-						onChange={ onChange }
+						updatePagination={ updatePagination }
 					/>
 				</ToolbarGroup>
 			) }

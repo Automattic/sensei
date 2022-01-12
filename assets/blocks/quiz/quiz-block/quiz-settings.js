@@ -3,7 +3,11 @@
 /**
  * WordPress dependencies
  */
-import { BlockControls, InspectorControls } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InspectorControls,
+	PanelColorSettings,
+} from '@wordpress/block-editor';
 import {
 	Button,
 	PanelBody,
@@ -57,6 +61,15 @@ const QuizSettings = ( {
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
+
+	// Update the pagination options function used for block settings.
+	const updatePagination = ( updatedPagination ) =>
+		setAttributes( {
+			options: {
+				...options,
+				pagination: { ...pagination, ...updatedPagination },
+			},
+		} );
 
 	const openQuizSettings = useOpenQuizSettings( clientId );
 
@@ -226,13 +239,36 @@ const QuizSettings = ( {
 				</PanelBody>
 				<PaginationSidebarSettings
 					settings={ pagination }
-					onChange={ createChangeHandler( 'pagination' ) }
+					updatePagination={ updatePagination }
+				/>
+				<PanelColorSettings
+					title={ __( 'Color settings', 'sensei-lms' ) }
+					initialOpen={ false }
+					colorSettings={ [
+						{
+							value: pagination.progressBarColor,
+							onChange: ( value ) =>
+								updatePagination( { progressBarColor: value } ),
+							label: __( 'Progress bar color', 'sensei-lms' ),
+						},
+						{
+							value: pagination.progressBarBackground,
+							onChange: ( value ) =>
+								updatePagination( {
+									progressBarBackground: value,
+								} ),
+							label: __(
+								'Progress bar background color',
+								'sensei-lms'
+							),
+						},
+					] }
 				/>
 			</InspectorControls>
 			<BlockControls>
 				<PaginationToolbarSettings
 					settings={ pagination }
-					onChange={ createChangeHandler( 'pagination' ) }
+					onChange={ updatePagination }
 				/>
 			</BlockControls>
 		</>
