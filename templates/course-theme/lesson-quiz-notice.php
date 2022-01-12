@@ -57,7 +57,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notice_actions_map' ) ) {
 				<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme-lesson-quiz-notice__action sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
 					<?php echo wp_kses_post( $action['label'] ); ?>
 					<?php
-						// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returning svg only.
+						// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 						echo Sensei()->assets->get_icon( 'chevron-right', 'sensei-course-theme-lesson-quiz-notice__link-chevron' );
 					?>
 				</a>
