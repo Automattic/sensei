@@ -184,19 +184,15 @@ class Sensei_Course_Navigation_Block {
 			$collapsed = 'collapsed';
 		}
 
-		$collapse_toggle = '<button type="button" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
-				' . Sensei()->assets->get_icon( 'chevron-up' ) . '
-				<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
-			</button>';
-
 		return '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 				<header class="sensei-lms-course-navigation-module__header">
-					<h2 class="sensei-lms-course-navigation-module__title">
-						<a href="' . esc_url( $module_url ) . '">' . $title . '</a>
-					</h2>
-					' . $collapse_toggle .
-			'</header>
+					<button type="button" class="sensei-collapsible__toggle ' . $collapsed . '">
+						<h2 class="sensei-lms-course-navigation-module__title">' . $title . '</h2>
+						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
+						<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
+					</button>
+				</header>
 				<div class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
 					' . $lessons_html . '
 				</div>
