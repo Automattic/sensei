@@ -139,7 +139,15 @@
 		)
 		.forEach( initVimeoPlayer );
 
+	const extractVideoPressIdFromUrl = ( url ) => {
+		const urlWithoutQuery = url.split( '?' )[ 0 ];
+		const parts = urlWithoutQuery.split( '/' );
+		return parts[ parts.length - 1 ];
+	};
+
 	const initVideoPressPlayer = ( iframe ) => {
+		const videoId = extractVideoPressIdFromUrl( iframe.src );
+
 		iframe.addEventListener( 'load', () => {
 			// eslint-disable-next-line @wordpress/no-global-event-listener
 			window.addEventListener(
@@ -148,7 +156,10 @@
 					if ( event.source !== iframe.contentWindow ) {
 						return;
 					}
-					if ( event.data.event === 'ended' ) {
+					if (
+						event.data.event === 'ended' &&
+						event.data.id === videoId
+					) {
 						onEnded();
 					}
 				},
