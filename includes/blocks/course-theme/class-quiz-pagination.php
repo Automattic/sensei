@@ -55,6 +55,10 @@ class Quiz_Pagination {
 		}
 		$pagination = ob_get_clean();
 
+		if ( ! $pagination ) {
+			return '';
+		}
+
 		return ( "
 			<form method='POST' enctype='multipart/form-data'>
 				{$pagination}
