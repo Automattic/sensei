@@ -8,10 +8,8 @@ import { SelectControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import useCourseMeta from '../../react-hooks/use-course-meta';
-
-const SENSEI_THEME = 'sensei-theme';
-const WORDPRESS_THEME = 'wordpress-theme';
+import useCourseMeta from '../../../react-hooks/use-course-meta';
+import { SENSEI_THEME, WORDPRESS_THEME } from './constants';
 
 /**
  * Course Theme Sidebar component.
