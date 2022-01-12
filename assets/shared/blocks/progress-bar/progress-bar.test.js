@@ -12,7 +12,7 @@ import ProgressBar from './index';
 describe( '<ProgressBar />', () => {
 	it( 'Should render the numbers and progress bar correctly', () => {
 		const { queryByText, queryByRole, container } = render(
-			<ProgressBar lessonsCount={ 10 } completedCount={ 5 } />
+			<ProgressBar totalCount={ 10 } completedCount={ 5 } />
 		);
 
 		const completedText = container.querySelector(
@@ -31,7 +31,7 @@ describe( '<ProgressBar />', () => {
 	it( 'Should render without the completed percentage', () => {
 		const { queryByText } = render(
 			<ProgressBar
-				lessonsCount={ 10 }
+				totalCount={ 10 }
 				completedCount={ 5 }
 				hidePercentage
 			/>
