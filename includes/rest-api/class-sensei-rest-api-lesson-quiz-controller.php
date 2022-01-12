@@ -360,8 +360,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$pagination = [
 			'pagination_number'       => null,
 			'show_progress_bar'       => false,
-			'progress_bar_radius'     => 5,
-			'progress_bar_height'     => 5,
+			'progress_bar_radius'     => 6,
+			'progress_bar_height'     => 12,
 			'progress_bar_color'      => null,
 			'progress_bar_background' => null,
 		];
@@ -502,12 +502,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 								'progress_bar_radius'     => [
 									'type'        => 'integer',
 									'description' => 'Progress bar radius',
-									'default'     => 5,
+									'default'     => 6,
 								],
 								'progress_bar_height'     => [
 									'type'        => 'integer',
 									'description' => 'Progress bar height',
-									'default'     => 5,
+									'default'     => 12,
 								],
 								'progress_bar_background' => [
 									'type'        => [ 'string', 'null' ],
