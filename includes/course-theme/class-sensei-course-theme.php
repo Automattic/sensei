@@ -15,7 +15,7 @@ use \Sensei\Blocks\Course_Theme;
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
- * @since 3.13.4
+ * @since 3.15.0
  */
 class Sensei_Course_Theme {
 	/**
@@ -68,8 +68,11 @@ class Sensei_Course_Theme {
 
 		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
+		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
+		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 
 	}
+
 
 	/**
 	 * Is the theme active for the current request.
@@ -77,7 +80,7 @@ class Sensei_Course_Theme {
 	 * @return bool
 	 */
 	public function is_active() {
-		return get_query_var( self::QUERY_VAR );
+		return self::THEME_NAME === get_stylesheet();
 	}
 
 	/**
@@ -119,15 +122,16 @@ class Sensei_Course_Theme {
 	/**
 	 * Load a bundled theme for the request.
 	 */
-	private function override_theme() {
+	public function override_theme() {
 
 		add_filter( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
-		add_filter( 'template', [ $this, 'theme_template' ] );
-		add_filter( 'stylesheet', [ $this, 'theme_stylesheet' ] );
+		add_filter( 'pre_option_stylesheet_root', [ $this, 'get_plugin_themes_root' ] );
+		add_filter( 'pre_option_template_root', [ $this, 'get_plugin_themes_root' ] );
+		add_filter( 'pre_option_template', [ $this, 'theme_template' ] );
+		add_filter( 'pre_option_stylesheet', [ $this, 'theme_stylesheet' ] );
 		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
-		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
@@ -204,18 +208,6 @@ class Sensei_Course_Theme {
 	public function get_course_theme_root() {
 		return $this->get_plugin_themes_root() . '/' . self::THEME_NAME;
 	}
-
-	/**
-	 * Get the wrapper template.
-	 *
-	 * @access private
-	 *
-	 * @return string The wrapper template path.
-	 */
-	public function get_wrapper_template() {
-		return locate_template( 'index.php' );
-	}
-
 
 	/**
 	 * Add Sensei theme body class.
