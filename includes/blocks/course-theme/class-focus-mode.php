@@ -42,7 +42,10 @@ class Focus_Mode {
 	 */
 	public function render_focus_mode_toggle( array $attributes = [] ): string {
 
-		$wrapper_attributes = get_block_wrapper_attributes();
+		$wrapper_attributes = '';
+		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
+			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
+		}
 
 		$label_enable  = __( 'Collapse', 'sensei-lms' );
 		$label_disable = __( 'Expand', 'sensei-lms' );

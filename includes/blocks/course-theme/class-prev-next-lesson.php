@@ -39,6 +39,6 @@ class Prev_Next_Lesson {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes, string $content ) : string {
-		return $content;
+		return do_blocks('<!-- wp:sensei-lms/course-theme-prev-lesson /--><!-- wp:sensei-lms/course-theme-next-lesson /-->');
 	}
 }

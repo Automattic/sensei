@@ -182,9 +182,8 @@ class Sensei_Course_Navigation_Block {
 			$collapsed = 'collapsed';
 		}
 
-		$collapse_toggle = '<button type="button" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
+		$collapse_toggle = '<button type="button" aria-label="' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
 				' . Sensei()->assets->get_icon( 'chevron-up' ) . '
-				<span class="screen-reader-text">' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '</span>
 			</button>';
 
 		return '
