@@ -174,7 +174,9 @@ class Sensei_Course_Navigation_Block {
 		$summary_lessons = _n( '%d lesson', '%d lessons', $lesson_count, 'sensei-lms' );
 		// Translators: placeholder is number of quizzes.
 		$summary_quizzes = _n( '%d quiz', '%d quizzes', $quiz_count, 'sensei-lms' );
-		$summary         = sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
+		$summary         = 0 === $quiz_count
+			? sprintf( $summary_lessons, $lesson_count )
+			: sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
 
 		$classes   = [ 'sensei-lms-course-navigation-module sensei-collapsible' ];
 		$collapsed = '';
