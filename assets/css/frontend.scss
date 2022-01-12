@@ -371,6 +371,9 @@ a.sensei-certificate-link {
   }
 }
 
+/**
+ * Quiz Pagination
+ */
 #sensei-quiz-pagination {
 	display: flex;
 	flex-flow: column wrap;
@@ -398,63 +401,23 @@ a.sensei-certificate-link {
 			padding: 0;
 			list-style: none;
 
-			li, span {
+			li {
+				display: flex;
 				margin: 0;
 				padding: 0;
 			}
-		}
-	}
 
-	.sensei-quiz-pagination__actions {
-		display: flex;
-		order: 1;
-
-		@media only screen and (min-width: $tablet-breakpoint) {
-			order: 0;
-		}
-	}
-
-	.sensei-quiz-pagination__action {
-		display: inline-flex;
-
-		&:not(:first-child) {
-			margin-left: 0.5em;
-			padding-left: 0.5em;
-			border-left: 2px solid;
-		}
-
-		button {
-			margin: 0;
-			padding: 0;
-			border: 0;
-			color: inherit;
-			background-color: transparent;
-			text-decoration: underline;
-			text-transform: none;
-			font-weight: normal;
-			cursor: pointer;
-
-			&:hover {
-				color: inherit;
-				background-color: transparent;
-				text-decoration: none;
+			.page-numbers {
+				@include button-link;
 			}
-		}
-	}
 
-	.sensei-quiz-pagination__nav {
-		display: flex;
-		align-items: center;
+			span.page-numbers {
+				text-decoration: none;
+				cursor: inherit;
 
-		@media only screen and (min-width: $tablet-breakpoint) {
-			margin-left: auto;
-		}
-
-		.wp-block-buttons {
-			gap: 0.5em;
-
-			.wp-block-button {
-				margin: 0;
+				&.current {
+					font-weight: 500;
+				}
 			}
 		}
 	}
@@ -475,6 +438,54 @@ a.sensei-certificate-link {
 		}
 	}
 }
+
+/**
+ * Quiz Actions
+ */
+#sensei-quiz-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5em;
+
+	@media only screen and (min-width: $tablet-breakpoint) {
+		flex-direction: row;
+		margin-left: auto;
+	}
+
+	.sensei-quiz-action {
+		margin: 0;
+	}
+
+	.sensei-quiz-actions-primary {
+		display: flex;
+		gap: 0.5em;
+	}
+
+	.sensei-quiz-actions-secondary {
+		display: flex;
+		order: 1;
+
+		@media only screen and (min-width: $tablet-breakpoint) {
+			order: 0;
+		}
+
+		.sensei-quiz-action {
+			display: flex;
+
+			&:not(:first-child) {
+				margin-left: 0.5em;
+				padding-left: 0.5em;
+				border-left: 2px solid;
+			}
+
+			button {
+				@include button-link;
+			}
+		}
+	}
+}
+
 
 .quiz:not(.quiz-blocks), .lesson {
   button.quiz-submit  {

@@ -11,49 +11,35 @@
 }
 
 .sensei-lms-course-navigation-module {
-	&__header {
+	.sensei-collapsible__toggle {
 		display: flex;
 		align-items: flex-start;
+		width: 100%;
 		margin: 12px 0;
+		border: unset;
+		background: unset;
 
-		.sensei-collapsible__toggle {
-			border: unset;
-			background: unset;
-			margin-right: -10px;
+		&:hover {
+			color: var(--primary-color);
+			text-decoration: underline;
+		}
+
+		.sensei-lms-course-navigation-module__collapsible-icon {
+			width: 24px;
 			height: 24px;
+		}
 
-			&:hover {
-				color: var(--primary-color);
-			}
-			svg {
-				fill: currentColor;
-				width: 24px;
-				height: 24px;
-			}
-
-			&.collapsed {
-				transform: rotate(180deg);
-			}
-
+		&.collapsed .sensei-lms-course-navigation-module__collapsible-icon {
+			transform: rotate(180deg);
 		}
 	}
 
 	&__title {
 		flex: 1;
-		margin: 0;
-		font-weight: 400;
-		font-size: 13px;
-
-		> * {
-			color: var(--primary-color);
-			font-weight: 600;
-			font-size: 18px;
-			line-height: 22px;
-
-			&:hover {
-				text-decoration: underline;
-			}
-		}
+		color: var(--primary-color);
+		font-weight: 600;
+		font-size: 18px;
+		line-height: 22px;
 	}
 
 	&__summary {

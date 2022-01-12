@@ -174,7 +174,9 @@ class Sensei_Course_Navigation_Block {
 		$summary_lessons = _n( '%d lesson', '%d lessons', $lesson_count, 'sensei-lms' );
 		// Translators: placeholder is number of quizzes.
 		$summary_quizzes = _n( '%d quiz', '%d quizzes', $quiz_count, 'sensei-lms' );
-		$summary         = sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
+		$summary         = 0 === $quiz_count
+			? sprintf( $summary_lessons, $lesson_count )
+			: sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
 
 		$classes   = [ 'sensei-lms-course-navigation-module sensei-collapsible' ];
 		$collapsed = '';
@@ -182,18 +184,14 @@ class Sensei_Course_Navigation_Block {
 			$collapsed = 'collapsed';
 		}
 
-		$collapse_toggle = '<button type="button" aria-label="' . esc_html__( 'Toggle module content', 'sensei-lms' ) . '" class="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ' . $collapsed . '">
-				' . Sensei()->assets->get_icon( 'chevron-up' ) . '
-			</button>';
-
 		return '
 			<section ' . Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 				<header class="sensei-lms-course-navigation-module__header">
-					<h2 class="sensei-lms-course-navigation-module__title">
-						<a href="' . esc_url( $module_url ) . '">' . $title . '</a>
-					</h2>
-					' . $collapse_toggle .
-			'</header>
+					<button type="button" class="sensei-collapsible__toggle ' . $collapsed . '">
+						<h2 class="sensei-lms-course-navigation-module__title">' . $title . '</h2>
+						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
+					</button>
+				</header>
 				<div class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
 					' . $lessons_html . '
 				</div>

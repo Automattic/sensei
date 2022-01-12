@@ -73,7 +73,8 @@ class Sensei_Course_Theme_Option {
 		new \Sensei\Blocks\Course_Theme();
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
-		add_action( 'template_redirect', [ $this, 'maybe_redirect_to_course_theme' ] );
+		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
+		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
 	}
 
 	/**
@@ -91,18 +92,33 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
-	 * Use Sensei Theme template if the theme is set for the current page.
+	 * Ensure the learning mode prefix is set if required or removed
+	 * if not allowed.
 	 *
 	 * @access private
 	 */
-	public function maybe_redirect_to_course_theme() {
-
-		if ( Sensei_Course_Theme::instance()->is_active() || ! $this->should_use_sensei_theme() ) {
+	public function ensure_learning_mode_url_prefix() {
+		if (
+			is_admin() ||
+			( Sensei_Course_Theme::instance()->is_active() && $this->should_use_sensei_theme() ) ||
+			( ! Sensei_Course_Theme::instance()->is_active() && ! $this->should_use_sensei_theme() )
+		) {
 			return;
 		}
 
-		$url = str_replace( trailingslashit( home_url() ), '', get_permalink() );
-		wp_safe_redirect( Sensei_Course_Theme::instance()->get_theme_redirect_url( $url ) );
+		$url = get_permalink();
+		if ( $this->should_use_sensei_theme() ) {
+			$url = str_replace( trailingslashit( home_url() ), '', $url );
+			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );
+		}
+
+		wp_safe_redirect( $url );
+
+		/**
+		 * Need to exit, otherwise unwanted hooks might run.
+		 * See: https://developer.wordpress.org/reference/functions/wp_safe_redirect/#description
+		 */
+		exit;
 	}
 
 	/**
@@ -143,6 +159,39 @@ class Sensei_Course_Theme_Option {
 		$theme = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 
 		return self::SENSEI_THEME === $theme;
+	}
+
+	/**
+	 * Adds a course theme notice.
+	 *
+	 * @access private
+	 *
+	 * @param array $notices Notices list.
+	 *
+	 * @return array Notices including the course theme notice.
+	 */
+	public function add_course_theme_notice( array $notices ) {
+		$notices['sensei-course-theme'] = [
+			'type'       => 'user',
+			'icon'       => 'sensei',
+			'heading'    => __( 'Sensei’s new learning mode is here', 'sensei-lms' ),
+			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
+			'actions'    => [
+				[
+					'label'  => __( 'Learn more', 'sensei-lms' ),
+					'url'    => 'https://senseilms.com/wordpress-course-theme',
+					'target' => '_blank',
+				],
+			],
+			'conditions' => [
+				[
+					'type'    => 'screens',
+					'screens' => [ 'sensei*' ],
+				],
+			],
+		];
+
+		return $notices;
 	}
 
 	/**
