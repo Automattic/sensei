@@ -12,15 +12,16 @@ import { sprintf, __ } from '@wordpress/i18n';
  * Course progress component.
  *
  * @param {Object}  props
- * @param {number}  props.totalCount           Total count for progress bar.
- * @param {number}  props.completedCount       Number of completed.
- * @param {boolean} props.hidePercentage       Hide completed percentage.
- * @param {Object}  props.wrapperAttributes    Wrapper HTML attributes.
- * @param {Object}  props.barWrapperAttributes Bar wrapper HTML attributes.
- * @param {string}  props.countersClassName    Counters class name.
- * @param {Object}  props.barAttributes        Bar HTML attributes.
- * @param {boolean} props.hideDefault          Hide default settings for edit view only.
- * @param {boolean} props.progressBarLabel     Progress bar label.
+ * @param {number}  props.totalCount              Total count for progress bar.
+ * @param {number}  props.completedCount          Number of completed.
+ * @param {boolean} props.hidePercentage          Hide completed percentage.
+ * @param {Object}  props.wrapperAttributes       Wrapper HTML attributes.
+ * @param {Object}  props.barWrapperAttributes    Bar wrapper HTML attributes.
+ * @param {string}  props.countersClassName       Counters class name.
+ * @param {string}  props.completedCountClassName Completed count class name.
+ * @param {Object}  props.barAttributes           Bar HTML attributes.
+ * @param {boolean} props.hideDefault             Hide default settings for edit view only.
+ * @param {boolean} props.progressBarLabel        Progress bar label.
  */
 const ProgressBar = ( {
 	totalCount,
@@ -30,6 +31,7 @@ const ProgressBar = ( {
 	barWrapperAttributes,
 	barAttributes,
 	countersClassName,
+	completedCountClassName,
 	hideDefault,
 	progressBarLabel,
 } ) => {
@@ -48,12 +50,13 @@ const ProgressBar = ( {
 				<div
 					className={ classnames(
 						'sensei-progress-bar__completed',
-						'wp-block-sensei-lms-progress-heading__completed'
+						'wp-block-sensei-lms-progress-heading__completed',
+						completedCountClassName
 					) }
 				>
 					{ sprintf(
 						// translators: Placeholder %1$d is the completed progress count, %2$d is the total count and %3$s is the label for progress bar.
-						__( '%1$d of %2$d %3$s complete ', 'sensei-lms' ),
+						__( '%1$d of %2$d %3$s complete', 'sensei-lms' ),
 						completedCount,
 						totalCount,
 						progressBarLabel ? progressBarLabel : ''

@@ -87,6 +87,7 @@ export const CourseProgressEdit = ( props ) => {
 				barAttributes={ barAttributes }
 				countersClassName="wp-block-sensei-lms-progress-heading"
 				progressBarLabel={ progressBarLabel }
+				completedCountClassName="wp-block-sensei-lms-progress-heading__completed"
 			/>
 			<ProgressBarSettings
 				borderRadius={ borderRadius }
