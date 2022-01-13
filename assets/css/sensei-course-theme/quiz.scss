@@ -61,9 +61,17 @@
 			box-shadow: 2px 10px 30px 5px rgba(#E2E4E7, 0.5);
 		}
 
+		#sensei-quiz-actions {
+			flex-direction: row-reverse;
+		}
+
 		#sensei-quiz-pagination {
 			flex: 1;
 			margin: 0;
+
+			#sensei-quiz-actions {
+				flex-direction: row;
+			}
 		}
 	}
 }
