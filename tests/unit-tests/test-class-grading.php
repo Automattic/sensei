@@ -66,10 +66,45 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			}
 		}
 
-		$this->assertTrue(
-			in_array( 'Grading <span class="awaiting-mod">2</span>', $grading_menu, true ),
-			'Should count 2 available updates'
-		);
+		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', $grading_menu, 'Should count 2 available updates' );
+	}
+
+	/**
+	 * Tests that ungraded quiz count is not displayed in the Grading menu.
+	 *
+	 * @covers Sensei_Grading::grading_admin_menu
+	 */
+	public function testGradingAdminMenuTitleWithoutIndicator() {
+		$user_id    = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many( 5 );
+
+		foreach ( $lesson_ids as $lesson_id ) {
+			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+		}
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'in-progress' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'complete' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+
+		$this->login_as_admin();
+
+		Sensei()->grading->grading_admin_menu();
+
+		global $submenu;
+
+		$grading_menu = '';
+
+		foreach ( $submenu['edit.php?post_type=course'] as $submenu_item ) {
+			if ( in_array( 'Grading', $submenu_item, true ) ) {
+				$grading_menu = $submenu_item;
+				break;
+			}
+		}
+
+		$this->assertEquals( 'Grading', $grading_menu[0], 'Should not have indicator when there are no ungraded quizzes' );
 	}
 
 	/**
