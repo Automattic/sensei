@@ -37,7 +37,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public function testGradingAdminMenuTitleWithIndicator() {
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
-		$lesson_ids = $this->lesson->create_many( 5 );
+		$lesson_ids = $this->factory->lesson->create_many( 5 );
 
 		foreach ( $lesson_ids as $lesson_id ) {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id );
