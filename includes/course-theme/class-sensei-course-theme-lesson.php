@@ -126,9 +126,17 @@ class Sensei_Course_Theme_Lesson {
 			return false;
 		}
 
-		$filtered_user_answers = array_filter(
+		// Get first unanswered question and filter answers (skip the empty questions).
+		$answers_index             = 0;
+		$first_unanswered_question = null;
+		$filtered_user_answers     = array_filter(
 			$user_answers,
-			function( $answer ) {
+			function( $answer ) use ( &$answers_index, &$first_unanswered_question ) {
+				if ( '' === $answer && null === $first_unanswered_question ) {
+					$first_unanswered_question = $answers_index;
+				}
+				$answers_index++;
+
 				return '' !== $answer;
 			}
 		);
@@ -136,6 +144,17 @@ class Sensei_Course_Theme_Lesson {
 		$answered_questions = count( $filtered_user_answers );
 		$total_questions    = count( Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' ) );
 		$continue_link      = get_permalink( $quiz_id );
+
+		// Set pagination to the continue link, if needed.
+		$pagination_settings = json_decode(
+			get_post_meta( $quiz_id, '_pagination', true ),
+			true
+		);
+		if ( ! empty( $pagination_settings['pagination_number'] ) && null !== $first_unanswered_question ) {
+			$questions_per_page = (int) $pagination_settings['pagination_number'];
+			$unanswered_page    = ceil( ( $first_unanswered_question + 1 ) / $questions_per_page );
+			$continue_link      = add_query_arg( 'quiz-page', $unanswered_page, $continue_link );
+		}
 
 		$actions = [
 			[
