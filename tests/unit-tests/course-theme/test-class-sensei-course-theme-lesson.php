@@ -34,6 +34,38 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Testing quiz progress notice.
+	 */
+	public function testQuizProgressNotice() {
+		$lesson_id = $this->factory->get_lesson_with_quiz_and_questions(); // It creates a quiz with 3 questions.
+		$lesson    = get_post( $lesson_id );
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+
+		$this->login_as_student();
+		$GLOBALS['post'] = $lesson;
+
+		$user_id = get_current_user_id();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		// Create the sample data to save.
+		$user_quiz_answers = [
+			$questions[0]->ID => '0',
+			$questions[1]->ID => 'false',
+			$questions[2]->ID => '',
+		];
+		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
+
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
+
+		$this->assertContains( 'Lesson quiz in progress', $html, 'Should return quiz progress notice' );
+		$this->assertContains( '2 of 3', $html, 'Should return quiz progress notice' );
+	}
+
+	/**
 	 * Testing quiz ungraded notice.
 	 */
 	public function testQuizUngradedNotice() {
