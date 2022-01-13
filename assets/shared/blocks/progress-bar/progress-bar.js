@@ -41,10 +41,16 @@ const ProgressBar = ( {
 			<section
 				className={ classnames(
 					'sensei-progress-bar__heading',
+					'wp-block-sensei-lms-progress-heading',
 					countersClassName
 				) }
 			>
-				<div>
+				<div
+					className={ classnames(
+						'sensei-progress-bar__completed',
+						'wp-block-sensei-lms-progress-heading__completed'
+					) }
+				>
 					{ sprintf(
 						// translators: Placeholder %1$d is the completed progress count, %2$d is the total count and %3$s is the label for progress bar.
 						__( '%1$d of %2$d %3$s complete ', 'sensei-lms' ),
@@ -65,6 +71,7 @@ const ProgressBar = ( {
 					...barWrapperAttributes,
 					className: classnames(
 						'sensei-progress-bar__bar',
+						'wp-block-sensei-lms-course-progress',
 						barWrapperAttributes?.className
 					),
 				} }

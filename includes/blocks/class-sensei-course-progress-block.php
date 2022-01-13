@@ -93,7 +93,7 @@ class Sensei_Course_Progress_Block {
 		return '
 			<div ' . Sensei_Block_Helpers::render_style_attributes( $class_names, $text_css ) . '>
 				<section class="wp-block-sensei-lms-progress-heading sensei-progress-bar__heading">
-					<div>' . $progress_bar_text . '</div>
+					<div class="wp-block-sensei-lms-progress-heading__completed sensei-progress-bar__completed">' . $progress_bar_text . '</div>
 				</section>
 				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-progress', 'sensei-progress-bar__bar' ], $bar_background_css ) . '>
 					<div ' . Sensei_Block_Helpers::render_style_attributes( [], $bar_css ) . '></div>
