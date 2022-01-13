@@ -28,7 +28,8 @@ class Quiz_Content {
 		remove_action( 'sensei_single_quiz_questions_before', [ Sensei()->post_types->messages, 'send_message_link' ], 10 );
 		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'action_buttons' ], 10 );
 
-		\Sensei_Quiz::start_quiz_questions_loop();
+		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
+		do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 
 		if ( ! sensei_can_user_view_lesson() ) {
 			return '';
