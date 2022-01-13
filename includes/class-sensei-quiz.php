@@ -1696,6 +1696,8 @@ class Sensei_Quiz {
 			return;
 		}
 
+		$button_inline_styles = self::get_button_inline_styles();
+
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 		?>
 
@@ -1703,7 +1705,12 @@ class Sensei_Quiz {
 			<?php if ( ! $is_quiz_completed ) : ?>
 				<div class="sensei-quiz-actions-primary wp-block-buttons">
 					<div class="sensei-quiz-action wp-block-button">
-						<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
+						<button
+							type="submit"
+							name="quiz_complete"
+							class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"
+							style="<?php echo esc_attr( $button_inline_styles ); ?>"
+						>
 							<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
 						</button>
 
@@ -1735,6 +1742,36 @@ class Sensei_Quiz {
 			</div>
 		</div>
 		<?php
+
+	}
+
+	/**
+	 * Get the quiz button inline styles.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int|null $quiz_id (Optional) The quiz post ID. Defaults to the current post ID.
+	 *
+	 * @return string
+	 */
+	public static function get_button_inline_styles( int $quiz_id = null ): string {
+
+		$quiz_id = $quiz_id ? $quiz_id : get_the_ID();
+
+		$button_text_color       = get_post_meta( $quiz_id, '_button_text_color', true );
+		$button_background_color = get_post_meta( $quiz_id, '_button_background_color', true );
+
+		$styles = [];
+
+		if ( $button_text_color ) {
+			$styles[] = sprintf( 'color: %s', $button_text_color );
+		}
+
+		if ( $button_background_color ) {
+			$styles[] = sprintf( 'background-color: %s', $button_background_color );
+		}
+
+		return implode( '; ', $styles );
 
 	}
 

@@ -56,6 +56,8 @@ const QuizSettings = ( {
 		failedShowAnswerFeedback,
 		failedShowCorrectAnswers,
 		failedIndicateIncorrect,
+		buttonTextColor,
+		buttonBackgroundColor,
 		pagination,
 	} = options;
 
@@ -246,6 +248,21 @@ const QuizSettings = ( {
 					initialOpen={ false }
 					colorSettings={ [
 						{
+							value: buttonTextColor,
+							onChange: createChangeHandler( 'buttonTextColor' ),
+							label: __( 'Button text color', 'sensei-lms' ),
+						},
+						{
+							value: buttonBackgroundColor,
+							onChange: createChangeHandler(
+								'buttonBackgroundColor'
+							),
+							label: __(
+								'Button background color',
+								'sensei-lms'
+							),
+						},
+						{
 							value: pagination.progressBarColor,
 							onChange: ( value ) =>
 								updatePagination( { progressBarColor: value } ),
@@ -268,7 +285,7 @@ const QuizSettings = ( {
 			<BlockControls>
 				<PaginationToolbarSettings
 					settings={ pagination }
-					onChange={ updatePagination }
+					updatePagination={ updatePagination }
 				/>
 			</BlockControls>
 		</>

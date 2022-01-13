@@ -291,6 +291,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			}
 		}
 
+		$meta_input['_button_text_color']       = $quiz_options['button_text_color'] ?? null;
+		$meta_input['_button_background_color'] = $quiz_options['button_background_color'] ?? null;
+
 		if ( isset( $quiz_options['pagination'] ) ) {
 			$meta_input['_pagination'] = wp_json_encode( $quiz_options['pagination'] );
 		}
@@ -381,6 +384,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
 				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
 				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
+				'button_text_color'           => ! empty( $post_meta['_button_text_color'][0] ) ? $post_meta['_button_text_color'][0] : null,
+				'button_background_color'     => ! empty( $post_meta['_button_background_color'][0] ) ? $post_meta['_button_background_color'][0] : null,
 				'pagination'                  => $pagination,
 			],
 			'questions'     => $this->get_quiz_questions( $quiz ),
@@ -483,6 +488,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 						'failed_show_answer_feedback' => [
 							'type'        => [ 'boolean', 'null' ],
 							'description' => 'Show answer feedback text',
+							'default'     => null,
+						],
+						'button_text_color'           => [
+							'type'        => [ 'string', 'null' ],
+							'description' => 'Button text color',
+							'default'     => null,
+						],
+						'button_background_color'     => [
+							'type'        => [ 'string', 'null' ],
+							'description' => 'Button background color',
 							'default'     => null,
 						],
 						'pagination'                  => [
