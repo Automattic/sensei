@@ -59,7 +59,7 @@ class Sensei_Course_Theme_Lesson {
 	 */
 	private function maybe_add_quiz_results_notice() {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$user_id   = wp_get_current_user()->ID;
+		$user_id   = get_current_user_id();
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
 			return;
