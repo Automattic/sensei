@@ -175,7 +175,7 @@
 			document.addEventListener(
 				'visibilitychange',
 				() => {
-					if ( document.hidden ) {
+					if ( courseVideoAutoPause && document.hidden ) {
 						iframe.contentWindow.postMessage(
 							{
 								event: 'videopress_action_pause',
