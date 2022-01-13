@@ -60,7 +60,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$grading_menu = '';
 
 		foreach ( $submenu['edit.php?post_type=course'] as $submenu_item ) {
-			if ( in_array( 'Grading', $submenu_item ) ) {
+			if ( in_array( 'Grading', $submenu_item, true ) ) {
 				$grading_menu = $submenu_item;
 				break;
 			}
