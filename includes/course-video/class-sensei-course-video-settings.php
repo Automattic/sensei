@@ -3,7 +3,7 @@
  * File containing the Sensei_Course_Progression_Settings class.
  *
  * @package sensei-lms
- * @since 4.0.0
+ * @since 3.15.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Adds the course progression settings to the course.
  *
- * @since 4.0.0
+ * @since 3.15.0
  */
 class Sensei_Course_Video_Settings {
 
