@@ -53,7 +53,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 
-		Sensei_Grading::instance()->grading_admin_menu();
+		Sensei()->grading->grading_admin_menu();
 
 		global $submenu;
 
