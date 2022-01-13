@@ -57,6 +57,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		global $submenu;
 
+		print_r( $submenu, true );
+
 		$this->assertTrue(
 			in_array( 'Grading <span class="awaiting-mod">2</span>', $submenu['edit.php?post_type=course'][20], true ),
 			'Should count 2 available updates'
