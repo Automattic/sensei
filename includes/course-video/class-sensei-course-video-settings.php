@@ -60,37 +60,14 @@ class Sensei_Course_Video_Settings {
 
 	/**
 	 * Initializes the Video-Based Course Progression.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
-
-		if ( ! $sensei->feature_flags->is_enabled( 'video_based_course_progression' ) ) {
-			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
-			return;
-		}
-
+	public function init() {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
 
 		Sensei_Course_Video_Blocks_Youtube_Extension::instance()->init();
 		Sensei_Course_Video_Blocks_Video_Extension::instance()->init();
 		Sensei_Course_Video_Blocks_Vimeo_Extension::instance()->init();
-	}
-
-	/**
-	 * Add feature flag inline script.
-	 *
-	 * @access private
-	 */
-	public function add_feature_flag_inline_script() {
-		$screen  = get_current_screen();
-		$enabled = Sensei()->feature_flags->is_enabled( 'video_based_course_progression' ) ? 'true' : 'false';
-
-		if ( 'course' === $screen->id ) {
-			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiVideoCourseProgressionFeatureFlagEnabled = ' . $enabled, 'before' );
-		}
 	}
 
 	/**
