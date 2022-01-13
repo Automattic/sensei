@@ -30,6 +30,38 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that ungraded quiz count is displayed in the Grading menu.
+	 *
+	 * @covers Sensei_Grading::grading_admin_menu
+	 */
+	public function testGradingAdminMenuTitleWithIndicator() {
+		$user_id    = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->lesson->create_many( 5 );
+
+		foreach ( $lesson_ids as $lesson_id ) {
+			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+		}
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'ungraded' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+
+		$this->login_as_admin();
+
+		Sensei_Grading::instance()->grading_admin_menu();
+
+		global $submenu;
+
+		$this->assertTrue(
+			in_array( 'Grading <span class="awaiting-mod">2</span>', $submenu['edit.php?post_type=course'][20], true ),
+			'Should count 2 available updates'
+		);
+	}
+
+	/**
 	 * Data source for ::testGradeGapFillQuestionRegEx
 	 *
 	 * @return array
