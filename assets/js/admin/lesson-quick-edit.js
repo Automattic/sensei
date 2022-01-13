@@ -20,9 +20,32 @@
 			var editRow = $( '#edit-' + postId );
 			var senseiFieldValues = window[ 'sensei_quick_edit_' + postId ];
 
-			//load the relod function on the save button click
+			//on the save button click, set senseiFieldValues to the values user entered in the form fields
 			editRow.find( '.save' ).on( 'click', function () {
-				setTimeout( () => location.reload(), 2000 );
+				senseiFieldValues.lesson_course = $(
+					'#sensei-edit-lesson-course'
+				).val();
+				senseiFieldValues.lesson_complexity = $(
+					'#sensei-edit-lesson-complexity'
+				).val();
+				senseiFieldValues.pass_required = $(
+					'#sensei-edit-lesson-pass-required'
+				).val();
+				senseiFieldValues.quiz_passmark = $(
+					'#sensei-edit-quiz-pass-percentage'
+				).val();
+				senseiFieldValues.enable_quiz_reset = $(
+					'#sensei-edit-enable-quiz-reset'
+				).val();
+				senseiFieldValues.show_questions = $(
+					'#sensei-edit-show-questions'
+				).val();
+				senseiFieldValues.random_question_order = $(
+					'#sensei-edit-random-question-order'
+				).val();
+				senseiFieldValues.quiz_grade_type = $(
+					'#sensei-edit-quiz-grade-type'
+				).val();
 			} );
 
 			// populate the data
@@ -72,7 +95,10 @@
 				editRow
 			).attr( 'selected', true );
 
-			if ( 'auto' === senseiFieldValues.quiz_grade_type ) {
+			if (
+				'auto' === senseiFieldValues.quiz_grade_type ||
+				'1' === senseiFieldValues.quiz_grade_type
+			) {
 				senseiFieldValues.quiz_grade_type = 1;
 			} else {
 				senseiFieldValues.quiz_grade_type = 0;
