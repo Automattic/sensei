@@ -69,6 +69,7 @@ class Sensei_Lesson {
 
 			// Metabox functions
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes_' . $this->token, array( $this, 'add_video_meta_box' ), 10, 1 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
@@ -206,9 +207,6 @@ class Sensei_Lesson {
 		// Add Meta Box for Prerequisite Lesson
 		add_meta_box( 'lesson-prerequisite', esc_html__( 'Prerequisite', 'sensei-lms' ), array( $this, 'lesson_prerequisite_meta_box_content' ), $this->token, 'side', 'low' );
 
-		// Add Meta Box for Video-Course Progression settings
-		add_meta_box( 'lesson-video', esc_html__( 'Video', 'sensei-lms' ), array( $this, 'lesson_video_meta_box_content' ), $this->token, 'side', 'low' );
-
 		// Add Meta Box for Lesson Preview
 		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'sensei-lms' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'low' );
 
@@ -232,6 +230,21 @@ class Sensei_Lesson {
 		// Add CSS.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
+	}
+
+	/**
+	 * Add Meta Box for Video-Course Progression settings
+	 *
+	 * @param WP_Post $post
+	 *
+	 * @return void
+	 */
+	public function add_video_meta_box( $post ) {
+		$lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+		if ( ! $lesson_course ) {
+			return;
+		}
+		add_meta_box( 'lesson-video', esc_html__( 'Video', 'sensei-lms' ), array( $this, 'lesson_video_meta_box_content' ), $this->token, 'side', 'low' );
 	}
 
 	/**
@@ -454,13 +467,9 @@ class Sensei_Lesson {
 	public function lesson_video_meta_box_content() {
 		$html = '<p>' . esc_html__( 'Control how students progress through the course based on their interactions with lesson video.', 'sensei-lms' ) . '<p>';
 
-		$lesson_course = get_post_meta( get_the_ID(), '_lesson_course', true );
-		if ( $lesson_course ) {
-			$edit_course_url = get_edit_post_link( $lesson_course );
-			$html           .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
-		} else {
-			$html .= '<p>' . esc_html__( 'Please attach the lesson to a course first.', 'sensei-lms' ) . '</p>';
-		}
+		$lesson_course   = get_post_meta( get_the_ID(), '_lesson_course', true );
+		$edit_course_url = get_edit_post_link( $lesson_course );
+		$html           .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
 		echo wp_kses( $html, wp_kses_allowed_html( 'post' ) );
 	}
 
