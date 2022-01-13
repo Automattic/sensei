@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="sensei-course-theme__quiz__footer__wrapper sensei-course-theme__frame">
 			<!-- wp:columns {"className":"sensei-course-theme__quiz__footer"} -->
 			<div class="wp-block-columns sensei-course-theme__quiz__footer">
-				<!-- wp:sensei-lms/quiz-pagination /-->
+				<!-- wp:sensei-lms/quiz-actions /-->
 			</div>
 			<!-- /wp:columns -->
 		</div>

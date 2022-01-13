@@ -68,6 +68,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		new Blocks\Lesson_Actions();
 		new Blocks\Quiz_Back_To_Lesson();
 		new Blocks\Sidebar_Toggle_Button();
-		new Blocks\Quiz_Pagination();
+		new Blocks\Quiz_Actions();
 	}
 }

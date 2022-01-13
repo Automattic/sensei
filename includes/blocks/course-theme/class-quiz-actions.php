@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Quiz_Pagination class.
+ * File containing the Quiz_Actions class.
  *
  * @package sensei
  * @since 4.0.0
@@ -16,15 +16,16 @@ use \Sensei_Blocks;
 use Sensei_Quiz;
 
 /**
- * Class Quiz_Pagination is responsible for rendering the quiz pagination block.
+ * Class Quiz_Actions is responsible for rendering the quiz
+ * actions button as well as quiz pagination if enabled.
  */
-class Quiz_Pagination {
+class Quiz_Actions {
 	/**
-	 * Quiz_Pagination constructor.
+	 * Quiz_Actions constructor.
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/quiz-pagination',
+			'sensei-lms/quiz-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]
@@ -42,7 +43,6 @@ class Quiz_Pagination {
 		\Sensei_Quiz::start_quiz_questions_loop();
 		global $sensei_question_loop;
 		$pagination_enabled = $sensei_question_loop['total_pages'] > 1;
-		$pagination         = '';
 
 		// Get quiz actions. Either actions with pagination
 		// or only action if pagination is not enabled.
@@ -53,15 +53,15 @@ class Quiz_Pagination {
 		} else {
 			Sensei_Quiz::action_buttons();
 		}
-		$pagination = ob_get_clean();
+		$actions = ob_get_clean();
 
-		if ( ! $pagination ) {
+		if ( ! $actions ) {
 			return '';
 		}
 
 		return ( "
 			<form method='POST' enctype='multipart/form-data'>
-				{$pagination}
+				{$actions}
 			</form>
 		" );
 	}
