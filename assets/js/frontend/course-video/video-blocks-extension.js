@@ -64,7 +64,10 @@
 			document.addEventListener(
 				'visibilitychange',
 				() => {
-					if ( document.hidden ) {
+					if (
+						document.hidden &&
+						typeof player.pauseVideo === 'function'
+					) {
 						player.pauseVideo();
 					}
 				},
@@ -100,7 +103,10 @@
 			document.addEventListener(
 				'visibilitychange',
 				() => {
-					if ( document.hidden ) {
+					if (
+						document.hidden &&
+						typeof video.pause === 'function'
+					) {
 						video.pause();
 					}
 				},
@@ -122,7 +128,10 @@
 			document.addEventListener(
 				'visibilitychange',
 				() => {
-					if ( document.hidden ) {
+					if (
+						document.hidden &&
+						typeof player.pause === 'function'
+					) {
 						player.pause();
 					}
 				},
