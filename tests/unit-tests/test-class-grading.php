@@ -1,6 +1,8 @@
 <?php
 
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
+
 	/**
 	 * setup function
 	 *
