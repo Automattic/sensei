@@ -71,14 +71,21 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
+		$notices       = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
+		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		$user_answers  = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
+		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
+
+		if ( $this->maybe_add_lesson_quiz_progress_notice( $user_answers, $lesson_status, $quiz_id, $notices ) ) {
+			return;
+		}
+
 		if ( ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
 			return;
 		}
 
-		$lesson_status    = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 		$grade            = Sensei_Quiz::get_user_quiz_grade( $lesson_id, $user_id );
 		$grade_rounded    = Sensei_Utils::round( $grade, 2 );
-		$quiz_id          = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$passmark         = get_post_meta( $quiz_id, '_quiz_passmark', true );
 		$passmark_rounded = Sensei_Utils::round( $passmark, 2 );
 		$pass_required    = get_post_meta( $quiz_id, '_pass_required', true );
@@ -93,7 +100,6 @@ class Sensei_Course_Theme_Lesson {
 			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $grade_rounded . '</strong>' );
 		}
 
-		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
 		$actions = [
 			[
 				'label' => __( 'View quiz', 'sensei-lms' ),
@@ -103,6 +109,47 @@ class Sensei_Course_Theme_Lesson {
 		];
 
 		$notices->add_notice( 'lesson_quiz_results', $text, __( 'Quiz completed', 'sensei-lms' ), $actions );
+	}
+
+	/**
+	 * Maybe add lesson quiz progress notice.
+	 *
+	 * @param array|false            $user_answers  User answers.
+	 * @param object|false           $lesson_status Lesson status.
+	 * @param int                    $quiz_id       Quiz ID.
+	 * @param Sensei_Context_Notices $notices       Notices instance.
+	 *
+	 * @return bool Whether notice was added.
+	 */
+	private function maybe_add_lesson_quiz_progress_notice( $user_answers, $lesson_status, $quiz_id, $notices ) {
+		if ( ! $user_answers || empty( $user_answers ) || ! is_array( $user_answers ) || empty( $lesson_status ) || 'in-progress' !== $lesson_status->comment_approved ) {
+			return false;
+		}
+
+		$filtered_user_answers = array_filter(
+			$user_answers,
+			function( $answer ) {
+				return '' !== $answer;
+			}
+		);
+
+		$answered_questions = count( $filtered_user_answers );
+		$total_questions    = count( Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' ) );
+		$continue_link      = get_permalink( $quiz_id );
+
+		$actions = [
+			[
+				'label' => __( 'Continue quiz', 'sensei-lms' ),
+				'url'   => $continue_link,
+				'style' => 'link',
+			],
+		];
+		// translators: Placeholders are the number of answered questions and the total questions, respectively.
+		$text = sprintf( __( '%1$d of %2$d questions complete', 'sensei-lms' ), $answered_questions, $total_questions );
+
+		$notices->add_notice( 'lesson_quiz_results', $text, __( 'Lesson quiz in progress', 'sensei-lms' ), $actions );
+
+		return true;
 	}
 
 	/**
