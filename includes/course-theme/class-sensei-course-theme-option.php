@@ -168,7 +168,7 @@ class Sensei_Course_Theme_Option {
 		 * Filters if a course has learning mode enabled.
 		 *
 		 * @since 4.0.0
-		 * @hook sensei_has_learning_mode_enabled
+		 * @hook sensei_course_learning_mode_enabled
 		 *
 		 * @param {bool} $enabled_for_course True if the learning mode is enabled for the course.
 		 * @param {bool} $enabled_globally   True if the learning mode is enabled globally.
