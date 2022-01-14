@@ -73,22 +73,24 @@ const QuizEdit = ( props ) => {
 			<div className="sensei-lms-quiz-block__separator">
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
 			</div>
-			<div>
-				{ showPaginationProgressBar && (
-					<QuizProgressBarEdit pagination={ pagination } />
-				) }
-			</div>
+
+			{ showPaginationProgressBar && (
+				<QuizProgressBarEdit pagination={ pagination } />
+			) }
+
 			<InnerBlocks
 				allowedBlocks={ ALLOWED_BLOCKS }
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ AppenderComponent }
 			/>
+
 			{ isExistingQuestionsModalOpen && (
 				<QuestionsModal
 					clientId={ clientId }
 					onClose={ closeExistingQuestionsModal }
 				/>
 			) }
+
 			<div className="sensei-lms-quiz-block__separator" />
 			<QuizSettings { ...props } />
 		</>
