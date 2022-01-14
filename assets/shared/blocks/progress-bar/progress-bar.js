@@ -43,14 +43,12 @@ const ProgressBar = ( {
 			<section
 				className={ classnames(
 					'sensei-progress-bar__heading',
-					'wp-block-sensei-lms-progress-heading',
 					countersClassName
 				) }
 			>
 				<div
 					className={ classnames(
 						'sensei-progress-bar__completed',
-						'wp-block-sensei-lms-progress-heading__completed',
 						completedCountClassName
 					) }
 				>
@@ -74,7 +72,6 @@ const ProgressBar = ( {
 					...barWrapperAttributes,
 					className: classnames(
 						'sensei-progress-bar__bar',
-						'wp-block-sensei-lms-course-progress',
 						barWrapperAttributes?.className
 					),
 				} }
