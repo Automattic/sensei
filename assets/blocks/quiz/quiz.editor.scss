@@ -72,13 +72,16 @@ $gray-400: #ccc;
 	}
 
 	/* Settings */
-	&__settings-link {
+	&__settings-quick-nav {
 		display: flex;
-		margin: 0 auto;
-		text-decoration: underline;
+		justify-content: center;
 
-		&:focus:not(:disabled) {
-			box-shadow: none;
+		button {
+			text-decoration: underline;
+
+			&:focus:not(:disabled) {
+				box-shadow: none;
+			}
 		}
 	}
 
