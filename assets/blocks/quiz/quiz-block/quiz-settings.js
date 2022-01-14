@@ -248,12 +248,12 @@ const QuizSettings = ( {
 					initialOpen={ false }
 					colorSettings={ [
 						{
-							value: buttonTextColor,
+							value: buttonTextColor || undefined,
 							onChange: createChangeHandler( 'buttonTextColor' ),
 							label: __( 'Button text color', 'sensei-lms' ),
 						},
 						{
-							value: buttonBackgroundColor,
+							value: buttonBackgroundColor || undefined,
 							onChange: createChangeHandler(
 								'buttonBackgroundColor'
 							),
@@ -263,13 +263,14 @@ const QuizSettings = ( {
 							),
 						},
 						{
-							value: pagination.progressBarColor,
+							value: pagination.progressBarColor || undefined,
 							onChange: ( value ) =>
 								updatePagination( { progressBarColor: value } ),
 							label: __( 'Progress bar color', 'sensei-lms' ),
 						},
 						{
-							value: pagination.progressBarBackground,
+							value:
+								pagination.progressBarBackground || undefined,
 							onChange: ( value ) =>
 								updatePagination( {
 									progressBarBackground: value,
