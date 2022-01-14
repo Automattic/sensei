@@ -69,6 +69,7 @@ class Sensei_Tools {
 		if ( ! $this->tools ) {
 			$tools   = [];
 			$tools[] = new Sensei_Tool_Import();
+			$tools[] = new Sensei_Tool_Export();
 			$tools[] = new Sensei_Tool_Recalculate_Enrolment();
 			$tools[] = new Sensei_Tool_Recalculate_Course_Enrolment();
 			$tools[] = new Sensei_Tool_Ensure_Roles();

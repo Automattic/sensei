@@ -19,30 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
 
 	public function output() {
-		add_action(
-			'admin_print_scripts',
-			function() {
-				Sensei()->assets->enqueue( 'sensei-import', 'data-port/import.js', [], true );
-				Sensei()->assets->preload_data( [ '/sensei-internal/v1/import/active' ] );
-			}
-		);
-
-		add_action(
-			'admin_print_styles',
-			function() {
-				Sensei()->assets->enqueue( 'sensei-import', 'data-port/style.css', [ 'sensei-wp-components' ] );
-			}
-		);
-		?>
-		<div id="sensei-import-page-wrapper" class="wrap">
-			<h1>
-				<?php echo wp_kses_post( get_admin_page_title() ); ?>
-			</h1>
-			<div id="sensei-import-page" class="sensei-import">
-
-			</div>
-		</div>
-	<?php	}
+		include __DIR__ . '/views/html-import.php';
+	}
 
 	public function get_id() {
 		return 'import-content';
@@ -57,7 +35,20 @@ class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 	}
 
 	public function process() {
-		// TODO: Implement process() method.
+		add_action(
+			'admin_print_scripts',
+			function() {
+				Sensei()->assets->enqueue( 'sensei-import', 'data-port/import.js', [], true );
+				Sensei()->assets->preload_data( [ '/sensei-internal/v1/import/active' ] );
+			}
+		);
+
+		add_action(
+			'admin_print_styles',
+			function() {
+				Sensei()->assets->enqueue( 'sensei-import', 'data-port/style.css', [ 'sensei-wp-components' ] );
+			}
+		);
 	}
 
 	public function is_available() {
