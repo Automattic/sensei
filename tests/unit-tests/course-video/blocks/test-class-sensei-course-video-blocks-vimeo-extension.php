@@ -7,8 +7,7 @@ class Test_Sensei_Course_Video_Blocks_Vimeo_Extension extends WP_UnitTestCase {
 	 * @dataProvider provider_wraps_only_vimeo_embeds
 	 */
 	public function test_wrap_only_vimeo_embed( $iframe, $url, $expected ) {
-		$settings        = $this->createMock( Sensei_Course_Video_Settings::class );
-		$vimeo_extension = Sensei_Course_Video_Blocks_Vimeo_Extension::instance( $settings );
+		$vimeo_extension = Sensei_Course_Video_Blocks_Vimeo_Extension::instance();
 
 		$result = $vimeo_extension->wrap_video( $iframe, $url );
 

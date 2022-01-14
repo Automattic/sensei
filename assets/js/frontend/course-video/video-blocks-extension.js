@@ -33,7 +33,9 @@
 			'[data-id="complete-lesson-button"]'
 		);
 		if ( completeButton ) {
-			completeButton.click();
+			setTimeout( () => {
+				completeButton.click();
+			}, 3000 );
 		}
 	};
 
@@ -74,12 +76,17 @@
 	};
 
 	// onYouTubeIframeAPIReady is called by YouTube iframe API when it is ready.
+	const previousYouTubeIframeAPIReady =
+		window.onYouTubeIframeAPIReady !== undefined
+			? window.onYouTubeIframeAPIReady
+			: () => {};
 	window.onYouTubeIframeAPIReady = () => {
 		document
 			.querySelectorAll(
 				'.sensei-course-video-container.youtube-extension iframe'
 			)
 			.forEach( initYouTubePlayer );
+		previousYouTubeIframeAPIReady();
 	};
 
 	const onEnded = () => {
@@ -136,6 +143,59 @@
 			'.sensei-course-video-container.vimeo-extension iframe'
 		)
 		.forEach( initVimeoPlayer );
+
+	const extractVideoPressIdFromUrl = ( url ) => {
+		const urlWithoutQuery = url.split( '?' )[ 0 ];
+		const parts = urlWithoutQuery.split( '/' );
+		return parts[ parts.length - 1 ];
+	};
+
+	const initVideoPressPlayer = ( iframe ) => {
+		const videoId = extractVideoPressIdFromUrl( iframe.src );
+
+		iframe.addEventListener( 'load', () => {
+			// eslint-disable-next-line @wordpress/no-global-event-listener
+			window.addEventListener(
+				'message',
+				( event ) => {
+					if ( event.source !== iframe.contentWindow ) {
+						return;
+					}
+					if (
+						event.data.event === 'ended' &&
+						event.data.id === videoId
+					) {
+						onEnded();
+					}
+				},
+				false
+			);
+
+			if ( courseVideoAutoPause && document.hidden !== undefined ) {
+				// eslint-disable-next-line @wordpress/no-global-event-listener
+				document.addEventListener(
+					'visibilitychange',
+					() => {
+						if ( document.hidden ) {
+							iframe.contentWindow.postMessage(
+								{
+									event: 'videopress_action_pause',
+								},
+								'*'
+							);
+						}
+					},
+					false
+				);
+			}
+		} );
+	};
+
+	document
+		.querySelectorAll(
+			'.sensei-course-video-container.videopress-extension iframe'
+		)
+		.forEach( initVideoPressPlayer );
 
 	if ( courseVideoRequired ) {
 		disableCompleteLessonButton();
