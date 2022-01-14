@@ -90,13 +90,11 @@ const QuizSettings = ( {
 
 	return (
 		<>
-			<Button
-				className="sensei-lms-quiz-block__settings-link"
-				onClick={ openQuizSettings }
-				icon={ CogIcon }
-			>
-				{ __( 'Quiz settings', 'sensei-lms' ) }
-			</Button>
+			<div className="sensei-lms-quiz-block__settings-quick-nav">
+				<Button onClick={ openQuizSettings } icon={ CogIcon }>
+					{ __( 'Quiz settings', 'sensei-lms' ) }
+				</Button>
+			</div>
 			<InspectorControls>
 				<PanelBody
 					title={ __( 'Quiz settings', 'sensei-lms' ) }
