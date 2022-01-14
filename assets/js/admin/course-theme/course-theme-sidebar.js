@@ -63,8 +63,9 @@ const usePreviewAndCustomizerLinks = () => {
 	let previewUrl = '';
 	if ( firstLesson?.id && currentPost?.id ) {
 		if (
-			globalLearningModeEnabled ||
-			currentPost.meta._course_theme === SENSEI_THEME
+			! firstLesson.draft &&
+			( globalLearningModeEnabled ||
+				currentPost.meta._course_theme === SENSEI_THEME )
 		) {
 			previewUrl = `/?p=${ firstLesson.id }`;
 		} else {
