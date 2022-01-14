@@ -43,7 +43,7 @@ render(
 		barWrapperAttributes={ barWrapperAttributes }
 		wrapperAttributes={ wrapperAttributes }
 		hideDefault={ true }
-		progressBarLabel={ __( 'questions', 'sensei-lms' ) }
+		label={ __( 'questions', 'sensei-lms' ) }
 	/>,
 	document.getElementById( 'progress-bar-quiz' )
 );

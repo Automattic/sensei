@@ -165,10 +165,7 @@ const LearnerCoursesEdit = ( {
 										'wp-block-sensei-lms-course-progress',
 								} }
 								hidePercentage
-								progressBarLabel={ __(
-									'lessons',
-									'sensei-lms'
-								) }
+								label={ __( 'lessons', 'sensei-lms' ) }
 							/>
 						) }
 

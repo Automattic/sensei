@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { sprintf, __ } from '@wordpress/i18n';
 
 /**
- * Course progress component.
+ * Progress bar component.
  *
  * @param {Object}  props
  * @param {number}  props.totalCount              Total count for progress bar.
@@ -21,7 +21,7 @@ import { sprintf, __ } from '@wordpress/i18n';
  * @param {string}  props.completedCountClassName Completed count class name.
  * @param {Object}  props.barAttributes           Bar HTML attributes.
  * @param {boolean} props.hideDefault             Hide default settings for edit view only.
- * @param {boolean} props.progressBarLabel        Progress bar label.
+ * @param {boolean} props.label                   Label.
  */
 const ProgressBar = ( {
 	totalCount,
@@ -33,7 +33,7 @@ const ProgressBar = ( {
 	countersClassName,
 	completedCountClassName,
 	hideDefault,
-	progressBarLabel,
+	label,
 } ) => {
 	const completePercentage =
 		Math.round( ( completedCount / totalCount ) * 100 ) || 0;
@@ -57,7 +57,7 @@ const ProgressBar = ( {
 						__( '%1$d of %2$d %3$s complete', 'sensei-lms' ),
 						completedCount,
 						totalCount,
-						progressBarLabel ? progressBarLabel : ''
+						label ? label : ''
 					) }
 					{ ! hidePercentage && ` (${ completePercentage }%)` }
 				</div>
