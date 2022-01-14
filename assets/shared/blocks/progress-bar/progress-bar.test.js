@@ -15,7 +15,7 @@ describe( '<ProgressBar />', () => {
 			<ProgressBar totalCount={ 10 } completedCount={ 5 } />
 		);
 		const completedText = container.querySelector(
-			'.sensei-progress-bar__completed'
+			'.sensei-progress-bar__label'
 		).innerHTML;
 
 		expect( completedText ).toMatch( '5 of 10  complete (50%)' );
@@ -33,7 +33,7 @@ describe( '<ProgressBar />', () => {
 			/>
 		);
 		const completedText = container.querySelector(
-			'.sensei-progress-bar__completed'
+			'.sensei-progress-bar__label'
 		).innerHTML;
 		expect( completedText ).toMatch( '5 of 10  complete' );
 	} );

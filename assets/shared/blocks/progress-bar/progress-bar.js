@@ -48,7 +48,7 @@ const ProgressBar = ( {
 			>
 				<div
 					className={ classnames(
-						'sensei-progress-bar__completed',
+						'sensei-progress-bar__label',
 						completedCountClassName
 					) }
 				>
