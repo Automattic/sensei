@@ -73,9 +73,11 @@ const QuizEdit = ( props ) => {
 			<div className="sensei-lms-quiz-block__separator">
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
 			</div>
-			{ showPaginationProgressBar && (
-				<QuizProgressBarEdit pagination={ pagination } />
-			) }
+			<div>
+				{ showPaginationProgressBar && (
+					<QuizProgressBarEdit pagination={ pagination } />
+				) }
+			</div>
 			<InnerBlocks
 				allowedBlocks={ ALLOWED_BLOCKS }
 				templateInsertUpdatesSelection={ false }

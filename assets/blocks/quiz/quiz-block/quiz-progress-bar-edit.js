@@ -35,6 +35,7 @@ const QuizProgressBarEdit = ( props ) => {
 		<ProgressBar
 			lessonsCount={ 10 }
 			completedCount={ 2 }
+			wrapperAttributes={ { className: 'wp-block' } }
 			barAttributes={ barAttributes }
 			barWrapperAttributes={ barWrapperAttributes }
 		/>
