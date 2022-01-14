@@ -21,7 +21,11 @@ class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 	 * Output tool view for interactive action methods.
 	 */
 	public function output() {
-		include __DIR__ . '/views/html-import.php';
+		?>
+		<div id="sensei-import-page-wrapper" class="wrap">
+			<div id="sensei-import-page" class="sensei-import"></div>
+		</div>
+		<?php
 	}
 
 	/**

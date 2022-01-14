@@ -21,7 +21,11 @@ class Sensei_Tool_Export implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 	 * Output tool view for interactive action methods.
 	 */
 	public function output() {
-		include __DIR__ . '/views/html-export.php';
+		?>
+		<div id="sensei-export-page-wrapper" class="wrap">
+			<div id="sensei-export-page" class="sensei-export"></div>
+		</div>
+		<?php
 	}
 
 	/**
