@@ -14,10 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $sensei_question_loop;
 
-$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
-$sensei_is_quiz_completed = Sensei_Quiz::is_quiz_completed();
-$sensei_is_reset_allowed  = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
-$sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
+$sensei_is_quiz_available    = Sensei_Quiz::is_quiz_available();
+$sensei_is_quiz_completed    = Sensei_Quiz::is_quiz_completed();
+$sensei_is_reset_allowed     = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
+$sensei_has_actions          = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
+$sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 
 ?>
 
@@ -85,12 +86,13 @@ $sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_comple
 
 		<div class="sensei-quiz-actions-primary wp-block-buttons">
 			<?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
-				<div class="sensei-quiz-action wp-block-button is-style-outline">
+				<div class="sensei-quiz-action wp-block-button">
 					<button
 						type="submit"
 						name="quiz_target_page"
 						value="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
+						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
 						<?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
 					</button>
@@ -104,13 +106,19 @@ $sensei_has_actions       = $sensei_is_reset_allowed || ! $sensei_is_quiz_comple
 						name="quiz_target_page"
 						value="<?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
 						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
+						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
 					>
 						<?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
 					</button>
 				</div>
 			<?php elseif ( $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) : ?>
 				<div class="sensei-quiz-action wp-block-button">
-					<button type="submit" name="quiz_complete" class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission">
+					<button
+						type="submit"
+						name="quiz_complete"
+						class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"
+						style="<?php echo esc_attr( $sensei_button_inline_styles ); ?>"
+					>
 						<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
 					</button>
 
