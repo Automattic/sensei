@@ -260,7 +260,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return bool
 	 */
-	public static function is_sensei_theme_preview_mode_allowed( $course_id ) {
+	public static function is_preview_mode( $course_id ) {
 		// Do not allow sensei preview if not an administrator.
 		if ( ! current_user_can( 'manage_sensei' ) ) {
 			return false;

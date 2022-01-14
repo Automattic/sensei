@@ -144,7 +144,7 @@ class Sensei_Course_Theme_Option {
 
 		if (
 			self::has_sensei_theme_enabled( $course_id ) ||
-			Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $course_id )
+			Sensei_Course_Theme::is_preview_mode( $course_id )
 		) {
 			return true;
 		}

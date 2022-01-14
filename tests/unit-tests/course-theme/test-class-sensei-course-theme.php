@@ -55,7 +55,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 
 		$_GET[ Sensei_Course_Theme::PREVIEW_QUERY_VAR ] = (string) $course->ID;
-		$allowed                                        = Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $course->ID );
+		$allowed                                        = Sensei_Course_Theme::is_preview_mode( $course->ID );
 		$this->assertFalse( $allowed, 'Should not allow preview to students.' );
 	}
 
@@ -65,7 +65,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 
-		$allowed = Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $post->ID );
+		$allowed = Sensei_Course_Theme::is_preview_mode( $post->ID );
 		$this->assertFalse( $allowed, 'Should not allow preview if not a course related page.' );
 	}
 
@@ -77,7 +77,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		$this->login_as_admin();
 
 		$_GET[ Sensei_Course_Theme::PREVIEW_QUERY_VAR ] = (string) $another_course->ID;
-		$allowed                                        = Sensei_Course_Theme::is_sensei_theme_preview_mode_allowed( $course->ID );
+		$allowed                                        = Sensei_Course_Theme::is_preview_mode( $course->ID );
 		$this->assertFalse( $allowed, 'Should not allow preview if preview query id is not current course page.' );
 	}
 }
