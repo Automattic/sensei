@@ -139,6 +139,7 @@ class Sensei_Autoloader {
 			'Sensei_Tool_Remove_Deleted_User_Data'        => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
 			'Sensei_Tool_Module_Slugs_Mismatch'           => 'admin/tools/class-sensei-tool-module-slugs-mismatch.php',
 			'Sensei_Tool_Enrolment_Debug'                 => 'admin/tools/class-sensei-tool-enrolment-debug.php',
+			'Sensei_Tool_Import'                          => 'admin/tools/class-sensei-tool-import.php',
 
 			/**
 			 * Shortcodes
