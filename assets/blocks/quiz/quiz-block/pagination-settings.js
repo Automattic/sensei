@@ -27,7 +27,7 @@ const paginationOptions = [
 		value: SINGLE,
 	},
 	{
-		label: __( 'Multi-Page', 'sensei-lms' ),
+		label: __( 'Multi-page', 'sensei-lms' ),
 		value: MULTI,
 	},
 ];
