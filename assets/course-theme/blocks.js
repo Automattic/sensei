@@ -184,11 +184,11 @@ const blocks = [
 			const Module = ( { title, lessons } ) => (
 				<section className="sensei-lms-course-navigation-module sensei-collapsible">
 					<header className="sensei-lms-course-navigation-module__header">
-						<h2 className="sensei-lms-course-navigation-module__title">
-							<span className="sensei-lms-href">{ title }</span>
-						</h2>
-						<div className="sensei-lms-course-navigation__arrow sensei-collapsible__toggle ">
-							<ChevronUp />
+						<div className="sensei-collapsible__toggle">
+							<h2 className="sensei-lms-course-navigation-module__title">
+								{ title }
+							</h2>
+							<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
 						</div>
 					</header>
 					<div className="sensei-lms-course-navigation-module__lessons sensei-collapsible__content">
