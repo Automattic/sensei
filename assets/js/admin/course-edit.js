@@ -81,9 +81,7 @@ if ( window.senseiCourseThemeFeatureFlagEnabled ) {
 		icon: null,
 	} );
 }
-if ( window.senseiVideoCourseProgressionFeatureFlagEnabled ) {
-	registerPlugin( 'sensei-course-video-progression-plugin', {
-		render: CourseVideoSidebar,
-		icon: null,
-	} );
-}
+registerPlugin( 'sensei-course-video-progression-plugin', {
+	render: CourseVideoSidebar,
+	icon: null,
+} );
