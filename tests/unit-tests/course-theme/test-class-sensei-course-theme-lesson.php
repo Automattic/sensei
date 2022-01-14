@@ -42,6 +42,13 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$questions = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
 
+		// Set quiz pagination.
+		update_post_meta(
+			$quiz_id,
+			'_pagination',
+			wp_json_encode( [ 'pagination_number' => 2 ] )
+		);
+
 		$this->login_as_student();
 		$GLOBALS['post'] = $lesson;
 
@@ -49,7 +56,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
-		// Create the sample data to save.
+		// Set third question as unanswered.
 		$user_quiz_answers = [
 			$questions[0]->ID => '0',
 			$questions[1]->ID => 'false',
@@ -58,11 +65,32 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
 
 		\Sensei_Course_Theme_Lesson::instance()->init();
-
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'Lesson quiz in progress', $html, 'Should return quiz progress notice' );
 		$this->assertContains( '2 of 3', $html, 'Should return quiz progress notice' );
+		$this->assertContains( 'quiz-page=2', $html, 'Should have the link to quiz page with the first unanswered question' );
+
+		// Set second question as unanswered.
+		$user_quiz_answers = [
+			$questions[0]->ID => '0',
+			$questions[1]->ID => '',
+			$questions[2]->ID => 'false',
+		];
+		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
+
+		\Sensei_Course_Theme_Lesson::instance()->init();
+		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
+
+		$this->assertContains( 'quiz-page=1', $html, 'Should have the link to quiz page with the first unanswered question' );
+
+		// Remove quiz pagination.
+		delete_post_meta( $quiz_id, '_pagination' );
+
+		\Sensei_Course_Theme_Lesson::instance()->init();
+		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
+
+		$this->assertNotContains( 'quiz-page=', $html, 'Should not have the link to a specific page' );
 	}
 
 	/**
