@@ -254,7 +254,7 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Tells if sensei theme in preview mode is allowed.
+	 * Tells if sensei theme is in preview mode.
 	 *
 	 * @param int $course_id The id of the course.
 	 *
