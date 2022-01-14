@@ -29,7 +29,7 @@ describe( 'Testing Quiz Progress Bar Edit', () => {
 		);
 		const progressBar = render(
 			<ProgressBar
-				lessonsCount={ 10 }
+				totalCount={ 10 }
 				completedCount={ 2 }
 				barAttributes={ barAttributes }
 				barWrapperAttributes={ barWrapperAttributes }
