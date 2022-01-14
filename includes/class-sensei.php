@@ -428,7 +428,7 @@ class Sensei_Main {
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
-			$this->admin = new Sensei_Admin( $this->main_plugin_file_name );
+			$this->admin = new Sensei_Admin();
 
 			// Load Analysis Reports
 			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );

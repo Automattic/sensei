@@ -76,7 +76,7 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 		global $submenu;
 
 		$this->assertTrue(
-			in_array( 'Extensions <span class="awaiting-mod">2</span>', end( $submenu['sensei'] ), true ),
+			in_array( 'Extensions <span class="awaiting-mod">2</span>', end( $submenu['edit.php?post_type=course'] ), true ),
 			'Should count 2 available updates'
 		);
 	}
@@ -115,7 +115,7 @@ class Sensei_Extensions_Test extends WP_UnitTestCase {
 		global $submenu;
 
 		$this->assertTrue(
-			in_array( 'Extensions', end( $submenu['sensei'] ), true ),
+			in_array( 'Extensions', end( $submenu['edit.php?post_type=course'] ), true ),
 			'Should not have counter when there is no available update'
 		);
 	}

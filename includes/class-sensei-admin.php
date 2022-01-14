@@ -37,11 +37,8 @@ class Sensei_Admin {
 
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
-		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
 
 		// Duplicate lesson & courses
@@ -89,9 +86,13 @@ class Sensei_Admin {
 	 * Add items to admin menu
 	 *
 	 * @since  1.4.0
+	 * @deprecated 4.0.0
+	 *
 	 * @return void
 	 */
 	public function admin_menu() {
+		_deprecated_function( __METHOD__, '4.0.0' );
+
 		global $menu;
 		$menu_cap = '';
 		if ( current_user_can( 'manage_sensei' ) ) {
@@ -187,9 +188,13 @@ class Sensei_Admin {
 	 * Redirect Sensei menu item to Analysis page
 	 *
 	 * @since  1.4.0
+	 * @deprecated 4.0.0
+	 *
 	 * @return void
 	 */
 	public function page_redirect() {
+		_deprecated_function( __METHOD__, '4.0.0' );
+
 		if ( isset( $_GET['page'] ) && $_GET['page'] == 'sensei' ) {
 			wp_safe_redirect( 'admin.php?page=sensei_analysis' );
 			exit;
