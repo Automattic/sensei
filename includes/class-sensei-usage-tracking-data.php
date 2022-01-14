@@ -57,6 +57,12 @@ class Sensei_Usage_Tracking_Data {
 			'teachers'                => self::get_teacher_count(),
 		);
 
+		if ( Sensei()->feature_flags->is_enabled( 'course_theme' ) ) {
+			// After removing the feature flag, remember to move this to the $usage_data variable assignment.
+			$usage_data['courses_using_course_theme']    = self::get_courses_using_course_theme_count();
+			$usage_data['course_theme_enabled_globally'] = self::get_is_course_theme_enabled_globally() ? 1 : 0;
+		}
+
 		return array_merge( $question_type_count, $usage_data, $quiz_stats );
 	}
 
@@ -912,6 +918,42 @@ class Sensei_Usage_Tracking_Data {
 		}
 
 		return $count;
+	}
+
+	/**
+	 * Get the total number of courses with Sensei course theme enabled.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @return int Number of active courses.
+	 **/
+	private static function get_courses_using_course_theme_count() {
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'course',
+				'fields'     => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Needed to identify courses with Sensei theme.
+				'meta_query' => array(
+					array(
+						'key'   => Sensei_Course_Theme_Option::THEME_POST_META_NAME,
+						'value' => Sensei_Course_Theme_Option::SENSEI_THEME,
+					),
+				),
+			)
+		);
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Checks if learning mode is enabled globally.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @return bool
+	 */
+	private static function get_is_course_theme_enabled_globally() {
+		return (bool) Sensei()->settings->settings['sensei_learning_mode_all'];
 	}
 
 	/**
