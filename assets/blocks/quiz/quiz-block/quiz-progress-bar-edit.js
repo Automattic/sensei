@@ -40,7 +40,9 @@ const QuizProgressBarEdit = ( props ) => {
 		<ProgressBar
 			totalCount={ 10 }
 			completedCount={ 2 }
-			wrapperAttributes={ { className: 'wp-block' } }
+			wrapperAttributes={ {
+				className: 'sensei-lms-quiz-block__progress-bar wp-block',
+			} }
 			barAttributes={ barAttributes }
 			label={ __( 'questions', 'sensei-lms' ) }
 			barWrapperAttributes={ barWrapperAttributes }

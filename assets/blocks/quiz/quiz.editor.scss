@@ -61,6 +61,11 @@ $gray-400: #ccc;
 		}
 	}
 
+	&__progress-bar {
+		margin-top: $default-block-margin;
+		margin-bottom: $default-block-margin;
+	}
+
 	&__pre-publish-validation {
 		&__notice {
 			margin: 0;
