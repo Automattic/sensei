@@ -357,7 +357,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
 		$failed_feedback_default = ! $allow_retakes;
 
-		$pagination = [
+		$pagination_defaults = [
 			'pagination_number'       => null,
 			'show_progress_bar'       => false,
 			'progress_bar_radius'     => 6,
@@ -366,8 +366,11 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			'progress_bar_background' => null,
 		];
 
-		if ( ! empty( $post_meta['_pagination'][0] ) ) {
-			$pagination = json_decode( $post_meta['_pagination'][0], true ) ?? $pagination;
+		if ( empty( $post_meta['_pagination'][0] ) ) {
+			$pagination = $pagination_defaults;
+		} else {
+			$pagination = json_decode( $post_meta['_pagination'][0], true );
+			$pagination = $pagination ? $pagination : $pagination_defaults;
 		}
 
 		$quiz_data = [
