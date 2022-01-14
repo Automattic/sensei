@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
 import ProgressBar from '../../../shared/blocks/progress-bar';
@@ -37,6 +42,7 @@ const QuizProgressBarEdit = ( props ) => {
 			completedCount={ 2 }
 			wrapperAttributes={ { className: 'wp-block' } }
 			barAttributes={ barAttributes }
+			progressBarLabel={ __( 'questions', 'sensei-lms' ) }
 			barWrapperAttributes={ barWrapperAttributes }
 		/>
 	);

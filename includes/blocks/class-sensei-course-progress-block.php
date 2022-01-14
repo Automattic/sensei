@@ -79,10 +79,8 @@ class Sensei_Course_Progress_Block {
 
 		$bar_css['inline_styles'][] = 'width: ' . $percentage . '%';
 
-		$lessons_text = _n( 'lesson', 'lessons', $total_lessons, 'sensei-lms' );
-
-		// translators: %1$d number of lessons completed, %2$d number of total lessons, %3$s lessons text, %4$s percentage.
-		$progress_bar_text = sprintf( __( '%1$d of %2$d %3$s completed (%4$s)', 'sensei-lms' ), $completed, $total_lessons, $lessons_text, $percentage . '%' );
+		// translators: %1$d number of lessons completed, %2$d number of total lessons, %3$s percentage.
+		$progress_bar_text = sprintf( __( '%1$d of %2$d lessons completed (%3$s)', 'sensei-lms' ), $completed, $total_lessons, $percentage . '%' );
 
 		$class_names = [ 'sensei-block-wrapper' ];
 

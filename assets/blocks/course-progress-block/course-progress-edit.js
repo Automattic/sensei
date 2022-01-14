@@ -7,7 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { compose } from '@wordpress/compose';
-import { __, _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -76,7 +76,7 @@ export const CourseProgressEdit = ( props ) => {
 			borderRadius,
 		},
 	};
-	const progressBarLabel = _n( 'lesson', 'lessons', 2, 'sensei-lms' );
+
 	return (
 		<>
 			<ProgressBar
@@ -86,7 +86,7 @@ export const CourseProgressEdit = ( props ) => {
 				barWrapperAttributes={ barWrapperAttributes }
 				barAttributes={ barAttributes }
 				countersClassName="wp-block-sensei-lms-progress-heading"
-				progressBarLabel={ progressBarLabel }
+				progressBarLabel={ __( 'lessons', 'sensei-lms' ) }
 				completedCountClassName="wp-block-sensei-lms-progress-heading__completed"
 			/>
 			<ProgressBarSettings

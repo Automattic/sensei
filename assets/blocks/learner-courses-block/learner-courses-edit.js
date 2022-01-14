@@ -9,7 +9,7 @@ import { omitBy } from 'lodash';
  */
 import { useState } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
-import { __, _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -122,12 +122,7 @@ const LearnerCoursesEdit = ( {
 			( index === array.length - 1 ||
 				//  Show all as completed if completed is filtered.
 				filter === 'completed' );
-		const progressBarLabel = _n(
-			'question',
-			'questions',
-			completed ? 3 : 1,
-			'sensei-lms'
-		);
+
 		return (
 			<li
 				className="wp-block-sensei-lms-learner-courses__courses-list__item course"
@@ -170,7 +165,10 @@ const LearnerCoursesEdit = ( {
 										'wp-block-sensei-lms-course-progress',
 								} }
 								hidePercentage
-								progressBarLabel={ progressBarLabel }
+								progressBarLabel={ __(
+									'lessons',
+									'sensei-lms'
+								) }
 							/>
 						) }
 

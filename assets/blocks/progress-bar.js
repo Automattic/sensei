@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { render } from '@wordpress/element';
-import { _n } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -34,12 +34,6 @@ const wrapperAttributes = {
 	className: 'sensei-block-wrapper',
 };
 
-const progressBarLabel = _n(
-	'question',
-	'questions',
-	window.sensei_quiz_progress.completedNumber,
-	'sensei-lms'
-);
 render(
 	<ProgressBar
 		totalCount={ window.sensei_quiz_progress.totalNumber }
@@ -49,7 +43,7 @@ render(
 		barWrapperAttributes={ barWrapperAttributes }
 		wrapperAttributes={ wrapperAttributes }
 		hideDefault={ true }
-		progressBarLabel={ progressBarLabel }
+		progressBarLabel={ __( 'questions', 'sensei-lms' ) }
 	/>,
 	document.getElementById( 'progress-bar-quiz' )
 );
