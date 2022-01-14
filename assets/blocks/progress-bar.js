@@ -45,5 +45,5 @@ render(
 		hideDefault={ true }
 		label={ __( 'questions', 'sensei-lms' ) }
 	/>,
-	document.getElementById( 'progress-bar-quiz' )
+	document.getElementById( 'sensei-progress-bar' )
 );

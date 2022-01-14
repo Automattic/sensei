@@ -12,4 +12,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<div id="progress-bar-quiz"></div>
+<div id="sensei-progress-bar"></div>
