@@ -17,23 +17,43 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interactive_Interface {
-
+	/**
+	 * Output tool view for interactive action methods.
+	 */
 	public function output() {
 		include __DIR__ . '/views/html-import.php';
 	}
 
+	/**
+	 * Get the ID of the tool.
+	 *
+	 * @return string
+	 */
 	public function get_id() {
 		return 'import-content';
 	}
 
+	/**
+	 * Get the name of the tool.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return __( 'Import Content', 'sensei-lms' );
 	}
 
+	/**
+	 * Get the description of the tool.
+	 *
+	 * @return string
+	 */
 	public function get_description() {
 		return __( 'Import courses, lessons, and questions from a CSV file.', 'sensei-lms' );
 	}
 
+	/**
+	 * Run the tool.
+	 */
 	public function process() {
 		add_action(
 			'admin_print_scripts',
@@ -51,6 +71,11 @@ class Sensei_Tool_Import implements Sensei_Tool_Interface, Sensei_Tool_Interacti
 		);
 	}
 
+	/**
+	 * Is the tool currently available?
+	 *
+	 * @return bool True if tool is available.
+	 */
 	public function is_available() {
 		return true;
 	}
