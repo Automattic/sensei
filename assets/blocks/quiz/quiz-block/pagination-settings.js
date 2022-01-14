@@ -106,7 +106,7 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 				title={ __( 'Pagination', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
-				<PanelRow className="sensei-lms-quiz-block__pagination">
+				<PanelRow className="sensei-lms-quiz-block-settings__pagination">
 					<SelectControl
 						label={ __( 'Pagination', 'sensei-lms' ) }
 						hideLabelFromVision
@@ -116,7 +116,7 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 					/>
 				</PanelRow>
 				{ paginationNumber !== null && (
-					<PanelRow className="sensei-lms-quiz-block__question-count">
+					<PanelRow className="sensei-lms-quiz-block-settings__question-count">
 						<QuestionsControl
 							settings={ settings }
 							onChange={ onChange }
@@ -141,7 +141,7 @@ export const PaginationSidebarSettings = ( { settings, onChange } ) => {
 								}
 							/>
 						</PanelRow>
-						<PanelRow className="sensei-lms-quiz-block__progress-bar">
+						<PanelRow className="sensei-lms-quiz-block-settings__progress-bar">
 							<NumberControl
 								label={ __( 'Radius', 'sensei-lms' ) }
 								min={ 1 }
