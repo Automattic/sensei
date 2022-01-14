@@ -135,6 +135,9 @@ class Sensei_Course_Theme {
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 
+		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
+		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
+
 	}
 
 	/**
@@ -238,6 +241,37 @@ class Sensei_Course_Theme {
 			$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
 			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';" );
 		}
+	}
+
+	/**
+	 * Replace 'Edit site' in admin bar to point to the current theme template.
+	 */
+	public function admin_menu_init() {
+		remove_action( 'admin_bar_menu', 'wp_admin_bar_edit_site_menu', 40 );
+		add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_edit_site_menu' ], 39 );
+
+	}
+
+	/**
+	 * Add 'Edit site' in admin bar opening the current theme template.
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar
+	 *
+	 * @return void
+	 */
+	public function add_admin_bar_edit_site_menu( WP_Admin_Bar $wp_admin_bar ) {
+
+		if ( ! current_user_can( 'edit_theme_options' ) || is_admin() ) {
+			return;
+		}
+
+		$wp_admin_bar->add_node(
+			array(
+				'id'    => 'site-editor',
+				'title' => __( 'Edit Site', 'sensei-lms' ),
+				'href'  => admin_url( 'site-editor.php?learn=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+			)
+		);
 	}
 
 }
