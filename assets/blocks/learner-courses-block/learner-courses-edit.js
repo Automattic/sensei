@@ -158,13 +158,14 @@ const LearnerCoursesEdit = ( {
 
 						{ options.progressBarEnabled && (
 							<ProgressBar
-								lessonsCount={ 3 }
+								totalCount={ 3 }
 								completedCount={ completed ? 3 : 1 }
 								wrapperAttributes={ {
 									className:
 										'wp-block-sensei-lms-course-progress',
 								} }
 								hidePercentage
+								label={ __( 'lessons', 'sensei-lms' ) }
 							/>
 						) }
 

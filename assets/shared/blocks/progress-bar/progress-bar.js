@@ -6,39 +6,38 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { sprintf, _n } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 
 /**
- * Course progress component.
+ * Progress bar component.
  *
  * @param {Object}  props
- * @param {number}  props.lessonsCount            Number of lessons.
- * @param {number}  props.completedCount          Number of completed lessons.
+ * @param {number}  props.totalCount              Total count for progress bar.
+ * @param {number}  props.completedCount          Number of completed.
  * @param {boolean} props.hidePercentage          Hide completed percentage.
  * @param {Object}  props.wrapperAttributes       Wrapper HTML attributes.
  * @param {Object}  props.barWrapperAttributes    Bar wrapper HTML attributes.
- * @param {Object}  props.barAttributes           Bar HTML attributes.
  * @param {string}  props.countersClassName       Counters class name.
- * @param {string}  props.lessonsCountClassName   Lessons count class name.
  * @param {string}  props.completedCountClassName Completed count class name.
+ * @param {Object}  props.barAttributes           Bar HTML attributes.
  * @param {boolean} props.hideDefault             Hide default settings for edit view only.
+ * @param {boolean} props.label                   Label.
  */
 const ProgressBar = ( {
-	lessonsCount,
+	totalCount,
 	completedCount,
 	hidePercentage,
 	wrapperAttributes,
 	barWrapperAttributes,
 	barAttributes,
 	countersClassName,
-	lessonsCountClassName,
 	completedCountClassName,
 	hideDefault,
+	label,
 } ) => {
 	const completePercentage =
-		Math.round( ( completedCount / lessonsCount ) * 100 ) || 0;
+		Math.round( ( completedCount / totalCount ) * 100 ) || 0;
 	const barPercentage = Math.max( hideDefault ? 0 : 3, completePercentage );
-
 	return (
 		<div { ...wrapperAttributes }>
 			<section
@@ -49,40 +48,21 @@ const ProgressBar = ( {
 			>
 				<div
 					className={ classnames(
-						'sensei-progress-bar__lessons',
-						lessonsCountClassName
-					) }
-				>
-					{ sprintf(
-						// translators: placeholder is number of lessons in the course.
-						_n(
-							'%d Lesson',
-							'%d Lessons',
-							lessonsCount,
-							'sensei-lms'
-						),
-						lessonsCount
-					) }
-				</div>
-				<div
-					className={ classnames(
-						'sensei-progress-bar__completed',
+						'sensei-progress-bar__label',
 						completedCountClassName
 					) }
 				>
 					{ sprintf(
-						// translators: placeholder is number of completed lessons in the course.
-						_n(
-							'%d Completed',
-							'%d Completed',
-							completedCount,
-							'sensei-lms'
-						),
-						completedCount
+						// translators: Placeholder %1$d is the completed progress count, %2$d is the total count and %3$s is the label for progress bar.
+						__( '%1$d of %2$d %3$s completed', 'sensei-lms' ),
+						completedCount,
+						totalCount,
+						label ? label : ''
 					) }
 					{ ! hidePercentage && ` (${ completePercentage }%)` }
 				</div>
 			</section>
+
 			<div
 				role="progressbar"
 				aria-valuenow={ completePercentage }
