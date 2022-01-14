@@ -18,7 +18,7 @@ describe( '<ProgressBar />', () => {
 			'.sensei-progress-bar__label'
 		).innerHTML;
 
-		expect( completedText ).toMatch( '5 of 10  complete (50%)' );
+		expect( completedText ).toMatch( '5 of 10  completed (50%)' );
 		expect(
 			queryByRole( 'progressbar' ).getAttribute( 'aria-valuenow' )
 		).toEqual( '50' );
@@ -35,6 +35,6 @@ describe( '<ProgressBar />', () => {
 		const completedText = container.querySelector(
 			'.sensei-progress-bar__label'
 		).innerHTML;
-		expect( completedText ).toMatch( '5 of 10  complete' );
+		expect( completedText ).toMatch( '5 of 10  completed' );
 	} );
 } );

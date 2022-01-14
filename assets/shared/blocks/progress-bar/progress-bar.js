@@ -54,7 +54,7 @@ const ProgressBar = ( {
 				>
 					{ sprintf(
 						// translators: Placeholder %1$d is the completed progress count, %2$d is the total count and %3$s is the label for progress bar.
-						__( '%1$d of %2$d %3$s complete', 'sensei-lms' ),
+						__( '%1$d of %2$d %3$s completed', 'sensei-lms' ),
 						completedCount,
 						totalCount,
 						label ? label : ''
