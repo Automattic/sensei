@@ -69,6 +69,7 @@ class Sensei_Lesson {
 
 			// Metabox functions
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes_' . $this->token, array( $this, 'add_video_meta_box' ), 10, 1 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
@@ -196,7 +197,6 @@ class Sensei_Lesson {
 	 * meta_box_setup function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function meta_box_setup() {
 
@@ -226,16 +226,29 @@ class Sensei_Lesson {
 		// Add JS scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
-		// Add CSS
+		// Add CSS.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
+	}
+
+	/**
+	 * Add Meta Box for Video-Course Progression settings
+	 *
+	 * @access private
+	 * @param WP_Post $post
+	 */
+	public function add_video_meta_box( $post ) {
+		$lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+		if ( ! $lesson_course ) {
+			return;
+		}
+		add_meta_box( 'lesson-video', esc_html__( 'Video', 'sensei-lms' ), array( $this, 'lesson_video_meta_box_content' ), $this->token, 'side', 'low' );
 	}
 
 	/**
 	 * lesson_info_meta_box_content function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function lesson_info_meta_box_content() {
 		global $post;
@@ -309,7 +322,6 @@ class Sensei_Lesson {
 	 * lesson_prerequisite_meta_box_content function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function lesson_prerequisite_meta_box_content() {
 		global $post;
@@ -444,10 +456,23 @@ class Sensei_Lesson {
 	}
 
 	/**
+	 * Display the Video settings panel for the lesson.
+	 *
+	 * @access private
+	 */
+	public function lesson_video_meta_box_content() {
+		$html = '<p>' . esc_html__( 'Control how students progress through the course based on their interactions with lesson video.', 'sensei-lms' ) . '<p>';
+
+		$lesson_course   = get_post_meta( get_the_ID(), '_lesson_course', true );
+		$edit_course_url = get_edit_post_link( $lesson_course );
+		$html           .= '<p><a href="' . esc_attr( $edit_course_url ) . '">' . esc_html__( 'Customize', 'sensei-lms' ) . '</a>';
+		echo wp_kses( $html, wp_kses_allowed_html( 'post' ) );
+	}
+
+	/**
 	 * lesson_preview_meta_box_content function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function lesson_preview_meta_box_content() {
 		global $post;
@@ -542,7 +567,6 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 * @param int $lesson_id
-	 * @return void
 	 */
 	public function add_lesson_to_course_order( $lesson_id = 0 ) {
 		$lesson_id = intval( $lesson_id );
@@ -830,7 +854,6 @@ class Sensei_Lesson {
 	 * lesson_course_meta_box_content function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function lesson_course_meta_box_content() {
 		global $post;
@@ -2082,7 +2105,6 @@ class Sensei_Lesson {
 	 * lesson_quiz_meta_box_content function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function lesson_quiz_meta_box_content() {
 		global $post;
@@ -2100,8 +2122,6 @@ class Sensei_Lesson {
 
 	/**
 	 * Quiz settings metabox
-	 *
-	 * @return void
 	 */
 	public function lesson_quiz_settings_meta_box_content() {
 		global $post;
@@ -2278,7 +2298,6 @@ class Sensei_Lesson {
 	 * enqueue_scripts function.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function enqueue_scripts( $hook ) {
 		global $post_type;
@@ -2376,7 +2395,6 @@ class Sensei_Lesson {
 	 *
 	 * @access private
 	 * @since  3.0.0
-	 * @return void
 	 */
 	private function enqueue_lesson_edit_scripts() {
 		// Load the quick edit screen script.
@@ -2390,7 +2408,6 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 * @since  1.4.0
-	 * @return void
 	 */
 	public function enqueue_styles( $hook ) {
 		global  $post_type;
@@ -2482,7 +2499,6 @@ class Sensei_Lesson {
 	 * @since  1.0.0
 	 * @param  string $column_name
 	 * @param  int    $id
-	 * @return void
 	 */
 	public function add_column_data( $column_name, $id ) {
 		switch ( $column_name ) {
@@ -2515,7 +2531,6 @@ class Sensei_Lesson {
 	 *
 	 * @access public
 	 * @deprecated 2.2.0
-	 * @return void
 	 */
 	public function lesson_add_course() {
 		_deprecated_function( __METHOD__, '2.2.0' );
@@ -2581,7 +2596,6 @@ class Sensei_Lesson {
 	 * Updates a question.
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function lesson_update_question() {
 		// Add nonce security to the request.
@@ -3821,7 +3835,6 @@ class Sensei_Lesson {
 	 *
 	 * @param string $column_name
 	 * @param string $post_type
-	 * @return void
 	 */
 	public function all_lessons_edit_fields( $column_name, $post_type ) {
 
@@ -3991,7 +4004,6 @@ class Sensei_Lesson {
 	 * from the admin all lesson screen.
 	 *
 	 * @since 1.8.0
-	 * @return void
 	 */
 	function save_all_lessons_edit_fields() {
 
@@ -4068,7 +4080,6 @@ class Sensei_Lesson {
 	 * NOTE: this function runs for each row in the edit column
 	 *
 	 * @since 1.8.0
-	 * @return void
 	 */
 	public function set_quick_edit_admin_defaults( $column_name, $post_id ) {
 
@@ -4522,7 +4533,6 @@ class Sensei_Lesson {
 	 * Outputs the lesson archive header.
 	 *
 	 * @since  1.9.0
-	 * @return void
 	 */
 	public function the_archive_header() {
 
