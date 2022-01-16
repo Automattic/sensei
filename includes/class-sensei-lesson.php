@@ -234,6 +234,7 @@ class Sensei_Lesson {
 	/**
 	 * Add Meta Box for Video-Course Progression settings
 	 *
+	 * @access private
 	 * @param WP_Post $post
 	 */
 	public function add_video_meta_box( $post ) {
@@ -456,6 +457,8 @@ class Sensei_Lesson {
 
 	/**
 	 * Display the Video settings panel for the lesson.
+	 *
+	 * @access private
 	 */
 	public function lesson_video_meta_box_content() {
 		$html = '<p>' . esc_html__( 'Control how students progress through the course based on their interactions with lesson video.', 'sensei-lms' ) . '<p>';
