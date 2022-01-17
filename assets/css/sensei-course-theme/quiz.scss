@@ -9,6 +9,7 @@ $tablet-breakpoint: 768px;
 
 	&__main-content {
 		padding: 32px;
+		margin-bottom: 100px;
 
 		> * {
 			display: block;
@@ -94,7 +95,7 @@ $tablet-breakpoint: 768px;
 	.sensei-course-theme__quiz {
 		&__footer {
 			&__wrapper {
-				position: sticky;
+				position: fixed;
 				bottom: 0;
 				left: 0;
 				right: 0;
