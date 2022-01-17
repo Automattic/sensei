@@ -32,6 +32,24 @@ $gray-400: #ccc;
 	}
 }
 
+/* Block Settings */
+.sensei-lms-quiz-block-settings {
+	&__question-count,
+	&__progress-bar {
+		align-items: baseline;
+		justify-content: flex-start;
+
+		.components-base-control {
+			margin-bottom: 0;
+			margin-right: 1em;
+		}
+	}
+
+	&__question-count {
+		margin-bottom: 12px;
+	}
+}
+
 .sensei-lms-quiz-block {
 	&__separator {
 		position: relative;
@@ -88,21 +106,6 @@ $gray-400: #ccc;
 				box-shadow: none;
 			}
 		}
-	}
-
-	&__question-count,
-	&__progress-bar {
-		align-items: baseline;
-		justify-content: flex-start;
-
-		.components-base-control {
-			margin-bottom: 0;
-			margin-right: 1em;
-		}
-	}
-
-	&__question-count {
-		margin-bottom: 12px;
 	}
 
 	/* Toolbar */
