@@ -25,6 +25,8 @@ class Quiz_Content {
 	 */
 	public static function render_quiz() {
 
+		\Sensei_Course_Theme_Quiz::instance()->add_form_wrapper();
+
 		// The following content are rendered separately in Learning Mode.
 		// So we need to remove them from here, otherwise they are repeated.
 		remove_action( 'sensei_single_quiz_questions_before', [ Sensei()->post_types->messages, 'send_message_link' ], 10 );

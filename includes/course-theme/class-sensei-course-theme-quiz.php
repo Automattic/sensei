@@ -141,4 +141,33 @@ class Sensei_Course_Theme_Quiz {
 		$block = new Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );
 	}
+
+	/**
+	 * Add a form wrapper for quiz pages.
+	 *
+	 * @access private
+	 */
+	public function add_form_wrapper() {
+
+		add_action( 'wp_body_open', [ $this, 'start_form' ], 90 );
+		add_action( 'wp_footer', [ $this, 'end_form' ], 0 );
+	}
+
+	/**
+	 * Add a form open tag.
+	 *
+	 * @access private
+	 */
+	public function start_form() {
+		echo '<form method="post" enctype="multipart/form-data" class="sensei-form">';
+	}
+
+	/**
+	 * Add a form close tag.
+	 *
+	 * @access private
+	 */
+	public function end_form() {
+		echo '</form>';
+	}
 }
