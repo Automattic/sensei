@@ -158,7 +158,7 @@ class Sensei_Course_Theme_Editor {
 			$theme_templates = array_filter(
 				$theme_templates,
 				function( $template ) use ( $post_type ) {
-					return ! in_array( $post_type, $template->post_types, true );
+					return in_array( $post_type, $template->post_types, true );
 				}
 			);
 		}
