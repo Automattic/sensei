@@ -1256,7 +1256,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add custom columns to lesson list table.
 	 *
-	 * @since 1.8.0
+	 * @since 4.0.0
 	 *
 	 * @param  array $columns Existing columns.
 	 * @return array          Modified columns.
@@ -1285,7 +1285,7 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Output the content of the course modules column.
+	 * Get the links of all modules related to a post.
 	 *
 	 * @since 4.0.0
 	 *
@@ -1293,7 +1293,7 @@ class Sensei_Core_Modules {
 	 * @return array
 	 */
 	private function get_module_links( int $post_id ): array {
-		$terms = get_the_terms( $post_id, 'module' );
+		$terms = get_the_terms( $post_id, $this->taxonomy );
 		$links = [];
 
 		if ( $terms ) {
