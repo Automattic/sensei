@@ -49,6 +49,8 @@ class Sensei_Core_Modules {
 		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
 		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
 		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
+		add_filter( 'manage_lesson_posts_columns', array( $this, 'lesson_columns' ), 11, 1 );
+		add_action( 'manage_lesson_posts_custom_column', array( $this, 'lesson_column_content' ), 11, 2 );
 
 		// Ensure modules always show under courses
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
@@ -1248,6 +1250,37 @@ class Sensei_Core_Modules {
 					esc_html__( 'Order modules', 'sensei-lms' )
 				);
 			}
+		}
+	}
+
+	/**
+	 * Add custom columns to lesson list table.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param  array $columns Existing columns.
+	 * @return array          Modified columns.
+	 */
+	public function lesson_columns( $columns = array() ) {
+		$columns['module'] = __( 'Module', 'sensei-lms' );
+
+		return $columns;
+	}
+
+	/**
+	 * Load content in the lesson custom columns.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  string  $column    Current column name.
+	 * @param  integer $lesson_id The lesson ID.
+	 * @return void
+	 */
+	public function lesson_column_content( $column = '', $lesson_id = 0 ) {
+		if ( 'module' === $column ) {
+			$module_links = $this->get_module_links( $lesson_id );
+
+			echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
 		}
 	}
 
