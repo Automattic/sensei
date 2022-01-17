@@ -184,6 +184,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 				'_failed_indicate_incorrect'   => 'yes',
 				'_failed_show_answer_feedback' => 'yes',
 				'_failed_show_correct_answers' => 'no',
+				'_button_text_color'           => '#ffffff',
+				'_button_background_color'     => '#000000',
 			],
 		];
 		list( $lesson_id ) = $this->create_lesson_with_quiz( $quiz_args );
@@ -199,6 +201,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 		$this->assertTrue( $response_data['options']['failed_indicate_incorrect'] );
 		$this->assertTrue( $response_data['options']['failed_show_answer_feedback'] );
 		$this->assertFalse( $response_data['options']['failed_show_correct_answers'] );
+		$this->assertEquals( '#ffffff', $response_data['options']['button_text_color'] );
+		$this->assertEquals( '#000000', $response_data['options']['button_background_color'] );
 
 		$another_quiz_args = [
 			'meta_input' => [
@@ -828,8 +832,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$this->assertNull( $pagination_settings['pagination_number'] );
 		$this->assertFalse( $pagination_settings['show_progress_bar'] );
-		$this->assertEquals( 5, $pagination_settings['progress_bar_radius'] );
-		$this->assertEquals( 5, $pagination_settings['progress_bar_height'] );
+		$this->assertEquals( 6, $pagination_settings['progress_bar_radius'] );
+		$this->assertEquals( 12, $pagination_settings['progress_bar_height'] );
 		$this->assertNull( $pagination_settings['progress_bar_color'] );
 		$this->assertNull( $pagination_settings['progress_bar_background'] );
 	}

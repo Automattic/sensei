@@ -79,11 +79,8 @@ class Sensei_Course_Progress_Block {
 
 		$bar_css['inline_styles'][] = 'width: ' . $percentage . '%';
 
-		// translators: Placeholder %d is the lesson count.
-		$lessons_text = sprintf( _n( '%d Lesson', '%d Lessons', $total_lessons, 'sensei-lms' ), $total_lessons );
-
-		// translators: Placeholders are the number and percentage of completed lessons.
-		$completed_text = sprintf( __( '%1$d completed (%2$s)', 'sensei-lms' ), $completed, $percentage . '%' );
+		// translators: %1$d number of lessons completed, %2$d number of total lessons, %3$s percentage.
+		$progress_bar_text = sprintf( __( '%1$d of %2$d lessons completed (%3$s)', 'sensei-lms' ), $completed, $total_lessons, $percentage . '%' );
 
 		$class_names = [ 'sensei-block-wrapper' ];
 
@@ -94,8 +91,7 @@ class Sensei_Course_Progress_Block {
 		return '
 			<div ' . Sensei_Block_Helpers::render_style_attributes( $class_names, $text_css ) . '>
 				<section class="wp-block-sensei-lms-progress-heading sensei-progress-bar__heading">
-					<div class="wp-block-sensei-lms-progress-heading__lessons sensei-progress-bar__lessons">' . $lessons_text . '</div>
-					<div class="wp-block-sensei-lms-progress-heading__completed sensei-progress-bar__completed">' . $completed_text . '</div>
+					<div class="wp-block-sensei-lms-progress-heading__completed sensei-progress-bar__label">' . $progress_bar_text . '</div>
 				</section>
 				<div role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" ' . Sensei_Block_Helpers::render_style_attributes( [ 'wp-block-sensei-lms-course-progress', 'sensei-progress-bar__bar' ], $bar_background_css ) . '>
 					<div ' . Sensei_Block_Helpers::render_style_attributes( [], $bar_css ) . '></div>

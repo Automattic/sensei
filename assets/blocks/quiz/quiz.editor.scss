@@ -61,6 +61,11 @@ $gray-400: #ccc;
 		}
 	}
 
+	&__progress-bar {
+		margin-top: $default-block-margin;
+		margin-bottom: $default-block-margin;
+	}
+
 	&__pre-publish-validation {
 		&__notice {
 			margin: 0;
@@ -72,13 +77,16 @@ $gray-400: #ccc;
 	}
 
 	/* Settings */
-	&__settings-link {
+	&__settings-quick-nav {
 		display: flex;
-		margin: 0 auto;
-		text-decoration: underline;
+		justify-content: center;
 
-		&:focus:not(:disabled) {
-			box-shadow: none;
+		button {
+			text-decoration: underline;
+
+			&:focus:not(:disabled) {
+				box-shadow: none;
+			}
 		}
 	}
 

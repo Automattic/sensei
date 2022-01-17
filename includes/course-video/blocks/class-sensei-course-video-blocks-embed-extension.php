@@ -3,7 +3,7 @@
  * File containing the Sensei_Course_Video_Blocks_Embed_Extension class.
  *
  * @package sensei-lms
- * @since 4.0.0
+ * @since 3.15.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Provides common logic for video block extensions to implement functionality for video course progression
  *
- * @since 4.0.0
+ * @since 3.15.0
  */
 abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**

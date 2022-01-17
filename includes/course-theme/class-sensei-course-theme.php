@@ -24,6 +24,11 @@ class Sensei_Course_Theme {
 	const QUERY_VAR = 'learn';
 
 	/**
+	 * Course theme preview query var.
+	 */
+	const PREVIEW_QUERY_VAR = 'sensei_theme_preview';
+
+	/**
 	 * Directory for the course theme.
 	 */
 	const THEME_NAME = 'sensei-course-theme';
@@ -93,7 +98,7 @@ class Sensei_Course_Theme {
 	public function get_theme_redirect_url( $path = '' ) {
 
 		if ( '' === get_option( 'permalink_structure' ) ) {
-			return add_query_arg( [ self::QUERY_VAR => 1 ], $path );
+			return home_url( add_query_arg( [ self::QUERY_VAR => 1 ], $path ) );
 		}
 
 		return home_url( '/' . self::QUERY_VAR . '/' . $path );
@@ -239,8 +244,67 @@ class Sensei_Course_Theme {
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 
 			$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
-			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';" );
+			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
 		}
+	}
+
+	/**
+	 * Tells if sensei theme is in preview mode.
+	 *
+	 * @param int $course_id The id of the course.
+	 *
+	 * @return bool
+	 */
+	public static function is_preview_mode( $course_id ) {
+		// Do not allow sensei preview if not an administrator.
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			return false;
+		}
+
+		// Do not allow sensei preview if it is not a course related page.
+		$course_id = intval( \Sensei_Utils::get_current_course() );
+		if ( ! $course_id ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The user is administrator at this point. No need.
+		$query_var = isset( $_GET[ self::PREVIEW_QUERY_VAR ] ) ? intval( $_GET[ self::PREVIEW_QUERY_VAR ] ) : 0;
+
+		// Do not allow sensei preview if requested course id does not match.
+		if ( $query_var !== $course_id ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the url for sensei theme customization.
+	 */
+	public static function get_sensei_theme_customize_url() {
+		// Get the last modified lesson.
+		$result = get_posts(
+			[
+				'posts_per_page' => 1,
+				'post_type'      => 'lesson',
+				'orderby'        => 'modified',
+				'meta'           => [
+					'key'     => '_lesson_course',
+					'compare' => 'EXISTS',
+				],
+			]
+		);
+		if ( empty( $result ) ) {
+			return '';
+		}
+
+		$lesson      = $result[0];
+		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+		$preview_url = '/?p=' . $lesson->ID;
+		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+			$preview_url .= '&learn=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+		}
+		return '/wp-admin/customize.php?autofocus[section]=Sensei_Course_Theme_Option&url=' . rawurlencode( $preview_url );
 	}
 
 	/**

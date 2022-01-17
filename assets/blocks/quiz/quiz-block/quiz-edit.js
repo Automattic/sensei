@@ -18,6 +18,7 @@ import QuestionsModal from './questions-modal';
 import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
+import QuizProgressBarEdit from './quiz-progress-bar-edit';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/quiz-question',
@@ -62,6 +63,9 @@ const QuizEdit = ( props ) => {
 		),
 		[ clientId ]
 	);
+	const pagination = props?.attributes?.options?.pagination;
+	const showPaginationProgressBar =
+		pagination?.paginationNumber && pagination?.showProgressBar;
 
 	return (
 		<>
@@ -69,17 +73,24 @@ const QuizEdit = ( props ) => {
 			<div className="sensei-lms-quiz-block__separator">
 				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
 			</div>
+
+			{ showPaginationProgressBar && (
+				<QuizProgressBarEdit pagination={ pagination } />
+			) }
+
 			<InnerBlocks
 				allowedBlocks={ ALLOWED_BLOCKS }
 				templateInsertUpdatesSelection={ false }
 				renderAppender={ AppenderComponent }
 			/>
+
 			{ isExistingQuestionsModalOpen && (
 				<QuestionsModal
 					clientId={ clientId }
 					onClose={ closeExistingQuestionsModal }
 				/>
 			) }
+
 			<div className="sensei-lms-quiz-block__separator" />
 			<QuizSettings { ...props } />
 		</>

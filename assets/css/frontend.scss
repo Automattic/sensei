@@ -488,12 +488,19 @@ a.sensei-certificate-link {
 
 
 .quiz:not(.quiz-blocks), .lesson {
-  button.quiz-submit  {
-    &.complete  {
+  button.quiz-submit {
+    &.complete {
       background: $success;
     }
-    &.reset  {
+    &.reset {
       background: $error;
+    }
+  }
+  input.quiz-submit {
+    &:disabled {
+      pointer-events: none;
+      opacity: 0.5;
+      filter: grayscale(100%);
     }
   }
 }

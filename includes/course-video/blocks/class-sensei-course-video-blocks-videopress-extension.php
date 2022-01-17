@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Course_Video_Blocks_Vimeo_Extension class.
+ * File containing the Sensei_Course_Video_Blocks_VideoPress_Extension class.
  *
  * @package sensei-lms
  * @since 3.15.0
@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Extends standard Embed block with Vimeo specific functionality for video course progression
+ * Extends standard Embed block with VideoPress specific functionality for video course progression
  *
  * @since 3.15.0
  */
-class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blocks_Embed_Extension {
+class Sensei_Course_Video_Blocks_VideoPress_Extension extends Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Instance of class.
 	 *
@@ -26,7 +26,7 @@ class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blo
 	/**
 	 * Returns an instance of the class.
 	 *
-	 * @return Sensei_Course_Video_Blocks_Vimeo_Extension
+	 * @return static
 	 */
 	public static function instance() {
 		if ( self::$instance ) {
@@ -38,14 +38,13 @@ class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blo
 	}
 
 	/**
-	 * Sensei_Course_Video_Blocks_Vimeo_Extension constructor.
+	 * Sensei_Course_Video_Blocks_VideoPress_Extension constructor.
 	 */
 	private function __construct() {
 	}
 
-
 	/**
-	 * Check if the URL is a Vimeo URL.
+	 * Check if the URL is a VideoPress URL.
 	 *
 	 * @param string $url
 	 *
@@ -53,7 +52,8 @@ class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blo
 	 */
 	protected function is_supported( string $url ): bool {
 		$host = wp_parse_url( $url, PHP_URL_HOST );
-		return in_array( $host, [ 'vimeo.com', 'player.vimeo.com' ], true );
+
+		return strpos( $host, 'videopress.com' ) !== false || strpos( $host, 'video.wordpress.com' ) !== false;
 	}
 
 	/**
@@ -62,6 +62,6 @@ class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blo
 	 * @return string
 	 */
 	protected function get_extension_class_name(): string {
-		return 'vimeo-extension';
+		return 'videopress-extension';
 	}
 }
