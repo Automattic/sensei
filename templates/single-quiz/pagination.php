@@ -22,7 +22,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 
 ?>
 
-<div id="sensei-quiz-pagination">
+<div class="sensei-quiz-pagination">
 	<input type="hidden" name="sensei_quiz_page_change_nonce" id="sensei_quiz_page_change_nonce" value="<?php echo esc_attr( wp_create_nonce( 'sensei_quiz_page_change_nonce' ) ); ?>" />
 
 	<div class="sensei-quiz-pagination__list">

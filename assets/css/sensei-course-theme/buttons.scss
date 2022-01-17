@@ -1,13 +1,15 @@
 
-.wp-block-button .wp-block-button__link {
-	all: unset;
-}
 
 .sensei-course-theme__button, .wp-block-button {
 
+	.wp-block-button__link {
+		font-family: inherit;
+		font-weight: inherit;
+		font-size: inherit;
+
+	}
 	font-family: 'Inter', sans-serif;
 	font-weight: 400;
-	font-size: 13px;
 	line-height: 1.5;
 	letter-spacing: normal;
 	display: inline-block;
@@ -15,6 +17,9 @@
 	cursor: pointer;
 	text-align: center;
 	background: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
 
 	&.is-primary,
 	&.is-secondary,

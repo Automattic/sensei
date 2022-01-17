@@ -1,14 +1,14 @@
+
 /**
  * Variables
  */
 $tablet-breakpoint: 768px;
 
+@import '../../shared/blocks/progress-bar/progress-bar';
 .sensei-course-theme__quiz {
-	display: block;
 
 	&__main-content {
 		padding: 32px;
-		margin-bottom: 100px;
 
 		> * {
 			display: block;
@@ -36,6 +36,7 @@ $tablet-breakpoint: 768px;
 		z-index: 100;
 
 		.wp-block-post-title {
+			font-family: inherit;
 			font-size: 24px;
 			font-weight: 600;
 			overflow: hidden;
@@ -58,7 +59,7 @@ $tablet-breakpoint: 768px;
 			display: block;
 		}
 
-		#sensei-quiz-actions {
+		.sensei-quiz-actions {
 			width: 100%;
 			flex-direction: column;
 			gap: 2rem;
@@ -73,13 +74,13 @@ $tablet-breakpoint: 768px;
 
 			.sensei-quiz-action {
 				flex: 1;
-				button {
+				.button {
 					width: 100%;
 				}
 			}
 		}
 
-		#sensei-quiz-pagination {
+		.sensei-quiz-pagination {
 			flex: 1;
 			margin: 0;
 			.sensei-quiz-pagination__list ul.page-numbers{
@@ -93,7 +94,7 @@ $tablet-breakpoint: 768px;
 	.sensei-course-theme__quiz {
 		&__footer {
 			&__wrapper {
-				position: fixed;
+				position: sticky;
 				bottom: 0;
 				left: 0;
 				right: 0;
@@ -104,15 +105,15 @@ $tablet-breakpoint: 768px;
 			}
 
 
-			#sensei-quiz-actions {
+			.sensei-quiz-actions {
 				width: auto;
 				flex-direction: row-reverse;
 				.sensei-quiz-action {
 					flex: unset;
 				}
 			}
-			#sensei-quiz-pagination {
-				#sensei-quiz-actions {
+			.sensei-quiz-pagination {
+				.sensei-quiz-actions {
 					flex-direction: row;
 				}
 			}
