@@ -64,10 +64,16 @@ class Quiz_Actions {
 			return '';
 		}
 
-		return ( "
-			<form method='POST' enctype='multipart/form-data'>
-				{$actions}
-			</form>
-		" );
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$user_id   = get_current_user_id();
+		if ( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
+			return ( "
+				<form method='POST' enctype='multipart/form-data'>
+					{$actions}
+				</form>
+			" );
+		}
+
+		return $actions;
 	}
 }
