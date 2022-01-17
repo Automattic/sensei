@@ -698,15 +698,18 @@ class Sensei_Course {
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'sensei-lms' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'sensei-lms' );
 		$new_columns['course-category']     = _x( 'Category', 'column name', 'sensei-lms' );
+
+		if ( isset( $defaults['modules'] ) ) {
+			$new_columns['modules'] = $defaults['modules'];
+		}
+
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
-			'taxonomy-module',
 			'teacher',
-			'module_order',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {

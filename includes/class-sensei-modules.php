@@ -1212,33 +1212,68 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Add 'Module order' column to courses list table
+	 * Add custom columns to course list table.
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array $columns Existing columns
-	 * @return array           Modifed columns
+	 * @param  array $columns Existing columns.
+	 * @return array          Modified columns.
 	 */
 	public function course_columns( $columns = array() ) {
-		$columns['module_order'] = __( 'Module order', 'sensei-lms' );
+		$columns['modules'] = __( 'Modules', 'sensei-lms' );
+
 		return $columns;
 	}
 
 	/**
-	 * Load content in 'Module order' column
+	 * Load content in the course custom columns.
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  string  $column Current column name
-	 * @param  integer $course_id ID of course
+	 * @param  string  $column    Current column name.
+	 * @param  integer $course_id The course ID.
 	 * @return void
 	 */
 	public function course_column_content( $column = '', $course_id = 0 ) {
-		if ( $column == 'module_order' ) {
-			if ( has_term( '', $this->taxonomy, $course_id ) ) {
-				echo '<a class="button-secondary" href="' . esc_url( admin_url( 'edit.php?post_type=course&page=module-order&course_id=' . urlencode( intval( $course_id ) ) ) ) . '">' . esc_html__( 'Order modules', 'sensei-lms' ) . '</a>';
+		if ( 'modules' === $column ) {
+			$module_links = $this->get_module_links( $course_id );
+
+			if ( $module_links ) {
+				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
+
+				// Output the edit modules order link.
+				echo sprintf(
+					'<a class="button-link" href="%s">%s</a>',
+					esc_url( admin_url( 'edit.php?post_type=course&page=module-order&course_id=' . intval( $course_id ) ) ),
+					esc_html__( 'Order modules', 'sensei-lms' )
+				);
 			}
 		}
+	}
+
+	/**
+	 * Output the content of the course modules column.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  int $post_id
+	 * @return array
+	 */
+	private function get_module_links( int $post_id ): array {
+		$terms = get_the_terms( $post_id, 'module' );
+		$links = [];
+
+		if ( $terms ) {
+			foreach ( $terms as $term ) {
+				$links[] = sprintf(
+					'<a href="%s">%s</a>',
+					esc_attr( get_edit_term_link( $term->term_id ) ),
+					esc_html( $term->name )
+				);
+			}
+		}
+
+		return $links;
 	}
 
 	/**
@@ -1838,7 +1873,7 @@ class Sensei_Core_Modules {
 		$args = array(
 			'public'             => true,
 			'hierarchical'       => true,
-			'show_admin_column'  => true,
+			'show_admin_column'  => false,
 			'capabilities'       => array(
 				'manage_terms' => 'manage_categories',
 				'edit_terms'   => 'edit_courses',
