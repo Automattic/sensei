@@ -314,7 +314,7 @@ class Sensei_Course_Theme {
 	 */
 	public function admin_menu_init() {
 
-		if( ! function_exists( 'wp_is_block_theme' ) ) {
+		if ( ! function_exists( 'wp_is_block_theme' ) ) {
 			return;
 		}
 
