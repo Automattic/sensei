@@ -1,6 +1,6 @@
 
 body {
-	--primary-color: var(--wp--preset--color--primary, #30968B);
+	--primary-color: var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #30968B));
 	--primary-contrast-color: var(--wp--preset--color--primary-contrast-color, #FFFFFF);
 	--gray: var(--wp--preset--color--gray, #787C82);
 	--border-color: var(--wp--preset--color--border, #CCCCCC);
