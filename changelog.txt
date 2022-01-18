@@ -57,6 +57,7 @@
 * Fix: Fix course theme start lesson [#4580](https://github.com/Automattic/sensei/pull/4580)
 * Fix: Fix grade message with decimals [#4602](https://github.com/Automattic/sensei/pull/4602)
 * Fix: Fix comments pagination on lesson page [#4609](https://github.com/Automattic/sensei/pull/4609)
+* Fix: Return wp_nonce_field result instead of outputting it immediately [#4641](https://github.com/Automattic/sensei/pull/4641)
 
 2021.11.25 - version 3.14.0
 * New: Answer feedback improvements
