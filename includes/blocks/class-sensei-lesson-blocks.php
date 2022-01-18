@@ -49,6 +49,18 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			true
 		);
 
+		$course_id = Sensei_Utils::get_current_course();
+		if ( ! empty( $course_id ) ) {
+			wp_add_inline_script(
+				'sensei-single-lesson-blocks',
+				sprintf(
+					'window.sensei = window.sensei || {}; window.sensei.courseThemeEnabled = %s;',
+					Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ? 'true' : 'false'
+				),
+				'before'
+			);
+		}
+
 		Sensei()->assets->enqueue(
 			'sensei-single-lesson-blocks-editor-style',
 			'blocks/single-lesson-style-editor.css',
