@@ -313,6 +313,11 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function admin_menu_init() {
+
+		if( ! function_exists( 'wp_is_block_theme' ) ) {
+			return;
+		}
+
 		remove_action( 'admin_bar_menu', 'wp_admin_bar_edit_site_menu', 40 );
 		add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_edit_site_menu' ], 39 );
 
