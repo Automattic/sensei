@@ -67,8 +67,6 @@ class Sensei_Course_Theme_Editor {
 			return;
 		}
 
-		register_theme_directory( $sensei->plugin_path() . 'themes' );
-
 		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ], 0, 10 );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ], 0, 10 );
 
@@ -276,6 +274,8 @@ class Sensei_Course_Theme_Editor {
 	 * @access private
 	 */
 	public function add_site_editor_hooks() {
+
+		register_theme_directory( Sensei()->plugin_path() . 'themes' );
 
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
 		add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
