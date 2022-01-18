@@ -86,7 +86,9 @@ const Module = ( { title, lessons } ) => (
 			</div>
 		</header>
 		<div className="sensei-lms-course-navigation-module__lessons sensei-collapsible__content">
-			{ lessons.map( Lesson ) }
+			{ lessons.map( ( lesson ) => (
+				<Lesson { ...lesson } key={ lesson.title } />
+			) ) }
 		</div>
 		<div className="sensei-lms-course-navigation-module__summary">
 			{ __( '2 lessons, 0 quizzes', 'sensei-lms' ) }
@@ -136,7 +138,9 @@ export default {
 		return (
 			<div className="sensei-lms-course-navigation">
 				<div className="sensei-lms-course-navigation__modules">
-					{ sampleStructure.map( Module ) }
+					{ sampleStructure.map( ( module ) => (
+						<Module { ...module } key={ module.title } />
+					) ) }
 				</div>
 			</div>
 		);

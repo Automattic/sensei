@@ -72,7 +72,7 @@ const blocks = [
 		edit() {
 			return (
 				<div className="sensei-course-theme__sidebar-toggle">
-					{ MenuIcon }
+					<MenuIcon />
 				</div>
 			);
 		},
