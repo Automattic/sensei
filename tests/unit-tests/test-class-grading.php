@@ -89,9 +89,6 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
 
-		$this->expectOutputString('');
-		print_r( Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ), true );
-
 		$this->login_as_admin();
 
 		Sensei()->grading->grading_admin_menu();
@@ -106,6 +103,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 				break;
 			}
 		}
+
+		$this->assertArrayHasKey( 'foo', Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ) );
 
 				//Real data (
 	//     [0] => Grading <span class="awaiting-mod">1</span>
