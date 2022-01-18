@@ -89,6 +89,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
 
+		$this->expectOutputString('');
 		print_r( Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ), true );
 
 		$this->login_as_admin();
