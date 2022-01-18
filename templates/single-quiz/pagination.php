@@ -59,7 +59,7 @@ $sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
 		?>
 	</div>
 
-	<div id="sensei-quiz-actions">
+	<div class="sensei-quiz-actions">
 		<?php if ( $sensei_is_quiz_available && $sensei_has_actions ) : ?>
 			<div class="sensei-quiz-actions-secondary">
 				<?php if ( $sensei_is_reset_allowed ) : ?>

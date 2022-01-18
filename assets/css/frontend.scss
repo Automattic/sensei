@@ -483,7 +483,7 @@ a.sensei-certificate-link {
 				border-left: 2px solid;
 			}
 
-			.button {
+			.button, button {
 				@include button-link;
 			}
 		}
