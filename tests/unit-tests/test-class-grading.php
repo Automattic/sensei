@@ -79,8 +79,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
 
-		print_r( 'USER ID ' . $user_id, true );
-		print_r( 'COURSE ID ' . $course_id, true );
+		print_r( 'USER ID ' . $user_id);
+		print_r( 'COURSE ID ' . $course_id );
 
 		foreach ( $lesson_ids as $lesson_id ) {
 			add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
@@ -96,7 +96,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
 
-		print_r( Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ), true );
+		print_r( 'STATUSES ' . Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ) );
 
 		$this->login_as_admin();
 
