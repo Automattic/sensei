@@ -79,15 +79,24 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$course_id  = $this->factory->course->create();
 		$lesson_ids = $this->factory->lesson->create_many( 5 );
 
+		print_r( 'USER ID ' . $user_id, true );
+		print_r( 'COURSE ID ' . $course_id, true );
+
 		foreach ( $lesson_ids as $lesson_id ) {
-			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+			add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
+			print_r( 'LESSON ID ' . $lesson_id );
 		}
 
+		// TODO: Problem is either with data setup. Maybe caching?
+		// Update sensei_lesson_status
+		// SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = 'sensei_lesson_status' GROUP BY comment_approved
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'ungraded' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+
+		print_r( Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ), true );
 
 		$this->login_as_admin();
 
@@ -104,6 +113,18 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			}
 		}
 
+				//Real data (
+	//     [0] => Grading <span class="awaiting-mod">1</span>
+	//     [1] => manage_sensei_grades
+	//     [2] => sensei_grading
+	//     [3] => Grading
+	// )
+
+		// --- Expected
+		// +++ Actual
+		// @@ @@
+		// -'Grading <span class="awaiting-mod">2</span>'
+		// +'Grading'
 		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', $grading_menu[0], 'Should count 2 available updates' );
 	}
 
