@@ -6,30 +6,15 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ChevronLeft from '../icons/chevron-left.svg';
-import ChevronRight from '../icons/chevron-right.svg';
-import ChevronUp from '../icons/chevron-up.svg';
-import MenuIcon from '../icons/menu.svg';
-import CircleIcon from '../icons/circle.svg';
-import HalfCircleIcon from '../icons/half-filled-circle.svg';
-import CheckCircleIcon from '../icons/check-filled-circle.svg';
-import LockIcon from '../icons/lock.svg';
-import EyeIcon from '../icons/eye.svg';
-
-const ICONS = {
-	'not-started': CircleIcon,
-	'in-progress': HalfCircleIcon,
-	ungraded: HalfCircleIcon,
-	completed: CheckCircleIcon,
-	failed: HalfCircleIcon,
-	locked: LockIcon,
-	preview: EyeIcon,
-};
+import ChevronLeft from '../../icons/chevron-left.svg';
+import ChevronRight from '../../icons/chevron-right.svg';
+import MenuIcon from '../../icons/menu.svg';
+import CorseNavigationBlock from './course-navigation';
 
 /**
  * Internal dependencies
  */
-import registerSenseiBlocks from '../blocks/register-sensei-blocks';
+import registerSenseiBlocks from '../../blocks/register-sensei-blocks';
 
 const meta = {
 	category: 'sensei-lms',
@@ -38,6 +23,7 @@ const meta = {
 };
 
 const blocks = [
+	CorseNavigationBlock,
 	{
 		...meta,
 		title: __( 'Course Title', 'sensei-lms' ),
@@ -131,105 +117,7 @@ const blocks = [
 			return <div>{ __( 'Collapse', 'sensei-lms' ) }</div>;
 		},
 	},
-	{
-		...meta,
-		title: __( 'Course Navigation', 'sensei-lms' ),
-		name: 'sensei-lms/course-navigation',
-		edit() {
-			const structure = [
-				{
-					title: __( 'Module A', 'sensei-lms' ),
-					lessons: [
-						{
-							title: 'First Lesson',
-							status: 'preview',
-						},
-						{
-							title: 'Second Lesson',
-							status: 'completed',
-							quiz: true,
-						},
-						{
-							title: 'Third Lesson',
-							status: 'in-progress',
-							quiz: true,
-						},
-						{
-							title: 'Fourth Lesson',
-							status: 'not-started',
-							quiz: true,
-						},
-					],
-				},
-				{
-					title: __( 'Module B', 'sensei-lms' ),
-					lessons: [
-						{
-							title: 'Fifth Lesson',
-							status: 'not-started',
-							quiz: true,
-						},
-						{
-							title: 'Sixth Lesson',
-							status: 'locked',
-						},
-						{
-							title: 'Seventh Lesson',
-							status: 'locked',
-						},
-					],
-				},
-			];
 
-			const Module = ( { title, lessons } ) => (
-				<section className="sensei-lms-course-navigation-module sensei-collapsible">
-					<header className="sensei-lms-course-navigation-module__header">
-						<div className="sensei-collapsible__toggle">
-							<h2 className="sensei-lms-course-navigation-module__title">
-								{ title }
-							</h2>
-							<ChevronUp className="sensei-lms-course-navigation-module__collapsible-icon" />
-						</div>
-					</header>
-					<div className="sensei-lms-course-navigation-module__lessons sensei-collapsible__content">
-						{ lessons.map( Lesson ) }
-					</div>
-					<div className="sensei-lms-course-navigation-module__summary">
-						{ __( '2 lessons, 0 quizzes', 'sensei-lms' ) }
-					</div>
-				</section>
-			);
-
-			const Lesson = ( { title, quiz, status } ) => {
-				const StatusIcon = ICONS[ status ];
-				return (
-					<div
-						className={ `sensei-lms-course-navigation-lesson status-${ status }` }
-					>
-						<span className="sensei-lms-course-navigation-lesson__link">
-							<StatusIcon className="sensei-lms-course-navigation-lesson__status" />
-							<span className="sensei-lms-href sensei-lms-course-navigation-lesson__title">
-								{ title }
-							</span>
-						</span>
-						{ quiz && (
-							<span className="sensei-lms-href sensei-lms-course-navigation-lesson__extra">
-								{ __( 'Quiz', 'sensei-lms' ) }
-							</span>
-						) }
-					</div>
-				);
-			};
-
-			return (
-				<div className="sensei-lms-course-navigation">
-					<div className="sensei-lms-course-navigation__modules">
-						{ structure.map( Module ) }
-					</div>
-				</div>
-			);
-		},
-	},
 	{
 		...meta,
 		title: __( 'Contact Teacher', 'sensei-lms' ),

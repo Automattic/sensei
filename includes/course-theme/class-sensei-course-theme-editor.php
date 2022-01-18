@@ -324,7 +324,7 @@ class Sensei_Course_Theme_Editor {
 	public function enqueue_site_editor_assets() {
 		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
 		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor-style', 'css/sensei-course-theme.editor.css' );
-		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks.js' );
+		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js' );
 	}
 
 	/**
