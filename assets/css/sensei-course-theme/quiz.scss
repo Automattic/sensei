@@ -27,7 +27,7 @@
 	&__header {
 		position: sticky;
 		top: var(--top-offset);
-		background-color: #fff;
+		background-color: var(--bg-color);
 		z-index: 100;
 
 		.wp-block-post-title {
@@ -70,4 +70,10 @@
 
 		}
 	}
+}
+
+.sensei-lms-quiz-back-to-lesson {
+	font-family: var(--font-family);
+	font-size: 14px;
+	text-decoration: none;
 }

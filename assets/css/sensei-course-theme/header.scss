@@ -18,7 +18,7 @@
 	}
 
 	.sensei-course-theme-course-progress {
-		color: var(--gray);
+		@include text-gray;
 
 	}
 }

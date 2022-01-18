@@ -1,4 +1,8 @@
 
+@mixin text-gray() {
+	opacity: 0.7;
+}
+
 body {
 	--primary-color: var(--sensei-course-theme-primary-color, var(--wp--custom--color--primary, #30968B));
 	--bg-color: var(--sensei-course-theme-background-color, var(--wp--custom--color--background-color, #FFFFFF));
