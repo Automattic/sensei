@@ -71,8 +71,8 @@ class Sensei_Course_Theme {
 			return;
 		}
 
-		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
-		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 10 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 20 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 
@@ -309,6 +309,8 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Replace 'Edit site' in admin bar to point to the current theme template.
+	 *
+	 * @access private
 	 */
 	public function admin_menu_init() {
 		remove_action( 'admin_bar_menu', 'wp_admin_bar_edit_site_menu', 40 );
@@ -318,6 +320,8 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Add 'Edit site' in admin bar opening the current theme template.
+	 *
+	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 *

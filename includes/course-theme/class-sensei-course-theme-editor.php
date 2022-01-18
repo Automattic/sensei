@@ -67,10 +67,10 @@ class Sensei_Course_Theme_Editor {
 			return;
 		}
 
-		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ], 0, 10 );
-		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ], 0, 10 );
+		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ] );
+		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 
-		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 0, 20 );
+		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
 
 	}
 
@@ -286,6 +286,8 @@ class Sensei_Course_Theme_Editor {
 	/**
 	 * Return a block template for the course theme.
 	 *
+	 * @access private
+	 *
 	 * @param \WP_Block_Template|null $template      Return a block template object to short-circuit the default query,
 	 *                                               or null to allow WP to run its normal queries.
 	 * @param string                  $id            Template unique identifier (example: theme_slug//template_slug).
@@ -306,14 +308,6 @@ class Sensei_Course_Theme_Editor {
 		list( , $slug ) = explode( '//', $id );
 
 		return $templates[ $slug ] ?? $template;
-	}
-
-	/**
-	 * Register block templates as plugin-provided templates when a block theme is already active.
-	 *
-	 * @access private
-	 */
-	public function register_plugin_templates() {
 	}
 
 	/**
