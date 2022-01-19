@@ -183,7 +183,7 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
-	 * Filter to hide admin bar for non-editor users.
+	 * Filter to show admin bar only for editor users.
 	 *
 	 * @access private
 	 *
@@ -191,7 +191,7 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @return bool Whether show admin bar.
 	 */
-	public function hide_admin_bar_for_non_editors( $show_admin_bar ) {
+	public function show_admin_bar_only_for_editors( $show_admin_bar ) {
 		$lesson_id = Sensei_Utils::get_current_lesson();
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
