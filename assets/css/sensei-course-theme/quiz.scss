@@ -73,7 +73,9 @@ $tablet-breakpoint: 768px;
 
 			.sensei-quiz-action {
 				flex: 1;
-				button {
+				padding: 0;
+				button.button {
+					padding: 8px 11px;
 					width: 100%;
 				}
 			}
