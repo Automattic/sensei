@@ -22,7 +22,6 @@ function init() {
 	add_filter( 'template_include', '\Sensei\Themes\Sensei_Course_Theme\Compat\get_wrapper_template' );
 	add_filter( 'theme_mod_custom_logo', '\Sensei\Themes\Sensei_Course_Theme\Compat\theme_mod_custom_logo', 60 );
 
-
 }
 
 /**
