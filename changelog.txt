@@ -1,5 +1,8 @@
 *** Changelog ***
 
+2022.01.20 - version 3.15.1
+* Fix: Fix PHP 7.0 and 7.1 compatibility
+
 2022.01.18 - version 3.15.0
 * New: Quiz Pagination
 	* Add toolbar pagination settings [#4429](https://github.com/Automattic/sensei/pull/4429)
