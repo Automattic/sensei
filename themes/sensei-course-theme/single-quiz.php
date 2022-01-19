@@ -44,17 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="sensei-course-theme__quiz__footer__wrapper sensei-course-theme__frame">
 			<!-- wp:columns {"className":"sensei-course-theme__quiz__footer"} -->
 			<div class="wp-block-columns sensei-course-theme__quiz__footer">
-				<!-- wp:column {"className":"sensei-course-theme__quiz__footer__left"} -->
-				<div class="wp-block-column sensei-course-theme__quiz__footer__left">
-					<!-- wp:sensei-lms/quiz-pagination /-->
-				</div>
-				<!-- /wp:column -->
-				<!-- wp:column {"className":"sensei-course-theme__quiz__footer__right"} -->
-				<div class="wp-block-column sensei-course-theme__quiz__footer__right">
-					<!-- wp:sensei-lms/quiz-actions /-->
-					<?php Sensei_Quiz::action_buttons(); ?>
-				</div>
-				<!-- /wp:column -->
+				<!-- wp:sensei-lms/quiz-actions /-->
 			</div>
 			<!-- /wp:columns -->
 		</div>
