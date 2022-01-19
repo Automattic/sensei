@@ -97,7 +97,7 @@ class Sensei_Course_Theme {
 	 */
 	public function get_theme_redirect_url( $path = '' ) {
 
-		if ( '' === get_option( 'permalink_structure' ) ) {
+		if ( '' === get_option( 'permalink_structure' ) || get_query_var( 'preview' ) ) {
 			return home_url( add_query_arg( [ self::QUERY_VAR => 1 ], $path ) );
 		}
 
@@ -258,12 +258,6 @@ class Sensei_Course_Theme {
 	public static function is_preview_mode( $course_id ) {
 		// Do not allow sensei preview if not an administrator.
 		if ( ! current_user_can( 'manage_sensei' ) ) {
-			return false;
-		}
-
-		// Do not allow sensei preview if it is not a course related page.
-		$course_id = intval( \Sensei_Utils::get_current_course() );
-		if ( ! $course_id ) {
 			return false;
 		}
 

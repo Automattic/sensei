@@ -227,7 +227,7 @@ class Sensei_Grading_User_Quiz {
 				 * Filters the various values which are displayed in the grading admin page for each quiz question.
 				 * The expected values are type_name, right_answer, user_answer_content and grade_type
 				 *
-				 * @since 4.0.0
+				 * @since 3.15.0
 				 *
 				 * @hook sensei_grading_display_quiz_question
 				 *
