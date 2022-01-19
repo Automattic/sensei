@@ -9,8 +9,10 @@
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
-	.wp-block-sensei-lms-site-logo {
+	.wp-block-site-logo {
 		img {
+			width: auto;
+			height: auto;
 			max-height: 50px;
 		}
 	}
