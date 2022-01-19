@@ -41,7 +41,7 @@ class Quiz_Actions {
 	 */
 	public function render() : string {
 
-		if ( ! sensei_can_user_view_lesson() ) {
+		if ( ! sensei_can_user_view_lesson() || 'quiz' !== get_post_type() ) {
 			return '';
 		}
 
