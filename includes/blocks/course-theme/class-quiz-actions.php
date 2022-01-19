@@ -45,7 +45,6 @@ class Quiz_Actions {
 			return '';
 		}
 
-		\Sensei_Quiz::start_quiz_questions_loop();
 		global $sensei_question_loop;
 		$pagination_enabled = $sensei_question_loop['total_pages'] > 1;
 
