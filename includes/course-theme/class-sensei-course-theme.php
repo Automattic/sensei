@@ -41,6 +41,13 @@ class Sensei_Course_Theme {
 	private static $instance;
 
 	/**
+	 * Active theme on the site before override.
+	 *
+	 * @var string
+	 */
+	private $original_theme;
+
+	/**
 	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
@@ -128,6 +135,8 @@ class Sensei_Course_Theme {
 	 * Load a bundled theme for the request.
 	 */
 	public function override_theme() {
+
+		$this->original_theme = get_stylesheet();
 
 		add_filter( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
 		add_filter( 'pre_option_stylesheet_root', [ $this, 'get_plugin_themes_root' ] );
@@ -339,6 +348,15 @@ class Sensei_Course_Theme {
 				'href'  => admin_url( 'site-editor.php?learn=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
 			)
 		);
+	}
+
+	/**
+	 * Get the original active site theme.
+	 *
+	 * @return mixed
+	 */
+	public function get_original_theme() {
+		return $this->original_theme;
 	}
 
 }
