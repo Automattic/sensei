@@ -118,10 +118,8 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 	 * @return string The json response.
 	 */
 	public function save_new_message( WP_REST_Request $request ) {
-		list(
-			'post_id' => $post_id,
-			'contact_message' => $message,
-		) = $request->get_params();
+		$post_id = $request->get_param( 'post_id' );
+		$message = $request->get_param( 'contact_message' );
 
 		$fail_response = [
 			'success' => false,
