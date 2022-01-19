@@ -261,14 +261,14 @@ const QuizSettings = ( {
 							),
 						},
 						{
-							value: pagination.progressBarColor || undefined,
+							value: pagination?.progressBarColor || undefined,
 							onChange: ( value ) =>
 								updatePagination( { progressBarColor: value } ),
 							label: __( 'Progress bar color', 'sensei-lms' ),
 						},
 						{
 							value:
-								pagination.progressBarBackground || undefined,
+								pagination?.progressBarBackground || undefined,
 							onChange: ( value ) =>
 								updatePagination( {
 									progressBarBackground: value,
