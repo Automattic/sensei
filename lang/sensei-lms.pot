@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 3.15.0\n"
+"Project-Id-Version: Sensei LMS 3.15.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-01-17T19:31:38+00:00\n"
+"POT-Creation-Date: 2022-01-19T22:11:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: sensei-lms\n"
@@ -1061,11 +1061,16 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: assets/blocks/lesson-actions/lesson-actions-block/lesson-actions-edit.js:54
+#: assets/blocks/lesson-actions/lesson-actions-block/lesson-actions-edit.js:57
 #: assets/blocks/lesson-actions/reset-lesson-block/index.js:33
 #: includes/class-sensei-frontend.php:1011
 #: assets/dist/blocks/single-lesson.js:1
 msgid "Reset Lesson"
+msgstr ""
+
+#: assets/blocks/lesson-actions/lesson-actions-block/lesson-actions-edit.js:77
+#: assets/dist/blocks/single-lesson.js:1
+msgid "Lesson Actions block is not displayed when Learning Mode is enabled."
 msgstr ""
 
 #: assets/blocks/lesson-actions/lesson-actions-block/lesson-actions-settings.js:48
@@ -2499,7 +2504,7 @@ msgid "Learning Mode is enabled globally."
 msgstr ""
 
 #: assets/js/admin/course-theme/course-theme-sidebar.js:115
-#: includes/class-sensei-settings.php:306
+#: includes/class-sensei-settings.php:308
 #: assets/dist/js/admin/course-edit.js:1
 msgid "Learning mode"
 msgstr ""
@@ -3760,8 +3765,8 @@ msgstr ""
 msgid "%1$d of %2$d lessons completed (%3$s)"
 msgstr ""
 
-#: includes/blocks/class-sensei-lesson-blocks.php:81
-#: includes/blocks/class-sensei-lesson-blocks.php:90
+#: includes/blocks/class-sensei-lesson-blocks.php:93
+#: includes/blocks/class-sensei-lesson-blocks.php:102
 msgid "Write lesson content..."
 msgstr ""
 
@@ -4643,7 +4648,7 @@ msgid "This quiz is not able to be automatically graded."
 msgstr ""
 
 #: includes/class-sensei-learner-profiles.php:28
-#: includes/class-sensei-settings.php:517
+#: includes/class-sensei-settings.php:520
 msgid "learner"
 msgstr ""
 
@@ -5881,372 +5886,372 @@ msgid ""
 "cannot be restored."
 msgstr ""
 
-#: includes/class-sensei-settings.php:307
+#: includes/class-sensei-settings.php:309
 msgid ""
 "Enable this mode for your courses to show an immersive and dedicated view "
 "for the course, lessons, and quiz.*"
 msgstr ""
 
-#: includes/class-sensei-settings.php:315
+#: includes/class-sensei-settings.php:318
 msgid "Courses are complete:"
 msgstr ""
 
-#: includes/class-sensei-settings.php:316
+#: includes/class-sensei-settings.php:319
 msgid "This will determine when courses are marked as complete."
 msgstr ""
 
-#: includes/class-sensei-settings.php:325
+#: includes/class-sensei-settings.php:328
 msgid "Display Course Author"
 msgstr ""
 
-#: includes/class-sensei-settings.php:326
+#: includes/class-sensei-settings.php:329
 msgid "Output the Course Author on Course archive and My Courses page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:333
+#: includes/class-sensei-settings.php:336
 msgid "My Courses Pagination"
 msgstr ""
 
-#: includes/class-sensei-settings.php:334
+#: includes/class-sensei-settings.php:337
 msgid "The number of courses to output for the my courses page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:343
+#: includes/class-sensei-settings.php:346
 msgid "Course Archive Image"
 msgstr ""
 
-#: includes/class-sensei-settings.php:344
+#: includes/class-sensei-settings.php:347
 msgid "Output the Course Image on the Course Archive Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:351
+#: includes/class-sensei-settings.php:354
 msgid "Image Width - Archive"
 msgstr ""
 
-#: includes/class-sensei-settings.php:352
+#: includes/class-sensei-settings.php:355
 msgid "The width in pixels of the featured image for the Course Archive page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:360
+#: includes/class-sensei-settings.php:363
 msgid "Image Height - Archive"
 msgstr ""
 
-#: includes/class-sensei-settings.php:361
+#: includes/class-sensei-settings.php:364
 msgid "The height in pixels of the featured image for the Course Archive page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:369
+#: includes/class-sensei-settings.php:372
 msgid "Image Hard Crop - Archive"
 msgstr ""
 
-#: includes/class-sensei-settings.php:371
-#: includes/class-sensei-settings.php:406
-#: includes/class-sensei-settings.php:475
-#: includes/class-sensei-settings.php:510
+#: includes/class-sensei-settings.php:374
+#: includes/class-sensei-settings.php:409
+#: includes/class-sensei-settings.php:478
+#: includes/class-sensei-settings.php:513
 #. translators: Placeholders are an opening and closing <a> tag linking to the documentation page.
 msgid ""
 "After changing this setting, you may need to %1$sregenerate your "
 "thumbnails%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:378
+#: includes/class-sensei-settings.php:381
 msgid "Single Course Image"
 msgstr ""
 
-#: includes/class-sensei-settings.php:379
+#: includes/class-sensei-settings.php:382
 msgid "Output the Course Image on the Single Course Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:386
-#: includes/class-sensei-settings.php:490
+#: includes/class-sensei-settings.php:389
+#: includes/class-sensei-settings.php:493
 msgid "Image Width - Single"
 msgstr ""
 
-#: includes/class-sensei-settings.php:387
+#: includes/class-sensei-settings.php:390
 msgid "The width in pixels of the featured image for the Course single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:395
-#: includes/class-sensei-settings.php:499
+#: includes/class-sensei-settings.php:398
+#: includes/class-sensei-settings.php:502
 msgid "Image Height - Single"
 msgstr ""
 
-#: includes/class-sensei-settings.php:396
+#: includes/class-sensei-settings.php:399
 msgid "The height in pixels of the featured image for the Course single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:404
-#: includes/class-sensei-settings.php:508
+#: includes/class-sensei-settings.php:407
+#: includes/class-sensei-settings.php:511
 msgid "Image Hard Crop - Single"
 msgstr ""
 
-#: includes/class-sensei-settings.php:413
+#: includes/class-sensei-settings.php:416
 msgid "Featured Courses Panel"
 msgstr ""
 
-#: includes/class-sensei-settings.php:414
+#: includes/class-sensei-settings.php:417
 msgid "Output the Featured Courses Panel on the Course Archive Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:421
+#: includes/class-sensei-settings.php:424
 msgid "More link text"
 msgstr ""
 
-#: includes/class-sensei-settings.php:422
+#: includes/class-sensei-settings.php:425
 msgid ""
 "The text that will be displayed on the Course Archive for the more courses "
 "link."
 msgstr ""
 
-#: includes/class-sensei-settings.php:424
+#: includes/class-sensei-settings.php:427
 msgid "More"
 msgstr ""
 
-#: includes/class-sensei-settings.php:431
+#: includes/class-sensei-settings.php:434
 msgid "Allow Comments for Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:432
+#: includes/class-sensei-settings.php:435
 msgid ""
 "This will allow students to post comments on the single Lesson page, only "
 "student who have access to the Lesson will be allowed to comment."
 msgstr ""
 
-#: includes/class-sensei-settings.php:439
+#: includes/class-sensei-settings.php:442
 msgid "Display Lesson Author"
 msgstr ""
 
-#: includes/class-sensei-settings.php:440
+#: includes/class-sensei-settings.php:443
 msgid "Output the Lesson Author on Course single page & Lesson archive page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:447
+#: includes/class-sensei-settings.php:450
 msgid "Course Lesson Images"
 msgstr ""
 
-#: includes/class-sensei-settings.php:448
+#: includes/class-sensei-settings.php:451
 msgid "Output the Lesson Image on the Single Course Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:455
+#: includes/class-sensei-settings.php:458
 msgid "Image Width - Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:456
+#: includes/class-sensei-settings.php:459
 msgid ""
 "The width in pixels of the featured image for the Lessons on the Course "
 "Single page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:464
+#: includes/class-sensei-settings.php:467
 msgid "Image Height - Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:465
+#: includes/class-sensei-settings.php:468
 msgid ""
 "The height in pixels of the featured image for the Lessons on the Course "
 "Single page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:473
+#: includes/class-sensei-settings.php:476
 msgid "Image Hard Crop - Course Lessons"
 msgstr ""
 
-#: includes/class-sensei-settings.php:482
+#: includes/class-sensei-settings.php:485
 msgid "Single Lesson Images"
 msgstr ""
 
-#: includes/class-sensei-settings.php:483
+#: includes/class-sensei-settings.php:486
 msgid "Output the Lesson Image on the Single Lesson Page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:491
+#: includes/class-sensei-settings.php:494
 msgid "The width in pixels of the featured image for the Lessons single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:500
+#: includes/class-sensei-settings.php:503
 msgid "The height in pixels of the featured image for the Lessons single post page."
 msgstr ""
 
-#: includes/class-sensei-settings.php:521
+#: includes/class-sensei-settings.php:524
 msgid "Public student profiles"
 msgstr ""
 
-#: includes/class-sensei-settings.php:523
+#: includes/class-sensei-settings.php:526
 #. translators: Placeholder is a profile URL example.
 msgid ""
 "Enable public student profiles that will be accessible to everyone. Profile "
 "URL format: %s"
 msgstr ""
 
-#: includes/class-sensei-settings.php:530
+#: includes/class-sensei-settings.php:533
 msgid "Show student's courses"
 msgstr ""
 
-#: includes/class-sensei-settings.php:531
+#: includes/class-sensei-settings.php:534
 msgid "Display the student's active and completed courses on their profile."
 msgstr ""
 
-#: includes/class-sensei-settings.php:539
+#: includes/class-sensei-settings.php:542
 msgid "Their quiz is graded (auto and manual grading)"
 msgstr ""
 
-#: includes/class-sensei-settings.php:540
+#: includes/class-sensei-settings.php:543
 msgid "They complete a course"
 msgstr ""
 
-#: includes/class-sensei-settings.php:544
+#: includes/class-sensei-settings.php:547
 msgid "A student starts their course"
 msgstr ""
 
-#: includes/class-sensei-settings.php:545
+#: includes/class-sensei-settings.php:548
 msgid "A student completes their course"
 msgstr ""
 
-#: includes/class-sensei-settings.php:546
+#: includes/class-sensei-settings.php:549
 msgid "A student completes a lesson"
 msgstr ""
 
-#: includes/class-sensei-settings.php:547
+#: includes/class-sensei-settings.php:550
 msgid "A student submits a quiz for grading"
 msgstr ""
 
-#: includes/class-sensei-settings.php:548
+#: includes/class-sensei-settings.php:551
 msgid "A student sends a private message to a teacher"
 msgstr ""
 
-#: includes/class-sensei-settings.php:552
+#: includes/class-sensei-settings.php:555
 msgid "They receive a reply to their private message"
 msgstr ""
 
-#: includes/class-sensei-settings.php:556
+#: includes/class-sensei-settings.php:559
 msgid "Emails Sent to Students"
 msgstr ""
 
-#: includes/class-sensei-settings.php:557
+#: includes/class-sensei-settings.php:560
 msgid "Select the notifications that will be sent to students."
 msgstr ""
 
-#: includes/class-sensei-settings.php:565
+#: includes/class-sensei-settings.php:568
 msgid "Emails Sent to Teachers"
 msgstr ""
 
-#: includes/class-sensei-settings.php:566
+#: includes/class-sensei-settings.php:569
 msgid "Select the notifications that will be sent to teachers."
 msgstr ""
 
-#: includes/class-sensei-settings.php:574
+#: includes/class-sensei-settings.php:577
 msgid "Emails Sent to All Users"
 msgstr ""
 
-#: includes/class-sensei-settings.php:575
+#: includes/class-sensei-settings.php:578
 msgid "Select the notifications that will be sent to all users."
 msgstr ""
 
-#: includes/class-sensei-settings.php:583
+#: includes/class-sensei-settings.php:586
 msgid "\"From\" Name"
 msgstr ""
 
-#: includes/class-sensei-settings.php:584
+#: includes/class-sensei-settings.php:587
 msgid "The name from which all emails will be sent."
 msgstr ""
 
-#: includes/class-sensei-settings.php:592
+#: includes/class-sensei-settings.php:595
 msgid "\"From\" Address"
 msgstr ""
 
-#: includes/class-sensei-settings.php:593
+#: includes/class-sensei-settings.php:596
 msgid "The address from which all emails will be sent."
 msgstr ""
 
-#: includes/class-sensei-settings.php:601
+#: includes/class-sensei-settings.php:604
 msgid "Header Image"
 msgstr ""
 
-#: includes/class-sensei-settings.php:603
+#: includes/class-sensei-settings.php:606
 #. translators: Placeholders are opening and closing <a> tags linking to the media uploader.
 msgid ""
 "Enter a URL to an image you want to show in the email's header. Upload your "
 "image using the %1$smedia uploader%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:611
+#: includes/class-sensei-settings.php:614
 msgid "Email Footer Text"
 msgstr ""
 
-#: includes/class-sensei-settings.php:612
+#: includes/class-sensei-settings.php:615
 msgid "The text to appear in the footer of Sensei LMS emails."
 msgstr ""
 
-#: includes/class-sensei-settings.php:615
+#: includes/class-sensei-settings.php:618
 #: templates/emails/footer.php:26
 #. translators: Placeholder is the blog name.
 msgid "%1$s - Powered by Sensei LMS"
 msgstr ""
 
-#: includes/class-sensei-settings.php:621
+#: includes/class-sensei-settings.php:624
 msgid "Base Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:623
+#: includes/class-sensei-settings.php:626
 #. translators: Placeholders are opening and closing <code> tags.
 msgid "The base colour for Sensei LMS email templates. Default %1$s#557da1%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:631
+#: includes/class-sensei-settings.php:634
 msgid "Background Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:633
+#: includes/class-sensei-settings.php:636
 #. translators: Placeholders are opening and closing <code> tags.
 msgid ""
 "The background colour for Sensei LMS email templates. Default "
 "%1$s#f5f5f5%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:641
+#: includes/class-sensei-settings.php:644
 msgid "Body Background Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:643
+#: includes/class-sensei-settings.php:646
 #. translators: Placeholders are opening and closing <code> tags.
 msgid ""
 "The main body background colour for Sensei LMS email templates. Default "
 "%1$s#fdfdfd%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:651
+#: includes/class-sensei-settings.php:654
 msgid "Body Text Colour"
 msgstr ""
 
-#: includes/class-sensei-settings.php:653
+#: includes/class-sensei-settings.php:656
 #. translators: Placeholders are opening and closing <code> tags.
 msgid ""
 "The main body text colour for Sensei LMS email templates. Default "
 "%1$s#505050%2$s."
 msgstr ""
 
-#: includes/class-sensei-settings.php:720
+#: includes/class-sensei-settings.php:723
 msgid "Select a Page:"
 msgstr ""
 
-#: includes/class-sensei-settings.php:868
+#: includes/class-sensei-settings.php:871
 msgid "Enable for all courses"
 msgstr ""
 
-#: includes/class-sensei-settings.php:873
+#: includes/class-sensei-settings.php:876
 msgid ""
 "Enable this mode for your courses to show an immersive and dedicated view "
 "for the course, lessons, and quizzes.*"
 msgstr ""
 
-#: includes/class-sensei-settings.php:878
+#: includes/class-sensei-settings.php:881
 msgid ""
 "Customize the colors, add a logo, and other styling options for Sensei’s "
 "learning mode."
 msgstr ""
 
-#: includes/class-sensei-settings.php:883
+#: includes/class-sensei-settings.php:886
 msgid "Customize styles"
 msgstr ""
 
