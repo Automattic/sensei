@@ -1,7 +1,7 @@
-@import './blockbase-ponyfill';
-
 .sensei-course-theme {
 	&__main-content {
+		padding: var(--content-padding);
+		margin-left: var(--sidebar-width) !important;
 
 		> * {
 			max-width: 900px;
@@ -22,4 +22,3 @@
 		}
 	}
 }
-

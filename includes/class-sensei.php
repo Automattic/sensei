@@ -418,7 +418,6 @@ class Sensei_Main {
 		Sensei_Data_Port_Manager::instance()->init();
 		Sensei_Course_Theme_Option::instance()->init( $this );
 		Sensei_Course_Theme::instance()->init( $this );
-		Sensei_Course_Theme_Editor::instance()->init( $this );
 		new Sensei_Customizer( $this );
 
 		// Setup Wizard.

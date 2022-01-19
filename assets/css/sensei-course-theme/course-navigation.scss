@@ -16,9 +16,6 @@
 		align-items: flex-start;
 		width: 100%;
 		margin: 12px 0;
-		padding: 0;
-		border: unset;
-		background: unset;
 
 		&:hover {
 			color: var(--primary-color);
@@ -41,8 +38,6 @@
 		font-weight: 600;
 		font-size: 18px;
 		line-height: 22px;
-		text-align: left;
-		margin: 0;
 	}
 
 	&__summary {

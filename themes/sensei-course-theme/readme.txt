@@ -1,24 +1,24 @@
-=== Sensei LMS ===
+=== Learning Mode ===
 Contributors: Automattic
-Requires at least: 5.7
-Tested up to: 5.9
-Requires PHP: 7.0
+Requires at least: 5.8
+Tested up to: 5.8
+Requires PHP: 5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-Learning Mode course theme for Sensei LMS.
+Sensei learning mode
 
 == Changelog ==
 
 = 1.0.0 =
-* Initial release.
+* Initial release
 
 == Copyright ==
 
-Sensei LMS WordPress Theme, (C) 2022 Automattic
-Sensei LMS is distributed under the terms of the GNU GPL.
+Learning Mode WordPress Theme, (C) 2021 Automattic
+Learning Mode is distributed under the terms of the GNU GPL.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

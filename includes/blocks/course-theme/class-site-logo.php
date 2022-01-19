@@ -31,7 +31,6 @@ class Site_Logo {
 		);
 	}
 
-
 	/**
 	 * Renders the block.
 	 *
@@ -51,10 +50,7 @@ class Site_Logo {
 
 		$logo = wp_get_attachment_image( $custom_logo_id, 'medium', false );
 
-		$wrapper_attributes = '';
-		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
-			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
-		}
+		$wrapper_attributes = get_block_wrapper_attributes();
 
 		return sprintf( '<a href="%1$s" %2$s>%3$s</a>', get_the_permalink( $course_id ), $wrapper_attributes, $logo );
 	}

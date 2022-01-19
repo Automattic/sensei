@@ -1,3 +1,18 @@
+<?php
+/**
+ * Single quiz page template.
+ *
+ * @author      Automattic
+ * @package     Sensei
+ * @category    Templates
+ * @version     4.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+?>
 <!-- wp:sensei-lms/container {"className":"quiz"} -->
 <div class="quiz quiz-blocks">
 	<!-- wp:sensei-lms/container {"className":"sensei-course-theme__quiz", "tagName": "form"} -->

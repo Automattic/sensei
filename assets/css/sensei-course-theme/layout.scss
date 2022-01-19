@@ -1,22 +1,16 @@
-:root {
+.sensei-course-theme {
+
 	--header-height: var(--focus-header-height, 75px);
 	--sidebar-width: 300px;
 	--top-offset: 0px;
 	--content-padding: 32px;
 	--full-header-height: calc(var(--header-height) + var(--top-offset));
-}
-
-body {
-	background-color: var(--bg-color);
-}
-
-.sensei-course-theme {
 
 	@at-root body.admin-bar {
-		--top-offset: var(--wp-admin--admin-bar--height, 32px);
+		--top-offset: 32px;
 	}
 
-	background-color: var(--bg-color);
+	background-color: #fff;
 
 	&__columns, &__header {
 		margin: 0 !important;
@@ -26,7 +20,7 @@ body {
 		margin: 0;
 		position: sticky;
 		top: var(--top-offset);
-		background-color: var(--bg-color);
+		background-color: #fff;
 		z-index: 100;
 	}
 
@@ -36,15 +30,13 @@ body {
 		bottom: 0;
 		left: 0;
 		width: var(--sidebar-width);
-		border-right: 1px solid var(--border-color);
-		background-color: var(--bg-color);
-		overflow: auto;
-		overscroll-behavior: contain;
+		border-right: 1px solid #ccc;
+		background-color: #fff;
+
 		display: flex;
 		flex-direction: column;
 
 		&__content, &__footer {
-			margin: 0;
 			padding: 24px;
 			padding-right: 16px;
 			padding-bottom: 12px;
@@ -52,6 +44,8 @@ body {
 
 		&__content {
 			flex: 1;
+			overflow: auto;
+			overscroll-behavior: contain;
 		}
 		&__footer {
 			display: flex;
@@ -71,9 +65,8 @@ body {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			flex-wrap: nowrap;
 			padding: 0 24px;
-			margin: 0;
+			margin: 0 !important;
 			gap: 24px;
 			height: calc(var(--header-height) - 10px);
 		}
@@ -82,14 +75,14 @@ body {
 			display: flex;
 			align-items: center;
 			gap: 24px;
-			flex: 1 0 auto!important;
+			flex: 1 0 auto;
 		}
 
 		&__navigation {
 			display: flex;
 			align-items: center;
 			gap: 24px;
-			flex: 0 0 auto!important;
+			flex: 0 0 auto;
 		}
 	}
 
