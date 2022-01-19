@@ -68,7 +68,7 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 						'sanitize_callback' => 'wp_kses_post',
 					],
 				],
-			],
+			]
 		);
 	}
 
@@ -137,7 +137,7 @@ class Sensei_REST_API_Send_Message_Controller extends \WP_REST_Controller {
 			get_current_user_id(),
 			$post->post_author,
 			$message,
-			$post->ID,
+			$post->ID
 		);
 
 		// Return success object with message_id on success.
