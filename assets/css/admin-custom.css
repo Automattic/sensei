@@ -109,6 +109,10 @@ div.question_boolean_fields { margin-bottom: 10px; }
     padding-left: 2em !important;
 }
 
+.sensei-wp-list-table-actions {
+	margin-top: 2em;
+}
+
 .sensei-inline-edit-col{
     margin-bottom: 2em !important;
     padding-left: 0.5em;

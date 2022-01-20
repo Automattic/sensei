@@ -707,6 +707,7 @@ class Sensei_Course {
 			'taxonomy-module',
 			'teacher',
 			'module_order',
+			'students',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {

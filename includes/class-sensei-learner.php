@@ -62,6 +62,87 @@ class Sensei_Learner {
 
 		// Try to remove duplicate progress comments to mitigate duplicate enrollment issue.
 		add_action( 'sensei_log_activity_after', [ $this, 'remove_duplicate_progress' ] );
+
+		// Add custom columns.
+		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 10 );
+		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 10, 2 );
+	}
+
+	/**
+	 * Add columns to courses list table.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  array $columns Course columns.
+	 * @return array
+	 */
+	public function course_columns( $columns ) {
+		$columns['students'] = _x( 'Students', 'column name', 'sensei-lms' );
+
+		return $columns;
+	}
+
+	/**
+	 * Output the content of the course columns.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  string $column    Current column name.
+	 * @param  int    $course_id The course ID.
+	 * @return void
+	 */
+	public function course_column_content( $column, $course_id ) {
+		if ( 'students' === $column ) {
+			$this->output_students_column( $course_id );
+		}
+	}
+
+	/**
+	 * Output the students' column HTML.
+	 *
+	 * @since 4.0.0
+	 * @param int $course_id
+	 * @return void
+	 */
+	private function output_students_column( int $course_id ) {
+		$students_count = Sensei_Utils::sensei_check_for_activity(
+			[
+				'post_id' => $course_id,
+				'type'    => 'sensei_course_status',
+				'status'  => 'any',
+			]
+		);
+
+		echo esc_html(
+			sprintf(
+				// translators: Placeholder is the number of students enrolled in a course.
+				_n( '%d student', '%d students', $students_count, 'sensei-lms' ),
+				$students_count
+			)
+		);
+
+		// No need to show the buttons if there are no students.
+		if ( ! $students_count ) {
+			return;
+		}
+
+		$manage_url = admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id );
+		$grade_url  = admin_url( 'admin.php?page=sensei_grading&view=all&course_id=' . $course_id );
+
+		?>
+		<div class="sensei-wp-list-table-actions">
+			<p>
+				<a class="button-secondary" href="<?php echo esc_url( $manage_url ); ?>">
+					<?php esc_html_e( 'Manage', 'sensei-lms' ); ?>
+				</a>
+			</p>
+			<p>
+				<a class="button-secondary" href="<?php echo esc_url( $grade_url ); ?>">
+					<?php esc_html_e( 'Grade', 'sensei-lms' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
