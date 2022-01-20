@@ -164,7 +164,7 @@ const blocks = [
 		title: __( 'Course Content', 'sensei-lms' ),
 		name: 'sensei-lms/course-content',
 		edit() {
-			return <p>{ __( 'Lesson Content', 'sensei-lms' ) }</p>;
+			return <p>{ __( 'Course Content.', 'sensei-lms' ) }</p>;
 		},
 	},
 	{
