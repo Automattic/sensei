@@ -1,6 +1,6 @@
 <?php
 /**
- * Sensei Course Theme compatibility functions.
+ * Sensei Course Theme compatibility functions. Used for WordPress 5.7 and 5.8  support.
  *
  * @package sensei
  */
@@ -24,7 +24,6 @@ function init() {
 
 /**
  * Load the layout and render its blocks.
- * Used for
  *
  * @access private
  */

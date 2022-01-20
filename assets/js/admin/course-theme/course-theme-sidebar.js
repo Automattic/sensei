@@ -15,10 +15,14 @@ import {
 	WORDPRESS_THEME,
 	SENSEI_PREVIEW_QUERY,
 } from './constants';
-import { name as courseOutlineBlockName } from '../../../blocks/course-outline/outline-block/block.json';
-import { name as courseModuleBlockName } from '../../../blocks/course-outline/module-block/block.json';
-import { name as courseLessonBlockName } from '../../../blocks/course-outline/lesson-block/block.json';
+import courseOutlineBlock from '../../../blocks/course-outline/outline-block/block.json';
+import courseModuleBlock from '../../../blocks/course-outline/module-block/block.json';
+import courseLessonBlock from '../../../blocks/course-outline/lesson-block/block.json';
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
+
+const courseOutlineBlockName = courseOutlineBlock.name;
+const courseModuleBlockName = courseModuleBlock.name;
+const courseLessonBlockName = courseLessonBlock.name;
 
 const canPreview = ( block ) =>
 	block.name === courseLessonBlockName && block.attributes.id;

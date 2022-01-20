@@ -227,7 +227,7 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function add_admin_menu_site_editor_item() {
 
-		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
+		if ( ! function_exists( 'wp_is_block_theme' ) || wp_is_block_theme() ) {
 			return;
 		}
 
