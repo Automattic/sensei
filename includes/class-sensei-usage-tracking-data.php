@@ -949,7 +949,7 @@ class Sensei_Usage_Tracking_Data {
 	 * @return bool
 	 */
 	private static function get_is_course_theme_enabled_globally() {
-		return (bool) Sensei()->settings->settings['sensei_learning_mode_all'];
+		return (bool) \Sensei()->settings->get( 'sensei_learning_mode_all' );
 	}
 
 	/**
