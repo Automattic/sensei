@@ -58,7 +58,7 @@ class Next_Lesson {
 		$icon = \Sensei()->assets->get_icon( 'chevron-right' );
 
 		return ( "
-			<a class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' href='{$url}'>
+			<a class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' href='{$url}' aria-label='{$text}'>
 				<span class='sensei-course-theme-prev-next-lesson-text sensei-course-theme-prev-next-lesson-text__next'>
 					{$text}
 				</span>
