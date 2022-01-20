@@ -41,11 +41,10 @@ class Quiz_Actions {
 	 */
 	public function render() : string {
 
-		if ( ! sensei_can_user_view_lesson() ) {
+		if ( ! sensei_can_user_view_lesson() || 'quiz' !== get_post_type() ) {
 			return '';
 		}
 
-		\Sensei_Quiz::start_quiz_questions_loop();
 		global $sensei_question_loop;
 		$pagination_enabled = $sensei_question_loop['total_pages'] > 1;
 
@@ -64,10 +63,16 @@ class Quiz_Actions {
 			return '';
 		}
 
-		return ( "
-			<form method='POST' enctype='multipart/form-data'>
-				{$actions}
-			</form>
-		" );
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$user_id   = get_current_user_id();
+		if ( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
+			return ( "
+				<form method='POST' enctype='multipart/form-data'>
+					{$actions}
+				</form>
+			" );
+		}
+
+		return $actions;
 	}
 }

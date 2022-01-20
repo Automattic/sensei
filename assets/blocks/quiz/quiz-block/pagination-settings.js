@@ -26,7 +26,7 @@ const paginationOptions = [
 		value: SINGLE,
 	},
 	{
-		label: __( 'Multi-Page', 'sensei-lms' ),
+		label: __( 'Multi-page', 'sensei-lms' ),
 		value: MULTI,
 	},
 ];
@@ -92,7 +92,7 @@ export const PaginationSidebarSettings = ( { settings, updatePagination } ) => {
 				title={ __( 'Pagination', 'sensei-lms' ) }
 				initialOpen={ true }
 			>
-				<PanelRow className="sensei-lms-quiz-block__pagination">
+				<PanelRow className="sensei-lms-quiz-block-settings__pagination">
 					<SelectControl
 						label={ __( 'Pagination', 'sensei-lms' ) }
 						hideLabelFromVision
@@ -102,7 +102,7 @@ export const PaginationSidebarSettings = ( { settings, updatePagination } ) => {
 					/>
 				</PanelRow>
 				{ paginationNumber !== null && (
-					<PanelRow className="sensei-lms-quiz-block__question-count">
+					<PanelRow className="sensei-lms-quiz-block-settings__question-count">
 						<QuestionsControl
 							settings={ settings }
 							updatePagination={ updatePagination }
@@ -126,7 +126,7 @@ export const PaginationSidebarSettings = ( { settings, updatePagination } ) => {
 								}
 							/>
 						</PanelRow>
-						<PanelRow className="sensei-lms-quiz-block__progress-bar">
+						<PanelRow className="sensei-lms-quiz-block-settings__progress-bar">
 							<NumberControl
 								label={ __( 'Radius', 'sensei-lms' ) }
 								min={ 1 }

@@ -79,7 +79,7 @@ const files = [
 	'css/sensei-course-theme.scss',
 	'css/sensei-course-theme.editor.scss',
 	'course-theme/course-theme.js',
-	'course-theme/blocks.js',
+	'course-theme/blocks/blocks.js',
 ];
 
 function getName( filename ) {

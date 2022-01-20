@@ -112,6 +112,10 @@ class Sensei_Course_Theme_Option {
 			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );
 		}
 
+		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+			$url = esc_url_raw( wp_unslash( $url . '?' . $_SERVER['QUERY_STRING'] ) );
+		}
+
 		wp_safe_redirect( $url );
 
 		/**

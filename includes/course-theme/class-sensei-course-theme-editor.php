@@ -67,12 +67,10 @@ class Sensei_Course_Theme_Editor {
 			return;
 		}
 
-		register_theme_directory( $sensei->plugin_path() . 'themes' );
+		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ] );
+		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 
-		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ], 0, 10 );
-		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ], 0, 10 );
-
-		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 0, 20 );
+		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
 
 	}
 
@@ -158,7 +156,7 @@ class Sensei_Course_Theme_Editor {
 			$theme_templates = array_filter(
 				$theme_templates,
 				function( $template ) use ( $post_type ) {
-					return ! in_array( $post_type, $template->post_types, true );
+					return in_array( $post_type, $template->post_types, true );
 				}
 			);
 		}
@@ -229,7 +227,7 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function add_admin_menu_site_editor_item() {
 
-		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
+		if ( ! function_exists( 'wp_is_block_theme' ) || wp_is_block_theme() ) {
 			return;
 		}
 
@@ -277,6 +275,8 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function add_site_editor_hooks() {
 
+		register_theme_directory( Sensei()->plugin_path() . 'themes' );
+
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
 		add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
@@ -285,6 +285,8 @@ class Sensei_Course_Theme_Editor {
 
 	/**
 	 * Return a block template for the course theme.
+	 *
+	 * @access private
 	 *
 	 * @param \WP_Block_Template|null $template      Return a block template object to short-circuit the default query,
 	 *                                               or null to allow WP to run its normal queries.
@@ -309,14 +311,6 @@ class Sensei_Course_Theme_Editor {
 	}
 
 	/**
-	 * Register block templates as plugin-provided templates when a block theme is already active.
-	 *
-	 * @access private
-	 */
-	public function register_plugin_templates() {
-	}
-
-	/**
 	 * Enqueue course theme blocks and styles.
 	 *
 	 * @access private
@@ -325,7 +319,7 @@ class Sensei_Course_Theme_Editor {
 		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
 		Sensei()->assets->enqueue( 'sensei-frontend', 'css/frontend.css' );
 		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor-style', 'css/sensei-course-theme.editor.css' );
-		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks.js' );
+		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js' );
 	}
 
 	/**

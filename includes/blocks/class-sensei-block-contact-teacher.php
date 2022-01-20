@@ -100,7 +100,7 @@ class Sensei_Block_Contact_Teacher {
 	private function teacher_contact_form( $post ) {
 
 		$nonce         = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
-		$wp_rest_nonce = wp_nonce_field( 'wp_rest' );
+		$wp_rest_nonce = wp_nonce_field( 'wp_rest', '_wpnonce', true, false );
 
 		return '
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form" onsubmit="sensei.submitContactTeacher(event)">

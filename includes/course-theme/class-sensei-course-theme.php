@@ -71,8 +71,8 @@ class Sensei_Course_Theme {
 			return;
 		}
 
-		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
-		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 10 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 20 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 
@@ -97,7 +97,7 @@ class Sensei_Course_Theme {
 	 */
 	public function get_theme_redirect_url( $path = '' ) {
 
-		if ( '' === get_option( 'permalink_structure' ) ) {
+		if ( '' === get_option( 'permalink_structure' ) || get_query_var( 'preview' ) ) {
 			return home_url( add_query_arg( [ self::QUERY_VAR => 1 ], $path ) );
 		}
 
@@ -261,12 +261,6 @@ class Sensei_Course_Theme {
 			return false;
 		}
 
-		// Do not allow sensei preview if it is not a course related page.
-		$course_id = intval( \Sensei_Utils::get_current_course() );
-		if ( ! $course_id ) {
-			return false;
-		}
-
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The user is administrator at this point. No need.
 		$query_var = isset( $_GET[ self::PREVIEW_QUERY_VAR ] ) ? intval( $_GET[ self::PREVIEW_QUERY_VAR ] ) : 0;
 
@@ -309,8 +303,15 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Replace 'Edit site' in admin bar to point to the current theme template.
+	 *
+	 * @access private
 	 */
 	public function admin_menu_init() {
+
+		if ( ! function_exists( 'wp_is_block_theme' ) ) {
+			return;
+		}
+
 		remove_action( 'admin_bar_menu', 'wp_admin_bar_edit_site_menu', 40 );
 		add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_edit_site_menu' ], 39 );
 
@@ -318,6 +319,8 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Add 'Edit site' in admin bar opening the current theme template.
+	 *
+	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 *
