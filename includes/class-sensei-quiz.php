@@ -1604,7 +1604,7 @@ class Sensei_Quiz {
 
 		foreach ( $sensei_question_loop['questions_asked'] as $question_id ) {
 			?>
-			<input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>">
+			<input type="hidden" name="questions_asked[]" form="sensei-quiz-form" value="<?php echo esc_attr( $question_id ); ?>">
 			<?php
 		}
 
@@ -1708,13 +1708,14 @@ class Sensei_Quiz {
 						<button
 							type="submit"
 							name="quiz_complete"
+							form="sensei-quiz-form"
 							class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"
 							style="<?php echo esc_attr( $button_inline_styles ); ?>"
 						>
 							<?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
 						</button>
 
-						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
+						<input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
 					</div>
 				</div>
 			<?php endif ?>
@@ -1722,21 +1723,21 @@ class Sensei_Quiz {
 			<div class="sensei-quiz-actions-secondary">
 				<?php if ( $is_reset_allowed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_reset" class="quiz-submit reset sensei-stop-double-submission">
+						<button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
 							<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
 						</button>
 
-						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
+						<input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
 					</div>
 				<?php endif ?>
 
 				<?php if ( ! $is_quiz_completed ) : ?>
 					<div class="sensei-quiz-action">
-						<button type="submit" name="quiz_save" class="quiz-submit save sensei-stop-double-submission">
+						<button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
 							<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
 						</button>
 
-						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
+						<input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="<?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
 					</div>
 				<?php endif ?>
 			</div>
@@ -2152,7 +2153,7 @@ class Sensei_Quiz {
 	public function replace_pagination_links_with_buttons( $html ): string {
 		return preg_replace(
 			'/<a.+?href="(.+?)">(.+?)<\/a>/',
-			'<button type="submit" name="quiz_target_page" value="$1" class="page-numbers">$2</button>',
+			'<button type="submit" name="quiz_target_page" form="sensei-quiz-form" value="$1" class="page-numbers">$2</button>',
 			$html
 		);
 	}

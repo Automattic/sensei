@@ -143,31 +143,30 @@ class Sensei_Course_Theme_Quiz {
 	}
 
 	/**
-	 * Add a form wrapper for quiz pages.
+	 * Add a global form for quiz pages.
 	 *
 	 * @access private
 	 */
-	public function add_form_wrapper() {
+	public function add_quiz_form() {
 
-		add_action( 'wp_body_open', [ $this, 'start_form' ], 90 );
-		add_action( 'wp_footer', [ $this, 'end_form' ], 0 );
+		add_action( 'wp_body_open', [ $this, 'output_quiz_form' ], 90 );
 	}
 
 	/**
-	 * Add a form open tag.
+	 * Output form tag.
 	 *
 	 * @access private
 	 */
-	public function start_form() {
-		echo '<form method="post" enctype="multipart/form-data" class="sensei-form">';
+	public function output_quiz_form() {
+		echo '<form id="' . esc_attr( $this->get_quiz_form_id() ) . '" action="" method="post" enctype="multipart/form-data" class="sensei-form"></form>';
 	}
 
 	/**
-	 * Add a form close tag.
+	 * Get the ID for the quiz form.
 	 *
-	 * @access private
+	 * @return string
 	 */
-	public function end_form() {
-		echo '</form>';
+	public function get_quiz_form_id() {
+		return 'sensei-quiz-form';
 	}
 }
