@@ -3,7 +3,7 @@
 .sensei-lms-course-navigation {
 
 	&__modules + &__lessons {
-		border-top: 1px dotted #ccc;
+		border-top: 1px dotted var(--border-color);
 		margin-top: 6px;
 		padding-top: 6px;
 	}
@@ -47,7 +47,7 @@
 
 	&__summary {
 		font-size: 13px;
-		color: var(--gray);
+		@include text-gray;
 		visibility: hidden;
 		overflow: hidden;
 		max-height: 0;
@@ -84,7 +84,7 @@
 		padding-left: 6px;
 		margin-top: 1px; // Needed to compensate the font-size difference.
 		font-size: 13px;
-		color: var(--gray);
+		@include text-gray;
 	}
 
 	&__status {
@@ -96,7 +96,7 @@
 
 	&.status-locked,
 	&.status-not-started &__status {
-		color: var(--gray);
+		@include text-gray;
 	}
 
 	&.current-lesson &__title {

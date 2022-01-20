@@ -12,7 +12,8 @@
 		border: 1px solid #757575;
 		border-radius: 2px;
 		padding: 10px;
-		background-color: #fff;
+		background-color: inherit;
+		color: inherit;
 		margin-bottom: 20px;
 		width: 355px;
 	}
@@ -41,7 +42,7 @@ a.sensei-contact-teacher-close {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	color: #1E1E1E;
+	color: inherit;
 	svg {
 		width: 14px;
 		height: 14px;
