@@ -74,6 +74,7 @@ class Sensei_Course_Theme_Option {
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
+		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
 	}
 
@@ -179,6 +180,26 @@ class Sensei_Course_Theme_Option {
 		$enabled_via_filter = (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled_for_course, $enabled_globally, $course_id );
 
 		return $enabled_for_course || $enabled_globally || $enabled_via_filter;
+	}
+
+	/**
+	 * Filter to show admin bar only for editor users.
+	 *
+	 * @access private
+	 *
+	 * @param bool $show_admin_bar Whether show admin bar.
+	 *
+	 * @return bool Whether show admin bar.
+	 */
+	public function show_admin_bar_only_for_editors( $show_admin_bar ) {
+		$lesson_id = Sensei_Utils::get_current_lesson();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( self::has_sensei_theme_enabled( $course_id ) ) {
+			return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id );
+		}
+
+		return $show_admin_bar;
 	}
 
 	/**
