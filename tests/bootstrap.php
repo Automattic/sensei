@@ -139,7 +139,5 @@ class Sensei_Unit_Tests_Bootstrap {
 	}
 }
 
-define( 'SENSEI_FEATURE_FLAG_COURSE_THEME', true );
-
 Sensei_Unit_Tests_Bootstrap::instance();
 

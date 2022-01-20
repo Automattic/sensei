@@ -58,17 +58,8 @@ class Sensei_Course_Theme_Option {
 
 	/**
 	 * Initializes the Course Theme.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
-
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
-			return;
-		}
-
+	public function init() {
 		// Init blocks.
 		new \Sensei\Blocks\Course_Theme();
 
@@ -76,20 +67,6 @@ class Sensei_Course_Theme_Option {
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
 		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
-	}
-
-	/**
-	 * Add feature flag inline script.
-	 *
-	 * @access private
-	 */
-	public function add_feature_flag_inline_script() {
-		$screen  = get_current_screen();
-		$enabled = Sensei()->feature_flags->is_enabled( 'course_theme' ) ? 'true' : 'false';
-
-		if ( 'course' === $screen->id ) {
-			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseThemeFeatureFlagEnabled = ' . $enabled, 'before' );
-		}
 	}
 
 	/**
