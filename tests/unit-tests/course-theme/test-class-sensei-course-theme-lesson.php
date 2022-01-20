@@ -259,7 +259,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 					'_lesson_course'      => $course->ID,
 					'_quiz_has_questions' => 1,
 				],
-			],
+			]
 		);
 		$GLOBALS['post'] = $lesson;
 		$quiz_args       = [
