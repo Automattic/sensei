@@ -1,6 +1,10 @@
 *** Changelog ***
 
-2022.01.20 - version 3.15.1
+2022.01.20 - version 3.15.2
+* Fix: Quiz block not rendering in certain cases [#4657](https://github.com/Automattic/sensei/pull/4657)
+* Fix: PHP notice when retrieving some of the settings [#4658](https://github.com/Automattic/sensei/pull/4658/files)
+
+2022.01.19 - version 3.15.1
 * Fix: Fix PHP 7.0 and 7.1 compatibility
 
 2022.01.18 - version 3.15.0
