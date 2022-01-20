@@ -74,7 +74,7 @@ class Sensei_Course_Theme_Option {
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
-		add_filter( 'show_admin_bar', [ $this, 'hide_admin_bar_for_non_editors' ] );
+		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
 	}
 
