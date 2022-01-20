@@ -6,7 +6,7 @@
 @media screen and (max-width: 782px) {
 
 	body.admin-bar {
-		--top-offset: var(--wp-admin--admin-bar--height, 46px);
+		--top-offset: 46px;
 	}
 
 	.sensei-course-theme__focus-mode-toggle {
@@ -68,7 +68,7 @@
 				height: 30px;
 			}
 
-			.wp-block-site-logo {
+			.wp-block-sensei-lms-site-logo {
 				&, img {
 					max-height: 30px;
 				}
@@ -87,9 +87,6 @@
 			display: block;
 			width: 24px;
 			height: 24px;
-			background: none;
-			border: none;
-			padding: 0;
 
 			svg {
 				width: 24px;
@@ -103,7 +100,7 @@
 
 		&__sidebar {
 			z-index: 90;
-			background: var(--bg-color);
+			background: #FFFFFF;
 			left: 0;
 			right: 0;
 			width: unset;
@@ -129,7 +126,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			background: var(--bg-color);
+			background: #fff;
 			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
 			transition: bottom 800ms ease-in;
 

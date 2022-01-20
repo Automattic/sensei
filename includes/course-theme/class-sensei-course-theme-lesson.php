@@ -97,7 +97,7 @@ class Sensei_Course_Theme_Lesson {
 			$text = sprintf( __( 'You require %1$s%% to pass this lesson\'s quiz. Your grade is %2$s%%.', 'sensei-lms' ), '<strong>' . $passmark_rounded . '</strong>', '<strong>' . $grade_rounded . '</strong>' );
 		} else {
 			// translators: Placeholder is the quiz grade.
-			$text = sprintf( __( 'Your Grade: %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $grade_rounded . '</strong>' );
+			$text = sprintf( __( 'Your Grade %s%%', 'sensei-lms' ), '<strong class="sensei-course-theme-lesson-quiz-notice__grade">' . $grade_rounded . '</strong>' );
 		}
 
 		$actions = [

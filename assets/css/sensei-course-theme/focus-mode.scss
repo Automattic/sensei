@@ -2,19 +2,15 @@
 $base: '.sensei-course-theme';
 
 .sensei-course-theme__focus-mode-toggle {
-	.sensei-course-theme--focus-mode & {
-		position: absolute;
-		left: 20px;
-	}
+	position: absolute;
+	left: 20px;
+	top: 8px;
 	padding: 4px;
 	white-space: nowrap;
 	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
 	gap: 12px;
-	border: none;
-	background: none;
-
 	&__disable {
 		display: none;
 	}
@@ -43,7 +39,7 @@ $base: '.sensei-course-theme';
 			.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
 				display: none;
 			}
-			.wp-block-site-logo {
+			.wp-block-sensei-lms-site-logo {
 				margin-right: -12px;
 				img {
 					max-height: 0;
@@ -64,7 +60,6 @@ $base: '.sensei-course-theme';
 
 		&__sidebar {
 			left: -400px;
-			overflow: visible;
 		}
 		&__main-content {
 			margin-left: 0 !important;

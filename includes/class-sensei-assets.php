@@ -183,7 +183,7 @@ class Sensei_Assets {
 	 *
 	 * @return string Public url for the file.
 	 */
-	public function asset_url( $filename ) {
+	private function asset_url( $filename ) {
 		return rtrim( $this->plugin_url, '/' ) . '/assets/dist/' . $filename;
 	}
 
