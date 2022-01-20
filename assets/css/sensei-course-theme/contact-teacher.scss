@@ -34,7 +34,7 @@
 }
 
 	.sensei-contact-teacher-success {
-		font-family: 'Inter', sans-serif;
+		font-family: inherit;
 		display: block;
 		position: absolute;
 		top: 0;
@@ -49,13 +49,14 @@
 		z-index: -1;
 		opacity: 0;
 		transition: opacity 100ms ease-out;
+		background: var(--bg-color);
 
-	svg {
-		width: 42px;
-		height: 42px;
-		margin-bottom: 20px;
-		color: var(--primary-color);
-	}
+		svg {
+			width: 42px;
+			height: 42px;
+			margin-bottom: 20px;
+			color: var(--primary-color);
+		}
 
 		p {
 			font-weight: 500;
