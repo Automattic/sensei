@@ -36,7 +36,6 @@ domReady( () => {
 			originalHeight = content.offsetHeight + 'px';
 			content.style.maxHeight = 0;
 			content.style.transition = transition;
-			content.style.display = 'none';
 		} else {
 			content.style.maxHeight = originalHeight;
 		}
@@ -47,14 +46,8 @@ domReady( () => {
 			const collapsed = content.classList.toggle( 'collapsed' );
 
 			if ( ! collapsed ) {
-				// Browser needs to render the element first and
-				// change it's height later in order to animate the transition.
-				window.requestAnimationFrame( () => {
-					content.style.display = '';
-					window.requestAnimationFrame( () => {
-						content.style.maxHeight = originalHeight;
-					} );
-				} );
+				content.style.visibility = 'visible';
+				content.style.maxHeight = originalHeight;
 			} else {
 				content.style.maxHeight = '0px';
 			}
@@ -62,7 +55,7 @@ domReady( () => {
 
 		content.addEventListener( 'transitionend', () => {
 			if ( content.classList.contains( 'collapsed' ) ) {
-				content.style.display = 'none';
+				content.style.visibility = 'hidden';
 			}
 		} );
 	} );
