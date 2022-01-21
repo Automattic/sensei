@@ -86,9 +86,6 @@ class Sensei_Shortcode_Loader {
 			)
 		);
 
-		// legacy shortcode handling:
-		Sensei_Legacy_Shortcodes::init();
-
 	}
 
 	/**

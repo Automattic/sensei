@@ -886,56 +886,6 @@ class Sensei_Course {
 
 				break;
 
-			case 'freecourses':
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html__( 'Querying with argument `$type` having a value of `freecourses` is deprecated.', 'sensei-lms' ),
-					'2.0.0'
-				);
-
-				$post_args = array(
-					'post_type'        => 'course',
-					'orderby'          => $orderby,
-					'order'            => $order,
-					'post_status'      => 'publish',
-					'exclude'          => $excludes,
-					'suppress_filters' => 0,
-				);
-
-				// If WooCommerce Paid Courses is not active, we will display all courses.
-				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
-					// Sub Query to get all WooCommerce Products that have Zero price
-					$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
-				}
-
-				break;
-
-			case 'paidcourses':
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html__( 'Querying with argument `$type` having a value of `paidcourses` is deprecated.', 'sensei-lms' ),
-					'2.0.0'
-				);
-
-				$post_args = array(
-					'post_type'        => 'course',
-					'orderby'          => $orderby,
-					'order'            => $order,
-					'post_status'      => 'publish',
-					'exclude'          => $excludes,
-					'suppress_filters' => 0,
-				);
-
-				// If WooCommerce Paid Courses is not active, we will display no courses.
-				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
-					// Sub Query to get all WooCommerce Products that have price greater than zero
-					$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
-				} else {
-					$post_args['post__in'] = array( -1 );
-				}
-
-				break;
-
 			case 'featuredcourses':
 				$post_args = array(
 					'post_type'        => 'course',
@@ -1387,46 +1337,6 @@ class Sensei_Course {
 	}
 
 	/**
-	 * get_product_courses function.
-	 *
-	 * @access public
-	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses()` instead.
-	 *
-	 * @param  int $product_id (default: 0)
-	 * @return array
-	 */
-	public function get_product_courses( $product_id = 0 ) {
-
-		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses' );
-
-		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses' ) ) {
-			return \Sensei_WC_Paid_Courses\Courses::get_product_courses( $product_id );
-		}
-
-		return array();
-
-	}
-
-	/**
-	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args()` instead.
-	 *
-	 * @param $product_id
-	 *
-	 * @return array
-	 */
-	public static function get_product_courses_query_args( $product_id ) {
-
-		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args' );
-
-		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses_query_args' ) ) {
-			return \Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args( $product_id );
-		}
-
-		return array();
-
-	}
-
-	/**
 	 * Fix posts_per_page for My Courses page
 	 *
 	 * @deprecated 3.0.0
@@ -1615,19 +1525,6 @@ class Sensei_Course {
 
 						}
 					}
-
-					/**
-					 * documented in class-sensei-course.php the_course_action_buttons function
-					 *
-					 * @deprecated 2.0.0
-					 */
-					$show_delete_course_button = apply_filters_deprecated(
-						'sensei_show_delete_course_button',
-						[ false ],
-						'2.0.0',
-						null,
-						'Sensei LMS "Delete Course" button will be removed in version 4.0.'
-					);
 
 					if ( false == $course_purchased && $show_delete_course_button ) {
 
@@ -2418,26 +2315,6 @@ class Sensei_Course {
 			}
 		}
 
-		/**
-		 * Hide or show the delete course button.
-		 *
-		 * This button on shows in certain instances, but this filter will hide it in those
-		 * cases. For other instances the button will be hidden.
-		 *
-		 * @since 1.9.0
-		 *
-		 * @deprecated 2.0.0
-		 *
-		 * @param bool $show_delete_course_button defaults to false
-		 */
-		$show_delete_course_button = apply_filters_deprecated(
-			'sensei_show_delete_course_button',
-			[ false ],
-			'2.0.0',
-			null,
-			'Sensei LMS "Delete Course" button will be removed in version 4.0.'
-		);
-
 		if ( ! $course_purchased
 				&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
 				&& $show_delete_course_button ) {
@@ -3169,18 +3046,6 @@ class Sensei_Course {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
 		$wp_query = new WP_Query( $course_lesson_query_args );
 
-	}
-
-	/**
-	 * Flush the rewrite rules.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.2.1
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	public static function flush_rewrite_rules( $post_id ) {
-		_deprecated_function( __METHOD__, '2.2.1' );
 	}
 
 	/**

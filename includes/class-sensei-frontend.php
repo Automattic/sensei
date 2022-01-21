@@ -174,24 +174,6 @@ class Sensei_Frontend {
 	}
 
 	/**
-	 * Get template part.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_Templates::get_part
-	 * @access public
-	 * @param mixed  $slug Template slug.
-	 * @param string $name Optional. Template name. Default ''.
-	 * @return void
-	 */
-	function sensei_get_template_part( $slug, $name = '' ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Templates::get_part' );
-
-		Sensei_Templates::get_part( $slug, $name );
-
-	}
-
-	/**
 	 * Output the start of the content wrapper.
 	 *
 	 * @access public
@@ -461,60 +443,6 @@ class Sensei_Frontend {
 			$classes[] = 'post';
 		}
 		return $classes;
-	}
-
-	/**
-	 * Outputs the course image.
-	 *
-	 * @deprecated since 1.9.0 use Sensei()->course->course_image
-	 * @param int    $course_id Course ID.
-	 * @param string $width Optional. Image width. Default '100'.
-	 * @param string $height Optional. Image height. Default '100'.
-	 * @param bool   $return true if the image should be returned, false if the image should be
-	 *                       echoed.
-	 * @return string|null Course image or null if the image was echoed.
-	 */
-	function sensei_course_image( $course_id, $width = '100', $height = '100', $return = false ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei()->course->course_image' );
-		if ( ! $return ) {
-
-			echo wp_kses_post( Sensei()->course->course_image( $course_id, $width, $height ) );
-			return '';
-
-		}
-
-		return Sensei()->course->course_image( $course_id, $width, $height );
-
-	}
-
-	/**
-	 * Outputs the lesson image.
-	 *
-	 * @since  1.2.0
-	 * @deprecated since 1.9.0 use Sensei()->lesson->lesson_image
-	 * @param int        $lesson_id Lesson ID.
-	 * @param string     $width Optional. Image width. Default '100'.
-	 * @param string     $height Optional. Image height. Default '100'.
-	 * @param bool       $return true if the image should be returned, false if the image should be
-	 *                           echoed.
-	 * @param bool|false $widget Widget.
-	 * @return string Lesson image or empty string if the image was echoed.
-	 */
-	function sensei_lesson_image( $lesson_id, $width = '100', $height = '100', $return = false, $widget = false ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei()->lesson->lesson_image' );
-
-		if ( ! $return ) {
-
-			echo wp_kses_post( Sensei()->lesson->lesson_image( $lesson_id, $width, $height, $widget ) );
-			return '';
-		}
-
-		return Sensei()->lesson->lesson_image( $lesson_id, $width, $height, $widget );
-
 	}
 
 	/**
@@ -846,27 +774,6 @@ class Sensei_Frontend {
 
 					break;
 
-				/**
-				 * Handle the Delete Course button. This is deprecated and will
-				 * be removed.
-				 *
-				 * @deprecated 2.0.0
-				 */
-				case __( 'Delete Course', 'sensei-lms' ):
-					_doing_it_wrong(
-						'Sensei_Frontend::sensei_complete_course',
-						'Handling for "Delete Course" button will be removed in version 4.0.',
-						'2.0.0'
-					);
-					Sensei_Utils::sensei_remove_user_from_course( $sanitized_course_id, $current_user->ID );
-
-					// Success message.
-					$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
-						// translators: Placeholder is the Course title.
-						. sprintf( __( '%1$s deleted.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
-						. '</div></header>';
-					break;
-
 				default:
 					// Nothing.
 					break;
@@ -1013,20 +920,6 @@ class Sensei_Frontend {
 		</form>
 			<?php
 		}
-	}
-
-	/**
-	 * Outputs the quiz buttons and messages.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_Lesson::footer_quiz_call_to_action()
-	 */
-	public function sensei_lesson_quiz_meta() {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Lesson::footer_quiz_call_to_action' );
-
-		Sensei_Lesson::footer_quiz_call_to_action();
-
 	}
 
 	public function sensei_course_archive_meta() {
@@ -1351,31 +1244,6 @@ class Sensei_Frontend {
 	}
 
 	/**
-	 * This function shows the WooCommerce cart notice if the user has
-	 * added the current course to cart. It does not show if the user is already taking
-	 * the course.
-	 *
-	 * @since 1.0.2
-	 * @deprecated 2.0.0 Replaced with WCPC plugin's Sensei_WC::course_in_cart_message method.
-	 *
-	 * @return void
-	 */
-	public function sensei_woocommerce_in_cart_message() {
-		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC::course_in_cart_message' );
-
-		if ( ! method_exists( 'Sensei_WC', 'course_in_cart_message' ) ) {
-			return;
-		}
-
-		Sensei_WC::course_in_cart_message();
-	}
-
-	// Deprecated.
-	public function sensei_lesson_comment_count( $count ) {
-		return $count;
-	}
-
-	/**
 	 * Only show excerpts for lessons and courses in search results.
 	 *
 	 * @param  string $content Original content.
@@ -1394,58 +1262,6 @@ class Sensei_Frontend {
 		}
 
 		return $content;
-	}
-
-	/**
-	 * Remove active course when an order is refunded or cancelled.
-	 *
-	 * @deprecated 2.0.0 Moved to WCPC plugin. Use \Sensei_WC_Paid_Courses\Courses::remove_active_course
-	 *
-	 * @param  integer $order_id ID of order.
-	 * @return void
-	 */
-	public function remove_active_course( $order_id ) {
-		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::remove_active_course' );
-
-		if ( ! method_exists( 'Sensei_WC_Paid_Courses\Courses', 'remove_active_course' ) ) {
-			return;
-		}
-
-		\Sensei_WC_Paid_Courses\Courses::remove_active_course( $order_id );
-	}
-
-	/**
-	 * Activate all purchased courses for user.
-	 *
-	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Courses::activate_purchased_courses()` if it exists.
-	 * @since  1.4.8
-	 * @param  integer $user_id User ID.
-	 * @return void
-	 */
-	public function activate_purchased_courses( $user_id = 0 ) {
-		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::activate_purchased_courses' );
-
-		if ( ! method_exists( '\Sensei_WC_Paid_Courses\Courses', 'activate_purchased_courses' ) ) {
-			return;
-		}
-
-		\Sensei_WC_Paid_Courses\Courses::instance()->activate_purchased_courses( $user_id );
-	}
-
-	/**
-	 * Activate single course if already purchases.
-	 *
-	 * @deprecated 2.0.0 Use `\Sensei_WC_Paid_Courses\Courses::activate_purchased_single_course()` if it exists.
-	 * @return void
-	 */
-	public function activate_purchased_single_course() {
-		_deprecated_function( __METHOD__, '2.0.0', '\Sensei_WC_Paid_Courses\Courses::activate_purchased_single_course' );
-
-		if ( ! method_exists( '\Sensei_WC_Paid_Courses\Courses', 'activate_purchased_single_course' ) ) {
-			return;
-		}
-
-		\Sensei_WC_Paid_Courses\Courses::instance()->activate_purchased_single_course();
 	}
 
 	/**

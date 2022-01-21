@@ -57,7 +57,7 @@ class Sensei_Data_Cleaner {
 		'sensei_installed',
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
-		'skip_install_sensei_pages', // @deprecated since 3.1.0.
+		'skip_install_sensei_pages', // @deprecated 3.1.0.
 		'sensei_suggest_setup_wizard',
 		'sensei-data-port-jobs',
 		'sensei_setup_wizard_data',
@@ -68,7 +68,7 @@ class Sensei_Data_Cleaner {
 		'sensei-version',
 		'woothemes-sensei-version',
 		'sensei_enrolment_legacy',
-		'sensei_usage_tracking_opt_in_hide', // @deprecated since 3.1.0.
+		'sensei_usage_tracking_opt_in_hide', // @deprecated 3.1.0.
 		'sensei-upgrades',
 		'woothemes-sensei-upgrades',
 		'woothemes-sensei-settings',
