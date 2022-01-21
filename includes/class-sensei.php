@@ -279,16 +279,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Load the email signup modal form.
-	 *
-	 * @deprecated 3.1.0 The modal was removed.
-	 * @access     private
-	 */
-	public function load_email_signup_modal() {
-		_deprecated_function( __METHOD__, '3.1.0' );
-	}
-
-	/**
 	 * Global Sensei Instance
 	 *
 	 * Ensure that only one instance of the main Sensei class can be loaded.
