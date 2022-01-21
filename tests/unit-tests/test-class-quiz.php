@@ -221,7 +221,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 		$files             = $this->factory->generate_test_files( $test_user_quiz_answers );
-		$lesson_data_saved = Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$lesson_data_saved = $this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 
 		// Did the correct data return a valid comment id on the lesson as a result?
 		$this->assertTrue( intval( $lesson_data_saved ) > 0, 'The comment id returned after saving the quiz answer does not represent a valid comment ' );
@@ -364,7 +364,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 		$files = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 		$users_retrieved_answers = Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
 
 		// Was it saved correctly?
@@ -388,7 +388,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$old_transient_value = $decoded_transient_val;
 		$new_answers         = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$new_files           = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $new_answers, $new_files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $new_answers, $new_files, $test_lesson_id, $test_user_id );
 		$new_users_retrieved_answers = Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
 
 		$this->assertNotEquals(
@@ -427,7 +427,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 		$files = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 		delete_site_transient( $transient_key );
 		Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
 		$transient_data_after_retrieval = get_transient( $transient_key );
@@ -652,7 +652,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		}
 
 		// For the valid data does it return an array?
-		$prepared_test_data = Sensei()->quiz->prepare_form_submitted_answers( $test_user_quiz_answers, $files );
+		// phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged -- Workaround to run tests with PHP 7.1.
+		$prepared_test_data = @Sensei()->quiz->prepare_form_submitted_answers( $test_user_quiz_answers, $files );
 		$this->assertTrue(
 			is_array( $prepared_test_data ),
 			'function function does not return an array for valid parameters'
@@ -733,7 +734,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		// Doesn't this function return true for valid data?
 		Sensei_Utils::user_start_lesson( $test_user_id, $test_lesson_id );
-		$result_for_valid_data = WooThemes_Sensei_Quiz::submit_answers_for_grading(
+		$result_for_valid_data = $this->submit_answers_for_grading(
 			$test_user_quiz_answers,
 			$files,
 			$test_lesson_id,
@@ -757,7 +758,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$files                  = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 
 		// Make sure the method is in the class before we proceed.
 		$this->assertTrue(
@@ -829,7 +830,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$files                  = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 		$random_question_id  = array_rand( $test_user_quiz_answers );
 		$users_saved_answers = Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
 
@@ -861,7 +862,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$files                  = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 		$test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
 
 		// Make sure the method is in the class before we proceed.
@@ -932,7 +933,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$files                  = $this->factory->generate_test_files( $test_user_quiz_answers );
-		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
+		$this->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
 		$test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
 
 		// Make sure the method is in the class before we proceed.
@@ -1350,7 +1351,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		// Submit answers and remove the hooks within the submit function to avoid side effects.
 		remove_all_actions( 'sensei_user_quiz_submitted' );
 		remove_all_actions( 'sensei_user_lesson_end' );
-		$result_for_valid_data = WooThemes_Sensei_Quiz::submit_answers_for_grading(
+		$result_for_valid_data = $this->submit_answers_for_grading(
 			$test_user_quiz_answers,
 			$files,
 			$test_lesson_id,
@@ -1504,4 +1505,41 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertTrue( Sensei_Quiz::is_quiz_completed( $quiz_id, $user_id ), 'The quiz should be considered completed if the lesson status is ungraded.' );
 	}
 
+	/**
+	 * This is a temporary workaround to run tests against the code with PHP 7.1.
+	 * When we don't support 7.1 anymore, this can be reverted.
+	 *
+	 * A PHP bug (https://bugs.php.net/bug.php?id=74428) happened in the tests
+	 * while calling `wp_generate_attachment_metadata` in `Sensei_Utils::upload_file` with PHP 7.1.
+	 *
+	 * @param array $quiz_answers
+	 * @param array $files from global $_FILES
+	 * @param int   $lesson_id
+	 * @param int   $user_id
+	 *
+	 * @return false or int $answers_saved
+	 */
+	private function save_user_answers( $quiz_answers, $files, $lesson_id, $user_id ) {
+		// phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged -- Workaround to run tests with PHP 7.1.
+		return @Sensei()->quiz->save_user_answers( $quiz_answers, $files, $lesson_id, $user_id );
+	}
+
+	/**
+	 * This is a temporary workaround to run tests against the code with PHP 7.1.
+	 * When we don't support 7.1 anymore, this can be reverted.
+	 *
+	 * A PHP bug (https://bugs.php.net/bug.php?id=74428) happened in the tests
+	 * while calling `wp_generate_attachment_metadata` in `Sensei_Utils::upload_file` with PHP 7.1.
+	 *
+	 * @param array $quiz_answers
+	 * @param array $files from $_FILES
+	 * @param int   $user_id
+	 * @param int   $lesson_id
+	 *
+	 * @return bool $answers_submitted
+	 */
+	private function submit_answers_for_grading( $quiz_answers, $files, $user_id, $lesson_id ) {
+		// phpcs:disable WordPress.PHP.NoSilencedErrors.Discouraged -- Workaround to run tests with PHP 7.1.
+		return @WooThemes_Sensei_Quiz::submit_answers_for_grading( $quiz_answers, $files, $user_id, $lesson_id );
+	}
 }
