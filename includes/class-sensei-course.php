@@ -1526,13 +1526,6 @@ class Sensei_Course {
 						}
 					}
 
-					if ( false == $course_purchased && $show_delete_course_button ) {
-
-						$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="'
-							. esc_attr__( 'Delete Course', 'sensei-lms' ) . '"/></span>';
-
-					}
-
 					$active_html .= '</form>';
 
 					$active_html .= '</section>';
@@ -2294,7 +2287,6 @@ class Sensei_Course {
 		}
 
 		$has_course_complete_button = false;
-		$has_delete_course_button   = false;
 		$has_results_button         = false;
 
 		if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
@@ -2315,19 +2307,13 @@ class Sensei_Course {
 			}
 		}
 
-		if ( ! $course_purchased
-				&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
-				&& $show_delete_course_button ) {
-			$has_delete_course_button = true;
-		}
-
 		$has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
 
 		if ( self::has_results_links( $course->ID ) || $has_quizzes ) {
 			$has_results_button = true;
 		}
 
-		if ( ! $has_course_complete_button && ! $has_delete_course_button && ! $has_results_button ) {
+		if ( ! $has_course_complete_button && ! $has_results_button ) {
 			return;
 		}
 
@@ -2353,15 +2339,6 @@ class Sensei_Course {
 							value="<?php esc_attr_e( 'Mark as Complete', 'sensei-lms' ); ?>" />
 					</span>
 
-				<?php
-			}
-
-			if ( $has_delete_course_button ) {
-				?>
-					<span>
-						<input name="course_complete" type="submit" class="course-delete"
-							value="<?php echo esc_attr__( 'Delete Course', 'sensei-lms' ); ?>"/>
-					</span>
 				<?php
 			}
 
