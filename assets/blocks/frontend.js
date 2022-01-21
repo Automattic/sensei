@@ -35,7 +35,6 @@ domReady( () => {
 		}
 
 		let originalHeight = content.offsetHeight + 'px';
-		const originalDisplay = content.style.display;
 
 		if ( content.classList.contains( 'collapsed' ) ) {
 			const transition = content.style.transition;
@@ -60,7 +59,7 @@ domReady( () => {
 				// Browser needs to render the element first and
 				// change it's height later in order to animate the transition.
 				window.requestAnimationFrame( () => {
-					content.style.display = originalDisplay;
+					content.style.display = '';
 					window.requestAnimationFrame( () => {
 						content.style.maxHeight = originalHeight;
 					} );
