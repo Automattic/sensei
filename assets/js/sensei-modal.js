@@ -1,3 +1,5 @@
+/* eslint @wordpress/no-global-active-element: 0 -- Not relevant out of React.  */
+
 /**
  * Internal dependencies
  */
@@ -27,6 +29,8 @@ import { querySelectorAncestor } from '../shared/helpers/DOM';
  * ```
  */
 
+let lastActiveElement = document.activeElement;
+
 /**
  * Opens the modal
  * @param {MouseEvent} ev The click event.
@@ -55,19 +59,25 @@ const openModal = ( ev ) => {
 	} );
 
 	// Open the modal.
-	setTimeout(
-		() => {
+	// Make sure the elements are opened only after they are painted by
+	// the browser first. Otherwise the transition effects do not work.
+	window.requestAnimationFrame( () =>
+		window.requestAnimationFrame( () => {
 			modalElementCopy.setAttribute( 'data-sensei-modal-is-open', '' );
 			document.body.dispatchEvent(
 				new CustomEvent( 'sensei-modal-open', {
 					detail: modalElementCopy,
 				} )
 			);
-		},
-
-		// Make sure the elements are opened only after they are painted by
-		// the browser first. Otherwise the transition effects do not work.
-		20
+			lastActiveElement = document.activeElement;
+			const content = modalElementCopy.querySelector(
+				'[data-sensei-modal-content]'
+			);
+			if ( content ) {
+				content.tabIndex = 0;
+				content.focus();
+			}
+		} )
 	);
 };
 
@@ -86,6 +96,7 @@ const closeModal = ( ev ) => {
 					detail: modalElement,
 				} )
 			);
+			lastActiveElement?.focus();
 		} );
 };
 
