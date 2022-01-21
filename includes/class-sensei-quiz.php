@@ -1654,8 +1654,8 @@ class Sensei_Quiz {
 		}
 
 		$attributes = [
-			'radius'             => $pagination_settings['progress_bar_radius'],
-			'height'             => $pagination_settings['progress_bar_height'],
+			'radius'                   => $pagination_settings['progress_bar_radius'],
+			'height'                   => $pagination_settings['progress_bar_height'],
 			'customBarColor'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
 			'customBarBackgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
 		];

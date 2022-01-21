@@ -3,7 +3,7 @@
  * File containing the Exit_Course class.
  *
  * @package sensei
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -39,9 +39,9 @@ class Exit_Course {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ) : string {
+	public function render( array $attributes = [] ): string {
 
-		$course_id      = \Sensei_Utils::get_current_course();
+		$course_id = \Sensei_Utils::get_current_course();
 
 		$wrapper_attributes = '';
 		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
