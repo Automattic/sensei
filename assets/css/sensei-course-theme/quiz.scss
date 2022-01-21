@@ -34,7 +34,7 @@ $tablet-breakpoint: 768px;
 	&__header {
 		position: sticky;
 		top: var(--top-offset);
-		background-color: #fff;
+		background-color: var(--bg-color);
 		z-index: 100;
 
 		.wp-block-post-title {
@@ -101,9 +101,8 @@ $tablet-breakpoint: 768px;
 				left: 0;
 				right: 0;
 				z-index: 100;
-				background-color: #fff;
-				border-top: 1px solid #F6F7F7;
-				box-shadow: 2px 10px 30px 5px rgba(#E2E4E7, 0.5);
+				background-color: var(--bg-color);
+				box-shadow: 2px 10px 30px 5px rgba(0,0,0, 0.1);
 			}
 
 			.sensei-quiz-actions {
@@ -120,4 +119,10 @@ $tablet-breakpoint: 768px;
 			}
 		}
 	}
+}
+
+.sensei-lms-quiz-back-to-lesson {
+	font-family: var(--font-family);
+	font-size: 14px;
+	text-decoration: none;
 }

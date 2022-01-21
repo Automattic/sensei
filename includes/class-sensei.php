@@ -409,17 +409,17 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
-		$this->blocks = new Sensei_Blocks( $this );
+		$this->blocks = new Sensei_Blocks();
 
 		Sensei_Learner::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
 		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
 		$this->enrolment_scheduler->init();
 		Sensei_Data_Port_Manager::instance()->init();
-		Sensei_Course_Theme_Option::instance()->init( $this );
-		Sensei_Course_Theme::instance()->init( $this );
-		Sensei_Course_Theme_Editor::instance()->init( $this );
-		new Sensei_Customizer( $this );
+		Sensei_Course_Theme_Option::instance()->init();
+		Sensei_Course_Theme::instance()->init();
+		Sensei_Course_Theme_Editor::instance()->init();
+		new Sensei_Customizer();
 
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();

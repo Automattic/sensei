@@ -1,6 +1,12 @@
 @import '../notices';
 @import './quiz-graded';
 
+.sensei-lms-notice {
+	background-color: rgba(125, 125, 125, 0.08);
+	border-color: var(--border-color);
+	color: inherit;
+}
+
 .sensei-course-theme-lesson-quiz-notice {
 	display: flex;
 	justify-content: space-between;

@@ -3,7 +3,7 @@
  * Sensei_Customizer class.
  *
  * @package sensei-lms
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 /**
@@ -12,32 +12,34 @@
 class Sensei_Customizer {
 
 	/**
-	 * Sensei course theme primary color.
-	 */
-	const COURSE_THEME_PRIMARY_COLOR = 'sensei-course-theme-primary-color';
-
-	/**
-	 * Settings to output as CSS variables.
+	 * Configurable colors.
 	 *
-	 * @var string[] Variable names.
+	 * @var array[]
 	 */
-	public $css_variables = [ self::COURSE_THEME_PRIMARY_COLOR ];
+	private $colors;
 
 	/**
 	 * Sensei_Customizer constructor.
-	 *
-	 * @param Sensei_Main $sensei Main Sensei instance.
 	 */
-	public function __construct( Sensei_Main $sensei ) {
-
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			return;
-		}
+	public function __construct() {
+		$this->colors = [
+			'sensei-course-theme-primary-color'    => [
+				'label'   => __( 'Primary Color', 'sensei-lms' ),
+				'default' => '#1E1E1E',
+			],
+			'sensei-course-theme-background-color' => [
+				'label'   => __( 'Background Color', 'sensei-lms' ),
+				'default' => '#FFFFFF',
+			],
+			'sensei-course-theme-foreground-color' => [
+				'label'   => __( 'Text Color', 'sensei-lms' ),
+				'default' => '#1E1E1E',
+			],
+		];
 
 		add_action( 'customize_register', [ $this, 'add_customizer_settings' ] );
 		add_action( 'customize_preview_init', [ $this, 'enqueue_customizer_helper' ] );
 		add_action( 'wp_head', [ $this, 'output_custom_settings' ] );
-
 	}
 
 	/**
@@ -47,44 +49,41 @@ class Sensei_Customizer {
 	 */
 	public function add_customizer_settings( WP_Customize_Manager $wp_customize ) {
 
-		$wp_customize->add_panel(
-			'sensei',
+		$wp_customize->add_section(
+			'sensei-course-theme',
 			[
 				'priority'       => 40,
 				'capability'     => 'manage_sensei',
 				'theme_supports' => '',
-				'title'          => __( 'Sensei LMS', 'sensei-lms' ),
+				'title'          => __( 'Learning Mode (Sensei LMS)', 'sensei-lms' ),
 			]
 		);
 
-		$wp_customize->add_section(
-			'Sensei_Course_Theme_Option',
-			[
-				'title'    => __( 'Course Theme', 'sensei-lms' ),
-				'priority' => 30,
-				'panel'    => 'sensei',
-			]
-		);
+		foreach ( $this->colors as $variable => $settings ) {
 
-		$wp_customize->add_setting(
-			self::COURSE_THEME_PRIMARY_COLOR,
-			[
-				'default'   => '#1E1E1E',
-				'transport' => 'postMessage',
-			]
-		);
+			$wp_customize->add_setting(
+				$variable,
+				[
+					'default'   => $settings['default'],
+					'transport' => 'postMessage',
+					'type'      => 'option',
+				]
+			);
 
-		$wp_customize->add_control(
-			new WP_Customize_Color_Control(
-				$wp_customize,
-				self::COURSE_THEME_PRIMARY_COLOR,
-				array(
-					'label'    => __( 'Primary Color', 'sensei-lms' ),
-					'section'  => 'Sensei_Course_Theme_Option',
-					'settings' => self::COURSE_THEME_PRIMARY_COLOR,
+			$wp_customize->add_control(
+				new WP_Customize_Color_Control(
+					$wp_customize,
+					$variable,
+					array(
+						'label'       => $settings['label'],
+						'section'     => 'sensei-course-theme',
+						'settings'    => $variable,
+						'description' => $settings['description'] ?? null,
+
+					)
 				)
-			)
-		);
+			);
+		}
 
 	}
 
@@ -104,8 +103,8 @@ class Sensei_Customizer {
 
 		$css = '';
 
-		foreach ( $this->css_variables as $variable ) {
-			$value = get_theme_mod( $variable );
+		foreach ( $this->colors as $variable => $settings ) {
+			$value = get_option( $variable );
 			if ( $value ) {
 				$css .= sprintf( "--%s: %s;\n", $variable, ( $value ) );
 			}
@@ -128,7 +127,7 @@ class Sensei_Customizer {
 		?>
 		<script type="text/javascript">
 			<?php
-			foreach ( $this->css_variables as $variable ) {
+			foreach ( $this->colors as $variable => $settings ) {
 				?>
 			wp.customize( '<?php echo esc_js( $variable ); ?>', ( setting ) => {
 				setting.bind( ( value ) => {

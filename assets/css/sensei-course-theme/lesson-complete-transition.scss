@@ -13,7 +13,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: #FFF;
+	background-color: var(--bg-color);
 
 	&__text {
 		margin: 25px 0;

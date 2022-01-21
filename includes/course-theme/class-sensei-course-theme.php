@@ -61,16 +61,8 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Initializes the Course Theme.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
-			return;
-		}
-
+	public function init() {
 		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 10 );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 20 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
@@ -298,7 +290,7 @@ class Sensei_Course_Theme {
 		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
 			$preview_url .= '&learn=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
-		return '/wp-admin/customize.php?autofocus[section]=Sensei_Course_Theme_Option&url=' . rawurlencode( $preview_url );
+		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 	}
 
 	/**
