@@ -29,6 +29,11 @@ import { querySelectorAncestor } from '../shared/helpers/DOM';
  * ```
  */
 
+/**
+ * The last focused element in the document.
+ *
+ * @type {Element}
+ */
 let lastActiveElement = document.activeElement;
 
 /**
@@ -123,3 +128,13 @@ function attachModalEvents() {
 // Init modal when the DOM is fully ready.
 // eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'load', attachModalEvents );
+
+/**
+ * Support for closing the Modal on Esc key.
+ */
+// eslint-disable-next-line @wordpress/no-global-event-listener
+document.addEventListener( 'keydown', ( ev ) => {
+	if ( [ 'Esc', 'Escape' ].includes( ev.key ) ) {
+		closeModal();
+	}
+} );

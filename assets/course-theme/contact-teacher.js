@@ -31,7 +31,6 @@ export function submitContactTeacher( ev ) {
 		'button.sensei-contact-teacher-form__submit'
 	);
 	submitButton.classList.add( 'sensei-course-theme__button', 'is-busy' );
-	submitButton.disabled = true;
 
 	const fieldNames = [
 		'sensei_message_teacher_nonce',
