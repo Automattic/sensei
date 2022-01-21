@@ -31,6 +31,7 @@ class Quiz_Content {
 		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'action_buttons' ], 10 );
 		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
 		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_title' ), 20 );
+		remove_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
 
 		ob_start();
 

@@ -134,3 +134,14 @@ $tablet-breakpoint: 768px;
 	font-size: 14px;
 	text-decoration: none;
 }
+
+.sensei-progress-bar {
+	&__bar {
+		height: 12px;
+		background-color: var(--border-color);
+	}
+
+	&__progress {
+		background-color: var(--primary-color);
+	}
+}

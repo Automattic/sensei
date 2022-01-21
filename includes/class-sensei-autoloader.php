@@ -202,6 +202,11 @@ class Sensei_Autoloader {
 			'Sensei_WPML'                                 => 'wpml/class-sensei-wpml.php',
 
 			/**
+			 * Blocks
+			 */
+			'Sensei\Blocks\Components\Progress_Bar'       => 'blocks/components/class-progress-bar.php',
+
+			/**
 			 * Course Theme
 			 */
 			'Sensei\Blocks\Course_Theme'                  => 'blocks/course-theme/class-course-theme.php',
