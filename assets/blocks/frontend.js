@@ -8,13 +8,6 @@ import domReady from '@wordpress/dom-ready';
  */
 import '../js/sensei-modal';
 
-/**
- * The collapse/expand transition duration in milliseconds.
- *
- * @constant {number}
- */
-const TRANSITION_DURATION = 350;
-
 domReady( () => {
 	if (
 		0 === document.querySelectorAll( '.sensei-collapsible__toggle' ).length
@@ -48,13 +41,11 @@ domReady( () => {
 			content.style.maxHeight = originalHeight;
 		}
 
-		let transitionTimeoutId = null;
 		toggleButton.addEventListener( 'click', ( e ) => {
 			e.preventDefault();
 			toggleButton.classList.toggle( 'collapsed' );
 			const collapsed = content.classList.toggle( 'collapsed' );
 
-			clearTimeout( transitionTimeoutId );
 			if ( ! collapsed ) {
 				// Browser needs to render the element first and
 				// change it's height later in order to animate the transition.
@@ -66,13 +57,12 @@ domReady( () => {
 				} );
 			} else {
 				content.style.maxHeight = '0px';
+			}
+		} );
 
-				// At the end of the collapse animation, we set the content
-				// display to "none", so the elements inside the content do not
-				// get focus when user navigates by tabbing through buttons and links.
-				transitionTimeoutId = setTimeout( () => {
-					content.style.display = 'none';
-				}, TRANSITION_DURATION );
+		content.addEventListener( 'transitionend', () => {
+			if ( content.classList.contains( 'collapsed' ) ) {
+				content.style.display = 'none';
 			}
 		} );
 	} );
