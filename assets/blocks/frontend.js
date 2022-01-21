@@ -46,15 +46,18 @@ domReady( () => {
 			const collapsed = content.classList.toggle( 'collapsed' );
 
 			if ( ! collapsed ) {
-				content.style.visibility = 'visible';
+				content.style.visibility = '';
 				content.style.maxHeight = originalHeight;
 			} else {
 				content.style.maxHeight = '0px';
 			}
 		} );
 
-		content.addEventListener( 'transitionend', () => {
-			if ( content.classList.contains( 'collapsed' ) ) {
+		content.addEventListener( 'transitionend', ( e ) => {
+			if (
+				'max-height' === e.propertyName &&
+				content.classList.contains( 'collapsed' )
+			) {
 				content.style.visibility = 'hidden';
 			}
 		} );

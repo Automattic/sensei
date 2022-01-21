@@ -38,8 +38,14 @@ const toggleFocusMode = ( on ) => {
 	const { classList } = document.body;
 
 	const isActive = classList.contains( FOCUS_MODE_CLASS );
-
 	const next = 'undefined' === typeof on ? ! isActive : on;
+
+	if ( ! next ) {
+		document.querySelector(
+			'.sensei-lms-course-navigation'
+		).style.visibility = '';
+	}
+
 	classList.toggle( FOCUS_MODE_CLASS, next );
 	window.sessionStorage.setItem( FOCUS_MODE_CLASS, JSON.stringify( next ) );
 };
@@ -47,6 +53,19 @@ const toggleFocusMode = ( on ) => {
 // eslint-disable-next-line @wordpress/no-global-event-listener
 window.addEventListener( 'DOMContentLoaded', () => {
 	initFocusMode();
+
+	document
+		.querySelector( '.sensei-course-theme__sidebar' )
+		.addEventListener( 'transitionend', ( e ) => {
+			if (
+				'left' === e.propertyName &&
+				document.body.classList.contains( FOCUS_MODE_CLASS )
+			) {
+				document.querySelector(
+					'.sensei-lms-course-navigation'
+				).style.visibility = 'hidden';
+			}
+		} );
 } );
 
 export { toggleFocusMode };
