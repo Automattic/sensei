@@ -111,7 +111,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
 
 .post-type-course .wp-list-table .button-link {
 	color: #2C3338;
-	display: inline-block;
+	display: block;
 }
 
 .post-type-course .wp-list-table .button-link:not(:first-child) {

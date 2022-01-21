@@ -16,6 +16,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const files = [
 	'js/admin/course-edit.js',
+	'js/admin/course-index.js',
 	'js/admin/event-logging.js',
 	'js/admin/lesson-bulk-edit.js',
 	'js/admin/lesson-quick-edit.js',

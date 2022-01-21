@@ -159,6 +159,10 @@ class Sensei_Course {
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
 		}
+
+		if ( 'edit-course' === $screen->id ) {
+			Sensei()->assets->enqueue( 'sensei-admin-course-index', 'js/admin/course-index.js', [ 'jquery' ], true );
+		}
 	}
 
 	/**

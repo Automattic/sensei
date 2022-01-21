@@ -1243,28 +1243,60 @@ class Sensei_Core_Modules {
 	 */
 	public function course_column_content( $column = '', $course_id = 0 ) {
 		if ( 'modules' === $column ) {
-			$modules = $this->get_course_modules( $course_id );
+			$this->output_course_modules_column( $course_id );
+		}
+	}
 
-			if ( $modules ) {
-				$module_links = [];
-				foreach ( $modules as $module ) {
-					$module_links[] = sprintf(
-						'<a href="%s">%s</a>',
-						esc_attr( get_edit_term_link( $module->term_id ) ),
-						esc_html( $module->name )
+	/**
+	 * Output the course modules column HTML.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param int $course_id
+	 * @return void
+	 */
+	private function output_course_modules_column( int $course_id ) {
+		$modules = $this->get_course_modules( $course_id );
+
+		if ( ! $modules ) {
+			return;
+		}
+
+		$links_count     = count( $modules );
+		$max_links_count = apply_filters( 'sensei_modules_column_max_links_count', 3 );
+
+		foreach ( $modules as $index => $module ) {
+			$is_last     = $index + 1 === $links_count;
+			$should_hide = $index + 1 > $max_links_count;
+			$module_link = sprintf(
+				'<a href="%s">%s</a>',
+				esc_attr( get_edit_term_link( $module->term_id ) ),
+				esc_html( $module->name )
+			);
+			?>
+			<span class="<?php echo esc_attr( $should_hide ? 'hidden' : '' ); ?>">
+				<?php echo $module_link . ( $is_last ? '' : ', ' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is already escaped. ?>
+			</span>
+			<?php if ( $is_last && $should_hide ) { ?>
+				<a href="#" class="sensei-show-more">
+					<?php
+					printf(
+						/* translators: %d: the number of links to be displayed */
+						esc_html__( '+%d more', 'sensei-lms' ),
+						intval( $links_count - $max_links_count )
 					);
-				}
-
-				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
-
-				// Output the edit modules order link.
-				echo sprintf(
-					'<a class="button-link" href="%s">%s</a>',
-					esc_url( admin_url( 'options.php?post_type=course&page=module-order&course_id=' . intval( $course_id ) ) ),
-					esc_html__( 'Order modules', 'sensei-lms' )
-				);
+					?>
+				</a>
+				<?php
 			}
 		}
+
+		// Output the edit modules order link.
+		printf(
+			'<a class="button-link" href="%s">%s</a>',
+			esc_url( admin_url( 'options.php?post_type=course&page=module-order&course_id=' . $course_id ) ),
+			esc_html__( 'Order modules', 'sensei-lms' )
+		);
 	}
 
 	/**
