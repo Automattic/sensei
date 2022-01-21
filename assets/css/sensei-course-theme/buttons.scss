@@ -6,6 +6,7 @@
 		font-family: inherit;
 		font-weight: inherit;
 		font-size: inherit;
+		background-color: inherit;
 
 	}
 	font-family: 'Inter', sans-serif;
@@ -45,12 +46,17 @@
 	&.is-secondary,
 	&.wp-block-button.is-style-outline {
 		color: var(--primary-color);
+		--wp--custom--button--border--color: var(--primary-color);
 		&:hover {
 			background-color: var(--primary-color);
 			color: var(--primary-contrast-color);
-
+			.wp-block-button__link {
+				border-color: var(--primary-color);
+			}
 		}
 	}
+
+
 
 	&.is-link {
 		font-weight: 600;

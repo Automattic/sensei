@@ -29,6 +29,14 @@ $tablet-breakpoint: 768px;
 
 		margin: 0 auto;
 		max-width: 1200px;
+
+		.wp-block-group__inner-container {
+			display: flex;
+			flex: 1;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+		}
 	}
 
 	&__header {
