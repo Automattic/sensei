@@ -63,6 +63,7 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		new Blocks\Prev_Lesson();
 		new Blocks\Next_Lesson();
 		new Blocks\Prev_Next_Lesson();
+		new Blocks\Exit_Course();
 		new Blocks\Course_Progress_Counter();
 		new Blocks\Course_Progress_Bar();
 		new Blocks\Lesson_Actions();
