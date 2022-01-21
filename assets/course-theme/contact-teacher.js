@@ -27,10 +27,14 @@ export function submitContactTeacher( ev ) {
 	ev.preventDefault();
 
 	const form = ev.target;
-	const submitButton = ev.target.querySelector(
+	const submitButton = form.querySelector(
 		'button.sensei-contact-teacher-form__submit'
 	);
+	const closeButton = document.querySelector(
+		'.sensei-contact-teacher-close'
+	);
 	submitButton.classList.add( 'sensei-course-theme__button', 'is-busy' );
+	submitButton.disabled = true;
 
 	const fieldNames = [
 		'sensei_message_teacher_nonce',
@@ -57,6 +61,7 @@ export function submitContactTeacher( ev ) {
 		} )
 		.then( () => {
 			form.classList.add( 'is-success' );
+			closeButton.focus();
 		} )
 		.catch( () => {
 			// TODO: Show submit failed message.
