@@ -43,10 +43,8 @@ class Sensei_Blocks {
 
 	/**
 	 * Sensei_Blocks constructor.
-	 *
-	 * @param Sensei_Main $sensei Sensei instance.
 	 */
-	public function __construct( Sensei_Main $sensei ) {
+	public function __construct() {
 		// Skip if Gutenberg is not available.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;

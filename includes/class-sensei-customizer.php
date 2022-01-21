@@ -20,11 +20,8 @@ class Sensei_Customizer {
 
 	/**
 	 * Sensei_Customizer constructor.
-	 *
-	 * @param Sensei_Main $sensei Main Sensei instance.
 	 */
-	public function __construct( Sensei_Main $sensei ) {
-
+	public function __construct() {
 		$this->colors = [
 			'sensei-course-theme-primary-color'    => [
 				'label'   => __( 'Primary Color', 'sensei-lms' ),
@@ -40,14 +37,9 @@ class Sensei_Customizer {
 			],
 		];
 
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			return;
-		}
-
 		add_action( 'customize_register', [ $this, 'add_customizer_settings' ] );
 		add_action( 'customize_preview_init', [ $this, 'enqueue_customizer_helper' ] );
 		add_action( 'wp_head', [ $this, 'output_custom_settings' ] );
-
 	}
 
 	/**

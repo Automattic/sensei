@@ -15,8 +15,6 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		tests_add_filter( 'sensei_feature_flag_course_theme', '__return_true' );
-
 		$this->factory = new Sensei_Factory();
 		self::resetCourseEnrolmentManager();
 	}

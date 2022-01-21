@@ -302,17 +302,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		// Course Settings.
-
-		if ( Sensei()->feature_flags->is_enabled( 'course_theme' ) ) {
-			$fields['sensei_learning_mode_all'] = array(
-				'name'        => __( 'Learning mode', 'sensei-lms' ),
-				'description' => __( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quiz.*', 'sensei-lms' ),
-				'form'        => 'render_learning_mode_setting',
-				'type'        => 'checkbox',
-				'default'     => false,
-				'section'     => 'course-settings',
-			);
-		}
+		$fields['sensei_learning_mode_all'] = array(
+			'name'        => __( 'Learning mode', 'sensei-lms' ),
+			'description' => __( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quizzes.', 'sensei-lms' ),
+			'form'        => 'render_learning_mode_setting',
+			'type'        => 'checkbox',
+			'default'     => false,
+			'section'     => 'course-settings',
+		);
 
 		$fields['course_completion'] = array(
 			'name'        => __( 'Courses are complete:', 'sensei-lms' ),
@@ -873,7 +870,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			</div>
 			<br />
 			<p class="sensei-settings-learning-mode__description">
-				<?php esc_html_e( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quizzes.*', 'sensei-lms' ); ?>
+				<?php echo esc_html( $args['data']['description'] ); ?>
 			</p>
 			<?php if ( $customize_url ) { ?>
 			<br />

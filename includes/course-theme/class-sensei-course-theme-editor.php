@@ -58,15 +58,8 @@ class Sensei_Course_Theme_Editor {
 
 	/**
 	 * Initializes the Course Theme Editor.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			return;
-		}
-
+	public function init() {
 		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 
