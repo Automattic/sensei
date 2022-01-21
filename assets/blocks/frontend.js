@@ -57,6 +57,8 @@ domReady( () => {
 
 			clearTimeout( transitionTimeoutId );
 			if ( ! collapsed ) {
+				// Browser needs to render the element first and
+				// change it's height later in order to animate the transition.
 				window.requestAnimationFrame( () => {
 					content.style.display = originalDisplay;
 					window.requestAnimationFrame( () => {
