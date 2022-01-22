@@ -1415,7 +1415,7 @@ class Sensei_Quiz {
 
 			// Check for a quiz grade.
 			$quiz_grade = get_comment_meta( $lesson_status->comment_ID, 'grade', true );
-			if ( $quiz_grade ) {
+			if ( '' !== $quiz_grade ) {
 				return true;
 			}
 		}
