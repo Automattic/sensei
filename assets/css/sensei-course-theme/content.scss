@@ -1,4 +1,5 @@
 @import './blockbase-ponyfill';
+@import './global-styles';
 
 body {
 	--wp--custom--form--color--background: var(--bg-color);
@@ -8,7 +9,10 @@ body {
 	--wp--custom--form--border--radius: 2px;
 	--wp--custom--form--color--text: inherit;
 	--wp--custom--form--padding: 6px 8px;
+}
 
+a {
+	color: var(--primary-color);
 }
 
 input, textarea {
@@ -17,24 +21,32 @@ input, textarea {
 
 .sensei-course-theme {
 	&__main-content {
-
 		> * {
-			max-width: 900px;
+			max-width: var(--wp--custom--layout--content-size);
 			margin-left: auto;
 			margin-right: auto;
 		}
 
-		.alignfull {
-			margin-left: calc( -1 * var(--content-padding));
-			margin-right: calc( -1 * var(--content-padding));
+		.entry-content {
 			max-width: unset;
-			width: auto;
-		}
-
-		img {
-			max-width: 100%;
-			height: auto;
 		}
 	}
 }
+
+.entry-content {
+	--wp--custom--gap--horizontal: var(--content-padding);
+	--wp--custom--gap--vertical: 12px;
+
+	> * {
+		max-width: var(--wp--custom--layout--content-size);
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+}
+
 
