@@ -32,7 +32,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that ungraded quiz count is not displayed in the Grading menu.
+	 * Tests that the ungraded quiz count is not displayed in the Grading menu.
 	 *
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
@@ -52,25 +52,18 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
 
 		$this->login_as_admin();
-
 		Sensei()->grading->grading_admin_menu();
 
 		global $submenu;
 
-		$grading_menu = '';
+		$this->assertEquals( 'Grading', $submenu['edit.php?post_type=course'][0][0], 'Should not have indicator when there are no ungraded quizzes' );
 
-		foreach ( $submenu['edit.php?post_type=course'] as $submenu_item ) {
-			if ( in_array( 'Grading', $submenu_item, true ) ) {
-				$grading_menu = $submenu_item;
-				break;
-			}
-		}
-
-		$this->assertEquals( 'Grading', $grading_menu[0], 'Should not have indicator when there are no ungraded quizzes' );
+		// Clean up the menu.
+		unset( $submenu['edit.php?post_type=course'] );
 	}
 
 	/**
-	 * Tests that ungraded quiz count is displayed in the Grading menu.
+	 * Tests that the ungraded quiz count is displayed in the Grading menu.
 	 *
 	 * @covers Sensei_Grading::grading_admin_menu
 	 */
@@ -90,35 +83,14 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
 
 		$this->login_as_admin();
-
 		Sensei()->grading->grading_admin_menu();
 
 		global $submenu;
 
-		$grading_menu = '';
+		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', $submenu['edit.php?post_type=course'][0][0], 'Should count 2 available updates' );
 
-		foreach ( $submenu['edit.php?post_type=course'] as $submenu_item ) {
-			if ( in_array( 'Grading', $submenu_item, true ) ) {
-				$grading_menu = $submenu_item;
-				break;
-			}
-		}
-
-		$this->assertArrayHasKey( 'foo', Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ) );
-
-				//Real data (
-	//     [0] => Grading <span class="awaiting-mod">1</span>
-	//     [1] => manage_sensei_grades
-	//     [2] => sensei_grading
-	//     [3] => Grading
-	// )
-
-		// --- Expected
-		// +++ Actual
-		// @@ @@
-		// -'Grading <span class="awaiting-mod">2</span>'
-		// +'Grading'
-		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', $grading_menu[0], 'Should count 2 available updates' );
+		// Clean up the menu.
+		unset( $submenu['edit.php?post_type=course'] );
 	}
 
 	/**
