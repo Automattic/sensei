@@ -65,7 +65,7 @@ class Sensei_Grading {
 			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
 		}
 
-		// if ( current_user_can( 'manage_sensei_grades' ) ) {
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=course',
 				__( 'Grading', 'sensei-lms' ),
@@ -74,7 +74,7 @@ class Sensei_Grading {
 				$this->page_slug,
 				array( $this, 'grading_page' )
 			);
-		// }
+		}
 	}
 
 	/**
