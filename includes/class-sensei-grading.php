@@ -456,7 +456,7 @@ class Sensei_Grading {
 		}
 		$query .= ' GROUP BY comment_approved';
 
-		// $counts = wp_cache_get( $cache_key, 'counts' );
+		$counts = wp_cache_get( $cache_key, 'counts' );
 		$counts = false;
 		if ( false === $counts ) {
 			$sql     = $wpdb->prepare( $query, $type );
@@ -466,7 +466,7 @@ class Sensei_Grading {
 			foreach ( $results as $row ) {
 				$counts[ $row['comment_approved'] ] = $row['total'];
 			}
-			// wp_cache_set( $cache_key, $counts, 'counts' );
+			wp_cache_set( $cache_key, $counts, 'counts' );
 		}
 
 		if ( ! isset( $counts['graded'] ) ) {
