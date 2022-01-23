@@ -117,3 +117,47 @@ div.question_boolean_fields { margin-bottom: 10px; }
 .sensei-dismissible-link {
     text-decoration: none;
 }
+
+/**
+ * Sensei custom navigation
+ */
+#sensei-custom-navigation {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	color: #000000;
+	margin-bottom: 20px;
+
+}
+
+#sensei-custom-navigation .title h1 {
+	color: #1E1E1E;
+	font-size: 20px;
+	margin-right: 25px;
+}
+
+#sensei-custom-navigation .navigation a {
+	margin-left: 0;
+	margin-right: 20px;
+}
+
+#sensei-custom-navigation .navigation a.page-title-action {
+	top: auto;
+}
+
+#sensei-custom-navigation .navigation a.sensei-custom-navigation__nav-tag {
+	margin-right: 25px;
+	color: #1E1E1E;
+	text-decoration: none;
+	font-size: 14px;
+	padding-bottom:  14px;
+}
+
+#sensei-custom-navigation .navigation a.sensei-custom-navigation__nav-tag.active {
+	font-weight: 500;
+	border-bottom: 4px solid #007CBA;
+}
+
+#sensei-custom-navigation .navigation a.sensei-custom-navigation__nav-tag:hover {
+	border-bottom: 4px solid #1E1E1E;
+}

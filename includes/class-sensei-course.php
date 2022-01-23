@@ -145,17 +145,80 @@ class Sensei_Course {
 
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
+
+		// Add custom navigation
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_action( 'parent_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
-	 * Register and enqueue scripts that are needed in the backend.
+	 * Highlight the menu item for the course pages.
+	 *
+	 * @param $file
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $file ) {
+		global $submenu_file;
+		$screen = get_current_screen();
+
+		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ] ) ) {
+			$submenu_file = 'edit.php?post_type=course';
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 1.9.0
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category'] ) ) {
+			$this->display_courses_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the courses' navigation.
+	 *
+	 * @param WP_Screen $screen
+	 */
+	private function display_courses_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation">
+			<div class="title">
+				<h1><?php echo __( 'Courses', 'sensei-lms' ); ?></h1>
+			</div>
+			<div class="navigation">
+				<a class="sensei-custom-navigation__nav-tag <?php echo $screen->taxonomy === '' ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php echo __( 'All Courses', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__nav-tag <?php echo $screen->taxonomy === 'course-category' ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php echo __( 'Course Categories', 'sensei-lms' ); ?></a>
+				<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php echo __( 'New course', 'sensei-lms' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php echo __( 'Order courses', 'sensei-lms' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php echo __( 'Course settings', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Register and enqueue scripts and styles that are needed in the backend.
 	 *
 	 * @access private
 	 * @since 2.1.0
 	 */
 	public function register_admin_scripts() {
 		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
 
+		Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
 		}

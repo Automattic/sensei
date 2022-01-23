@@ -12,13 +12,25 @@ jQuery( document ).ready( function ( $ ) {
 		} );
 
 	// Only show the General settings.
-	var defaultSettingsSlug = 'default-settings';
+	var selectedSettingsSlug = 'default-settings';
+
+	if ( window.location.hash && window.location.hash.length > 1 ) {
+		selectedSettingsSlug = window.location.hash.replace( '#', '' );
+		jQuery( '#woothemes-sensei .subsubsub a.tab' ).each( function () {
+			if ( jQuery( this ).attr( 'href' ) === window.location.hash ) {
+				jQuery( this ).addClass( 'current' );
+			} else {
+				jQuery( this ).removeClass( 'current' );
+			}
+		} );
+	}
+
 	$( '#woothemes-sensei section' ).each( function () {
-		if ( this.id !== defaultSettingsSlug ) {
+		if ( this.id !== selectedSettingsSlug ) {
 			$( this ).hide();
 		}
 	} );
-	sensei_log_event( 'settings_view', { view: defaultSettingsSlug } );
+	sensei_log_event( 'settings_view', { view: selectedSettingsSlug } );
 
 	jQuery( '#woothemes-sensei .subsubsub a.tab' ).click( function () {
 		// Move the "current" CSS class.

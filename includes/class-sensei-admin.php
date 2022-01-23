@@ -37,6 +37,7 @@ class Sensei_Admin {
 
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
@@ -111,6 +112,23 @@ class Sensei_Admin {
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
 		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_published_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
+	}
+
+	/**
+	 * Add Course order page to admin panel.
+	 *
+	 * @since  1.9.0
+	 * @return void
+	 */
+	public function add_course_order() {
+		add_submenu_page(
+			null, // Hide in menu.
+			__( 'Order Courses', 'sensei-lms' ),
+			__( 'Order Courses', 'sensei-lms' ),
+			'manage_sensei',
+			$this->course_order_page_slug,
+			array( $this, 'course_order_screen' )
+		);
 	}
 
 	/**
