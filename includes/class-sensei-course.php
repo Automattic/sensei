@@ -146,7 +146,7 @@ class Sensei_Course {
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
 
-		// Add custom navigation
+		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		add_action( 'parent_file', [ $this, 'highlight_menu_item' ] );
 	}
@@ -154,7 +154,7 @@ class Sensei_Course {
 	/**
 	 * Highlight the menu item for the course pages.
 	 *
-	 * @param $file
+	 * @param string $file
 	 *
 	 * @return string
 	 */
@@ -162,7 +162,8 @@ class Sensei_Course {
 		global $submenu_file;
 		$screen = get_current_screen();
 
-		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ] ) ) {
+		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ], true ) ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu_file = 'edit.php?post_type=course';
 		}
 
@@ -179,7 +180,7 @@ class Sensei_Course {
 		if ( ! $screen ) {
 			return;
 		}
-		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category'] ) ) {
+		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) ) {
 			$this->display_courses_navigation( $screen );
 		}
 	}
@@ -190,20 +191,20 @@ class Sensei_Course {
 	 * @param WP_Screen $screen
 	 */
 	private function display_courses_navigation( WP_Screen $screen ) {
-		?>
-		<div id="sensei-custom-navigation">
-			<div class="title">
-				<h1><?php echo __( 'Courses', 'sensei-lms' ); ?></h1>
-			</div>
-			<div class="navigation">
-				<a class="sensei-custom-navigation__nav-tag <?php echo $screen->taxonomy === '' ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php echo __( 'All Courses', 'sensei-lms' ); ?></a>
-				<a class="sensei-custom-navigation__nav-tag <?php echo $screen->taxonomy === 'course-category' ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php echo __( 'Course Categories', 'sensei-lms' ); ?></a>
-				<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php echo __( 'New course', 'sensei-lms' ); ?></a>
-				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php echo __( 'Order courses', 'sensei-lms' ); ?></a>
-				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php echo __( 'Course settings', 'sensei-lms' ); ?></a>
-			</div>
-		</div>
-		<?php
+		$html  = '<div id="sensei-custom-navigation">';
+		$html .= '<div class="title">';
+		$html .= '<h1>' . __( 'Courses', 'sensei-lms' ) . '</h1>';
+		$html .= '</div>';
+		$html .= '<div class="navigation">';
+		$html .= '<a class="sensei-custom-navigation__nav-tag ' . ( '' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit.php?post_type=course' ) ) . '">' . __( 'All Courses', 'sensei-lms' ) . '</a>';
+		$html .= '<a class="sensei-custom-navigation__nav-tag ' . ( 'course-category' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ) . '">' . __( 'Course Categories', 'sensei-lms' ) . '</a>';
+		$html .= '<a class="page-title-action" href="' . esc_url( admin_url( 'post-new.php?post_type=course' ) ) . '">' . __( 'New course', 'sensei-lms' ) . '</a>';
+		$html .= '<a href="' . esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ) . '">' . __( 'Order courses', 'sensei-lms' ) . '</a>';
+		$html .= '<a href="' . esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ) . '">' . __( 'Course settings', 'sensei-lms' ) . '</a>';
+		$html .= '</div>';
+		$html .= '</div>';
+
+		echo wp_kses( $html, wp_kses_allowed_html( 'post' ) );
 	}
 
 	/**
