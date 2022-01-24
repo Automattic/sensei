@@ -148,32 +148,34 @@ class Sensei_Course {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_action( 'parent_file', [ $this, 'highlight_menu_item' ] );
+		add_action( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
 	 * Highlight the menu item for the course pages.
 	 *
-	 * @param string $file
+	 * @since 4.0.0
+	 * @access private*
+	 *
+	 * @param $submenu_file
 	 *
 	 * @return string
 	 */
-	public function highlight_menu_item( $file ) {
-		global $submenu_file;
+	public function highlight_menu_item( $submenu_file ) {
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ], true ) ) {
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$submenu_file = 'edit.php?post_type=course';
 		}
 
-		return $file;
+		return $submenu_file;
 	}
 
 	/**
 	 * Add custom navigation to the admin pages.
 	 *
-	 * @since 1.9.0
+	 * @since 4.0.0
+	 * @access private
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
