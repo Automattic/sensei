@@ -1653,26 +1653,16 @@ class Sensei_Quiz {
 			return;
 		}
 
-		$user_id       = get_current_user_id();
-		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$answers       = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
-		$answers_count = is_array( $answers ) ? count( array_filter( $answers ) ) : 0;
+		$attributes = [
+			'radius'                   => $pagination_settings['progress_bar_radius'],
+			'height'                   => $pagination_settings['progress_bar_height'],
+			'customBarColor'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
+			'customBarBackgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
+		];
 
 		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.scss' );
-		wp_enqueue_script( 'sensei-quiz-progress' );
-		wp_localize_script(
-			'sensei-quiz-progress',
-			'sensei_quiz_progress',
-			array(
-				'totalNumber'     => $sensei_question_loop['total'],
-				'completedNumber' => $answers_count,
-				'radius'          => $pagination_settings['progress_bar_radius'],
-				'height'          => $pagination_settings['progress_bar_height'],
-				'color'           => empty( $pagination_settings['progress_bar_color'] ) ? '' : $pagination_settings['progress_bar_color'],
-				'backgroundColor' => empty( $pagination_settings['progress_bar_background'] ) ? '' : $pagination_settings['progress_bar_background'],
-			)
-		);
-		Sensei_Templates::get_template( 'globals/progress-bar.php' );
+
+		echo wp_kses_post( ( new Sensei_Block_Quiz_Progress() )->render( $attributes ) );
 	}
 
 	/**

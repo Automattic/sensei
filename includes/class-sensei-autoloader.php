@@ -201,12 +201,18 @@ class Sensei_Autoloader {
 			'Sensei_WPML'                                 => 'wpml/class-sensei-wpml.php',
 
 			/**
+			 * Blocks
+			 */
+			'Sensei\Blocks\Shared\Progress_Bar'           => 'blocks/shared/class-progress-bar.php',
+
+			/**
 			 * Course Theme
 			 */
 			'Sensei\Blocks\Course_Theme'                  => 'blocks/course-theme/class-course-theme.php',
 			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson' => 'blocks/course-theme/class-prev-next-lesson.php',
 			'Sensei\Blocks\Course_Theme\Prev_Lesson'      => 'blocks/course-theme/class-prev-lesson.php',
 			'Sensei\Blocks\Course_Theme\Next_Lesson'      => 'blocks/course-theme/class-next-lesson.php',
+			'Sensei\Blocks\Course_Theme\Exit_Course'      => 'blocks/course-theme/class-exit-course.php',
 			'Sensei\Blocks\Course_Theme\Course_Title'     => 'blocks/course-theme/class-course-title.php',
 			'Sensei\Blocks\Course_Theme\Site_Logo'        => 'blocks/course-theme/class-site-logo.php',
 			'Sensei\Blocks\Course_Theme\Focus_Mode'       => 'blocks/course-theme/class-focus-mode.php',

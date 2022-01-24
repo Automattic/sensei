@@ -184,17 +184,15 @@ const blocks = [
 	{
 		...meta,
 		title: __( 'Quiz Progress Bar', 'sensei-lms' ),
-		name: 'sensei-lms/quiz-progress-bar',
+		name: 'sensei-lms/quiz-progress',
 		edit() {
 			return (
-				<div>
-					<div className="sensei-progress-bar__heading">
-						<div className="sensei-progress-bar__label">
-							{ __(
-								'2 of 10 questions complete (20%)',
-								'sensei-lms'
-							) }
-						</div>
+				<div className="sensei-progress-bar">
+					<div className="sensei-progress-bar__label">
+						{ __(
+							'2 of 10 questions complete (20%)',
+							'sensei-lms'
+						) }
 					</div>
 					<div
 						role="progressbar"
