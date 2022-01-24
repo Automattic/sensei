@@ -123,8 +123,8 @@ div.question_boolean_fields { margin-bottom: 10px; }
  */
 .sensei-custom-navigation {
 	display: flex;
-	flex-direction: row;
-	align-items: center;
+	flex-flow: row wrap;
+	align-items: flex-start;
 	color: #000000;
 	margin-bottom: 20px;
 }
@@ -133,6 +133,13 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	color: #1E1E1E;
 	font-size: 20px;
 	margin-right: 25px;
+}
+
+.sensei-custom-navigation .sensei-custom-navigation__navbar {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: flex-start;
 }
 
 .sensei-custom-navigation .sensei-custom-navigation__navbar a {
@@ -149,7 +156,8 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	color: #1E1E1E;
 	text-decoration: none;
 	font-size: 14px;
-	padding-bottom:  14px;
+	padding-bottom:  10px;
+	border-bottom: 4px solid transparent;
 }
 
 .sensei-custom-navigation .sensei-custom-navigation__navbar a.sensei-custom-navigation__navbar__navtab.active {
