@@ -193,20 +193,20 @@ class Sensei_Course {
 	 * @param WP_Screen $screen
 	 */
 	private function display_courses_navigation( WP_Screen $screen ) {
-		$html  = '<div id="sensei-custom-navigation" class="sensei-custom-navigation">';
-		$html .= '<div class="sensei-custom-navigation__title">';
-		$html .= '<h1>' . __( 'Courses', 'sensei-lms' ) . '</h1>';
-		$html .= '</div>';
-		$html .= '<div class="sensei-custom-navigation__navbar">';
-		$html .= '<a class="sensei-custom-navigation__navbar__navtab ' . ( '' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit.php?post_type=course' ) ) . '">' . __( 'All Courses', 'sensei-lms' ) . '</a>';
-		$html .= '<a class="sensei-custom-navigation__navbar__navtab ' . ( 'course-category' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ) . '">' . __( 'Course Categories', 'sensei-lms' ) . '</a>';
-		$html .= '<a class="page-title-action" href="' . esc_url( admin_url( 'post-new.php?post_type=course' ) ) . '">' . __( 'New course', 'sensei-lms' ) . '</a>';
-		$html .= '<a href="' . esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ) . '">' . __( 'Order courses', 'sensei-lms' ) . '</a>';
-		$html .= '<a href="' . esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ) . '">' . __( 'Course settings', 'sensei-lms' ) . '</a>';
-		$html .= '</div>';
-		$html .= '</div>';
-
-		echo wp_kses( $html, wp_kses_allowed_html( 'post' ) );
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__title">
+				<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
+			</div>
+			<div class="sensei-custom-navigation__navbar">
+				<a class="sensei-custom-navigation__navbar__navtab <?php echo $screen->taxonomy === '' ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__navbar__navtab <?php echo $screen->taxonomy === 'course-category' ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+				<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New course', 'sensei-lms' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order courses', 'sensei-lms' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course settings', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
