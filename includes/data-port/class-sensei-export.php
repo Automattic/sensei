@@ -25,8 +25,9 @@ class Sensei_Export {
 	 * Sensei_Export constructor.
 	 */
 	public function __construct() {
-
 		$this->page_slug = 'sensei_export';
+
+		add_action( 'admin_menu', [ $this, 'admin_menu' ], 40 );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug ) ) {
@@ -50,15 +51,11 @@ class Sensei_Export {
 
 	/**
 	 * Register an export submenu.
-	 *
-	 * @deprecated 4.0.0
 	 */
 	public function admin_menu() {
-		_deprecated_function( __METHOD__, '4.0.0' );
-
 		if ( current_user_can( 'manage_sensei' ) ) {
 			add_submenu_page(
-				'sensei',
+				'options.php',
 				__( 'Export Content', 'sensei-lms' ),
 				__( 'Export', 'sensei-lms' ),
 				'manage_sensei',
