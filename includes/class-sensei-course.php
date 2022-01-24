@@ -191,13 +191,13 @@ class Sensei_Course {
 	 * @param WP_Screen $screen
 	 */
 	private function display_courses_navigation( WP_Screen $screen ) {
-		$html  = '<div id="sensei-custom-navigation">';
-		$html .= '<div class="title">';
+		$html  = '<div id="sensei-custom-navigation" class="sensei-custom-navigation">';
+		$html .= '<div class="sensei-custom-navigation__title">';
 		$html .= '<h1>' . __( 'Courses', 'sensei-lms' ) . '</h1>';
 		$html .= '</div>';
-		$html .= '<div class="navigation">';
-		$html .= '<a class="sensei-custom-navigation__nav-tag ' . ( '' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit.php?post_type=course' ) ) . '">' . __( 'All Courses', 'sensei-lms' ) . '</a>';
-		$html .= '<a class="sensei-custom-navigation__nav-tag ' . ( 'course-category' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ) . '">' . __( 'Course Categories', 'sensei-lms' ) . '</a>';
+		$html .= '<div class="sensei-custom-navigation__navbar">';
+		$html .= '<a class="sensei-custom-navigation__navbar__navtab ' . ( '' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit.php?post_type=course' ) ) . '">' . __( 'All Courses', 'sensei-lms' ) . '</a>';
+		$html .= '<a class="sensei-custom-navigation__navbar__navtab ' . ( 'course-category' === $screen->taxonomy ? 'active' : '' ) . '" href="' . esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ) . '">' . __( 'Course Categories', 'sensei-lms' ) . '</a>';
 		$html .= '<a class="page-title-action" href="' . esc_url( admin_url( 'post-new.php?post_type=course' ) ) . '">' . __( 'New course', 'sensei-lms' ) . '</a>';
 		$html .= '<a href="' . esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ) . '">' . __( 'Order courses', 'sensei-lms' ) . '</a>';
 		$html .= '<a href="' . esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ) . '">' . __( 'Course settings', 'sensei-lms' ) . '</a>';
