@@ -62,7 +62,10 @@ class Quiz_Content {
 		while ( sensei_quiz_has_questions() ) {
 			sensei_setup_the_question();
 			?>
-			<li class="sensei-quiz-question <?php sensei_the_question_class(); ?>">
+			<li
+				class="sensei-quiz-question <?php sensei_the_question_class(); ?>"
+				value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+			>
 				<?php
 				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
 				sensei_the_question_content();
