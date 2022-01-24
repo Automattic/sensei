@@ -34,6 +34,7 @@ domReady( () => {
 			content.style.transition = 'unset';
 			content.style.maxHeight = 'unset';
 			originalHeight = content.offsetHeight + 'px';
+			content.style.visibility = 'hidden';
 			content.style.maxHeight = 0;
 			content.style.transition = transition;
 		} else {
