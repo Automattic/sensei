@@ -119,7 +119,7 @@ class Sensei_Autoloader {
 			'Sensei_Learners_Admin_Bulk_Actions_Controller' => 'admin/class-sensei-learners-admin-bulk-actions-controller.php',
 			'Sensei_Learners_Admin_Bulk_Actions_View'     => 'admin/class-sensei-learners-admin-bulk-actions-view.php',
 			'Sensei_Learners_Main'                        => 'admin/class-sensei-learners-main.php',
-			'Sensei_Email_Signup_Form'                    => 'email-signup/class-sensei-email-signup-form.php', // @deprecated since 3.1.0
+			'Sensei_Email_Signup_Form'                    => 'email-signup/class-sensei-email-signup-form.php', // @deprecated 3.1.0
 			'Sensei_Setup_Wizard'                         => 'admin/class-sensei-setup-wizard.php',
 			'Sensei_Setup_Wizard_Pages'                   => 'admin/class-sensei-setup-wizard-pages.php',
 			'Sensei_Plugins_Installation'                 => 'admin/class-sensei-plugins-installation.php',
@@ -154,7 +154,6 @@ class Sensei_Autoloader {
 			'Sensei_Shortcode_Lesson_Page'                => 'shortcodes/class-sensei-shortcode-lesson-page.php',
 			'Sensei_Shortcode_Course_Categories'          => 'shortcodes/class-sensei-shortcode-course-categories.php',
 			'Sensei_Shortcode_Unpurchased_Courses'        => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
-			'Sensei_Legacy_Shortcodes'                    => 'shortcodes/class-sensei-legacy-shortcodes.php',
 
 			/**
 			 * Renderers
