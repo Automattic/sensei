@@ -59,7 +59,7 @@ class Sensei_Grading {
 	 */
 	public function grading_admin_menu() {
 		$indicator_html = '';
-		$grading_counts = Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] ) );
+		$grading_counts = Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] );
 
 		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
 			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
