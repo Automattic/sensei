@@ -19,6 +19,11 @@ input, textarea {
 	font-size: inherit;
 }
 
+::selection {
+	background-color: var(--primary-color);
+	color: var(--primary-contrast-color);
+}
+
 .sensei-course-theme {
 	&__main-content {
 		> * {
