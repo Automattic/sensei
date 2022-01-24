@@ -6,7 +6,7 @@
  * @since   4.0.0
  */
 
-namespace Sensei\Blocks\Components;
+namespace Sensei\Blocks\Shared;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,10 +23,10 @@ class Progress_Bar {
 	 * @access private
 	 *
 	 * @param array $attributes {
-	 *                          Component attributes.
+	 *     Component attributes.
 	 *
-	 * @type string $label      Text label.
-	 * @type float  $percentage Progress bar percentage.
+	 *     @type string $label      Text label.
+	 *     @type float  $percentage Progress bar percentage.
 	 * }
 	 *
 	 * @return string HTML.

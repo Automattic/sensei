@@ -63,7 +63,7 @@ class Sensei_Block_Quiz_Progress {
 			]
 		);
 
-		return \Sensei\Blocks\Components\Progress_Bar::render( $attributes );
+		return \Sensei\Blocks\Shared\Progress_Bar::render( $attributes );
 	}
 
 }

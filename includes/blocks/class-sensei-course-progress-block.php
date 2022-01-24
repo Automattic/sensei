@@ -60,6 +60,6 @@ class Sensei_Course_Progress_Block {
 		$attributes['label']      = sprintf( __( '%1$d of %2$d lessons completed (%3$s)', 'sensei-lms' ), $completed, $total_lessons, $percentage . '%' );
 		$attributes['percentage'] = $percentage;
 
-		return \Sensei\Blocks\Components\Progress_Bar::render( $attributes );
+		return \Sensei\Blocks\Shared\Progress_Bar::render( $attributes );
 	}
 }

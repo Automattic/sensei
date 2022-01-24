@@ -204,7 +204,7 @@ class Sensei_Autoloader {
 			/**
 			 * Blocks
 			 */
-			'Sensei\Blocks\Components\Progress_Bar'       => 'blocks/components/class-progress-bar.php',
+			'Sensei\Blocks\Shared\Progress_Bar'           => 'blocks/shared/class-progress-bar.php',
 
 			/**
 			 * Course Theme
