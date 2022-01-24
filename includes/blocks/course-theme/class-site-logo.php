@@ -42,20 +42,6 @@ class Site_Logo {
 	 */
 	public function render_site_logo( array $attributes ): string {
 
-		$course_id      = \Sensei_Utils::get_current_course();
-		$custom_logo_id = get_theme_mod( 'custom_logo' );
-
-		if ( ! $course_id || ! $custom_logo_id ) {
-			return '';
-		}
-
-		$logo = wp_get_attachment_image( $custom_logo_id, 'medium', false );
-
-		$wrapper_attributes = '';
-		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
-			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
-		}
-
-		return sprintf( '<a href="%1$s" %2$s>%3$s</a>', get_the_permalink( $course_id ), $wrapper_attributes, $logo );
+		return get_custom_logo();
 	}
 }
