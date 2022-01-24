@@ -30,7 +30,7 @@ export function submitContactTeacher( ev ) {
 	const submitButton = form.querySelector(
 		'button.sensei-contact-teacher-form__submit'
 	);
-	const closeButton = document.querySelector(
+	const closeButton = form.parentElement.querySelector(
 		'.sensei-contact-teacher-close'
 	);
 	submitButton.classList.add( 'sensei-course-theme__button', 'is-busy' );
