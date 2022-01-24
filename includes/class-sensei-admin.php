@@ -117,8 +117,7 @@ class Sensei_Admin {
 	/**
 	 * Add Course order page to admin panel.
 	 *
-	 * @since  1.9.0
-	 * @return void
+	 * @since  4.0.0
 	 */
 	public function add_course_order() {
 		add_submenu_page(
