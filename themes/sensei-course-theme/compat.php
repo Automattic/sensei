@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function init() {
 	add_filter( 'template_include', '\Sensei\Themes\Sensei_Course_Theme\Compat\get_wrapper_template' );
+	add_filter( 'theme_mod_custom_logo', '\Sensei\Themes\Sensei_Course_Theme\Compat\theme_mod_custom_logo', 60 );
+
 }
 
 /**
@@ -91,3 +93,28 @@ function get_the_block_template_html( $template_content ) {
 	return '<div class="wp-site-blocks">' . $content . '</div>';
 
 }
+
+/**
+ * Get custom logo from the original theme's customize settings if it was not found already.
+ *
+ * @param string $custom_logo
+ *
+ * @return string
+ */
+function theme_mod_custom_logo( $custom_logo ) {
+
+	if ( $custom_logo ) {
+		return $custom_logo;
+	}
+
+	$theme_mods = get_option( 'theme_mods_' . \Sensei_Course_Theme::instance()->get_original_theme() );
+
+	if ( ! empty( $theme_mods['custom_logo'] ) ) {
+		return $theme_mods['custom_logo'];
+	}
+
+	return $custom_logo;
+
+}
+
+

@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
-
 /**
  * Display the site logo, linking to the course page.
  */
@@ -23,14 +21,15 @@ class Site_Logo {
 	 * Site_Logo constructor.
 	 */
 	public function __construct() {
-		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/site-logo',
-			[
-				'render_callback' => [ $this, 'render' ],
-			]
-		);
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'core/site-logo' ) ) {
+			register_block_type(
+				'core/site-logo',
+				[
+					'render_callback' => [ $this, 'render_site_logo' ],
+				]
+			);
+		}
 	}
-
 
 	/**
 	 * Renders the block.
@@ -41,21 +40,8 @@ class Site_Logo {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ): string {
-		$course_id      = \Sensei_Utils::get_current_course();
-		$custom_logo_id = get_theme_mod( 'custom_logo' );
+	public function render_site_logo( array $attributes ): string {
 
-		if ( ! $course_id || ! $custom_logo_id ) {
-			return '';
-		}
-
-		$logo = wp_get_attachment_image( $custom_logo_id, 'medium', false );
-
-		$wrapper_attributes = '';
-		if ( function_exists( 'get_block_wrapper_attributes' ) ) {
-			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
-		}
-
-		return sprintf( '<a href="%1$s" %2$s>%3$s</a>', get_the_permalink( $course_id ), $wrapper_attributes, $logo );
+		return get_custom_logo();
 	}
 }
