@@ -128,7 +128,7 @@ function getWebpackConfig( env, argv ) {
 					test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
 					type: 'asset/resource',
 					generator: {
-						filename: '[path][name]-[contenthash].[ext]',
+						filename: '[path][name]-[contenthash][ext]',
 						publicPath: '../',
 					},
 				},
