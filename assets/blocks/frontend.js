@@ -34,6 +34,7 @@ domReady( () => {
 			content.style.transition = 'unset';
 			content.style.maxHeight = 'unset';
 			originalHeight = content.offsetHeight + 'px';
+			content.style.visibility = 'hidden';
 			content.style.maxHeight = 0;
 			content.style.transition = transition;
 		} else {
@@ -46,9 +47,19 @@ domReady( () => {
 			const collapsed = content.classList.toggle( 'collapsed' );
 
 			if ( ! collapsed ) {
+				content.style.visibility = '';
 				content.style.maxHeight = originalHeight;
 			} else {
 				content.style.maxHeight = '0px';
+			}
+		} );
+
+		content.addEventListener( 'transitionend', ( e ) => {
+			if (
+				'max-height' === e.propertyName &&
+				content.classList.contains( 'collapsed' )
+			) {
+				content.style.visibility = 'hidden';
 			}
 		} );
 	} );

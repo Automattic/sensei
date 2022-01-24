@@ -1,3 +1,10 @@
+.sensei-course-theme__frame {
+	a, button {
+		&:focus {
+			outline: dashed 1px var(--primary-color);
+		}
+	}
+}
 
 
 .sensei-course-theme__button, .wp-block-button {
@@ -31,6 +38,19 @@
 		font-weight: 700;
 		text-decoration: none;
 		border-radius: 2px;
+	}
+
+	&.wp-block-button {
+		padding: 0;
+		.wp-block-button__link {
+			padding: 8px 11px;
+			display: block;
+			&:focus {
+				outline: dashed 1px var(--primary-color);
+				margin: -1px;
+				padding: 9px 12px;
+			}
+		}
 	}
 
 	&.is-primary,
