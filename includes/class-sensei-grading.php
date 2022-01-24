@@ -61,7 +61,7 @@ class Sensei_Grading {
 		$indicator_html = '';
 		$grading_counts = Sensei()->grading->count_statuses( apply_filters( 'sensei_grading_count_statues', [ 'type' => 'lesson' ] ) );
 
-		if ( $grading_counts['ungraded'] > 0 ) {
+		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
 			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
 		}
 
