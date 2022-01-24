@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -163,7 +164,7 @@ const blocks = [
 		title: __( 'Course Content', 'sensei-lms' ),
 		name: 'sensei-lms/course-content',
 		edit() {
-			return <p>{ __( 'Lesson Content', 'sensei-lms' ) }</p>;
+			return <p>{ __( 'Course Content.', 'sensei-lms' ) }</p>;
 		},
 	},
 	{
@@ -175,6 +176,101 @@ const blocks = [
 				<div className="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
 					<div className="sensei-course-theme-lesson-quiz-notice__content">
 						{ __( 'Notice', 'sensei-lms' ) }
+					</div>
+				</div>
+			);
+		},
+	},
+	{
+		...meta,
+		title: __( 'Quiz Progress Bar', 'sensei-lms' ),
+		name: 'sensei-lms/quiz-progress-bar',
+		edit() {
+			return (
+				<div>
+					<div className="sensei-progress-bar__heading">
+						<div className="sensei-progress-bar__label">
+							{ __(
+								'2 of 10 questions complete (20%)',
+								'sensei-lms'
+							) }
+						</div>
+					</div>
+					<div
+						role="progressbar"
+						className="sensei-progress-bar__bar"
+					>
+						<div
+							style={ {
+								width: '20%',
+								backgroundColor:
+									'var(--wp--preset--color--primary)',
+							} }
+						></div>
+					</div>
+				</div>
+			);
+		},
+	},
+	{
+		...meta,
+		title: __( 'Back to lesson', 'sensei-lms' ),
+		name: 'sensei-lms/quiz-back-to-lesson',
+		edit() {
+			return (
+				<span className="sensei-lms-href sensei-lms-quiz-back-to-lesson">
+					&lt; { __( 'Back to lesson', 'sensei-lms' ) }
+				</span>
+			);
+		},
+	},
+	{
+		...meta,
+		title: __( 'Quiz actions and pagination', 'sensei-lms' ),
+		name: 'sensei-lms/quiz-actions',
+		apiVersion: 2,
+		edit: function EditQuizActions() {
+			const blockProps = useBlockProps( {
+				className: 'sensei-quiz-pagination',
+			} );
+			return (
+				<div { ...blockProps }>
+					<div className="sensei-quiz-pagination__list">
+						<ul className="page-numbers">
+							<li>
+								<span className="page-numbers current">1</span>
+							</li>
+							<li>
+								<span className="page-numbers">2</span>
+							</li>
+							<li>
+								<span className="page-numbers dots">…</span>
+							</li>
+							<li>
+								<span className="page-numbers">10</span>
+							</li>
+						</ul>
+					</div>
+					<div className="sensei-quiz-actions">
+						<div className="sensei-quiz-actions-secondary">
+							<div className="sensei-quiz-action">
+								<div className="button">
+									{ __( 'Next', 'sensei-lms' ) }
+								</div>
+							</div>
+							<div className="sensei-quiz-action">
+								<div className="button quiz-submit save">
+									{ __( 'Save', 'sensei-lms' ) }
+								</div>
+							</div>
+						</div>
+						<div className="sensei-quiz-actions-primary wp-block-buttons">
+							<div className="sensei-quiz-action wp-block-button sensei-course-button">
+								<div className="wp-block-button__link button quiz-submit complete">
+									{ __( 'Complete', 'sensei-lms' ) }
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			);

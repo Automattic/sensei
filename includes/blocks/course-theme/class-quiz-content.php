@@ -3,7 +3,7 @@
  * File containing the Sensei\Blocks\Course_Theme\Quiz_Content class.
  *
  * @package sensei
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -46,7 +46,7 @@ class Quiz_Content {
 
 		$content = ob_get_clean();
 
-		return "<div>{$content}</div>";
+		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form'>{$content}</form>" );
 	}
 
 	/**

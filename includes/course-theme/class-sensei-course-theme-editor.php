@@ -60,7 +60,7 @@ class Sensei_Course_Theme_Editor {
 	 * Initializes the Course Theme Editor.
 	 */
 	public function init() {
-		add_action( 'admin_init', [ $this, 'maybe_add_site_editor_hooks' ] );
+		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ] );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 
 		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
@@ -309,9 +309,8 @@ class Sensei_Course_Theme_Editor {
 	 * @access private
 	 */
 	public function enqueue_site_editor_assets() {
-		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
-		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor-style', 'css/sensei-course-theme.editor.css' );
 		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js' );
+
 	}
 
 	/**
@@ -321,10 +320,9 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function add_editor_styles() {
 
-		remove_editor_styles();
-
 		add_editor_style( Sensei()->assets->asset_url( 'css/sensei-course-theme.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/sensei-course-theme.editor.css' ) );
+		add_editor_style( Sensei()->assets->asset_url( 'css/frontend.css' ) );
 
 	}
 
