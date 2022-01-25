@@ -47,23 +47,29 @@ class Prev_Lesson {
 			return '';
 		}
 
-		$urls = sensei_get_prev_next_lessons( $lesson_id );
+		$urls           = sensei_get_prev_next_lessons( $lesson_id );
+		$disabled_attrs = '';
 
 		if ( empty( $urls['previous']['url'] ) ) {
-			return '';
+			$url            = '#';
+			$tag            = 'span';
+			$disabled_attrs = 'data-disabled="disabled"';
+		} else {
+			$url = esc_url( $urls['previous']['url'] );
+			$tag = 'a';
 		}
-		$url  = esc_url( $urls['previous']['url'] );
+
 		$text = $attributes['text'] ?? __( 'Previous', 'sensei-lms' );
 		$text = wp_kses_post( $text );
 		$icon = \Sensei()->assets->get_icon( 'chevron-left' );
 
 		return ( "
-			<a class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev' href='{$url}' aria-label='{$text}'>
+			<{$tag} class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev' href='{$url}' aria-label='{$text}' {$disabled_attrs}>
 				{$icon}
 				<span class='sensei-course-theme-prev-next-lesson-text sensei-course-theme-prev-next-lesson-text__prev'>
 					{$text}
 				</span>
-			</a>
+			</{$tag}>
 		" );
 	}
 }
