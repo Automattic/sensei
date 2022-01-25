@@ -103,7 +103,14 @@ const CourseThemeSidebar = () => {
 	return (
 		<PluginDocumentSettingPanel
 			name="sensei-course-theme"
-			title={ __( 'Course Styles', 'sensei-lms' ) }
+			title={
+				<>
+					{ __( 'Course Styles', 'sensei-lms' ) }
+					<span className="sensei-badge sensei-badge--success sensei-badge--after-text">
+						{ __( 'New!', 'sensei-lms' ) }
+					</span>
+				</>
+			}
 		>
 			{ globalLearningModeEnabled ? (
 				<p>
