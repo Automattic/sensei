@@ -1,13 +1,17 @@
 @import '../../shared/styles/collapsible-content';
 
 .sensei-lms-course-navigation {
-
 	&__modules + &__lessons {
 		border-top: 1px dotted var(--border-color);
 		margin-top: 6px;
 		padding-top: 6px;
 	}
 
+	@media screen and (min-width: $breakpoint ) {
+		&--hidden {
+			visibility: hidden;
+		}
+	}
 }
 
 .sensei-lms-course-navigation-module {
