@@ -122,6 +122,8 @@ class Sensei_Course_Theme_Option {
 			return false;
 		}
 
+		$course_id = absint( $course_id );
+
 		if (
 			self::has_sensei_theme_enabled( $course_id ) ||
 			Sensei_Course_Theme::is_preview_mode( $course_id )
