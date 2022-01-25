@@ -1262,8 +1262,17 @@ class Sensei_Core_Modules {
 			return;
 		}
 
-		$links_count     = count( $modules );
+		/**
+		 * Filter to change the number of links in the course modules column.
+		 *
+		 * @since 4.0.0
+		 * @hook  sensei_modules_column_max_links_count
+		 *
+		 * @param  {int} $max_links_count The number of links.
+		 * @return {int}
+		 */
 		$max_links_count = apply_filters( 'sensei_modules_column_max_links_count', 3 );
+		$links_count     = count( $modules );
 
 		foreach ( $modules as $index => $module ) {
 			$is_last     = $index + 1 === $links_count;
