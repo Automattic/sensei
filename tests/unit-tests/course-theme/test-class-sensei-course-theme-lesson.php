@@ -134,7 +134,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' );
 
-		$this->assertContains( 'Your Grade <strong class="sensei-course-theme-lesson-quiz-notice__grade">0</strong>%', $html, 'Should return quiz graded notice' );
+		$this->assertContains( 'Your Grade: <strong class="sensei-course-theme-lesson-quiz-notice__grade">0</strong>%', $html, 'Should return quiz graded notice' );
 	}
 
 	/**

@@ -22,11 +22,11 @@ if ( ! function_exists( 'sensei_quiz_grade_notices_map' ) ) {
 		?>
 		<div class='sensei-course-theme__frame sensei-lms-notice sensei-course-theme-quiz-graded-notice'>
 			<?php if ( isset( $notice['title'] ) && ! empty( $notice['title'] ) ) { ?>
-			<h1 class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></h1>
+			<div class='sensei-course-theme-quiz-graded-notice__title'><?php echo wp_kses_post( $notice['title'] ); ?></div>
 			<?php } ?>
 
 			<?php if ( isset( $notice['text'] ) && ! empty( $notice['text'] ) ) { ?>
-			<p class='sensei-course-theme-quiz-graded-notice__text'><?php echo wp_kses_post( $notice['text'] ); ?></p>
+			<div class='sensei-course-theme-quiz-graded-notice__text'><?php echo wp_kses_post( $notice['text'] ); ?></div>
 			<?php } ?>
 
 			<?php if ( isset( $notice['actions'] ) && ! empty( $notice['actions'] ) ) { ?>

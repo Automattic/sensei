@@ -96,16 +96,6 @@ class Sensei_Blocks {
 	 * @return array Filtered categories.
 	 */
 	public function sensei_block_categories( $categories, $context ) {
-		$post = null;
-		if ( class_exists( 'WP_Block_Editor_Context' ) && $context instanceof WP_Block_Editor_Context ) {
-			$post = $context->post;
-		} elseif ( $context instanceof WP_Post ) {
-			$post = $context;
-		}
-
-		if ( ! $post || ! in_array( $post->post_type, [ 'course', 'lesson', 'question', 'page' ], true ) ) {
-			return $categories;
-		}
 
 		return array_merge(
 			[
