@@ -140,6 +140,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
 .sensei-custom-navigation .sensei-custom-navigation__main .sensei-custom-navigation__main__title h1 {
 	color: #1E1E1E;
 	font-size: 20px;
+	padding: 0;
 }
 
 .sensei-custom-navigation .sensei-custom-navigation__main__tabbar {
