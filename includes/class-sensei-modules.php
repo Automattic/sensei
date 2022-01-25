@@ -1243,9 +1243,18 @@ class Sensei_Core_Modules {
 	 */
 	public function course_column_content( $column = '', $course_id = 0 ) {
 		if ( 'modules' === $column ) {
-			$module_links = $this->get_module_links( $course_id );
+			$modules = $this->get_course_modules( $course_id );
 
-			if ( $module_links ) {
+			if ( $modules ) {
+				$module_links = [];
+				foreach ( $modules as $module ) {
+					$module_links[] = sprintf(
+						'<a href="%s">%s</a>',
+						esc_attr( get_edit_term_link( $module->term_id ) ),
+						esc_html( $module->name )
+					);
+				}
+
 				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
 
 				// Output the edit modules order link.
@@ -1283,35 +1292,17 @@ class Sensei_Core_Modules {
 	 */
 	public function lesson_column_content( $column = '', $lesson_id = 0 ) {
 		if ( 'module' === $column ) {
-			$module_links = $this->get_module_links( $lesson_id );
+			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
+			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
 
-			echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
-		}
-	}
-
-	/**
-	 * Get the links of all modules related to a post.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  int $post_id
-	 * @return array
-	 */
-	private function get_module_links( int $post_id ): array {
-		$terms = get_the_terms( $post_id, $this->taxonomy );
-		$links = [];
-
-		if ( $terms ) {
-			foreach ( $terms as $term ) {
-				$links[] = sprintf(
+			if ( $module ) {
+				printf(
 					'<a href="%s">%s</a>',
-					esc_attr( get_edit_term_link( $term->term_id ) ),
-					esc_html( $term->name )
+					esc_attr( get_edit_term_link( $module->term_id ) ),
+					esc_html( $module->name )
 				);
 			}
 		}
-
-		return $links;
 	}
 
 	/**
