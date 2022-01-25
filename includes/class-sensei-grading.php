@@ -52,24 +52,29 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * grading_admin_menu function.
+	 * Add the Grading submenu.
 	 *
 	 * @since  1.3.0
 	 * @access public
-	 * @return void
 	 */
 	public function grading_admin_menu() {
+		$indicator_html = '';
+		$grading_counts = Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] );
+
+		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
+			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
+		}
+
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=course',
 				__( 'Grading', 'sensei-lms' ),
-				__( 'Grading', 'sensei-lms' ),
+				__( 'Grading', 'sensei-lms' ) . $indicator_html,
 				'manage_sensei_grades',
 				$this->page_slug,
 				array( $this, 'grading_page' )
 			);
 		}
-
 	}
 
 	/**
