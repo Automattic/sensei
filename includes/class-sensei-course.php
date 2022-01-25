@@ -196,12 +196,12 @@ class Sensei_Course {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__main">
-				<div class="sensei-custom-navigation__main__title">
+				<div class="sensei-custom-navigation__title">
 					<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
 				</div>
-				<div class="sensei-custom-navigation__main__tabbar">
-					<a class="sensei-custom-navigation__main__tabbar__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
-					<a class="sensei-custom-navigation__main__tabbar__tab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+				<div class="sensei-custom-navigation__tabbar">
+					<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
+					<a class="sensei-custom-navigation__tab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__additional">
