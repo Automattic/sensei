@@ -22,46 +22,19 @@
 
 			//on the save button click, set senseiFieldValues to the values user entered in the form fields
 			editRow.find( '.save' ).on( 'click', function () {
-				senseiFieldValues.lesson_course = $(
-					'#sensei-edit-lesson-course'
-				).val();
-				senseiFieldValues.lesson_complexity = $(
-					'#sensei-edit-lesson-complexity'
-				).val();
-				senseiFieldValues.pass_required = $(
-					'#sensei-edit-lesson-pass-required'
-				).val();
-				senseiFieldValues.quiz_passmark = $(
-					'#sensei-edit-quiz-pass-percentage'
-				).val();
-				senseiFieldValues.enable_quiz_reset = $(
-					'#sensei-edit-enable-quiz-reset'
-				).val();
-				senseiFieldValues.show_questions = $(
-					'#sensei-edit-show-questions'
-				).val();
-				senseiFieldValues.random_question_order = $(
-					'#sensei-edit-random-question-order'
-				).val();
-				senseiFieldValues.quiz_grade_type = $(
-					'#sensei-edit-quiz-grade-type'
-				).val();
+				const $inputs = $( '.sensei-quiz-settings :input', editRow );
+
+				$inputs.each( function () {
+					const inputName = $( this ).attr( 'name' );
+					const inputValue = $( this ).val();
+
+					senseiFieldValues[ inputName ] = inputValue;
+				} );
 			} );
 
 			// populate the data
 			//data is localized in sensei_quick_edit object
-			$(
-				':input[name="lesson_course"] option[value="' +
-					senseiFieldValues.lesson_course +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
-			$(
-				':input[name="lesson_complexity"] option[value="' +
-					senseiFieldValues.lesson_complexity +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
+
 			if (
 				'on' == senseiFieldValues.pass_required ||
 				'1' == senseiFieldValues.pass_required
@@ -70,15 +43,6 @@
 			} else {
 				senseiFieldValues.pass_required = 0;
 			}
-			$(
-				':input[name="pass_required"] option[value="' +
-					senseiFieldValues.pass_required +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
-			$( ':input[name="quiz_passmark"]', editRow ).val(
-				senseiFieldValues.quiz_passmark
-			);
 
 			if (
 				'on' == senseiFieldValues.enable_quiz_reset ||
@@ -88,12 +52,6 @@
 			} else {
 				senseiFieldValues.enable_quiz_reset = 0;
 			}
-			$(
-				':input[name="enable_quiz_reset"] option[value="' +
-					senseiFieldValues.enable_quiz_reset +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
 
 			if (
 				'auto' === senseiFieldValues.quiz_grade_type ||
@@ -103,12 +61,6 @@
 			} else {
 				senseiFieldValues.quiz_grade_type = 0;
 			}
-			$(
-				':input[name="quiz_grade_type"] option[value="' +
-					senseiFieldValues.quiz_grade_type +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
 
 			if (
 				'yes' == senseiFieldValues.random_question_order ||
@@ -118,16 +70,24 @@
 			} else {
 				senseiFieldValues.random_question_order = 0;
 			}
-			$(
-				':input[name="random_question_order"] option[value="' +
-					senseiFieldValues.random_question_order +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
 
-			$( ':input[name="show_questions"]', editRow ).val(
-				senseiFieldValues.show_questions
-			);
+			for ( const [ key, value ] of Object.entries(
+				senseiFieldValues
+			) ) {
+				var elem = $( ':input[name="' + key + '"]', editRow );
+				if ( elem.prop( 'nodeName' ) == 'INPUT' ) {
+					elem.val( parseInt( value ) );
+				} else {
+					$(
+						':input[name="' +
+							key +
+							'"] option[value="' +
+							value +
+							'"] ',
+						editRow
+					).attr( 'selected', true );
+				}
+			}
 		}
 	};
 } )( jQuery );
