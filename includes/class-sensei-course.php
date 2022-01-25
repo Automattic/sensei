@@ -155,7 +155,7 @@ class Sensei_Course {
 	 * Highlight the menu item for the course pages.
 	 *
 	 * @since 4.0.0
-	 * @access private*
+	 * @access private
 	 *
 	 * @param string $submenu_file
 	 *
