@@ -3,7 +3,7 @@
 	display: none;
 }
 
-@media screen and (max-width: 782px) {
+@media screen and (max-width: ($breakpoint - 1)) {
 
 	body.admin-bar {
 		--top-offset: var(--wp-admin--admin-bar--height, 46px);
