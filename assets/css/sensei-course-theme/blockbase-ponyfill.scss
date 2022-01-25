@@ -13,7 +13,7 @@ body {
 }
 
 pre {
-	overflow: scroll;
+	overflow: auto;
 }
 
 button {
@@ -32,6 +32,11 @@ button {
 	margin-left: calc(-1 * var(--wp--custom--gap--horizontal)) !important;
 	margin-right: calc(-1 * var(--wp--custom--gap--horizontal)) !important;
 	width: unset;
+	max-width: unset;
+}
+
+.wp-site-blocks .alignwide {
+	max-width: var(--wp--custom--layout--wide-size);
 }
 
 .wp-site-blocks .alignfull.wp-block-template-part, .wp-site-blocks .alignfull.wp-block-columns, .wp-site-blocks .alignfull.wp-block-group {

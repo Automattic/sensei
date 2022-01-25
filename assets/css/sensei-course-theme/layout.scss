@@ -10,6 +10,23 @@ body {
 	background-color: var(--bg-color);
 }
 
+.sensei-course-theme__frame {
+
+	.wp-block-group__inner-container {
+		display: inherit;
+		flex: 1;
+		align-items: inherit;
+		justify-content: inherit;
+		flex-wrap: inherit;
+		flex-direction: inherit;
+		gap: inherit;
+	}
+
+	.sensei-block-wrapper {
+		margin: 0;
+	}
+}
+
 .sensei-course-theme {
 
 	@at-root body.admin-bar {
@@ -54,10 +71,12 @@ body {
 			flex: 1;
 		}
 		&__footer {
+			gap: 12px;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			gap: 12px;
+			padding: 12px;
+
 		}
 	}
 
@@ -97,4 +116,5 @@ body {
 		flex: 0 0 auto!important;
 
 	}
+
 }

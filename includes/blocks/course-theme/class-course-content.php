@@ -41,14 +41,24 @@ class Course_Content {
 	public function render_content() {
 		$type = get_post_type();
 
+		$content = '';
+
 		switch ( $type ) {
 			case 'quiz':
-				return Quiz_Content::render_quiz();
+				$content = Quiz_Content::render_quiz();
+				break;
 			case 'lesson':
-				return $this->render_lesson_content();
+				$content = $this->render_lesson_content();
+				break;
 		}
 
-		return '';
+		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'entry-content' ) );
+
+		return (
+			'<div ' . $wrapper_attributes . '>' .
+			$content .
+			'</div>'
+		);
 
 	}
 

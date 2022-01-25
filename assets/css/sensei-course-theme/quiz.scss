@@ -21,22 +21,16 @@ $tablet-breakpoint: 768px;
 	}
 
 	&__header, &__footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 		padding: 24px;
-		gap: 24px;
 
 		margin: 0 auto;
 		max-width: 1200px;
 
-		.wp-block-group__inner-container {
-			display: flex;
-			flex: 1;
-			align-items: center;
-			justify-content: space-between;
-			gap: 24px;
-		}
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+
 	}
 
 	&__header {

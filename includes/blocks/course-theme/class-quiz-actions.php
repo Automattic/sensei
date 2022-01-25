@@ -46,7 +46,7 @@ class Quiz_Actions {
 		}
 
 		global $sensei_question_loop;
-		$pagination_enabled = $sensei_question_loop['total_pages'] > 1;
+		$pagination_enabled = $sensei_question_loop && $sensei_question_loop['total_pages'] > 1;
 
 		// Get quiz actions. Either actions with pagination
 		// or only action if pagination is not enabled.
