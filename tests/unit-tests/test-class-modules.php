@@ -143,4 +143,61 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * Ensure the course modules column "more" link is shown
+	 * only if the course has more than 3 modules.
+	 *
+	 * @covers Sensei_Core_Modules::course_column_content
+	 * @covers Sensei_Core_Modules::output_course_modules_column
+	 */
+	public function testCourseModulesColumnShouldShowMoreLinkIfMoreThan3Modules() {
+		$course_id = $this->factory->course->create();
+		$modules   = [
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+		];
+
+		wp_set_object_terms( $course_id, wp_list_pluck( $modules, 'term_id' ), Sensei()->modules->taxonomy );
+
+		ob_start();
+		Sensei()->modules->course_column_content( 'modules', $course_id );
+		$column_output = ob_get_clean();
+
+		foreach ( $modules as $module ) {
+			$this->assertContains( $module->name, $column_output );
+		}
+
+		$this->assertContains( '+1 more', $column_output );
+	}
+
+	/**
+	 * Ensure the course modules column "more" link is not shown
+	 * if the course has less than 4 modules.
+	 *
+	 * @covers Sensei_Core_Modules::course_column_content
+	 * @covers Sensei_Core_Modules::output_course_modules_column
+	 */
+	public function testCourseModulesColumnShouldNotShowMoreLinkIfLessThan4Modules() {
+		$course_id = $this->factory->course->create();
+		$modules   = [
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+		];
+
+		wp_set_object_terms( $course_id, wp_list_pluck( $modules, 'term_id' ), Sensei()->modules->taxonomy );
+
+		ob_start();
+		Sensei()->modules->course_column_content( 'modules', $course_id );
+		$column_output = ob_get_clean();
+
+		foreach ( $modules as $module ) {
+			$this->assertContains( $module->name, $column_output );
+		}
+
+		$this->assertNotContains( 'more', $column_output );
+	}
+
 }
