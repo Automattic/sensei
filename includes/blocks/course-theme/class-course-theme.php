@@ -60,8 +60,6 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 		new Blocks\Post_Title();
 		new Blocks\Lesson_Module();
 		new Blocks\Course_Content();
-		new Blocks\Prev_Lesson();
-		new Blocks\Next_Lesson();
 		new Blocks\Prev_Next_Lesson();
 		new Blocks\Exit_Course();
 		new Blocks\Course_Progress_Counter();
