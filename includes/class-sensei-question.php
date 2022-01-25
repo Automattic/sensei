@@ -796,8 +796,8 @@ class Sensei_Question {
 		 */
 		$show_correct_answers = apply_filters( 'sensei_question_show_answers', $show_correct_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
 
-		$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
-		$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
+		$answer_grade   = (int) Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+		$answer_correct = $answer_grade > 0;
 
 		$answer_notes_classname = '';
 		$answer_feedback_title  = '';
