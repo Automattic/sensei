@@ -4146,15 +4146,14 @@ class Sensei_Lesson {
 		// store the values for all selected posts.
 		foreach ( $_POST['post_ids'] as $lesson_id ) {
 
-
 			// do not save the items if the value is -1 as this
 			// means it was not changed
 			// update lesson course
-			if ( - 1 != $new_course ) {
+			if ( - 1 !== $new_course ) {
 				update_post_meta( $lesson_id, '_lesson_course', $new_course );
 			}
 			// update lesson complexity
-			if ( -1 != $new_complexity ) {
+			if ( -1 !== $new_complexity ) {
 				update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
 			}
 
