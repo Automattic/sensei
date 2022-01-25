@@ -123,48 +123,59 @@ div.question_boolean_fields { margin-bottom: 10px; }
  */
 .sensei-custom-navigation {
 	display: flex;
-	flex-flow: row wrap;
+	flex-direction: column;
 	align-items: flex-start;
-	color: #000000;
-	margin-bottom: 20px;
+	gap: 20px;
+	margin: 20px auto;
 }
 
-.sensei-custom-navigation .sensei-custom-navigation__title h1 {
-	color: #1E1E1E;
-	font-size: 20px;
-	margin-right: 25px;
-}
-
-.sensei-custom-navigation .sensei-custom-navigation__navbar {
+.sensei-custom-navigation .sensei-custom-navigation__main {
 	display: flex;
 	flex-flow: row wrap;
 	align-items: center;
 	justify-content: flex-start;
+	gap: 40px;
 }
 
-.sensei-custom-navigation .sensei-custom-navigation__navbar a {
-	margin-left: 0;
-	margin-right: 20px;
+.sensei-custom-navigation .sensei-custom-navigation__main .sensei-custom-navigation__main__title h1 {
+	color: #1E1E1E;
+	font-size: 20px;
 }
 
-.sensei-custom-navigation .sensei-custom-navigation__navbar a.page-title-action {
-	top: auto;
+.sensei-custom-navigation .sensei-custom-navigation__main__tabbar {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 20px;
 }
 
-.sensei-custom-navigation .sensei-custom-navigation__navbar a.sensei-custom-navigation__navbar__navtab {
-	margin-right: 25px;
+.sensei-custom-navigation .sensei-custom-navigation__main__tabbar a.sensei-custom-navigation__main__tabbar__tab {
 	color: #1E1E1E;
 	text-decoration: none;
 	font-size: 14px;
-	padding-bottom:  10px;
+	padding-bottom:  2px;
 	border-bottom: 4px solid transparent;
 }
 
-.sensei-custom-navigation .sensei-custom-navigation__navbar a.sensei-custom-navigation__navbar__navtab.active {
+.sensei-custom-navigation .sensei-custom-navigation__main__tabbar a.sensei-custom-navigation__main__tabbar__tab.active {
 	font-weight: 500;
 	border-bottom: 4px solid #007CBA;
 }
 
-.sensei-custom-navigation .sensei-custom-navigation__navbar a.sensei-custom-navigation__navbar__navtab:hover {
+.sensei-custom-navigation .sensei-custom-navigation__main__tabbar a.sensei-custom-navigation__main__tabbar__tab:hover {
 	border-bottom: 4px solid #1E1E1E;
+}
+
+.sensei-custom-navigation .sensei-custom-navigation__additional {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: baseline;
+	justify-content: flex-start;
+	gap: 20px;
+}
+
+.sensei-custom-navigation .sensei-custom-navigation__additional a.page-title-action {
+	margin-left: 0;
+	top: auto;
 }

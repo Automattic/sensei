@@ -195,12 +195,16 @@ class Sensei_Course {
 	private function display_courses_navigation( WP_Screen $screen ) {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
-			<div class="sensei-custom-navigation__title">
-				<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
+			<div class="sensei-custom-navigation__main">
+				<div class="sensei-custom-navigation__main__title">
+					<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__main__tabbar">
+					<a class="sensei-custom-navigation__main__tabbar__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
+					<a class="sensei-custom-navigation__main__tabbar__tab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+				</div>
 			</div>
-			<div class="sensei-custom-navigation__navbar">
-				<a class="sensei-custom-navigation__navbar__navtab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
-				<a class="sensei-custom-navigation__navbar__navtab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+			<div class="sensei-custom-navigation__additional">
 				<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New course', 'sensei-lms' ); ?></a>
 				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order courses', 'sensei-lms' ); ?></a>
 				<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course settings', 'sensei-lms' ); ?></a>
