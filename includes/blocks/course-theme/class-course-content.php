@@ -68,6 +68,11 @@ class Course_Content {
 	 * @return false|string
 	 */
 	private function render_lesson_content() {
+
+		if ( ! in_the_loop() && have_posts() ) {
+			the_post();
+		}
+
 		ob_start();
 
 		if ( sensei_can_user_view_lesson() ) {
