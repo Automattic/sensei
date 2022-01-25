@@ -108,13 +108,16 @@ body {
 			display: flex;
 			align-items: center;
 			gap: 24px;
-			flex: 0 0 auto!important;
+
+			// Override style from block-library.
+			&.wp-block-column:not(:only-child) {
+				flex: 0 0 auto !important;
+			}
 		}
 	}
 
 	&__actions {
-		flex: 0 0 auto!important;
-
+		flex: 0 0 auto !important;
 	}
 
 }
