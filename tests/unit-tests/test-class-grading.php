@@ -1,6 +1,8 @@
 <?php
 
 class Sensei_Class_Grading_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
+
 	/**
 	 * setup function
 	 *
@@ -27,6 +29,68 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->grading ), 'Sensei Grading class is not loaded' );
 
+	}
+
+	/**
+	 * Tests that the ungraded quiz count is not displayed in the Grading menu.
+	 *
+	 * @covers Sensei_Grading::grading_admin_menu
+	 */
+	public function testGradingAdminMenuTitleWithoutIndicator() {
+		$user_id    = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many( 5 );
+
+		foreach ( $lesson_ids as $lesson_id ) {
+			add_post_meta( $lesson_id, '_lesson_course', $course_id );
+		}
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'in-progress' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'complete' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+
+		$this->login_as_admin();
+		Sensei()->grading->grading_admin_menu();
+
+		global $submenu;
+
+		$this->assertEquals( 'Grading', end( $submenu['edit.php?post_type=course'] )[0], 'Should not have indicator when there are no ungraded quizzes' );
+
+		// Clean up the submenu.
+		unset( $submenu['edit.php?post_type=course'] );
+	}
+
+	/**
+	 * Tests that the ungraded quiz count is displayed in the Grading menu.
+	 *
+	 * @covers Sensei_Grading::grading_admin_menu
+	 */
+	public function testGradingAdminMenuTitleWithIndicator() {
+		$user_id    = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many( 5 );
+
+		foreach ( $lesson_ids as $lesson_id ) {
+			add_post_meta( $lesson_id, '_lesson_course', $course_id, true );
+		}
+
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[0], 'passed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[1], 'ungraded' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[2], 'failed' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[3], 'ungraded' );
+		Sensei_Utils::update_lesson_status( $user_id, $lesson_ids[4], 'graded' );
+
+		$this->login_as_admin();
+		Sensei()->grading->grading_admin_menu();
+
+		global $submenu;
+
+		$this->assertEquals( 'Grading <span class="awaiting-mod">2</span>', end( $submenu['edit.php?post_type=course'] )[0], 'Should display 2 ungraded quizzes' );
+
+		// Clean up the submenu.
+		unset( $submenu['edit.php?post_type=course'] );
 	}
 
 	/**
