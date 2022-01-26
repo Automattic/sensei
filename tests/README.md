@@ -4,13 +4,13 @@
 
 ### Using Varying Vagrant Vagrants
 
-1) `$ vagrant ssh` into the machine running your Sensei setup.
-
-2) `$ cd /srv/www/wordpress-default/public_html` or `$ cd /srv/www/wordpress-develop/public_html/src` depending on where you run Sensei from.
-
-3) Proceed to `cd wp-content/plugins/sensei` or to directory where you've installed Sensei
-
-4) Install the tests:
+1) Follow [these instructions](https://varyingvagrantvagrants.org/docs/en-US/installation/) to install VVV.
+2) Open `config/config.yml`.
+3) In the `wordpress-trunk` sites entry, set `skip_provisioning` to `false`.
+4) Run `vagrant up --provision`.
+5) Enter `vagrant ssh` to SSH into the machine that's running your Sensei site.
+6) Execute `cd /srv/www/wordpress-one/public_html/wp-content/plugins/sensei` (location may vary depending on which directory Sensei is in).
+7) Install the tests:
 
     `$ tests/bin/install_vvv.sh`
 
