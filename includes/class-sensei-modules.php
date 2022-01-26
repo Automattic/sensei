@@ -1302,7 +1302,7 @@ class Sensei_Core_Modules {
 
 		// Output the edit modules order link.
 		printf(
-			'<a class="button-link" href="%s">%s</a>',
+			'<a class="sensei-wp-list-table-link" href="%s">%s</a>',
 			esc_url( admin_url( 'options.php?post_type=course&page=module-order&course_id=' . $course_id ) ),
 			esc_html__( 'Order modules', 'sensei-lms' )
 		);
