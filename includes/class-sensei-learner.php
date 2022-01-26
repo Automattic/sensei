@@ -64,8 +64,8 @@ class Sensei_Learner {
 		add_action( 'sensei_log_activity_after', [ $this, 'remove_duplicate_progress' ] );
 
 		// Add custom columns.
-		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 10 );
-		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 10, 2 );
+		add_filter( 'manage_course_posts_columns', array( $this, 'add_course_column_heading' ), 10 );
+		add_action( 'manage_course_posts_custom_column', array( $this, 'add_course_column_data' ), 10, 2 );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Sensei_Learner {
 	 * @param  array $columns Course columns.
 	 * @return array
 	 */
-	public function course_columns( $columns ) {
+	public function add_course_column_heading( $columns ) {
 		$columns['students'] = _x( 'Students', 'column name', 'sensei-lms' );
 
 		return $columns;
@@ -91,7 +91,7 @@ class Sensei_Learner {
 	 * @param  int    $course_id The course ID.
 	 * @return void
 	 */
-	public function course_column_content( $column, $course_id ) {
+	public function add_course_column_data( $column, $course_id ) {
 		if ( 'students' === $column ) {
 			$this->output_students_column( $course_id );
 		}
