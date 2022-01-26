@@ -85,11 +85,11 @@ class Sensei_Learner {
 	/**
 	 * Output the content of the course columns.
 	 *
-	 * @since 4.0.0
+	 * @since  4.0.0
+	 * @access private
 	 *
 	 * @param  string $column    Current column name.
 	 * @param  int    $course_id The course ID.
-	 * @return void
 	 */
 	public function add_course_column_data( $column, $course_id ) {
 		if ( 'students' === $column ) {
@@ -100,8 +100,10 @@ class Sensei_Learner {
 	/**
 	 * Output the students' column HTML.
 	 *
-	 * @since 4.0.0
-	 * @param int $course_id
+	 * @since  4.0.0
+	 * @access private
+	 *
+	 * @param  int $course_id The course ID.
 	 * @return void
 	 */
 	private function output_students_column( int $course_id ) {
