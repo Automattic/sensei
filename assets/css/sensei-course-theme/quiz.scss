@@ -34,7 +34,7 @@ $tablet-breakpoint: 768px;
 
 	&__header {
 		position: sticky;
-		top: var(--sensei-wpadminbar-offset);
+		top: var(--top-offset);
 		background-color: var(--bg-color);
 		z-index: 100;
 
