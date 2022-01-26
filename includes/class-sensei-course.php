@@ -148,7 +148,7 @@ class Sensei_Course {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_action( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
