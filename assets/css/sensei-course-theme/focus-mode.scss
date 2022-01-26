@@ -13,7 +13,7 @@ $base: '.sensei-course-theme';
 		align-items: center;
 		gap: 12px;
 		border: none;
-		background: none;
+		background-color: var(--bg-color);
 
 		&__disable {
 			display: none;
@@ -65,8 +65,9 @@ $base: '.sensei-course-theme';
 				margin-left: 0 !important;
 			}
 			&__focus-mode-toggle {
-				top: 5px;
-				left: 428px;
+				top: 0;
+				left: 400px;
+				width: 100vw;
 				flex-direction: row;
 				&__enable {
 					display: none;
