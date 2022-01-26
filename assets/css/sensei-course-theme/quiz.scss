@@ -1,4 +1,3 @@
-
 /**
  * Variables
  */
@@ -35,7 +34,7 @@ $tablet-breakpoint: 768px;
 
 	&__header {
 		position: sticky;
-		top: var(--top-offset);
+		top: var(--sensei-wpadminbar-offset);
 		background-color: var(--bg-color);
 		z-index: 100;
 
