@@ -225,7 +225,6 @@ class Sensei_Course {
 			return;
 		}
 
-		Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
 		}

@@ -345,8 +345,12 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-message-menu-fix', 'js/admin/message-menu-fix.js', [ 'jquery' ], true );
 
 		// Event logging.
-
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
+
+		// Sensei custom navigation.
+		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) ) ) {
+			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
+		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
