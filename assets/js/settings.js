@@ -11,9 +11,10 @@ jQuery( document ).ready( function ( $ ) {
 				.addClass( 'section-heading' );
 		} );
 
-	// Only show the General settings.
+	// General settings is the default slug.
 	var selectedSettingsSlug = 'default-settings';
 
+	// Set the selected settings slug and tab if it was provided in the URL.
 	if ( window.location.hash && window.location.hash.length > 1 ) {
 		selectedSettingsSlug = window.location.hash.replace( '#', '' );
 		jQuery( '#woothemes-sensei .subsubsub a.tab' ).each( function () {
