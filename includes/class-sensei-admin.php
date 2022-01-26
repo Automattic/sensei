@@ -38,6 +38,7 @@ class Sensei_Admin {
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
+		add_action( 'admin_menu', array( $this, 'add_lesson_order' ) );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
@@ -131,6 +132,22 @@ class Sensei_Admin {
 	}
 
 	/**
+	 * Add Lesson order page to admin panel.
+	 *
+	 * @since  4.0.0
+	 */
+	public function add_lesson_order() {
+		add_submenu_page(
+			null,
+			__( 'Order Lessons', 'sensei-lms' ),
+			__( 'Order Lessons', 'sensei-lms' ),
+			'manage_sensei',
+			$this->lesson_order_page_slug,
+			array( $this, 'lesson_order_screen' )
+		);
+	}
+
+	/**
 	 * [admin_menu_order description]
 	 *
 	 * @since  1.4.0
@@ -198,6 +215,7 @@ class Sensei_Admin {
 			$parent_file  = 'sensei';
 
 		}
+
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
@@ -348,9 +366,7 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) ) ) {
-			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
-		}
+		Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
@@ -1410,7 +1426,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Dsplay Lesson Order screen
+	 * Display Lesson Order screen
 	 *
 	 * @return void
 	 */
