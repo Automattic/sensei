@@ -80,7 +80,9 @@ describe( '<Ready />', () => {
 			queryByText( 'Import content', {
 				selector: 'a',
 			} ).getAttribute( 'href' )
-		).toEqual( 'admin.php?page=sensei_import' );
+		).toEqual(
+			'edit.php?post_type=course&page=sensei-tools&tool=import-content'
+		);
 	} );
 
 	it( 'Should have a create your first course link.', () => {
