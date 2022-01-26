@@ -166,10 +166,10 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$column_output = ob_get_clean();
 
 		foreach ( $modules as $module ) {
-			$this->assertContains( $module->name, $column_output );
+			$this->assertContains( $module->name, $column_output, 'The module link should be present.' );
 		}
 
-		$this->assertContains( '+1 more', $column_output );
+		$this->assertContains( '+1 more', $column_output, 'The "+1 more" link should be present.' );
 	}
 
 	/**
@@ -194,10 +194,10 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$column_output = ob_get_clean();
 
 		foreach ( $modules as $module ) {
-			$this->assertContains( $module->name, $column_output );
+			$this->assertContains( $module->name, $column_output, 'The module link should be present.' );
 		}
 
-		$this->assertNotContains( 'more', $column_output );
+		$this->assertNotContains( 'more', $column_output, 'The "more" link shouldn\'t be present.' );
 	}
 
 }
