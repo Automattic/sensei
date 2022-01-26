@@ -1068,7 +1068,7 @@ class Sensei_Core_Modules {
 
 		// Register an admin page for module ordering.
 		add_submenu_page(
-			'options.php',
+			null, // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
 			__( 'Order Modules', 'sensei-lms' ),
 			'edit_lessons',
@@ -1100,7 +1100,7 @@ class Sensei_Core_Modules {
 						'ordered'   => $ordered,
 						'course_id' => $_POST['course_id'],
 					),
-					admin_url( 'options.php' )
+					admin_url( 'edit.php' )
 				)
 			)
 		);
@@ -1131,7 +1131,7 @@ class Sensei_Core_Modules {
 
 			$courses = Sensei()->course->get_all_courses();
 
-			$html .= '<form method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
 			$html .= '<select id="module-order-course" name="course_id">' . "\n";
@@ -1260,7 +1260,7 @@ class Sensei_Core_Modules {
 				// Output the edit modules order link.
 				echo sprintf(
 					'<a class="button-link" href="%s">%s</a>',
-					esc_url( admin_url( 'options.php?post_type=course&page=module-order&course_id=' . intval( $course_id ) ) ),
+					esc_url( admin_url( 'edit.php?post_type=course&page=module-order&course_id=' . intval( $course_id ) ) ),
 					esc_html__( 'Order modules', 'sensei-lms' )
 				);
 			}
@@ -1653,7 +1653,7 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array( 'admin_page_module-order' )
+			array( 'course_page_module-order' )
 		);
 
 		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
