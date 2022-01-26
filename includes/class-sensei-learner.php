@@ -123,13 +123,23 @@ class Sensei_Learner {
 			)
 		);
 
-		// No need to show the buttons if there are no students.
-		if ( ! $students_count ) {
-			return;
-		}
+		$manage_url = add_query_arg(
+			[
+				'page'      => 'sensei_learners',
+				'view'      => 'learners',
+				'course_id' => $course_id,
+			],
+			admin_url( 'admin.php' )
+		);
 
-		$manage_url = admin_url( 'admin.php?page=sensei_learners&view=learners&course_id=' . $course_id );
-		$grade_url  = admin_url( 'admin.php?page=sensei_grading&view=all&course_id=' . $course_id );
+		$grade_url = add_query_arg(
+			[
+				'page'      => 'sensei_grading',
+				'view'      => 'all',
+				'course_id' => $course_id,
+			],
+			admin_url( 'admin.php' )
+		);
 
 		?>
 		<div class="sensei-wp-list-table-actions">
@@ -138,11 +148,13 @@ class Sensei_Learner {
 					<?php esc_html_e( 'Manage', 'sensei-lms' ); ?>
 				</a>
 			</p>
-			<p>
-				<a class="button-secondary" href="<?php echo esc_url( $grade_url ); ?>">
-					<?php esc_html_e( 'Grade', 'sensei-lms' ); ?>
-				</a>
-			</p>
+			<?php if ( $students_count ) : ?>
+				<p>
+					<a class="button-secondary" href="<?php echo esc_url( $grade_url ); ?>">
+						<?php esc_html_e( 'Grade', 'sensei-lms' ); ?>
+					</a>
+				</p>
+			<?php endif ?>
 		</div>
 		<?php
 	}
