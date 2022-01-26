@@ -4,7 +4,7 @@
  * @type {string}
  */
 const FOCUS_MODE_CLASS = 'sensei-course-theme--focus-mode';
-const HIDDEN_CLASS_NAME = 'sensei-lms-course-navigation--hidden';
+const HIDDEN_CLASS_NAME = 'sensei-course-theme__sidebar--hidden';
 
 /**
  * Initialize focus mode state on page load.
@@ -40,7 +40,7 @@ const toggleFocusMode = ( on, restore ) => {
 	const { classList } = document.body;
 
 	const courseNavigation = document.querySelector(
-		'.sensei-lms-course-navigation'
+		'.sensei-course-theme__sidebar'
 	);
 	const isActive = classList.contains( FOCUS_MODE_CLASS );
 	const next = 'undefined' === typeof on ? ! isActive : on;
@@ -67,7 +67,7 @@ window.addEventListener( 'DOMContentLoaded', () => {
 				document.body.classList.contains( FOCUS_MODE_CLASS )
 			) {
 				document
-					.querySelector( '.sensei-lms-course-navigation' )
+					.querySelector( '.sensei-course-theme__sidebar' )
 					.classList.add( HIDDEN_CLASS_NAME );
 			}
 		} );

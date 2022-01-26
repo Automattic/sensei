@@ -6,12 +6,6 @@
 		margin-top: 6px;
 		padding-top: 6px;
 	}
-
-	@media screen and (min-width: $breakpoint ) {
-		&--hidden {
-			visibility: hidden;
-		}
-	}
 }
 
 .sensei-lms-course-navigation-module {
