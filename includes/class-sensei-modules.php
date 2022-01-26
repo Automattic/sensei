@@ -1253,7 +1253,6 @@ class Sensei_Core_Modules {
 	 * @since 4.0.0
 	 *
 	 * @param int $course_id
-	 * @return void
 	 */
 	private function output_course_modules_column( int $course_id ) {
 		$modules = $this->get_course_modules( $course_id );
