@@ -64,7 +64,7 @@ const files = [
 	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',
-	'css/admin-custom.css',
+	'css/admin-custom.scss',
 	'css/extensions.scss',
 	'css/global.scss',
 	'css/jquery-ui.css',
