@@ -157,7 +157,7 @@ class Sensei_Course {
 	 * @since 4.0.0
 	 * @access private
 	 *
-	 * @param string $submenu_file
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
 	 *
 	 * @return string
 	 */
@@ -190,7 +190,7 @@ class Sensei_Course {
 	/**
 	 * Display the courses' navigation.
 	 *
-	 * @param WP_Screen $screen
+	 * @param WP_Screen $screen WordPress current screen object.
 	 */
 	private function display_courses_navigation( WP_Screen $screen ) {
 		?>
