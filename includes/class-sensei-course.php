@@ -200,9 +200,9 @@ class Sensei_Course {
 					<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__links">
-					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New course', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order courses', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course settings', 'sensei-lms' ); ?></a>
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New Course', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
