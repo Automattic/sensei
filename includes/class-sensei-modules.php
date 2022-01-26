@@ -1250,7 +1250,15 @@ class Sensei_Core_Modules {
 				foreach ( $modules as $module ) {
 					$module_links[] = sprintf(
 						'<a href="%s">%s</a>',
-						esc_attr( get_edit_term_link( $module->term_id ) ),
+						esc_url(
+							add_query_arg(
+								[
+									'post_type'     => 'course',
+									$this->taxonomy => $module->slug,
+								],
+								admin_url( 'edit.php' )
+							)
+						),
 						esc_html( $module->name )
 					);
 				}
@@ -1260,7 +1268,16 @@ class Sensei_Core_Modules {
 				// Output the edit modules order link.
 				echo sprintf(
 					'<a class="button-link" href="%s">%s</a>',
-					esc_url( admin_url( 'edit.php?post_type=course&page=module-order&course_id=' . intval( $course_id ) ) ),
+					esc_url(
+						add_query_arg(
+							[
+								'post_type' => 'course',
+								'page'      => 'module-order',
+								'course_id' => $course_id,
+							],
+							admin_url( 'edit.php' )
+						)
+					),
 					esc_html__( 'Order modules', 'sensei-lms' )
 				);
 			}
@@ -1298,7 +1315,15 @@ class Sensei_Core_Modules {
 			if ( $module ) {
 				printf(
 					'<a href="%s">%s</a>',
-					esc_attr( get_edit_term_link( $module->term_id ) ),
+					esc_url(
+						add_query_arg(
+							[
+								'post_type'     => 'lesson',
+								$this->taxonomy => $module->slug,
+							],
+							admin_url( 'edit.php' )
+						)
+					),
 					esc_html( $module->name )
 				);
 			}
