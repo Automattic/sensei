@@ -1243,28 +1243,28 @@ class Sensei_Core_Modules {
 	 */
 	public function course_column_content( $column = '', $course_id = 0 ) {
 		if ( 'modules' === $column ) {
-			$modules = $this->get_course_modules( $course_id );
+			$modules      = $this->get_course_modules( $course_id );
+			$module_links = [];
 
-			if ( $modules ) {
-				$module_links = [];
-				foreach ( $modules as $module ) {
-					$module_links[] = sprintf(
-						'<a href="%s">%s</a>',
-						esc_url(
-							add_query_arg(
-								[
-									'post_type'     => 'course',
-									$this->taxonomy => $module->slug,
-								],
-								admin_url( 'edit.php' )
-							)
-						),
-						esc_html( $module->name )
-					);
-				}
+			foreach ( $modules as $module ) {
+				$module_links[] = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url(
+						add_query_arg(
+							[
+								'post_type'     => 'course',
+								$this->taxonomy => $module->slug,
+							],
+							admin_url( 'edit.php' )
+						)
+					),
+					esc_html( $module->name )
+				);
+			}
 
-				echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
+			echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
 
+			if ( count( $modules ) > 1 ) {
 				// Output the edit modules order link.
 				echo sprintf(
 					'<a class="button-link" href="%s">%s</a>',
