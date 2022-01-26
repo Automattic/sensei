@@ -1278,7 +1278,7 @@ class Sensei_Core_Modules {
 							admin_url( 'edit.php' )
 						)
 					),
-					esc_html__( 'Order modules', 'sensei-lms' )
+					esc_html__( 'Order Modules', 'sensei-lms' )
 				);
 			}
 		}
