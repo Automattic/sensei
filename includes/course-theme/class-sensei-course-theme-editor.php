@@ -278,10 +278,6 @@ class Sensei_Course_Theme_Editor {
 			}
 		}
 
-		if ( $is_site_editor_rest ) {
-			Sensei_Course_Theme::instance()->override_theme();
-		}
-
 	}
 
 	/**
