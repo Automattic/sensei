@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei_Blocks;
-
 /**
  * Block to render the content for the current lesson or quiz page.
  */
@@ -24,6 +22,32 @@ class Course_Content {
 	 */
 	public function __construct() {
 		add_filter( 'the_content', [ $this, 'render_content' ] );
+
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'core/post-content' ) ) {
+			register_block_type(
+				'core/post-content',
+				[
+					'render_callback' => [ $this, 'render_content_block' ],
+				]
+			);
+		}
+	}
+
+	/**
+	 * Content block fallback.
+	 *
+	 * @return string
+	 */
+	public function render_content_block() {
+
+		if ( ! in_the_loop() && have_posts() ) {
+			the_post();
+		}
+
+		ob_start();
+		the_content();
+		return ob_get_clean();
+
 	}
 
 	/**
