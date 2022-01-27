@@ -9,6 +9,12 @@ body {
 	--wp--custom--form--border--radius: 2px;
 	--wp--custom--form--color--text: inherit;
 	--wp--custom--form--padding: 6px 8px;
+	--wp--custom--list--spacing--padding--left: 16px;
+}
+
+.wp-block-post-title {
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 a {

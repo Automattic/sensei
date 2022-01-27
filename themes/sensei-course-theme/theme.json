@@ -16,14 +16,9 @@
 					"name": "Primary"
 				},
 				{
-					"slug": "border",
-					"color": "#cccccc",
-					"name": "Border"
-				},
-				{
-					"slug": "foreground",
+					"slug": "text",
 					"color": "#384143",
-					"name": "Foreground"
+					"name": "Text"
 				},
 				{
 					"slug": "background",
@@ -37,10 +32,9 @@
 				"margin": "var(--wp--custom--gap--vertical) auto"
 			},
 			"color": {
-				"foreground": "var(--wp--preset--color--foreground)",
+				"text": "var(--wp--preset--color--text)",
 				"background": "var(--wp--preset--color--background)",
-				"primary": "var(--wp--preset--color--primary)",
-				"border": "var(--wp--preset--color--border)"
+				"primary": "var(--wp--preset--color--primary)"
 			},
 			"body": {
 				"typography": {
@@ -70,24 +64,13 @@
 			"fontFamilies": [
 				{
 					"fontFamily": "\"Source Serif Pro\", serif",
-					"fontSlug": "source-serif-pro",
 					"slug": "body-font",
-					"name": "Source Serif Pro",
-					"google": "family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900"
-				},
-				{
-					"fontFamily": "\"Source Serif Pro\", serif",
-					"fontSlug": "source-serif-pro",
-					"slug": "heading-font",
-					"name": "Source Serif Pro",
-					"google": "family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900"
+					"name": "Source Serif Pro"
 				},
 				{
 					"fontFamily": "Inter, sans-serif",
-					"fontSlug": "inter",
-					"slug": "ui-font",
-					"name": "Inter",
-					"google": "family=Inter:wght@300;400;500;600;700"
+					"slug": "heading-font",
+					"name": "Inter"
 				}
 			],
 			"fontSizes": [
@@ -181,7 +164,7 @@
 			},
 			"core/post-date": {
 				"color": {
-					"text": "var(--wp--custom--color--foreground)"
+					"text": "var(--wp--custom--color--text)"
 				},
 				"typography": {
 					"fontSize": "var(--wp--preset--font-size--small)"
@@ -213,7 +196,7 @@
 			},
 			"core/separator": {
 				"color": {
-					"text": "var(--wp--custom--color--foreground)"
+					"text": "var(--wp--custom--color--text)"
 				},
 				"border": {
 					"color": "currentColor",
