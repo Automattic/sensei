@@ -60,8 +60,8 @@ class Sensei_Course_Theme_Editor {
 	 * Initializes the Course Theme Editor.
 	 */
 	public function init() {
-		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ] );
-		add_action( 'use_block_editor_for_post', [ $this, 'maybe_override_lesson_theme' ], 10, 2 );
+		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ], 1 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_lesson_theme' ], 1 );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
 
@@ -241,20 +241,24 @@ class Sensei_Course_Theme_Editor {
 
 	/**
 	 * Load the course theme for the lesson editor if it has Learning Mode enabled.
-	 *
-	 * @param boolean $use_block_editor
-	 * @param WP_Post $post
-	 *
-	 * @return boolean
 	 */
-	public function maybe_override_lesson_theme( $use_block_editor, $post ) {
+	public function maybe_override_lesson_theme() {
 
-		if ( $this->lesson_has_course_theme( $post ) ) {
+		$uri            = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$is_post_editor = preg_match( '#/wp-admin/post.php#i', $uri );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe handling of post ID.
+		$post_id = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : null;
+
+		if ( ! $is_post_editor || empty( $post_id ) ) {
+			return;
+		}
+
+		if ( $this->lesson_has_course_theme( get_post( $post_id ) ) ) {
 			$this->add_editor_styles();
 			Sensei_Course_Theme::instance()->override_theme();
 		}
 
-		return $use_block_editor;
 	}
 
 	/**
@@ -332,6 +336,7 @@ class Sensei_Course_Theme_Editor {
 		if ( $this->lesson_has_course_theme() || $this->is_site_editor() ) {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js' );
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
+			Sensei_Course_Theme::instance()->enqueue_fonts();
 		}
 	}
 
