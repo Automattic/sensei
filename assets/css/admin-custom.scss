@@ -2,6 +2,8 @@
 * Admin custom css.
 */
 
+@import '../shared/styles/variables';
+
 /* Lesson Write Panel Styling */
 a.lesson_question_cancel { text-decoration: underline; }
 #lesson-info input[type=text] { margin-bottom: 10px; }
@@ -109,15 +111,6 @@ div.question_boolean_fields { margin-bottom: 10px; }
     padding-left: 2em !important;
 }
 
-.post-type-course .wp-list-table .button-link {
-	color: #2C3338;
-	display: inline-block;
-}
-
-.post-type-course .wp-list-table .button-link:not(:first-child) {
-	margin-top: 2em;
-}
-
 .sensei-wp-list-table-actions {
 	margin-top: 1em;
 }
@@ -129,6 +122,22 @@ div.question_boolean_fields { margin-bottom: 10px; }
 
 .sensei-dismissible-link {
     text-decoration: none;
+}
+
+.wp-list-table {
+	.sensei-wp-list-table-link {
+		display: block;
+		color: $text_primary;
+		text-decoration: underline;
+
+		&:not(:first-child) {
+			margin-top: 2em;
+		}
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
 }
 
 /**

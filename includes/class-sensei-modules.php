@@ -1255,44 +1255,86 @@ class Sensei_Core_Modules {
 	 */
 	public function course_column_content( $column = '', $course_id = 0 ) {
 		if ( 'modules' === $column ) {
-			$modules      = $this->get_course_modules( $course_id );
-			$module_links = [];
+			$this->output_course_modules_column( $course_id );
+		}
+	}
 
-			foreach ( $modules as $module ) {
-				$module_links[] = sprintf(
-					'<a href="%s">%s</a>',
-					esc_url(
-						add_query_arg(
-							[
-								'post_type'     => 'course',
-								$this->taxonomy => $module->slug,
-							],
-							admin_url( 'edit.php' )
-						)
-					),
-					esc_html( $module->name )
-				);
+	/**
+	 * Output the course modules column HTML.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param int $course_id
+	 */
+	private function output_course_modules_column( int $course_id ) {
+		$modules = $this->get_course_modules( $course_id );
+
+		if ( ! $modules ) {
+			return;
+		}
+
+		/**
+		 * Filter to change the number of links in the course modules column.
+		 *
+		 * @since 4.0.0
+		 * @hook  sensei_module_course_column_max_links_count
+		 *
+		 * @param  {int} $max_links_count The number of links.
+		 * @return {int}
+		 */
+		$max_links_count = apply_filters( 'sensei_module_course_column_max_links_count', 3 );
+		$links_count     = count( $modules );
+
+		foreach ( $modules as $index => $module ) {
+			$is_last     = $index + 1 === $links_count;
+			$should_hide = $index + 1 > $max_links_count;
+			$module_link = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'post_type'     => 'course',
+							$this->taxonomy => $module->slug,
+						],
+						admin_url( 'edit.php' )
+					)
+				),
+				esc_html( $module->name )
+			);
+			?>
+			<span class="<?php echo esc_attr( $should_hide ? 'hidden' : '' ); ?>">
+				<?php echo $module_link . ( $is_last ? '' : ', ' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is already escaped. ?>
+			</span>
+			<?php if ( $is_last && $should_hide ) { ?>
+				<a href="#" class="sensei-show-more">
+					<?php
+					printf(
+						/* translators: %d: the number of links to be displayed */
+						esc_html__( '+%d more', 'sensei-lms' ),
+						intval( $links_count - $max_links_count )
+					);
+					?>
+				</a>
+				<?php
 			}
+		}
 
-			echo implode( ', ', $module_links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped in the array.
-
-			if ( count( $modules ) > 1 ) {
-				// Output the edit modules order link.
-				echo sprintf(
-					'<a class="button-link" href="%s">%s</a>',
-					esc_url(
-						add_query_arg(
-							[
-								'post_type' => 'course',
-								'page'      => 'module-order',
-								'course_id' => $course_id,
-							],
-							admin_url( 'edit.php' )
-						)
-					),
-					esc_html__( 'Order Modules', 'sensei-lms' )
-				);
-			}
+		if ( count( $modules ) > 1 ) {
+			// Output the edit modules order link.
+			echo sprintf(
+				'<a class="sensei-wp-list-table-link" href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'post_type' => 'course',
+							'page'      => 'module-order',
+							'course_id' => $course_id,
+						],
+						admin_url( 'edit.php' )
+					)
+				),
+				esc_html__( 'Order Modules', 'sensei-lms' )
+			);
 		}
 	}
 
