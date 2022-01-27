@@ -9,10 +9,9 @@ body {
 	--wp--preset--font-family--heading-font: Inter, sans-serif;
 	--wp--custom--heading--typography--font-weight: 600;
 	--wp--custom--separator--margin: var(--wp--custom--gap--vertical) auto;
-	--wp--custom--color--foreground: var(--wp--preset--color--foreground);
+	--wp--custom--color--text: var(--wp--preset--color--text);
 	--wp--custom--color--background: var(--wp--preset--color--background);
 	--wp--custom--color--primary: var(--wp--preset--color--primary);
-	--wp--custom--color--border: var(--wp--preset--color--border);
 	--wp--custom--body--typography--line-height: 1.6;
 	--wp--custom--layout--content-size: 900px;
 	--wp--custom--layout--wide-size: 1100px;
@@ -137,7 +136,7 @@ h6 {
 }
 
 .wp-block-post-date {
-	color: var(--wp--custom--color--foreground);
+	color: var(--wp--custom--color--text);
 	font-size: var(--wp--preset--font-size--small);
 }
 
@@ -161,7 +160,7 @@ h6 {
 	border-color: currentColor;
 	border-width: 0 0 1px 0;
 	border-style: solid;
-	color: var(--wp--custom--color--foreground);
+	color: var(--wp--custom--color--text);
 }
 
 .wp-block-quote {
@@ -235,12 +234,8 @@ h6 {
 	color: var(--wp--preset--color--primary) !important;
 }
 
-.has-border-color {
-	color: var(--wp--preset--color--border) !important;
-}
-
-.has-foreground-color {
-	color: var(--wp--preset--color--foreground) !important;
+.has-text-color {
+	color: var(--wp--preset--color--text) !important;
 }
 
 .has-background-color {
@@ -299,12 +294,8 @@ h6 {
 	background-color: var(--wp--preset--color--primary) !important;
 }
 
-.has-border-background-color {
-	background-color: var(--wp--preset--color--border) !important;
-}
-
-.has-foreground-background-color {
-	background-color: var(--wp--preset--color--foreground) !important;
+.has-text-background-color {
+	background-color: var(--wp--preset--color--text) !important;
 }
 
 .has-background-background-color {
@@ -363,16 +354,8 @@ h6 {
 	border-color: var(--wp--preset--color--primary) !important;
 }
 
-.has-border-border-color {
-	border-color: var(--wp--preset--color--border) !important;
-}
-
-.has-foreground-border-color {
-	border-color: var(--wp--preset--color--foreground) !important;
-}
-
-.has-background-border-color {
-	border-color: var(--wp--preset--color--background) !important;
+.has-text-border-color {
+	border-color: var(--wp--preset--color--text) !important;
 }
 
 .has-vivid-cyan-blue-to-vivid-purple-gradient-background {
