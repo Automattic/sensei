@@ -46,6 +46,7 @@ class Sensei_Core_Modules {
 		add_action( 'sensei_user_lesson_reset', array( $this, 'save_lesson_module_progress' ), 10, 2 );
 		add_action( 'wp', array( $this, 'save_module_progress' ), 10 );
 
+		add_action( 'admin_menu', array( $this, 'add_submenus' ) );
 		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
 		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
 		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
@@ -1071,6 +1072,22 @@ class Sensei_Core_Modules {
 
 		// Register new admin page for module ordering.
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei-lms' ), __( 'Order Modules', 'sensei-lms' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
+	}
+
+	/**
+	 * Add admin screens.
+	 *
+	 * @since 4.0.0
+	 */
+	public function add_submenus() {
+		add_submenu_page(
+			null, // Hide the submenu.
+			__( 'Order Modules', 'sensei-lms' ),
+			__( 'Order Modules', 'sensei-lms' ),
+			'edit_lessons',
+			$this->order_page_slug,
+			array( $this, 'module_order_screen' )
+		);
 	}
 
 	/**
