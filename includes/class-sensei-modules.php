@@ -126,7 +126,7 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Highlight the menu item for the course pages.
+	 * Highlight the menu item for the modules pages.
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -162,7 +162,7 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Display the courses' navigation.
+	 * Display the modules' navigation.
 	 *
 	 * @param WP_Screen $screen WordPress current screen object.
 	 */
