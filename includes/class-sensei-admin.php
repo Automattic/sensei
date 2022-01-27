@@ -1430,7 +1430,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Display Lesson Order screen
+	 * Dsplay Lesson Order screen
 	 *
 	 * @return void
 	 */
@@ -1466,7 +1466,7 @@ class Sensei_Admin {
 			$courses = get_posts( $args );
 
 			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
-			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
+			$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
