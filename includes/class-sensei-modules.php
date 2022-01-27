@@ -54,6 +54,7 @@ class Sensei_Core_Modules {
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
 		add_action( 'admin_menu', array( $this, 'remove_courses_menu_model_taxonomy' ), 10 );
 		add_action( 'admin_menu', array( $this, 'redirect_to_lesson_module_taxonomy_to_course' ), 20 );
+		add_action( 'admin_menu', array( $this, 'add_module_order' ) );
 
 		// Add course field to taxonomy
 		add_action( $this->taxonomy . '_add_form_fields', array( $this, 'add_module_fields' ), 50, 1 );
@@ -103,6 +104,81 @@ class Sensei_Core_Modules {
 		// remove the default modules  metabox
 		add_action( 'admin_init', array( 'Sensei_Core_Modules', 'remove_default_modules_box' ) );
 
+		// Add custom navigation.
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+	}
+
+	/**
+	 * Add Order modules page to admin panel.
+	 *
+	 * @since  4.0.0
+	 */
+	public function add_module_order() {
+		add_submenu_page(
+			null, // Hide from menu.
+			__( 'Order Modules', 'sensei-lms' ),
+			__( 'Order Modules', 'sensei-lms' ),
+			'edit_lessons',
+			$this->order_page_slug,
+			array( $this, 'module_order_screen' )
+		);
+	}
+
+	/**
+	 * Highlight the menu item for the course pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		$screen = get_current_screen();
+		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
+			$submenu_file = 'edit-tags.php?taxonomy=module';
+		}
+
+		return $submenu_file;
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
+			$this->display_modules_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the courses' navigation.
+	 *
+	 * @param WP_Screen $screen WordPress current screen object.
+	 */
+	private function display_modules_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Modules', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

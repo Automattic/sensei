@@ -274,7 +274,8 @@ class Sensei_Admin {
 	 *
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
+	 *
+	 * @param string $hook The current admin page.
 	 */
 	public function admin_styles_global( $hook ) {
 		global $post_type;
@@ -295,12 +296,32 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.min.css' );
 
 		// Test for Write Panel Pages
-		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-
+		if ( $this->are_admin_custom_styles_allowed( $post_type, $hook, get_current_screen() ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom', 'css/admin-custom.css', [], 'screen' );
-
 		}
 
+	}
+
+	/**
+	 * Check if it is allowed to enqueue admin custom styles.
+	 *
+	 * @param string         $post_type The post type slug.
+	 * @param string         $hook_suffix The current admin page.
+	 * @param WP_Screen|null $screen The current screen.
+	 * @return bool Returns true if admin custom styles are allowed.
+	 */
+	private function are_admin_custom_styles_allowed( $post_type, $hook_suffix, $screen ) {
+		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$module_pages_screen_ids = [ 'edit-module', 'course_page_module-order' ];
+
+		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );
+		$is_allowed_post_type_page = isset( $hook_suffix ) && in_array( $hook_suffix, $allowed_post_type_pages, true );
+		$is_allowed_page           = isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages, true );
+		$is_modules_page           = $screen && in_array( $screen->id, $module_pages_screen_ids, true );
+
+		return ( $is_allowed_type && $is_allowed_post_type_page ) || $is_allowed_page || $is_modules_page;
 	}
 
 
@@ -348,7 +369,8 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) ) ) {
+		$allowed_screen_ids = [ 'edit-course', 'edit-course-category', 'edit-module', 'course_page_module-order' ];
+		if ( $screen && ( in_array( $screen->id, $allowed_screen_ids, true ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
