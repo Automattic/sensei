@@ -42,7 +42,7 @@ class Post_Title {
 	 */
 	public function render_title_block( array $attributes = [] ): string {
 
-		$title   = get_the_title();
+		$title = get_the_title();
 
 		if ( ! $title ) {
 			return '';

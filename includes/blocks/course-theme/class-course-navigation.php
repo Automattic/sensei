@@ -77,7 +77,7 @@ class Course_Navigation {
 	public function render_course_navigation() {
 		$this->course_id = \Sensei_Utils::get_current_course();
 
-		if ( ! $this->course_id || ! in_array( get_post_type(), [ 'lesson', 'quiz' ] ) ) {
+		if ( ! $this->course_id || ! in_array( get_post_type(), [ 'lesson', 'quiz' ], true ) ) {
 			return '';
 		}
 
