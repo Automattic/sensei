@@ -3,7 +3,7 @@
  * File containing the Sensei\Blocks\Course_Theme\Course_Content class.
  *
  * @package sensei
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -23,12 +23,7 @@ class Course_Content {
 	 * Content constructor.
 	 */
 	public function __construct() {
-		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-content',
-			[
-				'render_callback' => [ $this, 'render_content' ],
-			]
-		);
+		add_filter( 'the_content', [ $this, 'render_content' ] );
 	}
 
 	/**
@@ -36,9 +31,18 @@ class Course_Content {
 	 *
 	 * @access private
 	 *
+	 * @param string $content
+	 *
 	 * @return string HTML
 	 */
-	public function render_content() {
+	public function render_content( $content ) {
+
+		if ( ! \Sensei_Course_Theme_Option::instance()->should_use_sensei_theme() ) {
+			return $content;
+		}
+
+		remove_filter( 'the_content', [ $this, 'render_content' ] );
+
 		$type = get_post_type();
 
 		$content = '';
