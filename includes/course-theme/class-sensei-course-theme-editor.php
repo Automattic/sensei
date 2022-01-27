@@ -61,7 +61,9 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function init() {
 		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ] );
+		add_action( 'use_block_editor_for_post', [ $this, 'maybe_override_lesson_theme' ], 10, 2 );
 		add_action( 'rest_api_init', [ $this, 'maybe_add_site_editor_hooks' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
 
 		add_action( 'admin_menu', [ $this, 'add_admin_menu_site_editor_item' ], 20 );
 
@@ -98,7 +100,7 @@ class Sensei_Course_Theme_Editor {
 					'id'          => self::THEME_PREFIX . '//lesson',
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 					'content'     => file_get_contents( $base_path . 'lesson.html' ),
-					'post_types'  => [],
+					'post_types'  => [ 'lesson' ],
 				]
 			),
 			'quiz'   => array_merge(
@@ -237,6 +239,23 @@ class Sensei_Course_Theme_Editor {
 
 	}
 
+	/**
+	 * Load the course theme for the lesson editor if it has Learning Mode enabled.
+	 *
+	 * @param boolean $use_block_editor
+	 * @param WP_Post $post
+	 *
+	 * @return boolean
+	 */
+	public function maybe_override_lesson_theme( $use_block_editor, $post ) {
+
+		if ( $this->lesson_has_course_theme( $post ) ) {
+			$this->add_editor_styles();
+			Sensei_Course_Theme::instance()->override_theme();
+		}
+
+		return $use_block_editor;
+	}
 
 	/**
 	 * Add template editing hooks for site editor and related API requests.
@@ -257,6 +276,10 @@ class Sensei_Course_Theme_Editor {
 			if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() && ! Sensei_Course_Theme::instance()->is_active() ) {
 				Sensei_Course_Theme::instance()->override_theme();
 			}
+		}
+
+		if ( $is_site_editor_rest ) {
+			Sensei_Course_Theme::instance()->override_theme();
 		}
 
 	}
@@ -309,9 +332,13 @@ class Sensei_Course_Theme_Editor {
 	 * @access private
 	 */
 	public function enqueue_site_editor_assets() {
-		Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js' );
 
+		if ( $this->lesson_has_course_theme() || $this->is_site_editor() ) {
+			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js' );
+			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
+		}
 	}
+
 
 	/**
 	 * Register course theme styles as editor styles.
@@ -324,6 +351,39 @@ class Sensei_Course_Theme_Editor {
 		add_editor_style( Sensei()->assets->asset_url( 'css/sensei-course-theme.editor.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/frontend.css' ) );
 
+	}
+
+	/**
+	 * Check if the post being edited is a lesson with Learning Mode enabled.
+	 * Also returns true on site editor and widgets editor pages.
+	 *
+	 * @param WP_Post? $post
+	 *
+	 * @return bool
+	 */
+	private function lesson_has_course_theme( $post = null ) {
+
+		$post = $post ?? get_post();
+
+		if ( empty( $post ) || 'lesson' !== $post->post_type ) {
+			return false;
+		}
+
+		$course_id = Sensei()->lesson->get_course_id( $post->ID );
+
+		return Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+	}
+
+	/**
+	 * Check if the current screen is a site or widgets editor.
+	 *
+	 * @return bool
+	 */
+	private function is_site_editor() {
+
+		$screen = get_current_screen();
+
+		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize' ], true );
 	}
 
 	/**
