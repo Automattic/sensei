@@ -296,7 +296,7 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.min.css' );
 
 		// Test for Write Panel Pages
-		if ( $this->are_admin_custom_styles_allowed( $post_type, $hook, get_current_screen() ) ) {
+		if ( $this->are_custom_admin_styles_allowed( $post_type, $hook, get_current_screen() ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom', 'css/admin-custom.css', [], 'screen' );
 		}
 
@@ -310,7 +310,7 @@ class Sensei_Admin {
 	 * @param WP_Screen|null $screen The current screen.
 	 * @return bool Returns true if admin custom styles are allowed.
 	 */
-	private function are_admin_custom_styles_allowed( $post_type, $hook_suffix, $screen ) {
+	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
