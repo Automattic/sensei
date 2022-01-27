@@ -5,6 +5,10 @@
 const selector = '#menu-posts-course ';
 const adminTracking = [
 	{
+		selector: selector + '.wp-menu-name',
+		eventName: 'courses_view',
+	},
+	{
 		selector: selector + 'a[href="edit.php?post_type=course"]',
 		eventName: 'courses_view',
 	},
