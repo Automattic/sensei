@@ -51,8 +51,8 @@ class Sensei_Core_Modules {
 
 		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
 		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
-		add_filter( 'manage_lesson_posts_columns', array( $this, 'lesson_columns' ), 11, 1 );
-		add_action( 'manage_lesson_posts_custom_column', array( $this, 'lesson_column_content' ), 11, 2 );
+		add_filter( 'manage_lesson_posts_columns', array( $this, 'add_lesson_columns' ), 11, 1 );
+		add_action( 'manage_lesson_posts_custom_column', array( $this, 'add_lesson_column_content' ), 11, 2 );
 
 		// Ensure modules always show under courses
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
@@ -1287,12 +1287,13 @@ class Sensei_Core_Modules {
 	/**
 	 * Add custom columns to lesson list table.
 	 *
-	 * @since 4.0.0
+	 * @since  4.0.0
+	 * @access private
 	 *
 	 * @param  array $columns Existing columns.
 	 * @return array          Modified columns.
 	 */
-	public function lesson_columns( $columns = array() ) {
+	public function add_lesson_columns( $columns = array() ) {
 		$columns['module'] = __( 'Module', 'sensei-lms' );
 
 		return $columns;
@@ -1301,13 +1302,13 @@ class Sensei_Core_Modules {
 	/**
 	 * Load content in the lesson custom columns.
 	 *
-	 * @since 4.0.0
+	 * @since  4.0.0
+	 * @access private
 	 *
 	 * @param  string  $column    Current column name.
 	 * @param  integer $lesson_id The lesson ID.
-	 * @return void
 	 */
-	public function lesson_column_content( $column = '', $lesson_id = 0 ) {
+	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
 		if ( 'module' === $column ) {
 			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
 			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
