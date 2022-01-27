@@ -145,16 +145,85 @@ class Sensei_Course {
 
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
+
+		// Add custom navigation.
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
-	 * Register and enqueue scripts that are needed in the backend.
+	 * Highlight the menu item for the course pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		$screen = get_current_screen();
+
+		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ], true ) ) {
+			$submenu_file = 'edit.php?post_type=course';
+		}
+
+		return $submenu_file;
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) ) {
+			$this->display_courses_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the courses' navigation.
+	 *
+	 * @param WP_Screen $screen WordPress current screen object.
+	 */
+	private function display_courses_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New Course', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Register and enqueue scripts and styles that are needed in the backend.
 	 *
 	 * @access private
 	 * @since 2.1.0
 	 */
 	public function register_admin_scripts() {
 		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
 
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
@@ -710,6 +779,7 @@ class Sensei_Course {
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
 			'teacher',
+			'students',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
