@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \Sensei\Blocks\Course_Theme;
-
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
