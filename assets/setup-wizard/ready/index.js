@@ -95,7 +95,7 @@ export const Ready = () => {
 										<Button
 											className="sensei-setup-wizard__button"
 											isSecondary
-											href="admin.php?page=sensei_import"
+											href="edit.php?post_type=course&page=sensei-tools&tool=import-content"
 											{ ...logLink(
 												'setup_wizard_ready_import'
 											) }

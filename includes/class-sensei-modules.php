@@ -46,13 +46,12 @@ class Sensei_Core_Modules {
 		add_action( 'sensei_user_lesson_reset', array( $this, 'save_lesson_module_progress' ), 10, 2 );
 		add_action( 'wp', array( $this, 'save_module_progress' ), 10 );
 
-		add_action( 'admin_menu', array( $this, 'register_modules_admin_menu_items' ), 30 );
+		add_action( 'admin_menu', array( $this, 'add_submenus' ) );
 		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
-
 		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
 		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
-		add_filter( 'manage_lesson_posts_columns', array( $this, 'lesson_columns' ), 11, 1 );
-		add_action( 'manage_lesson_posts_custom_column', array( $this, 'lesson_column_content' ), 11, 2 );
+		add_filter( 'manage_lesson_posts_columns', array( $this, 'add_lesson_columns' ), 11, 1 );
+		add_action( 'manage_lesson_posts_custom_column', array( $this, 'add_lesson_column_content' ), 11, 2 );
 
 		// Ensure modules always show under courses
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
@@ -1058,24 +1057,37 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Register admin pages related to modules.
+	 * Register admin screen for ordering modules
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.0.0
 	 *
 	 * @return void
 	 */
 	public function register_modules_admin_menu_items() {
+		_deprecated_function( __METHOD__, '4.0.0' );
 
-		// Register an admin page for module ordering.
+		// add the modules link under the Course main menu
+		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module', '' );
+
+		// Register new admin page for module ordering.
+		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei-lms' ), __( 'Order Modules', 'sensei-lms' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
+	}
+
+	/**
+	 * Add admin screens.
+	 *
+	 * @since 4.0.0
+	 */
+	public function add_submenus() {
 		add_submenu_page(
-			'options.php',
+			null, // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
 			__( 'Order Modules', 'sensei-lms' ),
 			'edit_lessons',
 			$this->order_page_slug,
 			array( $this, 'module_order_screen' )
 		);
-
 	}
 
 	/**
@@ -1100,7 +1112,7 @@ class Sensei_Core_Modules {
 						'ordered'   => $ordered,
 						'course_id' => $_POST['course_id'],
 					),
-					admin_url( 'options.php' )
+					admin_url( 'edit.php' )
 				)
 			)
 		);
@@ -1131,7 +1143,7 @@ class Sensei_Core_Modules {
 
 			$courses = Sensei()->course->get_all_courses();
 
-			$html .= '<form method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
 			$html .= '<select id="module-order-course" name="course_id">' . "\n";
@@ -1278,7 +1290,15 @@ class Sensei_Core_Modules {
 			$should_hide = $index + 1 > $max_links_count;
 			$module_link = sprintf(
 				'<a href="%s">%s</a>',
-				esc_attr( get_edit_term_link( $module->term_id ) ),
+				esc_url(
+					add_query_arg(
+						[
+							'post_type'     => 'course',
+							$this->taxonomy => $module->slug,
+						],
+						admin_url( 'edit.php' )
+					)
+				),
 				esc_html( $module->name )
 			);
 			?>
@@ -1299,23 +1319,35 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		// Output the edit modules order link.
-		printf(
-			'<a class="sensei-wp-list-table-link" href="%s">%s</a>',
-			esc_url( admin_url( 'options.php?post_type=course&page=module-order&course_id=' . $course_id ) ),
-			esc_html__( 'Order modules', 'sensei-lms' )
-		);
+		if ( count( $modules ) > 1 ) {
+			// Output the edit modules order link.
+			echo sprintf(
+				'<a class="sensei-wp-list-table-link" href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'post_type' => 'course',
+							'page'      => 'module-order',
+							'course_id' => $course_id,
+						],
+						admin_url( 'edit.php' )
+					)
+				),
+				esc_html__( 'Order Modules', 'sensei-lms' )
+			);
+		}
 	}
 
 	/**
 	 * Add custom columns to lesson list table.
 	 *
-	 * @since 4.0.0
+	 * @since  4.0.0
+	 * @access private
 	 *
 	 * @param  array $columns Existing columns.
 	 * @return array          Modified columns.
 	 */
-	public function lesson_columns( $columns = array() ) {
+	public function add_lesson_columns( $columns = array() ) {
 		$columns['module'] = __( 'Module', 'sensei-lms' );
 
 		return $columns;
@@ -1324,13 +1356,13 @@ class Sensei_Core_Modules {
 	/**
 	 * Load content in the lesson custom columns.
 	 *
-	 * @since 4.0.0
+	 * @since  4.0.0
+	 * @access private
 	 *
 	 * @param  string  $column    Current column name.
 	 * @param  integer $lesson_id The lesson ID.
-	 * @return void
 	 */
-	public function lesson_column_content( $column = '', $lesson_id = 0 ) {
+	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
 		if ( 'module' === $column ) {
 			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
 			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
@@ -1338,7 +1370,15 @@ class Sensei_Core_Modules {
 			if ( $module ) {
 				printf(
 					'<a href="%s">%s</a>',
-					esc_attr( get_edit_term_link( $module->term_id ) ),
+					esc_url(
+						add_query_arg(
+							[
+								'post_type'     => 'lesson',
+								$this->taxonomy => $module->slug,
+							],
+							admin_url( 'edit.php' )
+						)
+					),
 					esc_html( $module->name )
 				);
 			}
@@ -1693,7 +1733,7 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array( 'admin_page_module-order' )
+			array( 'course_page_module-order' )
 		);
 
 		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
