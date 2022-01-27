@@ -81,6 +81,7 @@ class Sensei_Blocks {
 		Sensei()->assets->register( 'sensei-editor-components-style', 'blocks/editor-components/editor-components-style.css' );
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
+		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css', [] );
 	}
 
 	/**

@@ -77,6 +77,7 @@ const files = [
 	'css/meta-box-quiz-editor.scss',
 	'css/sensei-course-theme.scss',
 	'css/sensei-course-theme.editor.scss',
+	'css/sensei-theme-blocks.scss',
 	'course-theme/course-theme.js',
 	'course-theme/course-theme.editor.js',
 	'course-theme/blocks/blocks.js',
