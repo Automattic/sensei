@@ -109,6 +109,15 @@ div.question_boolean_fields { margin-bottom: 10px; }
     padding-left: 2em !important;
 }
 
+.post-type-course .wp-list-table .button-link {
+	color: #2C3338;
+	display: inline-block;
+}
+
+.post-type-course .wp-list-table .button-link:not(:first-child) {
+	margin-top: 2em;
+}
+
 .sensei-wp-list-table-actions {
 	margin-top: 1em;
 }
