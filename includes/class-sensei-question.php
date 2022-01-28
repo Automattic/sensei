@@ -75,7 +75,7 @@ class Sensei_Question {
 	public function highlight_menu_item( $submenu_file ) {
 		$screen = get_current_screen();
 
-		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-question-category' ], true ) ) {
+		if ( $screen && 'edit-question-category' === $screen->id ) {
 			$submenu_file = 'edit.php?post_type=question';
 		}
 
