@@ -200,9 +200,9 @@ class Sensei_Lesson {
 					<h1><?php esc_html_e( 'Lessons', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__links">
-					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New lesson', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order lessons', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson settings', 'sensei-lms' ); ?></a>
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
