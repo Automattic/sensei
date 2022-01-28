@@ -5,14 +5,17 @@ $base: '.sensei-course-theme';
 		padding: 4px;
 		border: none;
 		background-color: var(--bg-color);
+		cursor: pointer;
 
 		.sensei-course-theme__focus-mode-toggle-icon {
 			width: 10px;
 			height: 10px;
+			transform: rotate(180deg);
 		}
 	}
 
-	body:not(.sensei-course-theme--focus-mode, .editor-styles-wrapper) {
+	// Toogle in the header and without focus mode.
+	body:not(.sensei-course-theme--focus-mode, .editor-styles-wrapper) .sensei-course-theme__header__left {
 		.sensei-course-theme__focus-mode-toggle {
 			position: absolute;
 			left: 0;
@@ -24,10 +27,6 @@ $base: '.sensei-course-theme';
 			padding-left: 24px;
 			padding-top: 9px;
 			padding-bottom: 9px;
-		}
-
-		.sensei-course-theme__focus-mode-toggle-icon {
-			transform: rotate(180deg);
 		}
 	}
 
@@ -65,9 +64,22 @@ $base: '.sensei-course-theme';
 			}
 			&__focus-mode-toggle {
 				.sensei-course-theme__focus-mode-toggle-icon {
-					transform: rotate(90deg);
+					transform: rotate(0);
 				}
 			}
+		}
+
+		// Toogle in the header.
+		.sensei-course-theme__header__left .sensei-course-theme__focus-mode-toggle {
+			.sensei-course-theme__focus-mode-toggle-icon {
+				transform: rotate(90deg);
+			}
+		}
+
+		// Toggle in the sidebar.
+		.sensei-course-theme__sidebar .sensei-course-theme__focus-mode-toggle {
+			position: absolute;
+			left: 405px;
 		}
 	}
 }
