@@ -280,10 +280,6 @@ class Sensei_Admin {
 	public function admin_styles_global( $hook ) {
 		global $post_type;
 
-		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
-		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
-
 		// Global Styles for icons and menu items
 		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
 
