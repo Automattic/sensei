@@ -55,12 +55,6 @@ $base: '.sensei-course-theme';
 				margin-left: 0 !important;
 			}
 			&__focus-mode-toggle {
-				&__label--enable {
-					display: none;
-				}
-				&__label--disable {
-					display: revert;
-				}
 				.sensei-course-theme__focus-mode-toggle-icon {
 					transform: rotate(90deg);
 				}
