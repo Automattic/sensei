@@ -368,7 +368,7 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'edit-lesson', 'edit-lesson-tag' ], true ) ) ) {
+		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ], true ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
@@ -1430,7 +1430,7 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Display Lesson Order screen
+	 * Dsplay Lesson Order screen
 	 *
 	 * @return void
 	 */
