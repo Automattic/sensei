@@ -1,46 +1,24 @@
 $base: '.sensei-course-theme';
 
-@keyframes sensei-learning-mode-collapse {
-	0% { transform: translateX(0) scale(1) rotate(180deg); }
-	50% { transform: translateX(-3px) scale(1.05) rotate(180deg); }
-	100% { transform: translateX(0) scale(1) rotate(180deg); }
-}
-
-@keyframes sensei-learning-mode-expand {
-	0% { transform: translateX(0) scale(1); }
-	50% { transform: translateX(3px) scale(1.05); }
-	100% { transform: translateX(0) scale(1); }
-}
-
 @media screen and (min-width: $breakpoint ) {
 	.sensei-course-theme__focus-mode-toggle {
-		.sensei-course-theme--focus-mode & {
-			position: absolute;
-			left: 20px;
-		}
 		padding: 4px;
-		white-space: nowrap;
-		display: flex;
-		flex-direction: row-reverse;
-		align-items: center;
-		gap: 12px;
 		border: none;
-		background-color: var(--bg-color);
+		background-color: transparent;
 
-		&__disable {
-			display: none;
+		&__label {
+			position: absolute;
+			top: -99999px;
+
+			&--disable {
+				display: none;
+			}
 		}
 
 		.sensei-course-theme__focus-mode-toggle-icon {
 			width: 10px;
 			height: 10px;
-			transform: rotate(180deg);
-		}
-
-		&:hover {
-			.sensei-course-theme__focus-mode-toggle-icon {
-				animation: sensei-learning-mode-collapse 0.8s infinite;
-			}
+			transform: rotate(270deg);
 		}
 	}
 
@@ -53,14 +31,8 @@ $base: '.sensei-course-theme';
 					height: 39px;
 					overflow: hidden;
 				}
-				.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
+				.wp-block-site-logo, .sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
 					display: none;
-				}
-				.wp-block-site-logo {
-					margin-right: -12px;
-					img {
-						max-height: 0;
-					}
 				}
 				.wp-block-sensei-lms-course-title {
 					font-size: 16px;
@@ -83,23 +55,14 @@ $base: '.sensei-course-theme';
 				margin-left: 0 !important;
 			}
 			&__focus-mode-toggle {
-				top: 0;
-				left: 400px;
-				width: 100vw;
-				flex-direction: row;
-				&__enable {
+				&__label--enable {
 					display: none;
 				}
-				&__disable {
+				&__label--disable {
 					display: revert;
 				}
 				.sensei-course-theme__focus-mode-toggle-icon {
-					transform: none;
-				}
-				&:hover {
-					.sensei-course-theme__focus-mode-toggle-icon {
-						animation-name: sensei-learning-mode-expand;
-					}
+					transform: rotate(90deg);
 				}
 			}
 		}

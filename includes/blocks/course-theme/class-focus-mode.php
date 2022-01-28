@@ -47,16 +47,18 @@ class Focus_Mode {
 			$wrapper_attributes = get_block_wrapper_attributes( $attributes );
 		}
 
+		$title_toggle  = __( 'Toggle focus mode', 'sensei-lms' );
 		$label_enable  = __( 'Collapse', 'sensei-lms' );
 		$label_disable = __( 'Expand', 'sensei-lms' );
 
 		return sprintf(
-			'<button class="sensei-course-theme__focus-mode-toggle" %1s onclick="window.sensei.courseTheme.toggleFocusMode()">
-				<span class="sensei-course-theme__focus-mode-toggle__enable">%2s</span>
-				<span class="sensei-course-theme__focus-mode-toggle__disable">%3s</span>
+			'<button class="sensei-course-theme__focus-mode-toggle" %1s onclick="window.sensei.courseTheme.toggleFocusMode()" title="%2s">
+				<span class="sensei-course-theme__focus-mode-toggle__label sensei-course-theme__focus-mode-toggle__label--enable">%3s</span>
+				<span class="sensei-course-theme__focus-mode-toggle__label sensei-course-theme__focus-mode-toggle__label--disable">%4s</span>
 				' . Sensei()->assets->get_icon( 'double-chevron-right', 'sensei-course-theme__focus-mode-toggle-icon' ) . '
 			</button>',
 			$wrapper_attributes,
+			$title_toggle,
 			$label_enable,
 			$label_disable
 		);

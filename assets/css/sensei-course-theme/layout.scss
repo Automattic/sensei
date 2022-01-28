@@ -61,10 +61,7 @@ body {
 
 		@media screen and (min-width: $breakpoint ) {
 			&--hidden {
-				.sensei-course-theme__sidebar__footer,
-				.sensei-course-theme__sidebar__content .wp-block-group__inner-container > *:not(.sensei-course-theme__focus-mode-toggle) {
-					visibility: hidden;
-				}
+				visibility: hidden;
 			}
 		}
 
