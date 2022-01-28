@@ -3,14 +3,13 @@
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"php": "^5.4 || ^7 || ^8",
-		"phpunit/phpunit": "7.5.20",
 		"dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
 		"phpcompatibility/phpcompatibility-wp": "2.1.2",
 		"squizlabs/php_codesniffer": "3.6.0",
 		"wp-coding-standards/wpcs": "2.3.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.2",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
-		"yoast/phpunit-polyfills": "1.0.1"
+		"yoast/phpunit-polyfills": "1.0.3"
 	},
 	"prefer-stable": true,
 	"archive": {
@@ -41,5 +40,10 @@
 			"*.test.js",
 			"/assets/tests-helper/*.js"
 		]
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }
