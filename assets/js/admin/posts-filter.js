@@ -11,4 +11,10 @@ domReady( () => {
 		'.tablenav.top',
 		$postsFilterForm
 	);
+
+	// Auto-submit the form when changing the filters.
+	jQuery(
+		'.actions:not(.bulkactions) :input',
+		$postsFilterForm
+	).on( 'change', ( event ) => $postsFilterForm.trigger( 'submit' ) );
 } );
