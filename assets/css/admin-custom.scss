@@ -149,6 +149,10 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	align-items: flex-start;
 	gap: 20px;
 	margin: 20px auto;
+
+	~ .subtitle {
+		padding-left: 0;
+	}
 }
 
 .sensei-custom-navigation__heading {
