@@ -17,10 +17,10 @@
 		title.style.display = 'none';
 	}
 	// Find the default "Add New" button and hide it.
-	const newCourseButton = document.querySelector(
+	const addNewButton = document.querySelector(
 		'.wrap > a.page-title-action'
 	);
-	if ( newCourseButton ) {
-		newCourseButton.style.display = 'none';
+	if ( addNewButton ) {
+		addNewButton.style.display = 'none';
 	}
 } )();

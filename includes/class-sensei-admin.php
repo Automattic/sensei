@@ -38,6 +38,7 @@ class Sensei_Admin {
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
+		add_action( 'admin_menu', array( $this, 'add_lesson_order' ) );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
@@ -118,6 +119,7 @@ class Sensei_Admin {
 	 * Add Course order page to admin panel.
 	 *
 	 * @since  4.0.0
+	 * @access private
 	 */
 	public function add_course_order() {
 		add_submenu_page(
@@ -127,6 +129,23 @@ class Sensei_Admin {
 			'manage_sensei',
 			$this->course_order_page_slug,
 			array( $this, 'course_order_screen' )
+		);
+	}
+
+	/**
+	 * Add Lesson order page to admin panel.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 */
+	public function add_lesson_order() {
+		add_submenu_page(
+			null,
+			__( 'Order Lessons', 'sensei-lms' ),
+			__( 'Order Lessons', 'sensei-lms' ),
+			'edit_published_lessons',
+			$this->lesson_order_page_slug,
+			array( $this, 'lesson_order_screen' )
 		);
 	}
 
@@ -365,7 +384,7 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module' ];
+		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ];
 		if ( $screen && ( in_array( $screen->id, $screens_with_custom_navigation, true ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
@@ -1464,7 +1483,7 @@ class Sensei_Admin {
 			$courses = get_posts( $args );
 
 			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
-			$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
+			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
