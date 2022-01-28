@@ -2,14 +2,11 @@
 
 
 .sensei-lms-course-navigation {
-
-
 	&__modules + &__lessons {
 		border-top: 1px dotted var(--border-color, #1E1E1E);
 		margin-top: 6px;
 		padding-top: 6px;
 	}
-
 }
 
 .sensei-lms-course-navigation-module {

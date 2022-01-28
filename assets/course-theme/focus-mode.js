@@ -4,6 +4,7 @@
  * @type {string}
  */
 const FOCUS_MODE_CLASS = 'sensei-course-theme--focus-mode';
+const HIDDEN_CLASS_NAME = 'sensei-course-theme__sidebar--hidden';
 
 /**
  * Initialize focus mode state on page load.
@@ -39,15 +40,15 @@ const toggleFocusMode = ( on, restore ) => {
 	const { classList } = document.body;
 
 	const courseNavigation = document.querySelector(
-		'.sensei-lms-course-navigation'
+		'.sensei-course-theme__sidebar'
 	);
 	const isActive = classList.contains( FOCUS_MODE_CLASS );
 	const next = 'undefined' === typeof on ? ! isActive : on;
 
 	if ( ! next ) {
-		courseNavigation.style.visibility = '';
+		courseNavigation.classList.remove( HIDDEN_CLASS_NAME );
 	} else if ( restore ) {
-		courseNavigation.style.visibility = 'hidden';
+		courseNavigation.classList.add( HIDDEN_CLASS_NAME );
 	}
 
 	classList.toggle( FOCUS_MODE_CLASS, next );
@@ -65,9 +66,9 @@ window.addEventListener( 'DOMContentLoaded', () => {
 				'left' === e.propertyName &&
 				document.body.classList.contains( FOCUS_MODE_CLASS )
 			) {
-				document.querySelector(
-					'.sensei-lms-course-navigation'
-				).style.visibility = 'hidden';
+				document
+					.querySelector( '.sensei-course-theme__sidebar' )
+					.classList.add( HIDDEN_CLASS_NAME );
 			}
 		} );
 } );

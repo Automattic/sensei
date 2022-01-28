@@ -31,6 +31,43 @@ class Prev_Next_Lesson {
 	}
 
 	/**
+	 * Get the previous or next link link.
+	 *
+	 * @param array  $urls      Previous and next lesson URLs.
+	 * @param string $type      Link type.
+	 * @param string $label     Link label.
+	 * @param string $icon_name Icon name for the link.
+	 *
+	 * @return string The link,
+	 */
+	private function get_link( $urls, $type, $label, $icon_name ) {
+		$disabled_attrs = '';
+
+		if ( empty( $urls[ $type ]['url'] ) ) {
+			$url            = '#';
+			$tag            = 'span';
+			$disabled_attrs = 'data-disabled="disabled"';
+		} else {
+			$url = esc_url( $urls[ $type ]['url'] );
+			$tag = 'a';
+		}
+
+		$icon        = \Sensei()->assets->get_icon( $icon_name );
+		$before_icon = 'previous' === $type ? $icon : '';
+		$after_icon  = 'next' === $type ? $icon : '';
+
+		return ( "
+			<{$tag} class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' href='{$url}' aria-label='{$label}' {$disabled_attrs}>
+				{$before_icon}
+				<span class='sensei-course-theme-prev-next-lesson-text sensei-course-theme-prev-next-lesson-text__next'>
+					{$label}
+				</span>
+				{$after_icon}
+			</{$tag}>
+		" );
+	}
+
+	/**
 	 * Renders the block.
 	 *
 	 * @param array  $attributes The attributes that were saved for this block.
@@ -39,6 +76,16 @@ class Prev_Next_Lesson {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes, string $content ): string {
-		return do_blocks( '<!-- wp:sensei-lms/course-theme-prev-lesson /--><!-- wp:sensei-lms/course-theme-next-lesson /-->' );
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+
+		if ( empty( $lesson_id ) ) {
+			return '';
+		}
+
+		$urls = sensei_get_prev_next_lessons( $lesson_id );
+		$prev = $this->get_link( $urls, 'previous', __( 'Previous', 'sensei-lms' ), 'chevron-left' );
+		$next = $this->get_link( $urls, 'next', __( 'Next', 'sensei-lms' ), 'chevron-right' );
+
+		return $prev . $next;
 	}
 }

@@ -304,7 +304,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Course Settings.
 		$fields['sensei_learning_mode_all'] = array(
 			'name'        => __( 'Learning mode', 'sensei-lms' ) . '<span class="sensei-badge sensei-badge--success sensei-badge--after-text">' . __( 'New!', 'sensei-lms' ) . '</span>',
-			'description' => __( 'Enable this mode for your courses to show an immersive and dedicated view for the course, lessons, and quizzes.', 'sensei-lms' ),
+			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_setting',
 			'type'        => 'checkbox',
 			'default'     => false,
@@ -861,31 +861,20 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$value         = $options[ $key ];
 		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
 		?>
-		<div class="sensei-settings-learning-mode__container">
-			<div class="sensei-settings-learning-mode__checkbox">
-				<input id="<?php echo esc_attr( $args['key'] ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
-				<label for="<?php echo esc_attr( $args['key'] ); ?>">
-					<?php esc_html_e( 'Enable for all courses', 'sensei-lms' ); ?>
-				</label>
-			</div>
-			<br />
-			<p class="sensei-settings-learning-mode__description">
-				<?php echo esc_html( $args['data']['description'] ); ?>
-			</p>
-			<?php if ( $customize_url ) { ?>
-			<br />
-			<p class="sensei-settings-learning-mode__description">
-				<?php esc_html_e( 'Customize the colors, add a logo, and other styling options for Sensei’s learning mode.', 'sensei-lms' ); ?>
-			</p>
-			<br />
-			<p class="sensei-settings-learning-mode__description">
-				<a class="sensei-settings-learning-mode__customize-link button" href="<?php echo esc_url( $customize_url ); ?>">
-					<?php esc_html_e( 'Customize styles', 'sensei-lms' ); ?>
-				</a>
-			</p>
-			<?php } ?>
-			<br />
-		</div>
+		<label for="<?php echo esc_attr( $args['key'] ); ?>">
+			<input id="<?php echo esc_attr( $args['key'] ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
+			<?php esc_html_e( 'Enable for all courses', 'sensei-lms' ); ?>
+		</label>
+		<p>
+			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
+		</p>
+		<?php if ( $customize_url ) { ?>
+		<p class="extra-content">
+			<a href="<?php echo esc_url( $customize_url ); ?>">
+				<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
+			</a>
+		</p>
+		<?php } ?>
 		<?php
 	}
 }
