@@ -158,10 +158,12 @@ class Sensei_Lesson {
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
+
 		if ( ! $screen ) {
 			return;
 		}
-		if ( in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag' ], true ) ) {
+
+		if ( in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag' ], true ) && ( 'term' !== $screen->base ) ) {
 			$this->display_lessons_navigation( $screen );
 		}
 	}

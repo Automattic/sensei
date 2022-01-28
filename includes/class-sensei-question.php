@@ -54,10 +54,12 @@ class Sensei_Question {
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
+
 		if ( ! $screen ) {
 			return;
 		}
-		if ( in_array( $screen->id, [ 'edit-question', 'edit-question-category' ], true ) ) {
+
+		if ( in_array( $screen->id, [ 'edit-question', 'edit-question-category' ], true ) && ( 'term' !== $screen->base ) ) {
 			$this->display_question_navigation( $screen );
 		}
 	}
