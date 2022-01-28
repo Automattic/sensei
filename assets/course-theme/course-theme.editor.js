@@ -20,6 +20,7 @@ function redirectToCourseThemeOverride() {
 	query.learn = isCourseThemeDocument ? '1' : undefined;
 	if ( !! query.learn !== !! isCourseThemeActive ) {
 		const url = addQueryArgs( document.location.path, query );
+		document.body.style.display = 'none';
 		document.location.replace( url );
 	}
 }
