@@ -143,7 +143,7 @@ class Sensei_Core_Modules {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
+		if ( 'edit-module' === $screen->id ) {
 			$this->display_modules_navigation( $screen );
 		}
 	}

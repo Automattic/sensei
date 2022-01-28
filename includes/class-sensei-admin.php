@@ -314,7 +314,7 @@ class Sensei_Admin {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
-		$module_pages_screen_ids = [ 'edit-module', 'course_page_module-order' ];
+		$module_pages_screen_ids = [ 'edit-module' ];
 
 		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );
 		$is_allowed_post_type_page = isset( $hook_suffix ) && in_array( $hook_suffix, $allowed_post_type_pages, true );
@@ -369,7 +369,7 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		$allowed_screen_ids = [ 'edit-course', 'edit-course-category', 'edit-module', 'course_page_module-order' ];
+		$allowed_screen_ids = [ 'edit-course', 'edit-course-category', 'edit-module' ];
 		if ( $screen && ( in_array( $screen->id, $allowed_screen_ids, true ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
