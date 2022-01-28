@@ -369,7 +369,7 @@ class Sensei_Admin {
 
 		// Sensei custom navigation.
 		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'edit-lesson', 'edit-lesson-tag' ], true ) ) ) {
-			Sensei()->assets->enqueue('sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true);
+			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
