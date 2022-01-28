@@ -146,16 +146,6 @@ button {
 	margin-top: auto;
 }
 
-@media (min-width: 600px) {
-	body.admin-bar {
-		--wpadmin-bar--height: 32px;
-	}
-}
-
-body.admin-bar .wp-site-blocks {
-	min-height: calc( 100vh - var(--wpadmin-bar--height));
-}
-
 .image-no-margin {
 	margin: 0;
 }
