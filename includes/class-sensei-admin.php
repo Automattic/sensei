@@ -321,6 +321,11 @@ class Sensei_Admin {
 
 		}
 
+		// Posts filter form.
+		if ( $this->screen_has_posts_filter() ) {
+			Sensei()->assets->enqueue( 'sensei-admin-posts-filter', 'css/posts-filter.css', [], 'screen' );
+		}
+
 	}
 
 
@@ -366,15 +371,40 @@ class Sensei_Admin {
 
 		// Event logging.
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
+		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 
 		// Sensei custom navigation.
 		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ], true ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
-		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+		// Posts filter form.
+		if ( $this->screen_has_posts_filter() ) {
+			Sensei()->assets->enqueue( 'sensei-admin-posts-filter', 'js/admin/posts-filter.js', [ 'jquery' ], true );
+		}
+
 	}
 
+	/**
+	 * Check if the current screen has the posts filter form.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return bool
+	 */
+	private function screen_has_posts_filter(): bool {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		return in_array(
+			$screen->id,
+			[ 'edit-course', 'edit-lesson', 'edit-question', 'edit-sensei_message' ],
+			true
+		);
+	}
 
 	/**
 	 * admin_install_notice function.

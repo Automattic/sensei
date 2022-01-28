@@ -77,6 +77,8 @@ const files = [
 	'css/meta-box-quiz-editor.scss',
 	'css/sensei-course-theme.scss',
 	'course-theme/course-theme.js',
+	'css/posts-filter.scss',
+	'js/admin/posts-filter.js',
 ];
 
 function getName( filename ) {

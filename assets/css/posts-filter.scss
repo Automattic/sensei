@@ -1,0 +1,40 @@
+/**
+ * Variables
+ */
+$tablet-breakpoint: 783px;
+
+/**
+ * Posts filter form
+ */
+@media only screen and (min-width: $tablet-breakpoint) {
+	.tablenav.top {
+		padding-top: 0;
+		margin: 0;
+		height: auto;
+
+		> * {
+			margin-top: 1em;
+		}
+
+		.search-box {
+			margin-left: 2em;
+		}
+
+		.actions:not(.bulkactions) {
+			padding-right: 0;
+			float: right;
+
+			#post-query-submit {
+				margin-right: 0;
+			}
+		}
+
+		.tablenav-pages {
+			margin-bottom: 1em;
+			clear: both;
+		}
+	}
+}
+
+
+
