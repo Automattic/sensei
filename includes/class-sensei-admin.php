@@ -385,7 +385,12 @@ class Sensei_Admin {
 
 		// Sensei custom navigation.
 		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ];
-		if ( $screen && ( in_array( $screen->id, $screens_with_custom_navigation, true ) ) ) {
+
+		if (
+			$screen
+			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
+			&& ( 'term' !== $screen->base )
+		) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
