@@ -8,8 +8,8 @@ $tablet-breakpoint: 783px;
  */
 @media only screen and (min-width: $tablet-breakpoint) {
 	.tablenav.top {
-		padding-top: 0;
-		margin: 0;
+		padding: 0;
+		margin: 0 0 1em 0;
 		height: auto;
 
 		> * {
@@ -30,7 +30,7 @@ $tablet-breakpoint: 783px;
 		}
 
 		.tablenav-pages {
-			margin-bottom: 1em;
+			margin-bottom: 0;
 			clear: both;
 		}
 	}
