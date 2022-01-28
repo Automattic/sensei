@@ -6,15 +6,6 @@ $base: '.sensei-course-theme';
 		border: none;
 		background-color: transparent;
 
-		&__label {
-			position: absolute;
-			top: -99999px;
-
-			&--disable {
-				display: none;
-			}
-		}
-
 		.sensei-course-theme__focus-mode-toggle-icon {
 			width: 10px;
 			height: 10px;
