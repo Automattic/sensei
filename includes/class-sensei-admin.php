@@ -369,8 +369,8 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		$allowed_screen_ids = [ 'edit-course', 'edit-course-category', 'edit-module' ];
-		if ( $screen && ( in_array( $screen->id, $allowed_screen_ids, true ) ) ) {
+		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module' ];
+		if ( $screen && ( in_array( $screen->id, $screens_with_custom_navigation, true ) ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
