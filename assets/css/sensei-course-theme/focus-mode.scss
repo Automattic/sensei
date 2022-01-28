@@ -4,12 +4,30 @@ $base: '.sensei-course-theme';
 	.sensei-course-theme__focus-mode-toggle {
 		padding: 4px;
 		border: none;
-		background-color: transparent;
+		background-color: var(--bg-color);
 
 		.sensei-course-theme__focus-mode-toggle-icon {
 			width: 10px;
 			height: 10px;
-			transform: rotate(270deg);
+		}
+	}
+
+	body:not(.sensei-course-theme--focus-mode, .editor-styles-wrapper) {
+		.sensei-course-theme__focus-mode-toggle {
+			position: absolute;
+			left: 0;
+			bottom: -34px; // Button height width the padding.
+			text-align: left;
+
+			// Match sidebar spacing.
+			width: calc( var( --sidebar-width ) - 18px );
+			padding-left: 24px;
+			padding-top: 9px;
+			padding-bottom: 9px;
+		}
+
+		.sensei-course-theme__focus-mode-toggle-icon {
+			transform: rotate(180deg);
 		}
 	}
 

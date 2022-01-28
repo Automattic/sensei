@@ -9,6 +9,7 @@ import { useBlockProps } from '@wordpress/block-editor';
  */
 import ChevronLeft from '../../icons/chevron-left.svg';
 import ChevronRight from '../../icons/chevron-right.svg';
+import DoubleChevronRight from '../../icons/double-chevron-right.svg';
 import MenuIcon from '../../icons/menu.svg';
 import CorseNavigationBlock from './course-navigation';
 
@@ -115,7 +116,11 @@ const blocks = [
 		title: __( 'Focus Mode Toggle', 'sensei-lms' ),
 		name: 'sensei-lms/focus-mode-toggle',
 		edit() {
-			return <div>{ __( 'Collapse', 'sensei-lms' ) }</div>;
+			return (
+				<div className="sensei-course-theme__focus-mode-toggle">
+					<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
+				</div>
+			);
 		},
 	},
 
