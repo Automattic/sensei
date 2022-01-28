@@ -119,6 +119,7 @@ class Sensei_Admin {
 	 * Add Course order page to admin panel.
 	 *
 	 * @since  4.0.0
+	 * @access private
 	 */
 	public function add_course_order() {
 		add_submenu_page(
@@ -135,13 +136,14 @@ class Sensei_Admin {
 	 * Add Lesson order page to admin panel.
 	 *
 	 * @since  4.0.0
+	 * @access private
 	 */
 	public function add_lesson_order() {
 		add_submenu_page(
 			null,
 			__( 'Order Lessons', 'sensei-lms' ),
 			__( 'Order Lessons', 'sensei-lms' ),
-			'manage_sensei',
+			'edit_published_lessons',
 			$this->lesson_order_page_slug,
 			array( $this, 'lesson_order_screen' )
 		);
@@ -366,7 +368,9 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
 		// Sensei custom navigation.
-		Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
+		if ( $screen && ( in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'edit-lesson', 'edit-lesson-tag' ], true ) ) ) {
+			Sensei()->assets->enqueue('sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true);
+		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}

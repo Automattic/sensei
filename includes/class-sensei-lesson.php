@@ -169,13 +169,14 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
-	 * @param string | null $submenu_file The submenu file points to the certain item of the submenu.
-	 *
-	 * @return string | null
 	 * @since 4.0.0
 	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
 	 */
-	public function highlight_menu_item( ?string $submenu_file ) {
+	public function highlight_menu_item( $submenu_file ) {
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
