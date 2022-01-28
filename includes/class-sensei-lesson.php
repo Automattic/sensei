@@ -207,7 +207,7 @@ class Sensei_Lesson {
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
 				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'All Lessons', 'sensei-lms' ); ?></a>
-				<a class="sensei-custom-navigation__tab <?php echo 'lesson-tag' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lesson-tag&post_type=lesson' ) ); ?>"><?php esc_html_e( 'Lesson Tags', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'lesson-tag' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lesson-tag&post_type=course' ) ); ?>"><?php esc_html_e( 'Lesson Tags', 'sensei-lms' ); ?></a>
 			</div>
 		</div>
 		<?php
