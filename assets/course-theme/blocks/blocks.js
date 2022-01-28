@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
+import { registerBlockType, getBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -331,9 +332,9 @@ const blocks = [
 	},
 ];
 
-import { registerBlockType } from '@wordpress/blocks';
-
 blocks.forEach( ( block ) => {
 	const { name, ...settings } = block;
-	registerBlockType( name, settings );
+	if ( ! getBlockType( name ) ) {
+		registerBlockType( name, settings );
+	}
 } );
