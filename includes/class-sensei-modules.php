@@ -113,22 +113,6 @@ class Sensei_Core_Modules {
 	}
 
 	/**
-	 * Add Order modules page to admin panel.
-	 *
-	 * @since  4.0.0
-	 */
-	public function add_module_order() {
-		add_submenu_page(
-			null, // Hide from menu.
-			__( 'Order Modules', 'sensei-lms' ),
-			__( 'Order Modules', 'sensei-lms' ),
-			'edit_lessons',
-			$this->order_page_slug,
-			array( $this, 'module_order_screen' )
-		);
-	}
-
-	/**
 	 * Highlight the menu item for the modules pages.
 	 *
 	 * @since 4.0.0
