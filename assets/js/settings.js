@@ -52,7 +52,7 @@ jQuery( document ).ready( function ( $ ) {
 
 		sensei_log_event( 'settings_view', { view: toShow } );
 
-		return false;
+		return true;
 	} );
 
 	/***** Colour pickers *****/
