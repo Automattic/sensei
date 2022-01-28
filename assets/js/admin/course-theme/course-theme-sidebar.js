@@ -105,7 +105,7 @@ const CourseThemeSidebar = () => {
 			name="sensei-course-theme"
 			title={
 				<>
-					{ __( 'Course Styles', 'sensei-lms' ) }
+					{ __( 'Learning Mode', 'sensei-lms' ) }
 					<span className="sensei-badge sensei-badge--success sensei-badge--after-text">
 						{ __( 'New!', 'sensei-lms' ) }
 					</span>
@@ -123,9 +123,9 @@ const CourseThemeSidebar = () => {
 				</p>
 			) : (
 				<ToggleControl
-					label={ __( 'Learning mode', 'sensei-lms' ) }
+					label={ __( 'Enable Learning Mode', 'sensei-lms' ) }
 					help={ __(
-						'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
+						'Show an immersive and distraction-free view for lessons and quizzes.',
 						'sensei-lms'
 					) }
 					checked={ theme === SENSEI_THEME }
@@ -150,7 +150,7 @@ const CourseThemeSidebar = () => {
 			{ customizerUrl && (
 				<p>
 					<a href={ customizerUrl }>
-						{ __( 'Customize Learning mode', 'sensei-lms' ) }
+						{ __( 'Customize', 'sensei-lms' ) }
 					</a>
 				</p>
 			) }
