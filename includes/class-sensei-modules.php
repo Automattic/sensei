@@ -57,7 +57,6 @@ class Sensei_Core_Modules {
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
 		add_action( 'admin_menu', array( $this, 'remove_courses_menu_model_taxonomy' ), 10 );
 		add_action( 'admin_menu', array( $this, 'redirect_to_lesson_module_taxonomy_to_course' ), 20 );
-		add_action( 'admin_menu', array( $this, 'add_module_order' ) );
 
 		// Add course field to taxonomy
 		add_action( $this->taxonomy . '_add_form_fields', array( $this, 'add_module_fields' ), 50, 1 );
