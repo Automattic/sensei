@@ -631,16 +631,16 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				// make a copy of the file intended for upload as
 				// it will be moved to the new location during the upload
 				// and no longer available for the next test
-				$new_test_image_name     = 'test-question-' . $question_id . '-greenapple.jpg';
+				$new_test_image_name     = 'test-question-' . $question_id . '-sensei.png';
 				$new_test_image_location = $test_images_directory . $new_test_image_name;
-				copy( $test_images_directory . 'greenapple.jpg', $new_test_image_location );
+				copy( $test_images_directory . 'sensei.png', $new_test_image_location );
 
 				$file = array(
 					'name'     => $new_test_image_name,
-					'type'     => 'image/jpeg',
+					'type'     => 'image/png',
 					'tmp_name' => $new_test_image_location,
 					'error'    => 0,
-					'size'     => 4576,
+					'size'     => 7598,
 				);
 
 				// pop the file on top of the car
