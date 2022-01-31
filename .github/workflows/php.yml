@@ -44,7 +44,7 @@ jobs:
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.3', '7.4']
+                php: ['7.3', '7.4', '8.0']
                 include:
                     - php: 7.4
                       wp: 5.6
@@ -77,6 +77,14 @@ jobs:
             # run CI checks
             - name: Start mysql service
               run: sudo /etc/init.d/mysql start
+                  if [ "$(php -r "echo version_compare(PHP_VERSION,'8.0','>=');")" ]; then
+                # Temporary fix - PHPUnit 9.3 is supposed to officially support PHP 8.
+                  composer require --no-update phpunit/phpunit:"^9.3"
+                # PHPUnit 9.x does not (yet) allow for installation on PHP 8, so ignore platform
+                # requirements to get PHPUnit 9.x to install on nightly.
+                  composer install --prefer-dist --no-suggest --ignore-platform-reqs
+                  fi
+              
             - name: Install PHP dependencies
               run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
             - name: Setup test environment
