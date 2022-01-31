@@ -66,6 +66,7 @@ class Sensei_PostTypes {
 		$this->token  = 'woothemes-sensei-posttypes';
 
 		$this->setup_post_type_labels_base();
+
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
@@ -109,6 +110,9 @@ class Sensei_PostTypes {
 
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
+
+		// Add Sensei LMS submenus.
+		add_action( 'admin_menu', array( $this, 'add_submenus' ) );
 
 		$this->setup_initial_publish_action();
 
@@ -306,7 +310,7 @@ class Sensei_PostTypes {
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
-			'show_in_menu'          => true,
+			'show_in_menu'          => false,
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
@@ -402,7 +406,7 @@ class Sensei_PostTypes {
 			'public'                => false,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
-			'show_in_menu'          => true,
+			'show_in_menu'          => false,
 			'show_in_nav_menus'     => false,
 			'query_var'             => true,
 			'exclude_from_search'   => true,
@@ -486,7 +490,7 @@ class Sensei_PostTypes {
 				'public'                => true,
 				'publicly_queryable'    => true,
 				'show_ui'               => true,
-				'show_in_menu'          => 'admin.php?page=sensei',
+				'show_in_menu'          => false,
 				'show_in_nav_menus'     => true,
 				'query_var'             => true,
 				'exclude_from_search'   => true,
@@ -564,6 +568,7 @@ class Sensei_PostTypes {
 			'labels'            => $labels,
 			'show_in_rest'      => true,
 			'show_ui'           => true,
+			'show_in_menu'      => false,
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
@@ -747,7 +752,6 @@ class Sensei_PostTypes {
 	 * Setup the singular, plural and menu label names for the post types.
 	 *
 	 * @since  1.0.0
-	 * @return void
 	 */
 	private function setup_post_type_labels_base() {
 		$this->labels = array(
@@ -760,7 +764,7 @@ class Sensei_PostTypes {
 		$this->labels['course']            = array(
 			'singular' => __( 'Course', 'sensei-lms' ),
 			'plural'   => __( 'Courses', 'sensei-lms' ),
-			'menu'     => __( 'Courses', 'sensei-lms' ),
+			'menu'     => __( 'Sensei LMS', 'sensei-lms' ),
 		);
 		$this->labels['lesson']            = array(
 			'singular' => __( 'Lesson', 'sensei-lms' ),
@@ -814,7 +818,7 @@ class Sensei_PostTypes {
 			// translators: Placeholder is the singular post type label.
 			'new_item'           => sprintf( __( 'New %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'all_items'          => sprintf( __( 'All %s', 'sensei-lms' ), $plural ),
+			'all_items'          => $plural,
 			// translators: Placeholder is the singular post type label.
 			'view_item'          => sprintf( __( 'View %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
@@ -1008,6 +1012,48 @@ class Sensei_PostTypes {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Add submenus under "Sensei LMS" main menu.
+	 *
+	 * @since 4.0.0
+	 */
+	public function add_submenus() {
+		add_submenu_page(
+			'edit.php?post_type=course',
+			__( 'Modules', 'sensei-lms' ),
+			__( 'Modules', 'sensei-lms' ),
+			'manage_categories',
+			'edit-tags.php?taxonomy=module'
+		);
+
+		add_submenu_page(
+			'edit.php?post_type=course',
+			__( 'Lessons', 'sensei-lms' ),
+			__( 'Lessons', 'sensei-lms' ),
+			'edit_lessons',
+			'edit.php?post_type=lesson'
+		);
+
+		add_submenu_page(
+			'edit.php?post_type=course',
+			__( 'Questions', 'sensei-lms' ),
+			__( 'Questions', 'sensei-lms' ),
+			'edit_questions',
+			'edit.php?post_type=question'
+		);
+
+		Sensei()->learners->learners_admin_menu();
+		Sensei()->grading->grading_admin_menu();
+
+		$sensei_messages = new Sensei_Messages();
+		$sensei_messages->add_menu_item();
+
+		Sensei()->analysis->analysis_admin_menu();
+		Sensei()->settings->register_settings_screen();
+		Sensei_Tools::instance()->add_menu_pages();
+		Sensei_Extensions::instance()->add_admin_menu_item();
 	}
 
 	/**

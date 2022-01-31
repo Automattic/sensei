@@ -143,9 +143,79 @@ class Sensei_Lesson {
 			add_action( 'wp', array( __CLASS__, 'maybe_start_lesson' ) );
 		}
 
+		// Add custom navigation.
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag' ], true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_lessons_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Highlight the menu item for the lessons pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		$screen = get_current_screen();
+
+		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
+			$submenu_file = 'edit.php?post_type=lesson';
+		}
+
+		return $submenu_file;
+	}
+
+
+	/**
+	 * Display the lessons' navigation.
+	 *
+	 * @param WP_Screen $screen
+	 */
+	private function display_lessons_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Lessons', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'All Lessons', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'lesson-tag' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lesson-tag&post_type=course' ) ); ?>"><?php esc_html_e( 'Lesson Tags', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
 
 	/**
 	 * Adds a link for editing the lesson's course if it belongs to a course.
@@ -181,7 +251,8 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$url = admin_url( "post.php?post=$course_id&action=edit" ); ?>
+		$url = admin_url( "post.php?post=$course_id&action=edit" );
+		?>
 
 		<script>
 			jQuery(function () {
@@ -2474,7 +2545,7 @@ class Sensei_Lesson {
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
-			'taxonomy-module',
+			'module',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {

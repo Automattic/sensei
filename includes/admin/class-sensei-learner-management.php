@@ -70,7 +70,7 @@ class Sensei_Learner_Management {
 		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
-			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
+
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
 
 			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
@@ -103,10 +103,17 @@ class Sensei_Learner_Management {
 	 */
 	public function learners_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+			$learners_page = add_submenu_page(
+				'edit.php?post_type=course',
+				$this->name,
+				$this->name,
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'learners_page' )
+			);
+
 			add_action( "load-$learners_page", array( $this, 'load_screen_options_when_on_bulk_actions' ) );
 		}
-
 	}
 
 	/**

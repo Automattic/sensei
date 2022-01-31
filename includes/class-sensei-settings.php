@@ -87,13 +87,17 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
 	 */
 	public function register_settings_screen() {
-
 		$this->settings_version = Sensei()->version; // Use the global plugin version on this settings screen.
-		$hook                   = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
-		$this->hook             = $hook;
+		$this->hook             = add_submenu_page(
+			'edit.php?post_type=course',
+			$this->name,
+			$this->menu_label,
+			'manage_sensei',
+			$this->page_slug,
+			array( $this, 'settings_screen' )
+		);
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 			add_action( 'admin_notices', array( $this, 'settings_errors' ) );

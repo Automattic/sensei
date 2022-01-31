@@ -40,8 +40,6 @@ class Sensei_Messages {
 		$this->post_type   = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
 
-		// Add Messages page to admin menu
-		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 40 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
@@ -122,9 +120,15 @@ class Sensei_Messages {
 	}
 
 	public function add_menu_item() {
-
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'sensei-lms' ), __( 'Messages', 'sensei-lms' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
+
+			add_submenu_page(
+				'edit.php?post_type=course',
+				__( 'Messages', 'sensei-lms' ),
+				__( 'Messages', 'sensei-lms' ),
+				'edit_courses',
+				'edit.php?post_type=sensei_message'
+			);
 		}
 	}
 
