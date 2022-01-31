@@ -192,7 +192,7 @@ class Sensei_Course_Theme_Option {
 		$notices['sensei-course-theme'] = [
 			'type'       => 'user',
 			'icon'       => 'sensei',
-			'heading'    => __( 'Sensei’s new learning mode is here', 'sensei-lms' ),
+			'heading'    => __( 'Sensei’s new Learning Mode is here!', 'sensei-lms' ),
 			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
 			'actions'    => [
 				[
