@@ -3,7 +3,7 @@
  * File containing the Sensei_Course_Video_Blocks_Vimeo_Extension class.
  *
  * @package sensei-lms
- * @since 4.0.0
+ * @since 3.15.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Extends standard Embed block with Vimeo specific functionality for video course progression
  *
- * @since 4.0.0
+ * @since 3.15.0
  */
 class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blocks_Embed_Extension {
 	/**

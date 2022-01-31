@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class that handles showing the notices from SenseiLMS.com.
+ * Class that handles showing admin notices.
+ * It also includes notices coming from SenseiLMS.com.
  *
  * @access private
  *
@@ -132,6 +133,16 @@ class Sensei_Admin_Notices {
 			$notices = [];
 		}
 
+		/**
+		 * Filters the admin notices.
+		 *
+		 * @hook sensei_admin_notices
+		 *
+		 * @param {array} $notices The admin notices.
+		 * @return {array} The admin notices.
+		 */
+		$notices = apply_filters( 'sensei_admin_notices', $notices );
+
 		return $notices;
 	}
 
@@ -163,13 +174,17 @@ class Sensei_Admin_Notices {
 		<div class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<?php
+			if ( ! empty( $notice['icon'] ) ) {
+				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
+				echo Sensei()->assets->get_icon( $notice['icon'], 'sensei-notice__icon' );
+			}
 			echo '<div class="sensei-notice__wrapper">';
+			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['heading'] ) ) {
 				echo '<div class="sensei-notice__heading">';
 				echo wp_kses( $notice['heading'], self::ALLOWED_HTML );
 				echo '</div>';
 			}
-			echo '<div class="sensei-notice__content">';
 			echo wp_kses( $notice['message'], self::ALLOWED_HTML );
 			echo '</div>';
 			echo '</div>';

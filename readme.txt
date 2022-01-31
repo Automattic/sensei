@@ -4,7 +4,7 @@ Tags: elearning, lms, learning management system, teach, courses, woocommerce
 Requires at least: 5.6
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 3.14.0
+Stable tag: 3.15.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,5 +94,35 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 5. Quiz
 
 == Changelog ==
+
+2022.01.18 - version 3.15.0
+* New: Quiz Pagination
+	* Add toolbar pagination settings [#4429](https://github.com/Automattic/sensei/pull/4429)
+	* Implement the quiz pagination backend [#4492](https://github.com/Automattic/sensei/pull/4492)
+	* Implement the quiz pagination frontend [#4502](https://github.com/Automattic/sensei/pull/4502)
+	* Save the quiz pagination form state between pages [#4521](https://github.com/Automattic/sensei/pull/4521)
+	* Reorganize quiz pagination settings [#4523](https://github.com/Automattic/sensei/pull/4523)
+	* Rename CourseProgress to more generic ProgressBar [#4572](https://github.com/Automattic/sensei/pull/4572)
+	* Make the quiz buttons consistent [#4579](https://github.com/Automattic/sensei/pull/4579)
+	* Add a button to the quiz block that opens the quiz settings [#4597](https://github.com/Automattic/sensei/pull/4597)
+	* Frontend for progress bar related to pagination  [#4606](https://github.com/Automattic/sensei/pull/4606)
+	* Remove quiz pagination feature flag [#4610](https://github.com/Automattic/sensei/pull/4610)
+	* Update design of progress bar [#4620](https://github.com/Automattic/sensei/pull/4620)
+	* Show pagination progress bar in lesson edit view [#4625](https://github.com/Automattic/sensei/pull/4625)
+	* Add quiz button color settings [#4629](https://github.com/Automattic/sensei/pull/4629)
+	* Fix quiz settings link not centered on Astra [#4635](https://github.com/Automattic/sensei/pull/4635)
+	* Fix lesson course metabox request infinite loop [#4637](https://github.com/Automattic/sensei/pull/4637)
+	* Minor tweaks to quiz and video settings [#4639](https://github.com/Automattic/sensei/pull/4639)
+* New: Video-based Course Progression
+	* Add Video-Based Course Progression settings [#4519](https://github.com/Automattic/sensei/pull/4519)
+	* Extend standard YouTube embed block [#4546](https://github.com/Automattic/sensei/pull/4546)
+	* Extend standard Vimeo video embed [#4561](https://github.com/Automattic/sensei/pull/4561)
+	* Extend standard video block [#4562](https://github.com/Automattic/sensei/pull/4562)
+	* Add VideoPress extension [#4573](https://github.com/Automattic/sensei/pull/4573)
+	* Add a 3-second delay before autocompleting the lesson [#4611](https://github.com/Automattic/sensei/pull/4611)
+	* Add styles for the disabled button in the lesson template [#4612](https://github.com/Automattic/sensei/pull/4612)
+	* Add Video settings panel to the lesson sidebar [#4624](https://github.com/Automattic/sensei/pull/4624)
+	* Remove video based course progression feature flag [#4627](https://github.com/Automattic/sensei/pull/4627)
+	* Check pause method exists for given object [#4628](https://github.com/Automattic/sensei/pull/4628)
 
 [See changelog for all versions](https://raw.githubusercontent.com/Automattic/sensei/master/changelog.txt).

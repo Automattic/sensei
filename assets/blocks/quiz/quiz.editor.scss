@@ -32,6 +32,24 @@ $gray-400: #ccc;
 	}
 }
 
+/* Block Settings */
+.sensei-lms-quiz-block-settings {
+	&__question-count,
+	&__progress-bar {
+		align-items: baseline;
+		justify-content: flex-start;
+
+		.components-base-control {
+			margin-bottom: 0;
+			margin-right: 1em;
+		}
+	}
+
+	&__question-count {
+		margin-bottom: 12px;
+	}
+}
+
 .sensei-lms-quiz-block {
 	&__separator {
 		position: relative;
@@ -61,6 +79,11 @@ $gray-400: #ccc;
 		}
 	}
 
+	&__progress-bar {
+		margin-top: $default-block-margin;
+		margin-bottom: $default-block-margin;
+	}
+
 	&__pre-publish-validation {
 		&__notice {
 			margin: 0;
@@ -72,29 +95,17 @@ $gray-400: #ccc;
 	}
 
 	/* Settings */
-	&__settings-link {
+	&__settings-quick-nav {
 		display: flex;
-		margin: 0 auto;
-		text-decoration: underline;
+		justify-content: center;
 
-		&:focus:not(:disabled) {
-			box-shadow: none;
+		button {
+			text-decoration: underline;
+
+			&:focus:not(:disabled) {
+				box-shadow: none;
+			}
 		}
-	}
-
-	&__question-count,
-	&__progress-bar {
-		align-items: baseline;
-		justify-content: flex-start;
-
-		.components-base-control {
-			margin-bottom: 0;
-			margin-right: 1em;
-		}
-	}
-
-	&__question-count {
-		margin-bottom: 12px;
 	}
 
 	/* Toolbar */

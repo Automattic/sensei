@@ -11,42 +11,33 @@
 }
 
 .sensei-lms-course-navigation-module {
-	&__header {
+	.sensei-collapsible__toggle {
 		display: flex;
 		align-items: flex-start;
+		width: 100%;
 		margin: 12px 0;
 
-		.sensei-collapsible__toggle {
-			&:hover {
-				color: var(--primary-color);
-			}
-			svg {
-				fill: currentColor;
-				width: 24px;
-				height: 24px;
-			}
+		&:hover {
+			color: var(--primary-color);
+			text-decoration: underline;
+		}
 
-			&.collapsed {
-				transform: rotate(180deg);
-			}
-
+		.sensei-lms-course-navigation-module__collapsible-icon {
+			width: 24px;
 			height: 24px;
+		}
+
+		&.collapsed .sensei-lms-course-navigation-module__collapsible-icon {
+			transform: rotate(180deg);
 		}
 	}
 
 	&__title {
 		flex: 1;
-
-		a {
-			color: var(--primary-color);
-			font-weight: 600;
-			font-size: 18px;
-			line-height: 22px;
-
-			&:hover {
-				text-decoration: underline;
-			}
-		}
+		color: var(--primary-color);
+		font-weight: 600;
+		font-size: 18px;
+		line-height: 22px;
 	}
 
 	&__summary {

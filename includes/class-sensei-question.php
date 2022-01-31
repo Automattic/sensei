@@ -862,8 +862,8 @@ class Sensei_Question {
 		 */
 		$show_correct_answers = apply_filters( 'sensei_question_show_answers', $show_correct_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
 
-		$answer_grade   = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
-		$answer_correct = is_int( $answer_grade ) && $answer_grade > 0;
+		$answer_grade   = (int) Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+		$answer_correct = $answer_grade > 0;
 
 		$answer_notes_classname = '';
 		$answer_feedback_title  = '';
@@ -948,6 +948,8 @@ class Sensei_Question {
 		 */
 		$correct_answer = apply_filters( 'sensei_question_answer_message_correct_answer', $correct_answer, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
 
+		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
+
 		?>
 		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( $answer_notes_classname ); ?>">
 			<?php if ( $indicate_incorrect ) { ?>
@@ -960,7 +962,7 @@ class Sensei_Question {
 					<?php } ?>
 				</div>
 			<?php } ?>
-			<?php if ( $answer_notes || $correct_answer ) { ?>
+			<?php if ( $has_answer_notes || $correct_answer ) { ?>
 				<div class="sensei-lms-question__answer-feedback__content">
 					<?php if ( $correct_answer ) { ?>
 						<div class="sensei-lms-question__answer-feedback__correct-answer">
@@ -968,7 +970,7 @@ class Sensei_Question {
 							<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
 						</div>
 					<?php } ?>
-					<?php if ( $answer_notes && wp_strip_all_tags( $answer_notes ) ) { ?>
+					<?php if ( $has_answer_notes ) { ?>
 						<div class="sensei-lms-question__answer-feedback__answer-notes">
 							<?php echo wp_kses_post( $answer_notes ); ?>
 						</div>

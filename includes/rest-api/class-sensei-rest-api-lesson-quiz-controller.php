@@ -291,6 +291,9 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			}
 		}
 
+		$meta_input['_button_text_color']       = $quiz_options['button_text_color'] ?? null;
+		$meta_input['_button_background_color'] = $quiz_options['button_background_color'] ?? null;
+
 		if ( isset( $quiz_options['pagination'] ) ) {
 			$meta_input['_pagination'] = wp_json_encode( $quiz_options['pagination'] );
 		}
@@ -357,17 +360,20 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 		$allow_retakes           = ! empty( $post_meta['_enable_quiz_reset'][0] ) && 'on' === $post_meta['_enable_quiz_reset'][0];
 		$failed_feedback_default = ! $allow_retakes;
 
-		$pagination = [
+		$pagination_defaults = [
 			'pagination_number'       => null,
 			'show_progress_bar'       => false,
-			'progress_bar_radius'     => 5,
-			'progress_bar_height'     => 5,
+			'progress_bar_radius'     => 6,
+			'progress_bar_height'     => 12,
 			'progress_bar_color'      => null,
 			'progress_bar_background' => null,
 		];
 
-		if ( ! empty( $post_meta['_pagination'][0] ) ) {
-			$pagination = json_decode( $post_meta['_pagination'][0], true ) ?? $pagination;
+		if ( empty( $post_meta['_pagination'][0] ) ) {
+			$pagination = $pagination_defaults;
+		} else {
+			$pagination = json_decode( $post_meta['_pagination'][0], true );
+			$pagination = $pagination ? $pagination : $pagination_defaults;
 		}
 
 		$quiz_data = [
@@ -381,6 +387,8 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 				'failed_indicate_incorrect'   => empty( $post_meta['_failed_indicate_incorrect'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_indicate_incorrect'][0],
 				'failed_show_correct_answers' => empty( $post_meta['_failed_show_correct_answers'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_correct_answers'][0],
 				'failed_show_answer_feedback' => empty( $post_meta['_failed_show_answer_feedback'][0] ) ? $failed_feedback_default : 'yes' === $post_meta['_failed_show_answer_feedback'][0],
+				'button_text_color'           => ! empty( $post_meta['_button_text_color'][0] ) ? $post_meta['_button_text_color'][0] : null,
+				'button_background_color'     => ! empty( $post_meta['_button_background_color'][0] ) ? $post_meta['_button_background_color'][0] : null,
 				'pagination'                  => $pagination,
 			],
 			'questions'     => $this->get_quiz_questions( $quiz ),
@@ -485,6 +493,16 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 							'description' => 'Show answer feedback text',
 							'default'     => null,
 						],
+						'button_text_color'           => [
+							'type'        => [ 'string', 'null' ],
+							'description' => 'Button text color',
+							'default'     => null,
+						],
+						'button_background_color'     => [
+							'type'        => [ 'string', 'null' ],
+							'description' => 'Button background color',
+							'default'     => null,
+						],
 						'pagination'                  => [
 							'type'       => 'object',
 							'required'   => true,
@@ -502,12 +520,12 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 								'progress_bar_radius'     => [
 									'type'        => 'integer',
 									'description' => 'Progress bar radius',
-									'default'     => 5,
+									'default'     => 6,
 								],
 								'progress_bar_height'     => [
 									'type'        => 'integer',
 									'description' => 'Progress bar height',
-									'default'     => 5,
+									'default'     => 12,
 								],
 								'progress_bar_background' => [
 									'type'        => [ 'string', 'null' ],

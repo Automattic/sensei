@@ -7,8 +7,18 @@ $base: '.sensei-course-theme';
 	top: 8px;
 	padding: 4px;
 	white-space: nowrap;
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: center;
+	gap: 12px;
 	&__disable {
 		display: none;
+	}
+
+	.sensei-course-theme__focus-mode-toggle-icon {
+		width: 10px;
+		height: 10px;
+		transform: rotate(180deg);
 	}
 }
 @media screen and (min-width: 782px) {
@@ -56,11 +66,15 @@ $base: '.sensei-course-theme';
 		}
 		&__focus-mode-toggle {
 			left: 420px;
+			flex-direction: row;
 			&__enable {
 				display: none;
 			}
 			&__disable {
 				display: revert;
+			}
+			.sensei-course-theme__focus-mode-toggle-icon {
+				transform: none;
 			}
 		}
 	}

@@ -49,7 +49,7 @@ class Sensei_WCPC_Prompt {
 		<div class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_wcpc_prompt"
 			data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_PROMPT_NONCE_ACTION ) ); ?>">
 			<?php
-				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returning svg only.
+				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 				echo Sensei()->assets->get_icon( 'sensei', 'sensei-notice__icon' );
 			?>
 			<div class='sensei-notice__wrapper'>

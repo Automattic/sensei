@@ -4,6 +4,7 @@
 const path = require( 'path' );
 const process = require( 'process' );
 const { fromPairs } = require( 'lodash' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 
@@ -60,6 +61,7 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
+	'blocks/progress-bar.js',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'css/tools.scss',
@@ -72,6 +74,7 @@ const files = [
 	'css/modules-admin.css',
 	'css/modules-frontend.scss',
 	'css/pages-frontend.scss',
+	'css/course-editor.scss',
 	'css/ranges.css',
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
@@ -145,6 +148,14 @@ function getWebpackConfig( env, argv ) {
 				),
 				ignoreSrcPattern: /^node_modules/,
 				baseDist,
+			} ),
+			new CopyPlugin( {
+				patterns: [
+					{
+						from: path.resolve( '.', 'assets/images' ),
+						to: path.resolve( '.', baseDist, 'images' ),
+					},
+				],
 			} ),
 			new SVGSpritemapPlugin( 'assets/icons/**/*.svg', {
 				output: {
