@@ -130,17 +130,17 @@ class Sensei_Autoloader {
 			/**
 			 * Admin Tools
 			 */
-			'Sensei_Tools'                                => 'admin/class-sensei-tools.php',
-			'Sensei_Tool_Interface'                       => 'admin/tools/class-sensei-tool-interface.php',
-			'Sensei_Tool_Interactive_Interface'           => 'admin/tools/class-sensei-tool-interactive-interface.php',
-			'Sensei_Tool_Recalculate_Course_Enrolment'    => 'admin/tools/class-sensei-tool-recalculate-course-enrolment.php',
-			'Sensei_Tool_Recalculate_Enrolment'           => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
-			'Sensei_Tool_Ensure_Roles'                    => 'admin/tools/class-sensei-tool-ensure-roles.php',
-			'Sensei_Tool_Remove_Deleted_User_Data'        => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
-			'Sensei_Tool_Module_Slugs_Mismatch'           => 'admin/tools/class-sensei-tool-module-slugs-mismatch.php',
-			'Sensei_Tool_Enrolment_Debug'                 => 'admin/tools/class-sensei-tool-enrolment-debug.php',
-			'Sensei_Tool_Import'                          => 'admin/tools/class-sensei-tool-import.php',
-			'Sensei_Tool_Export'                          => 'admin/tools/class-sensei-tool-export.php',
+			'Sensei_Tools'                                 => 'admin/class-sensei-tools.php',
+			'Sensei_Tool_Interface'                        => 'admin/tools/class-sensei-tool-interface.php',
+			'Sensei_Tool_Interactive_Interface'            => 'admin/tools/class-sensei-tool-interactive-interface.php',
+			'Sensei_Tool_Recalculate_Course_Enrolment'     => 'admin/tools/class-sensei-tool-recalculate-course-enrolment.php',
+			'Sensei_Tool_Recalculate_Enrolment'            => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
+			'Sensei_Tool_Ensure_Roles'                     => 'admin/tools/class-sensei-tool-ensure-roles.php',
+			'Sensei_Tool_Remove_Deleted_User_Data'         => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
+			'Sensei_Tool_Module_Slugs_Mismatch'            => 'admin/tools/class-sensei-tool-module-slugs-mismatch.php',
+			'Sensei_Tool_Enrolment_Debug'                  => 'admin/tools/class-sensei-tool-enrolment-debug.php',
+			'Sensei_Tool_Import'                           => 'admin/tools/class-sensei-tool-import.php',
+			'Sensei_Tool_Export'                           => 'admin/tools/class-sensei-tool-export.php',
 
 			/**
 			 * Shortcodes
