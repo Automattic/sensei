@@ -392,7 +392,7 @@ class Sensei_Learner_Management {
 			'sensei_ajax_redirect_url',
 			add_query_arg(
 				array(
-					'post_type' => $this->menu_post_type,
+					'post_type'  => $this->menu_post_type,
 					'page'       => $this->page_slug,
 					'course_cat' => $course_cat,
 				),
