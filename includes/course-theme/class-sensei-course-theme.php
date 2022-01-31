@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \Sensei\Blocks\Course_Theme;
-
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
@@ -70,8 +68,8 @@ class Sensei_Course_Theme {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
-		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 10 );
-		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 20 );
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 1 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 

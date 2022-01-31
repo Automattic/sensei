@@ -65,7 +65,7 @@ class Sensei_Blocks {
 		$this->quiz   = new Sensei_Quiz_Blocks();
 		$this->page   = new Sensei_Page_Blocks();
 
-		new Sensei_Course_Navigation_Block();
+		new Sensei\Blocks\Course_Theme_Blocks();
 	}
 
 	/**
@@ -81,6 +81,7 @@ class Sensei_Blocks {
 		Sensei()->assets->register( 'sensei-editor-components-style', 'blocks/editor-components/editor-components-style.css' );
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
+		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css', [] );
 	}
 
 	/**

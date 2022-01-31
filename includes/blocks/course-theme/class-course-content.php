@@ -3,7 +3,7 @@
  * File containing the Sensei\Blocks\Course_Theme\Course_Content class.
  *
  * @package sensei
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -11,8 +11,6 @@ namespace Sensei\Blocks\Course_Theme;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-use \Sensei_Blocks;
 
 /**
  * Block to render the content for the current lesson or quiz page.
@@ -23,12 +21,33 @@ class Course_Content {
 	 * Content constructor.
 	 */
 	public function __construct() {
-		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/course-content',
-			[
-				'render_callback' => [ $this, 'render_content' ],
-			]
-		);
+		add_filter( 'the_content', [ $this, 'render_content' ] );
+
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'core/post-content' ) ) {
+			register_block_type(
+				'core/post-content',
+				[
+					'render_callback' => [ $this, 'render_content_block' ],
+				]
+			);
+		}
+	}
+
+	/**
+	 * Content block fallback.
+	 *
+	 * @return string
+	 */
+	public function render_content_block() {
+
+		if ( ! in_the_loop() && have_posts() ) {
+			the_post();
+		}
+
+		ob_start();
+		the_content();
+		return ob_get_clean();
+
 	}
 
 	/**
@@ -36,9 +55,18 @@ class Course_Content {
 	 *
 	 * @access private
 	 *
+	 * @param string $content
+	 *
 	 * @return string HTML
 	 */
-	public function render_content() {
+	public function render_content( $content ) {
+
+		if ( ! \Sensei_Course_Theme_Option::instance()->should_use_sensei_theme() ) {
+			return $content;
+		}
+
+		remove_filter( 'the_content', [ $this, 'render_content' ] );
+
 		$type = get_post_type();
 
 		$content = '';

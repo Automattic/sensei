@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use \Sensei_Blocks;
 
 /**
- * Class Exit_Course the back to lesson block in the quiz.
+ * Exit course link, to leave Learning Mode and open the course page.
  */
 class Exit_Course {
 	/**

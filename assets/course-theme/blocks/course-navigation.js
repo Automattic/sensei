@@ -129,7 +129,6 @@ const Lesson = ( { title, quiz, status } ) => {
  * Course Navigation block.
  */
 export default {
-	category: 'sensei-lms',
 	supports: {},
 	attributes: {},
 	title: __( 'Course Navigation', 'sensei-lms' ),

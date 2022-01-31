@@ -25,15 +25,15 @@ class Sensei_Customizer {
 		$this->colors = [
 			'sensei-course-theme-primary-color'    => [
 				'label'   => __( 'Primary Color', 'sensei-lms' ),
-				'default' => '#1E1E1E',
+				'default' => '#1e1e1e',
 			],
 			'sensei-course-theme-background-color' => [
 				'label'   => __( 'Background Color', 'sensei-lms' ),
-				'default' => '#FFFFFF',
+				'default' => '#ffffff',
 			],
 			'sensei-course-theme-foreground-color' => [
 				'label'   => __( 'Text Color', 'sensei-lms' ),
-				'default' => '#1E1E1E',
+				'default' => '#1e1e1e',
 			],
 		];
 
@@ -105,7 +105,7 @@ class Sensei_Customizer {
 
 		foreach ( $this->colors as $variable => $settings ) {
 			$value = get_option( $variable );
-			if ( $value ) {
+			if ( $value && $value !== $settings['default'] ) {
 				$css .= sprintf( "--%s: %s;\n", $variable, ( $value ) );
 			}
 		}

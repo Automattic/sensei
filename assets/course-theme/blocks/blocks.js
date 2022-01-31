@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
+import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -11,25 +12,26 @@ import ChevronLeft from '../../icons/chevron-left.svg';
 import ChevronRight from '../../icons/chevron-right.svg';
 import DoubleChevronRight from '../../icons/double-chevron-right.svg';
 import MenuIcon from '../../icons/menu.svg';
-import CorseNavigationBlock from './course-navigation';
-
-/**
- * Internal dependencies
- */
-import registerSenseiBlocks from '../../blocks/register-sensei-blocks';
+import SenseiIcon from '../../icons/sensei.svg';
+import CourseNavigationBlock from './course-navigation';
 
 const meta = {
-	category: 'sensei-lms',
+	category: 'theme',
 	supports: {},
 	attributes: {},
+	icon: <SenseiIcon width="20" height="20" />,
 };
 
 const blocks = [
-	CorseNavigationBlock,
+	{ ...meta, ...CourseNavigationBlock },
 	{
 		...meta,
 		title: __( 'Course Title', 'sensei-lms' ),
 		name: 'sensei-lms/course-title',
+		description: __(
+			'Display title of the course the current lesson or quiz belongs to.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<h2 className="wp-block-sensei-lms-course-title">
@@ -42,6 +44,10 @@ const blocks = [
 		...meta,
 		title: __( 'Course Progress', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-course-progress-counter',
+		description: __(
+			'Display number of completed and total lessons in the course.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme-course-progress">
@@ -54,6 +60,10 @@ const blocks = [
 		...meta,
 		title: __( 'Previous & Next Lesson', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-prev-next-lesson',
+		description: __(
+			'Link to the previous and next lessons.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme-prev-next-lesson-container">
@@ -69,8 +79,9 @@ const blocks = [
 	},
 	{
 		...meta,
-		title: __( 'Sidebar Toggle Button', 'sensei-lms' ),
+		title: __( 'Sidebar Toggle', 'sensei-lms' ),
 		name: 'sensei-lms/sidebar-toggle-button',
+		description: __( 'Toggle the Learning Mode sidebar.', 'sensei-lms' ),
 		edit() {
 			return (
 				<div className="sensei-course-theme__sidebar-toggle">
@@ -83,6 +94,10 @@ const blocks = [
 		...meta,
 		title: __( 'Lesson Actions', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-lesson-actions',
+		description: __(
+			'Display buttons for actions the learner can take for the current lesson.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme-lesson-actions">
@@ -100,6 +115,7 @@ const blocks = [
 		...meta,
 		title: __( 'Course Progress Bar', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-course-progress-bar',
+		description: __( 'Display course progress.', 'sensei-lms' ),
 		edit() {
 			return (
 				<div className="sensei-course-theme-course-progress-bar">
@@ -115,6 +131,10 @@ const blocks = [
 		...meta,
 		title: __( 'Focus Mode Toggle', 'sensei-lms' ),
 		name: 'sensei-lms/focus-mode-toggle',
+		description: __(
+			'Toggle a minimalized view of Learning Mode.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme__focus-mode-toggle">
@@ -123,23 +143,14 @@ const blocks = [
 			);
 		},
 	},
-
-	{
-		...meta,
-		title: __( 'Contact Teacher', 'sensei-lms' ),
-		name: 'sensei-lms/button-contact-teacher',
-		edit() {
-			return (
-				<div className="sensei-course-theme-contact-teacher__button is-primary">
-					{ __( 'Contact Teacher', 'sensei-lms' ) }
-				</div>
-			);
-		},
-	},
 	{
 		...meta,
 		title: __( 'Exit Course', 'sensei-lms' ),
 		name: 'sensei-lms/exit-course',
+		description: __(
+			'Exit Learning Mode and return to the course page.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<span className="sensei-lms-href">
@@ -152,6 +163,10 @@ const blocks = [
 		...meta,
 		title: __( 'Module Title', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-lesson-module',
+		description: __(
+			'Display title of the module the current lesson belongs to.',
+			'sensei-lms'
+		),
 		edit() {
 			return <em>{ __( 'MODULE', 'sensei-lms' ) }</em>;
 		},
@@ -160,6 +175,10 @@ const blocks = [
 		...meta,
 		title: __( 'Post Title', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-post-title',
+		description: __(
+			'Display title of the current lesson or quiz.',
+			'sensei-lms'
+		),
 		edit() {
 			return <h1>{ __( 'Lesson Title', 'sensei-lms' ) }</h1>;
 		},
@@ -168,6 +187,10 @@ const blocks = [
 		...meta,
 		title: __( 'Course Content', 'sensei-lms' ),
 		name: 'sensei-lms/course-content',
+		description: __(
+			'Display lesson or quiz content, if the learner has access to it.',
+			'sensei-lms'
+		),
 		edit() {
 			return <p>{ __( 'Course Content.', 'sensei-lms' ) }</p>;
 		},
@@ -176,6 +199,10 @@ const blocks = [
 		...meta,
 		title: __( 'Notices', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-notices',
+		description: __(
+			'Display Sensei notices about the current lesson or quiz.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
@@ -190,6 +217,10 @@ const blocks = [
 		...meta,
 		title: __( 'Quiz Progress Bar', 'sensei-lms' ),
 		name: 'sensei-lms/quiz-progress',
+		description: __(
+			'Display progress of questions answered in a quiz.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-progress-bar">
@@ -219,6 +250,10 @@ const blocks = [
 		...meta,
 		title: __( 'Back to lesson', 'sensei-lms' ),
 		name: 'sensei-lms/quiz-back-to-lesson',
+		description: __(
+			'Return to the lesson the quiz belongs to.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<span className="sensei-lms-href sensei-lms-quiz-back-to-lesson">
@@ -229,8 +264,12 @@ const blocks = [
 	},
 	{
 		...meta,
-		title: __( 'Quiz actions and pagination', 'sensei-lms' ),
+		title: __( 'Quiz Actions and Pagination', 'sensei-lms' ),
 		name: 'sensei-lms/quiz-actions',
+		description: __(
+			'Display pagination and actions the learner can take for the current quiz page.',
+			'sensei-lms'
+		),
 		apiVersion: 2,
 		edit: function EditQuizActions() {
 			const blockProps = useBlockProps( {
@@ -281,4 +320,7 @@ const blocks = [
 	},
 ];
 
-registerSenseiBlocks( blocks );
+blocks.forEach( ( block ) => {
+	const { name, ...settings } = block;
+	registerBlockType( name, settings );
+} );
