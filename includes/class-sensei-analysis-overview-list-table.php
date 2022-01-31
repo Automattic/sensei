@@ -664,7 +664,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$menu = array();
 
 		$query_args     = array(
-			'page' => $this->page_slug,
+			'page'      => $this->page_slug,
 			'post_type' => 'course',
 		);
 		$learners_class = $courses_class = $lessons_class = '';
