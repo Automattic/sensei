@@ -1,11 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	registerBlockType,
-	updateCategory,
-	getBlockType,
-} from '@wordpress/blocks';
+import { registerBlockType, updateCategory } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -24,10 +20,7 @@ const registerSenseiBlocks = ( blocks ) => {
 
 	blocks.forEach( ( block ) => {
 		const { name, ...settings } = block;
-
-		if ( ! getBlockType( name ) ) {
-			registerBlockType( name, settings );
-		}
+		registerBlockType( name, settings );
 	} );
 };
 

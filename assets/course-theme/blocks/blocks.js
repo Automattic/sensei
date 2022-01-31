@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
-import { registerBlockType, getBlockType } from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -136,23 +136,6 @@ const blocks = [
 		),
 		edit() {
 			return <div>{ __( 'Collapse', 'sensei-lms' ) }</div>;
-		},
-	},
-
-	{
-		...meta,
-		title: __( 'Contact Teacher', 'sensei-lms' ),
-		name: 'sensei-lms/button-contact-teacher',
-		description: __(
-			'Open a dialog to send a message to the course teacher.',
-			'sensei-lms'
-		),
-		edit() {
-			return (
-				<div className="sensei-course-theme-contact-teacher__button is-primary">
-					{ __( 'Contact Teacher', 'sensei-lms' ) }
-				</div>
-			);
 		},
 	},
 	{
@@ -334,7 +317,5 @@ const blocks = [
 
 blocks.forEach( ( block ) => {
 	const { name, ...settings } = block;
-	if ( ! getBlockType( name ) ) {
-		registerBlockType( name, settings );
-	}
+	registerBlockType( name, settings );
 } );

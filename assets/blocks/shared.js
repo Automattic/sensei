@@ -20,7 +20,7 @@ registerSenseiBlocks( [ ContactTeacherBlock ] );
 let postType = null;
 
 const unsubscribe = subscribe( () => {
-	postType = select( 'core/editor' ).getCurrentPostType();
+	postType = select( 'core/editor' )?.getCurrentPostType();
 
 	if ( ! postType ) {
 		return;
