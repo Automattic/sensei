@@ -51,6 +51,7 @@ $sensei-notice-icon-width: 30px;
 
 	&__actions {
 		margin: 0.5em 0 0.5em auto;
+		align-self: center;
 
 		.button {
 			padding: 3px 12px;
@@ -58,7 +59,7 @@ $sensei-notice-icon-width: 30px;
 	}
 
 	.notice-dismiss {
-		margin: 0.5em 0 0 auto;
+		align-self: center;
 		padding: 0;
 		position: static;
 	}
