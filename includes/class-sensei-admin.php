@@ -1426,7 +1426,7 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
-		$course_id = (int) $_POST['course_id'] ?? null;
+		$course_id = isset( $_POST['course_id'] ) ? (int) $_POST['course_id'] : null;
 		$ordered   = null;
 
 		if ( isset( $_POST['lesson-order'] ) ) {
