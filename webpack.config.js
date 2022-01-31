@@ -59,7 +59,6 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
-	'blocks/progress-bar.js',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'css/tools.scss',
@@ -77,7 +76,11 @@ const files = [
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
 	'css/sensei-course-theme.scss',
+	'css/sensei-course-theme.editor.scss',
+	'css/sensei-theme-blocks.scss',
 	'course-theme/course-theme.js',
+	'course-theme/course-theme.editor.js',
+	'course-theme/blocks/blocks.js',
 ];
 
 function getName( filename ) {
@@ -127,7 +130,7 @@ function getWebpackConfig( env, argv ) {
 					test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
 					type: 'asset/resource',
 					generator: {
-						filename: '[path][name]-[contenthash].[ext]',
+						filename: '[path][name]-[contenthash][ext]',
 						publicPath: '../',
 					},
 				},

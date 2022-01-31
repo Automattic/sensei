@@ -46,7 +46,7 @@ class Quiz_Actions {
 		}
 
 		global $sensei_question_loop;
-		$pagination_enabled = $sensei_question_loop['total_pages'] > 1;
+		$pagination_enabled = $sensei_question_loop && $sensei_question_loop['total_pages'] > 1;
 
 		// Get quiz actions. Either actions with pagination
 		// or only action if pagination is not enabled.
@@ -61,16 +61,6 @@ class Quiz_Actions {
 
 		if ( ! $actions ) {
 			return '';
-		}
-
-		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$user_id   = get_current_user_id();
-		if ( Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
-			return ( "
-				<form method='POST' enctype='multipart/form-data'>
-					{$actions}
-				</form>
-			" );
 		}
 
 		return $actions;

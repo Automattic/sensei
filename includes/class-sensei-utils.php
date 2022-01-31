@@ -304,84 +304,6 @@ class Sensei_Utils {
 
 	}
 
-	/**
-	 * Save quiz answers submitted by users
-	 *
-	 * @deprecated since 1.9.4 use Sensei_Quiz::save_user_answers
-	 * @param  array $submitted User's quiz answers
-	 * @param int   $user_id
-	 * @return boolean            Whether the answers were saved or not
-	 */
-	public static function sensei_save_quiz_answers( $submitted = array(), $user_id = 0 ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.4', 'Sensei_Quiz::save_user_answers' );
-
-		if ( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
-		}
-
-		$answers_saved = false;
-
-		if ( $submitted && intval( $user_id ) > 0 ) {
-
-			foreach ( $submitted as $question_id => $answer ) {
-
-				// Get question type
-				$question_type = Sensei()->question->get_question_type( $question_id );
-
-				// Sanitise answer
-				$answer = wp_unslash( $answer );
-
-				switch ( $question_type ) {
-					case 'multi-line':
-						$answer = nl2br( $answer );
-						break;
-					case 'single-line':
-						break;
-					case 'gap-fill':
-						break;
-					default:
-						$answer = maybe_serialize( $answer );
-						break;
-				}
-				$args          = array(
-					'post_id' => $question_id,
-					'data'    => base64_encode( $answer ),
-					'type'    => 'sensei_user_answer', /* FIELD SIZE 20 */
-					'user_id' => $user_id,
-					'action'  => 'update',
-				);
-				$answers_saved = self::sensei_log_activity( $args );
-			}
-
-			// Handle file upload questions
-			if ( isset( $_FILES ) ) {
-				foreach ( $_FILES as $field => $file ) {
-					if ( strpos( $field, 'file_upload_' ) !== false ) {
-						$question_id = str_replace( 'file_upload_', '', $field );
-						if ( $file && $question_id ) {
-							$attachment_id = self::upload_file( $file );
-							if ( $attachment_id ) {
-								$args          = array(
-									'post_id' => $question_id,
-									'data'    => base64_encode( $attachment_id ),
-									'type'    => 'sensei_user_answer', /* FIELD SIZE 20 */
-									'user_id' => $user_id,
-									'action'  => 'update',
-								);
-								$answers_saved = self::sensei_log_activity( $args );
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return $answers_saved;
-
-	}
-
 	public static function upload_file( $file = array() ) {
 
 		require_once ABSPATH . 'wp-admin/includes/admin.php';
@@ -446,33 +368,6 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Grade quiz automatically
-	 *
-	 * This function grades each question automatically if the are auto gradable.
-	 * It store all question grades.
-	 *
-	 * @deprecated since 1.7.4 use Sensei_Grading::grade_quiz_auto instead
-	 *
-	 * @param  integer $quiz_id         ID of quiz
-	 * @param  array   $submitted questions id ans answers {
-	 *          @type int $question_id
-	 *          @type mixed $answer
-	 * }
-	 * @param  integer $total_questions Total questions in quiz (not used)
-	 * @param string  $quiz_grade_type Optional defaults to auto
-	 *
-	 * @return int $quiz_grade total sum of all question grades
-	 */
-	public static function sensei_grade_quiz_auto( $quiz_id = 0, $submitted = array(), $total_questions = 0, $quiz_grade_type = 'auto' ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.7.4', 'Sensei_Grading::grade_quiz_auto' );
-
-		return Sensei_Grading::grade_quiz_auto( $quiz_id, $submitted, $total_questions, $quiz_grade_type );
-
-	}
-
-	/**
 	 * Grade quiz
 	 *
 	 * @param  integer $quiz_id ID of quiz
@@ -498,29 +393,6 @@ class Sensei_Utils {
 		}
 
 		return $activity_logged;
-	}
-
-	/**
-	 * Grade question automatically
-	 *
-	 * This function checks the question type and then grades it accordingly.
-	 *
-	 * @deprecated since 1.7.4 use Sensei_Grading::grade_question_auto instead
-	 *
-	 * @param integer $question_id
-	 * @param string  $question_type of the standard Sensei question types
-	 * @param string  $answer
-	 * @param int     $user_id
-	 *
-	 * @return int $question_grade
-	 */
-	public static function sensei_grade_question_auto( $question_id = 0, $question_type = '', $answer = '', $user_id = 0 ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.7.4', 'Sensei_Grading::grade_question_auto' );
-
-		return Sensei_Grading::grade_question_auto( $question_id, $question_type, $answer, $user_id );
-
 	}
 
 	/**
@@ -816,44 +688,6 @@ class Sensei_Utils {
 		}
 
 		return $question_grade;
-	}
-
-	/**
-	 * Returns the answer_notes for a specific question and user, or sensei_user_answer entry
-	 *
-	 * @deprecated since 1.7.5 use Sensei()->quiz->get_user_question_feedback instead
-	 * @param mixed $question
-	 * @param int   $user_id
-	 * @return string
-	 */
-	public static function sensei_get_user_question_answer_notes( $question = 0, $user_id = 0 ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.7.5', 'Sensei()->quiz->get_user_question_feedback' );
-
-		$answer_notes = false;
-		if ( $question ) {
-			if ( is_object( $question ) ) {
-				$user_answer_id = $question->comment_ID;
-			} else {
-				if ( intval( $user_id ) == 0 ) {
-					$user_id = get_current_user_id();
-				}
-				$user_answer_id = self::sensei_get_activity_value(
-					array(
-						'post_id' => intval( $question ),
-						'user_id' => $user_id,
-						'type'    => 'sensei_user_answer',
-						'field'   => 'comment_ID',
-					)
-				);
-			}
-			if ( $user_answer_id ) {
-				$answer_notes = base64_decode( get_comment_meta( $user_answer_id, 'answer_note', true ) );
-			}
-		}
-
-		return $answer_notes;
 	}
 
 	public static function sensei_delete_quiz_answers( $quiz_id = 0, $user_id = 0 ) {

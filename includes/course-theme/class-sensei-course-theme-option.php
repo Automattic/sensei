@@ -58,39 +58,13 @@ class Sensei_Course_Theme_Option {
 
 	/**
 	 * Initializes the Course Theme.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-		add_action( 'admin_enqueue_scripts', [ $this, 'add_feature_flag_inline_script' ] );
-
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
-			return;
-		}
-
-		// Init blocks.
-		new \Sensei\Blocks\Course_Theme();
+	public function init() {
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
-		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
-		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
+		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
-	}
-
-	/**
-	 * Add feature flag inline script.
-	 *
-	 * @access private
-	 */
-	public function add_feature_flag_inline_script() {
-		$screen  = get_current_screen();
-		$enabled = Sensei()->feature_flags->is_enabled( 'course_theme' ) ? 'true' : 'false';
-
-		if ( 'course' === $screen->id ) {
-			wp_add_inline_script( 'sensei-admin-course-edit', 'window.senseiCourseThemeFeatureFlagEnabled = ' . $enabled, 'before' );
-		}
 	}
 
 	/**
@@ -146,6 +120,8 @@ class Sensei_Course_Theme_Option {
 			return false;
 		}
 
+		$course_id = absint( $course_id );
+
 		if (
 			self::has_sensei_theme_enabled( $course_id ) ||
 			Sensei_Course_Theme::is_preview_mode( $course_id )
@@ -181,6 +157,26 @@ class Sensei_Course_Theme_Option {
 		$enabled_via_filter = (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled_for_course, $enabled_globally, $course_id );
 
 		return $enabled_for_course || $enabled_globally || $enabled_via_filter;
+	}
+
+	/**
+	 * Filter to show admin bar only for editor users.
+	 *
+	 * @access private
+	 *
+	 * @param bool $show_admin_bar Whether show admin bar.
+	 *
+	 * @return bool Whether show admin bar.
+	 */
+	public function show_admin_bar_only_for_editors( $show_admin_bar ) {
+		$lesson_id = Sensei_Utils::get_current_lesson();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( self::has_sensei_theme_enabled( $course_id ) ) {
+			return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id );
+		}
+
+		return $show_admin_bar;
 	}
 
 	/**

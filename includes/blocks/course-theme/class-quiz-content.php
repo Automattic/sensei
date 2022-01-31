@@ -3,7 +3,7 @@
  * File containing the Sensei\Blocks\Course_Theme\Quiz_Content class.
  *
  * @package sensei
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -31,6 +31,7 @@ class Quiz_Content {
 		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'action_buttons' ], 10 );
 		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
 		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_title' ), 20 );
+		remove_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
 
 		ob_start();
 
@@ -46,7 +47,7 @@ class Quiz_Content {
 
 		$content = ob_get_clean();
 
-		return "<div>{$content}</div>";
+		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form'>{$content}</form>" );
 	}
 
 	/**
@@ -61,7 +62,10 @@ class Quiz_Content {
 		while ( sensei_quiz_has_questions() ) {
 			sensei_setup_the_question();
 			?>
-			<li class="sensei-quiz-question <?php sensei_the_question_class(); ?>">
+			<li
+				class="sensei-quiz-question <?php sensei_the_question_class(); ?>"
+				value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+			>
 				<?php
 				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
 				sensei_the_question_content();

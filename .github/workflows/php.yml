@@ -44,7 +44,7 @@ jobs:
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.3', '7.4']
+                php: ['7.1', '7.2', '7.3', '7.4']
                 include:
                     - php: 7.4
                       wp: 5.6

@@ -79,6 +79,10 @@ const ProgressBar = ( {
 				<div
 					{ ...{
 						...barAttributes,
+						className: classnames(
+							'sensei-progress-bar__progress',
+							barAttributes?.className
+						),
 						style: {
 							...( barAttributes?.style && barAttributes.style ),
 							width: `${ barPercentage }%`,

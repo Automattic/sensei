@@ -1,0 +1,47 @@
+.wp-block {
+	max-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.wp-site-blocks {
+	.wp-block {
+		max-width: none;
+		margin: 0;
+	}
+
+}
+
+
+.wp-block.sensei-course-theme {
+	&__sidebar {
+		position: static;
+	}
+	&__columns {
+		display: flex;
+	}
+	&__main-content {
+		margin-left: 0 !important;
+		> * {
+			max-width: 900px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+}
+
+.wp-block-post-title {
+	font-size: 48px!important;
+}
+
+input, textarea {
+	border: none;
+	padding: 0;
+}
+
+.sensei-course-theme__button {
+	pointer-events: none;
+	&:hover {
+		cursor: default;
+	}
+}

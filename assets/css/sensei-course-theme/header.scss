@@ -1,23 +1,28 @@
 .sensei-course-theme__header {
 	.wp-block-sensei-lms-course-title {
-		a:not(:hover) {
-			color: currentColor;
-		}
+		padding: 1px 2px;
 		font-size: 24px;
 		font-weight: 600;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+		a {
+			transition: none;
+		}
+		a:not(:hover) {
+			color: currentColor;
+		}
 	}
-	.wp-block-sensei-lms-site-logo {
+	.wp-block-site-logo {
 		img {
+			width: auto;
+			height: auto;
 			max-height: 50px;
 		}
 	}
 
 	.sensei-course-theme-course-progress {
-		color: var(--gray);
+		@include text-gray;
 
 	}
 }
-

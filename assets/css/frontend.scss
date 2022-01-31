@@ -374,7 +374,7 @@ a.sensei-certificate-link {
 /**
  * Quiz Pagination
  */
-#sensei-quiz-pagination {
+.sensei-quiz-pagination {
 	display: flex;
 	flex-flow: column wrap;
 	align-items: center;
@@ -442,7 +442,7 @@ a.sensei-certificate-link {
 /**
  * Quiz Actions
  */
-#sensei-quiz-actions {
+div.sensei-quiz-actions {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -455,6 +455,10 @@ a.sensei-certificate-link {
 
 	.sensei-quiz-action {
 		margin: 0;
+		padding: 0;
+		.button {
+			padding: 8px 11px;
+		}
 	}
 
 	.sensei-quiz-actions-primary {
@@ -479,7 +483,7 @@ a.sensei-certificate-link {
 				border-left: 2px solid;
 			}
 
-			button {
+			.button, button {
 				@include button-link;
 			}
 		}
