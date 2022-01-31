@@ -125,20 +125,22 @@ class Sensei_Learner {
 
 		$manage_url = add_query_arg(
 			[
+				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'view'      => 'learners',
 				'course_id' => $course_id,
 			],
-			admin_url( 'admin.php' )
+			admin_url( 'edit.php' )
 		);
 
 		$grade_url = add_query_arg(
 			[
+				'post_type' => 'course',
 				'page'      => 'sensei_grading',
 				'view'      => 'all',
 				'course_id' => $course_id,
 			],
-			admin_url( 'admin.php' )
+			admin_url( 'edit.php' )
 		);
 
 		?>
