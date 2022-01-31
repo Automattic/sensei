@@ -665,6 +665,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		$query_args     = array(
 			'page' => $this->page_slug,
+			'post_type' => 'course',
 		);
 		$learners_class = $courses_class = $lessons_class = '';
 		switch ( $this->type ) {
@@ -685,9 +686,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$lesson_args['view']  = 'lessons';
 		$courses_args['view'] = 'courses';
 
-		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
-		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
-		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
+		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
+		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
+		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
 
 		$menu = apply_filters( 'sensei_analysis_overview_sub_menu', $menu );
 		if ( ! empty( $menu ) ) {
