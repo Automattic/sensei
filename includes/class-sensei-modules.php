@@ -138,11 +138,12 @@ class Sensei_Core_Modules {
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
+
 		if ( ! $screen ) {
 			return;
 		}
 
-		if ( 'edit-module' === $screen->id ) {
+		if ( ( 'edit-module' === $screen->id ) && ( 'term' !== $screen->base ) ) {
 			$this->display_modules_navigation( $screen );
 		}
 	}

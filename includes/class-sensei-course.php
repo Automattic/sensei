@@ -179,10 +179,12 @@ class Sensei_Course {
 	 */
 	public function add_custom_navigation() {
 		$screen = get_current_screen();
+
 		if ( ! $screen ) {
 			return;
 		}
-		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) ) {
+
+		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) && ( 'term' !== $screen->base ) ) {
 			$this->display_courses_navigation( $screen );
 		}
 	}
