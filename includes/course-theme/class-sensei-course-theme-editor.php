@@ -151,7 +151,7 @@ class Sensei_Course_Theme_Editor {
 			$theme_templates = array_filter(
 				$theme_templates,
 				function( $template ) use ( $post_type ) {
-					return in_array( $post_type, $template->post_types, true );
+					return ! isset( $template->post_types ) || in_array( $post_type, $template->post_types, true );
 				}
 			);
 		}
@@ -177,7 +177,7 @@ class Sensei_Course_Theme_Editor {
 			$template_object = (object) $template;
 
 			if ( ! empty( $db_template ) ) {
-				$template_object = $this->build_template_from_post( $db_template );
+				$template_object = $this->build_template_from_post( $db_template, $template_object );
 			} else {
 				$template_object->wp_id  = null;
 				$template_object->author = null;
@@ -392,10 +392,11 @@ class Sensei_Course_Theme_Editor {
 	 * Build a template object from a post.
 	 *
 	 * @param WP_Post $post
+	 * @param object  $base File template this post customizes.
 	 *
 	 * @return WP_Block_Template
 	 */
-	private function build_template_from_post( $post ) {
+	private function build_template_from_post( $post, $base ) {
 		$template                 = new WP_Block_Template();
 		$template->wp_id          = $post->ID;
 		$template->id             = self::THEME_PREFIX . '//' . $post->post_name;
@@ -411,6 +412,7 @@ class Sensei_Course_Theme_Editor {
 		$template->has_theme_file = true;
 		$template->is_custom      = true;
 		$template->author         = $post->post_author;
+		$template->post_types     = $base->post_types;
 
 		return $template;
 
