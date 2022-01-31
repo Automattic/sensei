@@ -1469,7 +1469,7 @@ class Sensei_Teacher {
 			'edit-course',
 			'edit-question',
 			'course_page_course-order',
-			'lesson_page_lesson-order',
+			'course_page_lesson-order',
 		);
 
 		if ( in_array( $screen->id, $limit_screens ) ) {

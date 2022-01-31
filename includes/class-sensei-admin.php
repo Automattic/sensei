@@ -369,7 +369,7 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
-		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
+		if ( in_array( $screen->id, [ 'course_page_course-order', 'course_page_lesson-order' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
@@ -1431,24 +1431,28 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
-		$ordered = null;
+		$course_id = isset( $_POST['course_id'] ) ? (int) $_POST['course_id'] : null;
+		$ordered   = null;
+
 		if ( isset( $_POST['lesson-order'] ) ) {
-			$ordered = $this->save_lesson_order( esc_attr( $_POST['lesson-order'] ), esc_attr( $_POST['course_id'] ) );
+			$lesson_order = sanitize_text_field( wp_unslash( $_POST['lesson-order'] ) );
+			$ordered      = $this->save_lesson_order( $lesson_order, $course_id );
 		}
 
-		wp_redirect(
+		wp_safe_redirect(
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'lesson',
+						'post_type' => 'course',
 						'page'      => $this->lesson_order_page_slug,
 						'ordered'   => $ordered,
-						'course_id' => $_POST['course_id'],
+						'course_id' => $course_id,
 					),
 					admin_url( 'edit.php' )
 				)
 			)
 		);
+		exit;
 	}
 
 	/**

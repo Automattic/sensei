@@ -244,7 +244,7 @@ class Sensei_Setup_Wizard {
 			'course_page_module-order',
 			'edit-lesson',
 			'edit-lesson-tag',
-			'lesson_page_lesson-order',
+			'course_page_lesson-order',
 			'edit-question',
 			'question',
 			'edit-question-category',
