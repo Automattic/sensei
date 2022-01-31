@@ -23,12 +23,12 @@ class Sensei_Messages {
 	 *
 	 * @var string
 	 */
-	public const NONCE_FIELD_NAME = 'sensei_message_teacher_nonce';
+	const NONCE_FIELD_NAME = 'sensei_message_teacher_nonce';
 
 	/**
 	 * The nonce action name when submitting a new message.
 	 */
-	public const NONCE_ACTION_NAME = 'message_teacher';
+	const NONCE_ACTION_NAME = 'message_teacher';
 
 	/**
 	 * Constructor.

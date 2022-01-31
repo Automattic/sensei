@@ -21,6 +21,8 @@
         "failedShowAnswerFeedback": false,
         "failedShowCorrectAnswers": false,
         "failedIndicateIncorrect": false,
+        "buttonTextColor": null,
+        "buttonBackgroundColor": null,
         "pagination": {}
       }
     },

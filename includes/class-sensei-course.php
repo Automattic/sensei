@@ -229,6 +229,15 @@ class Sensei_Course {
 
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
+			Sensei()->assets->enqueue( 'sensei-admin-course-edit-styles', 'css/course-editor.css' );
+
+			wp_add_inline_script( 'sensei-admin-course-edit', "window.sensei = window.sensei || {}; window.sensei.pluginUrl = '" . Sensei()->plugin_url . "';", 'before' );
+			$settings_json = wp_json_encode( \Sensei()->settings->get_settings() );
+			wp_add_inline_script(
+				'sensei-admin-course-edit',
+				sprintf( 'window.sensei = window.sensei || {}; window.sensei.senseiSettings = %s;', $settings_json ),
+				'before'
+			);
 		}
 
 		if ( 'edit-course' === $screen->id ) {
@@ -4011,7 +4020,7 @@ class Sensei_Course {
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
 
 		$course_id = $post->ID;
-		if ( Sensei_Course_Theme_Option::instance()->has_sensei_theme_enabled( $course_id ) ) {
+		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
 			$first_incomplete_lesson_id = Sensei_Course_Structure::instance( $course_id )->get_first_incomplete_lesson_id();
 			if ( false !== $first_incomplete_lesson_id ) {
 				$url = get_permalink( $first_incomplete_lesson_id );

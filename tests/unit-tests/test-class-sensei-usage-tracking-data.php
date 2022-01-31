@@ -15,6 +15,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 
+		tests_add_filter( 'sensei_feature_flag_course_theme', '__return_true' );
+
 		$this->factory = new Sensei_Factory();
 		self::resetCourseEnrolmentManager();
 	}
@@ -1589,5 +1591,56 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'lesson_videos', $usage_data, 'Key' );
 		$this->assertEquals( $lessons_with_video, $usage_data['lesson_videos'], 'Count' );
+	}
+
+	/**
+	 * Tests getting courses using course theme count.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_using_course_theme_count
+	 */
+	public function testGetCoursesUsingCourseThemeCount() {
+		$this->factory->course->create_many(
+			2,
+			[
+				'meta_input' => [
+					Sensei_Course_Theme_Option::THEME_POST_META_NAME => Sensei_Course_Theme_Option::SENSEI_THEME,
+				],
+			]
+		);
+		$this->factory->course->create_many(
+			2,
+			[
+				'meta_input' => [
+					Sensei_Course_Theme_Option::THEME_POST_META_NAME => Sensei_Course_Theme_Option::WORDPRESS_THEME,
+				],
+			]
+		);
+		$this->factory->course->create_many( 2 );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'courses_using_course_theme', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['courses_using_course_theme'], 'Count' );
+	}
+
+	/**
+	 * Tests getting if course theme is enabled globally.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_is_course_theme_enabled_globally
+	 */
+	public function testGetIsCourseThemeEnabledGlobally() {
+		Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
+
+		Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
 	}
 }

@@ -26,7 +26,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 				<?php if ( ! empty( $notice['icon'] ) ) { ?>
 				<div class="sensei-course-theme-locked-lesson-notice__icon">
 					<?php
-					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Function returning svg only.
+					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 					echo Sensei()->assets->get_icon( $notice['icon'] );
 					?>
 				</div>

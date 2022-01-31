@@ -80,13 +80,13 @@ export const CourseProgressEdit = ( props ) => {
 	return (
 		<>
 			<ProgressBar
-				lessonsCount={ totalLessonsCount }
+				totalCount={ totalLessonsCount }
 				completedCount={ completedLessonsCount }
 				wrapperAttributes={ wrapperAttributes }
 				barWrapperAttributes={ barWrapperAttributes }
 				barAttributes={ barAttributes }
 				countersClassName="wp-block-sensei-lms-progress-heading"
-				lessonsCountClassName="wp-block-sensei-lms-progress-heading__lessons"
+				label={ __( 'lessons', 'sensei-lms' ) }
 				completedCountClassName="wp-block-sensei-lms-progress-heading__completed"
 			/>
 			<ProgressBarSettings

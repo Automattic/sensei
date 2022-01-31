@@ -3,7 +3,11 @@
 /**
  * WordPress dependencies
  */
-import { BlockControls, InspectorControls } from '@wordpress/block-editor';
+import {
+	BlockControls,
+	InspectorControls,
+	PanelColorSettings,
+} from '@wordpress/block-editor';
 import {
 	Button,
 	PanelBody,
@@ -52,11 +56,22 @@ const QuizSettings = ( {
 		failedShowAnswerFeedback,
 		failedShowCorrectAnswers,
 		failedIndicateIncorrect,
+		buttonTextColor,
+		buttonBackgroundColor,
 		pagination,
 	} = options;
 
 	const createChangeHandler = ( optionKey ) => ( value ) =>
 		setAttributes( { options: { ...options, [ optionKey ]: value } } );
+
+	// Update the pagination options function used for block settings.
+	const updatePagination = ( updatedPagination ) =>
+		setAttributes( {
+			options: {
+				...options,
+				pagination: { ...pagination, ...updatedPagination },
+			},
+		} );
 
 	const openQuizSettings = useOpenQuizSettings( clientId );
 
@@ -90,13 +105,11 @@ const QuizSettings = ( {
 
 	return (
 		<>
-			<Button
-				className="sensei-lms-quiz-block__settings-link"
-				onClick={ openQuizSettings }
-				icon={ CogIcon }
-			>
-				{ __( 'Quiz settings', 'sensei-lms' ) }
-			</Button>
+			<div className="sensei-lms-quiz-block__settings-quick-nav">
+				<Button onClick={ openQuizSettings } icon={ CogIcon }>
+					{ __( 'Quiz settings', 'sensei-lms' ) }
+				</Button>
+			</div>
 			<InspectorControls>
 				<PanelBody
 					title={ __( 'Quiz settings', 'sensei-lms' ) }
@@ -226,13 +239,52 @@ const QuizSettings = ( {
 				</PanelBody>
 				<PaginationSidebarSettings
 					settings={ pagination }
-					onChange={ createChangeHandler( 'pagination' ) }
+					updatePagination={ updatePagination }
+				/>
+				<PanelColorSettings
+					title={ __( 'Color settings', 'sensei-lms' ) }
+					initialOpen={ false }
+					colorSettings={ [
+						{
+							value: buttonTextColor || undefined,
+							onChange: createChangeHandler( 'buttonTextColor' ),
+							label: __( 'Button text color', 'sensei-lms' ),
+						},
+						{
+							value: buttonBackgroundColor || undefined,
+							onChange: createChangeHandler(
+								'buttonBackgroundColor'
+							),
+							label: __(
+								'Button background color',
+								'sensei-lms'
+							),
+						},
+						{
+							value: pagination?.progressBarColor || undefined,
+							onChange: ( value ) =>
+								updatePagination( { progressBarColor: value } ),
+							label: __( 'Progress bar color', 'sensei-lms' ),
+						},
+						{
+							value:
+								pagination?.progressBarBackground || undefined,
+							onChange: ( value ) =>
+								updatePagination( {
+									progressBarBackground: value,
+								} ),
+							label: __(
+								'Progress bar background color',
+								'sensei-lms'
+							),
+						},
+					] }
 				/>
 			</InspectorControls>
 			<BlockControls>
 				<PaginationToolbarSettings
 					settings={ pagination }
-					onChange={ createChangeHandler( 'pagination' ) }
+					updatePagination={ updatePagination }
 				/>
 			</BlockControls>
 		</>

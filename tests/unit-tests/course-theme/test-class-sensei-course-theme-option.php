@@ -24,19 +24,19 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	private $factory;
 
 	/**
-	 * Instance of `Sensei_Course_Theme_Option` under test.
-	 *
-	 * @var Sensei_Course_Theme_Option
-	 */
-	private $instance;
-
-	/**
 	 * Setup method. Run first on every test execution.
 	 */
 	public function setup() {
 		parent::setup();
-		$this->factory  = new Sensei_Factory();
-		$this->instance = Sensei_Course_Theme_Option::instance();
+		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * Cleanup/teardown after class.
+	 */
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testHasSenseiThemeEnabledReturnsFalseByDefault() {
 		$course_id = $this->factory->course->create();
 
-		$output = $this->instance->has_sensei_theme_enabled( $course_id );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
 
 		$this->assertFalse( $output, 'By default the `has_sensei_theme_enabled` method must return false.' );
 	}
@@ -64,7 +64,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create();
 		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
 
-		$output = $this->instance->has_sensei_theme_enabled( $course_id );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
 
 		$this->assertFalse( $output, '`has_sensei_theme_enabled` method must return false when WordPress theme is enabled.' );
 	}
@@ -76,8 +76,84 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create();
 		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
 
-		$output = $this->instance->has_sensei_theme_enabled( $course_id );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
 
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is enabled.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns false if Sensei theme is globally off and for course null.
+	 */
+	public function testSenseiThemeGloballyOffAndCourseNull() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$course_id = $this->factory->course->create();
+		$output    = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertFalse( $output, '`has_sensei_theme_enabled` method must return false when Sensei theme is globally off and for course null.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns false if Sensei theme is globally off and for course off.
+	 */
+	public function testSenseiThemeGloballyOffAndCourseOff() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertFalse( $output, '`has_sensei_theme_enabled` method must return false when Sensei theme is globally off and for course off.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns true if Sensei theme is globally off and for course on.
+	 */
+	public function testSenseiThemeGloballyOffAndCourseOn() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return false when Sensei theme is globally off and for course on.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns true if Sensei theme is globally on and for course null.
+	 */
+	public function testSenseiThemeGloballyOnAndCourseNull() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$course_id = $this->factory->course->create();
+		$output    = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course null.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns true if Sensei theme is globally on and for course off.
+	 */
+	public function testSenseiThemeGloballyOnAndCourseOff() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course off.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns true if Sensei theme is globally on and for course on.
+	 */
+	public function testSenseiThemeGloballyOnAndCourseOn() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course on.' );
+	}
+
+	/**
+	 * Ensure `has_sensei_theme_enabled` returns true if enabled via filter.
+	 */
+	public function testSenseiThemeGloballyOffAndCourseOffAndFilterOn() {
+		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$course_id = $this->factory->course->create();
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
+		add_filter( 'sensei_course_learning_mode_enabled', '__return_true' );
+		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally off for course off and via filter on.' );
 	}
 }
