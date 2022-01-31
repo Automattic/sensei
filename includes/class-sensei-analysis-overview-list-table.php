@@ -14,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public $type;
 	public $page_slug = 'sensei_analysis';
+	/**
+	 * The post type under which is the page registered.
+	 *
+	 * @var string
+	 */
+	private $post_type = 'course';
 
 	/**
 	 * Constructor
@@ -317,7 +323,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'course_id' => $item->ID,
-							'post_type' => 'course',
+							'post_type' => $this->post_type,
 						),
 						admin_url( 'edit.php' )
 					);
@@ -388,7 +394,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'lesson_id' => $item->ID,
-							'post_type' => 'course',
+							'post_type' => $this->post_type,
 						),
 						admin_url( 'edit.php' )
 					);
@@ -399,7 +405,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 							array(
 								'page'      => $this->page_slug,
 								'course_id' => $course_id,
-								'post_type' => 'course',
+								'post_type' => $this->post_type,
 							),
 							admin_url( 'edit.php' )
 						);
@@ -469,7 +475,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'user_id'   => $item->ID,
-							'post_type' => 'course',
+							'post_type' => $this->post_type,
 						),
 						admin_url( 'edit.php' )
 					);
@@ -509,7 +515,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function get_courses( $args ) {
 		$course_args = array(
-			'post_type'        => 'course',
+			'post_type'        => $this->post_type,
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $args['number'],
 			'offset'           => $args['offset'],
@@ -669,7 +675,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		$query_args     = array(
 			'page'      => $this->page_slug,
-			'post_type' => 'course',
+			'post_type' => $this->post_type,
 		);
 		$learners_class = $courses_class = $lessons_class = '';
 		switch ( $this->type ) {
@@ -731,7 +737,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'page'                   => $this->page_slug,
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
-				'post_type'              => 'course',
+				'post_type'              => $this->post_type,
 			),
 			admin_url( 'edit.php' )
 		);

@@ -15,6 +15,12 @@ class Sensei_Analysis {
 	public $name;
 	public $file;
 	public $page_slug;
+	/**
+	 * The post type under which is the page registered.
+	 *
+	 * @var string
+	 */
+	private $post_type;
 
 	/**
 	 * Constructor
@@ -26,6 +32,7 @@ class Sensei_Analysis {
 		$this->name      = __( 'Analysis', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_analysis';
+		$this->post_type = 'course';
 
 		// Admin functions
 		if ( is_admin() ) {
@@ -448,7 +455,7 @@ class Sensei_Analysis {
 
 		$analysis_args = array(
 			'page'      => $this->page_slug,
-			'post_type' => 'course',
+			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'edit.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
@@ -458,7 +465,7 @@ class Sensei_Analysis {
 					array(
 						'page'      => $this->page_slug,
 						'user'      => $user_id,
-						'post_type' => 'course',
+						'post_type' => $this->post_type,
 					),
 					admin_url( 'edit.php' )
 				)
@@ -482,7 +489,7 @@ class Sensei_Analysis {
 
 		$analysis_args = array(
 			'page'      => $this->page_slug,
-			'post_type' => 'course',
+			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'edit.php' ) ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['user_id'] ) && 0 < intval( $_GET['user_id'] ) ) {
@@ -492,7 +499,7 @@ class Sensei_Analysis {
 				array(
 					'page'      => $this->page_slug,
 					'user_id'   => $user_id,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);
@@ -506,7 +513,7 @@ class Sensei_Analysis {
 				array(
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);
@@ -527,7 +534,7 @@ class Sensei_Analysis {
 
 		$analysis_args = array(
 			'page'      => $this->page_slug,
-			'post_type' => 'course',
+			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) {
@@ -536,7 +543,7 @@ class Sensei_Analysis {
 				array(
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);
@@ -557,7 +564,7 @@ class Sensei_Analysis {
 
 		$analysis_args = array(
 			'page'      => $this->page_slug,
-			'post_type' => 'course',
+			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['course_id'] ) ) {
@@ -566,7 +573,7 @@ class Sensei_Analysis {
 				array(
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);
@@ -587,7 +594,7 @@ class Sensei_Analysis {
 
 		$analysis_args = array(
 			'page'      => $this->page_slug,
-			'post_type' => 'course',
+			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
 		if ( isset( $_GET['lesson_id'] ) ) {
@@ -597,7 +604,7 @@ class Sensei_Analysis {
 				array(
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);
@@ -606,7 +613,7 @@ class Sensei_Analysis {
 				array(
 					'page'      => $this->page_slug,
 					'lesson_id' => $lesson_id,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);

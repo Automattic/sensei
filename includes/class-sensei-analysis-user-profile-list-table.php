@@ -14,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	public $user_id;
 	public $page_slug = 'sensei_analysis';
+	/**
+	 * The post type under which is the page registered.
+	 *
+	 * @var string
+	 */
+	private $post_type = 'course';
 
 	/**
 	 * Constructor
@@ -222,7 +228,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 					'page'      => $this->page_slug,
 					'user_id'   => $this->user_id,
 					'course_id' => $item->comment_post_ID,
-					'post_type' => 'course',
+					'post_type' => $this->post_type,
 				),
 				admin_url( 'edit.php' )
 			);
@@ -342,7 +348,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 				'page'                   => $this->page_slug,
 				'user_id'                => $this->user_id,
 				'sensei_report_download' => $report,
-				'post_type'              => 'course',
+				'post_type'              => $this->post_type,
 			),
 			admin_url( 'edit.php' )
 		);
