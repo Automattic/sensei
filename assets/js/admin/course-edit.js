@@ -75,12 +75,10 @@ domReady( () => {
 /**
  * Plugins
  */
-if ( window.senseiCourseThemeFeatureFlagEnabled ) {
-	registerPlugin( 'sensei-course-theme-plugin', {
-		render: CourseTheme,
-		icon: null,
-	} );
-}
+registerPlugin( 'sensei-course-theme-plugin', {
+	render: CourseTheme,
+	icon: null,
+} );
 registerPlugin( 'sensei-course-video-progression-plugin', {
 	render: CourseVideoSidebar,
 	icon: null,

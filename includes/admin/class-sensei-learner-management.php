@@ -854,26 +854,6 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Return the full name and surname or the display name of the user.
-	 *
-	 * The user must have both name and surname otherwise display name will be returned.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_Learner::get_full_name
-	 * @since 1.8.0
-	 *
-	 * @param int $user_id | bool false for an invalid $user_id.
-	 *
-	 * @return string $full_name
-	 */
-	public function get_learner_full_name( $user_id ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Learner::get_full_name' );
-		return Sensei_Learner::get_full_name( $user_id );
-
-	}
-
-	/**
 	 * Rebuilds and appends query variables to the URL.
 	 *
 	 * @return string URL query string.

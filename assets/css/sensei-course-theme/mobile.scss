@@ -1,14 +1,8 @@
-
 .sensei-course-theme__sidebar-toggle {
 	display: none;
 }
 
-@media screen and (max-width: 782px) {
-
-	body.admin-bar {
-		--top-offset: 46px;
-	}
-
+@media screen and (max-width: ($breakpoint - 1)) {
 	.sensei-course-theme__focus-mode-toggle {
 		display: none;
 	}
@@ -18,11 +12,12 @@
 	}
 
 	.sensei-course-theme {
-		--content-padding: 12px;
+		--content-padding: 18px;
 		--header-height: 60px;
 
 		&--sidebar-open {
 			--header-height: 90px;
+			overflow: hidden;
 
 			.sensei-course-theme__header__container {
 				padding-bottom: var(--header-open-height);
@@ -59,7 +54,6 @@
 
 			&__left {
 				gap: 12px;
-				flex-wrap: wrap;
 				height: 30px;
 			}
 
@@ -68,7 +62,7 @@
 				height: 30px;
 			}
 
-			.wp-block-sensei-lms-site-logo {
+			.wp-block-site-logo {
 				&, img {
 					max-height: 30px;
 				}
@@ -87,6 +81,9 @@
 			display: block;
 			width: 24px;
 			height: 24px;
+			background: none;
+			border: none;
+			padding: 0;
 
 			svg {
 				width: 24px;
@@ -100,7 +97,7 @@
 
 		&__sidebar {
 			z-index: 90;
-			background: #FFFFFF;
+			background: var(--bg-color);
 			left: 0;
 			right: 0;
 			width: unset;
@@ -126,7 +123,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			background: #fff;
+			background: var(--bg-color);
 			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
 			transition: bottom 800ms ease-in;
 
@@ -162,13 +159,9 @@
 }
 
 @media screen and (max-width: 600px) {
-	body.admin-bar {
-		--top-offset: 0px;
-	}
 	.sensei-course-theme {
 		&--sidebar-open &__sidebar {
 			transition: all 400ms, padding-top 0ms 0ms;
-			padding-top: calc(24px + var(--sensei-wpadminbar-offset, 0px));
 		}
 	}
 }

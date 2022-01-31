@@ -6,10 +6,11 @@
 		align-items: center;
 	}
 
-    &-a {
+	&-a {
 		padding: 12px 5px;
 		display: flex;
 		align-items: center;
+
 		span {
 			display: block;
 			font-size: 14px;
@@ -45,6 +46,11 @@
 				width: 24px;
 				height: 24px;
 			}
+		}
+
+		&[data-disabled="disabled"] {
+			cursor: not-allowed;
+			opacity: 0.3;
 		}
 	}
 }

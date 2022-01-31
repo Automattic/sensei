@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group course-theme
  */
 class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * Sensei Factory helper class - useful to create objects for testing.
@@ -155,5 +156,31 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 		add_filter( 'sensei_course_learning_mode_enabled', '__return_true' );
 		$output = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally off for course off and via filter on.' );
+	}
+
+	/**
+	 * Test that admin bar is displayed only for editor users.
+	 */
+	public function testShowAdminBarOnlyForEditors() {
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		global $post;
+		$post = get_post( $lesson_id );
+
+		// Student on learning mode.
+		$this->login_as_student();
+		$this->assertFalse( Sensei_Course_Theme_Option::instance()->show_admin_bar_only_for_editors( true ), 'Should return `false` to hide admin bar on learning mode.' );
+
+		// Admin on learning mode.
+		$this->login_as_admin();
+		$this->assertTrue( Sensei_Course_Theme_Option::instance()->show_admin_bar_only_for_editors( false ), 'Should return `true` to hide admin bar on learning mode.' );
+
+		// Student outside of learning mode.
+		$post = $this->factory->post->create_and_get();
+		$this->login_as_student();
+		$this->assertTrue( Sensei_Course_Theme_Option::instance()->show_admin_bar_only_for_editors( true ), 'Should return the default value to hide admin bar outside of learning mode.' );
 	}
 }

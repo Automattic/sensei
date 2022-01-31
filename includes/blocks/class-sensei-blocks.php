@@ -43,10 +43,8 @@ class Sensei_Blocks {
 
 	/**
 	 * Sensei_Blocks constructor.
-	 *
-	 * @param Sensei_Main $sensei Sensei instance.
 	 */
-	public function __construct( Sensei_Main $sensei ) {
+	public function __construct() {
 		// Skip if Gutenberg is not available.
 		if ( ! function_exists( 'register_block_type' ) ) {
 			return;
@@ -67,7 +65,7 @@ class Sensei_Blocks {
 		$this->quiz   = new Sensei_Quiz_Blocks();
 		$this->page   = new Sensei_Page_Blocks();
 
-		new Sensei_Course_Navigation_Block();
+		new Sensei\Blocks\Course_Theme_Blocks();
 	}
 
 	/**
@@ -83,6 +81,7 @@ class Sensei_Blocks {
 		Sensei()->assets->register( 'sensei-editor-components-style', 'blocks/editor-components/editor-components-style.css' );
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
+		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css', [] );
 	}
 
 	/**
@@ -96,16 +95,6 @@ class Sensei_Blocks {
 	 * @return array Filtered categories.
 	 */
 	public function sensei_block_categories( $categories, $context ) {
-		$post = null;
-		if ( class_exists( 'WP_Block_Editor_Context' ) && $context instanceof WP_Block_Editor_Context ) {
-			$post = $context->post;
-		} elseif ( $context instanceof WP_Post ) {
-			$post = $context;
-		}
-
-		if ( ! $post || ! in_array( $post->post_type, [ 'course', 'lesson', 'question', 'page' ], true ) ) {
-			return $categories;
-		}
 
 		return array_merge(
 			[

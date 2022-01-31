@@ -5,7 +5,7 @@
 
 .sensei-course-theme-lesson-completion-notice {
 	position: fixed;
-	z-index: 1;
+	z-index: 90;
 	height: calc(100vh - var(--full-header-height));
 	left: var(--sidebar-width);
 	right: 0;
@@ -13,7 +13,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: #FFF;
+	background-color: var(--bg-color);
 
 	&__text {
 		margin: 25px 0;

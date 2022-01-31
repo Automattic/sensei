@@ -141,4 +141,5 @@ class Sensei_Course_Theme_Quiz {
 		$block = new Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );
 	}
+
 }
