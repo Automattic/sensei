@@ -353,19 +353,21 @@ class Sensei_Grading {
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			$url       = add_query_arg(
 				array(
+					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
 				),
-				admin_url( 'admin.php' )
+				admin_url( 'edit.php' )
 			);
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
 
 			$url    = add_query_arg(
 				array(
+					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'lesson_id' => $lesson_id,
 				),
-				admin_url( 'admin.php' )
+				admin_url( 'edit.php' )
 			);
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
 		}
@@ -778,12 +780,13 @@ class Sensei_Grading {
 					'sensei_ajax_redirect_url',
 					add_query_arg(
 						array(
+							'post_type' => 'course',
 							'page'      => $this->page_slug,
 							'lesson_id' => $lesson_id,
 							'course_id' => $course_id,
 							'view'      => $grading_view,
 						),
-						admin_url( 'admin.php' )
+						admin_url( 'edit.php' )
 					)
 				)
 			);
@@ -814,12 +817,13 @@ class Sensei_Grading {
 					'sensei_ajax_redirect_url',
 					add_query_arg(
 						array(
+							'post_type' => 'course',
 							'page'      => $this->page_slug,
 							'lesson_id' => $lesson_id,
 							'course_id' => $course_id,
 							'view'      => $grading_view,
 						),
-						admin_url( 'admin.php' )
+						admin_url( 'edit.php' )
 					)
 				)
 			);
