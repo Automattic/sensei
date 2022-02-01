@@ -54,7 +54,7 @@
 	}
 
 	&.is-primary,
-	&.wp-block-button:not(.is-style-outline) {
+	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		background-color: var(--primary-color);
 		color: var(--primary-contrast-color);
 		&:hover {
