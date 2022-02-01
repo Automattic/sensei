@@ -182,6 +182,169 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Ensure the lessons could be moved and unassigned from modules.
+	 *
+	 * @covers Sensei_Admin::sync_lesson_order
+	 */
+	public function testShouldMoveLessonsBetweenModulesAndUnassignModules() {
+		/* Arrange. */
+		$setup             = $this->setupSyncLessonOrderEnv();
+		$sync_lesson_order = $setup['sync_lesson_order'];
+
+		$course_id = $setup['course_id'];
+		$lesson_1  = $setup['lessons'][0];
+		$lesson_2  = $setup['lessons'][1];
+		$module_1  = $setup['modules'][0];
+		$module_2  = $setup['modules'][1];
+
+		/* Act. */
+		$lessons_to_sync = [
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_2 => [ 'module' => $module_2 ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$this->assertTrue( has_term( $module_1, Sensei()->modules->taxonomy, $lesson_1 ) );
+		$this->assertTrue( has_term( $module_2, Sensei()->modules->taxonomy, $lesson_2 ) );
+
+		/* Act. */
+		// Move lesson 2 to module 1.
+		$lessons_to_sync = [
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_2 => [ 'module' => $module_1 ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$this->assertTrue( has_term( $module_1, Sensei()->modules->taxonomy, $lesson_1 ) );
+		$this->assertTrue( has_term( $module_1, Sensei()->modules->taxonomy, $lesson_2 ) );
+		$this->assertFalse( has_term( $module_2, Sensei()->modules->taxonomy, $lesson_2 ) );
+
+		/* Act. */
+		// Unassign the module from lesson 2.
+		$lessons_to_sync = [
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_2 => [ 'module' => null ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$this->assertTrue( has_term( $module_1, Sensei()->modules->taxonomy, $lesson_1 ) );
+		$this->assertFalse( has_term( $module_1, Sensei()->modules->taxonomy, $lesson_2 ) );
+		$this->assertFalse( has_term( $module_2, Sensei()->modules->taxonomy, $lesson_2 ) );
+	}
+
+	/**
+	 * Ensure the lessons order is updated.
+	 *
+	 * @covers Sensei_Admin::sync_lesson_order
+	 */
+	public function testShouldUpdateTheOrderOfLessons() {
+		/* Arrange. */
+		$setup             = $this->setupSyncLessonOrderEnv();
+		$sync_lesson_order = $setup['sync_lesson_order'];
+
+		$course_id = $setup['course_id'];
+		$lesson_1  = $setup['lessons'][0];
+		$lesson_2  = $setup['lessons'][1];
+		$lesson_3  = $setup['lessons'][2];
+		$module_1  = $setup['modules'][0];
+		$module_2  = $setup['modules'][1];
+
+		/* Act. */
+		$lessons_to_sync = [
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_2 => [ 'module' => $module_2 ],
+			$lesson_3 => [ 'module' => null ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$this->assertEquals( '0', get_post_meta( $lesson_1, '_order_module_' . $module_1, true ) );
+		$this->assertEquals( '0', get_post_meta( $lesson_2, '_order_module_' . $module_2, true ) );
+
+		/* Act. */
+		// Move the lesson 2 to module 1 and make it first.
+		$lessons_to_sync = [
+			$lesson_2 => [ 'module' => $module_1 ],
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_3 => [ 'module' => null ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$this->assertEquals( '0', get_post_meta( $lesson_2, '_order_module_' . $module_1, true ) );
+		$this->assertEquals( '1', get_post_meta( $lesson_1, '_order_module_' . $module_1, true ) );
+
+		/* Act. */
+		// Have 2 unassigned lessons.
+		$lessons_to_sync = [
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_2 => [ 'module' => null ],
+			$lesson_3 => [ 'module' => null ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$no_module_lessons_order = explode( ',', get_post_meta( $course_id, '_lesson_order', true ) );
+		$this->assertEquals( [ $lesson_2, $lesson_3 ], $no_module_lessons_order );
+
+		/* Act. */
+		// Reorder the unassigned lessons.
+		$lessons_to_sync = [
+			$lesson_1 => [ 'module' => $module_1 ],
+			$lesson_3 => [ 'module' => null ],
+			$lesson_2 => [ 'module' => null ],
+		];
+
+		$sync_lesson_order( $lessons_to_sync, $course_id );
+
+		/* Assert. */
+		$no_module_lessons_order = explode( ',', get_post_meta( $course_id, '_lesson_order', true ) );
+		$this->assertEquals( [ $lesson_3, $lesson_2 ], $no_module_lessons_order );
+	}
+
+	/**
+	 * Setup method for Sensei_Admin::sync_lesson_order.
+	 *
+	 * @return array
+	 */
+	private function setupSyncLessonOrderEnv() {
+		$course_id = $this->factory->course->create( [ 'post_author' => 1 ] );
+		$modules   = $this->factory->module->create_many( 2 );
+		$lessons   = $this->factory->lesson->create_many(
+			3,
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
+
+		wp_set_object_terms( $course_id, $modules, Sensei()->modules->taxonomy );
+
+		$admin  = new Sensei_Admin();
+		$method = new ReflectionMethod( $admin, 'sync_lesson_order' );
+		$method->setAccessible( true );
+
+		return [
+			'course_id'         => $course_id,
+			'lessons'           => $lessons,
+			'modules'           => $modules,
+			'sync_lesson_order' => function( $lessons_to_sync, $course_id ) use ( $admin, $method ) {
+				return $method->invoke( $admin, $lessons_to_sync, $course_id );
+			},
+		];
+	}
+
+	/**
 	 * Setup function for duplicate course.
 	 *
 	 * This function mocks the redirect method, create and set the user, create a course
