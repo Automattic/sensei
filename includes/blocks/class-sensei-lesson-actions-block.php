@@ -43,7 +43,12 @@ class Sensei_Lesson_Actions_Block {
 			return '';
 		}
 
-		if ( ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID ) ) {
+		$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
+
+		if (
+			Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id )
+			|| ! Sensei_Lesson::should_show_lesson_actions( $lesson->ID )
+		) {
 			return '';
 		}
 

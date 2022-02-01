@@ -20,7 +20,6 @@ jQuery( document ).ready( function ( $ ) {
 	const urlHashSectionId = window.location.hash?.replace( '#', '' );
 	hideAllSections();
 	if ( urlHashSectionId ) {
-		window.location.hash = '';
 		show( urlHashSectionId );
 	} else {
 		show( defaultSectionId );
@@ -28,6 +27,7 @@ jQuery( document ).ready( function ( $ ) {
 
 	$senseiSettings.find( 'a.tab' ).on( 'click', function () {
 		const sectionId = $( this ).attr( 'href' )?.replace( '#', '' );
+		window.location.hash = '#' + sectionId;
 		hideAllSections();
 		show( sectionId );
 		return false;

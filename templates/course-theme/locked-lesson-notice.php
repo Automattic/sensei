@@ -31,17 +31,17 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 					?>
 				</div>
 				<?php } ?>
-				<h3 class="sensei-course-theme-locked-lesson-notice__title">
+				<div class="sensei-course-theme-locked-lesson-notice__title">
 					<?php echo wp_kses_post( $notice['title'] ); ?>
-				</h3>
+				</div>
 			</div>
 			<?php } ?>
-			<p class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></p>
+			<div class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></div>
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>
-				<ul class="sensei-course-theme-locked-lesson-notice__actions">
+				<div class="sensei-course-theme-locked-lesson-notice__actions">
 				<?php implode( '', array_map( 'sensei_locked_lesson_notice_actions_map', $notice['actions'] ) ); ?>
-				</ul>
+				</div>
 			<?php } ?>
 		</div>
 		<?php
@@ -56,7 +56,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notice_actions_map' ) ) {
 	 */
 	function sensei_locked_lesson_notice_actions_map( $action ) {
 		?>
-		<li>
+		<div>
 			<?php
 			if ( ! is_array( $action ) ) {
 				echo wp_kses(
@@ -86,7 +86,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notice_actions_map' ) ) {
 				<?php
 			}
 			?>
-		</li>
+		</div>
 		<?php
 	}
 }

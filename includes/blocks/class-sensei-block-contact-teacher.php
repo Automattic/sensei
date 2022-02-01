@@ -77,13 +77,14 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form_open = isset( $_GET['contact'] ) && ! ( isset( $_GET['send'] ) && 'complete' === $_GET['send'] );
 
 		$contact_form = $this->teacher_contact_form( $post );
+		$text_close   = __( 'Close', 'sensei-lms' );
 
 		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
 				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
-				<a href="' . $post_link . '" data-sensei-modal-overlay></a>
+				<a href="' . $post_link . '" data-sensei-modal-overlay aria-label="' . $text_close . '"></a>
 				<div data-sensei-modal-content>
 					' . $contact_form . '
-					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close>
+					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close title="' . $text_close . '">
 						' . \Sensei()->assets->get_icon( 'close' ) . '
 					</a>
 				</div>
@@ -100,7 +101,7 @@ class Sensei_Block_Contact_Teacher {
 	private function teacher_contact_form( $post ) {
 
 		$nonce         = wp_nonce_field( \Sensei_Messages::NONCE_ACTION_NAME, \Sensei_Messages::NONCE_FIELD_NAME, true, false );
-		$wp_rest_nonce = wp_nonce_field( 'wp_rest' );
+		$wp_rest_nonce = wp_nonce_field( 'wp_rest', '_wpnonce', true, false );
 
 		return '
 			<form name="contact-teacher" action="" method="post" class="sensei-contact-teacher-form" onsubmit="sensei.submitContactTeacher(event)">

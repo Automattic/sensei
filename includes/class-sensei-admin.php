@@ -37,11 +37,10 @@ class Sensei_Admin {
 
 		// register admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
-
-		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
+		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
+		add_action( 'admin_menu', array( $this, 'add_lesson_order' ) );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
-		add_action( 'admin_init', array( $this, 'page_redirect' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
 
 		// Duplicate lesson & courses
@@ -89,9 +88,13 @@ class Sensei_Admin {
 	 * Add items to admin menu
 	 *
 	 * @since  1.4.0
+	 * @deprecated 4.0.0
+	 *
 	 * @return void
 	 */
 	public function admin_menu() {
+		_deprecated_function( __METHOD__, '4.0.0' );
+
 		global $menu;
 		$menu_cap = '';
 		if ( current_user_can( 'manage_sensei' ) ) {
@@ -110,6 +113,40 @@ class Sensei_Admin {
 
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
 		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_published_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
+	}
+
+	/**
+	 * Add Course order page to admin panel.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 */
+	public function add_course_order() {
+		add_submenu_page(
+			null, // Hide in menu.
+			__( 'Order Courses', 'sensei-lms' ),
+			__( 'Order Courses', 'sensei-lms' ),
+			'manage_sensei',
+			$this->course_order_page_slug,
+			array( $this, 'course_order_screen' )
+		);
+	}
+
+	/**
+	 * Add Lesson order page to admin panel.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 */
+	public function add_lesson_order() {
+		add_submenu_page(
+			null,
+			__( 'Order Lessons', 'sensei-lms' ),
+			__( 'Order Lessons', 'sensei-lms' ),
+			'edit_published_lessons',
+			$this->lesson_order_page_slug,
+			array( $this, 'lesson_order_screen' )
+		);
 	}
 
 	/**
@@ -187,9 +224,13 @@ class Sensei_Admin {
 	 * Redirect Sensei menu item to Analysis page
 	 *
 	 * @since  1.4.0
+	 * @deprecated 4.0.0
+	 *
 	 * @return void
 	 */
 	public function page_redirect() {
+		_deprecated_function( __METHOD__, '4.0.0' );
+
 		if ( isset( $_GET['page'] ) && $_GET['page'] == 'sensei' ) {
 			wp_safe_redirect( 'admin.php?page=sensei_analysis' );
 			exit;
@@ -252,14 +293,11 @@ class Sensei_Admin {
 	 *
 	 * @access public
 	 * @since 1.0.0
-	 * @return void
+	 *
+	 * @param string $hook The current admin page.
 	 */
 	public function admin_styles_global( $hook ) {
 		global $post_type;
-
-		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
-		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 
 		// Global Styles for icons and menu items
 		Sensei()->assets->enqueue( 'sensei-global', 'css/global.css', [], 'screen' );
@@ -273,12 +311,32 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'jquery-modal', '../vendor/jquery-modal-0.9.1/jquery.modal.min.css' );
 
 		// Test for Write Panel Pages
-		if ( ( ( isset( $post_type ) && in_array( $post_type, $allowed_post_types ) ) && ( isset( $hook ) && in_array( $hook, $allowed_post_type_pages ) ) ) || ( isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages ) ) ) {
-
+		if ( $this->are_custom_admin_styles_allowed( $post_type, $hook, get_current_screen() ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom', 'css/admin-custom.css', [], 'screen' );
-
 		}
 
+	}
+
+	/**
+	 * Check if it is allowed to enqueue admin custom styles.
+	 *
+	 * @param string         $post_type The post type slug.
+	 * @param string         $hook_suffix The current admin page.
+	 * @param WP_Screen|null $screen The current screen.
+	 * @return bool Returns true if admin custom styles are allowed.
+	 */
+	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
+		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$module_pages_screen_ids = [ 'edit-module' ];
+
+		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );
+		$is_allowed_post_type_page = isset( $hook_suffix ) && in_array( $hook_suffix, $allowed_post_type_pages, true );
+		$is_allowed_page           = isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages, true );
+		$is_modules_page           = $screen && in_array( $screen->id, $module_pages_screen_ids, true );
+
+		return ( $is_allowed_type && $is_allowed_post_type_page ) || $is_allowed_page || $is_modules_page;
 	}
 
 
@@ -311,7 +369,7 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
-		if ( in_array( $screen->id, [ 'course_page_course-order', 'lesson_page_lesson-order' ], true ) ) {
+		if ( in_array( $screen->id, [ 'course_page_course-order', 'course_page_lesson-order' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
@@ -323,8 +381,18 @@ class Sensei_Admin {
 		Sensei()->assets->enqueue( 'sensei-message-menu-fix', 'js/admin/message-menu-fix.js', [ 'jquery' ], true );
 
 		// Event logging.
-
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
+
+		// Sensei custom navigation.
+		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ];
+
+		if (
+			$screen
+			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
+			&& ( 'term' !== $screen->base )
+		) {
+			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
+		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
 	}
@@ -1363,24 +1431,28 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
-		$ordered = null;
+		$course_id = isset( $_POST['course_id'] ) ? (int) $_POST['course_id'] : null;
+		$ordered   = null;
+
 		if ( isset( $_POST['lesson-order'] ) ) {
-			$ordered = $this->save_lesson_order( esc_attr( $_POST['lesson-order'] ), esc_attr( $_POST['course_id'] ) );
+			$lesson_order = sanitize_text_field( wp_unslash( $_POST['lesson-order'] ) );
+			$ordered      = $this->save_lesson_order( $lesson_order, $course_id );
 		}
 
-		wp_redirect(
+		wp_safe_redirect(
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'lesson',
+						'post_type' => 'course',
 						'page'      => $this->lesson_order_page_slug,
 						'ordered'   => $ordered,
-						'course_id' => $_POST['course_id'],
+						'course_id' => $course_id,
 					),
 					admin_url( 'edit.php' )
 				)
 			)
 		);
+		exit;
 	}
 
 	/**
@@ -1420,7 +1492,7 @@ class Sensei_Admin {
 			$courses = get_posts( $args );
 
 			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
-			$html .= '<input type="hidden" name="post_type" value="lesson" />' . "\n";
+			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";

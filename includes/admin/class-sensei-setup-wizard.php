@@ -150,16 +150,6 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
-	 * Set script translations.
-	 *
-	 * @access private
-	 * @deprecated 3.8.0
-	 */
-	public function setup_wizard_set_script_translations() {
-		_deprecated_function( __METHOD__, '3.8.0' );
-	}
-
-	/**
 	 * Add global classes for Setup Wizard page.
 	 *
 	 * @param string $classes Current class list.
@@ -254,7 +244,7 @@ class Sensei_Setup_Wizard {
 			'course_page_module-order',
 			'edit-lesson',
 			'edit-lesson-tag',
-			'lesson_page_lesson-order',
+			'course_page_lesson-order',
 			'edit-question',
 			'question',
 			'edit-question-category',

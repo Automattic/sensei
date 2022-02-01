@@ -44,7 +44,7 @@ jobs:
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.3', '7.4', '8.0']
+                php: ['7.1', '7.2', '7.3', '7.4']
                 include:
                     - php: 7.4
                       wp: 5.6
@@ -102,7 +102,6 @@ jobs:
                   
                       composer dump-autoload
                   fi
-
             - name: Setup test environment
               run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root localhost $WP_VERSION
 

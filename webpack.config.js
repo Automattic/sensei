@@ -17,6 +17,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const files = [
 	'js/admin/course-edit.js',
+	'js/admin/course-index.js',
 	'js/admin/event-logging.js',
 	'js/admin/lesson-bulk-edit.js',
 	'js/admin/lesson-quick-edit.js',
@@ -25,6 +26,7 @@ const files = [
 	'js/admin/lesson-edit.js',
 	'js/admin/ordering.js',
 	'js/admin/sensei-notice-dismiss.js',
+	'js/admin/custom-navigation.js',
 	'js/frontend/course-archive.js',
 	'js/frontend/course-video/video-blocks-extension.js',
 	'js/grading-general.js',
@@ -59,13 +61,12 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
-	'blocks/progress-bar.js',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',
-	'css/admin-custom.css',
+	'css/admin-custom.scss',
 	'css/extensions.scss',
 	'css/global.scss',
 	'css/jquery-ui.css',
@@ -77,7 +78,11 @@ const files = [
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
 	'css/sensei-course-theme.scss',
+	'css/sensei-course-theme.editor.scss',
+	'css/sensei-theme-blocks.scss',
 	'course-theme/course-theme.js',
+	'course-theme/course-theme.editor.js',
+	'course-theme/blocks/blocks.js',
 ];
 
 function getName( filename ) {
@@ -127,7 +132,7 @@ function getWebpackConfig( env, argv ) {
 					test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
 					type: 'asset/resource',
 					generator: {
-						filename: '[path][name]-[contenthash].[ext]',
+						filename: '[path][name]-[contenthash][ext]',
 						publicPath: '../',
 					},
 				},

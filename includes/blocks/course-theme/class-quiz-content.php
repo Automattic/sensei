@@ -3,7 +3,7 @@
  * File containing the Sensei\Blocks\Course_Theme\Quiz_Content class.
  *
  * @package sensei
- * @since 4.0.0
+ * @since   4.0.0
  */
 
 namespace Sensei\Blocks\Course_Theme;
@@ -25,36 +25,47 @@ class Quiz_Content {
 	 */
 	public static function render_quiz() {
 
+		// The following content are rendered separately in Learning Mode.
+		// So we need to remove them from here, otherwise they are repeated.
 		remove_action( 'sensei_single_quiz_questions_before', [ Sensei()->post_types->messages, 'send_message_link' ], 10 );
 		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'action_buttons' ], 10 );
+		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_user_status_message' ), 40 );
+		remove_action( 'sensei_single_quiz_content_inside_before', array( 'Sensei_Quiz', 'the_title' ), 20 );
+		remove_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
 
-		\Sensei_Quiz::start_quiz_questions_loop();
+		ob_start();
+
+		do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 
 		if ( ! sensei_can_user_view_lesson() ) {
-			return '';
+			return ob_get_clean();
 		}
 
-		$content = self::render_questions_loop();
+		self::render_questions_loop();
 
-		return "<div>
-			<ol id='sensei-quiz-list'>{$content}</ol>
-		</div>";
+		do_action( 'sensei_single_quiz_content_inside_after', get_the_ID() );
+
+		$content = ob_get_clean();
+
+		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form'>{$content}</form>" );
 	}
 
 	/**
 	 * Render the questions.
-	 *
-	 * @return string
 	 */
 	private static function render_questions_loop() {
 
-		ob_start();
 		do_action( 'sensei_single_quiz_questions_before', get_the_id() );
+
+		echo "<ol id='sensei-quiz-list'>";
 
 		while ( sensei_quiz_has_questions() ) {
 			sensei_setup_the_question();
 			?>
-			<li class="sensei-quiz-question <?php sensei_the_question_class(); ?>">
+			<li
+				class="sensei-quiz-question <?php sensei_the_question_class(); ?>"
+				value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+			>
 				<?php
 				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
 				sensei_the_question_content();
@@ -64,9 +75,13 @@ class Quiz_Content {
 			<?php
 		}
 
-		do_action( 'sensei_single_quiz_questions_after', get_the_id() );
+		echo '</ol>';
 
-		return ob_get_clean();
+		// In "Learning Mode" we do not want the quiz pagination as part
+		// of the quiz post content. Because we will render it separately
+		// in the footer of the "Learning Mode" screen.
+		remove_action( 'sensei_single_quiz_questions_after', array( 'Sensei_Quiz', 'the_quiz_pagination' ), 9 );
+		do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 	}
 
 }

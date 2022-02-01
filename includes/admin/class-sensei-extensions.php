@@ -39,7 +39,6 @@ final class Sensei_Extensions {
 	 */
 	public function init() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-		add_action( 'admin_menu', array( $this, 'add_admin_menu_item' ), 60 );
 	}
 
 	/**
@@ -51,7 +50,7 @@ final class Sensei_Extensions {
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
 
-		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei-extensions' ], true ) ) {
+		if ( in_array( $screen->id, [ 'course_page_sensei-extensions' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
@@ -271,6 +270,7 @@ final class Sensei_Extensions {
 	 * Adds the menu item for the Extensions page.
 	 *
 	 * @since  2.0.0
+	 *
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
@@ -282,7 +282,7 @@ final class Sensei_Extensions {
 		}
 
 		add_submenu_page(
-			'sensei',
+			'edit.php?post_type=course',
 			__( 'Sensei LMS Extensions', 'sensei-lms' ),
 			__( 'Extensions', 'sensei-lms' ) . $updates_html,
 			'install_plugins',

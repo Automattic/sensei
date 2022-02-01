@@ -145,16 +145,87 @@ class Sensei_Course {
 
 		add_action( 'template_redirect', [ $this, 'setup_single_course_page' ] );
 		add_action( 'sensei_loaded', [ $this, 'add_legacy_course_hooks' ] );
+
+		// Add custom navigation.
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
-	 * Register and enqueue scripts that are needed in the backend.
+	 * Highlight the menu item for the course pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		$screen = get_current_screen();
+
+		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ], true ) ) {
+			$submenu_file = 'edit.php?post_type=course';
+		}
+
+		return $submenu_file;
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'edit-course', 'edit-course-category' ], true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_courses_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the courses' navigation.
+	 *
+	 * @param WP_Screen $screen WordPress current screen object.
+	 */
+	private function display_courses_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Courses', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New Course', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=course' ) ); ?>"><?php esc_html_e( 'All Courses', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'course-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=course-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Course Categories', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Register and enqueue scripts and styles that are needed in the backend.
 	 *
 	 * @access private
 	 * @since 2.1.0
 	 */
 	public function register_admin_scripts() {
 		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
 
 		if ( 'course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-edit', 'js/admin/course-edit.js', [ 'jquery', 'sensei-core-select2' ], true );
@@ -167,6 +238,10 @@ class Sensei_Course {
 				sprintf( 'window.sensei = window.sensei || {}; window.sensei.senseiSettings = %s;', $settings_json ),
 				'before'
 			);
+		}
+
+		if ( 'edit-course' === $screen->id ) {
+			Sensei()->assets->enqueue( 'sensei-admin-course-index', 'js/admin/course-index.js', [ 'jquery' ], true );
 		}
 	}
 
@@ -673,19 +748,21 @@ class Sensei_Course {
 
 		$manage_url  = add_query_arg(
 			array(
+				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
 			),
-			admin_url( 'admin.php' )
+			admin_url( 'edit.php' )
 		);
 		$grading_url = add_query_arg(
 			array(
+				'post_type' => 'course',
 				'page'      => 'sensei_grading',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
 			),
-			admin_url( 'admin.php' )
+			admin_url( 'edit.php' )
 		);
 
 		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'sensei-lms' ) . '</a></li>';
@@ -707,15 +784,19 @@ class Sensei_Course {
 		$new_columns['title']               = _x( 'Course Title', 'column name', 'sensei-lms' );
 		$new_columns['course-prerequisite'] = _x( 'Pre-requisite Course', 'column name', 'sensei-lms' );
 		$new_columns['course-category']     = _x( 'Category', 'column name', 'sensei-lms' );
+
+		if ( isset( $defaults['modules'] ) ) {
+			$new_columns['modules'] = $defaults['modules'];
+		}
+
 		if ( isset( $defaults['date'] ) ) {
 			$new_columns['date'] = $defaults['date'];
 		}
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
-			'taxonomy-module',
 			'teacher',
-			'module_order',
+			'students',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
@@ -883,56 +964,6 @@ class Sensei_Course {
 					'suppress_filters' => 0,
 				);
 				$post_args       = $learner_manager->get_enrolled_courses_query_args( get_current_user_id(), $post_args );
-
-				break;
-
-			case 'freecourses':
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html__( 'Querying with argument `$type` having a value of `freecourses` is deprecated.', 'sensei-lms' ),
-					'2.0.0'
-				);
-
-				$post_args = array(
-					'post_type'        => 'course',
-					'orderby'          => $orderby,
-					'order'            => $order,
-					'post_status'      => 'publish',
-					'exclude'          => $excludes,
-					'suppress_filters' => 0,
-				);
-
-				// If WooCommerce Paid Courses is not active, we will display all courses.
-				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
-					// Sub Query to get all WooCommerce Products that have Zero price
-					$post_args['meta_query'] = Sensei_WC::get_free_courses_meta_query_args();
-				}
-
-				break;
-
-			case 'paidcourses':
-				_doing_it_wrong(
-					__METHOD__,
-					esc_html__( 'Querying with argument `$type` having a value of `paidcourses` is deprecated.', 'sensei-lms' ),
-					'2.0.0'
-				);
-
-				$post_args = array(
-					'post_type'        => 'course',
-					'orderby'          => $orderby,
-					'order'            => $order,
-					'post_status'      => 'publish',
-					'exclude'          => $excludes,
-					'suppress_filters' => 0,
-				);
-
-				// If WooCommerce Paid Courses is not active, we will display no courses.
-				if ( class_exists( 'Sensei_WC_Paid_Courses\Sensei_WC_Paid_Courses' ) ) {
-					// Sub Query to get all WooCommerce Products that have price greater than zero
-					$post_args['meta_query'] = Sensei_WC::get_paid_courses_meta_query_args();
-				} else {
-					$post_args['post__in'] = array( -1 );
-				}
 
 				break;
 
@@ -1387,46 +1418,6 @@ class Sensei_Course {
 	}
 
 	/**
-	 * get_product_courses function.
-	 *
-	 * @access public
-	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses()` instead.
-	 *
-	 * @param  int $product_id (default: 0)
-	 * @return array
-	 */
-	public function get_product_courses( $product_id = 0 ) {
-
-		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses' );
-
-		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses' ) ) {
-			return \Sensei_WC_Paid_Courses\Courses::get_product_courses( $product_id );
-		}
-
-		return array();
-
-	}
-
-	/**
-	 * @deprecated 2.0.0 Use `Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args()` instead.
-	 *
-	 * @param $product_id
-	 *
-	 * @return array
-	 */
-	public static function get_product_courses_query_args( $product_id ) {
-
-		_deprecated_function( __METHOD__, '2.0.0', 'Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args' );
-
-		if ( method_exists( 'Sensei_WC_Paid_Courses\Courses', 'get_product_courses_query_args' ) ) {
-			return \Sensei_WC_Paid_Courses\Courses::get_product_courses_query_args( $product_id );
-		}
-
-		return array();
-
-	}
-
-	/**
 	 * Fix posts_per_page for My Courses page
 	 *
 	 * @deprecated 3.0.0
@@ -1614,26 +1605,6 @@ class Sensei_Course {
 							$course_purchased = Sensei_WC::has_customer_bought_product( $user->ID, $wc_post_id );
 
 						}
-					}
-
-					/**
-					 * documented in class-sensei-course.php the_course_action_buttons function
-					 *
-					 * @deprecated 2.0.0
-					 */
-					$show_delete_course_button = apply_filters_deprecated(
-						'sensei_show_delete_course_button',
-						[ false ],
-						'2.0.0',
-						null,
-						'Sensei LMS "Delete Course" button will be removed in version 4.0.'
-					);
-
-					if ( false == $course_purchased && $show_delete_course_button ) {
-
-						$active_html .= '<span><input name="course_complete" type="submit" class="course-delete" value="'
-							. esc_attr__( 'Delete Course', 'sensei-lms' ) . '"/></span>';
-
 					}
 
 					$active_html .= '</form>';
@@ -2397,7 +2368,6 @@ class Sensei_Course {
 		}
 
 		$has_course_complete_button = false;
-		$has_delete_course_button   = false;
 		$has_results_button         = false;
 
 		if ( 0 < absint( count( Sensei()->course->course_lessons( $course->ID ) ) )
@@ -2418,39 +2388,13 @@ class Sensei_Course {
 			}
 		}
 
-		/**
-		 * Hide or show the delete course button.
-		 *
-		 * This button on shows in certain instances, but this filter will hide it in those
-		 * cases. For other instances the button will be hidden.
-		 *
-		 * @since 1.9.0
-		 *
-		 * @deprecated 2.0.0
-		 *
-		 * @param bool $show_delete_course_button defaults to false
-		 */
-		$show_delete_course_button = apply_filters_deprecated(
-			'sensei_show_delete_course_button',
-			[ false ],
-			'2.0.0',
-			null,
-			'Sensei LMS "Delete Course" button will be removed in version 4.0.'
-		);
-
-		if ( ! $course_purchased
-				&& ! Sensei_Utils::user_completed_course( $course->ID, get_current_user_id() )
-				&& $show_delete_course_button ) {
-			$has_delete_course_button = true;
-		}
-
 		$has_quizzes = Sensei()->course->course_quizzes( $course->ID, true );
 
 		if ( self::has_results_links( $course->ID ) || $has_quizzes ) {
 			$has_results_button = true;
 		}
 
-		if ( ! $has_course_complete_button && ! $has_delete_course_button && ! $has_results_button ) {
+		if ( ! $has_course_complete_button && ! $has_results_button ) {
 			return;
 		}
 
@@ -2476,15 +2420,6 @@ class Sensei_Course {
 							value="<?php esc_attr_e( 'Mark as Complete', 'sensei-lms' ); ?>" />
 					</span>
 
-				<?php
-			}
-
-			if ( $has_delete_course_button ) {
-				?>
-					<span>
-						<input name="course_complete" type="submit" class="course-delete"
-							value="<?php echo esc_attr__( 'Delete Course', 'sensei-lms' ); ?>"/>
-					</span>
 				<?php
 			}
 
@@ -3169,18 +3104,6 @@ class Sensei_Course {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Used for lesson loop on single course page. Reset in hook to `sensei_single_course_lessons_after`.
 		$wp_query = new WP_Query( $course_lesson_query_args );
 
-	}
-
-	/**
-	 * Flush the rewrite rules.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.2.1
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	public static function flush_rewrite_rules( $post_id ) {
-		_deprecated_function( __METHOD__, '2.2.1' );
 	}
 
 	/**
@@ -3941,7 +3864,7 @@ class Sensei_Course {
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
 
 		$course_id = $post->ID;
-		if ( Sensei_Course_Theme_Option::instance()->has_sensei_theme_enabled( $course_id ) ) {
+		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
 			$first_incomplete_lesson_id = Sensei_Course_Structure::instance( $course_id )->get_first_incomplete_lesson_id();
 			if ( false !== $first_incomplete_lesson_id ) {
 				$url = get_permalink( $first_incomplete_lesson_id );

@@ -1,13 +1,12 @@
 @import '../../shared/styles/collapsible-content';
 
-.sensei-lms-course-navigation {
 
+.sensei-lms-course-navigation {
 	&__modules + &__lessons {
-		border-top: 1px dotted #ccc;
+		border-top: 1px dotted var(--border-color, #1E1E1E);
 		margin-top: 6px;
 		padding-top: 6px;
 	}
-
 }
 
 .sensei-lms-course-navigation-module {
@@ -16,6 +15,9 @@
 		align-items: flex-start;
 		width: 100%;
 		margin: 12px 0;
+		padding: 0;
+		border: unset;
+		background: unset;
 
 		&:hover {
 			color: var(--primary-color);
@@ -38,11 +40,16 @@
 		font-weight: 600;
 		font-size: 18px;
 		line-height: 22px;
+		text-align: left;
+		margin: 0;
+	}
+	&__button {
+		color: inherit;
 	}
 
 	&__summary {
 		font-size: 13px;
-		color: var(--gray);
+		@include text-gray;
 		visibility: hidden;
 		overflow: hidden;
 		max-height: 0;
@@ -60,7 +67,7 @@
 
 .sensei-lms-course-navigation-lesson {
 	display: flex;
-	padding: 10px 0;
+	padding: 10px 1px;
 
 	&__link {
 		flex: 1;
@@ -79,7 +86,7 @@
 		padding-left: 6px;
 		margin-top: 1px; // Needed to compensate the font-size difference.
 		font-size: 13px;
-		color: var(--gray);
+		@include text-gray;
 	}
 
 	&__status {
@@ -91,7 +98,7 @@
 
 	&.status-locked,
 	&.status-not-started &__status {
-		color: var(--gray);
+		@include text-gray;
 	}
 
 	&.current-lesson &__title {

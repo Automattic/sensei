@@ -7,9 +7,14 @@
 
 namespace Sensei\Themes\Sensei_Course_Theme;
 
+require_once __DIR__ . '/compat.php';
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+add_action( 'after_setup_theme', '\Sensei\Themes\Sensei_Course_Theme\setup_theme' );
+add_filter( 'single_template_hierarchy', '\Sensei\Themes\Sensei_Course_Theme\set_single_template_hierarchy' );
 
 /**
  * Set up the theme.
@@ -17,26 +22,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 function setup_theme() {
 
 	add_theme_support( 'title-tag' );
+	add_theme_support( 'wp-block-styles' );
+	add_theme_support( 'align-wide' );
+	add_theme_support( 'editor-styles' );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'block-nav-menus' );
+	add_theme_support( 'custom-logo' );
+	add_theme_support( 'html5', array( 'comment-list', 'comment-form', 'search-form', 'gallery', 'caption', 'style', 'script' ) );
 
-}
-add_action( 'after_setup_theme', '\Sensei\Themes\Sensei_Course_Theme\setup_theme' );
+	Compat\init();
 
-
-/**
- * Load the layout and render its blocks.
- *
- * @access private
- */
-function the_course_theme_layout() {
-
-	ob_start();
-	$template = locate_template( get_layout_template() );
-
-	load_template( $template );
-	$output = ob_get_clean();
-
-	//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Theme function.
-	echo do_blocks( $output );
 }
 
 /**
@@ -46,10 +42,25 @@ function the_course_theme_layout() {
  */
 function get_layout_template() {
 	if ( should_use_quiz_template() ) {
-		return 'single-quiz.php';
+		return 'quiz';
 	}
 
-	return 'single.php';
+	return 'lesson';
+}
+
+
+/**
+ * Add the template used for the current page's layout to the template hierarchy.
+ *
+ * @param array $templates Template hierarchy.
+ *
+ * @return array
+ */
+function set_single_template_hierarchy( $templates ) {
+
+	array_unshift( $templates, get_layout_template() );
+
+	return $templates;
 }
 
 /**
@@ -70,3 +81,4 @@ function should_use_quiz_template() {
 
 	return false;
 }
+

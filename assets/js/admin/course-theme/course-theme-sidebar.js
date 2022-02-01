@@ -15,10 +15,14 @@ import {
 	WORDPRESS_THEME,
 	SENSEI_PREVIEW_QUERY,
 } from './constants';
-import { name as courseOutlineBlockName } from '../../../blocks/course-outline/outline-block/block.json';
-import { name as courseModuleBlockName } from '../../../blocks/course-outline/module-block/block.json';
-import { name as courseLessonBlockName } from '../../../blocks/course-outline/lesson-block/block.json';
+import courseOutlineBlock from '../../../blocks/course-outline/outline-block/block.json';
+import courseModuleBlock from '../../../blocks/course-outline/module-block/block.json';
+import courseLessonBlock from '../../../blocks/course-outline/lesson-block/block.json';
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
+
+const courseOutlineBlockName = courseOutlineBlock.name;
+const courseModuleBlockName = courseModuleBlock.name;
+const courseLessonBlockName = courseLessonBlock.name;
 
 const canPreview = ( block ) =>
 	block.name === courseLessonBlockName && block.attributes.id;
@@ -79,7 +83,7 @@ const usePreviewAndCustomizerLinks = () => {
 
 	let customizerUrl = '';
 	if ( previewUrl ) {
-		customizerUrl = `/wp-admin/customize.php?autofocus[section]=Sensei_Course_Theme_Option&url=${ encodeURIComponent(
+		customizerUrl = `/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=${ encodeURIComponent(
 			previewUrl
 		) }`;
 	}
@@ -99,7 +103,14 @@ const CourseThemeSidebar = () => {
 	return (
 		<PluginDocumentSettingPanel
 			name="sensei-course-theme"
-			title={ __( 'Course Styles', 'sensei-lms' ) }
+			title={
+				<>
+					{ __( 'Learning Mode', 'sensei-lms' ) }
+					<span className="sensei-badge sensei-badge--success sensei-badge--after-text">
+						{ __( 'New!', 'sensei-lms' ) }
+					</span>
+				</>
+			}
 		>
 			{ globalLearningModeEnabled ? (
 				<p>
@@ -112,9 +123,9 @@ const CourseThemeSidebar = () => {
 				</p>
 			) : (
 				<ToggleControl
-					label={ __( 'Learning mode', 'sensei-lms' ) }
+					label={ __( 'Enable Learning Mode', 'sensei-lms' ) }
 					help={ __(
-						'Enable this mode to show an immersive and dedicated view for the course, lessons, and quizzes.',
+						'Show an immersive and distraction-free view for lessons and quizzes.',
 						'sensei-lms'
 					) }
 					checked={ theme === SENSEI_THEME }
@@ -139,7 +150,7 @@ const CourseThemeSidebar = () => {
 			{ customizerUrl && (
 				<p>
 					<a href={ customizerUrl }>
-						{ __( 'Customize Learning mode', 'sensei-lms' ) }
+						{ __( 'Customize', 'sensei-lms' ) }
 					</a>
 				</p>
 			) }

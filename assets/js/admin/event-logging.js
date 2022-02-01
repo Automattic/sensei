@@ -1,14 +1,55 @@
-// Used to add tracking to WP core elements, where we can't add custom code.
+/**
+ * Used to add tracking to WP core elements, where we can't add custom code.
+ * Settings and Extensions submenus are logged elsewhere.
+ */
+const selector = '#menu-posts-course ';
 const adminTracking = [
 	{
-		selector:
-			'#toplevel_page_sensei a[href="admin.php?page=sensei_import"]',
-		eventName: 'import_click',
+		selector: selector + '.wp-menu-name',
+		eventName: 'courses_view',
+	},
+	{
+		selector: selector + 'a[href="edit.php?post_type=course"]',
+		eventName: 'courses_view',
+	},
+	{
+		selector: selector + 'a[href="edit-tags.php?taxonomy=module"]',
+		eventName: 'modules_view',
+	},
+	{
+		selector: selector + 'a[href="edit.php?post_type=lesson"]',
+		eventName: 'lessons_view',
+	},
+	{
+		selector: selector + 'a[href="edit.php?post_type=question"]',
+		eventName: 'questions_view',
 	},
 	{
 		selector:
-			'#toplevel_page_sensei a[href="admin.php?page=sensei_export"]',
-		eventName: 'export_click',
+			selector +
+			'a[href="edit.php?post_type=course&page=sensei_learners"]',
+		eventName: 'student_management_view',
+	},
+	{
+		selector:
+			selector +
+			'a[href="edit.php?post_type=course&page=sensei_grading"]',
+		eventName: 'grading_view',
+	},
+	{
+		selector: selector + 'a[href="edit.php?post_type=sensei_message"]',
+		eventName: 'messages_view',
+	},
+	{
+		selector:
+			selector +
+			'a[href="edit.php?post_type=course&page=sensei_analysis"]',
+		eventName: 'analysis_view',
+	},
+	{
+		selector:
+			selector + 'a[href="edit.php?post_type=course&page=sensei-tools"]',
+		eventName: 'tools_view',
 	},
 ];
 

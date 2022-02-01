@@ -51,6 +51,7 @@ $sensei-notice-icon-width: 30px;
 
 	&__actions {
 		margin: 0.5em 0 0.5em auto;
+		align-self: center;
 
 		.button {
 			padding: 3px 12px;
@@ -58,7 +59,7 @@ $sensei-notice-icon-width: 30px;
 	}
 
 	.notice-dismiss {
-		margin: 0.5em 0 0 auto;
+		align-self: center;
 		padding: 0;
 		position: static;
 	}
@@ -77,27 +78,28 @@ $sensei-notice-icon-width: 30px;
 	font-style: normal;
 }
 
-/*  Sensei icon */
-body #toplevel_page_sensei div.wp-menu-image:before {
-	font-family: 'sensei' !important;
-	content: "\f101";
+/* Sensei LMS menu */
+body #menu-posts-course {
+	div.wp-menu-image:before {
+		font-family: 'sensei';
+		content: "\f101";
+	}
+
+	ul li a {
+		&[href="post-new.php?post_type=course"] {
+			display: none;
+		}
+
+		&[href="edit.php?post_type=course&page=sensei_learners"],
+		&[href="edit.php?post_type=course&page=sensei_analysis"] {
+			border-top: solid 1px;
+			margin-top: 10px;
+			padding-top: 10px;
+		}
+	}
 }
 
-/* Lessons Icon */
-body #menu-posts-lesson div.wp-menu-image:before {
-	content: '\f163' !important;
-}
-
-/* Course Icon */
-body #menu-posts-course div.wp-menu-image:before {
-	content: '\f331' !important;
-}
-
-/* Questions Icon */
-body #menu-posts-question div.wp-menu-image:before {
-	content: '\f223' !important;
-}
-
+/* Dashboard At a Glance */
 #dashboard_right_now a.course-count:before,
 #dashboard_right_now span.course-count:before {
 	content: '\f331';
@@ -113,17 +115,22 @@ body #menu-posts-question div.wp-menu-image:before {
 	content: '\f223';
 }
 
-/* Sensei Menu */
-#toplevel_page_sensei li.wp-first-item {
-	display: none;
-}
-
-/* Course Menu Icons */
-li.menu-icon-lesson .wp-menu-image img,
-li.menu-icon-course .wp-menu-image img {
-	display: none;
-}
-
 .edit-php.post-type-quiz .add-new-h2 {
 	display: none;
+}
+
+.sensei-badge {
+	display: inline-block;
+	padding: 0 5px;
+	border-radius: 9px;
+	font-size: 12px;
+
+	&--success {
+		background-color: #28a745;
+		color: #ffffff;
+	}
+
+	&--after-text {
+		margin-left: 5px;
+	}
 }

@@ -54,7 +54,6 @@ class Sensei_Feature_Flags {
 			'sensei_default_feature_flag_settings',
 			[
 				'enrolment_provider_tooltip' => false,
-				'course_theme'               => false,
 			]
 		);
 	}

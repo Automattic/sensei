@@ -10,12 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \Sensei\Blocks\Course_Theme;
-
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
- * @since 3.13.4
+ * @since 3.15.0
  */
 class Sensei_Course_Theme {
 	/**
@@ -41,6 +39,13 @@ class Sensei_Course_Theme {
 	private static $instance;
 
 	/**
+	 * Active theme on the site before override.
+	 *
+	 * @var string
+	 */
+	private $original_theme;
+
+	/**
 	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
@@ -61,20 +66,15 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Initializes the Course Theme.
-	 *
-	 * @param Sensei_Main $sensei Sensei object.
 	 */
-	public function init( $sensei ) {
-
-		if ( ! $sensei->feature_flags->is_enabled( 'course_theme' ) ) {
-			// As soon this feature flag check is removed, the `$sensei` argument can also be removed.
-			return;
-		}
-
-		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 0, 10 );
-		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 0, 20 );
+	public function init() {
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 1 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
+		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
+		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 
 	}
+
 
 	/**
 	 * Is the theme active for the current request.
@@ -82,7 +82,7 @@ class Sensei_Course_Theme {
 	 * @return bool
 	 */
 	public function is_active() {
-		return get_query_var( self::QUERY_VAR );
+		return self::THEME_NAME === get_stylesheet();
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Sensei_Course_Theme {
 	 */
 	public function get_theme_redirect_url( $path = '' ) {
 
-		if ( '' === get_option( 'permalink_structure' ) ) {
+		if ( '' === get_option( 'permalink_structure' ) || get_query_var( 'preview' ) ) {
 			return home_url( add_query_arg( [ self::QUERY_VAR => 1 ], $path ) );
 		}
 
@@ -124,17 +124,23 @@ class Sensei_Course_Theme {
 	/**
 	 * Load a bundled theme for the request.
 	 */
-	private function override_theme() {
+	public function override_theme() {
+
+		$this->original_theme = get_stylesheet();
 
 		add_filter( 'theme_root', [ $this, 'get_plugin_themes_root' ] );
-		add_filter( 'template', [ $this, 'theme_template' ] );
-		add_filter( 'stylesheet', [ $this, 'theme_stylesheet' ] );
+		add_filter( 'pre_option_stylesheet_root', [ $this, 'get_plugin_themes_root' ] );
+		add_filter( 'pre_option_template_root', [ $this, 'get_plugin_themes_root' ] );
+		add_filter( 'pre_option_template', [ $this, 'theme_template' ] );
+		add_filter( 'pre_option_stylesheet', [ $this, 'theme_stylesheet' ] );
 		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
-		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+
+		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
+		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
 
 	}
 
@@ -211,18 +217,6 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Get the wrapper template.
-	 *
-	 * @access private
-	 *
-	 * @return string The wrapper template path.
-	 */
-	public function get_wrapper_template() {
-		return locate_template( 'index.php' );
-	}
-
-
-	/**
 	 * Add Sensei theme body class.
 	 *
 	 * @access private
@@ -244,13 +238,29 @@ class Sensei_Course_Theme {
 	 */
 	public function enqueue_styles() {
 		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
-		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
-			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 
-			$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
-			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
-		}
+		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
+		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
+
+		$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
+		wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
+
+		$this->enqueue_fonts();
+
+	}
+
+	/**
+	 * Enqueue Google fonts.
+	 *
+	 * @access private
+	 */
+	public function enqueue_fonts() {
+		$font_families = [ 'family=Inter:wght@300;400;500;600;700', 'family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900' ];
+
+		$fonts_url = esc_url_raw( 'https://fonts.googleapis.com/css2?' . implode( '&', array_unique( $font_families ) ) . '&display=swap' );
+
+		//phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- External resource.
+		wp_enqueue_style( 'sensei-course-theme-fonts', $fonts_url, [], null );
 	}
 
 	/**
@@ -263,12 +273,6 @@ class Sensei_Course_Theme {
 	public static function is_preview_mode( $course_id ) {
 		// Do not allow sensei preview if not an administrator.
 		if ( ! current_user_can( 'manage_sensei' ) ) {
-			return false;
-		}
-
-		// Do not allow sensei preview if it is not a course related page.
-		$course_id = intval( \Sensei_Utils::get_current_course() );
-		if ( ! $course_id ) {
 			return false;
 		}
 
@@ -309,6 +313,56 @@ class Sensei_Course_Theme {
 		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
 			$preview_url .= '&learn=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
-		return '/wp-admin/customize.php?autofocus[section]=Sensei_Course_Theme_Option&url=' . rawurlencode( $preview_url );
+		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 	}
+
+	/**
+	 * Replace 'Edit site' in admin bar to point to the current theme template.
+	 *
+	 * @access private
+	 */
+	public function admin_menu_init() {
+
+		if ( ! function_exists( 'wp_is_block_theme' ) ) {
+			return;
+		}
+
+		remove_action( 'admin_bar_menu', 'wp_admin_bar_edit_site_menu', 40 );
+		add_action( 'admin_bar_menu', [ $this, 'add_admin_bar_edit_site_menu' ], 39 );
+
+	}
+
+	/**
+	 * Add 'Edit site' in admin bar opening the current theme template.
+	 *
+	 * @access private
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar
+	 *
+	 * @return void
+	 */
+	public function add_admin_bar_edit_site_menu( WP_Admin_Bar $wp_admin_bar ) {
+
+		if ( ! current_user_can( 'edit_theme_options' ) || is_admin() ) {
+			return;
+		}
+
+		$wp_admin_bar->add_node(
+			array(
+				'id'    => 'site-editor',
+				'title' => __( 'Edit Site', 'sensei-lms' ),
+				'href'  => admin_url( 'site-editor.php?learn=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+			)
+		);
+	}
+
+	/**
+	 * Get the original active site theme.
+	 *
+	 * @return mixed
+	 */
+	public function get_original_theme() {
+		return $this->original_theme;
+	}
+
 }

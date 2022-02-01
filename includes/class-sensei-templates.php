@@ -429,38 +429,4 @@ class Sensei_Templates {
 		do_action( 'sensei_frontend_messages' );
 
 	}
-
-	public static function the_register_button( $post_id = '' ) {
-		global $current_user;
-
-		// This function is no longer used internally. It should be removed in
-		// version 4.0.
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		if ( ! get_option( 'users_can_register' )
-			 || 'course' != get_post_type( $post_id )
-			 || ! empty( $current_user->caps )
-			 || ! Sensei()->settings->get( 'access_permission' ) ) {
-
-			return;
-		}
-
-		// if user is not logged in skipped for single lesson
-		// show a link to the my_courses page or the WordPress register page if
-		// not my courses page was set in the settings
-		$my_courses_page_id = 0;
-		if ( ! empty( $my_courses_page_id ) && $my_courses_page_id ) {
-
-			$my_courses_url = get_permalink( $my_courses_page_id );
-
-			echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-				esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
-
-		} else {
-
-			wp_register( '<div class="status register">', '</div>' );
-
-		}
-
-	}
 }

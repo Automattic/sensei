@@ -30,24 +30,35 @@ class Sensei_Learner_Management {
 	 * @var string $name
 	 */
 	public $name;
+
 	/**
 	 * Main plugin file name.
 	 *
 	 * @var string $file
 	 */
 	public $file;
+
 	/**
 	 * Menu slug name.
 	 *
 	 * @var string $page_slug
 	 */
 	public $page_slug;
+
+	/**
+	 * Post type that the Student Management menu is associated with.
+	 *
+	 * @var string $menu_post_type
+	 */
+	public $menu_post_type;
+
 	/**
 	 * Reference to the class responsible for Bulk Learner Actions.
 	 *
 	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller $bulk_actions_controller
 	 */
 	public $bulk_actions_controller;
+
 	/**
 	 * Per page screen option ID.
 	 *
@@ -63,14 +74,15 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Student Management', 'sensei-lms' );
-		$this->file      = $file;
-		$this->page_slug = 'sensei_learners';
+		$this->name           = __( 'Student Management', 'sensei-lms' );
+		$this->file           = $file;
+		$this->page_slug      = 'sensei_learners';
+		$this->menu_post_type = 'course';
 
 		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
-			add_action( 'admin_menu', array( $this, 'learners_admin_menu' ), 30 );
+
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
 
 			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
@@ -103,10 +115,17 @@ class Sensei_Learner_Management {
 	 */
 	public function learners_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			$learners_page = add_submenu_page( 'sensei', $this->name, $this->name, 'manage_sensei_grades', $this->page_slug, array( $this, 'learners_page' ) );
+			$learners_page = add_submenu_page(
+				'edit.php?post_type=course',
+				$this->name,
+				$this->name,
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'learners_page' )
+			);
+
 			add_action( "load-$learners_page", array( $this, 'load_screen_options_when_on_bulk_actions' ) );
 		}
-
 	}
 
 	/**
@@ -323,11 +342,12 @@ class Sensei_Learner_Management {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
+					'post_type' => $this->menu_post_type,
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
 					'view'      => 'learners',
 				),
-				admin_url( 'admin.php' )
+				admin_url( 'edit.php' )
 			);
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 		}
@@ -372,10 +392,11 @@ class Sensei_Learner_Management {
 			'sensei_ajax_redirect_url',
 			add_query_arg(
 				array(
+					'post_type'  => $this->menu_post_type,
 					'page'       => $this->page_slug,
 					'course_cat' => $course_cat,
 				),
-				admin_url( 'admin.php' )
+				admin_url( 'edit.php' )
 			)
 		);
 
@@ -748,8 +769,9 @@ class Sensei_Learner_Management {
 
 		// Set redirect URL after adding user to course/lesson.
 		$query_args = array(
-			'page' => $this->page_slug,
-			'view' => 'learners',
+			'post_type' => $this->menu_post_type,
+			'page'      => $this->page_slug,
+			'view'      => 'learners',
 		);
 
 		if ( $course_id ) {
@@ -770,7 +792,7 @@ class Sensei_Learner_Management {
 			$query_args['message'] .= '_multiple';
 		}
 
-		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'admin.php' ) ) );
+		$redirect_url = apply_filters( 'sensei_learners_add_learner_redirect_url', add_query_arg( $query_args, admin_url( 'edit.php' ) ) );
 
 		wp_safe_redirect( esc_url_raw( $redirect_url ) );
 		exit;
@@ -847,32 +869,18 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Return the full name and surname or the display name of the user.
-	 *
-	 * The user must have both name and surname otherwise display name will be returned.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_Learner::get_full_name
-	 * @since 1.8.0
-	 *
-	 * @param int $user_id | bool false for an invalid $user_id.
-	 *
-	 * @return string $full_name
-	 */
-	public function get_learner_full_name( $user_id ) {
-
-		// To be removed in 5.0.0.
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_Learner::get_full_name' );
-		return Sensei_Learner::get_full_name( $user_id );
-
-	}
-
-	/**
 	 * Rebuilds and appends query variables to the URL.
 	 *
 	 * @return string URL query string.
 	 */
 	public function get_url() {
-		return add_query_arg( array( 'page' => $this->page_slug ), admin_url( 'admin.php' ) );
+		return add_query_arg(
+			array(
+				'post_type' => $this->menu_post_type,
+				'page'      => $this->page_slug,
+			),
+			admin_url( 'edit.php' )
+		);
 	}
 
 	/**

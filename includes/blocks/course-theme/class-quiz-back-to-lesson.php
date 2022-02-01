@@ -53,6 +53,6 @@ class Quiz_Back_To_Lesson {
 
 		$text = $attributes['text'] ?? __( 'Back to lesson', 'sensei-lms' );
 
-		return '<a href="' . esc_url( $lesson_url ) . '" class="sensei-lms-quiz-back-to-lesson">< ' . esc_html( $text ) . '</a>';
+		return '<a href="' . esc_url( $lesson_url ) . '" class="sensei-lms-quiz-back-to-lesson">&lt; ' . esc_html( $text ) . '</a>';
 	}
 }

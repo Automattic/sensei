@@ -143,9 +143,79 @@ class Sensei_Lesson {
 			add_action( 'wp', array( __CLASS__, 'maybe_start_lesson' ) );
 		}
 
+		// Add custom navigation.
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
 	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag' ], true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_lessons_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Highlight the menu item for the lessons pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		$screen = get_current_screen();
+
+		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
+			$submenu_file = 'edit.php?post_type=lesson';
+		}
+
+		return $submenu_file;
+	}
+
+
+	/**
+	 * Display the lessons' navigation.
+	 *
+	 * @param WP_Screen $screen
+	 */
+	private function display_lessons_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Lessons', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'All Lessons', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'lesson-tag' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=lesson-tag&post_type=course' ) ); ?>"><?php esc_html_e( 'Lesson Tags', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
 
 	/**
 	 * Adds a link for editing the lesson's course if it belongs to a course.
@@ -181,7 +251,8 @@ class Sensei_Lesson {
 			return;
 		}
 
-		$url = admin_url( "post.php?post=$course_id&action=edit" ); ?>
+		$url = admin_url( "post.php?post=$course_id&action=edit" );
+		?>
 
 		<script>
 			jQuery(function () {
@@ -2474,7 +2545,7 @@ class Sensei_Lesson {
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
-			'taxonomy-module',
+			'module',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
@@ -2524,60 +2595,6 @@ class Sensei_Lesson {
 			default:
 				break;
 		}
-	}
-
-	/**
-	 * Add a course from the lesson page.
-	 *
-	 * @access public
-	 * @deprecated 2.2.0
-	 */
-	public function lesson_add_course() {
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		// Add nonce security to the request
-		if ( isset( $_POST['lesson_add_course_nonce'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$nonce = esc_html( $_POST['lesson_add_course_nonce'] );
-		}
-		if ( ! wp_verify_nonce( $nonce, 'lesson_add_course_nonce' )
-			|| ! current_user_can( 'edit_lessons' ) ) {
-			die( '' );
-		}
-		// Parse POST data
-		$data        = $_POST['data'];
-		$course_data = array();
-		parse_str( $data, $course_data );
-		// Save the Course
-		$updated                      = false;
-		$current_user                 = wp_get_current_user();
-		$question_data                = [];
-		$question_data['post_author'] = $current_user->ID;
-		$updated                      = $this->lesson_save_course( $course_data );
-
-		// Compute properties and log an event.
-		$event_properties = [];
-		foreach ( [ 'course_prerequisite', 'course_category', 'course_woocommerce_product' ] as $field ) {
-			$value_to_log = -1;
-			if ( isset( $course_data[ $field ] ) ) {
-				$val = intval( $course_data[ $field ] );
-				if ( $val ) {
-					$value_to_log = $val;
-				}
-			}
-
-			// Get property name.
-			$property_name = $field . '_id';
-			if ( 'course_woocommerce_product' === $field ) {
-				$property_name = 'product_id';
-			}
-
-			$event_properties[ $property_name ] = $value_to_log;
-		}
-		sensei_log_event( 'lesson_course_add', $event_properties );
-
-		echo esc_html( $updated );
-		die(); // WordPress may print out a spurious zero without this can be particularly bad if using JSON
 	}
 
 	/**
@@ -2956,73 +2973,6 @@ class Sensei_Lesson {
 		parse_str( $data, $quiz_data );
 		update_post_meta( $quiz_data['quiz_id'], '_random_question_order', $quiz_data['random_question_order'] );
 		die();
-	}
-
-	/**
-	 * Save lesson course.
-	 *
-	 * @access private
-	 * @deprecated 2.2.0
-	 * @param array $data (default: array()).
-	 * @return integer|boolean $course_id or false
-	 */
-	private function lesson_save_course( $data = array() ) {
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		$return = false;
-		// Setup the course data.
-		$course_id      = 0;
-		$course_content = '';
-		$course_title   = '';
-		if ( isset( $data['course_id'] ) && ( 0 < absint( $data['course_id'] ) ) ) {
-			$course_id = absint( $data['course_id'] );
-		}
-		if ( isset( $data['course_title'] ) && ( '' !== $data['course_title'] ) ) {
-			$course_title = $data['course_title'];
-		}
-		$post_title  = $course_title;
-		$post_status = 'publish';
-		$post_type   = 'course';
-		if ( isset( $data['course_content'] ) && ( '' !== $data['course_content'] ) ) {
-			$course_content = $data['course_content'];
-		}
-		$post_content = $course_content;
-		// Course Query Arguments.
-		$post_type_args = array(
-			'post_content' => $post_content,
-			'post_status'  => $post_status,
-			'post_title'   => $post_title,
-			'post_type'    => $post_type,
-		);
-		// Only save if there is a valid title.
-		if ( '' !== $post_title ) {
-			// Check for prerequisite courses.
-			$course_prerequisite_id = absint( $data['course_prerequisite'] );
-			$course_category_id     = absint( $data['course_category'] );
-			// Create the new course.
-			$course_id = wp_insert_post( $post_type_args );
-			add_post_meta( $course_id, '_course_prerequisite', $course_prerequisite_id );
-
-			/**
-			 * Fires after a course was created from the lesson page meta box.
-			 *
-			 * @since 2.0.0
-			 * @hook sensei_lesson_course_created
-			 *
-			 * @param {int}   $course_id Course ID.
-			 * @param {array} $data      Data that was sent when creating the course.
-			 */
-			do_action( 'sensei_lesson_course_created', $course_id, $data );
-
-			if ( 0 < $course_category_id ) {
-				wp_set_object_terms( $course_id, $course_category_id, 'course-category' );
-			}
-		}
-		// Check that the insert or update saved by testing the post id.
-		if ( 0 < $course_id ) {
-			$return = $course_id;
-		}
-		return $return;
 	}
 
 	/**
@@ -4603,18 +4553,6 @@ class Sensei_Lesson {
 
 		<?php
 
-	}
-
-	/**
-	 * Flush the rewrite rules.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 2.2.1
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	public static function flush_rewrite_rules( $post_id ) {
-		_deprecated_function( __METHOD__, '2.2.1' );
 	}
 
 	/**
