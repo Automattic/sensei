@@ -79,6 +79,11 @@ jobs:
               run: sudo /etc/init.d/mysql start
             - name: Install PHP dependencies
               run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
+            - name: Add PHP 7.4 compatibility
+              run: |
+                if [ "$(php -r "echo version_compare(PHP_VERSION,'7.4','>=');")" ]; then
+                    composer require --dev phpunit/phpunit:"^7.5" --update-with-dependencies --ignore-platform-reqs
+                fi
             - name: Setup test environment
               run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root localhost $WP_VERSION
             - name: Run tests
