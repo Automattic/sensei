@@ -1431,13 +1431,32 @@ class Sensei_Admin {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
-		$course_id = isset( $_POST['course_id'] ) ? (int) $_POST['course_id'] : null;
-		$ordered   = null;
+		if (
+			empty( $_POST['course_id'] )
+			|| empty( $_POST['lessons'] )
+		) {
+			_doing_it_wrong(
+				'handle_order_lessons',
+				'The handle_order_lessons AJAX call should be a POST request with parameters "course_id" and "lessons".',
+				'4.0.1'
+			);
 
-		if ( isset( $_POST['lesson-order'] ) ) {
-			$lesson_order = sanitize_text_field( wp_unslash( $_POST['lesson-order'] ) );
-			$ordered      = $this->save_lesson_order( $lesson_order, $course_id );
+			wp_die();
 		}
+
+		$lessons_order = [];
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- The input is sanitized by hand.
+		foreach ( $_POST['lessons'] as $lesson_id => $lesson_data ) {
+			$lessons_order[ (int) $lesson_id ] = [
+				'module' => (int) $lesson_data['module'],
+			];
+		}
+
+		$course_id = (int) $_POST['course_id'];
+		$ordered   = $this->sync_lesson_order(
+			$lessons_order,
+			$course_id
+		);
 
 		wp_safe_redirect(
 			esc_url_raw(
@@ -1528,12 +1547,13 @@ class Sensei_Admin {
 							$html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module['id'] ) . '">' . "\n";
 
 							foreach ( $module['lessons'] as $lesson ) {
-								$html .= '<li class="lesson"><span rel="' . esc_attr( $lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $lesson['title'] ) . '</span></li>' . "\n";
+								$html .= '<li class="lesson">';
+								$html .= '<span rel="' . esc_attr( $lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $lesson['title'] ) . '</span>';
+								$html .= '<input type="hidden" name="lessons[' . intval( $lesson['id'] ) . '][module]" value="' . intval( $module['id'] ) . '">';
+								$html .= '</li>' . "\n";
 							}
 
 							$html .= '</ul>' . "\n";
-
-							$html .= '<input type="hidden" name="lesson-order-module-' . esc_attr( $module['id'] ) . '" value="" />' . "\n";
 						}
 					}
 
@@ -1546,7 +1566,9 @@ class Sensei_Admin {
 						$html .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
 
 						foreach ( $other_lessons as $other_lesson ) {
-							$html .= '<li class="lesson"><span rel="' . esc_attr( $other_lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $other_lesson['title'] ) . '</span></li>' . "\n";
+							$html .= '<li class="lesson"><span rel="' . esc_attr( $other_lesson['id'] ) . '" style="width: 100%;"> ' . esc_html( $other_lesson['title'] ) . '</span>';
+							$html .= '<input type="hidden" name="lessons[' . intval( $other_lesson['id'] ) . '][module]" value="">';
+							$html .= '</li>' . "\n";
 						}
 						$html .= '</ul>' . "\n";
 					}
@@ -1558,7 +1580,6 @@ class Sensei_Admin {
 					if ( $has_lessons ) {
 						$html .= '<input type="hidden" name="action" value="order_lessons" />' . "\n";
 						$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
-						$html .= '<input type="hidden" name="lesson-order" value="" />' . "\n";
 						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei-lms' ) . '" />' . "\n";
 						$html .= '</form>';
@@ -1666,6 +1687,67 @@ class Sensei_Admin {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Sync the course lessons with a list of IDs.
+	 *
+	 * @since 4.0.1
+	 *
+	 * @param array $lesson_ids {
+	 *     Arguments that accompany the lesson ids.
+	 *
+	 *     @type int $module The module ID of the lesson.
+	 * }
+	 * @param int   $course_id
+	 *
+	 * @return bool
+	 */
+	private function sync_lesson_order( array $lesson_ids, int $course_id ): bool {
+
+		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+		$original_course_structure = $this->get_course_structure( $course_id );
+		add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
+
+		$lessons = [];
+		$modules = [];
+
+		// Extract the lessons from the course structure in preparation for the re-ordering.
+		foreach ( $original_course_structure as $item ) {
+			if ( 'module' === $item['type'] ) {
+				foreach ( $item['lessons'] as $lesson ) {
+					$lessons[ $lesson['id'] ] = $lesson;
+				}
+
+				$item['lessons']        = [];
+				$modules[ $item['id'] ] = $item;
+			} elseif ( 'lesson' === $item['type'] ) {
+				$lessons[ $item['id'] ] = $item;
+			}
+		}
+
+		// Map the lessons to the modules.
+		foreach ( $lesson_ids as $lesson_id => $lesson_data ) {
+			$module_id = (int) $lesson_data['module'];
+			if ( $module_id ) {
+				$modules[ $module_id ]['lessons'][] = $lessons[ $lesson_id ];
+			}
+		}
+
+		$reordered_course_structure = array_values( $modules );
+
+		// Map the lessons that don't belong to a module.
+		foreach ( $lesson_ids as $lesson_id => $lesson_data ) {
+			if ( ! $lesson_data['module'] ) {
+				$reordered_course_structure[] = $lessons[ $lesson_id ];
+			}
+		}
+
+		// Save the new course structure.
+		$saved = Sensei_Course_Structure::instance( $course_id )
+			->save( $reordered_course_structure );
+
+		return true === $saved;
 	}
 
 	/**
