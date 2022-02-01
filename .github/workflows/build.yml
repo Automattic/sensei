@@ -35,3 +35,9 @@ jobs:
               run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
             - name: Build Plugin
               run: npm run build
+            - name: Store Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                name: sensei-lms-${{ github.sha }}.zip
+                path: ${{ github.workspace }}/sensei-lms.zip
+                retention-days: 5
