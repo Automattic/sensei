@@ -194,7 +194,6 @@ class Sensei_Course_Theme {
 
 	}
 
-
 	/**
 	 * Get course theme name.
 	 *
@@ -345,7 +344,7 @@ class Sensei_Course_Theme {
 		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
 		$preview_url = '/?p=' . $lesson->ID;
 		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
-			$preview_url .= '&learn=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+			$preview_url .= '&' . self::QUERY_VAR . '=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
 		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 	}
@@ -385,7 +384,7 @@ class Sensei_Course_Theme {
 			array(
 				'id'    => 'site-editor',
 				'title' => __( 'Edit Site', 'sensei-lms' ),
-				'href'  => admin_url( 'site-editor.php?learn=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+				'href'  => admin_url( 'site-editor.php?' . self::QUERY_VAR . '=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
 			)
 		);
 	}
