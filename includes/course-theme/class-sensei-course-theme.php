@@ -68,7 +68,9 @@ class Sensei_Course_Theme {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
-		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 1 );
+		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
+		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
+		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
@@ -145,21 +147,53 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Add a route for loading the course theme.
+	 * Add learning mode prefix as query var.
 	 *
 	 * @access private
 	 */
-	public function add_rewrite_rules() {
+	public function add_query_var() {
 		global $wp;
-		$wp->add_query_var( self::QUERY_VAR );
-		add_rewrite_rule( '^' . self::QUERY_VAR . '/([^/]*)/([^/]*)/?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&post_type=$matches[1]&name=$matches[2]&$matches[3]', 'top' );
-		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
 
-		if ( ! get_option( 'sensei_course_theme_query_var_flushed' ) ) {
-			flush_rewrite_rules( false );
-			update_option( 'sensei_course_theme_query_var_flushed', 1 );
-		}
+		$wp->add_query_var( self::QUERY_VAR );
 	}
+
+
+	/**
+	 * Flush rewrite rules if changed.
+	 *
+	 * @access private
+	 */
+	public function maybe_flush_rewrite_rules() {
+
+		delete_option( 'sensei_course_theme_query_var_flushed' );
+
+		if ( '2' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+			flush_rewrite_rules( false );
+		}
+		update_option( 'sensei_course_theme_query_var_flushed', '2' );
+	}
+
+
+	/**
+	 * Add a route with a /learn prefix for using course theme for a post type.
+	 *
+	 * @access private
+	 *
+	 * @param string       $post_type Post type name.
+	 * @param WP_Post_Type $args      Post type object.
+	 */
+	public function add_post_type_rewrite_rules( $post_type, $args ) {
+
+		if ( ! in_array( $post_type, [ 'lesson', 'quiz' ], true ) ) {
+			return;
+		}
+
+		$slug = preg_quote( $args->rewrite['slug'] ?? $post_type, '/' );
+
+		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $post_type . '=$matches[1]&page=$matches[2]&$matches[3]', 'top' );
+
+	}
+
 
 	/**
 	 * Get course theme name.
