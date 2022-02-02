@@ -18,12 +18,12 @@ use \Sensei\Blocks\Course_Theme as Blocks;
 /**
  * Class Course_Theme
  */
-class Course_Theme extends Sensei_Blocks_Initializer {
+class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * Course_Theme constructor.
 	 */
 	public function __construct() {
-		parent::__construct( [ 'lesson', 'course', 'quiz' ] );
+		parent::__construct( null );
 	}
 
 	/**
@@ -43,25 +43,17 @@ class Course_Theme extends Sensei_Blocks_Initializer {
 	}
 
 	/**
-	 * Check if it should initialize the blocks.
-	 */
-	protected function should_initialize_blocks() {
-		return Sensei_Course_Theme_Option::instance()->should_use_sensei_theme();
-	}
-
-	/**
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
 		new Blocks\Course_Title();
+		new Blocks\Course_Navigation();
 		new Blocks\Site_Logo();
 		new Blocks\Notices();
 		new Blocks\Focus_Mode();
 		new Blocks\Post_Title();
 		new Blocks\Lesson_Module();
 		new Blocks\Course_Content();
-		new Blocks\Prev_Lesson();
-		new Blocks\Next_Lesson();
 		new Blocks\Prev_Next_Lesson();
 		new Blocks\Exit_Course();
 		new Blocks\Course_Progress_Counter();

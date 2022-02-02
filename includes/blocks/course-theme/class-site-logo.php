@@ -42,6 +42,6 @@ class Site_Logo {
 	 */
 	public function render_site_logo( array $attributes ): string {
 
-		return get_custom_logo();
+		return '<div class="wp-block-site-logo">' . get_custom_logo() . '</div>';
 	}
 }

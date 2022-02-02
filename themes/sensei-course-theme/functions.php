@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'after_setup_theme', '\Sensei\Themes\Sensei_Course_Theme\setup_theme' );
-add_action( 'wp_enqueue_scripts', '\Sensei\Themes\Sensei_Course_Theme\enqueue_scripts' );
 add_filter( 'single_template_hierarchy', '\Sensei\Themes\Sensei_Course_Theme\set_single_template_hierarchy' );
 
 /**
@@ -83,18 +82,3 @@ function should_use_quiz_template() {
 	return false;
 }
 
-/**
- * Load Google fonts.
- *
- * @return void
- */
-function enqueue_scripts() {
-
-	$font_families = [ 'family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900' ];
-
-	$fonts_url = esc_url_raw( 'https://fonts.googleapis.com/css2?' . implode( '&', array_unique( $font_families ) ) . '&display=swap' );
-
-	//phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- External resource.
-	wp_enqueue_style( 'sensei-course-theme-fonts', $fonts_url, [], null );
-
-}

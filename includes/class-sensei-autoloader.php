@@ -94,87 +94,89 @@ class Sensei_Autoloader {
 			/**
 			 * Main Sensei class
 			 */
-			'Sensei_Main'                                 => 'class-sensei.php',
+			'Sensei_Main'                                  => 'class-sensei.php',
 
 			/**
 			 * Emails
 			 */
-			'Sensei_Email_Learner_Completed_Course'       => 'emails/class-sensei-email-learner-completed-course.php',
-			'Sensei_Email_Learner_Graded_Quiz'            => 'emails/class-sensei-email-learner-graded-quiz.php',
-			'Sensei_Email_New_Message_Reply'              => 'emails/class-sensei-email-new-message-reply.php',
-			'Sensei_Email_Teacher_Completed_Course'       => 'emails/class-sensei-email-teacher-completed-course.php',
-			'Sensei_Email_Teacher_Completed_Lesson'       => 'emails/class-sensei-email-teacher-completed-lesson.php',
-			'Sensei_Email_Teacher_New_Course_Assignment'  => 'emails/class-sensei-email-teacher-new-course-assignment.php',
-			'Sensei_Email_Teacher_New_Message'            => 'emails/class-sensei-email-teacher-new-message.php',
-			'Sensei_Email_Teacher_Quiz_Submitted'         => 'emails/class-sensei-email-teacher-quiz-submitted.php',
-			'Sensei_Email_Teacher_Started_Course'         => 'emails/class-sensei-email-teacher-started-course.php',
+			'Sensei_Email_Learner_Completed_Course'        => 'emails/class-sensei-email-learner-completed-course.php',
+			'Sensei_Email_Learner_Graded_Quiz'             => 'emails/class-sensei-email-learner-graded-quiz.php',
+			'Sensei_Email_New_Message_Reply'               => 'emails/class-sensei-email-new-message-reply.php',
+			'Sensei_Email_Teacher_Completed_Course'        => 'emails/class-sensei-email-teacher-completed-course.php',
+			'Sensei_Email_Teacher_Completed_Lesson'        => 'emails/class-sensei-email-teacher-completed-lesson.php',
+			'Sensei_Email_Teacher_New_Course_Assignment'   => 'emails/class-sensei-email-teacher-new-course-assignment.php',
+			'Sensei_Email_Teacher_New_Message'             => 'emails/class-sensei-email-teacher-new-message.php',
+			'Sensei_Email_Teacher_Quiz_Submitted'          => 'emails/class-sensei-email-teacher-quiz-submitted.php',
+			'Sensei_Email_Teacher_Started_Course'          => 'emails/class-sensei-email-teacher-started-course.php',
 
 			/**
 			 * Admin
 			 */
-			'Sensei_Learner_Management'                   => 'admin/class-sensei-learner-management.php',
-			'Sensei_Extensions'                           => 'admin/class-sensei-extensions.php',
-			'Sensei_Exit_Survey'                          => 'admin/class-sensei-exit-survey.php',
-			'Sensei_WCPC_Prompt'                          => 'admin/class-sensei-wcpc-prompt.php',
+			'Sensei_Learner_Management'                    => 'admin/class-sensei-learner-management.php',
+			'Sensei_Extensions'                            => 'admin/class-sensei-extensions.php',
+			'Sensei_Exit_Survey'                           => 'admin/class-sensei-exit-survey.php',
+			'Sensei_WCPC_Prompt'                           => 'admin/class-sensei-wcpc-prompt.php',
 			'Sensei_Learners_Admin_Bulk_Actions_Controller' => 'admin/class-sensei-learners-admin-bulk-actions-controller.php',
-			'Sensei_Learners_Admin_Bulk_Actions_View'     => 'admin/class-sensei-learners-admin-bulk-actions-view.php',
-			'Sensei_Learners_Main'                        => 'admin/class-sensei-learners-main.php',
-			'Sensei_Email_Signup_Form'                    => 'email-signup/class-sensei-email-signup-form.php', // @deprecated 3.1.0
-			'Sensei_Setup_Wizard'                         => 'admin/class-sensei-setup-wizard.php',
-			'Sensei_Setup_Wizard_Pages'                   => 'admin/class-sensei-setup-wizard-pages.php',
-			'Sensei_Plugins_Installation'                 => 'admin/class-sensei-plugins-installation.php',
-			'Sensei_Status'                               => 'admin/class-sensei-status.php',
-			'Sensei_WCCOM_Connect_Notice'                 => 'admin/class-sensei-wccom-connect-notice.php',
-			'Sensei_Admin_Notices'                        => 'admin/class-sensei-admin-notices.php',
+			'Sensei_Learners_Admin_Bulk_Actions_View'      => 'admin/class-sensei-learners-admin-bulk-actions-view.php',
+			'Sensei_Learners_Main'                         => 'admin/class-sensei-learners-main.php',
+			'Sensei_Email_Signup_Form'                     => 'email-signup/class-sensei-email-signup-form.php', // @deprecated 3.1.0
+			'Sensei_Setup_Wizard'                          => 'admin/class-sensei-setup-wizard.php',
+			'Sensei_Setup_Wizard_Pages'                    => 'admin/class-sensei-setup-wizard-pages.php',
+			'Sensei_Plugins_Installation'                  => 'admin/class-sensei-plugins-installation.php',
+			'Sensei_Status'                                => 'admin/class-sensei-status.php',
+			'Sensei_WCCOM_Connect_Notice'                  => 'admin/class-sensei-wccom-connect-notice.php',
+			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
 
 			/**
 			 * Admin Tools
 			 */
-			'Sensei_Tools'                                => 'admin/class-sensei-tools.php',
-			'Sensei_Tool_Interface'                       => 'admin/tools/class-sensei-tool-interface.php',
-			'Sensei_Tool_Interactive_Interface'           => 'admin/tools/class-sensei-tool-interactive-interface.php',
-			'Sensei_Tool_Recalculate_Course_Enrolment'    => 'admin/tools/class-sensei-tool-recalculate-course-enrolment.php',
-			'Sensei_Tool_Recalculate_Enrolment'           => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
-			'Sensei_Tool_Ensure_Roles'                    => 'admin/tools/class-sensei-tool-ensure-roles.php',
-			'Sensei_Tool_Remove_Deleted_User_Data'        => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
-			'Sensei_Tool_Module_Slugs_Mismatch'           => 'admin/tools/class-sensei-tool-module-slugs-mismatch.php',
-			'Sensei_Tool_Enrolment_Debug'                 => 'admin/tools/class-sensei-tool-enrolment-debug.php',
+			'Sensei_Tools'                                 => 'admin/class-sensei-tools.php',
+			'Sensei_Tool_Interface'                        => 'admin/tools/class-sensei-tool-interface.php',
+			'Sensei_Tool_Interactive_Interface'            => 'admin/tools/class-sensei-tool-interactive-interface.php',
+			'Sensei_Tool_Recalculate_Course_Enrolment'     => 'admin/tools/class-sensei-tool-recalculate-course-enrolment.php',
+			'Sensei_Tool_Recalculate_Enrolment'            => 'admin/tools/class-sensei-tool-recalculate-enrolment.php',
+			'Sensei_Tool_Ensure_Roles'                     => 'admin/tools/class-sensei-tool-ensure-roles.php',
+			'Sensei_Tool_Remove_Deleted_User_Data'         => 'admin/tools/class-sensei-tool-remove-deleted-user-data.php',
+			'Sensei_Tool_Module_Slugs_Mismatch'            => 'admin/tools/class-sensei-tool-module-slugs-mismatch.php',
+			'Sensei_Tool_Enrolment_Debug'                  => 'admin/tools/class-sensei-tool-enrolment-debug.php',
+			'Sensei_Tool_Import'                           => 'admin/tools/class-sensei-tool-import.php',
+			'Sensei_Tool_Export'                           => 'admin/tools/class-sensei-tool-export.php',
 
 			/**
 			 * Shortcodes
 			 */
-			'Sensei_Shortcode_Loader'                     => 'shortcodes/class-sensei-shortcode-loader.php',
-			'Sensei_Shortcode_Interface'                  => 'shortcodes/interface-sensei-shortcode.php',
-			'Sensei_Shortcode_Featured_Courses'           => 'shortcodes/class-sensei-shortcode-featured-courses.php',
-			'Sensei_Shortcode_User_Courses'               => 'shortcodes/class-sensei-shortcode-user-courses.php',
-			'Sensei_Shortcode_Courses'                    => 'shortcodes/class-sensei-shortcode-courses.php',
-			'Sensei_Shortcode_Teachers'                   => 'shortcodes/class-sensei-shortcode-teachers.php',
-			'Sensei_Shortcode_User_Messages'              => 'shortcodes/class-sensei-shortcode-user-messages.php',
-			'Sensei_Shortcode_Course_Page'                => 'shortcodes/class-sensei-shortcode-course-page.php',
-			'Sensei_Shortcode_Lesson_Page'                => 'shortcodes/class-sensei-shortcode-lesson-page.php',
-			'Sensei_Shortcode_Course_Categories'          => 'shortcodes/class-sensei-shortcode-course-categories.php',
-			'Sensei_Shortcode_Unpurchased_Courses'        => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
+			'Sensei_Shortcode_Loader'                      => 'shortcodes/class-sensei-shortcode-loader.php',
+			'Sensei_Shortcode_Interface'                   => 'shortcodes/interface-sensei-shortcode.php',
+			'Sensei_Shortcode_Featured_Courses'            => 'shortcodes/class-sensei-shortcode-featured-courses.php',
+			'Sensei_Shortcode_User_Courses'                => 'shortcodes/class-sensei-shortcode-user-courses.php',
+			'Sensei_Shortcode_Courses'                     => 'shortcodes/class-sensei-shortcode-courses.php',
+			'Sensei_Shortcode_Teachers'                    => 'shortcodes/class-sensei-shortcode-teachers.php',
+			'Sensei_Shortcode_User_Messages'               => 'shortcodes/class-sensei-shortcode-user-messages.php',
+			'Sensei_Shortcode_Course_Page'                 => 'shortcodes/class-sensei-shortcode-course-page.php',
+			'Sensei_Shortcode_Lesson_Page'                 => 'shortcodes/class-sensei-shortcode-lesson-page.php',
+			'Sensei_Shortcode_Course_Categories'           => 'shortcodes/class-sensei-shortcode-course-categories.php',
+			'Sensei_Shortcode_Unpurchased_Courses'         => 'shortcodes/class-sensei-shortcode-unpurchased-courses.php',
 
 			/**
 			 * Renderers
 			 */
-			'Sensei_Renderer_Interface'                   => 'renderers/interface-sensei-renderer.php',
-			'Sensei_Renderer_Single_Post'                 => 'renderers/class-sensei-renderer-single-post.php',
+			'Sensei_Renderer_Interface'                    => 'renderers/interface-sensei-renderer.php',
+			'Sensei_Renderer_Single_Post'                  => 'renderers/class-sensei-renderer-single-post.php',
 
 			/**
 			 * Update tasks.
 			 */
-			'Sensei_Update_Fix_Question_Author'           => 'update-tasks/class-sensei-update-fix-question-author.php',
+			'Sensei_Update_Fix_Question_Author'            => 'update-tasks/class-sensei-update-fix-question-author.php',
 			'Sensei_Update_Remove_Abandoned_Multiple_Question' => 'update-tasks/class-sensei-update-remove-abandoned-multiple-question.php',
 
 			/**
 			 * Unsupported theme handlers.
 			 */
-			'Sensei_Unsupported_Theme_Handler_Interface'  => 'unsupported-theme-handlers/interface-sensei-unsupported-theme-handler.php',
+			'Sensei_Unsupported_Theme_Handler_Interface'   => 'unsupported-theme-handlers/interface-sensei-unsupported-theme-handler.php',
 			'Sensei_Unsupported_Theme_Handler_Page_Imitator' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-page-imitator.php',
-			'Sensei_Unsupported_Theme_Handler_Utils'      => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-utils.php',
-			'Sensei_Unsupported_Theme_Handler_CPT'        => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-cpt.php',
-			'Sensei_Unsupported_Theme_Handler_Module'     => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php',
+			'Sensei_Unsupported_Theme_Handler_Utils'       => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-utils.php',
+			'Sensei_Unsupported_Theme_Handler_CPT'         => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-cpt.php',
+			'Sensei_Unsupported_Theme_Handler_Module'      => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-module.php',
 			'Sensei_Unsupported_Theme_Handler_Course_Results' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-course-results.php',
 			'Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-lesson-tag-archive.php',
 			'Sensei_Unsupported_Theme_Handler_Teacher_Archive' => 'unsupported-theme-handlers/class-sensei-unsupported-theme-handler-teacher-archive.php',
@@ -185,49 +187,48 @@ class Sensei_Autoloader {
 			/**
 			 * Built in theme integration support
 			 */
-			'Sensei_Theme_Integration_Loader'             => 'theme-integrations/theme-integration-loader.php',
-			'Sensei__S'                                   => 'theme-integrations/underscores.php',
-			'Sensei_Twentyeleven'                         => 'theme-integrations/twentyeleven.php',
-			'Sensei_Twentytwelve'                         => 'theme-integrations/twentytwelve.php',
-			'Sensei_Twentythirteen'                       => 'theme-integrations/Twentythirteen.php',
-			'Sensei_Twentyfourteen'                       => 'theme-integrations/Twentyfourteen.php',
-			'Sensei_Twentyfifteen'                        => 'theme-integrations/Twentyfifteen.php',
-			'Sensei_Twentysixteen'                        => 'theme-integrations/Twentysixteen.php',
-			'Sensei_Storefront'                           => 'theme-integrations/Storefront.php',
+			'Sensei_Theme_Integration_Loader'              => 'theme-integrations/theme-integration-loader.php',
+			'Sensei__S'                                    => 'theme-integrations/underscores.php',
+			'Sensei_Twentyeleven'                          => 'theme-integrations/twentyeleven.php',
+			'Sensei_Twentytwelve'                          => 'theme-integrations/twentytwelve.php',
+			'Sensei_Twentythirteen'                        => 'theme-integrations/Twentythirteen.php',
+			'Sensei_Twentyfourteen'                        => 'theme-integrations/Twentyfourteen.php',
+			'Sensei_Twentyfifteen'                         => 'theme-integrations/Twentyfifteen.php',
+			'Sensei_Twentysixteen'                         => 'theme-integrations/Twentysixteen.php',
+			'Sensei_Storefront'                            => 'theme-integrations/Storefront.php',
 
 			/**
 			 * WPML
 			 */
-			'Sensei_WPML'                                 => 'wpml/class-sensei-wpml.php',
+			'Sensei_WPML'                                  => 'wpml/class-sensei-wpml.php',
 
 			/**
 			 * Blocks
 			 */
-			'Sensei\Blocks\Shared\Progress_Bar'           => 'blocks/shared/class-progress-bar.php',
+			'Sensei\Blocks\Shared\Progress_Bar'            => 'blocks/shared/class-progress-bar.php',
 
 			/**
 			 * Course Theme
 			 */
-			'Sensei\Blocks\Course_Theme'                  => 'blocks/course-theme/class-course-theme.php',
-			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson' => 'blocks/course-theme/class-prev-next-lesson.php',
-			'Sensei\Blocks\Course_Theme\Prev_Lesson'      => 'blocks/course-theme/class-prev-lesson.php',
-			'Sensei\Blocks\Course_Theme\Next_Lesson'      => 'blocks/course-theme/class-next-lesson.php',
-			'Sensei\Blocks\Course_Theme\Exit_Course'      => 'blocks/course-theme/class-exit-course.php',
-			'Sensei\Blocks\Course_Theme\Course_Title'     => 'blocks/course-theme/class-course-title.php',
-			'Sensei\Blocks\Course_Theme\Site_Logo'        => 'blocks/course-theme/class-site-logo.php',
-			'Sensei\Blocks\Course_Theme\Focus_Mode'       => 'blocks/course-theme/class-focus-mode.php',
-			'Sensei\Blocks\Course_Theme\Notices'          => 'blocks/course-theme/class-notices.php',
-			'Sensei\Blocks\Course_Theme\Lesson_Actions'   => 'blocks/course-theme/class-lesson-actions.php',
+			'Sensei\Blocks\Course_Theme_Blocks'            => 'blocks/course-theme/class-course-theme-blocks.php',
+			'Sensei\Blocks\Course_Theme\Prev_Next_Lesson'  => 'blocks/course-theme/class-prev-next-lesson.php',
+			'Sensei\Blocks\Course_Theme\Exit_Course'       => 'blocks/course-theme/class-exit-course.php',
+			'Sensei\Blocks\Course_Theme\Course_Title'      => 'blocks/course-theme/class-course-title.php',
+			'Sensei\Blocks\Course_Theme\Course_Navigation' => 'blocks/course-theme/class-course-navigation.php',
+			'Sensei\Blocks\Course_Theme\Site_Logo'         => 'blocks/course-theme/class-site-logo.php',
+			'Sensei\Blocks\Course_Theme\Focus_Mode'        => 'blocks/course-theme/class-focus-mode.php',
+			'Sensei\Blocks\Course_Theme\Notices'           => 'blocks/course-theme/class-notices.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Actions'    => 'blocks/course-theme/class-lesson-actions.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson' => 'blocks/course-theme/class-quiz-back-to-lesson.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Counter' => 'blocks/course-theme/class-course-progress-counter.php',
 			'Sensei\Blocks\Course_Theme\Course_Progress_Bar' => 'blocks/course-theme/class-course-progress-bar.php',
-			'Sensei\Blocks\Course_Theme\Course_Content'   => 'blocks/course-theme/class-course-content.php',
-			'Sensei\Blocks\Course_Theme\Quiz_Content'     => 'blocks/course-theme/class-quiz-content.php',
-			'Sensei\Blocks\Course_Theme\Post_Title'       => 'blocks/course-theme/class-post-title.php',
-			'Sensei\Blocks\Course_Theme\Lesson_Module'    => 'blocks/course-theme/class-lesson-module.php',
+			'Sensei\Blocks\Course_Theme\Course_Content'    => 'blocks/course-theme/class-course-content.php',
+			'Sensei\Blocks\Course_Theme\Quiz_Content'      => 'blocks/course-theme/class-quiz-content.php',
+			'Sensei\Blocks\Course_Theme\Post_Title'        => 'blocks/course-theme/class-post-title.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Module'     => 'blocks/course-theme/class-lesson-module.php',
 			'Sensei\Blocks\Course_Theme\Sidebar_Toggle_Button' => 'blocks/course-theme/class-sidebar-toggle-button.php',
-			'Sensei\Blocks\Course_Theme\Quiz_Graded'      => 'blocks/course-theme/class-quiz-graded.php',
-			'Sensei\Blocks\Course_Theme\Quiz_Actions'     => 'blocks/course-theme/class-quiz-actions.php',
+			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
+			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Pagination'       => 'blocks/course-theme/class-pagination.php',
 		);
 	}

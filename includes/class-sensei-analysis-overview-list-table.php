@@ -14,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public $type;
 	public $page_slug = 'sensei_analysis';
+	/**
+	 * The post type under which is the page registered.
+	 *
+	 * @var string
+	 */
+	private $post_type = 'course';
 
 	/**
 	 * Constructor
@@ -317,8 +323,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'course_id' => $item->ID,
+							'post_type' => $this->post_type,
 						),
-						admin_url( 'admin.php' )
+						admin_url( 'edit.php' )
 					);
 
 					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
@@ -387,8 +394,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'lesson_id' => $item->ID,
+							'post_type' => $this->post_type,
 						),
-						admin_url( 'admin.php' )
+						admin_url( 'edit.php' )
 					);
 					$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
@@ -397,8 +405,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 							array(
 								'page'      => $this->page_slug,
 								'course_id' => $course_id,
+								'post_type' => $this->post_type,
 							),
-							admin_url( 'admin.php' )
+							admin_url( 'edit.php' )
 						);
 						$course_title = '<a href="' . esc_url( $url ) . '">' . esc_html( $course_title ) . '</a>';
 					} else {
@@ -464,10 +473,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				} else {
 					$url                 = add_query_arg(
 						array(
-							'page'    => $this->page_slug,
-							'user_id' => $item->ID,
+							'page'      => $this->page_slug,
+							'user_id'   => $item->ID,
+							'post_type' => $this->post_type,
 						),
-						admin_url( 'admin.php' )
+						admin_url( 'edit.php' )
 					);
 					$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
 					$user_average_grade .= '%';
@@ -505,7 +515,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function get_courses( $args ) {
 		$course_args = array(
-			'post_type'        => 'course',
+			'post_type'        => $this->post_type,
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $args['number'],
 			'offset'           => $args['offset'],
@@ -664,7 +674,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$menu = array();
 
 		$query_args     = array(
-			'page' => $this->page_slug,
+			'page'      => $this->page_slug,
+			'post_type' => $this->post_type,
 		);
 		$learners_class = $courses_class = $lessons_class = '';
 		switch ( $this->type ) {
@@ -685,9 +696,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$lesson_args['view']  = 'lessons';
 		$courses_args['view'] = 'courses';
 
-		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
-		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
-		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
+		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
+		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
+		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
 
 		$menu = apply_filters( 'sensei_analysis_overview_sub_menu', $menu );
 		if ( ! empty( $menu ) ) {
@@ -726,8 +737,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'page'                   => $this->page_slug,
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
+				'post_type'              => $this->post_type,
 			),
-			admin_url( 'admin.php' )
+			admin_url( 'edit.php' )
 		);
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}

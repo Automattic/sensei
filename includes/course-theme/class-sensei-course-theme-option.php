@@ -60,8 +60,6 @@ class Sensei_Course_Theme_Option {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
-		// Init blocks.
-		new \Sensei\Blocks\Course_Theme();
 
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
@@ -194,7 +192,7 @@ class Sensei_Course_Theme_Option {
 		$notices['sensei-course-theme'] = [
 			'type'       => 'user',
 			'icon'       => 'sensei',
-			'heading'    => __( 'Sensei’s new learning mode is here', 'sensei-lms' ),
+			'heading'    => __( 'Sensei’s new Learning Mode is here!', 'sensei-lms' ),
 			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
 			'actions'    => [
 				[

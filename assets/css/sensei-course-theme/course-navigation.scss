@@ -1,13 +1,12 @@
 @import '../../shared/styles/collapsible-content';
 
-.sensei-lms-course-navigation {
 
+.sensei-lms-course-navigation {
 	&__modules + &__lessons {
-		border-top: 1px dotted var(--border-color);
+		border-top: 1px dotted var(--border-color, #1E1E1E);
 		margin-top: 6px;
 		padding-top: 6px;
 	}
-
 }
 
 .sensei-lms-course-navigation-module {
@@ -43,6 +42,9 @@
 		line-height: 22px;
 		text-align: left;
 		margin: 0;
+	}
+	&__button {
+		color: inherit;
 	}
 
 	&__summary {

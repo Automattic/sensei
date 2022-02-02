@@ -62,6 +62,103 @@ class Sensei_Learner {
 
 		// Try to remove duplicate progress comments to mitigate duplicate enrollment issue.
 		add_action( 'sensei_log_activity_after', [ $this, 'remove_duplicate_progress' ] );
+
+		// Add custom columns.
+		add_filter( 'manage_course_posts_columns', array( $this, 'add_course_column_heading' ), 10 );
+		add_action( 'manage_course_posts_custom_column', array( $this, 'add_course_column_data' ), 10, 2 );
+	}
+
+	/**
+	 * Add columns to courses list table.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param  array $columns Course columns.
+	 * @return array
+	 */
+	public function add_course_column_heading( $columns ) {
+		$columns['students'] = _x( 'Students', 'column name', 'sensei-lms' );
+
+		return $columns;
+	}
+
+	/**
+	 * Output the content of the course columns.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 *
+	 * @param  string $column    Current column name.
+	 * @param  int    $course_id The course ID.
+	 */
+	public function add_course_column_data( $column, $course_id ) {
+		if ( 'students' === $column ) {
+			$this->output_students_column( $course_id );
+		}
+	}
+
+	/**
+	 * Output the students' column HTML.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 *
+	 * @param  int $course_id The course ID.
+	 * @return void
+	 */
+	private function output_students_column( int $course_id ) {
+		$students_count = Sensei_Utils::sensei_check_for_activity(
+			[
+				'post_id' => $course_id,
+				'type'    => 'sensei_course_status',
+				'status'  => 'any',
+			]
+		);
+
+		echo esc_html(
+			sprintf(
+				// translators: Placeholder is the number of students enrolled in a course.
+				_n( '%d student', '%d students', $students_count, 'sensei-lms' ),
+				$students_count
+			)
+		);
+
+		$manage_url = add_query_arg(
+			[
+				'post_type' => 'course',
+				'page'      => 'sensei_learners',
+				'view'      => 'learners',
+				'course_id' => $course_id,
+			],
+			admin_url( 'edit.php' )
+		);
+
+		$grade_url = add_query_arg(
+			[
+				'post_type' => 'course',
+				'page'      => 'sensei_grading',
+				'view'      => 'all',
+				'course_id' => $course_id,
+			],
+			admin_url( 'edit.php' )
+		);
+
+		?>
+		<div class="sensei-wp-list-table-actions">
+			<p>
+				<a class="button-secondary" href="<?php echo esc_url( $manage_url ); ?>">
+					<?php esc_html_e( 'Manage', 'sensei-lms' ); ?>
+				</a>
+			</p>
+			<?php if ( $students_count ) : ?>
+				<p>
+					<a class="button-secondary" href="<?php echo esc_url( $grade_url ); ?>">
+						<?php esc_html_e( 'Grade', 'sensei-lms' ); ?>
+					</a>
+				</p>
+			<?php endif ?>
+		</div>
+		<?php
 	}
 
 	/**

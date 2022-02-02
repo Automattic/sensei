@@ -1,93 +1,93 @@
-
 $base: '.sensei-course-theme';
 
-.sensei-course-theme__focus-mode-toggle {
-	.sensei-course-theme--focus-mode & {
-		position: absolute;
-		left: 20px;
-	}
-	padding: 4px;
-	white-space: nowrap;
-	display: flex;
-	flex-direction: row-reverse;
-	align-items: center;
-	gap: 12px;
-	border: none;
-	background: none;
+@media screen and (min-width: $breakpoint ) {
+	.sensei-course-theme__focus-mode-toggle {
+		padding: 4px;
+		border: none;
+		background-color: var(--bg-color);
+		cursor: pointer;
 
-	&__disable {
-		display: none;
+		.sensei-course-theme__focus-mode-toggle-icon {
+			width: 10px;
+			height: 10px;
+			transform: rotate(180deg);
+		}
 	}
 
-	.sensei-course-theme__focus-mode-toggle-icon {
-		width: 10px;
-		height: 10px;
-		transform: rotate(180deg);
-	}
-}
-@media screen and (min-width: 782px) {
-	.sensei-course-theme__sidebar {
-		padding-top: 32px;
-	}
-}
+	// Toogle in the header and without focus mode.
+	body:not(.sensei-course-theme--focus-mode, .editor-styles-wrapper) .sensei-course-theme__header__left {
+		.sensei-course-theme__focus-mode-toggle {
+			position: absolute;
+			left: 0;
+			bottom: -34px; // Button height with the padding.
+			text-align: left;
 
-.sensei-course-theme--focus-mode {
-	--focus-header-height: 45px;
+			// Match sidebar spacing.
+			width: calc( var( --sidebar-width ) - 18px );
+			padding-left: 24px;
+			padding-top: 9px;
+			padding-bottom: 9px;
+		}
+	}
 
-	.sensei-course-theme {
-		&__header {
-			&__container {
-				height: 39px;
-				overflow: hidden;
-			}
-			.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
-				display: none;
-			}
-			.wp-block-site-logo {
-				margin-right: -12px;
-				img {
-					max-height: 0;
+	.sensei-course-theme--focus-mode {
+		--header-height: 45px;
+
+		.sensei-course-theme {
+			&__header {
+				&__container {
+					height: 39px;
+					overflow: hidden;
+				}
+				.wp-block-site-logo, .sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
+					display: none;
+				}
+				.wp-block-sensei-lms-course-title {
+					font-size: 16px;
+				}
+				.sensei-course-theme-course-progress-bar {
+					height: 6px;
+				}
+				.sensei-course-theme__button {
+					font-size: 12px;
+					padding: 3px 8px;
+					font-weight: 700;
 				}
 			}
-			.wp-block-sensei-lms-course-title {
-				font-size: 16px;
+
+			&__sidebar {
+				left: -400px;
+				overflow: visible;
 			}
-			.sensei-course-theme-course-progress-bar {
-				height: 6px;
+			&__main-content {
+				margin-left: 0 !important;
 			}
-			.sensei-course-theme__button {
-				font-size: 12px;
-				padding: 3px 8px;
-				font-weight: 700;
+			&__focus-mode-toggle {
+				.sensei-course-theme__focus-mode-toggle-icon {
+					transform: rotate(0);
+				}
 			}
 		}
 
-		&__sidebar {
-			left: -400px;
-			overflow: visible;
-		}
-		&__main-content {
-			margin-left: 0 !important;
-		}
-		&__focus-mode-toggle {
-			left: 420px;
-			flex-direction: row;
-			&__enable {
-				display: none;
-			}
-			&__disable {
-				display: revert;
-			}
+		// Toogle in the header.
+		.sensei-course-theme__header__left .sensei-course-theme__focus-mode-toggle {
 			.sensei-course-theme__focus-mode-toggle-icon {
-				transform: none;
+				transform: rotate(90deg);
 			}
+		}
+
+		// Toggle in the sidebar.
+		.sensei-course-theme__sidebar .sensei-course-theme__focus-mode-toggle {
+			position: absolute;
+			left: 405px;
 		}
 	}
-	&--animated {
-		@media screen and (prefers-reduced-motion: no-preference) {
-			* {
-				transition: all 300ms ease-out;
-			}
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+	.sensei-course-theme--focus-mode--animated {
+		* {
+			transition: all 300ms ease-out;
 		}
 	}
 }

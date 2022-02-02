@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \Sensei\Blocks\Course_Theme;
-
 /**
  * Load the 'Sensei Course Theme' theme for the /learn subsite.
  *
@@ -70,8 +68,8 @@ class Sensei_Course_Theme {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
-		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 10 );
-		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 20 );
+		add_action( 'setup_theme', [ $this, 'add_rewrite_rules' ], 1 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 
@@ -241,13 +239,29 @@ class Sensei_Course_Theme {
 	 */
 	public function enqueue_styles() {
 		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
-		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
-			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 
-			$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
-			wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
-		}
+		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
+		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
+
+		$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
+		wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
+
+		$this->enqueue_fonts();
+
+	}
+
+	/**
+	 * Enqueue Google fonts.
+	 *
+	 * @access private
+	 */
+	public function enqueue_fonts() {
+		$font_families = [ 'family=Inter:wght@300;400;500;600;700', 'family=Source+Serif+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900' ];
+
+		$fonts_url = esc_url_raw( 'https://fonts.googleapis.com/css2?' . implode( '&', array_unique( $font_families ) ) . '&display=swap' );
+
+		//phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- External resource.
+		wp_enqueue_style( 'sensei-course-theme-fonts', $fonts_url, [], null );
 	}
 
 	/**

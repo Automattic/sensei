@@ -236,7 +236,9 @@ describe( 'Setup Wizard', () => {
 			} );
 			await page.waitForNavigation();
 			await expect( page.url() ).toMatch(
-				adminUrl( 'admin.php?page=sensei_import' )
+				adminUrl(
+					'edit.php?post_type=course&page=sensei-tools&tool=import-content'
+				)
 			);
 		} );
 	} );
