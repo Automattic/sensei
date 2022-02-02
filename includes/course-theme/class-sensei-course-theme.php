@@ -144,6 +144,7 @@ class Sensei_Course_Theme {
 		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
 		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
 
+		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
 	/**
