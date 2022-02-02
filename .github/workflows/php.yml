@@ -7,10 +7,13 @@ jobs:
         name: PHP Linting
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout code
+              uses: actions/checkout@v2
               with:
                   fetch-depth: 0
-            - uses: actions/cache@v2
+
+            - name: Get cached composer directories
+              uses: actions/cache@v2
               with:
                   path: ~/.cache/composer/
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -18,21 +21,29 @@ jobs:
               with:
                   path: vendor/
                   key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
-            - uses: shivammathur/setup-php@v2
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
               with:
                   php-version: '7.0'
                   tools: composer
                   coverage: none
+
             - name: Set up branches
               run: git checkout -b master refs/remotes/origin/master && git checkout -
+
             - name: Install PHP dependencies
               run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
+
             - name: Check for new issues
               run: ./scripts/linter-ci
+
             - name: Check for escaping
               run: ./vendor/bin/phpcs -s --sniffs=WordPress.WP.I18n,Generic.PHP.Syntax,WordPress.Security.EscapeOutput .
+
             - name: Check for nonces
               run: ./vendor/bin/phpcs -sn --sniffs=WordPress.Security.NonceVerification .
+
             - name: Check WPCOM rules
               run: ./vendor/bin/phpcs -sn --standard=./wpcom-phpcs.xml .
     test:
@@ -55,7 +66,7 @@ jobs:
                       wp: latest
                       wpmu: 1
                     - wp: nightly
-                      php: '8.1'
+                      php: 8.1
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
@@ -69,9 +80,11 @@ jobs:
               - 3306:3306
             options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
         steps:
-            # clone the repository
-            - uses: actions/checkout@v2
-            - uses: actions/cache@v2
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Get cached composer directories
+              uses: actions/cache@v2
               with:
                   path: ~/.cache/composer/
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -79,15 +92,18 @@ jobs:
               with:
                   path: vendor/
                   key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
-            - uses: shivammathur/setup-php@v2
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php }}
                   extensions: mysql
                   tools: composer
                   coverage: none
-            # run CI checks
+
             - name: Install PHP dependencies
               run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
+
             - name: Add PHP 7.4+ compatibility
               run: |
                 if [ "$(php -r "echo version_compare(PHP_VERSION,'7.4','>=');")" ]; then
@@ -99,7 +115,9 @@ jobs:
                     rm -rf ./vendor/phpunit/
                     composer dump-autoload
                 fi
+
             - name: Setup test environment
               run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 $WP_VERSION
+
             - name: Run tests
               run: ./vendor/bin/phpunit
