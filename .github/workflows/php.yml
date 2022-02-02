@@ -20,7 +20,7 @@ jobs:
                   key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
             - uses: shivammathur/setup-php@v2
               with:
-                  php-version: '7.4'
+                  php-version: '7.0'
                   tools: composer
                   coverage: none
             - name: Set up branches
@@ -46,11 +46,11 @@ jobs:
                 wpmu: [0]
                 php: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
                 include:
-                    - php: 7.4
+                    - php: 7.0
                       wp: 5.7
-                    - php: 7.4
+                    - php: 7.0
                       wp: 5.8
-                    - php: 7.4
+                    - php: 7.0
                       wp: latest
                       wpmu: 1
         env:
