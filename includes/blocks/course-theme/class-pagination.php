@@ -51,6 +51,11 @@ class Pagination {
 		return '';
 	}
 
+	/**
+	 * Render the WordPress post pagination.
+	 *
+	 * @return string
+	 */
 	private function render_post_pagination() {
 
 		return wp_link_pages( [ 'echo' => false ] );
