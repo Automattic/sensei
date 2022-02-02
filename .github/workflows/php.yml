@@ -57,6 +57,14 @@ jobs:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
             PHP_VERSION: ${{ matrix.php }}
+        services:
+          database:
+            image: mysql:5.6
+            env:
+              MYSQL_ROOT_PASSWORD: root
+            ports:
+              - 3306:3306
+            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
         steps:
             # clone the repository
             - uses: actions/checkout@v2
@@ -75,8 +83,6 @@ jobs:
                   tools: composer
                   coverage: none
             # run CI checks
-            - name: Start mysql service
-              run: sudo /etc/init.d/mysql start
             - name: Install PHP dependencies
               run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
             - name: Add PHP 7.4+ compatibility
@@ -91,6 +97,6 @@ jobs:
                     composer dump-autoload
                 fi
             - name: Setup test environment
-              run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root localhost $WP_VERSION
+              run: bash ./tests/bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 $WP_VERSION
             - name: Run tests
               run: ./vendor/bin/phpunit
