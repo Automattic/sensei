@@ -38,6 +38,7 @@ jobs:
     test:
         name: PHP Unit Tests
         runs-on: ubuntu-latest
+        continue-on-error: ${{ matrix.wp == 'nightly' }}
         strategy:
             fail-fast: false
             max-parallel: 10
@@ -53,6 +54,8 @@ jobs:
                     - php: 7.0
                       wp: latest
                       wpmu: 1
+                    - wp: nightly
+                      php: '8.1'
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
