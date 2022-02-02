@@ -101,6 +101,11 @@ jobs:
                   tools: composer
                   coverage: none
 
+            - name: Tool versions
+              run: |
+                php --version
+                composer --version
+
             - name: Install PHP dependencies
               run: composer install --no-ansi --no-interaction --prefer-dist --no-progress --ignore-platform-reqs
 
