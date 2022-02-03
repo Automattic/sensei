@@ -31,16 +31,15 @@ input, textarea {
 }
 
 .sensei-course-theme {
-	&__main-content {
+	&__main-content, &__main-content__container {
 		> * {
 			max-width: var(--wp--custom--layout--content-size);
 			margin-left: auto;
 			margin-right: auto;
 		}
-
-		.entry-content {
+	}
+	&__main-content .entry-content, &__main-content__container {
 			max-width: unset;
-		}
 	}
 }
 
