@@ -68,6 +68,7 @@ class Sensei_PostTypes {
 		$this->setup_post_type_labels_base();
 
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_filter( 'request', array( $this, 'handle_course_archive_page' ) );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
@@ -231,6 +232,26 @@ class Sensei_PostTypes {
 		 */
 		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
 
+	}
+
+
+	/**
+	 * Rewrite queries originally made to the page_id specified in the course_page option to the archive page of the
+	 * courses, so we can list the courses properly
+	 *
+	 * @since  4.0.0
+	 * @uses  Sensei()
+	 * @param array $request The original request.
+	 * @return array The modified request
+	 */
+	public function handle_course_archive_page( $request ) {
+		if ( array_key_exists( 'page_id', $request ) &&
+			 array_key_exists( 'course_page', Sensei()->settings->settings ) &&
+			 Sensei()->settings->settings['course_page'] === $request['page_id'] ) {
+			unset( $request['page_id'] );
+			$request['post_type'] = 'course';
+		}
+		return $request;
 	}
 
 	/**
