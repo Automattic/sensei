@@ -44,13 +44,27 @@
     </div>
     <!-- /wp:column -->
 
-    <!-- wp:column {"width":"","className":"sensei-course-theme__main-content"} -->
-    <div class="wp-block-column sensei-course-theme__main-content">
-        <!-- wp:sensei-lms/course-theme-lesson-module /-->
-        <!-- wp:post-title {"level": 1} /-->
-        <!-- wp:sensei-lms/course-theme-notices /-->
-        <!-- wp:post-content /-->
-        <!-- wp:sensei-lms/quiz-actions /-->
+    <!-- wp:column {"width":"","className":"sensei-course-theme__main"} -->
+    <div class="wp-block-column sensei-course-theme__main">
+        <!-- wp:group {"className":"sensei-course-theme__main-content", "tagName": "main"} -->
+        <main class="wp-block-group sensei-course-theme__main-content">
+            <!-- wp:sensei-lms/course-theme-lesson-module /-->
+            <!-- wp:post-title {"level": 1} /-->
+            <!-- wp:sensei-lms/course-theme-notices /-->
+            <!-- wp:post-content /-->
+            <!-- wp:group {"className":"sensei-course-theme__main__navigation sensei-course-theme__frame", "tagName": "nav" } -->
+            <nav class="wp-block-group sensei-course-theme__main__navigation sensei-course-theme__frame">
+                <!-- wp:sensei-lms/quiz-actions /-->
+            </nav>
+            <!-- /wp:group -->
+            <!-- wp:group {"className":"sensei-course-theme__main__navigation sensei-course-theme__frame", "tagName": "nav", "layout": { "type": "flex", "justifyContent":"right" } } -->
+            <nav class="wp-block-group sensei-course-theme__main__navigation sensei-course-theme__frame">
+                <!-- wp:sensei-lms/course-theme-prev-next-lesson /-->
+                <!-- wp:sensei-lms/course-theme-lesson-actions /-->
+            </nav>
+            <!-- /wp:group -->
+        </main>
+        <!-- /wp:group -->
     </div>
     <!-- /wp:column -->
 </div>

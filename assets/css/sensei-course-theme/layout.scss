@@ -91,6 +91,10 @@ body {
 	&__main-content {
 		padding: var(--content-padding);
 		margin-left: var(--sidebar-width) !important;
+
+		&__navigation {
+			padding: 30px 0;
+		}
 	}
 
 	&__header {
