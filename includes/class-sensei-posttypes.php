@@ -246,8 +246,8 @@ class Sensei_PostTypes {
 	 */
 	public function handle_course_archive_page( $request ) {
 		if ( array_key_exists( 'page_id', $request ) &&
-			 array_key_exists( 'course_page', Sensei()->settings->settings ) &&
-			 Sensei()->settings->settings['course_page'] === $request['page_id'] ) {
+			array_key_exists( 'course_page', Sensei()->settings->settings ) &&
+			Sensei()->settings->settings['course_page'] === $request['page_id'] ) {
 			unset( $request['page_id'] );
 			$request['post_type'] = 'course';
 		}
