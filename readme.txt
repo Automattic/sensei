@@ -4,7 +4,7 @@ Tags: elearning, lms, learning management system, teach, courses, woocommerce
 Requires at least: 5.7
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,10 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 4. Course editor
 
 == Changelog ==
+
+2022.02.03 - version 4.0.1
+* Fix link styles in Learning Mode [#4730](https://github.com/Automattic/sensei/pull/4730)
+* Fix learning mode with localized post type slugs [#4745](https://github.com/Automattic/sensei/pull/4745)
 
 2022.02.01 - version 4.0.0
 
