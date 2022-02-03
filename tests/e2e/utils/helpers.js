@@ -24,7 +24,8 @@ export function resetSetupWizard() {
 
 export function cleanupSenseiData() {
 	const code = `
-		require 'wp-content/plugins/sensei/includes/class-sensei-data-cleaner.php';
+		// require 'wp-content/plugins/sensei/includes/class-sensei-data-cleaner.php';
+		require 'wp-content/plugins/sensei/sensei-lms.php';
 		Sensei_Data_Cleaner::cleanup_all();
 	`;
 	return wpcli( `eval "${ code }"` );
