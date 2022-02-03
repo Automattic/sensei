@@ -1,5 +1,9 @@
 *** Changelog ***
 
+2022.02.03 - version 4.0.1
+* Fix link styles in Learning Mode [#4730](https://github.com/Automattic/sensei/pull/4730)
+* Fix learning mode with localized post type slugs [#4745](https://github.com/Automattic/sensei/pull/4745)
+
 2022.02.01 - version 4.0.0
 
 Sensei 4.0 is here! This is a major release, which includes a new theme for your courses and a rework of the WordPress dashboard menu navigation. [Read the announcement post here.](https://senseilms.com/wordpress-course-theme/)
