@@ -68,7 +68,7 @@ class Sensei_PostTypes {
 		$this->setup_post_type_labels_base();
 
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
-		add_filter( 'request', array( $this, 'handle_course_archive_page' ) );
+		add_action( 'template_redirect', array( $this, 'handle_course_archive_page' ) );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
@@ -236,22 +236,31 @@ class Sensei_PostTypes {
 
 
 	/**
-	 * Rewrite queries originally made to the page_id specified in the course_page option to the archive page of the
-	 * courses, so we can list the courses properly
+	 * Redirect visits to the page id specified by course page to the archive page of the course
 	 *
 	 * @since 4.0.2
 	 * @uses  Sensei()
-	 * @param array $request The original request.
-	 * @return array The modified request
+	 * @access private
+	 * @return void
 	 */
-	public function handle_course_archive_page( $request ) {
-		if ( array_key_exists( 'page_id', $request ) &&
-			array_key_exists( 'course_page', Sensei()->settings->settings ) &&
-			Sensei()->settings->settings['course_page'] === $request['page_id'] ) {
-			unset( $request['page_id'] );
-			$request['post_type'] = 'course';
+	public function redirect_course_archive_page() {
+		$settings = Sensei()->settings->settings;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// When default permalinks are enabled, redirect course page to post type archive url.
+		$course_url = get_post_type_archive_link( 'course' );
+		if (
+			! empty( $_GET['page_id'] ) &&
+			'' === get_option( 'permalink_structure' ) &&
+			absint( $_GET['page_id'] ) === absint( $settings['course_page'] ) &&
+			$course_url ) {
+			foreach ( $_GET as $param => $value ) {
+				if ( 'page_id' !== $param ) {
+					$course_url = add_query_arg( $param, $value, $course_url );
+				}
+			}
+			wp_safe_redirect( $course_url );
+			exit;
 		}
-		return $request;
 	}
 
 	/**
