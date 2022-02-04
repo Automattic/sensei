@@ -239,7 +239,7 @@ class Sensei_PostTypes {
 	 * Rewrite queries originally made to the page_id specified in the course_page option to the archive page of the
 	 * courses, so we can list the courses properly
 	 *
-	 * @since  4.0.0
+	 * @since 4.0.2
 	 * @uses  Sensei()
 	 * @param array $request The original request.
 	 * @return array The modified request
