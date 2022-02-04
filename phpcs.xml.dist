@@ -78,5 +78,6 @@
 			</property>
 		</properties>
 		<exclude-pattern>**/views/*</exclude-pattern>
+		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
 	</rule>
 </ruleset>

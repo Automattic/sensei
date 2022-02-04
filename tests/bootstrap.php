@@ -40,6 +40,12 @@ class Sensei_Unit_Tests_Bootstrap {
 		// Prevent requests from `WP_Http::request` while testing.
 		tests_add_filter( 'pre_http_request', [ $this, 'prevent_requests' ], 99 );
 
+		/*
+		* Load PHPUnit Polyfills for the WP testing suite.
+		* @see https://github.com/WordPress/wordpress-develop/pull/1563/
+		*/
+		define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', __DIR__ . '/../vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php' );
+
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
 
