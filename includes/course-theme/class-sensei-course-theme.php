@@ -372,7 +372,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return void
 	 */
-	public function add_admin_bar_edit_site_menu( WP_Admin_Bar $wp_admin_bar ) {
+	public function add_admin_bar_edit_site_menu( $wp_admin_bar ) {
 
 		if ( ! current_user_can( 'edit_theme_options' ) || is_admin() ) {
 			return;
