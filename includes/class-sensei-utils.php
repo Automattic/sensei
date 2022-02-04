@@ -2178,9 +2178,11 @@ class Sensei_Utils {
 	 * Returns the current url with all the query vars
 	 *
 	 * @since 1.9.0
+	 * @deprecated 4.0.2
 	 * @return string $url
 	 */
 	public static function get_current_url() {
+		_deprecated_function( __METHOD__, '4.0.2' );
 
 		global $wp;
 		$current_url = trailingslashit( home_url( $wp->request ) );
@@ -2194,6 +2196,17 @@ class Sensei_Utils {
 		}
 
 		return $current_url;
+	}
+
+	/**
+	 * Returns the current url path, without adding the query vars
+	 *
+	 * @since 4.0.2
+	 * @return string The current URL path being visited by the user
+	 */
+	public static function get_current_url_path() {
+		global $wp;
+		return trailingslashit( home_url( $wp->request ) );
 	}
 
 	/**

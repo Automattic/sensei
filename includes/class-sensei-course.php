@@ -2631,7 +2631,16 @@ class Sensei_Course {
 
 		?>
 
-		<form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url() ); ?>" method="get">
+		<form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url_path() ); ?>" method="get">
+			<?php
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			foreach ( $_GET as $param => $value ) {
+				// We should ignore the field that will be set just below.
+				if ( 'course-orderby' !== $param ) {
+					echo '<input type="hidden" name="' . esc_attr( $param ) . '" value="' . esc_attr( $value ) . '" />';
+				}
+			}
+			?>
 			<select name="course-orderby" class="orderby">
 				<?php
 				foreach ( $course_order_by_options as $value => $text ) {
