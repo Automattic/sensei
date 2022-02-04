@@ -271,40 +271,4 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
-
-	/**
-	 * Test if the query vars rewrite appropriately when the page id and the course page id matches
-	 *
-	 * @covers Sensei_PostType::handle_course_archive_page
-	 */
-	public function testHandleCourseArchivePageShouldRewriteTheUrlAppropriately() {
-		Sensei()->settings->set( 'course_page', '1' );
-		$request = [
-			'page_id' => '1',
-			'paged'   => '5',
-		];
-		$request = Sensei()->post_types->handle_course_archive_page( $request );
-		$this->assertEquals(
-			[
-				'post_type' => 'course',
-				'paged'     => '5',
-			],
-			$request
-		);
-	}
-
-
-	/**
-	 * Test if the query vars ignores the request when the page id and the course page id doesn't match
-	 *
-	 * @covers Sensei_PostType::handle_course_archive_page
-	 */
-	public function testHandleCourseArchivePageShouldNotRewriteTheUrl() {
-		Sensei()->settings->set( 'course_page', '2' );
-		$request = [
-			'page_id' => '1',
-		];
-		$request = Sensei()->post_types->handle_course_archive_page( $request );
-		$this->assertEquals( [ 'page_id' => '1' ], $request );
-	}
 }
