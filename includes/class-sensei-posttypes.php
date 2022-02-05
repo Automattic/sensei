@@ -311,6 +311,7 @@ class Sensei_PostTypes {
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
 			'show_in_menu'          => false,
+			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
@@ -360,6 +361,7 @@ class Sensei_PostTypes {
 			'publicly_queryable'  => true,
 			'show_ui'             => true,
 			'show_in_menu'        => false,
+			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => false,
 			'query_var'           => true,
 			'exclude_from_search' => true,
@@ -407,6 +409,7 @@ class Sensei_PostTypes {
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
 			'show_in_menu'          => false,
+			'show_in_admin_bar'     => true,
 			'show_in_nav_menus'     => false,
 			'query_var'             => true,
 			'exclude_from_search'   => true,
