@@ -139,7 +139,7 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @return bool
 	 */
-	public static function has_sensei_theme_enabled( int $course_id ) {
+	public static function has_sensei_theme_enabled( $course_id ) {
 		$theme              = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 		$enabled_for_course = self::SENSEI_THEME === $theme;
 		$enabled_globally   = (bool) \Sensei()->settings->get( 'sensei_learning_mode_all' );
