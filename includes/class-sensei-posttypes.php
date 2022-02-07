@@ -252,7 +252,8 @@ class Sensei_PostTypes {
 			! empty( $_GET['page_id'] ) &&
 			'' === get_option( 'permalink_structure' ) &&
 			absint( $_GET['page_id'] ) === absint( $settings['course_page'] ) &&
-			$course_url ) {
+			$course_url
+		) {
 			foreach ( $_GET as $param => $value ) {
 				if ( 'page_id' !== $param ) {
 					$course_url = add_query_arg( $param, $value, $course_url );
