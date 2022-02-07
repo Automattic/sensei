@@ -68,7 +68,7 @@ class Sensei_PostTypes {
 		$this->setup_post_type_labels_base();
 
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
-		add_action( 'template_redirect', array( $this, 'handle_course_archive_page' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_course_archive_page' ) );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
