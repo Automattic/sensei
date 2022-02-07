@@ -2631,7 +2631,7 @@ class Sensei_Course {
 
 		?>
 
-		<form class="sensei-ordering" name="sensei-course-order" action="<?php echo esc_attr( Sensei_Utils::get_current_url_path() ); ?>" method="get">
+		<form class="sensei-ordering" name="sensei-course-order" method="get">
 			<?php
 			// phpcs:disable WordPress.Security.NonceVerification.Recommended
 			foreach ( $_GET as $param => $value ) {

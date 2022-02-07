@@ -2199,17 +2199,6 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Returns the current url path, without adding the query vars.
-	 *
-	 * @since 4.0.2
-	 * @return string The current URL path being visited by the user.
-	 */
-	public static function get_current_url_path() {
-		global $wp;
-		return trailingslashit( home_url( $wp->request ) );
-	}
-
-	/**
 	 * Get the course id of the current post.
 	 *
 	 * @return int|null The course id or null if it was not found.
