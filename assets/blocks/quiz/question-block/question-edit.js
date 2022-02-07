@@ -133,21 +133,7 @@ const QuestionEdit = ( props ) => {
 	);
 
 	const template = [
-		[
-			questionDescriptionBlock.name,
-			{},
-			[
-				[
-					'core/paragraph',
-					{
-						placeholder: __(
-							'Add question description or type / to choose a block.',
-							'sensei-lms'
-						),
-					},
-				],
-			],
-		],
+		[ questionDescriptionBlock.name, {} ],
 		[ questionAnswersBlock.name, {} ],
 		...( canHaveFeedback
 			? [
