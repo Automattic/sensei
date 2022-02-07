@@ -59,11 +59,15 @@ class Sensei_Import_CSV_Reader {
 	 */
 	public function __construct( $csv_file, $completed_lines = 0, $lines_per_batch = 30 ) {
 		$this->file = new SplFileObject( $csv_file );
+		$this->file->seek( PHP_INT_MAX );
+
+		// In PHP 8.0+ the SplFileObject::key() method works differently,
+		// so the total lines should be calculated before setting the CSV flag.
+		$this->total_lines = $this->file->key();
+
 		$this->file->setFlags( SplFileObject::READ_CSV );
 		$this->detect_delimiter();
 
-		$this->file->seek( PHP_INT_MAX );
-		$this->total_lines     = $this->file->key();
 		$this->completed_lines = $completed_lines;
 		$this->is_completed    = $this->completed_lines >= $this->total_lines;
 		$this->lines_per_batch = $lines_per_batch;
