@@ -112,23 +112,22 @@ class Course_Navigation {
 		);
 
 		if ( $modules_html ) {
-			$modules_html = '<div class="sensei-lms-course-navigation__modules">
+			$modules_html = '<ol class="sensei-lms-course-navigation__modules">
 				' . $modules_html . '
-			</div>';
+			</ol>';
 		}
 
 		if ( $lessons_html ) {
-			$lessons_html = '<div class="sensei-lms-course-navigation__lessons">
+			$lessons_html = '<ol class="sensei-lms-course-navigation__lessons">
 				' . $lessons_html . '
-			</div>';
+			</ol>';
 		}
 
-		return '<div class="sensei-lms-course-navigation">
+		return '<nav class="sensei-lms-course-navigation" aria-label="' . esc_attr__( 'Course outline', 'sensei-lms' ) . '">
 			' . $modules_html . '
 			' . $lessons_html . '
-		</div>';
+		</nav>';
 	}
-
 
 	/**
 	 * Build module block HTML.
@@ -189,20 +188,20 @@ class Course_Navigation {
 		}
 
 		return '
-			<section ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
-				<header class="sensei-lms-course-navigation-module__header">
+			<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+				<div class="sensei-lms-course-navigation-module__header">
 					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '">
-						<h2 class="sensei-lms-course-navigation-module__title">' . $title . '</h2>
+						<div class="sensei-lms-course-navigation-module__title">' . $title . '</div>
 						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
 					</button>
-				</header>
-				<div class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
-					' . $lessons_html . '
 				</div>
+				<ol class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
+					' . $lessons_html . '
+				</ol>
 				<div class="sensei-lms-course-navigation-module__summary">
 				' . wp_kses_post( $summary ) . '
 				</div>
-			</section>
+			</li>
 		';
 	}
 
@@ -230,13 +229,17 @@ class Course_Navigation {
 		$extra_html = '';
 
 		if ( $lesson['preview'] && $locked_lesson ) {
-			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $lesson_id ) ) . '">' . esc_html__( 'Preview', 'sensei-lms' ) . '</a>';
+			// Translators: placeholder is the lesson title.
+			$preview_label = sprintf( __( 'Preview lesson %s', 'sensei-lms' ), $lesson['title'] );
+			$extra_html    = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $lesson_id ) ) . '" aria-label="' . esc_attr( $preview_label ) . '" >' . esc_html__( 'Preview', 'sensei-lms' ) . '</a>';
 		} elseif ( $has_quiz && ! $locked_lesson ) {
-			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $quiz_id ) ) . '">' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
+			// Translators: placeholder is the lesson title.
+			$quiz_label = sprintf( __( 'View quiz for %s', 'sensei-lms' ), $lesson['title'] );
+			$extra_html = '<a class="sensei-lms-course-navigation-lesson__extra" href="' . esc_url( get_permalink( $quiz_id ) ) . '" aria-label="' . esc_attr( $quiz_label ) . '" >' . esc_html__( 'Quiz', 'sensei-lms' ) . '</a>';
 		}
 
 		return '
-		<div ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+		<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-navigation-lesson__link">
 				' . $this->lesson_status_icon( $status ) . '
 				<span class="sensei-lms-course-navigation-lesson__title">
@@ -244,7 +247,7 @@ class Course_Navigation {
 				</span>
 			</a>
 			' . $extra_html . '
-		</div>';
+		</li>';
 	}
 
 	/**

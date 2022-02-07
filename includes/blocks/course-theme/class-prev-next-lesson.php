@@ -33,20 +33,21 @@ class Prev_Next_Lesson {
 	/**
 	 * Get the previous or next link link.
 	 *
-	 * @param array  $urls      Previous and next lesson URLs.
-	 * @param string $type      Link type.
-	 * @param string $label     Link label.
-	 * @param string $icon_name Icon name for the link.
+	 * @param array  $urls       Previous and next lesson URLs.
+	 * @param string $type       Link type.
+	 * @param string $label      Link label.
+	 * @param string $icon_name  Icon name for the link.
+	 * @param string $aria_label Link ARIA label.
 	 *
 	 * @return string The link,
 	 */
-	private function get_link( $urls, $type, $label, $icon_name ) {
+	private function get_link( $urls, $type, $label, $icon_name, $aria_label ) {
 		$disabled_attrs = '';
 
 		if ( empty( $urls[ $type ]['url'] ) ) {
 			$url            = '#';
 			$tag            = 'span';
-			$disabled_attrs = 'data-disabled="disabled"';
+			$disabled_attrs = 'data-disabled="disabled" aria-disabled="true"';
 		} else {
 			$url = esc_url( $urls[ $type ]['url'] );
 			$tag = 'a';
@@ -56,8 +57,10 @@ class Prev_Next_Lesson {
 		$before_icon = 'previous' === $type ? $icon : '';
 		$after_icon  = 'next' === $type ? $icon : '';
 
+		$aria_label = $aria_label ?? $label;
+
 		return ( "
-			<{$tag} class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' href='{$url}' aria-label='{$label}' {$disabled_attrs}>
+			<{$tag} class='sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next' href='{$url}' aria-label='{$aria_label}' {$disabled_attrs}>
 				{$before_icon}
 				<span class='sensei-course-theme-prev-next-lesson-text sensei-course-theme-prev-next-lesson-text__next'>
 					{$label}
@@ -83,9 +86,9 @@ class Prev_Next_Lesson {
 		}
 
 		$urls = sensei_get_prev_next_lessons( $lesson_id );
-		$prev = $this->get_link( $urls, 'previous', __( 'Previous', 'sensei-lms' ), 'chevron-left' );
-		$next = $this->get_link( $urls, 'next', __( 'Next', 'sensei-lms' ), 'chevron-right' );
+		$prev = $this->get_link( $urls, 'previous', __( 'Previous', 'sensei-lms' ), 'chevron-left', __( 'Previous Lesson', 'sensei-lms' ) );
+		$next = $this->get_link( $urls, 'next', __( 'Next', 'sensei-lms' ), 'chevron-right', __( 'Next Lesson', 'sensei-lms' ) );
 
-		return $prev . $next;
+		return '<nav class="sensei-course-theme-prev-next-lesson-container">' . $prev . $next . '</nav>';
 	}
 }
