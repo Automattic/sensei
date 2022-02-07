@@ -112,23 +112,22 @@ class Course_Navigation {
 		);
 
 		if ( $modules_html ) {
-			$modules_html = '<div class="sensei-lms-course-navigation__modules">
+			$modules_html = '<ol class="sensei-lms-course-navigation__modules">
 				' . $modules_html . '
-			</div>';
+			</ol>';
 		}
 
 		if ( $lessons_html ) {
-			$lessons_html = '<div class="sensei-lms-course-navigation__lessons">
+			$lessons_html = '<ol class="sensei-lms-course-navigation__lessons">
 				' . $lessons_html . '
-			</div>';
+			</ol>';
 		}
 
-		return '<nav class="sensei-lms-course-navigation">
+		return '<nav class="sensei-lms-course-navigation" aria-label="' . esc_attr__( 'Course outline', 'sensei-lms' ) . '">
 			' . $modules_html . '
 			' . $lessons_html . '
 		</nav>';
 	}
-
 
 	/**
 	 * Build module block HTML.
@@ -189,20 +188,20 @@ class Course_Navigation {
 		}
 
 		return '
-			<div ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+			<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 				<div class="sensei-lms-course-navigation-module__header">
 					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '">
 						<div class="sensei-lms-course-navigation-module__title">' . $title . '</div>
 						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
 					</button>
 				</div>
-				<div class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
+				<ol class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
 					' . $lessons_html . '
-				</div>
+				</ol>
 				<div class="sensei-lms-course-navigation-module__summary">
 				' . wp_kses_post( $summary ) . '
 				</div>
-			</div>
+			</li>
 		';
 	}
 
@@ -240,7 +239,7 @@ class Course_Navigation {
 		}
 
 		return '
-		<div ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+		<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-navigation-lesson__link">
 				' . $this->lesson_status_icon( $status ) . '
 				<span class="sensei-lms-course-navigation-lesson__title">
@@ -248,7 +247,7 @@ class Course_Navigation {
 				</span>
 			</a>
 			' . $extra_html . '
-		</div>';
+		</li>';
 	}
 
 	/**
