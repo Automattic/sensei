@@ -547,7 +547,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				$type_specific_properties = array_merge_recursive( $type_specific_properties, $this->get_multiple_choice_properties( $question ) );
 				break;
 			case 'boolean':
-				$type_specific_properties['answer']['correct'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
+				$right_answer                                  = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['answer']['correct'] = 'true' === $right_answer || '' === $right_answer;
 				break;
 			case 'gap-fill':
 				$type_specific_properties['answer'] = $this->get_gap_fill_properties( $question );
