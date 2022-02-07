@@ -39,7 +39,8 @@ trait Sensei_Export_Task_Tests {
 		$export_task_class = $this->get_task_class();
 		$task              = new $export_task_class( $job );
 		$task->run();
-			return self::read_csv( $job->get_file_path( $task->get_content_type() ) );
+
+		return self::read_csv( $job->get_file_path( $task->get_content_type() ) );
 	}
 
 	/**

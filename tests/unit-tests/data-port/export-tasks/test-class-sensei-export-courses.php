@@ -61,6 +61,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		$this->factory->term->add_post_terms( $course->ID, $terms, 'course-category', false );
 
 		$result = $this->export();
+
 		$this->assertEquals(
 			'Course Category \'Single\',Course Category "Double"',
 			$result[0]['categories']
@@ -91,7 +92,6 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 		$result = $this->export();
 
 		$lesson_order_str = "id:{$lesson_order[0]},id:{$lesson_order[1]},id:{$lesson_order[2]},id:{$lesson_unordered}";
-
 		$this->assertEquals( $lesson_order_str, $result[0]['lessons'] );
 	}
 
