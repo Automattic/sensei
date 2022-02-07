@@ -259,7 +259,7 @@ class Sensei_PostTypes {
 					$course_url = add_query_arg( $param, $value, $course_url );
 				}
 			}
-			wp_safe_redirect( esc_url( $course_url ) );
+			wp_safe_redirect( esc_url_raw( $course_url ) );
 			exit;
 		}
 	}
