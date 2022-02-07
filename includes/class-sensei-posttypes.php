@@ -236,7 +236,7 @@ class Sensei_PostTypes {
 
 
 	/**
-	 * Redirect visits to the page id specified by course page to the archive page of the course
+	 * Redirect to the correct course archive link when using plain permalinks.
 	 *
 	 * @since 4.0.2
 	 * @uses  Sensei()
