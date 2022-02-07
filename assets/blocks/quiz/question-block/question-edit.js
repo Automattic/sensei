@@ -132,16 +132,19 @@ const QuestionEdit = ( props ) => {
 		]
 	);
 
-	const template = [
-		[ questionDescriptionBlock.name, {} ],
-		[ questionAnswersBlock.name, {} ],
-		...( canHaveFeedback
-			? [
-					[ answerFeedbackCorrectBlock.name, {} ],
-					[ answerFeedbackIncorrectBlock.name, {} ],
-			  ]
-			: [] ),
-	];
+	const template = useMemo(
+		() => [
+			[ questionDescriptionBlock.name, {} ],
+			[ questionAnswersBlock.name, {} ],
+			...( canHaveFeedback
+				? [
+						[ answerFeedbackCorrectBlock.name, {} ],
+						[ answerFeedbackIncorrectBlock.name, {} ],
+				  ]
+				: [] ),
+		],
+		[ canHaveFeedback ]
+	);
 
 	if ( ! editable ) {
 		return (
