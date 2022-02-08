@@ -41,7 +41,8 @@ class Sensei_Course_Theme_Option {
 	/**
 	 * Sensei_Course_Theme_Option constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+	}
 
 	/**
 	 * Fetches an instance of the class.
@@ -74,16 +75,16 @@ class Sensei_Course_Theme_Option {
 	 * @access private
 	 */
 	public function ensure_learning_mode_url_prefix() {
-		if (
-			is_admin() ||
-			( Sensei_Course_Theme::instance()->is_active() && $this->should_use_sensei_theme() ) ||
-			( ! Sensei_Course_Theme::instance()->is_active() && ! $this->should_use_sensei_theme() )
-		) {
+
+		$using_theme      = Sensei_Course_Theme::instance()->is_active();
+		$should_use_theme = self::should_use_learning_mode() && self::should_override_theme();
+
+		if ( is_admin() || $using_theme === $should_use_theme ) {
 			return;
 		}
 
 		$url = get_permalink();
-		if ( $this->should_use_sensei_theme() ) {
+		if ( $should_use_theme ) {
 			$url = str_replace( trailingslashit( home_url() ), '', $url );
 			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );
 		}
@@ -102,11 +103,22 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
-	 * Check if it should use Sensei Theme template.
+	 * Check if it should use Learning Mode template.
+	 *
+	 * @deprecated 4.0.2 Use Sensei_Course_Theme_Option::should_use_learning_mode
 	 *
 	 * @return boolean
 	 */
 	public function should_use_sensei_theme() {
+		return self::should_use_learning_mode();
+	}
+
+	/**
+	 * Check if it should use Learning Mode template.
+	 *
+	 * @return boolean
+	 */
+	public static function should_use_learning_mode() {
 
 		$is_course_content = is_singular( 'lesson' ) || is_singular( 'quiz' ) || is_tax( 'module' );
 
@@ -123,7 +135,7 @@ class Sensei_Course_Theme_Option {
 		$course_id = absint( $course_id );
 
 		if (
-			self::has_sensei_theme_enabled( $course_id ) ||
+			self::has_learning_mode_enabled( $course_id ) ||
 			Sensei_Course_Theme::is_preview_mode( $course_id )
 		) {
 			return true;
@@ -132,31 +144,53 @@ class Sensei_Course_Theme_Option {
 		return false;
 	}
 
+
 	/**
-	 * Check if the given course has the Sensei Theme enabled or not.
+	 * Check if it should override the theme for Learning Mode with the course theme.
+	 *
+	 * @return boolean
+	 */
+	public static function should_override_theme() {
+		return ! \Sensei()->settings->get( 'sensei_learning_mode_theme' );
+	}
+
+	/**
+	 * Check if the given course has Learning Mode enabled or not.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @deprecated 4.0.2 Use Sensei_Course_Theme_Option::has_learning_mode_enabled
+	 *
+	 * @return bool
+	 */
+	public static function has_sensei_theme_enabled( $course_id ) {
+		return self::has_learning_mode_enabled( $course_id );
+	}
+
+	/**
+	 * Check if the given course has Learning Mode enabled or not.
 	 *
 	 * @param int $course_id Course ID.
 	 *
 	 * @return bool
 	 */
-	public static function has_sensei_theme_enabled( $course_id ) {
+	public static function has_learning_mode_enabled( $course_id ) {
 		$theme              = get_post_meta( $course_id, self::THEME_POST_META_NAME, true );
 		$enabled_for_course = self::SENSEI_THEME === $theme;
 		$enabled_globally   = (bool) \Sensei()->settings->get( 'sensei_learning_mode_all' );
+
+		$enabled = $enabled_for_course || $enabled_globally;
 
 		/**
 		 * Filters if a course has learning mode enabled.
 		 *
 		 * @since 4.0.0
-		 * @hook sensei_course_learning_mode_enabled
+		 * @hook  sensei_course_learning_mode_enabled
 		 *
-		 * @param {bool} $enabled_for_course True if the learning mode is enabled for the course.
-		 * @param {bool} $enabled_globally   True if the learning mode is enabled globally.
-		 * @param {int}  $course_id          The id of the course.
+		 * @param {bool} $enabled    True if the learning mode is enabled for the course or globally.
+		 * @param {int}  $course_id  The id of the course.
 		 */
-		$enabled_via_filter = (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled_for_course, $enabled_globally, $course_id );
-
-		return $enabled_for_course || $enabled_globally || $enabled_via_filter;
+		return (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled, $course_id );
 	}
 
 	/**
@@ -172,7 +206,7 @@ class Sensei_Course_Theme_Option {
 		$lesson_id = Sensei_Utils::get_current_lesson();
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
-		if ( self::has_sensei_theme_enabled( $course_id ) ) {
+		if ( self::has_learning_mode_enabled( $course_id ) ) {
 			return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id );
 		}
 

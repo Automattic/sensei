@@ -72,7 +72,7 @@ class Sensei_Course_Theme_Templates {
 	 * Use course theme if it's enabled for the current lesson or quiz.
 	 */
 	public function maybe_use_course_theme_templates() {
-		if ( Sensei_Course_Theme_Option::instance()->should_use_sensei_theme() ) {
+		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			add_filter( 'sensei_use_sensei_template', '__return_false' );
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
 		}

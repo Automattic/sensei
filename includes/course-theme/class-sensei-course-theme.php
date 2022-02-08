@@ -76,7 +76,7 @@ class Sensei_Course_Theme {
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
-		add_action( 'template_redirect', [ $this, 'load_styles' ] );
+		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 
 	}
 
@@ -131,9 +131,9 @@ class Sensei_Course_Theme {
 	 *
 	 * @return void
 	 */
-	public function load_styles() {
+	public function load_theme() {
 
-		if ( ! Sensei_Course_Theme_Option::instance()->should_use_sensei_theme() ) {
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			return;
 		}
 
@@ -159,7 +159,7 @@ class Sensei_Course_Theme {
 		add_filter( 'pre_option_stylesheet', [ $this, 'theme_stylesheet' ] );
 		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
 
-		$this->load_styles();
+		$this->load_theme();
 
 	}
 
@@ -358,7 +358,7 @@ class Sensei_Course_Theme {
 		$lesson      = $result[0];
 		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
 		$preview_url = '/?p=' . $lesson->ID;
-		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
 			$preview_url .= '&' . self::QUERY_VAR . '=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
 		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
@@ -399,7 +399,7 @@ class Sensei_Course_Theme {
 			array(
 				'id'    => 'site-editor',
 				'title' => __( 'Edit Site', 'sensei-lms' ),
-				'href'  => admin_url( 'site-editor.php?' . self::QUERY_VAR . '=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+				'href'  => admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
 			)
 		);
 	}
