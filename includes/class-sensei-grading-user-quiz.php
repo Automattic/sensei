@@ -108,9 +108,9 @@ class Sensei_Grading_User_Quiz {
 				<span class="total_grade_total"><?php echo esc_html( $user_quiz_grade_total ); ?></span> / <span class="quiz_grade_total"><?php echo esc_html( $quiz_grade_total ); ?></span> (<span class="total_grade_percent"><?php echo esc_html( $quiz_grade ); ?></span>%)
 			</div>
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
-				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
-				<input type="button" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-link button-link-delete" title="Resets all questions to ungraded and total grade to 0" />
+				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="<?php esc_attr_e( 'Saves grades as currently marked on this page', 'sensei-lms' ); ?>" />
+				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="<?php esc_attr_e( 'Where possible, automatically grades questions that have not yet been graded', 'sensei-lms' ); ?>" />
+				<input type="button" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-link button-link-delete" title="<?php esc_attr_e( 'Resets all questions to ungraded and total grade to 0', 'sensei-lms' ); ?>" />
 			</div>
 			<div class="clear"></div><br/>
 			<?php
