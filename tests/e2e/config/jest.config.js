@@ -4,8 +4,6 @@ const { jestConfig: baseE2Econfig } = require( '@woocommerce/e2e-environment' );
 module.exports = {
 	...baseE2Econfig,
 
-	preset: 'jest-puppeteer',
-
 	// Path of your project's E2E tests.
 	roots: [ path.resolve( __dirname, '../specs' ) ],
 
