@@ -28,7 +28,7 @@ const QuestionDescription = () => {
 						'core/paragraph',
 						{
 							placeholder: __(
-								'Question Description',
+								'Add question description or type / to choose a block.',
 								'sensei-lms'
 							),
 						},
