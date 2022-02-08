@@ -28,6 +28,7 @@ body.sensei-course-theme {
 		flex-wrap: inherit;
 		flex-direction: inherit;
 		gap: inherit;
+		max-width: unset !important;
 		> * {
 			max-width: unset !important;
 			margin: 0 !important;
@@ -109,14 +110,14 @@ body.sensei-course-theme {
 	}
 
 	&__main-content {
-		padding: var(--content-padding);
+		padding: 32px 0;
 		margin-left: var(--sidebar-width) !important;
 	}
 
 	&__header {
 		&__container {
 			display: flex;
-			align-items: center;
+			align-items: center !important;
 			justify-content: space-between;
 			flex-wrap: nowrap;
 			padding: 0 24px;

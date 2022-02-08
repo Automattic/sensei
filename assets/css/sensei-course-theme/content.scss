@@ -1,5 +1,3 @@
-@import './blockbase-ponyfill';
-@import './global-styles';
 
 body {
 	--wp--custom--form--color--background: var(--bg-color);
@@ -49,8 +47,11 @@ input, textarea {
 		}
 	}
 
-	&__main-content .entry-content, &__main-content__container {
-			max-width: unset;
+	&__main-content .entry-content, &__main-content__container, &__main-content .entry-content .alignfull {
+		max-width: unset;
+		width: unset;
+		margin-left: 0;
+		margin-right: 0;
 	}
 }
 
