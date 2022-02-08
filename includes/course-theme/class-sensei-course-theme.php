@@ -285,9 +285,9 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/learning-mode.css' );
 
-		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 
 		$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
@@ -296,7 +296,7 @@ class Sensei_Course_Theme {
 		$this->enqueue_fonts();
 
 		if ( Sensei_Course_Theme_Option::should_override_theme() ) {
-			Sensei()->assets->enqueue( self::THEME_NAME . '-theme-style', 'css/sensei-course-theme.theme.css' );
+			Sensei()->assets->enqueue( self::THEME_NAME . '-theme-style', 'css/learning-mode.theme.css' );
 		}
 
 	}
