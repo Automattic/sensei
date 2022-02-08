@@ -261,10 +261,18 @@ class Sensei_Course_Theme_Lesson {
 				],
 			];
 
+			$notice_text  = __( 'Please register or sign in to access the course content.', 'sensei-lms' );
+			$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
+
+			if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+				$notice_text  = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
+				$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
+			}
+
 			$notices->add_notice(
 				'locked_lesson',
-				__( 'Please register or sign in to access the course content.', 'sensei-lms' ),
-				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+				$notice_text,
+				$notice_title,
 				$actions,
 				'lock'
 			);
@@ -282,10 +290,18 @@ class Sensei_Course_Theme_Lesson {
 			</form>',
 		];
 
+		$notice_text  = __( 'Please register for this course to access the content.', 'sensei-lms' );
+		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
+
+		if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+			$notice_text  = __( 'Register for this course to take this lesson.', 'sensei-lms' );
+			$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
+		}
+
 		$notices->add_notice(
 			'locked_lesson',
-			__( 'Please register for this course to access the content.', 'sensei-lms' ),
-			__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+			$notice_text,
+			$notice_title,
 			$actions,
 			'lock'
 		);
