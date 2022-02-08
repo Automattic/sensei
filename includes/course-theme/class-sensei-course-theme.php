@@ -68,6 +68,8 @@ class Sensei_Course_Theme {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
+		Sensei_Course_Theme_Templates::instance()->init();
+
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
