@@ -44,7 +44,6 @@
     "@automattic/calypso-build": "10.0.0",
     "@babel/cli": "7.13.14",
     "@babel/core": "7.13.14",
-    "@babel/helper-compilation-targets": "7.16.7",
     "@babel/preset-env": "7.16.4",
     "@babel/runtime": "7.13.10",
     "@sheerun/mutationobserver-shim": "0.3.3",
