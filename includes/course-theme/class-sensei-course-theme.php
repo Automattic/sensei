@@ -295,6 +295,10 @@ class Sensei_Course_Theme {
 
 		$this->enqueue_fonts();
 
+		if ( Sensei_Course_Theme_Option::should_override_theme() ) {
+			Sensei()->assets->enqueue( self::THEME_NAME . '-theme-style', 'css/sensei-course-theme.theme.css' );
+		}
+
 	}
 
 	/**

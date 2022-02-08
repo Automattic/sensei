@@ -1,0 +1,15 @@
+@import './blockbase-ponyfill';
+@import './global-styles';
+
+.sensei-course-theme
+{
+	&__main-content {
+		padding: var(--content-padding);
+
+		.alignfull:not(.entry-content) {
+			margin-left: calc(-1 * var(--content-padding));
+			margin-right: calc(-1 * var(--content-padding));
+
+		}
+	}
+}
