@@ -1,6 +1,10 @@
 .sensei-course-theme__frame {
 	a, button {
 		&:focus {
+			outline: none;
+		}
+		&:focus-visible {
+			transition: none;
 			outline: dashed 1px var(--primary-color);
 		}
 	}
@@ -13,8 +17,12 @@
 		font-family: inherit;
 		font-weight: inherit;
 		font-size: inherit;
-		background-color: inherit;
-
+		background-color: inherit !important;
+		color: inherit !important;
+		&:hover {
+			background-color: inherit !important;
+			color: inherit !important;
+		}
 	}
 	font-family: 'Inter', sans-serif;
 	font-weight: 400;
@@ -55,8 +63,10 @@
 
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
-		background-color: var(--primary-color);
-		color: var(--primary-contrast-color);
+		&:not(:hover) {
+			background-color: var(--primary-color) !important;
+			color: var(--primary-contrast-color);
+		}
 		&:hover {
 			color: var(--primary-color);
 			background: none;
@@ -68,7 +78,7 @@
 		color: var(--primary-color);
 		--wp--custom--button--border--color: var(--primary-color);
 		&:hover {
-			background-color: var(--primary-color);
+			background-color: var(--primary-color) !important;
 			color: var(--primary-contrast-color);
 			.wp-block-button__link {
 				border-color: var(--primary-color);
@@ -81,13 +91,15 @@
 	&.is-link {
 		font-weight: 600;
 		text-decoration: underline;
+		background: none !important;
+		color: inherit !important;
 
 		&:hover {
-			color: var(--primary-color);
+			color: var(--primary-color) !important;;
 		}
 	}
 
-	&[aria-disabled="true"],
+	&[aria-disabled='true'],
 	&:disabled {
 		opacity: 0.4;
 		pointer-events: none;
