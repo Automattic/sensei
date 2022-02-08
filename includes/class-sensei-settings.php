@@ -897,7 +897,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			</label>
 			<p>
 				<span
-					class="description"><?php esc_html_e( $this->fields[ $theme_key ]['description'], 'sensei-lms' ); ?></span>
+					class="description"><?php echo esc_html( $this->fields[ $theme_key ]['description'] ); ?></span>
 			</p>
 		</div>
 		<?php
