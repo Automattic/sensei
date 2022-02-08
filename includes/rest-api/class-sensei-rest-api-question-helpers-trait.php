@@ -313,6 +313,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			case 'boolean':
 				if ( isset( $question['answer']['correct'] ) ) {
 					$meta['_question_right_answer'] = $question['answer']['correct'] ? 'true' : 'false';
+				} else {
+					// If the correct field isn't defined, then it's true by default.
+					$meta['_question_right_answer'] = 'true';
 				}
 				break;
 			case 'gap-fill':
