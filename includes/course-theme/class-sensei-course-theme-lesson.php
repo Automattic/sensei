@@ -263,10 +263,12 @@ class Sensei_Course_Theme_Lesson {
 
 			$notice_text  = __( 'Please register or sign in to access the course content.', 'sensei-lms' );
 			$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
+			$notice_icon  = 'lock';
 
 			if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 				$notice_text  = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
 				$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
+				$notice_icon  = 'eye';
 			}
 
 			$notices->add_notice(
@@ -274,7 +276,7 @@ class Sensei_Course_Theme_Lesson {
 				$notice_text,
 				$notice_title,
 				$actions,
-				'lock'
+				$notice_icon
 			);
 
 			return;
@@ -292,10 +294,12 @@ class Sensei_Course_Theme_Lesson {
 
 		$notice_text  = __( 'Please register for this course to access the content.', 'sensei-lms' );
 		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
+		$notice_icon  = 'lock';
 
 		if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			$notice_text  = __( 'Register for this course to take this lesson.', 'sensei-lms' );
 			$notice_title = __( 'This is a preview lesson', 'sensei-lms' );
+			$notice_icon  = 'eye';
 		}
 
 		$notices->add_notice(
@@ -303,7 +307,7 @@ class Sensei_Course_Theme_Lesson {
 			$notice_text,
 			$notice_title,
 			$actions,
-			'lock'
+			$notice_icon
 		);
 	}
 }
