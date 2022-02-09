@@ -7,8 +7,6 @@
 
 namespace Sensei\Themes\Sensei_Course_Theme;
 
-require_once __DIR__ . '/compat.php';
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -30,7 +28,5 @@ function setup_theme() {
 	add_theme_support( 'custom-logo' );
 	add_theme_support( 'html5', array( 'comment-list', 'comment-form', 'search-form', 'gallery', 'caption', 'style', 'script' ) );
 	remove_filter( 'render_block', 'wp_render_layout_support_flag' );
-
-	Compat\init();
 
 }
