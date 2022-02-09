@@ -47,7 +47,7 @@ class Sensei_Course_Theme_Compat {
 	 *
 	 * @return void
 	 */
-	public function init() {
+	public function load_theme() {
 		add_filter( 'template_include', [ $this, 'get_wrapper_template' ] );
 		add_filter( 'theme_mod_custom_logo', [ $this, 'theme_mod_custom_logo' ], 60 );
 

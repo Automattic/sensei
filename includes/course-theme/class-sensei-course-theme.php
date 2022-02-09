@@ -69,7 +69,6 @@ class Sensei_Course_Theme {
 	 */
 	public function init() {
 		Sensei_Course_Theme_Templates::instance()->init();
-		Sensei_Course_Theme_Compat::instance()->init();
 
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
@@ -137,6 +136,8 @@ class Sensei_Course_Theme {
 		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			return;
 		}
+
+		Sensei_Course_Theme_Compat::instance()->load_theme();
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
