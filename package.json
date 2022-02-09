@@ -56,6 +56,7 @@
     "@wordpress/babel-plugin-makepot": "4.1.0",
     "@wordpress/babel-preset-default": "5.1.0",
     "@wordpress/e2e-test-utils": "5.1.0",
+    "@wordpress/env": "4.2.0",
     "@wordpress/eslint-plugin": "9.0.6",
     "@wordpress/is-shallow-equal": "3.1.2",
     "@wordpress/jest-preset-default": "7.0.1",
@@ -117,7 +118,8 @@
     "e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
     "test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
     "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "wp-env": "wp-env"
   },
   "lint-staged": {
     "package.json": [
