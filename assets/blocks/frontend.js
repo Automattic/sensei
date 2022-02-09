@@ -39,8 +39,9 @@ window.addEventListener( 'load', () => {
 
 		toggleButton.addEventListener( 'click', ( e ) => {
 			e.preventDefault();
-			toggleButton.classList.toggle( 'collapsed' );
 			const collapsed = content.classList.toggle( 'collapsed' );
+			toggleButton.classList.toggle( 'collapsed', collapsed );
+			toggleButton.setAttribute( 'aria-expanded', ! collapsed );
 
 			if ( ! collapsed ) {
 				content.style.visibility = '';
