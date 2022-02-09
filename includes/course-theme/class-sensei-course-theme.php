@@ -143,6 +143,14 @@ class Sensei_Course_Theme {
 
 		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
 		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
+
+		/**
+		 * Fires when learning mode is loaded for a page.
+		 *
+		 * @since 4.0.2
+		 * @hook  sensei_course_learning_mode_load_theme
+		 */
+		do_action( 'sensei_course_learning_mode_load_theme' );
 	}
 
 	/**
@@ -158,6 +166,14 @@ class Sensei_Course_Theme {
 		add_filter( 'pre_option_template', [ $this, 'theme_template' ] );
 		add_filter( 'pre_option_stylesheet', [ $this, 'theme_stylesheet' ] );
 		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
+
+		/**
+		 * Fires when the theme is override is added for learning mode.
+		 *
+		 * @since 4.0.2
+		 * @hook  sensei_course_learning_mode_override_theme
+		 */
+		do_action( 'sensei_course_learning_mode_override_theme' );
 
 		$this->load_theme();
 
@@ -296,7 +312,16 @@ class Sensei_Course_Theme {
 		$this->enqueue_fonts();
 
 		if ( Sensei_Course_Theme_Option::should_override_theme() ) {
+
 			Sensei()->assets->enqueue( self::THEME_NAME . '-theme-style', 'css/learning-mode.theme.css' );
+
+			/**
+			 * Fires when the override theme styles are loaded for learning mode.
+			 *
+			 * @since 4.0.2
+			 * @hook  sensei_course_learning_mode_load_override_styles
+			 */
+			do_action( 'sensei_course_learning_mode_load_override_styles' );
 		}
 
 	}
