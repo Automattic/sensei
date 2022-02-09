@@ -221,16 +221,19 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+		$notices      = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+		$notice_key   = 'locked_lesson';
+		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
+		$notice_icon  = 'lock';
 
 		// Course prerequisite notice.
 		if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
 			$notices->add_notice(
-				'locked_lesson',
+				$notice_key,
 				Sensei()->course::get_course_prerequisite_message( $course_id ),
-				__( 'You don\'t have access to this lesson', 'sensei-lms' ),
+				$notice_title,
 				[],
-				'lock'
+				$notice_icon
 			);
 
 			return;
@@ -261,9 +264,7 @@ class Sensei_Course_Theme_Lesson {
 				],
 			];
 
-			$notice_text  = __( 'Please register or sign in to access the course content.', 'sensei-lms' );
-			$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
-			$notice_icon  = 'lock';
+			$notice_text = __( 'Please register or sign in to access the course content.', 'sensei-lms' );
 
 			if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 				$notice_text  = __( 'Register or sign in to take this lesson.', 'sensei-lms' );
@@ -272,7 +273,7 @@ class Sensei_Course_Theme_Lesson {
 			}
 
 			$notices->add_notice(
-				'locked_lesson',
+				$notice_key,
 				$notice_text,
 				$notice_title,
 				$actions,
@@ -292,9 +293,7 @@ class Sensei_Course_Theme_Lesson {
 			</form>',
 		];
 
-		$notice_text  = __( 'Please register for this course to access the content.', 'sensei-lms' );
-		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
-		$notice_icon  = 'lock';
+		$notice_text = __( 'Please register for this course to access the content.', 'sensei-lms' );
 
 		if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 			$notice_text  = __( 'Register for this course to take this lesson.', 'sensei-lms' );
@@ -303,7 +302,7 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		$notices->add_notice(
-			'locked_lesson',
+			$notice_key,
 			$notice_text,
 			$notice_title,
 			$actions,
