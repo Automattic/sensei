@@ -187,15 +187,18 @@ class Course_Navigation {
 			$collapsed = 'collapsed';
 		}
 
+		$content_id = esc_attr( 'sensei-course-navigation-module-' . $module_id . '-' . wp_generate_uuid4() );
+
 		return '
 			<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
 				<div class="sensei-lms-course-navigation-module__header">
-					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '">
+					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '"
+						aria-controls="' . $content_id . '" aria-expanded="' . esc_attr( $is_current_module ? 'true' : 'false' ) . '">
 						<div class="sensei-lms-course-navigation-module__title">' . $title . '</div>
 						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
 					</button>
 				</div>
-				<ol class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
+				<ol id="' . $content_id . '" class="sensei-lms-course-navigation-module__lessons sensei-collapsible__content ' . $collapsed . '">
 					' . $lessons_html . '
 				</ol>
 				<div class="sensei-lms-course-navigation-module__summary">

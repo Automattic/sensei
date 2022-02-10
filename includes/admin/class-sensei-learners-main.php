@@ -691,7 +691,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							add_query_arg(
 								array(
 									'post_type' => $this->menu_post_type,
-									'post_type' => $this->post_type,
 									'page'      => $this->page_slug,
 									'lesson_id' => $item->ID,
 									'course_id' => $this->course_id,

@@ -126,7 +126,10 @@ const QuizSettings = ( {
 						<>
 							<PanelRow>
 								<RangeControl
-									label={ 'Passing Grade (%)' }
+									label={ __(
+										'Passing Grade (%)',
+										'sensei-lms'
+									) }
 									value={ quizPassmark }
 									onChange={ createChangeHandler(
 										'quizPassmark'

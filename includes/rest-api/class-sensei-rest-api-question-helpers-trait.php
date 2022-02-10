@@ -313,6 +313,9 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			case 'boolean':
 				if ( isset( $question['answer']['correct'] ) ) {
 					$meta['_question_right_answer'] = $question['answer']['correct'] ? 'true' : 'false';
+				} else {
+					// If the correct field isn't defined, then it's true by default.
+					$meta['_question_right_answer'] = 'true';
 				}
 				break;
 			case 'gap-fill':
@@ -547,7 +550,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 				$type_specific_properties = array_merge_recursive( $type_specific_properties, $this->get_multiple_choice_properties( $question ) );
 				break;
 			case 'boolean':
-				$type_specific_properties['answer']['correct'] = 'true' === get_post_meta( $question->ID, '_question_right_answer', true );
+				$right_answer                                  = get_post_meta( $question->ID, '_question_right_answer', true );
+				$type_specific_properties['answer']['correct'] = 'true' === $right_answer || '' === $right_answer;
 				break;
 			case 'gap-fill':
 				$type_specific_properties['answer'] = $this->get_gap_fill_properties( $question );

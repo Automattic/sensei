@@ -1,3 +1,8 @@
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
 jQuery( document ).ready( function ( $ ) {
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
@@ -56,10 +61,10 @@ jQuery( document ).ready( function ( $ ) {
 
 		if ( total_questions == total_graded_questions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
-			jQuery( '.grade-button' ).val( 'Grade' );
+			jQuery( '.grade-button' ).val( __( 'Grade', 'sensei-lms' ) );
 		} else {
 			jQuery( '#all_questions_graded' ).val( 'no' );
-			jQuery( '.grade-button' ).val( 'Save' );
+			jQuery( '.grade-button' ).val( __( 'Save', 'sensei-lms' ) );
 		}
 	};
 
