@@ -149,8 +149,8 @@ class Sensei_Import_CSV_Reader {
 			$second_line         = $this->file->current();
 			$second_line_columns = count( $second_line );
 
-			// SplFileObject->current() returns [ 0 => null ] on empty lines, or false, on PHP 8.
-			if ( false === $second_line || ( 1 === $second_line_columns && empty( $second_line[0] ) ) ) {
+			// SplFileObject->current() returns [ 0 => null ] on empty lines.
+			if ( 1 === $second_line_columns && empty( $second_line[0] ) ) {
 				$this->file->next();
 				continue;
 			}
@@ -199,8 +199,8 @@ class Sensei_Import_CSV_Reader {
 
 			$indexed_line = $this->file->current();
 
-			// SplFileObject->current() returns [ 0 => null ] on empty lines, or false, in PHP 8.
-			if ( false !== $indexed_line && ( 1 < count( $indexed_line ) || ( 1 === count( $indexed_line ) && ! empty( $indexed_line[0] ) ) ) ) {
+			// SplFileObject->current() returns [ 0 => null ] on empty lines.
+			if ( 1 < count( $indexed_line ) || ( 1 === count( $indexed_line ) && ! empty( $indexed_line[0] ) ) ) {
 
 				if ( count( $indexed_line ) !== count( $columns ) ) {
 					$lines[] = new WP_Error(
