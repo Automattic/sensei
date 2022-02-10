@@ -15,6 +15,11 @@ $wordpress-break: 961px;
 	}
 }
 
+@font-face {
+	font-family: Reforma;
+	src: url('../css/fonts/Reforma1918-Blanca.otf') format('opentype');
+}
+
 .sensei-extensions-page {
 	margin-right: 10px;
 
@@ -43,9 +48,16 @@ $wordpress-break: 961px;
 	}
 
 	.sensei-extensions {
-		.components-button.is-primary {
-			min-width: 112px;
-			min-height: 36px;
+		.components-button {
+			&:not(.is-link) {
+				min-width: 112px;
+				min-height: 36px;
+			}
+
+			&.is-large {
+				width: 100%;
+				min-height: 54px;
+			}
 		}
 
 		&__loader {
@@ -426,6 +438,103 @@ $wordpress-break: 961px;
 				margin: 0 0 10px;
 				font-size: 14px;
 				flex: 1;
+			}
+		}
+
+		&__featured-product {
+			display: flex;
+			margin: 20px 0;
+			background-color: #26212e;
+			font-family: Inter, sans-serif;
+			font-size: 18px;
+			line-height: 1.5;
+
+			p {
+				font-size: 18px;
+			}
+
+			&__column {
+				width: 50%;
+				background-size: cover;
+				background-position: center center;
+			}
+
+			&__content {
+				padding: 48px;
+				color: $white;
+			}
+
+			&__header {
+				display: flex;
+				align-items: center;
+				margin: 0 0 24px -4px;
+			}
+
+			&__title {
+				margin: 0;
+				line-height: 1.3;
+				color: $white;
+				font-weight: 400;
+				font-size: 40px;
+			}
+
+			&__badge {
+				margin-left: 16px;
+				background-color: #43af99;
+				padding: 4px 8px;
+				border-radius: 14px;
+				color: $gray-80;
+				font-size: 16px;
+				line-height: 1.2;
+			}
+
+			&__content {
+				ul {
+					margin: 24px 0 0;
+				}
+
+				li {
+					margin: 0;
+
+					~ li {
+						margin-top: 12px;
+					}
+
+					&:before {
+						content: url(../icons/checked-white.svg);
+						margin-right: 10px;
+					}
+				}
+			}
+
+			&__card {
+				margin: 76px;
+				padding: 48px;
+				background-color: $white;
+				text-align: center;
+
+				&__title {
+					font-family: Reforma, serif;
+					font-size: 48px;
+					font-weight: 400;
+					line-height: 1.3;
+					margin: 0 0 16px 0;
+				}
+
+				&__description {
+					max-width: 270px;
+					margin: 0 auto 24px;
+				}
+
+				&__price {
+					margin: 24px 0;
+					font-size: 24px;
+					color: #43af99;
+				}
+
+				&__button {
+					font-size: 16px;
+				}
 			}
 		}
 

@@ -11,6 +11,7 @@ import { RawHTML } from '@wordpress/element';
  * Internal dependencies
  */
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
+import FeaturedProduct from './featured-product';
 import Header from './header';
 import Tabs from './tabs';
 import UpdateNotification from './update-notification';
@@ -95,6 +96,26 @@ const Main = () => {
 			<Grid as="main" className="sensei-extensions">
 				<QueryStringRouter paramName="tab" defaultRoute="all">
 					<Col className="sensei-extensions__section" cols={ 12 }>
+						{ /* TODO: Get the featured product data from the API */ }
+						<FeaturedProduct
+							title="Sensei Pro"
+							excerpt="Everything you need to create and sell online courses"
+							description={ `
+								<p>By upgrading to Sensei Pro, you get all the great<br/>features found in Sensei LMS plus:</p>
+								<ul>
+									<li>WooCommerce integration</li>
+									<li>Schedule ‘drip’ content</li>
+									<li>Set expiration date of courses</li>
+									<li>Advanced quiz features</li>
+									<li>Interactive learning blocks (coming soon)</li>
+									<li>Premium support</li>
+								</ul>
+							` }
+							image="https://senseilms.com/wp-content/uploads/2021/05/sensei-content-drip__cover.png?w=568&h=522&crop=1"
+							badgeLabel="new"
+							price="$149.00"
+							buttonLink="https://senseilms.com/checkout?add-to-cart="
+						/>
 						<Header />
 						<Tabs tabs={ tabs } />
 						{ error !== null && (
