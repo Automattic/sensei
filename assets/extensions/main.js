@@ -69,6 +69,9 @@ const Main = () => {
 	const nonWooExtensions = extensions.filter(
 		( extension ) => ! extension.wccom_product_id
 	);
+	const senseiProExtension = extensions.find(
+		( extension ) => extension.product_slug === 'sensei-pro'
+	);
 
 	const tabs = [
 		{
@@ -96,28 +99,35 @@ const Main = () => {
 			<Grid as="main" className="sensei-extensions">
 				<QueryStringRouter paramName="tab" defaultRoute="all">
 					<Col className="sensei-extensions__section" cols={ 12 }>
-						{ /* TODO: Get the featured product data from the API */ }
-						<FeaturedProduct
-							title="Sensei Pro"
-							excerpt="Everything you need to create and sell online courses"
-							description={ `
-								<p>By upgrading to Sensei Pro, you get all the great features found in Sensei LMS plus:</p>
-								<ul>
-									<li>WooCommerce integration</li>
-									<li>Schedule ‘drip’ content</li>
-									<li>Set expiration date of courses</li>
-									<li>Advanced quiz features</li>
-									<li>Interactive learning blocks (coming soon)</li>
-									<li>Premium support</li>
-								</ul>
-							` }
-							image="https://i0.wp.com/senseilms.mystagingwebsite.com/wp-content/uploads/2022/02/sensei-pro.png?fit=1024%2C941&ssl=1"
-							badgeLabel="new"
-							price="$149.00"
-							buttonLink="https://senseilms.com/checkout?add-to-cart="
-						/>
+						{ senseiProExtension?.is_installed === false && (
+							<FeaturedProduct
+								title={ senseiProExtension.title }
+								excerpt={ senseiProExtension.excerpt }
+								description={ `
+									<p>By upgrading to Sensei Pro, you get all the great features found in Sensei LMS plus:</p>
+									<ul>
+										<li>WooCommerce integration</li>
+										<li>Schedule ‘drip’ content</li>
+										<li>Set expiration date of courses</li>
+										<li>Advanced quiz features</li>
+										<li>Interactive learning blocks (coming soon)</li>
+										<li>Premium support</li>
+									</ul>
+								` }
+								image={ senseiProExtension.image_large }
+								badgeLabel="new"
+								price={ senseiProExtension.price }
+								buttonLink={
+									'https://senseilms.com/checkout?add-to-cart=' +
+									senseiProExtension.wccom_product_id
+								}
+							/>
+						) }
+
 						<Header />
+
 						<Tabs tabs={ tabs } />
+
 						{ error !== null && (
 							<Notice status="error" isDismissible={ false }>
 								<RawHTML>{ error }</RawHTML>
