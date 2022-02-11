@@ -1,6 +1,13 @@
 @mixin text-gray() {
 	opacity: 0.7;
 }
+
+// It's a hack to allow including this file in the editor canvas.
+// See https://github.com/WordPress/gutenberg/blob/e54a9ec2f97e28db3293628e921e40e81cfe5f76/packages/block-editor/src/components/iframe/index.js#L47.
+.wp-block-hack-to-include-css-in-canvas {
+	background: transparent;
+}
+
 @import 'sensei-course-theme/modal';
 @import 'sensei-course-theme/prev-next-lesson';
 @import 'sensei-course-theme/course-navigation';
