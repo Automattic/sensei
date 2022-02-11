@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * @param {Object}   props               Component props.
  * @param {string}   props.title         Product title.
  * @param {string}   props.description   Product description.
+ * @param {Array}    props.features      Product features.
  * @param {string}   props.badgeLabel    Badge label.
  * @param {string}   props.excerpt       Product excerpt.
  * @param {string}   props.image         Product image.
@@ -25,6 +26,7 @@ const FeaturedProduct = ( props ) => {
 	const {
 		title,
 		description,
+		features,
 		badgeLabel,
 		excerpt,
 		image,
@@ -62,12 +64,17 @@ const FeaturedProduct = ( props ) => {
 						) }
 					</header>
 
-					<div
-						className="sensei-extensions__featured-product__description"
-						dangerouslySetInnerHTML={ {
-							__html: description,
-						} }
-					/>
+					<div className="sensei-extensions__featured-product__description">
+						<p>{ description }</p>
+
+						{ features && (
+							<ul>
+								{ features.map( ( feature, key ) => (
+									<li key={ key }>{ feature }</li>
+								) ) }
+							</ul>
+						) }
+					</div>
 				</div>
 			</section>
 
@@ -87,11 +94,7 @@ const FeaturedProduct = ( props ) => {
 					</p>
 
 					<div className="sensei-extensions__featured-product__card__price">
-						{ sprintf(
-							// translators: placeholder is the price.
-							__( '%s USD / year (1 site)', 'sensei-lms' ),
-							price
-						) }
+						{ price }
 					</div>
 
 					<a
