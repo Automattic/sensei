@@ -24,6 +24,20 @@ jQuery( document ).ready( function ( $ ) {
 	} else {
 		show( defaultSectionId );
 	}
+	windowResize();
+	window.addEventListener( 'resize', windowResize );
+
+	function windowResize() {
+		if ( urlHashSectionId === 'woocommerce-settings' ) {
+			if ( window.visualViewport.width > 1100 ) {
+				$senseiSettings.find( '#sensei-pricing-image-desktop' ).show();
+				$senseiSettings.find( '#sensei-pricing-image-mobile' ).hide();
+			} else {
+				$senseiSettings.find( '#sensei-pricing-image-desktop' ).hide();
+				$senseiSettings.find( '#sensei-pricing-image-mobile' ).show();
+			}
+		}
+	}
 
 	$senseiSettings.find( 'a.tab' ).on( 'click', function () {
 		const sectionId = $( this ).attr( 'href' )?.replace( '#', '' );

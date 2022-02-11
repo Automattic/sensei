@@ -162,6 +162,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
 		);
 
+		if ( ! apply_filters( 'sensei_settings_woocommerce_hide', false ) ) {
+			$sections['woocommerce-settings'] = array(
+				'name'        => __( 'WooCommerce', 'sensei-lms' ),
+				'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
+			);
+		}
+
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
 	}
 
@@ -538,6 +545,15 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'learner-profile-settings',
 		);
 
+		$fields['woocommerce_sensei_pro'] = [
+			'name'     => '',
+			'type'     => 'text',
+			'default'  => true,
+			'form'     => 'render_woo_commerce_settings',
+			'section'  => 'woocommerce-settings',
+			'required' => 0,
+		];
+
 		// Email notifications
 		$learner_email_options = array(
 			'learner-graded-quiz'      => __( 'Their quiz is graded (auto and manual grading)', 'sensei-lms' ),
@@ -879,6 +895,29 @@ class Sensei_Settings extends Sensei_Settings_API {
 			</a>
 		</p>
 		<?php } ?>
+		<?php
+	}
+
+	/**
+	 * Learning mode setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_woo_commerce_settings( $args ) {
+		$image_path_desktop = Sensei()->assets->get_image( 'purchase-sensei-pro-desktop.png' );
+		$image_path_mobile  = Sensei()->assets->get_image( 'purchase-sensei-pro-mobile.png' );
+		?>
+		<div class="woocommerce-banner">
+			<div class="woocommerce-banner__background woocommerce-banner__background-large woocommerce-banner__background-medium">
+					<span class="woocommerce-banner__header"><?php echo esc_html( __( 'Get sensei pro', 'sensei-lms' ) ); ?></span>
+					<span class="woocommerce-banner__body"><?php echo esc_html( __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' ) ); ?> </span>
+					<a class="button button-primary woocommerce-banner__redirect-button" href="<?php echo esc_url( 'https://senseilms.com/pricing/' ); ?>"><?php echo esc_html( __( 'Upgrade to Sensei Pro', 'sensei-lms' ) ); ?></a>
+			</div>
+			<div class="woocommerce-banner__side-background">
+				<img class="woocommerce-banner__image-desktop" id="sensei-pricing-image-desktop" src="<?php echo esc_url( $image_path_desktop ); ?>" />
+				<img class="woocommerce-banner__image-mobile" id="sensei-pricing-image-mobile" src="<?php echo esc_url( $image_path_mobile ); ?>" />
+			</div>
+		</div>
 		<?php
 	}
 }

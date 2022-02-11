@@ -1,0 +1,106 @@
+
+@media screen and (max-width: 780px) {
+	.woocommerce-banner {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+@media screen and (min-width: 1100px) {
+	.woocommerce-banner {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+#woothemes-sensei .woocommerce-banner {
+	&__body {
+		color: #FFFFFF;
+		font-size: 16px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 26px;
+		letter-spacing: 0em;
+		text-align: left;
+		margin-bottom: 20px;
+
+	}
+
+	&__header {
+		color: #6fcfb2;
+		font-family: 'Reforma 1918-Blanca';
+		font-size: 32px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 45px;
+		letter-spacing: 0em;
+		text-align: left;
+		margin-bottom: 16px;
+	}
+
+	&__background {
+		background-color: #26212e;
+		display: flex;
+		flex-direction: column;
+		max-height: 269px;
+		box-sizing: border-box;
+	}
+	@media screen and (max-width: 1500px) {
+		&__background-medium {
+			padding: 24px;
+		}
+	}
+	@media screen and (min-width: 1500px) {
+		&__background-large {
+			padding: 48px;
+		}
+	}
+
+	&__redirect-button {
+		background-color: #6fcfb2;
+		border-color: #6fcfb2;
+		color: #000;
+		height: 36px;
+		width: 180px;
+		border-radius: 4px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&__image-desktop {
+		max-height: 269px;
+	}
+	@media screen and (min-width: 320px) {
+		&__image-mobile {
+			max-height: 269px;
+		}
+	}
+	@media screen and (max-width: 440px) {
+		&__image-mobile {
+			max-height: 137px;
+		}
+	}
+	@media screen and (max-width: 1100px) {
+		&__side-background {
+			background-color: #43af99;
+			padding: 26px;
+			display: flex;
+			align-content: center;
+			justify-content: center;
+			align-items: center;
+			box-sizing: border-box;
+		}
+	}
+}
+
+
+#woocommerce-settings:not([style*="display: none"]) ~ .submit {
+	display: none;
+}
+#woocommerce-settings h2 {
+	display: none;
+}
+#woocommerce-settings th {
+	display: none;
+}

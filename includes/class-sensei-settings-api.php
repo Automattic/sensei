@@ -1033,6 +1033,7 @@ class Sensei_Settings_API {
 
 		wp_enqueue_style( 'farbtastic' );
 		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css', [ 'farbtastic' ] );
+		Sensei()->assets->enqueue( 'sensei-settings', 'css/sensei-banner.css' );
 
 		$this->enqueue_field_styles();
 	}
