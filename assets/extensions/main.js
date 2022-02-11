@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { EditorNotices } from '@wordpress/editor';
 import { RawHTML } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -70,8 +71,6 @@ const Main = () => {
 		( extension ) => ! extension.wccom_product_id
 	);
 
-	const FeaturedProduct = FeaturedProductSenseiPro;
-
 	const tabs = [
 		{
 			id: 'all',
@@ -93,12 +92,32 @@ const Main = () => {
 		},
 	];
 
+	/**
+	 * Filters the featured product toggle.
+	 *
+	 * @param {boolean} hideFeaturedProduct Toggle.
+	 */
+	const hideFeaturedProduct = applyFilters(
+		'sensei-lms.Extensions.hideFeaturedProduct',
+		false
+	);
+
+	/**
+	 * Filters the featured product component.
+	 *
+	 * @param {Object} FeaturedProduct Component.
+	 */
+	const FeaturedProduct = applyFilters(
+		'sensei-lms.Extensions.featuredProduct',
+		FeaturedProductSenseiPro
+	);
+
 	return (
 		<>
 			<Grid as="main" className="sensei-extensions">
 				<QueryStringRouter paramName="tab" defaultRoute="all">
 					<Col className="sensei-extensions__section" cols={ 12 }>
-						<FeaturedProduct />
+						{ ! hideFeaturedProduct && <FeaturedProduct /> }
 
 						<Header />
 
