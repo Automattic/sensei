@@ -120,8 +120,8 @@ jQuery( document ).ready( function ( $ ) {
 					correct_answer = $this.find( '.correct-answer' ).html();
 				}
 
-				user_answer = $.trim( user_answer );
-				correct_answer = $.trim( correct_answer );
+				user_answer = user_answer.trim();
+				correct_answer = correct_answer.trim();
 
 				// Auto-grading
 				if ( $this.hasClass( 'auto-grade' ) ) {
