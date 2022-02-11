@@ -101,7 +101,7 @@ const Main = () => {
 							title="Sensei Pro"
 							excerpt="Everything you need to create and sell online courses"
 							description={ `
-								<p>By upgrading to Sensei Pro, you get all the great<br/>features found in Sensei LMS plus:</p>
+								<p>By upgrading to Sensei Pro, you get all the great features found in Sensei LMS plus:</p>
 								<ul>
 									<li>WooCommerce integration</li>
 									<li>Schedule ‘drip’ content</li>
@@ -111,7 +111,7 @@ const Main = () => {
 									<li>Premium support</li>
 								</ul>
 							` }
-							image="https://senseilms.com/wp-content/uploads/2021/05/sensei-content-drip__cover.png?w=568&h=522&crop=1"
+							image="https://i0.wp.com/senseilms.mystagingwebsite.com/wp-content/uploads/2022/02/sensei-pro.png?fit=1024%2C941&ssl=1"
 							badgeLabel="new"
 							price="$149.00"
 							buttonLink="https://senseilms.com/checkout?add-to-cart="
