@@ -383,12 +383,6 @@ class Sensei_Grading_User_Quiz {
 				<input type="button" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-link button-link-delete" title="Resets all questions to ungraded and total grade to 0" />
 			</div>
 			<div class="clear"></div>
-			<script type="text/javascript">
-				jQuery( window ).on( 'load', function() {
-					// Calculate total grade on page load to make sure everything is set up correctly
-					jQuery.fn.autoGrade();
-				});
-			</script>
 		</form>
 		<?php
 	}

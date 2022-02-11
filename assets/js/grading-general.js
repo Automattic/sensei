@@ -204,6 +204,9 @@ jQuery( document ).ready( function ( $ ) {
 		$.fn.updateFeedback();
 	};
 
+	// Calculate total grade on page load to make sure everything is set up correctly
+	jQuery.fn.autoGrade();
+
 	/**
 	 * Resets all graded questions.
 	 */
