@@ -166,7 +166,7 @@ class Sensei_Course_Theme {
 	 */
 	public function maybe_flush_rewrite_rules() {
 
-		if ( '2' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+		if ( '3' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
 			flush_rewrite_rules( false );
 			update_option( 'sensei_course_theme_query_var_flushed', '2' );
 		}
