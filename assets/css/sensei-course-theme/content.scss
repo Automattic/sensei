@@ -17,54 +17,61 @@ body {
 	margin-bottom: 20px!important;
 }
 
-a {
-	color: var(--primary-color);
-}
-
-input, textarea {
-	font-size: inherit;
-}
-
-::selection {
-	background-color: var(--primary-color);
-	color: var(--primary-contrast-color);
-}
 
 .sensei-course-theme {
-	&__main-content__container {
-		margin: 0!important;
-		> *:not(.alignfull) {
-			max-width: var(--wp--custom--layout--content-size);
-			margin-left: auto;
-			margin-right: auto;
-		}
-	}
-	&__main-content__container .wp-block-group__inner-container {
-		max-width: unset;
-		> *:not(.alignfull) {
-			max-width: var(--wp--custom--layout--content-size);
+
+	&__main-content__container, &__main-content__container > .wp-block-group__inner-container {
+		> * {
+			max-width: var(--wp--custom--layout--content-size) !important;
 			margin-left: auto;
 			margin-right: auto;
 		}
 	}
 
-	&__main-content .entry-content, &__main-content__container, &__main-content .entry-content .alignfull {
-		max-width: unset;
-		width: unset;
-		margin-left: 0;
-		margin-right: 0;
+	&__main-content__container > .wp-block-group__inner-container {
+		max-width: unset!important;
+	}
+
+	.wp-block-post-content {
+
+		& > *, .wp-block-group__inner-container > * {
+			max-width: var(--wp--custom--layout--content-size) !important;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		&, & > & {
+			max-width: unset !important;
+			width: unset !important;
+			padding: 0!important;
+		}
+
+		.alignfull {
+			max-width: unset !important;
+		}
+
+		.alignwide {
+			max-width: var(--wp--custom--layout--wide-size) !important;
+
+		}
+
+		.alignright {
+			position: static;
+			margin-right: 0;
+			float: right;
+		}
+
+		.alignleft {
+			position: static;
+			margin-left: 0;
+			float: left;
+		}
 	}
 }
 
 .entry-content {
 	--wp--custom--gap--horizontal: var(--content-padding);
 	--wp--custom--gap--vertical: 12px;
-
-	> *:not(.alignfull) {
-		max-width: var(--wp--custom--layout--content-size);
-		margin-left: auto;
-		margin-right: auto;
-	}
 
 	img {
 		max-width: 100%;

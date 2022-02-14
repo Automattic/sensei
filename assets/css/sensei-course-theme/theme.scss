@@ -1,6 +1,18 @@
 @import './blockbase-ponyfill';
 @import './global-styles';
 
+a {
+	color: var(--primary-color);
+}
+
+input, textarea {
+	font-size: inherit;
+}
+
+::selection {
+	background-color: var(--primary-color);
+	color: var(--primary-contrast-color);
+}
 .sensei-course-theme
 {
 	&__main-content {
