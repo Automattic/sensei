@@ -160,12 +160,6 @@ class Sensei_Course_Theme_Editor {
 				Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
 			}
 		}
-
-		$screen = get_current_screen();
-
-		if ( ! empty( $screen ) && 'widgets' === $screen->id ) {
-			Sensei()->assets->enqueue_style( 'sensei-theme-blocks' );
-		}
 	}
 
 	/**
