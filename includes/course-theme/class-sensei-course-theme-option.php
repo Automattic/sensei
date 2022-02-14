@@ -110,7 +110,7 @@ class Sensei_Course_Theme_Option {
 	 * @return boolean
 	 */
 	public function should_use_sensei_theme() {
-		_deprecated_function( __METHOD__, '4.0.2' );
+		_deprecated_function( __METHOD__, '4.0.2', 'Sensei_Course_Theme_Option::should_use_learning_mode' );
 		return self::should_use_learning_mode();
 	}
 
@@ -178,7 +178,7 @@ class Sensei_Course_Theme_Option {
 	 * @return bool
 	 */
 	public static function has_sensei_theme_enabled( $course_id ) {
-		_deprecated_function( __METHOD__, '4.0.2' );
+		_deprecated_function( __METHOD__, '4.0.2', 'Sensei_Course_Theme_Option::has_learning_mode_enabled' );
 		return self::has_learning_mode_enabled( $course_id );
 	}
 
