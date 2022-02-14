@@ -232,6 +232,27 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Testing logged out preview notice.
+	 */
+	public function testLoggedOutPreviewNotice() {
+		$lesson          = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_preview' => 'preview',
+				],
+			]
+		);
+		$GLOBALS['post'] = $lesson;
+
+		wp_logout();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		$this->assertContains( 'Register or sign in to take this lesson.', $html, 'Should return logged out preview notice' );
+	}
+
+	/**
 	 * Testing not enrolled notice.
 	 */
 	public function testNotEnrolledNotice() {
@@ -244,6 +265,27 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
 
 		$this->assertContains( 'Please register for this course to access the content.', $html, 'Should return not enrolled notice' );
+	}
+
+	/**
+	 * Testing not enrolled preview notice.
+	 */
+	public function testNotEnrolledPreviewNotice() {
+		$lesson          = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_preview' => 'preview',
+				],
+			]
+		);
+		$GLOBALS['post'] = $lesson;
+
+		$this->login_as_student();
+		\Sensei_Course_Theme_Lesson::instance()->init();
+
+		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' );
+
+		$this->assertContains( 'Register for this course to take this lesson.', $html, 'Should return not enrolled preview notice' );
 	}
 
 	/**
