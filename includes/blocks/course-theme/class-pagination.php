@@ -23,7 +23,7 @@ class Pagination {
 	 */
 	public function __construct() {
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/pagination',
+			'sensei-lms/page-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
 			]

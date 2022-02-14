@@ -318,6 +318,41 @@ const blocks = [
 			);
 		},
 	},
+	{
+		...meta,
+		title: __( 'Page Actions', 'sensei-lms' ),
+		name: 'sensei-lms/page-actions',
+		description: __(
+			'Display pagination and related actions for the current page.',
+			'sensei-lms'
+		),
+		apiVersion: 2,
+		edit: function EditPageActions() {
+			const blockProps = useBlockProps( {
+				className: 'sensei-quiz-pagination',
+			} );
+			return (
+				<div { ...blockProps }>
+					<div className="sensei-quiz-pagination__list">
+						<ul className="page-numbers">
+							<li>
+								<span className="page-numbers current">1</span>
+							</li>
+							<li>
+								<span className="page-numbers">2</span>
+							</li>
+							<li>
+								<span className="page-numbers dots">…</span>
+							</li>
+							<li>
+								<span className="page-numbers">10</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			);
+		},
+	},
 ];
 
 blocks.forEach( ( block ) => {
