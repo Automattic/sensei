@@ -26,13 +26,20 @@ body {
 		display: flex;
 	}
 	&__main-content {
-		margin-left: 0 !important;
-		> * {
-			max-width: 900px;
+		margin-left: auto !important;
+	}
+	&__main-content__container {
+		margin: 0!important;
+		> *:not(.alignfull), .wp-block-post-content.alignfull {
+			max-width: var(--wp--custom--layout--content-size) !important;
 			margin-left: auto;
 			margin-right: auto;
 		}
 	}
+}
+
+.wp-block-post-content {
+	padding: 12px 0;
 }
 
 .wp-block-post-title {

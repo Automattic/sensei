@@ -9,7 +9,7 @@ $tablet-breakpoint: 768px;
 
 	&__main-content {
 		padding: 32px;
-		margin-bottom: 100px;
+		margin-bottom: 100px !important;
 
 		> * {
 			display: block;
