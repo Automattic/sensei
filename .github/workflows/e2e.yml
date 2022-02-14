@@ -5,7 +5,7 @@ on: pull_request
 jobs:
     test:
         name: E2E Tests
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-latest
         strategy:
             fail-fast: false
             max-parallel: 10

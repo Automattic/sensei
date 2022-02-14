@@ -2,6 +2,13 @@
 
 
 .sensei-lms-course-navigation {
+	&__modules, &__lessons, &-module__lessons {
+		&, li {
+			list-style: none;
+		}
+		padding-left: 0px;
+	}
+
 	&__modules + &__lessons {
 		border-top: 1px dotted var(--border-color, #1E1E1E);
 		margin-top: 6px;
@@ -43,6 +50,7 @@
 		text-align: left;
 		margin: 0;
 	}
+
 	&__button {
 		color: inherit;
 	}

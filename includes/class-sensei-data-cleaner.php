@@ -86,6 +86,7 @@ class Sensei_Data_Cleaner {
 		'widget_sensei_category_courses',
 		'sensei_dismiss_wcpc_prompt',
 		'sensei-cancelled-wccom-connect-dismissed',
+		'sensei_course_theme_query_var_flushed',
 	);
 
 	/**
@@ -361,6 +362,12 @@ class Sensei_Data_Cleaner {
 		$my_courses_page_id = $settings->get( 'my_course_page' );
 		if ( $my_courses_page_id ) {
 			wp_trash_post( $my_courses_page_id );
+		}
+
+		// Trash the Course Completed page.
+		$course_completed_page_id = $settings->get( 'course_completed_page' );
+		if ( $course_completed_page_id ) {
+			wp_trash_post( $course_completed_page_id );
 		}
 	}
 

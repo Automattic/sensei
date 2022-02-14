@@ -59,11 +59,22 @@ class Sensei_Import_CSV_Reader {
 	 */
 	public function __construct( $csv_file, $completed_lines = 0, $lines_per_batch = 30 ) {
 		$this->file = new SplFileObject( $csv_file );
-		$this->file->setFlags( SplFileObject::READ_CSV );
+		// SplFileObject::READ_AHEAD is absolutely required for iterator_count to work, otherwise it blocks in an
+		// internal infinite loop. See: https://bugs.php.net/bug.php?id=63616 - this bug is totally avoided by using
+		// SplFileObject::READ_AHEAD.
+		$this->file->setFlags( SplFileObject::READ_CSV | SplFileObject::READ_AHEAD );
 		$this->detect_delimiter();
 
-		$this->file->seek( PHP_INT_MAX );
-		$this->total_lines     = $this->file->key();
+		// In PHP 8.0+ SplFileObject::key() doesn't work in the same way as the SplFileObject::key() in PHP 7.x,
+		// so we need to use iterator_count instead to count the total number of lines in the file.
+		// Also note that, as iterator_count calls SplFileObject::rewind() on $this->file, we need to subtract 1 to
+		// ignore the header line and have the same result as SplFileObject::key() in PHP 7.0.
+		$this->total_lines = iterator_count( $this->file ) - 1;
+
+		// After computing the total number of lines in the file, we reset the flags to remove the
+		// SplFileObject:READ_AHEAD, which breaks our code.
+		$this->file->setFlags( SplFileObject::READ_CSV );
+
 		$this->completed_lines = $completed_lines;
 		$this->is_completed    = $this->completed_lines >= $this->total_lines;
 		$this->lines_per_batch = $lines_per_batch;

@@ -68,6 +68,7 @@ class Sensei_PostTypes {
 		$this->setup_post_type_labels_base();
 
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_action( 'template_redirect', array( $this, 'redirect_course_archive_page' ) );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
@@ -233,6 +234,36 @@ class Sensei_PostTypes {
 
 	}
 
+
+	/**
+	 * Redirect to the correct course archive link when using plain permalinks.
+	 *
+	 * @since 4.0.2
+	 * @uses  Sensei()
+	 * @access private
+	 * @return void
+	 */
+	public function redirect_course_archive_page() {
+		$settings = Sensei()->settings->settings;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// When default permalinks are enabled, redirect course page to post type archive url.
+		$course_url = get_post_type_archive_link( 'course' );
+		if (
+			! empty( $_GET['page_id'] ) &&
+			'' === get_option( 'permalink_structure' ) &&
+			absint( $_GET['page_id'] ) === absint( $settings['course_page'] ) &&
+			$course_url
+		) {
+			foreach ( $_GET as $param => $value ) {
+				if ( 'page_id' !== $param ) {
+					$course_url = add_query_arg( $param, $value, $course_url );
+				}
+			}
+			wp_safe_redirect( esc_url_raw( $course_url ) );
+			exit;
+		}
+	}
+
 	/**
 	 * Figure out of the course post type has an archive and what it should be.
 	 *
@@ -311,6 +342,7 @@ class Sensei_PostTypes {
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
 			'show_in_menu'          => false,
+			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
@@ -360,6 +392,7 @@ class Sensei_PostTypes {
 			'publicly_queryable'  => true,
 			'show_ui'             => true,
 			'show_in_menu'        => false,
+			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => false,
 			'query_var'           => true,
 			'exclude_from_search' => true,
@@ -407,6 +440,7 @@ class Sensei_PostTypes {
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
 			'show_in_menu'          => false,
+			'show_in_admin_bar'     => true,
 			'show_in_nav_menus'     => false,
 			'query_var'             => true,
 			'exclude_from_search'   => true,

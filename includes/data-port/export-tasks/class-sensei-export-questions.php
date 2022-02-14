@@ -111,7 +111,7 @@ class Sensei_Export_Questions
 		switch ( $question_type ) {
 			case 'multiple-choice':
 				$answers_right = Sensei()->question->get_answers_by_id( (array) $meta['_question_right_answer'] );
-				$answers_wrong = Sensei()->question->get_answers_by_id( $meta['_question_wrong_answers'] );
+				$answers_wrong = Sensei()->question->get_answers_by_id( (array) $meta['_question_wrong_answers'] );
 
 				$answers_right = array_map(
 					function( $value ) {

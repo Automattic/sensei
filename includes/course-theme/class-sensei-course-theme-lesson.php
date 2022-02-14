@@ -240,10 +240,6 @@ class Sensei_Course_Theme_Lesson {
 		if ( ! is_user_logged_in() ) {
 			$user_can_register = get_option( 'users_can_register' );
 
-			// Take course URL.
-			$course_url      = add_query_arg( 'take_course_sign_in', '1', get_permalink( $course_id ) );
-			$take_course_url = $user_can_register ? sensei_user_registration_url( true, $course_url ) : sensei_user_login_url( $course_url );
-
 			// Sign in URL.
 			$current_link = get_permalink();
 			$sign_in_url  = $user_can_register ? sensei_user_registration_url( true, $current_link ) : sensei_user_login_url( $current_link );
@@ -251,7 +247,7 @@ class Sensei_Course_Theme_Lesson {
 			$actions = [
 				[
 					'label' => __( 'Take course', 'sensei-lms' ),
-					'url'   => $take_course_url,
+					'url'   => get_permalink( $course_id ),
 					'style' => 'primary',
 				],
 				[

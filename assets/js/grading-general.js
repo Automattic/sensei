@@ -1,3 +1,8 @@
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
 jQuery( document ).ready( function ( $ ) {
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
@@ -56,10 +61,10 @@ jQuery( document ).ready( function ( $ ) {
 
 		if ( total_questions == total_graded_questions ) {
 			jQuery( '#all_questions_graded' ).val( 'yes' );
-			jQuery( '.grade-button' ).val( 'Grade' );
+			jQuery( '.grade-button' ).val( __( 'Grade', 'sensei-lms' ) );
 		} else {
 			jQuery( '#all_questions_graded' ).val( 'no' );
-			jQuery( '.grade-button' ).val( 'Save' );
+			jQuery( '.grade-button' ).val( __( 'Save', 'sensei-lms' ) );
 		}
 	};
 
@@ -115,8 +120,8 @@ jQuery( document ).ready( function ( $ ) {
 					correct_answer = $this.find( '.correct-answer' ).html();
 				}
 
-				user_answer = $.trim( user_answer );
-				correct_answer = $.trim( correct_answer );
+				user_answer = user_answer.trim();
+				correct_answer = correct_answer.trim();
 
 				// Auto-grading
 				if ( $this.hasClass( 'auto-grade' ) ) {
@@ -198,6 +203,9 @@ jQuery( document ).ready( function ( $ ) {
 		$.fn.calculateTotalGrade();
 		$.fn.updateFeedback();
 	};
+
+	// Calculate total grade on page load to make sure everything is set up correctly
+	jQuery.fn.autoGrade();
 
 	/**
 	 * Resets all graded questions.
