@@ -4,6 +4,8 @@
 	.inside {
 		display: flex;
 		flex-direction: column;
+		flex-wrap: wrap;
+		box-sizing: border-box;
 
 		@media (min-width: $break-medium)  {
 			flex-direction: row;
@@ -24,6 +26,7 @@
 		}
 
 		&__preview {
+			min-width: 232px;
 			opacity: 0.4;
 
 			@media (min-width: $break-medium)  {
