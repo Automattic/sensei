@@ -222,26 +222,33 @@ const QuizSettings = ( {
 							) }
 						/>
 					</PanelRow>
+					{ randomQuestionOrder && (
+						<PanelRow>
+							<NumberControl
+								id="sensei-quiz-settings-show-questions"
+								label={ __(
+									'Number of Questions',
+									'sensei-lms'
+								) }
+								help={ __(
+									'Display a random selection of questions.',
+									'sensei-lms'
+								) }
+								allowReset
+								resetLabel={ __( 'All', 'sensei-lms' ) }
+								min={ 0 }
+								max={ questionCount }
+								step={ 1 }
+								value={ showQuestions }
+								placeholder={ __( 'All', 'sensei-lms' ) }
+								onChange={ createChangeHandler(
+									'showQuestions'
+								) }
+							/>
+						</PanelRow>
+					) }
 					<PanelRow>
 						<QuizTimerPromo />
-					</PanelRow>
-					<PanelRow>
-						<NumberControl
-							id="sensei-quiz-settings-show-questions"
-							label={ __( 'Number of Questions', 'sensei-lms' ) }
-							help={ __(
-								'Display a random selection of questions.',
-								'sensei-lms'
-							) }
-							allowReset
-							resetLabel={ __( 'All', 'sensei-lms' ) }
-							min={ 0 }
-							max={ questionCount }
-							step={ 1 }
-							value={ showQuestions }
-							placeholder={ __( 'All', 'sensei-lms' ) }
-							onChange={ createChangeHandler( 'showQuestions' ) }
-						/>
 					</PanelRow>
 				</PanelBody>
 				<PaginationSidebarSettings
