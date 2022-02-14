@@ -83,7 +83,7 @@ class Sensei_Course_Theme_Option {
 			return;
 		}
 
-		$url = get_permalink();
+		$url = get_pagenum_link( 1, false );
 		if ( $should_use_theme ) {
 			$url = str_replace( trailingslashit( home_url() ), '', $url );
 			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );

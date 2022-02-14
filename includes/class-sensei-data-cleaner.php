@@ -363,6 +363,12 @@ class Sensei_Data_Cleaner {
 		if ( $my_courses_page_id ) {
 			wp_trash_post( $my_courses_page_id );
 		}
+
+		// Trash the Course Completed page.
+		$course_completed_page_id = $settings->get( 'course_completed_page' );
+		if ( $course_completed_page_id ) {
+			wp_trash_post( $course_completed_page_id );
+		}
 	}
 
 	/**
