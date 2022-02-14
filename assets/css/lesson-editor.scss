@@ -1,37 +1,33 @@
 @import '~@wordpress/base-styles/breakpoints';
 
-#content-drip-promo {
-	.inside {
-		display: flex;
-		flex-direction: column;
-		flex-wrap: wrap;
-		box-sizing: border-box;
+.sensei-content-drip-promo {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	box-sizing: border-box;
 
-		@media (min-width: $break-medium)  {
-			flex-direction: row;
-			justify-content: space-between;
-			gap: 1em;
+	@media (min-width: $break-medium)  {
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 1em;
+	}
+
+	&__descriptions {
+		max-width: 410px;
+
+		a:after {
+			content: url(../icons/external-link.svg);
+			margin-left: 8px;
+			vertical-align: text-top;
 		}
 	}
 
-	.sensei-content-drip-promo {
-		&__descriptions {
-			max-width: 410px;
+	&__preview {
+		min-width: 232px;
+		opacity: 0.4;
 
-			a:after {
-				content: url(../icons/external-link.svg);
-				margin-left: 8px;
-				vertical-align: text-top;
-			}
-		}
-
-		&__preview {
-			min-width: 232px;
-			opacity: 0.4;
-
-			@media (min-width: $break-medium)  {
-				width: 50%;
-			}
+		@media (min-width: $break-medium)  {
+			width: 50%;
 		}
 	}
 }
