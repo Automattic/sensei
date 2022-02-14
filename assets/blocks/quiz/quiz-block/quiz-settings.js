@@ -29,6 +29,7 @@ import {
 	PaginationSidebarSettings,
 	PaginationToolbarSettings,
 } from './pagination-settings';
+import QuizTimerPromo from './quiz-timer-promo';
 import { useOpenQuizSettings } from './use-open-quiz-settings';
 import CogIcon from '../../../icons/cog.svg';
 
@@ -220,6 +221,9 @@ const QuizSettings = ( {
 								'sensei-lms'
 							) }
 						/>
+					</PanelRow>
+					<PanelRow>
+						<QuizTimerPromo />
 					</PanelRow>
 					<PanelRow>
 						<NumberControl
