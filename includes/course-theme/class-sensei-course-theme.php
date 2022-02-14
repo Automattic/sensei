@@ -144,6 +144,7 @@ class Sensei_Course_Theme {
 		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
 		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
 
+		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
 	/**
@@ -165,7 +166,7 @@ class Sensei_Course_Theme {
 	 */
 	public function maybe_flush_rewrite_rules() {
 
-		if ( '2' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+		if ( '3' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
 			flush_rewrite_rules( false );
 			update_option( 'sensei_course_theme_query_var_flushed', '2' );
 		}
@@ -189,6 +190,7 @@ class Sensei_Course_Theme {
 		$slug = preg_quote( $args->rewrite['slug'] ?? $post_type, '/' );
 
 		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $post_type . '=$matches[1]&page=$matches[2]&$matches[3]', 'top' );
+		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
 
 	}
 
