@@ -76,7 +76,6 @@ const files = [
 	'css/course-editor.scss',
 	'css/ranges.css',
 	'css/settings.scss',
-	'css/sensei-banner.scss',
 	'css/meta-box-quiz-editor.scss',
 	'css/sensei-course-theme.scss',
 	'css/sensei-course-theme.editor.scss',

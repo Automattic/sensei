@@ -44,6 +44,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
 		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
+
 	}
 
 	/**
@@ -909,13 +910,15 @@ class Sensei_Settings extends Sensei_Settings_API {
 		?>
 		<div class="woocommerce-banner">
 			<div class="woocommerce-banner__background woocommerce-banner__background-large woocommerce-banner__background-medium">
-					<span class="woocommerce-banner__header"><?php echo esc_html( __( 'Get sensei pro', 'sensei-lms' ) ); ?></span>
+					<span class="woocommerce-banner__header"><?php echo esc_html( __( 'Get Sensei Pro', 'sensei-lms' ) ); ?></span>
 					<span class="woocommerce-banner__body"><?php echo esc_html( __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' ) ); ?> </span>
-					<a class="button button-primary woocommerce-banner__redirect-button" href="<?php echo esc_url( 'https://senseilms.com/pricing/' ); ?>"><?php echo esc_html( __( 'Upgrade to Sensei Pro', 'sensei-lms' ) ); ?></a>
+					<a class="button button-primary woocommerce-banner__redirect-button" href="<?php echo esc_url( 'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=settings_woocommerce' ); ?>"><?php echo esc_html( __( 'Upgrade to Sensei Pro', 'sensei-lms' ) ); ?></a>
 			</div>
 			<div class="woocommerce-banner__side-background">
-				<img class="woocommerce-banner__image-desktop" id="sensei-pricing-image-desktop" src="<?php echo esc_url( $image_path_desktop ); ?>" />
-				<img class="woocommerce-banner__image-mobile" id="sensei-pricing-image-mobile" src="<?php echo esc_url( $image_path_mobile ); ?>" />
+				<picture>
+					<source media="(max-width:1100px)" srcset="<?php echo esc_url( $image_path_mobile ); ?>">
+					<img class="woocommerce-banner__background-image" src="<?php echo esc_url( $image_path_desktop ); ?>" alt="sensei-banner">
+				</picture>
 			</div>
 		</div>
 		<?php
