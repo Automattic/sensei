@@ -42,16 +42,28 @@ export const QuestionTypeToolbar = ( { value, onSelect } ) => {
 						<b>{ selectedOption?.title }</b>
 					),
 				} }
-				getMenuItemProps={ ( option ) => ( {
-					children: (
-						<div>
-							<strong> { option.title }</strong>
-							<div className="sensei-lms-question-block__type-selector__option__description">
-								{ option.description }
+				getMenuItemProps={ ( option ) => {
+					const props = {};
+
+					if ( option.renderMenuItem ) {
+						props.children = option.renderMenuItem();
+					} else {
+						props.children = (
+							<div>
+								<strong> { option.title }</strong>
+								<div className="sensei-lms-question-block__type-selector__option__description">
+									{ option.description }
+								</div>
 							</div>
-						</div>
-					),
-				} ) }
+						);
+					}
+
+					if ( option.disabled ) {
+						props.onClick = () => {};
+					}
+
+					return props;
+				} }
 			/>
 		</Toolbar>
 	);
