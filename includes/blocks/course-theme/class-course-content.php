@@ -40,6 +40,7 @@ class Course_Content {
 	 */
 	public function render_content_block() {
 
+		// Make sure post is set up correctly.
 		if ( ! in_the_loop() && have_posts() ) {
 			the_post();
 		}
