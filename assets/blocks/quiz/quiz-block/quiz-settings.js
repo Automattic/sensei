@@ -18,6 +18,7 @@ import {
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -94,6 +95,16 @@ const QuizSettings = ( {
 				? question.attributes.options.number
 				: 1 ),
 		0
+	);
+
+	/**
+	 * Filters the quiz timer promo component toggle.
+	 *
+	 * @param {boolean} hideQuizTimer Whether to hide the quiz timer promo component.
+	 */
+	const hideQuizTimer = applyFilters(
+		'sensei-lms.Quiz.hideQuizTimer',
+		false
 	);
 
 	useEffect( () => {
@@ -247,9 +258,11 @@ const QuizSettings = ( {
 							/>
 						</PanelRow>
 					) }
-					<PanelRow>
-						<QuizTimerPromo />
-					</PanelRow>
+					{ ! hideQuizTimer && (
+						<PanelRow>
+							<QuizTimerPromo />
+						</PanelRow>
+					) }
 				</PanelBody>
 				<PaginationSidebarSettings
 					settings={ pagination }
