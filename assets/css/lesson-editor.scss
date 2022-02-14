@@ -1,6 +1,6 @@
 @import '~@wordpress/base-styles/breakpoints';
 
-#content-drip-upgrade {
+#content-drip-promo {
 	.inside {
 		display: flex;
 		flex-direction: column;
@@ -14,7 +14,7 @@
 		}
 	}
 
-	.sensei-content-drip-upgrade {
+	.sensei-content-drip-promo {
 		&__descriptions {
 			max-width: 410px;
 

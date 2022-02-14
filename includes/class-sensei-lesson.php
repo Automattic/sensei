@@ -281,18 +281,17 @@ class Sensei_Lesson {
 		add_meta_box( 'lesson-preview', esc_html__( 'Preview', 'sensei-lms' ), array( $this, 'lesson_preview_meta_box_content' ), $this->token, 'side', 'low' );
 
 		/**
-		 * Filters the content drip metabox toggle.
+		 * Filters the Content Drip promo metabox toggle.
 		 *
 		 * @hook  sensei_lesson_content_drip_hide
 		 * @since 4.1.0
 		 *
-		 * @param  {bool} $hide_content_drip
+		 * @param  {bool} $hide_content_drip Whether to hide the Content Drip promo metabox.
 		 * @return {bool}
 		 */
-		$hide_content_drip = apply_filters( 'sensei_lesson_content_drip_hide', false );
-		if ( ! $hide_content_drip ) {
-			// Add Meta Box for Content Drip upgrade.
-			add_meta_box( 'content-drip-upgrade', esc_html__( 'Content Drip', 'sensei-lms' ), array( $this, 'content_drip_upgrade_meta_box_content' ), $this->token, 'normal', 'default' );
+		if ( ! apply_filters( 'sensei_lesson_content_drip_hide', false ) ) {
+			// Add Meta Box for Content Drip promo.
+			add_meta_box( 'content-drip-promo', esc_html__( 'Content Drip', 'sensei-lms' ), array( $this, 'content_drip_promo_meta_box_content' ), $this->token, 'normal', 'default' );
 		}
 
 		// Add Meta Box for Lesson Information
@@ -332,27 +331,29 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Display the content drip upgrade inside the meta box.
+	 * Display the Content Drip promo content inside the meta box.
 	 *
 	 * @since  4.1.0
 	 * @access private
 	 */
-	public function content_drip_upgrade_meta_box_content() {
+	public function content_drip_promo_meta_box_content() {
 		?>
-		<div class="sensei-content-drip-upgrade__descriptions">
-			<p><?php esc_html_e( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' ); ?></p>
-			<p><a href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_content_drip" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a></p>
-		</div>
+		<div class="sensei-content-drip-promo">
+			<div class="sensei-content-drip-promo__descriptions">
+				<p><?php esc_html_e( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' ); ?></p>
+				<p><a href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_content_drip" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a></p>
+			</div>
 
-		<div class="sensei-content-drip-upgrade__preview">
-			<p><?php esc_html_e( 'When should this lesson become available?', 'sensei-lms' ); ?></p>
-			<p>
-				<select>
-					<option><?php esc_html_e( 'As soon as the course is started', 'sensei-lms' ); ?></option>
-					<option><?php esc_html_e( 'On a specific date', 'sensei-lms' ); ?></option>
-					<option><?php esc_html_e( 'A specific interval after the course start date', 'sensei-lms' ); ?></option>
-				</select>
-			</p>
+			<div class="sensei-content-drip-promo__preview">
+				<p><?php esc_html_e( 'When should this lesson become available?', 'sensei-lms' ); ?></p>
+				<p>
+					<select>
+						<option><?php esc_html_e( 'As soon as the course is started', 'sensei-lms' ); ?></option>
+						<option><?php esc_html_e( 'On a specific date', 'sensei-lms' ); ?></option>
+						<option><?php esc_html_e( 'A specific interval after the course start date', 'sensei-lms' ); ?></option>
+					</select>
+				</p>
+			</div>
 		</div>
 		<?php
 	}
