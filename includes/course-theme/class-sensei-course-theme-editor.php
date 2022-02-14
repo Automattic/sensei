@@ -101,9 +101,12 @@ class Sensei_Course_Theme_Editor {
 			return;
 		}
 
-		if ( $this->lesson_has_course_theme( get_post( $post_id ) ) ) {
+		if ( $this->lesson_has_learning_mode( get_post( $post_id ) ) ) {
 			$this->add_editor_styles();
-			Sensei_Course_Theme::instance()->override_theme();
+
+			if ( Sensei_Course_Theme_Option::should_override_theme() ) {
+				Sensei_Course_Theme::instance()->override_theme();
+			}
 		}
 
 	}
@@ -151,7 +154,7 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function enqueue_site_editor_assets() {
 
-		if ( $this->lesson_has_course_theme() || $this->is_site_editor() ) {
+		if ( $this->lesson_has_learning_mode() || $this->is_site_editor() ) {
 			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei_Course_Theme::instance()->enqueue_fonts();
@@ -182,7 +185,7 @@ class Sensei_Course_Theme_Editor {
 	 *
 	 * @return bool
 	 */
-	private function lesson_has_course_theme( $post = null ) {
+	private function lesson_has_learning_mode( $post = null ) {
 
 		$post = $post ?? get_post();
 
@@ -192,7 +195,7 @@ class Sensei_Course_Theme_Editor {
 
 		$course_id = Sensei()->lesson->get_course_id( $post->ID );
 
-		return Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) && Sensei_Course_Theme_Option::should_override_theme();
+		return Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 	}
 
 	/**
