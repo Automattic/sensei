@@ -110,6 +110,7 @@ class Sensei_Course_Theme_Option {
 	 * @return boolean
 	 */
 	public function should_use_sensei_theme() {
+		_deprecated_function( __METHOD__, '4.0.2' );
 		return self::should_use_learning_mode();
 	}
 
@@ -161,6 +162,8 @@ class Sensei_Course_Theme_Option {
 		 * @hook  sensei_course_learning_mode_theme_override_enabled
 		 *
 		 * @param {bool} $enabled True if the learning mode theme override is enabled.
+		 *
+		 * @return {bool} The modified learning mode theme override setting.
 		 */
 		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', $enabled );
 	}
@@ -175,6 +178,7 @@ class Sensei_Course_Theme_Option {
 	 * @return bool
 	 */
 	public static function has_sensei_theme_enabled( $course_id ) {
+		_deprecated_function( __METHOD__, '4.0.2' );
 		return self::has_learning_mode_enabled( $course_id );
 	}
 
@@ -200,6 +204,8 @@ class Sensei_Course_Theme_Option {
 		 *
 		 * @param {bool} $enabled    True if the learning mode is enabled for the course or globally.
 		 * @param {int}  $course_id  The id of the course.
+		 *
+		 * @return {bool} The modified learning mode setting.
 		 */
 		return (bool) apply_filters( 'sensei_course_learning_mode_enabled', $enabled, $course_id );
 	}

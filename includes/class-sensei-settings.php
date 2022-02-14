@@ -315,7 +315,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'course-settings',
 		);
 
-		// Course Settings.
+		// Rendered as part of the 'Learning Mode' setting.
 		$fields['sensei_learning_mode_theme'] = array(
 			'name'        => __( 'Learning Mode Theme Styles', 'sensei-lms' ),
 			'description' => __( 'Load styles and blocks of the active theme in Learning Mode.', 'sensei-lms' ),

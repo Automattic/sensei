@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Theme_Editor class.
+ * File containing Sensei_Course_Theme_Templates class.
  *
  * @package sensei-lms
  * @since   4.0.2
