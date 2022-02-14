@@ -1,3 +1,4 @@
+@import '~@wordpress/base-styles/breakpoints';
 $primary: #6FCFB2;
 
 /* Course Theme Onboarding */
@@ -90,5 +91,52 @@ $primary: #6FCFB2;
 				}
 			}
 		}
+	}
+}
+
+.sensei-pricing-nudge {
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 1em;
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__redirect-icon:after {
+		content: url(../icons/external-link.svg);
+		margin-left: 8px;
+		vertical-align: text-top;
+	}
+
+	&__upgrade-content-text {
+		color: #a5a5a5;
+	}
+
+	&__upgrade-new-course {
+		padding: 12px;
+		border: 1px solid #a5a5a5;
+		margin-bottom: 16px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__upgrade-new-course-text {
+		color: #a5a5a5;
+		margin-bottom: 10px;
+	}
+
+	&__upgrade_new_course_mock_button {
+		color: #78a9d5;
+		border: 1px solid #78a9d5;
+		border-radius: 3px;
+		font-size: 13px;
+		line-height: 2.15384615; /* 28px */
+		padding: 0 10px;
+		cursor: not-allowed;
+		box-sizing: border-box;
 	}
 }

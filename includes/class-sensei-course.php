@@ -149,6 +149,24 @@ class Sensei_Course {
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+
+		// Add custom sensei course pricing description
+		add_filter( 'sensei_course_pricing_description', [ $this, 'get_sensei_course_pricing_description' ] );
+	}
+
+	/**
+	 * Get sensei course pricing description to be used in Pricing metabox.
+	 *
+	 * @since 4.1.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_sensei_course_pricing_description() {
+		return array(
+			'text' => 'Sell this course using WooCommerce - integrates with subscriptions, memberships, affiliates, and more.',
+			'url'  => 'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing',
+		);
 	}
 
 	/**
@@ -387,6 +405,20 @@ class Sensei_Course {
 	 */
 	public function meta_box_setup() {
 
+		/**
+		 * Filters the course pricing metabox toggle.
+		 *
+		 * @hook  sensei_course_pricing_hide
+		 * @since 4.1.0
+		 *
+		 * @param  {bool} $hide_course_pricing
+		 * @return {bool}
+		 */
+		$hide_course_pricing = apply_filters( 'sensei_course_pricing_hide', false );
+		if ( ! $hide_course_pricing ) {
+			// Add Meta Box for Pricing
+			add_meta_box( 'course-pricing-nudge', __( 'Pricing', 'sensei-lms' ), array( $this, 'course_pricing_nudge_meta_box_content' ), $this->token, 'side', 'default' );
+		}
 		// Add Meta Box for Prerequisite Course
 		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'sensei-lms' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
 		// Add Meta Box for Featured Course
@@ -403,6 +435,41 @@ class Sensei_Course {
 		// add Disable email notification box
 		add_meta_box( 'course-notifications', __( 'Course Notifications', 'sensei-lms' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
 
+	}
+
+	/**
+	 * Function for rendering course_pricing_nudge_meta_box_content.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function course_pricing_nudge_meta_box_content() {
+		$sensei_pricing_nudge_description = apply_filters( 'sensei_course_pricing_description', 'sensei-lms' );
+		$text                             = $sensei_pricing_nudge_description['text'];
+		$url                              = $sensei_pricing_nudge_description['url'];
+		?>
+		<div class="sensei-pricing-nudge">
+			<div class="sensei-pricing-nudge__content">
+				<p>
+					<?php is_string( $text ) ? esc_html_e( $text, 'sensei-lms' ) : ''; ?>
+				</p>
+				<a class="sensei-pricing-nudge__redirect-icon" href="<?php echo esc_url( $url ); ?>" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a>
+			</div>
+			<div class="sensei-pricing-nudge__content">
+				<p class="sensei-pricing-nudge__upgrade-content-text">
+					<?php esc_html_e( 'To access this course, learners will need to purchase one of the assigned products.', 'sensei-lms' ); ?>
+				</p>
+				<div class="sensei-pricing-nudge__upgrade-new-course">
+					<p class="sensei-pricing-nudge__upgrade-new-course-text">
+						<?php esc_html_e( 'You don\'t have any products yet. Get started by creating a new WooCommerce product', 'sensei-lms' ); ?>
+					</p>
+					<div class="sensei-pricing-nudge__upgrade_new_course_mock_button">
+						<?php esc_html_e( 'Create a product', 'sensei-lms' ); ?>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
