@@ -4,7 +4,7 @@ jQuery( document ).ready( function ( $ ) {
 	$( '.sortable-tab-list' ).disableSelection();
 
 	/* Order Courses */
-	$( '.sortable-course-list' ).bind( 'sortstop', function () {
+	$( '.sortable-course-list' ).on( 'sortstop', function () {
 		var orderString = '';
 
 		$( this )
@@ -21,7 +21,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	/* Order Lessons */
-	$( '.sortable-lesson-list' ).bind( 'sortstop', function () {
+	$( '.sortable-lesson-list' ).on( 'sortstop', function () {
 		var orderString = '';
 		var module_id = $( this ).attr( 'data-module-id' );
 		var order_input = 'lesson-order';
