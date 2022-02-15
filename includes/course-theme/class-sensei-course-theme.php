@@ -22,6 +22,11 @@ class Sensei_Course_Theme {
 	const QUERY_VAR = 'learn';
 
 	/**
+	 * Update when rewrite rules change to make sure they are flushed.
+	 */
+	const REWRITE_VERSION = '3';
+
+	/**
 	 * Course theme preview query var.
 	 */
 	const PREVIEW_QUERY_VAR = 'sensei_theme_preview';
@@ -201,9 +206,9 @@ class Sensei_Course_Theme {
 	 */
 	public function maybe_flush_rewrite_rules() {
 
-		if ( '3' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+		if ( self::REWRITE_VERSION !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
 			flush_rewrite_rules( false );
-			update_option( 'sensei_course_theme_query_var_flushed', '2' );
+			update_option( 'sensei_course_theme_query_var_flushed', self::REWRITE_VERSION );
 		}
 	}
 
