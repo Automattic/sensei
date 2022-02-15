@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { select, subscribe } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { applyFilters } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
 
@@ -12,6 +12,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { startBlocksTogglingControl } from './blocks-toggling-control';
 import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
+import CoursePricingNudgeSidebar from './course-pricing-nudge-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -83,3 +84,19 @@ registerPlugin( 'sensei-course-video-progression-plugin', {
 	render: CourseVideoSidebar,
 	icon: null,
 } );
+
+/**
+ * Filters the course pricing sidebar toggle.
+ *
+ * @since 4.1.0
+ *
+ * @hook  senseiCoursePricingHide
+ * @param {boolean} $hide_course_pricing
+ * @return {boolean}
+ */
+if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
+	registerPlugin( 'sensei-course-pricing-nudge-sidebar', {
+		render: CoursePricingNudgeSidebar,
+		icon: null,
+	} );
+}
