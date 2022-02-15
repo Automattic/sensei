@@ -287,7 +287,7 @@ class Sensei_Lesson {
 		 * @since 4.1.0
 		 *
 		 * @param  {bool} $hide_content_drip Whether to hide the Content Drip promo metabox.
-		 * @return {bool}
+		 * @return {bool} Whether to hide the Content Drip promo metabox.
 		 */
 		if ( ! apply_filters( 'sensei_lesson_content_drip_hide', false ) ) {
 			// Add Meta Box for Content Drip promo.
