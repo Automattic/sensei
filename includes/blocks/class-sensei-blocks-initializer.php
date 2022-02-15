@@ -57,7 +57,7 @@ abstract class Sensei_Blocks_Initializer {
 				return;
 			}
 
-			$is_editor = $screen->is_block_editor || in_array( $screen->id, [ 'widgets', 'site-editor' ], true );
+			$is_editor = $screen->is_block_editor || in_array( $screen->id, [ 'widgets', 'site-editor', 'appearance_page_gutenberg-edit-site' ], true );
 
 			// Init blocks.
 			if ( ! $is_editor || ! $this->is_post_type_included( $screen->post_type ) ) {
