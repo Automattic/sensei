@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { select, subscribe } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { applyFilters } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
 
@@ -12,6 +12,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { startBlocksTogglingControl } from './blocks-toggling-control';
 import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
+import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -75,10 +76,28 @@ domReady( () => {
 /**
  * Plugins
  */
+
+/**
+ * Filters the course access period display.
+ *
+ * @since 4.1.0
+ *
+ * @hook senseiCourseAccessPeriodHide
+ * @param {boolean} $hideCourseAccessPeriod Whether to hide the access period.
+ * @return {boolean} Whether to hide the access period.
+ */
+if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
+	registerPlugin( 'sensei-course-access-period-promo-plugin', {
+		render: CourseAccessPeriodPromoSidebar,
+		icon: null,
+	} );
+}
+
 registerPlugin( 'sensei-course-theme-plugin', {
 	render: CourseTheme,
 	icon: null,
 } );
+
 registerPlugin( 'sensei-course-video-progression-plugin', {
 	render: CourseVideoSidebar,
 	icon: null,
