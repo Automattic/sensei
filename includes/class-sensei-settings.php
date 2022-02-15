@@ -166,7 +166,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		if ( ! apply_filters( 'sensei_settings_woocommerce_hide', false ) ) {
 			$sections['woocommerce-settings'] = array(
 				'name'        => __( 'WooCommerce', 'sensei-lms' ),
-				'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
+				'description' => __( 'Optional settings for WooCommerce functions.', 'sensei-lms' ),
 			);
 		}
 

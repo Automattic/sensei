@@ -293,11 +293,11 @@ class Sensei_Assets {
 	/**
 	 * Gets image from assets.
 	 *
-	 * @since 3.15.0
+	 * @since 4.1.0
 	 *
-	 * @param string $name        The name of the icon file at "assets/images/<name>.svg".
+	 * @param string $name    The name of the image file at "assets/images/<name>".
 	 *
-	 * @return string The SVG HTML.
+	 * @return string Image path.
 	 */
 	public function get_image( string $name ) : string {
 		return $this->plugin_url . 'assets/dist/images/' . $name;
