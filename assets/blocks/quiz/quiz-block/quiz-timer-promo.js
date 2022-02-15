@@ -1,13 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { ToggleControl, Icon } from '@wordpress/components';
+import { ToggleControl, ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import ExternalLinkIcon from '../../../icons/external-link.svg';
 
 /**
  * Quiz block inserter for adding new or existing questions.
@@ -25,18 +20,9 @@ const QuizTimerPromo = () => {
 			/>
 
 			<p>
-				<a
-					className="sensei-lms-quiz-block-settings__quiz-timer-promo__link"
-					href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_timer"
-					target="_blank"
-					rel="noreferrer"
-				>
+				<ExternalLink href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_timer">
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
-					<Icon
-						className="sensei-lms-quiz-block-settings__quiz-timer-promo__icon"
-						icon={ ExternalLinkIcon }
-					/>
-				</a>
+				</ExternalLink>
 			</p>
 		</div>
 	);
