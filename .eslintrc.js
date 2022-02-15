@@ -14,7 +14,7 @@ module.exports = {
 				allowedTextDomain: 'sensei-lms',
 			},
 		],
-		'import/no-extraneous-dependencies': 'off',
+		'import/no-extraneous-dependencies': [ 'error' ],
 		'jsdoc/check-line-alignment': [
 			'warn',
 			'always',
