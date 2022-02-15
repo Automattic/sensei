@@ -93,12 +93,12 @@ const Main = () => {
 	];
 
 	/**
-	 * Filters the featured product toggle.
+	 * Filters the featured product display.
 	 *
-	 * @param {boolean} hideFeaturedProduct Toggle.
+	 * @param {boolean} hideFeaturedProduct Whether to hide the extensions featured product.
 	 */
 	const hideFeaturedProduct = applyFilters(
-		'sensei-lms.Extensions.hideFeaturedProduct',
+		'senseiExtensionsFeaturedProductHide',
 		false
 	);
 
@@ -108,7 +108,7 @@ const Main = () => {
 	 * @param {Object} FeaturedProduct Component.
 	 */
 	const FeaturedProduct = applyFilters(
-		'sensei-lms.Extensions.featuredProduct',
+		'senseiExtensionsFeaturedProduct',
 		FeaturedProductSenseiPro
 	);
 

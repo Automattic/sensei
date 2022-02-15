@@ -98,14 +98,11 @@ const QuizSettings = ( {
 	);
 
 	/**
-	 * Filters the quiz timer promo component toggle.
+	 * Filters the quiz timer promo component display.
 	 *
 	 * @param {boolean} hideQuizTimer Whether to hide the quiz timer promo component.
 	 */
-	const hideQuizTimer = applyFilters(
-		'sensei-lms.Quiz.hideQuizTimer',
-		false
-	);
+	const hideQuizTimer = applyFilters( 'senseiQuizTimerHide', false );
 
 	useEffect( () => {
 		if ( showQuestions > questionCount ) {
