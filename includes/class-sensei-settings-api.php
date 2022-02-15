@@ -82,6 +82,33 @@ class Sensei_Settings_API {
 	}
 
 	/**
+	 * Render woo commerce upgrade settings
+	 *
+	 * @access  public
+	 * @since   4.1.0
+	 * @return  void
+	 */
+	public function render_woo_commerce_upgrade_settings() {
+		$image_path_desktop = Sensei()->assets->get_image( 'purchase-sensei-pro-desktop.png' );
+		$image_path_mobile  = Sensei()->assets->get_image( 'purchase-sensei-pro-mobile.png' );
+		?>
+		<div id="upgrade-to-sensei-pro" class="woocommerce-banner">
+			<div class="woocommerce-banner__background woocommerce-banner__background-large woocommerce-banner__background-medium">
+				<span class="woocommerce-banner__header"><?php echo esc_html( __( 'Get Sensei Pro', 'sensei-lms' ) ); ?></span>
+				<span class="woocommerce-banner__body"><?php echo esc_html( __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' ) ); ?> </span>
+				<a class="button button-primary woocommerce-banner__redirect-button" href="<?php echo esc_url( 'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=settings_woocommerce' ); ?>"><?php echo esc_html( __( 'Upgrade to Sensei Pro', 'sensei-lms' ) ); ?></a>
+			</div>
+			<div class="woocommerce-banner__side-background">
+				<picture>
+					<source media="(max-width:1100px)" srcset="<?php echo esc_url( $image_path_mobile ); ?>">
+					<img class="woocommerce-banner__background-image" src="<?php echo esc_url( $image_path_desktop ); ?>" alt="sensei-banner">
+				</picture>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Register the settings sections.
 	 *
 	 * @access public
@@ -169,7 +196,6 @@ class Sensei_Settings_API {
 			foreach ( $this->sections as $k => $v ) {
 				$tabs[ $k ] = $v;
 			}
-
 			$this->tabs = $tabs;
 		}
 	}
@@ -329,7 +355,6 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_screen() {
-
 		?>
 		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
 		<h1><?php echo esc_html( $this->name ); ?>
@@ -355,7 +380,7 @@ class Sensei_Settings_API {
 			if ( $section['name'] ) {
 				echo '<h2>' . esc_html( $section['name'] ) . '</h2>' . "\n";
 			}
-
+			$this->render_additiona_section_elements( $section_id );
 			echo '<table class="form-table">';
 			do_settings_fields( $page, $section_id );
 			echo '</table>';
@@ -371,6 +396,21 @@ class Sensei_Settings_API {
 </div><!--/#woothemes-sensei-->
 		<?php
 	}
+
+	/**
+	 * Render additional section elements.
+	 *
+	 * @access public
+	 * @param string $section_id Section id.
+	 * @return void
+	 * @since  4.1.0
+	 */
+	public function render_additiona_section_elements( $section_id ) {
+		if ( 'woocommerce-settings' === $section_id && ! apply_filters( 'sensei_settings_woocommerce_hide', false ) ) {
+			$this->render_woo_commerce_upgrade_settings();
+		}
+	}
+
 
 	/**
 	 * Retrieve the settings from the database.

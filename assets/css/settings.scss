@@ -547,6 +547,7 @@
 	.woocommerce-banner {
 		display: flex;
 		flex-direction: column;
+		marign-top: 20px;
 	}
 }
 
@@ -634,15 +635,4 @@
 			box-sizing: border-box;
 		}
 	}
-}
-
-
-#woocommerce-settings:not([style*="display: none"]) ~ .submit {
-	display: none;
-}
-#woocommerce-settings h2 {
-	display: none;
-}
-#woocommerce-settings th {
-	display: none;
 }

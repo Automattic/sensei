@@ -15,6 +15,24 @@ jQuery( document ).ready( function ( $ ) {
 		sensei_log_event( 'settings_view', { view: sectionId } );
 	}
 
+	hideSettingsFormElements();
+	function hideSettingsFormElements() {
+		const urlHashSectionId = window.location.hash?.replace( '#', '' );
+		if ( urlHashSectionId === 'woocommerce-settings' ) {
+			formRows = $senseiSettings.find( '#woocommerce-settings tr' );
+			if (
+				! formRows.length &&
+				$senseiSettings.find( '#upgrade-to-sensei-pro' )
+			) {
+				$senseiSettings.find( '#submit' ).hide();
+				$senseiSettings.find( 'h2' ).hide();
+				$senseiSettings.find( 'th' ).hide();
+			}
+		}
+	}
+
+	window.onhashchange = hideSettingsFormElements;
+
 	// Show general settings section if no section is selected in url hasn.
 	const defaultSectionId = 'default-settings';
 	const urlHashSectionId = window.location.hash?.replace( '#', '' );
