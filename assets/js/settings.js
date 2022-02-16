@@ -15,19 +15,39 @@ jQuery( document ).ready( function ( $ ) {
 		sensei_log_event( 'settings_view', { view: sectionId } );
 	}
 
+	// Hide header and submit on page load if needed
 	hideSettingsFormElements();
+
 	function hideSettingsFormElements() {
 		const urlHashSectionId = window.location.hash?.replace( '#', '' );
 		if ( urlHashSectionId === 'woocommerce-settings' ) {
-			formRows = $senseiSettings.find( '#woocommerce-settings tr' );
-			if (
+			const formRows = $senseiSettings.find( '#woocommerce-settings tr' );
+			// Hide header and submit if there is not settings form in section
+			hideHeaderAndSubmit(
 				! formRows.length &&
-				$senseiSettings.find( '#upgrade-to-sensei-pro' )
-			) {
-				$senseiSettings.find( '#submit' ).hide();
-				$senseiSettings.find( 'h2' ).hide();
-				$senseiSettings.find( 'th' ).hide();
-			}
+					$senseiSettings.find( '#sensei-promo-banner' )
+			);
+		} else if ( urlHashSectionId === 'content-drip-settings' ) {
+			const formRows = $senseiSettings.find(
+				'#content-drip-settings tr'
+			);
+			// Hide header and submit if there is not settings form in section
+			hideHeaderAndSubmit(
+				! formRows.length &&
+					$senseiSettings.find( '#sensei-promo-banner' )
+			);
+		} else {
+			hideHeaderAndSubmit( false );
+		}
+	}
+
+	function hideHeaderAndSubmit( shouldHide ) {
+		if ( shouldHide ) {
+			$senseiSettings.find( '#submit' ).hide();
+			$senseiSettings.find( 'h2' ).hide();
+		} else {
+			$senseiSettings.find( '#submit' ).show();
+			$senseiSettings.find( 'h2' ).show();
 		}
 	}
 
