@@ -111,16 +111,16 @@ $primary: #6FCFB2;
 		margin-bottom: 16px;
 		display: flex;
 		flex-direction: column;
+		opacity: 0.4;
 	}
 
 	&__upgrade-new-course-text {
-		color: #a5a5a5;
 		margin-bottom: 10px;
 	}
 
 	&__upgrade_new_course_mock_button {
-		color: #78a9d5;
-		border: 1px solid #78a9d5;
+		color: #007cba;
+		border: 1px solid #007cba;
 		border-radius: 3px;
 		font-size: 13px;
 		line-height: 2.15384615; /* 28px */
