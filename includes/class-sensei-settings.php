@@ -44,6 +44,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
 		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
+
 	}
 
 	/**
@@ -161,6 +162,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'        => __( 'Student Profiles', 'sensei-lms' ),
 			'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
 		);
+
+		if ( ! apply_filters( 'sensei_settings_woocommerce_hide', false ) ) {
+			$sections['woocommerce-settings'] = array(
+				'name'        => __( 'WooCommerce', 'sensei-lms' ),
+				'description' => __( 'Optional settings for WooCommerce functions.', 'sensei-lms' ),
+			);
+		}
 
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
 	}
