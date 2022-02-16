@@ -171,9 +171,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 		}
 
 		if ( ! apply_filters( 'sensei_settings_content_drip_hide', false ) ) {
-			$sections['content-drip-settings'] = array(
+			$sections['sensei-content-drip-settings'] = array(
 				'name'        => __( 'Content Drip', 'sensei-lms' ),
-				'description' => __( 'Optional settings for Content drip functions.', 'sensei-lms' ),
+				'description' => __( 'Optional settings for the Content Drip extension.', 'sensei-lms' ),
 			);
 		}
 

@@ -449,7 +449,7 @@ class Sensei_Settings_API {
 			$this->render_woocommerce_upgrade_settings();
 		}
 
-		if ( 'content-drip-settings' === $section_id && ! apply_filters( 'sensei_settings_content_drip_hide', false ) ) {
+		if ( 'sensei-content-drip-settings' === $section_id && ! apply_filters( 'sensei_settings_content_drip_hide', false ) ) {
 			$this->render_content_drip_settings();
 		}
 	}
