@@ -63,6 +63,18 @@ $sensei-notice-icon-width: 30px;
 		padding: 0;
 		position: static;
 	}
+
+	&.sensei-notice-error {
+		border-left-color: $notice-error;
+	}
+
+	&.sensei-notice-warning {
+		border-left-color: $notice-warning;
+	}
+
+	&.sensei-notice-info {
+		border-left-color: $notice-info;
+	}
 }
 
 /*  Sensei Icon Font */
