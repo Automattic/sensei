@@ -1,5 +1,3 @@
-@import './blockbase-ponyfill';
-@import './global-styles';
 
 body {
 	--wp--custom--form--color--background: var(--bg-color);
@@ -10,48 +8,89 @@ body {
 	--wp--custom--form--color--text: inherit;
 	--wp--custom--form--padding: 6px 8px;
 	--wp--custom--list--spacing--padding--left: 16px;
+	--wp--custom--layout--content-size: 900px;
+	--wp--custom--layout--wide-size: 1100px;
+
+	--max-content-size: calc(100vw - var(--sidebar-width) - 2 * var(--content-padding));
+	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
+	--wide-size: min(var(--wp--custom--layout--wide-size), var(--max-content-size));
+
 }
 
 .wp-block-post-title {
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: 20px!important;
+	margin-bottom: 20px!important;
 }
 
-a {
-	color: var(--primary-color);
-}
+/**
+ * 4.0.1 Template compatibility.
+ */
 
-input, textarea {
-	font-size: inherit;
+.sensei-course-theme__main-content {
+	> * {
+		max-width: var(--content-size) !important;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
-
-::selection {
-	background-color: var(--primary-color);
-	color: var(--primary-contrast-color);
-}
+/**
+ * Latest template version.
+ */
 
 .sensei-course-theme {
-	&__main-content, &__main-content__container {
+
+	&__main-content__container, &__main-content__container > .wp-block-group__inner-container {
 		> * {
-			max-width: var(--wp--custom--layout--content-size);
+			max-width: var(--content-size) !important;
 			margin-left: auto;
 			margin-right: auto;
 		}
 	}
-	&__main-content .entry-content, &__main-content__container {
-			max-width: unset;
+
+	&__main-content__container > .wp-block-group__inner-container {
+		max-width: unset!important;
+	}
+
+	.wp-block-post-content {
+
+		& > *, .wp-block-group__inner-container > * {
+			max-width: var(--content-size) !important;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		&, & > & {
+			max-width: unset !important;
+			width: unset !important;
+			padding: 0!important;
+		}
+
+		.alignfull {
+			max-width: unset !important;
+		}
+
+		.alignwide {
+			max-width: var(--wide-size) !important;
+
+		}
+
+		.alignright {
+			position: static;
+			margin-right: 0;
+			float: right;
+		}
+
+		.alignleft {
+			position: static;
+			margin-left: 0;
+			float: left;
+		}
 	}
 }
 
 .entry-content {
 	--wp--custom--gap--horizontal: var(--content-padding);
 	--wp--custom--gap--vertical: 12px;
-
-	> * {
-		max-width: var(--wp--custom--layout--content-size);
-		margin-left: auto;
-		margin-right: auto;
-	}
 
 	img {
 		max-width: 100%;

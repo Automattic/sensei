@@ -62,7 +62,7 @@ class Course_Content {
 	 */
 	public function render_content( $content ) {
 
-		if ( ! \Sensei_Course_Theme_Option::instance()->should_use_sensei_theme() ) {
+		if ( ! \Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			return $content;
 		}
 

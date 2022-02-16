@@ -3,6 +3,9 @@
 }
 
 @media screen and (max-width: ($breakpoint - 1)) {
+	body {
+		--sidebar-width: 0px;
+	}
 	.sensei-course-theme__focus-mode-toggle {
 		display: none;
 	}
@@ -39,7 +42,7 @@
 		&__header {
 
 			&__container {
-				align-items: flex-start;
+				align-items: flex-start!important;
 				padding-top: 12px;
 				overflow: hidden;
 			}
@@ -84,14 +87,17 @@
 			background: none;
 			border: none;
 			padding: 0;
+			color: var(--text-color);
 
 			svg {
 				width: 24px;
 				height: 24px;
+				fill: currentColor;
 			}
 
-			&:hover {
-				fill: var(--primary-color);
+			&:hover, &:focus {
+				color: var(--primary-color);
+				background: none;
 			}
 		}
 

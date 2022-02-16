@@ -29,8 +29,6 @@ button {
 }
 
 .wp-site-blocks .alignfull {
-	margin-left: calc(-1 * var(--wp--custom--gap--horizontal)) !important;
-	margin-right: calc(-1 * var(--wp--custom--gap--horizontal)) !important;
 	width: unset;
 	max-width: unset;
 }

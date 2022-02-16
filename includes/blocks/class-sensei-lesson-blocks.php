@@ -55,7 +55,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 				'sensei-single-lesson-blocks',
 				sprintf(
 					'window.sensei = window.sensei || {}; window.sensei.courseThemeEnabled = %s;',
-					Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ? 'true' : 'false'
+					Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ? 'true' : 'false'
 				),
 				'before'
 			);
@@ -83,7 +83,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		// Notice that for new Lessons, the `lesson_id` will return `0` (post query string not set).
 		// It means the following check will return `false`. It's expected and works well because
 		// new lessons don't have associated courses yet.
-		$sensei_theme_enabled = Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id );
+		$sensei_theme_enabled = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
 
 		if ( $sensei_theme_enabled ) {
 			$block_template = [
