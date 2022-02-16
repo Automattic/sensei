@@ -21,7 +21,6 @@ let options = Object.entries( types ).map( ( [ value, settings ] ) => ( {
  *
  * @since 4.1.0
  *
- * @hook senseiQuestionTypeOptions
  * @param {Array} options The available question type options.
  * @return {Array} The filtered question type options.
  */
@@ -66,7 +65,6 @@ export const QuestionTypeToolbar = ( { value, onSelect } ) => {
 					 *
 					 * @since 4.1.0
 					 *
-					 * @hook senseiQuestionTypeToolbarOptionChildren
 					 * @param {JSX.Element} children Menu element children.
 					 * @param {Object}      option   The question type option.
 					 * @return {JSX.Element} Whether to hide the access period.
