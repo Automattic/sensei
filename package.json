@@ -93,11 +93,6 @@
     "webpack": "5.64.4",
     "wp-hookdoc": "0.2.0"
   },
-  "resolutions": {
-    "extract-zip": "2.0.1",
-    "unbzip2-stream": "1.4.3",
-    "tar-fs": "2.1.1"
-  },
   "scripts": {
     "build": "npm run build:assets && npm run archive",
     "build:assets": "rm -rf ./assets/dist && cross-env NODE_ENV=production npx calypso-build",
