@@ -87,6 +87,9 @@ class Sensei_Course_Theme_Option {
 		if ( $should_use_theme ) {
 			$url = str_replace( trailingslashit( home_url() ), '', $url );
 			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );
+		} else {
+			$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
+			$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
 		}
 
 		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {

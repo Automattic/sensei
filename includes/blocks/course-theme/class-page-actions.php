@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Pagination class.
+ * File containing the Page_Actions class.
  *
  * @package sensei
  * @since   4.0.0
@@ -17,7 +17,7 @@ use \Sensei_Blocks;
 /**
  * Display lesson or quiz pagination.
  */
-class Pagination {
+class Page_Actions {
 	/**
 	 * Exit_Course constructor.
 	 */
@@ -58,6 +58,12 @@ class Pagination {
 	 */
 	private function render_post_pagination() {
 
-		return wp_link_pages( [ 'echo' => false ] );
+		return wp_link_pages(
+			[
+				'echo'   => false,
+				'before' => '<div class="wp-block-sensei-lms-page-actions sensei-course-theme__post-pagination">',
+				'after'  => '</div>',
+			]
+		);
 	}
 }
