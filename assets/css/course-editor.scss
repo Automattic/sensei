@@ -94,23 +94,12 @@ $primary: #6FCFB2;
 	}
 }
 
-.sensei-pricing-nudge {
+.sensei-pricing-promo {
 
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	gap: 1em;
-
-	&__content {
-		display: flex;
-		flex-direction: column;
-	}
-
-	&__redirect-icon:after {
-		content: url(../icons/external-link.svg);
-		margin-left: 8px;
-		vertical-align: text-top;
-	}
 
 	&__upgrade-content-text {
 		color: #a5a5a5;

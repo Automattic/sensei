@@ -12,7 +12,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { startBlocksTogglingControl } from './blocks-toggling-control';
 import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
-import CoursePricingNudgeSidebar from './course-pricing-nudge-sidebar';
+import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -91,12 +91,12 @@ registerPlugin( 'sensei-course-video-progression-plugin', {
  * @since 4.1.0
  *
  * @hook  senseiCoursePricingHide
- * @param {boolean} $hide_course_pricing
+ * @param {boolean} hideCoursePricing
  * @return {boolean}
  */
 if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
-	registerPlugin( 'sensei-course-pricing-nudge-sidebar', {
-		render: CoursePricingNudgeSidebar,
+	registerPlugin( 'sensei-course-pricing-promo-sidebar', {
+		render: CoursePricingPromoSidebar,
 		icon: null,
 	} );
 }
