@@ -2,14 +2,11 @@
 
 .sensei-content-drip-promo {
 	display: flex;
-	flex-direction: column;
 	flex-wrap: wrap;
 	box-sizing: border-box;
 
 	@media (min-width: $break-medium)  {
-		flex-direction: row;
 		justify-content: space-between;
-		gap: 1em;
 	}
 
 	&__descriptions {
