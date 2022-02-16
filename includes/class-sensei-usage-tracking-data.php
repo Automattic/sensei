@@ -72,7 +72,7 @@ class Sensei_Usage_Tracking_Data {
 	public static function get_event_logging_base_fields() {
 		$base_fields = [
 			'paid'     => 0,
-			'courses'  => wp_count_posts( 'course' )->publish,
+			'courses'  => post_type_exists( 'course' ) ? wp_count_posts( 'course' )->publish : 0,
 			'learners' => self::get_learner_count(),
 		];
 
