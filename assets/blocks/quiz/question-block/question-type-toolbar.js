@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { Toolbar } from '@wordpress/components';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -10,12 +11,21 @@ import { __ } from '@wordpress/i18n';
 import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
 import types from '../answer-blocks';
 
-const options = Object.entries( types ).map( ( [ value, settings ] ) => ( {
+let options = Object.entries( types ).map( ( [ value, settings ] ) => ( {
 	...settings,
 	label: settings.title,
 	value,
 } ) );
-
+/**
+ * Filters the available question type options.
+ *
+ * @since 4.1.0
+ *
+ * @hook senseiQuestionTypeOptions
+ * @param {Array} options The available question type options.
+ * @return {Array} The filtered question type options.
+ */
+options = applyFilters( 'senseiQuestionTypeToolbarOptions', options );
 /**
  * Question type selector toolbar control.
  *
@@ -43,21 +53,32 @@ export const QuestionTypeToolbar = ( { value, onSelect } ) => {
 					),
 				} }
 				getMenuItemProps={ ( option ) => {
-					const props = {};
-
-					if ( option.renderMenuItem ) {
-						props.children = option.renderMenuItem();
-					} else {
-						props.children = (
-							<div>
-								<strong> { option.title }</strong>
-								<div className="sensei-lms-question-block__type-selector__option__description">
-									{ option.description }
-								</div>
+					let children = (
+						<div>
+							<strong> { option.title }</strong>
+							<div className="sensei-lms-question-block__type-selector__option__description">
+								{ option.description }
 							</div>
-						);
-					}
+						</div>
+					);
+					/**
+					 * Filters the children of the menu item.
+					 *
+					 * @since 4.1.0
+					 *
+					 * @hook senseiQuestionTypeToolbarOptionChildren
+					 * @param {JSX.Element} children Menu element children.
+					 * @param {Object}      option   The question type option.
+					 * @return {JSX.Element} Whether to hide the access period.
+					 */
+					children = applyFilters(
+						'senseiQuestionTypeToolbarOptionChildren',
+						children,
+						option
+					);
 
+					const props = {};
+					props.children = children;
 					if ( option.disabled ) {
 						props.onClick = () => {};
 					}
