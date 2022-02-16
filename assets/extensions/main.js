@@ -95,6 +95,8 @@ const Main = () => {
 	/**
 	 * Filters the featured product display.
 	 *
+	 * @since 4.1.0
+	 *
 	 * @param {boolean} hideFeaturedProduct Whether to hide the extensions featured product.
 	 */
 	const hideFeaturedProduct = applyFilters(
