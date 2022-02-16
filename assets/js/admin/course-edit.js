@@ -82,8 +82,7 @@ domReady( () => {
  *
  * @since 4.1.0
  *
- * @hook senseiCourseAccessPeriodHide
- * @param {boolean} $hideCourseAccessPeriod Whether to hide the access period.
+ * @param {boolean} hideCourseAccessPeriod Whether to hide the access period.
  * @return {boolean} Whether to hide the access period.
  */
 if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
