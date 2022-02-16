@@ -100,6 +100,8 @@ const QuizSettings = ( {
 	/**
 	 * Filters the quiz timer promo component display.
 	 *
+	 * @since 4.1.0
+	 *
 	 * @param {boolean} hideQuizTimer Whether to hide the quiz timer promo component.
 	 */
 	const hideQuizTimer = applyFilters( 'senseiQuizTimerHide', false );
