@@ -3,6 +3,9 @@
 }
 
 @media screen and (max-width: ($breakpoint - 1)) {
+	.sensei-course-theme {
+		--sidebar-width: 0px;
+	}
 	.sensei-course-theme__focus-mode-toggle {
 		display: none;
 	}
