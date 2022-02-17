@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
-import { applyFilters, addFilter } from '@wordpress/hooks';
+import { applyFilters } from '@wordpress/hooks';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { escapeHTML } from '@wordpress/escape-html';
-import { ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 
 /**
  * Course Pricing Promo Sidebar component.
@@ -14,44 +14,50 @@ const CoursePricingPromoSidebar = () => {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @hook  senseiCoursePricingDescription
-	 * @return {Object}
+	 * @hook  senseiCoursePricingDescription This hook allows to pass a string value for the course pricing promo description.
+	 * @return {string} 					 Description text for course pricing promo sidebar.
 	 */
-	const description = applyFilters( 'senseiCoursePricingDescription', {
-		text: __(
+	const description = applyFilters(
+		'senseiCoursePricingDescription',
+		__(
 			'Sell this course using WooCommerce - integrates with subscriptions, memberships, affiliates, and more.'
-		),
-		url:
-			'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing',
-	} );
+		)
+	);
 
 	return (
 		<PluginDocumentSettingPanel
-			name="sensei-course-theme"
-			title={ <>{ __( 'Pricing ', 'sensei-lms' ) }</> }
+			name="sensei-course-pricing-promo"
+			title={ __( 'Pricing ', 'sensei-lms' ) }
 		>
-			<div className="sensei-pricing-promo">
-				<p> { escapeHTML( description.text ) } </p>
-				<ExternalLink href={ description.url }>
+			<p> { escapeHTML( description ) } </p>
+			<p>
+				<ExternalLink
+					href={
+						'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing'
+					}
+				>
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 				</ExternalLink>
-				<p className="sensei-pricing-promo__upgrade-content-text">
+			</p>
+			<p>
+				{ __(
+					'To access this course, learners will need to purchase one of the assigned products.',
+					'sensei-lms'
+				) }
+			</p>
+			<div className="sensei-pricing-promo__upgrade-new-course">
+				<p className="sensei-pricing-promo__upgrade-new-course-text">
 					{ __(
-						'To access this course, learners will need to purchase one of the assigned products.',
+						"You don't have any products yet. Get started by creating a new WooCommerce product.",
 						'sensei-lms'
 					) }
 				</p>
-				<div className="sensei-pricing-promo__upgrade-new-course">
-					<p className="sensei-pricing-promo__upgrade-new-course-text">
-						{ __(
-							"You don't have any products yet. Get started by creating a new WooCommerce product",
-							'sensei-lms'
-						) }
-					</p>
-					<div className="sensei-pricing-promo__upgrade_new_course_mock_button">
-						{ __( 'Create a product', 'sensei-lms' ) }
-					</div>
-				</div>
+				<Button
+					className="sensei-pricing-promo__upgrade_new_course_mock_button"
+					disabled
+				>
+					{ __( 'Create a product', 'sensei-lms' ) }
+				</Button>
 			</div>
 		</PluginDocumentSettingPanel>
 	);

@@ -72,6 +72,22 @@ domReady( () => {
 		trackLinkClickCallback( 'course_edit_lesson_click' )
 	);
 } );
+/**
+ * Filters the course pricing sidebar toggle.
+ *
+ * @since 4.1.0
+ *
+ * @hook  senseiCoursePricingHide     Hook used to hide course pricing promo sidebar.
+ *
+ * @param {boolean} hideCoursePricing Boolean value that defines if the course pricing promo sidebar should be hidden.
+ * @return {boolean}                  Returns a boolean value that defines if the course pricing promo sidebar should be hidden.
+ */
+if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
+	registerPlugin( 'sensei-course-pricing-promo-sidebar', {
+		render: CoursePricingPromoSidebar,
+		icon: null,
+	} );
+}
 
 /**
  * Plugins
@@ -84,19 +100,3 @@ registerPlugin( 'sensei-course-video-progression-plugin', {
 	render: CourseVideoSidebar,
 	icon: null,
 } );
-
-/**
- * Filters the course pricing sidebar toggle.
- *
- * @since 4.1.0
- *
- * @hook  senseiCoursePricingHide
- * @param {boolean} hideCoursePricing
- * @return {boolean}
- */
-if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
-	registerPlugin( 'sensei-course-pricing-promo-sidebar', {
-		render: CoursePricingPromoSidebar,
-		icon: null,
-	} );
-}
