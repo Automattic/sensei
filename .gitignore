@@ -8,7 +8,9 @@ build
 diffs
 hookdocs
 node_modules/*
-tests/images/test-*
 vendor/*
+tests/images/test-*
 tests/e2e/screenshots
+test-results/
+playwright-report/
 /*.zip
