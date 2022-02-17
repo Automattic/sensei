@@ -20,7 +20,8 @@ const CoursePricingPromoSidebar = () => {
 	const description = applyFilters(
 		'senseiCoursePricingDescription',
 		__(
-			'Sell this course using WooCommerce - integrates with subscriptions, memberships, affiliates, and more.'
+			'Sell this course using WooCommerce - integrates with subscriptions, memberships, affiliates, and more.',
+			'sensei-lms'
 		)
 	);
 
