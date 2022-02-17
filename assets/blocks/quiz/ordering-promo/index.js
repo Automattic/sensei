@@ -32,10 +32,11 @@ function addPromoLink( children, option ) {
 	if ( option.value !== 'ordering' ) {
 		return children;
 	}
+
 	return (
 		<div className="sensei-lms-question-block__type-selector__option__container--disabled">
 			<strong> { option.title }</strong>
-			<div className="sensei-lms-question-block__type-selector__option__description--disabled">
+			<div className="sensei-lms-question-block__type-selector__option__description sensei-lms-question-block__type-selector__option__description--disabled">
 				{ option.description }
 			</div>
 			<ExternalLink href={ PROMO_LINK }>

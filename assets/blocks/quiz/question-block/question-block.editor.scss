@@ -57,6 +57,11 @@ $block: '.sensei-lms-question-block';
 			strong {
 				opacity: 0.4;
 			}
+
+			a {
+				display: inline-block;
+				margin-top: 3px;
+			}
 		}
 
 		&__option__description {
