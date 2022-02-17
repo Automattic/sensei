@@ -18,6 +18,7 @@ import {
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -29,6 +30,7 @@ import {
 	PaginationSidebarSettings,
 	PaginationToolbarSettings,
 } from './pagination-settings';
+import QuizTimerPromo from './quiz-timer-promo';
 import { useOpenQuizSettings } from './use-open-quiz-settings';
 import CogIcon from '../../../icons/cog.svg';
 
@@ -94,6 +96,15 @@ const QuizSettings = ( {
 				: 1 ),
 		0
 	);
+
+	/**
+	 * Filters the quiz timer promo component display.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param {boolean} hideQuizTimer Whether to hide the quiz timer promo component.
+	 */
+	const hideQuizTimer = applyFilters( 'senseiQuizTimerHide', false );
 
 	useEffect( () => {
 		if ( showQuestions > questionCount ) {
@@ -221,24 +232,36 @@ const QuizSettings = ( {
 							) }
 						/>
 					</PanelRow>
-					<PanelRow>
-						<NumberControl
-							id="sensei-quiz-settings-show-questions"
-							label={ __( 'Number of Questions', 'sensei-lms' ) }
-							help={ __(
-								'Display a random selection of questions.',
-								'sensei-lms'
-							) }
-							allowReset
-							resetLabel={ __( 'All', 'sensei-lms' ) }
-							min={ 0 }
-							max={ questionCount }
-							step={ 1 }
-							value={ showQuestions }
-							placeholder={ __( 'All', 'sensei-lms' ) }
-							onChange={ createChangeHandler( 'showQuestions' ) }
-						/>
-					</PanelRow>
+					{ randomQuestionOrder && (
+						<PanelRow>
+							<NumberControl
+								id="sensei-quiz-settings-show-questions"
+								label={ __(
+									'Number of Questions',
+									'sensei-lms'
+								) }
+								help={ __(
+									'Display a random selection of questions.',
+									'sensei-lms'
+								) }
+								allowReset
+								resetLabel={ __( 'All', 'sensei-lms' ) }
+								min={ 0 }
+								max={ questionCount }
+								step={ 1 }
+								value={ showQuestions }
+								placeholder={ __( 'All', 'sensei-lms' ) }
+								onChange={ createChangeHandler(
+									'showQuestions'
+								) }
+							/>
+						</PanelRow>
+					) }
+					{ ! hideQuizTimer && (
+						<PanelRow>
+							<QuizTimerPromo />
+						</PanelRow>
+					) }
 				</PanelBody>
 				<PaginationSidebarSettings
 					settings={ pagination }

@@ -48,6 +48,12 @@ $gray-400: #ccc;
 	&__question-count {
 		margin-bottom: 12px;
 	}
+
+	&__quiz-timer-promo {
+		.components-base-control {
+			margin-bottom: 8px;
+		}
+	}
 }
 
 .sensei-lms-quiz-block {

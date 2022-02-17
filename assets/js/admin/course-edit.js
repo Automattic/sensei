@@ -13,6 +13,7 @@ import { startBlocksTogglingControl } from './blocks-toggling-control';
 import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
 import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
+import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -72,6 +73,11 @@ domReady( () => {
 		trackLinkClickCallback( 'course_edit_lesson_click' )
 	);
 } );
+
+/**
+ * Plugins
+ */
+
 /**
  * Filters the course pricing sidebar toggle.
  *
@@ -90,12 +96,25 @@ if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
 }
 
 /**
- * Plugins
+ * Filters the course access period display.
+ *
+ * @since 4.1.0
+ *
+ * @param {boolean} hideCourseAccessPeriod Whether to hide the access period.
+ * @return {boolean} Whether to hide the access period.
  */
+if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
+	registerPlugin( 'sensei-course-access-period-promo-plugin', {
+		render: CourseAccessPeriodPromoSidebar,
+		icon: null,
+	} );
+}
+
 registerPlugin( 'sensei-course-theme-plugin', {
 	render: CourseTheme,
 	icon: null,
 } );
+
 registerPlugin( 'sensei-course-video-progression-plugin', {
 	render: CourseVideoSidebar,
 	icon: null,

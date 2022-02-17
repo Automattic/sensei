@@ -112,7 +112,7 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	public function get_extensions( $type = null, $category = null, $additional_query_args = [] ) {
-		$extension_request_key = md5( $type . '|' . $category . '|' . determine_locale() . '|' . wp_json_encode( $additional_query_args ) );
+		$extension_request_key = md5( $type . '|' . $category . '|' . determine_locale() . '|' . wp_json_encode( $additional_query_args ) . '|' . self::SENSEILMS_PRODUCTS_API_BASE_URL );
 		$extensions            = get_transient( 'sensei_extensions_' . $extension_request_key );
 
 		if ( false === $extensions ) {
@@ -206,8 +206,17 @@ final class Sensei_Extensions {
 	 * @return array
 	 */
 	public function get_layout() {
-		$transient_key    = implode( '_', [ 'sensei_extensions_layout', determine_locale() ] );
+		$transient_key = implode(
+			'_',
+			[
+				'sensei_extensions_layout',
+				determine_locale(),
+				md5( self::SENSEILMS_PRODUCTS_API_BASE_URL ),
+			]
+		);
+
 		$extension_layout = get_transient( $transient_key );
+
 		if ( false === $extension_layout ) {
 			$raw_layout = wp_safe_remote_get(
 				add_query_arg(

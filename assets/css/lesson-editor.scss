@@ -1,0 +1,30 @@
+@import '~@wordpress/base-styles/breakpoints';
+
+.sensei-content-drip-promo {
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+
+	@media (min-width: $break-medium)  {
+		justify-content: space-between;
+	}
+
+	&__descriptions {
+		max-width: 410px;
+
+		a:after {
+			content: url(../icons/external-link.svg);
+			margin-left: 8px;
+			vertical-align: text-top;
+		}
+	}
+
+	&__preview {
+		min-width: 232px;
+		opacity: 0.4;
+
+		@media (min-width: $break-medium)  {
+			width: 50%;
+		}
+	}
+}
