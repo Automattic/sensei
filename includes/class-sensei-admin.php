@@ -1438,7 +1438,7 @@ class Sensei_Admin {
 			_doing_it_wrong(
 				'handle_order_lessons',
 				'The handle_order_lessons AJAX call should be a POST request with parameters "course_id" and "lessons".',
-				'4.0.1'
+				'4.1.0'
 			);
 
 			wp_die();
@@ -1533,18 +1533,19 @@ class Sensei_Admin {
 				if ( $course_id > 0 ) {
 					$course_structure = $this->get_course_structure( $course_id );
 					$modules          = $this->get_course_structure( $course_structure, 'module' );
+					$has_lessons      = false;
 
+					// Form start.
 					$html .= '<form id="editgrouping" method="post" action="'
 						. esc_url( admin_url( 'admin-post.php' ) ) . '" class="validate">' . "\n";
 
-					$has_lessons = false;
-
 					foreach ( $modules as $module ) {
-						if ( count( $module['lessons'] ) > 0 ) {
-							$has_lessons = true;
+						// Modules.
+						$html .= '<h3>' . esc_html( $module['title'] ) . '</h3>' . "\n";
+						$html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module['id'] ) . '">' . "\n";
 
-							$html .= '<h3>' . esc_html( $module['title'] ) . '</h3>' . "\n";
-							$html .= '<ul class="sortable-lesson-list" data-module-id="' . esc_attr( $module['id'] ) . '">' . "\n";
+						if ( $module['lessons'] ) {
+							$has_lessons = true;
 
 							foreach ( $module['lessons'] as $lesson ) {
 								$html .= '<li class="lesson">';
@@ -1552,16 +1553,16 @@ class Sensei_Admin {
 								$html .= '<input type="hidden" name="lessons[' . intval( $lesson['id'] ) . '][module]" value="' . intval( $module['id'] ) . '">';
 								$html .= '</li>' . "\n";
 							}
-
-							$html .= '</ul>' . "\n";
 						}
+
+						$html .= '</ul>' . "\n";
 					}
 
-					// Other Lessons
 					$other_lessons = $this->get_course_structure( $course_structure, 'lesson' );
-					if ( 0 < count( $other_lessons ) ) {
-						$has_lessons = true;
+					$has_lessons   = $has_lessons || $other_lessons;
 
+					if ( $has_lessons ) {
+						// Other Lessons (lessons not related to a module).
 						$html .= '<h3>' . esc_html__( 'Other Lessons', 'sensei-lms' ) . '</h3>' . "\n";
 						$html .= '<ul class="sortable-lesson-list" data-module-id="0">' . "\n";
 
@@ -1570,19 +1571,17 @@ class Sensei_Admin {
 							$html .= '<input type="hidden" name="lessons[' . intval( $other_lesson['id'] ) . '][module]" value="">';
 							$html .= '</li>' . "\n";
 						}
+
 						$html .= '</ul>' . "\n";
-					}
 
-					if ( ! $has_lessons ) {
-						$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei-lms' ) . '</em></p>';
-					}
-
-					if ( $has_lessons ) {
+						// Form end.
 						$html .= '<input type="hidden" name="action" value="order_lessons" />' . "\n";
 						$html .= wp_nonce_field( 'order_lessons', '_wpnonce', true, false ) . "\n";
 						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
 						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save lesson order', 'sensei-lms' ) . '" />' . "\n";
 						$html .= '</form>';
+					} else {
+						$html .= '<p><em>' . esc_html__( 'There are no lessons in this course.', 'sensei-lms' ) . '</em></p>';
 					}
 				}
 			}
@@ -1692,7 +1691,7 @@ class Sensei_Admin {
 	/**
 	 * Sync the course lessons with a list of IDs.
 	 *
-	 * @since 4.0.1
+	 * @since 4.1.0
 	 *
 	 * @param array $lesson_ids {
 	 *     Arguments that accompany the lesson ids.
