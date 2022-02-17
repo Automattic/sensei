@@ -163,10 +163,37 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
 		);
 
-		if ( ! apply_filters( 'sensei_settings_woocommerce_hide', false ) ) {
+		/**
+		 * Filters the woocommerce promo settings section.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 *
+		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 */
+		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
+		if ( ! $hide_woocommerce_settings ) {
 			$sections['woocommerce-settings'] = array(
 				'name'        => __( 'WooCommerce', 'sensei-lms' ),
 				'description' => __( 'Optional settings for WooCommerce functions.', 'sensei-lms' ),
+			);
+		}
+
+		/**
+		 * Filters the content drip promo settings section.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
+		 *
+		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 */
+		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
+		if ( ! $hide_content_drip_settings ) {
+			$sections['sensei-content-drip-settings'] = array(
+				'name'        => __( 'Content Drip', 'sensei-lms' ),
+				'description' => __( 'Optional settings for the Content Drip extension.', 'sensei-lms' ),
 			);
 		}
 

@@ -544,21 +544,21 @@
 }
 
 
-.woocommerce-banner {
+.sensei-promo-banner {
 	display: flex;
 	flex-direction: column;
 	margin-top: 10px;
 }
 
 @media screen and (min-width: 1100px) {
-	.woocommerce-banner {
+	.sensei-promo-banner  {
 		display: flex;
 		flex-direction: row;
 		margin-top: 20px;
 	}
 }
 
-#woothemes-sensei .woocommerce-banner {
+#woothemes-sensei .sensei-promo-banner {
 	&__body {
 		color: #FFFFFF;
 		font-size: 16px;
