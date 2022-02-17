@@ -27,9 +27,9 @@ jQuery( document ).ready( function ( $ ) {
 				! formRows.length &&
 					$senseiSettings.find( '#sensei-promo-banner' )
 			);
-		} else if ( urlHashSectionId === 'content-drip-settings' ) {
+		} else if ( urlHashSectionId === 'sensei-content-drip-settings' ) {
 			const formRows = $senseiSettings.find(
-				'#content-drip-settings tr'
+				'#sensei-content-drip-settings tr'
 			);
 			// Hide header and submit if there is not settings form in section
 			hideHeaderAndSubmit(
