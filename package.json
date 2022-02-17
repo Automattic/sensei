@@ -57,6 +57,7 @@
     "@babel/preset-env": "7.16.4",
     "@babel/runtime": "7.13.10",
     "@es-joy/jsdoccomment": "0.8.0",
+    "@playwright/test": "1.19.1",
     "@sheerun/mutationobserver-shim": "0.3.3",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",
@@ -124,6 +125,7 @@
     "e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
     "test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
     "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
+    "test:e2e-playwright": "playwright test",
     "prepare": "husky install",
     "wp-env": "wp-env"
   },
