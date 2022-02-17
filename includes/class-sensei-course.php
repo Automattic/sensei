@@ -2770,7 +2770,7 @@ class Sensei_Course {
 	 */
 	public static function course_archive_set_order_by( $query ) {
 		// Exit early if it is from admin panel or anywhere else other than an archive page, like admin panel and pages with shortcode.
-		if ( ! $query->is_post_type_archive( 'course' ) ||  ! $query->is_main_query() || is_admin() ) {
+		if ( ! $query->is_post_type_archive( 'course' ) || ! $query->is_main_query() || is_admin() ) {
 			return;
 		}
 
