@@ -41,7 +41,7 @@ class Sensei_Quiz {
 		add_action( 'template_redirect', array( $this, 'user_quiz_submit_listener' ) );
 
 		// Fire the save user answers quiz button click responder.
-		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'user_save_quiz_answers_listener' ) );
+		add_action( 'template_redirect', array( $this, 'user_save_quiz_answers_listener' ) );
 
 		// Fire the load global data function.
 		add_action( 'sensei_single_quiz_content_inside_before', array( $this, 'load_global_quiz_data' ), 80 );
@@ -418,13 +418,6 @@ class Sensei_Quiz {
 			$lesson_id,
 			$user_id
 		);
-
-		// Make sure there is at least one answer.
-		if ( empty( array_filter( $answers ) ) ) {
-			Sensei()->notices->add_notice( __( 'Please answer at least one question.', 'sensei-lms' ), 'alert' );
-
-			return;
-		}
 
 		self::submit_answers_for_grading( $answers, $_FILES, $lesson_id, $user_id );
 
