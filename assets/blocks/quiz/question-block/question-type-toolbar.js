@@ -67,7 +67,7 @@ export const QuestionTypeToolbar = ( { value, onSelect } ) => {
 					 *
 					 * @param {JSX.Element} children Menu element children.
 					 * @param {Object}      option   The question type option.
-					 * @return {JSX.Element} Whether to hide the access period.
+					 * @return {JSX.Element} Retuns the filtered children for the menu item.
 					 */
 					children = applyFilters(
 						'senseiQuestionTypeToolbarOptionChildren',

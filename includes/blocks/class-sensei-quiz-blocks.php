@@ -40,7 +40,7 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 		 * @hook  sensei_quiz_ordering_question_type_hide
 		 * @since 4.1.0
 		 *
-		 * @param  {bool} $hide_content_drip Whether to hide the ordering question type promo.
+		 * @param  {bool} $ordering_question_type_hide Whether to hide the ordering question type promo.
 		 * @return {bool} Whether to hide the ordering question type promo.
 		 */
 		$ordering_question_type_hide = apply_filters( 'sensei_quiz_ordering_question_type_hide', false );
