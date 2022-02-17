@@ -9,12 +9,13 @@ import {
 	PanelColorSettings,
 } from '@wordpress/block-editor';
 import {
+	BaseControl,
 	Button,
 	PanelBody,
 	PanelRow,
 	RangeControl,
+	Slot,
 	ToggleControl,
-	BaseControl,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -239,6 +240,7 @@ const QuizSettings = ( {
 							onChange={ createChangeHandler( 'showQuestions' ) }
 						/>
 					</PanelRow>
+					<Slot name="SenseiQuizSettings" />
 				</PanelBody>
 				<PaginationSidebarSettings
 					settings={ pagination }
