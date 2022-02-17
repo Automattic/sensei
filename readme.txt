@@ -94,6 +94,30 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022.02.17 - version 4.0.2
+
+* Improve course theme accessibility [#4749](https://github.com/Automattic/sensei/pull/4749)
+* Add theme style support to Learning Mode [#4775](https://github.com/Automattic/sensei/pull/4775)
+* Fix Edit Lesson link in admin bar [#4765](https://github.com/Automattic/sensei/pull/4765)
+* Fix course archive page when there's no custom permalink structure [#4748](https://github.com/Automattic/sensei/pull/4748)
+* Fix PHP 8.0 compatibility issue when importing data [#4770](https://github.com/Automattic/sensei/pull/4770)
+* Fix different default option on boolean questions [#4774](https://github.com/Automattic/sensei/pull/4774)
+* Add missing quiz translations [#4776](https://github.com/Automattic/sensei/pull/4776)
+* Fix PHP Warning when exporting questions without wrong answers [#4779](https://github.com/Automattic/sensei/pull/4779)
+* Fix the URL for the "Manage students" link [#4788](https://github.com/Automattic/sensei/pull/4788)
+* Redirect logged-out user to the course after login when clicking on Take Course button in the Course page [#4792](https://github.com/Automattic/sensei/pull/4792)
+* Update Take course button from lesson notices to redirect to course [#4793](https://github.com/Automattic/sensei/pull/4793)
+* Fix question description losing blocks [#4773](https://github.com/Automattic/sensei/pull/4773)
+* Fix CSV importing on PHP 8 [#4790](https://github.com/Automattic/sensei/pull/4790)
+* Fix JavaScript Error on the grading page [#4804](https://github.com/Automattic/sensei/pull/4804)
+* Move the Course Completed page to Trash when uninstalling the plugin [#4808](https://github.com/Automattic/sensei/pull/4808)
+* Add check to module teacher term filter [#4726](https://github.com/Automattic/sensei/pull/4726)
+* Fix lesson pagination [#4686](https://github.com/Automattic/sensei/pull/4686)
+* Fix learning mode notices in preview lessons [#4778](https://github.com/Automattic/sensei/pull/4778)
+* Fix widgets editor style for Sensei theme blocks [#4806](https://github.com/Automattic/sensei/pull/4806)
+* Fix course outline and quiz appenders on 5.9 [#4825](https://github.com/Automattic/sensei/pull/4825)
+* Remove empty answers check from quiz submit [#4818](https://github.com/Automattic/sensei/pull/4818)
+
 2022.02.03 - version 4.0.1
 * Fix link styles in Learning Mode [#4730](https://github.com/Automattic/sensei/pull/4730)
 * Fix learning mode with localized post type slugs [#4745](https://github.com/Automattic/sensei/pull/4745)
