@@ -56,6 +56,7 @@ const files = [
 	'blocks/single-lesson.js',
 	'blocks/single-lesson-style-editor.scss',
 	'blocks/quiz/index.js',
+	'blocks/quiz/ordering-promo/index.js',
 	'blocks/quiz/quiz.editor.scss',
 	'blocks/shared.js',
 	'blocks/shared-style.scss',
