@@ -40,7 +40,7 @@ const CoursePricingPromoSidebar = () => {
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 				</ExternalLink>
 			</p>
-			<p>
+			<p className="sensei-pricing-promo__upgrade-new-course-text">
 				{ __(
 					'To access this course, learners will need to purchase one of the assigned products.',
 					'sensei-lms'
