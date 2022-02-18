@@ -1,4 +1,11 @@
+/**
+ * External dependencies
+ */
 import { render } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
 import QuizProgressBarEdit from './quiz-progress-bar-edit';
 import ProgressBar from '../../../shared/blocks/progress-bar';
 
