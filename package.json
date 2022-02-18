@@ -44,7 +44,6 @@
     "interpolate-components": "1.1.1",
     "jquery": "3.5.1",
     "lodash": "4.17.21",
-    "react": "16.11.0",
     "react-animate-height": "2.0.23",
     "select2": "4.0.13",
     "uuid": "3.3.2"
@@ -88,6 +87,7 @@
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
     "puppeteer-core": "npm:puppeteer-core@8.0.0",
+    "react": "16.11.0",
     "react-test-renderer": "17.0.2",
     "svg-spritemap-webpack-plugin": "4.4.0",
     "webpack": "5.64.4",
