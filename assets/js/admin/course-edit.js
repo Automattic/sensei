@@ -12,6 +12,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { startBlocksTogglingControl } from './blocks-toggling-control';
 import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
+import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
 import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
 
 ( () => {
@@ -76,6 +77,23 @@ domReady( () => {
 /**
  * Plugins
  */
+
+/**
+ * Filters the course pricing sidebar toggle.
+ *
+ * @since 4.1.0
+ *
+ * @hook  senseiCoursePricingHide     Hook used to hide course pricing promo sidebar.
+ *
+ * @param {boolean} hideCoursePricing Boolean value that defines if the course pricing promo sidebar should be hidden.
+ * @return {boolean}                  Returns a boolean value that defines if the course pricing promo sidebar should be hidden.
+ */
+if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
+	registerPlugin( 'sensei-course-pricing-promo-sidebar', {
+		render: CoursePricingPromoSidebar,
+		icon: null,
+	} );
+}
 
 /**
  * Filters the course access period display.
