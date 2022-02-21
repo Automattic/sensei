@@ -449,6 +449,9 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @dataProvider data_testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage
 	 */
 	public function testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage( $is_post_type_archive, $is_main_query, $is_main_query_call_count, $set_current_screen_to_admin_panel ) {
+		global $current_screen;
+		$initial_current_screen = $current_screen;
+
 		$wp_query = $this->createMock( 'WP_Query' );
 		// Returns true for the course archive page, but also returns true when the query is from 'wp-admin -> Sensei LMS -> Courses' or 'shortcode'
 		$wp_query->expects( $this->once() )
@@ -468,6 +471,10 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			set_current_screen( 'edit-post' );
 		}
 		Sensei_Course::course_archive_set_order_by( $wp_query );
+
+		// Reset $current_screen. This is needed for WordPress <= 5.8.
+		// @see https://core.trac.wordpress.org/ticket/53431
+		$current_screen = $initial_current_screen;
 	}
 
 	/**
