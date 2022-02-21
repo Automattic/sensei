@@ -509,7 +509,7 @@ div.sensei-quiz-actions {
   }
 }
 
-.quiz-blocks {
+.quiz-blocks:not(.sensei-course-theme) {
   .wp-block-buttons {
     display: flex;
     flex-direction: row;
