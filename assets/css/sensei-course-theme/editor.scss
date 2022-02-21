@@ -1,6 +1,6 @@
 body {
 	padding: 8px;
-	--wp--custom--gap--baseline: 0.5em;
+	--wp--custom--gap--baseline: 0px;
 }
 
 .wp-block {
@@ -17,7 +17,6 @@ body {
 
 }
 
-
 .wp-block.sensei-course-theme {
 	&__sidebar {
 		position: static;
@@ -26,13 +25,18 @@ body {
 		display: flex;
 	}
 	&__main-content {
-		margin-left: 0 !important;
+		margin-left: auto !important;
+	}
+	&__main-content, &__main-content__container {
 		> * {
-			max-width: 900px;
-			margin-left: auto;
-			margin-right: auto;
+			margin-left: auto !important;
+			margin-right: auto !important;
 		}
 	}
+}
+
+.wp-block-post-content {
+	padding: 12px 0;
 }
 
 .wp-block-post-title {

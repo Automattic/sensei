@@ -1641,4 +1641,24 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
 		$this->assertEquals( 1, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
 	}
+
+	/**
+	 * Tests getting if course theme is enabled globally.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_theme_has_theme_styles_enabled
+	 */
+	public function testGetDoesCourseThemeHasThemeStyles() {
+		Sensei()->settings->set( 'sensei_learning_mode_theme', false );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_theme_theme_styles', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['course_theme_theme_styles'], 'Boolean int' );
+
+		Sensei()->settings->set( 'sensei_learning_mode_theme', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_theme_theme_styles', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['course_theme_theme_styles'], 'Boolean int' );
+	}
 }
