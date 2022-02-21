@@ -122,6 +122,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		 */
 		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? [] );
 
+		new Sensei_Conditional_Content_Block();
+
 		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
 			return;
 		}
