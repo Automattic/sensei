@@ -12,7 +12,7 @@ jQuery( document ).ready( function ( $ ) {
 	$( '.sortable-tab-list' ).disableSelection();
 
 	/* Order Courses */
-	$courseList.bind( 'sortstop', function () {
+	$courseList.on( 'sortstop', function () {
 		var orderString = '';
 
 		$( this )
@@ -29,7 +29,7 @@ jQuery( document ).ready( function ( $ ) {
 	} );
 
 	/* Order Lessons */
-	$lessonList.bind( 'sortstop', ( event, ui ) => {
+	$lessonList.on( 'sortstop', ( event, ui ) => {
 		const $listItem = $( ui.item[ 0 ] );
 		const $destinationList = $listItem.parent();
 		const moduleId = $destinationList.data( 'module-id' );

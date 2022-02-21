@@ -64,7 +64,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 
 	editorLifecycle( {
 		subscribeListener: () => {
-			const newBlocks = coreEditorSelector.getBlocks();
+			const newBlocks = blockEditorSelector.getBlocks();
 
 			// Check if blocks were changed.
 			if ( newBlocks !== lastBlocks ) {

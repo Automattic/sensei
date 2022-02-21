@@ -31,7 +31,7 @@ jQuery( document ).ready( function () {
 	jQuery( '.sortable-module-list' ).sortable();
 	jQuery( '.sortable-tab-list' ).disableSelection();
 
-	jQuery( '.sortable-module-list' ).bind( 'sortstop', function () {
+	jQuery( '.sortable-module-list' ).on( 'sortstop', function () {
 		var orderString = '';
 
 		jQuery( this )
