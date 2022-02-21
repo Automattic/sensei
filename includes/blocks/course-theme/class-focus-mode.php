@@ -50,7 +50,7 @@ class Focus_Mode {
 		$title_toggle = __( 'Toggle focus mode', 'sensei-lms' );
 
 		return sprintf(
-			'<button class="sensei-course-theme__focus-mode-toggle" %1s onclick="window.sensei.courseTheme.toggleFocusMode()" title="%2s">
+			'<button class="sensei-course-theme__focus-mode-toggle" aria-hidden="true" %1s onclick="window.sensei.courseTheme.toggleFocusMode()" title="%2s">
 				' . Sensei()->assets->get_icon( 'double-chevron-right', 'sensei-course-theme__focus-mode-toggle-icon' ) . '
 			</button>',
 			$wrapper_attributes,

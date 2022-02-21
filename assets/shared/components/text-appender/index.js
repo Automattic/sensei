@@ -23,6 +23,10 @@ const TextAppender = ( { controls, text, label } ) => {
 				} }
 				label={ label }
 				controls={ controls }
+				popoverProps={ {
+					position: 'bottom center',
+				} }
+				menuProps={ { className: 'sensei-lms-text-appender__menu' } }
 			/>
 			<p
 				className="sensei-lms-text-appender__placeholder"

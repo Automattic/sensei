@@ -49,7 +49,7 @@ class Post_Title {
 		}
 
 		return sprintf(
-			'<h1>%1$s</h1>',
+			'<h1 class="wp-block-post-title">%1$s</h1>',
 			$title
 		);
 	}

@@ -168,10 +168,15 @@ class Sensei_Admin_Notices {
 			$notice['actions'] = [];
 		}
 
+		$notice_class = '';
+		if ( ! empty( $notice['style'] ) ) {
+			$notice_class = 'sensei-notice-' . $notice['style'];
+		}
+
 		wp_enqueue_script( 'sensei-dismiss-notices' );
 
 		?>
-		<div class="notice sensei-notice is-dismissible" data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
+		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?> is-dismissible" data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
 				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
 			<?php
 			if ( ! empty( $notice['icon'] ) ) {

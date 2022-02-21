@@ -40,6 +40,7 @@ class Course_Content {
 	 */
 	public function render_content_block() {
 
+		// Make sure post is set up correctly.
 		if ( ! in_the_loop() && have_posts() ) {
 			the_post();
 		}
@@ -61,7 +62,7 @@ class Course_Content {
 	 */
 	public function render_content( $content ) {
 
-		if ( ! \Sensei_Course_Theme_Option::instance()->should_use_sensei_theme() ) {
+		if ( ! \Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			return $content;
 		}
 
@@ -96,6 +97,11 @@ class Course_Content {
 	 * @return false|string
 	 */
 	private function render_lesson_content() {
+
+		if ( ! in_the_loop() && have_posts() ) {
+			the_post();
+		}
+
 		ob_start();
 
 		if ( sensei_can_user_view_lesson() ) {

@@ -1,7 +1,17 @@
 @import '../../shared/styles/collapsible-content';
 
 
+.editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {
+	&__modules, &__lessons, &-module__lessons {
+		&, li {
+			list-style: none;
+			margin: 0;
+		}
+		padding-left: 0px;
+		margin: 0;
+	}
+
 	&__modules + &__lessons {
 		border-top: 1px dotted var(--border-color, #1E1E1E);
 		margin-top: 6px;
@@ -17,10 +27,11 @@
 		margin: 12px 0;
 		padding: 0;
 		border: unset;
-		background: unset;
+		background: unset!important;
+		color: inherit !important;
 
 		&:hover {
-			color: var(--primary-color);
+			color: var(--primary-color) !important;
 			text-decoration: underline;
 		}
 
@@ -43,8 +54,11 @@
 		text-align: left;
 		margin: 0;
 	}
+
 	&__button {
 		color: inherit;
+		text-transform: inherit;
+		background: none!important;
 	}
 
 	&__summary {

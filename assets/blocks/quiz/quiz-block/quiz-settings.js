@@ -9,15 +9,16 @@ import {
 	PanelColorSettings,
 } from '@wordpress/block-editor';
 import {
+	BaseControl,
 	Button,
 	PanelBody,
 	PanelRow,
 	RangeControl,
+	Slot,
 	ToggleControl,
-	BaseControl,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { Fragment, useEffect } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -233,29 +234,27 @@ const QuizSettings = ( {
 						/>
 					</PanelRow>
 					{ randomQuestionOrder && (
-						<PanelRow>
-							<NumberControl
-								id="sensei-quiz-settings-show-questions"
-								label={ __(
-									'Number of Questions',
-									'sensei-lms'
-								) }
-								help={ __(
-									'Display a random selection of questions.',
-									'sensei-lms'
-								) }
-								allowReset
-								resetLabel={ __( 'All', 'sensei-lms' ) }
-								min={ 0 }
-								max={ questionCount }
-								step={ 1 }
-								value={ showQuestions }
-								placeholder={ __( 'All', 'sensei-lms' ) }
-								onChange={ createChangeHandler(
-									'showQuestions'
-								) }
-							/>
-						</PanelRow>
+						<Fragment>
+							<PanelRow>
+								<NumberControl
+									id="sensei-quiz-settings-show-questions"
+									label={ __( 'Number of Questions', 'sensei-lms' ) }
+									help={ __(
+										'Display a random selection of questions.',
+										'sensei-lms'
+									) }
+									allowReset
+									resetLabel={ __( 'All', 'sensei-lms' ) }
+									min={ 0 }
+									max={ questionCount }
+									step={ 1 }
+									value={ showQuestions }
+									placeholder={ __( 'All', 'sensei-lms' ) }
+									onChange={ createChangeHandler( 'showQuestions' ) }
+								/>
+							</PanelRow>
+							<Slot name="SenseiQuizSettings" />
+						</Fragment>
 					) }
 					{ ! hideQuizTimer && (
 						<PanelRow>

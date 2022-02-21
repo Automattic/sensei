@@ -132,30 +132,19 @@ const QuestionEdit = ( props ) => {
 		]
 	);
 
-	const template = [
-		[
-			questionDescriptionBlock.name,
-			{},
-			[
-				[
-					'core/paragraph',
-					{
-						placeholder: __(
-							'Add question description or type / to choose a block.',
-							'sensei-lms'
-						),
-					},
-				],
-			],
+	const template = useMemo(
+		() => [
+			[ questionDescriptionBlock.name, {} ],
+			[ questionAnswersBlock.name, {} ],
+			...( canHaveFeedback
+				? [
+						[ answerFeedbackCorrectBlock.name, {} ],
+						[ answerFeedbackIncorrectBlock.name, {} ],
+				  ]
+				: [] ),
 		],
-		[ questionAnswersBlock.name, {} ],
-		...( canHaveFeedback
-			? [
-					[ answerFeedbackCorrectBlock.name, {} ],
-					[ answerFeedbackIncorrectBlock.name, {} ],
-			  ]
-			: [] ),
-	];
+		[ canHaveFeedback ]
+	);
 
 	if ( ! editable ) {
 		return (

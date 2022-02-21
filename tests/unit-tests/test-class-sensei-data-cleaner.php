@@ -16,6 +16,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $regular_page_ids;
 	private $course_archive_page_id;
 	private $my_courses_page_id;
+	private $course_completed_page_id;
 
 	// Taxonomies.
 	private $modules;
@@ -205,6 +206,15 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		);
 		Sensei()->settings->set( 'my_course_page', $this->my_courses_page_id );
 
+		// Create the Course Completed page.
+		$this->course_completed_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			)
+		);
+		Sensei()->settings->set( 'course_completed_page', $this->course_completed_page_id );
+
 		// Refresh the Sensei settings in memory.
 		Sensei()->settings->get_settings();
 	}
@@ -316,6 +326,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 'trash', get_post_status( $this->course_archive_page_id ), 'Course Archive page should be trashed' );
 		$this->assertEquals( 'trash', get_post_status( $this->my_courses_page_id ), 'My Courses page should be trashed' );
+		$this->assertEquals( 'trash', get_post_status( $this->course_completed_page_id ), 'Course Completed page should be trashed' );
 
 		foreach ( $this->regular_page_ids as $page_id ) {
 			$this->assertNotEquals( 'trash', get_post_status( $page_id ), 'Regular page should not be trashed' );

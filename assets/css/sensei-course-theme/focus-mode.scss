@@ -4,8 +4,13 @@ $base: '.sensei-course-theme';
 	.sensei-course-theme__focus-mode-toggle {
 		padding: 4px;
 		border: none;
-		background-color: var(--bg-color);
+		background-color: var(--bg-color) !important;
 		cursor: pointer;
+		color: inherit !important;
+		line-height: 10px;
+		&:hover {
+			color: var(--primary-color) !important;
+		}
 
 		.sensei-course-theme__focus-mode-toggle-icon {
 			width: 10px;
@@ -19,7 +24,7 @@ $base: '.sensei-course-theme';
 		.sensei-course-theme__focus-mode-toggle {
 			position: absolute;
 			left: 0;
-			bottom: -34px; // Button height with the padding.
+			top: var(--header-height);
 			text-align: left;
 
 			// Match sidebar spacing.
