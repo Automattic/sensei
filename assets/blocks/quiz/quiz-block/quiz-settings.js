@@ -238,7 +238,10 @@ const QuizSettings = ( {
 							<PanelRow>
 								<NumberControl
 									id="sensei-quiz-settings-show-questions"
-									label={ __( 'Number of Questions', 'sensei-lms' ) }
+									label={ __(
+										'Number of Questions',
+										'sensei-lms'
+									) }
 									help={ __(
 										'Display a random selection of questions.',
 										'sensei-lms'
@@ -250,7 +253,9 @@ const QuizSettings = ( {
 									step={ 1 }
 									value={ showQuestions }
 									placeholder={ __( 'All', 'sensei-lms' ) }
-									onChange={ createChangeHandler( 'showQuestions' ) }
+									onChange={ createChangeHandler(
+										'showQuestions'
+									) }
 								/>
 							</PanelRow>
 							<Slot name="SenseiQuizSettings" />
