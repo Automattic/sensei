@@ -29,7 +29,7 @@ class Sensei_Analysis {
 	 * @param string $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Analysis', 'sensei-lms' );
+		$this->name      = __( 'Reports', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_analysis';
 		$this->post_type = 'course';
@@ -60,8 +60,8 @@ class Sensei_Analysis {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=course',
-				__( 'Analysis', 'sensei-lms' ),
-				__( 'Analysis', 'sensei-lms' ),
+				$this->name,
+				$this->name,
 				'manage_sensei_grades',
 				'sensei_analysis',
 				array( $this, 'analysis_page' )
