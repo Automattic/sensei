@@ -1237,10 +1237,9 @@ class Sensei_Frontend {
 	 * @return bool True if successful.
 	 */
 	public function manually_enrol_learner( $user_id, $course_id ) {
-		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		return $manual_enrolment && $manual_enrolment->enrol_learner( $user_id, $course_id );
+		return $course_enrolment->enrol( $user_id );
 	}
 
 	/**
