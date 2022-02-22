@@ -12,8 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  */
 class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
+
 	public $user_id;
-	public $page_slug = 'sensei_analysis';
+	public $page_slug;
+
 	/**
 	 * The post type under which is the page registered.
 	 *
@@ -28,7 +30,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return  void
 	 */
 	public function __construct( $user_id = 0 ) {
-		$this->user_id = intval( $user_id );
+		$this->user_id   = intval( $user_id );
+		$this->page_slug = Sensei()->analysis->page_slug;
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );

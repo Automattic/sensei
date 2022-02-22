@@ -56,7 +56,7 @@ class Sensei_Admin_Notices {
 		'edit-question-type',
 		'edit-question-category',
 		'edit-lesson-tag',
-		'course_page_sensei_analysis',
+		'course_page_sensei_reports',
 		'course_page_sensei_learners',
 		'course_page_sensei-settings',
 		'course_page_sensei_grading',

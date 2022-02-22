@@ -15,6 +15,7 @@ class Sensei_Analysis {
 	public $name;
 	public $file;
 	public $page_slug;
+
 	/**
 	 * The post type under which is the page registered.
 	 *
@@ -31,7 +32,7 @@ class Sensei_Analysis {
 	public function __construct( $file ) {
 		$this->name      = __( 'Reports', 'sensei-lms' );
 		$this->file      = $file;
-		$this->page_slug = 'sensei_analysis';
+		$this->page_slug = 'sensei_reports';
 		$this->post_type = 'course';
 
 		// Admin functions
@@ -63,7 +64,7 @@ class Sensei_Analysis {
 				$this->name,
 				$this->name,
 				'manage_sensei_grades',
-				'sensei_analysis',
+				$this->page_slug,
 				array( $this, 'analysis_page' )
 			);
 		}
