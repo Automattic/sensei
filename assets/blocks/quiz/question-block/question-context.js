@@ -1,6 +1,6 @@
 /**
- * External dependencies
+ * WordPress dependencies
  */
-import React from 'react';
+import { createContext } from '@wordpress/element';
 
-export const QuestionContext = React.createContext( {} );
+export const QuestionContext = createContext( {} );

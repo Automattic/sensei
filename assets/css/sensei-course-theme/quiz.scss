@@ -9,7 +9,7 @@ $tablet-breakpoint: 768px;
 
 	&__main-content {
 		padding: 32px;
-		margin-bottom: 100px;
+		margin-bottom: 100px !important;
 
 		> * {
 			display: block;
@@ -58,7 +58,9 @@ $tablet-breakpoint: 768px;
 
 	&__footer {
 		padding: 24px;
+
 		&__wrapper {
+			margin: 0 !important;
 			display: block;
 		}
 
@@ -66,21 +68,6 @@ $tablet-breakpoint: 768px;
 			width: 100%;
 			flex-direction: column;
 			gap: 2rem;
-
-			.sensei-quiz-actions-primary {
-				width: 100%;
-			}
-
-			.sensei-quiz-actions-secondary {
-				flex: 1;
-			}
-
-			.sensei-quiz-action {
-				flex: 1;
-				.button {
-					width: 100%;
-				}
-			}
 		}
 
 		.sensei-quiz-pagination {

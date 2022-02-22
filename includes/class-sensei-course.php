@@ -2769,9 +2769,8 @@ class Sensei_Course {
 	 * @return WP_Query
 	 */
 	public static function course_archive_set_order_by( $query ) {
-
-		// Applies only to Course archive page.
-		if ( ! $query->is_post_type_archive( 'course' ) ) {
+		// Exit early if it is from admin panel or anywhere else other than an archive page, like admin panel and pages with shortcode.
+		if ( ! $query->is_post_type_archive( 'course' ) || ! $query->is_main_query() || is_admin() ) {
 			return;
 		}
 
@@ -3873,7 +3872,7 @@ class Sensei_Course {
 	public static function alter_redirect_url_after_enrolment( $url, $post ) {
 
 		$course_id = $post->ID;
-		if ( Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+		if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
 			$first_incomplete_lesson_id = Sensei_Course_Structure::instance( $course_id )->get_first_incomplete_lesson_id();
 			if ( false !== $first_incomplete_lesson_id ) {
 				$url = get_permalink( $first_incomplete_lesson_id );

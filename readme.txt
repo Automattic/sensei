@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.7
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 4.0.1
+Stable tag: 4.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,30 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022.02.17 - version 4.0.2
+
+* Improve course theme accessibility [#4749](https://github.com/Automattic/sensei/pull/4749)
+* Add theme style support to Learning Mode [#4775](https://github.com/Automattic/sensei/pull/4775)
+* Fix Edit Lesson link in admin bar [#4765](https://github.com/Automattic/sensei/pull/4765)
+* Fix course archive page when there's no custom permalink structure [#4748](https://github.com/Automattic/sensei/pull/4748)
+* Fix PHP 8.0 compatibility issue when importing data [#4770](https://github.com/Automattic/sensei/pull/4770)
+* Fix different default option on boolean questions [#4774](https://github.com/Automattic/sensei/pull/4774)
+* Add missing quiz translations [#4776](https://github.com/Automattic/sensei/pull/4776)
+* Fix PHP Warning when exporting questions without wrong answers [#4779](https://github.com/Automattic/sensei/pull/4779)
+* Fix the URL for the "Manage students" link [#4788](https://github.com/Automattic/sensei/pull/4788)
+* Redirect logged-out user to the course after login when clicking on Take Course button in the Course page [#4792](https://github.com/Automattic/sensei/pull/4792)
+* Update Take course button from lesson notices to redirect to course [#4793](https://github.com/Automattic/sensei/pull/4793)
+* Fix question description losing blocks [#4773](https://github.com/Automattic/sensei/pull/4773)
+* Fix CSV importing on PHP 8 [#4790](https://github.com/Automattic/sensei/pull/4790)
+* Fix JavaScript Error on the grading page [#4804](https://github.com/Automattic/sensei/pull/4804)
+* Move the Course Completed page to Trash when uninstalling the plugin [#4808](https://github.com/Automattic/sensei/pull/4808)
+* Add check to module teacher term filter [#4726](https://github.com/Automattic/sensei/pull/4726)
+* Fix lesson pagination [#4686](https://github.com/Automattic/sensei/pull/4686)
+* Fix learning mode notices in preview lessons [#4778](https://github.com/Automattic/sensei/pull/4778)
+* Fix widgets editor style for Sensei theme blocks [#4806](https://github.com/Automattic/sensei/pull/4806)
+* Fix course outline and quiz appenders on 5.9 [#4825](https://github.com/Automattic/sensei/pull/4825)
+* Remove empty answers check from quiz submit [#4818](https://github.com/Automattic/sensei/pull/4818)
+
 2022.02.03 - version 4.0.1
 * Fix link styles in Learning Mode [#4730](https://github.com/Automattic/sensei/pull/4730)
 * Fix learning mode with localized post type slugs [#4745](https://github.com/Automattic/sensei/pull/4745)
@@ -163,64 +187,5 @@ Sensei 4.0 is here! This is a major release, which includes a new theme for your
   * Fix preview learning mode in a course with disabled learning mode [#4678](https://github.com/Automattic/sensei/pull/4678)
 * Remove deprecated functionality [#4667](https://github.com/Automattic/sensei/pull/4667)
 * Fix quiz answer notes issues [#4685](https://github.com/Automattic/sensei/pull/4685)
-
-2022.01.18 - version 3.15.0
-* New: Quiz Pagination
-	* Add toolbar pagination settings [#4429](https://github.com/Automattic/sensei/pull/4429)
-	* Implement the quiz pagination backend [#4492](https://github.com/Automattic/sensei/pull/4492)
-	* Implement the quiz pagination frontend [#4502](https://github.com/Automattic/sensei/pull/4502)
-	* Save the quiz pagination form state between pages [#4521](https://github.com/Automattic/sensei/pull/4521)
-	* Reorganize quiz pagination settings [#4523](https://github.com/Automattic/sensei/pull/4523)
-	* Rename CourseProgress to more generic ProgressBar [#4572](https://github.com/Automattic/sensei/pull/4572)
-	* Make the quiz buttons consistent [#4579](https://github.com/Automattic/sensei/pull/4579)
-	* Add a button to the quiz block that opens the quiz settings [#4597](https://github.com/Automattic/sensei/pull/4597)
-	* Frontend for progress bar related to pagination  [#4606](https://github.com/Automattic/sensei/pull/4606)
-	* Remove quiz pagination feature flag [#4610](https://github.com/Automattic/sensei/pull/4610)
-	* Update design of progress bar [#4620](https://github.com/Automattic/sensei/pull/4620)
-	* Show pagination progress bar in lesson edit view [#4625](https://github.com/Automattic/sensei/pull/4625)
-	* Add quiz button color settings [#4629](https://github.com/Automattic/sensei/pull/4629)
-	* Fix quiz settings link not centered on Astra [#4635](https://github.com/Automattic/sensei/pull/4635)
-	* Fix lesson course metabox request infinite loop [#4637](https://github.com/Automattic/sensei/pull/4637)
-	* Minor tweaks to quiz and video settings [#4639](https://github.com/Automattic/sensei/pull/4639)
-* New: Video-based Course Progression
-	* Add Video-Based Course Progression settings [#4519](https://github.com/Automattic/sensei/pull/4519)
-	* Extend standard YouTube embed block [#4546](https://github.com/Automattic/sensei/pull/4546)
-	* Extend standard Vimeo video embed [#4561](https://github.com/Automattic/sensei/pull/4561)
-	* Extend standard video block [#4562](https://github.com/Automattic/sensei/pull/4562)
-	* Add VideoPress extension [#4573](https://github.com/Automattic/sensei/pull/4573)
-	* Add a 3-second delay before autocompleting the lesson [#4611](https://github.com/Automattic/sensei/pull/4611)
-	* Add styles for the disabled button in the lesson template [#4612](https://github.com/Automattic/sensei/pull/4612)
-	* Add Video settings panel to the lesson sidebar [#4624](https://github.com/Automattic/sensei/pull/4624)
-	* Remove video based course progression feature flag [#4627](https://github.com/Automattic/sensei/pull/4627)
-	* Check pause method exists for given object [#4628](https://github.com/Automattic/sensei/pull/4628)
-* New: Grading display filter for custom question types [#4415](https://github.com/Automattic/sensei/pull/4415)
-* New: Add course navigation extra icons [#4577](https://github.com/Automattic/sensei/pull/4577)
-* New: Add filters and actions to support quiz timer [#4594](https://github.com/Automattic/sensei/pull/4594)
-* New: Add course theme notice [#4616](https://github.com/Automattic/sensei/pull/4616)
-* Tweak: Make the lesson prerequisite metabox dropdown show lessons from the selected course [#4410](https://github.com/Automattic/sensei/pull/4410)
-* Tweak: Refresh the module selection after changing the course [#4421](https://github.com/Automattic/sensei/pull/4421)
-* Tweak: Tweak wording for incomplete quiz question warning [#4474](https://github.com/Automattic/sensei/pull/4474)
-* Tweak: Renamed learner -> student in all user-facing occurrences [#4501](https://github.com/Automattic/sensei/pull/4501)
-* Tweak: Improve wording of the lessons prerequisite metabox [#4507](https://github.com/Automattic/sensei/pull/4507)
-* Tweak: Allow only before or after text on the gap question [#4533](https://github.com/Automattic/sensei/pull/4533)
-* Tweak: Add "by default" sort order to Courses archive page [#4534](https://github.com/Automattic/sensei/pull/4534)
-* Tweak: Hide incomplete questions in preview mode [#4543](https://github.com/Automattic/sensei/pull/4543)
-* Tweak: Change icons folder [#4578](https://github.com/Automattic/sensei/pull/4578)
-* Tweak: Remove quizStructureStore filter [#4598](https://github.com/Automattic/sensei/pull/4598)
-* Fix: Update quiz status and title on lesson update [#4359](https://github.com/Automattic/sensei/pull/4359)
-* Fix: Restrict the order lessons menu to teachers, authors, and above [#4452](https://github.com/Automattic/sensei/pull/4452)
-* Fix: Fix sidebar icon not picking up admin scheme colors [#4471](https://github.com/Automattic/sensei/pull/4471)
-* Fix: Add check so that Authors can only order their own lessons [#4475](https://github.com/Automattic/sensei/pull/4475)
-* Fix: Fix invalid type issue when questions options empty [#4491](https://github.com/Automattic/sensei/pull/4491)
-* Fix: Fix npm 8 issues [#4506](https://github.com/Automattic/sensei/pull/4506)
-* Fix: WP_User_Query can't be called with 'who' parameter in WP versions >= 5.9.0 [#4513](https://github.com/Automattic/sensei/pull/4513)
-* Fix: Casting `lesson_length` value to integer in the backend [#4525](https://github.com/Automattic/sensei/pull/4525)
-* Fix: Remove ID attribute to prevent duplication [#4526](https://github.com/Automattic/sensei/pull/4526)
-* Fix: Fix multiple pages due to page breaks in unsupported Sensei themes [#4527] https://github.com/Automattic/sensei/pull/4527)
-* Fix: Fix Lesson template when creating a new lesson through WP-admin menu [#4557](https://github.com/Automattic/sensei/pull/4557)
-* Fix: Fix course theme start lesson [#4580](https://github.com/Automattic/sensei/pull/4580)
-* Fix: Fix grade message with decimals [#4602](https://github.com/Automattic/sensei/pull/4602)
-* Fix: Fix comments pagination on lesson page [#4609](https://github.com/Automattic/sensei/pull/4609)
-* Fix: Return wp_nonce_field result instead of outputting it immediately [#4641](https://github.com/Automattic/sensei/pull/4641)
 
 [See changelog for all versions](https://github.com/Automattic/sensei/releases).

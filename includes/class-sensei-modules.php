@@ -2524,6 +2524,10 @@ class Sensei_Core_Modules {
 				$term = get_term( $term, 'module' );
 			}
 
+			if ( ! $term instanceof WP_Term ) {
+				continue;
+			}
+
 			$author = self::get_term_author( $term->slug );
 
 			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {

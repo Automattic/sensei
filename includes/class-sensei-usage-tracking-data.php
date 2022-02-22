@@ -57,6 +57,7 @@ class Sensei_Usage_Tracking_Data {
 			'teachers'                      => self::get_teacher_count(),
 			'courses_using_course_theme'    => self::get_courses_using_course_theme_count(),
 			'course_theme_enabled_globally' => self::get_is_course_theme_enabled_globally() ? 1 : 0,
+			'course_theme_theme_styles'     => self::get_course_theme_has_theme_styles_enabled() ? 1 : 0,
 		);
 
 		return array_merge( $question_type_count, $usage_data, $quiz_stats );
@@ -72,7 +73,7 @@ class Sensei_Usage_Tracking_Data {
 	public static function get_event_logging_base_fields() {
 		$base_fields = [
 			'paid'     => 0,
-			'courses'  => wp_count_posts( 'course' )->publish,
+			'courses'  => post_type_exists( 'course' ) ? wp_count_posts( 'course' )->publish : 0,
 			'learners' => self::get_learner_count(),
 		];
 
@@ -950,6 +951,17 @@ class Sensei_Usage_Tracking_Data {
 	 */
 	private static function get_is_course_theme_enabled_globally() {
 		return (bool) \Sensei()->settings->get( 'sensei_learning_mode_all' );
+	}
+
+	/**
+	 * Checks if theme styles are enabled for learning mode
+	 *
+	 * @since 4.0.2
+	 *
+	 * @return bool
+	 */
+	private static function get_course_theme_has_theme_styles_enabled() {
+		return (bool) \Sensei()->settings->get( 'sensei_learning_mode_theme' );
 	}
 
 	/**

@@ -22,6 +22,11 @@ class Sensei_Course_Theme {
 	const QUERY_VAR = 'learn';
 
 	/**
+	 * Update when rewrite rules change to make sure they are flushed.
+	 */
+	const REWRITE_VERSION = '3';
+
+	/**
 	 * Course theme preview query var.
 	 */
 	const PREVIEW_QUERY_VAR = 'sensei_theme_preview';
@@ -68,12 +73,15 @@ class Sensei_Course_Theme {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
+		Sensei_Course_Theme_Templates::instance()->init();
+
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
+		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 
 	}
 
@@ -124,6 +132,35 @@ class Sensei_Course_Theme {
 	}
 
 	/**
+	 * Load course theme styles and add related filters.
+	 *
+	 * @return void
+	 */
+	public function load_theme() {
+
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+			return;
+		}
+
+		Sensei_Course_Theme_Compat::instance()->load_theme();
+
+		add_filter( 'sensei_use_sensei_template', '__return_false' );
+		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+
+		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
+		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
+
+		/**
+		 * Fires when learning mode is loaded for a page.
+		 *
+		 * @since 4.0.2
+		 * @hook  sensei_course_learning_mode_load_theme
+		 */
+		do_action( 'sensei_course_learning_mode_load_theme' );
+	}
+
+	/**
 	 * Load a bundled theme for the request.
 	 */
 	public function override_theme() {
@@ -137,13 +174,17 @@ class Sensei_Course_Theme {
 		add_filter( 'pre_option_stylesheet', [ $this, 'theme_stylesheet' ] );
 		add_filter( 'theme_root_uri', [ $this, 'theme_root_uri' ] );
 
-		add_filter( 'sensei_use_sensei_template', '__return_false' );
-		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
-		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+		/**
+		 * Fires when the theme is override is added for learning mode.
+		 *
+		 * @since 4.0.2
+		 * @hook  sensei_course_learning_mode_override_theme
+		 */
+		do_action( 'sensei_course_learning_mode_override_theme' );
 
-		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
-		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
+		$this->load_theme();
 
+		remove_action( 'template_redirect', 'redirect_canonical' );
 	}
 
 	/**
@@ -165,9 +206,9 @@ class Sensei_Course_Theme {
 	 */
 	public function maybe_flush_rewrite_rules() {
 
-		if ( '2' !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+		if ( self::REWRITE_VERSION !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
 			flush_rewrite_rules( false );
-			update_option( 'sensei_course_theme_query_var_flushed', '2' );
+			update_option( 'sensei_course_theme_query_var_flushed', self::REWRITE_VERSION );
 		}
 	}
 
@@ -189,6 +230,7 @@ class Sensei_Course_Theme {
 		$slug = preg_quote( $args->rewrite['slug'] ?? $post_type, '/' );
 
 		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $post_type . '=$matches[1]&page=$matches[2]&$matches[3]', 'top' );
+		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
 
 	}
 
@@ -268,15 +310,28 @@ class Sensei_Course_Theme {
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/sensei-course-theme.css' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/learning-mode.css' );
 
-		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/course-theme.js' );
+		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
 
 		$check_circle_icon = Sensei()->assets->get_icon( 'check-circle' );
 		wp_add_inline_script( self::THEME_NAME . '-script', "window.sensei = window.sensei || {}; window.sensei.checkCircleIcon = '$check_circle_icon';", 'before' );
 
 		$this->enqueue_fonts();
+
+		if ( Sensei_Course_Theme_Option::should_override_theme() ) {
+
+			Sensei()->assets->enqueue( self::THEME_NAME . '-theme-style', 'css/learning-mode.theme.css' );
+
+			/**
+			 * Fires when the override theme styles are loaded for learning mode.
+			 *
+			 * @since 4.0.2
+			 * @hook  sensei_course_learning_mode_load_override_styles
+			 */
+			do_action( 'sensei_course_learning_mode_load_override_styles' );
+		}
 
 	}
 
@@ -341,7 +396,7 @@ class Sensei_Course_Theme {
 		$lesson      = $result[0];
 		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
 		$preview_url = '/?p=' . $lesson->ID;
-		if ( ! Sensei_Course_Theme_Option::has_sensei_theme_enabled( $course_id ) ) {
+		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
 			$preview_url .= '&' . self::QUERY_VAR . '=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
 		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
@@ -382,7 +437,7 @@ class Sensei_Course_Theme {
 			array(
 				'id'    => 'site-editor',
 				'title' => __( 'Edit Site', 'sensei-lms' ),
-				'href'  => admin_url( 'site-editor.php?' . self::QUERY_VAR . '=1&postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+				'href'  => admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
 			)
 		);
 	}

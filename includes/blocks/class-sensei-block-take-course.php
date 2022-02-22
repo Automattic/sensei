@@ -130,8 +130,11 @@ class Sensei_Block_Take_Course {
 	private function render_with_login( $content ) {
 		$target = sensei_user_registration_url();
 
+		$course_url = add_query_arg( 'take_course_sign_in', '1', get_permalink() );
+
 		return ( '
 			<form method="GET" action="' . esc_url( $target ) . '">
+			<input type="hidden" name="redirect_to" value="' . esc_url_raw( $course_url ) . '" />
 			' . $content . '
 			</form>
 			' );
