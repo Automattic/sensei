@@ -599,15 +599,17 @@
 	}
 
 	&__redirect-button {
+		align-items: center;
 		background-color: #6fcfb2;
 		border-color: #6fcfb2;
-		color: #000;
-		height: 36px;
-		width: 180px;
 		border-radius: 4px;
+		box-shadow: none;
+		color: #000;
 		display: flex;
+		height: 36px;
 		justify-content: center;
-		align-items: center;
+		outline: none;
+		width: 180px;
 	}
 
 	&__background-image {
