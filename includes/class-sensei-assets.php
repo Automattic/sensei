@@ -289,4 +289,17 @@ class Sensei_Assets {
 
 		return '<svg class="' . esc_attr( $class_names ) . '"><use xlink:href="' . esc_url( $href ) . '"></use></svg>';
 	}
+
+	/**
+	 * Gets image from assets.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $name    The name of the image file at "assets/images/<name>".
+	 *
+	 * @return string Image path.
+	 */
+	public function get_image( string $name ) : string {
+		return $this->plugin_url . 'assets/dist/images/' . $name;
+	}
 }

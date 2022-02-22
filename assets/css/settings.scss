@@ -535,3 +535,102 @@
 		}
 	}
 }
+
+@font-face {
+	font-family: 'Reforma 1918-Blanca';
+	src: url( '../css/fonts/Reforma1918-Blanca.otf' );
+	font-weight: normal;
+	font-style: normal;
+}
+
+
+.sensei-promo-banner {
+	display: flex;
+	flex-direction: column;
+	margin-top: 10px;
+}
+
+@media screen and (min-width: 1100px) {
+	.sensei-promo-banner  {
+		display: flex;
+		flex-direction: row;
+		margin-top: 20px;
+	}
+}
+
+#woothemes-sensei .sensei-promo-banner {
+	&__body {
+		color: #FFFFFF;
+		font-size: 16px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 26px;
+		letter-spacing: 0em;
+		text-align: left;
+		margin-bottom: 20px;
+		max-width: 420px;
+	}
+
+	&__header {
+		color: #6fcfb2;
+		font-family: 'Reforma 1918-Blanca';
+		font-size: 32px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 45px;
+		letter-spacing: 0em;
+		text-align: left;
+		margin-bottom: 16px;
+	}
+
+	&__background {
+		background-color: #26212e;
+		display: flex;
+		flex-direction: column;
+		max-height: 269px;
+		box-sizing: border-box;
+		padding: 24px;
+	}
+
+	@media screen and (min-width: 1500px) {
+		&__background-large {
+			padding: 48px;
+		}
+	}
+
+	&__redirect-button {
+		align-items: center;
+		background-color: #6fcfb2;
+		border-color: #6fcfb2;
+		border-radius: 4px;
+		box-shadow: none;
+		color: #000;
+		display: flex;
+		height: 36px;
+		justify-content: center;
+		outline: none;
+		width: 180px;
+	}
+
+	&__background-image {
+		max-height: 137px;
+	}
+
+	@media screen and (min-width: 600px) {
+		&__background-image {
+			max-height: 269px;
+		}
+	}
+
+	@media screen and (max-width: 1100px) {
+		&__side-background {
+			background-color: #43af99;
+			padding: 26px;
+			display: flex;
+			align-content: center;
+			justify-content: center;
+			align-items: center;
+			box-sizing: border-box;
+		}
+	}
+}
