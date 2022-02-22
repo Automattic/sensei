@@ -68,7 +68,7 @@ class Page_Actions {
 
 		// Prev and next navigation, and lesson actions.
 		$actions = $actions .
-			'<div class="sensei-course-theme__read-only-actions">' .
+			'<div class="screen-reader-text">' .
 				do_blocks( '<!-- wp:sensei-lms/course-theme-prev-next-lesson /-->' ) .
 				do_blocks( '<!-- wp:sensei-lms/course-theme-lesson-actions /-->' ) .
 			'</div>';
