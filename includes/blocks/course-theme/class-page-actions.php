@@ -43,7 +43,7 @@ class Page_Actions {
 
 		switch ( get_post_type() ) {
 			case 'lesson':
-				return $this->render_post_pagination();
+				return $this->render_lesson_actions();
 			case 'quiz':
 				return do_blocks( '<!-- wp:sensei-lms/quiz-actions /-->' );
 		}
@@ -52,18 +52,27 @@ class Page_Actions {
 	}
 
 	/**
-	 * Render the WordPress post pagination.
+	 * Render the Lesson actions.
 	 *
 	 * @return string
 	 */
-	private function render_post_pagination() {
-
-		return wp_link_pages(
+	private function render_lesson_actions() {
+		// WordPress post pagination.
+		$actions = wp_link_pages(
 			[
 				'echo'   => false,
 				'before' => '<div class="wp-block-sensei-lms-page-actions sensei-course-theme__post-pagination">',
 				'after'  => '</div>',
 			]
 		);
+
+		// Prev and next navigation, and lesson actions.
+		$actions = $actions .
+			'<div class="sensei-course-theme__read-only-actions">' .
+				do_blocks( '<!-- wp:sensei-lms/course-theme-prev-next-lesson /-->' ) .
+				do_blocks( '<!-- wp:sensei-lms/course-theme-lesson-actions /-->' ) .
+			'</div>';
+
+		return $actions;
 	}
 }
