@@ -37,7 +37,7 @@ const useObserveOpenModal = ( shouldObserve ) => {
 			setHasOpenModal( document.body.classList.contains( 'modal-open' ) );
 		}, 1 );
 
-		const observer = new MutationObserver( () => {
+		const observer = new window.MutationObserver( () => {
 			setHasOpenModal( document.body.classList.contains( 'modal-open' ) );
 		} );
 		observer.observe( document.body, {
@@ -96,7 +96,7 @@ const CourseThemeOnboarding = () => {
 	} ) );
 
 	const isOnboardingOpen = useOnboardingOpen();
-	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
+	const [ , setTheme ] = useCourseMeta( '_course_theme' );
 
 	if ( ! isOnboardingOpen ) {
 		return null;
@@ -163,7 +163,7 @@ const CourseThemeOnboarding = () => {
 									goForward();
 								} }
 							>
-								{ __( 'Enable learning mode' ) }
+								{ __( 'Enable learning mode', 'sensei-lms' ) }
 							</Button>
 						</>
 					),
@@ -201,7 +201,7 @@ const CourseThemeOnboarding = () => {
 							className="components-guide__forward-button"
 							onClick={ onFinish }
 						>
-							{ __( 'Sounds good' ) }
+							{ __( 'Sounds good', 'sensei-lms' ) }
 						</Button>
 					),
 				},
