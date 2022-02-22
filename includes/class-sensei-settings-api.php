@@ -133,9 +133,19 @@ class Sensei_Settings_API {
 		?>
 		<div id="sensei-promo-banner" class="sensei-promo-banner">
 			<div class="sensei-promo-banner__background sensei-promo-banner__background-large sensei-promo-banner__background-medium">
-				<span class="sensei-promo-banner__header"><?php echo esc_html( $header ); ?></span>
-				<span class="sensei-promo-banner__body"><?php echo esc_html( $text ); ?> </span>
-				<a class="button button-primary sensei-promo-banner__redirect-button" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $button_text ); ?></a>
+				<span class="sensei-promo-banner__header">
+					<?php echo esc_html( $header ); ?>
+				</span>
+				<span class="sensei-promo-banner__body">
+					<?php echo esc_html( $text ); ?>
+				</span>
+				<a
+					class="button button-primary sensei-promo-banner__redirect-button"
+					href="<?php echo esc_url( $url ); ?>"
+					target="_blank"
+				>
+					<?php echo esc_html( $button_text ); ?>
+				</a>
 			</div>
 			<div class="sensei-promo-banner__side-background">
 				<picture>
