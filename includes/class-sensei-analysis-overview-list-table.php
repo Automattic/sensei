@@ -605,10 +605,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Sets the stats boxes to render
 	 *
-	 * @since  1.2.0
-	 * @return array $stats_to_render of stats boxes and values
+	 * @since      1.2.0
+	 * @deprecated 4.2.0
+	 * @return     array $stats_to_render of stats boxes and values
 	 */
 	public function stats_boxes() {
+
+		_deprecated_function( __METHOD__, '4.2.0' );
 
 		// Get the data required
 		$user_count          = count_users();

@@ -190,15 +190,6 @@ class Sensei_Analysis {
 
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap">
-			<div class="sensei-analysis-sidebar">
-				<?php
-				do_action( 'sensei_analysis_before_stats_boxes' );
-				foreach ( $sensei_analysis_overview->stats_boxes() as $key => $value ) {
-					$this->render_stats_box( esc_html( $key ), esc_html( $value ) );
-				}
-				do_action( 'sensei_analysis_after_stats_boxes' );
-				?>
-			</div>
 			<div class="sensei-analysis-main">
 				<?php $sensei_analysis_overview->display(); ?>
 			</div>
@@ -373,14 +364,18 @@ class Sensei_Analysis {
 	}
 
 	/**
-	 * render_stats_box outputs stats boxes
+	 * Outputs stats boxes.
 	 *
-	 * @since  1.2.0
-	 * @param  $title string title of stat
-	 * @param  $data string stats data
-	 * @return void
+	 * @since      1.2.0
+	 * @deprecated 4.2.0
+	 * @param      string $title Title of stat.
+	 * @param      string $data  Stats data.
+	 * @return     void
 	 */
 	public function render_stats_box( $title, $data ) {
+
+		_deprecated_function( __METHOD__, '4.2.0' );
+
 		?>
 		<div class="postbox">
 			<h2><span><?php echo esc_html( $title ); ?></span></h2>
