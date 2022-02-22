@@ -2769,9 +2769,8 @@ class Sensei_Course {
 	 * @return WP_Query
 	 */
 	public static function course_archive_set_order_by( $query ) {
-
-		// Applies only to Course archive page.
-		if ( ! $query->is_post_type_archive( 'course' ) ) {
+		// Exit early if it is from admin panel or anywhere else other than an archive page, like admin panel and pages with shortcode.
+		if ( ! $query->is_post_type_archive( 'course' ) || ! $query->is_main_query() || is_admin() ) {
 			return;
 		}
 
