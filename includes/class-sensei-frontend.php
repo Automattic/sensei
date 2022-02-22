@@ -1239,12 +1239,11 @@ class Sensei_Frontend {
 	public function manually_enrol_learner( $user_id, $course_id ) {
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		// If user is removed, just restore instead.
+		// If user is removed, just restore it.
 		if ( $course_enrolment->is_learner_removed( $user_id ) ) {
 			$course_enrolment->restore_learner( $user_id );
 		}
 
-		// If user isn't still enrolled, enroll manually.
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
 
