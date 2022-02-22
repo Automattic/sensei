@@ -62,7 +62,7 @@ domReady( () => {
 	// Log when the "Add Lesson" link is clicked.
 	document
 		.querySelector( 'a.add-course-lesson' )
-		.addEventListener(
+		?.addEventListener(
 			'click',
 			trackLinkClickCallback( 'course_add_lesson_click' )
 		);
@@ -70,7 +70,7 @@ domReady( () => {
 	// Log when the "Edit Lesson" link is clicked.
 	document
 		.querySelector( 'a.edit-lesson-action' )
-		.addEventListener(
+		?.addEventListener(
 			'click',
 			trackLinkClickCallback( 'course_edit_lesson_click' )
 		);
