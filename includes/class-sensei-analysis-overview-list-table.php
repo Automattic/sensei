@@ -52,8 +52,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => __( 'Course', 'sensei-lms' ),
-					'students'        => __( 'Students', 'sensei-lms' ),
-					'lessons'         => __( 'Lessons', 'sensei-lms' ),
 					'completions'     => __( 'Completed', 'sensei-lms' ),
 					'average_percent' => __( 'Average Percentage', 'sensei-lms' ),
 				);
@@ -99,8 +97,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => array( 'title', false ),
-					'students'        => array( 'students', false ),
-					'lessons'         => array( 'lessons', false ),
 					'completions'     => array( 'completions', false ),
 					'average_percent' => array( 'average_percent', false ),
 				);
@@ -280,14 +276,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
-				// Get Learners (i.e. those who have started)
-				$course_args     = array(
-					'post_id' => $item->ID,
-					'type'    => 'sensei_course_status',
-					'status'  => 'any',
-				);
-				$course_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ) );
-
 				// Get Course Completions
 				$course_args        = array(
 					'post_id' => $item->ID,
@@ -295,9 +283,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'status'  => 'complete',
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
-
-				// Course Lessons
-				$course_lessons = Sensei()->lesson->lesson_count( array( 'publish', 'private' ), $item->ID );
 
 				// Get Percent Complete
 				$grade_args = array(
@@ -336,8 +321,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'           => $course_title,
-						'students'        => $course_students,
-						'lessons'         => $course_lessons,
 						'completions'     => $course_completions,
 						'average_percent' => $course_average_percent,
 					),
