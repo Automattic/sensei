@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.7
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 4.0.2
+Stable tag: 4.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,8 +111,31 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022.02.17 - version 4.0.2
+2022.02.23 - version 4.1.0
+* Remove unneeded notices [#4862](https://github.com/Automattic/sensei/pull/4862)
+* Add lesson actions and navigation to the bottom of the content, for screen reader only [#4861](https://github.com/Automattic/sensei/pull/4861)
+* Add build/test JS files to the list of files that can use devDependencies [#4859](https://github.com/Automattic/sensei/pull/4859)
+* Fix addEventListener when no element is found [#4858](https://github.com/Automattic/sensei/pull/4858)
+* Update ReadMe [#4856](https://github.com/Automattic/sensei/pull/4856)
+* Open links in new tab for WooCommerce & Content Drip settings promos [#4855](https://github.com/Automattic/sensei/pull/4855)
+* Add conditional content block to lessons [#4850](https://github.com/Automattic/sensei/pull/4850)
+* Fix legacy quiz styles in learning mode [#4849](https://github.com/Automattic/sensei/pull/4849)
+* Allow user re-enrolling even when removed [#4848](https://github.com/Automattic/sensei/pull/4848)
+* Fix course ordering not working on admin dashboard and shortcode pages [#4837](https://github.com/Automattic/sensei/pull/4837)
+* Extend quiz settings inspector panel [#4826](https://github.com/Automattic/sensei/pull/4826)
+* Fix issue causing debug text on activate [#4824](https://github.com/Automattic/sensei/pull/4824)
+* Add content drip promo banner to settings [#4822](https://github.com/Automattic/sensei/pull/4822)
+* Add upgrade nudge for access period [#4821](https://github.com/Automattic/sensei/pull/4821)
+* Add upgrade nudge to Quiz block settings [#4816](https://github.com/Automattic/sensei/pull/4816)
+* Add Ordering promo question type [#4815](https://github.com/Automattic/sensei/pull/4815)
+* Add Pricing section to course side bar for upgrading to Sensei Pro [#4810](https://github.com/Automattic/sensei/pull/4810)
+* Add content drip upgrade metabox to edit lesson screen [#4809](https://github.com/Automattic/sensei/pull/4809)
+* New WooCommerce settings section [#4801](https://github.com/Automattic/sensei/pull/4801)
+* Add optional 'style' option for admin notices [#4797](https://github.com/Automattic/sensei/pull/4797)
+* Add upgrade header to Extensions page [#4794](https://github.com/Automattic/sensei/pull/4794)
+* Order lessons between modules [#4727](https://github.com/Automattic/sensei/pull/4727)
 
+2022.02.17 - version 4.0.2
 * Improve course theme accessibility [#4749](https://github.com/Automattic/sensei/pull/4749)
 * Add theme style support to Learning Mode [#4775](https://github.com/Automattic/sensei/pull/4775)
 * Fix Edit Lesson link in admin bar [#4765](https://github.com/Automattic/sensei/pull/4765)
