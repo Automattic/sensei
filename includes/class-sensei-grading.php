@@ -1132,6 +1132,29 @@ class Sensei_Grading {
 	}
 
 	/**
+	 * Get average grade of all lessons graded
+	 *
+	 * @since 4.2.0
+	 * @return double $graded_lesson_avg
+	 */
+	public static function get_graded_lessons_avg() {
+		$grade_args        = array(
+			'type'     => 'sensei_lesson_status',
+			'status'   => 'any',
+			'meta_key' => 'grade',
+		);
+		$grade_count       = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, ), false );
+		$sum_of_all_grades = self::get_graded_lessons_sum();
+		$average_grade     = 0;
+
+		if ( $sum_of_all_grades > 0 && $grade_count > 0 ) {
+			$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $sum_of_all_grades, $grade_count, 2 );
+		}
+		return $average_grade;
+
+	}
+
+	/**
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0

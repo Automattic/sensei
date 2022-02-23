@@ -71,13 +71,27 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
-				$columns = array(
+				$graded_avg            = Sensei_Grading::get_graded_lessons_avg();
+				$course_args_started   = array(
+					'type'   => 'sensei_course_status',
+					'status' => 'any',
+				);
+				$courses_started       = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args_started ) );
+				$course_args_completed = array(
+					'type'   => 'sensei_course_status',
+					'status' => 'complete',
+				);
+				$courses_completed     = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args_completed ) );
+				$columns               = array(
 					'title'             => __( 'Student', 'sensei-lms' ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'registered'        => __( 'Date Registered', 'sensei-lms' ),
-					'active_courses'    => __( 'Active Courses', 'sensei-lms' ),
-					'completed_courses' => __( 'Completed Courses', 'sensei-lms' ),
-					'average_grade'     => __( 'Average Grade', 'sensei-lms' ),
+					// translators: Placeholder value is all active courses.
+					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $courses_started - $courses_completed ),
+					// translators: Placeholder value is all completed courses.
+					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $courses_completed ),
+					// translators: Placeholder value is graded average value.
+					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $graded_avg ),
 				);
 				break;
 		}
