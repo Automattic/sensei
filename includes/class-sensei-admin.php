@@ -373,8 +373,8 @@ class Sensei_Admin {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
-		// load edit module scripts
-		if ( 'edit-module' == $screen->id ) {
+		// Load edit module scripts.
+		if ( 'edit-module' === $screen->id ) {
 			wp_enqueue_script( 'sensei-chosen-ajax' );
 		}
 
@@ -383,18 +383,25 @@ class Sensei_Admin {
 		// Event logging.
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
-		// Sensei custom navigation.
-		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ];
-
-		if (
-			$screen
-			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
-			&& ( 'term' !== $screen->base )
-		) {
+		if ( $this->has_custom_navigation( $screen ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+	}
+
+	/**
+	 * Check if the current screen has a custom navigation.
+	 *
+	 * @param WP_Screen|null $screen The current screen.
+	 * @return bool
+	 */
+	private function has_custom_navigation( $screen ) {
+		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category', 'course_page_sensei_analysis' ];
+
+		return $screen
+			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
+			&& ( 'term' !== $screen->base );
 	}
 
 

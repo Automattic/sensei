@@ -34,7 +34,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		parent::__construct( 'analysis_overview' );
 
 		// Actions
-		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
@@ -671,9 +670,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * Output for table heading
 	 *
 	 * @since  1.2.0
+	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function data_table_header() {
+		_deprecated_function( __METHOD__, '4.2.0' );
+
 		$menu = array();
 
 		$query_args     = array(

@@ -166,6 +166,12 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	align-items: center;
 	justify-content: flex-start;
 	gap: 20px;
+	width: 100%;
+	padding-right: 20px;
+
+	&__separator {
+		flex: 1;
+	}
 }
 
 a.sensei-custom-navigation__tab {
@@ -183,6 +189,17 @@ a.sensei-custom-navigation__tab.active {
 
 a.sensei-custom-navigation__tab:hover {
 	border-bottom: 4px solid #1E1E1E;
+}
+
+.sensei-custom-navigation__info {
+	display: flex;
+	gap: 5px;
+	align-items: flex-end;
+
+	a {
+		text-decoration: none;
+		font-size: 14px;
+	}
 }
 
 .sensei-custom-navigation__links {
