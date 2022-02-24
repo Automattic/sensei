@@ -51,11 +51,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => __( 'Course', 'sensei-lms' ),
-					'students'        => __( 'Students', 'sensei-lms' ),
-					'lessons'         => __( 'Lessons', 'sensei-lms' ),
-					'completions'     => __( 'Completed', 'sensei-lms' ),
-					'average_percent' => __( 'Average Percentage', 'sensei-lms' ),
+					'title'            => __( 'Course', 'sensei-lms' ),
+					'students'         => __( 'Students', 'sensei-lms' ),
+					'lessons'          => __( 'Lessons', 'sensei-lms' ),
+					'completions'      => __( 'Completed', 'sensei-lms' ),
+					'average_progress' => __( 'Average Progress', 'sensei-lms' ),
+					'average_percent'  => __( 'Average Percentage', 'sensei-lms' ),
 				);
 				break;
 
@@ -98,11 +99,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => array( 'title', false ),
-					'students'        => array( 'students', false ),
-					'lessons'         => array( 'lessons', false ),
-					'completions'     => array( 'completions', false ),
-					'average_percent' => array( 'average_percent', false ),
+					'title'            => array( 'title', false ),
+					'students'         => array( 'students', false ),
+					'lessons'          => array( 'lessons', false ),
+					'completions'      => array( 'completions', false ),
+					'average_progress' => array( 'average_progress', false ),
+					'average_percent'  => array( 'average_percent', false ),
 				);
 				break;
 
@@ -286,7 +288,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'type'    => 'sensei_course_status',
 					'status'  => 'any',
 				);
-				$course_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ) );
+				$course_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ), true );
 
 				// Get Course Completions
 				$course_args        = array(
@@ -299,12 +301,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				// Course Lessons
 				$course_lessons = Sensei()->lesson->lesson_count( array( 'publish', 'private' ), $item->ID );
 
-				// Get Percent Complete
+				// Get Percent Complete.
 				$grade_args = array(
 					'post_id'  => $item->ID,
 					'type'     => 'sensei_course_status',
 					'status'   => 'any',
-					'meta_key' => 'percent',
+					'meta_key' => 'percent',  // phpcs:ignore Slow query ok.,
 				);
 
 				$percent_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
@@ -331,15 +333,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 					$course_average_percent .= '%';
 				}
-
-				$column_data = apply_filters(
+				$average_course_progress = $this->get_average_progress( $item->ID, $course_students );
+				$course_students_count   = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
+				$column_data             = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'           => $course_title,
-						'students'        => $course_students,
-						'lessons'         => $course_lessons,
-						'completions'     => $course_completions,
-						'average_percent' => $course_average_percent,
+						'title'            => $course_title,
+						'students'         => $course_students_count,
+						'lessons'          => $course_lessons,
+						'completions'      => $course_completions,
+						'average_progress' => $average_course_progress,
+						'average_percent'  => $course_average_percent,
 					),
 					$item,
 					$this
@@ -505,6 +509,44 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		return $escaped_column_data;
+	}
+
+	/**
+	 * Return average progress per lesson for course.
+	 *
+	 * @since  4.2.0
+	 *
+	 * @param int   $course_id Course id.
+	 * @param array $course_students Course students.
+	 * @return int $average_progress Average progress value.
+	 */
+	private function get_average_progress( $course_id, $course_students ): int {
+
+		$course_lessons_ids                 = Sensei()->course->course_lesson_ids( $course_id );
+		$course_students                    = is_array( $course_students ) ? $course_students : array( $course_students );
+		$lesson_completed_percentages_count = 0;
+		foreach ( $course_students as $student ) {
+			$lesson_completed_count = 0;
+			foreach ( $course_lessons_ids as $lesson_id ) {
+				$lesson_course_args      = array(
+					'user_id' => $student->user_id,
+					'post_id' => $lesson_id,
+					'type'    => 'sensei_lesson_status',
+					'status'  => array( 'complete', 'graded', 'passed' ),
+				);
+				$lessons_course          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lessons_courses', $lesson_course_args ) );
+				$lesson_completed_count .= $lessons_course;
+			}
+
+			if ( 0 !== $lesson_completed_count && 0 !== count( $course_lessons_ids ) ) {
+				$lesson_completed_percentages_count .= Sensei_Utils::quotient_as_absolute_rounded_number( $lesson_completed_count, count( $course_lessons_ids ), 2 );
+			}
+		}
+		$average_course_progress = 0;
+		if ( 0 !== count( $course_lessons_ids ) ) {
+			$average_course_progress = $lesson_completed_percentages_count / count( $course_lessons_ids ) * 100;
+		}
+		return $average_course_progress;
 	}
 
 	/**

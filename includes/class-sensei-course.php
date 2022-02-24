@@ -1358,29 +1358,43 @@ class Sensei_Course {
 	}
 
 	/**
-	 * course_lesson_count function.
+	 * Function to return count of lessons in coutse.
 	 *
 	 * @access public
-	 * @param  int $course_id (default: 0)
+	 * @param  int $course_id Course id (default: 0).
 	 * @return int
 	 */
 	public function course_lesson_count( $course_id = 0 ) {
-
-		$lesson_args   = array(
-			'post_type'        => 'lesson',
-			'posts_per_page'   => -1,
-			'meta_key'         => '_lesson_course',
-			'meta_value'       => $course_id,
-			'post_status'      => 'publish',
-			'suppress_filters' => 0,
-			'fields'           => 'ids', // less data to retrieve
-		);
-		$lessons_array = get_posts( $lesson_args );
+		$lessons_array = $this->course_lesson_ids( $course_id );
 
 		$count = count( $lessons_array );
 
 		return $count;
+	}
 
+	/**
+	 * Function to return ids of all lessons in course.
+	 *
+	 * @access public
+	 * @since 4.2.0
+	 *
+	 * @param  int $course_id Course id (default: 0).
+	 * @return int
+	 */
+	public function course_lesson_ids( $course_id = 0 ) {
+
+		$lesson_args   = array(
+			'post_type'        => 'lesson',
+			'posts_per_page'   => -1,
+			'meta_key'         => '_lesson_course', // phpcs:ignore Slow query ok.
+			'meta_value'       => $course_id, // phpcs:ignore Slow query ok.
+			'post_status'      => 'publish',
+			'suppress_filters' => 0,
+			'fields'           => 'ids', // less data to retrieve.
+		);
+		$lessons_array = get_posts( $lesson_args );
+
+		return $lessons_array;
 	}
 
 	/**
