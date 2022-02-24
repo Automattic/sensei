@@ -282,6 +282,7 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
+		$this->analysis_user_profile_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
@@ -313,6 +314,7 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
+		$this->analysis_course_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
@@ -345,6 +347,7 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
+		$this->analysis_user_course_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
@@ -376,6 +379,7 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
+		$this->analysis_course_users_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
@@ -407,6 +411,7 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
+		$this->analysis_lesson_users_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
@@ -505,11 +510,10 @@ class Sensei_Analysis {
 	 * Nav area for Analysis of a specific User profile
 	 *
 	 * @since  1.2.0
-	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_user_profile_nav() {
-		_deprecated_function( __METHOD__, '4.2.0' );
+
 		$analysis_args = array(
 			'page'      => $this->page_slug,
 			'post_type' => $this->post_type,
@@ -540,11 +544,10 @@ class Sensei_Analysis {
 	 * Nav area for Analysis of a specific Course and its Lessons, specific to a User
 	 *
 	 * @since  1.2.0
-	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_user_course_nav() {
-		_deprecated_function( __METHOD__, '4.2.0' );
+
 		$analysis_args = array(
 			'page'      => $this->page_slug,
 			'post_type' => $this->post_type,
@@ -586,11 +589,10 @@ class Sensei_Analysis {
 	 * Nav area for Analysis of a specific Course and displaying its Lessons
 	 *
 	 * @since  1.2.0
-	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_course_nav() {
-		_deprecated_function( __METHOD__, '4.2.0' );
+
 		$analysis_args = array(
 			'page'      => $this->page_slug,
 			'post_type' => $this->post_type,
@@ -617,11 +619,10 @@ class Sensei_Analysis {
 	 * Nav area for Analysis of a specific Course displaying its Users
 	 *
 	 * @since  1.2.0
-	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_course_users_nav() {
-		_deprecated_function( __METHOD__, '4.2.0' );
+
 		$analysis_args = array(
 			'page'      => $this->page_slug,
 			'post_type' => $this->post_type,
@@ -648,11 +649,10 @@ class Sensei_Analysis {
 	 * Nav area for Analysis of a specific Lesson displaying its Users
 	 *
 	 * @since  1.2.0
-	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_lesson_users_nav() {
-		_deprecated_function( __METHOD__, '4.2.0' );
+
 		$analysis_args = array(
 			'page'      => $this->page_slug,
 			'post_type' => $this->post_type,
