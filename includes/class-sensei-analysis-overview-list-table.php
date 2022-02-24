@@ -53,7 +53,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$columns = array(
 					'title'           => __( 'Course', 'sensei-lms' ),
 					'completions'     => __( 'Completed', 'sensei-lms' ),
-					'average_percent' => __( 'Average Percentage', 'sensei-lms' ),
+					'average_percent' => __( 'Average Grade', 'sensei-lms' ),
 				);
 				break;
 
