@@ -82,6 +82,82 @@ class Sensei_Settings_API {
 	}
 
 	/**
+	 * Render content drip upgrade settings.
+	 *
+	 * @since   4.1.0
+	 *
+	 * @access  private
+	 */
+	private function render_content_drip_settings() {
+		$image_path_desktop = Sensei()->assets->get_image( 'content-drip-promo-desktop.png' );
+		$image_path_mobile  = Sensei()->assets->get_image( 'content-drip-promo-mobile.png' );
+		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
+		$text               = __( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' );
+		$url                = 'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=settings_content_drip';
+		$button_text        = __( 'Upgrade to Sensei Pro', 'sensei-lms' );
+		$this->render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text );
+	}
+
+	/**
+	 * Render woo commerce upgrade settings.
+	 *
+	 * @since   4.1.0
+	 *
+	 * @access  private
+	 */
+	private function render_woocommerce_upgrade_settings() {
+		$image_path_desktop = Sensei()->assets->get_image( 'purchase-sensei-pro-desktop.png' );
+		$image_path_mobile  = Sensei()->assets->get_image( 'purchase-sensei-pro-mobile.png' );
+		$header             = __( 'Get Sensei Pro', 'sensei-lms' );
+		$text               = __( 'Sell your courses using the most popular eCommerce platform on the web, WooCommerce.', 'sensei-lms' );
+		$url                = 'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=settings_woocommerce';
+		$button_text        = __( 'Upgrade to Sensei Pro', 'sensei-lms' );
+		$this->render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text );
+	}
+
+	/**
+	 * Render promo banner for sensei lms settings.
+	 *
+	 * @since   4.1.0
+	 *
+	 * @access  private
+	 *
+	 * @param string $image_path_desktop Path to image for desktop view.
+	 * @param string $image_path_mobile Path to image for mobile view.
+	 * @param string $header Banner header text.
+	 * @param string $text Banner body text.
+	 * @param string $url Redirect url.
+	 * @param string $button_text Button text in banner.
+	 */
+	private function render_promo_banner( $image_path_desktop, $image_path_mobile, $header, $text, $url, $button_text ) {
+		?>
+		<div id="sensei-promo-banner" class="sensei-promo-banner">
+			<div class="sensei-promo-banner__background sensei-promo-banner__background-large sensei-promo-banner__background-medium">
+				<span class="sensei-promo-banner__header">
+					<?php echo esc_html( $header ); ?>
+				</span>
+				<span class="sensei-promo-banner__body">
+					<?php echo esc_html( $text ); ?>
+				</span>
+				<a
+					class="button button-primary sensei-promo-banner__redirect-button"
+					href="<?php echo esc_url( $url ); ?>"
+					target="_blank"
+				>
+					<?php echo esc_html( $button_text ); ?>
+				</a>
+			</div>
+			<div class="sensei-promo-banner__side-background">
+				<picture>
+					<source media="(max-width:780px)" srcset="<?php echo esc_url( $image_path_mobile ); ?>">
+					<img class="sensei-promo-banner__background-image" src="<?php echo esc_url( $image_path_desktop ); ?>" alt="sensei-banner">
+				</picture>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Register the settings sections.
 	 *
 	 * @access public
@@ -169,7 +245,6 @@ class Sensei_Settings_API {
 			foreach ( $this->sections as $k => $v ) {
 				$tabs[ $k ] = $v;
 			}
-
 			$this->tabs = $tabs;
 		}
 	}
@@ -329,7 +404,6 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function settings_screen() {
-
 		?>
 		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
 		<h1><?php echo esc_html( $this->name ); ?>
@@ -355,7 +429,7 @@ class Sensei_Settings_API {
 			if ( $section['name'] ) {
 				echo '<h2>' . esc_html( $section['name'] ) . '</h2>' . "\n";
 			}
-
+			$this->render_additional_section_elements( $section_id );
 			echo '<table class="form-table">';
 			do_settings_fields( $page, $section_id );
 			echo '</table>';
@@ -371,6 +445,45 @@ class Sensei_Settings_API {
 </div><!--/#woothemes-sensei-->
 		<?php
 	}
+
+	/**
+	 * Render additional section elements.
+	 *
+	 * @since  4.1.0
+	 *
+	 * @access private
+	 * @param string $section_id Section id.
+	 */
+	private function render_additional_section_elements( $section_id ) {
+		/**
+		 * Filters the woocommerce promo settings section.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 *
+		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 */
+		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
+		if ( 'woocommerce-settings' === $section_id && ! $hide_woocommerce_settings ) {
+			$this->render_woocommerce_upgrade_settings();
+		}
+
+		/**
+		 * Filters the content drip promo settings section.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
+		 *
+		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 */
+		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
+		if ( 'sensei-content-drip-settings' === $section_id && ! $hide_content_drip_settings ) {
+			$this->render_content_drip_settings();
+		}
+	}
+
 
 	/**
 	 * Retrieve the settings from the database.

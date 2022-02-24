@@ -34,6 +34,20 @@ class Sensei_Quiz_Blocks extends Sensei_Blocks_Initializer {
 		Sensei()->assets->enqueue( 'sensei-quiz-blocks', 'blocks/quiz/index.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-quiz-blocks-editor', 'blocks/quiz/quiz.editor.css', [ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ] );
 
+		/**
+		 * Filters the quiz ordering type promo toggle.
+		 *
+		 * @hook  sensei_quiz_ordering_question_type_hide
+		 * @since 4.1.0
+		 *
+		 * @param  {bool} $ordering_question_type_hide Whether to hide the ordering question type promo.
+		 * @return {bool} Whether to hide the ordering question type promo.
+		 */
+		$ordering_question_type_hide = apply_filters( 'sensei_quiz_ordering_question_type_hide', false );
+		if ( ! $ordering_question_type_hide ) {
+			Sensei()->assets->enqueue( 'sensei-quiz-blocks-ordering-promo', 'blocks/quiz/ordering-promo/index.js', [], false );
+		}
+
 		wp_localize_script( 'sensei-quiz-blocks', 'sensei_quiz_blocks', [ 'category_question_enabled' => Sensei()->feature_flags->is_enabled( 'block_editor_enable_category_questions' ) ] );
 
 		global $post;

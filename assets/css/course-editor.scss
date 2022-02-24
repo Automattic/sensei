@@ -1,4 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
 $primary: #6FCFB2;
+$secondary: #0693e3;
 
 /* Course Theme Onboarding */
 .sensei-course-theme-onboarding {
@@ -90,5 +92,27 @@ $primary: #6FCFB2;
 				}
 			}
 		}
+	}
+}
+
+.sensei-pricing-promo {
+	&__upgrade-new-course-text {
+		opacity: 0.4;
+	}
+
+	&__upgrade-new-course {
+		padding: 12px;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+	}
+
+	&__upgrade_new_course_mock_button {
+		color: $secondary;
+		border: 1px solid $secondary;
+	}
+}
+
+.sensei-course-access-period-promo {
+	&__holder {
+		opacity: 0.4;
 	}
 }
