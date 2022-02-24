@@ -477,11 +477,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$last_activity = null;
 				if ( $last_activity_comment ) {
 					if ( $this->csv_output ) {
-						$last_activity = $last_activity_comment->comment_date;
+						$last_activity = $last_activity_comment->comment_date_gmt;
 					} else {
 						$last_activity = sprintf(
 							'<abbr title="%s">%s</abbr>',
-							$last_activity_comment->comment_date,
+							$last_activity_comment->comment_date_gmt,
 							sprintf(
 								/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 								esc_html__( '%s ago', 'sensei-lms' ),
