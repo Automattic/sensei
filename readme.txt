@@ -1,10 +1,11 @@
+
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
-Contributors: automattic, alexsanford1, donnapep, jakeom, gikaragia, renathoc, yscik, dwainm, panosktn, jeffikus, burtrw
-Tags: elearning, lms, learning management system, teach, courses, woocommerce
+Contributors: automattic, alexsanford1, burtrw, donnapep, gikaragia, jakeom, merkushin, m1r0, renathoc, yscik
+Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.7
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 4.0.2
+Stable tag: 4.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,27 +17,43 @@ Create beautiful and engaging online courses, lessons, and quizzes.
 
 [Sensei LMS](https://senseilms.com) is a teaching and learning management plugin built by Automattic, the company behind WordPress.com, WooCommerce, and Jetpack. In fact, Sensei LMS is used to power all of Automattic’s employee training and courses too.
 
-Your knowledge is worth teaching - teach it with Sensei LMS!
+Your knowledge is worth teaching - teach freely with Sensei LMS!
 
-= Works With Your Existing Theme =
+### Works With Your Existing Theme ###
 Sensei LMS integrates seamlessly with your WordPress site, and courses look great with any theme.
 
 Add blocks for course and student information to any page or post.
 
 Customize the look and feel to match your branding and site style.
 
-= Assessments That Reinforce =
+### Learning Mode ###
+Enable the optional Learning Mode for a distraction free and immersive learning experience. Learning Mode is Full Site Editing ready for additional personalization and customization.
+
+https://videopress.com/v/WLDfZydJ
+
+### Quizzes That Reinforce ###
 Leverage the power of quizzes to strengthen your students’ understanding of key concepts and evaluate their progress.
 
 Choose from many question types and quiz settings, including multiple-choice, fill-in-the-blank, true/false, free response, file uploads, and more.
 
-= Sell Your Courses =
-Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocommerce-paid-courses/) lets you sell your courses using the most popular eCommerce platform on the web – WooCommerce.
 
-= Other Extensions =
+### Get More with Sensei Pro ###
+
+Do more and sell courses with Sensei Pro, which includes:
+
+**WooCommerce Integration:** Set a price and sell courses with just a few clicks. Sensei Pro integrates perfectly with WooCommerce Subscriptions, Payments, Memberships, and Affiliates extensions too.
+
 **Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
 
-[Learn more about Sensei LMS Content Drip](https://woocommerce.com/products/sensei-content-drip/).
+**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type.
+
+**Course Expiration:** Select an end date or a specific amount of time that courses will remain accessible to students.
+
+**Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
+
+[Learn more about Sensei Pro](https://senseilms.com/pricing/).
+
+### Free Extensions ###
 
 **Certificates:** Automatically generate beautiful downloadable PDF certificates for students when they complete a course.
 
@@ -72,7 +89,7 @@ Our [WooCommerce Paid Courses extension](https://woocommerce.com/products/woocom
 = Where can I get support for Sensei LMS? =
 For the free plugin, please use the [Support Forums](https://wordpress.org/support/plugin/sensei-lms/) for any questions that you may have. We monitor the forums regularly and will reply as soon as we can.
 
-You can also check our [Documentation](https://senseilms.com/documentation) on our website for docs, tutorials, and other helpful information.
+You can also check our [Documentation](https://senseilms.com/docs) on our website for guides, tutorials, and other helpful information.
 
 = Where can I report bugs or contribute improvements to the plugin? =
 Sensei is developed in public on Github. We welcome anyone to report a bug, submit a pull request, and follow along with our progress.
@@ -80,7 +97,7 @@ Sensei is developed in public on Github. We welcome anyone to report a bug, subm
 [Visit Sensei LMS on Github](https://github.com/Automattic/sensei/).
 
 = Does Sensei work with membership plugins? =
-Sensei LMS can be used in conjunction with [WooCommerce Paid Courses](https://woocommerce.com/products/woocommerce-paid-courses/) and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/) to enable you to sell courses as part of a membership plan. See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
+Sensei LMS can be used in conjunction with [Sensei Pro](https://senseilms.com/pricing/) and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/) to enable you to sell courses as part of a membership plan. See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
 = How can I keep up to date with new releases and announcements for Sensei LMS? =
 
@@ -94,8 +111,31 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022.02.17 - version 4.0.2
+2022.02.23 - version 4.1.0
+* Remove unneeded notices [#4862](https://github.com/Automattic/sensei/pull/4862)
+* Add lesson actions and navigation to the bottom of the content, for screen reader only [#4861](https://github.com/Automattic/sensei/pull/4861)
+* Add build/test JS files to the list of files that can use devDependencies [#4859](https://github.com/Automattic/sensei/pull/4859)
+* Fix addEventListener when no element is found [#4858](https://github.com/Automattic/sensei/pull/4858)
+* Update ReadMe [#4856](https://github.com/Automattic/sensei/pull/4856)
+* Open links in new tab for WooCommerce & Content Drip settings promos [#4855](https://github.com/Automattic/sensei/pull/4855)
+* Add conditional content block to lessons [#4850](https://github.com/Automattic/sensei/pull/4850)
+* Fix legacy quiz styles in learning mode [#4849](https://github.com/Automattic/sensei/pull/4849)
+* Allow user re-enrolling even when removed [#4848](https://github.com/Automattic/sensei/pull/4848)
+* Fix course ordering not working on admin dashboard and shortcode pages [#4837](https://github.com/Automattic/sensei/pull/4837)
+* Extend quiz settings inspector panel [#4826](https://github.com/Automattic/sensei/pull/4826)
+* Fix issue causing debug text on activate [#4824](https://github.com/Automattic/sensei/pull/4824)
+* Add content drip promo banner to settings [#4822](https://github.com/Automattic/sensei/pull/4822)
+* Add upgrade nudge for access period [#4821](https://github.com/Automattic/sensei/pull/4821)
+* Add upgrade nudge to Quiz block settings [#4816](https://github.com/Automattic/sensei/pull/4816)
+* Add Ordering promo question type [#4815](https://github.com/Automattic/sensei/pull/4815)
+* Add Pricing section to course side bar for upgrading to Sensei Pro [#4810](https://github.com/Automattic/sensei/pull/4810)
+* Add content drip upgrade metabox to edit lesson screen [#4809](https://github.com/Automattic/sensei/pull/4809)
+* New WooCommerce settings section [#4801](https://github.com/Automattic/sensei/pull/4801)
+* Add optional 'style' option for admin notices [#4797](https://github.com/Automattic/sensei/pull/4797)
+* Add upgrade header to Extensions page [#4794](https://github.com/Automattic/sensei/pull/4794)
+* Order lessons between modules [#4727](https://github.com/Automattic/sensei/pull/4727)
 
+2022.02.17 - version 4.0.2
 * Improve course theme accessibility [#4749](https://github.com/Automattic/sensei/pull/4749)
 * Add theme style support to Learning Mode [#4775](https://github.com/Automattic/sensei/pull/4775)
 * Fix Edit Lesson link in admin bar [#4765](https://github.com/Automattic/sensei/pull/4765)
