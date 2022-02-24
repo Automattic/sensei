@@ -65,6 +65,11 @@ class Sensei_Analysis {
 			return;
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
+		if ( isset( $_GET['course_id'] ) || isset( $_GET['lesson_id'] ) || isset( $_GET['user_id'] ) ) {
+			return;
+		}
+
 		$this->display_reports_navigation();
 	}
 
