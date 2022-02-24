@@ -19,6 +19,7 @@ import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
 import QuizProgressBarEdit from './quiz-progress-bar-edit';
+import { useSelect } from '@wordpress/data';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/quiz-question',
@@ -52,6 +53,21 @@ const QuizEdit = ( props ) => {
 
 	const closeExistingQuestionsModal = () =>
 		setExistingQuestionsModalOpen( false );
+	const questionCount = useSelect(
+		( select ) =>
+			select( 'core/block-editor' )
+				.getBlock( clientId )
+				.innerBlocks.reduce( ( count, question ) => {
+					if ( isQuestionEmpty( question.attributes ) ) return count;
+					return (
+						count +
+						( question.attributes.type === 'category-question'
+							? question.attributes.options.number
+							: 1 )
+					);
+				}, 0 ),
+		[ clientId ]
+	);
 
 	/* Temporary solution. See https://github.com/WordPress/gutenberg/pull/29911 */
 	const AppenderComponent = useCallback(
@@ -65,7 +81,9 @@ const QuizEdit = ( props ) => {
 	);
 	const pagination = props?.attributes?.options?.pagination;
 	const showPaginationProgressBar =
-		pagination?.paginationNumber && pagination?.showProgressBar;
+		pagination?.paginationNumber &&
+		pagination?.showProgressBar &&
+		pagination.paginationNumber < questionCount;
 
 	return (
 		<>
