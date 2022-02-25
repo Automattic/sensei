@@ -42,4 +42,4 @@ jobs:
               with:
                 name: sensei-lms-${{ github.sha }}.zip
                 path: ${{ github.workspace }}/sensei-lms/
-                retention-days: 5
+                retention-days: 7
