@@ -44,7 +44,8 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Assert. */
-		$this->assertEmpty(
+		$this->assertEquals(
+			'N/A',
 			$method->invoke( $instance, $user_id ),
 			'The last activity should not take into account lessons that are in progress.'
 		);
@@ -92,9 +93,9 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	 */
 	public function lessonCompleteStatuses(): array {
 		return [
+			[ 'complete' ],
 			[ 'passed' ],
-			[ 'ungraded' ],
-			[ 'failed' ],
+			[ 'graded' ],
 		];
 	}
 

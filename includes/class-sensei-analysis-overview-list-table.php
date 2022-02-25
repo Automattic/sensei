@@ -662,7 +662,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'number'  => 1,
 				'user_id' => $user_id,
 				'type'    => 'sensei_lesson_status',
-				'status'  => [ 'complete', 'passed', 'ungraded', 'failed' ],
+				'status'  => [ 'complete', 'passed', 'graded' ],
 			),
 			true
 		);
