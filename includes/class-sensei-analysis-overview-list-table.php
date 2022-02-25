@@ -648,12 +648,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 	/**
 	 * Get the last user activity date.
-	 * It is based on the date on which the last lesson was submitted (completed).
+	 * It is based on the date on which the last lesson was completed.
 	 *
 	 * @since 4.2.0
 	 *
-	 * @param  int $user_id
-	 * @return string
+	 * @param int $user_id The user ID.
+	 *
+	 * @return string The last activity date or 'N/A' if there is none.
 	 */
 	private function get_last_activity( int $user_id ): string {
 		$last_activity_comment = Sensei_Utils::sensei_check_for_activity(
@@ -667,7 +668,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		);
 
 		if ( ! $last_activity_comment ) {
-			return '';
+			return 'N/A';
 		}
 
 		// Return the full date when doing CSV export.
