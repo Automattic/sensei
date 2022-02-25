@@ -24,11 +24,38 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the last activity is ignoring "in-progress" lessons.
+	 * Lesson statuses that mark the lesson as completed.
+	 *
+	 * @return string[][]
+	 */
+	public function lessonCompleteStatuses(): array {
+		return [
+			[ 'complete' ],
+			[ 'passed' ],
+			[ 'graded' ],
+		];
+	}
+
+	/**
+	 * Lesson statuses that mark the lesson as uncompleted.
+	 *
+	 * @return string[][]
+	 */
+	public function lessonUncompleteStatuses(): array {
+		return [
+			[ 'in-progress' ],
+			[ 'ungraded' ],
+			[ 'failed' ],
+		];
+	}
+
+	/**
+	 * Tests that the last activity is ignoring uncompleted lessons.
 	 *
 	 * @covers Sensei_Admin::get_last_activity
+	 * @dataProvider lessonUncompleteStatuses
 	 */
-	public function testGetLastActivityShouldIgnoreInProgressLessons() {
+	public function testGetLastActivityShouldIgnoreUncompleteLessons( $lesson_uncomplete_status ) {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create(
@@ -41,7 +68,13 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		// Start lesson 1 (status: in-progress).
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$lesson_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		wp_update_comment(
+			[
+				'comment_ID'       => $lesson_activity_comment_id,
+				'comment_approved' => $lesson_uncomplete_status,
+			]
+		);
 
 		/* Assert. */
 		$this->assertEquals(
@@ -70,8 +103,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$lesson_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-
-		// Update the lesson status.
 		wp_update_comment(
 			[
 				'comment_ID'       => $lesson_activity_comment_id,
@@ -84,19 +115,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			$method->invoke( $instance, $user_id ),
 			'The last activity should take into account lessons with status "' . $lesson_complete_status . '".'
 		);
-	}
-
-	/**
-	 * Lesson statuses that mark the lesson as completed.
-	 *
-	 * @return string[][]
-	 */
-	public function lessonCompleteStatuses(): array {
-		return [
-			[ 'complete' ],
-			[ 'passed' ],
-			[ 'graded' ],
-		];
 	}
 
 	/**
