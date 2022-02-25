@@ -176,6 +176,7 @@ const QuestionEdit = ( props ) => {
 					onRemove={ () => removeBlock( clientId ) }
 				/>
 			</h2>
+			{ AnswerBlock.subtitle && <AnswerBlock.subtitle /> }
 			{ showContent && questionGrade }
 			{ hasSelected && shared && <SharedQuestionNotice /> }
 			{ showContent && (
