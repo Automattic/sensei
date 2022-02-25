@@ -46,7 +46,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			]
 		);
 
-
 		$instance = new Sensei_Analysis_Overview_List_Table();
 		$method   = new ReflectionMethod( $instance, 'get_last_activity' );
 		$method->setAccessible( true );
