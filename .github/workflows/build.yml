@@ -45,6 +45,8 @@ jobs:
                 retention-days: 7
             - name: Commenting on the issue with the artifact link
               uses: tonyhallett/artifacts-url-comments@v1.1.0
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                   prefix: "Here's the plugin build for the changes in the commit ${{ github.sha }}:"
                   format: name
