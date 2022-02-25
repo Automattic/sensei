@@ -110,10 +110,7 @@ class Sensei_Analysis {
 			<div class="sensei-custom-navigation__tabbar">
 				<?php echo wp_kses( implode( '', $menu ), wp_kses_allowed_html( 'post' ) ); ?>
 				<div class="sensei-custom-navigation__tabbar__separator"></div>
-				<div class="sensei-custom-navigation__info">
-					<a href="https://senseilms.com/docs">Guide To Using Reports</a>
-					<span class="dashicons dashicons-external"></span>
-				</div>
+				<a class="sensei-custom-navigation__info" href="https://senseilms.com/docs">Guide To Using Reports</a>
 				<div></div>
 			</div>
 		</div>

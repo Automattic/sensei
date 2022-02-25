@@ -191,14 +191,14 @@ a.sensei-custom-navigation__tab:hover {
 	border-bottom: 4px solid #1E1E1E;
 }
 
-.sensei-custom-navigation__info {
-	display: flex;
-	gap: 5px;
-	align-items: flex-end;
+a.sensei-custom-navigation__info {
+	text-decoration: none;
+	font-size: 14px;
 
-	a {
-		text-decoration: none;
-		font-size: 14px;
+	&:after {
+		content: url(../icons/external-link.svg);
+		margin-left: 5px;
+		vertical-align: text-top;
 	}
 }
 
