@@ -111,7 +111,8 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		);
 
 		/* Assert. */
-		$this->assertNotEmpty(
+		$this->assertStringEndsWith(
+			'ago',
 			$method->invoke( $instance, $user_id ),
 			'The last activity should take into account lessons with status "' . $lesson_complete_status . '".'
 		);
