@@ -55,6 +55,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => __( 'Course', 'sensei-lms' ),
+					'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
 					'completions'     => __( 'Completed', 'sensei-lms' ),
 					'average_percent' => __( 'Average Grade', 'sensei-lms' ),
 				);
@@ -100,6 +101,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => array( 'title', false ),
+					'last_activity'   => array( 'last_activity', false ),
 					'completions'     => array( 'completions', false ),
 					'average_percent' => array( 'average_percent', false ),
 				);
@@ -278,6 +280,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
+				// Last Activity.
+				$last_activity_date = $this->get_course_last_activity_date( $item->ID );
+
 				// Get Course Completions
 				$course_args        = array(
 					'post_id' => $item->ID,
@@ -323,6 +328,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'           => $course_title,
+						'last_activity'   => $last_activity_date,
 						'completions'     => $course_completions,
 						'average_percent' => $course_average_percent,
 					),
@@ -490,6 +496,51 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		return $escaped_column_data;
+	}
+
+	/**
+	 * Get the date on which the last lesson was marked complete in a course by any student.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int $course_id Course ID.
+	 * @return string Date on which the last lesson was marked complete in a course by any student, or N/A if none.
+	 */
+	private function get_course_last_activity_date( int $course_id ): string {
+		$last_activity = Sensei_Utils::sensei_check_for_activity(
+			[
+				'post__in' => Sensei()->course->course_lessons( $course_id, 'any', 'ids' ),
+				'type'     => 'sensei_lesson_status',
+				'status'   => [ 'complete', 'passed', 'graded' ],
+				'number'   => 1,
+			],
+			true
+		);
+
+		if ( ! $last_activity ) {
+			return 'N/A';
+		}
+
+		// Return the full date when doing a CSV export.
+		if ( $this->csv_output ) {
+			return $last_activity->comment_date_gmt;
+		}
+
+		$timezone           = new DateTimeZone( 'GMT' );
+		$now                = new DateTime( 'now', $timezone );
+		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
+		$diff_in_days       = $now->diff( $last_activity_date )->days;
+
+		// Show a human readable date if activity is within 6 days.
+		if ( $diff_in_days < 7 ) {
+			return sprintf(
+				/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
+				__( '%s ago', 'sensei-lms' ),
+				human_time_diff( strtotime( $last_activity->comment_date_gmt ) )
+			);
+		}
+
+		return wp_date( get_option( 'date_format' ), $last_activity->getTimestamp(), $timezone );
 	}
 
 	/**
