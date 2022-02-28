@@ -6,8 +6,8 @@ on:
         types: [completed]
 
 jobs:
-    build:
-        name: Plugin Build
+    report-build:
+        name: Report Plugin Build
         runs-on: ubuntu-latest
         steps:
             - name: Get the artifact data for current run
