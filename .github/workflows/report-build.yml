@@ -3,7 +3,8 @@ name: Report Plugin Build
 on:
     workflow_run:
         workflows: ["Plugin Build"]
-        types: [completed]
+        types: 
+          - completed
 
 jobs:
     report-build:
