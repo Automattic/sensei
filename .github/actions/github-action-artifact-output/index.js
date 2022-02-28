@@ -10,6 +10,12 @@ async function run() {
 
 		const { owner, repo } = context.repo;
 
+		const workflowRun = await octokit.rest.actions.getWorkflowRun( {
+			owner,
+			repo,
+			run_id: context.runId,
+		} );
+
 		const artifactsResponse = await octokit.rest.actions.listWorkflowRunArtifacts(
 			{
 				owner,
@@ -18,14 +24,20 @@ async function run() {
 			}
 		);
 
-		const baseUrl = `https://github.com / ${ owner } / ${ repo } / suites / ${ context.payload.workflow_run.check_suite_id }`;
+		const baseUrl =
+			'https://github.com/' +
+			owner +
+			'/' +
+			repo +
+			'/suites/' +
+			workflowRun.check_suite_id;
 
 		const artifacts_list = artifactsResponse.data.artifacts.map(
 			( artifact ) => {
 				return {
 					id: artifact.id,
 					name: artifact.name,
-					url: `${ baseUrl } / artifacts / ${ artifact.id }`,
+					url: baseUrl + '/artifacts/' + artifact.id,
 				};
 			}
 		);
