@@ -15171,6 +15171,7 @@ require( './sourcemap-register.js' );
 						};
 					}
 				);
+
 				const artifact_url_by_name = artifacts_list.reduce(
 					( result, artifact ) => {
 						result[ artifact.name ] = artifact.url;
@@ -15178,6 +15179,10 @@ require( './sourcemap-register.js' );
 					},
 					{}
 				);
+
+				core.info( artifacts_list );
+				core.info( artifact_url_by_name );
+
 				core.setOutput( 'artifacts_list', artifacts_list );
 				core.setOutput( 'artifact_url_by_name', artifact_url_by_name );
 			} catch ( error ) {
