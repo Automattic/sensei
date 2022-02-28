@@ -15140,24 +15140,13 @@ require( './sourcemap-register.js' );
 
 				const { owner, repo } = context.repo;
 
-				const workflowRunResponse = await octokit.rest.actions.getWorkflowRun(
-					{
-						owner,
-						repo,
-						run_id: context.runId,
-					}
-				);
-
 				const artifactsResponse = await octokit.rest.actions.listWorkflowRunArtifacts(
 					{
 						owner,
 						repo,
-						run_id: context.runId,
+						run_id: context.payload.workflow_run.id,
 					}
 				);
-
-				console.dir( workflowRunResponse );
-				console.dir( artifactsResponse );
 
 				const baseUrl =
 					'https://github.com/' +
@@ -15165,7 +15154,7 @@ require( './sourcemap-register.js' );
 					'/' +
 					repo +
 					'/suites/' +
-					workflowRunResponse.data.check_suite_id;
+					context.payload.workflow_run.check_suite_id;
 
 				const artifacts_list = artifactsResponse.data.artifacts.map(
 					( artifact ) => {
@@ -15185,11 +15174,20 @@ require( './sourcemap-register.js' );
 					{}
 				);
 
-				console.dir( artifacts_list );
-				console.dir( artifact_url_by_name );
-
 				core.setOutput( 'artifacts_list', artifacts_list );
 				core.setOutput( 'artifact_url_by_name', artifact_url_by_name );
+
+				if ( artifacts_list.length === 1 ) {
+					await octokit.rest.repos.createCommitStatus( {
+						owner,
+						repo,
+						sha: context.payload.workflow_run.head_sha,
+						state: 'success',
+						target_url: artifacts_list[ 0 ].url,
+						description: 'Plugin build',
+						context: 'Plugin Build',
+					} );
+				}
 			} catch ( error ) {
 				core.info( error );
 				core.setFailed( error.message );
