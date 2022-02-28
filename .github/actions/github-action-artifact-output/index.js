@@ -10,6 +10,12 @@ async function run() {
 
 		const { owner, repo } = context.repo;
 
+		console.dir( {
+			owner,
+			repo,
+			run_id: context.runId,
+		} );
+
 		const workflowRun = await octokit.rest.actions.getWorkflowRun( {
 			owner,
 			repo,
@@ -32,6 +38,8 @@ async function run() {
 			'/suites/' +
 			workflowRun.check_suite_id;
 
+		console.log( baseUrl );
+
 		const artifacts_list = artifactsResponse.data.artifacts.map(
 			( artifact ) => {
 				return {
@@ -50,8 +58,8 @@ async function run() {
 			{}
 		);
 
-		core.info( artifacts_list );
-		core.info( artifact_url_by_name );
+		console.dir( artifacts_list );
+		console.dir( artifact_url_by_name );
 
 		core.setOutput( 'artifacts_list', artifacts_list );
 		core.setOutput( 'artifact_url_by_name', artifact_url_by_name );

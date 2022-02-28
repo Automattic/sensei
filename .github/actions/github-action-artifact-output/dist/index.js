@@ -15140,6 +15140,12 @@ require( './sourcemap-register.js' );
 
 				const { owner, repo } = context.repo;
 
+				console.dir( {
+					owner,
+					repo,
+					run_id: context.runId,
+				} );
+
 				const workflowRun = await octokit.rest.actions.getWorkflowRun( {
 					owner,
 					repo,
@@ -15162,6 +15168,8 @@ require( './sourcemap-register.js' );
 					'/suites/' +
 					workflowRun.check_suite_id;
 
+				console.log( baseUrl );
+
 				const artifacts_list = artifactsResponse.data.artifacts.map(
 					( artifact ) => {
 						return {
@@ -15180,8 +15188,8 @@ require( './sourcemap-register.js' );
 					{}
 				);
 
-				core.info( artifacts_list );
-				core.info( artifact_url_by_name );
+				console.dir( artifacts_list );
+				console.dir( artifact_url_by_name );
 
 				core.setOutput( 'artifacts_list', artifacts_list );
 				core.setOutput( 'artifact_url_by_name', artifact_url_by_name );
