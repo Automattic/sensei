@@ -182,7 +182,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args, $this->get_selected_course_id() );
+				$this->items = $this->get_lessons( $args, $this->get_course_filter() );
 				break;
 
 			case 'users':
@@ -252,7 +252,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args, $this->get_selected_course_id() );
+				$this->items = $this->get_lessons( $args, $this->get_course_filter() );
 				break;
 
 			case 'users':
@@ -710,16 +710,50 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * Overloads the parent method
 	 *
 	 * @since  1.2.0
-	 * @return void
 	 */
 	public function no_items() {
-		if ( ! $this->view || 'users' == $this->view ) {
-			$type = 'learners';
+		if ( 'lessons' === $this->type && ! $this->get_course_filter() ) {
+			$this->output_lessons_inner_form();
 		} else {
-			$type = $this->view;
+			if ( ! $this->view || 'users' === $this->view ) {
+				$type = 'learners';
+			} else {
+				$type = $this->view;
+			}
+			// translators: Placeholders %1$s and %3$s are opening and closing <em> tags, %2$s is the view type.
+			echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' ) );
 		}
-		// translators: Placeholders %1$s and %3$s are opening and closing <em> tages, %2$s is the view type.
-		echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' ) );
+	}
+
+	/**
+	 * Output the lessons inner form.
+	 *
+	 * @since 4.2.0
+	 */
+	private function output_lessons_inner_form() {
+		$courses = Sensei_Course::get_all_courses();
+		?>
+		<form class="sensei-analysis__inner-form">
+			<input type="hidden" name="page" value="<?php echo esc_attr( $this->page_slug ); ?>">
+			<input type="hidden" name="post_type" value="<?php echo esc_attr( $this->post_type ); ?>">
+			<input type="hidden" name="view" value="<?php echo esc_attr( $this->type ); ?>">
+
+			<div class="sensei-analysis__inner-form__description">
+				<p>
+					<?php esc_html_e( 'View your Lessons data by first selecting a course.', 'sensei-lms' ); ?>
+				</p>
+			</div>
+
+			<select name="course_filter">
+				<option value=""><?php esc_html_e( 'Select a course', 'sensei-lms' ); ?></option>
+				<?php foreach ( $courses as $course ) : ?>
+					<option value="<?php echo esc_attr( $course->ID ); ?>">
+						<?php echo esc_html( get_the_title( $course ) ); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+		</form>
+		<?php
 	}
 
 	/**
@@ -860,9 +894,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @return int The course ID or 0 if none is selected.
 	 */
-	private function get_selected_course_id() {
+	private function get_course_filter(): int {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
-		return isset( $_GET['course_id'] ) ? (int) $_GET['course_id'] : 0;
+		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
 	}
 
 }

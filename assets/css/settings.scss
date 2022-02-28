@@ -84,15 +84,27 @@
 	display: flex;
 	gap: 20px;
 	flex-flow: row;
+
 	@media (max-width: 850px) {
 		flex-direction: column;
 	}
+
+	table  {
+		tr  {
+			td  {
+				padding: 10px 7px;
+			}
+		}
+	}
+
 	&.user-profile  {
 		margin-left: 0;
 	}
+
 	&.course-profile  {
 		margin-left: 0;
 	}
+
 	.sensei-analysis-main {
 		flex: 1;
 		.tablenav {
@@ -102,10 +114,16 @@
 			}
 		}
 	}
-	table  {
-		tr  {
-			td  {
-				padding: 10px 7px;
+
+	.sensei-analysis__inner-form {
+		margin: 50px 0;
+		text-align: center;
+
+		&__description {
+			margin-bottom: 20px;
+
+			p {
+				font-size: 14px;
 			}
 		}
 	}
