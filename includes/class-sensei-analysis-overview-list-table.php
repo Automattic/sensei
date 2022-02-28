@@ -72,7 +72,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$columns = array(
 					'title'             => __( 'Student', 'sensei-lms' ),
 					'email'             => __( 'Email', 'sensei-lms' ),
-					'registered'        => __( 'Date Registered', 'sensei-lms' ),
+					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 					'active_courses'    => __( 'Active Courses', 'sensei-lms' ),
 					'completed_courses' => __( 'Completed Courses', 'sensei-lms' ),
 					'average_grade'     => __( 'Average Grade', 'sensei-lms' ),
@@ -117,7 +117,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$columns = array(
 					'title'             => array( 'user_login', false ),
 					'email'             => array( 'user_email', false ),
-					'registered'        => array( 'registered', false ),
 					'active_courses'    => array( 'active_courses', false ),
 					'completed_courses' => array( 'completed_courses', false ),
 					'average_grade'     => array( 'average_grade', false ),
@@ -470,7 +469,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					array(
 						'title'             => $user_name,
 						'email'             => $user_email,
-						'registered'        => $item->user_registered,
+						'last_activity'     => $this->get_last_activity( $item->ID ),
 						'active_courses'    => ( $user_courses_started - $user_courses_ended ),
 						'completed_courses' => $user_courses_ended,
 						'average_grade'     => $user_average_grade,
@@ -568,7 +567,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		// This stops the full meta data of each user being loaded
-		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
+		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'display_name' );
 
 		/**
 		 * Filter the WP_User_Query arguments
@@ -631,6 +630,53 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			__( 'Total Completed Courses', 'sensei-lms' ) => $total_courses_ended,
 		);
 		return apply_filters( 'sensei_analysis_stats_boxes', $stats_to_render );
+	}
+
+	/**
+	 * Get the last user activity date.
+	 * It is based on the date on which the last lesson was completed.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int $user_id The user ID.
+	 *
+	 * @return string The last activity date or 'N/A' if there is none.
+	 */
+	private function get_last_activity( int $user_id ): string {
+		$last_activity_comment = Sensei_Utils::sensei_check_for_activity(
+			array(
+				'number'  => 1,
+				'user_id' => $user_id,
+				'type'    => 'sensei_lesson_status',
+				'status'  => [ 'complete', 'passed', 'graded' ],
+			),
+			true
+		);
+
+		if ( ! $last_activity_comment ) {
+			return 'N/A';
+		}
+
+		// Return the full date when doing CSV export.
+		if ( $this->csv_output ) {
+			return $last_activity_comment->comment_date_gmt;
+		}
+
+		$timezone           = new DateTimeZone( 'GMT' );
+		$now                = new DateTime( 'now', $timezone );
+		$last_activity_date = new DateTime( $last_activity_comment->comment_date_gmt, $timezone );
+		$diff_in_days       = $now->diff( $last_activity_date )->days;
+
+		// Show the human-readable time diff if less than a week.
+		if ( $diff_in_days < 7 ) {
+			return sprintf(
+				/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
+				esc_html__( '%s ago', 'sensei-lms' ),
+				human_time_diff( strtotime( $last_activity_comment->comment_date_gmt ) )
+			);
+		}
+
+		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
 	}
 
 	/**
