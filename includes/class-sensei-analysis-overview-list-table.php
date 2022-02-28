@@ -31,7 +31,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	public function __construct( $type = 'users' ) {
 		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
-		$this->page_slug = Sensei()->analysis->page_slug;
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_overview' );

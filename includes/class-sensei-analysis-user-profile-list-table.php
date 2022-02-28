@@ -31,7 +31,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	public function __construct( $user_id = 0 ) {
 		$this->user_id   = intval( $user_id );
-		$this->page_slug = Sensei()->analysis->page_slug;
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );

@@ -32,7 +32,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	public function __construct( $lesson_id = 0 ) {
 		$this->lesson_id = intval( $lesson_id );
 		$this->course_id = intval( get_post_meta( $this->lesson_id, '_lesson_course', true ) );
-		$this->page_slug = Sensei()->analysis->page_slug;
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_lesson' );

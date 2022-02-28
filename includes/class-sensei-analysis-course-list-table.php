@@ -34,7 +34,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public function __construct( $course_id = 0, $user_id = 0 ) {
 		$this->course_id = intval( $course_id );
 		$this->user_id   = intval( $user_id );
-		$this->page_slug = Sensei()->analysis->page_slug;
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
 			$this->view = $_GET['view'];
