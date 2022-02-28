@@ -45,7 +45,7 @@ jobs:
                 retention-days: 7
             - name: Get the artifact data for current run
               id: artifacts
-              uses: .github/actions/github-action-artifact-output
+              uses: ./.github/actions/github-action-artifact-output
               with:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Test output
