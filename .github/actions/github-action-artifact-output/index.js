@@ -6,22 +6,19 @@ async function run() {
 		const GITHUB_TOKEN = core.getInput( 'GITHUB_TOKEN' );
 		const octokit = github.getOctokit( GITHUB_TOKEN );
 
-		const context = github.context;
+		const { context } = github;
 
 		const { owner, repo } = context.repo;
 
-		console.dir( context.payload );
 		const artifactsResponse = await octokit.rest.actions.listWorkflowRunArtifacts(
 			{
 				owner,
 				repo,
-				run_id: context.payload.workflow_run.id,
+				run_id: context.runId,
 			}
 		);
 
 		const baseUrl = `https://github.com / ${ owner } / ${ repo } / suites / ${ context.payload.workflow_run.check_suite_id }`;
-
-		console.dir( artifactsResponse );
 
 		const artifacts_list = artifactsResponse.data.artifacts.map(
 			( artifact ) => {

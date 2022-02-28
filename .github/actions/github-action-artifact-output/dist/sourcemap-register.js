@@ -57,10 +57,10 @@
 		284: ( e, r, n ) => {
 			e = n.nmd( e );
 			var t = n( 596 ).SourceMapConsumer;
-			var o = n( 622 );
+			var o = n( 17 );
 			var i;
 			try {
-				i = n( 747 );
+				i = n( 147 );
 				if ( ! i.existsSync || ! i.readFileSync ) {
 					i = null;
 				}
@@ -98,6 +98,27 @@
 					process !== null &&
 					typeof process.on === 'function'
 				);
+			}
+			function globalProcessVersion() {
+				if ( typeof process === 'object' && process !== null ) {
+					return process.version;
+				} else {
+					return '';
+				}
+			}
+			function globalProcessStderr() {
+				if ( typeof process === 'object' && process !== null ) {
+					return process.stderr;
+				}
+			}
+			function globalProcessExit( e ) {
+				if (
+					typeof process === 'object' &&
+					process !== null &&
+					typeof process.exit === 'function'
+				) {
+					return process.exit( e );
+				}
 			}
 			function handlerExec( e ) {
 				return function ( r ) {
@@ -348,7 +369,7 @@
 					var t = e.getLineNumber();
 					var o = e.getColumnNumber() - 1;
 					var i = /^v(10\.1[6-9]|10\.[2-9][0-9]|10\.[0-9]{3,}|1[2-9]\d*|[2-9]\d|\d{3,}|11\.11)/;
-					var a = i.test( process.version ) ? 0 : 62;
+					var a = i.test( globalProcessVersion() ) ? 0 : 62;
 					if ( t === 1 && o > a && ! isInBrowser() && ! e.isEval() ) {
 						o -= a;
 					}
@@ -442,18 +463,16 @@
 			}
 			function printErrorAndExit( e ) {
 				var r = getErrorSource( e );
-				if (
-					process.stderr._handle &&
-					process.stderr._handle.setBlocking
-				) {
-					process.stderr._handle.setBlocking( true );
+				var n = globalProcessStderr();
+				if ( n && n._handle && n._handle.setBlocking ) {
+					n._handle.setBlocking( true );
 				}
 				if ( r ) {
 					console.error();
 					console.error( r );
 				}
 				console.error( e.stack );
-				process.exit( 1 );
+				globalProcessExit( 1 );
 			}
 			function shimEmitUncaughtException() {
 				var e = process.emit;
@@ -2514,11 +2533,11 @@
 			r.SourceMapConsumer = n( 327 ).SourceMapConsumer;
 			n( 990 );
 		},
-		747: ( e ) => {
+		147: ( e ) => {
 			'use strict';
 			e.exports = require( 'fs' );
 		},
-		622: ( e ) => {
+		17: ( e ) => {
 			'use strict';
 			e.exports = require( 'path' );
 		},
