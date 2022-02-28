@@ -51,9 +51,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => __( 'Course', 'sensei-lms' ),
-					'completions'     => __( 'Completed', 'sensei-lms' ),
-					'average_percent' => __( 'Average Grade', 'sensei-lms' ),
+					'title'              => __( 'Course', 'sensei-lms' ),
+					'completions'        => __( 'Completed', 'sensei-lms' ),
+					'average_percent'    => __( 'Average Grade', 'sensei-lms' ),
+					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
 
@@ -96,9 +97,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => array( 'title', false ),
-					'completions'     => array( 'completions', false ),
-					'average_percent' => array( 'average_percent', false ),
+					'title'              => array( 'title', false ),
+					'completions'        => array( 'completions', false ),
+					'average_percent'    => array( 'average_percent', false ),
+					'days_to_completion' => array( 'days_to_completion', false ),
 				);
 				break;
 
@@ -317,12 +319,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$course_average_percent .= '%';
 				}
 
-				$column_data = apply_filters(
+				$days_to_completion = $this->get_course_days_to_completion( $item );
+				$column_data        = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'           => $course_title,
-						'completions'     => $course_completions,
-						'average_percent' => $course_average_percent,
+						'title'              => $course_title,
+						'completions'        => $course_completions,
+						'average_percent'    => $course_average_percent,
+						'days_to_completion' => $days_to_completion ?? __( 'N/A', 'sensei-lms' ),
 					),
 					$item,
 					$this
@@ -755,6 +759,45 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		return $text;
 	}
 
+	/**
+	 * Return an average number of days that students spent to complete the course.
+	 *
+	 * @param WP_Post $item The course to calculate days to completion.
+	 *
+	 * @return float|null Returns an average numbers of days or null if there is not enough data.
+	 */
+	private function get_course_days_to_completion( $item ) {
+		$course_args        = array(
+			'post_id' => $item->ID,
+			'type'    => 'sensei_course_status',
+			'status'  => 'complete',
+		);
+		$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ), true );
+		if ( ! is_array( $user_courses_ended ) ) {
+			$user_courses_ended = array( $user_courses_ended );
+		}
+		$days_to_completion = array();
+		foreach ( $user_courses_ended as $status_comment ) {
+			$starting_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
+			if ( false === $starting_date ) {
+				continue;
+			}
+			if ( $starting_date === $status_comment->comment_date ) {
+				continue;
+			}
+
+			$timezone             = new DateTimeZone( 'UTC' );
+			$starting_datetime    = new DateTime( $starting_date, $timezone );
+			$last_activity_date   = new DateTime( $status_comment->comment_date, $timezone );
+			$days_to_completion[] = $starting_datetime->diff( $last_activity_date )->days;
+		}
+
+		if ( 0 === count( $days_to_completion ) ) {
+			return null;
+		}
+
+		return ceil( array_sum( $days_to_completion ) / count( $days_to_completion ) );
+	}
 }
 
 /**
