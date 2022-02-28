@@ -43,15 +43,11 @@ jobs:
                 name: sensei-lms-${{ github.sha }}.zip
                 path: ${{ github.workspace }}/sensei-lms/
                 retention-days: 7
-            - name: Commenting on the issue with the artifact link
-              uses: tonyhallett/artifacts-url-comments@v1.1.0
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Get the artifact data for current run
+              id: artifacts
+              uses: .github/actions/github-action-artifact-output
               with:
-                  prefix: "Here's the plugin build for the changes in the commit ${{ github.sha }}:"
-                  format: name
-                  addTo: pull
-                  useBranch: 'false'
-                  useCommitMessages: 'false'
-                  usePullTitle: 'false'
-                  usePullBody: 'false'
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Test output
+              run: echo "Testing if URL appears '${{ fromJSON(steps.artifacts.outputs.artifacts_list)[0].url}}' with suffix"
+                  
