@@ -92,7 +92,7 @@ class Sensei_Analysis {
 	 */
 	public function add_custom_navigation() {
 		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
-		$is_reports_page = isset( $_GET['page'] ) && ( $_GET['page'] === self::PAGE_SLUG );
+		$is_reports_page = isset( $_GET['page'] ) && ( self::PAGE_SLUG === $_GET['page'] );
 
 		if ( ! $is_reports_page ) {
 			return;
