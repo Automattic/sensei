@@ -322,13 +322,15 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$days_to_completion = $this->get_course_days_to_completion( $item );
-				$column_data        = apply_filters(
+				$days_to_completion = Sensei_Utils::as_absolute_rounded_number( $days_to_completion, 2 );
+
+				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'              => $course_title,
 						'completions'        => $course_completions,
 						'average_percent'    => $course_average_percent,
-						'days_to_completion' => $days_to_completion ?? __( 'N/A', 'sensei-lms' ),
+						'days_to_completion' => $days_to_completion ?? __( 'n/a', 'sensei-lms' ),
 					),
 					$item,
 					$this
@@ -825,6 +827,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! is_array( $user_courses_ended ) ) {
 			$user_courses_ended = array( $user_courses_ended );
 		}
+
 		$days_to_completion = array();
 		foreach ( $user_courses_ended as $status_comment ) {
 			$starting_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
@@ -835,17 +838,20 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				continue;
 			}
 
-			$timezone             = new DateTimeZone( 'UTC' );
-			$starting_datetime    = new DateTime( $starting_date, $timezone );
-			$last_activity_date   = new DateTime( $status_comment->comment_date, $timezone );
-			$days_to_completion[] = $starting_datetime->diff( $last_activity_date )->days;
+			$timezone           = new DateTimeZone( 'UTC' );
+			$starting_datetime  = new DateTime( $starting_date, $timezone );
+			$last_activity_date = new DateTime( $status_comment->comment_date, $timezone );
+			$dates_difference   = $starting_datetime->diff( $last_activity_date );
+
+			// We count it as the whole day if it takes an hour or more.
+			$days_to_completion[] = ( $dates_difference->days + ( $dates_difference->h > 0 ? 1 : 0 ) );
 		}
 
 		if ( 0 === count( $days_to_completion ) ) {
 			return null;
 		}
 
-		return ceil( array_sum( $days_to_completion ) / count( $days_to_completion ) );
+		return array_sum( $days_to_completion ) / count( $days_to_completion );
 	}
 }
 
