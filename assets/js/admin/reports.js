@@ -4,7 +4,7 @@
 import domReady from '@wordpress/dom-ready';
 
 domReady( () => {
-	jQuery( '.sensei-analysis__inner-form' ).on( 'change', ( event ) => {
+	jQuery( '.sensei-analysis__filter-form' ).on( 'change', ( event ) => {
 		event.currentTarget.submit();
 	} );
 } );

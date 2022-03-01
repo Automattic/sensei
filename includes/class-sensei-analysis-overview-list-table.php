@@ -33,10 +33,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
-		// Load Parent token into constructor
+		// Load Parent token into constructor.
 		parent::__construct( 'analysis_overview' );
 
-		// Actions
+		// Actions.
+		if ( 'lessons' === $this->type ) {
+			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filter_form' ) );
+		}
+
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
@@ -713,7 +717,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	public function no_items() {
 		if ( 'lessons' === $this->type && ! $this->get_course_filter() ) {
-			$this->output_lessons_inner_form();
+			$this->output_lessons_inner_filter_form();
 		} else {
 			if ( ! $this->view || 'users' === $this->view ) {
 				$type = 'learners';
@@ -726,34 +730,80 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Output the lessons inner form.
+	 * Output the lessons top filter form.
+	 *
+	 * @since  4.2.0
+	 */
+	public function output_lessons_top_filter_form() {
+		?>
+		<form class="sensei-analysis__filter-form">
+			<?php $this->output_query_params_as_inputs(); ?>
+
+			<label for="sensei-course-filter">
+				<?php esc_html_e( 'Filter', 'sensei-lms' ); ?>:
+			</label>
+
+			<?php $this->output_course_filter_select(); ?>
+		</form>
+		<?php
+	}
+
+	/**
+	 * Output the lessons inner filter form.
 	 *
 	 * @since 4.2.0
 	 */
-	private function output_lessons_inner_form() {
-		$courses = Sensei_Course::get_all_courses();
+	private function output_lessons_inner_filter_form() {
 		?>
-		<form class="sensei-analysis__inner-form">
-			<input type="hidden" name="page" value="<?php echo esc_attr( $this->page_slug ); ?>">
-			<input type="hidden" name="post_type" value="<?php echo esc_attr( $this->post_type ); ?>">
-			<input type="hidden" name="view" value="<?php echo esc_attr( $this->type ); ?>">
+		<form class="sensei-analysis__filter-form sensei-analysis__filter-form--inner">
+			<?php $this->output_query_params_as_inputs(); ?>
 
-			<div class="sensei-analysis__inner-form__description">
-				<p>
-					<?php esc_html_e( 'View your Lessons data by first selecting a course.', 'sensei-lms' ); ?>
-				</p>
-			</div>
+			<p>
+				<?php esc_html_e( 'View your Lessons data by first selecting a course.', 'sensei-lms' ); ?>
+			</p>
 
-			<select name="course_filter">
-				<option value=""><?php esc_html_e( 'Select a course', 'sensei-lms' ); ?></option>
-				<?php foreach ( $courses as $course ) : ?>
-					<option value="<?php echo esc_attr( $course->ID ); ?>">
-						<?php echo esc_html( get_the_title( $course ) ); ?>
-					</option>
-				<?php endforeach; ?>
-			</select>
+			<?php $this->output_course_filter_select(); ?>
 		</form>
 		<?php
+	}
+
+	/**
+	 * Output the course filter select input.
+	 *
+	 * @since 4.2.0
+	 */
+	private function output_course_filter_select() {
+		$courses            = Sensei_Course::get_all_courses();
+		$selected_course_id = $this->get_course_filter();
+		?>
+		<select name="course_filter" id="sensei-course-filter">
+			<option>
+				<?php esc_html_e( 'Select a course', 'sensei-lms' ); ?>
+			</option>
+			<?php foreach ( $courses as $course ) : ?>
+				<option
+					value="<?php echo esc_attr( $course->ID ); ?>"
+					<?php echo $selected_course_id === $course->ID ? 'selected' : ''; ?>
+				>
+					<?php echo esc_html( get_the_title( $course ) ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	/**
+	 * Output the current query params as hidden inputs.
+	 *
+	 * @since 4.2.0
+	 */
+	private function output_query_params_as_inputs() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- Arguments are used for filtering.
+		foreach ( $_GET as $name => $value ) {
+			?>
+			<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
+			<?php
+		}
 	}
 
 	/**
