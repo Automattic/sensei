@@ -92,7 +92,7 @@ class Sensei_Analysis {
 	 */
 	public function add_custom_navigation() {
 		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
-		$is_reports_page = isset( $_GET['page'] ) && ( $_GET['page'] === $this->page_slug );
+		$is_reports_page = isset( $_GET['page'] ) && ( $_GET['page'] === self::PAGE_SLUG );
 
 		if ( ! $is_reports_page ) {
 			return;
@@ -125,7 +125,7 @@ class Sensei_Analysis {
 		foreach ( $reports as $key => $title ) {
 			$class_name   = $current_report_key === $key ? 'active' : '';
 			$query_args   = array(
-				'page'      => $this->page_slug,
+				'page'      => self::PAGE_SLUG,
 				'post_type' => $this->post_type,
 				'view'      => $key,
 			);
