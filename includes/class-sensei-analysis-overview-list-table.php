@@ -719,10 +719,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( 'lessons' === $this->type && ! $this->get_course_filter() ) {
 			$this->output_lessons_inner_filter_form();
 		} else {
-			if ( ! $this->view || 'users' === $this->view ) {
-				$type = 'learners';
+			if ( ! $this->type || 'users' === $this->type ) {
+				$type = __( 'students', 'sensei-lms' );
 			} else {
-				$type = $this->view;
+				$type = $this->type;
 			}
 			// translators: Placeholders %1$s and %3$s are opening and closing <em> tags, %2$s is the view type.
 			echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' ) );
@@ -775,6 +775,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	private function output_course_filter_select() {
 		$courses            = Sensei_Course::get_all_courses();
 		$selected_course_id = $this->get_course_filter();
+
 		?>
 		<select name="course_filter" id="sensei-course-filter">
 			<option>
