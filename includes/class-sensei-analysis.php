@@ -12,9 +12,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Analysis {
 
+	/**
+	 * The reports' page slug.
+	 */
+	const PAGE_SLUG = 'sensei_reports';
+
+	/**
+	 * The reports' page name (title).
+	 *
+	 * @var string
+	 */
 	public $name;
+
+	/**
+	 * Reference to the main plugin file name.
+	 *
+	 * @var string
+	 */
 	public $file;
-	public $page_slug;
+
 	/**
 	 * The post type under which is the page registered.
 	 *
@@ -29,16 +45,16 @@ class Sensei_Analysis {
 	 * @param string $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Analysis', 'sensei-lms' );
+		$this->name      = __( 'Reports', 'sensei-lms' );
 		$this->file      = $file;
-		$this->page_slug = 'sensei_analysis';
 		$this->post_type = 'course';
 
-		// Admin functions
+		// Admin functions.
 		if ( is_admin() ) {
 			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container' ) );
 
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- Arguments used for comparison.
+			if ( isset( $_GET['page'] ) && self::PAGE_SLUG === $_GET['page'] ) {
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
@@ -48,6 +64,22 @@ class Sensei_Analysis {
 		}
 	}
 
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return string|void
+	 */
+	public function __get( $key ) {
+		if ( 'page_slug' === $key ) {
+			_doing_it_wrong( 'Sensei_Analysis->page_slug', 'The "page_slug" property is deprecated. Use the Sensei_Analysis::PAGE_SLUG constant instead.', '4.2.0' );
+
+			return self::PAGE_SLUG;
+		}
+	}
 
 	/**
 	 * analysis_admin_menu function.
@@ -60,10 +92,10 @@ class Sensei_Analysis {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=course',
-				__( 'Analysis', 'sensei-lms' ),
-				__( 'Analysis', 'sensei-lms' ),
+				$this->name,
+				$this->name,
 				'manage_sensei_grades',
-				'sensei_analysis',
+				self::PAGE_SLUG,
 				array( $this, 'analysis_page' )
 			);
 		}
@@ -449,7 +481,7 @@ class Sensei_Analysis {
 	public function analysis_user_profile_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'edit.php' ) ) ), esc_html( $this->name ) );
@@ -458,7 +490,7 @@ class Sensei_Analysis {
 			$url       = esc_url(
 				add_query_arg(
 					array(
-						'page'      => $this->page_slug,
+						'page'      => self::PAGE_SLUG,
 						'user'      => $user_id,
 						'post_type' => $this->post_type,
 					),
@@ -483,7 +515,7 @@ class Sensei_Analysis {
 	public function analysis_user_course_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'edit.php' ) ) ), esc_html( $this->name ) );
@@ -492,7 +524,7 @@ class Sensei_Analysis {
 			$user_data = get_userdata( $user_id );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'user_id'   => $user_id,
 					'post_type' => $this->post_type,
 				),
@@ -506,7 +538,7 @@ class Sensei_Analysis {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -528,7 +560,7 @@ class Sensei_Analysis {
 	public function analysis_course_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
@@ -536,7 +568,7 @@ class Sensei_Analysis {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -558,7 +590,7 @@ class Sensei_Analysis {
 	public function analysis_course_users_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
@@ -566,7 +598,7 @@ class Sensei_Analysis {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -588,7 +620,7 @@ class Sensei_Analysis {
 	public function analysis_lesson_users_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
@@ -597,7 +629,7 @@ class Sensei_Analysis {
 			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -606,7 +638,7 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'lesson_id' => $lesson_id,
 					'post_type' => $this->post_type,
 				),

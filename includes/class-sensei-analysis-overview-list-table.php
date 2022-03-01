@@ -12,8 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  */
 class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
+
 	public $type;
-	public $page_slug = 'sensei_analysis';
+	public $page_slug;
+
 	/**
 	 * The post type under which is the page registered.
 	 *
@@ -28,7 +30,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return  void
 	 */
 	public function __construct( $type = 'users' ) {
-		$this->type = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
+		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_overview' );
