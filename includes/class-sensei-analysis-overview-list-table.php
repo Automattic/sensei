@@ -823,7 +823,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',
 		);
-		$user_courses_ended = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_ended', $course_args, $item ), true );
+		$user_courses_ended = Sensei_Utils::sensei_check_for_activity( $course_args, true );
 		if ( ! is_array( $user_courses_ended ) ) {
 			$user_courses_ended = array( $user_courses_ended );
 		}
