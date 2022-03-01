@@ -322,7 +322,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$days_to_completion = $this->get_course_days_to_completion( $item );
-				$days_to_completion = Sensei_Utils::as_absolute_rounded_number( $days_to_completion, 2 );
+				if ( null !== $days_to_completion ) {
+					$days_to_completion = Sensei_Utils::as_absolute_rounded_number( $days_to_completion, 2 );
+				}
 
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
