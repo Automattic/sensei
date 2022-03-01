@@ -232,7 +232,7 @@ class Sensei_Admin {
 		_deprecated_function( __METHOD__, '4.0.0' );
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] == 'sensei' ) {
-			wp_safe_redirect( 'admin.php?page=sensei_analysis' );
+			wp_safe_redirect( 'admin.php?page=sensei_reports' );
 			exit;
 		}
 	}
@@ -328,7 +328,7 @@ class Sensei_Admin {
 	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 		$module_pages_screen_ids = [ 'edit-module' ];
 
 		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );

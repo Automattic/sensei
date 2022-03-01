@@ -43,7 +43,7 @@ const adminTracking = [
 	{
 		selector:
 			selector +
-			'a[href="edit.php?post_type=course&page=sensei_analysis"]',
+			'a[href="edit.php?post_type=course&page=sensei_reports"]',
 		eventName: 'analysis_view',
 	},
 	{
