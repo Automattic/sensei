@@ -1,0 +1,46 @@
+name: Plugin Build
+
+on: pull_request
+
+jobs:
+    build:
+        name: Plugin Build
+        runs-on: ubuntu-18.04
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/cache@v2
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+            - uses: actions/cache@v2
+              with:
+                path: node_modules/
+                key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+            - uses: actions/cache@v2
+              with:
+                path: ~/.cache/composer/
+                key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+            - uses: actions/cache@v2
+              with:
+                path: vendor/
+                key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
+            - uses: shivammathur/setup-php@v2
+              with:
+                php-version: '7.4'
+                tools: composer
+                coverage: none
+            - name: Install JS dependencies
+              run: npm ci
+            - name: Install PHP dependencies
+              run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
+            - name: Build Plugin
+              run: npm run build
+            - name: Decompress plugin
+              run: unzip sensei-lms.zip -d sensei-lms
+            - name: Store Artifact
+              uses: actions/upload-artifact@v2
+              with:
+                name: sensei-lms-${{ github.sha }}.zip
+                path: ${{ github.workspace }}/sensei-lms/
+                retention-days: 7
+                  

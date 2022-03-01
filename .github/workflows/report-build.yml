@@ -1,0 +1,21 @@
+name: Report Plugin Build
+
+on:
+    workflow_run:
+        workflows: ["Plugin Build"]
+        types: 
+          - completed
+
+jobs:
+    report-build:
+        name: Report Plugin Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get the artifact data for current run
+              id: artifacts
+              uses: ./.github/actions/github-action-artifact-output
+              with:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Test output
+              run: echo "Testing if URL appears '${{ fromJSON(steps.artifacts.outputs.artifacts_list)[0].url}}' with suffix"
+                  

@@ -1,0 +1,14 @@
+name: 'List artifacts of the current run as outputs'
+description: 'Just process and return artifacts name and url in the outputs'
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub token'
+    required: true
+outputs:
+  artifacts_list:
+    description: 'List of artifacts detected'
+  artifact_url_by_name:
+    description: 'Mapping of artifacts URLs mapped by name'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
