@@ -114,11 +114,11 @@ class Sensei_Analysis {
 		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
 
 		$reports            = array(
-			'learners' => __( 'Students', 'sensei-lms' ),
+			'students' => __( 'Students', 'sensei-lms' ),
 			'courses'  => __( 'Courses', 'sensei-lms' ),
 			'lessons'  => __( 'Lessons', 'sensei-lms' ),
 		);
-		$current_report_key = isset( $reports[ $type ] ) ? $type : 'learners';
+		$current_report_key = isset( $reports[ $type ] ) ? $type : 'students';
 
 		$link_template = '<div><a href="%s" class="sensei-custom-navigation__tab %s">%s</a></div>';
 		$menu          = array();
