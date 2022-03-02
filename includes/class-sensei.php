@@ -276,6 +276,7 @@ class Sensei_Main {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		$this->initialize_global_objects();
+		$this->initialize_cli();
 	}
 
 	/**
@@ -455,6 +456,19 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
+	}
+
+	/**
+	 * Load the WP-CLI commands.
+	 *
+	 * @since 4.2.0
+	 */
+	private function initialize_cli() {
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			require_once $this->resolve_path( 'includes/class-sensei-cli.php' );
+
+			new Sensei_CLI();
+		}
 	}
 
 	/**
