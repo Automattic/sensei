@@ -281,11 +281,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				// Last Activity.
-				$last_activity_date = $this->get_last_activity_date(
-					array(
-						'post__in' => Sensei()->course->course_lessons( $item->ID, 'any', 'ids' ),
-					)
-				);
+				$last_activity_date = 'N/A';
+				$lessons            = Sensei()->course->course_lessons( $item->ID, 'any', 'ids' );
+
+				if ( 0 < count( $lessons ) ) {
+					$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
+				}
 
 				// Get Course Completions
 				$course_args        = array(
