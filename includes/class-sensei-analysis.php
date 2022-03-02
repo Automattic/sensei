@@ -142,7 +142,7 @@ class Sensei_Analysis {
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
 				<?php echo wp_kses( implode( '', $menu ), wp_kses_allowed_html( 'post' ) ); ?>
-				<div class="sensei-custom-navigation__tabbar__separator"></div>
+				<div class="sensei-custom-navigation__tabbar-separator"></div>
 				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/docs">
 					<?php echo esc_html__( 'Guide To Using Reports', 'sensei-lms' ); ?>
 				</a>
