@@ -111,6 +111,9 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022.03.02 - version 4.1.1
+* Add question subtitle support [#4872](https://github.com/Automattic/sensei/pull/4872)
+
 2022.02.23 - version 4.1.0
 * Remove unneeded notices [#4862](https://github.com/Automattic/sensei/pull/4862)
 * Add lesson actions and navigation to the bottom of the content, for screen reader only [#4861](https://github.com/Automattic/sensei/pull/4861)
