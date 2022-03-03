@@ -41,7 +41,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	 *
 	 * @return string[][]
 	 */
-	public function lessonUncompleteStatuses(): array {
+	public function lessonIncompleteStatuses(): array {
 		return [
 			[ 'in-progress' ],
 			[ 'ungraded' ],
@@ -52,10 +52,10 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that the last activity is ignoring uncompleted lessons.
 	 *
-	 * @covers Sensei_Admin::get_last_activity
-	 * @dataProvider lessonUncompleteStatuses
+	 * @covers Sensei_Admin::get_last_activity_date
+	 * @dataProvider lessonIncompleteStatuses
 	 */
-	public function testGetLastActivityShouldIgnoreUncompleteLessons( $lesson_uncomplete_status ) {
+	public function testGetLastActivityDateShouldIgnoreIncompleteLessons( $lesson_incomplete_status ) {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create(
@@ -63,7 +63,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		);
 
 		$instance = new Sensei_Analysis_Overview_List_Table();
-		$method   = new ReflectionMethod( $instance, 'get_last_activity' );
+		$method   = new ReflectionMethod( $instance, 'get_last_activity_date' );
 		$method->setAccessible( true );
 
 		/* Act. */
@@ -72,14 +72,14 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		wp_update_comment(
 			[
 				'comment_ID'       => $lesson_activity_comment_id,
-				'comment_approved' => $lesson_uncomplete_status,
+				'comment_approved' => $lesson_incomplete_status,
 			]
 		);
 
 		/* Assert. */
 		$this->assertEquals(
 			'N/A',
-			$method->invoke( $instance, $user_id ),
+			$method->invoke( $instance, array( 'user_id' => $user_id ) ),
 			'The last activity should not take into account lessons that are in progress.'
 		);
 	}
@@ -87,10 +87,10 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that the last activity is based on "completed" lessons.
 	 *
-	 * @covers Sensei_Admin::get_last_activity
+	 * @covers Sensei_Admin::get_last_activity_date
 	 * @dataProvider lessonCompleteStatuses
 	 */
-	public function testGetLastActivityShouldBeBasedOnCompletedLessons( $lesson_complete_status ) {
+	public function testGetLastActivityDateShouldBeBasedOnCompletedLessons( $lesson_complete_status ) {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create(
@@ -98,7 +98,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		);
 
 		$instance = new Sensei_Analysis_Overview_List_Table();
-		$method   = new ReflectionMethod( $instance, 'get_last_activity' );
+		$method   = new ReflectionMethod( $instance, 'get_last_activity_date' );
 		$method->setAccessible( true );
 
 		/* Act. */
@@ -113,7 +113,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertStringEndsWith(
 			'ago',
-			$method->invoke( $instance, $user_id ),
+			$method->invoke( $instance, array( 'user_id' => $user_id ) ),
 			'The last activity should take into account lessons with status "' . $lesson_complete_status . '".'
 		);
 	}
@@ -121,9 +121,9 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that the last activity should be the more recent one.
 	 *
-	 * @covers Sensei_Admin::get_last_activity
+	 * @covers Sensei_Admin::get_last_activity_date
 	 */
-	public function testGetLastActivityShouldReturnTheMoreRecentActivity() {
+	public function testGetLastActivityDateShouldReturnTheMoreRecentActivity() {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$course_id = $this->factory->course->create();
@@ -135,7 +135,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		);
 
 		$instance = new Sensei_Analysis_Overview_List_Table();
-		$method   = new ReflectionMethod( $instance, 'get_last_activity' );
+		$method   = new ReflectionMethod( $instance, 'get_last_activity_date' );
 		$method->setAccessible( true );
 
 		/* Act. */
@@ -162,7 +162,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			'2 days ago',
-			$method->invoke( $instance, $user_id ),
+			$method->invoke( $instance, array( 'user_id' => $user_id ) ),
 			'The last activity should be the more recent activity.'
 		);
 
@@ -179,7 +179,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			'1 day ago',
-			$method->invoke( $instance, $user_id ),
+			$method->invoke( $instance, array( 'user_id' => $user_id ) ),
 			'The last activity should be the more recent activity.'
 		);
 	}
@@ -187,9 +187,9 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that the last activity date format is human-readable when less than a week.
 	 *
-	 * @covers Sensei_Admin::get_last_activity
+	 * @covers Sensei_Admin::get_last_activity_date
 	 */
-	public function testGetLastActivityShouldUseHumanReadableTimeFormatIfLessThanAWeek() {
+	public function testGetLastActivityDateShouldUseHumanReadableTimeFormatIfLessThanAWeek() {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create(
@@ -197,7 +197,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		);
 
 		$instance = new Sensei_Analysis_Overview_List_Table();
-		$method   = new ReflectionMethod( $instance, 'get_last_activity' );
+		$method   = new ReflectionMethod( $instance, 'get_last_activity_date' );
 		$method->setAccessible( true );
 
 		/* Act. */
@@ -218,7 +218,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 				$lesson_activity_timestamp,
 				new DateTimeZone( 'GMT' )
 			),
-			$method->invoke( $instance, $user_id ),
+			$method->invoke( $instance, array( 'user_id' => $user_id ) ),
 			'The last activity date format or timezone is invalid.'
 		);
 
@@ -235,8 +235,49 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			'1 day ago',
-			$method->invoke( $instance, $user_id ),
+			$method->invoke( $instance, array( 'user_id' => $user_id ) ),
 			'The last activity date format should be in human-readable form.'
+		);
+	}
+
+	/**
+	 * Tests that the correct last activity date is returned when queried by course.
+	 *
+	 * @covers Sensei_Admin::get_last_activity_date
+	 */
+	public function testGetLastActivityDateByCourseLessons() {
+		$user_ids   = $this->factory->user->create_many( 3 );
+		$lesson_ids = $this->factory->lesson->create_many(
+			2,
+			[ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ]
+		);
+		$days_count = -7;
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_last_activity_date' );
+		$method->setAccessible( true );
+
+		// Complete a lesson for each student on a different date.
+		foreach ( $user_ids as $user_id ) {
+			$lesson_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_ids[0], $user_id, true );
+			wp_update_comment(
+				[
+					'comment_ID'   => $lesson_activity_comment_id,
+					'comment_date' => gmdate( 'Y-m-d H:i:s', strtotime( $days_count . ' days' ) ),
+				]
+			);
+
+			$days_count--;
+		}
+
+		$this->assertEquals(
+			wp_date(
+				get_option( 'date_format' ),
+				strtotime( '-7 days' ),
+				new DateTimeZone( 'GMT' )
+			),
+			$method->invoke( $instance, array( 'post__in' => $lesson_ids ) ),
+			'The last activity date format or timezone is invalid.'
 		);
 	}
 }
