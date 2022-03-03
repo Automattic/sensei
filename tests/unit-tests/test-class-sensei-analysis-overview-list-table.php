@@ -239,4 +239,94 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'The last activity date format should be in human-readable form.'
 		);
 	}
+
+	public function testGetCourseDaysToCompletionForIncompleteCourseReturnsNull() {
+
+		$course = $this->factory->course->create_and_get();
+		$user   = $this->factory->user->create_and_get();
+		Sensei_Utils::update_course_status( $user->ID, $course->ID, 'in-progress' );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_course_days_to_completion' );
+		$method->setAccessible( true );
+
+		$actual = $method->invoke( $instance, $course );
+
+		$this->assertNull( $actual, 'Days to completion should be null for incomplete course' );
+	}
+
+	/**
+	 * Tests that get_course_days_to_completion returns the correct value.
+	 *
+	 * @param string $start_user1
+	 * @param string $complete_user1
+	 * @param string $start_user2
+	 * @param string $complete_user2
+	 * @param float $expected
+	 *
+	 * @return void
+	 * @dataProvider providerGetCourseDaysToCompletionWhenCourseWasCompletedReturnsMatchingValue
+	 */
+	public function testGetCourseDaysToCompletionWhenCourseWasCompletedReturnsMatchingValue(
+		$start_user1, $complete_user1, $start_user2, $complete_user2, $expected
+	) {
+
+		$course = $this->factory->course->create_and_get();
+		$user1  = $this->factory->user->create_and_get();
+		$user2  = $this->factory->user->create_and_get();
+
+		Sensei_Utils::update_course_status( $user1->ID, $course->ID, 'in-progress' );
+		$comment_id = Sensei_Utils::update_course_status( $user1->ID, $course->ID, 'complete' );
+		update_comment_meta( $comment_id, 'start', $start_user1 );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment_id,
+				'comment_date' => $complete_user1,
+			]
+		);
+
+		Sensei_Utils::update_course_status( $user2->ID, $course->ID, 'in-progress' );
+		$comment_id = Sensei_Utils::update_course_status( $user2->ID, $course->ID, 'complete' );
+		update_comment_meta( $comment_id, 'start', $start_user2 );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment_id,
+				'comment_date' => $complete_user2,
+			]
+		);
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_course_days_to_completion' );
+		$method->setAccessible( true );
+
+		$actual = $method->invoke( $instance, $course );
+
+		$this->assertSame( $expected, $actual, 'Days to completion should match expected value' );
+	}
+
+	public function providerGetCourseDaysToCompletionWhenCourseWasCompletedReturnsMatchingValue(): array {
+		return [
+			'Course was started and completed at the same moment' => [
+				'2018-01-01 00:00:00',
+				'2018-01-01 00:00:00',
+				'2018-01-01 00:00:00',
+				'2018-01-01 00:00:00',
+				null,
+			],
+			'Course was completed in one day for the first user and in two days for the second user' => [
+				'2018-01-01 00:00:00',
+				'2018-01-02 00:00:00',
+				'2018-01-02 00:00:00',
+				'2018-01-04 00:00:00',
+				1.5,
+			],
+			'Course was completed in a week for the first user and in a month for the second user' => [
+				'2018-01-01 00:00:00',
+				'2018-01-08 00:00:00',
+				'2018-01-02 00:00:00',
+				'2018-02-02 00:00:00',
+				19,
+			],
+		];
+	}
 }
