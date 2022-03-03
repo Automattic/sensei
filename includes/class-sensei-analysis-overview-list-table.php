@@ -62,11 +62,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'lessons':
 				$columns = array(
-					'title'         => __( 'Lesson', 'sensei-lms' ),
-					'course'        => __( 'Course', 'sensei-lms' ),
-					'students'      => __( 'Students', 'sensei-lms' ),
-					'completions'   => __( 'Completed', 'sensei-lms' ),
-					'average_grade' => __( 'Average Grade', 'sensei-lms' ),
+					'title'           => __( 'Lesson', 'sensei-lms' ),
+					'course'          => __( 'Course', 'sensei-lms' ),
+					'students'        => __( 'Students', 'sensei-lms' ),
+					'completions'     => __( 'Completed', 'sensei-lms' ),
+					'completion_rate' => __( 'Completion Rate', 'sensei-lms' ),
+					'average_grade'   => __( 'Average Grade', 'sensei-lms' ),
 				);
 				break;
 
@@ -107,11 +108,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'lessons':
 				$columns = array(
-					'title'         => array( 'title', false ),
-					'course'        => array( 'course', false ),
-					'students'      => array( 'students', false ),
-					'completions'   => array( 'completions', false ),
-					'average_grade' => array( 'average_grade', false ),
+					'title'           => array( 'title', false ),
+					'course'          => array( 'course', false ),
+					'students'        => array( 'students', false ),
+					'completions'     => array( 'completions', false ),
+					'completion_rate' => array( 'completion_rate', false ),
+					'average_grade'   => array( 'average_grade', false ),
 				);
 				break;
 
@@ -405,11 +407,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'         => $lesson_title,
-						'course'        => $course_title,
-						'students'      => $lesson_students,
-						'completions'   => $lesson_completions,
-						'average_grade' => $lesson_average_grade,
+						'title'           => $lesson_title,
+						'course'          => $course_title,
+						'students'        => $lesson_students,
+						'completions'     => $lesson_completions,
+						'completion_rate' => $lesson_students > 0 ? round( ( $lesson_completions / $lesson_students ) * 100 ) . '%' : __( 'n/a', 'sensei-lms' ),
+						'average_grade'   => $lesson_average_grade,
 					),
 					$item,
 					$this
