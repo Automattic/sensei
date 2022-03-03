@@ -281,7 +281,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				// Last Activity.
-				$last_activity_date = 'N/A';
+				$last_activity_date = __( 'N/A', 'sensei-lms' );
 				$lessons            = Sensei()->course->course_lessons( $item->ID, 'any', 'ids' );
 
 				if ( 0 < count( $lessons ) ) {
@@ -522,7 +522,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$last_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
 
 		if ( ! $last_activity ) {
-			return 'N/A';
+			return __( 'N/A', 'sensei-lms' );
 		}
 
 		// Return the full date when doing a CSV export.
