@@ -1132,21 +1132,32 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Get average grade of all lessons graded
+	 * Get average grade of all lessons graded in all the courses.
 	 *
 	 * @since 4.2.0
-	 * @return double $graded_lesson_avg
+	 * @access public
+	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
-	public static function get_graded_lessons_avg() {
-		$grade_args        = array(
-			'type'     => 'sensei_lesson_status',
-			'status'   => 'any',
-			'meta_key' => 'grade',  // phpcs:ignore Slow query ok.
-		);
-		$grade_count       = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args ), false );
-		$sum_of_all_grades = self::get_graded_lessons_sum();
-		$average_grade     = 0;
+	public static function get_graded_lessons_average_grade() {
 
+		// Fetching all the grades of all the lessons that are graded.
+		global $wpdb;
+
+		$comment_query_piece           = [];
+		$comment_query_piece['select'] = "SELECT {$wpdb->commentmeta}.meta_value AS grades";
+		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
+
+		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$all_grades    = $wpdb->get_results( $comment_query );
+		$all_grades    = is_array( $all_grades ) ? $all_grades : [ $all_grades ];
+
+		// Getting sum value of all grades and count of the grades.
+		$sum_of_all_grades = array_sum( array_column( $all_grades, 'grades' ) );
+		$grade_count       = count( $all_grades );
+
+		// The average value will be calculated with: all_grades_value / grades_count.
+		$average_grade = 0;
 		if ( $sum_of_all_grades > 0 && $grade_count > 0 ) {
 			$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $sum_of_all_grades, $grade_count, 2 );
 		}
@@ -1171,7 +1182,6 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.user_id = {$clean_user_id} ";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
-		// WPCS: unprepared SQL OK.
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1196,7 +1206,6 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.comment_post_ID = {$clean_lesson_id} ";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
-		// WPCS: unprepared SQL OK.
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1222,7 +1231,6 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
-		// WPCS: unprepared SQL OK.
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;

@@ -14,12 +14,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public $type;
 	public $page_slug = 'sensei_analysis';
+
 	/**
 	 * The post type under which is the page registered.
 	 *
 	 * @var string
 	 */
 	private $post_type = 'course';
+
+	/**
+	 * The average grade for all the lessons in all the courses.
+	 *
+	 * @var int
+	 */
+	private $total_average_grade = 0;
+
+	/**
+	 * Total courses started.
+	 *
+	 * @var int
+	 */
+	private $total_active_courses = 0;
+
+	/**
+	 * Total courses completed.
+	 *
+	 * @var int
+	 */
+	private $total_courses_completed = 0;
 
 	/**
 	 * Constructor
@@ -71,28 +93,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
-				$graded_avg            = Sensei_Grading::get_graded_lessons_avg();
-				$course_args_started   = array(
-					'type'   => 'sensei_course_status',
-					'status' => 'any',
-				);
-				$courses_started       = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args_started ) );
-				$course_args_completed = array(
-					'type'   => 'sensei_course_status',
-					'status' => 'complete',
-				);
-				$courses_completed     = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_user_courses_started', $course_args_completed ) );
-				$columns               = array(
-					'title'             => __( 'Student', 'sensei-lms' ),
-					'email'             => __( 'Email', 'sensei-lms' ),
-					'registered'        => __( 'Date Registered', 'sensei-lms' ),
-					// translators: Placeholder value is all active courses.
-					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $courses_started - $courses_completed ),
-					// translators: Placeholder value is all completed courses.
-					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $courses_completed ),
-					// translators: Placeholder value is graded average value.
-					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $graded_avg ),
-				);
+					$columns = array(
+						'title'             => __( 'Student', 'sensei-lms' ),
+						'email'             => __( 'Email', 'sensei-lms' ),
+						'registered'        => __( 'Date Registered', 'sensei-lms' ),
+						// translators: Placeholder value is all active courses.
+						'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $this->total_active_courses ),
+						// translators: Placeholder value is all completed courses.
+						'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $this->total_courses_completed ),
+						// translators: Placeholder value is graded average value.
+						'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $this->total_average_grade ),
+					);
 				break;
 		}
 		// Backwards compatible filter name, moving forward should have single filter name
@@ -155,6 +166,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function prepare_items() {
+
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
@@ -201,6 +213,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
+				$this->set_users_table_header_total_values();
 				$this->items = $this->get_learners( $args );
 				break;
 		}
@@ -214,6 +227,35 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'per_page'    => $per_page,
 			)
 		);
+	}
+
+	/**
+	 * Generate values needed for users table headers totals.
+	 * Values: $total_courses_started, $total_active_courses, $total_average_grade.
+	 *
+	 * @since  4.2.0
+	 */
+	private function set_users_table_header_total_values() {
+
+		// Get average grade for all the lessons graded for all the courses.
+		$this->total_average_grade = Sensei_Grading::get_graded_lessons_average_grade();
+
+		// Get the number of the courses that users have started.
+		$course_args_started   = array(
+			'type'   => 'sensei_course_status',
+			'status' => 'any',
+		);
+		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+
+		// Get the number of the courses that users have completed.
+		$course_args_completed         = array(
+			'type'   => 'sensei_course_status',
+			'status' => 'complete',
+		);
+		$this->total_courses_completed = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+
+		// Calculate the number of the actvie courses. Calcuation based on started vs completed courses.
+		$this->total_active_courses = $total_courses_started - $this->total_courses_completed;
 	}
 
 	/**
