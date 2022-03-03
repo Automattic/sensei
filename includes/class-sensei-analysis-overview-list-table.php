@@ -345,9 +345,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				// Last Activity.
-				$last_activity_date = $this->get_last_activity_date( array( 'post__in' => array( $item->ID ) ) );
-
 				// Get Learners (i.e. those who have started)
 				$lesson_args     = array(
 					'post_id' => $item->ID,
@@ -424,7 +421,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'title'         => $lesson_title,
 						'course'        => $course_title,
 						'students'      => $lesson_students,
-						'last_activity' => $last_activity_date,
+						'last_activity' => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 						'completions'   => $lesson_completions,
 						'average_grade' => $lesson_average_grade,
 					),
