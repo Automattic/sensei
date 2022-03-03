@@ -131,13 +131,27 @@ class Sensei_Analysis {
 			);
 			$menu[ $key ] = sprintf( $link_template, esc_url( add_query_arg( $query_args, admin_url( 'edit.php' ) ) ), $class_name, $title );
 		}
+		/**
+		 * Filter the Reports navigation menu items.
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param array $menu The menu items.
+		 */
 		$menu = apply_filters( 'sensei_analysis_sub_menu', $menu );
-
+		/**
+		 * Filter the Reports page title.
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param string $title The page title.
+		 */
+		$data = apply_filters( 'sensei_analysis_nav_title', $this->name );
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading">
 				<div class="sensei-custom-navigation__title">
-					<h1><?php echo wp_kses_post( apply_filters( 'sensei_analysis_nav_title', $this->name ) ); ?></h1>
+					<h1><?php echo wp_kses_post( $data ); ?></h1>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
