@@ -62,11 +62,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'lessons':
 				$columns = array(
-					'title'         => __( 'Lesson', 'sensei-lms' ),
-					'course'        => __( 'Course', 'sensei-lms' ),
-					'students'      => __( 'Students', 'sensei-lms' ),
-					'completions'   => __( 'Completed', 'sensei-lms' ),
-					'average_grade' => __( 'Average Grade', 'sensei-lms' ),
+					'title'       => __( 'Lesson', 'sensei-lms' ),
+					'students'    => __( 'Students', 'sensei-lms' ),
+					'completions' => __( 'Completed', 'sensei-lms' ),
 				);
 				break;
 
@@ -107,11 +105,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'lessons':
 				$columns = array(
-					'title'         => array( 'title', false ),
-					'course'        => array( 'course', false ),
-					'students'      => array( 'students', false ),
-					'completions'   => array( 'completions', false ),
-					'average_grade' => array( 'average_grade', false ),
+					'title'       => array( 'title', false ),
+					'students'    => array( 'students', false ),
+					'completions' => array( 'completions', false ),
 				);
 				break;
 
@@ -348,29 +344,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'count'   => true,
 				);
 				$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
-
-				// Course
-				$course_id    = get_post_meta( $item->ID, '_lesson_course', true );
-				$course_title = $course_id ? get_the_title( $course_id ) : '';
-
-				$lesson_average_grade = __( 'n/a', 'sensei-lms' );
-				if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
-					// Get Percent Complete
-					$grade_args = array(
-						'post_id'  => $item->ID,
-						'type'     => 'sensei_lesson_status',
-						'status'   => array( 'graded', 'passed', 'failed' ),
-						'meta_key' => 'grade',
-					);
-
-					$grade_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_grades', $grade_args, $item ), false );
-					$grade_total          = Sensei_Grading::get_lessons_users_grades_sum( $item->ID );
-					$lesson_average_grade = 0;
-
-					if ( $grade_total > 0 && $grade_count > 0 ) {
-						$lesson_average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $grade_total, $grade_count, 2 );
-					}
-				}
 				// Output lesson data
 				if ( $this->csv_output ) {
 					$lesson_title = apply_filters( 'the_title', $item->post_title, $item->ID );
@@ -385,31 +358,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					);
 					$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
-					if ( $course_id ) {
-						$url          = add_query_arg(
-							array(
-								'page'      => $this->page_slug,
-								'course_id' => $course_id,
-								'post_type' => $this->post_type,
-							),
-							admin_url( 'edit.php' )
-						);
-						$course_title = '<a href="' . esc_url( $url ) . '">' . esc_html( $course_title ) . '</a>';
-					} else {
-						$course_title = __( 'n/a', 'sensei-lms' );
-					}
-					if ( is_numeric( $lesson_average_grade ) ) {
-						$lesson_average_grade .= '%';
-					}
 				}
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'         => $lesson_title,
-						'course'        => $course_title,
-						'students'      => $lesson_students,
-						'completions'   => $lesson_completions,
-						'average_grade' => $lesson_average_grade,
+						'title'       => $lesson_title,
+						'students'    => $lesson_students,
+						'completions' => $lesson_completions,
 					),
 					$item,
 					$this
