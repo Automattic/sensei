@@ -102,7 +102,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => array( 'title', false ),
-					'last_activity'   => array( 'last_activity', false ),
 					'completions'     => array( 'completions', false ),
 					'average_percent' => array( 'average_percent', false ),
 				);
@@ -113,7 +112,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'title'         => array( 'title', false ),
 					'course'        => array( 'course', false ),
 					'students'      => array( 'students', false ),
-					'last_activity' => array( 'last_activity', false ),
 					'completions'   => array( 'completions', false ),
 					'average_grade' => array( 'average_grade', false ),
 				);
