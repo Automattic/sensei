@@ -332,7 +332,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'title'              => $course_title,
 						'completions'        => $course_completions,
 						'average_percent'    => $course_average_percent,
-						'days_to_completion' => $days_to_completion ?? __( 'n/a', 'sensei-lms' ),
+						'days_to_completion' => $days_to_completion ?? __( 'N/A', 'sensei-lms' ),
 					),
 					$item,
 					$this
@@ -361,7 +361,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$course_id    = get_post_meta( $item->ID, '_lesson_course', true );
 				$course_title = $course_id ? get_the_title( $course_id ) : '';
 
-				$lesson_average_grade = __( 'n/a', 'sensei-lms' );
+				$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 				if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 					// Get Percent Complete
 					$grade_args = array(
@@ -404,7 +404,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						);
 						$course_title = '<a href="' . esc_url( $url ) . '">' . esc_html( $course_title ) . '</a>';
 					} else {
-						$course_title = __( 'n/a', 'sensei-lms' );
+						$course_title = __( 'N/A', 'sensei-lms' );
 					}
 					if ( is_numeric( $lesson_average_grade ) ) {
 						$lesson_average_grade .= '%';
