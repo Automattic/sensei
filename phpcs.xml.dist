@@ -66,7 +66,6 @@
 		<exclude-pattern>tests/</exclude-pattern>
 		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
 		<exclude name="Squiz.Commenting.PostStatementComment" />
-		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
