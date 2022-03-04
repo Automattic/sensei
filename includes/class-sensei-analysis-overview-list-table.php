@@ -186,7 +186,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args, $this->get_course_filter() );
+				$this->items = $this->get_lessons( $args, $this->get_course_filter_value() );
 				break;
 
 			case 'users':
@@ -256,7 +256,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args, $this->get_course_filter() );
+				$this->items = $this->get_lessons( $args, $this->get_course_filter_value() );
 				break;
 
 			case 'users':
@@ -716,7 +716,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 */
 	public function no_items() {
-		if ( 'lessons' === $this->type && ! $this->get_course_filter() ) {
+		if ( 'lessons' === $this->type && ! $this->get_course_filter_value() ) {
 			$this->output_lessons_inner_filters();
 		} else {
 			if ( ! $this->type || 'users' === $this->type ) {
@@ -733,6 +733,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * Output the lessons top filter form.
 	 *
 	 * @since  4.2.0
+	 * @access private
 	 */
 	public function output_lessons_top_filters() {
 		?>
@@ -774,7 +775,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function output_course_select_input() {
 		$courses            = Sensei_Course::get_all_courses();
-		$selected_course_id = $this->get_course_filter();
+		$selected_course_id = $this->get_course_filter_value();
 
 		?>
 		<select name="course_filter" id="sensei-course-filter">
@@ -944,7 +945,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @return int The course ID or 0 if none is selected.
 	 */
-	private function get_course_filter(): int {
+	private function get_course_filter_value(): int {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
 	}
