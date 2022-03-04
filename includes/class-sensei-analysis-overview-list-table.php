@@ -38,7 +38,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		// Actions.
 		if ( 'lessons' === $this->type ) {
-			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filters') );
+			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filters' ) );
 		}
 
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
