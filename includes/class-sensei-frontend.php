@@ -1237,10 +1237,21 @@ class Sensei_Frontend {
 	 * @return bool True if successful.
 	 */
 	public function manually_enrol_learner( $user_id, $course_id ) {
-		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
-		$manual_enrolment  = $enrolment_manager->get_manual_enrolment_provider();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		return $manual_enrolment && $manual_enrolment->enrol_learner( $user_id, $course_id );
+		// If user is removed, just restore it.
+		if ( $course_enrolment->is_learner_removed( $user_id ) ) {
+			$course_enrolment->restore_learner( $user_id );
+		}
+
+		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
+		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
+
+		if ( ! ( $manual_enrolment_provider instanceof Sensei_Course_Manual_Enrolment_Provider ) ) {
+			return false;
+		}
+
+		return $manual_enrolment_provider->enrol_learner( $user_id, $course_id );
 	}
 
 	/**
