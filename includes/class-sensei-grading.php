@@ -1124,7 +1124,8 @@ class Sensei_Grading {
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
 
-		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		// WPCS: unprepared SQL OK.
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1139,7 +1140,6 @@ class Sensei_Grading {
 	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
 	public static function get_graded_lessons_average_grade() {
-
 		// Fetching all the grades of all the lessons that are graded.
 		global $wpdb;
 
@@ -1149,6 +1149,7 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		// WPCS: unprepared SQL OK.
 		$all_grades    = $wpdb->get_results( $comment_query );
 		$all_grades    = is_array( $all_grades ) ? $all_grades : [ $all_grades ];
 
@@ -1162,14 +1163,13 @@ class Sensei_Grading {
 			$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $sum_of_all_grades, $grade_count, 2 );
 		}
 		return $average_grade;
-
 	}
 
 	/**
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0
-	 * @param integer $user_id User id.
+	 * @param $user_id
 	 * @return double
 	 */
 	public static function get_user_graded_lessons_sum( $user_id ) {
@@ -1182,7 +1182,8 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.user_id = {$clean_user_id} ";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
-		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
+		// WPCS: unprepared SQL OK.
+		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );      // WPCS: unprepared SQL OK.
 
 		return $sum_of_all_grades;
 	}
@@ -1192,7 +1193,7 @@ class Sensei_Grading {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param int $lesson_id Lesson id.
+	 * @param int lesson_id
 	 * @return double
 	 */
 	public static function get_lessons_users_grades_sum( $lesson_id ) {
@@ -1206,6 +1207,7 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade') AND {$wpdb->comments}.comment_post_ID = {$clean_lesson_id} ";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		// WPCS: unprepared SQL OK.
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
@@ -1231,6 +1233,7 @@ class Sensei_Grading {
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
+		// WPCS: unprepared SQL OK.
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
