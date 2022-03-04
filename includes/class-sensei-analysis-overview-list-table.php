@@ -66,6 +66,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'title'         => __( 'Lesson', 'sensei-lms' ),
 					'course'        => __( 'Course', 'sensei-lms' ),
 					'students'      => __( 'Students', 'sensei-lms' ),
+					'last_activity' => __( 'Last Activity', 'sensei-lms' ),
 					'completions'   => __( 'Completed', 'sensei-lms' ),
 					'average_grade' => __( 'Average Grade', 'sensei-lms' ),
 				);
@@ -101,7 +102,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => array( 'title', false ),
-					'last_activity'   => array( 'last_activity', false ),
 					'completions'     => array( 'completions', false ),
 					'average_percent' => array( 'average_percent', false ),
 				);
@@ -419,6 +419,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'title'         => $lesson_title,
 						'course'        => $course_title,
 						'students'      => $lesson_students,
+						'last_activity' => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 						'completions'   => $lesson_completions,
 						'average_grade' => $lesson_average_grade,
 					),
