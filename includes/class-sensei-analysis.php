@@ -135,16 +135,20 @@ class Sensei_Analysis {
 		 * Filter the Reports navigation menu items.
 		 *
 		 * @since 4.2.0
+		 * @hook sensei_analysis_sub_menu
 		 *
-		 * @param array $menu The menu items.
+		 * @param {array} $menu The menu items.
+		 * @return {array} Returns filtered menu items.
 		 */
 		$menu = apply_filters( 'sensei_analysis_sub_menu', $menu );
 		/**
 		 * Filter the Reports page title.
 		 *
 		 * @since 4.2.0
+		 * @hook sensei_analysis_nav_title
 		 *
-		 * @param string $title The page title.
+		 * @param {string} $title The page title.
+		 * @return {string} Returns filtered page title.
 		 */
 		$data = apply_filters( 'sensei_analysis_nav_title', $this->name );
 		?>
