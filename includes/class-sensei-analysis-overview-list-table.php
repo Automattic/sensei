@@ -112,7 +112,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'course'             => array( 'course', false ),
 					'students'           => array( 'students', false ),
 					'completions'        => array( 'completions', false ),
-					'days_to_completion' => array( 'days_to_completion', false ),
 					'average_grade'      => array( 'average_grade', false ),
 				);
 				break;
@@ -355,7 +354,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$course_id    = get_post_meta( $item->ID, '_lesson_course', true );
 				$course_title = $course_id ? get_the_title( $course_id ) : '';
 				// Taking the ceiling value for the average.
-				$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'n/a', 'sensei-lms' );
+				$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'N/A', 'sensei-lms' );
 
 				$lesson_average_grade = __( 'n/a', 'sensei-lms' );
 				if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
@@ -531,9 +530,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Return array of lessons
 	 *
-	 * @param object $args Arguments for query.
-	 * @return array lessons
 	 * @since  1.7.0
+	 *
+	 * @param array $args Associative array for query.
+	 *
+	 * @return array lessons
 	 */
 	private function get_lessons( $args ) {
 		$lessons_args = array(
@@ -558,7 +559,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
 		$this->total_items = $lessons_query->found_posts;
-
 		return $lessons_query->posts;
 	}
 
@@ -814,9 +814,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Add the sum of days taken by each student to complete a lesson with returning lesson row.
 	 *
-	 * @param array $clauses Incoming clauses.
 	 * @since  4.2.0
-	 * @return array Modified clauses.
+	 * @access private
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
 	 */
 	public function add_days_to_complete_to_lessons_query( $clauses ) {
 		global $wpdb;
