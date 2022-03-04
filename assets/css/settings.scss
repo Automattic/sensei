@@ -115,8 +115,13 @@
 		}
 	}
 
-	.sensei-analysis__filter-form {
-		&--inner {
+	.sensei-analysis {
+		&__top-filters {
+			float: left;
+			margin-bottom: 14px;
+		}
+
+		&__inner-filters {
 			margin: 50px 0;
 			text-align: center;
 

@@ -38,7 +38,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		// Actions.
 		if ( 'lessons' === $this->type ) {
-			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filter_form' ) );
+			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filters') );
 		}
 
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
@@ -717,7 +717,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	public function no_items() {
 		if ( 'lessons' === $this->type && ! $this->get_course_filter() ) {
-			$this->output_lessons_inner_filter_form();
+			$this->output_lessons_inner_filters();
 		} else {
 			if ( ! $this->type || 'users' === $this->type ) {
 				$type = __( 'students', 'sensei-lms' );
@@ -734,16 +734,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @since  4.2.0
 	 */
-	public function output_lessons_top_filter_form() {
+	public function output_lessons_top_filters() {
 		?>
-		<form class="sensei-analysis__filter-form">
+		<form class="sensei-analysis__top-filters">
 			<?php $this->output_query_params_as_inputs(); ?>
 
 			<label for="sensei-course-filter">
 				<?php esc_html_e( 'Filter', 'sensei-lms' ); ?>:
 			</label>
 
-			<?php $this->output_course_filter_select(); ?>
+			<?php $this->output_course_select_input(); ?>
 		</form>
 		<?php
 	}
@@ -753,16 +753,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @since 4.2.0
 	 */
-	private function output_lessons_inner_filter_form() {
+	private function output_lessons_inner_filters() {
 		?>
-		<form class="sensei-analysis__filter-form sensei-analysis__filter-form--inner">
+		<form class="sensei-analysis__inner-filters">
 			<?php $this->output_query_params_as_inputs(); ?>
 
 			<p>
 				<?php esc_html_e( 'View your Lessons data by first selecting a course.', 'sensei-lms' ); ?>
 			</p>
 
-			<?php $this->output_course_filter_select(); ?>
+			<?php $this->output_course_select_input(); ?>
 		</form>
 		<?php
 	}
@@ -772,7 +772,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @since 4.2.0
 	 */
-	private function output_course_filter_select() {
+	private function output_course_select_input() {
 		$courses            = Sensei_Course::get_all_courses();
 		$selected_course_id = $this->get_course_filter();
 
