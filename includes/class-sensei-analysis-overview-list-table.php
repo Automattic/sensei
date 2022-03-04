@@ -928,14 +928,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function add_days_to_complete_to_lessons_query( $clauses ) {
 		global $wpdb;
 
-		$clauses['fields']  .= ", sum( CEILING( timestampdiff( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
-		$clauses['join']    .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
-		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
-		$clauses['groupby'] .= " {$wpdb->posts}.ID";
+		$clauses['fields'] .= ", sum( CEILING( timestampdiff( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
+		$clauses['join']   .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']   .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
+		$clauses['join']   .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 
 		return $clauses;
 	}
