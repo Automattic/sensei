@@ -259,6 +259,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$args = array(
+			'number'  => '-1',
+			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
@@ -595,11 +597,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 		);
+
 		if ( $this->search ) {
 			$lessons_args['s'] = $this->search;
-		}
-		if ( $this->csv_output ) {
-			$lessons_args['posts_per_page'] = '-1';
 		}
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'

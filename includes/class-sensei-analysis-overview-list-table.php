@@ -229,6 +229,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		$args = array(
+			'number'  => -1,
+			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
@@ -567,10 +569,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'suppress_filters' => 0,
 		);
 
-		if ( $this->csv_output ) {
-			$course_args['posts_per_page'] = '-1';
-		}
-
 		if ( isset( $args['search'] ) ) {
 			$course_args['s'] = $args['search'];
 		}
@@ -601,10 +599,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'order'            => $args['order'],
 			'suppress_filters' => 0,
 		);
-
-		if ( $this->csv_output ) {
-			$lessons_args['posts_per_page'] = '-1';
-		}
 
 		if ( isset( $args['search'] ) ) {
 			$lessons_args['s'] = $args['search'];
