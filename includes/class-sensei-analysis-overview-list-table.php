@@ -358,7 +358,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				// Taking the ceiling value for the average.
 				$average_completion_days = $lesson_completions > 0 ? ceil( $item->days_to_complete / $lesson_completions ) : __( 'N/A', 'sensei-lms' );
 
-        // Output lesson data.
+				// Output lesson data.
 				if ( $this->csv_output ) {
 					$lesson_title = apply_filters( 'the_title', $item->post_title, $item->ID );
 				} else {
