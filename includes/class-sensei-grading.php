@@ -1142,27 +1142,18 @@ class Sensei_Grading {
 	public static function get_graded_lessons_average_grade() {
 		// Fetching all the grades of all the lessons that are graded.
 		global $wpdb;
-
 		$comment_query_piece           = [];
-		$comment_query_piece['select'] = "SELECT {$wpdb->commentmeta}.meta_value AS grades";
+		$comment_query_piece['select'] = "SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum, COUNT( * ) as grade_count";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
 		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		// WPCS: unprepared SQL OK.
-		$all_grades    = $wpdb->get_results( $comment_query );
-		$all_grades    = is_array( $all_grades ) ? $all_grades : [ $all_grades ];
-
-		// Getting sum value of all grades and count of the grades.
-		$sum_of_all_grades = array_sum( array_column( $all_grades, 'grades' ) );
-		$grade_count       = count( $all_grades );
-
-		// The average value will be calculated with: all_grades_value / grades_count.
-		$average_grade = 0;
-		if ( $sum_of_all_grades > 0 && $grade_count > 0 ) {
-			$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $sum_of_all_grades, $grade_count, 2 );
+		$sum_result = $wpdb->get_row( $comment_query );
+		if ( 0 === $sum_result->grade_count ) {
+			return 0;
 		}
-		return $average_grade;
+		return $sum_result->grade_sum / $sum_result->grade_count;
 	}
 
 	/**
