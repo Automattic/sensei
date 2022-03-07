@@ -824,21 +824,20 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	 *
 	 * @since 4.2.0
 	 * @access public
-	 * @param int $amount How many graded lessons to generate.
+	 * @param array $grades Grades to generated graded lessons with.
 	 */
-	public function generate_graded_lessons( $amount ) {
+	public function generate_graded_lessons( $grades ) {
 		// Generates graded lessons.
 		// First step is to generate comment and then comment meta with grade value.
-		for ( $i = 1; $i <= $amount; $i++ ) {
+		foreach ( $grades as $index => $grade ) {
 			$comment_args = array(
-				'user_id'          => 1,
-				'comment_post_ID'  => $i,
+				'user_id'          => $index,
+				'comment_post_ID'  => $index,
 				'comment_type'     => 'sensei_lesson_status',
 				'comment_approved' => 'graded',
 			);
 			$comment_id   = $this->comment->create( $comment_args );
-			// Grade value
-			$grade = 10 * $i;
+
 			add_comment_meta( $comment_id, 'grade', $grade );
 		}
 	}
