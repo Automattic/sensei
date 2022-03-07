@@ -1777,16 +1777,12 @@ class Sensei_Utils {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
-				'user_id'   => $user_id,
-				'post_id'   => $course_id,
-				'status'    => $status,
-				'type'      => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'    => 'update', // Update the existing status...
-				'keep_time' => true, // ...but don't change the existing timestamp
+				'user_id' => $user_id,
+				'post_id' => $course_id,
+				'status'  => $status,
+				'type'    => 'sensei_course_status', /* FIELD SIZE 20 */
+				'action'  => 'update', // Update the existing status...
 			);
-			if ( 'in-progress' == $status ) {
-				unset( $args['keep_time'] ); // Keep updating what's happened
-			}
 
 			$comment_id = self::sensei_log_activity( $args );
 			if ( $comment_id && ! empty( $metadata ) ) {
