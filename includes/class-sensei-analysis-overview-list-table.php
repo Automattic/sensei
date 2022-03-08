@@ -716,17 +716,27 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 */
 	public function no_items() {
+		$highlight = false;
+
 		if ( 'lessons' === $this->type && ! $this->get_course_filter_value() ) {
-			$this->output_lessons_inner_filters();
+			$message   = __( 'View your Lessons data by first selecting a course.', 'sensei-lms' );
+			$highlight = true;
 		} else {
 			if ( ! $this->type || 'users' === $this->type ) {
 				$type = __( 'students', 'sensei-lms' );
 			} else {
 				$type = $this->type;
 			}
+
 			// translators: Placeholders %1$s and %3$s are opening and closing <em> tags, %2$s is the view type.
-			echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' ) );
+			$message = sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' );
 		}
+
+		?>
+		<div class="sensei-analysis__no-items-message <?php echo $highlight ? 'sensei-analysis__no-items-message--highlighted' : ''; ?>">
+			<?php echo wp_kses_post( $message ); ?>
+		</div>
+		<?php
 	}
 
 	/**
@@ -741,27 +751,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			<?php $this->output_query_params_as_inputs(); ?>
 
 			<label for="sensei-course-filter">
-				<?php esc_html_e( 'Filter', 'sensei-lms' ); ?>:
+				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
 			</label>
-
-			<?php $this->output_course_select_input(); ?>
-		</form>
-		<?php
-	}
-
-	/**
-	 * Output the lessons inner filter form.
-	 *
-	 * @since 4.2.0
-	 */
-	private function output_lessons_inner_filters() {
-		?>
-		<form class="sensei-analysis__inner-filters">
-			<?php $this->output_query_params_as_inputs(); ?>
-
-			<p>
-				<?php esc_html_e( 'View your Lessons data by first selecting a course.', 'sensei-lms' ); ?>
-			</p>
 
 			<?php $this->output_course_select_input(); ?>
 		</form>

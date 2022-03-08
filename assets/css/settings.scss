@@ -121,14 +121,10 @@
 			margin-bottom: 14px;
 		}
 
-		&__inner-filters {
+		&__no-items-message--highlighted {
 			margin: 50px 0;
 			text-align: center;
-
-			p {
-				margin-bottom: 20px;
-				font-size: 14px;
-			}
+			font-size: 14px;
 		}
 	}
 }
