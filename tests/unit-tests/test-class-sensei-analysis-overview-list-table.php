@@ -4,6 +4,12 @@
  * Tests for Sensei_Analysis_Overview_List_Table class.
  */
 class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+
+	/**
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
 
 	/**
 	 * Set up before each test.
@@ -238,5 +244,53 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			$method->invoke( $instance, $user_id ),
 			'The last activity date format should be in human-readable form.'
 		);
+	}
+	/**
+	 * Tests that we are getting right data for Completion Rate column.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_row_data
+	 * @dataProvider dataFortestCompletionRateForLesson
+	 */
+	public function testCompletionRateForLesson( $enrolled_student_count, $completed_student_count, $expected_output ) {
+		$this->resetCourseEnrolmentManager();
+		$user_ids                    = $this->factory->user->create_many( $enrolled_student_count );
+		$course_lessons              = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 1,
+			)
+		);
+		$instance                    = new Sensei_Analysis_Overview_List_Table();
+		$instance->type              = 'lessons';
+		$get_lessons_method          = new ReflectionMethod( $instance, 'get_lessons' );
+		$get_row_data_lessons_method = new ReflectionMethod( $instance, 'get_row_data' );
+		$get_lessons_method->setAccessible( true );
+		$get_row_data_lessons_method->setAccessible( true );
+		$lessons_args = array(
+			'offset'  => 0,
+			'number'  => -1,
+			'orderby' => '',
+			'order'   => 'ASC',
+		);
+		$lesson_id    = array_pop( $course_lessons['lesson_ids'] );
+		foreach ( $user_ids as $key => $user_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $key < $completed_student_count );
+		}
+		$lessons  = $get_lessons_method->invoke( $instance, $lessons_args );
+		$row_data = $get_row_data_lessons_method->invoke( $instance, array_pop( $lessons ) );
+		$this->assertEquals( $row_data['completion_rate'], $expected_output );
+	}
+	/**
+	 * Returns an associative array with parameters needed to run lesson completion test.
+	 *
+	 * @return array
+	 */
+	public function dataFortestCompletionRateForLesson(): array {
+		return [
+			'100%' => [ 5, 5, '100%' ],
+			'80%'  => [ 5, 4, '80%' ],
+			'67%'  => [ 3, 2, '67%' ],
+			'N/A'  => [ 0, 0, 'N/A' ],
+			'0%'   => [ 1, 0, '0%' ],
+		];
 	}
 }

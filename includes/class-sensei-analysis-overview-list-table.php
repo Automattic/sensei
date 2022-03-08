@@ -411,7 +411,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'course'          => $course_title,
 						'students'        => $lesson_students,
 						'completions'     => $lesson_completions,
-						'completion_rate' => $lesson_students > 0 ? round( ( $lesson_completions / $lesson_students ) * 100 ) . '%' : __( 'n/a', 'sensei-lms' ),
+						'completion_rate' => $this->get_completion_rate( $lesson_completions, $lesson_students ),
 						'average_grade'   => $lesson_average_grade,
 					),
 					$item,
@@ -683,6 +683,23 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Get completion rate for a lesson.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int $lesson_completion_count Number of students who has completed this lesson.
+	 * @param int $lesson_student_count Number of students who has started this lesson.
+	 *
+	 * @return string The completion rate or 'N/A' if there are no students.
+	 */
+	private function get_completion_rate( int $lesson_completion_count, int $lesson_student_count ): string {
+		if ( 0 >= $lesson_student_count ) {
+			return __( 'N/A', 'sensei-lms' );
+		}
+		return Sensei_Utils::quotient_as_absolute_rounded_percentage( $lesson_completion_count, $lesson_student_count ) . '%';
 	}
 
 	/**
