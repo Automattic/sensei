@@ -37,12 +37,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		parent::__construct( 'analysis_overview' );
 
 		// Actions.
-		if ( 'lessons' === $this->type ) {
-			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filters' ) );
-		}
-
+		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
-
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
@@ -740,21 +736,56 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Output the lessons top filter form.
+	 * Output top filter form.
 	 *
 	 * @since  4.2.0
 	 * @access private
 	 */
-	public function output_lessons_top_filters() {
+	public function output_top_filters() {
+
+		if ( ! in_array( $this->type, [ 'lessons', 'users' ], true ) ) {
+			return;
+		}
+
 		?>
 		<form class="sensei-analysis__top-filters">
-			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 's' ] ); ?>
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's' ] ); ?>
 
-			<label for="sensei-course-filter">
-				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
-			</label>
+			<?php if ( 'lessons' === $this->type ) : ?>
+				<label for="sensei-course-filter">
+					<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
+				</label>
 
-			<?php $this->output_course_select_input(); ?>
+				<?php $this->output_course_select_input(); ?>
+			<?php endif ?>
+
+			<?php if ( 'users' === $this->type ) : ?>
+				<label for="sensei-start-date-filter">
+					<?php esc_html_e( 'Start date', 'sensei-lms' ); ?>:
+				</label>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-start-date-filter"
+					name="start_date"
+					type="text"
+					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
+				/>
+
+				<label for="sensei-end-date-filter">
+					<?php esc_html_e( 'End date', 'sensei-lms' ); ?>:
+				</label>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-end-date-filter"
+					name="end_date"
+					type="text"
+					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
+				/>
+			<?php endif ?>
+
+			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
 		</form>
 		<?php
 	}
@@ -926,6 +957,30 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	private function get_course_filter_value(): int {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
+	}
+
+	/**
+	 * Get the start date filter value.
+	 *
+	 * @return string The start date.
+	 */
+	private function get_start_date_filter_value(): string {
+		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
+		$start_date = $_GET['start_date'] ?? '';
+
+		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
+	}
+
+	/**
+	 * Get the end date filter value.
+	 *
+	 * @return string The end date.
+	 */
+	private function get_end_date_filter_value(): string {
+		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
+		$end_date = $_GET['end_date'] ?? '';
+
+		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
 	}
 
 }

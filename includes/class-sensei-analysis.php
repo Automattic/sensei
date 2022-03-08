@@ -198,7 +198,7 @@ class Sensei_Analysis {
 	 */
 	public function enqueue_scripts() {
 
-		Sensei()->assets->enqueue( 'sensei-reports', 'js/admin/reports.js', [ 'jquery' ] );
+		Sensei()->assets->enqueue( 'sensei-reports', 'js/admin/reports.js', [ 'jquery', 'jquery-ui-datepicker' ] );
 
 	}
 
@@ -213,6 +213,7 @@ class Sensei_Analysis {
 	public function enqueue_styles() {
 
 		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
+		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
 
 	}
 

@@ -119,6 +119,10 @@
 		&__top-filters {
 			float: left;
 			margin-bottom: 14px;
+
+			.sensei-date-picker {
+				max-width: 100px;
+			}
 		}
 
 		&__no-items-message--highlighted {
