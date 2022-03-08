@@ -60,7 +60,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'title'           => __( 'Course', 'sensei-lms' ),
 					'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
 					'completions'     => __( 'Completed', 'sensei-lms' ),
-					'average_percent' => __( 'Average Grade', 'sensei-lms' ),
+					'average_percent' => sprintf(
+						// translators: Placeholder value is the average grade of all courses.
+						__( 'Average Grade (%d%%)', 'sensei-lms' ),
+						esc_html( Sensei()->grading->get_courses_average_grade() )
+					),
 				);
 				break;
 

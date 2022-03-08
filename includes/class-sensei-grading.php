@@ -1203,6 +1203,30 @@ class Sensei_Grading {
 
 	}
 
+	/**
+	 * Get the average grade of all courses.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @return double Average grade of all courses.
+	 */
+	public function get_courses_average_grade() {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$result = $wpdb->get_row(
+			"SELECT SUM(cm.meta_value) AS grade_total, COUNT(*) as grade_count
+			FROM {$wpdb->comments} c
+			INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+			WHERE c.comment_type = 'sensei_course_status' AND cm.meta_key = 'percent'"
+		);
+
+		if ( 0 === $result->grade_count ) {
+			return 0;
+		}
+
+		return $result->grade_total / $result->grade_count;
+	}
 }
 
 /**
