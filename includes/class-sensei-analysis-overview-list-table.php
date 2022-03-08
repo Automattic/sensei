@@ -99,12 +99,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'title'             => __( 'Student', 'sensei-lms' ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
-          // translators: Placeholder value is all active courses.
-          'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $this->total_active_courses ),
-          // translators: Placeholder value is all completed courses.
-          'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $this->total_courses_completed ),
-          // translators: Placeholder value is graded average value.
-          'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $this->total_average_grade ),
+					// translators: Placeholder value is all active courses.
+					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $this->total_active_courses ),
+					// translators: Placeholder value is all completed courses.
+					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $this->total_courses_completed ),
+					// translators: Placeholder value is graded average value.
+					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $this->total_average_grade ),
 				);
 				break;
 		}
