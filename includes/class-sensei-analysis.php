@@ -61,6 +61,9 @@ class Sensei_Analysis {
 			add_action( 'admin_init', array( $this, 'report_download_page' ) );
 
 			add_filter( 'user_search_columns', array( $this, 'user_search_columns_filter' ), 10, 3 );
+
+			// Add custom navigation.
+			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		}
 	}
 
@@ -79,6 +82,92 @@ class Sensei_Analysis {
 
 			return self::PAGE_SLUG;
 		}
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.2.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
+		$is_reports_page = isset( $_GET['page'] ) && ( self::PAGE_SLUG === $_GET['page'] );
+
+		if ( ! $is_reports_page ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
+		if ( isset( $_GET['course_id'] ) || isset( $_GET['lesson_id'] ) || isset( $_GET['user_id'] ) ) {
+			return;
+		}
+
+		$this->display_reports_navigation();
+	}
+
+	/**
+	 * Display the Reports navigation.
+	 */
+	private function display_reports_navigation() {
+		// phpcs:ignore
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+
+		$reports            = array(
+			'students' => __( 'Students', 'sensei-lms' ),
+			'courses'  => __( 'Courses', 'sensei-lms' ),
+			'lessons'  => __( 'Lessons', 'sensei-lms' ),
+		);
+		$current_report_key = isset( $reports[ $type ] ) ? $type : 'students';
+
+		$link_template = '<div><a href="%s" class="sensei-custom-navigation__tab %s">%s</a></div>';
+		$menu          = array();
+		foreach ( $reports as $key => $title ) {
+			$class_name   = $current_report_key === $key ? 'active' : '';
+			$query_args   = array(
+				'page'      => self::PAGE_SLUG,
+				'post_type' => $this->post_type,
+				'view'      => $key,
+			);
+			$menu[ $key ] = sprintf( $link_template, esc_url( add_query_arg( $query_args, admin_url( 'edit.php' ) ) ), $class_name, $title );
+		}
+		/**
+		 * Filter the Reports navigation menu items.
+		 *
+		 * @since 4.2.0
+		 * @hook sensei_analysis_sub_menu
+		 *
+		 * @param {array} $menu The menu items.
+		 * @return {array} Returns filtered menu items.
+		 */
+		$menu = apply_filters( 'sensei_analysis_sub_menu', $menu );
+		/**
+		 * Filter the Reports page title.
+		 *
+		 * @since 4.2.0
+		 * @hook sensei_analysis_nav_title
+		 *
+		 * @param {string} $title The page title.
+		 * @return {string} Returns filtered page title.
+		 */
+		$data = apply_filters( 'sensei_analysis_nav_title', $this->name );
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php echo wp_kses_post( $data ); ?></h1>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<?php echo wp_kses( implode( '', $menu ), wp_kses_allowed_html( 'post' ) ); ?>
+				<div class="sensei-custom-navigation__tabbar-separator"></div>
+				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/docs">
+					<?php echo esc_html__( 'Guide To Using Reports', 'sensei-lms' ); ?>
+				</a>
+				<div></div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -217,7 +306,6 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
-		$this->analysis_default_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
@@ -460,10 +548,11 @@ class Sensei_Analysis {
 	 * Default nav area for Analysis, overview of Learners, Courses and Lessons
 	 *
 	 * @since  1.2.0
+	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_default_nav() {
-
+		_deprecated_function( __METHOD__, '4.2.0' );
 		$title = $this->name;
 		?>
 			<h1>

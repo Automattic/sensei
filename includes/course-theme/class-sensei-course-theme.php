@@ -98,7 +98,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Add the URL prefix the theme is active under.
 	 *
-	 * @param string $path
+	 * @param string $path Optional path to prefix.
 	 *
 	 * @return string|void
 	 */
@@ -294,7 +294,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @access private
 	 *
-	 * @param string[] $classes
+	 * @param string[] $classes The html classess to be added.
 	 *
 	 * @return string[] $classes
 	 */
@@ -397,7 +397,7 @@ class Sensei_Course_Theme {
 		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
 		$preview_url = '/?p=' . $lesson->ID;
 		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
-			$preview_url .= '&' . self::QUERY_VAR . '=1&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+			$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
 		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 	}
@@ -423,7 +423,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @access private
 	 *
-	 * @param WP_Admin_Bar $wp_admin_bar
+	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
 	 *
 	 * @return void
 	 */
