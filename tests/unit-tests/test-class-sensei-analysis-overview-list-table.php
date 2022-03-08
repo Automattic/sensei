@@ -4,7 +4,6 @@
  * Tests for Sensei_Analysis_Overview_List_Table class.
  */
 class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
-	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -295,7 +294,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	 * @dataProvider dataFortestCompletionRateForLesson
 	 */
 	public function testCompletionRateForLesson( $enrolled_student_count, $completed_student_count, $expected_output ) {
-		$this->resetCourseEnrolmentManager();
 		$user_ids                    = $this->factory->user->create_many( $enrolled_student_count );
 		$course_lessons              = $this->factory->get_course_with_lessons(
 			array(
