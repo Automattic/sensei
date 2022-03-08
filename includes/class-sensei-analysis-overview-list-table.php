@@ -862,6 +862,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
 				'post_type'              => $this->post_type,
+				'course_filter'          => $this->get_course_filter_value(),
 			),
 			admin_url( 'edit.php' )
 		);
