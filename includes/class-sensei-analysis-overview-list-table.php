@@ -748,7 +748,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function output_lessons_top_filters() {
 		?>
 		<form class="sensei-analysis__top-filters">
-			<?php $this->output_query_params_as_inputs(); ?>
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 's' ] ); ?>
 
 			<label for="sensei-course-filter">
 				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
@@ -783,20 +783,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			<?php endforeach; ?>
 		</select>
 		<?php
-	}
-
-	/**
-	 * Output the current query params as hidden inputs.
-	 *
-	 * @since 4.2.0
-	 */
-	private function output_query_params_as_inputs() {
-		// phpcs:ignore WordPress.Security.NonceVerification -- Arguments are used for filtering.
-		foreach ( $_GET as $name => $value ) {
-			?>
-			<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
-			<?php
-		}
 	}
 
 	/**

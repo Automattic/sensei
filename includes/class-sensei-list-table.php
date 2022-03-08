@@ -123,19 +123,9 @@ class Sensei_List_Table extends WP_List_Table {
 		}
 		?><form method="get">
 			<?php
-			if ( isset( $_GET ) && count( $_GET ) > 0 ) {
-				foreach ( $_GET as $k => $v ) {
-					if ( 's' != $k ) {
-						?>
-
-						<input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
-
-						<?php
-					}
-				}
-			}
+			Sensei_Utils::output_query_params_as_inputs( [ 's' ] );
+			$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 			?>
-			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' ); ?>
 		</form>
 		<?php
 	}
