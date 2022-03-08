@@ -1144,16 +1144,22 @@ class Sensei_Grading {
 		$comment_query_piece           = [];
 		$comment_query_piece['select'] = "SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum, COUNT( * ) as grade_count";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = %s)";
 
 		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$sum_result = $wpdb->get_row( $comment_query );
-		if ( 0 === $sum_result->grade_count ) {
-			return 0;
+		$cache_key           = 'averageGrade';
+		$average_grade_value = wp_cache_get( $cache_key );
+		if ( false === $average_grade_value ) {
+			$sum_result = $wpdb->get_row( $wpdb->prepare( $comment_query, 'grade' ) );
+			if ( 0 === $sum_result->grade_count ) {
+				return 0;
+			}
+			$value = $sum_result->grade_sum / $sum_result->grade_count;
+			wp_cache_set( $cache_key, $value );
+			return $value;
 		}
-		return $sum_result->grade_sum / $sum_result->grade_count;
+		return $average_grade_value;
 	}
 
 	/**
