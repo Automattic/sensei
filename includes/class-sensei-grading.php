@@ -1152,7 +1152,7 @@ class Sensei_Grading {
 		$average_grade_value = wp_cache_get( $cache_key );
 		if ( false === $average_grade_value ) {
 
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
 			$sum_result = $wpdb->get_row( $wpdb->prepare( $comment_query, 'grade' ) );
 			if ( 0 === $sum_result->grade_count ) {
 				return 0;
