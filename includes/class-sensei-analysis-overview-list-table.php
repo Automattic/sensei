@@ -66,7 +66,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'students'           => __( 'Students', 'sensei-lms' ),
 					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 					'completions'        => __( 'Completed', 'sensei-lms' ),
-					'completion_rate' => __( 'Completion Rate', 'sensei-lms' ),
+					'completion_rate'    => __( 'Completion Rate', 'sensei-lms' ),
 					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
@@ -381,7 +381,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'students'           => $lesson_students,
 						'last_activity'      => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 						'completions'        => $lesson_completions,
-						'completion_rate' => $this->get_completion_rate( $lesson_completions, $lesson_students ),
+						'completion_rate'    => $this->get_completion_rate( $lesson_completions, $lesson_students ),
 						'days_to_completion' => $average_completion_days,
 					),
 					$item,

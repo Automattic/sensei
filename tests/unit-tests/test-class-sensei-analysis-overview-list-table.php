@@ -7,6 +7,8 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
+	 * Factory for setting up testing data.
+	 *
 	 * @var Sensei_Factory
 	 */
 	protected $factory;
