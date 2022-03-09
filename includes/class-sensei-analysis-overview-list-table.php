@@ -650,9 +650,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 */
 		$args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
 
-		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity'] );
+		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 		$wp_user_search = new WP_User_Query( $args );
-		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity'] );
+		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
 		$learners          = $wp_user_search->get_results();
 		$this->total_items = $wp_user_search->get_total();
@@ -786,7 +786,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					id="sensei-end-date-filter"
 					name="end_date"
 					type="text"
-					autocomplete="off" 
+					autocomplete="off"
 					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
 				/>
 			<?php endif ?>
