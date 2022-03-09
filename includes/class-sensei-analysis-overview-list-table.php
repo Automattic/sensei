@@ -333,9 +333,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 					$course_average_percent .= '%';
 				}
-				$average_course_progress = $this->get_average_progress( $item->ID, $course_students );
-				$course_students_count   = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
-				$column_data             = apply_filters(
+
+				$course_students_count = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
+
+				$average_course_progress = 0;
+				if ( 0 !== $course_students_count && 0 !== $course_lessons ) {
+					// Average course progress is calculated based on lessons completed for the course
+					// divided by the total possible lessons completed.
+					$average_course_progress = $item->completed_lesson_count / ( $course_students_count * $course_lessons ) * 100;
+				}
+
+				$course_students_count = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
+				$column_data           = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'            => $course_title,
@@ -512,44 +521,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Return average progress per lesson for course.
-	 *
-	 * @since  4.2.0
-	 *
-	 * @param int   $course_id Course id.
-	 * @param array $course_students Course students.
-	 * @return int $average_progress Average progress value.
-	 */
-	private function get_average_progress( $course_id, $course_students ): int {
-
-		$course_lessons_ids                 = Sensei()->course->course_lesson_ids( $course_id );
-		$course_students                    = is_array( $course_students ) ? $course_students : array( $course_students );
-		$lesson_completed_percentages_count = 0;
-		foreach ( $course_students as $student ) {
-			$lesson_completed_count = 0;
-			foreach ( $course_lessons_ids as $lesson_id ) {
-				$lesson_course_args      = array(
-					'user_id' => $student->user_id,
-					'post_id' => $lesson_id,
-					'type'    => 'sensei_lesson_status',
-					'status'  => array( 'complete', 'graded', 'passed' ),
-				);
-				$lessons_course          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lessons_courses', $lesson_course_args ) );
-				$lesson_completed_count .= $lessons_course;
-			}
-
-			if ( 0 !== $lesson_completed_count && 0 !== count( $course_lessons_ids ) ) {
-				$lesson_completed_percentages_count .= Sensei_Utils::quotient_as_absolute_rounded_number( $lesson_completed_count, count( $course_lessons_ids ), 2 );
-			}
-		}
-		$average_course_progress = 0;
-		if ( 0 !== count( $course_lessons_ids ) ) {
-			$average_course_progress = $lesson_completed_percentages_count / count( $course_lessons_ids ) * 100;
-		}
-		return $average_course_progress;
-	}
-
-	/**
 	 * Return array of course
 	 *
 	 * @since  1.7.0
@@ -573,12 +544,45 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( isset( $args['search'] ) ) {
 			$course_args['s'] = $args['search'];
 		}
-
+		add_filter( 'posts_clauses', [ $this, 'add_lesson_completion_count_to_course_query' ] );
 		// Using WP_Query as get_posts() doesn't support 'found_posts'
-		$courses_query     = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_clauses', [ $this, 'add_lesson_completion_count_to_course_query' ] );
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
+	}
+	/**
+	 * Add count of completed lessons per course for all the active students.
+	 *
+	 * @since  4.2.0
+	 * @access public
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_lesson_completion_count_to_course_query( $clauses ) {
+		global $wpdb;
 
+		$clauses['fields'] .= ", COUNT( {$wpdb->comments}.comment_approved ) as completed_lesson_count";
+		// Get postmeta rows that have meta_value of course ID and meta_key of '_lesson_course' to get relation
+		// between lessons and the course.
+		$clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} as lessons ON lessons.meta_value = {$wpdb->posts}.ID";
+		$clauses['join'] .= " AND lessons.meta_key IN ('_lesson_course')";
+		// Get comments of type 'sensei_lesson_status' that have the post_id same as lessons ids
+		// form the previous join and have one of the completed statuses.
+		$clauses['join'] .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = lessons.post_id";
+		$clauses['join'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
+		$clauses['join'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'failed')";
+		// Include only comments that have user ID of a users that are currently enroled in the course.
+		$clauses['join'] .= " AND {$wpdb->comments}.user_id IN ( SELECT( {$wpdb->comments}.user_id )
+		 FROM {$wpdb->comments} WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status')
+		 AND {$wpdb->comments}.comment_post_ID IN ( {$wpdb->posts}.ID )
+		 AND {$wpdb->comments}.comment_approved IN ('in-progress', 'complete'))";
+
+		$clauses['groupby'] .= "{$wpdb->posts}.ID";
+
+		return $clauses;
 	}
 
 	/**
