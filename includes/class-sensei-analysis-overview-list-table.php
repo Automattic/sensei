@@ -648,8 +648,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 * @since 1.6.0
 		 * @param $args
 		 */
-		$args              = apply_filters( 'sensei_analysis_overview_filter_users', $args );
-		$wp_user_search    = new WP_User_Query( $args );
+		$args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
+
+		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity'] );
+		$wp_user_search = new WP_User_Query( $args );
+		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity'] );
+
 		$learners          = $wp_user_search->get_results();
 		$this->total_items = $wp_user_search->get_total();
 
@@ -887,6 +891,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$report = 'user-overview';
 				break;
 		}
+
 		$url = add_query_arg(
 			array(
 				'page'                   => $this->page_slug,
@@ -894,9 +899,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'sensei_report_download' => $report,
 				'post_type'              => $this->post_type,
 				'course_filter'          => $this->get_course_filter_value(),
+				'start_date'             => $this->get_start_date_filter_value(),
+				'end_date'               => $this->get_end_date_filter_value(),
 			),
 			admin_url( 'edit.php' )
 		);
+
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
 
@@ -947,6 +955,61 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$clauses['join']   .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 
 		return $clauses;
+	}
+
+	/**
+	 * Filter the users by last activity start/end date.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function filter_users_by_last_activity( WP_User_Query $query ) {
+		global $wpdb;
+
+		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
+		$end_date   = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
+
+		if ( ! $start_date && ! $end_date ) {
+			return;
+		}
+
+		if ( $start_date ) {
+			$start_date->setTime( 0, 0, 0 );
+		}
+
+		if ( $end_date ) {
+			$end_date->setTime( 23, 59, 59 );
+		}
+
+		// Join only the last activity comment.
+		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
+		$query->query_from .= " INNER JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_ID = (
+			SELECT comment_ID
+			FROM {$wpdb->comments}
+			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
+			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+			ORDER BY wp_comments.comment_date_gmt DESC
+			LIMIT 1
+		)";
+
+		// Filter by start date.
+		if ( $start_date ) {
+			$query->query_where .= $wpdb->prepare(
+				" AND {$wpdb->comments}.comment_date_gmt >= %s",
+				$start_date->format( 'Y-m-d H:i:s' )
+			);
+		}
+
+		// Filter by end date.
+		if ( $end_date ) {
+			$query->query_where .= $wpdb->prepare(
+				" AND {$wpdb->comments}.comment_date_gmt <= %s",
+				$end_date->format( 'Y-m-d H:i:s' )
+			);
+		}
 	}
 
 	/**
