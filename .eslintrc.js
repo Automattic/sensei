@@ -17,7 +17,15 @@ module.exports = {
 		'import/no-extraneous-dependencies': [
 			'error',
 			{
-				devDependencies: [ '**/*.test.js', 'webpack.config.js' ],
+				devDependencies: [
+					'**/*.test.js',
+					'scripts/**/*.js',
+					'tests/**/*.js',
+					'webpack.config.js',
+					'postcss.config.js',
+					'jest.setup.js',
+					'jest.config.js',
+				],
 				peerDependencies: false,
 				optionalDependencies: false,
 				bundledDependencies: false,

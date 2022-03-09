@@ -232,7 +232,7 @@ class Sensei_Admin {
 		_deprecated_function( __METHOD__, '4.0.0' );
 
 		if ( isset( $_GET['page'] ) && $_GET['page'] == 'sensei' ) {
-			wp_safe_redirect( 'admin.php?page=sensei_analysis' );
+			wp_safe_redirect( 'admin.php?page=sensei_reports' );
 			exit;
 		}
 	}
@@ -328,7 +328,7 @@ class Sensei_Admin {
 	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', 'sensei_analysis', 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 		$module_pages_screen_ids = [ 'edit-module' ];
 
 		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );
@@ -373,8 +373,8 @@ class Sensei_Admin {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
-		// load edit module scripts
-		if ( 'edit-module' == $screen->id ) {
+		// Load edit module scripts.
+		if ( 'edit-module' === $screen->id ) {
 			wp_enqueue_script( 'sensei-chosen-ajax' );
 		}
 
@@ -383,18 +383,25 @@ class Sensei_Admin {
 		// Event logging.
 		Sensei()->assets->enqueue( 'sensei-event-logging', 'js/admin/event-logging.js', [ 'jquery' ], true );
 
-		// Sensei custom navigation.
-		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category' ];
-
-		if (
-			$screen
-			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
-			&& ( 'term' !== $screen->base )
-		) {
+		if ( $this->has_custom_navigation( $screen ) ) {
 			Sensei()->assets->enqueue( 'sensei-admin-custom-navigation', 'js/admin/custom-navigation.js', [], true );
 		}
 
 		wp_localize_script( 'sensei-event-logging', 'sensei_event_logging', [ 'enabled' => Sensei_Usage_Tracking::get_instance()->get_tracking_enabled() ] );
+	}
+
+	/**
+	 * Check if the current screen has a custom navigation.
+	 *
+	 * @param WP_Screen|null $screen The current screen.
+	 * @return bool
+	 */
+	private function has_custom_navigation( $screen ) {
+		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category', 'course_page_' . Sensei_Analysis::PAGE_SLUG ];
+
+		return $screen
+			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
+			&& ( 'term' !== $screen->base );
 	}
 
 

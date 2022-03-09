@@ -104,6 +104,7 @@ describe( '<QuizSettings />', () => {
 		expect( queryByLabelText( 'Number of Questions' ).value ).toEqual(
 			'5'
 		);
+		expect( queryByLabelText( 'Quiz Timer' ).checked ).toEqual( false );
 	} );
 
 	it( 'Should not render the Passing Grade field when Pass Required is false', () => {
@@ -200,5 +201,17 @@ describe( '<QuizSettings />', () => {
 		);
 
 		expect( mockOpenGeneralSidebar ).toBeCalledTimes( 1 );
+	} );
+
+	it( 'Should hide the number of questions when the random question order is disabled', () => {
+		const { queryByLabelText } = render(
+			<QuizSettings
+				attributes={ {
+					options: { ...defaultOptions, randomQuestionOrder: false },
+				} }
+			/>
+		);
+
+		expect( queryByLabelText( 'Number of Questions' ) ).toBeNull();
 	} );
 } );

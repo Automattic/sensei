@@ -73,7 +73,7 @@ const usePreviewAndCustomizerLinks = () => {
 		) {
 			previewUrl = `/?p=${ firstLesson.id }`;
 		} else {
-			previewUrl = `/?p=${ firstLesson.id }&learn=1&${ SENSEI_PREVIEW_QUERY }=${ currentPost.id }`;
+			previewUrl = `/?p=${ firstLesson.id }&${ SENSEI_PREVIEW_QUERY }=${ currentPost.id }`;
 		}
 
 		if ( firstLesson.draft ) {
