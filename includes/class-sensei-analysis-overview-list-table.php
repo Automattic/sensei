@@ -773,6 +773,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					id="sensei-start-date-filter"
 					name="start_date"
 					type="text"
+					autocomplete="off"
 					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
 				/>
 
@@ -785,6 +786,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					id="sensei-end-date-filter"
 					name="end_date"
 					type="text"
+					autocomplete="off" 
 					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
 				/>
 			<?php endif ?>
