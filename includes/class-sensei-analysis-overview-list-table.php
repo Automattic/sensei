@@ -53,10 +53,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => __( 'Course', 'sensei-lms' ),
-					'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
-					'completions'     => __( 'Completed', 'sensei-lms' ),
-					'average_percent' => __( 'Average Grade', 'sensei-lms' ),
+					'title'              => __( 'Course', 'sensei-lms' ),
+					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
+					'completions'        => __( 'Completed', 'sensei-lms' ),
+					'average_percent'    => __( 'Average Grade', 'sensei-lms' ),
+					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
 
@@ -284,13 +285,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
 				}
 
-				// Get Course Completions
+				// Get Course Completions.
 				$course_args        = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'complete',
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
+
+				// Properties `count_of_completions` and `days_to_completion` where added to items in
+				// `Sensei_Analysis_Overview_List_Table::add_days_to_completion_to_courses_queries`.
+				// We made it due to improve performance of the report. Don't try to access these properties outside.
+				$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
 
 				// Get Percent Complete.
 				$grade_args = array(
@@ -328,10 +334,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'           => $course_title,
-						'last_activity'   => $last_activity_date,
-						'completions'     => $course_completions,
-						'average_percent' => $course_average_percent,
+						'title'              => $course_title,
+						'last_activity'      => $last_activity_date,
+						'completions'        => $course_completions,
+						'average_percent'    => $course_average_percent,
+						'days_to_completion' => $average_completion_days,
 					),
 					$item,
 					$this
@@ -532,8 +539,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$course_args['s'] = $args['search'];
 		}
 
+		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 		// Using WP_Query as get_posts() doesn't support 'found_posts'
-		$courses_query     = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
 
@@ -804,6 +814,33 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		return $clauses;
 	}
 
+	/**
+	 * Add the sum of days taken by each student to complete a course and the number of completions for each course.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_days_to_completion_to_courses_queries( $clauses ) {
+		global $wpdb;
+
+		// Get the number of days to complete a course: `days to complete = complete date - start date + 1`.
+		$clauses['fields'] .= ", SUM(  ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) AS days_to_completion";
+		// We consider the course as completed if there is a comment and corresponding meta for it.
+		$clauses['fields']  .= ", COUNT({$wpdb->commentmeta}.comment_id) AS count_of_completions";
+		$clauses['join']    .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_course_status')";
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( 'complete' )";
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
+		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
+		$clauses['groupby'] .= " {$wpdb->posts}.ID";
+
+		return $clauses;
+	}
 }
 
 /**
