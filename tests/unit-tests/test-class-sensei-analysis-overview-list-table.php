@@ -280,4 +280,26 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'The last activity date format or timezone is invalid.'
 		);
 	}
+
+	public function testAddDaysToCompletionToCoursesQueriesModifiesQueryParts() {
+		$instance = new Sensei_Analysis_Overview_List_Table();
+
+		$actual = $instance->add_days_to_completion_to_courses_queries(
+			[
+				'fields'  => 'a',
+				'join'    => 'b',
+				'where'   => 'c',
+				'groupby' => 'd',
+			]
+		);
+
+		$expected = [
+			'fields'  => "a, SUM(  ABS( DATEDIFF( wptests_comments.comment_date, STR_TO_DATE( wptests_commentmeta.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) AS days_to_completion, COUNT(wptests_commentmeta.comment_id) AS count_of_completions",
+			'join'    => "b LEFT JOIN wptests_comments ON wptests_comments.comment_post_ID = wptests_posts.ID AND wptests_comments.comment_type IN ('sensei_course_status') AND wptests_comments.comment_approved IN ( 'complete' ) AND wptests_comments.comment_post_ID = wptests_posts.ID LEFT JOIN wptests_commentmeta ON wptests_comments.comment_ID = wptests_commentmeta.comment_id AND wptests_commentmeta.meta_key = 'start'",
+			'where'   => 'c',
+			'groupby' => 'd wptests_posts.ID',
+		];
+
+		self::assertSame( $expected, $actual );
+	}
 }
