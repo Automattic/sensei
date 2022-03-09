@@ -54,7 +54,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'            => __( 'Course', 'sensei-lms' ),
-          'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
+					'last_activity'    => __( 'Last Activity', 'sensei-lms' ),
 					'completions'      => __( 'Completed', 'sensei-lms' ),
 					'average_progress' => __( 'Average Progress', 'sensei-lms' ),
 					'average_percent'  => __( 'Average Percentage', 'sensei-lms' ),
@@ -294,7 +294,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
 				}
 
-				// Get Course Completions
+				// Get Course Completions.
 				$course_args        = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
@@ -302,7 +302,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
-				// Course Lessons
+				// Course Lessons.
 				$course_lessons = Sensei()->lesson->lesson_count( array( 'publish', 'private' ), $item->ID );
 
 				// Get Percent Complete.
@@ -310,7 +310,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'post_id'  => $item->ID,
 					'type'     => 'sensei_course_status',
 					'status'   => 'any',
-					'meta_key' => 'percent',  // phpcs:ignore Slow query ok.,
+					'meta_key' => 'percent',
 				);
 
 				$percent_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
@@ -352,7 +352,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'            => $course_title,
-						'last_activity'   => $last_activity_date,
+						'last_activity'    => $last_activity_date,
 						'completions'      => $course_completions,
 						'average_progress' => $average_course_progress,
 						'average_percent'  => $course_average_percent,
