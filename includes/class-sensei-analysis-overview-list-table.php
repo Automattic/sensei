@@ -24,27 +24,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	private $post_type = 'course';
 
 	/**
-	 * The average grade for all the lessons in all the courses.
-	 *
-	 * @var int
-	 */
-	private $total_average_grade = 0;
-
-	/**
-	 * Total courses started.
-	 *
-	 * @var int
-	 */
-	private $total_active_courses = 0;
-
-	/**
-	 * Total courses completed.
-	 *
-	 * @var int
-	 */
-	private $total_courses_completed = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @since  1.2.0
@@ -95,16 +74,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
-				$columns = array(
-					'title'             => __( 'Student', 'sensei-lms' ),
+				$students_header_total_values = $this->set_users_table_header_total_values();
+				$students_count               = is_array( $this->items ) ? count( $this->items ) : ! empty( $this->items );
+				$columns                      = array(
+					// translators: Placeholder value is total count of students.
+					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $students_count ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 					// translators: Placeholder value is all active courses.
-					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $this->total_active_courses ) ),
+					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $students_header_total_values['total_active_courses'] ) ),
 					// translators: Placeholder value is all completed courses.
-					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $this->total_courses_completed ) ),
+					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $students_header_total_values['total_courses_completed'] ) ),
 					// translators: Placeholder value is graded average value.
-					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $this->total_average_grade ) ),
+					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $students_header_total_values['total_average_grade'] ) ),
 				);
 				break;
 		}
@@ -211,7 +193,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
-				$this->set_users_table_header_total_values();
 				$this->items = $this->get_learners( $args );
 				break;
 		}
@@ -229,31 +210,63 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 	/**
 	 * Generate values needed for users table headers totals.
-	 * Values: $total_courses_started, $total_active_courses, $total_average_grade.
+	 * Values: total_courses_started, total_active_courses, total_average_grade.
 	 *
 	 * @since  4.2.0
+	 * @return array $userTotalValues Total values for the user table header.
 	 */
 	private function set_users_table_header_total_values() {
 
-		// Get average grade for all the lessons graded for all the courses.
-		$this->total_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
+		// Reason for caching: this method is called 3 times in single request.
+		$user_total_values = [];
 
-		// Get the number of the courses that users have started.
-		$course_args_started   = array(
-			'type'   => 'sensei_course_status',
-			'status' => 'any',
-		);
-		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+		// Get total value for Average Grade column in users table.
+		$cache_key_average_grade = 'users_total_average_grade';
+		$average_grade_value     = wp_cache_get( $cache_key_average_grade );
+		if ( empty( $average_grade_value ) ) {
+			// Get average grade for all the lessons graded for all the courses.
+			$value                                    = Sensei()->grading->get_graded_lessons_average_grade();
+			$user_total_values['total_average_grade'] = $value;
+			wp_cache_set( $cache_key_average_grade, $value );
 
-		// Get the number of the courses that users have completed.
-		$course_args_completed         = array(
-			'type'   => 'sensei_course_status',
-			'status' => 'complete',
-		);
-		$this->total_courses_completed = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+		} else {
+			$user_total_values['total_average_grade'] = $average_grade_value;
+		}
 
-		// Calculate the number of the actvie courses. Calcuation based on started vs completed courses.
-		$this->total_active_courses = $total_courses_started - $this->total_courses_completed;
+		// Get total value for Courses Completed column in users table.
+		$cache_key_courses_completed = 'users_total_courses_completed';
+		$total_courses_completed     = wp_cache_get( $cache_key_courses_completed );
+		if ( empty( $total_courses_completed ) ) {
+			// Get the number of the courses that users have completed.
+			$course_args_completed                        = array(
+				'type'   => 'sensei_course_status',
+				'status' => 'complete',
+			);
+			$value                                        = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+			$user_total_values['total_courses_completed'] = $value;
+			wp_cache_set( $cache_key_courses_completed, $value );
+		} else {
+			$user_total_values['total_courses_completed'] = $total_courses_completed;
+		}
+
+		// Get total value for Active Courses per user.
+		$cache_key_courses_started = 'users_total_courses_started';
+		$total_courses_started     = wp_cache_get( $cache_key_courses_started );
+
+		if ( empty( $total_courses_started ) ) {
+			// Get the number of the courses that users have started.
+			$course_args_started   = array(
+				'type'   => 'sensei_course_status',
+				'status' => 'any',
+			);
+			$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+			wp_cache_set( $cache_key_courses_started, $total_courses_started );
+		}
+
+		// Calculate the number of the active courses. Calculation based on started vs completed courses.
+		$user_total_values['total_active_courses'] = $total_courses_started - $user_total_values['total_courses_completed'];
+
+		return $user_total_values;
 	}
 
 	/**
@@ -263,7 +276,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return data
 	 */
 	public function generate_report( $report ) {
-
 		$data = array();
 
 		$this->csv_output = true;
@@ -292,14 +304,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		// Start the csv with the column headings
-		$column_headers = array();
-		$columns        = $this->get_columns();
-		foreach ( $columns as $key => $title ) {
-			$column_headers[] = $title;
-		}
-		$data[] = $column_headers;
-
 		switch ( $this->type ) {
 			case 'courses':
 				$this->items = $this->get_courses( $args );
@@ -314,6 +318,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$this->items = $this->get_learners( $args );
 				break;
 		}
+
+		// Start the csv with the column headings.
+		$column_headers = array();
+		$columns        = $this->get_columns();
+		foreach ( $columns as $key => $title ) {
+			$column_headers[] = $title;
+		}
+		$data[] = $column_headers;
 
 		// Process each row.
 		foreach ( $this->items as $item ) {
