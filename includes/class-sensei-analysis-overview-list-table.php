@@ -33,10 +33,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
-		// Load Parent token into constructor
+		// Load Parent token into constructor.
 		parent::__construct( 'analysis_overview' );
 
-		// Actions
+		// Actions.
+		if ( 'lessons' === $this->type ) {
+			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filters' ) );
+		}
+
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
@@ -179,7 +183,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args );
+				$this->items = $this->get_lessons( $args, $this->get_course_filter_value() );
 				break;
 
 			case 'users':
@@ -226,6 +230,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		$args = array(
+			'number'  => -1,
+			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
@@ -249,7 +255,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				break;
 
 			case 'lessons':
-				$this->items = $this->get_lessons( $args );
+				$this->items = $this->get_lessons( $args, $this->get_course_filter_value() );
 				break;
 
 			case 'users':
@@ -531,10 +537,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'suppress_filters' => 0,
 		);
 
-		if ( $this->csv_output ) {
-			$course_args['posts_per_page'] = '-1';
-		}
-
 		if ( isset( $args['search'] ) ) {
 			$course_args['s'] = $args['search'];
 		}
@@ -550,15 +552,21 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Return array of lessons
+	 * Return array of lessons.
 	 *
 	 * @since  1.7.0
 	 *
-	 * @param array $args Associative array for query.
+	 * @param array $args      The query arguments.
+	 * @param int   $course_id The selected course ID.
 	 *
-	 * @return array lessons
+	 * @return array Lesson posts or empty array if no course is selected.
 	 */
-	private function get_lessons( $args ) {
+	private function get_lessons( array $args, int $course_id ): array {
+
+		if ( ! $course_id ) {
+			return [];
+		}
+
 		$lessons_args = array(
 			'post_type'        => 'lesson',
 			'post_status'      => array( 'publish', 'private' ),
@@ -566,12 +574,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'offset'           => $args['offset'],
 			'orderby'          => $args['orderby'],
 			'order'            => $args['order'],
+			'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Applying the course filter.
+			'meta_value'       => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Applying the course filter.
 			'suppress_filters' => 0,
 		);
-
-		if ( $this->csv_output ) {
-			$lessons_args['posts_per_page'] = '-1';
-		}
 
 		if ( isset( $args['search'] ) ) {
 			$lessons_args['s'] = $args['search'];
@@ -669,16 +675,73 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * Overloads the parent method
 	 *
 	 * @since  1.2.0
-	 * @return void
 	 */
 	public function no_items() {
-		if ( ! $this->view || 'users' == $this->view ) {
-			$type = 'learners';
+
+		if ( 'lessons' === $this->type && ! $this->get_course_filter_value() ) {
+			$message = __( 'View your Lessons data by first selecting a course.', 'sensei-lms' );
 		} else {
-			$type = $this->view;
+			if ( ! $this->type || 'users' === $this->type ) {
+				$type = __( 'students', 'sensei-lms' );
+			} else {
+				$type = $this->type;
+			}
+
+			// translators: Placeholders %1$s and %3$s are opening and closing <em> tags, %2$s is the view type.
+			$message = sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' );
 		}
-		// translators: Placeholders %1$s and %3$s are opening and closing <em> tages, %2$s is the view type.
-		echo wp_kses_post( sprintf( __( '%1$sNo %2$s found%3$s', 'sensei-lms' ), '<em>', $type, '</em>' ) );
+
+		?>
+		<div class="sensei-analysis__no-items-message">
+			<?php echo wp_kses_post( $message ); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output the lessons top filter form.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 */
+	public function output_lessons_top_filters() {
+		?>
+		<form class="sensei-analysis__top-filters">
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 's' ] ); ?>
+
+			<label for="sensei-course-filter">
+				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
+			</label>
+
+			<?php $this->output_course_select_input(); ?>
+		</form>
+		<?php
+	}
+
+	/**
+	 * Output the course filter select input.
+	 *
+	 * @since 4.2.0
+	 */
+	private function output_course_select_input() {
+		$courses            = Sensei_Course::get_all_courses();
+		$selected_course_id = $this->get_course_filter_value();
+
+		?>
+		<select name="course_filter" id="sensei-course-filter">
+			<option>
+				<?php esc_html_e( 'Select a course', 'sensei-lms' ); ?>
+			</option>
+			<?php foreach ( $courses as $course ) : ?>
+				<option
+					value="<?php echo esc_attr( $course->ID ); ?>"
+					<?php echo $selected_course_id === $course->ID ? 'selected' : ''; ?>
+				>
+					<?php echo esc_html( get_the_title( $course ) ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<?php
 	}
 
 	/**
@@ -758,6 +821,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
 				'post_type'              => $this->post_type,
+				'course_filter'          => $this->get_course_filter_value(),
 			),
 			admin_url( 'edit.php' )
 		);
@@ -802,16 +866,25 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function add_days_to_complete_to_lessons_query( $clauses ) {
 		global $wpdb;
 
-		$clauses['fields']  .= ", sum( CEILING( timestampdiff( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
-		$clauses['join']    .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
-		$clauses['join']    .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
-		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
-		$clauses['groupby'] .= " {$wpdb->posts}.ID";
+		$clauses['fields'] .= ", sum( CEILING( timestampdiff( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
+		$clauses['join']   .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']   .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
+		$clauses['join']   .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
 
 		return $clauses;
+	}
+
+	/**
+	 * Get the selected course ID.
+	 *
+	 * @return int The course ID or 0 if none is selected.
+	 */
+	private function get_course_filter_value(): int {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
 	}
 
 	/**
