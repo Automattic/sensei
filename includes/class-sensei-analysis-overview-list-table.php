@@ -59,10 +59,20 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
-				$columns = array(
+				$completions = Sensei_Utils::sensei_check_for_activity(
+					array(
+						'type'   => 'sensei_course_status',
+						'status' => 'complete',
+					)
+				);
+				$columns     = array(
 					'title'           => __( 'Course', 'sensei-lms' ),
 					'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
-					'completions'     => __( 'Completed', 'sensei-lms' ),
+					'completions'     => sprintf(
+						// translators: Placeholder value is the number of completed courses.
+						__( 'Completed (%d)', 'sensei-lms' ),
+						esc_html( $completions )
+					),
 					'average_percent' => sprintf(
 						// translators: Placeholder value is the average grade of all courses.
 						__( 'Average Grade (%d%%)', 'sensei-lms' ),
