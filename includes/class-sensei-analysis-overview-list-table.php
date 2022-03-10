@@ -765,7 +765,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			<?php if ( 'users' === $this->type ) : ?>
 				<label for="sensei-start-date-filter">
-					<?php esc_html_e( 'Start date', 'sensei-lms' ); ?>:
+					<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
 				</label>
 
 				<input
@@ -774,12 +774,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					name="start_date"
 					type="text"
 					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
 					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
 				/>
-
-				<label for="sensei-end-date-filter">
-					<?php esc_html_e( 'End date', 'sensei-lms' ); ?>:
-				</label>
 
 				<input
 					class="sensei-date-picker"
@@ -787,6 +784,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					name="end_date"
 					type="text"
 					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
 					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
 				/>
 			<?php endif ?>
