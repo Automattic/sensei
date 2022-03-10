@@ -282,9 +282,10 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the correct last activity date is returned when queried by course.
+	 * Tests that the learners last activity filter is applied correctly.
 	 *
 	 * @covers Sensei_Analysis_Overview_List_Table::get_learners
+	 * @covers Sensei_Analysis_Overview_List_Table::filter_users_by_last_activity
 	 */
 	public function testGetLearnersByLastActivityDate() {
 		/* Arrange. */
@@ -360,20 +361,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		/* Act. */
 		$_GET = [
-			'end_date' => '2022-03-01',
-		];
-
-		$learners = $method->invoke( $instance, [] );
-
-		/* Assert. */
-		$this->assertEquals(
-			[ $user_1 ],
-			wp_list_pluck( $learners, 'ID' ),
-			'The filter should work correctly when using only the end date.'
-		);
-
-		/* Act. */
-		$_GET = [
 			'start_date' => '2022-03-02',
 			'end_date'   => '2022-03-01',
 		];
@@ -383,22 +370,73 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEmpty(
 			$learners,
-			'The filter should work correctly when the start and end dates are incorrect.'
+			'The filter should return no results when the start date is bigger than the end date.'
+		);
+	}
+
+	/**
+	 * Test the start date getter.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_start_date_filter_value
+	 */
+	public function testGetStartDateFilterValue() {
+		/* Arrange. */
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_start_date_filter_value' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+		];
+
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'2022-03-01',
+			$start_date,
+			'The start date should be equal to the "start_date" query param.'
 		);
 
 		/* Act. */
 		$_GET = [
-			'start_date' => 'not-a-date',
-			'end_date'   => 'not-a-date',
+			'start_date' => '',
 		];
 
-		$learners = $method->invoke( $instance, [] );
+		$start_date = $method->invoke( $instance );
 
 		/* Assert. */
-		$this->assertCount(
-			count_users()['total_users'],
-			$learners,
-			'The filter should not be applied when the start and end dates are invalid dates.'
+		$this->assertEquals(
+			gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+			$start_date,
+			'The start date should default to 30 days ago.'
+		);
+	}
+
+	/**
+	 * Test the end date getter.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_end_date_filter_value
+	 */
+	public function testGetEndDateFilterValue() {
+		/* Arrange. */
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_end_date_filter_value' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$_GET = [
+			'end_date' => '2022-03-01',
+		];
+
+		$end_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'2022-03-01',
+			$end_date,
+			'The end date should be equal to the "end_date" query param.'
 		);
 	}
 }
