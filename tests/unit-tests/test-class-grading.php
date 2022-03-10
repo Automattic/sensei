@@ -198,7 +198,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 
 		$grades = [ 10, 20, 30, 40, 50 ];
 		$this->factory->generate_graded_lessons( $grades );
-		$graded_lessons_average_grade = Sensei_Grading::get_graded_lessons_average_grade();
+		$graded_lessons_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
 
 		$this->assertEquals( $graded_lessons_average_grade, 30 );
 	}

@@ -100,11 +100,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 					// translators: Placeholder value is all active courses.
-					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $this->total_active_courses ),
+					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $this->total_active_courses ) ),
 					// translators: Placeholder value is all completed courses.
-					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $this->total_courses_completed ),
+					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $this->total_courses_completed ) ),
 					// translators: Placeholder value is graded average value.
-					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $this->total_average_grade ),
+					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $this->total_average_grade ) ),
 				);
 				break;
 		}
@@ -236,7 +236,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	private function set_users_table_header_total_values() {
 
 		// Get average grade for all the lessons graded for all the courses.
-		$this->total_average_grade = Sensei_Grading::get_graded_lessons_average_grade();
+		$this->total_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
 
 		// Get the number of the courses that users have started.
 		$course_args_started   = array(

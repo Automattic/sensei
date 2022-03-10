@@ -1138,7 +1138,7 @@ class Sensei_Grading {
 	 * @access public
 	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
-	public static function get_graded_lessons_average_grade() {
+	public function get_graded_lessons_average_grade() {
 		// Fetching all the grades of all the lessons that are graded.
 		global $wpdb;
 		$comment_query_piece           = [];
