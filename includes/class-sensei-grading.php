@@ -1221,7 +1221,7 @@ class Sensei_Grading {
 			WHERE c.comment_type = 'sensei_course_status' AND cm.meta_key = 'percent'"
 		);
 
-		if ( 0 === $result->grade_count ) {
+		if ( '0' === $result->grade_count ) {
 			return 0;
 		}
 

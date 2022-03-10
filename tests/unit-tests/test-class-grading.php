@@ -186,6 +186,33 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that courses average grade is calculated correctly when there are no grades.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGradeNoGrades() {
+		$this->assertEquals( 0, Sensei()->grading->get_courses_average_grade() );
+	}
+
+	/**
+	 * Test that courses average grade is calculated correctly when there are grades.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetCoursesAverageGradeHasGrades() {
+		$grade      = 50;
+		$course_ids = $this->factory->course->create_many( 4 );
+
+		foreach ( $course_ids as $course_id ) {
+			$comment_id = $this->factory->comment->create( array( 'comment_type' => 'sensei_course_status' ) );
+			add_comment_meta( $comment_id, 'percent', $grade );
+			$grade += 10;
+		}
+
+		$this->assertEquals( 65, Sensei()->grading->get_courses_average_grade() );
+	}
+
+	/**
 	 * Get a test question.
 	 *
 	 * @param string $question_type
