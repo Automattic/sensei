@@ -281,7 +281,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testAddDaysToCompletionToCoursesQueriesModifiesQueryParts() {
+	public function testAddDaysToCompletionToCoursesQueriesWithProvidedClausesModifiesQueryParts() {
 		$instance = new Sensei_Analysis_Overview_List_Table();
 
 		$actual = $instance->add_days_to_completion_to_courses_queries(
@@ -301,5 +301,53 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		];
 
 		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedItemsHaveDaysToCompletionProperty() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		self::assertObjectHasAttribute( 'days_to_completion', $courses[0] );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedItemsHaveCountOfCompletionsProperty() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		self::assertObjectHasAttribute( 'count_of_completions', $courses[0] );
 	}
 }
