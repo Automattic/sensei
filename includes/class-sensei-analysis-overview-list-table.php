@@ -53,6 +53,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
+		if ( $this->columns ) {
+			return $this->columns;
+		}
 
 		switch ( $this->type ) {
 			case 'courses':
@@ -90,10 +93,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				break;
 		}
+
 		// Backwards compatible filter name, moving forward should have single filter name
 		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this );
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
-		return $columns;
+
+		$this->columns = $columns;
+
+		return $this->columns;
 	}
 
 	/**

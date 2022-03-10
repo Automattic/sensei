@@ -20,13 +20,6 @@ class Sensei_Grading {
 	public $page_slug;
 
 	/**
-	 * Average grade of all courses.
-	 *
-	 * @var double
-	 */
-	private $courses_average_grade;
-
-	/**
 	 * Constructor
 	 *
 	 * @since  1.3.0
@@ -1218,10 +1211,6 @@ class Sensei_Grading {
 	 * @return double Average grade of all courses.
 	 */
 	public function get_courses_average_grade() {
-		if ( isset( $this->courses_average_grade ) ) {
-			return $this->courses_average_grade;
-		}
-
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
@@ -1236,9 +1225,7 @@ class Sensei_Grading {
 			return 0;
 		}
 
-		$this->courses_average_grade = $result->grade_total / $result->grade_count;
-
-		return $this->courses_average_grade;
+		return $result->grade_total / $result->grade_count;
 	}
 }
 
