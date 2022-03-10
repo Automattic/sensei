@@ -174,6 +174,8 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$args = array(
+			'number'  => '-1',
+			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
