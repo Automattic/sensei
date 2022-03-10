@@ -350,4 +350,59 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		self::assertObjectHasAttribute( 'count_of_completions', $courses[0] );
 	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedReturnsItemsWithMatchingCustomProperties() {
+		$user_id = $this->factory->user->create();
+
+		$course_id  = $this->factory->course->create();
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment_id,
+				'comment_date' => '2022-01-02 00:00:01',
+			]
+		);
+
+		$unfinished_course_id  = $this->factory->course->create();
+		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 2,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		$expected = [
+			[
+				'days_to_completion'   => '2',
+				'count_of_completions' => '1',
+			],
+			[
+				'days_to_completion'   => null,
+				'count_of_completions' => '0',
+			],
+		];
+
+		self::assertSame( $expected, $this->exportCustomPropertiesFromItems( $courses ) );
+	}
+
+	private function exportCustomPropertiesFromItems( array $items ): array {
+		$ret = [];
+		foreach ( $items as $item ) {
+			$ret[] = [
+				'days_to_completion'   => $item->days_to_completion,
+				'count_of_completions' => $item->count_of_completions,
+			];
+		}
+		return $ret;
+	}
 }
