@@ -280,4 +280,125 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'The last activity date format or timezone is invalid.'
 		);
 	}
+
+	/**
+	 * Tests that the correct last activity date is returned when queried by course.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_learners
+	 */
+	public function testGetLearnersByLastActivityDate() {
+		/* Arrange. */
+		$user_1 = $this->factory->user->create();
+		$user_2 = $this->factory->user->create();
+
+		$lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_learners' );
+		$method->setAccessible( true );
+
+		$user_1_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_1, true );
+		$user_2_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_2, true );
+
+		wp_update_comment(
+			[
+				'comment_ID'   => $user_1_activity_comment_id,
+				'comment_date' => '2022-03-01 00:00:00',
+			]
+		);
+
+		wp_update_comment(
+			[
+				'comment_ID'   => $user_2_activity_comment_id,
+				'comment_date' => '2022-03-02 00:00:00',
+			]
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-01',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_1 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using the same start and end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-02',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_1, $user_2 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using different start and end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-02',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_2 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using only the start date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'end_date' => '2022-03-01',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_1 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using only the end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-02',
+			'end_date'   => '2022-03-01',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEmpty(
+			$learners,
+			'The filter should work correctly when the start and end dates are incorrect.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => 'not-a-date',
+			'end_date'   => 'not-a-date',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertCount(
+			count_users()['total_users'],
+			$learners,
+			'The filter should not be applied when the start and end dates are invalid dates.'
+		);
+	}
 }
