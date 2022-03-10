@@ -439,4 +439,39 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'The end date should be equal to the "end_date" query param.'
 		);
 	}
+
+	/**
+	 * Tests that when getting the lessons they are filtered by course.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_lessons
+	 */
+	public function testGetLessonsByCourse() {
+		/* Arrange. */
+		$course_id         = $this->factory->course->create();
+		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+
+		// Fill the database with other lessons from other courses.
+		$this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_lessons' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$query_args = [
+			'number'  => -1,
+			'offset'  => 0,
+			'orderby' => '',
+			'order'   => 'ASC',
+		];
+
+		$course_lesson_posts = $method->invoke( $instance, $query_args, $course_id );
+
+		/* Assert. */
+		$this->assertEquals(
+			$course_lesson_ids,
+			wp_list_pluck( $course_lesson_posts, 'ID' ),
+			'The lessons should be filtered by course.'
+		);
+	}
 }

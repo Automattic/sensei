@@ -194,7 +194,8 @@ class Sensei_Analysis {
 	/**
 	 * Enqueue JS scripts.
 	 *
-	 * @since 4.2.0
+	 * @since  4.2.0
+	 * @access private
 	 */
 	public function enqueue_scripts() {
 
