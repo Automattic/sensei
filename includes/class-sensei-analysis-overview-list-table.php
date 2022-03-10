@@ -265,14 +265,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		// Start the csv with the column headings
-		$column_headers = array();
-		$columns        = $this->get_columns();
-		foreach ( $columns as $key => $title ) {
-			$column_headers[] = $title;
-		}
-		$data[] = $column_headers;
-
 		switch ( $this->type ) {
 			case 'courses':
 				$this->items = $this->get_courses( $args );
@@ -287,6 +279,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$this->items = $this->get_learners( $args );
 				break;
 		}
+
+		// Start the CSV with the column headings.
+		$column_headers = array();
+		$columns        = $this->get_columns();
+
+		foreach ( $columns as $key => $title ) {
+			$column_headers[] = $title;
+		}
+
+		$data[] = $column_headers;
 
 		// Process each row.
 		foreach ( $this->items as $item ) {
