@@ -22,7 +22,7 @@ class Sensei_Grading {
 	/**
 	 * Average grade of all courses.
 	 *
-	 * @var int
+	 * @var double
 	 */
 	private $courses_average_grade;
 
