@@ -716,11 +716,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 */
 	public function no_items() {
-		$highlight = false;
 
 		if ( 'lessons' === $this->type && ! $this->get_course_filter_value() ) {
-			$message   = __( 'View your Lessons data by first selecting a course.', 'sensei-lms' );
-			$highlight = true;
+			$message = __( 'View your Lessons data by first selecting a course.', 'sensei-lms' );
 		} else {
 			if ( ! $this->type || 'users' === $this->type ) {
 				$type = __( 'students', 'sensei-lms' );
@@ -733,7 +731,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		?>
-		<div class="sensei-analysis__no-items-message <?php echo $highlight ? 'sensei-analysis__no-items-message--highlighted' : ''; ?>">
+		<div class="sensei-analysis__no-items-message">
 			<?php echo wp_kses_post( $message ); ?>
 		</div>
 		<?php
