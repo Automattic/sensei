@@ -65,8 +65,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'status' => 'complete',
 					)
 				);
-				$columns     = array(
-					'title'           => __( 'Course', 'sensei-lms' ),
+				$columns           = array(
+					'title'           => sprintf(
+						// translators: Placeholder value is the number of courses.
+						__( 'Course (%d)', 'sensei-lms' ),
+						esc_html( $this->total_items )
+					),
 					'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
 					'completions'     => sprintf(
 						// translators: Placeholder value is the number of completed courses.
