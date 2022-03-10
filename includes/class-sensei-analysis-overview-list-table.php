@@ -993,7 +993,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
 			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY wp_comments.comment_date_gmt DESC
+			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
 			LIMIT 1
 		)";
 
