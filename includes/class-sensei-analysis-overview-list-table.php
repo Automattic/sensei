@@ -1028,10 +1028,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return string The start date.
 	 */
 	private function get_start_date_filter_value(): string {
+		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
+
 		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
 		$start_date = $_GET['start_date'] ?? '';
 
-		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
+		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : $default;
 	}
 
 	/**
