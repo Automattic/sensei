@@ -549,4 +549,46 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			'Order set and default option selected'      => array( array( 'course-orderby' => 'default' ), 'anything', 'menu_order', 'ASC' ),
 		);
 	}
+
+	public function testGetAverageDaysToCompletionTotalReturnsMatchingValue() {
+		$user1_id  = $this->factory->user->create();
+		$user2_id  = $this->factory->user->create();
+		$user3_id  = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment1_id = Sensei_Utils::update_course_status( $user1_id, $course_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment1_id,
+				'comment_date' => '2022-01-07 00:00:00',
+			]
+		);
+		update_comment_meta( $comment1_id, 'start', '2022-01-01 00:00:01' );
+
+		$comment2_id = Sensei_Utils::update_course_status( $user2_id, $course_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment2_id,
+				'comment_date' => '2022-01-10 00:00:00',
+			]
+		);
+		update_comment_meta( $comment2_id, 'start', '2022-01-01 00:00:01' );
+
+		$comment3_id = Sensei_Utils::update_course_status( $user3_id, $course_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment3_id,
+				'comment_date' => '2022-01-30 00:00:00',
+			]
+		);
+		update_comment_meta( $comment3_id, 'start', '2022-01-01 00:00:01' );
+
+		$actual = Sensei()->course->get_average_days_to_completion_total();
+
+		// 2022-01-07 00:00:00 - 2022-01-01 00:00:01 + 1 = 7 days.
+		// 2022-01-10 00:00:00 - 2022-01-01 00:00:01 + 1 = 10 days.
+		// 2022-01-30 00:00:00 - 2022-01-01 00:00:01 + 1 = 30 days.
+		// ceil( ( 7 + 10 + 30 ) / 3 ) = 16 days.
+		self::assertSame( 16, $actual );
+	}
 }
