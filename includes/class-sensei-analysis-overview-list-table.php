@@ -112,8 +112,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$column_value_map['lesson_module']      = $total_counts->unique_module_count;
 				$column_value_map['students']           = $total_counts->unique_student_count;
 				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 ? $total_counts->lesson_completed_count : 0;
-				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0 ? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count ) : __( 'N/A', 'sensei-lms' );
-				$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0 ? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%' : '0%';
+				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
+					? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
+					: __( 'N/A', 'sensei-lms' );
+				$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
+					? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
+					: '0%';
 				break;
 			default:
 				break;
@@ -958,30 +962,30 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
-
-		$clean_course_id                = esc_sql( $course_id );
-		$comment_query_piece            = [];
-		$comment_query_piece['select']  = 'SELECT COUNT(DISTINCT(lessons.id)) lesson_count';
-		$comment_query_piece['select'] .= ', COUNT(DISTINCT(lesson_taxonomy.term_id)) unique_module_count';
-		$comment_query_piece['select'] .= ', COUNT(DISTINCT(lesson_students.user_id)) unique_student_count';
-		$comment_query_piece['select'] .= ', COUNT(DISTINCT(lesson_students.comment_id)) lesson_start_count';
-		$comment_query_piece['select'] .= ", SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), 1, 0)) lesson_completed_count";
-		$comment_query_piece['select'] .= ", SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), CEILING( timestampdiff( second, STR_TO_DATE( lesson_start.meta_value, '%Y-%m-%d %H:%i:%s' ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum";
-		$comment_query_piece['from']    = " from {$wpdb->posts} lessons";
-		$comment_query_piece['join']    = " left join {$wpdb->postmeta} lessons_meta on lessons.id = lessons_meta.post_id";
-		$comment_query_piece['join']   .= " AND lessons_meta.meta_key = '_lesson_course'";
-		$comment_query_piece['join']   .= " left join {$wpdb->term_relationships} lesson_term on lessons.id = lesson_term.object_id";
-		$comment_query_piece['join']   .= " left join {$wpdb->term_taxonomy} lesson_taxonomy on lesson_term.term_taxonomy_id = lesson_taxonomy.term_taxonomy_id";
-		$comment_query_piece['join']   .= " AND lesson_taxonomy.taxonomy = 'module'";
-		$comment_query_piece['join']   .= " left JOIN {$wpdb->comments} as lesson_students on lesson_students.comment_post_id = lessons.id";
-		$comment_query_piece['join']   .= " AND lesson_students.comment_type = 'sensei_lesson_status'";
-		$comment_query_piece['join']   .= " left JOIN {$wpdb->commentmeta} lesson_start on lesson_start.comment_id = lesson_students.comment_id";
-		$comment_query_piece['join']   .= " AND lesson_start.meta_key = 'start'";
-		$comment_query_piece['where']   = " WHERE lessons.post_type = 'lesson' AND lessons.post_status IN ('publish','private') AND lessons_meta.meta_value = {$clean_course_id}";
-
-		$comment_query = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['join'] . $comment_query_piece['where'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- The only external variable we are using is $course_id, and we've escaped it manually.
-		return $wpdb->get_row( $comment_query );
+		$clean_course_id = esc_sql( $course_id );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(DISTINCT(lessons.id)) lesson_count, COUNT(DISTINCT(lesson_taxonomy.term_id)) unique_module_count
+			, COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
+			, COUNT(DISTINCT(lesson_students.comment_id)) lesson_start_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), 1, 0)) lesson_completed_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), CEILING( timestampdiff( second, STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum
+			from $wpdb->posts lessons
+			left join $wpdb->postmeta lessons_meta on lessons.id = lessons_meta.post_id
+			AND lessons_meta.meta_key = '_lesson_course'
+			left join $wpdb->term_relationships lesson_term on lessons.id = lesson_term.object_id
+			left join $wpdb->term_taxonomy lesson_taxonomy on lesson_term.term_taxonomy_id = lesson_taxonomy.term_taxonomy_id
+			AND lesson_taxonomy.taxonomy = 'module'
+			left JOIN $wpdb->comments as lesson_students on lesson_students.comment_post_id = lessons.id
+			AND lesson_students.comment_type = 'sensei_lesson_status'
+			left JOIN $wpdb->commentmeta lesson_start on lesson_start.comment_id = lesson_students.comment_id
+			AND lesson_start.meta_key = 'start'
+			WHERE lessons.post_type = 'lesson' AND lessons.post_status IN ('publish','private') AND lessons_meta.meta_value = %d",
+				'%Y-%m-%d %H:%i:%s',
+				$clean_course_id
+			)
+		);
 	}
 }
 
