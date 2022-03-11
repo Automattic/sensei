@@ -90,8 +90,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 				// Get total average students grade.
 				$total_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
-				
-				$columns        = array(
+
+				$columns = array(
 					// translators: Placeholder value is total count of students.
 					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),

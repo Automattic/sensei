@@ -1151,7 +1151,7 @@ class Sensei_Grading {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$sum_result          = $wpdb->get_row( $comment_query );
 		$average_grade_value = 0;
-		if ( 0 === $sum_result->grade_count ) {
+		if ( '0' === $sum_result->grade_count ) {
 			return $average_grade_value;
 		}
 		$average_grade_value = $sum_result->grade_sum / $sum_result->grade_count;
