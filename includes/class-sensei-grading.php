@@ -1187,14 +1187,20 @@ class Sensei_Grading {
 	 * @return double
 	 */
 	public static function get_course_users_grades_sum( $course_id ) {
-
 		global $wpdb;
 
-		$clean_course_id               = esc_sql( $course_id );
+		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+
+		if ( ! $lesson_ids) {
+			return 0;
+		}
+
 		$comment_query_piece           = [];
+		$clean_lesson_ids              = implode( ',', esc_sql( $lesson_ids ) );
 		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND {$wpdb->comments}.comment_approved IN ('graded', 'passed', 'failed') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
+			AND {$wpdb->comments}.comment_post_ID IN ({$clean_lesson_ids}) ";
 
 		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
@@ -1218,7 +1224,9 @@ class Sensei_Grading {
 			"SELECT SUM(cm.meta_value) AS grade_total, COUNT(*) as grade_count
 			FROM {$wpdb->comments} c
 			INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
-			WHERE c.comment_type = 'sensei_course_status' AND cm.meta_key = 'percent'"
+			WHERE c.comment_type = 'sensei_lesson_status'
+				AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+				AND cm.meta_key = 'grade'"
 		);
 
 		if ( '0' === $result->grade_count ) {

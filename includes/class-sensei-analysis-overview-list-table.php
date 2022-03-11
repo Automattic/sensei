@@ -325,20 +325,27 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
-				// Get Percent Complete.
-				$grade_args = array(
-					'post_id'  => $item->ID,
-					'type'     => 'sensei_course_status',
-					'status'   => 'any',
-					'meta_key' => 'percent',
-				);
+				// Average Grade - Will be N/A if course has no quizzes.
+				$average_grade = __( 'N/A', 'sensei-lms' );
 
-				$percent_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
-				$percent_total          = Sensei_Grading::get_course_users_grades_sum( $item->ID );
-				$course_average_percent = 0;
+				// Get grades only if the course has quizzes.
+				if ( Sensei()->course->course_quizzes( $item->ID, true ) ) {
+					$grade_args = array(
+						'post__in' => $lessons,
+						'type'     => 'sensei_lesson_status',
+						'status'   => array( 'graded', 'passed', 'failed' ),
+						'meta_key' => 'grade',
+					);
 
-				if ( $percent_count > 0 && $percent_total > 0 ) {
-					$course_average_percent = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 );
+					$percent_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
+					$percent_total          = Sensei_Grading::get_course_users_grades_sum( $item->ID );
+					$average_grade = 0;
+
+					if ( $percent_count > 0 && $percent_total > 0 ) {
+						$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 );
+					}
+
+					$average_grade .= '%';
 				}
 
 				// Output course data
@@ -355,7 +362,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					);
 
 					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
-					$course_average_percent .= '%';
 				}
 
 				$column_data = apply_filters(
@@ -364,7 +370,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'title'           => $course_title,
 						'last_activity'   => $last_activity_date,
 						'completions'     => $course_completions,
-						'average_percent' => $course_average_percent,
+						'average_percent' => $average_grade,
 					),
 					$item,
 					$this
