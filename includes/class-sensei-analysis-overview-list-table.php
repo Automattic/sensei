@@ -90,11 +90,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 				// Get total average students grade.
 				$total_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
-
-				$students_count = is_array( $this->items ) ? count( $this->items ) : ! empty( $this->items );
+				
 				$columns        = array(
 					// translators: Placeholder value is total count of students.
-					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $students_count ) ),
+					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 					// translators: Placeholder value is all active courses.
