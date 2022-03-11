@@ -111,7 +111,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$column_value_map['title']              = $total_counts->lesson_count;
 				$column_value_map['lesson_module']      = $total_counts->unique_module_count;
 				$column_value_map['students']           = $total_counts->unique_student_count;
-				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 ? $total_counts->lesson_completed_count : 0;
+				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
+					? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
+					: 0;
 				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
 					? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
 					: __( 'N/A', 'sensei-lms' );
