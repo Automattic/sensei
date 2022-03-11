@@ -120,7 +120,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 		foreach ( $column_value_map as $key => $value ) {
 			if ( key_exists( $key, $columns ) ) {
-				$columns[ $key ] = "{$columns[ $key ]} ({$value})";
+				$columns[ $key ] = $columns[ $key ] . ' (' . esc_html( $value ) . ')';
 			}
 		}
 		return $columns;
@@ -956,7 +956,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @return object Row containing the totals for column header.
 	 */
-	public function get_totals_for_lesson_report_column_headers( int $course_id ) {
+	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
 
 		$clean_course_id                = esc_sql( $course_id );
@@ -965,8 +965,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$comment_query_piece['select'] .= ', COUNT(DISTINCT(lesson_taxonomy.term_id)) unique_module_count';
 		$comment_query_piece['select'] .= ', COUNT(DISTINCT(lesson_students.user_id)) unique_student_count';
 		$comment_query_piece['select'] .= ', COUNT(DISTINCT(lesson_students.comment_id)) lesson_start_count';
-		$comment_query_piece['select'] .= ", SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed'), 1, 0)) lesson_completed_count";
-		$comment_query_piece['select'] .= ", SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed'), CEILING( timestampdiff( second, STR_TO_DATE( lesson_start.meta_value, '%Y-%m-%d %H:%i:%s' ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum";
+		$comment_query_piece['select'] .= ", SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), 1, 0)) lesson_completed_count";
+		$comment_query_piece['select'] .= ", SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), CEILING( timestampdiff( second, STR_TO_DATE( lesson_start.meta_value, '%Y-%m-%d %H:%i:%s' ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum";
 		$comment_query_piece['from']    = " from {$wpdb->posts} lessons";
 		$comment_query_piece['join']    = " left join {$wpdb->postmeta} lessons_meta on lessons.id = lessons_meta.post_id";
 		$comment_query_piece['join']   .= " AND lessons_meta.meta_key = '_lesson_course'";
