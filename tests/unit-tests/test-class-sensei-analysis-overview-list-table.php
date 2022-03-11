@@ -663,6 +663,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
 		$get_courses->setAccessible( true );
 
+		$this->disableCourseLastActivityFilter( $instance );
 		$courses = $get_courses->invoke(
 			$instance,
 			[
@@ -687,6 +688,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
 		$get_courses->setAccessible( true );
 
+		$this->disableCourseLastActivityFilter( $instance );
 		$courses = $get_courses->invoke(
 			$instance,
 			[
@@ -720,6 +722,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
 		$get_courses->setAccessible( true );
 
+		$this->disableCourseLastActivityFilter( $instance );
 		$courses = $get_courses->invoke(
 			$instance,
 			[
@@ -753,5 +756,19 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			];
 		}
 		return $ret;
+	}
+
+	/**
+	 * Disable the course last activity filter.
+	 *
+	 * @param Sensei_Analysis_Overview_List_Table $instance
+	 */
+	private function disableCourseLastActivityFilter( Sensei_Analysis_Overview_List_Table $instance ) {
+		add_action(
+			'pre_get_posts',
+			function() use ( $instance ) {
+				remove_filter( 'posts_clauses', [ $instance, 'filter_courses_by_last_activity' ] );
+			}
+		);
 	}
 }
