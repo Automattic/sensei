@@ -386,7 +386,8 @@ class Sensei_Lesson {
 		}
 		$html .= '</select></p>' . "\n";
 
-		if ( ! empty( trim( $lesson_video_embed ) ) ) {
+		// Show legacy embed video only when it's filled or when using classic editor.
+		if ( ! empty( trim( $lesson_video_embed ) ) || ! get_current_screen()->is_block_editor() ) {
 			$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'sensei-lms' ) . ':</label><br/>' . "\n";
 			$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
 
