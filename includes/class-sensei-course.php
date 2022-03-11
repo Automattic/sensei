@@ -3899,8 +3899,8 @@ class Sensei_Course {
 			FROM {$wpdb->comments}
 			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
 				AND {$wpdb->commentmeta}.meta_key = 'start'
-			WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status')
-				AND {$wpdb->comments}.comment_approved IN ( 'complete' )
+			WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
+				AND {$wpdb->comments}.comment_approved = 'complete'
 		";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
