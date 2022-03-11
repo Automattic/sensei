@@ -530,9 +530,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$course_args['s'] = $args['search'];
 		}
 
-		// Using WP_Query as get_posts() doesn't support 'found_posts'
-		$courses_query     = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
+		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
+
 		$this->total_items = $courses_query->found_posts;
+
 		return $courses_query->posts;
 
 	}
@@ -695,11 +698,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @access private
 	 */
 	public function output_top_filters() {
-
-		if ( ! in_array( $this->type, [ 'lessons', 'users' ], true ) ) {
-			return;
-		}
-
 		?>
 		<form class="sensei-analysis__top-filters">
 			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's' ] ); ?>
@@ -712,7 +710,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				<?php $this->output_course_select_input(); ?>
 			<?php endif ?>
 
-			<?php if ( 'users' === $this->type ) : ?>
+			<?php if ( in_array( $this->type, [ 'courses', 'users' ], true ) ) : ?>
 				<label for="sensei-start-date-filter">
 					<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
 				</label>
@@ -907,6 +905,62 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Filter the courses by last activity start/end date.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function filter_courses_by_last_activity( array $clauses ): array {
+		global $wpdb;
+
+		$start_date = $this->get_start_date_and_time();
+		$end_date   = $this->get_end_date_and_time();
+
+		if ( ! $start_date && ! $end_date ) {
+			return $clauses;
+		}
+
+		// Join only the last activity comment.
+		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
+		$clauses['join'] .= " INNER JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_ID = (
+			SELECT comment_ID
+			FROM {$wpdb->comments}
+			WHERE {$wpdb->comments}.comment_post_ID IN (
+				SELECT pm.post_id
+				FROM {$wpdb->postmeta} as pm
+				WHERE pm.meta_value = {$wpdb->posts}.ID
+				AND pm.meta_key = '_lesson_course'
+			)
+			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
+			LIMIT 1
+		)";
+
+		// Filter by start date.
+		if ( $start_date ) {
+			$clauses['where'] .= $wpdb->prepare(
+				" AND {$wpdb->comments}.comment_date_gmt >= %s",
+				$start_date
+			);
+		}
+
+		// Filter by end date.
+		if ( $end_date ) {
+			$clauses['where'] .= $wpdb->prepare(
+				" AND {$wpdb->comments}.comment_date_gmt <= %s",
+				$end_date
+			);
+		}
+
+		return $clauses;
+	}
+
+	/**
 	 * Filter the users by last activity start/end date.
 	 *
 	 * @since  4.2.0
@@ -917,19 +971,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function filter_users_by_last_activity( WP_User_Query $query ) {
 		global $wpdb;
 
-		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
-		$end_date   = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
+		$start_date = $this->get_start_date_and_time();
+		$end_date   = $this->get_end_date_and_time();
 
 		if ( ! $start_date && ! $end_date ) {
 			return;
-		}
-
-		if ( $start_date ) {
-			$start_date->setTime( 0, 0, 0 );
-		}
-
-		if ( $end_date ) {
-			$end_date->setTime( 23, 59, 59 );
 		}
 
 		// Join only the last activity comment.
@@ -948,7 +994,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( $start_date ) {
 			$query->query_where .= $wpdb->prepare(
 				" AND {$wpdb->comments}.comment_date_gmt >= %s",
-				$start_date->format( 'Y-m-d H:i:s' )
+				$start_date
 			);
 		}
 
@@ -956,7 +1002,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( $end_date ) {
 			$query->query_where .= $wpdb->prepare(
 				" AND {$wpdb->comments}.comment_date_gmt <= %s",
-				$end_date->format( 'Y-m-d H:i:s' )
+				$end_date
 			);
 		}
 	}
@@ -979,22 +1025,56 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	private function get_start_date_filter_value(): string {
 		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
 
-		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
+		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
 		$start_date = $_GET['start_date'] ?? '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : $default;
 	}
 
 	/**
+	 * Get the start date filter value including the time.
+	 *
+	 * @return string The start date including the time or empty string if none.
+	 */
+	private function get_start_date_and_time(): string {
+		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
+
+		if ( ! $start_date ) {
+			return '';
+		}
+
+		$start_date->setTime( 0, 0, 0 );
+
+		return $start_date->format( 'Y-m-d H:i:s' );
+	}
+
+	/**
 	 * Get the end date filter value.
 	 *
-	 * @return string The end date.
+	 * @return string The end date or empty string if none.
 	 */
 	private function get_end_date_filter_value(): string {
-		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
+		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
 		$end_date = $_GET['end_date'] ?? '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
+	}
+
+	/**
+	 * Get the end date filter value including the time.
+	 *
+	 * @return string The end date including the time or empty string if none.
+	 */
+	private function get_end_date_and_time(): string {
+		$end_date = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
+
+		if ( ! $end_date ) {
+			return '';
+		}
+
+		$end_date->setTime( 23, 59, 59 );
+
+		return $end_date->format( 'Y-m-d H:i:s' );
 	}
 
 }
