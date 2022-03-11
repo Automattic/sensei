@@ -61,7 +61,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 					'completions'        => __( 'Completed', 'sensei-lms' ),
 					'average_percent'    => __( 'Average Grade', 'sensei-lms' ),
-					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
+					'days_to_completion' => sprintf(
+						// translators: Placeholder value is average days to completion.
+						__( 'Days to Completion (%d)', 'sensei-lms' ),
+						$this->get_days_to_completion_total_for_courses()
+					),
 				);
 				break;
 
@@ -913,6 +917,32 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$clauses['groupby'] .= " {$wpdb->posts}.ID";
 
 		return $clauses;
+	}
+
+	/**
+	 * Get average days to completion for all courses.
+	 *
+	 * @since 4.2.0
+	 * @access private
+	 *
+	 * @return int Average days to completion, rounded to the highest integer.
+	 */
+	public function get_days_to_completion_total_for_courses() {
+		global $wpdb;
+
+		$query = "
+			SELECT SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) AS average_days_to_completion
+			FROM {$wpdb->comments}
+			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
+				AND {$wpdb->commentmeta}.meta_key = 'start'
+			WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status')
+				AND {$wpdb->comments}.comment_approved IN ( 'complete' )
+		";
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$average_days_to_completion = $wpdb->get_var( $query );
+
+		return (int) ceil( $average_days_to_completion );
 	}
 }
 
