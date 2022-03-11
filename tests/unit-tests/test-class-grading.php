@@ -194,7 +194,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	public function testGetGradedLessonsAverageGradeNoGrades() {
 		$this->assertEquals( 0, Sensei()->grading->get_graded_lessons_average_grade() );
 	}
-	
+
 	/**
 	 *
 	 * This tests generated graded lessons and makes sure that the function
