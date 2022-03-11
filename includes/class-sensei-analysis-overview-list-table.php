@@ -933,17 +933,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			return $clauses;
 		}
 
+		// Join the lessons meta.
+		// We need the lesson ids to extract the last activity comment.
+		$clauses['join'] .= "
+			INNER JOIN {$wpdb->postmeta} AS pm ON pm.meta_value = {$wpdb->posts}.ID
+			AND pm.meta_key = '_lesson_course'
+		";
+
 		// Join only the last activity comment.
 		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
 		$clauses['join'] .= " INNER JOIN {$wpdb->comments} AS c ON c.comment_ID = (
 			SELECT comment_ID
 			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.comment_post_ID IN (
-				SELECT pm.post_id
-				FROM {$wpdb->postmeta} AS pm
-				WHERE pm.meta_value = {$wpdb->posts}.ID
-				AND pm.meta_key = '_lesson_course'
-			)
+			WHERE {$wpdb->comments}.comment_post_ID = pm.post_id
 			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
 			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
@@ -953,7 +955,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// Filter by start date.
 		if ( $start_date ) {
 			$clauses['where'] .= $wpdb->prepare(
-				" AND c.comment_date_gmt >= %s",
+				' AND c.comment_date_gmt >= %s',
 				$start_date
 			);
 		}
@@ -961,7 +963,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// Filter by end date.
 		if ( $end_date ) {
 			$clauses['where'] .= $wpdb->prepare(
-				" AND c.comment_date_gmt <= %s",
+				' AND c.comment_date_gmt <= %s',
 				$end_date
 			);
 		}
