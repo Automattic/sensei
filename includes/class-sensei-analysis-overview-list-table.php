@@ -279,12 +279,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				// Get Learners (i.e. those who have started)
-				$course_args     = array(
+				$course_args           = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
 					'status'  => 'any',
 				);
-				$course_students = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ), true );
+				$course_students_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ) );
 
 				// Last Activity.
 				$last_activity_date = __( 'N/A', 'sensei-lms' );
@@ -338,17 +338,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$course_average_percent .= '%';
 				}
 
-				$course_students_count = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
-
 				$average_course_progress = 0;
 				if ( 0 !== $course_students_count && 0 !== $course_lessons ) {
 					// Average course progress is calculated based on lessons completed for the course
 					// divided by the total possible lessons completed.
 					$average_course_progress = $item->completed_lesson_count / ( $course_students_count * $course_lessons ) * 100;
+					$average_course_progress = esc_html(
+					/* translators: Progress value. */
+						sprintf( '%d%%', $average_course_progress )
+					);
 				}
 
-				$course_students_count = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
-				$column_data           = apply_filters(
+				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'            => $course_title,
@@ -584,12 +585,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// form the previous join and have one of the completed statuses.
 		$clauses['join'] .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = lessons.post_id";
 		$clauses['join'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['join'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'failed')";
+		$clauses['join'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
 		// Include only comments that have user ID of a users that are currently enroled in the course.
-		$clauses['join'] .= " AND {$wpdb->comments}.user_id IN ( SELECT( {$wpdb->comments}.user_id )
+		$clauses['join'] .= " AND {$wpdb->comments}.user_id IN ( SELECT DISTINCT  {$wpdb->comments}.user_id
 		 FROM {$wpdb->comments} WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status')
 		 AND {$wpdb->comments}.comment_post_ID IN ( {$wpdb->posts}.ID )
-		 AND {$wpdb->comments}.comment_approved IN ('in-progress', 'complete'))";
+		 AND {$wpdb->comments}.comment_approved IN ('in-progress', 'complete', 'failed'))";
 
 		$clauses['groupby'] .= "{$wpdb->posts}.ID";
 
