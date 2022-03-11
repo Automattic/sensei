@@ -629,4 +629,129 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'The end date should be equal to the "end_date" query param, plus the last minute time.'
 		);
 	}
+
+	public function testAddDaysToCompletionToCoursesQueriesWithProvidedClausesModifiesQueryParts() {
+		$instance = new Sensei_Analysis_Overview_List_Table();
+
+		$actual = $instance->add_days_to_completion_to_courses_queries(
+			[
+				'fields'  => 'a',
+				'join'    => 'b',
+				'where'   => 'c',
+				'groupby' => 'd',
+			]
+		);
+
+		$expected = [
+			'fields'  => "a, SUM(  ABS( DATEDIFF( wptests_comments.comment_date, STR_TO_DATE( wptests_commentmeta.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) AS days_to_completion, COUNT(wptests_commentmeta.comment_id) AS count_of_completions",
+			'join'    => "b LEFT JOIN wptests_comments ON wptests_comments.comment_post_ID = wptests_posts.ID AND wptests_comments.comment_type IN ('sensei_course_status') AND wptests_comments.comment_approved IN ( 'complete' ) AND wptests_comments.comment_post_ID = wptests_posts.ID LEFT JOIN wptests_commentmeta ON wptests_comments.comment_ID = wptests_commentmeta.comment_id AND wptests_commentmeta.meta_key = 'start'",
+			'where'   => 'c',
+			'groupby' => 'd wptests_posts.ID',
+		];
+
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedItemsHaveDaysToCompletionProperty() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		self::assertObjectHasAttribute( 'days_to_completion', $courses[0] );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedItemsHaveCountOfCompletionsProperty() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		self::assertObjectHasAttribute( 'count_of_completions', $courses[0] );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedReturnsItemsWithMatchingCustomProperties() {
+		$user_id = $this->factory->user->create();
+
+		$course_id  = $this->factory->course->create();
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment_id,
+				'comment_date' => '2022-01-02 00:00:01',
+			]
+		);
+
+		$unfinished_course_id  = $this->factory->course->create();
+		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 2,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		$expected = [
+			[
+				'days_to_completion'   => '2',
+				'count_of_completions' => '1',
+			],
+			[
+				'days_to_completion'   => null,
+				'count_of_completions' => '0',
+			],
+		];
+
+		self::assertSame( $expected, $this->exportCustomPropertiesFromItems( $courses ) );
+	}
+
+	private function exportCustomPropertiesFromItems( array $items ): array {
+		$ret = [];
+		foreach ( $items as $item ) {
+			$ret[] = [
+				'days_to_completion'   => $item->days_to_completion,
+				'count_of_completions' => $item->count_of_completions,
+			];
+		}
+		return $ret;
+	}
 }
