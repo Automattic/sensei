@@ -386,12 +386,14 @@ class Sensei_Lesson {
 		}
 		$html .= '</select></p>' . "\n";
 
-		$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'sensei-lms' ) . ':</label><br/>' . "\n";
-		$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
+		if ( ! empty( trim( $lesson_video_embed ) ) ) {
+			$html .= '<p><label for="lesson_video_embed">' . esc_html__( 'Video Embed Code', 'sensei-lms' ) . ':</label><br/>' . "\n";
+			$html .= '<textarea rows="5" cols="50" name="lesson_video_embed" tabindex="6" id="course-video-embed">';
 
-		$html .= $lesson_video_embed . '</textarea></p>' . "\n";
+			$html .= $lesson_video_embed . '</textarea></p>' . "\n";
 
-		$html .= '<p>' . esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'sensei-lms' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Paste the embed code for your video (e.g. YouTube, Vimeo etc.) in the box above.', 'sensei-lms' ) . '</p>';
+		}
 
 		echo wp_kses(
 			$html,
