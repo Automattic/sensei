@@ -79,8 +79,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					),
 					'average_percent' => sprintf(
 						// translators: Placeholder value is the average grade of all courses.
-						__( 'Average Grade (%d%%)', 'sensei-lms' ),
-						esc_html( Sensei()->grading->get_courses_average_grade() )
+						__( 'Average Grade (%s%%)', 'sensei-lms' ),
+						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
 					),
 				);
 				break;
@@ -325,11 +325,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
-				// Average Grade - Will be N/A if course has no quizzes.
+				// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
+				// have a status of 'graded', 'passed' or 'failed', or if none of the quizzes have grades.
 				$average_grade = __( 'N/A', 'sensei-lms' );
 
-				// Get grades only if the course has quizzes.
-				if ( Sensei()->course->course_quizzes( $item->ID, true ) ) {
+				// Get grades only if the course has lessons and quizzes.
+				if ( ! empty( $lessons ) && Sensei()->course->course_quizzes( $item->ID, true ) ) {
 					$grade_args = array(
 						'post__in' => $lessons,
 						'type'     => 'sensei_lesson_status',
@@ -337,15 +338,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'meta_key' => 'grade',
 					);
 
-					$percent_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
-					$percent_total          = Sensei_Grading::get_course_users_grades_sum( $item->ID );
-					$average_grade = 0;
+					$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
+					$percent_total = Sensei_Grading::get_course_users_grades_sum( $item->ID );
 
-					if ( $percent_count > 0 && $percent_total > 0 ) {
-						$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 );
+					if ( $percent_count > 0 && $percent_total >= 0 ) {
+						$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
 					}
-
-					$average_grade .= '%';
 				}
 
 				// Output course data
