@@ -599,4 +599,46 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		}
 		return $ret;
 	}
+	/**
+	 * Tests that we are getting the correct value for totals in column headers for lesson table.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_columns
+	 */
+	public function testGetTotalsforLessonReportColumnHeaders() {
+		/* Arrange */
+		$user_ids   = $this->factory->user->create_many( 3 );
+		$course_id  = $this->factory->course->create();
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$days_count = 7;
+
+		$instance = new Sensei_Analysis_Overview_List_Table( 'lessons' );
+
+		$_GET['course_filter'] = $course_id;
+		// Complete a lesson for each student on a different date.
+		foreach ( $user_ids as $user_id ) {
+			$lesson_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_ids[0], $user_id, true );
+			wp_update_comment(
+				[
+					'comment_ID'   => $lesson_activity_comment_id,
+					'comment_date' => gmdate( 'Y-m-d H:i:s', strtotime( ( $days_count++ ) . ' days' ) ),
+				]
+			);
+		}
+
+		/* ACT */
+		$actual = $instance->get_columns();
+
+		/* Assert */
+		$expected = [
+			'title'              => 'Lesson (3)',
+			'students'           => 'Students (3)',
+			'last_activity'      => 'Last Activity',
+			'completions'        => 'Completed (1)',
+			'days_to_completion' => 'Days to Completion (8)',
+		];
+		self::assertSame( $expected, $actual, 'The expected column headers for lessons table in overview report does not match the actual output' );
+	}
 }
