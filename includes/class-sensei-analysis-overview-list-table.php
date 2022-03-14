@@ -62,18 +62,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					)
 				);
 				$columns           = array(
-					'title'           => sprintf(
+					'title'              => sprintf(
 						// translators: Placeholder value is the number of courses.
 						__( 'Course (%d)', 'sensei-lms' ),
 						esc_html( $this->total_items )
 					),
-					'last_activity'   => __( 'Last Activity', 'sensei-lms' ),
-					'completions'     => sprintf(
+					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
+					'completions'        => sprintf(
 						// translators: Placeholder value is the number of completed courses.
 						__( 'Completed (%d)', 'sensei-lms' ),
 						esc_html( $total_completions )
 					),
-					'average_percent' => sprintf(
+					'average_percent'    => sprintf(
 						// translators: Placeholder value is the average grade of all courses.
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
 						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
@@ -361,13 +361,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						admin_url( 'edit.php' )
 					);
 
-					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
+					$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 				}
 
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'.             => $course_title,
+						'title'              => $course_title,
 						'last_activity'      => $last_activity_date,
 						'completions'        => $course_completions,
 						'average_percent'    => $average_grade,

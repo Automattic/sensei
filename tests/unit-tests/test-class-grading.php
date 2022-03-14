@@ -4,7 +4,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
-	 * setup function
+	 * Setup function
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
@@ -192,7 +192,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCoursesAverageGradeLessonStatus() {
 		$course_id  = $this->factory->course->create();
-		$lesson_ids = $this->factory->lesson->create_many( 3,
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
 			[
 				'meta_input' => [
 					'_lesson_course'      => $course_id,
@@ -228,7 +229,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCoursesAverageGradeNoGrades() {
 		$course_id  = $this->factory->course->create();
-		$lesson_ids = $this->factory->lesson->create_many( 3,
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
 			[
 				'meta_input' => [
 					'_lesson_course'      => $course_id,
@@ -256,7 +258,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCoursesAverageGradeNoCourse() {
 		$course_id  = $this->factory->course->create();
-		$lesson_ids = $this->factory->lesson->create_many( 3,
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
 			[
 				'meta_input' => [
 					'_quiz_has_questions' => 1,
@@ -295,7 +298,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCoursesAverageGradeNoQuiz() {
 		$course_id  = $this->factory->course->create();
-		$lesson_ids = $this->factory->lesson->create_many( 3,
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
 			[
 				'meta_input' => [
 					'_lesson_course' => $course_id,
@@ -334,7 +338,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCoursesAverageGradeMultipleCourses() {
 		$course_ids = $this->factory->course->create_many( 2 );
-		$lesson_ids = $this->factory->lesson->create_many( 3,
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
 			[
 				'meta_input' => [
 					'_quiz_has_questions' => 1,
@@ -364,7 +369,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 		$this->assignGrade( $comment_ids[4], '70' );
 		$this->assignGrade( $comment_ids[5], '85' );
 
-		$first_course_average = ( 10 + 50 + 100 + 35 ) / 4;
+		$first_course_average  = ( 10 + 50 + 100 + 35 ) / 4;
 		$second_course_average = ( 70 + 85 ) / 2;
 
 		$this->assertEquals( ( $first_course_average + $second_course_average ) / count( $course_ids ), Sensei()->grading->get_courses_average_grade() );
@@ -377,7 +382,8 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 */
 	public function testGetCoursesAverageGrade() {
 		$course_id  = $this->factory->course->create();
-		$lesson_ids = $this->factory->lesson->create_many( 3,
+		$lesson_ids = $this->factory->lesson->create_many(
+			3,
 			[
 				'meta_input' => [
 					'_lesson_course'      => $course_id,
@@ -430,7 +436,7 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 	 * @param string $status    Lesson status.
 	 * @return int Comment ID.
 	 */
-	private function startStudentInLesson( $lesson_id, $user_id, $status) {
+	private function startStudentInLesson( $lesson_id, $user_id, $status ) {
 		return $this->factory->comment->create(
 			[
 				'comment_type'     => 'sensei_lesson_status',

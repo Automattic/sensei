@@ -1191,7 +1191,7 @@ class Sensei_Grading {
 
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
 
-		if ( ! $lesson_ids) {
+		if ( ! $lesson_ids ) {
 			return 0;
 		}
 
@@ -1222,11 +1222,11 @@ class Sensei_Grading {
 		/**
 		 * The subquery calculates the average grade per course, and the outer query then calculates the
 		 * average grade of all courses. To be included in the calculation, a lesson must:
-		 * 	Have a status of 'graded', 'passed' or 'failed'.
-		 * 	Have grade data.
-		 * 	Be associated with a course.
-		 * 	Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
-		 * 	if it exists its value will be 1).
+		 *   Have a status of 'graded', 'passed' or 'failed'.
+		 *   Have grade data.
+		 *   Be associated with a course.
+		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
+		 *   if it exists its value will be 1).
 		 */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$result = $wpdb->get_row(
