@@ -37,12 +37,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		parent::__construct( 'analysis_overview' );
 
 		// Actions.
-		if ( 'lessons' === $this->type ) {
-			add_action( 'sensei_before_list_table', array( $this, 'output_lessons_top_filters' ) );
-		}
-
+		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
-
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
@@ -82,6 +78,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
 						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
 					),
+          'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
 
@@ -317,7 +314,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
 				}
 
-				// Get Course Completions
+				// Get Course Completions.
 				$course_args        = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
@@ -345,6 +342,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
 					}
 				}
+        
+        // Properties `count_of_completions` and `days_to_completion` where added to items in
+				// `Sensei_Analysis_Overview_List_Table::add_days_to_completion_to_courses_queries`.
+				// We made it due to improve performance of the report. Don't try to access these properties outside.
+				$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
 
 				// Output course data
 				if ( $this->csv_output ) {
@@ -365,10 +367,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
-						'title'           => $course_title,
-						'last_activity'   => $last_activity_date,
-						'completions'     => $course_completions,
-						'average_percent' => $average_grade,
+						'title'.             => $course_title,
+						'last_activity'      => $last_activity_date,
+						'completions'        => $course_completions,
+						'average_percent'    => $average_grade,
+						'days_to_completion' => $average_completion_days,
 					),
 					$item,
 					$this
@@ -565,8 +568,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$course_args['s'] = $args['search'];
 		}
 
+		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 		// Using WP_Query as get_posts() doesn't support 'found_posts'
-		$courses_query     = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
 
@@ -634,8 +640,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 * @since 1.6.0
 		 * @param $args
 		 */
-		$args              = apply_filters( 'sensei_analysis_overview_filter_users', $args );
-		$wp_user_search    = new WP_User_Query( $args );
+		$args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
+
+		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
+		$wp_user_search = new WP_User_Query( $args );
+		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
+
 		$learners          = $wp_user_search->get_results();
 		$this->total_items = $wp_user_search->get_total();
 
@@ -720,21 +730,56 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Output the lessons top filter form.
+	 * Output top filter form.
 	 *
 	 * @since  4.2.0
 	 * @access private
 	 */
-	public function output_lessons_top_filters() {
+	public function output_top_filters() {
+
+		if ( ! in_array( $this->type, [ 'lessons', 'users' ], true ) ) {
+			return;
+		}
+
 		?>
 		<form class="sensei-analysis__top-filters">
-			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 's' ] ); ?>
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's' ] ); ?>
 
-			<label for="sensei-course-filter">
-				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
-			</label>
+			<?php if ( 'lessons' === $this->type ) : ?>
+				<label for="sensei-course-filter">
+					<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
+				</label>
 
-			<?php $this->output_course_select_input(); ?>
+				<?php $this->output_course_select_input(); ?>
+			<?php endif ?>
+
+			<?php if ( 'users' === $this->type ) : ?>
+				<label for="sensei-start-date-filter">
+					<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
+				</label>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-start-date-filter"
+					name="start_date"
+					type="text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
+					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
+				/>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-end-date-filter"
+					name="end_date"
+					type="text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
+					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
+				/>
+			<?php endif ?>
+
+			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
 		</form>
 		<?php
 	}
@@ -836,6 +881,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$report = 'user-overview';
 				break;
 		}
+
 		$url = add_query_arg(
 			array(
 				'page'                   => $this->page_slug,
@@ -843,9 +889,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'sensei_report_download' => $report,
 				'post_type'              => $this->post_type,
 				'course_filter'          => $this->get_course_filter_value(),
+				'start_date'             => $this->get_start_date_filter_value(),
+				'end_date'               => $this->get_end_date_filter_value(),
 			),
 			admin_url( 'edit.php' )
 		);
+
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
 
@@ -899,6 +948,89 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Filter the users by last activity start/end date.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function filter_users_by_last_activity( WP_User_Query $query ) {
+		global $wpdb;
+
+		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
+		$end_date   = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
+
+		if ( ! $start_date && ! $end_date ) {
+			return;
+		}
+
+		if ( $start_date ) {
+			$start_date->setTime( 0, 0, 0 );
+		}
+
+		if ( $end_date ) {
+			$end_date->setTime( 23, 59, 59 );
+		}
+
+		// Join only the last activity comment.
+		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
+		$query->query_from .= " INNER JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_ID = (
+			SELECT comment_ID
+			FROM {$wpdb->comments}
+			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
+			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
+			LIMIT 1
+		)";
+
+		// Filter by start date.
+		if ( $start_date ) {
+			$query->query_where .= $wpdb->prepare(
+				" AND {$wpdb->comments}.comment_date_gmt >= %s",
+				$start_date->format( 'Y-m-d H:i:s' )
+			);
+		}
+
+		// Filter by end date.
+		if ( $end_date ) {
+			$query->query_where .= $wpdb->prepare(
+				" AND {$wpdb->comments}.comment_date_gmt <= %s",
+				$end_date->format( 'Y-m-d H:i:s' )
+			);
+		}
+	}
+
+	/**
+	 * Add the sum of days taken by each student to complete a course and the number of completions for each course.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_days_to_completion_to_courses_queries( $clauses ) {
+		global $wpdb;
+
+		// Get the number of days to complete a course: `days to complete = complete date - start date + 1`.
+		$clauses['fields'] .= ", SUM(  ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) AS days_to_completion";
+		// We consider the course as completed if there is a comment and corresponding meta for it.
+		$clauses['fields']  .= ", COUNT({$wpdb->commentmeta}.comment_id) AS count_of_completions";
+		$clauses['join']    .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_type IN ('sensei_course_status')";
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_approved IN ( 'complete' )";
+		$clauses['join']    .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join']    .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
+		$clauses['join']    .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
+		$clauses['groupby'] .= " {$wpdb->posts}.ID";
+
+		return $clauses;
+	}
+
+	/**
 	 * Get the selected course ID.
 	 *
 	 * @return int The course ID or 0 if none is selected.
@@ -908,6 +1040,31 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
 	}
 
+	/**
+	 * Get the start date filter value.
+	 *
+	 * @return string The start date.
+	 */
+	private function get_start_date_filter_value(): string {
+		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
+
+		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
+		$start_date = $_GET['start_date'] ?? '';
+
+		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : $default;
+	}
+
+	/**
+	 * Get the end date filter value.
+	 *
+	 * @return string The end date.
+	 */
+	private function get_end_date_filter_value(): string {
+		// phpcs:ignore WordPress.Security -- The date is sanitized at a later stage.
+		$end_date = $_GET['end_date'] ?? '';
+
+		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
+	}
 }
 
 /**
