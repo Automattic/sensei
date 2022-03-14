@@ -87,6 +87,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// Backwards compatible filter name, moving forward should have single filter name
 		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this );
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
+		// We want to fetch the totals only once.
+		remove_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 		return $columns;
 	}
 	/**
@@ -99,7 +101,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return array The array of columns to use with the table with columns appended to their title
 	 */
 	public function add_totals_to_report_column_headers( array $columns ) {
-		remove_filter( 'sensei_analysis_overview_columns', array( $this, __FUNCTION__ ) );
 		$column_value_map = array();
 		switch ( $this->type ) {
 			case 'lessons' && $this->get_course_filter_value():
@@ -1091,17 +1092,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				"SELECT COUNT(DISTINCT(lessons.id)) lesson_count, COUNT(DISTINCT(lesson_taxonomy.term_id)) unique_module_count
 			, COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
 			, COUNT(DISTINCT(lesson_students.comment_id)) lesson_start_count
-			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), 1, 0)) lesson_completed_count
-			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','completed','failed'), CEILING( timestampdiff( second, STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum
-			from $wpdb->posts lessons
-			left join $wpdb->postmeta lessons_meta on lessons.id = lessons_meta.post_id
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), 1, 0)) lesson_completed_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), CEILING( TIMESTAMPDIFF( second, STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum
+			FROM $wpdb->posts lessons
+			LEFT JOIN $wpdb->postmeta lessons_meta ON lessons.id = lessons_meta.post_id
 			AND lessons_meta.meta_key = '_lesson_course'
-			left join $wpdb->term_relationships lesson_term on lessons.id = lesson_term.object_id
-			left join $wpdb->term_taxonomy lesson_taxonomy on lesson_term.term_taxonomy_id = lesson_taxonomy.term_taxonomy_id
+			LEFT JOIN $wpdb->term_relationships lesson_term ON lessons.id = lesson_term.object_id
+			LEFT JOIN $wpdb->term_taxonomy lesson_taxonomy ON lesson_term.term_taxonomy_id = lesson_taxonomy.term_taxonomy_id
 			AND lesson_taxonomy.taxonomy = 'module'
-			left JOIN $wpdb->comments as lesson_students on lesson_students.comment_post_id = lessons.id
+			LEFT JOIN $wpdb->comments lesson_students ON lesson_students.comment_post_id = lessons.id
 			AND lesson_students.comment_type = 'sensei_lesson_status'
-			left JOIN $wpdb->commentmeta lesson_start on lesson_start.comment_id = lesson_students.comment_id
+			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			AND lesson_start.meta_key = 'start'
 			WHERE lessons.post_type = 'lesson' AND lessons.post_status IN ('publish','private') AND lessons_meta.meta_value = %d",
 				'%Y-%m-%d %H:%i:%s',
