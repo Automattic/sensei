@@ -623,9 +623,10 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			wp_update_comment(
 				[
 					'comment_ID'   => $lesson_activity_comment_id,
-					'comment_date' => gmdate( 'Y-m-d H:i:s', strtotime( ( $days_count++ ) . ' days' ) ),
+					'comment_date' => gmdate( 'Y-m-d H:i:s', strtotime( ( $days_count * 24 ) - 6 . ' hours' ) ),
 				]
 			);
+			$days_count++;
 		}
 
 		/* ACT */
