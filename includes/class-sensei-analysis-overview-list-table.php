@@ -78,7 +78,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
 						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
 					),
-          'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
+					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
 
@@ -342,8 +342,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
 					}
 				}
-        
-        // Properties `count_of_completions` and `days_to_completion` where added to items in
+
+				// Properties `count_of_completions` and `days_to_completion` where added to items in
 				// `Sensei_Analysis_Overview_List_Table::add_days_to_completion_to_courses_queries`.
 				// We made it due to improve performance of the report. Don't try to access these properties outside.
 				$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
