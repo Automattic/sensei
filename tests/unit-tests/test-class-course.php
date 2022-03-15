@@ -633,4 +633,10 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// ceil( 2.5 ) = 3.
 		self::assertSame( 3, $actual );
 	}
+
+	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
+		$actual = Sensei()->course->get_average_days_to_completion_total();
+
+		self::assertSame( 0, $actual );
+	}
 }
