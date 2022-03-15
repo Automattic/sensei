@@ -55,6 +55,7 @@ class Sensei_Analysis {
 
 			// phpcs:ignore WordPress.Security.NonceVerification -- Arguments used for comparison.
 			if ( isset( $_GET['page'] ) && self::PAGE_SLUG === $_GET['page'] ) {
+				add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
@@ -191,6 +192,18 @@ class Sensei_Analysis {
 	}
 
 	/**
+	 * Enqueue JS scripts.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 */
+	public function enqueue_scripts() {
+
+		Sensei()->assets->enqueue( 'sensei-reports', 'js/admin/reports.js', [ 'jquery', 'jquery-ui-datepicker' ] );
+
+	}
+
+	/**
 	 * enqueue_styles function.
 	 *
 	 * @description Load in CSS styles where necessary.
@@ -201,6 +214,7 @@ class Sensei_Analysis {
 	public function enqueue_styles() {
 
 		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
+		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
 
 	}
 
