@@ -1081,34 +1081,54 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 *
 	 * @param int $course_id Course Id to filter lessons with.
 	 *
-	 * @return object Row containing the totals for column header.
+	 * @return object Object containing the required totals for column header.
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
-		$clean_course_id = esc_sql( $course_id );
+		$lesson_count = 0;
+		$lessons_args = array(
+			'post_type'      => 'lesson',
+			'post_status'    => array( 'publish', 'private' ),
+			'posts_per_page' => -1,
+			'meta_key'       => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Applying the course filter.
+			'meta_value'     => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Applying the course filter.
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+		);
+		$query        = new WP_Query( $lessons_args );
+		$lesson_ids   = '0';
+		if ( $query->have_posts() ) {
+			$lesson_count = count( $query->posts );
+			$lesson_ids   = implode( ',', $query->posts );
+		};
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		return $wpdb->get_row(
+		$lesson_completion_info = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT COUNT(DISTINCT(lessons.id)) lesson_count, COUNT(DISTINCT(lesson_taxonomy.term_id)) unique_module_count
-			, COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
+				"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
 			, COUNT(DISTINCT(lesson_students.comment_id)) lesson_start_count
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), 1, 0)) lesson_completed_count
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), CEILING( TIMESTAMPDIFF( second, STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum
-			FROM $wpdb->posts lessons
-			LEFT JOIN $wpdb->postmeta lessons_meta ON lessons.id = lessons_meta.post_id
-			AND lessons_meta.meta_key = '_lesson_course'
-			LEFT JOIN $wpdb->term_relationships lesson_term ON lessons.id = lesson_term.object_id
-			LEFT JOIN $wpdb->term_taxonomy lesson_taxonomy ON lesson_term.term_taxonomy_id = lesson_taxonomy.term_taxonomy_id
-			AND lesson_taxonomy.taxonomy = 'module'
-			LEFT JOIN $wpdb->comments lesson_students ON lesson_students.comment_post_id = lessons.id
-			AND lesson_students.comment_type = 'sensei_lesson_status'
+			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			AND lesson_start.meta_key = 'start'
-			WHERE lessons.post_type = 'lesson' AND lessons.post_status IN ('publish','private') AND lessons_meta.meta_value = %d",
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)",
 				'%Y-%m-%d %H:%i:%s',
-				$clean_course_id
+				$lesson_ids
 			)
 		);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$modules_count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(DISTINCT({$wpdb->term_taxonomy}.term_id)) FROM {$wpdb->term_relationships}
+			LEFT JOIN {$wpdb->term_taxonomy} ON {$wpdb->term_taxonomy}.`term_taxonomy_id` = {$wpdb->term_relationships}.`term_taxonomy_id`
+			WHERE {$wpdb->term_taxonomy}.`taxonomy` = 'module'
+			AND object_id IN (%1s)",
+				$lesson_ids
+			)
+		);
+
+		$lesson_completion_info->lesson_count        = $lesson_count;
+		$lesson_completion_info->unique_module_count = $modules_count;
+		return $lesson_completion_info;
 	}
 }
 
