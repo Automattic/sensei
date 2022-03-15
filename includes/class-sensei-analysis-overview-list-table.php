@@ -1139,7 +1139,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), CEILING( TIMESTAMPDIFF( second, STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum
 			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)",
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 				'%Y-%m-%d %H:%i:%s',
 				$lesson_ids
 			)
@@ -1150,7 +1150,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				"SELECT COUNT(DISTINCT({$wpdb->term_taxonomy}.term_id)) FROM {$wpdb->term_relationships}
 			LEFT JOIN {$wpdb->term_taxonomy} ON {$wpdb->term_taxonomy}.`term_taxonomy_id` = {$wpdb->term_relationships}.`term_taxonomy_id`
 			WHERE {$wpdb->term_taxonomy}.`taxonomy` = 'module'
-			AND object_id IN (%1s)",
+			AND object_id IN (%1s)",  // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
 				$lesson_ids
 			)
 		);
