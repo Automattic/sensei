@@ -550,7 +550,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testGetAverageDaysToCompletionTotalReturnsMatchingValue() {
+	public function testGetAverageDaysToCompletionTotalWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
 		$user2_id  = $this->factory->user->create();
 		$user3_id  = $this->factory->user->create();
@@ -590,5 +590,47 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// 2022-01-30 00:00:00 - 2022-01-01 00:00:01 + 1 = 30 days.
 		// ceil( ( 7 + 10 + 30 ) / 3 ) = 16 days.
 		self::assertSame( 16, $actual );
+	}
+
+	public function testGetAverageDaysToCompletionTotalWhenMoreThanOneCourseExistReturnsMatchingValue() {
+		$user1_id   = $this->factory->user->create();
+		$user2_id   = $this->factory->user->create();
+		$course1_id = $this->factory->course->create();
+		$course2_id = $this->factory->course->create();
+
+		$comment1_id = Sensei_Utils::update_course_status( $user1_id, $course1_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment1_id,
+				'comment_date' => '2022-03-11 23:29:06',
+			]
+		);
+		update_comment_meta( $comment1_id, 'start', '2022-03-11 23:27:51' );
+
+		$comment2_id = Sensei_Utils::update_course_status( $user2_id, $course1_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment2_id,
+				'comment_date' => '2022-03-14 21:34:37',
+			]
+		);
+		update_comment_meta( $comment2_id, 'start', '2022-03-14 21:34:27' );
+
+		$comment3_id = Sensei_Utils::update_course_status( $user1_id, $course2_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment3_id,
+				'comment_date' => '2022-03-12 00:22:37',
+			]
+		);
+		update_comment_meta( $comment3_id, 'start', '2022-03-09 00:22:34' );
+
+		$actual = Sensei()->course->get_average_days_to_completion_total();
+
+		// Average for the first course: (1 + 1) / 2 = 1.
+		// Average for the second course: 4 / 1 = 4.
+		// Overall average: ( 1 + 4 ) / 2 = 2.5.
+		// ceil( 2.5 ) = 3.
+		self::assertSame( 3, $actual );
 	}
 }
