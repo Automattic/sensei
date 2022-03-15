@@ -50,14 +50,35 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	function get_columns() {
+		if ( $this->columns ) {
+			return $this->columns;
+		}
 
 		switch ( $this->type ) {
 			case 'courses':
-				$columns = array(
-					'title'              => __( 'Course', 'sensei-lms' ),
+				$total_completions = Sensei_Utils::sensei_check_for_activity(
+					array(
+						'type'   => 'sensei_course_status',
+						'status' => 'complete',
+					)
+				);
+				$columns           = array(
+					'title'              => sprintf(
+						// translators: Placeholder value is the number of courses.
+						__( 'Course (%d)', 'sensei-lms' ),
+						esc_html( $this->total_items )
+					),
 					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
-					'completions'        => __( 'Completed', 'sensei-lms' ),
-					'average_percent'    => __( 'Average Grade', 'sensei-lms' ),
+					'completions'        => sprintf(
+						// translators: Placeholder value is the number of completed courses.
+						__( 'Completed (%d)', 'sensei-lms' ),
+						esc_html( $total_completions )
+					),
+					'average_percent'    => sprintf(
+						// translators: Placeholder value is the average grade of all courses.
+						__( 'Average Grade (%s%%)', 'sensei-lms' ),
+						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
+					),
 					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
@@ -84,12 +105,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				break;
 		}
+
 		// Backwards compatible filter name, moving forward should have single filter name
 		$columns = apply_filters( 'sensei_analysis_overview_' . $this->type . '_columns', $columns, $this );
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
-		// We want to fetch the totals only once.
-		remove_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
-		return $columns;
+
+		$this->columns = $columns;
+
+		return $this->columns;
 	}
 	/**
 	 * Append the count value to column headers where applicable
@@ -276,14 +299,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		// Start the csv with the column headings
-		$column_headers = array();
-		$columns        = $this->get_columns();
-		foreach ( $columns as $key => $title ) {
-			$column_headers[] = $title;
-		}
-		$data[] = $column_headers;
-
 		switch ( $this->type ) {
 			case 'courses':
 				$this->items = $this->get_courses( $args );
@@ -298,6 +313,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$this->items = $this->get_learners( $args );
 				break;
 		}
+
+		// Start the CSV with the column headings.
+		$column_headers = array();
+		$columns        = $this->get_columns();
+
+		foreach ( $columns as $key => $title ) {
+			$column_headers[] = $title;
+		}
+
+		$data[] = $column_headers;
 
 		// Process each row.
 		foreach ( $this->items as $item ) {
@@ -334,26 +359,31 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
+				// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
+				// have a status of 'graded', 'passed' or 'failed', or if none of the quizzes have grades.
+				$average_grade = __( 'N/A', 'sensei-lms' );
+
+				// Get grades only if the course has lessons and quizzes.
+				if ( ! empty( $lessons ) && Sensei()->course->course_quizzes( $item->ID, true ) ) {
+					$grade_args = array(
+						'post__in' => $lessons,
+						'type'     => 'sensei_lesson_status',
+						'status'   => array( 'graded', 'passed', 'failed' ),
+						'meta_key' => 'grade',
+					);
+
+					$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
+					$percent_total = Sensei_Grading::get_course_users_grades_sum( $item->ID );
+
+					if ( $percent_count > 0 && $percent_total >= 0 ) {
+						$average_grade = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 ) . '%';
+					}
+				}
+
 				// Properties `count_of_completions` and `days_to_completion` where added to items in
 				// `Sensei_Analysis_Overview_List_Table::add_days_to_completion_to_courses_queries`.
 				// We made it due to improve performance of the report. Don't try to access these properties outside.
 				$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
-
-				// Get Percent Complete.
-				$grade_args = array(
-					'post_id'  => $item->ID,
-					'type'     => 'sensei_course_status',
-					'status'   => 'any',
-					'meta_key' => 'percent',
-				);
-
-				$percent_count          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
-				$percent_total          = Sensei_Grading::get_course_users_grades_sum( $item->ID );
-				$course_average_percent = 0;
-
-				if ( $percent_count > 0 && $percent_total > 0 ) {
-					$course_average_percent = Sensei_Utils::quotient_as_absolute_rounded_number( $percent_total, $percent_count, 2 );
-				}
 
 				// Output course data
 				if ( $this->csv_output ) {
@@ -368,8 +398,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						admin_url( 'edit.php' )
 					);
 
-					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
-					$course_average_percent .= '%';
+					$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 				}
 
 				$column_data = apply_filters(
@@ -378,7 +407,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'title'              => $course_title,
 						'last_activity'      => $last_activity_date,
 						'completions'        => $course_completions,
-						'average_percent'    => $course_average_percent,
+						'average_percent'    => $average_grade,
 						'days_to_completion' => $average_completion_days,
 					),
 					$item,
