@@ -973,22 +973,21 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$end_date->setTime( 23, 59, 59 );
 		}
 
-		// Join only the last activity comment.
-		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
-		$query->query_from .= " INNER JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_ID = (
-			SELECT comment_ID
+		$query->query_fields .= ", (
+			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
 			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
 			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
 			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-			LIMIT 1
-		)";
+		) AS last_activity_date";
+
+		$query->query_where .= ' HAVING 1 = 1';
 
 		// Filter by start date.
 		if ( $start_date ) {
 			$query->query_where .= $wpdb->prepare(
-				" AND {$wpdb->comments}.comment_date_gmt >= %s",
+				' AND last_activity_date >= %s',
 				$start_date->format( 'Y-m-d H:i:s' )
 			);
 		}
@@ -996,7 +995,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// Filter by end date.
 		if ( $end_date ) {
 			$query->query_where .= $wpdb->prepare(
-				" AND {$wpdb->comments}.comment_date_gmt <= %s",
+				' AND last_activity_date <= %s',
 				$end_date->format( 'Y-m-d H:i:s' )
 			);
 		}
