@@ -1114,21 +1114,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
-		$lesson_count = 0;
-		$lessons_args = array(
-			'post_type'      => 'lesson',
-			'post_status'    => array( 'publish', 'private' ),
-			'posts_per_page' => -1,
-			'meta_key'       => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Applying the course filter.
-			'meta_value'     => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Applying the course filter.
-			'fields'         => 'ids',
-			'no_found_rows'  => true,
-		);
-		$query        = new WP_Query( $lessons_args );
+		$lessons      = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
 		$lesson_ids   = '0';
-		if ( $query->have_posts() ) {
-			$lesson_count = count( $query->posts );
-			$lesson_ids   = implode( ',', $query->posts );
+		$lesson_count = count( $lessons );
+		if ( 0 < $lesson_count ) {
+			$lesson_ids = implode( ',', $lessons );
 		};
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$lesson_completion_info = $wpdb->get_row(
