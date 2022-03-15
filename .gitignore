@@ -7,8 +7,9 @@ assets/dist
 build
 diffs
 hookdocs
-node_modules/*
+node_modules/
 tests/images/test-*
-vendor/*
+vendor/
 tests/e2e/screenshots
 /*.zip
+/coverage/
