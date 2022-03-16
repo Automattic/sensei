@@ -298,9 +298,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
-				// Course Lessons
-				$course_lessons = Sensei()->lesson->lesson_count( array( 'publish', 'private' ), $item->ID );
-
 				// Get Percent Complete.
 				$grade_args = array(
 					'post_id'  => $item->ID,
@@ -333,14 +330,29 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$course_title            = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 					$course_average_percent .= '%';
 				}
-				$average_course_progress = $this->get_average_progress( $item->ID, $course_students );
-				$course_students_count   = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
-				$column_data             = apply_filters(
+
+				$course_students_count = is_array( $course_students ) ? count( $course_students ) : ! empty( $course_students );
+
+				$stats                   = Sensei()->course->get_progress_stats( $item->ID );
+				$lesson_completions      = $stats['completed_lessons_count'];
+				$total_lessons           = $stats['lessons_count'];
+				$average_course_progress = 0;
+
+				if ( $course_students_count && $total_lessons ) {
+					// Average course progress is calculated based on lessons completed for the course
+					// divided by the total possible lessons completed.
+					$average_course_progress = $lesson_completions / ( $course_students_count * $total_lessons ) * 100;
+					$average_course_progress = esc_html(
+					/* translators: Progress value. */
+						sprintf( '%d%%', $average_course_progress )
+					);
+				}
+				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'            => $course_title,
 						'students'         => $course_students_count,
-						'lessons'          => $course_lessons,
+						'lessons'          => $total_lessons,
 						'completions'      => $course_completions,
 						'average_progress' => $average_course_progress,
 						'average_percent'  => $course_average_percent,
@@ -512,44 +524,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Return average progress per lesson for course.
-	 *
-	 * @since  4.2.0
-	 *
-	 * @param int   $course_id Course id.
-	 * @param array $course_students Course students.
-	 * @return int $average_progress Average progress value.
-	 */
-	private function get_average_progress( $course_id, $course_students ): int {
-
-		$course_lessons_ids                 = Sensei()->course->course_lesson_ids( $course_id );
-		$course_students                    = is_array( $course_students ) ? $course_students : array( $course_students );
-		$lesson_completed_percentages_count = 0;
-		foreach ( $course_students as $student ) {
-			$lesson_completed_count = 0;
-			foreach ( $course_lessons_ids as $lesson_id ) {
-				$lesson_course_args      = array(
-					'user_id' => $student->user_id,
-					'post_id' => $lesson_id,
-					'type'    => 'sensei_lesson_status',
-					'status'  => array( 'complete', 'graded', 'passed' ),
-				);
-				$lessons_course          = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lessons_courses', $lesson_course_args ) );
-				$lesson_completed_count .= $lessons_course;
-			}
-
-			if ( 0 !== $lesson_completed_count && 0 !== count( $course_lessons_ids ) ) {
-				$lesson_completed_percentages_count .= Sensei_Utils::quotient_as_absolute_rounded_number( $lesson_completed_count, count( $course_lessons_ids ), 2 );
-			}
-		}
-		$average_course_progress = 0;
-		if ( 0 !== count( $course_lessons_ids ) ) {
-			$average_course_progress = $lesson_completed_percentages_count / count( $course_lessons_ids ) * 100;
-		}
-		return $average_course_progress;
-	}
-
-	/**
 	 * Return array of course
 	 *
 	 * @since  1.7.0
@@ -647,13 +621,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Sets the stats boxes to render
 	 *
-	 * @since      1.2.0
-	 * @deprecated 4.2.0
-	 * @return     array $stats_to_render of stats boxes and values
+	 * @since  1.2.0
+	 * @return array $stats_to_render of stats boxes and values
 	 */
 	public function stats_boxes() {
-
-		_deprecated_function( __METHOD__, '4.2.0' );
 
 		// Get the data required
 		$user_count          = count_users();
