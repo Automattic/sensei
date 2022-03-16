@@ -3889,28 +3889,28 @@ class Sensei_Course {
 	 * @since 4.2.0
 	 * @access private
 	 *
-	 * @return int Average days to completion, rounded to the highest integer.
+	 * @return int Total days to completion, rounded to the highest integer.
 	 */
-	public function get_average_days_to_completion_total() {
+	public function get_days_to_completion_total() {
 		global $wpdb;
 
 		$query = "
-			SELECT CEIL( SUM( agregated.average_days_to_completion ) / COUNT( agregated.average_days_to_completion ) ) AS average_days_to_completion
+			SELECT SUM( aggregated.days_to_completion )
 			FROM (
-				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS average_days_to_completion
+				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
 				FROM {$wpdb->comments}
 				LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
 					AND {$wpdb->commentmeta}.meta_key = 'start'
 				WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
 					AND {$wpdb->comments}.comment_approved = 'complete'
 				GROUP BY {$wpdb->comments}.comment_post_ID
-			) AS agregated
+			) AS aggregated
 		";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$average_days_to_completion = $wpdb->get_var( $query );
+		$days_to_completion = $wpdb->get_var( $query );
 
-		return (int) $average_days_to_completion;
+		return (int) $days_to_completion;
 	}
 }
 
