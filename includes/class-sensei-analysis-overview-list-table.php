@@ -278,7 +278,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
-				// Get Learners (i.e. those who have started)
+				// Get Learners count (i.e. those who have started)
 				$course_args           = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
@@ -579,18 +579,18 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$clauses['fields'] .= ", COUNT( {$wpdb->comments}.comment_approved ) as completed_lesson_count";
 		// Get postmeta rows that have meta_value of course ID and meta_key of '_lesson_course' to get relation
 		// between lessons and the course.
-		$clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} as lessons ON lessons.meta_value = {$wpdb->posts}.ID";
-		$clauses['join'] .= " AND lessons.meta_key IN ('_lesson_course')";
+		$clauses['join'] .= " LEFT JOIN {$wpdb->postmeta} as pm1 ON pm1.meta_value = {$wpdb->posts}.ID";
+		$clauses['join'] .= " AND pm1.meta_key = '_lesson_course'";
 		// Get comments of type 'sensei_lesson_status' that have the post_id same as lessons ids
 		// form the previous join and have one of the completed statuses.
-		$clauses['join'] .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = lessons.post_id";
-		$clauses['join'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['join'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
+		$clauses['join'] .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = pm1.post_id";
+		$clauses['join'] .= " AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'";
+		$clauses['join'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'failed', 'passed', 'ungraded')";
 		// Include only comments that have user ID of a users that are currently enroled in the course.
-		$clauses['join'] .= " AND {$wpdb->comments}.user_id IN ( SELECT DISTINCT  {$wpdb->comments}.user_id
-		 FROM {$wpdb->comments} WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status')
-		 AND {$wpdb->comments}.comment_post_ID IN ( {$wpdb->posts}.ID )
-		 AND {$wpdb->comments}.comment_approved IN ('in-progress', 'complete', 'failed'))";
+		$clauses['join'] .= " LEFT JOIN {$wpdb->comments} c1 ON c1.user_id = {$wpdb->comments}.user_id";
+		$clauses['join'] .= " AND c1.comment_type = 'sensei_course_status'";
+		$clauses['join'] .= " AND c1.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['join'] .= " AND c1.comment_approved IN ('in-progress', 'complete')";
 
 		$clauses['groupby'] .= "{$wpdb->posts}.ID";
 
