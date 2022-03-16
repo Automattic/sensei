@@ -2569,6 +2569,26 @@ class Sensei_Utils {
 		return false;
 	}
 
+	/**
+	 * Output the current query params as hidden inputs.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param array $excluded The query params that should be excluded.
+	 */
+	public static function output_query_params_as_inputs( array $excluded = [] ) {
+		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
+		foreach ( $_GET as $name => $value ) {
+			if ( in_array( $name, $excluded, true ) ) {
+				continue;
+			}
+
+			?>
+			<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
+			<?php
+		}
+	}
+
 }
 
 /**

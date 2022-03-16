@@ -280,4 +280,323 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'The last activity date format or timezone is invalid.'
 		);
 	}
+
+	/**
+	 * Tests that the learners last activity filter is applied correctly.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_learners
+	 * @covers Sensei_Analysis_Overview_List_Table::filter_users_by_last_activity
+	 */
+	public function testGetLearnersByLastActivityDate() {
+		/* Arrange. */
+		$user_1 = $this->factory->user->create();
+		$user_2 = $this->factory->user->create();
+
+		$lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_learners' );
+		$method->setAccessible( true );
+
+		$user_1_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_1, true );
+		$user_2_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_2, true );
+
+		wp_update_comment(
+			[
+				'comment_ID'   => $user_1_activity_comment_id,
+				'comment_date' => '2022-03-01 00:00:00',
+			]
+		);
+
+		wp_update_comment(
+			[
+				'comment_ID'   => $user_2_activity_comment_id,
+				'comment_date' => '2022-03-02 00:00:00',
+			]
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-01',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_1 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using the same start and end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-02',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_1, $user_2 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using different start and end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-02',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $user_2 ],
+			wp_list_pluck( $learners, 'ID' ),
+			'The filter should work correctly when using only the start date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-02',
+			'end_date'   => '2022-03-01',
+		];
+
+		$learners = $method->invoke( $instance, [] );
+
+		/* Assert. */
+		$this->assertEmpty(
+			$learners,
+			'The filter should return no results when the start date is bigger than the end date.'
+		);
+	}
+
+	/**
+	 * Test the start date getter.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_start_date_filter_value
+	 */
+	public function testGetStartDateFilterValue() {
+		/* Arrange. */
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_start_date_filter_value' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+		];
+
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'2022-03-01',
+			$start_date,
+			'The start date should be equal to the "start_date" query param.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '',
+		];
+
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+			$start_date,
+			'The start date should default to 30 days ago.'
+		);
+	}
+
+	/**
+	 * Test the end date getter.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_end_date_filter_value
+	 */
+	public function testGetEndDateFilterValue() {
+		/* Arrange. */
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_end_date_filter_value' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$_GET = [
+			'end_date' => '2022-03-01',
+		];
+
+		$end_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'2022-03-01',
+			$end_date,
+			'The end date should be equal to the "end_date" query param.'
+		);
+	}
+
+	/**
+	 * Tests that when getting the lessons they are filtered by course.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_lessons
+	 */
+	public function testGetLessonsByCourse() {
+		/* Arrange. */
+		$course_id         = $this->factory->course->create();
+		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+
+		// Fill the database with other lessons from other courses.
+		$this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_lessons' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$query_args = [
+			'number'  => -1,
+			'offset'  => 0,
+			'orderby' => '',
+			'order'   => 'ASC',
+		];
+
+		$course_lesson_posts = $method->invoke( $instance, $query_args, $course_id );
+
+		/* Assert. */
+		$this->assertEquals(
+			$course_lesson_ids,
+			wp_list_pluck( $course_lesson_posts, 'ID' ),
+			'The lessons should be filtered by course.'
+		);
+	}
+
+	public function testAddDaysToCompletionToCoursesQueriesWithProvidedClausesModifiesQueryParts() {
+		$instance = new Sensei_Analysis_Overview_List_Table();
+
+		$actual = $instance->add_days_to_completion_to_courses_queries(
+			[
+				'fields'  => 'a',
+				'join'    => 'b',
+				'where'   => 'c',
+				'groupby' => 'd',
+			]
+		);
+
+		$expected = [
+			'fields'  => "a, SUM(  ABS( DATEDIFF( wptests_comments.comment_date, STR_TO_DATE( wptests_commentmeta.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) AS days_to_completion, COUNT(wptests_commentmeta.comment_id) AS count_of_completions",
+			'join'    => "b LEFT JOIN wptests_comments ON wptests_comments.comment_post_ID = wptests_posts.ID AND wptests_comments.comment_type IN ('sensei_course_status') AND wptests_comments.comment_approved IN ( 'complete' ) AND wptests_comments.comment_post_ID = wptests_posts.ID LEFT JOIN wptests_commentmeta ON wptests_comments.comment_ID = wptests_commentmeta.comment_id AND wptests_commentmeta.meta_key = 'start'",
+			'where'   => 'c',
+			'groupby' => 'd wptests_posts.ID',
+		];
+
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedItemsHaveDaysToCompletionProperty() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		self::assertObjectHasAttribute( 'days_to_completion', $courses[0] );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedItemsHaveCountOfCompletionsProperty() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 1,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		self::assertObjectHasAttribute( 'count_of_completions', $courses[0] );
+	}
+
+	public function testGetCoursesWithDaysToCompletionFiltersAppliedReturnsItemsWithMatchingCustomProperties() {
+		$user_id = $this->factory->user->create();
+
+		$course_id  = $this->factory->course->create();
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment_id,
+				'comment_date' => '2022-01-02 00:00:01',
+			]
+		);
+
+		$unfinished_course_id  = $this->factory->course->create();
+		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
+
+		$instance    = new Sensei_Analysis_Overview_List_Table();
+		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
+		$get_courses->setAccessible( true );
+
+		$courses = $get_courses->invoke(
+			$instance,
+			[
+				'number'  => 2,
+				'offset'  => 0,
+				'orderby' => '',
+				'order'   => 'ASC',
+			]
+		);
+
+		$expected = [
+			[
+				'days_to_completion'   => '2',
+				'count_of_completions' => '1',
+			],
+			[
+				'days_to_completion'   => null,
+				'count_of_completions' => '0',
+			],
+		];
+
+		self::assertSame( $expected, $this->exportCustomPropertiesFromItems( $courses ) );
+	}
+
+	private function exportCustomPropertiesFromItems( array $items ): array {
+		$ret = [];
+		foreach ( $items as $item ) {
+			$ret[] = [
+				'days_to_completion'   => $item->days_to_completion,
+				'count_of_completions' => $item->count_of_completions,
+			];
+		}
+		return $ret;
+	}
 }
