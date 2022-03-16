@@ -73,7 +73,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						__( 'Completed (%d)', 'sensei-lms' ),
 						esc_html( $total_completions )
 					),
-          'average_progress' => __( 'Average Progress', 'sensei-lms' ),
+					'average_progress'   => __( 'Average Progress', 'sensei-lms' ),
 					'average_percent'    => sprintf(
 						// translators: Placeholder value is the average grade of all courses.
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
@@ -308,7 +308,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		switch ( $this->type ) {
 			case 'courses':
-				// Get Learners count (i.e. those who have started)
+				// Get Learners count (i.e. those who have started).
 				$course_args           = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
@@ -375,10 +375,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$average_course_progress = 0;
-				if ( 0 !== $course_students_count && 0 !== $course_lessons ) {
+				// Course lessons count.
+				$course_lessons_count = Sensei()->lesson->lesson_count( array( 'publish', 'private' ), $item->ID );
+
+				if ( 0 !== $course_students_count && 0 !== $course_lessons_count ) {
 					// Average course progress is calculated based on lessons completed for the course
 					// divided by the total possible lessons completed.
-					$average_course_progress = $item->completed_lesson_count / ( $course_students_count * $course_lessons ) * 100;
+					$average_course_progress = $item->completed_lesson_count / ( $course_students_count * $course_lessons_count ) * 100;
 					$average_course_progress = esc_html(
 					/* translators: Progress value. */
 						sprintf( '%d%%', $average_course_progress )
@@ -391,7 +394,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'title'              => $course_title,
 						'last_activity'      => $last_activity_date,
 						'completions'        => $course_completions,
-            'average_progress'   => $average_course_progress,
+						'average_progress'   => $average_course_progress,
 						'average_percent'    => $average_grade,
 						'days_to_completion' => $average_completion_days,
 					),
@@ -592,10 +595,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		add_filter( 'posts_clauses', [ $this, 'add_lesson_completion_count_to_course_query' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
-		// Using WP_Query as get_posts() doesn't support 'found_posts'
+		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
-    remove_filter( 'posts_clauses', [ $this, 'add_lesson_completion_count_to_course_query' ] );
+		remove_filter( 'posts_clauses', [ $this, 'add_lesson_completion_count_to_course_query' ] );
 
 		$this->total_items = $courses_query->found_posts;
 		return $courses_query->posts;
