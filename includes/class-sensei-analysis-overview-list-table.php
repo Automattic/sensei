@@ -40,6 +40,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
+		add_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 	}
 
 	/**
@@ -139,7 +140,43 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		return $this->columns;
 	}
-
+	/**
+	 * Append the count value to column headers where applicable
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param array $columns Array of columns for the report table.
+	 * @return array The array of columns to use with the table with columns appended to their title
+	 */
+	public function add_totals_to_report_column_headers( array $columns ) {
+		$column_value_map = array();
+		switch ( $this->type ) {
+			case 'lessons' && $this->get_course_filter_value():
+				$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
+				$column_value_map['title']              = $total_counts->lesson_count;
+				$column_value_map['lesson_module']      = $total_counts->unique_module_count;
+				$column_value_map['students']           = $total_counts->unique_student_count;
+				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
+					? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
+					: 0;
+				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
+					? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
+					: __( 'N/A', 'sensei-lms' );
+				$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
+					? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
+					: '0%';
+				break;
+			default:
+				break;
+		}
+		foreach ( $column_value_map as $key => $value ) {
+			if ( key_exists( $key, $columns ) ) {
+				$columns[ $key ] = $columns[ $key ] . ' (' . esc_html( $value ) . ')';
+			}
+		}
+		return $columns;
+	}
 	/**
 	 * Define the columns that are going to be used in the table
 	 *
@@ -1187,6 +1224,47 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$end_date->setTime( 23, 59, 59 );
 
 		return $end_date->format( 'Y-m-d H:i:s' );
+	}
+	/**
+	 * Fetch the values required for the total counts added to column headers in lesson reports.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param int $course_id Course Id to filter lessons with.
+	 *
+	 * @return object Object containing the required totals for column header.
+	 */
+	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
+		global $wpdb;
+		$lessons      = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
+		$lesson_ids   = '0';
+		$lesson_count = count( $lessons );
+		if ( 0 < $lesson_count ) {
+			$lesson_ids = implode( ',', $lessons );
+		};
+
+		$default_args  = array(
+			'fields' => 'ids',
+		);
+		$modules_count = count( wp_get_object_terms( $lessons, 'module', $default_args ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$lesson_completion_info                      = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
+			, COUNT(lesson_students.comment_id) lesson_start_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), 1, 0)) lesson_completed_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
+			FROM $wpdb->comments lesson_students
+			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
+				'%Y-%m-%d %H:%i:%s',
+				$lesson_ids
+			)
+		);
+		$lesson_completion_info->lesson_count        = $lesson_count;
+		$lesson_completion_info->unique_module_count = $modules_count;
+		return $lesson_completion_info;
 	}
 }
 
