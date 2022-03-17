@@ -389,7 +389,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$total_lessons  = count( $course_lessons );
 
 				// Get all completed lessons.
-				$lesson_args        = array(
+				$lesson_args     = array(
 					'post__in' => $course_lessons,
 					'type'     => 'sensei_lesson_status',
 					'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
