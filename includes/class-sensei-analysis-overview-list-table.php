@@ -396,7 +396,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$lesson_args        = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
-					'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+					'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
 					'count'   => true,
 				);
 				$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
@@ -959,7 +959,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$clauses['fields'] .= ", sum( CEILING( timestampdiff( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
 		$clauses['join']   .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['join']   .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['join']   .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
+		$clauses['join']   .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )";
 		$clauses['join']   .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['join']   .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['join']   .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
