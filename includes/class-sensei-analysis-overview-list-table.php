@@ -962,7 +962,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;
