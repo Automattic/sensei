@@ -524,6 +524,16 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$method->setAccessible( true );
 
 		/* Act. */
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+			$start_date,
+			'The start date should default to 30 days ago.'
+		);
+
+		/* Act. */
 		$_GET = [
 			'start_date' => '2022-03-01',
 		];
@@ -546,9 +556,23 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEquals(
-			gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+			'',
 			$start_date,
-			'The start date should default to 30 days ago.'
+			'The start date should be empty when the "start_date" query param is empty.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => 'invalid-date',
+		];
+
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'',
+			$start_date,
+			'The start date should be empty when the "start_date" query param date is invalid.'
 		);
 	}
 
