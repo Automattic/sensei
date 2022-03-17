@@ -892,6 +892,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			'students'           => 'Students (3)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',
+			'completion_rate'    => 'Completion Rate (100%)',
 			'days_to_completion' => 'Days to Completion (8)',
 		];
 		self::assertSame( $expected, $actual, 'The expected column headers for lessons table in overview report does not match the actual output' );
