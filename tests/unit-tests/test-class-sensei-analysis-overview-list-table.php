@@ -6,6 +6,13 @@
 class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Set up before each test.
 	 */
 	public function setup() {
@@ -770,5 +777,56 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 				remove_filter( 'posts_clauses', [ $instance, 'filter_courses_by_last_activity' ] );
 			}
 		);
+	}
+	/**
+	 * Tests that we are getting right data for Completion Rate column.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_row_data
+	 * @dataProvider lessonCompletionRateData
+	 */
+	public function testCompletionRateForLesson( $enrolled_student_count, $completed_student_count, $expected_output ) {
+		/* Arrange */
+		$instance                    = new Sensei_Analysis_Overview_List_Table( 'lessons' );
+		$get_lessons_method          = new ReflectionMethod( $instance, 'get_lessons' );
+		$get_row_data_lessons_method = new ReflectionMethod( $instance, 'get_row_data' );
+		$get_lessons_method->setAccessible( true );
+		$get_row_data_lessons_method->setAccessible( true );
+		$user_ids       = $this->factory->user->create_many( $enrolled_student_count );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 1,
+			)
+		);
+		$lesson_id      = array_pop( $course_lessons['lesson_ids'] );
+		foreach ( $user_ids as $key => $user_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $key < $completed_student_count );
+		}
+		$lessons_args = array(
+			'offset'  => 0,
+			'number'  => -1,
+			'orderby' => '',
+			'order'   => 'ASC',
+		);
+		$lessons      = $get_lessons_method->invoke( $instance, $lessons_args, $course_lessons['course_id'] );
+
+		/* Act */
+		$row_data = $get_row_data_lessons_method->invoke( $instance, array_pop( $lessons ) );
+
+		/* Assert */
+		$this->assertEquals( $row_data['completion_rate'], $expected_output, "The 'Completion Rate' for {$enrolled_student_count} enrolled and {$completed_student_count} completed students should be {$expected_output}, got {$row_data['completion_rate']}" );
+	}
+	/**
+	 * Returns an associative array with parameters needed to run lesson completion test.
+	 *
+	 * @return array
+	 */
+	public function lessonCompletionRateData(): array {
+		return [
+			'100%' => [ 5, 5, '100%' ],
+			'80%'  => [ 5, 4, '80%' ],
+			'67%'  => [ 3, 2, '67%' ],
+			'N/A'  => [ 0, 0, 'N/A' ],
+			'0%'   => [ 1, 0, '0%' ],
+		];
 	}
 }
