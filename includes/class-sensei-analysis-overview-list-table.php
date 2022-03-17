@@ -389,24 +389,20 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$total_lessons  = count( $course_lessons );
 
 				// Get all completed lessons.
-				$completed_count        = 0;
-					$lesson_args        = array(
-						'post__in' => $course_lessons,
-						'type'     => 'sensei_lesson_status',
-						'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
-						'count'    => true,
-					);
-					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_lesson_completions', $lesson_args, $item ) );
-					if ( $lesson_completions ) {
-						$completed_count += (int) $lesson_completions;
-					}
+				$lesson_args        = array(
+					'post__in' => $course_lessons,
+					'type'     => 'sensei_lesson_status',
+					'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
+					'count'    => true,
+				);
+				$completed_count = (int) Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_lesson_completions', $lesson_args, $item ) );
 
-					// Calculate avergae progress.
-					if ( $course_students_count && $total_lessons ) {
-						// Average course progress is calculated based on lessons completed for the course
-						// divided by the total possible lessons completed.
-						$average_course_progress = $completed_count / ( $course_students_count * $total_lessons ) * 100;
-					}
+				// Calculate average progress.
+				if ( $course_students_count && $total_lessons ) {
+					// Average course progress is calculated based on lessons completed for the course
+					// divided by the total possible lessons completed.
+					$average_course_progress = $completed_count / ( $course_students_count * $total_lessons ) * 100;
+				}
 					$column_data = apply_filters(
 						'sensei_analysis_overview_column_data',
 						array(
