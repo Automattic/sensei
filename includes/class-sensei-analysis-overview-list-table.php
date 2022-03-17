@@ -92,6 +92,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'students'           => __( 'Students', 'sensei-lms' ),
 					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 					'completions'        => __( 'Completed', 'sensei-lms' ),
+					'completion_rate'    => __( 'Completion Rate', 'sensei-lms' ),
 					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
@@ -395,7 +396,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$lesson_args        = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
-					'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+					'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
 					'count'   => true,
 				);
 				$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
@@ -424,6 +425,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'students'           => $lesson_students,
 						'last_activity'      => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 						'completions'        => $lesson_completions,
+						'completion_rate'    => $this->get_completion_rate( $lesson_completions, $lesson_students ),
 						'days_to_completion' => $average_completion_days,
 					),
 					$item,
@@ -708,6 +710,23 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Get completion rate for a lesson.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int $lesson_completion_count Number of students who has completed this lesson.
+	 * @param int $lesson_student_count Number of students who has started this lesson.
+	 *
+	 * @return string The completion rate or 'N/A' if there are no students.
+	 */
+	private function get_completion_rate( int $lesson_completion_count, int $lesson_student_count ): string {
+		if ( 0 >= $lesson_student_count ) {
+			return __( 'N/A', 'sensei-lms' );
+		}
+		return Sensei_Utils::quotient_as_absolute_rounded_percentage( $lesson_completion_count, $lesson_student_count ) . '%';
+	}
+
+	/**
 	 * Sets output when no items are found
 	 * Overloads the parent method
 	 *
@@ -942,7 +961,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed' )";
+		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )";
 		$clauses['fields'] .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
 		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
