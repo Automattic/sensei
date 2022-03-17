@@ -460,7 +460,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					);
 					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
-					$lesson_average_grade = __( 'n/a', 'sensei-lms' );
+					$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 
 					if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 						// Get Percent Complete

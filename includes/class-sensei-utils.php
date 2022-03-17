@@ -114,13 +114,6 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// Are we only retrieving a single entry, or not care about the order...
-		if ( isset( $args['count'] ) || isset( $args['post_id'] ) ) {
-			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
-			$args['order']   = false;
-			$args['orderby'] = false;
-		}
-
 		// A user ID of 0 is in valid, so shortcut this
 		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
