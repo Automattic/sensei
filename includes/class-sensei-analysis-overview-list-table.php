@@ -601,16 +601,16 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! $course_id ) {
 			return [];
 		}
-
-		$lessons_args = array(
+		// Fetching the lesson ids beforehand because joining both postmeta and comment + commentmeta makes WP_Query very slow.
+		$course_lessons = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+		$lessons_args   = array(
 			'post_type'        => 'lesson',
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $args['number'],
 			'offset'           => $args['offset'],
 			'orderby'          => $args['orderby'],
 			'order'            => $args['order'],
-			'meta_key'         => '_lesson_course', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Applying the course filter.
-			'meta_value'       => $course_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Applying the course filter.
+			'post__in'         => $course_lessons,
 			'suppress_filters' => 0,
 		);
 
@@ -956,13 +956,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function add_days_to_complete_to_lessons_query( $clauses ) {
 		global $wpdb;
 
-		$clauses['fields'] .= ", sum( CEILING( timestampdiff( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
-		$clauses['join']   .= " LEFT JOIN {$wpdb->comments} ON {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['join']   .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
-		$clauses['join']   .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )";
-		$clauses['join']   .= " AND {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
-		$clauses['join']   .= " LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
-		$clauses['join']   .= " AND {$wpdb->commentmeta}.meta_key = 'start'";
+		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
+		$clauses['fields'] .= " FROM {$wpdb->comments}";
+		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
+		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
+		$clauses['fields'] .= " AND {$wpdb->comments}.comment_type IN ('sensei_lesson_status')";
+		$clauses['fields'] .= " AND {$wpdb->comments}.comment_approved IN ( 'complete', 'graded', 'passed', 'failed', 'ungraded' )";
+		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;
 	}
