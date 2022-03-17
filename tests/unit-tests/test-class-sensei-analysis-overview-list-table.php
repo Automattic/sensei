@@ -6,6 +6,13 @@
 class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Set up before each test.
 	 */
 	public function setup() {
@@ -282,6 +289,41 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that when getting the lessons they are filtered by course.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_lessons
+	 */
+	public function testGetLessonsByCourse() {
+		/* Arrange. */
+		$course_id         = $this->factory->course->create();
+		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+
+		// Fill the database with other lessons from other courses.
+		$this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_lessons' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$query_args = [
+			'number'  => -1,
+			'offset'  => 0,
+			'orderby' => '',
+			'order'   => 'ASC',
+		];
+
+		$course_lesson_posts = $method->invoke( $instance, $query_args, $course_id );
+
+		/* Assert. */
+		$this->assertEquals(
+			$course_lesson_ids,
+			wp_list_pluck( $course_lesson_posts, 'ID' ),
+			'The lessons should be filtered by course.'
+		);
+	}
+
+	/**
 	 * Tests that the learners last activity filter is applied correctly.
 	 *
 	 * @covers Sensei_Analysis_Overview_List_Table::get_learners
@@ -375,6 +417,109 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the courses last activity filter is applied correctly.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_courses
+	 * @covers Sensei_Analysis_Overview_List_Table::filter_courses_by_last_activity
+	 */
+	public function testGetCoursesByLastActivityDate() {
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+
+		$course_1 = $this->factory->course->create();
+		$course_2 = $this->factory->course->create();
+
+		$course_1_lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_1 ] ] );
+		$course_2_lesson_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_2 ] ] );
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_courses' );
+		$method->setAccessible( true );
+
+		$course_1_activity_comment_id = Sensei_Utils::sensei_start_lesson( $course_1_lesson_id, $user_id, true );
+		$course_2_activity_comment_id = Sensei_Utils::sensei_start_lesson( $course_2_lesson_id, $user_id, true );
+
+		wp_update_comment(
+			[
+				'comment_ID'   => $course_1_activity_comment_id,
+				'comment_date' => '2022-03-01 00:00:00',
+			]
+		);
+
+		wp_update_comment(
+			[
+				'comment_ID'   => $course_2_activity_comment_id,
+				'comment_date' => '2022-03-02 00:00:00',
+			]
+		);
+
+		$query_args = [
+			'number'  => -1,
+			'offset'  => 0,
+			'orderby' => '',
+			'order'   => 'ASC',
+		];
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-01',
+		];
+
+		$courses = $method->invoke( $instance, $query_args );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $course_1 ],
+			wp_list_pluck( $courses, 'ID' ),
+			'The filter should work correctly when using the same start and end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-02',
+		];
+
+		$courses = $method->invoke( $instance, $query_args );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $course_1, $course_2 ],
+			wp_list_pluck( $courses, 'ID' ),
+			'The filter should work correctly when using different start and end date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-02',
+		];
+
+		$courses = $method->invoke( $instance, $query_args );
+
+		/* Assert. */
+		$this->assertEquals(
+			[ $course_2 ],
+			wp_list_pluck( $courses, 'ID' ),
+			'The filter should work correctly when using only the start date.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => '2022-03-02',
+			'end_date'   => '2022-03-01',
+		];
+
+		$courses = $method->invoke( $instance, $query_args );
+
+		/* Assert. */
+		$this->assertEmpty(
+			$courses,
+			'The filter should return no results when the start date is bigger than the end date.'
+		);
+	}
+
+	/**
 	 * Test the start date getter.
 	 *
 	 * @covers Sensei_Analysis_Overview_List_Table::get_start_date_filter_value
@@ -384,6 +529,16 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Analysis_Overview_List_Table();
 		$method   = new ReflectionMethod( $instance, 'get_start_date_filter_value' );
 		$method->setAccessible( true );
+
+		/* Act. */
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+			$start_date,
+			'The start date should default to 30 days ago.'
+		);
 
 		/* Act. */
 		$_GET = [
@@ -408,9 +563,23 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEquals(
-			gmdate( 'Y-m-d', strtotime( '-30 days' ) ),
+			'',
 			$start_date,
-			'The start date should default to 30 days ago.'
+			'The start date should be empty when the "start_date" query param is empty.'
+		);
+
+		/* Act. */
+		$_GET = [
+			'start_date' => 'invalid-date',
+		];
+
+		$start_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'',
+			$start_date,
+			'The start date should be empty when the "start_date" query param date is invalid.'
 		);
 	}
 
@@ -441,37 +610,54 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that when getting the lessons they are filtered by course.
+	 * Test the start date and time getter.
 	 *
-	 * @covers Sensei_Analysis_Overview_List_Table::get_lessons
+	 * @covers Sensei_Analysis_Overview_List_Table::get_start_date_and_time
 	 */
-	public function testGetLessonsByCourse() {
+	public function testGetStartDateAndTime() {
 		/* Arrange. */
-		$course_id         = $this->factory->course->create();
-		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
-
-		// Fill the database with other lessons from other courses.
-		$this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->factory->course->create() ] ] );
-
 		$instance = new Sensei_Analysis_Overview_List_Table();
-		$method   = new ReflectionMethod( $instance, 'get_lessons' );
+		$method   = new ReflectionMethod( $instance, 'get_start_date_and_time' );
 		$method->setAccessible( true );
 
 		/* Act. */
-		$query_args = [
-			'number'  => -1,
-			'offset'  => 0,
-			'orderby' => '',
-			'order'   => 'ASC',
+		$_GET = [
+			'start_date' => '2022-03-01',
 		];
 
-		$course_lesson_posts = $method->invoke( $instance, $query_args, $course_id );
+		$end_date = $method->invoke( $instance );
 
 		/* Assert. */
 		$this->assertEquals(
-			$course_lesson_ids,
-			wp_list_pluck( $course_lesson_posts, 'ID' ),
-			'The lessons should be filtered by course.'
+			'2022-03-01 00:00:00',
+			$end_date,
+			'The end date should be equal to the "end_date" query param, plus the first minute time.'
+		);
+	}
+
+	/**
+	 * Test the end date and time getter.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_end_date_and_time
+	 */
+	public function testGetEndDateAndTime() {
+		/* Arrange. */
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'get_end_date_and_time' );
+		$method->setAccessible( true );
+
+		/* Act. */
+		$_GET = [
+			'end_date' => '2022-03-01',
+		];
+
+		$end_date = $method->invoke( $instance );
+
+		/* Assert. */
+		$this->assertEquals(
+			'2022-03-01 23:59:59',
+			$end_date,
+			'The end date should be equal to the "end_date" query param, plus the last minute time.'
 		);
 	}
 
@@ -508,6 +694,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
 		$get_courses->setAccessible( true );
 
+		$this->disableCourseLastActivityFilter( $instance );
 		$courses = $get_courses->invoke(
 			$instance,
 			[
@@ -532,6 +719,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
 		$get_courses->setAccessible( true );
 
+		$this->disableCourseLastActivityFilter( $instance );
 		$courses = $get_courses->invoke(
 			$instance,
 			[
@@ -565,6 +753,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$get_courses = new ReflectionMethod( $instance, 'get_courses' );
 		$get_courses->setAccessible( true );
 
+		$this->disableCourseLastActivityFilter( $instance );
 		$courses = $get_courses->invoke(
 			$instance,
 			[
@@ -598,5 +787,70 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 			];
 		}
 		return $ret;
+	}
+
+	/**
+	 * Disable the course last activity filter.
+	 *
+	 * @param Sensei_Analysis_Overview_List_Table $instance
+	 */
+	private function disableCourseLastActivityFilter( Sensei_Analysis_Overview_List_Table $instance ) {
+		add_action(
+			'pre_get_posts',
+			function() use ( $instance ) {
+				remove_filter( 'posts_clauses', [ $instance, 'filter_courses_by_last_activity' ] );
+			}
+		);
+	}
+	/**
+	 * Tests that we are getting right data for Completion Rate column.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_row_data
+	 * @dataProvider lessonCompletionRateData
+	 */
+	public function testCompletionRateForLesson( $enrolled_student_count, $completed_student_count, $expected_output ) {
+		/* Arrange */
+		$instance                    = new Sensei_Analysis_Overview_List_Table( 'lessons' );
+		$get_lessons_method          = new ReflectionMethod( $instance, 'get_lessons' );
+		$get_row_data_lessons_method = new ReflectionMethod( $instance, 'get_row_data' );
+		$get_lessons_method->setAccessible( true );
+		$get_row_data_lessons_method->setAccessible( true );
+		$user_ids       = $this->factory->user->create_many( $enrolled_student_count );
+		$course_lessons = $this->factory->get_course_with_lessons(
+			array(
+				'lesson_count' => 1,
+			)
+		);
+		$lesson_id      = array_pop( $course_lessons['lesson_ids'] );
+		foreach ( $user_ids as $key => $user_id ) {
+			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $key < $completed_student_count );
+		}
+		$lessons_args = array(
+			'offset'  => 0,
+			'number'  => -1,
+			'orderby' => '',
+			'order'   => 'ASC',
+		);
+		$lessons      = $get_lessons_method->invoke( $instance, $lessons_args, $course_lessons['course_id'] );
+
+		/* Act */
+		$row_data = $get_row_data_lessons_method->invoke( $instance, array_pop( $lessons ) );
+
+		/* Assert */
+		$this->assertEquals( $row_data['completion_rate'], $expected_output, "The 'Completion Rate' for {$enrolled_student_count} enrolled and {$completed_student_count} completed students should be {$expected_output}, got {$row_data['completion_rate']}" );
+	}
+	/**
+	 * Returns an associative array with parameters needed to run lesson completion test.
+	 *
+	 * @return array
+	 */
+	public function lessonCompletionRateData(): array {
+		return [
+			'100%' => [ 5, 5, '100%' ],
+			'80%'  => [ 5, 4, '80%' ],
+			'67%'  => [ 3, 2, '67%' ],
+			'N/A'  => [ 0, 0, 'N/A' ],
+			'0%'   => [ 1, 0, '0%' ],
+		];
 	}
 }
