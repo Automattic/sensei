@@ -1099,9 +1099,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
 
 		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$start_date = $_GET['start_date'] ?? '';
+		$start_date = $_GET['start_date'] ?? $default;
 
-		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : $default;
+		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
 	}
 
 	/**
