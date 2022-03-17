@@ -397,7 +397,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'status'  => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
 						'count'   => true,
 					);
-					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
+					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_lesson_completions', $lesson_args, $item ) );
 					if ( $lesson_completions ) {
 						$completed_count += (int) $lesson_completions;
 					}
@@ -416,7 +416,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'last_activity'      => $last_activity_date,
 						'completions'        => $course_completions,
 						'average_progress'   => esc_html(
-						/* translators: Progress value. */
 							sprintf( '%d%%', $average_course_progress )
 						),
 						'average_grade'      => $average_grade,
