@@ -82,7 +82,7 @@ class Sensei_Course_Theme {
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 		add_action( 'template_redirect', [ $this, 'load_theme' ] );
-
+		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
 	}
 
 
@@ -451,4 +451,27 @@ class Sensei_Course_Theme {
 		return $this->original_theme;
 	}
 
+	/**
+	 * Filter the post content when using learning mode to add the video
+	 * added through the legacy video embed meta box.
+	 *
+	 * @param string $content The post content.
+	 *
+	 * @return string The post content with the video.
+	 */
+	public function add_lesson_video_to_content( $content ) {
+		$course_id = \Sensei_Utils::get_current_course();
+
+		if ( is_admin() || ! is_single() || 'lesson' !== get_post_type() || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			return $content;
+		}
+
+		remove_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80 );
+
+		ob_start();
+		Sensei()->frontend->sensei_lesson_video( get_the_ID() );
+		$video = ob_get_clean();
+
+		return $video . $content;
+	}
 }
