@@ -937,7 +937,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function add_days_to_complete_to_lessons_query( $clauses ) {
 		global $wpdb;
 
-		$clauses['fields'] .= ", (SELECT SUM( CEILING( TIMESTAMPDIFF( second, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date ) / (24 * 60 * 60) )) as days_to_complete";
+		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
 		$clauses['fields'] .= " FROM {$wpdb->comments}";
 		$clauses['fields'] .= " INNER JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id";
 		$clauses['fields'] .= " WHERE {$wpdb->comments}.comment_post_ID = {$wpdb->posts}.ID";
