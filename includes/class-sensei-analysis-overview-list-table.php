@@ -78,7 +78,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
 						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
 					),
-					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
+					'days_to_completion' => sprintf(
+						// translators: Placeholder value is average days to completion.
+						__( 'Days to Completion (%d)', 'sensei-lms' ),
+						ceil( Sensei()->course->get_days_to_completion_total() )
+					),
 				);
 				break;
 
