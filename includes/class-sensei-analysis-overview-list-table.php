@@ -389,41 +389,39 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$total_lessons  = count( $course_lessons );
 
 				// Get all completed lessons.
-				$completed_count = 0;
-				foreach ( $course_lessons as $lesson_id ) {
+				$completed_count        = 0;
 					$lesson_args        = array(
-						'post_id' => $lesson_id,
-						'type'    => 'sensei_lesson_status',
-						'status'  => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
-						'count'   => true,
+						'post__in' => $course_lessons,
+						'type'     => 'sensei_lesson_status',
+						'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
+						'count'    => true,
 					);
 					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_lesson_completions', $lesson_args, $item ) );
 					if ( $lesson_completions ) {
 						$completed_count += (int) $lesson_completions;
 					}
-				}
 
-				// Calculate avergae progress.
-				if ( $course_students_count && $total_lessons ) {
-					// Average course progress is calculated based on lessons completed for the course
-					// divided by the total possible lessons completed.
-					$average_course_progress = $completed_count / ( $course_students_count * $total_lessons ) * 100;
-				}
-				$column_data = apply_filters(
-					'sensei_analysis_overview_column_data',
-					array(
-						'title'              => $course_title,
-						'last_activity'      => $last_activity_date,
-						'completions'        => $course_completions,
-						'average_progress'   => esc_html(
-							sprintf( '%d%%', $average_course_progress )
+					// Calculate avergae progress.
+					if ( $course_students_count && $total_lessons ) {
+						// Average course progress is calculated based on lessons completed for the course
+						// divided by the total possible lessons completed.
+						$average_course_progress = $completed_count / ( $course_students_count * $total_lessons ) * 100;
+					}
+					$column_data = apply_filters(
+						'sensei_analysis_overview_column_data',
+						array(
+							'title'              => $course_title,
+							'last_activity'      => $last_activity_date,
+							'completions'        => $course_completions,
+							'average_progress'   => esc_html(
+								sprintf( '%d%%', $average_course_progress )
+							),
+							'average_grade'      => $average_grade,
+							'days_to_completion' => $average_completion_days,
 						),
-						'average_grade'      => $average_grade,
-						'days_to_completion' => $average_completion_days,
-					),
-					$item,
-					$this
-				);
+						$item,
+						$this
+					);
 				break;
 
 			case 'lessons':
