@@ -92,6 +92,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'students'           => __( 'Students', 'sensei-lms' ),
 					'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 					'completions'        => __( 'Completed', 'sensei-lms' ),
+					'completion_rate'    => __( 'Completion Rate', 'sensei-lms' ),
 					'days_to_completion' => __( 'Days to Completion', 'sensei-lms' ),
 				);
 				break;
@@ -395,7 +396,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$lesson_args        = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_lesson_status',
-					'status'  => array( 'complete', 'graded', 'passed', 'failed' ),
+					'status'  => array( 'complete', 'graded', 'passed', 'failed', 'ungraded' ),
 					'count'   => true,
 				);
 				$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
@@ -424,6 +425,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'students'           => $lesson_students,
 						'last_activity'      => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 						'completions'        => $lesson_completions,
+						'completion_rate'    => $this->get_completion_rate( $lesson_completions, $lesson_students ),
 						'days_to_completion' => $average_completion_days,
 					),
 					$item,
@@ -705,6 +707,23 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			__( 'Total Completed Courses', 'sensei-lms' ) => $total_courses_ended,
 		);
 		return apply_filters( 'sensei_analysis_stats_boxes', $stats_to_render );
+	}
+
+	/**
+	 * Get completion rate for a lesson.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param int $lesson_completion_count Number of students who has completed this lesson.
+	 * @param int $lesson_student_count Number of students who has started this lesson.
+	 *
+	 * @return string The completion rate or 'N/A' if there are no students.
+	 */
+	private function get_completion_rate( int $lesson_completion_count, int $lesson_student_count ): string {
+		if ( 0 >= $lesson_student_count ) {
+			return __( 'N/A', 'sensei-lms' );
+		}
+		return Sensei_Utils::quotient_as_absolute_rounded_percentage( $lesson_completion_count, $lesson_student_count ) . '%';
 	}
 
 	/**
