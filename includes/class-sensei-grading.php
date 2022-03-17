@@ -1132,6 +1132,31 @@ class Sensei_Grading {
 	}
 
 	/**
+	 * Get average grade of all lessons graded in all the courses.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
+	 */
+	public function get_graded_lessons_average_grade() {
+		global $wpdb;
+
+		// Fetching all the grades of all the lessons that are graded.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$sum_result          = $wpdb->get_row(
+			"SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum,COUNT( * ) as grade_count FROM {$wpdb->comments}
+             INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
+			 WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')"
+		);
+		$average_grade_value = 0;
+		if ( '0' === $sum_result->grade_count ) {
+			return $average_grade_value;
+		}
+		$average_grade_value = $sum_result->grade_sum / $sum_result->grade_count;
+		return $average_grade_value;
+	}
+
+	/**
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0

@@ -183,6 +183,33 @@ class Sensei_Class_Grading_Test extends WP_UnitTestCase {
 			$response = Sensei_Grading::grade_gap_fill_question( $question_id, $not_found_item );
 			$this->assertFalse( $response, "Expecting {$not_found_item} to not match {$answer}" );
 		}
+
+	}
+
+	/**
+	 * Test that courses average grade is calculated correctly when there are no grades.
+	 *
+	 * @covers Sensei_Grading::get_courses_average_grade
+	 */
+	public function testGetGradedLessonsAverageGradeNoGrades() {
+		$this->assertEquals( 0, Sensei()->grading->get_graded_lessons_average_grade() );
+	}
+
+	/**
+	 *
+	 * This tests generated graded lessons and makes sure that the function
+	 * get graded lessons average is returning expected value for average lesson.
+	 *
+	 * @covers Sensei_Grading::get_graded_lessons_average_grade
+	 * @since 4.2.0
+	 */
+	public function testGetGradedLessonsAverage() {
+
+		$grades = [ 10, 20, 30, 40, 50 ];
+		$this->factory->generate_graded_lessons( $grades );
+		$graded_lessons_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
+
+		$this->assertEquals( 30, $graded_lessons_average_grade );
 	}
 
 	/**

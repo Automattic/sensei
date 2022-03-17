@@ -99,13 +99,34 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
+				// Get total value for Courses Completed column in users table.
+				$course_args_completed   = array(
+					'type'   => 'sensei_course_status',
+					'status' => 'complete',
+				);
+				$total_completed_courses = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+
+				// Get the number of the courses that users have started.
+				$course_args_started   = array(
+					'type'   => 'sensei_course_status',
+					'status' => 'any',
+				);
+				$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+
+				// Get total average students grade.
+				$total_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
+
 				$columns = array(
-					'title'             => __( 'Student', 'sensei-lms' ),
+					// translators: Placeholder value is total count of students.
+					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
-					'active_courses'    => __( 'Active Courses', 'sensei-lms' ),
-					'completed_courses' => __( 'Completed Courses', 'sensei-lms' ),
-					'average_grade'     => __( 'Average Grade', 'sensei-lms' ),
+					// translators: Placeholder value is all active courses.
+					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
+					// translators: Placeholder value is all completed courses.
+					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $total_completed_courses ) ),
+					// translators: Placeholder value is graded average value.
+					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $total_average_grade ) ),
 				);
 				break;
 		}
@@ -236,7 +257,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return data
 	 */
 	public function generate_report( $report ) {
-
 		$data = array();
 
 		$this->csv_output = true;
