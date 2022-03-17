@@ -1233,8 +1233,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$wpdb->prepare(
 				"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
 			, COUNT(lesson_students.comment_id) lesson_start_count
-			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), 1, 0)) lesson_completed_count
-			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed'), CEILING( TIMESTAMPDIFF( second, STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) / (24 * 60 * 60) ), 0)) days_to_complete_sum
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), 1, 0)) lesson_completed_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
 			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
