@@ -50,4 +50,58 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 			'title'          => $section->title,
 		];
 	}
+
+	/**
+	 * Test that customizer adds settings to the customizer manager.
+	 *
+	 * @param string $setting_id Setting identifier.
+	 * @param array $expected Expected setting value.
+	 *
+	 * @dataProvider providerAddCustomizerSettings_CustomizeManagerGiven_AddsSettingToCustomizeManager
+	 */
+	public function testAddCustomizerSettings_CustomizeManagerGiven_AddsSettingToCustomizeManager( $setting_id, $expected ) {
+		$customize_manager = new WP_Customize_Manager();
+
+		$this->customizer->add_customizer_settings( $customize_manager );
+		$setting = $customize_manager->get_setting( $setting_id );
+
+		self::assertSame( $expected, $this->exportSetting( $setting ) );
+	}
+
+	public function exportSetting( WP_Customize_Setting $setting ): array {
+		return [
+			'default'   => $setting->default,
+			'transport' => $setting->transport,
+			'type'      => $setting->type,
+		];
+	}
+
+	public function providerAddCustomizerSettings_CustomizeManagerGiven_AddsSettingToCustomizeManager(): array {
+		return [
+			'sensei-course-theme-primary-color'    => [
+				'sensei-course-theme-primary-color',
+				[
+					'default'   => '#1e1e1e',
+					'transport' => 'postMessage',
+					'type'      => 'option',
+				],
+			],
+			'sensei-course-theme-background-color' => [
+				'sensei-course-theme-background-color',
+				[
+					'default'   => '#ffffff',
+					'transport' => 'postMessage',
+					'type'      => 'option',
+				],
+			],
+			'sensei-course-theme-foreground-color' => [
+				'sensei-course-theme-primary-color',
+				[
+					'default'   => '#1e1e1e',
+					'transport' => 'postMessage',
+					'type'      => 'option',
+				],
+			],
+		];
+	}
 }
