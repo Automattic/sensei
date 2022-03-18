@@ -546,7 +546,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					array(
 						'title'             => $user_name,
 						'email'             => $user_email,
-						'last_activity'     => $this->get_last_activity_date( array( 'user_id' => $item->ID ) ),
+						'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 						'active_courses'    => ( $user_courses_started - $user_courses_ended ),
 						'completed_courses' => $user_courses_ended,
 						'average_grade'     => $user_average_grade,
@@ -588,26 +588,39 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			return __( 'N/A', 'sensei-lms' );
 		}
 
-		// Return the full date when doing a CSV export.
+		return $this->format_last_activity_date( $last_activity->comment_date_gmt );
+	}
+
+	/**
+	 * Format the last activity date to a more readable form.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param string $date The last activity date.
+	 *
+	 * @return string The formatted last activity date.
+	 */
+	private function format_last_activity_date( string $date ) {
+		// Don't do any formatting if this is a CSV export.
 		if ( $this->csv_output ) {
-			return $last_activity->comment_date_gmt;
+			return $date;
 		}
 
-		$timezone           = new DateTimeZone( 'GMT' );
-		$now                = new DateTime( 'now', $timezone );
-		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
-		$diff_in_days       = $now->diff( $last_activity_date )->days;
+		$timezone     = new DateTimeZone( 'GMT' );
+		$now          = new DateTime( 'now', $timezone );
+		$date         = new DateTime( $date, $timezone );
+		$diff_in_days = $now->diff( $date )->days;
 
 		// Show a human readable date if activity is within 6 days.
 		if ( $diff_in_days < 7 ) {
 			return sprintf(
 				/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( strtotime( $last_activity->comment_date_gmt ) )
+				human_time_diff( $date->getTimestamp() )
 			);
 		}
 
-		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
+		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
 
 	/**
@@ -707,8 +720,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 */
 		$args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
 
+		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 		$wp_user_search = new WP_User_Query( $args );
+		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
 		$learners          = $wp_user_search->get_results();
@@ -1083,7 +1098,30 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Add the `last_activity` field to the user query.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function add_last_activity_to_user_query( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_fields .= ", (
+			SELECT MAX({$wpdb->comments}.comment_date_gmt)
+			FROM {$wpdb->comments}
+			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
+			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
+		) AS last_activity_date";
+	}
+
+	/**
 	 * Filter the users by last activity start/end date.
+	 *
+	 * This action should be called after `Sensei_Analysis_Overview_List_Table::add_last_activity_to_user_query`.
 	 *
 	 * @since  4.2.0
 	 * @access private
@@ -1099,15 +1137,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! $start_date && ! $end_date ) {
 			return;
 		}
-
-		$query->query_fields .= ", (
-			SELECT MAX({$wpdb->comments}.comment_date_gmt)
-			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-		) AS last_activity_date";
 
 		$query->query_where .= ' HAVING 1 = 1';
 
