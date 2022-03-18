@@ -378,7 +378,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'type'    => 'sensei_course_status',
 					'status'  => 'any',
 				);
-				$course_students_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_learners', $course_args, $item ) );
+				$course_students_count = Sensei_Utils::sensei_check_for_activity( $course_args );
 
 				// Calculate average lesson progress per student for course.
 				$average_course_progress = 0;
