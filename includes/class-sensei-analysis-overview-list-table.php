@@ -1044,7 +1044,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			return $clauses;
 		}
 		// Fetch the lessons within the expected last activity range.
-		$lessons_query = "SELECT cm.comment_post_id lesson_id
+		$lessons_query = "SELECT cm.comment_post_id lesson_id, MAX(cm.comment_date_gmt) as comment_date_gmt
 			FROM {$wpdb->comments} cm
 			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
 			AND cm.comment_type = 'sensei_lesson_status'";
@@ -1056,18 +1056,20 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			);
 		}
 		$lessons_query .= ' GROUP BY cm.comment_post_id';
+		// Fetch the course IDs associated with those lessons.
+		$course_query = "SELECT DISTINCT(pm.meta_value) course_id
+		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
+		ON cm.lesson_id = pm.post_id
+		AND pm.meta_key = '_lesson_course'
+		GROUP BY pm.meta_value
+		";
 		// Filter by end date.
 		if ( $end_date ) {
-			$lessons_query .= $wpdb->prepare(
+			$course_query .= $wpdb->prepare(
 				' HAVING MAX(cm.comment_date_gmt) <= %s',
 				$end_date
 			);
 		}
-		// Fetch the course IDs associated with those lessons.
-		$course_query      = "SELECT DISTINCT(pm.meta_value) course_id
-		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) ls
-		ON ls.lesson_id = pm.post_id
-		";
 		$clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$course_query})";
 
 		return $clauses;
