@@ -1045,7 +1045,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 		// Fetch the lessons within the expected last activity range.
 		$lessons_query = "SELECT cm.comment_post_id lesson_id
-			FROM wp_comments cm
+			FROM {$wpdb->comments} cm
 			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
 			AND cm.comment_type = 'sensei_lesson_status'";
 		// Filter by start date.
@@ -1065,7 +1065,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 		// Fetch the course IDs associated with those lessons.
 		$course_query      = "SELECT DISTINCT(pm.meta_value) course_id
-		FROM wp_postmeta pm JOIN ({$lessons_query}) ls
+		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) ls
 		ON ls.lesson_id = pm.post_id
 		";
 		$clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$course_query})";
