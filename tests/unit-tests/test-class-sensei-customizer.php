@@ -5,14 +5,6 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 
 	private $customizer;
 
-	public static function setUpBeforeClass() {
-		parent::setUpBeforeClass();
-		$bootstrap = Sensei_Unit_Tests_Bootstrap::instance();
-
-		//      $bootstrap->
-
-	}
-
 	public function setUp() {
 		parent::setUp();
 		$this->customizer = new Sensei_Customizer();
