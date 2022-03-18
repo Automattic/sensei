@@ -232,4 +232,12 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 
 		self::assertSame( $expected, $actual );
 	}
+
+	public function testEnqueueCustomizerHelper_Constructed_AddsAction() {
+		$this->customizer->enqueue_customizer_helper();
+
+		$actual = has_action( 'wp_print_footer_scripts', [ $this->customizer, 'output_customizer_helper' ] );
+
+		self::assertSame( 10, $actual );
+	}
 }
