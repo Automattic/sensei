@@ -1043,41 +1043,32 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! $start_date && ! $end_date ) {
 			return $clauses;
 		}
-
-		// Join the lessons meta.
-		// We need the lesson ids to extract the last activity comment.
-		$clauses['join'] .= "
-			INNER JOIN {$wpdb->postmeta} AS pm ON pm.meta_value = {$wpdb->posts}.ID
-			AND pm.meta_key = '_lesson_course'
-		";
-
-		// Join only the last activity comment.
-		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
-		$clauses['join'] .= " INNER JOIN {$wpdb->comments} AS c ON c.comment_ID = (
-			SELECT comment_ID
-			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.comment_post_ID = pm.post_id
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-			LIMIT 1
-		)";
-
+		// Fetch the lessons within the expected last activity range.
+		$lessons_query = "SELECT cm.comment_post_id lesson_id
+			FROM wp_comments cm
+			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
+			AND cm.comment_type = 'sensei_lesson_status'";
 		// Filter by start date.
 		if ( $start_date ) {
-			$clauses['where'] .= $wpdb->prepare(
-				' AND c.comment_date_gmt >= %s',
+			$lessons_query .= $wpdb->prepare(
+				' AND cm.comment_date_gmt >= %s',
 				$start_date
 			);
 		}
-
+		$lessons_query .= ' GROUP BY cm.comment_post_id';
 		// Filter by end date.
 		if ( $end_date ) {
-			$clauses['where'] .= $wpdb->prepare(
-				' AND c.comment_date_gmt <= %s',
+			$lessons_query .= $wpdb->prepare(
+				' HAVING MAX(cm.comment_date_gmt) <= %s',
 				$end_date
 			);
 		}
+		// Fetch the course IDs associated with those lessons.
+		$course_query      = "SELECT DISTINCT(pm.meta_value) course_id
+		FROM wp_postmeta pm JOIN ({$lessons_query}) ls
+		ON ls.lesson_id = pm.post_id
+		";
+		$clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$course_query})";
 
 		return $clauses;
 	}
