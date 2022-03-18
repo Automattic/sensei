@@ -397,12 +397,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				);
 				$completed_count = (int) Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_lesson_completions', $lesson_args, $item ) );
 				// Calculate average progress.
-				$average_course_progress =  __( 'N/A', 'sensei-lms' );
+				$average_course_progress = __( 'N/A', 'sensei-lms' );
 				if ( $course_students_count && $total_lessons ) {
 					// Average course progress is calculated based on lessons completed for the course
 					// divided by the total possible lessons completed.
 					$average_course_progress_value = $completed_count / ( $course_students_count * $total_lessons ) * 100;
-					$average_course_progress = esc_html(
+					$average_course_progress       = esc_html(
 						sprintf( '%d%%', $average_course_progress_value )
 					);
 				}
