@@ -376,7 +376,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$course_args           = array(
 					'post_id' => $item->ID,
 					'type'    => 'sensei_course_status',
-					'status'  => 'any',
+					'status'  => array( 'in-progress', 'complete' ),
 				);
 				$course_students_count = Sensei_Utils::sensei_check_for_activity( $course_args );
 
@@ -384,7 +384,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				$average_course_progress = 0;
 
 				// Get all course lessons.
-				$lessons        = Sensei()->course->course_lessons( $item->ID, 'any', 'ids' );
+				$lessons        = Sensei()->course->course_lessons( $item->ID, 'publish', 'ids' );
 				$course_lessons = is_array( $lessons ) ? $lessons : array( $lessons );
 				$total_lessons  = count( $course_lessons );
 
