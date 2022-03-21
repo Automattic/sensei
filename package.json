@@ -44,6 +44,7 @@
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
     "react-animate-height": "2.0.23",
+    "terser-webpack-plugin": "5.3.1",
     "uuid": "3.3.2"
   },
   "devDependencies": {
