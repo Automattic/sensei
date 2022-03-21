@@ -818,4 +818,28 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		return $lesson_id;
 	}
 
+	/**
+	 * Generates comments with graded lessons.
+	 * Note: this method doesn't generate lessons, but comments with grades and commentsmeta with grade values.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 * @param array $grades Grades to generated graded lessons with.
+	 */
+	public function generate_graded_lessons( $grades ) {
+		// Generates graded lessons.
+		// First step is to generate comment and then comment meta with grade value.
+		foreach ( $grades as $index => $grade ) {
+			$comment_args = array(
+				'user_id'          => $index,
+				'comment_post_ID'  => $index,
+				'comment_type'     => 'sensei_lesson_status',
+				'comment_approved' => 'graded',
+			);
+			$comment_id   = $this->comment->create( $comment_args );
+
+			add_comment_meta( $comment_id, 'grade', $grade );
+		}
+	}
+
 }

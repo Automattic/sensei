@@ -114,13 +114,6 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// Are we only retrieving a single entry, or not care about the order...
-		if ( isset( $args['count'] ) || isset( $args['post_id'] ) ) {
-			// ...then we don't need to ask the db to order the results, this overrides WP default behaviour
-			$args['order']   = false;
-			$args['orderby'] = false;
-		}
-
 		// A user ID of 0 is in valid, so shortcut this
 		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
@@ -1777,16 +1770,12 @@ class Sensei_Utils {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
-				'user_id'   => $user_id,
-				'post_id'   => $course_id,
-				'status'    => $status,
-				'type'      => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'    => 'update', // Update the existing status...
-				'keep_time' => true, // ...but don't change the existing timestamp
+				'user_id' => $user_id,
+				'post_id' => $course_id,
+				'status'  => $status,
+				'type'    => 'sensei_course_status', /* FIELD SIZE 20 */
+				'action'  => 'update', // Update the existing status...
 			);
-			if ( 'in-progress' == $status ) {
-				unset( $args['keep_time'] ); // Keep updating what's happened
-			}
 
 			$comment_id = self::sensei_log_activity( $args );
 			if ( $comment_id && ! empty( $metadata ) ) {
@@ -2571,6 +2560,26 @@ class Sensei_Utils {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Output the current query params as hidden inputs.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param array $excluded The query params that should be excluded.
+	 */
+	public static function output_query_params_as_inputs( array $excluded = [] ) {
+		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
+		foreach ( $_GET as $name => $value ) {
+			if ( in_array( $name, $excluded, true ) ) {
+				continue;
+			}
+
+			?>
+			<input type="hidden" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
+			<?php
+		}
 	}
 
 }

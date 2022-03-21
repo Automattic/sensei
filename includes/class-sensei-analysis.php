@@ -12,9 +12,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Analysis {
 
+	/**
+	 * The reports' page slug.
+	 */
+	const PAGE_SLUG = 'sensei_reports';
+
+	/**
+	 * The reports' page name (title).
+	 *
+	 * @var string
+	 */
 	public $name;
+
+	/**
+	 * Reference to the main plugin file name.
+	 *
+	 * @var string
+	 */
 	public $file;
-	public $page_slug;
+
 	/**
 	 * The post type under which is the page registered.
 	 *
@@ -29,25 +45,131 @@ class Sensei_Analysis {
 	 * @param string $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Analysis', 'sensei-lms' );
+		$this->name      = __( 'Reports', 'sensei-lms' );
 		$this->file      = $file;
-		$this->page_slug = 'sensei_analysis';
 		$this->post_type = 'course';
 
-		// Admin functions
+		// Admin functions.
 		if ( is_admin() ) {
 			add_action( 'analysis_wrapper_container', array( $this, 'wrapper_container' ) );
 
-			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification -- Arguments used for comparison.
+			if ( isset( $_GET['page'] ) && self::PAGE_SLUG === $_GET['page'] ) {
+				add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
 			add_action( 'admin_init', array( $this, 'report_download_page' ) );
 
 			add_filter( 'user_search_columns', array( $this, 'user_search_columns_filter' ), 10, 3 );
+
+			// Add custom navigation.
+			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		}
 	}
 
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return string|void
+	 */
+	public function __get( $key ) {
+		if ( 'page_slug' === $key ) {
+			_doing_it_wrong( 'Sensei_Analysis->page_slug', 'The "page_slug" property is deprecated. Use the Sensei_Analysis::PAGE_SLUG constant instead.', '4.2.0' );
+
+			return self::PAGE_SLUG;
+		}
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.2.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
+		$is_reports_page = isset( $_GET['page'] ) && ( self::PAGE_SLUG === $_GET['page'] );
+
+		if ( ! $is_reports_page ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification -- No action, nonce is not required.
+		if ( isset( $_GET['course_id'] ) || isset( $_GET['lesson_id'] ) || isset( $_GET['user_id'] ) ) {
+			return;
+		}
+
+		$this->display_reports_navigation();
+	}
+
+	/**
+	 * Display the Reports navigation.
+	 */
+	private function display_reports_navigation() {
+		// phpcs:ignore
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+
+		$reports            = array(
+			'students' => __( 'Students', 'sensei-lms' ),
+			'courses'  => __( 'Courses', 'sensei-lms' ),
+			'lessons'  => __( 'Lessons', 'sensei-lms' ),
+		);
+		$current_report_key = isset( $reports[ $type ] ) ? $type : 'students';
+
+		$link_template = '<div><a href="%s" class="sensei-custom-navigation__tab %s">%s</a></div>';
+		$menu          = array();
+		foreach ( $reports as $key => $title ) {
+			$class_name   = $current_report_key === $key ? 'active' : '';
+			$query_args   = array(
+				'page'      => self::PAGE_SLUG,
+				'post_type' => $this->post_type,
+				'view'      => $key,
+			);
+			$menu[ $key ] = sprintf( $link_template, esc_url( add_query_arg( $query_args, admin_url( 'edit.php' ) ) ), $class_name, $title );
+		}
+		/**
+		 * Filter the Reports navigation menu items.
+		 *
+		 * @since 4.2.0
+		 * @hook sensei_analysis_sub_menu
+		 *
+		 * @param {array} $menu The menu items.
+		 * @return {array} Returns filtered menu items.
+		 */
+		$menu = apply_filters( 'sensei_analysis_sub_menu', $menu );
+		/**
+		 * Filter the Reports page title.
+		 *
+		 * @since 4.2.0
+		 * @hook sensei_analysis_nav_title
+		 *
+		 * @param {string} $title The page title.
+		 * @return {string} Returns filtered page title.
+		 */
+		$data = apply_filters( 'sensei_analysis_nav_title', $this->name );
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php echo wp_kses_post( $data ); ?></h1>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<?php echo wp_kses( implode( '', $menu ), wp_kses_allowed_html( 'post' ) ); ?>
+				<div class="sensei-custom-navigation__tabbar-separator"></div>
+				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/docs">
+					<?php echo esc_html__( 'Guide To Using Reports', 'sensei-lms' ); ?>
+				</a>
+				<div></div>
+			</div>
+		</div>
+		<?php
+	}
 
 	/**
 	 * analysis_admin_menu function.
@@ -60,13 +182,25 @@ class Sensei_Analysis {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
 				'edit.php?post_type=course',
-				__( 'Analysis', 'sensei-lms' ),
-				__( 'Analysis', 'sensei-lms' ),
+				$this->name,
+				$this->name,
 				'manage_sensei_grades',
-				'sensei_analysis',
+				self::PAGE_SLUG,
 				array( $this, 'analysis_page' )
 			);
 		}
+	}
+
+	/**
+	 * Enqueue JS scripts.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 */
+	public function enqueue_scripts() {
+
+		Sensei()->assets->enqueue( 'sensei-reports', 'js/admin/reports.js', [ 'jquery', 'jquery-ui-datepicker' ] );
+
 	}
 
 	/**
@@ -80,6 +214,7 @@ class Sensei_Analysis {
 	public function enqueue_styles() {
 
 		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
+		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
 
 	}
 
@@ -185,20 +320,10 @@ class Sensei_Analysis {
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
-		$this->analysis_default_nav();
 		do_action( 'sensei_analysis_after_headers' );
 
 		?>
 		<div id="poststuff" class="sensei-analysis-wrap">
-			<div class="sensei-analysis-sidebar">
-				<?php
-				do_action( 'sensei_analysis_before_stats_boxes' );
-				foreach ( $sensei_analysis_overview->stats_boxes() as $key => $value ) {
-					$this->render_stats_box( esc_html( $key ), esc_html( $value ) );
-				}
-				do_action( 'sensei_analysis_after_stats_boxes' );
-				?>
-			</div>
 			<div class="sensei-analysis-main">
 				<?php $sensei_analysis_overview->display(); ?>
 			</div>
@@ -373,14 +498,18 @@ class Sensei_Analysis {
 	}
 
 	/**
-	 * render_stats_box outputs stats boxes
+	 * Outputs stats boxes.
 	 *
-	 * @since  1.2.0
-	 * @param  $title string title of stat
-	 * @param  $data string stats data
-	 * @return void
+	 * @since      1.2.0
+	 * @deprecated 4.2.0
+	 * @param      string $title Title of stat.
+	 * @param      string $data  Stats data.
+	 * @return     void
 	 */
 	public function render_stats_box( $title, $data ) {
+
+		_deprecated_function( __METHOD__, '4.2.0' );
+
 		?>
 		<div class="postbox">
 			<h2><span><?php echo esc_html( $title ); ?></span></h2>
@@ -433,10 +562,11 @@ class Sensei_Analysis {
 	 * Default nav area for Analysis, overview of Learners, Courses and Lessons
 	 *
 	 * @since  1.2.0
+	 * @deprecated 4.2.0
 	 * @return void
 	 */
 	public function analysis_default_nav() {
-
+		_deprecated_function( __METHOD__, '4.2.0' );
 		$title = $this->name;
 		?>
 			<h1>
@@ -454,7 +584,7 @@ class Sensei_Analysis {
 	public function analysis_user_profile_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'edit.php' ) ) ), esc_html( $this->name ) );
@@ -463,7 +593,7 @@ class Sensei_Analysis {
 			$url       = esc_url(
 				add_query_arg(
 					array(
-						'page'      => $this->page_slug,
+						'page'      => self::PAGE_SLUG,
 						'user'      => $user_id,
 						'post_type' => $this->post_type,
 					),
@@ -488,7 +618,7 @@ class Sensei_Analysis {
 	public function analysis_user_course_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( $analysis_args, admin_url( 'edit.php' ) ) ), esc_html( $this->name ) );
@@ -497,7 +627,7 @@ class Sensei_Analysis {
 			$user_data = get_userdata( $user_id );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'user_id'   => $user_id,
 					'post_type' => $this->post_type,
 				),
@@ -511,7 +641,7 @@ class Sensei_Analysis {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -533,7 +663,7 @@ class Sensei_Analysis {
 	public function analysis_course_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
@@ -541,7 +671,7 @@ class Sensei_Analysis {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -563,7 +693,7 @@ class Sensei_Analysis {
 	public function analysis_course_users_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
@@ -571,7 +701,7 @@ class Sensei_Analysis {
 			$course_id = intval( $_GET['course_id'] );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -593,7 +723,7 @@ class Sensei_Analysis {
 	public function analysis_lesson_users_nav() {
 
 		$analysis_args = array(
-			'page'      => $this->page_slug,
+			'page'      => self::PAGE_SLUG,
 			'post_type' => $this->post_type,
 		);
 		$title         = sprintf( '<a href="%s">%s</a>', add_query_arg( $analysis_args, admin_url( 'edit.php' ) ), esc_html( $this->name ) );
@@ -602,7 +732,7 @@ class Sensei_Analysis {
 			$course_id = intval( get_post_meta( $lesson_id, '_lesson_course', true ) );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'course_id' => $course_id,
 					'post_type' => $this->post_type,
 				),
@@ -611,7 +741,7 @@ class Sensei_Analysis {
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
 			$url       = add_query_arg(
 				array(
-					'page'      => $this->page_slug,
+					'page'      => self::PAGE_SLUG,
 					'lesson_id' => $lesson_id,
 					'post_type' => $this->post_type,
 				),

@@ -11,12 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  */
 class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
+
 	public $user_id;
 	public $course_id;
 	public $total_lessons;
 	public $user_ids;
-	public $view      = 'lesson';
-	public $page_slug = 'sensei_analysis';
+	public $page_slug;
+	public $view = 'lesson';
+
 	/**
 	 * The post type under which is the page registered.
 	 *
@@ -32,6 +34,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public function __construct( $course_id = 0, $user_id = 0 ) {
 		$this->course_id = intval( $course_id );
 		$this->user_id   = intval( $user_id );
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
 			$this->view = $_GET['view'];
@@ -256,6 +259,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$args = array(
+			'number'  => '-1',
+			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
@@ -455,7 +460,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					);
 					$lesson_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_lesson_completions', $lesson_args, $item ) );
 
-					$lesson_average_grade = __( 'n/a', 'sensei-lms' );
+					$lesson_average_grade = __( 'N/A', 'sensei-lms' );
 
 					if ( false != Sensei_Lesson::lesson_quiz_has_questions( $item->ID ) ) {
 						// Get Percent Complete
@@ -592,11 +597,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'post_status'      => array( 'publish', 'private' ),
 			'suppress_filters' => 0,
 		);
+
 		if ( $this->search ) {
 			$lessons_args['s'] = $this->search;
-		}
-		if ( $this->csv_output ) {
-			$lessons_args['posts_per_page'] = '-1';
 		}
 
 		// Using WP_Query as get_posts() doesn't support 'found_posts'

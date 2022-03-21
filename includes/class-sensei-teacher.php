@@ -579,7 +579,7 @@ class Sensei_Teacher {
 		$sensei_post_types = array( 'course', 'lesson', 'question' );
 
 		// exit early for the following conditions
-		$limit_screen_ids = array( 'sensei-lms_page_sensei_analysis', 'course_page_module-order' );
+		$limit_screen_ids = array( 'course_page_' . Sensei_Analysis::PAGE_SLUG, 'course_page_module-order' );
 
 		if ( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id, $limit_screen_ids )
 			|| ! in_array( $query->query['post_type'], $sensei_post_types ) ) {
@@ -687,9 +687,9 @@ class Sensei_Teacher {
 			return $query;
 		}
 		switch ( $screen->id ) {
-			case 'sensei-lms_page_sensei_grading':
-			case 'sensei-lms_page_sensei_analysis':
-			case 'sensei-lms_page_sensei_learners':
+			case 'course_page_sensei_grading':
+			case 'course_page_' . Sensei_Analysis::PAGE_SLUG:
+			case 'course_page_sensei_learners':
 			case 'lesson':
 			case 'course':
 			case 'question':
