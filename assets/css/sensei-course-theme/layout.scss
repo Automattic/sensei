@@ -129,7 +129,7 @@ body.sensei-course-theme {
 			flex-wrap: nowrap;
 			padding: 0 24px;
 			margin: 0 !important;
-			gap: 24px;
+			gap: 24px!important;
 			height: calc(var(--header-height) - 10px);
 		}
 
