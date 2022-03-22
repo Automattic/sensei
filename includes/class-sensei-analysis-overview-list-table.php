@@ -594,7 +594,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Format the last activity date to a more readable form.
 	 *
-	 * @since 4.2.0
+	 * @since 4.3.0
 	 *
 	 * @param string $date The last activity date.
 	 *
@@ -1100,7 +1100,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Add the `last_activity` field to the user query.
 	 *
-	 * @since  4.2.0
+	 * @since  4.3.0
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
