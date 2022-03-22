@@ -873,13 +873,62 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
-		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
 
 		/* Assert. */
 		$this->assertEquals(
 			'50%',
 			$method->invoke( $instance, ( $course_id ) ),
 			'Find an average of lessons completed in the course for all the students.'
+		);
+	}
+
+	/**
+	 * Tests getting average progress value for the course based on the lessons completion.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
+	 */
+	public function testAverageProgressForCourseRoundupNumber() {
+		// Create a course
+		$course_id = $this->factory->course->create();
+
+		// Create 2 users
+		$user_id_1 = $this->factory->user->create();
+		$user_id_2 = $this->factory->user->create();
+
+		//Add 3 lessons to the course
+		$lesson_1 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$lesson_2 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+		$lesson_3 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
+		);
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+
+		// Get private method get_average_progress_for_courses_table
+		$method = new ReflectionMethod( $instance, 'get_average_progress_for_courses_table' );
+		$method->setAccessible( true );
+
+		// Complete lesson 1 and lesson 2 with user_1.
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1 );
+		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_1 );
+
+		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_2 );
+
+		// The value after calcuation should be 16.66%, but it should be rounded up to 17.
+		/* Assert. */
+		$this->assertEquals(
+			'17%',
+			$method->invoke( $instance, ( $course_id ) ),
+			'Find an average of lessons completed in the course for all the students round it up.'
 		);
 	}
 

@@ -554,7 +554,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			// divided by the total possible lessons completed.
 			$average_course_progress_value = $completed_count / ( $course_students_count * $total_lessons ) * 100;
 			$average_course_progress       = esc_html(
-				sprintf( '%d%%', $average_course_progress_value )
+				sprintf( '%d%%', ceil( $average_course_progress_value ) )
 			);
 		}
 		return $average_course_progress;
