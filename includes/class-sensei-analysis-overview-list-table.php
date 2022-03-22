@@ -40,6 +40,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
+		add_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 	}
 
 	/**
@@ -100,13 +101,34 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 			case 'users':
 			default:
+				// Get total value for Courses Completed column in users table.
+				$course_args_completed   = array(
+					'type'   => 'sensei_course_status',
+					'status' => 'complete',
+				);
+				$total_completed_courses = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+
+				// Get the number of the courses that users have started.
+				$course_args_started   = array(
+					'type'   => 'sensei_course_status',
+					'status' => 'any',
+				);
+				$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+
+				// Get total average students grade.
+				$total_average_grade = Sensei()->grading->get_graded_lessons_average_grade();
+
 				$columns = array(
-					'title'             => __( 'Student', 'sensei-lms' ),
+					// translators: Placeholder value is total count of students.
+					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
-					'active_courses'    => __( 'Active Courses', 'sensei-lms' ),
-					'completed_courses' => __( 'Completed Courses', 'sensei-lms' ),
-					'average_grade'     => __( 'Average Grade', 'sensei-lms' ),
+					// translators: Placeholder value is all active courses.
+					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
+					// translators: Placeholder value is all completed courses.
+					'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $total_completed_courses ) ),
+					// translators: Placeholder value is graded average value.
+					'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $total_average_grade ) ),
 				);
 				break;
 		}
@@ -119,7 +141,43 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		return $this->columns;
 	}
-
+	/**
+	 * Append the count value to column headers where applicable
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param array $columns Array of columns for the report table.
+	 * @return array The array of columns to use with the table with columns appended to their title
+	 */
+	public function add_totals_to_report_column_headers( array $columns ) {
+		$column_value_map = array();
+		switch ( $this->type ) {
+			case 'lessons' && $this->get_course_filter_value():
+				$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
+				$column_value_map['title']              = $total_counts->lesson_count;
+				$column_value_map['lesson_module']      = $total_counts->unique_module_count;
+				$column_value_map['students']           = $total_counts->unique_student_count;
+				$column_value_map['completions']        = $total_counts->lesson_completed_count > 0 && $total_counts->lesson_count > 0
+					? ceil( $total_counts->lesson_completed_count / $total_counts->lesson_count )
+					: 0;
+				$column_value_map['days_to_completion'] = $total_counts->lesson_completed_count > 0
+					? ceil( $total_counts->days_to_complete_sum / $total_counts->lesson_completed_count )
+					: __( 'N/A', 'sensei-lms' );
+				$column_value_map['completion_rate']    = $total_counts->lesson_start_count > 0
+					? Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_counts->lesson_completed_count, $total_counts->lesson_start_count ) . '%'
+					: '0%';
+				break;
+			default:
+				break;
+		}
+		foreach ( $column_value_map as $key => $value ) {
+			if ( key_exists( $key, $columns ) ) {
+				$columns[ $key ] = $columns[ $key ] . ' (' . esc_html( $value ) . ')';
+			}
+		}
+		return $columns;
+	}
 	/**
 	 * Define the columns that are going to be used in the table
 	 *
@@ -239,7 +297,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @return data
 	 */
 	public function generate_report( $report ) {
-
 		$data = array();
 
 		$this->csv_output = true;
@@ -1038,41 +1095,34 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! $start_date && ! $end_date ) {
 			return $clauses;
 		}
-
-		// Join the lessons meta.
-		// We need the lesson ids to extract the last activity comment.
-		$clauses['join'] .= "
-			INNER JOIN {$wpdb->postmeta} AS pm ON pm.meta_value = {$wpdb->posts}.ID
-			AND pm.meta_key = '_lesson_course'
-		";
-
-		// Join only the last activity comment.
-		// Following the logic from `Sensei_Analysis_Overview_List_Table::get_last_activity_date()`.
-		$clauses['join'] .= " INNER JOIN {$wpdb->comments} AS c ON c.comment_ID = (
-			SELECT comment_ID
-			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.comment_post_ID = pm.post_id
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-			LIMIT 1
-		)";
-
+		// Fetch the lessons within the expected last activity range.
+		$lessons_query = "SELECT cm.comment_post_id lesson_id, MAX(cm.comment_date_gmt) as comment_date_gmt
+			FROM {$wpdb->comments} cm
+			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
+			AND cm.comment_type = 'sensei_lesson_status'";
 		// Filter by start date.
 		if ( $start_date ) {
-			$clauses['where'] .= $wpdb->prepare(
-				' AND c.comment_date_gmt >= %s',
+			$lessons_query .= $wpdb->prepare(
+				' AND cm.comment_date_gmt >= %s',
 				$start_date
 			);
 		}
-
+		$lessons_query .= ' GROUP BY cm.comment_post_id';
+		// Fetch the course IDs associated with those lessons.
+		$course_query = "SELECT DISTINCT(pm.meta_value) course_id
+		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
+		ON cm.lesson_id = pm.post_id
+		AND pm.meta_key = '_lesson_course'
+		GROUP BY pm.meta_value
+		";
 		// Filter by end date.
 		if ( $end_date ) {
-			$clauses['where'] .= $wpdb->prepare(
-				' AND c.comment_date_gmt <= %s',
+			$course_query .= $wpdb->prepare(
+				' HAVING MAX(cm.comment_date_gmt) <= %s',
 				$end_date
 			);
 		}
+		$clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$course_query})";
 
 		return $clauses;
 	}
@@ -1219,6 +1269,47 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$end_date->setTime( 23, 59, 59 );
 
 		return $end_date->format( 'Y-m-d H:i:s' );
+	}
+	/**
+	 * Fetch the values required for the total counts added to column headers in lesson reports.
+	 *
+	 * @since  4.2.0
+	 * @access private
+	 *
+	 * @param int $course_id Course Id to filter lessons with.
+	 *
+	 * @return object Object containing the required totals for column header.
+	 */
+	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
+		global $wpdb;
+		$lessons      = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
+		$lesson_ids   = '0';
+		$lesson_count = count( $lessons );
+		if ( 0 < $lesson_count ) {
+			$lesson_ids = implode( ',', $lessons );
+		};
+
+		$default_args  = array(
+			'fields' => 'ids',
+		);
+		$modules_count = count( wp_get_object_terms( $lessons, 'module', $default_args ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$lesson_completion_info                      = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(DISTINCT(lesson_students.user_id)) unique_student_count
+			, COUNT(lesson_students.comment_id) lesson_start_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), 1, 0)) lesson_completed_count
+			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
+			FROM $wpdb->comments lesson_students
+			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
+				'%Y-%m-%d %H:%i:%s',
+				$lesson_ids
+			)
+		);
+		$lesson_completion_info->lesson_count        = $lesson_count;
+		$lesson_completion_info->unique_module_count = $modules_count;
+		return $lesson_completion_info;
 	}
 }
 
