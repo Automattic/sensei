@@ -461,7 +461,7 @@ class Sensei_Main {
 	/**
 	 * Load the WP-CLI commands.
 	 *
-	 * @since 4.2.0
+	 * @since 4.3.0
 	 */
 	private function initialize_cli() {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {

@@ -3,7 +3,6 @@
  * Enables the Sensei WP-CLI commands.
  *
  * @package sensei
- * @version 4.2.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * CLI class.
  *
- * @since 4.2.0
+ * @since 4.3.0
  */
 class Sensei_CLI {
 	/**

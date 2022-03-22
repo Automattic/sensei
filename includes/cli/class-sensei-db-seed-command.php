@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * WP-CLI command that helps with seeding the database.
  *
- * @since 4.2.0
+ * @since 4.3.0
  */
 class Sensei_DB_Seed_Command {
 	/**
