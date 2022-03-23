@@ -1,6 +1,8 @@
 <?php
 /**
  * File containing the abstract class Sensei_Reports_Overview_List_Table_Abstract.
+ *
+ * @package sensei
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -103,7 +105,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			'order'   => $order,
 		);
 
-		// Handle search
+		// Handle search.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
 		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
 		if ( ! empty( $search ) ) {

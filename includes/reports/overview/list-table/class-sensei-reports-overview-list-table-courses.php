@@ -1,23 +1,30 @@
 <?php
+/**
+ * File containing the Sensei_Reports_Overview_List_Table_Courses class.
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
- * Analysis Overview Data Table.
+ * Courses overview list table class.
  *
- * @package Analytics
- * @author Automattic
- *
- * @since 1.2.0
+ * @since 4.2.1
  */
 class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
+	 * Sensei grading related services.
+	 *
 	 * @var Sensei_Grading
 	 */
 	private $grading;
 
 	/**
+	 * Sensei course related services.
+	 *
 	 * @var Sensei_Course
 	 */
 	private $course;
@@ -25,14 +32,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading $grading
-	 * @param Sensei_Course $course
-	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider
-	 *
-	 * @since  4.2.1
-	 *
+	 * @param Sensei_Grading                                  $grading Sensei grading related services.
+	 * @param Sensei_Course                                   $course Sensei course related services.
+	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
@@ -43,8 +47,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Define the columns that are going to be used in the table
 	 *
-	 * @return array $columns, the array of columns to use with the table
-	 * @since  1.7.0
+	 * @return array The array of columns to use with the table
 	 */
 	public function get_columns() {
 		if ( $this->columns ) {
@@ -93,8 +96,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Define the columns that are going to be used in the table
 	 *
-	 * @return array $columns, the array of columns to use with the table
-	 * @since  1.7.0
+	 * @return array The array of columns to use with the table
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
@@ -115,8 +117,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 *
 	 * @param object $item The current item.
 	 *
-	 * @return array $column_data;
-	 * @since  1.7.0
+	 * @return array Report row data.
+	 * @throws Exception If date-time conversion fails.
 	 */
 	protected function get_row_data( $item ) {
 		// Last Activity.
@@ -145,7 +147,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				'post__in' => $lessons,
 				'type'     => 'sensei_lesson_status',
 				'status'   => array( 'graded', 'passed', 'failed' ),
-				'meta_key' => 'grade',
+				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			);
 
 			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
@@ -161,10 +163,10 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		// We made it due to improve performance of the report. Don't try to access these properties outside.
 		$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
 
-		// Output course data
-		if ( $this->csv_output ) {
-			$course_title = apply_filters( 'the_title', $item->post_title, $item->ID );
-		} else {
+		// Output course data.
+		/** This filter is documented in wp-includes/post-template.php */
+		$course_title = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+		if ( ! $this->csv_output ) {
 			$url = add_query_arg(
 				array(
 					'page'      => $this->page_slug,
@@ -174,7 +176,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				admin_url( 'edit.php' )
 			);
 
-			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
+			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';
 		}
 
 		$column_data = apply_filters(
@@ -190,7 +192,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$this
 		);
 
-
 		$escaped_column_data = array();
 
 		foreach ( $column_data as $key => $data ) {
@@ -203,10 +204,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Get the date on which the last lesson was marked complete.
 	 *
-	 * @param array $args Array of arguments to pass to comments query.
+	 * @param array $args Array of arguments to pass to the comments query.
 	 *
 	 * @return string The last activity date, or N/A if none.
-	 * @since 4.2.0
+	 *
+	 * @throws Exception If date-time conversion fails.
 	 */
 	private function get_last_activity_date( array $args ): string {
 		$default_args  = array(
@@ -231,7 +233,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
 		$diff_in_days       = $now->diff( $last_activity_date )->days;
 
-		// Show a human readable date if activity is within 6 days.
+		// Show a human-readable date if activity is within 6 days.
 		if ( $diff_in_days < 7 ) {
 			return sprintf(
 			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
@@ -244,15 +246,19 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	}
 
 	/**
-	 * The text for the search button
+	 * The text for the search button.
 	 *
-	 * @return string $text
-	 * @since  1.7.0
+	 * @return string
 	 */
-	public function search_button( $text = '' ) {
+	public function search_button() {
 		return __( 'Search Courses', 'sensei-lms' );
 	}
 
+	/**
+	 * Return additional filters for current report.
+	 *
+	 * @return array
+	 */
 	protected function get_additional_filters(): array {
 		return [
 			'courses_date_from' => $this->get_start_date_and_time(),
