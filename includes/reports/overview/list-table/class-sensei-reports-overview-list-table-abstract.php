@@ -30,6 +30,11 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 	protected $data_provider;
 
 	/**
+	 * @return array Date filters
+	 */
+	abstract protected function get_date_filters(): array;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Grading $grading
@@ -49,7 +54,6 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
-
 
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
@@ -93,7 +97,8 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		$this->items       = $this->data_provider->get_items( $args, $this->get_start_date_and_time(), $this->get_end_date_and_time() );
+		$filters           = array_merge( $args, $this->get_date_filters() );
+		$this->items       = $this->data_provider->get_items( $filters );
 		$this->total_items = $this->data_provider->get_last_total_items();
 
 		$total_items = $this->total_items;
@@ -144,7 +149,8 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		$this->items       = $this->data_provider->get_items( $args, $this->get_start_date_and_time(), $this->get_end_date_and_time() );
+		$filters           = array_merge( $args, $this->get_date_filters() );
+		$this->items       = $this->data_provider->get_items( $filters );
 		$this->total_items = $this->data_provider->get_last_total_items();
 
 		// Start the CSV with the column headings.

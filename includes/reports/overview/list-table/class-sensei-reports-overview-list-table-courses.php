@@ -27,6 +27,7 @@ class Sensei_Reports_Overview_ListTable_Courses extends Sensei_Reports_Overview_
 	 *
 	 * @param Sensei_Grading $grading
 	 * @param Sensei_Course $course
+	 * @param Sensei_Reports_Overview_DataProvider_Interface $data_provider
 	 *
 	 * @since  4.2.1
 	 *
@@ -37,11 +38,6 @@ class Sensei_Reports_Overview_ListTable_Courses extends Sensei_Reports_Overview_
 
 		$this->grading = $grading;
 		$this->course  = $course;
-
-		// Actions.
-		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
-		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
-		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
 	/**
@@ -255,5 +251,9 @@ class Sensei_Reports_Overview_ListTable_Courses extends Sensei_Reports_Overview_
 	 */
 	public function search_button( $text = '' ) {
 		return __( 'Search Courses', 'sensei-lms' );
+	}
+
+	protected function get_date_filters(): array {
+		// TODO: Implement get_date_filters() method.
 	}
 }
