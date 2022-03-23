@@ -4808,6 +4808,38 @@ class Sensei_Lesson {
 	}
 
 	/**
+	 * Get completed lessons by students and lessons.
+	 *
+	 * @since  4.2.1
+	 * @access public
+	 *
+	 * @param array $lesson_ids The list of lessons ids.
+	 * @param array $student_ids The list of students ids.
+	 * @return array[] lists of students based on the courses list.
+	 */
+	public function get_completed_lessons_for_students_and_lessons( $lesson_ids, $student_ids ) {
+		if ( ! is_array( $lesson_ids ) || empty( $lesson_ids ) || ! is_array( $student_ids ) || empty( $student_ids ) ) {
+			return [];
+		}
+
+		global $wpdb;
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT c.user_id as user_id, c.comment_post_id as lesson_id
+				FROM {$wpdb->comments} c
+			WHERE c.comment_post_id IN (%1s)
+			AND c.user_id IN (%1s)
+			AND c.comment_type = 'sensei_lesson_status'
+			AND c.comment_approved IN ( 'graded', 'ungraded', 'passed', 'failed', 'complete' )
+ 			GROUP BY c.comment_post_id",
+				implode( ',', $lesson_ids ),
+				implode( ',', $student_ids )
+			)
+		);
+	}
+
+
+	/**
 	 * Checks if a lesson has a quiz that has at least one graded question.
 	 *
 	 * @param int $lesson_id The Lesson.

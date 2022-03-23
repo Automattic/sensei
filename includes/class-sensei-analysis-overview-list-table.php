@@ -62,7 +62,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						'status' => 'complete',
 					)
 				);
-				$columns           = array(
+
+				$columns = array(
 					'title'              => sprintf(
 						// translators: Placeholder value is the number of courses.
 						__( 'Course (%d)', 'sensei-lms' ),
@@ -74,7 +75,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						__( 'Completed (%d)', 'sensei-lms' ),
 						esc_html( $total_completions )
 					),
-					'average_progress'   => __( 'Average Progress', 'sensei-lms' ),
+					'average_progress'   => sprintf(
+						// translators: Placeholder vale is the total average progress for all courses.
+						__( 'Average Progress (%s)', 'sensei-lms' ),
+						esc_html( $this->get_total_average_progress_for_courses_report() )
+					),
 					'average_grade'      => sprintf(
 					// translators: Placeholder value is the average grade of all courses.
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
@@ -141,6 +146,99 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		return $this->columns;
 	}
+
+	/**
+	 * Get total average progress for all the courses.
+	 *
+	 * @since  4.2.1
+	 * @access private
+	 *
+	 * @return string average_progress total average progress value and N/A if not applicable.
+	 */
+	private function get_total_average_progress_for_courses_report() {
+		// Get all courses ids.
+		$courses_ids = $this->get_all_courses_ids();
+
+		// Get all students for courses.
+		$students = Sensei()->course->get_students_by_courses( $courses_ids );
+
+		// Get students grouped by courses.
+		$students_by_courses = array();
+		foreach ( $students as $student ) {
+			$students_by_courses[ $student->course_id ][] = $student->student_id;
+		}
+
+		// Get Lessons by courses.
+		$lessons = Sensei()->course->get_lessons_grouped_by_courses( $courses_ids );
+
+		// Get Lessons grouped by courses.
+		$lessons_by_courses = array();
+		foreach ( $lessons as $lesson ) {
+			$lessons_by_courses[ $lesson->course_id ][] = $lesson->lesson_id;
+		}
+
+		// Calculate total average progress for all the courses.
+		$average_course_progress_total = 0;
+		foreach ( $courses_ids as $course_id ) {
+			// Calculate average progress per course.
+
+			// First step: Get total max value by multiplying students and lessons.
+			if ( ! is_array( $students_by_courses[ $course_id ] ) || ! is_array( $lessons_by_courses[ $course_id ] ) ) {
+				continue;
+			}
+			$lessons_students_max_value = ( count( $students_by_courses[ $course_id ] ) * count( $lessons_by_courses[ $course_id ] ) );
+
+			// Second step: Get completed lessons in the course.
+			$completed_lessons_in_course = Sensei()->lesson->get_completed_lessons_for_students_and_lessons( $lessons_by_courses[ $course_id ], $students_by_courses[ $course_id ] );
+			if ( $completed_lessons_in_course && is_array( $completed_lessons_in_course ) ) {
+				$average_course_progress_total += ( count( $completed_lessons_in_course ) / $lessons_students_max_value * 100 );
+			}
+		}
+		// If total value for all the courses is zero, return N/A.
+		if ( ! $average_course_progress_total ) {
+			return __( 'N/A', 'sensei-lms' );
+		}
+
+		// Subtract the value of all progresses combined with the number of courses to get average value.
+		if ( is_array( $courses_ids ) ) {
+			$average_course_progress_total = $average_course_progress_total / count( $courses_ids );
+		}
+
+		return esc_html(
+			sprintf( '%d%%', ceil( $average_course_progress_total ) )
+		);
+	}
+
+	/**
+	 * Get all courses ids no pagination, offests.
+	 *
+	 * @since  4.2.1
+	 * @access private
+	 *
+	 * @return array course ids array.
+	 */
+	private function get_all_courses_ids() {
+		// Get all courses ids.
+		$args = array(
+			'post_type'      => $this->post_type,
+			'post_status'    => array( 'publish', 'private' ),
+			'posts_per_page' => -1,
+			'fields'         => 'ID',
+		);
+
+		// Set search arguments.
+		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
+			$args['s'] = esc_html( $_GET['s'] );
+		}
+
+		// Filter courses based on last activity filter if needed.
+		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
+		$courses_query = new WP_Query( $args );
+		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
+
+		return array_column( $courses_query->posts, 'ID' );
+	}
+
 	/**
 	 * Append the count value to column headers where applicable
 	 *
@@ -152,6 +250,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	public function add_totals_to_report_column_headers( array $columns ) {
 		$column_value_map = array();
+
 		switch ( $this->type ) {
 			case 'lessons' && $this->get_course_filter_value():
 				$total_counts                           = $this->get_totals_for_lesson_report_column_headers( $this->get_course_filter_value() );
@@ -190,8 +289,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title'           => array( 'title', false ),
-					'students'        => array( 'students', false ),
-					'lessons'         => array( 'lessons', false ),
 					'completions'     => array( 'completions', false ),
 					'average_percent' => array( 'average_percent', false ),
 				);

@@ -1264,6 +1264,60 @@ class Sensei_Course {
 		return $lessons;
 
 	}
+	/**
+	 * Get lessons by courses.
+	 *
+	 * @since  4.2.1
+	 * @access public
+	 *
+	 * @param array $courses_ids The list of courses ids.
+	 * @return array[] lists of lessons by courses.
+	 */
+	public function get_lessons_grouped_by_courses( $courses_ids ) {
+		if ( ! is_array( $courses_ids ) || empty( $courses_ids ) ) {
+			return [];
+		}
+		global $wpdb;
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT pm.meta_value as course_id, pm.post_id as lesson_id
+				FROM {$wpdb->postmeta} pm
+				WHERE pm.meta_value IN (%1s)
+				AND pm.meta_key = '_lesson_course'
+				GROUP BY pm.post_id",
+				implode( ',', $courses_ids )
+			)
+		);
+	}
+
+	/**
+	 * Get students by courses.
+	 *
+	 * @since  4.2.1
+	 * @access public
+	 *
+	 * @param array $courses_ids The list of courses ids.
+	 * @return array[] lists of students based on the courses list.
+	 */
+	public function get_students_by_courses( $courses_ids ) {
+		if ( ! is_array( $courses_ids ) || empty( $courses_ids ) ) {
+			return [];
+		}
+
+		global $wpdb;
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT c.comment_post_ID as course_id, c.user_id as student_id
+					FROM {$wpdb->comments} c
+					WHERE c.comment_post_ID IN (%1s)
+		  			AND c.comment_type = 'sensei_course_status'
+					AND c.comment_approved IN ( 'in-progress', 'complete' )",
+				implode( ',', $courses_ids )
+			)
+		);
+	}
 
 	/**
 	 * Used for the uasort in $this->course_lessons()
