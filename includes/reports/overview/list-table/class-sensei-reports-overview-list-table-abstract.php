@@ -1,20 +1,31 @@
 <?php
+/**
+ * File containing the abstract class Sensei_Reports_Overview_List_Table_Abstract.
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
- * Analysis Overview Data Table.
+ * Abstract reports overview list table class.
  *
- * @package Analytics
- * @author Automattic
- *
- * @since 1.2.0
+ * @since 4.2.1
  */
 abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_Table {
 
+	/**
+	 * Reports page slug.
+	 *
+	 * @var string
+	 */
 	protected $page_slug = Sensei_Analysis::PAGE_SLUG;
 
+	/**
+	 * Type of the overview report.
+	 *
+	 * @var string
+	 */
 	protected $type;
 
 	/**
@@ -25,22 +36,24 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	protected $post_type = 'course';
 
 	/**
+	 * Data provider for current report.
+	 *
 	 * @var Sensei_Reports_Overview_Data_Provider_Interface
 	 */
 	protected $data_provider;
 
 	/**
-	 * @return array Date filters
+	 * Return additional filters for current report.
+	 *
+	 * @return array
 	 */
 	abstract protected function get_additional_filters(): array;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading $grading
-	 * @param Sensei_Course  $course
-	 *
-	 * @since  4.2.1
+	 * @param string                                          $type Type of the overview report.
+	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Data provider for current report.
 	 */
 	public function __construct( string $type, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
 		// Load Parent token into constructor.
@@ -63,18 +76,16 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 */
 	public function prepare_items() {
 		// Handle orderby.
-		$orderby = '';
-		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
+		if ( empty( $orderby ) || ! array_key_exists( esc_html( $orderby ), $this->get_sortable_columns() ) ) {
+			$orderby = '';
 		}
 
 		// Handle order.
-		$order = 'ASC';
-		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
-		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$order = sanitize_key( wp_unslash( $_GET['order'] ?? '' ) );
+		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
 		$per_page = apply_filters( 'sensei_comments_per_page', $per_page, 'sensei_comments' );
@@ -93,8 +104,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		);
 
 		// Handle search
-		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
-			$args['search'] = esc_html( $_GET['s'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
+		if ( ! empty( $search ) ) {
+			$args['search'] = esc_html( $search );
 		}
 
 		$filters           = array_merge( $args, $this->get_additional_filters() );
@@ -116,26 +129,23 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * Generate a csv report with different parameters, pagination, columns and table elements
 	 *
 	 * @return array
-	 * @since  1.7.0
 	 */
-	public function generate_report( $report ) {
+	public function generate_report() {
 		$data = array();
 
 		$this->csv_output = true;
 
-		// Handle orderby
-		$orderby = '';
-		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			}
+		// Handle orderby.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
+		if ( empty( $orderby ) || ! array_key_exists( esc_html( $orderby ), $this->get_sortable_columns() ) ) {
+			$orderby = '';
 		}
 
-		// Handle order
-		$order = 'ASC';
-		if ( ! empty( $_GET['order'] ) ) {
-			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
-		}
+		// Handle order.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$order = sanitize_key( wp_unslash( $_GET['order'] ?? '' ) );
+		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$args = array(
 			'number'  => - 1,
@@ -144,9 +154,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			'order'   => $order,
 		);
 
-		// Handle search
-		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
-			$args['search'] = esc_html( $_GET['s'] );
+		// Handle search.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
+		if ( ! empty( $search ) ) {
+			$args['search'] = esc_html( $search );
 		}
 
 		$filters           = array_merge( $args, $this->get_additional_filters() );
@@ -157,7 +169,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		$column_headers = array();
 		$columns        = $this->get_columns();
 
-		foreach ( $columns as $key => $title ) {
+		foreach ( $columns as $title ) {
 			$column_headers[] = $title;
 		}
 
@@ -251,8 +263,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 	/**
 	 * Output the course filter select input.
-	 *
-	 * @since 4.2.0
 	 */
 	private function output_course_select_input() {
 		$courses            = Sensei_Course::get_all_courses();
@@ -276,11 +286,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	}
 
 	/**
-	 * @return void
-	 *
 	 * Output for table footer
-	 *
-	 * @since  1.7.0
 	 */
 	public function data_table_footer() {
 		switch ( $this->type ) {
@@ -315,12 +321,9 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	}
 
 	/**
-	 * The text for the search button
-	 *
-	 * @return string $text
-	 * @since  1.7.0
+	 * The text for the search button.
 	 */
-	public function search_button( $text = '' ) {
+	public function search_button() {
 		return __( 'Search Courses', 'sensei-lms' );
 	}
 

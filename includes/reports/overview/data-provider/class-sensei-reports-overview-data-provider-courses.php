@@ -1,5 +1,13 @@
 <?php
+/**
+ * File containing the Sensei_Reports_Overview_Data_Provider_Courses class.
+ *
+ * @package sensei
+ */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 /**
  * Class Sensei_Reports_Overview_Data_Provider_Courses
  *
@@ -14,10 +22,27 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 */
 	private $last_total_items = 0;
 
-	// @fixme these two fields are kind of a hack
+	/**
+	 * Contains start date and time for filtering.
+	 *
+	 * @var string|null
+	 */
 	private $date_from;
+
+	/**
+	 * Contains end date and time for filtering.
+	 *
+	 * @var string|null
+	 */
 	private $date_to;
 
+	/**
+	 * Get the data for the overview report.
+	 *
+	 * @param array $filters Filters to apply to the data.
+	 *
+	 * @return array
+	 */
 	public function get_items( array $filters ): array {
 		$this->date_from = $filters['courses_date_from'] ?? null;
 		$this->date_to   = $filters['courses_date_to'] ?? null;
@@ -128,8 +153,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 
 	/**
 	 * Get the total number of items found for the last query.
-	 *
-	 * @since  4.2.1
 	 *
 	 * @return int
 	 */
