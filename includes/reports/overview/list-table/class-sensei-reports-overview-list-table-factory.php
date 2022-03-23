@@ -1,6 +1,29 @@
 <?php
+/**
+ * File containing the Sensei_Reports_Overview_List_Table_Factory class.
+ *
+ * @package sensei
+ */
 
-class Sensei_Reports_Overview_ListTable_Factory {
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Overview list table factory.
+ *
+ * @since 4.2.1
+ */
+class Sensei_Reports_Overview_List_Table_Factory {
+	/**
+	 * Creates a new list table instance for reports overview.
+	 *
+	 * @param string $type The report type.
+	 *
+	 * @return Sensei_List_Table
+	 *
+	 * @throws InvalidArgumentException If the report type is not supported.
+	 */
 	public function create( string $type ) {
 		switch ( $type ) {
 			case 'students':
