@@ -32,7 +32,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 	/**
 	 * @return array Date filters
 	 */
-	abstract protected function get_date_filters(): array;
+	abstract protected function get_additional_filters(): array;
 
 	/**
 	 * Constructor
@@ -97,7 +97,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		$filters           = array_merge( $args, $this->get_date_filters() );
+		$filters           = array_merge( $args, $this->get_additional_filters() );
 		$this->items       = $this->data_provider->get_items( $filters );
 		$this->total_items = $this->data_provider->get_last_total_items();
 
@@ -149,7 +149,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 
-		$filters           = array_merge( $args, $this->get_date_filters() );
+		$filters           = array_merge( $args, $this->get_additional_filters() );
 		$this->items       = $this->data_provider->get_items( $filters );
 		$this->total_items = $this->data_provider->get_last_total_items();
 
@@ -354,7 +354,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 	 *
 	 * @return string The start date including the time or empty string if none.
 	 */
-	private function get_start_date_and_time(): string {
+	protected function get_start_date_and_time(): string {
 		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
 
 		if ( ! $start_date ) {
@@ -383,7 +383,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 	 *
 	 * @return string The end date including the time or empty string if none.
 	 */
-	private function get_end_date_and_time(): string {
+	protected function get_end_date_and_time(): string {
 		$end_date = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
 
 		if ( ! $end_date ) {

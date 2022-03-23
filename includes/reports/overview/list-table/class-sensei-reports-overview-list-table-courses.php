@@ -253,7 +253,10 @@ class Sensei_Reports_Overview_ListTable_Courses extends Sensei_Reports_Overview_
 		return __( 'Search Courses', 'sensei-lms' );
 	}
 
-	protected function get_date_filters(): array {
-		// TODO: Implement get_date_filters() method.
+	protected function get_additional_filters(): array {
+		return [
+			'courses_date_from' => $this->get_start_date_and_time(),
+			'courses_date_to'   => $this->get_end_date_and_time(),
+		];
 	}
 }
