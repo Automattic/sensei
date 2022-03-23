@@ -9,7 +9,7 @@ class Sensei_Reports_Overview_ListTable_Factory {
 				return new Sensei_Reports_Overview_ListTable_Courses(
 					Sensei()->grading,
 					Sensei()->course,
-					new Sensei_Reports_Overview_DataProvider_Courses()
+					new Sensei_Reports_Overview_Data_Provider_Courses()
 				);
 			case 'lessons':
 				return new Sensei_Reports_Overview_ListTable_Lessons();

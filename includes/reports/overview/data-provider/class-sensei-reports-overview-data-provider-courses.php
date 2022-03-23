@@ -1,28 +1,39 @@
 <?php
 
-class Sensei_Reports_Overview_DataProvider_Courses implements Sensei_Reports_Overview_DataProvider_Interface {
+/**
+ * Class Sensei_Reports_Overview_Data_Provider_Courses
+ *
+ * @since 4.2.1
+ */
+class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Overview_DataProvider_Interface {
 
+	/**
+	 * Total number of courses found with given criteria.
+	 *
+	 * @var int Total number of items
+	 */
 	private $last_total_items = 0;
 
 	// @fixme these two fields are kind of a hack
 	private $date_from;
 	private $date_to;
 
-	public function get_items( array $args, $date_from = null, $date_to = null ): array {
-		$this->date_from = $date_from;
-		$this->date_to   = $date_to;
+	public function get_items( array $filters ): array {
+		$this->date_from = $filters['courses_date_from'] ?? null;
+		$this->date_to   = $filters['courses_date_to'] ?? null;
+
 		$course_args = array(
-			'post_type'        => $this->post_type,
+			'post_type'        => 'course',
 			'post_status'      => array( 'publish', 'private' ),
-			'posts_per_page'   => $args['number'],
-			'offset'           => $args['offset'],
-			'orderby'          => $args['orderby'],
-			'order'            => $args['order'],
+			'posts_per_page'   => $filters['number'],
+			'offset'           => $filters['offset'],
+			'orderby'          => $filters['orderby'],
+			'order'            => $filters['order'],
 			'suppress_filters' => 0,
 		);
 
-		if ( isset( $args['search'] ) ) {
-			$course_args['s'] = $args['search'];
+		if ( isset( $filters['search'] ) ) {
+			$course_args['s'] = $filters['search'];
 		}
 
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
@@ -39,19 +50,16 @@ class Sensei_Reports_Overview_DataProvider_Courses implements Sensei_Reports_Ove
 	/**
 	 * Filter the courses by last activity start/end date.
 	 *
+	 * @access private
+	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 *
 	 * @return array Modified associative array of the clauses for the query.
-	 * @since  4.2.0
-	 * @access private
 	 */
 	public function filter_courses_by_last_activity( array $clauses ): array {
 		global $wpdb;
 
-		$start_date = $this->date_from;
-		$end_date   = $this->date_to;
-
-		if ( ! $start_date && ! $end_date ) {
+		if ( ! $this->date_from && ! $this->date_to ) {
 			return $clauses;
 		}
 		// Fetch the lessons within the expected last activity range.
@@ -59,14 +67,16 @@ class Sensei_Reports_Overview_DataProvider_Courses implements Sensei_Reports_Ove
 			FROM {$wpdb->comments} cm
 			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
 			AND cm.comment_type = 'sensei_lesson_status'";
+
 		// Filter by start date.
-		if ( $start_date ) {
+		if ( $this->date_from ) {
 			$lessons_query .= $wpdb->prepare(
 				' AND cm.comment_date_gmt >= %s',
-				$start_date
+				$this->date_from
 			);
 		}
 		$lessons_query .= ' GROUP BY cm.comment_post_id';
+
 		// Fetch the course IDs associated with those lessons.
 		$course_query = "SELECT DISTINCT(pm.meta_value) course_id
 		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
@@ -74,13 +84,15 @@ class Sensei_Reports_Overview_DataProvider_Courses implements Sensei_Reports_Ove
 		AND pm.meta_key = '_lesson_course'
 		GROUP BY pm.meta_value
 		";
+
 		// Filter by end date.
-		if ( $end_date ) {
+		if ( $this->date_to ) {
 			$course_query .= $wpdb->prepare(
 				' HAVING MAX(cm.comment_date_gmt) <= %s',
-				$end_date
+				$this->date_to
 			);
 		}
+
 		$clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$course_query})";
 
 		return $clauses;
@@ -90,11 +102,11 @@ class Sensei_Reports_Overview_DataProvider_Courses implements Sensei_Reports_Ove
 	/**
 	 * Add the sum of days taken by each student to complete a course and the number of completions for each course.
 	 *
+	 * @access private
+	 *
 	 * @param array $clauses Associative array of the clauses for the query.
 	 *
 	 * @return array Modified associative array of the clauses for the query.
-	 * @since  4.2.0
-	 * @access private
 	 */
 	public function add_days_to_completion_to_courses_queries( $clauses ) {
 		global $wpdb;
@@ -114,6 +126,13 @@ class Sensei_Reports_Overview_DataProvider_Courses implements Sensei_Reports_Ove
 		return $clauses;
 	}
 
+	/**
+	 * Get the total number of items found for the last query.
+	 *
+	 * @since  4.2.1
+	 *
+	 * @return int
+	 */
 	public function get_last_total_items(): int {
 		return $this->last_total_items;
 	}
