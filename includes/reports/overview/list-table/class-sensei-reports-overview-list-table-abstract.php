@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Table {
+abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_Table {
 
 	protected $page_slug = Sensei_Analysis::PAGE_SLUG;
 
@@ -25,7 +25,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 	protected $post_type = 'course';
 
 	/**
-	 * @var Sensei_Reports_Overview_DataProvider_Interface
+	 * @var Sensei_Reports_Overview_Data_Provider_Interface
 	 */
 	protected $data_provider;
 
@@ -42,7 +42,7 @@ abstract class Sensei_Reports_Overview_ListTable_Abstract extends Sensei_List_Ta
 	 *
 	 * @since  4.2.1
 	 */
-	public function __construct( string $type, Sensei_Reports_Overview_DataProvider_Interface $data_provider ) {
+	public function __construct( string $type, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'analysis_overview' );
 

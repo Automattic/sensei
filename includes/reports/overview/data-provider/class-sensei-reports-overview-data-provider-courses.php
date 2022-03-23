@@ -5,7 +5,7 @@
  *
  * @since 4.2.1
  */
-class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Overview_DataProvider_Interface {
+class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Overview_Data_Provider_Interface {
 
 	/**
 	 * Total number of courses found with given criteria.

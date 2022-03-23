@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.2.0
  */
-class Sensei_Reports_Overview_ListTable_Courses extends Sensei_Reports_Overview_ListTable_Abstract {
+class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
 	 * @var Sensei_Grading
 	 */
@@ -27,12 +27,12 @@ class Sensei_Reports_Overview_ListTable_Courses extends Sensei_Reports_Overview_
 	 *
 	 * @param Sensei_Grading $grading
 	 * @param Sensei_Course $course
-	 * @param Sensei_Reports_Overview_DataProvider_Interface $data_provider
+	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider
 	 *
 	 * @since  4.2.1
 	 *
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_DataProvider_Interface $data_provider) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
