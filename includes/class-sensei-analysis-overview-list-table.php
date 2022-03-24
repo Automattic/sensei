@@ -131,11 +131,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => array( 'title', false ),
-					'students'        => array( 'students', false ),
-					'lessons'         => array( 'lessons', false ),
-					'completions'     => array( 'completions', false ),
-					'average_percent' => array( 'average_percent', false ),
+					'title' => array( 'title', false ),
 				);
 				break;
 
