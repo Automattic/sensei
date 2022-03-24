@@ -7,6 +7,12 @@ const { fromPairs } = require( 'lodash' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
+
+/**
+ * I18n methods that should not be mangled by the compiler process
+ */
+const I18N_METHODS = [ '__', '_n', '_nx', '_x' ];
 
 /**
  * Internal dependencies
@@ -125,6 +131,18 @@ function getWebpackConfig( env, argv ) {
 		entry: mapFilesToEntries( files ),
 		output: {
 			path: path.resolve( '.', baseDist ),
+		},
+		optimization: {
+			concatenateModules: false,
+			minimizer: [
+				new TerserPlugin( {
+					extractComments: false,
+					terserOptions: {
+						mangle: { reserved: I18N_METHODS },
+						format: { comments: true },
+					},
+				} ),
+			],
 		},
 		devtool:
 			process.env.SOURCEMAP ||

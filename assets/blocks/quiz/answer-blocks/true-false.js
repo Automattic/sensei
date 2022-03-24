@@ -49,9 +49,10 @@ const TrueFalseAnswer = ( {
 									} )
 								}
 							>
-								{ correct === value
-									? __( 'Right', 'sensei-lms' )
-									: __( 'Wrong', 'sensei-lms' ) }
+								{ correct === value &&
+									__( 'Right', 'sensei-lms' ) }
+								{ correct !== value &&
+									__( 'Wrong', 'sensei-lms' ) }
 							</Button>
 						</div>
 					) }

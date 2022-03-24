@@ -66,9 +66,8 @@ const MultipleChoiceAnswerOption = ( props ) => {
 						className="sensei-lms-question-block__answer--multiple-choice__toggle"
 						onClick={ toggleCorrect }
 					>
-						{ correct
-							? __( 'Right', 'sensei-lms' )
-							: __( 'Wrong', 'sensei-lms' ) }
+						{ correct && __( 'Right', 'sensei-lms' ) }
+						{ ! correct && __( 'Wrong', 'sensei-lms' ) }
 					</Button>
 				</div>
 			) }
