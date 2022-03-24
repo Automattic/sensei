@@ -150,7 +150,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$args = array(
-			'number'  => - 1,
+			'number'  => -1,
 			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
