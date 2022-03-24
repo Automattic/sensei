@@ -44,8 +44,8 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @return array
 	 */
 	public function get_items( array $filters ): array {
-		$this->date_from = $filters['courses_date_from'] ?? null;
-		$this->date_to   = $filters['courses_date_to'] ?? null;
+		$this->date_from = $filters['last_activity_date_from'] ?? null;
+		$this->date_to   = $filters['last_activity_date_to'] ?? null;
 
 		$course_args = array(
 			'post_type'        => 'course',

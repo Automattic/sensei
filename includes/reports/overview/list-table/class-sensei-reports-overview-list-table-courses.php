@@ -261,8 +261,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	protected function get_additional_filters(): array {
 		return [
-			'courses_date_from' => $this->get_start_date_and_time(),
-			'courses_date_to'   => $this->get_end_date_and_time(),
+			'last_activity_date_from' => $this->get_start_date_and_time(),
+			'last_activity_date_to'   => $this->get_end_date_and_time(),
 		];
 	}
 }
