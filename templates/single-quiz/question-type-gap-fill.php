@@ -21,13 +21,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(), get_the_ID() );
 ?>
 
+
 <p class="gapfill-answer">
 	<span class="gapfill-answer-pre">
 		<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_pre'] ) ) ); ?>
 		<input type="text" id="<?php echo esc_attr( 'question_' . $question_data['ID'] ); ?>"
 			name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
 			value="<?php echo esc_attr( $question_data['user_answer_entry'] ); ?>"
-			class="gapfill-answer-gap" />
+			class="gapfill-answer-gap"
+			<?php echo $question_data['quiz_is_completed'] || ! is_user_logged_in() ? 'disabled' : ''; ?>
+		/>
 		<span class="gapfill-answer-post">
 			<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', esc_html( $question_data['gapfill_post'] ) ) ); ?>
 		</span>

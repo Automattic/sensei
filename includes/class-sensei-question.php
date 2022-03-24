@@ -1152,7 +1152,7 @@ class Sensei_Question {
 		$data['lesson_completed']       = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
 		$data['quiz_grade_type']        = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$data['reset_quiz_allowed']     = $reset_allowed;
-		$data['lesson_complete']        = $user_lesson_complete;
+		$data['quiz_is_completed']      = Sensei()->quiz->is_completed( $quiz_id );
 
 		/**
 		 * Filter the question template data. This filter fires in
@@ -1281,7 +1281,6 @@ class Sensei_Question {
 
 					// For zero grade mark as 'correct' but add no classes
 					if ( 0 == $question_data['question_grade'] ) {
-
 						$user_correct = true;
 
 					} elseif ( $question_data['user_question_grade'] > 0 ) {
