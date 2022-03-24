@@ -248,14 +248,21 @@ class Sensei_Analysis {
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
-		// Load Analysis data
-		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
-		if ( is_null( $optional_data ) ) {
-			$sensei_analysis_object = new $object_name( $data );
+		if ( 'Overview' === $name ) {
+			$factory = new Sensei_Reports_Overview_List_Table_Factory();
+
+			$sensei_analysis_object = $factory->create( $data );
 		} else {
-			$sensei_analysis_object = new $object_name( $data, $optional_data );
+			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
+			if ( is_null( $optional_data ) ) {
+				$sensei_analysis_object = new $object_name( $data );
+			} else {
+				$sensei_analysis_object = new $object_name( $data, $optional_data );
+			}
 		}
+
 		$sensei_analysis_object->prepare_items();
+
 		return $sensei_analysis_object;
 	}
 
@@ -283,7 +290,7 @@ class Sensei_Analysis {
 
 		$this->check_course_lesson( $course_id, $lesson_id, $user_id );
 
-		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : 'students';
 
 		if ( 0 < $lesson_id ) {
 			// Viewing a specific Lesson and all its Learners
