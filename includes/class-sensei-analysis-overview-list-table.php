@@ -288,9 +288,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => array( 'title', false ),
-					'completions'     => array( 'completions', false ),
-					'average_percent' => array( 'average_percent', false ),
+					'title' => array( 'title', false ),
+          
 				);
 				break;
 
@@ -708,7 +707,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			// divided by the total possible lessons completed.
 			$average_course_progress_value = $completed_count / ( $course_students_count * $total_lessons ) * 100;
 			$average_course_progress       = esc_html(
-				sprintf( '%d%%', ceil( $average_course_progress_value ) )
+				sprintf( '%d%%', round( $average_course_progress_value ) )
 			);
 		}
 		return $average_course_progress;
