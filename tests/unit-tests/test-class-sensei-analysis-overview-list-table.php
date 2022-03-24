@@ -57,6 +57,23 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests that the registration date is formatted correctly.
+	 *
+	 * @covers Sensei_Admin::format_date_registered
+	 */
+	public function testFormatDateRegistered() {
+		$instance = new Sensei_Analysis_Overview_List_Table();
+		$method   = new ReflectionMethod( $instance, 'format_date_registered' );
+		$method->setAccessible( true );
+
+		update_option( 'date_format', 'F j, Y' );
+
+		$formatted_date = $method->invoke( $instance, '2022-02-24 01:14:11' );
+
+		$this->assertEquals( 'February 24, 2022', $formatted_date );
+	}
+
+	/**
 	 * Tests that the last activity is ignoring uncompleted lessons.
 	 *
 	 * @covers Sensei_Admin::get_last_activity_date

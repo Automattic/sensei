@@ -121,6 +121,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					// translators: Placeholder value is total count of students.
 					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),
+					'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 					// translators: Placeholder value is all active courses.
 					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
@@ -541,11 +542,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
 					$user_average_grade .= '%';
 				}
+
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'             => $user_name,
 						'email'             => $user_email,
+						'date_registered'   => $this->format_date_registered( $item->user_registered ),
 						'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 						'active_courses'    => ( $user_courses_started - $user_courses_ended ),
 						'completed_courses' => $user_courses_ended,
@@ -564,6 +567,22 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		return $escaped_column_data;
+	}
+
+	/**
+	 * Format the registration date.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string $date Registration date.
+	 *
+	 * @return string Formatted registration date.
+	 */
+	private function format_date_registered( string $date ) {
+		$timezone = new DateTimeZone( 'GMT' );
+		$date     = new DateTime( $date, $timezone );
+
+		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
 
 	/**
@@ -594,7 +613,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Format the last activity date to a more readable form.
 	 *
-	 * @since 4.3.0
+	 * @since 4.2.0
 	 *
 	 * @param string $date The last activity date.
 	 *
@@ -710,7 +729,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		// This stops the full meta data of each user being loaded
-		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'display_name' );
+		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
 
 		/**
 		 * Filter the WP_User_Query arguments
