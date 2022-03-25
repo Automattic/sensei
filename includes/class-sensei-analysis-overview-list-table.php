@@ -514,7 +514,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Calculate average lesson progress per student for course.
 	 *
-	 * @since 4.2.0
+	 * @since 4.3.0
 	 *
 	 * @param int $course_id Id of the course for which average progress is calculated.
 	 *
