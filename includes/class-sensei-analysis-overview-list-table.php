@@ -74,8 +74,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						__( 'Completed (%d)', 'sensei-lms' ),
 						esc_html( $total_completions )
 					),
-					'average_percent'    => sprintf(
-						// translators: Placeholder value is the average grade of all courses.
+					'average_progress'   => __( 'Average Progress', 'sensei-lms' ),
+					'average_grade'      => sprintf(
+					// translators: Placeholder value is the average grade of all courses.
 						__( 'Average Grade (%s%%)', 'sensei-lms' ),
 						esc_html( ceil( Sensei()->grading->get_courses_average_grade() ) )
 					),
@@ -188,9 +189,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'           => array( 'title', false ),
-					'completions'     => array( 'completions', false ),
-					'average_percent' => array( 'average_percent', false ),
+					'title' => array( 'title', false ),
 				);
 				break;
 
@@ -426,18 +425,20 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 				}
 
-				$column_data = apply_filters(
-					'sensei_analysis_overview_column_data',
-					array(
-						'title'              => $course_title,
-						'last_activity'      => $last_activity_date,
-						'completions'        => $course_completions,
-						'average_percent'    => $average_grade,
-						'days_to_completion' => $average_completion_days,
-					),
-					$item,
-					$this
-				);
+				$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
+					$column_data         = apply_filters(
+						'sensei_analysis_overview_column_data',
+						array(
+							'title'              => $course_title,
+							'last_activity'      => $last_activity_date,
+							'completions'        => $course_completions,
+							'average_progress'   => $average_course_progress,
+							'average_grade'      => $average_grade,
+							'days_to_completion' => $average_completion_days,
+						),
+						$item,
+						$this
+					);
 				break;
 
 			case 'lessons':
@@ -565,6 +566,53 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		return $escaped_column_data;
 	}
+
+
+	/**
+	 * Calculate average lesson progress per student for course.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int $course_id Id of the course for which average progress is calculated.
+	 *
+	 * @return string The average progress for the course, or N/A if none.
+	 */
+	private function get_average_progress_for_courses_table( $course_id ) {
+		// Fetch learners in course.
+		$course_args = array(
+			'post_id' => $course_id,
+			'type'    => 'sensei_course_status',
+			'status'  => array( 'in-progress', 'complete' ),
+		);
+
+		$course_students_count = Sensei_Utils::sensei_check_for_activity( $course_args );
+
+		// Get all course lessons.
+		$lessons        = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+		$course_lessons = is_array( $lessons ) ? $lessons : array( $lessons );
+		$total_lessons  = count( $course_lessons );
+
+		// Get all completed lessons.
+		$lesson_args     = array(
+			'post__in' => $course_lessons,
+			'type'     => 'sensei_lesson_status',
+			'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
+			'count'    => true,
+		);
+		$completed_count = (int) Sensei_Utils::sensei_check_for_activity( $lesson_args );
+		// Calculate average progress.
+		$average_course_progress = __( 'N/A', 'sensei-lms' );
+		if ( $course_students_count && $total_lessons ) {
+			// Average course progress is calculated based on lessons completed for the course
+			// divided by the total possible lessons completed.
+			$average_course_progress_value = $completed_count / ( $course_students_count * $total_lessons ) * 100;
+			$average_course_progress       = esc_html(
+				sprintf( '%d%%', round( $average_course_progress_value ) )
+			);
+		}
+		return $average_course_progress;
+	}
+
 
 	/**
 	 * Get the date on which the last lesson was marked complete.
