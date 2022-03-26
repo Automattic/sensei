@@ -12,7 +12,7 @@ import { BaseControl, Icon } from '@wordpress/components';
  * Input control component.
  *
  * It can use or be replaced by the
- * WordPress [InputControl]{@link https://github.com/WordPress/gutenberg/tree/master/packages/components/src/input-control} when it's stable.
+ * WordPress [InputControl]{@link https://github.com/WordPress/gutenberg/tree/trunk/packages/components/src/input-control} when it's stable.
  *
  * @param {Object}   props             Component props.
  * @param {string}   [props.className] Additional classnames for the input.

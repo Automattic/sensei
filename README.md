@@ -33,7 +33,7 @@ version, but serves as a model for future changes.
   * Permissions
 
 ## Contributing to Sensei LMS
-See our guidelines here: [Contributing to Sensei LMS](https://github.com/Automattic/sensei/blob/master/CONTRIBUTING.md)
+See our guidelines here: [Contributing to Sensei LMS](https://github.com/Automattic/sensei/blob/trunk/CONTRIBUTING.md)
 
 ## Development Blog
 Please follow further development updates at [https://senseilms.com/blog](https://senseilms.com/blog)
