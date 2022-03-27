@@ -755,17 +755,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 							'</strong>',
 						'num_learners' => esc_html( $course_learners ),
 						'updated'      => esc_html( $item->post_modified ),
-						'actions'      => '<a class="button" href="' . esc_url(
-							add_query_arg(
-								array(
-									'post_type' => $this->menu_post_type,
-									'page'      => $this->page_slug,
-									'course_id' => $item->ID,
-									'view'      => 'learners',
-								),
-								admin_url( 'edit.php' )
-							)
-						) . '">' . esc_html__( 'Manage students', 'sensei-lms' ) . '</a> ' . $grading_action,
+						'actions'      =>
+							'<div class="student-action-menu" data-course-id="' . esc_attr( $item->ID ) . '"></div>'
 					),
 					$item
 				);

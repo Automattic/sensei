@@ -71,6 +71,7 @@ const files = [
 	'blocks/frontend.js',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
+	'admin/students/student-action-menu/index.js',
 	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',
