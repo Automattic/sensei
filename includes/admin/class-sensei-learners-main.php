@@ -756,7 +756,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						'num_learners' => esc_html( $course_learners ),
 						'updated'      => esc_html( $item->post_modified ),
 						'actions'      =>
-							'<div class="student-action-menu" data-course-id="' . esc_attr( $item->ID ) . '"></div>'
+							'<div class="student-action-menu" data-course-id="' . esc_attr( $item->ID ) . '"></div>',
 					),
 					$item
 				);
