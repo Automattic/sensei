@@ -1279,12 +1279,14 @@ class Sensei_Course {
 		}
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
 		return $wpdb->get_results(
+			// phpcs:ignore
 			$wpdb->prepare(
 				"SELECT pm.meta_value as course_id, pm.post_id as lesson_id
 				FROM {$wpdb->postmeta} pm
-				WHERE pm.meta_value IN (%1s)
-				AND pm.meta_key = '_lesson_course'
+				WHERE pm.meta_value IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
+				. " AND pm.meta_key = '_lesson_course'
 				GROUP BY pm.post_id",
 				implode( ',', $courses_ids )
 			)
@@ -1306,13 +1308,13 @@ class Sensei_Course {
 		}
 
 		global $wpdb;
-
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
 		return $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT c.comment_post_ID as course_id, c.user_id as student_id
 					FROM {$wpdb->comments} c
-					WHERE c.comment_post_ID IN (%1s)
-		  			AND c.comment_type = 'sensei_course_status'
+					WHERE c.comment_post_ID IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no quoting.
+					. " AND c.comment_type = 'sensei_course_status'
 					AND c.comment_approved IN ( 'in-progress', 'complete' )",
 				implode( ',', $courses_ids )
 			)

@@ -4823,15 +4823,16 @@ class Sensei_Lesson {
 		}
 
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
 		return $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT c.user_id as user_id, c.comment_post_id as lesson_id
 				FROM {$wpdb->comments} c
-			WHERE c.comment_post_id IN (%1s)
-			AND c.user_id IN (%1s)
-			AND c.comment_type = 'sensei_lesson_status'
-			AND c.comment_approved IN ( 'graded', 'ungraded', 'passed', 'failed', 'complete' )
- 			GROUP BY c.comment_post_id",
+				WHERE c.comment_post_id IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no quoting needed.
+				. ' AND c.user_id IN (%1s)' // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no quoting needed.
+				. " AND c.comment_type = 'sensei_lesson_status'
+				AND c.comment_approved IN ( 'graded', 'ungraded', 'passed', 'failed', 'complete' )
+				GROUP BY c.comment_post_id",
 				implode( ',', $lesson_ids ),
 				implode( ',', $student_ids )
 			)
