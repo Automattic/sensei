@@ -314,9 +314,12 @@ class Sensei_Analysis {
 	 */
 	public function analysis_default_view( $type ) {
 
-		// Load Analysis data
-		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
-		// Wrappers
+		// Load Analysis data.
+		$factory                  = new Sensei_Reports_Overview_List_Table_Factory();
+		$sensei_analysis_overview = $factory->create( $type );
+		$sensei_analysis_overview->prepare_items();
+
+		// Wrappers.
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 

@@ -335,7 +335,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 *
 	 * @return int The course ID or 0 if none is selected.
 	 */
-	private function get_course_filter_value(): int {
+	protected function get_course_filter_value(): int {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
 	}
