@@ -19,19 +19,20 @@ $base: '.sensei-course-theme';
 		}
 	}
 
-	// Toogle in the header and without focus mode.
-	body:not(.sensei-course-theme--focus-mode, .editor-styles-wrapper) .sensei-course-theme__header__left {
-		.sensei-course-theme__focus-mode-toggle {
-			position: absolute;
-			left: 0;
-			top: var(--header-height);
-			text-align: left;
+	body:not(.sensei-course-theme--focus-mode) {
 
-			// Match sidebar spacing.
-			width: calc( var( --sidebar-width ) - 18px );
-			padding-left: 24px;
-			padding-top: 9px;
-			padding-bottom: 9px;
+		// Toogle in the header and without focus mode.
+		.sensei-course-theme__header__left .sensei-course-theme__focus-mode-toggle {
+			transform: rotate(90deg)
+		}
+
+		// Toggle in the sidebar and without focus mode.
+		.sensei-course-theme__sidebar .sensei-course-theme__focus-mode-toggle {
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
+			box-sizing: border-box;
+			padding-right: 6px;
 		}
 	}
 

@@ -127,6 +127,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					// translators: Placeholder value is total count of students.
 					'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 					'email'             => __( 'Email', 'sensei-lms' ),
+					'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 					'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 					// translators: Placeholder value is all active courses.
 					'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
@@ -289,7 +290,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'courses':
 				$columns = array(
 					'title' => array( 'title', false ),
-          
 				);
 				break;
 
@@ -642,12 +642,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
 					$user_average_grade .= '%';
 				}
+
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'             => $user_name,
 						'email'             => $user_email,
-						'last_activity'     => $this->get_last_activity_date( array( 'user_id' => $item->ID ) ),
+						'date_registered'   => $this->format_date_registered( $item->user_registered ),
+						'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 						'active_courses'    => ( $user_courses_started - $user_courses_ended ),
 						'completed_courses' => $user_courses_ended,
 						'average_grade'     => $user_average_grade,
@@ -671,7 +673,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Calculate average lesson progress per student for course.
 	 *
-	 * @since 4.2.0
+	 * @since 4.3.0
 	 *
 	 * @param int $course_id Id of the course for which average progress is calculated.
 	 *
@@ -713,6 +715,22 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		return $average_course_progress;
 	}
 
+	/**
+	 * Format the registration date.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string $date Registration date.
+	 *
+	 * @return string Formatted registration date.
+	 */
+	private function format_date_registered( string $date ) {
+		$timezone = new DateTimeZone( 'GMT' );
+		$date     = new DateTime( $date, $timezone );
+
+		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
 
 	/**
 	 * Get the date on which the last lesson was marked complete.
@@ -736,26 +754,39 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			return __( 'N/A', 'sensei-lms' );
 		}
 
-		// Return the full date when doing a CSV export.
+		return $this->format_last_activity_date( $last_activity->comment_date_gmt );
+	}
+
+	/**
+	 * Format the last activity date to a more readable form.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param string $date The last activity date.
+	 *
+	 * @return string The formatted last activity date.
+	 */
+	private function format_last_activity_date( string $date ) {
+		// Don't do any formatting if this is a CSV export.
 		if ( $this->csv_output ) {
-			return $last_activity->comment_date_gmt;
+			return $date;
 		}
 
-		$timezone           = new DateTimeZone( 'GMT' );
-		$now                = new DateTime( 'now', $timezone );
-		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
-		$diff_in_days       = $now->diff( $last_activity_date )->days;
+		$timezone     = new DateTimeZone( 'GMT' );
+		$now          = new DateTime( 'now', $timezone );
+		$date         = new DateTime( $date, $timezone );
+		$diff_in_days = $now->diff( $date )->days;
 
 		// Show a human readable date if activity is within 6 days.
 		if ( $diff_in_days < 7 ) {
 			return sprintf(
 				/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
 				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( strtotime( $last_activity->comment_date_gmt ) )
+				human_time_diff( $date->getTimestamp() )
 			);
 		}
 
-		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
+		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
 
 	/**
@@ -845,7 +876,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		}
 
 		// This stops the full meta data of each user being loaded
-		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'display_name' );
+		$args['fields'] = array( 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' );
 
 		/**
 		 * Filter the WP_User_Query arguments
@@ -855,8 +886,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		 */
 		$args = apply_filters( 'sensei_analysis_overview_filter_users', $args );
 
+		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 		$wp_user_search = new WP_User_Query( $args );
+		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
 		$learners          = $wp_user_search->get_results();
@@ -1224,7 +1257,30 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Add the `last_activity` field to the user query.
+	 *
+	 * @since  4.3.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function add_last_activity_to_user_query( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_fields .= ", (
+			SELECT MAX({$wpdb->comments}.comment_date_gmt)
+			FROM {$wpdb->comments}
+			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
+			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
+			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
+			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
+		) AS last_activity_date";
+	}
+
+	/**
 	 * Filter the users by last activity start/end date.
+	 *
+	 * This action should be called after `Sensei_Analysis_Overview_List_Table::add_last_activity_to_user_query`.
 	 *
 	 * @since  4.2.0
 	 * @access private
@@ -1240,15 +1296,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( ! $start_date && ! $end_date ) {
 			return;
 		}
-
-		$query->query_fields .= ", (
-			SELECT MAX({$wpdb->comments}.comment_date_gmt)
-			FROM {$wpdb->comments}
-			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
-			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
-		) AS last_activity_date";
 
 		$query->query_where .= ' HAVING 1 = 1';
 
