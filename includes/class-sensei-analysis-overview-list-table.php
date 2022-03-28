@@ -151,7 +151,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Get total average progress for all the courses.
 	 *
-	 * @since  4.2.1
+	 * @since  4.3.0
 	 * @access private
 	 *
 	 * @return string average_progress total average progress value and N/A if not applicable.
@@ -161,7 +161,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$courses_ids = $this->get_all_courses_ids();
 
 		// Get all students for courses.
-		$students = Sensei()->course->get_students_by_courses( $courses_ids );
+		$students = Sensei()->course->get_students_grouped_by_courses( $courses_ids );
 
 		// Get students grouped by courses.
 		$students_by_courses = array();
@@ -200,7 +200,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			return __( 'N/A', 'sensei-lms' );
 		}
 
-		// Subtract the value of all progresses combined with the number of courses to get average value.
+		// Divide the value of all progresses combined with the number of courses to get average value.
 		if ( is_array( $courses_ids ) ) {
 			$average_course_progress_total = $average_course_progress_total / count( $courses_ids );
 		}
@@ -211,10 +211,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	}
 
 	/**
-	 * Get all courses ids no pagination, offests.
+	 * Get all courses ids no pagination.
 	 *
-	 * @since  4.2.1
-	 * @access private
+	 * @since  4.3.0
 	 *
 	 * @return array course ids array.
 	 */
@@ -229,7 +228,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		// Set search arguments.
 		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
-			$args['s'] = esc_html( $_GET['s'] );
+			$args['s'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
 		}
 
 		// Filter courses based on last activity filter if needed.

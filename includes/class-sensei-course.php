@@ -1267,7 +1267,7 @@ class Sensei_Course {
 	/**
 	 * Get lessons by courses.
 	 *
-	 * @since  4.2.1
+	 * @since  4.3.0
 	 * @access public
 	 *
 	 * @param array $courses_ids The list of courses ids.
@@ -1294,13 +1294,13 @@ class Sensei_Course {
 	/**
 	 * Get students by courses.
 	 *
-	 * @since  4.2.1
+	 * @since  4.3.0
 	 * @access public
 	 *
 	 * @param array $courses_ids The list of courses ids.
 	 * @return array[] lists of students based on the courses list.
 	 */
-	public function get_students_by_courses( $courses_ids ) {
+	public function get_students_grouped_by_courses( $courses_ids ) {
 		if ( ! is_array( $courses_ids ) || empty( $courses_ids ) ) {
 			return [];
 		}

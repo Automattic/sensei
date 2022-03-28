@@ -901,7 +901,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests getting total average progress value for the course based on the lessons completion for multiple courses single course.
+	 * Tests getting total average progress value for the course based on the lessons completion for single course.
 	 *
 	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
 	 */
@@ -945,7 +945,7 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 
 	/**
-	 * Tests getting total average progress value for the course based on the lessons completion for multiple courses multiple courses.
+	 * Tests getting total average progress value for the course based on the lessons completion for multiple courses.
 	 *
 	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
 	 */
@@ -967,7 +967,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		$lesson_2 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
 		);
-
 		//Add 2 lessons to the course 2
 		$lesson_3 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
@@ -989,7 +988,6 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
-
 
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_3, $user_id_1, true );
