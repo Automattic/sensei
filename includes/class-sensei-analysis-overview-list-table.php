@@ -227,7 +227,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		);
 
 		// Set search arguments.
-		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
+		if ( isset( $_GET['s'] ) && ! wp_verify_nonce( empty( $_GET['s'] ) ) ) {
 			$args['s'] = sanitize_text_field( wp_unslash( $_GET['s'] ) );
 		}
 
