@@ -329,7 +329,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		return __( 'Search Courses', 'sensei-lms' );
 	}
 
-
 	/**
 	 * Get the selected course ID.
 	 *

@@ -16,7 +16,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	/**
 	 * Set up before each test.
 	 */
-	public function setup() {
+	public function setUp() {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
