@@ -20,6 +20,8 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+
+		add_filter( 'sensei_analysis_overview_filter_users', [ $this, 'excludeAdminFromUserQuery' ] );
 	}
 
 	/**
@@ -33,8 +35,6 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsAllStudents() {
 		/* Arrange. */
-		$this->delete_user( 1 ); // Remove the default admin user.
-
 		$no_last_activity_user   = $this->factory->user->create();
 		$user_with_last_activity = $this->createUserWithActivity( '2022-03-01 00:00:00' );
 
@@ -49,8 +49,6 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsStudentsWithCorrectFields() {
 		/* Arrange. */
-		$this->delete_user( 1 ); // Remove the default admin user.
-
 		$user_id = $this->createUserWithActivity(
 			'2022-03-01 00:00:00',
 			[
@@ -232,7 +230,6 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 	public function testGetLastTotalItems_WithItems_ReturnsTheTotalNumberOfItems() {
 		/* Arrange. */
-		$this->delete_user( 1 ); // Remove the default admin user.
 		$this->factory->user->create_many( 5 );
 
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
@@ -291,5 +288,18 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		);
 
 		return $user_id;
+	}
+
+	/**
+	 * Exclude the default admin user from the WP_User_Query args.
+	 *
+	 * @param array $query_args The WP_User_Query args.
+	 *
+	 * @return array
+	 */
+	public function excludeAdminFromUserQuery( array $query_args ): array {
+		$query_args['exclude'] = [ 1 ];
+
+		return $query_args;
 	}
 }
