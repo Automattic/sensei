@@ -1205,7 +1205,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * Order query based on the custom field.
 	 *
 	 * @since  4.3.0
-	 * @access public
+	 * @access private
 	 *
 	 * @param array  $args Arguments Old orderby arguments.
 	 * @param object $query Query.
