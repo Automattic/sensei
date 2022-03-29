@@ -190,15 +190,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title' => array( 'title', false ),
+					'title'              => array( 'title', false ),
+					'completions'        => array( 'count_of_completions', false ),
 				);
 				break;
 
 			case 'lessons':
 				$columns = array(
-					'title'       => array( 'title', false ),
-					'students'    => array( 'students', false ),
-					'completions' => array( 'completions', false ),
+					'title'              => array( 'title', false ),
 				);
 				break;
 
@@ -708,7 +707,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+		if ( isset( $args['orderby'] ) && ( 'count_of_completions' === $args['orderby'] ) ) {
+			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
+		}
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 
@@ -749,6 +752,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( isset( $args['search'] ) ) {
 			$lessons_args['s'] = $args['search'];
 		}
+
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
@@ -1183,15 +1187,35 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  4.3.0
 	 * @access public
 	 *
-	 * @param WP_User_Query $query The user query.
+	 * @param $query The user query.
 	 */
-	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
+	public function add_orderby_custom_field_to_query( $query ) {
 		global $wpdb;
 		if ( ! isset( $query->query_vars['orderby'] ) || ! isset( $query->query_vars['order'] ) ) {
 			return '';
 		}
 		$query->query_orderby = sprintf(
 			'ORDER BY %s %s',
+			esc_sql( $query->query_vars['orderby'] ),
+			esc_sql( $query->query_vars['order'] )
+		);
+	}
+
+	/**
+	 * Order query based on the custom field.
+	 *
+	 * @since  4.3.0
+	 * @access public
+	 *
+	 * @param array  $args Arguments Old orderby arguments.
+	 * @param object $query Query.
+	 */
+	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
+		if ( ! isset( $query->query_vars['orderby'] ) || ! isset( $query->query_vars['order'] ) ) {
+			return '';
+		}
+		return sprintf(
+			'%s %s',
 			esc_sql( $query->query_vars['orderby'] ),
 			esc_sql( $query->query_vars['order'] )
 		);
