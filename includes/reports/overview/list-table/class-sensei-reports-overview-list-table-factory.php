@@ -28,6 +28,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 		switch ( $type ) {
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
+					Sensei()->grading,
 					new Sensei_Reports_Overview_Data_Provider_Students()
 				);
 			case 'courses':
