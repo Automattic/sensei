@@ -36,6 +36,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 				);
 			case 'lessons':
 				return new Sensei_Reports_Overview_List_Table_Lessons(
+					Sensei()->course,
 					new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course )
 				);
 			default:

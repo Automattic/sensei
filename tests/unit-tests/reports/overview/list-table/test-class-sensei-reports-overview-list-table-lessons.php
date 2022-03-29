@@ -34,40 +34,31 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	/**
 	 * Tests that we are getting right data for Completion Rate column.
 	 *
-	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_row_data
+	 * @covers Sensei_Reports_Overview_List_Table_Lessons::generate_report
 	 * @dataProvider lessonCompletionRateData
+	 * @test
 	 */
-	public function testCompletionRateForLesson( $enrolled_student_count, $completed_student_count, $expected_output ) {
+	public function test_CompletionRate_LessonOverviewTable_ReturnsCorrectCompletion( $enrolled_student_count, $completed_student_count, $expected_output ) {
 		/* Arrange */
-		$table_factory               = new Sensei_Reports_Overview_List_Table_Factory();
-		$lesson_table_instance       = $table_factory->create( 'lessons' );
-		$data_provider_instance      = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
-		$get_row_data_lessons_method = new ReflectionMethod( $lesson_table_instance, 'get_row_data' );
-		$get_row_data_lessons_method->setAccessible( true );
-		$user_ids       = $this->factory->user->create_many( $enrolled_student_count );
-		$course_lessons = $this->factory->get_course_with_lessons(
+		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
+		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
+		$user_ids               = $this->factory->user->create_many( $enrolled_student_count );
+		$course_lessons         = $this->factory->get_course_with_lessons(
 			array(
 				'lesson_count' => 1,
 			)
 		);
-		$lesson_id      = array_pop( $course_lessons['lesson_ids'] );
+		$lesson_id              = array_pop( $course_lessons['lesson_ids'] );
 		foreach ( $user_ids as $key => $user_id ) {
 			Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id, $key < $completed_student_count );
 		}
-		$lessons_args = array(
-			'offset'    => 0,
-			'number'    => -1,
-			'orderby'   => '',
-			'order'     => 'ASC',
-			'course_id' => $course_lessons['course_id'],
-		);
-		$lessons      = $data_provider_instance->get_items( $lessons_args );
+		$_GET['course_filter'] = $course_lessons['course_id'];
 
 		/* Act */
-		$row_data = $get_row_data_lessons_method->invoke( $lesson_table_instance, array_pop( $lessons ) );
+		$row_data = $lesson_table_instance->generate_report();
 
 		/* Assert */
-		$this->assertEquals( $row_data['completion_rate'], $expected_output, "The 'Completion Rate' for {$enrolled_student_count} enrolled and {$completed_student_count} completed students should be {$expected_output}, got {$row_data['completion_rate']}" );
+		$this->assertEquals( $row_data[1]['completion_rate'], $expected_output, "The calculated 'Completion Rate' is not correct" );
 	}
 	/**
 	 * Returns an associative array with parameters needed to run lesson completion test.
@@ -88,7 +79,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
 	 */
-	public function testGetTotalsforLessonReportColumnHeaders() {
+	public function testGetTotals_LessonReportColumnHeaders_ReturnsExpectedTotals() {
 		/* Arrange */
 		$user_ids   = $this->factory->user->create_many( 3 );
 		$course_id  = $this->factory->course->create();
@@ -98,8 +89,8 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		);
 		$days_count = 7;
 
-		$table_factory = new Sensei_Reports_Overview_List_Table_Factory();
-		$instance      = $table_factory->create( 'lessons' );
+		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
+		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
 
 		$_GET['course_filter'] = $course_id;
 		// Complete a lesson for each student on a different date.
@@ -115,7 +106,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 		}
 
 		/* ACT */
-		$actual = $instance->get_columns();
+		$actual = $lesson_table_instance->get_columns();
 
 		/* Assert */
 		$expected = [

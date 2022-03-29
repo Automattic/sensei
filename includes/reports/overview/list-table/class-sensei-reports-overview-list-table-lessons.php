@@ -16,13 +16,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
+	 * Sensei course related services.
+	 *
+	 * @var Sensei_Course
+	 */
+	private $course;
+
+	/**
 	 * Constructor
 	 *
+	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
 	 */
-	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	public function __construct( Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'lessons', $data_provider );
+		$this->course = $course;
+
 		add_filter( 'sensei_analysis_overview_columns', array( $this, 'add_totals_to_report_column_headers' ) );
 	}
 
@@ -220,7 +230,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
-		$lessons      = Sensei()->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
+		$lessons      = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
 		$lesson_ids   = '0';
 		$lesson_count = count( $lessons );
 		if ( 0 < $lesson_count ) {

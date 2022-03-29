@@ -36,7 +36,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons_Test extends WP_UnitTestCase
 	 *
 	 * @covers Sensei_Reports_Overview_Data_Provider_Lessons::get_items
 	 */
-	public function testGetLessonsByCourse() {
+	public function testGetItems_FilteredByCourse_ReturnsFilteredLessons() {
 		/* Arrange. */
 		$course_id         = $this->factory->course->create();
 		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
