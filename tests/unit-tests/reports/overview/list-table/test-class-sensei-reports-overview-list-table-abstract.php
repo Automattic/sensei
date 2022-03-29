@@ -30,7 +30,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 					'number'  => 20,
 					'offset'  => 0,
 					'orderby' => '',
-					'order'   => 'DESC',
+					'order'   => 'ASC',
 					'a'       => 1,
 				]
 			)
@@ -50,7 +50,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 					'number'  => -1,
 					'offset'  => 0,
 					'orderby' => '',
-					'order'   => 'DESC',
+					'order'   => 'ASC',
 					'a'       => 1,
 				]
 			)

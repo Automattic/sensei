@@ -101,9 +101,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'title'           => array( 'title', false ),
-			'completions'     => array( 'completions', false ),
-			'average_percent' => array( 'average_percent', false ),
+			'title' => array( 'title', false ),
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.

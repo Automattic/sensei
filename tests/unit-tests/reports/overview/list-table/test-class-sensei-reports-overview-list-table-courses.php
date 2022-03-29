@@ -63,6 +63,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (0)',
+			'average_progress'   => 'Average Progress',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (3)',
 		];
@@ -91,6 +92,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'title'              => 'Course (4)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',
+			'average_progress'   => 'Average Progress',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (3)',
 		];
@@ -108,9 +110,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$actual = $list_table->get_sortable_columns();
 
 		$expected = [
-			'title'           => [ 'title', false ],
-			'completions'     => [ 'completions', false ],
-			'average_percent' => [ 'average_percent', false ],
+			'title' => [ 'title', false ],
 		];
 		self::assertSame( $expected, $actual );
 	}
