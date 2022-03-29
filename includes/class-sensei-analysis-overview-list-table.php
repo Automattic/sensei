@@ -427,7 +427,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
-				$column_data         = apply_filters(
+				$column_data             = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'              => $course_title,
