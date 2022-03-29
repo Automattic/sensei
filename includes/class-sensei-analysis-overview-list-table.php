@@ -190,14 +190,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title'              => array( 'title', false ),
-					'completions'        => array( 'count_of_completions', false ),
+					'title'       => array( 'title', false ),
+					'completions' => array( 'count_of_completions', false ),
 				);
 				break;
 
 			case 'lessons':
 				$columns = array(
-					'title'              => array( 'title', false ),
+					'title' => array( 'title', false ),
 				);
 				break;
 
@@ -1187,9 +1187,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  4.3.0
 	 * @access public
 	 *
-	 * @param $query The user query.
+	 * @param WP_User_Query $query The user query.
 	 */
-	public function add_orderby_custom_field_to_query( $query ) {
+	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
 		global $wpdb;
 		if ( ! isset( $query->query_vars['orderby'] ) || ! isset( $query->query_vars['order'] ) ) {
 			return '';
@@ -1211,9 +1211,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @param object $query Query.
 	 */
 	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
-		if ( ! isset( $query->query_vars['orderby'] ) || ! isset( $query->query_vars['order'] ) ) {
-			return '';
-		}
 		return sprintf(
 			'%s %s',
 			esc_sql( $query->query_vars['orderby'] ),
