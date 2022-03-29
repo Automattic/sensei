@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Lessons overview list table class.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
@@ -65,7 +65,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	/**
 	 * Append the count value to column headers where applicable
 	 *
-	 * @since  4.2.1
+	 * @since  4.3.0
 	 * @access private
 	 *
 	 * @param array $columns Array of columns for the report table.
@@ -221,7 +221,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	/**
 	 * Fetch the values required for the total counts added to column headers in lesson reports.
 	 *
-	 * @since  4.2.1
+	 * @since  4.3.0
 	 * @access private
 	 *
 	 * @param int $course_id Course Id to filter lessons with.
@@ -262,7 +262,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	/**
 	 * Get the date on which the last lesson was marked complete.
 	 *
-	 * @since 4.2.1
+	 * @since 4.3.0
 	 *
 	 * @param array $args Array of arguments to pass to comments query.
 	 *

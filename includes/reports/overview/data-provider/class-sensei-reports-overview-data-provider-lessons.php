@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Reports_Overview_Data_Provider_Lessons
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Overview_Data_Provider_Interface {
 	/**
@@ -84,7 +84,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	/**
 	 * Add the sum of days taken by each student to complete a lesson with returning lesson row.
 	 *
-	 * @since  4.2.1
+	 * @since  4.3.0
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.

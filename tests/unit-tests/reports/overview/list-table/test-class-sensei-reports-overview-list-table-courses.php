@@ -7,4 +7,123 @@
  */
 class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
+	private static $initial_hook_suffix;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	private $factory;
+
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
+		$GLOBALS['hook_suffix']    = null;
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
+	}
+
+	/**
+	 * Set up before each test.
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+	}
+
+	/**
+	 * Tear down after each test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+
+		$this->factory->tearDown();
+	}
+
+	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
+		$grading = $this->createMock( Sensei_Grading::class );
+		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$course = $this->createMock( Sensei_Course::class );
+		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
+			$grading,
+			$course,
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+		);
+		$list_table->total_items = 1;
+
+		$actual = $list_table->get_columns();
+
+		$expected = [
+			'title'              => 'Course (1)',
+			'last_activity'      => 'Last Activity',
+			'completions'        => 'Completed (0)',
+			'average_progress'   => 'Average Progress',
+			'average_percent'    => 'Average Grade (2%)',
+			'days_to_completion' => 'Days to Completion (3)',
+		];
+
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetColumns_CompletionsFound_ReturnsMatchingArray() {
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		$grading = $this->createMock( Sensei_Grading::class );
+		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$course = $this->createMock( Sensei_Course::class );
+		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
+			$grading,
+			$course,
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+		);
+		$list_table->total_items = 4;
+
+		$actual = $list_table->get_columns();
+
+		$expected = [
+			'title'              => 'Course (4)',
+			'last_activity'      => 'Last Activity',
+			'completions'        => 'Completed (1)',
+			'average_progress'   => 'Average Progress',
+			'average_percent'    => 'Average Grade (2%)',
+			'days_to_completion' => 'Days to Completion (3)',
+		];
+
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			$this->createMock( Sensei_Course::class ),
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+		);
+
+		$actual = $list_table->get_sortable_columns();
+
+		$expected = [
+			'title' => [ 'title', false ],
+		];
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
+			$this->createMock( Sensei_Course::class ),
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+		);
+
+		$actual = $list_table->search_button();
+
+		self::assertSame( 'Search Courses', $actual );
+	}
 }

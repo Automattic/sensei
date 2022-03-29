@@ -427,19 +427,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
-					$column_data         = apply_filters(
-						'sensei_analysis_overview_column_data',
-						array(
-							'title'              => $course_title,
-							'last_activity'      => $last_activity_date,
-							'completions'        => $course_completions,
-							'average_progress'   => $average_course_progress,
-							'average_grade'      => $average_grade,
-							'days_to_completion' => $average_completion_days,
-						),
-						$item,
-						$this
-					);
+				$column_data             = apply_filters(
+					'sensei_analysis_overview_column_data',
+					array(
+						'title'              => $course_title,
+						'last_activity'      => $last_activity_date,
+						'completions'        => $course_completions,
+						'average_progress'   => $average_course_progress,
+						'average_grade'      => $average_grade,
+						'days_to_completion' => $average_completion_days,
+					),
+					$item,
+					$this
+				);
 				break;
 
 			case 'lessons':
