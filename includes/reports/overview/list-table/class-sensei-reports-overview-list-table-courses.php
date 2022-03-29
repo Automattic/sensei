@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Courses overview list table class.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**

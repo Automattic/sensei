@@ -8,7 +8,7 @@
 /**
  * Interface Sensei_Reports_Overview_Data_Provider_Interface.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 interface Sensei_Reports_Overview_Data_Provider_Interface {
 	/**

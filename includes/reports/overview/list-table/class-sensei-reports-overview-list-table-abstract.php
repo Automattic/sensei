@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Abstract reports overview list table class.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_Table {
 
