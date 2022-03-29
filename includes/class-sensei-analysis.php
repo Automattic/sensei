@@ -240,17 +240,16 @@ class Sensei_Analysis {
 	}
 
 	/**
-	 * load_data_object creates new instance of class
+	 * The load_data_object method creates new instance of class
 	 *
-	 * @param  string    $name          Name of class
-	 * @param  integer   $data          constructor arguments
-	 * @param  undefined $optional_data optional constructor arguments
-	 * @return object                 class instance object
+	 * @param  string $name          Name of class.
+	 * @param  mixed  $data          Constructor arguments.
+	 * @param  mixed  $optional_data Optional constructor arguments.
+	 * @return Sensei_List_Table     Class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
 		if ( 'Overview' === $name ) {
-			$factory = new Sensei_Reports_Overview_List_Table_Factory();
-
+			$factory                = new Sensei_Reports_Overview_List_Table_Factory();
 			$sensei_analysis_object = $factory->create( $data );
 		} else {
 			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';

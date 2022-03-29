@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_Overview_Data_Provider_Interface {
-
 	/**
 	 * Total number of courses found with given criteria.
 	 *
@@ -131,7 +130,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		}
 	}
 
-	/**
+/**
 	 * Get the total number of items found for the last query.
 	 *
 	 * @return int

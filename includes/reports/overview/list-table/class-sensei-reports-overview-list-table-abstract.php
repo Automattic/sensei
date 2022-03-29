@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Abstract reports overview list table class.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_Table {
 
@@ -86,7 +86,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle order.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$order = sanitize_key( wp_unslash( $_GET['order'] ?? '' ) );
+		$order = sanitize_key( wp_unslash( $_GET['order'] ?? 'ASC' ) );
 		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
@@ -146,7 +146,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle order.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$order = sanitize_key( wp_unslash( $_GET['order'] ?? '' ) );
+		$order = sanitize_key( wp_unslash( $_GET['order'] ?? 'ASC' ) );
 		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$args = array(
@@ -328,7 +328,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	public function search_button() {
 		return __( 'Search Courses', 'sensei-lms' );
 	}
-
 
 	/**
 	 * Get the selected course ID.

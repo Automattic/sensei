@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Overview list table factory.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Factory {
 	/**

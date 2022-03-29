@@ -10,12 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Courses overview list table class.
+ * Students overview list table class.
  *
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overview_List_Table_Abstract {
-
 	/**
 	 * Constructor
 	 *

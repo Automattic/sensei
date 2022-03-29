@@ -41,7 +41,7 @@ PLEASE NOTE
 - Everything is optional, but try to add as many details as possible.
 
 Contributing docs:
-https://github.com/Automattic/sensei/blob/master/CONTRIBUTING.md
+https://github.com/Automattic/sensei/blob/trunk/CONTRIBUTING.md
 
 Helpful tips for screenshots:
 https://en.support.wordpress.com/make-a-screenshot/

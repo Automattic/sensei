@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Courses overview list table class.
  *
- * @since 4.2.1
+ * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview_List_Table_Abstract {
 	/**
@@ -72,6 +72,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				__( 'Completed (%d)', 'sensei-lms' ),
 				esc_html( $total_completions )
 			),
+			'average_progress'   => __( 'Average Progress', 'sensei-lms' ),
 			'average_percent'    => sprintf(
 			// translators: Placeholder value is the average grade of all courses.
 				__( 'Average Grade (%s%%)', 'sensei-lms' ),
@@ -100,9 +101,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'title'           => array( 'title', false ),
-			'completions'     => array( 'completions', false ),
-			'average_percent' => array( 'average_percent', false ),
+			'title' => array( 'title', false ),
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
@@ -179,12 +178,15 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';
 		}
 
+		$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
+
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
 				'title'              => $course_title,
 				'last_activity'      => $last_activity_date,
 				'completions'        => $course_completions,
+				'average_progress'   => $average_course_progress,
 				'average_percent'    => $average_grade,
 				'days_to_completion' => $average_completion_days,
 			),
@@ -243,6 +245,51 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		}
 
 		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Calculate average lesson progress per student for course.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int $course_id Id of the course for which average progress is calculated.
+	 *
+	 * @return string The average progress for the course, or N/A if none.
+	 */
+	private function get_average_progress_for_courses_table( $course_id ) {
+		// Fetch learners in course.
+		$course_args = array(
+			'post_id' => $course_id,
+			'type'    => 'sensei_course_status',
+			'status'  => array( 'in-progress', 'complete' ),
+		);
+
+		$course_students_count = Sensei_Utils::sensei_check_for_activity( $course_args );
+
+		// Get all course lessons.
+		$lessons        = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
+		$course_lessons = is_array( $lessons ) ? $lessons : array( $lessons );
+		$total_lessons  = count( $course_lessons );
+
+		// Get all completed lessons.
+		$lesson_args     = array(
+			'post__in' => $course_lessons,
+			'type'     => 'sensei_lesson_status',
+			'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
+			'count'    => true,
+		);
+		$completed_count = (int) Sensei_Utils::sensei_check_for_activity( $lesson_args );
+		// Calculate average progress.
+		$average_course_progress = __( 'N/A', 'sensei-lms' );
+		if ( $course_students_count && $total_lessons ) {
+			// Average course progress is calculated based on lessons completed for the course
+			// divided by the total possible lessons completed.
+			$average_course_progress_value = $completed_count / ( $course_students_count * $total_lessons ) * 100;
+			$average_course_progress       = esc_html(
+				sprintf( '%d%%', round( $average_course_progress_value ) )
+			);
+		}
+		return $average_course_progress;
 	}
 
 	/**
