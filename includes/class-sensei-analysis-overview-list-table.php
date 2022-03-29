@@ -1181,19 +1181,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * Order query based on the custom field.
 	 *
 	 * @since  4.3.0
-	 * @access public
+	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
 	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
 		global $wpdb;
-		if ( ! isset( $query->query_vars['orderby'] ) || ! isset( $query->query_vars['order'] ) ) {
-			return '';
-		}
-		$query->query_orderby = sprintf(
-			'ORDER BY %s %s',
-			esc_sql( $query->query_vars['orderby'] ),
-			esc_sql( $query->query_vars['order'] )
+
+		$query->query_orderby = $wpdb->prepare(
+			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
+			$query->query_vars['orderby'],
+			$query->query_vars['order']
 		);
 	}
 
