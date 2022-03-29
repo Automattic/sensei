@@ -52,9 +52,10 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$user_id = $this->createUserWithActivity(
 			'2022-03-01 00:00:00',
 			[
-				'user_login'   => 'test',
-				'user_email'   => 'test@example.org',
-				'display_name' => 'test',
+				'user_login'      => 'test',
+				'user_email'      => 'test@example.org',
+				'display_name'    => 'test',
+				'user_registered' => '2022-03-01 00:00:00',
 			]
 		);
 
@@ -71,6 +72,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 				'user_email'         => 'test@example.org',
 				'display_name'       => 'test',
 				'last_activity_date' => '2022-03-01 00:00:00',
+				'user_registered'    => '2022-03-01 00:00:00',
 			],
 		];
 

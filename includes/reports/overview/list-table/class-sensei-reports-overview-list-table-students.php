@@ -56,6 +56,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			// translators: Placeholder value is total count of students.
 			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
 			'email'             => __( 'Email', 'sensei-lms' ),
+			'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 			'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 			// translators: Placeholder value is all active courses.
 			'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
@@ -159,6 +160,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			array(
 				'title'             => $user_name,
 				'email'             => $user_email,
+				'date_registered'   => $this->format_date_registered( $item->user_registered ),
 				'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 				'active_courses'    => ( $user_courses_started - $user_courses_ended ),
 				'completed_courses' => $user_courses_ended,
@@ -196,5 +198,19 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'last_activity_date_from' => $this->get_start_date_and_time(),
 			'last_activity_date_to'   => $this->get_end_date_and_time(),
 		];
+	}
+
+	/**
+	 * Format the registration date.
+	 *
+	 * @param string $date Registration date.
+	 *
+	 * @return string Formatted registration date.
+	 */
+	private function format_date_registered( string $date ) {
+		$timezone = new DateTimeZone( 'GMT' );
+		$date     = new DateTime( $date, $timezone );
+
+		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
 }
