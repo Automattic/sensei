@@ -130,7 +130,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		}
 	}
 
-/**
+	/**
 	 * Get the total number of items found for the last query.
 	 *
 	 * @return int
