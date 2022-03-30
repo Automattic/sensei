@@ -8,14 +8,8 @@ import { __ } from '@wordpress/i18n';
 
 /**
  * Student action menu.
- *
- * @param {Object} props
- * @param {string} props.courseId Course ID.
  */
-const StudentActionMenu = ( { courseId } ) => {
-	// eslint-disable-next-line no-console
-	console.log( courseId );
-
+export const StudentActionMenu = () => {
 	return (
 		<DropdownMenu
 			icon={ moreVertical }
