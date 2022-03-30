@@ -30,7 +30,7 @@ jobs:
                   coverage: none
 
             - name: Set up branches
-              run: git checkout -b master refs/remotes/origin/trunk && git checkout -
+              run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
 
             - name: Install PHP dependencies
               run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress

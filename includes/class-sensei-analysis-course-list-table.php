@@ -68,6 +68,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			case 'user':
 				$columns = array(
 					'title'       => __( 'Student', 'sensei-lms' ),
+					'email'       => __( 'Email', 'sensei-lms' ),
 					'started'     => __( 'Date Started', 'sensei-lms' ),
 					'completed'   => __( 'Date Completed', 'sensei-lms' ),
 					'user_status' => __( 'Status', 'sensei-lms' ),
@@ -322,8 +323,13 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 				}
 				$course_percent = get_comment_meta( $item->comment_ID, 'percent', true );
 
-				// Output users data
+				// User data.
 				$user_name = Sensei_Learner::get_full_name( $item->user_id );
+				$user      = get_user_by( 'id', $item->user_id );
+
+				if ( $user ) {
+					$user_email = $user->user_email;
+				}
 
 				if ( ! $this->csv_output ) {
 
@@ -350,6 +356,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 					'sensei_analysis_course_column_data',
 					array(
 						'title'       => $user_name,
+						'email'       => $user_email,
 						'started'     => $user_start_date,
 						'completed'   => $user_end_date,
 						'user_status' => $status,
