@@ -38,7 +38,10 @@ class Sensei_Reports_Overview_List_Table_Factory {
 					new Sensei_Reports_Overview_Data_Provider_Courses()
 				);
 			case 'lessons':
-				return new Sensei_Reports_Overview_List_Table_Lessons();
+				return new Sensei_Reports_Overview_List_Table_Lessons(
+					Sensei()->course,
+					new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course )
+				);
 			default:
 				throw new InvalidArgumentException( 'Unknown list table type' );
 		}
