@@ -955,20 +955,6 @@ class Sensei_Quiz {
 	}
 
 	/**
-	 * Check if the user has completed the quiz.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param int|null $quiz_id (Optional) The quiz post ID. Defaults to the current post ID.
-	 * @param int|null $user_id (Optional) The user ID. Defaults to the current user ID.
-	 *
-	 * @return bool
-	 */
-	public function is_completed( int $quiz_id = 0, int $user_id = 0 ): bool {
-		return self::is_quiz_completed( $quiz_id, $user_id );
-	}
-
-	/**
 	 * Retrieve the users quiz question grades
 	 *
 	 * This function gets all the grades for all the questions in the given lesson quiz for a specific user.
