@@ -205,11 +205,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			case 'users':
 			default:
 				$columns = array(
-					'title'             => array( 'user_login', false ),
-					'email'             => array( 'user_email', false ),
-					'active_courses'    => array( 'active_courses', false ),
-					'completed_courses' => array( 'completed_courses', false ),
-					'average_grade'     => array( 'average_grade', false ),
+					'title'           => array( 'display_name', false ),
+					'email'           => array( 'user_email', false ),
+					'date_registered' => array( 'user_registered', false ),
+					'last_activity'   => array( 'last_activity_date', false ),
 				);
 				break;
 		}
@@ -229,9 +228,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// Handle orderby.
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			}
+			$orderby = esc_html( $_GET['orderby'] );
 		}
 
 		// Handle order.
@@ -301,9 +298,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		// Handle orderby
 		$orderby = '';
 		if ( ! empty( $_GET['orderby'] ) ) {
-			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
-				$orderby = esc_html( $_GET['orderby'] );
-			}
+			$orderby = esc_html( $_GET['orderby'] );
 		}
 
 		// Handle order
@@ -789,7 +784,13 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
+
+		if ( isset( $args['orderby'] ) && 'last_activity_date' === $args['orderby'] ) {
+			add_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_query' ] );
+		}
+
 		$wp_user_search = new WP_User_Query( $args );
+		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
@@ -797,7 +798,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$this->total_items = $wp_user_search->get_total();
 
 		return $learners;
-
 	}
 
 	/**
@@ -1174,8 +1174,25 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
 			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-			ORDER BY {$wpdb->comments}.comment_date_gmt DESC
 		) AS last_activity_date";
+	}
+
+	/**
+	 * Order query based on the custom field.
+	 *
+	 * @since  4.3.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_orderby = $wpdb->prepare(
+			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
+			$query->query_vars['orderby'],
+			$query->query_vars['order']
+		);
 	}
 
 	/**
