@@ -38,7 +38,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 * @dataProvider lessonCompletionRateData
 	 * @test
 	 */
-	public function test_CompletionRate_LessonOverviewTable_ReturnsCorrectCompletion( $enrolled_student_count, $completed_student_count, $expected_output ) {
+	public function testGenerateReport_StudentEnrollmentsFound_ReturnsRowsWithMatchingCompletionRate( $enrolled_student_count, $completed_student_count, $expected_output ) {
 		/* Arrange */
 		$data_provider_instance = new Sensei_Reports_Overview_Data_Provider_Lessons( Sensei()->course );
 		$lesson_table_instance  = new Sensei_Reports_Overview_List_Table_Lessons( Sensei()->course, $data_provider_instance );
@@ -79,7 +79,7 @@ class Sensei_Reports_Overview_List_Table_Lessons_Test extends WP_UnitTestCase {
 	 *
 	 * @covers Sensei_Reports_Overview_List_Table_Lessons::get_columns
 	 */
-	public function testGetTotals_LessonReportColumnHeaders_ReturnsExpectedTotals() {
+	public function testGetColumns_WhenCalled_ReturnsColumnsWithMatchingTotals() {
 		/* Arrange */
 		$user_ids   = $this->factory->user->create_many( 3 );
 		$course_id  = $this->factory->course->create();
