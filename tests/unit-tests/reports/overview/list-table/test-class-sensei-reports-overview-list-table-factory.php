@@ -28,10 +28,13 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	 * @dataProvider providerCreate_TypeGiven_ReturnsExpectedInstance
 	 */
 	public function testCreate_TypeGiven_ReturnsExpectedInstance( string $type, string $expected_class ) {
+		/* Arrange. */
 		$factory = new Sensei_Reports_Overview_List_Table_Factory();
 
+		/* Act. */
 		$actual_instance = $factory->create( $type );
 
+		/* Assert. */
 		$this->assertInstanceOf( $expected_class, $actual_instance );
 	}
 
@@ -45,11 +48,12 @@ class Sensei_Reports_Overview_List_Table_Factory_Test extends WP_UnitTestCase {
 	}
 
 	public function testCreate_UnknownTypeGiven_ThrowsException() {
+		/* Arrange. */
 		$factory = new Sensei_Reports_Overview_List_Table_Factory();
 
+		/* Expect & Act. */
 		$this->expectException( InvalidArgumentException::class );
 		$this->expectExceptionMessage( 'Unknown list table type' );
-
 		$factory->create( 'unknown' );
 	}
 }

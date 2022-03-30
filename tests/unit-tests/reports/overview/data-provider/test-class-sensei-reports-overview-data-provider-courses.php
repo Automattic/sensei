@@ -32,7 +32,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsMatchingCourses() {
-		$user_id    = $this->factory->user->create();
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+
 		$course_id  = $this->factory->course->create();
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
 		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
@@ -42,10 +44,13 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				'comment_date' => '2022-01-02 00:00:01',
 			]
 		);
+
 		$unfinished_course_id  = $this->factory->course->create();
 		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
-		$data_provider         = new Sensei_Reports_Overview_Data_Provider_Courses();
 
+		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
+
+		/* Act. */
 		$filters = array(
 			'number'  => 2,
 			'offset'  => 0,
@@ -54,6 +59,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		);
 		$courses = $data_provider->get_items( $filters );
 
+		/* Assert. */
 		$expected = [
 			[
 				'id'                   => $course_id,
@@ -71,6 +77,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 	}
 
 	public function testGetAll_FiltersWithLastActivity_ReturnsMatchingCourses() {
+		/* Arrange. */
 		$user_id    = $this->factory->user->create();
 		$course_id  = $this->factory->course->create();
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
@@ -81,6 +88,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				'comment_date' => '2022-01-02 00:00:01',
 			]
 		);
+
 		$lesson1_id                  = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
 		$lesson1_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson1_id, $user_id );
 		wp_update_comment(
@@ -90,6 +98,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				'comment_date'     => '2022-01-02 00:00:01',
 			]
 		);
+
 		$unfinished_course_id  = $this->factory->course->create();
 		$unfinished_comment_id = Sensei_Utils::update_course_status( $user_id, $unfinished_course_id, 'in-progress' );
 		wp_update_comment(
@@ -98,6 +107,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				'comment_date' => '2022-01-01 00:00:01',
 			]
 		);
+
 		$lesson2_id                  = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $unfinished_course_id ] ] );
 		$lesson2_activity_comment_id = Sensei_Utils::sensei_start_lesson( $lesson2_id, $user_id );
 		wp_update_comment(
@@ -107,8 +117,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 				'comment_date'     => '2022-01-01 00:00:01',
 			]
 		);
+
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Courses();
 
+		/* Act. */
 		$filters = array(
 			'number'                  => 2,
 			'offset'                  => 0,
@@ -119,6 +131,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses_Test extends WP_UnitTestCase
 		);
 		$courses = $data_provider->get_items( $filters );
 
+		/* Assert. */
 		$expected = [
 			[
 				'id'                   => $course_id,

@@ -15,6 +15,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 	}
 
 	public function testPrepareItems_WhenCalled_GetsItemsFromDataProvider() {
+		/* Arrange. */
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
 
 		$list_table = $this->getMockBuilder( Sensei_Reports_Overview_List_Table_Abstract::class )
@@ -22,6 +23,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 			->getMockForAbstractClass();
 		$list_table->method( 'get_additional_filters' )->willReturn( [ 'a' => 1 ] );
 
+		/* Expect & Act. */
 		$data_provider
 			->expects( self::once() )
 			->method( 'get_items' )
@@ -39,6 +41,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 	}
 
 	public function testGenerateReport_WhenCalled_ReturnsMatchingArray() {
+		/* Arrange. */
 		$post1 = new WP_Post( new stdClass() );
 		$post2 = new WP_Post( new stdClass() );
 
@@ -73,8 +76,10 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 			);
 		$list_table->columns = [ 'd', 'e', 'f' ];
 
+		/* Act. */
 		$actual = $list_table->generate_report();
 
+		/* Assert. */
 		$expected = [
 			[ 'd', 'e', 'f' ],
 			[ 'b' => 2 ],

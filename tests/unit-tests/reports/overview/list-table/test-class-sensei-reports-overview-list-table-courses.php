@@ -46,10 +46,13 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
+		/* Arrange. */
 		$grading = $this->createMock( Sensei_Grading::class );
 		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+
 		$course = $this->createMock( Sensei_Course::class );
 		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
@@ -57,8 +60,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		);
 		$list_table->total_items = 1;
 
+		/* Act. */
 		$actual = $list_table->get_columns();
 
+		/* Assert. */
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
@@ -72,13 +77,18 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetColumns_CompletionsFound_ReturnsMatchingArray() {
-		$user_id   = $this->factory->user->create();
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+
 		$course_id = $this->factory->course->create();
 		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+
 		$grading = $this->createMock( Sensei_Grading::class );
 		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+
 		$course = $this->createMock( Sensei_Course::class );
 		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
@@ -86,8 +96,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		);
 		$list_table->total_items = 4;
 
+		/* Act. */
 		$actual = $list_table->get_columns();
 
+		/* Assert. */
 		$expected = [
 			'title'              => 'Course (4)',
 			'last_activity'      => 'Last Activity',
@@ -101,14 +113,17 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
+		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
 		);
 
+		/* Act. */
 		$actual = $list_table->get_sortable_columns();
 
+		/* Assert. */
 		$expected = [
 			'title' => [ 'title', false ],
 		];
@@ -116,14 +131,17 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
+		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
 			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
 		);
 
+		/* Act. */
 		$actual = $list_table->search_button();
 
+		/* Assert. */
 		self::assertSame( 'Search Courses', $actual );
 	}
 }
