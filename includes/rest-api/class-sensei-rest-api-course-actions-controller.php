@@ -1,6 +1,19 @@
 <?php
+/**
+ * File contains the Sensei_REST_API_Course_Actions_Controller class.
+ *
+ * @package sensei
+ */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
+/**
+ * Course actions controller class.
+ *
+ * @since 4.4.0
+ */
 class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 
 	/**
@@ -43,11 +56,17 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 		);
 	}
 
+	/**
+	 * Add users to courses.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return array
+	 */
 	public function add_users_to_courses( WP_REST_Request $request ) {
 		$params     = $request->get_params();
 		$user_ids   = $params['user_ids'];
 		$course_ids = $params['course_ids'];
-		$role       = $params['role'];
 		$result     = [];
 		foreach ( $user_ids as $user_id ) {
 			$user = new WP_User( $user_id );
@@ -62,6 +81,13 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 		return $result;
 	}
 
+	/**
+	 * Check if the current user can add users to courses.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return bool
+	 */
 	public function can_add_users_to_courses( WP_REST_Request $request ) {
 		$params          = $request->get_params();
 		$course_ids      = $params['course_ids'];
