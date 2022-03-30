@@ -937,9 +937,9 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEquals(
-			'50%',
+			50,
 			$method->invoke( $instance ),
-			'Find an average of lessons completed in the course for all the students.'
+			'Find totals of lessons completed single course.'
 		);
 	}
 
@@ -998,9 +998,71 @@ class Sensei_Analysis_Overview_List_Table_Test extends WP_UnitTestCase {
 		Sensei_Utils::sensei_start_lesson( $lesson_4, $user_id_2 );
 		/* Assert. */
 		$this->assertEquals(
-			'38%',
+			38,
 			$method->invoke( $instance ),
-			'Find an average of lessons completed in the course for all the students.'
+			'Find totals of lessons completed multiple courses.'
+		);
+	}
+
+	/**
+	 * Tests getting total average progress value for the course based on the lessons completion to be zero.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
+	 */
+	public function testTotalAverageProgressForCoursesProgressZero() {
+		// Create a course 1
+		$course_id_1 = $this->factory->course->create();
+
+		// Create single
+		$user_id_2 = $this->factory->user->create();
+
+		//Add 2 lessons to the course 1
+		$lesson_1 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
+		);
+		$lesson_2 = $this->factory->lesson->create(
+			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
+		);
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+
+		// Get private method get_average_progress_for_courses_table
+		$method = new ReflectionMethod( $instance, 'get_total_average_progress_for_courses_report' );
+		$method->setAccessible( true );
+
+		// Enroll student 2 to the course and lessons, but don't complete the lessons.
+		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
+		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_2 );
+
+		/* Assert. */
+		$this->assertEquals(
+			0,
+			$method->invoke( $instance ),
+			'Find average progress total is 0 when no lesson is completed'
+		);
+	}
+
+
+	/**
+	 * Tests getting total average progress value create courses but don't add students so progress false.
+	 *
+	 * @covers Sensei_Analysis_Overview_List_Table::get_average_progress_for_courses_table
+	 */
+	public function testTotalAverageProgressForCoursesProgressFalse() {
+		// Create a course 1
+		$this->factory->course->create();
+
+		$instance = new Sensei_Analysis_Overview_List_Table();
+
+		// Get private method get_average_progress_for_courses_table
+		$method = new ReflectionMethod( $instance, 'get_total_average_progress_for_courses_report' );
+		$method->setAccessible( true );
+
+		/* Assert. */
+		$this->assertEquals(
+			false,
+			$method->invoke( $instance ),
+			'Average of progress total is false when no lessons or students.'
 		);
 	}
 

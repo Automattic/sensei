@@ -63,6 +63,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					)
 				);
 
+				$total_average_progress = $this->get_total_average_progress_for_courses_report();
+
 				$columns = array(
 					'title'              => sprintf(
 						// translators: Placeholder value is the number of courses.
@@ -78,7 +80,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'average_progress'   => sprintf(
 						// translators: Placeholder vale is the total average progress for all courses.
 						__( 'Average Progress (%s)', 'sensei-lms' ),
-						esc_html( $this->get_total_average_progress_for_courses_report() )
+						esc_html( $total_average_progress ? sprintf( '%d%%', $total_average_progress ) : __( 'N/A', 'sensei-lms' ) )
 					),
 					'average_grade'      => sprintf(
 					// translators: Placeholder value is the average grade of all courses.
@@ -154,21 +156,21 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  4.3.0
 	 * @access private
 	 *
-	 * @return string average_progress total average progress value and N/A if not applicable.
+	 * @return int|false average_progress total average progress value and false if not applicable.
 	 */
 	private function get_total_average_progress_for_courses_report() {
 		// Get all courses ids.
 		$courses_ids = $this->get_all_courses_ids();
 
 		if ( ! is_array( $courses_ids ) || empty( $courses_ids ) ) {
-			return __( 'N/A', 'sensei-lms' );
+			return false;
 		}
 		// Calculate total average progress for all the courses.
 		$average_course_progress_total = $this->get_total_average_progress_for_all_the_courses( $courses_ids );
 
 		// If total value for all the courses is zero, return N/A.
 		if ( ! $average_course_progress_total ) {
-			return __( 'N/A', 'sensei-lms' );
+			return false;
 		}
 
 		// Divide the value of all progresses combined with the number of courses to get average value.
@@ -176,9 +178,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			$average_course_progress_total = $average_course_progress_total / count( $courses_ids );
 		}
 
-		return esc_html(
-			sprintf( '%d%%', ceil( $average_course_progress_total ) )
-		);
+		return ceil( $average_course_progress_total );
 	}
 
 	/**
