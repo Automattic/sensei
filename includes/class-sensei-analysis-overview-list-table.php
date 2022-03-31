@@ -1209,10 +1209,12 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @param object $query Query.
 	 */
 	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
-		return sprintf(
-			'%s %s',
-			esc_sql( $query->query_vars['orderby'] ),
-			esc_sql( $query->query_vars['order'] )
+		global $wpdb;
+
+		return $wpdb->prepare(
+			'%1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
+			$query->query_vars['orderby'],
+			$query->query_vars['order']
 		);
 	}
 
