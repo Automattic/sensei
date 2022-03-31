@@ -50,6 +50,12 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$query_args = array(
 			'fields' => [ 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' ],
 		);
+
+		if ( ! empty( $filters['orderby'] ) && ! empty( $filters['order'] ) ) {
+			$query_args['orderby'] = $filters['orderby'];
+			$query_args['order']   = $filters['order'];
+		}
+
 		$query_args = array_merge( $query_args, $filters );
 		if ( ! empty( $filters['search'] ) ) {
 			$query_args['search'] = '*' . trim( $filters['search'], '*' ) . '*';
@@ -65,14 +71,38 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
+
+		if ( ! empty( $query_args['orderby'] ) && 'last_activity_date' === $query_args['orderby'] ) {
+			add_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
+		}
+
 		$wp_user_search = new WP_User_Query( $query_args );
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
+		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 
 		$learners               = $wp_user_search->get_results();
 		$this->last_total_items = $wp_user_search->get_total();
 
 		return $learners;
+	}
+
+	/**
+	 * Order query based on the custom field.
+	 *
+	 * @since  4.3.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function add_orderby_custom_field_to_user_query( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_orderby = $wpdb->prepare(
+			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
+			$query->query_vars['orderby'],
+			$query->query_vars['order']
+		);
 	}
 
 	/**

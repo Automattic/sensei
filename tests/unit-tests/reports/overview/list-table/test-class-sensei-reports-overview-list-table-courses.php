@@ -125,7 +125,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = [
-			'title' => [ 'title', false ],
+			'title'       => [ 'title', false ],
+			'completions' => [ 'count_of_completions', false ],
 		];
 		self::assertSame( $expected, $actual );
 	}
