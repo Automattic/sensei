@@ -92,11 +92,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 */
 	public function get_sortable_columns() {
 		$columns = [
-			'title'             => [ 'user_login', false ],
-			'email'             => [ 'user_email', false ],
-			'active_courses'    => [ 'active_courses', false ],
-			'completed_courses' => [ 'completed_courses', false ],
-			'average_grade'     => [ 'average_grade', false ],
+			'title'           => array( 'display_name', false ),
+			'email'           => array( 'user_email', false ),
+			'date_registered' => array( 'user_registered', false ),
+			'last_activity'   => array( 'last_activity_date', false ),
 		];
 
 		// Backwards compatible filter name, moving forward should have single filter name.

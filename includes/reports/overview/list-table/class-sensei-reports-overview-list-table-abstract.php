@@ -77,11 +77,12 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * @since  1.7.0
 	 */
 	public function prepare_items() {
+
 		// Handle orderby.
+		$orderby = '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
-		if ( empty( $orderby ) || ! array_key_exists( esc_html( $orderby ), $this->get_sortable_columns() ) ) {
-			$orderby = '';
+		if ( isset( $_GET['orderby'] ) && ! empty( $_GET['orderby'] ) ) {
+			$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ) );
 		}
 
 		// Handle order.
