@@ -335,7 +335,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 *
 	 * @return string orderby value.
 	 */
-	protected function get_orderby_value(): string {
+	private function get_orderby_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['orderby'] ) ? sanitize_key( wp_unslash( $_GET['orderby'] ) ) : '';
 	}
@@ -345,7 +345,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 *
 	 * @return string order value.
 	 */
-	protected function get_order_value(): string {
+	private function get_order_value(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['order'] ) ? sanitize_key( wp_unslash( $_GET['order'] ) ) : 'DESC';
 	}
