@@ -57,11 +57,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			'suppress_filters' => 0,
 		);
 
-		if ( ! empty( $filters['orderby'] ) && ! empty( $filters['order'] ) ) {
-			$course_args['orderby'] = $filters['orderby'];
-			$course_args['order']   = $filters['order'];
-		}
-
 		if ( isset( $filters['search'] ) ) {
 			$course_args['s'] = $filters['search'];
 		}
@@ -69,7 +64,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 
-		if ( isset( $course_args['orderby'] ) && ( 'count_of_completions' === $course_args['orderby'] ) ) {
+		if ( 'count_of_completions' === $course_args['orderby'] ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		}
 
