@@ -800,15 +800,15 @@ class Sensei_Analysis {
 
 			if ( 0 < $lesson_id ) {
 				// Viewing a specific Lesson and all its Learners
-				$sensei_analysis_report_object = $this->load_report_object( 'Lesson', $lesson_id );
+				$sensei_analysis_report_object = $this->load_data_object( 'Lesson', $lesson_id );
 				$event_properties['view']      = 'course-lesson-users';
 			} elseif ( 0 < $course_id && 0 < $user_id ) {
 				// Viewing a specific User on a specific Course
-				$sensei_analysis_report_object = $this->load_report_object( 'Course', $course_id, $user_id );
+				$sensei_analysis_report_object = $this->load_data_object( 'Course', $course_id, $user_id );
 				$event_properties['view']      = 'user-course-lessons';
 			} elseif ( 0 < $course_id ) {
 				// Viewing a specific Course and all it's Lessons, or it's Learners
-				$sensei_analysis_report_object = $this->load_report_object( 'Course', $course_id );
+				$sensei_analysis_report_object = $this->load_data_object( 'Course', $course_id );
 
 				// Set view property for event logging.
 				if ( isset( $_GET['view'] ) ) {
@@ -820,11 +820,11 @@ class Sensei_Analysis {
 				}
 			} elseif ( 0 < $user_id ) {
 				// Viewing a specific Learner, and their Courses
-				$sensei_analysis_report_object = $this->load_report_object( 'User_Profile', $user_id );
+				$sensei_analysis_report_object = $this->load_data_object( 'User_Profile', $user_id );
 				$event_properties['view']      = 'user-courses';
 			} else {
 				// Overview of all Learners, all Courses, or all Lessons
-				$sensei_analysis_report_object = $this->load_report_object( 'Overview', $type );
+				$sensei_analysis_report_object = $this->load_data_object( 'Overview', $type );
 				$event_properties['view']      = isset( $_GET['view'] ) ? $_GET['view'] : '';
 			}
 
@@ -905,21 +905,7 @@ class Sensei_Analysis {
 	 * @return object                 class instance object
 	 */
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
-		if ( 'Overview' === $name ) {
-			$factory                = new Sensei_Reports_Overview_List_Table_Factory();
-			$sensei_analysis_object = $factory->create( $data );
-		} else {
-			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
-			if ( is_null( $optional_data ) ) {
-				$sensei_analysis_object = new $object_name( $data );
-			} else {
-				$sensei_analysis_object = new $object_name( $data, $optional_data );
-			}
-		}
-
-		$sensei_analysis_object->prepare_items();
-
-		return $sensei_analysis_object;
+		return $this->load_data_object( $name, $data, $optional_data );
 	}
 	/**
 	 * Write array data to CSV
