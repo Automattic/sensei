@@ -80,13 +80,11 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = [
-			'title'             => [ 'user_login', false ],
-			'email'             => [ 'user_email', false ],
-			'active_courses'    => [ 'active_courses', false ],
-			'completed_courses' => [ 'completed_courses', false ],
-			'average_grade'     => [ 'average_grade', false ],
+			'title'           => [ 'display_name', false ],
+			'email'           => [ 'user_email', false ],
+			'date_registered' => [ 'user_registered', false ],
+			'last_activity'   => [ 'last_activity_date', false ],
 		];
-
 		self::assertSame( $expected, $actual );
 	}
 
