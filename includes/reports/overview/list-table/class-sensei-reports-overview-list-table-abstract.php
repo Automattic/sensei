@@ -140,7 +140,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		// Handle orderby.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
 		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
-		if ( empty( $orderby ) || ! array_key_exists( esc_html( $orderby ), $this->get_sortable_columns() ) ) {
+		if ( empty( $orderby ) ) {
 			$orderby = '';
 		}
 
