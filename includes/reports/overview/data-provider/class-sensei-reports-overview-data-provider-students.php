@@ -48,7 +48,11 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$this->date_to   = $filters['last_activity_date_to'] ?? null;
 
 		$query_args = array(
-			'fields' => [ 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' ],
+			'fields'  => [ 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' ],
+			'number'  => $filters['number'],
+			'offset'  => $filters['offset'],
+			'orderby' => $filters['orderby'],
+			'order'   => $filters['order'],
 		);
 
 		if ( ! empty( $filters['search'] ) ) {
