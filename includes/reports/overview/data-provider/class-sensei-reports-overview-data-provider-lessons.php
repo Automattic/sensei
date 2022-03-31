@@ -64,6 +64,12 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		if ( isset( $filters['search'] ) ) {
 			$lessons_args['s'] = $filters['search'];
 		}
+
+		if ( ! empty( $filters['orderby'] ) && ! empty( $filters['order'] ) ) {
+			$query_args['orderby'] = $filters['orderby'];
+			$query_args['order']   = $filters['order'];
+		}
+
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );

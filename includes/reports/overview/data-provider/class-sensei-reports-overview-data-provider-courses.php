@@ -57,19 +57,49 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			'suppress_filters' => 0,
 		);
 
+		if ( ! empty( $filters['orderby'] ) && ! empty( $filters['order'] ) ) {
+			$query_args['orderby'] = $filters['orderby'];
+			$query_args['order']   = $filters['order'];
+		}
+
 		if ( isset( $filters['search'] ) ) {
 			$course_args['s'] = $filters['search'];
 		}
 
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+
+		if ( isset( $query_args['orderby'] ) && ( 'count_of_completions' === $query_args['orderby'] ) ) {
+			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
+		}
+
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
 		$this->last_total_items = $courses_query->found_posts;
 
 		return $courses_query->posts;
+	}
+
+	/**
+	 * Order query based on the custom field.
+	 *
+	 * @since  4.3.0
+	 * @access private
+	 *
+	 * @param array  $args Arguments Old orderby arguments.
+	 * @param object $query Query.
+	 */
+	public function add_orderby_custom_field_to_query( $args, $query ) {
+		global $wpdb;
+
+		return $wpdb->prepare(
+			'%1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
+			$query->query_vars['orderby'],
+			$query->query_vars['order']
+		);
 	}
 
 	/**

@@ -54,7 +54,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		if ( ! empty( $filters['orderby'] ) && ! empty( $filters['order'] ) ) {
 			$query_args['orderby'] = $filters['orderby'];
 			$query_args['order']   = $filters['order'];
-		};
+		}
 
 		if ( ! empty( $filters['search'] ) ) {
 			$query_args['search'] = '*' . trim( $filters['search'], '*' ) . '*';
@@ -71,7 +71,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
-		if ( ! empty( $query_args['orderby'] ) ) {
+		if ( ! empty( $query_args['orderby'] ) && 'last_activity_date' === $query_args['orderby'] ) {
 			add_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 		}
 
