@@ -66,8 +66,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		}
 
 		if ( ! empty( $filters['orderby'] ) && ! empty( $filters['order'] ) ) {
-			$query_args['orderby'] = $filters['orderby'];
-			$query_args['order']   = $filters['order'];
+			$lessons_args['orderby'] = $filters['orderby'];
+			$lessons_args['order']   = $filters['order'];
 		}
 
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
