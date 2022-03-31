@@ -56,6 +56,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 			$query_args['order']   = $filters['order'];
 		}
 
+		$query_args = array_merge( $query_args, $filters );
 		if ( ! empty( $filters['search'] ) ) {
 			$query_args['search'] = '*' . trim( $filters['search'], '*' ) . '*';
 		}
