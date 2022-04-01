@@ -276,72 +276,11 @@ class Sensei_Learner_Management {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( ! empty( $_GET['course_id'] ) ) {
-			$this->output_course_page();
+			require __DIR__ . '/views/html-admin-page-students-course.php';
 		} else {
-			$this->output_main_page();
+			require __DIR__ . '/views/html-admin-page-students-main.php';
 		}
 
-	}
-
-	/**
-	 * Display the students main page.
-	 *
-	 * @since x.x.x
-	 */
-	private function output_main_page() {
-		// Load Learners data.
-		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this->bulk_actions_controller, $this );
-		$sensei_learners_main_view->prepare_items();
-
-		// Wrappers.
-		do_action( 'sensei_learner_admin_before_container' );
-		?>
-		<div id="woothemes-sensei" class="wrap woothemes-sensei">
-		<?php
-		do_action( 'sensei_learner_admin_wrapper_container', 'top' );
-		$sensei_learners_main_view->output_headers();
-		?>
-		<div id="poststuff" class="sensei-learners-wrap">
-			<div class="sensei-learners-main">
-				<?php $sensei_learners_main_view->display(); ?>
-			</div>
-			<div class="sensei-learners-extra">
-				<?php do_action( 'sensei_learner_admin_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
-		?>
-		</div>
-		<?php
-		do_action( 'sensei_learner_admin_after_container' );
-	}
-
-	/**
-	 * Display the course page.
-	 *
-	 * @since x.x.x
-	 */
-	private function output_course_page() {
-		$sensei_learners_main = new Sensei_Learners_Main();
-		$sensei_learners_main->prepare_items();
-
-		// Wrappers.
-		do_action( 'learners_before_container' );
-		do_action( 'learners_wrapper_container', 'top' );
-		$this->learners_headers();
-		?>
-		<div id="poststuff" class="sensei-learners-wrap">
-			<div class="sensei-learners-main">
-				<?php $sensei_learners_main->display(); ?>
-			</div>
-			<div class="sensei-learners-extra">
-				<?php do_action( 'sensei_learners_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'learners_wrapper_container', 'bottom' );
-		do_action( 'learners_after_container' );
 	}
 
 	/**
