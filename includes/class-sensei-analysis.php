@@ -907,20 +907,18 @@ class Sensei_Analysis {
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
 		if ( 'Overview' === $name ) {
 			$factory                = new Sensei_Reports_Overview_List_Table_Factory();
-			$sensei_analysis_object = $factory->create( $data );
+			$sensei_analysis_report_object = $factory->create( $data );
 		} else {
 			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
 			if ( is_null( $optional_data ) ) {
-				$sensei_analysis_object = new $object_name( $data );
+				$sensei_analysis_report_object = new $object_name( $data );
 			} else {
-				$sensei_analysis_object = new $object_name( $data, $optional_data );
+				$sensei_analysis_report_object = new $object_name( $data, $optional_data );
 			}
 		}
-
-		$sensei_analysis_object->prepare_items();
-
-		return $sensei_analysis_object;
+		return $sensei_analysis_report_object;
 	}
+
 	/**
 	 * Write array data to CSV
 	 *
