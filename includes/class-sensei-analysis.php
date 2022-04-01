@@ -899,14 +899,14 @@ class Sensei_Analysis {
 	 * Loads the right object for CSV reporting
 	 *
 	 * @since  1.2.0
-	 * @param  string    $name          Name of class
-	 * @param  integer   $data          constructor arguments
-	 * @param  undefined $optional_data optional constructor arguments
+	 * @param  string    $name          Name of class.
+	 * @param  integer   $data          constructor arguments.
+	 * @param  undefined $optional_data optional constructor arguments.
 	 * @return object                 class instance object
 	 */
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
 		if ( 'Overview' === $name ) {
-			$factory                = new Sensei_Reports_Overview_List_Table_Factory();
+			$factory                       = new Sensei_Reports_Overview_List_Table_Factory();
 			$sensei_analysis_report_object = $factory->create( $data );
 		} else {
 			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
