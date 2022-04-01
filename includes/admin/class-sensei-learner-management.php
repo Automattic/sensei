@@ -79,13 +79,15 @@ class Sensei_Learner_Management {
 		$this->page_slug      = 'sensei_learners';
 		$this->menu_post_type = 'course';
 
+		$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
+
 		// Admin functions.
 		if ( is_admin() ) {
 			add_filter( 'set-screen-option', array( $this, 'set_learner_management_screen_option' ), 20, 3 );
 
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
 
-			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -94,7 +96,6 @@ class Sensei_Learner_Management {
 			add_action( 'admin_init', array( $this, 'handle_learner_actions' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
-			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		}
 
 		// Ajax functions.
@@ -272,12 +273,56 @@ class Sensei_Learner_Management {
 	 * @access public
 	 */
 	public function learners_page() {
-		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
-		if ( $this->bulk_actions_controller->get_view() === $type ) {
-			$this->bulk_actions_controller->learner_admin_page();
-			return;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		if ( ! empty( $_GET['course_id'] ) ) {
+			$this->output_course_page();
+		} else {
+			$this->output_main_page();
 		}
 
+	}
+
+	/**
+	 * Display the students main page.
+	 *
+	 * @since x.x.x
+	 */
+	private function output_main_page() {
+		// Load Learners data.
+		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this->bulk_actions_controller, $this );
+		$sensei_learners_main_view->prepare_items();
+
+		// Wrappers.
+		do_action( 'sensei_learner_admin_before_container' );
+		?>
+		<div id="woothemes-sensei" class="wrap woothemes-sensei">
+		<?php
+		do_action( 'sensei_learner_admin_wrapper_container', 'top' );
+		$sensei_learners_main_view->output_headers();
+		?>
+		<div id="poststuff" class="sensei-learners-wrap">
+			<div class="sensei-learners-main">
+				<?php $sensei_learners_main_view->display(); ?>
+			</div>
+			<div class="sensei-learners-extra">
+				<?php do_action( 'sensei_learner_admin_extra' ); ?>
+			</div>
+		</div>
+		<?php
+		do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
+		?>
+		</div>
+		<?php
+		do_action( 'sensei_learner_admin_after_container' );
+	}
+
+	/**
+	 * Display the course page.
+	 *
+	 * @since x.x.x
+	 */
+	private function output_course_page() {
 		$sensei_learners_main = new Sensei_Learners_Main();
 		$sensei_learners_main->prepare_items();
 
