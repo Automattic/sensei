@@ -916,7 +916,6 @@ class Sensei_Analysis {
 				$sensei_analysis_report_object = new $object_name( $data, $optional_data );
 			}
 		}
-		$sensei_analysis_report_object->prepare_items();
 
 		return $sensei_analysis_report_object;
 	}
