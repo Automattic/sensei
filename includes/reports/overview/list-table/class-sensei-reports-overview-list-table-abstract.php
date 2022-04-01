@@ -179,7 +179,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Process each row.
 		foreach ( $this->items as $item ) {
-			$data[] = $this->get_row_data( $item );
+			$data[] = array_replace( $columns, $this->get_row_data( $item ) );
 		}
 
 		return $data;
