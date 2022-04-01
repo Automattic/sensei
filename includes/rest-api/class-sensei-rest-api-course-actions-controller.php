@@ -54,6 +54,17 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 				],
 			]
 		);
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/remove',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'remove_users_from_courses' ],
+					'permission_callback' => [ $this, 'can_add_users_to_courses' ],
+				],
+			]
+		);
 	}
 
 	/**
@@ -78,6 +89,31 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 		}
 
 		return new WP_REST_Response( null, WP_HTTP::OK );
+	}
+
+	/**
+	 * Remove users from courses.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function remove_users_from_courses( WP_REST_Request $request ) : WP_REST_Response {
+		$params     = $request->get_params();
+		$user_ids   = $params['user_ids'];
+		$course_ids = $params['course_ids'];
+		$result     = [];
+		foreach ( $user_ids as $user_id ) {
+			$user = new WP_User( $user_id );
+
+			if ( $user->exists() ) {
+				foreach ( $course_ids as $course_id ) {
+					$course_enrolment                 = Sensei_Course_Enrolment::get_course_instance( $course_id );
+					$result[ $user_id ][ $course_id ] = $course_enrolment->withdraw( $user_id );
+				}
+			}
+		}
+		return new WP_REST_Response( $result, WP_HTTP::OK );
 	}
 
 	/**
