@@ -92,4 +92,29 @@ class Sensei_REST_API_Course_Actions_Controller_Test extends WP_Test_REST_TestCa
 		/* Assert. */
 		$this->assertEquals( 403, $response->get_status() );
 	}
+
+	public function testAddUsersToCourses_RequestGiven_EnrolsUserForCourse() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-actions/add' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'user_ids'   => [ $user_id ],
+					'course_ids' => [ $course_id ],
+				]
+			)
+		);
+		$this->server->dispatch( $request );
+
+		/* Assert. */
+		$enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$this->assertTrue( $enrolment->is_enrolled( $user_id ) );
+	}
 }
