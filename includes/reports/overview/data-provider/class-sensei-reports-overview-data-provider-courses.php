@@ -53,7 +53,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			'posts_per_page'   => $filters['number'],
 			'offset'           => $filters['offset'],
 			'orderby'          => $filters['orderby'] ?? '',
-			'order'            => $filters['order'] ?? 'DESC',
+			'order'            => $filters['order'] ?? 'ASC',
 			'suppress_filters' => 0,
 		);
 

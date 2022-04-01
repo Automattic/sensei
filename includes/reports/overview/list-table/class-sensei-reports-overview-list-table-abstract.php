@@ -137,17 +137,28 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		$this->csv_output = true;
 
+		// Handle orderby.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$orderby = $this->get_orderby_value();
+		if ( empty( $orderby ) || ! array_key_exists( esc_html( $orderby ), $this->get_sortable_columns() ) ) {
+			$orderby = '';
+		}
+
+		// Handle order.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
+		$order = $this->get_order_value();
+		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
+
 		$args = array(
 			'number'  => -1,
 			'offset'  => 0,
-			'orderby' => esc_html( $this->get_orderby_value() ),
-			'order'   => esc_html( $this->get_order_value() ),
+			'orderby' => $orderby,
+			'order'   => $order,
 		);
 
 		// Handle search.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
 		$search = sanitize_text_field( wp_unslash( $_GET['s'] ?? '' ) );
-
 		if ( ! empty( $search ) ) {
 			$args['search'] = esc_html( $search );
 		}
