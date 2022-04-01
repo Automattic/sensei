@@ -2,7 +2,7 @@
 /**
  * Students page course view.
  *
- * This view displays the students data filtered by course.
+ * This view displays the students data in a course context.
  *
  * @package sensei-lms
  * @since x.x.x
