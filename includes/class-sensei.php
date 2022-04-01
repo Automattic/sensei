@@ -139,7 +139,7 @@ class Sensei_Main {
 	public $teacher;
 
 	/**
-	 * @var Sensei_Learners
+	 * @var Sensei_Learner_Management
 	 */
 	public $learners;
 

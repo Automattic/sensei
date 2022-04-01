@@ -12,7 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-$sensei_list_table = new Sensei_Learners_Admin_Bulk_Actions_View( $this->bulk_actions_controller, $this );
+$sensei_list_table = new Sensei_Learners_Admin_Bulk_Actions_View(
+	Sensei()->learners->bulk_actions_controller,
+	Sensei()->learners
+);
 $sensei_list_table->prepare_items();
 
 do_action( 'sensei_learner_admin_before_container' );
