@@ -74,7 +74,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 					[ $post2, [ 'c' => 3 ] ],
 				]
 			);
-		$list_table->columns = [ 'd', 'e', 'f' ];
+		$list_table->columns = array_flip( [ 'd', 'e', 'f' ] );
 
 		/* Act. */
 		$actual = $list_table->generate_report();
