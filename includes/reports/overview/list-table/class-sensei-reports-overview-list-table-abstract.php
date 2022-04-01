@@ -175,11 +175,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			$column_headers[] = $title;
 		}
 
-		$data[] = $column_headers;
-
+		$data[]                   = $column_headers;
+		$columns_keys_assoc_array = array_fill_keys( array_keys( $columns ), '' );
 		// Process each row.
 		foreach ( $this->items as $item ) {
-			$data[] = array_replace( $columns, $this->get_row_data( $item ) );
+			$data[] = array_replace( $columns_keys_assoc_array, $this->get_row_data( $item ) );
 		}
 
 		return $data;

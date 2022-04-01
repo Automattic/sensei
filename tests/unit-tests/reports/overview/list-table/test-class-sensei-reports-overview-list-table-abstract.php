@@ -74,7 +74,8 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 					[ $post2, [ 'c' => 3 ] ],
 				]
 			);
-		$list_table->columns = array_flip( [ 'd', 'e', 'f' ] );
+		$list_table->columns       = array_combine( [ 'd', 'e', 'f' ], [ 'd', 'e', 'f' ] );
+		$columns_with_empty_values = array_fill_keys( array_keys( $list_table->columns ), '' );
 
 		/* Act. */
 		$actual = $list_table->generate_report();
@@ -82,8 +83,8 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$expected = [
 			[ 'd', 'e', 'f' ],
-			[ 'b' => 2 ],
-			[ 'c' => 3 ],
+			array_merge( $columns_with_empty_values, [ 'b' => 2 ] ),
+			array_merge( $columns_with_empty_values, [ 'c' => 3 ] ),
 		];
 		self::assertSame( $expected, $actual );
 	}
