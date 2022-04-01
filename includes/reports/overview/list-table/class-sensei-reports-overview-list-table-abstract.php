@@ -146,7 +146,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle order.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$order = $this->get_order_value();
+		$order = sanitize_key( wp_unslash( $_GET['order'] ?? 'ASC' ) );
 		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$args = array(
