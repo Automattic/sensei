@@ -179,6 +179,7 @@ class Sensei_Learner_Management {
 
 		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-student-action-menu', 'admin/students/student-action-menu/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-student-modal', 'admin/students/student-modal/index.js', [], true );
 
 		wp_localize_script(
 			'sensei-learners-general',
@@ -215,10 +216,12 @@ class Sensei_Learner_Management {
 	 * @since 1.6.0
 	 */
 	public function enqueue_styles() {
-		// JQuery UI doesn't actually require sensei-wp-components, but the StudentActionMenu component does.
-		// Since StudentActionMenu doesn't currently have its own CSS file, I'm adding the dependency here
-		// as a workaround.
-		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css', [ 'sensei-wp-components' ] );
+		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
+		Sensei()->assets->enqueue(
+			'sensei-student-modal-style',
+			'admin/students/student-modal/student-modal.css',
+			[ 'sensei-wp-components', 'sensei-editor-components-style' ]
+		);
 	}
 
 	/**

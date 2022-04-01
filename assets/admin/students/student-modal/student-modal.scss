@@ -1,0 +1,29 @@
+@import '../../../shared/styles/wp-colors';
+
+.sensei-student-modal {
+	width: 455px;
+
+	&__header {
+		display: block;
+		margin-top: 30px;
+	}
+
+	.sensei-course-list {
+		border: 1px solid #8c8f94;
+	}
+
+	.sensei-course-list__item--empty {
+		margin: 0;
+		padding: 10px;
+	}
+
+	.sensei-student-modal__action {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 40px;
+
+		&--remove {
+			color: $alert-red;
+		}
+	}
+}
