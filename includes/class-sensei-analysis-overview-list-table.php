@@ -351,7 +351,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		// Process each row.
 		foreach ( $this->items as $item ) {
-			$data[] = $this->get_row_data( $item );
+			$data[] = array_replace( $columns, $this->get_row_data( $item ) );
 		}
 
 		return $data;
