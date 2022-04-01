@@ -61,7 +61,7 @@
     "@testing-library/react": "11.2.6",
     "@testing-library/react-hooks": "5.1.1",
     "@testing-library/user-event": "12.8.3",
-    "@woocommerce/e2e-environment": "0.1.5",
+    "@woocommerce/e2e-environment": "0.3.0",
     "@wordpress/babel-plugin-makepot": "4.1.0",
     "@wordpress/babel-preset-default": "5.1.0",
     "@wordpress/e2e-test-utils": "5.1.0",
