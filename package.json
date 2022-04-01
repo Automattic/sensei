@@ -80,7 +80,7 @@
     "expect-puppeteer": "4.4.0",
     "gettext-parser": "4.0.4",
     "husky": "6.0.0",
-    "jsdoc": "3.6.7",
+    "jsdoc": "3.6.8",
     "lint-staged": "10.2.11",
     "mkdirp": "0.5.5",
     "postcss-color-function": "4.1.0",
