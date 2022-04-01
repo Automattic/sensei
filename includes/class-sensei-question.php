@@ -1129,6 +1129,7 @@ class Sensei_Question {
 	public static function get_template_data( $question_id, $quiz_id ) {
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_id = get_current_user_id();
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
 		// backwards compatibility
@@ -1145,14 +1146,14 @@ class Sensei_Question {
 		$data['lesson_id']              = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$data['type']                   = Sensei()->question->get_question_type( $question_id );
 		$data['question_grade']         = Sensei()->question->get_question_grade( $question_id );
-		$data['user_question_grade']    = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+		$data['user_question_grade']    = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 		$data['question_right_answer']  = get_post_meta( $question_id, '_question_right_answer', true );
 		$data['question_wrong_answers'] = get_post_meta( $question_id, '_question_wrong_answers', true );
-		$data['user_answer_entry']      = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, get_current_user_id() );
-		$data['lesson_completed']       = Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() );
+		$data['user_answer_entry']      = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
+		$data['lesson_completed']       = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
 		$data['quiz_grade_type']        = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$data['reset_quiz_allowed']     = $reset_allowed;
-		$data['quiz_is_completed']      = Sensei_Quiz::is_quiz_completed();
+		$data['quiz_is_completed']      = Sensei_Quiz::is_quiz_completed($quiz_id, $user_id);
 
 		/**
 		 * Filter the question template data. This filter fires in
