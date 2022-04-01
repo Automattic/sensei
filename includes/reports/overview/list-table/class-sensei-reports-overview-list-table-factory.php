@@ -26,6 +26,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 	 */
 	public function create( string $type ) {
 		switch ( $type ) {
+			case 'users':
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
 					Sensei()->grading,

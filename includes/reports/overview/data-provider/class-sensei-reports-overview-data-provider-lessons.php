@@ -55,8 +55,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $filters['number'],
 			'offset'           => $filters['offset'],
-			'orderby'          => $filters['orderby'],
-			'order'            => $filters['order'],
+			'orderby'          => $filters['orderby'] ?? '',
+			'order'            => $filters['order'] ?? 'ASC',
 			'post__in'         => $course_lessons,
 			'suppress_filters' => 0,
 		);

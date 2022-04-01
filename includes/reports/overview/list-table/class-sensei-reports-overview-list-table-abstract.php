@@ -139,14 +139,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 		// Handle orderby.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
-		if ( empty( $orderby ) || ! array_key_exists( esc_html( $orderby ), $this->get_sortable_columns() ) ) {
-			$orderby = '';
-		}
+		$orderby = $this->get_orderby_value();
 
 		// Handle order.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
-		$order = sanitize_key( wp_unslash( $_GET['order'] ?? 'ASC' ) );
+		$order = $this->get_order_value();
 		$order = ( 'ASC' === strtoupper( $order ) ) ? 'ASC' : 'DESC';
 
 		$args = array(
@@ -312,6 +309,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
 				'post_type'              => $this->post_type,
+				'orderby'                => $this->get_orderby_value(),
+				'order'                  => $this->get_order_value(),
 				'course_filter'          => $this->get_course_filter_value(),
 				'start_date'             => $this->get_start_date_filter_value(),
 				'end_date'               => $this->get_end_date_filter_value(),
@@ -337,6 +336,26 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	protected function get_course_filter_value(): int {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['course_filter'] ) ? (int) $_GET['course_filter'] : 0;
+	}
+
+	/**
+	 * Get the orderby value.
+	 *
+	 * @return string orderby value.
+	 */
+	private function get_orderby_value(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['orderby'] ) ? sanitize_key( wp_unslash( $_GET['orderby'] ) ) : '';
+	}
+
+	/**
+	 * Get the order value.
+	 *
+	 * @return string order value.
+	 */
+	private function get_order_value(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['order'] ) ? sanitize_key( wp_unslash( $_GET['order'] ) ) : 'ASC';
 	}
 
 	/**
