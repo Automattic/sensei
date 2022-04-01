@@ -5,9 +5,9 @@
  *
  * @covers Sensei_REST_API_Course_Actions_Controller
  */
-class Sensei_REST_API_Course_Actions_Controller_Test extends WP_UnitTestCase {
+class Sensei_REST_API_Course_Actions_Controller_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
-
+	use Sensei_Course_Enrolment_Test_Helpers;
 	/**
 	 * A server instance that we use in tests to dispatch requests.
 	 *
@@ -35,6 +35,9 @@ class Sensei_REST_API_Course_Actions_Controller_Test extends WP_UnitTestCase {
 		do_action( 'rest_api_init' );
 
 		$this->factory = new Sensei_Factory();
+
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
 	}
 
 	public function tearDown() {
@@ -42,7 +45,7 @@ class Sensei_REST_API_Course_Actions_Controller_Test extends WP_UnitTestCase {
 		$this->factory->tearDown();
 	}
 
-	public function testAddUsersToCourses_RequestsGiven_ReturnsSuccessfulResponse() {
+	public function testAddUsersToCourses_RequestGiven_ReturnsSuccessfulResponse() {
 		/* Arrange. */
 		$user_ids   = $this->factory->user->create_many( 2 );
 		$course_ids = $this->factory->course->create_many( 2 );
