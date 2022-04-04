@@ -62,6 +62,9 @@ const CourseList = () => {
 
 	return (
 		<>
+			<span className="sensei-course-list__header">
+				{ __( 'Your Courses', 'sensei-lms' ) }
+			</span>
 			<ul className="sensei-course-list">
 				{ courses.map( coursesMap ) }
 			</ul>

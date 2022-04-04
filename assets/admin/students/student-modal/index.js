@@ -52,9 +52,6 @@ const StudentModal = ( { action, onClose } ) => {
 				placeholder={ __( 'Search courses', 'sensei-lms' ) }
 				iconRight={ search }
 			/>
-			<span className="sensei-student-modal__header">
-				{ __( 'Your Courses', 'sensei-lms' ) }
-			</span>
 			<CourseList />
 			<div className="sensei-student-modal__action">
 				{ 'add' === action ? addButton : removeButton }
