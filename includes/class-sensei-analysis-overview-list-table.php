@@ -32,6 +32,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @since  1.2.0
 	 */
 	public function __construct( $type = 'users' ) {
+		_deprecated_function( __METHOD__, '4.3.0', 'Sensei_Reports_Overview_List_Table_Factory::create()' );
+
 		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ), true ) ? $type : 'users';
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
