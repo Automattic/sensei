@@ -9,30 +9,16 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
-import types from '../answer-blocks';
 
-let options = Object.entries( types ).map( ( [ value, settings ] ) => ( {
-	...settings,
-	label: settings.title,
-	value,
-} ) );
-/**
- * Filters the available question type options.
- *
- * @since 4.1.0
- *
- * @param {Array} options The available question type options.
- * @return {Array} The filtered question type options.
- */
-options = applyFilters( 'senseiQuestionTypeToolbarOptions', options );
 /**
  * Question type selector toolbar control.
  *
  * @param {Object}   props
  * @param {string}   props.value    Selected type.
  * @param {Function} props.onSelect Selection callback.
+ * @param {Array}    props.options  Question options.
  */
-export const QuestionTypeToolbar = ( { value, onSelect } ) => {
+export const QuestionTypeToolbar = ( { value, onSelect, options } ) => {
 	return (
 		<Toolbar className="sensei-lms-question-block__type-selector__toolbar">
 			<ToolbarDropdown
