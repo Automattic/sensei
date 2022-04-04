@@ -1576,7 +1576,7 @@ class Sensei_Core_Modules {
 	 * Data for 'Module' column Analysis Lesson Overview table
 	 *
 	 * @since 1.8.0
-	 * @deprecated x.x.x
+	 * @deprecated 4.3.0
 	 *
 	 * @param  array   $columns Table column data
 	 * @param  WP_Post $lesson
@@ -1584,7 +1584,7 @@ class Sensei_Core_Modules {
 	 */
 	public function analysis_overview_column_data( $columns, $lesson ) {
 
-		_deprecated_function( __METHOD__, 'x.x.x' );
+		_deprecated_function( __METHOD__, '4.3.0' );
 
 		if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
 			$lesson_module      = '';
