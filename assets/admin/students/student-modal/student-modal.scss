@@ -1,40 +1,47 @@
 @import '../../../shared/styles/wp-colors';
 
 .sensei-student-modal {
-	width: 455px;
+	max-width: 697px;
+	width: 100%;
 
-	&__header {
-		display: block;
-		margin-top: 30px;
-	}
-
-	.sensei-course-list {
+	&__course-list {
 		border: 1px solid #8c8f94;
-	}
+		height: calc(100vh - 340px);
+		overflow: auto;
 
-	.sensei-course-list__item--empty {
-		margin: 0;
-		padding: 10px;
-	}
-
-	.sensei-course-list__item {
-		margin: 0;
-		padding: 15px 25px;
-
-		.components-base-control {
-			display: inline-block;
+		@media (min-width: 600px) {
+			height: 300px;
 		}
 
-		.components-base-control__field {
+		&--loading {
+			text-align: center;
+			padding: 20px;
+		}
+
+		&__header {
+			display: block;
+			margin-top: 30px;
+		}
+
+		&__item {
 			margin: 0;
-		}
+			padding: 15px 25px;
 
-		&:nth-child(odd) {
-			background-color: #f6f7f7;
+			.components-base-control {
+				display: inline-block;
+			}
+
+			.components-base-control__field {
+				margin: 0;
+			}
+
+			&:nth-child(odd) {
+				background-color: #f6f7f7;
+			}
 		}
 	}
 
-	.sensei-student-modal__action {
+	&__action {
 		display: flex;
 		justify-content: flex-end;
 		margin-top: 40px;

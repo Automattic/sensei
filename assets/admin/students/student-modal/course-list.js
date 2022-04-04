@@ -31,7 +31,7 @@ const CourseList = () => {
 
 	if ( isFetching ) {
 		return (
-			<div className="sensei-course-list--loading">
+			<div className="sensei-student-modal__course-list--loading">
 				<Spinner />
 			</div>
 		);
@@ -47,7 +47,10 @@ const CourseList = () => {
 
 		return (
 			<>
-				<li className="sensei-course-list__item" key={ courseId }>
+				<li
+					className="sensei-student-modal__course-list__item"
+					key={ courseId }
+				>
 					<CheckboxControl
 						id={ `course-${ courseId }` }
 						title={ title }
@@ -62,10 +65,10 @@ const CourseList = () => {
 
 	return (
 		<>
-			<span className="sensei-course-list__header">
+			<span className="sensei-student-modal__course-list__header">
 				{ __( 'Your Courses', 'sensei-lms' ) }
 			</span>
-			<ul className="sensei-course-list">
+			<ul className="sensei-student-modal__course-list">
 				{ courses.map( coursesMap ) }
 			</ul>
 		</>
