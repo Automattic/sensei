@@ -196,12 +196,12 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 
 		foreach ( $modules_terms as $term ) {
 			if ( $this->csv_output ) {
-				$module = $term->name;
+				$module = esc_html( $term->name );
 			} else {
 				$module = sprintf(
 					'<a href="%s">%s</a>',
-					admin_url( 'edit-tags.php?action=edit&taxonomy=module&tag_ID=' . $term->term_id ),
-					$term->name
+					esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=module&tag_ID=' . $term->term_id ) ),
+					esc_html( $term->name )
 				);
 			}
 
