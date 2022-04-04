@@ -74,7 +74,7 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name           = __( 'Student Management', 'sensei-lms' );
+		$this->name           = __( 'Students', 'sensei-lms' );
 		$this->file           = $file;
 		$this->page_slug      = 'sensei_learners';
 		$this->menu_post_type = 'course';
