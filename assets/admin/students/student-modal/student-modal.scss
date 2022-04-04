@@ -17,6 +17,23 @@
 		padding: 10px;
 	}
 
+	.sensei-course-list__item {
+		margin: 0;
+		padding: 15px 25px;
+
+		.components-base-control {
+			display: inline-block;
+		}
+
+		.components-base-control__field {
+			margin: 0;
+		}
+
+		&:nth-child(odd) {
+			background-color: #f6f7f7;
+		}
+	}
+
 	.sensei-student-modal__action {
 		display: flex;
 		justify-content: flex-end;
