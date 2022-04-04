@@ -111,6 +111,30 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022.04.04 - version 4.3.0
+* New: Add a database seed WP-CLI command [#4882](https://github.com/Automattic/sensei/pull/4882)
+* New: Add Average Progress to courses report [#4917](https://github.com/Automattic/sensei/pull/4917)
+* New: Add Date Registered column to students report [#4952](https://github.com/Automattic/sensei/pull/4952)
+* New: Display email address on "Students taking this course" report [#4955](https://github.com/Automattic/sensei/pull/4955)
+* Tweak: Improve the students export performance [#4932](https://github.com/Automattic/sensei/pull/4932)
+* Tweak: Extract `get_courses` with dependent methods from `Sensei_Analysis_Overview_List_Table` [#4938](https://github.com/Automattic/sensei/pull/4938)
+* Tweak: Move focus toggle to the sidebar in learning mode [#4942](https://github.com/Automattic/sensei/pull/4942)
+* Tweak: Refactor the students overview report code [#4947](https://github.com/Automattic/sensei/pull/4947)
+* Tweak: Refactor lesson code from reports overview [#4964](https://github.com/Automattic/sensei/pull/4964)
+* Tweak: Remove sortable from columns that can't be sorted [#4965](https://github.com/Automattic/sensei/pull/4965)
+* Tweak: Update the reports documentation link [#4969](https://github.com/Automattic/sensei/pull/4969)
+* Tweak: Deprecate Sensei_Analysis_Overview_List_Table class [#4982](https://github.com/Automattic/sensei/pull/4982)
+* Fix: Video embed width [#4925](https://github.com/Automattic/sensei/pull/4925)
+* Fix: Incorrect i18n extraction from js files [#4935](https://github.com/Automattic/sensei/pull/4935)
+* Fix: Empty datepicker UI box showing in the footer [#4937](https://github.com/Automattic/sensei/pull/4937)
+* Fix: Only first row exporting for some reports [#4944](https://github.com/Automattic/sensei/pull/4944)
+* Fix: Sorting for students reports table [#4960](https://github.com/Automattic/sensei/pull/4960)
+* Fix: Sorting for Students report [#4970](https://github.com/Automattic/sensei/pull/4970)
+* Fix: Students report not taking pagination and sorting into cosideration [#4972](https://github.com/Automattic/sensei/pull/4972)
+* Fix: Use Sensei Reports Factory for generating report [#4973](https://github.com/Automattic/sensei/pull/4973)
+* Fix: Wrong data when exporting lessons report [#4975](https://github.com/Automattic/sensei/pull/4975)
+* Fix: "Days to Completion" and "Module" columns are swapped when exporting lessons [#4978](https://github.com/Automattic/sensei/pull/4978)
+
 2022.03.22 - version 4.2.0
 * New: Replace `Date Registered` column with `Last Activity` [#4863](https://github.com/Automattic/sensei/pull/4863)
 * New: Add totals to Students report [#4865](https://github.com/Automattic/sensei/pull/4865)
@@ -142,29 +166,5 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 2022.03.02 - version 4.1.1
 * Add question subtitle support [#4872](https://github.com/Automattic/sensei/pull/4872)
-
-2022.02.23 - version 4.1.0
-* Remove unneeded notices [#4862](https://github.com/Automattic/sensei/pull/4862)
-* Add lesson actions and navigation to the bottom of the content, for screen reader only [#4861](https://github.com/Automattic/sensei/pull/4861)
-* Add build/test JS files to the list of files that can use devDependencies [#4859](https://github.com/Automattic/sensei/pull/4859)
-* Fix addEventListener when no element is found [#4858](https://github.com/Automattic/sensei/pull/4858)
-* Update ReadMe [#4856](https://github.com/Automattic/sensei/pull/4856)
-* Open links in new tab for WooCommerce & Content Drip settings promos [#4855](https://github.com/Automattic/sensei/pull/4855)
-* Add conditional content block to lessons [#4850](https://github.com/Automattic/sensei/pull/4850)
-* Fix legacy quiz styles in learning mode [#4849](https://github.com/Automattic/sensei/pull/4849)
-* Allow user re-enrolling even when removed [#4848](https://github.com/Automattic/sensei/pull/4848)
-* Fix course ordering not working on admin dashboard and shortcode pages [#4837](https://github.com/Automattic/sensei/pull/4837)
-* Extend quiz settings inspector panel [#4826](https://github.com/Automattic/sensei/pull/4826)
-* Fix issue causing debug text on activate [#4824](https://github.com/Automattic/sensei/pull/4824)
-* Add content drip promo banner to settings [#4822](https://github.com/Automattic/sensei/pull/4822)
-* Add upgrade nudge for access period [#4821](https://github.com/Automattic/sensei/pull/4821)
-* Add upgrade nudge to Quiz block settings [#4816](https://github.com/Automattic/sensei/pull/4816)
-* Add Ordering promo question type [#4815](https://github.com/Automattic/sensei/pull/4815)
-* Add Pricing section to course side bar for upgrading to Sensei Pro [#4810](https://github.com/Automattic/sensei/pull/4810)
-* Add content drip upgrade metabox to edit lesson screen [#4809](https://github.com/Automattic/sensei/pull/4809)
-* New WooCommerce settings section [#4801](https://github.com/Automattic/sensei/pull/4801)
-* Add optional 'style' option for admin notices [#4797](https://github.com/Automattic/sensei/pull/4797)
-* Add upgrade header to Extensions page [#4794](https://github.com/Automattic/sensei/pull/4794)
-* Order lessons between modules [#4727](https://github.com/Automattic/sensei/pull/4727)
 
 [See changelog for all versions](https://github.com/Automattic/sensei/releases).
