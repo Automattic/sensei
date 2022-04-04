@@ -1129,11 +1129,11 @@ class Sensei_Question {
 	public static function get_template_data( $question_id, $quiz_id ) {
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
-		$user_id = get_current_user_id();
+		$user_id   = get_current_user_id();
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
 		// backwards compatibility
-		if ( 'on' == $reset_allowed ) {
+		if ( 'on' === $reset_allowed ) {
 			$reset_allowed = 1;
 		}
 
@@ -1153,7 +1153,7 @@ class Sensei_Question {
 		$data['lesson_completed']       = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
 		$data['quiz_grade_type']        = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$data['reset_quiz_allowed']     = $reset_allowed;
-		$data['quiz_is_completed']      = Sensei_Quiz::is_quiz_completed($quiz_id, $user_id);
+		$data['quiz_is_completed']      = Sensei_Quiz::is_quiz_completed( $quiz_id, $user_id );
 
 		/**
 		 * Filter the question template data. This filter fires in
