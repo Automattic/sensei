@@ -83,7 +83,6 @@ class Sensei_Core_Modules {
 
 		// Add 'Modules' columns to Analysis tables
 		add_filter( 'sensei_analysis_overview_columns', array( $this, 'analysis_overview_column_title' ), 10, 2 );
-		add_filter( 'sensei_analysis_overview_column_data', array( $this, 'analysis_overview_column_data' ), 10, 3 );
 		add_filter( 'sensei_analysis_course_columns', array( $this, 'analysis_course_column_title' ), 10, 2 );
 		add_filter( 'sensei_analysis_course_column_data', array( $this, 'analysis_course_column_data' ), 10, 3 );
 
@@ -1577,12 +1576,16 @@ class Sensei_Core_Modules {
 	 * Data for 'Module' column Analysis Lesson Overview table
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.3.0
 	 *
 	 * @param  array   $columns Table column data
 	 * @param  WP_Post $lesson
 	 * @return array              Updated column data
 	 */
 	public function analysis_overview_column_data( $columns, $lesson ) {
+
+		_deprecated_function( __METHOD__, '4.3.0' );
+
 		if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
 			$lesson_module      = '';
 			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );

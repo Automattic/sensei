@@ -157,12 +157,13 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			);
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
-
 		}
+
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
 				'title'              => $lesson_title,
+				'lesson_module'      => $this->get_row_module( $item->ID ),
 				'students'           => $lesson_students,
 				'last_activity'      => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 				'completions'        => $lesson_completions,
@@ -181,6 +182,35 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 
 		return $escaped_column_data;
 	}
+
+	/**
+	 * Get the module data for a row.
+	 *
+	 * @param int $lesson_id The lesson post ID.
+	 *
+	 * @return string
+	 */
+	private function get_row_module( int $lesson_id ): string {
+		$module        = '';
+		$modules_terms = wp_get_post_terms( $lesson_id, 'module' );
+
+		foreach ( $modules_terms as $term ) {
+			if ( $this->csv_output ) {
+				$module = esc_html( $term->name );
+			} else {
+				$module = sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( admin_url( 'edit-tags.php?action=edit&taxonomy=module&tag_ID=' . $term->term_id ) ),
+					esc_html( $term->name )
+				);
+			}
+
+			break;
+		}
+
+		return $module;
+	}
+
 	/**
 	 * Get completion rate for a lesson.
 	 *
