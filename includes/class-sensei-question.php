@@ -1154,7 +1154,7 @@ class Sensei_Question {
 		$data['quiz_grade_type']        = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$data['reset_quiz_allowed']     = $reset_allowed;
 		$data['quiz_is_completed']      = Sensei_Quiz::is_quiz_completed( $quiz_id, $user_id );
-
+		$data['lesson_complete']        = $data['lesson_completed'];
 		/**
 		 * Filter the question template data. This filter fires in
 		 * the get_template_data function.
