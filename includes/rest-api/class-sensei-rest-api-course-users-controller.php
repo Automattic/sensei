@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains the Sensei_REST_API_Course_Actions_Controller class.
+ * File contains the Sensei_REST_API_Course_Users_Controller class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Course actions controller class.
+ * Course users actions controller class.
  *
- * @since 4.4.0
+ * @since x.x.x
  */
-class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
+class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Routes namespace.
@@ -28,7 +28,7 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'course-actions';
+	protected $rest_base = 'course-users/batch';
 
 	/**
 	 * Sensei_REST_API_Course_Structure_Controller constructor.
@@ -45,12 +45,13 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/add',
+			$this->rest_base,
 			[
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'add_users_to_courses' ],
 					'permission_callback' => [ $this, 'can_add_users_to_courses' ],
+					'args'                => $this->get_args_schema(),
 				],
 			]
 		);
@@ -123,7 +124,7 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 	 *
 	 * @return bool
 	 */
-	public function can_add_users_to_courses( WP_REST_Request $request ) {
+	public function can_add_users_to_courses( WP_REST_Request $request ): bool {
 		$params          = $request->get_params();
 		$course_ids      = $params['course_ids'];
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
@@ -134,5 +135,35 @@ class Sensei_REST_API_Course_Actions_Controller extends \WP_REST_Controller {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Schema definition for endpoint arguments.
+	 *
+	 * @return array[]
+	 */
+	public function get_args_schema(): array {
+		return [
+			'course_ids' => [
+				'description' => 'Course Ids to perform the action on.',
+				'type'        => 'array',
+				'minItems'    => 1,
+				'uniqueItems' => true,
+				'items'       => [
+					'type' => 'integer',
+				],
+				'required'    => true,
+			],
+			'user_ids'   => [
+				'description' => 'Student Ids to perform the action on',
+				'type'        => 'array',
+				'minItems'    => 1,
+				'uniqueItems' => true,
+				'items'       => [
+					'type' => 'integer',
+				],
+				'required'    => true,
+			],
+		];
 	}
 }
