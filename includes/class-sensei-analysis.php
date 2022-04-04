@@ -240,22 +240,28 @@ class Sensei_Analysis {
 	}
 
 	/**
-	 * load_data_object creates new instance of class
+	 * The load_data_object method creates new instance of class
 	 *
-	 * @param  string    $name          Name of class
-	 * @param  integer   $data          constructor arguments
-	 * @param  undefined $optional_data optional constructor arguments
-	 * @return object                 class instance object
+	 * @param  string $name          Name of class.
+	 * @param  mixed  $data          Constructor arguments.
+	 * @param  mixed  $optional_data Optional constructor arguments.
+	 * @return Sensei_List_Table     Class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
-		// Load Analysis data
-		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
-		if ( is_null( $optional_data ) ) {
-			$sensei_analysis_object = new $object_name( $data );
+		if ( 'Overview' === $name ) {
+			$factory                = new Sensei_Reports_Overview_List_Table_Factory();
+			$sensei_analysis_object = $factory->create( $data );
 		} else {
-			$sensei_analysis_object = new $object_name( $data, $optional_data );
+			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
+			if ( is_null( $optional_data ) ) {
+				$sensei_analysis_object = new $object_name( $data );
+			} else {
+				$sensei_analysis_object = new $object_name( $data, $optional_data );
+			}
 		}
+
 		$sensei_analysis_object->prepare_items();
+
 		return $sensei_analysis_object;
 	}
 
@@ -283,7 +289,7 @@ class Sensei_Analysis {
 
 		$this->check_course_lesson( $course_id, $lesson_id, $user_id );
 
-		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
+		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : 'students';
 
 		if ( 0 < $lesson_id ) {
 			// Viewing a specific Lesson and all its Learners
@@ -893,18 +899,24 @@ class Sensei_Analysis {
 	 * Loads the right object for CSV reporting
 	 *
 	 * @since  1.2.0
-	 * @param  string    $name          Name of class
-	 * @param  integer   $data          constructor arguments
-	 * @param  undefined $optional_data optional constructor arguments
+	 * @param  string    $name          Name of class.
+	 * @param  integer   $data          constructor arguments.
+	 * @param  undefined $optional_data optional constructor arguments.
 	 * @return object                 class instance object
 	 */
 	public function load_report_object( $name = '', $data = 0, $optional_data = null ) {
-		$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
-		if ( is_null( $optional_data ) ) {
-			$sensei_analysis_report_object = new $object_name( $data );
+		if ( 'Overview' === $name ) {
+			$factory                       = new Sensei_Reports_Overview_List_Table_Factory();
+			$sensei_analysis_report_object = $factory->create( $data );
 		} else {
-			$sensei_analysis_report_object = new $object_name( $data, $optional_data );
+			$object_name = 'Sensei_Analysis_' . $name . '_List_Table';
+			if ( is_null( $optional_data ) ) {
+				$sensei_analysis_report_object = new $object_name( $data );
+			} else {
+				$sensei_analysis_report_object = new $object_name( $data, $optional_data );
+			}
 		}
+
 		return $sensei_analysis_report_object;
 	}
 
