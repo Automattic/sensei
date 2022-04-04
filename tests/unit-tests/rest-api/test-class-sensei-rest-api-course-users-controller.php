@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Test for Sensei_REST_API_Course_Actions_Controller.
+ * Test for Sensei_REST_API_Course_Users_Controller.
  *
- * @covers Sensei_REST_API_Course_Actions_Controller
+ * @covers Sensei_REST_API_Course_Users_Controller
  */
-class Sensei_REST_API_Course_Actions_Controller_Test extends WP_Test_REST_TestCase {
+class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	/**
@@ -53,7 +53,7 @@ class Sensei_REST_API_Course_Actions_Controller_Test extends WP_Test_REST_TestCa
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-actions/add' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-users/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -77,7 +77,7 @@ class Sensei_REST_API_Course_Actions_Controller_Test extends WP_Test_REST_TestCa
 		$this->login_as_student();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-actions/add' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-users/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -101,7 +101,7 @@ class Sensei_REST_API_Course_Actions_Controller_Test extends WP_Test_REST_TestCa
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-actions/add' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-users/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
