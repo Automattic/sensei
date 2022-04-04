@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author Automattic
  *
  * @since 1.2.0
+ * @deprecated 4.3.0 Use Sensei_Reports_Overview_List_Table_Factory to create proper instances.
  */
 class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
@@ -26,11 +27,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Constructor
 	 *
+	 * @param string $type Report type.
+	 *
 	 * @since  1.2.0
-	 * @return  void
 	 */
 	public function __construct( $type = 'users' ) {
-		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
+		_deprecated_function( __METHOD__, '4.3.0', 'Sensei_Reports_Overview_List_Table_Factory::create()' );
+
+		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ), true ) ? $type : 'users';
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor.
