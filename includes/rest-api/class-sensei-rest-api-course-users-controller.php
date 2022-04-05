@@ -55,8 +55,8 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 				],
 				[
 					'methods'             => WP_REST_Server::DELETABLE,
-					'callback'            => [ $this, 'remove_users_from_courses' ],
-					'permission_callback' => [ $this, 'can_add_users_to_courses' ],
+					'callback'            => [ $this, 'batch_remove_items' ],
+					'permission_callback' => [ $this, 'batch_create_items_permissions_check' ],
 					'args'                => $this->get_args_schema(),
 				],
 			]
@@ -94,7 +94,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function remove_users_from_courses( WP_REST_Request $request ) : WP_REST_Response {
+	public function batch_remove_items( WP_REST_Request $request ) : WP_REST_Response {
 		$params     = $request->get_params();
 		$user_ids   = $params['user_ids'];
 		$course_ids = $params['course_ids'];
