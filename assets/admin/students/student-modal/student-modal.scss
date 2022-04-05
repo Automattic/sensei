@@ -6,11 +6,12 @@
 
 	&__course-list {
 		border: 1px solid #8c8f94;
-		height: calc(100vh - 340px);
+		height: auto;
+		max-height: calc(100vh - 340px);
 		overflow: auto;
 
 		@media (min-width: 600px) {
-			height: 300px;
+			max-height: 300px;
 		}
 
 		&--loading {
