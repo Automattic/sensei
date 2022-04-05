@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Course list.
  */
-const CourseList = () => {
+export const CourseList = () => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
 
@@ -46,20 +46,18 @@ const CourseList = () => {
 		const title = course?.title?.rendered;
 
 		return (
-			<>
-				<li
-					className="sensei-student-modal__course-list__item"
-					key={ courseId }
-				>
-					<CheckboxControl
-						id={ `course-${ courseId }` }
-						title={ title }
-					/>
-					<label htmlFor={ `course-${ courseId }` } title={ title }>
-						{ title }
-					</label>
-				</li>
-			</>
+			<li
+				className="sensei-student-modal__course-list__item"
+				key={ courseId }
+			>
+				<CheckboxControl
+					id={ `course-${ courseId }` }
+					title={ title }
+				/>
+				<label htmlFor={ `course-${ courseId }` } title={ title }>
+					{ title }
+				</label>
+			</li>
 		);
 	};
 

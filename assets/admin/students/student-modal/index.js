@@ -18,7 +18,7 @@ import InputControl from '../../../blocks/editor-components/input-control';
  * @param {Object}   props.action  Action that is being performed.
  * @param {Function} props.onClose Close callback.
  */
-const StudentModal = ( { action, onClose } ) => {
+export const StudentModal = ( { action, onClose } ) => {
 	const addDescription = __(
 		'Select the course(s) you would like to add students to:',
 		'sensei-lms'
@@ -30,7 +30,7 @@ const StudentModal = ( { action, onClose } ) => {
 	);
 
 	const addButton = (
-		<Button isPrimary className="sensei-student-modal__action--add">
+		<Button className="sensei-student-modal__action--add" variant="primary">
 			{ __( 'Add to Course', 'sensei-lms' ) }
 		</Button>
 	);
