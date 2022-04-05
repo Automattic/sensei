@@ -53,16 +53,11 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 					'permission_callback' => [ $this, 'can_add_users_to_courses' ],
 					'args'                => $this->get_args_schema(),
 				],
-			]
-		);
-		register_rest_route(
-			$this->namespace,
-			$this->rest_base . '/remove',
-			[
 				[
-					'methods'             => WP_REST_Server::EDITABLE,
+					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'remove_users_from_courses' ],
 					'permission_callback' => [ $this, 'can_add_users_to_courses' ],
+					'args'                => $this->get_args_schema(),
 				],
 			]
 		);
@@ -112,6 +107,8 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 					$course_enrolment                 = Sensei_Course_Enrolment::get_course_instance( $course_id );
 					$result[ $user_id ][ $course_id ] = $course_enrolment->withdraw( $user_id );
 				}
+			} else {
+				$result[ $user_id ] = false;
 			}
 		}
 		return new WP_REST_Response( $result, WP_HTTP::OK );
@@ -122,7 +119,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 *
-	 * @return bool
+	 * @return bool|WP_Error
 	 */
 	public function can_add_users_to_courses( WP_REST_Request $request ): bool {
 		$params          = $request->get_params();
@@ -130,7 +127,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
 		foreach ( $course_ids as $course_id ) {
 			$course = get_post( absint( $course_id ) );
-			if ( empty( $course ) || ! current_user_can( $edit_course_cap, $course_id ) ) {
+			if ( empty( $course ) || 'course' !== $course->post_type || ! current_user_can( $edit_course_cap, $course_id ) ) {
 				return false;
 			}
 		}

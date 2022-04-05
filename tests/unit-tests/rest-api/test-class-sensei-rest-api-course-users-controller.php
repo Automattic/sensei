@@ -135,7 +135,7 @@ class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-actions/remove' );
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-users/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
