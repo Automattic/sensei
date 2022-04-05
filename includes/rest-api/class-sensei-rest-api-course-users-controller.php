@@ -28,7 +28,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'course-users/batch';
+	protected $rest_base = 'course-users';
 
 	/**
 	 * Sensei_REST_API_Course_Structure_Controller constructor.
@@ -45,12 +45,12 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base,
+			$this->rest_base . '/batch',
 			[
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => [ $this, 'add_users_to_courses' ],
-					'permission_callback' => [ $this, 'can_add_users_to_courses' ],
+					'callback'            => [ $this, 'batch_create_items' ],
+					'permission_callback' => [ $this, 'batch_create_items_permissions_check' ],
 					'args'                => $this->get_args_schema(),
 				],
 			]
@@ -64,7 +64,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function add_users_to_courses( WP_REST_Request $request ) {
+	public function batch_create_items( WP_REST_Request $request ) {
 		$params     = $request->get_params();
 		$user_ids   = $params['user_ids'];
 		$course_ids = $params['course_ids'];
@@ -88,7 +88,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 *
 	 * @return bool
 	 */
-	public function can_add_users_to_courses( WP_REST_Request $request ): bool {
+	public function batch_create_items_permissions_check( WP_REST_Request $request ): bool {
 		$params          = $request->get_params();
 		$course_ids      = $params['course_ids'];
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
