@@ -100,10 +100,10 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'    => __( 'Student', 'sensei-lms' ),
-			'progress'   => __( 'Course Progress', 'sensei-lms' ),
-			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
+			'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
+			'learner'  => __( 'Student', 'sensei-lms' ),
+			'email'    => __( 'Email', 'sensei-lms' ),
+			'progress' => __( 'Course Progress', 'sensei-lms' ),
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
@@ -163,10 +163,10 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$learner  = $item;
 			$courses  = $this->get_learner_courses_html( $item->course_statuses );
 			$row_data = array(
-				'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
-				'learner'    => $this->get_learner_html( $learner ),
-				'progress'   => $courses,
-				'enrolments' => get_term_field( 'count', Sensei_Learner::get_learner_term( $learner->user_id ) ),
+				'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'learner'  => $this->get_learner_html( $learner ),
+				'email'    => $learner->user_email,
+				'progress' => $courses,
 			);
 		}
 
