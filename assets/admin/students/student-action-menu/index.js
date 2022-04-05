@@ -62,7 +62,7 @@ export const StudentActionMenu = () => {
 Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 	( actionMenu ) => {
 		render(
-			<StudentActionMenu courseId={ actionMenu?.dataset?.courseId } />,
+			<StudentActionMenu userId={ actionMenu?.dataset?.userId } />,
 			actionMenu
 		);
 	}
