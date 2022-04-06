@@ -72,10 +72,7 @@ $boolean_options = array( 'true', 'false' );
 			   name="<?php echo esc_attr( 'sensei_question[' . $question_data['ID'] . ']' ); ?>"
 			   value="<?php echo esc_attr( $option_value ); ?>"
 			<?php echo checked( $question_data['user_answer_entry'], $option_value, false ); ?>
-			<?php
-			if ( ! is_user_logged_in() ) {
-				echo ' disabled'; }
-			?>
+			<?php echo $question_data['quiz_is_completed'] || ! is_user_logged_in() ? 'disabled' : ''; ?>
 		/>
 		<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $option_value ); ?>">
 			<?php
