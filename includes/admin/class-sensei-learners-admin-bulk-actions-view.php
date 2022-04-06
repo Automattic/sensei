@@ -312,16 +312,16 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * Helper method to display the bulk action selector.
 	 */
 	private function render_bulk_action_select_box() {
-		$rendered     =
-			'<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
-			'<option value="">' . esc_html__( 'Bulk Student Actions', 'sensei-lms' ) . '</option>';
-		$bulk_actions = $this->controller->get_known_bulk_actions();
-
-		foreach ( $bulk_actions as $value => $translation ) {
-			$rendered .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
-		}
-
-		return $rendered . '</select>';
+		?>
+		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-bulk-action-select" style="width: 50%">
+			<option value="0"><?php echo esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) ); ?></option>
+			<?php
+			foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
+				echo '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
+			}
+			?>
+		</select>
+		<?php
 	}
 
 	/**
