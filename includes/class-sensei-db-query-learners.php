@@ -55,7 +55,13 @@ class Sensei_Db_Query_Learners {
 				`u`.`user_login`,
 				`u`.`user_email`,
 				GROUP_CONCAT(`c`.`comment_post_ID`, '|', IF(`c`.`comment_approved` = 'complete', 'c', 'p' )) AS 'course_statuses',
-				COUNT(`c`.`comment_approved`) AS 'course_count'
+				COUNT(`c`.`comment_approved`) AS 'course_count', (
+					SELECT MAX(cm.comment_date_gmt)
+					FROM {$wpdb->comments} cm
+					WHERE cm.user_id = u.ID
+					AND cm.comment_approved IN ('complete', 'passed', 'graded')
+					AND cm.comment_type = 'sensei_lesson_status'
+				) AS last_activity_date
 			FROM `{$wpdb->users}` AS `u`";
 
 		if ( ! empty( $this->filter_by_course_id ) ) {
@@ -63,9 +69,9 @@ class Sensei_Db_Query_Learners {
 
 			$sql .= "
 				INNER JOIN `{$wpdb->comments}` AS `cf`
-					ON `u`.`ID` = `cf`.`user_id` 
+					ON `u`.`ID` = `cf`.`user_id`
 					AND `cf`.`comment_type` = 'sensei_course_status'
-					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id} 
+					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
 					AND `cf`.comment_approved IS NOT NULL";
 		}
 
@@ -81,9 +87,18 @@ class Sensei_Db_Query_Learners {
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
-		if ( ! empty( $this->order_by ) && 'learner' === $this->order_by && in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
+		if ( ! empty( $this->order_by ) && in_array( $this->order_type, array( 'ASC', 'DESC' ), true ) ) {
 			$order_type = $this->order_type;
-			$sql       .= " ORDER BY `u`.`user_login` {$order_type}";
+			$order_by   = $this->order_by;
+			// Switch case to be used when the value in the 'order_by' param needs modifying to work in the db.
+			switch ( $this->order_by ) {
+				case 'learner':
+					$order_by = 'u.user_login';
+					break;
+				default:
+					break;
+			}
+			$sql .= " ORDER BY {$order_by} {$order_type}";
 		}
 
 		$sql .= $wpdb->prepare( ' LIMIT %d OFFSET %d ', array( $this->per_page, $this->offset ) );
