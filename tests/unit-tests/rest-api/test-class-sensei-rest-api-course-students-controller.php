@@ -163,4 +163,98 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		/* Assert. */
 		$this->assertSame( 403, $response->get_status() );
 	}
+
+	public function testRemoveUsersFromCoursesApi_AfterApiExecution_StudentsAreActuallyRemoved() {
+		/* Arrange. */
+		$user_ids              = $this->factory->user->create_many( 2 );
+		$course_ids            = $this->factory->course->create_many( 2 );
+		$enrolled_course_count = 0;
+		foreach ( $user_ids as $user_id ) {
+			foreach ( $course_ids as $course_id ) {
+				$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+				$course_enrolment->enrol( $user_id );
+				if ( $course_enrolment->is_enrolled( $user_id, false ) ) {
+					$enrolled_course_count++;
+				}
+			}
+		}
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-students/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => $user_ids,
+					'course_ids'  => $course_ids,
+				]
+			)
+		);
+		$this->server->dispatch( $request );
+
+		/* Assert. */
+		foreach ( $user_ids as $user_id ) {
+			foreach ( $course_ids as $course_id ) {
+				$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+				if ( ! $course_enrolment->is_enrolled( $user_id, false ) ) {
+					$enrolled_course_count--;
+				}
+			}
+		}
+		$this->assertEquals( 0, $enrolled_course_count );
+	}
+
+	public function testRemoveUsersFromCoursesApi_IfCourseDoesNotExist_ReturnsUnauthorizedResponse() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-students/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ 1 ],
+					'course_ids'  => [ 999 ],
+				]
+			)
+		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function testRemoveUsersFromCoursesApi_IfAnyStudentDoesNotExist_ReturnsFalseForThatStudentAndTrueForOthers() {
+		/* Arrange. */
+		$user_id          = $this->factory->user->create();
+		$course_id        = $this->factory->course->create();
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-students/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ $user_id, 999 ],
+					'course_ids'  => [ $course_id ],
+				]
+			)
+		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$expected = [
+			$user_id => [
+				$course_id => true,
+			],
+			'999'    => false,
+		];
+		$this->assertEquals( $expected, $response->get_data() );
+	}
 }
