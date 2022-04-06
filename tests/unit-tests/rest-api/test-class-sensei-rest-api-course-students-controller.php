@@ -66,10 +66,58 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
 	}
 
-	public function testAddUsersToCourses_UserWithInsufficientPermissions_ReturnsFailedResponse() {
+	public function testAddUsersToCourses_RequestGiven_EnrolsUserForCourse() {
+		/* Arrange. */
+		$student_id = $this->factory->user->create();
+		$course_id  = $this->factory->course->create();
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-students/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ $student_id ],
+					'course_ids'  => [ $course_id ],
+				]
+			)
+		);
+		$this->server->dispatch( $request );
+
+		/* Assert. */
+		$enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$this->assertTrue( $enrolment->is_enrolled( $student_id ) );
+	}
+
+	public function testAddUsersToCourses_UserNotFoundGiven_ReturnsSuccessfulResponse() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-students/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ 999 ],
+					'course_ids'  => [ $course_id ],
+				]
+			)
+		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	public function testAddUsersToCourses_UserWithInsufficientPermissions_ReturnsForbiddenResponse() {
 		/* Arrange. */
 		$student_ids = $this->factory->user->create_many( 2 );
 		$course_ids  = $this->factory->course->create_many( 2 );
@@ -90,13 +138,12 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertEquals( 403, $response->get_status() );
+		$this->assertSame( 403, $response->get_status() );
 	}
 
-	public function testAddUsersToCourses_RequestGiven_EnrolsUserForCourse() {
+	public function testAddUsersToCourses_CourseNotFoundGiven_ReturnsForbiddenResponse() {
 		/* Arrange. */
-		$student_ids = $this->factory->user->create();
-		$course_id   = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
 
 		$this->login_as_admin();
 
@@ -106,15 +153,14 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$request->set_body(
 			wp_json_encode(
 				[
-					'student_ids' => [ $student_ids ],
-					'course_ids'  => [ $course_id ],
+					'student_ids' => [ $student_id ],
+					'course_ids'  => [ 999 ],
 				]
 			)
 		);
-		$this->server->dispatch( $request );
+		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$this->assertTrue( $enrolment->is_enrolled( $student_ids ) );
+		$this->assertSame( 403, $response->get_status() );
 	}
 }
