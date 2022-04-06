@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author Automattic
  *
  * @since 1.2.0
+ * @deprecated 4.3.0 Use Sensei_Reports_Overview_List_Table_Factory to create proper instances.
  */
 class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
@@ -26,11 +27,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	/**
 	 * Constructor
 	 *
+	 * @param string $type Report type.
+	 *
 	 * @since  1.2.0
-	 * @return  void
 	 */
 	public function __construct( $type = 'users' ) {
-		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ) ) ? $type : 'users';
+		_deprecated_function( __METHOD__, '4.3.0', 'Sensei_Reports_Overview_List_Table_Factory::create()' );
+
+		$this->type      = in_array( $type, array( 'courses', 'lessons', 'users' ), true ) ? $type : 'users';
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor.
@@ -190,15 +194,14 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		switch ( $this->type ) {
 			case 'courses':
 				$columns = array(
-					'title' => array( 'title', false ),
+					'title'       => array( 'title', false ),
+					'completions' => array( 'count_of_completions', false ),
 				);
 				break;
 
 			case 'lessons':
 				$columns = array(
-					'title'       => array( 'title', false ),
-					'students'    => array( 'students', false ),
-					'completions' => array( 'completions', false ),
+					'title' => array( 'title', false ),
 				);
 				break;
 
@@ -346,7 +349,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		// Process each row.
 		foreach ( $this->items as $item ) {
-			$data[] = $this->get_row_data( $item );
+			$data[] = array_replace( $columns, $this->get_row_data( $item ) );
 		}
 
 		return $data;
@@ -422,19 +425,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				}
 
 				$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
-					$column_data         = apply_filters(
-						'sensei_analysis_overview_column_data',
-						array(
-							'title'              => $course_title,
-							'last_activity'      => $last_activity_date,
-							'completions'        => $course_completions,
-							'average_progress'   => $average_course_progress,
-							'average_grade'      => $average_grade,
-							'days_to_completion' => $average_completion_days,
-						),
-						$item,
-						$this
-					);
+				$column_data             = apply_filters(
+					'sensei_analysis_overview_column_data',
+					array(
+						'title'              => $course_title,
+						'last_activity'      => $last_activity_date,
+						'completions'        => $course_completions,
+						'average_progress'   => $average_course_progress,
+						'average_grade'      => $average_grade,
+						'days_to_completion' => $average_completion_days,
+					),
+					$item,
+					$this
+				);
 				break;
 
 			case 'lessons':
@@ -708,7 +711,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+		if ( isset( $args['orderby'] ) && ( 'count_of_completions' === $args['orderby'] ) ) {
+			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
+		}
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_non_user_query' ), 10, 2 );
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 
@@ -749,6 +756,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		if ( isset( $args['search'] ) ) {
 			$lessons_args['s'] = $args['search'];
 		}
+
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
@@ -1190,6 +1198,25 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		$query->query_orderby = $wpdb->prepare(
 			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
+			$query->query_vars['orderby'],
+			$query->query_vars['order']
+		);
+	}
+
+	/**
+	 * Order query based on the custom field.
+	 *
+	 * @since  4.3.0
+	 * @access private
+	 *
+	 * @param array  $args Arguments Old orderby arguments.
+	 * @param object $query Query.
+	 */
+	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
+		global $wpdb;
+
+		return $wpdb->prepare(
+			'%1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
 			$query->query_vars['orderby'],
 			$query->query_vars['order']
 		);
