@@ -6,6 +6,23 @@ import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
+const courseItems = ( course ) => {
+	const courseId = course?.id;
+	const title = course?.title?.rendered;
+
+	return (
+		<li
+			className="sensei-student-modal__course-list__item"
+			key={ courseId }
+		>
+			<CheckboxControl id={ `course-${ courseId }` } title={ title } />
+			<label htmlFor={ `course-${ courseId }` } title={ title }>
+				{ title }
+			</label>
+		</li>
+	);
+};
+
 /**
  * Course list.
  */
@@ -41,33 +58,13 @@ export const CourseList = () => {
 		return <p>{ __( 'No courses found.', 'sensei-lms' ) }</p>;
 	}
 
-	const coursesMap = ( course ) => {
-		const courseId = course?.id;
-		const title = course?.title?.rendered;
-
-		return (
-			<li
-				className="sensei-student-modal__course-list__item"
-				key={ courseId }
-			>
-				<CheckboxControl
-					id={ `course-${ courseId }` }
-					title={ title }
-				/>
-				<label htmlFor={ `course-${ courseId }` } title={ title }>
-					{ title }
-				</label>
-			</li>
-		);
-	};
-
 	return (
 		<>
 			<span className="sensei-student-modal__course-list__header">
 				{ __( 'Your Courses', 'sensei-lms' ) }
 			</span>
 			<ul className="sensei-student-modal__course-list">
-				{ courses.map( coursesMap ) }
+				{ courses.map( courseItems ) }
 			</ul>
 		</>
 	);
