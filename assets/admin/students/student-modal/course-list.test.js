@@ -13,26 +13,37 @@ import apiFetch from '@wordpress/api-fetch';
  */
 import { CourseList } from './course-list';
 
-const coursePromise = Promise.resolve( [
-	{
-		id: 1,
-		title: { rendered: 'My Course' },
-	},
-	{
-		id: 2,
-		title: { rendered: 'Another Course' },
-	},
-] );
-
 jest.mock( '@wordpress/api-fetch', () => jest.fn() );
-apiFetch.mockImplementation( () => coursePromise );
 
 describe( '<CourseList />', () => {
 	it( 'Should display courses in the list', async () => {
+		const coursePromise = Promise.resolve( [
+			{
+				id: 1,
+				title: { rendered: 'My Course' },
+			},
+			{
+				id: 2,
+				title: { rendered: 'Another Course' },
+			},
+		] );
+		apiFetch.mockImplementation( () => coursePromise );
+
 		await act( async () => {
 			render( <CourseList /> );
 		} );
 
-		expect( screen.getAllByRole( 'listitem' ).length ).toBe( 2 );
+		expect( screen.getByLabelText( 'My Course' ) ).toBeTruthy();
+		expect( screen.getByLabelText( 'Another Course' ) ).toBeTruthy();
+	} );
+
+	it( 'Should show a message when there are no courses', async () => {
+		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
+
+		await act( async () => {
+			render( <CourseList /> );
+		} );
+
+		expect( screen.getByText( 'No courses found.' ) ).toBeTruthy();
 	} );
 } );
