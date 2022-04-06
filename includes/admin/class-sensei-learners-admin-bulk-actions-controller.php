@@ -327,8 +327,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	/**
 	 * Display the learner bulk action page.
+	 *
+	 * @deprecated x.x.x
 	 */
 	public function learner_admin_page() {
+
+		_deprecated_function( __METHOD__, 'x.x.x', 'Sensei_Learner_Management::output_main_page' );
+
 		// Load Learners data.
 		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management );
 		$sensei_learners_main_view->prepare_items();
@@ -362,7 +367,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 */
 	public function is_current_page() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		return isset( $_GET['page'], $_GET['view'] ) && ( $_GET['page'] === $this->page_slug ) && ( $_GET['view'] === $this->view );
+		return empty( $_GET['course_id'] ) && isset( $_GET['page'] ) && $_GET['page'] === $this->page_slug;
 	}
 
 	/**

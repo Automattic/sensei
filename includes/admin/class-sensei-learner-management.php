@@ -74,10 +74,12 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name           = __( 'Student Management', 'sensei-lms' );
+		$this->name           = __( 'Students', 'sensei-lms' );
 		$this->file           = $file;
 		$this->page_slug      = 'sensei_learners';
 		$this->menu_post_type = 'course';
+
+		$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 
 		// Admin functions.
 		if ( is_admin() ) {
@@ -85,7 +87,7 @@ class Sensei_Learner_Management {
 
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
 
-			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -94,7 +96,6 @@ class Sensei_Learner_Management {
 			add_action( 'admin_init', array( $this, 'handle_learner_actions' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
-			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		}
 
 		// Ajax functions.
@@ -177,6 +178,7 @@ class Sensei_Learner_Management {
 		);
 
 		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-student-action-menu', 'admin/students/student-action-menu/index.js', [], true );
 
 		wp_localize_script(
 			'sensei-learners-general',
@@ -213,9 +215,10 @@ class Sensei_Learner_Management {
 	 * @since 1.6.0
 	 */
 	public function enqueue_styles() {
-
-		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
-
+		// JQuery UI doesn't actually require sensei-wp-components, but the StudentActionMenu component does.
+		// Since StudentActionMenu doesn't currently have its own CSS file, I'm adding the dependency here
+		// as a workaround.
+		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css', [ 'sensei-wp-components' ] );
 	}
 
 	/**
@@ -272,31 +275,14 @@ class Sensei_Learner_Management {
 	 * @access public
 	 */
 	public function learners_page() {
-		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
-		if ( $this->bulk_actions_controller->get_view() === $type ) {
-			$this->bulk_actions_controller->learner_admin_page();
-			return;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		if ( ! empty( $_GET['course_id'] ) ) {
+			require __DIR__ . '/views/html-admin-page-students-course.php';
+		} else {
+			require __DIR__ . '/views/html-admin-page-students-main.php';
 		}
 
-		$sensei_learners_main = new Sensei_Learners_Main();
-		$sensei_learners_main->prepare_items();
-
-		// Wrappers.
-		do_action( 'learners_before_container' );
-		do_action( 'learners_wrapper_container', 'top' );
-		$this->learners_headers();
-		?>
-		<div id="poststuff" class="sensei-learners-wrap">
-			<div class="sensei-learners-main">
-				<?php $sensei_learners_main->display(); ?>
-			</div>
-			<div class="sensei-learners-extra">
-				<?php do_action( 'sensei_learners_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'learners_wrapper_container', 'bottom' );
-		do_action( 'learners_after_container' );
 	}
 
 	/**

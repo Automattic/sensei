@@ -1,6 +1,6 @@
 <?php
 /**
- * File contains the Sensei_REST_API_Course_Users_Controller class.
+ * File contains the Sensei_REST_API_Course_Students_Controller class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Course users actions controller class.
+ * Course students actions controller class.
  *
  * @since x.x.x
  */
-class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
+class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Routes namespace.
@@ -28,7 +28,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'course-users';
+	protected $rest_base = 'course-students';
 
 	/**
 	 * Sensei_REST_API_Course_Structure_Controller constructor.
@@ -50,13 +50,13 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'batch_create_items' ],
-					'permission_callback' => [ $this, 'batch_create_items_permissions_check' ],
+					'permission_callback' => [ $this, 'batch_operation_permissions_check' ],
 					'args'                => $this->get_args_schema(),
 				],
 				[
 					'methods'             => WP_REST_Server::DELETABLE,
 					'callback'            => [ $this, 'batch_remove_items' ],
-					'permission_callback' => [ $this, 'batch_create_items_permissions_check' ],
+					'permission_callback' => [ $this, 'batch_operation_permissions_check' ],
 					'args'                => $this->get_args_schema(),
 				],
 			]
@@ -71,10 +71,10 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function batch_create_items( WP_REST_Request $request ) {
-		$params     = $request->get_params();
-		$user_ids   = $params['user_ids'];
-		$course_ids = $params['course_ids'];
-		foreach ( $user_ids as $user_id ) {
+		$params      = $request->get_params();
+		$student_ids = $params['student_ids'];
+		$course_ids  = $params['course_ids'];
+		foreach ( $student_ids as $user_id ) {
 			$user = new WP_User( $user_id );
 			if ( $user->exists() ) {
 				foreach ( $course_ids as $course_id ) {
@@ -96,7 +96,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 */
 	public function batch_remove_items( WP_REST_Request $request ) : WP_REST_Response {
 		$params     = $request->get_params();
-		$user_ids   = $params['user_ids'];
+		$user_ids   = $params['student_ids'];
 		$course_ids = $params['course_ids'];
 		$result     = [];
 		foreach ( $user_ids as $user_id ) {
@@ -115,13 +115,13 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Check if the current user can add users to courses.
+	 * Check if the current user can add students to courses.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 *
-	 * @return bool|WP_Error
+	 * @return bool
 	 */
-	public function batch_create_items_permissions_check( WP_REST_Request $request ): bool {
+	public function batch_operation_permissions_check( WP_REST_Request $request ): bool {
 		$params          = $request->get_params();
 		$course_ids      = $params['course_ids'];
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
@@ -141,7 +141,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 	 */
 	public function get_args_schema(): array {
 		return [
-			'course_ids' => [
+			'course_ids'  => [
 				'description' => 'Course Ids to perform the action on.',
 				'type'        => 'array',
 				'minItems'    => 1,
@@ -151,7 +151,7 @@ class Sensei_REST_API_Course_Users_Controller extends \WP_REST_Controller {
 				],
 				'required'    => true,
 			],
-			'user_ids'   => [
+			'student_ids' => [
 				'description' => 'Student Ids to perform the action on',
 				'type'        => 'array',
 				'minItems'    => 1,
