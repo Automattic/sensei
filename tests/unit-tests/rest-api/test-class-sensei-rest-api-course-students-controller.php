@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Test for Sensei_REST_API_Course_Users_Controller.
+ * Test for Sensei_REST_API_Course_Students_Controller.
  *
- * @covers Sensei_REST_API_Course_Users_Controller
+ * @covers Sensei_REST_API_Course_Students_Controller
  */
-class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase {
+class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
 	/**
@@ -47,19 +47,19 @@ class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase
 
 	public function testAddUsersToCourses_RequestGiven_ReturnsSuccessfulResponse() {
 		/* Arrange. */
-		$user_ids   = $this->factory->user->create_many( 2 );
-		$course_ids = $this->factory->course->create_many( 2 );
+		$student_ids = $this->factory->user->create_many( 2 );
+		$course_ids  = $this->factory->course->create_many( 2 );
 
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-users/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-students/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
 				[
-					'user_ids'   => $user_ids,
-					'course_ids' => $course_ids,
+					'student_ids' => $student_ids,
+					'course_ids'  => $course_ids,
 				]
 			)
 		);
@@ -71,19 +71,19 @@ class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase
 
 	public function testAddUsersToCourses_UserWithInsufficientPermissions_ReturnsFailedResponse() {
 		/* Arrange. */
-		$user_ids   = $this->factory->user->create_many( 2 );
-		$course_ids = $this->factory->course->create_many( 2 );
+		$student_ids = $this->factory->user->create_many( 2 );
+		$course_ids  = $this->factory->course->create_many( 2 );
 
 		$this->login_as_student();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-users/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-students/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
 				[
-					'user_ids'   => $user_ids,
-					'course_ids' => $course_ids,
+					'student_ids' => $student_ids,
+					'course_ids'  => $course_ids,
 				]
 			)
 		);
@@ -95,19 +95,19 @@ class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase
 
 	public function testAddUsersToCourses_RequestGiven_EnrolsUserForCourse() {
 		/* Arrange. */
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
+		$student_ids = $this->factory->user->create();
+		$course_id   = $this->factory->course->create();
 
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-users/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-students/batch' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
 				[
-					'user_ids'   => [ $user_id ],
-					'course_ids' => [ $course_id ],
+					'student_ids' => [ $student_ids ],
+					'course_ids'  => [ $course_id ],
 				]
 			)
 		);
@@ -115,6 +115,6 @@ class Sensei_REST_API_Course_Users_Controller_Test extends WP_Test_REST_TestCase
 
 		/* Assert. */
 		$enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
-		$this->assertTrue( $enrolment->is_enrolled( $user_id ) );
+		$this->assertTrue( $enrolment->is_enrolled( $student_ids ) );
 	}
 }
