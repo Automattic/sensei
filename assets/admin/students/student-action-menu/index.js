@@ -13,8 +13,11 @@ import StudentModal from '../student-modal';
 
 /**
  * Student action menu.
+ *
+ * @param {Object} props          Component props.
+ * @param {string} props.userName Student's user name.
  */
-export const StudentActionMenu = () => {
+export const StudentActionMenu = ( { userName } ) => {
 	const [ action, setAction ] = useState( '' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const closeModal = () => setModalOpen( false );
@@ -30,7 +33,11 @@ export const StudentActionMenu = () => {
 		},
 		{
 			title: __( 'Grading', 'sensei-lms' ),
-			onClick: () => {},
+			onClick: () =>
+				window.open(
+					`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ userName }`,
+					'_self'
+				),
 		},
 	];
 
@@ -62,7 +69,10 @@ export const StudentActionMenu = () => {
 Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 	( actionMenu ) => {
 		render(
-			<StudentActionMenu userId={ actionMenu?.dataset?.userId } />,
+			<StudentActionMenu
+				userId={ actionMenu?.dataset?.userId }
+				userName={ actionMenu?.dataset?.userName }
+			/>,
 			actionMenu
 		);
 	}
