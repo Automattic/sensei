@@ -6,7 +6,12 @@ import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-const courseItems = ( course ) => {
+/**
+ * Course item.
+ *
+ * @param {Object} course Course.
+ */
+const CourseItem = ( course ) => {
 	const courseId = course?.id;
 	const title = course?.title?.rendered;
 
@@ -64,7 +69,7 @@ export const CourseList = () => {
 				{ __( 'Your Courses', 'sensei-lms' ) }
 			</span>
 			<ul className="sensei-student-modal__course-list">
-				{ courses.map( courseItems ) }
+				{ courses.map( CourseItem ) }
 			</ul>
 		</>
 	);
