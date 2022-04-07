@@ -24,23 +24,71 @@ jest.mock( '@wordpress/api-fetch', () => jest.fn() );
 apiFetch.mockImplementation( () => coursePromise );
 
 describe( '<StudentModal />', () => {
-	it( 'Should display the "Add to Course" button when adding a course', async () => {
-		await act( async () => {
-			render( <StudentModal action="add" /> );
+	describe( 'Add action', () => {
+		beforeEach( async () => {
+			await act( async () => {
+				return render( <StudentModal action="add" /> );
+			} );
 		} );
 
-		expect(
-			screen.getByRole( 'button', { name: 'Add to Course' } )
-		).toBeTruthy();
+		it( 'Should display the action description', async () => {
+			expect(
+				screen.getByText(
+					'Select the course(s) you would like to add students to:'
+				)
+			).toBeTruthy();
+		} );
+
+		it( 'Should display the action button', async () => {
+			expect(
+				screen.getByRole( 'button', { name: 'Add to Course' } )
+			).toBeTruthy();
+		} );
 	} );
 
-	it( 'Should display the "Remove from Course" button when removing a course', async () => {
-		await act( async () => {
-			render( <StudentModal action="remove" /> );
+	describe( 'Remove action', () => {
+		beforeEach( async () => {
+			await act( async () => {
+				return render( <StudentModal action="remove" /> );
+			} );
 		} );
 
-		expect(
-			screen.getByRole( 'button', { name: 'Remove from Course' } )
-		).toBeTruthy();
+		it( 'Should display the action description', async () => {
+			expect(
+				screen.getByText(
+					'Select the course(s) you would like to remove students from:'
+				)
+			).toBeTruthy();
+		} );
+
+		it( 'Should display the action button', async () => {
+			expect(
+				screen.getByRole( 'button', { name: 'Remove from Course' } )
+			).toBeTruthy();
+		} );
+	} );
+
+	describe( 'reset progress action', () => {
+		beforeEach( async () => {
+			await act( async () => {
+				return render( <StudentModal action="reset-progress" /> );
+			} );
+		} );
+
+		it( 'Should display the action description', async () => {
+			expect(
+				screen.getByText(
+					'Select the course(s) you would like to reset the students progress:'
+				)
+			).toBeTruthy();
+		} );
+
+		it( 'Should display the action button', async () => {
+			expect(
+				screen.getByRole( 'button', {
+					name: 'Reset or Remove the student(s) progress',
+				} )
+			).toBeTruthy();
+		} );
 	} );
 } );
