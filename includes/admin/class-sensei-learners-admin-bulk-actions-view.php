@@ -105,6 +105,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			'email'              => __( 'Email', 'sensei-lms' ),
 			'progress'           => __( 'Course Progress', 'sensei-lms' ),
 			'last_activity_date' => __( 'Last Activity', 'sensei-lms' ),
+			'actions'            => '',
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
@@ -158,9 +159,10 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$row_data = array(
 				'cb'                 => '',
 				'learner'            => esc_html__( 'No results found', 'sensei-lms' ),
+				'email'              => '',
 				'progress'           => '',
-				'enrolments'         => '',
 				'last_activity_date' => '',
+				'actions'            => '',
 			);
 		} else {
 			$learner            = $item;
@@ -175,6 +177,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				'email'              => $learner->user_email,
 				'progress'           => $courses,
 				'last_activity_date' => $last_activity_date,
+				'actions'            => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) . '"></div>',
 			);
 		}
 
