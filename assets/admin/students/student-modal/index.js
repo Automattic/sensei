@@ -38,7 +38,7 @@ const RemoveButton = (
 
 const ResetButton = (
 	<Button className="sensei-student-modal__action--remove">
-		{ __( 'Reset or Remove the student(s) progress', 'sensei-lms' ) }
+		{ __( 'Reset or Remove Progress', 'sensei-lms' ) }
 	</Button>
 );
 
@@ -59,7 +59,7 @@ const POSSIBLE_ACTIONS = {
 	},
 	'reset-progress': {
 		description: __(
-			'Select the course(s) you would like to reset the students progress:',
+			'Select the course(s) you would like to reset or remove progress for:',
 			'sensei-lms'
 		),
 		button: ResetButton,
