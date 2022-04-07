@@ -109,6 +109,74 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		self::assertFalse( false, Sensei_Course::is_user_enrolled( $student_id, $course_id ) );
 	}
 
+	public function testDeleteCourseProgress_RequestGiven_ReturnsMatchingResponseData() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson1_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$lesson2_id = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$student_id = $this->factory->user->create();
+
+		Sensei_Utils::user_start_course( $student_id, $course_id );
+		Sensei_Utils::update_lesson_status( $student_id, $lesson1_id, 'complete' );
+		Sensei_Utils::user_start_lesson( $student_id, $lesson2_id );
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ $student_id ],
+					'course_ids'  => [ $course_id ],
+				]
+			)
+		);
+		ob_start();
+		$response = $this->server->dispatch( $request );
+		ob_end_clean(); // suppress output from \Sensei_Quiz::reset_user_lesson_data().
+
+		/* Assert. */
+		$expected = [
+			$student_id => [
+				$course_id => true,
+			],
+		];
+		self::assertSame( $expected, $response->get_data() );
+	}
+
+	public function testDeleteCourseProgress_StudentHasntEnrolledToCourse_ReturnsMatchingResponseData() {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$student_id = $this->factory->user->create();
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ $student_id ],
+					'course_ids'  => [ $course_id ],
+				]
+			)
+		);
+		ob_start();
+		$response = $this->server->dispatch( $request );
+		ob_end_clean(); // suppress output from \Sensei_Quiz::reset_user_lesson_data().
+
+		/* Assert. */
+		$expected = [
+			$student_id => [
+				$course_id => false,
+			],
+		];
+		self::assertSame( $expected, $response->get_data() );
+	}
+
 	public function testDeleteCourseProgress_UserWithInsufficientPermissions_ReturnsForbiddenResponse() {
 		/* Arrange. */
 		$this->login_as_student();
@@ -176,4 +244,27 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		self::assertSame( 403, $response->get_status() );
 	}
 
+	public function testDeleteCourseProgress_PostInsteadOfCourseGiven_ReturnsForbiddenResponse() {
+		/* Arrange. */
+		$post_id    = $this->factory->post->create();
+		$student_id = $this->factory->user->create();
+
+		$this->login_as_admin();
+
+		/* Act. */
+		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request->set_header( 'content-type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				[
+					'student_ids' => [ $student_id ],
+					'course_ids'  => [ $post_id ],
+				]
+			)
+		);
+		$response = $this->server->dispatch( $request );
+
+		/* Assert. */
+		self::assertSame( 403, $response->get_status() );
+	}
 }

@@ -31,7 +31,7 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 	protected $rest_base = 'course-progress';
 
 	/**
-	 * Sensei_REST_API_Course_Structure_Controller constructor.
+	 * Sensei_REST_API_Course_Progress_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
 	 */
@@ -68,18 +68,22 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 		$params      = $request->get_params();
 		$student_ids = $params['student_ids'];
 		$course_ids  = $params['course_ids'];
+
+		$result = [];
 		foreach ( $student_ids as $student_id ) {
-			$user = new WP_User( $student_id );
-			if ( $user->exists() ) {
+			$student               = new WP_User( $student_id );
+			$result[ $student_id ] = false;
+			if ( $student->exists() ) {
 				foreach ( $course_ids as $course_id ) {
+					$result[ $student_id ][ $course_id ] = false;
 					if ( Sensei_Utils::has_started_course( $course_id, $student_id ) ) {
-						Sensei_Utils::reset_course_for_user( $course_id, $student_id );
+						$result[ $student_id ][ $course_id ] = Sensei_Utils::reset_course_for_user( $course_id, $student_id );
 					}
 				}
 			}
 		}
 
-		return new WP_REST_Response( null, WP_HTTP::OK );
+		return new WP_REST_Response( $result, WP_HTTP::OK );
 	}
 
 	/**
@@ -95,7 +99,7 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
 		foreach ( $course_ids as $course_id ) {
 			$course = get_post( absint( $course_id ) );
-			if ( empty( $course ) || ! current_user_can( $edit_course_cap, $course_id ) ) {
+			if ( empty( $course ) || 'course' !== $course->post_type || ! current_user_can( $edit_course_cap, $course_id ) ) {
 				return false;
 			}
 		}

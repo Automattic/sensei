@@ -31,7 +31,7 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 	protected $rest_base = 'course-students';
 
 	/**
-	 * Sensei_REST_API_Course_Structure_Controller constructor.
+	 * Sensei_REST_API_Course_Students_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
 	 */
