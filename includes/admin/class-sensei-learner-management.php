@@ -130,7 +130,7 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Display the courses' navigation.
+	 * Display the Students' page navigation.
 	 *
 	 * @param WP_Screen $screen WordPress current screen object.
 	 */
