@@ -37,6 +37,7 @@ export const CourseList = () => {
 
 	// Fetch the courses.
 	useEffect( () => {
+		let mounted = true;
 		setIsFetching( true );
 
 		apiFetch( {
@@ -44,11 +45,12 @@ export const CourseList = () => {
 			method: 'GET',
 		} )
 			.then( ( result ) => {
-				setCourses( result );
+				if ( mounted ) setCourses( result );
 			} )
 			.finally( () => {
-				setIsFetching( false );
+				if ( mounted ) setIsFetching( false );
 			} );
+		return () => ( mounted = false );
 	}, [] );
 
 	if ( isFetching ) {
