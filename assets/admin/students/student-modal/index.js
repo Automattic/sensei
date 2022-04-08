@@ -11,14 +11,27 @@ import { __ } from '@wordpress/i18n';
 import CourseList from './course-list';
 import InputControl from '../../../blocks/editor-components/input-control';
 
+let needsReload = false;
+
 const AddButton = (
-	<Button className="sensei-student-modal__action--add" variant="primary">
+	<Button
+		className="sensei-student-modal__action--add"
+		variant="primary"
+		onClick={ () => {
+			needsReload = true;
+		} }
+	>
 		{ __( 'Add to Course', 'sensei-lms' ) }
 	</Button>
 );
 
 const RemoveButton = (
-	<Button className="sensei-student-modal__action--remove">
+	<Button
+		className="sensei-student-modal__action--remove"
+		onClick={ () => {
+			needsReload = true;
+		} }
+	>
 		{ __( 'Remove from Course', 'sensei-lms' ) }
 	</Button>
 );
@@ -67,7 +80,7 @@ export const StudentModal = ( { action, onClose } ) => {
 		<Modal
 			className="sensei-student-modal"
 			title={ __( 'Choose Course', 'sensei-lms' ) }
-			onRequestClose={ onClose }
+			onRequestClose={ ( args ) => onClose( { ...args, needsReload } ) }
 		>
 			<p>{ description }</p>
 
