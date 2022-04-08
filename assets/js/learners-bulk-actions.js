@@ -183,12 +183,12 @@ jQuery( document ).ready( function () {
 		$courseSelect.select2( {
 			placeholder:
 				window.sensei_learners_bulk_data.select_course_placeholder,
-			width: '300px',
+			width: '200px',
 		} );
 
 		$bulkActionSelect.select2( {
 			minimumResultsForSearch: -1,
-			width: '300px',
+			width: '200px',
 		} );
 
 		$selectUserCheckboxes.on( 'change', function ( evt ) {

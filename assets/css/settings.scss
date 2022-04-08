@@ -670,26 +670,26 @@
 	margin-right: 10px;
 }
 
-@media screen and (max-width: 1600px) {
+@media screen and (max-width: 1400px) {
 	.sensei-wp-table-filters {
 		display: flex;
 		flex-direction: column-reverse;
 	}
 }
 
-@media screen and (max-width: 1600px) and (min-width: 1100px) {
+@media screen and (max-width: 1400px) and (min-width: 1100px) {
 	.sensei-bulkactions-container {
 		width: 60%;
 	}
 }
-@media screen and (max-width: 1600px) {
+@media screen and (max-width: 1400px) {
 	.sensei-bulkactions-wrapper {
 		height: 30px;
 		margin-bottom: 10px
 	}
 }
 .sensei-bulkactions-wrapper .sensei-wp-table-filters .sensei-bulkactions-placeholder-dropdown {
-	max-width: 300px;
+	max-width: 200px;
 	margin-bottom: 10px;
 	font-size: 13px;
 	background: white;
