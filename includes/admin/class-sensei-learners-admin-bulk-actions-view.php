@@ -236,14 +236,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return string The HTML.
 	 */
 	private function get_learner_html( $learner ) {
-		$login = $learner->user_login;
-		$title = Sensei_Learner::get_full_name( $learner->user_id );
+		$full_name = Sensei_Learner::get_full_name( $learner->user_id );
 		// translators: Placeholder is the full name of the learner.
-		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
-		$html    = '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $login ) . '</a></strong>';
-		$html   .= ' <span>(<em>' . esc_html( $title ) . '</em>, ' . esc_html( $learner->user_email ) . ')</span>';
+		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $full_name ) );
 
-		return $html;
+		return '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $full_name ) . '</a></strong>';
 	}
 
 	/**
