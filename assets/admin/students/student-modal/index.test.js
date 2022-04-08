@@ -2,34 +2,39 @@
  * External dependencies
  */
 import { act, render, screen } from '@testing-library/react';
-
-/**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
+import nock from 'nock';
 
 /**
  * Internal dependencies
  */
 import { StudentModal } from './index';
 
-const coursePromise = Promise.resolve( [
+const coursePromise = [
 	{
 		id: 1,
 		title: { rendered: 'My Course' },
 	},
-] );
-
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
-apiFetch.mockImplementation( () => coursePromise );
+];
 
 describe( '<StudentModal />', () => {
-	const { getByText, getByRole } = screen;
+	const { getByText, getByRole, findByText, findByRole } = screen;
+
+	beforeEach( () => {
+		nock( 'http://localhost' )
+			.persist()
+			.get( '/wp/v2/courses' )
+			.query( { per_page: 100, _locale: 'user' } )
+			.reply( 200, coursePromise );
+	} );
+
+	it( 'Should display a list of courses', async () => {
+		render( <StudentModal action="add" /> );
+		expect( await findByText( 'My Course' ) ).toBeTruthy();
+	} );
+
 	describe( 'Add action', () => {
 		beforeEach( async () => {
-			await act( async () => {
-				return render( <StudentModal action="add" /> );
-			} );
+			await act( async () => render( <StudentModal action="add" /> ) );
 		} );
 
 		it( 'Should display the action description', async () => {
@@ -49,14 +54,12 @@ describe( '<StudentModal />', () => {
 
 	describe( 'Remove action', () => {
 		beforeEach( async () => {
-			await act( async () => {
-				return render( <StudentModal action="remove" /> );
-			} );
+			await act( async () => render( <StudentModal action="remove" /> ) );
 		} );
 
 		it( 'Should display the action description', async () => {
 			expect(
-				getByText(
+				await findByText(
 					'Select the course(s) you would like to remove students from:'
 				)
 			).toBeTruthy();
@@ -64,16 +67,16 @@ describe( '<StudentModal />', () => {
 
 		it( 'Should display the action button', async () => {
 			expect(
-				getByRole( 'button', { name: 'Remove from Course' } )
+				await findByRole( 'button', { name: 'Remove from Course' } )
 			).toBeTruthy();
 		} );
 	} );
 
 	describe( 'Reset progress action', () => {
 		beforeEach( async () => {
-			await act( async () => {
-				return render( <StudentModal action="reset-progress" /> );
-			} );
+			await act( async () =>
+				render( <StudentModal action="reset-progress" /> )
+			);
 		} );
 
 		it( 'Should display the action description', async () => {
