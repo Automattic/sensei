@@ -100,11 +100,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'  => __( 'Student', 'sensei-lms' ),
-			'email'    => __( 'Email', 'sensei-lms' ),
-			'progress' => __( 'Course Progress', 'sensei-lms' ),
-			'actions'  => '',
+			'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
+			'learner'            => __( 'Student', 'sensei-lms' ),
+			'email'              => __( 'Email', 'sensei-lms' ),
+			'progress'           => __( 'Course Progress', 'sensei-lms' ),
+			'last_activity_date' => __( 'Last Activity', 'sensei-lms' ),
+			'actions'            => '',
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
@@ -117,7 +118,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'learner' => array( 'learner', false ),
+			'learner'            => array( 'learner', false ),
+			'last_activity_date' => array( 'last_activity_date', false ),
 		);
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
@@ -155,21 +157,27 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	protected function get_row_data( $item ) {
 		if ( ! $item ) {
 			$row_data = array(
-				'cb'         => '',
-				'learner'    => esc_html__( 'No results found', 'sensei-lms' ),
-				'progress'   => '',
-				'enrolments' => '',
-				'actions'    => '',
+				'cb'                 => '',
+				'learner'            => esc_html__( 'No results found', 'sensei-lms' ),
+				'email'              => '',
+				'progress'           => '',
+				'last_activity_date' => '',
+				'actions'            => '',
 			);
 		} else {
-			$learner  = $item;
-			$courses  = $this->get_learner_courses_html( $item->course_statuses );
+			$learner            = $item;
+			$courses            = $this->get_learner_courses_html( $item->course_statuses );
+			$last_activity_date = __( 'N/A', 'sensei-lms' );
+			if ( $item->last_activity_date ) {
+				$last_activity_date = Sensei_Utils::format_last_activity_date( $item->last_activity_date );
+			}
 			$row_data = array(
-				'cb'       => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
-				'learner'  => $this->get_learner_html( $learner ),
-				'email'    => $learner->user_email,
-				'progress' => $courses,
-				'actions'  => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) . '"></div>',
+				'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'learner'            => $this->get_learner_html( $learner ),
+				'email'              => $learner->user_email,
+				'progress'           => $courses,
+				'last_activity_date' => $last_activity_date,
+				'actions'            => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) . '"></div>',
 			);
 		}
 
