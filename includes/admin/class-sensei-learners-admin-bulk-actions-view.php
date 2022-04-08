@@ -276,8 +276,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 		?>
 
-		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-course-select" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
-			<option value="0"><?php echo esc_html( $select_label ); ?></option>
+		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-bulkactions-placeholder-dropdown sensei-course-select" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
 			<?php
 			foreach ( $courses as $course ) {
 				echo '<option value="' . esc_attr( $course->ID ) . '"' . selected( $course->ID, $selected_course, false ) . '>' . esc_html( $course->post_title ) . '</option>';
@@ -313,7 +312,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	private function render_bulk_action_select_box() {
 		?>
-		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-bulk-action-select">
+		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-bulkactions-placeholder-dropdown sensei-bulk-action-select">
 			<option value="0"><?php echo esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) ); ?></option>
 			<?php
 			foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
@@ -357,7 +356,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						)
 					);
 					?>
-					<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
+					<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
 				</div>
 				<div class="alignleft actions">
 					<form action="" method="get">
