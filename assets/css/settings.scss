@@ -175,7 +175,8 @@
 	}
 }
 
-/* Grading & Learner Management */
+/* Grading & Student Management */
+
 .grading-selects, .learners-selects  {
 	.subsubsub {
 		float: none;
@@ -558,6 +559,47 @@
 	}
 }
 
+
+.sensei-learners-wrap .search-box {
+	margin-left: 10px;
+}
+
+.sensei-wp-table-filters {
+	display: flex;
+	flex-direction: row;
+}
+
+.sensei-wp-table-filters > div{
+	margin-right: 10px;
+}
+
+@media screen and (max-width: 1400px) {
+	.sensei-wp-table-filters {
+		display: flex;
+		flex-direction: column-reverse;
+	}
+}
+
+@media screen and (max-width: 1400px) and (min-width: 1100px) {
+	.sensei-bulkactions-container {
+		width: 60%;
+	}
+}
+@media screen and (max-width: 1400px) {
+	.sensei-bulkactions-wrapper {
+		height: 30px;
+		margin-bottom: 10px
+	}
+}
+.sensei-bulkactions-wrapper .sensei-wp-table-filters .sensei-bulkactions-placeholder-dropdown {
+	max-width: 200px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	background: white;
+}
+
+/* Sensei Promo */
+
 @font-face {
 	font-family: 'Reforma 1918-Blanca';
 	src: url( '../css/fonts/Reforma1918-Blanca.otf' );
@@ -656,42 +698,3 @@
 		}
 	}
 }
-
-.sensei-learners-wrap .search-box {
-	margin-left: 10px;
-}
-
-.sensei-wp-table-filters {
-	display: flex;
-	flex-direction: row;
-}
-
-.sensei-wp-table-filters > div{
-	margin-right: 10px;
-}
-
-@media screen and (max-width: 1400px) {
-	.sensei-wp-table-filters {
-		display: flex;
-		flex-direction: column-reverse;
-	}
-}
-
-@media screen and (max-width: 1400px) and (min-width: 1100px) {
-	.sensei-bulkactions-container {
-		width: 60%;
-	}
-}
-@media screen and (max-width: 1400px) {
-	.sensei-bulkactions-wrapper {
-		height: 30px;
-		margin-bottom: 10px
-	}
-}
-.sensei-bulkactions-wrapper .sensei-wp-table-filters .sensei-bulkactions-placeholder-dropdown {
-	max-width: 200px;
-	margin-bottom: 10px;
-	font-size: 13px;
-	background: white;
-}
-
