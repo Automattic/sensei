@@ -142,8 +142,8 @@ class Sensei_Learner_Management {
 					<h1><?php esc_html_e( 'Students', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__separator"></div>
-				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/documentation/reports/?utm_source=plugin_sensei&utm_medium=docs&utm_campaign=reports">
-					<?php echo esc_html__( 'Guide To Using Reports', 'sensei-lms' ); ?>
+				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/documentation/?utm_source=plugin_sensei&utm_medium=docs&utm_campaign=student-management">
+					<?php echo esc_html__( 'Guide To Student Management', 'sensei-lms' ); ?>
 				</a>
 			</div>
 		</div>
