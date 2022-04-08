@@ -564,34 +564,34 @@
 	margin-left: 10px;
 }
 
-.sensei-wp-table-filters {
+.sensei-students-bulk-actions-filters {
 	display: flex;
 	flex-direction: row;
 }
 
-.sensei-wp-table-filters > div{
+.sensei-students-bulk-actions-filters > div {
 	margin-right: 10px;
 }
 
 @media screen and (max-width: 1400px) {
-	.sensei-wp-table-filters {
+	.sensei-students-bulk-actions-filters {
 		display: flex;
 		flex-direction: column-reverse;
 	}
 }
 
 @media screen and (max-width: 1400px) and (min-width: 1100px) {
-	.sensei-bulkactions-container {
+	.sensei-bulk-actions-container {
 		width: 60%;
 	}
 }
 @media screen and (max-width: 1400px) {
-	.sensei-bulkactions-wrapper {
+	.sensei-bulk-actions-wrapper {
 		height: 30px;
 		margin-bottom: 10px
 	}
 }
-.sensei-bulkactions-wrapper .sensei-wp-table-filters .sensei-bulkactions-placeholder-dropdown {
+.sensei-bulk-actions-wrapper .sensei-students-bulk-actions-filters .sensei-bulk-actions-placeholder-dropdown {
 	max-width: 200px;
 	margin-bottom: 10px;
 	font-size: 13px;

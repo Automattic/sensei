@@ -276,7 +276,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 		?>
 
-		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-bulkactions-placeholder-dropdown sensei-course-select" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
+		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-bulk-actions-placeholder-dropdown sensei-course-select" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
 			<?php
 			foreach ( $courses as $course ) {
 				echo '<option value="' . esc_attr( $course->ID ) . '"' . selected( $course->ID, $selected_course, false ) . '>' . esc_html( $course->post_title ) . '</option>';
@@ -312,7 +312,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	private function render_bulk_action_select_box() {
 		?>
-		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-bulkactions-placeholder-dropdown sensei-bulk-action-select">
+		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-bulk-actions-placeholder-dropdown sensei-bulk-action-select">
 			<option value="0"><?php echo esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) ); ?></option>
 			<?php
 			foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
@@ -335,12 +335,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$selected_course = (int) $_GET['filter_by_course_id']; // phpcs:ignore WordPress.Security.NonceVerification
 		}
 		?>
-		<div class="sensei-bulkactions-wrapper">
-			<div class="alignleft actions bulkactions sensei-bulkactions-container">
+		<div class="sensei-bulk-actions-wrapper">
+			<div class="alignleft actions bulkactions sensei-bulk-actions-container">
 			<div id="sensei-bulk-learner-actions-modal" style="display:none;">
 				<?php $this->render_bulk_actions_form( $courses ); ?>
 			</div>
-			<div class="sensei-wp-table-filters">
+			<div class="sensei-students-bulk-actions-filters">
 				<div>
 					<?php
 					echo wp_kses(
