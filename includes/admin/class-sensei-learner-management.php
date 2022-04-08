@@ -137,15 +137,14 @@ class Sensei_Learner_Management {
 	private function display_courses_navigation( WP_Screen $screen ) {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
-			<div class="sensei-custom-navigation__heading">
+			<div class="sensei-custom-navigation__heading-with-info">
 				<div class="sensei-custom-navigation__title">
 					<h1><?php esc_html_e( 'Students', 'sensei-lms' ); ?></h1>
 				</div>
-				<div class="sensei-custom-navigation__links">
-					<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/documentation/reports/?utm_source=plugin_sensei&utm_medium=docs&utm_campaign=reports">
-						<?php echo esc_html__( 'Guide To Using Reports', 'sensei-lms' ); ?>
-					</a>
-				</div>
+				<div class="sensei-custom-navigation__separator"></div>
+				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/documentation/reports/?utm_source=plugin_sensei&utm_medium=docs&utm_campaign=reports">
+					<?php echo esc_html__( 'Guide To Using Reports', 'sensei-lms' ); ?>
+				</a>
 			</div>
 		</div>
 		<?php
