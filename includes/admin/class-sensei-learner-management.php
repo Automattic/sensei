@@ -125,7 +125,7 @@ class Sensei_Learner_Management {
 		}
 
 		if ( in_array( $screen->id, [ 'course_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
-			$this->display_courses_navigation( $screen );
+			$this->display_students_navigation( $screen );
 		}
 	}
 
@@ -134,7 +134,7 @@ class Sensei_Learner_Management {
 	 *
 	 * @param WP_Screen $screen WordPress current screen object.
 	 */
-	private function display_courses_navigation( WP_Screen $screen ) {
+	private function display_students_navigation( WP_Screen $screen ) {
 		?>
 		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
 			<div class="sensei-custom-navigation__heading-with-info">
