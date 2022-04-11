@@ -80,7 +80,7 @@ export const StudentModal = ( { action, onClose } ) => {
 		<Modal
 			className="sensei-student-modal"
 			title={ __( 'Choose Course', 'sensei-lms' ) }
-			onRequestClose={ ( args ) => onClose( { ...args, needsReload } ) }
+			onRequestClose={ () => onClose( needsReload ) }
 		>
 			<p>{ description }</p>
 
