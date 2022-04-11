@@ -408,7 +408,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$courses            = explode( ',', $courses );
 			$courses_total      = count( $courses );
 			$courses_completed  = 0;
-			$visible_count      = 1;
+			$visible_count      = 3;
 			$completed_courses  = [];
 			$incomplete_courses = [];
 			foreach ( $courses as $i => $course_id ) {
