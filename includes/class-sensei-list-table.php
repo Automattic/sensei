@@ -228,7 +228,7 @@ class Sensei_List_Table extends WP_List_Table {
 
 			if ( $primary === $column_name ) {
 				$classes .= ' column-primary';
-			} else if ( 'cb' === $column_name ) {
+			} elseif ( 'cb' === $column_name ) {
 				$classes .= ' check-column';
 			}
 
@@ -242,11 +242,12 @@ class Sensei_List_Table extends WP_List_Table {
 
 			$attributes = "class='$classes' $data $style";
 
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped while preparation.
 			if ( 'cb' === $column_name ) {
 				// Checkbox element needs to be wrapped in a table header cell to have proper WordPress styles applied.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
 				echo "<th $attributes>";
 			} else {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
 				echo "<td $attributes>";
 			}
 
