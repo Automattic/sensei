@@ -278,6 +278,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		?>
 
 		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-bulk-actions-placeholder-dropdown sensei-course-select" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
+			<option value="0"><?php echo esc_html( $select_label ); ?></option>
 			<?php
 			foreach ( $courses as $course ) {
 				echo '<option value="' . esc_attr( $course->ID ) . '"' . selected( $course->ID, $selected_course, false ) . '>' . esc_html( $course->post_title ) . '</option>';
