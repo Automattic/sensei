@@ -337,12 +337,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$selected_course = (int) $_GET['filter_by_course_id']; // phpcs:ignore WordPress.Security.NonceVerification
 		}
 		?>
-		<div class="sensei-bulk-actions-wrapper">
-			<div class="alignleft bulkactions sensei-bulk-actions-container">
+		<div class="sensei-student-bulk-actions__wrapper">
+			<div class="alignleft bulkactions sensei-student-bulk-actions__container">
 			<div id="sensei-bulk-learner-actions-modal" style="display:none;">
 				<?php $this->render_bulk_actions_form( $courses ); ?>
 			</div>
-			<div class="sensei-students-bulk-actions-filters">
+			<div class="sensei-student-bulk-actions__filters">
 				<div>
 					<?php
 					echo wp_kses(

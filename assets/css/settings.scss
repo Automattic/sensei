@@ -559,39 +559,42 @@
 	}
 }
 
-
 .sensei-learners-wrap .search-box {
 	margin-left: 10px;
 }
 
-.sensei-students-bulk-actions-filters {
-	display: flex;
-	flex-direction: row;
-}
-
-.sensei-students-bulk-actions-filters > div {
-	margin-right: 10px;
-}
-
-@media screen and (max-width: 1400px) {
-	.sensei-students-bulk-actions-filters {
+.sensei-student-bulk-actions {
+	&__filters {
 		display: flex;
-		flex-direction: column-reverse;
+		flex-direction: row;
+	}
+
+	&__filters > div {
+		margin-right: 10px;
+	}
+
+	@media screen and (max-width: 1400px) {
+		&__filters {
+			display: flex;
+			flex-direction: column-reverse;
+		}
+	}
+
+	@media screen and (max-width: 1400px) and (min-width: 1100px) {
+		&__container {
+			width: 60%;
+		}
+	}
+
+	@media screen and (max-width: 1400px) {
+		&__wrapper {
+			height: 30px;
+			margin-bottom: 10px
+		}
 	}
 }
 
-@media screen and (max-width: 1400px) and (min-width: 1100px) {
-	.sensei-bulk-actions-container {
-		width: 60%;
-	}
-}
-@media screen and (max-width: 1400px) {
-	.sensei-bulk-actions-wrapper {
-		height: 30px;
-		margin-bottom: 10px
-	}
-}
-.sensei-bulk-actions-wrapper .sensei-students-bulk-actions-filters .sensei-bulk-actions-placeholder-dropdown {
+.sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-bulk-actions-placeholder-dropdown {
 	max-width: 200px;
 	margin-bottom: 10px;
 	font-size: 13px;
@@ -605,17 +608,17 @@
 }
 
 @media screen and (max-width: 767px) {
-	.sensei-bulk-actions-container .select2 {
+	.sensei-student-bulk-actions__container .select2 {
 		margin-top: 6px;
 		width: 190px !important;
 	}
-	.sensei-bulk-actions-container .select2-selection__rendered {
+	.sensei-student-bulk-actions__container .select2-selection__rendered {
 		line-height: 39px !important;
 	}
-	.sensei-bulk-actions-container .select2-container .select2-selection--single {
+	.sensei-student-bulk-actions__container .select2-container .select2-selection--single {
 		height: 40px !important;
 	}
-	.sensei-bulk-actions-container .select2-selection__arrow {
+	.sensei-student-bulk-actions__container .select2-selection__arrow {
 		height: 39px !important;
 	}
 }
@@ -628,7 +631,6 @@
 	font-weight: normal;
 	font-style: normal;
 }
-
 
 .sensei-promo-banner {
 	display: flex;
