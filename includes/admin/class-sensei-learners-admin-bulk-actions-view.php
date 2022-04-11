@@ -405,33 +405,44 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		if ( empty( $courses ) ) {
 			return '0 ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
 		} else {
-			$courses           = explode( ',', $courses );
-			$course_arr        = array();
-			$courses_total     = count( $courses );
-			$courses_completed = 0;
-			foreach ( $courses as $course_id ) {
+			$courses            = explode( ',', $courses );
+			$courses_total      = count( $courses );
+			$courses_completed  = 0;
+			$visible_count      = 1;
+			$completed_courses  = [];
+			$incomplete_courses = [];
+			foreach ( $courses as $i => $course_id ) {
 				$splitted      = explode( '|', $course_id );
 				$course_id     = absint( $splitted[0] );
 				$course_status = $splitted[1];
+				$is_completed  = 'c' === $course_status;
+				$course_class  = 'learner-overview-course-item' . ( $is_completed ? ' course-complete' : '' );
+				$course        = get_post( $course_id );
+				$course_url    = esc_url( $this->controller->get_learner_management_course_url( $course_id ) );
+				$item_html     = '<a href="' . $course_url . '" class="' . $course_class . '" data-course-id="' . esc_attr( $course_id ) . '">' . esc_html( $course->post_title ) . '</a>';
 
-				if ( 'c' === $course_status ) {
+				if ( $is_completed ) {
 					$courses_completed++;
+					$completed_courses[] = $item_html;
+				} else {
+					$incomplete_courses[] = $item_html;
 				}
-
-				$course       = get_post( $course_id );
-				$span_style   = 'c' === $course_status ? ' button-primary action' : ' action';
-				$course_arr[] = '<a href="' . esc_url( $this->controller->get_learner_management_course_url( $course_id ) ) . '" class="button' . esc_attr( $span_style ) . '" data-course-id="' . esc_attr( $course_id ) . '">' . esc_html( $course->post_title ) . '</a>';
 			}
-
-			$html = $courses_total - $courses_completed . ' ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
+			$in_progress = $courses_total - $courses_completed;
+			$course_html = 1 === $in_progress ? esc_html__( 'Course', 'sensei-lms' ) : esc_html__( 'Courses', 'sensei-lms' );
+			$html        = $in_progress . ' ' . $course_html . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
 			if ( $courses_completed > 0 ) {
 				$html .= ', ' . $courses_completed . ' ' . esc_html__( 'Completed', 'sensei-lms' );
 			}
-			$html   .= ' <a href="#" class="learner-course-overview-detail-btn">...<span>' .
-				esc_html__( 'more', 'sensei-lms' ) . '</span></a><br/>';
-			$courses = implode( '<br />', $course_arr );
-
-			return $html . '<div class="learner-course-overview-detail" style="display:none">' . $courses . '</div>';
+			$more_button = '';
+			if ( $courses_total > $visible_count ) {
+				$more_button = '<a href="#" style="display: block" class="learner-course-overview-detail-btn">+' . ( $courses_total - $visible_count ) . ' <span>' .
+					esc_html__( 'more', 'sensei-lms' ) . '</span></a>';
+			}
+			$detail_items    = array_merge( $incomplete_courses, $completed_courses );
+			$visible_courses = implode( '', array_slice( $detail_items, 0, $visible_count ) );
+			$hidden_courses  = implode( '', array_slice( $detail_items, $visible_count ) );
+			return $html . $visible_courses . '<div class="learner-course-overview-detail" style="display: none">' . $hidden_courses . '</div>' . $more_button;
 		}
 	}
 

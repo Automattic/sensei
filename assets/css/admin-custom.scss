@@ -221,3 +221,17 @@ a.sensei-custom-navigation__info {
 .sensei-custom-navigation__links a.page-title-action:focus {
 	margin-left: 0;
 }
+
+.learner-overview-course-item {
+	display: block;
+	&.course-complete {
+		&:before {
+			font-family: dashicons;
+			content: "\f15e";
+			font-size: 170%;
+			vertical-align: bottom;
+			margin-right: 10px;
+			color: #7e7e7e;
+		}
+	}
+}
