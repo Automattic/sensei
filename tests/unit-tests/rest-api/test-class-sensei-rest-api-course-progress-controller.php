@@ -180,6 +180,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 	public function testDeleteCourseProgress_UserWithInsufficientPermissions_ReturnsForbiddenResponse() {
 		/* Arrange. */
 		$this->login_as_student();
+		$course_id = $this->factory->course->create();
 
 		/* Act. */
 		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
@@ -188,7 +189,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 			wp_json_encode(
 				[
 					'student_ids' => [ 1 ],
-					'course_ids'  => [ 2 ],
+					'course_ids'  => [ $course_id ],
 				]
 			)
 		);
@@ -221,7 +222,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		self::assertSame( 200, $response->get_status() );
 	}
 
-	public function testDeleteCourseProgress_CourseNotFound_ReturnsForbiddenResponse() {
+	public function testDeleteCourseProgress_CourseNotFound_ReturnsCourseNotFoundResponse() {
 		/* Arrange. */
 		$student_id = $this->factory->user->create();
 
@@ -241,7 +242,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		self::assertSame( 403, $response->get_status() );
+		self::assertSame( 404, $response->get_status() );
 	}
 
 	public function testDeleteCourseProgress_PostInsteadOfCourseGiven_ReturnsForbiddenResponse() {
@@ -265,6 +266,6 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		self::assertSame( 403, $response->get_status() );
+		self::assertSame( 404, $response->get_status() );
 	}
 }
