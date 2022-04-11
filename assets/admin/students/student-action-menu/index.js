@@ -17,7 +17,12 @@ import StudentModal from '../student-modal';
 export const StudentActionMenu = () => {
 	const [ action, setAction ] = useState( '' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
-	const closeModal = () => setModalOpen( false );
+	const closeModal = ( needsReload ) => {
+		if ( needsReload ) {
+			window.location.reload();
+		}
+		setModalOpen( false );
+	};
 
 	const controls = [
 		{
