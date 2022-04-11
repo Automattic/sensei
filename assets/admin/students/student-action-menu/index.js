@@ -14,10 +14,11 @@ import StudentModal from '../student-modal';
 /**
  * Student action menu.
  *
- * @param {Object} props          Component props.
- * @param {string} props.userName Student's user name.
+ * @param {Object} props
+ * @param {number} props.studentId Student's user id
+ * @param {string} props.userName  Student's user name.
  */
-export const StudentActionMenu = ( { userName } ) => {
+export const StudentActionMenu = ( { studentId, userName } ) => {
 	const [ action, setAction ] = useState( '' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const closeModal = ( needsReload ) => {
@@ -65,7 +66,11 @@ export const StudentActionMenu = ( { userName } ) => {
 			/>
 
 			{ isModalOpen && (
-				<StudentModal action={ action } onClose={ closeModal } />
+				<StudentModal
+					action={ action }
+					onClose={ closeModal }
+					students={ [ studentId ] }
+				/>
 			) }
 		</>
 	);
@@ -77,8 +82,7 @@ Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 			<StudentActionMenu
 				userId={ actionMenu?.dataset?.userId }
 				userName={ actionMenu?.dataset?.userName }
-			/>,
-			actionMenu
+			/>
 		);
 	}
 );
