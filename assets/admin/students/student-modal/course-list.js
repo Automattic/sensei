@@ -1,10 +1,14 @@
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
 import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import httpClient from './lib/http-client';
 
 /**
  * Callback for select or unselect courseItem
@@ -77,20 +81,28 @@ export const CourseList = ( { onChange } ) => {
 
 	// Fetch the courses.
 	useEffect( () => {
-		let mounted = true;
+		const controller = new AbortController();
 		setIsFetching( true );
 
-		apiFetch( {
-			path: '/wp/v2/courses?per_page=100',
+		httpClient( {
+			url: '/wp-json/wp/v2/courses?per_page=100',
 			method: 'GET',
+			signal: controller.signal,
 		} )
 			.then( ( result ) => {
-				if ( mounted ) setCourses( result );
+				setCourses( result.data );
+			} )
+			.catch( () => {
+				if ( ! controller.signal.aborted ) {
+					setIsFetching( false );
+				}
 			} )
 			.finally( () => {
-				if ( mounted ) setIsFetching( false );
+				if ( ! controller.signal.aborted ) {
+					setIsFetching( false );
+				}
 			} );
-		return () => ( mounted = false );
+		return () => controller.abort();
 	}, [] );
 
 	if ( isFetching ) {
