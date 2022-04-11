@@ -105,7 +105,7 @@ describe( '<StudentModal />', () => {
 				await findByRole( 'button', { name: 'Add to Course' } )
 			);
 			await waitFor( () => {
-				expect( onClose ).toHaveBeenCalled();
+				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
 		} );
 
@@ -179,7 +179,7 @@ describe( '<StudentModal />', () => {
 			);
 
 			await waitFor( () => {
-				expect( onClose ).toHaveBeenCalled();
+				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
 		} );
 
@@ -258,7 +258,7 @@ describe( '<StudentModal />', () => {
 				} )
 			);
 			await waitFor( () => {
-				expect( onClose ).toHaveBeenCalled();
+				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
 		} );
 

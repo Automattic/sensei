@@ -82,7 +82,8 @@ Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 			<StudentActionMenu
 				userId={ actionMenu?.dataset?.userId }
 				userName={ actionMenu?.dataset?.userName }
-			/>
+			/>,
+			actionMenu
 		);
 	}
 );
