@@ -73,8 +73,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 		parent::__construct( $this->page_slug );
 
-		add_action( 'sensei_before_list_table', array( $this, 'data_table_top_header' ) );
-		add_action( 'sensei_after_list_table', array( $this, 'data_table_bottom_header' ) );
+		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
@@ -324,27 +323,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		</select>
 		<?php
 	}
-
-	public function data_table_top_header() {
-		?>
-		<div class="top_header">
-			<?php
-			$this->data_table_header();
-			?>
-		</div>
-		<?php
-	}
-
-	public function data_table_bottom_header() {
-		?>
-		<div class="bottom_header">
-			<?php
-			$this->data_table_header();
-			?>
-		</div>
-		<?php
-	}
-
 
 	/**
 	 * Helper method to display the controls of bulk actions.
