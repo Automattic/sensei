@@ -116,7 +116,7 @@ describe( '<StudentModal />', () => {
 			} );
 		} );
 
-		describe( 'when there is a fail to add the students to the courses', () => {
+		describe( 'when there is a failure to add the students to the courses', () => {
 			it( 'Should display an error message', async () => {
 				nock( 'http://localhost' )
 					.post( '/' )
@@ -190,7 +190,7 @@ describe( '<StudentModal />', () => {
 			} );
 		} );
 
-		describe( 'when there is a fail to remove the students from the courses', () => {
+		describe( 'when there is a failure to remove the students from the courses', () => {
 			it( 'Should display an error message', async () => {
 				nock( 'http://localhost' )
 					.delete( '/' )
@@ -242,7 +242,7 @@ describe( '<StudentModal />', () => {
 			).toBeTruthy();
 		} );
 
-		it( 'Should reset the selected the students progress from the selected courses', async () => {
+		it( "Should reset the selected the students's progress from the selected courses", async () => {
 			nock( 'http://localhost' )
 				.delete( '/', {
 					student_ids: students,
@@ -269,7 +269,7 @@ describe( '<StudentModal />', () => {
 			} );
 		} );
 
-		describe( 'when there is a fail to reset the students progress', () => {
+		describe( 'when there is a failure to reset the students progress', () => {
 			it( 'Should display an error message', async () => {
 				nock( 'http://localhost' )
 					.delete( '/', {
