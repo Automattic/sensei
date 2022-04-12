@@ -8,12 +8,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-                with:
-                    node-version: '16'
-                    cache: 'npm'
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
             - name: Install JS dependencies
               run: npm ci
+            - name: Node version
+              run: node -v
             - name: Lint JS
               run: npm run lint-js
 
@@ -23,11 +25,15 @@ jobs:
         steps:
             # clone the repository
             - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-                with:
-                    node-version: '16'
-                    cache: 'npm'
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
             - name: Install JS dependencies
               run: npm ci
+            - name: Node version
+              run: node -v
             - name: Test JS
               run: npm run test-js
