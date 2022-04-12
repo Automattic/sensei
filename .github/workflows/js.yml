@@ -11,14 +11,7 @@ jobs:
             - uses: actions/setup-node@v3
                 with:
                     node-version: '16'
-            - uses: actions/cache@v3
-              with:
-                  path: ~/.npm/
-                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v3
-              with:
-                  path: node_modules/
-                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+                    cache: 'npm'
             - name: Install JS dependencies
               run: npm ci
             - name: Lint JS
@@ -33,12 +26,7 @@ jobs:
             - uses: actions/setup-node@v3
                 with:
                     node-version: '16'
-            - uses: actions/cache@v3
-              with:
-                  path: ~/.npm
-                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.os }}-node-
+                    cache: 'npm'
             - name: Install JS dependencies
               run: npm ci
             - name: Test JS
