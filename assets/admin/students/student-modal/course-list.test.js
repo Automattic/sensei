@@ -1,49 +1,117 @@
 /**
  * External dependencies
  */
-import { act, render, screen } from '@testing-library/react';
-
-/**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
+import { act, render, screen, fireEvent } from '@testing-library/react';
+import nock from 'nock';
 
 /**
  * Internal dependencies
  */
 import { CourseList } from './course-list';
 
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
+const courses = [
+	{
+		id: 1,
+		title: { rendered: 'Course 1' },
+	},
+	{
+		id: 2,
+		title: { rendered: 'Course 2' },
+	},
+	{
+		id: 3,
+		title: { rendered: 'Course 3' },
+	},
+];
 
 describe( '<CourseList />', () => {
-	it( 'Should display courses in the list', async () => {
-		const coursePromise = Promise.resolve( [
-			{
-				id: 1,
-				title: { rendered: 'My Course' },
-			},
-			{
-				id: 2,
-				title: { rendered: 'Another Course' },
-			},
-		] );
-		apiFetch.mockImplementation( () => coursePromise );
-
-		await act( async () => {
-			render( <CourseList /> );
-		} );
-
-		expect( screen.getByLabelText( 'My Course' ) ).toBeTruthy();
-		expect( screen.getByLabelText( 'Another Course' ) ).toBeTruthy();
+	beforeEach( () => {
+		nock.cleanAll();
+		nock( 'http://localhost' )
+			.get( '/wp-json/wp/v2/courses' )
+			.query( { per_page: 100 } )
+			.reply( 200, courses );
 	} );
 
-	it( 'Should show a message when there are no courses', async () => {
-		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
-
+	it( 'Should display courses in the list', async () => {
 		await act( async () => {
 			render( <CourseList /> );
 		} );
+		expect(
+			await screen.findByLabelText( courses.at( 0 ).title.rendered )
+		).toBeTruthy();
+	} );
 
-		expect( screen.getByText( 'No courses found.' ) ).toBeTruthy();
+	describe( 'when there is no course', () => {
+		beforeEach( () => {
+			nock.cleanAll();
+			nock( 'http://localhost' )
+				.get( '/wp-json/wp/v2/courses' )
+				.query( { per_page: 100 } )
+				.once()
+				.reply( 200, [] );
+		} );
+
+		it( 'Should show a message when there are no courses', async () => {
+			await act( async () => {
+				render( <CourseList /> );
+			} );
+
+			expect(
+				await screen.findByText( 'No courses found.' )
+			).toBeTruthy();
+		} );
+	} );
+
+	describe( 'when a course is selected', () => {
+		it( 'Should call onChange with the selected courses', async () => {
+			const onChange = jest.fn();
+			await act( async () => {
+				render( <CourseList onChange={ onChange } /> );
+			} );
+
+			fireEvent.click(
+				await screen.findByLabelText( courses.at( 0 ).title.rendered )
+			);
+			fireEvent.click(
+				await screen.findByLabelText( courses.at( 2 ).title.rendered )
+			);
+
+			expect( onChange ).toHaveBeenCalledWith( [
+				courses.at( 0 ),
+				courses.at( 2 ),
+			] );
+		} );
+
+		describe( 'when a course is selected and deselected', () => {
+			it( 'Should remove unselected items', async () => {
+				const onChange = jest.fn();
+				await act( async () => {
+					render( <CourseList onChange={ onChange } /> );
+				} );
+
+				const newLocal = fireEvent.click;
+				newLocal(
+					await screen.findByLabelText(
+						courses.at( 0 ).title.rendered
+					)
+				);
+				fireEvent.click(
+					await screen.findByLabelText(
+						courses.at( 0 ).title.rendered
+					)
+				);
+
+				fireEvent.click(
+					await screen.findByLabelText(
+						courses.at( 1 ).title.rendered
+					)
+				);
+
+				expect( onChange ).toHaveBeenLastCalledWith( [
+					courses.at( 1 ),
+				] );
+			} );
+		} );
 	} );
 } );
