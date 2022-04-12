@@ -1,48 +1,26 @@
 /**
  * WordPress dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { CheckboxControl, Spinner } from '@wordpress/components';
-import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import httpClient from './lib/http-client';
-
-/**
- * Callback for select or unselect courseItem
- *
- * @callback onChangeEvent
- * @param {boolean} isSelected - Describes if the course was selected or unselected
- * @param {boolean} course     - Course related to the trigged event
- */
 
 /**
  * Course item.
  *
- * @param {Object}        props
- * @param {Object}        props.course   Course
- * @param {onChangeEvent} props.onChange Event trigged when
+ * @param {Object} course Course.
  */
-const CourseItem = ( { course, onChange } ) => {
+const CourseItem = ( course ) => {
 	const courseId = course?.id;
 	const title = course?.title?.rendered;
-	const onSelectCourse = useCallback(
-		( isSelected ) => onChange( { isSelected, course } ),
-		[ course, onChange ]
-	);
 
 	return (
 		<li
 			className="sensei-student-modal__course-list__item"
 			key={ courseId }
 		>
-			<CheckboxControl
-				id={ `course-${ courseId }` }
-				title={ title }
-				onChange={ onSelectCourse }
-			/>
+			<CheckboxControl id={ `course-${ courseId }` } title={ title } />
 			<label htmlFor={ `course-${ courseId }` } title={ title }>
 				{ title }
 			</label>
@@ -51,58 +29,26 @@ const CourseItem = ( { course, onChange } ) => {
 };
 
 /**
- * Callback for CourseSelection
- *
- * @callback onCourseSelectionChange
- * @param {Array} selectedCourses - List of selected courses
- */
-
-/**
  * Course list.
- *
- * @param {Object}                  props
- * @param {onCourseSelectionChange} props.onChange
  */
-export const CourseList = ( { onChange } ) => {
+export const CourseList = () => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
-	const selectedCourses = useRef( [] );
-
-	const selectCourse = useCallback(
-		( { isSelected, course } ) => {
-			selectedCourses.current = isSelected
-				? [ ...selectedCourses.current, course ]
-				: selectedCourses.current.filter( ( c ) => c.id !== course.id );
-
-			onChange( selectedCourses.current );
-		},
-		[ onChange ]
-	);
 
 	// Fetch the courses.
 	useEffect( () => {
-		const controller = new AbortController();
 		setIsFetching( true );
 
-		httpClient( {
-			url: '/wp-json/wp/v2/courses?per_page=100',
+		apiFetch( {
+			path: '/wp/v2/courses?per_page=100',
 			method: 'GET',
-			signal: controller.signal,
 		} )
 			.then( ( result ) => {
-				setCourses( result.data );
-			} )
-			.catch( () => {
-				if ( ! controller.signal.aborted ) {
-					setIsFetching( false );
-				}
+				setCourses( result );
 			} )
 			.finally( () => {
-				if ( ! controller.signal.aborted ) {
-					setIsFetching( false );
-				}
+				setIsFetching( false );
 			} );
-		return () => controller.abort();
 	}, [] );
 
 	if ( isFetching ) {
@@ -123,13 +69,7 @@ export const CourseList = ( { onChange } ) => {
 				{ __( 'Your Courses', 'sensei-lms' ) }
 			</span>
 			<ul className="sensei-student-modal__course-list">
-				{ courses.map( ( course ) => (
-					<CourseItem
-						key={ course.id }
-						course={ course }
-						onChange={ selectCourse }
-					/>
-				) ) }
+				{ courses.map( CourseItem ) }
 			</ul>
 		</>
 	);
