@@ -67,6 +67,7 @@ export const CourseList = ( { onChange } ) => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
+	const isMounted = useRef( true );
 
 	const selectCourse = useCallback(
 		( { isSelected, course } ) => {
@@ -81,28 +82,28 @@ export const CourseList = ( { onChange } ) => {
 
 	// Fetch the courses.
 	useEffect( () => {
-		const controller = new AbortController();
 		setIsFetching( true );
 
 		httpClient( {
 			url: '/wp-json/wp/v2/courses?per_page=100',
 			method: 'GET',
-			signal: controller.signal,
 		} )
 			.then( ( result ) => {
-				setCourses( result.data );
+				if ( isMounted.current ) {
+					setCourses( result.data );
+				}
 			} )
 			.catch( () => {
-				if ( ! controller.signal.aborted ) {
+				if ( isMounted.current ) {
 					setIsFetching( false );
 				}
 			} )
 			.finally( () => {
-				if ( ! controller.signal.aborted ) {
+				if ( isMounted.current ) {
 					setIsFetching( false );
 				}
 			} );
-		return () => controller.abort();
+		return () => ( isMounted.current = false );
 	}, [] );
 
 	if ( isFetching ) {
