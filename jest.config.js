@@ -3,6 +3,7 @@ const baseConfig = require( '@wordpress/scripts/config/jest-unit.config.js' );
 module.exports = {
 	...baseConfig,
 	setupFilesAfterEnv: [ './jest.setup.js' ],
+	preset: null,
 	testPathIgnorePatterns: [
 		'/node_modules/',
 		'<rootDir>/build/',
