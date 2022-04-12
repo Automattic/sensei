@@ -65,7 +65,7 @@
     "@wordpress/babel-plugin-makepot": "4.1.0",
     "@wordpress/babel-preset-default": "5.1.0",
     "@wordpress/e2e-test-utils": "5.1.0",
-    "@wordpress/env": "4.2.0",
+    "@wordpress/env": "4.5.0",
     "@wordpress/eslint-plugin": "9.0.6",
     "@wordpress/jest-preset-default": "7.0.1",
     "@wordpress/postcss-themes": "3.0.1",
