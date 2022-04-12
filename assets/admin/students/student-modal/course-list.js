@@ -81,28 +81,21 @@ export const CourseList = ( { onChange } ) => {
 
 	// Fetch the courses.
 	useEffect( () => {
-		const controller = new AbortController();
 		setIsFetching( true );
 
 		httpClient( {
 			url: '/wp-json/wp/v2/courses?per_page=100',
 			method: 'GET',
-			signal: controller.signal,
 		} )
 			.then( ( result ) => {
 				setCourses( result.data );
 			} )
 			.catch( () => {
-				if ( ! controller.signal.aborted ) {
-					setIsFetching( false );
-				}
+				setIsFetching( false );
 			} )
 			.finally( () => {
-				if ( ! controller.signal.aborted ) {
-					setIsFetching( false );
-				}
+				setIsFetching( false );
 			} );
-		return () => controller.abort();
 	}, [] );
 
 	if ( isFetching ) {
