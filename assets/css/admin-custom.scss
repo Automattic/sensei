@@ -153,20 +153,17 @@ div.question_boolean_fields { margin-bottom: 10px; }
 }
 
 .sensei-custom-navigation__heading {
-	display: flex;
-	flex-flow: row wrap;
-	align-items: baseline;
-	justify-content: flex-start;
-	gap: 10px;
-}
+	&, &-with-info {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: baseline;
+		justify-content: flex-start;
+		gap: 10px;
+	}
 
-.sensei-custom-navigation__heading-with-info {
-	display: flex;
-	flex-flow: row wrap;
-	align-items: baseline;
-	justify-content: flex-start;
-	gap: 10px;
-	width: 100%;
+	&-with-info {
+		width: 100%;
+	}
 }
 
 .sensei-custom-navigation__separator {
