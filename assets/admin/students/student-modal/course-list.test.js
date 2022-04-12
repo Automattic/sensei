@@ -25,16 +25,16 @@ const courses = [
 ];
 
 describe( '<CourseList />', () => {
-	beforeEach( () => {
-		nock.cleanAll();
+	beforeAll( () => {
 		nock( 'http://localhost' )
+			.persist()
 			.get( '/wp-json/wp/v2/courses' )
 			.query( { per_page: 100 } )
 			.reply( 200, courses );
 	} );
 
-	it( 'Should display courses in the list', async () => {
-		await act( async () => {
+	it.only( 'Should display courses in the list', async () => {
+		await act( () => {
 			render( <CourseList /> );
 		} );
 		expect(
