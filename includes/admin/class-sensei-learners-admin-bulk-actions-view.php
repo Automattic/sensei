@@ -339,42 +339,42 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		?>
 		<div class="sensei-student-bulk-actions__wrapper">
 			<div class="alignleft bulkactions sensei-student-bulk-actions__container">
-			<div id="sensei-bulk-learner-actions-modal" style="display:none;">
-				<?php $this->render_bulk_actions_form( $courses ); ?>
-			</div>
-			<div class="sensei-student-bulk-actions__filters">
-				<div>
-					<?php
-					echo wp_kses(
-						$this->render_bulk_action_select_box(),
-						array(
-							'option' => array(
-								'value' => array(),
-							),
-							'select' => array(
-								'id'   => array(),
-								'name' => array(),
-							),
-						)
-					);
-					?>
-					<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
+				<div id="sensei-bulk-learner-actions-modal" style="display:none;">
+					<?php $this->render_bulk_actions_form( $courses ); ?>
 				</div>
-				<div class="alignleft">
-					<form action="" method="get">
+				<div class="sensei-student-bulk-actions__filters">
+					<div>
 						<?php
-						foreach ( $this->query_args as $name => $value ) {
-							if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
-								continue;
-							}
-							echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
-						}
-						$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei-lms' ) );
+						echo wp_kses(
+							$this->render_bulk_action_select_box(),
+							array(
+								'option' => array(
+									'value' => array(),
+								),
+								'select' => array(
+									'id'   => array(),
+									'name' => array(),
+								),
+							)
+						);
 						?>
-						<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei-lms' ); ?></button>
-					</form>
+						<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
+					</div>
+					<div class="alignleft">
+						<form action="" method="get">
+							<?php
+							foreach ( $this->query_args as $name => $value ) {
+								if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
+									continue;
+								}
+								echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
+							}
+							$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei-lms' ) );
+							?>
+							<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei-lms' ); ?></button>
+						</form>
+					</div>
 				</div>
-			</div>
 		</div>
 		</div>
 		<?php
