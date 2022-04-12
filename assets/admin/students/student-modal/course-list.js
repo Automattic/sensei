@@ -61,9 +61,10 @@ const CourseItem = ( { course, onChange } ) => {
  * Course list.
  *
  * @param {Object}                  props
+ * @param {string}                  props.searchQuery Course to search for.
  * @param {onCourseSelectionChange} props.onChange Event triggered when a course is selected or unselected
  */
-export const CourseList = ( { onChange } ) => {
+export const CourseList = ( { searchQuery, onChange } ) => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
@@ -85,7 +86,8 @@ export const CourseList = ( { onChange } ) => {
 		setIsFetching( true );
 
 		httpClient( {
-			path: '/wp/v2/courses?per_page=100',
+			path: '/wp/v2/courses?per_page=100' +
+				( searchQuery ? `&search=${ searchQuery }` : '' ),
 			method: 'GET',
 		} )
 			.then( ( result ) => {
@@ -104,7 +106,7 @@ export const CourseList = ( { onChange } ) => {
 				}
 			} );
 		return () => ( isMounted.current = false );
-	}, [] );
+	}, [ searchQuery ] );
 
 	if ( isFetching ) {
 		return (
