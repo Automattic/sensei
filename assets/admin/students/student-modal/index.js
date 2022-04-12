@@ -30,6 +30,7 @@ const POSSIBLE_ACTIONS = {
 				method: 'POST',
 				data: { student_ids: students, course_ids: courses },
 			} ),
+		isDestructive: false,
 	},
 	remove: {
 		description: __(
@@ -43,6 +44,7 @@ const POSSIBLE_ACTIONS = {
 				method: 'DELETE',
 				data: { student_ids: students, course_ids: courses },
 			} ),
+		isDestructive: true,
 	},
 	'reset-progress': {
 		description: __(
@@ -56,6 +58,8 @@ const POSSIBLE_ACTIONS = {
 				method: 'DELETE',
 				data: { student_ids: students, course_ids: courses },
 			} ),
+
+		isDestructive: true,
 	},
 };
 
@@ -68,8 +72,13 @@ const POSSIBLE_ACTIONS = {
  * @param {Array}    props.students
  */
 export const StudentModal = ( { action, onClose, students } ) => {
-	const { description, buttonLabel, sendAction } = POSSIBLE_ACTIONS[ action ];
-	const selectedCourses = useRef( [] );
+	const {
+		description,
+		buttonLabel,
+		sendAction,
+		isDestructive,
+	} = POSSIBLE_ACTIONS[ action ];
+	const [ selectedCourses, setCourses ] = useState( [] );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasError, setError ] = useState( false );
 	const mounted = useRef( true );
@@ -81,9 +90,8 @@ export const StudentModal = ( { action, onClose, students } ) => {
 		try {
 			await sendAction(
 				students,
-				selectedCourses.current.map( ( course ) => course.id )
+				selectedCourses.map( ( course ) => course.id )
 			);
-			setIsSending( false );
 			onClose( true );
 		} catch ( e ) {
 			if ( mounted.current ) {
@@ -91,7 +99,7 @@ export const StudentModal = ( { action, onClose, students } ) => {
 				setIsSending( false );
 			}
 		}
-	}, [ sendAction, students, onClose ] );
+	}, [ sendAction, students, selectedCourses, onClose ] );
 
 	return (
 		<Modal
@@ -100,23 +108,27 @@ export const StudentModal = ( { action, onClose, students } ) => {
 			onRequestClose={ () => onClose() }
 		>
 			<p>{ description }</p>
-			{ isSending && <Spinner /> }
-			{ hasError && <h1>Sorry, something went wrong</h1> }
+
 			<InputControl
 				placeholder={ __( 'Search courses', 'sensei-lms' ) }
 				iconRight={ search }
 			/>
+
+			{ hasError && <h1>Sorry, something went wrong</h1> }
 			<CourseList
 				onChange={ ( courses ) => {
-					selectedCourses.current = courses;
+					setCourses( courses );
 				} }
 			/>
 			<div className="sensei-student-modal__action">
 				<Button
-					className={ `sensei-student-modal__action--${ action }` }
-					variant="primary"
+					className={ `sensei-student-modal__action` }
+					variant={ isDestructive ? '' : 'primary' }
 					onClick={ () => send() }
+					disabled={ isSending || selectedCourses.length === 0 }
+					isDestructive={ isDestructive }
 				>
+					{ isSending && <Spinner /> }
 					{ buttonLabel }
 				</Button>
 			</div>

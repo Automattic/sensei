@@ -57,6 +57,13 @@ describe( '<StudentModal />', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'Should disable the action button when there is no course selected', async () => {
+		render( <StudentModal action="add" /> );
+		expect(
+			getByRole( 'button', { name: 'Add to Course' } )
+		).toBeDisabled();
+	} );
+
 	describe( 'Add action', () => {
 		const onClose = jest.fn();
 
