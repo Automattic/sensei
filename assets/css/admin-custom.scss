@@ -145,10 +145,12 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	display: flex;
 	flex-flow: column;
 	margin: 20px auto;
+
+	div {
+		margin: 8px auto;
+	}
 }
-.sensei-students__call-to-action div {
-	margin: 8px auto;
-}
+
 /**
  * Sensei custom navigation
  */
