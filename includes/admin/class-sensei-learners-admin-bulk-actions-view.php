@@ -172,7 +172,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				$last_activity_date = Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 			}
 			$row_data = array(
-				'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'cb'                 => '<label class="screen-reader-text">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
 				'learner'            => $this->get_learner_html( $learner ),
 				'email'              => $learner->user_email,
 				'progress'           => $courses,
