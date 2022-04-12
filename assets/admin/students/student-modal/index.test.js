@@ -1,13 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	act,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 /**
  * Internal dependencies
@@ -35,8 +29,7 @@ const NONCE = 'some-nounce-id';
 describe( '<StudentModal />', () => {
 	const { getByText, getByRole, findByText, findByRole } = screen;
 
-	beforeEach( () => {
-		nock.disableNetConnect();
+	beforeAll( () => {
 		nock( 'http://localhost' )
 			.persist()
 			.get( '/wp-json/wp/v2/courses' )
@@ -49,6 +42,7 @@ describe( '<StudentModal />', () => {
 			.query( { action: 'rest-nonce' } )
 			.reply( 200, NONCE );
 	} );
+	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display a list of courses', async () => {
 		render( <StudentModal action="add" /> );
@@ -214,15 +208,13 @@ describe( '<StudentModal />', () => {
 
 	describe( 'Reset action', () => {
 		const onClose = jest.fn();
-		beforeEach( async () => {
-			await act( async () =>
-				render(
-					<StudentModal
-						action="reset-progress"
-						onClose={ onClose }
-						students={ students }
-					/>
-				)
+		beforeEach( () => {
+			render(
+				<StudentModal
+					action="reset-progress"
+					onClose={ onClose }
+					students={ students }
+				/>
 			);
 		} );
 

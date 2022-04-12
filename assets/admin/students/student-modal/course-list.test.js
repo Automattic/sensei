@@ -26,8 +26,8 @@ const courses = [
 
 describe( '<CourseList />', () => {
 	beforeEach( () => {
-		nock.cleanAll();
 		nock( 'http://localhost' )
+			.persist()
 			.get( '/wp-json/wp/v2/courses' )
 			.query( { per_page: 100 } )
 			.reply( 200, courses );
@@ -86,12 +86,9 @@ describe( '<CourseList />', () => {
 		describe( 'when a course is selected and deselected', () => {
 			it( 'Should remove unselected items', async () => {
 				const onChange = jest.fn();
-				await act( async () => {
-					render( <CourseList onChange={ onChange } /> );
-				} );
+				render( <CourseList onChange={ onChange } /> );
 
-				const newLocal = fireEvent.click;
-				newLocal(
+				fireEvent.click(
 					await screen.findByLabelText(
 						courses.at( 0 ).title.rendered
 					)
