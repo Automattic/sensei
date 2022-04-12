@@ -375,7 +375,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						</form>
 					</div>
 				</div>
-		</div>
+			</div>
 		</div>
 		<?php
 	}
