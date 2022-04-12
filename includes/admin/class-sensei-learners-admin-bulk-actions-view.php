@@ -177,7 +177,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				'email'              => $learner->user_email,
 				'progress'           => $courses,
 				'last_activity_date' => $last_activity_date,
-				'actions'            => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) . '"></div>',
+				'actions'            => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) .
+					'" data-user-name="' . esc_attr( $learner->user_login ) . '"></div>',
 			);
 		}
 
