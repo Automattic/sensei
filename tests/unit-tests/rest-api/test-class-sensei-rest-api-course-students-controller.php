@@ -8,6 +8,7 @@
 class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_REST_API_Test_Helpers;
 	/**
 	 * A server instance that we use in tests to dispatch requests.
 	 *
@@ -141,7 +142,7 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$this->assertSame( 403, $response->get_status() );
 	}
 
-	public function testAddUsersToCourses_CourseNotFoundGiven_ReturnsForbiddenResponse() {
+	public function testAddUsersToCourses_CourseNotFoundGiven_ReturnsCourseNotFoundResponse() {
 		/* Arrange. */
 		$student_id = $this->factory->user->create();
 
@@ -161,7 +162,11 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertSame( 403, $response->get_status() );
+		$expected = [
+			'status_code' => 404,
+			'error_code'  => 'sensei_course_student_batch_action_missing_course',
+		];
+		$this->assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
 
 	public function testRemoveUsersFromCoursesApi_AfterApiExecution_StudentsAreActuallyRemoved() {
@@ -205,9 +210,10 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$this->assertEquals( 0, $enrolled_course_count );
 	}
 
-	public function testRemoveUsersFromCoursesApi_IfCourseDoesNotExist_ReturnsUnauthorizedResponse() {
+	public function testRemoveUsersFromCoursesApi_IfPostFoundInsteadOfCourse_ReturnsCourseNotFound() {
 		/* Arrange. */
 		$this->login_as_admin();
+		$post_id = $this->factory->post->create();
 
 		/* Act. */
 		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-students/batch' );
@@ -216,14 +222,18 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 			wp_json_encode(
 				[
 					'student_ids' => [ 1 ],
-					'course_ids'  => [ 999 ],
+					'course_ids'  => [ $post_id ],
 				]
 			)
 		);
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertSame( 403, $response->get_status() );
+		$expected = [
+			'status_code' => 404,
+			'error_code'  => 'sensei_course_student_batch_action_missing_course',
+		];
+		$this->assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
 
 	public function testRemoveUsersFromCoursesApi_IfAnyStudentDoesNotExist_ReturnsFalseForThatStudentAndTrueForOthers() {
