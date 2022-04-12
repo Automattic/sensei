@@ -209,10 +209,10 @@ jQuery( document ).ready( function () {
 			evt.preventDefault();
 			evt.stopPropagation();
 			var $elem = $( this ),
-				overviewDiv = $elem.siblings(
+				$overviewDiv = $elem.siblings(
 					'.learner-course-overview-detail'
 				);
-			overviewDiv.slideDown( 'slow' );
+			$overviewDiv.slideDown( 'slow' );
 			$( this ).slideUp( 'slow' );
 		} );
 
