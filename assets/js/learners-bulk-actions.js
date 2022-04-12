@@ -197,13 +197,6 @@ jQuery( document ).ready( function () {
 		hookSelectAll( $cbSelectAllTwo, $cbSelectAll );
 
 		$modalToggle.attr( 'disabled', true );
-		$modalToggle.on( 'click', function () {
-			$modalContent.modal( {
-				fadeDuration: 100,
-				fadeDelay: 0.5,
-			} );
-			return false;
-		} );
 
 		$learnerCourseOverviewDetailButton.on( 'click', function ( evt ) {
 			evt.preventDefault();
