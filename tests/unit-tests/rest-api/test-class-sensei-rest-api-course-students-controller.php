@@ -8,6 +8,7 @@
 class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_REST_API_Test_Helpers;
 	/**
 	 * A server instance that we use in tests to dispatch requests.
 	 *
@@ -161,7 +162,11 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertSame( 404, $response->get_status() );
+		$expected = [
+			'status_code' => 404,
+			'error_code'  => 'sensei_course_student_batch_action_missing_course',
+		];
+		$this->assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
 
 	public function testRemoveUsersFromCoursesApi_AfterApiExecution_StudentsAreActuallyRemoved() {
@@ -224,7 +229,11 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$this->assertSame( 404, $response->get_status() );
+		$expected = [
+			'status_code' => 404,
+			'error_code'  => 'sensei_course_student_batch_action_missing_course',
+		];
+		$this->assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
 
 	public function testRemoveUsersFromCoursesApi_IfAnyStudentDoesNotExist_ReturnsFalseForThatStudentAndTrueForOthers() {

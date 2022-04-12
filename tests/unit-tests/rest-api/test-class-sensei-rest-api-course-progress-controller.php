@@ -8,6 +8,7 @@
 class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestCase {
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_REST_API_Test_Helpers;
 	/**
 	 * A server instance that we use in tests to dispatch requests.
 	 *
@@ -242,10 +243,14 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		self::assertSame( 404, $response->get_status() );
+		$expected = [
+			'status_code' => 404,
+			'error_code'  => 'sensei_course_student_batch_action_missing_course',
+		];
+		self::assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
 
-	public function testDeleteCourseProgress_PostInsteadOfCourseGiven_ReturnsForbiddenResponse() {
+	public function testDeleteCourseProgress_PostInsteadOfCourseGiven_ReturnsNotFoundResponse() {
 		/* Arrange. */
 		$post_id    = $this->factory->post->create();
 		$student_id = $this->factory->user->create();
@@ -266,6 +271,10 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		self::assertSame( 404, $response->get_status() );
+		$expected = [
+			'status_code' => 404,
+			'error_code'  => 'sensei_course_student_batch_action_missing_course',
+		];
+		self::assertSame( $expected, $this->getResponseAndStatusCode( $response ) );
 	}
 }
