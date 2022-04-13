@@ -15,12 +15,14 @@ import { check } from '@wordpress/icons';
  * @param {string}  props.className  Class name for the wrapper.
  * @param {boolean} props.isChecked  Whether it's checked.
  * @param {boolean} props.isCheckbox Whether it's a checkbox.
+ * @param {Object}  props.input      Input component.
  * @param {Object}  props.children   Component children.
  */
 export const OptionToggle = ( {
 	className,
 	isChecked,
 	isCheckbox,
+	input,
 	children,
 	...props
 } ) => (
@@ -31,6 +33,7 @@ export const OptionToggle = ( {
 		) }
 		{ ...props }
 	>
+		{ input }
 		<div
 			className={ classnames(
 				'sensei-lms-question-block__option-toggle__control',
@@ -50,11 +53,13 @@ export const OptionToggle = ( {
  * @param {string} props.type Input toggle type (`checkbox` or `radio`).
  */
 export const InputToggle = ( props ) => (
-	<>
-		<input
-			className="sensei-lms-question-block__option-toggle-input"
-			{ ...props }
-		/>
-		<OptionToggle isCheckbox={ props.type === 'checkbox' } />
-	</>
+	<OptionToggle
+		isCheckbox={ props.type === 'checkbox' }
+		input={
+			<input
+				className="sensei-lms-question-block__option-toggle-input"
+				{ ...props }
+			/>
+		}
+	/>
 );
