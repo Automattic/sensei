@@ -141,6 +141,16 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	}
 }
 
+.sensei-students__call-to-action {
+	display: flex;
+	flex-flow: column;
+	margin: 20px auto;
+
+	div {
+		margin: 8px auto;
+	}
+}
+
 /**
  * Sensei custom navigation
  */
