@@ -33,13 +33,13 @@ export const StudentsBulkActionButton = () => {
 	};
 
 	const openModal = () => {
-		setIsModalOpen( true );
 		const hiddenSenseiBulkAction = document.getElementById(
 			'bulk-action-selector-top'
 		);
 		if ( hiddenSenseiBulkAction ) {
 			setActionValue( hiddenSenseiBulkAction.value );
 		}
+		setIsModalOpen( true );
 	};
 	return (
 		<>
