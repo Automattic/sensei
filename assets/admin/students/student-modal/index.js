@@ -15,7 +15,7 @@ import httpClient from './lib/http-client';
 /**
  * External dependencies
  */
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 
 const POSSIBLE_ACTIONS = {
 	add: {
@@ -69,7 +69,7 @@ const POSSIBLE_ACTIONS = {
  * @param {Object}   props
  * @param {Object}   props.action   Action that is being performed.
  * @param {Function} props.onClose  Close callback.
- * @param {Array}    props.students
+ * @param {Array}    props.students A list of Student ids related to the action should be applied.
  */
 export const StudentModal = ( { action, onClose, students } ) => {
 	const {
@@ -81,9 +81,11 @@ export const StudentModal = ( { action, onClose, students } ) => {
 	const [ selectedCourses, setCourses ] = useState( [] );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasError, setError ] = useState( false );
-	const mounted = useRef( true );
+	const isMounted = useRef( true );
 
-	useEffect( () => () => ( mounted.current = false ) );
+	useEffect( () => {
+		return () => ( isMounted.current = false );
+	}, [ isMounted ] );
 
 	const send = useCallback( async () => {
 		setIsSending( true );
@@ -94,7 +96,7 @@ export const StudentModal = ( { action, onClose, students } ) => {
 			);
 			onClose( true );
 		} catch ( e ) {
-			if ( mounted.current ) {
+			if ( isMounted.current ) {
 				setError( true );
 				setIsSending( false );
 			}

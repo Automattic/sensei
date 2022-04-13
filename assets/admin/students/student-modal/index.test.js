@@ -24,10 +24,16 @@ const courses = [
 ];
 
 const students = [ 1, 2, 3 ];
-const NONCE = 'some-nounce-id';
+const NONCE = 'some-nonce-id';
 
 describe( '<StudentModal />', () => {
-	const { getByText, getByRole, findByText, findByRole } = screen;
+	const { getByText, findByText, findByRole, findByLabelText } = screen;
+
+	const courseOptionAt = async ( index ) =>
+		findByLabelText( courses.at( index ).title.rendered );
+
+	const buttonByLabel = async ( label ) =>
+		findByRole( 'button', { name: label } );
 
 	beforeAll( () => {
 		nock( 'http://localhost' )
@@ -46,16 +52,12 @@ describe( '<StudentModal />', () => {
 
 	it( 'Should display a list of courses', async () => {
 		render( <StudentModal action="add" /> );
-		expect(
-			await findByText( courses.at( 0 ).title.rendered )
-		).toBeTruthy();
+		expect( await courseOptionAt( 0 ) ).toBeInTheDocument();
 	} );
 
 	it( 'Should disable the action button when there is no course selected', async () => {
 		render( <StudentModal action="add" /> );
-		expect(
-			getByRole( 'button', { name: 'Add to Course' } )
-		).toBeDisabled();
+		expect( await buttonByLabel( 'Add to Course' ) ).toBeDisabled();
 	} );
 
 	describe( 'Add action', () => {
@@ -76,13 +78,13 @@ describe( '<StudentModal />', () => {
 				getByText(
 					'Select the course(s) you would like to add students to:'
 				)
-			).toBeTruthy();
+			).toBeInTheDocument();
 		} );
 
 		it( 'Should display the action button', async () => {
 			expect(
-				getByRole( 'button', { name: 'Add to Course' } )
-			).toBeTruthy();
+				await buttonByLabel( 'Add to Course' )
+			).toBeInTheDocument();
 		} );
 
 		it( 'Should add the selected students to the selected course', async () => {
@@ -98,20 +100,17 @@ describe( '<StudentModal />', () => {
 				.once()
 				.reply( 200 );
 
-			fireEvent.click(
-				await screen.findByLabelText( courses.at( 0 ).title.rendered )
-			);
+			fireEvent.click( await courseOptionAt( 0 ) );
 
-			fireEvent.click(
-				await findByRole( 'button', { name: 'Add to Course' } )
-			);
+			fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
 		} );
 
 		describe( 'when there is a failure to add the students to the courses', () => {
-			it( 'Should display an error message', async () => {
+			beforeEach( async () => {
 				nock( 'http://localhost' )
 					.post( '/' )
 					.query( {
@@ -121,13 +120,21 @@ describe( '<StudentModal />', () => {
 					.once()
 					.reply( 500 );
 
-				fireEvent.click(
-					await findByRole( 'button', { name: 'Add to Course' } )
-				);
+				fireEvent.click( await courseOptionAt( 0 ) );
 
+				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+			} );
+
+			it( 'Should display an error message', async () => {
 				expect(
-					screen.findByText( 'Sorry, something went wrong' )
-				).toBeTruthy();
+					await findByText( 'Sorry, something went wrong' )
+				).toBeInTheDocument();
+			} );
+
+			it( 'Should enable the action button', async () => {
+				expect(
+					await buttonByLabel( 'Add to Course' )
+				).toHaveAttribute( 'disabled', '' );
 			} );
 		} );
 	} );
@@ -149,13 +156,13 @@ describe( '<StudentModal />', () => {
 				await findByText(
 					'Select the course(s) you would like to remove students from:'
 				)
-			).toBeTruthy();
+			).toBeInTheDocument();
 		} );
 
 		it( 'Should display the action button', async () => {
 			expect(
-				await findByRole( 'button', { name: 'Remove from Course' } )
-			).toBeTruthy();
+				await buttonByLabel( 'Remove from Course' )
+			).toBeInTheDocument();
 		} );
 
 		it( 'Should remove the selected students to the selected course', async () => {
@@ -171,13 +178,9 @@ describe( '<StudentModal />', () => {
 				.once()
 				.reply( 200 );
 
-			fireEvent.click(
-				await screen.findByLabelText( courses.at( 0 ).title.rendered )
-			);
+			fireEvent.click( await courseOptionAt( 0 ) );
 
-			fireEvent.click(
-				await findByRole( 'button', { name: 'Remove from Course' } )
-			);
+			fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
 
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
@@ -185,9 +188,12 @@ describe( '<StudentModal />', () => {
 		} );
 
 		describe( 'when there is a failure to remove the students from the courses', () => {
-			it( 'Should display an error message', async () => {
+			beforeEach( async () => {
 				nock( 'http://localhost' )
-					.delete( '/' )
+					.delete( '/', {
+						student_ids: students,
+						course_ids: [ courses.at( 0 ).id ],
+					} )
 					.query( {
 						rest_route: '/sensei-internal/v1/course-students/batch',
 						_wpnonce: NONCE,
@@ -195,18 +201,20 @@ describe( '<StudentModal />', () => {
 					.once()
 					.reply( 500 );
 
-				fireEvent.click(
-					await findByRole( 'button', { name: 'Remove from Course' } )
-				);
+				fireEvent.click( await courseOptionAt( 0 ) );
 
+				fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
+			} );
+
+			it( 'Should display an error message', async () => {
 				expect(
-					screen.findByText( 'Sorry, something went wrong' )
-				).toBeTruthy();
+					await findByText( 'Sorry, something went wrong' )
+				).toBeInTheDocument();
 			} );
 		} );
 	} );
 
-	describe( 'Reset action', () => {
+	describe( 'Reset/Remove Progress action', () => {
 		const onClose = jest.fn();
 		beforeEach( () => {
 			render(
@@ -223,15 +231,13 @@ describe( '<StudentModal />', () => {
 				getByText(
 					'Select the course(s) you would like to reset or remove progress for:'
 				)
-			).toBeTruthy();
+			).toBeInTheDocument();
 		} );
 
 		it( 'Should display the action button', async () => {
 			expect(
-				await findByRole( 'button', {
-					name: 'Reset or Remove Progress',
-				} )
-			).toBeTruthy();
+				await buttonByLabel( 'Reset or Remove Progress' )
+			).toBeInTheDocument();
 		} );
 
 		it( "Should reset the selected the students's progress from the selected courses", async () => {
@@ -247,14 +253,10 @@ describe( '<StudentModal />', () => {
 				.once()
 				.reply( 200 );
 
-			fireEvent.click(
-				await screen.findByLabelText( courses.at( 0 ).title.rendered )
-			);
+			fireEvent.click( await courseOptionAt( 0 ) );
 
 			fireEvent.click(
-				await findByRole( 'button', {
-					name: 'Reset or Remove Progress',
-				} )
+				await buttonByLabel( 'Reset or Remove Progress' )
 			);
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
@@ -262,28 +264,29 @@ describe( '<StudentModal />', () => {
 		} );
 
 		describe( 'when there is a failure to reset the students progress', () => {
-			it( 'Should display an error message', async () => {
+			beforeEach( async () => {
 				nock( 'http://localhost' )
 					.delete( '/', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
 					} )
-					.once()
 					.query( {
 						rest_route: '/sensei-internal/v1/course-progress/batch',
 						_wpnonce: NONCE,
 					} )
+					.once()
 					.reply( 500 );
 
+				fireEvent.click( await courseOptionAt( 0 ) );
 				fireEvent.click(
-					await findByRole( 'button', {
-						name: 'Reset or Remove Progress',
-					} )
+					await buttonByLabel( 'Reset or Remove Progress' )
 				);
+			} );
 
+			it( 'Should display an error message', async () => {
 				expect(
-					screen.findByText( 'Sorry, something went wrong' )
-				).toBeTruthy();
+					await findByText( 'Sorry, something went wrong' )
+				).toBeInTheDocument();
 			} );
 		} );
 	} );
