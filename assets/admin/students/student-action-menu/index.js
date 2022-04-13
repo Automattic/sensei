@@ -15,7 +15,7 @@ import StudentModal from '../student-modal';
  * Student action menu.
  *
  * @param {Object} props
- * @param {number} props.studentId   Student's user id
+ * @param {string} props.studentId   Student's user id
  * @param {string} props.studentName Student's user name.
  */
 export const StudentActionMenu = ( { studentId, studentName } ) => {
