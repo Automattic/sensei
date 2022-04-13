@@ -215,16 +215,11 @@ jQuery( document ).ready( function () {
 			evt.preventDefault();
 			evt.stopPropagation();
 			var $elem = $( this ),
-				$overviewDiv = $elem
-					.siblings( '.learner-course-overview-detail' )
-					.first();
-
-			$learnerCourseOverviewDetail.filter( ':visible' ).slideUp( 'slow' );
-			if ( $overviewDiv.is( ':hidden' ) ) {
-				$overviewDiv.slideDown( 'slow' );
-			} else {
-				$overviewDiv.slideUp( 'slow' );
-			}
+				$overviewDiv = $elem.siblings(
+					'.learner-course-overview-detail'
+				);
+			$overviewDiv.slideDown( 'slow' );
+			$( this ).slideUp( 'slow' );
 		} );
 
 		$actionSelector.on( 'change', function () {
