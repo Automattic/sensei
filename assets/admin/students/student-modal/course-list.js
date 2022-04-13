@@ -24,6 +24,24 @@ import httpClient from '../../lib/http-client';
  */
 
 /**
+ * Loading course list component.
+ */
+const LoadingCourseList = () => (
+	<li className="sensei-student-modal__course-list--loading">
+		<Spinner />
+	</li>
+);
+
+/**
+ * Empty course list component.
+ */
+const EmptyCourseList = () => (
+	<li className="sensei-student-modal__course-list--empty">
+		{ __( 'No courses found.', 'sensei-lms' ) }
+	</li>
+);
+
+/**
  * Course item.
  *
  * @param {Object}        props
@@ -141,31 +159,26 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 		[]
 	);
 
-	if ( isFetching ) {
-		return (
-			<div className="sensei-student-modal__course-list--loading">
-				<Spinner />
-			</div>
-		);
-	}
-
-	if ( 0 === courses.length ) {
-		return <p>{ __( 'No courses found.', 'sensei-lms' ) }</p>;
-	}
-
 	return (
 		<>
 			<span className="sensei-student-modal__course-list__header">
 				{ __( 'Your Courses', 'sensei-lms' ) }
 			</span>
 			<ul className="sensei-student-modal__course-list">
-				{ courses.map( ( course ) => (
-					<CourseItem
-						key={ course.id }
-						course={ course }
-						onChange={ selectCourse }
-					/>
-				) ) }
+				{ isFetching && <LoadingCourseList /> }
+
+				{ ! isFetching && 0 === courses.length && <EmptyCourseList /> }
+
+				{ ! isFetching &&
+					0 < courses.length &&
+					courses.map( ( course ) => (
+						<CourseItem
+							key={ course.id }
+							course={ course }
+							onChange={ selectCourse }
+						/>
+					) )
+				}
 			</ul>
 		</>
 	);
