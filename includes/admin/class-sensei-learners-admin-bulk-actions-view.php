@@ -172,7 +172,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				$last_activity_date = Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 			}
 			$row_data = array(
-				'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'cb'                 => '<label class="screen-reader-text">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
 				'learner'            => $this->get_learner_html( $learner ),
 				'email'              => $learner->user_email,
 				'progress'           => $courses,
@@ -237,14 +237,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return string The HTML.
 	 */
 	private function get_learner_html( $learner ) {
-		$login = $learner->user_login;
-		$title = Sensei_Learner::get_full_name( $learner->user_id );
+		$full_name = Sensei_Learner::get_full_name( $learner->user_id );
 		// translators: Placeholder is the full name of the learner.
-		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
-		$html    = '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $login ) . '</a></strong>';
-		$html   .= ' <span>(<em>' . esc_html( $title ) . '</em>, ' . esc_html( $learner->user_email ) . ')</span>';
+		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $full_name ) );
 
-		return $html;
+		return '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $full_name ) . '</a></strong>';
 	}
 
 	/**
