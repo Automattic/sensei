@@ -42,6 +42,43 @@ describe( '<CourseList />', () => {
 		).toBeTruthy();
 	} );
 
+	it( 'Should call onChange with the selected courses when a course is selected', async () => {
+		const onChange = jest.fn();
+		await act( async () => {
+			render( <CourseList onChange={ onChange } /> );
+		} );
+
+		fireEvent.click(
+			await screen.findByLabelText( courses.at( 0 ).title.rendered )
+		);
+		fireEvent.click(
+			await screen.findByLabelText( courses.at( 2 ).title.rendered )
+		);
+
+		expect( onChange ).toHaveBeenCalledWith( [
+			courses.at( 0 ),
+			courses.at( 2 ),
+		] );
+	} );
+
+	it( 'Should remove unselected items when a course is selected and deselected', async () => {
+		const onChange = jest.fn();
+		render( <CourseList onChange={ onChange } /> );
+
+		fireEvent.click(
+			await screen.findByLabelText( courses.at( 0 ).title.rendered )
+		);
+		fireEvent.click(
+			await screen.findByLabelText( courses.at( 0 ).title.rendered )
+		);
+
+		fireEvent.click(
+			await screen.findByLabelText( courses.at( 1 ).title.rendered )
+		);
+
+		expect( onChange ).toHaveBeenLastCalledWith( [ courses.at( 1 ) ] );
+	} );
+
 	describe( 'when there is no course', () => {
 		beforeEach( () => {
 			nock.cleanAll();
@@ -60,55 +97,6 @@ describe( '<CourseList />', () => {
 			expect(
 				await screen.findByText( 'No courses found.' )
 			).toBeTruthy();
-		} );
-	} );
-
-	describe( 'when a course is selected', () => {
-		it( 'Should call onChange with the selected courses', async () => {
-			const onChange = jest.fn();
-			await act( async () => {
-				render( <CourseList onChange={ onChange } /> );
-			} );
-
-			fireEvent.click(
-				await screen.findByLabelText( courses.at( 0 ).title.rendered )
-			);
-			fireEvent.click(
-				await screen.findByLabelText( courses.at( 2 ).title.rendered )
-			);
-
-			expect( onChange ).toHaveBeenCalledWith( [
-				courses.at( 0 ),
-				courses.at( 2 ),
-			] );
-		} );
-
-		describe( 'when a course is selected and deselected', () => {
-			it( 'Should remove unselected items', async () => {
-				const onChange = jest.fn();
-				render( <CourseList onChange={ onChange } /> );
-
-				fireEvent.click(
-					await screen.findByLabelText(
-						courses.at( 0 ).title.rendered
-					)
-				);
-				fireEvent.click(
-					await screen.findByLabelText(
-						courses.at( 0 ).title.rendered
-					)
-				);
-
-				fireEvent.click(
-					await screen.findByLabelText(
-						courses.at( 1 ).title.rendered
-					)
-				);
-
-				expect( onChange ).toHaveBeenLastCalledWith( [
-					courses.at( 1 ),
-				] );
-			} );
 		} );
 	} );
 } );

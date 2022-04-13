@@ -14,8 +14,8 @@ import httpClient from './lib/http-client';
  * Callback for select or unselect courseItem
  *
  * @callback onChangeEvent
- * @param {boolean} isSelected - Describes if the course was selected or unselected
- * @param {boolean} course     - Course related to the trigged event
+ * @param {boolean} isSelected Describes if the course was selected or unselected
+ * @param {boolean} course     Course related to the triggered event
  */
 
 /**
@@ -23,7 +23,7 @@ import httpClient from './lib/http-client';
  *
  * @param {Object}        props
  * @param {Object}        props.course   Course
- * @param {onChangeEvent} props.onChange Event trigged when
+ * @param {onChangeEvent} props.onChange Event triggered when the a course is select/unselected
  */
 const CourseItem = ( { course, onChange } ) => {
 	const courseId = course?.id;
@@ -54,14 +54,14 @@ const CourseItem = ( { course, onChange } ) => {
  * Callback for CourseSelection
  *
  * @callback onCourseSelectionChange
- * @param {Array} selectedCourses - List of selected courses
+ * @param {Array} selectedCourses List of selected courses
  */
 
 /**
  * Course list.
  *
  * @param {Object}                  props
- * @param {onCourseSelectionChange} props.onChange
+ * @param {onCourseSelectionChange} props.onChange Event triggered when a course is selected or unselected
  */
 export const CourseList = ( { onChange } ) => {
 	const [ isFetching, setIsFetching ] = useState( true );
