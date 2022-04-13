@@ -2,8 +2,13 @@
  * WordPress dependencies
  */
 import { CheckboxControl, Spinner } from '@wordpress/components';
-import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * External dependencies
+ */
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -83,7 +88,7 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 
 	// Fetch the courses.
 	useEffect( () => {
-		setIsFetching( true );
+		fetchCourses( searchQuery );
 
 		httpClient( {
 			path: '/wp/v2/courses?per_page=100' +
@@ -106,7 +111,35 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 				}
 			} );
 		return () => ( isMounted.current = false );
-	}, [ searchQuery ] );
+	}, [ fetchCourses, searchQuery ] );
+
+	const fetchCourses = useCallback(
+		debounce( ( query ) => {
+			setIsFetching( true );
+
+			httpClient( {
+				url: '/wp-json/wp/v2/courses?per_page=100' +
+					( searchQuery ? `&search=${ searchQuery }` : '' ),
+				method: 'GET',
+			} )
+				.then( ( result ) => {
+					if ( isMounted.current ) {
+						setCourses( result.data );
+					}
+				} )
+				.catch( () => {
+					if ( isMounted.current ) {
+						setIsFetching( false );
+					}
+				} )
+				.finally( () => {
+					if ( isMounted.current ) {
+						setIsFetching( false );
+					}
+				} );
+		}, 400 ),
+		[]
+	);
 
 	if ( isFetching ) {
 		return (
