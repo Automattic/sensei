@@ -368,10 +368,11 @@ class Sensei_Learner_Management {
 	 * @since  1.6.0
 	 */
 	public function learners_default_nav() {
-		$title = $this->name;
-		if ( isset( $_GET['course_id'] ) ) {
-			$course_id = intval( $_GET['course_id'] );
-			$url       = add_query_arg(
+		$course_id = (int) sanitize_text_field( wp_unslash( $_GET['course_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$lesson_id = (int) sanitize_text_field( wp_unslash( $_GET['lesson_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 0 < $course_id && 0 < $lesson_id ) {
+			$back_url = add_query_arg(
 				array(
 					'post_type' => $this->menu_post_type,
 					'page'      => $this->page_slug,
@@ -380,14 +381,33 @@ class Sensei_Learner_Management {
 				),
 				admin_url( 'edit.php' )
 			);
-			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
+		} else {
+			$back_url = add_query_arg(
+				[
+					'post_type' => 'course',
+					'page'      => 'sensei_learners',
+				],
+				admin_url( 'edit.php' )
+			);
 		}
-		if ( isset( $_GET['lesson_id'] ) ) {
-			$lesson_id = intval( $_GET['lesson_id'] );
-			$title    .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>';
+
+		$title = '';
+		if ( 0 < $course_id ) {
+			$title .= get_the_title( $course_id );
 		}
+
+		if ( 0 < $lesson_id ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+			if ( ! empty( $title ) ) {
+				$title .= ': ';
+			}
+			$title .= get_the_title( $lesson_id );
+		}
+
+		$back_link = '<a href="' . esc_url( $back_url ) . '">←</a> ';
+		$title     = $back_link . $title;
 		?>
-			<h1>
+			<h2 class="sensei-students__subheading">
 				<?php
 				echo wp_kses(
 					apply_filters( 'sensei_learners_nav_title', $title ),
@@ -401,8 +421,7 @@ class Sensei_Learner_Management {
 					)
 				);
 				?>
-				| <a href="<?php echo esc_attr( $this->bulk_actions_controller->get_url() ); ?>"><?php echo esc_html( $this->bulk_actions_controller->get_name() ); ?></a></h1>
-			</h1>
+			</h2>
 		<?php
 	}
 

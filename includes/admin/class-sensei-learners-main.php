@@ -1076,23 +1076,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 			$menu['lessons'] = $this->lessons_link();
 
-		} elseif ( $this->course_id && $this->lesson_id ) {
-
-			$query_args = array(
-				'post_type' => $this->menu_post_type,
-				'page'      => $this->page_slug,
-				'course_id' => $this->course_id,
-				'view'      => 'lessons',
-			);
-
-			$course = get_the_title( $this->course_id );
-
-			$menu['back'] = '<a href="'
-				. esc_url( add_query_arg( $query_args, admin_url( 'edit.php' ) ) )
-				. '"><em>&larr; '
-				// translators: Placeholder is the Course title.
-				. esc_html( sprintf( __( 'Back to %s', 'sensei-lms' ), $course ) )
-				. '</em></a>';
 		}
 
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
