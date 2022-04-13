@@ -24,7 +24,6 @@ do_action( 'sensei_learner_admin_before_container' );
 <div id="woothemes-sensei" class="wrap woothemes-sensei">
 	<?php
 	do_action( 'sensei_learner_admin_wrapper_container', 'top' );
-	$sensei_list_table->output_headers();
 	?>
 
 	<div id="poststuff" class="sensei-learners-wrap">
