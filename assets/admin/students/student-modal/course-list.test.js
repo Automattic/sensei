@@ -24,6 +24,8 @@ const courses = [
 	},
 ];
 
+const timeoutValue = 500;
+
 describe( '<CourseList />', () => {
 	beforeAll( () => {
 		nock( 'http://localhost' )
@@ -44,6 +46,7 @@ describe( '<CourseList />', () => {
 
 	it( 'Should call onChange with the selected courses when a course is selected', async () => {
 		const onChange = jest.fn();
+
 		render( <CourseList onChange={ onChange } /> );
 
 		fireEvent.click(
@@ -61,6 +64,7 @@ describe( '<CourseList />', () => {
 
 	it( 'Should remove unselected items when a course is selected and deselected', async () => {
 		const onChange = jest.fn();
+
 		render( <CourseList onChange={ onChange } /> );
 
 		fireEvent.click(

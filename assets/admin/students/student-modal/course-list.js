@@ -105,32 +105,6 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 	);
 
 	// Fetch the courses.
-	useEffect( () => {
-		fetchCourses( searchQuery );
-
-		httpClient( {
-			path: '/wp/v2/courses?per_page=100' +
-				( searchQuery ? `&search=${ searchQuery }` : '' ),
-			method: 'GET',
-		} )
-			.then( ( result ) => {
-				if ( isMounted.current ) {
-					setCourses( result );
-				}
-			} )
-			.catch( () => {
-				if ( isMounted.current ) {
-					setIsFetching( false );
-				}
-			} )
-			.finally( () => {
-				if ( isMounted.current ) {
-					setIsFetching( false );
-				}
-			} );
-		return () => ( isMounted.current = false );
-	}, [ fetchCourses, searchQuery ] );
-
 	const fetchCourses = useCallback(
 		debounce( ( query ) => {
 			setIsFetching( true );
@@ -142,7 +116,7 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 			} )
 				.then( ( result ) => {
 					if ( isMounted.current ) {
-						setCourses( result.data );
+						setCourses( result );
 					}
 				} )
 				.catch( () => {
@@ -158,6 +132,12 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 		}, 400 ),
 		[]
 	);
+
+	useEffect( () => {
+		fetchCourses( searchQuery );
+
+		return () => ( isMounted.current = false );
+	}, [ fetchCourses, searchQuery ] );
 
 	return (
 		<>

@@ -79,6 +79,7 @@ export const StudentModal = ( { action, onClose, students } ) => {
 		isDestructive,
 	} = POSSIBLE_ACTIONS[ action ];
 	const [ selectedCourses, setCourses ] = useState( [] );
+	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasError, setError ] = useState( false );
 	const isMounted = useRef( true );
@@ -102,8 +103,6 @@ export const StudentModal = ( { action, onClose, students } ) => {
 			}
 		}
 	}, [ sendAction, students, selectedCourses, onClose ] );
-
-	const [ searchQuery, setSearchQuery ] = useState( '' );
 
 	const searchCourses = ( value ) => setSearchQuery( value );
 
