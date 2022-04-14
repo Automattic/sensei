@@ -52,7 +52,7 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 					'callback'            => [ $this, 'batch_create_items' ],
 					'permission_callback' => [ $this, 'batch_operation_permissions_check' ],
 					'args'                => $this->get_args_schema(),
-				]
+				],
 			]
 		);
 
