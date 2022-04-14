@@ -45,10 +45,10 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/batch',
+			$this->rest_base . '/batch/delete',
 			[
 				[
-					'methods'             => WP_REST_Server::DELETABLE,
+					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'batch_delete_items' ],
 					'permission_callback' => [ $this, 'batch_delete_items_permissions_check' ],
 					'args'                => $this->get_args_schema(),

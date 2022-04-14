@@ -60,7 +60,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -92,7 +92,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -124,7 +124,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -155,7 +155,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -184,7 +184,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$course_id = $this->factory->course->create();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -207,7 +207,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -230,7 +230,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
@@ -258,7 +258,7 @@ class Sensei_REST_API_Course_Progress_Controller_Test extends WP_Test_REST_TestC
 		$this->login_as_admin();
 
 		/* Act. */
-		$request = new WP_REST_Request( 'DELETE', '/sensei-internal/v1/course-progress/batch' );
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-progress/batch/delete' );
 		$request->set_header( 'content-type', 'application/json' );
 		$request->set_body(
 			wp_json_encode(
