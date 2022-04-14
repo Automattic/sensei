@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import CourseList from './course-list';
 import InputControl from '../../../blocks/editor-components/input-control';
-import httpClient from './lib/http-client';
+import httpClient from '../../lib/http-client';
 
 /**
  * External dependencies

@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import httpClient from './lib/http-client';
+import httpClient from '../../lib/http-client';
 
 /**
  * Callback for select or unselect courseItem

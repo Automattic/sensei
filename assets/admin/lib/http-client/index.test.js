@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import httpClient from './';
+import httpClient from '.';
 /**
  * External dependencies
  */
