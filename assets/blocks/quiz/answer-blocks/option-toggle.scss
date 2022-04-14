@@ -67,6 +67,7 @@ $toogle-size: 26px;
 	&-input[type="radio"],
 	&-input[type="checkbox"] {
 		cursor: pointer;
+		top: auto;
 
 		&, &:disabled {
 			position: absolute;
