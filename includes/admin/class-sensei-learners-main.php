@@ -1212,7 +1212,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		?>
 		<div class="postbox">
-			<h2 class="postbox-title">
+			<h2>
 				<?php
 				// translators: Placeholder is the post type.
 				printf( esc_html__( 'Add Student to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
@@ -1221,20 +1221,17 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
 					<p>
-						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;">
-						</select>
+						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;"></select>
 						<?php if ( 'lesson' === $form_post_type ) { ?>
-							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for student', 'sensei-lms' ); ?></label>
-						<?php } elseif ( 'course' === $form_post_type ) { ?>
-							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for student', 'sensei-lms' ); ?></label>
-						<?php } ?>
-						<br/>
-						<span class="description"><?php esc_html_e( 'Search for a user by typing their name or username.', 'sensei-lms' ); ?></span>
+							<div><label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for selected student(s)', 'sensei-lms' ); ?></label></div>
+					<?php } elseif ( 'course' === $form_post_type ) { ?>
+							<div><label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for selected student(s)', 'sensei-lms' ); ?></label></div>
+					<?php } ?>
 					</p>
 					<p>
 						<?php
 						// translators: Placeholder is the post title.
-						submit_button( sprintf( __( 'Add to \'%1$s\'', 'sensei-lms' ), $post_title ), 'primary', 'add_learner_submit', false, array() );
+						submit_button( sprintf( __( 'Add to \'%1$s\'', 'sensei-lms' ), $post_title ), 'primary', 'add_learner_submit', false, array( 'disabled' => true ) );
 						?>
 					</p>
 					<?php if ( 'lesson' === $form_post_type && isset( $course_title ) ) { ?>

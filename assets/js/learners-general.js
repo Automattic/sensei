@@ -235,7 +235,11 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	} );
 
-	jQuery( 'select#add_learner_search' ).select2( {
+	let $learnerSearchSelect = jQuery( 'select#add_learner_search' );
+	let $learnerAddToCourseSubmitButton = jQuery(
+		"[name='add_learner_submit']"
+	).first();
+	$learnerSearchSelect.select2( {
 		minimumInputLength: 3,
 		placeholder: window.woo_learners_general_data.selectplaceholder,
 		width: '300px',
@@ -274,7 +278,12 @@ jQuery( document ).ready( function ( $ ) {
 			},
 		},
 	} ); // end select2
-
+	$learnerSearchSelect.on( 'change.select2', () => {
+		$learnerAddToCourseSubmitButton.prop(
+			'disabled',
+			$learnerSearchSelect.select2( 'data' ).length < 1
+		);
+	} );
 	/***************************************************************************************************
 	 * 	3 - Load Select2 Dropdowns.
 	 ***************************************************************************************************/

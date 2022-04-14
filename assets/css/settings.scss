@@ -299,6 +299,21 @@
 			}
 		}
 	}
+	.sensei-learners-extra {
+		.postbox {
+			padding: 1em 0px 0px 1em;
+			h2 {
+				padding: 0px !important;
+			}
+			.inside {
+				padding: 0px;
+			}
+		}
+		.button-primary[disabled] {
+			background-color: #037ABAFF !important;
+			color: #66AFD6FF !important;
+		}
+	}
 }
 
 .enrolment-helper {
