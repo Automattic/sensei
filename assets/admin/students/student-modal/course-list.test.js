@@ -24,8 +24,6 @@ const courses = [
 	},
 ];
 
-const timeoutValue = 500;
-
 describe( '<CourseList />', () => {
 	beforeAll( () => {
 		nock( 'http://localhost' )
