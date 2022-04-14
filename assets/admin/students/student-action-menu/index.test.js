@@ -63,6 +63,29 @@ describe( '<StudentActionMenu />', () => {
 		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
 	} );
 
+	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
+		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
+		render( <StudentActionMenu /> );
+
+		// Open the dropdown menu.
+		const button = screen.getByRole( 'button' );
+
+		button.focus();
+		fireEvent.keyDown( button, {
+			keyCode: DOWN,
+			preventDefault: () => {},
+		} );
+
+		// Click the "Reset or Remove Progress" menu item.
+		const menuItem = screen.getByText( 'Reset or Remove Progress' );
+
+		await act( async () => {
+			fireEvent.click( menuItem );
+		} );
+
+		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+	} );
+
 	it( "Should display student's ungraded quizzes when Grading menu item is selected", () => {
 		render( <StudentActionMenu studentName="mary" /> );
 
