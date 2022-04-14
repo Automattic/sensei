@@ -24,7 +24,6 @@ const courses = [
 ];
 
 const students = [ 1, 2, 3 ];
-const NONCE = 'some-nonce-id';
 
 describe( '<StudentModal />', () => {
 	const { getByText, findByText, findByRole, findByLabelText } = screen;
@@ -36,17 +35,12 @@ describe( '<StudentModal />', () => {
 		findByRole( 'button', { name: label } );
 
 	beforeAll( () => {
+		nock.disableNetConnect();
 		nock( 'http://localhost' )
 			.persist()
-			.get( '/wp-json/wp/v2/courses' )
-			.query( { per_page: 100 } )
+			.get( '/wp/v2/courses' )
+			.query( { per_page: 100, _locale: 'user' } )
 			.reply( 200, courses );
-
-		nock( 'http://localhost' )
-			.persist()
-			.get( '/wp-admin/admin-ajax.php' )
-			.query( { action: 'rest-nonce' } )
-			.reply( 200, NONCE );
 	} );
 	afterAll( () => nock.cleanAll() );
 
@@ -95,10 +89,10 @@ describe( '<StudentModal />', () => {
 				} )
 				.query( {
 					rest_route: '/sensei-internal/v1/course-students/batch',
-					_wpnonce: NONCE,
+					_locale: 'user',
 				} )
 				.once()
-				.reply( 200 );
+				.reply( 200, { status: 'ok' } );
 
 			fireEvent.click( await courseOptionAt( 0 ) );
 
@@ -115,10 +109,10 @@ describe( '<StudentModal />', () => {
 					.post( '/' )
 					.query( {
 						rest_route: '/sensei-internal/v1/course-students/batch',
-						_wpnonce: NONCE,
+						_locale: 'user',
 					} )
 					.once()
-					.reply( 500 );
+					.reply( 500, { status: 'error' } );
 
 				fireEvent.click( await courseOptionAt( 0 ) );
 
@@ -167,16 +161,17 @@ describe( '<StudentModal />', () => {
 
 		it( 'Should remove the selected students to the selected course', async () => {
 			nock( 'http://localhost/' )
-				.delete( '/', {
+				.post( '/', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
 				} )
 				.query( {
 					rest_route: '/sensei-internal/v1/course-students/batch',
-					_wpnonce: NONCE,
+					_locale: 'user',
 				} )
+				.matchHeader( 'x-http-method-override', 'DELETE' )
 				.once()
-				.reply( 200 );
+				.reply( 200, { status: 'ok' } );
 
 			fireEvent.click( await courseOptionAt( 0 ) );
 
@@ -190,16 +185,17 @@ describe( '<StudentModal />', () => {
 		describe( 'when there is a failure to remove the students from the courses', () => {
 			beforeEach( async () => {
 				nock( 'http://localhost' )
-					.delete( '/', {
+					.post( '/', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
 						rest_route: '/sensei-internal/v1/course-students/batch',
-						_wpnonce: NONCE,
+						_locale: 'user',
 					} )
+					.matchHeader( 'x-http-method-override', 'DELETE' )
 					.once()
-					.reply( 500 );
+					.reply( 500, { status: 'error' } );
 
 				fireEvent.click( await courseOptionAt( 0 ) );
 
@@ -242,22 +238,24 @@ describe( '<StudentModal />', () => {
 
 		it( "Should reset the selected the students's progress from the selected courses", async () => {
 			nock( 'http://localhost' )
-				.delete( '/', {
+				.post( '/', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
 				} )
 				.query( {
 					rest_route: '/sensei-internal/v1/course-progress/batch',
-					_wpnonce: NONCE,
+					_locale: 'user',
 				} )
+				.matchHeader( 'x-http-method-override', 'DELETE' )
 				.once()
-				.reply( 200 );
+				.reply( 200, { status: 'ok' } );
 
 			fireEvent.click( await courseOptionAt( 0 ) );
 
 			fireEvent.click(
 				await buttonByLabel( 'Reset or Remove Progress' )
 			);
+
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
@@ -266,16 +264,17 @@ describe( '<StudentModal />', () => {
 		describe( 'when there is a failure to reset the students progress', () => {
 			beforeEach( async () => {
 				nock( 'http://localhost' )
-					.delete( '/', {
+					.post( '/', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
 						rest_route: '/sensei-internal/v1/course-progress/batch',
-						_wpnonce: NONCE,
+						_locale: 'user',
 					} )
+					.matchHeader( 'x-http-method-override', 'DELETE' )
 					.once()
-					.reply( 500 );
+					.reply( 500, { status: 'error' } );
 
 				fireEvent.click( await courseOptionAt( 0 ) );
 				fireEvent.click(
