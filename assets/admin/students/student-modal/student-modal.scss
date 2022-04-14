@@ -47,7 +47,7 @@
 		justify-content: flex-end;
 		margin-top: 40px;
 
-		&--remove {
+		&.is-destructive:hover {
 			color: $alert-red;
 		}
 	}

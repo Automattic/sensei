@@ -14,10 +14,11 @@ import StudentModal from '../student-modal';
 /**
  * Student action menu.
  *
- * @param {Object} props          Component props.
- * @param {string} props.userName Student's user name.
+ * @param {Object} props
+ * @param {string} props.studentId   Student's user id
+ * @param {string} props.studentName Student's user name.
  */
-export const StudentActionMenu = ( { userName } ) => {
+export const StudentActionMenu = ( { studentId, studentName } ) => {
 	const [ action, setAction ] = useState( '' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const closeModal = ( needsReload ) => {
@@ -40,7 +41,7 @@ export const StudentActionMenu = ( { userName } ) => {
 			title: __( 'Grading', 'sensei-lms' ),
 			onClick: () =>
 				window.open(
-					`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ userName }`,
+					`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ studentName }`,
 					'_self'
 				),
 		},
@@ -65,7 +66,11 @@ export const StudentActionMenu = ( { userName } ) => {
 			/>
 
 			{ isModalOpen && (
-				<StudentModal action={ action } onClose={ closeModal } />
+				<StudentModal
+					action={ action }
+					onClose={ closeModal }
+					students={ [ studentId ] }
+				/>
 			) }
 		</>
 	);
@@ -75,8 +80,8 @@ Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 	( actionMenu ) => {
 		render(
 			<StudentActionMenu
-				userId={ actionMenu?.dataset?.userId }
-				userName={ actionMenu?.dataset?.userName }
+				studentId={ actionMenu?.dataset?.userId }
+				studentName={ actionMenu?.dataset?.userName }
 			/>,
 			actionMenu
 		);
