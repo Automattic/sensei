@@ -32,6 +32,7 @@ describe( '<CourseList />', () => {
 			.query( { per_page: 100, _locale: 'user' } )
 			.reply( 200, courses );
 	} );
+	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display courses in the list', async () => {
 		render( <CourseList /> );
