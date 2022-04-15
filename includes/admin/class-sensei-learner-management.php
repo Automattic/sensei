@@ -105,7 +105,49 @@ class Sensei_Learner_Management {
 			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
+
+			// Add custom navigation.
+			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		}
+	}
+
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'course_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_students_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the Students' page navigation.
+	 *
+	 * @param WP_Screen $screen WordPress current screen object.
+	 */
+	private function display_students_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading-with-info">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Students', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__separator"></div>
+				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/documentation/?utm_source=plugin_sensei&utm_medium=docs&utm_campaign=student-management">
+					<?php echo esc_html__( 'Guide To Student Management', 'sensei-lms' ); ?>
+				</a>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

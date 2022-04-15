@@ -132,6 +132,7 @@ jQuery( document ).ready( function () {
 			$actionSelector = $( '#bulk-action-selector-top' ),
 			$hiddenSenseiBulkAction = $( '#sensei-bulk-action' ),
 			$courseSelect = $( '.sensei-course-select' ),
+			$bulkActionSelect = $( '.sensei-bulk-action-select' ),
 			$bulkActionCourseSelect = $( '#bulk-action-course-select' ),
 			$selectUserCheckboxes = $( '.sensei_user_select_id' ),
 			$cbSelectAll = $( '#cb-select-all-1' ),
@@ -185,7 +186,12 @@ jQuery( document ).ready( function () {
 		$courseSelect.select2( {
 			placeholder:
 				window.sensei_learners_bulk_data.select_course_placeholder,
-			width: '300px',
+			width: '200px',
+		} );
+
+		$bulkActionSelect.select2( {
+			minimumResultsForSearch: -1,
+			width: '200px',
 		} );
 
 		$selectUserCheckboxes.on( 'change', function ( evt ) {
@@ -205,16 +211,11 @@ jQuery( document ).ready( function () {
 			evt.preventDefault();
 			evt.stopPropagation();
 			var $elem = $( this ),
-				$overviewDiv = $elem
-					.siblings( '.learner-course-overview-detail' )
-					.first();
-
-			$learnerCourseOverviewDetail.filter( ':visible' ).slideUp( 'slow' );
-			if ( $overviewDiv.is( ':hidden' ) ) {
-				$overviewDiv.slideDown( 'slow' );
-			} else {
-				$overviewDiv.slideUp( 'slow' );
-			}
+				$overviewDiv = $elem.siblings(
+					'.learner-course-overview-detail'
+				);
+			$overviewDiv.slideDown( 'slow' );
+			$( this ).slideUp( 'slow' );
 		} );
 
 		$actionSelector.on( 'change', function () {

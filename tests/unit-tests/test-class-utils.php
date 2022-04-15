@@ -3,14 +3,6 @@
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
-	 * Constructor function
-	 */
-	public function __construct() {
-		parent::__construct();
-	}
-
-
-	/**
 	 * setup function
 	 *
 	 * This function sets up the lessons, quizzes and their questions. This function runs before
@@ -258,4 +250,36 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
 	}
 
+	/**
+	 * Tests that last activity date formatting function is working correctly.
+	 *
+	 * @dataProvider lastActivityDateTestingData
+	 */
+	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $minutes_count, $expected_output ) {
+		/* Arrange */
+		$gmt_time           = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $minutes_count . ' seconds' ) );
+		$date_as_per_format = wp_date( get_option( 'date_format' ), ( new DateTime( $gmt_time ) )->getTimestamp(), new DateTimeZone( 'GMT' ) );
+
+		/* Act */
+		$actual = Sensei_Utils::format_last_activity_date( $gmt_time );
+
+		/* Assert */
+		$expected = empty( $expected_output ) ? $date_as_per_format : $expected_output;
+		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
+	}
+
+	/**
+	 * Returns an associative array with parameters needed to run lesson completion test.
+	 *
+	 * @return array
+	 */
+	public function lastActivityDateTestingData() {
+		return [
+			'days'    => [ ( 5 * 24 * 60 * 60 ), '5 days ago' ],
+			'hours'   => [ 60 * 5 * 60, '5 hours ago' ],
+			'minutes' => [ 20 * 60, '20 mins ago' ],
+			'seconds' => [ 20, '20 seconds ago' ],
+			'date'    => [ 8 * 24 * 60 * 60, null ],
+		];
+	}
 }

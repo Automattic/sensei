@@ -175,7 +175,8 @@
 	}
 }
 
-/* Grading & Learner Management */
+/* Grading & Student Management */
+
 .grading-selects, .learners-selects  {
 	.subsubsub {
 		float: none;
@@ -558,13 +559,93 @@
 	}
 }
 
+.sensei-learners-wrap .search-box {
+	margin-left: 10px;
+}
+
+.sensei-student-bulk-actions {
+	&__filters {
+		display: flex;
+		flex-direction: row;
+	}
+
+	&__filters > div {
+		margin-right: 10px;
+	}
+
+	@media screen and (max-width: 1400px) {
+		&__filters {
+			display: flex;
+			flex-direction: column-reverse;
+		}
+	}
+
+	@media screen and (max-width: 1400px) and (min-width: 1100px) {
+		&__container {
+			width: 60%;
+		}
+	}
+
+	@media screen and (max-width: 1400px) {
+		&__wrapper {
+			height: 30px;
+			margin-bottom: 10px
+		}
+	}
+}
+
+.sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-student-bulk-actions__placeholder-dropdown {
+	max-width: 200px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	background: white;
+	min-height: 28px;
+	height: 28px;
+	padding-top: 1px;
+	border: 1px solid #aaa;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+@media screen and (max-width: 767px) {
+	.sensei-student-bulk-actions__container .select2 {
+		margin-top: 6px;
+		width: 190px !important;
+		font-size: 16px;
+	}
+	.sensei-student-bulk-actions__container .select2-selection__rendered {
+		line-height: 40px !important;
+	}
+	.sensei-student-bulk-actions__container .select2-container .select2-selection--single {
+		height: 40px !important;
+	}
+	.sensei-student-bulk-actions__container .select2-selection__arrow {
+		height: 40px !important;
+	}
+
+	.sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-student-bulk-actions__placeholder-dropdown {
+		max-width: 190px;
+		margin-bottom: 10px;
+		font-size: 16px;
+		background: white;
+		min-height: 40px;
+		height: 40px;
+		padding-top: 6px;
+		border: 1px solid #aaa;
+		margin-top: 6px;
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+}
+
+/* Sensei Promo */
+
 @font-face {
 	font-family: 'Reforma 1918-Blanca';
 	src: url( '../css/fonts/Reforma1918-Blanca.otf' );
 	font-weight: normal;
 	font-style: normal;
 }
-
 
 .sensei-promo-banner {
 	display: flex;

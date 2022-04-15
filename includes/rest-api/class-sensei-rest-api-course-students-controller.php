@@ -31,7 +31,7 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 	protected $rest_base = 'course-students';
 
 	/**
-	 * Sensei_REST_API_Course_Structure_Controller constructor.
+	 * Sensei_REST_API_Course_Students_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
 	 */
@@ -119,15 +119,25 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 *
-	 * @return bool
+	 * @return boolean|WP_Error
 	 */
-	public function batch_operation_permissions_check( WP_REST_Request $request ): bool {
+	public function batch_operation_permissions_check( WP_REST_Request $request ) {
 		$params          = $request->get_params();
 		$course_ids      = $params['course_ids'];
 		$edit_course_cap = get_post_type_object( 'course' )->cap->edit_post;
 		foreach ( $course_ids as $course_id ) {
 			$course = get_post( absint( $course_id ) );
-			if ( empty( $course ) || 'course' !== $course->post_type || ! current_user_can( $edit_course_cap, $course_id ) ) {
+			if ( empty( $course ) || 'course' !== $course->post_type ) {
+				return new WP_Error(
+					'sensei_course_student_batch_action_missing_course',
+					__( 'Course not found.', 'sensei-lms' ),
+					[
+						'status'    => 404,
+						'course_id' => $course_id,
+					]
+				);
+			}
+			if ( ! current_user_can( $edit_course_cap, $course_id ) ) {
 				return false;
 			}
 		}
