@@ -130,9 +130,17 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
 		];
 
+		// TODO: move to register_hooks
+		add_action( 'wp_ajax_fetch_custom_list', array( $this, 'fetch_custom_list' ) );
+
 		if ( is_admin() ) {
 			$this->register_hooks();
 		}
+	}
+
+	public function fetch_custom_list() {
+		$wp_list_table = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management );
+		$wp_list_table->ajax_response();
 	}
 
 	/**

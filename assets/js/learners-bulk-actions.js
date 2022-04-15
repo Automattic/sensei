@@ -262,7 +262,51 @@ jQuery( document ).ready( function () {
 			$hiddenSelectedCourseIdsField.val(
 				$bulkActionCourseSelect.val().join( ',' )
 			);
-			$bulkLearnerActionsForm.submit();
+
+			MOjaReactComponent.submit().then( () => {
+				jQuery.ajax( {
+					// /wp-admin/admin-ajax.php
+					url: ajaxurl,
+					// Add action and nonce to our collected data
+					data: jQuery.extend(
+						{
+							action: 'fetch_custom_list',
+						},
+						{
+							per_page: '20',
+							offset: '50',
+							order: 'ASC',
+							orderby: 'last_activity_date',
+						}
+					),
+					// Handle the successful result
+					success: function ( fnResponse ) {
+						// WP_List_Table::ajax_response() returns json
+						var response = jQuery.parseJSON( fnResponse );
+
+						// Add the requested rows
+						if ( response.rows.length )
+							jQuery( '#the-list' ).html( response.rows );
+						// Update column headers for sorting
+						if ( response.column_headers.length )
+							jQuery( 'thead tr, tfoot tr' ).html(
+								response.column_headers
+							);
+						// Update pagination for navigation
+						if ( response.pagination.bottom.length )
+							jQuery( '.tablenav.top .tablenav-pages' ).html(
+								jQuery( response.pagination.top ).html()
+							);
+						if ( response.pagination.top.length )
+							jQuery( '.tablenav.bottom .tablenav-pages' ).html(
+								jQuery( response.pagination.bottom ).html()
+							);
+
+						list.init(); // TODO MAKE IT WORK (umjesto ovoga treba pozvati ovu mooju parent fn)
+					},
+					error: function ( error ) {},
+				} );
+			} );
 		} );
 	} )( bulkUserActions );
 } );
