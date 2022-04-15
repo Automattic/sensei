@@ -16,6 +16,7 @@ import StudentModal from '../student-modal';
 export const StudentsBulkActionButton = () => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const [ studentIds, setStudentIds ] = useState( [] );
 	const closeModal = () => setIsModalOpen( false );
 	const setActionValue = ( selectedValue ) => {
 		switch ( selectedValue ) {
@@ -36,8 +37,14 @@ export const StudentsBulkActionButton = () => {
 		const hiddenSenseiBulkAction = document.getElementById(
 			'bulk-action-selector-top'
 		);
+		const hiddenSelectedUserIdsField = document.getElementById(
+			'bulk-action-user-ids'
+		);
 		if ( hiddenSenseiBulkAction ) {
 			setActionValue( hiddenSenseiBulkAction.value );
+		}
+		if ( hiddenSelectedUserIdsField ) {
+			setStudentIds( JSON.parse( hiddenSelectedUserIdsField.value ) );
 		}
 		setIsModalOpen( true );
 	};
@@ -51,8 +58,13 @@ export const StudentsBulkActionButton = () => {
 			>
 				{ __( 'Select Courses', 'sensei-lms' ) }
 			</Button>
+			<input type={ 'hidden' } id={ 'bulk-action-user-ids' } />
 			{ isModalOpen && (
-				<StudentModal action={ action } onClose={ closeModal } />
+				<StudentModal
+					action={ action }
+					onClose={ closeModal }
+					students={ studentIds }
+				/>
 			) }
 		</>
 	);

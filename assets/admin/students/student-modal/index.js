@@ -62,7 +62,6 @@ const POSSIBLE_ACTIONS = {
  */
 export const StudentModal = ( { action, onClose } ) => {
 	const { description, button } = POSSIBLE_ACTIONS[ action ];
-
 	return (
 		<Modal
 			className="sensei-student-modal"

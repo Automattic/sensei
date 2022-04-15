@@ -177,6 +177,9 @@ jQuery( document ).ready( function () {
 			} else {
 				$modalToggle.attr( 'disabled', true );
 			}
+			$hiddenSelectedUserIdsField.val(
+				JSON.stringify( bulkUserActions.getUserIds() )
+			);
 		};
 
 		$courseSelect.select2( {
@@ -247,7 +250,6 @@ jQuery( document ).ready( function () {
 			if ( ! validationResult.isValid ) {
 				return;
 			}
-
 			$hiddenSelectedUserIdsField.val(
 				bulkUserActions.getUserIds().join( ',' )
 			);
