@@ -6,7 +6,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 /**
  * WordPress dependencies
  */
-import apiFetch from '@wordpress/api-fetch';
+import httpClient from '../../lib/http-client';
 import { DOWN } from '@wordpress/keycodes';
 
 /**
@@ -14,11 +14,11 @@ import { DOWN } from '@wordpress/keycodes';
  */
 import { StudentActionMenu } from './index';
 
-jest.mock( '@wordpress/api-fetch' );
+jest.mock( '../../lib/http-client' );
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
-		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
+		httpClient.mockImplementation( () => Promise.resolve( { data: [] } ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
@@ -41,7 +41,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
-		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
+		httpClient.mockImplementation( () => Promise.resolve( { data: [] } ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
@@ -64,7 +64,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
-		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
+		httpClient.mockImplementation( () => Promise.resolve( { data: [] } ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
