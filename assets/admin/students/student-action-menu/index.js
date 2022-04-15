@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import StudentModal from '../student-modal';
+import { reloadWPTable } from '../ajax/ajax-api';
 
 /**
  * Student action menu.
@@ -23,7 +24,7 @@ export const StudentActionMenu = ( { studentId, studentName } ) => {
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const closeModal = ( needsReload ) => {
 		if ( needsReload ) {
-			window.location.reload();
+			reloadWPTable();
 		}
 		setModalOpen( false );
 	};
@@ -76,8 +77,10 @@ export const StudentActionMenu = ( { studentId, studentName } ) => {
 	);
 };
 
-Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
-	( actionMenu ) => {
+window.attachStudentActionMenuNodes = () => {
+	Array.from(
+		document.getElementsByClassName( 'student-action-menu' )
+	).forEach( ( actionMenu ) => {
 		render(
 			<StudentActionMenu
 				studentId={ actionMenu?.dataset?.userId }
@@ -85,5 +88,7 @@ Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 			/>,
 			actionMenu
 		);
-	}
-);
+	} );
+};
+
+window.attachStudentActionMenuNodes();
