@@ -44,7 +44,9 @@ export const StudentsBulkActionButton = () => {
 			setActionValue( hiddenSenseiBulkAction.value );
 		}
 		if ( hiddenSelectedUserIdsField ) {
-			setStudentIds( JSON.parse( hiddenSelectedUserIdsField.value ) );
+			try {
+				setStudentIds( JSON.parse( hiddenSelectedUserIdsField.value ) );
+			} catch ( e ) {}
 		}
 		setIsModalOpen( true );
 	};
