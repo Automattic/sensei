@@ -96,6 +96,7 @@ export const StudentModal = ( { action, onClose, students } ) => {
 			);
 			onClose( true );
 		} catch ( e ) {
+			onClose( true );
 			if ( isMounted.current ) {
 				setError( true );
 				setIsSending( false );
