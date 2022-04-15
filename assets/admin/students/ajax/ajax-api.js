@@ -10,14 +10,7 @@ export function reloadWPTable() {
 				{
 					action: 'fetch_custom_list',
 				},
-				{
-					per_page: '20',
-					offset: '50',
-					orderby: 'learner',
-					order: 'desc',
-					s: 'will',
-					filter_by_course_id: 0,
-				}
+				getQueryParams()
 			),
 			// Handle the successful result
 			// eslint-disable-next-line
@@ -46,4 +39,17 @@ export function reloadWPTable() {
 			},
 		} );
 	} );
+}
+
+function getQueryParams() {
+	const queryString = window.location.search;
+	const urlParams = new URLSearchParams( queryString );
+	return {
+		per_page: urlParams.get( 'product' ),
+		offset: urlParams.get( 'offset' ),
+		orderby: urlParams.get( 'orderby' ),
+		order: urlParams.get( 'order' ),
+		s: urlParams.get( 's' ),
+		filter_by_course_id: urlParams.get( 'filter_by_course_id' ),
+	};
 }

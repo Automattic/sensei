@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * This class handles is responsible for displaying the learner bulk actions page in the admin screens.
  */
-class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table_Ajax {
+class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 	/**
 	 * The page slug.
@@ -72,16 +72,15 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table_Ajax {
 		$this->page_slug          = 'sensei_learner_admin';
 
 		parent::__construct( $this->page_slug );
-		error_log("constructor");
+		error_log( 'constructor' );
 
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 
-		
 		// add_action('wp_ajax__ajax_fetch_custom_list', '_ajax_fetch_custom_list_callback');
 	}
 
-	
+
 
 	/**
 	 * Outputs the HTML before the main table.
@@ -151,44 +150,46 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table_Ajax {
 
 	}
 
-	function ajax_response() {	 
+	function ajax_response() {
 		$this->prepare_items();
-	 
+
 		extract( $this->_args );
 		extract( $this->_pagination_args, EXTR_SKIP );
-	 
+
 		ob_start();
-		if ( ! empty( $_REQUEST['no_placeholder'] ) )
+		if ( ! empty( $_REQUEST['no_placeholder'] ) ) {
 			$this->display_rows();
-		else
+		} else {
 			$this->display_rows_or_placeholder();
+		}
 		$rows = ob_get_clean();
-	 
+
 		ob_start();
 		$this->print_column_headers();
 		$headers = ob_get_clean();
-	 
+
 		ob_start();
-		$this->pagination('top');
+		$this->pagination( 'top' );
 		$pagination_top = ob_get_clean();
-	 
+
 		ob_start();
-		$this->pagination('bottom');
+		$this->pagination( 'bottom' );
 		$pagination_bottom = ob_get_clean();
-	 
-		$response = array( 'rows' => $rows );
-		$response['pagination']['top'] = $pagination_top;
+
+		$response                         = array( 'rows' => $rows );
+		$response['pagination']['top']    = $pagination_top;
 		$response['pagination']['bottom'] = $pagination_bottom;
-		$response['column_headers'] = $headers;
-	 
-		if ( isset( $total_items ) )
+		$response['column_headers']       = $headers;
+
+		if ( isset( $total_items ) ) {
 			$response['total_items_i18n'] = sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) );
-	 
+		}
+
 		if ( isset( $total_pages ) ) {
-			$response['total_pages'] = $total_pages;
+			$response['total_pages']      = $total_pages;
 			$response['total_pages_i18n'] = number_format_i18n( $total_pages );
 		}
-	 
+
 		die( json_encode( $response ) );
 	}
 
