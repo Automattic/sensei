@@ -46,7 +46,8 @@
 		"lodash": "4.17.21",
 		"react-animate-height": "2.0.23",
 		"terser-webpack-plugin": "5.3.1",
-		"uuid": "3.3.2"
+		"uuid": "3.3.2",
+		"whatwg-fetch": "3.6.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "10.0.0",
@@ -91,7 +92,6 @@
 		"react": "16.11.0",
 		"react-test-renderer": "17.0.2",
 		"svg-spritemap-webpack-plugin": "4.4.0",
-		"unfetch": "4.2.0",
 		"webpack": "5.64.4",
 		"wp-hookdoc": "0.2.0"
 	},

@@ -7,5 +7,6 @@ import MutationObserver from '@sheerun/mutationobserver-shim';
  */
 import '@wordpress/jest-preset-default/scripts/setup-globals';
 import '@testing-library/jest-dom';
-import 'unfetch/polyfill';
+import 'whatwg-fetch';
+
 window.MutationObserver = MutationObserver;
