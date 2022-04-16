@@ -574,7 +574,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								implode( ' | ', $row_actions ) .
 							'</div>',
 						'date_started'     => $date_input,
-						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
+						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '-',
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
 						'actions'          => implode( ' ', $actions ),
