@@ -289,7 +289,8 @@ class Sensei_Analysis {
 
 		$this->check_course_lesson( $course_id, $lesson_id, $user_id );
 
-		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : 'students';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$type = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : 'students';
 
 		if ( 0 < $lesson_id ) {
 			// Viewing a specific Lesson and all its Learners
