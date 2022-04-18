@@ -13,4 +13,4 @@ import '@testing-library/jest-dom';
 
 window.MutationObserver = MutationObserver;
 
-beforeAll( () => nock.cleanAll() );
+beforeEach( () => nock.cleanAll() );
