@@ -6,19 +6,19 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 /**
  * WordPress dependencies
  */
-import httpClient from '../../lib/http-client';
 import { DOWN } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
  */
 import { StudentActionMenu } from './index';
+import httpClient from '../../lib/http-client';
 
 jest.mock( '../../lib/http-client' );
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
-		httpClient.mockImplementation( () => Promise.resolve( { data: [] } ) );
+		httpClient.mockImplementation( () => Promise.resolve( [] ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
@@ -41,7 +41,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
-		httpClient.mockImplementation( () => Promise.resolve( { data: [] } ) );
+		httpClient.mockImplementation( () => Promise.resolve( [] ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
@@ -64,7 +64,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
-		httpClient.mockImplementation( () => Promise.resolve( { data: [] } ) );
+		httpClient.mockImplementation( () => Promise.resolve( [] ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
