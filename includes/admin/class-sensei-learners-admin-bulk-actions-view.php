@@ -358,7 +358,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 							)
 						);
 						?>
-						<div class="student-bulk-action-button" style="margin-left: 4px"></div>
+						<div class="sensei-student-bulk-actions__button"></div>
 					</div>
 					<div class="alignleft">
 						<form action="" method="get">

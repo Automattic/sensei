@@ -592,6 +592,15 @@
 			margin-bottom: 10px
 		}
 	}
+
+	&__button {
+		margin-left: 4px;
+	}
+	@media screen and (max-width: 782px) {
+		&__button {
+			margin-top: 6px;
+		}
+	}
 }
 
 .sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-student-bulk-actions__placeholder-dropdown {

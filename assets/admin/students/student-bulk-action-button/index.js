@@ -73,7 +73,7 @@ export const StudentsBulkActionButton = () => {
 };
 
 Array.from(
-	document.getElementsByClassName( 'student-bulk-action-button' )
+	document.getElementsByClassName( 'sensei-student-bulk-actions__button' )
 ).forEach( ( button ) => {
 	render( <StudentsBulkActionButton />, button );
 } );
