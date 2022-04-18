@@ -377,7 +377,7 @@ class Sensei_Learner_Management {
 					'post_type' => $this->menu_post_type,
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'view'      => 'learners',
+					'view'      => 'lessons',
 				),
 				admin_url( 'edit.php' )
 			);
