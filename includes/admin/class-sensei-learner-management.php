@@ -391,21 +391,15 @@ class Sensei_Learner_Management {
 			);
 		}
 
-		$title = '';
+		$title_parts = [];
 		if ( 0 < $course_id ) {
-			$title .= get_the_title( $course_id );
+			$title_parts[] = get_the_title( $course_id );
 		}
-
-		if ( 0 < $lesson_id ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
-			if ( ! empty( $title ) ) {
-				$title .= ': ';
-			}
-			$title .= get_the_title( $lesson_id );
+		if ( 0 < $lesson_id ) {
+			$title_parts[] = get_the_title( $lesson_id );
 		}
-
 		$back_link = '<a href="' . esc_url( $back_url ) . '">←</a> ';
-		$title     = $back_link . $title;
+		$title     = $back_link . implode( ': ', $title_parts );
 		?>
 			<h2 class="sensei-students__subheading">
 				<?php
