@@ -15,3 +15,5 @@ test-results/
 playwright-report/
 /*.zip
 /coverage/
+test-results/
+playwright-report/

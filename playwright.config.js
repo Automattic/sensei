@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { devices } = require( '@playwright/test' );
 
 /**
@@ -8,7 +9,8 @@ const { devices } = require( '@playwright/test' );
  * @type {Object} PlaywrightTestConfig
  */
 const config = {
-	testDir: './tests/e2e-playwright',
+	testDir: './tests/e2e-playwright/',
+	testMatch: '**/*.spec.js',
 	/* Maximum time one test can run for. */
 	timeout: 30 * 1000, // 30 seconds.
 	expect: {
