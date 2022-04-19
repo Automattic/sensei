@@ -44,6 +44,10 @@ describe( '<StudentsBulkActionButton />', () => {
 		option3.value = 'remove_progress';
 		mockSelector.appendChild( option3 );
 		spy.mockReturnValue( mockSelector );
+		const mockStudentIdContainer = document.createElement( 'input' );
+		mockStudentIdContainer.id = 'bulk-action-user-ids';
+		mockStudentIdContainer.value = '[1,2,3]';
+		spy.mockReturnValue( mockStudentIdContainer );
 	} );
 
 	it( 'Student modal is rendered with action to add students on button click when add option is selected', () => {
@@ -54,9 +58,11 @@ describe( '<StudentsBulkActionButton />', () => {
 		} );
 		button.click();
 		expect(
-			screen.getByText(
-				'Select the course(s) you would like to add students to:'
-			)
-		).toBeTruthy();
+			screen.getByText( 'Select the course(s) you would like to add', {
+				exact: false,
+			} ).textContent
+		).toEqual(
+			'Select the course(s) you would like to add 3 students to:'
+		);
 	} );
 } );

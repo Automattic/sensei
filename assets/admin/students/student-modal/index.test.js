@@ -1,7 +1,13 @@
 /**
  * External dependencies
  */
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+	cleanup,
+} from '@testing-library/react';
 import nock from 'nock';
 /**
  * Internal dependencies
@@ -24,7 +30,9 @@ const courses = [
 ];
 
 const students = [ 1, 2, 3 ];
+const studentName = 'testname';
 const NONCE = 'some-nonce-id';
+const NOCK_HOST_URL = 'http://localhost';
 
 describe( '<StudentModal />', () => {
 	const { getByText, findByText, findByRole, findByLabelText } = screen;
@@ -36,13 +44,13 @@ describe( '<StudentModal />', () => {
 		findByRole( 'button', { name: label } );
 
 	beforeAll( () => {
-		nock( 'http://localhost' )
+		nock( NOCK_HOST_URL )
 			.persist()
 			.get( '/wp-json/wp/v2/courses' )
 			.query( { per_page: 100 } )
 			.reply( 200, courses );
 
-		nock( 'http://localhost' )
+		nock( NOCK_HOST_URL )
 			.persist()
 			.get( '/wp-admin/admin-ajax.php' )
 			.query( { action: 'rest-nonce' } )
@@ -51,17 +59,19 @@ describe( '<StudentModal />', () => {
 	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display a list of courses', async () => {
-		render( <StudentModal action="add" /> );
+		render( <StudentModal students={ students } action="add" /> );
 		expect( await courseOptionAt( 0 ) ).toBeInTheDocument();
 	} );
 
 	it( 'Should disable the action button when there is no course selected', async () => {
-		render( <StudentModal action="add" /> );
+		render( <StudentModal students={ students } action="add" /> );
 		expect( await buttonByLabel( 'Add to Course' ) ).toBeDisabled();
 	} );
 
 	describe( 'Add action', () => {
 		const onClose = jest.fn();
+		const descriptionLookupText =
+			'Select the course(s) you would like to add ';
 
 		beforeEach( () => {
 			render(
@@ -73,22 +83,28 @@ describe( '<StudentModal />', () => {
 			);
 		} );
 
-		it( 'Should display the action description', async () => {
+		it( 'Should display the description with student name for single input', async () => {
+			cleanup();
+			render(
+				<StudentModal
+					action="add"
+					students={ students.slice( 0, 1 ) }
+					studentName={ studentName }
+				/>
+			);
 			expect(
-				getByText(
-					'Select the course(s) you would like to add students to:'
-				)
-			).toBeInTheDocument();
+				getByText( descriptionLookupText, { exact: false } ).textContent
+			).toEqual( descriptionLookupText + studentName + ' to:' );
 		} );
 
-		it( 'Should display the action button', async () => {
+		it( 'Should display the action description for multiple students', async () => {
 			expect(
-				await buttonByLabel( 'Add to Course' )
-			).toBeInTheDocument();
+				getByText( descriptionLookupText, { exact: false } ).textContent
+			).toEqual( descriptionLookupText + '3 students to:' );
 		} );
 
 		it( 'Should add the selected students to the selected course', async () => {
-			nock( 'http://localhost' )
+			nock( NOCK_HOST_URL )
 				.post( '/', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
@@ -111,7 +127,7 @@ describe( '<StudentModal />', () => {
 
 		describe( 'when there is a failure to add the students to the courses', () => {
 			beforeEach( async () => {
-				nock( 'http://localhost' )
+				nock( NOCK_HOST_URL )
 					.post( '/' )
 					.query( {
 						rest_route: '/sensei-internal/v1/course-students/batch',
@@ -141,6 +157,9 @@ describe( '<StudentModal />', () => {
 
 	describe( 'Remove action', () => {
 		const onClose = jest.fn();
+		const descriptionLookupText =
+			'Select the course(s) you would like to remove ';
+
 		beforeEach( async () => {
 			render(
 				<StudentModal
@@ -151,12 +170,24 @@ describe( '<StudentModal />', () => {
 			);
 		} );
 
-		it( 'Should display the action description', async () => {
+		it( 'Should display the description with student name for single input', async () => {
+			cleanup();
+			render(
+				<StudentModal
+					action="remove"
+					students={ students.slice( 0, 1 ) }
+					studentName={ studentName }
+				/>
+			);
 			expect(
-				await findByText(
-					'Select the course(s) you would like to remove students from:'
-				)
-			).toBeInTheDocument();
+				getByText( descriptionLookupText, { exact: false } ).textContent
+			).toEqual( descriptionLookupText + studentName + ' from:' );
+		} );
+
+		it( 'Should display the action description for multiple students', async () => {
+			expect(
+				getByText( descriptionLookupText, { exact: false } ).textContent
+			).toEqual( descriptionLookupText + '3 students from:' );
 		} );
 
 		it( 'Should display the action button', async () => {
@@ -166,7 +197,7 @@ describe( '<StudentModal />', () => {
 		} );
 
 		it( 'Should remove the selected students to the selected course', async () => {
-			nock( 'http://localhost/' )
+			nock( NOCK_HOST_URL + '/' )
 				.delete( '/', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
@@ -189,7 +220,7 @@ describe( '<StudentModal />', () => {
 
 		describe( 'when there is a failure to remove the students from the courses', () => {
 			beforeEach( async () => {
-				nock( 'http://localhost' )
+				nock( NOCK_HOST_URL )
 					.delete( '/', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
@@ -216,6 +247,9 @@ describe( '<StudentModal />', () => {
 
 	describe( 'Reset/Remove Progress action', () => {
 		const onClose = jest.fn();
+		const descriptionLookupText =
+			'Select the course(s) you would like to reset or remove progress from for ';
+
 		beforeEach( () => {
 			render(
 				<StudentModal
@@ -226,12 +260,24 @@ describe( '<StudentModal />', () => {
 			);
 		} );
 
-		it( 'Should display the action description', async () => {
+		it( 'Should display the description with student name for single input', async () => {
+			cleanup();
+			render(
+				<StudentModal
+					action="reset-progress"
+					students={ students.slice( 0, 1 ) }
+					studentName={ studentName }
+				/>
+			);
 			expect(
-				getByText(
-					'Select the course(s) you would like to reset or remove progress for:'
-				)
-			).toBeInTheDocument();
+				getByText( descriptionLookupText, { exact: false } ).textContent
+			).toEqual( descriptionLookupText + studentName + ':' );
+		} );
+
+		it( 'Should display the action description for multiple students', async () => {
+			expect(
+				getByText( descriptionLookupText, { exact: false } ).textContent
+			).toEqual( descriptionLookupText + '3 students:' );
 		} );
 
 		it( 'Should display the action button', async () => {
@@ -241,7 +287,7 @@ describe( '<StudentModal />', () => {
 		} );
 
 		it( "Should reset the selected the students's progress from the selected courses", async () => {
-			nock( 'http://localhost' )
+			nock( NOCK_HOST_URL )
 				.delete( '/', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
@@ -265,7 +311,7 @@ describe( '<StudentModal />', () => {
 
 		describe( 'when there is a failure to reset the students progress', () => {
 			beforeEach( async () => {
-				nock( 'http://localhost' )
+				nock( NOCK_HOST_URL )
 					.delete( '/', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],

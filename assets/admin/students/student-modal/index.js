@@ -3,7 +3,7 @@
  */
 import { Button, Modal, Spinner } from '@wordpress/components';
 import { search } from '@wordpress/icons';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -15,74 +15,96 @@ import httpClient from '../../lib/http-client';
 /**
  * External dependencies
  */
-import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
+import {
+	useCallback,
+	useRef,
+	useState,
+	useEffect,
+	useMemo,
+	RawHTML,
+} from '@wordpress/element';
 
-const POSSIBLE_ACTIONS = {
-	add: {
-		description: __(
-			'Select the course(s) you would like to add students to:',
-			'sensei-lms'
-		),
-		buttonLabel: __( 'Add to Course', 'sensei-lms' ),
-		sendAction: ( students, courses ) =>
-			httpClient( {
-				restRoute: '/sensei-internal/v1/course-students/batch',
-				method: 'POST',
-				data: { student_ids: students, course_ids: courses },
-			} ),
-		isDestructive: false,
-	},
-	remove: {
-		description: __(
-			'Select the course(s) you would like to remove students from:',
-			'sensei-lms'
-		),
-		buttonLabel: __( 'Remove from Course', 'sensei-lms' ),
-		sendAction: ( students, courses ) =>
-			httpClient( {
-				restRoute: '/sensei-internal/v1/course-students/batch',
-				method: 'DELETE',
-				data: { student_ids: students, course_ids: courses },
-			} ),
-		isDestructive: true,
-	},
-	'reset-progress': {
-		description: __(
-			'Select the course(s) you would like to reset or remove progress for:',
-			'sensei-lms'
-		),
-		buttonLabel: __( 'Reset or Remove Progress', 'sensei-lms' ),
-		sendAction: ( students, courses ) =>
-			httpClient( {
-				restRoute: '/sensei-internal/v1/course-progress/batch',
-				method: 'DELETE',
-				data: { student_ids: students, course_ids: courses },
-			} ),
+const getAction = ( action, studentCount ) => {
+	const possibleActions = {
+		add: {
+			// Translators: placeholder is the number of selected students for plural, student's name for singular.
+			description: _n(
+				'Select the course(s) you would like to add <strong>%1$s</strong> to:',
+				'Select the course(s) you would like to add <strong>%1$d students</strong> to:',
+				studentCount,
+				'sensei-lms'
+			),
+			buttonLabel: __( 'Add to Course', 'sensei-lms' ),
+			sendAction: ( students, courses ) =>
+				httpClient( {
+					restRoute: '/sensei-internal/v1/course-students/batch',
+					method: 'POST',
+					data: { student_ids: students, course_ids: courses },
+				} ),
+			isDestructive: false,
+		},
+		remove: {
+			// Translators: placeholder is the number of selected students for plural, student's name for singular.
+			description: _n(
+				'Select the course(s) you would like to remove <strong>%1$s</strong> from:',
+				'Select the course(s) you would like to remove <strong>%1$d students</strong> from:',
+				studentCount,
+				'sensei-lms'
+			),
+			buttonLabel: __( 'Remove from Course', 'sensei-lms' ),
+			sendAction: ( students, courses ) =>
+				httpClient( {
+					restRoute: '/sensei-internal/v1/course-students/batch',
+					method: 'DELETE',
+					data: { student_ids: students, course_ids: courses },
+				} ),
+			isDestructive: true,
+		},
+		'reset-progress': {
+			// Translators: placeholder is the number of selected students for plural, student's name for singular.
+			description: _n(
+				'Select the course(s) you would like to reset or remove progress from for <strong>%1$s</strong>:',
+				'Select the course(s) you would like to reset or remove progress from for <strong>%1$d students</strong>:',
+				studentCount,
+				'sensei-lms'
+			),
+			buttonLabel: __( 'Reset or Remove Progress', 'sensei-lms' ),
+			sendAction: ( students, courses ) =>
+				httpClient( {
+					restRoute: '/sensei-internal/v1/course-progress/batch',
+					method: 'DELETE',
+					data: { student_ids: students, course_ids: courses },
+				} ),
 
-		isDestructive: true,
-	},
+			isDestructive: true,
+		},
+	};
+	return possibleActions[ action ];
 };
 
 /**
  * Questions modal content.
  *
  * @param {Object}   props
- * @param {Object}   props.action   Action that is being performed.
- * @param {Function} props.onClose  Close callback.
- * @param {Array}    props.students A list of Student ids related to the action should be applied.
+ * @param {Object}   props.action      Action that is being performed.
+ * @param {Function} props.onClose     Close callback.
+ * @param {Array}    props.students    A list of Student ids related to the action should be applied.
+ * @param {string}   props.studentName Name of the student, shown when there's only one student.
  */
-
-export const StudentModal = ( { action, onClose, students } ) => {
-	const {
-		description,
-		buttonLabel,
-		sendAction,
-		isDestructive,
-	} = POSSIBLE_ACTIONS[ action ];
+export const StudentModal = ( { action, onClose, students, studentName } ) => {
+	const { description, buttonLabel, sendAction, isDestructive } = getAction(
+		action,
+		students.length
+	);
 	const [ selectedCourses, setCourses ] = useState( [] );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasError, setError ] = useState( false );
 	const isMounted = useRef( true );
+	const replacedDescription = useMemo( () => {
+		const replacementString =
+			students.length === 1 ? studentName : students.length;
+		return sprintf( description, replacementString );
+	}, [ students, studentName, description ] );
 
 	useEffect( () => {
 		return () => ( isMounted.current = false );
@@ -110,7 +132,7 @@ export const StudentModal = ( { action, onClose, students } ) => {
 			title={ __( 'Choose Course', 'sensei-lms' ) }
 			onRequestClose={ () => onClose() }
 		>
-			<p>{ description }</p>
+			<RawHTML>{ replacedDescription }</RawHTML>
 
 			<InputControl
 				placeholder={ __( 'Search courses', 'sensei-lms' ) }

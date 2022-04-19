@@ -70,6 +70,7 @@ export const StudentActionMenu = ( { studentId, studentName } ) => {
 					action={ action }
 					onClose={ closeModal }
 					students={ [ studentId ] }
+					studentName={ studentName }
 				/>
 			) }
 		</>
