@@ -44,12 +44,23 @@ export function reloadWPTable() {
 function getQueryParams() {
 	const queryString = window.location.search;
 	const urlParams = new URLSearchParams( queryString );
-	return {
-		per_page: urlParams.get( 'product' ),
-		offset: urlParams.get( 'offset' ),
-		orderby: urlParams.get( 'orderby' ),
-		order: urlParams.get( 'order' ),
-		s: urlParams.get( 's' ),
-		filter_by_course_id: urlParams.get( 'filter_by_course_id' ),
+	const params = {
+		...( urlParams.get( 'product' ) && {
+			per_page: urlParams.get( 'product' ),
+		} ),
+		...( urlParams.get( 'offset' ) && {
+			offset: urlParams.get( 'offset' ),
+		} ),
+		...( urlParams.get( 'orderby' ) && {
+			orderby: urlParams.get( 'orderby' ),
+		} ),
+		...( urlParams.get( 'order' ) && { order: urlParams.get( 'order' ) } ),
+		...( urlParams.get( 's' ) && { s: urlParams.get( 's' ) } ),
+		...( urlParams.get( 'search' ) && { s: urlParams.get( 'search' ) } ),
+		...( urlParams.get( 'paged' ) && { paged: urlParams.get( 'paged' ) } ),
+		...( urlParams.get( 'filter_by_course_id' ) && {
+			filter_by_course_id: urlParams.get( 'filter_by_course_id' ),
+		} ),
 	};
+	return params;
 }
