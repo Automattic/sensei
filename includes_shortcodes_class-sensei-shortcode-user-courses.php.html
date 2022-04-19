@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Source: includes/shortcodes/class-sensei-shortcode-user-courses.php - Sensei LMS Hook Docs</title>
+
+	<script src="scripts/prettify/prettify.js"> </script>
+	<script src="scripts/prettify/lang-css.js"> </script>
+	<!--[if lt IE 9]>
+	  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+	<link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+
+	<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans:300,400|Playfair+Display:900&display=swap" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="main">
+
+	
+	<h1 class="page-title">Source: includes/shortcodes/class-sensei-shortcode-user-courses.php</h1>
+	
+
+	
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly
+}
+/**
+ * This class is loaded int WP by the shortcode loader class.
+ *
+ * Renders the [sensei_user_courses] shortcode to all courses the current user is taking
+ *
+ * Shortcode parameters:
+ * number - how many courses you'd like to show
+ * orderby - the same as the WordPress orderby query parameter
+ * order - ASC | DESC
+ * status -  complete | active if none specified it will default to all
+ *
+ * If all courses for a given user is shown, there will also be a toggle link between active and complete. Please note
+ * that the number you specify will be respected.
+ *
+ * @class Sensei_Shortcode_User_Courses
+ *
+ * @package    Content
+ * @subpackage Shortcode
+ * @author     Automattic
+ *
+ * @since 1.9.0
+ */
+class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
+
+	/**
+	 * The name of the status filter HTTP query param.
+	 *
+	 * @var string
+	 */
+	const MY_COURSES_STATUS_FILTER = 'my_courses_status';
+
+	/**
+	 * @var WP_Query to help setup the query needed by the render method.
+	 */
+	protected $query;
+
+	/**
+	 * @var string number of items to show on the current page
+	 */
+	protected $number;
+
+	/**
+	 * @var string ordery by course field
+	 * Default: date
+	 */
+	protected $orderby;
+
+	/**
+	 * @var string ASC or DESC
+	 * Default: 'DESC'
+	 */
+	protected $order;
+
+	/**
+	 * @var status can be completed or active. If none is specified all will be shown
+	 */
+	protected $status;
+
+	/**
+	 *  Rendering options.
+	 *
+	 * @var array
+	 */
+	protected $options;
+
+	/**
+	 * Are we in my-courses?
+	 *
+	 * @var bool
+	 */
+	private $is_shortcode_initial_status_all = false;
+
+	/**
+	 * Current Page ID
+	 *
+	 * @var int
+	 */
+	private $page_id = 0;
+
+	/**
+	 * Rendering as a block.
+	 *
+	 * @var bool
+	 */
+	private $is_block = false;
+
+	/**
+	 * Setup the shortcode object
+	 *
+	 * @since 1.9.0
+	 * @param array  $attributes
+	 * @param string $content
+	 * @param string $shortcode  the shortcode that was called for this instance
+	 */
+	public function __construct( $attributes, $content, $shortcode ) {
+		global $wp_query;
+		$this->is_shortcode_initial_status_all = ! isset( $attributes['status'] ) || 'all' === $attributes['status'];
+
+		$attributes = shortcode_atts(
+			array(
+				'number'  => null,
+				'status'  => 'all',
+				'orderby' => 'title',
+				'order'   => 'ASC',
+				'options' => [],
+			),
+			$attributes,
+			$shortcode
+		);
+
+		if ( $this->is_shortcode_initial_status_all &amp;&amp; $wp_query->is_main_query() ) {
+			// Check if we should filter the courses.
+			if ( isset( $_GET[ self::MY_COURSES_STATUS_FILTER ] ) ) {
+				$course_filter_by_status = sanitize_text_field( $_GET[ self::MY_COURSES_STATUS_FILTER ] );
+
+				if ( ! empty( $course_filter_by_status ) &amp;&amp; in_array( $course_filter_by_status, array_keys( $this->get_filter_options() ), true ) ) {
+					$attributes['status'] = $course_filter_by_status;
+				}
+			}
+		}
+
+		$this->page_id = $wp_query->get_queried_object_id();
+
+		$per_page = 10;
+		if (
+			isset( Sensei()->settings->settings['my_course_amount'] )
+			&amp;&amp; 0 &lt; absint( Sensei()->settings->settings['my_course_amount'] )
+		) {
+			$per_page = absint( Sensei()->settings->settings['my_course_amount'] );
+		}
+
+		// set up all argument need for constructing the course query
+		$this->number  = isset( $attributes['number'] ) ? absint( $attributes['number'] ) : $per_page;
+		$this->orderby = isset( $attributes['orderby'] ) ? $attributes['orderby'] : 'title';
+		$this->status  = isset( $attributes['status'] ) ? $attributes['status'] : 'all';
+
+		// set the default for menu_order to be ASC
+		if ( 'menu_order' === $this->orderby &amp;&amp; ! isset( $attributes['order'] ) ) {
+
+			$this->order = 'ASC';
+
+		} else {
+
+			// for everything else use the value passed or the default DESC
+			$this->order = isset( $attributes['order'] ) ? $attributes['order'] : 'ASC';
+
+		}
+
+		$this->is_block = ! empty( $attributes['options'] );
+
+		$this->options = wp_parse_args(
+			$attributes['options'],
+			[
+				'featuredImageEnabled'     => true,
+				'courseCategoryEnabled'    => true,
+				'courseDescriptionEnabled' => true,
+				'progressBarEnabled'       => true,
+				'columns'                  => 2,
+				'layoutView'               => 'list',
+			]
+		);
+
+	}
+
+	private function is_my_courses() {
+		global $wp_query;
+
+		return $wp_query->is_page() &amp;&amp; $wp_query->get_queried_object_id() === absint( Sensei()->settings->get( 'my_course_page' ) );
+	}
+
+	private function should_filter_course_by_status( $course_status, $user_id ) {
+		/**
+		 * Filters courses processed by the course query in the
+		 * [sensei_user_courses] shortcode.
+		 *
+		 * @param bool       $should_filter Whether the course should be filtered out.
+		 * @param WP_Comment $course_status The current course status record.
+		 * @param int        $user_id       The user ID.
+		 * @return bool
+		 */
+		return (bool) apply_filters(
+			'sensei_setup_course_query_should_filter_course_by_status',
+			false,
+			$course_status,
+			$user_id
+		);
+	}
+
+	/**
+	 * Sets up the object course query
+	 * that will be used in the render method.
+	 *
+	 * @since 1.9.0
+	 */
+	protected function setup_course_query() {
+		$learner_manager = Sensei_Learner::instance();
+		$user_id         = get_current_user_id();
+		$empty_callback  = [ $this, 'no_course_message_output' ];
+
+		$number_of_posts = $this->number;
+		$query_var_paged = get_query_var( 'paged' );
+		$base_query_args = array(
+			'orderby'        => $this->orderby,
+			'order'          => $this->order,
+			'paged'          => empty( $query_var_paged ) ? 1 : $query_var_paged,
+			'posts_per_page' => $number_of_posts,
+		);
+
+		/**
+		 * Filters the query which fetches the user courses.
+		 *
+		 * @since 3.13.3
+		 * @hook sensei_user_courses_query
+		 *
+		 * @param {null}   $query
+		 * @param {int}    $user_id         The user id.
+		 * @param {string} $status          Status of query to run.
+		 * @param {array}  $base_query_args Base query args.
+		 *
+		 * @return {WP_Query} The query.
+		 */
+		$filtered_query = apply_filters( 'sensei_user_courses_query', null, $user_id, $this->status, $base_query_args );
+
+		if ( ! empty( $filtered_query ) ) {
+			$this->query = $filtered_query;
+		} elseif ( 'complete' === $this->status ) {
+			$this->query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
+		} elseif ( 'active' === $this->status ) {
+			$this->query = $learner_manager->get_enrolled_active_courses_query( $user_id, $base_query_args );
+		} else {
+			$this->query = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
+		}
+
+		if ( 'complete' === $this->status ) {
+			$empty_callback = [ $this, 'completed_no_course_message_output' ];
+		} elseif ( 'active' === $this->status ) {
+			$empty_callback = [ $this, 'active_no_course_message_output' ];
+		}
+
+		if ( empty( $this->query->found_posts ) ) {
+			add_action( 'sensei_loop_course_inside_before', $empty_callback );
+		}
+
+	}
+
+	/**
+	 * Output the message that tells the user they have
+	 * no courses.
+	 *
+	 * @since 3.0.0
+	 */
+	public function no_course_message_output() {
+		?>
+
+		&lt;li class="user-active">
+			&lt;div class="sensei-message info">
+
+				&lt;?php esc_html_e( 'You have no active or completed courses.', 'sensei-lms' ); ?>
+
+				&lt;a href="&lt;?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
+
+					&lt;?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
+
+				&lt;/a>
+
+			&lt;/div>
+		&lt;/li>
+		&lt;?php
+	}
+
+	/**
+	 * Output the message that tells the user they have
+	 * no completed courses.
+	 *
+	 * @since 1.9.0
+	 */
+	public function completed_no_course_message_output() {
+		?>
+		&lt;li class="user-completed">
+			&lt;div class="sensei-message info">
+
+				&lt;?php esc_html_e( 'You have not completed any courses yet.', 'sensei-lms' ); ?>
+
+			&lt;/div>
+		&lt;/li>
+		&lt;?php
+	}
+
+	/**
+	 * Output the message that tells the user they have
+	 * no active courses.
+	 *
+	 * @since 1.9.0
+	 */
+	public function active_no_course_message_output() {
+		?>
+
+		&lt;li class="user-active">
+			&lt;div class="sensei-message info">
+
+				&lt;?php esc_html_e( 'You have no active courses.', 'sensei-lms' ); ?>
+
+				&lt;a href="&lt;?php echo esc_attr( Sensei_Course::get_courses_page_url() ); ?>">
+
+					&lt;?php esc_html_e( 'Start a Course!', 'sensei-lms' ); ?>
+
+				&lt;/a>
+
+			&lt;/div>
+		&lt;/li>
+		&lt;?php
+	}
+
+	/**
+	 * Rendering the shortcode this class is responsible for.
+	 *
+	 * @return string $content
+	 */
+	public function render() {
+		// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		global $wp_query;
+		global $sensei_is_block;
+
+		$sensei_is_block = $this->is_block;
+
+		if ( false === is_user_logged_in() ) {
+			// show the login form
+			return $this->render_login_form();
+		}
+		// setup the course query that will be used when rendering
+		$this->setup_course_query();
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Mocking loop for shortcode. Reset below.
+		$wp_query = $this->query;
+
+		$this->attach_shortcode_hooks();
+
+		// mostly hooks added for legacy and backwards compatiblity sake
+		do_action( 'sensei_my_courses_before' );
+		do_action( 'sensei_before_user_course_content', wp_get_current_user() );
+
+		ob_start();
+		echo '&lt;section id="sensei-user-courses">';
+
+		if ( ! $sensei_is_block ) {
+			Sensei_Messages::the_my_messages_link();
+		}
+
+		do_action( 'sensei_my_courses_content_inside_before' );
+		Sensei_Templates::get_template( 'loop-course.php' );
+		do_action( 'sensei_my_courses_content_inside_after' );
+		Sensei_Templates::get_template( 'globals/pagination.php' );
+		echo '&lt;/section>';
+
+		// mostly hooks added for legacy and backwards compatiblity sake
+		do_action( 'sensei_after_user_course_content', wp_get_current_user() );
+		do_action( 'sensei_my_courses_after' );
+
+		$shortcode_output = ob_get_clean();
+
+		// phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- wp_reset_postdata() is not a good alternative.
+		wp_reset_query();
+
+		$this->detach_shortcode_hooks();
+		$sensei_is_block = false;
+
+		return $shortcode_output;
+
+	}
+
+	/**
+	 * Add hooks for the shortcode
+	 *
+	 * @since 1.9.0
+	 */
+	public function attach_shortcode_hooks() {
+
+		// Don't show the toggle action if the user specified complete or active for this shortcode.
+		if ( $this->is_shortcode_initial_status_all ) {
+			add_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
+		}
+
+		add_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20, 2 );
+
+		if ( $this->is_block ) {
+			// Remove default WordPress theme hook that overrides Sensei styles.
+			remove_filter( 'wp_get_attachment_image_attributes', 'twenty_twenty_one_get_attachment_image_attributes', 10 );
+
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+			remove_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30 );
+
+			if ( $this->options['featuredImageEnabled'] ) {
+				add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 1 );
+			}
+
+			add_action( 'sensei_course_content_inside_before', array( $this, 'add_course_details_wrapper_start' ), 2 );
+
+			if ( $this->options['courseCategoryEnabled'] ) {
+				add_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 6 );
+			}
+
+			if ( ! $this->options['courseDescriptionEnabled'] ) {
+				add_filter( 'get_the_excerpt', '__return_false' );
+			}
+
+			if ( $this->options['progressBarEnabled'] ) {
+				add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ), 20 );
+			}
+		}
+
+		add_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ), 30 );
+		$this->is_block &amp;&amp; add_action( 'sensei_course_content_inside_after', array( $this, 'add_course_details_wrapper_end' ), 40 );
+	}
+
+	/**
+	 * Remove hooks for the shortcode
+	 *
+	 * @since 1.9.0
+	 */
+	public function detach_shortcode_hooks() {
+
+		// Remove all hooks after the output is generated.
+		remove_action( 'sensei_course_content_inside_before', array( $this, 'course_category' ), 3 );
+		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_progress' ), 20 );
+		remove_action( 'sensei_course_content_inside_after', array( $this, 'attach_course_buttons' ), 30 );
+		remove_filter( 'sensei_course_loop_content_class', array( $this, 'course_status_class_tagging' ), 20 );
+		remove_action( 'sensei_loop_course_before', array( $this, 'course_toggle_actions' ) );
+		remove_filter( 'get_the_excerpt', '__return_false' );
+
+		if ( false === $this->options['featuredImageEnabled'] ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'course_image' ), 30, 1 );
+		}
+
+		if ( $this->is_block ) {
+			add_action( 'sensei_course_content_inside_before', array( Sensei()->course, 'the_course_meta' ) );
+		}
+	}
+
+	/**
+	 * Hooks into sensei_course_content_inside_after
+	 *
+	 * @param int $course_id Course ID.
+	 */
+	public function attach_course_progress( $course_id ) {
+
+		if ( $this->is_block ) {
+			$progress_block = ( new Sensei_Course_Progress_Block() )->render_course_progress( [ 'postId' => $course_id ] );
+			echo wp_kses_post( $progress_block );
+		} else {
+			$percentage = Sensei()->course->get_completion_percentage( $course_id, get_current_user_id() );
+			echo wp_kses_post( Sensei()->course->get_progress_meter( $percentage ) );
+		}
+
+	}
+
+
+	/**
+	 * Hooked into sensei_course_content_inside_after
+	 *
+	 * Prints out the course action buttons
+	 *
+	 * @param integer $course_id
+	 */
+	public function attach_course_buttons( $course_id ) {
+
+		Sensei()->course->the_course_action_buttons( get_post( $course_id ) );
+
+	}
+
+	/**
+	 * Display course categories.
+	 *
+	 * @param int|WP_Post $course
+	 */
+	public function course_category( $course ) {
+		$category_output = get_the_term_list( $course, 'course-category', '', ', ', '' );
+		echo '&lt;span class="wp-block-sensei-lms-learner-courses__courses-list__category">
+					' . wp_kses_post( $category_output ) . '
+				&lt;/span>';
+	}
+
+	/**
+	 * Add an opening wrapper element around the course details.
+	 */
+	public function add_course_details_wrapper_start() {
+		echo '&lt;div class="wp-block-sensei-lms-learner-courses__courses-list__details">';
+	}
+
+	/**
+	 * Add a closing wrapper element around the course details.
+	 */
+	public function add_course_details_wrapper_end() {
+		echo '&lt;/div>';
+	}
+
+	/**
+	 * Add a the user status class for the given course.
+	 *
+	 * @since 1.9
+	 *
+	 * @param  array   $classes
+	 * @param  WP_Post $course
+	 * @return array $classes
+	 */
+	public function course_status_class_tagging( $classes, $course ) {
+
+		if ( Sensei_Utils::user_completed_course( $course, get_current_user_id() ) ) {
+
+			$classes[] = 'user-completed';
+
+		} else {
+
+			$classes[] = 'user-active';
+
+		}
+
+		return $classes;
+
+	}
+
+	/**
+	 * Output the course toggle functionality
+	 */
+	public function course_toggle_actions() {
+		/**
+		 * Determine if we should display course toggles on User Courses Shortcode.
+		 *
+		 * @param bool $should_display_course_toggles Should we Display the course toggles.
+		 *
+		 * @since 1.9.18
+		 *
+		 * @return bool
+		 */
+		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
+		if ( false === $should_display_course_toggles ) {
+			return;
+		}
+
+		$active_filter_options = $this->get_filter_options();
+
+		$base_url = get_page_link( $this->page_id );
+		?>
+
+		&lt;section id="user-course-status-toggle">
+			&lt;?php
+			foreach ( $active_filter_options as $key => $option ) {
+				$css_class = $key === $this->status ? 'active' : 'inactive';
+				$url       = add_query_arg( self::MY_COURSES_STATUS_FILTER, $key, $base_url );
+				?>
+				&lt;a href="&lt;?php echo esc_url( $url ); ?>" class="&lt;?php echo esc_attr( $css_class ); ?>">&lt;?php echo esc_html( $option ); ?>&lt;/a>
+			&lt;?php } ?>
+		&lt;/section>
+
+		&lt;?php
+	}
+
+	/**
+	 * Get the filter options.
+	 *
+	 * @return array The filter options.
+	 */
+	private function get_filter_options() {
+		$filter_options = [
+			'all'      => __( 'All', 'sensei-lms' ),
+			'active'   => __( 'Active', 'sensei-lms' ),
+			'complete' => __( 'Completed', 'sensei-lms' ),
+		];
+
+		/**
+		 * Filters the the user courses filter options.
+		 *
+		 * @since 3.13.3
+		 * @hook sensei_user_courses_filter_options
+		 *
+		 * @param {array} $filter_options The filter options.
+		 *
+		 * @return {array} The filter options.
+		 */
+		return apply_filters( 'sensei_user_courses_filter_options', $filter_options );
+	}
+
+	/**
+	 * Load the javascript for the toggle functionality
+	 *
+	 * @since 1.9.0
+	 */
+	function print_course_toggle_actions_inline_script() {
+		?>
+
+		&lt;script type="text/javascript">
+			var buttonContainer = jQuery('#user-course-status-toggle');
+			var courseList = jQuery('ul.course-container');
+
+			///
+			/// EVENT LISTENERS
+			///
+			buttonContainer.on('click','a#sensei-user-courses-active-action', function( e ){
+
+				e.preventDefault();
+				sensei_user_courses_hide_all_completed();
+				sensei_user_courses_show_all_active();
+				sensei_users_courses_toggle_button_active( e );
+
+
+			});
+
+			buttonContainer.on('click', 'a#sensei-user-courses-complete-action', function( e ){
+
+				e.preventDefault();
+				sensei_user_courses_hide_all_active();
+				sensei_user_courses_show_all_completed();
+				sensei_users_courses_toggle_button_active( e );
+
+			});
+
+
+			///
+			// Set initial state
+			///
+			jQuery( 'a#sensei-user-courses-active-action').trigger( 'click' );
+
+
+			///
+			/// FUNCTIONS
+			///
+			function sensei_user_courses_hide_all_completed(){
+
+				courseList.children('li.user-completed').hide();
+
+			}
+
+			function sensei_user_courses_hide_all_active(){
+
+				courseList.children('li.user-active').hide();
+
+			}
+
+			function sensei_user_courses_show_all_completed(){
+
+				courseList.children('li.user-completed').show();
+
+			}
+
+			function sensei_user_courses_show_all_active(){
+
+				courseList.children('li.user-active').show();
+
+			}
+
+			/**
+			 * Toggle buttons active a classes
+			 */
+			function sensei_users_courses_toggle_button_active( e ){
+
+				//reset both buttons
+				buttonContainer.children('a').removeClass( 'active' );
+				buttonContainer.children('a').addClass( 'inactive' );
+
+				// setup the curent clicked button
+				jQuery( e.target).addClass( 'active' ) ;
+				jQuery( e.target).removeClass( 'inactive' ) ;
+
+			}
+
+		&lt;/script>
+
+		&lt;?php
+	}
+
+	/**
+	 * @return string
+	 */
+	private function render_login_form() {
+		ob_start();
+		Sensei()->frontend->sensei_login_form();
+		$shortcode_output = ob_get_clean();
+		return $shortcode_output;
+	}
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+	<footer>
+		<a href="https://senseilms.com/">SenseiLMS.com</a> &bull;
+		<a href="https://github.com/automattic/sensei">Sensei LMS on GitHub</a>
+	</footer>
+
+
+</div>
+
+<nav>
+	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
