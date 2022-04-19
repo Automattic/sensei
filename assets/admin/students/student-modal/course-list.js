@@ -91,7 +91,6 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
-	const isMounted = useRef( true );
 
 	const selectCourse = useCallback(
 		( { isSelected, course } ) => {
@@ -116,19 +115,13 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 				method: 'GET',
 			} )
 				.then( ( result ) => {
-					if ( isMounted.current ) {
-						setCourses( result );
-					}
+					setCourses( result );
 				} )
 				.catch( () => {
-					if ( isMounted.current ) {
-						setIsFetching( false );
-					}
+					setIsFetching( false );
 				} )
 				.finally( () => {
-					if ( isMounted.current ) {
-						setIsFetching( false );
-					}
+					setIsFetching( false );
 				} );
 		}, 400 ),
 		[]
@@ -136,8 +129,6 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 
 	useEffect( () => {
 		fetchCourses( searchQuery );
-
-		return () => ( isMounted.current = false );
 	}, [ fetchCourses, searchQuery ] );
 
 	return (
