@@ -4,26 +4,20 @@
 import { render, screen } from '@testing-library/react';
 
 /**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
-/**
  * Internal dependencies
  */
 import { StudentsBulkActionButton } from './index';
+import nock from 'nock';
 
 let spy;
-const coursePromise = Promise.resolve( [
+const courses = [
 	{
 		id: 1,
 		title: { rendered: 'My Course' },
 	},
-] );
-
-// Mock fetch for student modal.
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
-apiFetch.mockImplementation( () => coursePromise );
+];
+const NOCK_HOST_URL = 'http://localhost';
+const NONCE = 'some-nonce-id';
 
 // Create a bulk action selector with enrol student option selected.
 beforeAll( () => {
@@ -31,6 +25,18 @@ beforeAll( () => {
 } );
 describe( '<StudentsBulkActionButton />', () => {
 	beforeAll( () => {
+		nock( NOCK_HOST_URL )
+			.persist()
+			.get( '/wp-json/wp/v2/courses' )
+			.query( { per_page: 100 } )
+			.reply( 200, courses );
+
+		nock( NOCK_HOST_URL )
+			.persist()
+			.get( '/wp-admin/admin-ajax.php' )
+			.query( { action: 'rest-nonce' } )
+			.reply( 200, NONCE );
+
 		const mockSelector = document.createElement( 'select' );
 		mockSelector.id = 'bulk-action-selector-top';
 		const option1 = document.createElement( 'option' );
