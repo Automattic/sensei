@@ -6,8 +6,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Question block single-line answer component.
  *
- * @param {Object} prop
- * @param {Object} prop.children
+ * @param {Object} props
+ * @param {Object} props.children
  */
 const SingleLineAnswer = ( { children } ) => {
 	return (
