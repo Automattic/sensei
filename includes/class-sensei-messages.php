@@ -377,7 +377,11 @@ class Sensei_Messages {
 			return false;
 		}
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+		$message = empty( $_POST['contact_message'] )
+			? ''
+			: sanitize_text_field( wp_unslash( $_POST['contact_message'] ) );
+
+		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
 
 		if ( $message_id ) {
 			do_action( 'sensei_new_private_message', $message_id );
