@@ -338,6 +338,11 @@
 			}
 		}
 	}
+	@media screen and (max-width: 782px) and (min-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			position: inherit;
+		}
+	}
 }
 
 .sensei-grading-main  {

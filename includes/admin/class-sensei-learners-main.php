@@ -138,8 +138,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
-		add_action( 'sensei_learners_extra', array( $this, 'add_learners_box' ) );
-
+		add_action( 'sensei_after_list_table', array( $this, 'add_learners_box' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
