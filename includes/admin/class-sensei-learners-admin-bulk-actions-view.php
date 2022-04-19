@@ -72,7 +72,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$this->page_slug          = 'sensei_learner_admin';
 
 		parent::__construct( $this->page_slug );
-		error_log( 'constructor' );
 
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );

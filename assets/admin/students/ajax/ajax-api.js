@@ -24,15 +24,6 @@ export function reloadWPTable() {
 				// Update column headers for sorting
 				if ( response.column_headers.length )
 					$( 'thead tr, tfoot tr' ).html( response.column_headers );
-				// Update pagination for navigation
-				if ( response.pagination.bottom.length )
-					$( '.tablenav.top .tablenav-pages' ).html(
-						$( response.pagination.top ).html()
-					);
-				if ( response.pagination.top.length )
-					$( '.tablenav.bottom .tablenav-pages' ).html(
-						$( response.pagination.bottom ).html()
-					);
 
 				window.initBulkUserActionsGlobal();
 				window.attachStudentActionMenuNodes();
