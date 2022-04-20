@@ -11,9 +11,12 @@ import { __ } from '@wordpress/i18n';
 import StudentModal from '../student-modal';
 
 /**
- * Student bulk action button.
+ *  Student bulk action button.
+ *
+ * @param {Object} props          Props for bulk actions.
+ * @param {Object} props.disabled If button should be disabled or enabled.
  */
-export const StudentBulkActionButton = () => {
+export const StudentBulkActionButton = ( { disabled = false } ) => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
@@ -61,6 +64,7 @@ export const StudentBulkActionButton = () => {
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
 				style={ { height: 30 } }
+				disabled={ disabled }
 			>
 				{ __( 'Select Courses', 'sensei-lms' ) }
 			</Button>
@@ -79,5 +83,5 @@ export const StudentBulkActionButton = () => {
 Array.from(
 	document.getElementsByClassName( 'sensei-student-bulk-actions__button' )
 ).forEach( ( button ) => {
-	render( <StudentBulkActionButton />, button );
+	render( <StudentBulkActionButton disabled={ true } />, button );
 } );

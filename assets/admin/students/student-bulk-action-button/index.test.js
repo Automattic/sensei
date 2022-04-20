@@ -30,24 +30,14 @@ beforeAll( () => {
 	spy = jest.spyOn( document, 'getElementById' );
 } );
 describe( '<StudentBulkActionButton />', () => {
-	beforeAll( () => {
-		const mockSelector = document.createElement( 'select' );
-		mockSelector.id = 'bulk-action-selector-top';
-		const option1 = document.createElement( 'option' );
-		option1.value = 'enrol_restore_enrolment';
-		option1.selected = true;
-		mockSelector.appendChild( option1 );
-		const option2 = document.createElement( 'option' );
-		option2.value = 'remove_enrolment';
-		mockSelector.appendChild( option2 );
-		const option3 = document.createElement( 'option' );
-		option3.value = 'remove_progress';
-		mockSelector.appendChild( option3 );
-		spy.mockReturnValue( mockSelector );
-	} );
-
 	it( 'Student modal is rendered with action to add students on button click when add option is selected', () => {
+		setupSelector( [
+			{ value: 'enrol_restore_enrolment', selected: true },
+			{ value: 'remove_progress' },
+			{ value: 'remove_progress' },
+		] );
 		render( <StudentBulkActionButton /> );
+
 		// Click Select Courses button to open modal.
 		const button = screen.getByRole( 'button', {
 			id: 'sensei-bulk-learner-actions-modal-toggle',
@@ -59,4 +49,64 @@ describe( '<StudentBulkActionButton />', () => {
 			)
 		).toBeTruthy();
 	} );
+
+	it( 'Student modal is rendered with action to remove progress on button click when remove progress is selected', () => {
+		setupSelector( [
+			{ value: 'enrol_restore_enrolment' },
+			{ value: 'remove_progress', selected: true },
+			{ value: 'remove_progress' },
+		] );
+		render( <StudentBulkActionButton /> );
+
+		// Click Select Courses button to open modal.
+		const button = screen.getByRole( 'button', {
+			id: 'sensei-bulk-learner-actions-modal-toggle',
+		} );
+		button.click();
+		expect(
+			screen.getByText(
+				'Select the course(s) you would like to reset or remove progress for:'
+			)
+		).toBeTruthy();
+	} );
+	it( 'Student modal is rendered with action to remove students on button click when remove from course is selected', () => {
+		setupSelector( [
+			{ value: 'enrol_restore_enrolment' },
+			{ value: 'remove_progress' },
+			{ value: 'remove_enrolment', selected: true },
+		] );
+		render( <StudentBulkActionButton /> );
+
+		// Click Select Courses button to open modal.
+		const button = screen.getByRole( 'button', {
+			id: 'sensei-bulk-learner-actions-modal-toggle',
+		} );
+		button.click();
+		expect(
+			screen.getByText(
+				'Select the course(s) you would like to remove students from:'
+			)
+		).toBeTruthy();
+	} );
 } );
+
+/**
+ *  Create selector element with options that are passed to the function.
+ *
+ * @param {Array} options Options to created selector with.
+ */
+const setupSelector = ( options ) => {
+	const mockSelector = document.createElement( 'select' );
+	mockSelector.id = 'bulk-action-selector-top';
+	options.forEach( ( option ) => {
+		const optionElement = document.createElement( 'option' );
+		optionElement.value = option.value;
+
+		if ( option.selected ) {
+			optionElement.selected = option.selected;
+		}
+
+		mockSelector.appendChild( optionElement );
+	} );
+	spy.mockReturnValue( mockSelector );
+};
