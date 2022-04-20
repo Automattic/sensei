@@ -466,12 +466,14 @@ class Sensei_Course_Theme {
 			return $content;
 		}
 
-		remove_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80 );
-
 		ob_start();
 		Sensei()->frontend->sensei_lesson_video( get_the_ID() );
 		$video = ob_get_clean();
 
-		return $video . $content;
+		if ( ! empty( $video ) && false === strpos( $content, $video ) ) {
+			return $video . $content;
+		}
+
+		return $content;
 	}
 }
