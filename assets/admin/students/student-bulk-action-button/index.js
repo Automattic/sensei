@@ -64,7 +64,7 @@ export const StudentBulkActionButton = () => {
 			>
 				{ __( 'Select Courses', 'sensei-lms' ) }
 			</Button>
-			<input type={ 'hidden' } id={ 'bulk-action-user-ids' } />
+			<input type="hidden" id="bulk-action-user-ids" />
 			{ isModalOpen && (
 				<StudentModal
 					action={ action }
