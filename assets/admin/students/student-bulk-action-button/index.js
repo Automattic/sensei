@@ -37,17 +37,21 @@ export const StudentBulkActionButton = () => {
 		const hiddenSenseiBulkAction = document.getElementById(
 			'bulk-action-selector-top'
 		);
+
 		const hiddenSelectedUserIdsField = document.getElementById(
 			'bulk-action-user-ids'
 		);
+
 		if ( hiddenSenseiBulkAction ) {
 			setActionValue( hiddenSenseiBulkAction.value );
 		}
+
 		if ( hiddenSelectedUserIdsField ) {
 			try {
 				setStudentIds( JSON.parse( hiddenSelectedUserIdsField.value ) );
 			} catch ( e ) {}
 		}
+
 		setIsModalOpen( true );
 	};
 	return (
