@@ -13,7 +13,7 @@ import StudentModal from '../student-modal';
 /**
  * Student bulk action button.
  */
-export const StudentsBulkActionButton = () => {
+export const StudentBulkActionButton = () => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
@@ -75,5 +75,5 @@ export const StudentsBulkActionButton = () => {
 Array.from(
 	document.getElementsByClassName( 'sensei-student-bulk-actions__button' )
 ).forEach( ( button ) => {
-	render( <StudentsBulkActionButton />, button );
+	render( <StudentBulkActionButton />, button );
 } );

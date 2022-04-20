@@ -11,7 +11,7 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import { StudentsBulkActionButton } from './index';
+import { StudentBulkActionButton } from './index';
 
 let spy;
 const coursePromise = Promise.resolve( [
@@ -29,7 +29,7 @@ apiFetch.mockImplementation( () => coursePromise );
 beforeAll( () => {
 	spy = jest.spyOn( document, 'getElementById' );
 } );
-describe( '<StudentsBulkActionButton />', () => {
+describe( '<StudentBulkActionButton />', () => {
 	beforeAll( () => {
 		const mockSelector = document.createElement( 'select' );
 		mockSelector.id = 'bulk-action-selector-top';
@@ -47,7 +47,7 @@ describe( '<StudentsBulkActionButton />', () => {
 	} );
 
 	it( 'Student modal is rendered with action to add students on button click when add option is selected', () => {
-		render( <StudentsBulkActionButton /> );
+		render( <StudentBulkActionButton /> );
 		// Click Select Courses button to open modal.
 		const button = screen.getByRole( 'button', {
 			id: 'sensei-bulk-learner-actions-modal-toggle',
