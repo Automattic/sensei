@@ -334,6 +334,11 @@
 .sensei-learners-main {
 	.tablenav {
 		&.top {
+			@media screen and (max-width: 782px) {
+				.sensei-student-bulk-actions__wrapper {
+					display: none;
+				}
+			}
 			.tablenav-pages {
 				margin: 0 0 5px 0;
 			}
@@ -568,7 +573,12 @@
 
 	@media screen and (max-width: 1400px) {
 		&__filters {
-			display: flex;
+			flex-direction: column-reverse;
+		}
+	}
+
+	@media screen and (max-width: 782px) {
+		&__filters {
 			flex-direction: column;
 		}
 	}
@@ -594,7 +604,7 @@
 	margin-right: 0px;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 782px) {
 	.sensei-student-bulk-actions__container .select2 {
 		margin-top: 6px;
 		width: 190px !important;
