@@ -595,11 +595,16 @@
 
 	&__button {
 		margin-left: 4px;
+		height: 30px !important;
 	}
 	@media screen and (max-width: 782px) {
 		&__button {
 			margin-top: 6px;
 		}
+	}
+
+	&__bulk_actions_container {
+		display: flex;
 	}
 }
 

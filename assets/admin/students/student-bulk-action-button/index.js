@@ -57,10 +57,9 @@ export const StudentBulkActionButton = () => {
 	return (
 		<>
 			<Button
-				className="button button-primary"
+				className="button button-primary sensei-student-bulk-actions__button"
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
-				style={ { height: 30 } }
 			>
 				{ __( 'Select Courses', 'sensei-lms' ) }
 			</Button>

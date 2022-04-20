@@ -343,7 +343,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<div class="sensei-student-bulk-actions__wrapper">
 			<div class="alignleft bulkactions sensei-student-bulk-actions__container">
 				<div class="sensei-student-bulk-actions__filters">
-					<div style="display: flex">
+					<div class="sensei-student-bulk-actions__bulk_actions_container">
 						<?php
 						echo wp_kses(
 							$this->render_bulk_action_select_box(),
