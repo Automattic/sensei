@@ -79,7 +79,7 @@ class Sensei_Learner_Management {
 		$this->page_slug      = 'sensei_learners';
 		$this->menu_post_type = 'course';
 
-		$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
+		$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this, Sensei_Learner::instance() );
 
 		// Admin functions.
 		if ( is_admin() ) {

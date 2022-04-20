@@ -57,18 +57,27 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private $learner_management;
 
 	/**
+	 * The Sensei_Learner object with utility functions.
+	 *
+	 * @var Sensei_Learner
+	 */
+	private $learner;
+
+	/**
 	 * Sensei_Learners_Admin_Main_View constructor.
 	 *
 	 * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller         The controller.
 	 * @param Sensei_Learner_Management                     $learner_management The learner management.
+	 * @param Sensei_Learner                                $learner                       The learner utility class.
 	 */
-	public function __construct( $controller, $learner_management ) {
+	public function __construct( $controller, $learner_management, $learner ) {
 		$this->controller         = $controller;
+		$this->learner_management = $learner_management;
+		$this->learner            = $learner;
 		$this->name               = $controller->get_name();
 		$this->page_slug          = $controller->get_page_slug();
 		$this->menu_post_type     = 'course';
 		$this->query_args         = $this->parse_query_args();
-		$this->learner_management = $learner_management;
 		$this->page_slug          = 'sensei_learner_admin';
 
 		parent::__construct( $this->page_slug );
@@ -107,7 +116,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				esc_html( $this->total_items )
 			),
 			'email'              => __( 'Email', 'sensei-lms' ),
-			'progress'           => __( 'Course Progress', 'sensei-lms' ),
+			'progress'           => __( 'Enrolled Courses', 'sensei-lms' ),
 			'last_activity_date' => __( 'Last Activity', 'sensei-lms' ),
 			'actions'            => '',
 		);
@@ -170,7 +179,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			);
 		} else {
 			$learner            = $item;
-			$courses            = $this->get_learner_courses_html( $item->course_statuses );
+			$courses            = $this->get_learner_courses_html( $learner->user_id );
 			$last_activity_date = __( 'N/A', 'sensei-lms' );
 			if ( $item->last_activity_date ) {
 				$last_activity_date = Sensei_Utils::format_last_activity_date( $item->last_activity_date );
@@ -416,55 +425,38 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the content of the progress column of the table.
+	 * Helper method to display the content of the enrolled courses' column of the table.
 	 *
-	 * @param array $courses The courses to be displayed.
+	 * @param int $user_id  The user id to display their enrolled courses.
 	 *
 	 * @return string The HTML for the column.
 	 */
-	private function get_learner_courses_html( $courses ) {
-		if ( empty( $courses ) ) {
-			return '0 ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
-		} else {
-			$courses            = explode( ',', $courses );
-			$courses_total      = count( $courses );
-			$courses_completed  = 0;
-			$visible_count      = 3;
-			$completed_courses  = [];
-			$incomplete_courses = [];
-			foreach ( $courses as $i => $course_id ) {
-				$splitted      = explode( '|', $course_id );
-				$course_id     = absint( $splitted[0] );
-				$course_status = $splitted[1];
-				$is_completed  = 'c' === $course_status;
-				$course_class  = 'learner-overview-course-item' . ( $is_completed ? ' course-complete' : '' );
-				$course        = get_post( $course_id );
-				$course_url    = esc_url( $this->controller->get_learner_management_course_url( $course_id ) );
-				$item_html     = '<a href="' . $course_url . '" class="' . $course_class . '" data-course-id="' . esc_attr( $course_id ) . '">' . esc_html( $course->post_title ) . '</a>';
+	private function get_learner_courses_html( $user_id ) {
+		$query   = $this->learner->get_enrolled_courses_query( $user_id );
+		$courses = $query->get_posts();
 
-				if ( $is_completed ) {
-					$courses_completed++;
-					$completed_courses[] = $item_html;
-				} else {
-					$incomplete_courses[] = $item_html;
-				}
-			}
-			$in_progress = $courses_total - $courses_completed;
-			$course_html = 1 === $in_progress ? esc_html__( 'Course', 'sensei-lms' ) : esc_html__( 'Courses', 'sensei-lms' );
-			$html        = $in_progress . ' ' . $course_html . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
-			if ( $courses_completed > 0 ) {
-				$html .= ', ' . $courses_completed . ' ' . esc_html__( 'Completed', 'sensei-lms' );
-			}
-			$more_button = '';
-			if ( $courses_total > $visible_count ) {
-				$more_button = '<a href="#" style="display: block" class="learner-course-overview-detail-btn">+' . ( $courses_total - $visible_count ) . ' <span>' .
-					esc_html__( 'more', 'sensei-lms' ) . '</span></a>';
-			}
-			$detail_items    = array_merge( $incomplete_courses, $completed_courses );
-			$visible_courses = implode( '', array_slice( $detail_items, 0, $visible_count ) );
-			$hidden_courses  = implode( '', array_slice( $detail_items, $visible_count ) );
-			return $html . $visible_courses . '<div class="learner-course-overview-detail" style="display: none">' . $hidden_courses . '</div>' . $more_button;
+		if ( empty( $courses ) ) {
+			return '0 ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'Enrolled', 'sensei-lms' );
 		}
+
+		$courses_total = $query->post_count;
+		$visible_count = 3;
+		foreach ( $courses as $course ) {
+			$course_class = 'learner-overview-course-item';
+			$course_url   = esc_url( $this->controller->get_learner_management_course_url( $course->ID ) );
+			$html_items[] = '<a href="' . $course_url . '" class="' . $course_class . '" data-course-id="' . esc_attr( $course->ID ) . '">' . esc_html( $course->post_title ) . '</a>';
+		}
+		$course_html = 1 === $courses_total ? esc_html__( 'Course', 'sensei-lms' ) : esc_html__( 'Courses', 'sensei-lms' );
+		$html        = $courses_total . ' ' . $course_html . ' ' . esc_html__( 'Enrolled', 'sensei-lms' );
+		$more_button = '';
+		if ( $courses_total > $visible_count ) {
+			$more_button = '<a href="#" style="display: block" class="learner-course-overview-detail-btn">+' . ( $courses_total - $visible_count ) . ' <span>' .
+				esc_html__( 'more', 'sensei-lms' ) . '</span></a>';
+		}
+		$visible_courses = implode( '', array_slice( $html_items, 0, $visible_count ) );
+		$hidden_courses  = implode( '', array_slice( $html_items, $visible_count ) );
+		return $html . $visible_courses . '<div class="learner-course-overview-detail" style="display: none">' . $hidden_courses . '</div>' . $more_button;
+
 	}
 
 	/**
