@@ -1169,7 +1169,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			</h2>
 			<div class="inside">
 				<form name="add_learner" action="" method="post">
-					<p>
+					<p class="add-student-form-container student-search-empty">
 						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;"></select>
 						<?php if ( 'lesson' === $form_post_type ) { ?>
 							<div><label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for selected student(s)', 'sensei-lms' ); ?></label></div>

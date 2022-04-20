@@ -299,6 +299,29 @@
 		}
 	}
 	.sensei-learners-extra {
+		.add-student-form-container.student-search-empty {
+			.select2-selection:before {
+				position: absolute;
+				font-family: dashicons;
+				content: "\f179";
+				font-size: 200%;
+				z-index: 1;
+				top: 0;
+				color: #9b9b9b;
+				padding: 1px 0px 0px 5px;
+				height: 100%;
+				display:flex;
+				flex-direction:row;
+				align-items: center;
+				justify-content: center;
+			}
+			.select2-search__field {
+				padding-left: 2.2em;
+			}
+		}
+		.select2-selection__rendered li {
+			margin-bottom: 0px;
+		}
 		.postbox {
 			padding: 1em 0px 0px 1em;
 			h2 {
@@ -311,6 +334,7 @@
 		.button-primary[disabled] {
 			background-color: #037ABAFF !important;
 			color: #66AFD6FF !important;
+			border-color: #66AFD6FF !important;
 		}
 	}
 }

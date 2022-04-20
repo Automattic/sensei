@@ -239,11 +239,13 @@ jQuery( document ).ready( function ( $ ) {
 	let $learnerAddToCourseSubmitButton = jQuery(
 		"[name='add_learner_submit']"
 	).first();
+	let $learnerSearchboxFormContainer = jQuery(
+		'.sensei-learners-extra .add-student-form-container'
+	);
 	$learnerSearchSelect.select2( {
 		minimumInputLength: 3,
 		placeholder: window.woo_learners_general_data.selectplaceholder,
 		width: '300px',
-
 		ajax: {
 			// in wp-admin ajaxurl is supplied by WordPress and is available globaly
 			url: window.ajaxurl,
@@ -279,10 +281,16 @@ jQuery( document ).ready( function ( $ ) {
 		},
 	} ); // end select2
 	$learnerSearchSelect.on( 'change.select2', () => {
-		$learnerAddToCourseSubmitButton.prop(
-			'disabled',
-			$learnerSearchSelect.select2( 'data' ).length < 1
-		);
+		let isNoStudentSelected =
+			$learnerSearchSelect.select2( 'data' ).length < 1;
+		$learnerAddToCourseSubmitButton.prop( 'disabled', isNoStudentSelected );
+		if ( isNoStudentSelected ) {
+			$learnerSearchboxFormContainer.addClass( 'student-search-empty' );
+		} else {
+			$learnerSearchboxFormContainer.removeClass(
+				'student-search-empty'
+			);
+		}
 	} );
 	/***************************************************************************************************
 	 * 	3 - Load Select2 Dropdowns.
