@@ -441,6 +441,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 
 		$courses_total = $query->post_count;
 		$visible_count = 3;
+		$html_items    = [];
 		foreach ( $courses as $course ) {
 			$course_class = 'learner-overview-course-item';
 			$course_url   = esc_url( $this->controller->get_learner_management_course_url( $course->ID ) );
