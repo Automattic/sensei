@@ -6,10 +6,13 @@
  * @since   3.1.0
  */
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+
 /**
  * Class for Sensei_Setup_Wizard_API tests.
  */
 class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
 
 	/**
 	 * A server instance that we use in tests to dispatch requests.
@@ -44,6 +47,9 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	public function setUp() {
 		parent::setUp();
 
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
+
 		global $wp_rest_server;
 		$wp_rest_server = new WP_REST_Server();
 		$this->server   = $wp_rest_server;
@@ -54,6 +60,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		// Prevent requests.
 		add_filter( 'pre_http_request', '__return_empty_array' );
+
 	}
 
 	/**
@@ -67,6 +74,11 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		// Restore Usage tracking option.
 		Sensei()->usage_tracking->set_tracking_enabled( true );
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
 	}
 
 	/**

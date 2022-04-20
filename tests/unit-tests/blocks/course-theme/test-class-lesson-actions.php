@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+
 use \Sensei\Blocks\Course_Theme\Lesson_Actions;
 
 /**
@@ -17,6 +19,7 @@ use \Sensei\Blocks\Course_Theme\Lesson_Actions;
  * @group course-theme
  */
 class Lesson_Actions_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 	/**
 	 * Setup function.
@@ -25,6 +28,13 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
 	}
 
 	/**

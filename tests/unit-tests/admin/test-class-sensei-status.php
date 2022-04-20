@@ -5,12 +5,27 @@
  * @package sensei
  */
 
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
+
 /**
  * Tests for Sensei_Status_Test class.
  *
  * @group status
  */
 class Sensei_Status_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
+
+	public function setUp() {
+		parent::setUp();
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
+	}
+
 	/**
 	 * Tests to make sure legacy enrolment is not marked when fresh install.
 	 */
