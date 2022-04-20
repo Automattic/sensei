@@ -101,7 +101,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'            => __( 'Student', 'sensei-lms' ),
+			'learner'            => sprintf(
+				// translators: placeholder is the total number of students.
+				__( 'Students (%d)', 'sensei-lms' ),
+				esc_html( $this->total_items )
+			),
 			'email'              => __( 'Email', 'sensei-lms' ),
 			'progress'           => __( 'Course Progress', 'sensei-lms' ),
 			'last_activity_date' => __( 'Last Activity', 'sensei-lms' ),

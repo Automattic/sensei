@@ -14,7 +14,7 @@ import { DOWN } from '@wordpress/keycodes';
  */
 import { StudentActionMenu } from './index';
 
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
+jest.mock( '@wordpress/api-fetch' );
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
@@ -64,7 +64,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( "Should display student's ungraded quizzes when Grading menu item is selected", () => {
-		render( <StudentActionMenu userName="mary" /> );
+		render( <StudentActionMenu studentName="mary" /> );
 
 		// Open the dropdown menu.
 		const button = screen.getByRole( 'button' );
