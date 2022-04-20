@@ -14,7 +14,7 @@ import { DOWN } from '@wordpress/keycodes';
  */
 import { StudentActionMenu } from './index';
 
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
+jest.mock( '@wordpress/api-fetch' );
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {

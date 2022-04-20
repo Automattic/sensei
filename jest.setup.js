@@ -8,5 +8,9 @@ import nock from 'nock';
  */
 import '@wordpress/jest-preset-default/scripts/setup-globals';
 import '@testing-library/jest-dom';
+import 'whatwg-fetch';
+
 window.MutationObserver = MutationObserver;
+beforeAll( () => nock.cleanAll() );
+
 beforeAll( () => nock.cleanAll() );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { act, render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import nock from 'nock';
 
 /**
@@ -25,18 +25,18 @@ const courses = [
 ];
 
 describe( '<CourseList />', () => {
-	beforeEach( () => {
+	beforeAll( () => {
 		nock( 'http://localhost' )
 			.persist()
-			.get( '/wp-json/wp/v2/courses' )
-			.query( { per_page: 100 } )
+			.get( '/wp/v2/courses' )
+			.query( { per_page: 100, _locale: 'user' } )
 			.reply( 200, courses );
 	} );
+	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display courses in the list', async () => {
-		await act( async () => {
-			render( <CourseList /> );
-		} );
+		render( <CourseList /> );
+
 		expect(
 			await screen.findByLabelText( courses.at( 0 ).title.rendered )
 		).toBeTruthy();
@@ -44,9 +44,7 @@ describe( '<CourseList />', () => {
 
 	it( 'Should call onChange with the selected courses when a course is selected', async () => {
 		const onChange = jest.fn();
-		await act( async () => {
-			render( <CourseList onChange={ onChange } /> );
-		} );
+		render( <CourseList onChange={ onChange } /> );
 
 		fireEvent.click(
 			await screen.findByLabelText( courses.at( 0 ).title.rendered )
@@ -83,16 +81,14 @@ describe( '<CourseList />', () => {
 		beforeEach( () => {
 			nock.cleanAll();
 			nock( 'http://localhost' )
-				.get( '/wp-json/wp/v2/courses' )
-				.query( { per_page: 100 } )
+				.get( '/wp/v2/courses' )
+				.query( { per_page: 100, _locale: 'user' } )
 				.once()
 				.reply( 200, [] );
 		} );
 
 		it( 'Should show a message when there are no courses', async () => {
-			await act( async () => {
-				render( <CourseList /> );
-			} );
+			render( <CourseList /> );
 
 			expect(
 				await screen.findByText( 'No courses found.' )
