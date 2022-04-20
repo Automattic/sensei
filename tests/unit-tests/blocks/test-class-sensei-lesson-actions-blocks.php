@@ -11,6 +11,8 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
+	 * Factory for setting up testing data.
+	 *
 	 * @var Sensei_Factory
 	 */
 	private $factory;
