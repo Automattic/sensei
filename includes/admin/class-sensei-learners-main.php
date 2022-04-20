@@ -1161,7 +1161,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		?>
 		<div class="postbox">
-			<h2>
+			<h2 id="add-student-to-course-header">
 				<?php
 				// translators: Placeholder is the post type.
 				printf( esc_html__( 'Add Student to %1$s', 'sensei-lms' ), esc_html( $post_type ) );
@@ -1172,10 +1172,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					<p class="add-student-form-container student-search-empty">
 						<select name="add_user_id[]" id="add_learner_search" multiple="multiple" style="min-width:300px;"></select>
 						<?php if ( 'lesson' === $form_post_type ) { ?>
-							<div><label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for selected student(s)', 'sensei-lms' ); ?></label></div>
-					<?php } elseif ( 'course' === $form_post_type ) { ?>
-							<div><label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for selected student(s)', 'sensei-lms' ); ?></label></div>
-					<?php } ?>
+							<label for="add_complete_lesson"><input type="checkbox" id="add_complete_lesson" name="add_complete_lesson"  value="yes" /> <?php esc_html_e( 'Complete lesson for selected student(s)', 'sensei-lms' ); ?></label>
+						<?php } elseif ( 'course' === $form_post_type ) { ?>
+							<label for="add_complete_course"><input type="checkbox" id="add_complete_course" name="add_complete_course"  value="yes" /> <?php esc_html_e( 'Complete course for selected student(s)', 'sensei-lms' ); ?></label>
+						<?php } ?>
 					</p>
 					<p>
 						<?php
