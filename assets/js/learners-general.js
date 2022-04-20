@@ -292,6 +292,28 @@ jQuery( document ).ready( function ( $ ) {
 			);
 		}
 	} );
+	// For mobile devices (below 783px) put the filters and bulk actions below the table, else keep above.
+	let $bulkActionContainer = $(
+			'.tablenav.top > .sensei-student-bulk-actions__wrapper'
+		).first(),
+		$tableBottomActionContainer = $( '.tablenav.bottom > .tablenav-pages' ),
+		$tableTopActionContainer = $( '.tablenav.top > .tablenav-pages' ),
+		$themeContainer = $( '#woothemes-sensei' ),
+		placeElementsBasedOnScreenSize = () => {
+			let width = $( window ).width();
+			let $targetContainer =
+				width < 783
+					? $tableBottomActionContainer
+					: $tableTopActionContainer;
+			let themeDivPosition = width < 783 ? 'inherit' : '';
+			if ( $targetContainer.has( $bulkActionContainer ).length ) {
+				return;
+			}
+			$targetContainer.before( $bulkActionContainer );
+			$themeContainer.css( { position: themeDivPosition } );
+		};
+	placeElementsBasedOnScreenSize();
+	$( window ).resize( placeElementsBasedOnScreenSize );
 	/***************************************************************************************************
 	 * 	3 - Load Select2 Dropdowns.
 	 ***************************************************************************************************/

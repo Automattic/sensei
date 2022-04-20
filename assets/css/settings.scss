@@ -62,15 +62,6 @@
 		background: #f5f5f5;
 		@include border_radius(10px);
 	}
-	@media screen and (max-width: 782px) {
-		.tablenav {
-			&.top {
-				p.search-box {
-					bottom: -90px;
-				}
-			}
-		}
-	}
 	.extra-content {
 		margin-top: 1em;
 	}
@@ -298,6 +289,16 @@
 			}
 		}
 	}
+	@media screen and (min-width: 1140px) {
+		.search-box {
+			margin-left: 10px;
+		}
+	}
+	@media screen and (min-width: 783px) {
+		.search-box {
+			margin-bottom: 10px;
+		}
+	}
 	.sensei-learners-extra {
 		.add-student-form-container {
 			&.student-search-empty .select2-selection:before {
@@ -374,6 +375,11 @@
 .sensei-learners-main {
 	.tablenav {
 		&.top {
+			@media screen and (max-width: 782px) {
+				.sensei-student-bulk-actions__wrapper {
+					display: none;
+				}
+			}
 			.tablenav-pages {
 				margin: 0 0 5px 0;
 			}
@@ -600,30 +606,21 @@
 	}
 }
 
-.sensei-learners-wrap .search-box {
-	margin-left: 10px;
-}
-
 .sensei-student-bulk-actions {
 	&__filters {
 		display: flex;
 		flex-direction: row;
 	}
 
-	&__filters > div {
-		margin-right: 10px;
-	}
-
 	@media screen and (max-width: 1400px) {
 		&__filters {
-			display: flex;
 			flex-direction: column-reverse;
 		}
 	}
 
-	@media screen and (max-width: 1400px) and (min-width: 1100px) {
-		&__container {
-			width: 60%;
+	@media screen and (max-width: 782px) {
+		&__filters {
+			flex-direction: column;
 		}
 	}
 
@@ -648,7 +645,7 @@
 	margin-right: 0px;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 782px) {
 	.sensei-student-bulk-actions__container .select2 {
 		margin-top: 6px;
 		width: 190px !important;
