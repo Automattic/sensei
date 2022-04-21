@@ -595,7 +595,6 @@
 
 	&__button {
 		margin-left: 4px;
-		height: 30px !important;
 	}
 	@media screen and (max-width: 782px) {
 		&__button {
@@ -605,6 +604,10 @@
 
 	&__bulk_actions_container {
 		display: flex;
+	}
+
+	&__bulk_actions_container &__button {
+		height: 30px;
 	}
 }
 
