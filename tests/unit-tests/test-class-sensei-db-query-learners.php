@@ -30,16 +30,16 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 
 		$expected = [
 			[
-				'user_email'   => 'admin@example.org', // admin
+				'user_email' => 'admin@example.org', // admin
 			],
 			[
-				'user_email'   => 'user1@example.com',
+				'user_email' => 'user1@example.com',
 			],
 			[
-				'user_email'   => 'user2@example.com',
+				'user_email' => 'user2@example.com',
 			],
 			[
-				'user_email'   => 'user3@example.com',
+				'user_email' => 'user3@example.com',
 			],
 		];
 
@@ -68,10 +68,10 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 
 		$expected = [
 			[
-				'user_email'   => 'user1@example.com',
+				'user_email' => 'user1@example.com',
 			],
 			[
-				'user_email'   => 'user2@example.com',
+				'user_email' => 'user2@example.com',
 			],
 		];
 
@@ -101,7 +101,7 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 
 		$expected = [
 			[
-				'user_email'   => 'user1@example.com',
+				'user_email' => 'user1@example.com',
 			],
 		];
 
@@ -146,7 +146,7 @@ class Sensei_Db_Query_Learners_Test extends WP_UnitTestCase {
 
 		foreach ( $learners as $learner ) {
 			$ret[] = [
-				'user_email'   => $learner->user_email,
+				'user_email' => $learner->user_email,
 			];
 		}
 
