@@ -20,7 +20,6 @@ import {
 	useRef,
 	useState,
 	useEffect,
-	useMemo,
 	RawHTML,
 } from '@wordpress/element';
 
@@ -100,11 +99,9 @@ export const StudentModal = ( { action, onClose, students, studentName } ) => {
 	const [ isSending, setIsSending ] = useState( false );
 	const [ hasError, setError ] = useState( false );
 	const isMounted = useRef( true );
-	const replacedDescription = useMemo( () => {
-		const replacementString =
-			students.length === 1 ? studentName : students.length;
-		return sprintf( description, replacementString );
-	}, [ students, studentName, description ] );
+	const replacementString =
+		students.length === 1 ? studentName : students.length;
+	const replacedDescription = sprintf( description, replacementString );
 
 	useEffect( () => {
 		return () => ( isMounted.current = false );
