@@ -62,15 +62,6 @@
 		background: #f5f5f5;
 		@include border_radius(10px);
 	}
-	@media screen and (max-width: 782px) {
-		.tablenav {
-			&.top {
-				p.search-box {
-					bottom: -90px;
-				}
-			}
-		}
-	}
 	.extra-content {
 		margin-top: 1em;
 	}
@@ -225,7 +216,6 @@
 		.enrolment_status  {
 			span  {
 				display: inline-block;
-				padding: 5px 10px;
 				@include border_radius(3px);
 				white-space: nowrap;
 			}
@@ -299,6 +289,58 @@
 			}
 		}
 	}
+	@media screen and (min-width: 1140px) {
+		.search-box {
+			margin-left: 10px;
+		}
+	}
+	@media screen and (min-width: 783px) {
+		.search-box {
+			margin-bottom: 10px;
+		}
+	}
+	.sensei-learners-extra {
+		.add-student-form-container {
+			&.student-search-empty .select2-selection:before {
+				position: absolute;
+				font-family: dashicons;
+				content: "\f179";
+				font-size: 200%;
+				z-index: 1;
+				top: 0;
+				color: #9b9b9b;
+				padding: 1px 0px 0px 5px;
+				height: 100%;
+				display:flex;
+				flex-direction:row;
+				align-items: center;
+				justify-content: center;
+			}
+			label {
+				display: block;
+			}
+			.select2-search__field {
+				padding-left: 2.2em;
+			}
+		}
+		.select2-selection__rendered li {
+			margin-bottom: 0px;
+		}
+		.postbox {
+			padding: 1em 0px 0px 1em;
+			h2#add-student-to-course-header {
+				padding: 0px;
+			}
+			.inside {
+				padding: 0px;
+			}
+		}
+		#add_learner_submit[disabled] {
+			background-color: #037ABA !important;
+			color: #66AFD6 !important;
+			border-color: #037ABA !important;
+		}
+	}
 }
 
 .enrolment-helper {
@@ -333,13 +375,32 @@
 .sensei-learners-main {
 	.tablenav {
 		&.top {
+			@media screen and (max-width: 782px) {
+				.sensei-student-bulk-actions__wrapper {
+					display: none;
+				}
+			}
 			.tablenav-pages {
 				margin: 0 0 5px 0;
 			}
 		}
 	}
-}
 
+	@media screen and (max-width: 782px) and (min-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			position: relative;
+			top: -20px;
+			display: block;
+			text-align: right;
+		}
+	}
+
+	@media screen and (max-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			top: -20px;
+		}
+	}
+}
 .sensei-grading-main  {
 	.question_box {
 		@include clearfix();
@@ -559,30 +620,21 @@
 	}
 }
 
-.sensei-learners-wrap .search-box {
-	margin-left: 10px;
-}
-
 .sensei-student-bulk-actions {
 	&__filters {
 		display: flex;
 		flex-direction: row;
 	}
 
-	&__filters > div {
-		margin-right: 10px;
-	}
-
 	@media screen and (max-width: 1400px) {
 		&__filters {
-			display: flex;
 			flex-direction: column-reverse;
 		}
 	}
 
-	@media screen and (max-width: 1400px) and (min-width: 1100px) {
-		&__container {
-			width: 60%;
+	@media screen and (max-width: 782px) {
+		&__filters {
+			flex-direction: column;
 		}
 	}
 
@@ -601,6 +653,14 @@
 			margin-top: 6px;
 		}
 	}
+
+	&__bulk_actions_container {
+		display: flex;
+	}
+
+	&__bulk_actions_container &__button {
+		height: 30px;
+	}
 }
 
 .sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-student-bulk-actions__placeholder-dropdown {
@@ -616,7 +676,7 @@
 	margin-right: 0px;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 782px) {
 	.sensei-student-bulk-actions__container .select2 {
 		margin-top: 6px;
 		width: 190px !important;
