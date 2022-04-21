@@ -299,6 +299,48 @@
 			margin-bottom: 10px;
 		}
 	}
+	.sensei-learners-extra {
+		.add-student-form-container {
+			&.student-search-empty .select2-selection:before {
+				position: absolute;
+				font-family: dashicons;
+				content: "\f179";
+				font-size: 200%;
+				z-index: 1;
+				top: 0;
+				color: #9b9b9b;
+				padding: 1px 0px 0px 5px;
+				height: 100%;
+				display:flex;
+				flex-direction:row;
+				align-items: center;
+				justify-content: center;
+			}
+			label {
+				display: block;
+			}
+			.select2-search__field {
+				padding-left: 2.2em;
+			}
+		}
+		.select2-selection__rendered li {
+			margin-bottom: 0px;
+		}
+		.postbox {
+			padding: 1em 0px 0px 1em;
+			h2#add-student-to-course-header {
+				padding: 0px;
+			}
+			.inside {
+				padding: 0px;
+			}
+		}
+		#add_learner_submit[disabled] {
+			background-color: #037ABA !important;
+			color: #66AFD6 !important;
+			border-color: #037ABA !important;
+		}
+	}
 }
 
 .enrolment-helper {
@@ -343,8 +385,22 @@
 			}
 		}
 	}
-}
 
+	@media screen and (max-width: 782px) and (min-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			position: relative;
+			top: -20px;
+			display: block;
+			text-align: right;
+		}
+	}
+
+	@media screen and (max-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			top: -20px;
+		}
+	}
+}
 .sensei-grading-main  {
 	.question_box {
 		@include clearfix();
