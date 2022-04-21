@@ -42,7 +42,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests that the user gets redirected when the action is invalid.
+	 * Test that prepared items have the last activity date field with matching data.
 	 */
 	public function testPrepareItems_WhenCalled_ReturnsStudentsWithLastActivityDate() {
 		// Arrange
