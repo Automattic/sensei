@@ -385,8 +385,22 @@
 			}
 		}
 	}
-}
 
+	@media screen and (max-width: 782px) and (min-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			position: relative;
+			top: -20px;
+			display: block;
+			text-align: right;
+		}
+	}
+
+	@media screen and (max-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			top: -20px;
+		}
+	}
+}
 .sensei-grading-main  {
 	.question_box {
 		@include clearfix();
