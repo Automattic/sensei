@@ -101,11 +101,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	public function get_columns() {
 		$columns = array(
 			'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'            => sprintf(
-				// translators: placeholder is the total number of students.
-				__( 'Students (%d)', 'sensei-lms' ),
-				esc_html( $this->total_items )
-			),
+			'learner'            => __( 'Student', 'sensei-lms' ),
 			'email'              => __( 'Email', 'sensei-lms' ),
 			'progress'           => __( 'Course Progress', 'sensei-lms' ),
 			'last_activity_date' => __( 'Last Activity', 'sensei-lms' ),
@@ -347,7 +343,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		<div class="sensei-student-bulk-actions__wrapper">
 			<div class="alignleft bulkactions sensei-student-bulk-actions__container">
 				<div class="sensei-student-bulk-actions__filters">
-					<div class="sensei-student-bulk-actions__bulk_actions_container">
+					<div style="display: flex">
 						<?php
 						echo wp_kses(
 							$this->render_bulk_action_select_box(),
@@ -364,8 +360,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						?>
 						<div class="sensei-student-bulk-actions__button"></div>
 					</div>
-					<form action="" method="get">
-						<div class="alignleft actions">
+					<div class="alignleft">
+						<form action="" method="get">
 							<?php
 							foreach ( $this->query_args as $name => $value ) {
 								if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
@@ -376,8 +372,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 							$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei-lms' ) );
 							?>
 							<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei-lms' ); ?></button>
-						</div>
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>

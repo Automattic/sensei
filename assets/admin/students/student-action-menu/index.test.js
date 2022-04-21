@@ -6,19 +6,19 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 /**
  * WordPress dependencies
  */
+import apiFetch from '@wordpress/api-fetch';
 import { DOWN } from '@wordpress/keycodes';
 
 /**
  * Internal dependencies
  */
 import { StudentActionMenu } from './index';
-import httpClient from '../../lib/http-client';
 
-jest.mock( '../../lib/http-client' );
+jest.mock( '@wordpress/api-fetch', () => jest.fn() );
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
-		httpClient.mockImplementation( () => Promise.resolve( [] ) );
+		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
@@ -41,7 +41,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
-		httpClient.mockImplementation( () => Promise.resolve( [] ) );
+		apiFetch.mockImplementation( () => Promise.resolve( [] ) );
 		render( <StudentActionMenu /> );
 
 		// Open the dropdown menu.
@@ -55,29 +55,6 @@ describe( '<StudentActionMenu />', () => {
 
 		// Click the "Remove from Course" menu item.
 		const menuItem = screen.getByText( 'Remove from Course' );
-
-		await act( async () => {
-			fireEvent.click( menuItem );
-		} );
-
-		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
-	} );
-
-	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
-		httpClient.mockImplementation( () => Promise.resolve( [] ) );
-		render( <StudentActionMenu /> );
-
-		// Open the dropdown menu.
-		const button = screen.getByRole( 'button' );
-
-		button.focus();
-		fireEvent.keyDown( button, {
-			keyCode: DOWN,
-			preventDefault: () => {},
-		} );
-
-		// Click the "Reset or Remove Progress" menu item.
-		const menuItem = screen.getByText( 'Reset or Remove Progress' );
 
 		await act( async () => {
 			fireEvent.click( menuItem );

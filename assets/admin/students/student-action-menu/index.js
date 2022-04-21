@@ -38,10 +38,6 @@ export const StudentActionMenu = ( { studentId, studentName } ) => {
 			onClick: () => removeFromCourse(),
 		},
 		{
-			title: __( 'Reset or Remove Progress', 'sensei-lms' ),
-			onClick: () => resetProgress(),
-		},
-		{
 			title: __( 'Grading', 'sensei-lms' ),
 			onClick: () =>
 				window.open(
@@ -58,11 +54,6 @@ export const StudentActionMenu = ( { studentId, studentName } ) => {
 
 	const removeFromCourse = () => {
 		setAction( 'remove' );
-		setModalOpen( true );
-	};
-
-	const resetProgress = () => {
-		setAction( 'reset-progress' );
 		setModalOpen( true );
 	};
 

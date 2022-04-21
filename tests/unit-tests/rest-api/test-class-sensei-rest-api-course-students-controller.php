@@ -48,8 +48,8 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 
 	public function testAddUsersToCourses_RequestGiven_ReturnsSuccessfulResponse() {
 		/* Arrange. */
-		$student_id = $this->factory->user->create();
-		$course_id  = $this->factory->course->create();
+		$student_ids = $this->factory->user->create_many( 2 );
+		$course_ids  = $this->factory->course->create_many( 2 );
 
 		$this->login_as_admin();
 
@@ -59,23 +59,15 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$request->set_body(
 			wp_json_encode(
 				[
-					'student_ids' => [ $student_id ],
-					'course_ids'  => [ $course_id ],
+					'student_ids' => $student_ids,
+					'course_ids'  => $course_ids,
 				]
 			)
 		);
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$expected = [
-			'status_code' => 200,
-			'data'        => [
-				$student_id => [
-					$course_id => true,
-				],
-			],
-		];
-		$this->assertSame( $expected, $this->getResponseStatusAndData( $response ) );
+		$this->assertSame( 200, $response->get_status() );
 	}
 
 	public function testAddUsersToCourses_RequestGiven_EnrolsUserForCourse() {
@@ -123,13 +115,7 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 		$response = $this->server->dispatch( $request );
 
 		/* Assert. */
-		$expected = [
-			'status_code' => 200,
-			'data'        => [
-				999 => false,
-			],
-		];
-		$this->assertSame( $expected, $this->getResponseStatusAndData( $response ) );
+		$this->assertSame( 200, $response->get_status() );
 	}
 
 	public function testAddUsersToCourses_UserWithInsufficientPermissions_ReturnsForbiddenResponse() {
@@ -274,14 +260,11 @@ class Sensei_REST_API_Course_Students_Controller_Test extends WP_Test_REST_TestC
 
 		/* Assert. */
 		$expected = [
-			'status_code' => 200,
-			'data'        => [
-				$user_id => [
-					$course_id => true,
-				],
-				'999'    => false,
+			$user_id => [
+				$course_id => true,
 			],
+			'999'    => false,
 		];
-		$this->assertEquals( $expected, $this->getResponseStatusAndData( $response ) );
+		$this->assertEquals( $expected, $response->get_data() );
 	}
 }

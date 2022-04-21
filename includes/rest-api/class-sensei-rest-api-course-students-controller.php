@@ -74,20 +74,17 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 		$params      = $request->get_params();
 		$student_ids = $params['student_ids'];
 		$course_ids  = $params['course_ids'];
-
-		$result = [];
 		foreach ( $student_ids as $user_id ) {
-			$user               = new WP_User( $user_id );
-			$result[ $user_id ] = false;
+			$user = new WP_User( $user_id );
 			if ( $user->exists() ) {
 				foreach ( $course_ids as $course_id ) {
-					$course_enrolment                 = Sensei_Course_Enrolment::get_course_instance( $course_id );
-					$result[ $user_id ][ $course_id ] = $course_enrolment->enrol( $user_id );
+					$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+					$course_enrolment->enrol( $user_id );
 				}
 			}
 		}
 
-		return new WP_REST_Response( $result, WP_HTTP::OK );
+		return new WP_REST_Response( null, WP_HTTP::OK );
 	}
 
 	/**

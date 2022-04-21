@@ -172,8 +172,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'learners':
 				$columns = array(
-					'title'            => __( 'Students', 'sensei-lms' ),
-					'enrolment_status' => __( 'Enrolled', 'sensei-lms' ),
+					'title'            => __( 'Student', 'sensei-lms' ),
+					'enrolment_status' => __( 'Enrollment', 'sensei-lms' ),
 					'user_status'      => __( 'Status', 'sensei-lms' ),
 					'date_started'     => __( 'Date Started', 'sensei-lms' ),
 					'date_completed'   => __( 'Date Completed', 'sensei-lms' ),
@@ -387,26 +387,54 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 				}
 
-				if ( in_array( $user_activity->comment_approved, [ 'complete', 'graded', 'passed' ], true ) ) {
-					$progress_status_html = esc_html__( 'Completed', 'sensei-lms' );
+				if ( 'complete' === $user_activity->comment_approved || 'graded' === $user_activity->comment_approved || 'passed' === $user_activity->comment_approved ) {
+
+					$progress_status_html =
+						'<span class="graded">' .
+							esc_html__( 'Completed', 'sensei-lms' ) .
+						'</span>';
+
 				} else {
-					$user_not_started     = 'course' === $post_type && 0 === Sensei_Utils::user_started_lesson_count( $post_id, $user_activity->user_id );
-					$progress_status_html = $user_not_started ? esc_html__( 'Not Started', 'sensei-lms' ) : esc_html__( 'In Progress', 'sensei-lms' );
+
+					if ( 'course' === $post_type && 0 === Sensei_Utils::user_started_lesson_count( $post_id, $user_activity->user_id ) ) {
+						$progress_status_html =
+							'<span class="not-started">' .
+							esc_html__( 'Not Started', 'sensei-lms' ) .
+							'</span>';
+					} else {
+						$progress_status_html =
+							'<span class="in-progress">' .
+							esc_html__( 'In Progress', 'sensei-lms' ) .
+							'</span>';
+					}
 				}
 
-				$is_user_enrolled       = Sensei_Course::is_user_enrolled( $this->course_id, $user_activity->user_id );
-				$course_enrolment       = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
-				$enrolment_results      = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
-				$provider_results       = $enrolment_results ? $enrolment_results->get_provider_results() : [];
+				$is_user_enrolled  = Sensei_Course::is_user_enrolled( $this->course_id, $user_activity->user_id );
+				$course_enrolment  = Sensei_Course_Enrolment::get_course_instance( $this->course_id );
+				$enrolment_results = $course_enrolment->get_enrolment_check_results( $user_activity->user_id );
+				$provider_results  = [];
+
+				if ( $enrolment_results ) {
+					$provider_results = $enrolment_results->get_provider_results();
+				}
+
 				$enrolment_tooltip_html = '';
 
 				if ( Sensei()->feature_flags->is_enabled( 'enrolment_provider_tooltip' ) ) {
 					if ( ! empty( $provider_results ) ) {
-						$enrolment_tooltip_html = [ '<ul class="enrolment-helper">' ];
+						$enrolment_tooltip_html   = [];
+						$enrolment_tooltip_html[] = '<ul class="enrolment-helper">';
 
 						foreach ( $provider_results as $id => $result ) {
-							$name       = Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_name_by_id( $id ) ?? $id;
-							$item_class = $result ? 'provides-enrolment' : 'does-not-provide-enrolment';
+							$name = Sensei_Course_Enrolment_Manager::instance()->get_enrolment_provider_name_by_id( $id );
+							if ( ! $name ) {
+								$name = $id;
+							}
+
+							$item_class = 'does-not-provide-enrolment';
+							if ( $result ) {
+								$item_class = 'provides-enrolment';
+							}
 
 							$enrolment_tooltip_html[] =
 								'<li class="' . esc_attr( $item_class ) . '">' .
@@ -421,10 +449,16 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					}
 				}
 
-				$enrolment_label = $is_user_enrolled ? __( 'Yes', 'sensei-lms' ) : __( 'No', 'sensei-lms' );
+				if ( $is_user_enrolled ) {
+					$enrolment_label             = __( 'Enrolled', 'sensei-lms' );
+					$enrolment_label_extra_class = 'enrolled';
+				} else {
+					$enrolment_label             = __( 'Not Enrolled', 'sensei-lms' );
+					$enrolment_label_extra_class = 'not-enrolled';
+				}
 
 				$enrolment_status_html =
-					'<span class="sensei-tooltip" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' .
+					'<span class="sensei-tooltip ' . esc_attr( $enrolment_label_extra_class ) . '" data-tooltip="' . esc_attr( htmlentities( $enrolment_tooltip_html ) ) . '">' .
 						esc_html( $enrolment_label ) .
 					'</span>';
 
@@ -574,7 +608,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								implode( ' | ', $row_actions ) .
 							'</div>',
 						'date_started'     => $date_input,
-						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '-',
+						'date_completed'   => ( 'complete' === $user_activity->comment_approved ) ? $user_activity->comment_date : '',
 						'user_status'      => $progress_status_html,
 						'enrolment_status' => $enrolment_status_html,
 						'actions'          => implode( ' ', $actions ),
@@ -1042,6 +1076,23 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 			$menu['lessons'] = $this->lessons_link();
 
+		} elseif ( $this->course_id && $this->lesson_id ) {
+
+			$query_args = array(
+				'post_type' => $this->menu_post_type,
+				'page'      => $this->page_slug,
+				'course_id' => $this->course_id,
+				'view'      => 'lessons',
+			);
+
+			$course = get_the_title( $this->course_id );
+
+			$menu['back'] = '<a href="'
+				. esc_url( add_query_arg( $query_args, admin_url( 'edit.php' ) ) )
+				. '"><em>&larr; '
+				// translators: Placeholder is the Course title.
+				. esc_html( sprintf( __( 'Back to %s', 'sensei-lms' ), $course ) )
+				. '</em></a>';
 		}
 
 		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );

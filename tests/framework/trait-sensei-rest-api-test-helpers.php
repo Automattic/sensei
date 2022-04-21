@@ -36,26 +36,10 @@ trait Sensei_REST_API_Test_Helpers {
 	 *
 	 * @return array Associative array containing the status and error code.
 	 */
-	public function getResponseAndStatusCode( WP_REST_Response $response ): array {
+	public function getResponseAndStatusCode( WP_REST_Response $response ) {
 		return [
 			'status_code' => $response->get_status(),
 			'error_code'  => $response->get_data()['code'] ?? null,
-		];
-	}
-
-	/**
-	 * Get response status code and data
-	 *
-	 * @since 4.4.0
-	 *
-	 * @param WP_REST_Response $response Response object.
-	 *
-	 * @return array Array containing the status code and data.
-	 */
-	public function getResponseStatusAndData( WP_REST_Response $response ): array {
-		return [
-			'status_code' => $response->get_status(),
-			'data'        => $response->get_data(),
 		];
 	}
 }
