@@ -23,11 +23,13 @@ import httpClient from '../../lib/http-client';
  *
  * @param {Object}        props
  * @param {Object}        props.course   Course
+ * @param {boolean}       props.checked  Checkbox state
  * @param {onChangeEvent} props.onChange Event triggered when the a course is select/unselected
  */
-const CourseItem = ( { course, onChange } ) => {
+const CourseItem = ( { course, checked, onChange } ) => {
 	const courseId = course?.id;
 	const title = course?.title?.rendered;
+
 	const onSelectCourse = useCallback(
 		( isSelected ) => onChange( { isSelected, course } ),
 		[ course, onChange ]
@@ -41,6 +43,7 @@ const CourseItem = ( { course, onChange } ) => {
 			<CheckboxControl
 				id={ `course-${ courseId }` }
 				title={ title }
+				checked={ checked }
 				onChange={ onSelectCourse }
 			/>
 			<label htmlFor={ `course-${ courseId }` } title={ title }>
@@ -129,6 +132,9 @@ export const CourseList = ( { onChange } ) => {
 						key={ course.id }
 						course={ course }
 						onChange={ selectCourse }
+						checked={ selectedCourses.current.some(
+							( { id } ) => id === course.id
+						) }
 					/>
 				) ) }
 			</ul>
