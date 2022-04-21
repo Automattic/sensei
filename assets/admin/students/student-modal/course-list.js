@@ -85,12 +85,12 @@ export const CourseList = ( { onChange } ) => {
 		setIsFetching( true );
 
 		httpClient( {
-			url: '/wp-json/wp/v2/courses?per_page=100',
+			path: '/wp/v2/courses?per_page=100',
 			method: 'GET',
 		} )
 			.then( ( result ) => {
 				if ( isMounted.current ) {
-					setCourses( result.data );
+					setCourses( result );
 				}
 			} )
 			.catch( () => {
