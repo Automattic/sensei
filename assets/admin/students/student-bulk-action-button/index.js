@@ -11,9 +11,9 @@ import { __ } from '@wordpress/i18n';
 import StudentModal from '../student-modal';
 
 /**
- * Student bulk action button.
+ *  Student bulk action button.
  */
-export const StudentsBulkActionButton = () => {
+export const StudentBulkActionButton = () => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
@@ -38,12 +38,14 @@ export const StudentsBulkActionButton = () => {
 		const hiddenSenseiBulkAction = document.getElementById(
 			'bulk-action-selector-top'
 		);
+
 		const hiddenSelectedUserIdsField = document.getElementById(
 			'bulk-action-user-ids'
 		);
 		if ( hiddenSenseiBulkAction ) {
 			setActionValue( hiddenSenseiBulkAction.value );
 		}
+
 		if ( hiddenSelectedUserIdsField ) {
 			try {
 				const parsedStudentIds = JSON.parse(
@@ -63,19 +65,19 @@ export const StudentsBulkActionButton = () => {
 				}
 			} catch ( e ) {}
 		}
+
 		setIsModalOpen( true );
 	};
 	return (
 		<>
 			<Button
-				className="button button-primary"
+				className="button button-primary sensei-student-bulk-actions__button"
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
-				style={ { height: 30 } }
 			>
 				{ __( 'Select Courses', 'sensei-lms' ) }
 			</Button>
-			<input type={ 'hidden' } id={ 'bulk-action-user-ids' } />
+			<input type="hidden" id="bulk-action-user-ids" />
 			{ isModalOpen && (
 				<StudentModal
 					action={ action }
@@ -91,5 +93,5 @@ export const StudentsBulkActionButton = () => {
 Array.from(
 	document.getElementsByClassName( 'sensei-student-bulk-actions__button' )
 ).forEach( ( button ) => {
-	render( <StudentsBulkActionButton />, button );
+	render( <StudentBulkActionButton />, button );
 } );
