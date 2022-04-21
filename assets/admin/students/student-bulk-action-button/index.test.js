@@ -2,34 +2,32 @@
  * External dependencies
  */
 import { render, screen } from '@testing-library/react';
-
-/**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
 /**
  * Internal dependencies
  */
 import { StudentBulkActionButton } from './index';
+import nock from 'nock';
 
 let spy;
-const coursePromise = Promise.resolve( [
+const courses = [
 	{
 		id: 1,
 		title: { rendered: 'My Course' },
 	},
-] );
-
-// Mock fetch for student modal.
-jest.mock( '@wordpress/api-fetch', () => jest.fn() );
-apiFetch.mockImplementation( () => coursePromise );
+];
 
 // Create a bulk action selector with enrol student option selected.
 beforeAll( () => {
 	spy = jest.spyOn( document, 'getElementById' );
 } );
 describe( '<StudentBulkActionButton />', () => {
+	beforeAll( () => {
+		nock( 'http://localhost' )
+			.persist()
+			.get( '/wp-json/wp/v2/courses' )
+			.query( { per_page: 100 } )
+			.reply( 200, courses );
+	} );
 	it( 'Student modal is rendered with action to add students on button click when add option is selected', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment', selected: true },

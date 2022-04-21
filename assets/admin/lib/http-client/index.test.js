@@ -6,7 +6,7 @@ import httpClient from '.';
  * External dependencies
  */
 import nock from 'nock';
-
+jest.setTimeout( 30000 );
 describe( 'http-client', () => {
 	it( 'Should make a request to a rest route', async () => {
 		nock.disableNetConnect();
