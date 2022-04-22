@@ -8,6 +8,9 @@ import httpClient from '.';
 import nock from 'nock';
 
 describe( 'http-client', () => {
+	beforeEach( () => {
+		jest.useRealTimers();
+	} );
 	it( 'Should make a request to a rest route', async () => {
 		nock.disableNetConnect();
 		nock( 'http://localhost' )

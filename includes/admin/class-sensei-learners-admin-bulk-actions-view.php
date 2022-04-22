@@ -316,27 +316,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the bulk action form in the modal.
-	 *
-	 * @param array $courses The courses options.
-	 */
-	private function render_bulk_actions_form( $courses ) {
-		$label = __( 'Select Course(s)', 'sensei-lms' );
-
-		?>
-		<form id="bulk-learner-actions-form" action="" method="post">
-		<label for="bulk-action-course-select" class="screen-reader-text"><?php echo esc_html( $label ); ?></label>
-		<?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', $label, true ); ?>
-		<input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" value="">
-		<input type="hidden" id="sensei-bulk-action"  name="sensei_bulk_action" value="">
-		<input type="hidden" id="bulk-action-course-ids"  name="bulk_action_course_ids" value="">
-		<?php wp_nonce_field( Sensei_Learners_Admin_Bulk_Actions_Controller::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Bulk_Actions_Controller::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
-		<button type="submit" id="bulk-learner-action-submit" class="button button-primary action sensei-stop-double-submission"><?php echo esc_html__( 'Apply', 'sensei-lms' ); ?></button>
-		</form>
-		<?php
-	}
-
-	/**
 	 * Helper method to display the bulk action selector.
 	 */
 	private function render_bulk_action_select_box() {
@@ -367,11 +346,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		?>
 		<div class="sensei-student-bulk-actions__wrapper">
 			<div class="alignleft bulkactions sensei-student-bulk-actions__container">
-				<div id="sensei-bulk-learner-actions-modal" style="display:none;">
-					<?php $this->render_bulk_actions_form( $courses ); ?>
-				</div>
 				<div class="sensei-student-bulk-actions__filters">
-					<div class="alignleft actions bulkactions">
+					<div class="sensei-student-bulk-actions__bulk_actions_container">
 						<?php
 						echo wp_kses(
 							$this->render_bulk_action_select_box(),
@@ -386,7 +362,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 							)
 						);
 						?>
-						<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
+						<div class="sensei-student-bulk-actions__button"></div>
 					</div>
 					<form action="" method="get">
 						<div class="alignleft actions">

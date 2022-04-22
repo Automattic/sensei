@@ -2,8 +2,13 @@
  * WordPress dependencies
  */
 import { CheckboxControl, Spinner } from '@wordpress/components';
-import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+
+/**
+ * External dependencies
+ */
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +22,24 @@ import httpClient from '../../lib/http-client';
  * @param {boolean} isSelected Describes if the course was selected or unselected
  * @param {boolean} course     Course related to the triggered event
  */
+
+/**
+ * Loading course list component.
+ */
+const LoadingCourseList = () => (
+	<li className="sensei-student-modal__course-list--loading">
+		<Spinner />
+	</li>
+);
+
+/**
+ * Empty course list component.
+ */
+const EmptyCourseList = () => (
+	<li className="sensei-student-modal__course-list--empty">
+		{ __( 'No courses found.', 'sensei-lms' ) }
+	</li>
+);
 
 /**
  * Course item.
@@ -64,13 +87,13 @@ const CourseItem = ( { course, checked, onChange } ) => {
  * Course list.
  *
  * @param {Object}                  props
- * @param {onCourseSelectionChange} props.onChange Event triggered when a course is selected or unselected
+ * @param {string}                  props.searchQuery Course to search for.
+ * @param {onCourseSelectionChange} props.onChange    Event triggered when a course is selected or unselected
  */
-export const CourseList = ( { onChange } ) => {
+export const CourseList = ( { searchQuery, onChange } ) => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
-	const isMounted = useRef( true );
 
 	const selectCourse = useCallback(
 		( { isSelected, course } ) => {
@@ -84,42 +107,32 @@ export const CourseList = ( { onChange } ) => {
 	);
 
 	// Fetch the courses.
-	useEffect( () => {
-		setIsFetching( true );
+	const fetchCourses = useCallback(
+		debounce( ( query ) => {
+			setIsFetching( true );
 
-		httpClient( {
-			path: '/wp/v2/courses?per_page=100',
-			method: 'GET',
-		} )
-			.then( ( result ) => {
-				if ( isMounted.current ) {
+			httpClient( {
+				path:
+					'/wp/v2/courses?per_page=100' +
+					( query ? `&search=${ query }` : '' ),
+				method: 'GET',
+			} )
+				.then( ( result ) => {
 					setCourses( result );
-				}
-			} )
-			.catch( () => {
-				if ( isMounted.current ) {
+				} )
+				.catch( () => {
 					setIsFetching( false );
-				}
-			} )
-			.finally( () => {
-				if ( isMounted.current ) {
+				} )
+				.finally( () => {
 					setIsFetching( false );
-				}
-			} );
-		return () => ( isMounted.current = false );
-	}, [] );
+				} );
+		}, 400 ),
+		[]
+	);
 
-	if ( isFetching ) {
-		return (
-			<div className="sensei-student-modal__course-list--loading">
-				<Spinner />
-			</div>
-		);
-	}
-
-	if ( 0 === courses.length ) {
-		return <p>{ __( 'No courses found.', 'sensei-lms' ) }</p>;
-	}
+	useEffect( () => {
+		fetchCourses( searchQuery );
+	}, [ fetchCourses, searchQuery ] );
 
 	return (
 		<>
@@ -127,16 +140,22 @@ export const CourseList = ( { onChange } ) => {
 				{ __( 'Your Courses', 'sensei-lms' ) }
 			</span>
 			<ul className="sensei-student-modal__course-list">
-				{ courses.map( ( course ) => (
-					<CourseItem
-						key={ course.id }
-						course={ course }
-						onChange={ selectCourse }
-						checked={ selectedCourses.current.find(
-							( { id } ) => id === course.id
-						) }
-					/>
-				) ) }
+				{ isFetching && <LoadingCourseList /> }
+
+				{ ! isFetching && 0 === courses.length && <EmptyCourseList /> }
+
+				{ ! isFetching &&
+					0 < courses.length &&
+					courses.map( ( course ) => (
+						<CourseItem
+							key={ course.id }
+							course={ course }
+							onChange={ selectCourse }
+              checked={ selectedCourses.current.find(
+              	( { id } ) => id === course.id
+              ) }
+						/>
+					) ) }
 			</ul>
 		</>
 	);
