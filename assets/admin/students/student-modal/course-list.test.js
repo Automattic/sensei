@@ -24,7 +24,7 @@ const courses = [
 	},
 ];
 
-describe( '<CourseList />', () => {
+describe.skip( '<CourseList />', () => {
 	beforeAll( () => {
 		nock( 'http://localhost' )
 			.persist()
