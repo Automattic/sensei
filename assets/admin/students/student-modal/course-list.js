@@ -132,7 +132,7 @@ export const CourseList = ( { onChange } ) => {
 						key={ course.id }
 						course={ course }
 						onChange={ selectCourse }
-						checked={ selectedCourses.current.some(
+						checked={ selectedCourses.current.find(
 							( { id } ) => id === course.id
 						) }
 					/>
