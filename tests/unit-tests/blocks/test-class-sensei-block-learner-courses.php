@@ -1,10 +1,12 @@
 <?php
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 /**
  * Tests for Sensei_Learner_Courses_Block class.
  */
 class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
+	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 
@@ -15,7 +17,6 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	 */
 	private $block;
 
-
 	/**
 	 * Set up the test.
 	 */
@@ -23,16 +24,22 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
 
 		$this->block     = new Sensei_Learner_Courses_Block();
 		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'learner-courses-block' ] );
 		$GLOBALS['post'] = $this->course;
-
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/learner-courses' );
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
 	}
 
 	/**

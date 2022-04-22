@@ -1,20 +1,36 @@
 <?php
+require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
 /**
  * Tests for Lesson action blocks class.
  */
 class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 
+	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 
 	/**
-	 * Constructor function
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
 	 */
-	public function __construct() {
-		parent::__construct();
+	private $factory;
 
+	/**
+	 * Set up the test.
+	 */
+	public function setUp() {
+
+		parent::setUp();
 		$this->factory = new Sensei_Factory();
+		self::resetEnrolmentProviders();
+		$this->prepareEnrolmentManager();
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
 	}
 
 	/**
