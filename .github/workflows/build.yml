@@ -20,9 +20,9 @@ jobs:
                       ${{ runner.os }}-node-
             - uses: shivammathur/setup-php@v2
               with:
-                php-version: '7.4'
-                tools: composer
-                coverage: none
+                  php-version: '7.4'
+                  tools: composer
+                  coverage: none
             - name: Get composer cache directory
               id: composer-cache
               run: echo "::set-output name=dir::$(composer config cache-files-dir)"
@@ -43,7 +43,6 @@ jobs:
             - name: Store Artifact
               uses: actions/upload-artifact@v2
               with:
-                name: sensei-lms-${{ github.event.pull_request.head.sha }}
-                path: ${{ github.workspace }}/sensei-lms/
-                retention-days: 7
-                  
+                  name: sensei-lms-${{ github.event.pull_request.head.sha }}
+                  path: ${{ github.workspace }}/sensei-lms/
+                  retention-days: 7

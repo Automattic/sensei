@@ -2,9 +2,9 @@ name: Report Plugin Build
 
 on:
     workflow_run:
-        workflows: ["Plugin Build"]
-        types: 
-          - completed
+        workflows: ['Plugin Build']
+        types:
+            - completed
 
 jobs:
     report-build:
@@ -12,7 +12,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - name: Publish commit status with the link to download the plugin 
+            - name: Publish commit status with the link to download the plugin
               id: plugin_artifact
               uses: fjorgemota/github-action-report-artifact@v0
               with:
@@ -21,4 +21,3 @@ jobs:
                   report-on: commit_status
                   context: Plugin Build Download
                   message: Click on "Details" to download the plugin zip file
-                  
