@@ -128,7 +128,7 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 				} );
 		}, 400 ),
 		[]
-	);
+	); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect( () => {
 		fetchCourses( searchQuery );

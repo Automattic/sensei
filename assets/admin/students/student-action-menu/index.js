@@ -15,10 +15,15 @@ import StudentModal from '../student-modal';
  * Student action menu.
  *
  * @param {Object} props
- * @param {string} props.studentId   Student's user id
- * @param {string} props.studentName Student's user name.
+ * @param {string} props.studentId          Student's user id
+ * @param {string} props.studentName        Student's user name.
+ * @param {string} props.studentDisplayName Student's displayName.
  */
-export const StudentActionMenu = ( { studentId, studentName } ) => {
+export const StudentActionMenu = ( {
+	studentId,
+	studentName,
+	studentDisplayName,
+} ) => {
 	const [ action, setAction ] = useState( '' );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const closeModal = ( needsReload ) => {
@@ -79,6 +84,7 @@ export const StudentActionMenu = ( { studentId, studentName } ) => {
 					action={ action }
 					onClose={ closeModal }
 					students={ [ studentId ] }
+					studentDisplayName={ studentDisplayName }
 				/>
 			) }
 		</>
@@ -91,6 +97,7 @@ Array.from( document.getElementsByClassName( 'student-action-menu' ) ).forEach(
 			<StudentActionMenu
 				studentId={ actionMenu?.dataset?.userId }
 				studentName={ actionMenu?.dataset?.userName }
+				studentDisplayName={ actionMenu?.dataset?.userDisplayName }
 			/>,
 			actionMenu
 		);

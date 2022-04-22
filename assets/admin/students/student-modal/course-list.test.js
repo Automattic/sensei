@@ -23,10 +23,10 @@ const courses = [
 		title: { rendered: 'Course 3' },
 	},
 ];
-
+const NOCK_HOST_URL = 'http://localhost';
 describe( '<CourseList />', () => {
 	beforeAll( () => {
-		nock( 'http://localhost' )
+		nock( NOCK_HOST_URL )
 			.persist()
 			.get( '/wp/v2/courses' )
 			.query( { per_page: 100, _locale: 'user' } )
@@ -82,7 +82,7 @@ describe( '<CourseList />', () => {
 	describe( 'when there is no course', () => {
 		beforeEach( () => {
 			nock.cleanAll();
-			nock( 'http://localhost' )
+			nock( NOCK_HOST_URL )
 				.get( '/wp/v2/courses' )
 				.query( { per_page: 100, _locale: 'user' } )
 				.once()

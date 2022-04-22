@@ -15,6 +15,7 @@ const courses = [
 		title: { rendered: 'My Course' },
 	},
 ];
+const NOCK_HOST_URL = 'http://localhost';
 
 // Create a bulk action selector with enrol student option selected.
 beforeAll( () => {
@@ -22,7 +23,7 @@ beforeAll( () => {
 } );
 describe( '<StudentBulkActionButton />', () => {
 	beforeAll( () => {
-		nock( 'http://localhost' )
+		nock( NOCK_HOST_URL )
 			.persist()
 			.get( '/wp-json/wp/v2/courses' )
 			.query( { per_page: 100 } )
@@ -42,10 +43,12 @@ describe( '<StudentBulkActionButton />', () => {
 		} );
 		button.click();
 		expect(
-			screen.getByText(
-				'Select the course(s) you would like to add students to:'
-			)
-		).toBeTruthy();
+			screen.getByText( 'Select the course(s) you would like to add', {
+				exact: false,
+			} ).textContent
+		).toEqual(
+			'Select the course(s) you would like to add 3 students to:'
+		);
 	} );
 
 	it( 'Student modal is rendered with action to remove progress on button click when remove progress is selected', () => {
@@ -63,9 +66,14 @@ describe( '<StudentBulkActionButton />', () => {
 		button.click();
 		expect(
 			screen.getByText(
-				'Select the course(s) you would like to reset or remove progress for:'
-			)
-		).toBeTruthy();
+				'Select the course(s) you would like to reset or remove progress from for ',
+				{
+					exact: false,
+				}
+			).textContent
+		).toEqual(
+			'Select the course(s) you would like to reset or remove progress from for 3 students:'
+		);
 	} );
 	it( 'Student modal is rendered with action to remove students on button click when remove from course is selected', () => {
 		setupSelector( [
@@ -82,9 +90,14 @@ describe( '<StudentBulkActionButton />', () => {
 		button.click();
 		expect(
 			screen.getByText(
-				'Select the course(s) you would like to remove students from:'
-			)
-		).toBeTruthy();
+				'Select the course(s) you would like to remove ',
+				{
+					exact: false,
+				}
+			).textContent
+		).toEqual(
+			'Select the course(s) you would like to remove 3 students from:'
+		);
 	} );
 } );
 
@@ -106,5 +119,14 @@ const setupSelector = ( options ) => {
 
 		mockSelector.appendChild( optionElement );
 	} );
-	spy.mockReturnValue( mockSelector );
+
+	const mockStudentIdContainer = document.createElement( 'input' );
+	mockStudentIdContainer.id = 'bulk-action-user-ids';
+	mockStudentIdContainer.value = '[1,2,3]';
+
+	spy.mockImplementation( ( elementId ) => {
+		return 'bulk-action-selector-top' === elementId
+			? mockSelector
+			: mockStudentIdContainer;
+	} );
 };

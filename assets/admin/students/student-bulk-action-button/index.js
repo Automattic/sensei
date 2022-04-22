@@ -17,6 +17,7 @@ export const StudentBulkActionButton = () => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
+	const [ studentName, setStudentName ] = useState( '' );
 	const closeModal = () => setIsModalOpen( false );
 	const setActionValue = ( selectedValue ) => {
 		switch ( selectedValue ) {
@@ -48,7 +49,21 @@ export const StudentBulkActionButton = () => {
 
 		if ( hiddenSelectedUserIdsField ) {
 			try {
-				setStudentIds( JSON.parse( hiddenSelectedUserIdsField.value ) );
+				const parsedStudentIds = JSON.parse(
+					hiddenSelectedUserIdsField.value
+				);
+				setStudentIds( parsedStudentIds );
+				if ( parsedStudentIds.length === 1 ) {
+					setStudentName(
+						document
+							.querySelector(
+								'input.sensei_user_select_id:checked'
+							)
+							.closest( 'tr' )
+							.querySelector( '.student-action-menu' )
+							.getAttribute( 'data-user-display-name' )
+					);
+				}
 			} catch ( e ) {}
 		}
 
@@ -69,6 +84,7 @@ export const StudentBulkActionButton = () => {
 					action={ action }
 					onClose={ closeModal }
 					students={ studentIds }
+					studentDisplayName={ studentName }
 				/>
 			) }
 		</>
