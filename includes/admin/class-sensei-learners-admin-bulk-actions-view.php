@@ -413,7 +413,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$courses = $query->get_posts();
 
 		if ( empty( $courses ) ) {
-			return '0 ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'Enrolled', 'sensei-lms' );
+			return __( 'N/A', 'sensei-lms' );
 		}
 
 		$courses_total = $query->post_count;
@@ -427,8 +427,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				'</a>';
 		}
 
-		$course_html = 1 === $courses_total ? esc_html__( 'Course', 'sensei-lms' ) : esc_html__( 'Courses', 'sensei-lms' );
-		$html        = $courses_total . ' ' . $course_html . ' ' . esc_html__( 'Enrolled', 'sensei-lms' );
 		$more_button = '';
 
 		if ( $courses_total > $visible_count ) {
@@ -444,7 +442,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$visible_courses = implode( '', array_slice( $html_items, 0, $visible_count ) );
 		$hidden_courses  = implode( '', array_slice( $html_items, $visible_count ) );
 
-		return $html . $visible_courses . '<div class="sensei-students__enrolled-courses-detail hidden">' . $hidden_courses . '</div>' . $more_button;
+		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail hidden">' . $hidden_courses . '</div>' . $more_button;
 	}
 
 	/**
