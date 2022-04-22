@@ -16,7 +16,7 @@ import httpClient from '../../lib/http-client';
 
 jest.mock( '../../lib/http-client' );
 
-describe.skip( '<StudentActionMenu />', () => {
+describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
 		httpClient.mockImplementation( () => Promise.resolve( [] ) );
 		render( <StudentActionMenu /> );

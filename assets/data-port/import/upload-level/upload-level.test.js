@@ -8,7 +8,7 @@ import { fireEvent, render } from '@testing-library/react';
  */
 import { UploadLevels } from './upload-level';
 
-describe.skip( '<UploadLevels />', () => {
+describe( '<UploadLevels />', () => {
 	it( 'should display the error when there is one', () => {
 		const levelsState = {
 			courses: {
