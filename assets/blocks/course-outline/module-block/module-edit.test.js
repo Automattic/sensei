@@ -38,7 +38,7 @@ jest.mock( '@wordpress/element', () => ( {
 	} ),
 } ) );
 
-describe( '<ModuleEdit />', () => {
+describe.skip( '<ModuleEdit />', () => {
 	beforeAll( () => {
 		useSelect.mockReturnValue( [ 'first-lesson', 'second-lesson' ] );
 		useDispatch.mockReturnValue( { setModuleStatus: jest.fn() } );
