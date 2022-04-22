@@ -1544,8 +1544,7 @@ class Sensei_Utils {
 	 * @param int   $user_id
 	 * @return boolean
 	 */
-	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ) {
-
+	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ): bool {
 		if ( $lesson ) {
 			$lesson_id = 0;
 			if ( is_object( $lesson ) ) {

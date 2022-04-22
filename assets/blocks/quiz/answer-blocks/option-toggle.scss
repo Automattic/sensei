@@ -1,8 +1,11 @@
+$toogle-size: 26px;
 
 .sensei-lms-question-block__option-toggle {
 	color: inherit;
 	display: inline-flex;
 	align-items: center;
+	position: relative;
+
 	.edit-post-visual-editor & {
 		font-family: inherit;
 		font-size: inherit;
@@ -20,13 +23,13 @@
 	}
 
 	&__control {
-		width: 26px;
-		height: 26px;
+		width: $toogle-size;
+		height: $toogle-size;
 		border-radius: 50%;
-		box-shadow: inset 0 0 0 1.5px currentColor;
+		box-sizing: border-box;
+		border: solid 1.5px currentColor;
 		position: relative;
 		align-items: center;
-
 
 		&:after {
 			position: absolute;
@@ -41,10 +44,6 @@
 			border-radius: 50%;
 		}
 
-		&.is-checked:after {
-			background: currentColor;
-		}
-
 		&.is-checkbox {
 			border-radius: 4px;
 			display: flex;
@@ -52,6 +51,7 @@
 			justify-content: center;
 
 			svg {
+				display: none;
 				width: 20px;
 				height: 20px;
 				fill: currentColor;
@@ -61,5 +61,51 @@
 				content: none;
 			}
 		}
+	}
+
+	// Some extra specificity for themes compatibility.
+	&-input[type="radio"],
+	&-input[type="checkbox"] {
+		cursor: pointer;
+		top: auto;
+
+		&, &:disabled {
+			position: absolute;
+			z-index: 1;
+			opacity: 0;
+			width: $toogle-size;
+			height: $toogle-size;
+			margin: 0;
+			padding: 0;
+			border: none;
+		}
+	}
+
+	// Checked state.
+	&__control.is-checked,
+	&-input:checked + &__control {
+		svg {
+			display: revert;
+		}
+
+		&::after {
+			background: currentColor;
+		}
+	}
+
+	&-input:disabled {
+		cursor: not-allowed;
+
+		& + .sensei-lms-question-block__option-toggle__control {
+			opacity: 0.3;
+		}
+	}
+
+	&-input:focus-visible + &__control {
+		$box-shadow: 0 0 0 1.5px;
+
+		// Default styles for Firefox and Chrome.
+		box-shadow: $box-shadow Highlight;
+		box-shadow: $box-shadow -webkit-focus-ring-color;
 	}
 }

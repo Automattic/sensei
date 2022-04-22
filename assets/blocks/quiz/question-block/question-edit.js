@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
@@ -6,15 +11,11 @@ import { select, useDispatch } from '@wordpress/data';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-/**
- * External dependencies
- */
-import classnames from 'classnames';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
  */
-
 import { withBlockValidation } from '../../../shared/blocks/block-validation';
 import {
 	answerFeedbackCorrectBlock,
@@ -41,6 +42,27 @@ import QuestionView from './question-view';
 import QuestionSettings from './question-settings';
 import { QuestionTypeToolbar } from './question-type-toolbar';
 import SingleQuestion from './single-question';
+
+let questionOptions = Object.entries( types ).map(
+	( [ value, settings ] ) => ( {
+		...settings,
+		label: settings.title,
+		value,
+	} )
+);
+
+/**
+ * Filters the available question type options.
+ *
+ * @since 4.1.0
+ *
+ * @param {Array} options The available question type options.
+ * @return {Array} The filtered question type options.
+ */
+questionOptions = applyFilters(
+	'senseiQuestionTypeToolbarOptions',
+	questionOptions
+);
 
 /**
  * Format the question grade as `X points`.
@@ -202,6 +224,7 @@ const QuestionEdit = ( props ) => {
 						onSelect={ ( nextValue ) =>
 							setAttributes( { type: nextValue } )
 						}
+						options={ questionOptions }
 					/>
 					<QuestionGradeToolbar
 						value={ options.grade }

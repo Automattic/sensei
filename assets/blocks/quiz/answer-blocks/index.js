@@ -159,6 +159,11 @@ const availableCoreSettings = {
 };
 
 /**
+ * Question types before the filter being applied.
+ */
+export const unfilteredQuestionTypes = questionTypes;
+
+/**
  * Filters the quiz editor question types in order to support custom ones.
  *
  * @param {Object}   questionTypes             The question types.

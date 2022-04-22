@@ -230,13 +230,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public function prepare_items() {
 		// Handle orderby.
 		$orderby = '';
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $_GET['orderby'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 			$orderby = esc_html( $_GET['orderby'] );
 		}
 
 		// Handle order.
 		$order = 'ASC';
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $_GET['order'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification,WordPress.PHP.StrictComparisons.LooseComparison,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
 		}
 
@@ -256,9 +260,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'order'   => $order,
 		);
 
-		// Handle search
+		// Handle search.
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
-			$args['search'] = esc_html( $_GET['s'] );
+			// phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$args['search'] = esc_html( wp_unslash( $_GET['s'] ) );
 		}
 
 		switch ( $this->type ) {
@@ -287,6 +293,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		);
 	}
 
+	// phpcs:ignore Squiz.Commenting.FunctionComment.MissingParamTag
 	/**
 	 * Generate a csv report with different parameters, pagination, columns and table elements
 	 *
@@ -298,15 +305,19 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 
 		$this->csv_output = true;
 
-		// Handle orderby
+		// Handle orderby.
 		$orderby = '';
+		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( ! empty( $_GET['orderby'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$orderby = esc_html( $_GET['orderby'] );
 		}
 
-		// Handle order
+		// Handle order.
 		$order = 'ASC';
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $_GET['order'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification,WordPress.PHP.StrictComparisons.LooseComparison,WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$order = ( 'ASC' == strtoupper( $_GET['order'] ) ) ? 'ASC' : 'DESC';
 		}
 
@@ -317,8 +328,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			'order'   => $order,
 		);
 
-		// Handle search
+		// Handle search.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['s'] ) && ! empty( $_GET['s'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$args['search'] = esc_html( $_GET['s'] );
 		}
 

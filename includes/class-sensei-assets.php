@@ -43,16 +43,25 @@ class Sensei_Assets {
 	protected $version;
 
 	/**
+	 * Plugin text domain.
+	 *
+	 * @var string
+	 */
+	protected $text_domain;
+
+	/**
 	 * Sensei_Assets constructor.
 	 *
 	 * @param string $plugin_url  The URL for the plugin.
 	 * @param string $plugin_path Plugin location.
 	 * @param string $version     Plugin version.
+	 * @param string $text_domain Plugin text domain.
 	 */
-	public function __construct( $plugin_url, $plugin_path, $version ) {
+	public function __construct( $plugin_url, $plugin_path, $version, $text_domain = 'sensei-lms' ) {
 		$this->plugin_url  = $plugin_url;
 		$this->plugin_path = $plugin_path;
 		$this->version     = $version;
+		$this->text_domain = $text_domain;
 	}
 
 	/**
@@ -76,7 +85,7 @@ class Sensei_Assets {
 	 * @param string|null $handle       Unique name of the asset.
 	 * @param string      $filename     The filename.
 	 * @param array       $dependencies Dependencies.
-	 * @param null        $args
+	 * @param null        $args         Asset arguments.
 	 */
 	public function register( $handle, $filename, $dependencies = [], $args = null ) {
 		$config = $this->asset_config( $filename, $dependencies, $args );
@@ -113,7 +122,7 @@ class Sensei_Assets {
 		call_user_func( $action . '_' . $config['type'], $handle, $config['url'], $config['dependencies'], $config['version'], $config['args'] );
 
 		if ( 'script' === $config['type'] && in_array( 'wp-i18n', $config['dependencies'], true ) ) {
-			wp_set_script_translations( $handle, 'sensei-lms' );
+			wp_set_script_translations( $handle, $this->text_domain );
 		}
 	}
 
