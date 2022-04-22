@@ -43,7 +43,7 @@ export const AnswerFeedbackToggle = () => {
 
 			<div className="sensei-lms-question-block__answer-feedback-toggle__help">
 				{ __(
-					'Show feedback to students after they submit the quiz.',
+					'Show feedback once the question is answered.',
 					'sensei-lms'
 				) }
 			</div>
