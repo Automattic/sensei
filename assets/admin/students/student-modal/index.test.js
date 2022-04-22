@@ -83,7 +83,7 @@ describe( '<StudentModal />', () => {
 				<StudentModal
 					action="add"
 					students={ students.slice( 0, 1 ) }
-					studentName={ studentName }
+					studentDisplayName={ studentName }
 				/>
 			);
 			expect(
@@ -170,7 +170,7 @@ describe( '<StudentModal />', () => {
 				<StudentModal
 					action="remove"
 					students={ students.slice( 0, 1 ) }
-					studentName={ studentName }
+					studentDisplayName={ studentName }
 				/>
 			);
 			expect(
@@ -262,7 +262,7 @@ describe( '<StudentModal />', () => {
 				<StudentModal
 					action="reset-progress"
 					students={ students.slice( 0, 1 ) }
-					studentName={ studentName }
+					studentDisplayName={ studentName }
 				/>
 			);
 			expect(

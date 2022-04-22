@@ -61,7 +61,7 @@ export const StudentBulkActionButton = () => {
 							)
 							.closest( 'tr' )
 							.querySelector( '.student-action-menu' )
-							.getAttribute( 'data-user-name' )
+							.getAttribute( 'data-user-display-name' )
 					);
 				}
 			} catch ( e ) {}
@@ -84,7 +84,7 @@ export const StudentBulkActionButton = () => {
 					action={ action }
 					onClose={ closeModal }
 					students={ studentIds }
-					studentName={ studentName }
+					studentDisplayName={ studentName }
 				/>
 			) }
 		</>

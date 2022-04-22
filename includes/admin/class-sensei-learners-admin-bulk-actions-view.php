@@ -171,6 +171,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		} else {
 			$learner            = $item;
 			$courses            = $this->get_learner_courses_html( $item->course_statuses );
+			$full_name          = esc_html( Sensei_Learner::get_full_name( $learner->user_id ) );
 			$last_activity_date = __( 'N/A', 'sensei-lms' );
 			if ( $item->last_activity_date ) {
 				$last_activity_date = Sensei_Utils::format_last_activity_date( $item->last_activity_date );
@@ -182,7 +183,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 				'progress'           => $courses,
 				'last_activity_date' => $last_activity_date,
 				'actions'            => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) .
-					'" data-user-name="' . esc_attr( $learner->user_login ) . '"></div>',
+					'" data-user-name="' . esc_attr( $learner->user_login ) . '" data-user-display-name="' . esc_attr( $full_name ) . '"></div>',
 			);
 		}
 
