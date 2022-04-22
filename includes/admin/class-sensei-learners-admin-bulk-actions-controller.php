@@ -56,6 +56,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	private $learner_management;
 
 	/**
+	 * The Sensei_Learner object with utility functions.
+	 *
+	 * @var Sensei_Learner
+	 */
+	private $learner;
+
+	/**
 	 * The name of the page
 	 *
 	 * @var string
@@ -112,13 +119,15 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * Sensei_Learners_Admin_Main constructor.
 	 *
 	 * @param Sensei_Learner_Management $management The learner managemnt object.
+	 * @param Sensei_Learner            $learner    The learner object with utility functions.
 	 */
-	public function __construct( $management ) {
+	public function __construct( $management, $learner ) {
+		$this->learner_management = $management;
+		$this->learner            = $learner;
 		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
 		$this->menu_post_type     = 'course';
 		$this->view               = 'sensei_learner_admin';
-		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
 			self::ENROL_RESTORE_ENROLMENT => __( 'Enroll / Restore Enrollment', 'sensei-lms' ),
@@ -321,7 +330,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		_deprecated_function( __METHOD__, 'x.x.x', 'Sensei_Learner_Management::output_main_page' );
 
 		// Load Learners data.
-		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management );
+		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management, $this->learner );
 		$sensei_learners_main_view->prepare_items();
 
 		// Wrappers.

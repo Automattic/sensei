@@ -48,14 +48,17 @@ class Sensei_Db_Query_Learners {
 			$matching_user_ids = array_map( 'absint', $user_query->get_results() );
 		}
 
+		/*
+		 * Return empty string for `course_statuses` and zero for `course_count` for backward compatibility.
+		 */
 		$sql = "
 			SELECT SQL_CALC_FOUND_ROWS
 				`u`.`ID` AS 'user_id',
 				`u`.`user_nicename`,
 				`u`.`user_login`,
 				`u`.`user_email`,
-				GROUP_CONCAT(`c`.`comment_post_ID`, '|', IF(`c`.`comment_approved` = 'complete', 'c', 'p' )) AS 'course_statuses',
-				COUNT(`c`.`comment_approved`) AS 'course_count', (
+				'' AS 'course_statuses',
+				0 AS 'course_count', (
 					SELECT MAX(cm.comment_date_gmt)
 					FROM {$wpdb->comments} cm
 					WHERE cm.user_id = u.ID
@@ -74,10 +77,6 @@ class Sensei_Db_Query_Learners {
 					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
 					AND `cf`.comment_approved IS NOT NULL";
 		}
-
-		$sql .= "
-			LEFT JOIN `{$wpdb->comments}` AS `c`
-				ON `u`.`ID` = `c`.`user_id` AND `c`.`comment_type` = 'sensei_course_status'";
 
 		$sql .= ' WHERE 1=1';
 
