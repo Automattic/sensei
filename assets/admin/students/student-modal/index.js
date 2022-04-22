@@ -64,14 +64,13 @@ const POSSIBLE_ACTIONS = {
 };
 
 /**
- * Questions modal content.
+ * Student Actions Modal.
  *
  * @param {Object}   props
  * @param {Object}   props.action   Action that is being performed.
  * @param {Function} props.onClose  Close callback.
  * @param {Array}    props.students A list of Student ids related to the action should be applied.
  */
-
 export const StudentModal = ( { action, onClose, students } ) => {
 	const {
 		description,
