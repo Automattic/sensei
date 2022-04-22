@@ -380,7 +380,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					<?php $this->render_bulk_actions_form( $courses ); ?>
 				</div>
 				<div class="sensei-student-bulk-actions__filters">
-					<div>
+					<div class="alignleft actions bulkactions">
 						<?php
 						echo wp_kses(
 							$this->render_bulk_action_select_box(),
@@ -397,8 +397,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						?>
 						<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
 					</div>
-					<div class="alignleft">
-						<form action="" method="get">
+					<form action="" method="get">
+						<div class="alignleft actions">
 							<?php
 							foreach ( $this->query_args as $name => $value ) {
 								if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
@@ -409,8 +409,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 							$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei-lms' ) );
 							?>
 							<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei-lms' ); ?></button>
-						</form>
-					</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
