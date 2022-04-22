@@ -6,7 +6,7 @@
 
 	&__course-list {
 		border: 1px solid #8c8f94;
-		height: auto;
+		height: 300px;
 		max-height: calc(100vh - 340px);
 		overflow: auto;
 
@@ -14,14 +14,15 @@
 			max-height: 300px;
 		}
 
-		&--loading {
-			text-align: center;
-			padding: 20px;
-		}
-
 		&__header {
 			display: block;
 			margin-top: 30px;
+		}
+
+		&--loading,
+		&--empty {
+			padding-top: 1em;
+			text-align: center;
 		}
 
 		&__item {

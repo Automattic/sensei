@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
+import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 import { search } from '@wordpress/icons';
 import { __, _n } from '@wordpress/i18n';
 
@@ -15,7 +16,6 @@ import httpClient from '../../lib/http-client';
 /**
  * External dependencies
  */
-import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 
 const POSSIBLE_ACTIONS = {
 	add: {
@@ -101,6 +101,7 @@ export const StudentModal = ( { action, onClose, students } ) => {
 		isDestructive,
 	} = POSSIBLE_ACTIONS[ action ];
 	const [ selectedCourses, setCourses ] = useState( [] );
+	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ error, setError ] = useState( false );
 	const isMounted = useRef( true );
@@ -126,6 +127,8 @@ export const StudentModal = ( { action, onClose, students } ) => {
 		}
 	}, [ sendAction, students, selectedCourses, onClose ] );
 
+	const searchCourses = ( value ) => setSearchQuery( value );
+
 	return (
 		<Modal
 			className="sensei-student-modal"
@@ -135,11 +138,14 @@ export const StudentModal = ( { action, onClose, students } ) => {
 			<p>{ description }</p>
 
 			<InputControl
-				placeholder={ __( 'Search courses', 'sensei-lms' ) }
 				iconRight={ search }
+				onChange={ searchCourses }
+				placeholder={ __( 'Search courses', 'sensei-lms' ) }
+				value={ searchQuery }
 			/>
 
 			<CourseList
+				searchQuery={ searchQuery }
 				onChange={ ( courses ) => {
 					setCourses( courses );
 				} }
