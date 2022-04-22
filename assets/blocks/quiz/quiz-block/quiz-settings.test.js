@@ -73,7 +73,7 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
-describe( '<QuizSettings />', () => {
+describe.skip( '<QuizSettings />', () => {
 	it( 'Should render the settings with the defined values', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
 			<QuizSettings
