@@ -131,9 +131,7 @@ jQuery( document ).ready( function () {
 			$bulkActionSelect = $( '.sensei-bulk-action-select' ),
 			$selectUserCheckboxes = $( '.sensei_user_select_id' ),
 			$cbSelectAll = $( '#cb-select-all-1' ),
-			$learnerCourseOverviewDetailButton = $(
-				'.learner-course-overview-detail-btn'
-			),
+			$moreLink = $( '.sensei-students__enrolled-courses-more-link' ),
 			$cbSelectAllTwo = $( '#cb-select-all-2' ),
 			$modalToggle = $( '#sensei-bulk-learner-actions-modal-toggle' );
 
@@ -197,15 +195,14 @@ jQuery( document ).ready( function () {
 
 		$modalToggle.attr( 'disabled', true );
 
-		$learnerCourseOverviewDetailButton.on( 'click', function ( evt ) {
-			evt.preventDefault();
-			evt.stopPropagation();
-			var $elem = $( this ),
-				$overviewDiv = $elem.siblings(
-					'.learner-course-overview-detail'
-				);
-			$overviewDiv.slideDown( 'slow' );
-			$( this ).slideUp( 'slow' );
+		$moreLink.on( 'click', function ( event ) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			$( event.target )
+				.addClass( 'hidden' )
+				.prev()
+				.removeClass( 'hidden' );
 		} );
 
 		$actionSelector.on( 'change', function () {

@@ -249,16 +249,6 @@ a.sensei-custom-navigation__info {
 	margin-left: 0;
 }
 
-.learner-overview-course-item {
+.sensei-students__enrolled-course {
 	display: block;
-	&.course-complete {
-		&:before {
-			font-family: dashicons;
-			content: "\f15e";
-			font-size: 170%;
-			vertical-align: bottom;
-			margin-right: 10px;
-			color: #7e7e7e;
-		}
-	}
 }
