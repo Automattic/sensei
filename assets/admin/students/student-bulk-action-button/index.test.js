@@ -33,7 +33,7 @@ describe( '<StudentBulkActionButton />', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment', selected: true },
 			{ value: 'remove_progress' },
-			{ value: 'remove_progress' },
+			{ value: 'remove_enrolment' },
 		] );
 		render( <StudentBulkActionButton /> );
 
@@ -55,7 +55,7 @@ describe( '<StudentBulkActionButton />', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment' },
 			{ value: 'remove_progress', selected: true },
-			{ value: 'remove_progress' },
+			{ value: 'remove_enrolment' },
 		] );
 		render( <StudentBulkActionButton /> );
 

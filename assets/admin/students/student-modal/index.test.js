@@ -34,7 +34,7 @@ const studentName = 'testname';
 const NOCK_HOST_URL = 'http://localhost';
 
 describe( '<StudentModal />', () => {
-	const { getByText, findByText, findByRole, findByLabelText } = screen;
+	const { getByText, findAllByText, findByRole, findByLabelText } = screen;
 
 	const courseOptionAt = async ( index ) =>
 		findByLabelText( courses.at( index ).title.rendered );
@@ -50,6 +50,7 @@ describe( '<StudentModal />', () => {
 			.query( { per_page: 100, _locale: 'user' } )
 			.reply( 200, courses );
 	} );
+
 	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display a list of courses', async () => {
@@ -119,7 +120,7 @@ describe( '<StudentModal />', () => {
 			} );
 		} );
 
-		describe( 'when there is a failure to add the students to the courses', () => {
+		describe( 'When there is a failure to add the students to the courses', () => {
 			beforeEach( async () => {
 				nock( NOCK_HOST_URL )
 					.post( '/' )
@@ -133,12 +134,6 @@ describe( '<StudentModal />', () => {
 				fireEvent.click( await courseOptionAt( 0 ) );
 
 				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
-			} );
-
-			it( 'Should display an error message', async () => {
-				expect(
-					await findByText( 'Sorry, something went wrong' )
-				).toBeInTheDocument();
 			} );
 
 			it( 'Should enable the action button', async () => {
@@ -190,7 +185,7 @@ describe( '<StudentModal />', () => {
 			).toBeInTheDocument();
 		} );
 
-		it( 'Should remove the selected students to the selected course', async () => {
+		it( 'Should remove the selected students from the selected course', async () => {
 			nock( NOCK_HOST_URL + '/' )
 				.post( '/', {
 					student_ids: students,
@@ -210,33 +205,6 @@ describe( '<StudentModal />', () => {
 
 			await waitFor( () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
-			} );
-		} );
-
-		describe( 'when there is a failure to remove the students from the courses', () => {
-			beforeEach( async () => {
-				nock( NOCK_HOST_URL )
-					.post( '/', {
-						student_ids: students,
-						course_ids: [ courses.at( 0 ).id ],
-					} )
-					.query( {
-						rest_route: '/sensei-internal/v1/course-students/batch',
-						_locale: 'user',
-					} )
-					.matchHeader( 'x-http-method-override', 'DELETE' )
-					.once()
-					.reply( 500, { status: 'error' } );
-
-				fireEvent.click( await courseOptionAt( 0 ) );
-
-				fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
-			} );
-
-			it( 'Should display an error message', async () => {
-				expect(
-					await findByText( 'Sorry, something went wrong' )
-				).toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -306,10 +274,139 @@ describe( '<StudentModal />', () => {
 				expect( onClose ).toHaveBeenCalledWith( true );
 			} );
 		} );
+	} );
 
-		describe( 'when there is a failure to reset the students progress', () => {
-			beforeEach( async () => {
+	describe( 'Errors', () => {
+		describe( 'Single student', () => {
+			beforeAll( () => {
+				// Add to course
 				nock( NOCK_HOST_URL )
+					.post( '/', {
+						student_ids: [ students[ 0 ] ],
+						course_ids: [ courses.at( 0 ).id ],
+					} )
+					.query( {
+						rest_route: '/sensei-internal/v1/course-students/batch',
+						_locale: 'user',
+					} )
+					.once()
+					.reply( 200, { status: 'ok' } );
+
+				// Remove from course
+				nock( 'http://localhost/' )
+					.post( '/', {
+						student_ids: [ students[ 0 ] ],
+						course_ids: [ courses.at( 0 ).id ],
+					} )
+					.query( {
+						rest_route: '/sensei-internal/v1/course-students/batch',
+						_locale: 'user',
+					} )
+					.matchHeader( 'x-http-method-override', 'DELETE' )
+					.once()
+					.reply( 200, { status: 'ok' } );
+
+				// Reset or remove progress
+				nock( 'http://localhost' )
+					.post( '/', {
+						student_ids: [ students[ 0 ] ],
+						course_ids: [ courses.at( 0 ).id ],
+					} )
+					.query( {
+						rest_route: '/sensei-internal/v1/course-progress/batch',
+						_locale: 'user',
+					} )
+					.matchHeader( 'x-http-method-override', 'DELETE' )
+					.once()
+					.reply( 500, { status: 'error' } );
+			} );
+
+			it( 'Should display an error message when adding a student to a course', async () => {
+				render(
+					<StudentModal action="add" students={ [ students[ 0 ] ] } />
+				);
+
+				fireEvent.click( await courseOptionAt( 0 ) );
+				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+
+				expect(
+					await findAllByText(
+						'Unable to add student. Please try again.'
+					)
+				).toHaveLength( 2 ); // ARIA + notice
+			} );
+
+			it( 'Should display an error message when removing a student from a course', async () => {
+				render(
+					<StudentModal
+						action="remove"
+						students={ [ students[ 0 ] ] }
+					/>
+				);
+
+				fireEvent.click( await courseOptionAt( 0 ) );
+				fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
+
+				expect(
+					await findAllByText(
+						'Unable to remove student. Please try again.'
+					)
+				).toHaveLength( 2 ); // ARIA + notice
+			} );
+
+			it( 'Should display an error message when resetting progress for a single student', async () => {
+				render(
+					<StudentModal
+						action="reset-progress"
+						students={ [ students[ 0 ] ] }
+					/>
+				);
+
+				fireEvent.click( await courseOptionAt( 0 ) );
+				fireEvent.click(
+					await buttonByLabel( 'Reset or Remove Progress' )
+				);
+
+				expect(
+					// In addition to the notice, there is an ARIA element that has this text.
+					await findAllByText(
+						'Unable to reset or remove progress for this student. Please try again.'
+					)
+				).toHaveLength( 2 ); // ARIA + notice
+			} );
+		} );
+
+		describe( 'Multiple students', () => {
+			beforeAll( () => {
+				// Add to course
+				nock( 'http://localhost' )
+					.post( '/', {
+						student_ids: students,
+						course_ids: [ courses.at( 0 ).id ],
+					} )
+					.query( {
+						rest_route: '/sensei-internal/v1/course-students/batch',
+						_locale: 'user',
+					} )
+					.once()
+					.reply( 200, { status: 'ok' } );
+
+				// Remove from course
+				nock( 'http://localhost/' )
+					.post( '/', {
+						student_ids: students,
+						course_ids: [ courses.at( 0 ).id ],
+					} )
+					.query( {
+						rest_route: '/sensei-internal/v1/course-students/batch',
+						_locale: 'user',
+					} )
+					.matchHeader( 'x-http-method-override', 'DELETE' )
+					.once()
+					.reply( 200, { status: 'ok' } );
+
+				// Reset or remove progress
+				nock( 'http://localhost' )
 					.post( '/', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
@@ -321,17 +418,54 @@ describe( '<StudentModal />', () => {
 					.matchHeader( 'x-http-method-override', 'DELETE' )
 					.once()
 					.reply( 500, { status: 'error' } );
+			} );
+
+			it( 'Should display an error message when adding multiple students to a course', async () => {
+				render( <StudentModal action="add" students={ students } /> );
+
+				fireEvent.click( await courseOptionAt( 0 ) );
+				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
+
+				expect(
+					await findAllByText(
+						'Unable to add students. Please try again.'
+					)
+				).toHaveLength( 2 ); // ARIA + notice
+			} );
+
+			it( 'Should display an error message when removing multiple students from a course', async () => {
+				render(
+					<StudentModal action="remove" students={ students } />
+				);
+
+				fireEvent.click( await courseOptionAt( 0 ) );
+				fireEvent.click( await buttonByLabel( 'Remove from Course' ) );
+
+				expect(
+					await findAllByText(
+						'Unable to remove students. Please try again.'
+					)
+				).toHaveLength( 2 ); // ARIA + notice
+			} );
+
+			it( 'Should display an error message when resetting progress for multiple students', async () => {
+				render(
+					<StudentModal
+						action="reset-progress"
+						students={ students }
+					/>
+				);
 
 				fireEvent.click( await courseOptionAt( 0 ) );
 				fireEvent.click(
 					await buttonByLabel( 'Reset or Remove Progress' )
 				);
-			} );
 
-			it( 'Should display an error message', async () => {
 				expect(
-					await findByText( 'Sorry, something went wrong' )
-				).toBeInTheDocument();
+					await findAllByText(
+						'Unable to reset or remove progress for these students. Please try again.'
+					)
+				).toHaveLength( 2 ); // ARIA + notice
 			} );
 		} );
 	} );
