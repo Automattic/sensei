@@ -470,6 +470,8 @@ class Sensei_Course_Theme {
 		Sensei()->frontend->sensei_lesson_video( get_the_ID() );
 		$video = ob_get_clean();
 
+		// Checks if video is already added in the content to avoid it duplicated when `the_content`
+		// filter is called more than once.
 		if ( ! empty( $video ) && false === strpos( $content, $video ) ) {
 			return $video . $content;
 		}
