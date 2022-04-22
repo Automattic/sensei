@@ -151,9 +151,9 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 							key={ course.id }
 							course={ course }
 							onChange={ selectCourse }
-              checked={ selectedCourses.current.find(
-              	( { id } ) => id === course.id
-              ) }
+							checked={ selectedCourses.current.find(
+								( { id } ) => id === course.id
+							) }
 						/>
 					) ) }
 			</ul>
