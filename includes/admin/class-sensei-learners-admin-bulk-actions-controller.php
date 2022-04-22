@@ -19,8 +19,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	const ENROL_RESTORE_ENROLMENT                 = 'enrol_restore_enrolment';
 	const REMOVE_ENROLMENT                        = 'remove_enrolment';
 	const REMOVE_PROGRESS                         = 'remove_progress';
-	const COMPLETE_COURSE                         = 'complete_course';
-	const RECALCULATE_COURSE_COMPLETION           = 'recalculate_course_completion';
 
 	/**
 	 * The available bulk actions.
@@ -123,11 +121,9 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
-			self::ENROL_RESTORE_ENROLMENT       => __( 'Enroll / Restore Enrollment', 'sensei-lms' ),
-			self::REMOVE_ENROLMENT              => __( 'Remove Enrollment', 'sensei-lms' ),
-			self::REMOVE_PROGRESS               => __( 'Reset or Remove Progress', 'sensei-lms' ),
-			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
-			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
+			self::ENROL_RESTORE_ENROLMENT => __( 'Enroll / Restore Enrollment', 'sensei-lms' ),
+			self::REMOVE_ENROLMENT        => __( 'Remove Enrollment', 'sensei-lms' ),
+			self::REMOVE_PROGRESS         => __( 'Reset or Remove Progress', 'sensei-lms' ),
 		];
 
 		if ( is_admin() ) {
@@ -284,16 +280,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 			case self::REMOVE_PROGRESS:
 				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) ) {
 					Sensei_Utils::reset_course_for_user( $course_id, $user_id );
-				}
-				break;
-			case self::COMPLETE_COURSE:
-				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) && ! Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-					Sensei_Utils::user_complete_course( $course_id, $user_id );
-				}
-				break;
-			case self::RECALCULATE_COURSE_COMPLETION:
-				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) && ! Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-					Sensei_Utils::user_complete_course( $course_id, $user_id, false );
 				}
 				break;
 		}

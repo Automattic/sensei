@@ -85,7 +85,7 @@ const POSSIBLE_ACTIONS = {
 };
 
 /**
- * Questions modal content.
+ * Student Actions Modal.
  *
  * @param {Object}   props
  * @param {Object}   props.action   Action that is being performed.
