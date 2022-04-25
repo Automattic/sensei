@@ -419,6 +419,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$courses_total = $query->post_count;
 		$visible_count = 3;
 		$html_items    = [];
+		$more_button   = '';
 
 		foreach ( $courses as $course ) {
 			$html_items[] = '<a href="' . esc_url( $this->controller->get_learner_management_course_url( $course->ID ) ) .
@@ -426,8 +427,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					esc_html( $course->post_title ) .
 				'</a>';
 		}
-
-		$more_button = '';
 
 		if ( $courses_total > $visible_count ) {
 			$more_button = '<a href="#" class="sensei-students__enrolled-courses-more-link">' .
