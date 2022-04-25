@@ -9,7 +9,7 @@ const { devices } = require( '@playwright/test' );
  * @type {Object} PlaywrightTestConfig
  */
 const config = {
-	testDir: './tests/e2e-playwright/',
+	testDir: './tests/e2e-playwright/specs/',
 	testMatch: '**/*.spec.js',
 	/* Maximum time one test can run for. */
 	timeout: 30 * 1000, // 30 seconds.

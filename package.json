@@ -125,7 +125,8 @@
     "e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
     "test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
     "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
-    "test:e2e-playwright": "wp-env start && wp-env clean all && PLAYWRIGHT_EXPERIMENTAL_FEATURES=1 playwright test",
+    "test:e2e-playwright": "PLAYWRIGHT_EXPERIMENTAL_FEATURES=1 playwright test",
+    "test:e2e-playwright:debug": "PLAYWRIGHT_EXPERIMENTAL_FEATURES=1 playwright test",
     "prepare": "husky install",
     "wp-env": "wp-env"
   },

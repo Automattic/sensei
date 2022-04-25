@@ -8,8 +8,10 @@ class LoginPage {
 		this.page = page;
 	}
 
-	async login( user = 'admin', password = 'password' ) {
-		await this.page.goto( '/wp-admin' );
+	async goTo() {
+		return this.page.goto( '/wp-admin' );
+	}
+	async logIn( user = 'admin', password = 'password' ) {
 		await this.page.locator( 'input[name="log"]' ).fill( user );
 		await this.page.locator( 'input[name="pwd"]' ).fill( password );
 		await this.page.locator( 'text=Log In' ).click();
