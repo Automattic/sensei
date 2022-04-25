@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
-import { render, useState } from '@wordpress/element';
+import { render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -21,6 +21,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } = {} ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
 	const [ studentName, setStudentName ] = useState( '' );
+	const [ buttonDisabled, setButtonDisabled ] = useState( isDisabled );
 	const closeModal = () => setIsModalOpen( false );
 	const setActionValue = ( selectedValue ) => {
 		switch ( selectedValue ) {
@@ -36,7 +37,21 @@ export const StudentBulkActionButton = ( { isDisabled = true } = {} ) => {
 			default:
 		}
 	};
-
+	const buttonEnableDisableEventHandler = ( args ) => {
+		setButtonDisabled( ! ( args.detail && args.detail.enable ) );
+	};
+	useEffect( () => {
+		document.addEventListener(
+			'enableDisableCourseSelectionToggle',
+			buttonEnableDisableEventHandler
+		);
+		return () => {
+			document.removeEventListener(
+				'enableDisableCourseSelectionToggle',
+				buttonEnableDisableEventHandler
+			);
+		};
+	}, [] );
 	const openModal = () => {
 		const hiddenSenseiBulkAction = document.getElementById(
 			'bulk-action-selector-top'
@@ -76,7 +91,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } = {} ) => {
 		<>
 			<Button
 				className="button button-primary sensei-student-bulk-actions__button"
-				disabled={ isDisabled }
+				disabled={ buttonDisabled }
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
 			>
