@@ -18,7 +18,12 @@ export const StudentBulkActionButton = () => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
 	const [ studentName, setStudentName ] = useState( '' );
-	const closeModal = () => setIsModalOpen( false );
+	const closeModal = ( needsReload ) => {
+		if ( needsReload ) {
+			window.location.reload();
+		}
+		setIsModalOpen( false );
+	};
 	const setActionValue = ( selectedValue ) => {
 		switch ( selectedValue ) {
 			case 'enrol_restore_enrolment':
