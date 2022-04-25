@@ -3,6 +3,7 @@
  */
 import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -51,7 +52,7 @@ const EmptyCourseList = () => (
  */
 const CourseItem = ( { course, checked, onChange } ) => {
 	const courseId = course?.id;
-	const title = course?.title?.rendered;
+	const title = decodeEntities( course?.title?.rendered );
 
 	const onSelectCourse = useCallback(
 		( isSelected ) => onChange( { isSelected, course } ),
