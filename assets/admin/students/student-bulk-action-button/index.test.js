@@ -29,13 +29,20 @@ describe( '<StudentBulkActionButton />', () => {
 			.query( { per_page: 100 } )
 			.reply( 200, courses );
 	} );
+	it( 'Select courses button is disabled by default on render', () => {
+		render( <StudentBulkActionButton /> );
+		const button = screen.getByRole( 'button', {
+			id: 'sensei-bulk-learner-actions-modal-toggle',
+		} );
+		expect( button ).toBeDisabled();
+	} );
 	it( 'Student modal is rendered with action to add students on button click when add option is selected', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment', selected: true },
 			{ value: 'remove_progress' },
 			{ value: 'remove_enrolment' },
 		] );
-		render( <StudentBulkActionButton /> );
+		render( <StudentBulkActionButton isDisabled={ false } /> );
 
 		// Click Select Courses button to open modal.
 		const button = screen.getByRole( 'button', {
@@ -57,7 +64,7 @@ describe( '<StudentBulkActionButton />', () => {
 			{ value: 'remove_progress', selected: true },
 			{ value: 'remove_enrolment' },
 		] );
-		render( <StudentBulkActionButton /> );
+		render( <StudentBulkActionButton isDisabled={ false } /> );
 
 		// Click Select Courses button to open modal.
 		const button = screen.getByRole( 'button', {
@@ -81,7 +88,7 @@ describe( '<StudentBulkActionButton />', () => {
 			{ value: 'remove_progress' },
 			{ value: 'remove_enrolment', selected: true },
 		] );
-		render( <StudentBulkActionButton /> );
+		render( <StudentBulkActionButton isDisabled={ false } /> );
 
 		// Click Select Courses button to open modal.
 		const button = screen.getByRole( 'button', {

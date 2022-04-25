@@ -12,8 +12,11 @@ import StudentModal from '../student-modal';
 
 /**
  *  Student bulk action button.
+ *
+ * @param {Object}  props
+ * @param {boolean} props.isDisabled Set button's initial state to be disabled or enabled, defaults to disabled.
  */
-export const StudentBulkActionButton = () => {
+export const StudentBulkActionButton = ( { isDisabled = true } = {} ) => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
@@ -73,6 +76,7 @@ export const StudentBulkActionButton = () => {
 		<>
 			<Button
 				className="button button-primary sensei-student-bulk-actions__button"
+				disabled={ isDisabled }
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
 			>
