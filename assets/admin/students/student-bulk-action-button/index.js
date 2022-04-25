@@ -22,7 +22,12 @@ export const StudentBulkActionButton = ( { isDisabled = true } = {} ) => {
 	const [ studentIds, setStudentIds ] = useState( [] );
 	const [ studentName, setStudentName ] = useState( '' );
 	const [ buttonDisabled, setButtonDisabled ] = useState( isDisabled );
-	const closeModal = () => setIsModalOpen( false );
+	const closeModal = ( needsReload ) => {
+		if ( needsReload ) {
+			window.location.reload();
+		}
+		setIsModalOpen( false );
+	};
 	const setActionValue = ( selectedValue ) => {
 		switch ( selectedValue ) {
 			case 'enrol_restore_enrolment':
