@@ -101,7 +101,7 @@ const config = {
 		command: 'npm run wp-env start',
 		port: 8889,
 		timeout: 120 * 1000, // 120 seconds.
-		reuseExistingServer: true,
+		reuseExistingServer: ! process.env.CI,
 	},
 };
 
