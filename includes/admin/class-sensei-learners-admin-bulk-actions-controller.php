@@ -130,8 +130,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->view               = 'sensei_learner_admin';
 
 		$this->known_bulk_actions = [
-			self::ENROL_RESTORE_ENROLMENT => __( 'Enroll / Restore Enrollment', 'sensei-lms' ),
-			self::REMOVE_ENROLMENT        => __( 'Remove Enrollment', 'sensei-lms' ),
+			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
+			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
 			self::REMOVE_PROGRESS         => __( 'Reset or Remove Progress', 'sensei-lms' ),
 		];
 
