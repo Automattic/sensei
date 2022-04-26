@@ -17,7 +17,7 @@
   },
   "engines": {
     "npm": "^8.5.0",
-    "node": "^16.0.0"
+    "node": "^16.14.0"
   },
   "dependencies": {
     "@wordpress/api-fetch": "3.22.0",
