@@ -8,8 +8,14 @@ import { render, waitFor } from '@testing-library/react';
  */
 import { CourseList } from './course-list';
 import httpClient from '../../lib/http-client';
+import useAbortController from './use-abort-controller';
 
 jest.mock( '../../lib/http-client' );
+jest.mock( './use-abort-controller' );
+
+useAbortController.mockImplementation( () => {
+	return jest.fn().mockReturnValue( { aborted: false } );
+} );
 
 describe( 'CourseList fetch', () => {
 	beforeEach( () => {
@@ -28,6 +34,7 @@ describe( 'CourseList fetch', () => {
 				expect( httpClient ).toHaveBeenCalledWith( {
 					path: '/wp/v2/courses?per_page=100&search=abc123',
 					method: 'GET',
+					signal: { aborted: false },
 				} ),
 			{ timeout: 450 }
 		);
@@ -41,6 +48,7 @@ describe( 'CourseList fetch', () => {
 				expect( httpClient ).toHaveBeenCalledWith( {
 					path: '/wp/v2/courses?per_page=100',
 					method: 'GET',
+					signal: { aborted: false },
 				} ),
 			{ timeout: 450 }
 		);
