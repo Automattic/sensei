@@ -53,6 +53,7 @@ const EmptyCourseList = () => (
 const CourseItem = ( { course, checked, onChange } ) => {
 	const courseId = course?.id;
 	const title = decodeEntities( course?.title?.rendered );
+	const [ isChecked ] = useState( checked );
 
 	const onSelectCourse = useCallback(
 		( isSelected ) => onChange( { isSelected, course } ),
@@ -67,7 +68,7 @@ const CourseItem = ( { course, checked, onChange } ) => {
 			<CheckboxControl
 				id={ `course-${ courseId }` }
 				title={ title }
-				checked={ checked }
+				checked={ isChecked }
 				onChange={ onSelectCourse }
 			/>
 			<label htmlFor={ `course-${ courseId }` } title={ title }>
