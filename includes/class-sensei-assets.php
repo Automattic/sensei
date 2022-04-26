@@ -280,7 +280,21 @@ class Sensei_Assets {
 	private function get_icon_href( string $name ) : string {
 		$sprite_file = $this->plugin_url . 'assets/dist/icons/sensei-sprite.svg?v=' . $this->version;
 
-		return "{$sprite_file}#sensei-sprite-{$name}";
+		/**
+		 * Filters the icon href for the svg.
+		 *
+		 * @since x.x.x
+		 * @hook sensei_icon_href
+		 *
+		 * @param {string} $icon_href   The icon href.
+		 * @param {string} $sprite_file The sprite file URL.
+		 * @param {string} $name        The icon name.
+		 *
+		 * @return {string} The icon href.
+		 */
+		$icon_href = apply_filters( 'sensei_icon_href', "{$sprite_file}#sensei-sprite-{$name}", $sprite_file, $name );
+
+		return $icon_href;
 	}
 
 	/**
