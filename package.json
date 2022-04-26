@@ -34,6 +34,7 @@
     "@wordpress/element": "2.16.0",
     "@wordpress/escape-html": "1.9.0",
     "@wordpress/hooks": "2.9.0",
+    "@wordpress/html-entities": "3.7.0",
     "@wordpress/i18n": "3.14.0",
     "@wordpress/icons": "2.10.0",
     "@wordpress/keycodes": "2.19.2",

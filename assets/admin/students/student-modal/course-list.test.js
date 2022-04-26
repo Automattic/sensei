@@ -79,7 +79,7 @@ describe( '<CourseList />', () => {
 		expect( onChange ).toHaveBeenLastCalledWith( [ courses.at( 1 ) ] );
 	} );
 
-	describe( 'when there is no course', () => {
+	describe( 'When there is no course', () => {
 		beforeEach( () => {
 			nock.cleanAll();
 			nock( NOCK_HOST_URL )
@@ -95,6 +95,27 @@ describe( '<CourseList />', () => {
 			expect(
 				await screen.findByText( 'No courses found.' )
 			).toBeTruthy();
+		} );
+	} );
+
+	describe( 'When there are HTML-Entities in course titles', () => {
+		beforeEach( () => {
+			nock.cleanAll();
+			nock( NOCK_HOST_URL )
+				.get( '/wp/v2/courses' )
+				.query( { per_page: 100, _locale: 'user' } )
+				.reply( 200, [
+					{
+						id: 1,
+						title: { rendered: 'Course&#8217;s' },
+					},
+				] );
+		} );
+
+		it( 'Should show the course title without HTML-Entities', async () => {
+			render( <CourseList /> );
+
+			expect( await screen.findByText( 'Course’s' ) ).toBeTruthy();
 		} );
 	} );
 } );
