@@ -108,32 +108,32 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 	);
 
 	// Fetch the courses.
-	const fetchCourses = useCallback(
-		debounce( ( query ) => {
-			setIsFetching( true );
+	const fetchCourses = debounce( ( query ) => {
+		setIsFetching( true );
 
-			httpClient( {
-				path:
-					'/wp/v2/courses?per_page=100' +
-					( query ? `&search=${ query }` : '' ),
-				method: 'GET',
+		httpClient( {
+			path:
+				'/wp/v2/courses?per_page=100' +
+				( query ? `&search=${ query }` : '' ),
+			method: 'GET',
+		} )
+			.then( ( result ) => {
+				setCourses( result );
 			} )
-				.then( ( result ) => {
-					setCourses( result );
-				} )
-				.catch( () => {
-					setIsFetching( false );
-				} )
-				.finally( () => {
-					setIsFetching( false );
-				} );
-		}, 400 ),
-		[]
-	); // eslint-disable-line react-hooks/exhaustive-deps
+			.catch( () => {
+				setIsFetching( false );
+			} )
+			.finally( () => {
+				setIsFetching( false );
+			} );
+	}, 400 );
 
 	useEffect( () => {
 		fetchCourses( searchQuery );
-	}, [ fetchCourses, searchQuery ] );
+		return () => {
+			fetchCourses.cancel();
+		};
+	}, [ searchQuery ] );
 
 	return (
 		<>
