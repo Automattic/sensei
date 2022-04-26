@@ -13,3 +13,5 @@ vendor/
 tests/e2e/screenshots
 /*.zip
 /coverage/
+test-results/
+playwright-report/
