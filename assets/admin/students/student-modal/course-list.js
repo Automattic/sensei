@@ -51,7 +51,7 @@ const EmptyCourseList = () => (
  * @param {boolean}       props.checked  Checkbox state
  * @param {onChangeEvent} props.onChange Event triggered when the a course is select/unselected
  */
-const CourseItem = ( { course, checked, onChange } ) => {
+const CourseItem = ( { course, checked = false, onChange } ) => {
 	const courseId = course?.id;
 	const title = decodeEntities( course?.title?.rendered );
 
@@ -153,9 +153,12 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 							key={ course.id }
 							course={ course }
 							onChange={ selectCourse }
-							checked={ selectedCourses.current.find(
-								( { id } ) => id === course.id
-							) }
+							checked={
+								selectedCourses.current.length > 0 &&
+								selectedCourses.current.find(
+									( { id } ) => id === course.id
+								)
+							}
 						/>
 					) ) }
 			</ul>
