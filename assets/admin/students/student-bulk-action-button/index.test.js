@@ -29,10 +29,10 @@ describe( '<StudentBulkActionButton />', () => {
 			.query( { per_page: 100 } )
 			.reply( 200, courses );
 	} );
-	it( 'Select courses button is disabled by default on render', () => {
+	it( 'Should be disabled by default on render', () => {
 		render( <StudentBulkActionButton /> );
 		const button = screen.getByRole( 'button', {
-			id: 'sensei-bulk-learner-actions-modal-toggle',
+			name: 'Select Courses',
 		} );
 		expect( button ).toBeDisabled();
 	} );
