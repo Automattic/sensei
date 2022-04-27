@@ -373,6 +373,16 @@
 }
 
 .sensei-learners-main {
+	.components-popover {
+		&:not( [data-y-axis='middle'] )[data-x-axis='left'] {
+			>.components-popover__content {
+				margin-right: -18px;
+			}
+		}
+	}
+	.column-actions {
+		width: 2.2em;
+	}
 	.tablenav {
 		&.top {
 			@media screen and (max-width: 782px) {
