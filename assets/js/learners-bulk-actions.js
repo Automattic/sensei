@@ -160,7 +160,7 @@ jQuery( document ).ready( function () {
 			var validator = bulkUserActions.validator(),
 				bulkActionValidationResult = validator.validateBulkAction(),
 				selectedUserIdsValidationResult = validator.validateSelectedUserIds();
-			document.dispatchEvent(
+			global.dispatchEvent(
 				new CustomEvent( 'enableDisableCourseSelectionToggle', {
 					detail: {
 						enable:

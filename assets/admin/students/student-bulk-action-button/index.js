@@ -46,12 +46,12 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 		setButtonDisabled( ! ( args.detail && args.detail.enable ) );
 	};
 	useEffect( () => {
-		document.addEventListener(
+		global.addEventListener(
 			'enableDisableCourseSelectionToggle',
 			buttonEnableDisableEventHandler
 		);
 		return () => {
-			document.removeEventListener(
+			global.removeEventListener(
 				'enableDisableCourseSelectionToggle',
 				buttonEnableDisableEventHandler
 			);
