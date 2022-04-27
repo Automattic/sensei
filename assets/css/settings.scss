@@ -372,6 +372,7 @@
 	border-width: 2px;
 }
 
+
 .sensei-learners-main {
 	.tablenav {
 		&.top {
@@ -646,11 +647,12 @@
 	}
 
 	&__button {
-		margin-left: 4px;
+		margin-left: 6px;
 	}
 	@media screen and (max-width: 782px) {
 		&__button {
 			margin-top: 6px;
+			margin-left: 4px;
 		}
 	}
 
