@@ -8,6 +8,13 @@ import { render, screen } from '@testing-library/react';
 import { StudentBulkActionButton } from './index';
 import nock from 'nock';
 
+/**
+ *  Create a custom screen selector that ignores text inside html tags like hello <strong> world</strong>
+ *
+ * @param {string} value Text value to be searched without tags. E.g. "Hello Word".
+ * @return {Function} custom selector can be used by screen.getByText to match text with inline html.
+ */
+
 const ignoreInlineTags = ( value ) => ( _, node ) => {
 	const hasText = ( n ) => n.textContent === value;
 	const nodeHasText = hasText( node );
