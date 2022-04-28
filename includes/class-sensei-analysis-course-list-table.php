@@ -200,6 +200,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
+
 		if ( $this->search ) {
 			$args['search'] = $this->search;
 		}
@@ -530,7 +531,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$activity_args = array(
+		$activity_args = [
 			'post_id' => $this->course_id,
 			'type'    => 'sensei_course_status',
 			'number'  => $args['number'],
@@ -538,7 +539,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'orderby' => $args['orderby'],
 			'order'   => $args['order'],
 			'status'  => 'any',
-		);
+		];
+		$activity_args = $this->add_filter_by_start_date( $activity_args );
 
 		// Searching users on statuses requires sub-selecting the statuses by user_ids
 		if ( $this->search ) {
@@ -643,6 +645,21 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
+		echo '<div class="sensei-analysis-course__table-header">';
+
+		$this->output_course_submenu();
+
+		if ( 'user' === $this->view ) {
+			$this->output_top_filters();
+		}
+
+		echo '</div>';
+	}
+
+	/**
+	 * Output submenu for course reports.
+	 */
+	private function output_course_submenu() {
 		if ( $this->user_id ) {
 			$learners_text = __( 'Other Students taking this Course', 'sensei-lms' );
 		} else {
@@ -676,7 +693,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		$menu = apply_filters( 'sensei_analysis_course_sub_menu', $menu );
 		if ( ! empty( $menu ) ) {
-			echo '<ul class="subsubsub">' . "\n";
+			echo '<ul class="sensei-analysis-course__submenu">' . "\n";
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
@@ -684,6 +701,43 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
 			echo '</ul>' . "\n";
 		}
+	}
+
+	/**
+	 * Output top filter form.
+	 */
+	private function output_top_filters() {
+		?>
+		<form class="sensei-analysis-course__top-filters">
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'start_date', 'end_date', 's' ] ); ?>
+
+				<label for="sensei-start-date-filter">
+					<?php esc_html_e( 'Date Started', 'sensei-lms' ); ?>:
+				</label>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-start-date-filter"
+					name="start_date"
+					type="text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
+					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
+				/>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-end-date-filter"
+					name="end_date"
+					type="text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
+					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
+				/>
+
+			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
+		</form>
+		<?php
 	}
 
 	/**
@@ -736,6 +790,108 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		return $text;
 	}
 
+	/**
+	 * Get the start date filter value.
+	 *
+	 * @return string The start date.
+	 */
+	private function get_start_date_filter_value(): string {
+		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
+
+		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
+		$start_date = $_GET['start_date'] ?? $default;
+
+		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
+	}
+
+	/**
+	 * Get the start date filter value including the time.
+	 *
+	 * @return string The start date including the time or empty string if none.
+	 */
+	protected function get_start_date_and_time(): string {
+		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
+
+		if ( ! $start_date ) {
+			return '';
+		}
+
+		$start_date->setTime( 0, 0, 0 );
+
+		return $start_date->format( 'Y-m-d H:i:s' );
+	}
+
+	/**
+	 * Get the end date filter value.
+	 *
+	 * @return string The end date or empty string if none.
+	 */
+	private function get_end_date_filter_value(): string {
+		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
+		$end_date = $_GET['end_date'] ?? '';
+
+		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
+	}
+
+	/**
+	 * Get the end date filter value including the time.
+	 *
+	 * @return string The end date including the time or empty string if none.
+	 */
+	protected function get_end_date_and_time(): string {
+		$end_date = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
+
+		if ( ! $end_date ) {
+			return '';
+		}
+
+		$end_date->setTime( 23, 59, 59 );
+
+		return $end_date->format( 'Y-m-d H:i:s' );
+	}
+
+	/**
+	 * Filter users by start date
+	 *
+	 * @param array $args The query arguments.
+	 * @return array The query arguments with added filter by start date.
+	 */
+	private function add_filter_by_start_date( array $args ): array {
+
+		$date_from = $this->get_start_date_and_time();
+		$date_to   = $this->get_end_date_and_time();
+
+		if ( ! $date_from && ! $date_to ) {
+			return $args;
+		}
+
+		$meta_query_conditions = [];
+
+		if ( $date_from ) {
+			$meta_query_conditions[] = [
+				'key'     => 'start',
+				'value'   => $date_from,
+				'compare' => '>=',
+				'type'    => 'DATE',
+			];
+		}
+
+		if ( $date_to ) {
+			$meta_query_conditions[] = [
+				'key'     => 'start',
+				'value'   => $date_to,
+				'compare' => '<=',
+				'type'    => 'DATE',
+			];
+		}
+
+		$args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'relation' => 'AND',
+			$meta_query_conditions,
+		];
+
+		return $args;
+	}
 }
 
 /**
