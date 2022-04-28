@@ -12,11 +12,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
+	use Sensei_Reports_Helper_Date_Range_Trait;
+
+	/**
+	 * User ID.
+	 *
+	 * @var int
+	 */
 	public $user_id;
+
+	/**
+	 * Course ID.
+	 *
+	 * @var int
+	 */
 	public $course_id;
+
+	/**
+	 * Total number of lessons.
+	 *
+	 * @var int
+	 */
 	public $total_lessons;
+
+	/**
+	 * User IDs.
+	 *
+	 * @var array
+	 */
 	public $user_ids;
+
+	/**
+	 * Page slug.
+	 *
+	 * @var string
+	 */
 	public $page_slug;
+
+	/**
+	 * Selected view.
+	 *
+	 * @var string
+	 */
 	public $view = 'lesson';
 
 	/**
@@ -29,11 +66,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Constructor
 	 *
+	 * @param int $course_id Course ID.
+	 * @param int $user_id User ID.
+	 *
 	 * @since  1.2.0
 	 */
 	public function __construct( $course_id = 0, $user_id = 0 ) {
-		$this->course_id = intval( $course_id );
-		$this->user_id   = intval( $user_id );
+		$this->course_id = (int) $course_id;
+		$this->user_id   = (int) $user_id;
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
@@ -788,66 +828,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		}
 
 		return $text;
-	}
-
-	/**
-	 * Get the start date filter value.
-	 *
-	 * @return string The start date.
-	 */
-	private function get_start_date_filter_value(): string {
-		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
-
-		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$start_date = $_GET['start_date'] ?? $default;
-
-		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
-	}
-
-	/**
-	 * Get the start date filter value including the time.
-	 *
-	 * @return string The start date including the time or empty string if none.
-	 */
-	protected function get_start_date_and_time(): string {
-		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
-
-		if ( ! $start_date ) {
-			return '';
-		}
-
-		$start_date->setTime( 0, 0, 0 );
-
-		return $start_date->format( 'Y-m-d H:i:s' );
-	}
-
-	/**
-	 * Get the end date filter value.
-	 *
-	 * @return string The end date or empty string if none.
-	 */
-	private function get_end_date_filter_value(): string {
-		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$end_date = $_GET['end_date'] ?? '';
-
-		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
-	}
-
-	/**
-	 * Get the end date filter value including the time.
-	 *
-	 * @return string The end date including the time or empty string if none.
-	 */
-	protected function get_end_date_and_time(): string {
-		$end_date = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
-
-		if ( ! $end_date ) {
-			return '';
-		}
-
-		$end_date->setTime( 23, 59, 59 );
-
-		return $end_date->format( 'Y-m-d H:i:s' );
 	}
 
 	/**
