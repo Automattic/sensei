@@ -8,6 +8,23 @@ import { render, screen } from '@testing-library/react';
 import { StudentBulkActionButton } from './index';
 import nock from 'nock';
 
+/**
+ *  Create a custom screen selector that ignores text inside html tags like hello <strong> world</strong>
+ *
+ * @param {string} value Text value to be searched without tags. E.g. "Hello Word".
+ * @return {Function} custom selector can be used by screen.getByText to match text with inline html.
+ */
+
+const ignoreInlineTags = ( value ) => ( _, node ) => {
+	const hasText = ( n ) => n.textContent === value;
+	const nodeHasText = hasText( node );
+	const childrenDontHaveText = Array.from( node.children ).every(
+		( child ) => ! hasText( child )
+	);
+
+	return nodeHasText && childrenDontHaveText;
+};
+
 let spy;
 const courses = [
 	{
@@ -22,6 +39,11 @@ beforeAll( () => {
 	spy = jest.spyOn( document, 'getElementById' );
 } );
 describe( '<StudentBulkActionButton />', () => {
+	const selectActionButton = () =>
+		screen.getByRole( 'button', {
+			name: 'Select Action',
+		} );
+
 	beforeAll( () => {
 		nock( NOCK_HOST_URL )
 			.persist()
@@ -29,14 +51,16 @@ describe( '<StudentBulkActionButton />', () => {
 			.query( { per_page: 100 } )
 			.reply( 200, courses );
 	} );
+
 	it( 'Should be disabled by default on render', () => {
 		render( <StudentBulkActionButton /> );
 		const button = screen.getByRole( 'button', {
-			name: 'Select Courses',
+			name: 'Select Action',
 		} );
 		expect( button ).toBeDisabled();
 	} );
-	it( 'Student modal is rendered with action to add students on button click when add option is selected', () => {
+
+	it( 'Should render the `Add to course` modal', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment', selected: true },
 			{ value: 'remove_progress' },
@@ -44,21 +68,17 @@ describe( '<StudentBulkActionButton />', () => {
 		] );
 		render( <StudentBulkActionButton isDisabled={ false } /> );
 
-		// Click Select Courses button to open modal.
-		const button = screen.getByRole( 'button', {
-			id: 'sensei-bulk-learner-actions-modal-toggle',
-		} );
-		button.click();
+		selectActionButton().click();
 		expect(
-			screen.getByText( 'Select the course(s) you would like to add', {
-				exact: false,
-			} ).textContent
-		).toEqual(
-			'Select the course(s) you would like to add 3 students to:'
-		);
+			screen.getByText(
+				ignoreInlineTags(
+					'Select the course(s) you would like to add 3 students to:'
+				)
+			)
+		).toBeInTheDocument();
 	} );
 
-	it( 'Student modal is rendered with action to remove progress on button click when remove progress is selected', () => {
+	it( 'Should render the `Reset or Remove Progress` modal', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment' },
 			{ value: 'remove_progress', selected: true },
@@ -66,23 +86,17 @@ describe( '<StudentBulkActionButton />', () => {
 		] );
 		render( <StudentBulkActionButton isDisabled={ false } /> );
 
-		// Click Select Courses button to open modal.
-		const button = screen.getByRole( 'button', {
-			id: 'sensei-bulk-learner-actions-modal-toggle',
-		} );
-		button.click();
+		selectActionButton().click();
+
 		expect(
 			screen.getByText(
-				'Select the course(s) you would like to reset or remove progress from for ',
-				{
-					exact: false,
-				}
-			).textContent
-		).toEqual(
-			'Select the course(s) you would like to reset or remove progress from for 3 students:'
-		);
+				ignoreInlineTags(
+					'Select the course(s) you would like to reset or remove progress from for 3 students:'
+				)
+			)
+		).toBeInTheDocument();
 	} );
-	it( 'Student modal is rendered with action to remove students on button click when remove from course is selected', () => {
+	it( 'Should render the `Remove from Course` modal', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment' },
 			{ value: 'remove_progress' },
@@ -90,21 +104,14 @@ describe( '<StudentBulkActionButton />', () => {
 		] );
 		render( <StudentBulkActionButton isDisabled={ false } /> );
 
-		// Click Select Courses button to open modal.
-		const button = screen.getByRole( 'button', {
-			id: 'sensei-bulk-learner-actions-modal-toggle',
-		} );
-		button.click();
+		selectActionButton().click();
 		expect(
 			screen.getByText(
-				'Select the course(s) you would like to remove ',
-				{
-					exact: false,
-				}
-			).textContent
-		).toEqual(
-			'Select the course(s) you would like to remove 3 students from:'
-		);
+				ignoreInlineTags(
+					'Select the course(s) you would like to remove 3 students from:'
+				)
+			)
+		).toBeInTheDocument();
 	} );
 } );
 

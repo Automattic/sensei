@@ -100,7 +100,7 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
 			>
-				{ __( 'Select Courses', 'sensei-lms' ) }
+				{ __( 'Select Action', 'sensei-lms' ) }
 			</Button>
 			<input type="hidden" id="bulk-action-user-ids" />
 			{ isModalOpen && (
