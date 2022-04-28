@@ -48,7 +48,7 @@ describe( 'CourseList fetch', () => {
 				expect( httpClient ).toHaveBeenCalledWith( {
 					path: '/wp/v2/courses?per_page=100',
 					method: 'GET',
-					signal: { aborted: false },
+					signal: new AbortController().signal,
 				} ),
 			{ timeout: 450 }
 		);
