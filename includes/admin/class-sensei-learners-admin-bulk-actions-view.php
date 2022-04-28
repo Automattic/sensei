@@ -372,7 +372,9 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 							)
 						);
 						?>
-						<div class="sensei-student-bulk-actions__button"></div>
+						<div class="sensei-student-bulk-actions__button">
+							<button type="button" class="button components-button button-primary sensei-student-bulk-actions__button" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
+						</div>
 					</div>
 					<form action="" method="get">
 						<div class="alignleft actions">

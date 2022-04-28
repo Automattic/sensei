@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
-import { render, useState } from '@wordpress/element';
+import { render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -12,12 +12,16 @@ import StudentModal from '../student-modal';
 
 /**
  *  Student bulk action button.
+ *
+ * @param {Object}  props
+ * @param {boolean} props.isDisabled Set button's initial state to be disabled or enabled, defaults to disabled.
  */
-export const StudentBulkActionButton = () => {
+export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 	const [ action, setAction ] = useState( 'add' );
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ studentIds, setStudentIds ] = useState( [] );
 	const [ studentName, setStudentName ] = useState( '' );
+	const [ buttonDisabled, setButtonDisabled ] = useState( isDisabled );
 	const closeModal = ( needsReload ) => {
 		if ( needsReload ) {
 			window.location.reload();
@@ -38,7 +42,21 @@ export const StudentBulkActionButton = () => {
 			default:
 		}
 	};
-
+	const buttonEnableDisableEventHandler = ( args ) => {
+		setButtonDisabled( ! ( args.detail && args.detail.enable ) );
+	};
+	useEffect( () => {
+		global.addEventListener(
+			'enableDisableCourseSelectionToggle',
+			buttonEnableDisableEventHandler
+		);
+		return () => {
+			global.removeEventListener(
+				'enableDisableCourseSelectionToggle',
+				buttonEnableDisableEventHandler
+			);
+		};
+	}, [] );
 	const openModal = () => {
 		const hiddenSenseiBulkAction = document.getElementById(
 			'bulk-action-selector-top'
@@ -78,6 +96,7 @@ export const StudentBulkActionButton = () => {
 		<>
 			<Button
 				className="button button-primary sensei-student-bulk-actions__button"
+				disabled={ buttonDisabled }
 				id="sensei-bulk-learner-actions-modal-toggle"
 				onClick={ openModal }
 			>
@@ -97,7 +116,7 @@ export const StudentBulkActionButton = () => {
 };
 
 Array.from(
-	document.getElementsByClassName( 'sensei-student-bulk-actions__button' )
+	document.querySelectorAll( 'div.sensei-student-bulk-actions__button' )
 ).forEach( ( button ) => {
 	render( <StudentBulkActionButton />, button );
 } );
