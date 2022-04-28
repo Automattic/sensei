@@ -126,7 +126,9 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 				signal: getSignal(),
 			} )
 				.then( ( result ) => setCourses( result ) )
-				.catch( () => {} )
+				.catch( ( error ) => {
+					console.log( error ); // eslint-disable-line no-console
+				} )
 				.finally( () => {
 					if ( ! getSignal().aborted ) {
 						setIsFetching( false );
