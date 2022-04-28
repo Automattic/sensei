@@ -52,13 +52,21 @@ describe( '<StudentBulkActionButton />', () => {
 			.reply( 200, courses );
 	} );
 
+	it( 'Should be disabled by default on render', () => {
+		render( <StudentBulkActionButton /> );
+		const button = screen.getByRole( 'button', {
+			name: 'Select Action',
+		} );
+		expect( button ).toBeDisabled();
+	} );
+
 	it( 'Should render the `Add to course` modal', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment', selected: true },
 			{ value: 'remove_progress' },
 			{ value: 'remove_enrolment' },
 		] );
-		render( <StudentBulkActionButton /> );
+		render( <StudentBulkActionButton isDisabled={ false } /> );
 
 		selectActionButton().click();
 		expect(
@@ -76,7 +84,7 @@ describe( '<StudentBulkActionButton />', () => {
 			{ value: 'remove_progress', selected: true },
 			{ value: 'remove_enrolment' },
 		] );
-		render( <StudentBulkActionButton /> );
+		render( <StudentBulkActionButton isDisabled={ false } /> );
 
 		selectActionButton().click();
 
@@ -94,7 +102,7 @@ describe( '<StudentBulkActionButton />', () => {
 			{ value: 'remove_progress' },
 			{ value: 'remove_enrolment', selected: true },
 		] );
-		render( <StudentBulkActionButton /> );
+		render( <StudentBulkActionButton isDisabled={ false } /> );
 
 		selectActionButton().click();
 		expect(

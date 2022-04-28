@@ -158,14 +158,15 @@ jQuery( document ).ready( function () {
 			var validator = bulkUserActions.validator(),
 				bulkActionValidationResult = validator.validateBulkAction(),
 				selectedUserIdsValidationResult = validator.validateSelectedUserIds();
-			if (
-				bulkActionValidationResult.isValid &&
-				selectedUserIdsValidationResult.isValid
-			) {
-				$modalToggle.removeAttr( 'disabled' );
-			} else {
-				$modalToggle.attr( 'disabled', true );
-			}
+			global.dispatchEvent(
+				new CustomEvent( 'enableDisableCourseSelectionToggle', {
+					detail: {
+						enable:
+							bulkActionValidationResult.isValid &&
+							selectedUserIdsValidationResult.isValid,
+					},
+				} )
+			);
 			$hiddenSelectedUserIdsField.val(
 				JSON.stringify( bulkUserActions.getUserIds() )
 			);
