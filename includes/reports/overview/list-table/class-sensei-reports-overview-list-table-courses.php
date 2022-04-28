@@ -323,7 +323,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Get total average progress value for courses.
 	 *
-	 * @since  4.4.1
+	 * @since  4.5.0
 	 *
 	 * @return float total average progress value for all the courses.
 	 */
@@ -376,7 +376,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Get all courses ids no pagination.
 	 *
-	 * @since  4.4.1
+	 * @since  4.5.0
 	 *
 	 * @return array course ids array.
 	 */
@@ -397,7 +397,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Get lessons grouped by courses.
 	 *
-	 * @since  4.4.1
+	 * @since  4.5.0
 	 *
 	 * @param array $courses_ids The list of courses ids.
 	 * @return array lessons count in courses.
@@ -423,7 +423,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	/**
 	 * Get students count by courses.
 	 *
-	 * @since  4.4.1
+	 * @since  4.5.0
 	 *
 	 * @param array $courses_ids The array of courses ids.
 	 * @return array students in courses.
