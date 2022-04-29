@@ -314,6 +314,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'course_filter'          => $this->get_course_filter_value(),
 				'start_date'             => $this->get_start_date_filter_value(),
 				'end_date'               => $this->get_end_date_filter_value(),
+				's'                      => $this->get_search_value(),
 			),
 			admin_url( 'edit.php' )
 		);
@@ -418,6 +419,15 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		return $end_date->format( 'Y-m-d H:i:s' );
 	}
 
+	/**
+	 * Get the search value.
+	 *
+	 * @return string search param value.
+	 */
+	private function get_search_value(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['s'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ) : '';
+	}
 	/**
 	 * Format the last activity date to a more readable form.
 	 *
