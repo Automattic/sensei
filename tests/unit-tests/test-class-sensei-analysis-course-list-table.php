@@ -67,6 +67,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 			$user2_id,
 			$user3_id,
 		];
+		sort( $expected );
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
@@ -106,6 +107,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 			$user3_id,
 			$user4_id,
 		];
+		sort( $expected );
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
@@ -114,6 +116,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		foreach ( $items as $item ) {
 			$ret[] = (int) $item->user_id;
 		}
+		sort( $ret );
 		return $ret;
 	}
 }
