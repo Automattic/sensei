@@ -372,6 +372,7 @@
 	border-width: 2px;
 }
 
+
 .sensei-learners-main {
 	.components-popover {
 		&:not( [data-y-axis='middle'] )[data-x-axis='left'] {
@@ -656,16 +657,18 @@
 	}
 
 	&__button {
-		margin-left: 4px;
+		margin-left: 6px;
 	}
 	@media screen and (max-width: 782px) {
 		&__button {
 			margin-top: 6px;
+			margin-left: 4px;
 		}
 	}
 
 	&__bulk_actions_container {
 		display: flex;
+		margin-right: 22px;
 	}
 
 	&__bulk_actions_container &__button {
