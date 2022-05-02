@@ -77,6 +77,14 @@ class Sensei_Course_Theme_Compat {
 	 * @return string The wrapper template path.
 	 */
 	public function get_wrapper_template( $template ) {
+		// Fix compatibility issue with Divi builder.
+		if (
+			class_exists( 'ET_GB_Block_Layout' )
+			&& method_exists( 'ET_GB_Block_Layout', 'is_layout_block_preview' )
+			&& ET_GB_Block_Layout::is_layout_block_preview()
+		) {
+			return $template;
+		}
 
 		if ( ! preg_match( '/template-canvas.php$/', $template ) ) {
 			return Sensei_Course_Theme::instance()->get_course_theme_root() . '/index.php';
@@ -127,7 +135,7 @@ class Sensei_Course_Theme_Compat {
 	/**
 	 * Get custom logo from the original theme's customize settings if it was not found already.
 	 *
-	 * @param string $custom_logo
+	 * @param string $custom_logo Custom logo.
 	 *
 	 * @return string
 	 */
