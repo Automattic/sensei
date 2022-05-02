@@ -48,22 +48,22 @@ class Sensei_Dependency_Checker {
 	}
 
 	/**
-	 * Adds error in WP Admin that minimum version of PHP is not met.
+	 * Adds error in WP Admin that the current PHP version doesn't met the current minimum supported version of PHP.
 	 *
 	 * @access private
 	 */
-	public static function add_php_error() {
+	public static function add_php_version_notice() {
 		// translators: %1$s is version of PHP that Sensei requires; %2$s is the version of PHP WordPress is running on.
 		$message = sprintf( __( '<strong>Sensei LMS</strong> requires a minimum PHP version of %1$s, but you are running %2$s.', 'sensei-lms' ), self::MINIMUM_PHP_VERSION, phpversion() );
 		self::show_php_notice( $message );
 	}
 
 	/**
-	 * Adds warning in WP Admin that the future minimum version of PHP is not met.
+	 * Adds warning in WP Admin that the current PHP version doesn't met the future supported minimum version of PHP.
 	 *
 	 * @access private
 	 */
-	public static function add_php_notice() {
+	public static function add_future_php_version_notice() {
 		// translators: %1$s is version of PHP that Sensei is going to require in the future; %2$s is the version of PHP WordPress is running on.
 		$message = sprintf( __( '<strong>Sensei LMS</strong> will require, in the next release, a minimum PHP version of %1$s, but you are running %2$s.', 'sensei-lms' ), self::FUTURE_MINIMUM_PHP_VERSION, phpversion() );
 		self::show_php_notice( $message );
