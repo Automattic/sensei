@@ -41,6 +41,7 @@ class Sensei_Dependency_Checker {
 	/**
 	 * Checks for our PHP version requirement.
 	 *
+	 * @param string $version The PHP requirement to check against.
 	 * @return bool
 	 */
 	private static function verify_php( $version ) {
@@ -72,7 +73,7 @@ class Sensei_Dependency_Checker {
 	/**
 	 * Verify if the user can see a PHP compatibility error and then shows the message if appropriate.
 	 *
-	 * @param string $message The message to show
+	 * @param string $message The message to show.
 	 */
 	private static function show_php_notice( $message ) {
 		$screen        = get_current_screen();
