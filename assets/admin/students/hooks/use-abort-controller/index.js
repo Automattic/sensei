@@ -23,5 +23,5 @@ export default function useAbortController() {
 		getAbortController,
 	] );
 
-	return getSignal;
+	return { getSignal };
 }

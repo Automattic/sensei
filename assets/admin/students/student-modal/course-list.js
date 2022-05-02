@@ -15,7 +15,7 @@ import { debounce } from 'lodash';
  * Internal dependencies
  */
 import httpClient from '../../lib/http-client';
-import useAbortController from './use-abort-controller';
+import useAbortController from '../hooks/use-abort-controller';
 
 /**
  * Callback for select or unselect courseItem
@@ -100,7 +100,7 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 	const [ isFetching, setIsFetching ] = useState( true );
 	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
-	const getSignal = useAbortController();
+	const { getSignal } = useAbortController();
 
 	const selectCourse = useCallback(
 		( { isSelected, course } ) => {
