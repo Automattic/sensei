@@ -50,7 +50,11 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		}
 		// Fetching the lesson ids beforehand because joining both postmeta and comment + commentmeta makes WP_Query very slow.
 		$course_lessons = $this->course->course_lessons( $filters['course_id'], 'any', 'ids' );
-		$lessons_args   = array(
+		if ( empty( $course_lessons ) ) {
+			return [];
+		}
+
+		$lessons_args = array(
 			'post_type'        => 'lesson',
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $filters['number'],
