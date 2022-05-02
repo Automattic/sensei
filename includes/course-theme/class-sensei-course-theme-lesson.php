@@ -250,7 +250,7 @@ class Sensei_Course_Theme_Lesson {
 			$actions = [
 				[
 					'label' => __( 'Take course', 'sensei-lms' ),
-					'url'   => $this->get_logged_out_take_course_url( $course_id ),
+					'url'   => Sensei()->lesson->get_take_course_url( $course_id ),
 					'style' => 'primary',
 				],
 				[
@@ -303,32 +303,6 @@ class Sensei_Course_Theme_Lesson {
 			$notice_title,
 			$actions,
 			$notice_icon
-		);
-	}
-
-	/**
-	 * Get take course URL when student is not enrolled.
-	 *
-	 * @param int $course_id Course ID.
-	 *
-	 * @return string Take course URL
-	 */
-	private function get_logged_out_take_course_url( $course_id ) {
-		/**
-		 * Filter the take course URL when student is not enrolled.
-		 *
-		 * @since x.x.x
-		 * @hook sensei_learning_mode_logged_out_take_course_url
-		 *
-		 * @param {string} $take_course_url Take course URL.
-		 * @param {int}    $course_id       Course ID.
-		 *
-		 * @return {string} Returns filtered take course URL.
-		 */
-		return apply_filters(
-			'sensei_learning_mode_logged_out_take_course_url',
-			get_permalink( $course_id ),
-			$course_id
 		);
 	}
 }
