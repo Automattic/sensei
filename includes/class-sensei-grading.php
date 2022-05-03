@@ -1157,6 +1157,40 @@ class Sensei_Grading {
 	}
 
 	/**
+	 * Get average grade of all lessons graded in all the courses filtered by students.
+	 *
+	 * @since 4.5.0
+	 * @access public
+	 *
+	 * @param array $user_ids user ids.
+	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
+	 */
+	public function get_graded_lessons_average_grade_filter_users( $user_ids ) {
+		if ( empty( $user_ids ) ) {
+			return 0;
+		}
+		global $wpdb;
+
+		// Fetching all the grades of all the lessons that are graded.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$sum_result          = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum,COUNT( * ) as grade_count FROM {$wpdb->comments}
+             INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
+			 WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
+			 AND {$wpdb->comments}.user_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
+				implode( ',', $user_ids )
+			)
+		);
+		$average_grade_value = 0;
+		if ( ! $sum_result->grade_count || '0' === $sum_result->grade_count ) {
+			return $average_grade_value;
+		}
+		$average_grade_value = ceil( $sum_result->grade_sum / $sum_result->grade_count );
+		return $average_grade_value;
+	}
+
+	/**
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0
@@ -1238,6 +1272,7 @@ class Sensei_Grading {
 	 * Get the average grade of all courses.
 	 *
 	 * @since 4.2.0
+	 * @access public
 	 *
 	 * @return double Average grade of all courses.
 	 */

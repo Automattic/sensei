@@ -16,11 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_Overview_Data_Provider_Interface {
 	/**
-	 * Total number of courses found with given criteria.
+	 * Total number of students found with given criteria.
 	 *
 	 * @var int Total number of items
 	 */
 	private $last_total_items = 0;
+
+	/**
+	 * Array of students ids, retrieved from last query.
+	 *
+	 * @var array Total number of items
+	 */
+	private $last_items_ids = [];
 
 	/**
 	 * Contains start date and time for filtering.
@@ -74,9 +81,14 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		}
 
 		$wp_user_search = new WP_User_Query( $query_args );
+		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
+
+		$query_args_no_pagination = $this->remove_pagination_arguments( $query_args );
+		$wp_all_users             = new WP_User_Query( $query_args_no_pagination );
+		$this->last_items_ids     = array_column( $wp_all_users->get_results(), 'ID' );
+
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
-		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 
 		$learners               = $wp_user_search->get_results();
 		$this->last_total_items = $wp_user_search->get_total();
@@ -164,5 +176,27 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 */
 	public function get_last_total_items(): int {
 		return $this->last_total_items;
+	}
+
+	/**
+	 * Get ids of items from the last query.
+	 *
+	 * @return array
+	 */
+	public function get_last_items_ids(): array {
+		return $this->last_items_ids;
+	}
+
+	/**
+	 * Remove pagination arguments from query.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param array $query_args query arguments.
+	 * @return array Query arguments without pagination.*
+	 */
+	private function remove_pagination_arguments( $query_args ): array {
+		unset( $query_args['number'] );
+		return $query_args;
 	}
 }

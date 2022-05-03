@@ -42,11 +42,13 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_course_status( $user_id, $completed_course_id, 'complete' );
 
 		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_graded_lessons_average_grade' )->willReturn( 50 );
+		$grading->method( 'get_graded_lessons_average_grade_filter_users' )->willReturn( 50 );
 
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_last_items_ids' )->willReturn( [ $user_id ] );
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$grading,
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$data_provider
 		);
 
 		$list_table->total_items = 1;
