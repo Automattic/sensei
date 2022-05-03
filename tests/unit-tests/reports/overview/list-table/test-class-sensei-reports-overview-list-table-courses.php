@@ -48,10 +48,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
 		/* Arrange. */
 		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+		$course->method( 'get_days_to_completion_total_filter_courses' )->willReturn( 3 );
 
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
@@ -84,15 +84,17 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
 
 		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+		$course->method( 'get_days_to_completion_total_filter_courses' )->willReturn( 3 );
 
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_last_items_ids' )->willReturn( [ $course_id ] );
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$data_provider
 		);
 		$list_table->total_items = 4;
 

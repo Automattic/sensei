@@ -27,4 +27,11 @@ interface Sensei_Reports_Overview_Data_Provider_Interface {
 	 */
 	public function get_last_total_items(): int;
 
+	/**
+	 * Get ids of items from the last query.
+	 *
+	 * @return array
+	 */
+	public function get_last_items_ids(): array;
+
 }

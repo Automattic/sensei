@@ -23,6 +23,13 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	private $last_total_items = 0;
 
 	/**
+	 * Array of students ids, retrieved from last query.
+	 *
+	 * @var array Total number of items
+	 */
+	private $last_items_ids = [];
+
+	/**
 	 * Contains start date and time for filtering.
 	 *
 	 * @var string|null
@@ -69,9 +76,14 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		}
 
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
+
+		$course_args_no_pagination = $this->remove_pagination_arguments( $course_args );
+		$wp_all_courses            = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args_no_pagination ) );
+		$this->last_items_ids      = array_column( $wp_all_courses->posts, 'ID' );
+
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
-		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
 		$this->last_total_items = $courses_query->found_posts;
 
@@ -183,5 +195,27 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 */
 	public function get_last_total_items(): int {
 		return $this->last_total_items;
+	}
+
+	/**
+	 * Get ids of items from the last query.
+	 *
+	 * @return array
+	 */
+	public function get_last_items_ids(): array {
+		return $this->last_items_ids;
+	}
+
+	/**
+	 * Remove pagination arguments from query.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param array $query_args query arguments.
+	 * @return array Query arguments without pagination.*
+	 */
+	private function remove_pagination_arguments( $query_args ): array {
+		$query_args['posts_per_page'] = -1;
+		return $query_args;
 	}
 }
