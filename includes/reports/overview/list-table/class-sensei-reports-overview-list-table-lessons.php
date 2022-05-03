@@ -258,8 +258,17 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
-		$lessons      = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
-		$lesson_ids   = '0';
+
+		// Add search filter to query arguments.
+		$query_args = [];
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for searching.
+		if ( ! empty( $_GET['s'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$query_args['s'] = esc_html( $_GET['s'] );
+		}
+		$lessons    = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids', $query_args );
+		$lesson_ids = '0';
+
 		$lesson_count = count( $lessons );
 		if ( 0 < $lesson_count ) {
 			$lesson_ids = implode( ',', $lessons );

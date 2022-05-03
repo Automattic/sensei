@@ -22,6 +22,13 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	private $last_total_items = 0;
 
 	/**
+	 * Array of lessons ids, retrieved from last query.
+	 *
+	 * @var array Total number of items
+	 */
+	private $last_items_ids = [];
+
+	/**
 	 * Sensei course related services.
 	 *
 	 * @var Sensei_Course
@@ -50,7 +57,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		}
 		// Fetching the lesson ids beforehand because joining both postmeta and comment + commentmeta makes WP_Query very slow.
 		$course_lessons = $this->course->course_lessons( $filters['course_id'], 'any', 'ids' );
-		$lessons_args   = array(
+
+		$lessons_args = array(
 			'post_type'        => 'lesson',
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $filters['number'],
@@ -64,8 +72,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		if ( isset( $filters['search'] ) ) {
 			$lessons_args['s'] = $filters['search'];
 		}
-
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
+
 		// Using WP_Query as get_posts() doesn't support 'found_posts'.
 		$lessons_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_lessons', $lessons_args ) );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_complete_to_lessons_query' ] );
@@ -104,5 +112,27 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;
+	}
+
+	/**
+	 * Get ids of items from the last query.
+	 *
+	 * @return array
+	 */
+	public function get_last_items_ids(): array {
+		return $this->last_items_ids;
+	}
+
+	/**
+	 * Remove pagination arguments from query.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param array $query_args query arguments.
+	 * @return array Query arguments without pagination.*
+	 */
+	private function remove_pagination_arguments( $query_args ): array {
+		$query_args['posts_per_page'] = -1;
+		return $query_args;
 	}
 }
