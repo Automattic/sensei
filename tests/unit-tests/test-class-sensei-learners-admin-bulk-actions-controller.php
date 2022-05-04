@@ -17,14 +17,14 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller_Test extends WP_UnitTestCase
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+		self::resetEnrolmentProviders();
 
 		$this->controller = $this->getMockBuilder( Sensei_Learners_Admin_Bulk_Actions_Controller::class )
-			->setConstructorArgs( [ new Sensei_Learner_Management( '' ) ] )
+			->setConstructorArgs( [ new Sensei_Learner_Management( '' ), Sensei_Learner::instance() ] )
 			->setMethods( [ 'check_nonce', 'is_current_page', 'redirect_to_learner_admin_index' ] )
 			->getMock();
 
 		$this->controller->method( 'is_current_page' )->willReturn( true );
-		self::resetEnrolmentProviders();
 	}
 
 	/**

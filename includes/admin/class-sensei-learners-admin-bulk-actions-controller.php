@@ -19,8 +19,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	const ENROL_RESTORE_ENROLMENT                 = 'enrol_restore_enrolment';
 	const REMOVE_ENROLMENT                        = 'remove_enrolment';
 	const REMOVE_PROGRESS                         = 'remove_progress';
-	const COMPLETE_COURSE                         = 'complete_course';
-	const RECALCULATE_COURSE_COMPLETION           = 'recalculate_course_completion';
 
 	/**
 	 * The available bulk actions.
@@ -56,6 +54,13 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @var Sensei_Learner_Management
 	 */
 	private $learner_management;
+
+	/**
+	 * The Sensei_Learner object with utility functions.
+	 *
+	 * @var Sensei_Learner
+	 */
+	private $learner;
 
 	/**
 	 * The name of the page
@@ -114,20 +119,20 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * Sensei_Learners_Admin_Main constructor.
 	 *
 	 * @param Sensei_Learner_Management $management The learner managemnt object.
+	 * @param Sensei_Learner            $learner    The learner object with utility functions.
 	 */
-	public function __construct( $management ) {
+	public function __construct( $management, $learner ) {
+		$this->learner_management = $management;
+		$this->learner            = $learner;
 		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
 		$this->menu_post_type     = 'course';
 		$this->view               = 'sensei_learner_admin';
-		$this->learner_management = $management;
 
 		$this->known_bulk_actions = [
-			self::ENROL_RESTORE_ENROLMENT       => __( 'Enroll / Restore Enrollment', 'sensei-lms' ),
-			self::REMOVE_ENROLMENT              => __( 'Remove Enrollment', 'sensei-lms' ),
-			self::REMOVE_PROGRESS               => __( 'Reset or Remove Progress', 'sensei-lms' ),
-			self::COMPLETE_COURSE               => __( 'Recalculate Course(s) Completion (notify on complete)', 'sensei-lms' ),
-			self::RECALCULATE_COURSE_COMPLETION => __( 'Recalculate Course(s) Completion (do not notify on complete)', 'sensei-lms' ),
+			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
+			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
+			self::REMOVE_PROGRESS         => __( 'Reset or Remove Progress', 'sensei-lms' ),
 		];
 
 		if ( is_admin() ) {
@@ -286,16 +291,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 					Sensei_Utils::reset_course_for_user( $course_id, $user_id );
 				}
 				break;
-			case self::COMPLETE_COURSE:
-				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) && ! Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-					Sensei_Utils::user_complete_course( $course_id, $user_id );
-				}
-				break;
-			case self::RECALCULATE_COURSE_COMPLETION:
-				if ( Sensei_Utils::has_started_course( $course_id, $user_id ) && ! Sensei_Utils::user_completed_course( $course_id, $user_id ) ) {
-					Sensei_Utils::user_complete_course( $course_id, $user_id, false );
-				}
-				break;
 		}
 	}
 
@@ -327,10 +322,15 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 
 	/**
 	 * Display the learner bulk action page.
+	 *
+	 * @deprecated x.x.x
 	 */
 	public function learner_admin_page() {
+
+		_deprecated_function( __METHOD__, 'x.x.x', 'Sensei_Learner_Management::output_main_page' );
+
 		// Load Learners data.
-		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management );
+		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management, $this->learner );
 		$sensei_learners_main_view->prepare_items();
 
 		// Wrappers.
@@ -362,7 +362,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 */
 	public function is_current_page() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
-		return isset( $_GET['page'], $_GET['view'] ) && ( $_GET['page'] === $this->page_slug ) && ( $_GET['view'] === $this->view );
+		return empty( $_GET['course_id'] ) && isset( $_GET['page'] ) && $_GET['page'] === $this->page_slug;
 	}
 
 	/**

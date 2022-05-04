@@ -3420,12 +3420,12 @@ msgid "Bulk Student Actions"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-admin-bulk-actions-controller.php:126
-msgid "Enroll / Restore Enrollment"
+msgid "Add to Course"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-admin-bulk-actions-controller.php:127
 #: includes/admin/class-sensei-learners-main.php:501
-msgid "Remove Enrollment"
+msgid "Remove from Course"
 msgstr ""
 
 #: includes/admin/class-sensei-learners-admin-bulk-actions-controller.php:128
