@@ -147,27 +147,17 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		}
 
 		$user_email = $item->user_email;
+		$user_name  = Sensei_Learner::get_full_name( $item->ID );
 
 		// Output the users data.
-		if ( $this->csv_output ) {
-			$user_name = Sensei_Learner::get_full_name( $item->ID );
-		} else {
-			$url                 = add_query_arg(
-				array(
-					'page'      => $this->page_slug,
-					'user_id'   => $item->ID,
-					'post_type' => $this->post_type,
-				),
-				admin_url( 'edit.php' )
-			);
-			$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
+		if ( ! $this->csv_output ) {
 			$user_average_grade .= '%';
 		}
 
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
-				'title'             => $user_name,
+				'title'             => $this->csv_output ? $user_name : $this->format_user_name( $item->ID, $user_name ),
 				'email'             => $user_email,
 				'date_registered'   => $this->format_date_registered( $item->user_registered ),
 				'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
@@ -221,5 +211,26 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$date     = new DateTime( $date, $timezone );
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Format user name.
+	 *
+	 * @param int $user_id user's id.
+	 * @param int $user_name user's name.
+	 *
+	 * @return string Formatted user name to the HTML table.
+	 */
+	private function format_user_name( $user_id, $user_name ) {
+		$url = add_query_arg(
+			array(
+				'page'      => $this->page_slug,
+				'user_id'   => $user_id,
+				'post_type' => $this->post_type,
+			),
+			admin_url( 'edit.php' )
+		);
+
+		return '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
 	}
 }
