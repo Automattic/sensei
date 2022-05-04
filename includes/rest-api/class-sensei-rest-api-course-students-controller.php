@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Course students actions controller class.
  *
- * @since x.x.x
+ * @since 4.4.0
  */
 class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 

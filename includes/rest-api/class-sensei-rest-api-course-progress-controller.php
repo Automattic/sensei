@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Course Progress REST API Controller
  *
- * @since x.x.x
+ * @since 4.4.0
  */
 class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 
