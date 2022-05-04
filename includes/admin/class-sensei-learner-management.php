@@ -115,7 +115,7 @@ class Sensei_Learner_Management {
 	/**
 	 * Add custom navigation to the admin pages.
 	 *
-	 * @since 4.0.0
+	 * @since 4.4.0
 	 * @access private
 	 */
 	public function add_custom_navigation() {
