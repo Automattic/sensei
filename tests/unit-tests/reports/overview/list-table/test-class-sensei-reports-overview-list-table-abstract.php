@@ -88,4 +88,32 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 		];
 		self::assertSame( $expected, $actual );
 	}
+
+	public function testTableFooter_WhenCalled_GeneratesProperHtmlFoFooter() {
+		/* Arrange. */
+		$nonce = wp_create_nonce( 'sensei_csv_download' );
+		$_GET  = [
+			's'             => 'course 5',
+			'order'         => 'asc  ',
+			'orderby'       => 'id  ',
+			'start_date'    => '2022-03-01',
+			'end_date'      => '2022-03-01',
+			'course_filter' => 1,
+			'_wpnonce'      => $nonce,
+
+		];
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$list_table    = $this->getMockBuilder( Sensei_Reports_Overview_List_Table_Abstract::class )
+			->setConstructorArgs( [ 'a', $data_provider ] )
+			->getMockForAbstractClass();
+
+		/* Act. */
+		ob_start();
+		$list_table->data_table_footer();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = '<a class="button button-primary" href="http://example.org/wp-admin/edit.php?page=sensei_reports&#038;view=a&#038;sensei_report_download=user-overview&#038;post_type=course&#038;orderby=id&#038;order=asc&#038;course_filter=1&#038;start_date=2022-03-01&#038;end_date=2022-03-01&#038;s=course+5&#038;_sdl_nonce=' . $nonce . '">Export all rows (CSV)</a>';
+		self::assertSame( $expected, $actual, 'Html for footer was not generated properly' );
+	}
 }
