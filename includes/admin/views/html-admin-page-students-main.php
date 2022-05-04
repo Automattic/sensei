@@ -5,7 +5,7 @@
  * This view displays the students data and bulk actions dropdown.
  *
  * @package sensei-lms
- * @since x.x.x
+ * @since 4.4.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

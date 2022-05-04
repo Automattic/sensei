@@ -323,11 +323,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	/**
 	 * Display the learner bulk action page.
 	 *
-	 * @deprecated x.x.x
+	 * @deprecated 4.4.0
 	 */
 	public function learner_admin_page() {
 
-		_deprecated_function( __METHOD__, 'x.x.x', 'Sensei_Learner_Management::output_main_page' );
+		_deprecated_function( __METHOD__, '4.4.0', 'Sensei_Learner_Management::output_main_page' );
 
 		// Load Learners data.
 		$sensei_learners_main_view = new Sensei_Learners_Admin_Bulk_Actions_View( $this, $this->learner_management, $this->learner );
