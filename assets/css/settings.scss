@@ -109,13 +109,12 @@
 		flex: 1;
 		.tablenav {
 			.tablenav-pages {
-				line-height: 25px;
 				margin-right: 20px;
 			}
 		}
 	}
 
-	.sensei-analysis {
+	.sensei-analysis, .sensei-analysis-course {
 		&__top-filters {
 			float: left;
 			display: flex;
@@ -132,6 +131,43 @@
 			margin: 50px 0;
 			text-align: center;
 			font-size: 14px;
+		}
+	}
+
+	.sensei-analysis-course {
+		&__table-header {
+			float: left;
+		}
+
+		&__submenu {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				font-size: 13px;
+				color: #646970;
+
+			 a {
+				line-height: 2;
+				padding: .2em;
+				text-decoration: none;
+			}
+
+			a.current {
+				color: #000000;
+				font-weight: 600;
+				border: none;
+			}
+
+			li {
+				display: inline-block;
+				margin: 0;
+				padding: 0;
+				white-space: nowrap;
+			}
+		}
+
+		&__top-filters {
+			margin: 5px 0 7px;
 		}
 	}
 }
