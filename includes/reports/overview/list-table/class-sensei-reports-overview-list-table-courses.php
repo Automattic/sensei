@@ -333,6 +333,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return false;
 		}
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $courses_ids );
+		$lessons_completions       = $this->get_lessons_completions();
 		$student_count_per_courses = $this->get_students_count_in_courses( $courses_ids );
 		$total_average_progress    = 0;
 
@@ -354,13 +355,17 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			}
 
 			// Get all completed lessons for all the students.
-			$lesson_args     = array(
-				'post__in' => $lessons,
-				'type'     => 'sensei_lesson_status',
-				'status'   => array( 'graded', 'ungraded', 'passed', 'failed', 'complete' ),
-				'count'    => true,
+			$completed_count = array_reduce(
+				$lessons,
+				function ( $carry, $lesson ) use ( $lessons_completions ) {
+					if ( ! isset( $lessons_completions[ $lesson ] ) ) {
+						return $carry;
+					}
+					$carry += $lessons_completions[ $lesson ]->completion_count;
+					return $carry;
+				},
+				0
 			);
-			$completed_count = (int) Sensei_Utils::sensei_check_for_activity( $lesson_args );
 
 			// Calculate average progress for a course.
 			$course_average_progress = $completed_count / ( $students_count * count( $lessons ) ) * 100;
@@ -371,6 +376,34 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		// Divide total value to get average total value for average progress for courses.
 		$average_total_average_progress = ceil( $total_average_progress / count( $courses_ids ) );
 		return $average_total_average_progress;
+	}
+
+	/**
+	 * Get all lessons completions.
+	 *
+	 * @since  4.5.0
+	 *
+	 * @return array lessons completions.
+	 */
+	private function get_lessons_completions(): array {
+
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
+		return $wpdb->get_results(
+			"SELECT wcom.comment_post_id lesson_id, COUNT(*) completion_count
+						FROM {$wpdb->comments} wcom
+						WHERE wcom.comment_approved IN ('graded', 'ungraded', 'passed', 'failed','complete')
+						AND comment_type IN ('sensei_lesson_status')
+						AND wcom.comment_post_ID IN
+						(
+						SELECT wpm.post_id lesson_id from {$wpdb->posts} wpc
+						JOIN {$wpdb->postmeta} wpm on wpm.meta_value = wpc.id
+						WHERE wpm.meta_key = '_lesson_course'
+						AND wpc.post_status in ('publish','private')
+						)
+						GROUP BY wcom.comment_post_id",
+			'OBJECT_K'
+		);
 	}
 
 	/**
