@@ -108,8 +108,8 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 			->getMockForAbstractClass();
 
 		$data_provider
-			->method('get_last_total_items')
-			->willReturn(1);
+			->method( 'get_last_total_items' )
+			->willReturn( 1 );
 
 		/* Act. */
 		ob_start();
@@ -122,17 +122,16 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual, 'The export button should be displayed' );
 	}
 
-	public function testTableFooter_WhenCalledWithNoData_NotDisplayTheExportButton()
-	{
+	public function testTableFooter_WhenCalledWithNoData_NotDisplayTheExportButton() {
 		/* Arrange. */
-		$data_provider = $this->createMock(Sensei_Reports_Overview_Data_Provider_Interface::class);
-		$list_table    = $this->getMockBuilder(Sensei_Reports_Overview_List_Table_Abstract::class)
-			->setConstructorArgs(['a', $data_provider])
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$list_table    = $this->getMockBuilder( Sensei_Reports_Overview_List_Table_Abstract::class )
+			->setConstructorArgs( [ 'a', $data_provider ] )
 			->getMockForAbstractClass();
 
 		$data_provider
-			->method('get_last_total_items')
-			->willReturn(0);
+			->method( 'get_last_total_items' )
+			->willReturn( 0 );
 
 		/* Act. */
 		ob_start();
@@ -141,6 +140,6 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = '';
-		self::assertSame($expected, $actual, 'The export button should not be displayed');
+		self::assertSame( $expected, $actual, 'The export button should not be displayed' );
 	}
 }
