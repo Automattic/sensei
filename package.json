@@ -47,7 +47,7 @@
     "lodash": "4.17.21",
     "react-animate-height": "2.0.23",
     "terser-webpack-plugin": "5.3.1",
-    "uuid": "3.3.2",
+    "uuid": "3.4.0",
     "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
