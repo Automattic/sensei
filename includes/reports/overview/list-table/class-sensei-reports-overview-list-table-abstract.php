@@ -288,6 +288,9 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * Output for table footer
 	 */
 	public function data_table_footer() {
+		if ( $this->total_items < 1 ) {
+			return;
+		}
 		switch ( $this->type ) {
 			case 'courses':
 				$report = 'courses-overview';
