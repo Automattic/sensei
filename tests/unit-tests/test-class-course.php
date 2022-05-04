@@ -590,7 +590,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// 2022-01-30 00:00:00 - 2022-01-01 00:00:01 + 1 = 30 days.
 		// As these completions are for the single course:
 		// ceil(7 + 10 + 30/ 3)  = 16 days.
-		self::assertSame( 16, $actual );
+		self::assertSame( 16.0, $actual );
 	}
 
 	public function testGetAverageDaysToCompletionTotalWhenMoreThanOneCourseExistReturnsMatchingValue() {
@@ -630,13 +630,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		// Average for the first course: (1 + 1) / 2 = 1.
 		// Average for the second course: 4 / 1 = 4.
-		// Total: 1 + 4 = 5.
-		self::assertSame( 5, $actual );
+		// Total: (1 + 4) / 2 = 2.5.
+		self::assertSame( 2.5, $actual );
 	}
 
 	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
 		$actual = Sensei()->course->get_days_to_completion_total();
 
-		self::assertSame( 0, $actual );
+		self::assertSame( 0.0, $actual );
 	}
 }

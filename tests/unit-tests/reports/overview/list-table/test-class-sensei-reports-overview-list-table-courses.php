@@ -51,7 +51,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+		$course->method( 'get_days_to_completion_total' )->willReturn( 2.2 );
 
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
@@ -87,7 +87,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_days_to_completion_total' )->willReturn( 3 );
+		$course->method( 'get_days_to_completion_total' )->willReturn( 3.0 );
 
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,

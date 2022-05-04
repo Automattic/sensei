@@ -3889,13 +3889,13 @@ class Sensei_Course {
 	 * @since 4.2.0
 	 * @access private
 	 *
-	 * @return int Total days to completion, rounded to the highest integer.
+	 * @return float Total days to completion, rounded to the highest integer.
 	 */
 	public function get_days_to_completion_total() {
 		global $wpdb;
 
 		$query = "
-			SELECT SUM( aggregated.days_to_completion )
+			SELECT AVG( aggregated.days_to_completion )
 			FROM (
 				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
 				FROM {$wpdb->comments}
@@ -3908,9 +3908,7 @@ class Sensei_Course {
 		";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$days_to_completion = $wpdb->get_var( $query );
-
-		return (int) $days_to_completion;
+		return (float) $wpdb->get_var( $query );
 	}
 }
 
