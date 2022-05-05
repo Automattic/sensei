@@ -550,7 +550,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testGetAverageDaysToCompletionTotalWhenOneCourseExistsReturnsMatchingValue() {
+	public function testGetAverageDaysToCompletionWhenOneCourseExistsReturnsMatchingValue() {
 		$user1_id  = $this->factory->user->create();
 		$user2_id  = $this->factory->user->create();
 		$user3_id  = $this->factory->user->create();
@@ -583,17 +583,17 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 		update_comment_meta( $comment3_id, 'start', '2022-01-01 00:00:01' );
 
-		$actual = Sensei()->course->get_days_to_completion_total();
+		$actual = Sensei()->course->get_average_days_to_completion();
 
 		// 2022-01-07 00:00:00 - 2022-01-01 00:00:01 + 1 = 7 days.
 		// 2022-01-10 00:00:00 - 2022-01-01 00:00:01 + 1 = 10 days.
 		// 2022-01-30 00:00:00 - 2022-01-01 00:00:01 + 1 = 30 days.
 		// As these completions are for the single course:
 		// ceil(7 + 10 + 30/ 3)  = 16 days.
-		self::assertSame( 16, $actual );
+		self::assertSame( 16.0, $actual );
 	}
 
-	public function testGetAverageDaysToCompletionTotalWhenMoreThanOneCourseExistReturnsMatchingValue() {
+	public function testGetAverageDaysToCompletionWhenMoreThanOneCourseExistReturnsMatchingValue() {
 		$user1_id   = $this->factory->user->create();
 		$user2_id   = $this->factory->user->create();
 		$course1_id = $this->factory->course->create();
@@ -626,17 +626,17 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		);
 		update_comment_meta( $comment3_id, 'start', '2022-03-09 00:22:34' );
 
-		$actual = Sensei()->course->get_days_to_completion_total();
+		$actual = Sensei()->course->get_average_days_to_completion();
 
 		// Average for the first course: (1 + 1) / 2 = 1.
 		// Average for the second course: 4 / 1 = 4.
-		// Total: 1 + 4 = 5.
-		self::assertSame( 5, $actual );
+		// Total: (1 + 4) / 2 = 2.5.
+		self::assertSame( 2.5, $actual );
 	}
 
-	public function testGetAverageDaysToCompletionTotalWithoutCompletionsReturnsZero() {
-		$actual = Sensei()->course->get_days_to_completion_total();
+	public function testGetAverageDaysToCompletionWithoutCompletionsReturnsZero() {
+		$actual = Sensei()->course->get_average_days_to_completion();
 
-		self::assertSame( 0, $actual );
+		self::assertSame( 0.0, $actual );
 	}
 }
