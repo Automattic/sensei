@@ -213,7 +213,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	}
 
 	/**
-	 * Format user name wrapping or not with a link
+	 * Format user name wrapping or not with a link.
 	 *
 	 * @param int  $user_id user's id.
 	 * @param bool $use_raw_name Indicate if it should return the wrap the name with the student link.
