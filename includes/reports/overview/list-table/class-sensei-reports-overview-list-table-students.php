@@ -147,7 +147,6 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		}
 
 		$user_email = $item->user_email;
-		$user_name  = Sensei_Learner::get_full_name( $item->ID );
 
 		// Output the users data.
 		if ( ! $this->csv_output ) {
@@ -157,7 +156,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
-				'title'             => $this->csv_output ? $user_name : $this->format_user_name( $item->ID, $user_name ),
+				'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
 				'email'             => $user_email,
 				'date_registered'   => $this->format_date_registered( $item->user_registered ),
 				'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
@@ -217,11 +216,18 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * Format user name.
 	 *
 	 * @param int $user_id user's id.
-	 * @param int $user_name user's name.
+	 * @param int $use_link Indicate if it should wrap the user_name with a link.
 	 *
 	 * @return string Formatted user name to the HTML table.
 	 */
-	private function format_user_name( $user_id, $user_name ) {
+	private function format_user_name( $user_id, $use_link ) {
+
+		$user_name = Sensei_Learner::get_full_name( $user_id );
+
+		if ( ! $use_link ) {
+			return $user_name;
+		}
+
 		$url = add_query_arg(
 			array(
 				'page'      => $this->page_slug,
