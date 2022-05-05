@@ -3889,9 +3889,9 @@ class Sensei_Course {
 	 * @since 4.2.0
 	 * @access private
 	 *
-	 * @return float Total days to completion, rounded to the highest integer.
+	 * @return float Average days to completion, rounded to the highest integer.
 	 */
-	public function get_days_to_completion_total() {
+	public function get_average_days_to_completion() {
 		global $wpdb;
 
 		$query = "
