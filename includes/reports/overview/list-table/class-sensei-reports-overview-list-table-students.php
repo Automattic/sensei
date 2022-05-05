@@ -215,8 +215,8 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	/**
 	 * Format user name.
 	 *
-	 * @param int $user_id user's id.
-	 * @param int $use_link Indicate if it should wrap the user_name with a link.
+	 * @param int  $user_id user's id.
+	 * @param bool $use_link Indicate if it should wrap the user_name with a link.
 	 *
 	 * @return string Formatted user name to the HTML table.
 	 */
