@@ -213,18 +213,18 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	}
 
 	/**
-	 * Format user name.
+	 * Format user name wrapping or not with a link
 	 *
 	 * @param int  $user_id user's id.
-	 * @param bool $use_link Indicate if it should wrap the user_name with a link.
+	 * @param bool $use_raw_name Indicate if it should return the wrap the name with the student link.
 	 *
-	 * @return string Formatted user name to the HTML table.
+	 * @return string Return the student full name (first_name+last_name) optionally wrapped by a link
 	 */
-	private function format_user_name( $user_id, $use_link ) {
+	private function format_user_name( $user_id, $use_raw_name ) {
 
 		$user_name = Sensei_Learner::get_full_name( $user_id );
 
-		if ( ! $use_link ) {
+		if ( $use_raw_name ) {
 			return $user_name;
 		}
 
