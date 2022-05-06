@@ -122,12 +122,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	protected function get_row_data( $item ) {
 		// Last Activity.
-		$last_activity_date = __( 'N/A', 'sensei-lms' );
-		$lessons            = $this->course->course_lessons( $item->ID, 'any', 'ids' );
-
-		if ( 0 < count( $lessons ) ) {
-			$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
-		}
+		$lessons = $this->course->course_lessons( $item->ID, 'any', 'ids' );
 
 		// Get Course Completions.
 		$course_args        = array(
@@ -185,7 +180,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'sensei_analysis_overview_column_data',
 			array(
 				'title'              => $course_title,
-				'last_activity'      => $last_activity_date,
+				'last_activity'      => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 				'completions'        => $course_completions,
 				'average_progress'   => $average_course_progress,
 				'average_percent'    => $average_grade,
@@ -202,50 +197,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		}
 
 		return $escaped_column_data;
-	}
-
-	/**
-	 * Get the date on which the last lesson was marked complete.
-	 *
-	 * @param array $args Array of arguments to pass to the comments query.
-	 *
-	 * @return string The last activity date, or N/A if none.
-	 *
-	 * @throws Exception If date-time conversion fails.
-	 */
-	private function get_last_activity_date( array $args ): string {
-		$default_args  = array(
-			'number' => 1,
-			'type'   => 'sensei_lesson_status',
-			'status' => [ 'complete', 'passed', 'graded' ],
-		);
-		$args          = wp_parse_args( $args, $default_args );
-		$last_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
-
-		if ( ! $last_activity ) {
-			return __( 'N/A', 'sensei-lms' );
-		}
-
-		// Return the full date when doing a CSV export.
-		if ( $this->csv_output ) {
-			return $last_activity->comment_date_gmt;
-		}
-
-		$timezone           = new DateTimeZone( 'GMT' );
-		$now                = new DateTime( 'now', $timezone );
-		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
-		$diff_in_days       = $now->diff( $last_activity_date )->days;
-
-		// Show a human-readable date if activity is within 6 days.
-		if ( $diff_in_days < 7 ) {
-			return sprintf(
-			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
-				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( strtotime( $last_activity->comment_date_gmt ) )
-			);
-		}
-
-		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
 	}
 
 	/**
