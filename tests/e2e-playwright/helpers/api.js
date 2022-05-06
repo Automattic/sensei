@@ -1,29 +1,26 @@
 const createStudent = async ( context, name ) => {
 	const nonce = await getNonce( context );
 
-	const response = await context.post(
-		`http://localhost:8889/index.php?rest_route=/wp/v2/users`,
-		{
-			failOnStatusCode: true,
-			headers: {
-				'X-WP-Nonce': nonce,
-			},
-			data: {
-				username: name,
-				password: 'secret',
-				email: `${ name }@example.com`,
-				meta: { context: 'view' },
-				slug: `som-slug#${ name }`,
-			},
-		}
-	);
+	const response = await context.post( `/index.php?rest_route=/wp/v2/users`, {
+		failOnStatusCode: true,
+		headers: {
+			'X-WP-Nonce': nonce,
+		},
+		data: {
+			username: name,
+			password: 'secret',
+			email: `${ name }@example.com`,
+			meta: { context: 'view' },
+			slug: `som-slug#${ name }`,
+		},
+	} );
 	return response.json();
 };
 
 const createCourse = async ( context, name ) => {
 	const nonce = await getNonce( context );
 	const response = await context.post(
-		`http://localhost:8889/index.php?rest_route=/wp/v2/courses`,
+		`/index.php?rest_route=/wp/v2/courses`,
 		{
 			failOnStatusCode: true,
 			headers: {
@@ -43,7 +40,7 @@ const createCourse = async ( context, name ) => {
 
 const getNonce = async ( context ) => {
 	const response = await context.get(
-		'http://localhost:8889/wp-admin/admin-ajax.php?action=rest-nonce',
+		'/wp-admin/admin-ajax.php?action=rest-nonce',
 		{
 			failOnStatusCode: true,
 		}
