@@ -16,7 +16,8 @@
     "url": "https://github.com/Automattic/sensei/issues"
   },
   "engines": {
-    "npm": ">=8"
+    "npm": "^8.5.0",
+    "node": "^16.14.0"
   },
   "dependencies": {
     "@wordpress/api-fetch": "3.22.0",
@@ -57,6 +58,7 @@
     "@babel/preset-env": "7.16.4",
     "@babel/runtime": "7.13.10",
     "@es-joy/jsdoccomment": "0.8.0",
+    "@playwright/test": "1.21.1",
     "@sheerun/mutationobserver-shim": "0.3.3",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",
@@ -68,7 +70,7 @@
     "@wordpress/babel-plugin-makepot": "4.1.0",
     "@wordpress/babel-preset-default": "5.1.0",
     "@wordpress/e2e-test-utils": "5.1.0",
-    "@wordpress/env": "4.2.0",
+    "@wordpress/env": "4.6.0",
     "@wordpress/eslint-plugin": "9.0.6",
     "@wordpress/jest-preset-default": "7.0.1",
     "@wordpress/postcss-themes": "3.0.1",
@@ -120,10 +122,12 @@
     "test-js": "wp-scripts test-unit-js",
     "test-php": "./vendor/bin/phpunit",
     "test-php-coverage": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
-    "e2e-docker:up": "npm explore @woocommerce/e2e-environment -- npm run docker:up",
-    "e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
-    "test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
-    "test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
+    "legacy:e2e-docker:up": "npm explore @woocommerce/e2e-environment -- npm run docker:up",
+    "legacy:e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
+    "legacy:test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
+    "legacy:test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
+    "test:e2e": "playwright test",
+    "test:e2e:debug": "playwright test --headed",
     "prepare": "husky install",
     "wp-env": "wp-env"
   },
