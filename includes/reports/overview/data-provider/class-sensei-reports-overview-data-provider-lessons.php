@@ -98,7 +98,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_complete_to_lessons_query( $clauses ) {
+	public function add_days_to_complete_to_lessons_query( array $clauses ): array {
 		global $wpdb;
 
 		$clauses['fields'] .= ", (SELECT SUM( ABS( DATEDIFF( STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ), {$wpdb->comments}.comment_date )) + 1 ) as days_to_complete";
@@ -122,7 +122,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_last_activity_to_lessons_query( $clauses ) {
+	public function add_last_activity_to_lessons_query( array $clauses ): array {
 		global $wpdb;
 
 		$clauses['fields'] .= ", (
