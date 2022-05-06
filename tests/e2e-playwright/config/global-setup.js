@@ -25,7 +25,7 @@ const createAdminBrowserContext = async () => {
 	const page = await browser.newPage();
 
 	await page.goto( 'http://localhost:8889/wp-admin' );
-	await page.locator( 'input[name="log"]' ).fill( 'admin2' );
+	await page.locator( 'input[name="log"]' ).fill( 'admin' );
 	await page.locator( 'input[name="pwd"]' ).fill( 'password' );
 	await page.locator( 'text=Log In' ).click();
 
