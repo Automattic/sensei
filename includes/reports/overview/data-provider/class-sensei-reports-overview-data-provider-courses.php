@@ -112,15 +112,15 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	public function add_last_activity_to_courses_query( array $clauses ): array {
 		global $wpdb;
 
-		$clauses['fields'] .= ', MAX(lacm.comment_date_gmt) AS last_activity_date';
-		$clauses['join']   .= "
-			LEFT JOIN {$wpdb->postmeta} lapm
-				ON  lapm.meta_key = '_lesson_course'
-				AND lapm.meta_value = {$wpdb->posts}.ID
-			LEFT JOIN {$wpdb->comments} lacm
-				ON lapm.post_id = lacm.comment_post_ID
+		$clauses['fields'] .= ", (
+			SELECT MAX(lacm.comment_date_gmt)
+			FROM {$wpdb->comments} lacm
+			JOIN {$wpdb->postmeta} lapm ON lapm.post_id = lacm.comment_post_ID
+			WHERE  lapm.meta_key = '_lesson_course'
 				AND lacm.comment_type = 'sensei_lesson_status'
 				AND lacm.comment_approved IN ('complete', 'passed', 'graded')
+				AND lapm.meta_value = {$wpdb->posts}.ID
+			) AS last_activity_date
 		";
 
 		return $clauses;
