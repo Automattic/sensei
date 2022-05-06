@@ -28,6 +28,7 @@ const createAdminBrowserContext = async () => {
 	await page.locator( 'input[name="log"]' ).fill( 'admin' );
 	await page.locator( 'input[name="pwd"]' ).fill( 'password' );
 	await page.locator( 'text=Log In' ).click();
+	await page.waitForNavigation();
 
 	// it saves the request context
 	await page.request.storageState( { path: getContextByRole( 'admin' ) } );
