@@ -112,16 +112,21 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	public function add_last_activity_to_courses_query( array $clauses ): array {
 		global $wpdb;
 
-		$clauses['fields'] .= ", (
-			SELECT MAX(lacm.comment_date_gmt)
-			FROM {$wpdb->comments} lacm
-			JOIN {$wpdb->postmeta} lapm ON lapm.post_id = lacm.comment_post_ID
-			WHERE  lapm.meta_key = '_lesson_course'
-				AND lacm.comment_type = 'sensei_lesson_status'
-				AND lacm.comment_approved IN ('complete', 'passed', 'graded')
-				AND lapm.meta_value = {$wpdb->posts}.ID
-			) AS last_activity_date
+		$lessons_query = "SELECT cm.comment_post_id lesson_id, MAX(cm.comment_date_gmt) as comment_date_gmt
+			FROM {$wpdb->comments} cm
+			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
+			AND cm.comment_type = 'sensei_lesson_status'
+			GROUP BY cm.comment_post_id";
+
+		$course_query = "SELECT DISTINCT pm.meta_value AS course_id, cm.comment_date_gmt
+		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
+		ON cm.lesson_id = pm.post_id
+		AND pm.meta_key = '_lesson_course'
+		GROUP BY pm.meta_value
 		";
+
+		$clauses['fields'] .= ', la.comment_date_gmt AS last_activity_date';
+		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
 
 		return $clauses;
 	}
