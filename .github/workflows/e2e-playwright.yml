@@ -36,7 +36,7 @@ jobs:
               run: npx playwright install --with-deps
 
             - name: Run Playwright tests
-              run: npm run test:e2e
+              run: CI=true npm run test:e2e
 
             - name: Archive report
               uses: actions/upload-artifact@v2
