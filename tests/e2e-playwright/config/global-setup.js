@@ -7,7 +7,9 @@ const { chromium } = require( '@playwright/test' );
  * Internal dependencies
  */
 const { getContextByRole } = require( '../helpers/context' );
+const { cleanAll: cleanDatabase } = require( '../helpers/database' );
 module.exports = async () => {
+	await cleanDatabase();
 	await createAdminBrowserContext();
 };
 
