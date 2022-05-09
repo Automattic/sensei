@@ -58,13 +58,7 @@ class Sensei_Db_Query_Learners {
 				`u`.`user_login`,
 				`u`.`user_email`,
 				'' AS 'course_statuses',
-				0 AS 'course_count', (
-					SELECT MAX(cm.comment_date_gmt)
-					FROM {$wpdb->comments} cm
-					WHERE cm.user_id = u.ID
-					AND cm.comment_approved IN ('complete', 'passed', 'graded')
-					AND cm.comment_type = 'sensei_lesson_status'
-				) AS last_activity_date
+				0 AS 'course_count'
 			FROM `{$wpdb->users}` AS `u`";
 
 		if ( ! empty( $this->filter_by_course_id ) ) {
@@ -106,6 +100,35 @@ class Sensei_Db_Query_Learners {
 	}
 
 	/**
+	 * Get last activity date by users.
+	 *
+	 * @param int[] $user_ids User IDs to get the last activity date.
+	 *
+	 * @return array Last activity date array.
+	 */
+	private function get_last_activity_date_by_users( $user_ids ) {
+		global $wpdb;
+
+		$user_ids_string = implode( ',', $user_ids );
+
+		$sql = "
+			SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
+			FROM {$wpdb->comments} cm
+			WHERE cm.user_id IN ({$user_ids_string})
+			AND cm.comment_approved IN ('complete', 'passed', 'graded')
+			AND cm.comment_type = 'sensei_lesson_status'
+			GROUP BY user_id";
+
+		$results = $wpdb->get_results( $sql, OBJECT_K );
+
+		if ( ! $results ) {
+			return [];
+		}
+
+		return $results;
+	}
+
+	/**
 	 * Get the results of the query.
 	 *
 	 * @return array
@@ -114,8 +137,24 @@ class Sensei_Db_Query_Learners {
 		global $wpdb;
 		$sql = $this->build_query();
 
-		$results           = $wpdb->get_results( $sql );
-		$this->total_items = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) );
+		$results                     = $wpdb->get_results( $sql );
+		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) );
+		$user_ids                    = wp_list_pluck( $results, 'user_id' );
+		$last_activity_date_by_users = $this->get_last_activity_date_by_users( $user_ids );
+
+		$results = array_map(
+			function( $row ) use ( $last_activity_date_by_users ) {
+				$user_id = $row->user_id;
+
+				$row->last_activity_date = ! empty( $last_activity_date_by_users[ $user_id ] )
+					? $last_activity_date_by_users[ $user_id ]->last_activity_date
+					: null;
+
+				return $row;
+			},
+			$results
+		);
+
 		return $results;
 	}
 }
