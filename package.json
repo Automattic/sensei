@@ -16,7 +16,8 @@
     "url": "https://github.com/Automattic/sensei/issues"
   },
   "engines": {
-    "npm": ">=8"
+    "npm": "^8.9.0",
+    "node": "^16.14.0"
   },
   "overrides": {
       "react": "$react",
