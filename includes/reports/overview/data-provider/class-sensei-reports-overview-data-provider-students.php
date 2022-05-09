@@ -66,6 +66,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 */
 		$query_args = apply_filters( 'sensei_analysis_overview_filter_users', $query_args );
 
+		add_action( 'pre_user_query', [ $this, 'only_course_enrolled_users' ] );
 		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
@@ -82,6 +83,26 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$this->last_total_items = $wp_user_search->get_total();
 
 		return $learners;
+	}
+
+	/**
+	 * Filter the users to ones enrolled in a course.
+	 *
+	 * @since  4.5.0
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function only_course_enrolled_users( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_from .= "
+			INNER JOIN {$wpdb->comments}
+				ON {$wpdb->comments}.user_id = {$wpdb->users}.ID
+				AND {$wpdb->comments}.comment_type = 'sensei_course_status'
+		";
+
+		$query->query_where .= " GROUP BY {$wpdb->users}.ID ";
 	}
 
 	/**
