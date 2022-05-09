@@ -72,9 +72,14 @@ if ( class_exists( 'Sensei_Main' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
-if ( ! Sensei_Dependency_Checker::check_php() ) {
-	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_notice' ) );
+if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
 	return;
+}
+
+
+if ( ! Sensei_Dependency_Checker::check_future_php_requirement() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_future_php_version_notice' ) );
 }
 
 if ( ! Sensei_Dependency_Checker::check_assets() ) {
