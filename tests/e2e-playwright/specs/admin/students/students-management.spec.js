@@ -17,6 +17,7 @@ test.describe.serial( 'Students Management', () => {
 	const STUDENT_NAME = `student${ Math.ceil( Math.random() * 100 ) }`;
 	let student, course;
 
+	// it is ensuring the browser is using a admin session.
 	test.use( { storageState: getContextByRole( 'admin' ) } );
 
 	test.beforeAll( async ( { request } ) => {

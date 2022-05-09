@@ -19,9 +19,6 @@ class StudentsModalFragment {
 class StudentsPage {
 	constructor( page ) {
 		this.page = page;
-		this.actions = {
-			addToCourse: page.locator( `text=Add to Course` ),
-		};
 		this.modal = new StudentsModalFragment(
 			page.locator( '[role=dialog]' )
 		);
