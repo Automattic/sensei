@@ -109,17 +109,23 @@ class Sensei_Db_Query_Learners {
 	private function get_last_activity_date_by_users( $user_ids ) {
 		global $wpdb;
 
-		$user_ids_string = implode( ',', $user_ids );
+		$in_placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%s' ) );
 
-		$sql = "
-			SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
-			FROM {$wpdb->comments} cm
-			WHERE cm.user_id IN ({$user_ids_string})
-			AND cm.comment_approved IN ('complete', 'passed', 'graded')
-			AND cm.comment_type = 'sensei_lesson_status'
-			GROUP BY user_id";
-
-		$results = $wpdb->get_results( $sql, OBJECT_K );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$results = $wpdb->get_results(
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dinamically.
+			$wpdb->prepare(
+				"
+				SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
+				FROM {$wpdb->comments} cm
+				WHERE cm.user_id IN ( {$in_placeholders} )
+				AND cm.comment_approved IN ('complete', 'passed', 'graded')
+				AND cm.comment_type = 'sensei_lesson_status'
+				GROUP BY user_id",
+				$user_ids
+			),
+			OBJECT_K
+		);
 
 		if ( ! $results ) {
 			return [];
@@ -137,6 +143,7 @@ class Sensei_Db_Query_Learners {
 		global $wpdb;
 		$sql = $this->build_query();
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Used inside the build_query method.
 		$results                     = $wpdb->get_results( $sql );
 		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) );
 		$user_ids                    = wp_list_pluck( $results, 'user_id' );
