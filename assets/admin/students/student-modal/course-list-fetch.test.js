@@ -28,6 +28,7 @@ describe( 'CourseList fetch', () => {
 				expect( httpClient ).toHaveBeenCalledWith( {
 					path: '/wp/v2/courses?per_page=100&search=abc123',
 					method: 'GET',
+					signal: new AbortController().signal,
 				} ),
 			{ timeout: 450 }
 		);
@@ -41,6 +42,7 @@ describe( 'CourseList fetch', () => {
 				expect( httpClient ).toHaveBeenCalledWith( {
 					path: '/wp/v2/courses?per_page=100',
 					method: 'GET',
+					signal: new AbortController().signal,
 				} ),
 			{ timeout: 450 }
 		);
