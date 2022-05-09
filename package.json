@@ -18,6 +18,11 @@
   "engines": {
     "npm": ">=8"
   },
+  "overrides": {
+      "react": "$react",
+      "react-dom": "$react-dom",
+      "@wordpress/element": "$@wordpress/element"
+  },
   "dependencies": {
     "@wordpress/api-fetch": "3.22.0",
     "@wordpress/base-styles": "1.9.0",
@@ -31,7 +36,7 @@
     "@wordpress/dom-ready": "2.11.0",
     "@wordpress/edit-post": "3.27.0",
     "@wordpress/editor": "9.26.0",
-    "@wordpress/element": "2.16.0",
+    "@wordpress/element": "4.6.0",
     "@wordpress/escape-html": "1.9.0",
     "@wordpress/hooks": "2.9.0",
     "@wordpress/html-entities": "3.7.0",
@@ -45,7 +50,9 @@
     "classnames": "2.3.1",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
+    "react": "17.0.2",
     "react-animate-height": "2.0.23",
+    "react-dom": "17.0.2",
     "terser-webpack-plugin": "5.3.1",
     "uuid": "3.3.2",
     "whatwg-fetch": "3.6.2"
@@ -90,8 +97,6 @@
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
     "puppeteer-core": "npm:puppeteer-core@8.0.0",
-    "react": "16.11.0",
-    "react-test-renderer": "17.0.2",
     "svg-spritemap-webpack-plugin": "4.4.0",
     "webpack": "5.64.4",
     "wp-hookdoc": "0.2.0"
