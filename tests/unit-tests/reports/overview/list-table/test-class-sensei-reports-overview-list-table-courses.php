@@ -90,7 +90,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course->method( 'get_days_to_completion_total_filter_courses' )->willReturn( 3 );
 
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_last_items_ids' )->willReturn( [ $course_id ] );
+		$data_provider->method( 'get_all_items_ids' )->willReturn( [ $course_id ] );
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,

@@ -47,7 +47,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			return $this->columns;
 		}
 
-		$user_ids = $this->data_provider->get_last_items_ids();
+		$user_ids = $this->data_provider->get_all_items_ids();
 		// Get total value for Courses Completed column in users table.
 		$course_args_completed   = array(
 			'user_id' => $user_ids,

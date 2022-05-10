@@ -27,7 +27,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @var array Total number of items
 	 */
-	private $last_items_ids = [];
+	private $all_items_ids = [];
 
 	/**
 	 * Contains start date and time for filtering.
@@ -80,7 +80,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 
 		$course_args_no_pagination = $this->remove_pagination_arguments( $course_args );
 		$wp_all_courses            = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args_no_pagination ) );
-		$this->last_items_ids      = array_column( $wp_all_courses->posts, 'ID' );
+		$this->all_items_ids       = array_column( $wp_all_courses->posts, 'ID' );
 
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
@@ -202,8 +202,8 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @return array
 	 */
-	public function get_last_items_ids(): array {
-		return $this->last_items_ids;
+	public function get_all_items_ids(): array {
+		return $this->all_items_ids;
 	}
 
 	/**

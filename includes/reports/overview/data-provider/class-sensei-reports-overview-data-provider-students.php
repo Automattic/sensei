@@ -27,7 +27,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 *
 	 * @var array Total number of items
 	 */
-	private $last_items_ids = [];
+	private $all_items_ids = [];
 
 	/**
 	 * Contains start date and time for filtering.
@@ -85,7 +85,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		$query_args_no_pagination = $this->remove_pagination_arguments( $query_args );
 		$wp_all_users             = new WP_User_Query( $query_args_no_pagination );
-		$this->last_items_ids     = array_column( $wp_all_users->get_results(), 'ID' );
+		$this->all_items_ids     = array_column( $wp_all_users->get_results(), 'ID' );
 
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
@@ -183,8 +183,8 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 *
 	 * @return array
 	 */
-	public function get_last_items_ids(): array {
-		return $this->last_items_ids;
+	public function get_all_items_ids(): array {
+		return $this->all_items_ids;
 	}
 
 	/**

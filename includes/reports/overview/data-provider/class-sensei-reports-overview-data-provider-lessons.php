@@ -26,7 +26,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @var array Total number of items
 	 */
-	private $last_items_ids = [];
+	private $all_item_ids = [];
 
 	/**
 	 * Sensei course related services.
@@ -119,8 +119,8 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @return array
 	 */
-	public function get_last_items_ids(): array {
-		return $this->last_items_ids;
+	public function get_all_items_ids(): array {
+		return $this->all_items_ids;
 	}
 
 	/**
