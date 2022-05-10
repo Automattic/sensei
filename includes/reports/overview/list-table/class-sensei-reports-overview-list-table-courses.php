@@ -48,8 +48,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
-		$this->grading                           = $grading;
-		$this->course                            = $course;
+		$this->grading                          = $grading;
+		$this->course                           = $course;
 		$this->reports_overview_service_courses = $reports_overview_service_courses;
 	}
 

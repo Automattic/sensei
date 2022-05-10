@@ -10,6 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.5.0
  */
 class Sensei_Reports_Overview_Service_Courses {
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+	}
+
 	/**
 	 * Get total average progress value for courses.
 	 *
