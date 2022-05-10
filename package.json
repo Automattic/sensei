@@ -19,11 +19,6 @@
     "npm": "^8.9.0",
     "node": "^16.14.0"
   },
-  "overrides": {
-      "react": "$react",
-      "react-dom": "$react-dom",
-      "@wordpress/element": "$@wordpress/element"
-  },
   "dependencies": {
     "@wordpress/api-fetch": "3.22.0",
     "@wordpress/base-styles": "1.9.0",
@@ -51,12 +46,15 @@
     "classnames": "2.3.1",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
-    "react": "17.0.2",
     "react-animate-height": "2.0.23",
-    "react-dom": "17.0.2",
     "terser-webpack-plugin": "5.3.1",
     "uuid": "3.3.2",
     "whatwg-fetch": "3.6.2"
+  },
+  "overrides": {
+      "react": "17.0.2",
+      "react-dom": "17.0.2",
+      "@wordpress/element": "$@wordpress/element"
   },
   "devDependencies": {
     "@automattic/calypso-build": "10.0.0",
@@ -98,6 +96,8 @@
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
     "puppeteer-core": "npm:puppeteer-core@8.0.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "svg-spritemap-webpack-plugin": "4.4.0",
     "webpack": "5.64.4",
     "wp-hookdoc": "0.2.0"
