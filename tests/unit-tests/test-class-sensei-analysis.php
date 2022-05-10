@@ -40,6 +40,7 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 				'Overview',
 				'courses',
 				'Sensei_Reports_Overview_List_Table_Courses',
+				'Sensei_Reports_Overview_Service_Courses',
 			],
 			'user profile'     => [
 				'User_Profile',
