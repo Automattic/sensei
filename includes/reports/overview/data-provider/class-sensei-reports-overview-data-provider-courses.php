@@ -23,9 +23,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	private $last_total_items = 0;
 
 	/**
-	 * Array of students ids, retrieved from last query.
+	 * Array of all the students ids.
 	 *
-	 * @var array Total number of items
+	 * @var array All the student ids.
 	 */
 	private $all_items_ids = [];
 

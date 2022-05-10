@@ -23,9 +23,9 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	private $last_total_items = 0;
 
 	/**
-	 * Array of students ids, retrieved from last query.
+	 * Array of all the students ids.
 	 *
-	 * @var array Total number of items
+	 * @var array all the lessons ids.
 	 */
 	private $all_items_ids = [];
 
@@ -85,7 +85,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		$query_args_no_pagination = $this->remove_pagination_arguments( $query_args );
 		$wp_all_users             = new WP_User_Query( $query_args_no_pagination );
-		$this->all_items_ids     = array_column( $wp_all_users->get_results(), 'ID' );
+		$this->all_items_ids      = array_column( $wp_all_users->get_results(), 'ID' );
 
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
