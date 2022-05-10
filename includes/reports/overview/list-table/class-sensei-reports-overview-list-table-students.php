@@ -42,7 +42,6 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 */
 	public function get_columns() {
 
-		$this->get_all_students_ids();
 		if ( $this->columns ) {
 			return $this->columns;
 		}
