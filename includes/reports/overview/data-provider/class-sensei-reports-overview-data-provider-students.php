@@ -181,6 +181,8 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Get ids of items from the last query.
 	 *
+	 * @since 4.5.0
+	 *
 	 * @return array
 	 */
 	public function get_all_items_ids(): array {
