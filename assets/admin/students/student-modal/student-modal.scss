@@ -1,0 +1,73 @@
+@import '../../../shared/styles/wp-colors';
+
+.sensei-student-modal {
+	max-width: 697px;
+	width: 100%;
+
+	&__course-list {
+		border: 1px solid #8c8f94;
+		height: 300px;
+		max-height: calc(100vh - 340px);
+		overflow: auto;
+
+		@media (min-width: 600px) {
+			max-height: 300px;
+		}
+
+		&__header {
+			display: block;
+			margin-top: 30px;
+		}
+
+		&--loading,
+		&--empty {
+			padding-top: 1em;
+			text-align: center;
+		}
+
+		&__item {
+			margin: 0;
+			padding: 15px 25px;
+
+			.components-base-control {
+				display: inline-block;
+			}
+
+			.components-base-control__field {
+				margin: 0;
+			}
+
+			&:nth-child(odd) {
+				background-color: #f6f7f7;
+			}
+		}
+	}
+
+	&__notice {
+		margin: 0;
+	}
+
+	&__action {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 40px;
+
+		&.is-destructive {
+			color: $alert-red;
+			box-shadow: inset 0 0 0 1px $alert-red;
+
+			&:hover:not(:disabled) {
+				color: darken($alert-red, 20%);
+				box-shadow: inset 0 0 0 1px darken($alert-red, 20%);
+			}
+
+			&:focus:not(:disabled) {
+				color: var(--wp-admin-theme-color);
+			}
+
+			&:active:not(:disabled) {
+				background: $gray-400;
+			}
+		}
+	}
+}

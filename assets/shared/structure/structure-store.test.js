@@ -55,16 +55,20 @@ describe( 'Structure store', () => {
 		expect( store.readBlock ).toHaveBeenCalled();
 	} );
 
-	it( 'Saves structure when post is being saved', function () {
-		store.readBlock.mockReturnValue( { structure: 'block' } );
-
+	it( 'Saves structure when post is being saved', () => {
+		const savePost = jest.spyOn( dispatch( 'core/editor' ), 'savePost' );
+		store.readBlock.mockReturnValue( 'new' );
+		apiFetch.mockReturnValue( 'new' );
 		dispatch( 'core/editor' ).savePost();
-
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			method: 'POST',
 			path: '/sensei-internal/v1/test-api/1',
-			data: { structure: 'block' },
+			data: 'new',
 		} );
+
+		// Check if there is not an infinite loop.
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+		expect( savePost ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'Re-saves post on change after structure save', () => {
@@ -72,10 +76,12 @@ describe( 'Structure store', () => {
 		store.readBlock
 			.mockReturnValueOnce( 'old' )
 			.mockReturnValueOnce( 'new' );
+
 		apiFetch.mockReturnValue( 'new' );
 
 		dispatch( 'core/editor' ).savePost();
 
 		expect( savePost ).toHaveBeenCalledTimes( 2 );
+		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

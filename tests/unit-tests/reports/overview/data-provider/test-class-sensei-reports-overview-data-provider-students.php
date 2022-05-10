@@ -65,18 +65,12 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$students = $data_provider->get_items( [ 'number' => -1 ] );
 
 		/* Assert. */
-		$expected = [
-			(object) [
-				'ID'                 => $user_id,
-				'user_login'         => 'test',
-				'user_email'         => 'test@example.org',
-				'display_name'       => 'test',
-				'last_activity_date' => '2022-03-01 00:00:00',
-				'user_registered'    => '2022-03-01 00:00:00',
-			],
-		];
-
-		$this->assertEquals( $expected, $students );
+		$this->assertEquals( $user_id, $students[0]->ID );
+		$this->assertEquals( 'test', $students[0]->user_login );
+		$this->assertEquals( 'test@example.org', $students[0]->user_email );
+		$this->assertEquals( 'test', $students[0]->display_name );
+		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->last_activity_date );
+		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->user_registered );
 	}
 
 	public function testGetItems_FiltersWithSearchGiven_ReturnsTheSearchedStudents() {

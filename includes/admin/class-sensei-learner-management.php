@@ -74,10 +74,12 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name           = __( 'Student Management', 'sensei-lms' );
+		$this->name           = __( 'Students', 'sensei-lms' );
 		$this->file           = $file;
 		$this->page_slug      = 'sensei_learners';
 		$this->menu_post_type = 'course';
+
+		$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this, Sensei_Learner::instance() );
 
 		// Admin functions.
 		if ( is_admin() ) {
@@ -85,7 +87,7 @@ class Sensei_Learner_Management {
 
 			add_action( 'learners_wrapper_container', array( $this, 'wrapper_container' ) );
 
-			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) || ( 'sensei_learner_admin' === $_GET['page'] ) ) ) {
+			if ( isset( $_GET['page'] ) && ( ( $this->page_slug === $_GET['page'] ) ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
@@ -94,7 +96,6 @@ class Sensei_Learner_Management {
 			add_action( 'admin_init', array( $this, 'handle_learner_actions' ) );
 
 			add_action( 'admin_notices', array( $this, 'add_learner_notices' ) );
-			$this->bulk_actions_controller = new Sensei_Learners_Admin_Bulk_Actions_Controller( $this );
 		}
 
 		// Ajax functions.
@@ -104,7 +105,49 @@ class Sensei_Learner_Management {
 			add_action( 'wp_ajax_remove_user_from_post', array( $this, 'remove_user_from_post' ) );
 			add_action( 'wp_ajax_reset_user_post', array( $this, 'reset_user_post' ) );
 			add_action( 'wp_ajax_sensei_json_search_users', array( $this, 'json_search_users' ) );
+
+			// Add custom navigation.
+			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		}
+	}
+
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.4.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'course_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_students_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the Students' page navigation.
+	 *
+	 * @param WP_Screen $screen WordPress current screen object.
+	 */
+	private function display_students_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading-with-info">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Students', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__separator"></div>
+				<a class="sensei-custom-navigation__info" target="_blank" href="https://senseilms.com/documentation/student-management?utm_source=plugin_sensei&utm_medium=docs&utm_campaign=student-management">
+					<?php echo esc_html__( 'Guide To Student Management', 'sensei-lms' ); ?>
+				</a>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -177,6 +220,9 @@ class Sensei_Learner_Management {
 		);
 
 		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-student-action-menu', 'admin/students/student-action-menu/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-student-modal', 'admin/students/student-modal/index.js', [], true );
+		Sensei()->assets->enqueue( 'sensei-student-bulk-action-button', 'admin/students/student-bulk-action-button/index.js', [], true );
 
 		wp_localize_script(
 			'sensei-learners-general',
@@ -213,9 +259,12 @@ class Sensei_Learner_Management {
 	 * @since 1.6.0
 	 */
 	public function enqueue_styles() {
-
 		Sensei()->assets->enqueue( 'sensei-jquery-ui', 'css/jquery-ui.css' );
-
+		Sensei()->assets->enqueue(
+			'sensei-student-modal-style',
+			'admin/students/student-modal/student-modal.css',
+			[ 'sensei-wp-components', 'sensei-editor-components-style' ]
+		);
 	}
 
 	/**
@@ -272,31 +321,14 @@ class Sensei_Learner_Management {
 	 * @access public
 	 */
 	public function learners_page() {
-		$type = isset( $_GET['view'] ) ? esc_html( $_GET['view'] ) : false;
-		if ( $this->bulk_actions_controller->get_view() === $type ) {
-			$this->bulk_actions_controller->learner_admin_page();
-			return;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
+		if ( ! empty( $_GET['course_id'] ) ) {
+			require __DIR__ . '/views/html-admin-page-students-course.php';
+		} else {
+			require __DIR__ . '/views/html-admin-page-students-main.php';
 		}
 
-		$sensei_learners_main = new Sensei_Learners_Main();
-		$sensei_learners_main->prepare_items();
-
-		// Wrappers.
-		do_action( 'learners_before_container' );
-		do_action( 'learners_wrapper_container', 'top' );
-		$this->learners_headers();
-		?>
-		<div id="poststuff" class="sensei-learners-wrap">
-			<div class="sensei-learners-main">
-				<?php $sensei_learners_main->display(); ?>
-			</div>
-			<div class="sensei-learners-extra">
-				<?php do_action( 'sensei_learners_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'learners_wrapper_container', 'bottom' );
-		do_action( 'learners_after_container' );
 	}
 
 	/**
@@ -337,26 +369,40 @@ class Sensei_Learner_Management {
 	 * @since  1.6.0
 	 */
 	public function learners_default_nav() {
-		$title = $this->name;
-		if ( isset( $_GET['course_id'] ) ) {
-			$course_id = intval( $_GET['course_id'] );
-			$url       = add_query_arg(
+		$course_id = (int) sanitize_text_field( wp_unslash( $_GET['course_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$lesson_id = (int) sanitize_text_field( wp_unslash( $_GET['lesson_id'] ?? 0 ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		if ( 0 < $course_id && 0 < $lesson_id ) {
+			$back_url = add_query_arg(
 				array(
 					'post_type' => $this->menu_post_type,
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
-					'view'      => 'learners',
+					'view'      => 'lessons',
 				),
 				admin_url( 'edit.php' )
 			);
-			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), get_the_title( $course_id ) );
+		} else {
+			$back_url = add_query_arg(
+				[
+					'post_type' => 'course',
+					'page'      => 'sensei_learners',
+				],
+				admin_url( 'edit.php' )
+			);
 		}
-		if ( isset( $_GET['lesson_id'] ) ) {
-			$lesson_id = intval( $_GET['lesson_id'] );
-			$title    .= '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;' . get_the_title( intval( $lesson_id ) ) . '</span>';
+
+		$title_parts = [];
+		if ( 0 < $course_id ) {
+			$title_parts[] = get_the_title( $course_id );
 		}
+		if ( 0 < $lesson_id ) {
+			$title_parts[] = get_the_title( $lesson_id );
+		}
+		$back_link = '<a href="' . esc_url( $back_url ) . '">←</a> ';
+		$title     = $back_link . implode( ': ', $title_parts );
 		?>
-			<h1>
+			<h2 class="sensei-students__subheading">
 				<?php
 				echo wp_kses(
 					apply_filters( 'sensei_learners_nav_title', $title ),
@@ -370,8 +416,7 @@ class Sensei_Learner_Management {
 					)
 				);
 				?>
-				| <a href="<?php echo esc_attr( $this->bulk_actions_controller->get_url() ); ?>"><?php echo esc_html( $this->bulk_actions_controller->get_name() ); ?></a></h1>
-			</h1>
+			</h2>
 		<?php
 	}
 

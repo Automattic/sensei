@@ -1,6 +1,6 @@
 {
   "name": "sensei-lms",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -16,10 +16,10 @@
     "url": "https://github.com/Automattic/sensei/issues"
   },
   "engines": {
-    "npm": ">=7"
+    "npm": ">=8"
   },
   "dependencies": {
-    "@wordpress/api-fetch": "3.18.0",
+    "@wordpress/api-fetch": "3.22.0",
     "@wordpress/base-styles": "1.9.0",
     "@wordpress/block-editor": "4.4.0",
     "@wordpress/blocks": "6.21.0",
@@ -34,18 +34,21 @@
     "@wordpress/element": "2.16.0",
     "@wordpress/escape-html": "1.9.0",
     "@wordpress/hooks": "2.9.0",
+    "@wordpress/html-entities": "3.7.0",
     "@wordpress/i18n": "3.14.0",
     "@wordpress/icons": "2.10.0",
     "@wordpress/keycodes": "2.19.2",
     "@wordpress/plugins": "2.25.0",
     "@wordpress/token-list": "1.12.0",
     "@wordpress/url": "2.17.0",
+    "axios": "0.26.1",
     "classnames": "2.3.1",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
     "react-animate-height": "2.0.23",
     "terser-webpack-plugin": "5.3.1",
-    "uuid": "3.3.2"
+    "uuid": "3.3.2",
+    "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
     "@automattic/calypso-build": "10.0.0",
@@ -83,6 +86,7 @@
     "jsdoc": "3.6.7",
     "lint-staged": "10.2.11",
     "mkdirp": "0.5.5",
+    "nock": "13.2.4",
     "postcss-color-function": "4.1.0",
     "prettier": "npm:wp-prettier@2.0.5",
     "puppeteer-core": "npm:puppeteer-core@8.0.0",
