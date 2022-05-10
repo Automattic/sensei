@@ -83,9 +83,16 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$wp_user_search = new WP_User_Query( $query_args );
 		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 
-		$query_args_no_pagination = $this->remove_pagination_arguments( $query_args );
-		$wp_all_users             = new WP_User_Query( $query_args_no_pagination );
-		$this->all_items_ids      = array_column( $wp_all_users->get_results(), 'ID' );
+		$wp_all_users        = new WP_User_Query(
+			array_merge(
+				$query_args,
+				[
+					'number' => -1,
+					'fields' => 'ids',
+				]
+			)
+		);
+		$this->all_items_ids = $wp_all_users->get_results();
 
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
@@ -187,18 +194,5 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 */
 	public function get_all_items_ids(): array {
 		return $this->all_items_ids;
-	}
-
-	/**
-	 * Remove pagination arguments from query.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param array $query_args query arguments.
-	 * @return array Query arguments without pagination.*
-	 */
-	private function remove_pagination_arguments( $query_args ): array {
-		unset( $query_args['number'] );
-		return $query_args;
 	}
 }

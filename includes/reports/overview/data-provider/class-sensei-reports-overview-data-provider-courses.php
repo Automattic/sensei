@@ -74,14 +74,21 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		if ( 'count_of_completions' === $course_args['orderby'] ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		}
+		$course_args   = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+		$courses_query = new WP_Query( $course_args );
 
-		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
 		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
-		$course_args_no_pagination = $this->remove_pagination_arguments( $course_args );
-		$wp_all_courses            = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args_no_pagination ) );
-		$this->all_items_ids       = array_column( $wp_all_courses->posts, 'ID' );
-
+		$all_courses_query   = new WP_Query(
+			array_merge(
+				$course_args,
+				[
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+				]
+			)
+		);
+		$this->all_items_ids = $all_courses_query->posts;
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 
@@ -206,18 +213,5 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 */
 	public function get_all_items_ids(): array {
 		return $this->all_items_ids;
-	}
-
-	/**
-	 * Remove pagination arguments from query.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param array $query_args query arguments.
-	 * @return array Query arguments without pagination.*
-	 */
-	private function remove_pagination_arguments( $query_args ): array {
-		$query_args['posts_per_page'] = -1;
-		return $query_args;
 	}
 }
