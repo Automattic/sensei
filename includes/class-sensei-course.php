@@ -3887,7 +3887,7 @@ class Sensei_Course {
 	 * Get average days to completion for all courses.
 	 *
 	 * @since 4.2.0
-	 * @access public
+	 * @access private
 	 *
 	 * @return int Total days to completion, rounded to the highest integer.
 	 */
