@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { CheckboxControl, Spinner } from '@wordpress/components';
-import { useCallback, useRef } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { store as coreDataStore } from '@wordpress/core-data';
@@ -46,12 +46,16 @@ const EmptyCourseList = () => (
  * @param {boolean}       props.checked  Checkbox state
  * @param {onChangeEvent} props.onChange Event triggered when the a course is select/unselected
  */
-const CourseItem = ( { course, checked, onChange } ) => {
+const CourseItem = ( { course, checked = false, onChange } ) => {
 	const courseId = course?.id;
 	const title = decodeEntities( course?.title?.rendered );
+	const [ isChecked, setIsChecked ] = useState( checked );
 
 	const onSelectCourse = useCallback(
-		( isSelected ) => onChange( { isSelected, course } ),
+		( isSelected ) => {
+			setIsChecked( isSelected );
+			onChange( { isSelected, course } );
+		},
 		[ course, onChange ]
 	);
 
@@ -63,7 +67,7 @@ const CourseItem = ( { course, checked, onChange } ) => {
 			<CheckboxControl
 				id={ `course-${ courseId }` }
 				title={ title }
-				checked={ checked }
+				checked={ isChecked }
 				onChange={ onSelectCourse }
 			/>
 			<label htmlFor={ `course-${ courseId }` } title={ title }>
@@ -141,9 +145,12 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 							key={ course.id }
 							course={ course }
 							onChange={ selectCourse }
-							checked={ selectedCourses.current.find(
-								( { id } ) => id === course.id
-							) }
+							checked={
+								selectedCourses.current.length > 0 &&
+								selectedCourses.current.find(
+									( { id } ) => id === course.id
+								)
+							}
 						/>
 					) ) }
 			</ul>

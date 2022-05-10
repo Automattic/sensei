@@ -2,13 +2,7 @@
  * WordPress dependencies
  */
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
-import {
-	useCallback,
-	useRef,
-	useState,
-	useEffect,
-	RawHTML,
-} from '@wordpress/element';
+import { useCallback, useState, RawHTML } from '@wordpress/element';
 import { search } from '@wordpress/icons';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
@@ -23,6 +17,7 @@ import { escape } from 'lodash';
 import CourseList from './course-list';
 import InputControl from '../../../blocks/editor-components/input-control';
 import httpClient from '../../lib/http-client';
+import useAbortController from '../hooks/use-abort-controller';
 
 const getAction = ( action, studentCount ) => {
 	const possibleActions = {
@@ -42,11 +37,12 @@ const getAction = ( action, studentCount ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses ) =>
+			sendAction: ( students, courses, { signal } ) =>
 				httpClient( {
 					restRoute: '/sensei-internal/v1/course-students/batch',
 					method: 'POST',
 					data: { student_ids: students, course_ids: courses },
+					signal,
 				} ),
 			isDestructive: false,
 		},
@@ -66,11 +62,12 @@ const getAction = ( action, studentCount ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses ) =>
+			sendAction: ( students, courses, { signal } ) =>
 				httpClient( {
 					restRoute: '/sensei-internal/v1/course-students/batch',
 					method: 'DELETE',
 					data: { student_ids: students, course_ids: courses },
+					signal,
 				} ),
 			isDestructive: true,
 		},
@@ -90,11 +87,12 @@ const getAction = ( action, studentCount ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses ) =>
+			sendAction: ( students, courses, { signal } ) =>
 				httpClient( {
 					restRoute: '/sensei-internal/v1/course-progress/batch',
 					method: 'DELETE',
 					data: { student_ids: students, course_ids: courses },
+					signal,
 				} ),
 
 			isDestructive: true,
@@ -129,14 +127,10 @@ export const StudentModal = ( {
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ error, setError ] = useState( false );
-	const isMounted = useRef( true );
+	const { getSignal } = useAbortController();
 	const replacementString =
 		students.length === 1 ? escape( studentDisplayName ) : students.length;
 	const replacedDescription = sprintf( description, replacementString );
-
-	useEffect( () => {
-		return () => ( isMounted.current = false );
-	}, [ isMounted ] );
 
 	const send = useCallback( async () => {
 		setIsSending( true );
@@ -144,16 +138,17 @@ export const StudentModal = ( {
 		try {
 			await sendAction(
 				students,
-				selectedCourses.map( ( course ) => course.id )
+				selectedCourses.map( ( course ) => course.id ),
+				{ signal: getSignal() }
 			);
 			onClose( true );
 		} catch ( e ) {
-			if ( isMounted.current ) {
+			if ( ! getSignal().aborted ) {
 				setError( true );
 				setIsSending( false );
 			}
 		}
-	}, [ sendAction, students, selectedCourses, onClose ] );
+	}, [ sendAction, students, selectedCourses, onClose, getSignal ] );
 
 	const searchCourses = ( value ) => setSearchQuery( value );
 
