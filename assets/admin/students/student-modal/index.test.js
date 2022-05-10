@@ -9,6 +9,12 @@ import {
 	cleanup,
 } from '@testing-library/react';
 import nock from 'nock';
+
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
@@ -29,6 +35,8 @@ const courses = [
 	},
 ];
 
+jest.mock( '@wordpress/data' );
+
 const students = [ 1, 2, 3 ];
 const studentName = 'testname';
 const NOCK_HOST_URL = 'http://localhost';
@@ -43,15 +51,8 @@ describe( '<StudentModal />', () => {
 		findByRole( 'button', { name: label } );
 
 	beforeAll( () => {
-		nock.disableNetConnect();
-		nock( NOCK_HOST_URL )
-			.persist()
-			.get( '/wp/v2/courses' )
-			.query( { per_page: 100, _locale: 'user' } )
-			.reply( 200, courses );
+		useSelect.mockReturnValue( { courses, isFetching: false } );
 	} );
-
-	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display a list of courses', async () => {
 		render( <StudentModal students={ students } action="add" /> );
