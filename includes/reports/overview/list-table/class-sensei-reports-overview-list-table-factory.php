@@ -38,7 +38,7 @@ class Sensei_Reports_Overview_List_Table_Factory {
 					Sensei()->grading,
 					Sensei()->course,
 					new Sensei_Reports_Overview_Data_Provider_Courses(),
-					new Sensei_Reports_Overview_Service_Courses(),
+					new Sensei_Reports_Overview_Service_Courses()
 				);
 			case 'lessons':
 				return new Sensei_Reports_Overview_List_Table_Lessons(

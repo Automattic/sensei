@@ -1,4 +1,9 @@
 <?php
+/**
+ * File containing the Sensei_Reports_Overview_Service_Courses class.
+ *
+ * @package sensei
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
