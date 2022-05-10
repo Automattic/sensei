@@ -124,17 +124,4 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	public function get_all_items_ids(): array {
 		return $this->all_items_ids;
 	}
-
-	/**
-	 * Remove pagination arguments from query.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param array $query_args query arguments.
-	 * @return array Query arguments without pagination.*
-	 */
-	private function remove_pagination_arguments( $query_args ): array {
-		$query_args['posts_per_page'] = -1;
-		return $query_args;
-	}
 }
