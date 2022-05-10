@@ -120,7 +120,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	private function get_all_courses_ids(): array {
 		// Get all courses ids.
 		$args = array(
-			'post_type'      => $this->post_type,
+			'post_type'      => 'course',
 			'post_status'    => array( 'publish', 'private' ),
 			'posts_per_page' => -1,
 			'fields'         => 'ID',

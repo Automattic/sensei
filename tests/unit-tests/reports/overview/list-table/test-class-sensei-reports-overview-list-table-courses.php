@@ -171,17 +171,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			[ 'meta_input' => [ '_lesson_course' => $course_id ] ]
 		);
 
-		$service_instance = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
-		$instance         = new Sensei_Reports_Overview_List_Table_Courses(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$service_instance
-		);
-
-		// Get private method get_average_progress_for_courses_table
-		$method = new ReflectionMethod( $service_instance, 'get_total_average_progress' );
-		$method->setAccessible( true );
+		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
@@ -194,7 +184,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			50,
-			$method->invoke( $instance ),
+			$service->get_total_average_progress(),
 			'Find totals of lessons completed single course.'
 		);
 	}
@@ -230,19 +220,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$lesson_4 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
 		);
-
-		$service_instance = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
-		$instance         = new Sensei_Reports_Overview_List_Table_Courses(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$service_instance
-		);
-
-		// Get private method get_average_progress_for_courses_table
-		$method = new ReflectionMethod( $service_instance, 'get_total_average_progress' );
-		$method->setAccessible( true );
-
+		$service  = new Sensei_Reports_Overview_Service_Courses();
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
 		Sensei_Utils::sensei_start_lesson( $lesson_2, $user_id_1, true );
@@ -261,7 +239,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			38,
-			$method->invoke( $instance ),
+			$service->get_total_average_progress(),
 			'Find totals of lessons completed multiple courses.'
 		);
 	}
@@ -285,18 +263,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$lesson_2 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_1 ] ]
 		);
-
-		$service_instance = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
-		$instance         = new Sensei_Reports_Overview_List_Table_Courses(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$service_instance
-		);
-
-		// Get private method get_average_progress_for_courses_table
-		$method = new ReflectionMethod( $service_instance, 'get_total_average_progress' );
-		$method->setAccessible( true );
+		$service  = new Sensei_Reports_Overview_Service_Courses();
 
 		// Enroll student 2 to the course and lessons, but don't complete the lessons.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_2 );
@@ -305,7 +272,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			0,
-			$method->invoke( $instance ),
+			$service->get_total_average_progress(),
 			'Find average progress total is 0 when no lesson is completed'
 		);
 	}
@@ -320,22 +287,12 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		// Create a course 1
 		$this->factory->course->create();
 
-		$service_instance = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
-		$instance         = new Sensei_Reports_Overview_List_Table_Courses(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$service_instance
-		);
-
-		// Get private method get_average_progress_for_courses_table
-		$method = new ReflectionMethod( $service_instance, 'get_total_average_progress' );
-		$method->setAccessible( true );
+		$service = new Sensei_Reports_Overview_Service_Courses();
 
 		/* Assert. */
 		$this->assertEquals(
 			0,
-			$method->invoke( $instance ),
+			$service->get_total_average_progress(),
 			'Average of progress total is zero when no lessons or students.'
 		);
 	}
@@ -369,18 +326,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$lesson_3 = $this->factory->lesson->create(
 			[ 'meta_input' => [ '_lesson_course' => $course_id_2 ] ]
 		);
-
-		$service_instance = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
-		$instance         = new Sensei_Reports_Overview_List_Table_Courses(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$service_instance
-		);
-
-		// Get private method get_average_progress_for_courses_table
-		$method = new ReflectionMethod( $service_instance, 'get_total_average_progress' );
-		$method->setAccessible( true );
+		$service  = new Sensei_Reports_Overview_Service_Courses();
 
 		// Complete lesson 1 and lesson 2 with user_1.
 		Sensei_Utils::sensei_start_lesson( $lesson_1, $user_id_1, true );
@@ -396,7 +342,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			100,
-			$method->invoke( $instance ),
+			$service->get_total_average_progress(),
 			'Find totals of lessons completed single course.'
 		);
 	}
