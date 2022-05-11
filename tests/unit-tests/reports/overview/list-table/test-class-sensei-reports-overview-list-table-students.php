@@ -45,7 +45,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		$grading->method( 'get_graded_lessons_average_grade_filter_users' )->willReturn( 50 );
 
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_items' )->willReturn( [ $completed_course_id, $active_course_id ] );
+		$data_provider->method( 'get_items' )->willReturn( [ $user_id ] );
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
 			$grading,
 			$data_provider
