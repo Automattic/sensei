@@ -69,7 +69,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'completions'        => 'Completed (0)',
 			'average_progress'   => 'Average Progress',
 			'average_percent'    => 'Average Grade (2%)',
-			'days_to_completion' => 'Days to Completion (3)',
+			'days_to_completion' => 'Days to Completion (0)',
 		];
 
 		self::assertSame( $expected, $actual );
@@ -106,7 +106,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'completions'        => 'Completed (1)',
 			'average_progress'   => 'Average Progress',
 			'average_percent'    => 'Average Grade (2%)',
-			'days_to_completion' => 'Days to Completion (3)',
+			'days_to_completion' => 'Days to Completion (0)',
 		];
 
 		self::assertSame( $expected, $actual );
