@@ -63,12 +63,14 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 
 		add_filter( 'posts_clauses', [ $this, 'add_last_activity_to_courses_query' ] );
 		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_query' ] );
+		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 
 		if ( 'count_of_completions' === $course_args['orderby'] ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		}
 
 		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_query' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_last_activity_to_courses_query' ] );
 		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
@@ -98,7 +100,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	}
 
 	/**
-	 * Add last activity date field and filters.
+	 * Add last activity date for each course.
 	 *
 	 * @since  x.x.x
 	 * @access private
@@ -126,6 +128,21 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		$clauses['fields'] .= ', la.comment_date_gmt AS last_activity_date';
 		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
 
+		return $clauses;
+	}
+
+	/**
+	 * Filter the courses by last activity start/end date.
+	 *
+	 * @access private
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function filter_courses_by_last_activity( array $clauses ): array {
+		global $wpdb;
+
 		// Filter by start date.
 		if ( $this->date_from ) {
 			$clauses['where'] .= $wpdb->prepare(
@@ -144,6 +161,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 
 		return $clauses;
 	}
+
 
 	/**
 	 * Add the sum of days taken by each student to complete a course and the number of completions for each course.
