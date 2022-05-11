@@ -30,7 +30,6 @@ export const registerVideo = ( {
 		if ( blocksStore ) {
 			blocksStore.setAttributes( url, {
 				required: true,
-				completed: false,
 			} );
 		} else {
 			disableCompleteLessonButton();
