@@ -3886,9 +3886,10 @@ class Sensei_Course {
 	/**
 	 * Get average days to completion for all courses.
 	 *
-   * @deprecated 4.5.0
-   *
 	 * @since 4.2.0
+	 *
+	 * @deprecated 4.5.0
+	 *
 	 * @access private
 	 *
 	 * @return float Average days to completion, rounded to the highest integer.
