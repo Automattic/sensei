@@ -30,18 +30,27 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $course;
 
 	/**
+	 * Sensei course related services.
+	 *
+	 * @var Sensei_Reports_Overview_Service_Courses
+	 */
+	private $reports_overview_service_courses;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Grading                                  $grading Sensei grading related services.
 	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
+	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
-		$this->grading = $grading;
-		$this->course  = $course;
+		$this->grading                          = $grading;
+		$this->course                           = $course;
+		$this->reports_overview_service_courses = $reports_overview_service_courses;
 	}
 
 	/**
@@ -54,13 +63,15 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$total_completions = Sensei_Utils::sensei_check_for_activity(
+		$total_completions      = Sensei_Utils::sensei_check_for_activity(
 			array(
 				'type'   => 'sensei_course_status',
 				'status' => 'complete',
 			)
 		);
-		$columns           = array(
+		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress();
+
+		$columns = array(
 			'title'              => sprintf(
 			// translators: Placeholder value is the number of courses.
 				__( 'Course (%d)', 'sensei-lms' ),
@@ -72,7 +83,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				__( 'Completed (%d)', 'sensei-lms' ),
 				esc_html( $total_completions )
 			),
-			'average_progress'   => __( 'Average Progress', 'sensei-lms' ),
+			'average_progress'   => sprintf(
+			// translators: Placeholder vale is the total average progress for all courses.
+				__( 'Average Progress (%s)', 'sensei-lms' ),
+				esc_html( sprintf( '%d%%', $total_average_progress ) )
+			),
 			'average_percent'    => sprintf(
 			// translators: Placeholder value is the average grade of all courses.
 				__( 'Average Grade (%s%%)', 'sensei-lms' ),
