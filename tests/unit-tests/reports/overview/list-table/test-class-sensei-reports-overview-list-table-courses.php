@@ -89,8 +89,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course = $this->createMock( Sensei_Course::class );
 		$course->method( 'get_average_days_to_completion' )->willReturn( 3.0 );
 
-		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$data_provider->method( 'get_all_item_ids' )->willReturn( [ $course_id ] );
+		$data_provider           = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
 		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
