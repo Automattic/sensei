@@ -22,13 +22,6 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	private $last_total_items = 0;
 
 	/**
-	 * Array of all the lessons ids.
-	 *
-	 * @var array All the lessons ids.
-	 */
-	private $all_item_ids = [];
-
-	/**
 	 * Sensei course related services.
 	 *
 	 * @var Sensei_Course
@@ -112,16 +105,5 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 		$clauses['fields'] .= " AND {$wpdb->commentmeta}.meta_key = 'start') as days_to_complete";
 
 		return $clauses;
-	}
-
-	/**
-	 * Get ids of items from the last query.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	public function get_all_item_ids(): array {
-		return $this->all_item_ids;
 	}
 }

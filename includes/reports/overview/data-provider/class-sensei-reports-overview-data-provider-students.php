@@ -23,13 +23,6 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	private $last_total_items = 0;
 
 	/**
-	 * Array of all the students ids.
-	 *
-	 * @var array all the lessons ids.
-	 */
-	private $all_item_ids = [];
-
-	/**
 	 * Contains start date and time for filtering.
 	 *
 	 * @var string|null
@@ -183,16 +176,5 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 */
 	public function get_last_total_items(): int {
 		return $this->last_total_items;
-	}
-
-	/**
-	 * Get ids of items from the last query.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	public function get_all_item_ids(): array {
-		return $this->all_item_ids;
 	}
 }

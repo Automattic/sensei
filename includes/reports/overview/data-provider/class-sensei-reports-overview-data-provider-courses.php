@@ -23,13 +23,6 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	private $last_total_items = 0;
 
 	/**
-	 * Array of all the students ids.
-	 *
-	 * @var array All the student ids.
-	 */
-	private $all_item_ids = [];
-
-	/**
 	 * Contains start date and time for filtering.
 	 *
 	 * @var string|null
@@ -59,6 +52,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $filters['number'],
 			'offset'           => $filters['offset'],
+			'fields'           => $filters['fields'] ?? '',
 			'orderby'          => $filters['orderby'] ?? '',
 			'order'            => $filters['order'] ?? 'ASC',
 			'suppress_filters' => 0,
@@ -202,16 +196,5 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 */
 	public function get_last_total_items(): int {
 		return $this->last_total_items;
-	}
-
-	/**
-	 * Get ids of items from the last query.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	public function get_all_item_ids(): array {
-		return $this->all_item_ids;
 	}
 }

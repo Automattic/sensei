@@ -164,6 +164,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			array(
 				'title'              => $lesson_title,
 				'lesson_module'      => $this->get_row_module( $item->ID ),
+				'fields'             => $filters['fields'] ?? '',
 				'students'           => $lesson_students,
 				'last_activity'      => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
 				'completions'        => $lesson_completions,

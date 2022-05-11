@@ -45,6 +45,13 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	protected $data_provider;
 
 	/**
+	 * All the item ids.
+	 *
+	 * @var array
+	 */
+	protected $all_item_ids = [];
+
+	/**
 	 * Return additional filters for current report.
 	 *
 	 * @return array
@@ -69,14 +76,12 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
-
 	/**
-	 * Prepare the table with different parameters, pagination, columns and table elements
+	 * Get the filter arguments needed to get the items.
 	 *
-	 * @return void
-	 * @since  1.7.0
+	 * @return array filter_arguments Arguments.
 	 */
-	public function prepare_items() {
+	private function get_filter_args(): array {
 		// Handle orderby.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
 		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
@@ -112,19 +117,49 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			$args['search'] = esc_html( $search );
 		}
 
-		$filters           = array_merge( $args, $this->get_additional_filters() );
-		$this->items       = $this->data_provider->get_items( $filters );
+		$this->total_items = $this->data_provider->get_last_total_items();
+		return array_merge( $args, $this->get_additional_filters() );
+	}
+
+	/**
+	 * Prepare the table with different parameters, pagination, columns and table elements
+	 *
+	 * @return void
+	 * @since  1.7.0
+	 */
+	public function prepare_items() {
+		$filter_args       = $this->get_filter_args();
+		$this->items       = $this->data_provider->get_items( $filter_args );
 		$this->total_items = $this->data_provider->get_last_total_items();
 
 		$total_items = $this->total_items;
-		$total_pages = ceil( $total_items / $per_page );
+		$total_pages = ceil( $total_items / $filter_args['number'] );
 		$this->set_pagination_args(
 			array(
 				'total_items' => $total_items,
 				'total_pages' => $total_pages,
-				'per_page'    => $per_page,
+				'per_page'    => $filter_args['number'],
 			)
 		);
+	}
+
+	/**
+	 * Get all the item ids.
+	 *
+	 * @return array The post ids.
+	 */
+	protected function get_all_item_ids() {
+			$result =  $this->data_provider->get_items(
+				array_merge(
+					$this->get_filter_args(),
+					[
+						'number'         => -1,
+						'fields'         => 'ids',
+						'posts_per_page' => -1,
+					]
+				)
+			);
+			return $result;
 	}
 
 	/**
