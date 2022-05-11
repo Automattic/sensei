@@ -6,6 +6,8 @@
  * @covers Sensei_Reports_Overview_Data_Provider_Students
  */
 class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+
 	/**
 	 * Factory for setting up testing data.
 	 *
@@ -35,7 +37,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 	public function testGetItems_FiltersWithoutLastActivityGiven_ReturnsAllStudents() {
 		/* Arrange. */
-		$no_last_activity_user   = $this->factory->user->create();
+		$no_last_activity_user   = $this->createUserWithCourseEnrollment();
 		$user_with_last_activity = $this->createUserWithActivity( '2022-03-01 00:00:00' );
 
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
@@ -65,24 +67,18 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$students = $data_provider->get_items( [ 'number' => -1 ] );
 
 		/* Assert. */
-		$expected = [
-			(object) [
-				'ID'                 => $user_id,
-				'user_login'         => 'test',
-				'user_email'         => 'test@example.org',
-				'display_name'       => 'test',
-				'last_activity_date' => '2022-03-01 00:00:00',
-				'user_registered'    => '2022-03-01 00:00:00',
-			],
-		];
-
-		$this->assertEquals( $expected, $students );
+		$this->assertEquals( $user_id, $students[0]->ID );
+		$this->assertEquals( 'test', $students[0]->user_login );
+		$this->assertEquals( 'test@example.org', $students[0]->user_email );
+		$this->assertEquals( 'test', $students[0]->display_name );
+		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->last_activity_date );
+		$this->assertEquals( '2022-03-01 00:00:00', $students[0]->user_registered );
 	}
 
 	public function testGetItems_FiltersWithSearchGiven_ReturnsTheSearchedStudents() {
 		/* Arrange. */
-		$searched_user = $this->factory->user->create( [ 'user_login' => 'awesome_nickname' ] );
-		$other_user    = $this->factory->user->create( [ 'user_login' => 'cool_nickname' ] );
+		$searched_user = $this->createUserWithCourseEnrollment( [ 'user_login' => 'awesome_nickname' ] );
+		$other_user    = $this->createUserWithCourseEnrollment( [ 'user_login' => 'cool_nickname' ] );
 
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
@@ -220,11 +216,30 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$this->assertEmpty( $students );
 	}
 
-	public function testGetLastTotalItems_WithNoItems_ReturnsZero() {
+	public function testGetItems_WithNoFiltersGiven_ReturnsOnlyCourseEnrolledStudents() {
 		/* Arrange. */
+		$course_enrolled_user = $this->createUserWithCourseEnrollment();
+		$not_enrolled_user    = $this->factory->user->create();
+
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
 		/* Act. */
+		$students = $data_provider->get_items( [] );
+
+		/* Assert. */
+		$expected = [
+			[
+				'id'                 => $course_enrolled_user,
+				'last_activity_date' => null,
+			],
+		];
+
+		$this->assertEquals( $expected, $this->exportStudents( $students ) );
+	}
+
+	public function testGetLastTotalItems_WithNoItems_ReturnsZero() {
+		/* Arrange. */
+		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
 		/* Assert. */
 		$this->assertSame( 0, $data_provider->get_last_total_items() );
@@ -232,7 +247,8 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 
 	public function testGetLastTotalItems_WithItems_ReturnsTheTotalNumberOfItems() {
 		/* Arrange. */
-		$this->factory->user->create_many( 5 );
+		$this->createUserWithCourseEnrollment();
+		$this->createUserWithCourseEnrollment();
 
 		$data_provider = new Sensei_Reports_Overview_Data_Provider_Students();
 
@@ -240,7 +256,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$students = $data_provider->get_items( [ 'number' => -1 ] );
 
 		/* Assert. */
-		$this->assertSame( 5, $data_provider->get_last_total_items() );
+		$this->assertSame( 2, $data_provider->get_last_total_items() );
 	}
 
 	/**
@@ -288,6 +304,23 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 				'comment_date' => $activity_date,
 			]
 		);
+
+		return $user_id;
+	}
+
+	/**
+	 * Create a user that is enrolled to a course.
+	 *
+	 * @param array    $user_args The user args.
+	 * @param int|null $course_id The course ID.
+	 *
+	 * @return int The user ID.
+	 */
+	private function createUserWithCourseEnrollment( array $user_args = [], int $course_id = null ): int {
+		$user_id   = $this->factory->user->create( $user_args );
+		$course_id = $course_id ?? $this->factory->course->create();
+
+		$this->directlyEnrolStudent( $user_id, $course_id );
 
 		return $user_id;
 	}

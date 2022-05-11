@@ -153,25 +153,14 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$user_email = $item->user_email;
 
 		// Output the users data.
-		if ( $this->csv_output ) {
-			$user_name = Sensei_Learner::get_full_name( $item->ID );
-		} else {
-			$url                 = add_query_arg(
-				array(
-					'page'      => $this->page_slug,
-					'user_id'   => $item->ID,
-					'post_type' => $this->post_type,
-				),
-				admin_url( 'edit.php' )
-			);
-			$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
+		if ( ! $this->csv_output ) {
 			$user_average_grade .= '%';
 		}
 
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
-				'title'             => $user_name,
+				'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
 				'email'             => $user_email,
 				'date_registered'   => $this->format_date_registered( $item->user_registered ),
 				'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
@@ -225,5 +214,33 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$date     = new DateTime( $date, $timezone );
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Format user name wrapping or not with a link.
+	 *
+	 * @param int  $user_id user's id.
+	 * @param bool $use_raw_name Indicate if it should return the wrap the name with the student link.
+	 *
+	 * @return string Return the student full name (first_name+last_name) optionally wrapped by a link
+	 */
+	private function format_user_name( $user_id, $use_raw_name ) {
+
+		$user_name = Sensei_Learner::get_full_name( $user_id );
+
+		if ( $use_raw_name ) {
+			return $user_name;
+		}
+
+		$url = add_query_arg(
+			array(
+				'page'      => $this->page_slug,
+				'user_id'   => $user_id,
+				'post_type' => $this->post_type,
+			),
+			admin_url( 'edit.php' )
+		);
+
+		return '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
 	}
 }

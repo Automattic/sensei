@@ -87,7 +87,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'days_to_completion' => sprintf(
 						// translators: Placeholder value is average days to completion.
 						__( 'Days to Completion (%d)', 'sensei-lms' ),
-						ceil( Sensei()->course->get_days_to_completion_total() )
+						ceil( Sensei()->course->get_average_days_to_completion() )
 					),
 				);
 				break;
