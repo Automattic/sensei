@@ -5,6 +5,7 @@ import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { useCallback, useState, RawHTML } from '@wordpress/element';
 import { search } from '@wordpress/icons';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * External dependencies
@@ -16,7 +17,6 @@ import { escape } from 'lodash';
  */
 import CourseList from './course-list';
 import InputControl from '../../../blocks/editor-components/input-control';
-import httpClient from '../../lib/http-client';
 import useAbortController from '../hooks/use-abort-controller';
 
 const getAction = ( action, studentCount ) => {
@@ -38,8 +38,8 @@ const getAction = ( action, studentCount ) => {
 					'sensei-lms'
 				),
 			sendAction: ( students, courses, { signal } ) =>
-				httpClient( {
-					restRoute: '/sensei-internal/v1/course-students/batch',
+				apiFetch( {
+					path: '/sensei-internal/v1/course-students/batch',
 					method: 'POST',
 					data: { student_ids: students, course_ids: courses },
 					signal,
@@ -63,8 +63,8 @@ const getAction = ( action, studentCount ) => {
 					'sensei-lms'
 				),
 			sendAction: ( students, courses, { signal } ) =>
-				httpClient( {
-					restRoute: '/sensei-internal/v1/course-students/batch',
+				apiFetch( {
+					path: '/sensei-internal/v1/course-students/batch',
 					method: 'DELETE',
 					data: { student_ids: students, course_ids: courses },
 					signal,
@@ -88,8 +88,8 @@ const getAction = ( action, studentCount ) => {
 					'sensei-lms'
 				),
 			sendAction: ( students, courses, { signal } ) =>
-				httpClient( {
-					restRoute: '/sensei-internal/v1/course-progress/batch',
+				apiFetch( {
+					path: '/sensei-internal/v1/course-progress/batch',
 					method: 'DELETE',
 					data: { student_ids: students, course_ids: courses },
 					signal,

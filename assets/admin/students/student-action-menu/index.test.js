@@ -14,7 +14,6 @@ import { useSelect } from '@wordpress/data';
  */
 import { StudentActionMenu } from './index';
 
-jest.mock( '../../lib/http-client' );
 jest.mock( '@wordpress/data' );
 
 describe( '<StudentActionMenu />', () => {
