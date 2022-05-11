@@ -69,7 +69,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
-			$data_provider
+			$data_provider,
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		$list_table->total_items = 1;
@@ -81,8 +82,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
-			'completions'        => 'Completed (1)',
-			'average_progress'   => 'Average Progress',
+			'completions'        => 'Completed (0)',
+			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (7)',
 		];
@@ -108,7 +109,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
-			$data_provider
+			$data_provider,
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		/* Act. */
@@ -119,7 +121,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',
-			'average_progress'   => 'Average Progress',
+			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
 			'days_to_completion' => 'Days to Completion (0)',
 		];
@@ -132,7 +134,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		/* Act. */
@@ -151,7 +154,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		/* Act. */

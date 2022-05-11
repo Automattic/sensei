@@ -77,6 +77,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'reports/helper' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/data-provider' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/list-table' ),
+			new Sensei_Autoloader_Bundle( 'reports/overview/services' ),
 		);
 
 		// Add Sensei custom auto loader.
