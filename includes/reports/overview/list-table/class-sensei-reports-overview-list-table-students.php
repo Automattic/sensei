@@ -68,7 +68,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.
-			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
+			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( count( $user_ids ) ) ),
 			'email'             => __( 'Email', 'sensei-lms' ),
 			'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 			'last_activity'     => __( 'Last Activity', 'sensei-lms' ),

@@ -46,18 +46,32 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
+		$user_id = $this->factory->user->create();
+
+		$course_id = $this->factory->course->create();
+
+		$comment1_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
+		wp_update_comment(
+			[
+				'comment_ID'   => $comment1_id,
+				'comment_date' => '2022-01-07 00:00:00',
+			]
+		);
+		update_comment_meta( $comment1_id, 'start', '2022-01-01 00:00:01' );
+
 		/* Arrange. */
 		$grading = $this->createMock( Sensei_Grading::class );
 		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
 
-		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_average_days_to_completion' )->willReturn( 2.2 );
-
-		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
+		$course        = $this->createMock( Sensei_Course::class );
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$data_provider
 		);
+
 		$list_table->total_items = 1;
 
 		/* Act. */
@@ -67,10 +81,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$expected = [
 			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
-			'completions'        => 'Completed (0)',
+			'completions'        => 'Completed (1)',
 			'average_progress'   => 'Average Progress',
 			'average_percent'    => 'Average Grade (2%)',
-			'days_to_completion' => 'Days to Completion (0)',
+			'days_to_completion' => 'Days to Completion (7)',
 		];
 
 		self::assertSame( $expected, $actual );
@@ -87,22 +101,22 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_average_days_to_completion' )->willReturn( 3.0 );
 
-		$data_provider           = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
-		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
 			$grading,
 			$course,
 			$data_provider
 		);
-		$list_table->total_items = 4;
 
 		/* Act. */
 		$actual = $list_table->get_columns();
 
 		/* Assert. */
 		$expected = [
-			'title'              => 'Course (4)',
+			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',
 			'average_progress'   => 'Average Progress',

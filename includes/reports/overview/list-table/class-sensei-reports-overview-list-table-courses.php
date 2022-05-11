@@ -77,7 +77,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'title'              => sprintf(
 			// translators: Placeholder value is the number of courses.
 				__( 'Course (%d)', 'sensei-lms' ),
-				esc_html( $this->total_items )
+				esc_html( count( $total_courses_ids ) )
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 			'completions'        => sprintf(
