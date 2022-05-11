@@ -25,13 +25,12 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get total average progress value for courses.
 	 *
+	 * @param array $courses_ids Courses ids.
+	 * @return float total average progress value for all the courses.
 	 * @since  4.5.0
 	 * @access public
-	 *
-	 * @return float total average progress value for all the courses.
 	 */
-	public function get_total_average_progress(): float {
-		$courses_ids = $this->get_all_courses_ids();
+	public function get_total_average_progress( array $courses_ids ): float {
 		if ( empty( $courses_ids ) ) {
 			return false;
 		}

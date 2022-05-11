@@ -36,6 +36,9 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	public $total_courses_ids = [];
 
+	/**
+	 * Sensei reports courses service.
+	 *
 	 * @var Sensei_Reports_Overview_Service_Courses
 	 */
 	private $reports_overview_service_courses;
@@ -81,7 +84,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			);
 		}
 
-		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress();
+		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $total_courses_ids );
 
 		$columns = array(
 			'title'              => sprintf(

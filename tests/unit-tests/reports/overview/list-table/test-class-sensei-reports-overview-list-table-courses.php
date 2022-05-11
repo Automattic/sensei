@@ -50,15 +50,6 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 
 		$course_id = $this->factory->course->create();
 
-		$comment1_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
-		wp_update_comment(
-			[
-				'comment_ID'   => $comment1_id,
-				'comment_date' => '2022-01-07 00:00:00',
-			]
-		);
-		update_comment_meta( $comment1_id, 'start', '2022-01-01 00:00:01' );
-
 		/* Arrange. */
 		$grading = $this->createMock( Sensei_Grading::class );
 		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
@@ -85,7 +76,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'completions'        => 'Completed (0)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
-			'days_to_completion' => 'Days to Completion (7)',
+			'days_to_completion' => 'Days to Completion (0)',
 		];
 
 		self::assertSame( $expected, $actual );
@@ -202,7 +193,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		$method = new ReflectionMethod( $instance, 'get_average_days_to_completion' );
@@ -253,7 +245,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		$method = new ReflectionMethod( $instance, 'get_average_days_to_completion' );
@@ -270,7 +263,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$instance = new Sensei_Reports_Overview_List_Table_Courses(
 			$this->createMock( Sensei_Grading::class ),
 			$this->createMock( Sensei_Course::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
 		);
 
 		$method = new ReflectionMethod( $instance, 'get_average_days_to_completion' );

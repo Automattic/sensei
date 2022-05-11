@@ -79,7 +79,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			50,
-			$service->get_total_average_progress(),
+			$service->get_total_average_progress( [ $course_id ] ),
 			'Find totals of lessons completed single course.'
 		);
 	}
@@ -133,7 +133,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			38,
-			$service->get_total_average_progress(),
+			$service->get_total_average_progress( [ $course_id_1, $course_id_2 ] ),
 			'Find totals of lessons completed multiple courses.'
 		);
 	}
@@ -168,7 +168,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			0,
-			$service->get_total_average_progress(),
+			$service->get_total_average_progress( [ $course_id_1 ] ),
 			'Find average progress total is 0 when no lesson is completed'
 		);
 	}
@@ -188,7 +188,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			0,
-			$service->get_total_average_progress(),
+			$service->get_total_average_progress( [] ),
 			'Average of progress total is zero when no lessons or students.'
 		);
 	}
@@ -238,7 +238,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals(
 			100,
-			$service->get_total_average_progress(),
+			$service->get_total_average_progress( [ $course_id_1, $course_id_2 ] ),
 			'Find totals of lessons completed single course.'
 		);
 	}
