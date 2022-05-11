@@ -61,7 +61,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$total_courses_ids       = $this->data_provider->get_all_items_ids();
+		$total_courses_ids       = $this->data_provider->get_all_item_ids();
 		$this->total_courses_ids = $total_courses_ids;
 		$total_completions       = 0;
 		if ( ! empty( $total_courses_ids ) ) {

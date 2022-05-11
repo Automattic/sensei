@@ -32,6 +32,6 @@ interface Sensei_Reports_Overview_Data_Provider_Interface {
 	 *
 	 * @return array
 	 */
-	public function get_all_items_ids(): array;
+	public function get_all_item_ids(): array;
 
 }

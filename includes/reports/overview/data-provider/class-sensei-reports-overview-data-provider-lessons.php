@@ -121,7 +121,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	 *
 	 * @return array
 	 */
-	public function get_all_items_ids(): array {
-		return $this->all_items_ids;
+	public function get_all_item_ids(): array {
+		return $this->all_item_ids;
 	}
 }

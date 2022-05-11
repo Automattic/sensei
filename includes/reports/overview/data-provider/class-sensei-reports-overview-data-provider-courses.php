@@ -27,7 +27,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @var array All the student ids.
 	 */
-	private $all_items_ids = [];
+	private $all_item_ids = [];
 
 	/**
 	 * Contains start date and time for filtering.
@@ -79,7 +79,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 
 		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
-		$all_courses_query   = new WP_Query(
+		$all_courses_query  = new WP_Query(
 			array_merge(
 				$course_args,
 				[
@@ -88,7 +88,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 				]
 			)
 		);
-		$this->all_items_ids = $all_courses_query->posts;
+		$this->all_item_ids = $all_courses_query->posts;
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 
@@ -211,7 +211,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @return array
 	 */
-	public function get_all_items_ids(): array {
-		return $this->all_items_ids;
+	public function get_all_item_ids(): array {
+		return $this->all_item_ids;
 	}
 }

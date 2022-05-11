@@ -27,7 +27,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 *
 	 * @var array all the lessons ids.
 	 */
-	private $all_items_ids = [];
+	private $all_item_ids = [];
 
 	/**
 	 * Contains start date and time for filtering.
@@ -83,7 +83,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$wp_user_search = new WP_User_Query( $query_args );
 		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 
-		$wp_all_users        = new WP_User_Query(
+		$wp_all_users       = new WP_User_Query(
 			array_merge(
 				$query_args,
 				[
@@ -92,7 +92,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 				]
 			)
 		);
-		$this->all_items_ids = $wp_all_users->get_results();
+		$this->all_item_ids = $wp_all_users->get_results();
 
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
@@ -192,7 +192,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 *
 	 * @return array
 	 */
-	public function get_all_items_ids(): array {
-		return $this->all_items_ids;
+	public function get_all_item_ids(): array {
+		return $this->all_item_ids;
 	}
 }
