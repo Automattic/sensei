@@ -30,13 +30,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $course;
 
 	/**
-	 * Sensei course related services.
-	 *
-	 * @var array
-	 */
-	public $total_courses_ids = [];
-
-	/**
 	 * Sensei reports courses service.
 	 *
 	 * @var Sensei_Reports_Overview_Service_Courses
@@ -71,9 +64,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$total_courses_ids       = $this->get_all_item_ids();
-		$this->total_courses_ids = $total_courses_ids;
-		$total_completions       = 0;
+		$total_courses_ids = $this->get_all_item_ids();
+		$total_completions = 0;
 		if ( ! empty( $total_courses_ids ) ) {
 			$total_completions = Sensei_Utils::sensei_check_for_activity(
 				array(
