@@ -144,17 +144,15 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * @return array The post ids.
 	 */
 	protected function get_all_item_ids() {
-			$result = $this->data_provider->get_items(
+			return $this->data_provider->get_items(
 				array_merge(
 					$this->get_filter_args(),
 					[
-						'number'         => -1,
-						'fields'         => 'ids',
-						'posts_per_page' => -1,
+						'number' => -1,
+						'fields' => 'ids',
 					]
 				)
 			);
-			return $result;
 	}
 
 	/**
