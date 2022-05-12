@@ -61,8 +61,9 @@ class Sensei_Course_Structure {
 	 * @see Sensei_Course_Structure::prepare_lesson()
 	 * @see Sensei_Course_Structure::prepare_module()
 	 *
-	 * @param string  $context  Context that structure is being retrieved for. Possible values: edit, view.
-	 * @param boolean $no_cache Avoid query cache.
+	 * @param string  $context           Context that structure is being retrieved for. Possible values: edit, view.
+	 * @param boolean $no_cache          Avoid query cache.
+	 * @param boolean $is_admin_override Override is_admin if is_admin returns false.
 	 *
 	 * @return array {
 	 *     An array which has course structure information.
@@ -71,7 +72,7 @@ class Sensei_Course_Structure {
 	 *                 and prepare_module().
 	 * }
 	 */
-	public function get( $context = 'view', $no_cache = false ) {
+	public function get( $context = 'view', $no_cache = false, $is_admin_override = false ) {
 		if ( $no_cache ) {
 			add_filter( 'posts_where', [ $this, 'filter_no_cache_where' ] );
 		}
@@ -84,10 +85,16 @@ class Sensei_Course_Structure {
 		$post_status            = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
 		$no_module_lessons      = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, $post_status ), 'ID' );
 
-		$modules = $this->get_modules();
-		foreach ( $modules as $module_term ) {
-			$module = $this->prepare_module( $module_term, $post_status );
+		$add_teacher_name_property = 'edit' === $context && current_user_can( 'manage_options' ) && ( is_admin() || $is_admin_override );
 
+		$add_teacher_name_property && remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+
+		$modules = $this->get_modules();
+
+		$add_teacher_name_property && $context && add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
+
+		foreach ( $modules as $module_term ) {
+			$module = $this->prepare_module( $module_term, $post_status, $add_teacher_name_property );
 			if ( ! empty( $module['lessons'] ) || 'edit' === $context ) {
 				$structure[] = $module;
 			}
@@ -129,8 +136,9 @@ class Sensei_Course_Structure {
 	 *
 	 * @see Sensei_Course_Structure::prepare_lesson()
 	 *
-	 * @param WP_Term      $module_term        Module term.
-	 * @param array|string $lesson_post_status Lesson post status(es).
+	 * @param WP_Term      $module_term               Module term.
+	 * @param array|string $lesson_post_status        Lesson post status(es).
+	 * @param boolean      $add_teacher_name_property Teacher's name will be added to the module as a property.
 	 *
 	 * @return array {
 	 *     An array which has module information.
@@ -138,19 +146,27 @@ class Sensei_Course_Structure {
 	 *     @type string $type        The type of the array which is 'module'.
 	 *     @type int    $id          The module term id.
 	 *     @type string $title       The module name.
+	 *     @type string $teacher     Name of the teacher of this module, gets populated only in admin panel for admins and if the teacher is not admin.
 	 *     @type string $description The module description.
 	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
 	 * }
 	 */
-	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
+	private function prepare_module( WP_Term $module_term, $lesson_post_status, $add_teacher_name_property ) : array {
 		$lessons = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
-		$module  = [
+
+		$module = [
 			'type'        => 'module',
 			'id'          => $module_term->term_id,
 			'title'       => $module_term->name,
 			'description' => $module_term->description,
+			'teacher'     => '',
 			'lessons'     => [],
 		];
+
+		if ( $add_teacher_name_property ) {
+			$author            = Sensei_Core_Modules::get_term_author( $module_term->slug );
+			$module['teacher'] = user_can( $author, 'manage_options' ) ? '' : $author->display_name;
+		}
 
 		foreach ( $lessons as $lesson ) {
 			$module['lessons'][] = $this->prepare_lesson( $lesson );
