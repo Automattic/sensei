@@ -3895,7 +3895,7 @@ class Sensei_Course {
 	 * @return float Average days to completion, rounded to the highest integer.
 	 */
 	public function get_average_days_to_completion() {
-		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Course::get_average_days_to_completion' );
+		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Reports_Overview_Service_Courses::get_average_days_to_completion' );
 
 		global $wpdb;
 

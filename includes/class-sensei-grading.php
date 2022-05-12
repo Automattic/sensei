@@ -1168,7 +1168,7 @@ class Sensei_Grading {
 	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
 	public function get_graded_lessons_average_grade_filter_users( $user_ids ) {
-		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Grading::get_graded_lessons_average_grade_filter_users' );
+		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Reports_Overview_Service_Students::get_graded_lessons_average_grade_filter_users' );
 
 		if ( empty( $user_ids ) ) {
 			return 0;
@@ -1327,7 +1327,7 @@ class Sensei_Grading {
 	 * @return double Average grade of all courses.
 	 */
 	public function get_courses_average_grade_filter_courses( array $courses_ids ) {
-		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Grading::get_courses_average_grade_filter_courses' );
+		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Reports_Overview_Service_Courses::get_courses_average_grade_filter_courses' );
 
 		if ( empty( $courses_ids ) ) {
 			return 0;
