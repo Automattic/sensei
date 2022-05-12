@@ -4442,7 +4442,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Outputs the lessons course signup lingk
+	 * Outputs the lessons course signup link.
 	 *
 	 * This hook runs inside the single lesson page.
 	 *
@@ -4469,7 +4469,7 @@ class Sensei_Lesson {
 		 * @return {bool} Whether to show the course sign up notice.
 		 */
 		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
-			$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
+			$course_link  = '<a href="' . esc_url( Sensei()->lesson->get_take_course_url( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
 			$course_link .= esc_html__( 'course', 'sensei-lms' );
 			$course_link .= '</a>';
 
@@ -4503,6 +4503,34 @@ class Sensei_Lesson {
 			Sensei()->notices->add_notice( $message, $notice_level );
 		}
 
+	}
+
+	/**
+	 * Get take course URL.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return string Take course URL.
+	 */
+	public function get_take_course_url( $course_id ) {
+		/**
+		 * Filter the take course URL displayed in lessons.
+		 * Notice that in Learning Mode, when user is logged-in, it will not use this
+		 * filter and directly enroll the user in the course.
+		 *
+		 * @since x.x.x
+		 * @hook sensei_lesson_take_course_url
+		 *
+		 * @param {string} $take_course_url Take course URL.
+		 * @param {int}    $course_id       Course ID.
+		 *
+		 * @return {string} Returns filtered take course URL.
+		 */
+		return apply_filters(
+			'sensei_lesson_take_course_url',
+			get_permalink( $course_id ),
+			$course_id
+		);
 	}
 
 	/**
