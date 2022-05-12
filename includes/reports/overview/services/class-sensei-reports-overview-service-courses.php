@@ -161,27 +161,6 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get all courses ids no pagination.
-	 *
-	 * @since  4.5.0
-	 *
-	 * @return array course ids array.
-	 */
-	private function get_all_courses_ids(): array {
-		// Get all courses ids.
-		$args = array(
-			'post_type'      => 'course',
-			'post_status'    => array( 'publish', 'private' ),
-			'posts_per_page' => -1,
-			'fields'         => 'ID',
-		);
-
-		$courses_query = new WP_Query( $args );
-
-		return array_column( $courses_query->posts, 'ID' );
-	}
-
-	/**
 	 * Get lessons grouped by courses.
 	 *
 	 * @since  4.5.0
