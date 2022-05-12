@@ -106,7 +106,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'average_percent'    => sprintf(
 			// translators: Placeholder value is the average grade of all courses.
 				__( 'Average Grade (%s%%)', 'sensei-lms' ),
-				esc_html( ceil( $this->grading->get_courses_average_grade_filter_courses( $total_courses_ids ) ) )
+				esc_html( ceil( $this->reports_overview_service_courses->get_courses_average_grade_filter_courses( $total_courses_ids ) ) )
 			),
 			'days_to_completion' => sprintf(
 			// translators: Placeholder value is average days to completion.

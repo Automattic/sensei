@@ -80,6 +80,57 @@ class Sensei_Reports_Overview_Service_Courses {
 		return $average_total_average_progress;
 	}
 
+	/**
+	 * Get the average grade of the courses.
+	 *
+	 * @since 4.5.0
+	 * @access public
+	 *
+	 * @param array $courses_ids Courses ids to filter by.
+	 * @return double Average grade of all courses.
+	 */
+	public function get_courses_average_grade_filter_courses( array $courses_ids ) {
+		if ( empty( $courses_ids ) ) {
+			return 0;
+		}
+		global $wpdb;
+		/**
+		 * The subquery calculates the average grade per course, and the outer query then calculates the
+		 * average grade of all courses. To be included in the calculation, a lesson must:
+		 *   Have a status of 'graded', 'passed' or 'failed'.
+		 *   Have grade data.
+		 *   Be associated with a course.
+		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
+		 *   if it exists its value will be 1).
+		 */
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$result = $wpdb->get_row(
+		// phpcs:ignore
+			$wpdb->prepare(
+				"SELECT AVG(course_average) as courses_average
+			FROM (
+				SELECT AVG(cm.meta_value) as course_average
+				FROM {$wpdb->comments} c
+				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
+				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
+				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+					AND cm.meta_key = 'grade'
+					AND course.meta_key = '_lesson_course'
+					AND course.meta_value <> ''
+					AND has_questions.meta_key = '_quiz_has_questions'
+				 AND course.meta_value IN (%1s) " // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
+				. ' GROUP BY course.meta_value
+			) averages_by_course',
+				implode( ',', $courses_ids )
+			)
+		);
+
+		return doubleval( $result->courses_average );
+	}
+
 
 	/**
 	 * Get all lessons completions.

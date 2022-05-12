@@ -51,17 +51,17 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create();
 
 		/* Arrange. */
-		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
-
 		$course        = $this->createMock( Sensei_Course::class );
 		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
 		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
+		$service->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
+
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
-			$grading,
+			$this->createMock( Sensei_Grading::class ),
 			$course,
 			$data_provider,
-			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
+			$service
 		);
 
 		$list_table->total_items = 1;
@@ -89,8 +89,8 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create();
 		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
 
-		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
+		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
+		$service->method( 'get_courses_average_grade_filter_courses' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
 
@@ -98,10 +98,10 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
 
 		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
-			$grading,
+			$this->createMock( Sensei_Grading::class ),
 			$course,
 			$data_provider,
-			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
+			$service
 		);
 
 		/* Act. */

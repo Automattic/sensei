@@ -1321,10 +1321,14 @@ class Sensei_Grading {
 	 * @since 4.5.0
 	 * @access public
 	 *
+	 * @deprecated 4.5.0 use Sensei_Reports_Overview_Service_Courses::get_courses_average_grade_filter_courses
+	 *
 	 * @param array $courses_ids Courses ids to filter by.
 	 * @return double Average grade of all courses.
 	 */
 	public function get_courses_average_grade_filter_courses( array $courses_ids ) {
+		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Grading::get_courses_average_grade_filter_courses' );
+
 		if ( empty( $courses_ids ) ) {
 			return 0;
 		}
