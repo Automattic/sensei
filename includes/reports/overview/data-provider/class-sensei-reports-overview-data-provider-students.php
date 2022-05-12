@@ -75,19 +75,8 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		}
 
 		$wp_user_search = new WP_User_Query( $query_args );
+
 		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
-
-		$wp_all_users       = new WP_User_Query(
-			array_merge(
-				$query_args,
-				[
-					'number' => -1,
-					'fields' => 'ids',
-				]
-			)
-		);
-		$this->all_item_ids = $wp_all_users->get_results();
-
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 

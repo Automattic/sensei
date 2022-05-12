@@ -47,13 +47,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	protected $data_provider;
 
 	/**
-	 * All the item ids.
-	 *
-	 * @var array
-	 */
-	protected $all_item_ids = [];
-
-	/**
 	 * Return additional filters for current report.
 	 *
 	 * @return array
