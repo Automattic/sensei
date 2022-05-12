@@ -25,21 +25,21 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get total average progress value for courses.
 	 *
-	 * @param array $courses_ids Courses ids.
+	 * @param array $course_ids Courses ids.
 	 * @return float total average progress value for all the courses.
 	 * @since  4.5.0
 	 * @access public
 	 */
-	public function get_total_average_progress( array $courses_ids ): float {
-		if ( empty( $courses_ids ) ) {
+	public function get_total_average_progress( array $course_ids ): float {
+		if ( empty( $course_ids ) ) {
 			return false;
 		}
-		$lessons_count_per_courses = $this->get_lessons_in_courses( $courses_ids );
+		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
 		$lessons_completions       = $this->get_lessons_completions();
-		$student_count_per_courses = $this->get_students_count_in_courses( $courses_ids );
+		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
 		$total_average_progress    = 0;
 
-		foreach ( $courses_ids as $course_id ) {
+		foreach ( $course_ids as $course_id ) {
 			if ( ! isset( $lessons_count_per_courses[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
 				continue;
 			}
@@ -76,7 +76,7 @@ class Sensei_Reports_Overview_Service_Courses {
 			$total_average_progress += $course_average_progress;
 		}
 		// Divide total value to get average total value for average progress for courses.
-		$average_total_average_progress = ceil( $total_average_progress / count( $courses_ids ) );
+		$average_total_average_progress = ceil( $total_average_progress / count( $course_ids ) );
 		return $average_total_average_progress;
 	}
 
@@ -86,11 +86,11 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @since 4.5.0
 	 * @access public
 	 *
-	 * @param array $courses_ids Courses ids to filter by.
+	 * @param array $course_ids Courses ids to filter by.
 	 * @return double Average grade of all courses.
 	 */
-	public function get_courses_average_grade_filter_courses( array $courses_ids ) {
-		if ( empty( $courses_ids ) ) {
+	public function get_courses_average_grade_filter_courses( array $course_ids ) {
+		if ( empty( $course_ids ) ) {
 			return 0;
 		}
 		global $wpdb;
@@ -124,7 +124,7 @@ class Sensei_Reports_Overview_Service_Courses {
 				 AND course.meta_value IN (%1s) " // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
 				. ' GROUP BY course.meta_value
 			) averages_by_course',
-				implode( ',', $courses_ids )
+				implode( ',', $course_ids )
 			)
 		);
 
@@ -165,10 +165,10 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @since  4.5.0
 	 *
-	 * @param array $courses_ids The list of courses ids.
+	 * @param array $course_ids The list of courses ids.
 	 * @return array lessons count in courses.
 	 */
-	private function get_lessons_in_courses( $courses_ids ): array {
+	private function get_lessons_in_courses( $course_ids ): array {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
@@ -180,7 +180,7 @@ class Sensei_Reports_Overview_Service_Courses {
 				WHERE pm.meta_value IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
 				. " AND pm.meta_key = '_lesson_course'
 				GROUP BY pm.meta_value",
-				implode( ',', $courses_ids )
+				implode( ',', $course_ids )
 			),
 			'OBJECT_K'
 		);
@@ -191,10 +191,10 @@ class Sensei_Reports_Overview_Service_Courses {
 	 *
 	 * @since  4.5.0
 	 *
-	 * @param array $courses_ids The array of courses ids.
+	 * @param array $course_ids The array of courses ids.
 	 * @return array students in courses.
 	 */
-	private function get_students_count_in_courses( array $courses_ids ): array {
+	private function get_students_count_in_courses( array $course_ids ): array {
 
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
@@ -206,7 +206,7 @@ class Sensei_Reports_Overview_Service_Courses {
 				. " AND c.comment_type = 'sensei_course_status'
 					AND c.comment_approved IN ( 'in-progress', 'complete' )
 					GROUP BY c.comment_post_ID",
-				implode( ',', $courses_ids )
+				implode( ',', $course_ids )
 			),
 			'OBJECT_K'
 		);

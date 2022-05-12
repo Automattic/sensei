@@ -292,11 +292,11 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param array $courses_ids Courses ids to filter by.
+	 * @param array $course_ids Courses ids to filter by.
 	 * @return float Average days to completion, rounded to the highest integer.
 	 */
-	private function get_average_days_to_completion( array $courses_ids ) : float {
-		if ( empty( $courses_ids ) ) {
+	private function get_average_days_to_completion( array $course_ids ) : float {
+		if ( empty( $course_ids ) ) {
 			return 0;
 		}
 		global $wpdb;
@@ -315,7 +315,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			. " GROUP BY {$wpdb->comments}.comment_post_ID
 			) AS aggregated
 		",
-			implode( ',', $courses_ids )
+			implode( ',', $course_ids )
 		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
