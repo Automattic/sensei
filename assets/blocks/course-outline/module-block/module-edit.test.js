@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 /**
  * WordPress dependencies
@@ -76,5 +76,34 @@ describe( '<ModuleEdit />', () => {
 		} );
 
 		expect( setAttributesMock ).toBeCalledWith( { description: 'Test' } );
+	} );
+
+	it( 'Should not display the teacher name section if no or empty name is provided', () => {
+		render(
+			<ModuleEdit
+				className={ '' }
+				attributes={ { title: '', description: '', lessons: [] } }
+			/>
+		);
+
+		expect( screen.queryByText( '(', { exact: false } ) ).toBeFalsy();
+	} );
+
+	it( 'Should display the teacher name section in parentheses if name is provided', () => {
+		render(
+			<ModuleEdit
+				className={ '' }
+				attributes={ {
+					title: '',
+					description: '',
+					lessons: [],
+					teacher: 'teacher1',
+				} }
+			/>
+		);
+
+		expect( screen.getByText( '(', { exact: false } ).textContent ).toEqual(
+			'(teacher1)'
+		);
 	} );
 } );
