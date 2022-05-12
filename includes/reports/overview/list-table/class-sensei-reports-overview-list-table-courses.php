@@ -64,25 +64,25 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$total_courses_ids = $this->get_all_item_ids();
+		$all_course_ids    = $this->get_all_item_ids();
 		$total_completions = 0;
-		if ( ! empty( $total_courses_ids ) ) {
+		if ( ! empty( $all_course_ids ) ) {
 			$total_completions = Sensei_Utils::sensei_check_for_activity(
 				array(
 					'type'     => 'sensei_course_status',
 					'status'   => 'complete',
-					'post__in' => $total_courses_ids,
+					'post__in' => $all_course_ids,
 				)
 			);
 		}
 
-		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $total_courses_ids );
+		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
 
 		$columns = array(
 			'title'              => sprintf(
 			// translators: Placeholder value is the number of courses.
 				__( 'Course (%d)', 'sensei-lms' ),
-				esc_html( count( $total_courses_ids ) )
+				esc_html( count( $all_course_ids ) )
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 			'completions'        => sprintf(
@@ -98,12 +98,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'average_percent'    => sprintf(
 			// translators: Placeholder value is the average grade of all courses.
 				__( 'Average Grade (%s%%)', 'sensei-lms' ),
-				esc_html( ceil( $this->reports_overview_service_courses->get_courses_average_grade_filter_courses( $total_courses_ids ) ) )
+				esc_html( ceil( $this->reports_overview_service_courses->get_courses_average_grade_filter_courses( $all_course_ids ) ) )
 			),
 			'days_to_completion' => sprintf(
 			// translators: Placeholder value is average days to completion.
 				__( 'Days to Completion (%d)', 'sensei-lms' ),
-				ceil( $this->get_average_days_to_completion( $total_courses_ids ) )
+				ceil( $this->get_average_days_to_completion( $all_course_ids ) )
 			),
 		);
 
