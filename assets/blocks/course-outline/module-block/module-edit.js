@@ -52,7 +52,13 @@ export const ModuleEdit = ( props ) => {
 	const {
 		clientId,
 		className,
-		attributes: { title, description, borderedSelected, borderColorValue },
+		attributes: {
+			title,
+			description,
+			borderedSelected,
+			borderColorValue,
+			teacher,
+		},
 		mainColor,
 		defaultMainColor,
 		textColor,
@@ -158,6 +164,7 @@ export const ModuleEdit = ( props ) => {
 							onChange={ updateName }
 						/>
 					</h2>
+					{ teacher && <span>({ teacher })</span> }
 					<ModuleStatus clientId={ clientId } />
 					{ collapsibleModules && (
 						<button
