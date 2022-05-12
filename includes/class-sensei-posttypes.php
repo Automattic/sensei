@@ -1059,7 +1059,7 @@ class Sensei_PostTypes {
 			__( 'Modules', 'sensei-lms' ),
 			__( 'Modules', 'sensei-lms' ),
 			'manage_categories',
-			'edit-tags.php?taxonomy=module'
+			'edit-tags.php?taxonomy=module&post_type=course'
 		);
 
 		add_submenu_page(
