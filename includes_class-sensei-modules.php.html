@@ -156,7 +156,7 @@ class Sensei_Core_Modules {
 	public function highlight_menu_item( $submenu_file ) {
 		$screen = get_current_screen();
 		if ( $screen &amp;&amp; in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
-			$submenu_file = 'edit-tags.php?taxonomy=module';
+			$submenu_file = 'edit-tags.php?taxonomy=module&amp;post_type=course';
 		}
 
 		return $submenu_file;
@@ -1160,7 +1160,7 @@ class Sensei_Core_Modules {
 		_deprecated_function( __METHOD__, '4.0.0' );
 
 		// add the modules link under the Course main menu
-		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module', '' );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module&amp;post_type=course', '' );
 
 		// Register new admin page for module ordering.
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei-lms' ), __( 'Order Modules', 'sensei-lms' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
