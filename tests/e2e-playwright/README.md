@@ -2,6 +2,7 @@
 
 ## Quickstart
 You should first make sure that the [dependencies are installed](#dependencies). 
+Run `npm run wp-env start`.
 Run `npm run test:e2e`.
 
 ## Running

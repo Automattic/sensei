@@ -1,4 +1,5 @@
-# Sensei E2E Tests
+# Sensei E2E Tests [Deprecated]
+Please check the `tests/e2e` folder to see the new version
 
 ## Introduction
 

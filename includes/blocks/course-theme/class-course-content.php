@@ -56,7 +56,7 @@ class Course_Content {
 	 *
 	 * @access private
 	 *
-	 * @param string $content
+	 * @param string $content The content of the post.
 	 *
 	 * @return string HTML
 	 */
@@ -82,6 +82,8 @@ class Course_Content {
 		}
 
 		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'entry-content' ) );
+
+		add_filter( 'the_content', [ $this, 'render_content' ] );
 
 		return (
 			'<div ' . $wrapper_attributes . '>' .
