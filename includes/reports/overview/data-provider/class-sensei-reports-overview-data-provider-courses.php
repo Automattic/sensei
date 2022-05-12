@@ -62,8 +62,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			$course_args['s'] = $filters['search'];
 		}
 
+		add_filter( 'posts_clauses', [ $this, 'add_last_activity_to_courses_query' ] );
+		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_query' ] );
 		add_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
-		add_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
 
 		if ( 'count_of_completions' === $course_args['orderby'] ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
@@ -84,7 +85,9 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		);
 		$this->all_item_ids = $all_courses_query->posts;
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
-		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_queries' ] );
+		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_query' ] );
+		remove_filter( 'posts_clauses', [ $this, 'add_last_activity_to_courses_query' ] );
+		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 
 		$this->last_total_items = $courses_query->found_posts;
 
@@ -111,6 +114,38 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	}
 
 	/**
+	 * Add last activity date for each course.
+	 *
+	 * @since  x.x.x
+	 * @access private
+	 *
+	 * @param array $clauses Associative array of the clauses for the query.
+	 *
+	 * @return array Modified associative array of the clauses for the query.
+	 */
+	public function add_last_activity_to_courses_query( array $clauses ): array {
+		global $wpdb;
+
+		$lessons_query = "SELECT cm.comment_post_id lesson_id, MAX(cm.comment_date_gmt) as comment_date_gmt
+			FROM {$wpdb->comments} cm
+			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
+			AND cm.comment_type = 'sensei_lesson_status'
+			GROUP BY cm.comment_post_id";
+
+		$course_query = "SELECT DISTINCT pm.meta_value AS course_id, cm.comment_date_gmt
+		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
+		ON cm.lesson_id = pm.post_id
+		AND pm.meta_key = '_lesson_course'
+		GROUP BY pm.meta_value
+		";
+
+		$clauses['fields'] .= ', la.comment_date_gmt AS last_activity_date';
+		$clauses['join']   .= " LEFT JOIN ({$course_query}) AS la ON la.course_id = {$wpdb->posts}.ID";
+
+		return $clauses;
+	}
+
+	/**
 	 * Filter the courses by last activity start/end date.
 	 *
 	 * @access private
@@ -122,41 +157,21 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	public function filter_courses_by_last_activity( array $clauses ): array {
 		global $wpdb;
 
-		if ( ! $this->date_from && ! $this->date_to ) {
-			return $clauses;
-		}
-		// Fetch the lessons within the expected last activity range.
-		$lessons_query = "SELECT cm.comment_post_id lesson_id, MAX(cm.comment_date_gmt) as comment_date_gmt
-			FROM {$wpdb->comments} cm
-			WHERE cm.comment_approved IN ('complete', 'passed', 'graded')
-			AND cm.comment_type = 'sensei_lesson_status'";
-
 		// Filter by start date.
 		if ( $this->date_from ) {
-			$lessons_query .= $wpdb->prepare(
-				' AND cm.comment_date_gmt >= %s',
+			$clauses['where'] .= $wpdb->prepare(
+				' AND la.comment_date_gmt >= %s',
 				$this->date_from
 			);
 		}
-		$lessons_query .= ' GROUP BY cm.comment_post_id';
-
-		// Fetch the course IDs associated with those lessons.
-		$course_query = "SELECT DISTINCT(pm.meta_value) course_id
-		FROM {$wpdb->postmeta} pm JOIN ({$lessons_query}) cm
-		ON cm.lesson_id = pm.post_id
-		AND pm.meta_key = '_lesson_course'
-		GROUP BY pm.meta_value
-		";
 
 		// Filter by end date.
 		if ( $this->date_to ) {
-			$course_query .= $wpdb->prepare(
-				' HAVING MAX(cm.comment_date_gmt) <= %s',
+			$clauses['where'] .= $wpdb->prepare(
+				' AND la.comment_date_gmt <= %s',
 				$this->date_to
 			);
 		}
-
-		$clauses['where'] .= " AND {$wpdb->posts}.ID IN ({$course_query})";
 
 		return $clauses;
 	}
@@ -171,7 +186,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 *
 	 * @return array Modified associative array of the clauses for the query.
 	 */
-	public function add_days_to_completion_to_courses_queries( $clauses ) {
+	public function add_days_to_completion_to_courses_query( array $clauses ): array {
 		global $wpdb;
 
 		// Get the number of days to complete a course: `days to complete = complete date - start date + 1`.
