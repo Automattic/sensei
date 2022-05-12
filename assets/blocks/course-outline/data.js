@@ -103,6 +103,7 @@ export const extractStructure = ( blocks ) => {
 		module: ( block ) => ( {
 			description: block.attributes.description,
 			lessons: extractStructure( block.innerBlocks ),
+			teacher: block.attributes.teacher,
 		} ),
 		lesson: ( block ) => ( {
 			draft: block.attributes.draft,
