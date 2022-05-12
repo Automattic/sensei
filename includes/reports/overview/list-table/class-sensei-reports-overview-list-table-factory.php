@@ -30,8 +30,8 @@ class Sensei_Reports_Overview_List_Table_Factory {
 			case 'users':
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
-					Sensei()->grading,
-					new Sensei_Reports_Overview_Data_Provider_Students()
+					new Sensei_Reports_Overview_Data_Provider_Students(),
+					new Sensei_Reports_Overview_Service_Students()
 				);
 			case 'courses':
 				return new Sensei_Reports_Overview_List_Table_Courses(

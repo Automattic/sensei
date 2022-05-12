@@ -15,24 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overview_List_Table_Abstract {
+
 	/**
-	 * Sensei grading related services.
+	 * Sensei reports courses service.
 	 *
-	 * @var Sensei_Grading
+	 * @var Sensei_Reports_Overview_Service_Students
 	 */
-	private $grading;
+	private $reports_overview_service_students;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading                                  $grading Sensei grading related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
+	 * @param Sensei_Reports_Overview_Service_Students        $reports_overview_service_students reports students service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'users', $data_provider );
 
-		$this->grading = $grading;
+		$this->reports_overview_service_students = $reports_overview_service_students;
 	}
 
 	/**
@@ -64,7 +65,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
 
 		// Get total average students grade.
-		$total_average_grade = $this->grading->get_graded_lessons_average_grade_filter_users( $user_ids );
+		$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade_filter_users( $user_ids );
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.

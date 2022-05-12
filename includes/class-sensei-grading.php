@@ -1162,10 +1162,14 @@ class Sensei_Grading {
 	 * @since 4.5.0
 	 * @access public
 	 *
+	 * @deprecated 4.5.0 use Sensei_Reports_Overview_Service_Students::get_graded_lessons_average_grade_filter_users
+	 *
 	 * @param array $user_ids user ids.
 	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
 	public function get_graded_lessons_average_grade_filter_users( $user_ids ) {
+		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Grading::get_graded_lessons_average_grade_filter_users' );
+
 		if ( empty( $user_ids ) ) {
 			return 0;
 		}
