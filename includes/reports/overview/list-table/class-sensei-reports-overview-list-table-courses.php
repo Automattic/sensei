@@ -103,7 +103,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'days_to_completion' => sprintf(
 			// translators: Placeholder value is average days to completion.
 				__( 'Days to Completion (%d)', 'sensei-lms' ),
-				ceil( $this->get_average_days_to_completion( $all_course_ids ) )
+				ceil( $this->reports_overview_service_courses->get_average_days_to_completion( $all_course_ids ) )
 			),
 		);
 
@@ -285,40 +285,5 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'last_activity_date_from' => $this->get_start_date_and_time(),
 			'last_activity_date_to'   => $this->get_end_date_and_time(),
 		];
-	}
-
-	/**
-	 * Get average days to completion by courses.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param array $course_ids Courses ids to filter by.
-	 * @return float Average days to completion, rounded to the highest integer.
-	 */
-	private function get_average_days_to_completion( array $course_ids ) : float {
-		if ( empty( $course_ids ) ) {
-			return 0;
-		}
-		global $wpdb;
-
-		$query = $wpdb->prepare(
-			"
-			SELECT AVG( aggregated.days_to_completion )
-			FROM (
-				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%%Y-%%m-%%d %%H:%%i:%%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
-				FROM {$wpdb->comments}
-				LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
-					AND {$wpdb->commentmeta}.meta_key = 'start'
-				WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
-					AND {$wpdb->comments}.comment_approved = 'complete'
-					AND {$wpdb->comments}.comment_post_ID IN (%1s)"  // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
-			. " GROUP BY {$wpdb->comments}.comment_post_ID
-			) AS aggregated
-		",
-			implode( ',', $course_ids )
-		);
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		return (float) $wpdb->get_var( $query );
 	}
 }
