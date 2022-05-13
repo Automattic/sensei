@@ -1157,44 +1157,6 @@ class Sensei_Grading {
 	}
 
 	/**
-	 * Get average grade of all lessons graded in all the courses filtered by students.
-	 *
-	 * @since 4.5.0
-	 * @access public
-	 *
-	 * @deprecated 4.5.0 use Sensei_Reports_Overview_Service_Students::get_graded_lessons_average_grade_filter_users
-	 *
-	 * @param array $user_ids user ids.
-	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
-	 */
-	public function get_graded_lessons_average_grade_filter_users( $user_ids ) {
-		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Reports_Overview_Service_Students::get_graded_lessons_average_grade_filter_users' );
-
-		if ( empty( $user_ids ) ) {
-			return 0;
-		}
-		global $wpdb;
-
-		// Fetching all the grades of all the lessons that are graded.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$sum_result          = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum,COUNT( * ) as grade_count FROM {$wpdb->comments}
-             INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
-			 WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
-			 AND {$wpdb->comments}.user_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
-				implode( ',', $user_ids )
-			)
-		);
-		$average_grade_value = 0;
-		if ( ! $sum_result->grade_count || '0' === $sum_result->grade_count ) {
-			return $average_grade_value;
-		}
-		$average_grade_value = ceil( $sum_result->grade_sum / $sum_result->grade_count );
-		return $average_grade_value;
-	}
-
-	/**
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0
@@ -1310,61 +1272,6 @@ class Sensei_Grading {
 					AND has_questions.meta_key = '_quiz_has_questions'
 				GROUP BY course.meta_value
 			) averages_by_course"
-		);
-
-		return doubleval( $result->courses_average );
-	}
-
-	/**
-	 * Get the average grade of the courses.
-	 *
-	 * @since 4.5.0
-	 * @access public
-	 *
-	 * @deprecated 4.5.0 use Sensei_Reports_Overview_Service_Courses::get_courses_average_grade_filter_courses
-	 *
-	 * @param array $courses_ids Courses ids to filter by.
-	 * @return double Average grade of all courses.
-	 */
-	public function get_courses_average_grade_filter_courses( array $courses_ids ) {
-		_deprecated_function( __METHOD__, '4.5.0', 'Sensei_Reports_Overview_Service_Courses::get_courses_average_grade_filter_courses' );
-
-		if ( empty( $courses_ids ) ) {
-			return 0;
-		}
-		global $wpdb;
-		/**
-		 * The subquery calculates the average grade per course, and the outer query then calculates the
-		 * average grade of all courses. To be included in the calculation, a lesson must:
-		 *   Have a status of 'graded', 'passed' or 'failed'.
-		 *   Have grade data.
-		 *   Be associated with a course.
-		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
-		 *   if it exists its value will be 1).
-		 */
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$result = $wpdb->get_row(
-		// phpcs:ignore
-			$wpdb->prepare(
-				"SELECT AVG(course_average) as courses_average
-			FROM (
-				SELECT AVG(cm.meta_value) as course_average
-				FROM {$wpdb->comments} c
-				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
-				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
-				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
-				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
-				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
-					AND cm.meta_key = 'grade'
-					AND course.meta_key = '_lesson_course'
-					AND course.meta_value <> ''
-					AND has_questions.meta_key = '_quiz_has_questions'
-				 AND course.meta_value IN (%1s) " // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
-				. ' GROUP BY course.meta_value
-			) averages_by_course',
-				implode( ',', $courses_ids )
-			)
 		);
 
 		return doubleval( $result->courses_average );
