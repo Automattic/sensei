@@ -32,7 +32,7 @@ jobs:
             # clone the repository
             - uses: actions/checkout@v3
 
-            - name: Updates the CI npm
+            - name: Updates the npm version
               run: npm install -g npm@8.9.0
 
             - uses: actions/cache@v3
