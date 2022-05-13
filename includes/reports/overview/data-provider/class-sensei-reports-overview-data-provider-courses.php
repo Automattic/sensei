@@ -52,6 +52,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $filters['number'],
 			'offset'           => $filters['offset'],
+			'fields'           => $filters['fields'] ?? '',
 			'orderby'          => $filters['orderby'] ?? '',
 			'order'            => $filters['order'] ?? 'ASC',
 			'suppress_filters' => 0,
@@ -68,8 +69,10 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 		if ( 'count_of_completions' === $course_args['orderby'] ) {
 			add_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		}
+		$course_args   = apply_filters( 'sensei_analysis_overview_filter_courses', $course_args );
+		$courses_query = new WP_Query( $course_args );
 
-		$courses_query = new WP_Query( apply_filters( 'sensei_analysis_overview_filter_courses', $course_args ) );
+		remove_filter( 'posts_orderby', array( $this, 'add_orderby_custom_field_to_query' ), 10, 2 );
 		remove_filter( 'posts_clauses', [ $this, 'filter_courses_by_last_activity' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_days_to_completion_to_courses_query' ] );
 		remove_filter( 'posts_clauses', [ $this, 'add_last_activity_to_courses_query' ] );

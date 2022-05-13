@@ -46,19 +46,24 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 	}
 
 	public function testGetColumns_NoCompletionsFound_ReturnsMatchingArray() {
+		$user_id = $this->factory->user->create();
+
+		$course_id = $this->factory->course->create();
+
 		/* Arrange. */
-		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$course        = $this->createMock( Sensei_Course::class );
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
+		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
 
-		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_average_days_to_completion' )->willReturn( 2.2 );
-
-		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
-			$grading,
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
 			$course,
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
+			$data_provider,
+			$service
 		);
+
 		$list_table->total_items = 1;
 
 		/* Act. */
@@ -71,7 +76,7 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 			'completions'        => 'Completed (0)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
-			'days_to_completion' => 'Days to Completion (3)',
+			'days_to_completion' => 'Days to Completion (0)',
 		];
 
 		self::assertSame( $expected, $actual );
@@ -84,31 +89,32 @@ class Sensei_Reports_Overview_List_Table_Courses_Test extends WP_UnitTestCase {
 		$course_id = $this->factory->course->create();
 		Sensei_Utils::update_course_status( $user_id, $course_id, 'complete' );
 
-		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_courses_average_grade' )->willReturn( 2 );
+		$service = $this->createMock( Sensei_Reports_Overview_Service_Courses::class );
+		$service->method( 'get_courses_average_grade' )->willReturn( 2 );
 
 		$course = $this->createMock( Sensei_Course::class );
-		$course->method( 'get_average_days_to_completion' )->willReturn( 3.0 );
 
-		$list_table              = new Sensei_Reports_Overview_List_Table_Courses(
-			$grading,
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( [ $course_id ] );
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Courses(
+			$this->createMock( Sensei_Grading::class ),
 			$course,
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
-			$this->createMock( Sensei_Reports_Overview_Service_Courses::class )
+			$data_provider,
+			$service
 		);
-		$list_table->total_items = 4;
 
 		/* Act. */
 		$actual = $list_table->get_columns();
 
 		/* Assert. */
 		$expected = [
-			'title'              => 'Course (4)',
+			'title'              => 'Course (1)',
 			'last_activity'      => 'Last Activity',
 			'completions'        => 'Completed (1)',
 			'average_progress'   => 'Average Progress (0%)',
 			'average_percent'    => 'Average Grade (2%)',
-			'days_to_completion' => 'Days to Completion (3)',
+			'days_to_completion' => 'Days to Completion (0)',
 		];
 
 		self::assertSame( $expected, $actual );

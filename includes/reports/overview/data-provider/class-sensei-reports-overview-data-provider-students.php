@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_Overview_Data_Provider_Interface {
 	/**
-	 * Total number of courses found with given criteria.
+	 * Total number of students found with given criteria.
 	 *
 	 * @var int Total number of items
 	 */
@@ -75,9 +75,10 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		}
 
 		$wp_user_search = new WP_User_Query( $query_args );
+
+		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
-		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 
 		$learners               = $wp_user_search->get_results();
 		$this->last_total_items = $wp_user_search->get_total();
@@ -88,7 +89,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Filter the users to ones enrolled in a course.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.

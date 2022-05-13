@@ -15,24 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overview_List_Table_Abstract {
+
 	/**
-	 * Sensei grading related services.
+	 * Sensei reports courses service.
 	 *
-	 * @var Sensei_Grading
+	 * @var Sensei_Reports_Overview_Service_Students
 	 */
-	private $grading;
+	private $reports_overview_service_students;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading                                  $grading Sensei grading related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
+	 * @param Sensei_Reports_Overview_Service_Students        $reports_overview_service_students reports students service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'users', $data_provider );
 
-		$this->grading = $grading;
+		$this->reports_overview_service_students = $reports_overview_service_students;
 	}
 
 	/**
@@ -41,30 +42,34 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @return array The array of columns to use with the table
 	 */
 	public function get_columns() {
+
 		if ( $this->columns ) {
 			return $this->columns;
 		}
 
+		$user_ids = $this->get_all_item_ids();
 		// Get total value for Courses Completed column in users table.
 		$course_args_completed   = array(
-			'type'   => 'sensei_course_status',
-			'status' => 'complete',
+			'user_id' => $user_ids,
+			'type'    => 'sensei_course_status',
+			'status'  => 'complete',
 		);
 		$total_completed_courses = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
 
 		// Get the number of the courses that users have started.
 		$course_args_started   = array(
-			'type'   => 'sensei_course_status',
-			'status' => 'any',
+			'user_id' => $user_ids,
+			'type'    => 'sensei_course_status',
+			'status'  => 'any',
 		);
 		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
 
 		// Get total average students grade.
-		$total_average_grade = $this->grading->get_graded_lessons_average_grade();
+		$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.
-			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
+			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( count( $user_ids ) ) ),
 			'email'             => __( 'Email', 'sensei-lms' ),
 			'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 			'last_activity'     => __( 'Last Activity', 'sensei-lms' ),

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Courses overview service class.
  *
- * @since 4.5.0
+ * @since x.x.x
  */
 class Sensei_Reports_Overview_Service_Courses {
 
@@ -25,22 +25,22 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get total average progress value for courses.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 * @access public
 	 *
+	 * @param array $course_ids Courses ids.
 	 * @return float total average progress value for all the courses.
 	 */
-	public function get_total_average_progress(): float {
-		$courses_ids = $this->get_all_courses_ids();
-		if ( empty( $courses_ids ) ) {
-			return false;
+	public function get_total_average_progress( array $course_ids ): float {
+		if ( empty( $course_ids ) ) {
+			return 0.0;
 		}
-		$lessons_count_per_courses = $this->get_lessons_in_courses( $courses_ids );
+		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
 		$lessons_completions       = $this->get_lessons_completions();
-		$student_count_per_courses = $this->get_students_count_in_courses( $courses_ids );
+		$student_count_per_courses = $this->get_students_count_in_courses( $course_ids );
 		$total_average_progress    = 0;
 
-		foreach ( $courses_ids as $course_id ) {
+		foreach ( $course_ids as $course_id ) {
 			if ( ! isset( $lessons_count_per_courses[ $course_id ] ) || ! isset( $student_count_per_courses[ $course_id ] ) ) {
 				continue;
 			}
@@ -77,15 +77,101 @@ class Sensei_Reports_Overview_Service_Courses {
 			$total_average_progress += $course_average_progress;
 		}
 		// Divide total value to get average total value for average progress for courses.
-		$average_total_average_progress = ceil( $total_average_progress / count( $courses_ids ) );
+		$average_total_average_progress = ceil( $total_average_progress / count( $course_ids ) );
 		return $average_total_average_progress;
 	}
 
+	/**
+	 * Get the average grade of the courses.
+	 *
+	 * @since x.x.x
+	 * @access public
+	 *
+	 * @param array $course_ids Courses ids to filter by.
+	 * @return double Average grade of all courses.
+	 */
+	public function get_courses_average_grade( array $course_ids ) {
+		if ( empty( $course_ids ) ) {
+			return 0;
+		}
+		global $wpdb;
+		/**
+		 * The subquery calculates the average grade per course, and the outer query then calculates the
+		 * average grade of all courses. To be included in the calculation, a lesson must:
+		 *   Have a status of 'graded', 'passed' or 'failed'.
+		 *   Have grade data.
+		 *   Be associated with a course.
+		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
+		 *   if it exists its value will be 1).
+		 */
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$result = $wpdb->get_row(
+		// phpcs:ignore
+			$wpdb->prepare(
+				"SELECT AVG(course_average) as courses_average
+			FROM (
+				SELECT AVG(cm.meta_value) as course_average
+				FROM {$wpdb->comments} c
+				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
+				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
+				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+					AND cm.meta_key = 'grade'
+					AND course.meta_key = '_lesson_course'
+					AND course.meta_value <> ''
+					AND has_questions.meta_key = '_quiz_has_questions'
+				 AND course.meta_value IN (%1s) " // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
+				. ' GROUP BY course.meta_value
+			) averages_by_course',
+				implode( ',', $course_ids )
+			)
+		);
+
+		return doubleval( $result->courses_average );
+	}
+
+	/**
+	 * Get average days to completion by courses.
+	 *
+	 * @since x.x.x
+	 * @access public
+	 *
+	 * @param array $course_ids Courses ids to filter by.
+	 * @return float Average days to completion, rounded to the highest integer.
+	 */
+	public function get_average_days_to_completion( array $course_ids ) : float {
+		if ( empty( $course_ids ) ) {
+			return 0;
+		}
+		global $wpdb;
+
+		$query = $wpdb->prepare(
+			"
+			SELECT AVG( aggregated.days_to_completion )
+			FROM (
+				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%%Y-%%m-%%d %%H:%%i:%%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
+				FROM {$wpdb->comments}
+				LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
+					AND {$wpdb->commentmeta}.meta_key = 'start'
+				WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
+					AND {$wpdb->comments}.comment_approved = 'complete'
+					AND {$wpdb->comments}.comment_post_ID IN (%1s)"  // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
+			. " GROUP BY {$wpdb->comments}.comment_post_ID
+			) AS aggregated
+		",
+			implode( ',', $course_ids )
+		);
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		return (float) $wpdb->get_var( $query );
+	}
 
 	/**
 	 * Get all lessons completions.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 *
 	 * @return array lessons completions.
 	 */
@@ -111,35 +197,14 @@ class Sensei_Reports_Overview_Service_Courses {
 	}
 
 	/**
-	 * Get all courses ids no pagination.
-	 *
-	 * @since  4.5.0
-	 *
-	 * @return array course ids array.
-	 */
-	private function get_all_courses_ids(): array {
-		// Get all courses ids.
-		$args = array(
-			'post_type'      => 'course',
-			'post_status'    => array( 'publish', 'private' ),
-			'posts_per_page' => -1,
-			'fields'         => 'ID',
-		);
-
-		$courses_query = new WP_Query( $args );
-
-		return array_column( $courses_query->posts, 'ID' );
-	}
-
-	/**
 	 * Get lessons grouped by courses.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 *
-	 * @param array $courses_ids The list of courses ids.
+	 * @param array $course_ids The list of courses ids.
 	 * @return array lessons count in courses.
 	 */
-	private function get_lessons_in_courses( $courses_ids ): array {
+	private function get_lessons_in_courses( $course_ids ): array {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
@@ -151,7 +216,7 @@ class Sensei_Reports_Overview_Service_Courses {
 				WHERE pm.meta_value IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
 				. " AND pm.meta_key = '_lesson_course'
 				GROUP BY pm.meta_value",
-				implode( ',', $courses_ids )
+				implode( ',', $course_ids )
 			),
 			'OBJECT_K'
 		);
@@ -160,12 +225,12 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get students count by courses.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 *
-	 * @param array $courses_ids The array of courses ids.
+	 * @param array $course_ids The array of courses ids.
 	 * @return array students in courses.
 	 */
-	private function get_students_count_in_courses( array $courses_ids ): array {
+	private function get_students_count_in_courses( array $course_ids ): array {
 
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
@@ -177,7 +242,7 @@ class Sensei_Reports_Overview_Service_Courses {
 				. " AND c.comment_type = 'sensei_course_status'
 					AND c.comment_approved IN ( 'in-progress', 'complete' )
 					GROUP BY c.comment_post_ID",
-				implode( ',', $courses_ids )
+				implode( ',', $course_ids )
 			),
 			'OBJECT_K'
 		);

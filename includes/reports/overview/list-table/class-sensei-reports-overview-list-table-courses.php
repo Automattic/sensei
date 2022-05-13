@@ -30,11 +30,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $course;
 
 	/**
-	 * Sensei course related services.
+	 * Sensei reports courses service.
 	 *
 	 * @var Sensei_Reports_Overview_Service_Courses
 	 */
 	private $reports_overview_service_courses;
+
 
 	/**
 	 * Constructor
@@ -63,19 +64,25 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$total_completions      = Sensei_Utils::sensei_check_for_activity(
-			array(
-				'type'   => 'sensei_course_status',
-				'status' => 'complete',
-			)
-		);
-		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress();
+		$all_course_ids    = $this->get_all_item_ids();
+		$total_completions = 0;
+		if ( ! empty( $all_course_ids ) ) {
+			$total_completions = Sensei_Utils::sensei_check_for_activity(
+				array(
+					'type'     => 'sensei_course_status',
+					'status'   => 'complete',
+					'post__in' => $all_course_ids,
+				)
+			);
+		}
+
+		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
 
 		$columns = array(
 			'title'              => sprintf(
 			// translators: Placeholder value is the number of courses.
 				__( 'Course (%d)', 'sensei-lms' ),
-				esc_html( $this->total_items )
+				esc_html( count( $all_course_ids ) )
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 			'completions'        => sprintf(
@@ -91,12 +98,12 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'average_percent'    => sprintf(
 			// translators: Placeholder value is the average grade of all courses.
 				__( 'Average Grade (%s%%)', 'sensei-lms' ),
-				esc_html( ceil( $this->grading->get_courses_average_grade() ) )
+				esc_html( ceil( $this->reports_overview_service_courses->get_courses_average_grade( $all_course_ids ) ) )
 			),
 			'days_to_completion' => sprintf(
 			// translators: Placeholder value is average days to completion.
 				__( 'Days to Completion (%d)', 'sensei-lms' ),
-				ceil( $this->course->get_average_days_to_completion() )
+				ceil( $this->reports_overview_service_courses->get_average_days_to_completion( $all_course_ids ) )
 			),
 		);
 
