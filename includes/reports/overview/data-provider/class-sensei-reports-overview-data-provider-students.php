@@ -89,7 +89,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Filter the users to ones enrolled in a course.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.

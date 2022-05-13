@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Courses overview service class.
  *
- * @since 4.5.0
+ * @since x.x.x
  */
 class Sensei_Reports_Overview_Service_Courses {
 
@@ -25,10 +25,11 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get total average progress value for courses.
 	 *
+	 * @since  x.x.x
+	 * @access public
+	 *
 	 * @param array $course_ids Courses ids.
 	 * @return float total average progress value for all the courses.
-	 * @since  4.5.0
-	 * @access public
 	 */
 	public function get_total_average_progress( array $course_ids ): float {
 		if ( empty( $course_ids ) ) {
@@ -83,7 +84,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get the average grade of the courses.
 	 *
-	 * @since 4.5.0
+	 * @since x.x.x
 	 * @access public
 	 *
 	 * @param array $course_ids Courses ids to filter by.
@@ -134,7 +135,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get average days to completion by courses.
 	 *
-	 * @since 4.5.0
+	 * @since x.x.x
 	 * @access public
 	 *
 	 * @param array $course_ids Courses ids to filter by.
@@ -170,7 +171,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get all lessons completions.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 *
 	 * @return array lessons completions.
 	 */
@@ -198,7 +199,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get lessons grouped by courses.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 *
 	 * @param array $course_ids The list of courses ids.
 	 * @return array lessons count in courses.
@@ -224,7 +225,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	/**
 	 * Get students count by courses.
 	 *
-	 * @since  4.5.0
+	 * @since  x.x.x
 	 *
 	 * @param array $course_ids The array of courses ids.
 	 * @return array students in courses.
