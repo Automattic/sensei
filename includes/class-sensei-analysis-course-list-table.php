@@ -787,6 +787,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_footer() {
+		if ( ! $this->total_items ) {
+			return;
+		}
 
 		$course = get_post( $this->course_id );
 		$report = sanitize_title( $course->post_title ) . '-' . $this->view . 's-overview';
