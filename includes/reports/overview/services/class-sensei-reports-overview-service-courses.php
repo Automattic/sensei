@@ -89,7 +89,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 * @param array $course_ids Courses ids to filter by.
 	 * @return double Average grade of all courses.
 	 */
-	public function get_courses_average_grade_filter_courses( array $course_ids ) {
+	public function get_courses_average_grade( array $course_ids ) {
 		if ( empty( $course_ids ) ) {
 			return 0;
 		}
