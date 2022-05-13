@@ -9,7 +9,6 @@ import { debounce } from 'lodash';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useCallback } from '@wordpress/element';
 
-// TODO: Write tests.
 /**
  * Use select hook with debounce.
  *
