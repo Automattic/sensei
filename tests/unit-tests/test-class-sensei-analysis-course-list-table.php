@@ -111,6 +111,20 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
+	public function testTableFooter_WhenCalledWithNoData_NotDisplayTheExportButton() {
+		/* Arrange. */
+		$list_table = new Sensei_Analysis_Course_List_Table();
+
+		/* Act. */
+		ob_start();
+		$list_table->data_table_footer();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = '';
+		self::assertSame( $expected, $actual, 'The export button should not be displayed' );
+	}
+
 	private function export_items( array $items ) {
 		$ret = [];
 		foreach ( $items as $item ) {
