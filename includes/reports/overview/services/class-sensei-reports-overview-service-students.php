@@ -30,7 +30,7 @@ class Sensei_Reports_Overview_Service_Students {
 	 * @param array $user_ids user ids.
 	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
 	 */
-	public function get_graded_lessons_average_grade_filter_users( $user_ids ) {
+	public function get_graded_lessons_average_grade( $user_ids ) {
 		if ( empty( $user_ids ) ) {
 			return 0;
 		}

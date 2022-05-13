@@ -65,7 +65,7 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
 
 		// Get total average students grade.
-		$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade_filter_users( $user_ids );
+		$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.
