@@ -32,7 +32,7 @@ class Sensei_Reports_Overview_Service_Courses {
 	 */
 	public function get_total_average_progress( array $course_ids ): float {
 		if ( empty( $course_ids ) ) {
-			return false;
+			return 0.0;
 		}
 		$lessons_count_per_courses = $this->get_lessons_in_courses( $course_ids );
 		$lessons_completions       = $this->get_lessons_completions();
