@@ -790,6 +790,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		$course = get_post( $this->course_id );
 		$report = sanitize_title( $course->post_title ) . '-' . $this->view . 's-overview';
+
 		if ( $this->user_id ) {
 			$user_name = Sensei_Learner::get_full_name( $this->user_id );
 			$report    = sanitize_title( $user_name ) . '-' . $report;
@@ -801,11 +802,17 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'view'                   => $this->view,
 			'sensei_report_download' => $report,
 			'post_type'              => $this->post_type,
+			'start_date'             => $this->get_start_date_filter_value(),
+			'end_date'               => $this->get_end_date_filter_value(),
+			's'                      => $this->get_search_value(),
 		);
+
 		if ( $this->user_id ) {
 			$url_args['user_id'] = $this->user_id;
 		}
+
 		$url = add_query_arg( $url_args, admin_url( 'edit.php' ) );
+
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
 
@@ -871,6 +878,16 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		];
 
 		return $args;
+	}
+
+	/**
+	 * Get the search value.
+	 *
+	 * @return string search param value.
+	 */
+	private function get_search_value(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 	}
 }
 
