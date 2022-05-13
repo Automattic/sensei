@@ -62,15 +62,6 @@
 		background: #f5f5f5;
 		@include border_radius(10px);
 	}
-	@media screen and (max-width: 782px) {
-		.tablenav {
-			&.top {
-				p.search-box {
-					bottom: -90px;
-				}
-			}
-		}
-	}
 	.extra-content {
 		margin-top: 1em;
 	}
@@ -211,7 +202,8 @@
 	}
 }
 
-/* Grading & Learner Management */
+/* Grading & Student Management */
+
 .grading-selects, .learners-selects  {
 	.subsubsub {
 		float: none;
@@ -260,7 +252,6 @@
 		.enrolment_status  {
 			span  {
 				display: inline-block;
-				padding: 5px 10px;
 				@include border_radius(3px);
 				white-space: nowrap;
 			}
@@ -334,6 +325,58 @@
 			}
 		}
 	}
+	@media screen and (min-width: 1140px) {
+		.search-box {
+			margin-left: 10px;
+		}
+	}
+	@media screen and (min-width: 783px) {
+		.search-box {
+			margin-bottom: 10px;
+		}
+	}
+	.sensei-learners-extra {
+		.add-student-form-container {
+			&.student-search-empty .select2-selection:before {
+				position: absolute;
+				font-family: dashicons;
+				content: "\f179";
+				font-size: 200%;
+				z-index: 1;
+				top: 0;
+				color: #9b9b9b;
+				padding: 1px 0px 0px 5px;
+				height: 100%;
+				display:flex;
+				flex-direction:row;
+				align-items: center;
+				justify-content: center;
+			}
+			label {
+				display: block;
+			}
+			.select2-search__field {
+				padding-left: 2.2em;
+			}
+		}
+		.select2-selection__rendered li {
+			margin-bottom: 0px;
+		}
+		.postbox {
+			padding: 1em 0px 0px 1em;
+			h2#add-student-to-course-header {
+				padding: 0px;
+			}
+			.inside {
+				padding: 0px;
+			}
+		}
+		#add_learner_submit[disabled] {
+			background-color: #037ABA !important;
+			color: #66AFD6 !important;
+			border-color: #037ABA !important;
+		}
+	}
 }
 
 .enrolment-helper {
@@ -365,16 +408,46 @@
 	border-width: 2px;
 }
 
+
 .sensei-learners-main {
+	.components-popover {
+		&:not( [data-y-axis='middle'] )[data-x-axis='left'] {
+			>.components-popover__content {
+				margin-right: -18px;
+			}
+		}
+	}
+	.column-actions {
+		width: 2.2em;
+	}
 	.tablenav {
 		&.top {
+			@media screen and (max-width: 782px) {
+				.sensei-student-bulk-actions__wrapper {
+					display: none;
+				}
+			}
 			.tablenav-pages {
 				margin: 0 0 5px 0;
 			}
 		}
 	}
-}
 
+	@media screen and (max-width: 782px) and (min-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			position: relative;
+			top: -20px;
+			display: block;
+			text-align: right;
+		}
+	}
+
+	@media screen and (max-width: 480px) {
+		.tablenav.bottom .displaying-num {
+			top: -20px;
+		}
+	}
+}
 .sensei-grading-main  {
 	.question_box {
 		@include clearfix();
@@ -594,13 +667,103 @@
 	}
 }
 
+.sensei-student-bulk-actions {
+	&__filters {
+		display: flex;
+		flex-direction: row;
+	}
+
+	@media screen and (max-width: 1400px) {
+		&__filters {
+			flex-direction: column-reverse;
+		}
+	}
+
+	@media screen and (max-width: 782px) {
+		&__filters {
+			flex-direction: column;
+		}
+	}
+
+	@media screen and (max-width: 1400px) {
+		&__wrapper {
+			height: 30px;
+			margin-bottom: 10px
+		}
+	}
+
+	&__button {
+		margin-left: 6px;
+	}
+	@media screen and (max-width: 782px) {
+		&__button {
+			margin-top: 6px;
+			margin-left: 4px;
+		}
+	}
+
+	&__bulk_actions_container {
+		display: flex;
+		margin-right: 22px;
+	}
+
+	&__bulk_actions_container &__button {
+		height: 30px;
+	}
+}
+
+.sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-student-bulk-actions__placeholder-dropdown {
+	max-width: 200px;
+	margin-bottom: 10px;
+	font-size: 13px;
+	background: white;
+	min-height: 28px;
+	height: 28px;
+	padding-top: 1px;
+	border: 1px solid #aaa;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+@media screen and (max-width: 782px) {
+	.sensei-student-bulk-actions__container .select2 {
+		margin-top: 6px;
+		width: 190px !important;
+		font-size: 16px;
+	}
+	.sensei-student-bulk-actions__container .select2-selection__rendered {
+		line-height: 40px !important;
+	}
+	.sensei-student-bulk-actions__container .select2-container .select2-selection--single {
+		height: 40px !important;
+	}
+	.sensei-student-bulk-actions__container .select2-selection__arrow {
+		height: 40px !important;
+	}
+
+	.sensei-student-bulk-actions__wrapper .sensei-student-bulk-actions__filters .sensei-student-bulk-actions__placeholder-dropdown {
+		max-width: 190px;
+		margin-bottom: 10px;
+		font-size: 16px;
+		background: white;
+		min-height: 40px;
+		height: 40px;
+		padding-top: 6px;
+		border: 1px solid #aaa;
+		margin-top: 6px;
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+}
+
+/* Sensei Promo */
+
 @font-face {
 	font-family: 'Reforma 1918-Blanca';
 	src: url( '../css/fonts/Reforma1918-Blanca.otf' );
 	font-weight: normal;
 	font-style: normal;
 }
-
 
 .sensei-promo-banner {
 	display: flex;

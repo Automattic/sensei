@@ -13,7 +13,9 @@ const adminTracking = [
 		eventName: 'courses_view',
 	},
 	{
-		selector: selector + 'a[href="edit-tags.php?taxonomy=module"]',
+		selector:
+			selector +
+			'a[href="edit-tags.php?taxonomy=module&post_type=course"]',
 		eventName: 'modules_view',
 	},
 	{

@@ -57,18 +57,27 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private $learner_management;
 
 	/**
+	 * The Sensei_Learner object with utility functions.
+	 *
+	 * @var Sensei_Learner
+	 */
+	private $learner;
+
+	/**
 	 * Sensei_Learners_Admin_Main_View constructor.
 	 *
 	 * @param Sensei_Learners_Admin_Bulk_Actions_Controller $controller         The controller.
 	 * @param Sensei_Learner_Management                     $learner_management The learner management.
+	 * @param Sensei_Learner                                $learner                       The learner utility class.
 	 */
-	public function __construct( $controller, $learner_management ) {
+	public function __construct( $controller, $learner_management, $learner ) {
 		$this->controller         = $controller;
+		$this->learner_management = $learner_management;
+		$this->learner            = $learner;
 		$this->name               = $controller->get_name();
 		$this->page_slug          = $controller->get_page_slug();
 		$this->menu_post_type     = 'course';
 		$this->query_args         = $this->parse_query_args();
-		$this->learner_management = $learner_management;
 		$this->page_slug          = 'sensei_learner_admin';
 
 		parent::__construct( $this->page_slug );
@@ -100,10 +109,16 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
-			'learner'    => __( 'Student', 'sensei-lms' ),
-			'progress'   => __( 'Course Progress', 'sensei-lms' ),
-			'enrolments' => __( 'Enrollments', 'sensei-lms' ),
+			'cb'                 => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox">',
+			'learner'            => sprintf(
+				// translators: placeholder is the total number of students.
+				__( 'Students (%d)', 'sensei-lms' ),
+				esc_html( $this->total_items )
+			),
+			'email'              => __( 'Email', 'sensei-lms' ),
+			'progress'           => __( 'Enrolled Courses', 'sensei-lms' ),
+			'last_activity_date' => __( 'Last Activity', 'sensei-lms' ),
+			'actions'            => '',
 		);
 
 		return apply_filters( 'sensei_learners_admin_default_columns', $columns, $this );
@@ -116,7 +131,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'learner' => array( 'learner', false ),
+			'learner'            => array( 'learner', false ),
+			'last_activity_date' => array( 'last_activity_date', false ),
 		);
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
@@ -154,19 +170,29 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	protected function get_row_data( $item ) {
 		if ( ! $item ) {
 			$row_data = array(
-				'cb'         => '',
-				'learner'    => esc_html__( 'No results found', 'sensei-lms' ),
-				'progress'   => '',
-				'enrolments' => '',
+				'cb'                 => '',
+				'learner'            => esc_html__( 'No results found', 'sensei-lms' ),
+				'email'              => '',
+				'progress'           => '',
+				'last_activity_date' => '',
+				'actions'            => '',
 			);
 		} else {
-			$learner  = $item;
-			$courses  = $this->get_learner_courses_html( $item->course_statuses );
+			$learner            = $item;
+			$courses            = $this->get_learner_courses_html( $learner->user_id );
+			$full_name          = esc_html( Sensei_Learner::get_full_name( $learner->user_id ) );
+			$last_activity_date = __( 'N/A', 'sensei-lms' );
+			if ( $item->last_activity_date ) {
+				$last_activity_date = Sensei_Utils::format_last_activity_date( $item->last_activity_date );
+			}
 			$row_data = array(
-				'cb'         => '<label class="screen-reader-text" for="cb-select-all-1">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
-				'learner'    => $this->get_learner_html( $learner ),
-				'progress'   => $courses,
-				'enrolments' => get_term_field( 'count', Sensei_Learner::get_learner_term( $learner->user_id ) ),
+				'cb'                 => '<label class="screen-reader-text">Select All</label><input type="checkbox" name="user_id" value="' . esc_attr( $learner->user_id ) . '" class="sensei_user_select_id">',
+				'learner'            => $this->get_learner_html( $learner ),
+				'email'              => $learner->user_email,
+				'progress'           => $courses,
+				'last_activity_date' => $last_activity_date,
+				'actions'            => '<div class="student-action-menu" data-user-id="' . esc_attr( $learner->user_id ) .
+					'" data-user-name="' . esc_attr( $learner->user_login ) . '" data-user-display-name="' . esc_attr( $full_name ) . '"></div>',
 			);
 		}
 
@@ -225,14 +251,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return string The HTML.
 	 */
 	private function get_learner_html( $learner ) {
-		$login = $learner->user_login;
-		$title = Sensei_Learner::get_full_name( $learner->user_id );
+		$full_name = Sensei_Learner::get_full_name( $learner->user_id );
 		// translators: Placeholder is the full name of the learner.
-		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $title ) );
-		$html    = '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $login ) . '</a></strong>';
-		$html   .= ' <span>(<em>' . esc_html( $title ) . '</em>, ' . esc_html( $learner->user_email ) . ')</span>';
+		$a_title = sprintf( esc_html__( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), esc_html( $full_name ) );
 
-		return $html;
+		return '<strong><a class="row-title" href="' . esc_url( admin_url( 'user-edit.php?user_id=' . $learner->user_id ) ) . '" title="' . esc_attr( $a_title ) . '">' . esc_html( $full_name ) . '</a></strong>';
 	}
 
 	/**
@@ -256,7 +279,22 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @see WP_List_Table
 	 */
 	public function no_items() {
-		$text = __( 'No students found.', 'sensei-lms' );
+		$course_id = (int) ( $this->query_args['filter_by_course_id'] ?? 0 );
+		if ( 0 === $course_id ) {
+			$text = __( 'No students found.', 'sensei-lms' );
+		} else {
+			$add_students_args = [
+				'post_type' => 'course',
+				'page'      => 'sensei_learners',
+				'course_id' => $course_id,
+				'view'      => 'learners',
+			];
+
+			$message = __( 'This course doesn\'t have any students yet, you can add them below.', 'sensei-lms' );
+			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'edit.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
+			$text    = '<div class="sensei-students__call-to-action"><div>' . $message . '</div><div>' . $button . '</div></div>';
+		}
+
 		echo wp_kses_post( apply_filters( 'sensei_learners_no_items_text', $text ) );
 	}
 
@@ -276,7 +314,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 		?>
 
-		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-course-select" style="width: 50%" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
+		<select id="<?php echo esc_attr( $select_id ); ?>" data-placeholder="<?php echo esc_attr( $select_label ); ?>" name="<?php echo esc_attr( $name ); ?>" class="sensei-student-bulk-actions__placeholder-dropdown sensei-course-select" <?php echo $multiple ? 'multiple="true"' : ''; ?>>
 			<option value="0"><?php echo esc_html( $select_label ); ?></option>
 			<?php
 			foreach ( $courses as $course ) {
@@ -288,46 +326,26 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the bulk action form in the modal.
-	 *
-	 * @param array $courses The courses options.
-	 */
-	private function render_bulk_actions_form( $courses ) {
-		$label = __( 'Select Course(s)', 'sensei-lms' );
-
-		?>
-		<form id="bulk-learner-actions-form" action="" method="post">
-		<label for="bulk-action-course-select" class="screen-reader-text"><?php echo esc_html( $label ); ?></label>
-		<?php $this->courses_select( $courses, -1, 'bulk-action-course-select', 'course_id', $label, true ); ?>
-		<input type="hidden" id="bulk-action-user-ids"  name="bulk_action_user_ids" value="">
-		<input type="hidden" id="sensei-bulk-action"  name="sensei_bulk_action" value="">
-		<input type="hidden" id="bulk-action-course-ids"  name="bulk_action_course_ids" value="">
-		<?php wp_nonce_field( Sensei_Learners_Admin_Bulk_Actions_Controller::NONCE_SENSEI_BULK_LEARNER_ACTIONS, Sensei_Learners_Admin_Bulk_Actions_Controller::SENSEI_BULK_LEARNER_ACTIONS_NONCE_FIELD ); ?>
-		<button type="submit" id="bulk-learner-action-submit" class="button button-primary action sensei-stop-double-submission"><?php echo esc_html__( 'Apply', 'sensei-lms' ); ?></button>
-		</form>
-		<?php
-	}
-
-	/**
 	 * Helper method to display the bulk action selector.
 	 */
 	private function render_bulk_action_select_box() {
-		$rendered     =
-			'<select name="sensei_bulk_action_select" id="bulk-action-selector-top">' .
-			'<option value="">' . esc_html__( 'Bulk Student Actions', 'sensei-lms' ) . '</option>';
-		$bulk_actions = $this->controller->get_known_bulk_actions();
-
-		foreach ( $bulk_actions as $value => $translation ) {
-			$rendered .= '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
-		}
-
-		return $rendered . '</select>';
+		?>
+		<select id="bulk-action-selector-top" name="sensei_bulk_action_select" class="sensei-student-bulk-actions__placeholder-dropdown sensei-bulk-action-select">
+			<option value="0"><?php echo esc_html( __( 'Select Bulk Actions', 'sensei-lms' ) ); ?></option>
+			<?php
+			foreach ( $this->controller->get_known_bulk_actions() as $value => $translation ) {
+				echo '<option value="' . esc_attr( $value ) . '">' . esc_html( $translation ) . '</option>';
+			}
+			?>
+		</select>
+		<?php
 	}
 
 	/**
 	 * Helper method to display the controls of bulk actions.
 	 */
 	public function data_table_header() {
+
 		$courses         = Sensei_Course::get_all_courses();
 		$selected_course = 0;
 
@@ -336,41 +354,43 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$selected_course = (int) $_GET['filter_by_course_id']; // phpcs:ignore WordPress.Security.NonceVerification
 		}
 		?>
-		<div class="tablenav top">
-			<div class="alignleft actions bulkactions">
-				<div id="sensei-bulk-learner-actions-modal" style="display:none;">
-					<?php $this->render_bulk_actions_form( $courses ); ?>
+		<div class="sensei-student-bulk-actions__wrapper">
+			<div class="alignleft bulkactions sensei-student-bulk-actions__container">
+				<div class="sensei-student-bulk-actions__filters">
+					<div class="sensei-student-bulk-actions__bulk_actions_container">
+						<?php
+						echo wp_kses(
+							$this->render_bulk_action_select_box(),
+							array(
+								'option' => array(
+									'value' => array(),
+								),
+								'select' => array(
+									'id'   => array(),
+									'name' => array(),
+								),
+							)
+						);
+						?>
+						<div class="sensei-student-bulk-actions__button">
+							<button type="button" class="button components-button button-primary sensei-student-bulk-actions__button" disabled><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
+						</div>
+					</div>
+					<form action="" method="get">
+						<div class="alignleft actions">
+							<?php
+							foreach ( $this->query_args as $name => $value ) {
+								if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
+									continue;
+								}
+								echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
+							}
+							$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei-lms' ) );
+							?>
+							<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei-lms' ); ?></button>
+						</div>
+					</form>
 				</div>
-				<?php
-				echo wp_kses(
-					$this->render_bulk_action_select_box(),
-					array(
-						'option' => array(
-							'value' => array(),
-						),
-						'select' => array(
-							'id'   => array(),
-							'name' => array(),
-						),
-					)
-				);
-				?>
-				<button type="submit" id="sensei-bulk-learner-actions-modal-toggle" class="button button-primary action"><?php echo esc_html__( 'Select Courses', 'sensei-lms' ); ?></button>
-			</div>
-			<div class="alignleft actions">
-				<form action="" method="get">
-					<?php
-					foreach ( $this->query_args as $name => $value ) {
-						if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
-							continue;
-						}
-						echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
-					}
-					$this->courses_select( $courses, $selected_course, 'courses-select-filter', 'filter_by_course_id', __( 'Filter By Course', 'sensei-lms' ) );
-					?>
-					<button type="submit" id="filt" class="button action"><?php echo esc_html__( 'Filter', 'sensei-lms' ); ?></button>
-				</form>
-
 			</div>
 		</div>
 		<?php
@@ -384,44 +404,46 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	}
 
 	/**
-	 * Helper method to display the content of the progress column of the table.
+	 * Helper method to display the content of the enrolled courses' column of the table.
 	 *
-	 * @param array $courses The courses to be displayed.
+	 * @param int $user_id  The user id to display their enrolled courses.
 	 *
 	 * @return string The HTML for the column.
 	 */
-	private function get_learner_courses_html( $courses ) {
+	private function get_learner_courses_html( $user_id ) {
+		$query   = $this->learner->get_enrolled_courses_query( $user_id );
+		$courses = $query->get_posts();
+
 		if ( empty( $courses ) ) {
-			return '0 ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
-		} else {
-			$courses           = explode( ',', $courses );
-			$course_arr        = array();
-			$courses_total     = count( $courses );
-			$courses_completed = 0;
-			foreach ( $courses as $course_id ) {
-				$splitted      = explode( '|', $course_id );
-				$course_id     = absint( $splitted[0] );
-				$course_status = $splitted[1];
-
-				if ( 'c' === $course_status ) {
-					$courses_completed++;
-				}
-
-				$course       = get_post( $course_id );
-				$span_style   = 'c' === $course_status ? ' button-primary action' : ' action';
-				$course_arr[] = '<a href="' . esc_url( $this->controller->get_learner_management_course_url( $course_id ) ) . '" class="button' . esc_attr( $span_style ) . '" data-course-id="' . esc_attr( $course_id ) . '">' . esc_html( $course->post_title ) . '</a>';
-			}
-
-			$html = $courses_total - $courses_completed . ' ' . esc_html__( 'Courses', 'sensei-lms' ) . ' ' . esc_html__( 'In Progress', 'sensei-lms' );
-			if ( $courses_completed > 0 ) {
-				$html .= ', ' . $courses_completed . ' ' . esc_html__( 'Completed', 'sensei-lms' );
-			}
-			$html   .= ' <a href="#" class="learner-course-overview-detail-btn">...<span>' .
-				esc_html__( 'more', 'sensei-lms' ) . '</span></a><br/>';
-			$courses = implode( '<br />', $course_arr );
-
-			return $html . '<div class="learner-course-overview-detail" style="display:none">' . $courses . '</div>';
+			return __( 'N/A', 'sensei-lms' );
 		}
+
+		$courses_total = $query->post_count;
+		$visible_count = 3;
+		$html_items    = [];
+		$more_button   = '';
+
+		foreach ( $courses as $course ) {
+			$html_items[] = '<a href="' . esc_url( $this->controller->get_learner_management_course_url( $course->ID ) ) .
+				'" class="sensei-students__enrolled-course" data-course-id="' . esc_attr( $course->ID ) . '">' .
+					esc_html( $course->post_title ) .
+				'</a>';
+		}
+
+		if ( $courses_total > $visible_count ) {
+			$more_button = '<a href="#" class="sensei-students__enrolled-courses-more-link">' .
+				sprintf(
+					/* translators: %d: the number of links to be displayed */
+					esc_html__( '+%d more', 'sensei-lms' ),
+					intval( $courses_total - $visible_count )
+				) .
+			'</a>';
+		}
+
+		$visible_courses = implode( '', array_slice( $html_items, 0, $visible_count ) );
+		$hidden_courses  = implode( '', array_slice( $html_items, $visible_count ) );
+
+		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail hidden">' . $hidden_courses . '</div>' . $more_button;
 	}
 
 	/**

@@ -136,7 +136,6 @@ class Sensei_Blocks {
 		 * @hook sensei_block_type_args
 		 * @see register_block_type
 		 * @see register_block_type_from_metadata
-		 * @see includes/blocks/compat.php
 		 *
 		 * @param {array}  $block_args The block arguments as defined by register_block_type.
 		 * @param {string} $block_name Block name.

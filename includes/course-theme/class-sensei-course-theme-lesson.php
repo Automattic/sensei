@@ -250,7 +250,7 @@ class Sensei_Course_Theme_Lesson {
 			$actions = [
 				[
 					'label' => __( 'Take course', 'sensei-lms' ),
-					'url'   => get_permalink( $course_id ),
+					'url'   => Sensei()->lesson->get_take_course_url( $course_id ),
 					'style' => 'primary',
 				],
 				[

@@ -208,7 +208,7 @@ class Sensei_Admin {
 
 		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'module' ) {
 
-			$submenu_file = 'edit-tags.php?taxonomy=module';
+			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
 			$parent_file  = 'edit.php?post_type=course';
 
 		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
@@ -328,12 +328,12 @@ class Sensei_Admin {
 	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
 		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
-		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
+		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', 'sensei_learners', $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 		$module_pages_screen_ids = [ 'edit-module' ];
 
 		$is_allowed_type           = isset( $post_type ) && in_array( $post_type, $allowed_post_types, true );
 		$is_allowed_post_type_page = isset( $hook_suffix ) && in_array( $hook_suffix, $allowed_post_type_pages, true );
-		$is_allowed_page           = isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages, true );
+		$is_allowed_page           = isset( $_GET['page'] ) && in_array( $_GET['page'], $allowed_pages, true ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$is_modules_page           = $screen && in_array( $screen->id, $module_pages_screen_ids, true );
 
 		return ( $is_allowed_type && $is_allowed_post_type_page ) || $is_allowed_page || $is_modules_page;
@@ -397,7 +397,17 @@ class Sensei_Admin {
 	 * @return bool
 	 */
 	private function has_custom_navigation( $screen ) {
-		$screens_with_custom_navigation = [ 'edit-course', 'edit-course-category', 'edit-module', 'edit-lesson', 'edit-lesson-tag', 'edit-question', 'edit-question-category', 'course_page_' . Sensei_Analysis::PAGE_SLUG ];
+		$screens_with_custom_navigation = [
+			'edit-course',
+			'edit-course-category',
+			'edit-module',
+			'edit-lesson',
+			'edit-lesson-tag',
+			'edit-question',
+			'edit-question-category',
+			'course_page_' . Sensei_Analysis::PAGE_SLUG,
+			'course_page_sensei_learners',
+		];
 
 		return $screen
 			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )

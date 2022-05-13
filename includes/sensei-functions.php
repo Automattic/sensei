@@ -305,7 +305,18 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
 		$registration_url = add_query_arg( 'redirect_to', $redirect, $registration_url );
 	}
 
-	return $registration_url;
+	/**
+	 * Filter the registration URL.
+	 *
+	 * @since x.x.x
+	 * @hook sensei_registration_url
+	 *
+	 * @param {string} $registration_url Registration URL.
+	 * @param {string} $redirect         Redirect url after registration.
+	 *
+	 * @return {string} Returns filtered registration URL.
+	 */
+	return apply_filters( 'sensei_registration_url', $registration_url, $redirect );
 }
 
 /**
@@ -323,25 +334,33 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
  * @return string The login url.
  */
 function sensei_user_login_url( string $redirect = '' ) {
-
+	$login_url          = '';
 	$my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
 	$page               = get_post( $my_courses_page_id );
 
 	if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID ) ) {
-
 		$my_courses_url = get_permalink( $page->ID );
 		if ( ! empty( $redirect ) ) {
 			$my_courses_url = add_query_arg( 'redirect_to', $redirect, $my_courses_url );
 		}
 
-		return $my_courses_url;
-
+		$login_url = $my_courses_url;
 	} else {
-
-		return wp_login_url( $redirect );
-
+		$login_url = wp_login_url( $redirect );
 	}
 
+	/**
+	 * Filter the login URL.
+	 *
+	 * @since x.x.x
+	 * @hook sensei_login_url
+	 *
+	 * @param {string} $login_url Login URL.
+	 * @param {string} $redirect  Redirect url after login.
+	 *
+	 * @return {string} Returns filtered login URL.
+	 */
+	return apply_filters( 'sensei_login_url', $login_url, $redirect );
 }
 
 /**

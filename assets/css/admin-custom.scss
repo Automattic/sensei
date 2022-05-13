@@ -141,6 +141,23 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	}
 }
 
+.sensei-students__subheading {
+	a {
+		color: $text_primary;
+		text-decoration: none;
+	}
+}
+
+.sensei-students__call-to-action {
+	display: flex;
+	flex-flow: column;
+	margin: 20px auto;
+
+	div {
+		margin: 8px auto;
+	}
+}
+
 /**
  * Sensei custom navigation
  */
@@ -149,15 +166,25 @@ div.question_boolean_fields { margin-bottom: 10px; }
 	flex-flow: column wrap;
 	align-items: flex-start;
 	gap: 20px;
-	margin: 20px auto;
+	margin: 30px auto 20px;
 }
 
 .sensei-custom-navigation__heading {
-	display: flex;
-	flex-flow: row wrap;
-	align-items: baseline;
-	justify-content: flex-start;
-	gap: 10px;
+	&, &-with-info {
+		display: flex;
+		flex-flow: row wrap;
+		align-items: baseline;
+		justify-content: flex-start;
+		gap: 10px;
+	}
+
+	&-with-info {
+		width: 100%;
+	}
+}
+
+.sensei-custom-navigation__separator {
+	flex: 1;
 }
 
 .sensei-custom-navigation__tabbar {
@@ -220,4 +247,8 @@ a.sensei-custom-navigation__info {
 .sensei-custom-navigation__links a.page-title-action:visited,
 .sensei-custom-navigation__links a.page-title-action:focus {
 	margin-left: 0;
+}
+
+.sensei-students__enrolled-course {
+	display: block;
 }

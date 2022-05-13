@@ -554,14 +554,17 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
 					$user_average_grade .= '%';
 				}
-
+				$last_activity_date = __( 'N/A', 'sensei-lms' );
+				if ( $item->last_activity_date ) {
+					$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
+				}
 				$column_data = apply_filters(
 					'sensei_analysis_overview_column_data',
 					array(
 						'title'             => $user_name,
 						'email'             => $user_email,
 						'date_registered'   => $this->format_date_registered( $item->user_registered ),
-						'last_activity'     => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
+						'last_activity'     => $last_activity_date,
 						'active_courses'    => ( $user_courses_started - $user_courses_ended ),
 						'completed_courses' => $user_courses_ended,
 						'average_grade'     => $user_average_grade,
@@ -666,39 +669,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			return __( 'N/A', 'sensei-lms' );
 		}
 
-		return $this->format_last_activity_date( $last_activity->comment_date_gmt );
-	}
-
-	/**
-	 * Format the last activity date to a more readable form.
-	 *
-	 * @since 4.2.0
-	 *
-	 * @param string $date The last activity date.
-	 *
-	 * @return string The formatted last activity date.
-	 */
-	private function format_last_activity_date( string $date ) {
-		// Don't do any formatting if this is a CSV export.
-		if ( $this->csv_output ) {
-			return $date;
-		}
-
-		$timezone     = new DateTimeZone( 'GMT' );
-		$now          = new DateTime( 'now', $timezone );
-		$date         = new DateTime( $date, $timezone );
-		$diff_in_days = $now->diff( $date )->days;
-
-		// Show a human readable date if activity is within 6 days.
-		if ( $diff_in_days < 7 ) {
-			return sprintf(
-				/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
-				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( $date->getTimestamp() )
-			);
-		}
-
-		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+		return $this->csv_output ? $last_activity->comment_date_gmt : Sensei_Utils::format_last_activity_date( $last_activity->comment_date_gmt );
 	}
 
 	/**

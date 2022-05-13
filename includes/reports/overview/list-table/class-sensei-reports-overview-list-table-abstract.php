@@ -401,34 +401,4 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
 		return isset( $_GET['s'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ) : '';
 	}
-
-	/**
-	 * Format the last activity date to a more readable form.
-	 *
-	 * @param string $date The last activity date.
-	 *
-	 * @return string The formatted last activity date.
-	 */
-	protected function format_last_activity_date( string $date ) {
-		// Don't do any formatting if this is a CSV export.
-		if ( $this->csv_output ) {
-			return $date;
-		}
-
-		$timezone     = new DateTimeZone( 'GMT' );
-		$now          = new DateTime( 'now', $timezone );
-		$date         = new DateTime( $date, $timezone );
-		$diff_in_days = $now->diff( $date )->days;
-
-		// Show a human readable date if activity is within 6 days.
-		if ( $diff_in_days < 7 ) {
-			return sprintf(
-				/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
-				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( $date->getTimestamp() )
-			);
-		}
-
-		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
-	}
 }

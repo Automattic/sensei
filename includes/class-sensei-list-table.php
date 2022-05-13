@@ -213,41 +213,59 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	function single_row( $item ) {
 		static $row_class = '';
-		$row_class        = ( $row_class == '' ? 'alternate' : '' );
+
+		$row_class   = ( $row_class == '' ? 'alternate' : '' );
+		$column_data = $this->get_row_data( $item );
 
 		echo '<tr class="' . esc_attr( $row_class ) . '">';
-
-		$column_data = $this->get_row_data( $item );
 
 		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		foreach ( $columns as $column_name => $column_display_name ) {
 			$classes = esc_attr( $column_name ) . ' column-' . esc_attr( $column_name );
+			$data    = '';
+			$style   = '';
+
 			if ( $primary === $column_name ) {
 				$classes .= ' column-primary';
+			} elseif ( 'cb' === $column_name ) {
+				$classes .= ' check-column';
 			}
 
-			$style = '';
+			if ( 'cb' !== $column_name ) {
+				$data = 'data-colname="' . esc_attr( $column_display_name ) . '"';
+			}
+
 			if ( in_array( $column_name, $hidden ) ) {
-				$style = 'display:none;';
+				$style = 'style="display: none;"';
 			}
 
-			$data = 'data-colname="' . esc_attr( $column_display_name ) . '"';
+			$attributes = "class='$classes' $data $style";
 
-			$attributes = "class='$classes' $data style='$style'";
+			if ( 'cb' === $column_name ) {
+				// Checkbox element needs to be wrapped in a table header cell to have proper WordPress styles applied.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
+				echo "<th $attributes>";
+			} else {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
+				echo "<td $attributes>";
+			}
 
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped while preparation.
-			echo "<td $attributes>";
 			if ( isset( $column_data[ $column_name ] ) ) {
 				// $column_data is escaped in the individual get_row_data functions.
-
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in `get_row_data` method implementations.
 				echo $column_data[ $column_name ];
 			}
+
 			if ( $column_name === $primary ) {
 				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '</span></button>';
 			}
-			echo '</td>';
+
+			if ( 'cb' === $column_name ) {
+				echo '</th>';
+			} else {
+				echo '</td>';
+			}
 		}
 
 		echo '</tr>';
