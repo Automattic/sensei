@@ -112,7 +112,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			$args['search'] = esc_html( $search );
 		}
 
-		$this->total_items = $this->data_provider->get_last_total_items();
 		return array_merge( $args, $this->get_additional_filters() );
 	}
 
