@@ -12,6 +12,7 @@ module.exports = {
 		'<rootDir>/build/',
 		'<rootDir>/assets/dist/',
 		'<rootDir>/tests/e2e/',
+		'<rootDir>/tests/e2e-playwright/',
 	],
 	moduleNameMapper: {
 		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
