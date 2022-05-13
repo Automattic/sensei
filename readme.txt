@@ -17,6 +17,8 @@ Create beautiful and engaging online courses, lessons, and quizzes.
 
 [Sensei LMS](https://senseilms.com) is a teaching and learning management plugin built by Automattic, the company behind WordPress.com, WooCommerce, and Jetpack. In fact, Sensei LMS is used to power all of Automattic’s employee training and courses too.
 
+[Check out our Sensei Demo Course here](https://senseilms.com/lesson/overview/).
+
 Your knowledge is worth teaching - teach freely with Sensei LMS!
 
 ### Works With Your Existing Theme ###
@@ -45,7 +47,9 @@ Do more and sell courses with Sensei Pro, which includes:
 
 **Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
 
-**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type.
+**Interactive Blocks:** Flaschards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post. 
+
+**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz. 
 
 **Course Expiration:** Select an end date or a specific amount of time that courses will remain accessible to students.
 
