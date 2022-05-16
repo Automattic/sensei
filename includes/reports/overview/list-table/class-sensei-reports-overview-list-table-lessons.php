@@ -165,7 +165,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 				'title'              => $lesson_title,
 				'lesson_module'      => $this->get_row_module( $item->ID ),
 				'students'           => $lesson_students,
-				'last_activity'      => $this->get_last_activity_date( array( 'post_id' => $item->ID ) ),
+				'last_activity'      => $item->last_activity_date ? Sensei_Utils::format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 				'completions'        => $lesson_completions,
 				'completion_rate'    => $this->get_completion_rate( $lesson_completions, $lesson_students ),
 				'days_to_completion' => $average_completion_days,
@@ -258,8 +258,17 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 	 */
 	private function get_totals_for_lesson_report_column_headers( int $course_id ) {
 		global $wpdb;
-		$lessons      = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids' );
-		$lesson_ids   = '0';
+
+		// Add search filter to query arguments.
+		$query_args = [];
+		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for searching.
+		if ( ! empty( $_GET['s'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$query_args['s'] = esc_html( $_GET['s'] );
+		}
+		$lessons    = $this->course->course_lessons( $course_id, array( 'publish', 'private' ), 'ids', $query_args );
+		$lesson_ids = '0';
+
 		$lesson_count = count( $lessons );
 		if ( 0 < $lesson_count ) {
 			$lesson_ids = implode( ',', $lessons );
@@ -286,48 +295,5 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 		$lesson_completion_info->lesson_count        = $lesson_count;
 		$lesson_completion_info->unique_module_count = $modules_count;
 		return $lesson_completion_info;
-	}
-	/**
-	 * Get the date on which the last lesson was marked complete.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @param array $args Array of arguments to pass to comments query.
-	 *
-	 * @return string The last activity date, or N/A if none.
-	 */
-	protected function get_last_activity_date( array $args ): string {
-		$default_args  = array(
-			'number' => 1,
-			'type'   => 'sensei_lesson_status',
-			'status' => [ 'complete', 'passed', 'graded' ],
-		);
-		$args          = wp_parse_args( $args, $default_args );
-		$last_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
-
-		if ( ! $last_activity ) {
-			return __( 'N/A', 'sensei-lms' );
-		}
-
-		// Return the full date when doing a CSV export.
-		if ( $this->csv_output ) {
-			return $last_activity->comment_date_gmt;
-		}
-
-		$timezone           = new DateTimeZone( 'GMT' );
-		$now                = new DateTime( 'now', $timezone );
-		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
-		$diff_in_days       = $now->diff( $last_activity_date )->days;
-
-		// Show a human readable date if activity is within 6 days.
-		if ( $diff_in_days < 7 ) {
-			return sprintf(
-			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
-				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( strtotime( $last_activity->comment_date_gmt ) )
-			);
-		}
-
-		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
 	}
 }

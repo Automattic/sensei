@@ -12,11 +12,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
+	use Sensei_Reports_Helper_Date_Range_Trait;
+
+	/**
+	 * User ID.
+	 *
+	 * @var int
+	 */
 	public $user_id;
+
+	/**
+	 * Course ID.
+	 *
+	 * @var int
+	 */
 	public $course_id;
+
+	/**
+	 * Total number of lessons.
+	 *
+	 * @var int
+	 */
 	public $total_lessons;
+
+	/**
+	 * User IDs.
+	 *
+	 * @var array
+	 */
 	public $user_ids;
+
+	/**
+	 * Page slug.
+	 *
+	 * @var string
+	 */
 	public $page_slug;
+
+	/**
+	 * Selected view.
+	 *
+	 * @var string
+	 */
 	public $view = 'lesson';
 
 	/**
@@ -29,11 +66,14 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	/**
 	 * Constructor
 	 *
+	 * @param int $course_id Course ID.
+	 * @param int $user_id User ID.
+	 *
 	 * @since  1.2.0
 	 */
 	public function __construct( $course_id = 0, $user_id = 0 ) {
-		$this->course_id = intval( $course_id );
-		$this->user_id   = intval( $user_id );
+		$this->course_id = (int) $course_id;
+		$this->user_id   = (int) $user_id;
 		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'user', 'lesson' ) ) ) {
@@ -200,6 +240,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'orderby' => $orderby,
 			'order'   => $order,
 		);
+
 		if ( $this->search ) {
 			$args['search'] = $this->search;
 		}
@@ -530,7 +571,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function get_course_statuses( $args ) {
 
-		$activity_args = array(
+		$activity_args = [
 			'post_id' => $this->course_id,
 			'type'    => 'sensei_course_status',
 			'number'  => $args['number'],
@@ -538,7 +579,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'orderby' => $args['orderby'],
 			'order'   => $args['order'],
 			'status'  => 'any',
-		);
+		];
+		$activity_args = $this->add_filter_by_start_date( $activity_args );
 
 		// Searching users on statuses requires sub-selecting the statuses by user_ids
 		if ( $this->search ) {
@@ -643,6 +685,21 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
+		echo '<div class="sensei-analysis-course__table-header">';
+
+		$this->output_course_submenu();
+
+		if ( 'user' === $this->view ) {
+			$this->output_top_filters();
+		}
+
+		echo '</div>';
+	}
+
+	/**
+	 * Output submenu for course reports.
+	 */
+	private function output_course_submenu() {
 		if ( $this->user_id ) {
 			$learners_text = __( 'Other Students taking this Course', 'sensei-lms' );
 		} else {
@@ -676,7 +733,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		$menu = apply_filters( 'sensei_analysis_course_sub_menu', $menu );
 		if ( ! empty( $menu ) ) {
-			echo '<ul class="subsubsub">' . "\n";
+			echo '<ul class="sensei-analysis-course__submenu">' . "\n";
 			foreach ( $menu as $class => $item ) {
 				$menu[ $class ] = "\t<li class='$class'>$item";
 			}
@@ -687,15 +744,56 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	}
 
 	/**
+	 * Output top filter form.
+	 */
+	private function output_top_filters() {
+		?>
+		<form class="sensei-analysis-course__top-filters">
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'start_date', 'end_date', 's' ] ); ?>
+
+				<label for="sensei-start-date-filter">
+					<?php esc_html_e( 'Date Started', 'sensei-lms' ); ?>:
+				</label>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-start-date-filter"
+					name="start_date"
+					type="text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
+					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
+				/>
+
+				<input
+					class="sensei-date-picker"
+					id="sensei-end-date-filter"
+					name="end_date"
+					type="text"
+					autocomplete="off"
+					placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
+					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
+				/>
+
+			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
+		</form>
+		<?php
+	}
+
+	/**
 	 * Output for table footer
 	 *
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function data_table_footer() {
+		if ( ! $this->total_items ) {
+			return;
+		}
 
 		$course = get_post( $this->course_id );
 		$report = sanitize_title( $course->post_title ) . '-' . $this->view . 's-overview';
+
 		if ( $this->user_id ) {
 			$user_name = Sensei_Learner::get_full_name( $this->user_id );
 			$report    = sanitize_title( $user_name ) . '-' . $report;
@@ -707,11 +805,17 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'view'                   => $this->view,
 			'sensei_report_download' => $report,
 			'post_type'              => $this->post_type,
+			'start_date'             => $this->get_start_date_filter_value(),
+			'end_date'               => $this->get_end_date_filter_value(),
+			's'                      => $this->get_search_value(),
 		);
+
 		if ( $this->user_id ) {
 			$url_args['user_id'] = $this->user_id;
 		}
+
 		$url = add_query_arg( $url_args, admin_url( 'edit.php' ) );
+
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
 
@@ -736,6 +840,58 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		return $text;
 	}
 
+	/**
+	 * Filter users by start date
+	 *
+	 * @param array $args The query arguments.
+	 * @return array The query arguments with added filter by start date.
+	 */
+	private function add_filter_by_start_date( array $args ): array {
+
+		$date_from = $this->get_start_date_and_time();
+		$date_to   = $this->get_end_date_and_time();
+
+		if ( ! $date_from && ! $date_to ) {
+			return $args;
+		}
+
+		$meta_query_conditions = [];
+
+		if ( $date_from ) {
+			$meta_query_conditions[] = [
+				'key'     => 'start',
+				'value'   => $date_from,
+				'compare' => '>=',
+				'type'    => 'DATE',
+			];
+		}
+
+		if ( $date_to ) {
+			$meta_query_conditions[] = [
+				'key'     => 'start',
+				'value'   => $date_to,
+				'compare' => '<=',
+				'type'    => 'DATE',
+			];
+		}
+
+		$args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'relation' => 'AND',
+			$meta_query_conditions,
+		];
+
+		return $args;
+	}
+
+	/**
+	 * Get the search value.
+	 *
+	 * @return string search param value.
+	 */
+	private function get_search_value(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+	}
 }
 
 /**

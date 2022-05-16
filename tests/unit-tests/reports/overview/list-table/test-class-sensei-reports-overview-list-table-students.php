@@ -41,15 +41,15 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_course_status( $user_id, $active_course_id, 'in-progress' );
 		Sensei_Utils::update_course_status( $user_id, $completed_course_id, 'complete' );
 
-		$grading = $this->createMock( Sensei_Grading::class );
-		$grading->method( 'get_graded_lessons_average_grade' )->willReturn( 50 );
+		$student_service = $this->createMock( Sensei_Reports_Overview_Service_Students::class );
+		$student_service->method( 'get_graded_lessons_average_grade' )->willReturn( 50 );
 
+		$data_provider = $this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class );
+		$data_provider->method( 'get_items' )->willReturn( [ $user_id ] );
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
-			$grading,
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$data_provider,
+			$student_service
 		);
-
-		$list_table->total_items = 1;
 
 		/* Act. */
 		$actual = $list_table->get_columns();
@@ -71,8 +71,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 	public function testGetSortableColumns_WhenCalled_ReturnsMatchingArray() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
 		);
 
 		/* Act. */
@@ -91,8 +91,8 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {
 		/* Arrange. */
 		$list_table = new Sensei_Reports_Overview_List_Table_Students(
-			$this->createMock( Sensei_Grading::class ),
-			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class )
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
 		);
 
 		/* Act. */

@@ -217,21 +217,25 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					wp_kses_allowed_html( 'post' ),
 					array(
 						'a'     => array(
-							'class'          => array(),
-							'data-course-id' => array(),
-							'href'           => array(),
-							'title'          => array(),
+							'class'          => true,
+							'data-course-id' => true,
+							'href'           => true,
+							'title'          => true,
 						),
 						'input' => array(
-							'class' => array(),
-							'name'  => array(),
-							'type'  => array(),
-							'value' => array(),
+							'class' => true,
+							'name'  => true,
+							'type'  => true,
+							'value' => true,
 						),
 						// Explicitly allow label tag for WP.com.
 						'label' => array(
-							'class' => array(),
-							'for'   => array(),
+							'class' => true,
+							'for'   => true,
+						),
+						'div'   => array(
+							'data-*' => true,
+							'class'  => true,
 						),
 					)
 				)

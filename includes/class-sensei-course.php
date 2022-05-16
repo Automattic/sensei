@@ -3887,15 +3887,20 @@ class Sensei_Course {
 	 * Get average days to completion for all courses.
 	 *
 	 * @since 4.2.0
+	 *
+	 * @deprecated 4.4.1 use Sensei_Reports_Overview_List_Table_Courses::get_average_days_to_completion
+	 *
 	 * @access private
 	 *
-	 * @return int Total days to completion, rounded to the highest integer.
+	 * @return float Average days to completion, rounded to the highest integer.
 	 */
-	public function get_days_to_completion_total() {
+	public function get_average_days_to_completion() {
+		_deprecated_function( __METHOD__, '4.4.1', 'Sensei_Reports_Overview_Service_Courses::get_average_days_to_completion' );
+
 		global $wpdb;
 
 		$query = "
-			SELECT SUM( aggregated.days_to_completion )
+			SELECT AVG( aggregated.days_to_completion )
 			FROM (
 				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
 				FROM {$wpdb->comments}
@@ -3908,9 +3913,7 @@ class Sensei_Course {
 		";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
-		$days_to_completion = $wpdb->get_var( $query );
-
-		return (int) $days_to_completion;
+		return (float) $wpdb->get_var( $query );
 	}
 }
 

@@ -1238,6 +1238,7 @@ class Sensei_Grading {
 	 * Get the average grade of all courses.
 	 *
 	 * @since 4.2.0
+	 * @access public
 	 *
 	 * @return double Average grade of all courses.
 	 */
