@@ -111,9 +111,9 @@ class Sensei_Db_Query_Learners {
 
 		$in_placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%s' ) );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dinamically.
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders created dinamically.
 			$wpdb->prepare(
 				"
 				SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
@@ -121,9 +121,10 @@ class Sensei_Db_Query_Learners {
 				WHERE cm.user_id IN ( {$in_placeholders} )
 				AND cm.comment_approved IN ('complete', 'passed', 'graded')
 				AND cm.comment_type = 'sensei_lesson_status'
-				GROUP BY user_id",
+				GROUP BY user_id", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dinamically.
 				$user_ids
 			),
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			OBJECT_K
 		);
 
@@ -143,9 +144,8 @@ class Sensei_Db_Query_Learners {
 		global $wpdb;
 		$sql = $this->build_query();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared -- Used inside the build_query method.
-		$results                     = $wpdb->get_results( $sql );
-		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) );
+		$results                     = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Created inside the build_query method.
+		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$user_ids                    = wp_list_pluck( $results, 'user_id' );
 		$last_activity_date_by_users = $this->get_last_activity_date_by_users( $user_ids );
 
