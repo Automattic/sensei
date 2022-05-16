@@ -202,7 +202,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'sensei_analysis_overview_column_data',
 			array(
 				'title'              => $course_title,
-				'last_activity'      => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
+				'last_activity'      => $item->last_activity_date ? Sensei_Utils::format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 				'completions'        => $course_completions,
 				'average_progress'   => $average_course_progress,
 				'average_percent'    => $average_grade,

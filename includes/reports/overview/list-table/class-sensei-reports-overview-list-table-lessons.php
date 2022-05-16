@@ -165,7 +165,7 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 				'title'              => $lesson_title,
 				'lesson_module'      => $this->get_row_module( $item->ID ),
 				'students'           => $lesson_students,
-				'last_activity'      => $item->last_activity_date ? $this->format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
+				'last_activity'      => $item->last_activity_date ? Sensei_Utils::format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 				'completions'        => $lesson_completions,
 				'completion_rate'    => $this->get_completion_rate( $lesson_completions, $lesson_students ),
 				'days_to_completion' => $average_completion_days,

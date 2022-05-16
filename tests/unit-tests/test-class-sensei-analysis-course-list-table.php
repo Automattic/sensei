@@ -125,6 +125,40 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $actual, 'The export button should not be displayed' );
 	}
 
+	public function testTableFooter_WhenCalled_DisplayTheExportButtonWithCorrectArgs() {
+		/* Arrange. */
+		$course = $this->factory->course->create_and_get();
+		$user   = $this->factory->user->create_and_get();
+		$nonce  = wp_create_nonce( 'sensei_csv_download' );
+
+		$_GET = [
+			's'          => 'course',
+			'start_date' => '2022-03-01',
+			'end_date'   => '2022-03-02',
+			'_wpnonce'   => $nonce,
+		];
+
+		$list_table = new Sensei_Analysis_Course_List_Table( $course->ID, $user->ID );
+
+		/* Act. */
+		ob_start();
+		$list_table->prepare_items();
+		$list_table->data_table_footer();
+		$actual = ob_get_clean();
+
+		/* Assert. */
+		$expected = sprintf(
+			'<a class="button button-primary" href="http://example.org/wp-admin/edit.php?page=sensei_reports&#038;course_id=%d&#038;view=lesson&#038;sensei_report_download=%s-%s-lessons-overview&#038;post_type=course&#038;start_date=2022-03-01&#038;end_date=2022-03-02&#038;s=course&#038;user_id=%d&#038;_sdl_nonce=%s">Export all rows (CSV)</a>',
+			$course->ID,
+			$user->user_nicename,
+			$course->post_name,
+			$user->ID,
+			$nonce
+		);
+
+		self::assertSame( $expected, $actual, 'The export button should be displayed with the correct args.' );
+	}
+
 	private function export_items( array $items ) {
 		$ret = [];
 		foreach ( $items as $item ) {
