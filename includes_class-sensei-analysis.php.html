@@ -674,8 +674,7 @@ class Sensei_Analysis {
 				admin_url( 'edit.php' )
 			);
 			$user_name = Sensei_Learner::get_full_name( $user_id );
-			$title    .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="user-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', $url, $user_name );
-			$title    .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="user-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', esc_url( $url ), $user_data->display_name );
+			$title    .= sprintf( '&amp;nbsp;&amp;nbsp;&lt;span class="user-title">&amp;gt;&amp;nbsp;&amp;nbsp;&lt;a href="%s">%s&lt;/a>&lt;/span>', esc_url( $url ), $user_name );
 		}
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
