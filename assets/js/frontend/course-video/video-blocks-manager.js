@@ -24,7 +24,6 @@ export const registerVideo = ( {
 	registerVideoEndHandler = () => {},
 	url = '',
 } ) => {
-	const blocksStore = window.sensei?.store?.blocks;
 	if ( courseVideoRequired ) {
 		/**
 		 * Called when a required video for the current lesson is registered.
@@ -67,7 +66,7 @@ export const registerVideo = ( {
 };
 
 /**
- * Tells if all the required blocks in the current page are completed.
+ * Tells if all the required videos in the current page are completed.
  *
  * @return {boolean} True if all the videos are completed. False otherwise.
  */
