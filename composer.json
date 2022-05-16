@@ -3,12 +3,12 @@
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
 		"php": "^7 || ^8",
-		"bamarni/composer-bin-plugin": "^1.4",
-		"dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
-		"phpcompatibility/phpcompatibility-wp": "2.1.2",
+		"bamarni/composer-bin-plugin": "1.4.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
+		"phpcompatibility/phpcompatibility-wp": "2.1.3",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
-		"sirbrillig/phpcs-variable-analysis": "2.11.2",
-		"squizlabs/php_codesniffer": "3.6.0",
+		"sirbrillig/phpcs-variable-analysis": "2.11.3",
+		"squizlabs/php_codesniffer": "3.6.2",
 		"wp-coding-standards/wpcs": "2.3.0",
 		"yoast/phpunit-polyfills": "1.0.3"
 	},
