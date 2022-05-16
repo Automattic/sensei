@@ -140,9 +140,10 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		$list_table = new Sensei_Analysis_Course_List_Table( $course->ID, $user->ID );
 
+		$list_table->total_items = 1;
+
 		/* Act. */
 		ob_start();
-		$list_table->prepare_items();
 		$list_table->data_table_footer();
 		$actual = ob_get_clean();
 
