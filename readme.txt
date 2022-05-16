@@ -3,9 +3,9 @@
 Contributors: automattic, alexsanford1, burtrw, donnapep, gikaragia, jakeom, merkushin, m1r0, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.7
-Tested up to: 5.9
+Tested up to: 5.9.3
 Requires PHP: 7.0
-Stable tag: 4.4.0
+Stable tag: 4.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,29 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022.05.16 - version 4.4.1
+* New: Add a "Date Started" reports filter for students on a course [#5076](https://github.com/Automattic/sensei/pull/5076)
+* New: Show a notice if future PHP requirements aren't met in preparation for increasing the minimum requirements to PHP 7.2 [#5088](https://github.com/Automattic/sensei/pull/5088)
+* New: Add lesson notices filters [#5087](https://github.com/Automattic/sensei/pull/5087)
+* Tweak: Apply data filters to column total values for reports [#5091](https://github.com/Automattic/sensei/pull/5091)
+* Tweak: Calculate total average progress for courses reports [#5077](https://github.com/Automattic/sensei/pull/5077)
+* Tweak: Display average total for Days to Completion in Courses report header [#5097](https://github.com/Automattic/sensei/pull/5097)
+* Tweak: Display the student FullName on the reports [#5096](https://github.com/Automattic/sensei/pull/5096)
+* Tweak: Hide the export button when there is no data [#5095](https://github.com/Automattic/sensei/pull/5095)
+* Tweak: Improve performance by fetching last activity date with the main query [#5101](https://github.com/Automattic/sensei/pull/5101)
+* Tweak: On the reports screen, show no lessons instead of all when the course has no lessons [#5090](https://github.com/Automattic/sensei/pull/5090)
+* Tweak: Only show enrolled students in reports [#5105](https://github.com/Automattic/sensei/pull/5105)
+* Tweak: Refactor students page fetching data through Gutenberg and avoiding subqueries [#5104](https://github.com/Automattic/sensei/pull/5104)
+* Tweak: Use AbortController to cancel fetch requests for unmounted components [#5065](https://github.com/Automattic/sensei/pull/5065)
+* Fix: Ensure the content filter for course content is re-added in Learning Mode [#5086](https://github.com/Automattic/sensei/pull/5086)
+* Fix: Exporting "students taking course" not affected by filters [#5120](https://github.com/Automattic/sensei/pull/5120)
+* Fix: Hide export button when no results on "Students taking course" screen [#5121](https://github.com/Automattic/sensei/pull/5121)
+* Fix: Incorrect menu item selected in the Module editor [#5117](https://github.com/Automattic/sensei/pull/5117)
+* Fix: Lesson compatibility issue with Divi [#5082](https://github.com/Automattic/sensei/pull/5082)
+* Fix: Reports date filters not accounting for the user timezone [#5113](https://github.com/Automattic/sensei/pull/5113)
+* Fix: Reports exporting does not take search into account [#5079](https://github.com/Automattic/sensei/pull/5079)
+* Fix: Student name appearing twice on student report title [#5111](https://github.com/Automattic/sensei/pull/5111)
+
 2022.05.04 - version 4.4.0
 * New: Add modal to add or remove a student from a course [#4979](https://github.com/Automattic/sensei/pull/4979), [#5038](https://github.com/Automattic/sensei/pull/5038), [#5004](https://github.com/Automattic/sensei/pull/5004), [#5040](https://github.com/Automattic/sensei/pull/5040), [#4999](https://github.com/Automattic/sensei/pull/4999), [#5023](https://github.com/Automattic/sensei/pull/5023), [#5003](https://github.com/Automattic/sensei/pull/5003), [#5029](https://github.com/Automattic/sensei/pull/5029), [#5017](https://github.com/Automattic/sensei/pull/5017), [#5046](https://github.com/Automattic/sensei/pull/5046), [#5059](https://github.com/Automattic/sensei/pull/5059)
 * New: Add student action menu to Student Management page [#4961](https://github.com/Automattic/sensei/pull/4961), [#5031](https://github.com/Automattic/sensei/pull/5031), [#5072](https://github.com/Automattic/sensei/pull/5072)
@@ -174,34 +197,5 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Use Sensei Reports Factory for generating report [#4973](https://github.com/Automattic/sensei/pull/4973)
 * Fix: Wrong data when exporting lessons report [#4975](https://github.com/Automattic/sensei/pull/4975)
 * Fix: "Days to Completion" and "Module" columns are swapped when exporting lessons [#4978](https://github.com/Automattic/sensei/pull/4978)
-
-2022.03.22 - version 4.2.0
-* New: Replace `Date Registered` column with `Last Activity` [#4863](https://github.com/Automattic/sensei/pull/4863)
-* New: Add totals to Students report [#4865](https://github.com/Automattic/sensei/pull/4865)
-* New: Add new lesson report default view and course filter [#4878](https://github.com/Automattic/sensei/pull/4878)
-* New: Add "Last Activity" column to Courses report [#4879](https://github.com/Automattic/sensei/pull/4879)
-* New: Add Days to Completion column for lessons [#4883](https://github.com/Automattic/sensei/pull/4883), [#4923](https://github.com/Automattic/sensei/pull/4923)
-* New: Add Last activity for Lessons [#4895](https://github.com/Automattic/sensei/pull/4895), [#4918](https://github.com/Automattic/sensei/pull/4918)
-* New: Added completion rate column in Reports->Lessons [#4897](https://github.com/Automattic/sensei/pull/4897)
-* New: Add activity date filters to the students report screen [#4903](https://github.com/Automattic/sensei/pull/4903)
-* New: Add totals to Courses report [#4904](https://github.com/Automattic/sensei/pull/4904)
-* New: Add Days to Completion column for courses [#4906](https://github.com/Automattic/sensei/pull/4906)
-* New: Add activity date filters to the courses report screen [#4909](https://github.com/Automattic/sensei/pull/4909)
-* New: Add days to completion total for courses [#4910](https://github.com/Automattic/sensei/pull/4910)
-* New: Add totals to reports->lessons column headers [#4911](https://github.com/Automattic/sensei/pull/4911)
-* New: Add the video embed from legacy meta box to learning mode [#4912](https://github.com/Automattic/sensei/pull/4912)
-* Tweak: Rename Analysis to Reports [#4853](https://github.com/Automattic/sensei/pull/4853)
-* Tweak: Remove the reports totals sidebar [#4854](https://github.com/Automattic/sensei/pull/4854)
-* Tweak: Update navigation on Reports page [#4868](https://github.com/Automattic/sensei/pull/4868)
-* Tweak: Remove and rename columns from Courses report [#4870](https://github.com/Automattic/sensei/pull/4870)
-* Tweak: Remove grade average and course column from Reports->Lessons [#4893](https://github.com/Automattic/sensei/pull/4893)
-* Tweak: Improve students report screen performance [#4915](https://github.com/Automattic/sensei/pull/4915)
-* Tweak: Allow clearing the reports last activity date filter [#4924](https://github.com/Automattic/sensei/pull/4924)
-* Tweak: Move `option-toggle` css to shared `question.scss` [#4929](https://github.com/Automattic/sensei/pull/4929)
-* Tweak: Optimize performance for reports->courses [#4930](https://github.com/Automattic/sensei/pull/4930)
-* Fix: Teachers can see all courses on some screens [#4860](https://github.com/Automattic/sensei/pull/4860)
-* Fix: Course completed date does not update when having one lesson [#4888](https://github.com/Automattic/sensei/pull/4888)
-* Fix: Remove `learn` query parameter from the preview url [#4894](https://github.com/Automattic/sensei/pull/4894)
-* Fix: PHP notices when exporting the courses or lessons reports [#4901](https://github.com/Automattic/sensei/pull/4901)
 
 [See changelog for all versions](https://github.com/Automattic/sensei/releases).

@@ -105,7 +105,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	/**
 	 * Add last activity date for each course.
 	 *
-	 * @since  x.x.x
+	 * @since  4.4.1
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.

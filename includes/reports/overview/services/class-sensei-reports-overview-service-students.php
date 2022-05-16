@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Courses overview service class.
  *
- * @since x.x.x
+ * @since 4.4.1
  */
 class Sensei_Reports_Overview_Service_Students {
 
@@ -24,7 +24,7 @@ class Sensei_Reports_Overview_Service_Students {
 	/**
 	 * Get average grade of all lessons graded in all the courses filtered by students.
 	 *
-	 * @since x.x.x
+	 * @since 4.4.1
 	 * @access public
 	 *
 	 * @param array $user_ids user ids.

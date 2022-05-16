@@ -114,7 +114,7 @@ class Sensei_Reports_Overview_Data_Provider_Lessons implements Sensei_Reports_Ov
 	/**
 	 * Add the `last_activity` field to the query.
 	 *
-	 * @since  x.x.x
+	 * @since  4.4.1
 	 * @access private
 	 *
 	 * @param array $clauses Associative array of the clauses for the query.
