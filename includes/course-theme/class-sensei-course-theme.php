@@ -77,6 +77,7 @@ class Sensei_Course_Theme {
 
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
+		add_action( 'registered_taxonomy', [ $this, 'add_taxonomy_rewrite_rules' ], 10, 3 );
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
@@ -232,6 +233,23 @@ class Sensei_Course_Theme {
 		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $post_type . '=$matches[1]&page=$matches[2]&$matches[3]', 'top' );
 		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
 
+	}
+
+	/**
+	 * Add a route with a /learn prefix for using course theme for a taxonomy.
+	 *
+	 * @param string $taxonomy    Taxonomy slug.
+	 * @param array  $object_type Array of object types supported by the taxonomy.
+	 * @param array  $args        Arguments used to register the taxonomy.
+	 */
+	public function add_taxonomy_rewrite_rules( $taxonomy, $object_type, $args ) {
+		if ( ! in_array( $taxonomy, [ 'module' ], true ) ) {
+			return;
+		}
+
+		$slug = preg_quote( $args['rewrite']['slug'] ?? $taxonomy, '/' );
+
+		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $taxonomy . '=$matches[1]', 'top' );
 	}
 
 	/**
