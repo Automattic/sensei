@@ -30,18 +30,28 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	private $course;
 
 	/**
+	 * Sensei reports courses service.
+	 *
+	 * @var Sensei_Reports_Overview_Service_Courses
+	 */
+	private $reports_overview_service_courses;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param Sensei_Grading                                  $grading Sensei grading related services.
 	 * @param Sensei_Course                                   $course Sensei course related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
+	 * @param Sensei_Reports_Overview_Service_Courses         $reports_overview_service_courses reports courses service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	public function __construct( Sensei_Grading $grading, Sensei_Course $course, Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Courses $reports_overview_service_courses ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'courses', $data_provider );
 
-		$this->grading = $grading;
-		$this->course  = $course;
+		$this->grading                          = $grading;
+		$this->course                           = $course;
+		$this->reports_overview_service_courses = $reports_overview_service_courses;
 	}
 
 	/**
@@ -54,17 +64,25 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$total_completions = Sensei_Utils::sensei_check_for_activity(
-			array(
-				'type'   => 'sensei_course_status',
-				'status' => 'complete',
-			)
-		);
-		$columns           = array(
+		$all_course_ids    = $this->get_all_item_ids();
+		$total_completions = 0;
+		if ( ! empty( $all_course_ids ) ) {
+			$total_completions = Sensei_Utils::sensei_check_for_activity(
+				array(
+					'type'     => 'sensei_course_status',
+					'status'   => 'complete',
+					'post__in' => $all_course_ids,
+				)
+			);
+		}
+
+		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
+
+		$columns = array(
 			'title'              => sprintf(
 			// translators: Placeholder value is the number of courses.
 				__( 'Course (%d)', 'sensei-lms' ),
-				esc_html( $this->total_items )
+				esc_html( count( $all_course_ids ) )
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
 			'completions'        => sprintf(
@@ -72,16 +90,20 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				__( 'Completed (%d)', 'sensei-lms' ),
 				esc_html( $total_completions )
 			),
-			'average_progress'   => __( 'Average Progress', 'sensei-lms' ),
+			'average_progress'   => sprintf(
+			// translators: Placeholder vale is the total average progress for all courses.
+				__( 'Average Progress (%s)', 'sensei-lms' ),
+				esc_html( sprintf( '%d%%', $total_average_progress ) )
+			),
 			'average_percent'    => sprintf(
 			// translators: Placeholder value is the average grade of all courses.
 				__( 'Average Grade (%s%%)', 'sensei-lms' ),
-				esc_html( ceil( $this->grading->get_courses_average_grade() ) )
+				esc_html( ceil( $this->reports_overview_service_courses->get_courses_average_grade( $all_course_ids ) ) )
 			),
 			'days_to_completion' => sprintf(
 			// translators: Placeholder value is average days to completion.
 				__( 'Days to Completion (%d)', 'sensei-lms' ),
-				ceil( $this->course->get_days_to_completion_total() )
+				ceil( $this->reports_overview_service_courses->get_average_days_to_completion( $all_course_ids ) )
 			),
 		);
 
@@ -122,12 +144,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 	 */
 	protected function get_row_data( $item ) {
 		// Last Activity.
-		$last_activity_date = __( 'N/A', 'sensei-lms' );
-		$lessons            = $this->course->course_lessons( $item->ID, 'any', 'ids' );
-
-		if ( 0 < count( $lessons ) ) {
-			$last_activity_date = $this->get_last_activity_date( array( 'post__in' => $lessons ) );
-		}
+		$lessons = $this->course->course_lessons( $item->ID, 'any', 'ids' );
 
 		// Get Course Completions.
 		$course_args        = array(
@@ -185,7 +202,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			'sensei_analysis_overview_column_data',
 			array(
 				'title'              => $course_title,
-				'last_activity'      => $last_activity_date,
+				'last_activity'      => $item->last_activity_date ? Sensei_Utils::format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
 				'completions'        => $course_completions,
 				'average_progress'   => $average_course_progress,
 				'average_percent'    => $average_grade,
@@ -202,50 +219,6 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		}
 
 		return $escaped_column_data;
-	}
-
-	/**
-	 * Get the date on which the last lesson was marked complete.
-	 *
-	 * @param array $args Array of arguments to pass to the comments query.
-	 *
-	 * @return string The last activity date, or N/A if none.
-	 *
-	 * @throws Exception If date-time conversion fails.
-	 */
-	private function get_last_activity_date( array $args ): string {
-		$default_args  = array(
-			'number' => 1,
-			'type'   => 'sensei_lesson_status',
-			'status' => [ 'complete', 'passed', 'graded' ],
-		);
-		$args          = wp_parse_args( $args, $default_args );
-		$last_activity = Sensei_Utils::sensei_check_for_activity( $args, true );
-
-		if ( ! $last_activity ) {
-			return __( 'N/A', 'sensei-lms' );
-		}
-
-		// Return the full date when doing a CSV export.
-		if ( $this->csv_output ) {
-			return $last_activity->comment_date_gmt;
-		}
-
-		$timezone           = new DateTimeZone( 'GMT' );
-		$now                = new DateTime( 'now', $timezone );
-		$last_activity_date = new DateTime( $last_activity->comment_date_gmt, $timezone );
-		$diff_in_days       = $now->diff( $last_activity_date )->days;
-
-		// Show a human-readable date if activity is within 6 days.
-		if ( $diff_in_days < 7 ) {
-			return sprintf(
-			/* translators: Time difference between two dates. %s: Number of seconds/minutes/etc. */
-				__( '%s ago', 'sensei-lms' ),
-				human_time_diff( strtotime( $last_activity->comment_date_gmt ) )
-			);
-		}
-
-		return wp_date( get_option( 'date_format' ), $last_activity_date->getTimestamp(), $timezone );
 	}
 
 	/**

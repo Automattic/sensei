@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_Table {
 
+	use Sensei_Reports_Helper_Date_Range_Trait;
+
 	/**
 	 * Reports page slug.
 	 *
@@ -69,14 +71,12 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
-
 	/**
-	 * Prepare the table with different parameters, pagination, columns and table elements
+	 * Get the filter arguments needed to get the items.
 	 *
-	 * @return void
-	 * @since  1.7.0
+	 * @return array filter_arguments Arguments.
 	 */
-	public function prepare_items() {
+	private function get_filter_args(): array {
 		// Handle orderby.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action, nonce is not required.
 		$orderby = sanitize_key( wp_unslash( $_GET['orderby'] ?? '' ) );
@@ -112,19 +112,46 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			$args['search'] = esc_html( $search );
 		}
 
-		$filters           = array_merge( $args, $this->get_additional_filters() );
-		$this->items       = $this->data_provider->get_items( $filters );
+		return array_merge( $args, $this->get_additional_filters() );
+	}
+
+	/**
+	 * Prepare the table with different parameters, pagination, columns and table elements
+	 *
+	 * @return void
+	 * @since  1.7.0
+	 */
+	public function prepare_items() {
+		$filter_args       = $this->get_filter_args();
+		$this->items       = $this->data_provider->get_items( $filter_args );
 		$this->total_items = $this->data_provider->get_last_total_items();
 
 		$total_items = $this->total_items;
-		$total_pages = ceil( $total_items / $per_page );
+		$total_pages = ceil( $total_items / $filter_args['number'] );
 		$this->set_pagination_args(
 			array(
 				'total_items' => $total_items,
 				'total_pages' => $total_pages,
-				'per_page'    => $per_page,
+				'per_page'    => $filter_args['number'],
 			)
 		);
+	}
+
+	/**
+	 * Get all the item ids.
+	 *
+	 * @return array The post ids.
+	 */
+	protected function get_all_item_ids() {
+			return $this->data_provider->get_items(
+				array_merge(
+					$this->get_filter_args(),
+					[
+						'number' => -1,
+						'fields' => 'ids',
+					]
+				)
+			);
 	}
 
 	/**
@@ -219,7 +246,9 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	public function output_top_filters() {
 		?>
 		<form class="sensei-analysis__top-filters">
-			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's' ] ); ?>
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's', 'timezone' ] ); ?>
+
+			<input type="hidden" name="timezone">
 
 			<?php if ( 'lessons' === $this->type ) : ?>
 				<label for="sensei-course-filter">
@@ -288,6 +317,9 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * Output for table footer
 	 */
 	public function data_table_footer() {
+		if ( $this->total_items < 1 ) {
+			return;
+		}
 		switch ( $this->type ) {
 			case 'courses':
 				$report = 'courses-overview';
@@ -314,6 +346,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'course_filter'          => $this->get_course_filter_value(),
 				'start_date'             => $this->get_start_date_filter_value(),
 				'end_date'               => $this->get_end_date_filter_value(),
+				'timezone'               => $this->get_timezone(),
+				's'                      => $this->get_search_value(),
 			),
 			admin_url( 'edit.php' )
 		);
@@ -359,62 +393,12 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	}
 
 	/**
-	 * Get the start date filter value.
+	 * Get the search value.
 	 *
-	 * @return string The start date.
+	 * @return string search param value.
 	 */
-	private function get_start_date_filter_value(): string {
-		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
-
-		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$start_date = $_GET['start_date'] ?? $default;
-
-		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
-	}
-
-	/**
-	 * Get the start date filter value including the time.
-	 *
-	 * @return string The start date including the time or empty string if none.
-	 */
-	protected function get_start_date_and_time(): string {
-		$start_date = DateTime::createFromFormat( 'Y-m-d', $this->get_start_date_filter_value() );
-
-		if ( ! $start_date ) {
-			return '';
-		}
-
-		$start_date->setTime( 0, 0, 0 );
-
-		return $start_date->format( 'Y-m-d H:i:s' );
-	}
-
-	/**
-	 * Get the end date filter value.
-	 *
-	 * @return string The end date or empty string if none.
-	 */
-	private function get_end_date_filter_value(): string {
-		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$end_date = $_GET['end_date'] ?? '';
-
-		return DateTime::createFromFormat( 'Y-m-d', $end_date ) ? $end_date : '';
-	}
-
-	/**
-	 * Get the end date filter value including the time.
-	 *
-	 * @return string The end date including the time or empty string if none.
-	 */
-	protected function get_end_date_and_time(): string {
-		$end_date = DateTime::createFromFormat( 'Y-m-d', $this->get_end_date_filter_value() );
-
-		if ( ! $end_date ) {
-			return '';
-		}
-
-		$end_date->setTime( 23, 59, 59 );
-
-		return $end_date->format( 'Y-m-d H:i:s' );
+	private function get_search_value(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for filtering.
+		return isset( $_GET['s'] ) ? esc_attr( sanitize_text_field( wp_unslash( $_GET['s'] ) ) ) : '';
 	}
 }

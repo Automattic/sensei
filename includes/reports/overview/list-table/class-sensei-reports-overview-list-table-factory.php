@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Factory {
+
 	/**
 	 * Creates a new list table instance for reports overview.
 	 *
@@ -29,14 +30,15 @@ class Sensei_Reports_Overview_List_Table_Factory {
 			case 'users':
 			case 'students':
 				return new Sensei_Reports_Overview_List_Table_Students(
-					Sensei()->grading,
-					new Sensei_Reports_Overview_Data_Provider_Students()
+					new Sensei_Reports_Overview_Data_Provider_Students(),
+					new Sensei_Reports_Overview_Service_Students()
 				);
 			case 'courses':
 				return new Sensei_Reports_Overview_List_Table_Courses(
 					Sensei()->grading,
 					Sensei()->course,
-					new Sensei_Reports_Overview_Data_Provider_Courses()
+					new Sensei_Reports_Overview_Data_Provider_Courses(),
+					new Sensei_Reports_Overview_Service_Courses()
 				);
 			case 'lessons':
 				return new Sensei_Reports_Overview_List_Table_Lessons(
