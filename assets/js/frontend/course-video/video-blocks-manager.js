@@ -26,30 +26,41 @@ export const registerVideo = ( {
 } ) => {
 	const blocksStore = window.sensei?.store?.blocks;
 	if ( courseVideoRequired ) {
+		/**
+		 * Called when a required video for the current lesson is registered.
+		 *
+		 * @since 4.5.0
+		 *
+		 * @hook sensei.videoProgression.registerVideo Hook used to run an arbitrary code when new required
+		 *                                             video for the current lesson is registered.
+		 * @param {Object} video
+		 * @param {string} video.url The source url of the video.
+		 */
+		wp.hooks.doAction( 'sensei.videoProgression.registerVideo', { url } );
 		videos[ url ] = { pauseVideo, completed: false };
-		if ( blocksStore ) {
-			blocksStore.setAttributes( url, {
-				required: true,
-			} );
-		} else {
-			disableCompleteLessonButton();
-		}
+		disableCompleteLessonButton();
 	}
 
 	registerVideoEndHandler( () => {
 		if ( courseVideoRequired ) {
-			if ( blocksStore ) {
-				blocksStore.setAttributes( url, { completed: true } );
-			} else {
-				videos[ url ].completed = true;
-
-				if ( areAllComplete() ) {
-					enableCompleteLessonButton();
-				}
+			/**
+			 * Called when a required video for the current lesson is finished playing.
+			 *
+			 * @since 4.5.0
+			 *
+			 * @hook sensei.videoProgression.videoEnded Hook used to run an arbitrary code when a required video
+			 *                                          for the current lesson is finished playing.
+			 * @param {Object} video
+			 * @param {string} video.url The source url of the video.
+			 */
+			wp.hooks.doAction( 'sensei.videoProgression.videoEnded', { url } );
+			videos[ url ].completed = true;
+			if ( areAllCompleted() ) {
+				enableCompleteLessonButton();
 			}
 		}
 
-		if ( courseVideoAutoComplete && areAllComplete() ) {
+		if ( courseVideoAutoComplete && areAllCompleted() ) {
 			submitCompleteLessonForm();
 		}
 	} );
@@ -60,30 +71,53 @@ export const registerVideo = ( {
  *
  * @return {boolean} True if all the videos are completed. False otherwise.
  */
-const areAllComplete = () => {
-	const blocksStore = window.sensei?.store?.blocks;
-	if ( blocksStore ) {
-		const requiredBlockIds = blocksStore.getRequiredBlockIds();
-		const completedBlocksCount = blocksStore
-			.areBlocksCompleted( requiredBlockIds )
-			.filter( ( completed ) => completed ).length;
-
-		return requiredBlockIds.length === completedBlocksCount;
-	}
-
+const areAllCompleted = () => {
+	let allCompleted = true;
 	for ( const url in videos ) {
 		if ( ! videos[ url ].completed ) {
-			return false;
+			allCompleted = false;
 		}
 	}
 
-	return true;
+	/**
+	 * Tells if all the required videos for the current lesson are finished playing or not.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @hook sensei.videoProgression.allCompleted Hook used to tell if all the required videos for the current lesson have finished playing.
+	 *
+	 * @param {boolean} allCompleted Whether all the required videos for the current lesson are completed.
+	 */
+	allCompleted = wp.hooks.applyFilters(
+		'sensei.videoProgression.allCompleted',
+		allCompleted
+	);
+
+	return allCompleted;
 };
 
 /**
  * Disables the Complete Lesson buttons.
  */
 const disableCompleteLessonButton = () => {
+	if (
+		/**
+		 * Whether or not the Lesson Complete button should be disabled or not.
+		 *
+		 * @since 4.5.0
+		 *
+		 * @hook sensei.videoProgression.preventLessonCompletion Hook is used to tell if the "Complete Lesson" button should be disabled or not.
+		 *
+		 * @param {boolean} shouldPrevent Wheter to prevent users from completing the lesson.
+		 */
+		! wp.hooks.applyFilters(
+			'sensei.videoProgression.preventLessonCompletion',
+			true
+		)
+	) {
+		return;
+	}
+
 	document
 		.querySelectorAll( '[data-id="complete-lesson-button"]' )
 		.forEach( ( button ) => {
@@ -108,6 +142,24 @@ const preventClick = ( event ) => {
  * Enables the Complete Lesson buttons.
  */
 const enableCompleteLessonButton = () => {
+	if (
+		/**
+		 * Whether or not the Lesson Complete button should be enabled or not.
+		 *
+		 * @since 4.5.0
+		 *
+		 * @hook sensei.videoProgression.allowLessonCompletion Hook is used to tell if the "Complete Lesson" button should be enabled or not.
+		 *
+		 * @param {boolean} shouldPrevent Wheter to alalow users to complete the lesson.
+		 */
+		! wp.hooks.applyFilters(
+			'sensei.videoProgression.allowLessonCompletion',
+			true
+		)
+	) {
+		return;
+	}
+
 	document
 		.querySelectorAll( '[data-id="complete-lesson-button"]' )
 		.forEach( ( button ) => {
