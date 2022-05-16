@@ -3,12 +3,12 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://woocommerce.com/products/sensei/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.4.0
+ * Version: 4.4.1
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * Requires at least: 5.7
- * Tested up to: 5.9
+ * Tested up to: 5.9.3
  * Requires PHP: 7.0
  * Text Domain: sensei-lms
  * Domain path: /lang/
