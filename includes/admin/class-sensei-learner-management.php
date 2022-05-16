@@ -221,7 +221,6 @@ class Sensei_Learner_Management {
 
 		Sensei()->assets->enqueue( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-student-action-menu', 'admin/students/student-action-menu/index.js', [], true );
-		Sensei()->assets->enqueue( 'sensei-student-modal', 'admin/students/student-modal/index.js', [], true );
 		Sensei()->assets->enqueue( 'sensei-student-bulk-action-button', 'admin/students/student-bulk-action-button/index.js', [], true );
 
 		wp_localize_script(

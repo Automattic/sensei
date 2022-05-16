@@ -2,20 +2,15 @@
  * WordPress dependencies
  */
 import { CheckboxControl, Spinner } from '@wordpress/components';
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
-
-/**
- * External dependencies
- */
-import { debounce } from 'lodash';
+import { store as coreDataStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
  */
-import httpClient from '../../lib/http-client';
-import useAbortController from '../hooks/use-abort-controller';
+import useSelectWithDebounce from '../../../react-hooks/use-select-with-debounce';
 
 /**
  * Callback for select or unselect courseItem
@@ -97,10 +92,7 @@ const CourseItem = ( { course, checked = false, onChange } ) => {
  * @param {onCourseSelectionChange} props.onChange    Event triggered when a course is selected or unselected
  */
 export const CourseList = ( { searchQuery, onChange } ) => {
-	const [ isFetching, setIsFetching ] = useState( true );
-	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
-	const { getSignal } = useAbortController();
 
 	const selectCourse = useCallback(
 		( { isSelected, course } ) => {
@@ -113,34 +105,28 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 		[ onChange ]
 	);
 
-	// Fetch the courses.
-	const fetchCourses = useCallback(
-		debounce( ( query ) => {
-			setIsFetching( true );
+	const { courses, isFetching } = useSelectWithDebounce(
+		( select ) => {
+			const store = select( coreDataStore );
 
-			httpClient( {
-				path:
-					'/wp/v2/courses?per_page=100' +
-					( query ? `&search=${ query }` : '' ),
-				method: 'GET',
-				signal: getSignal(),
-			} )
-				.then( ( result ) => setCourses( result ) )
-				.catch( ( error ) => {
-					console.log( error ); // eslint-disable-line no-console
-				} )
-				.finally( () => {
-					if ( ! getSignal().aborted ) {
-						setIsFetching( false );
-					}
-				} );
-		}, 400 ),
-		[]
-	); // eslint-disable-line react-hooks/exhaustive-deps
+			const query = {
+				per_page: 100,
+				search: searchQuery,
+			};
 
-	useEffect( () => {
-		fetchCourses( searchQuery );
-	}, [ fetchCourses, searchQuery ] );
+			return {
+				courses:
+					store.getEntityRecords( 'postType', 'course', query ) || [],
+				isFetching: ! store.hasFinishedResolution( 'getEntityRecords', [
+					'postType',
+					'course',
+					query,
+				] ),
+			};
+		},
+		[ searchQuery ],
+		500
+	);
 
 	return (
 		<>

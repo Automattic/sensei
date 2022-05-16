@@ -9,6 +9,12 @@ import {
 	cleanup,
 } from '@testing-library/react';
 import nock from 'nock';
+
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
@@ -29,6 +35,8 @@ const courses = [
 	},
 ];
 
+jest.mock( '@wordpress/data' );
+
 const students = [ 1, 2, 3 ];
 const studentName = 'testname';
 const NOCK_HOST_URL = 'http://localhost';
@@ -43,15 +51,8 @@ describe( '<StudentModal />', () => {
 		findByRole( 'button', { name: label } );
 
 	beforeAll( () => {
-		nock.disableNetConnect();
-		nock( NOCK_HOST_URL )
-			.persist()
-			.get( '/wp/v2/courses' )
-			.query( { per_page: 100, _locale: 'user' } )
-			.reply( 200, courses );
+		useSelect.mockReturnValue( { courses, isFetching: false } );
 	} );
-
-	afterAll( () => nock.cleanAll() );
 
 	it( 'Should display a list of courses', async () => {
 		render( <StudentModal students={ students } action="add" /> );
@@ -100,12 +101,11 @@ describe( '<StudentModal />', () => {
 
 		it( 'Should add the selected students to the selected course', async () => {
 			nock( NOCK_HOST_URL )
-				.post( '/', {
+				.post( '/sensei-internal/v1/course-students/batch', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
 				} )
 				.query( {
-					rest_route: '/sensei-internal/v1/course-students/batch',
 					_locale: 'user',
 				} )
 				.once()
@@ -123,9 +123,8 @@ describe( '<StudentModal />', () => {
 		describe( 'When there is a failure to add the students to the courses', () => {
 			beforeEach( async () => {
 				nock( NOCK_HOST_URL )
-					.post( '/' )
+					.post( '/sensei-internal/v1/course-students/batch' )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-students/batch',
 						_locale: 'user',
 					} )
 					.once()
@@ -187,12 +186,11 @@ describe( '<StudentModal />', () => {
 
 		it( 'Should remove the selected students from the selected course', async () => {
 			nock( NOCK_HOST_URL + '/' )
-				.post( '/', {
+				.post( '/sensei-internal/v1/course-students/batch', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
 				} )
 				.query( {
-					rest_route: '/sensei-internal/v1/course-students/batch',
 					_locale: 'user',
 				} )
 				.matchHeader( 'x-http-method-override', 'DELETE' )
@@ -252,12 +250,11 @@ describe( '<StudentModal />', () => {
 
 		it( "Should reset the selected the students's progress from the selected courses", async () => {
 			nock( NOCK_HOST_URL )
-				.post( '/', {
+				.post( '/sensei-internal/v1/course-progress/batch', {
 					student_ids: students,
 					course_ids: [ courses.at( 0 ).id ],
 				} )
 				.query( {
-					rest_route: '/sensei-internal/v1/course-progress/batch',
 					_locale: 'user',
 				} )
 				.matchHeader( 'x-http-method-override', 'DELETE' )
@@ -281,12 +278,11 @@ describe( '<StudentModal />', () => {
 			beforeAll( () => {
 				// Add to course
 				nock( NOCK_HOST_URL )
-					.post( '/', {
+					.post( '/sensei-internal/v1/course-students/batch', {
 						student_ids: [ students[ 0 ] ],
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-students/batch',
 						_locale: 'user',
 					} )
 					.once()
@@ -294,12 +290,11 @@ describe( '<StudentModal />', () => {
 
 				// Remove from course
 				nock( 'http://localhost/' )
-					.post( '/', {
+					.post( '/sensei-internal/v1/course-students/batch', {
 						student_ids: [ students[ 0 ] ],
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-students/batch',
 						_locale: 'user',
 					} )
 					.matchHeader( 'x-http-method-override', 'DELETE' )
@@ -308,12 +303,11 @@ describe( '<StudentModal />', () => {
 
 				// Reset or remove progress
 				nock( 'http://localhost' )
-					.post( '/', {
+					.post( '/sensei-internal/v1/course-progress/batch', {
 						student_ids: [ students[ 0 ] ],
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-progress/batch',
 						_locale: 'user',
 					} )
 					.matchHeader( 'x-http-method-override', 'DELETE' )
@@ -380,12 +374,11 @@ describe( '<StudentModal />', () => {
 			beforeAll( () => {
 				// Add to course
 				nock( 'http://localhost' )
-					.post( '/', {
+					.post( '/sensei-internal/v1/course-students/batch', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-students/batch',
 						_locale: 'user',
 					} )
 					.once()
@@ -393,12 +386,11 @@ describe( '<StudentModal />', () => {
 
 				// Remove from course
 				nock( 'http://localhost/' )
-					.post( '/', {
+					.post( '/sensei-internal/v1/course-students/batch', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-students/batch',
 						_locale: 'user',
 					} )
 					.matchHeader( 'x-http-method-override', 'DELETE' )
@@ -407,12 +399,11 @@ describe( '<StudentModal />', () => {
 
 				// Reset or remove progress
 				nock( 'http://localhost' )
-					.post( '/', {
+					.post( '/sensei-internal/v1/course-progress/batch', {
 						student_ids: students,
 						course_ids: [ courses.at( 0 ).id ],
 					} )
 					.query( {
-						rest_route: '/sensei-internal/v1/course-progress/batch',
 						_locale: 'user',
 					} )
 					.matchHeader( 'x-http-method-override', 'DELETE' )
