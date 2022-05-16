@@ -108,7 +108,7 @@ const disableCompleteLessonButton = () => {
 		 *
 		 * @hook sensei.videoProgression.preventLessonCompletion Hook is used to tell if the "Complete Lesson" button should be disabled or not.
 		 *
-		 * @param {boolean} shouldPrevent Wheter to prevent users from completing the lesson.
+		 * @param {boolean} shouldPrevent Whether to prevent users from completing the lesson.
 		 */
 		! wp.hooks.applyFilters(
 			'sensei.videoProgression.preventLessonCompletion',
@@ -150,7 +150,7 @@ const enableCompleteLessonButton = () => {
 		 *
 		 * @hook sensei.videoProgression.allowLessonCompletion Hook is used to tell if the "Complete Lesson" button should be enabled or not.
 		 *
-		 * @param {boolean} shouldPrevent Wheter to alalow users to complete the lesson.
+		 * @param {boolean} shouldAllow Whether to allow users to complete the lesson.
 		 */
 		! wp.hooks.applyFilters(
 			'sensei.videoProgression.allowLessonCompletion',
