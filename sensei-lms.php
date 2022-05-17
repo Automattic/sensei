@@ -35,6 +35,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+define( 'SENSEI_LMS_VERSION', '4.4.1' );
+
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
@@ -99,7 +101,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 */
 	function Sensei() {
 		// phpcs:enable
-		return Sensei_Main::instance( array( 'version' => '4.4.0' ) );
+		return Sensei_Main::instance( array( 'version' => SENSEI_LMS_VERSION ) );
 	}
 }
 
