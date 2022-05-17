@@ -128,7 +128,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 		} else {
 			createWarningNotice(
 				__(
-					"This post doesn't have any Sensei block. It means this page will be displayed using templates.",
+					"It looks like this course page doesn't have any Sensei blocks. This means that content will be handled by custom templates.",
 					'sensei-lms'
 				),
 				{
