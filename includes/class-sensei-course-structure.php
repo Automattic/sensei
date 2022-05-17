@@ -483,8 +483,7 @@ class Sensei_Course_Structure {
 			'post_type'   => 'lesson',
 			'post_status' => 'draft',
 			'meta_input'  => [
-				'_lesson_course'  => $this->course_id,
-				'_needs_template' => true,
+				'_lesson_course' => $this->course_id,
 			],
 		];
 

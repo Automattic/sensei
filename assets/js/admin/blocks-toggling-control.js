@@ -84,11 +84,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 				coreEditorSelector.isEditedPostDirty() &&
 				undefined === initialWithSenseiBlocks
 			) {
-				// If it will fill the template (needs_template is true),
-				// we consider that it has Sensei blocks initially.
-				initialWithSenseiBlocks =
-					coreEditorSelector.getCurrentPostAttribute( 'meta' )
-						?._needs_template || previousWithSenseiBlocks;
+				initialWithSenseiBlocks = previousWithSenseiBlocks;
 			}
 		},
 		onSave: () => {
