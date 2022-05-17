@@ -429,6 +429,7 @@ class Sensei_Main {
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
 			new Sensei_Admin_Notices();
+			Sensei_Editor_Wizard::instance()->init();
 		} else {
 
 			// Load Frontend Class

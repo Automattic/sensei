@@ -1,0 +1,87 @@
+<?php
+/**
+ * File containing the class Sensei_Editor_Wizard.
+ *
+ * @package sensei-lms
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class that handles editor wizards.
+ *
+ * @since $$next-version$$
+ */
+class Sensei_Editor_Wizard {
+	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Sensei_Editor_Wizard constructor. Prevents other instances from being created outside of `self::instance()`.
+	 */
+	private function __construct() {
+	}
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Initializes the class.
+	 */
+	public function init() {
+		add_action( 'init', [ $this, 'register_post_metas' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
+	}
+
+	/**
+	 * Register post metas.
+	 *
+	 * @access private
+	 */
+	public function register_post_metas() {
+		$meta_key = '_editor_wizard_completed';
+		$args     = [
+			'show_in_rest'  => true,
+			'single'        => true,
+			'type'          => 'boolean',
+			'auth_callback' => function( $allowed, $meta_key, $post_id ) {
+				return current_user_can( 'edit_post', $post_id );
+			},
+		];
+
+		register_post_meta( 'lesson', $meta_key, $args );
+
+		register_post_meta( 'course', $meta_key, $args );
+	}
+
+	/**
+	 * Enqueue scripts.
+	 *
+	 * @param string $hook_suffix The current admin page.
+	 *
+	 * @access private
+	 */
+	public function enqueue_admin_scripts( $hook_suffix ) {
+		$post_type = get_post_type();
+
+		if ( 'post-new.php' === $hook_suffix && in_array( $post_type, [ 'course', 'lesson' ], true ) ) {
+			Sensei()->assets->enqueue( 'sensei-editor-wizard-script', 'admin/editor-wizard/index.js' );
+		}
+	}
+}
