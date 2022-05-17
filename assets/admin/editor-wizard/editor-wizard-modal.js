@@ -1,8 +1,10 @@
 /**
  * WordPress dependencies
  */
+import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -67,9 +69,11 @@ const useWizardOpenState = () => {
  */
 const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
+	const { synchronizeTemplate } = useDispatch( editorStore );
 
 	const closeModal = () => {
 		setDone( true );
+		synchronizeTemplate();
 	};
 
 	return (
