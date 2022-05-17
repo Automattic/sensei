@@ -484,6 +484,7 @@ class Sensei_Course_Structure {
 			'post_status' => 'draft',
 			'meta_input'  => [
 				'_lesson_course' => $this->course_id,
+				'_new_post'      => true,
 			],
 		];
 

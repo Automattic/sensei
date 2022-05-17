@@ -417,6 +417,9 @@ class Sensei_Main {
 
 		Sensei_Scheduler::init();
 
+		// Editor Wizard.
+		Sensei_Editor_Wizard::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class
@@ -429,7 +432,6 @@ class Sensei_Main {
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
 			new Sensei_Admin_Notices();
-			Sensei_Editor_Wizard::instance()->init();
 		} else {
 
 			// Load Frontend Class

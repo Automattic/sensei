@@ -55,7 +55,7 @@ class Sensei_Editor_Wizard {
 	 * @access private
 	 */
 	public function register_post_metas() {
-		$meta_key = '_editor_wizard_completed';
+		$meta_key = '_new_post';
 		$args     = [
 			'show_in_rest'  => true,
 			'single'        => true,
@@ -77,10 +77,13 @@ class Sensei_Editor_Wizard {
 	 * @access private
 	 */
 	public function enqueue_admin_scripts( $hook_suffix ) {
-		$post_type  = get_post_type();
-		$post_types = [ 'course', 'lesson' ];
+		$post_type   = get_post_type();
+		$post_id     = get_the_ID();
+		$new_post    = get_post_meta( $post_id, '_new_post', true );
+		$post_types  = [ 'course', 'lesson' ];
+		$is_new_post = 'post-new.php' === $hook_suffix || $new_post;
 
-		if ( 'post-new.php' === $hook_suffix && in_array( $post_type, $post_types, true ) ) {
+		if ( $is_new_post && in_array( $post_type, $post_types, true ) ) {
 			Sensei()->assets->enqueue( 'sensei-editor-wizard-script', 'admin/editor-wizard/index.js' );
 		}
 	}

@@ -4,6 +4,7 @@
 import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
 
 /**
@@ -69,11 +70,15 @@ const useWizardOpenState = () => {
  */
 const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
-	const { synchronizeTemplate } = useDispatch( editorStore );
+	const { synchronizeTemplate } = useDispatch( blockEditorStore );
+	const { editPost } = useDispatch( editorStore );
 
 	const closeModal = () => {
 		setDone( true );
 		synchronizeTemplate();
+		editPost( {
+			meta: { _new_post: false },
+		} );
 	};
 
 	return (
