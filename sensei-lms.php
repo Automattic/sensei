@@ -36,6 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'SENSEI_LMS_VERSION', '4.4.1' );
+define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
@@ -114,7 +115,7 @@ $woothemes_sensei = Sensei();
  *
  * @since 1.8.0
  */
-register_activation_hook( __FILE__, 'activate_sensei' );
+register_activation_hook( SENSEI_LMS_PLUGIN_FILE, 'activate_sensei' );
 
 if ( ! function_exists( 'activate_sensei' ) ) {
 	/**
