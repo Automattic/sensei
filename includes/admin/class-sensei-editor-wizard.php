@@ -85,6 +85,7 @@ class Sensei_Editor_Wizard {
 
 		if ( $is_new_post && in_array( $post_type, $post_types, true ) ) {
 			Sensei()->assets->enqueue( 'sensei-editor-wizard-script', 'admin/editor-wizard/index.js' );
+			Sensei()->assets->enqueue( 'sensei-editor-wizard-style', 'admin/editor-wizard/style.css' );
 		}
 	}
 }
