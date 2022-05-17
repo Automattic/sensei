@@ -1698,8 +1698,9 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
 
 		/* Act */
-		$edit_output = $course_structure->get( 'edit' );
 		$view_output = $course_structure->get();
+		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+		$edit_output = $course_structure->get( 'edit' );
 
 		/* Assert */
 		//Added multiple assertions to cut db setup time for tests.
@@ -1709,7 +1710,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$this->assertNotContains( 'teacher1', $edit_output[0]['title'] );
 
 		//For view mode.
-		$this->assertEmpty( $view_output[0]['teacher'] );
+		$this->assertEquals( 'teacher1', $view_output[0]['teacher'] );
 		$this->assertContains( 'teacher1', $view_output[0]['title'] );
 
 		// Reset $current_screen. This is needed for WordPress <= 5.8.

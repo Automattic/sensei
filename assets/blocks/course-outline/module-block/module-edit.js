@@ -164,7 +164,9 @@ export const ModuleEdit = ( props ) => {
 							onChange={ updateName }
 						/>
 					</h2>
-					{ teacher && <span>({ teacher })</span> }
+					{ teacher && (
+						<span className="teacher-name">({ teacher })</span>
+					) }
 					<ModuleStatus clientId={ clientId } />
 					{ collapsibleModules && (
 						<button

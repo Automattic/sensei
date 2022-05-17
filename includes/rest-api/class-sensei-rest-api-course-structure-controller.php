@@ -141,6 +141,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		$context = 'view';
 		if ( 'edit' === $request['context'] && $this->can_current_user_edit_course( $course->ID ) ) {
 			$context = 'edit';
+			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
 		}
 
 		$response = new WP_REST_Response();
@@ -189,7 +190,7 @@ class Sensei_REST_API_Course_Structure_Controller extends \WP_REST_Controller {
 		}
 
 		$response = new WP_REST_Response();
-		$response->set_data( $course_structure->get( 'edit', wp_using_ext_object_cache(), true ) );
+		$response->set_data( $course_structure->get( 'edit', wp_using_ext_object_cache() ) );
 
 		return $response;
 	}
