@@ -23,6 +23,10 @@
       "type": "string",
       "default": ""
     },
+    "slug": {
+      "type": "string",
+      "default": ""
+    },
     "mainColor": {
       "type": "string"
     },
