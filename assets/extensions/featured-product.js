@@ -20,6 +20,7 @@ import { __, sprintf } from '@wordpress/i18n';
  * @param {string}   props.image         Product image.
  * @param {string}   props.price         Product price.
  * @param {string}   props.buttonLink    CTA button link.
+ * @param {string}   props.buttonTitle   CTA button title.
  * @param {Object}   props.htmlProps     Wrapper extra props.
  */
 const FeaturedProduct = ( props ) => {
@@ -32,6 +33,7 @@ const FeaturedProduct = ( props ) => {
 		image,
 		price,
 		buttonLink,
+		buttonTitle,
 		htmlProps,
 	} = props;
 
@@ -108,7 +110,7 @@ const FeaturedProduct = ( props ) => {
 							'is-large'
 						) }
 					>
-						{ getProductText }
+						{ buttonTitle }
 					</a>
 				</div>
 			</section>
