@@ -6,6 +6,11 @@ import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
+/**
+ * Internal dependencies
+ */
+import LimitedTextControl from './limited-text-control';
+import { __ } from '@wordpress/i18n';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -72,6 +77,8 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
+	const [ title, setTitle ] = useState( '' );
+	const [ description, setDescription ] = useState( '' );
 
 	const closeModal = () => {
 		setDone( true );
@@ -84,7 +91,20 @@ const EditorWizardModal = () => {
 	return (
 		open && (
 			<Modal onRequestClose={ closeModal } title="I'm a modal!">
-				Code me, please!
+				{ /* Sample content for modal */ }
+				<LimitedTextControl
+					label={ __( 'Course Title', 'sensei-lms' ) }
+					value={ title }
+					onChange={ setTitle }
+					maxLength={ 40 }
+				/>
+				<LimitedTextControl
+					label={ __( 'Course Description', 'sensei-lms' ) }
+					value={ description }
+					onChange={ setDescription }
+					maxLength={ 350 }
+					multiline={ true }
+				/>
 			</Modal>
 		)
 	);
