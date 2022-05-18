@@ -152,6 +152,7 @@ class Sensei_Course_Structure {
 			'title'       => $module_term->name,
 			'description' => $module_term->description,
 			'teacher'     => user_can( $author, 'manage_options' ) ? '' : $author->display_name,
+			'slug'        => $module_term->slug,
 			'lessons'     => [],
 		];
 
