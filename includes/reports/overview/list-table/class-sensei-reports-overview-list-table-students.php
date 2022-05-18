@@ -77,16 +77,16 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.
-			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( count( $user_ids ) ) ),
+			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), count( $user_ids ) ),
 			'email'             => __( 'Email', 'sensei-lms' ),
 			'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 			'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 			// translators: Placeholder value is all active courses.
-			'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
+			'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $total_courses_started - $total_completed_courses ),
 			// translators: Placeholder value is all completed courses.
-			'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $total_completed_courses ) ),
+			'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $total_completed_courses ),
 			// translators: Placeholder value is graded average value.
-			'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $total_average_grade ) ),
+			'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $total_average_grade ),
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
