@@ -47,25 +47,33 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			return $this->columns;
 		}
 
+		$total_completed_courses = 0;
+		$total_courses_started   = 0;
+		$total_average_grade     = 0;
+
 		$user_ids = $this->get_all_item_ids();
-		// Get total value for Courses Completed column in users table.
-		$course_args_completed   = array(
-			'user_id' => $user_ids,
-			'type'    => 'sensei_course_status',
-			'status'  => 'complete',
-		);
-		$total_completed_courses = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+		if ( $user_ids ) {
+			// Get total value for Courses Completed column in users table.
+			$total_completed_courses = Sensei_Utils::sensei_check_for_activity(
+				[
+					'user_id' => $user_ids,
+					'type'    => 'sensei_course_status',
+					'status'  => 'complete',
+				]
+			);
 
-		// Get the number of the courses that users have started.
-		$course_args_started   = array(
-			'user_id' => $user_ids,
-			'type'    => 'sensei_course_status',
-			'status'  => 'any',
-		);
-		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+			// Get the number of the courses that users have started.
+			$total_courses_started = Sensei_Utils::sensei_check_for_activity(
+				[
+					'user_id' => $user_ids,
+					'type'    => 'sensei_course_status',
+					'status'  => 'any',
+				]
+			);
 
-		// Get total average students grade.
-		$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
+			// Get total average students grade.
+			$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
+		}
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.
