@@ -302,6 +302,32 @@ class Sensei_Course_Structure {
 			$term = get_term( $item['id'], 'module' );
 			$slug = $this->get_module_slug( $item['title'] );
 
+			if ( empty( $term ) && $item['slug'] ) {
+				$teacher_user_id = get_post( $this->course_id )->post_author;
+				$search_slugs[]  = $slug;
+				$is_admin_user   = user_can( $teacher_user_id, 'manage_options' );
+				$split_slug      = explode( '-', $item['slug'] );
+
+				array_shift( $split_slug );
+
+				if ( ! $is_admin_user ) {
+					$search_slugs[] = $teacher_user_id . '-' . $item['slug'];
+					$search_slugs[] = $teacher_user_id . '-' . implode( '-', $split_slug );
+				} elseif ( count( $split_slug ) > 0 ) {
+					$search_slugs[] = implode( '-', $split_slug );
+				}
+
+				foreach ( $search_slugs as $search_slug ) {
+					$search_term = get_term_by( 'slug', $search_slug, 'module' );
+
+					if ( $search_term && ! is_wp_error( $search_term ) ) {
+						$term       = $search_term;
+						$item['id'] = $term->term_id;
+						break;
+					}
+				}
+			}
+
 			// Slug has changed.
 			if ( $term->slug !== $slug ) {
 				$existing_module_id = $this->get_existing_module( $item['title'] );
