@@ -4,6 +4,16 @@
 import { TextareaControl, TextControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
+/**
+ * Text control with input limited by a given maximum length.
+ *
+ * @param {Object}   props           Component properties.
+ * @param {string}   props.label     Label for the field.
+ * @param {string}   props.value     Value for the field.
+ * @param {Function} props.onChange  Callback for when the value changes.
+ * @param {number}   props.maxLength Maximum length for the field.
+ * @param {boolean}  props.multiline Whether if multiline input (textarea) must be used or not.
+ */
 const LimitedTextControl = ( {
 	label,
 	value,
