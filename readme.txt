@@ -47,7 +47,7 @@ Do more and sell courses with Sensei Pro, which includes:
 
 **Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
 
-**Interactive Blocks:** Flaschards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post. 
+**Interactive Blocks:** Flashcards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post.
 
 **Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz. 
 
