@@ -302,32 +302,6 @@ class Sensei_Course_Structure {
 			$term = get_term( $item['id'], 'module' );
 			$slug = $this->get_module_slug( $item['title'] );
 
-			if ( empty( $term ) && $item['slug'] ) {
-				$teacher_user_id = get_post( $this->course_id )->post_author;
-				$search_slugs[]  = $slug;
-				$is_admin_user   = user_can( $teacher_user_id, 'manage_options' );
-				$split_slug      = explode( '-', $item['slug'] );
-
-				array_shift( $split_slug );
-
-				if ( ! $is_admin_user ) {
-					$search_slugs[] = $teacher_user_id . '-' . $item['slug'];
-					$search_slugs[] = $teacher_user_id . '-' . implode( '-', $split_slug );
-				} elseif ( count( $split_slug ) > 0 ) {
-					$search_slugs[] = implode( '-', $split_slug );
-				}
-
-				foreach ( $search_slugs as $search_slug ) {
-					$search_term = get_term_by( 'slug', $search_slug, 'module' );
-
-					if ( $search_term && ! is_wp_error( $search_term ) ) {
-						$term       = $search_term;
-						$item['id'] = $term->term_id;
-						break;
-					}
-				}
-			}
-
 			// Slug has changed.
 			if ( $term->slug !== $slug ) {
 				$existing_module_id = $this->get_existing_module( $item['title'] );
@@ -726,6 +700,13 @@ class Sensei_Course_Structure {
 		if ( 'module' === $raw_item['type'] ) {
 			if ( $item['id'] ) {
 				$term = get_term( $item['id'], 'module' );
+				if ( ! $term && $raw_item['slug'] ) {
+					$new_slug = $this->get_module_slug( $raw_item['title'] );
+					$term     = $this->get_module_for_teacher_by_slug( $raw_item['slug'], [ $new_slug ] );
+					if ( $term ) {
+						$item['id'] = $term->term_id;
+					}
+				}
 				if ( ! $term || is_wp_error( $term ) ) {
 					return new WP_Error(
 						'sensei_course_structure_missing_module',
@@ -880,5 +861,40 @@ class Sensei_Course_Structure {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get module for teacher by slug.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $slug             The probable slug.
+	 * @param array  $additional_slugs Additional slugs to search with.
+	 *
+	 * @return WP_Term|null The found term or null.
+	 */
+	private function get_module_for_teacher_by_slug( string $slug, array $additional_slugs = [] ) {
+		$search_slugs  = [] + $additional_slugs ?? [];
+		$user_id       = get_post( $this->course_id )->post_author;
+		$is_admin_user = user_can( $user_id, 'manage_options' );
+		$split_slug    = explode( '-', $slug );
+
+		array_shift( $split_slug );
+
+		if ( ! $is_admin_user ) {
+			$search_slugs[] = $user_id . '-' . $slug;
+			$search_slugs[] = $user_id . '-' . implode( '-', $split_slug );
+		} elseif ( count( $split_slug ) > 0 ) {
+			$search_slugs[] = implode( '-', $split_slug );
+		}
+
+		foreach ( $search_slugs as $search_slug ) {
+			$search_term = get_term_by( 'slug', $search_slug, 'module' );
+
+			if ( $search_term && ! is_wp_error( $search_term ) ) {
+				return $search_term;
+			}
+		}
+		return null;
 	}
 }
