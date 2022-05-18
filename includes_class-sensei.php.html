@@ -326,8 +326,8 @@ class Sensei_Main {
 
 		if ( is_null( self::$_instance ) ) {
 
-			// Sensei requires a reference to the main Sensei plugin file
-			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/sensei-lms.php';
+			// Sensei requires a reference to the main Sensei plugin file.
+			$sensei_main_plugin_file = SENSEI_LMS_PLUGIN_FILE;
 
 			self::$_instance = new self( $sensei_main_plugin_file, $args );
 
