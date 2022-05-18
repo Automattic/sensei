@@ -70,9 +70,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 				toggleLegacyOrBlocksNotice();
 			}
 		},
-		onSave: () => {
-			toggleLegacyOrBlocksNotice();
-		},
 	} );
 
 	/**
