@@ -44,9 +44,9 @@ describe( '<SingleLineInput />', () => {
 			<SingleLineInput onChange={ onChangeMock } />
 		);
 
-		userEvent.type( getByRole( 'textbox' ), ' input {enter}line' );
+		userEvent.type( getByRole( 'textbox' ), 'input {enter}line' );
 
-		expect( onChangeMock ).toHaveBeenLastCalledWith( 'input line ' );
+		expect( onChangeMock ).toHaveBeenLastCalledWith( 'input line' );
 	} );
 
 	it( 'Calls onRemove on backspace with an empty title', () => {

@@ -41,6 +41,8 @@ const mockStepData = ( mockData = {} ) => {
 describe( '<Ready />', () => {
 	beforeEach( () => {
 		window.sensei_log_event = jest.fn();
+		delete window.location;
+		window.location = { assign: jest.fn() };
 
 		mockStepData();
 	} );
@@ -75,7 +77,6 @@ describe( '<Ready />', () => {
 
 	it( 'Should have an import content button', () => {
 		const { queryByText } = render( <Ready /> );
-
 		expect(
 			queryByText( 'Import content', {
 				selector: 'a',
@@ -119,7 +120,11 @@ describe( '<Ready />', () => {
 	it( 'Should log event when clicking "Create a Course" button', () => {
 		const { queryByText } = render( <Ready /> );
 
-		fireEvent.click( queryByText( 'Create a course' ) );
+		const element = queryByText( 'Create a course', { selector: 'a' } );
+
+		element.setAttribute( 'href', '#' ); // Temporarily rewrite the `href` attribute to avoid warnings
+
+		fireEvent.click( element );
 
 		expect( window.sensei_log_event ).toHaveBeenCalledWith(
 			'setup_wizard_ready_create_course',
@@ -127,10 +132,13 @@ describe( '<Ready />', () => {
 		);
 	} );
 
-	it( 'Should log event when clicking to import content button', () => {
+	it( 'Should log event when clicking to import content button', async () => {
 		const { queryByText } = render( <Ready /> );
 
-		fireEvent.click( queryByText( 'Import content', { selector: 'a' } ) );
+		const element = queryByText( 'Import content', { selector: 'a' } );
+
+		element.setAttribute( 'href', '#' ); // Temporarily rewrite the `href` attribute to avoid warnings
+		fireEvent.click( element );
 
 		expect( window.sensei_log_event ).toHaveBeenCalledWith(
 			'setup_wizard_ready_import',
@@ -205,7 +213,6 @@ describe( '<Ready />', () => {
 	} );
 
 	it( 'Should run sample installation', async () => {
-		window.location.assign = jest.fn();
 		window.sensei_setup_wizard = { nonce: '123' };
 
 		apiFetch.mockResolvedValueOnce( { id: 1 } );

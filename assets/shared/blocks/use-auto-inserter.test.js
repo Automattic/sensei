@@ -11,15 +11,10 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { registerTestLessonBlock } from '../../blocks/course-outline/test-helpers';
 import { useAutoInserter } from './use-auto-inserter';
 
-registerTestLessonBlock();
-
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: jest.fn(),
-	useSelect: jest.fn(),
-} ) );
+jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/blocks' );
 
 describe( 'useAutoInserter', () => {
 	const ModuleBlock = ( props ) => {
