@@ -43,7 +43,10 @@ const FeaturedProductSenseiPro = () => {
 				__( 'Schedule ‘drip’ content', 'sensei-lms' ),
 				__( 'Set expiration date of courses', 'sensei-lms' ),
 				__( 'Advanced quiz features', 'sensei-lms' ),
-				__( 'Interactive learning blocks (coming soon)', 'sensei-lms' ),
+				__(
+					'Flashcard, image hotspot, and tasklist blocks',
+					'sensei-lms'
+				),
 				__( 'Premium support', 'sensei-lms' ),
 			] }
 			image={ senseiProExtension.image_large }
