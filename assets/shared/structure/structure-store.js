@@ -228,14 +228,15 @@ export function registerStructureStore( {
 	const subscribeToPostSave = () => {
 		let structureStartedSaving = false;
 		let editorStartedSaving = false;
+		let metaSavingStarted = false;
 
 		return subscribe( function saveStructureOnPostSave() {
 			const editor = select( 'core/editor' );
+			const editPostSelector = select( 'core/edit-post' );
 
-			if ( ! editor ) {
+			if ( ! editor || ! editPostSelector ) {
 				return;
 			}
-
 			const isSavingPost =
 				editor.isSavingPost() && ! editor.isAutosavingPost();
 			const isSavingStructure = select(
@@ -244,16 +245,24 @@ export function registerStructureStore( {
 
 			if ( isSavingPost ) {
 				editorStartedSaving = true;
+				metaSavingStarted = false;
+			}
+
+			if ( editorStartedSaving && ! metaSavingStarted ) {
+				metaSavingStarted = editPostSelector.isSavingMetaBoxes();
 			}
 
 			if (
 				! structureStartedSaving &&
 				! isSavingPost &&
-				editorStartedSaving
+				editorStartedSaving &&
+				metaSavingStarted &&
+				! editPostSelector.isSavingMetaBoxes()
 			) {
 				// Start saving structure when post has finished saving.
 				structureStartedSaving = true;
 				editorStartedSaving = false;
+				metaSavingStarted = false;
 				dispatch( storeName ).startPostSave();
 			} else if ( structureStartedSaving && ! isSavingStructure ) {
 				// Call finishPostSave when structure has finished saving.
