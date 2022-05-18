@@ -69,6 +69,8 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
+	'admin/editor-wizard/index.js',
+	'admin/editor-wizard/style.scss',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'admin/students/student-action-menu/index.js',

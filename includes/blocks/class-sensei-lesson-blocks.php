@@ -18,7 +18,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function __construct() {
 		parent::__construct( [ 'lesson' ] );
-		add_action( 'init', [ $this, 'register_lesson_post_metas' ] );
 	}
 
 	/**
@@ -149,26 +148,5 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		// Remove footer buttons.
 		remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
-	}
-
-
-	/**
-	 * Register lesson post metas.
-	 *
-	 * @access private
-	 */
-	public function register_lesson_post_metas() {
-		register_post_meta(
-			'lesson',
-			'_needs_template',
-			[
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'boolean',
-				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
-			]
-		);
 	}
 }
