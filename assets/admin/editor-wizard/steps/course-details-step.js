@@ -5,10 +5,10 @@
  * @param {Object}   props.data
  * @param {Function} props.setData
  */
-const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
+const CourseDetailsStep = ( { data, setData } ) => {
 	// Sample implementation updating title attribute.
 	const onTitleChange = ( event ) => {
-		setWizardData( { ...wizardData, title: event.target.value } );
+		setData( { ...data, title: event.target.value } );
 	};
 	return (
 		<div>

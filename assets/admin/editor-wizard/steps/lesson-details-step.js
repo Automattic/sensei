@@ -5,9 +5,9 @@
  * @param {Object}   props.data
  * @param {Function} props.setData
  */
-const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
+const LessonDetailsStep = ( { data, setData } ) => {
 	const onTitleChange = ( event ) => {
-		setWizardData( { ...wizardData, title: event.target.value } );
+		setData( { ...data, title: event.target.value } );
 	};
 	return (
 		<div>
