@@ -415,7 +415,7 @@ class Sensei_Teacher {
 			return;
 		}
 
-		$lessons = Sensei()->course->course_lessons( $course_id );
+		$lessons = Sensei()->course->course_lessons( $course_id, null );
 
 		foreach ( $terms_selected_on_course as $term ) {
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
