@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 /**
@@ -24,6 +24,7 @@ describe( '<Wizard />', () => {
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
 		expect( queryByText( SOME_DUMMY_ACTIONS ) ).toBeTruthy();
+		expect( queryByText( 'Step 1 of 1' ) ).toBeTruthy();
 	} );
 
 	it( 'Wizard renders step without actions.', () => {
@@ -36,5 +37,49 @@ describe( '<Wizard />', () => {
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
 		expect( queryByText( SOME_DUMMY_ACTIONS ) ).toBeFalsy();
+		expect( queryByText( 'Step 1 of 1' ) ).toBeTruthy();
+	} );
+
+	it( 'Wizard navigates to next step.', () => {
+		const FirstStep = () => {
+			return 'FIRST_STEP_CONTENT';
+		};
+		FirstStep.Actions = ( { goToNextStep } ) => {
+			return <button onClick={ goToNextStep }>Next</button>;
+		};
+		const SecondStep = () => {
+			return 'SECOND_STEP_CONTENT';
+		};
+
+		const { queryByText } = render(
+			<Wizard steps={ [ FirstStep, SecondStep ] } />
+		);
+
+		expect( queryByText( 'FIRST_STEP_CONTENT' ) ).toBeTruthy();
+		expect( queryByText( 'Step 1 of 2' ) ).toBeTruthy();
+
+		fireEvent.click( queryByText( 'Next' ) );
+
+		expect( queryByText( 'SECOND_STEP_CONTENT' ) ).toBeTruthy();
+		expect( queryByText( 'Step 2 of 2' ) ).toBeTruthy();
+	} );
+
+	it( 'Wizard calls onCompletion callback after last step.', () => {
+		const SingleStep = () => {
+			return null;
+		};
+		SingleStep.Actions = ( { goToNextStep } ) => {
+			return <button onClick={ goToNextStep }>Next</button>;
+		};
+		const onCompletionCallback = jest.fn();
+
+		const { queryByText } = render(
+			<Wizard
+				steps={ [ SingleStep ] }
+				onCompletion={ onCompletionCallback }
+			/>
+		);
+		fireEvent.click( queryByText( 'Next' ) );
+		expect( onCompletionCallback ).toBeCalled();
 	} );
 } );
