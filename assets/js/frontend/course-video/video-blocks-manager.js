@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { doAction, applyFilters } from '@wordpress/hooks';
+
+/**
  * The Course Video Progression settings.
  */
 const {
@@ -35,7 +40,7 @@ export const registerVideo = ( {
 		 * @param {Object} video
 		 * @param {string} video.url The source url of the video.
 		 */
-		wp.hooks.doAction( 'sensei.videoProgression.registerVideo', { url } );
+		doAction( 'sensei.videoProgression.registerVideo', { url } );
 		videos[ url ] = { pauseVideo, completed: false };
 		disableCompleteLessonButton();
 	}
@@ -52,7 +57,7 @@ export const registerVideo = ( {
 			 * @param {Object} video
 			 * @param {string} video.url The source url of the video.
 			 */
-			wp.hooks.doAction( 'sensei.videoProgression.videoEnded', { url } );
+			doAction( 'sensei.videoProgression.videoEnded', { url } );
 			videos[ url ].completed = true;
 			if ( areAllCompleted() ) {
 				enableCompleteLessonButton();
@@ -87,7 +92,7 @@ const areAllCompleted = () => {
 	 *
 	 * @param {boolean} allCompleted Whether all the required videos for the current lesson are completed.
 	 */
-	allCompleted = wp.hooks.applyFilters(
+	allCompleted = applyFilters(
 		'sensei.videoProgression.allCompleted',
 		allCompleted
 	);
@@ -109,7 +114,7 @@ const disableCompleteLessonButton = () => {
 		 *
 		 * @param {boolean} shouldPrevent Whether to prevent users from completing the lesson.
 		 */
-		! wp.hooks.applyFilters(
+		! applyFilters(
 			'sensei.videoProgression.preventLessonCompletion',
 			true
 		)
@@ -151,10 +156,7 @@ const enableCompleteLessonButton = () => {
 		 *
 		 * @param {boolean} shouldAllow Whether to allow users to complete the lesson.
 		 */
-		! wp.hooks.applyFilters(
-			'sensei.videoProgression.allowLessonCompletion',
-			true
-		)
+		! applyFilters( 'sensei.videoProgression.allowLessonCompletion', true )
 	) {
 		return;
 	}
