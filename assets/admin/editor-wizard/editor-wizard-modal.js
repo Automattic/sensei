@@ -9,8 +9,8 @@ import { store as editorStore } from '@wordpress/editor';
 /**
  * Internal dependencies
  */
-import LimitedTextControl from './limited-text-control';
 import { __ } from '@wordpress/i18n';
+import LimitedTextControl from '../../blocks/editor-components/limited-text-control';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
