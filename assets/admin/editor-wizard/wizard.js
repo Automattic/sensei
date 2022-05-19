@@ -35,7 +35,7 @@ const Wizard = ( { steps, onCompletion } ) => {
 			</div>
 			<div className={ 'sensei-editor-wizard__footer' }>
 				<div className={ 'sensei-editor-wizard__progress' }>
-					Step { currentStepNumber } of { steps.length }
+					Step { currentStepNumber + 1 } of { steps.length }
 				</div>
 				{ CurrentStep.Actions && (
 					<div className={ 'sensei-editor-wizard__actions' }>
