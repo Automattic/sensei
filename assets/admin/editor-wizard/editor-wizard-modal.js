@@ -6,6 +6,13 @@ import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
+/**
+ * Internal dependencies
+ */
+import Wizard from './wizard';
+import CourseDetailsStep from './steps/course-details-step';
+import UpgradeStep from './steps/upgrade-step';
+import CoursePatternsStep from './steps/course-patterns-step';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -81,10 +88,24 @@ const EditorWizardModal = () => {
 		} );
 	};
 
+	// TODO Implement different flows depending on post type 👇.
+	const steps = [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ];
+
+	const onWizardCompletion = ( data ) => {
+		// TODO Implement actions when wizard is completed.
+
+		// eslint-disable-next-line no-console
+		console.log(
+			`Wizard completed with data: ${ JSON.stringify( data ) }`
+		);
+
+		closeModal();
+	};
+
 	return (
 		open && (
 			<Modal onRequestClose={ closeModal } title="I'm a modal!">
-				Code me, please!
+				<Wizard steps={ steps } onCompletion={ onWizardCompletion } />
 			</Modal>
 		)
 	);
