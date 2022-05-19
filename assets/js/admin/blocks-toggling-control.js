@@ -70,9 +70,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 				toggleLegacyOrBlocksNotice();
 			}
 		},
-		onSave: () => {
-			toggleLegacyOrBlocksNotice();
-		},
 	} );
 
 	/**
@@ -122,8 +119,9 @@ export const startBlocksTogglingControl = ( postType ) => {
 	 */
 	const toggleLegacyOrBlocksNotice = () => {
 		const withSenseiBlocks = hasSenseiBlocks();
+		const courseThemeEnabled = window?.sensei?.courseThemeEnabled;
 
-		if ( withSenseiBlocks ) {
+		if ( withSenseiBlocks || courseThemeEnabled ) {
 			removeNotice( 'sensei-using-template' );
 		} else {
 			createWarningNotice(
