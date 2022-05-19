@@ -21,12 +21,6 @@ const LimitedTextControl = ( {
 	maxLength,
 	multiline = false,
 } ) => {
-	const changeValueIfAllowed = ( newValue ) => {
-		if ( newValue.length <= maxLength ) {
-			onChange( newValue );
-		}
-	};
-
 	const Control = multiline ? TextareaControl : TextControl;
 
 	return (
@@ -38,8 +32,9 @@ const LimitedTextControl = ( {
 				maxLength
 			) }
 			label={ label }
-			onChange={ changeValueIfAllowed }
+			onChange={ onChange }
 			value={ value }
+			maxLength={ maxLength }
 		/>
 	);
 };
