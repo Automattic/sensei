@@ -1,15 +1,15 @@
 .sensei-editor-wizard {
-	& &__footer {
+	&__footer {
 		display: flex;
 		flex-direction: row;
 		margin-top: 25px;
 	}
 
-	& &__footer &__progress {
+	&__progress {
 		color: grey;
 	}
 
-	& &__footer &__actions {
+	&__actions {
 		margin-left: auto;
 	}
 }
