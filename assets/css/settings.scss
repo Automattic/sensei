@@ -421,6 +421,7 @@
 		width: 2.2em;
 	}
 	.tablenav {
+		height: auto;
 		&.top {
 			@media screen and (max-width: 782px) {
 				.sensei-student-bulk-actions__wrapper {
