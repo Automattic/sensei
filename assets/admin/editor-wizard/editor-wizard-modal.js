@@ -88,7 +88,11 @@ const EditorWizardModal = () => {
 
 	return (
 		open && (
-			<Modal onRequestClose={ closeModal } title="I'm a modal!">
+			<Modal
+				className="sensei-editor-wizard-modal"
+				onRequestClose={ closeModal }
+				title="I'm a modal!"
+			>
 				<PatternsList />
 			</Modal>
 		)

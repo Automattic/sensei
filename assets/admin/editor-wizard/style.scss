@@ -1,0 +1,5 @@
+.sensei-editor-wizard-modal {
+	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
+		width: 800px;
+	}
+}
