@@ -142,14 +142,6 @@ test.describe.serial( 'Setup Wizard', () => {
 			).toHaveCount( 1 );
 		} );
 
-		test( 'links to course creation', async () => {
-			await expect(
-				page
-					.locator( 'a[href="post-new.php?post_type=course"]' )
-					.locator( 'text=Create a course' )
-			).toHaveCount( 1 );
-		} );
-
 		test( 'links to importer', async () => {
 			await page.locator( 'a' ).locator( 'text=Import content' ).click();
 			const baseUrl = process.env.WP_BASE_URL;
