@@ -6,6 +6,7 @@ import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
+
 /**
  * Internal dependencies
  */

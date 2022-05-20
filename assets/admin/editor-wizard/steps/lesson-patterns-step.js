@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import PatternsList from '../patterns-list';
+
+/**
  * Final step in lesson creation wizard choosing the actual lesson pattern to use.
  *
  * @param {Object}   props
@@ -20,6 +25,7 @@ const LessonPatternsStep = ( {
 	return (
 		<div>
 			<div>PENDING TO IMPLEMENT</div>
+			<PatternsList />
 		</div>
 	);
 };

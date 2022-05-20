@@ -1,7 +1,6 @@
+@import './patterns-list.scss';
+
 .sensei-editor-wizard {
-
-	width: 800px;
-
 	&__content {
 		margin: 30px;
 	}
@@ -24,6 +23,9 @@
 }
 
 .sensei-editor-wizard-modal {
+	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
+		width: 800px;
+	}
 	& .components-modal__header {
 		border-bottom: 0;
 		padding: 30px;

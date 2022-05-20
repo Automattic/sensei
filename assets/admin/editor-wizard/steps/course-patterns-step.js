@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import PatternsList from '../patterns-list';
+
+/**
  * Final step in course creation wizard choosing the actual course pattern to use.
  *
  * @param {Object}   props
@@ -6,7 +11,6 @@
  * @param {Function} props.setData
  * @param {Function} props.onCompletion
  */
-
 /* eslint-disable no-unused-vars */
 const CoursePatternsStep = ( {
 	data: wizardData,
@@ -21,6 +25,7 @@ const CoursePatternsStep = ( {
 	return (
 		<div>
 			<div>PENDING TO IMPLEMENT</div>
+			<PatternsList />
 		</div>
 	);
 };
