@@ -55,7 +55,7 @@ describe( '<LimitedTextControl />', () => {
 		expect( queryByText( 'Characters: 10/20' ) ).toBeTruthy();
 	} );
 
-	it( 'Should respect the maxLength property', () => {
+	it( 'Should not call the `onChange` method when already at maxLength capacity', () => {
 		const onChangeMock = jest.fn();
 		const { queryByRole } = render(
 			<LimitedTextControl
@@ -144,7 +144,7 @@ describe( '<LimitedTextControl multiline={ true }/>', () => {
 		expect( queryByText( 'Characters: 10/20' ) ).toBeTruthy();
 	} );
 
-	it( 'Should respect the maxLength property', () => {
+	it( 'Should not call the `onChange` method when already at maxLength capacity', () => {
 		const onChangeMock = jest.fn();
 		const { queryByRole } = render(
 			<LimitedTextControl
