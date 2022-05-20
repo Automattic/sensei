@@ -64,12 +64,6 @@ test.describe.serial( 'Setup Wizard', () => {
 	} );
 
 	test.describe.serial( 'Purpose step', () => {
-		test( 'disables Continue until something is selected', async () => {
-			await expect(
-				page.locator( 'button[disabled]' ).locator( 'text=Continue' )
-			).toHaveCount( 1 );
-		} );
-
 		test( 'allows selecting purposes', async () => {
 			await page
 				.locator( 'label' )
