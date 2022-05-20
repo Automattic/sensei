@@ -142,20 +142,6 @@ test.describe.serial( 'Setup Wizard', () => {
 			).toHaveCount( 1 );
 		} );
 
-		test( 'has newsletter sign-up form', async () => {
-			const form = page.locator(
-				'form[action="https://senseilms.us19.list-manage.com/subscribe/post?u=7a061a9141b0911d6d9bafe3a&id=4fa225a515"]'
-			);
-			await expect(
-				form.locator(
-					'input[name="EMAIL"][value="wordpress@example.com"]'
-				)
-			).toHaveCount( 1 );
-			await expect(
-				form.locator( 'button' ).locator( 'text=Yes, please!' )
-			).toHaveCount( 1 );
-		} );
-
 		test( 'links to course creation', async () => {
 			await expect(
 				page
