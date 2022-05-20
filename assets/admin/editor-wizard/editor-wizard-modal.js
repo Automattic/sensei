@@ -8,6 +8,11 @@ import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
 
 /**
+ * Internal dependencies
+ */
+import PatternsList from './patterns-list';
+
+/**
  * A React Hook to observe if a modal is open based on the body class.
  *
  * @param {boolean} shouldObserve If it should observe the changes.
@@ -83,8 +88,12 @@ const EditorWizardModal = () => {
 
 	return (
 		open && (
-			<Modal onRequestClose={ closeModal } title="I'm a modal!">
-				Code me, please!
+			<Modal
+				className="sensei-editor-wizard-modal"
+				onRequestClose={ closeModal }
+				title="I'm a modal!"
+			>
+				<PatternsList />
 			</Modal>
 		)
 	);
