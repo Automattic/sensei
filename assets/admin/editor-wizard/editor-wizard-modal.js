@@ -1,16 +1,21 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
+
 /**
  * Internal dependencies
  */
-import { __ } from '@wordpress/i18n';
-import LimitedTextControl from '../../blocks/editor-components/limited-text-control';
+import Wizard from './wizard';
+import CourseDetailsStep from './steps/course-details-step';
+import UpgradeStep from './steps/upgrade-step';
+import CoursePatternsStep from './steps/course-patterns-step';
+import LessonDetailsStep from './steps/lesson-details-step';
+import LessonPatternsStep from './steps/lesson-patterns-step';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -77,8 +82,7 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
-	const [ title, setTitle ] = useState( '' );
-	const [ description, setDescription ] = useState( '' );
+	const [ modalTitle, setModalTitle ] = useState( '' );
 
 	const closeModal = () => {
 		setDone( true );
@@ -88,25 +92,43 @@ const EditorWizardModal = () => {
 		} );
 	};
 
+	// Choose steps by post type.
+	const stepsByPostType = {
+		course: [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ],
+		lesson: [ LessonDetailsStep, LessonPatternsStep ],
+	};
+	const { postType } = useSelect( ( select ) => ( {
+		postType: select( editorStore )?.getCurrentPostType(),
+	} ) );
+	const steps = stepsByPostType[ postType ];
+
+	// eslint-disable-next-line no-unused-vars
+	const onWizardCompletion = ( wizardData ) => {
+		// TODO Implement actions when wizard is completed
+		closeModal();
+	};
+
+	const updateModalTitle = ( step ) => {
+		if ( step.Title !== undefined ) {
+			setModalTitle( step.Title );
+		}
+	};
+
 	return (
-		open && (
-			<Modal onRequestClose={ closeModal } title="I'm a modal!">
-				{ /* Sample content for modal */ }
-				<LimitedTextControl
-					label={ __( 'Course Title', 'sensei-lms' ) }
-					value={ title }
-					onChange={ setTitle }
-					maxLength={ 40 }
-				/>
-				<LimitedTextControl
-					label={ __( 'Course Description', 'sensei-lms' ) }
-					value={ description }
-					onChange={ setDescription }
-					maxLength={ 350 }
-					multiline={ true }
+		( open && steps && (
+			<Modal
+				className="sensei-editor-wizard-modal"
+				onRequestClose={ closeModal }
+				title={ modalTitle }
+			>
+				<Wizard
+					steps={ steps }
+					onStepChange={ updateModalTitle }
+					onCompletion={ onWizardCompletion }
 				/>
 			</Modal>
-		)
+		) ) ||
+		null
 	);
 };
 
