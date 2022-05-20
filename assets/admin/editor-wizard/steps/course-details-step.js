@@ -1,4 +1,14 @@
 /**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
+import LimitedTextControl from '../../../blocks/editor-components/limited-text-control';
+
+/**
  * Initial step for course creation wizard.
  *
  * @param {Object}   props
@@ -6,16 +16,32 @@
  * @param {Function} props.setData
  */
 const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	// TODO Implement this.
-	// Sample implementation updating newCourseTitle attribute.
-	const updateNewCourseTitle = ( event ) => {
-		setWizardData( { ...wizardData, newCourseTitle: event.target.value } );
+	// TODO Replace this sample implementation.
+	const updateNewCourseTitle = ( value ) => {
+		setWizardData( { ...wizardData, newCourseTitle: value } );
+	};
+	const updateNewCourseDescription = ( value ) => {
+		setWizardData( {
+			...wizardData,
+			newCourseDescription: value,
+		} );
 	};
 	return (
 		<div>
 			<div>
-				<label htmlFor="course_title">Course title:</label>
-				<input id="course_title" onChange={ updateNewCourseTitle } />
+				<LimitedTextControl
+					label={ __( 'Course Title', 'sensei-lms' ) }
+					value={ wizardData.newCourseTitle ?? '' }
+					onChange={ updateNewCourseTitle }
+					maxLength={ 40 }
+				/>
+				<LimitedTextControl
+					label={ __( 'Course Description', 'sensei-lms' ) }
+					value={ wizardData.newCourseDescription ?? '' }
+					onChange={ updateNewCourseDescription }
+					maxLength={ 350 }
+					multiline={ true }
+				/>
 			</div>
 			<div>PENDING TO IMPLEMENT</div>
 		</div>
