@@ -8,11 +8,6 @@ const { test, expect } = require( '@playwright/test' );
  */
 const { getContextByRole } = require( '../../../helpers/context' );
 const AdminFlow = require( '../../../pages/admin/plugins/plugins' );
-const {
-	cleanupSenseiData,
-	resetSetupWizard,
-	adminUrl,
-} = require( '../../../helpers/cleanup' );
 
 async function stepIsComplete( page, label ) {
 	return expect(
@@ -35,14 +30,12 @@ test.describe.serial( 'Setup Wizard', () => {
 	let adminFlow;
 	let page;
 	test.beforeAll( async ( { browser } ) => {
-		await resetSetupWizard();
 		page = await browser.newPage();
 		adminFlow = new AdminFlow( page );
 		await adminFlow.goTo( 'admin.php?page=sensei_setup_wizard' );
 	} );
 
 	test( 'opens when first activating the Sensei LMS plugin', async () => {
-		await cleanupSenseiData();
 		await adminFlow.activatePlugin( 'sensei-lms', true );
 		await expect( page.url() ).toMatch(
 			'admin.php?page=sensei_setup_wizard'
@@ -208,11 +201,13 @@ test.describe.serial( 'Setup Wizard', () => {
 
 		test( 'links to importer', async () => {
 			await page.locator( 'a' ).locator( 'text=Import content' ).click();
-			await expect( page.url() ).toMatch(
-				adminUrl(
-					'edit.php?post_type=course&page=sensei-tools&tool=import-content'
-				)
-			);
+			const baseUrl = process.env.WP_BASE_URL;
+			const adminUrl = [
+				baseUrl,
+				'wp-admin',
+				'edit.php?post_type=course&page=sensei-tools&tool=import-content',
+			].join( '/' );
+			await expect( page.url() ).toMatch( adminUrl );
 		} );
 	} );
 } );
