@@ -44,7 +44,6 @@ test.describe.serial( 'Setup Wizard', () => {
 	test( 'opens when first activating the Sensei LMS plugin', async () => {
 		await cleanupSenseiData();
 		await adminFlow.activatePlugin( 'sensei-lms', true );
-		await page.waitForNavigation();
 		await expect( page.url() ).toMatch(
 			'admin.php?page=sensei_setup_wizard'
 		);
@@ -53,7 +52,6 @@ test.describe.serial( 'Setup Wizard', () => {
 	test( 'shows a notice to run the Setup Wizard', async () => {
 		await adminFlow.goToPlugins();
 		await page.locator( `text=Run the Setup Wizard` ).click();
-		await page.waitForNavigation();
 		await expect( page.url() ).toMatch(
 			'admin.php?page=sensei_setup_wizard'
 		);
@@ -239,8 +237,7 @@ test.describe.serial( 'Setup Wizard', () => {
 		} );
 
 		test( 'links to importer', async () => {
-			page.locator( 'a' ).locator( 'text=Import content' ).click();
-			await page.waitForNavigation();
+			await page.locator( 'a' ).locator( 'text=Import content' ).click();
 			await expect( page.url() ).toMatch(
 				adminUrl(
 					'edit.php?post_type=course&page=sensei-tools&tool=import-content'
