@@ -89,17 +89,11 @@ test.describe.serial( 'Setup Wizard', () => {
 	} );
 
 	test.describe.serial( 'Features step', () => {
-		test( 'allows selecting plugins', async () => {
+		test( 'confirms is plugin installation', async () => {
 			await page
 				.locator( 'label' )
 				.locator( 'text=Sensei LMS Certificates' )
 				.click();
-			await expect(
-				page.locator( '.components-checkbox-control__checked' )
-			).toHaveCount( 1 );
-		} );
-
-		test( 'confirms is plugin installation', async () => {
 			await page.locator( 'text=Continue' ).click();
 			await expect(
 				page.locator(
