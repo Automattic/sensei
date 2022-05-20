@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { useEffect } from '@wordpress/element';
+
+/**
  * Final step in course creation wizard choosing the actual course pattern to use.
  *
  * @param {Object}   props
@@ -6,12 +11,18 @@
  * @param {Function} props.setData
  * @param {Function} props.onCompletion
  */
+
 /* eslint-disable no-unused-vars */
 const CoursePatternsStep = ( {
 	data: wizardData,
 	setData: setWizardData,
 	onCompletion,
 } ) => {
+	// Update modal title.
+	useEffect( () => {
+		setWizardData( { ...wizardData, modalTitle: 'Course Patterns Step' } );
+	}, [] );
+
 	// TODO Implement this.
 
 	// We can call `onCompletion` to complete the wizard after setting the correct pattern with `setData`.
@@ -19,7 +30,6 @@ const CoursePatternsStep = ( {
 
 	return (
 		<div>
-			<div>Course Patterns Step</div>
 			<div>PENDING TO IMPLEMENT</div>
 		</div>
 	);

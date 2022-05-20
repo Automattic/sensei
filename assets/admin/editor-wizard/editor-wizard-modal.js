@@ -81,6 +81,7 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
+	const [ modalTitle, setModalTitle ] = useState( '' );
 
 	const closeModal = () => {
 		setDone( true );
@@ -98,21 +99,29 @@ const EditorWizardModal = () => {
 	const postType = select( 'core/editor' )?.getCurrentPostType();
 	const steps = stepsByPostType[ postType ];
 
-	const onWizardCompletion = ( data ) => {
-		// TODO Implement actions when wizard is completed.
-
-		// eslint-disable-next-line no-console
-		console.log(
-			`Wizard completed with data: ${ JSON.stringify( data ) }`
-		);
-
+	// eslint-disable-next-line no-unused-vars
+	const onWizardCompletion = ( wizardData ) => {
+		// TODO Implement actions when wizard is completed
 		closeModal();
+	};
+
+	const updateModalTitle = ( wizardData ) => {
+		if (
+			wizardData.modalTitle !== undefined &&
+			wizardData.modalTitle !== modalTitle
+		) {
+			setModalTitle( wizardData.modalTitle );
+		}
 	};
 
 	return (
 		open && (
-			<Modal onRequestClose={ closeModal } title="I'm a modal!">
-				<Wizard steps={ steps } onCompletion={ onWizardCompletion } />
+			<Modal onRequestClose={ closeModal } title={ modalTitle }>
+				<Wizard
+					steps={ steps }
+					onCompletion={ onWizardCompletion }
+					onChange={ updateModalTitle }
+				/>
 			</Modal>
 		)
 	);

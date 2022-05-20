@@ -1,16 +1,17 @@
 /**
  * WordPress dependencies
  */
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Wizard component.
  *
  * @param {Object}   props
  * @param {Array}    props.steps        Array with the steps that will be rendered.
+ * @param {Function} props.onChange     Callback to call when wizard data changes.
  * @param {Function} props.onCompletion Callback to call when wizard is completed.
  */
-const Wizard = ( { steps, onCompletion } ) => {
+const Wizard = ( { steps, onChange, onCompletion } ) => {
 	const [ currentStepNumber, setCurrentStepNumber ] = useState( 0 );
 	const [ data, setData ] = useState( {} );
 
@@ -23,6 +24,11 @@ const Wizard = ( { steps, onCompletion } ) => {
 			onCompletion( data );
 		}
 	};
+
+	// Call onChange every time wizard data is changed.
+	useEffect( () => {
+		onChange( data );
+	}, [ data, onChange ] );
 
 	return (
 		<div className={ 'sensei-editor-wizard' }>

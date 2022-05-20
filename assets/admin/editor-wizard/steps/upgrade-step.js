@@ -1,13 +1,23 @@
 /**
+ * WordPress dependencies
+ */
+import { useEffect } from '@wordpress/element';
+
+/**
  * Upgrade step during course creation wizard.
  *
- * @param {Object} props
+ * @param {Object}   props
+ * @param {Object}   props.data
+ * @param {Function} props.setData
  */
-const UpgradeStep = ( {} ) => {
+const UpgradeStep = ( { data: wizardData, setData: setWizardData } ) => {
+	// Update modal title.
+	useEffect( () => {
+		setWizardData( { ...wizardData, modalTitle: 'Upgrade Step' } );
+	}, [] );
 	// TODO Implement this.
 	return (
 		<div>
-			<div>Upgrade Step</div>
 			<div>PENDING TO IMPLEMENT</div>
 		</div>
 	);
