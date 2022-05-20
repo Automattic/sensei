@@ -20,7 +20,9 @@ describe( '<Wizard />', () => {
 			return SOME_DUMMY_ACTIONS;
 		};
 
-		const { queryByText } = render( <Wizard steps={ [ DummyStep ] } /> );
+		const { queryByText } = render(
+			<Wizard steps={ [ DummyStep ] } onChange={ () => {} } />
+		);
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
 		expect( queryByText( SOME_DUMMY_ACTIONS ) ).toBeTruthy();
@@ -32,7 +34,10 @@ describe( '<Wizard />', () => {
 			return SOME_DUMMY_CONTENT;
 		};
 		const { queryByText } = render(
-			<Wizard steps={ [ DummyStepWithoutActions ] } />
+			<Wizard
+				steps={ [ DummyStepWithoutActions ] }
+				onChange={ () => {} }
+			/>
 		);
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
@@ -52,7 +57,7 @@ describe( '<Wizard />', () => {
 		};
 
 		const { queryByText } = render(
-			<Wizard steps={ [ FirstStep, SecondStep ] } />
+			<Wizard steps={ [ FirstStep, SecondStep ] } onChange={ () => {} } />
 		);
 
 		expect( queryByText( 'FIRST_STEP_CONTENT' ) ).toBeTruthy();
@@ -64,7 +69,7 @@ describe( '<Wizard />', () => {
 		expect( queryByText( 'Step 2 of 2' ) ).toBeTruthy();
 	} );
 
-	it( 'Wizard calls onCompletion callback after last step.', () => {
+	it( 'Wizard calls `onCompletion` callback after last step.', () => {
 		const SingleStep = () => {
 			return null;
 		};
@@ -76,10 +81,36 @@ describe( '<Wizard />', () => {
 		const { queryByText } = render(
 			<Wizard
 				steps={ [ SingleStep ] }
+				onChange={ () => {} }
 				onCompletion={ onCompletionCallback }
 			/>
 		);
 		fireEvent.click( queryByText( 'Next' ) );
 		expect( onCompletionCallback ).toBeCalled();
+	} );
+
+	it( 'Wizard calls `onChange` when wizard data is updated.', () => {
+		const onChangeMock = jest.fn();
+		const StepWithInput = ( {
+			data: wizardData,
+			setData: setWizardData,
+		} ) => {
+			return (
+				<input
+					value={ wizardData.value ?? '' }
+					onChange={ ( e ) => {
+						setWizardData( { value: e.target.value } );
+					} }
+				></input>
+			);
+		};
+
+		const { queryByRole } = render(
+			<Wizard steps={ [ StepWithInput ] } onChange={ onChangeMock } />
+		);
+		fireEvent.change( queryByRole( 'textbox' ), {
+			target: { value: 'TEST_DATA' },
+		} );
+		expect( onChangeMock ).toHaveBeenCalledWith( { value: 'TEST_DATA' } );
 	} );
 } );
