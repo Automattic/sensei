@@ -106,15 +106,13 @@ const EditorWizardModal = () => {
 	};
 
 	const updateModalTitle = ( wizardData ) => {
-		if (
-			wizardData.modalTitle
-		) {
+		if ( wizardData.modalTitle ) {
 			setModalTitle( wizardData.modalTitle );
 		}
 	};
 
 	return (
-		open && (
+		( open && steps && (
 			<Modal
 				className="sensei-editor-wizard-modal"
 				onRequestClose={ closeModal }
@@ -126,7 +124,8 @@ const EditorWizardModal = () => {
 					onChange={ updateModalTitle }
 				/>
 			</Modal>
-		)
+		) ) ||
+		null
 	);
 };
 

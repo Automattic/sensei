@@ -15,7 +15,10 @@ const Wizard = ( { steps, onChange, onCompletion } ) => {
 	const [ currentStepNumber, setCurrentStepNumber ] = useState( 0 );
 	const [ data, setData ] = useState( {} );
 
-	const CurrentStep = steps[ currentStepNumber ];
+	// Call onChange every time wizard data is changed.
+	useEffect( () => {
+		onChange( data );
+	}, [ data, onChange ] );
 
 	const goToNextStep = () => {
 		if ( currentStepNumber + 1 < steps.length ) {
@@ -25,34 +28,34 @@ const Wizard = ( { steps, onChange, onCompletion } ) => {
 		}
 	};
 
-	// Call onChange every time wizard data is changed.
-	useEffect( () => {
-		onChange( data );
-	}, [ data, onChange ] );
+	const CurrentStep = steps[ currentStepNumber ];
 
 	return (
-		<div className={ 'sensei-editor-wizard' }>
-			<div className={ 'sensei-editor-wizard__content' }>
-				<CurrentStep
-					data={ data }
-					setData={ setData }
-					onCompletion={ onCompletion }
-				/>
-			</div>
-			<div className={ 'sensei-editor-wizard__footer' }>
-				<div className={ 'sensei-editor-wizard__progress' }>
-					Step { currentStepNumber + 1 } of { steps.length }
+		( CurrentStep && (
+			<div className={ 'sensei-editor-wizard' }>
+				<div className={ 'sensei-editor-wizard__content' }>
+					<CurrentStep
+						data={ data }
+						setData={ setData }
+						onCompletion={ onCompletion }
+					/>
 				</div>
-				{ CurrentStep.Actions && (
-					<div className={ 'sensei-editor-wizard__actions' }>
-						<CurrentStep.Actions
-							data={ data }
-							goToNextStep={ goToNextStep }
-						/>
+				<div className={ 'sensei-editor-wizard__footer' }>
+					<div className={ 'sensei-editor-wizard__progress' }>
+						Step { currentStepNumber + 1 } of { steps.length }
 					</div>
-				) }
+					{ CurrentStep.Actions && (
+						<div className={ 'sensei-editor-wizard__actions' }>
+							<CurrentStep.Actions
+								data={ data }
+								goToNextStep={ goToNextStep }
+							/>
+						</div>
+					) }
+				</div>
 			</div>
-		</div>
+		) ) ||
+		null
 	);
 };
 
