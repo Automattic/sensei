@@ -15,6 +15,7 @@ const CoursePatternsStep = ( {
 	// TODO Implement this.
 
 	// We can call `onCompletion` to complete the wizard after setting the correct pattern with `setData`.
+	// We could replace `onCompletion` with the `goToNextStep` callback with a similar effect.
 
 	return (
 		<div>
