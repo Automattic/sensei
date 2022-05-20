@@ -107,8 +107,7 @@ const EditorWizardModal = () => {
 
 	const updateModalTitle = ( wizardData ) => {
 		if (
-			wizardData.modalTitle !== undefined &&
-			wizardData.modalTitle !== modalTitle
+			wizardData.modalTitle
 		) {
 			setModalTitle( wizardData.modalTitle );
 		}
