@@ -6,8 +6,12 @@
  * @param {Function} props.setData
  * @param {Function} props.onCompletion
  */
-// eslint-disable-next-line no-unused-vars
-const LessonPatternsStep = ( { data, setData, onCompletion } ) => {
+/* eslint-disable no-unused-vars */
+const LessonPatternsStep = ( {
+	data: wizardData,
+	setData: setWizardData,
+	onCompletion,
+} ) => {
 	// TODO Implement this.
 
 	// We can call `onCompletion` to complete the wizard after setting the correct pattern with `setData`.
