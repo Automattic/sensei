@@ -59,7 +59,7 @@ test.describe.serial( 'Setup Wizard', () => {
 	} );
 
 	test.describe.serial( 'Purpose step', () => {
-		test( 'allows selecting purposes', async () => {
+		test.beforeAll( async () => {
 			await pluginsPage.fillOutPurposeForm();
 			await page.locator( 'text=Continue' ).click();
 		} );
@@ -74,7 +74,7 @@ test.describe.serial( 'Setup Wizard', () => {
 	} );
 
 	test.describe.serial( 'Features step', () => {
-		test( 'confirms is plugin installation', async () => {
+		test.beforeAll( async () => {
 			await pluginsPage.fillOutFeaturesForm();
 			await page.locator( 'text=Continue' ).click();
 		} );
