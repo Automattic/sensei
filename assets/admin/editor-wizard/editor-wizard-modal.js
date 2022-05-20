@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { select, useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -96,7 +96,9 @@ const EditorWizardModal = () => {
 		course: [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ],
 		lesson: [ LessonDetailsStep, LessonPatternsStep ],
 	};
-	const postType = select( 'core/editor' )?.getCurrentPostType();
+	const { postType } = useSelect( ( select ) => ( {
+		postType: select( editorStore )?.getCurrentPostType(),
+	} ) );
 	const steps = stepsByPostType[ postType ];
 
 	// eslint-disable-next-line no-unused-vars
