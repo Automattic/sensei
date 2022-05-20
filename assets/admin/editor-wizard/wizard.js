@@ -32,7 +32,7 @@ const Wizard = ( { steps, onChange, onCompletion } ) => {
 
 	return (
 		<div className={ 'sensei-editor-wizard' }>
-			<div className={ 'sensei-editor-wizard__body' }>
+			<div className={ 'sensei-editor-wizard__content' }>
 				<CurrentStep
 					data={ data }
 					setData={ setData }

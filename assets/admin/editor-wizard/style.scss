@@ -1,15 +1,41 @@
 .sensei-editor-wizard {
+
+	width: 800px;
+
+	&__content {
+		margin: 30px;
+	}
+
 	&__footer {
 		display: flex;
 		flex-direction: row;
-		margin-top: 25px;
+		align-items: center;
+		border-top: 1px solid rgba(30, 30, 30, 0.12);
+		padding: 30px;
 	}
 
 	&__progress {
-		color: grey;
+		color: #787C82;
 	}
 
 	&__actions {
 		margin-left: auto;
+	}
+}
+
+.sensei-editor-wizard-modal {
+	& .components-modal__header {
+		border-bottom: 0;
+		padding: 30px;
+		height: auto;
+
+		& .components-modal__header-heading {
+			font-size: 32px;
+			line-height: 40px;
+			color: #1E1E1E;
+		}
+	}
+	& .components-modal__content {
+		padding: 0;
 	}
 }

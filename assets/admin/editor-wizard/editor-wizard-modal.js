@@ -116,7 +116,11 @@ const EditorWizardModal = () => {
 
 	return (
 		open && (
-			<Modal onRequestClose={ closeModal } title={ modalTitle }>
+			<Modal
+				className="sensei-editor-wizard-modal"
+				onRequestClose={ closeModal }
+				title={ modalTitle }
+			>
 				<Wizard
 					steps={ steps }
 					onCompletion={ onWizardCompletion }
