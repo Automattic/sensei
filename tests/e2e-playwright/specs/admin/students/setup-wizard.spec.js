@@ -113,7 +113,7 @@ test.describe.serial( 'Setup Wizard', () => {
 				'.sensei-setup-wizard__textcontrol-other input',
 				'Other'
 			);
-			await page.locator( 'button' ).locator( 'text=Continue' ).click();
+			await page.locator( 'text=Continue' ).click();
 		} );
 
 		test( 'marks purpose step done and goes to features step', async () => {
@@ -149,7 +149,7 @@ test.describe.serial( 'Setup Wizard', () => {
 		} );
 
 		test( 'confirms is plugin installation', async () => {
-			await page.locator( 'button' ).locator( 'text=Continue' ).click();
+			await page.locator( 'text=Continue' ).click();
 			await expect(
 				page.locator(
 					'text=Would you like to install the following features now?'
@@ -165,14 +165,9 @@ test.describe.serial( 'Setup Wizard', () => {
 		} );
 
 		test( 'installs selected plugins', async () => {
-			await page
-				.locator( 'button' )
-				.locator( 'text=Install now' )
-				.click();
+			await page.locator( 'text=Install now' ).click();
 			await expect(
-				page
-					.locator( '.sensei-list__item-title' )
-					.locator( 'text=Sensei LMS Certificates — Installed' )
+				page.locator( 'text=Sensei LMS Certificates — Installed' )
 			).toHaveCount( 1 );
 			await page.locator( 'button' ).locator( 'text=Continue' ).click();
 			await adminFlow.goToPlugins();
@@ -184,14 +179,9 @@ test.describe.serial( 'Setup Wizard', () => {
 		test( 'marks installed plugins as unavailable', async () => {
 			await adminFlow.goTo( 'admin.php?page=sensei_setup_wizard' );
 
-			await page
-				.locator( '.sensei-stepper__step' )
-				.locator( 'text=Features' )
-				.click();
+			await page.locator( 'text=Features' ).click();
 			await expect(
-				page
-					.locator( '.status-installed' )
-					.locator( 'text=Sensei LMS Certificates — Installed' )
+				page.locator( 'text=Sensei LMS Certificates — Installed' )
 			).toHaveCount( 1 );
 		} );
 	} );
