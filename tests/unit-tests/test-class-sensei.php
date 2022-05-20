@@ -155,10 +155,12 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	 *
 	 * The version number in the plugin information block should match the version number specified in the code.
 	 */
-	function testVersionNumber() {
+	public function testVersionNumberIsCorrect() {
+		/* Arrange. */
+		$plugin_data = get_plugin_data( SENSEI_LMS_PLUGIN_FILE );
 
-		// make sure the version number was set on the new sensei instance
-		$this->assertTrue( isset( Sensei()->version ), 'The version number is not set on the global Sensei object' );
+		/* Assert. */
+		$this->assertEquals( $plugin_data['Version'], Sensei()->version, 'The version number in the global Sensei object is not equal to the plugin version' );
 	}
 
 	/**

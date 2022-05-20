@@ -1655,4 +1655,66 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 			}
 		}
 	}
+
+	public function testGetForEditMode_WhenCalled_ReturnsTeacherNameWithModulesProperly() {
+		/* Arrange */
+		global $current_screen;
+		$initial_current_screen = $current_screen;
+
+		$this->login_as_admin();
+
+		$user_id   = wp_create_user( 'teacher1', 'teacher1', 'teacher1@test.com' );
+		$course_id = $this->factory->course->create();
+		$lesson_id = $this->factory->lesson->create();
+		$module_id = $this->factory->module->create();
+
+		$structure = [
+			[
+				'type'    => 'module',
+				'title'   => 'Module A',
+				'id'      => $module_id,
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson A',
+						'id'    => $lesson_id,
+					],
+				],
+			],
+		];
+		$this->saveStructure( $course_id, $structure );
+
+		//Adding a non admin teacher to the module.
+		wp_update_term(
+			$module_id,
+			'module',
+			array(
+				'slug' => $user_id . '-testmodule',
+			)
+		);
+
+		//Because teacher's name is appended to the module only in the admin panel.
+		set_current_screen( 'edit-post' );
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		/* Act */
+		$view_output = $course_structure->get();
+		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+		$edit_output = $course_structure->get( 'edit' );
+
+		/* Assert */
+		//Added multiple assertions to cut db setup time for tests.
+
+		//For edit mode.
+		$this->assertEquals( 'teacher1', $edit_output[0]['teacher'] );
+		$this->assertNotContains( 'teacher1', $edit_output[0]['title'] );
+
+		//For view mode.
+		$this->assertEquals( 'teacher1', $view_output[0]['teacher'] );
+		$this->assertContains( 'teacher1', $view_output[0]['title'] );
+
+		// Reset $current_screen. This is needed for WordPress <= 5.8.
+		// @see https://core.trac.wordpress.org/ticket/53431
+		$current_screen = $initial_current_screen;
+	}
 }
