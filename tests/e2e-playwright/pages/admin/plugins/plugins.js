@@ -18,8 +18,9 @@ class AdminFlow {
 	}
 
 	async findPluginAction( slug, action ) {
-		return this.page.$( `tr[data-slug="${ slug }"] .${ action } a` );
+		return this.page.locator( `tr[data-slug="${ slug }"] .${ action } a` );
 	}
+
 	async findExitSurvey() {
 		return this.page.waitForSelector(
 			`#sensei-exit-survey-modal button:not(:disabled)`
