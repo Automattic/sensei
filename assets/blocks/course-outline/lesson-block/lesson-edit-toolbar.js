@@ -9,7 +9,6 @@ import {
 	ToolbarItem,
 } from '@wordpress/components';
 import { dispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -51,23 +50,11 @@ const LessonEditToolbar = ( { lessonId } ) => {
 		} )
 	);
 
-	// Should we open the lesson in a new tab after save?
-	const [ shouldEditLesson, setShouldEditLesson ] = useState( false );
-
-	// Open the lesson in a new tab if needed.
-	useEffect( () => {
-		if ( shouldEditLesson && lessonId ) {
-			setShouldEditLesson( false );
-			window.open( getLessonURL( lessonId ), '_blank' );
-		}
-	}, [ shouldEditLesson, lessonId, isSavingStructure ] );
-
 	// Component for the "Save and edit lesson" button.
 	const savePostLink = (
 		<ToolbarItem
 			as={ Button }
 			onClick={ () => {
-				setShouldEditLesson( true );
 				dispatch( 'core/editor' ).savePost();
 			} }
 		>
