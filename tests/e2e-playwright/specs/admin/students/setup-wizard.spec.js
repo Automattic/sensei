@@ -141,16 +141,5 @@ test.describe.serial( 'Setup Wizard', () => {
 				)
 			).toHaveCount( 1 );
 		} );
-
-		test( 'links to importer', async () => {
-			await page.locator( 'a' ).locator( 'text=Import content' ).click();
-			const baseUrl = process.env.WP_BASE_URL;
-			const adminUrl = [
-				baseUrl,
-				'wp-admin',
-				'edit.php?post_type=course&page=sensei-tools&tool=import-content',
-			].join( '/' );
-			await expect( page.url() ).toMatch( adminUrl );
-		} );
 	} );
 } );
