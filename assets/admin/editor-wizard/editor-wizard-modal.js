@@ -105,9 +105,9 @@ const EditorWizardModal = () => {
 		closeModal();
 	};
 
-	const updateModalTitle = ( wizardData ) => {
-		if ( wizardData.modalTitle ) {
-			setModalTitle( wizardData.modalTitle );
+	const updateModalTitle = ( step ) => {
+		if ( step.Title !== undefined ) {
+			setModalTitle( step.Title );
 		}
 	};
 
@@ -120,8 +120,8 @@ const EditorWizardModal = () => {
 			>
 				<Wizard
 					steps={ steps }
+					onStepChange={ updateModalTitle }
 					onCompletion={ onWizardCompletion }
-					onChange={ updateModalTitle }
 				/>
 			</Modal>
 		) ) ||

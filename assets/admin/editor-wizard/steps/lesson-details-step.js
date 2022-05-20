@@ -1,27 +1,16 @@
 /**
- * WordPress dependencies
- */
-import { useEffect } from '@wordpress/element';
-
-/**
  * Initial step for course creation wizard.
- *
- * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
  */
-const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	// Update modal title.
-	useEffect( () => {
-		setWizardData( { ...wizardData, modalTitle: 'Lesson Details Step' } );
-	}, [] );
-
+const LessonDetailsStep = () => {
+	// TODO Implement this.
 	return (
 		<div>
 			<div>PENDING TO IMPLEMENT</div>
 		</div>
 	);
 };
+
+LessonDetailsStep.Title = 'Lesson Details Step';
 
 LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (

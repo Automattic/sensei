@@ -1,9 +1,4 @@
 /**
- * WordPress dependencies
- */
-import { useEffect } from '@wordpress/element';
-
-/**
  * Initial step for course creation wizard.
  *
  * @param {Object}   props
@@ -11,11 +6,7 @@ import { useEffect } from '@wordpress/element';
  * @param {Function} props.setData
  */
 const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	// Update modal title.
-	useEffect( () => {
-		setWizardData( { ...wizardData, modalTitle: 'Course Details Step' } );
-	}, [] );
-
+	// TODO Implement this.
 	// Sample implementation updating newCourseTitle attribute.
 	const updateNewCourseTitle = ( event ) => {
 		setWizardData( { ...wizardData, newCourseTitle: event.target.value } );
@@ -30,6 +21,8 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 		</div>
 	);
 };
+
+CourseDetailsStep.Title = 'Course Details Step';
 
 CourseDetailsStep.Actions = ( { data, goToNextStep } ) => {
 	// Actions have access to the whole wizard data.

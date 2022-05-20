@@ -1,20 +1,7 @@
 /**
- * WordPress dependencies
- */
-import { useEffect } from '@wordpress/element';
-
-/**
  * Upgrade step during course creation wizard.
- *
- * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
  */
-const UpgradeStep = ( { data: wizardData, setData: setWizardData } ) => {
-	// Update modal title.
-	useEffect( () => {
-		setWizardData( { ...wizardData, modalTitle: 'Upgrade Step' } );
-	}, [] );
+const UpgradeStep = () => {
 	// TODO Implement this.
 	return (
 		<div>
@@ -22,6 +9,8 @@ const UpgradeStep = ( { data: wizardData, setData: setWizardData } ) => {
 		</div>
 	);
 };
+
+UpgradeStep.Title = 'Upgrade Step';
 
 UpgradeStep.Actions = ( { goToNextStep } ) => {
 	// TODO Implement this.

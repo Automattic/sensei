@@ -1,9 +1,4 @@
 /**
- * WordPress dependencies
- */
-import { useEffect } from '@wordpress/element';
-
-/**
  * Final step in lesson creation wizard choosing the actual lesson pattern to use.
  *
  * @param {Object}   props
@@ -17,11 +12,6 @@ const LessonPatternsStep = ( {
 	setData: setWizardData,
 	onCompletion,
 } ) => {
-	// Update modal title.
-	useEffect( () => {
-		setWizardData( { ...wizardData, modalTitle: 'Lesson Patterns Step' } );
-	}, [] );
-
 	// TODO Implement this.
 
 	// We can call `onCompletion` to complete the wizard after setting the correct pattern with `setData`.
@@ -33,6 +23,8 @@ const LessonPatternsStep = ( {
 		</div>
 	);
 };
+
+LessonPatternsStep.Title = 'Lesson Patterns Step';
 
 LessonPatternsStep.Actions = ( { goToNextStep } ) => {
 	// TODO Implement this.

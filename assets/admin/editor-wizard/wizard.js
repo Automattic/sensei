@@ -8,17 +8,12 @@ import { useEffect, useState } from '@wordpress/element';
  *
  * @param {Object}   props
  * @param {Array}    props.steps        Array with the steps that will be rendered.
- * @param {Function} props.onChange     Callback to call when wizard data changes.
+ * @param {Function} props.onStepChange Callback to call when wizard's step changes.
  * @param {Function} props.onCompletion Callback to call when wizard is completed.
  */
-const Wizard = ( { steps, onChange, onCompletion } ) => {
+const Wizard = ( { steps, onStepChange, onCompletion } ) => {
 	const [ currentStepNumber, setCurrentStepNumber ] = useState( 0 );
 	const [ data, setData ] = useState( {} );
-
-	// Call onChange every time wizard data is changed.
-	useEffect( () => {
-		onChange( data );
-	}, [ data, onChange ] );
 
 	const goToNextStep = () => {
 		if ( currentStepNumber + 1 < steps.length ) {
@@ -29,6 +24,11 @@ const Wizard = ( { steps, onChange, onCompletion } ) => {
 	};
 
 	const CurrentStep = steps[ currentStepNumber ];
+
+	// Call onChange every time wizard data is changed.
+	useEffect( () => {
+		onStepChange( CurrentStep );
+	}, [ CurrentStep, onStepChange ] );
 
 	return (
 		( CurrentStep && (

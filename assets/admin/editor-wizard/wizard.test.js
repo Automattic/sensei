@@ -21,7 +21,7 @@ describe( '<Wizard />', () => {
 		};
 
 		const { queryByText } = render(
-			<Wizard steps={ [ DummyStep ] } onChange={ () => {} } />
+			<Wizard steps={ [ DummyStep ] } onStepChange={ () => {} } />
 		);
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
@@ -36,7 +36,7 @@ describe( '<Wizard />', () => {
 		const { queryByText } = render(
 			<Wizard
 				steps={ [ DummyStepWithoutActions ] }
-				onChange={ () => {} }
+				onStepChange={ () => {} }
 			/>
 		);
 
@@ -57,7 +57,10 @@ describe( '<Wizard />', () => {
 		};
 
 		const { queryByText } = render(
-			<Wizard steps={ [ FirstStep, SecondStep ] } onChange={ () => {} } />
+			<Wizard
+				steps={ [ FirstStep, SecondStep ] }
+				onStepChange={ () => {} }
+			/>
 		);
 
 		expect( queryByText( 'FIRST_STEP_CONTENT' ) ).toBeTruthy();
@@ -81,7 +84,7 @@ describe( '<Wizard />', () => {
 		const { queryByText } = render(
 			<Wizard
 				steps={ [ SingleStep ] }
-				onChange={ () => {} }
+				onStepChange={ () => {} }
 				onCompletion={ onCompletionCallback }
 			/>
 		);
@@ -89,28 +92,29 @@ describe( '<Wizard />', () => {
 		expect( onCompletionCallback ).toBeCalled();
 	} );
 
-	it( 'Wizard calls `onChange` when wizard data is updated.', () => {
-		const onChangeMock = jest.fn();
-		const StepWithInput = ( {
-			data: wizardData,
-			setData: setWizardData,
-		} ) => {
-			return (
-				<input
-					value={ wizardData.value ?? '' }
-					onChange={ ( e ) => {
-						setWizardData( { value: e.target.value } );
-					} }
-				></input>
-			);
+	it( 'Wizard calls `onStepChange` when wizard step is updated.', () => {
+		const onStepChangedMock = jest.fn();
+		const FirstStep = () => {
+			return 'FIRST_STEP_CONTENT';
+		};
+		FirstStep.Actions = ( { goToNextStep } ) => {
+			return <button onClick={ goToNextStep }>Next</button>;
+		};
+		const SecondStep = () => {
+			return 'SECOND_STEP_CONTENT';
 		};
 
-		const { queryByRole } = render(
-			<Wizard steps={ [ StepWithInput ] } onChange={ onChangeMock } />
+		const { queryByText } = render(
+			<Wizard
+				steps={ [ FirstStep, SecondStep ] }
+				onStepChange={ onStepChangedMock }
+			/>
 		);
-		fireEvent.change( queryByRole( 'textbox' ), {
-			target: { value: 'TEST_DATA' },
-		} );
-		expect( onChangeMock ).toHaveBeenCalledWith( { value: 'TEST_DATA' } );
+
+		expect( onStepChangedMock ).toHaveBeenLastCalledWith( FirstStep );
+
+		fireEvent.click( queryByText( 'Next' ) );
+
+		expect( onStepChangedMock ).toHaveBeenLastCalledWith( SecondStep );
 	} );
 } );
