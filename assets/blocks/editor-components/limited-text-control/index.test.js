@@ -9,7 +9,7 @@ import { render, fireEvent } from '@testing-library/react';
 import LimitedTextControl from './index';
 import userEvent from '@testing-library/user-event';
 
-describe( '<LimitedTextControl"/>', () => {
+describe( '<LimitedTextControl />', () => {
 	it( 'Should render the input with the correct value', () => {
 		const { queryByRole } = render(
 			<LimitedTextControl value="SOME_VALUE" maxLength={ 20 } />
