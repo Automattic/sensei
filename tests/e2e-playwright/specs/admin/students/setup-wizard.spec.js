@@ -7,7 +7,7 @@ const { test, expect } = require( '@playwright/test' );
  * Internal dependencies
  */
 const { getContextByRole } = require( '../../../helpers/context' );
-const AdminFlow = require( '../../../pages/admin/plugins/plugins' );
+const PluginsPage = require( '../../../pages/admin/plugins/plugins' );
 
 async function stepIsComplete( page, label ) {
 	return expect(
@@ -27,23 +27,23 @@ async function stepIsActive( page, label ) {
 
 test.describe.serial( 'Setup Wizard', () => {
 	test.use( { storageState: getContextByRole( 'admin' ) } );
-	let adminFlow;
+	let pluginsPage;
 	let page;
 	test.beforeAll( async ( { browser } ) => {
 		page = await browser.newPage();
-		adminFlow = new AdminFlow( page );
-		await adminFlow.goTo( 'admin.php?page=sensei_setup_wizard' );
+		pluginsPage = new PluginsPage( page );
+		await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
 	} );
 
 	test( 'opens when first activating the Sensei LMS plugin', async () => {
-		await adminFlow.activatePlugin( 'sensei-lms', true );
+		await pluginsPage.activatePlugin( 'sensei-lms', true );
 		await expect( page.url() ).toMatch(
 			'admin.php?page=sensei_setup_wizard'
 		);
 	} );
 
 	test( 'shows a notice to run the Setup Wizard', async () => {
-		await adminFlow.goToPlugins();
+		await pluginsPage.goToPlugins();
 		await page.locator( `text=Run the Setup Wizard` ).click();
 		await expect( page.url() ).toMatch(
 			'admin.php?page=sensei_setup_wizard'
@@ -143,14 +143,14 @@ test.describe.serial( 'Setup Wizard', () => {
 				page.locator( 'text=Sensei LMS Certificates — Installed' )
 			).toHaveCount( 1 );
 			await page.locator( 'button' ).locator( 'text=Continue' ).click();
-			await adminFlow.goToPlugins();
+			await pluginsPage.goToPlugins();
 			expect(
-				await adminFlow.isPluginActive( 'sensei-certificates' )
+				await pluginsPage.isPluginActive( 'sensei-certificates' )
 			).toBeTruthy();
 		} );
 
 		test( 'marks installed plugins as unavailable', async () => {
-			await adminFlow.goTo( 'admin.php?page=sensei_setup_wizard' );
+			await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
 
 			await page.locator( 'text=Features' ).click();
 			await expect(

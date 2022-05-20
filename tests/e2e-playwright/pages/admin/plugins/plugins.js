@@ -1,4 +1,4 @@
-class AdminFlow {
+class PluginsPage {
 	constructor( page ) {
 		this.page = page;
 	}
@@ -61,4 +61,4 @@ class AdminFlow {
 	}
 }
 
-module.exports = AdminFlow;
+module.exports = PluginsPage;
