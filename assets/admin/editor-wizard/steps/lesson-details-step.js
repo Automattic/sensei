@@ -11,7 +11,7 @@ const LessonDetailsStep = ( { data, setData } ) => {
 	};
 	return (
 		<div>
-			<div>Course Details Step</div>
+			<div>Lesson Details Step</div>
 			<div>
 				<label htmlFor="course_title">Course title:</label>
 				<input id="course_title" onChange={ onTitleChange } />

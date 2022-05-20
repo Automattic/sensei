@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { select, useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -13,6 +13,8 @@ import Wizard from './wizard';
 import CourseDetailsStep from './steps/course-details-step';
 import UpgradeStep from './steps/upgrade-step';
 import CoursePatternsStep from './steps/course-patterns-step';
+import LessonDetailsStep from './steps/lesson-details-step';
+import LessonPatternsStep from './steps/lesson-patterns-step';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -88,8 +90,13 @@ const EditorWizardModal = () => {
 		} );
 	};
 
-	// TODO Implement different flows depending on post type 👇.
-	const steps = [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ];
+	// Choose steps by post type.
+	const stepsByPostType = {
+		course: [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ],
+		lesson: [ LessonDetailsStep, LessonPatternsStep ],
+	};
+	const postType = select( 'core/editor' )?.getCurrentPostType();
+	const steps = stepsByPostType[ postType ];
 
 	const onWizardCompletion = ( data ) => {
 		// TODO Implement actions when wizard is completed.
