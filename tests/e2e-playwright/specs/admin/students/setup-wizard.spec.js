@@ -87,16 +87,6 @@ test.describe.serial( 'Setup Wizard', () => {
 	} );
 
 	test.describe.serial( 'Purpose step', () => {
-		test( 'purpose opens when it is the active step', async () => {
-			await stepIsComplete( page, 'Welcome' );
-			await stepIsActive( page, 'Purpose' );
-			await expect(
-				page.locator(
-					'text=What is your primary purpose for offering online courses?'
-				)
-			).toHaveCount( 1 );
-		} );
-
 		test( 'disables Continue until something is selected', async () => {
 			await expect(
 				page.locator( 'button[disabled]' ).locator( 'text=Continue' )
@@ -128,16 +118,6 @@ test.describe.serial( 'Setup Wizard', () => {
 	} );
 
 	test.describe.serial( 'Features step', () => {
-		test( 'features opens when it is the active step', async () => {
-			await stepIsComplete( page, 'Purpose' );
-			await stepIsActive( page, 'Features' );
-			await expect(
-				page.locator(
-					'text=Enhance your online courses with these optional features.'
-				)
-			).toHaveCount( 1 );
-		} );
-
 		test( 'allows selecting plugins', async () => {
 			await page
 				.locator( 'label' )
