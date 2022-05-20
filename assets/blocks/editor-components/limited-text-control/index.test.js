@@ -88,7 +88,7 @@ describe( '<LimitedTextControl />', () => {
 	} );
 } );
 
-describe( '<LimitedTextControl multiline="{ true }"/>', () => {
+describe( '<LimitedTextControl multiline={ true }/>', () => {
 	it( 'Should render the input with the correct value', () => {
 		const { queryByRole } = render(
 			<LimitedTextControl
