@@ -151,6 +151,7 @@ describe( '<LimitedTextControl multiline="{ true }"/>', () => {
 				value="ABC"
 				maxLength={ 3 }
 				onChange={ onChangeMock }
+				multiline={ true }
 			/>
 		);
 
