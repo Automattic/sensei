@@ -1,3 +1,5 @@
+const { expect } = require( '@playwright/test' );
+
 class PluginsPage {
 	constructor( page ) {
 		this.page = page;
@@ -25,6 +27,22 @@ class PluginsPage {
 		return this.page.waitForSelector(
 			`#sensei-exit-survey-modal button:not(:disabled)`
 		);
+	}
+
+	async stepIsComplete( page, label ) {
+		return expect(
+			page
+				.locator( '.sensei-stepper__step.is-complete' )
+				.locator( `text=${ label }` )
+		).toHaveCount( 1 );
+	}
+
+	async stepIsActive( page, label ) {
+		return expect(
+			page
+				.locator( '.sensei-stepper__step.is-active' )
+				.locator( `text=${ label }` )
+		).toHaveCount( 1 );
 	}
 
 	async goToPluginsAndGetDeactivationLink( slug ) {

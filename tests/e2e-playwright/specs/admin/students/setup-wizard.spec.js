@@ -9,22 +9,6 @@ const { test, expect } = require( '@playwright/test' );
 const { getContextByRole } = require( '../../../helpers/context' );
 const PluginsPage = require( '../../../pages/admin/plugins/plugins' );
 
-async function stepIsComplete( page, label ) {
-	return expect(
-		page
-			.locator( '.sensei-stepper__step.is-complete' )
-			.locator( `text=${ label }` )
-	).toHaveCount( 1 );
-}
-
-async function stepIsActive( page, label ) {
-	return expect(
-		page
-			.locator( '.sensei-stepper__step.is-active' )
-			.locator( `text=${ label }` )
-	).toHaveCount( 1 );
-}
-
 test.describe.serial( 'Setup Wizard', () => {
 	test.use( { storageState: getContextByRole( 'admin' ) } );
 	let pluginsPage;
@@ -69,8 +53,8 @@ test.describe.serial( 'Setup Wizard', () => {
 				.locator( '.sensei-setup-wizard__usage-modal button' )
 				.locator( 'text=Continue' )
 				.click();
-			await stepIsComplete( page, 'Welcome' );
-			await stepIsActive( page, 'Purpose' );
+			await pluginsPage.stepIsComplete( page, 'Welcome' );
+			await pluginsPage.stepIsActive( page, 'Purpose' );
 			await expect(
 				page.locator(
 					'text=What is your primary purpose for offering online courses?'
@@ -100,8 +84,8 @@ test.describe.serial( 'Setup Wizard', () => {
 		} );
 
 		test( 'marks purpose step done and goes to features step', async () => {
-			await stepIsComplete( page, 'Purpose' );
-			await stepIsActive( page, 'Features' );
+			await pluginsPage.stepIsComplete( page, 'Purpose' );
+			await pluginsPage.stepIsActive( page, 'Features' );
 			await expect(
 				page.locator(
 					'text=Enhance your online courses with these optional features.'
@@ -168,8 +152,8 @@ test.describe.serial( 'Setup Wizard', () => {
 		} );
 
 		test( 'is available if it is the active step', async () => {
-			await stepIsComplete( page, 'Features' );
-			await stepIsActive( page, 'Ready' );
+			await pluginsPage.stepIsComplete( page, 'Features' );
+			await pluginsPage.stepIsActive( page, 'Ready' );
 			await expect(
 				page.locator(
 					"text=You're ready to start creating online courses!"
