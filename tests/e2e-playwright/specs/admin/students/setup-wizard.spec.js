@@ -120,19 +120,12 @@ test.describe.serial( 'Setup Wizard', () => {
 				await pluginsPage.isPluginActive( 'sensei-certificates' )
 			).toBeTruthy();
 		} );
-
-		test( 'marks installed plugins as unavailable', async () => {
-			await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
-
-			await page.locator( 'text=Features' ).click();
-			await expect(
-				page.locator( 'text=Sensei LMS Certificates — Installed' )
-			).toHaveCount( 1 );
-		} );
 	} );
 
 	test.describe.serial( 'Ready step', () => {
 		test.beforeEach( async () => {
+			await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
+			await page.locator( 'text=Features' ).click();
 			await page
 				.locator( '.sensei-stepper__step' )
 				.locator( 'text=Ready' )
