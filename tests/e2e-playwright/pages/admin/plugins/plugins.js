@@ -37,6 +37,39 @@ class PluginsPage {
 		).toHaveCount( 1 );
 	}
 
+	async closeUserTrackingModal() {
+		await this.page
+			.locator( '.sensei-setup-wizard__usage-modal button' )
+			.locator( 'text=Continue' )
+			.click();
+	}
+
+	async fillOutPurposeForm() {
+		await this.page
+			.locator( 'label' )
+			.locator( 'text=Promote your business' )
+			.click();
+		await this.page.locator( 'label' ).locator( 'text=Other' ).click();
+		await this.page.fill(
+			'.sensei-setup-wizard__textcontrol-other input',
+			'Other'
+		);
+	}
+
+	async goToReadyStep() {
+		await this.page
+			.locator( '.sensei-stepper__step' )
+			.locator( 'text=Ready' )
+			.click();
+	}
+
+	async fillOutFeaturesForm() {
+		return this.page
+			.locator( 'label' )
+			.locator( 'text=Sensei LMS Certificates' )
+			.click();
+	}
+
 	async stepIsActive( page, label ) {
 		return expect(
 			page
@@ -51,6 +84,7 @@ class PluginsPage {
 		const deactivateUrl = await this.findPluginAction( slug, 'deactivate' );
 		return deactivateUrl;
 	}
+
 	async deactivatePluginByLink( deactivateLink ) {
 		if ( deactivateLink ) {
 			await deactivateLink.click();

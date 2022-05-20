@@ -49,12 +49,7 @@ test.describe.serial( 'Setup Wizard', () => {
 		} );
 
 		test( 'marks welcome step done and goes to purpose step', async () => {
-			await page
-				.locator( '.sensei-setup-wizard__usage-modal button' )
-				.locator( 'text=Continue' )
-				.click();
-			await pluginsPage.stepIsComplete( page, 'Welcome' );
-			await pluginsPage.stepIsActive( page, 'Purpose' );
+			await pluginsPage.closeUserTrackingModal();
 			await expect(
 				page.locator(
 					'text=What is your primary purpose for offering online courses?'
@@ -65,21 +60,11 @@ test.describe.serial( 'Setup Wizard', () => {
 
 	test.describe.serial( 'Purpose step', () => {
 		test( 'allows selecting purposes', async () => {
-			await page
-				.locator( 'label' )
-				.locator( 'text=Promote your business' )
-				.click();
-			await page.locator( 'label' ).locator( 'text=Other' ).click();
-			await page.fill(
-				'.sensei-setup-wizard__textcontrol-other input',
-				'Other'
-			);
+			await pluginsPage.fillOutPurposeForm();
 			await page.locator( 'text=Continue' ).click();
 		} );
 
 		test( 'marks purpose step done and goes to features step', async () => {
-			await pluginsPage.stepIsComplete( page, 'Purpose' );
-			await pluginsPage.stepIsActive( page, 'Features' );
 			await expect(
 				page.locator(
 					'text=Enhance your online courses with these optional features.'
@@ -90,23 +75,8 @@ test.describe.serial( 'Setup Wizard', () => {
 
 	test.describe.serial( 'Features step', () => {
 		test( 'confirms is plugin installation', async () => {
-			await page
-				.locator( 'label' )
-				.locator( 'text=Sensei LMS Certificates' )
-				.click();
+			await pluginsPage.fillOutFeaturesForm();
 			await page.locator( 'text=Continue' ).click();
-			await expect(
-				page.locator(
-					'text=Would you like to install the following features now?'
-				)
-			).toHaveCount( 1 );
-			await expect(
-				page
-					.locator(
-						'.sensei-setup-wizard__features-confirmation-modal .sensei-list__item-title'
-					)
-					.locator( 'text=Sensei LMS Certificates' )
-			).toHaveCount( 1 );
 		} );
 
 		test( 'installs selected plugins', async () => {
@@ -126,10 +96,7 @@ test.describe.serial( 'Setup Wizard', () => {
 		test.beforeEach( async () => {
 			await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
 			await page.locator( 'text=Features' ).click();
-			await page
-				.locator( '.sensei-stepper__step' )
-				.locator( 'text=Ready' )
-				.click();
+			await pluginsPage.goToReadyStep();
 		} );
 
 		test( 'is available if it is the active step', async () => {
