@@ -26,7 +26,7 @@ const UpgradeStep = () => {
 				</ul>
 			</div>
 			<div className="components-modal-columns__image">
-				Image container
+				<p>Image container</p>
 			</div>
 		</div>
 	);
