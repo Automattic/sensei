@@ -31,6 +31,7 @@
 		padding: 30px;
 		height: auto;
 		margin: auto;
+		background: transparent;
 
 		& .components-modal__header-heading {
 			font-size: 32px;
@@ -61,6 +62,11 @@
 					width: 1.3em;
 					color: #00998b;
 				}
+			}
+			&__image {
+				background: #43af99;
+				margin: -130px -30px -30px 0;
+				padding: -130px -30px -30px 0;
 			}
 		}
 	}
