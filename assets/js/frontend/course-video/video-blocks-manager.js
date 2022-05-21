@@ -19,15 +19,18 @@ const videos = {};
 
 /**
  * Registers the videos to manage.
- * @param {Object}   video
- * @param {Function} video.pauseVideo              The function that pauses the video when invoked.
- * @param {Function} video.registerVideoEndHandler Accepts a callback that is invoked when the video ends.
- * @param {string}   video.url                     The source url of the video. Used as an id.
+ *
+ * @param {Object}      video
+ * @param {Function}    video.pauseVideo              The function that pauses the video when invoked.
+ * @param {Function}    video.registerVideoEndHandler Accepts a callback that is invoked when the video ends.
+ * @param {string}      video.url                     The source url of the video. Used as an id.
+ * @param {HTMLElement} video.blockElement            The DOM element of the video block.
  */
 export const registerVideo = ( {
 	pauseVideo = () => {},
 	registerVideoEndHandler = () => {},
 	url = '',
+	blockElement,
 } ) => {
 	if ( courseVideoRequired ) {
 		/**
@@ -40,7 +43,10 @@ export const registerVideo = ( {
 		 * @param {Object} video
 		 * @param {string} video.url The source url of the video.
 		 */
-		doAction( 'sensei.videoProgression.registerVideo', { url } );
+		doAction( 'sensei.videoProgression.registerVideo', {
+			url,
+			blockElement,
+		} );
 		videos[ url ] = { pauseVideo, completed: false };
 		disableCompleteLessonButton();
 	}

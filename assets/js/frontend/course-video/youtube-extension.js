@@ -3,6 +3,11 @@
  */
 import { registerVideo } from './video-blocks-manager';
 
+/**
+ * Initializes the YouTube video block player.
+ *
+ * @param {HTMLElement} iframe The iframe element of the YouTube video block.
+ */
 const initYouTubePlayer = ( iframe ) => {
 	let onVideoEnd = () => {};
 	const player = new YT.Player( iframe, {
@@ -20,6 +25,7 @@ const initYouTubePlayer = ( iframe ) => {
 						onVideoEnd = cb;
 					},
 					url: player.getVideoUrl(),
+					blockElement: iframe.closest( 'figure' ),
 				} );
 			},
 		},

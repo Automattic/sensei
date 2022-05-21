@@ -3,6 +3,11 @@
  */
 import { registerVideo } from './video-blocks-manager';
 
+/**
+ * Initializes the VideoPress block player.
+ *
+ * @param {HTMLElement} iframe The iframe of the VideoPress block.
+ */
 const initVideoPressPlayer = ( iframe ) => {
 	const videoId = extractVideoPressIdFromUrl( iframe.src );
 	let onVideoEnd = () => {};
@@ -38,6 +43,7 @@ const initVideoPressPlayer = ( iframe ) => {
 				);
 			},
 			url: iframe.src,
+			blockElement: iframe.closest( 'figure' ),
 		} );
 	} );
 };

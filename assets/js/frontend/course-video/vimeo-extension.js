@@ -3,6 +3,11 @@
  */
 import { registerVideo } from './video-blocks-manager';
 
+/**
+ * Initializes Vimeo block video player.
+ *
+ * @param {HTMLElement} iframe The iframe element of the Vimeo video block.
+ */
 const initVimeoPlayer = ( iframe ) => {
 	let onVideoEnd = () => {};
 	const player = new Vimeo.Player( iframe );
@@ -17,6 +22,7 @@ const initVimeoPlayer = ( iframe ) => {
 			},
 			pauseVideo: player.pause.bind( player ),
 			url,
+			blockElement: iframe.closest( 'figure' ),
 		} );
 	} );
 };
