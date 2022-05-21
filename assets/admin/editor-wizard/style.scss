@@ -40,5 +40,28 @@
 	}
 	& .components-modal__content {
 		padding: 0;
+
+		& .components-modal-columns {
+			display: grid;
+			grid-template-columns: 50% 50%;
+
+			&__description {
+				ul {
+					list-style: none;
+					padding: 0;
+				}
+				li {
+					padding-left: 1.3em;
+				}
+				li:before {
+					content: "\f00c";
+					font-family: FontAwesomeSensei, FontAwesome;
+					display: inline-block;
+					margin-left: -1.3em;
+					width: 1.3em;
+					color: #00998b;
+				}
+			}
+		}
 	}
 }
