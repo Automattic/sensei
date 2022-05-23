@@ -12,7 +12,7 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import Wizard from './wizard';
 import CourseDetailsStep from './steps/course-details-step';
-import UpgradeStep from './steps/upgrade-step';
+import CourseUpgradeStep from './steps/course-upgrade-step';
 import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
@@ -93,7 +93,7 @@ const EditorWizardModal = () => {
 
 	// Choose steps by post type.
 	const stepsByPostType = {
-		course: [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ],
+		course: [ CourseDetailsStep, CourseUpgradeStep, CoursePatternsStep ],
 		lesson: [ LessonDetailsStep, LessonPatternsStep ],
 	};
 	const { postType } = useSelect( ( select ) => ( {

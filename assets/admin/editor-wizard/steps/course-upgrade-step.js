@@ -6,7 +6,7 @@ import { Button } from '@wordpress/components';
 /**
  * Upgrade step during course creation wizard.
  */
-const UpgradeStep = () => {
+const CourseUpgradeStep = () => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
@@ -56,7 +56,7 @@ const UpgradeStep = () => {
 	);
 };
 
-UpgradeStep.Actions = ( { goToNextStep } ) => {
+CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {
 		window.open(
 			'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_editor_wizard',
@@ -77,4 +77,4 @@ UpgradeStep.Actions = ( { goToNextStep } ) => {
 	);
 };
 
-export default UpgradeStep;
+export default CourseUpgradeStep;
