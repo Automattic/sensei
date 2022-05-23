@@ -1,10 +1,6 @@
 @import './patterns-list.scss';
 
 .sensei-editor-wizard {
-	&__content {
-		margin: 30px;
-	}
-
 	&__footer {
 		display: flex;
 		flex-direction: row;
@@ -26,32 +22,44 @@
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
 	}
-	& .components-modal__header {
-		border-bottom: 0;
-		padding: 30px;
-		height: auto;
-		margin: auto;
-		background: transparent;
-
-		& .components-modal__header-heading {
-			font-size: 32px;
-			line-height: 40px;
-			color: #1E1E1E;
-		}
-	}
 	& .components-modal__content {
 		padding: 0;
+		margin-top: 0;
 
-		& .components-modal-columns {
-			display: grid;
-			grid-template-columns: 50% 50%;
+		&::before {
+			content: none;
+		}
+	}
 
-			&__image {
-				background: #43af99;
-				margin: -130px -30px -30px 0;
-				padding: 130px 30px 30px 0;
+	.components-modal__header {
+		border-bottom: none;
+		padding: 0;
+		position: fixed;
+
+		.components-button {
+			align-self: flex-start;
+			margin: 8px 8px 0 0;
+			position: static;
+
+			&:hover {
+				svg {
+					fill: #fff;
+				}
 			}
 		}
+	}
+
+	&__columns {
+		display: grid;
+		grid-template-columns: 50% 50%;
+	}
+
+	&__content {
+		margin: 30px;
+	}
+
+	&__illustration {
+		background: #43af99;
 	}
 
 	&__upsell-features {
