@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.7
 Tested up to: 5.9.3
 Requires PHP: 7.0
-Stable tag: 4.4.1
+Stable tag: 4.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,13 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022.05.23 - version 4.4.2
+* Fix: Modules page not found error in learning mode [#5144](https://github.com/Automattic/sensei/pull/5144) 👏 @jeremyfelt
+* Fix: Teacher name getting appended and duplicated in module title in course edit [#5114](https://github.com/Automattic/sensei/pull/5114)
+* Fix: Lessons not getting assigned to modules if the course is assigned to a teacher [#5151](https://github.com/Automattic/sensei/pull/5151)
+* Fix: Add student to course form not visible if Sensei Pro or Content Drip is enabled [#5164](https://github.com/Automattic/sensei/pull/5164)
+* Fix: Deprecated warnings on the students report screen [#5153](https://github.com/Automattic/sensei/pull/5153)
+
 2022.05.16 - version 4.4.1
 * New: Add a "Date Started" reports filter for students on a course [#5076](https://github.com/Automattic/sensei/pull/5076)
 * New: Show a notice if future PHP requirements aren't met in preparation for increasing the minimum requirements to PHP 7.2 [#5088](https://github.com/Automattic/sensei/pull/5088)
@@ -173,29 +180,5 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Remove excessive escaping of course titles on frontend [#5057](https://github.com/Automattic/sensei/pull/5057)
 * Fix: Remove infinite loop on test execution [#5078](https://github.com/Automattic/sensei/pull/5078)
 * Fix: Spacing issues in filters on the Students page [#5070](https://github.com/Automattic/sensei/pull/5070)
-
-2022.04.04 - version 4.3.0
-* New: Add a database seed WP-CLI command [#4882](https://github.com/Automattic/sensei/pull/4882)
-* New: Add Average Progress to courses report [#4917](https://github.com/Automattic/sensei/pull/4917)
-* New: Add Date Registered column to students report [#4952](https://github.com/Automattic/sensei/pull/4952)
-* New: Display email address on "Students taking this course" report [#4955](https://github.com/Automattic/sensei/pull/4955)
-* Tweak: Improve the students export performance [#4932](https://github.com/Automattic/sensei/pull/4932)
-* Tweak: Extract `get_courses` with dependent methods from `Sensei_Analysis_Overview_List_Table` [#4938](https://github.com/Automattic/sensei/pull/4938)
-* Tweak: Move focus toggle to the sidebar in learning mode [#4942](https://github.com/Automattic/sensei/pull/4942)
-* Tweak: Refactor the students overview report code [#4947](https://github.com/Automattic/sensei/pull/4947)
-* Tweak: Refactor lesson code from reports overview [#4964](https://github.com/Automattic/sensei/pull/4964)
-* Tweak: Remove sortable from columns that can't be sorted [#4965](https://github.com/Automattic/sensei/pull/4965)
-* Tweak: Update the reports documentation link [#4969](https://github.com/Automattic/sensei/pull/4969)
-* Tweak: Deprecate Sensei_Analysis_Overview_List_Table class [#4982](https://github.com/Automattic/sensei/pull/4982)
-* Fix: Video embed width [#4925](https://github.com/Automattic/sensei/pull/4925)
-* Fix: Incorrect i18n extraction from js files [#4935](https://github.com/Automattic/sensei/pull/4935)
-* Fix: Empty datepicker UI box showing in the footer [#4937](https://github.com/Automattic/sensei/pull/4937)
-* Fix: Only first row exporting for some reports [#4944](https://github.com/Automattic/sensei/pull/4944)
-* Fix: Sorting for students reports table [#4960](https://github.com/Automattic/sensei/pull/4960)
-* Fix: Sorting for Students report [#4970](https://github.com/Automattic/sensei/pull/4970)
-* Fix: Students report not taking pagination and sorting into cosideration [#4972](https://github.com/Automattic/sensei/pull/4972)
-* Fix: Use Sensei Reports Factory for generating report [#4973](https://github.com/Automattic/sensei/pull/4973)
-* Fix: Wrong data when exporting lessons report [#4975](https://github.com/Automattic/sensei/pull/4975)
-* Fix: "Days to Completion" and "Module" columns are swapped when exporting lessons [#4978](https://github.com/Automattic/sensei/pull/4978)
 
 [See changelog for all versions](https://github.com/Automattic/sensei/releases).
