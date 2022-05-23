@@ -64,13 +64,24 @@
 		justify-content: right;
 		align-items: center;
 	}
+}
 
-	&__upsell-features {
+.sensei-editor-wizard-modal-upsell {
+	&__price {
+		font-size: 28px;
+	}
+
+	&__price-detail {
+		font-size: 11px;
+		color: #787C82;
+	}
+
+	&__features {
 		list-style: none;
 		padding: 0;
 	}
 
-	&__upsell-feature-item {
+	&__feature-item {
 		padding-left: 1.3em;
 
 		&::before {

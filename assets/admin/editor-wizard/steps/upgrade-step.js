@@ -15,25 +15,29 @@ const UpgradeStep = () => {
 					Do you want to sell this course? This requires Sensei Pro
 					which also unlocks many useful features.
 				</p>
-				<h2>$149 USD</h2>
-				<span className="label">per year, 1 site</span>
-				<ul className="sensei-editor-wizard-modal__upsell-features">
-					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+				<h1 className="sensei-editor-wizard-modal-upsell__price">
+					$149 USD
+				</h1>
+				<span className="sensei-editor-wizard-modal-upsell__price-detail">
+					per year, 1 site
+				</span>
+				<ul className="sensei-editor-wizard-modal-upsell__features">
+					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						WooCommerce integration
 					</li>
-					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						Schedule &apos;drip&apos; content
 					</li>
-					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						Set expiration date of courses
 					</li>
-					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						Quiz timer
 					</li>
-					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						Flashcards, Image Hotspots, and Checklists
 					</li>
-					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						1 year of updates & support
 					</li>
 				</ul>
