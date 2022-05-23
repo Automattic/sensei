@@ -4,6 +4,18 @@
 import { registerVideo } from './video-blocks-manager';
 
 /**
+ * Extracts the video id from the url of the video.
+ *
+ * @param {string} url The url of the video.
+ * @return {string} The id of the video.
+ */
+const extractVideoPressIdFromUrl = ( url ) => {
+	const urlWithoutQuery = url.split( '?' )[ 0 ];
+	const parts = urlWithoutQuery.split( '/' );
+	return parts[ parts.length - 1 ];
+};
+
+/**
  * Initializes the VideoPress block player.
  *
  * @param {HTMLElement} iframe The iframe of the VideoPress block.
