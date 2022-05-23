@@ -82,7 +82,6 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
-	const [ modalTitle, setModalTitle ] = useState( '' );
 
 	const closeModal = () => {
 		setDone( true );
@@ -108,24 +107,13 @@ const EditorWizardModal = () => {
 		closeModal();
 	};
 
-	const updateModalTitle = ( step ) => {
-		if ( step.Title !== undefined ) {
-			setModalTitle( step.Title );
-		}
-	};
-
 	return (
 		( open && steps && (
 			<Modal
 				className="sensei-editor-wizard-modal"
 				onRequestClose={ closeModal }
-				title={ modalTitle }
 			>
-				<Wizard
-					steps={ steps }
-					onStepChange={ updateModalTitle }
-					onCompletion={ onWizardCompletion }
-				/>
+				<Wizard steps={ steps } onCompletion={ onWizardCompletion } />
 			</Modal>
 		) ) ||
 		null

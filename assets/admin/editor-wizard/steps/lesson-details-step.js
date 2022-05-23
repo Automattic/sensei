@@ -4,13 +4,17 @@
 const LessonDetailsStep = () => {
 	// TODO Implement this.
 	return (
-		<div>
-			<div>PENDING TO IMPLEMENT</div>
+		<div className="sensei-editor-wizard-modal__columns">
+			<div className="sensei-editor-wizard-modal__content">
+				<h1>Lesson Details Step</h1>
+				<div>PENDING TO IMPLEMENT</div>
+			</div>
+			<div className="sensei-editor-wizard-modal__illustration">
+				Images
+			</div>
 		</div>
 	);
 };
-
-LessonDetailsStep.Title = 'Lesson Details Step';
 
 LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (

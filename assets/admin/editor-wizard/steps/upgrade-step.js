@@ -8,8 +8,9 @@ import { Button } from '@wordpress/components';
  */
 const UpgradeStep = () => {
 	return (
-		<div className="components-modal-columns">
-			<div className="components-modal-columns__description">
+		<div className="sensei-editor-wizard-modal__columns">
+			<div className="sensei-editor-wizard-modal__content">
+				<h1>Sell with Sensei Pro</h1>
 				<p>
 					Do you want to sell this course? This requires Sensei Pro
 					which also unlocks many useful features.
@@ -43,8 +44,6 @@ const UpgradeStep = () => {
 		</div>
 	);
 };
-
-UpgradeStep.Title = 'Sell with Sensei Pro';
 
 UpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {

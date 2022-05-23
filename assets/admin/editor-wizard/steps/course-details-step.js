@@ -27,28 +27,32 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 		} );
 	};
 	return (
-		<div>
-			<div>
-				<LimitedTextControl
-					label={ __( 'Course Title', 'sensei-lms' ) }
-					value={ wizardData.newCourseTitle ?? '' }
-					onChange={ updateNewCourseTitle }
-					maxLength={ 40 }
-				/>
-				<LimitedTextControl
-					label={ __( 'Course Description', 'sensei-lms' ) }
-					value={ wizardData.newCourseDescription ?? '' }
-					onChange={ updateNewCourseDescription }
-					maxLength={ 350 }
-					multiline={ true }
-				/>
+		<div className="sensei-editor-wizard-modal__columns">
+			<div className="sensei-editor-wizard-modal__content">
+				<h1>Course Details Step</h1>
+				<div>
+					<LimitedTextControl
+						label={ __( 'Course Title', 'sensei-lms' ) }
+						value={ wizardData.newCourseTitle ?? '' }
+						onChange={ updateNewCourseTitle }
+						maxLength={ 40 }
+					/>
+					<LimitedTextControl
+						label={ __( 'Course Description', 'sensei-lms' ) }
+						value={ wizardData.newCourseDescription ?? '' }
+						onChange={ updateNewCourseDescription }
+						maxLength={ 350 }
+						multiline={ true }
+					/>
+				</div>
+				<div>PENDING TO IMPLEMENT</div>
 			</div>
-			<div>PENDING TO IMPLEMENT</div>
+			<div className="sensei-editor-wizard-modal__illustration">
+				Images
+			</div>
 		</div>
 	);
 };
-
-CourseDetailsStep.Title = 'Course Details Step';
 
 CourseDetailsStep.Actions = ( { data, goToNextStep } ) => {
 	// Actions have access to the whole wizard data.
