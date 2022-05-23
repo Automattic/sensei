@@ -31,7 +31,7 @@ const UpgradeStep = () => {
 						Quiz timer
 					</li>
 					<li className="sensei-editor-wizard-modal__upsell-feature-item">
-						Flashcards, Image Hotspots, and CHecklists
+						Flashcards, Image Hotspots, and Checklists
 					</li>
 					<li className="sensei-editor-wizard-modal__upsell-feature-item">
 						1 year of updates & support
