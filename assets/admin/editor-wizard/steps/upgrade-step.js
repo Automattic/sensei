@@ -38,8 +38,15 @@ const UpgradeStep = () => {
 					</li>
 				</ul>
 			</div>
-			<div className="components-modal-columns__image">
-				<p>Image container</p>
+			<div className="sensei-editor-wizard-modal__illustration">
+				<img
+					src={
+						window.sensei.pluginUrl +
+						'/assets/images/sensei-pro-upsell.png'
+					}
+					alt="Illustration of a course listing with the pricing defined and with the button 'Purchase Button'"
+					height="75%"
+				/>
 			</div>
 		</div>
 	);

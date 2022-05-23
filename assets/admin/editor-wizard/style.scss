@@ -60,6 +60,9 @@
 
 	&__illustration {
 		background: #43af99;
+		display: flex;
+		justify-content: right;
+		align-items: center;
 	}
 
 	&__upsell-features {
