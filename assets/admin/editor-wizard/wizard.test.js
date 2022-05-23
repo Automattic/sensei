@@ -91,30 +91,4 @@ describe( '<Wizard />', () => {
 		fireEvent.click( queryByText( 'Next' ) );
 		expect( onCompletionCallback ).toBeCalled();
 	} );
-
-	it( 'Wizard calls `onStepChange` when wizard step is updated.', () => {
-		const onStepChangedMock = jest.fn();
-		const FirstStep = () => {
-			return 'FIRST_STEP_CONTENT';
-		};
-		FirstStep.Actions = ( { goToNextStep } ) => {
-			return <button onClick={ goToNextStep }>Next</button>;
-		};
-		const SecondStep = () => {
-			return 'SECOND_STEP_CONTENT';
-		};
-
-		const { queryByText } = render(
-			<Wizard
-				steps={ [ FirstStep, SecondStep ] }
-				onStepChange={ onStepChangedMock }
-			/>
-		);
-
-		expect( onStepChangedMock ).toHaveBeenLastCalledWith( FirstStep );
-
-		fireEvent.click( queryByText( 'Next' ) );
-
-		expect( onStepChangedMock ).toHaveBeenLastCalledWith( SecondStep );
-	} );
 } );
