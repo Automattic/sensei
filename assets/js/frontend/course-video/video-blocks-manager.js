@@ -32,7 +32,15 @@ export const registerVideo = ( {
 	url = '',
 	blockElement,
 } ) => {
-	if ( courseVideoRequired ) {
+	const isBlockRequired = blockElement.hasAttribute(
+		'data-sensei-is-required'
+	);
+	const isBlockNotRequired = blockElement.hasAttribute(
+		'data-sensei-is-not-required'
+	);
+
+	// Block level setting overwrites the course level setting.
+	if ( isBlockRequired || ( courseVideoRequired && ! isBlockNotRequired ) ) {
 		/**
 		 * Called when a required video for the current lesson is registered.
 		 *
@@ -52,7 +60,11 @@ export const registerVideo = ( {
 	}
 
 	registerVideoEndHandler( () => {
-		if ( courseVideoRequired ) {
+		// Block level setting overwrites the course level setting.
+		if (
+			isBlockRequired ||
+			( courseVideoRequired && ! isBlockNotRequired )
+		) {
 			/**
 			 * Called when a required video for the current lesson is finished playing.
 			 *
