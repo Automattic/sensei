@@ -16,13 +16,25 @@ const UpgradeStep = () => {
 				</p>
 				<h2>$149 USD</h2>
 				<span className="label">per year, 1 site</span>
-				<ul>
-					<li>WooCommerce integration</li>
-					<li>Schedule &apos;drip&apos; content</li>
-					<li>Set expiration date of courses</li>
-					<li>Quiz timer</li>
-					<li>Flashcards, Image Hotspots, and CHecklists</li>
-					<li>1 year of updates & support</li>
+				<ul className="sensei-editor-wizard-modal__upsell-features">
+					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+						WooCommerce integration
+					</li>
+					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+						Schedule &apos;drip&apos; content
+					</li>
+					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+						Set expiration date of courses
+					</li>
+					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+						Quiz timer
+					</li>
+					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+						Flashcards, Image Hotspots, and CHecklists
+					</li>
+					<li className="sensei-editor-wizard-modal__upsell-feature-item">
+						1 year of updates & support
+					</li>
 				</ul>
 			</div>
 			<div className="components-modal-columns__image">

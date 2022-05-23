@@ -46,28 +46,29 @@
 			display: grid;
 			grid-template-columns: 50% 50%;
 
-			&__description {
-				ul {
-					list-style: none;
-					padding: 0;
-				}
-				li {
-					padding-left: 1.3em;
-				}
-				li:before {
-					content: "\f00c";
-					font-family: FontAwesomeSensei, FontAwesome;
-					display: inline-block;
-					margin-left: -1.3em;
-					width: 1.3em;
-					color: #00998b;
-				}
-			}
 			&__image {
 				background: #43af99;
 				margin: -130px -30px -30px 0;
 				padding: 130px 30px 30px 0;
 			}
+		}
+	}
+
+	&__upsell-features {
+		list-style: none;
+		padding: 0;
+	}
+
+	&__upsell-feature-item {
+		padding-left: 1.3em;
+
+		&::before {
+			content: "\f00c";
+			font-family: FontAwesomeSensei, FontAwesome;
+			display: inline-block;
+			margin-left: -1.3em;
+			width: 1.3em;
+			color: #00998b;
 		}
 	}
 }
