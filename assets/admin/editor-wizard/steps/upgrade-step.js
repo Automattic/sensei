@@ -58,7 +58,11 @@ const UpgradeStep = () => {
 
 UpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {
-		window.open( '', 'sensei-pricing', 'noreferrer' );
+		window.open(
+			'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_editor_wizard',
+			'sensei-pricing',
+			'noreferrer'
+		);
 		goToNextStep();
 	};
 	return (
