@@ -1,10 +1,6 @@
 @import './patterns-list.scss';
 
 .sensei-editor-wizard {
-	&__content {
-		margin: 30px;
-	}
-
 	&__footer {
 		display: flex;
 		flex-direction: row;
@@ -26,18 +22,87 @@
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
 	}
-	& .components-modal__header {
-		border-bottom: 0;
-		padding: 30px;
-		height: auto;
-
-		& .components-modal__header-heading {
-			font-size: 32px;
-			line-height: 40px;
-			color: #1E1E1E;
-		}
-	}
 	& .components-modal__content {
 		padding: 0;
+		margin-top: 0;
+
+		&::before {
+			content: none;
+		}
+	}
+
+	.components-modal__header {
+		border-bottom: none;
+		padding: 0;
+		position: fixed;
+
+		.components-button {
+			align-self: flex-start;
+			margin: 8px 8px 0 0;
+			position: static;
+
+			&:hover {
+				svg {
+					fill: #fff;
+				}
+			}
+		}
+	}
+
+	&__columns {
+		display: grid;
+		grid-template-columns: 50% 50%;
+	}
+
+	&__content {
+		margin: 30px;
+	}
+
+	&__illustration {
+		background: #43af99;
+		display: flex;
+		justify-content: right;
+		align-items: center;
+	}
+
+	&__illustration-image {
+		height: 75%;
+	}
+}
+
+.sensei-editor-wizard-modal-upsell {
+	&__price {
+		font-size: 28px;
+	}
+
+	&__price-detail {
+		font-size: 11px;
+		color: #787C82;
+		margin-top: -10px;
+		margin-bottom: 30px;
+	}
+
+	&__features {
+		list-style: none;
+		padding: 0;
+		font-weight: 700;
+	}
+
+	&__feature-item {
+		padding-left: 1.3em;
+
+		&::before {
+			content: "\f00c";
+			font-family: FontAwesomeSensei, FontAwesome;
+			display: inline-block;
+			margin-left: -1.3em;
+			width: 1.3em;
+			color: #00998b;
+		}
+	}
+
+	&__button {
+		margin-left: 12px;
+		padding: 18px 30px;
 	}
 }

@@ -12,10 +12,11 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import Wizard from './wizard';
 import CourseDetailsStep from './steps/course-details-step';
-import UpgradeStep from './steps/upgrade-step';
+import CourseUpgradeStep from './steps/course-upgrade-step';
 import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
+import { EXTENSIONS_STORE } from '../../extensions/store';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -82,7 +83,6 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
-	const [ modalTitle, setModalTitle ] = useState( '' );
 
 	const closeModal = () => {
 		setDone( true );
@@ -94,12 +94,25 @@ const EditorWizardModal = () => {
 
 	// Choose steps by post type.
 	const stepsByPostType = {
-		course: [ CourseDetailsStep, UpgradeStep, CoursePatternsStep ],
+		course: [ CourseDetailsStep, CourseUpgradeStep, CoursePatternsStep ],
 		lesson: [ LessonDetailsStep, LessonPatternsStep ],
 	};
-	const { postType } = useSelect( ( select ) => ( {
-		postType: select( editorStore )?.getCurrentPostType(),
-	} ) );
+	const { postType, senseiProExtension } = useSelect(
+		( select ) => ( {
+			postType: select( editorStore )?.getCurrentPostType(),
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		} ),
+		[]
+	);
+
+	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
+		stepsByPostType.course = stepsByPostType.course.filter(
+			( step ) => step !== CourseUpgradeStep
+		);
+	}
+
 	const steps = stepsByPostType[ postType ];
 
 	// eslint-disable-next-line no-unused-vars
@@ -108,24 +121,13 @@ const EditorWizardModal = () => {
 		closeModal();
 	};
 
-	const updateModalTitle = ( step ) => {
-		if ( step.Title !== undefined ) {
-			setModalTitle( step.Title );
-		}
-	};
-
 	return (
 		( open && steps && (
 			<Modal
 				className="sensei-editor-wizard-modal"
 				onRequestClose={ closeModal }
-				title={ modalTitle }
 			>
-				<Wizard
-					steps={ steps }
-					onStepChange={ updateModalTitle }
-					onCompletion={ onWizardCompletion }
-				/>
+				<Wizard steps={ steps } onCompletion={ onWizardCompletion } />
 			</Modal>
 		) ) ||
 		null
