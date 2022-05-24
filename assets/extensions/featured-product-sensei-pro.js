@@ -2,18 +2,25 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import FeaturedProduct from './featured-product';
-import useSenseiProExtension from './use-sensei-pro-extension';
+import { EXTENSIONS_STORE } from './store';
 
 /*
  * Sensei Pro featured product component.
  */
 const FeaturedProductSenseiPro = () => {
-	const senseiProExtension = useSenseiProExtension();
+	const { senseiProExtension } = useSelect( ( select ) => {
+		return {
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		};
+	} );
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
 		return <></>;

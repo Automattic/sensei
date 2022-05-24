@@ -3,17 +3,25 @@
  */
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import useSenseiProExtension from '../../../extensions/use-sensei-pro-extension';
+import { EXTENSIONS_STORE } from '../../../extensions/store';
 
 /**
  * Upgrade step during course creation wizard.
  */
 const CourseUpgradeStep = () => {
-	const senseiProExtension = useSenseiProExtension();
+	const { senseiProExtension } = useSelect( ( select ) => {
+		return {
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		};
+	} );
+
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
