@@ -97,10 +97,15 @@ const EditorWizardModal = () => {
 		course: [ CourseDetailsStep, CourseUpgradeStep, CoursePatternsStep ],
 		lesson: [ LessonDetailsStep, LessonPatternsStep ],
 	};
-	const { postType, senseiProExtension } = useSelect( ( select ) => ( {
-		postType: select( editorStore )?.getCurrentPostType(),
-		senseiProExtension: select( EXTENSIONS_STORE ).getSenseiProExtension(),
-	} ) );
+	const { postType, senseiProExtension } = useSelect(
+		( select ) => ( {
+			postType: select( editorStore )?.getCurrentPostType(),
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		} ),
+		[]
+	);
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
 		stepsByPostType.course = stepsByPostType.course.filter(

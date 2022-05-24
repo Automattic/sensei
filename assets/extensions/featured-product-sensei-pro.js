@@ -14,13 +14,14 @@ import { EXTENSIONS_STORE } from './store';
  * Sensei Pro featured product component.
  */
 const FeaturedProductSenseiPro = () => {
-	const { senseiProExtension } = useSelect( ( select ) => {
-		return {
+	const { senseiProExtension } = useSelect(
+		( select ) => ( {
 			senseiProExtension: select(
 				EXTENSIONS_STORE
 			).getSenseiProExtension(),
-		};
-	} );
+		} ),
+		[]
+	);
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
 		return <></>;
