@@ -16,10 +16,15 @@ import { StudentActionMenu } from './index';
 
 jest.mock( '@wordpress/data' );
 
+const studentName = 'johndoe';
+const studentDisplayName = 'John Doe';
+
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
-		render( <StudentActionMenu /> );
+		render(
+			<StudentActionMenu studentDisplayName={ studentDisplayName } />
+		);
 
 		// Open the dropdown menu.
 		const button = screen.getByRole( 'button' );
@@ -42,7 +47,9 @@ describe( '<StudentActionMenu />', () => {
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
-		render( <StudentActionMenu /> );
+		render(
+			<StudentActionMenu studentDisplayName={ studentDisplayName } />
+		);
 
 		// Open the dropdown menu.
 		const button = screen.getByRole( 'button' );
@@ -65,7 +72,9 @@ describe( '<StudentActionMenu />', () => {
 
 	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
-		render( <StudentActionMenu /> );
+		render(
+			<StudentActionMenu studentDisplayName={ studentDisplayName } />
+		);
 
 		// Open the dropdown menu.
 		const button = screen.getByRole( 'button' );
@@ -87,7 +96,12 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( "Should display student's ungraded quizzes when Grading menu item is selected", () => {
-		render( <StudentActionMenu studentName="mary" /> );
+		render(
+			<StudentActionMenu
+				studentName={ studentName }
+				studentDisplayName={ studentDisplayName }
+			/>
+		);
 
 		// Open the dropdown menu.
 		const button = screen.getByRole( 'button' );
@@ -106,7 +120,7 @@ describe( '<StudentActionMenu />', () => {
 		fireEvent.click( menuItem );
 
 		expect( windowSpy ).toBeCalledWith(
-			'edit.php?post_type=course&page=sensei_grading&view=ungraded&s=mary',
+			`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ studentName }`,
 			'_self'
 		);
 

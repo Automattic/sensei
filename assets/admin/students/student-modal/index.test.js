@@ -55,12 +55,24 @@ describe( '<StudentModal />', () => {
 	} );
 
 	it( 'Should display a list of courses', async () => {
-		render( <StudentModal students={ students } action="add" /> );
+		render(
+			<StudentModal
+				students={ students }
+				studentDisplayName={ studentName }
+				action="add"
+			/>
+		);
 		expect( await courseOptionAt( 0 ) ).toBeInTheDocument();
 	} );
 
 	it( 'Should disable the action button when there is no course selected', async () => {
-		render( <StudentModal students={ students } action="add" /> );
+		render(
+			<StudentModal
+				students={ students }
+				studentDisplayName={ studentName }
+				action="add"
+			/>
+		);
 		expect( await buttonByLabel( 'Add to Course' ) ).toBeDisabled();
 	} );
 
@@ -75,6 +87,7 @@ describe( '<StudentModal />', () => {
 					action="add"
 					onClose={ onClose }
 					students={ students }
+					studentDisplayName={ studentName }
 				/>
 			);
 		} );
@@ -154,6 +167,7 @@ describe( '<StudentModal />', () => {
 					action="remove"
 					onClose={ onClose }
 					students={ students }
+					studentDisplayName={ studentName }
 				/>
 			);
 		} );
@@ -218,6 +232,7 @@ describe( '<StudentModal />', () => {
 					action="reset-progress"
 					onClose={ onClose }
 					students={ students }
+					studentDisplayName={ studentName }
 				/>
 			);
 		} );
@@ -317,7 +332,11 @@ describe( '<StudentModal />', () => {
 
 			it( 'Should display an error message when adding a student to a course', async () => {
 				render(
-					<StudentModal action="add" students={ [ students[ 0 ] ] } />
+					<StudentModal
+						action="add"
+						students={ [ students[ 0 ] ] }
+						studentDisplayName={ studentName }
+					/>
 				);
 
 				fireEvent.click( await courseOptionAt( 0 ) );
@@ -335,6 +354,7 @@ describe( '<StudentModal />', () => {
 					<StudentModal
 						action="remove"
 						students={ [ students[ 0 ] ] }
+						studentDisplayName={ studentName }
 					/>
 				);
 
@@ -353,6 +373,7 @@ describe( '<StudentModal />', () => {
 					<StudentModal
 						action="reset-progress"
 						students={ [ students[ 0 ] ] }
+						studentDisplayName={ studentName }
 					/>
 				);
 
@@ -412,7 +433,13 @@ describe( '<StudentModal />', () => {
 			} );
 
 			it( 'Should display an error message when adding multiple students to a course', async () => {
-				render( <StudentModal action="add" students={ students } /> );
+				render(
+					<StudentModal
+						action="add"
+						students={ students }
+						studentDisplayName={ studentName }
+					/>
+				);
 
 				fireEvent.click( await courseOptionAt( 0 ) );
 				fireEvent.click( await buttonByLabel( 'Add to Course' ) );
@@ -426,7 +453,11 @@ describe( '<StudentModal />', () => {
 
 			it( 'Should display an error message when removing multiple students from a course', async () => {
 				render(
-					<StudentModal action="remove" students={ students } />
+					<StudentModal
+						action="remove"
+						students={ students }
+						studentDisplayName={ studentName }
+					/>
 				);
 
 				fireEvent.click( await courseOptionAt( 0 ) );
@@ -444,6 +475,7 @@ describe( '<StudentModal />', () => {
 					<StudentModal
 						action="reset-progress"
 						students={ students }
+						studentDisplayName={ studentName }
 					/>
 				);
 
