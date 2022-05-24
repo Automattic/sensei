@@ -3,6 +3,10 @@
  */
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+
+/**
+ * Internal dependencies
+ */
 import useSenseiProExtension from '../../../extensions/use-sensei-pro-extension';
 
 /**
