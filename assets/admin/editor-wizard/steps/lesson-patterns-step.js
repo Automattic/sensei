@@ -12,7 +12,11 @@ import PatternsList from '../patterns-list';
  */
 const LessonPatternsStep = ( { data, onCompletion } ) => (
 	<div className="sensei-editor-wizard-modal__content">
-		<PatternsList data={ data } onChoose={ onCompletion } />
+		<PatternsList
+			title={ data.newCourseTitle }
+			description={ data.newCourseDescription }
+			onChoose={ onCompletion }
+		/>
 	</div>
 );
 
