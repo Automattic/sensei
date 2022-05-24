@@ -44,12 +44,13 @@ export const registerVideo = ( {
 		/**
 		 * Called when a required video for the current lesson is registered.
 		 *
-		 * @since 4.5.0
+		 * @since x.x.x
 		 *
 		 * @hook sensei.videoProgression.registerVideo Hook used to run an arbitrary code when new required
 		 *                                             video for the current lesson is registered.
-		 * @param {Object} video
-		 * @param {string} video.url The source url of the video.
+		 * @param {Object}      video
+		 * @param {string}      video.url          The source url of the video.
+		 * @param {HTMLElement} video.blockElement The video block DOM element.
 		 */
 		doAction( 'sensei.videoProgression.registerVideo', {
 			url,
