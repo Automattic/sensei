@@ -16,6 +16,7 @@ import CourseUpgradeStep from './steps/course-upgrade-step';
 import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
+import useSenseiProExtension from './use-sensei-pro-extension';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -99,6 +100,13 @@ const EditorWizardModal = () => {
 	const { postType } = useSelect( ( select ) => ( {
 		postType: select( editorStore )?.getCurrentPostType(),
 	} ) );
+
+	const senseiProExtension = useSenseiProExtension();
+
+	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
+		stepsByPostType.course = [ CourseDetailsStep, CoursePatternsStep ];
+	}
+
 	const steps = stepsByPostType[ postType ];
 
 	// eslint-disable-next-line no-unused-vars
