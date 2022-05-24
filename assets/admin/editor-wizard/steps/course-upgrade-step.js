@@ -39,9 +39,9 @@ const CourseUpgradeStep = () => {
 						senseiProExtension.price.replace( '.00', '' )
 					) }
 				</h1>
-				<span className="sensei-editor-wizard-modal-upsell__price-detail">
+				<p className="sensei-editor-wizard-modal-upsell__price-detail">
 					{ __( 'per year, 1 site', 'sensei-lms' ) }
-				</span>
+				</p>
 				<ul className="sensei-editor-wizard-modal-upsell__features">
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						{ __( 'WooCommerce integration', 'sensei-lms' ) }
