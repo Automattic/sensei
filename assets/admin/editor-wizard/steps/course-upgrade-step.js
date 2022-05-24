@@ -3,7 +3,7 @@
  */
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import useSenseiProExtension from '../use-sensei-pro-extension';
+import useSenseiProExtension from '../../../extensions/use-sensei-pro-extension';
 
 /**
  * Upgrade step during course creation wizard.

@@ -16,7 +16,7 @@ import CourseUpgradeStep from './steps/course-upgrade-step';
 import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
-import useSenseiProExtension from './use-sensei-pro-extension';
+import useSenseiProExtension from '../../extensions/use-sensei-pro-extension';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.

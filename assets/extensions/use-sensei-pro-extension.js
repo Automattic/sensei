@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { EXTENSIONS_STORE } from '../../extensions/store';
+import { EXTENSIONS_STORE } from './store';
 
 export default function useSenseiProExtension() {
 	const { extensions } = useSelect( ( select ) => {

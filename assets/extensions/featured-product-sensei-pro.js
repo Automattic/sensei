@@ -1,30 +1,19 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import FeaturedProduct from './featured-product';
-import { EXTENSIONS_STORE } from './store';
+import useSenseiProExtension from './use-sensei-pro-extension';
 
 /*
  * Sensei Pro featured product component.
  */
 const FeaturedProductSenseiPro = () => {
-	const { extensions } = useSelect( ( select ) => {
-		const store = select( EXTENSIONS_STORE );
-
-		return {
-			extensions: store.getExtensions(),
-		};
-	} );
-
-	const senseiProExtension = extensions.find(
-		( extension ) => extension.product_slug === 'sensei-pro'
-	);
+	const senseiProExtension = useSenseiProExtension();
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
 		return <></>;
