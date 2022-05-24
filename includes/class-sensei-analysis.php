@@ -320,188 +320,122 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_default_view( $type ) {
-
-		// Load Analysis data
 		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
-		// Wrappers
-		do_action( 'analysis_before_container' );
-		do_action( 'analysis_wrapper_container', 'top' );
-
-		do_action( 'sensei_analysis_after_headers' );
-
-		?>
-		<div id="poststuff" class="sensei-analysis-wrap">
-			<div class="sensei-analysis-main">
-				<?php $sensei_analysis_overview->display(); ?>
-			</div>
-			<div class="sensei-analysis-extra">
-				<?php do_action( 'sensei_analysis_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'analysis_wrapper_container', 'bottom' );
-		do_action( 'analysis_after_container' );
+		$exclude_query_params = [ 'start_date', 'end_date', 'q', '_wpnonce', '_wp_http_referer' ];
+		$this->display_report_page( $sensei_analysis_overview, null, $exclude_query_params );
 	}
 
 	/**
 	 * An individual users' profile view for analysis, showing their Courses
 	 *
 	 * @since  1.2.0
-	 * @param integer $user_id
+	 *
+	 * @param int $user_id
 	 * @return void
 	 */
 	public function analysis_user_profile_view( $user_id ) {
-
-		// Load Analysis data
 		$sensei_analysis_user_profile = $this->load_data_object( 'User_Profile', $user_id );
-		// Wrappers
-		do_action( 'analysis_before_container' );
-		do_action( 'analysis_wrapper_container', 'top' );
-
-		$this->analysis_user_profile_nav();
-		do_action( 'sensei_analysis_after_headers' );
-
-		?>
-		<div id="poststuff" class="sensei-analysis-wrap user-profile">
-			<div class="sensei-analysis-main">
-				<?php $sensei_analysis_user_profile->display(); ?>
-			</div>
-			<div class="sensei-analysis-extra">
-				<?php do_action( 'sensei_analysis_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'analysis_wrapper_container', 'bottom' );
-		do_action( 'analysis_after_container' );
+		$exclude_query_params         = [ 'q' ];
+		$this->display_report_page( $sensei_analysis_user_profile, 'user_profile', $exclude_query_params );
 	}
 
 	/**
 	 * An individual Course view for analysis, showing the Courses Lessons
 	 *
 	 * @since  1.2.0
-	 * @param integer $course_id
+	 *
+	 * @param int $course_id
 	 * @return void
 	 */
 	public function analysis_course_view( $course_id ) {
-
-		// Load Analysis data
 		$sensei_analysis_course = $this->load_data_object( 'Course', $course_id );
-		// Wrappers
-		do_action( 'analysis_before_container' );
-		do_action( 'analysis_wrapper_container', 'top' );
-
-		$this->analysis_course_nav();
-		do_action( 'sensei_analysis_after_headers' );
-
-		?>
-		<div id="poststuff" class="sensei-analysis-wrap course-profile">
-			<div class="sensei-analysis-main">
-				<?php $sensei_analysis_course->display(); ?>
-			</div>
-			<div class="sensei-analysis-extra">
-				<?php do_action( 'sensei_analysis_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'analysis_wrapper_container', 'bottom' );
-		do_action( 'analysis_after_container' );
+		$this->display_report_page( $sensei_analysis_course, 'course' );
 	}
 
 	/**
 	 * An individual Course view for analysis, showing a specific Learners Lessons
 	 *
 	 * @since  1.2.0
-	 * @param integer $course_id
-	 * @param integer $user_id
+	 *
+	 * @param int $course_id
+	 * @param int $user_id
 	 * @return void
 	 */
-	public function analysis_user_course_view( $course_id, $user_id ) {
-
-		// Load Analysis data
+	public function analysis_user_course_view( int $course_id, int $user_id ) {
 		$sensei_analysis_user_course = $this->load_data_object( 'Course', $course_id, $user_id );
-		// Wrappers
-		do_action( 'analysis_before_container' );
-		do_action( 'analysis_wrapper_container', 'top' );
-
-		$this->analysis_user_course_nav();
-		do_action( 'sensei_analysis_after_headers' );
-
-		?>
-		<div id="poststuff" class="sensei-analysis-wrap course-profile">
-			<div class="sensei-analysis-main">
-				<?php $sensei_analysis_user_course->display(); ?>
-			</div>
-			<div class="sensei-analysis-extra">
-				<?php do_action( 'sensei_analysis_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'analysis_wrapper_container', 'bottom' );
-		do_action( 'analysis_after_container' );
+		$exclude_query_params        = [ 'q' ];
+		$this->display_report_page( $sensei_analysis_user_course, 'user_course', $exclude_query_params );
 	}
 
 	/**
 	 * An individual Course view for analysis, showing all the Learners
 	 *
-	 * @since  1.2.0
-	 * @param integer $course_id
+	 * @since 1.2.0
+	 *
+	 * @param int $course_id
 	 * @return void
 	 */
-	public function analysis_course_users_view( $course_id ) {
-
-		// Load Analysis data
+	public function analysis_course_users_view( int $course_id ) {
 		$sensei_analysis_course_users = $this->load_data_object( 'Course', $course_id );
-		// Wrappers
-		do_action( 'analysis_before_container' );
-		do_action( 'analysis_wrapper_container', 'top' );
-
-		$this->analysis_course_users_nav();
-		do_action( 'sensei_analysis_after_headers' );
-
-		?>
-		<div id="poststuff" class="sensei-analysis-wrap course-profile">
-			<div class="sensei-analysis-main">
-				<?php $sensei_analysis_course_users->display(); ?>
-			</div>
-			<div class="sensei-analysis-extra">
-				<?php do_action( 'sensei_analysis_extra' ); ?>
-			</div>
-		</div>
-		<?php
-		do_action( 'analysis_wrapper_container', 'bottom' );
-		do_action( 'analysis_after_container' );
+		$exclude_query_params         = [ 'start_date', 'end_date', 's' ];
+		$this->display_report_page( $sensei_analysis_course_users, 'course_users', $exclude_query_params );
 	}
 
 	/**
 	 * An individual Lesson view for analysis, showing all the Learners
 	 *
 	 * @since  1.2.0
-	 * @param integer $lesson_id
+	 *
+	 * @param int $lesson_id
 	 * @return void
 	 */
-	public function analysis_lesson_users_view( $lesson_id ) {
-
-		// Load Analysis data
+	public function analysis_lesson_users_view( int $lesson_id ) {
 		$sensei_analysis_lesson_users = $this->load_data_object( 'Lesson', $lesson_id );
+		$exclude_query_params         = [ 's' ];
+		$this->display_report_page( $sensei_analysis_lesson_users, 'lesson_users', $exclude_query_params );
+	}
+
+	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ) {
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
 
-		$this->analysis_lesson_users_nav();
+		$this->display_nav( $nav_type );
 		do_action( 'sensei_analysis_after_headers' );
 
+		$list_table->views();
 		?>
-		<div id="poststuff" class="sensei-analysis-wrap course-profile">
-			<div class="sensei-analysis-main">
-				<?php $sensei_analysis_lesson_users->display(); ?>
-			</div>
-			<div class="sensei-analysis-extra">
-				<?php do_action( 'sensei_analysis_extra' ); ?>
-			</div>
-		</div>
+		<form id="reports-filter" method="get">
+			<?php Sensei_Utils::output_query_params_as_inputs( $exclude_query_params ); ?>
+			<?php $list_table->table_search_form(); ?>
+			<?php $list_table->display(); ?>
+		</form>
 		<?php
+
 		do_action( 'analysis_wrapper_container', 'bottom' );
 		do_action( 'analysis_after_container' );
+	}
+
+	private function display_nav( $nav_type ) {
+		switch ( $nav_type ) {
+			case 'user_profile':
+				$this->analysis_user_profile_nav();
+				break;
+			case 'course':
+				$this->analysis_course_nav();
+				break;
+			case 'course_users':
+				$this->analysis_course_users_nav();
+				break;
+			case 'user_course':
+				$this->analysis_user_course_nav();
+				break;
+			case 'lesson_users':
+				$this->analysis_lesson_users_nav();
+				break;
+			default:
+				break;
+		}
 	}
 
 	/**

@@ -50,6 +50,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 	}
 
 	/**
@@ -413,7 +414,27 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 
 		echo '</div><!-- /.grading-selects -->';
+	}
 
+	public function extra_tablenav( $which ) {
+		if ( 'top' === $which ) {
+			echo '<div class="alignleft actions sensei-actions__always-visible">';
+		}
+		parent::extra_tablenav( $which );
+
+		if ( 'top' === $which ) {
+			echo '</div>';
+		}
+	}
+
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+	}
+
+	public function get_views() {
 		$menu = array();
 
 		// Setup counters
@@ -508,17 +529,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			number_format( (int) $inprogress_lessons_count )
 		);
 
-		$menu = apply_filters( 'sensei_grading_sub_menu', $menu );
-		if ( ! empty( $menu ) ) {
-			echo '<ul class="subsubsub">' . "\n";
-			foreach ( $menu as $class => $item ) {
-				$menu[ $class ] = "\t<li class='$class'>$item";
-			}
-
-			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
-			echo '</ul>' . "\n";
-		}
-
+		return apply_filters( 'sensei_grading_sub_menu', $menu );
 	}
 
 	/**

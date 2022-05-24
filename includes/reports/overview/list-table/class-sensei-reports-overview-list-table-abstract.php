@@ -69,6 +69,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
+
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 	/**
@@ -236,6 +238,22 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		</div>
 		<?php
 	}
+	public function extra_tablenav( $which ) {
+		?>
+		<div class="alignleft actions sensei-actions__always-visible">
+			<?php
+			parent::extra_tablenav( $which );
+			?>
+		</div>
+		<?php
+	}
+
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+	}
 
 	/**
 	 * Output top filter form.
@@ -263,10 +281,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			?>
 
 			<?php if ( 'lessons' === $this->type ) : ?>
-				<label for="sensei-course-filter">
-					<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
-				</label>
+					<label for="sensei-course-filter">
+						<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
 
+					</label>
 				<?php $this->output_course_select_input(); ?>
 			<?php endif ?>
 

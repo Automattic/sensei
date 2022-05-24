@@ -44,7 +44,7 @@
 	}
 }
 #woothemes-sensei  {
-	position: relative;
+	//position: relative;
 	.fl  {
 		float: left;
 	}
@@ -70,11 +70,53 @@
 	z-index: 2;
 }
 /* Analysis */
+.wrap {
+	.sensei-analysis {
+		&__no-items-message {
+			margin: 50px 0;
+			text-align: center;
+			font-size: 14px;
+		}
+
+		&__top-filters {
+			float: left;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			margin-bottom: 14px;
+		}
+	}
+
+	.sensei-date-picker {
+		max-width: 100px;
+	}
+
+	#sensei-course-filter {
+		float: none;
+	}
+
+	.postbox {
+		padding: 1em 0px 0px 1em;
+		h2#add-student-to-course-header {
+			padding: 0px;
+		}
+		.inside {
+			padding: 0px;
+		}
+	}
+
+	@media screen and (max-width: 782px) {
+		.sensei-actions__always-visible {
+			display: block !important;
+		}
+	}
+}
+
 .sensei-analysis-wrap {
-	padding-top: 18px;
 	display: flex;
 	gap: 20px;
 	flex-flow: row;
+	clear: both;
 
 	@media (max-width: 850px) {
 		flex-direction: column;
@@ -98,11 +140,6 @@
 
 	.sensei-analysis-main {
 		flex: 1;
-		.tablenav {
-			.tablenav-pages {
-				margin-right: 20px;
-			}
-		}
 	}
 
 	.sensei-analysis, .sensei-analysis-course {
