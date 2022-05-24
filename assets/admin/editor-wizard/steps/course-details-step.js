@@ -54,7 +54,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 						'assets/dist/images/sensei-pro-upsell.png'
 					}
 					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
-					height="75%"
+					className="sensei-editor-wizard-modal-upsell__image"
 				/>
 			</div>
 		</div>

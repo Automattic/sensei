@@ -76,7 +76,7 @@ const CourseUpgradeStep = () => {
 						'Illustration of a course listing with the pricing defined and with the button "Purchase Button"',
 						'sensei-lms'
 					) }
-					height="75%"
+					className="sensei-editor-wizard-modal-upsell__image"
 				/>
 			</div>
 		</div>
