@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Upgrade step during course creation wizard.
@@ -10,35 +11,44 @@ const CourseUpgradeStep = () => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1>Sell with Sensei Pro</h1>
+				<h1>{ __( 'Sell with Sensei Pro', 'sensei-lms' ) }</h1>
 				<p>
-					Do you want to sell this course? This requires Sensei Pro
-					which also unlocks many useful features.
+					{ __(
+						'Do you want to sell this course? This requires Sensei Pro which also unlocks many useful features.',
+						'sensei-lms'
+					) }
 				</p>
 				<h1 className="sensei-editor-wizard-modal-upsell__price">
-					$149 USD
+					{ sprintf(
+						// translators: placeholder is the price.
+						__( '%s USD', 'sensei-lms' ),
+						'$149'
+					) }
 				</h1>
 				<span className="sensei-editor-wizard-modal-upsell__price-detail">
-					per year, 1 site
+					{ __( 'per year, 1 site', 'sensei-lms' ) }
 				</span>
 				<ul className="sensei-editor-wizard-modal-upsell__features">
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
-						WooCommerce integration
+						{ __( 'WooCommerce integration', 'sensei-lms' ) }
 					</li>
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
-						Schedule &apos;drip&apos; content
+						{ __( "Schedule 'drip' content", 'sensei-lms' ) }
 					</li>
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
-						Set expiration date of courses
+						{ __( 'Set expiration date of courses', 'sensei-lms' ) }
 					</li>
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
-						Quiz timer
+						{ __( 'Quiz timer', 'sensei-lms' ) }
 					</li>
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
-						Flashcards, Image Hotspots, and Checklists
+						{ __(
+							'Flashcards, Image Hotspots, and Checklists',
+							'sensei-lms'
+						) }
 					</li>
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
-						1 year of updates & support
+						{ __( '1 year of updates & support', 'sensei-lms' ) }
 					</li>
 				</ul>
 			</div>
@@ -48,7 +58,10 @@ const CourseUpgradeStep = () => {
 						window.sensei.pluginUrl +
 						'/assets/images/sensei-pro-upsell.png'
 					}
-					alt="Illustration of a course listing with the pricing defined and with the button 'Purchase Button'"
+					alt={ __(
+						'Illustration of a course listing with the pricing defined and with the button "Purchase Button"',
+						'sensei-lms'
+					) }
 					height="75%"
 				/>
 			</div>
@@ -68,10 +81,10 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	return (
 		<div>
 			<Button isTertiary onClick={ goToNextStep }>
-				Continue with Sensei Free
+				{ __( 'Continue with Sensei Free', 'sensei-lms' ) }
 			</Button>
 			<Button isPrimary onClick={ upgrade } target="_blank">
-				Get Sensei Pro
+				{ __( 'Get Sensei Pro', 'sensei-lms' ) }
 			</Button>
 		</div>
 	);
