@@ -81,18 +81,18 @@ const EditorWizardModal = () => {
 	const { editPost } = useDispatch( editorStore );
 	const steps = useEditorWizardSteps();
 
-	const closeModal = () => {
+	const onWizardCompletion = () => {
 		setDone( true );
-		synchronizeTemplate();
 		editPost( {
 			meta: { _new_post: false },
 		} );
 	};
 
-	// eslint-disable-next-line no-unused-vars
-	const onWizardCompletion = ( wizardData ) => {
-		// TODO Implement actions when wizard is completed
-		closeModal();
+	const closeModal = () => {
+		onWizardCompletion();
+		// Set default template. Mainly used for when lesson is created through Course Outline
+		// (which doesn't start with the template applied).
+		synchronizeTemplate();
 	};
 
 	return (

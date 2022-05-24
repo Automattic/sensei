@@ -28,8 +28,11 @@ const accessibleClick = ( fn ) => ( {
 
 /**
  * Patterns list component.
+ *
+ * @param {Object}   props          Component props.
+ * @param {Function} props.onChoose Callback on choosing a pattern.
  */
-const PatternsList = () => {
+const PatternsList = ( { onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
 		patterns: select( blockEditorStore ).__experimentalGetAllowedPatterns(),
 	} ) );
@@ -56,6 +59,7 @@ const PatternsList = () => {
 							tabIndex={ 0 }
 							{ ...accessibleClick( () => {
 								resetEditorBlocks( blocks );
+								onChoose();
 							} ) }
 						>
 							<div className="sensei-patterns-list__item-preview">
