@@ -51,7 +51,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 				<img
 					src={
 						window.sensei.pluginUrl +
-						'/assets/images/sensei-pro-upsell.png'
+						'assets/dist/images/sensei-pro-upsell.png'
 					}
 					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
 					height="75%"

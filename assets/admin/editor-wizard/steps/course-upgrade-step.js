@@ -58,7 +58,7 @@ const CourseUpgradeStep = () => {
 				<img
 					src={
 						window.sensei.pluginUrl +
-						'/assets/images/sensei-pro-upsell.png'
+						'assets/dist/images/sensei-pro-upsell.png'
 					}
 					alt={ __(
 						'Illustration of a course listing with the pricing defined and with the button "Purchase Button"',
