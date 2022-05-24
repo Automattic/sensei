@@ -94,10 +94,19 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	};
 	return (
 		<div>
-			<Button isTertiary onClick={ goToNextStep }>
+			<Button
+				isTertiary
+				onClick={ goToNextStep }
+				className="sensei-editor-wizard-modal-upsell__button"
+			>
 				{ __( 'Continue with Sensei Free', 'sensei-lms' ) }
 			</Button>
-			<Button isPrimary onClick={ upgrade } target="_blank">
+			<Button
+				isPrimary
+				onClick={ upgrade }
+				target="_blank"
+				className="sensei-editor-wizard-modal-upsell__button"
+			>
 				{ __( 'Get Sensei Pro', 'sensei-lms' ) }
 			</Button>
 		</div>
