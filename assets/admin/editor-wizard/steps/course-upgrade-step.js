@@ -3,11 +3,13 @@
  */
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import useSenseiProExtension from '../use-sensei-pro-extension';
 
 /**
  * Upgrade step during course creation wizard.
  */
 const CourseUpgradeStep = () => {
+	const senseiProExtension = useSenseiProExtension();
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
@@ -22,7 +24,7 @@ const CourseUpgradeStep = () => {
 					{ sprintf(
 						// translators: placeholder is the price.
 						__( '%s USD', 'sensei-lms' ),
-						'$149'
+						senseiProExtension.price.replace( '.00', '' )
 					) }
 				</h1>
 				<span className="sensei-editor-wizard-modal-upsell__price-detail">
