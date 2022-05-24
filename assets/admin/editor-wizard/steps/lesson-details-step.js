@@ -16,7 +16,7 @@ const LessonDetailsStep = () => {
 						'assets/dist/images/sensei-pro-upsell.png'
 					}
 					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
-					className="sensei-editor-wizard-modal-upsell__image"
+					className="sensei-editor-wizard-modal__illustration-image"
 				/>
 			</div>
 		</div>

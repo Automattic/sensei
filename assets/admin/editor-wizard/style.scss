@@ -64,6 +64,10 @@
 		justify-content: right;
 		align-items: center;
 	}
+
+	&__illustration-image {
+		height: 75%;
+	}
 }
 
 .sensei-editor-wizard-modal-upsell {
@@ -76,10 +80,6 @@
 		color: #787C82;
 		margin-top: -10px;
 		margin-bottom: 30px;
-	}
-
-	&__image {
-		height: 75%;
 	}
 
 	&__features {
