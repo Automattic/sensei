@@ -104,7 +104,9 @@ const EditorWizardModal = () => {
 	const senseiProExtension = useSenseiProExtension();
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
-		stepsByPostType.course = [ CourseDetailsStep, CoursePatternsStep ];
+		stepsByPostType.course = stepsByPostType.course.filter(
+			( step ) => step !== CourseUpgradeStep
+		);
 	}
 
 	const steps = stepsByPostType[ postType ];
