@@ -78,7 +78,7 @@ const useWizardOpenState = () => {
 const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
-	const { editPost } = useDispatch( editorStore );
+	const { editPost, savePost } = useDispatch( editorStore );
 	const steps = useEditorWizardSteps();
 
 	const onWizardCompletion = () => {
@@ -86,6 +86,7 @@ const EditorWizardModal = () => {
 		editPost( {
 			meta: { _new_post: false },
 		} );
+		savePost();
 	};
 
 	const closeModal = () => {
