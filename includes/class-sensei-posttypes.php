@@ -847,7 +847,7 @@ class Sensei_PostTypes {
 			'add_new'            => __( 'Add New', 'sensei-lms' ),
 			// translators: Placeholder is the singular post type label.
 			'add_new_item'       => sprintf( __( 'Add New %s', 'sensei-lms' ), $singular ),
-			// translators: Placeholder is the singular post type label.
+			// translators: Placeholder is the item title/name.
 			'edit_item'          => sprintf( __( 'Edit %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the singular post type label.
 			'new_item'           => sprintf( __( 'New %s', 'sensei-lms' ), $singular ),

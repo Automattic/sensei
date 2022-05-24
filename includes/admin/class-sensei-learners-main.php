@@ -428,7 +428,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					'</span>';
 
 				$title = Sensei_Learner::get_full_name( $user_activity->user_id );
-				// translators: Placeholder is the full name of the learner.
+				// translators: Placeholder is the item title/name.
 				$a_title              = sprintf( __( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), $title );
 				$edit_start_date_form = $this->get_edit_start_date_form( $user_activity, $post_id, $post_type );
 
@@ -623,7 +623,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					)
 				);
 				$title           = get_the_title( $item );
-				// translators: Placeholder is the item title.
+				// translators: Placeholder is the item title/name.
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), $title );
 
 				$grading_action = '';
@@ -685,7 +685,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					)
 				);
 				$title           = get_the_title( $item );
-				// translators: Placeholder is the item title.
+				// translators: Placeholder is the item title/name.
 				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), $title );
 
 				$grading_action = ' <a class="button" href="' . esc_url(
