@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import LimitedTextControl from '../../../blocks/editor-components/limited-text-control';
+import senseiProUpsell from '../../../images/sensei-pro-upsell.png';
 
 /**
  * Initial step for course creation wizard.
@@ -49,10 +50,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
 				<img
-					src={
-						window.sensei.pluginUrl +
-						'assets/dist/images/sensei-pro-upsell.png'
-					}
+					src={ window.sensei.pluginUrl + senseiProUpsell }
 					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
 					className="sensei-editor-wizard-modal__illustration-image"
 				/>

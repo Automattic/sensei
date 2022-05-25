@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import senseiProUpsell from '../../../images/sensei-pro-upsell.png';
+
+/**
  * Initial step for course creation wizard.
  */
 const LessonDetailsStep = () => {
@@ -11,10 +16,7 @@ const LessonDetailsStep = () => {
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
 				<img
-					src={
-						window.sensei.pluginUrl +
-						'assets/dist/images/sensei-pro-upsell.png'
-					}
+					src={ window.sensei.pluginUrl + senseiProUpsell }
 					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
 					className="sensei-editor-wizard-modal__illustration-image"
 				/>
