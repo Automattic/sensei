@@ -23,14 +23,13 @@ const LessonPatternsStep = ( {
 	// We could replace `onCompletion` with the `goToNextStep` callback with a similar effect.
 
 	return (
-		<div>
+		<div className="sensei-editor-wizard-modal__content">
+			<h1>Lesson Patterns Step</h1>
 			<div>PENDING TO IMPLEMENT</div>
 			<PatternsList />
 		</div>
 	);
 };
-
-LessonPatternsStep.Title = 'Lesson Patterns Step';
 
 LessonPatternsStep.Actions = ( { goToNextStep } ) => {
 	// TODO Implement this.

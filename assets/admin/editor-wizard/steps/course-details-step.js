@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import LimitedTextControl from '../../../blocks/editor-components/limited-text-control';
+import senseiProUpsell from '../../../images/sensei-pro-upsell.png';
 
 /**
  * Initial step for course creation wizard.
@@ -27,28 +28,36 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 		} );
 	};
 	return (
-		<div>
-			<div>
-				<LimitedTextControl
-					label={ __( 'Course Title', 'sensei-lms' ) }
-					value={ wizardData.newCourseTitle ?? '' }
-					onChange={ updateNewCourseTitle }
-					maxLength={ 40 }
-				/>
-				<LimitedTextControl
-					label={ __( 'Course Description', 'sensei-lms' ) }
-					value={ wizardData.newCourseDescription ?? '' }
-					onChange={ updateNewCourseDescription }
-					maxLength={ 350 }
-					multiline={ true }
+		<div className="sensei-editor-wizard-modal__columns">
+			<div className="sensei-editor-wizard-modal__content">
+				<h1>Course Details Step</h1>
+				<div>
+					<LimitedTextControl
+						label={ __( 'Course Title', 'sensei-lms' ) }
+						value={ wizardData.newCourseTitle ?? '' }
+						onChange={ updateNewCourseTitle }
+						maxLength={ 40 }
+					/>
+					<LimitedTextControl
+						label={ __( 'Course Description', 'sensei-lms' ) }
+						value={ wizardData.newCourseDescription ?? '' }
+						onChange={ updateNewCourseDescription }
+						maxLength={ 350 }
+						multiline={ true }
+					/>
+				</div>
+				<div>PENDING TO IMPLEMENT</div>
+			</div>
+			<div className="sensei-editor-wizard-modal__illustration">
+				<img
+					src={ window.sensei.pluginUrl + senseiProUpsell }
+					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
+					className="sensei-editor-wizard-modal__illustration-image"
 				/>
 			</div>
-			<div>PENDING TO IMPLEMENT</div>
 		</div>
 	);
 };
-
-CourseDetailsStep.Title = 'Course Details Step';
 
 CourseDetailsStep.Actions = ( { data, goToNextStep } ) => {
 	// Actions have access to the whole wizard data.
