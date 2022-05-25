@@ -2,6 +2,10 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
+import { store as editorStore } from '@wordpress/editor';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -16,44 +20,55 @@ import LimitedTextControl from '../../../blocks/editor-components/limited-text-c
  * @param {Function} props.setData
  */
 const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	// TODO Replace this sample implementation.
-	const updateNewCourseTitle = ( value ) => {
-		setWizardData( { ...wizardData, newCourseTitle: value } );
+	usePostTitle( wizardData.courseTitle );
+
+	const updateCourseTitle = ( value ) => {
+		setWizardData( { ...wizardData, courseTitle: value } );
 	};
-	const updateNewCourseDescription = ( value ) => {
+
+	const updateCourseDescription = ( value ) => {
 		setWizardData( {
 			...wizardData,
-			newCourseDescription: value,
+			courseDescription: value,
 		} );
 	};
+
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
 				<h1>Course Details Step</h1>
-				<div>
+				<div className={ 'sensei-editor-wizard-step__description' }>
+					{ __(
+						'Keep your Course Title short as it will get displayed in different places around your website. You can easily change both later.',
+						'sensei-lms'
+					) }
+				</div>
+				<div className={ 'sensei-editor-wizard-step__form' }>
 					<LimitedTextControl
 						label={ __( 'Course Title', 'sensei-lms' ) }
-						value={ wizardData.newCourseTitle ?? '' }
-						onChange={ updateNewCourseTitle }
+						value={ wizardData.courseTitle ?? '' }
+						onChange={ updateCourseTitle }
 						maxLength={ 40 }
 					/>
 					<LimitedTextControl
 						label={ __( 'Course Description', 'sensei-lms' ) }
-						value={ wizardData.newCourseDescription ?? '' }
-						onChange={ updateNewCourseDescription }
+						value={ wizardData.courseDescription ?? '' }
+						onChange={ updateCourseDescription }
 						maxLength={ 350 }
 						multiline={ true }
 					/>
 				</div>
-				<div>PENDING TO IMPLEMENT</div>
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
 				<img
 					src={
 						window.sensei.pluginUrl +
-						'assets/dist/images/sensei-pro-upsell.png'
+						'assets/dist/images/course-details-step.png'
 					}
-					alt="PENDING TO IMPLEMENT, BUT HERE TO SHOW IT WORKING"
+					alt={ __(
+						'Illustration of course sample with some placeholders.',
+						'sensei-lms'
+					) }
 					className="sensei-editor-wizard-modal__illustration-image"
 				/>
 			</div>
@@ -61,26 +76,23 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	);
 };
 
-CourseDetailsStep.Actions = ( { data, goToNextStep } ) => {
-	// Actions have access to the whole wizard data.
-	const secondaryAction = () => {
-		// TODO Remove this.
-		// eslint-disable-next-line no-alert
-		window.alert( `Data ${ JSON.stringify( data ) }` );
-	};
+CourseDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (
 		<div>
-			<button onClick={ secondaryAction }>
-				<span
-					role="img"
-					aria-label="Funny eyes that will be removed later."
-				>
-					👀
-				</span>
-			</button>
-			<button onClick={ goToNextStep }>Next</button>
+			<Button isPrimary onClick={ goToNextStep } target="_blank">
+				{ __( 'Continue', 'sensei-lms' ) }
+			</Button>
 		</div>
 	);
 };
+
+function usePostTitle( title ) {
+	const { editPost } = useDispatch( editorStore );
+	useEffect( () => {
+		editPost( {
+			title,
+		} );
+	}, [ title, editPost ] );
+}
 
 export default CourseDetailsStep;

@@ -106,3 +106,12 @@
 		padding: 18px 30px;
 	}
 }
+
+.sensei-editor-wizard-step {
+	&__form {
+		& label {
+			font-weight: bold;
+			margin-top: 30px;
+		}
+	}
+}
