@@ -1,7 +1,13 @@
 @import './patterns-list.scss';
 
 .sensei-editor-wizard {
+	padding-bottom: 72px; // Footer height.
+
 	&__footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		background: #ffffff;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
