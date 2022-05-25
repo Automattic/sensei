@@ -28,7 +28,15 @@ describe( 'useEditorWizardSteps()', () => {
 			CoursePatternsStep,
 		] );
 	} );
-	it( 'Should have all the course steps when the post type is course and Sensei Pro is installed', () => {
+	it( 'Should not have the course upgrade step when the post type is course and the Sensei Pro extension is not found', () => {
+		useSelect.mockReturnValue( {
+			postType: 'course',
+			senseiProExtension: undefined,
+		} );
+		const steps = useEditorWizardSteps();
+		expect( steps ).toEqual( [ CourseDetailsStep, CoursePatternsStep ] );
+	} );
+	it( 'Should not have the course upgrade step when the post type is course and the Sensei Pro is installed', () => {
 		useSelect.mockReturnValue( {
 			postType: 'course',
 			senseiProExtension: { is_installed: true },
