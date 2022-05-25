@@ -58,7 +58,7 @@ const LessonEditToolbar = ( { lessonId } ) => {
 				dispatch( 'core/editor' ).savePost();
 			} }
 		>
-			{ __( 'Save and edit lesson', 'sensei-lms' ) }
+			{ __( 'Save to edit lesson', 'sensei-lms' ) }
 		</ToolbarItem>
 	);
 
