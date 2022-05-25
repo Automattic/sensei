@@ -52,9 +52,9 @@
     "whatwg-fetch": "3.6.2"
   },
   "overrides": {
-      "react": "17.0.2",
-      "react-dom": "17.0.2",
-      "@wordpress/element": "$@wordpress/element"
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "@wordpress/element": "$@wordpress/element"
   },
   "devDependencies": {
     "@automattic/calypso-build": "10.0.0",
@@ -88,6 +88,7 @@
     "eslint": "7.30.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-jsdoc": "35.4.1",
+    "eslint-plugin-prefer-arrow-functions": "3.1.4",
     "expect-puppeteer": "4.4.0",
     "gettext-parser": "4.0.4",
     "husky": "6.0.0",

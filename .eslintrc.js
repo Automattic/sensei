@@ -40,9 +40,20 @@ module.exports = {
 				preserveMainDescriptionPostDelimiter: true,
 			},
 		],
+		'prefer-arrow-functions/prefer-arrow-functions': [
+			'warn',
+			{
+				classPropertiesAllowed: false,
+				disallowPrototype: false,
+				returnStyle: 'implicit',
+				singleReturnOnly: false,
+			},
+		],
+		'prefer-arrow-callback': [ 'warn', { allowNamedFunctions: false } ],
+		'func-style': [ 'warn', 'expression', { allowArrowFunctions: true } ],
 		'jsdoc/require-yields': 'off',
 		'jsdoc/tag-lines': 'off',
 		'react-hooks/exhaustive-deps': 'warn',
 	},
-	plugins: [ 'jest' ],
+	plugins: [ 'jest', 'prefer-arrow-functions' ],
 };
