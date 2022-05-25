@@ -9,6 +9,8 @@ import {
 	ToolbarItem,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { store as editPostStore } from '@wordpress/edit-post';
+import { store as editorStore } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -45,14 +47,14 @@ const LessonEditToolbar = ( { lessonId, lessonTitle } ) => {
 	// Determine whether we are currently saving.
 	const { isSavingPost, isSavingMetaBoxes, isSavingStructure } = useSelect(
 		( select ) => ( {
-			isSavingPost: select( 'core/editor' ).isSavingPost(),
-			isSavingMetaBoxes: select( 'core/edit-post' ).isSavingMetaBoxes(),
+			isSavingPost: select( editorStore ).isSavingPost(),
+			isSavingMetaBoxes: select( editPostStore ).isSavingMetaBoxes(),
 			isSavingStructure: select( COURSE_STORE ).getIsSavingStructure(),
 		} )
 	);
 
 	// Function to trigger saving the post.
-	const { savePost } = useDispatch( 'core/editor' );
+	const { savePost } = useDispatch( editorStore );
 
 	// If we don't have an ID or a title yet, don't render anything.
 	if ( ! lessonId && ! lessonTitle ) {
