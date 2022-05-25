@@ -9,6 +9,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import { EXTENSIONS_STORE } from '../../../extensions/store';
+import senseiProUpsell from '../../../images/sensei-pro-upsell.png';
 
 /**
  * Upgrade step during course creation wizard.
@@ -69,10 +70,7 @@ const CourseUpgradeStep = () => {
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
 				<img
-					src={
-						window.sensei.pluginUrl +
-						'assets/dist/images/sensei-pro-upsell.png'
-					}
+					src={ window.sensei.pluginUrl + senseiProUpsell }
 					alt={ __(
 						'Illustration of a course listing with the pricing defined and with the button "Purchase Button"',
 						'sensei-lms'
