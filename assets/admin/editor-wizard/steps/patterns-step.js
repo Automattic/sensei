@@ -18,7 +18,9 @@ import PatternsList from '../patterns-list';
  */
 const PatternsStep = ( { data, onCompletion } ) => (
 	<div className="sensei-editor-wizard-modal__content">
-		<h1>{ __( 'Choose Patterns', 'sensei-lms' ) }</h1>
+		<h1 className="sensei-editor-wizard-modal__sticky-title">
+			{ __( 'Choose Patterns', 'sensei-lms' ) }
+		</h1>
 		<p>
 			{ __(
 				'Get a jump on your landing page with one of the patterns below.',

@@ -49,6 +49,19 @@
 		}
 	}
 
+	&__sticky-title {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		margin: -30px 0 0;
+		padding: 30px 0 18px;
+		background: #ffffff;
+
+		& + p {
+			margin-top: 0;
+		}
+	}
+
 	&__columns {
 		display: grid;
 		grid-template-columns: 50% 50%;
