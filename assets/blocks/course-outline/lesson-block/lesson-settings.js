@@ -71,7 +71,7 @@ const LessonSettings = ( {
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
-				<LessonEditToolbar lessonId={ id } />
+				<LessonEditToolbar lessonId={ id } lessonTitle={ title } />
 			</BlockControls>
 		</>
 	);

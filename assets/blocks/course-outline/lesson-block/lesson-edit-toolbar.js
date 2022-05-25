@@ -8,7 +8,7 @@ import {
 	Toolbar,
 	ToolbarItem,
 } from '@wordpress/components';
-import { dispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -37,10 +37,11 @@ export const EditLessonLink = ( { lessonId } ) => (
 /**
  * Toolbar section for the link to edit a lesson.
  *
- * @param {Object} props          Component props.
- * @param {number} props.lessonId The lesson ID.
+ * @param {Object} props             Component props.
+ * @param {number} props.lessonId    The lesson ID.
+ * @param {number} props.lessonTitle The lesson title.
  */
-const LessonEditToolbar = ( { lessonId } ) => {
+const LessonEditToolbar = ( { lessonId, lessonTitle } ) => {
 	// Determine whether we are currently saving.
 	const { isSavingPost, isSavingMetaBoxes, isSavingStructure } = useSelect(
 		( select ) => ( {
@@ -50,14 +51,17 @@ const LessonEditToolbar = ( { lessonId } ) => {
 		} )
 	);
 
+	// Function to trigger saving the post.
+	const { savePost } = useDispatch( 'core/editor' );
+
+	// If we don't have an ID or a title yet, don't render anything.
+	if ( ! lessonId && ! lessonTitle ) {
+		return null;
+	}
+
 	// Component for the "Save and edit lesson" button.
 	const savePostLink = (
-		<ToolbarItem
-			as={ Button }
-			onClick={ () => {
-				dispatch( 'core/editor' ).savePost();
-			} }
-		>
+		<ToolbarItem as={ Button } onClick={ savePost }>
 			{ __( 'Save to edit lesson', 'sensei-lms' ) }
 		</ToolbarItem>
 	);
