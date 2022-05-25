@@ -11,8 +11,8 @@ import { store as editorStore } from '@wordpress/editor';
  * Internal dependencies
  */
 import Wizard from './wizard';
-import '../../shared/data/api-fetch-preloaded-once';
 import useEditorWizardSteps from './use-editor-wizard-steps';
+import '../../shared/data/api-fetch-preloaded-once';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -89,7 +89,7 @@ const EditorWizardModal = () => {
 		savePost();
 	};
 
-	const closeModal = () => {
+	const skipWizard = () => {
 		onWizardCompletion();
 		// Set default template. Mainly used for when lesson is created through Course Outline
 		// (which doesn't start with the template applied).
@@ -100,9 +100,13 @@ const EditorWizardModal = () => {
 		( open && steps && (
 			<Modal
 				className="sensei-editor-wizard-modal"
-				onRequestClose={ closeModal }
+				onRequestClose={ skipWizard }
 			>
-				<Wizard steps={ steps } onCompletion={ onWizardCompletion } />
+				<Wizard
+					steps={ steps }
+					onCompletion={ onWizardCompletion }
+					skipWizard={ skipWizard }
+				/>
 			</Modal>
 		) ) ||
 		null

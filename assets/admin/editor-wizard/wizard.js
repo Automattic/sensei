@@ -9,8 +9,9 @@ import { useState } from '@wordpress/element';
  * @param {Object}   props
  * @param {Array}    props.steps        Array with the steps that will be rendered.
  * @param {Function} props.onCompletion Callback to call when wizard is completed.
+ * @param {Function} props.skipWizard   Function to skip wizard.
  */
-const Wizard = ( { steps, onCompletion } ) => {
+const Wizard = ( { steps, onCompletion, skipWizard } ) => {
 	const [ currentStepNumber, setCurrentStepNumber ] = useState( 0 );
 	const [ data, setData ] = useState( {} );
 
@@ -41,6 +42,7 @@ const Wizard = ( { steps, onCompletion } ) => {
 							<CurrentStep.Actions
 								data={ data }
 								goToNextStep={ goToNextStep }
+								skipWizard={ skipWizard }
 							/>
 						</div>
 					) }

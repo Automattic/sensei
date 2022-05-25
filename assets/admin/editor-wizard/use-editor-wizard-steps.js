@@ -9,9 +9,8 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import CourseDetailsStep from './steps/course-details-step';
 import CourseUpgradeStep from './steps/course-upgrade-step';
-import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
-import LessonPatternsStep from './steps/lesson-patterns-step';
+import PatternsStep from './steps/patterns-step';
 import { EXTENSIONS_STORE } from '../../extensions/store';
 
 /**
@@ -22,8 +21,8 @@ import { EXTENSIONS_STORE } from '../../extensions/store';
  */
 const useEditorWizardSteps = () => {
 	const stepsByPostType = {
-		course: [ CourseDetailsStep, CourseUpgradeStep, CoursePatternsStep ],
-		lesson: [ LessonDetailsStep, LessonPatternsStep ],
+		course: [ CourseDetailsStep, CourseUpgradeStep, PatternsStep ],
+		lesson: [ LessonDetailsStep, PatternsStep ],
 	};
 	const { postType, senseiProExtension } = useSelect(
 		( select ) => ( {
