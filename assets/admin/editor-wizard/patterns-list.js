@@ -5,8 +5,7 @@ import {
 	store as blockEditorStore,
 	BlockPreview,
 } from '@wordpress/block-editor';
-import { store as editorStore } from '@wordpress/editor';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 
@@ -27,54 +26,15 @@ const accessibleClick = ( fn ) => ( {
 } );
 
 /**
- * Update blocks content, filling the placeholders.
- *
- * @param {Object[]} blocks      Blocks to fill with the new content.
- * @param {string}   title       Title to fill the placeholders
- * @param {string}   description Description to fill the placeholders.
- * @return {Object[]} Blocks with the placeholders filled.
- */
-const fillPlaceholders = ( blocks, title, description ) => {
-	if ( ! title && ! description ) {
-		return blocks;
-	}
-
-	return blocks.map( ( block ) => {
-		const { className = '' } = block.attributes;
-
-		if ( title && className.includes( 'sensei-pattern-description' ) ) {
-			block.attributes.content = description;
-		}
-
-		if ( title && className.includes( 'sensei-pattern-title' ) ) {
-			block.attributes.content = title;
-		}
-
-		if ( block.innerBlocks ) {
-			block.innerBlocks = fillPlaceholders( block.innerBlocks );
-		}
-
-		return block;
-	} );
-};
-
-/**
  * Patterns list component.
  *
- * @param {Object}   props             Component props.
- * @param {string}   props.title       Title to fill the chosen pattern.
- * @param {string}   props.description Description to fill the chosen pattern.
- * @param {Function} props.onChoose    Callback on choosing a pattern.
+ * @param {Object}   props          Component props.
+ * @param {Function} props.onChoose Callback on choosing a pattern.
  */
-const PatternsList = ( {
-	title: newTitle,
-	description: newDescription,
-	onChoose,
-} ) => {
+const PatternsList = ( { onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
 		patterns: select( blockEditorStore ).__experimentalGetAllowedPatterns(),
 	} ) );
-	const { resetEditorBlocks } = useDispatch( editorStore );
 
 	return (
 		<div
@@ -96,13 +56,7 @@ const PatternsList = ( {
 							role="option"
 							tabIndex={ 0 }
 							{ ...accessibleClick( () => {
-								const blocksWithFilledContent = fillPlaceholders(
-									blocks,
-									newTitle,
-									newDescription
-								);
-								resetEditorBlocks( blocksWithFilledContent );
-								onChoose();
+								onChoose( blocks );
 							} ) }
 						>
 							<div className="sensei-patterns-list__item-preview">
