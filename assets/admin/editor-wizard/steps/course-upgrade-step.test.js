@@ -21,9 +21,16 @@ const DUMMY_ROUNDED_PRICE = '$130';
 const DUMMY_PRICE_WITH_CENTS = '$123.50';
 const DUMMY_PRICE_SUFFIX = ' USD';
 
+const ANY_PLUGIN_URL = 'https://some-url/';
+
 describe( '<CourseUpgradeStep />', () => {
 	beforeAll( () => {
-		window.sensei = { pluginUrl: '' };
+		// Mock `window.sensei.pluginUrl`.
+		Object.defineProperty( window, 'sensei', {
+			value: {
+				pluginUrl: ANY_PLUGIN_URL,
+			},
+		} );
 	} );
 
 	it( 'Should return a component including the price rounded', () => {
