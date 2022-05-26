@@ -352,7 +352,7 @@ class Sensei_PostTypes {
 			),
 			'map_meta_cap'          => true,
 			'capability_type'       => 'lesson',
-			'has_archive'           => true,
+			'has_archive'           => false,
 			'hierarchical'          => false,
 			'menu_position'         => 52,
 			'supports'              => $supports_array,
