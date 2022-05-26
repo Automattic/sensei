@@ -2,12 +2,7 @@
  * WordPress dependencies
  */
 import { InspectorControls, BlockControls } from '@wordpress/block-editor';
-import {
-	ExternalLink,
-	FontSizePicker,
-	PanelBody,
-	Toolbar,
-} from '@wordpress/components';
+import { FontSizePicker, PanelBody } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
@@ -16,6 +11,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { Status } from '../status-preview';
 import { StatusControl } from '../status-preview/status-control';
+import LessonEditToolbar, { EditLessonLink } from './lesson-edit-toolbar';
 
 /**
  * Inspector controls for lesson block.
@@ -39,22 +35,12 @@ const LessonSettings = ( {
 		select( 'core/block-editor' ).getSettings()
 	);
 
-	const editLessonLink = (
-		<ExternalLink
-			href={ `post.php?post=${ id }&action=edit` }
-			target="lesson"
-			className="wp-block-sensei-lms-course-outline-lesson__edit"
-		>
-			{ __( 'Edit lesson', 'sensei-lms' ) }
-		</ExternalLink>
-	);
-
 	return (
 		<>
 			<InspectorControls>
 				{ id && (
 					<PanelBody title={ __( 'Lesson', 'sensei-lms' ) }>
-						<h2>{ editLessonLink }</h2>
+						<h2>{ <EditLessonLink lessonId={ id } /> }</h2>
 						<p>
 							{ __(
 								'Edit details such as lesson content, prerequisite, quiz settings and more.',
@@ -85,11 +71,7 @@ const LessonSettings = ( {
 				</PanelBody>
 			</InspectorControls>
 			<BlockControls>
-				{ id && (
-					<Toolbar className="components-button">
-						{ editLessonLink }
-					</Toolbar>
-				) }
+				<LessonEditToolbar lessonId={ id } lessonTitle={ title } />
 			</BlockControls>
 		</>
 	);
