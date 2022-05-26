@@ -13,14 +13,13 @@ import PatternsList from '../patterns-list';
  * Choose patterns step.
  *
  * @param {Object}   props              Component props.
+ * @param {string}   props.title        Step title.
  * @param {Object}   props.data         Wizard data.
  * @param {Function} props.onCompletion On completion callback.
  */
-const PatternsStep = ( { data, onCompletion } ) => (
+const PatternsStep = ( { title, data, onCompletion } ) => (
 	<div className="sensei-editor-wizard-modal__content">
-		<h1 className="sensei-editor-wizard-modal__sticky-title">
-			{ __( 'Choose Patterns', 'sensei-lms' ) }
-		</h1>
+		<h1 className="sensei-editor-wizard-modal__sticky-title">{ title }</h1>
 		<PatternsList
 			title={ data.newCourseTitle }
 			description={ data.newCourseDescription }
