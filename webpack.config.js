@@ -117,16 +117,31 @@ const baseDist = 'assets/dist/';
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
+	const styleSheetFiles = /\.(sc|sa|c)ss$/i;
+	const scriptFiles = /\.[jt]sx?$/i;
+
 	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
 
 	// Handle SVG images only in CSS files.
-	webpackConfig.module.rules[ 3 ].test = /\.(?:gif|jpg|jpeg|png)$/i;
+	webpackConfig.module.rules[ 3 ].test = /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i;
+	webpackConfig.module.rules[ 3 ].issuer = styleSheetFiles;
+
+	// Handle only images in JS files
 	webpackConfig.module.rules = [
 		...webpackConfig.module.rules,
 		{
-			...webpackConfig.module.rules[ 3 ],
-			issuer: /\.(sc|sa|c)ss$/,
+			test: /\.(?:gif|jpg|jpeg|png)$/i,
+			issuer: scriptFiles,
+			type: 'asset/resource',
+			generator: {
+				filename: '[path][name]-[contenthash][ext]',
+				publicPath: 'assets/dist/',
+			},
+		},
+		{
 			test: /\.svg$/,
+			issuer: scriptFiles,
+			use: [ '@svgr/webpack' ],
 		},
 	];
 
@@ -152,24 +167,6 @@ function getWebpackConfig( env, argv ) {
 		devtool:
 			process.env.SOURCEMAP ||
 			( isDevelopment ? 'eval-source-map' : false ),
-		module: {
-			rules: [
-				...webpackConfig.module.rules,
-				{
-					test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
-					type: 'asset/resource',
-					generator: {
-						filename: '[path][name]-[contenthash][ext]',
-						publicPath: '../',
-					},
-				},
-				{
-					test: /\.svg$/,
-					issuer: /\.[jt]sx?$/,
-					use: [ '@svgr/webpack' ],
-				},
-			],
-		},
 		plugins: [
 			...webpackConfig.plugins,
 			new GenerateChunksMapPlugin( {

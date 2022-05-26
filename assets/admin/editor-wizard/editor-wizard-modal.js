@@ -17,6 +17,7 @@ import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
 import { EXTENSIONS_STORE } from '../../extensions/store';
+import '../../shared/data/api-fetch-preloaded-once';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.

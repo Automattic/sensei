@@ -11,6 +11,7 @@ import { useEffect } from '@wordpress/element';
  * Internal dependencies
  */
 import LimitedTextControl from '../../../blocks/editor-components/limited-text-control';
+import courseDetailsStepImage from '../../../images/course-details-step.png';
 
 /**
  * Initial step for course creation wizard.
@@ -61,10 +62,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
 				<img
-					src={
-						window.sensei.pluginUrl +
-						'assets/dist/images/course-details-step.png'
-					}
+					src={ window.sensei.pluginUrl + courseDetailsStepImage }
 					alt={ __(
 						'Illustration of course sample with some placeholders.',
 						'sensei-lms'
