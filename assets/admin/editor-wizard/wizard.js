@@ -27,7 +27,7 @@ const Wizard = ( { steps, onCompletion, skipWizard } ) => {
 	const CurrentStep = steps[ currentStepNumber ];
 
 	return (
-		( CurrentStep && (
+		CurrentStep && (
 			<div className="sensei-editor-wizard">
 				<CurrentStep
 					data={ data }
@@ -54,8 +54,7 @@ const Wizard = ( { steps, onCompletion, skipWizard } ) => {
 					) }
 				</div>
 			</div>
-		) ) ||
-		null
+		)
 	);
 };
 
