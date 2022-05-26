@@ -15,6 +15,7 @@ module.exports = {
 		'<rootDir>/tests/e2e-playwright/',
 	],
 	moduleNameMapper: {
-		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
+		'\\.(?:gif|jpg|jpeg|png)$': '<rootDir>/tests/__mocks__/svg.js',
+		'\\.png$': '<rootDir>/tests/__mocks__/fileMock.js',
 	},
 };
