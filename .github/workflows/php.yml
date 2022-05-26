@@ -163,7 +163,7 @@ jobs:
                   php-version: 7.4
                   extensions: mysql
                   tools: composer
-                  coverage: none
+                  coverage: xdebug
 
             - name: Tool versions
               run: |
