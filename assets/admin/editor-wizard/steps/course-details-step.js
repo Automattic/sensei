@@ -37,7 +37,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1>Course Details Step</h1>
+				<h1>{ __( 'Create your course', 'sensei-lms' ) }</h1>
 				<div className="sensei-editor-wizard-step__description">
 					{ __(
 						'Keep your Course Title short as it will get displayed in different places around your website. You can easily change both later.',
