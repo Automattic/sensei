@@ -18,45 +18,40 @@ const extractVideoPressIdFromUrl = ( url ) => {
 /**
  * Initializes the VideoPress block player.
  *
- * @param {HTMLElement} iframe The iframe of the VideoPress block.
+ * @param {HTMLIFrameElement} iframe The iframe of the VideoPress block.
  */
 const initVideoPressPlayer = ( iframe ) => {
 	const videoId = extractVideoPressIdFromUrl( iframe.src );
 	let onVideoEnd = () => {};
 
-	iframe.addEventListener( 'load', () => {
-		// eslint-disable-next-line @wordpress/no-global-event-listener
-		window.addEventListener(
-			'message',
-			( event ) => {
-				if ( event.source !== iframe.contentWindow ) {
-					return;
-				}
-				if (
-					event.data.event === 'ended' &&
-					event.data.id === videoId
-				) {
-					onVideoEnd();
-				}
-			},
-			false
-		);
+	// eslint-disable-next-line @wordpress/no-global-event-listener
+	window.addEventListener(
+		'message',
+		( event ) => {
+			if ( event.source !== iframe.contentWindow ) {
+				return;
+			}
+			if ( event.data.event === 'ended' && event.data.id === videoId ) {
+				onVideoEnd();
+			}
+		},
+		false
+	);
 
-		registerVideo( {
-			registerVideoEndHandler: ( cb ) => {
-				onVideoEnd = cb;
-			},
-			pauseVideo: () => {
-				iframe.contentWindow.postMessage(
-					{
-						event: 'videopress_action_pause',
-					},
-					'*'
-				);
-			},
-			url: iframe.src.split( '?' )[ 0 ],
-			blockElement: iframe.closest( 'figure' ),
-		} );
+	registerVideo( {
+		registerVideoEndHandler: ( cb ) => {
+			onVideoEnd = cb;
+		},
+		pauseVideo: () => {
+			iframe.contentWindow.postMessage(
+				{
+					event: 'videopress_action_pause',
+				},
+				'*'
+			);
+		},
+		url: iframe.src.split( '?' )[ 0 ],
+		blockElement: iframe.closest( 'figure' ),
 	} );
 };
 
