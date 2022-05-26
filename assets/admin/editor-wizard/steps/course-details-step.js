@@ -37,13 +37,13 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
 				<h1>Course Details Step</h1>
-				<div className={ 'sensei-editor-wizard-step__description' }>
+				<div className="sensei-editor-wizard-step__description">
 					{ __(
 						'Keep your Course Title short as it will get displayed in different places around your website. You can easily change both later.',
 						'sensei-lms'
 					) }
 				</div>
-				<div className={ 'sensei-editor-wizard-step__form' }>
+				<div className="sensei-editor-wizard-step__form">
 					<LimitedTextControl
 						label={ __( 'Course Title', 'sensei-lms' ) }
 						value={ wizardData.courseTitle ?? '' }
@@ -79,7 +79,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 CourseDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (
 		<div>
-			<Button isPrimary onClick={ goToNextStep } target="_blank">
+			<Button isPrimary onClick={ goToNextStep }>
 				{ __( 'Continue', 'sensei-lms' ) }
 			</Button>
 		</div>
