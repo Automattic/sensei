@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
@@ -11,13 +11,8 @@ import { store as editorStore } from '@wordpress/editor';
  * Internal dependencies
  */
 import Wizard from './wizard';
-import CourseDetailsStep from './steps/course-details-step';
-import CourseUpgradeStep from './steps/course-upgrade-step';
-import CoursePatternsStep from './steps/course-patterns-step';
-import LessonDetailsStep from './steps/lesson-details-step';
-import LessonPatternsStep from './steps/lesson-patterns-step';
-import { EXTENSIONS_STORE } from '../../extensions/store';
 import '../../shared/data/api-fetch-preloaded-once';
+import useEditorWizardSteps from './use-editor-wizard-steps';
 
 /**
  * A React Hook to observe if a modal is open based on the body class.
@@ -84,6 +79,7 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
+	const steps = useEditorWizardSteps();
 
 	const closeModal = () => {
 		setDone( true );
@@ -92,29 +88,6 @@ const EditorWizardModal = () => {
 			meta: { _new_post: false },
 		} );
 	};
-
-	// Choose steps by post type.
-	const stepsByPostType = {
-		course: [ CourseDetailsStep, CourseUpgradeStep, CoursePatternsStep ],
-		lesson: [ LessonDetailsStep, LessonPatternsStep ],
-	};
-	const { postType, senseiProExtension } = useSelect(
-		( select ) => ( {
-			postType: select( editorStore )?.getCurrentPostType(),
-			senseiProExtension: select(
-				EXTENSIONS_STORE
-			).getSenseiProExtension(),
-		} ),
-		[]
-	);
-
-	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
-		stepsByPostType.course = stepsByPostType.course.filter(
-			( step ) => step !== CourseUpgradeStep
-		);
-	}
-
-	const steps = stepsByPostType[ postType ];
 
 	// eslint-disable-next-line no-unused-vars
 	const onWizardCompletion = ( wizardData ) => {
