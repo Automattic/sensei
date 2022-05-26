@@ -2011,6 +2011,12 @@ class Sensei_Admin {
 		// phpcs:enable WordPress.Security.NonceVerification
 	}
 
+	/**
+	 * Set `window.sensei.pluginUrl` to be used from javascript.
+	 *
+	 * @since x.x.x
+	 * @access private
+	 */
 	public function sensei_set_plugin_url() {
 
 		$screen = get_current_screen();
