@@ -12,15 +12,15 @@ import { __ } from '@wordpress/i18n';
 import PatternsList from '../patterns-list';
 
 /**
- * Update blocks content, filling the placeholders.
+ * Update blocks content, replacing the placeholders with a content.
  *
- * @param {Object[]} blocks   Blocks to fill with the new content.
+ * @param {Object[]} blocks   Blocks to replace with the new content.
  * @param {Object}   replaces Object containing content to be replaced. The keys are the block
  *                            classNames to find. The values are the content to be replaced.
  *
  * @return {Object[]} Blocks with the placeholders filled.
  */
-export const fillPlaceholders = ( blocks, replaces ) =>
+export const replacePlaceholders = ( blocks, replaces ) =>
 	blocks.map( ( block ) => {
 		const { className = '' } = block.attributes;
 		const replacesArray = Object.entries( replaces );
@@ -32,7 +32,10 @@ export const fillPlaceholders = ( blocks, replaces ) =>
 		} );
 
 		if ( block.innerBlocks ) {
-			block.innerBlocks = fillPlaceholders( block.innerBlocks, replaces );
+			block.innerBlocks = replacePlaceholders(
+				block.innerBlocks,
+				replaces
+			);
 		}
 
 		return block;
@@ -53,7 +56,7 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 
 	const onChoose = ( blocks ) => {
 		const newBlocks = replaces
-			? fillPlaceholders( blocks, replaces )
+			? replacePlaceholders( blocks, replaces )
 			: blocks;
 
 		resetEditorBlocks( newBlocks );

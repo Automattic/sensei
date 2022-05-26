@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { fillPlaceholders } from './patterns-step';
+import { replacePlaceholders } from './patterns-step';
 
-describe( 'fillPlaceholders', () => {
+describe( 'replacePlaceholders', () => {
 	const replaces = {
 		title: 'New title',
 		description: 'New description',
@@ -65,7 +65,7 @@ describe( 'fillPlaceholders', () => {
 			},
 		];
 
-		const newBlocks = fillPlaceholders( blocks, replaces );
+		const newBlocks = replacePlaceholders( blocks, replaces );
 
 		expect( newBlocks ).toEqual( expectedBlocks );
 	} );
