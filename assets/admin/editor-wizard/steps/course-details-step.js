@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
 import { useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -21,16 +20,17 @@ import courseDetailsStepImage from '../../../images/course-details-step.png';
  * @param {Function} props.setData
  */
 const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	usePostTitle( wizardData.courseTitle );
+	const { editPost } = useDispatch( editorStore );
 
-	const updateCourseTitle = ( value ) => {
-		setWizardData( { ...wizardData, courseTitle: value } );
+	const updateCourseTitle = ( title ) => {
+		setWizardData( { ...wizardData, courseTitle: title } );
+		editPost( { title } );
 	};
 
-	const updateCourseDescription = ( value ) => {
+	const updateCourseDescription = ( description ) => {
 		setWizardData( {
 			...wizardData,
-			courseDescription: value,
+			courseDescription: description,
 		} );
 	};
 
@@ -83,14 +83,5 @@ CourseDetailsStep.Actions = ( { goToNextStep } ) => {
 		</div>
 	);
 };
-
-function usePostTitle( title ) {
-	const { editPost } = useDispatch( editorStore );
-	useEffect( () => {
-		editPost( {
-			title,
-		} );
-	}, [ title, editPost ] );
-}
 
 export default CourseDetailsStep;
