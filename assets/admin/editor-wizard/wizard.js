@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { useState } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Wizard component.
@@ -35,7 +36,12 @@ const Wizard = ( { steps, onCompletion, skipWizard } ) => {
 				/>
 				<div className="sensei-editor-wizard__footer">
 					<div className="sensei-editor-wizard__progress">
-						Step { currentStepNumber + 1 } of { steps.length }
+						{ sprintf(
+							// translators: %1$d Current step number, %2$d Number of steps.
+							__( 'Step %1$d of %2$d', 'sensei-lms' ),
+							currentStepNumber + 1,
+							steps.length
+						) }
 					</div>
 					{ CurrentStep.Actions && (
 						<div className="sensei-editor-wizard__actions">
