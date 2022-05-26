@@ -2018,11 +2018,12 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, array( 'course', 'lesson' ) ) ) {
+		if ( in_array( $screen->id, [ 'course', 'lesson' ] ) ) {
 			?>
-<script>
-	window.sensei = window.sensei || {}; window.sensei.pluginUrl = '<? echo Sensei()->plugin_url; ?>';
-</script>
+			<script>
+				window.sensei = window.sensei || {};
+				window.sensei.pluginUrl = '<? echo Sensei()->plugin_url; ?>';
+			</script>
 			<?php
 		}
 	}
