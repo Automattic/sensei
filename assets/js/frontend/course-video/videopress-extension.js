@@ -54,7 +54,7 @@ const initVideoPressPlayer = ( iframe ) => {
 					'*'
 				);
 			},
-			url: iframe.src,
+			url: iframe.src.split( '?' )[ 0 ],
 			blockElement: iframe.closest( 'figure' ),
 		} );
 	} );

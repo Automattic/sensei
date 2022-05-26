@@ -19,7 +19,7 @@ const initVideoPlayer = ( video ) => {
 			onVideoEnd = cb;
 		},
 		pauseVideo: video.pause.bind( video ),
-		url: video.src,
+		url: video.src.split( '?' )[ 0 ],
 		blockElement: video.closest( 'figure' ),
 	} );
 };
