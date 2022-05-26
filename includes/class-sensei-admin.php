@@ -2028,7 +2028,7 @@ class Sensei_Admin {
 			?>
 			<script>
 				window.sensei = window.sensei || {};
-				window.sensei.pluginUrl = '<?php echo Sensei()->plugin_url; ?>';
+				window.sensei.pluginUrl = '<?php echo esc_url( Sensei()->plugin_url ); ?>';
 			</script>
 			<?php
 		}
