@@ -21,12 +21,6 @@ const PatternsStep = ( { data, onCompletion } ) => (
 		<h1 className="sensei-editor-wizard-modal__sticky-title">
 			{ __( 'Choose Patterns', 'sensei-lms' ) }
 		</h1>
-		<p>
-			{ __(
-				'Get a jump on your landing page with one of the patterns below.',
-				'sensei-lms'
-			) }{ ' ' }
-		</p>
 		<PatternsList
 			title={ data.newCourseTitle }
 			description={ data.newCourseDescription }
