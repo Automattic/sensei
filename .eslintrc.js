@@ -51,6 +51,7 @@ module.exports = {
 		],
 		'prefer-arrow-callback': [ 'warn', { allowNamedFunctions: false } ],
 		'func-style': [ 'warn', 'expression', { allowArrowFunctions: true } ],
+		yoda: [ 'warn', 'always' ],
 		'jsdoc/require-yields': 'off',
 		'jsdoc/tag-lines': 'off',
 		'react-hooks/exhaustive-deps': 'warn',
