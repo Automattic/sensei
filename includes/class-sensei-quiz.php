@@ -31,6 +31,9 @@ class Sensei_Quiz {
 		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required', 'enable_quiz_reset' );
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
+		// Redirect if the lesson is protected.
+		add_action( 'template_redirect', array( $this, 'redirect_if_lesson_is_protected' ) );
+
 		// Listen for a page change.
 		add_action( 'template_redirect', array( $this, 'page_change_listener' ) );
 
@@ -427,6 +430,25 @@ class Sensei_Quiz {
 		);
 		exit;
 
+	}
+
+	/**
+	 * Redirect back to the lesson if the lesson is password protected.
+	 *
+	 * @since  x.x.x
+	 * @access private
+	 */
+	public function redirect_if_lesson_is_protected() {
+		if ( ! is_singular( 'quiz' ) ) {
+			return;
+		}
+
+		$lesson_id = $this->get_lesson_id();
+
+		if ( post_password_required( $lesson_id ) ) {
+			wp_safe_redirect( get_permalink( $lesson_id ) );
+			exit;
+		}
 	}
 
 	/**
