@@ -97,7 +97,8 @@ const EditorWizardModal = () => {
 	};
 
 	return (
-		( open && steps && (
+		open &&
+		steps && (
 			<Modal
 				className="sensei-editor-wizard-modal"
 				onRequestClose={ skipWizard }
@@ -108,8 +109,7 @@ const EditorWizardModal = () => {
 					skipWizard={ skipWizard }
 				/>
 			</Modal>
-		) ) ||
-		null
+		)
 	);
 };
 
