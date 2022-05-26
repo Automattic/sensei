@@ -14,53 +14,49 @@ import PatternsList from '../patterns-list';
 /**
  * Update blocks content, filling the placeholders.
  *
- * @param {Object[]} blocks      Blocks to fill with the new content.
- * @param {string}   title       Title to fill the placeholders
- * @param {string}   description Description to fill the placeholders.
+ * @param {Object[]} blocks   Blocks to fill with the new content.
+ * @param {Object}   replaces Object containing content to be replaced. The keys are the block
+ *                            classNames to find. The values are the content to be replaced.
+ *
  * @return {Object[]} Blocks with the placeholders filled.
  */
-const fillPlaceholders = ( blocks, title, description ) => {
-	if ( ! title && ! description ) {
-		return blocks;
-	}
-
-	return blocks.map( ( block ) => {
+export const fillPlaceholders = ( blocks, replaces ) =>
+	blocks.map( ( block ) => {
 		const { className = '' } = block.attributes;
+		const replacesArray = Object.entries( replaces );
 
-		if ( title && className.includes( 'sensei-pattern-description' ) ) {
-			block.attributes.content = description;
-		}
-
-		if ( title && className.includes( 'sensei-pattern-title' ) ) {
-			block.attributes.content = title;
-		}
+		replacesArray.forEach( ( [ placeholder, content ] ) => {
+			if ( className.includes( placeholder ) ) {
+				block.attributes.content = content;
+			}
+		} );
 
 		if ( block.innerBlocks ) {
-			block.innerBlocks = fillPlaceholders( block.innerBlocks );
+			block.innerBlocks = fillPlaceholders( block.innerBlocks, replaces );
 		}
 
 		return block;
 	} );
-};
 
 /**
  * Choose patterns step.
  *
  * @param {Object}   props              Component props.
  * @param {string}   props.title        Step title.
- * @param {Object}   props.data         Wizard data.
+ * @param {Object}   props.replaces     Object containing content to be replaced. The keys are the
+ *                                      block classNames to find. The values are the content to be
+ *                                      replaced.
  * @param {Function} props.onCompletion On completion callback.
  */
-const PatternsStep = ( { title, data, onCompletion } ) => {
+const PatternsStep = ( { title, replaces, onCompletion } ) => {
 	const { resetEditorBlocks } = useDispatch( editorStore );
 
 	const onChoose = ( blocks ) => {
-		const blocksWithFilledContent = fillPlaceholders(
-			blocks,
-			data.title,
-			data.description
-		);
-		resetEditorBlocks( blocksWithFilledContent );
+		const newBlocks = replaces
+			? fillPlaceholders( blocks, replaces )
+			: blocks;
+
+		resetEditorBlocks( newBlocks );
 		onCompletion();
 	};
 
@@ -69,11 +65,7 @@ const PatternsStep = ( { title, data, onCompletion } ) => {
 			<h1 className="sensei-editor-wizard-modal__sticky-title">
 				{ title }
 			</h1>
-			<PatternsList
-				title={ data.newCourseTitle }
-				description={ data.newCourseDescription }
-				onChoose={ onChoose }
-			/>
+			<PatternsList onChoose={ onChoose } />
 		</div>
 	);
 };
