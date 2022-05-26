@@ -16,7 +16,7 @@ import { EXTENSIONS_STORE } from '../../extensions/store';
 
 /**
  * Returns the list of components (representing steps) for the Editor Wizard according to the post type and if
- * Sensei Pro is installed or not
+ * Sensei Pro is installed or not.
  *
  * @return {Array} The list of components to show to the user
  */
