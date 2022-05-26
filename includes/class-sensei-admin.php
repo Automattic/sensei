@@ -42,6 +42,7 @@ class Sensei_Admin {
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
+		add_action( 'admin_print_scripts', array($this, 'sensei_set_plugin_url'));
 
 		// Duplicate lesson & courses
 		add_filter( 'post_row_actions', array( $this, 'duplicate_action_link' ), 10, 2 );
@@ -2008,6 +2009,22 @@ class Sensei_Admin {
 
 		sensei_log_event( $event_name, $properties );
 		// phpcs:enable WordPress.Security.NonceVerification
+	}
+
+	public function sensei_set_plugin_url() {
+
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, array( 'course', 'lesson' ) ) ) {
+			?>
+<script>
+	window.sensei = window.sensei || {}; window.sensei.pluginUrl = '<? echo Sensei()->plugin_url; ?>';
+</script>
+			<?php
+		}
 	}
 
 }
