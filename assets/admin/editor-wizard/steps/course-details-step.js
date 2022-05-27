@@ -10,7 +10,7 @@ import { useDispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import LimitedTextControl from '../../../blocks/editor-components/limited-text-control';
-import courseDetailsStepImage from '../../../images/course-details-step.png';
+import detailsStepImage from '../../../images/details-step.png';
 
 /**
  * Initial step for course creation wizard.
@@ -37,7 +37,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1>Course Details Step</h1>
+				<h1>{ __( 'Create your course', 'sensei-lms' ) }</h1>
 				<div className="sensei-editor-wizard-step__description">
 					{ __(
 						'Keep your Course Title short as it will get displayed in different places around your website. You can easily change both later.',
@@ -62,7 +62,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
 				<img
-					src={ window.sensei.pluginUrl + courseDetailsStepImage }
+					src={ window.sensei.pluginUrl + detailsStepImage }
 					alt={ __(
 						'Illustration of course sample with some placeholders.',
 						'sensei-lms'

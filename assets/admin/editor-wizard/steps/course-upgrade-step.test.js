@@ -6,7 +6,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * External dependencies
  */
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 /**
@@ -21,9 +21,16 @@ const DUMMY_ROUNDED_PRICE = '$130';
 const DUMMY_PRICE_WITH_CENTS = '$123.50';
 const DUMMY_PRICE_SUFFIX = ' USD';
 
+const ANY_PLUGIN_URL = 'https://some-url/';
+
 describe( '<CourseUpgradeStep />', () => {
 	beforeAll( () => {
-		window.sensei = { pluginUrl: '' };
+		// Mock `window.sensei.pluginUrl`.
+		Object.defineProperty( window, 'sensei', {
+			value: {
+				pluginUrl: ANY_PLUGIN_URL,
+			},
+		} );
 	} );
 
 	it( 'Should return a component including the price rounded', () => {
@@ -52,5 +59,26 @@ describe( '<CourseUpgradeStep />', () => {
 		expect(
 			queryByText( DUMMY_PRICE_WITH_CENTS + DUMMY_PRICE_SUFFIX )
 		).toBeTruthy();
+	} );
+} );
+
+describe( '<CourseUpgradeStep.Actions />', () => {
+	it( 'Does not call `goToNextStep` when rendering.', () => {
+		const goToNextStepMock = jest.fn();
+
+		render(
+			<CourseUpgradeStep.Actions goToNextStep={ goToNextStepMock } />
+		);
+		expect( goToNextStepMock ).toBeCalledTimes( 0 );
+	} );
+
+	it( 'Calls `goToNextStep` on click.', () => {
+		const goToNextStepMock = jest.fn();
+
+		const { queryByText } = render(
+			<CourseUpgradeStep.Actions goToNextStep={ goToNextStepMock } />
+		);
+		fireEvent.click( queryByText( 'Continue with Sensei Free' ) );
+		expect( goToNextStepMock ).toBeCalledTimes( 1 );
 	} );
 } );
