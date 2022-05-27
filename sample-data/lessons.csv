@@ -289,7 +289,7 @@ Id,Lesson,Slug,Description,Excerpt,Status,Module,Prerequisite,Preview,Tags,Image
 <!-- /wp:sensei-lms/button-contact-teacher -->
 
 <!-- wp:paragraph -->
-<p>Sensei LMS has native functionality that enables you to export courses, lessons and questions. This means you can export course data from a staging site, for example, and then <a href=""https://senseilms.com/lesson/import/"" data-type=""lesson"" data-id=""3473"">import</a> it into your live site.</p>
+<p>Sensei LMS has native functionality that enables you to export courses, lessons and questions. This means you can export course data from a staging site, for example, and then <a href=""https://senseilms.com/documentation/import/"" data-type=""lesson"" data-id=""3473"">import</a> it into your live site.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:list {""ordered"":true} -->

@@ -38,7 +38,7 @@ export const UploadPage = ( { state, isReady, submitStartImport } ) => {
 								// eslint-disable-next-line jsx-a11y/anchor-has-content
 								<a
 									className="link__color-secondary"
-									href="https://senseilms.com/lesson/import/"
+									href="https://senseilms.com/documentation/import/"
 									target="_blank"
 									type="external"
 									rel="noopener noreferrer"
