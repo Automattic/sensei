@@ -67,7 +67,30 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 			[ 'sensei-lms/button-take-course' ],
 			[ 'sensei-lms/button-contact-teacher' ],
 			[ 'sensei-lms/course-progress' ],
-			[ 'sensei-lms/course-outline' ],
+			[
+				'sensei-lms/course-outline',
+				[],
+				[
+					[
+						'sensei-lms/course-outline-lesson',
+						[
+							'title' => __( 'Lesson 1', 'sensei-lms' ),
+						],
+					],
+					[
+						'sensei-lms/course-outline-lesson',
+						[
+							'title' => __( 'Lesson 2', 'sensei-lms' ),
+						],
+					],
+					[
+						'sensei-lms/course-outline-lesson',
+						[
+							'title' => __( 'Lesson 3', 'sensei-lms' ),
+						],
+					],
+				],
+			],
 		];
 
 		/**
@@ -133,7 +156,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 *
 	 * @access private
 	 *
-	 * @param bool $enabled
+	 * @param bool $enabled The current value passed from the filter.
 	 *
 	 * @return bool
 	 */
