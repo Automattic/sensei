@@ -27,34 +27,32 @@ const Wizard = ( { steps, onCompletion, skipWizard } ) => {
 	const CurrentStep = steps[ currentStepNumber ];
 
 	return (
-		CurrentStep && (
-			<div className="sensei-editor-wizard">
-				<CurrentStep
-					data={ data }
-					setData={ setData }
-					onCompletion={ onCompletion }
-				/>
-				<div className="sensei-editor-wizard__footer">
-					<div className="sensei-editor-wizard__progress">
-						{ sprintf(
-							// translators: %1$d Current step number, %2$d Number of steps.
-							__( 'Step %1$d of %2$d', 'sensei-lms' ),
-							currentStepNumber + 1,
-							steps.length
-						) }
-					</div>
-					{ CurrentStep.Actions && (
-						<div className="sensei-editor-wizard__actions">
-							<CurrentStep.Actions
-								data={ data }
-								goToNextStep={ goToNextStep }
-								skipWizard={ skipWizard }
-							/>
-						</div>
+		<div className="sensei-editor-wizard">
+			<CurrentStep
+				data={ data }
+				setData={ setData }
+				onCompletion={ onCompletion }
+			/>
+			<div className="sensei-editor-wizard__footer">
+				<div className="sensei-editor-wizard__progress">
+					{ sprintf(
+						// translators: %1$d Current step number, %2$d Number of steps.
+						__( 'Step %1$d of %2$d', 'sensei-lms' ),
+						currentStepNumber + 1,
+						steps.length
 					) }
 				</div>
+				{ CurrentStep.Actions && (
+					<div className="sensei-editor-wizard__actions">
+						<CurrentStep.Actions
+							data={ data }
+							goToNextStep={ goToNextStep }
+							skipWizard={ skipWizard }
+						/>
+					</div>
+				) }
 			</div>
-		)
+		</div>
 	);
 };
 
