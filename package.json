@@ -136,8 +136,7 @@
     "test:e2e": "playwright test",
     "test:e2e:debug": "playwright test --headed",
     "prepare": "husky install",
-    "wp-env": "wp-env",
-    "gutenberg:list": "node ./scripts/check-versions.mjs"
+    "wp-env": "wp-env"
   },
   "lint-staged": {
     "package.json": [
