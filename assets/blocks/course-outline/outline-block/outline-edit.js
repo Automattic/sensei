@@ -7,9 +7,7 @@ import {
 } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { store as editorStore } from '@wordpress/editor';
 import { createContext, useCallback, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -54,10 +52,9 @@ const OutlineEdit = ( props ) => {
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
-	const { isEmpty, isPostNew } = useSelect(
+	const { isEmpty } = useSelect(
 		( select ) => ( {
 			isEmpty: ! select( blockEditorStore ).getBlocks( clientId ).length,
-			isPostNew: select( editorStore ).isEditedPostNew(),
 		} ),
 		[ clientId ]
 	);
@@ -68,18 +65,6 @@ const OutlineEdit = ( props ) => {
 		() => <OutlineAppender clientId={ clientId } />,
 		[ clientId ]
 	);
-
-	useEffect( () => {
-		if ( ! isPostNew ) {
-			// Only add the lessons if the post is new
-			return;
-		}
-		setBlocks( [
-			{ type: 'lesson', title: __( 'Lesson 1', 'sensei-lms' ) },
-			{ type: 'lesson', title: __( 'Lesson 2', 'sensei-lms' ) },
-			{ type: 'lesson', title: __( 'Lesson 3', 'sensei-lms' ) },
-		] );
-	}, [ isPostNew, setBlocks ] );
 
 	return isEmpty ? (
 		<OutlinePlaceholder
