@@ -362,58 +362,39 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		global  $wp_version;
-
-		echo '<div class="grading-selects">';
 		do_action( 'sensei_grading_before_dropdown_filters' );
 
-		echo '<div class="select-box">' . "\n";
+		echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
+			echo wp_kses(
+				Sensei()->grading->courses_drop_down_html( $this->course_id ),
+				array(
+					'option' => array(
+						'selected' => array(),
+						'value'    => array(),
+					),
+				)
+			);
+		echo '</select>' . "\n";
 
-			echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
+		echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'sensei-lms' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
+			echo wp_kses(
+				Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id ),
+				array(
+					'option' => array(
+						'selected' => array(),
+						'value'    => array(),
+					),
+				)
+			);
+		echo '</select>' . "\n";
 
-				echo wp_kses(
-					Sensei()->grading->courses_drop_down_html( $this->course_id ),
-					array(
-						'option' => array(
-							'selected' => array(),
-							'value'    => array(),
-						),
-					)
-				);
-
-			echo '</select>' . "\n";
-
-		echo '</div>' . "\n";
-
-		echo '<div class="select-box">' . "\n";
-
-			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'sensei-lms' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
-
-				echo wp_kses(
-					Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id ),
-					array(
-						'option' => array(
-							'selected' => array(),
-							'value'    => array(),
-						),
-					)
-				);
-
-			echo '</select>' . "\n";
-
-		echo '</div>' . "\n";
-
-		if ( $this->course_id && $this->lesson_id ) {
-
-			echo '<div class="select-box reset-filter">' . "\n";
-
-				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
-
-			echo '</div>' . "\n";
-
+		$reset_button_enabled = $this->course_id && $this->lesson_id;
+		$reset_button_href    = $reset_button_enabled ? esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) : '#';
+		$reset_button_classes = [ 'button-secondary', 'sensei-grading-filters__reset-button' ];
+		if ( ! $reset_button_enabled ) {
+			$reset_button_classes[] = 'disabled';
 		}
-
-		echo '</div><!-- /.grading-selects -->';
+		echo '<a class="' . esc_attr( implode( ' ', $reset_button_classes ) ) . '" href="' . $reset_button_href . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
 	}
 
 	/**
