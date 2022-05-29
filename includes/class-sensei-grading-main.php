@@ -389,12 +389,12 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		echo '</select>' . "\n";
 
 		$reset_button_enabled = $this->course_id && $this->lesson_id;
-		$reset_button_href    = $reset_button_enabled ? esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) : '#';
+		$reset_button_href    = $reset_button_enabled ? remove_query_arg( array( 'lesson_id', 'course_id' ) ) : '#';
 		$reset_button_classes = [ 'button-secondary', 'sensei-grading-filters__reset-button' ];
 		if ( ! $reset_button_enabled ) {
 			$reset_button_classes[] = 'disabled';
 		}
-		echo '<a class="' . esc_attr( implode( ' ', $reset_button_classes ) ) . '" href="' . $reset_button_href . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
+		echo '<a class="' . esc_attr( implode( ' ', $reset_button_classes ) ) . '" href="' . esc_url( $reset_button_href ) . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
 	}
 
 	/**
