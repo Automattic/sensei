@@ -344,7 +344,7 @@ class Sensei_Analysis {
 	 *
 	 * @since  1.2.0
 	 *
-	 * @param int $course_id
+	 * @param int $course_id Course ID for the report.
 	 * @return void
 	 */
 	public function analysis_course_view( $course_id ) {
@@ -357,8 +357,8 @@ class Sensei_Analysis {
 	 *
 	 * @since  1.2.0
 	 *
-	 * @param int $course_id
-	 * @param int $user_id
+	 * @param int $course_id Course ID for the report.
+	 * @param int $user_id User ID for the report.
 	 * @return void
 	 */
 	public function analysis_user_course_view( int $course_id, int $user_id ) {
@@ -372,7 +372,7 @@ class Sensei_Analysis {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param int $course_id
+	 * @param int $course_id Course ID for the report.
 	 * @return void
 	 */
 	public function analysis_course_users_view( int $course_id ) {
@@ -386,7 +386,7 @@ class Sensei_Analysis {
 	 *
 	 * @since  1.2.0
 	 *
-	 * @param int $lesson_id
+	 * @param int $lesson_id Lesson ID for the report.
 	 * @return void
 	 */
 	public function analysis_lesson_users_view( int $lesson_id ) {
