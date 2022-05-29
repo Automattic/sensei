@@ -88,6 +88,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
 	public function extra_tablenav( $which ) {
 		if ( 'top' === $which ) {
 			echo '<div class="alignleft actions">';
@@ -99,8 +104,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 	}
 
+	/**
+	 * Output search form for table.
+	 */
 	public function table_search_form() {
-		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );

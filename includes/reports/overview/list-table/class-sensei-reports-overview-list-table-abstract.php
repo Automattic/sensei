@@ -238,6 +238,12 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		</div>
 		<?php
 	}
+
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
 	public function extra_tablenav( $which ) {
 		?>
 		<div class="alignleft actions sensei-actions__always-visible">
@@ -248,8 +254,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		<?php
 	}
 
+	/**
+	 * Output search form for table.
+	 */
 	public function table_search_form() {
-		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );

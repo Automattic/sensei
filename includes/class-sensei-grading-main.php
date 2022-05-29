@@ -416,6 +416,11 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		echo '</div><!-- /.grading-selects -->';
 	}
 
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
 	public function extra_tablenav( $which ) {
 		if ( 'top' === $which ) {
 			echo '<div class="alignleft actions sensei-actions__always-visible">';
@@ -427,17 +432,25 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 	}
 
+	/**
+	 * Output search form for table.
+	 */
 	public function table_search_form() {
-		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
+	/**
+	 * Gets the list of views available on this table.
+	 *
+	 * @return array
+	 */
 	public function get_views() {
 		$menu = array();
 
-		// Setup counters
+		// Setup counters.
 		$count_args = array(
 			'type' => 'lesson',
 		);
@@ -451,7 +464,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 		if ( $this->lesson_id ) {
 			$query_args['lesson_id'] = $this->lesson_id;
-			// Restrict to a single lesson
+			// Restrict to a single lesson.
 			$count_args['post_id'] = $this->lesson_id;
 		}
 		if ( $this->search ) {

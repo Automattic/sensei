@@ -321,7 +321,7 @@ class Sensei_Analysis {
 	 */
 	public function analysis_default_view( $type ) {
 		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
-		$exclude_query_params = [ 'start_date', 'end_date', 'q', '_wpnonce', '_wp_http_referer' ];
+		$exclude_query_params     = [ 'start_date', 'end_date', 'q', '_wpnonce', '_wp_http_referer' ];
 		$this->display_report_page( $sensei_analysis_overview, null, $exclude_query_params );
 	}
 
@@ -395,6 +395,13 @@ class Sensei_Analysis {
 		$this->display_report_page( $sensei_analysis_lesson_users, 'lesson_users', $exclude_query_params );
 	}
 
+	/**
+	 * Output the report page with given list table.
+	 *
+	 * @param Sensei_List_Table $list_table List table to display.
+	 * @param string|null       $nav_type Navigation type.
+	 * @param array             $exclude_query_params Query parameters to exclude from output.
+	 */
 	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ) {
 		// Wrappers
 		do_action( 'analysis_before_container' );
@@ -406,9 +413,12 @@ class Sensei_Analysis {
 		$list_table->views();
 		?>
 		<form id="reports-filter" method="get">
-			<?php Sensei_Utils::output_query_params_as_inputs( $exclude_query_params ); ?>
-			<?php $list_table->table_search_form(); ?>
-			<?php $list_table->display(); ?>
+			<?php
+			Sensei_Utils::output_query_params_as_inputs( $exclude_query_params );
+			$list_table->table_search_form();
+			$list_table->display();
+			do_action( 'sensei_analysis_extra' );
+			?>
 		</form>
 		<?php
 
@@ -416,6 +426,11 @@ class Sensei_Analysis {
 		do_action( 'analysis_after_container' );
 	}
 
+	/**
+	 * Display the navigation for the report page.
+	 *
+	 * @param string|null $nav_type Navigation type.
+	 */
 	private function display_nav( $nav_type ) {
 		switch ( $nav_type ) {
 			case 'user_profile':
