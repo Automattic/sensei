@@ -463,11 +463,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$all_class         = $ungraded_class = $graded_class = $inprogress_class = '';
 
 		switch ( $this->view ) :
-			case 'all':
-				$all_class = 'current';
-				break;
 			case 'ungraded':
-			default:
 				$ungraded_class = 'current';
 				break;
 			case 'graded':
@@ -475,6 +471,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 			case 'in-progress':
 				$inprogress_class = 'current';
+				break;
+			case 'all':
+			default:
+				$all_class = 'current';
 				break;
 		endswitch;
 
