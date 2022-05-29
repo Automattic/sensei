@@ -1063,6 +1063,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		}
 		parent::extra_tablenav( $which );
 
+		if ( 'bottom' === $which ) {
+			do_action( 'sensei_learners_extra' );
+		}
+
 		if ( 'top' === $which ) {
 			echo '</div>';
 		}

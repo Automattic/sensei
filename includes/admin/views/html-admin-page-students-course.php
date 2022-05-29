@@ -26,7 +26,6 @@ Sensei()->learners->learners_headers();
 	<?php $sensei_list_table->table_search_form(); ?>
 	<?php $sensei_list_table->display(); ?>
 </form>
-<?php do_action( 'sensei_learners_extra' ); ?>
 <?php
 do_action( 'learners_wrapper_container', 'bottom' );
 do_action( 'learners_after_container' );
