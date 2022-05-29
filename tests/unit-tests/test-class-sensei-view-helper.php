@@ -8,6 +8,23 @@
 class Sensei_View_Helper_Test extends WP_UnitTestCase {
 
 	/**
+	 * Initial settings array.
+	 *
+	 * @var array
+	 */
+	private static $initial_settings;
+
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+		self::$initial_settings = Sensei()->settings->settings;
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		Sensei()->settings->settings = self::$initial_settings;
+	}
+
+	/**
 	 * Test the format_question_points method.
 	 *
 	 * @param string $points
