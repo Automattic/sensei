@@ -106,10 +106,18 @@
 
 .sensei-editor-wizard-modal-upsell {
 	&__price {
-		font-size: 28px;
+		display: block;
+		margin-bottom: 8px;
+		line-height: 1.2;
+		font-size: 32px;
+
+		@media ( min-width: 600px ) {
+			font-size: 36px;
+		}
 	}
 
 	&__price-detail {
+		display: block;
 		font-size: 11px;
 		color: #787C82;
 		margin-top: -10px;

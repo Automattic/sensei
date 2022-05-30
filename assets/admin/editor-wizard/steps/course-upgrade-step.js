@@ -36,16 +36,16 @@ const CourseUpgradeStep = () => {
 						'sensei-lms'
 					) }
 				</p>
-				<h1 className="sensei-editor-wizard-modal-upsell__price">
+				<strong className="sensei-editor-wizard-modal-upsell__price">
 					{ sprintf(
 						// translators: placeholder is the price.
 						__( '%s USD', 'sensei-lms' ),
 						senseiProExtension.price.replace( '.00', '' )
 					) }
-				</h1>
-				<p className="sensei-editor-wizard-modal-upsell__price-detail">
+				</strong>
+				<span className="sensei-editor-wizard-modal-upsell__price-detail">
 					{ __( 'per year, 1 site', 'sensei-lms' ) }
-				</p>
+				</span>
 				<ul className="sensei-editor-wizard-modal-upsell__features">
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						{ __( 'WooCommerce integration', 'sensei-lms' ) }
