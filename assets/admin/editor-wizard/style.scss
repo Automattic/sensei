@@ -12,7 +12,11 @@
 		flex-direction: row;
 		align-items: center;
 		border-top: 1px solid rgba(30, 30, 30, 0.12);
-		padding: 18px 30px;
+		padding: 18px;
+
+		@media ( min-width: 600px ) {
+			padding: 18px 30px;
+		}
 	}
 
 	&__progress {
@@ -20,6 +24,8 @@
 	}
 
 	&__actions {
+		display: flex;
+		gap: 12px;
 		margin-left: auto;
 	}
 }
@@ -148,11 +154,6 @@
 			width: 1.3em;
 			color: #00998b;
 		}
-	}
-
-	&__button {
-		margin-left: 12px;
-		padding: 18px 30px;
 	}
 }
 

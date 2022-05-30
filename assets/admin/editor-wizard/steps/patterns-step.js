@@ -80,11 +80,9 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
  * @param {Function} props.skipWizard Skip wizard function.
  */
 PatternsStep.Actions = ( { skipWizard } ) => (
-	<div>
-		<Button isTertiary onClick={ skipWizard }>
-			{ __( 'Start with default layout', 'sensei-lms' ) }
-		</Button>
-	</div>
+	<Button isTertiary onClick={ skipWizard }>
+		{ __( 'Start with default layout', 'sensei-lms' ) }
+	</Button>
 );
 
 export default PatternsStep;

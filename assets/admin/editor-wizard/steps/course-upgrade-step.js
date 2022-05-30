@@ -94,7 +94,7 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 		goToNextStep();
 	};
 	return (
-		<div>
+		<>
 			<Button
 				isTertiary
 				onClick={ goToNextStep }
@@ -110,7 +110,7 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 			>
 				{ __( 'Get Sensei Pro', 'sensei-lms' ) }
 			</Button>
-		</div>
+		</>
 	);
 };
 

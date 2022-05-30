@@ -66,11 +66,9 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 
 LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (
-		<div>
-			<Button isPrimary onClick={ goToNextStep }>
-				{ __( 'Continue', 'sensei-lms' ) }
-			</Button>
-		</div>
+		<Button isPrimary onClick={ goToNextStep }>
+			{ __( 'Continue', 'sensei-lms' ) }
+		</Button>
 	);
 };
 
