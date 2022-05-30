@@ -48,6 +48,7 @@ class Sensei_Editor_Wizard {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_metas' ] );
+		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
 	}
@@ -96,6 +97,18 @@ class Sensei_Editor_Wizard {
 	}
 
 	/**
+	 * Register Sensei block patterns category.
+	 *
+	 * @access private
+	 */
+	public function register_block_patterns_category() {
+		register_block_pattern_category(
+			self::PATTERNS_CATEGORY,
+			array( 'label' => __( 'Sensei LMS', 'sensei-lms' ) )
+		);
+	}
+
+	/**
 	 * Register block patterns.
 	 *
 	 * @param WP_Screen $current_screen Current WP_Screen object.
@@ -104,12 +117,6 @@ class Sensei_Editor_Wizard {
 	 */
 	public function register_block_patterns( $current_screen ) {
 		$post_type = $current_screen->post_type;
-
-		// Register block pattern category.
-		register_block_pattern_category(
-			self::PATTERNS_CATEGORY,
-			array( 'label' => __( 'Sensei LMS', 'sensei-lms' ) )
-		);
 
 		if ( 'course' === $post_type ) {
 			$this->register_course_block_patterns();
