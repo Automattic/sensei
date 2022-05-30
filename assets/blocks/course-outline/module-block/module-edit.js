@@ -58,6 +58,7 @@ export const ModuleEdit = ( props ) => {
 			borderedSelected,
 			borderColorValue,
 			teacher,
+			slug,
 		},
 		mainColor,
 		defaultMainColor,
@@ -91,6 +92,15 @@ export const ModuleEdit = ( props ) => {
 	 */
 	const updateName = ( value ) => {
 		setAttributes( { title: value } );
+	};
+
+	/**
+	 * Handle update name.
+	 *
+	 * @param {string} value Name value.
+	 */
+	const updateSlug = ( value ) => {
+		setAttributes( { slug: value } );
 	};
 
 	/**
@@ -143,6 +153,8 @@ export const ModuleEdit = ( props ) => {
 				setBordered={ ( newValue ) =>
 					setAttributes( { borderedSelected: newValue } )
 				}
+				customSlug={ slug }
+				setCustomSlug={ updateSlug }
 			/>
 			<section
 				className={ classnames( className, {
@@ -163,6 +175,12 @@ export const ModuleEdit = ( props ) => {
 							value={ title }
 							onChange={ updateName }
 						/>
+						{ slug && (
+							<>
+								<br />
+								<span className="custom-slug">({ slug })</span>
+							</>
+						) }
 					</h2>
 					{ teacher && (
 						<span className="teacher-name">({ teacher })</span>
