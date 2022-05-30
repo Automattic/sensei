@@ -108,6 +108,9 @@ class Sensei_Core_Modules {
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
 		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+
+		// If slug changed to custom, try to extract and save teacher id.
+		add_action( 'edit_module', [ $this, 'extract_and_save_teacher_to_meta_from_slug' ] );
 	}
 
 	/**
@@ -2627,4 +2630,44 @@ class Sensei_Core_Modules {
 		wp_reset_query();
 	}
 
+	/**
+	 * Set teacher meta for module.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param int $module_id  Term ID.
+	 * @param int $teacher_id ID of module teacher.
+	 */
+	public static function save_module_teacher_meta( $module_id, $teacher_id ) {
+		update_term_meta(
+			$module_id,
+			'module_author',
+			$teacher_id
+		);
+	}
+
+	/**
+	 * Try to extract teacher id from module slug to term meta
+	 * if the meta does not exist already
+	 *
+	 * @since x.x.x
+	 *
+	 * @param int $term_id ID of the term being edited.
+	 * @return void
+	 */
+	public function extract_and_save_teacher_to_meta_from_slug( $term_id ) {
+		$term_meta = get_term_meta( $term_id, 'module_author', true );
+
+		if ( $term_meta ) {
+			return;
+		}
+
+		$term       = get_term( $term_id, 'module' );
+		$split_slug = explode( '-', $term->slug );
+
+		if ( count( $split_slug ) > 1 && is_numeric( $split_slug[0] ) ) {
+			$user = get_user_by( 'id', $split_slug[0] );
+			$user && self::save_module_teacher_meta( $term_id, $user->ID );
+		}
+	}
 }
