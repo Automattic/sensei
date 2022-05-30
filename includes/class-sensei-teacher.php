@@ -464,6 +464,8 @@ class Sensei_Teacher {
 				$term_id        = $new_term['term_id'];
 				$module_order[] = $term_id;
 
+				Sensei_Core_Modules::save_module_teacher_meta( $term_id, $new_teacher_id );
+
 				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
 
