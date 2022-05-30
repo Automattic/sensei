@@ -43,8 +43,9 @@ const PatternsList = ( { onChoose } ) => {
 			aria-label={ __( 'Sensei block patterns', 'sensei-lms' ) }
 		>
 			{ patterns
-				.filter( ( { categories } ) =>
-					categories.includes( 'sensei-lms' )
+				.filter(
+					( { categories } ) =>
+						categories && categories.includes( 'sensei-lms' )
 				)
 				.map(
 					( { name, title, description, blocks, viewportWidth } ) => (
