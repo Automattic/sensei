@@ -138,22 +138,26 @@ class Sensei_Course_Structure {
 	 *     @type int    $id          The module term id.
 	 *     @type string $title       The module name.
 	 *     @type string $teacher     Name of the teacher of this module, gets populated only in admin panel for admins and if the teacher is not admin.
+	 *     @type int    $teacherId   ID of the module author, used by block editor to detect change of teacher.
 	 *     @type string $lastTitle   Used in the block editor for unchanged title state reference.
+	 *     @type string $slug        Slug of the module, not empty only if the slug is custom.
 	 *     @type string $description The module description.
 	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
 	 * }
 	 */
 	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
-		$lessons = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
-		$author  = Sensei_Core_Modules::get_term_author( $module_term->slug );
-
-		$module = [
+		$lessons      = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
+		$author       = Sensei_Core_Modules::get_term_author( $module_term->slug );
+		$default_slug = $this->get_module_slug( $module_term->name );
+		$module       = [
 			'type'        => 'module',
 			'id'          => $module_term->term_id,
 			'title'       => $module_term->name,
 			'description' => $module_term->description,
 			'teacher'     => user_can( $author, 'manage_options' ) ? '' : $author->display_name,
+			'teacherId'   => $author->ID,
 			'lastTitle'   => $module_term->name,
+			'slug'        => $module_term->slug === $default_slug ? '' : $module_term->slug,
 			'lessons'     => [],
 		];
 
