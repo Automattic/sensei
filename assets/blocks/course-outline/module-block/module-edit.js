@@ -143,6 +143,14 @@ export const ModuleEdit = ( props ) => {
 		);
 	}
 
+	const courseTeacherInput = document.querySelector(
+		'select[name="sensei-course-teacher-author"]'
+	);
+	if ( courseTeacherInput ) {
+		courseTeacherInput.addEventListener( 'change', ( event ) => {
+			setAttributes( { teacherId: event.target.value } );
+		} );
+	}
 	const bordered =
 		undefined !== borderedSelected ? borderedSelected : outlineBordered;
 
