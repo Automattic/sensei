@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { select } from '@wordpress/data';
+import { resolveSelect, select } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 
 /**
@@ -9,6 +9,10 @@ import { apiFetch } from '@wordpress/data-controls';
  */
 import registerExportStore, { EXPORT_STORE } from './index';
 import * as actions from './actions';
+/**
+ * External dependencies
+ */
+import { waitFor } from '@testing-library/dom';
 
 window.sensei_log_event = jest.fn();
 jest.mock( '@wordpress/data-controls', () => {
@@ -21,7 +25,7 @@ jest.mock( '@wordpress/data-controls', () => {
 	};
 } );
 
-function mockActiveJob( job ) {
+async function mockActiveJob( job ) {
 	apiFetch.mockImplementation( () => {
 		if ( ! job )
 			throw {
@@ -41,13 +45,13 @@ describe( 'Export store', () => {
 		apiFetch.mockClear();
 	} );
 
-	it( 'resolves active job', () => {
+	it( 'resolves active job', async () => {
 		apiFetch.mockReturnValue( {
 			id: 5,
 			status: { status: 'completed' },
 		} );
 
-		const job = select( EXPORT_STORE ).getJob();
+		const job = await resolveSelect( EXPORT_STORE ).getJob();
 
 		expect( job ).toEqual( {
 			id: 5,
@@ -138,25 +142,35 @@ describe( 'Export store', () => {
 	} );
 
 	it( 'deletes job', async () => {
+		jest.useFakeTimers();
+
 		mockActiveJob( { id: 4, status: { status: 'complete' } } );
-		apiFetch.mockReturnValue( { id: 4, deleted: true } );
+		apiFetch.mockReturnValue( {
+			id: 4,
+			deleted: true,
+			status: { status: 'setup' },
+		} );
+
 		store.dispatch( actions.cancel() );
+		await jest.runOnlyPendingTimers();
+
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			path: '/sensei-internal/v1/export/4',
 			method: 'DELETE',
 		} );
+
 		expect( store.getState() ).toEqual( {} );
 	} );
 
 	it( 'polls for updates if job is pending', async () => {
 		jest.useFakeTimers();
 		const mockStatus = ( status, percentage ) => ( {
-			id: 3,
+			id: 7,
 			status: { status, percentage },
 		} );
 
 		mockActiveJob( {
-			id: 3,
+			id: 7,
 			status: { status: 'pending', percentage: 0 },
 		} );
 
@@ -166,53 +180,39 @@ describe( 'Export store', () => {
 			.mockReturnValueOnce( mockStatus( 'complete', 100 ) );
 
 		await jest.runOnlyPendingTimers();
+		await jest.runOnlyPendingTimers();
+		await jest.runOnlyPendingTimers();
 
 		const pollRequest = {
-			path: '/sensei-internal/v1/export/3/process',
+			path: '/sensei-internal/v1/export/7/process',
 			method: 'POST',
 		};
 
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
-		expect( apiFetch ).toHaveBeenLastCalledWith( pollRequest );
-		expect( select( EXPORT_STORE ).getJob().percentage ).toEqual( 20 );
-
-		await jest.runOnlyPendingTimers();
-
-		expect( apiFetch ).toHaveBeenCalledTimes( 2 );
-		expect( apiFetch ).toHaveBeenLastCalledWith( pollRequest );
-		expect( select( EXPORT_STORE ).getJob().percentage ).toEqual( 50 );
-
-		await jest.runOnlyPendingTimers();
-
-		expect( apiFetch ).toHaveBeenCalledTimes( 3 );
-		expect( apiFetch ).toHaveBeenLastCalledWith( pollRequest );
-		expect( select( EXPORT_STORE ).getJob() ).toEqual( {
-			id: 3,
-			status: 'complete',
-			percentage: 100,
-		} );
-
-		await jest.runOnlyPendingTimers();
-
-		expect( apiFetch ).toHaveBeenCalledTimes( 3 );
-		expect( select( EXPORT_STORE ).getJob() ).toEqual( {
-			id: 3,
-			status: 'complete',
-			percentage: 100,
+		await waitFor( async () => {
+			expect( apiFetch ).toHaveBeenCalledWith( pollRequest );
+			expect( select( EXPORT_STORE ).getJob() ).toEqual( {
+				id: 7,
+				status: 'complete',
+				percentage: 100,
+			} );
 		} );
 	} );
 
 	it( 'gets logs after job is completed', async () => {
 		jest.useFakeTimers();
 
+		// store = registerExportStore();
+
 		mockActiveJob( {
-			id: 3,
+			id: 5,
 			status: { status: 'pending', percentage: 0 },
 		} );
 
+		await jest.runOnlyPendingTimers();
+
 		apiFetch
 			.mockReturnValueOnce( {
-				id: 3,
+				id: 5,
 				status: { status: 'completed', percentage: 100 },
 			} )
 			.mockReturnValueOnce( {

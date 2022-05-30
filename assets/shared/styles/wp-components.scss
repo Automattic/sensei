@@ -6,64 +6,13 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/animations';
 @import '~@wordpress/base-styles/z-index';
-
-// It imports the dependencies from @import '~@wordpress/components/src/style',
-// excepts './date-time/style.scss' that contains an issue and we don't use that.
-@import '~@wordpress/components/src/animate/style.scss';
-@import '~@wordpress/components/src/angle-picker-control/style.scss';
-@import '~@wordpress/components/src/autocomplete/style.scss';
-@import '~@wordpress/components/src/base-control/style.scss';
-@import '~@wordpress/components/src/button-group/style.scss';
-@import '~@wordpress/components/src/button/style.scss';
-@import '~@wordpress/components/src/checkbox-control/style.scss';
-@import '~@wordpress/components/src/circular-option-picker/style.scss';
-@import '~@wordpress/components/src/color-indicator/style.scss';
-@import '~@wordpress/components/src/color-picker/style.scss';
-@import '~@wordpress/components/src/custom-gradient-picker/style.scss';
-@import '~@wordpress/components/src/custom-select-control/style.scss';
-@import '~@wordpress/components/src/dashicon/style.scss';
-@import '~@wordpress/components/src/dimension-control/style.scss';
-@import '~@wordpress/components/src/disabled/style.scss';
-@import '~@wordpress/components/src/draggable/style.scss';
-@import '~@wordpress/components/src/drop-zone/style.scss';
-@import '~@wordpress/components/src/dropdown/style.scss';
-@import '~@wordpress/components/src/dropdown-menu/style.scss';
-@import '~@wordpress/components/src/external-link/style.scss';
-@import '~@wordpress/components/src/focal-point-picker/style.scss';
-@import '~@wordpress/components/src/font-size-picker/style.scss';
-@import '~@wordpress/components/src/form-toggle/style.scss';
-@import '~@wordpress/components/src/form-token-field/style.scss';
-@import '~@wordpress/components/src/guide/style.scss';
-@import '~@wordpress/components/src/higher-order/navigate-regions/style.scss';
-@import '~@wordpress/components/src/menu-group/style.scss';
-@import '~@wordpress/components/src/menu-item/style.scss';
-@import '~@wordpress/components/src/menu-items-choice/style.scss';
-@import '~@wordpress/components/src/modal/style.scss';
-@import '~@wordpress/components/src/notice/style.scss';
-@import '~@wordpress/components/src/panel/style.scss';
-@import '~@wordpress/components/src/placeholder/style.scss';
-@import '~@wordpress/components/src/popover/style.scss';
-@import '~@wordpress/components/src/radio-control/style.scss';
-@import '~@wordpress/components/src/resizable-box/style.scss';
-@import '~@wordpress/components/src/responsive-wrapper/style.scss';
-@import '~@wordpress/components/src/sandbox/style.scss';
-@import '~@wordpress/components/src/scroll-lock/style.scss';
-@import '~@wordpress/components/src/select-control/style.scss';
-@import '~@wordpress/components/src/snackbar/style.scss';
-@import '~@wordpress/components/src/spinner/style.scss';
-@import '~@wordpress/components/src/tab-panel/style.scss';
-@import '~@wordpress/components/src/text-control/style.scss';
-@import '~@wordpress/components/src/textarea-control/style.scss';
-@import '~@wordpress/components/src/tip/style.scss';
-@import '~@wordpress/components/src/toggle-control/style.scss';
-@import '~@wordpress/components/src/toolbar/style.scss';
-@import '~@wordpress/components/src/toolbar-button/style.scss';
-@import '~@wordpress/components/src/toolbar-group/style.scss';
-@import '~@wordpress/components/src/tooltip/style.scss';
-@import '~@wordpress/components/src/visually-hidden/style.scss';
+@import '~@wordpress/components/build-style/style.css';
 
 
 body.sensei-color {
+	--wp-admin-theme-color: rgb(70, 200, 173);
+	--wp-admin-theme-color-darker-10: rgb(55, 187, 159);
+	--wp-admin-theme-color-darker-20: rgb(49, 166, 142);
 
 	.components-button.is-primary {
 		&,

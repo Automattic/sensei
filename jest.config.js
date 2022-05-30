@@ -14,6 +14,7 @@ module.exports = {
 		'<rootDir>/tests/e2e/',
 		'<rootDir>/tests/e2e-playwright/',
 	],
+	testEnvironment: 'jsdom',
 	moduleNameMapper: {
 		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
 	},
