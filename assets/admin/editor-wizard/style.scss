@@ -9,8 +9,9 @@
 		width: 100%;
 		background: #ffffff;
 		display: flex;
-		flex-direction: row;
+		flex-wrap: wrap;
 		align-items: center;
+		gap: 12px;
 		border-top: 1px solid rgba(30, 30, 30, 0.12);
 		padding: 18px;
 
@@ -25,8 +26,9 @@
 
 	&__actions {
 		display: flex;
+		flex: 1;
+		justify-content: end;
 		gap: 12px;
-		margin-left: auto;
 	}
 }
 
