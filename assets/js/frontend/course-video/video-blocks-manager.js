@@ -19,34 +19,53 @@ const videos = {};
 
 /**
  * Registers the videos to manage.
- * @param {Object}   video
- * @param {Function} video.pauseVideo              The function that pauses the video when invoked.
- * @param {Function} video.registerVideoEndHandler Accepts a callback that is invoked when the video ends.
- * @param {string}   video.url                     The source url of the video. Used as an id.
+ *
+ * @param {Object}      video
+ * @param {Function}    video.pauseVideo              The function that pauses the video when invoked.
+ * @param {Function}    video.registerVideoEndHandler Accepts a callback that is invoked when the video ends.
+ * @param {string}      video.url                     The source url of the video. Used as an id.
+ * @param {HTMLElement} video.blockElement            The DOM element of the video block.
  */
 export const registerVideo = ( {
 	pauseVideo = () => {},
 	registerVideoEndHandler = () => {},
 	url = '',
+	blockElement,
 } ) => {
-	if ( courseVideoRequired ) {
+	const isBlockRequired = blockElement.hasAttribute(
+		'data-sensei-is-required'
+	);
+	const isBlockNotRequired = blockElement.hasAttribute(
+		'data-sensei-is-not-required'
+	);
+
+	// Block level setting overwrites the course level setting.
+	if ( isBlockRequired || ( courseVideoRequired && ! isBlockNotRequired ) ) {
 		/**
 		 * Called when a required video for the current lesson is registered.
 		 *
-		 * @since 4.5.0
+		 * @since x.x.x
 		 *
 		 * @hook sensei.videoProgression.registerVideo Hook used to run an arbitrary code when new required
 		 *                                             video for the current lesson is registered.
-		 * @param {Object} video
-		 * @param {string} video.url The source url of the video.
+		 * @param {Object}      video
+		 * @param {string}      video.url          The source url of the video.
+		 * @param {HTMLElement} video.blockElement The video block DOM element.
 		 */
-		doAction( 'sensei.videoProgression.registerVideo', { url } );
+		doAction( 'sensei.videoProgression.registerVideo', {
+			url,
+			blockElement,
+		} );
 		videos[ url ] = { pauseVideo, completed: false };
 		disableCompleteLessonButton();
 	}
 
 	registerVideoEndHandler( () => {
-		if ( courseVideoRequired ) {
+		// Block level setting overwrites the course level setting.
+		if (
+			isBlockRequired ||
+			( courseVideoRequired && ! isBlockNotRequired )
+		) {
 			/**
 			 * Called when a required video for the current lesson is finished playing.
 			 *

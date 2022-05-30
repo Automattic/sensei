@@ -3,6 +3,11 @@
  */
 import { registerVideo } from './video-blocks-manager';
 
+/**
+ * Initializes the Video block player.
+ *
+ * @param {HTMLElement} video The video element of the Video block.
+ */
 const initVideoPlayer = ( video ) => {
 	let onVideoEnd = () => {};
 	video.addEventListener( 'ended', () => {
@@ -14,7 +19,8 @@ const initVideoPlayer = ( video ) => {
 			onVideoEnd = cb;
 		},
 		pauseVideo: video.pause.bind( video ),
-		url: video.src,
+		url: video.src.split( '?' )[ 0 ],
+		blockElement: video.closest( 'figure' ),
 	} );
 };
 
