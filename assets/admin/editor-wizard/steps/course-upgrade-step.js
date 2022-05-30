@@ -27,7 +27,9 @@ const CourseUpgradeStep = () => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1>{ __( 'Sell with Sensei Pro', 'sensei-lms' ) }</h1>
+				<h1 className="sensei-editor-wizard-modal__title">
+					{ __( 'Sell with Sensei Pro', 'sensei-lms' ) }
+				</h1>
 				<p>
 					{ __(
 						'Do you want to sell this course? This requires Sensei Pro which also unlocks many useful features.',

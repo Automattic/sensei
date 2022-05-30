@@ -28,6 +28,7 @@
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
 	}
+
 	& .components-modal__content {
 		padding: 0;
 		margin-top: 0;
@@ -54,13 +55,22 @@
 		}
 	}
 
+	&__title {
+		margin-top: 0;
+	}
+
 	&__sticky-title {
 		position: sticky;
 		top: 0;
 		z-index: 1;
-		margin: -30px 0 0;
-		padding: 30px 0 18px;
+		margin: -24px 0 0;
+		padding: 24px 0 18px;
 		background: #ffffff;
+
+		@media ( min-width: 600px ) {
+			padding-top: 30px;
+			margin-top: -30px;
+		}
 	}
 
 	&__columns {
@@ -71,10 +81,10 @@
 	}
 
 	&__content {
-		margin: 30px;
+		margin: 24px 18px 18px;
 
-		h1 {
-			margin-top: 0;
+		@media ( min-width: 600px ) {
+			margin: 30px;
 		}
 	}
 
