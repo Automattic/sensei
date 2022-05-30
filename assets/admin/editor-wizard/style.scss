@@ -1,12 +1,18 @@
 @import './patterns-list.scss';
 
 .sensei-editor-wizard {
+	padding-bottom: 72px; // Footer height.
+
 	&__footer {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+		background: #ffffff;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		border-top: 1px solid rgba(30, 30, 30, 0.12);
-		padding: 30px;
+		padding: 18px 30px;
 	}
 
 	&__progress {
@@ -40,13 +46,16 @@
 			align-self: flex-start;
 			margin: 8px 8px 0 0;
 			position: static;
-
-			&:hover {
-				svg {
-					fill: #fff;
-				}
-			}
 		}
+	}
+
+	&__sticky-title {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		margin: -30px 0 0;
+		padding: 30px 0 18px;
+		background: #ffffff;
 	}
 
 	&__columns {
