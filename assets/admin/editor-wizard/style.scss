@@ -42,6 +42,11 @@
 		padding: 0;
 		position: fixed;
 
+		// WP 5.8 fixes.
+		width: 100%;
+		background: transparent;
+		margin: 0;
+
 		.components-button {
 			align-self: flex-start;
 			margin: 8px 8px 0 0;
