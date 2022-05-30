@@ -305,12 +305,12 @@ class Sensei_Course_Structure {
 	private function save_module( array $item ) {
 		if ( $item['id'] ) {
 			$term = get_term( $item['id'], 'module' );
-			$slug = $this->get_module_slug( $item['title'] );
+			// Custom slug gets priority over conventional slug.
+			$slug = $item['slug'] ?? $this->get_module_slug( $item['title'] );
 
-			// Slug has changed.
 			if ( $term->slug !== $slug ) {
-				$existing_module_id = $this->get_existing_module( $item['title'] );
-				$module_id          = $existing_module_id ? $existing_module_id : $this->create_module( $item );
+				$existing_module = get_term_by( 'slug', $slug, 'module' );
+				$module_id       = $existing_module ? $existing_module->term_id : $this->create_module( $item );
 			} else {
 				$module_id = $this->update_module( $item );
 			}
@@ -336,6 +336,14 @@ class Sensei_Course_Structure {
 
 			$lesson_ids[] = $lesson_id;
 		}
+
+		if ( $item['slug'] ) {
+			// If a custom slug is defined, remove any unused module generated when changing teacher.
+			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
+			$previous_term && Sensei()->modules->remove_if_unused( $previous_term->term_id );
+		}
+
+		Sensei_Core_Modules::save_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );
 
 		return [
 			$module_id,
@@ -371,7 +379,7 @@ class Sensei_Course_Structure {
 	private function create_module( array $item ) {
 		$args = [
 			'description' => $item['description'],
-			'slug'        => $this->get_module_slug( $item['title'] ),
+			'slug'        => $item['slug'] ?? $this->get_module_slug( $item['title'] ),
 		];
 
 		$create_result = wp_insert_term( $item['title'], 'module', $args );
@@ -726,6 +734,8 @@ class Sensei_Course_Structure {
 			}
 
 			$item['description'] = isset( $raw_item['description'] ) ? trim( wp_kses_post( $raw_item['description'] ) ) : null;
+			$item['slug']        = ! empty( $raw_item['slug'] ) ? trim( sanitize_text_field( $raw_item['slug'] ) ) : null;
+			$item['lastTitle']   = ! empty( $raw_item['lastTitle'] ) ? trim( sanitize_text_field( $raw_item['lastTitle'] ) ) : null;
 			$item['lessons']     = [];
 			foreach ( $raw_item['lessons'] as $raw_lesson ) {
 				$lesson = $this->sanitize_item( $raw_lesson );
