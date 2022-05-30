@@ -64,8 +64,10 @@
 	}
 
 	&__columns {
-		display: grid;
-		grid-template-columns: 50% 50%;
+		@media ( min-width: 600px ) {
+			display: grid;
+			grid-template-columns: 50% 50%;
+		}
 	}
 
 	&__content {
@@ -77,10 +79,14 @@
 	}
 
 	&__illustration {
-		background: #43af99;
-		display: flex;
-		justify-content: right;
-		align-items: center;
+		display: none;
+
+		@media ( min-width: 600px ) {
+			background: #43af99;
+			display: flex;
+			justify-content: right;
+			align-items: center;
+		}
 	}
 
 	&__illustration-image {
