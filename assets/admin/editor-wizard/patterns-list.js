@@ -5,8 +5,7 @@ import {
 	store as blockEditorStore,
 	BlockPreview,
 } from '@wordpress/block-editor';
-import { store as editorStore } from '@wordpress/editor';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 
@@ -28,12 +27,14 @@ const accessibleClick = ( fn ) => ( {
 
 /**
  * Patterns list component.
+ *
+ * @param {Object}   props          Component props.
+ * @param {Function} props.onChoose Callback on choosing a pattern.
  */
-const PatternsList = () => {
+const PatternsList = ( { onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
 		patterns: select( blockEditorStore ).__experimentalGetAllowedPatterns(),
 	} ) );
-	const { resetEditorBlocks } = useDispatch( editorStore );
 
 	return (
 		<div
@@ -55,7 +56,7 @@ const PatternsList = () => {
 							role="option"
 							tabIndex={ 0 }
 							{ ...accessibleClick( () => {
-								resetEditorBlocks( blocks );
+								onChoose( blocks );
 							} ) }
 						>
 							<div className="sensei-patterns-list__item-preview">

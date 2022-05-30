@@ -1,43 +1,35 @@
 /**
- * Internal dependencies
+ * WordPress dependencies
  */
-import PatternsList from '../patterns-list';
+import { __ } from '@wordpress/i18n';
 
 /**
- * Final step in lesson creation wizard choosing the actual lesson pattern to use.
- *
- * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
- * @param {Function} props.onCompletion
+ * Internal dependencies
  */
-/* eslint-disable no-unused-vars */
-const LessonPatternsStep = ( {
-	data: wizardData,
-	setData: setWizardData,
-	onCompletion,
-} ) => {
-	// TODO Implement this.
+import PatternsStep from './patterns-step';
 
-	// We can call `onCompletion` to complete the wizard after setting the correct pattern with `setData`.
-	// We could replace `onCompletion` with the `goToNextStep` callback with a similar effect.
+/**
+ * Lesson patterns step.
+ *
+ * @param {Object} props      Component props.
+ * @param {Object} props.data Wizard data.
+ */
+const LessonPatternsStep = ( { data, ...props } ) => {
+	const replaces = {};
+
+	if ( data.lessonTitle ) {
+		replaces[ 'sensei-pattern-title' ] = data.lessonTitle;
+	}
 
 	return (
-		<div className="sensei-editor-wizard-modal__content">
-			<h1>Lesson Patterns Step</h1>
-			<div>PENDING TO IMPLEMENT</div>
-			<PatternsList />
-		</div>
+		<PatternsStep
+			title={ __( 'Lesson Layout', 'sensei-lms' ) }
+			replaces={ replaces }
+			{ ...props }
+		/>
 	);
 };
 
-LessonPatternsStep.Actions = ( { goToNextStep } ) => {
-	// TODO Implement this.
-	return (
-		<div>
-			<button onClick={ goToNextStep }>Complete</button>
-		</div>
-	);
-};
+LessonPatternsStep.Actions = PatternsStep.Actions;
 
 export default LessonPatternsStep;

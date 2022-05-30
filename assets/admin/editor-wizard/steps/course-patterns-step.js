@@ -1,43 +1,39 @@
 /**
- * Internal dependencies
+ * WordPress dependencies
  */
-import PatternsList from '../patterns-list';
+import { __ } from '@wordpress/i18n';
 
 /**
- * Final step in course creation wizard choosing the actual course pattern to use.
- *
- * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
- * @param {Function} props.onCompletion
+ * Internal dependencies
  */
-/* eslint-disable no-unused-vars */
-const CoursePatternsStep = ( {
-	data: wizardData,
-	setData: setWizardData,
-	onCompletion,
-} ) => {
-	// TODO Implement this.
+import PatternsStep from './patterns-step';
 
-	// We can call `onCompletion` to complete the wizard after setting the correct pattern with `setData`.
-	// We could replace `onCompletion` with the `goToNextStep` callback with a similar effect.
+/**
+ * Course patterns step.
+ *
+ * @param {Object} props      Component props.
+ * @param {Object} props.data Wizard data.
+ */
+const CoursePatternsStep = ( { data, ...props } ) => {
+	const replaces = {};
+
+	if ( data.courseTitle ) {
+		replaces[ 'sensei-pattern-title' ] = data.courseTitle;
+	}
+
+	if ( data.courseDescription ) {
+		replaces[ 'sensei-pattern-description' ] = data.courseDescription;
+	}
 
 	return (
-		<div className="sensei-editor-wizard-modal__content">
-			<h1>Course Patterns Step</h1>
-			<div>PENDING TO IMPLEMENT</div>
-			<PatternsList />
-		</div>
+		<PatternsStep
+			title={ __( 'Course Layout', 'sensei-lms' ) }
+			replaces={ replaces }
+			{ ...props }
+		/>
 	);
 };
 
-CoursePatternsStep.Actions = ( { goToNextStep } ) => {
-	// TODO Implement this.
-	return (
-		<div>
-			<button onClick={ goToNextStep }>Complete</button>
-		</div>
-	);
-};
+CoursePatternsStep.Actions = PatternsStep.Actions;
 
 export default CoursePatternsStep;
