@@ -25,6 +25,8 @@
 }
 
 .sensei-editor-wizard-modal {
+	color: #1e1e1e;
+
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
 	}
@@ -53,6 +55,11 @@
 			margin: 8px 8px 0 0;
 			position: static;
 		}
+	}
+
+	&__title,
+	&__sticky-title {
+		color: inherit;
 	}
 
 	&__title {
