@@ -2631,7 +2631,7 @@ class Sensei_Lesson {
 			case 'lesson-course':
 				$lesson_course_id = get_post_meta( $id, '_lesson_course', true );
 				if ( 0 < absint( $lesson_course_id ) ) {
-					// translators: Placeholder is the course title.
+					// translators: Placeholder is the item title/name.
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_course_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_course_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_course_id ) ) ) . '</a>';
 				}
 				break;
@@ -2639,7 +2639,7 @@ class Sensei_Lesson {
 				$lesson_prerequisite_id = get_post_meta( $id, '_lesson_prerequisite', true );
 				if ( 0 < absint( $lesson_prerequisite_id ) ) {
 					$lesson_prerequisite_post = get_post( $lesson_prerequisite_id );
-					// translators: Placeholder is the title of the prerequisite lesson.
+					// translators: Placeholder is the item title/name.
 					echo '<a href="' . esc_url( get_edit_post_link( absint( $lesson_prerequisite_id ) ) ) . '" title="' . esc_attr( sprintf( __( 'Edit %s', 'sensei-lms' ), get_the_title( absint( $lesson_prerequisite_id ) ) ) ) . '">' . esc_html( get_the_title( absint( $lesson_prerequisite_id ) ) ) . '</a>';
 					_post_states( $lesson_prerequisite_post );
 				}
@@ -4547,7 +4547,7 @@ class Sensei_Lesson {
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
 				. '" title="'
-				// translators: Placeholder is the lesson prerequisite title.
+				// translators: Placeholder is the item title.
 				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
 				. '">'
 				. get_the_title( $lesson_prerequisite )

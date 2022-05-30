@@ -408,16 +408,17 @@ class Sensei_Teacher {
 		}
 
 		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
-		$terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
+		$modules = Sensei()->modules->get_course_modules( $course_id );
 		add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
-		if ( empty( $terms_selected_on_course ) ) {
+		if ( empty( $modules ) ) {
 			return;
 		}
 
-		$lessons = Sensei()->course->course_lessons( $course_id, null );
+		$lessons      = Sensei()->course->course_lessons( $course_id, null );
+		$module_order = [];
 
-		foreach ( $terms_selected_on_course as $term ) {
+		foreach ( $modules as $term ) {
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
 
 			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
@@ -460,7 +461,8 @@ class Sensei_Teacher {
 					continue;
 				}
 
-				$term_id = $new_term['term_id'];
+				$term_id        = $new_term['term_id'];
+				$module_order[] = $term_id;
 
 				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
@@ -495,6 +497,8 @@ class Sensei_Teacher {
 				Sensei()->modules->remove_if_unused( $term->term_id );
 			}
 		}
+
+		Sensei_Course_Structure::instance( $course_id )->save_module_order( $module_order );
 	}
 
 	/**
