@@ -94,6 +94,9 @@ class Sensei_Teacher {
 		add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page' ), 10 );
 		add_filter( 'pre_get_comments', array( $this, 'restrict_comment_moderation' ), 10, 1 );
 
+		// If slug changed to custom, try to extract and save teacher id.
+		add_action( 'edit_module', [ $this, 'extract_and_save_teacher_to_meta_from_slug' ] );
+
 	}
 
 	/**
@@ -1651,4 +1654,28 @@ class Sensei_Teacher {
 
 	}
 
+	/**
+	 * Try to extract teacher id from module slug to term meta
+	 * if the meta does not exist already
+	 *
+	 * @since x.x.x
+	 *
+	 * @param int $term_id ID of the term being edited.
+	 * @return void
+	 */
+	public function extract_and_save_teacher_to_meta_from_slug( $term_id ) {
+		$term_meta = get_term_meta( $term_id, 'module_author', true );
+
+		if ( $term_meta ) {
+			return;
+		}
+
+		$term       = get_term( $term_id, 'module' );
+		$split_slug = explode( '-', $term->slug );
+
+		if ( count( $split_slug ) > 1 && is_numeric( $split_slug[0] ) ) {
+			$user = get_user_by( 'id', $split_slug[0] );
+			$user && Sensei_Core_Modules::save_module_teacher_meta( $term_id, $user->ID );
+		}
+	}
 }
