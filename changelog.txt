@@ -1,5 +1,12 @@
 *** Changelog ***
 
+2022.05.31 - version 4.4.3
+* Fix: The "import" docs link. [#5201](https://github.com/Automattic/sensei/pull/5201)
+* Fix: Module order not preserved after teacher update. [#5198](https://github.com/Automattic/sensei/pull/5198)
+* Tweak: Redirect the quiz if the lesson is password protected. [#5195](https://github.com/Automattic/sensei/pull/5195)
+* Tweak: Disable the lesson archive. [#5192](https://github.com/Automattic/sensei/pull/5192)
+* Tweak: Update Course Video Progression to support customization via hooks. [#5100](https://github.com/Automattic/sensei/pull/5100), [#5175](https://github.com/Automattic/sensei/pull/5175)
+
 2022.05.23 - version 4.4.2
 * Fix: Modules page not found error in learning mode [#5144](https://github.com/Automattic/sensei/pull/5144) 👏 @jeremyfelt
 * Fix: Teacher name getting appended and duplicated in module title in course edit [#5114](https://github.com/Automattic/sensei/pull/5114)

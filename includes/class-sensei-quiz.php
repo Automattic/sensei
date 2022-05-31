@@ -435,7 +435,7 @@ class Sensei_Quiz {
 	/**
 	 * Redirect back to the lesson if the lesson is password protected.
 	 *
-	 * @since  x.x.x
+	 * @since  4.4.3
 	 * @access private
 	 */
 	public function redirect_if_lesson_is_protected() {
