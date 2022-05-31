@@ -373,4 +373,33 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( $response->get_status(), 401 );
 	}
+
+	public function testCourseStructure_whenCustomSlugIsAddedToModule_isProperlySavedAndServed() {
+		$this->login_as_admin();
+
+		$course_response = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$course_id        = $course_response['course_id'];
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get( 'edit' );
+
+		$structure[0]['slug'] = 'custom-slug';
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( $response->get_status(), 200 );
+
+		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );
+		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
+		$this->assertEquals( $structure[0]['slug'], $response->get_data()[0]['slug'], 'Returned structure should have custom slug' );
+		$this->assertEquals( wp_get_current_user()->ID, $response->get_data()[0]['teacherId'], 'Returned structure should have module teacher\'s id' );
+	}
 }
