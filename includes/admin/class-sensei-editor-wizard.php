@@ -112,9 +112,9 @@ class Sensei_Editor_Wizard {
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
-				'artists',
-				'testimonials',
-				'featured',
+				'video-lesson',
+				'discussion-question',
+				'files-to-download',
 			];
 		}
 

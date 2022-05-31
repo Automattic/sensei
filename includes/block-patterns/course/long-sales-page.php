@@ -274,9 +274,5 @@ return [
 					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer --></div>
-					<!-- /wp:group -->
-
-					<!-- wp:paragraph -->
-					<p></p>
-					<!-- /wp:paragraph -->',
+					<!-- /wp:group -->',
 ];
