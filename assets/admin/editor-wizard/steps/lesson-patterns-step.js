@@ -23,7 +23,7 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 
 	return (
 		<PatternsStep
-			title={ __( 'Lesson Layout', 'sensei-lms' ) }
+			title={ __( 'Lesson Type', 'sensei-lms' ) }
 			replaces={ replaces }
 			{ ...props }
 		/>
