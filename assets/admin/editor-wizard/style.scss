@@ -9,10 +9,15 @@
 		width: 100%;
 		background: #ffffff;
 		display: flex;
-		flex-direction: row;
+		flex-wrap: wrap;
 		align-items: center;
+		gap: 12px;
 		border-top: 1px solid rgba(30, 30, 30, 0.12);
-		padding: 18px 30px;
+		padding: 18px;
+
+		@media ( min-width: 600px ) {
+			padding: 18px 30px;
+		}
 	}
 
 	&__progress {
@@ -20,14 +25,20 @@
 	}
 
 	&__actions {
-		margin-left: auto;
+		display: flex;
+		flex: 1;
+		justify-content: end;
+		gap: 12px;
 	}
 }
 
 .sensei-editor-wizard-modal {
+	color: #1e1e1e;
+
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
 	}
+
 	& .components-modal__content {
 		padding: 0;
 		margin-top: 0;
@@ -54,29 +65,53 @@
 		}
 	}
 
+	&__title,
+	&__sticky-title {
+		color: inherit;
+	}
+
+	&__title {
+		margin-top: 0;
+	}
+
 	&__sticky-title {
 		position: sticky;
 		top: 0;
 		z-index: 1;
-		margin: -30px 0 0;
-		padding: 30px 0 18px;
+		margin: -24px 0 0;
+		padding: 24px 0 18px;
 		background: #ffffff;
+
+		@media ( min-width: 600px ) {
+			padding-top: 30px;
+			margin-top: -30px;
+		}
 	}
 
 	&__columns {
-		display: grid;
-		grid-template-columns: 50% 50%;
+		@media ( min-width: 600px ) {
+			display: grid;
+			grid-template-columns: 50% 50%;
+		}
 	}
 
 	&__content {
-		margin: 30px;
+		margin: 24px 18px 18px;
+
+		@media ( min-width: 600px ) {
+			margin: 30px;
+		}
 	}
 
 	&__illustration {
-		background: #43af99;
-		display: flex;
-		justify-content: right;
-		align-items: center;
+		display: none;
+
+		@media ( min-width: 600px ) {
+			background: #43af99;
+			display: flex;
+			justify-content: right;
+			align-items: center;
+		}
 	}
 
 	&__illustration-image {
@@ -86,10 +121,18 @@
 
 .sensei-editor-wizard-modal-upsell {
 	&__price {
-		font-size: 28px;
+		display: block;
+		margin-bottom: 8px;
+		line-height: 1.2;
+		font-size: 32px;
+
+		@media ( min-width: 600px ) {
+			font-size: 36px;
+		}
 	}
 
 	&__price-detail {
+		display: block;
 		font-size: 11px;
 		color: #787C82;
 		margin-top: -10px;
@@ -114,18 +157,13 @@
 			color: #00998b;
 		}
 	}
-
-	&__button {
-		margin-left: 12px;
-		padding: 18px 30px;
-	}
 }
 
 .sensei-editor-wizard-step {
 	&__form {
 		& label {
 			font-weight: bold;
-			margin-top: 30px;
+			margin-top: 20px;
 		}
 	}
 }

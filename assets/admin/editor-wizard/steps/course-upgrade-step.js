@@ -27,23 +27,25 @@ const CourseUpgradeStep = () => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1>{ __( 'Sell with Sensei Pro', 'sensei-lms' ) }</h1>
+				<h1 className="sensei-editor-wizard-modal__title">
+					{ __( 'Sell with Sensei Pro', 'sensei-lms' ) }
+				</h1>
 				<p>
 					{ __(
 						'Do you want to sell this course? This requires Sensei Pro which also unlocks many useful features.',
 						'sensei-lms'
 					) }
 				</p>
-				<h1 className="sensei-editor-wizard-modal-upsell__price">
+				<strong className="sensei-editor-wizard-modal-upsell__price">
 					{ sprintf(
 						// translators: placeholder is the price.
 						__( '%s USD', 'sensei-lms' ),
 						senseiProExtension.price.replace( '.00', '' )
 					) }
-				</h1>
-				<p className="sensei-editor-wizard-modal-upsell__price-detail">
+				</strong>
+				<span className="sensei-editor-wizard-modal-upsell__price-detail">
 					{ __( 'per year, 1 site', 'sensei-lms' ) }
-				</p>
+				</span>
 				<ul className="sensei-editor-wizard-modal-upsell__features">
 					<li className="sensei-editor-wizard-modal-upsell__feature-item">
 						{ __( 'WooCommerce integration', 'sensei-lms' ) }
@@ -92,7 +94,7 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 		goToNextStep();
 	};
 	return (
-		<div>
+		<>
 			<Button
 				isTertiary
 				onClick={ goToNextStep }
@@ -108,7 +110,7 @@ CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 			>
 				{ __( 'Get Sensei Pro', 'sensei-lms' ) }
 			</Button>
-		</div>
+		</>
 	);
 };
 

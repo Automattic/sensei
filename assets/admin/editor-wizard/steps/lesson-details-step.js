@@ -32,7 +32,9 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1>{ __( 'Create your lesson', 'sensei-lms' ) }</h1>
+				<h1 className="sensei-editor-wizard-modal__title">
+					{ __( 'Create your lesson', 'sensei-lms' ) }
+				</h1>
 				<div className="sensei-editor-wizard-step__description">
 					{ __(
 						'It is best to keep your Lesson Title short because it will show in your course outline and navigation. You can easily change both later.',
@@ -64,11 +66,9 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 
 LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (
-		<div>
-			<Button isPrimary onClick={ goToNextStep }>
-				{ __( 'Continue', 'sensei-lms' ) }
-			</Button>
-		</div>
+		<Button isPrimary onClick={ goToNextStep }>
+			{ __( 'Continue', 'sensei-lms' ) }
+		</Button>
 	);
 };
 

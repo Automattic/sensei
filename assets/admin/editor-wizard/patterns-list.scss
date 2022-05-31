@@ -1,6 +1,8 @@
 .sensei-patterns-list {
-	column-count: 2;
-	column-gap: 24px;
+	@media ( min-width: 600px ) {
+		column-count: 2;
+		column-gap: 24px;
+	}
 
 	&__item {
 		break-inside: avoid-column;
