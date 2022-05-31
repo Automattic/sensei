@@ -1659,6 +1659,7 @@ class Sensei_Teacher {
 	 * if the meta does not exist already
 	 *
 	 * @since x.x.x
+	 * @access private
 	 *
 	 * @param int $term_id ID of the term being edited.
 	 * @return void
