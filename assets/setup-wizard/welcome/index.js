@@ -45,7 +45,7 @@ export const Welcome = () => {
 			<div className="sensei-setup-wizard__title">
 				<H> { __( 'Welcome to Sensei LMS!', 'sensei-lms' ) } </H>
 			</div>
-			<Card className="sensei-setup-wizard__card" isElevated={ true }>
+			<Card className="sensei-setup-wizard__card" elevation={ 2 }>
 				<CardBody>
 					<p>
 						{ __(
