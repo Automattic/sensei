@@ -1,10 +1,12 @@
 @import './patterns-list.scss';
 
 .sensei-editor-wizard {
-	padding-bottom: 72px; // Footer height.
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 
 	&__footer {
-		position: fixed;
+		position: sticky;
 		bottom: 0;
 		width: 100%;
 		background: #ffffff;
@@ -51,12 +53,13 @@
 	.components-modal__header {
 		border-bottom: none;
 		padding: 0;
-		position: fixed;
+		position: sticky;
+		top: 0;
+		margin: 0 0 -60px;
 
 		// WP 5.8 fixes.
 		width: 100%;
 		background: transparent;
-		margin: 0;
 
 		.components-button {
 			align-self: flex-start;
@@ -76,19 +79,35 @@
 
 	&__sticky-title {
 		position: sticky;
-		top: 0;
+		top: 24px;
 		z-index: 1;
-		margin: -24px 0 0;
-		padding: 24px 0 18px;
+		margin: 0;
+		padding-bottom: 18px;
 		background: #ffffff;
 
 		@media ( min-width: 600px ) {
-			padding-top: 30px;
-			margin-top: -30px;
+			top: 30px;
+		}
+
+		// White box above the title to hide content on scroll.
+		&::before {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 24px;
+			position: absolute;
+			bottom: 100%;
+			background: #ffffff;
+
+			@media ( min-width: 600px ) {
+				height: 30px;
+			}
 		}
 	}
 
 	&__columns {
+		flex: 1;
+
 		@media ( min-width: 600px ) {
 			display: grid;
 			grid-template-columns: 50% 50%;
@@ -96,10 +115,10 @@
 	}
 
 	&__content {
-		margin: 24px 18px 18px;
+		padding: 24px 18px 18px;
 
 		@media ( min-width: 600px ) {
-			margin: 30px;
+			padding: 30px;
 		}
 	}
 
