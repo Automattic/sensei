@@ -458,4 +458,25 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		}
 	}
 
+	public function testModuleSaving_ifCustomSlugAdded_savesExistingTeacherIdFromSlugToMeta() {
+		// Arrange.
+		$this->login_as_admin();
+		$current_user_id = wp_get_current_user()->ID;
+
+		$new_term = wp_insert_term(
+			'Test module',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => $current_user_id . '-test-module',
+			)
+		);
+
+		// Act.
+		wp_update_term( $new_term['term_id'], 'module', [ 'slug' => 'custom-slug' ] );
+
+		// Assert.
+		$term_meta = get_term_meta( $new_term['term_id'], 'module_author', true );
+		$this->assertEquals( $current_user_id, $term_meta );
+	}
 }
