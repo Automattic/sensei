@@ -56,18 +56,19 @@ class Sensei_Editor_Wizard {
 	 * @access private
 	 */
 	public function register_post_metas() {
-		$meta_key = '_new_post';
-		$args     = [
-			'show_in_rest'  => true,
-			'single'        => true,
-			'type'          => 'boolean',
-			'auth_callback' => function( $allowed, $meta_key, $post_id ) {
-				return current_user_can( 'edit_post', $post_id );
-			},
-		];
-
-		register_post_meta( 'lesson', $meta_key, $args );
-		register_post_meta( 'course', $meta_key, $args );
+		// A meta used to identify lessons created dynamically as new.
+		register_post_meta(
+			'lesson',
+			'_new_post',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
 	}
 
 	/**
