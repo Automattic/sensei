@@ -16,20 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Editor_Wizard {
 	/**
-	 * Patterns category.
-	 *
-	 * @access private
-	 */
-	const PATTERNS_CATEGORY = 'sensei-lms';
-
-	/**
-	 * The block type to be used in patterns for full page patterns.
-	 *
-	 * @access private
-	 */
-	const POST_CONTENT_BLOCK_TYPE = 'sensei-lms/post-content';
-
-	/**
 	 * Instance of class.
 	 *
 	 * @var self
@@ -60,7 +46,6 @@ class Sensei_Editor_Wizard {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_metas' ] );
-		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
 	}
@@ -106,18 +91,6 @@ class Sensei_Editor_Wizard {
 			// Preload extensions (needed to identify if Sensei Pro is installed, and extension details).
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
 		}
-	}
-
-	/**
-	 * Register Sensei block patterns category.
-	 *
-	 * @access private
-	 */
-	public function register_block_patterns_category() {
-		register_block_pattern_category(
-			self::PATTERNS_CATEGORY,
-			[ 'label' => __( 'Sensei LMS', 'sensei-lms' ) ]
-		);
 	}
 
 	/**
