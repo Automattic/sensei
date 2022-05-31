@@ -114,4 +114,21 @@ describe( '<ModuleEdit />', () => {
 			'(teacher1)'
 		);
 	} );
+	it( 'Should show custom slug in header', () => {
+		render(
+			<ModuleEdit
+				className={ '' }
+				attributes={ {
+					title: '',
+					description: '',
+					lessons: [],
+					slug: 'custom-slug',
+				} }
+			/>
+		);
+
+		expect( screen.getByText( '(', { exact: false } ).textContent ).toEqual(
+			'(custom-slug)'
+		);
+	} );
 } );
