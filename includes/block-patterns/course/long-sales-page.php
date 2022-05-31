@@ -25,7 +25,7 @@ return [
 					<!-- /wp:group --></div></div>
 					<!-- /wp:media-text -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -37,7 +37,7 @@ return [
 					<p>' . wp_kses_post( __( '<strong>Portrait photography</strong>, or <strong>portraiture</strong>, is a type of photography aimed at capturing the personality of a person or group of people by using effective lighting, backdrops, and poses. A portrait photograph may be artistic or clinical.', 'sensei-lms' ) ) . '</p>
 					<!-- /wp:paragraph -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -69,7 +69,7 @@ return [
 					<!-- /wp:column --></div>
 					<!-- /wp:columns -->
 
-					<!-- wp:spacer {"height":"24px"} -->
+					<!-- wp:spacer {"height":24} -->
 					<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -78,7 +78,7 @@ return [
 					<h2>' . esc_html__( 'What you will learn to master', 'sensei-lms' ) . '</h2>
 					<!-- /wp:heading -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -191,7 +191,7 @@ return [
 					<p>' . esc_html__( 'Jeff lives in NYC and has worked for many world-famous publications. In his free time, he likes to discover new ways of how he can pass on the skills and artistic views accumulated in his journey.', 'sensei-lms' ) . '</p>
 					<!-- /wp:paragraph -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -230,7 +230,7 @@ return [
 					<!-- /wp:columns --></div>
 					<!-- /wp:group -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -242,12 +242,12 @@ return [
 					<blockquote class="wp-block-quote has-text-align-center is-style-large"><p>' . esc_html__( '"Jeff\'s course really help me understand how to work with light and my closer to my subjects. Amazing course!"', 'sensei-lms' ) . '</p><cite>— Anna Wong, <em>' . esc_html__( 'Volunteer', 'sensei-lms' ) . '</em></cite></blockquote>
 					<!-- /wp:quote -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
 					<!-- wp:group {"backgroundColor":"foreground","textColor":"background","layout":{"inherit":false}} -->
-					<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":"16px"} -->
+					<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -271,7 +271,7 @@ return [
 					<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
 					<!-- /wp:sensei-lms/button-take-course -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer --></div>
 					<!-- /wp:group -->

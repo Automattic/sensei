@@ -15,7 +15,7 @@ return [
 					<h1 class="alignwide has-tertiary-color has-text-color" id="warble-a-film-about-hobbyist-bird-watchers-1" style="font-size:clamp(3rem, 6vw, 4.5rem)">' . esc_html__( 'Welcome to the Film Direction Course', 'sensei-lms' ) . '</h1>
 					<!-- /wp:heading -->
 
-					<!-- wp:spacer {"height":"32px"} -->
+					<!-- wp:spacer {"height":32} -->
 					<div style="height:32px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -51,7 +51,7 @@ return [
 					<p class="has-text-align-center has-large-font-size">' . esc_html__( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ) . '</p>
 					<!-- /wp:paragraph -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -59,7 +59,7 @@ return [
 					<p class="has-text-align-center has-x-large-font-size" style="font-weight:300"><a href="#">Jesús Rodriguez</a>, <a href="#">Emery Driscoll</a>, <a href="#">Megan Perry</a>, <a href="#">Rowan Price</a>, <a href="#">Angelo Tso</a>, <a href="#">Edward Stilton</a>, <a href="#">Amy Jensen</a>, <a href="#">Boston Bell</a>, <a href="#">Shay Ford</a>, <a href="#">Lee Cunningham</a>, <a href="#">Evelynn Ray</a>, <a href="#">Landen Reese</a>, <a href="#">Ewan Hart</a>, <a href="#">Jenna Chan</a>, <a href="#">Phoenix Murray</a>, <a href="#">Mel Saunders</a>, <a href="#">Aldo Davidson</a>, <a href="#">Zain Hall</a>.</p>
 					<!-- /wp:paragraph -->
 
-					<!-- wp:spacer {"height":"16px"} -->
+					<!-- wp:spacer {"height":16} -->
 					<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -70,7 +70,7 @@ return [
 					<!-- /wp:group -->
 
 					<!-- wp:group {"align":"full","style":{"color":{"background":"#f8f4e4"}}} -->
-					<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4"><!-- wp:spacer {"height":"24px"} -->
+					<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4"><!-- wp:spacer {"height":24} -->
 					<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -88,7 +88,7 @@ return [
 					<p class="has-text-color" style="color:#000000;font-size:5vw;line-height:1.1"><strong>' . esc_html__( 'Film Direction', 'sensei-lms' ) . '</strong></p>
 					<!-- /wp:paragraph -->
 
-					<!-- wp:spacer {"height":"5px"} -->
+					<!-- wp:spacer {"height":5} -->
 					<div style="height:5px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer --></div>
 					<!-- /wp:column --></div>
@@ -130,7 +130,7 @@ return [
 					<p class="has-text-color has-extra-small-font-size" style="color:#000000">' . esc_html__( 'There are many pathways to becoming a film director. Some film directors started as screenwriters, cinematographers, producers, film editors, or actors. Directors use different approaches. In this course you will also learn about each of these points and figure out which one is for you.', 'sensei-lms' ) . '</p>
 					<!-- /wp:paragraph -->
 
-					<!-- wp:spacer {"height":"8px"} -->
+					<!-- wp:spacer {"height":8} -->
 					<div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -150,7 +150,7 @@ return [
 					<!-- /wp:spacer -->
 
 					<!-- wp:group {"backgroundColor":"foreground","textColor":"background"} -->
-					<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":"24px"} -->
+					<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":24} -->
 					<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -158,7 +158,7 @@ return [
 					<h2>' . esc_html__( "Let's get started", 'sensei-lms' ) . '</h2>
 					<!-- /wp:heading -->
 
-					<!-- wp:spacer {"height":"24px"} -->
+					<!-- wp:spacer {"height":24} -->
 					<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -174,7 +174,7 @@ return [
 					<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'From script to film', 'sensei-lms' ) . '"} /-->
 					<!-- /wp:sensei-lms/course-outline -->
 
-					<!-- wp:spacer {"height":"8px"} -->
+					<!-- wp:spacer {"height":8} -->
 					<div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer -->
 
@@ -188,7 +188,7 @@ return [
 					<!-- /wp:sensei-lms/button-contact-teacher --></div>
 					<!-- /wp:group -->
 
-					<!-- wp:spacer {"height":"24px"} -->
+					<!-- wp:spacer {"height":24} -->
 					<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 					<!-- /wp:spacer --></div>
 					<!-- /wp:group -->',
