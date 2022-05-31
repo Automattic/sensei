@@ -132,471 +132,469 @@ class Sensei_Editor_Wizard {
 		register_block_pattern(
 			'sensei-lms/video-hero',
 			[
-				'title'         => __( 'Video Hero', 'sensei-lms' ),
-				'categories'    => [ self::PATTERNS_CATEGORY ],
-				'viewportWidth' => 800,
-				'content'       => '<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"elements":{"link":{"color":{"text":"var:preset|color|secondary"}}}},"backgroundColor":"foreground","textColor":"secondary"} -->
-									<div class="wp-block-group alignfull has-secondary-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
-									<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}},"textColor":"tertiary"} -->
-									<h1 class="alignwide has-tertiary-color has-text-color" id="warble-a-film-about-hobbyist-bird-watchers-1" style="font-size:clamp(3rem, 6vw, 4.5rem)">' . esc_html__( 'Welcome to the Film Direction Course', 'sensei-lms' ) . '</h1>
-									<!-- /wp:heading -->
+				'title'      => __( 'Video Hero', 'sensei-lms' ),
+				'categories' => [ self::PATTERNS_CATEGORY ],
+				'content'    => '<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"elements":{"link":{"color":{"text":"var:preset|color|secondary"}}}},"backgroundColor":"foreground","textColor":"secondary"} -->
+								<div class="wp-block-group alignfull has-secondary-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
+								<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}},"textColor":"tertiary"} -->
+								<h1 class="alignwide has-tertiary-color has-text-color" id="warble-a-film-about-hobbyist-bird-watchers-1" style="font-size:clamp(3rem, 6vw, 4.5rem)">' . esc_html__( 'Welcome to the Film Direction Course', 'sensei-lms' ) . '</h1>
+								<!-- /wp:heading -->
 
-									<!-- wp:spacer {"height":"32px"} -->
-									<div style="height:32px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"32px"} -->
+								<div style="height:32px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:video {"align":"wide"} -->
-									<figure class="wp-block-video alignwide"><video controls src="https://sensei-demo.mystagingwebsite.com/wp-content/themes/twentytwentytwo/assets/videos/birds.mp4"></video></figure>
-									<!-- /wp:video -->
+								<!-- wp:video {"align":"wide"} -->
+								<figure class="wp-block-video alignwide"><video controls src="https://sensei-demo.mystagingwebsite.com/wp-content/themes/twentytwentytwo/assets/videos/birds.mp4"></video></figure>
+								<!-- /wp:video -->
 
-									<!-- wp:columns {"align":"wide","textColor":"tertiary"} -->
-									<div class="wp-block-columns alignwide has-tertiary-color has-text-color"><!-- wp:column {"width":"50%"} -->
-									<div class="wp-block-column" style="flex-basis:50%"><!-- wp:paragraph -->
-									<p><strong>Doug Stilton</strong></p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"align":"wide","textColor":"tertiary"} -->
+								<div class="wp-block-columns alignwide has-tertiary-color has-text-color"><!-- wp:column {"width":"50%"} -->
+								<div class="wp-block-column" style="flex-basis:50%"><!-- wp:paragraph -->
+								<p><strong>Doug Stilton</strong></p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column -->
-									<div class="wp-block-column"><!-- wp:paragraph {"className":"sensei-pattern-description"} -->
-									<p class="sensei-pattern-description">' . esc_html__( 'Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column -->
+								<!-- wp:column -->
+								<div class="wp-block-column"><!-- wp:paragraph {"className":"sensei-pattern-description"} -->
+								<p class="sensei-pattern-description">' . esc_html__( 'Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column -->
-									<div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right","backgroundColor":"tertiary","textColor":"foreground"} -->
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link has-foreground-color has-tertiary-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns --></div>
-									<!-- /wp:group --></div>
-									<!-- /wp:group -->
+								<!-- wp:column -->
+								<div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right","backgroundColor":"tertiary","textColor":"foreground"} -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link has-foreground-color has-tertiary-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns --></div>
+								<!-- /wp:group --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|primary"}}},"color":{}},"textColor":"primary","layout":{"inherit":false}} -->
-									<div class="wp-block-group alignfull has-primary-color has-text-color has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:group {"align":"wide"} -->
-									<div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","fontSize":"large"} -->
-									<p class="has-text-align-center has-large-font-size">' . esc_html__( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|primary"}}},"color":{}},"textColor":"primary","layout":{"inherit":false}} -->
+								<div class="wp-block-group alignfull has-primary-color has-text-color has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:group {"align":"wide"} -->
+								<div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","fontSize":"large"} -->
+								<p class="has-text-align-center has-large-font-size">' . esc_html__( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:paragraph {"align":"center","style":{"typography":{"fontWeight":"300"}},"fontSize":"x-large"} -->
-									<p class="has-text-align-center has-x-large-font-size" style="font-weight:300"><a href="#">Jesús Rodriguez</a>, <a href="#">Emery Driscoll</a>, <a href="#">Megan Perry</a>, <a href="#">Rowan Price</a>, <a href="#">Angelo Tso</a>, <a href="#">Edward Stilton</a>, <a href="#">Amy Jensen</a>, <a href="#">Boston Bell</a>, <a href="#">Shay Ford</a>, <a href="#">Lee Cunningham</a>, <a href="#">Evelynn Ray</a>, <a href="#">Landen Reese</a>, <a href="#">Ewan Hart</a>, <a href="#">Jenna Chan</a>, <a href="#">Phoenix Murray</a>, <a href="#">Mel Saunders</a>, <a href="#">Aldo Davidson</a>, <a href="#">Zain Hall</a>.</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph {"align":"center","style":{"typography":{"fontWeight":"300"}},"fontSize":"x-large"} -->
+								<p class="has-text-align-center has-x-large-font-size" style="font-weight:300"><a href="#">Jesús Rodriguez</a>, <a href="#">Emery Driscoll</a>, <a href="#">Megan Perry</a>, <a href="#">Rowan Price</a>, <a href="#">Angelo Tso</a>, <a href="#">Edward Stilton</a>, <a href="#">Amy Jensen</a>, <a href="#">Boston Bell</a>, <a href="#">Shay Ford</a>, <a href="#">Lee Cunningham</a>, <a href="#">Evelynn Ray</a>, <a href="#">Landen Reese</a>, <a href="#">Ewan Hart</a>, <a href="#">Jenna Chan</a>, <a href="#">Phoenix Murray</a>, <a href="#">Mel Saunders</a>, <a href="#">Aldo Davidson</a>, <a href="#">Zain Hall</a>.</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:sensei-lms/button-take-course {"align":"center","backgroundColor":"foreground","textColor":"background"} -->
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-center"><button class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course --></div>
-									<!-- /wp:group --></div>
-									<!-- /wp:group -->
+								<!-- wp:sensei-lms/button-take-course {"align":"center","backgroundColor":"foreground","textColor":"background"} -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-center"><button class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course --></div>
+								<!-- /wp:group --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:group {"align":"full","style":{"color":{"background":"#f8f4e4"}}} -->
-									<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4"><!-- wp:spacer {"height":"24px"} -->
-									<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:group {"align":"full","style":{"color":{"background":"#f8f4e4"}}} -->
+								<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4"><!-- wp:spacer {"height":"24px"} -->
+								<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:columns {"align":"wide"} -->
-									<div class="wp-block-columns alignwide"><!-- wp:column -->
-									<div class="wp-block-column"><!-- wp:spacer -->
-									<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:columns {"align":"wide"} -->
+								<div class="wp-block-columns alignwide"><!-- wp:column -->
+								<div class="wp-block-column"><!-- wp:spacer -->
+								<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:heading {"level":6,"style":{"color":{"text":"#000000"}}} -->
-									<h6 class="has-text-color" id="ecosystem" style="color:#000000">' . esc_html__( 'INTRODUCTION', 'sensei-lms' ) . '</h6>
-									<!-- /wp:heading -->
+								<!-- wp:heading {"level":6,"style":{"color":{"text":"#000000"}}} -->
+								<h6 class="has-text-color" id="ecosystem" style="color:#000000">' . esc_html__( 'INTRODUCTION', 'sensei-lms' ) . '</h6>
+								<!-- /wp:heading -->
 
-									<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1.1","fontSize":"5vw"},"color":{"text":"#000000"}}} -->
-									<p class="has-text-color" style="color:#000000;font-size:5vw;line-height:1.1"><strong>' . esc_html__( 'Film Direction', 'sensei-lms' ) . '</strong></p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1.1","fontSize":"5vw"},"color":{"text":"#000000"}}} -->
+								<p class="has-text-color" style="color:#000000;font-size:5vw;line-height:1.1"><strong>' . esc_html__( 'Film Direction', 'sensei-lms' ) . '</strong></p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:spacer {"height":"5px"} -->
-									<div style="height:5px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:spacer {"height":"5px"} -->
+								<div style="height:5px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:columns {"align":"wide"} -->
-									<div class="wp-block-columns alignwide"><!-- wp:column {"width":"33.38%"} -->
-									<div class="wp-block-column" style="flex-basis:33.38%"><!-- wp:paragraph {"style":{"color":{"text":"#000000"}},"fontSize":"extra-small"} -->
-									<p class="has-text-color has-extra-small-font-size" style="color:#000000">' . wp_kses_post( __( "A <strong>film director</strong> controls a film's artistic and dramatic aspects and visualizes the screenplay (or script) while guiding the film crew and actors in the fulfillment of that vision. The director has a key role in choosing the cast members, production design, and all the creative aspects of filmmaking.", 'sensei-lms' ) ) . '</p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"align":"wide"} -->
+								<div class="wp-block-columns alignwide"><!-- wp:column {"width":"33.38%"} -->
+								<div class="wp-block-column" style="flex-basis:33.38%"><!-- wp:paragraph {"style":{"color":{"text":"#000000"}},"fontSize":"extra-small"} -->
+								<p class="has-text-color has-extra-small-font-size" style="color:#000000">' . wp_kses_post( __( "A <strong>film director</strong> controls a film's artistic and dramatic aspects and visualizes the screenplay (or script) while guiding the film crew and actors in the fulfillment of that vision. The director has a key role in choosing the cast members, production design, and all the creative aspects of filmmaking.", 'sensei-lms' ) ) . '</p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"width":"33%"} -->
-									<div class="wp-block-column" style="flex-basis:33%"><!-- wp:spacer -->
-									<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:column {"width":"33%"} -->
+								<div class="wp-block-column" style="flex-basis:33%"><!-- wp:spacer -->
+								<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-									<figure class="wp-block-image size-large"><img src="https://s.w.org/images/core/5.8/outside-01.jpg" alt="The sun setting through a dense forest."/></figure>
-									<!-- /wp:image --></div>
-									<!-- /wp:column -->
+								<!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
+								<figure class="wp-block-image size-large"><img src="https://s.w.org/images/core/5.8/outside-01.jpg" alt="The sun setting through a dense forest."/></figure>
+								<!-- /wp:image --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"width":"33.62%"} -->
-									<div class="wp-block-column" style="flex-basis:33.62%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-									<figure class="wp-block-image size-large"><img src="https://s.w.org/images/core/5.8/outside-02.jpg" alt="Wind turbines standing on a grassy plain, against a blue sky."/></figure>
-									<!-- /wp:image --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column {"width":"33.62%"} -->
+								<div class="wp-block-column" style="flex-basis:33.62%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
+								<figure class="wp-block-image size-large"><img src="https://s.w.org/images/core/5.8/outside-02.jpg" alt="Wind turbines standing on a grassy plain, against a blue sky."/></figure>
+								<!-- /wp:image --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:columns {"align":"wide"} -->
-									<div class="wp-block-columns alignwide"><!-- wp:column {"width":"67%"} -->
-									<div class="wp-block-column" style="flex-basis:67%"><!-- wp:image {"align":"right","sizeSlug":"large","linkDestination":"none"} -->
-									<figure class="wp-block-image alignright size-large"><img src="https://s.w.org/images/core/5.8/outside-03.jpg" alt="The sun shining over a ridge leading down into the shore. In the distance, a car drives down a road."/></figure>
-									<!-- /wp:image --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"align":"wide"} -->
+								<div class="wp-block-columns alignwide"><!-- wp:column {"width":"67%"} -->
+								<div class="wp-block-column" style="flex-basis:67%"><!-- wp:image {"align":"right","sizeSlug":"large","linkDestination":"none"} -->
+								<figure class="wp-block-image alignright size-large"><img src="https://s.w.org/images/core/5.8/outside-03.jpg" alt="The sun shining over a ridge leading down into the shore. In the distance, a car drives down a road."/></figure>
+								<!-- /wp:image --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center","width":"33%"} -->
-									<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:33%"><!-- wp:paragraph {"style":{"color":{"text":"#000000"}},"fontSize":"extra-small"} -->
-									<p class="has-text-color has-extra-small-font-size" style="color:#000000">' . esc_html__( 'There are many pathways to becoming a film director. Some film directors started as screenwriters, cinematographers, producers, film editors, or actors. Directors use different approaches. In this course you will also learn about each of these points and figure out which one is for you.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:column {"verticalAlignment":"center","width":"33%"} -->
+								<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:33%"><!-- wp:paragraph {"style":{"color":{"text":"#000000"}},"fontSize":"extra-small"} -->
+								<p class="has-text-color has-extra-small-font-size" style="color:#000000">' . esc_html__( 'There are many pathways to becoming a film director. Some film directors started as screenwriters, cinematographers, producers, film editors, or actors. Directors use different approaches. In this course you will also learn about each of these points and figure out which one is for you.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:spacer {"height":"8px"} -->
-									<div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"8px"} -->
+								<div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:sensei-lms/button-take-course {"align":"left","backgroundColor":"foreground","textColor":"background"} -->
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:sensei-lms/button-take-course {"align":"left","backgroundColor":"foreground","textColor":"background"} -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:spacer -->
-									<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer --></div>
-									<!-- /wp:group -->
+								<!-- wp:spacer -->
+								<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:spacer -->
-									<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer -->
+								<div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:group {"backgroundColor":"foreground","textColor":"background"} -->
-									<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":"24px"} -->
-									<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:group {"backgroundColor":"foreground","textColor":"background"} -->
+								<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":"24px"} -->
+								<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:heading -->
-									<h2>' . esc_html__( "Let's get started", 'sensei-lms' ) . '</h2>
-									<!-- /wp:heading -->
+								<!-- wp:heading -->
+								<h2>' . esc_html__( "Let's get started", 'sensei-lms' ) . '</h2>
+								<!-- /wp:heading -->
 
-									<!-- wp:spacer {"height":"24px"} -->
-									<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"24px"} -->
+								<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:sensei-lms/course-progress /-->
+								<!-- wp:sensei-lms/course-progress /-->
 
-									<!-- wp:sensei-lms/course-outline -->
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Introduction', 'sensei-lms' ) . '"} /-->
+								<!-- wp:sensei-lms/course-outline -->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Introduction', 'sensei-lms' ) . '"} /-->
 
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( "Meeting Doug's network", 'sensei-lms' ) . '"} /-->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( "Meeting Doug's network", 'sensei-lms' ) . '"} /-->
 
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Start your journey', 'sensei-lms' ) . '"} /-->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Start your journey', 'sensei-lms' ) . '"} /-->
 
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'From script to film', 'sensei-lms' ) . '"} /-->
-									<!-- /wp:sensei-lms/course-outline -->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'From script to film', 'sensei-lms' ) . '"} /-->
+								<!-- /wp:sensei-lms/course-outline -->
 
-									<!-- wp:spacer {"height":"8px"} -->
-									<div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"8px"} -->
+								<div style="height:8px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-									<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course {"align":"left","backgroundColor":"background","textColor":"foreground"} -->
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course -->
+								<!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
+								<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course {"align":"left","backgroundColor":"background","textColor":"foreground"} -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course -->
 
-									<!-- wp:sensei-lms/button-contact-teacher -->
-									<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">' . esc_html__( 'Contact Teacher', 'sensei-lms' ) . '</a></div>
-									<!-- /wp:sensei-lms/button-contact-teacher --></div>
-									<!-- /wp:group -->
+								<!-- wp:sensei-lms/button-contact-teacher -->
+								<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">' . esc_html__( 'Contact Teacher', 'sensei-lms' ) . '</a></div>
+								<!-- /wp:sensei-lms/button-contact-teacher --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:spacer {"height":"24px"} -->
-									<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer --></div>
-									<!-- /wp:group -->',
+								<!-- wp:spacer {"height":"24px"} -->
+								<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer --></div>
+								<!-- /wp:group -->',
 			]
 		);
 
 		register_block_pattern(
 			'sensei-lms/longe-sales-page',
 			[
-				'title'         => __( 'Long Sales Page', 'sensei-lms' ),
-				'categories'    => [ self::PATTERNS_CATEGORY ],
-				'viewportWidth' => 800,
-				'content'       => '<!-- wp:media-text {"align":"full","mediaPosition":"right","mediaId":1298,"mediaLink":"https://sensei-demo.mystagingwebsite.com/course/pattern-long-sales-page/11423305963_79ef26ea28_b/","mediaType":"image","mediaWidth":58,"mediaSizeSlug":"full","verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#121c1c"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background"} -->
-									<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;grid-template-columns:auto 58%"><figure class="wp-block-media-text__media"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/11423305963_79ef26ea28_b.jpeg" alt="" class="wp-image-1298 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:group {"style":{"spacing":{"padding":{"top":"2em","right":"2em","bottom":"2em","left":"2em"}},"elements":{"link":{"color":{"text":"#fffdc7"}}}},"layout":{"inherit":false}} -->
-									<div class="wp-block-group has-link-color" style="padding-top:2em;padding-right:2em;padding-bottom:2em;padding-left:2em"><!-- wp:heading {"level":1,"style":{"typography":{"fontWeight":"700","fontSize":"48px","lineHeight":"1.15"}}} -->
-									<h1 style="font-size:48px;font-weight:700;line-height:1.15"><strong>' . esc_html__( 'Deep dive into portrait photography', 'sensei-lms' ) . '</strong></h1>
-									<!-- /wp:heading -->
+				'title'      => __( 'Long Sales Page', 'sensei-lms' ),
+				'categories' => [ self::PATTERNS_CATEGORY ],
+				'content'    => '<!-- wp:media-text {"align":"full","mediaPosition":"right","mediaId":1298,"mediaLink":"https://sensei-demo.mystagingwebsite.com/course/pattern-long-sales-page/11423305963_79ef26ea28_b/","mediaType":"image","mediaWidth":58,"mediaSizeSlug":"full","verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#121c1c"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background"} -->
+								<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;grid-template-columns:auto 58%"><figure class="wp-block-media-text__media"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/11423305963_79ef26ea28_b.jpeg" alt="" class="wp-image-1298 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:group {"style":{"spacing":{"padding":{"top":"2em","right":"2em","bottom":"2em","left":"2em"}},"elements":{"link":{"color":{"text":"#fffdc7"}}}},"layout":{"inherit":false}} -->
+								<div class="wp-block-group has-link-color" style="padding-top:2em;padding-right:2em;padding-bottom:2em;padding-left:2em"><!-- wp:heading {"level":1,"style":{"typography":{"fontWeight":"700","fontSize":"48px","lineHeight":"1.15"}}} -->
+								<h1 style="font-size:48px;font-weight:700;line-height:1.15"><strong>' . esc_html__( 'Deep dive into portrait photography', 'sensei-lms' ) . '</strong></h1>
+								<!-- /wp:heading -->
 
-									<!-- wp:paragraph {"className":"sensei-pattern-description"} -->
-									<p class="sensei-pattern-description">' . esc_html__( 'Learn from Jeff Bronson how to shoot photography like a pro in any outside light conditions.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph {"className":"sensei-pattern-description"} -->
+								<p class="sensei-pattern-description">' . esc_html__( 'Learn from Jeff Bronson how to shoot photography like a pro in any outside light conditions.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course --></div>
-									<!-- /wp:group --></div></div>
-									<!-- /wp:media-text -->
+								<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course --></div>
+								<!-- /wp:group --></div></div>
+								<!-- /wp:media-text -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:heading -->
-									<h2>' . esc_html__( 'What is portrait photography', 'sensei-lms' ) . '</h2>
-									<!-- /wp:heading -->
+								<!-- wp:heading -->
+								<h2>' . esc_html__( 'What is portrait photography', 'sensei-lms' ) . '</h2>
+								<!-- /wp:heading -->
 
-									<!-- wp:paragraph -->
-									<p>' . wp_kses_post( __( '<strong>Portrait photography</strong>, or <strong>portraiture</strong>, is a type of photography aimed at capturing the personality of a person or group of people by using effective lighting, backdrops, and poses. A portrait photograph may be artistic or clinical.', 'sensei-lms' ) ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph -->
+								<p>' . wp_kses_post( __( '<strong>Portrait photography</strong>, or <strong>portraiture</strong>, is a type of photography aimed at capturing the personality of a person or group of people by using effective lighting, backdrops, and poses. A portrait photograph may be artistic or clinical.', 'sensei-lms' ) ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:columns -->
-									<div class="wp-block-columns"><!-- wp:column -->
-									<div class="wp-block-column"><!-- wp:image {"id":1309,"sizeSlug":"full","linkDestination":"none"} -->
-									<figure class="wp-block-image size-full"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/15881510678_2bb334c5ec_b.jpeg" alt="" class="wp-image-1309"/></figure>
-									<!-- /wp:image --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns -->
+								<div class="wp-block-columns"><!-- wp:column -->
+								<div class="wp-block-column"><!-- wp:image {"id":1309,"sizeSlug":"full","linkDestination":"none"} -->
+								<figure class="wp-block-image size-full"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/15881510678_2bb334c5ec_b.jpeg" alt="" class="wp-image-1309"/></figure>
+								<!-- /wp:image --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column -->
-									<div class="wp-block-column"></div>
-									<!-- /wp:column -->
+								<!-- wp:column -->
+								<div class="wp-block-column"></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"width":"10%"} -->
-									<div class="wp-block-column" style="flex-basis:10%"></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column {"width":"10%"} -->
+								<div class="wp-block-column" style="flex-basis:10%"></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:columns -->
-									<div class="wp-block-columns"><!-- wp:column -->
-									<div class="wp-block-column"></div>
-									<!-- /wp:column -->
+								<!-- wp:columns -->
+								<div class="wp-block-columns"><!-- wp:column -->
+								<div class="wp-block-column"></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column -->
-									<div class="wp-block-column"><!-- wp:quote -->
-									<blockquote class="wp-block-quote"><p>' . esc_html__( 'A photographic portrait means to consider who we have before us and what we want to show about that person.', 'sensei-lms' ) . '</p><cite>Jeff Bronson</cite></blockquote>
-									<!-- /wp:quote --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column -->
+								<div class="wp-block-column"><!-- wp:quote -->
+								<blockquote class="wp-block-quote"><p>' . esc_html__( 'A photographic portrait means to consider who we have before us and what we want to show about that person.', 'sensei-lms' ) . '</p><cite>Jeff Bronson</cite></blockquote>
+								<!-- /wp:quote --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:spacer {"height":"24px"} -->
-									<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"24px"} -->
+								<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}},"color":{"background":"#121c1c"}},"textColor":"background","layout":{"inherit":true}} -->
-									<div class="wp-block-group alignfull has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:heading -->
-									<h2>' . esc_html__( 'What you will learn to master', 'sensei-lms' ) . '</h2>
-									<!-- /wp:heading -->
+								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}},"color":{"background":"#121c1c"}},"textColor":"background","layout":{"inherit":true}} -->
+								<div class="wp-block-group alignfull has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:heading -->
+								<h2>' . esc_html__( 'What you will learn to master', 'sensei-lms' ) . '</h2>
+								<!-- /wp:heading -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:group {"align":"full","layout":{"inherit":true}} -->
-									<div class="wp-block-group alignfull"><!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-									<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
-									<!-- /wp:separator -->
+								<!-- wp:group {"align":"full","layout":{"inherit":true}} -->
+								<div class="wp-block-group alignfull"><!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
+								<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+								<!-- /wp:separator -->
 
-									<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
-									<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
-									<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
-									<h3>' . esc_html__( 'Lighting for portraiture', 'sensei-lms' ) . '</h3>
-									<!-- /wp:heading --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
+								<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
+								<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
+								<h3>' . esc_html__( 'Lighting for portraiture', 'sensei-lms' ) . '</h3>
+								<!-- /wp:heading --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"></div>
-									<!-- /wp:column -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
-									<p>' . esc_html__( "There are many techniques available to light a subject's face.", 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
+								<p>' . esc_html__( "There are many techniques available to light a subject's face.", 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-									<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
-									<!-- /wp:separator -->
+								<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
+								<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+								<!-- /wp:separator -->
 
-									<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
-									<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
-									<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
-									<h3>' . esc_html__( 'Three-point lighting', 'sensei-lms' ) . '</h3>
-									<!-- /wp:heading --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
+								<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
+								<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
+								<h3>' . esc_html__( 'Three-point lighting', 'sensei-lms' ) . '</h3>
+								<!-- /wp:heading --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"></div>
-									<!-- /wp:column -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
-									<p>' . esc_html__( 'Three-point lighting is one of the most common lighting setups. It is traditionally used in a studio, but photographers may use it on-location in combination with ambient light.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
+								<p>' . esc_html__( 'Three-point lighting is one of the most common lighting setups. It is traditionally used in a studio, but photographers may use it on-location in combination with ambient light.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-									<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
-									<!-- /wp:separator -->
+								<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
+								<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+								<!-- /wp:separator -->
 
-									<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
-									<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
-									<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
-									<h3>' . esc_html__( 'Key light', 'sensei-lms' ) . '</h3>
-									<!-- /wp:heading --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
+								<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
+								<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
+								<h3>' . esc_html__( 'Key light', 'sensei-lms' ) . '</h3>
+								<!-- /wp:heading --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"></div>
-									<!-- /wp:column -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
-									<p>' . esc_html__( "The key light, also known as the main light, is placed either to the left, right, or above the subject's face, typically 30 to 60 degrees from the camera.", 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
+								<p>' . esc_html__( "The key light, also known as the main light, is placed either to the left, right, or above the subject's face, typically 30 to 60 degrees from the camera.", 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-									<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
-									<!-- /wp:separator -->
+								<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
+								<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+								<!-- /wp:separator -->
 
-									<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
-									<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
-									<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
-									<h3>' . esc_html__( 'Fill light', 'sensei-lms' ) . '</h3>
-									<!-- /wp:heading --></div>
-									<!-- /wp:column -->
+								<!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
+								<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"210px"} -->
+								<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:210px"><!-- wp:heading {"level":3} -->
+								<h3>' . esc_html__( 'Fill light', 'sensei-lms' ) . '</h3>
+								<!-- /wp:heading --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"></div>
-									<!-- /wp:column -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"verticalAlignment":"center"} -->
-									<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
-									<p>' . esc_html__( 'The fill light, also known as the secondary main light, is typically placed opposite the key light.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns -->
+								<!-- wp:column {"verticalAlignment":"center"} -->
+								<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph -->
+								<p>' . esc_html__( 'The fill light, also known as the secondary main light, is typically placed opposite the key light.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns -->
 
-									<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-									<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
-									<!-- /wp:separator --></div>
-									<!-- /wp:group --></div>
-									<!-- /wp:group -->
+								<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
+								<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+								<!-- /wp:separator --></div>
+								<!-- /wp:group --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"background","textColor":"foreground","layout":{"inherit":true}} -->
-									<div class="wp-block-group alignfull has-foreground-color has-background-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:media-text {"mediaId":1337,"mediaLink":"https://sensei-demo.mystagingwebsite.com/course/pattern-long-sales-page/11423305963_79ef26ea28_b-1/","mediaType":"image","verticalAlignment":"bottom","imageFill":false} -->
-									<div class="wp-block-media-text alignwide is-stacked-on-mobile is-vertically-aligned-bottom"><figure class="wp-block-media-text__media"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/11423305963_79ef26ea28_b-1.jpeg" alt="" class="wp-image-1337 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:heading -->
-									<h2>' . esc_html__( 'Meet Jeff Bronson', 'sensei-lms' ) . '</h2>
-									<!-- /wp:heading -->
+								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"background","textColor":"foreground","layout":{"inherit":true}} -->
+								<div class="wp-block-group alignfull has-foreground-color has-background-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:media-text {"mediaId":1337,"mediaLink":"https://sensei-demo.mystagingwebsite.com/course/pattern-long-sales-page/11423305963_79ef26ea28_b-1/","mediaType":"image","verticalAlignment":"bottom","imageFill":false} -->
+								<div class="wp-block-media-text alignwide is-stacked-on-mobile is-vertically-aligned-bottom"><figure class="wp-block-media-text__media"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/11423305963_79ef26ea28_b-1.jpeg" alt="" class="wp-image-1337 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:heading -->
+								<h2>' . esc_html__( 'Meet Jeff Bronson', 'sensei-lms' ) . '</h2>
+								<!-- /wp:heading -->
 
-									<!-- wp:paragraph -->
-									<p>' . esc_html__( 'You will begin by getting to know the work of Jeff de Bronson, who will also teach you how to learn the best tricks he accumulated throughout his 25+ years of experience.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph -->
+								<p>' . esc_html__( 'You will begin by getting to know the work of Jeff de Bronson, who will also teach you how to learn the best tricks he accumulated throughout his 25+ years of experience.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:paragraph -->
-									<p>' . esc_html__( 'Jeff lives in NYC and has worked for many world-famous publications. In his free time, he likes to discover new ways of how he can pass on the skills and artistic views accumulated in his journey.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph -->
+								<p>' . esc_html__( 'Jeff lives in NYC and has worked for many world-famous publications. In his free time, he likes to discover new ways of how he can pass on the skills and artistic views accumulated in his journey.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:sensei-lms/button-contact-teacher -->
-									<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">' . esc_html__( 'Contact Teacher', 'sensei-lms' ) . '</a></div>
-									<!-- /wp:sensei-lms/button-contact-teacher --></div></div>
-									<!-- /wp:media-text --></div>
-									<!-- /wp:group -->
+								<!-- wp:sensei-lms/button-contact-teacher -->
+								<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">' . esc_html__( 'Contact Teacher', 'sensei-lms' ) . '</a></div>
+								<!-- /wp:sensei-lms/button-contact-teacher --></div></div>
+								<!-- /wp:media-text --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:group {"align":"full","style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}},"spacing":{"padding":{"top":"6rem","bottom":"4rem"}}},"backgroundColor":"foreground","textColor":"background","layout":{"inherit":true}} -->
-									<div class="wp-block-group alignfull has-background-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:4rem"><!-- wp:columns {"align":"wide"} -->
-									<div class="wp-block-columns alignwide"><!-- wp:column {"width":"50%"} -->
-									<div class="wp-block-column" style="flex-basis:50%"><!-- wp:heading {"fontSize":"x-large"} -->
-									<h2 class="has-x-large-font-size" id="extended-trailer">' . esc_html__( 'Jeff at work', 'sensei-lms' ) . '</h2>
-									<!-- /wp:heading -->
+								<!-- wp:group {"align":"full","style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}},"spacing":{"padding":{"top":"6rem","bottom":"4rem"}}},"backgroundColor":"foreground","textColor":"background","layout":{"inherit":true}} -->
+								<div class="wp-block-group alignfull has-background-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:4rem"><!-- wp:columns {"align":"wide"} -->
+								<div class="wp-block-columns alignwide"><!-- wp:column {"width":"50%"} -->
+								<div class="wp-block-column" style="flex-basis:50%"><!-- wp:heading {"fontSize":"x-large"} -->
+								<h2 class="has-x-large-font-size" id="extended-trailer">' . esc_html__( 'Jeff at work', 'sensei-lms' ) . '</h2>
+								<!-- /wp:heading -->
 
-									<!-- wp:paragraph -->
-									<p>' . esc_html__( 'Meet Jeff in his studio and see firsthand how he approaches a photoshoot in this exclusive trailer.', 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph -->
+								<p>' . esc_html__( 'Meet Jeff in his studio and see firsthand how he approaches a photoshoot in this exclusive trailer.', 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:paragraph -->
-									<p>' . esc_html__( "Unlock the full video by signing up for Jeff's course.", 'sensei-lms' ) . '</p>
-									<!-- /wp:paragraph -->
+								<!-- wp:paragraph -->
+								<p>' . esc_html__( "Unlock the full video by signing up for Jeff's course.", 'sensei-lms' ) . '</p>
+								<!-- /wp:paragraph -->
 
-									<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
+								<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
 
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course --></div>
-									<!-- /wp:column -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course --></div>
+								<!-- /wp:column -->
 
-									<!-- wp:column {"width":"66.66%"} -->
-									<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:video -->
-									<figure class="wp-block-video"><video controls src="https://sensei-demo.mystagingwebsite.com/wp-content/themes/twentytwentytwo/assets/videos/birds.mp4"></video></figure>
-									<!-- /wp:video --></div>
-									<!-- /wp:column --></div>
-									<!-- /wp:columns --></div>
-									<!-- /wp:group -->
+								<!-- wp:column {"width":"66.66%"} -->
+								<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:video -->
+								<figure class="wp-block-video"><video controls src="https://sensei-demo.mystagingwebsite.com/wp-content/themes/twentytwentytwo/assets/videos/birds.mp4"></video></figure>
+								<!-- /wp:video --></div>
+								<!-- /wp:column --></div>
+								<!-- /wp:columns --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:image {"align":"center","width":150,"height":150,"sizeSlug":"large","linkDestination":"none","className":"is-style-rounded"} -->
-									<figure class="wp-block-image aligncenter size-large is-resized is-style-rounded"><img src="https://s.w.org/images/core/5.8/portrait.jpg" alt="A side profile of a woman in a russet-colored turtleneck and white bag. She looks up with her eyes closed." width="150" height="150"/></figure>
-									<!-- /wp:image -->
+								<!-- wp:image {"align":"center","width":150,"height":150,"sizeSlug":"large","linkDestination":"none","className":"is-style-rounded"} -->
+								<figure class="wp-block-image aligncenter size-large is-resized is-style-rounded"><img src="https://s.w.org/images/core/5.8/portrait.jpg" alt="A side profile of a woman in a russet-colored turtleneck and white bag. She looks up with her eyes closed." width="150" height="150"/></figure>
+								<!-- /wp:image -->
 
-									<!-- wp:quote {"align":"center","className":"is-style-large"} -->
-									<blockquote class="wp-block-quote has-text-align-center is-style-large"><p>' . esc_html__( '"Jeff\'s course really help me understand how to work with light and my closer to my subjects. Amazing course!"', 'sensei-lms' ) . '</p><cite>— Anna Wong, <em>' . esc_html__( 'Volunteer', 'sensei-lms' ) . '</em></cite></blockquote>
-									<!-- /wp:quote -->
+								<!-- wp:quote {"align":"center","className":"is-style-large"} -->
+								<blockquote class="wp-block-quote has-text-align-center is-style-large"><p>' . esc_html__( '"Jeff\'s course really help me understand how to work with light and my closer to my subjects. Amazing course!"', 'sensei-lms' ) . '</p><cite>— Anna Wong, <em>' . esc_html__( 'Volunteer', 'sensei-lms' ) . '</em></cite></blockquote>
+								<!-- /wp:quote -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:group {"backgroundColor":"foreground","textColor":"background","layout":{"inherit":false}} -->
-									<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer -->
+								<!-- wp:group {"backgroundColor":"foreground","textColor":"background","layout":{"inherit":false}} -->
+								<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer -->
 
-									<!-- wp:heading {"textAlign":"left"} -->
-									<h2 class="has-text-align-left">' . esc_html__( 'Course Lessons', 'sensei-lms' ) . '</h2>
-									<!-- /wp:heading -->
+								<!-- wp:heading {"textAlign":"left"} -->
+								<h2 class="has-text-align-left">' . esc_html__( 'Course Lessons', 'sensei-lms' ) . '</h2>
+								<!-- /wp:heading -->
 
-									<!-- wp:sensei-lms/course-progress /-->
+								<!-- wp:sensei-lms/course-progress /-->
 
-									<!-- wp:sensei-lms/course-outline -->
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Lighting for portraiture', 'sensei-lms' ) . '"} /-->
+								<!-- wp:sensei-lms/course-outline -->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Lighting for portraiture', 'sensei-lms' ) . '"} /-->
 
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Three-point lighting', 'sensei-lms' ) . '"} /-->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Three-point lighting', 'sensei-lms' ) . '"} /-->
 
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Key light', 'sensei-lms' ) . '"} /-->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Key light', 'sensei-lms' ) . '"} /-->
 
-									<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Fill light', 'sensei-lms' ) . '"} /-->
-									<!-- /wp:sensei-lms/course-outline -->
+								<!-- wp:sensei-lms/course-outline-lesson {"title":"' . esc_html__( 'Fill light', 'sensei-lms' ) . '"} /-->
+								<!-- /wp:sensei-lms/course-outline -->
 
-									<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
-									<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
-									<!-- /wp:sensei-lms/button-take-course -->
+								<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
+								<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color">' . esc_html__( 'Take Course', 'sensei-lms' ) . '</button></div>
+								<!-- /wp:sensei-lms/button-take-course -->
 
-									<!-- wp:spacer {"height":"16px"} -->
-									<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
-									<!-- /wp:spacer --></div>
-									<!-- /wp:group -->
+								<!-- wp:spacer {"height":"16px"} -->
+								<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+								<!-- /wp:spacer --></div>
+								<!-- /wp:group -->
 
-									<!-- wp:paragraph -->
-									<p></p>
-									<!-- /wp:paragraph -->',
+								<!-- wp:paragraph -->
+								<p></p>
+								<!-- /wp:paragraph -->',
 			]
 		);
 	}
