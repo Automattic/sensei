@@ -44,7 +44,7 @@ export const registerVideo = ( {
 		/**
 		 * Called when a required video for the current lesson is registered.
 		 *
-		 * @since x.x.x
+		 * @since 4.4.3
 		 *
 		 * @hook sensei.videoProgression.registerVideo Hook used to run an arbitrary code when new required
 		 *                                             video for the current lesson is registered.
@@ -69,7 +69,7 @@ export const registerVideo = ( {
 			/**
 			 * Called when a required video for the current lesson is finished playing.
 			 *
-			 * @since 4.5.0
+			 * @since 4.4.3
 			 *
 			 * @hook sensei.videoProgression.videoEnded Hook used to run an arbitrary code when a required video
 			 *                                          for the current lesson is finished playing.
@@ -105,7 +105,7 @@ const areAllCompleted = () => {
 	/**
 	 * Tells if all the required videos for the current lesson are finished playing or not.
 	 *
-	 * @since 4.5.0
+	 * @since 4.4.3
 	 *
 	 * @hook sensei.videoProgression.allCompleted Hook used to tell if all the required videos for the current lesson have finished playing.
 	 *
@@ -127,7 +127,7 @@ const disableCompleteLessonButton = () => {
 		/**
 		 * Whether or not the Lesson Complete button should be disabled or not.
 		 *
-		 * @since 4.5.0
+		 * @since 4.4.3
 		 *
 		 * @hook sensei.videoProgression.preventLessonCompletion Hook is used to tell if the "Complete Lesson" button should be disabled or not.
 		 *
@@ -169,7 +169,7 @@ const enableCompleteLessonButton = () => {
 		/**
 		 * Whether or not the Lesson Complete button should be enabled or not.
 		 *
-		 * @since 4.5.0
+		 * @since 4.4.3
 		 *
 		 * @hook sensei.videoProgression.allowLessonCompletion Hook is used to tell if the "Complete Lesson" button should be enabled or not.
 		 *
