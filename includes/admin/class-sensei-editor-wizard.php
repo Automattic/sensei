@@ -15,7 +15,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Sensei_Editor_Wizard {
+	/**
+	 * Patterns category.
+	 *
+	 * @access private
+	 */
 	const PATTERNS_CATEGORY = 'sensei-lms';
+
+	/**
+	 * The block type to be used in patterns for full page patterns.
+	 *
+	 * @access private
+	 */
+	const POST_CONTENT_BLOCK_TYPE = 'sensei-lms/post-content';
 
 	/**
 	 * Instance of class.

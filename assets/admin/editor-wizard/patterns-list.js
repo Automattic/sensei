@@ -33,7 +33,9 @@ const accessibleClick = ( fn ) => ( {
  */
 const PatternsList = ( { onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
-		patterns: select( blockEditorStore ).__experimentalGetAllowedPatterns(),
+		patterns: select(
+			blockEditorStore
+		).__experimentalGetPatternsByBlockTypes( 'sensei-lms/post-content' ),
 	} ) );
 
 	return (
