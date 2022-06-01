@@ -20,7 +20,7 @@ return [
 					<!-- /wp:spacer -->
 
 					<!-- wp:video {"align":"wide"} -->
-					<figure class="wp-block-video alignwide"><video controls src="https://sensei-demo.mystagingwebsite.com/wp-content/themes/twentytwentytwo/assets/videos/birds.mp4"></video></figure>
+					<figure class="wp-block-video alignwide"><video controls src="' . esc_url( Sensei()->assets->get_image( 'patterns-video.mp4' ) ) . '"></video></figure>
 					<!-- /wp:video -->
 
 					<!-- wp:columns {"align":"wide","textColor":"tertiary"} -->
@@ -107,13 +107,13 @@ return [
 					<!-- /wp:spacer -->
 
 					<!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-					<figure class="wp-block-image size-large"><img src="https://s.w.org/images/core/5.8/outside-01.jpg" alt="The sun setting through a dense forest."/></figure>
+					<figure class="wp-block-image size-large"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-video-hero-01.jpg' ) ) . '" alt="The sun setting through a dense forest."/></figure>
 					<!-- /wp:image --></div>
 					<!-- /wp:column -->
 
 					<!-- wp:column {"width":"33.62%"} -->
 					<div class="wp-block-column" style="flex-basis:33.62%"><!-- wp:image {"sizeSlug":"large","linkDestination":"none"} -->
-					<figure class="wp-block-image size-large"><img src="https://s.w.org/images/core/5.8/outside-02.jpg" alt="Wind turbines standing on a grassy plain, against a blue sky."/></figure>
+					<figure class="wp-block-image size-large"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-video-hero-02.jpg' ) ) . '" alt="Wind turbines standing on a grassy plain, against a blue sky."/></figure>
 					<!-- /wp:image --></div>
 					<!-- /wp:column --></div>
 					<!-- /wp:columns -->
@@ -121,7 +121,7 @@ return [
 					<!-- wp:columns {"align":"wide"} -->
 					<div class="wp-block-columns alignwide"><!-- wp:column {"width":"67%"} -->
 					<div class="wp-block-column" style="flex-basis:67%"><!-- wp:image {"align":"right","sizeSlug":"large","linkDestination":"none"} -->
-					<figure class="wp-block-image alignright size-large"><img src="https://s.w.org/images/core/5.8/outside-03.jpg" alt="The sun shining over a ridge leading down into the shore. In the distance, a car drives down a road."/></figure>
+					<figure class="wp-block-image alignright size-large"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-video-hero-03.jpg' ) ) . '" alt="The sun shining over a ridge leading down into the shore. In the distance, a car drives down a road."/></figure>
 					<!-- /wp:image --></div>
 					<!-- /wp:column -->
 

@@ -9,8 +9,8 @@ return [
 	'title'      => __( 'Long Sales Page', 'sensei-lms' ),
 	'categories' => [ \Sensei_Block_Patterns::get_patterns_category_name() ],
 	'blockTypes' => [ \Sensei_Block_Patterns::get_post_content_block_type_name() ],
-	'content'    => '<!-- wp:media-text {"align":"full","mediaPosition":"right","mediaId":1298,"mediaLink":"https://sensei-demo.mystagingwebsite.com/course/pattern-long-sales-page/11423305963_79ef26ea28_b/","mediaType":"image","mediaWidth":58,"mediaSizeSlug":"full","verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#121c1c"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background"} -->
-					<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;grid-template-columns:auto 58%"><figure class="wp-block-media-text__media"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/11423305963_79ef26ea28_b.jpeg" alt="" class="wp-image-1298 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:group {"style":{"spacing":{"padding":{"top":"2em","right":"2em","bottom":"2em","left":"2em"}},"elements":{"link":{"color":{"text":"#fffdc7"}}}},"layout":{"inherit":false}} -->
+	'content'    => '<!-- wp:media-text {"align":"full","mediaPosition":"right","mediaType":"image","mediaWidth":58,"mediaSizeSlug":"full","verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#121c1c"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background"} -->
+					<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;grid-template-columns:auto 58%"><figure class="wp-block-media-text__media"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-long-sales-01.jpg' ) ) . '" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:group {"style":{"spacing":{"padding":{"top":"2em","right":"2em","bottom":"2em","left":"2em"}},"elements":{"link":{"color":{"text":"#fffdc7"}}}},"layout":{"inherit":false}} -->
 					<div class="wp-block-group has-link-color" style="padding-top:2em;padding-right:2em;padding-bottom:2em;padding-left:2em"><!-- wp:heading {"level":1,"style":{"typography":{"fontWeight":"700","fontSize":"48px","lineHeight":"1.15"}}} -->
 					<h1 style="font-size:48px;font-weight:700;line-height:1.15"><strong>' . esc_html__( 'Deep dive into portrait photography', 'sensei-lms' ) . '</strong></h1>
 					<!-- /wp:heading -->
@@ -44,7 +44,7 @@ return [
 					<!-- wp:columns -->
 					<div class="wp-block-columns"><!-- wp:column -->
 					<div class="wp-block-column"><!-- wp:image {"id":1309,"sizeSlug":"full","linkDestination":"none"} -->
-					<figure class="wp-block-image size-full"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/15881510678_2bb334c5ec_b.jpeg" alt="" class="wp-image-1309"/></figure>
+					<figure class="wp-block-image size-full"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-long-sales-02.jpg' ) ) . '" alt="" class="wp-image-1309"/></figure>
 					<!-- /wp:image --></div>
 					<!-- /wp:column -->
 
@@ -178,8 +178,8 @@ return [
 					<!-- /wp:group -->
 
 					<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"background","textColor":"foreground","layout":{"inherit":true}} -->
-					<div class="wp-block-group alignfull has-foreground-color has-background-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:media-text {"mediaId":1337,"mediaLink":"https://sensei-demo.mystagingwebsite.com/course/pattern-long-sales-page/11423305963_79ef26ea28_b-1/","mediaType":"image","verticalAlignment":"bottom","imageFill":false} -->
-					<div class="wp-block-media-text alignwide is-stacked-on-mobile is-vertically-aligned-bottom"><figure class="wp-block-media-text__media"><img src="https://sensei-demo.mystagingwebsite.com/wp-content/uploads/2022/05/11423305963_79ef26ea28_b-1.jpeg" alt="" class="wp-image-1337 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:heading -->
+					<div class="wp-block-group alignfull has-foreground-color has-background-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:media-text {"mediaId":1337,"mediaType":"image","verticalAlignment":"bottom","imageFill":false} -->
+					<div class="wp-block-media-text alignwide is-stacked-on-mobile is-vertically-aligned-bottom"><figure class="wp-block-media-text__media"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-long-sales-01.jpg' ) ) . '" alt="" class="wp-image-1337 size-full"/></figure><div class="wp-block-media-text__content"><!-- wp:heading -->
 					<h2>' . esc_html__( 'Meet Jeff Bronson', 'sensei-lms' ) . '</h2>
 					<!-- /wp:heading -->
 
@@ -224,7 +224,7 @@ return [
 
 					<!-- wp:column {"width":"66.66%"} -->
 					<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:video -->
-					<figure class="wp-block-video"><video controls src="https://sensei-demo.mystagingwebsite.com/wp-content/themes/twentytwentytwo/assets/videos/birds.mp4"></video></figure>
+					<figure class="wp-block-video"><video controls src="' . esc_url( Sensei()->assets->get_image( 'patterns-video.mp4' ) ) . '"></video></figure>
 					<!-- /wp:video --></div>
 					<!-- /wp:column --></div>
 					<!-- /wp:columns --></div>
@@ -235,7 +235,7 @@ return [
 					<!-- /wp:spacer -->
 
 					<!-- wp:image {"align":"center","width":150,"height":150,"sizeSlug":"large","linkDestination":"none","className":"is-style-rounded"} -->
-					<figure class="wp-block-image aligncenter size-large is-resized is-style-rounded"><img src="https://s.w.org/images/core/5.8/portrait.jpg" alt="A side profile of a woman in a russet-colored turtleneck and white bag. She looks up with her eyes closed." width="150" height="150"/></figure>
+					<figure class="wp-block-image aligncenter size-large is-resized is-style-rounded"><img src="' . esc_url( Sensei()->assets->get_image( 'patterns-long-sales-03.jpg' ) ) . '" alt="A side profile of a woman in a russet-colored turtleneck and white bag. She looks up with her eyes closed." width="150" height="150"/></figure>
 					<!-- /wp:image -->
 
 					<!-- wp:quote {"align":"center","className":"is-style-large"} -->
