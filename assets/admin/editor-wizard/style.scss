@@ -39,6 +39,7 @@
 
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
+		height: 670px;
 	}
 
 	& .components-modal__content {
@@ -115,6 +116,7 @@
 	}
 
 	&__content {
+		flex: 1;
 		padding: 24px 18px 18px;
 
 		@media ( min-width: 600px ) {
