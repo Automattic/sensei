@@ -211,6 +211,11 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Shared\Progress_Bar'            => 'blocks/shared/class-progress-bar.php',
 
 			/**
+			 * Block patterns.
+			 */
+			'Sensei_Block_Patterns'                        => 'block-patterns/class-sensei-block-patterns.php',
+
+			/**
 			 * Course Theme
 			 */
 			'Sensei\Blocks\Course_Theme_Blocks'            => 'blocks/course-theme/class-course-theme-blocks.php',
