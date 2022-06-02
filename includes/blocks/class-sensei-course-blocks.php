@@ -64,6 +64,13 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		$post_type_object = get_post_type_object( 'course' );
 
 		$block_template = [
+			[
+				'core/paragraph',
+				[
+					'className'   => 'sensei-content-description',
+					'placeholder' => __( 'Write course content...', 'sensei-lms' ),
+				],
+			],
 			[ 'sensei-lms/button-take-course' ],
 			[ 'sensei-lms/button-contact-teacher' ],
 			[ 'sensei-lms/course-progress' ],
