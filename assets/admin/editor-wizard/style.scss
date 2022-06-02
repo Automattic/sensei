@@ -69,44 +69,6 @@
 		}
 	}
 
-	&__title,
-	&__sticky-title {
-		line-height: 1.1;
-		color: inherit;
-	}
-
-	&__title {
-		margin-top: 0;
-	}
-
-	&__sticky-title {
-		position: sticky;
-		top: 24px;
-		z-index: 1;
-		margin: 0;
-		padding-bottom: 18px;
-		background: #ffffff;
-
-		@media ( min-width: 600px ) {
-			top: 30px;
-		}
-
-		// White box above the title to hide content on scroll.
-		&::before {
-			content: '';
-			display: block;
-			width: 100%;
-			height: 24px;
-			position: absolute;
-			bottom: 100%;
-			background: #ffffff;
-
-			@media ( min-width: 600px ) {
-				height: 30px;
-			}
-		}
-	}
-
 	&__columns {
 		flex: 1;
 
@@ -183,6 +145,48 @@
 }
 
 .sensei-editor-wizard-step {
+	&__title,
+	&__sticky-title {
+		line-height: 1.1;
+		color: inherit;
+	}
+
+	&__title {
+		margin-top: 0;
+	}
+
+	&__sticky-title {
+		position: sticky;
+		top: 24px;
+		z-index: 1;
+		margin: 0;
+		padding-bottom: 18px;
+		background: #ffffff;
+
+		@media ( min-width: 600px ) {
+			top: 30px;
+		}
+
+		// White box above the title to hide content on scroll.
+		&::before {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 24px;
+			position: absolute;
+			bottom: 100%;
+			background: #ffffff;
+
+			@media ( min-width: 600px ) {
+				height: 30px;
+			}
+		}
+	}
+
+	&__description {
+		margin: 0 0 4px;
+	}
+
 	&__form {
 		& label {
 			font-weight: bold;
