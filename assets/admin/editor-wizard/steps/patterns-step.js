@@ -65,7 +65,7 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 
 	return (
 		<div className="sensei-editor-wizard-modal__content">
-			<h1 className="sensei-editor-wizard-modal__sticky-title">
+			<h1 className="sensei-editor-wizard-step__sticky-title">
 				{ title }
 			</h1>
 			<PatternsList onChoose={ onChoose } />
