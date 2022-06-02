@@ -112,7 +112,7 @@
 
 		@media ( min-width: 600px ) {
 			display: grid;
-			grid-template-columns: 50% 50%;
+			grid-template-columns: 52% 48%;
 		}
 	}
 
@@ -129,6 +129,7 @@
 		display: none;
 
 		@media ( min-width: 600px ) {
+			padding-top: 25px;
 			background: #43af99;
 			display: flex;
 			justify-content: right;
@@ -137,7 +138,7 @@
 	}
 
 	&__illustration-image {
-		height: 75%;
+		width: 84%;
 	}
 }
 
