@@ -184,13 +184,16 @@
 	}
 
 	&__description {
-		margin: 0 0 4px;
+		margin: 0 0 24px;
 	}
 
 	&__form {
 		& label {
 			font-weight: bold;
-			margin-top: 20px;
 		}
+	}
+
+	&__form-control {
+		margin-bottom: 32px;
 	}
 }

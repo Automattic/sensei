@@ -48,12 +48,14 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 				</p>
 				<div className="sensei-editor-wizard-step__form">
 					<LimitedTextControl
+						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Title', 'sensei-lms' ) }
 						value={ wizardData.courseTitle ?? '' }
 						onChange={ updateCourseTitle }
 						maxLength={ 40 }
 					/>
 					<LimitedTextControl
+						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Description', 'sensei-lms' ) }
 						value={ wizardData.courseDescription ?? '' }
 						onChange={ updateCourseDescription }
