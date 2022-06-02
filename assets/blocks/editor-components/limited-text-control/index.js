@@ -28,6 +28,8 @@ const LimitedTextControl = ( {
 				value.length,
 				maxLength
 			) }
+			value={ value }
+			maxLength={ maxLength }
 			{ ...props }
 		/>
 	);
