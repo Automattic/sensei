@@ -5,6 +5,10 @@
  * @package sensei-lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 ?>
 <!-- wp:media-text {"align":"full","mediaPosition":"right","mediaType":"image","mediaWidth":58,"mediaSizeSlug":"full","verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#121c1c"},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background"} -->
 <div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center has-background-color has-text-color has-background has-link-color" style="background-color:#121c1c;grid-template-columns:auto 58%"><figure class="wp-block-media-text__media"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-long-sales-01.jpg' ) ); ?>" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:group {"style":{"spacing":{"padding":{"top":"2em","right":"2em","bottom":"2em","left":"2em"}},"elements":{"link":{"color":{"text":"#fffdc7"}}}},"layout":{"inherit":false}} -->

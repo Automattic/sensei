@@ -5,6 +5,10 @@
  * @package sensei-lms
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 ?>
 <!-- wp:video -->
 <figure class="wp-block-video"></figure>
