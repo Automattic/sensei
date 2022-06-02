@@ -38,6 +38,7 @@ class Sensei_Block_Patterns {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
+		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 	}
 
 	/**
@@ -56,6 +57,38 @@ class Sensei_Block_Patterns {
 			self::get_patterns_category_name(),
 			[ 'label' => __( 'Sensei LMS', 'sensei-lms' ) ]
 		);
+	}
+
+	/**
+	 * Register block patterns.
+	 *
+	 * @param WP_Screen $current_screen Current WP_Screen object.
+	 *
+	 * @access private
+	 */
+	public function register_block_patterns( $current_screen ) {
+		$post_type      = $current_screen->post_type;
+		$block_patterns = [];
+
+		if ( 'course' === $post_type ) {
+			$block_patterns = [
+				'video-hero',
+				'long-sales-page',
+			];
+		} elseif ( 'lesson' === $post_type ) {
+			$block_patterns = [
+				'video-lesson',
+				'discussion-question',
+				'files-to-download',
+			];
+		}
+
+		foreach ( $block_patterns as $block_pattern ) {
+			register_block_pattern(
+				'sensei-lms/' . $block_pattern,
+				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
+			);
+		}
 	}
 
 	/**

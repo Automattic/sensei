@@ -46,7 +46,6 @@ class Sensei_Editor_Wizard {
 	 */
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_metas' ] );
-		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
 	}
 
@@ -91,38 +90,6 @@ class Sensei_Editor_Wizard {
 
 			// Preload extensions (needed to identify if Sensei Pro is installed, and extension details).
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
-		}
-	}
-
-	/**
-	 * Register block patterns.
-	 *
-	 * @param WP_Screen $current_screen Current WP_Screen object.
-	 *
-	 * @access private
-	 */
-	public function register_block_patterns( $current_screen ) {
-		$post_type      = $current_screen->post_type;
-		$block_patterns = [];
-
-		if ( 'course' === $post_type ) {
-			$block_patterns = [
-				'video-hero',
-				'long-sales-page',
-			];
-		} elseif ( 'lesson' === $post_type ) {
-			$block_patterns = [
-				'video-lesson',
-				'discussion-question',
-				'files-to-download',
-			];
-		}
-
-		foreach ( $block_patterns as $block_pattern ) {
-			register_block_pattern(
-				'sensei-lms/' . $block_pattern,
-				require __DIR__ . '/../block-patterns/' . $post_type . '/' . $block_pattern . '.php'
-			);
 		}
 	}
 }
