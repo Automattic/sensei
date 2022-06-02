@@ -1079,6 +1079,14 @@ class Sensei_PostTypes {
 		);
 
 		Sensei()->learners->learners_admin_menu();
+
+		/**
+		 * Filter used to add new menu item.
+		 *
+		 * @since x.x.x
+		 */
+		do_action( 'sensei_pro_groups_menu_item', [] );
+
 		Sensei()->grading->grading_admin_menu();
 
 		$sensei_messages = new Sensei_Messages();
