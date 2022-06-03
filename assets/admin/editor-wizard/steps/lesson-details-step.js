@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { Button } from '@wordpress/components';
 
@@ -21,6 +21,7 @@ import detailsStepImage from '../../../images/details-step.png';
  */
 const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	const { editPost } = useDispatch( editorStore );
+	const postTitle = usePostTitle();
 
 	const updateLessonTitle = ( title ) => {
 		setWizardData( { ...wizardData, lessonTitle: title } );
@@ -44,7 +45,7 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 				<div className="sensei-editor-wizard-step__form">
 					<LimitedTextControl
 						label={ __( 'Lesson Title', 'sensei-lms' ) }
-						value={ wizardData.lessonTitle ?? '' }
+						value={ wizardData.lessonTitle ?? postTitle }
 						onChange={ updateLessonTitle }
 						maxLength={ 40 }
 					/>
@@ -64,12 +65,29 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	);
 };
 
+/**
+ * Actions for the LessonDetailsStep.
+ *
+ * @param {Function} goToNextStep Invoke to go to the next step.
+ */
 LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (
 		<Button isPrimary onClick={ goToNextStep }>
 			{ __( 'Continue', 'sensei-lms' ) }
 		</Button>
 	);
+};
+
+/**
+ * Load the post title from the Editor Store.
+ *
+ * @return {string} The post title from the editor.
+ */
+const usePostTitle = () => {
+	const { title } = useSelect( ( select ) => ( {
+		title: select( editorStore )?.getEditedPostAttribute( 'title' ),
+	} ) );
+	return title;
 };
 
 export default LessonDetailsStep;

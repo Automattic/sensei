@@ -7,7 +7,7 @@ import '@testing-library/jest-dom';
 /**
  * WordPress dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import LessonDetailsStep from './lesson-details-step';
 jest.mock( '@wordpress/data' );
 
 const ANY_PLUGIN_URL = 'https://some-url/';
+const ANY_LESSON_TITLE = 'Any lesson title.';
 
 describe( '<LessonDetailsStep />', () => {
 	beforeAll( () => {
@@ -27,9 +28,13 @@ describe( '<LessonDetailsStep />', () => {
 			},
 		} );
 	} );
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
 	it( 'Renders title input field and not calls savePost initially.', () => {
 		const editPostMock = jest.fn();
 		useDispatch.mockReturnValue( { editPost: editPostMock } );
+		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
 			<LessonDetailsStep data={ {} } setData={ () => {} } />
@@ -44,6 +49,7 @@ describe( '<LessonDetailsStep />', () => {
 		const setDataMock = jest.fn();
 		const NEW_TITLE = 'Some new title';
 		useDispatch.mockReturnValue( { editPost: editPostMock } );
+		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
 			<LessonDetailsStep data={ {} } setData={ setDataMock } />
@@ -54,6 +60,21 @@ describe( '<LessonDetailsStep />', () => {
 
 		expect( editPostMock ).toBeCalledWith( { title: NEW_TITLE } );
 		expect( setDataMock ).toBeCalledWith( { lessonTitle: NEW_TITLE } );
+	} );
+
+	it( 'Renders post title in title field initially.', () => {
+		const editPostMock = jest.fn();
+		useDispatch.mockReturnValue( { editPost: editPostMock } );
+		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
+
+		const { queryByLabelText } = render(
+			<LessonDetailsStep data={ {} } setData={ () => {} } />
+		);
+
+		expect( queryByLabelText( 'Lesson Title' ) ).toBeTruthy();
+		expect( queryByLabelText( 'Lesson Title' ) ).toHaveDisplayValue(
+			ANY_LESSON_TITLE
+		);
 	} );
 } );
 
