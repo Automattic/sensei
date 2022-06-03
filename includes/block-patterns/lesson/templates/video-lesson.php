@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <figure class="wp-block-video"></figure>
 <!-- /wp:video -->
 
-<!-- wp:paragraph {"placeholder":"<?php esc_html__( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>"} -->
+<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>"} -->
 <p></p>
 <!-- /wp:paragraph -->
 
