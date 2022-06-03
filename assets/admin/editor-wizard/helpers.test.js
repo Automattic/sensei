@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { replacePlaceholders } from './patterns-step';
+import { replacePlaceholders } from './helpers';
 
 describe( 'replacePlaceholders', () => {
 	const replaces = {

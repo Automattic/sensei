@@ -10,36 +10,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PatternsList from '../patterns-list';
-
-/**
- * Update blocks content, replacing the placeholders with a content.
- *
- * @param {Object[]} blocks   Blocks to replace with the new content.
- * @param {Object}   replaces Object containing content to be replaced. The keys are the block
- *                            classNames to find. The values are the content to be replaced.
- *
- * @return {Object[]} Blocks with the placeholders filled.
- */
-export const replacePlaceholders = ( blocks, replaces ) =>
-	blocks.map( ( block ) => {
-		const { className = '' } = block.attributes;
-		const replacesArray = Object.entries( replaces );
-
-		replacesArray.forEach( ( [ placeholder, content ] ) => {
-			if ( className.includes( placeholder ) ) {
-				block.attributes.content = content;
-			}
-		} );
-
-		if ( block.innerBlocks ) {
-			block.innerBlocks = replacePlaceholders(
-				block.innerBlocks,
-				replaces
-			);
-		}
-
-		return block;
-	} );
+import { replacePlaceholders } from '../helpers';
 
 /**
  * Choose patterns step.
