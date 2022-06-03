@@ -32,6 +32,7 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 			...wizardData,
 			courseDescription: description,
 		} );
+		editPost( { excerpt: description } );
 	};
 
 	return (

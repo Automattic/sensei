@@ -40,7 +40,7 @@ describe( '<CourseDetailsStep />', () => {
 		expect( editPostMock ).toBeCalledTimes( 0 );
 	} );
 
-	it( 'Updates course title in data and as title post when changed.', () => {
+	it( 'Updates course title in data and as post title when changed.', () => {
 		const editPostMock = jest.fn();
 		const setDataMock = jest.fn();
 		const NEW_TITLE = 'Some new title';
@@ -57,7 +57,7 @@ describe( '<CourseDetailsStep />', () => {
 		expect( setDataMock ).toBeCalledWith( { courseTitle: NEW_TITLE } );
 	} );
 
-	it( 'Updates course description in data when changed.', () => {
+	it( 'Updates course description in data and as post excerpt when changed.', () => {
 		const editPostMock = jest.fn();
 		const setDataMock = jest.fn();
 		const NEW_DESCRIPTION = 'Some new description';
@@ -70,7 +70,7 @@ describe( '<CourseDetailsStep />', () => {
 			target: { value: NEW_DESCRIPTION },
 		} );
 
-		expect( editPostMock ).toBeCalledTimes( 0 );
+		expect( editPostMock ).toBeCalledWith( { excerpt: NEW_DESCRIPTION } );
 		expect( setDataMock ).toBeCalledWith( {
 			courseDescription: NEW_DESCRIPTION,
 		} );
