@@ -15,6 +15,7 @@ import { useDispatch } from '@wordpress/data';
 import CourseDetailsStep from './course-details-step';
 
 jest.mock( '@wordpress/data' );
+jest.mock( '@wordpress/editor' );
 
 const ANY_PLUGIN_URL = 'https://some-url/';
 
