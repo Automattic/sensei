@@ -80,6 +80,7 @@ const EditorWizardModal = () => {
 	const { synchronizeTemplate } = useDispatch( blockEditorStore );
 	const { editPost, savePost } = useDispatch( editorStore );
 	const steps = useEditorWizardSteps();
+	const dataState = useState( {} );
 
 	const onWizardCompletion = () => {
 		setDone( true );
@@ -104,6 +105,7 @@ const EditorWizardModal = () => {
 			>
 				<Wizard
 					steps={ steps }
+					dataState={ dataState }
 					onCompletion={ onWizardCompletion }
 					skipWizard={ skipWizard }
 				/>
