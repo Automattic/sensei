@@ -10,7 +10,7 @@ import AnimateHeight from 'react-animate-height';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon, chevronUp } from '@wordpress/icons';
 import { compose } from '@wordpress/compose';
-import { useContext, useState } from '@wordpress/element';
+import { useContext, useState, useEffect } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
@@ -143,14 +143,17 @@ export const ModuleEdit = ( props ) => {
 		);
 	}
 
-	const courseTeacherInput = document.querySelector(
-		'select[name="sensei-course-teacher-author"]'
-	);
-	if ( courseTeacherInput ) {
-		courseTeacherInput.addEventListener( 'change', ( event ) => {
-			setAttributes( { teacherId: event.target.value } );
-		} );
-	}
+	useEffect( () => {
+		const courseTeacherInput = document.querySelector(
+			'select[name="sensei-course-teacher-author"]'
+		);
+		if ( courseTeacherInput ) {
+			courseTeacherInput.addEventListener( 'change', ( event ) => {
+				setAttributes( { teacherId: event.target.value } );
+			} );
+		}
+	}, [] );
+
 	const bordered =
 		undefined !== borderedSelected ? borderedSelected : outlineBordered;
 
