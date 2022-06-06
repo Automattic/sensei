@@ -11,7 +11,7 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import Wizard from './wizard';
 import useEditorWizardSteps from './use-editor-wizard-steps';
-import { useWizardOpenState, useDefaultTemplate } from './helpers';
+import { useWizardOpenState, useSetDefaultTemplate } from './helpers';
 import '../../shared/data/api-fetch-preloaded-once';
 
 /**
@@ -23,7 +23,7 @@ const EditorWizardModal = () => {
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
-	const setDefaultTemplate = useDefaultTemplate( {
+	const setDefaultTemplate = useSetDefaultTemplate( {
 		'sensei-content-description': dataState[ 0 ].courseDescription,
 	} );
 

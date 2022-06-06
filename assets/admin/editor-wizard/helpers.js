@@ -95,14 +95,14 @@ export const useWizardOpenState = () => {
 };
 
 /**
- * Default template hook that sets the default post template with replaced content.
+ * Hook to set the default post template with replaced content.
  *
  * @param {Object} replaces Object containing content to be replaced. The keys are the block
  *                          classNames to find. The values are the content to be replaced.
  *
  * @return {Function} Function to set the default template.
  */
-export const useDefaultTemplate = ( replaces ) => {
+export const useSetDefaultTemplate = ( replaces ) => {
 	const { resetBlocks } = useDispatch( blockEditorStore );
 	const { blocks, template } = useSelect( ( select ) => ( {
 		blocks: select( blockEditorStore ).getBlocks(),
