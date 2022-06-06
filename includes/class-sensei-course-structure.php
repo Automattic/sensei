@@ -304,13 +304,46 @@ class Sensei_Course_Structure {
 	 */
 	private function save_module( array $item ) {
 		if ( $item['id'] ) {
-			$term = get_term( $item['id'], 'module' );
+			$term         = get_term( $item['id'], 'module' );
+			$author       = get_post( $this->course_id )->post_author;
+			$default_slug = $this->get_module_slug( $item['title'] );
 			// Custom slug gets priority over conventional slug.
-			$slug = $item['slug'] ?? $this->get_module_slug( $item['title'] );
+			$slug = $item['slug'] ?? $default_slug;
 
 			if ( $term->slug !== $slug ) {
+				// First try to get an existing module directly by the provided slug.
 				$existing_module = get_term_by( 'slug', $slug, 'module' );
-				$module_id       = $existing_module ? $existing_module->term_id : $this->create_module( $item );
+				// If not found, try to find if this teacher already has a module for this, with the default slug.
+				if ( ! $existing_module && $slug !== $default_slug ) {
+					$existing_module = get_term_by( 'slug', $default_slug, 'module' );
+				}
+				// If not found, try to find module for this teacher using term-meta.
+				if ( ! $existing_module && ! user_can( $author, 'manage_options' ) ) {
+					$modules = get_terms(
+						array(
+							'taxonomy'   => 'module',
+							'name'       => $item['title'],
+							'hide_empty' => false,
+							'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only executed while saving, not too many data possibly.
+								array(
+									'key'     => 'module_author',
+									'value'   => $author,
+									'compare' => '=',
+								),
+							),
+						)
+					);
+					if ( ! empty( $modules ) ) {
+						$existing_module = $modules[0];
+					}
+				}
+				if ( $existing_module ) {
+					$temp_item       = $item;
+					$temp_item['id'] = $existing_module->term_id;
+					$module_id       = $this->update_module( $temp_item );
+				} else {
+					$module_id = $this->create_module( $item );
+				}
 			} else {
 				$module_id = $this->update_module( $item );
 			}
@@ -348,7 +381,7 @@ class Sensei_Course_Structure {
 			}
 		}
 
-		Sensei_Core_Modules::save_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );
+		Sensei_Core_Modules::update_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );
 
 		return [
 			$module_id,
@@ -411,6 +444,9 @@ class Sensei_Course_Structure {
 		}
 		if ( $term->description !== $item['description'] ) {
 			$changed_args['description'] = $item['description'];
+		}
+		if ( $item['slug'] && $term->slug !== $item['slug'] ) {
+			$changed_args['slug'] = $item['slug'];
 		}
 
 		if ( ! empty( $changed_args ) ) {
