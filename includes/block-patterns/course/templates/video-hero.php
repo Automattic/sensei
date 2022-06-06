@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"elements":{"link":{"color":{"text":"var:preset|color|secondary"}}}},"backgroundColor":"foreground","textColor":"secondary"} -->
-<div class="wp-block-group alignfull has-secondary-color has-foreground-background-color has-text-color has-background has-link-color" style="padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
-<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}},"textColor":"tertiary"} -->
-<h1 class="alignwide has-tertiary-color has-text-color" id="warble-a-film-about-hobbyist-bird-watchers-1" style="font-size:clamp(3rem, 6vw, 4.5rem)"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"color":{"background":"#000000","text":"#ffffff"}}} -->
+<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
+<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}}} -->
+<h1 class="alignwide" style="font-size:clamp(3rem, 6vw, 4.5rem)"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
 
 <!-- wp:spacer {"height":32} -->
@@ -24,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <figure class="wp-block-video alignwide"><video controls src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-video.mp4' ) ); ?>"></video></figure>
 <!-- /wp:video -->
 
-<!-- wp:columns {"align":"wide","textColor":"tertiary"} -->
-<div class="wp-block-columns alignwide has-tertiary-color has-text-color"><!-- wp:column {"width":"50%"} -->
+<!-- wp:columns {"align":"wide"} -->
+<div class="wp-block-columns alignwide"><!-- wp:column {"width":"50%"} -->
 <div class="wp-block-column" style="flex-basis:50%"><!-- wp:paragraph -->
 <p><strong>Doug Stilton</strong></p>
 <!-- /wp:paragraph --></div>
@@ -38,8 +38,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column -->
 
 <!-- wp:column -->
-<div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right","backgroundColor":"tertiary","textColor":"foreground"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link has-foreground-color has-tertiary-background-color has-text-color has-background"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right","style":{"color":{"text":"#000000","background":"#ffffff"}}} -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link has-text-color has-background" style="background-color:#ffffff;color:#000000"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns --></div>
@@ -150,8 +150,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"backgroundColor":"foreground","textColor":"background"} -->
-<div class="wp-block-group has-background-color has-foreground-background-color has-text-color has-background"><!-- wp:spacer {"height":24} -->
+<!-- wp:group {"style":{"color":{"text":"#ffffff","background":"#000000"}}} -->
+<div class="wp-block-group has-text-color has-background" style="background-color:#000000;color:#ffffff"><!-- wp:spacer {"height":24} -->
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -180,8 +180,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer -->
 
 <!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course {"align":"left","backgroundColor":"background","textColor":"foreground"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-foreground-color has-background-background-color has-text-color has-background"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course {"align":"left","style":{"color":{"text":"#000000","background":"#ffffff"}}} -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-text-color has-background" style="background-color:#ffffff;color:#000000"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:sensei-lms/button-contact-teacher -->
