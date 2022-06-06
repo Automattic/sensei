@@ -74,8 +74,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}},"color":{"background":"#121c1c","text":"#ffffff"}},"layout":{"inherit":true}} -->
-<div class="wp-block-group alignfull has-text-color has-background has-link-color" style="background-color:#121c1c;color:#ffffff;padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:heading -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"bottom":"120px","top":"120px","right":"90px","left":"90px"}},"color":{"background":"#121c1c","text":"#ffffff"}},"layout":{"inherit":true}} -->
+<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#121c1c;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:heading -->
 <h2><?php esc_html_e( 'What you will learn to master', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
@@ -84,8 +84,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer -->
 
 <!-- wp:group {"align":"full","layout":{"inherit":true}} -->
-<div class="wp-block-group alignfull"><!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+<div class="wp-block-group alignfull"><!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -106,8 +106,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -128,8 +128,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -150,8 +150,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -172,8 +172,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"opacity":"css","backgroundColor":"background","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-background-color has-css-opacity has-background-background-color has-background alignwide is-style-wide"/>
+<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
 <!-- /wp:separator --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->
@@ -202,8 +202,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:media-text --></div>
 <!-- /wp:group -->
 
-<!-- wp:group {"align":"full","style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}},"spacing":{"padding":{"top":"6rem","bottom":"4rem"}},"color":{"background":"#000000","text":"#ffffff"}},"layout":{"inherit":true}} -->
-<div class="wp-block-group alignfull has-text-color has-background has-link-color" style="background-color:#000000;color:#ffffff;padding-top:6rem;padding-bottom:4rem"><!-- wp:columns {"align":"wide"} -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"4rem","right":"90px","left":"90px"}},"color":{"background":"#000000","text":"#ffffff"}},"layout":{"inherit":true}} -->
+<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:6rem;padding-right:90px;padding-bottom:4rem;padding-left:90px"><!-- wp:columns {"align":"wide"} -->
 <div class="wp-block-columns alignwide"><!-- wp:column {"width":"50%"} -->
 <div class="wp-block-column" style="flex-basis:50%"><!-- wp:heading {"fontSize":"x-large"} -->
 <h2 class="has-x-large-font-size" id="extended-trailer"><?php esc_html_e( 'Jeff at work', 'sensei-lms' ); ?></h2>
@@ -247,8 +247,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"style":{"color":{"text":"#ffffff","background":"#000000"}},"layout":{"inherit":false}} -->
-<div class="wp-block-group has-text-color has-background" style="background-color:#000000;color:#ffffff"><!-- wp:spacer {"height":16} -->
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"90px","bottom":"20px","left":"90px"}},"color":{"background":"#000000","text":"#ffffff"}},"layout":{"inherit":false}} -->
+<div class="wp-block-group has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":16} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
