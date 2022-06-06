@@ -76,16 +76,39 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function add_notice( string $content, string $type = 'alert', string $key = null ) {
+
+		/**
+		 * Filters any sensei notice that is added to the frontend.
+		 *
+		 * @since 4.4.3
+		 * @hook sensei_notice
+		 *
+		 * @param {array}  $notice             The notice.
+		 * @param {string} $notice.content     The notice HTML content.
+		 * @param {string} $notice.type        The notice type. Acceptable values include info, alert.
+		 * @param {string} $notice.notice_key  Notices with the same key overwrite each other.
+		 *
+		 * @return {array} The notice.
+		 */
+		$notice = apply_filters(
+			'sensei_notice',
+			[
+				'content'    => $content,
+				'type'       => $type,
+				'notice_key' => $key,
+			]
+		);
+
 		// append the new notice.
-		if ( null === $key ) {
+		if ( null === $notice['notice_key'] ) {
 			$this->notices[] = [
-				'content' => $content,
-				'type'    => $type,
+				'content' => $notice['content'],
+				'type'    => $notice['type'],
 			];
 		} else {
-			$this->notices[ $key ] = [
-				'content' => $content,
-				'type'    => $type,
+			$this->notices[ $notice['notice_key'] ] = [
+				'content' => $notice['content'],
+				'type'    => $notice['type'],
 			];
 		}
 
