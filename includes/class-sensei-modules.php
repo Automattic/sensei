@@ -2642,11 +2642,15 @@ class Sensei_Core_Modules {
 	 * @param int $module_id  Term ID.
 	 * @param int $teacher_id ID of module teacher.
 	 */
-	public static function save_module_teacher_meta( $module_id, $teacher_id ) {
-		update_term_meta(
-			$module_id,
-			'module_author',
-			$teacher_id
-		);
+	public static function update_module_teacher_meta( $module_id, $teacher_id ) {
+		if ( user_can( $teacher_id, 'manage_options' ) ) {
+			delete_term_meta( $module_id, 'module_author' );
+		} else {
+			update_term_meta(
+				$module_id,
+				'module_author',
+				$teacher_id
+			);
+		}
 	}
 }

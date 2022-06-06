@@ -467,7 +467,7 @@ class Sensei_Teacher {
 				$term_id        = $new_term['term_id'];
 				$module_order[] = $term_id;
 
-				Sensei_Core_Modules::save_module_teacher_meta( $term_id, $new_teacher_id );
+				Sensei_Core_Modules::update_module_teacher_meta( $term_id, $new_teacher_id );
 
 				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
@@ -1676,7 +1676,7 @@ class Sensei_Teacher {
 
 		if ( count( $split_slug ) > 1 && is_numeric( $split_slug[0] ) ) {
 			$user = get_user_by( 'id', $split_slug[0] );
-			$user && Sensei_Core_Modules::save_module_teacher_meta( $term_id, $user->ID );
+			$user && Sensei_Core_Modules::update_module_teacher_meta( $term_id, $user->ID );
 		}
 	}
 }
