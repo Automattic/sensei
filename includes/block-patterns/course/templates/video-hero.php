@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)","bottom":"var(\u002d\u002dwp\u002d\u002dcustom\u002d\u002dspacing\u002d\u002dlarge, 8rem)"}},"color":{"background":"#000000","text":"#ffffff"}}} -->
-<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:var(--wp--custom--spacing--large, 8rem);padding-bottom:var(--wp--custom--spacing--large, 8rem)"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"120px","bottom":"120px","right":"90px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}}} -->
+<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
 <div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}}} -->
 <h1 class="alignwide" style="font-size:clamp(3rem, 6vw, 4.5rem)"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
@@ -70,8 +70,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:group --></div>
 <!-- /wp:group -->
 
-<!-- wp:group {"align":"full","style":{"color":{"background":"#f8f4e4"}}} -->
-<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4"><!-- wp:spacer {"height":24} -->
+<!-- wp:group {"align":"full","style":{"color":{"background":"#f8f4e4"},"spacing":{"padding":{"top":"20px","left":"90px","right":"90px","bottom":"20px"}}}} -->
+<div class="wp-block-group alignfull has-background" style="background-color:#f8f4e4;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":24} -->
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -150,8 +150,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"style":{"color":{"text":"#ffffff","background":"#000000"}}} -->
-<div class="wp-block-group has-text-color has-background" style="background-color:#000000;color:#ffffff"><!-- wp:spacer {"height":24} -->
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"90px","bottom":"20px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}}} -->
+<div class="wp-block-group has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":24} -->
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
