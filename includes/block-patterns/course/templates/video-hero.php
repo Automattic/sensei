@@ -184,8 +184,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-text-color has-background" style="background-color:#ffffff;color:#000000"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
-<!-- wp:sensei-lms/button-contact-teacher -->
-<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link"><?php esc_html_e( 'Contact Teacher', 'sensei-lms' ); ?></a></div>
+<!-- wp:sensei-lms/button-contact-teacher {"style":{"color":{"text":"#ffffff"}}} -->
+<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-text-color" style="color:#ffffff"><?php esc_html_e( 'Contact Teacher', 'sensei-lms' ); ?></a></div>
 <!-- /wp:sensei-lms/button-contact-teacher --></div>
 <!-- /wp:group -->
 
