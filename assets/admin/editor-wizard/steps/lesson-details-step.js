@@ -20,15 +20,10 @@ import detailsStepImage from '../../../images/details-step.png';
  * @param {Function} props.setData
  */
 const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	const { editPost } = useDispatch( editorStore );
-	const postTitle = usePostTitle();
-
-	const updateLessonTitle = ( title ) => {
-		setWizardData( { ...wizardData, lessonTitle: title } );
-		editPost( {
-			title,
-		} );
-	};
+	const [ postTitle, updateLessonTitle ] = useLessonTitle(
+		wizardData,
+		setWizardData
+	);
 
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
@@ -81,13 +76,21 @@ LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 /**
  * Load the post title from the Editor Store.
  *
- * @return {string} The post title from the editor.
+ * @param {Object}   wizardData    The wizard data.
+ * @param {Function} setWizardData Function to update the wizard data.
  */
-const usePostTitle = () => {
+const useLessonTitle = ( wizardData, setWizardData ) => {
+	const { editPost } = useDispatch( editorStore );
 	const { title } = useSelect( ( select ) => ( {
 		title: select( editorStore )?.getEditedPostAttribute( 'title' ),
 	} ) );
-	return title;
+	const updateLessonTitle = ( newTitle ) => {
+		setWizardData( { ...wizardData, lessonTitle: newTitle } );
+		editPost( {
+			title: newTitle,
+		} );
+	};
+	return [ title, updateLessonTitle ];
 };
 
 export default LessonDetailsStep;
