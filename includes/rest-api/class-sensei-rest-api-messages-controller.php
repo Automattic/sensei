@@ -25,6 +25,8 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @param string $post_type Post type.
 	 */
 	public function __construct( $post_type ) {
+		_deprecated_function( __METHOD__, '4.4.3' );
+
 		parent::__construct( $post_type );
 
 		// This filter is needed in order for students to be able to see their own messages only.
@@ -85,6 +87,8 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The schema.
 	 */
 	public function get_item_schema() {
+		_deprecated_function( __METHOD__, '4.4.3' );
+
 		$schema = parent::get_item_schema();
 
 		$schema['properties']['excerpt'] = array(
@@ -121,6 +125,7 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @since 2.3.0
 	 */
 	public function get_collection_params() {
+		_deprecated_function( __METHOD__, '4.4.3' );
 
 		$query_params = parent::get_collection_params();
 
@@ -152,6 +157,7 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The modified query args.
 	 */
 	public function exclude_others_comments( $args, $request ) {
+		_deprecated_function( __METHOD__, '4.4.3' );
 
 		if (
 			'all' === $request->get_param( 'sender' ) &&
@@ -167,4 +173,49 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 		return $args;
 	}
+
+	/**
+	 * Checks if the logged-in user can access the message.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
+	 */
+	public function get_item_permissions_check( $request ) {
+		_deprecated_function( __METHOD__, '4.4.3' );
+
+		$post = $this->get_post( $request['id'] );
+		if ( is_wp_error( $post ) ) {
+			return $post;
+		}
+
+		if ( 'edit' === $request['context'] && $post && ! $this->check_update_permission( $post ) ) {
+			return new WP_Error(
+				'rest_forbidden_context',
+				__( 'Sorry, you are not allowed to edit this post.' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		$current_user = wp_get_current_user();
+
+		// Check if user is logged in
+		if ( empty( $current_user ) || empty( $current_user->ID ) ) {
+			return new WP_Error(
+				'rest_forbidden_context',
+				__( 'Sorry, you are not allowed to view this post.' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		if ( (int) $post->post_author === $current_user->ID || $current_user->user_login === get_post_meta( $post->ID, '_receiver', true ) || current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'rest_forbidden_context',
+			__( 'Sorry, you are not allowed to view this post.' ),
+			array( 'status' => rest_authorization_required_code() )
+		);
+	}
+
 }
