@@ -219,7 +219,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 				wp_set_object_terms( $lesson_id, $module_id, 'module' );
 				add_post_meta( $lesson_id, '_order_module_' . $module_id, 0 );
-				update_term_meta( $module_id, 'module_author', wp_get_current_user()->ID );
+				Sensei_Core_Modules::update_module_teacher_meta( $module_id, wp_get_current_user()->ID );
 			}
 			$question_count = $args['question_count'];
 			if ( is_array( $question_count ) ) {

@@ -460,7 +460,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
 	public function testModuleSaving_ifCustomSlugAdded_savesExistingTeacherIdFromSlugToMeta() {
 		// Arrange.
-		$this->login_as_admin();
+		$this->login_as_teacher();
 		$current_user_id = wp_get_current_user()->ID;
 
 		$new_term = wp_insert_term(

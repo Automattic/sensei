@@ -375,7 +375,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 	}
 
 	public function testCourseStructure_whenCustomSlugIsAddedToModule_isProperlySavedAndServed() {
-		$this->login_as_admin();
+		$this->login_as_teacher();
 
 		$course_response = $this->factory->get_course_with_lessons(
 			[
