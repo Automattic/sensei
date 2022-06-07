@@ -9,12 +9,13 @@ import { __, sprintf } from '@wordpress/i18n';
  *
  * @param {Object}   props
  * @param {Array}    props.steps        Array with the steps that will be rendered.
+ * @param {Array}    props.dataState    Data and data setter.
  * @param {Function} props.onCompletion Callback to call when wizard is completed.
  * @param {Function} props.skipWizard   Function to skip wizard.
  */
-const Wizard = ( { steps, onCompletion, skipWizard } ) => {
+const Wizard = ( { steps, dataState, onCompletion, skipWizard } ) => {
 	const [ currentStepNumber, setCurrentStepNumber ] = useState( 0 );
-	const [ data, setData ] = useState( {} );
+	const [ data, setData ] = dataState;
 
 	const goToNextStep = () => {
 		if ( currentStepNumber + 1 < steps.length ) {

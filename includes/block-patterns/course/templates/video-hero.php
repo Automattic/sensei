@@ -32,8 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column -->
 
 <!-- wp:column -->
-<div class="wp-block-column"><!-- wp:paragraph {"className":"sensei-pattern-description"} -->
-<p class="sensei-pattern-description"><?php esc_html_e( 'Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera.', 'sensei-lms' ); ?></p>
+<div class="wp-block-column"><!-- wp:paragraph {"className":"sensei-content-description"} -->
+<p class="sensei-content-description"><?php esc_html_e( 'Start learning about Film Direction with Doug, a senior VP at Films. You will learn all the secrets and how to prepare your project even before touching the camera.', 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 

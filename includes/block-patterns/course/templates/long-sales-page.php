@@ -16,8 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h1 style="font-size:48px;font-weight:700;line-height:1.15"><strong><?php esc_html_e( 'Deep dive into portrait photography', 'sensei-lms' ); ?></strong></h1>
 <!-- /wp:heading -->
 
-<!-- wp:paragraph {"className":"sensei-pattern-description"} -->
-<p class="sensei-pattern-description"><?php esc_html_e( 'Learn from Jeff Bronson how to shoot photography like a pro in any outside light conditions.', 'sensei-lms' ); ?></p>
+<!-- wp:paragraph {"className":"sensei-content-description"} -->
+<p class="sensei-content-description"><?php esc_html_e( 'Learn from Jeff Bronson how to shoot photography like a pro in any outside light conditions.', 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->

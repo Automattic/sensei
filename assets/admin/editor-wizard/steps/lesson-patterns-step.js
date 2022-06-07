@@ -18,7 +18,7 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 	const replaces = {};
 
 	if ( data.lessonTitle ) {
-		replaces[ 'sensei-pattern-title' ] = data.lessonTitle;
+		replaces[ 'sensei-content-title' ] = data.lessonTitle;
 	}
 
 	return (

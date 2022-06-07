@@ -3,8 +3,7 @@
  */
 import { useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
-import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
-import { store as blockEditorStore } from '@wordpress/block-editor';
+import { useState } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
 
 /**
@@ -12,74 +11,21 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import Wizard from './wizard';
 import useEditorWizardSteps from './use-editor-wizard-steps';
+import { useWizardOpenState, useSetDefaultTemplate } from './helpers';
 import '../../shared/data/api-fetch-preloaded-once';
-
-/**
- * A React Hook to observe if a modal is open based on the body class.
- *
- * @param {boolean} shouldObserve If it should observe the changes.
- *
- * @return {boolean|undefined} Whether a modal is open, or `undefined` if it's not initialized yet.
- */
-const useObserveOpenModal = ( shouldObserve ) => {
-	const [ hasOpenModal, setHasOpenModal ] = useState();
-
-	useEffect( () => {
-		if ( ! shouldObserve ) {
-			return;
-		}
-
-		// Initialize state after modals are open or not.
-		setTimeout( () => {
-			setHasOpenModal( document.body.classList.contains( 'modal-open' ) );
-		}, 1 );
-
-		const observer = new window.MutationObserver( () => {
-			setHasOpenModal( document.body.classList.contains( 'modal-open' ) );
-		} );
-		observer.observe( document.body, {
-			attributes: true,
-			attributeFilter: [ 'class' ],
-		} );
-
-		return () => {
-			observer.disconnect();
-		};
-	}, [ shouldObserve ] );
-
-	return hasOpenModal;
-};
-
-/**
- * A React Hook to control the wizard open state.
- *
- * @return {boolean} Whether the modal should be open.
- */
-const useWizardOpenState = () => {
-	const [ open, setOpen ] = useState( false );
-	const [ done, setDone ] = useState( false );
-	const hasOpenModal = useObserveOpenModal( ! done );
-
-	useLayoutEffect( () => {
-		if ( done ) {
-			setOpen( false );
-		} else if ( false === hasOpenModal ) {
-			// If no modal is open, it's time to open.
-			setOpen( true );
-		}
-	}, [ done, hasOpenModal ] );
-
-	return [ open, setDone ];
-};
 
 /**
  * Editor wizard modal component.
  */
 const EditorWizardModal = () => {
-	const [ open, setDone ] = useWizardOpenState();
-	const { synchronizeTemplate } = useDispatch( blockEditorStore );
+	const dataState = useState( {} );
 	const { editPost, savePost } = useDispatch( editorStore );
+
+	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
+	const setDefaultTemplate = useSetDefaultTemplate( {
+		'sensei-content-description': dataState[ 0 ].courseDescription,
+	} );
 
 	const onWizardCompletion = () => {
 		setDone( true );
@@ -90,10 +36,8 @@ const EditorWizardModal = () => {
 	};
 
 	const skipWizard = () => {
+		setDefaultTemplate();
 		onWizardCompletion();
-		// Set default template. Mainly used for when lesson is created through Course Outline
-		// (which doesn't start with the template applied).
-		synchronizeTemplate();
 	};
 
 	return (
@@ -104,6 +48,7 @@ const EditorWizardModal = () => {
 			>
 				<Wizard
 					steps={ steps }
+					dataState={ dataState }
 					onCompletion={ onWizardCompletion }
 					skipWizard={ skipWizard }
 				/>
