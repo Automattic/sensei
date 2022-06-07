@@ -22,6 +22,7 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 	/**
 	 * Constructor.
+	 *
 	 * @deprecated $$next-version$$
 	 *
 	 * @param string $post_type Post type.
@@ -193,24 +194,24 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 		$current_user = wp_get_current_user();
 
-		// Check if user is logged in
+		// Check if user is logged in.
 		if ( empty( $current_user ) || empty( $current_user->ID ) ) {
 			return new WP_Error(
 				'rest_forbidden_context',
-				__( 'Sorry, you are not allowed to view this post.' ),
+				__( 'Sorry, you are not allowed to view this post.', 'sensei-lms' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
 
 		$post = $this->get_post( $request['id'] );
 
-		if ( (int) $post->post_author === $current_user->ID || $current_user->user_login === get_post_meta( $post->ID, '_receiver', true ) || current_user_can( 'manage_options' ) ) {
+		if ( $current_user->ID === (int) $post->post_author || get_post_meta( $post->ID, '_receiver', true ) === $current_user->user_login || current_user_can( 'manage_options' ) ) {
 			return true;
 		}
 
 		return new WP_Error(
 			'rest_forbidden_context',
-			__( 'Sorry, you are not allowed to view this post.' ),
+			__( 'Sorry, you are not allowed to view this post.', 'sensei-lms' ),
 			array( 'status' => rest_authorization_required_code() )
 		);
 	}
