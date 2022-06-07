@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { Button } from '@wordpress/components';
 
@@ -20,14 +20,10 @@ import detailsStepImage from '../../../images/details-step.png';
  * @param {Function} props.setData
  */
 const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	const { editPost } = useDispatch( editorStore );
-
-	const updateLessonTitle = ( title ) => {
-		setWizardData( { ...wizardData, lessonTitle: title } );
-		editPost( {
-			title,
-		} );
-	};
+	const [ lessonTitle, updateLessonTitle ] = useLessonTitle(
+		wizardData,
+		setWizardData
+	);
 
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
@@ -44,7 +40,7 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 				<div className="sensei-editor-wizard-step__form">
 					<LimitedTextControl
 						label={ __( 'Lesson Title', 'sensei-lms' ) }
-						value={ wizardData.lessonTitle ?? '' }
+						value={ lessonTitle }
 						onChange={ updateLessonTitle }
 						maxLength={ 40 }
 					/>
@@ -64,12 +60,37 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	);
 };
 
+/**
+ * Actions for the LessonDetailsStep.
+ *
+ * @param {Function} goToNextStep Invoke to go to the next step.
+ */
 LessonDetailsStep.Actions = ( { goToNextStep } ) => {
 	return (
 		<Button isPrimary onClick={ goToNextStep }>
 			{ __( 'Continue', 'sensei-lms' ) }
 		</Button>
 	);
+};
+
+/**
+ * Load the post title from the Editor Store.
+ *
+ * @param {Object}   wizardData    The wizard data.
+ * @param {Function} setWizardData Function to update the wizard data.
+ */
+const useLessonTitle = ( wizardData, setWizardData ) => {
+	const { editPost } = useDispatch( editorStore );
+	const { title } = useSelect( ( select ) => ( {
+		title: select( editorStore )?.getEditedPostAttribute( 'title' ),
+	} ) );
+	const updateLessonTitle = ( newTitle ) => {
+		setWizardData( { ...wizardData, lessonTitle: newTitle } );
+		editPost( {
+			title: newTitle,
+		} );
+	};
+	return [ wizardData.lessonTitle ?? title, updateLessonTitle ];
 };
 
 export default LessonDetailsStep;
