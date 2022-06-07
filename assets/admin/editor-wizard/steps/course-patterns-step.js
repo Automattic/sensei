@@ -18,11 +18,11 @@ const CoursePatternsStep = ( { data, ...props } ) => {
 	const replaces = {};
 
 	if ( data.courseTitle ) {
-		replaces[ 'sensei-pattern-title' ] = data.courseTitle;
+		replaces[ 'sensei-content-title' ] = data.courseTitle;
 	}
 
 	if ( data.courseDescription ) {
-		replaces[ 'sensei-pattern-description' ] = data.courseDescription;
+		replaces[ 'sensei-content-description' ] = data.courseDescription;
 	}
 
 	return (
