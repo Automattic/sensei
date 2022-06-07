@@ -20,7 +20,7 @@ import detailsStepImage from '../../../images/details-step.png';
  * @param {Function} props.setData
  */
 const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	const [ postTitle, updateLessonTitle ] = useLessonTitle(
+	const [ lessonTitle, updateLessonTitle ] = useLessonTitle(
 		wizardData,
 		setWizardData
 	);
@@ -40,7 +40,7 @@ const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 				<div className="sensei-editor-wizard-step__form">
 					<LimitedTextControl
 						label={ __( 'Lesson Title', 'sensei-lms' ) }
-						value={ wizardData.lessonTitle ?? postTitle }
+						value={ lessonTitle }
 						onChange={ updateLessonTitle }
 						maxLength={ 40 }
 					/>
@@ -90,7 +90,7 @@ const useLessonTitle = ( wizardData, setWizardData ) => {
 			title: newTitle,
 		} );
 	};
-	return [ title, updateLessonTitle ];
+	return [ wizardData.lessonTitle ?? title, updateLessonTitle ];
 };
 
 export default LessonDetailsStep;
