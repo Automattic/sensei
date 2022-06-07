@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"120px","bottom":"120px","right":"90px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}}} -->
-<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"120px","bottom":"120px","right":"90px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}},"className":"sensei-pattern-group"} -->
+<div class="wp-block-group sensei-pattern-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
 <div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}}} -->
 <h1 class="alignwide" style="font-size:clamp(3rem, 6vw, 4.5rem)"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
@@ -46,8 +46,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:group --></div>
 <!-- /wp:group -->
 
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|primary"}}},"color":{}},"textColor":"primary","layout":{"inherit":false}} -->
-<div class="wp-block-group alignfull has-primary-color has-text-color has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:group {"align":"wide"} -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}}},"className":"sensei-pattern-group","layout":{"inherit":false}} -->
+<div class="wp-block-group alignfull sensei-pattern-group" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:group {"align":"wide"} -->
 <div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","fontSize":"large"} -->
 <p class="has-text-align-center has-large-font-size"><?php esc_html_e( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
@@ -150,8 +150,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"90px","bottom":"20px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}}} -->
-<div class="wp-block-group has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":24} -->
+<!-- wp:group {"style":{"spacing":{"padding":{"top":"20px","right":"90px","bottom":"20px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}},"className":"sensei-pattern-group"} -->
+<div class="wp-block-group sensei-pattern-group has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:20px;padding-right:90px;padding-bottom:20px;padding-left:90px"><!-- wp:spacer {"height":24} -->
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
