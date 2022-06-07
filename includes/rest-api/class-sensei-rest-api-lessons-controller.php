@@ -25,9 +25,6 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 */
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
-
-		add_filter( 'rest_lesson_query', array( $this, 'exclude_others_lessons' ), 10, 2 );
-
 		$this->init_post_meta();
 	}
 
@@ -141,65 +138,5 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		}
 
 		return $prepared;
-	}
-
-	/**
-	 * Checks if the logged-in user should have access to a specific lesson.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param WP_REST_Request $request Full details about the request.
-	 *
-	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
-	 */
-	public function get_item_permissions_check( $request ) {
-		$check_result = parent::get_item_permissions_check( $request );
-
-		if ( true !== $check_result ) {
-			return $check_result;
-		}
-
-		if ( current_user_can( 'manage_sensei' ) || current_user_can( 'manage_options' ) ) {
-			return true;
-		}
-
-		$lesson = get_post( $request['id'] );
-
-		if ( get_current_user_id() === (int) $lesson->post_author ) {
-			return true;
-		}
-
-		$course_id = Sensei()->lesson->get_course_id( $request['id'] );
-
-		if ( empty( $course_id ) ) {
-			return new WP_Error(
-				'rest_forbidden_context',
-				__( 'Sorry, you are not allowed to edit this post.', 'sensei-lms' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
-		}
-
-		return Sensei()->course::is_user_enrolled( $course_id );
-	}
-
-	/**
-	 * Modifies the query for teachers so only their own lessons are returned.
-	 *
-	 * @access private
-	 *
-	 * @param array           $args    The query args.
-	 * @param WP_REST_Request $request The current REST request.
-	 *
-	 * @return array The modified query args.
-	 */
-	public function exclude_others_lessons( array $args, WP_REST_Request $request ) : array {
-		if ( current_user_can( 'manage_sensei' ) || current_user_can( 'manage_options' ) ) {
-			return $args;
-		}
-
-		$current_user   = wp_get_current_user();
-		$args['author'] = $current_user->ID ?? - 1;
-
-		return $args;
 	}
 }
