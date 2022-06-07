@@ -38,7 +38,7 @@ const ButtonEdit = ( props ) => {
 					value={ text }
 					onChange={ ( value ) => setAttributes( { text: value } ) }
 					{ ...buttonProps }
-					tagName="a"
+					tagName="div"
 					identifier="text"
 					withoutInteractiveFormatting={ true }
 				/>

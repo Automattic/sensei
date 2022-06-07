@@ -417,6 +417,9 @@ class Sensei_Main {
 
 		Sensei_Scheduler::init();
 
+		// Block patterns.
+		Sensei_Block_Patterns::instance()->init();
+
 		// Editor Wizard.
 		Sensei_Editor_Wizard::instance()->init();
 
