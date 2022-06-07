@@ -183,17 +183,10 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	public function get_item_permissions_check( $request ) {
 		_deprecated_function( __METHOD__, '4.4.3' );
 
-		$post = $this->get_post( $request['id'] );
-		if ( is_wp_error( $post ) ) {
-			return $post;
-		}
+		$check_result = parent::get_item_permissions_check( $request );
 
-		if ( 'edit' === $request['context'] && $post && ! $this->check_update_permission( $post ) ) {
-			return new WP_Error(
-				'rest_forbidden_context',
-				__( 'Sorry, you are not allowed to edit this post.' ),
-				array( 'status' => rest_authorization_required_code() )
-			);
+		if ( true !== $check_result ) {
+			return $check_result;
 		}
 
 		$current_user = wp_get_current_user();
@@ -206,6 +199,8 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
+
+		$post = $this->get_post( $request['id'] );
 
 		if ( (int) $post->post_author === $current_user->ID || $current_user->user_login === get_post_meta( $post->ID, '_receiver', true ) || current_user_can( 'manage_options' ) ) {
 			return true;
