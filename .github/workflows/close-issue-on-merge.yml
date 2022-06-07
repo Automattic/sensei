@@ -1,4 +1,4 @@
-name: Close issues related to a merged PR 
+name: Close issues related to a merged PR
 
 on:
     pull_request:
