@@ -2,6 +2,12 @@ body,
 .editor-styles-wrapper {
 	.sensei-pattern-media,
 	.sensei-pattern-group {
+		.has-large-font-size,
+		.has-x-large-font-size,
+		.sensei-pattern-lh1 {
+			line-height: 1;
+		}
+
 		h1,
 		h2,
 		h3,
