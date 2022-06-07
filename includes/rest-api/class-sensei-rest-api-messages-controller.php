@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * A REST controller for the Sensei messages.
  *
+ * @deprecated $$next-version$$
  * @since 2.3.0
  *
  * @see WP_REST_Posts_Controller
@@ -26,7 +27,9 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @param string $post_type Post type.
 	 */
 	public function __construct( $post_type ) {
+		add_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
 		_deprecated_function( __METHOD__, '$$next-version$$' );
+		remove_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
 
 		parent::__construct( $post_type );
 
@@ -89,7 +92,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The schema.
 	 */
 	public function get_item_schema() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		$schema = parent::get_item_schema();
 
@@ -128,8 +130,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @deprecated $$next-version$$
 	 */
 	public function get_collection_params() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-
 		$query_params = parent::get_collection_params();
 
 		$query_params['sender'] = array(
@@ -161,8 +161,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The modified query args.
 	 */
 	public function exclude_others_comments( $args, $request ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-
 		if (
 			'all' === $request->get_param( 'sender' ) &&
 			( current_user_can( 'moderate_comments' ) || current_user_can( 'read_private_sensei_messages' ) )
@@ -187,8 +185,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
 	 */
 	public function get_item_permissions_check( $request ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-
 		$check_result = parent::get_item_permissions_check( $request );
 
 		if ( true !== $check_result ) {
