@@ -84,8 +84,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer -->
 
 <!-- wp:group {"align":"full","layout":{"inherit":true}} -->
-<div class="wp-block-group alignfull"><!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
+<div class="wp-block-group alignfull"><!-- wp:separator {"customColor":"#7a8080","className":"has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-background has-alpha-channel-opacity alignwide is-style-wide" style="background-color:#7a8080;color:#7a8080"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -106,8 +106,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
+<!-- wp:separator {"customColor":"#7a8080","className":"has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-background has-alpha-channel-opacity alignwide is-style-wide" style="background-color:#7a8080;color:#7a8080"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -128,8 +128,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
+<!-- wp:separator {"customColor":"#7a8080","className":"has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-background has-alpha-channel-opacity alignwide is-style-wide" style="background-color:#7a8080;color:#7a8080"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -150,8 +150,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
+<!-- wp:separator {"customColor":"#7a8080","className":"has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-background has-alpha-channel-opacity alignwide is-style-wide" style="background-color:#7a8080;color:#7a8080"/>
 <!-- /wp:separator -->
 
 <!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
@@ -172,8 +172,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:separator {"style":{"color":{"background":"#ffffff40"}},"className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide" style="background-color:#ffffff40;color:#ffffff40"/>
+<!-- wp:separator {"customColor":"#7a8080","className":"has-text-color has-alpha-channel-opacity has-background alignwide is-style-wide"} -->
+<hr class="wp-block-separator has-text-color has-background has-alpha-channel-opacity alignwide is-style-wide" style="background-color:#7a8080;color:#7a8080"/>
 <!-- /wp:separator --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->
