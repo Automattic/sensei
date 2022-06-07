@@ -28,10 +28,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @param string $post_type Post type.
 	 */
 	public function __construct( $post_type ) {
-		add_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-		remove_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
-
 		parent::__construct( $post_type );
 
 		// This filter is needed in order for students to be able to see their own messages only.
@@ -186,6 +182,10 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
 	 */
 	public function get_item_permissions_check( $request ) {
+		add_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+		remove_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
+
 		$check_result = parent::get_item_permissions_check( $request );
 
 		if ( true !== $check_result ) {
