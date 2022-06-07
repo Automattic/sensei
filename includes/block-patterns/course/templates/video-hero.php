@@ -38,8 +38,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:column -->
 
 <!-- wp:column -->
-<div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right","style":{"color":{"text":"#000000","background":"#ffffff"}}} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link has-text-color has-background" style="background-color:#ffffff;color:#000000"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<div class="wp-block-column"><!-- wp:sensei-lms/button-take-course {"align":"right"} -->
+<div class="wp-block-sensei-lms-button-take-course has-text-align-right is-style-default wp-block-sensei-button wp-block-button"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns --></div>
@@ -180,8 +180,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer -->
 
 <!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
-<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course {"align":"left","style":{"color":{"text":"#000000","background":"#ffffff"}}} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-text-color has-background" style="background-color:#ffffff;color:#000000"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<div class="wp-block-group"><!-- wp:sensei-lms/button-take-course -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:sensei-lms/button-contact-teacher {"style":{"color":{"text":"#ffffff"}}} -->
