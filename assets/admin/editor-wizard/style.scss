@@ -39,6 +39,7 @@
 
 	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
 		width: 800px;
+		height: 670px;
 	}
 
 	& .components-modal__content {
@@ -68,8 +69,87 @@
 		}
 	}
 
+	&__columns {
+		flex: 1;
+
+		@media ( min-width: 600px ) {
+			display: grid;
+			grid-template-columns: 52% 48%;
+		}
+	}
+
+	&__content {
+		flex: 1;
+		padding: 24px 18px 18px;
+
+		@media ( min-width: 600px ) {
+			padding: 30px;
+		}
+	}
+
+	&__illustration {
+		display: none;
+
+		@media ( min-width: 600px ) {
+			padding-top: 25px;
+			background: #43af99;
+			display: flex;
+			justify-content: right;
+			align-items: center;
+		}
+	}
+
+	&__illustration-image {
+		width: 84%;
+	}
+}
+
+.sensei-editor-wizard-modal-upsell {
+	&__price {
+		display: block;
+		margin-bottom: 8px;
+		line-height: 1;
+		font-size: 36px;
+
+		@media ( min-width: 600px ) {
+			font-size: 36px;
+		}
+	}
+
+	&__price-detail {
+		display: block;
+		font-size: 13px;
+		color: #787C82;
+		margin-bottom: 30px;
+	}
+
+	&__features {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-size: 14px;
+		font-weight: 700;
+	}
+
+	&__feature-item {
+		padding: 0 0 20px 24px;
+		margin: 0;
+
+		&::before {
+			content: "\f00c";
+			font-family: FontAwesomeSensei, FontAwesome;
+			display: inline-block;
+			margin-left: -24px;
+			width: 24px;
+			color: #00998b;
+		}
+	}
+}
+
+.sensei-editor-wizard-step {
 	&__title,
 	&__sticky-title {
+		line-height: 1.1;
 		color: inherit;
 	}
 
@@ -105,84 +185,17 @@
 		}
 	}
 
-	&__columns {
-		flex: 1;
-
-		@media ( min-width: 600px ) {
-			display: grid;
-			grid-template-columns: 50% 50%;
-		}
+	&__description {
+		margin: 0 0 24px;
 	}
 
-	&__content {
-		padding: 24px 18px 18px;
-
-		@media ( min-width: 600px ) {
-			padding: 30px;
-		}
-	}
-
-	&__illustration {
-		display: none;
-
-		@media ( min-width: 600px ) {
-			background: #43af99;
-			display: flex;
-			justify-content: right;
-			align-items: center;
-		}
-	}
-
-	&__illustration-image {
-		height: 75%;
-	}
-}
-
-.sensei-editor-wizard-modal-upsell {
-	&__price {
-		display: block;
-		margin-bottom: 8px;
-		line-height: 1.2;
-		font-size: 32px;
-
-		@media ( min-width: 600px ) {
-			font-size: 36px;
-		}
-	}
-
-	&__price-detail {
-		display: block;
-		font-size: 11px;
-		color: #787C82;
-		margin-top: -10px;
-		margin-bottom: 30px;
-	}
-
-	&__features {
-		list-style: none;
-		padding: 0;
-		font-weight: 700;
-	}
-
-	&__feature-item {
-		padding-left: 1.3em;
-
-		&::before {
-			content: "\f00c";
-			font-family: FontAwesomeSensei, FontAwesome;
-			display: inline-block;
-			margin-left: -1.3em;
-			width: 1.3em;
-			color: #00998b;
-		}
-	}
-}
-
-.sensei-editor-wizard-step {
 	&__form {
 		& label {
 			font-weight: bold;
-			margin-top: 20px;
 		}
+	}
+
+	&__form-control {
+		margin-bottom: 32px;
 	}
 }

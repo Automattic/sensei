@@ -38,23 +38,25 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	return (
 		<div className="sensei-editor-wizard-modal__columns">
 			<div className="sensei-editor-wizard-modal__content">
-				<h1 className="sensei-editor-wizard-modal__title">
+				<h1 className="sensei-editor-wizard-step__title">
 					{ __( 'Create your course', 'sensei-lms' ) }
 				</h1>
-				<div className="sensei-editor-wizard-step__description">
+				<p className="sensei-editor-wizard-step__description">
 					{ __(
 						'Keep your Course Title short as it will get displayed in different places around your website. You can easily change both later.',
 						'sensei-lms'
 					) }
-				</div>
+				</p>
 				<div className="sensei-editor-wizard-step__form">
 					<LimitedTextControl
+						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Title', 'sensei-lms' ) }
 						value={ wizardData.courseTitle ?? '' }
 						onChange={ updateCourseTitle }
 						maxLength={ 40 }
 					/>
 					<LimitedTextControl
+						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Description', 'sensei-lms' ) }
 						value={ wizardData.courseDescription ?? '' }
 						onChange={ updateCourseDescription }
