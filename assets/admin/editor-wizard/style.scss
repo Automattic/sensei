@@ -134,15 +134,16 @@
 	&__feature-item {
 		padding: 0 0 20px 24px;
 		margin: 0;
+		display: flex;
+		align-items: center;
+	}
 
-		&::before {
-			content: "\f00c";
-			font-family: FontAwesomeSensei, FontAwesome;
-			display: inline-block;
-			margin-left: -24px;
-			width: 24px;
-			color: #00998b;
-		}
+	&__feature-item-icon {
+		width: 24px;
+		height: 24px;
+		margin-left: -24px;
+		margin-right: 6px;
+		color: #00998b;
 	}
 }
 
