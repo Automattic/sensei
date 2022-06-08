@@ -78,9 +78,12 @@ class Sensei_Block_Patterns {
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
 				'video-lesson',
-				'discussion-question',
 				'files-to-download',
 			];
+
+			if ( WP_Block_Type_Registry::get_instance()->is_registered( 'core/comments-query-loop' ) ) {
+				$block_patterns[] = 'discussion-question';
+			}
 		}
 
 		foreach ( $block_patterns as $block_pattern ) {
