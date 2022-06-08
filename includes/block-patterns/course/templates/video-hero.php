@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"120px","bottom":"120px","right":"90px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}},"className":"sensei-pattern-group"} -->
 <div class="wp-block-group sensei-pattern-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
-<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)"}},"className":"sensei-pattern-lh1"} -->
-<h1 class="alignwide sensei-pattern-lh1" style="font-size:clamp(3rem, 6vw, 4.5rem)"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
+<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)","lineHeight":"1.15"}}} -->
+<h1 class="alignwide" style="font-size:clamp(3rem, 6vw, 4.5rem);line-height:1.15"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
 
 <!-- wp:spacer {"height":32} -->
@@ -48,16 +48,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}}},"className":"sensei-pattern-group","layout":{"inherit":false}} -->
 <div class="wp-block-group alignfull sensei-pattern-group" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:group {"align":"wide"} -->
-<div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","fontSize":"large"} -->
-<p class="has-text-align-center has-large-font-size"><?php esc_html_e( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ); ?></p>
+<div class="wp-block-group alignwide"><!-- wp:paragraph {"align":"center","style":{"typography":{"lineHeight":1.5}},"fontSize":"large"} -->
+<p class="has-text-align-center has-large-font-size" style="line-height:1.5"><?php esc_html_e( "Get to know Doug's network of professionals by taking the Course today!", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:spacer {"height":16} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:paragraph {"align":"center","style":{"typography":{"fontWeight":"300"}},"fontSize":"x-large"} -->
-<p class="has-text-align-center has-x-large-font-size" style="font-weight:300"><a href="#">Jesús Rodriguez</a>, <a href="#">Emery Driscoll</a>, <a href="#">Megan Perry</a>, <a href="#">Rowan Price</a>, <a href="#">Angelo Tso</a>, <a href="#">Edward Stilton</a>, <a href="#">Amy Jensen</a>, <a href="#">Boston Bell</a>, <a href="#">Shay Ford</a>, <a href="#">Lee Cunningham</a>, <a href="#">Evelynn Ray</a>, <a href="#">Landen Reese</a>, <a href="#">Ewan Hart</a>, <a href="#">Jenna Chan</a>, <a href="#">Phoenix Murray</a>, <a href="#">Mel Saunders</a>, <a href="#">Aldo Davidson</a>, <a href="#">Zain Hall</a>.</p>
+<!-- wp:paragraph {"align":"center","style":{"typography":{"fontWeight":"300","lineHeight":1.5}},"fontSize":"x-large"} -->
+<p class="has-text-align-center has-x-large-font-size" style="font-weight:300;line-height:1.5"><a href="#">Jesús Rodriguez</a>, <a href="#">Emery Driscoll</a>, <a href="#">Megan Perry</a>, <a href="#">Rowan Price</a>, <a href="#">Angelo Tso</a>, <a href="#">Edward Stilton</a>, <a href="#">Amy Jensen</a>, <a href="#">Boston Bell</a>, <a href="#">Shay Ford</a>, <a href="#">Lee Cunningham</a>, <a href="#">Evelynn Ray</a>, <a href="#">Landen Reese</a>, <a href="#">Ewan Hart</a>, <a href="#">Jenna Chan</a>, <a href="#">Phoenix Murray</a>, <a href="#">Mel Saunders</a>, <a href="#">Aldo Davidson</a>, <a href="#">Zain Hall</a>.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:spacer {"height":16} -->
