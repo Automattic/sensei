@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- wp:columns {"align":"wide"} -->
 <div class="wp-block-columns alignwide"><!-- wp:column {"width":"50%"} -->
-<div class="wp-block-column" style="flex-basis:50%"><!-- wp:paragraph -->
-<p><strong>Doug Stilton</strong></p>
+<div class="wp-block-column" style="flex-basis:50%"><!-- wp:paragraph {"className":"sensei-content-author"} -->
+<p class="sensei-content-author"><strong>Doug Stilton</strong></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column -->
 

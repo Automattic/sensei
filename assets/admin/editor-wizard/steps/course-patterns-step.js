@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -15,6 +16,9 @@ import PatternsStep from './patterns-step';
  * @param {Object} props.data Wizard data.
  */
 const CoursePatternsStep = ( { data, ...props } ) => {
+	const { user } = useSelect( ( select ) => ( {
+		user: select( 'core' ).getCurrentUser(),
+	} ) );
 	const replaces = {};
 
 	if ( data.courseTitle ) {
@@ -23,6 +27,10 @@ const CoursePatternsStep = ( { data, ...props } ) => {
 
 	if ( data.courseDescription ) {
 		replaces[ 'sensei-content-description' ] = data.courseDescription;
+	}
+
+	if ( user.name ) {
+		replaces[ 'sensei-content-author' ] = `<strong>${ user.name }</strong>`;
 	}
 
 	return (
