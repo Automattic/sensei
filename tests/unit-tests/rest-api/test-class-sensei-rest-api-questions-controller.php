@@ -116,6 +116,8 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 	 * Tests to make sure guests cannot access a single question.
 	 */
 	public function testGuestsCannotAccessSingleQuestion() {
+		$this->login_as_teacher();
+
 		$question_id = $this->factory->question->create();
 
 		$this->login_as( null );
