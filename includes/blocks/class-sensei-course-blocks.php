@@ -72,7 +72,6 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 				],
 			],
 			[ 'sensei-lms/button-take-course' ],
-			[ 'sensei-lms/button-contact-teacher' ],
 			[ 'sensei-lms/course-progress' ],
 			[
 				'sensei-lms/course-outline',
