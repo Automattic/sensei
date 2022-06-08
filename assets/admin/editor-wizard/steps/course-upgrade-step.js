@@ -85,6 +85,12 @@ const CourseUpgradeStep = () => {
 	);
 };
 
+/**
+ * Item of the feature list in the Upgrade Step
+ *
+ * @param {Object} props          Component Props
+ * @param {string} props.children Text to be included after the feature item icon
+ */
 const FeatureItem = ( { children } ) => (
 	<li className="sensei-editor-wizard-modal-upsell__feature-item">
 		<CheckIcon className="sensei-editor-wizard-modal-upsell__feature-item-icon" />
