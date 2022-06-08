@@ -10,6 +10,7 @@ import { useSelect } from '@wordpress/data';
  */
 import { EXTENSIONS_STORE } from '../../../extensions/store';
 import senseiProUpsellImage from '../../../images/sensei-pro-upsell.png';
+import CheckIcon from '../../../icons/checked.svg';
 
 /**
  * Upgrade step during course creation wizard.
@@ -47,27 +48,27 @@ const CourseUpgradeStep = () => {
 					{ __( 'per year, 1 site', 'sensei-lms' ) }
 				</span>
 				<ul className="sensei-editor-wizard-modal-upsell__features">
-					<li className="sensei-editor-wizard-modal-upsell__feature-item">
+					<FeatureItem>
 						{ __( 'WooCommerce integration', 'sensei-lms' ) }
-					</li>
-					<li className="sensei-editor-wizard-modal-upsell__feature-item">
+					</FeatureItem>
+					<FeatureItem>
 						{ __( "Schedule 'drip' content", 'sensei-lms' ) }
-					</li>
-					<li className="sensei-editor-wizard-modal-upsell__feature-item">
+					</FeatureItem>
+					<FeatureItem>
 						{ __( 'Set expiration date of courses', 'sensei-lms' ) }
-					</li>
-					<li className="sensei-editor-wizard-modal-upsell__feature-item">
+					</FeatureItem>
+					<FeatureItem>
 						{ __( 'Quiz timer', 'sensei-lms' ) }
-					</li>
-					<li className="sensei-editor-wizard-modal-upsell__feature-item">
+					</FeatureItem>
+					<FeatureItem>
 						{ __(
 							'Flashcards, Image Hotspots, and Checklists',
 							'sensei-lms'
 						) }
-					</li>
-					<li className="sensei-editor-wizard-modal-upsell__feature-item">
+					</FeatureItem>
+					<FeatureItem>
 						{ __( '1 year of updates & support', 'sensei-lms' ) }
-					</li>
+					</FeatureItem>
 				</ul>
 			</div>
 			<div className="sensei-editor-wizard-modal__illustration">
@@ -83,6 +84,13 @@ const CourseUpgradeStep = () => {
 		</div>
 	);
 };
+
+const FeatureItem = ( { children } ) => (
+	<li className="sensei-editor-wizard-modal-upsell__feature-item">
+		<CheckIcon className="sensei-editor-wizard-modal-upsell__feature-item-icon" />
+		{ children }
+	</li>
+);
 
 CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {
