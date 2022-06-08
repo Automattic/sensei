@@ -259,13 +259,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:sensei-lms/course-progress /-->
 
 <!-- wp:sensei-lms/course-outline -->
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lighting for portraiture', 'sensei-lms' ); ?>"} /-->
+<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 1', 'sensei-lms' ); ?>"} /-->
 
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Three-point lighting', 'sensei-lms' ); ?>"} /-->
+<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 2', 'sensei-lms' ); ?>"} /-->
 
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Key light', 'sensei-lms' ); ?>"} /-->
-
-<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Fill light', 'sensei-lms' ); ?>"} /-->
+<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
 <!-- /wp:sensei-lms/course-outline -->
 
 <!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
