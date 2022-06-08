@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"120px","bottom":"120px","right":"90px","left":"90px"}},"color":{"text":"#ffffff","background":"#000000"}},"className":"sensei-pattern-group"} -->
 <div class="wp-block-group sensei-pattern-group alignfull has-text-color has-background" style="background-color:#000000;color:#ffffff;padding-top:120px;padding-right:90px;padding-bottom:120px;padding-left:90px"><!-- wp:group {"align":"full","layout":{"inherit":false}} -->
-<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)","lineHeight":"1.15"}}} -->
-<h1 class="alignwide" style="font-size:clamp(3rem, 6vw, 4.5rem);line-height:1.15"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
+<div class="wp-block-group alignfull"><!-- wp:heading {"level":1,"align":"wide","style":{"typography":{"fontSize":"clamp(3rem, 6vw, 4.5rem)","lineHeight":"1.15"}},"className":"sensei-content-title"} -->
+<h1 class="alignwide sensei-content-title" style="font-size:clamp(3rem, 6vw, 4.5rem);line-height:1.15"><?php esc_html_e( 'Welcome to the Film Direction Course', 'sensei-lms' ); ?></h1>
 <!-- /wp:heading -->
 
 <!-- wp:spacer {"height":32} -->
