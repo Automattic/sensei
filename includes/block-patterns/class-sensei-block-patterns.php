@@ -77,9 +77,12 @@ class Sensei_Block_Patterns {
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
+				'default',
+				'default-with-quiz',
 				'video-lesson',
 				'discussion-question',
 				'files-to-download',
+				'zoom-meeting',
 			];
 		}
 
