@@ -81,7 +81,10 @@ class Sensei_Block_Patterns {
 				'files-to-download',
 			];
 
-			if ( WP_Block_Type_Registry::get_instance()->is_registered( 'core/comments-query-loop' ) ) {
+			if (
+				WP_Block_Type_Registry::get_instance()->is_registered( 'core/comments-query-loop' )
+				|| version_compare( get_bloginfo( 'version' ), '6.0', '>=' )
+			) {
 				$block_patterns[] = 'discussion-question';
 			}
 		}
