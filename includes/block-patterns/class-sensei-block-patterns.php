@@ -39,6 +39,7 @@ class Sensei_Block_Patterns {
 	public function init() {
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
+		add_action( 'enqueue_block_assets', [ $this, 'enqueue_scripts' ] );
 	}
 
 	/**
@@ -88,6 +89,20 @@ class Sensei_Block_Patterns {
 				'sensei-lms/' . $block_pattern,
 				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
 			);
+		}
+	}
+
+	/**
+	 * Enqueue scripts.
+	 *
+	 * @access private
+	 */
+	public function enqueue_scripts() {
+		$post_type  = get_post_type();
+		$post_types = [ 'course', 'lesson' ];
+
+		if ( in_array( $post_type, $post_types, true ) ) {
+			Sensei()->assets->enqueue( 'sensei-block-patterns-style', 'css/block-patterns.css' );
 		}
 	}
 
