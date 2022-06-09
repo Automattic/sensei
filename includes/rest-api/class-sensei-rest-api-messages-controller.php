@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * A REST controller for the Sensei messages.
  *
- * @deprecated $$next-version$$
  * @since 2.3.0
  *
  * @see WP_REST_Posts_Controller
@@ -22,8 +21,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 	/**
 	 * Constructor.
-	 *
-	 * @deprecated $$next-version$$
 	 *
 	 * @param string $post_type Post type.
 	 */
@@ -84,7 +81,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * only when the post type supports the 'excerpt' feature which we cannot add since it is going to have side effects.
 	 *
 	 * @since 2.3.0
-	 * @deprecated $$next-version$$
 	 *
 	 * @return array The schema.
 	 */
@@ -124,7 +120,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * Overrides get_collection_params to add the 'sender' argument.
 	 *
 	 * @since 2.3.0
-	 * @deprecated $$next-version$$
 	 */
 	public function get_collection_params() {
 		$query_params = parent::get_collection_params();
@@ -151,7 +146,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 *
 	 * @since 2.3.0
 	 * @access private
-	 * @deprecated $$next-version$$
 	 *
 	 * @param array           $args The query args.
 	 * @param WP_REST_Request $request The current REST request.
@@ -176,15 +170,10 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Checks if the logged-in user can access the message.
 	 *
-	 * @deprecated $$next-version$$
-	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
 	 */
 	public function get_item_permissions_check( $request ) {
-		add_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-		remove_filter( 'deprecated_function_trigger_error', '__return_true', 15 );
 
 		$check_result = parent::get_item_permissions_check( $request );
 

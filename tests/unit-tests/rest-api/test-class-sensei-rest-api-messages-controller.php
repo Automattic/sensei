@@ -163,8 +163,6 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @group wip
 	 */
 	public function testSenderAndDateAreCorrect() {
-		$this->markTestSkipped( 'Related endpoint is deprecated' );
-
 		$first_user = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
@@ -191,8 +189,6 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @group wip
 	 */
 	public function testDisplayedTitleNoCourse() {
-		$this->markTestSkipped( 'Related endpoint is deprecated' );
-
 		$first_user = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
@@ -218,8 +214,6 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @group wip
 	 */
 	public function testDisplayedTitleWithCourse() {
-		$this->markTestSkipped( 'Related endpoint is deprecated' );
-
 		$first_user = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
