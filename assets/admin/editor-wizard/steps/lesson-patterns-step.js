@@ -9,7 +9,7 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import PatternsStep from './patterns-step';
-import LogoIcon from '../../../icons/logo.svg';
+import LogoTreeIcon from '../../../icons/logo-tree.svg';
 import { EXTENSIONS_STORE } from '../../../extensions/store';
 
 /**
@@ -56,7 +56,7 @@ const LessonPatternsStep = ( { data, ...props } ) => {
  */
 const UpsellBlock = () => (
 	<div className="sensei-editor-wizard-patterns-upsell">
-		<LogoIcon className="sensei-editor-wizard-patterns-upsell__logo" />
+		<LogoTreeIcon className="sensei-editor-wizard-patterns-upsell__logo" />
 		<div className="sensei-editor-wizard-patterns-upsell__text">
 			<b>
 				{ __(
