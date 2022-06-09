@@ -65,36 +65,9 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 
 		$block_template = [
 			[
-				'core/paragraph',
+				'core/pattern',
 				[
-					'className'   => 'sensei-content-description',
-					'placeholder' => __( 'Write course content...', 'sensei-lms' ),
-				],
-			],
-			[ 'sensei-lms/button-take-course' ],
-			[ 'sensei-lms/course-progress' ],
-			[
-				'sensei-lms/course-outline',
-				[],
-				[
-					[
-						'sensei-lms/course-outline-lesson',
-						[
-							'title' => __( 'Lesson 1', 'sensei-lms' ),
-						],
-					],
-					[
-						'sensei-lms/course-outline-lesson',
-						[
-							'title' => __( 'Lesson 2', 'sensei-lms' ),
-						],
-					],
-					[
-						'sensei-lms/course-outline-lesson',
-						[
-							'title' => __( 'Lesson 3', 'sensei-lms' ),
-						],
-					],
+					'slug' => 'sensei-lms/course-default',
 				],
 			],
 		];
