@@ -37,7 +37,7 @@ class Sensei_Block_Patterns {
 	 * Initializes the class.
 	 */
 	public function init() {
-		add_action( 'init', [ $this, 'maybe_register_pattern_block_polyfill' ], 20 );
+		add_action( 'init', [ $this, 'maybe_register_pattern_block_polyfill' ], 99 );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_scripts' ] );
