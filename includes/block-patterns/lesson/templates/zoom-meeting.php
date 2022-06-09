@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-group alignwide has-tertiary-background-color has-background"><!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
 	<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center"} -->
 		<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph {"style":{"typography":{"lineHeight":"2"}}} -->
-			<p style="line-height:2"><strong><?php esc_html_e( 'Date:', 'sensei-lms' ); ?></strong><br><?php echo wp_date( 'F jS, Y' ); ?></p>
+			<p style="line-height:2"><strong><?php esc_html_e( 'Date:', 'sensei-lms' ); ?></strong><br><?php echo esc_html( wp_date( 'F jS, Y' ) ); ?></p>
 			<!-- /wp:paragraph --></div>
 		<!-- /wp:column -->
 
