@@ -63,7 +63,7 @@ const UpsellBlock = () => (
 					'Want more lesson types, check out Sensei Pro.',
 					'sensei-lms'
 				) }
-			</b>{ ' ' }
+			</b>
 			<br />
 			{ __(
 				'Flashcards, timed quizes, image hotspots, tasklists, and more.',
