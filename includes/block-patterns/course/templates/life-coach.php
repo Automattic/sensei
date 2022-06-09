@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h2 class="has-text-color" style="color:#000000"><?php esc_html_e( 'Do What You Always Wanted Today!', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
-<!-- wp:paragraph {"style":{"typography":{"lineHeight":1.2,"fontSize":"17px"}},"textColor":"foreground"} -->
-<p class="has-foreground-color has-text-color" style="font-size:17px;line-height:1.2"><?php esc_html_e( "Hellen's Life Hacks course will teach you how to get to know yourself and how you can use your natural abilities to finally change your life around and do what you always wanted.", 'sensei-lms' ); ?></p>
+<!-- wp:paragraph {"style":{"typography":{"lineHeight":1.2,"fontSize":"17px"}},"textColor":"foreground","className":"sensei-content-description"} -->
+<p class="has-foreground-color has-text-color sensei-content-description" style="font-size:17px;line-height:1.2"><?php esc_html_e( "Hellen's Life Hacks course will teach you how to get to know yourself and how you can use your natural abilities to finally change your life around and do what you always wanted.", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:sensei-lms/button-take-course {"className":"is-style-default","textColor":"background"} -->
