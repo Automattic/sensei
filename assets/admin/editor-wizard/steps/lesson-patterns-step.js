@@ -71,7 +71,8 @@ const UpsellBlock = () => (
 			) }{ ' ' }
 			<a
 				className="sensei-editor-wizard-patterns-upsell__link"
-				href="https://senseilms.com/pricing?..."
+				href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_patterns_editor_wizard"
+				rel="noreferrer external"
 			>
 				{ __( 'Learn more', 'sensei-lms' ) }
 			</a>
