@@ -69,6 +69,7 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
+	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',
 	'admin/exit-survey/index.js',

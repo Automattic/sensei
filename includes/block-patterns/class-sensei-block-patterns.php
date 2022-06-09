@@ -37,6 +37,7 @@ class Sensei_Block_Patterns {
 	 * Initializes the class.
 	 */
 	public function init() {
+		add_action( 'init', [ $this, 'maybe_register_pattern_block_polyfill' ], 20 );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_scripts' ] );
@@ -91,6 +92,43 @@ class Sensei_Block_Patterns {
 				require __DIR__ . "/{$post_type}/{$block_pattern}.php"
 			);
 		}
+	}
+
+	/**
+	 * Register pattern block polyfill if it's not registered.
+	 *
+	 * @access private
+	 */
+	public function maybe_register_pattern_block_polyfill() {
+		if ( \WP_Block_Type_Registry::get_instance()->is_registered( 'core/pattern' ) ) {
+			return;
+		}
+
+		// Register script.
+		Sensei()->assets->register( 'sensei-core-pattern-polyfill-script', 'blocks/core-pattern-polyfill/core-pattern-polyfill.js', [], true );
+
+		// Register dynamic block.
+		Sensei_Blocks::register_sensei_block(
+			'core/pattern',
+			[
+				'editor_script'   => 'sensei-core-pattern-polyfill-script',
+				'render_callback' => function( $attributes ) {
+					if ( empty( $attributes['slug'] ) ) {
+						return '';
+					}
+
+					$slug     = $attributes['slug'];
+					$registry = WP_Block_Patterns_Registry::get_instance();
+					if ( ! $registry->is_registered( $slug ) ) {
+						return '';
+					}
+
+					$pattern = $registry->get_registered( $slug );
+					return do_blocks( $pattern['content'] );
+				},
+			],
+			Sensei()->assets->src_path( 'blocks/core-pattern-polyfill' )
+		);
 	}
 
 	/**
