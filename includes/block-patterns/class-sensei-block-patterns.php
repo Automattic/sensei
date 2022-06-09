@@ -73,7 +73,7 @@ class Sensei_Block_Patterns {
 
 		if ( 'course' === $post_type ) {
 			$block_patterns = [
-				'default',
+				'course-default',
 				'video-hero',
 				'long-sales-page',
 			];
