@@ -172,6 +172,7 @@ final class Sensei_Extensions {
 		$extensions = array_map(
 			function( $extension ) use ( $installed_plugins, $wccom_subscriptions ) {
 				$extension->is_installed = isset( $installed_plugins[ $extension->plugin_file ] );
+				$extension->is_activated = $extension->is_installed && is_plugin_active( $extension->plugin_file );
 
 				if ( $extension->is_installed ) {
 					$extension->installed_version = $installed_plugins[ $extension->plugin_file ]['Version'];

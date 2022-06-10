@@ -34,8 +34,8 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 		replaces[ 'sensei-content-title' ] = data.lessonTitle;
 	}
 
-	const isSenseiProInstalled =
-		! senseiProExtension || senseiProExtension.is_installed === true;
+	const isSenseiProActivated =
+		! senseiProExtension || senseiProExtension.is_activated === true;
 
 	return (
 		<Fragment>
@@ -45,7 +45,7 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 				{ ...props }
 			/>
 			<PatternsStep.UpsellFill>
-				{ isSenseiProInstalled ? null : <UpsellBlock /> }
+				{ isSenseiProActivated ? null : <UpsellBlock /> }
 			</PatternsStep.UpsellFill>
 		</Fragment>
 	);
@@ -59,22 +59,20 @@ const UpsellBlock = () => (
 		<LogoTreeIcon className="sensei-editor-wizard-patterns-upsell__logo" />
 		<div className="sensei-editor-wizard-patterns-upsell__text">
 			<b className="sensei-editor-wizard-patterns-upsell__title">
-				{ __(
-					'Want more lesson types, check out Sensei Pro.',
-					'sensei-lms'
-				) }
+				{ __( 'Want More Lesson Types?', 'sensei-lms' ) }
 			</b>
 			<br />
 			{ __(
-				'Flashcards, timed quizes, image hotspots, tasklists, and more.',
+				'Get flashcards, timed quizzes, image hotspots, and more with Sensei Pro.',
 				'sensei-lms'
 			) }{ ' ' }
 			<a
 				className="sensei-editor-wizard-patterns-upsell__link"
 				href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_patterns_editor_wizard"
 				rel="noreferrer external"
+				target="blank"
 			>
-				{ __( 'Learn more', 'sensei-lms' ) }
+				{ __( 'Learn more.', 'sensei-lms' ) }
 			</a>
 		</div>
 	</div>

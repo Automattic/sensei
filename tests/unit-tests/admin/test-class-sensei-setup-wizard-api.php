@@ -405,6 +405,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'plugin_file'  => 'test/test.php',
 			'status'       => 'installing',
 			'is_installed' => false,
+			'is_activated' => false,
 		];
 		$sensei_extensions  = Sensei()->setup_wizard->get_sensei_extensions();
 
