@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { useSelect, useDispatch } from '@wordpress/data';
-import { synchronizeBlocksWithTemplate } from '@wordpress/blocks';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 
@@ -95,28 +94,36 @@ export const useWizardOpenState = () => {
 };
 
 /**
- * Hook to set the default post template with replaced content.
+ * Hook to set the default post pattern with replaced content.
  *
  * @param {Object} replaces Object containing content to be replaced. The keys are the block
  *                          classNames to find. The values are the content to be replaced.
  *
- * @return {Function} Function to set the default template.
+ * @return {Function} Function to set the default pattern.
  */
-export const useSetDefaultTemplate = ( replaces ) => {
-	const { resetBlocks } = useDispatch( blockEditorStore );
-	const { blocks, template } = useSelect( ( select ) => ( {
-		blocks: select( blockEditorStore ).getBlocks(),
+export const useSetDefaultPattern = ( replaces ) => {
+	const { patterns } = useSelect( ( select ) => ( {
+		patterns: select(
+			blockEditorStore
+		).__experimentalGetPatternsByBlockTypes( 'sensei-lms/post-content' ),
+	} ) );
+	const { template } = useSelect( ( select ) => ( {
 		template: select( blockEditorStore ).getTemplate(),
 	} ) );
+	const { resetBlocks } = useDispatch( blockEditorStore );
 
-	// Set default template with replaced content.
+	// Get the default pattern based on what's set in the template.
+	const pattern = patterns.find(
+		( p ) => p.name === template?.[ 0 ]?.[ 1 ]?.slug
+	);
+
+	// Set default pattern with replaced content.
 	return () => {
-		const templateBlocks = synchronizeBlocksWithTemplate(
-			blocks,
-			template
-		);
-		const replacedBlocks = replacePlaceholders( templateBlocks, replaces );
+		if ( ! pattern ) {
+			return;
+		}
 
+		const replacedBlocks = replacePlaceholders( pattern.blocks, replaces );
 		resetBlocks( replacedBlocks );
 	};
 };
