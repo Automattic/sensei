@@ -45,11 +45,9 @@ describe( '<LessonDetailsStep />', () => {
 		expect( editPostMock ).toBeCalledTimes( 0 );
 	} );
 
-	it( 'Updates lesson title in data and as title post when changed.', () => {
-		const editPostMock = jest.fn();
+	it( 'Updates lesson title in data when changed.', () => {
 		const setDataMock = jest.fn();
 		const NEW_TITLE = 'Some new title';
-		useDispatch.mockReturnValue( { editPost: editPostMock } );
 		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
@@ -59,7 +57,6 @@ describe( '<LessonDetailsStep />', () => {
 			target: { value: NEW_TITLE },
 		} );
 
-		expect( editPostMock ).toBeCalledWith( { title: NEW_TITLE } );
 		expect( setDataMock ).toBeCalledWith( { lessonTitle: NEW_TITLE } );
 	} );
 
