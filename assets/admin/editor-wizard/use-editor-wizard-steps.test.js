@@ -36,10 +36,10 @@ describe( 'useEditorWizardSteps()', () => {
 		const steps = useEditorWizardSteps();
 		expect( steps ).toEqual( [ CourseDetailsStep, CoursePatternsStep ] );
 	} );
-	it( 'Should not have the course upgrade step when the post type is course and the Sensei Pro is installed', () => {
+	it( 'Should not have the course upgrade step when the post type is course and the Sensei Pro is activated', () => {
 		useSelect.mockReturnValue( {
 			postType: 'course',
-			senseiProExtension: { is_installed: true },
+			senseiProExtension: { is_activated: true },
 		} );
 		const steps = useEditorWizardSteps();
 		expect( steps ).toEqual( [ CourseDetailsStep, CoursePatternsStep ] );
@@ -47,7 +47,7 @@ describe( 'useEditorWizardSteps()', () => {
 	it( 'Should have all the lesson steps when the post type is lesson', () => {
 		useSelect.mockReturnValue( {
 			postType: 'lesson',
-			senseiProExtension: { is_installed: false },
+			senseiProExtension: { is_activated: false },
 		} );
 		const steps = useEditorWizardSteps();
 		expect( steps ).toEqual( [ LessonDetailsStep, LessonPatternsStep ] );
