@@ -14,17 +14,42 @@ import CourseTheme from './course-theme';
 import CourseVideoSidebar from './course-video-sidebar';
 import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
 import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
+import {
+	extractStructure,
+	getFirstBlockByName,
+} from '../../blocks/course-outline/data';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
+	const coreEditor = select( 'core/editor' );
 	const teacherIdSelect = document.getElementsByName(
 		'sensei-course-teacher-author'
 	);
-
+	const slugBearer = document.getElementsByName(
+		'course_module_custom_slugs'
+	);
 	if ( editPostSelector && teacherIdSelect.length ) {
 		let isSavingMetaboxes = false;
 
 		subscribe( () => {
+			const isSavingPost =
+				coreEditor.isSavingPost() && ! coreEditor.isAutosavingPost();
+			if (
+				isSavingPost &&
+				! editPostSelector.isSavingMetaBoxes() &&
+				slugBearer
+			) {
+				const outlineBlock = getFirstBlockByName(
+					'sensei-lms/course-outline',
+					select( 'core/block-editor' ).getBlocks()
+				);
+				const moduleSlugs =
+					outlineBlock &&
+					extractStructure( outlineBlock.innerBlocks )
+						.filter( ( block ) => block.slug )
+						.map( ( block ) => block.slug );
+				slugBearer[ 0 ].value = JSON.stringify( moduleSlugs );
+			}
 			if ( editPostSelector.isSavingMetaBoxes() !== isSavingMetaboxes ) {
 				isSavingMetaboxes = editPostSelector.isSavingMetaBoxes();
 
