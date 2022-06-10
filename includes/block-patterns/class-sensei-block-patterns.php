@@ -75,6 +75,7 @@ class Sensei_Block_Patterns {
 			$block_patterns = [
 				'video-hero',
 				'long-sales-page',
+				'life-coach',
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
