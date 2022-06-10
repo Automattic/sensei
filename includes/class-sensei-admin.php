@@ -397,17 +397,20 @@ class Sensei_Admin {
 	 * @return bool
 	 */
 	private function has_custom_navigation( $screen ) {
-		$screens_with_custom_navigation = [
-			'edit-course',
-			'edit-course-category',
-			'edit-module',
-			'edit-lesson',
-			'edit-lesson-tag',
-			'edit-question',
-			'edit-question-category',
-			'course_page_' . Sensei_Analysis::PAGE_SLUG,
-			'course_page_sensei_learners',
-		];
+		$screens_with_custom_navigation = apply_filters(
+			'sensei_custom_navigation_allowed_pages',
+			[
+				'edit-course',
+				'edit-course-category',
+				'edit-module',
+				'edit-lesson',
+				'edit-lesson-tag',
+				'edit-question',
+				'edit-question-category',
+				'course_page_' . Sensei_Analysis::PAGE_SLUG,
+				'course_page_sensei_learners',
+			]
+		);
 
 		return $screen
 			&& ( in_array( $screen->id, $screens_with_custom_navigation, true ) )
