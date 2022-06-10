@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <!-- wp:media-text {"align":"full","mediaPosition":"right","mediaType":"image","mediaWidth":70,"verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#ffe2c7"}},"className":"is-style-default"} -->
-<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center is-style-default has-background" style="background-color:#ffe2c7;grid-template-columns:auto 70%"><figure class="wp-block-media-text__media"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-01.jpg' ) ); ?>" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:spacer {"height":"28px"} -->
+<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center is-style-default has-background" style="background-color:#ffe2c7;grid-template-columns:auto 70%"><figure class="wp-block-media-text__media"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-01.jpg' ) ); ?>" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:spacer {"height":28} -->
 <div style="height:28px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h2 class="has-text-align-left"><?php esc_html_e( "Here's what you'll learn", 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
-<!-- wp:spacer {"height":"6px"} -->
+<!-- wp:spacer {"height":6} -->
 <div style="height:6px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
