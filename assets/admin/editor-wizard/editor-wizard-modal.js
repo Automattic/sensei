@@ -29,11 +29,14 @@ const EditorWizardModal = () => {
 
 	const onWizardCompletion = () => {
 		setDone( true );
-		editPost( {
+		const newPostData = {
 			meta: { _new_post: false },
-			excerpt: dataState[ 0 ].courseDescription,
 			title: dataState[ 0 ].courseTitle ?? dataState[ 0 ].lessonTitle,
-		} );
+		};
+		if ( dataState[ 0 ].courseDescription ) {
+			newPostData.excerpt = dataState[ 0 ].courseDescription;
+		}
+		editPost( newPostData );
 		savePost();
 	};
 
