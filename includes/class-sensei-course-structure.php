@@ -769,7 +769,9 @@ class Sensei_Course_Structure {
 				}
 
 				if ( Sensei_Core_Modules::get_term_author( $item['slug'] ) !== wp_get_current_user() &&
-					! current_user_can( 'manage_options' ) ) {
+					! current_user_can( 'manage_options' ) &&
+					get_term_by( 'slug', $item['slug'], 'module' )
+				) {
 					return new WP_Error(
 						'module_belongs_to_another_user',
 						sprintf(

@@ -394,8 +394,7 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
 		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
 		$response = $this->server->dispatch( $request );
-
-		$this->assertEquals( $response->get_status(), 200 );
+		$this->assertEquals( 200, $response->get_status() );
 
 		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );
 		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
