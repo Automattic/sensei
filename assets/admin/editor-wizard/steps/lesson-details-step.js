@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { Button } from '@wordpress/components';
 
@@ -81,15 +81,11 @@ LessonDetailsStep.Actions = ( { goToNextStep } ) => {
  * @param {Function} setWizardData Function to update the wizard data.
  */
 const useLessonTitle = ( wizardData, setWizardData ) => {
-	const { editPost } = useDispatch( editorStore );
 	const { title } = useSelect( ( select ) => ( {
 		title: select( editorStore )?.getEditedPostAttribute( 'title' ),
 	} ) );
 	const updateLessonTitle = ( newTitle ) => {
 		setWizardData( { ...wizardData, lessonTitle: newTitle } );
-		editPost( {
-			title: newTitle,
-		} );
 	};
 	return [ wizardData.lessonTitle ?? title, updateLessonTitle ];
 };

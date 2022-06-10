@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
-import { store as editorStore } from '@wordpress/editor';
-import { useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -20,11 +18,8 @@ import detailsStepImage from '../../../images/details-step.png';
  * @param {Function} props.setData
  */
 const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
-	const { editPost } = useDispatch( editorStore );
-
 	const updateCourseTitle = ( title ) => {
 		setWizardData( { ...wizardData, courseTitle: title } );
-		editPost( { title } );
 	};
 
 	const updateCourseDescription = ( description ) => {
@@ -32,7 +27,6 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 			...wizardData,
 			courseDescription: description,
 		} );
-		editPost( { excerpt: description } );
 	};
 
 	return (

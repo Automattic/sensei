@@ -31,6 +31,8 @@ const EditorWizardModal = () => {
 		setDone( true );
 		editPost( {
 			meta: { _new_post: false },
+			excerpt: dataState[ 0 ].courseDescription,
+			title: dataState[ 0 ].courseTitle ?? dataState[ 0 ].lessonTitle,
 		} );
 		savePost();
 	};
