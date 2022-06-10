@@ -58,7 +58,7 @@ const UpsellBlock = () => (
 	<div className="sensei-editor-wizard-patterns-upsell">
 		<LogoTreeIcon className="sensei-editor-wizard-patterns-upsell__logo" />
 		<div className="sensei-editor-wizard-patterns-upsell__text">
-			<b>
+			<b className="sensei-editor-wizard-patterns-upsell__title">
 				{ __(
 					'Want more lesson types, check out Sensei Pro.',
 					'sensei-lms'
