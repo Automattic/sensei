@@ -14,28 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:sensei-lms/quiz {"options":{"passRequired":false,"quizPassmark":0,"autoGrade":false,"allowRetakes":false,"showQuestions":null,"randomQuestionOrder":false,"failedIndicateIncorrect":true,"failedShowCorrectAnswers":true,"failedShowAnswerFeedback":true,"buttonTextColor":null,"buttonBackgroundColor":null,"pagination":{"paginationNumber":null,"showProgressBar":false,"progressBarRadius":6,"progressBarHeight":12,"progressBarColor":null,"progressBarBackground":null},"enableQuizTimer":"","timerValue":null}} -->
-<!-- wp:sensei-lms/quiz-question {"id":1630,"title":"<?php esc_html_e( 'Question 1', 'sensei-lms' ); ?>","answer":{"answers":[{"label":"<?php esc_html_e( 'Yes', 'sensei-lms' ); ?>","correct":true},{"label":"<?php esc_html_e( 'No', 'sensei-lms' ); ?>","correct":false}]},"options":{"grade":1,"answerFeedback":null,"randomOrder":false}} -->
-
-<!-- wp:sensei-lms/question-description -->
-<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'The question description goes here.', 'sensei-lms' ); ?>"} -->
-<p></p>
-<!-- /wp:paragraph -->
-<!-- /wp:sensei-lms/question-description -->
+<!-- wp:sensei-lms/quiz {"options":{"passRequired":false,"quizPassmark":0,"autoGrade":false,"allowRetakes":false,"showQuestions":null,"randomQuestionOrder":false,"failedIndicateIncorrect":true,"failedShowCorrectAnswers":true,"failedShowAnswerFeedback":true,"buttonTextColor":null,"buttonBackgroundColor":null,"pagination":{"paginationNumber":null,"showProgressBar":false,"progressBarRadius":6,"progressBarHeight":12,"progressBarColor":null,"progressBarBackground":null},"enableQuizTimer":"1","timerValue":300},"isPostTemplate":true} -->
+<!-- wp:sensei-lms/quiz-question {"options":{"grade":1}} -->
+<!-- wp:sensei-lms/question-description /-->
 
 <!-- wp:sensei-lms/question-answers /-->
-
-<!-- wp:sensei-lms/quiz-question-feedback-correct -->
-<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Show a message when the question is answered correctly. Type / to choose a block.', 'sensei-lms' ); ?>"} -->
-<p></p>
-<!-- /wp:paragraph -->
-<!-- /wp:sensei-lms/quiz-question-feedback-correct -->
-
-<!-- wp:sensei-lms/quiz-question-feedback-incorrect -->
-<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Show a message when the question is answered incorrectly. Type / to choose a block.', 'sensei-lms' ); ?>"} -->
-<p></p>
-<!-- /wp:paragraph -->
-<!-- /wp:sensei-lms/quiz-question-feedback-incorrect -->
 <!-- /wp:sensei-lms/quiz-question -->
 <!-- /wp:sensei-lms/quiz -->
 
