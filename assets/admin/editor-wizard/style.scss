@@ -161,6 +161,10 @@
 
 	&__link {
 		color: #fff;
+		&:hover {
+			color: #fff;
+			text-decoration: none;
+		}
 	}
 }
 
