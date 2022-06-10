@@ -10,8 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:media-text {"align":"full","mediaPosition":"right","mediaType":"image","mediaWidth":70,"verticalAlignment":"center","imageFill":false,"backgroundColor":"secondary","className":"is-style-default"} -->
-<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center is-style-default has-secondary-background-color has-background" style="grid-template-columns:auto 70%"><figure class="wp-block-media-text__media"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-01.jpg' ) ); ?>" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:heading {"style":{"color":{"text":"#000000"}}} -->
+<!-- wp:media-text {"align":"full","mediaPosition":"right","mediaType":"image","mediaWidth":70,"verticalAlignment":"center","imageFill":false,"style":{"color":{"background":"#ffe2c7"}},"className":"is-style-default"} -->
+<div class="wp-block-media-text alignfull has-media-on-the-right is-stacked-on-mobile is-vertically-aligned-center is-style-default has-background" style="background-color:#ffe2c7;grid-template-columns:auto 70%"><figure class="wp-block-media-text__media"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-01.jpg' ) ); ?>" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:spacer {"height":"28px"} -->
+<div style="height:28px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
+<!-- wp:heading {"style":{"color":{"text":"#000000"}}} -->
 <h2 class="has-text-color" style="color:#000000"><?php esc_html_e( 'Do What You Always Wanted Today!', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
 
@@ -19,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p class="has-foreground-color has-text-color sensei-content-description" style="font-size:17px;line-height:1.2"><?php esc_html_e( "Hellen's Life Hacks course will teach you how to get to know yourself and how you can use your natural abilities to finally change your life around and do what you always wanted.", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:sensei-lms/button-take-course {"className":"is-style-default","textColor":"background"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<!-- wp:sensei-lms/button-take-course -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:spacer {"height":32} -->
@@ -28,8 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:spacer --></div></div>
 <!-- /wp:media-text -->
 
-<!-- wp:spacer {"height":16} -->
-<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- wp:spacer {"height":28} -->
+<div style="height:28px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
 <!-- wp:heading -->
@@ -40,6 +44,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p><?php esc_html_e( "Hellen's classes offer 1:1 sessions so that she gets to know each of their students. It's not just a group chat, it's you and Hellen, at a personal level. That way you can figure out exactly how to apply her teachings to your personality.", 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
+<!-- wp:spacer {"height":16} -->
+<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
 <!-- wp:image {"align":"wide","id":1508,"sizeSlug":"large","linkDestination":"none"} -->
 <figure class="wp-block-image alignwide size-large"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-02.jpg' ) ); ?>" alt="" class="wp-image-1508"/><figcaption><?php esc_html_e( 'Meeting Helen', 'sensei-lms' ); ?></figcaption></figure>
 <!-- /wp:image -->
@@ -48,8 +56,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:sensei-lms/button-take-course {"align":"center","className":"is-style-default","textColor":"background"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-center"><button class="wp-block-button__link has-background-color has-text-color"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<!-- wp:sensei-lms/button-take-course -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:group {"align":"wide","layout":{"inherit":false}} -->
@@ -114,8 +122,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"backgroundColor":"secondary","textColor":"foreground","layout":{"inherit":true}} -->
-<div class="wp-block-group alignfull has-foreground-color has-secondary-background-color has-text-color has-background has-link-color" style="padding-top:6rem;padding-bottom:6rem"><!-- wp:media-text {"mediaType":"image","verticalAlignment":"center","imageFill":false} -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"6rem","bottom":"6rem"}},"color":{"background":"#ffe2c7","text":"#000000"}},"layout":{"inherit":true}} -->
+<div class="wp-block-group alignfull has-text-color has-background" style="background-color:#ffe2c7;color:#000000;padding-top:6rem;padding-bottom:6rem"><!-- wp:media-text {"mediaType":"image","verticalAlignment":"center","imageFill":false} -->
 <div class="wp-block-media-text alignwide is-stacked-on-mobile is-vertically-aligned-center"><figure class="wp-block-media-text__media"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-01.jpg' ) ); ?>" alt="" /></figure><div class="wp-block-media-text__content"><!-- wp:heading -->
 <h2><?php esc_html_e( 'Meet Hellen', 'sensei-lms' ); ?></h2>
 <!-- /wp:heading -->
@@ -130,8 +138,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- /wp:media-text --></div>
 <!-- /wp:group -->
 
-<!-- wp:spacer {"height":16} -->
-<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- wp:spacer {"height":28} -->
+<div style="height:28px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
 <!-- wp:video {"align":"wide"} -->
@@ -155,6 +163,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p class="has-text-align-center"><?php esc_html_e( 'We place a huge value on strong relationships and have seen the benefit they bring to our business. Customer feedback is vital in helping us to get it right.', 'sensei-lms' ); ?></p>
 <!-- /wp:paragraph -->
 
+<!-- wp:spacer {"height":16} -->
+<div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
 <!-- wp:image {"align":"center","id":1560,"width":231,"height":345,"sizeSlug":"large","linkDestination":"none","className":"is-style-rounded"} -->
 <figure class="wp-block-image aligncenter size-large is-resized is-style-rounded"><img src="<?php echo esc_url( Sensei()->assets->get_image( 'patterns-life-coach-05.jpg' ) ); ?>" alt="" class="wp-image-1560" width="231" height="345"/></figure>
 <!-- /wp:image -->
@@ -168,8 +180,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:group {"backgroundColor":"tertiary","textColor":"foreground","layout":{"inherit":false}} -->
-<div class="wp-block-group has-foreground-color has-tertiary-background-color has-text-color has-background"><!-- wp:spacer {"height":16} -->
+<!-- wp:group {"style":{"color":{"text":"#000000","background":"#f6f6f6"},"spacing":{"padding":{"top":"20px","right":"70px","bottom":"20px","left":"70px"}}},"layout":{"inherit":false}} -->
+<div class="wp-block-group has-text-color has-background" style="background-color:#f6f6f6;color:#000000;padding-top:20px;padding-right:70px;padding-bottom:20px;padding-left:70px"><!-- wp:spacer {"height":16} -->
 <div style="height:16px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
@@ -187,8 +199,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
 <!-- /wp:sensei-lms/course-outline -->
 
-<!-- wp:sensei-lms/button-take-course {"textColor":"background"} -->
-<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-background-color has-text-color"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
+<!-- wp:sensei-lms/button-take-course -->
+<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Take Course', 'sensei-lms' ); ?></button></div>
 <!-- /wp:sensei-lms/button-take-course -->
 
 <!-- wp:spacer {"height":16} -->
