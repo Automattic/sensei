@@ -21,9 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- wp:sensei-lms/course-progress /-->
 
 <!-- wp:sensei-lms/course-outline -->
-<!-- wp:sensei-lms/course-outline-lesson {"title":"Lesson 1"} /-->
+<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 1', 'sensei-lms' ); ?>"} /-->
 
-<!-- wp:sensei-lms/course-outline-lesson {"title":"Lesson 2"} /-->
+<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 2', 'sensei-lms' ); ?>"} /-->
 
-<!-- wp:sensei-lms/course-outline-lesson {"title":"Lesson 3"} /-->
+<!-- wp:sensei-lms/course-outline-lesson {"title":"<?php esc_html_e( 'Lesson 3', 'sensei-lms' ); ?>"} /-->
 <!-- /wp:sensei-lms/course-outline -->
