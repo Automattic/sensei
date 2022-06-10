@@ -397,7 +397,7 @@ class Sensei_Admin {
 	 * @return bool
 	 */
 	private function has_custom_navigation( $screen ) {
-		$screens = [
+		$screens_with_custom_navigation = [
 			'edit-course',
 			'edit-course-category',
 			'edit-module',
@@ -418,13 +418,13 @@ class Sensei_Admin {
 		 * @since $$next-version$$
 		 * @hook sensei_custom_navigation_allowed_screens
 		 *
-		 * @param {array} $screens Screens where custom navigation scrips will be loaded.
+		 * @param {array} $screens_with_custom_navigation Screens where custom navigation scrips will be loaded.
 		 *
 		 * @return {array} Screens where custom navigation scrips will be loaded.
 		 */
 		$screens_with_custom_navigation = apply_filters(
 			'sensei_custom_navigation_allowed_screens',
-			$screens
+			$screens_with_custom_navigation
 		);
 
 		return $screen
