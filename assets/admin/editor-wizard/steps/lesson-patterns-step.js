@@ -59,14 +59,11 @@ const UpsellBlock = () => (
 		<LogoTreeIcon className="sensei-editor-wizard-patterns-upsell__logo" />
 		<div className="sensei-editor-wizard-patterns-upsell__text">
 			<b className="sensei-editor-wizard-patterns-upsell__title">
-				{ __(
-					'Want more lesson types, check out Sensei Pro.',
-					'sensei-lms'
-				) }
+				{ __( 'Want More Lesson Types?', 'sensei-lms' ) }
 			</b>
 			<br />
 			{ __(
-				'Flashcards, timed quizes, image hotspots, tasklists, and more.',
+				'Get flashcards, timed quizzes, image hotspots, and more with Sensei Pro.',
 				'sensei-lms'
 			) }{ ' ' }
 			<a
@@ -75,7 +72,7 @@ const UpsellBlock = () => (
 				rel="noreferrer external"
 				target="blank"
 			>
-				{ __( 'Learn more', 'sensei-lms' ) }
+				{ __( 'Learn more.', 'sensei-lms' ) }
 			</a>
 		</div>
 	</div>
