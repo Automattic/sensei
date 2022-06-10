@@ -40,7 +40,7 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 	return (
 		<Fragment>
 			<PatternsStep
-				title={ __( 'Lesson Patterns', 'sensei-lms' ) }
+				title={ __( 'Lesson Type', 'sensei-lms' ) }
 				replaces={ replaces }
 				{ ...props }
 			/>
