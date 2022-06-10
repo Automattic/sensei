@@ -34,8 +34,8 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 		replaces[ 'sensei-content-title' ] = data.lessonTitle;
 	}
 
-	const isSenseiProInstalled =
-		! senseiProExtension || senseiProExtension.is_installed === true;
+	const isSenseiProActivated =
+		! senseiProExtension || senseiProExtension.is_activated === true;
 
 	return (
 		<Fragment>
@@ -45,7 +45,7 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 				{ ...props }
 			/>
 			<PatternsStep.UpsellFill>
-				{ isSenseiProInstalled ? null : <UpsellBlock /> }
+				{ isSenseiProActivated ? null : <UpsellBlock /> }
 			</PatternsStep.UpsellFill>
 		</Fragment>
 	);
