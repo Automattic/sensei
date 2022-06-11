@@ -1,4 +1,5 @@
 $dark-gray: #1a1d20;
+body,
 .block-editor {
 	.wp-block-sensei-lms-course-outline {
 		padding: 0 1em;
@@ -22,11 +23,17 @@ $dark-gray: #1a1d20;
 		}
 	}
 
-	.wp-block-sensei-lms-course-outline-lesson {
+	.wp-block-sensei-lms-course-outline-lesson .wp-block-sensei-lms-course-outline-lesson {
 
 		&__input {
 			margin: 20px 16px;
 			background: none;
+
+			@at-root {
+				.block-editor-block-preview__content-iframe & {
+					height: 29px !important; // Force height in the thumbnails - issue with `react-autosize-textarea`.
+				}
+			}
 		}
 
 		&__post-status {
