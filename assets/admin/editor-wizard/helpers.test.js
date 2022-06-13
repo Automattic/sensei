@@ -102,7 +102,7 @@ describe( 'useWizardOpenState', () => {
 		expect( queryByText( 'open' ) ).toBeTruthy();
 	} );
 
-	it( 'Should open when other modals get closed', async () => {
+	it.skip( 'Should open when other modals get closed', async () => {
 		document.body.classList.add( 'modal-open' );
 
 		const { queryByText } = render( <TestComponent /> );
