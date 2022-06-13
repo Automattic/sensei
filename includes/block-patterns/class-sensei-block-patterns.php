@@ -77,16 +77,23 @@ class Sensei_Block_Patterns {
 				'course-default',
 				'video-hero',
 				'long-sales-page',
+				'life-coach',
 			];
 		} elseif ( 'lesson' === $post_type ) {
 			$block_patterns = [
 				'default',
 				'default-with-quiz',
 				'video-lesson',
-				'discussion-question',
 				'files-to-download',
 				'zoom-meeting',
 			];
+
+			if (
+				WP_Block_Type_Registry::get_instance()->is_registered( 'core/comments-query-loop' )
+				|| version_compare( get_bloginfo( 'version' ), '6.0', '>=' )
+			) {
+				$block_patterns[] = 'discussion-question';
+			}
 		}
 
 		foreach ( $block_patterns as $block_pattern ) {

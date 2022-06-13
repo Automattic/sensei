@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Button } from '@wordpress/components';
+import { Button, createSlotFill } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -11,6 +11,8 @@ import { __ } from '@wordpress/i18n';
  */
 import PatternsList from '../patterns-list';
 import { replacePlaceholders } from '../helpers';
+
+const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
 
 /**
  * Choose patterns step.
@@ -39,6 +41,7 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 			<h1 className="sensei-editor-wizard-step__sticky-title">
 				{ title }
 			</h1>
+			<Slot />
 			<PatternsList onChoose={ onChoose } />
 		</div>
 	);
@@ -55,5 +58,10 @@ PatternsStep.Actions = ( { skipWizard } ) => (
 		{ __( 'Start with default layout', 'sensei-lms' ) }
 	</Button>
 );
+
+/**
+ * Component to fill the Patterns Upsell section
+ */
+PatternsStep.UpsellFill = Fill;
 
 export default PatternsStep;
