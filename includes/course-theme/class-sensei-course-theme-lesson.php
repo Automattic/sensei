@@ -191,7 +191,7 @@ class Sensei_Course_Theme_Lesson {
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
 				. '" title="'
-				// translators: Placeholder is the lesson prerequisite title.
+				// translators: Placeholder is the item title.
 				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
 				. '">'
 				. esc_html__( 'prerequisites', 'sensei-lms' )

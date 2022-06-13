@@ -814,7 +814,7 @@ class Sensei_Messages {
 		$content_post_id = get_post_meta( $post->ID, '_post', true );
 		if ( $content_post_id ) {
 			// translators: Placeholder is a link to post, with the post's title as the link text.
-			$title = wp_kses_post( sprintf( __( 'Re: %1$s', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
+			$title = wp_kses_post( sprintf( _x( 'Re: %1$s', 'message title with a link to the post', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
 		} else {
 			$title = esc_html( get_the_title( $post->ID ) );
 		}
@@ -900,7 +900,7 @@ class Sensei_Messages {
 		if ( $content_post_id ) {
 
 			// translators: Placeholder is the post title.
-			$title = sprintf( __( 'Re: %1$s', 'sensei-lms' ), get_the_title( $content_post_id ) );
+			$title = sprintf( _x( 'Re: %1$s', 'message title without a link to the post', 'sensei-lms' ), get_the_title( $content_post_id ) );
 
 		} else {
 

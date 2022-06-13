@@ -67,6 +67,57 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test if the module order is updated after the teacher has changed.
+	 */
+	public function testUpdateCourseModules_TeacherUpdated_UpdatesTheModuleOrder() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$structure_source = [
+			[
+				'type'    => 'module',
+				'title'   => 'Module A',
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson A',
+					],
+				],
+			],
+			[
+				'type'    => 'module',
+				'title'   => 'Module B',
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson B',
+					],
+				],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$course_structure->save( $structure_source );
+
+		/* Act. */
+		Sensei_Teacher::update_course_modules_author( $course_id, $user_id );
+
+		/* Assert. */
+		$new_module_order = Sensei()->modules->get_course_module_order( $course_id );
+		$new_structure    = $course_structure->get( 'edit' );
+
+		$expected_module_order = [];
+		foreach ( $new_structure as $item ) {
+			if ( 'module' === $item['type'] ) {
+				$expected_module_order[] = $item['id'];
+			}
+		}
+
+		$this->assertEquals( $expected_module_order, $new_module_order );
+	}
+
+	/**
 	 * Testing Sensei_Teacher::update_course_modules_author
 	 * This test focus on changing module author
 	 *

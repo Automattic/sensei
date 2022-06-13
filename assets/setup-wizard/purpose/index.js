@@ -123,7 +123,7 @@ export const Purpose = () => {
 				</H>
 				<p> { __( 'Choose any that apply', 'sensei-lms' ) } </p>
 			</div>
-			<Card className="sensei-setup-wizard__card" isElevated={ true }>
+			<Card className="sensei-setup-wizard__card" elevation={ 2 }>
 				<CardBody>
 					<div className="sensei-setup-wizard__checkbox-list">
 						{ purposes.map( ( { id, title, description } ) => (

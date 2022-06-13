@@ -22,10 +22,24 @@ describe( 'Structure store', () => {
 			updateBlock: jest.fn(),
 			readBlock: jest.fn(),
 		};
-
 		( { unsubscribe } = registerStructureStore( store ) );
-		registerStore( 'core/editor', mockEditorStore );
-
+		const storesForRegister = {
+			'core/editor': mockEditorStore,
+			'core/edit-post': {
+				reducer: () => {},
+				selectors: {
+					isSavingMetaBoxes: jest
+						.fn()
+						.mockReturnValueOnce( true )
+						.mockReturnValueOnce( true )
+						.mockReturnValueOnce( true )
+						.mockReturnValueOnce( false ),
+				},
+			},
+		};
+		for ( const key in storesForRegister ) {
+			registerStore( key, storesForRegister[ key ] );
+		}
 		apiFetch.mockClear();
 		store.getEndpoint.mockImplementation( function* () {
 			return 'test-api/1';

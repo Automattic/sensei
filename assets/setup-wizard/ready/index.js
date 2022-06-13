@@ -44,7 +44,7 @@ export const Ready = () => {
 					) }
 				</H>
 			</div>
-			<Card className="sensei-setup-wizard__card" isElevated={ true }>
+			<Card className="sensei-setup-wizard__card" elevation={ 2 }>
 				<CardBody>
 					<Section className="sensei-setup-wizard__mailinglist-signup">
 						<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
