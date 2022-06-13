@@ -33,7 +33,7 @@ describe( '<CourseDetailsStep />', () => {
 		useDispatch.mockReturnValue( { editPost: editPostMock } );
 
 		const { queryByLabelText } = render(
-			<CourseDetailsStep data={ {} } setData={ () => {} } />
+			<CourseDetailsStep wizardData={ {} } setWizardData={ () => {} } />
 		);
 
 		expect( queryByLabelText( 'Course Title' ) ).toBeTruthy();
@@ -46,7 +46,10 @@ describe( '<CourseDetailsStep />', () => {
 		const NEW_TITLE = 'Some new title';
 
 		const { queryByLabelText } = render(
-			<CourseDetailsStep data={ {} } setData={ setDataMock } />
+			<CourseDetailsStep
+				wizardData={ {} }
+				setWizardData={ setDataMock }
+			/>
 		);
 		fireEvent.change( queryByLabelText( 'Course Title' ), {
 			target: { value: NEW_TITLE },
@@ -60,7 +63,10 @@ describe( '<CourseDetailsStep />', () => {
 		const NEW_DESCRIPTION = 'Some new description';
 
 		const { queryByLabelText } = render(
-			<CourseDetailsStep data={ {} } setData={ setDataMock } />
+			<CourseDetailsStep
+				wizardData={ {} }
+				setWizardData={ setDataMock }
+			/>
 		);
 		fireEvent.change( queryByLabelText( 'Course Description' ), {
 			target: { value: NEW_DESCRIPTION },

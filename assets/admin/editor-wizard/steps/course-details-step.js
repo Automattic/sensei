@@ -14,10 +14,10 @@ import detailsStepImage from '../../../images/details-step.png';
  * Initial step for course creation wizard.
  *
  * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
+ * @param {Object}   props.wizardData    Wizard data.
+ * @param {Function} props.setWizardData Wizard data setter.
  */
-const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
+const CourseDetailsStep = ( { wizardData, setWizardData } ) => {
 	const updateCourseTitle = ( title ) => {
 		setWizardData( { ...wizardData, title } );
 	};

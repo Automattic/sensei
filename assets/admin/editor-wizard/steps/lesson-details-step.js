@@ -16,10 +16,10 @@ import detailsStepImage from '../../../images/details-step.png';
  * Initial step for lesson creation wizard.
  *
  * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
+ * @param {Object}   props.wizardData    Wizard data.
+ * @param {Function} props.setWizardData Wizard data setter.
  */
-const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
+const LessonDetailsStep = ( { wizardData, setWizardData } ) => {
 	const [ lessonTitle, updateLessonTitle ] = useLessonTitle(
 		wizardData,
 		setWizardData

@@ -12,21 +12,21 @@ import PatternsStep from './patterns-step';
 /**
  * Course patterns step.
  *
- * @param {Object} props      Component props.
- * @param {Object} props.data Wizard data.
+ * @param {Object} props            Component props.
+ * @param {Object} props.wizardData Wizard data.
  */
-const CoursePatternsStep = ( { data, ...props } ) => {
+const CoursePatternsStep = ( { wizardData, ...props } ) => {
 	const { user } = useSelect( ( select ) => ( {
 		user: select( 'core' ).getCurrentUser(),
 	} ) );
 	const replaces = {};
 
-	if ( data.title ) {
-		replaces[ 'sensei-content-title' ] = data.title;
+	if ( wizardData.title ) {
+		replaces[ 'sensei-content-title' ] = wizardData.title;
 	}
 
-	if ( data.description ) {
-		replaces[ 'sensei-content-description' ] = data.description;
+	if ( wizardData.description ) {
+		replaces[ 'sensei-content-description' ] = wizardData.description;
 	}
 
 	if ( user.name ) {

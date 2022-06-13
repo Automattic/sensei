@@ -18,23 +18,23 @@ import '../../shared/data/api-fetch-preloaded-once';
  * Editor wizard modal component.
  */
 const EditorWizardModal = () => {
-	const dataState = useState( {} );
+	const wizardDataState = useState( {} );
 	const { editPost, savePost } = useDispatch( editorStore );
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
 	const setDefaultPattern = useSetDefaultPattern( {
-		'sensei-content-description': dataState[ 0 ].description,
+		'sensei-content-description': wizardDataState[ 0 ].description,
 	} );
 
 	const onWizardCompletion = () => {
 		setDone( true );
 		const newPostData = {
 			meta: { _new_post: false },
-			title: dataState[ 0 ].title,
+			title: wizardDataState[ 0 ].title,
 		};
-		if ( dataState[ 0 ].description ) {
-			newPostData.excerpt = dataState[ 0 ].description;
+		if ( wizardDataState[ 0 ].description ) {
+			newPostData.excerpt = wizardDataState[ 0 ].description;
 		}
 		editPost( newPostData );
 		savePost();
@@ -53,7 +53,7 @@ const EditorWizardModal = () => {
 			>
 				<Wizard
 					steps={ steps }
-					dataState={ dataState }
+					wizardDataState={ wizardDataState }
 					onCompletion={ onWizardCompletion }
 					skipWizard={ skipWizard }
 				/>

@@ -38,7 +38,7 @@ describe( '<LessonDetailsStep />', () => {
 		useSelect.mockReturnValue( { postTitle: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
-			<LessonDetailsStep data={ {} } setData={ () => {} } />
+			<LessonDetailsStep wizardData={ {} } setWizardData={ () => {} } />
 		);
 
 		expect( queryByLabelText( 'Lesson Title' ) ).toBeTruthy();
@@ -51,7 +51,10 @@ describe( '<LessonDetailsStep />', () => {
 		useSelect.mockReturnValue( { postTitle: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
-			<LessonDetailsStep data={ {} } setData={ setDataMock } />
+			<LessonDetailsStep
+				wizardData={ {} }
+				setWizardData={ setDataMock }
+			/>
 		);
 		fireEvent.change( queryByLabelText( 'Lesson Title' ), {
 			target: { value: NEW_TITLE },
@@ -66,7 +69,7 @@ describe( '<LessonDetailsStep />', () => {
 		useSelect.mockReturnValue( { postTitle: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
-			<LessonDetailsStep data={ {} } setData={ () => {} } />
+			<LessonDetailsStep wizardData={ {} } setWizardData={ () => {} } />
 		);
 
 		expect( queryByLabelText( 'Lesson Title' ) ).toBeTruthy();
