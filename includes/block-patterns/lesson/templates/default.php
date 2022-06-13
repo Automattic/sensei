@@ -1,6 +1,6 @@
 <?php
 /**
- * Video Lesson pattern content.
+ * Default lesson pattern content.
  *
  * @package sensei-lms
  */
@@ -10,11 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:video -->
-<figure class="wp-block-video"></figure>
-<!-- /wp:video -->
-
-<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>"} -->
+<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Write lesson content...', 'sensei-lms' ); ?>"} -->
 <p></p>
 <!-- /wp:paragraph -->
 
@@ -35,4 +31,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper"><div class="wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link sensei-stop-double-submission"><?php esc_html_e( 'Reset Lesson', 'sensei-lms' ); ?></button></div></div>
 <!-- /wp:sensei-lms/button-reset-lesson --></div></div>
 <!-- /wp:sensei-lms/lesson-actions -->
-

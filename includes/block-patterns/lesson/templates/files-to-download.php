@@ -10,8 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:file /-->
-<!-- wp:file /-->
+<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center"><?php esc_html_e( 'Lesson Resources', 'sensei-lms' ); ?></h2>
+<!-- /wp:heading -->
+
 <!-- wp:file /-->
 
 <!-- wp:sensei-lms/lesson-actions -->
@@ -31,3 +33,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wp-block-sensei-lms-button-reset-lesson is-style-outline sensei-buttons-container__button-block wp-block-sensei-lms-button-reset-lesson__wrapper"><div class="wp-block-sensei-lms-button-reset-lesson is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link sensei-stop-double-submission"><?php esc_html_e( 'Reset Lesson', 'sensei-lms' ); ?></button></div></div>
 <!-- /wp:sensei-lms/button-reset-lesson --></div></div>
 <!-- /wp:sensei-lms/lesson-actions -->
+
