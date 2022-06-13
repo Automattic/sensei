@@ -16,10 +16,10 @@ import detailsStepImage from '../../../images/details-step.png';
  * Initial step for lesson creation wizard.
  *
  * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
+ * @param {Object}   props.wizardData    Wizard data.
+ * @param {Function} props.setWizardData Wizard data setter.
  */
-const LessonDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
+const LessonDetailsStep = ( { wizardData, setWizardData } ) => {
 	const [ lessonTitle, updateLessonTitle ] = useLessonTitle(
 		wizardData,
 		setWizardData
@@ -82,16 +82,16 @@ LessonDetailsStep.Actions = ( { goToNextStep } ) => {
  */
 const useLessonTitle = ( wizardData, setWizardData ) => {
 	const { editPost } = useDispatch( editorStore );
-	const { title } = useSelect( ( select ) => ( {
-		title: select( editorStore )?.getEditedPostAttribute( 'title' ),
+	const { postTitle } = useSelect( ( select ) => ( {
+		postTitle: select( editorStore )?.getEditedPostAttribute( 'title' ),
 	} ) );
-	const updateLessonTitle = ( newTitle ) => {
-		setWizardData( { ...wizardData, lessonTitle: newTitle } );
+	const updateLessonTitle = ( title ) => {
+		setWizardData( { ...wizardData, title } );
 		editPost( {
-			title: newTitle,
+			title,
 		} );
 	};
-	return [ wizardData.lessonTitle ?? title, updateLessonTitle ];
+	return [ wizardData.title ?? postTitle, updateLessonTitle ];
 };
 
 export default LessonDetailsStep;

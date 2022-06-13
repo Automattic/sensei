@@ -18,13 +18,14 @@ import '../../shared/data/api-fetch-preloaded-once';
  * Editor wizard modal component.
  */
 const EditorWizardModal = () => {
-	const dataState = useState( {} );
+	const wizardDataState = useState( {} );
 	const { editPost, savePost } = useDispatch( editorStore );
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
+
 	const setDefaultPattern = useSetDefaultPattern( {
-		'sensei-content-description': dataState[ 0 ].courseDescription,
+		'sensei-content-description': wizardDataState[ 0 ].description,
 	} );
 
 	const onWizardCompletion = () => {
@@ -48,7 +49,7 @@ const EditorWizardModal = () => {
 			>
 				<Wizard
 					steps={ steps }
-					dataState={ dataState }
+					wizardDataState={ wizardDataState }
 					onCompletion={ onWizardCompletion }
 					skipWizard={ skipWizard }
 				/>
