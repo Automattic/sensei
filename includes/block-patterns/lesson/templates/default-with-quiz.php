@@ -14,13 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <p></p>
 <!-- /wp:paragraph -->
 
-<!-- wp:sensei-lms/quiz {"options":{"passRequired":false,"quizPassmark":0,"autoGrade":false,"allowRetakes":false,"showQuestions":null,"randomQuestionOrder":false,"failedIndicateIncorrect":true,"failedShowCorrectAnswers":true,"failedShowAnswerFeedback":true,"buttonTextColor":null,"buttonBackgroundColor":null,"pagination":{"paginationNumber":null,"showProgressBar":false,"progressBarRadius":6,"progressBarHeight":12,"progressBarColor":null,"progressBarBackground":null},"enableQuizTimer":"1","timerValue":300},"isPostTemplate":true} -->
-<!-- wp:sensei-lms/quiz-question {"options":{"grade":1}} -->
-<!-- wp:sensei-lms/question-description /-->
-
-<!-- wp:sensei-lms/question-answers /-->
-<!-- /wp:sensei-lms/quiz-question -->
-<!-- /wp:sensei-lms/quiz -->
+<!-- wp:sensei-lms/quiz {"options":{"passRequired":false,"quizPassmark":0,"autoGrade":false,"allowRetakes":false,"showQuestions":null,"randomQuestionOrder":false,"failedIndicateIncorrect":true,"failedShowCorrectAnswers":true,"failedShowAnswerFeedback":true,"buttonTextColor":null,"buttonBackgroundColor":null,"pagination":{"paginationNumber":null,"showProgressBar":false,"progressBarRadius":6,"progressBarHeight":12,"progressBarColor":null,"progressBarBackground":null},"enableQuizTimer":"1","timerValue":300},"isPostTemplate":true} /-->
 
 <!-- wp:sensei-lms/lesson-actions -->
 <div class="wp-block-sensei-lms-lesson-actions"><div class="sensei-buttons-container"><!-- wp:sensei-lms/button-view-quiz {"inContainer":true} -->
