@@ -20,12 +20,13 @@ import '../../shared/data/api-fetch-preloaded-once';
 const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
 	const { editPost, savePost } = useDispatch( editorStore );
+	const wizardData = wizardDataState[ 0 ];
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
 
 	const setDefaultPattern = useSetDefaultPattern( {
-		'sensei-content-description': wizardDataState[ 0 ].description,
+		'sensei-content-description': wizardData.description,
 	} );
 
 	const onWizardCompletion = () => {
