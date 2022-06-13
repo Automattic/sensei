@@ -34,6 +34,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- /wp:columns --></div>
 <!-- /wp:group -->
 
+<!-- wp:spacer {"height":24} -->
+<div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
+
 <!-- wp:paragraph -->
 <p><strong><?php esc_html_e( 'Agenda:', 'sensei-lms' ); ?></strong></p>
 <!-- /wp:paragraph -->
