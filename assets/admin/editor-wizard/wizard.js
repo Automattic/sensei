@@ -46,7 +46,6 @@ const Wizard = ( { steps, wizardDataState, onCompletion, skipWizard } ) => {
 				{ CurrentStep.Actions && (
 					<div className="sensei-editor-wizard__actions">
 						<CurrentStep.Actions
-							wizardData={ wizardData }
 							goToNextStep={ goToNextStep }
 							skipWizard={ skipWizard }
 						/>
