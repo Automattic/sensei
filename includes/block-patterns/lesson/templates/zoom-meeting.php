@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:group {"align":"wide","backgroundColor":"tertiary"} -->
-<div class="wp-block-group alignwide has-tertiary-background-color has-background"><!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
+<!-- wp:group {"align":"wide","style":{"color":{"background":"#f6f6f6"}}} -->
+<div class="wp-block-group alignwide has-background" style="background-color:#f6f6f6"><!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
 	<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center"} -->
 		<div class="wp-block-column is-vertically-aligned-center"><!-- wp:paragraph {"style":{"typography":{"lineHeight":"2"}}} -->
 			<p style="line-height:2"><strong><?php esc_html_e( 'Date:', 'sensei-lms' ); ?></strong><br><?php echo esc_html( wp_date( 'F jS, Y' ) ); ?></p>
