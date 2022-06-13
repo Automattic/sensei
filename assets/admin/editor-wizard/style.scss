@@ -1,0 +1,227 @@
+@import './patterns-list.scss';
+
+.sensei-editor-wizard {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+
+	&__footer {
+		position: sticky;
+		bottom: 0;
+		width: 100%;
+		background: #ffffff;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 12px;
+		border-top: 1px solid rgba(30, 30, 30, 0.12);
+		padding: 18px;
+
+		@media ( min-width: 600px ) {
+			padding: 18px 30px;
+		}
+	}
+
+	&__progress {
+		color: #787C82;
+	}
+
+	&__actions {
+		display: flex;
+		flex: 1;
+		justify-content: end;
+		gap: 12px;
+	}
+}
+
+.sensei-editor-wizard-modal {
+	color: #1e1e1e;
+
+	@media ( min-width: 600px ) { // Media query needed for WP 5.8 compatibility.
+		width: 800px;
+		height: 670px;
+	}
+
+	& .components-modal__content {
+		padding: 0;
+		margin-top: 0;
+
+		&::before {
+			content: none;
+		}
+	}
+
+	.components-modal__header {
+		border-bottom: none;
+		padding: 0;
+		position: sticky;
+		top: 0;
+		margin: 0 0 -60px;
+
+		// WP 5.8 fixes.
+		width: 100%;
+		background: transparent;
+
+		.components-button {
+			align-self: flex-start;
+			margin: 8px 8px 0 0;
+			position: static;
+		}
+	}
+
+	&__columns {
+		flex: 1;
+
+		@media ( min-width: 600px ) {
+			display: grid;
+			grid-template-columns: 52% 48%;
+		}
+	}
+
+	&__content {
+		flex: 1;
+		padding: 24px 18px 18px;
+
+		@media ( min-width: 600px ) {
+			padding: 30px;
+		}
+	}
+
+	&__illustration {
+		display: none;
+
+		@media ( min-width: 600px ) {
+			padding-top: 25px;
+			background: #43af99;
+			display: flex;
+			justify-content: right;
+			align-items: center;
+		}
+	}
+
+	&__illustration-image {
+		width: 84%;
+	}
+}
+
+.sensei-editor-wizard-modal-upsell {
+	&__price {
+		display: block;
+		margin-bottom: 8px;
+		line-height: 1;
+		font-size: 36px;
+
+		@media ( min-width: 600px ) {
+			font-size: 36px;
+		}
+	}
+
+	&__price-detail {
+		display: block;
+		font-size: 13px;
+		color: #787C82;
+		margin-bottom: 30px;
+	}
+
+	&__features {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-size: 14px;
+		font-weight: 700;
+	}
+
+	&__feature-item {
+		padding: 0 0 20px 24px;
+		margin: 0;
+		display: flex;
+		align-items: center;
+	}
+
+	&__feature-item-icon {
+		width: 24px;
+		height: 24px;
+		margin-left: -24px;
+		margin-right: 6px;
+		color: #00998b;
+	}
+}
+
+.sensei-editor-wizard-patterns-upsell {
+	background: #26212E;
+	display: flex;
+	align-items: center;
+	padding: 18px;
+	margin-bottom: 18px;
+
+	&__text {
+		margin-left: 18px;
+		color: #fff;
+	}
+
+	&__title {
+		font-weight: 700;
+	}
+
+	&__link {
+		color: #fff;
+		&:hover {
+			color: #fff;
+			text-decoration: none;
+		}
+	}
+}
+
+.sensei-editor-wizard-step {
+	&__title,
+	&__sticky-title {
+		line-height: 1.1;
+		color: inherit;
+	}
+
+	&__title {
+		margin-top: 0;
+	}
+
+	&__sticky-title {
+		position: sticky;
+		top: 24px;
+		z-index: 1;
+		margin: 0;
+		padding-bottom: 18px;
+		background: #ffffff;
+
+		@media ( min-width: 600px ) {
+			top: 30px;
+		}
+
+		// White box above the title to hide content on scroll.
+		&::before {
+			content: '';
+			display: block;
+			width: 100%;
+			height: 24px;
+			position: absolute;
+			bottom: 100%;
+			background: #ffffff;
+
+			@media ( min-width: 600px ) {
+				height: 30px;
+			}
+		}
+	}
+
+	&__description {
+		margin: 0 0 24px;
+	}
+
+	&__form {
+		& label {
+			font-weight: bold;
+		}
+	}
+
+	&__form-control {
+		margin-bottom: 32px;
+	}
+}

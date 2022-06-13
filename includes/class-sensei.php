@@ -417,6 +417,12 @@ class Sensei_Main {
 
 		Sensei_Scheduler::init();
 
+		// Block patterns.
+		Sensei_Block_Patterns::instance()->init();
+
+		// Editor Wizard.
+		Sensei_Editor_Wizard::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class

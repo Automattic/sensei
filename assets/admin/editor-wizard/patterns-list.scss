@@ -1,0 +1,52 @@
+$thumbnail-height: 235px;
+$preview-padding: 5px;
+$preview-max-height: $thumbnail-height - $preview-padding * 2;
+
+.sensei-patterns-list {
+	@media ( min-width: 600px ) {
+		column-count: 2;
+		column-gap: 24px;
+	}
+
+	&__item {
+		break-inside: avoid-column;
+		margin-bottom: 30px;
+		cursor: pointer;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		&-preview {
+			border: 1px solid #f0f0f0;
+			height: $thumbnail-height;
+			overflow: hidden;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding-top: $preview-padding;
+			padding-bottom: $preview-padding;
+
+			.block-editor-block-preview__container {
+				max-height: $preview-max-height;
+			}
+		}
+
+		&:hover &-preview,
+		&:focus &-preview {
+			border-color: var(--wp-admin-theme-color);
+		}
+
+		&-title {
+			padding-top: 8px;
+			font-size: 12px;
+			text-align: center;
+		}
+
+		&:hover &-title,
+		&:focus &-title {
+			color: var(--wp-admin-theme-color);
+		}
+	}
+}

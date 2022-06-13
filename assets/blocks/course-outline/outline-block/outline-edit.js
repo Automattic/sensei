@@ -1,7 +1,10 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createContext, useCallback, useEffect } from '@wordpress/element';
@@ -9,13 +12,13 @@ import { createContext, useCallback, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import OutlinePlaceholder from './outline-placeholder';
 import OutlineSettings from './outline-settings';
 import { withDefaultBlockStyle } from '../../../shared/blocks/settings';
 import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons-status-sync';
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 import OutlineAppender from './outline-appender';
+import OutlinePlaceholder from './outline-placeholder';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/course-outline-module',
@@ -49,9 +52,10 @@ const OutlineEdit = ( props ) => {
 
 	const { setBlocks } = useBlocksCreator( clientId );
 
-	const isEmpty = useSelect(
-		( select ) =>
-			! select( 'core/block-editor' ).getBlocks( clientId ).length,
+	const { isEmpty } = useSelect(
+		( select ) => ( {
+			isEmpty: ! select( blockEditorStore ).getBlocks( clientId ).length,
+		} ),
 		[ clientId ]
 	);
 

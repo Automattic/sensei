@@ -64,10 +64,12 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 		$post_type_object = get_post_type_object( 'course' );
 
 		$block_template = [
-			[ 'sensei-lms/button-take-course' ],
-			[ 'sensei-lms/button-contact-teacher' ],
-			[ 'sensei-lms/course-progress' ],
-			[ 'sensei-lms/course-outline' ],
+			[
+				'core/pattern',
+				[
+					'slug' => 'sensei-lms/course-default',
+				],
+			],
 		];
 
 		/**
@@ -133,7 +135,7 @@ class Sensei_Course_Blocks extends Sensei_Blocks_Initializer {
 	 *
 	 * @access private
 	 *
-	 * @param bool $enabled
+	 * @param bool $enabled The current value passed from the filter.
 	 *
 	 * @return bool
 	 */

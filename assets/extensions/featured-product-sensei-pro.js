@@ -1,8 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -14,16 +14,13 @@ import { EXTENSIONS_STORE } from './store';
  * Sensei Pro featured product component.
  */
 const FeaturedProductSenseiPro = () => {
-	const { extensions } = useSelect( ( select ) => {
-		const store = select( EXTENSIONS_STORE );
-
-		return {
-			extensions: store.getExtensions(),
-		};
-	} );
-
-	const senseiProExtension = extensions.find(
-		( extension ) => extension.product_slug === 'sensei-pro'
+	const { senseiProExtension } = useSelect(
+		( select ) => ( {
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		} ),
+		[]
 	);
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
