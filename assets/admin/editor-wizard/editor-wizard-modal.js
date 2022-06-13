@@ -20,21 +20,22 @@ import '../../shared/data/api-fetch-preloaded-once';
 const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
 	const { editPost, savePost } = useDispatch( editorStore );
+	const wizardData = wizardDataState[ 0 ];
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
 	const setDefaultPattern = useSetDefaultPattern( {
-		'sensei-content-description': wizardDataState[ 0 ].description,
+		'sensei-content-description': wizardData.description,
 	} );
 
 	const onWizardCompletion = () => {
 		setDone( true );
 		const newPostData = {
 			meta: { _new_post: false },
-			title: wizardDataState[ 0 ].title,
+			title: wizardData.title,
 		};
-		if ( wizardDataState[ 0 ].description ) {
-			newPostData.excerpt = wizardDataState[ 0 ].description;
+		if ( wizardData.description ) {
+			newPostData.excerpt = wizardData.description;
 		}
 		editPost( newPostData );
 		savePost();
