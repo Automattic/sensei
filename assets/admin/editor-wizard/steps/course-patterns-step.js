@@ -21,12 +21,12 @@ const CoursePatternsStep = ( { data, ...props } ) => {
 	} ) );
 	const replaces = {};
 
-	if ( data.courseTitle ) {
-		replaces[ 'sensei-content-title' ] = data.courseTitle;
+	if ( data.title ) {
+		replaces[ 'sensei-content-title' ] = data.title;
 	}
 
-	if ( data.courseDescription ) {
-		replaces[ 'sensei-content-description' ] = data.courseDescription;
+	if ( data.description ) {
+		replaces[ 'sensei-content-description' ] = data.description;
 	}
 
 	if ( user.name ) {

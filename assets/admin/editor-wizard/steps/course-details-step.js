@@ -19,13 +19,13 @@ import detailsStepImage from '../../../images/details-step.png';
  */
 const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 	const updateCourseTitle = ( title ) => {
-		setWizardData( { ...wizardData, courseTitle: title } );
+		setWizardData( { ...wizardData, title } );
 	};
 
 	const updateCourseDescription = ( description ) => {
 		setWizardData( {
 			...wizardData,
-			courseDescription: description,
+			description,
 		} );
 	};
 
@@ -45,14 +45,14 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 					<LimitedTextControl
 						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Title', 'sensei-lms' ) }
-						value={ wizardData.courseTitle ?? '' }
+						value={ wizardData.title ?? '' }
 						onChange={ updateCourseTitle }
 						maxLength={ 40 }
 					/>
 					<LimitedTextControl
 						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Description', 'sensei-lms' ) }
-						value={ wizardData.courseDescription ?? '' }
+						value={ wizardData.description ?? '' }
 						onChange={ updateCourseDescription }
 						maxLength={ 350 }
 						multiline={ true }

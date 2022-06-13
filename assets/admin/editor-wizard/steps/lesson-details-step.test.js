@@ -35,7 +35,7 @@ describe( '<LessonDetailsStep />', () => {
 	it( 'Renders title input field and not calls savePost initially.', () => {
 		const editPostMock = jest.fn();
 		useDispatch.mockReturnValue( { editPost: editPostMock } );
-		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
+		useSelect.mockReturnValue( { postTitle: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
 			<LessonDetailsStep data={ {} } setData={ () => {} } />
@@ -48,7 +48,7 @@ describe( '<LessonDetailsStep />', () => {
 	it( 'Updates lesson title in data when changed.', () => {
 		const setDataMock = jest.fn();
 		const NEW_TITLE = 'Some new title';
-		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
+		useSelect.mockReturnValue( { postTitle: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
 			<LessonDetailsStep data={ {} } setData={ setDataMock } />
@@ -57,13 +57,13 @@ describe( '<LessonDetailsStep />', () => {
 			target: { value: NEW_TITLE },
 		} );
 
-		expect( setDataMock ).toBeCalledWith( { lessonTitle: NEW_TITLE } );
+		expect( setDataMock ).toBeCalledWith( { title: NEW_TITLE } );
 	} );
 
 	it( 'Renders post title in title field initially.', () => {
 		const editPostMock = jest.fn();
 		useDispatch.mockReturnValue( { editPost: editPostMock } );
-		useSelect.mockReturnValue( { title: ANY_LESSON_TITLE } );
+		useSelect.mockReturnValue( { postTitle: ANY_LESSON_TITLE } );
 
 		const { queryByLabelText } = render(
 			<LessonDetailsStep data={ {} } setData={ () => {} } />

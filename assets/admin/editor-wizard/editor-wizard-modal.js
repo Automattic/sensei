@@ -24,17 +24,17 @@ const EditorWizardModal = () => {
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
 	const setDefaultPattern = useSetDefaultPattern( {
-		'sensei-content-description': dataState[ 0 ].courseDescription,
+		'sensei-content-description': dataState[ 0 ].description,
 	} );
 
 	const onWizardCompletion = () => {
 		setDone( true );
 		const newPostData = {
 			meta: { _new_post: false },
-			title: dataState[ 0 ].courseTitle ?? dataState[ 0 ].lessonTitle,
+			title: dataState[ 0 ].title,
 		};
-		if ( dataState[ 0 ].courseDescription ) {
-			newPostData.excerpt = dataState[ 0 ].courseDescription;
+		if ( dataState[ 0 ].description ) {
+			newPostData.excerpt = dataState[ 0 ].description;
 		}
 		editPost( newPostData );
 		savePost();

@@ -30,8 +30,8 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 
 	const replaces = {};
 
-	if ( data.lessonTitle ) {
-		replaces[ 'sensei-content-title' ] = data.lessonTitle;
+	if ( data.title ) {
+		replaces[ 'sensei-content-title' ] = data.title;
 	}
 
 	const isSenseiProActivated =

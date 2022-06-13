@@ -81,13 +81,13 @@ LessonDetailsStep.Actions = ( { goToNextStep } ) => {
  * @param {Function} setWizardData Function to update the wizard data.
  */
 const useLessonTitle = ( wizardData, setWizardData ) => {
-	const { title } = useSelect( ( select ) => ( {
-		title: select( editorStore )?.getEditedPostAttribute( 'title' ),
+	const { postTitle } = useSelect( ( select ) => ( {
+		postTitle: select( editorStore )?.getEditedPostAttribute( 'title' ),
 	} ) );
-	const updateLessonTitle = ( newTitle ) => {
-		setWizardData( { ...wizardData, lessonTitle: newTitle } );
+	const updateLessonTitle = ( title ) => {
+		setWizardData( { ...wizardData, title } );
 	};
-	return [ wizardData.lessonTitle ?? title, updateLessonTitle ];
+	return [ wizardData.title ?? postTitle, updateLessonTitle ];
 };
 
 export default LessonDetailsStep;

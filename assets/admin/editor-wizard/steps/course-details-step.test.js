@@ -52,7 +52,7 @@ describe( '<CourseDetailsStep />', () => {
 			target: { value: NEW_TITLE },
 		} );
 
-		expect( setDataMock ).toBeCalledWith( { courseTitle: NEW_TITLE } );
+		expect( setDataMock ).toBeCalledWith( { title: NEW_TITLE } );
 	} );
 
 	it( 'Updates course description in data when changed.', () => {
@@ -67,7 +67,7 @@ describe( '<CourseDetailsStep />', () => {
 		} );
 
 		expect( setDataMock ).toBeCalledWith( {
-			courseDescription: NEW_DESCRIPTION,
+			description: NEW_DESCRIPTION,
 		} );
 	} );
 } );
