@@ -13,4 +13,5 @@ vendor/
 tests/e2e/screenshots
 /*.zip
 /coverage/
+coverage.xml
 tests/e2e-playwright/contexts/*

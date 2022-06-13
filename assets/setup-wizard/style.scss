@@ -350,6 +350,11 @@
 			margin-bottom: 0;
 		}
 
+		.components-text-control {
+			&__input {
+				height: 42px;
+			}
+		}
 		.sensei-list__item-inner {
 			padding: 0;
 		}

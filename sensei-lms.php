@@ -3,7 +3,7 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://woocommerce.com/products/sensei/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.4.1
+ * Version: 4.4.3
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -34,6 +34,9 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+define( 'SENSEI_LMS_VERSION', '4.4.3' );
+define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
@@ -99,7 +102,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 */
 	function Sensei() {
 		// phpcs:enable
-		return Sensei_Main::instance( array( 'version' => '4.4.0' ) );
+		return Sensei_Main::instance( array( 'version' => SENSEI_LMS_VERSION ) );
 	}
 }
 
@@ -112,7 +115,7 @@ $woothemes_sensei = Sensei();
  *
  * @since 1.8.0
  */
-register_activation_hook( __FILE__, 'activate_sensei' );
+register_activation_hook( SENSEI_LMS_PLUGIN_FILE, 'activate_sensei' );
 
 if ( ! function_exists( 'activate_sensei' ) ) {
 	/**

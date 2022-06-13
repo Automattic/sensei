@@ -22,6 +22,12 @@ jest.mock( '../../../shared/blocks/settings', () => ( {
 } ) );
 
 jest.mock( './lesson-settings', () => () => '' );
+jest.mock( '../../../shared/blocks/single-line-input', () => ( props ) => (
+	<input
+		{ ...props }
+		onChange={ ( event ) => props.onChange( event.currentTarget.value ) }
+	/>
+) );
 
 jest.mock( '../status-preview', () => ( {
 	Status: {

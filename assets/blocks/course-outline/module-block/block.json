@@ -19,6 +19,14 @@
       "type": "string",
       "default": ""
     },
+    "teacher": {
+      "type": "string",
+      "default": ""
+    },
+    "lastTitle": {
+      "type": "string",
+      "default": ""
+    },
     "mainColor": {
       "type": "string"
     },
