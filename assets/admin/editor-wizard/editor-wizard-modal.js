@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Modal } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { store as editorStore } from '@wordpress/editor';
@@ -19,8 +19,14 @@ import '../../shared/data/api-fetch-preloaded-once';
  */
 const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
-	const { editPost, savePost } = useDispatch( editorStore );
 	const wizardData = wizardDataState[ 0 ];
+	const { editPost, savePost } = useDispatch( editorStore );
+	const { postType } = useSelect(
+		( select ) => ( {
+			postType: select( editorStore ).getCurrentPostType(),
+		} ),
+		[]
+	);
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
@@ -46,13 +52,26 @@ const EditorWizardModal = () => {
 		open && (
 			<Modal
 				className="sensei-editor-wizard-modal"
-				onRequestClose={ skipWizard }
+				onRequestClose={ () => {
+					skipWizard();
+					window.sensei_log_event( 'editor_wizard_close_modal', {
+						postType,
+					} );
+				} }
 			>
 				<Wizard
 					steps={ steps }
 					wizardDataState={ wizardDataState }
 					onCompletion={ onWizardCompletion }
-					skipWizard={ skipWizard }
+					skipWizard={ () => {
+						skipWizard();
+						window.sensei_log_event(
+							'editor_wizard_choose_default_pattern',
+							{
+								postType,
+							}
+						);
+					} }
 				/>
 			</Modal>
 		)
