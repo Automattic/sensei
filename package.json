@@ -65,7 +65,6 @@
     "@es-joy/jsdoccomment": "0.8.0",
     "@lifeomic/attempt": "3.0.3",
     "@playwright/test": "1.21.1",
-    "@sheerun/mutationobserver-shim": "0.3.3",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",
     "@testing-library/jest-dom": "5.11.10",
