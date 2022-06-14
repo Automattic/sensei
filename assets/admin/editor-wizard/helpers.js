@@ -4,6 +4,7 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Update blocks content, replacing the placeholders with a content.
@@ -125,5 +126,26 @@ export const useSetDefaultPattern = ( replaces ) => {
 
 		const replacedBlocks = replacePlaceholders( pattern.blocks, replaces );
 		resetBlocks( replacedBlocks );
+	};
+};
+
+/**
+ * Hook to log event with the current post type.
+ *
+ * @return {Function} Log event function.
+ */
+export const useLogEvent = () => {
+	const { postType } = useSelect(
+		( select ) => ( {
+			postType: select( editorStore ).getCurrentPostType(),
+		} ),
+		[]
+	);
+
+	return ( eventName, eventProperties ) => {
+		window.sensei_log_event( eventName, {
+			post_type: postType,
+			...eventProperties,
+		} );
 	};
 };
