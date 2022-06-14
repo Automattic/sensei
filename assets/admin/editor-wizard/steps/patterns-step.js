@@ -56,11 +56,22 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
  * @param {Object}   props            Compoent props.
  * @param {Function} props.skipWizard Skip wizard function.
  */
-PatternsStep.Actions = ( { skipWizard } ) => (
-	<Button isTertiary onClick={ skipWizard }>
-		{ __( 'Start with default layout', 'sensei-lms' ) }
-	</Button>
-);
+const PatternsStepActions = ( { skipWizard } ) => {
+	const logEvent = useLogEvent();
+
+	return (
+		<Button
+			isTertiary
+			onClick={ () => {
+				skipWizard();
+				logEvent( 'editor_wizard_start_with_default_layout' );
+			} }
+		>
+			{ __( 'Start with default layout', 'sensei-lms' ) }
+		</Button>
+	);
+};
+PatternsStep.Actions = PatternsStepActions;
 
 /**
  * Component to fill the Patterns Upsell section

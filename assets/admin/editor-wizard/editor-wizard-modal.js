@@ -60,10 +60,7 @@ const EditorWizardModal = () => {
 					steps={ steps }
 					wizardDataState={ wizardDataState }
 					onCompletion={ onWizardCompletion }
-					skipWizard={ () => {
-						skipWizard();
-						logEvent( 'editor_wizard_start_with_default_layout' );
-					} }
+					skipWizard={ skipWizard }
 				/>
 			</Modal>
 		)
