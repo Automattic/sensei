@@ -24,10 +24,12 @@ const Wizard = ( { steps, wizardDataState, onCompletion, skipWizard } ) => {
 	const logEvent = useLogEvent();
 
 	const goToNextStep = () => {
-		if ( currentStepNumber + 1 < steps.length ) {
-			setCurrentStepNumber( currentStepNumber + 1 );
+		const nextStepNumber = currentStepNumber + 1;
+
+		if ( nextStepNumber < steps.length ) {
+			setCurrentStepNumber( nextStepNumber );
 			logEvent( 'editor_wizard_navigate_to_next_step', {
-				navigated_to: steps[ currentStepNumber + 1 ].name,
+				navigated_to: steps[ nextStepNumber ].name,
 			} );
 		} else {
 			onCompletion( wizardData );

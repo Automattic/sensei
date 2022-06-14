@@ -58,15 +58,13 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
  */
 const PatternsStepActions = ( { skipWizard } ) => {
 	const logEvent = useLogEvent();
+	const clickHandler = () => {
+		skipWizard();
+		logEvent( 'editor_wizard_start_with_default_layout' );
+	};
 
 	return (
-		<Button
-			isTertiary
-			onClick={ () => {
-				skipWizard();
-				logEvent( 'editor_wizard_start_with_default_layout' );
-			} }
-		>
+		<Button isTertiary onClick={ clickHandler }>
 			{ __( 'Start with default layout', 'sensei-lms' ) }
 		</Button>
 	);
