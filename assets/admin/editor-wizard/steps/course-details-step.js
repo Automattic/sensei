@@ -16,21 +16,21 @@ import detailsStepImage from '../../../images/details-step.png';
  * Initial step for course creation wizard.
  *
  * @param {Object}   props
- * @param {Object}   props.data
- * @param {Function} props.setData
+ * @param {Object}   props.wizardData    Wizard data.
+ * @param {Function} props.setWizardData Wizard data setter.
  */
-const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
+const CourseDetailsStep = ( { wizardData, setWizardData } ) => {
 	const { editPost } = useDispatch( editorStore );
 
 	const updateCourseTitle = ( title ) => {
-		setWizardData( { ...wizardData, courseTitle: title } );
+		setWizardData( { ...wizardData, title } );
 		editPost( { title } );
 	};
 
 	const updateCourseDescription = ( description ) => {
 		setWizardData( {
 			...wizardData,
-			courseDescription: description,
+			description,
 		} );
 		editPost( { excerpt: description } );
 	};
@@ -51,14 +51,14 @@ const CourseDetailsStep = ( { data: wizardData, setData: setWizardData } ) => {
 					<LimitedTextControl
 						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Title', 'sensei-lms' ) }
-						value={ wizardData.courseTitle ?? '' }
+						value={ wizardData.title ?? '' }
 						onChange={ updateCourseTitle }
 						maxLength={ 40 }
 					/>
 					<LimitedTextControl
 						className="sensei-editor-wizard-step__form-control"
 						label={ __( 'Course Description', 'sensei-lms' ) }
-						value={ wizardData.courseDescription ?? '' }
+						value={ wizardData.description ?? '' }
 						onChange={ updateCourseDescription }
 						maxLength={ 350 }
 						multiline={ true }

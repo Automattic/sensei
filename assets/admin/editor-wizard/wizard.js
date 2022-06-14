@@ -8,20 +8,20 @@ import { __, sprintf } from '@wordpress/i18n';
  * Wizard component.
  *
  * @param {Object}   props
- * @param {Array}    props.steps        Array with the steps that will be rendered.
- * @param {Array}    props.dataState    Data and data setter.
- * @param {Function} props.onCompletion Callback to call when wizard is completed.
- * @param {Function} props.skipWizard   Function to skip wizard.
+ * @param {Array}    props.steps           Array with the steps that will be rendered.
+ * @param {Array}    props.wizardDataState Wizard Data and wizard data setter.
+ * @param {Function} props.onCompletion    Callback to call when wizard is completed.
+ * @param {Function} props.skipWizard      Function to skip wizard.
  */
-const Wizard = ( { steps, dataState, onCompletion, skipWizard } ) => {
+const Wizard = ( { steps, wizardDataState, onCompletion, skipWizard } ) => {
 	const [ currentStepNumber, setCurrentStepNumber ] = useState( 0 );
-	const [ data, setData ] = dataState;
+	const [ wizardData, setWizardData ] = wizardDataState;
 
 	const goToNextStep = () => {
 		if ( currentStepNumber + 1 < steps.length ) {
 			setCurrentStepNumber( currentStepNumber + 1 );
 		} else {
-			onCompletion( data );
+			onCompletion( wizardData );
 		}
 	};
 
@@ -30,8 +30,8 @@ const Wizard = ( { steps, dataState, onCompletion, skipWizard } ) => {
 	return (
 		<div className="sensei-editor-wizard">
 			<CurrentStep
-				data={ data }
-				setData={ setData }
+				wizardData={ wizardData }
+				setWizardData={ setWizardData }
 				onCompletion={ onCompletion }
 			/>
 			<div className="sensei-editor-wizard__footer">
@@ -46,7 +46,6 @@ const Wizard = ( { steps, dataState, onCompletion, skipWizard } ) => {
 				{ CurrentStep.Actions && (
 					<div className="sensei-editor-wizard__actions">
 						<CurrentStep.Actions
-							data={ data }
 							goToNextStep={ goToNextStep }
 							skipWizard={ skipWizard }
 						/>

@@ -15,10 +15,10 @@ import { EXTENSIONS_STORE } from '../../../extensions/store';
 /**
  * Lesson patterns step.
  *
- * @param {Object} props      Component props.
- * @param {Object} props.data Wizard data.
+ * @param {Object} props            Component props.
+ * @param {Object} props.wizardData Wizard data.
  */
-const LessonPatternsStep = ( { data, ...props } ) => {
+const LessonPatternsStep = ( { wizardData, ...props } ) => {
 	const { senseiProExtension } = useSelect(
 		( select ) => ( {
 			senseiProExtension: select(
@@ -30,8 +30,8 @@ const LessonPatternsStep = ( { data, ...props } ) => {
 
 	const replaces = {};
 
-	if ( data.lessonTitle ) {
-		replaces[ 'sensei-content-title' ] = data.lessonTitle;
+	if ( wizardData.title ) {
+		replaces[ 'sensei-content-title' ] = wizardData.title;
 	}
 
 	const isSenseiProActivated =

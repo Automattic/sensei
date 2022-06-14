@@ -21,7 +21,7 @@ describe( '<Wizard />', () => {
 		};
 
 		const { queryByText } = render(
-			<Wizard steps={ [ DummyStep ] } dataState={ [] } />
+			<Wizard steps={ [ DummyStep ] } wizardDataState={ [] } />
 		);
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
@@ -34,7 +34,10 @@ describe( '<Wizard />', () => {
 			return SOME_DUMMY_CONTENT;
 		};
 		const { queryByText } = render(
-			<Wizard steps={ [ DummyStepWithoutActions ] } dataState={ [] } />
+			<Wizard
+				steps={ [ DummyStepWithoutActions ] }
+				wizardDataState={ [] }
+			/>
 		);
 
 		expect( queryByText( SOME_DUMMY_CONTENT ) ).toBeTruthy();
@@ -54,7 +57,10 @@ describe( '<Wizard />', () => {
 		};
 
 		const { queryByText } = render(
-			<Wizard steps={ [ FirstStep, SecondStep ] } dataState={ [] } />
+			<Wizard
+				steps={ [ FirstStep, SecondStep ] }
+				wizardDataState={ [] }
+			/>
 		);
 
 		expect( queryByText( 'FIRST_STEP_CONTENT' ) ).toBeTruthy();
@@ -78,7 +84,7 @@ describe( '<Wizard />', () => {
 		const { queryByText } = render(
 			<Wizard
 				steps={ [ SingleStep ] }
-				dataState={ [] }
+				wizardDataState={ [] }
 				onCompletion={ onCompletionCallback }
 			/>
 		);
