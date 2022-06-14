@@ -42,7 +42,7 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 		onCompletion();
 
 		window.sensei_log_event( 'editor_wizard_choose_pattern', {
-			postType,
+			post_type: postType,
 			name,
 		} );
 	};

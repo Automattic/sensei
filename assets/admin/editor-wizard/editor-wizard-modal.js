@@ -55,7 +55,7 @@ const EditorWizardModal = () => {
 				onRequestClose={ () => {
 					skipWizard();
 					window.sensei_log_event( 'editor_wizard_close_modal', {
-						postType,
+						post_type: postType,
 					} );
 				} }
 			>
@@ -68,7 +68,7 @@ const EditorWizardModal = () => {
 						window.sensei_log_event(
 							'editor_wizard_choose_default_pattern',
 							{
-								postType,
+								post_type: postType,
 							}
 						);
 					} }
