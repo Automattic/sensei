@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, fireEvent, act } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -79,6 +79,7 @@ describe( 'replacePlaceholders', () => {
 describe( 'useWizardOpenState', () => {
 	const TestComponent = () => {
 		const [ open, setDone ] = useWizardOpenState();
+
 		return (
 			<div>
 				{ open ? 'open' : 'closed' }
@@ -102,22 +103,20 @@ describe( 'useWizardOpenState', () => {
 		expect( queryByText( 'open' ) ).toBeTruthy();
 	} );
 
-	it.skip( 'Should open when other modals get closed', async () => {
+	it( 'Should open when other modals get closed', async () => {
 		document.body.classList.add( 'modal-open' );
 
-		const { queryByText } = render( <TestComponent /> );
+		const { findByText } = render( <TestComponent /> );
 
 		// Initializes initial state.
 		act( () => {
 			jest.runOnlyPendingTimers();
 		} );
 
-		expect( queryByText( 'closed' ) ).toBeTruthy();
+		expect( await findByText( 'closed' ) ).toBeTruthy();
 
 		document.body.classList.remove( 'modal-open' );
-		await waitFor( () => {
-			expect( queryByText( 'open' ) ).toBeTruthy();
-		} );
+		expect( findByText( 'open' ) ).toBeTruthy();
 	} );
 
 	it( 'Should be closed when wizard is done', async () => {
