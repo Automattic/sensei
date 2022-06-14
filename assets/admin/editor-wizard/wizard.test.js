@@ -5,13 +5,26 @@ import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 /**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import Wizard from './wizard';
 
 const SOME_DUMMY_CONTENT = 'SOME_DUMMY_CONTENT';
 const SOME_DUMMY_ACTIONS = 'SOME_DUMMY_ACTIONS';
+
+jest.mock( '@wordpress/data' );
+
 describe( '<Wizard />', () => {
+	beforeEach( () => {
+		useSelect.mockReturnValue( {} );
+		window.sensei_log_event = () => {};
+	} );
+
 	it( 'Wizard renders first step content and actions by default.', () => {
 		const DummyStep = () => {
 			return SOME_DUMMY_CONTENT;
