@@ -66,7 +66,7 @@ const EditorWizardModal = () => {
 					skipWizard={ () => {
 						skipWizard();
 						window.sensei_log_event(
-							'editor_wizard_choose_default_pattern',
+							'editor_wizard_start_with_default_layout',
 							{
 								post_type: postType,
 							}
