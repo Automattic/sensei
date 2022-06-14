@@ -3,7 +3,7 @@
  */
 import { Button, createSlotFill } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
-import { useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -26,14 +26,25 @@ const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
  */
 const PatternsStep = ( { title, replaces, onCompletion } ) => {
 	const { resetEditorBlocks } = useDispatch( editorStore );
+	const { postType } = useSelect(
+		( select ) => ( {
+			postType: select( editorStore ).getCurrentPostType(),
+		} ),
+		[]
+	);
 
-	const onChoose = ( blocks ) => {
+	const onChoose = ( blocks, name ) => {
 		const newBlocks = replaces
 			? replacePlaceholders( blocks, replaces )
 			: blocks;
 
 		resetEditorBlocks( newBlocks );
 		onCompletion();
+
+		window.sensei_log_event( 'editor_wizard_choose_pattern', {
+			postType,
+			name,
+		} );
 	};
 
 	return (
