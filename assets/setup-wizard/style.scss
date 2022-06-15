@@ -224,6 +224,10 @@
 		width: 520px;
 		max-width: 100%;
 
+		@media ( max-width: 600px ) {
+			width: 100%;
+		}
+
 		@media ( max-height: 500px ) {
 			.components-modal__content {
 				.components-modal__header, .sensei-setup-wizard__modal-footer {
@@ -238,7 +242,10 @@
 
 		&.components-modal__frame {
 			overflow: auto;
-			max-height: 90%;
+
+			@media ( min-width: 768px ) {
+				max-height: 90%;
+			}
 		}
 
 		.components-modal__content {
