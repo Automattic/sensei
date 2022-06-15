@@ -59,7 +59,7 @@ const PatternsList = ( { onChoose } ) => {
 							role="option"
 							tabIndex={ 0 }
 							{ ...accessibleClick( () => {
-								onChoose( blocks );
+								onChoose( blocks, name );
 							} ) }
 						>
 							<div className="sensei-patterns-list__item-preview">

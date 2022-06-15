@@ -11,7 +11,11 @@ import { store as editorStore } from '@wordpress/editor';
  */
 import Wizard from './wizard';
 import useEditorWizardSteps from './use-editor-wizard-steps';
-import { useWizardOpenState, useSetDefaultPattern } from './helpers';
+import {
+	useWizardOpenState,
+	useSetDefaultPattern,
+	useLogEvent,
+} from './helpers';
 import '../../shared/data/api-fetch-preloaded-once';
 
 /**
@@ -19,8 +23,9 @@ import '../../shared/data/api-fetch-preloaded-once';
  */
 const EditorWizardModal = () => {
 	const wizardDataState = useState( {} );
-	const { editPost, savePost } = useDispatch( editorStore );
 	const wizardData = wizardDataState[ 0 ];
+	const { editPost, savePost } = useDispatch( editorStore );
+	const logEvent = useLogEvent();
 
 	const [ open, setDone ] = useWizardOpenState();
 	const steps = useEditorWizardSteps();
@@ -46,7 +51,10 @@ const EditorWizardModal = () => {
 		open && (
 			<Modal
 				className="sensei-editor-wizard-modal"
-				onRequestClose={ skipWizard }
+				onRequestClose={ () => {
+					skipWizard();
+					logEvent( 'editor_wizard_close_modal' );
+				} }
 			>
 				<Wizard
 					steps={ steps }

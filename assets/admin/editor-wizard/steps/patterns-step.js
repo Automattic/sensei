@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import PatternsList from '../patterns-list';
-import { replacePlaceholders } from '../helpers';
+import { replacePlaceholders, useLogEvent } from '../helpers';
 
 const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
 
@@ -26,14 +26,17 @@ const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
  */
 const PatternsStep = ( { title, replaces, onCompletion } ) => {
 	const { resetEditorBlocks } = useDispatch( editorStore );
+	const logEvent = useLogEvent();
 
-	const onChoose = ( blocks ) => {
+	const onChoose = ( blocks, name ) => {
 		const newBlocks = replaces
 			? replacePlaceholders( blocks, replaces )
 			: blocks;
 
 		resetEditorBlocks( newBlocks );
 		onCompletion();
+
+		logEvent( 'editor_wizard_choose_pattern', { name } );
 	};
 
 	return (
@@ -53,11 +56,20 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
  * @param {Object}   props            Compoent props.
  * @param {Function} props.skipWizard Skip wizard function.
  */
-PatternsStep.Actions = ( { skipWizard } ) => (
-	<Button isTertiary onClick={ skipWizard }>
-		{ __( 'Start with default layout', 'sensei-lms' ) }
-	</Button>
-);
+const PatternsStepActions = ( { skipWizard } ) => {
+	const logEvent = useLogEvent();
+	const clickHandler = () => {
+		skipWizard();
+		logEvent( 'editor_wizard_start_with_default_layout' );
+	};
+
+	return (
+		<Button isTertiary onClick={ clickHandler }>
+			{ __( 'Start with default layout', 'sensei-lms' ) }
+		</Button>
+	);
+};
+PatternsStep.Actions = PatternsStepActions;
 
 /**
  * Component to fill the Patterns Upsell section
