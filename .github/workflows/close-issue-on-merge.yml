@@ -9,6 +9,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Closes issues related to a merged pull request.
-              uses: ldez/gha-mjolnir@v1.2.0
+              uses: fjorgemota/gha-mjolnir@v1.2.0
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
