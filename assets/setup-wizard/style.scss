@@ -234,10 +234,15 @@
 			border-bottom: 0;
 		}
 
+		.components-modal__content {
+			margin-top: 0;
+		}
+
 		.components-modal__header {
 			padding: 25px 0;
 			margin: 0;
 			height: auto;
+			position: sticky;
 
 			.components-modal__header-heading {
 				font-size: 20px;
@@ -245,7 +250,7 @@
 		}
 
 		.sensei-list {
-			margin-top: 0;
+			margin-bottom: 13px;
 		}
 
 		.sensei-list__item {
