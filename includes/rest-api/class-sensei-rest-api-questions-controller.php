@@ -247,7 +247,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Checks if the logged-in user should have access to a specific question.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.5.0
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
