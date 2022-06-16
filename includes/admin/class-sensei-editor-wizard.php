@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class that handles editor wizards.
  *
- * @since $$next-version$$
+ * @since 4.5.0
  */
 class Sensei_Editor_Wizard {
 	/**

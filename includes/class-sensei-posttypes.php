@@ -1083,7 +1083,7 @@ class Sensei_PostTypes {
 		/**
 		 * Filter used to add new menu item.
 		 *
-		 * @since x.x.x
+		 * @since 4.5.0
 		 */
 		do_action( 'sensei_pro_groups_menu_item', [] );
 
