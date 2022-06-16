@@ -156,13 +156,15 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests sender and displayed_date elements.
-	 *
-	 * @since 2.3.0
-	 * @covers Sensei_REST_API_Messages_Controller::exclude_others_comments
-	 * @group wip
+	 * Tests unauthenticated user cannot access message endpoint.
 	 */
-	public function testSenderAndDateAreCorrect() {
+	public function testUnauthenticatedUserCannotAccessMessage() {
+		$message_id = $this->create_sensei_message( 'Without course', 'first' );
+
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 401, $response->get_status() );
 
 		$first_user = $this->factory->user->create(
 			array(
@@ -171,9 +173,32 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 			)
 		);
 
-		$message_id = $this->create_sensei_message( 'Without course', 'first' );
+		wp_set_current_user( $first_user );
+
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 403, $response->get_status() );
+	}
+
+	/**
+	 * Tests sender and displayed_date elements.
+	 *
+	 * @since 2.3.0
+	 * @covers Sensei_REST_API_Messages_Controller::exclude_others_comments
+	 * @group wip
+	 */
+	public function testSenderAndDateAreCorrect() {
+		$first_user = $this->factory->user->create(
+			array(
+				'role'       => 'subscriber',
+				'user_login' => 'first',
+			)
+		);
 
 		wp_set_current_user( $first_user );
+
+		$message_id = $this->create_sensei_message( 'Without course', 'first' );
 
 		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_id );
 		$response = $this->server->dispatch( $request );
@@ -190,7 +215,6 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @group wip
 	 */
 	public function testDisplayedTitleNoCourse() {
-
 		$first_user = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
@@ -198,9 +222,9 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 			)
 		);
 
-		$message_without_course = $this->create_sensei_message( 'Without course', 'first' );
-
 		wp_set_current_user( $first_user );
+
+		$message_without_course = $this->create_sensei_message( 'Without course', 'first' );
 
 		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_without_course );
 		$response = $this->server->dispatch( $request );
@@ -216,7 +240,6 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 	 * @group wip
 	 */
 	public function testDisplayedTitleWithCourse() {
-
 		$first_user = $this->factory->user->create(
 			array(
 				'role'       => 'subscriber',
@@ -232,9 +255,9 @@ class Sensei_REST_API_Messages_Controller_Tests extends WP_Test_REST_TestCase {
 
 		$course = $this->factory->post->create( $message_args );
 
-		$message_with_course = $this->create_sensei_message( 'Message title', 'first', $course );
-
 		wp_set_current_user( $first_user );
+
+		$message_with_course = $this->create_sensei_message( 'Message title', 'first', $course );
 
 		$request  = new WP_REST_Request( 'GET', '/wp/v2/sensei-messages/' . $message_with_course );
 		$response = $this->server->dispatch( $request );

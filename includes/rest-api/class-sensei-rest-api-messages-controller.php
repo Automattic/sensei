@@ -85,6 +85,7 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The schema.
 	 */
 	public function get_item_schema() {
+
 		$schema = parent::get_item_schema();
 
 		$schema['properties']['excerpt'] = array(
@@ -121,7 +122,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @since 2.3.0
 	 */
 	public function get_collection_params() {
-
 		$query_params = parent::get_collection_params();
 
 		$query_params['sender'] = array(
@@ -152,7 +152,6 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 	 * @return array The modified query args.
 	 */
 	public function exclude_others_comments( $args, $request ) {
-
 		if (
 			'all' === $request->get_param( 'sender' ) &&
 			( current_user_can( 'moderate_comments' ) || current_user_can( 'read_private_sensei_messages' ) )
@@ -167,4 +166,43 @@ class Sensei_REST_API_Messages_Controller extends WP_REST_Posts_Controller {
 
 		return $args;
 	}
+
+	/**
+	 * Checks if the logged-in user can access the message.
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 * @return true|WP_Error True if the request has read access for the item, WP_Error object otherwise.
+	 */
+	public function get_item_permissions_check( $request ) {
+
+		$check_result = parent::get_item_permissions_check( $request );
+
+		if ( true !== $check_result ) {
+			return $check_result;
+		}
+
+		$current_user = wp_get_current_user();
+
+		// Check if user is logged in.
+		if ( empty( $current_user ) || empty( $current_user->ID ) ) {
+			return new WP_Error(
+				'rest_forbidden_context',
+				__( 'Sorry, you are not allowed to view this post.', 'sensei-lms' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		$post = $this->get_post( $request['id'] );
+
+		if ( $current_user->ID === (int) $post->post_author || get_post_meta( $post->ID, '_receiver', true ) === $current_user->user_login || current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'rest_forbidden_context',
+			__( 'Sorry, you are not allowed to view this post.', 'sensei-lms' ),
+			array( 'status' => rest_authorization_required_code() )
+		);
+	}
+
 }
