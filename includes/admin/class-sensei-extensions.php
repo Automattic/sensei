@@ -168,29 +168,15 @@ final class Sensei_Extensions {
 			$wccom_subscriptions = WC_Helper::get_subscriptions();
 		}
 
-		$aliases = [
-			'sensei-pro/sensei-pro.php' => [
-				'woothemes-sensei/woothemes-sensei.php',
-			],
-		];
-
 		// Includes installed version, whether it has update and WC.com metadata.
 		$extensions = array_map(
-			function( $extension ) use ( $installed_plugins, $wccom_subscriptions, $aliases ) {
-				$plugin_file = $extension->plugin_file;
+			function( $extension ) use ( $installed_plugins, $wccom_subscriptions ) {
+				$extension->is_installed = isset( $installed_plugins[ $extension->plugin_file ] );
+				$extension->is_activated = $extension->is_installed && is_plugin_active( $extension->plugin_file );
 
-				$plugin_file_aliases   = array_key_exists( $plugin_file, $aliases ) ? $aliases[ $plugin_file ] : [];
-				$plugin_file_aliases[] = $plugin_file;
-
-				foreach ( $plugin_file_aliases as $extension_plugin_file ) {
-					$extension->is_installed = isset( $installed_plugins[ $extension_plugin_file ] );
-					$extension->is_activated = $extension->is_installed && is_plugin_active( $extension_plugin_file );
-
-					if ( $extension->is_installed ) {
-						$extension->installed_version = $installed_plugins[ $extension_plugin_file ]['Version'];
-						$extension->has_update        = $extension_plugin_file === $plugin_file && isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
-						break;
-					}
+				if ( $extension->is_installed ) {
+					$extension->installed_version = $installed_plugins[ $extension->plugin_file ]['Version'];
+					$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
 				}
 
 				if ( isset( $extension->wccom_product_id ) ) {
