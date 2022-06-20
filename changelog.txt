@@ -1,5 +1,9 @@
 *** Changelog ***
 
+2022-06-20 - version 4.5.1
+* Fix: remove upsell from wizard when woothemes-sensei is installed [#5282](https://github.com/Automattic/sensei/pull/5282)
+* Fix: Guarantee that the wizard link will stay as white after visiting it [#5281](https://github.com/Automattic/sensei/pull/5281)
+
 2022-06-16 - version 4.5.0
 * New: Course and Lesson Wizard
 	* Add editor wizard modal for courses and lessons [#5149](https://github.com/Automattic/sensei/pull/5149)
