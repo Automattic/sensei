@@ -24,7 +24,7 @@ const LessonPatternsStep = ( { wizardData, ...props } ) => {
 		replaces[ 'sensei-content-title' ] = wizardData.title;
 	}
 
-	const isSenseiProActivated = useHideEditorWizardUpsell();
+	const shouldHideEditorWizardUpsell = useHideEditorWizardUpsell();
 
 	return (
 		<Fragment>
@@ -34,7 +34,7 @@ const LessonPatternsStep = ( { wizardData, ...props } ) => {
 				{ ...props }
 			/>
 			<PatternsStep.UpsellFill>
-				{ isSenseiProActivated ? null : <UpsellBlock /> }
+				{ shouldHideEditorWizardUpsell ? null : <UpsellBlock /> }
 			</PatternsStep.UpsellFill>
 		</Fragment>
 	);

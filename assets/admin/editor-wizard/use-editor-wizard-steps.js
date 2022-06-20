@@ -32,9 +32,9 @@ const useEditorWizardSteps = () => {
 		[]
 	);
 
-	const isSenseiProActivated = useHideEditorWizardUpsell();
+	const shouldHideEditorWizardUpsell = useHideEditorWizardUpsell();
 
-	if ( isSenseiProActivated ) {
+	if ( shouldHideEditorWizardUpsell ) {
 		stepsByPostType.course = stepsByPostType.course.filter(
 			( step ) => step !== CourseUpgradeStep
 		);
