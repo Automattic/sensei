@@ -5,6 +5,12 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useLayoutEffect, useState } from '@wordpress/element';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editorStore } from '@wordpress/editor';
+import { applyFilters } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies
+ */
+import { EXTENSIONS_STORE } from '../../extensions/store';
 
 /**
  * Update blocks content, replacing the placeholders with a content.
@@ -148,4 +154,33 @@ export const useLogEvent = () => {
 			...eventProperties,
 		} );
 	};
+};
+
+/**
+ * Hook to check if Sensei Pro is enabled or not, and hide the editor wizard accordingly.
+ *
+ * @return {boolean} If the editor wizard upsell should be hidden or not.
+ */
+export const useHideEditorWizardUpsell = () => {
+	const { senseiProExtension } = useSelect(
+		( select ) => ( {
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		} ),
+		[]
+	);
+
+	/**
+	 * Filters if the editor wizard upsells should show or not
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param {boolean} hideEditorWizardUpsell Whether to hide the editor wizard upsells.
+	 * @return {boolean} Whether to hide the editor wizard upsells.
+	 */
+	return applyFilters(
+		'senseiEditorWizardUpsellHide',
+		! senseiProExtension || senseiProExtension.is_activated === true
+	);
 };
