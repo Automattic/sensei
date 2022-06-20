@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 
 /**
@@ -10,7 +9,7 @@ import { Fragment } from '@wordpress/element';
  */
 import PatternsStep from './patterns-step';
 import LogoTreeIcon from '../../../icons/logo-tree.svg';
-import { EXTENSIONS_STORE } from '../../../extensions/store';
+import { useHideEditorWizardUpsell } from '../helpers';
 
 /**
  * Lesson patterns step.
@@ -19,23 +18,13 @@ import { EXTENSIONS_STORE } from '../../../extensions/store';
  * @param {Object} props.wizardData Wizard data.
  */
 const LessonPatternsStep = ( { wizardData, ...props } ) => {
-	const { senseiProExtension } = useSelect(
-		( select ) => ( {
-			senseiProExtension: select(
-				EXTENSIONS_STORE
-			).getSenseiProExtension(),
-		} ),
-		[]
-	);
-
 	const replaces = {};
 
 	if ( wizardData.title ) {
 		replaces[ 'sensei-content-title' ] = wizardData.title;
 	}
 
-	const isSenseiProActivated =
-		! senseiProExtension || senseiProExtension.is_activated === true;
+	const shouldHideEditorWizardUpsell = useHideEditorWizardUpsell();
 
 	return (
 		<Fragment>
@@ -45,7 +34,7 @@ const LessonPatternsStep = ( { wizardData, ...props } ) => {
 				{ ...props }
 			/>
 			<PatternsStep.UpsellFill>
-				{ isSenseiProActivated ? null : <UpsellBlock /> }
+				{ shouldHideEditorWizardUpsell ? null : <UpsellBlock /> }
 			</PatternsStep.UpsellFill>
 		</Fragment>
 	);

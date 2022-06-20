@@ -12,7 +12,7 @@ import CourseUpgradeStep from './steps/course-upgrade-step';
 import CoursePatternsStep from './steps/course-patterns-step';
 import LessonDetailsStep from './steps/lesson-details-step';
 import LessonPatternsStep from './steps/lesson-patterns-step';
-import { EXTENSIONS_STORE } from '../../extensions/store';
+import { useHideEditorWizardUpsell } from './helpers';
 
 /**
  * Returns the list of components (representing steps) for the Editor Wizard according to the post type and if
@@ -25,17 +25,16 @@ const useEditorWizardSteps = () => {
 		course: [ CourseDetailsStep, CourseUpgradeStep, CoursePatternsStep ],
 		lesson: [ LessonDetailsStep, LessonPatternsStep ],
 	};
-	const { postType, senseiProExtension } = useSelect(
+	const { postType } = useSelect(
 		( select ) => ( {
 			postType: select( editorStore )?.getCurrentPostType(),
-			senseiProExtension: select(
-				EXTENSIONS_STORE
-			).getSenseiProExtension(),
 		} ),
 		[]
 	);
 
-	if ( ! senseiProExtension || senseiProExtension.is_activated === true ) {
+	const shouldHideEditorWizardUpsell = useHideEditorWizardUpsell();
+
+	if ( shouldHideEditorWizardUpsell ) {
 		stepsByPostType.course = stepsByPostType.course.filter(
 			( step ) => step !== CourseUpgradeStep
 		);
