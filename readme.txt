@@ -115,6 +115,10 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-06-20 - version 4.5.1
+* Fix: remove upsell from wizard when woothemes-sensei is installed [#5282](https://github.com/Automattic/sensei/pull/5282)
+* Fix: Guarantee that the wizard link will stay as white after visiting it [#5281](https://github.com/Automattic/sensei/pull/5281)
+
 2022-06-16 - version 4.5.0
 * New: Course and Lesson Wizard
 	* Add editor wizard modal for courses and lessons [#5149](https://github.com/Automattic/sensei/pull/5149)
@@ -158,12 +162,5 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Tweak: Redirect the quiz if the lesson is password protected. [#5195](https://github.com/Automattic/sensei/pull/5195)
 * Tweak: Disable the lesson archive. [#5192](https://github.com/Automattic/sensei/pull/5192)
 * Tweak: Update Course Video Progression to support customization via hooks. [#5100](https://github.com/Automattic/sensei/pull/5100), [#5175](https://github.com/Automattic/sensei/pull/5175)
-
-2022.05.23 - version 4.4.2
-* Fix: Modules page not found error in learning mode [#5144](https://github.com/Automattic/sensei/pull/5144) 👏 @jeremyfelt
-* Fix: Teacher name getting appended and duplicated in module title in course edit [#5114](https://github.com/Automattic/sensei/pull/5114)
-* Fix: Lessons not getting assigned to modules if the course is assigned to a teacher [#5151](https://github.com/Automattic/sensei/pull/5151)
-* Fix: Add student to course form not visible if Sensei Pro or Content Drip is enabled [#5164](https://github.com/Automattic/sensei/pull/5164)
-* Fix: Deprecated warnings on the students report screen [#5153](https://github.com/Automattic/sensei/pull/5153)
 
 [See changelog for all versions](https://github.com/Automattic/sensei/releases).
