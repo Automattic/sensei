@@ -754,6 +754,9 @@ class Sensei_Frontend {
 		$url = Sensei_Course::get_course_completed_page_url( $course_id );
 
 		if ( $url ) {
+
+			do_action( 'sensei_user_course_end', $user_id, $course_id );
+
 			wp_safe_redirect( esc_url_raw( $url ) );
 			exit;
 		}
