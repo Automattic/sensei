@@ -3791,7 +3791,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Returns the course for a given lesson
+	 * Returns the course ID for a given lesson
 	 *
 	 * @since 1.7.4
 	 * @access public
@@ -3819,6 +3819,43 @@ class Sensei_Lesson {
 		}
 
 		return $lesson_course_id;
+
+	}
+
+	/**
+	 * Returns the course ID for a given set of lessons (with the key being the lesson ID)
+	 *
+	 * @since $$next-version$$
+	 * @access public
+	 *
+	 * @param array<int> $lesson_ids Array of Lesson IDs.
+	 * @return array<int, int|false> Array where the key is the lesson ID, and the value is the course ID (or false if not found)
+	 */
+	public function get_course_ids( $lesson_ids ) {
+		global $wpdb;
+
+		$courses_by_lesson = array_fill_keys( $lesson_ids, false );
+
+		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+		$query        = $wpdb->prepare(
+			"
+				SELECT lesson.ID AS lesson_id, course.ID AS course_id FROM {$wpdb->posts} lesson
+					INNER JOIN {$wpdb->postmeta} AS lesson_meta ON lesson_meta.post_id=lesson.ID AND lesson_meta.meta_key='_lesson_course'
+					INNER JOIN {$wpdb->posts} AS course ON course.ID = lesson_meta.meta_value AND course.post_type='course'
+					WHERE lesson.ID in ({$placeholders})
+				  		AND lesson.post_type='lesson'
+		",
+			$lesson_ids
+		);
+
+		$results = $wpdb->get_results( $query );
+		if ( is_array( $results ) ) {
+			foreach ( $results as $result ) {
+				$courses_by_lesson[ $result->lesson_id ] = $result->course_id;
+			}
+		}
+
+		return $courses_by_lesson;
 
 	}
 
