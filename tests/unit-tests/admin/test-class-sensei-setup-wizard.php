@@ -120,7 +120,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
-		set_current_screen( 'sensei-lms_page_sensei_test' );
+		set_current_screen( 'course_page_sensei_test' );
 		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 		ob_start();
