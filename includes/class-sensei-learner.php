@@ -585,7 +585,7 @@ class Sensei_Learner {
 	/**
 	 * Get all users.
 	 *
-	 * @param array $args
+	 * @param array $args Arguments.
 	 *
 	 * @deprecated 3.0.0
 	 *
