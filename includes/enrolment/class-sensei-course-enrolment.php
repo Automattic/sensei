@@ -546,7 +546,6 @@ class Sensei_Course_Enrolment {
 
 		if ( $result ) {
 			$this->removed_learners = $removed_learners;
-
 			return true;
 		}
 
