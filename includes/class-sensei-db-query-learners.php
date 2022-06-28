@@ -109,6 +109,10 @@ class Sensei_Db_Query_Learners {
 	private function get_last_activity_date_by_users( $user_ids ) {
 		global $wpdb;
 
+		if ( empty( $user_ids ) ) {
+			return [];
+		}
+
 		$in_placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%s' ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
