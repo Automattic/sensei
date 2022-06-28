@@ -226,13 +226,6 @@ class Sensei_Course_Enrolment {
 	public function save_enrolment( $user_id, $is_enrolled ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 
-		$is_enrolled_current = has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $this->course_id );
-
-		// Nothing has changed.
-		if ( $is_enrolled_current === $is_enrolled ) {
-			return true;
-		}
-
 		if ( ! $is_enrolled ) {
 			$result = true === wp_remove_object_terms( $this->course_id, [ intval( $term->term_id ) ], Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 		} else {
