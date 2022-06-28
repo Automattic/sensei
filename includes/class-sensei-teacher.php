@@ -731,7 +731,7 @@ class Sensei_Teacher {
 		// check if we're on the grading screen
 		$screen = get_current_screen();
 
-		if ( empty( $screen ) || 'sensei-lms_page_sensei_grading' != $screen->id ) {
+		if ( empty( $screen ) || 'course_page_sensei_grading' != $screen->id ) {
 			return $comments;
 		}
 
