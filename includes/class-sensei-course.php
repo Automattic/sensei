@@ -268,7 +268,7 @@ class Sensei_Course {
 
 		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
 
-		return $course_enrolment->is_enrolled( $user_id );
+		return $course_enrolment->is_enrolled( $user_id, false );
 	}
 
 	/**
