@@ -214,7 +214,7 @@ class Sensei_Course_Enrolment {
 		// We are retrieving the associated object_ids from the term and not the other way around (has_term) for performance reasons.
 		$object_ids = get_objects_in_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
 
-		return in_array( $this->course_id, $object_ids, true );
+		return in_array( (string) $this->course_id, $object_ids, true );
 	}
 
 	/**
