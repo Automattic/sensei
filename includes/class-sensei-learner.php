@@ -377,6 +377,8 @@ class Sensei_Learner {
 			'order'       => $order,
 			'orderby'     => $orderby,
 			'tax_query'   => [], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Just empty to set array.
+			'lazy_load_term_meta' => false,
+			'cache_results' => false,
 		];
 
 		$query_args   = array_merge( $default_args, $base_query_args );
