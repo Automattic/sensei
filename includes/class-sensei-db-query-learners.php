@@ -59,7 +59,7 @@ class Sensei_Db_Query_Learners {
 					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
 					AND `cf`.comment_approved IS NOT NULL";
 
-			$results  = $wpdb->get_results( $sql );
+			$results  = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$user_ids = wp_list_pluck( $results, 'user_id' );
 
 			if ( ! empty( $matching_user_ids ) ) {
