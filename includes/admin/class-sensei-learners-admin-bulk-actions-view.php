@@ -322,7 +322,15 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			<option value="0"><?php echo esc_html( $select_label ); ?></option>
 			<?php
 			foreach ( $courses as $course ) {
-				echo '<option value="' . esc_attr( $course->ID ) . '"' . selected( $course->ID, $selected_course, false ) . '>' . esc_html( $course->post_title ) . '</option>';
+				$option_label = __( '(no title)', 'sensei-lms' );
+
+				if ( empty( $course->post_title ) ) {
+					$option_label = $option_label . ' ID: ' . $course->ID;
+				} else {
+					$option_label = $course->post_title;
+				}
+
+				echo '<option value="' . esc_attr( $course->ID ) . '"' . selected( $course->ID, $selected_course, false ) . '>' . esc_html( $option_label ) . '</option>';
 			}
 			?>
 		</select>
