@@ -105,21 +105,52 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_id' ),
 			'The lesson class method `get_course_id` does not exist '
 		);
-		$course_ids = $this->factory->course->create_many( 2 );
-		$lesson_ids = $this->factory->lesson->create_many( 8 );
-		$to_check   = array();
+		$course_ids = $this->factory->course->create_many( 3 );
+		$lesson_ids = $this->factory->lesson->create_many( 9 );
+		$lesson_id_to_course_id   = array();
 		foreach ( $lesson_ids as $lesson_id ) {
 			$course_index           = array_rand( $course_ids );
 			$course_id              = $course_ids[ $course_index ];
-			$to_check[ $lesson_id ] = $course_id;
+			$lesson_id_to_course_id[ $lesson_id ] = $course_id;
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
-		foreach ( $to_check as $lesson_id => $expected_course_id ) {
+		foreach ( $lesson_id_to_course_id as $lesson_id => $expected_course_id ) {
 			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
 				"Lesson with ID {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
+			);
+		}
+	}
+
+	public function testGetCourseIds() {
+		$this->assertTrue(
+			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_ids' ),
+			'The lesson class method `get_course_ids` does not exist '
+		);
+		$course_ids = $this->factory->course->create_many( 3 );
+		$lesson_ids = $this->factory->lesson->create_many( 9 );
+		$lesson_id_to_course_id   = array();
+		foreach ( $lesson_ids as $lesson_id ) {
+			$course_index           = array_rand( $course_ids );
+			$course_id              = $course_ids[ $course_index ];
+			$lesson_id_to_course_id[ $lesson_id ] = $course_id;
+			update_post_meta( $lesson_id, '_lesson_course', $course_id );
+		}
+		$courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
+		foreach ( $lesson_id_to_course_id as $lesson_id => $expected_course_id ) {
+			$course_id = $courses_id[ $lesson_id ];
+			$get_course_id_result = Sensei()->lesson->get_course_id( $lesson_id );
+			$this->assertEquals(
+				$expected_course_id,
+				$course_id,
+				"Lesson with ID {$lesson_id} has course ID {$course_id}, expected {$expected_course_id}"
+			);
+			$this->assertEquals(
+				$get_course_id_result,
+				$course_id,
+				"get_course_ids returned ID {$course_id} for lesson {$lesson_id}, but get_course_id returned {$get_course_id_result}"
 			);
 		}
 	}
