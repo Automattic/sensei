@@ -185,10 +185,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				"get_course_ids returned ID {$course_id} for lesson {$lesson_id}, but get_course_id returned {$get_course_id_result}"
 			);
 		}
-		shuffle($lesson_ids);
+		shuffle( $lesson_ids );
 		$courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
 		foreach ( $lesson_id_to_course_id as $lesson_id => $expected_course_id ) {
-			$course_id            = $courses_id[ $lesson_id ];
+			$course_id = $courses_id[ $lesson_id ];
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
