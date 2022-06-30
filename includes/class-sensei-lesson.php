@@ -3834,7 +3834,7 @@ class Sensei_Lesson {
 	public function get_course_ids( $lesson_ids ) {
 		global $wpdb;
 
-		asort( $lesson_ids );
+		sort( $lesson_ids, SORT_NUMERIC );
 
 		$cache_key     = 'lesson/get-course-ids/' . implode( ',', $lesson_ids );
 		$cache_group   = 'sensei';
@@ -3842,10 +3842,8 @@ class Sensei_Lesson {
 		if ( false !== $cached_result ) {
 			return $cached_result;
 		}
-
 		$courses_by_lesson = array_fill_keys( $lesson_ids, false );
-
-		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
+		$placeholders      = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$query = $wpdb->prepare(
