@@ -3846,7 +3846,9 @@ class Sensei_Lesson {
 		$courses_by_lesson = array_fill_keys( $lesson_ids, false );
 
 		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
-		$query        = $wpdb->prepare(
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$query = $wpdb->prepare(
 			"
 				SELECT lesson.ID AS lesson_id, course.ID AS course_id FROM {$wpdb->posts} lesson
 					INNER JOIN {$wpdb->postmeta} AS lesson_meta ON lesson_meta.post_id=lesson.ID AND lesson_meta.meta_key='_lesson_course'
@@ -3856,7 +3858,9 @@ class Sensei_Lesson {
 		",
 			$lesson_ids
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results( $query );
 		if ( is_array( $results ) ) {
 			foreach ( $results as $result ) {
