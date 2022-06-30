@@ -490,7 +490,7 @@ class Sensei_Course_Theme {
 
 		// Checks if video is already added in the content to avoid it duplicated when `the_content`
 		// filter is called more than once.
-		if ( ! empty( $video ) && false === strpos( $content, $video ) ) {
+		if ( ! empty( $video ) && false === strpos( $content, Sensei_Frontend::VIDEO_EMBED_CLASS ) ) {
 			return $video . $content;
 		}
 
