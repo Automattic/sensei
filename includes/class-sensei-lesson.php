@@ -3834,6 +3834,15 @@ class Sensei_Lesson {
 	public function get_course_ids( $lesson_ids ) {
 		global $wpdb;
 
+		asort( $lesson_ids );
+
+		$cache_key     = 'lesson/get-course-ids/' . implode( ',', $lesson_ids );
+		$cache_group   = 'sensei';
+		$cached_result = wp_cache_get( $cache_key, $cache_group );
+		if ( false !== $cached_result ) {
+			return $cached_result;
+		}
+
 		$courses_by_lesson = array_fill_keys( $lesson_ids, false );
 
 		$placeholders = implode( ', ', array_fill( 0, count( $lesson_ids ), '%d' ) );
@@ -3854,9 +3863,8 @@ class Sensei_Lesson {
 				$courses_by_lesson[ $result->lesson_id ] = $result->course_id;
 			}
 		}
-
+		wp_cache_set( $cache_key, $courses_by_lesson, $cache_group );
 		return $courses_by_lesson;
-
 	}
 
 	/**
