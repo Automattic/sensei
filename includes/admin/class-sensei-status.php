@@ -210,7 +210,7 @@ class Sensei_Status {
 
 		$template_dir = Sensei()->plugin_path . 'templates/';
 		$files        = glob( $template_dir . '*.php' );
-		$files       += glob( $template_dir . '**/*.php' );
+		$files        = array_merge( $files, glob( $template_dir . '**/*.php' ) );
 
 		foreach ( $files as $template_path ) {
 			$template               = substr( $template_path, strlen( $template_dir ) );
