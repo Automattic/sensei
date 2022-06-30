@@ -108,7 +108,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$course_ids = $this->factory->course->create_many( 2 );
 		$lesson_ids = $this->factory->lesson->create_many( 8 );
 		$to_check   = array();
-		foreach ( $lesson_ids as $index => $lesson_id ) {
+		foreach ( $lesson_ids as $lesson_id ) {
 			$course_index           = array_rand( $course_ids );
 			$course_id              = $course_ids[ $course_index ];
 			$to_check[ $lesson_id ] = $course_id;
