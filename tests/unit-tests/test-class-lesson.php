@@ -56,10 +56,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 */
 	public function testIsPreRequisiteComplete() {
 
-		// does this function add_user_data exist?
 		$this->assertTrue(
 			method_exists( 'WooThemes_Sensei_Lesson', 'is_prerequisite_complete' ),
-			'The lesson class function `is_prerequisite_complete` does not exist '
+			'The lesson class method `is_prerequisite_complete` does not exist '
 		);
 
 		// falsy state
@@ -131,7 +130,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		}
 		$this->assertTrue(
 			method_exists( 'WooThemes_Sensei_Lesson', 'add_lesson_to_course_order' ),
-			'The lesson class function `add_lesson_to_course_order` does not exist '
+			'The lesson class method `add_lesson_to_course_order` does not exist '
 		);
 
 		$course_id = $this->factory->course->create();
