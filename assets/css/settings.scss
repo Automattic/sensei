@@ -856,3 +856,131 @@
 		}
 	}
 }
+
+/* Sensei Promo Groups*/
+
+@font-face {
+	font-family: 'Inter';
+	src: url( '../css/fonts/Inter.otf' );
+	font-weight: normal;
+	font-style: normal;
+}
+$promo_highlight: #43af99;
+
+#woothemes-sensei .sensei-promo-groups {
+	&__wrapper {
+		display: flex;
+		margin-top: 20px;
+	}
+
+	@media screen and (max-width: 1007px) {
+		&__wrapper {
+			flex-direction: column;
+		}
+	}
+
+	&__content-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		box-sizing: border-box;
+		padding: 48px 44px;
+		background-color: #26212e;
+	}
+
+	@media screen and (min-width: 640px) {
+		&__content-wrapper {
+			width: 622px;
+			height: 500px;
+		}
+	}
+
+	@media screen and (max-width: 640px) {
+		&__content-wrapper {
+			padding: 48px 24px;
+		}
+	}
+
+	@media screen and (max-width: 1007px) {
+		&__content-wrapper {
+			min-width: 402px;
+			width: 100%;
+		}
+	}
+
+	&__header {
+		font-family: 'Inter';
+		font-size: 40px;
+		color: white;
+		line-height: 130%;
+	}
+
+	&__body {
+		font-family: 'Inter';
+		font-size: 18px;
+		line-height: 155%;
+		color: white;
+		max-width: 420px;
+	}
+
+	@media screen and (min-width: 1007px) {
+		&__image {
+			height: 500px;
+		}
+	}
+	@media screen and (max-width: 1007px) {
+		&__image {
+			width: 100%;
+			min-width: 402px;
+		}
+	}
+
+	&__body-list {
+		display: flex;
+		align-items: center;
+		gap:6px
+	}
+
+	&__important-info {
+		font-family: 'Inter';
+		font-size: 24px;
+		line-height: 130%;
+		color: $promo_highlight;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 14px;
+	}
+
+	&__primary-action {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 200px;
+		height: 48px;
+		background: $promo_highlight;
+		border-color: $promo_highlight;
+		font-family: 'Inter';
+		border-radius: 0px;
+		color: #26212E;
+	}
+
+	&__secondary_action {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 200px;
+		height: 48px;
+		font-family: 'Inter';
+		font-size: 13px;
+		line-height: 150%;
+		color: white;
+		text-decoration: none;
+	}
+}
+#adminmenuwrap #adminmenu .sensei-promo-groups__badge {
+	background: $promo_highlight;
+	color: #2c3338;
+	font-weight: 400;
+}
