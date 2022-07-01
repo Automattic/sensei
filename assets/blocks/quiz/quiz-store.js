@@ -89,6 +89,13 @@ registerStructureStore( {
 	},
 
 	/**
+	 * Checks if quiz block exists.
+	 */
+	blockExists() {
+		return !! select( QUIZ_STORE ).getBlock();
+	},
+
+	/**
 	 * Parse question blocks and quiz settings from Quiz block.
 	 *
 	 * @throws {Object} Quiz structure.
