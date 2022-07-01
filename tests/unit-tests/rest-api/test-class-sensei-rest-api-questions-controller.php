@@ -70,6 +70,8 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 	 * Tests to make sure guests cannot access questions.
 	 */
 	public function testGuestsCannotAccessQuestions() {
+		$this->login_as( null );
+
 		$request  = new WP_REST_Request( 'GET', '/wp/v2/questions' );
 		$response = $this->server->dispatch( $request );
 
@@ -108,6 +110,59 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 		$this->assertEquals( 1, count( $data ), 'Should only have one question' );
 		$this->assertEquals( $teacher_b_question, $data[0]['id'], 'Should only see teacher B\'s question' );
 		$this->assertEquals( Sensei()->question->get_question_type( $teacher_b_question ), $data[0]['question-type-slug'], 'Question type slug should be filled' );
+	}
+
+	/**
+	 * Tests to make sure guests cannot access a single question.
+	 */
+	public function testGuestsCannotAccessSingleQuestion() {
+		$this->login_as_teacher();
+
+		$question_id = $this->factory->question->create();
+
+		$this->login_as( null );
+
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/questions/' . $question_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( $response->get_status(), 401 );
+	}
+
+
+	/**
+	 * Tests to make sure visitors cannot access a single question.
+	 */
+	public function testVisitorsCannotAccessSingleQuestion() {
+		$question_id = $this->factory->question->create();
+
+		$this->login_as_student();
+
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/questions/' . $question_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( $response->get_status(), 403 );
+	}
+
+	/**
+	 * Tests to make sure teachers can access their own single question.
+	 */
+	public function testTeacherCanAccessTheirOwnSingleQuestion() {
+		$this->login_as_teacher_b();
+		$question_id = $this->factory->question->create();
+
+		$this->login_as_teacher();
+
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/questions/' . $question_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( $response->get_status(), 403 );
+
+		$this->login_as_teacher_b();
+
+		$request  = new WP_REST_Request( 'GET', '/wp/v2/questions/' . $question_id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( $response->get_status(), 200 );
 	}
 
 	/**

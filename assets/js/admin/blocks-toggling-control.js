@@ -39,7 +39,6 @@ const metaboxReplacements = {
 
 // WordPress data.
 const blockEditorSelector = select( 'core/block-editor' );
-const coreEditorSelector = select( 'core/editor' );
 const editPostSelector = select( 'core/edit-post' );
 const editPostDispatcher = dispatch( 'core/edit-post' );
 
@@ -58,8 +57,6 @@ export const startBlocksTogglingControl = ( postType ) => {
 
 	const { createWarningNotice, removeNotice } = dispatch( 'core/notices' );
 
-	let initialWithSenseiBlocks; // Whether initial state has Sensei Blocks.
-	let previousWithSenseiBlocks; // Whether previous state has Sensei Blocks.
 	let lastBlocks;
 
 	editorLifecycle( {
@@ -70,31 +67,8 @@ export const startBlocksTogglingControl = ( postType ) => {
 			if ( newBlocks !== lastBlocks ) {
 				lastBlocks = newBlocks;
 				toggleLegacyMetaboxes();
-
-				previousWithSenseiBlocks = hasSenseiBlocks();
-
-				if ( undefined !== initialWithSenseiBlocks ) {
-					toggleLegacyOrBlocksNotice();
-				}
+				toggleLegacyOrBlocksNotice();
 			}
-		},
-		onSetDirty: () => {
-			// Set initial blocks state.
-			if (
-				coreEditorSelector.isEditedPostDirty() &&
-				undefined === initialWithSenseiBlocks
-			) {
-				// If it will fill the template (needs_template is true),
-				// we consider that it has Sensei blocks initially.
-				initialWithSenseiBlocks =
-					coreEditorSelector.getCurrentPostAttribute( 'meta' )
-						?._needs_template || previousWithSenseiBlocks;
-			}
-		},
-		onSave: () => {
-			// Update initial blocks state on save.
-			initialWithSenseiBlocks = hasSenseiBlocks();
-			toggleLegacyOrBlocksNotice();
 		},
 	} );
 
@@ -145,48 +119,28 @@ export const startBlocksTogglingControl = ( postType ) => {
 	 */
 	const toggleLegacyOrBlocksNotice = () => {
 		const withSenseiBlocks = hasSenseiBlocks();
+		const courseThemeEnabled = window?.sensei?.courseThemeEnabled;
 
-		const noticeOptions = {
-			isDismissible: true,
-			actions: [
-				{
-					label: __( 'Learn more', 'sensei-lms' ),
-					url:
-						'https://senseilms.com/documentation/course-page-blocks/',
-				},
-			],
-		};
-
-		if ( withSenseiBlocks ) {
+		if ( withSenseiBlocks || courseThemeEnabled ) {
 			removeNotice( 'sensei-using-template' );
-
-			if ( ! initialWithSenseiBlocks ) {
-				const message = __(
-					"You've just added your first Sensei block. This will change how your course page appears. Be sure to preview your page before saving changes.",
-					'sensei-lms'
-				);
-				createWarningNotice( message, {
-					id: 'sensei-using-blocks',
-					...noticeOptions,
-				} );
-			} else {
-				removeNotice( 'sensei-using-blocks' );
-			}
 		} else {
-			removeNotice( 'sensei-using-blocks' );
-
-			if ( initialWithSenseiBlocks ) {
-				const message = __(
-					'Are you sure you want to remove all Sensei blocks? This will change how your course page appears. Be sure to preview your page before saving changes.',
+			createWarningNotice(
+				__(
+					"It looks like this course page doesn't have any Sensei blocks. This means that content will be handled by custom templates.",
 					'sensei-lms'
-				);
-				createWarningNotice( message, {
+				),
+				{
 					id: 'sensei-using-template',
-					...noticeOptions,
-				} );
-			} else {
-				removeNotice( 'sensei-using-template' );
-			}
+					isDismissible: true,
+					actions: [
+						{
+							label: __( 'Learn more', 'sensei-lms' ),
+							url:
+								'https://senseilms.com/documentation/course-page-blocks/',
+						},
+					],
+				}
+			);
 		}
 	};
 

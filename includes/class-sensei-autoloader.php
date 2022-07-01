@@ -128,6 +128,7 @@ class Sensei_Autoloader {
 			'Sensei_Plugins_Installation'                  => 'admin/class-sensei-plugins-installation.php',
 			'Sensei_Status'                                => 'admin/class-sensei-status.php',
 			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
+			'Sensei_Editor_Wizard'                         => 'admin/class-sensei-editor-wizard.php',
 
 			/**
 			 * Admin Tools
@@ -208,6 +209,11 @@ class Sensei_Autoloader {
 			 * Blocks
 			 */
 			'Sensei\Blocks\Shared\Progress_Bar'            => 'blocks/shared/class-progress-bar.php',
+
+			/**
+			 * Block patterns.
+			 */
+			'Sensei_Block_Patterns'                        => 'block-patterns/class-sensei-block-patterns.php',
 
 			/**
 			 * Course Theme
