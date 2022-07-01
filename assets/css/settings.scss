@@ -856,3 +856,129 @@
 		}
 	}
 }
+
+/* Sensei Promo Groups*/
+
+@font-face {
+	font-family: 'Inter';
+	src: url( '../css/fonts/Inter.otf' );
+	font-weight: normal;
+	font-style: normal;
+}
+
+#woothemes-sensei .sensei-promo-groups {
+	&__wrapper {
+		display: flex;
+		margin-top: 20px;
+	}
+
+	@media screen and (max-width: 1007px) {
+		&__wrapper {
+			flex-direction: column;
+		}
+	}
+
+	&__content-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		box-sizing: border-box;
+		padding: 48px 44px 48px 44px;
+		background-color: #26212e;
+	}
+
+	@media screen and (min-width: 640px) {
+		&__content-wrapper {
+			width: 622px;
+			height: 500px;
+		}
+	}
+
+	@media screen and (max-width: 640px) {
+		&__content-wrapper {
+			padding: 48px 24px 48px 24px;
+		}
+	}
+
+	@media screen and (max-width: 640px) {
+		&__content-wrapper {
+			min-width: 402px;
+		}
+	}
+
+	&__header {
+		font-family: 'Inter';
+		font-size: 40px;
+		color: #ffffff;
+		line-height: 130%;
+	}
+
+	&__body {
+		font-family: 'Inter';
+		font-size: 18px;
+		line-height: 155%;
+		color: #fff;
+		max-width: 420px;
+	}
+
+	@media screen and (min-width: 1007px) {
+		&__image {
+			height: 500px;
+		}
+	}
+	@media screen and (max-width: 1007px) and (min-width: 640px) {
+		&__image {
+			width: 622px;
+		}
+	}
+	@media screen and (max-width: 640px) {
+		&__image {
+			width: 402px;
+		}
+	}
+
+	&__body-list {
+		display: flex;
+		align-items: center;
+		gap:6px
+	}
+
+	&__important-info {
+		font-family: 'Inter';
+		font-size: 24px;
+		line-height: 130%;
+		color: #43af99;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 14px;
+	}
+
+	&__primary-action {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 200px;
+		height: 48px;
+		background: #43AF99;
+		border-color: #43AF99;
+		font-family: 'Inter';
+		border-radius: 0px;
+		color: #26212E;
+	}
+
+	&__secondary_action {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 200px;
+		height: 48px;
+		font-family: 'Inter';
+		font-size: 13px;
+		line-height: 150%;
+		color: white;
+		text-decoration: none;
+	}
+
+}
