@@ -225,7 +225,7 @@ class Sensei_Course_Enrolment_Manager {
 		/**
 		 * Filter providers that can handle frontend enrolment.
 		 *
-		 * This filter is used to prevent frontend enrolment when a non-manual provider handles enrolment.
+		 * It is used to filter providers that can affect enrolment on the frontend.
 		 *
 		 * @since $$next-version$$
 		 *
