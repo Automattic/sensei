@@ -222,6 +222,17 @@ class Sensei_Course_Enrolment_Manager {
 
 		unset( $all_providers[ Sensei_Course_Manual_Enrolment_Provider::instance()->get_id() ] );
 
+		/**
+		 * Filter providers that can handle frontend enrolment.
+		 *
+		 * This filter is used to prevent frontend enrolment when a non-manual provider handles enrolment.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param Sensei_Course_Enrolment_Provider_Interface[] $providers List of enrolment providers instances.
+		 */
+		$all_providers = apply_filters( 'sensei_course_enrolment_providers_prevent_manual_enrol', $all_providers );
+
 		foreach ( $all_providers as $provider ) {
 			if ( $provider->handles_enrolment( $course_id ) ) {
 				// One of the other providers handles enrolment. Prevent enrolment on the frontend form.
