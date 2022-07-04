@@ -3865,8 +3865,8 @@ class Sensei_Lesson {
 			foreach ( $results as $result ) {
 				$courses_by_lesson[ $result->lesson_id ] = $result->course_id;
 			}
+			wp_cache_set( $cache_key, $courses_by_lesson, $cache_group );
 		}
-		wp_cache_set( $cache_key, $courses_by_lesson, $cache_group );
 		return $courses_by_lesson;
 	}
 
