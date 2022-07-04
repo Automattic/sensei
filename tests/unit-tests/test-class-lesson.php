@@ -142,8 +142,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$course_ids             = $this->factory->course->create_many( 3 );
 		$lesson_ids             = $this->factory->lesson->create_many( 9 );
 		$lesson_id_to_course_id = array();
-		foreach ( $lesson_ids as $lesson_id ) {
-			$course_index                         = array_rand( $course_ids );
+		foreach ( $lesson_ids as $lesson_id_index => $lesson_id ) {
+			$course_index                         = $lesson_id_index % count( $course_ids );
 			$course_id                            = $course_ids[ $course_index ];
 			$lesson_id_to_course_id[ $lesson_id ] = $course_id;
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
@@ -178,8 +178,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$course_ids             = $this->factory->course->create_many( 3 );
 		$lesson_ids             = $this->factory->lesson->create_many( 9 );
 		$lesson_id_to_course_id = array();
-		foreach ( $lesson_ids as $lesson_id ) {
-			$course_index                         = array_rand( $course_ids );
+		foreach ( $lesson_ids as $lesson_id_index => $lesson_id ) {
+			$course_index                         = $lesson_id_index % count( $course_ids );
 			$course_id                            = $course_ids[ $course_index ];
 			$lesson_id_to_course_id[ $lesson_id ] = $course_id;
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
