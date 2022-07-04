@@ -45,7 +45,28 @@ class Sensei_Db_Query_Learners {
 			$user_query_args['number'] = -1;
 
 			$user_query        = new WP_User_Query( $user_query_args );
-			$matching_user_ids = array_map( 'absint', $user_query->get_results() );
+			$matching_user_ids = $user_query->get_results();
+		}
+
+		if ( ! empty( $this->filter_by_course_id ) ) {
+			$eq = ( 'inc' === $this->filter_type ) ? '=' : '!=';
+
+			$sql = "
+				SELECT
+					`cf`.`user_id`
+				FROM `{$wpdb->comments}` AS `cf`
+					WHERE `cf`.`comment_type` = 'sensei_course_status'
+					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
+					AND `cf`.comment_approved IS NOT NULL";
+
+			$results  = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$user_ids = wp_list_pluck( $results, 'user_id' );
+
+			if ( ! empty( $matching_user_ids ) ) {
+				$matching_user_ids = array_intersect( $user_ids, $matching_user_ids );
+			} else {
+				$matching_user_ids = $user_ids;
+			}
 		}
 
 		/*
@@ -61,22 +82,12 @@ class Sensei_Db_Query_Learners {
 				0 AS 'course_count'
 			FROM `{$wpdb->users}` AS `u`";
 
-		if ( ! empty( $this->filter_by_course_id ) ) {
-			$eq = ( 'inc' === $this->filter_type ) ? '=' : '!=';
-
-			$sql .= "
-				INNER JOIN `{$wpdb->comments}` AS `cf`
-					ON `u`.`ID` = `cf`.`user_id`
-					AND `cf`.`comment_type` = 'sensei_course_status'
-					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
-					AND `cf`.comment_approved IS NOT NULL";
-		}
-
 		$sql .= ' WHERE 1=1';
 
 		if ( null !== $matching_user_ids ) {
-			$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
-			$sql       .= " AND u.ID IN ({$user_id_in})";
+			$matching_user_ids = array_map( 'absint', $matching_user_ids );
+			$user_id_in        = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
+			$sql              .= " AND u.ID IN ({$user_id_in})";
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
@@ -108,6 +119,10 @@ class Sensei_Db_Query_Learners {
 	 */
 	private function get_last_activity_date_by_users( $user_ids ) {
 		global $wpdb;
+
+		if ( empty( $user_ids ) ) {
+			return [];
+		}
 
 		$in_placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%s' ) );
 
