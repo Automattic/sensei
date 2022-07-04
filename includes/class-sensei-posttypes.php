@@ -1099,6 +1099,15 @@ class Sensei_PostTypes {
 		if ( ! apply_filters( 'sensei_student_groups_hide', false ) ) {
 			$instance = new Sensei_Groups_Landing_Page();
 			$instance->add_groups_landing_page_menu_item();
+		} else {
+			// If sensei PRO active add groups menu item.
+			add_submenu_page(
+				'edit.php?post_type=course',
+				__( 'Groups', 'sensei-lms' ),
+				__( 'Groups', 'sensei-lms' ),
+				'edit_courses',
+				'edit.php?post_type=group'
+			);
 		}
 
 		Sensei()->grading->grading_admin_menu();
