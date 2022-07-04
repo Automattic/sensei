@@ -3834,8 +3834,8 @@ class Sensei_Lesson {
 	public function get_course_ids( $lesson_ids ) {
 		global $wpdb;
 
-		$lesson_ids = array_unique( $lesson_ids );
 		sort( $lesson_ids, SORT_NUMERIC );
+		$lesson_ids = array_unique( $lesson_ids, SORT_NUMERIC );
 
 		$cache_key     = 'lesson/get-course-ids/' . md5( implode( ',', $lesson_ids ) );
 		$cache_group   = 'sensei';
