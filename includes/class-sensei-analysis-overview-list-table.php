@@ -1362,7 +1362,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( " . implode( ',', $lesson_ids ) . ' )', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( " . $lesson_ids . ' )', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				'%Y-%m-%d %H:%i:%s'
 			)
 		);
