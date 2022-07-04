@@ -146,7 +146,7 @@ class Sensei_Reports_Overview_Service_Courses {
 		$query = "
 		SELECT AVG( aggregated.days_to_completion )
 		FROM (
-			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%%Y-%%m-%%d %%H:%%i:%%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
+			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
 			FROM {$wpdb->comments}
 			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
 				AND {$wpdb->commentmeta}.meta_key = 'start'
