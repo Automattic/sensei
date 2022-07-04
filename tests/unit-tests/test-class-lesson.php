@@ -100,6 +100,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	}
 
+	/**
+	 * Verify if the method get_course_id returns the expected course ID
+	 *
+	 * @covers Sensei_Lesson::get_course_id
+	 */
 	public function testGetCourseId() {
 		$this->assertTrue(
 			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_id' ),
@@ -124,6 +129,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Verify if the method get_course_ids returns the same result as get_course_id
+	 *
+	 * @covers Sensei_Lesson::get_course_ids
+	 */
 	public function testGetCourseIds() {
 		$this->assertTrue(
 			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_ids' ),
@@ -155,7 +165,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		}
 	}
 
-
+	/**
+	 * Verify if the method getCourseIds is being cached properly
+	 *
+	 * @covers Sensei_Lesson::get_course_ids
+	 */
 	public function testGetCourseIdsCache() {
 		$this->assertTrue(
 			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_ids' ),
