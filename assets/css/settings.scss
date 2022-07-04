@@ -913,6 +913,7 @@ $promo_highlight: #43af99;
 		font-size: 40px;
 		color: white;
 		line-height: 130%;
+		padding-top: 0px;
 	}
 
 	&__body {
@@ -921,6 +922,15 @@ $promo_highlight: #43af99;
 		line-height: 155%;
 		color: white;
 		max-width: 420px;
+		margin: 0px;
+	}
+
+	&__list {
+		font-family: 'Inter';
+		font-size: 18px;
+		line-height: 155%;
+		color: white;
+		margin: 0px;
 	}
 
 	@media screen and (min-width: 1007px) {
@@ -935,10 +945,11 @@ $promo_highlight: #43af99;
 		}
 	}
 
-	&__body-list {
+	&__list_item {
 		display: flex;
 		align-items: center;
-		gap:6px
+		gap:6px;
+		margin: 0px;
 	}
 
 	&__important-info {
@@ -946,6 +957,7 @@ $promo_highlight: #43af99;
 		font-size: 24px;
 		line-height: 130%;
 		color: $promo_highlight;
+		margin: 0px;
 	}
 
 	&__actions {

@@ -64,33 +64,33 @@ class Sensei_Groups_Landing_Page {
 		</div>
 		<div class='sensei-promo-groups__wrapper'>
 		<div class="sensei-promo-groups__content-wrapper">
-			<span class="sensei-promo-groups__header">
+			<h1 class="sensei-promo-groups__header">
 					<?php echo esc_html( __( 'Get Sensei Pro', 'sensei-lms' ) ); ?>
-			</span>
-			<span class="sensei-promo-groups__body">
+			</h1>
+			<p class="sensei-promo-groups__body">
 				<?php echo esc_html( __( 'Unlock Groups by upgrading to Sensei Pro and get features like:', 'sensei-lms' ) ); ?>
-			</span>
-			<span class="sensei-promo-groups__body">
-				<div class="sensei-promo-groups__body-list">
+			</p>
+			<ul class="sensei-promo-groups__list">
+				<li class="sensei-promo-groups__list_item">
 					<span class="dashicons dashicons-saved"></span>
 					<span><?php echo esc_html( __( 'Assign students per group', 'sensei-lms' ) ); ?></span>
-				</div>
-				<div class="sensei-promo-groups__body-list">
+				</li>
+				<li class="sensei-promo-groups__list_item">
 					<span class="dashicons dashicons-saved"></span>
 					<span><?php echo esc_html( __( 'Automatically enroll groups to defined courses', 'sensei-lms' ) ); ?></span>
-				</div>
-				<div class="sensei-promo-groups__body-list">
+				</li>
+				<li class="sensei-promo-groups__list_item">
 					<span class="dashicons dashicons-saved"></span>
 					<span><?php echo esc_html( __( 'Set Access Period for courses in a group', 'sensei-lms' ) ); ?></span>
-				</div>
-				<div class="sensei-promo-groups__body-list">
+				</li>
+				<li class="sensei-promo-groups__list_item">
 					<span class="dashicons dashicons-saved"></span>
 					<span><?php echo esc_html( __( 'All the Sensei Pro features', 'sensei-lms' ) ); ?></span>
-				</div>
-			</span>
-			<span class="sensei-promo-groups__important-info">
+				</li>
+			</ul>
+			<h3 class="sensei-promo-groups__important-info">
 					<?php echo esc_html( __( '$149.00 USD / year (1 site)', 'sensei-lms' ) ); ?>
-			</span>
+			</h3>
 			<div class="sensei-promo-groups__actions">
 				<a
 				class="button button-primary sensei-promo-groups__primary-action"
