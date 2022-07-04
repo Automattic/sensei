@@ -287,9 +287,8 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
-				'%Y-%m-%d %H:%i:%s',
-				$lesson_ids
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $lesson_ids )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				'%Y-%m-%d %H:%i:%s'
 			)
 		);
 		$lesson_completion_info->lesson_count        = $lesson_count;

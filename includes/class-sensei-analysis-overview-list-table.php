@@ -1178,13 +1178,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @param WP_User_Query $query The user query.
 	 */
 	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
-		global $wpdb;
-
-		$query->query_orderby = $wpdb->prepare(
-			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
-			$query->query_vars['orderby'],
-			$query->query_vars['order']
-		);
+		$query->query_orderby = 'ORDER BY ' . $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
@@ -1197,13 +1191,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @param object $query Query.
 	 */
 	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
-		global $wpdb;
-
-		return $wpdb->prepare(
-			'%1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
-			$query->query_vars['orderby'],
-			$query->query_vars['order']
-		);
+		return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
@@ -1374,9 +1362,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
-				'%Y-%m-%d %H:%i:%s',
-				$lesson_ids
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $lesson_ids )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				'%Y-%m-%d %H:%i:%s'
 			)
 		);
 		$lesson_completion_info->lesson_count        = $lesson_count;
