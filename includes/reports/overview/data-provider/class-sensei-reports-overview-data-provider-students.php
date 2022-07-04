@@ -117,11 +117,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	public function add_orderby_custom_field_to_user_query( WP_User_Query $query ) {
 		global $wpdb;
 
-		$query->query_orderby = $wpdb->prepare(
-			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
-			$query->query_vars['orderby'],
-			$query->query_vars['order']
-		);
+		$query->query_orderby = 'ORDER BY ' . $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
