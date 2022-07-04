@@ -24,6 +24,7 @@ import '../data/api-fetch-preloaded-once';
  * @param {Function} opts.fetchError         Handler for displaying fetch errors.
  * @param {Function} opts.clearError         Handler for clearing errors.
  * @param {Function} opts.updateBlock        Update block with given structure.
+ * @param {Function} opts.blockExists        Check if block exists.
  * @param {Function} opts.readBlock          Extract structure from block.
  * @param {Function} opts.setServerStructure Set the server structure which is used to track differences.
  */
@@ -34,6 +35,7 @@ export function registerStructureStore( {
 	fetchError,
 	clearError,
 	updateBlock,
+	blockExists,
 	readBlock,
 	setServerStructure,
 	...store
@@ -237,6 +239,12 @@ export function registerStructureStore( {
 			if ( ! editor || ! editPostSelector ) {
 				return;
 			}
+
+			// Check if the block exists.
+			if ( ! blockExists() ) {
+				return;
+			}
+
 			const isSavingPost =
 				editor.isSavingPost() && ! editor.isAutosavingPost();
 			const isSavingStructure = select(

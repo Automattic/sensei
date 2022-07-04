@@ -21,6 +21,7 @@ describe( 'Structure store', () => {
 			getEndpoint: jest.fn(),
 			updateBlock: jest.fn(),
 			readBlock: jest.fn(),
+			blockExists: jest.fn().mockReturnValue( true ),
 		};
 		( { unsubscribe } = registerStructureStore( store ) );
 		const storesForRegister = {

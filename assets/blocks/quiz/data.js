@@ -130,6 +130,10 @@ export function parseQuestionBlocks( blocks ) {
 		};
 	} );
 
+	if ( 0 === questions.length ) {
+		return questions;
+	}
+
 	const lastQuestion = questions.pop();
 
 	if ( ! isQuestionEmpty( lastQuestion ) ) {
