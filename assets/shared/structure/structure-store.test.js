@@ -99,4 +99,12 @@ describe( 'Structure store', () => {
 		expect( savePost ).toHaveBeenCalledTimes( 2 );
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'Skips when block does not exist', () => {
+		const startPostSave = jest.spyOn( dispatch( STORE ), 'startPostSave' );
+		store.blockExists.mockReturnValue( false );
+		dispatch( 'core/editor' ).savePost();
+
+		expect( startPostSave ).not.toHaveBeenCalled();
+	} );
 } );
