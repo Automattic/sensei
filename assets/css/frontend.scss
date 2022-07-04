@@ -61,7 +61,7 @@ a.sensei-certificate-link {
 }
 
 /* Courses */
-.course,
+.course:not(body),
 .course-container,
 .course-container .course {
   @include clearfix();
