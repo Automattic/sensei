@@ -118,8 +118,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
 		foreach ( $lesson_ids as $lesson_index => $lesson_id ) {
-			$expected_course_id = $lesson_index % count( $course_ids );
-			$course_id          = Sensei()->lesson->get_course_id( $lesson_id );
+			$expected_course_index = $lesson_index % count( $course_ids );
+			$expected_course_id    = $course_ids[ $expected_course_index ];
+			$course_id             = Sensei()->lesson->get_course_id( $lesson_id );
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
@@ -146,11 +147,12 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			$course_id    = $course_ids[ $course_index ];
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
-		$courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
+		$result_courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
 		foreach ( $lesson_ids as  $lesson_id_index => $lesson_id ) {
-			$expected_course_id   = $lesson_id_index % count( $course_ids );
-			$course_id            = $courses_id[ $lesson_id ];
-			$get_course_id_result = Sensei()->lesson->get_course_id( $lesson_id );
+			$expected_course_index = $lesson_id_index % count( $course_ids );
+			$expected_course_id    = $course_ids[ $expected_course_index ];
+			$course_id             = $result_courses_id[ $lesson_id ];
+			$get_course_id_result  = Sensei()->lesson->get_course_id( $lesson_id );
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
@@ -162,11 +164,14 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				"get_course_ids returned ID {$course_id} for lesson {$lesson_id}, but get_course_id returned {$get_course_id_result}"
 			);
 		}
-		shuffle( $lesson_ids );
-		$courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
+		$shuffled_lesson_ids = $lesson_ids;
+		shuffle( $shuffled_lesson_ids );
+		$cached_courses_id = Sensei()->lesson->get_course_ids( $shuffled_lesson_ids );
+		$this->assertEquals( $result_courses_id, $cached_courses_id );
 		foreach ( $lesson_ids as  $lesson_id_index => $lesson_id ) {
-			$expected_course_id = $lesson_id_index % count( $course_ids );
-			$course_id          = $courses_id[ $lesson_id ];
+			$expected_course_index = $lesson_id_index % count( $course_ids );
+			$expected_course_id    = $course_ids[ $expected_course_index ];
+			$course_id             = $cached_courses_id[ $lesson_id ];
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
