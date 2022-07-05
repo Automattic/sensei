@@ -75,6 +75,8 @@ class Sensei_Frontend {
 	 */
 	public $allowed_html;
 
+	const VIDEO_EMBED_CLASS = 'sensei-video-embed';
+
 	/**
 	 * Constructor.
 	 *
@@ -878,7 +880,7 @@ class Sensei_Frontend {
 
 			if ( '' != $lesson_video_embed ) {
 				?>
-				&lt;div class="video">&lt;?php echo wp_kses( $lesson_video_embed, $this->allowed_html ); ?>&lt;/div>
+				&lt;div class="video &lt;?php echo esc_attr( self::VIDEO_EMBED_CLASS ); ?>">&lt;?php echo wp_kses( $lesson_video_embed, $this->allowed_html ); ?>&lt;/div>
 				&lt;?php
 			}
 		}
