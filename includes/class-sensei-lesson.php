@@ -3862,7 +3862,8 @@ class Sensei_Lesson {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results( $query );
 		if ( is_array( $results ) ) {
-			$courses_by_lesson = wp_list_pluck($results, 'course_id', 'lesson_id');
+			$results_courses_by_lesson = wp_list_pluck( $results, 'course_id', 'lesson_id' );
+			$courses_by_lesson = array_merge( $courses_by_lesson, $results_courses_by_lesson );
 			wp_cache_set( $cache_key, $courses_by_lesson, $cache_group, 60 );
 		}
 		return $courses_by_lesson;
