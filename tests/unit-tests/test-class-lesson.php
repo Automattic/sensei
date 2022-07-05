@@ -110,17 +110,16 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_id' ),
 			'The lesson class method `get_course_id` does not exist '
 		);
-		$course_ids             = $this->factory->course->create_many( 3 );
-		$lesson_ids             = $this->factory->lesson->create_many( 9 );
-		$lesson_id_to_course_id = array();
-		foreach ( $lesson_ids as $lesson_id ) {
-			$course_index                         = array_rand( $course_ids );
-			$course_id                            = $course_ids[ $course_index ];
-			$lesson_id_to_course_id[ $lesson_id ] = $course_id;
+		$course_ids = $this->factory->course->create_many( 3 );
+		$lesson_ids = $this->factory->lesson->create_many( 9 );
+		foreach ( $lesson_ids as $lesson_index => $lesson_id ) {
+			$course_index = $lesson_index % count( $course_ids );
+			$course_id    = $course_ids[ $course_index ];
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
-		foreach ( $lesson_id_to_course_id as $lesson_id => $expected_course_id ) {
-			$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+		foreach ( $lesson_ids as $lesson_index => $lesson_id ) {
+			$expected_course_id = $lesson_index % count( $course_ids );
+			$course_id          = Sensei()->lesson->get_course_id( $lesson_id );
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
@@ -140,11 +139,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			method_exists( 'WooThemes_Sensei_Lesson', 'get_course_ids' ),
 			'The lesson class method `get_course_ids` does not exist '
 		);
-		$course_ids             = $this->factory->course->create_many( 3 );
-		$lesson_ids             = $this->factory->lesson->create_many( 9 );
+		$course_ids = $this->factory->course->create_many( 3 );
+		$lesson_ids = $this->factory->lesson->create_many( 9 );
 		foreach ( $lesson_ids as $lesson_id_index => $lesson_id ) {
-			$course_index                         = $lesson_id_index % count( $course_ids );
-			$course_id                            = $course_ids[ $course_index ];
+			$course_index = $lesson_id_index % count( $course_ids );
+			$course_id    = $course_ids[ $course_index ];
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
 		$courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
@@ -165,9 +164,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		}
 		shuffle( $lesson_ids );
 		$courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
-		foreach ( $lesson_ids as  $lesson_id_index => $lesson_id )
-			$expected_course_id   = $lesson_id_index % count( $course_ids );
-			$course_id = $courses_id[ $lesson_id ];
+		foreach ( $lesson_ids as  $lesson_id_index => $lesson_id ) {
+			$expected_course_id = $lesson_id_index % count( $course_ids );
+			$course_id          = $courses_id[ $lesson_id ];
 			$this->assertEquals(
 				$expected_course_id,
 				$course_id,
