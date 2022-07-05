@@ -3838,7 +3838,7 @@ class Sensei_Lesson {
 		$lesson_ids = array_unique( $lesson_ids, SORT_NUMERIC );
 
 		$cache_key     = 'lesson/get-course-ids/' . md5( implode( ',', $lesson_ids ) );
-		$cache_group   = 'sensei';
+		$cache_group   = 'sensei/temporary';
 		$cached_result = wp_cache_get( $cache_key, $cache_group );
 		if ( false !== $cached_result ) {
 			return $cached_result;
