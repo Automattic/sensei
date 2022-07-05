@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
@@ -40,6 +41,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		parent::setup();
 		$this->factory  = new Sensei_Factory();
 		$this->instance = Sensei_Course_Theme::instance();
+		$this->prepareEnrolmentManager();
 	}
 
 	/**
