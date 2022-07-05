@@ -3834,6 +3834,10 @@ class Sensei_Lesson {
 	public function get_course_ids( $lesson_ids ) {
 		global $wpdb;
 
+		if ( empty( $lesson_ids ) ) {
+			return [];
+		}
+
 		sort( $lesson_ids, SORT_NUMERIC );
 		$lesson_ids = array_unique( $lesson_ids, SORT_NUMERIC );
 
