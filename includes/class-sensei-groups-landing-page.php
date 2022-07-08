@@ -100,7 +100,7 @@ class Sensei_Groups_Landing_Page {
 				<?php echo esc_html( __( 'Get Sensei Pro', 'sensei-lms' ) ); ?>
 			</a>
 			<a	class="sensei-promo-groups__secondary_action"
-				href="<?php echo esc_url( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=groups' ); ?>"
+				href="<?php echo esc_url( 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=groups#features' ); ?>"
 				target="_blank"
 			>
 				<?php echo esc_html( __( 'See all Sensei Pro Features', 'sensei-lms' ) ); ?>
