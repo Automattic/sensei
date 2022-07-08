@@ -42,6 +42,10 @@ export function useQuizStructure( { clientId } ) {
 	useEffect( () => {
 		setBlock( clientId );
 		loadStructure();
+
+		return () => {
+			setBlock( null );
+		};
 	}, [ setBlock, loadStructure, clientId ] );
 }
 
@@ -92,7 +96,10 @@ registerStructureStore( {
 	 * Checks if quiz block exists.
 	 */
 	blockExists() {
-		return !! select( QUIZ_STORE ).getBlock();
+		const clientId = select( QUIZ_STORE ).getBlock();
+		const block = select( 'core/block-editor' ).getBlock( clientId );
+
+		return !! block;
 	},
 
 	/**
