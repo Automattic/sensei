@@ -94,13 +94,13 @@ class Sensei_Groups_Landing_Page {
 			<div class="sensei-promo-groups__actions">
 				<a
 				class="button button-primary sensei-promo-groups__primary-action"
-				href="<?php echo esc_url( 'https://senseilms.com/pricing/' ); ?>"
+				href="<?php echo esc_url( 'https://senseilms.com/sensei-pro/' ); ?>"
 				target="_blank"
 				>
 				<?php echo esc_html( __( 'Get Sensei Pro', 'sensei-lms' ) ); ?>
 			</a>
 			<a	class="sensei-promo-groups__secondary_action"
-				href="<?php echo esc_url( 'https://senseilms.com/pricing/' ); ?>"
+				href="<?php echo esc_url( 'https://senseilms.com/sensei-pro/' ); ?>"
 				target="_blank"
 			>
 				<?php echo esc_html( __( 'See all Sensei Pro Features', 'sensei-lms' ) ); ?>
