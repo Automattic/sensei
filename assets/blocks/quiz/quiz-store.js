@@ -42,6 +42,10 @@ export function useQuizStructure( { clientId } ) {
 	useEffect( () => {
 		setBlock( clientId );
 		loadStructure();
+
+		return () => {
+			setBlock( null );
+		};
 	}, [ setBlock, loadStructure, clientId ] );
 }
 
