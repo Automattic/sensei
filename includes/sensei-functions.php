@@ -112,6 +112,69 @@ function sensei_all_access( $user_id = null ) {
 	return apply_filters( 'sensei_user_all_access', $access, $user_id );
 }
 
+/**
+ * Function to determine if the current user can
+ * access the current lesson content being viewed.
+ *
+ * This function checks in the following order
+ * - if the current user has all access based on their permissions
+ * - If the access permission setting is enabled for this site, if not the user has access
+ * - if the lesson has a pre-requisite and if the user has completed that
+ * - If it is a preview the user has access as well
+ *
+ * @since 1.9.0
+ *
+ * @param int $lesson_id Lesson post ID. Default: Use global post in loop.
+ * @param int $user_id   User ID. Default: Use currently logged in user ID.
+ * @return bool
+ */
+function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
+	if ( empty( $lesson_id ) ) {
+		$lesson_id = get_the_ID();
+	}
+
+	$context = 'lesson';
+	if ( 'quiz' === get_post_type( get_the_ID() ) ) {
+		$context   = 'quiz';
+		$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+	}
+
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
+
+	$user_can_view_course_content = false;
+	$course_id                    = Sensei()->lesson->get_course_id( $lesson_id );
+	if ( $course_id ) {
+		$user_can_view_course_content = Sensei()->course->can_access_course_content( $course_id, $user_id, $context );
+	}
+
+	// Check for prerequisite lesson completions.
+	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+	$is_preview_lesson      = false;
+
+	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+		$is_preview_lesson      = true;
+		$pre_requisite_complete = true;
+	};
+
+	$can_user_view_lesson = ! sensei_is_login_required()
+							|| sensei_all_access( $user_id )
+							|| ( $user_can_view_course_content && $pre_requisite_complete )
+							|| $is_preview_lesson;
+
+	/**
+	 * Filter if the user can view lesson and quiz content.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param bool $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param int  $lesson_id            Lesson post ID.
+	 * @param int  $user_id              User ID.
+	 */
+	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+}
+
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
 
 	/**
