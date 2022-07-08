@@ -275,6 +275,7 @@ class Sensei_Main {
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
+		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
 		$this->initialize_cli();
 	}
@@ -338,6 +339,15 @@ class Sensei_Main {
 	 */
 	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'sensei-lms' ), '1.8' );
+	}
+
+	/**
+	 * Initialize the cache groups used in Sensei
+	 *
+	 * @since $$next-version$$
+	 */
+	protected function initialize_cache_groups() {
+		wp_cache_add_non_persistent_groups( 'sensei/temporary' );
 	}
 
 	/**
