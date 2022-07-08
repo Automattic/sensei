@@ -53,7 +53,7 @@ const FeaturedProductSenseiPro = () => {
 				__( '%s USD / year (1 site)', 'sensei-lms' ),
 				senseiProExtension.price
 			) }
-			buttonLink="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
+			buttonLink="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
 			buttonTitle={ __( 'Learn More', 'sensei-lms' ) }
 		/>
 	);

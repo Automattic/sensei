@@ -6,7 +6,7 @@ import { addFilter } from '@wordpress/hooks';
 import { ExternalLink } from '@wordpress/components';
 
 const PROMO_LINK =
-	'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_ordering_question_type';
+	'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_ordering_question_type';
 
 function addOrderingPromoOption( options ) {
 	options.push( {
