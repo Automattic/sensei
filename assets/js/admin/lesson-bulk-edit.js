@@ -9,16 +9,9 @@ jQuery( function ( $ ) {
 
 		// get the selected post ids that are being edited
 		var postIds = new Array();
-		$bulk_row
-			.find( '#bulk-titles' )
-			.children()
-			.each( function () {
-				postIds.push(
-					$( this )
-						.attr( 'id' )
-						.replace( /^(ttle)/i, '' )
-				);
-			} );
+		$bulk_row.find( '#bulk-titles-list button' ).each( function () {
+			postIds.push( $( this ).attr( 'id' ).replace( /^(_)/i, '' ) );
+		} );
 
 		// get the data:
 
