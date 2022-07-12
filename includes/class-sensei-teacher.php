@@ -278,6 +278,28 @@ class Sensei_Teacher {
 
 		<?php
 
+		// Get `sensei_teacher_metabox_coteachers_feature` contents.
+		ob_start();
+		do_action( 'sensei_teacher_metabox_coteachers_feature', $post );
+		$teacher_metabox_end_content = ob_get_clean();
+
+		// Render Co-Teachers upgrade or contents.
+		?>
+		<div class="sensei-course-coteachers-wrapper">
+			<?php
+			if ( empty( $teacher_metabox_end_content ) ) {
+				echo sprintf(
+				// translators: The href tag contains the url to the Sensei Pro pricing page.
+					__( 'Multiple teachers? <a href="%s">Upgrade to Pro!</a>', 'sensei-lms' ),
+					'https://senseilms.com/pricing/'
+				);
+			} else {
+				echo $teacher_metabox_end_content;
+			}
+			?>
+		</div>
+		<?php
+
 	}
 
 	/**
