@@ -1440,7 +1440,9 @@ class Sensei_Core_Modules {
 	 * @return array          Modified columns.
 	 */
 	public function add_lesson_columns( $columns = array() ) {
-		$columns['module'] = __( 'Module', 'sensei-lms' );
+		// The lesson module column id should not be equal to "module".
+		// @see https://core.trac.wordpress.org/ticket/56185.
+		$columns['modules'] = __( 'Module', 'sensei-lms' );
 
 		return $columns;
 	}
@@ -1455,7 +1457,7 @@ class Sensei_Core_Modules {
 	 * @param  integer $lesson_id The lesson ID.
 	 */
 	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
-		if ( 'module' === $column ) {
+		if ( 'modules' === $column ) {
 			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
 			$module  = $modules &amp;&amp; is_array( $modules ) ? $modules[0] : null;
 
