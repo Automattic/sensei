@@ -1274,10 +1274,11 @@ class Sensei_Question {
 
 				$count++;
 				$question_option = array();
+				$is_quiz_graded  = isset( $question_data['user_quiz_grade'] );
 
-				if ( ( $question_data['lesson_completed'] && $question_data['user_quiz_grade'] != '' )
-					|| ( $question_data['lesson_completed'] && ! $question_data['reset_quiz_allowed'] && $question_data['user_quiz_grade'] != '' )
-					|| ( 'auto' == $question_data['quiz_grade_type'] && ! $question_data['reset_quiz_allowed'] && ! empty( $question_data['user_quiz_grade'] ) ) ) {
+				if ( ( $question_data['lesson_completed'] && $is_quiz_graded )
+					|| ( $question_data['lesson_completed'] && ! $question_data['reset_quiz_allowed'] && $is_quiz_graded )
+					|| ( 'auto' === $question_data['quiz_grade_type'] && ! $question_data['reset_quiz_allowed'] && $is_quiz_graded ) ) {
 
 					$user_correct = false;
 
