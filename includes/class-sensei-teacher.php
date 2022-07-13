@@ -214,7 +214,7 @@ class Sensei_Teacher {
 	/**
 	 * Sensei_Teacher::teacher_meta_box
 	 *
-	 * Add the teacher metabox to the course post type edit screen
+	 * Add the teacher meta_box to the course post type edit screen
 	 *
 	 * @since 1.8.0
 	 * @access public
@@ -278,23 +278,23 @@ class Sensei_Teacher {
 
 		<?php
 
-		// Get `sensei_teacher_metabox_coteachers_feature` contents.
+		// Get `sensei_teacher_meta_box_coteachers_feature` contents.
 		ob_start();
-		do_action( 'sensei_teacher_metabox_coteachers_feature', $post );
-		$teacher_metabox_end_content = ob_get_clean();
+		do_action( 'sensei_teacher_meta_box_coteachers_feature', $post );
+		$teacher_meta_box_end_content = ob_get_clean();
 
-		// Render Co-Teachers upgrade or contents.
+		// Render Upgrade to Pro or Co-Teachers contents.
 		?>
 		<div class="sensei-course-coteachers-wrapper">
 			<?php
-			if ( empty( $teacher_metabox_end_content ) ) {
+			if ( empty( $teacher_meta_box_end_content ) ) {
 				echo sprintf(
 				// translators: The href tag contains the url to the Sensei Pro pricing page.
 					__( 'Multiple teachers? <a href="%s">Upgrade to Pro!</a>', 'sensei-lms' ),
 					'https://senseilms.com/pricing/'
 				);
 			} else {
-				echo $teacher_metabox_end_content;
+				echo $teacher_meta_box_end_content;
 			}
 			?>
 		</div>
