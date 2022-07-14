@@ -47,8 +47,10 @@ class Sensei_Messages {
 		// registered
 		add_action( 'init', array( $this, 'save_new_message' ), 101 );
 
-		// Monitor when new reply is posted
-		add_action( 'comment_post', array( $this, 'message_reply_received' ), 10, 1 );
+		// Monitor when new reply is posted.
+		add_action('comment_post', [$this, 'message_reply_received'], 10, 1);
+		add_action('rest_insert_comment', [$this, 'message_rest_insert'], 10, 3);
+
 
 		// Block WordPress from sending comment update emails for the messages post type
 		add_filter( 'comment_notification_recipients', array( $this, 'stop_wp_comment_emails' ), 20, 2 );
@@ -74,6 +76,7 @@ class Sensei_Messages {
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
+		add_action('comment_form', [$this, 'add_nonce_to_comment_form']);
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -331,18 +334,8 @@ class Sensei_Messages {
 			return $html;
 		}
 
-		// confirm private message
-		$confirmation = '';
-		if ( isset( $_GET['send'] ) && 'complete' == $_GET['send'] ) {
-
-			$confirmation_message = __( 'Your private message has been sent.', 'sensei-lms' );
-			$confirmation         = '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
-
-		}
-
 		$html         .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</h3>';
 		$html         .= '<p>';
-		$html         .= $confirmation;
 		$html         .= '</p>';
 		$html         .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html     .= '<p class="form-row form-row-wide">';
@@ -390,24 +383,76 @@ class Sensei_Messages {
 
 	public function message_reply_received( $comment_id = 0 ) {
 
-		// Get comment object
+		// Get comment object.
 		$comment = get_comment( $comment_id );
 
 		if ( is_null( $comment ) ) {
 			return;
 		}
 
-		// Get message post object
+		// Get message post object.
 		$message = get_post( $comment->comment_post_ID );
 
 		if ( $message->post_type != $this->post_type ) {
 			return;
 		}
 
-		// Force comment to be approved
+		$should_verify_nonce = !defined('XMLRPC_REQUEST');
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification.
+		$nonce_verified = !empty($_POST['sensei_message_nonce']) && wp_verify_nonce(wp_unslash($_POST['sensei_message_nonce']), 'sensei_post_message_reply');
+
+		$comment_author   = get_userdata($comment->user_id);
+		$user_can_comment = in_array($comment_author->user_login, [get_post_meta($message->ID, '_receiver', true), get_post_meta($message->ID, '_sender', true)], true);
+
+		if (($should_verify_nonce && !$nonce_verified) || !$user_can_comment) {
+			wp_set_comment_status($comment_id, 'spam');
+			return;
+		}
+
+		// Force comment to be approved.
 		wp_set_comment_status( $comment_id, 'approve' );
 
 		do_action( 'sensei_private_message_reply', $comment, $message );
+	}
+
+	/**
+	 * Marks comments created or updated by a REST call as spam, if the user is unauthorized.
+	 *
+	 * @access private
+	 *
+	 * @param WP_Comment      $comment  Inserted or updated comment object.
+	 * @param WP_REST_Request $request  Request object.
+	 * @param bool            $creating True when creating a comment, false
+	 *                                  when updating.
+	 */
+	public function message_rest_insert(WP_Comment $comment, WP_REST_Request $request, bool $creating)
+	{
+		$message = get_post($comment->comment_post_ID);
+
+		if ($message->post_type !== $this->post_type) {
+			return;
+		}
+
+		$comment_author   = get_userdata($comment->user_id);
+		$user_can_comment = in_array($comment_author->user_login, [get_post_meta($message->ID, '_receiver', true), get_post_meta($message->ID, '_sender', true)], true);
+
+		if (!$user_can_comment) {
+			wp_set_comment_status($comment->comment_ID, 'spam');
+		}
+	}
+
+	/**
+	 * Adds a nonce to the sensei message comment form.
+	 *
+	 * @access private
+	 *
+	 * @return void
+	 */
+	public function add_nonce_to_comment_form()
+	{
+		if (is_singular($this->post_type)) {
+			wp_nonce_field('sensei_post_message_reply', 'sensei_message_nonce');
+		}
 	}
 
 	/**
