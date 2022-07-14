@@ -101,7 +101,7 @@ const FeatureItem = ( { children } ) => (
 CourseUpgradeStep.Actions = ( { goToNextStep } ) => {
 	const upgrade = () => {
 		window.open(
-			'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_editor_wizard',
+			'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_editor_wizard',
 			'sensei-pricing',
 			'noreferrer'
 		);

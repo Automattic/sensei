@@ -55,7 +55,7 @@ Do more and sell courses with Sensei Pro, which includes:
 
 **Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
 
-[Learn more about Sensei Pro](https://senseilms.com/pricing/).
+[Learn more about Sensei Pro](https://senseilms.com/sensei-pro/).
 
 ### Free Extensions ###
 
@@ -101,7 +101,7 @@ Sensei is developed in public on Github. We welcome anyone to report a bug, subm
 [Visit Sensei LMS on Github](https://github.com/Automattic/sensei/).
 
 = Does Sensei work with membership plugins? =
-Sensei LMS can be used in conjunction with [Sensei Pro](https://senseilms.com/pricing/) and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/) to enable you to sell courses as part of a membership plan. See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
+Sensei LMS can be used in conjunction with [Sensei Pro](https://senseilms.com/sensei-pro/) and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/) to enable you to sell courses as part of a membership plan. See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
 = How can I keep up to date with new releases and announcements for Sensei LMS? =
 
