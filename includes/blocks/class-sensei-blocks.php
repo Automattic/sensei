@@ -82,6 +82,9 @@ class Sensei_Blocks {
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
 		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css' );
+
+		wp_register_script( 'sensei-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', false );
+		wp_register_script( 'sensei-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', false );
 	}
 
 	/**
@@ -154,7 +157,7 @@ class Sensei_Blocks {
 	/**
 	 * Check if the current post has any Sensei blocks.
 	 *
-	 * @param int|WP_Post|null $post
+	 * @param int|WP_Post|null $post Post.
 	 *
 	 * @return bool
 	 */
