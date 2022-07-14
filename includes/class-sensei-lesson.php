@@ -2597,7 +2597,7 @@ class Sensei_Lesson {
 
 		// Make sure other sensei columns stay directly behind the new columns.
 		$other_sensei_columns = [
-			'module',
+			'modules',
 		];
 		foreach ( $other_sensei_columns as $column_key ) {
 			if ( isset( $defaults[ $column_key ] ) ) {
@@ -3731,7 +3731,7 @@ class Sensei_Lesson {
 				 * @param {string} $html HTML for the lesson placeholder image.
 				 * @return {string} HTML for the lesson placeholder image.
 				 */
-				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="http://placehold.it/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
+				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="//via.placeholder.com/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
 
 			}
 		}

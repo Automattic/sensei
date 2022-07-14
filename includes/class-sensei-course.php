@@ -764,7 +764,7 @@ class Sensei_Course {
 			admin_url( 'edit.php' )
 		);
 
-		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Learners', 'sensei-lms' ) . '</a></li>';
+		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Students', 'sensei-lms' ) . '</a></li>';
 		echo '<li><a href=' . esc_url( $grading_url ) . '>' . esc_html__( 'Manage Grading', 'sensei-lms' ) . '</a></li></ul>';
 	}
 
@@ -1116,7 +1116,7 @@ class Sensei_Course {
 					 * @param int    $width     Requested image width.
 					 * @param int    $height    Requested image height.
 					 */
-					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="http://placehold.it/' . $width . 'x' . $height . '" class="' . esc_attr( $classes ) . '" />', $course_id, $width, $height );
+					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '<img src="//via.placeholder.com/' . $width . 'x' . $height . '" class="' . esc_attr( $classes ) . '" />', $course_id, $width, $height );
 					$used_placeholder = true;
 
 				}
