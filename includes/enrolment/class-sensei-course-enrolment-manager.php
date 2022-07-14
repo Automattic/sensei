@@ -227,7 +227,7 @@ class Sensei_Course_Enrolment_Manager {
 		 *
 		 * It is used to filter providers that can affect enrolment on the frontend.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.5.2
 		 *
 		 * @param Sensei_Course_Enrolment_Provider_Interface[] $providers List of enrolment providers instances.
 		 */
