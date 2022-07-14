@@ -3,7 +3,7 @@
  * File Sensei_Groups_Landing_Page class.
  *
  * @package sensei-lms
- * @since x.x.x
+ * @since 4.5.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Displaying landing page for Sensei pro groups feature.
  *
- * @since x.x.x
+ * @since 4.5.2
  */
 class Sensei_Groups_Landing_Page {
 
@@ -23,7 +23,7 @@ class Sensei_Groups_Landing_Page {
 	 * Add student groups menu item and display student groups landing page.
 	 *
 	 * @access public
-	 * @since x.x.x
+	 * @since 4.5.2
 	 */
 	public function add_groups_landing_page_menu_item() {
 		// Enqueue styles.
@@ -47,7 +47,7 @@ class Sensei_Groups_Landing_Page {
 	 * Display student groups promo landing page.
 	 *
 	 * @access public
-	 * @since x.x.x
+	 * @since 4.5.2
 	 */
 	public function display_student_groups_landing_page() {
 
@@ -122,7 +122,7 @@ class Sensei_Groups_Landing_Page {
 	 * Wrapper container wrapper_container wrapper.
 	 *
 	 * @access public
-	 * @since  x.x.x
+	 * @since 4.5.2
 	 *
 	 * @param string $which which wrapper top or bottom.
 	 */
