@@ -34,14 +34,17 @@ const ConfirmDialog = ( {
 			title={ title }
 			onRequestClose={ onCancel }
 			shouldCloseOnClickOutside={ false }
+			className="sensei-confirm-dialog"
 		>
-			<p>{ children }</p>
-			<Button variant="tertiary" onClick={ onCancel }>
-				{ __( 'Cancel', 'sensei-lms' ) }
-			</Button>
-			<Button variant="primary" onClick={ onConfirm }>
-				{ __( 'OK', 'sensei-lms' ) }
-			</Button>
+			<div className="sensei-confirm-dialog__message">{ children }</div>
+			<div className="sensei-confirm-dialog__button-container">
+				<Button variant="tertiary" onClick={ onCancel }>
+					{ __( 'Cancel', 'sensei-lms' ) }
+				</Button>
+				<Button variant="primary" onClick={ onConfirm }>
+					{ __( 'OK', 'sensei-lms' ) }
+				</Button>
+			</div>
 		</Modal>
 	);
 };

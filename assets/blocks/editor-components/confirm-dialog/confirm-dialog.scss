@@ -1,0 +1,9 @@
+.sensei-confirm-dialog {
+	&__message {
+		margin: 1em;
+	}
+	&__button-container {
+		display: flex;
+		justify-content: end;
+	}
+}
