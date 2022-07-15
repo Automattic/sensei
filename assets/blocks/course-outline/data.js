@@ -71,25 +71,34 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
 	} );
 };
 
+const byStructure = ( target ) => ( { name, attributes } ) => {
+	const { id, type, title, lastTitle } = target;
+	if ( blockNames[ type ] !== name ) return false;
+	if ( ! attributes.id ) return attributes.title === title;
+	if ( attributes.id === id ) return true;
+	if ( attributes.title === title ) return true;
+	return attributes.title === lastTitle;
+};
+
+const findInInnerBlocks = ( blocks, predicate ) =>
+	blocks.reduce(
+		( found, block ) => found || block.innerBlocks.find( predicate ),
+		false
+	);
 /**
  * Find the block for a given lesson/module item.
  *
- * @param {Object[]}                                    blocks Block.
- * @param {Array.<(CourseLessonData|CourseModuleData)>} item   Structure item.
+ * @param {Object[]}                                    blocks           Block.
+ * @param {Array.<(CourseLessonData|CourseModuleData)>} updatedStructure Structure item.
  * @return {Object} The block, if found.
  */
-const findBlock = ( blocks, { id, type, title } ) => {
-	const compare = ( { name, attributes } ) =>
-		( id === attributes.id ||
-			( ! attributes.id && attributes.title === title ) ) &&
-		blockNames[ type ] === name;
+const findBlock = ( blocks, updatedStructure ) => {
+	const isLesson = ( value ) => value === 'lesson';
+
 	return (
-		blocks.find( compare ) ||
-		( 'lesson' === type &&
-			blocks.reduce(
-				( found, block ) => found || block.innerBlocks.find( compare ),
-				false
-			) )
+		blocks.find( byStructure( updatedStructure ) ) ||
+		( isLesson( updatedStructure.type ) &&
+			findInInnerBlocks( blocks, byStructure( updatedStructure ) ) )
 	);
 };
 /**
