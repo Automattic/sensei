@@ -84,7 +84,7 @@ class Sensei_Course_Video_Settings {
 		Sensei()->assets->register(
 			'sensei-course-video-blocks-extension',
 			'js/frontend/course-video/video-blocks-extension.js',
-			[ 'sensei-video-embed-apis' ],
+			[ 'sensei-youtube-iframe-api', 'sensei-vimeo-iframe-api' ],
 			true
 		);
 
