@@ -85,7 +85,9 @@ class Sensei_Blocks {
 
 		wp_register_script( 'sensei-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', false );
 		wp_register_script( 'sensei-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', false );
-		wp_register_script( 'sensei-video-embed-apis', false, [ 'sensei-youtube-iframe-api', 'sensei-vimeo-iframe-api' ], 'unversioned', false );
+
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion,WordPress.WP.EnqueuedResourceParameters.NotInFooter -- It's just joining some scripts.
+		wp_register_script( 'sensei-video-embed-apis', false, [ 'sensei-youtube-iframe-api', 'sensei-vimeo-iframe-api' ] );
 	}
 
 	/**
