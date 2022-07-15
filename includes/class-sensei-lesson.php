@@ -341,7 +341,7 @@ class Sensei_Lesson {
 		<div class="sensei-content-drip-promo">
 			<div class="sensei-content-drip-promo__descriptions">
 				<p><?php esc_html_e( 'Keep students engaged and improve knowledge retention by setting a delivery schedule for course content.', 'sensei-lms' ); ?></p>
-				<p><a href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_content_drip" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a></p>
+				<p><a href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=lesson_content_drip" target="_blank"><?php esc_html_e( 'Upgrade to Sensei Pro', 'sensei-lms' ); ?></a></p>
 			</div>
 
 			<div class="sensei-content-drip-promo__preview">
@@ -3825,7 +3825,7 @@ class Sensei_Lesson {
 	/**
 	 * Returns the course ID for a given set of lessons (with the key being the lesson ID)
 	 *
-	 * @since $$next-version$$
+	 * @since 4.5.2
 	 * @access public
 	 *
 	 * @param array<int> $lesson_ids Array of Lesson IDs.

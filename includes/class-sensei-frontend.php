@@ -1317,7 +1317,7 @@ class Sensei_Frontend {
 		 // if there's a valid referrer, and it's not the default log-in screen.
 		if ( ! empty( $referrer ) && ! strstr( $referrer, 'wp-login' ) && ! strstr( $referrer, 'wp-admin' ) ) {
 			// let's append some information (login=failed) to the URL for the theme to use.
-			wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) )( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 			exit;
 		}
 	}
@@ -1363,7 +1363,7 @@ class Sensei_Frontend {
 					if ( ! $user ) {
 
 						// the email doesnt exist.
-						wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
+						wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 						exit;
 
 					}
@@ -1387,7 +1387,7 @@ class Sensei_Frontend {
 				$user          = wp_signon( $creds, $secure_cookie );
 
 				if ( is_wp_error( $user ) ) { // on login failure.
-					wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
+					wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 					exit;
 				} else { // on login success.
 					$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : remove_query_arg( 'login', $referrer );
@@ -1398,7 +1398,7 @@ class Sensei_Frontend {
 					 * @since 1.6.1
 					 * @deprecated 3.15.0 Use `sensei_login_success_redirect_url` instead.
 					 *
-					 * @param string $referrer the page where the current url wheresensei login form was posted from.
+					 * @param string $referrer the page where the current url where sensei login form was posted from.
 					 */
 					$success_redirect_url = apply_filters_deprecated( 'sesei_login_success_redirect_url', [ $redirect_to ], 'sensei_login_success_redirect_url', 'Use `sensei_login_success_redirect_url` instead' );
 
@@ -1410,17 +1410,17 @@ class Sensei_Frontend {
 					 *
 					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
 					 *
-					 * @return {string} The redirect URL if login is successful.
+					 * The redirect URL if login is successful. Note that if this URL points to an external domain, it may need to be whitelisted using the `allowed_redirect_hosts` filter.
 					 */
 					$success_redirect_url = apply_filters( 'sensei_login_success_redirect_url', $success_redirect_url );
 
-					wp_redirect( esc_url_raw( $success_redirect_url ) );
+					wp_safe_redirect( esc_url_raw( $success_redirect_url ) );
 					exit;
 
 				}
 			} else { // if username or password is empty.
 
-				wp_redirect( esc_url_raw( add_query_arg( 'login', 'emptyfields', $referrer ) ) );
+				wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'emptyfields', $referrer ) ) );
 				exit;
 
 			}
@@ -1530,7 +1530,7 @@ class Sensei_Frontend {
 
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : $redirect;
 
-		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
+		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
 		exit;
 
 	}

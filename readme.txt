@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.8
 Tested up to: 6.0
 Requires PHP: 7.2
-Stable tag: 4.5.1
+Stable tag: 4.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +55,7 @@ Do more and sell courses with Sensei Pro, which includes:
 
 **Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
 
-[Learn more about Sensei Pro](https://senseilms.com/pricing/).
+[Learn more about Sensei Pro](https://senseilms.com/sensei-pro/).
 
 ### Free Extensions ###
 
@@ -101,7 +101,7 @@ Sensei is developed in public on Github. We welcome anyone to report a bug, subm
 [Visit Sensei LMS on Github](https://github.com/Automattic/sensei/).
 
 = Does Sensei work with membership plugins? =
-Sensei LMS can be used in conjunction with [Sensei Pro](https://senseilms.com/pricing/) and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/) to enable you to sell courses as part of a membership plan. See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
+Sensei LMS can be used in conjunction with [Sensei Pro](https://senseilms.com/sensei-pro/) and [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/) to enable you to sell courses as part of a membership plan. See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
 = How can I keep up to date with new releases and announcements for Sensei LMS? =
 
@@ -114,6 +114,20 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 4. Course editor
 
 == Changelog ==
+
+2022-07-14 - version 4.5.2
+* Add: New upsells students group page
+* Add: `sensei_user_course_end' hook before redirecting to completed page
+* Add: Bump the minimum required PHP version to 7.2 
+* Fix: Placeholder images for courses
+* Fix: Update the course Editor to display 'Learners' instead of Students 
+* Fix: Bulk Edit options (on Lessons menu) do not work
+* Fix: Change 'Manage Learners' to 'Manage Students' on the course management meta box
+* Fix: Quiz questions not being properly saved.
+* Fix: Lessons screen js error caused by the module column
+* Fix: Layout issues with Learning Mode when using Divi
+* Fix: issue on grading page
+* Fix: Errors on the students admin area
 
 2022-06-20 - version 4.5.1
 * Fix: remove upsell from wizard when woothemes-sensei is installed [#5282](https://github.com/Automattic/sensei/pull/5282)
@@ -156,11 +170,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Tweak: Create 3 default lessons on the Course Outline Block [#5196](https://github.com/Automattic/sensei/pull/5196)
 * Tweak: Do not auto-add Quiz blocks on the lessons anymore [#5177](https://github.com/Automattic/sensei/pull/5177)
 
-2022.05.31 - version 4.4.3
-* Fix: The "import" docs link. [#5201](https://github.com/Automattic/sensei/pull/5201)
-* Fix: Module order not preserved after teacher update. [#5198](https://github.com/Automattic/sensei/pull/5198)
-* Tweak: Redirect the quiz if the lesson is password protected. [#5195](https://github.com/Automattic/sensei/pull/5195)
-* Tweak: Disable the lesson archive. [#5192](https://github.com/Automattic/sensei/pull/5192)
-* Tweak: Update Course Video Progression to support customization via hooks. [#5100](https://github.com/Automattic/sensei/pull/5100), [#5175](https://github.com/Automattic/sensei/pull/5175)
-
-[See changelog for all versions](https://github.com/Automattic/sensei/releases).

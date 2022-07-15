@@ -37,7 +37,7 @@ const CoursePricingPromoSidebar = () => {
 			<p>
 				<ExternalLink
 					href={
-						'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing'
+						'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing'
 					}
 				>
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
