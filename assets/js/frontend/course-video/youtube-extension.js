@@ -51,13 +51,7 @@ export const initYouTubeExtension = () => {
 	init();
 };
 
-// onYouTubeIframeAPIReady is called by YouTube iframe API when it is ready.
-const previousYouTubeIframeAPIReady =
-	window.onYouTubeIframeAPIReady !== undefined
-		? window.onYouTubeIframeAPIReady
-		: () => {};
-window.onYouTubeIframeAPIReady = () => {
+window.senseiYouTubeIframeAPIReady.then( () => {
 	youtubeIframeReady = true;
 	init();
-	previousYouTubeIframeAPIReady();
-};
+} );
