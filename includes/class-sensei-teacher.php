@@ -297,7 +297,12 @@ class Sensei_Teacher {
 						__( 'Multiple teachers? <a href="%s" target="_blank">Upgrade to Pro!</a>', 'sensei-lms' ),
 						'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers'
 					),
-					[ 'a' => [ 'href' => [], 'target' => [] ] ]
+					[
+						'a' => [
+							'href'   => [],
+							'target' => [],
+						],
+					]
 				);
 				?>
 			</div>
