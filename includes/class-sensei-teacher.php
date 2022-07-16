@@ -291,10 +291,13 @@ class Sensei_Teacher {
 			?>
 			<div class="sensei-course-coteachers-wrapper">
 				<?php
-				echo sprintf(
-				// translators: The href tag contains the url to the Sensei Pro landing page.
-					__( 'Multiple teachers? <a href="%s">Upgrade to Pro!</a>', 'sensei-lms' ),
-					'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers'
+				echo wp_kses(
+					sprintf(
+					// translators: The href tag contains the url to the Sensei Pro landing page.
+						__( 'Multiple teachers? <a href="%s" target="_blank">Upgrade to Pro!</a>', 'sensei-lms' ),
+						'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers'
+					),
+					[ 'a' => [ 'href' => [], 'target' => [] ] ]
 				);
 				?>
 			</div>
