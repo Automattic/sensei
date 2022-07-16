@@ -2492,6 +2492,17 @@ class Sensei_Core_Modules {
 			}
 		}
 
+		/**
+		 * Filters the module terms when ownership is being checked for them.
+		 *
+		 * @hook   sensei_filter_module_terms_by_owner
+		 * @since  $$next-version$$
+		 *
+		 * @param  {WP_Term[]} $user_terms The terms after applying the filter by owner.
+		 * @param  {WP_Term[]|int[]} $terms The original terms before the filtering was applied.
+		 * @param  {int} $user_id The user ID to check for ownership.
+		 * @return {WP_Term[]} The final list of terms that must be considered as owner by the given user ID.
+		 */
 		return apply_filters( 'sensei_filter_module_terms_by_owner', $users_terms, $terms, $user_id );
 	}
 
