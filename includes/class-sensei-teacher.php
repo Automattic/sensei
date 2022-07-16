@@ -289,9 +289,9 @@ class Sensei_Teacher {
 			<?php
 			if ( empty( $teacher_meta_box_end_content ) ) {
 				echo sprintf(
-				// translators: The href tag contains the url to the Sensei Pro pricing page.
+				// translators: The href tag contains the url to the Sensei Pro landing page.
 					__( 'Multiple teachers? <a href="%s">Upgrade to Pro!</a>', 'sensei-lms' ),
-					'https://senseilms.com/pricing/'
+					'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers'
 				);
 			} else {
 				echo $teacher_meta_box_end_content;
