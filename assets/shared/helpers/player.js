@@ -18,6 +18,9 @@ const players = {
 			} );
 		},
 		getDuration: ( player ) => Promise.resolve( player.duration ),
+		setCurrentTime: ( player, seconds ) => {
+			player.currentTime = seconds;
+		},
 	},
 	[ VIDEOPRESS_TYPE ]: {
 		embedPattern: /(videopress|video\.wordpress)\.com\/.+/i,
@@ -37,6 +40,15 @@ const players = {
 					resolve( event.data.durationMs / 1000 );
 				} )
 			),
+		setCurrentTime: ( player, seconds ) => {
+			player.contentWindow.postMessage(
+				{
+					event: 'videopress_action_set_currenttime',
+					currentTime: seconds,
+				},
+				'*'
+			);
+		},
 	},
 	[ YOUTUBE_TYPE ]: {
 		embedPattern: /(youtu\.be|youtube\.com)\/.+/i,
@@ -60,12 +72,18 @@ const players = {
 				} );
 			} ),
 		getDuration: ( player ) => player.getDuration(),
+		setCurrentTime: ( player, seconds ) => {
+			player.seekTo( seconds );
+		},
 	},
 	[ VIMEO_TYPE ]: {
 		embedPattern: /vimeo\.com\/.+/i,
 		initializePlayer: ( element ) =>
 			Promise.resolve( new window.Vimeo.Player( element ) ),
 		getDuration: ( player ) => player.getDuration(),
+		setCurrentTime: ( player, seconds ) => {
+			player.setCurrentTime( seconds );
+		},
 	},
 };
 
@@ -112,6 +130,12 @@ class Player {
 	getDuration() {
 		return this.getPlayer().then( ( player ) =>
 			players[ this.type ].getDuration( player )
+		);
+	}
+
+	setCurrentTime( seconds ) {
+		return this.getPlayer().then( ( player ) =>
+			players[ this.type ].setCurrentTime( player, seconds )
 		);
 	}
 }
