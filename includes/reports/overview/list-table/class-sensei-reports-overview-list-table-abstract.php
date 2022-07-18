@@ -346,7 +346,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'course_filter'          => $this->get_course_filter_value(),
 				'start_date'             => $this->get_start_date_filter_value(),
 				'end_date'               => $this->get_end_date_filter_value(),
-				'timezone'               => $this->get_timezone(),
+				'timezone'               => rawurlencode( $this->get_timezone() ),
 				's'                      => $this->get_search_value(),
 			),
 			admin_url( 'edit.php' )
