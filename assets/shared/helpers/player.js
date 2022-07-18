@@ -21,6 +21,12 @@ const players = {
 		setCurrentTime: ( player, seconds ) => {
 			player.currentTime = seconds;
 		},
+		play: ( player ) => {
+			player.play();
+		},
+		pause: ( player ) => {
+			player.pause();
+		},
 	},
 	[ VIDEOPRESS_TYPE ]: {
 		embedPattern: /(videopress|video\.wordpress)\.com\/.+/i,
@@ -46,6 +52,18 @@ const players = {
 					event: 'videopress_action_set_currenttime',
 					currentTime: seconds,
 				},
+				'*'
+			);
+		},
+		play: ( player ) => {
+			player.contentWindow.postMessage(
+				{ event: 'videopress_action_play' },
+				'*'
+			);
+		},
+		pause: ( player ) => {
+			player.contentWindow.postMessage(
+				{ event: 'videopress_action_pause' },
 				'*'
 			);
 		},
@@ -75,6 +93,12 @@ const players = {
 		setCurrentTime: ( player, seconds ) => {
 			player.seekTo( seconds );
 		},
+		play: ( player ) => {
+			player.playVideo();
+		},
+		pause: ( player ) => {
+			player.pauseVideo();
+		},
 	},
 	[ VIMEO_TYPE ]: {
 		embedPattern: /vimeo\.com\/.+/i,
@@ -83,6 +107,12 @@ const players = {
 		getDuration: ( player ) => player.getDuration(),
 		setCurrentTime: ( player, seconds ) => {
 			player.setCurrentTime( seconds );
+		},
+		play: ( player ) => {
+			player.play();
+		},
+		pause: ( player ) => {
+			player.pause();
 		},
 	},
 };
@@ -136,6 +166,18 @@ class Player {
 	setCurrentTime( seconds ) {
 		return this.getPlayer().then( ( player ) =>
 			players[ this.type ].setCurrentTime( player, seconds )
+		);
+	}
+
+	play() {
+		return this.getPlayer().then( ( player ) =>
+			players[ this.type ].play( player )
+		);
+	}
+
+	pause() {
+		return this.getPlayer().then( ( player ) =>
+			players[ this.type ].pause( player )
 		);
 	}
 }
