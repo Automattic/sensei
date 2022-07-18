@@ -18,7 +18,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function __construct() {
 		parent::__construct( [ 'lesson' ] );
-		add_action( 'init', [ $this, 'register_lesson_post_metas' ] );
 	}
 
 	/**
@@ -76,38 +75,15 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		$post_type_object = get_post_type_object( 'lesson' );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$lesson_id = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : 0; // WP query is not ready yet.
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-
-		// Notice that for new Lessons, the `lesson_id` will return `0` (post query string not set).
-		// It means the following check will return `false`. It's expected and works well because
-		// new lessons don't have associated courses yet.
-		$sensei_theme_enabled = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
-
-		if ( $sensei_theme_enabled ) {
-			$block_template = [
-				[ 'sensei-lms/lesson-properties' ],
+		// We are using the default lesson pattern for the template. It includes some lesson actions that won't be shown if Learning Mode is enabled.
+		$block_template = [
+			[
+				'core/pattern',
 				[
-					'core/paragraph',
-					[ 'placeholder' => __( 'Write lesson content...', 'sensei-lms' ) ],
+					'slug' => 'sensei-lms/default',
 				],
-			];
-		} else {
-			$block_template = [
-				[ 'sensei-lms/lesson-properties' ],
-				[ 'sensei-lms/button-contact-teacher' ],
-				[
-					'core/paragraph',
-					[ 'placeholder' => __( 'Write lesson content...', 'sensei-lms' ) ],
-				],
-				[ 'sensei-lms/lesson-actions' ],
-			];
-		}
-
-		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
-			$block_template[] = [ 'sensei-lms/quiz', [ 'isPostTemplate' => true ] ];
-		}
+			],
+		];
 
 		/**
 		 * Customize the lesson block template.
@@ -149,26 +125,5 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 
 		// Remove footer buttons.
 		remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
-	}
-
-
-	/**
-	 * Register lesson post metas.
-	 *
-	 * @access private
-	 */
-	public function register_lesson_post_metas() {
-		register_post_meta(
-			'lesson',
-			'_needs_template',
-			[
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'boolean',
-				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
-					return current_user_can( 'edit_post', $post_id );
-				},
-			]
-		);
 	}
 }

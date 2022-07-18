@@ -20,7 +20,7 @@ const QuizTimerPromo = () => {
 			/>
 
 			<p>
-				<ExternalLink href="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_timer">
+				<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=quiz_timer">
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
 				</ExternalLink>
 			</p>

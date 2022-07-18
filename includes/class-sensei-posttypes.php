@@ -1079,6 +1079,28 @@ class Sensei_PostTypes {
 		);
 
 		Sensei()->learners->learners_admin_menu();
+
+		/**
+		 * Filter used to add new menu item.
+		 *
+		 * @since 4.5.0
+		 */
+		do_action( 'sensei_pro_groups_menu_item', [] );
+
+		/**
+		 * Filters the Student groups promo landing page.
+		 *
+		 * @hook  sensei_student_groups_hide
+		 * @since 4.5.2
+		 *
+		 * @param  {bool} $sensei_student_groups_hide Whether to hide the Student Groups promo landing page.
+		 * @return {bool} Whether to hide the Student groups landing page.
+		 */
+		if ( ! apply_filters( 'sensei_student_groups_hide', false ) ) {
+			$instance = new Sensei_Groups_Landing_Page();
+			$instance->add_groups_landing_page_menu_item();
+		}
+
 		Sensei()->grading->grading_admin_menu();
 
 		$sensei_messages = new Sensei_Messages();

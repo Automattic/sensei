@@ -42,7 +42,7 @@ a.view-results-link,
 a.sensei-certificate-link {
   display: inline-block;
   padding: .236em .857em;
-  background: $border_main;
+  background: $info;
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
@@ -61,7 +61,7 @@ a.sensei-certificate-link {
 }
 
 /* Courses */
-.course,
+.course:not(body),
 .course-container,
 .course-container .course {
   @include clearfix();

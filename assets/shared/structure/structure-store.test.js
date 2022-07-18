@@ -21,6 +21,7 @@ describe( 'Structure store', () => {
 			getEndpoint: jest.fn(),
 			updateBlock: jest.fn(),
 			readBlock: jest.fn(),
+			blockExists: jest.fn().mockReturnValue( true ),
 		};
 		( { unsubscribe } = registerStructureStore( store ) );
 		const storesForRegister = {
@@ -97,5 +98,13 @@ describe( 'Structure store', () => {
 
 		expect( savePost ).toHaveBeenCalledTimes( 2 );
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'Skips when block does not exist', () => {
+		const startPostSave = jest.spyOn( dispatch( STORE ), 'startPostSave' );
+		store.blockExists.mockReturnValue( false );
+		dispatch( 'core/editor' ).savePost();
+
+		expect( startPostSave ).not.toHaveBeenCalled();
 	} );
 } );

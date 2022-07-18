@@ -93,13 +93,7 @@ class Sensei_Reports_Overview_Data_Provider_Courses implements Sensei_Reports_Ov
 	 * @param object $query Query.
 	 */
 	public function add_orderby_custom_field_to_query( $args, $query ) {
-		global $wpdb;
-
-		return $wpdb->prepare(
-			'%1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
-			$query->query_vars['orderby'],
-			$query->query_vars['order']
-		);
+		return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**

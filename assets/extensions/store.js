@@ -6,7 +6,12 @@ import { keyBy, merge, isEqual } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { registerStore, select, dispatch } from '@wordpress/data';
+import {
+	registerStore,
+	select,
+	dispatch,
+	createRegistrySelector,
+} from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -296,6 +301,11 @@ const selectors = {
 		selectors
 			.getExtensions( args )
 			.filter( ( extension ) => status === extension.status ),
+	getSenseiProExtension: createRegistrySelector( ( selectStore ) => () =>
+		selectStore( EXTENSIONS_STORE )
+			.getExtensions()
+			.find( ( extension ) => extension.product_slug === 'sensei-pro' )
+	),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getConnectionStatus: ( { connected } ) => connected,
 	getLayout: ( { layout } ) => layout,

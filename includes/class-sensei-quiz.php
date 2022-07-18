@@ -377,7 +377,7 @@ class Sensei_Quiz {
 
 		// Redirect to the start of the quiz.
 		wp_safe_redirect(
-			remove_query_arg( 'quiz-page' )
+			add_query_arg( [ 'bypass_server_cache' => uniqid() ], remove_query_arg( 'quiz-page' ) )
 		);
 		exit;
 
@@ -426,7 +426,7 @@ class Sensei_Quiz {
 
 		// Redirect to the start of the quiz.
 		wp_safe_redirect(
-			remove_query_arg( 'quiz-page' )
+			add_query_arg( [ 'bypass_server_cache' => uniqid() ], remove_query_arg( 'quiz-page' ) )
 		);
 		exit;
 
@@ -435,7 +435,7 @@ class Sensei_Quiz {
 	/**
 	 * Redirect back to the lesson if the lesson is password protected.
 	 *
-	 * @since  x.x.x
+	 * @since  4.4.3
 	 * @access private
 	 */
 	public function redirect_if_lesson_is_protected() {
@@ -491,7 +491,7 @@ class Sensei_Quiz {
 
 		// Redirect to the target page.
 		wp_safe_redirect(
-			wp_unslash( $_POST['quiz_target_page'] )
+			add_query_arg( [ 'bypass_server_cache' => uniqid() ], sanitize_text_field( wp_unslash( $_POST['quiz_target_page'] ) ) )
 		);
 		exit;
 

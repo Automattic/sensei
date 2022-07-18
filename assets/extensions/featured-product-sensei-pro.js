@@ -1,8 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -14,16 +14,13 @@ import { EXTENSIONS_STORE } from './store';
  * Sensei Pro featured product component.
  */
 const FeaturedProductSenseiPro = () => {
-	const { extensions } = useSelect( ( select ) => {
-		const store = select( EXTENSIONS_STORE );
-
-		return {
-			extensions: store.getExtensions(),
-		};
-	} );
-
-	const senseiProExtension = extensions.find(
-		( extension ) => extension.product_slug === 'sensei-pro'
+	const { senseiProExtension } = useSelect(
+		( select ) => ( {
+			senseiProExtension: select(
+				EXTENSIONS_STORE
+			).getSenseiProExtension(),
+		} ),
+		[]
 	);
 
 	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
@@ -56,7 +53,7 @@ const FeaturedProductSenseiPro = () => {
 				__( '%s USD / year (1 site)', 'sensei-lms' ),
 				senseiProExtension.price
 			) }
-			buttonLink="https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
+			buttonLink="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
 			buttonTitle={ __( 'Learn More', 'sensei-lms' ) }
 		/>
 	);

@@ -106,27 +106,23 @@ class Sensei_Reports_Overview_Service_Courses {
 		 */
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		$result = $wpdb->get_row(
-		// phpcs:ignore
-			$wpdb->prepare(
-				"SELECT AVG(course_average) as courses_average
-			FROM (
-				SELECT AVG(cm.meta_value) as course_average
-				FROM {$wpdb->comments} c
-				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
-				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
-				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
-				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
-				WHERE c.comment_type = 'sensei_lesson_status'
-					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
-					AND cm.meta_key = 'grade'
-					AND course.meta_key = '_lesson_course'
-					AND course.meta_value <> ''
-					AND has_questions.meta_key = '_quiz_has_questions'
-				 AND course.meta_value IN (%1s) " // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
-				. ' GROUP BY course.meta_value
-			) averages_by_course',
-				implode( ',', $course_ids )
-			)
+			"SELECT AVG(course_average) as courses_average
+		FROM (
+			SELECT AVG(cm.meta_value) as course_average
+			FROM {$wpdb->comments} c
+			INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+			INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
+			INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
+			INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
+			WHERE c.comment_type = 'sensei_lesson_status'
+				AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+				AND cm.meta_key = 'grade'
+				AND course.meta_key = '_lesson_course'
+				AND course.meta_value <> ''
+				AND has_questions.meta_key = '_quiz_has_questions'
+				AND course.meta_value IN ( " . implode( ',', $course_ids ) . ' ) ' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			. ' GROUP BY course.meta_value
+		) averages_by_course'
 		);
 
 		return doubleval( $result->courses_average );
@@ -147,22 +143,19 @@ class Sensei_Reports_Overview_Service_Courses {
 		}
 		global $wpdb;
 
-		$query = $wpdb->prepare(
-			"
-			SELECT AVG( aggregated.days_to_completion )
-			FROM (
-				SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%%Y-%%m-%%d %%H:%%i:%%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
-				FROM {$wpdb->comments}
-				LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
-					AND {$wpdb->commentmeta}.meta_key = 'start'
-				WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
-					AND {$wpdb->comments}.comment_approved = 'complete'
-					AND {$wpdb->comments}.comment_post_ID IN (%1s)"  // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
-			. " GROUP BY {$wpdb->comments}.comment_post_ID
-			) AS aggregated
-		",
-			implode( ',', $course_ids )
-		);
+		$query = "
+		SELECT AVG( aggregated.days_to_completion )
+		FROM (
+			SELECT CEIL( SUM( ABS( DATEDIFF( {$wpdb->comments}.comment_date, STR_TO_DATE( {$wpdb->commentmeta}.meta_value, '%Y-%m-%d %H:%i:%s' ) ) ) + 1 ) / COUNT({$wpdb->commentmeta}.comment_id) ) AS days_to_completion
+			FROM {$wpdb->comments}
+			LEFT JOIN {$wpdb->commentmeta} ON {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id
+				AND {$wpdb->commentmeta}.meta_key = 'start'
+			WHERE {$wpdb->comments}.comment_type = 'sensei_course_status'
+				AND {$wpdb->comments}.comment_approved = 'complete'
+				AND {$wpdb->comments}.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )' // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		. " GROUP BY {$wpdb->comments}.comment_post_ID
+		) AS aggregated
+		";
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		return (float) $wpdb->get_var( $query );
@@ -209,15 +202,11 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
 		return $wpdb->get_results(
-		// phpcs:ignore
-			$wpdb->prepare(
-				"SELECT pm.meta_value as course_id, GROUP_CONCAT(pm.post_id) as lessons
-				FROM {$wpdb->postmeta} pm
-				WHERE pm.meta_value IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no need for quoting.
-				. " AND pm.meta_key = '_lesson_course'
-				GROUP BY pm.meta_value",
-				implode( ',', $course_ids )
-			),
+			"SELECT pm.meta_value as course_id, GROUP_CONCAT(pm.post_id) as lessons
+			FROM {$wpdb->postmeta} pm
+			WHERE pm.meta_value IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			. " AND pm.meta_key = '_lesson_course'
+			GROUP BY pm.meta_value",
 			'OBJECT_K'
 		);
 	}
@@ -235,15 +224,12 @@ class Sensei_Reports_Overview_Service_Courses {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe direct sql.
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
-					FROM {$wpdb->comments} c
-					WHERE c.comment_post_ID IN (%1s)" // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- no quoting.
-				. " AND c.comment_type = 'sensei_course_status'
-					AND c.comment_approved IN ( 'in-progress', 'complete' )
-					GROUP BY c.comment_post_ID",
-				implode( ',', $course_ids )
-			),
+			"SELECT c.comment_post_ID as course_id, count(c.comment_post_ID) as students_count
+				FROM {$wpdb->comments} c
+				WHERE c.comment_post_ID IN ( " . implode( ',', $course_ids ) . ' )'  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			. " AND c.comment_type = 'sensei_course_status'
+				AND c.comment_approved IN ( 'in-progress', 'complete' )
+				GROUP BY c.comment_post_ID",
 			'OBJECT_K'
 		);
 	}

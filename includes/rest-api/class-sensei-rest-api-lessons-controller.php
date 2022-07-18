@@ -126,7 +126,7 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
 		if ( 'edit' === $context && isset( $prepared['content']['raw'] ) ) {
 			$post = get_post();
-			if ( ! has_block( 'sensei-lms/quiz' ) ) {
+			if ( Sensei()->lesson::lesson_quiz_has_questions( $post->ID ) && ! has_block( 'sensei-lms/quiz' ) ) {
 				$prepared['content']['raw'] .= serialize_block(
 					[
 						'blockName'    => 'sensei-lms/quiz',

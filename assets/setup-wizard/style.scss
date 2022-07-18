@@ -224,20 +224,45 @@
 		width: 520px;
 		max-width: 100%;
 
+		@media ( max-width: 600px ) {
+			width: 100%;
+		}
+
 		@media ( max-height: 500px ) {
-			.components-modal__header,
-			.sensei-setup-wizard__modal-footer {
-				position: static;
+			.components-modal__content {
+				.components-modal__header, .sensei-setup-wizard__modal-footer {
+					position: static;
+				}
 			}
 		}
+
 		.sensei-list__item:last-child {
 			border-bottom: 0;
+		}
+
+		&.components-modal__frame {
+			overflow: auto;
+
+			@media ( min-width: 768px ) {
+				max-height: 90%;
+			}
+		}
+
+		.components-modal__content {
+			margin-top: 0;
+			overflow: visible;
+
+			&::before {
+				content: none;
+			}
 		}
 
 		.components-modal__header {
 			padding: 25px 0;
 			margin: 0;
 			height: auto;
+			position: sticky;
+			background: #fff;
 
 			.components-modal__header-heading {
 				font-size: 20px;
