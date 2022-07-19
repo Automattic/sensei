@@ -8,7 +8,7 @@ import { Icon, close as closeIcon } from '@wordpress/icons';
  */
 import classNames from 'classnames';
 
-const Modal = ( { isOpen, setIsOpen, children } ) => {
+const Modal = ( { isOpen, setIsOpen, title, children } ) => {
 	const close = ( event ) => {
 		setIsOpen( false );
 		event.preventDefault();
@@ -27,9 +27,7 @@ const Modal = ( { isOpen, setIsOpen, children } ) => {
 			/>
 			<div className="sensei-modal__wrapper">
 				<div className="sensei-modal__header">
-					<div className="sensei-modal__title">
-						This is the title.
-					</div>
+					<div className="sensei-modal__title">{ title }</div>
 					<button
 						className="sensei-modal__close-button"
 						onClick={ close }
