@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Source: templates/single-quiz/pagination.php - Sensei LMS Hook Docs</title>
+	<title>Action: sensei_reports_overview_after_top_filters - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,152 +21,162 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Source: templates/single-quiz/pagination.php</h1>
+	<h1 class="page-title">Action: sensei_reports_overview_after_top_filters</h1>
 	
 
 	
+
+
+
+
+<section>
+
+<header>
+    <h2></h2>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="sensei_reports_overview_after_top_filters">do_action( 'sensei_reports_overview_after_top_filters', <span class="signature">$report_type )</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Fires after the top filter inputs on the reports overview screen.</p>
+</div>
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>$report_type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The report type.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-abstract.php.html">includes/reports/overview/list-table/class-sensei-reports-overview-list-table-abstract.php</a>, <a href="includes_reports_overview_list-table_class-sensei-reports-overview-list-table-abstract.php.html#line300">line 300</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>&lt;?php
-/**
- * The template for displaying the quiz pagination.
- *
- * @author   Automattic
- * @package  Sensei
- * @category Templates
- * @version  4.0.0
- */
+    </div>
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+    
+</article>
 
-global $sensei_question_loop;
-
-$sensei_is_quiz_available    = Sensei_Quiz::is_quiz_available();
-$sensei_is_quiz_completed    = Sensei_Quiz::is_quiz_completed();
-$sensei_is_reset_allowed     = Sensei_Quiz::is_reset_allowed( Sensei()->quiz->get_lesson_id() );
-$sensei_has_actions          = $sensei_is_reset_allowed || ! $sensei_is_quiz_completed;
-$sensei_button_inline_styles = Sensei_Quiz::get_button_inline_styles();
-
-?>
-
-&lt;div class="sensei-quiz-pagination">
-	&lt;input type="hidden" name="sensei_quiz_page_change_nonce" form="sensei-quiz-form" id="sensei_quiz_page_change_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'sensei_quiz_page_change_nonce' ) ); ?>" />
-
-	&lt;div class="sensei-quiz-pagination__list">
-		&lt;?php
-
-		$sensei_pagination_list = paginate_links(
-			/**
-			 * Filters the quiz questions paginate links arguments.
-			 *
-			 * @see   https://developer.wordpress.org/reference/functions/paginate_links/
-			 * @hook  sensei_quiz_pagination_args
-			 * @since 3.15.0
-			 *
-			 * @param {array} $args The pagination arguments.
-			 *
-			 * @return {array}
-			 */
-			apply_filters(
-				'sensei_quiz_pagination_args',
-				[
-					'total'     => $sensei_question_loop['total_pages'],
-					'current'   => $sensei_question_loop['current_page'],
-					'format'    => '?quiz-page=%#%',
-					'type'      => 'list',
-					'mid_size'  => 1,
-					'prev_next' => false,
-				]
-			)
-		);
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No need to escape the pagination.
-		echo Sensei()->quiz->replace_pagination_links_with_buttons( $sensei_pagination_list );
-
-		?>
-	&lt;/div>
-
-	&lt;div class="sensei-quiz-actions">
-		&lt;?php if ( $sensei_is_quiz_available &amp;&amp; $sensei_has_actions ) : ?>
-			&lt;div class="sensei-quiz-actions-secondary">
-				&lt;?php if ( $sensei_is_reset_allowed ) : ?>
-					&lt;div class="sensei-quiz-action">
-						&lt;button type="submit" name="quiz_reset" form="sensei-quiz-form" class="quiz-submit reset sensei-stop-double-submission">
-							&lt;?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>
-						&lt;/button>
-
-						&lt;input type="hidden" name="woothemes_sensei_reset_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_reset_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_reset_quiz_nonce' ) ); ?>" />
-					&lt;/div>
-				&lt;?php endif ?>
-
-				&lt;?php if ( ! $sensei_is_quiz_completed ) : ?>
-					&lt;div class="sensei-quiz-action">
-						&lt;button type="submit" name="quiz_save" form="sensei-quiz-form" class="quiz-submit save sensei-stop-double-submission">
-							&lt;?php esc_attr_e( 'Save', 'sensei-lms' ); ?>
-						&lt;/button>
-
-						&lt;input type="hidden" name="woothemes_sensei_save_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_save_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_save_quiz_nonce' ) ); ?>" />
-					&lt;/div>
-				&lt;?php endif ?>
-			&lt;/div>
-		&lt;?php endif ?>
-
-		&lt;div class="sensei-quiz-actions-primary wp-block-buttons">
-			&lt;?php if ( $sensei_question_loop['current_page'] > 1 ) : ?>
-				&lt;div class="sensei-quiz-action wp-block-button is-style-outline">
-					&lt;button
-						type="submit"
-						name="quiz_target_page"
-						form="sensei-quiz-form"
-						value="&lt;?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] - 1 ) ); ?>"
-						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__prev-button"
-						style="&lt;?php echo esc_attr( $sensei_button_inline_styles ); ?>"
-					>
-						&lt;?php esc_attr_e( 'Previous', 'sensei-lms' ); ?>
-					&lt;/button>
-				&lt;/div>
-			&lt;?php endif ?>
-
-			&lt;?php if ( $sensei_question_loop['current_page'] &lt; $sensei_question_loop['total_pages'] ) : ?>
-				&lt;div class="sensei-quiz-action wp-block-button">
-					&lt;button
-						type="submit"
-						name="quiz_target_page"
-						form="sensei-quiz-form"
-						value="&lt;?php echo esc_attr( add_query_arg( 'quiz-page', $sensei_question_loop['current_page'] + 1 ) ); ?>"
-						class="wp-block-button__link button sensei-stop-double-submission sensei-quiz-pagination__next-button"
-						style="&lt;?php echo esc_attr( $sensei_button_inline_styles ); ?>"
-					>
-						&lt;?php esc_attr_e( 'Next', 'sensei-lms' ); ?>
-					&lt;/button>
-				&lt;/div>
-			&lt;?php elseif ( $sensei_is_quiz_available &amp;&amp; ! $sensei_is_quiz_completed ) : ?>
-				&lt;div class="sensei-quiz-action wp-block-button">
-					&lt;button
-						type="submit"
-						name="quiz_complete"
-						form="sensei-quiz-form"
-						class="wp-block-button__link button quiz-submit complete sensei-stop-double-submission"
-						style="&lt;?php echo esc_attr( $sensei_button_inline_styles ); ?>"
-					>
-						&lt;?php esc_attr_e( 'Complete', 'sensei-lms' ); ?>
-					&lt;/button>
-
-					&lt;input type="hidden" name="woothemes_sensei_complete_quiz_nonce" form="sensei-quiz-form" id="woothemes_sensei_complete_quiz_nonce" value="&lt;?php echo esc_attr( wp_create_nonce( 'woothemes_sensei_complete_quiz_nonce' ) ); ?>" />
-				&lt;/div>
-			&lt;?php endif ?>
-		&lt;/div>
-	&lt;/div>
-&lt;/div>
-</code></pre>
-        </article>
-    </section>
+</section>
 
 
 
