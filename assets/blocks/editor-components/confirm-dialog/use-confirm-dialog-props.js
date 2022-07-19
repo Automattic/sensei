@@ -13,13 +13,14 @@ import { useState } from '@wordpress/element';
  */
 export const useConfirmDialogProps = () => {
 	const [ props, setProps ] = useState( { isOpen: false } );
-	const confirm = ( text, title ) => {
+	const confirm = ( text, title, newProps = {} ) => {
 		return new Promise( ( resolve ) => {
 			const callback = ( value ) => () => {
 				resolve( value );
 				setProps( { isOpen: false } );
 			};
 			setProps( {
+				...newProps,
 				isOpen: true,
 				children: text,
 				title,
