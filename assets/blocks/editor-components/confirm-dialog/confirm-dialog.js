@@ -11,12 +11,14 @@ import { ENTER } from '@wordpress/keycodes';
  * Confirm Dialog.
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/components/confirm-dialog/
- * @param {Object}   props           Component props.
- * @param {boolean}  props.isOpen    Determines if the confirm dialog is open or not
- * @param {string}   props.title     Title for the confirm dialog.
- * @param {string}   props.children  Content for the confirm dialog, can be any React component.
- * @param {Function} props.onConfirm Callback called when the user click on "OK" or press Enter with the modal open.
- * @param {Function} props.onCancel  Callback called when the user click on "Cancel" or press ESC with the modal open.
+ * @param {Object}   props                   Component props.
+ * @param {boolean}  props.isOpen            Determines if the confirm dialog is open or not
+ * @param {string}   props.title             Title for the confirm dialog.
+ * @param {string}   props.children          Content for the confirm dialog, can be any React component.
+ * @param {Function} props.onConfirm         Callback called when the user click on "OK" or press Enter with the modal open.
+ * @param {Function} props.onCancel          Callback called when the user click on "Cancel" or press ESC with the modal open.
+ * @param {string}   props.confirmButtonText Optional custom text to display as the confirmation button's label.
+ * @param {string}   props.cancelButtonText  Optional custom text to display as the cancellation button's label.
  */
 const ConfirmDialog = ( {
 	isOpen = false,
@@ -24,6 +26,8 @@ const ConfirmDialog = ( {
 	children,
 	onConfirm,
 	onCancel,
+	cancelButtonText = __( 'Cancel', 'sensei-lms' ),
+	confirmButtonText = __( 'OK', 'sensei-lms' ),
 } ) => {
 	useConfirmOnEnter( isOpen, onConfirm );
 	if ( ! isOpen ) {
@@ -39,10 +43,10 @@ const ConfirmDialog = ( {
 			<div className="sensei-confirm-dialog__message">{ children }</div>
 			<div className="sensei-confirm-dialog__button-container">
 				<Button variant="tertiary" onClick={ onCancel }>
-					{ __( 'Cancel', 'sensei-lms' ) }
+					{ cancelButtonText }
 				</Button>
 				<Button variant="primary" onClick={ onConfirm }>
-					{ __( 'OK', 'sensei-lms' ) }
+					{ confirmButtonText }
 				</Button>
 			</div>
 		</Modal>
