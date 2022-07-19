@@ -110,7 +110,25 @@ const players = {
 		 *
 		 * @return {Promise<HTMLIFrameElement>} The video player through a promise.
 		 */
-		initializePlayer: ( element ) => Promise.resolve( element ),
+		initializePlayer: ( element ) =>
+			new Promise( ( resolve ) => {
+				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+				window.addEventListener( 'message', ( event ) => {
+					if (
+						event.source !== element.contentWindow ||
+						event.data.event !== 'videopress_durationchange' ||
+						! event.data.durationMs
+					) {
+						return;
+					}
+
+					// Set the duration to a dataset in order to have it available for later.
+					element.dataset.duration =
+						parseInt( event.data.durationMs, 10 ) / 1000;
+
+					resolve( element );
+				} );
+			} ),
 
 		/**
 		 * Get the video duration.
@@ -119,21 +137,16 @@ const players = {
 		 *
 		 * @return {Promise<number>} The duration of the video in seconds through a promise.
 		 */
-		getDuration: ( player ) =>
-			new Promise( ( resolve ) =>
-				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
-				window.addEventListener( 'message', ( event ) => {
-					if (
-						event.source !== player.contentWindow ||
-						event.data.event !== 'videopress_durationchange' ||
-						! event.data.durationMs
-					) {
-						return;
-					}
+		getDuration: ( player ) => {
+			const duration = player.dataset.duration;
+			if ( ! duration ) {
+				return Promise.reject(
+					new Error( 'Video duration not found' )
+				);
+			}
 
-					resolve( event.data.durationMs / 1000 );
-				} )
-			),
+			return Promise.resolve( parseFloat( player.dataset.duration ) );
+		},
 
 		/**
 		 * Set the video to a current time.
