@@ -52,12 +52,12 @@ const ConfirmDialog = ( {
 /**
  * Calls onConfirm when registerListener is true and the user press ENTER.
  *
- * @param {boolean}  registerListener If the listener should be set up or not.
- * @param {Function} fn               The callback to call when the user press ENTER, if registerListener is true.
+ * @param {boolean}  shouldRegisterListener If the listener should be set up or not.
+ * @param {Function} fn                     The callback to call when the user press ENTER, if registerListener is true.
  */
-const useConfirmOnEnter = ( registerListener, fn ) => {
+const useConfirmOnEnter = ( shouldRegisterListener, fn ) => {
 	useEffect( () => {
-		if ( ! registerListener ) {
+		if ( ! shouldRegisterListener ) {
 			return;
 		}
 		const callback = ( event ) => {
@@ -69,7 +69,7 @@ const useConfirmOnEnter = ( registerListener, fn ) => {
 		document.body.addEventListener( 'keydown', callback, false );
 		return () =>
 			document.body.removeEventListener( 'keydown', callback, false );
-	}, [ registerListener, fn ] );
+	}, [ shouldRegisterListener, fn ] );
 };
 
 export default ConfirmDialog;
