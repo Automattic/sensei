@@ -410,6 +410,9 @@ const players = {
 	},
 };
 
+/**
+ * A class that abstracts the use of the player APIs: Video, VideoPress, YouTube, and Vimeo.
+ */
 class Player {
 	/**
 	 * Player constructor.
