@@ -75,6 +75,27 @@ const players = {
 				return Promise.reject( e );
 			}
 		},
+
+		/**
+		 * Add an event listener to the player.
+		 *
+		 * @param {HTMLVideoElement} player    The player element.
+		 * @param {string}           eventName Event name (currently only `timeupdate` is supported)
+		 * @param {Function}         callback  Listener callback.
+		 *
+		 * @return {Function} The function to unsubscribe the event.
+		 */
+		on: ( player, eventName, callback ) => {
+			const transformedCallback = ( event ) => {
+				callback( event.target.currentTime );
+			};
+
+			player.addEventListener( eventName, transformedCallback );
+
+			return () => {
+				player.removeEventListener( eventName, transformedCallback );
+			};
+		},
 	},
 	[ VIDEOPRESS_TYPE ]: {
 		/**
@@ -174,6 +195,36 @@ const players = {
 				return Promise.reject( e );
 			}
 		},
+
+		/**
+		 * Add an event listener to the player.
+		 *
+		 * @param {HTMLIFrameElement} player    The player element.
+		 * @param {string}            eventName Event name (currently only `timeupdate` is supported)
+		 * @param {Function}          callback  Listener callback.
+		 *
+		 * @return {Function} The function to unsubscribe the event.
+		 */
+		on: ( player, eventName, callback ) => {
+			const transformedCallback = ( event ) => {
+				if (
+					event.source !== player.contentWindow ||
+					event.data.event !== `videopress_${ eventName }` ||
+					! event.data.currentTimeMs
+				) {
+					return;
+				}
+				callback( event.data.currentTimeMs / 1000 );
+			};
+
+			// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+			window.addEventListener( 'message', transformedCallback );
+
+			return () => {
+				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+				window.removeEventListener( 'message', transformedCallback );
+			};
+		},
 	},
 	[ YOUTUBE_TYPE ]: {
 		/**
@@ -253,6 +304,31 @@ const players = {
 			player.pauseVideo();
 			return Promise.resolve();
 		},
+
+		/**
+		 * Add an event listener to the player.
+		 *
+		 * @param {Object}   player    The YouTube player instance.
+		 * @param {string}   eventName Event name (currently only `timeupdate` is supported)
+		 * @param {Function} callback  Listener callback.
+		 *
+		 * @return {Function} The function to unsubscribe the event.
+		 */
+		on: ( player, eventName, callback ) => {
+			const timer = 250;
+
+			const interval = setInterval( () => {
+				if (
+					player.getPlayerState() === window.YT.PlayerState.PLAYING
+				) {
+					callback( player.getCurrentTime() );
+				}
+			}, timer );
+
+			return () => {
+				clearInterval( interval );
+			};
+		},
 	},
 	[ VIMEO_TYPE ]: {
 		/**
@@ -310,6 +386,27 @@ const players = {
 		 *                   (original return from Vimeo API).
 		 */
 		pause: ( player ) => player.pause(),
+
+		/**
+		 * Add an event listener to the player.
+		 *
+		 * @param {Object}   player    The Vimeo player instance.
+		 * @param {string}   eventName Event name (currently only `timeupdate` is supported)
+		 * @param {Function} callback  Listener callback.
+		 *
+		 * @return {Function} The function to unsubscribe the event.
+		 */
+		on: ( player, eventName, callback ) => {
+			const transformedCallback = ( event ) => {
+				callback( event.seconds );
+			};
+
+			player.on( eventName, transformedCallback );
+
+			return () => {
+				player.off( eventName, transformedCallback );
+			};
+		},
 	},
 };
 
@@ -411,6 +508,27 @@ class Player {
 	pause() {
 		return this.getPlayer().then( ( player ) =>
 			players[ this.type ].pause( player )
+		);
+	}
+
+	/**
+	 * Add an event listener to the player.
+	 *
+	 * @param {string}   eventName Event name (supported: `timeupdate`).
+	 * @param {Function} callback  Listener callback.
+	 *
+	 * @throws Will throw an error if the event is not supported.
+	 *
+	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
+	 */
+	on( eventName, callback ) {
+		// Check supported events.
+		if ( eventName !== 'timeupdate' ) {
+			throw new Error( `Event ${ eventName } not supported` );
+		}
+
+		return this.getPlayer().then( ( player ) =>
+			players[ this.type ].on( player, eventName, callback )
 		);
 	}
 }
