@@ -12,7 +12,7 @@ import { ENTER } from '@wordpress/keycodes';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/components/confirm-dialog/
  * @param {Object}   props                   Component props.
- * @param {boolean}  props.isOpen            Determines if the confirm dialog is open or not
+ * @param {boolean}  props.isOpen            Determines if the confirm dialog is open or not.
  * @param {string}   props.title             Title for the confirm dialog.
  * @param {string}   props.children          Content for the confirm dialog, can be any React component.
  * @param {Function} props.onConfirm         Callback called when the user click on "OK" or press Enter with the modal open.
