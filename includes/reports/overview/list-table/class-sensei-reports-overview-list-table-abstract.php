@@ -250,6 +250,18 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 
 			<input type="hidden" name="timezone">
 
+			<?php
+			/**
+			 * Fires before the top filter inputs on the reports overview screen.
+			 *
+			 * @hook sensei_reports_overview_before_top_filters
+			 * @since $$next-version$$
+			 *
+			 * @param {string} $report_type The report type.
+			 */
+			do_action( 'sensei_reports_overview_before_top_filters', $this->type );
+			?>
+
 			<?php if ( 'lessons' === $this->type ) : ?>
 				<label for="sensei-course-filter">
 					<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
@@ -283,6 +295,18 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
 				/>
 			<?php endif ?>
+
+			<?php
+			/**
+			 * Fires after the top filter inputs on the reports overview screen.
+			 *
+			 * @hook sensei_reports_overview_after_top_filters
+			 * @since $$next-version$$
+			 *
+			 * @param {string} $report_type The report type.
+			 */
+			do_action( 'sensei_reports_overview_after_top_filters', $this->type );
+			?>
 
 			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
 		</form>
@@ -351,6 +375,18 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			),
 			admin_url( 'edit.php' )
 		);
+
+		/**
+		 * Customize the export button URL on the reports overview screen.
+		 *
+		 * @hook  sensei_reports_overview_export_button_url
+		 * @since $$next-version$$
+		 *
+		 * @param {string} $url The export button URL.
+		 *
+		 * @return {string} The export button URL.
+		 */
+		$url = apply_filters( 'sensei_reports_overview_export_button_url', $url );
 
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
