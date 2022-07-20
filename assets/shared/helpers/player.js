@@ -456,7 +456,7 @@ class Player {
 		} else if ( this.element instanceof window.HTMLIFrameElement ) {
 			this.type = Object.entries( players ).find(
 				( [ , p ] ) =>
-					p.embedPattern && this.element.src.match( p.embedPattern )
+					p.embedPattern && this.element.src?.match( p.embedPattern )
 			)?.[ 0 ];
 		}
 
