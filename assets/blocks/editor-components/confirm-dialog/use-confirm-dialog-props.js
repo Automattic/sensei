@@ -13,6 +13,17 @@ import { useState } from '@wordpress/element';
  */
 export const useConfirmDialogProps = () => {
 	const [ props, setProps ] = useState( { isOpen: false } );
+	/**
+	 * Shows the ConfirmDialog component and returns a boolean with the result asynchronously.
+	 *
+	 * @param {string} text                      Text of the Confirm Dialog.
+	 * @param {Object} newProps                  Additional properties to use on the ConfirmDialog.
+	 * @param {string} newProps.title            Title of the Confirm Dialog.
+	 * @param {string} newProps.cancelButtonText Text of the Cancel button on the Confirm Dialog.
+	 * @param {string} newProps.okButtonText     Text of the Ok button on the Confirm Dialog.
+	 * @return {Promise<boolean>} true if the user clicked the OK button or pressed Enter. false if the user clicked the
+	 * 								Cancel button or pressed ESC.
+	 */
 	const confirm = ( text, newProps = {} ) => {
 		return new Promise( ( resolve ) => {
 			const callback = ( value ) => () => {
