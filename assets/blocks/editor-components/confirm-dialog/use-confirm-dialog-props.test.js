@@ -20,7 +20,7 @@ describe( 'useConfirmDialogProps()', () => {
 		let [ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
 		act( () => {
-			confirm( 'Hey Content', 'Hey Title' );
+			confirm( 'Hey Content', { title: 'Hey Title' } );
 		} );
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( true );
@@ -35,9 +35,9 @@ describe( 'useConfirmDialogProps()', () => {
 		let [ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
 		const confirmResponse = act( () =>
-			expect( confirm( 'Hey Content', 'Hey Title' ) ).resolves.toBe(
-				true
-			)
+			expect(
+				confirm( 'Hey Content', { title: 'Hey Title' } )
+			).resolves.toBe( true )
 		);
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( true );
@@ -53,9 +53,9 @@ describe( 'useConfirmDialogProps()', () => {
 		let [ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( false );
 		const confirmResponse = act( () =>
-			expect( confirm( 'Hey Content', 'Hey Title' ) ).resolves.toBe(
-				false
-			)
+			expect(
+				confirm( 'Hey Content', { title: 'Hey Title' } )
+			).resolves.toBe( false )
 		);
 		[ props, confirm ] = result.current;
 		expect( props.isOpen ).toBe( true );

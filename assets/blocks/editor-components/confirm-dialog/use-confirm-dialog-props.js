@@ -13,7 +13,7 @@ import { useState } from '@wordpress/element';
  */
 export const useConfirmDialogProps = () => {
 	const [ props, setProps ] = useState( { isOpen: false } );
-	const confirm = ( text, title, newProps = {} ) => {
+	const confirm = ( text, newProps = {} ) => {
 		return new Promise( ( resolve ) => {
 			const callback = ( value ) => () => {
 				resolve( value );
@@ -23,7 +23,6 @@ export const useConfirmDialogProps = () => {
 				...newProps,
 				isOpen: true,
 				children: text,
-				title,
 				onConfirm: callback( true ),
 				onCancel: callback( false ),
 			} );
