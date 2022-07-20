@@ -42,10 +42,18 @@ const ConfirmDialog = ( {
 		>
 			<div className="sensei-confirm-dialog__message">{ children }</div>
 			<div className="sensei-confirm-dialog__button-container">
-				<Button variant="tertiary" onClick={ onCancel }>
+				<Button
+					variant="tertiary"
+					onClick={ onCancel }
+					className="sensei-confirm-dialog__button"
+				>
 					{ cancelButtonText }
 				</Button>
-				<Button variant="primary" onClick={ onConfirm }>
+				<Button
+					variant="primary"
+					onClick={ onConfirm }
+					className="sensei-confirm-dialog__button"
+				>
 					{ confirmButtonText }
 				</Button>
 			</div>
