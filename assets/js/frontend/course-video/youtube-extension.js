@@ -10,25 +10,32 @@ import { registerVideo } from './video-blocks-manager';
  */
 const initYouTubePlayer = ( iframe ) => {
 	let onVideoEnd = () => {};
-	const player = new YT.Player( iframe, {
-		events: {
-			onStateChange: ( event ) => {
-				const playerStatus = event.data;
-				if ( playerStatus === YT.PlayerState.ENDED ) {
-					onVideoEnd();
-				}
+
+	const player = YT.get( iframe.id ) || new YT.Player( iframe );
+
+	const onReady = () => {
+		registerVideo( {
+			pauseVideo: player.pauseVideo.bind( player ),
+			registerVideoEndHandler: ( cb ) => {
+				onVideoEnd = cb;
 			},
-			onReady: () => {
-				registerVideo( {
-					pauseVideo: player.pauseVideo.bind( player ),
-					registerVideoEndHandler: ( cb ) => {
-						onVideoEnd = cb;
-					},
-					url: player.getVideoUrl(),
-					blockElement: iframe.closest( 'figure' ),
-				} );
-			},
-		},
+			url: player.getVideoUrl(),
+			blockElement: iframe.closest( 'figure' ),
+		} );
+	};
+
+	if ( player.getDuration ) {
+		// Just in case it's called after the player is ready.
+		onReady();
+	} else {
+		player.addEventListener( 'onReady', onReady );
+	}
+
+	player.addEventListener( 'onStateChange', ( event ) => {
+		const playerStatus = event.data;
+		if ( playerStatus === YT.PlayerState.ENDED ) {
+			onVideoEnd();
+		}
 	} );
 };
 
@@ -51,13 +58,7 @@ export const initYouTubeExtension = () => {
 	init();
 };
 
-// onYouTubeIframeAPIReady is called by YouTube iframe API when it is ready.
-const previousYouTubeIframeAPIReady =
-	window.onYouTubeIframeAPIReady !== undefined
-		? window.onYouTubeIframeAPIReady
-		: () => {};
-window.onYouTubeIframeAPIReady = () => {
+window.senseiYouTubeIframeAPIReady.then( () => {
 	youtubeIframeReady = true;
 	init();
-	previousYouTubeIframeAPIReady();
-};
+} );

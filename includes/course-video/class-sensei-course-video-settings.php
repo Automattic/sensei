@@ -81,12 +81,10 @@ class Sensei_Course_Video_Settings {
 			return;
 		}
 
-		wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
-		wp_register_script( 'sensei-course-video-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', true );
 		Sensei()->assets->register(
 			'sensei-course-video-blocks-extension',
 			'js/frontend/course-video/video-blocks-extension.js',
-			[ 'sensei-course-video-youtube-iframe-api', 'sensei-course-video-vimeo-iframe-api' ],
+			[ 'sensei-youtube-iframe-api', 'sensei-vimeo-iframe-api' ],
 			true
 		);
 
