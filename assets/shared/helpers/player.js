@@ -438,7 +438,7 @@ class Player {
 		this.element = element;
 
 		try {
-			this.setType( element );
+			this.setType();
 		} catch ( e ) {
 			// eslint-disable-next-line no-console -- We want to expose the element with problem.
 			console.error( e, element );
