@@ -70,7 +70,12 @@ const players = {
 		pause: ( player ) => {
 			try {
 				player.pause();
-				return Promise.resolve();
+
+				if ( player.paused ) {
+					return Promise.resolve();
+				}
+
+				return Promise.reject( new Error( "Video didn't pause" ) );
 			} catch ( e ) {
 				return Promise.reject( e );
 			}
