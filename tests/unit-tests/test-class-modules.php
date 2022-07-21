@@ -292,6 +292,6 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		wp_update_post( $args );
 
 		/* Assert */
-		$this->assertSame( get_term_meta( $module['term_id'], 'module_author', true ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
+		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
 	}
 }

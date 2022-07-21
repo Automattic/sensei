@@ -113,10 +113,10 @@ class Sensei_Core_Modules {
 		add_action( 'added_term_relationship', [ $this, 'add_teacher_id_in_module_meta_when_added_to_course' ], 10, 3 );
 
 		// Remove module teacher meta when removed from course.
-		add_action( 'delete_term_relationships', [ $this, 'remove_teacher_id_from_module_meta_when_added_to_course' ], 10, 3 );
+		add_action( 'delete_term_relationships', [ $this, 'remove_teacher_id_from_module_meta_when_removed_from_course' ], 10, 3 );
 
 		// Update module teacher meta on course teacher update.
-		add_action( 'post_updated', 'update_module_teacher_id_meta_on_post_teacher_update', 10, 3 );
+		add_action( 'post_updated', [ $this, 'update_module_teacher_id_meta_on_post_teacher_update' ], 10, 3 );
 	}
 
 	/**
@@ -172,13 +172,29 @@ class Sensei_Core_Modules {
 	 * @param array  $tt_ids    An array of term taxonomy IDs.
 	 * @param string $taxonomy  Taxonomy slug.
 	 */
-	public function remove_teacher_id_from_module_meta_when_added_to_course( int $object_id, array $tt_ids, string $taxonomy ) {
+	public function remove_teacher_id_from_module_meta_when_removed_from_course( int $object_id, array $tt_ids, string $taxonomy ) {
 		if ( 'module' !== $taxonomy ) {
 			return;
 		}
 
 		foreach ( $tt_ids as $tt_id ) {
-			delete_term_meta( $tt_id, 'module_author' );
+			$args    = array(
+				'post_type'      => 'course',
+				'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
+				'posts_per_page' => -1,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => $this->taxonomy,
+						'field'    => 'id',
+						'terms'    => $tt_id,
+					),
+				),
+			);
+			$courses = get_posts( $args );
+			// Don't remove teacher id if this module is still being used in other courses.
+			if ( count( $courses ) < 2 ) {
+				delete_term_meta( $tt_id, 'module_author' );
+			}
 		}
 	}
 
