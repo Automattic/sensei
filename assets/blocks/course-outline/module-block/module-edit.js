@@ -10,7 +10,7 @@ import AnimateHeight from 'react-animate-height';
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { Icon, chevronUp } from '@wordpress/icons';
 import { compose } from '@wordpress/compose';
-import { useContext, useState } from '@wordpress/element';
+import { useContext, useState, useEffect } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
@@ -58,6 +58,7 @@ export const ModuleEdit = ( props ) => {
 			borderedSelected,
 			borderColorValue,
 			teacher,
+			slug,
 		},
 		mainColor,
 		defaultMainColor,
@@ -91,6 +92,15 @@ export const ModuleEdit = ( props ) => {
 	 */
 	const updateName = ( value ) => {
 		setAttributes( { title: value } );
+	};
+
+	/**
+	 * Handle update name.
+	 *
+	 * @param {string} value Name value.
+	 */
+	const updateSlug = ( value ) => {
+		setAttributes( { slug: value } );
 	};
 
 	/**
@@ -133,6 +143,17 @@ export const ModuleEdit = ( props ) => {
 		);
 	}
 
+	useEffect( () => {
+		const courseTeacherInput = document.querySelector(
+			'select[name="sensei-course-teacher-author"]'
+		);
+		if ( courseTeacherInput ) {
+			courseTeacherInput.addEventListener( 'change', ( event ) => {
+				setAttributes( { teacherId: event.target.value } );
+			} );
+		}
+	}, [] );
+
 	const bordered =
 		undefined !== borderedSelected ? borderedSelected : outlineBordered;
 
@@ -143,6 +164,8 @@ export const ModuleEdit = ( props ) => {
 				setBordered={ ( newValue ) =>
 					setAttributes( { borderedSelected: newValue } )
 				}
+				customSlug={ slug }
+				setCustomSlug={ updateSlug }
 			/>
 			<section
 				className={ classnames( className, {
@@ -163,6 +186,12 @@ export const ModuleEdit = ( props ) => {
 							value={ title }
 							onChange={ updateName }
 						/>
+						{ slug && (
+							<>
+								<br />
+								<span className="custom-slug">({ slug })</span>
+							</>
+						) }
 					</h2>
 					{ teacher && (
 						<span className="teacher-name">({ teacher })</span>

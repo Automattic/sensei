@@ -373,4 +373,271 @@ class Sensei_REST_API_Course_Structure_Controller_Tests extends WP_Test_REST_Tes
 		$response = $this->server->dispatch( $request );
 		$this->assertEquals( $response->get_status(), 401 );
 	}
+
+	public function testCourseStructure_whenCustomSlugIsAddedToModule_isProperlySavedAndServed() {
+		$this->login_as_teacher();
+
+		$course_response = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$course_id        = $course_response['course_id'];
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$structure        = $course_structure->get( 'edit' );
+
+		$structure[0]['slug'] = 'custom-slug';
+
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_id );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 200, $response->get_status() );
+
+		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );
+		$this->assertMeetsSchema( $endpoint->get_schema(), $response->get_data() );
+		$this->assertEquals( $structure[0]['slug'], $response->get_data()[0]['slug'], 'Returned structure should have custom slug' );
+		$this->assertEquals( wp_get_current_user()->ID, $response->get_data()[0]['teacherId'], 'Returned structure should have module teacher\'s id' );
+	}
+
+	public function testCourseStructure_whenOtherCustomSlugModuleBelongsToSameTeacher_GetsMergedAndSaved() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course_a = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+		$course_b = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$course_structure_a = Sensei_Course_Structure::instance( $course_a['course_id'] );
+		$course_structure_b = Sensei_Course_Structure::instance( $course_b['course_id'] );
+
+		$structure_a = $course_structure_a->get( 'edit' );
+		$structure_b = $course_structure_b->get( 'edit' );
+
+		$structure_a[0]['slug'] = 'custom-slug';
+		$structure_b[0]['slug'] = 'custom-slug';
+
+		// Save a course structure containing one module with a custom slug.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_a['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_a ] ) );
+		$this->server->dispatch( $request );
+
+		/* Act */
+
+		// Save another course structure containing a different module with the same custom slug.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_b['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_b ] ) );
+		$response_b = $this->server->dispatch( $request );
+
+		// Get the structure for the first course again to make sure that the data was merged not overwritten.
+		$request    = new WP_REST_Request( 'GET', '/sensei-internal/v1/course-structure/' . $course_a['course_id'] );
+		$response_a = $this->server->dispatch( $request );
+
+		/* Assert */
+
+		// The first and second structure should have different modules.
+		$this->assertFalse( $structure_a[0]['id'] === $structure_b[0]['id'] );
+
+		// The returned structure from the api should contain the custom slug.
+		$this->assertEquals( $structure_b[0]['slug'], $response_b->get_data()[0]['slug'], 'Returned structure should have custom slug' );
+
+		// The second course module reused the module from the first course.
+		$this->assertEquals( $response_a->get_data()[0]['id'], $response_b->get_data()[0]['id'], 'Module did not reuse existing module with same custom slug' );
+
+		// Though the module will be same, lessons it contains will be different for different course denoting a lossless module merge.
+		$this->assertFalse( $response_a->get_data()[0]['lessons'][0]['id'] === $response_b->get_data()[0]['lessons'][0]['id'], 'Module lesson got overwritten' );
+	}
+
+	public function testCourseStructure_whenAnotherUserExistingSlugUsedInCourse_IsRestrictedFromDoingIt() {
+		/* Arrange */
+
+		// Save a course and update a module with custom slug for a teacher.
+		$this->login_as_teacher();
+
+		$course_a     = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+		$course_title = get_post( $course_a['course_id'] )->post_title;
+
+		$course_structure_a = Sensei_Course_Structure::instance( $course_a['course_id'] );
+
+		$structure_a = $course_structure_a->get( 'edit' );
+
+		$structure_a[0]['slug'] = 'custom-slug';
+
+		// Save a course structure containing one module with a custom slug.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_a['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_a ] ) );
+		$this->server->dispatch( $request );
+
+		// Save another course and try to update a module with the same custom slug for a different teacher.
+		$this->login_as_teacher_b();
+
+		$course_b = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$course_structure_b     = Sensei_Course_Structure::instance( $course_b['course_id'] );
+		$structure_b            = $course_structure_b->get( 'edit' );
+		$structure_b[0]['slug'] = 'custom-slug';
+
+		/* Act */
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_b['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_b ] ) );
+		$response_teacher_b = $this->server->dispatch( $request );
+
+		$this->login_as_admin();
+		$response_admin = $this->server->dispatch( $request );
+
+		/* Assert */
+
+		// Teacher gets restricted.
+		$this->assertEquals( $response_teacher_b->get_status(), 400 );
+		$this->assertEquals( "Slug custom-slug exists and is being used in $course_title course", $response_teacher_b->get_data()['message'] );
+
+		// Admin gets restricted.
+		$this->assertEquals( $response_admin->get_status(), 400 );
+		$this->assertEquals( "Slug custom-slug exists and is being used in $course_title course", $response_admin->get_data()['message'] );
+	}
+
+	public function testCourseStructure_whenAnotherUserTriesUsingExistingSlugNotUsedInCourse_IsAllowedOnlyForAdmin() {
+		/* Arrange */
+
+		// Save a course and update a module with custom slug for a teacher.
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 1,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		// Insert a module that is not used in any course.
+		wp_insert_term(
+			'Cats will take over',
+			'module',
+			array(
+				'description' => 'Test.',
+				'slug'        => 'custom-slug',
+			)
+		);
+		$course_structure_a = Sensei_Course_Structure::instance( $course['course_id'] );
+
+		$structure = $course_structure_a->get( 'edit' );
+
+		$structure[0]['slug'] = 'custom-slug';
+
+		/* Act */
+
+		// Try assigning the custom slug owned by another teacher to a module, as a teacher.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure ] ) );
+		$response_teacher = $this->server->dispatch( $request );
+
+		// Try assigning the custom slug owned by another teacher to a module, as an admin.
+		$this->login_as_admin();
+		$response_admin = $this->server->dispatch( $request );
+
+		/* Assert */
+
+		// Another teacher will not be able to use that custom slug owned by another user or teacher.
+		$this->assertEquals( $response_teacher->get_status(), 400 );
+		$this->assertEquals( 'A module with the slug custom-slug is already owned by another teacher', $response_teacher->get_data()['message'] );
+
+		// Admin should be able to use that custom slug as the module is not being by any course.
+		$endpoint = new Sensei_REST_API_Course_Structure_Controller( '' );
+		$this->assertEquals( $response_admin->get_status(), 200 );
+		$this->assertMeetsSchema( $endpoint->get_schema(), $response_admin->get_data() );
+	}
+
+	public function testCourseStructure_whenCustomSlugModuleInUseByAnotherCourseBySameTeacher_DoesNotLetChangeTheTeacherOfOneCourse() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course_params = [
+			'module_count'   => 1,
+			'lesson_count'   => 1,
+			'question_count' => 0,
+		];
+
+		$course_a = $this->factory->get_course_with_lessons( $course_params );
+		$course_b = $this->factory->get_course_with_lessons( $course_params );
+		$course_c = $this->factory->get_course_with_lessons( $course_params );
+
+		$course_structure_a = Sensei_Course_Structure::instance( $course_a['course_id'] );
+		$course_structure_b = Sensei_Course_Structure::instance( $course_b['course_id'] );
+		$course_structure_c = Sensei_Course_Structure::instance( $course_c['course_id'] );
+
+		$structure_a = $course_structure_a->get( 'edit' );
+		$structure_b = $course_structure_b->get( 'edit' );
+		$structure_c = $course_structure_c->get( 'edit' );
+
+		$structure_a[0]['slug'] = 'custom-slug';
+		$structure_b[0]['slug'] = 'custom-slug';
+		$structure_c[0]['slug'] = 'custom-slug-uncommon';
+
+		// Save a course structure containing one module with a custom slug.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_a['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_a ] ) );
+		$this->server->dispatch( $request );
+
+		// Save another course structure containing a different module with the same custom slug.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_b['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_b ] ) );
+		$this->server->dispatch( $request );
+
+		// Save a third course structure containing a different module with a different custom slug.
+		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/course-structure/' . $course_c['course_id'] );
+		$request->set_body( wp_json_encode( [ 'structure' => $structure_c ] ) );
+		$this->server->dispatch( $request );
+
+		$this->login_as_teacher_b();
+		$teacher_id = wp_get_current_user()->ID;
+		$this->login_as_admin();
+
+		/* Act */
+		$_POST['sensei_meta_nonce']            = wp_create_nonce( 'sensei_save_data' );
+		$_POST['sensei-course-teacher-author'] = $teacher_id;
+
+		// Try updating the teacher for the course with common custom module slug.
+		$_POST['course_module_custom_slugs'] = wp_json_encode( [ 'custom-slug' ] );
+		$_POST['post_ID']                    = $course_b['course_id'];
+		Sensei()->teacher->save_teacher_meta_box( $course_b['course_id'] );
+
+		// Try updating the teacher for the course without an uncommon custom module slug.
+		$_POST['course_module_custom_slugs'] = wp_json_encode( [ 'custom-slug-uncommon' ] );
+		$_POST['post_ID']                    = $course_c['course_id'];
+		Sensei()->teacher->save_teacher_meta_box( $course_c['course_id'] );
+
+		/* Assert */
+
+		// The teacher of the course with a common module using custom slug should not get updated.
+		$this->assertEquals( get_post( $course_b['course_id'] )->post_author, get_post( $course_a['course_id'] )->post_author );
+
+		// But the teacher for another course without that common module will be updated.
+		$this->assertEquals( get_post( $course_c['course_id'] )->post_author, $teacher_id );
+	}
 }
