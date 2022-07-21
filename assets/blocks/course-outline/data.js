@@ -104,7 +104,9 @@ export const extractStructure = ( blocks ) => {
 			description: block.attributes.description,
 			lessons: extractStructure( block.innerBlocks ),
 			teacher: block.attributes.teacher,
+			teacherId: block.attributes.teacherId,
 			lastTitle: block.attributes.lastTitle,
+			slug: block.attributes.slug,
 		} ),
 		lesson: ( block ) => ( {
 			draft: block.attributes.draft,
