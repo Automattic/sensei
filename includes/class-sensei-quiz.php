@@ -1303,9 +1303,8 @@ class Sensei_Quiz {
 	/**
 	 * Get the contents for the correct answer feedback block.
 	 *
-	 * @param int $question_id
-	 *
-	 * @return string
+	 * @param int $question_id Question Id.
+	 * @return string block rendered
 	 */
 	public static function get_correct_answer_feedback( $question_id ) {
 		$block = self::get_correct_answer_feedback_block( $question_id );
@@ -1315,6 +1314,7 @@ class Sensei_Quiz {
 	/**
 	 * Get the contents for the incorrect answer feedback block.
 	 *
+	 * @access public
 	 * @param int $question_id
 	 *
 	 * @return string
@@ -1328,9 +1328,9 @@ class Sensei_Quiz {
 	/**
 	 * Get the contents for the correct answer feedback block.
 	 *
-	 * @since $$next-version$$
 	 * @access public
-	 * @param int $question_id
+	 * @since $$next-version$$
+	 * @param int $question_id Question Id.
 	 *
 	 * @return string
 	 */
@@ -1343,7 +1343,7 @@ class Sensei_Quiz {
 	 *
 	 * @since $$next-version$$
 	 * @access public
-	 * @param int $question_id
+	 * @param int $question_id Question Id.
 	 *
 	 * @return string
 	 */

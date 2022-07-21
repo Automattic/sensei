@@ -400,7 +400,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 
-	function testGeCorrectAnswerCorrectFeedbacBlock_ReturnBlock() {
+	public function testGeCorrectAnswerCorrectFeedbacBlock_ReturnBlock() {
 		$quiz = $this->factory->quiz->create_and_get(
 			[
 				'post_content' => '<!-- wp:sensei-lms/quiz-question-feedback-correct {"className":"my-feedback success"} -->
@@ -411,12 +411,12 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$expected = 'sensei-lms/quiz-question-feedback-correct';
 		$actual   = Sensei_Quiz::get_correct_answer_feedback_block( $quiz->ID );
 
-		 $this->assertEquals( $actual['blockName'], $expected );
+		$this->assertEquals( $actual['blockName'], $expected );
 
 	}
 
 
-	function testGeCorrectAnswerIncorrectFeedbacBlock_ReturnBlock() {
+	public function testGeCorrectAnswerIncorrectFeedbacBlock_ReturnBlock() {
 		$quiz = $this->factory->quiz->create_and_get(
 			[
 				'post_content' => '<!-- wp:sensei-lms/quiz-question-feedback-incorrect {"className":"my-feedback success"} -->

@@ -774,8 +774,8 @@ class Sensei_Question {
 	/**
 	 * Return the answer feedback CSS classes (default and custom) based if the answer is correct or not
 	 *
-	 * @param [type] $question_id
-	 * @param [type] $answer_correct
+	 * @param int  $question_id Question id.
+	 * @param bool $answer_correct Flag indicating if the answer is correct or not.
 	 * @return array CSS classes
 	 */
 	private static function get_answer_feedback_classes( $question_id, bool $answer_correct ): array {
@@ -784,14 +784,14 @@ class Sensei_Question {
 
 			return [
 				'sensei-lms-question__answer-feedback--correct',
-				isset($feedback_block['attrs']['className']) ? $feedback_block['attrs']['className']: '',
+				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
 			];
 
 		} else {
 			$feedback_block = Sensei_Quiz::get_incorrect_answer_feedback_block( $question_id );
 			return [
 				'sensei-lms-question__answer-feedback--incorrect',
-				isset($feedback_block['attrs']['className']) ? $feedback_block['attrs']['className'] : '',
+				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
 
 			];
 		}
@@ -801,7 +801,7 @@ class Sensei_Question {
 	 * Special kses processing for media output to allow 'source' video tag.
 	 *
 	 * @since 3.0.0
-	 * @param string $source_string
+	 * @param string $source_string Source string.
 	 * @return string with allowed html elements
 	 */
 	private static function question_media_kses( $source_string ) {
