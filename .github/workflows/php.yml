@@ -1,6 +1,9 @@
 name: PHP Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+      paths:
+        - '**.php'
 
 jobs:
     lint:
