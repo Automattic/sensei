@@ -781,16 +781,17 @@ class Sensei_Question {
 	private static function get_answer_feedback_classes( $question_id, bool $answer_correct ): array {
 		if ( $answer_correct ) {
 			$feedback_block = Sensei_Quiz::get_correct_answer_feedback_block( $question_id );
+
 			return [
 				'sensei-lms-question__answer-feedback--correct',
-				$feedback_block['attrs']['className'],
+				isset($feedback_block['attrs']['className']) ? $feedback_block['attrs']['className']: '',
 			];
 
 		} else {
 			$feedback_block = Sensei_Quiz::get_incorrect_answer_feedback_block( $question_id );
 			return [
 				'sensei-lms-question__answer-feedback--incorrect',
-				$feedback_block['attrs']['className'],
+				isset($feedback_block['attrs']['className']) ? $feedback_block['attrs']['className'] : '',
 
 			];
 		}
