@@ -125,6 +125,7 @@ class Sensei_Course_Theme {
 		}
 
 		// Then parse the request and make sure the query var is correct.
+		wp_load_translations_early();
 		wp();
 
 		if ( get_query_var( self::QUERY_VAR ) ) {
