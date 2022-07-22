@@ -112,13 +112,14 @@ const players = {
 		 * Initialize the player.
 		 *
 		 * @param {HTMLIFrameElement} element The player element.
+		 * @param {Window}            w       A custom window.
 		 *
 		 * @return {Promise<HTMLIFrameElement>} The video player through a promise.
 		 */
-		initializePlayer: ( element ) =>
+		initializePlayer: ( element, w = window ) =>
 			new Promise( ( resolve ) => {
 				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
-				window.addEventListener( 'message', ( event ) => {
+				w.addEventListener( 'message', ( event ) => {
 					if (
 						event.source !== element.contentWindow ||
 						event.data.event !== 'videopress_durationchange' ||
@@ -220,10 +221,11 @@ const players = {
 		 * @param {HTMLIFrameElement} player    The player element.
 		 * @param {string}            eventName Event name (currently only `timeupdate` is supported)
 		 * @param {Function}          callback  Listener callback.
+		 * @param {Window}            w         A custom window.
 		 *
 		 * @return {Function} The function to unsubscribe the event.
 		 */
-		on: ( player, eventName, callback ) => {
+		on: ( player, eventName, callback, w = window ) => {
 			const transformedCallback = ( event ) => {
 				if (
 					event.source !== player.contentWindow ||
@@ -236,11 +238,11 @@ const players = {
 			};
 
 			// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
-			window.addEventListener( 'message', transformedCallback );
+			w.addEventListener( 'message', transformedCallback );
 
 			return () => {
 				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
-				window.removeEventListener( 'message', transformedCallback );
+				w.removeEventListener( 'message', transformedCallback );
 			};
 		},
 	},
@@ -254,15 +256,15 @@ const players = {
 		 * Initialize the player.
 		 *
 		 * @param {HTMLIFrameElement} element The player element.
+		 * @param {Window}            w       A custom window.
 		 *
 		 * @return {Object} The YouTube player instance through a promise.
 		 */
-		initializePlayer: ( element ) =>
+		initializePlayer: ( element, w = window ) =>
 			new Promise( ( resolve ) => {
-				window.senseiYouTubeIframeAPIReady.then( () => {
+				w.senseiYouTubeIframeAPIReady.then( () => {
 					const player =
-						window.YT.get( element.id ) ||
-						new window.YT.Player( element );
+						w.YT.get( element.id ) || new w.YT.Player( element );
 
 					const onReady = () => {
 						resolve( player );
@@ -329,16 +331,15 @@ const players = {
 		 * @param {Object}   player    The YouTube player instance.
 		 * @param {string}   eventName Event name (currently only `timeupdate` is supported)
 		 * @param {Function} callback  Listener callback.
+		 * @param {Window}   w         A custom window.
 		 *
 		 * @return {Function} The function to unsubscribe the event.
 		 */
-		on: ( player, eventName, callback ) => {
+		on: ( player, eventName, callback, w = window ) => {
 			const timer = 250;
 
 			const interval = setInterval( () => {
-				if (
-					player.getPlayerState() === window.YT.PlayerState.PLAYING
-				) {
+				if ( player.getPlayerState() === w.YT.PlayerState.PLAYING ) {
 					callback( player.getCurrentTime() );
 				}
 			}, timer );
@@ -358,11 +359,12 @@ const players = {
 		 * Initialize the player.
 		 *
 		 * @param {HTMLIFrameElement} element The player element.
+		 * @param {Window}            w       A custom window.
 		 *
 		 * @return {Object} The Vimeo player instance through a promise.
 		 */
-		initializePlayer: ( element ) =>
-			Promise.resolve( new window.Vimeo.Player( element ) ),
+		initializePlayer: ( element, w = window ) =>
+			Promise.resolve( new w.Vimeo.Player( element ) ),
 
 		/**
 		 * Get the video duration.
@@ -436,11 +438,13 @@ class Player {
 	 * Player constructor.
 	 *
 	 * @param {HTMLVideoElement|HTMLIFrameElement} element The player element.
+	 * @param {Window}                             w       A custom window.
 	 */
-	constructor( element ) {
+	constructor( element, w = window ) {
 		this.playerPromise = null;
 		this.type = null;
 		this.element = element;
+		this.w = w;
 
 		try {
 			this.setType();
@@ -456,9 +460,9 @@ class Player {
 	 * @throws Will throw an error if the video type is not found.
 	 */
 	setType() {
-		if ( this.element instanceof window.HTMLVideoElement ) {
+		if ( this.element instanceof this.w.HTMLVideoElement ) {
 			this.type = VIDEO_TYPE;
-		} else if ( this.element instanceof window.HTMLIFrameElement ) {
+		} else if ( this.element instanceof this.w.HTMLIFrameElement ) {
 			this.type = Object.entries( players ).find(
 				( [ , p ] ) =>
 					p.embedPattern && this.element.src?.match( p.embedPattern )
@@ -478,7 +482,10 @@ class Player {
 	getPlayer() {
 		if ( ! this.playerPromise ) {
 			this.playerPromise =
-				players[ this.type ]?.initializePlayer( this.element ) ||
+				players[ this.type ]?.initializePlayer(
+					this.element,
+					this.w
+				) ||
 				// A promise that never resolves if it doesn't exist.
 				Promise.reject( new Error( 'Failed getting the player' ) );
 		}
@@ -549,7 +556,7 @@ class Player {
 		}
 
 		return this.getPlayer().then( ( player ) =>
-			players[ this.type ].on( player, eventName, callback )
+			players[ this.type ].on( player, eventName, callback, this.w )
 		);
 	}
 }
