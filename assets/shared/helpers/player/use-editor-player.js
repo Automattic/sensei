@@ -61,18 +61,18 @@ const useEditorPlayer = ( videoBlock ) => {
 	);
 
 	useEffect( () => {
-		if ( 'core/video' === videoBlock.name ) {
-			const video = document.querySelector(
-				`#block-${ videoBlock.clientId } video`
-			);
+		// This timeout is to make sure it will run after the effects of the other blocks, which
+		// creates the iframe and video tags.
+		setTimeout( () => {
+			if ( 'core/video' === videoBlock.name ) {
+				const video = document.querySelector(
+					`#block-${ videoBlock.clientId } video`
+				);
 
-			setPlayer( new Player( video ) );
-		} else {
-			const scriptId = 'player-script';
+				setPlayer( new Player( video ) );
+			} else {
+				const scriptId = 'player-script';
 
-			// This timeout is to make sure it will run after the embed block adds the iframe, which
-			// happens after the fetching become `false`.
-			setTimeout( () => {
 				const sandboxIframe = document.querySelector(
 					`#block-${ videoBlock.clientId } iframe`
 				);
@@ -144,8 +144,8 @@ const useEditorPlayer = ( videoBlock ) => {
 						break;
 					}
 				}
-			}, 1 );
-		}
+			}
+		}, 1 );
 	}, [ videoBlock, isBlockSelected, fetching ] );
 
 	return player;
