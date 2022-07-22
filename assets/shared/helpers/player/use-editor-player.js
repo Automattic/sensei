@@ -64,85 +64,80 @@ const useEditorPlayer = ( videoBlock ) => {
 		// This timeout is to make sure it will run after the effects of the other blocks, which
 		// creates the iframe and video tags.
 		setTimeout( () => {
+			// Video block.
 			if ( 'core/video' === videoBlock.name ) {
 				const video = document.querySelector(
 					`#block-${ videoBlock.clientId } video`
 				);
 
 				setPlayer( new Player( video ) );
-			} else {
-				const scriptId = 'player-script';
 
-				const sandboxIframe = document.querySelector(
-					`#block-${ videoBlock.clientId } iframe`
-				);
-				const w = sandboxIframe?.contentWindow;
-				const doc = sandboxIframe?.contentDocument;
-				const playerIframe = doc?.querySelector( 'iframe' );
-				const playerScript = doc?.getElementById( scriptId );
+				return;
+			}
 
-				if ( ! playerIframe || playerScript ) {
-					return;
-				}
+			// Embed block.
+			const scriptId = 'player-script';
 
-				switch ( videoBlock.attributes.providerNameSlug ) {
-					case 'vimeo': {
-						addScript(
-							doc.body,
-							'https://player.vimeo.com/api/player.js',
-							scriptId,
-							() => {
-								setPlayer(
-									new Player(
-										doc.querySelector( 'iframe' ),
-										w
-									)
-								);
-							}
-						);
+			const sandboxIframe = document.querySelector(
+				`#block-${ videoBlock.clientId } iframe`
+			);
+			const w = sandboxIframe?.contentWindow;
+			const doc = sandboxIframe?.contentDocument;
+			const playerIframe = doc?.querySelector( 'iframe' );
+			const playerScript = doc?.getElementById( scriptId );
 
-						break;
-					}
-					case 'youtube': {
-						// Update the current embed to enable JS API.
-						if (
-							playerIframe &&
-							! playerIframe.src.includes( 'enablejsapi=1' )
-						) {
-							playerIframe.src =
-								playerIframe.src + '&enablejsapi=1';
+			if ( ! playerIframe || playerScript ) {
+				return;
+			}
+
+			switch ( videoBlock.attributes.providerNameSlug ) {
+				case 'vimeo': {
+					addScript(
+						doc.body,
+						'https://player.vimeo.com/api/player.js',
+						scriptId,
+						() => {
+							setPlayer(
+								new Player( doc.querySelector( 'iframe' ), w )
+							);
 						}
+					);
 
-						w.senseiYouTubeIframeAPIReady = new Promise(
-							( resolve ) => {
-								w.onYouTubeIframeAPIReady = () => {
-									resolve();
-								};
-							}
-						);
-
-						addScript(
-							doc.body,
-							'https://www.youtube.com/iframe_api',
-							scriptId,
-							() => {
-								setPlayer(
-									new Player(
-										doc.querySelector( 'iframe' ),
-										w
-									)
-								);
-							}
-						);
-
-						break;
+					break;
+				}
+				case 'youtube': {
+					// Update the current embed to enable JS API.
+					if (
+						playerIframe &&
+						! playerIframe.src.includes( 'enablejsapi=1' )
+					) {
+						playerIframe.src = playerIframe.src + '&enablejsapi=1';
 					}
-					case 'videopress': {
-						setPlayer(
-							new Player( doc.querySelector( 'iframe' ), w )
-						);
-						break;
-					}
+
+					w.senseiYouTubeIframeAPIReady = new Promise(
+						( resolve ) => {
+							w.onYouTubeIframeAPIReady = () => {
+								resolve();
+							};
+						}
+					);
+
+					addScript(
+						doc.body,
+						'https://www.youtube.com/iframe_api',
+						scriptId,
+						() => {
+							setPlayer(
+								new Player( doc.querySelector( 'iframe' ), w )
+							);
+						}
+					);
+
+					break;
+				}
+				case 'videopress': {
+					setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+					break;
 				}
 			}
 		}, 1 );
