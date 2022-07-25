@@ -1,6 +1,5 @@
 .sensei-modal {
 
-	display: none; // Hide modal by default.
 	color: #1E1E1E;
 
 	& &__overlay {
@@ -26,7 +25,7 @@
 		border: 1px solid #ddd;
 		border-radius: 2px;
 		transform: translate( -50%, -50% );
-		box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
+		box-shadow: rgba(0, 0, 0, 0.2) 0 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
 	}
 
 	& &__title {
@@ -35,7 +34,7 @@
 		font-weight: 600;
 		line-height: 24px;
 		border-bottom: 1px solid #ddd;
-		height: 24px;
+		min-height: 24px;
 	}
 
 	& &__content {
@@ -56,9 +55,5 @@
 		border: 0;
 		background-color: unset;
 		cursor: pointer;
-	}
-
-	&.sensei-modal--open {
-		display: unset; // Display contents.
 	}
 }

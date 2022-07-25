@@ -4,33 +4,34 @@
 import { Icon, close as closeIcon } from '@wordpress/icons';
 
 /**
- * External dependencies
+ * Modal component.
+ *
+ * @param {Object}   props
+ * @param {boolean}  props.isOpen      Whether the modal should be open or not.
+ * @param {Function} props.handleClose Callback to run when trying to close the modal.
+ * @param {string}   props.title       The title for the modal. Empty by default.
+ * @param {Object}   props.children    The content of the modal.
+ * @return {JSX.Element} The modal component or null (if not open).
  */
-import classNames from 'classnames';
-
-const Modal = ( { isOpen, setIsOpen, title, children } ) => {
-	const close = ( event ) => {
-		setIsOpen( false );
-		event.preventDefault();
-	};
+const Modal = ( { isOpen, handleClose, title = '', children } ) => {
+	// Return null if the modal is not open.
+	if ( ! isOpen ) {
+		return null;
+	}
 
 	return (
-		<div
-			className={ classNames( 'sensei-modal', {
-				'sensei-modal--open': isOpen,
-			} ) }
-		>
+		<div className={ 'sensei-modal' }>
 			<button
 				className="sensei-modal__overlay"
 				aria-label="Close"
-				onClick={ close }
+				onClick={ handleClose }
 			/>
 			<div className="sensei-modal__wrapper">
 				<div className="sensei-modal__header">
 					<div className="sensei-modal__title">{ title }</div>
 					<button
 						className="sensei-modal__close-button"
-						onClick={ close }
+						onClick={ handleClose }
 					>
 						<Icon icon={ closeIcon } />
 					</button>
