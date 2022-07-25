@@ -79,13 +79,13 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
  * @return {boolean}  Flag indicating if the block matches on the the strategies
  */
 
-const byStructureItem = ( block ) => ( courseStructureItem ) => {
-	const { name, attributes } = courseStructureItem;
+const byCourseData = ( courseData ) => ( block ) => {
+	const { name, attributes } = block;
 	const isTheCorrectBlockType = Object.keys( blockTypes ).includes( name );
 
-	const findById = () => !! attributes.id && block.id === attributes.id;
-	const findByTitle = () => attributes.title === block.title;
-	const findByLastTitle = () => attributes.title === block.lastTitle;
+	const findById = () => !! attributes.id && courseData.id === attributes.id;
+	const findByTitle = () => attributes.title === courseData.title;
+	const findByLastTitle = () => attributes.title === courseData.lastTitle;
 
 	if ( ! isTheCorrectBlockType ) {
 		return false;
@@ -103,16 +103,16 @@ const findInInnerBlocks = ( blocks, predicate ) =>
 /**
  * Find the block for a given lesson/module item.
  *
- * @param {Object[]}                                    blocks        Block.
- * @param {Array.<(CourseLessonData|CourseModuleData)>} structureItem Structure item.
+ * @param {Object[]}                                    blocks     Block.
+ * @param {Array.<(CourseLessonData|CourseModuleData)>} courseData Course item.
  * @return {Object} The block, if found.
  */
-const findBlock = ( blocks, structureItem ) => {
+const findBlock = ( blocks, courseData ) => {
 	const isLesson = ( value ) => value === 'lesson';
-	const found = blocks.find( byStructureItem( structureItem ) );
+	const found = blocks.find( byCourseData( courseData ) );
 
-	if ( ! found && isLesson( structureItem.type ) ) {
-		return findInInnerBlocks( blocks, byStructureItem( structureItem ) );
+	if ( ! found && isLesson( courseData.type ) ) {
+		return findInInnerBlocks( blocks, byCourseData( courseData ) );
 	}
 
 	return found;
