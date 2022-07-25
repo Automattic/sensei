@@ -255,7 +255,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			 * Fires before the top filter inputs on the reports overview screen.
 			 *
 			 * @hook sensei_reports_overview_before_top_filters
-			 * @since $$next-version$$
+			 * @since 4.6.0
 			 *
 			 * @param {string} $report_type The report type.
 			 */
@@ -301,7 +301,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			 * Fires after the top filter inputs on the reports overview screen.
 			 *
 			 * @hook sensei_reports_overview_after_top_filters
-			 * @since $$next-version$$
+			 * @since 4.6.0
 			 *
 			 * @param {string} $report_type The report type.
 			 */
@@ -380,7 +380,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		 * Customize the export button URL on the reports overview screen.
 		 *
 		 * @hook  sensei_reports_overview_export_button_url
-		 * @since $$next-version$$
+		 * @since 4.6.0
 		 *
 		 * @param {string} $url The export button URL.
 		 *

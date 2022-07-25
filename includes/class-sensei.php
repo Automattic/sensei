@@ -344,7 +344,7 @@ class Sensei_Main {
 	/**
 	 * Initialize the cache groups used in Sensei
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 */
 	protected function initialize_cache_groups() {
 		wp_cache_add_non_persistent_groups( 'sensei/temporary' );
