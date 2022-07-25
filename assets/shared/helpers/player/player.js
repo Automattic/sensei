@@ -19,9 +19,13 @@ const players = {
 			}
 
 			return new Promise( ( resolve ) => {
-				element.addEventListener( 'durationchange', () => {
-					resolve( element );
-				} );
+				element.addEventListener(
+					'durationchange',
+					() => {
+						resolve( element );
+					},
+					{ once: true }
+				);
 			} );
 		},
 
@@ -117,8 +121,7 @@ const players = {
 		 */
 		initializePlayer: ( element, w = window ) =>
 			new Promise( ( resolve ) => {
-				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
-				w.addEventListener( 'message', ( event ) => {
+				const onDurationChange = ( event ) => {
 					if (
 						event.source !== element.contentWindow ||
 						event.data.event !== 'videopress_durationchange' ||
@@ -131,8 +134,12 @@ const players = {
 					element.dataset.duration =
 						parseInt( event.data.durationMs, 10 ) / 1000;
 
+					w.removeEventListener( 'message', onDurationChange );
 					resolve( element );
-				} );
+				};
+
+				// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+				w.addEventListener( 'message', onDurationChange );
 			} ),
 
 		/**
