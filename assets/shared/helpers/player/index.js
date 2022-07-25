@@ -30,35 +30,29 @@ class Player {
 	 */
 	constructor( element, w = window ) {
 		this.playerPromise = null;
-		this.type = null;
+		this.adapterName = null;
 		this.element = element;
 		this.w = w;
 
-		try {
-			this.setType();
-		} catch ( e ) {
-			// eslint-disable-next-line no-console -- We want to expose the element with problem.
-			console.error( e, element );
-		}
+		this.setAdapter();
 	}
 
 	/**
-	 * Set the player type.
-	 *
-	 * @throws Will throw an error if the video type is not found.
+	 * Set the player adapter.
 	 */
-	setType() {
+	setAdapter() {
 		if ( this.element instanceof this.w.HTMLVideoElement ) {
-			this.type = VIDEO_TYPE;
+			this.adapterName = VIDEO_TYPE;
 		} else if ( this.element instanceof this.w.HTMLIFrameElement ) {
-			this.type = Object.entries( adapters ).find(
+			this.adapterName = Object.entries( adapters ).find(
 				( [ , { EMBED_PATTERN = null } ] ) =>
 					EMBED_PATTERN && this.element.src?.match( EMBED_PATTERN )
 			)?.[ 0 ];
 		}
 
-		if ( ! this.type ) {
-			throw new Error( 'Video type not found' );
+		if ( ! this.adapterName ) {
+			// eslint-disable-next-line no-console -- We want to expose the element with problem.
+			console.error( 'Video adapter not found', this.element );
 		}
 	}
 
@@ -70,7 +64,7 @@ class Player {
 	getPlayer() {
 		if ( ! this.playerPromise ) {
 			this.playerPromise =
-				adapters[ this.type ]?.initializePlayer(
+				adapters[ this.adapterName ]?.initializePlayer(
 					this.element,
 					this.w
 				) ||
@@ -88,7 +82,7 @@ class Player {
 	 */
 	getDuration() {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.type ].getDuration( player )
+			adapters[ this.adapterName ].getDuration( player )
 		);
 	}
 
@@ -101,7 +95,7 @@ class Player {
 	 */
 	setCurrentTime( seconds ) {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.type ].setCurrentTime( player, seconds )
+			adapters[ this.adapterName ].setCurrentTime( player, seconds )
 		);
 	}
 
@@ -112,7 +106,7 @@ class Player {
 	 */
 	play() {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.type ].play( player )
+			adapters[ this.adapterName ].play( player )
 		);
 	}
 
@@ -123,7 +117,7 @@ class Player {
 	 */
 	pause() {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.type ].pause( player )
+			adapters[ this.adapterName ].pause( player )
 		);
 	}
 
@@ -144,7 +138,11 @@ class Player {
 		}
 
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.type ].onTimeupdate( player, callback, this.w )
+			adapters[ this.adapterName ].onTimeupdate(
+				player,
+				callback,
+				this.w
+			)
 		);
 	}
 }
