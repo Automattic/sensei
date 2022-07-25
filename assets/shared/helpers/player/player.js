@@ -12,13 +12,13 @@ const players = {
 		 *
 		 * @return {Promise<HTMLVideoElement>} The video player through a promise.
 		 */
-		initializePlayer: ( element ) => {
-			// Return that it's ready when it can get the video duration.
-			if ( ! isNaN( element.duration ) ) {
-				return Promise.resolve( element );
-			}
+		initializePlayer: ( element ) =>
+			new Promise( ( resolve ) => {
+				// Return that it's ready when it can get the video duration.
+				if ( ! isNaN( element.duration ) ) {
+					resolve( element );
+				}
 
-			return new Promise( ( resolve ) => {
 				element.addEventListener(
 					'durationchange',
 					() => {
@@ -26,8 +26,7 @@ const players = {
 					},
 					{ once: true }
 				);
-			} );
-		},
+			} ),
 
 		/**
 		 * Get the video duration.
@@ -36,7 +35,10 @@ const players = {
 		 *
 		 * @return {Promise<number>} The duration of the video in seconds through a promise.
 		 */
-		getDuration: ( player ) => Promise.resolve( player.duration ),
+		getDuration: ( player ) =>
+			new Promise( ( resolve ) => {
+				resolve( player.duration );
+			} ),
 
 		/**
 		 * Set the video to a current time.
@@ -46,14 +48,11 @@ const players = {
 		 *
 		 * @return {Promise} A promise that resolves if the video was set to a current time successfully.
 		 */
-		setCurrentTime: ( player, seconds ) => {
-			try {
+		setCurrentTime: ( player, seconds ) =>
+			new Promise( ( resolve ) => {
 				player.currentTime = seconds;
-				return Promise.resolve();
-			} catch ( e ) {
-				return Promise.reject( e );
-			}
-		},
+				resolve();
+			} ),
 
 		/**
 		 * Play the video.
@@ -71,19 +70,16 @@ const players = {
 		 *
 		 * @return {Promise} A promise that resolves if the video was paused successfully.
 		 */
-		pause: ( player ) => {
-			try {
+		pause: ( player ) =>
+			new Promise( ( resolve, reject ) => {
 				player.pause();
 
 				if ( player.paused ) {
-					return Promise.resolve();
+					resolve();
 				}
 
-				return Promise.reject( new Error( "Video didn't pause" ) );
-			} catch ( e ) {
-				return Promise.reject( e );
-			}
-		},
+				reject( new Error( "Video didn't pause" ) );
+			} ),
 
 		/**
 		 * Add an timeupdate event listener to the player.
@@ -149,16 +145,16 @@ const players = {
 		 *
 		 * @return {Promise<number>} The duration of the video in seconds through a promise.
 		 */
-		getDuration: ( player ) => {
-			const { duration } = player.dataset;
-			if ( ! duration ) {
-				return Promise.reject(
-					new Error( 'Video duration not found' )
-				);
-			}
+		getDuration: ( player ) =>
+			new Promise( ( resolve, reject ) => {
+				const { duration } = player.dataset;
 
-			return Promise.resolve( parseFloat( player.dataset.duration ) );
-		},
+				if ( ! duration ) {
+					reject( new Error( 'Video duration not found' ) );
+				}
+
+				resolve( parseFloat( player.dataset.duration ) );
+			} ),
 
 		/**
 		 * Set the video to a current time.
@@ -168,8 +164,8 @@ const players = {
 		 *
 		 * @return {Promise} A promise that resolves if the video was set to a current time successfully.
 		 */
-		setCurrentTime: ( player, seconds ) => {
-			try {
+		setCurrentTime: ( player, seconds ) =>
+			new Promise( ( resolve ) => {
 				player.contentWindow.postMessage(
 					{
 						event: 'videopress_action_set_currenttime',
@@ -177,11 +173,8 @@ const players = {
 					},
 					'*'
 				);
-				return Promise.resolve();
-			} catch ( e ) {
-				return Promise.reject( e );
-			}
-		},
+				resolve();
+			} ),
 
 		/**
 		 * Play the video.
@@ -190,17 +183,14 @@ const players = {
 		 *
 		 * @return {Promise} A promise that resolves if the video was played successfully.
 		 */
-		play: ( player ) => {
-			try {
+		play: ( player ) =>
+			new Promise( ( resolve ) => {
 				player.contentWindow.postMessage(
 					{ event: 'videopress_action_play' },
 					'*'
 				);
-				return Promise.resolve();
-			} catch ( e ) {
-				return Promise.reject( e );
-			}
-		},
+				resolve();
+			} ),
 
 		/**
 		 * Pause the video.
@@ -209,17 +199,14 @@ const players = {
 		 *
 		 * @return {Promise} A promise that resolves if the video was paused successfully.
 		 */
-		pause: ( player ) => {
-			try {
+		pause: ( player ) =>
+			new Promise( ( resolve ) => {
 				player.contentWindow.postMessage(
 					{ event: 'videopress_action_pause' },
 					'*'
 				);
-				return Promise.resolve();
-			} catch ( e ) {
-				return Promise.reject( e );
-			}
-		},
+				resolve();
+			} ),
 
 		/**
 		 * Add an timeupdate event listener to the player.
@@ -292,7 +279,10 @@ const players = {
 		 *
 		 * @return {Promise<number>} The duration of the video in seconds through a promise.
 		 */
-		getDuration: ( player ) => Promise.resolve( player.getDuration() ),
+		getDuration: ( player ) =>
+			new Promise( ( resolve ) => {
+				resolve( player.getDuration() );
+			} ),
 
 		/**
 		 * Set the video to a current time.
@@ -302,10 +292,11 @@ const players = {
 		 *
 		 * @return {Promise} A resolved promise.
 		 */
-		setCurrentTime: ( player, seconds ) => {
-			player.seekTo( seconds );
-			return Promise.resolve();
-		},
+		setCurrentTime: ( player, seconds ) =>
+			new Promise( ( resolve ) => {
+				player.seekTo( seconds );
+				resolve();
+			} ),
 
 		/**
 		 * Play the video.
@@ -314,10 +305,11 @@ const players = {
 		 *
 		 * @return {Promise} A resolved promise.
 		 */
-		play: ( player ) => {
-			player.playVideo();
-			return Promise.resolve();
-		},
+		play: ( player ) =>
+			new Promise( ( resolve ) => {
+				player.playVideo();
+				resolve();
+			} ),
 
 		/**
 		 * Pause the video.
@@ -326,10 +318,11 @@ const players = {
 		 *
 		 * @return {Promise} A resolved promise.
 		 */
-		pause: ( player ) => {
-			player.pauseVideo();
-			return Promise.resolve();
-		},
+		pause: ( player ) =>
+			new Promise( ( resolve ) => {
+				player.pauseVideo();
+				resolve();
+			} ),
 
 		/**
 		 * Add an timeupdate event listener to the player.
