@@ -23,7 +23,15 @@
       "type": "string",
       "default": ""
     },
+    "teacherId": {
+      "type": "string",
+      "default": ""
+    },
     "lastTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "slug": {
       "type": "string",
       "default": ""
     },

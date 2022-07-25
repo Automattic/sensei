@@ -74,8 +74,11 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 			add_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 		}
 
+		add_action( 'pre_user_query', [ $this, 'add_pre_user_query_hook' ] );
+
 		$wp_user_search = new WP_User_Query( $query_args );
 
+		remove_action( 'pre_user_query', [ $this, 'add_pre_user_query_hook' ] );
 		remove_action( 'pre_user_query', [ $this, 'add_orderby_custom_field_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		remove_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
@@ -84,6 +87,27 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$this->last_total_items = $wp_user_search->get_total();
 
 		return $learners;
+	}
+
+	/**
+	 * Add a user query hook before querying the users.
+	 * This allows for third parties to alter the query.
+	 *
+	 * @since  $$next-version$$
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function add_pre_user_query_hook( WP_User_Query $query ) {
+		/**
+		 * Fires before the user query is executed.
+		 *
+		 * @hook sensei_reports_overview_students_data_provider_pre_user_query
+		 * @since $$next-version$$
+		 *
+		 * @param {WP_User_Query} $query The user query.
+		 */
+		do_action( 'sensei_reports_overview_students_data_provider_pre_user_query', $query );
 	}
 
 	/**

@@ -1303,25 +1303,52 @@ class Sensei_Quiz {
 	/**
 	 * Get the contents for the correct answer feedback block.
 	 *
-	 * @param int $question_id
-	 *
-	 * @return string
+	 * @param int $question_id Question Id.
+	 * @return string block rendered
 	 */
 	public static function get_correct_answer_feedback( $question_id ) {
-		$block = self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-correct' );
+		$block = self::get_correct_answer_feedback_block( $question_id );
 		return $block ? render_block( $block ) : '';
 	}
 
 	/**
 	 * Get the contents for the incorrect answer feedback block.
 	 *
+	 * @access public
 	 * @param int $question_id
 	 *
 	 * @return string
 	 */
 	public static function get_incorrect_answer_feedback( $question_id ) {
-		$block = self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
+		$block = self::get_incorrect_answer_feedback_block( $question_id );
 		return $block ? render_block( $block ) : '';
+	}
+
+
+	/**
+	 * Get the contents for the correct answer feedback block.
+	 *
+	 * @access public
+	 * @since $$next-version$$
+	 * @param int $question_id Question Id.
+	 *
+	 * @return string
+	 */
+	public static function get_correct_answer_feedback_block( $question_id ) {
+		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-correct' );
+	}
+
+	/**
+	 * Get the contents for the incorrect answer feedback block.
+	 *
+	 * @since $$next-version$$
+	 * @access public
+	 * @param int $question_id Question Id.
+	 *
+	 * @return string
+	 */
+	public static function get_incorrect_answer_feedback_block( $question_id ) {
+		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
 	}
 
 	/**

@@ -31,7 +31,10 @@ const initVideoPressPlayer = ( iframe ) => {
 			if ( event.source !== iframe.contentWindow ) {
 				return;
 			}
-			if ( event.data.event === 'ended' && event.data.id === videoId ) {
+			if (
+				event.data.event === 'videopress_ended' &&
+				event.data.id === videoId
+			) {
 				onVideoEnd();
 			}
 		},

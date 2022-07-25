@@ -44,27 +44,26 @@ class Sensei_Messages {
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
 		// Save new private message (priority low to ensure sensei_message post type is
-		// registered
+		// registered.
 		add_action( 'init', array( $this, 'save_new_message' ), 101 );
 
 		// Monitor when new reply is posted.
-		add_action('comment_post', [$this, 'message_reply_received'], 10, 1);
-		add_action('rest_insert_comment', [$this, 'message_rest_insert'], 10, 3);
+		add_action( 'comment_post', [ $this, 'message_reply_received' ], 10, 1 );
+		add_action( 'rest_insert_comment', [ $this, 'message_rest_insert' ], 10, 3 );
 
-
-		// Block WordPress from sending comment update emails for the messages post type
+		// Block WordPress from sending comment update emails for the messages post type.
 		add_filter( 'comment_notification_recipients', array( $this, 'stop_wp_comment_emails' ), 20, 2 );
 
-		// Block WordPress from sending comment moderator emails on the sensei messages post types
+		// Block WordPress from sending comment moderator emails on the sensei messages post types.
 		add_filter( 'comment_moderation_recipients', array( $this, 'stop_wp_comment_emails' ), 20, 2 );
 
-		// add message link to lesson
+		// Add message link to lesson.
 		add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'send_message_link' ), 30, 2 );
 
-		// add message link to lesson
+		// Add message link to lesson.
 		add_action( 'sensei_single_quiz_questions_before', array( $this, 'send_message_link' ), 10, 2 );
 
-		// Hide messages and replies from users who do not have access
+		// Hide messages and replies from users who do not have access.
 		add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
 		add_filter( 'the_title', array( $this, 'message_title' ), 10, 2 );
@@ -76,7 +75,7 @@ class Sensei_Messages {
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
-		add_action('comment_form', [$this, 'add_nonce_to_comment_form']);
+		add_action( 'comment_form', [ $this, 'add_nonce_to_comment_form' ] );
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -397,15 +396,15 @@ class Sensei_Messages {
 			return;
 		}
 
-		$should_verify_nonce = !defined('XMLRPC_REQUEST');
+		$should_verify_nonce = ! defined( 'XMLRPC_REQUEST' );
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification.
-		$nonce_verified = !empty($_POST['sensei_message_nonce']) && wp_verify_nonce(wp_unslash($_POST['sensei_message_nonce']), 'sensei_post_message_reply');
+		$nonce_verified = ! empty( $_POST['sensei_message_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['sensei_message_nonce'] ), 'sensei_post_message_reply' );
 
-		$comment_author   = get_userdata($comment->user_id);
-		$user_can_comment = in_array($comment_author->user_login, [get_post_meta($message->ID, '_receiver', true), get_post_meta($message->ID, '_sender', true)], true);
+		$comment_author   = get_userdata( $comment->user_id );
+		$user_can_comment = in_array( $comment_author->user_login, [ get_post_meta( $message->ID, '_receiver', true ), get_post_meta( $message->ID, '_sender', true ) ], true );
 
-		if (($should_verify_nonce && !$nonce_verified) || !$user_can_comment) {
-			wp_set_comment_status($comment_id, 'spam');
+		if ( ( $should_verify_nonce && ! $nonce_verified ) || ! $user_can_comment ) {
+			wp_set_comment_status( $comment_id, 'spam' );
 			return;
 		}
 
@@ -425,19 +424,18 @@ class Sensei_Messages {
 	 * @param bool            $creating True when creating a comment, false
 	 *                                  when updating.
 	 */
-	public function message_rest_insert(WP_Comment $comment, WP_REST_Request $request, bool $creating)
-	{
-		$message = get_post($comment->comment_post_ID);
+	public function message_rest_insert( WP_Comment $comment, WP_REST_Request $request, bool $creating ) {
+		$message = get_post( $comment->comment_post_ID );
 
-		if ($message->post_type !== $this->post_type) {
+		if ( $message->post_type !== $this->post_type ) {
 			return;
 		}
 
-		$comment_author   = get_userdata($comment->user_id);
-		$user_can_comment = in_array($comment_author->user_login, [get_post_meta($message->ID, '_receiver', true), get_post_meta($message->ID, '_sender', true)], true);
+		$comment_author   = get_userdata( $comment->user_id );
+		$user_can_comment = in_array( $comment_author->user_login, [ get_post_meta( $message->ID, '_receiver', true ), get_post_meta( $message->ID, '_sender', true ) ], true );
 
-		if (!$user_can_comment) {
-			wp_set_comment_status($comment->comment_ID, 'spam');
+		if ( ! $user_can_comment ) {
+			wp_set_comment_status( $comment->comment_ID, 'spam' );
 		}
 	}
 
@@ -448,10 +446,9 @@ class Sensei_Messages {
 	 *
 	 * @return void
 	 */
-	public function add_nonce_to_comment_form()
-	{
-		if (is_singular($this->post_type)) {
-			wp_nonce_field('sensei_post_message_reply', 'sensei_message_nonce');
+	public function add_nonce_to_comment_form() {
+		if ( is_singular( $this->post_type ) ) {
+			wp_nonce_field( 'sensei_post_message_reply', 'sensei_message_nonce' );
 		}
 	}
 
