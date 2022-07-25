@@ -928,7 +928,7 @@ class Sensei_Course_Structure {
 	/**
 	 * Try getting an existing module by custom slug, default slug, or name for course teacher.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 *
 	 * @param string $slug  The slug of the module.
 	 * @param string $title The title of the module.
