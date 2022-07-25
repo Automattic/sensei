@@ -82,23 +82,22 @@ const players = {
 		},
 
 		/**
-		 * Add an event listener to the player.
+		 * Add an timeupdate event listener to the player.
 		 *
-		 * @param {HTMLVideoElement} player    The player element.
-		 * @param {string}           eventName Event name (currently only `timeupdate` is supported)
-		 * @param {Function}         callback  Listener callback.
+		 * @param {HTMLVideoElement} player   The player element.
+		 * @param {Function}         callback Listener callback.
 		 *
 		 * @return {Function} The function to unsubscribe the event.
 		 */
-		on: ( player, eventName, callback ) => {
+		onTimeupdate: ( player, callback ) => {
 			const transformedCallback = ( event ) => {
 				callback( event.target.currentTime );
 			};
 
-			player.addEventListener( eventName, transformedCallback );
+			player.addEventListener( 'timeupdate', transformedCallback );
 
 			return () => {
-				player.removeEventListener( eventName, transformedCallback );
+				player.removeEventListener( 'timeupdate', transformedCallback );
 			};
 		},
 	},
@@ -216,24 +215,24 @@ const players = {
 		},
 
 		/**
-		 * Add an event listener to the player.
+		 * Add an timeupdate event listener to the player.
 		 *
-		 * @param {HTMLIFrameElement} player    The player element.
-		 * @param {string}            eventName Event name (currently only `timeupdate` is supported)
-		 * @param {Function}          callback  Listener callback.
-		 * @param {Window}            w         A custom window.
+		 * @param {HTMLIFrameElement} player   The player element.
+		 * @param {Function}          callback Listener callback.
+		 * @param {Window}            w        A custom window.
 		 *
 		 * @return {Function} The function to unsubscribe the event.
 		 */
-		on: ( player, eventName, callback, w = window ) => {
+		onTimeupdate: ( player, callback, w = window ) => {
 			const transformedCallback = ( event ) => {
 				if (
 					event.source !== player.contentWindow ||
-					event.data.event !== `videopress_${ eventName }` ||
+					event.data.event !== `videopress_timeupdate` ||
 					! event.data.currentTimeMs
 				) {
 					return;
 				}
+
 				callback( event.data.currentTimeMs / 1000 );
 			};
 
@@ -326,16 +325,15 @@ const players = {
 		},
 
 		/**
-		 * Add an event listener to the player.
+		 * Add an timeupdate event listener to the player.
 		 *
-		 * @param {Object}   player    The YouTube player instance.
-		 * @param {string}   eventName Event name (currently only `timeupdate` is supported)
-		 * @param {Function} callback  Listener callback.
-		 * @param {Window}   w         A custom window.
+		 * @param {Object}   player   The YouTube player instance.
+		 * @param {Function} callback Listener callback.
+		 * @param {Window}   w        A custom window.
 		 *
 		 * @return {Function} The function to unsubscribe the event.
 		 */
-		on: ( player, eventName, callback, w = window ) => {
+		onTimeupdate: ( player, callback, w = window ) => {
 			const timer = 250;
 
 			const interval = setInterval( () => {
@@ -408,23 +406,22 @@ const players = {
 		pause: ( player ) => player.pause(),
 
 		/**
-		 * Add an event listener to the player.
+		 * Add an timeupdate event listener to the player.
 		 *
-		 * @param {Object}   player    The Vimeo player instance.
-		 * @param {string}   eventName Event name (currently only `timeupdate` is supported)
-		 * @param {Function} callback  Listener callback.
+		 * @param {Object}   player   The Vimeo player instance.
+		 * @param {Function} callback Listener callback.
 		 *
 		 * @return {Function} The function to unsubscribe the event.
 		 */
-		on: ( player, eventName, callback ) => {
+		onTimeupdate: ( player, callback ) => {
 			const transformedCallback = ( event ) => {
 				callback( event.seconds );
 			};
 
-			player.on( eventName, transformedCallback );
+			player.on( 'timeupdate', transformedCallback );
 
 			return () => {
-				player.off( eventName, transformedCallback );
+				player.off( 'timeupdate', transformedCallback );
 			};
 		},
 	},
@@ -556,7 +553,7 @@ class Player {
 		}
 
 		return this.getPlayer().then( ( player ) =>
-			players[ this.type ].on( player, eventName, callback, this.w )
+			players[ this.type ].onTimeupdate( player, callback, this.w )
 		);
 	}
 }
