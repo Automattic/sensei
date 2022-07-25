@@ -6,7 +6,7 @@
  */
 import { createBlock } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
-import { invert } from 'lodash';
+import { curry, invert } from 'lodash';
 
 /**
  * Course structure data.
@@ -70,13 +70,15 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
 		return block;
 	} );
 };
+
 /**
- * Predicate builder method that return a predicate a block with a course structure item, using different strategies.
+ * Check if the block is related to the current course structure CourseLessonData|CourseModuleData
  *
- * @param {Object[]} courseData Course Lesson Data or Course Module Data..
- * @return {Function} Predicate that match a block using course lesson data/course module data.
+ * @param {block}                             block      Gutenberg Block stored on the editor store
+ * @param {CourseLessonData|CourseModuleData} courseData Course Lesson Data or Course Module Data..
+ * @return {boolean} returns if the block matches with the data structure.
  */
-const byCourseData = ( courseData ) => ( block ) => {
+const byCourseData = curry( ( courseData, block ) => {
 	const { name, attributes } = block;
 	const isTheCorrectBlockType = Object.keys( blockTypes ).includes( name );
 
@@ -89,7 +91,7 @@ const byCourseData = ( courseData ) => ( block ) => {
 	}
 
 	return [ findById(), findByTitle(), findByLastTitle() ].includes( true );
-};
+} );
 
 const findInInnerBlocks = ( blocks, predicate ) =>
 	blocks.reduce(
