@@ -143,7 +143,7 @@ const players = {
 		 * @return {Promise<number>} The duration of the video in seconds through a promise.
 		 */
 		getDuration: ( player ) => {
-			const duration = player.dataset.duration;
+			const { duration } = player.dataset;
 			if ( ! duration ) {
 				return Promise.reject(
 					new Error( 'Video duration not found' )
