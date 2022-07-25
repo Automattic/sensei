@@ -181,7 +181,7 @@ const players = {
 		 *
 		 * @param {HTMLIFrameElement} player The player element.
 		 *
-		 * @return {Promise} A promise that resolves if the video was played successfully.
+		 * @return {Promise} A promise that resolves if the video play was sent successfully.
 		 */
 		play: ( player ) =>
 			new Promise( ( resolve ) => {
@@ -197,7 +197,7 @@ const players = {
 		 *
 		 * @param {HTMLIFrameElement} player The player element.
 		 *
-		 * @return {Promise} A promise that resolves if the video was paused successfully.
+		 * @return {Promise} A promise that resolves if the video pause was sent successfully.
 		 */
 		pause: ( player ) =>
 			new Promise( ( resolve ) => {
@@ -290,7 +290,7 @@ const players = {
 		 * @param {Object} player  The YouTube player instance.
 		 * @param {number} seconds The video time in seconds to set.
 		 *
-		 * @return {Promise} A resolved promise.
+		 * @return {Promise} A promise that resolves if the video was set to a current time successfully.
 		 */
 		setCurrentTime: ( player, seconds ) =>
 			new Promise( ( resolve ) => {
@@ -303,7 +303,7 @@ const players = {
 		 *
 		 * @param {Object} player The YouTube player instance.
 		 *
-		 * @return {Promise} A resolved promise.
+		 * @return {Promise} A promise that resolves if the video play was called successfully.
 		 */
 		play: ( player ) =>
 			new Promise( ( resolve ) => {
@@ -316,7 +316,7 @@ const players = {
 		 *
 		 * @param {Object} player The YouTube player instance.
 		 *
-		 * @return {Promise} A resolved promise.
+		 * @return {Promise} A promise that resolves if the video pause was called successfully.
 		 */
 		pause: ( player ) =>
 			new Promise( ( resolve ) => {
@@ -517,7 +517,7 @@ class Player {
 	/**
 	 * Play the video.
 	 *
-	 * @return {Promise} A promise that resolves if the video was played successfully.
+	 * @return {Promise} A promise that resolves if the video play was called successfully.
 	 */
 	play() {
 		return this.getPlayer().then( ( player ) =>
@@ -528,7 +528,7 @@ class Player {
 	/**
 	 * Pause the video.
 	 *
-	 * @return {Promise} A promise that resolves if the video was paused successfully.
+	 * @return {Promise} A promise that resolves if the video pause was called successfully.
 	 */
 	pause() {
 		return this.getPlayer().then( ( player ) =>
