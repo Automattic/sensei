@@ -9,7 +9,7 @@ import { store as coreStore } from '@wordpress/core-data';
 /**
  * Internal dependencies
  */
-import Player from './player';
+import Player from './index';
 
 /**
  * Add a script to a body.
