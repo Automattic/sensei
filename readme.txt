@@ -115,6 +115,17 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-07-25 - version 4.6.0
+* Add: Add custom slug in module block [#5207](https://github.com/Automattic/sensei/pull/5207)
+* Add: Add Confirm Dialog component [#5361](https://github.com/Automattic/sensei/pull/5361)
+* Add: Enable _lesson_preview show-in-rest meta settings [#5369](https://github.com/Automattic/sensei/pull/5369)
+* Add: Change video api scripts to be more generic  [#5359](https://github.com/Automattic/sensei/pull/5359)
+* Add: Add hooks to allow adding filters to reports [#5365](https://github.com/Automattic/sensei/pull/5365)
+* Fix: Update videopress event name [#5373](https://github.com/Automattic/sensei/pull/5373)
+* Fix: Fix url encoding of timezone for reports [#5362](https://github.com/Automattic/sensei/pull/5362)
+* Fix: Fix Gutenberg compatibility issue [#5379](https://github.com/Automattic/sensei/pull/5379)
+* Fix: Render additional css on feedback answers block [#5371](https://github.com/Automattic/sensei/pull/5371)
+
 2022-07-14 - version 4.5.2
 * Add: New upsells students group page
 * Add: `sensei_user_course_end' hook before redirecting to completed page
@@ -132,41 +143,4 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 2022-06-20 - version 4.5.1
 * Fix: remove upsell from wizard when woothemes-sensei is installed [#5282](https://github.com/Automattic/sensei/pull/5282)
 * Fix: Guarantee that the wizard link will stay as white after visiting it [#5281](https://github.com/Automattic/sensei/pull/5281)
-
-2022-06-16 - version 4.5.0
-* New: Course and Lesson Wizard
-	* Add editor wizard modal for courses and lessons [#5149](https://github.com/Automattic/sensei/pull/5149)
-	* Add editor wizard usage tracking [#5274](https://github.com/Automattic/sensei/pull/5274)
-	* Fix style of the setup confirmation wizard [#5277](https://github.com/Automattic/sensei/pull/5277)
-	* Fix lesson pattern styles [#5273](https://github.com/Automattic/sensei/pull/5273)
-	* Change lesson pattern with quiz [#5268](https://github.com/Automattic/sensei/pull/5268)
-	* Fix Course Outline styles on pattern thumbnails [#5261](https://github.com/Automattic/sensei/pull/5261)
-	* Fix broken blocks on WP 5.8 [#5259](https://github.com/Automattic/sensei/pull/5259)
-	* Make default lesson names translatable in the default course pattern [#5258](https://github.com/Automattic/sensei/pull/5258)
-	* Fixes to the Upsell for Premium Lesson Patterns [#5257](https://github.com/Automattic/sensei/pull/5257)
-	* Add Upsell section for Premium Lesson Patterns [#5254](https://github.com/Automattic/sensei/pull/5254)
-	* Add life coach pattern [#5253](https://github.com/Automattic/sensei/pull/5253)
-	* Tweak wizard preview box sizing [#5251](https://github.com/Automattic/sensei/pull/5251)
-	* Add default course pattern [#5246](https://github.com/Automattic/sensei/pull/5246)
-	* Fix icons in the upgrade step [#5244](https://github.com/Automattic/sensei/pull/5244)
-	* Only load Discussion pattern if the Comments Query Loop block is available [#5243](https://github.com/Automattic/sensei/pull/5243)
-	* Tweak Course pattern Lesson titles [#5242](https://github.com/Automattic/sensei/pull/5242)
-	* Fix course pattern themes compatibility [#5232](https://github.com/Automattic/sensei/pull/5232)
-	* Fix pattern images urls [#5228](https://github.com/Automattic/sensei/pull/5228)
-	* Fix lesson patterns placeholders [#5225](https://github.com/Automattic/sensei/pull/5225)
-	* Fix patterns styles for TwentyTwenty One [#5222](https://github.com/Automattic/sensei/pull/5222)
-	* Add paragraph with description in default template [#5221](https://github.com/Automattic/sensei/pull/5221)
-	* Fix editor wizard styles [#5220](https://github.com/Automattic/sensei/pull/5220)
-	* Add new sensei patterns and separate block patterns logic [#5206](https://github.com/Automattic/sensei/pull/5206)
-	* Add editor wizard responsive style and tweak some styles [#5205](https://github.com/Automattic/sensei/pull/5205)
-	* Add patterns filter by post type [#5202](https://github.com/Automattic/sensei/pull/5202)
-	* Add Lesson Details Step [#5194](https://github.com/Automattic/sensei/pull/5194)
-	* Apply pattern to the post when selected [#5179](https://github.com/Automattic/sensei/pull/5179)
-	* Add Paid Course Upsell [#5169](https://github.com/Automattic/sensei/pull/5169)
-	* Add patterns list [#5157](https://github.com/Automattic/sensei/pull/5157)
-* New: Provide "Save and edit lesson" button from Course Outline [#5167](https://github.com/Automattic/sensei/pull/5167)
-* Fix: Lesson blocks notice when Learning Mode is enabled [#5156](https://github.com/Automattic/sensei/pull/5156)
-* Tweak: Add filter for loading custom navigation script for pages [#5256](https://github.com/Automattic/sensei/pull/5256)
-* Tweak: Create 3 default lessons on the Course Outline Block [#5196](https://github.com/Automattic/sensei/pull/5196)
-* Tweak: Do not auto-add Quiz blocks on the lessons anymore [#5177](https://github.com/Automattic/sensei/pull/5177)
 
