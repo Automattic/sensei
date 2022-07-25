@@ -70,15 +70,12 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
 		return block;
 	} );
 };
-
 /**
- * Predicate method to compare a block with a course structure item, using different strategies.
+ * Predicate builder method that return a predicate a block with a course structure item, using different strategies.
  *
- * @param {Object[]}                                    blocks        Block.
- * @param {Array.<(CourseLessonData|CourseModuleData)>} structureItem Structure item.
- * @return {boolean}  Flag indicating if the block matches on the the strategies
+ * @param {Object[]} courseData Course Lesson Data or Course Module Data..
+ * @return {Function} Predicate that match a block using course lesson data/course module data.
  */
-
 const byCourseData = ( courseData ) => ( block ) => {
 	const { name, attributes } = block;
 	const isTheCorrectBlockType = Object.keys( blockTypes ).includes( name );
