@@ -11,34 +11,18 @@ import { store as coreStore } from '@wordpress/core-data';
  */
 import Player from './index';
 
-/**
- * Add a script to a body.
- *
- * @param {HTMLBodyElement} body   The body where the script will be appended.
- * @param {string}          src    Script src.
- * @param {string}          id     Script ID.
- * @param {Function}        onLoad Script load callback.
- */
-const addScript = ( body, src, id, onLoad ) => {
-	const script = document.createElement( 'script' );
-
-	script.src = src;
-	script.id = id;
-	script.onload = onLoad;
-
-	body.append( script );
-};
+const API_SCRIPT_ID = 'player-script';
+const YOUTUBE_API_SRC = 'https://www.youtube.com/iframe_api';
+const VIMEO_API_SRC = 'https://player.vimeo.com/api/player.js';
 
 /**
- * Hook to get the editor player related to a block.
+ * Hook to get the dependencies used as trigger to (re)set the player instance.
  *
  * @param {Object} videoBlock Video block object.
  *
- * @return {Object|undefined} The player instance or undefined if it's not ready yet.
+ * @return {Object} Object containing embed fetching and block selected state.
  */
-const useEditorPlayer = ( videoBlock ) => {
-	const [ player, setPlayer ] = useState( undefined );
-
+const useTriggerDependencies = ( videoBlock ) => {
 	// Check embed fetching.
 	const { fetching } = useSelect(
 		( select ) => ( {
@@ -60,87 +44,122 @@ const useEditorPlayer = ( videoBlock ) => {
 		[ videoBlock.clientId ]
 	);
 
+	return { fetching, isBlockSelected };
+};
+
+/**
+ * A wrapper to useEffect with a timeout of 1 milisecond, in order to delay the sync execution.
+ *
+ * @param {Function} effect Effect callback.
+ * @param {Array}    deps   Effect dependencies.
+ */
+const useDelayedEffect = ( effect, deps ) => {
 	useEffect( () => {
-		// This timeout is to make sure it will run after the effects of the other blocks, which
-		// creates the iframe and video tags.
 		setTimeout( () => {
-			// Video block.
-			if ( 'core/video' === videoBlock.name ) {
-				const video = document.querySelector(
-					`#block-${ videoBlock.clientId } video`
-				);
-
-				setPlayer( new Player( video ) );
-
-				return;
-			}
-
-			// Embed block.
-			const scriptId = 'player-script';
-
-			const sandboxIframe = document.querySelector(
-				`#block-${ videoBlock.clientId } iframe`
-			);
-			const w = sandboxIframe?.contentWindow;
-			const doc = sandboxIframe?.contentDocument;
-			const playerIframe = doc?.querySelector( 'iframe' );
-			const playerScript = doc?.getElementById( scriptId );
-
-			if ( ! playerIframe || playerScript ) {
-				return;
-			}
-
-			switch ( videoBlock.attributes.providerNameSlug ) {
-				case 'vimeo': {
-					addScript(
-						doc.body,
-						'https://player.vimeo.com/api/player.js',
-						scriptId,
-						() => {
-							setPlayer(
-								new Player( doc.querySelector( 'iframe' ), w )
-							);
-						}
-					);
-
-					break;
-				}
-				case 'youtube': {
-					// Update the current embed to enable JS API.
-					if (
-						playerIframe &&
-						! playerIframe.src.includes( 'enablejsapi=1' )
-					) {
-						playerIframe.src = playerIframe.src + '&enablejsapi=1';
-					}
-
-					w.senseiYouTubeIframeAPIReady = new Promise(
-						( resolve ) => {
-							w.onYouTubeIframeAPIReady = () => {
-								resolve();
-							};
-						}
-					);
-
-					addScript(
-						doc.body,
-						'https://www.youtube.com/iframe_api',
-						scriptId,
-						() => {
-							setPlayer(
-								new Player( doc.querySelector( 'iframe' ), w )
-							);
-						}
-					);
-
-					break;
-				}
-				case 'videopress': {
-					setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
-					break;
-				}
-			}
+			effect();
 		}, 1 );
+	}, deps ); // eslint-disable-line react-hooks/exhaustive-deps -- Wrapper to useEffect.
+};
+
+/**
+ * Add a script to a body.
+ *
+ * @param {HTMLBodyElement} body   The body where the script will be appended.
+ * @param {string}          src    Script src.
+ * @param {Function}        onLoad Script load callback.
+ */
+const addScript = ( body, src, onLoad ) => {
+	const script = document.createElement( 'script' );
+
+	script.src = src;
+	script.id = API_SCRIPT_ID;
+	script.onload = onLoad;
+
+	body.append( script );
+};
+
+/**
+ * It prepares the YouTube iframe, enabling JS API, and adding the promise for the API Ready event.
+ *
+ * @param {HTMLIFrameElement} playerIframe YouTube player iframe.
+ * @param {Window}            w            Window object inside the sandbox (the parent of the
+ *                                         player iframe).
+ */
+const prepareYouTubeIframe = ( playerIframe, w ) => {
+	// Update the current embed to enable JS API.
+	if ( playerIframe && ! playerIframe.src.includes( 'enablejsapi=1' ) ) {
+		playerIframe.src = playerIframe.src + '&enablejsapi=1';
+	}
+
+	w.senseiYouTubeIframeAPIReady = new Promise( ( resolve ) => {
+		w.onYouTubeIframeAPIReady = () => {
+			resolve();
+		};
+	} );
+};
+
+/**
+ * Hook to get the editor player related to a block.
+ *
+ * @param {Object} videoBlock Video block object.
+ *
+ * @return {Object|undefined} The player instance or undefined if it's not ready yet.
+ */
+const useEditorPlayer = ( videoBlock ) => {
+	const [ player, setPlayer ] = useState();
+
+	const { fetching, isBlockSelected } = useTriggerDependencies( videoBlock );
+
+	// This is delayed to make sure it will run after the effects of the other blocks, which
+	// creates the iframe and video tags.
+	useDelayedEffect( () => {
+		// Video block.
+		if ( 'core/video' === videoBlock.name ) {
+			const video = document.querySelector(
+				`#block-${ videoBlock.clientId } video`
+			);
+
+			setPlayer( new Player( video ) );
+
+			return;
+		}
+
+		// Embed block.
+		const sandboxIframe = document.querySelector(
+			`#block-${ videoBlock.clientId } iframe`
+		);
+		const w = sandboxIframe?.contentWindow;
+		const doc = sandboxIframe?.contentDocument;
+		const playerIframe = doc?.querySelector( 'iframe' );
+		const playerScript = doc?.getElementById( API_SCRIPT_ID );
+
+		// Skip if iframe is not found or player was already added.
+		if ( ! playerIframe || playerScript ) {
+			return;
+		}
+
+		switch ( videoBlock.attributes.providerNameSlug ) {
+			case 'youtube': {
+				prepareYouTubeIframe( playerIframe, w );
+
+				addScript( doc.body, YOUTUBE_API_SRC, () => {
+					setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+				} );
+
+				break;
+			}
+			case 'vimeo': {
+				addScript( doc.body, VIMEO_API_SRC, () => {
+					setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+				} );
+
+				break;
+			}
+			case 'videopress': {
+				setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+				break;
+			}
+		}
 	}, [ videoBlock, isBlockSelected, fetching ] );
 
 	return player;
