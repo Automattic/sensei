@@ -22,16 +22,16 @@ const Modal = ( { isOpen, handleClose, title = '', children } ) => {
 	return (
 		<div className={ 'sensei-modal' }>
 			<button
-				className="sensei-modal__overlay"
+				className="sensei-modal sensei-modal__overlay"
 				aria-label="Close"
-				onClick={ ( e ) => handleClose( e ) }
+				onClick={ handleClose }
 			/>
 			<div className="sensei-modal__wrapper">
 				<div className="sensei-modal__header">
 					<div className="sensei-modal__title">{ title }</div>
 					<button
-						className="sensei-modal__close-button"
-						onClick={ ( e ) => handleClose( e ) }
+						className="sensei-modal sensei-modal__close-button"
+						onClick={ handleClose }
 					>
 						<Icon icon={ closeIcon } />
 					</button>
