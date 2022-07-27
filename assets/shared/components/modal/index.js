@@ -17,7 +17,7 @@ const Modal = ( { onClose, title = '', children } ) => {
 	useRunOnEscape( onClose );
 
 	return (
-		<div className={ 'sensei-modal' }>
+		<div className="sensei-modal">
 			<button
 				className="sensei-modal sensei-modal__overlay"
 				aria-label="Close"
