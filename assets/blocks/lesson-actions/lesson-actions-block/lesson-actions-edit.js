@@ -67,7 +67,7 @@ const LessonActionsEdit = ( props ) => {
 		: 'not-allowed';
 
 	if ( courseThemeEnabled ) {
-		return <></>;
+		return null;
 	}
 
 	// Filter inner blocks based on the settings.
