@@ -9,6 +9,7 @@ import {
 } from '@wordpress/compose';
 import { ESCAPE } from '@wordpress/keycodes';
 import { createPortal } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Modal component.
@@ -44,6 +45,7 @@ const Modal = ( { onClose, title = '', children } ) => {
 					<button
 						className="sensei-modal sensei-modal__close-button"
 						onClick={ onClose }
+						aria-label={ __( 'Close', 'sensei-lms' ) }
 					>
 						<Icon icon={ closeIcon } />
 					</button>
