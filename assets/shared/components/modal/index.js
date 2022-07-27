@@ -3,6 +3,7 @@
  */
 import { Icon, close as closeIcon } from '@wordpress/icons';
 import { useEffect } from '@wordpress/element';
+import { ESCAPE } from '@wordpress/keycodes';
 
 /**
  * Modal component.
@@ -42,7 +43,7 @@ const Modal = ( { onClose, title = '', children } ) => {
 const useRunOnEscape = ( onClose ) => {
 	useEffect( () => {
 		const handleEsc = ( event ) => {
-			if ( event.keyCode === 27 ) {
+			if ( event.keyCode === ESCAPE ) {
 				onClose( event );
 			}
 		};
