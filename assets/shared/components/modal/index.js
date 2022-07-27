@@ -2,8 +2,13 @@
  * WordPress dependencies
  */
 import { Icon, close as closeIcon } from '@wordpress/icons';
-import { useEffect } from '@wordpress/element';
+import {
+	useFocusOnMount,
+	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
+	__experimentalUseFocusOutside as useFocusOutside,
+} from '@wordpress/compose';
 import { ESCAPE } from '@wordpress/keycodes';
+import { createPortal } from '@wordpress/element';
 
 /**
  * Modal component.
@@ -15,16 +20,26 @@ import { ESCAPE } from '@wordpress/keycodes';
  * @return {JSX.Element} The modal component or null (if not open).
  */
 const Modal = ( { onClose, title = '', children } ) => {
-	useRunOnEscape( onClose );
+	const focusOnMountRef = useFocusOnMount();
+	const focusOutsideProps = useFocusOutside( onClose );
 
-	return (
+	const handleEsc = ( event ) => {
+		if ( event.keyCode === ESCAPE && ! event.defaultPrevented ) {
+			onClose( event );
+		}
+	};
+
+	return createPortal(
 		<div className="sensei-modal">
-			<button
-				className="sensei-modal sensei-modal__overlay"
-				aria-label="Close"
-				onClick={ onClose }
-			/>
-			<div className="sensei-modal__wrapper">
+			<div className="sensei-modal__overlay" />
+			{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+			<div
+				className="sensei-modal__wrapper"
+				onKeyDown={ handleEsc }
+				tabIndex="-1"
+				ref={ focusOnMountRef }
+				{ ...focusOutsideProps }
+			>
 				<div className="sensei-modal__header">
 					<div className="sensei-modal__title">{ title }</div>
 					<button
@@ -36,26 +51,9 @@ const Modal = ( { onClose, title = '', children } ) => {
 				</div>
 				<div className="sensei-modal__content">{ children }</div>
 			</div>
-		</div>
+		</div>,
+		document.body
 	);
 };
 
-const useRunOnEscape = ( onClose ) => {
-	useEffect( () => {
-		const handleEsc = ( event ) => {
-			if ( event.keyCode === ESCAPE ) {
-				onClose( event );
-			}
-		};
-		// Attach close event on Escape key.
-		// eslint-disable-next-line @wordpress/no-global-event-listener
-		window.addEventListener( 'keydown', handleEsc );
-
-		return () => {
-			// Detach from keydown on component unmounting.
-			// eslint-disable-next-line @wordpress/no-global-event-listener
-			window.removeEventListener( 'keydown', handleEsc );
-		};
-	}, [ onClose ] );
-};
 export default Modal;
