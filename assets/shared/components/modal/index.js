@@ -17,7 +17,6 @@ import { createPortal } from '@wordpress/element';
  * @param {Function} props.onClose  Callback to run when trying to close the modal.
  * @param {string}   props.title    The title for the modal. Empty by default.
  * @param {Object}   props.children The content of the modal.
- * @return {JSX.Element} The modal component or null (if not open).
  */
 const Modal = ( { onClose, title = '', children } ) => {
 	const focusOnMountRef = useFocusOnMount();
