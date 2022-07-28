@@ -50,6 +50,7 @@ const files = [
 	'extensions/index.js',
 	'extensions/extensions.scss',
 	'shared/styles/wp-components.scss',
+	'shared/components/modal/style.scss',
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',
