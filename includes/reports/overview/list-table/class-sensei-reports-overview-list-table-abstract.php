@@ -273,7 +273,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	public function output_top_filters() {
 		?>
 		<form class="sensei-analysis__top-filters">
-			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's', 'timezone' ] ); ?>
+			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's', 'timezone', 'post_type', 'page', 'search' ] ); ?>
 
 			<input type="hidden" name="timezone">
 
