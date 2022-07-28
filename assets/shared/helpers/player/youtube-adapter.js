@@ -8,6 +8,8 @@ export const ADAPTER_NAME = 'youtube';
  */
 export const EMBED_PATTERN = /(youtu\.be|youtube\.com)\/.+/i;
 
+let lastTime;
+
 /**
  * Initialize the player.
  *
@@ -98,13 +100,31 @@ export const pause = ( player ) =>
 export const onTimeupdate = ( player, callback, w = window ) => {
 	const timer = 250;
 
+	const updateCurrentTime = ( currentTime ) => {
+		if ( lastTime !== currentTime ) {
+			callback( currentTime );
+			lastTime = currentTime;
+		}
+	};
+
+	// Update the current time based on an interval.
 	const interval = setInterval( () => {
-		if ( player.getPlayerState() === w.YT.PlayerState.PLAYING ) {
-			callback( player.getCurrentTime() );
+		if ( player.getPlayerState() !== w.YT.PlayerState.ENDED ) {
+			updateCurrentTime( player.getCurrentTime() );
 		}
 	}, timer );
 
+	// Update the current time when the video is ended.
+	const onEnded = () => {
+		if ( player.getPlayerState() === w.YT.PlayerState.ENDED ) {
+			updateCurrentTime( player.getDuration() );
+		}
+	};
+
+	player.addEventListener( 'onStateChange', onEnded );
+
 	return () => {
 		clearInterval( interval );
+		player.removeEventListener( 'onStateChange', onEnded );
 	};
 };
