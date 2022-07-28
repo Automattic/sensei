@@ -48,7 +48,7 @@ const useTriggerDependencies = ( videoBlock ) => {
 };
 
 /**
- * A wrapper to useEffect with a setTimeout, in order to delay the sync execution.
+ * A wrapper to useEffect with a setTimeout, in order to delay to the next event cycle.
  *
  * @param {Function} effect Effect callback.
  * @param {Array}    deps   Effect dependencies.
@@ -57,7 +57,7 @@ const useDelayedEffect = ( effect, deps ) => {
 	useEffect( () => {
 		setTimeout( () => {
 			effect();
-		}, 0 );
+		} );
 	}, deps ); // eslint-disable-line react-hooks/exhaustive-deps -- Wrapper to useEffect.
 };
 
