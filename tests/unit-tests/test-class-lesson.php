@@ -133,7 +133,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			update_post_meta( $lesson_id, '_lesson_course', $course_id );
 		}
 		$result_courses_id = Sensei()->lesson->get_course_ids( $lesson_ids );
-		foreach ( $lesson_ids as  $lesson_id_index => $lesson_id ) {
+		foreach ( $lesson_ids as $lesson_id_index => $lesson_id ) {
 			$expected_course_index = $lesson_id_index % count( $course_ids );
 			$expected_course_id    = $course_ids[ $expected_course_index ];
 			$course_id             = $result_courses_id[ $lesson_id ];
@@ -153,7 +153,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		shuffle( $shuffled_lesson_ids );
 		$cached_courses_id = Sensei()->lesson->get_course_ids( $shuffled_lesson_ids );
 		$this->assertEquals( $result_courses_id, $cached_courses_id );
-		foreach ( $lesson_ids as  $lesson_id_index => $lesson_id ) {
+		foreach ( $lesson_ids as $lesson_id_index => $lesson_id ) {
 			$expected_course_index = $lesson_id_index % count( $course_ids );
 			$expected_course_id    = $course_ids[ $expected_course_index ];
 			$course_id             = $cached_courses_id[ $lesson_id ];
@@ -212,7 +212,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		update_post_meta( $not_a_lesson_post_type['ID'], '_lesson_course', $course_id );
 		update_post_meta( $unpublished_lesson['ID'], '_lesson_course', $course_id );
 		update_post_meta( $last_lesson_id, '_lesson_course', $course_id );
-		update_post_meta( $a_lesson_assigned_to_an_invalid_course_id, '_lesson_course', -123 );
+		update_post_meta( $a_lesson_assigned_to_an_invalid_course_id, '_lesson_course', - 123 );
 
 		Sensei()->lesson->add_lesson_to_course_order( null );
 		$this->assertEquals(
@@ -235,7 +235,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			'Empty string does nothing'
 		);
 
-		Sensei()->lesson->add_lesson_to_course_order( -12 );
+		Sensei()->lesson->add_lesson_to_course_order( - 12 );
 		$this->assertEquals(
 			3,
 			count( self::get_course_lesson_order( $course_id ) ),
@@ -442,7 +442,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		// Ensure course ID is -1.
 		$event = $events[0];
-		$this->assertEquals( -1, $event['url_args']['course_id'] );
+		$this->assertEquals( - 1, $event['url_args']['course_id'] );
 	}
 
 	/**
@@ -493,11 +493,12 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		// Ensure course ID is -1.
 		$event = $events[0];
-		$this->assertEquals( -1, $event['url_args']['module_id'] );
+		$this->assertEquals( - 1, $event['url_args']['module_id'] );
 	}
 
 	private static function get_course_lesson_order( $course_id ) {
 		$order_string_array = explode( ',', get_post_meta( intval( $course_id ), '_lesson_order', true ) );
+
 		return array_map( 'intval', $order_string_array );
 	}
 
@@ -1071,7 +1072,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testSingleCourseLessonsClasses_WhenUserNotLoggedInAndNoPreview_ReturnsMatchingClasses(): void {
 		/* Arrange */
 		global $post;
-		$post = $this->factory->course->create_and_get();
+		$post   = $this->factory->course->create_and_get();
 		$lesson = new Sensei_Lesson();
 
 		/* Act */
@@ -1121,7 +1122,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testCourseSignupLink_WhenSignupNoticeNeeded_AddsNotice(): void {
 		/* Arrange */
-		$notices = $this->createMock( 'Sensei_Notices' );
+		$notices          = $this->createMock( 'Sensei_Notices' );
 		Sensei()->notices = $notices;
 
 		$course = $this->factory->course->create_and_get();
@@ -1152,7 +1153,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		$post = get_post( $course_with_lessons['lesson_ids'][1] );
 
-		$notices = $this->createMock( 'Sensei_Notices' );
+		$notices          = $this->createMock( 'Sensei_Notices' );
 		Sensei()->notices = $notices;
 
 		$course = $this->factory->course->create_and_get();
@@ -1169,7 +1170,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testHasSenseiBlocks_WhenNoBlocks_ReturnsFalse(): void {
 		/* Arrange */
 		$lesson_id = $this->factory->lesson->create();
-		$lesson = new Sensei_Lesson();
+		$lesson    = new Sensei_Lesson();
 
 		/* Act */
 		$result = $lesson->has_sensei_blocks( $lesson_id );
@@ -1180,10 +1181,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testHasSenseiBlocks_WhenHasBlocks_ReturnsTrue(): void {
 		/* Arrange */
-		$lesson_id = $this->factory->lesson->create( [ 
+		$lesson_id = $this->factory->lesson->create( [
 			'post_content' => '<!-- wp:sensei-lms/lesson-actions --><!-- /wp:sensei-lms/lesson-actions -->'
 		] );
-		$lesson = new Sensei_Lesson();
+		$lesson    = new Sensei_Lesson();
 
 		/* Act */
 		$result = $lesson->has_sensei_blocks( $lesson_id );
@@ -1195,10 +1196,13 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testLogLessonUpdate_WhenCalled_LogsLessonUpdate(): void {
 		/* Arrange */
 		$course_id = $this->factory->course->create();
-		$post = $this->factory->lesson->create_and_get( [ 'post_status' => 'publish', 'meta_input'  => [ '_lesson_course' => $course_id ] ] );
-		$lesson = new Sensei_Lesson();
+		$post      = $this->factory->lesson->create_and_get( [
+			'post_status' => 'publish',
+			'meta_input'  => [ '_lesson_course' => $course_id ]
+		] );
+		$lesson    = new Sensei_Lesson();
 
-		$events = [];
+		$events     = [];
 		$log_events = function ( $log_event, $event_name ) use ( &$events ) {
 			$events[] = $event_name;
 		};
@@ -1233,11 +1237,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testUserLessonQuizStatusMessage_QuizFound_OutputsStatus(): void {
 		/* Arrange */
 		global $current_user;
-	   	$course = $this->factory->get_course_with_lessons();
+		$course       = $this->factory->get_course_with_lessons();
 		$current_user = $this->factory->user->create_and_get();
 
 		$initial_lesson = Sensei()->lesson;
-		$lesson = $this->createMock( Sensei_Lesson::class );
+		$lesson         = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'lesson_quizzes' )->willReturn( $course['quiz_ids'][0] );
 		Sensei()->lesson = $lesson;
 
@@ -1245,7 +1249,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Act */
 		ob_start();
-		Sensei_Lesson::user_lesson_quiz_status_message( $course[ 'lesson_ids' ][0], $current_user->ID );
+		Sensei_Lesson::user_lesson_quiz_status_message( $course['lesson_ids'][0], $current_user->ID );
 		$result = ob_get_clean();
 		remove_filter( 'sensei_is_enrolled', '__return_true' );
 		Sensei()->lesson = $initial_lesson;
@@ -1256,7 +1260,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testShouldShowLessonActions_WhenNoPrerequisite_ReturnsTrue(): void {
 		/* Arrange */
-		$user_id = $this->factory->user->create();
+		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create();
 		update_post_meta( $lesson_id, '_lesson_prerequisite', 0 );
 
@@ -1269,9 +1273,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testShouldShowLessonActions_WhenPrerequisiteFoundAndWasLessonAuthor_ReturnsTrue(): void {
 		/* Arrange */
-		$user_id = $this->factory->user->create();
+		$user_id         = $this->factory->user->create();
 		$prerequisite_id = $this->factory->lesson->create();
-		$lesson_id = $this->factory->lesson->create( [ 'post_author' => $user_id ] );
+		$lesson_id       = $this->factory->lesson->create( [ 'post_author' => $user_id ] );
 		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite_id );
 
 		/* Act */
@@ -1283,10 +1287,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testShouldShowLessonActions_WhenPrerequisiteFoundAndWasNotLessonAuthor_ReturnsFalse(): void {
 		/* Arrange */
-		$user_id = $this->factory->user->create();
-		$author_id = $this->factory->user->create();
+		$user_id         = $this->factory->user->create();
+		$author_id       = $this->factory->user->create();
 		$prerequisite_id = $this->factory->lesson->create();
-		$lesson_id = $this->factory->lesson->create( [ 'post_author' => $author_id ] );
+		$lesson_id       = $this->factory->lesson->create( [ 'post_author' => $author_id ] );
 		update_post_meta( $lesson_id, '_lesson_prerequisite', $prerequisite_id );
 
 		/* Act */
@@ -1301,13 +1305,13 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		global $post;
 		global $current_user;
 
-		$course = $this->factory->get_course_with_lessons();
-		$post = get_post( $course['lesson_ids'][0] );
+		$course       = $this->factory->get_course_with_lessons();
+		$post         = get_post( $course['lesson_ids'][0] );
 		$current_user = $this->factory->user->create_and_get();
 		update_post_meta( $post->ID, '_quiz_has_questions', 1 );
 
 		$initial_lesson = Sensei()->lesson;
-		$lesson = $this->createMock( Sensei_Lesson::class );
+		$lesson         = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'lesson_quizzes' )->willReturn( $course['quiz_ids'][0] );
 		Sensei()->lesson = $lesson;
 
@@ -1330,15 +1334,15 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testTheTitle_WhenCalled_OutputsTitle(): void {
 		/* Arrange */
 		global $post;
-		$post = $this->factory->lesson->create_and_get( [ 'post_title' => 'Test Lesson' ] );
+		$post      = $this->factory->lesson->create_and_get( [ 'post_title' => 'Test Lesson' ] );
 		$course_id = $this->factory->course->create();
 		update_post_meta( $post->ID, '_lesson_course', $course_id );
-	
+
 		/* Act */
 		ob_start();
 		Sensei_Lesson::the_title();
 		$result = ob_get_clean();
-	
+
 		/* Assert */
 		self::assertStringContainsString( 'Test Lesson', $result );
 	}
@@ -1348,16 +1352,16 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson_id = $this->factory->lesson->create();
 
 		$initial_lesson = Sensei()->lesson;
-		$lesson = $this->createMock( Sensei_Lesson::class );
+		$lesson         = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'lesson_image' )->willReturn( '<img src="test.jpg" />' );
 		Sensei()->lesson = $lesson;
-	
+
 		/* Act */
 		ob_start();
 		Sensei_Lesson::the_lesson_thumbnail( $lesson_id );
-		$result = ob_get_clean();
+		$result          = ob_get_clean();
 		Sensei()->lesson = $initial_lesson;
-	
+
 		/* Assert */
 		self::assertStringContainsString( '<img src="test.jpg" />', $result );
 	}
@@ -1371,10 +1375,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		];
 
 		$lesson = new Sensei_Lesson();
-	
+
 		/* Act */
 		$result = $lesson->get_submitted_setting_value( $field );
-	
+
 		/* Assert */
 		self::assertSame( 'test_value', $result );
 	}
@@ -1388,19 +1392,20 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		];
 
 		$lesson = new Sensei_Lesson();
-	
+
 		/* Act */
 		$result = $lesson->get_submitted_setting_value( $field );
-	
+
 		/* Assert */
 		self::assertSame( '', $result );
 	}
+
 	/**
 	 * @dataProvider providerGetSubmittedSettingValue_WhenEditpostActionForQuizGradeType_ReturnsMatchingValue
 	 */
 	public function testGetSubmittedSettingValue_WhenEditpostActionForQuizGradeType_ReturnsMatchingValue( $field_value, $expected ): void {
 		/* Arrange */
-		$_POST['action'] = 'editpost';
+		$_POST['action']          = 'editpost';
 		$_POST['quiz_grade_type'] = $field_value;
 
 		$field = [
@@ -1418,7 +1423,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function providerGetSubmittedSettingValue_WhenEditpostActionForQuizGradeType_ReturnsMatchingValue(): array {
 		return [
-			'auto' => [ 'on', 'auto' ],
+			'auto'   => [ 'on', 'auto' ],
 			'manual' => [ 'off', 'manual' ],
 		];
 	}
@@ -1430,8 +1435,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$post = $this->factory->lesson->create_and_get();
 		$quiz = $this->factory->quiz->create_and_get();
 
-		$initial_lesson = Sensei()->lesson;
-		$initial_quiz = Sensei()->quiz;
+		$initial_lesson     = Sensei()->lesson;
+		$initial_quiz       = Sensei()->quiz;
 		$initial_wp_scripts = $wp_scripts;
 
 		$wp_scripts = $this->createMock( WP_Scripts::class );
@@ -1440,42 +1445,42 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		update_post_meta( $post->ID, '_lesson_course', 2 );
 		update_post_meta( $post->ID, '_lesson_preview', 3 );
 		update_post_meta( $post->ID, '_lesson_length', 4 );
-		update_post_meta( $post->ID, '_lesson_complexity', 5 ); 
+		update_post_meta( $post->ID, '_lesson_complexity', 5 );
 		update_post_meta( $post->ID, '_lesson_video_embed', 6 );
 
 		$sensei_lesson = $this->createMock( Sensei_Lesson::class );
 		$sensei_lesson->method( 'lesson_quizzes' )->willReturn( $quiz->ID );
 		Sensei()->lesson = $sensei_lesson;
 
-		$sensei_quiz = $this->createMock( Sensei_Quiz::class );
+		$sensei_quiz              = $this->createMock( Sensei_Quiz::class );
 		$sensei_quiz->meta_fields = [ 'b' ];
-		Sensei()->quiz = $sensei_quiz;
+		Sensei()->quiz            = $sensei_quiz;
 		update_post_meta( $quiz->ID, '_b', 7 );
 
 		$lesson = new Sensei_Lesson();
-	
+
 		/* Expect & Act */
 		$wp_scripts
 			->expects( self::once() )
 			->method( 'localize' )
-			->with( 
-				'sensei-lesson-quick-edit', 
-				'sensei_quick_edit_' . $post->ID, 
+			->with(
+				'sensei-lesson-quick-edit',
+				'sensei_quick_edit_' . $post->ID,
 				[
 					'lesson_prerequisite' => '1',
-					'lesson_course' => '2',
-					'lesson_preview' => '3',
-					'lesson_length' => '4',
-					'lesson_complexity' => '5',
-					'lesson_video_embed' => '6',
-					'b' => '7',
+					'lesson_course'       => '2',
+					'lesson_preview'      => '3',
+					'lesson_length'       => '4',
+					'lesson_complexity'   => '5',
+					'lesson_video_embed'  => '6',
+					'b'                   => '7',
 				]
 			);
 		$lesson->set_quick_edit_admin_defaults( 'lesson-course', $post->ID );
 
-		Sensei()->quiz = $quiz;
+		Sensei()->quiz   = $quiz;
 		Sensei()->lesson = $lesson;
-		$wp_scripts = $initial_wp_scripts;
+		$wp_scripts      = $initial_wp_scripts;
 	}
 
 	public function testMetaBoxSave_PostIdGiven_UpdatesPostMeta(): void {
@@ -1483,16 +1488,16 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		global $current_user;
 		$current_user = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
 
-		$nonce = wp_create_nonce( 'sensei-save-post-meta' );
-		$_POST['woo_lesson_nonce'] = $nonce;
-		$_POST['post_type'] = 'post';
+		$nonce                       = wp_create_nonce( 'sensei-save-post-meta' );
+		$_POST['woo_lesson_nonce']   = $nonce;
+		$_POST['post_type']          = 'post';
 		$_POST['lesson_video_embed'] = 'a';
-		$_POST['lesson_preview'] = 'b';
-		$_POST['lesson_length'] = '5';
+		$_POST['lesson_preview']     = 'b';
+		$_POST['lesson_length']      = '5';
 
 		$post = $this->factory->lesson->create_and_get();
 
-		$lesson = new Sensei_Lesson();
+		$lesson              = new Sensei_Lesson();
 		$lesson->meta_fields = [ 'lesson_video_embed', 'lesson_preview', 'lesson_length' ];
 
 
@@ -1502,10 +1507,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = [
 			'_lesson_video_embed' => [ 'a' ],
-			'_lesson_preview' => [ 'b' ],
-			'_lesson_length' => [ '5' ],
+			'_lesson_preview'     => [ 'b' ],
+			'_lesson_length'      => [ '5' ],
 		];
-		$actual = get_post_meta( $post->ID );
+		$actual   = get_post_meta( $post->ID );
 		self::assertSame( $expected, $actual );
 	}
 
@@ -1516,16 +1521,16 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		update_post_meta( $question->ID, '_question_right_answer', 'a' );
 		update_post_meta( $question->ID, '_question_wrong_answers', [ 'b', 'c', 'd' ] );
 
-		$initial_question = Sensei()->question;
+		$initial_question  = Sensei()->question;
 		Sensei()->question = $this->createMock( Sensei_Question::class );
 		Sensei()->question->method( 'get_question_grade' )->willReturn( '1' );
 
 		$lesson = new Sensei_Lesson();
-			
+
 
 		/* Act */
 		$result = $lesson->quiz_panel_question( '', 0, $question->ID, 'quiz', [] );
-			
+
 		/* Assert */
 		self::assertStringContainsString( 'Test Question', $result );
 	}
