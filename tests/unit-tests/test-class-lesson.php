@@ -681,6 +681,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that highlight_menu_item returns expected value.
+	 *
 	 * @dataProvider providerHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile
 	 */
 	public function testHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile( $submenu_file, $screen_id, $expected ): void {
@@ -723,6 +725,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that add_custom_navigation doesn't have output when there is a wrong scree.
+	 *
 	 * @dataProvider providerAddCustomNavigation_WhenWrongScreen_DoesntHaveOutput
 	 */
 	public function testAddCustomNavigation_WhenWrongScreen_DoesntHaveOutput( string $screen_id, string $screen_base ): void {
@@ -757,6 +761,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that add_custom_navigation outputs expected HTML.
+	 *
 	 * @dataProvider providerAddCustomNavigation_WhenCorrectScreen_HasOutput
 	 */
 	public function testAddCustomNavigation_WhenCorrectScreen_HasOutput( string $screen_id ): void {
@@ -1002,6 +1008,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that lesson_count returns the correct number of lessons.
+	 *
 	 * @dataProvider providerLessonCount_ParamsGiven_ReturnsMatchingValue
 	 */
 	public function testLessonCount_ParamsGiven_ReturnsMatchingValue( $status, $with_course, $expected ): void {
