@@ -414,8 +414,9 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 					</div>
 					<div class="alignleft actions">
 						<?php
+						$exclude_query_args = [ 'filter_by_course_id', 'filter_type', 'page', 'post_type' ];
 						foreach ( $this->query_args as $name => $value ) {
-							if ( 'filter_by_course_id' === $name || 'filter_type' === $name ) {
+							if ( in_array( $name, $exclude_query_args, true ) ) {
 								continue;
 							}
 							echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
