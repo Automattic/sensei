@@ -65,6 +65,27 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	private $initial_wp_scripts;
 
 	/**
+	 * Keep initial state of global $current_screen.
+	 *
+	 * @var WP_Screen|null
+	 */
+	private $initial_screen;
+
+	/**
+	 * Keep initial state of global $taxnow.
+	 *
+	 * @var mixed|string
+	 */
+	private $initial_taxnow;
+
+	/**
+	 * Keep initial state of global $typenow.
+	 *
+	 * @var mixed|string
+	 */
+	private $initial_typenow;
+
+	/**
 	 * setup function
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
@@ -76,13 +97,12 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
 
-		global $post;
-		$this->initial_post = $post;
-
-		global $current_user;
-		$this->initial_user = $current_user;
-
-		global $wp_scripts;
+		global $current_screen, $taxnow, $typenow, $post, $current_user, $wp_scripts;
+		$this->initial_screen     = $current_screen;
+		$this->initial_taxnow     = $taxnow;
+		$this->initial_typenow    = $typenow;
+		$this->initial_post       = $post;
+		$this->initial_user       = $current_user;
 		$this->initial_wp_scripts = $wp_scripts;
 
 		$this->initial_course   = Sensei()->course;
@@ -96,14 +116,13 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		parent::tearDown();
 		$this->factory->tearDown();
 
-		global $post;
-		$post = $this->initial_post;
-
-		global $current_user;
-		$current_user = $this->initial_user;
-
-		global $wp_scripts;
-		$wp_scripts = $this->initial_wp_scripts;
+		global $current_screen, $taxnow, $typenow, $post, $current_user, $wp_scripts;
+		$current_screen = $this->initial_screen;
+		$taxnow         = $this->initial_taxnow;
+		$typenow        = $this->initial_typenow;
+		$post           = $this->initial_post;
+		$current_user   = $this->initial_user;
+		$wp_scripts     = $this->initial_wp_scripts;
 
 		Sensei()->course   = $this->initial_course;
 		Sensei()->lesson   = $this->initial_lesson;
@@ -855,7 +874,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Arrange */
 		$screen           = WP_Screen::get( $screen_id );
 		$screen->taxonomy = 'a';
-		$screen->set_current_screen();
+
+		global $current_screen, $taxnow;
+		$current_screen = $screen;
+		$taxnow         = 'a';
 
 		$lesson = new Sensei_Lesson();
 
