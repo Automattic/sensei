@@ -1189,9 +1189,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testHasSenseiBlocks_WhenHasBlocks_ReturnsTrue(): void {
 		/* Arrange */
-		$lesson_id = $this->factory->lesson->create( [
-			'post_content' => '<!-- wp:sensei-lms/lesson-actions --><!-- /wp:sensei-lms/lesson-actions -->'
-		] );
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'post_content' => '<!-- wp:sensei-lms/lesson-actions --><!-- /wp:sensei-lms/lesson-actions -->',
+			]
+		);
 		$lesson    = new Sensei_Lesson();
 
 		/* Act */
@@ -1204,10 +1206,12 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testLogLessonUpdate_WhenCalled_LogsLessonUpdate(): void {
 		/* Arrange */
 		$course_id = $this->factory->course->create();
-		$post      = $this->factory->lesson->create_and_get( [
-			'post_status' => 'publish',
-			'meta_input'  => [ '_lesson_course' => $course_id ]
-		] );
+		$post      = $this->factory->lesson->create_and_get(
+			[
+				'post_status' => 'publish',
+				'meta_input'  => [ '_lesson_course' => $course_id ],
+			]
+		);
 		$lesson    = new Sensei_Lesson();
 
 		$events     = [];
@@ -1409,6 +1413,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that get_submitted_setting_value returns matching value when the action is editpost.
+	 *
 	 * @dataProvider providerGetSubmittedSettingValue_WhenEditpostActionForQuizGradeType_ReturnsMatchingValue
 	 */
 	public function testGetSubmittedSettingValue_WhenEditpostActionForQuizGradeType_ReturnsMatchingValue( $field_value, $expected ): void {
@@ -1538,6 +1544,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Act */
 		$result = $lesson->quiz_panel_question( '', 0, $question->ID, 'quiz', [] );
+		Sensei()->question = $initial_question;
 
 		/* Assert */
 		self::assertStringContainsString( 'Test Question', $result );
