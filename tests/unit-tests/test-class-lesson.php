@@ -1514,7 +1514,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson              = new Sensei_Lesson();
 		$lesson->meta_fields = [ 'lesson_video_embed', 'lesson_preview', 'lesson_length' ];
 
-
 		/* Act */
 		$lesson->meta_box_save( $post->ID );
 
@@ -1541,9 +1540,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		$lesson = new Sensei_Lesson();
 
-
 		/* Act */
-		$result = $lesson->quiz_panel_question( '', 0, $question->ID, 'quiz', [] );
+		$result            = $lesson->quiz_panel_question( '', 0, $question->ID, 'quiz', [] );
 		Sensei()->question = $initial_question;
 
 		/* Assert */
