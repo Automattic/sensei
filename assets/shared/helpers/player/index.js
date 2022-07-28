@@ -11,7 +11,7 @@ const VIDEOPRESS_TYPE = videopressAdapter.ADAPTER_NAME;
 const YOUTUBE_TYPE = youtubeAdapter.ADAPTER_NAME;
 const VIMEO_TYPE = vimeoAdapter.ADAPTER_NAME;
 
-const adapters = {
+const ADAPTERS = {
 	[ VIDEO_TYPE ]: videoFileAdapter,
 	[ VIDEOPRESS_TYPE ]: videopressAdapter,
 	[ YOUTUBE_TYPE ]: youtubeAdapter,
@@ -44,7 +44,7 @@ class Player {
 		if ( this.element instanceof this.w.HTMLVideoElement ) {
 			this.adapterName = VIDEO_TYPE;
 		} else if ( this.element instanceof this.w.HTMLIFrameElement ) {
-			this.adapterName = Object.entries( adapters ).find(
+			this.adapterName = Object.entries( ADAPTERS ).find(
 				( [ , { EMBED_PATTERN = null } ] ) =>
 					EMBED_PATTERN && this.element.src?.match( EMBED_PATTERN )
 			)?.[ 0 ];
@@ -57,6 +57,17 @@ class Player {
 	}
 
 	/**
+	 * Get the adapter.
+	 *
+	 * @access private
+	 *
+	 * @return {Object} The adapter.
+	 */
+	getAdapter() {
+		return ADAPTERS[ this.adapterName ];
+	}
+
+	/**
 	 * Get the video player.
 	 *
 	 * @return {Promise<Object|HTMLVideoElement|HTMLIFrameElement>} The video player through a promise.
@@ -64,10 +75,7 @@ class Player {
 	getPlayer() {
 		if ( ! this.playerPromise ) {
 			this.playerPromise =
-				adapters[ this.adapterName ]?.initializePlayer(
-					this.element,
-					this.w
-				) ||
+				this.getAdapter()?.initializePlayer( this.element, this.w ) ||
 				// A promise that never resolves if it doesn't exist.
 				Promise.reject( new Error( 'Failed getting the player' ) );
 		}
@@ -82,7 +90,7 @@ class Player {
 	 */
 	getDuration() {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.adapterName ].getDuration( player )
+			this.getAdapter().getDuration( player )
 		);
 	}
 
@@ -95,7 +103,7 @@ class Player {
 	 */
 	setCurrentTime( seconds ) {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.adapterName ].setCurrentTime( player, seconds )
+			this.getAdapter().setCurrentTime( player, seconds )
 		);
 	}
 
@@ -106,7 +114,7 @@ class Player {
 	 */
 	play() {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.adapterName ].play( player )
+			this.getAdapter().play( player )
 		);
 	}
 
@@ -117,7 +125,7 @@ class Player {
 	 */
 	pause() {
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.adapterName ].pause( player )
+			this.getAdapter().pause( player )
 		);
 	}
 
@@ -138,11 +146,7 @@ class Player {
 		}
 
 		return this.getPlayer().then( ( player ) =>
-			adapters[ this.adapterName ].onTimeupdate(
-				player,
-				callback,
-				this.w
-			)
+			this.getAdapter().onTimeupdate( player, callback, this.w )
 		);
 	}
 }
