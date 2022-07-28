@@ -9,41 +9,57 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	private $factory;
 
 	/**
+	 * Keep initial state of global $post.
+	 *
 	 * @var WP_Post|null
 	 */
 	private $initial_post;
 
 	/**
+	 * Keep initial state of global $current_user.
+	 *
 	 * @var WP_User|null
 	 */
 	private $initial_user;
 
 	/**
+	 * Keep initial state of Sensei()->course.
+	 *
 	 * @var Sensei_Course|null
 	 */
 	private $initial_course;
 
 	/**
+	 * Keep initial state of Sensei()->lesson.
+	 *
 	 * @var Sensei_Lesson|null
 	 */
 	private $initial_lesson;
 
 	/**
+	 * Keep initial state of Sensei()->quiz.
+	 *
 	 * @var Sensei_Quiz|null
 	 */
 	private $initail_quiz;
 
 	/**
+	 * Keep initial state of Sensei()->question.
+	 *
 	 * @var Sensei_Question|null
 	 */
 	private $initial_question;
 
 	/**
+	 * Keep initial state of Sensei()->notices.
+	 *
 	 * @var Sensei_Notices|null
 	 */
 	private $initial_notices;
 
 	/**
+	 * Keep initial state of global $wp_scripts.
+	 *
 	 * @var WP_Scripts|null
 	 */
 	private $initial_wp_scripts;
