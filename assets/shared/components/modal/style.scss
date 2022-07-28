@@ -61,6 +61,7 @@
 		cursor: pointer;
 		padding: 0;
 		margin: 0;
+		outline: unset;
 
 		&.sensei-modal:not(:hover) {
 			background: none;
