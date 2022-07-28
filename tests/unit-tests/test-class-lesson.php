@@ -9,6 +9,46 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	private $factory;
 
 	/**
+	 * @var WP_Post|null
+	 */
+	private $initial_post;
+
+	/**
+	 * @var WP_User|null
+	 */
+	private $initial_user;
+
+	/**
+	 * @var Sensei_Course|null
+	 */
+	private $initial_course;
+
+	/**
+	 * @var Sensei_Lesson|null
+	 */
+	private $initial_lesson;
+
+	/**
+	 * @var Sensei_Quiz|null
+	 */
+	private $initail_quiz;
+
+	/**
+	 * @var Sensei_Question|null
+	 */
+	private $initial_question;
+
+	/**
+	 * @var Sensei_Notices|null
+	 */
+	private $initial_notices;
+
+	/**
+	 * @var WP_Scripts|null
+	 */
+	private $initial_wp_scripts;
+
+	/**
 	 * setup function
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
@@ -19,11 +59,41 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
+
+		global $post;
+		$this->initial_post = $post;
+
+		global $current_user;
+		$this->initial_user = $current_user;
+
+		global $wp_scripts;
+		$this->initial_wp_scripts = $wp_scripts;
+
+		$this->initial_course   = Sensei()->course;
+		$this->initial_lesson   = Sensei()->lesson;
+		$this->initail_quiz     = Sensei()->quiz;
+		$this->initial_question = Sensei()->question;
+		$this->initial_notices  = Sensei()->notices;
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		$this->factory->tearDown();
+
+		global $post;
+		$post = $this->initial_post;
+
+		global $current_user;
+		$current_user = $this->initial_user;
+
+		global $wp_scripts;
+		$wp_scripts = $this->initial_wp_scripts;
+
+		Sensei()->course   = $this->initial_course;
+		Sensei()->lesson   = $this->initial_lesson;
+		Sensei()->quiz     = $this->initail_quiz;
+		Sensei()->question = $this->initial_question;
+		Sensei()->notices  = $this->initial_notices;
 	}
 
 	/**
@@ -813,8 +883,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testAddCustomLinkToCourse_WhenNoPost_DoesntHaveOutput(): void {
 		/* Arrange */
 		global $post;
-		$initial_post = $post;
-		$post         = null;
+		$post = null;
 
 		$lesson = new Sensei_Lesson();
 
@@ -822,7 +891,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		ob_start();
 		$lesson->add_custom_link_to_course();
 		$output = ob_get_clean();
-		$post   = $initial_post;
 
 		/* Assert */
 		self::assertEmpty( $output );
@@ -831,8 +899,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testAddCustomLinkToCourse_WhenScreenBaseWasNotPost_DoesntHaveOutput(): void {
 		/* Arrange */
 		global $post;
-		$initial_post = $post;
-		$post         = new WP_Post( (object) [ 'ID' => 1 ] );
+		$post = new WP_Post( (object) [ 'ID' => 1 ] );
 
 		$screen       = WP_Screen::get( 'a' );
 		$screen->base = 'b';
@@ -844,7 +911,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		ob_start();
 		$lesson->add_custom_link_to_course();
 		$output = ob_get_clean();
-		$post   = $initial_post;
 
 		/* Assert */
 		self::assertEmpty( $output );
@@ -853,8 +919,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testAddCustomLinkToCourse_WhenNoCourseIdInPostMeta_DoesntHaveOutput(): void {
 		/* Arrange */
 		global $post;
-		$initial_post = $post;
-		$post         = new WP_Post( (object) [ 'ID' => 1 ] );
+		$post = new WP_Post( (object) [ 'ID' => 1 ] );
 
 		update_post_meta( $post->ID, '_course_id', '', true );
 
@@ -868,7 +933,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		ob_start();
 		$lesson->add_custom_link_to_course();
 		$output = ob_get_clean();
-		$post   = $initial_post;
 
 		/* Assert */
 		self::assertEmpty( $output );
@@ -877,8 +941,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testAddCustomLinkToCourse_WhenCourseInTrash_DoesntHaveOutput(): void {
 		/* Arrange */
 		global $post;
-		$initial_post = $post;
-		$post         = new WP_Post( (object) [ 'ID' => 1 ] );
+		$post = new WP_Post( (object) [ 'ID' => 1 ] );
 
 		$course_id = $this->factory->course->create( [ 'post_status' => 'trash' ] );
 		update_post_meta( $post->ID, '_course_id', $course_id, true );
@@ -893,7 +956,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		ob_start();
 		$lesson->add_custom_link_to_course();
 		$output = ob_get_clean();
-		$post   = $initial_post;
 
 		/* Assert */
 		self::assertEmpty( $output );
@@ -902,8 +964,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testAddCustomLinkToCourse_WhenPostWasntLesson_DoesntHaveOutput(): void {
 		/* Arrange */
 		global $post;
-		$initial_post = $post;
-		$post         = $this->factory->post->create_and_get();
+		$post = $this->factory->post->create_and_get();
 
 		$course_id = $this->factory->course->create();
 		update_post_meta( $post->ID, '_course_id', $course_id, true );
@@ -918,7 +979,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		ob_start();
 		$lesson->add_custom_link_to_course();
 		$output = ob_get_clean();
-		$post   = $initial_post;
 
 		/* Assert */
 		self::assertEmpty( $output );
@@ -927,9 +987,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testAddCustomLinkToCourse_WhenPostWasLesson_HasOutput(): void {
 		/* Arrange */
 		global $post;
-		$initial_post = $post;
-		$post         = $this->factory->lesson->create_and_get();
-		$course_id    = $this->factory->course->create();
+		$post      = $this->factory->lesson->create_and_get();
+		$course_id = $this->factory->course->create();
 		update_post_meta( $post->ID, '_lesson_course', $course_id, true );
 
 		$screen       = WP_Screen::get( 'a' );
@@ -942,7 +1001,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		ob_start();
 		$lesson->add_custom_link_to_course();
 		$output = ob_get_clean();
-		$post   = $initial_post;
 
 		/* Assert */
 		$expected = '
@@ -1130,7 +1188,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testCourseSignupLink_WhenSignupNoticeNeeded_AddsNotice(): void {
 		/* Arrange */
-		$notices          = $this->createMock( 'Sensei_Notices' );
+		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 
 		$course = $this->factory->course->create_and_get();
@@ -1146,8 +1204,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testPrerequisiteCompleteMessage_PrerequisiteFound_AddsNotice(): void {
 		/* Arrange */
-		global $post;
-
 		$user_id             = $this->factory->user->create();
 		$course_with_lessons = $this->factory->get_course_with_lessons(
 			[
@@ -1159,9 +1215,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		update_post_meta( $course_with_lessons['lesson_ids'][1], '_lesson_prerequisite', $course_with_lessons['lesson_ids'][0] );
 
+		global $post;
 		$post = get_post( $course_with_lessons['lesson_ids'][1] );
 
-		$notices          = $this->createMock( 'Sensei_Notices' );
+		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 
 		$course = $this->factory->course->create_and_get();
@@ -1249,11 +1306,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testUserLessonQuizStatusMessage_QuizFound_OutputsStatus(): void {
 		/* Arrange */
 		global $current_user;
-		$course       = $this->factory->get_course_with_lessons();
 		$current_user = $this->factory->user->create_and_get();
+		$course       = $this->factory->get_course_with_lessons();
 
-		$initial_lesson = Sensei()->lesson;
-		$lesson         = $this->createMock( Sensei_Lesson::class );
+		$lesson = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'lesson_quizzes' )->willReturn( $course['quiz_ids'][0] );
 		Sensei()->lesson = $lesson;
 
@@ -1264,7 +1320,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		Sensei_Lesson::user_lesson_quiz_status_message( $course['lesson_ids'][0], $current_user->ID );
 		$result = ob_get_clean();
 		remove_filter( 'sensei_is_enrolled', '__return_true' );
-		Sensei()->lesson = $initial_lesson;
 
 		/* Assert */
 		self::assertStringContainsString( '<div class="sensei-message info">', $result );
@@ -1314,16 +1369,17 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 	public function testFooterQuizCallToAction_WhenCalled_OutputsButton(): void {
 		/* Arrange */
-		global $post;
-		global $current_user;
+		$course = $this->factory->get_course_with_lessons();
 
-		$course       = $this->factory->get_course_with_lessons();
-		$post         = get_post( $course['lesson_ids'][0] );
+		global $post;
+		$post = get_post( $course['lesson_ids'][0] );
+
+		global $current_user;
 		$current_user = $this->factory->user->create_and_get();
+
 		update_post_meta( $post->ID, '_quiz_has_questions', 1 );
 
-		$initial_lesson = Sensei()->lesson;
-		$lesson         = $this->createMock( Sensei_Lesson::class );
+		$lesson = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'lesson_quizzes' )->willReturn( $course['quiz_ids'][0] );
 		Sensei()->lesson = $lesson;
 
@@ -1337,7 +1393,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		remove_filter( 'sensei_can_user_view_lesson', '__return_true' );
 		remove_filter( 'sensei_user_all_access', '__return_true' );
-		Sensei()->lesson = $initial_lesson;
 
 		/* Assert */
 		self::assertStringContainsString( 'View the Lesson Quiz', $result );
@@ -1363,16 +1418,14 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Arrange */
 		$lesson_id = $this->factory->lesson->create();
 
-		$initial_lesson = Sensei()->lesson;
-		$lesson         = $this->createMock( Sensei_Lesson::class );
+		$lesson = $this->createMock( Sensei_Lesson::class );
 		$lesson->method( 'lesson_image' )->willReturn( '<img src="test.jpg" />' );
 		Sensei()->lesson = $lesson;
 
 		/* Act */
 		ob_start();
 		Sensei_Lesson::the_lesson_thumbnail( $lesson_id );
-		$result          = ob_get_clean();
-		Sensei()->lesson = $initial_lesson;
+		$result = ob_get_clean();
 
 		/* Assert */
 		self::assertStringContainsString( '<img src="test.jpg" />', $result );
@@ -1445,15 +1498,10 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testSetQuickEditAdminDefaults_WhenCalled_LocalizesScripts(): void {
 		/* Arrange */
 		global $wp_scripts;
+		$wp_scripts = $this->createMock( WP_Scripts::class );
 
 		$post = $this->factory->lesson->create_and_get();
 		$quiz = $this->factory->quiz->create_and_get();
-
-		$initial_lesson     = Sensei()->lesson;
-		$initial_quiz       = Sensei()->quiz;
-		$initial_wp_scripts = $wp_scripts;
-
-		$wp_scripts = $this->createMock( WP_Scripts::class );
 
 		update_post_meta( $post->ID, '_lesson_prerequisite', 1 );
 		update_post_meta( $post->ID, '_lesson_course', 2 );
@@ -1491,10 +1539,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				]
 			);
 		$lesson->set_quick_edit_admin_defaults( 'lesson-course', $post->ID );
-
-		Sensei()->quiz   = $quiz;
-		Sensei()->lesson = $lesson;
-		$wp_scripts      = $initial_wp_scripts;
 	}
 
 	public function testMetaBoxSave_PostIdGiven_UpdatesPostMeta(): void {
@@ -1534,15 +1578,13 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		update_post_meta( $question->ID, '_question_right_answer', 'a' );
 		update_post_meta( $question->ID, '_question_wrong_answers', [ 'b', 'c', 'd' ] );
 
-		$initial_question  = Sensei()->question;
 		Sensei()->question = $this->createMock( Sensei_Question::class );
 		Sensei()->question->method( 'get_question_grade' )->willReturn( '1' );
 
 		$lesson = new Sensei_Lesson();
 
 		/* Act */
-		$result            = $lesson->quiz_panel_question( '', 0, $question->ID, 'quiz', [] );
-		Sensei()->question = $initial_question;
+		$result = $lesson->quiz_panel_question( '', 0, $question->ID, 'quiz', [] );
 
 		/* Assert */
 		self::assertStringContainsString( 'Test Question', $result );
