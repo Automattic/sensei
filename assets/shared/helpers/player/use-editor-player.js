@@ -33,10 +33,10 @@ const useTriggerDependencies = ( videoBlock ) => {
 		[ videoBlock?.attributes?.url ]
 	);
 
-	// Check if block is selected. We need to get the player reference again when it's video block
-	// because it re-creates the video element when it's (un)selected.
 	const { isBlockSelected, lastBlockAttributeChange } = useSelect(
 		( select ) => ( {
+			// Check if block is selected. We need to get the player reference again when it's video
+			// block because it re-creates the video element when it's (un)selected.
 			isBlockSelected: select( blockEditorStore ).isBlockSelected(
 				videoBlock.clientId
 			),
