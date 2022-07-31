@@ -272,6 +272,16 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private function get_learners( $args ) {
 		$query             = new Sensei_Db_Query_Learners( $args );
 		$learners          = $query->get_all();
+
+		if ( isset( $_GET['orderby'] ) && 'last_activity_date' === $_GET['orderby'] ) {
+			usort($learners, function ($item1, $item2) {
+				return $item1->last_activity_date <=> $item2->last_activity_date;
+			});
+			if ( isset( $_GET['order'] ) && 'asc' === $_GET['order'] ) {
+				$learners = array_reverse( $learners );
+			}
+		}
+
 		$this->total_items = $query->total_items;
 		return $learners;
 	}
