@@ -354,6 +354,10 @@ table.wp_list_table_sensei_learner_admins  {
 }
 
 .wrap {
+	.select2-container--default .select2-selection--single {
+		min-height: 30px;
+	}
+
 	.sensei-learners-extra {
 		.add-student-form-container {
 			&.student-search-empty .select2-selection:before {
