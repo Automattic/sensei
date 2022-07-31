@@ -474,17 +474,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return array The query args
 	 */
 	private function parse_query_args() {
-		// Handle orderby.
-		$orderby = '';
-
-		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to order columns.
-		if ( ! empty( $_GET['orderby'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification
-			$orderby_input = sanitize_text_field( wp_unslash( $_GET['orderby'] ) );
-			if ( array_key_exists( $orderby_input, $this->get_sortable_columns() ) ) {
-				$orderby = $orderby_input;
-			}
-		}
 
 		// Handle order.
 		$order = 'DESC';
@@ -521,9 +510,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
 		}
-		if ( empty( $orderby ) ) {
-			$orderby = '';
-		}
 
 		$filter_by_course_id = 0;
 		// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for filtering.
@@ -542,7 +528,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$page      = $this->page_slug;
 		$post_type = $this->menu_post_type;
 		$view      = $this->controller->get_view();
-		$args      = compact( 'page', 'post_type', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
+		$args      = compact( 'page', 'post_type', 'view', 'per_page', 'offset', 'order', 'search', 'filter_by_course_id', 'filter_type' );
 
 		return $args;
 	}
