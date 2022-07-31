@@ -248,7 +248,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	public function extra_tablenav( $which ) {
 		$visibility_class = 'top' === $which ? 'sensei-actions__always-visible' : '';
 		?>
-		<div class="alignleft actions <?php echo $visibility_class; ?>">
+		<div class="alignleft actions <?php echo esc_attr( $visibility_class ); ?>">
 			<?php
 			parent::extra_tablenav( $which );
 			?>
