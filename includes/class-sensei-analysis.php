@@ -414,8 +414,8 @@ class Sensei_Analysis {
 		?>
 		<form id="reports-filter" method="get">
 			<?php
-			Sensei_Utils::output_query_params_as_inputs( $exclude_query_params );
 			$list_table->table_search_form();
+			Sensei_Utils::output_query_params_as_inputs( $exclude_query_params );
 			$list_table->display();
 			do_action( 'sensei_analysis_extra' );
 			?>
