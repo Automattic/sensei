@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Generic Data Table parent Class in Sensei.
  *
- * @package Core
  * @author Automattic
  *
  * @since 1.2.0
+ * @package Core
  */
 class Sensei_List_Table extends WP_List_Table {
 	public $token;
@@ -307,7 +307,6 @@ class Sensei_List_Table extends WP_List_Table {
 	 * bulk_actions output for the bulk actions area
 	 *
 	 * @since  1.2.0
-	 * @return void
 	 */
 	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left

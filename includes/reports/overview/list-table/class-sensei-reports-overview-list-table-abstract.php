@@ -121,7 +121,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
 	 *
-	 * @return void
 	 * @since  1.7.0
 	 */
 	public function prepare_items() {
@@ -150,7 +149,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			array_merge(
 				$this->get_filter_args(),
 				[
-					'number' => - 1,
+					'number' => -1,
 					'fields' => 'ids',
 				]
 			)
