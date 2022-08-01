@@ -126,6 +126,8 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Fix Gutenberg compatibility issue [#5379](https://github.com/Automattic/sensei/pull/5379)
 * Fix: Render additional css on feedback answers block [#5371](https://github.com/Automattic/sensei/pull/5371)
 * Fix: Remove additional line from login redirection code [#5380](https://github.com/Automattic/sensei/pull/5380)
+* Fix: Modules loosing configuration when module is changed [#5387](https://github.com/Automattic/sensei/pull/5387)
+* Tweak: Hide action buttons' notification [#5386](https://github.com/Automattic/sensei/pull/5386)
 
 2022-07-14 - version 4.5.2
 * Add: New upsells students group page
