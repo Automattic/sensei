@@ -314,6 +314,29 @@ class Sensei_List_Table extends WP_List_Table {
 		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
 	}
 
+	/**
+	 * Generates the table navigation above or below the table.
+	 *
+	 * @param string $which Which type of navigation to generate: top or bottom.
+	 */
+	protected function display_tablenav( $which ) {
+		?>
+		<div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+			<?php if ( $this->has_items() ) : ?>
+				<div class="alignleft actions bulkactions">
+					<?php $this->bulk_actions( $which ); ?>
+				</div>
+			<?php
+			endif;
+			$this->extra_tablenav( $which );
+			$this->pagination( $which );
+			?>
+
+			<br class="clear" />
+		</div>
+		<?php
+	}
 }
 
 /**

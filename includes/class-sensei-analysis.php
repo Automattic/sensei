@@ -273,7 +273,6 @@ class Sensei_Analysis {
 	 * @return void
 	 */
 	public function analysis_page() {
-
 		$course_id = 0;
 		$lesson_id = 0;
 		$user_id   = 0;
@@ -403,6 +402,8 @@ class Sensei_Analysis {
 	 * @param array             $exclude_query_params Query parameters to exclude from output.
 	 */
 	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ) {
+		$exclude_query_params = array_merge( $exclude_query_params, [ '_wpnonce', '_wp_http_referer' ] );
+
 		// Wrappers
 		do_action( 'analysis_before_container' );
 		do_action( 'analysis_wrapper_container', 'top' );
@@ -898,7 +899,6 @@ class Sensei_Analysis {
 		array_push( $search_columns, 'display_name' );
 		return $search_columns;
 	}
-
 }
 
 /**
