@@ -2639,7 +2639,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Set teacher meta for module.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 *
 	 * @param int $module_id  Term ID.
 	 * @param int $teacher_id ID of module teacher.

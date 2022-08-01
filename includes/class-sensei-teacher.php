@@ -406,7 +406,7 @@ class Sensei_Teacher {
 	 * Check if the module with the slug provided is
 	 * a part of any other course taught by a different teacher.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 * @access private
 	 *
 	 * @param  string $module_slug Slug of the module to check for.
@@ -1713,7 +1713,7 @@ class Sensei_Teacher {
 	 * Try to extract teacher id from module slug to term meta
 	 * if the meta does not exist already
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 * @access private
 	 *
 	 * @param int $term_id ID of the term being edited.

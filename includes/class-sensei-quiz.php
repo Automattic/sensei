@@ -1329,7 +1329,7 @@ class Sensei_Quiz {
 	 * Get the contents for the correct answer feedback block.
 	 *
 	 * @access public
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 * @param int $question_id Question Id.
 	 *
 	 * @return string
@@ -1341,7 +1341,7 @@ class Sensei_Quiz {
 	/**
 	 * Get the contents for the incorrect answer feedback block.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 * @access public
 	 * @param int $question_id Question Id.
 	 *
