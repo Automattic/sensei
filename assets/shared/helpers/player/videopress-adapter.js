@@ -18,6 +18,13 @@ export const EMBED_PATTERN = /(videopress|video\.wordpress)\.com\/.+/i;
  */
 export const initializePlayer = ( element, w = window ) =>
 	new Promise( ( resolve ) => {
+		// It was already initialized earlier.
+		const { duration } = element.dataset;
+		if ( duration ) {
+			resolve( element );
+			return;
+		}
+
 		const onDurationChange = ( event ) => {
 			if (
 				event.source !== element.contentWindow ||
