@@ -326,7 +326,7 @@ class Sensei_List_Table extends WP_List_Table {
 				<div class="alignleft actions bulkactions">
 					<?php $this->bulk_actions( $which ); ?>
 				</div>
-			<?php
+				<?php
 			endif;
 			$this->extra_tablenav( $which );
 			$this->pagination( $which );
