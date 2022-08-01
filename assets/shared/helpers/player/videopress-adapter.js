@@ -22,6 +22,7 @@ export const initializePlayer = ( element, w = window ) =>
 		const { duration } = element.dataset;
 		if ( duration ) {
 			resolve( element );
+			return;
 		}
 
 		const onDurationChange = ( event ) => {
