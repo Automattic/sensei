@@ -9,20 +9,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	private $factory;
 
 	/**
-	 * Keep initial state of global $post.
-	 *
-	 * @var WP_Post|null
-	 */
-	private $initial_post;
-
-	/**
-	 * Keep initial state of global $current_user.
-	 *
-	 * @var WP_User|null
-	 */
-	private $initial_user;
-
-	/**
 	 * Keep initial state of Sensei()->course.
 	 *
 	 * @var Sensei_Course|null
@@ -58,34 +44,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	private $initial_notices;
 
 	/**
-	 * Keep initial state of global $wp_scripts.
-	 *
-	 * @var WP_Scripts|null
-	 */
-	private $initial_wp_scripts;
-
-	/**
-	 * Keep initial state of global $current_screen.
-	 *
-	 * @var WP_Screen|null
-	 */
-	private $initial_screen;
-
-	/**
-	 * Keep initial state of global $taxnow.
-	 *
-	 * @var mixed|string
-	 */
-	private $initial_taxnow;
-
-	/**
-	 * Keep initial state of global $typenow.
-	 *
-	 * @var mixed|string
-	 */
-	private $initial_typenow;
-
-	/**
 	 * setup function
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
@@ -97,14 +55,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
 
-		global $current_screen, $taxnow, $typenow, $post, $current_user, $wp_scripts;
-		$this->initial_screen     = $current_screen;
-		$this->initial_taxnow     = $taxnow;
-		$this->initial_typenow    = $typenow;
-		$this->initial_post       = $post;
-		$this->initial_user       = $current_user;
-		$this->initial_wp_scripts = $wp_scripts;
-
 		$this->initial_course   = Sensei()->course;
 		$this->initial_lesson   = Sensei()->lesson;
 		$this->initail_quiz     = Sensei()->quiz;
@@ -115,14 +65,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		$this->factory->tearDown();
-
-		global $current_screen, $taxnow, $typenow, $post, $current_user, $wp_scripts;
-		$current_screen = $this->initial_screen;
-		$taxnow         = $this->initial_taxnow;
-		$typenow        = $this->initial_typenow;
-		$post           = $this->initial_post;
-		$current_user   = $this->initial_user;
-		$wp_scripts     = $this->initial_wp_scripts;
 
 		Sensei()->course   = $this->initial_course;
 		Sensei()->lesson   = $this->initial_lesson;
