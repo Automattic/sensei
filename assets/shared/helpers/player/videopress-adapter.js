@@ -25,25 +25,38 @@ export const initializePlayer = ( element, w = window ) =>
 			return;
 		}
 
-		const onDurationChange = ( event ) => {
-			if (
-				event.source !== element.contentWindow ||
-				event.data.event !== 'videopress_durationchange' ||
-				! event.data.durationMs
-			) {
+		const onVideoPressMessage = ( event ) => {
+			if ( event.source !== element.contentWindow ) {
 				return;
 			}
 
-			// Set the duration to a dataset in order to have it available for later.
-			element.dataset.duration =
-				parseInt( event.data.durationMs, 10 ) / 1000;
+			const { data } = event;
 
-			w.removeEventListener( 'message', onDurationChange );
-			resolve( element );
+			if (
+				data.event === 'videopress_durationchange' &&
+				data.durationMs
+			) {
+				// Set the duration to a dataset in order to be available later,
+				// and consider the initialization done.
+				element.dataset.duration = data.durationMs / 1000;
+
+				// If current time didn't return yet, set it to `0`.
+				if ( ! element.dataset.currentTime ) {
+					element.dataset.currentTime = 0;
+				}
+
+				resolve( element );
+			} else if (
+				data.event === `videopress_timeupdate` &&
+				data.currentTimeMs
+			) {
+				// Set the current time to a dataset in order to be available later.
+				element.dataset.currentTime = data.currentTimeMs / 1000;
+			}
 		};
 
 		// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
-		w.addEventListener( 'message', onDurationChange );
+		w.addEventListener( 'message', onVideoPressMessage );
 	} );
 
 /**
@@ -62,6 +75,24 @@ export const getDuration = ( player ) =>
 		}
 
 		resolve( parseFloat( player.dataset.duration ) );
+	} );
+
+/**
+ * Get the current video time.
+ *
+ * @param {HTMLIFrameElement} player The player element.
+ *
+ * @return {Promise<number>} The current video time in seconds through a promise.
+ */
+export const getCurrentTime = ( player ) =>
+	new Promise( ( resolve, reject ) => {
+		const { currentTime } = player.dataset;
+
+		if ( ! currentTime ) {
+			reject( new Error( 'Video current time not found' ) );
+		}
+
+		resolve( parseFloat( player.dataset.currentTime ) );
 	} );
 
 /**
