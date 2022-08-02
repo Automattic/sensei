@@ -40,8 +40,8 @@ const useTriggerDependencies = ( videoBlock ) => {
 			isBlockSelected: select( blockEditorStore ).isBlockSelected(
 				videoBlock.clientId
 			),
-			// This prop is used to for the case when the user edit the embed URL, don't change the
-			// value and click on "Embed" again.
+			// This prop is used to detect the case when the user edits the embed URL, doesn't change the
+			// value and clicks on "Embed" again.
 			lastBlockAttributeChange: select(
 				blockEditorStore
 			).__experimentalGetLastBlockAttributeChanges()?.[
