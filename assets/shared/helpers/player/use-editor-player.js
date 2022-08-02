@@ -80,8 +80,8 @@ const addScript = ( body, src, onLoad ) => {
 
 	script.src = src;
 	script.id = API_SCRIPT_ID;
-	script.onload = onLoad;
 
+	script.addEventListener( 'load', onLoad );
 	body.append( script );
 };
 
@@ -144,8 +144,17 @@ const useEditorPlayer = ( videoBlock ) => {
 		const playerIframe = doc?.querySelector( 'iframe' );
 		const playerScript = doc?.getElementById( API_SCRIPT_ID );
 
-		// Skip if iframe is not found or player was already added.
-		if ( ! playerIframe || playerScript ) {
+		// Skip if iframe is not found.
+		if ( ! playerIframe ) {
+			return;
+		}
+
+		// If player script was already added, add load event to make sure player will be set.
+		if ( playerScript ) {
+			playerScript.addEventListener( 'load', () => {
+				setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+			} );
+
 			return;
 		}
 
