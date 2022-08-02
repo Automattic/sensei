@@ -33,18 +33,25 @@ const useTriggerDependencies = ( videoBlock ) => {
 		[ videoBlock?.attributes?.url ]
 	);
 
-	// Check if block is selected. We need to get the player reference again when it's video block
-	// because it re-creates the video element when it's (un)selected.
-	const { isBlockSelected } = useSelect(
+	const { isBlockSelected, lastBlockAttributeChange } = useSelect(
 		( select ) => ( {
+			// Check if block is selected. We need to get the player reference again when it's video
+			// block because it re-creates the video element when it's (un)selected.
 			isBlockSelected: select( blockEditorStore ).isBlockSelected(
 				videoBlock.clientId
 			),
+			// This prop is used to detect the case when the user edits the embed URL, doesn't change the
+			// value and clicks on "Embed" again.
+			lastBlockAttributeChange: select(
+				blockEditorStore
+			).__experimentalGetLastBlockAttributeChanges()?.[
+				videoBlock.clientId
+			],
 		} ),
 		[ videoBlock.clientId ]
 	);
 
-	return { fetching, isBlockSelected };
+	return { fetching, isBlockSelected, lastBlockAttributeChange };
 };
 
 /**
@@ -108,7 +115,11 @@ const prepareYouTubeIframe = ( playerIframe, w ) => {
 const useEditorPlayer = ( videoBlock ) => {
 	const [ player, setPlayer ] = useState();
 
-	const { fetching, isBlockSelected } = useTriggerDependencies( videoBlock );
+	const {
+		fetching,
+		isBlockSelected,
+		lastBlockAttributeChange,
+	} = useTriggerDependencies( videoBlock );
 
 	// This is delayed to make sure it will run after the effects of the other blocks, which
 	// creates the iframe and video tags.
@@ -160,7 +171,7 @@ const useEditorPlayer = ( videoBlock ) => {
 				break;
 			}
 		}
-	}, [ videoBlock, isBlockSelected, fetching ] );
+	}, [ fetching, isBlockSelected, lastBlockAttributeChange ] );
 
 	return player;
 };
