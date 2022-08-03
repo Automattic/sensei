@@ -38,17 +38,17 @@ const useTriggerDependencies = ( videoBlock ) => {
 			// Check if block is selected. We need to get the player reference again when it's video
 			// block because it re-creates the video element when it's (un)selected.
 			isBlockSelected: select( blockEditorStore ).isBlockSelected(
-				videoBlock.clientId
+				videoBlock?.clientId
 			),
 			// This prop is used to detect the case when the user edits the embed URL, doesn't change the
 			// value and clicks on "Embed" again.
 			lastBlockAttributeChange: select(
 				blockEditorStore
 			).__experimentalGetLastBlockAttributeChanges()?.[
-				videoBlock.clientId
+				videoBlock?.clientId
 			],
 		} ),
-		[ videoBlock.clientId ]
+		[ videoBlock?.clientId ]
 	);
 
 	return { fetching, isBlockSelected, lastBlockAttributeChange };
@@ -124,7 +124,11 @@ const useEditorPlayer = ( videoBlock ) => {
 	// This is delayed to make sure it will run after the effects of the other blocks, which
 	// creates the iframe and video tags.
 	useDelayedEffect( () => {
-		// Video block.
+		if ( ! videoBlock ) {
+			return;
+		}
+
+		// Video file block.
 		if ( 'core/video' === videoBlock.name ) {
 			const video = document.querySelector(
 				`#block-${ videoBlock.clientId } video`

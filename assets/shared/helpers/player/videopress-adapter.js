@@ -74,7 +74,7 @@ export const getDuration = ( player ) =>
 			reject( new Error( 'Video duration not found' ) );
 		}
 
-		resolve( parseFloat( player.dataset.duration ) );
+		resolve( parseFloat( duration ) );
 	} );
 
 /**
