@@ -69,8 +69,11 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'output_top_filters' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
+
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
+
 	/**
 	 * Get the filter arguments needed to get the items.
 	 *
@@ -118,7 +121,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	/**
 	 * Prepare the table with different parameters, pagination, columns and table elements
 	 *
-	 * @return void
 	 * @since  1.7.0
 	 */
 	public function prepare_items() {
@@ -143,15 +145,15 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	 * @return array The post ids.
 	 */
 	protected function get_all_item_ids() {
-			return $this->data_provider->get_items(
-				array_merge(
-					$this->get_filter_args(),
-					[
-						'number' => -1,
-						'fields' => 'ids',
-					]
-				)
-			);
+		return $this->data_provider->get_items(
+			array_merge(
+				$this->get_filter_args(),
+				[
+					'number' => -1,
+					'fields' => 'ids',
+				]
+			)
+		);
 	}
 
 	/**
@@ -238,79 +240,112 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 	}
 
 	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
+	public function extra_tablenav( $which ) {
+		$visibility_class = 'top' === $which ? 'sensei-actions__always-visible' : '';
+		?>
+		<div class="alignleft actions <?php echo esc_attr( $visibility_class ); ?>">
+			<?php
+			parent::extra_tablenav( $which );
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output search form for table.
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+	}
+
+	/**
 	 * Output top filter form.
 	 *
 	 * @since  4.2.0
 	 * @access private
 	 */
 	public function output_top_filters() {
+		Sensei_Utils::output_query_params_as_inputs(
+			[
+				'course_filter',
+				'start_date',
+				'end_date',
+				's',
+				'timezone',
+				'post_type',
+				'page',
+				'search',
+			]
+		);
 		?>
-		<form class="sensei-analysis__top-filters">
-			<?php Sensei_Utils::output_query_params_as_inputs( [ 'course_filter', 'start_date', 'end_date', 's', 'timezone' ] ); ?>
 
-			<input type="hidden" name="timezone">
+		<input type="hidden" name="timezone">
 
-			<?php
-			/**
-			 * Fires before the top filter inputs on the reports overview screen.
-			 *
-			 * @hook sensei_reports_overview_before_top_filters
-			 * @since 4.6.0
-			 *
-			 * @param {string} $report_type The report type.
-			 */
-			do_action( 'sensei_reports_overview_before_top_filters', $this->type );
-			?>
-
-			<?php if ( 'lessons' === $this->type ) : ?>
-				<label for="sensei-course-filter">
-					<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
-				</label>
-
-				<?php $this->output_course_select_input(); ?>
-			<?php endif ?>
-
-			<?php if ( in_array( $this->type, [ 'courses', 'users' ], true ) ) : ?>
-				<label for="sensei-start-date-filter">
-					<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
-				</label>
-
-				<input
-					class="sensei-date-picker"
-					id="sensei-start-date-filter"
-					name="start_date"
-					type="text"
-					autocomplete="off"
-					placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
-					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
-				/>
-
-				<input
-					class="sensei-date-picker"
-					id="sensei-end-date-filter"
-					name="end_date"
-					type="text"
-					autocomplete="off"
-					placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
-					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
-				/>
-			<?php endif ?>
-
-			<?php
-			/**
-			 * Fires after the top filter inputs on the reports overview screen.
-			 *
-			 * @hook sensei_reports_overview_after_top_filters
-			 * @since 4.6.0
-			 *
-			 * @param {string} $report_type The report type.
-			 */
-			do_action( 'sensei_reports_overview_after_top_filters', $this->type );
-			?>
-
-			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
-		</form>
 		<?php
+		/**
+		 * Fires before the top filter inputs on the reports overview screen.
+		 *
+		 * @hook sensei_reports_overview_before_top_filters
+		 * @since 4.6.0
+		 * @param {string} $report_type The report type.
+		 */
+		do_action( 'sensei_reports_overview_before_top_filters', $this->type );
+		?>
+
+		<?php if ( 'lessons' === $this->type ) : ?>
+			<label for="sensei-course-filter">
+				<?php esc_html_e( 'Course', 'sensei-lms' ); ?>:
+
+			</label>
+			<?php $this->output_course_select_input(); ?>
+		<?php endif ?>
+
+		<?php if ( in_array( $this->type, [ 'courses', 'users' ], true ) ) : ?>
+			<label for="sensei-start-date-filter">
+				<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
+			</label>
+
+			<input
+				class="sensei-date-picker"
+				id="sensei-start-date-filter"
+				name="start_date"
+				type="text"
+				autocomplete="off"
+				placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
+				value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
+			/>
+
+			<input
+				class="sensei-date-picker"
+				id="sensei-end-date-filter"
+				name="end_date"
+				type="text"
+				autocomplete="off"
+				placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
+				value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
+			/>
+		<?php endif ?>
+
+		<?php
+		/**
+		 * Fires after the top filter inputs on the reports overview screen.
+		 *
+		 * @hook sensei_reports_overview_after_top_filters
+		 * @since 4.6.0
+		 * @param {string} $report_type The report type.
+		 */
+		do_action( 'sensei_reports_overview_after_top_filters', $this->type );
+		?>
+
+		<?php
+		submit_button( __( 'Filter', 'sensei-lms' ), '', '', false );
 	}
 
 	/**

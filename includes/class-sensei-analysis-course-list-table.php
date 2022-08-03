@@ -91,9 +91,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
-
 	}
 
 	/**
@@ -685,21 +685,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		echo '<div class="sensei-analysis-course__table-header">';
-
-		$this->output_course_submenu();
-
 		if ( 'user' === $this->view ) {
 			$this->output_top_filters();
 		}
-
-		echo '</div>';
 	}
 
 	/**
-	 * Output submenu for course reports.
+	 * Return submenu for course reports.
 	 */
-	private function output_course_submenu() {
+	public function get_views() {
 		if ( $this->user_id ) {
 			$learners_text = __( 'Other Students taking this Course', 'sensei-lms' );
 		} else {
@@ -731,16 +725,32 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$menu['lesson'] = sprintf( '<a href="%s" class="%s">%s</a>', esc_url( $lessons_url ), esc_attr( $lessons_class ), esc_html( $lessons_text ) );
 		$menu['user']   = sprintf( '<a href="%s" class="%s">%s</a>', esc_url( $learners_url ), esc_attr( $learners_class ), esc_html( $learners_text ) );
 
-		$menu = apply_filters( 'sensei_analysis_course_sub_menu', $menu );
-		if ( ! empty( $menu ) ) {
-			echo '<ul class="sensei-analysis-course__submenu">' . "\n";
-			foreach ( $menu as $class => $item ) {
-				$menu[ $class ] = "\t<li class='$class'>$item";
-			}
+		return apply_filters( 'sensei_analysis_course_sub_menu', $menu );
+	}
 
-			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
-			echo '</ul>' . "\n";
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
+	public function extra_tablenav( $which ) {
+		?>
+		<div class="alignleft actions">
+		<?php
+		parent::extra_tablenav( $which );
+		?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output search form for table.
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
 		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
 	/**
@@ -748,36 +758,31 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	 */
 	private function output_top_filters() {
 		?>
-		<form class="sensei-analysis-course__top-filters">
-			<?php Sensei_Utils::output_query_params_as_inputs( [ 'start_date', 'end_date', 's' ] ); ?>
+			<label for="sensei-start-date-filter">
+				<?php esc_html_e( 'Date Started', 'sensei-lms' ); ?>:
+			</label>
 
-				<label for="sensei-start-date-filter">
-					<?php esc_html_e( 'Date Started', 'sensei-lms' ); ?>:
-				</label>
+			<input
+				class="sensei-date-picker"
+				id="sensei-start-date-filter"
+				name="start_date"
+				type="text"
+				autocomplete="off"
+				placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
+				value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
+			/>
 
-				<input
-					class="sensei-date-picker"
-					id="sensei-start-date-filter"
-					name="start_date"
-					type="text"
-					autocomplete="off"
-					placeholder="<?php echo esc_attr( __( 'Start Date', 'sensei-lms' ) ); ?>"
-					value="<?php echo esc_attr( $this->get_start_date_filter_value() ); ?>"
-				/>
-
-				<input
-					class="sensei-date-picker"
-					id="sensei-end-date-filter"
-					name="end_date"
-					type="text"
-					autocomplete="off"
-					placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
-					value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
-				/>
-
-			<?php submit_button( __( 'Filter', 'sensei-lms' ), '', '', false ); ?>
-		</form>
+			<input
+				class="sensei-date-picker"
+				id="sensei-end-date-filter"
+				name="end_date"
+				type="text"
+				autocomplete="off"
+				placeholder="<?php echo esc_attr( __( 'End Date', 'sensei-lms' ) ); ?>"
+				value="<?php echo esc_attr( $this->get_end_date_filter_value() ); ?>"
+			/>
 		<?php
+		submit_button( __( 'Filter', 'sensei-lms' ), '', '', false );
 	}
 
 	/**

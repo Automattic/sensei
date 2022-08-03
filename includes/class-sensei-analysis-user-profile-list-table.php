@@ -39,6 +39,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
@@ -335,6 +336,31 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		echo '<strong>' . esc_html__( 'Courses', 'sensei-lms' ) . '</strong>';
+	}
+
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
+	public function extra_tablenav( $which ) {
+		?>
+		<div class="alignleft actions">
+			<?php
+			parent::extra_tablenav( $which );
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output search form for table.
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
 	/**

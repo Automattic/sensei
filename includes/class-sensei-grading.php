@@ -217,16 +217,17 @@ class Sensei_Grading {
 		$this->grading_default_nav();
 		do_action( 'sensei_grading_after_headers' );
 
+		$sensei_grading_overview->views();
 		?>
-		<div id="poststuff" class="sensei-grading-wrap">
-			<div class="sensei-grading-main">
-				<?php $sensei_grading_overview->display(); ?>
-			</div>
-			<div class="sensei-grading-extra">
-				<?php do_action( 'sensei_grading_extra' ); ?>
-			</div>
-		</div>
+		<form id="grading-filters" method="get">
+			<?php
+			Sensei_Utils::output_query_params_as_inputs( [ 'course_id', 'lesson_id', 's' ] );
+			$sensei_grading_overview->table_search_form();
+			$sensei_grading_overview->display();
+			?>
+		</form>
 		<?php
+		do_action( 'sensei_grading_extra' );
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
 	}

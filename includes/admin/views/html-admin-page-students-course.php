@@ -20,16 +20,12 @@ do_action( 'learners_wrapper_container', 'top' );
 
 Sensei()->learners->learners_headers();
 ?>
-
-<div id="poststuff" class="sensei-learners-wrap">
-	<div class="sensei-learners-main">
-		<?php $sensei_list_table->display(); ?>
-	</div>
-	<div class="sensei-learners-extra">
-		<?php do_action( 'sensei_learners_extra' ); ?>
-	</div>
-</div>
-
+<?php $sensei_list_table->views(); ?>
+<form id="learners-filter" method="get">
+	<?php Sensei_Utils::output_query_params_as_inputs( [ 's' ] ); ?>
+	<?php $sensei_list_table->table_search_form(); ?>
+	<?php $sensei_list_table->display(); ?>
+</form>
 <?php
 do_action( 'learners_wrapper_container', 'bottom' );
 do_action( 'learners_after_container' );
