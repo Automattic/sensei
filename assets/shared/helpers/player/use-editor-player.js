@@ -81,7 +81,10 @@ const addScript = ( body, src, onLoad ) => {
 	script.src = src;
 	script.id = API_SCRIPT_ID;
 
-	script.addEventListener( 'load', onLoad );
+	script.addEventListener( 'load', () => {
+		script.dataset.loaded = 'loaded';
+		onLoad();
+	} );
 	body.append( script );
 };
 
@@ -139,7 +142,7 @@ const useEditorPlayer = ( videoBlock ) => {
 			return;
 		}
 
-		// Embed block.
+		// Embed block (iframe).
 		const sandboxIframe = document.querySelector(
 			`#block-${ videoBlock.clientId } iframe`
 		);
@@ -153,11 +156,16 @@ const useEditorPlayer = ( videoBlock ) => {
 			return;
 		}
 
-		// If player script was already added, add load event to make sure player will be set.
+		const setIframePlayer = () => {
+			setPlayer( new Player( playerIframe, w ) );
+		};
+
+		// If player script was already added or loaded.
 		if ( playerScript ) {
-			playerScript.addEventListener( 'load', () => {
-				setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
-			} );
+			if ( 'loaded' === playerScript.dataset.loaded ) {
+				setIframePlayer();
+			}
+			playerScript.addEventListener( 'load', setIframePlayer );
 
 			return;
 		}
@@ -165,18 +173,11 @@ const useEditorPlayer = ( videoBlock ) => {
 		switch ( videoBlock.attributes.providerNameSlug ) {
 			case 'youtube': {
 				prepareYouTubeIframe( playerIframe, w );
-
-				addScript( doc.body, YOUTUBE_API_SRC, () => {
-					setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
-				} );
-
+				addScript( doc.body, YOUTUBE_API_SRC, setIframePlayer );
 				break;
 			}
 			case 'vimeo': {
-				addScript( doc.body, VIMEO_API_SRC, () => {
-					setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
-				} );
-
+				addScript( doc.body, VIMEO_API_SRC, setIframePlayer );
 				break;
 			}
 			case 'videopress': {
