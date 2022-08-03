@@ -320,7 +320,7 @@ class Sensei_Analysis {
 	 */
 	public function analysis_default_view( $type ) {
 		$sensei_analysis_overview = $this->load_data_object( 'Overview', $type );
-		$exclude_query_params     = [ 'start_date', 'end_date', 'q', '_wpnonce', '_wp_http_referer' ];
+		$exclude_query_params     = [ 'start_date', 'end_date' ];
 		$this->display_report_page( $sensei_analysis_overview, null, $exclude_query_params );
 	}
 
@@ -334,8 +334,7 @@ class Sensei_Analysis {
 	 */
 	public function analysis_user_profile_view( $user_id ) {
 		$sensei_analysis_user_profile = $this->load_data_object( 'User_Profile', $user_id );
-		$exclude_query_params         = [ 'q' ];
-		$this->display_report_page( $sensei_analysis_user_profile, 'user_profile', $exclude_query_params );
+		$this->display_report_page( $sensei_analysis_user_profile, 'user_profile' );
 	}
 
 	/**
@@ -362,8 +361,7 @@ class Sensei_Analysis {
 	 */
 	public function analysis_user_course_view( int $course_id, int $user_id ) {
 		$sensei_analysis_user_course = $this->load_data_object( 'Course', $course_id, $user_id );
-		$exclude_query_params        = [ 'q' ];
-		$this->display_report_page( $sensei_analysis_user_course, 'user_course', $exclude_query_params );
+		$this->display_report_page( $sensei_analysis_user_course, 'user_course' );
 	}
 
 	/**
@@ -376,7 +374,7 @@ class Sensei_Analysis {
 	 */
 	public function analysis_course_users_view( int $course_id ) {
 		$sensei_analysis_course_users = $this->load_data_object( 'Course', $course_id );
-		$exclude_query_params         = [ 'start_date', 'end_date', 's' ];
+		$exclude_query_params         = [ 'start_date', 'end_date' ];
 		$this->display_report_page( $sensei_analysis_course_users, 'course_users', $exclude_query_params );
 	}
 
@@ -390,8 +388,7 @@ class Sensei_Analysis {
 	 */
 	public function analysis_lesson_users_view( int $lesson_id ) {
 		$sensei_analysis_lesson_users = $this->load_data_object( 'Lesson', $lesson_id );
-		$exclude_query_params         = [ 's' ];
-		$this->display_report_page( $sensei_analysis_lesson_users, 'lesson_users', $exclude_query_params );
+		$this->display_report_page( $sensei_analysis_lesson_users, 'lesson_users' );
 	}
 
 	/**
@@ -402,7 +399,7 @@ class Sensei_Analysis {
 	 * @param array             $exclude_query_params Query parameters to exclude from output.
 	 */
 	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ) {
-		$exclude_query_params = array_merge( $exclude_query_params, [ '_wpnonce', '_wp_http_referer' ] );
+		$exclude_query_params = array_merge( $exclude_query_params, [ '_wpnonce', '_wp_http_referer', 's' ] );
 
 		// Wrappers
 		do_action( 'analysis_before_container' );
