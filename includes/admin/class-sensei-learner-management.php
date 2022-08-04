@@ -795,7 +795,7 @@ class Sensei_Learner_Management {
 						$result
 						&& isset( $_POST['add_complete_course'] )
 						&& 'yes' === $_POST['add_complete_course']
-						&& ! Sensei_Utils::user_completed_course( $course_id,  $user_id )
+						&& ! Sensei_Utils::user_completed_course( $course_id, $user_id )
 					) {
 						Sensei_Utils::force_complete_user_course( $user_id, $course_id );
 					}
