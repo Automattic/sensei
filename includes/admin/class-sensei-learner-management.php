@@ -790,11 +790,6 @@ class Sensei_Learner_Management {
 
 			switch ( $post_type ) {
 				case 'course':
-					$base_query_args        = [
-						'posts_per_page' => -1,
-						'fields' => 'ids'
-					];
-
 					// Complete each lesson if course is set to be completed.
 					if (
 						$result
