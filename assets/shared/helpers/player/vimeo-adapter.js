@@ -65,9 +65,8 @@ export const setCurrentTime = ( player, seconds ) => {
 	}
 
 	// Play the video a first time if it wasn't already played yet.
-	return player
-		.play()
-		.then( () => player.pause() )
+	return play( player )
+		.then( () => pause( player ) )
 		.then( () => player.setCurrentTime( seconds ) );
 };
 
