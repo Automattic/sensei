@@ -5125,8 +5125,8 @@ class Sensei_Lesson {
 	 *
 	 * Saves the quiz post meta settings
 	 *
-	 * @param int|null $lesson_id
-	 * @param array    $new_settings
+	 * @param int|null $lesson_id ID if the lesson.
+	 * @param array    $new_settings New settings to be saved.
 	 */
 	private function save_quiz_settings( $lesson_id, array $new_settings ) {
 
