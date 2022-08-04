@@ -446,9 +446,11 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return string The HTML for the column.
 	 */
 	private function get_learner_courses_html( $user_id ) {
-		$query   = $this->learner->get_enrolled_courses_query( $user_id );
+		$base_query_args = [
+			'posts_per_page' => -1
+		];
+		$query   = $this->learner->get_enrolled_courses_query( $user_id, $base_query_args );
 		$courses = $query->get_posts();
-
 		if ( empty( $courses ) ) {
 			return __( 'N/A', 'sensei-lms' );
 		}
