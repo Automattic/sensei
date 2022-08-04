@@ -16,8 +16,20 @@ export const EMBED_PATTERN = /vimeo\.com\/.+/i;
  *
  * @return {Object} The Vimeo player instance through a promise.
  */
-export const initializePlayer = ( element, w = window ) =>
-	Promise.resolve( new w.Vimeo.Player( element ) );
+export const initializePlayer = ( element, w = window ) => {
+	const player = new w.Vimeo.Player( element );
+
+	// Add a dataset to identify if video has played already.
+	const onPlay = () => {
+		element.dataset.hasPlayed = 'has-played';
+		player.off( 'play', onPlay );
+	};
+	if ( 'has-played' !== element.dataset.hasPlayed ) {
+		player.on( 'play', onPlay );
+	}
+
+	return player.ready().then( () => player );
+};
 
 /**
  * Get the video duration.
@@ -47,8 +59,17 @@ export const getCurrentTime = ( player ) => player.getCurrentTime();
  * @return {Promise} A promise that resolves if the video was set to a current time successfully.
  *                   (original return from Vimeo API).
  */
-export const setCurrentTime = ( player, seconds ) =>
-	player.setCurrentTime( seconds );
+export const setCurrentTime = ( player, seconds ) => {
+	if ( player.element.dataset.hasPlayed ) {
+		return player.setCurrentTime( seconds );
+	}
+
+	// Play the video a first time if it wasn't already played yet.
+	return player
+		.play()
+		.then( () => player.pause() )
+		.then( () => player.setCurrentTime( seconds ) );
+};
 
 /**
  * Play the video.
