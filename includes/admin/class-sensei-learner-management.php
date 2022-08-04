@@ -794,15 +794,13 @@ class Sensei_Learner_Management {
 						'posts_per_page' => -1,
 						'fields' => 'ids'
 					];
-					$learner_manager = Sensei_Learner::instance();
-					$completed_courses   = $learner_manager->get_enrolled_completed_courses_query( $user_id, $base_query_args );
 
 					// Complete each lesson if course is set to be completed.
 					if (
 						$result
 						&& isset( $_POST['add_complete_course'] )
 						&& 'yes' === $_POST['add_complete_course']
-						&& ! in_array( $course_id, $completed_courses->posts, true )
+						&& ! Sensei_Utils::user_completed_course( $course_id,  $user_id )
 					) {
 						Sensei_Utils::force_complete_user_course( $user_id, $course_id );
 					}
