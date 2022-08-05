@@ -90,6 +90,7 @@ export const getCurrentTime = ( player ) =>
 
 		if ( ! currentTime ) {
 			reject( new Error( 'Video current time not found' ) );
+			return;
 		}
 
 		resolve( parseFloat( currentTime ) );
