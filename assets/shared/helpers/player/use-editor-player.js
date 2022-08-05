@@ -71,7 +71,7 @@ const useDelayedEffect = ( effect, deps ) => {
 /**
  * Add a script to a body.
  *
- * @param {Document} doc    The body where the script will be appended.
+ * @param {Document} doc    The document where the script will be appended.
  * @param {string}   src    Script src.
  * @param {Function} onLoad Script load callback.
  */
