@@ -172,7 +172,7 @@ class Player {
  *
  * @param {Object} player Player instance.
  *
- * @return {number} The video duration.
+ * @return {number|undefined} The video duration.
  */
 export const useVideoDuration = ( player ) => {
 	const [ duration, setDuration ] = useState();
