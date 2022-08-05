@@ -4137,7 +4137,7 @@ class Sensei_Lesson {
 		// get our variables
 		$new_course            = isset( $_POST['sensei_edit_lesson_course'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_lesson_course'] ) ) : '';
 		$new_complexity        = isset( $_POST['sensei_edit_complexity'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_complexity'] ) ) : '';
-		$new_pass_required     = isset( $_POST['sensei_edit_complexity'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_complexity'] ) ) : '';
+		$new_pass_required     = isset( $_POST['sensei_edit_pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_pass_required'] ) ) : '';
 		$new_pass_percentage   = isset( $_POST['sensei_edit_pass_percentage'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_pass_percentage'] ) ) : '';
 		$new_enable_quiz_reset = isset( $_POST['sensei_edit_enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_enable_quiz_reset'] ) ) : '';
 		$show_questions        = isset( $_POST['sensei_edit_show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_show_questions'] ) ) : '';
