@@ -49,6 +49,18 @@ export const getDuration = ( player ) =>
 	} );
 
 /**
+ * Get the current video time.
+ *
+ * @param {Object} player The YouTube player instance.
+ *
+ * @return {Promise<number>} The current video time in seconds through a promise.
+ */
+export const getCurrentTime = ( player ) =>
+	new Promise( ( resolve ) => {
+		resolve( player.getCurrentTime() );
+	} );
+
+/**
  * Set the video to a current time.
  *
  * @param {Object} player  The YouTube player instance.

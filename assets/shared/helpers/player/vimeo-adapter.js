@@ -30,6 +30,15 @@ export const initializePlayer = ( element, w = window ) =>
 export const getDuration = ( player ) => player.getDuration();
 
 /**
+ * Get the current video time.
+ *
+ * @param {Object} player The Vimeo player instance.
+ *
+ * @return {Promise<number>} The current video time in seconds through a promise.
+ */
+export const getCurrentTime = ( player ) => player.getCurrentTime();
+
+/**
  * Set the video to a current time.
  *
  * @param {Object} player  The Vimeo player instance.

@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { useEffect, useState } from '@wordpress/element';
+
+/**
  * Internal dependencies
  */
 import * as videoFileAdapter from './video-file-adapter';
@@ -95,6 +100,17 @@ class Player {
 	}
 
 	/**
+	 * Get the video current time.
+	 *
+	 * @return {Promise<number>} The current video time in seconds through a promise.
+	 */
+	getCurrentTime() {
+		return this.getPlayer().then( ( player ) =>
+			this.getAdapter().getCurrentTime( player )
+		);
+	}
+
+	/**
 	 * Set the video to a current time.
 	 *
 	 * @param {number} seconds The video time in seconds to set.
@@ -150,5 +166,22 @@ class Player {
 		);
 	}
 }
+
+/**
+ * Hook to get the video duration.
+ *
+ * @param {Object} player Player instance.
+ *
+ * @return {number|undefined} The video duration.
+ */
+export const useVideoDuration = ( player ) => {
+	const [ duration, setDuration ] = useState();
+
+	useEffect( () => {
+		player?.getDuration().then( setDuration );
+	}, [ player ] );
+
+	return duration;
+};
 
 export default Player;
