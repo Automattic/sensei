@@ -71,11 +71,23 @@ const useDelayedEffect = ( effect, deps ) => {
 /**
  * Add a script to a body.
  *
- * @param {HTMLBodyElement} body   The body where the script will be appended.
- * @param {string}          src    Script src.
- * @param {Function}        onLoad Script load callback.
+ * @param {Document} doc    The body where the script will be appended.
+ * @param {string}   src    Script src.
+ * @param {Function} onLoad Script load callback.
  */
-const addScript = ( body, src, onLoad ) => {
+const addScript = ( doc, src, onLoad ) => {
+	const prevScript = doc.getElementById( API_SCRIPT_ID );
+
+	// Check if player script was already added or loaded.
+	if ( prevScript ) {
+		if ( 'loaded' === prevScript.dataset.loaded ) {
+			onLoad();
+		}
+		prevScript.addEventListener( 'load', onLoad );
+
+		return;
+	}
+
 	const script = document.createElement( 'script' );
 
 	script.src = src;
@@ -85,7 +97,7 @@ const addScript = ( body, src, onLoad ) => {
 		script.dataset.loaded = 'loaded';
 		onLoad();
 	} );
-	body.append( script );
+	doc.body.append( script );
 };
 
 /**
@@ -101,11 +113,13 @@ const prepareYouTubeIframe = ( playerIframe, w ) => {
 		playerIframe.src = playerIframe.src + '&enablejsapi=1';
 	}
 
-	w.senseiYouTubeIframeAPIReady = new Promise( ( resolve ) => {
-		w.onYouTubeIframeAPIReady = () => {
-			resolve();
-		};
-	} );
+	w.senseiYouTubeIframeAPIReady =
+		w.senseiYouTubeIframeAPIReady ||
+		new Promise( ( resolve ) => {
+			w.onYouTubeIframeAPIReady = () => {
+				resolve();
+			};
+		} );
 };
 
 /**
@@ -149,7 +163,6 @@ const useEditorPlayer = ( videoBlock ) => {
 		const w = sandboxIframe?.contentWindow;
 		const doc = sandboxIframe?.contentDocument;
 		const playerIframe = doc?.querySelector( 'iframe' );
-		const playerScript = doc?.getElementById( API_SCRIPT_ID );
 
 		// Skip if iframe is not found.
 		if ( ! playerIframe ) {
@@ -160,24 +173,14 @@ const useEditorPlayer = ( videoBlock ) => {
 			setPlayer( new Player( playerIframe, w ) );
 		};
 
-		// If player script was already added or loaded.
-		if ( playerScript ) {
-			if ( 'loaded' === playerScript.dataset.loaded ) {
-				setIframePlayer();
-			}
-			playerScript.addEventListener( 'load', setIframePlayer );
-
-			return;
-		}
-
 		switch ( videoBlock.attributes.providerNameSlug ) {
 			case 'youtube': {
 				prepareYouTubeIframe( playerIframe, w );
-				addScript( doc.body, YOUTUBE_API_SRC, setIframePlayer );
+				addScript( doc, YOUTUBE_API_SRC, setIframePlayer );
 				break;
 			}
 			case 'vimeo': {
-				addScript( doc.body, VIMEO_API_SRC, setIframePlayer );
+				addScript( doc, VIMEO_API_SRC, setIframePlayer );
 				break;
 			}
 			case 'videopress': {
