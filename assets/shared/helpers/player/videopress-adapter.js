@@ -92,7 +92,7 @@ export const getCurrentTime = ( player ) =>
 			reject( new Error( 'Video current time not found' ) );
 		}
 
-		resolve( parseFloat( player.dataset.currentTime ) );
+		resolve( parseFloat( currentTime ) );
 	} );
 
 /**
