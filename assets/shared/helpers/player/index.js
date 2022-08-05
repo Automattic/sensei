@@ -1,4 +1,9 @@
 /**
+ * WordPress dependencies
+ */
+import { useEffect, useState } from '@wordpress/element';
+
+/**
  * Internal dependencies
  */
 import * as videoFileAdapter from './video-file-adapter';
@@ -161,5 +166,22 @@ class Player {
 		);
 	}
 }
+
+/**
+ * Hook to get the video duration.
+ *
+ * @param {Object} player Player instance.
+ *
+ * @return {number} The video duration.
+ */
+export const useVideoDuration = ( player ) => {
+	const [ duration, setDuration ] = useState();
+
+	useEffect( () => {
+		player?.getDuration().then( setDuration );
+	}, [ player ] );
+
+	return duration;
+};
 
 export default Player;
