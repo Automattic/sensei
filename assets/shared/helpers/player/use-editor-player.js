@@ -24,9 +24,16 @@ const VIMEO_API_SRC = 'https://player.vimeo.com/api/player.js';
  */
 const useTriggerDependencies = ( videoBlock ) => {
 	// Check embed fetching.
-	const { fetching } = useSelect(
+	const { fetching, preview } = useSelect(
 		( select ) => ( {
 			fetching: select( coreStore ).isRequestingEmbedPreview(
+				videoBlock?.attributes?.url
+			),
+			// Sometimes, WordPress can load the data from the Embed API so quickly, that fetching stays false, but
+			// the resource is just instantaneously loaded.
+			// Getting the embed preview from the store guarantees that we can check if the resource was loaded or not,
+			// and then trigger the proper effect.
+			preview: select( coreStore ).getEmbedPreview(
 				videoBlock?.attributes?.url
 			),
 		} ),
@@ -51,7 +58,7 @@ const useTriggerDependencies = ( videoBlock ) => {
 		[ videoBlock?.clientId ]
 	);
 
-	return { fetching, isBlockSelected, lastBlockAttributeChange };
+	return { fetching, preview, isBlockSelected, lastBlockAttributeChange };
 };
 
 /**
@@ -134,6 +141,7 @@ const useEditorPlayer = ( videoBlock ) => {
 
 	const {
 		fetching,
+		preview,
 		isBlockSelected,
 		lastBlockAttributeChange,
 	} = useTriggerDependencies( videoBlock );
@@ -188,7 +196,7 @@ const useEditorPlayer = ( videoBlock ) => {
 				break;
 			}
 		}
-	}, [ fetching, isBlockSelected, lastBlockAttributeChange ] );
+	}, [ fetching, preview, isBlockSelected, lastBlockAttributeChange ] );
 
 	return player;
 };
