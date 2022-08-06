@@ -6,7 +6,7 @@ import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 
 export const registerCourseListBlock = () => {
-	const QUERY_DEFAULT_ATTRIBUTES = {
+	const DEFAULT_ATTRIBUTES = {
 		className: 'course-list-block',
 		query: {
 			perPage: 3,
@@ -24,7 +24,7 @@ export const registerCourseListBlock = () => {
 	};
 
 	registerBlockVariation( 'core/query', {
-		name: 'course-list',
+		name: 'sensei-lms/course-list',
 		title: __( 'Course List', 'sensei-lms' ),
 		description: __( 'Show a list of courses.', 'sensei-lms' ),
 		icon: list,
@@ -34,17 +34,21 @@ export const registerCourseListBlock = () => {
 			__( 'List', 'sensei-lms' ),
 			__( 'Courses', 'sensei-lms' ),
 		],
-		attributes: { ...QUERY_DEFAULT_ATTRIBUTES },
+		attributes: { ...DEFAULT_ATTRIBUTES },
 		isActive: ( blockAttributes, variationAttributes ) => {
 			// Using className instead of postType because otherwise a normal Query Loop block
 			// will turn into a Course List block if the post type 'course' is selected. As we're planning
 			// to hide the Post Type dropdown for Course List block, so after changing the type to course,
 			// the Query loop user will not be able to change the post type again. We don't want that to
 			// happen.
-			return blockAttributes.className?.match(
-				variationAttributes.className
+			return (
+				blockAttributes.className?.match(
+					variationAttributes.className
+				) &&
+				blockAttributes.query.postType ===
+					variationAttributes.query.postType
 			);
 		},
-		scope: [ 'block', 'inserter' ],
+		scope: [ 'inserter' ],
 	} );
 };
