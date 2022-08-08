@@ -61,7 +61,16 @@ class Sensei_Quiz {
 	public function __construct( $file = __FILE__ ) {
 		$this->file        = $file;
 		$this->token       = 'quiz';
-		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required', 'enable_quiz_reset' );
+		$this->meta_fields = array(
+			'quiz_passmark',
+			'quiz_lesson',
+			'quiz_type',
+			'quiz_grade_type',
+			'pass_required',
+			'enable_quiz_reset',
+			'show_questions',
+			'random_question_order',
+		);
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
 		// Redirect if the lesson is protected.
