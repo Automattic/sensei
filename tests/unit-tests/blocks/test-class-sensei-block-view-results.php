@@ -32,9 +32,9 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
 
-		$this->factory   = new Sensei_Factory();
-		$this->block     = new Sensei_Block_View_Results();
-		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'view-results-block' ] );
+		$this->factory = new Sensei_Factory();
+		$this->block   = new Sensei_Block_View_Results();
+		$this->course  = $this->factory->course->create_and_get( [ 'post_name' => 'view-results-block' ] );
 
 		$GLOBALS['post'] = $this->course;
 	}

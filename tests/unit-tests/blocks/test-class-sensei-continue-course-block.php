@@ -32,9 +32,9 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
 
-		$this->factory   = new Sensei_Factory();
-		$this->block     = new Sensei_Continue_Course_Block();
-		$this->course    = $this->factory->course->create_and_get( [ 'post_name' => 'continue-course-block' ] );
+		$this->factory = new Sensei_Factory();
+		$this->block   = new Sensei_Continue_Course_Block();
+		$this->course  = $this->factory->course->create_and_get( [ 'post_name' => 'continue-course-block' ] );
 
 		$GLOBALS['post'] = $this->course;
 	}

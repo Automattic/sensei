@@ -29,8 +29,8 @@ class Sensei_Continue_Course_Block {
 	/**
 	 * Renders the `sensei-lms/button-continue-course` block on the server.
 	 *
-	 * @param array    $attributes Block attributes.
-	 * @param string   $content    Block default content.
+	 * @param array  $attributes Block attributes.
+	 * @param string $content    Block default content.
 	 *
 	 * @access private
 	 *
@@ -38,7 +38,7 @@ class Sensei_Continue_Course_Block {
 	 */
 	public function render( array $attributes, string $content ) : string {
 		$course_id = get_the_ID();
-		$user_id = get_current_user_id();
+		$user_id   = get_current_user_id();
 
 		/**
 		 * Whether to render the Continue Course block.
