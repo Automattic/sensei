@@ -24,11 +24,14 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Initialize blocks that are used in page post types.
 	 */
 	public function initialize_blocks() {
-		new Sensei_Learner_Courses_Block();
-		new Sensei_Learner_Messages_Button_Block();
+		new Sensei_Block_Take_Course();
+		new Sensei_Block_View_Results();
+		new Sensei_Continue_Course_Block();
 		new Sensei_Course_Completed_Actions_Block();
 		new Sensei_Course_Progress_Block();
 		new Sensei_Course_Results_Block();
+		new Sensei_Learner_Courses_Block();
+		new Sensei_Learner_Messages_Button_Block();
 	}
 
 	/**
