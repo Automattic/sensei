@@ -1,5 +1,15 @@
 *** Changelog ***
 
+2022-08-09 - version 4.6.1
+* Fix: Fix lesson quick edit and bulk edit for quiz settings [#4404](https://github.com/Automattic/sensei/pull/4404)
+* Fix: Use standard approach of displaying filters for list tables [#5174](https://github.com/Automattic/sensei/pull/5174)
+* Fix: Improve test coverage for Sensei_Lesson [#5389](https://github.com/Automattic/sensei/pull/5389)
+* Fix: Fix player API on the editor side when editing embeds with no changes [#5392](https://github.com/Automattic/sensei/pull/5392)
+* Fix: Fix multiple emails are send when completing a course in the backend [#5393](https://github.com/Automattic/sensei/pull/5393)
+* Add: Add current time to player and hook to get the video duration [#5410](https://github.com/Automattic/sensei/pull/5410)
+* Fix: Fix html entities bug for question answers. [#5414](https://github.com/Automattic/sensei/pull/5414)
+* Fix: Fix loading issue where the player wasn't detected correctly on the editor [#5421](https://github.com/Automattic/sensei/pull/5421)
+
 2022-07-25 - version 4.6.0
 * Add: Add custom slug in module block [#5207](https://github.com/Automattic/sensei/pull/5207)
 * Add: Add Confirm Dialog component [#5361](https://github.com/Automattic/sensei/pull/5361)
