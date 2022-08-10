@@ -76,13 +76,13 @@ class Sensei_Quiz {
 	 * @return bool
 	 */
 	public function is_block_based_editor_enabled() {
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
+
+		$current_screen = function_exists('get_current_screen') ? get_current_screen() : null;
 
 		// If custom question types have been registered, or the Classic Editor plugin is activated,
 		// disable the block based quiz editor for now.
-		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && ! is_plugin_active( 'classic-editor/classic-editor.php' );
+		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && $current_screen && $current_screen->is_block_editor();
+
 
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
