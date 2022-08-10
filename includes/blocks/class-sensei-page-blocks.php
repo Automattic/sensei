@@ -46,6 +46,10 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			'sensei-single-page-blocks-style',
 			'blocks/single-page-style.css'
 		);
+		Sensei()->assets->enqueue(
+			'sensei-shared-blocks-style',
+			'blocks/shared-style.css'
+		);
 	}
 
 	/**
