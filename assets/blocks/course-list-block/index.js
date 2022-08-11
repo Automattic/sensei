@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
+import { addFilter } from '@wordpress/hooks';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -52,3 +53,44 @@ export const registerCourseListBlock = () => {
 		scope: [ 'inserter' ],
 	} );
 };
+
+// Hide the settings which are inherited from the Query Loop block
+// but not applicable to our Course List block.
+const withUnnecessarySettingsHidden = ( BlockEdit ) => {
+	return ( props ) => {
+		if (
+			'core/query' === props.name &&
+			props.isSelected &&
+			props.attributes &&
+			props.attributes.className &&
+			'course-list-block' === props.attributes.className
+		) {
+			setTimeout( () => {
+				const postTypeContainerQuery =
+					'.components-input-control__label:contains(' +
+					/* eslint-disable-next-line @wordpress/i18n-text-domain */
+					__( 'Post type' ) +
+					')';
+				const inheritContextContainerQuery =
+					'.components-toggle-control__label:contains(' +
+					/* eslint-disable-next-line @wordpress/i18n-text-domain */
+					__( 'Inherit query from template' ) +
+					')';
+
+				// eslint-disable-next-line no-undef
+				const toBeHiddenSettingContainers = jQuery(
+					`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
+				).parents( '.components-base-control' );
+
+				toBeHiddenSettingContainers.hide();
+			}, 0 );
+		}
+		return <BlockEdit { ...props } />;
+	};
+};
+
+addFilter(
+	'editor.BlockEdit',
+	'sensei-lms/course-list-block',
+	withUnnecessarySettingsHidden
+);
