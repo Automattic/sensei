@@ -159,7 +159,9 @@ const useEditorPlayer = ( videoBlock ) => {
 				`#block-${ videoBlock.clientId } video`
 			);
 
-			setPlayer( new Player( video ) );
+			if ( video ) {
+				setPlayer( new Player( video ) );
+			}
 
 			return;
 		}
