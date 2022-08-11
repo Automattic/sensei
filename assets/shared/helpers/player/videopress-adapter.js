@@ -47,11 +47,14 @@ export const initializePlayer = ( element, w = window ) =>
 
 				resolve( element );
 			} else if (
-				data.event === `videopress_timeupdate` &&
+				data.event === 'videopress_timeupdate' &&
 				data.currentTimeMs
 			) {
 				// Set the current time to a dataset in order to be available later.
 				element.dataset.currentTime = data.currentTimeMs / 1000;
+			} else if ( data.event === 'videopress_play' ) {
+				// Identify that video was already played.
+				element.dataset.hasPlayed = 'has-played';
 			}
 		};
 
@@ -106,14 +109,24 @@ export const getCurrentTime = ( player ) =>
  */
 export const setCurrentTime = ( player, seconds ) =>
 	new Promise( ( resolve ) => {
-		player.contentWindow.postMessage(
-			{
-				event: 'videopress_action_set_currenttime',
-				currentTime: seconds,
-			},
-			'*'
-		);
-		resolve();
+		const run = () => {
+			player.contentWindow.postMessage(
+				{
+					event: 'videopress_action_set_currenttime',
+					currentTime: seconds,
+				},
+				'*'
+			);
+			resolve();
+		};
+
+		if ( player.dataset.hasPlayed ) {
+			run();
+		} else {
+			play( player )
+				.then( () => pause( player ) )
+				.then( run );
+		}
 	} );
 
 /**
