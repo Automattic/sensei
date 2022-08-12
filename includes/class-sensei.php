@@ -222,6 +222,20 @@ class Sensei_Main {
 	public $blocks;
 
 	/**
+	 * Course progress repository factory.
+	 *
+	 * @var Sensei_Course_Progress_Repository_Factory
+	 */
+	public $course_progress_repository_factory;
+
+	/**
+	 * Lesson progress repository factory.
+	 *
+	 * @var Sensei_Lesson_Progress_Repository_Factory
+	 */
+	public $lesson_progress_repository_factory;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -472,6 +486,9 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
+
+		$this->course_progress_repository_factory = new Sensei_Course_Progress_Repository_Factory();
+		$this->lesson_progress_repository_factory = new Sensei_Lesson_Progress_Repository_Factory();
 	}
 
 	/**

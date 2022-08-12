@@ -1,9 +1,22 @@
 <?php
+/**
+ * File containing the Sensei_Course_Progress_Tables_Repository class.
+ *
+ * @package sensei
+ */
 
-class Sensei_Course_Progress_Repository_Comments implements Sensei_Course_Progress_Repository_Interface {
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class Sensei_Course_Progress_Tables_Repository.
+ *
+ * @since $$next-version$$
+ */
+class Sensei_Course_Progress_Tables_Repository implements Sensei_Course_Progress_Repository_Interface {
 	public function create( int $course_id, int $user_id ): Sensei_Course_Progress_Interface {
-		// doesn't exist yet
-		return new Sensei_Course_Progress( $course_id, $user_id );
+		return new Sensei_Course_Progress_Tables( $course_id, $user_id );
 	}
 	public function get( int $course_id, int $user_id ): ?Sensei_Course_Progress_Interface {
 		// find and return
