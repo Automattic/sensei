@@ -67,22 +67,29 @@ const withUnnecessarySettingsHidden = ( BlockEdit ) => {
 		) {
 			setTimeout( () => {
 				const postTypeContainerQuery =
-					'.components-input-control__label:contains(' +
-					/* eslint-disable-next-line @wordpress/i18n-text-domain */
-					__( 'Post type' ) +
-					')';
-				const inheritContextContainerQuery =
-					'.components-toggle-control__label:contains(' +
-					/* eslint-disable-next-line @wordpress/i18n-text-domain */
-					__( 'Inherit query from template' ) +
-					')';
+						'.components-input-control__label',
+					inheritContextContainerQuery =
+						'.components-toggle-control__label';
 
-				// eslint-disable-next-line no-undef
-				const toBeHiddenSettingContainers = jQuery(
+				const toBeHiddenSettingContainers = document.querySelectorAll(
 					`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
-				).parents( '.components-base-control' );
-
-				toBeHiddenSettingContainers.hide();
+				);
+				Array.from( toBeHiddenSettingContainers ).forEach(
+					( element ) => {
+						if (
+							[
+								/* eslint-disable-next-line @wordpress/i18n-text-domain */
+								__( 'Post type' ),
+								/* eslint-disable-next-line @wordpress/i18n-text-domain */
+								__( 'Inherit query from template' ),
+							].includes( element.textContent )
+						) {
+							element.closest(
+								'.components-base-control'
+							).style.display = 'none';
+						}
+					}
+				);
 			}, 0 );
 		}
 		return <BlockEdit { ...props } />;
