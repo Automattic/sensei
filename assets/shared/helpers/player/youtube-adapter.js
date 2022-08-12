@@ -122,11 +122,6 @@ export const pause = ( player ) =>
 	} );
 
 /**
- * Variable that saves the last current time.
- */
-let lastCurrentTime;
-
-/**
  * Add an timeupdate event listener to the player.
  *
  * @param {Object}   player   The YouTube player instance.
@@ -137,11 +132,12 @@ let lastCurrentTime;
  */
 export const onTimeupdate = ( player, callback, w = window ) => {
 	const timer = 250;
+	let previousCurrentTime;
 
 	const updateCurrentTime = ( currentTime ) => {
-		if ( lastCurrentTime !== currentTime ) {
+		if ( previousCurrentTime !== currentTime ) {
 			callback( currentTime );
-			lastCurrentTime = currentTime;
+			previousCurrentTime = currentTime;
 		}
 	};
 
