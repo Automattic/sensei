@@ -20,7 +20,7 @@ import { __ } from '@wordpress/i18n';
  * Modal component.
  *
  * @param {Object}   props
- * @param {Function} props.className A class name for the modal.
+ * @param {string}   props.className A class name for the modal.
  * @param {Function} props.onClose   Callback to run when trying to close the modal.
  * @param {string}   props.title     The title for the modal. Empty by default.
  * @param {Object}   props.children  The content of the modal.
