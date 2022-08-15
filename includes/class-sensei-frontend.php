@@ -81,6 +81,8 @@ class Sensei_Frontend {
 		add_filter( 'init', array( $this, 'sensei_handle_login_request' ), 10 );
 		add_action( 'init', array( $this, 'sensei_process_registration' ), 2 );
 
+		add_action( 'admin_bar_menu', [ $this, 'add_manage_students' ], 70 );
+
 		add_action( 'sensei_pagination', array( $this, 'sensei_breadcrumb' ), 80, 1 );
 
 		// Fix pagination for course archive pages when filtering by course type.
@@ -1558,6 +1560,60 @@ class Sensei_Frontend {
 
 			Sensei()->notices->add_notice( $message, 'alert' );
 
+	}
+
+	/**
+	 * Add Manage Course menu to the admin bar, linking to Students and Grading admin pages.
+	 *
+	 * @access private
+	 * @since 4.7.0
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
+	 *
+	 * @return void
+	 */
+	public function add_manage_students( $wp_admin_bar ) {
+
+		global $post;
+
+		if ( ! is_single() || ! in_array( get_post_type(), array( 'lesson', 'course', 'quiz' ), true ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_sensei_grades' ) || is_admin() ) {
+			return;
+		}
+
+		$course_id = intval( Sensei_Utils::get_current_course() );
+
+		if ( ! $course_id ) {
+			return;
+		}
+
+		$wp_admin_bar->add_node(
+			[
+				'id'    => 'manage-sensei',
+				'title' => __( 'Manage Course', 'sensei-lms' ),
+			]
+		);
+
+		$wp_admin_bar->add_node(
+			[
+				'parent' => 'manage-sensei',
+				'id'     => 'sensei-students',
+				'title'  => __( 'Students', 'sensei-lms' ),
+				'href'   => admin_url( 'edit.php?post_type=course&page=sensei_learners&view=learners&course_id=' . $course_id ),
+			]
+		);
+
+		$wp_admin_bar->add_node(
+			[
+				'parent' => 'manage-sensei',
+				'id'     => 'sensei-grading',
+				'title'  => __( 'Grading', 'sensei-lms' ),
+				'href'   => admin_url( 'edit.php?post_type=course&page=sensei_grading&course_id=' . $course_id ),
+			]
+		);
 	}
 
 }
