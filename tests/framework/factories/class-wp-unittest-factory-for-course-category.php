@@ -1,6 +1,6 @@
 <?php
 
-class WP_UnitTest_Factory_For_Course_Category extends WP_UnitTest_Factory_For_Term {
+class Sensei_UnitTest_Factory_For_Course_Category extends WP_UnitTest_Factory_For_Term {
 	function __construct( $factory = null ) {
 		parent::__construct( $factory, 'course-category' );
 		$this->default_generation_definitions = array(

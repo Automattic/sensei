@@ -109,7 +109,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$this->module            = new WP_UnitTest_Factory_For_Module( $this );
 		$this->message           = new WP_UnitTest_Factory_For_Message( $this );
 		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
-		$this->course_category   = new WP_UnitTest_Factory_For_Course_Category( $this );
+		$this->course_category   = new Sensei_UnitTest_Factory_For_Course_Category( $this );
 	}
 
 	/**
