@@ -29,6 +29,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Course_Completed_Actions_Block();
 		new Sensei_Course_Progress_Block();
 		new Sensei_Course_Results_Block();
+		new Sensei_Course_Categories_Block();
 	}
 
 	/**
