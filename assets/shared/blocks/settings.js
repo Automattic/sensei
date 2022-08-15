@@ -54,24 +54,27 @@ export const withColorSettings = ( colorSettings ) => {
  */
 export const ColorSettings = ( { colorSettings, props } ) => {
 	const colors = Object.keys( colorSettings );
+
+	const settings = colors.map( ( color ) => ( {
+		value: props[ color ].color,
+		label: colorSettings[ color ].label,
+		onChange: ( newColor ) => {
+			props[ `set${ upperFirst( color ) }` ]( newColor );
+
+			if ( colorSettings[ color ].onChange )
+				colorSettings[ color ].onChange( {
+					...props,
+					colorValue: newColor,
+				} );
+		},
+	} ) );
+
 	return (
 		<InspectorControls>
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
 				initialOpen={ false }
-				colorSettings={ colors.map( ( color ) => ( {
-					value: props[ color ].color,
-					label: colorSettings[ color ].label,
-					onChange: ( newColor ) => {
-						props[ `set${ upperFirst( color ) }` ]( newColor );
-
-						if ( colorSettings[ color ].onChange )
-							colorSettings[ color ].onChange( {
-								...props,
-								colorValue: newColor,
-							} );
-					},
-				} ) ) }
+				colorSettings={ settings }
 			>
 				{ props.backgroundColor && props.textColor && (
 					<ContrastChecker
