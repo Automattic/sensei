@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { Icon, close as closeIcon } from '@wordpress/icons';
@@ -31,7 +36,7 @@ const Modal = ( { className, onClose, title = '', children } ) => {
 	};
 
 	return createPortal(
-		<div className={ `sensei-modal ${ className }` }>
+		<div className={ classnames( 'sensei-modal', className ) }>
 			<div className="sensei-modal__overlay" />
 			{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 			<div
