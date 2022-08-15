@@ -65,8 +65,8 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	 * The course categories block is registered and renders content.
 	 */
 	public function testBlockRegistered() {
-		 $post_content = '<!-- wp:sensei-lms/course-categories {"categoryStyle":{"classes":["has-primary-category-text-color","has-tertiary-category-background-color"],"style":{"color":"#1a4548","backgroundColor":"#F6F6F6"}}} /-->';
-		$result        = do_blocks( $post_content );
+		$post_content = '<!-- wp:sensei-lms/course-categories {"categoryStyle":{"classes":["has-primary-category-text-color","has-tertiary-category-background-color"],"style":{"color":"#1a4548","backgroundColor":"#F6F6F6"}}} /-->';
+		$result       = do_blocks( $post_content );
 
 		$this->assertContains( $this->category->name, $result );
 		$this->assertContains( $this->category->slug, $result );
