@@ -81,7 +81,7 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Add course theme block templates to single template hierarchy.
 	 *
-	 * @param string[] $templates
+	 * @param string[] $templates The list of template names.
 	 *
 	 * @return string[]
 	 */
@@ -163,9 +163,9 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Add Course Theme block templates.
 	 *
-	 * @param array $templates
-	 * @param array $query
-	 * @param array $template_type
+	 * @param array $templates List of WP templates.
+	 * @param array $query The query arguments to retrieve templates.
+	 * @param array $template_type The type of the template.
 	 *
 	 * @access private
 	 *
@@ -199,7 +199,11 @@ class Sensei_Course_Theme_Templates {
 			);
 		}
 
-		if ( $slugs ) {
+		// If the templates are queried for specific slugs
+		// then return templates matching only those slugs.
+		// Except if the slug is an "index". Which means it is
+		// searching for all the available templates.
+		if ( $slugs && ! in_array( 'index', $slugs, true ) ) {
 			$theme_templates = array_filter(
 				$theme_templates,
 				function( $template ) use ( $slugs ) {
@@ -297,7 +301,7 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Build a template object from a post.
 	 *
-	 * @param WP_Post $post
+	 * @param WP_Post $post The post.
 	 *
 	 * @return WP_Block_Template
 	 */
