@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { Icon, close as closeIcon } from '@wordpress/icons';
@@ -15,11 +20,12 @@ import { __ } from '@wordpress/i18n';
  * Modal component.
  *
  * @param {Object}   props
- * @param {Function} props.onClose  Callback to run when trying to close the modal.
- * @param {string}   props.title    The title for the modal. Empty by default.
- * @param {Object}   props.children The content of the modal.
+ * @param {Function} props.className A class name for the modal.
+ * @param {Function} props.onClose   Callback to run when trying to close the modal.
+ * @param {string}   props.title     The title for the modal. Empty by default.
+ * @param {Object}   props.children  The content of the modal.
  */
-const Modal = ( { onClose, title = '', children } ) => {
+const Modal = ( { className, onClose, title = '', children } ) => {
 	const focusOnMountRef = useFocusOnMount();
 	const focusOutsideProps = useFocusOutside( onClose );
 
@@ -30,7 +36,7 @@ const Modal = ( { onClose, title = '', children } ) => {
 	};
 
 	return createPortal(
-		<div className="sensei-modal">
+		<div className={ classnames( 'sensei-modal', className ) }>
 			<div className="sensei-modal__overlay" />
 			{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
 			<div
