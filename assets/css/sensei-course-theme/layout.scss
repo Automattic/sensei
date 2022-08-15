@@ -76,6 +76,7 @@ body.sensei-course-theme {
 		overscroll-behavior: contain;
 		display: flex;
 		flex-direction: column;
+		scrollbar-gutter: stable both-edges;
 
 		@media screen and (min-width: $breakpoint ) {
 			&--hidden {
