@@ -65,6 +65,10 @@ $base: '.sensei-course-theme';
 				left: -400px;
 				overflow: visible;
 			}
+			&__main-content ~ .sensei-course-theme__sidebar {
+				left: unset;
+				right: -400px;
+			}
 			&__main-content {
 				margin-left: 0 !important;
 			}

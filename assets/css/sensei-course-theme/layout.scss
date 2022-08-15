@@ -116,9 +116,17 @@ body.sensei-course-theme {
 		}
 	}
 
+	&__main-content ~ &__sidebar {
+		left: unset;
+		right: 0;
+		border-right: unset;
+		border-left: 1px solid var(--border-color);
+
+	}
+
 	&__main-content {
 		padding: 32px 0;
-		margin-left: var(--sidebar-width) !important;
+		margin-right: var(--sidebar-width) !important;
 
 		// A Divi fix since it doesn't load Gutenberg block library styles.
 		@at-root {
@@ -126,6 +134,10 @@ body.sensei-course-theme {
 				flex: 1;
 			}
 		}
+	}
+
+	&__sidebar ~ &__main-content {
+		margin-left: var(--sidebar-width) !important;
 	}
 
 	&__header {
