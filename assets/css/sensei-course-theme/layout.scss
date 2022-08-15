@@ -67,6 +67,10 @@ body.sensei-course-theme {
 		z-index: 100;
 	}
 
+	&__columns {
+		margin-top: var(--header-height) !important;
+	}
+
 	&__sidebar {
 		position: fixed;
 		top: var(--full-header-height);
