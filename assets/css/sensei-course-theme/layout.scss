@@ -1,5 +1,6 @@
 :root {
-	--header-height: 75px;
+	--header-height: 65px;
+	--header-progress-bar-height: 4px;
 	--sidebar-width: 300px;
 	--content-padding: 32px;
 }
@@ -58,7 +59,9 @@ body.sensei-course-theme {
 
 	&__header {
 		margin: 0;
-		position: sticky;
+		position: fixed;
+		left: 0;
+		right: 0;
 		top: var(--top-offset);
 		background-color: var(--bg-color);
 		z-index: 100;
@@ -130,7 +133,7 @@ body.sensei-course-theme {
 			padding: 0 24px;
 			margin: 0 !important;
 			gap: 24px!important;
-			height: calc(var(--header-height) - 10px);
+			height: calc(var(--header-height) - var(--header-progress-bar-height));
 		}
 
 		&__left {
