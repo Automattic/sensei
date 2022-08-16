@@ -54,18 +54,38 @@ export const registerCourseListBlock = () => {
 	} );
 };
 
-subscribe( () => {
-	const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
-	if (
-		selectedBlock &&
-		'core/query' === selectedBlock.name &&
-		selectedBlock.attributes &&
-		selectedBlock.attributes.className &&
-		'course-list-block' === selectedBlock.attributes.className
-	) {
-		hideUnnecessarySettingsForCourseList();
+const unsubscribe = subscribe( () => {
+	const blockSettingsPanel = document.querySelector(
+		'.interface-interface-skeleton__sidebar'
+	);
+	if ( ! blockSettingsPanel ) {
+		return;
 	}
+	observeAndRemoveSettingsFromPanel( blockSettingsPanel );
+	unsubscribe();
 } );
+
+const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
+	// eslint-disable-next-line no-undef
+	const observer = new MutationObserver( () => {
+		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+		if (
+			selectedBlock &&
+			'core/query' === selectedBlock.name &&
+			selectedBlock.attributes &&
+			selectedBlock.attributes.className &&
+			'course-list-block' === selectedBlock.attributes.className
+		) {
+			hideUnnecessarySettingsForCourseList();
+		}
+	} );
+
+	// configuration for settings panel observer.
+	const config = { childList: true, subtree: true };
+
+	// pass in the settings panel node, as well as the options.
+	observer.observe( blockSettingsPanel, config );
+};
 
 // Hide the settings which are inherited from the Query Loop block
 // but not applicable to our Course List block.
