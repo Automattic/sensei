@@ -2,10 +2,15 @@
  * WordPress dependencies
  */
 import { useEffect } from '@wordpress/element';
+
+import { useSetting } from '@wordpress/block-editor';
 /**
  * External dependencies
  */
 import { compact } from 'lodash';
+
+const findColorBySlug = ( colors, slug ) =>
+	colors?.find( ( color ) => color.slug === slug )?.color;
 
 /**
  * useColors hook.
@@ -32,13 +37,20 @@ const useColors = ( {
 } ) => {
 	// It set the block saved colors
 	const { categoryStyle } = attributes;
+	const themeColors = useSetting( 'color.palette.theme' );
 
-	// It set the internal colors state using the colors incoming from a saved block.
+	// It set the internal colors state using the colors incoming from a saved block or the theme colors.
 	useEffect( () => {
-		setCategoryBackgroundColor( categoryStyle?.style.backgroundColor );
-		setCategoryTextColor( categoryStyle?.style.color );
+		setCategoryTextColor(
+			categoryStyle?.style.color ||
+				findColorBySlug( themeColors, 'primary' )
+		);
+		setCategoryBackgroundColor(
+			categoryStyle?.style.backgroundColor ||
+				findColorBySlug( themeColors, 'background' )
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ themeColors ] );
 
 	// It updates the block attributes with the new colors already parsed by with-colors hook.
 	useEffect( () => {

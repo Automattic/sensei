@@ -2,10 +2,42 @@
  * External dependencies
  */
 import { renderHook } from '@testing-library/react-hooks';
+import { useSetting } from '@wordpress/block-editor';
+import { when } from 'jest-when';
 /**
  * Internal dependencies
  */
 import useColors from '.';
+
+jest.mock( '@wordpress/block-editor' );
+
+const themeColors = [
+	{
+		slug: 'foreground',
+		color: '#FFFFFF',
+		name: 'Foreground',
+	},
+	{
+		slug: 'background',
+		color: '#1A1A1A',
+		name: 'Background',
+	},
+	{
+		slug: 'primary',
+		color: '#FF7179',
+		name: 'Primary',
+	},
+	{
+		slug: 'secondary',
+		color: '#F4F4F2',
+		name: 'Secondary',
+	},
+	{
+		slug: 'tertiary',
+		color: '#0000000',
+		name: 'Tertiary',
+	},
+];
 
 describe( 'use-colors', () => {
 	const attributes = {
@@ -27,13 +59,22 @@ describe( 'use-colors', () => {
 	};
 
 	it( 'should load the colors from the attributes only on the first time', () => {
-		renderHook( () => useColors( props ) );
+		const propsWithoutColorStyle = {
+			...props,
+			attributes: { categoryStyle: null },
+		};
+
+		when( useSetting )
+			.calledWith( 'color.palette.theme' )
+			.mockReturnValue( themeColors );
+
+		renderHook( () => useColors( propsWithoutColorStyle ) );
 
 		expect( props.setCategoryBackgroundColor ).toHaveBeenCalledWith(
-			attributes.categoryStyle.style.backgroundColor
+			themeColors[ 1 ].color // foreground
 		);
 		expect( props.setCategoryTextColor ).toHaveBeenCalledWith(
-			attributes.categoryStyle.style.color
+			themeColors[ 2 ].color // background
 		);
 	} );
 

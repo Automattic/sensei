@@ -10,14 +10,7 @@
 			"default": "left"
 		},
 		"categoryStyle": {
-			"type": "object",
-			"default": {
-				"classes": [],
-				"style": {
-					"backgroundColor": "#3858E9",
-					"color": "#ffffff"
-				}
-			}
+			"type": "object"
 		},
 		"fontSize": {
 			"type": "string",
