@@ -5,9 +5,9 @@ import { render } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import { CourseCategoryEdit } from '.';
-import useColors from '../hooks/use-colors';
-import useCourseCategories from '../hooks/use-course-categories';
+import { CourseCategoryEdit } from './course-categories-edit';
+import useColors from './hooks/use-colors';
+import useCourseCategories from './hooks/use-course-categories';
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	useBlockProps: jest.fn(),
@@ -21,8 +21,8 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	withColors: () => ( Component ) => Component,
 } ) );
 
-jest.mock( '../hooks/use-colors' );
-jest.mock( '../hooks/use-course-categories' );
+jest.mock( './hooks/use-colors' );
+jest.mock( './hooks/use-course-categories' );
 
 const attributes = {
 	textAlign: 'left',

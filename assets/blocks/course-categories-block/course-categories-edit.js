@@ -7,13 +7,7 @@ import { unescape } from 'lodash';
 /**
  * WordPress dependencies
  */
-import {
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings,
-	useBlockProps,
-	withColors,
-} from '@wordpress/block-editor';
+import { useBlockProps, withColors } from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -21,8 +15,9 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { useMemo } from 'react';
-import useColors from '../hooks/use-colors';
-import useCourseCategories from '../hooks/use-course-categories';
+import useColors from './hooks/use-colors';
+import useCourseCategories from './hooks/use-course-categories';
+import { Settings } from './course-categories-settings';
 
 export function CourseCategoryEdit( props ) {
 	const { context, attributes } = props;
@@ -78,21 +73,11 @@ export function CourseCategoryEdit( props ) {
 
 	return (
 		<>
-			<InspectorControls>
-				<PanelColorSettings
-					title={ __( 'Category Colors', 'sensei-lms' ) }
-					initialOpen={ true }
-					colorSettings={ colorSettings }
-				>
-					<ContrastChecker
-						{ ...{
-							textColor: textColor?.color,
-							backgroundColor: backgroundColor?.color,
-						} }
-						isLargeText={ false }
-					/>
-				</PanelColorSettings>
-			</InspectorControls>
+			<Settings
+				textColor={ textColor }
+				backgroundColor={ backgroundColor }
+				colorSettings={ colorSettings }
+			></Settings>
 
 			<div { ...blockProps }>
 				{ isLoading && <Spinner /> }

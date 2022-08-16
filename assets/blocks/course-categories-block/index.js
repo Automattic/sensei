@@ -8,7 +8,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { category as icon } from '@wordpress/icons';
 import metadata from './block.json';
-import edit from './edit';
+import edit from './course-categories-edit';
 
 export default {
 	...metadata,
