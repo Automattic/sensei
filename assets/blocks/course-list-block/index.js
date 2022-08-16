@@ -70,11 +70,8 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 	const observer = new MutationObserver( () => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
 		if (
-			selectedBlock &&
-			'core/query' === selectedBlock.name &&
-			selectedBlock.attributes &&
-			selectedBlock.attributes.className &&
-			'course-list-block' === selectedBlock.attributes.className
+			'core/query' === selectedBlock?.name &&
+			'course-list-block' === selectedBlock?.attributes?.className
 		) {
 			hideUnnecessarySettingsForCourseList();
 		}
