@@ -137,6 +137,7 @@ body.sensei-course-theme {
 	}
 
 	&__sidebar ~ &__main-content {
+		margin-right: unset ! important;
 		margin-left: var(--sidebar-width) !important;
 	}
 
