@@ -70,33 +70,31 @@ subscribe( () => {
 // Hide the settings which are inherited from the Query Loop block
 // but not applicable to our Course List block.
 const hideUnnecessarySettingsForCourseList = () => {
-	setTimeout( () => {
-		const postTypeContainerQuery = '.components-input-control__label',
-			inheritContextContainerQuery = '.components-toggle-control__label';
+	const postTypeContainerQuery = '.components-input-control__label',
+		inheritContextContainerQuery = '.components-toggle-control__label';
 
-		const toBeHiddenSettingContainers = document.querySelectorAll(
-			`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
-		);
+	const toBeHiddenSettingContainers = document.querySelectorAll(
+		`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
+	);
 
+	if (
+		! toBeHiddenSettingContainers ||
+		0 === toBeHiddenSettingContainers.length
+	) {
+		return;
+	}
+
+	Array.from( toBeHiddenSettingContainers ).forEach( ( element ) => {
 		if (
-			! toBeHiddenSettingContainers ||
-			0 === toBeHiddenSettingContainers.length
+			[
+				/* eslint-disable-next-line @wordpress/i18n-text-domain */
+				__( 'Post type' ),
+				/* eslint-disable-next-line @wordpress/i18n-text-domain */
+				__( 'Inherit query from template' ),
+			].includes( element.textContent )
 		) {
-			return;
+			element.closest( '.components-base-control' ).style.display =
+				'none';
 		}
-
-		Array.from( toBeHiddenSettingContainers ).forEach( ( element ) => {
-			if (
-				[
-					/* eslint-disable-next-line @wordpress/i18n-text-domain */
-					__( 'Post type' ),
-					/* eslint-disable-next-line @wordpress/i18n-text-domain */
-					__( 'Inherit query from template' ),
-				].includes( element.textContent )
-			) {
-				element.closest( '.components-base-control' ).style.display =
-					'none';
-			}
-		} );
-	}, 0 );
+	} );
 };
