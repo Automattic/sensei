@@ -2,6 +2,9 @@
  * External dependencies
  */
 import { renderHook } from '@testing-library/react-hooks';
+/**
+ * WordPress dependencies
+ */
 import { useSetting } from '@wordpress/block-editor';
 import { when } from 'jest-when';
 /**
