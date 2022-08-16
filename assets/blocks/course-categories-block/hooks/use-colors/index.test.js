@@ -2,17 +2,16 @@
  * External dependencies
  */
 import { renderHook } from '@testing-library/react-hooks';
-/**
- * WordPress dependencies
- */
-import { useSetting } from '@wordpress/block-editor';
-import { when } from 'jest-when';
+
 /**
  * Internal dependencies
  */
 import useColors from '.';
+import { useColorsByProbe } from '../../../../react-hooks/probe-styles';
 
 jest.mock( '@wordpress/block-editor' );
+
+jest.mock( '../../../../react-hooks/probe-styles' );
 
 const themeColors = [
 	{
@@ -67,9 +66,10 @@ describe( 'use-colors', () => {
 			attributes: { categoryStyle: null },
 		};
 
-		when( useSetting )
-			.calledWith( 'color.palette.theme' )
-			.mockReturnValue( themeColors );
+		useColorsByProbe.mockReturnValue( {
+			primaryColor: themeColors[ 2 ],
+			primaryContrastColor: themeColors[ 1 ],
+		} );
 
 		renderHook( () => useColors( propsWithoutColorStyle ) );
 
