@@ -44,6 +44,7 @@
     "@wordpress/url": "wp-5.9",
     "axios": "0.26.1",
     "classnames": "2.3.1",
+    "eslint-plugin-playwright": "0.10.0",
     "interpolate-components": "1.1.1",
     "lodash": "4.17.21",
     "react-animate-height": "2.0.23",
