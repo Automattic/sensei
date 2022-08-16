@@ -67,6 +67,20 @@ subscribe( () => {
 	}
 } );
 
+// Hide unnecessary patterns for course list block.
+setInterval( () => {
+	const blocks = select( 'core/block-editor' ).getBlocks();
+	blocks.forEach( ( block ) => {
+		if (
+			block &&
+			block.attributes &&
+			block.attributes.className === 'course-list-block'
+		) {
+			hideUnnecessaryPatternsForCourseList( block.clientId );
+		}
+	} );
+}, 300 );
+
 // Hide the settings which are inherited from the Query Loop block
 // but not applicable to our Course List block.
 const hideUnnecessarySettingsForCourseList = () => {
@@ -99,4 +113,62 @@ const hideUnnecessarySettingsForCourseList = () => {
 			}
 		} );
 	}, 0 );
+};
+
+// Hide the patterns which are inherited from the Query Loop block
+// but not applicable to our Course List block.
+const hideUnnecessaryPatternsForCourseList = ( blockId ) => {
+	const block = document.querySelector( `div[data-block="${ blockId }"]` );
+	setTimeout( () => {
+		// Hide default patterns.
+		hideNonCourseListBlockPatterns( block );
+		// Hide patterns control so only Grid view can be selected.
+		hideCarouselPatternSelectorControl( block );
+	}, 100 );
+};
+
+const hideNonCourseListBlockPatterns = ( block ) => {
+	const patternsClass = '.block-editor-block-pattern-setup-list__list-item';
+	const customPatternDescription = 'course-list-element';
+	const patternHiddenClass = 'patterns-hidden';
+
+	// Brake for checking patterns after it's done once.
+	if ( block.classList.contains( patternHiddenClass ) ) {
+		return;
+	}
+
+	const patterns = block.querySelectorAll( `${ patternsClass }` );
+	patterns.forEach( ( pattern ) => {
+		const isCourseListPattern = [
+			...pattern.querySelectorAll( 'div' ),
+		].find( ( e ) => e.innerText === customPatternDescription );
+		if ( isCourseListPattern ) {
+			pattern.style.display = 'inherit';
+		}
+	} );
+	if ( patterns.length > 0 ) {
+		block.classList.add( patternHiddenClass );
+	}
+};
+
+// Hide patterns control so only Grid view can be selected.
+const hideCarouselPatternSelectorControl = ( block ) => {
+	const patternControlHidden = 'pattern-control-hidden';
+
+	// Brake for checking controls after it's done once.
+	if ( block.classList.contains( patternControlHidden ) ) {
+		return;
+	}
+	block.classList.add( patternControlHidden );
+
+	const patternsControlClass =
+		'.block-editor-block-pattern-setup__display-controls';
+	const controls = block.querySelectorAll( `${ patternsControlClass }` );
+	controls.forEach( ( control ) => {
+		const controlButtons = control.querySelectorAll( 'button' );
+		// Hide carousel pattern view button.
+		controlButtons[ 0 ].style.display = 'none';
+		// Select Grid view button.
+		controlButtons[ 1 ].click();
+	} );
 };

@@ -1,2 +1,6 @@
 @import './learner-courses-block/learner-courses';
 @import './course-results-block/course-results';
+
+.course-list-block .block-editor-block-pattern-setup .block-editor-block-pattern-setup__container .block-editor-block-pattern-setup-list__list-item {
+	display: none;
+}
