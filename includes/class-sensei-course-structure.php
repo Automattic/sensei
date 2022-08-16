@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.6.0
  */
 class Sensei_Course_Structure {
-	const PUBLISHED_POST_STATUSES = [ 'publish', 'private' ];
-
 	/**
 	 * Course instances.
 	 *
@@ -80,8 +78,8 @@ class Sensei_Course_Structure {
 
 		$structure = [];
 
-		$published_lessons_only = 'view' === $context;
-		$post_status            = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
+		$published_lessons_only = 'view' === $context && ! current_user_can( 'read_private_posts' );
+		$post_status            = $published_lessons_only ? 'publish' : 'any';
 		$no_module_lessons      = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, $post_status ), 'ID' );
 		$modules                = $this->get_modules();
 
