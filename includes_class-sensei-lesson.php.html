@@ -5176,7 +5176,7 @@ class Sensei_Lesson {
 			}
 
 			// update pass percentage.
-			if ( ! empty( $new_settings['pass_percentage'] ) &amp;&amp; is_numeric( $new_settings['pass_percentage'] ) ) {
+			if ( ! empty( $new_settings['pass_percentage'] ) &amp;&amp; '-1' !== $new_settings['pass_percentage'] &amp;&amp; is_numeric( $new_settings['pass_percentage'] ) ) {
 
 				update_post_meta( $quiz_id, '_quiz_passmark', $new_settings['pass_percentage'] );
 
@@ -5208,7 +5208,7 @@ class Sensei_Lesson {
 			}
 
 			// update number of questions to show.
-			if ( ! empty( $new_settings['show_questions'] ) ) {
+			if ( ! empty( $new_settings['show_questions'] ) &amp;&amp; '-1' !== $new_settings['show_questions'] ) {
 
 				update_post_meta( $quiz_id, '_show_questions', $new_settings['show_questions'] );
 
