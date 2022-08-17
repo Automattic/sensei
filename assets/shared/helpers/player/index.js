@@ -10,6 +10,7 @@ import * as videoFileAdapter from './video-file-adapter';
 import * as videopressAdapter from './videopress-adapter';
 import * as youtubeAdapter from './youtube-adapter';
 import * as vimeoAdapter from './vimeo-adapter';
+import roundWithDecimals from './round-with-decimals';
 
 const VIDEO_TYPE = videoFileAdapter.ADAPTER_NAME;
 const VIDEOPRESS_TYPE = videopressAdapter.ADAPTER_NAME;
@@ -106,7 +107,7 @@ class Player {
 	 */
 	getCurrentTime() {
 		return this.getPlayer().then( ( player ) =>
-			this.getAdapter().getCurrentTime( player )
+			roundWithDecimals( this.getAdapter().getCurrentTime( player ), 3 )
 		);
 	}
 
@@ -161,8 +162,29 @@ class Player {
 			throw new Error( `Event ${ eventName } not supported` );
 		}
 
+		return this.onTimeUpdate( callback );
+	}
+
+	/**
+	 * Wrapper to the `onTimeUpdate` event from the adapters.
+	 *
+	 * @access private
+	 *
+	 * @param {Function} callback Listener callback.
+	 *
+	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
+	 */
+	onTimeUpdate( callback ) {
+		const transformedCallback = ( seconds ) => {
+			callback( roundWithDecimals( seconds, 3 ) );
+		};
+
 		return this.getPlayer().then( ( player ) =>
-			this.getAdapter().onTimeupdate( player, callback, this.w )
+			this.getAdapter().onTimeupdate(
+				player,
+				transformedCallback,
+				this.w
+			)
 		);
 	}
 }
