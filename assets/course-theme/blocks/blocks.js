@@ -15,6 +15,8 @@ import MenuIcon from '../../icons/menu.svg';
 import SenseiIcon from '../../icons/sensei.svg';
 import CourseNavigationBlock from './course-navigation';
 
+import UiBlock from './ui';
+
 const meta = {
 	category: 'theme',
 	supports: {},
@@ -24,6 +26,7 @@ const meta = {
 
 const blocks = [
 	{ ...meta, ...CourseNavigationBlock },
+	{ ...meta, ...UiBlock },
 	{
 		...meta,
 		title: __( 'Course Title', 'sensei-lms' ),
