@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.8
 Tested up to: 6.0
 Requires PHP: 7.2
-Stable tag: 4.6.1
+Stable tag: 4.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,17 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-08-17 - version 4.6.2
+* Fix: Learning Mode - Do not filter templates for query slugs if it is indexing. [#5460](https://github.com/Automattic/sensei/pull/5460)
+* Fix: Do not save -1 values on quiz meta [#5461](https://github.com/Automattic/sensei/pull/5461)
+* Fix: Revert "Change className prop to not use classnames" [#5464](https://github.com/Automattic/sensei/pull/5464)
+* Fix: Fix timeupdate event on the youtube adapter [#5452](https://github.com/Automattic/sensei/pull/5452)
+* Fix: Fix interactive video when no video is set [#5442](https://github.com/Automattic/sensei/pull/5442)
+* Add: Add className prop to Sensei modal [#5462](https://github.com/Automattic/sensei/pull/5462)
+* Add: Change confirm dialog styles [#5454](https://github.com/Automattic/sensei/pull/5454)
+* Add: Fix set current time to keep the same behavior for all players [#5416](https://github.com/Automattic/sensei/pull/5416)
+
+
 2022-08-09 - version 4.6.1
 * Fix: Fix lesson quick edit and bulk edit for quiz settings [#4404](https://github.com/Automattic/sensei/pull/4404)
 * Fix: Use standard approach of displaying filters for list tables [#5174](https://github.com/Automattic/sensei/pull/5174)
@@ -139,18 +150,4 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Remove additional line from login redirection code [#5380](https://github.com/Automattic/sensei/pull/5380)
 * Fix: Modules loosing configuration when module is changed [#5387](https://github.com/Automattic/sensei/pull/5387)
 * Tweak: Hide action buttons' notification [#5386](https://github.com/Automattic/sensei/pull/5386)
-
-2022-07-14 - version 4.5.2
-* Add: New upsells students group page
-* Add: `sensei_user_course_end' hook before redirecting to completed page
-* Add: Bump the minimum required PHP version to 7.2 
-* Fix: Placeholder images for courses
-* Fix: Update the course Editor to display 'Learners' instead of Students 
-* Fix: Bulk Edit options (on Lessons menu) do not work
-* Fix: Change 'Manage Learners' to 'Manage Students' on the course management meta box
-* Fix: Quiz questions not being properly saved.
-* Fix: Lessons screen js error caused by the module column
-* Fix: Layout issues with Learning Mode when using Divi
-* Fix: issue on grading page
-* Fix: Errors on the students admin area
 
