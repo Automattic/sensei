@@ -130,19 +130,3 @@ body #menu-posts-course {
 .edit-php.post-type-quiz .add-new-h2 {
 	display: none;
 }
-
-.sensei-badge {
-	display: inline-block;
-	padding: 0 5px;
-	border-radius: 9px;
-	font-size: 12px;
-
-	&--success {
-		background-color: #28a745;
-		color: #ffffff;
-	}
-
-	&--after-text {
-		margin-left: 5px;
-	}
-}
