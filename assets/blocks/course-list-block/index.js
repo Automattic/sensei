@@ -54,17 +54,15 @@ export const registerCourseListBlock = () => {
 	} );
 };
 
-subscribe( () => {
-	const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
-	if (
-		selectedBlock &&
-		'core/query' === selectedBlock.name &&
-		selectedBlock.attributes &&
-		selectedBlock.attributes.className &&
-		'course-list-block' === selectedBlock.attributes.className
-	) {
-		hideUnnecessarySettingsForCourseList();
+const unsubscribe = subscribe( () => {
+	const blockSettingsPanel = document.querySelector(
+		'.interface-interface-skeleton__sidebar'
+	);
+	if ( ! blockSettingsPanel ) {
+		return;
 	}
+	observeAndRemoveSettingsFromPanel( blockSettingsPanel );
+	unsubscribe();
 } );
 
 // Hide unnecessary patterns for course list block.
@@ -81,38 +79,55 @@ setInterval( () => {
 	} );
 }, 300 );
 
+const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
+	// eslint-disable-next-line no-undef
+	const observer = new MutationObserver( () => {
+		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+		if (
+			'core/query' === selectedBlock?.name &&
+			'course-list-block' === selectedBlock?.attributes?.className
+		) {
+			hideUnnecessarySettingsForCourseList();
+		}
+	} );
+
+	// configuration for settings panel observer.
+	const config = { childList: true, subtree: true };
+
+	// pass in the settings panel node, as well as the options.
+	observer.observe( blockSettingsPanel, config );
+};
+
 // Hide the settings which are inherited from the Query Loop block
 // but not applicable to our Course List block.
 const hideUnnecessarySettingsForCourseList = () => {
-	setTimeout( () => {
-		const postTypeContainerQuery = '.components-input-control__label',
-			inheritContextContainerQuery = '.components-toggle-control__label';
+	const postTypeContainerQuery = '.components-input-control__label',
+		inheritContextContainerQuery = '.components-toggle-control__label';
 
-		const toBeHiddenSettingContainers = document.querySelectorAll(
-			`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
-		);
+	const toBeHiddenSettingContainers = document.querySelectorAll(
+		`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
+	);
 
+	if (
+		! toBeHiddenSettingContainers ||
+		0 === toBeHiddenSettingContainers.length
+	) {
+		return;
+	}
+
+	Array.from( toBeHiddenSettingContainers ).forEach( ( element ) => {
 		if (
-			! toBeHiddenSettingContainers ||
-			0 === toBeHiddenSettingContainers.length
+			[
+				/* eslint-disable-next-line @wordpress/i18n-text-domain */
+				__( 'Post type' ),
+				/* eslint-disable-next-line @wordpress/i18n-text-domain */
+				__( 'Inherit query from template' ),
+			].includes( element.textContent )
 		) {
-			return;
+			element.closest( '.components-base-control' ).style.display =
+				'none';
 		}
-
-		Array.from( toBeHiddenSettingContainers ).forEach( ( element ) => {
-			if (
-				[
-					/* eslint-disable-next-line @wordpress/i18n-text-domain */
-					__( 'Post type' ),
-					/* eslint-disable-next-line @wordpress/i18n-text-domain */
-					__( 'Inherit query from template' ),
-				].includes( element.textContent )
-			) {
-				element.closest( '.components-base-control' ).style.display =
-					'none';
-			}
-		} );
-	}, 0 );
+	} );
 };
 
 // Hide the patterns which are inherited from the Query Loop block
