@@ -103,7 +103,7 @@ const CourseThemeSidebar = () => {
 	return (
 		<PluginDocumentSettingPanel
 			name="sensei-course-theme"
-			title={ <>{ __( 'Learning Mode', 'sensei-lms' ) }</> }
+			title={ __( 'Learning Mode', 'sensei-lms' )  }
 		>
 			{ globalLearningModeEnabled ? (
 				<p>
