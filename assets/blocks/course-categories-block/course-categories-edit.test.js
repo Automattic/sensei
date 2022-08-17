@@ -65,40 +65,4 @@ describe( 'CourseCategoryEdit', () => {
 			expect( getByText( category.name ) ).toBeInTheDocument()
 		);
 	} );
-
-	it( 'should contain a custom color settings panel', () => {
-		useColors.mockReturnValue( { textColor: null } );
-		useCourseCategories.mockReturnValue( {
-			isLoading: false,
-			hasPostTerms: true,
-			postTerms: categories,
-		} );
-
-		const { getByText } = render(
-			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ context }
-			/>
-		);
-		expect( getByText( 'Category Colors' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should contain the contrast checker', () => {
-		useColors.mockReturnValue( { textColor: null } );
-		useCourseCategories.mockReturnValue( {
-			isLoading: false,
-			hasPostTerms: true,
-			postTerms: categories,
-		} );
-
-		const { getByText } = render(
-			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ context }
-			/>
-		);
-		expect( getByText( 'Contrast Checker' ) ).toBeInTheDocument();
-	} );
 } );

@@ -7,7 +7,7 @@ import { unescape } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useBlockProps, withColors } from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -17,7 +17,11 @@ import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import useColors from './hooks/use-colors';
 import useCourseCategories from './hooks/use-course-categories';
-import { Settings } from './course-categories-settings';
+import {
+	withColorSettings,
+	withDefaultColor,
+} from '../../shared/blocks/settings';
+import { compose } from '@wordpress/compose';
 
 export function CourseCategoryEdit( props ) {
 	const { context, attributes } = props;
@@ -31,30 +35,7 @@ export function CourseCategoryEdit( props ) {
 		isLoading,
 	} = useCourseCategories( postId );
 
-	const {
-		textColor,
-		backgroundColor,
-		setTextColor,
-		setBackgroundColor,
-	} = useColors( props );
-
-	const colorSettings = useMemo(
-		() => [
-			{
-				label: __( 'Text color', 'sensei-lms' ),
-				style: 'color',
-				value: textColor?.color,
-				onChange: setTextColor,
-			},
-			{
-				label: __( 'Background color', 'sensei-lms' ),
-				style: 'background-color',
-				value: backgroundColor?.color,
-				onChange: setBackgroundColor,
-			},
-		],
-		[ textColor, setTextColor, backgroundColor, setBackgroundColor ]
-	);
+	const { textColor, backgroundColor } = useColors( props );
 
 	const blockProps = useBlockProps( {
 		className: classnames( {
@@ -73,12 +54,6 @@ export function CourseCategoryEdit( props ) {
 
 	return (
 		<>
-			<Settings
-				textColor={ textColor }
-				backgroundColor={ backgroundColor }
-				colorSettings={ colorSettings }
-			></Settings>
-
 			<div { ...blockProps }>
 				{ isLoading && <Spinner /> }
 				{ ! isLoading &&
@@ -98,7 +73,25 @@ export function CourseCategoryEdit( props ) {
 	);
 }
 
-export default withColors(
-	'categoryTextColor',
-	'categoryBackgroundColor'
+export default compose(
+	withColorSettings( {
+		categoryBackgroundColor: {
+			style: 'background-color',
+			label: __( 'Category background color', 'sensei-lms' ),
+		},
+		categoryTextColor: {
+			style: 'color',
+			label: __( 'Text color', 'sensei-lms' ),
+		},
+	} ),
+	withDefaultColor( {
+		defaultCategoryBackgroundColor: {
+			style: 'background-color',
+			probeKey: 'primaryColor',
+		},
+		defaultCategoryTextColor: {
+			style: 'color',
+			probeKey: 'primaryContrastColor',
+		},
+	} )
 )( CourseCategoryEdit );

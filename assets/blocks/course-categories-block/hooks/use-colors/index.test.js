@@ -7,39 +7,8 @@ import { renderHook } from '@testing-library/react-hooks';
  * Internal dependencies
  */
 import useColors from '.';
-import { useColorsByProbe } from '../../../../react-hooks/probe-styles';
 
 jest.mock( '@wordpress/block-editor' );
-
-jest.mock( '../../../../react-hooks/probe-styles' );
-
-const themeColors = [
-	{
-		slug: 'foreground',
-		color: '#FFFFFF',
-		name: 'Foreground',
-	},
-	{
-		slug: 'background',
-		color: '#1A1A1A',
-		name: 'Background',
-	},
-	{
-		slug: 'primary',
-		color: '#FF7179',
-		name: 'Primary',
-	},
-	{
-		slug: 'secondary',
-		color: '#F4F4F2',
-		name: 'Secondary',
-	},
-	{
-		slug: 'tertiary',
-		color: '#0000000',
-		name: 'Tertiary',
-	},
-];
 
 describe( 'use-colors', () => {
 	const attributes = {
@@ -64,20 +33,21 @@ describe( 'use-colors', () => {
 		const propsWithoutColorStyle = {
 			...props,
 			attributes: { categoryStyle: null },
+			defaultCategoryBackgroundColor: {
+				color: 'some-default-background-color',
+			},
+			defaultCategoryTextColor: {
+				color: 'some-default-text-color',
+			},
 		};
-
-		useColorsByProbe.mockReturnValue( {
-			primaryColor: themeColors[ 2 ],
-			primaryContrastColor: themeColors[ 1 ],
-		} );
 
 		renderHook( () => useColors( propsWithoutColorStyle ) );
 
 		expect( props.setCategoryBackgroundColor ).toHaveBeenCalledWith(
-			themeColors[ 1 ].color // foreground
+			'some-default-background-color'
 		);
 		expect( props.setCategoryTextColor ).toHaveBeenCalledWith(
-			themeColors[ 2 ].color // background
+			'some-default-text-color'
 		);
 	} );
 
