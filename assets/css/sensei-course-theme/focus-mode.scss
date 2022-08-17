@@ -4,7 +4,7 @@ $base: '.sensei-course-theme';
 	.sensei-course-theme__focus-mode-toggle {
 		padding: 4px;
 		border: none;
-		background-color: var(--bg-color) !important;
+		background-color: unset !important;
 		cursor: pointer;
 		color: inherit !important;
 		line-height: 10px;
@@ -64,6 +64,10 @@ $base: '.sensei-course-theme';
 			&__sidebar {
 				left: -400px;
 				overflow: visible;
+			}
+			&__main-content ~ .sensei-course-theme__sidebar {
+				left: unset;
+				right: -400px;
 			}
 			&__main-content {
 				margin-left: 0 !important;
