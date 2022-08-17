@@ -75,6 +75,7 @@ class Sensei_Course_Theme_Templates {
 		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			add_filter( 'sensei_use_sensei_template', '__return_false' );
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
+			add_theme_support( 'block-templates' );
 		}
 	}
 
