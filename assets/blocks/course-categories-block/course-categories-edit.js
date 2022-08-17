@@ -75,23 +75,23 @@ export function CourseCategoryEdit( props ) {
 
 export default compose(
 	withColorSettings( {
-		categoryBackgroundColor: {
-			style: 'background-color',
-			label: __( 'Category background color', 'sensei-lms' ),
-		},
-		categoryTextColor: {
+		textColor: {
 			style: 'color',
 			label: __( 'Text color', 'sensei-lms' ),
 		},
+		backgroundColor: {
+			style: 'background-color',
+			label: __( 'Category background color', 'sensei-lms' ),
+		},
 	} ),
 	withDefaultColor( {
-		defaultCategoryBackgroundColor: {
-			style: 'background-color',
-			probeKey: 'primaryColor',
-		},
-		defaultCategoryTextColor: {
+		defaultTextColor: {
 			style: 'color',
 			probeKey: 'primaryContrastColor',
+		},
+		defaultBackgroundColor: {
+			style: 'background-color',
+			probeKey: 'primaryColor',
 		},
 	} )
 )( CourseCategoryEdit );

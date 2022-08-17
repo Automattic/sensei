@@ -82,7 +82,6 @@ describe( 'user-course-categories', () => {
 			useCourseCategories( 'some-post-id' )
 		);
 
-		// when(getEntityRecord).
 		await waitFor( () =>
 			expect( result.current ).toEqual( {
 				isLoading: false,

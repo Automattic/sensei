@@ -17,41 +17,39 @@ import { compact } from 'lodash';
  * This hook encapsulate the logic to update attributes when colors are updated.
  * It is heavily dependent of the Gutenberg with-colors.
  *
- * @param {Object}   props                                Hook Props.
- * @param {Function} props.setCategoryBackgroundColor     Set the background color. It is created by Gutenberg with-colors hook.
- * @param {Function} props.setCategoryTextColor           Set the category text color. It is created by Gutenberg with-colors hook.
- * @param {Function} props.attributes                     Block attributes.
- * @param {Function} props.setAttributes                  Update the block attributes to be stored during the save.
- * @param {Function} props.categoryTextColor              Selected category Text Color Object enhanced by Gutenberg with-colors hook.
- * @param {Function} props.categoryBackgroundColor        Selected category Background Color Object enhanced by Gutenberg with-colors hook.
- * @param {Function} props.defaultCategoryTextColor       Default category Text Color loaded from the theme.
- * @param {Function} props.defaultCategoryBackgroundColor Default category Background loaded from the theme
+ * @param {Object}   props                        Hook Props.
+ * @param {Function} props.setBackgroundColor     Set the background color. It is created by Gutenberg with-colors hook.
+ * @param {Function} props.setTextColor           Set the category text color. It is created by Gutenberg with-colors hook.
+ * @param {Function} props.attributes             Block attributes.
+ * @param {Function} props.setAttributes          Update the block attributes to be stored during the save.
+ * @param {Function} props.textColor              Selected category Text Color Object enhanced by Gutenberg with-colors hook.
+ * @param {Function} props.backgroundColor        Selected category Background Color Object enhanced by Gutenberg with-colors hook.
+ * @param {Function} props.defaultTextColor       Default category Text Color loaded from the theme.
+ * @param {Function} props.defaultBackgroundColor Default category Background loaded from the theme
  * @return {Object}  Object containing the textColor, backgroundColor and the setter to update them.
  */
 const useColors = ( {
-	setCategoryBackgroundColor,
-	setCategoryTextColor,
+	setBackgroundColor,
+	setTextColor,
 	attributes,
 	setAttributes,
-	categoryTextColor,
-	categoryBackgroundColor,
-	defaultCategoryBackgroundColor,
-	defaultCategoryTextColor,
+	textColor,
+	backgroundColor,
+	defaultBackgroundColor,
+	defaultTextColor,
 } ) => {
 	// It set the block saved colors
 	const { categoryStyle } = attributes;
 
 	// It set the internal colors state using the colors incoming from a saved block or the theme colors.
 	useEffect( () => {
-		setCategoryTextColor(
-			categoryStyle?.style.color || defaultCategoryTextColor?.color
-		);
-		setCategoryBackgroundColor(
+		setTextColor( categoryStyle?.style.color || defaultTextColor?.color );
+		setBackgroundColor(
 			categoryStyle?.style.backgroundColor ||
-				defaultCategoryBackgroundColor?.color
+				defaultBackgroundColor?.color
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ defaultCategoryBackgroundColor, defaultCategoryTextColor ] );
+	}, [ defaultBackgroundColor, defaultTextColor ] );
 
 	// It updates the block attributes with the new colors already parsed by with-colors hook.
 	useEffect( () => {
@@ -59,23 +57,23 @@ const useColors = ( {
 			...attributes,
 			categoryStyle: {
 				classes: compact( [
-					categoryTextColor?.class,
-					categoryBackgroundColor?.class,
+					textColor?.class,
+					backgroundColor?.class,
 				] ),
 				style: {
-					color: categoryTextColor?.color,
-					backgroundColor: categoryBackgroundColor?.color,
+					color: textColor?.color,
+					backgroundColor: backgroundColor?.color,
 				},
 			},
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ categoryTextColor, categoryBackgroundColor ] );
+	}, [ textColor, backgroundColor ] );
 
 	return {
-		setTextColor: setCategoryTextColor,
-		setBackgroundColor: setCategoryBackgroundColor,
-		textColor: categoryTextColor || null,
-		backgroundColor: categoryBackgroundColor || null,
+		setTextColor,
+		setBackgroundColor,
+		textColor: textColor || null,
+		backgroundColor: backgroundColor || null,
 	};
 };
 

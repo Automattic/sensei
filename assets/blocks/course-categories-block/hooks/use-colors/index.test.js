@@ -18,8 +18,8 @@ describe( 'use-colors', () => {
 	};
 
 	const setters = {
-		setCategoryBackgroundColor: jest.fn(),
-		setCategoryTextColor: jest.fn(),
+		setBackgroundColor: jest.fn(),
+		setTextColor: jest.fn(),
 		setAttributes: jest.fn(),
 	};
 	const props = {
@@ -33,20 +33,20 @@ describe( 'use-colors', () => {
 		const propsWithoutColorStyle = {
 			...props,
 			attributes: { categoryStyle: null },
-			defaultCategoryBackgroundColor: {
+			defaultBackgroundColor: {
 				color: 'some-default-background-color',
 			},
-			defaultCategoryTextColor: {
+			defaultTextColor: {
 				color: 'some-default-text-color',
 			},
 		};
 
 		renderHook( () => useColors( propsWithoutColorStyle ) );
 
-		expect( props.setCategoryBackgroundColor ).toHaveBeenCalledWith(
+		expect( props.setBackgroundColor ).toHaveBeenCalledWith(
 			'some-default-background-color'
 		);
-		expect( props.setCategoryTextColor ).toHaveBeenCalledWith(
+		expect( props.setTextColor ).toHaveBeenCalledWith(
 			'some-default-text-color'
 		);
 	} );
@@ -55,8 +55,8 @@ describe( 'use-colors', () => {
 		const { result } = renderHook( () => useColors( props ) );
 
 		expect( result.current ).toEqual( {
-			setBackgroundColor: setters.setCategoryBackgroundColor,
-			setTextColor: setters.setCategoryTextColor,
+			setBackgroundColor: setters.setBackgroundColor,
+			setTextColor: setters.setTextColor,
 			backgroundColor: null,
 			textColor: null,
 		} );
@@ -71,10 +71,10 @@ describe( 'use-colors', () => {
 		rerender( {
 			...props,
 			setAttributes,
-			categoryTextColor: {
+			textColor: {
 				color: 'some-color',
 			},
-			categoryBackgroundColor: {
+			backgroundColor: {
 				color: 'some-background-color',
 			},
 		} );
@@ -93,18 +93,18 @@ describe( 'use-colors', () => {
 	it( 'should return the colors', () => {
 		const propsWithColors = {
 			...props,
-			categoryTextColor: {
+			textColor: {
 				color: 'some-color',
 			},
-			categoryBackgroundColor: {
+			backgroundColor: {
 				color: 'some-background-color',
 			},
 		};
 		const { result } = renderHook( () => useColors( propsWithColors ) );
 
 		expect( result.current ).toEqual( {
-			setBackgroundColor: setters.setCategoryBackgroundColor,
-			setTextColor: setters.setCategoryTextColor,
+			setBackgroundColor: setters.setBackgroundColor,
+			setTextColor: setters.setTextColor,
 			textColor: { color: 'some-color' },
 			backgroundColor: { color: 'some-background-color' },
 		} );
