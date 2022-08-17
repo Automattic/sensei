@@ -33,6 +33,20 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- /wp:query-pagination --></div>
 						<!-- /wp:query -->';
 
+		$course_action_button = '<!-- wp:sensei-lms/course-actions -->
+						<!-- wp:sensei-lms/button-take-course {"align":"full"} -->
+						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><button class="wp-block-button__link">Start Course</button></div>
+						<!-- /wp:sensei-lms/button-take-course -->
+
+						<!-- wp:sensei-lms/button-continue-course {"align":"full"} -->
+						<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link">Continue</a></div>
+						<!-- /wp:sensei-lms/button-continue-course -->
+
+						<!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default"} -->
+						<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link">Visit Results</a></div>
+						<!-- /wp:sensei-lms/button-view-results -->
+						<!-- /wp:sensei-lms/course-actions -->';
+
 		$patterns = [
 			'course-list-columns'             =>
 			[
@@ -49,11 +63,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:post-excerpt {"fontSize":"medium"} /-->
 
-						<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->
-
-						<!-- wp:sensei-lms/button-take-course -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
-						<!-- /wp:sensei-lms/button-take-course -->
+						<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->' . $course_action_button . '
 						<!-- /wp:post-template -->' . $pagination,
 			],
 			'course-list-columns-title'       =>
@@ -65,11 +75,7 @@ class Sensei_Course_List_Block_Patterns {
 						<div class="wp-block-query course-list-block alignwide"><!-- wp:post-template {"align":"wide"} -->
 						<!-- wp:post-featured-image {"isLink":true,"width":"100%","height":"318px"} /-->
 
-						<!-- wp:post-title {"level":1,"fontSize":"x-large"} /-->
-
-						<!-- wp:sensei-lms/button-take-course -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
-						<!-- /wp:sensei-lms/button-take-course -->
+						<!-- wp:post-title {"level":1,"fontSize":"x-large"} /-->' . $course_action_button . '
 						<!-- /wp:post-template -->' . $pagination,
 				],
 			'course-list-columns-description' =>
@@ -83,11 +89,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:post-title {"level":1,"fontSize":"x-large"} /-->
 
-						<!-- wp:post-excerpt {"fontSize":"medium"} /-->
-
-						<!-- wp:sensei-lms/button-take-course -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
-						<!-- /wp:sensei-lms/button-take-course -->
+						<!-- wp:post-excerpt {"fontSize":"medium"} /-->' . $course_action_button . '
 						<!-- /wp:post-template -->' . $pagination,
 				],
 			'course-list'                     =>
@@ -96,9 +98,9 @@ class Sensei_Course_List_Block_Patterns {
 					'categories' => array( 'query' ),
 					'blockTypes' => array( 'core/query' ),
 					'content'    => '<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false},"align":"wide"} -->
-						<div class="wp-block-query alignwide"><!-- wp:post-template -->
-						<!-- wp:columns {"verticalAlignment":null,"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
-						<div class="wp-block-columns" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:column {"verticalAlignment":"center","width":"30%","layout":{"inherit":false}} -->
+						<div class="wp-block-query alignwide"><!-- wp:post-template {"align":"wide"} -->
+						<!-- wp:columns {"verticalAlignment":null,"align":"wide","style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
+						<div class="wp-block-columns alignwide" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:column {"verticalAlignment":"center","width":"30%","layout":{"inherit":false}} -->
 						<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:30%"><!-- wp:post-featured-image {"isLink":true,"align":"center"} /--></div>
 						<!-- /wp:column -->
 
@@ -115,11 +117,7 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- wp:column {"verticalAlignment":"top","width":"20%"} -->
 						<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:20%"><!-- wp:spacer {"height":"3px"} -->
 						<div style="height:3px" aria-hidden="true" class="wp-block-spacer"></div>
-						<!-- /wp:spacer -->
-
-						<!-- wp:sensei-lms/button-take-course -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
-						<!-- /wp:sensei-lms/button-take-course --></div>
+						<!-- /wp:spacer -->' . $course_action_button . '</div>
 						<!-- /wp:column --></div>
 						<!-- /wp:columns -->
 						<!-- /wp:post-template -->' . $pagination,
@@ -130,9 +128,9 @@ class Sensei_Course_List_Block_Patterns {
 					'categories' => array( 'query' ),
 					'blockTypes' => array( 'core/query' ),
 					'content'    => '<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false},"align":"wide"} -->
-						<div class="wp-block-query alignwide"><!-- wp:post-template -->
-						<!-- wp:columns {"verticalAlignment":null,"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
-						<div class="wp-block-columns" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:column {"verticalAlignment":"center","width":"30%","layout":{"inherit":false}} -->
+						<div class="wp-block-query alignwide"><!-- wp:post-template {"align":"wide"} -->
+						<!-- wp:columns {"verticalAlignment":null,"align":"wide","style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
+						<div class="wp-block-columns alignwide" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:column {"verticalAlignment":"center","width":"30%","layout":{"inherit":false}} -->
 						<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:30%"><!-- wp:post-featured-image {"isLink":true,"align":"center"} /--></div>
 						<!-- /wp:column -->
 
@@ -145,11 +143,7 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- wp:column {"verticalAlignment":"top","width":"20%"} -->
 						<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:20%"><!-- wp:spacer {"height":"3px"} -->
 						<div style="height:3px" aria-hidden="true" class="wp-block-spacer"></div>
-						<!-- /wp:spacer -->
-
-						<!-- wp:sensei-lms/button-take-course -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
-						<!-- /wp:sensei-lms/button-take-course --></div>
+						<!-- /wp:spacer -->' . $course_action_button . '</div>
 						<!-- /wp:column --></div>
 						<!-- /wp:columns -->
 						<!-- /wp:post-template -->' . $pagination,
@@ -160,9 +154,9 @@ class Sensei_Course_List_Block_Patterns {
 					'categories' => array( 'query' ),
 					'blockTypes' => array( 'core/query' ),
 					'content'    => '<!-- wp:query {"query":{"perPage":3,"pages":0,"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"","inherit":false},"align":"wide"} -->
-						<div class="wp-block-query alignwide"><!-- wp:post-template -->
-						<!-- wp:columns {"verticalAlignment":null,"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
-						<div class="wp-block-columns" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:column {"verticalAlignment":"center","width":"30%","layout":{"inherit":false}} -->
+						<div class="wp-block-query alignwide"><!-- wp:post-template {"align":"wide"} -->
+						<!-- wp:columns {"verticalAlignment":null,"align":"wide","style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}}} -->
+						<div class="wp-block-columns alignwide" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><!-- wp:column {"verticalAlignment":"center","width":"30%","layout":{"inherit":false}} -->
 						<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:30%"><!-- wp:post-featured-image {"isLink":true,"align":"center"} /--></div>
 						<!-- /wp:column -->
 
@@ -175,11 +169,7 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- wp:column {"verticalAlignment":"top","width":"20%"} -->
 						<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:20%"><!-- wp:spacer {"height":"3px"} -->
 						<div style="height:3px" aria-hidden="true" class="wp-block-spacer"></div>
-						<!-- /wp:spacer -->
-
-						<!-- wp:sensei-lms/button-take-course -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>
-						<!-- /wp:sensei-lms/button-take-course --></div>
+						<!-- /wp:spacer -->' . $course_action_button . '</div>
 						<!-- /wp:column --></div>
 						<!-- /wp:columns -->
 						<!-- /wp:post-template -->' . $pagination,
