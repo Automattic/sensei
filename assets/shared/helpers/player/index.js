@@ -106,9 +106,11 @@ class Player {
 	 * @return {Promise<number>} The current video time in seconds through a promise.
 	 */
 	getCurrentTime() {
-		return this.getPlayer().then( ( player ) =>
-			roundWithDecimals( this.getAdapter().getCurrentTime( player ), 3 )
-		);
+		return this.getPlayer()
+			.then( ( player ) => this.getAdapter().getCurrentTime( player ) )
+			.then( ( seconds ) => {
+				return roundWithDecimals( seconds, 3 );
+			} );
 	}
 
 	/**
