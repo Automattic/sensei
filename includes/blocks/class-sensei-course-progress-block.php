@@ -47,6 +47,10 @@ class Sensei_Course_Progress_Block {
 
 		$course_id = $attributes['postId'] ?? get_the_ID();
 
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return '';
+		}
+
 		if ( ! Sensei()->course::is_user_enrolled( $course_id ) ) {
 			return '';
 		}
