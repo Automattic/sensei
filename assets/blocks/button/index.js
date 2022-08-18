@@ -130,8 +130,16 @@ export const createButtonBlockType = ( {
 					<ButtonEditWithBlockStyle { ...props } { ...options } />
 				);
 
-				if ( invalidUsage?.validPostTypes && ! invalidUsage.validPostTypes.includes( postType ) ) {
-					const message = invalidUsage?.message || __( 'This block can only be used inside the Course List block.', 'sensei-lms' );
+				if (
+					invalidUsage?.validPostTypes &&
+					! invalidUsage.validPostTypes.includes( postType )
+				) {
+					const message =
+						invalidUsage?.message ||
+						__(
+							'This block can only be used inside the Course List block.',
+							'sensei-lms'
+						);
 
 					return <InvalidUsageError message={ message } />;
 				}

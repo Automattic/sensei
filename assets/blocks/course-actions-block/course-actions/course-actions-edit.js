@@ -28,13 +28,18 @@ const innerBlocksTemplate = [
  * Edit course actions block component.
  *
  * @param {Object} props
- * @param {Object} props.className Block className.
+ * @param {Object} props.className        Block className.
+ * @param {Object} props.context          Block context.
+ * @param {Object} props.context.postType Post type.
  */
 const CourseActionsEdit = ( { className, context: { postType } } ) => {
 	if ( 'course' !== postType ) {
 		return (
 			<InvalidUsageError
-				message={ __( 'The Course Actions block can only be used inside the Course List block.', 'sensei-lms' ) }
+				message={ __(
+					'The Course Actions block can only be used inside the Course List block.',
+					'sensei-lms'
+				) }
 			/>
 		);
 	}
@@ -52,6 +57,6 @@ const CourseActionsEdit = ( { className, context: { postType } } ) => {
 			/>
 		</div>
 	);
-}
+};
 
 export default CourseActionsEdit;

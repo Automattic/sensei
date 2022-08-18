@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { useBlockProps, Warning } from '@wordpress/block-editor';
 
 function InvalidUsageError( { message } ) {
@@ -9,9 +8,7 @@ function InvalidUsageError( { message } ) {
 
 	return (
 		<div { ...blockProps }>
-			<Warning>
-				{ message }
-			</Warning>
+			<Warning>{ message }</Warning>
 		</div>
 	);
 }

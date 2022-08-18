@@ -82,7 +82,10 @@ export const CourseProgressEdit = ( props ) => {
 	if ( 'course' !== postType ) {
 		return (
 			<InvalidUsageError
-				message={ __( 'The Course Progress block can only be used inside the Course List block.', 'sensei-lms' ) }
+				message={ __(
+					'The Course Progress block can only be used inside the Course List block.',
+					'sensei-lms'
+				) }
 			/>
 		);
 	}
