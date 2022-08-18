@@ -3,5 +3,6 @@
 	"category": "sensei-lms",
 	"supports": {
 		"html": false
-	}
+	},
+	"usesContext": [ "postType" ]
 }
