@@ -105,10 +105,10 @@ const hideUnnecessarySettingsForCourseList = () => {
 		if (
 			[
 				/* eslint-disable-next-line @wordpress/i18n-text-domain */
-				__( 'Post type' ),
+				__( 'Post type' ).toLowerCase(),
 				/* eslint-disable-next-line @wordpress/i18n-text-domain */
-				__( 'Inherit query from template' ),
-			].includes( element.textContent )
+				__( 'Inherit query from template' ).toLowerCase(),
+			].includes( element.textContent.toLowerCase() )
 		) {
 			element.closest( '.components-base-control' ).style.display =
 				'none';
