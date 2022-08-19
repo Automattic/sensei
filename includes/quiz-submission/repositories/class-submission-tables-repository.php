@@ -31,7 +31,7 @@ class Submission_Tables_Repository implements Submission_Repository_Interface {
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		// TODO: Implement create() method.
 
-		return;
+		return new Submission();
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Submission_Tables_Repository implements Submission_Repository_Interface {
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		// TODO: Implement create() method.
 
-		return;
+		return new Submission();
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Submission_Tables_Repository implements Submission_Repository_Interface {
 	public function get( int $quiz_id, int $user_id ): ?Submission {
 		// TODO: Implement get() method.
 
-		return;
+		return new Submission();
 	}
 
 	/**

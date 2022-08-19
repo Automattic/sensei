@@ -60,17 +60,18 @@ class Submission_Repository_Aggregate implements Submission_Repository_Interface
 	/**
 	 * Creates a new quiz submission.
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int        $quiz_id The quiz ID.
+	 * @param int        $user_id The user ID.
+	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id ): Submission {
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		if ( $this->use_tables ) {
-			$this->tables_repository->create( $quiz_id, $user_id );
+			$this->tables_repository->create( $quiz_id, $user_id, $final_grade );
 		}
 
-		return $this->comments_repository->create( $quiz_id, $user_id );
+		return $this->comments_repository->create( $quiz_id, $user_id, $final_grade );
 	}
 
 	/**
