@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Repository_Factory class.
+ * File containing the Submission_Repository_Factory class.
  *
  * @package sensei
  */
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Repository_Factory.
+ * Class Submission_Repository_Factory.
  *
  * @since $$next-version$$
  */
 class Submission_Repository_Factory {
 	/**
-	 * Create a repository for a quiz submissions.
+	 * Create a repository for the quiz submissions.
 	 *
 	 * @return Submission_Repository_Interface
 	 */

@@ -22,25 +22,31 @@ class Submission_Tables_Repository implements Submission_Repository_Interface {
 	/**
 	 * Creates a new quiz submission.
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int        $quiz_id     The quiz ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id ): Submission {
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		// TODO: Implement create() method.
+
+		return;
 	}
 
 	/**
 	 * Get or create a new quiz submission if it doesn't exist.
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int        $quiz_id     The quiz ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission The course progress.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id ): Submission {
+	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		// TODO: Implement create() method.
+
+		return;
 	}
 
 	/**
@@ -53,18 +59,8 @@ class Submission_Tables_Repository implements Submission_Repository_Interface {
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Submission {
 		// TODO: Implement get() method.
-	}
 
-	/**
-	 * Checks if a quiz submission exists.
-	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
-	 *
-	 * @return bool Whether the quiz submission exists.
-	 */
-	public function has( int $quiz_id, int $user_id ): bool {
-		// TODO: Implement has() method.
+		return;
 	}
 
 	/**

@@ -22,22 +22,24 @@ interface Submission_Repository_Interface {
 	/**
 	 * Creates a new quiz submission.
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int        $quiz_id     The quiz ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission The quiz submission.
 	 */
-	public function create( int $quiz_id, int $user_id ): Submission;
+	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission;
 
 	/**
 	 * Get or create a new quiz submission if it doesn't exist.
 	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
+	 * @param int        $quiz_id     The quiz ID.
+	 * @param int        $user_id     The user ID.
+	 * @param float|null $final_grade The final grade.
 	 *
 	 * @return Submission The quiz submission.
 	 */
-	public function get_or_create( int $quiz_id, int $user_id ): Submission;
+	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission;
 
 	/**
 	 * Gets a quiz submission.
@@ -48,16 +50,6 @@ interface Submission_Repository_Interface {
 	 * @return Submission|null The quiz submission.
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Submission;
-
-	/**
-	 * Checks if a quiz submission exists.
-	 *
-	 * @param int $quiz_id The quiz ID.
-	 * @param int $user_id The user ID.
-	 *
-	 * @return bool Whether the quiz submission exists.
-	 */
-	public function has( int $quiz_id, int $user_id ): bool;
 
 	/**
 	 * Save quiz submission.
