@@ -9,6 +9,7 @@ import { unescape } from 'lodash';
  */
 import { useBlockProps } from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -16,16 +17,17 @@ import { __ } from '@wordpress/i18n';
  */
 import { useMemo } from 'react';
 import useCourseCategories from './hooks/use-course-categories';
+import InvalidUsageError from '../../shared/components/invalid-usage';
+
 import {
 	withColorSettings,
 	withDefaultColor,
 } from '../../shared/blocks/settings';
-import { compose } from '@wordpress/compose';
 
 export function CourseCategoryEdit( props ) {
 	const { context, attributes, textColor, backgroundColor } = props;
 	const { textAlign } = attributes;
-	const { postId } = context;
+	const { postId, postType } = context;
 	const term = 'course-category';
 
 	const {
@@ -48,6 +50,17 @@ export function CourseCategoryEdit( props ) {
 		} ),
 		[ textColor, backgroundColor ]
 	);
+
+	if ( 'course' !== postType ) {
+		return (
+			<InvalidUsageError
+				message={ __(
+					'The Course Categories block can only be used inside the Course List block.',
+					'sensei-lms'
+				) }
+			/>
+		);
+	}
 
 	return (
 		<>
