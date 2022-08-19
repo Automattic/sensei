@@ -11,6 +11,7 @@ import TakeCourseBlock from './take-course-block';
 import ViewResultsBlock from './view-results-block';
 import { registerCourseCompletedActionsBlock } from './course-completed-actions';
 import { registerCourseListBlock } from './course-list-block';
+import CourseCategoryBlock from './course-categories-block';
 
 registerCourseCompletedActionsBlock();
 
@@ -25,4 +26,5 @@ registerSenseiBlocks( [
 	LearnerMessagesButtonBlock,
 	TakeCourseBlock,
 	ViewResultsBlock,
+	CourseCategoryBlock,
 ] );
