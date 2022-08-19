@@ -7,9 +7,6 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * @group course-structure
  */
 class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
-
-
-
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
