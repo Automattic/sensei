@@ -8,6 +8,9 @@ import { render } from '@testing-library/react';
 import { CourseCategoryEdit } from './course-categories-edit';
 import useCourseCategories from './hooks/use-course-categories';
 
+const message =
+	'The Course Categories block can only be used inside the Course List block.';
+
 jest.mock( '@wordpress/block-editor', () => ( {
 	useBlockProps: jest.fn(),
 	InspectorControls: ( { children } ) => <>{ children }</>,
@@ -17,7 +20,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 			<h1>{ props.title } </h1> { props.children }
 		</>
 	),
-	Warning: () => <div></div>,
+	Warning: () => <div>{ message }</div>,
 	withColors: () => ( Component ) => Component,
 } ) );
 
@@ -63,5 +66,20 @@ describe( 'CourseCategoryEdit', () => {
 		categories.forEach( ( category ) =>
 			expect( getByText( category.name ) ).toBeInTheDocument()
 		);
+	} );
+
+	it( 'should render an error', () => {
+		const { getByText } = render(
+			<CourseCategoryEdit
+				clientId="some-client-id"
+				attributes={ attributes }
+				context={ {
+					postId: 'some-post-id',
+					postType: 'page',
+				} }
+			/>
+		);
+
+		expect( getByText( message ) ).toBeInTheDocument();
 	} );
 } );
