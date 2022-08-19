@@ -117,10 +117,19 @@ class Submission {
 	/**
 	 * Get the final grade.
 	 *
-	 * @return int
+	 * @return float|null
 	 */
-	public function get_final_grade(): float {
+	public function get_final_grade(): ?float {
 		return $this->final_grade;
+	}
+
+	/**
+	 * Set the final grade.
+	 *
+	 * @param float $final_grade The final grade.
+	 */
+	public function set_final_grade( float $final_grade ): void {
+		$this->final_grade = $final_grade;
 	}
 
 	/**
