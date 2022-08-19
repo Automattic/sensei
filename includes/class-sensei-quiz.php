@@ -1,4 +1,9 @@
 <?php
+
+use Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory;
+use Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory;
+use const Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -272,34 +277,32 @@ class Sensei_Quiz {
 
 		}
 
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
 		// start the lesson before saving the data in case the user has not started the lesson
 		$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		// prepare the answers
 		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files );
-
-		// save the user data
-		$answers_saved = Sensei_Utils::add_user_data( 'quiz_answers', $lesson_id, $prepared_answers, $user_id );
-
-		// were the answers saved correctly?
-		if ( intval( $answers_saved ) > 0 ) {
-
-			// save transient to make retrieval faster
-			$transient_key = 'sensei_answers_' . $user_id . '_' . $lesson_id;
-			set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
-
-			// ensure these questions are saved for the user
-			// if saved they should not be overwritten on save
-			// only through reset can they be removed
-			$questions_asked_csv = get_comment_meta( $activity_logged, 'questions_asked', true );
-			if ( empty( $questions_asked_csv ) ) {
-				$questions_asked_csv = implode( ',', array_keys( $quiz_answers ) );
-				update_comment_meta( $activity_logged, 'questions_asked', $questions_asked_csv );
-			}
+		if ( ! $prepared_answers ) {
+			return false;
 		}
 
-		return $answers_saved;
+		// save the user data
+		$submission_repository = ( new Submission_Repository_Factory() )->create();
+		$submission            = $submission_repository->get_or_create( $quiz_id, $user_id );
 
+		$answer_repository = ( new Answer_Repository_Factory() )->create();
+		$answer_repository->delete_all_answers_and_grades_for_submission( $submission->get_id() );
+		foreach ( $prepared_answers as $question_id => $answer ) {
+			$answer_repository->create( $submission->get_id(), $question_id, $answer );
+		}
+
+		// Save transient to make retrieval faster.
+		$transient_key = 'sensei_answers_' . $user_id . '_' . $lesson_id;
+		set_transient( $transient_key, $prepared_answers, 10 * DAY_IN_SECONDS );
+
+		return true;
 	}
 
 	/**

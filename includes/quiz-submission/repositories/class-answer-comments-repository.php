@@ -55,6 +55,8 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 				return new Answer( 0, $submission_id, $question_id, $answer, new DateTime() );
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -65,9 +67,8 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 	 * @return Answer[] An array of answers.
 	 */
 	public function get_all_for_submission( int $submission_id ): array {
-		$saved_answers = get_comment_meta( $submission_id, 'quiz_answers', true );
-
-		foreach ( $saved_answers as $question_id => $answer ) {
+		$answers = [];
+		foreach ( $this->get_comment_answers( $submission_id ) as $question_id => $answer ) {
 			$answers[] = new Answer( 0, $submission_id, $question_id, $answer, new DateTime() );
 		}
 
@@ -92,6 +93,13 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 		// TODO: Implement delete_all_including_grades() method.
 	}
 
+	/**
+	 * Get the answers stored in the comment meta.
+	 *
+	 * @param int $submission_id The submission ID.
+	 *
+	 * @return array
+	 */
 	private function get_comment_answers( int $submission_id ): array {
 		$comment_answers = get_comment_meta( $submission_id, 'quiz_answers', true );
 
@@ -102,6 +110,14 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 		return $comment_answers;
 	}
 
+	/**
+	 * Update the answers in the comment meta.
+	 *
+	 * @param int   $submission_id   The submission ID.
+	 * @param array $comment_answers The comment answers.
+	 *
+	 * @return void
+	 */
 	private function update_comment_answers( int $submission_id, array $comment_answers ): void {
 		update_comment_meta( $submission_id, 'quiz_answers', $comment_answers );
 
