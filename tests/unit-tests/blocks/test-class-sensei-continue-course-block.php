@@ -92,4 +92,22 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		$this->assertRegExp( '|<a href="http://example.org/\?course=continue-course-block".*>Continue</a>|', $result );
 	}
+
+	public function testRender_EnrolledAndStartedLesson_ReturnsModifiedBlockContentWithLessonUrl() {
+		/* Arrange */
+		$user_id           = $this->factory->user->create();
+		$course_lesson_ids = $this->factory->lesson->create_many( 2, [ 'meta_input' => [ '_lesson_course' => $this->course->ID ] ] );
+
+		$this->login_as( $user_id );
+
+		$this->manuallyEnrolStudentInCourse( $user_id, $this->course->ID );
+		Sensei_Utils::user_start_lesson( $user_id, $course_lesson_ids[0] );
+
+		/* Act */
+		$result = $this->block->render( [], self::CONTENT );
+
+		/* Assert */
+		$lesson_title = get_post( $course_lesson_ids[0] )->post_name;
+		$this->assertRegExp( '|<a href="http://example.org/\?lesson=' . $lesson_title . '".*>Continue</a>|', $result );
+	}
 }
