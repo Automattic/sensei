@@ -17,6 +17,7 @@ jest.mock( '@wordpress/block-editor', () => ( {
 			<h1>{ props.title } </h1> { props.children }
 		</>
 	),
+	Warning: () => <div></div>,
 	withColors: () => ( Component ) => Component,
 } ) );
 
@@ -28,6 +29,7 @@ const attributes = {
 
 const context = {
 	postId: 'some-post-id',
+	postType: 'course',
 };
 
 const categories = [
