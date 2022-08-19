@@ -6,7 +6,6 @@ import { render } from '@testing-library/react';
  * Internal dependencies
  */
 import { CourseCategoryEdit } from './course-categories-edit';
-import useColors from './hooks/use-colors';
 import useCourseCategories from './hooks/use-course-categories';
 
 jest.mock( '@wordpress/block-editor', () => ( {
@@ -21,7 +20,6 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	withColors: () => ( Component ) => Component,
 } ) );
 
-jest.mock( './hooks/use-colors' );
 jest.mock( './hooks/use-course-categories' );
 
 const attributes = {
@@ -47,7 +45,6 @@ const categories = [
 
 describe( 'CourseCategoryEdit', () => {
 	it( 'should render the categories', () => {
-		useColors.mockReturnValue( { textColor: null } );
 		useCourseCategories.mockReturnValue( {
 			isLoading: false,
 			hasPostTerms: true,

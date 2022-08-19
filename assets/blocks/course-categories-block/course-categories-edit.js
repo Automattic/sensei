@@ -15,7 +15,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { useMemo } from 'react';
-import useColors from './hooks/use-colors';
 import useCourseCategories from './hooks/use-course-categories';
 import {
 	withColorSettings,
@@ -24,7 +23,7 @@ import {
 import { compose } from '@wordpress/compose';
 
 export function CourseCategoryEdit( props ) {
-	const { context, attributes } = props;
+	const { context, attributes, textColor, backgroundColor } = props;
 	const { textAlign } = attributes;
 	const { postId } = context;
 	const term = 'course-category';
@@ -34,8 +33,6 @@ export function CourseCategoryEdit( props ) {
 		hasPostTerms: hasCategories,
 		isLoading,
 	} = useCourseCategories( postId );
-
-	const { textColor, backgroundColor } = useColors( props );
 
 	const blockProps = useBlockProps( {
 		className: classnames( {

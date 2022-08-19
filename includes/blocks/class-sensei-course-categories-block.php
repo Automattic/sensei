@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_Categories_Block {
 
 
+
 	/**
 	 * Rendered HTML output for the block.
 	 *
@@ -27,18 +28,6 @@ class Sensei_Course_Categories_Block {
 	 */
 	public function __construct() {
 		$this->register_block();
-	}
-
-	/**
-	 *
-	 * Transforms camel case properties to dashed case.
-	 * Example:  backgroundColor -> background-color
-	 *
-	 * @param string $value value to be converted.
-	 * @return string  Converted value.
-	 */
-	private function camel2dashed( string $value ):string {
-		return strtolower( preg_replace( '/([^A-Z-])([A-Z])/', '$1-$2', $value ) );
 	}
 
 	/**
@@ -65,6 +54,8 @@ class Sensei_Course_Categories_Block {
 	 */
 	public function render_block( $attributes, $content, WP_Block $block ): string {
 
+		$css = Sensei_Block_Helpers::build_styles( $attributes );
+
 		if ( ! isset( $block->context['postId'] ) ) {
 			return '';
 		}
@@ -82,21 +73,8 @@ class Sensei_Course_Categories_Block {
 		}
 
 		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => $wrapper_classes ) );
-		$link_classes       = implode( ' ', $attributes['categoryStyle']['classes'] );
-		$styles             = $attributes['categoryStyle']['style'];
 
-		$link_styles = implode(
-			'; ',
-			array_map(
-				function ( $v, $k ) {
-					return sprintf( '%s: %s', $this->camel2dashed( $k ), $v );
-				},
-				$styles,
-				array_keys( $styles )
-			)
-		);
-
-		$link_attributes = sprintf( '<a class="%s" style="%s" ', $link_classes, $link_styles );
+		$link_attributes = '<a ' . Sensei_Block_Helpers::render_style_attributes( [], $css );
 		$terms           = get_the_term_list(
 			$block->context['postId'],
 			'course-category',

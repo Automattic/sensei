@@ -12,6 +12,21 @@
 		"categoryStyle": {
 			"type": "object"
 		},
+
+        "textColor": {
+			"type": "string"
+		},
+
+        "backgroundColor": {
+			"type": "string"
+		},
+
+        "customBackgroundColor": {
+			"type": "string"
+		},
+        "customTextColor": {
+			"type": "string"
+		},
 		"fontSize": {
 			"type": "string",
 			"default": "small"
