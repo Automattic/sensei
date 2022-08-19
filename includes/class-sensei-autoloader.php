@@ -238,6 +238,23 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+
+			/**
+			 * Quiz Submission
+			 */
+			'Sensei\Quiz_Submission\Models\Answer'         => 'quiz-submission/models/class-answer.php',
+			'Sensei\Quiz_Submission\Models\Grade'          => 'quiz-submission/models/class-grade.php',
+			'Sensei\Quiz_Submission\Models\Submission'     => 'quiz-submission/models/class-submission.php',
+			'Sensei\Quiz_Submission\Repositories\Answer_Comments_Repository' => 'quiz-submission/repositories/class-answer-comments-repository.php',
+			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Aggregate' => 'quiz-submission/repositories/class-answer-repository-aggregate.php',
+			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory' => 'quiz-submission/repositories/class-answer-repository-factory.php',
+			'Sensei\Quiz_Submission\Repositories\Answer_Tables_Repository' => 'quiz-submission/repositories/class-answer-tables-repository.php',
+			'Sensei\Quiz_Submission\Repositories\Submission_Comments_Repository' => 'quiz-submission/repositories/class-submission-comments-repository.php',
+			'Sensei\Quiz_Submission\Repositories\Submission_Repository_Aggregate' => 'quiz-submission/repositories/class-submission-repository-aggregate.php',
+			'Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory' => 'quiz-submission/repositories/class-submission-repository-factory.php',
+			'Sensei\Quiz_Submission\Repositories\Submission_Tables_Repository' => 'quiz-submission/repositories/class-submission-tables-repository.php',
+			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Interface' => 'quiz-submission/repositories/interface-answer-repository.php',
+			'Sensei\Quiz_Submission\Repositories\Submission_Repository_Interface' => 'quiz-submission/repositories/interface-submission-repository.php',
 		);
 	}
 
