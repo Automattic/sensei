@@ -32,7 +32,7 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	 * @return string
 	 */
 	public function wrap_video( $html, $url ): string {
-		if ( ! $this->is_supported( $url ) ) {
+		if ( ! $this->is_supported( $url ) || ! in_array('sensei', get_body_class()) ) {
 			return $html;
 		}
 
