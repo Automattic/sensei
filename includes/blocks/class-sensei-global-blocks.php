@@ -28,7 +28,6 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Block_View_Results();
 		new Sensei_Continue_Course_Block();
 		new Sensei_Course_Progress_Block();
-		new Sensei_Course_Results_Block();
 		new Sensei_Course_Categories_Block();
 	}
 
