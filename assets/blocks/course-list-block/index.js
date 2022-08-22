@@ -118,7 +118,7 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
-let isCourseListBlockSelected = true;
+let isCourseListBlockSelected = false;
 
 const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 	return ( props ) => {
@@ -136,7 +136,8 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		if (
 			isCourseListBlockSelected &&
 			isQueryLoopBlock &&
-			! isCourseListBlock
+			! isCourseListBlock &&
+			! isBlockAlreadyAddedInEditor( props.clientId )
 		) {
 			hideCourseListPatternsCarouselViewControl();
 			hideNonCourseListBlockPatternContainers();
@@ -165,6 +166,10 @@ const hideCourseListPatternsCarouselViewControl = () => {
 		// Select Grid view button.
 		controlButtons[ 1 ].click();
 	} );
+};
+
+const isBlockAlreadyAddedInEditor = ( clientId ) => {
+	return !! document.getElementById( 'block-' + clientId );
 };
 
 // Hide non course list patterns.
