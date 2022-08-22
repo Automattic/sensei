@@ -9,40 +9,21 @@
 			"type": "string",
 			"default": "left"
 		},
-		"categoryStyle": {
-			"type": "object"
-		},
-
-        "textColor": {
+		"textColor": {
 			"type": "string"
 		},
-
-        "backgroundColor": {
+		"backgroundColor": {
 			"type": "string"
 		},
-
-        "customBackgroundColor": {
+		"customBackgroundColor": {
 			"type": "string"
 		},
-        "customTextColor": {
+		"customTextColor": {
 			"type": "string"
 		},
 		"fontSize": {
 			"type": "string",
 			"default": "small"
-		},
-		"style": {
-			"type": "object",
-			"default": {
-				"spacing": {
-					"margin": {
-						"top": "10px",
-						"right": "0",
-						"bottom": "10px",
-						"left": "0"
-					}
-				}
-			}
 		}
 	},
 	"usesContext": [ "postId", "postType" ],
@@ -53,7 +34,7 @@
 			"padding": true,
 			"blockGap": true
 		},
-        "textAlign": true,
+		"textAlign": true,
 		"align": true,
 		"alignWide": true,
 		"typography": {
