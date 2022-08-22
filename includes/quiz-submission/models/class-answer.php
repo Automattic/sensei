@@ -41,11 +41,11 @@ class Answer {
 	private $question_id;
 
 	/**
-	 * The question answer.
+	 * The answer value.
 	 *
 	 * @var string
 	 */
-	private $answer;
+	private $value;
 
 	/**
 	 * The created date.
@@ -67,7 +67,7 @@ class Answer {
 	 * @param int           $id            The answer ID.
 	 * @param int           $submission_id The submission ID.
 	 * @param int           $question_id   The question ID.
-	 * @param string        $answer        The question answer.
+	 * @param string        $value         The answer value.
 	 * @param DateTime      $created_at    The created date.
 	 * @param DateTime|null $updated_at    The updated date.
 	 */
@@ -75,14 +75,14 @@ class Answer {
 		int $id,
 		int $submission_id,
 		int $question_id,
-		string $answer,
+		string $value,
 		DateTime $created_at,
 		DateTime $updated_at = null
 	) {
 		$this->id            = $id;
 		$this->submission_id = $submission_id;
 		$this->question_id   = $question_id;
-		$this->answer        = $answer;
+		$this->value         = $value;
 		$this->created_at    = $created_at;
 		$this->updated_at    = $updated_at ?? $created_at;
 	}
@@ -115,12 +115,12 @@ class Answer {
 	}
 
 	/**
-	 * Get the question answer.
+	 * Get the answer value.
 	 *
 	 * @return string
 	 */
-	public function get_answer(): string {
-		return $this->answer;
+	public function get_value(): string {
+		return $this->value;
 	}
 
 	/**

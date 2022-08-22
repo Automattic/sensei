@@ -66,9 +66,9 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 	public function get( int $submission_id, int $question_id ): ?Answer {
 		$answers = get_comment_meta( $submission_id, 'quiz_answers', true );
 
-		foreach ( $answers as $_question_id => $answer ) {
+		foreach ( $answers as $_question_id => $value ) {
 			if ( $_question_id === $question_id ) {
-				return new Answer( 0, $submission_id, $question_id, $answer, new DateTime() );
+				return new Answer( 0, $submission_id, $question_id, $value, new DateTime() );
 			}
 		}
 
@@ -84,8 +84,8 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 	 */
 	public function get_all( int $submission_id ): array {
 		$answers = [];
-		foreach ( $this->get_comment_answers( $submission_id ) as $question_id => $answer ) {
-			$answers[] = new Answer( 0, $submission_id, $question_id, $answer, new DateTime() );
+		foreach ( $this->get_comment_answers( $submission_id ) as $question_id => $value ) {
+			$answers[] = new Answer( 0, $submission_id, $question_id, $value, new DateTime() );
 		}
 
 		return $answers;
