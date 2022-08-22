@@ -46,6 +46,10 @@ class Sensei_Block_View_Results {
 	public function render( $attributes, $content ): string {
 		$course_id = get_the_ID();
 
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return '';
+		}
+
 		/**
 		 * Whether to render the View Results block.
 		 *
