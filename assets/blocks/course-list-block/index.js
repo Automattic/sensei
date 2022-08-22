@@ -6,6 +6,7 @@ import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
+import { Fragment } from '@wordpress/element';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -139,7 +140,7 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		) {
 			hideCourseListPatternsCarouselViewControl();
 			hideNonCourseListBlockPatternContainers();
-			return <></>;
+			return <Fragment />;
 		}
 		return <BlockEdit { ...props } />;
 	};
