@@ -2,7 +2,6 @@
 
 use Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory;
 use Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory;
-use const Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -317,11 +316,9 @@ class Sensei_Quiz {
 	 * @param int $lesson_id
 	 * @param int $user_id
 	 *
-	 * @return array $answers or false
+	 * @return array|false $answers or false
 	 */
 	public function get_user_answers( $lesson_id, $user_id ) {
-
-		$answers = false;
 
 		if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
 		|| ! intval( $user_id ) > 0 || ! get_userdata( $user_id ) ) {
@@ -333,30 +330,43 @@ class Sensei_Quiz {
 		$transient_cached_answers = get_transient( $transient_key );
 
 		// return the transient or get the values get the values from the comment meta
+		$encoded_answers_map = [];
 		if ( ! empty( $transient_cached_answers ) && false != $transient_cached_answers ) {
-
-			$encoded_user_answers = $transient_cached_answers;
-
+			$encoded_answers_map = $transient_cached_answers;
 		} else {
+			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			if ( ! $quiz_id ) {
+				return false;
+			}
 
-			$encoded_user_answers = Sensei_Utils::get_user_data( 'quiz_answers', $lesson_id, $user_id );
+			$submission_repository = ( new Submission_Repository_Factory() )->create();
+			$submission            = $submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
 
+			$answer_repository = ( new Answer_Repository_Factory() )->create();
+			$answers           = $answer_repository->get_all( $submission->get_id() );
+			foreach ( $answers as $answer ) {
+				$encoded_answers_map[ $answer->get_question_id() ] = $answer->get_value();
+			}
 		}
 
-		if ( ! is_array( $encoded_user_answers ) ) {
+		if ( ! $encoded_answers_map ) {
 			return false;
 		}
 
 		// set the transient with the new valid data for faster retrieval in future
-		set_transient( $transient_key, $encoded_user_answers, 10 * DAY_IN_SECONDS );
+		set_transient( $transient_key, $encoded_answers_map, 10 * DAY_IN_SECONDS );
 
 		// decode an unserialize all answers
-		foreach ( $encoded_user_answers as $question_id => $encoded_answer ) {
-			$decoded_answer          = base64_decode( $encoded_answer );
-			$answers[ $question_id ] = maybe_unserialize( $decoded_answer );
+		$decoded_answers_map = [];
+		foreach ( $encoded_answers_map as $question_id => $encoded_answer ) {
+			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+			$decoded_answers_map[ $question_id ] = maybe_unserialize( base64_decode( $encoded_answer ) );
 		}
 
-		return $answers;
+		return $decoded_answers_map;
 
 	}
 
