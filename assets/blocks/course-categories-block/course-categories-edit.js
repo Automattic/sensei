@@ -8,6 +8,7 @@ import { unescape } from 'lodash';
  * WordPress dependencies
  */
 import { useBlockProps } from '@wordpress/block-editor';
+import { useMemo } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -15,7 +16,6 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { useMemo } from 'react';
 import useCourseCategories from './hooks/use-course-categories';
 import InvalidUsageError from '../../shared/components/invalid-usage';
 
@@ -25,7 +25,14 @@ import {
 } from '../../shared/blocks/settings';
 
 export function CourseCategoryEdit( props ) {
-	const { context, attributes, textColor, backgroundColor } = props;
+	const {
+		attributes,
+		backgroundColor,
+		context,
+		defaultBackgroundColor,
+		defaultTextColor,
+		textColor,
+	} = props;
 	const { textAlign } = attributes;
 	const { postId, postType } = context;
 	const term = 'course-category';
@@ -45,10 +52,11 @@ export function CourseCategoryEdit( props ) {
 
 	const inlineStyle = useMemo(
 		() => ( {
-			color: textColor?.color,
-			backgroundColor: backgroundColor?.color,
+			backgroundColor:
+				backgroundColor?.color || defaultBackgroundColor?.color,
+			color: textColor?.color || defaultTextColor?.color,
 		} ),
-		[ textColor, backgroundColor ]
+		[ backgroundColor, defaultBackgroundColor, defaultTextColor, textColor ]
 	);
 
 	if ( 'course' !== postType ) {
@@ -63,23 +71,21 @@ export function CourseCategoryEdit( props ) {
 	}
 
 	return (
-		<>
-			<div { ...blockProps }>
-				{ isLoading && <Spinner /> }
-				{ ! isLoading &&
-					hasCategories &&
-					categories.map( ( category ) => (
-						<a
-							key={ category.id }
-							href={ category.link }
-							onClick={ ( event ) => event.preventDefault() }
-							style={ inlineStyle }
-						>
-							{ unescape( category.name ) }
-						</a>
-					) ) }
-			</div>
-		</>
+		<div { ...blockProps }>
+			{ isLoading && <Spinner /> }
+			{ ! isLoading &&
+				hasCategories &&
+				categories.map( ( category ) => (
+					<a
+						key={ category.id }
+						href={ category.link }
+						onClick={ ( event ) => event.preventDefault() }
+						style={ inlineStyle }
+					>
+						{ unescape( category.name ) }
+					</a>
+				) ) }
+		</div>
 	);
 }
 
