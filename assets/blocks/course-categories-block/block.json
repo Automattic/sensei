@@ -12,19 +12,16 @@
 		"categoryStyle": {
 			"type": "object"
 		},
-
-        "textColor": {
+		"textColor": {
 			"type": "string"
 		},
-
-        "backgroundColor": {
+		"backgroundColor": {
 			"type": "string"
 		},
-
-        "customBackgroundColor": {
+		"customBackgroundColor": {
 			"type": "string"
 		},
-        "customTextColor": {
+		"customTextColor": {
 			"type": "string"
 		},
 		"fontSize": {
@@ -53,7 +50,7 @@
 			"padding": true,
 			"blockGap": true
 		},
-        "textAlign": true,
+		"textAlign": true,
 		"align": true,
 		"alignWide": true,
 		"typography": {
