@@ -38,7 +38,7 @@ foreach ( $question_data['answer_options'] as $option ) {
 			/>
 
 		<label for="<?php echo esc_attr( 'question_' . $question_data['ID'] . '-option-' . $count ); ?>">
-			<?php echo wp_kses_post( apply_filters( 'sensei_answer_text', $option['answer'] ) ); ?>
+			<?php echo esc_html( apply_filters( 'sensei_answer_text', $option['answer'] ) ); ?>
 		</label>
 	</li>
 <?php } ?>

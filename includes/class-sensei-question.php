@@ -632,7 +632,7 @@ class Sensei_Question {
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 		$title_html  = '<span class="question question-title">';
-		$title_html .= wp_kses_post( $title );
+		$title_html .= esc_html( $title );
 		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		$title_html .= '</span>';
 
@@ -1469,21 +1469,21 @@ class Sensei_Question {
 		} elseif ( 'multiple-choice' == $type ) {
 
 			$right_answer = (array) $right_answer;
-			$right_answer = implode( ', ', $right_answer );
+			$right_answer = esc_html( implode( ', ', $right_answer ) );
 
 		} elseif ( 'gap-fill' == $type ) {
 
 			$right_answer_array = explode( '||', $right_answer );
 			if ( isset( $right_answer_array[0] ) ) {
-				$gapfill_pre = $right_answer_array[0];
+				$gapfill_pre = esc_html( $right_answer_array[0] );
 			} else {
 				$gapfill_pre = ''; }
 			if ( isset( $right_answer_array[1] ) ) {
-				$gapfill_gap = $right_answer_array[1];
+				$gapfill_gap = esc_html( $right_answer_array[1] );
 			} else {
 				$gapfill_gap = ''; }
 			if ( isset( $right_answer_array[2] ) ) {
-				$gapfill_post = $right_answer_array[2];
+				$gapfill_post = esc_html( $right_answer_array[2] );
 			} else {
 				$gapfill_post = ''; }
 

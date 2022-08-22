@@ -342,7 +342,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Course Settings.
 		$fields['sensei_learning_mode_all'] = array(
-			'name'        => __( 'Learning Mode', 'sensei-lms' ) . '<span class="sensei-badge sensei-badge--success sensei-badge--after-text">' . __( 'New!', 'sensei-lms' ) . '</span>',
+			'name'        => __( 'Learning Mode', 'sensei-lms' ),
 			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_setting',
 			'type'        => 'checkbox',
