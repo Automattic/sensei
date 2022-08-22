@@ -50,6 +50,10 @@ class Sensei_Block_Take_Course {
 		$course_id = $post->ID;
 		$html      = '';
 
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return '';
+		}
+
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
 				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );

@@ -17,6 +17,7 @@ import { button as icon } from '@wordpress/icons';
 import './color-hooks';
 import ButtonEdit from './button-edit';
 import ButtonSave from './button-save';
+import InvalidUsageError from '../../shared/components/invalid-usage';
 import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 
 /**
@@ -43,11 +44,13 @@ export const BlockStyles = {
  * Settings are merged into block settings, the rest of the options are passed on to the save and edit components.
  *
  * @param {Object}   opts
- * @param {Object}   opts.settings    Block settings.
- * @param {Function} opts.EditWrapper Custom edit wrapper component.
+ * @param {Object}   opts.settings     Block settings.
+ * @param {Object}   opts.invalidUsage Info about whether this block is being used in the proper context.
+ * @param {Function} opts.EditWrapper  Custom edit wrapper component.
  */
 export const createButtonBlockType = ( {
 	settings,
+	invalidUsage,
 	EditWrapper,
 	...options
 } ) => {
@@ -108,6 +111,7 @@ export const createButtonBlockType = ( {
 					default: [],
 				},
 			},
+			usesContext: [ 'postType' ],
 			supports: {
 				color: {
 					gradients: true,
@@ -121,9 +125,24 @@ export const createButtonBlockType = ( {
 			icon,
 			styles,
 			edit( props ) {
+				const { postType } = props.context;
 				const content = (
 					<ButtonEditWithBlockStyle { ...props } { ...options } />
 				);
+
+				if (
+					invalidUsage?.validPostTypes &&
+					! invalidUsage.validPostTypes.includes( postType )
+				) {
+					const message =
+						invalidUsage?.message ||
+						__(
+							'This block can only be used inside the Course List block.',
+							'sensei-lms'
+						);
+
+					return <InvalidUsageError message={ message } />;
+				}
 
 				if ( EditWrapper ) {
 					return <EditWrapper { ...props }>{ content }</EditWrapper>;

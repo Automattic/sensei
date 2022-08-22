@@ -33,6 +33,11 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	private $category;
 
 	/**
+	 * Block content.
+	 */
+	const CONTENT = '<!-- wp:sensei-lms/course-categories {"align":"center","categoryStyle":{"classes":[],"style":{}},"textColor":"secondary","backgroundColor":"background","style":{"spacing":{"margin":{"top":"10px","right":"0","bottom":"10px","left":"0"}}}} /-->';
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp() {
@@ -61,12 +66,28 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * The course categories block is registered and renders content.
+	 *
+	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testBlockRegistered() {
-		$post_content = '<!-- wp:sensei-lms/course-categories {"align":"center","categoryStyle":{"classes":[],"style":{}},"textColor":"secondary","backgroundColor":"background","style":{"spacing":{"margin":{"top":"10px","right":"0","bottom":"10px","left":"0"}}}} /-->';
-		$result       = do_blocks( $post_content );
+		$result = do_blocks( self::CONTENT );
 
 		$this->assertContains( $this->category->name, $result );
 		$this->assertContains( $this->category->slug, $result );
+	}
+
+	/**
+	 * Doesn't render the block if it's not running in a course context.
+	 *
+	 * @covers Sensei_Course_Categories_Block::render_block
+	 */
+	public function testRenderBlock_Page_ReturnsEmptyString() {
+		$GLOBALS['post'] = (object) [
+			'post_type' => 'page',
+		];
+
+		$result = do_blocks( self::CONTENT );
+
+		$this->assertEmpty( $result );
 	}
 }

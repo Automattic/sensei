@@ -89,4 +89,20 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 
 		$this->assertRegExp( "|<a href=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*>View Results</a>|", $result );
 	}
+
+	/**
+	 * Doesn't render the block if it's not running in a course context.
+	 *
+	 * @covers Sensei_Block_View_Results::render
+	 */
+	public function testRender_Page_ReturnsEmptyString() {
+		// Update the global post object ID to be the course ID, but change its post type to a page.
+		$GLOBALS['post'] = (object) [
+			'post_type' => 'page',
+		];
+
+		$result = $this->block->render( [], self::CONTENT );
+
+		$this->assertEmpty( $result );
+	}
 }

@@ -45,11 +45,11 @@ class Sensei_Course_Categories_Block {
 
 
 	/**
-	 * Undocumented function
+	 * Render the Course Categories block.
 	 *
-	 * @param Array    $attributes     The block's attributes saved attributes.
-	 * @param string   $content       The block's content.
-	 * @param WP_Block $block   The block instance.
+	 * @param Array    $attributes The block's attributes.
+	 * @param string   $content    The block's content.
+	 * @param WP_Block $block      The block instance.
 	 * @return string
 	 */
 	public function render_block( $attributes, $content, WP_Block $block ): string {
@@ -60,7 +60,13 @@ class Sensei_Course_Categories_Block {
 			return '';
 		}
 
-		$post_terms = get_the_terms( $block->context['postId'], 'course-category' );
+		$post_id = $block->context['postId'];
+
+		if ( 'course' !== get_post_type( $post_id ) ) {
+			return '';
+		}
+
+		$post_terms = get_the_terms( $post_id, 'course-category' );
 
 		if ( is_wp_error( $post_terms ) || empty( $post_terms ) ) {
 			return '';
@@ -76,7 +82,7 @@ class Sensei_Course_Categories_Block {
 
 		$link_attributes = '<a ' . Sensei_Block_Helpers::render_style_attributes( [], $css );
 		$terms           = get_the_term_list(
-			$block->context['postId'],
+			$post_id,
 			'course-category',
 			"<div $wrapper_attributes>",
 			'',
