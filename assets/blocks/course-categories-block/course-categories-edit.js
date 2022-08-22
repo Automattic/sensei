@@ -52,10 +52,11 @@ export function CourseCategoryEdit( props ) {
 
 	const inlineStyle = useMemo(
 		() => ( {
-			backgroundColor: backgroundColor?.color || defaultBackgroundColor?.color,
+			backgroundColor:
+				backgroundColor?.color || defaultBackgroundColor?.color,
 			color: textColor?.color || defaultTextColor?.color,
 		} ),
-		[ textColor, backgroundColor ]
+		[ backgroundColor, defaultBackgroundColor, defaultTextColor, textColor ]
 	);
 
 	if ( 'course' !== postType ) {
