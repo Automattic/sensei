@@ -63,23 +63,21 @@ export function CourseCategoryEdit( props ) {
 	}
 
 	return (
-		<>
-			<div { ...blockProps }>
-				{ isLoading && <Spinner /> }
-				{ ! isLoading &&
-					hasCategories &&
-					categories.map( ( category ) => (
-						<a
-							key={ category.id }
-							href={ category.link }
-							onClick={ ( event ) => event.preventDefault() }
-							style={ inlineStyle }
-						>
-							{ unescape( category.name ) }
-						</a>
-					) ) }
-			</div>
-		</>
+		<div { ...blockProps }>
+			{ isLoading && <Spinner /> }
+			{ ! isLoading &&
+				hasCategories &&
+				categories.map( ( category ) => (
+					<a
+						key={ category.id }
+						href={ category.link }
+						onClick={ ( event ) => event.preventDefault() }
+						style={ inlineStyle }
+					>
+						{ unescape( category.name ) }
+					</a>
+				) ) }
+		</div>
 	);
 }
 
