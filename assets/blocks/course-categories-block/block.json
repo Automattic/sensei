@@ -27,19 +27,6 @@
 		"fontSize": {
 			"type": "string",
 			"default": "small"
-		},
-		"style": {
-			"type": "object",
-			"default": {
-				"spacing": {
-					"margin": {
-						"top": "10px",
-						"right": "0",
-						"bottom": "10px",
-						"left": "0"
-					}
-				}
-			}
 		}
 	},
 	"usesContext": [ "postId", "postType" ],
