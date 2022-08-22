@@ -25,7 +25,7 @@ class Answer_Repository_Factory {
 	public function create(): Answer_Repository_Interface {
 		return new Answer_Repository_Aggregate(
 			new Answer_Tables_Repository(),
-			new Answer_Comments_Repository(),
+			new Answer_Comments_Repository( new Grade_Comments_Repository() ),
 			false
 		);
 	}

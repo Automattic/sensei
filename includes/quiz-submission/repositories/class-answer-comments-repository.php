@@ -21,6 +21,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Answer_Comments_Repository implements Answer_Repository_Interface {
 	/**
+	 * The grade repository.
+	 *
+	 * @var Grade_Comments_Repository
+	 */
+	private $grade_repository;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Grade_Comments_Repository $grade_repository The grade repository.
+	 */
+	public function __construct( Grade_Comments_Repository $grade_repository ) {
+		$this->grade_repository = $grade_repository;
+	}
+
+	/**
 	 * Create a new answer.
 	 *
 	 * @param int    $submission_id The submission ID.
@@ -66,7 +82,7 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 	 *
 	 * @return Answer[] An array of answers.
 	 */
-	public function get_all_for_submission( int $submission_id ): array {
+	public function get_all( int $submission_id ): array {
 		$answers = [];
 		foreach ( $this->get_comment_answers( $submission_id ) as $question_id => $answer ) {
 			$answers[] = new Answer( 0, $submission_id, $question_id, $answer, new DateTime() );
@@ -89,8 +105,11 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 */
-	public function delete_all_answers_and_grades_for_submission( int $submission_id ): void {
-		// TODO: Implement delete_all_including_grades() method.
+	public function delete_all_answers_and_grades( int $submission_id ): void {
+		$this->grade_repository->delete_all( $submission_id );
+
+		delete_comment_meta( $submission_id, 'quiz_answers' );
+		delete_comment_meta( $submission_id, 'questions_asked' );
 	}
 
 	/**

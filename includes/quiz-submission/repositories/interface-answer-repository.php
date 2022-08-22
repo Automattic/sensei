@@ -47,7 +47,7 @@ interface Answer_Repository_Interface {
 	 *
 	 * @return Answer[] An array of answers.
 	 */
-	public function get_all_for_submission( int $submission_id ): array;
+	public function get_all( int $submission_id ): array;
 
 	/**
 	 * Save the answer.
@@ -61,5 +61,5 @@ interface Answer_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 */
-	public function delete_all_answers_and_grades_for_submission( int $submission_id ): void;
+	public function delete_all_answers_and_grades( int $submission_id ): void;
 }

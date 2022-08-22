@@ -97,12 +97,12 @@ class Answer_Repository_Aggregate implements Answer_Repository_Interface {
 	 *
 	 * @return Answer[] An array of answers.
 	 */
-	public function get_all_for_submission( int $submission_id ): array {
+	public function get_all( int $submission_id ): array {
 		if ( $this->use_tables ) {
-			return $this->tables_repository->get_all_for_submission( $submission_id );
+			return $this->tables_repository->get_all( $submission_id );
 		}
 
-		return $this->comments_repository->get_all_for_submission( $submission_id );
+		return $this->comments_repository->get_all( $submission_id );
 	}
 
 	/**
@@ -123,11 +123,11 @@ class Answer_Repository_Aggregate implements Answer_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 */
-	public function delete_all_answers_and_grades_for_submission( int $submission_id ): void {
+	public function delete_all_answers_and_grades( int $submission_id ): void {
 		if ( $this->use_tables ) {
-			$this->tables_repository->delete_all_answers_and_grades_for_submission( $submission_id );
+			$this->tables_repository->delete_all_answers_and_grades( $submission_id );
 		}
 
-		$this->comments_repository->delete_all_answers_and_grades_for_submission( $submission_id );
+		$this->comments_repository->delete_all_answers_and_grades( $submission_id );
 	}
 }

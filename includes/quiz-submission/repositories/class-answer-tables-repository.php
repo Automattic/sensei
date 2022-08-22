@@ -55,8 +55,8 @@ class Answer_Tables_Repository implements Answer_Repository_Interface {
 	 *
 	 * @return Answer[] An array of answers.
 	 */
-	public function get_all_for_submission( int $submission_id ): array {
-		// TODO: Implement get_all_for_submission() method.
+	public function get_all( int $submission_id ): array {
+		// TODO: Implement get_all() method.
 
 		return [];
 	}
@@ -75,7 +75,7 @@ class Answer_Tables_Repository implements Answer_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 */
-	public function delete_all_answers_and_grades_for_submission( int $submission_id ): void {
-		// TODO: Implement delete_all_including_grades() method.
+	public function delete_all_answers_and_grades( int $submission_id ): void {
+		// TODO: Implement delete_all_answers_and_grades() method.
 	}
 }

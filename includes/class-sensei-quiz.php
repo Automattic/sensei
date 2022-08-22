@@ -293,7 +293,7 @@ class Sensei_Quiz {
 		$submission            = $submission_repository->get_or_create( $quiz_id, $user_id );
 
 		$answer_repository = ( new Answer_Repository_Factory() )->create();
-		$answer_repository->delete_all_answers_and_grades_for_submission( $submission->get_id() );
+		$answer_repository->delete_all_answers_and_grades( $submission->get_id() );
 		foreach ( $prepared_answers as $question_id => $answer ) {
 			$answer_repository->create( $submission->get_id(), $question_id, $answer );
 		}
