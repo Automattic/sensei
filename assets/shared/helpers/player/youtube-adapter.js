@@ -8,8 +8,6 @@ export const ADAPTER_NAME = 'youtube';
  */
 export const EMBED_PATTERN = /(youtu\.be|youtube\.com)\/.+/i;
 
-let lastTime;
-
 /**
  * Initialize the player.
  *
@@ -33,6 +31,20 @@ export const initializePlayer = ( element, w = window ) =>
 			} else {
 				player.addEventListener( 'onReady', onReady );
 			}
+
+			// Add a dataset to identify if video has played already.
+			const onStateChange = ( e ) => {
+				if ( e.data === w.YT.PlayerState.PLAYING ) {
+					element.dataset.hasPlayed = 'has-played';
+					player.removeEventListener(
+						'onStateChange',
+						onStateChange
+					);
+				}
+			};
+			if ( 'has-played' !== element.dataset.hasPlayed ) {
+				player.addEventListener( 'onStateChange', onStateChange );
+			}
 		} );
 	} );
 
@@ -49,6 +61,18 @@ export const getDuration = ( player ) =>
 	} );
 
 /**
+ * Get the current video time.
+ *
+ * @param {Object} player The YouTube player instance.
+ *
+ * @return {Promise<number>} The current video time in seconds through a promise.
+ */
+export const getCurrentTime = ( player ) =>
+	new Promise( ( resolve ) => {
+		resolve( player.getCurrentTime() );
+	} );
+
+/**
  * Set the video to a current time.
  *
  * @param {Object} player  The YouTube player instance.
@@ -58,8 +82,17 @@ export const getDuration = ( player ) =>
  */
 export const setCurrentTime = ( player, seconds ) =>
 	new Promise( ( resolve ) => {
-		player.seekTo( seconds );
-		resolve();
+		if ( player.i.dataset.hasPlayed ) {
+			player.seekTo( seconds );
+			resolve();
+		} else {
+			play( player )
+				.then( () => pause( player ) )
+				.then( () => {
+					player.seekTo( seconds );
+					resolve();
+				} );
+		}
 	} );
 
 /**
@@ -99,11 +132,12 @@ export const pause = ( player ) =>
  */
 export const onTimeupdate = ( player, callback, w = window ) => {
 	const timer = 250;
+	let previousCurrentTime;
 
 	const updateCurrentTime = ( currentTime ) => {
-		if ( lastTime !== currentTime ) {
+		if ( previousCurrentTime !== currentTime ) {
 			callback( currentTime );
-			lastTime = currentTime;
+			previousCurrentTime = currentTime;
 		}
 	};
 

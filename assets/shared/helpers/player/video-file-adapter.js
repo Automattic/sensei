@@ -39,6 +39,18 @@ export const getDuration = ( player ) =>
 	} );
 
 /**
+ * Get the current video time.
+ *
+ * @param {HTMLVideoElement} player The player element.
+ *
+ * @return {Promise<number>} The current video time in seconds through a promise.
+ */
+export const getCurrentTime = ( player ) =>
+	new Promise( ( resolve ) => {
+		resolve( player.currentTime );
+	} );
+
+/**
  * Set the video to a current time.
  *
  * @param {HTMLVideoElement} player  The player element.

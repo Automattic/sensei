@@ -40,6 +40,10 @@
 		box-sizing: border-box;
 	}
 
+	& &__header {
+		min-height: 60px;
+	}
+
 	& &__content {
 		padding: 26px;
 		overflow: auto;
@@ -66,5 +70,9 @@
 		&.sensei-modal:not(:hover) {
 			background: none;
 		}
+	}
+
+	& &__footer {
+		padding: 26px;
 	}
 }
