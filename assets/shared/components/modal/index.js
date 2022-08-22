@@ -60,7 +60,11 @@ const Modal = ( { className, onClose, title = '', footer, children } ) => {
 					</button>
 				</div>
 				<div className="sensei-modal__content">{ children }</div>
-				{ footer && footer( onClose ) }
+				{ footer && (
+					<div className="sensei-modal__footer">
+						{ footer( onClose ) }
+					</div>
+				) }
 			</div>
 		</div>,
 		document.body
