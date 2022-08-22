@@ -35,7 +35,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Block content.
 	 */
-	const CONTENT = '<!-- wp:sensei-lms/course-categories {"align":"center","categoryStyle":{"classes":[],"style":{}},"textColor":"secondary","backgroundColor":"background","style":{"spacing":{"margin":{"top":"10px","right":"0","bottom":"10px","left":"0"}}}} /-->';
+	const CONTENT = '<!-- wp:sensei-lms/course-categories {"align":"center","textColor":"secondary","backgroundColor":"background"} /-->';
 
 	/**
 	 * Set up the test.

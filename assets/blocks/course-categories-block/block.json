@@ -9,9 +9,6 @@
 			"type": "string",
 			"default": "left"
 		},
-		"categoryStyle": {
-			"type": "object"
-		},
 		"textColor": {
 			"type": "string"
 		},
