@@ -48,7 +48,9 @@ const Modal = ( { className, onClose, title = '', footer, children } ) => {
 				{ ...focusOutsideProps }
 			>
 				<div className="sensei-modal__header">
-					<div className="sensei-modal__title">{ title }</div>
+					{ title && (
+						<div className="sensei-modal__title">{ title }</div>
+					) }
 					<button
 						className="sensei-modal sensei-modal__close-button"
 						onClick={ onClose }
