@@ -1,18 +1,20 @@
 .wp-block-sensei-lms-course-categories {
 	width: 100%;
+
 	> a {
 		display: inline-flex;
-
 		padding: 3px 6px;
 		text-decoration: none;
 		border-radius: 2px;
 		margin-right: 8px;
 		margin-bottom: 8px;
-		word-wrap: none;
+		white-space: nowrap;
 	}
+
 	&.alignright{
 		text-align: right;
 	}
+
 	&.aligncenter{
 		text-align: center;
 	}
