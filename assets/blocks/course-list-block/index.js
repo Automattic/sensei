@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
+import { addFilter } from '@wordpress/hooks';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -74,7 +75,6 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 			'course-list-block' === selectedBlock?.attributes?.className
 		) {
 			hideUnnecessarySettingsForCourseList();
-			hideUnnecessaryCourseListBlockPatterns();
 		}
 	} );
 
@@ -83,29 +83,6 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 
 	// pass in the settings panel node, as well as the options.
 	observer.observe( blockSettingsPanel, config );
-};
-
-const hideUnnecessaryCourseListBlockPatterns = () => {
-	// find a course list block and add hide function to the main button.
-	const courseListBlocks = document.querySelectorAll( '.course-list-block' );
-	courseListBlocks.forEach( ( block ) => {
-		const buttons = block.querySelectorAll(
-			'.components-button.is-primary'
-		);
-		buttons.forEach( ( button ) => {
-			button.classList.add( 'course-list-button' );
-			const openModalButtons = document.querySelectorAll(
-				'.course-list-button'
-			);
-			openModalButtons.forEach( ( openModalButton ) => {
-				// Add event to hide patterns and carousel control button from the modal.
-				openModalButton.addEventListener(
-					'click',
-					hideUnnecessaryCourseListPatternsAndControl
-				);
-			} );
-		} );
-	} );
 };
 
 // Hide the settings which are inherited from the Query Loop block
@@ -140,7 +117,57 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
-const hideNonCourseListBlockPatterns = () => {
+let isCourseListBlockSelected = true;
+
+const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
+	return ( props ) => {
+		const isQueryLoopBlock = 'core/query' === props.name;
+		const isCourseListBlock =
+			isQueryLoopBlock &&
+			'course-list-block' === props.attributes.className;
+
+		if ( isCourseListBlock && props.isSelected ) {
+			isCourseListBlockSelected = true;
+		} else if ( props.isSelected ) {
+			isCourseListBlockSelected = false;
+		}
+
+		if (
+			isCourseListBlockSelected &&
+			isQueryLoopBlock &&
+			! isCourseListBlock
+		) {
+			hideCourseListPatternsCarouselViewControl();
+			hideNonCourseListBlockPatternContainers();
+			return <></>;
+		}
+		return <BlockEdit { ...props } />;
+	};
+};
+
+addFilter(
+	'editor.BlockEdit',
+	'sensei-lms/course-list-block',
+	withQueryLoopPatternsHiddenForCourseList
+);
+
+// Hide patterns control so only Grid view can be selected.
+const hideCourseListPatternsCarouselViewControl = () => {
+	const patternsControlClass =
+		'.block-editor-block-pattern-setup__display-controls';
+	// Hide a carousel control button and switch to grid view.
+	const controls = document.querySelectorAll( `${ patternsControlClass }` );
+	controls.forEach( ( control ) => {
+		const controlButtons = control.querySelectorAll( 'button' );
+		// Hide carousel pattern view button.
+		controlButtons[ 0 ].style.display = 'none';
+		// Select Grid view button.
+		controlButtons[ 1 ].click();
+	} );
+};
+
+// Hide non course list patterns.
+const hideNonCourseListBlockPatternContainers = () => {
 	const patternsClass = '.block-editor-block-pattern-setup-list__list-item';
 	const customPatternDescription = 'course-list-element';
 
@@ -153,25 +180,4 @@ const hideNonCourseListBlockPatterns = () => {
 			pattern.style.display = 'none';
 		}
 	} );
-};
-
-// Hide patterns control so only Grid view can be selected.
-const hideUnnecessaryCourseListPatternsAndControl = () => {
-	const patternsControlClass =
-		'.block-editor-block-pattern-setup__display-controls';
-	// Short timeout to make sure modal is open before try to hide the control and patterns.
-	setTimeout( () => {
-		// Hide a carousel control button and switch to grid view.
-		const controls = document.querySelectorAll(
-			`${ patternsControlClass }`
-		);
-		controls.forEach( ( control ) => {
-			const controlButtons = control.querySelectorAll( 'button' );
-			// Hide carousel pattern view button.
-			controlButtons[ 0 ].style.display = 'none';
-			// Select Grid view button.
-			controlButtons[ 1 ].click();
-		} );
-		hideNonCourseListBlockPatterns();
-	}, 10 );
 };
