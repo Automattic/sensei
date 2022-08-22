@@ -71,10 +71,11 @@ class Sensei_Block_Patterns {
 		register_block_pattern(
 			'dummy-course-list-query',
 			[
-				'title'      => __( 'Grid of courses', 'sensei-lms' ),
-				'categories' => array( 'query' ),
-				'blockTypes' => array( 'core/query' ),
-				'content'    => '<!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":4},"displayLayout":{"type":"flex","columns":3},"layout":{"inherit":false}} -->
+				'title'       => __( 'Grid of courses', 'sensei-lms' ),
+				'categories'  => array( 'query' ),
+				'blockTypes'  => array( 'core/query' ),
+				'description' => 'course-list-element',
+				'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":4},"displayLayout":{"type":"flex","columns":3},"layout":{"inherit":false}} -->
 						<div class="wp-block-query course-list-block"><!-- wp:post-template {"align":"wide"} -->
 						<!-- wp:post-featured-image {"isLink":true,"width":"100%","height":"318px"} /-->
 
