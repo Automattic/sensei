@@ -23,16 +23,10 @@ import { __ } from '@wordpress/i18n';
  * @param {string}   props.className A class name for the modal.
  * @param {Function} props.onClose   Callback to run when trying to close the modal.
  * @param {string}   props.title     The title for the modal. Empty by default.
- * @param {Function} props.footer    React Component to render the footer. Will be passed the "onClose" callback as a prop.
+ * @param {Function} props.footer    Render Prop to render the footer. Will be passed the "onClose" as a parameter.
  * @param {Object}   props.children  The content of the modal.
  */
-const Modal = ( {
-	className,
-	onClose,
-	title = '',
-	footer: Footer,
-	children,
-} ) => {
+const Modal = ( { className, onClose, title = '', footer, children } ) => {
 	const focusOnMountRef = useFocusOnMount();
 	const focusOutsideProps = useFocusOutside( onClose );
 
@@ -64,7 +58,7 @@ const Modal = ( {
 					</button>
 				</div>
 				<div className="sensei-modal__content">{ children }</div>
-				{ Footer ? <Footer onClose={ onClose } /> : null }
+				{ footer && footer( onClose ) }
 			</div>
 		</div>,
 		document.body
