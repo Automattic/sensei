@@ -65,20 +65,6 @@ const unsubscribe = subscribe( () => {
 	unsubscribe();
 } );
 
-// Hide unnecessary patterns for course list block.
-setInterval( () => {
-	const blocks = select( 'core/block-editor' ).getBlocks();
-	blocks.forEach( ( block ) => {
-		if (
-			block &&
-			block.attributes &&
-			block.attributes.className === 'course-list-block'
-		) {
-			hideUnnecessaryPatternsForCourseList( block.clientId );
-		}
-	} );
-}, 300 );
-
 const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 	// eslint-disable-next-line no-undef
 	const observer = new MutationObserver( () => {
@@ -88,6 +74,7 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 			'course-list-block' === selectedBlock?.attributes?.className
 		) {
 			hideUnnecessarySettingsForCourseList();
+			hideUnnecessaryCourseListBlockPatterns();
 		}
 	} );
 
@@ -96,6 +83,29 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 
 	// pass in the settings panel node, as well as the options.
 	observer.observe( blockSettingsPanel, config );
+};
+
+const hideUnnecessaryCourseListBlockPatterns = () => {
+	// find a course list block and add hide function to the main button.
+	const courseListBlocks = document.querySelectorAll( '.course-list-block' );
+	courseListBlocks.forEach( ( block ) => {
+		const buttons = block.querySelectorAll(
+			'.components-button.is-primary'
+		);
+		buttons.forEach( ( button ) => {
+			button.classList.add( 'course-list-button' );
+			const openModalButtons = document.querySelectorAll(
+				'.course-list-button'
+			);
+			openModalButtons.forEach( ( openModalButton ) => {
+				// Add event to hide patterns and carousel control button from the modal.
+				openModalButton.addEventListener(
+					'click',
+					hideUnnecessaryCourseListPatternsAndControl
+				);
+			} );
+		} );
+	} );
 };
 
 // Hide the settings which are inherited from the Query Loop block
@@ -130,60 +140,38 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
-// Hide the patterns which are inherited from the Query Loop block
-// but not applicable to our Course List block.
-const hideUnnecessaryPatternsForCourseList = ( blockId ) => {
-	const block = document.querySelector( `div[data-block="${ blockId }"]` );
-	setTimeout( () => {
-		// Hide default patterns.
-		hideNonCourseListBlockPatterns( block );
-		// Hide patterns control so only Grid view can be selected.
-		hideCarouselPatternSelectorControl( block );
-	}, 100 );
-};
-
-const hideNonCourseListBlockPatterns = ( block ) => {
+const hideNonCourseListBlockPatterns = () => {
 	const patternsClass = '.block-editor-block-pattern-setup-list__list-item';
 	const customPatternDescription = 'course-list-element';
-	const patternHiddenClass = 'patterns-hidden';
 
-	// Brake for checking patterns after it's done once.
-	if ( block.classList.contains( patternHiddenClass ) ) {
-		return;
-	}
-
-	const patterns = block.querySelectorAll( `${ patternsClass }` );
+	const patterns = document.querySelectorAll( `${ patternsClass }` );
 	patterns.forEach( ( pattern ) => {
 		const isCourseListPattern = [
 			...pattern.querySelectorAll( 'div' ),
 		].find( ( e ) => e.innerText === customPatternDescription );
-		if ( isCourseListPattern ) {
-			pattern.style.display = 'inherit';
+		if ( ! isCourseListPattern ) {
+			pattern.style.display = 'none';
 		}
 	} );
-	if ( patterns.length > 0 ) {
-		block.classList.add( patternHiddenClass );
-	}
 };
 
 // Hide patterns control so only Grid view can be selected.
-const hideCarouselPatternSelectorControl = ( block ) => {
-	const patternControlHidden = 'pattern-control-hidden';
-
-	// Brake for checking controls after it's done once.
-	if ( block.classList.contains( patternControlHidden ) ) {
-		return;
-	}
-	block.classList.add( patternControlHidden );
-
+const hideUnnecessaryCourseListPatternsAndControl = () => {
 	const patternsControlClass =
 		'.block-editor-block-pattern-setup__display-controls';
-	const controls = block.querySelectorAll( `${ patternsControlClass }` );
-	controls.forEach( ( control ) => {
-		const controlButtons = control.querySelectorAll( 'button' );
-		// Hide carousel pattern view button.
-		controlButtons[ 0 ].style.display = 'none';
-		// Select Grid view button.
-		controlButtons[ 1 ].click();
-	} );
+	// Short timeout to make sure modal is open before try to hide the control and patterns.
+	setTimeout( () => {
+		// Hide a carousel control button and switch to grid view.
+		const controls = document.querySelectorAll(
+			`${ patternsControlClass }`
+		);
+		controls.forEach( ( control ) => {
+			const controlButtons = control.querySelectorAll( 'button' );
+			// Hide carousel pattern view button.
+			controlButtons[ 0 ].style.display = 'none';
+			// Select Grid view button.
+			controlButtons[ 1 ].click();
+		} );
+		hideNonCourseListBlockPatterns();
+	}, 10 );
 };
