@@ -25,7 +25,14 @@ import {
 } from '../../shared/blocks/settings';
 
 export function CourseCategoryEdit( props ) {
-	const { context, attributes, textColor, backgroundColor } = props;
+	const {
+		attributes,
+		backgroundColor,
+		context,
+		defaultBackgroundColor,
+		defaultTextColor,
+		textColor,
+	} = props;
 	const { textAlign } = attributes;
 	const { postId, postType } = context;
 	const term = 'course-category';
@@ -45,8 +52,8 @@ export function CourseCategoryEdit( props ) {
 
 	const inlineStyle = useMemo(
 		() => ( {
-			color: textColor?.color,
-			backgroundColor: backgroundColor?.color,
+			backgroundColor: backgroundColor?.color || defaultBackgroundColor?.color,
+			color: textColor?.color || defaultTextColor?.color,
 		} ),
 		[ textColor, backgroundColor ]
 	);
