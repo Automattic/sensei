@@ -81,8 +81,8 @@ class Sensei_Block_Take_Course {
 	/**
 	 * Render block with start course action.
 	 *
-	 * @param int    $course_id
-	 * @param string $button Block HTML.
+	 * @param int    $course_id ID of the course.
+	 * @param string $button    Block HTML.
 	 *
 	 * @return string
 	 */
@@ -160,7 +160,7 @@ class Sensei_Block_Take_Course {
 	/**
 	 * Message text for prerequisite course the learner has to complete.
 	 *
-	 * @param int $course_id
+	 * @param int $course_id ID of the course.
 	 *
 	 * @deprecated 3.8.0 use Sensei_Course::get_course_prerequisite_message.
 	 *
