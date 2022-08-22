@@ -1,9 +1,24 @@
 <?php
 /**
  * File containing the Sensei_Course_Progress_Abstract class.
+ *
+ * @package sensei
  */
 
-abstract class Sensei_Course_Progress_Abstract implements Sensei_Course_Progress_Interface {
+namespace Sensei\StudentProgress\Models;
+
+use DateTime;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class Sensei_Course_Progress_Abstract.
+ *
+ * @since $$next-version$$
+ */
+abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 
 	/**
 	 * Progress identifier.

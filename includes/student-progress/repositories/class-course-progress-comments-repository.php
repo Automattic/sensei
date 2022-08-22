@@ -5,6 +5,13 @@
  * @package sensei
  */
 
+namespace Sensei\StudentProgress\Repositories;
+
+use DateTime;
+use Sensei\StudentProgress\Models\Course_Progress_Comments;
+use Sensei\StudentProgress\Models\Course_Progress_Interface;
+use Sensei_Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,15 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-class Sensei_Course_Progress_Comments_Repository implements Sensei_Course_Progress_Repository_Interface {
+class Course_Progress_Comments_Repository implements Course_Progress_Repository_Interface {
 	/**
 	 * Creates a new course progress.
-	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Sensei_Course_Progress_Interface The course progress.
+	 * @return Course_Progress_Interface The course progress.
 	 */
-	public function create( int $course_id, int $user_id ): Sensei_Course_Progress_Interface {
+	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'in-progress' );
 
 		$comment    = get_comment( $comment_id );
@@ -32,17 +38,16 @@ class Sensei_Course_Progress_Comments_Repository implements Sensei_Course_Progre
 		$started_at   = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
 		unset( $comment_meta['start'] );
 
-		return new Sensei_Course_Progress_Comments( $comment_id, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
+		return new Course_Progress_Comments( $comment_id, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
 	}
 
 	/**
 	 * Gets a course progress.
-	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Sensei_Course_Progress_Comments|null The course progress.
+	 * @return Course_Progress_Comments|null The course progress.
 	 */
-	public function get( int $course_id, int $user_id ): ?Sensei_Course_Progress_Interface {
+	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface {
 		$activity_args = [
 			'post_id' => $course_id,
 			'user_id' => $user_id,
@@ -58,7 +63,7 @@ class Sensei_Course_Progress_Comments_Repository implements Sensei_Course_Progre
 		$started_at   = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
 		unset( $comment_meta['start'] );
 
-		return new Sensei_Course_Progress_Comments( $comment->ID, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
+		return new Course_Progress_Comments( $comment->ID, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
 	}
 
 	/**
@@ -80,10 +85,9 @@ class Sensei_Course_Progress_Comments_Repository implements Sensei_Course_Progre
 
 	/**
 	 * Save course progress.
-	 *
-	 * @param Sensei_Course_Progress_Interface $course_progress The course progress.
+	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
-	public function save( Sensei_Course_Progress_Interface $course_progress ): void {
+	public function save( Course_Progress_Interface $course_progress ): void {
 		$metadata = $course_progress->get_metadata();
 		if ( $course_progress->get_started_at() ) {
 			$metadata['start'] = $course_progress->get_started_at()->format( 'Y-m-d H:i:s' );

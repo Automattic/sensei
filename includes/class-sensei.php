@@ -1,4 +1,9 @@
 <?php
+
+use Sensei\StudentProgress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\StudentProgress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\StudentProgress\Repositories\Quiz_Progress_Repository_Factory;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -224,16 +229,23 @@ class Sensei_Main {
 	/**
 	 * Course progress repository factory.
 	 *
-	 * @var Sensei_Course_Progress_Repository_Factory
+	 * @var Course_Progress_Repository_Factory
 	 */
 	public $course_progress_repository_factory;
 
 	/**
 	 * Lesson progress repository factory.
 	 *
-	 * @var Sensei_Lesson_Progress_Repository_Factory
+	 * @var Lesson_Progress_Repository_Factory
 	 */
 	public $lesson_progress_repository_factory;
+
+	/**
+	 * Quiz progress repository factory.
+	 *
+	 * @var Quiz_Progress_Repository_Factory
+	 */
+	public $quiz_progress_repository_factory;
 
 	/**
 	 * Constructor method.
@@ -487,8 +499,10 @@ class Sensei_Main {
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
-		$this->course_progress_repository_factory = new Sensei_Course_Progress_Repository_Factory();
-		$this->lesson_progress_repository_factory = new Sensei_Lesson_Progress_Repository_Factory();
+		// Student progress factories.
+		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory();
+		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory();
+		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory();
 	}
 
 	/**

@@ -1,20 +1,24 @@
 <?php
 /**
- * File containing the Sensei_Course_Progress_Tables class.
+ * File containing the Sensei_Course_Progress_Comments class.
  *
  * @package sensei
  */
+
+namespace Sensei\StudentProgress\Models;
+
+use DateTime;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Sensei_Course_Progress_Tables.
+ * Class Sensei_Course_Progress_Comments.
  *
  * @since $$next-version$$
  */
-class Sensei_Course_Progress_Tables extends Sensei_Course_Progress_Abstract {
+class Course_Progress_Comments extends Course_Progress_Abstract {
 	/**
 	 * Set in-progress status and start date.
 	 *
@@ -23,6 +27,13 @@ class Sensei_Course_Progress_Tables extends Sensei_Course_Progress_Abstract {
 	public function start( DateTime $started_at = null ): void {
 		$this->status     = 'in-progress';
 		$this->started_at = $started_at ?? new DateTime();
+		$this->metadata   = array_replace(
+			$this->metadata,
+			[
+				'complete' => 0,
+				'percent'  => 0,
+			]
+		);
 	}
 
 	/**

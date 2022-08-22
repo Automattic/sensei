@@ -1,9 +1,24 @@
 <?php
 /**
  * File containing the Sensei_Course_Progress_Interface interface.
+ *
+ * @package sensei
  */
 
-interface Sensei_Course_Progress_Interface {
+namespace Sensei\StudentProgress\Models;
+
+use DateTime;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Interface Sensei_Course_Progress_Interface.
+ *
+ * @since $$next-version$$
+ */
+interface Course_Progress_Interface {
 	/**
 	 * Status course in progress.
 	 */

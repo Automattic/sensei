@@ -238,6 +238,28 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+
+			/**
+			 * Student Progress
+			 */
+			'Sensei\\Student_Progress\\Models\\Course_Progress_Interface' => 'student-progress/models/class-course-progress-interface.php',
+			'Sensei\\Student_Progress\\Models\\Course_Progress_Abstract' => 'student-progress/models/class-course-progress-abstract.php',
+			'Sensei\\Student_Progress\\Models\\Course_Progress_Comments' => 'student-progress/models/class-course-progress-comments.php',
+			'Sensei\\Student_Progress\\Models\\Course_Progress_Tables' => 'student-progress/models/class-course-progress-tables.php',
+			'Sensei\\Student_Progress\\Models\\Lesson_Progress_Interface' => 'student-progress/models/class-lesson-progress-interface.php',
+			'Sensei\\Student_Progress\\Models\\Lesson_Progress_Comments' => 'student-progress/models/class-lesson-progress-comments.php',
+			'Sensei\\Student_Progress\\Models\\Quiz_Progress' => 'student-progress/models/class-quiz-progress.php',
+			'Sensei\\Student_Progress\\Repositories\\Course_Progress_Repository_Interface' => 'student-progress/repositories/class-course-progress-repository-interface.php',
+			'Sensei\\Student_Progress\\Repositories\\Course_Progress_Comments_Repository' => 'student-progress/repositories/class-course-progress-comments-repository.php',
+			'Sensei\\Student_Progress\\Repositories\\Course_Progress_Tables_Repository' => 'student-progress/repositories/class-course-progress-tables-repository.php',
+			'Sensei\\Student_Progress\\Repositories\\Course_Progress_Repository_Aggregate' => 'student-progress/repositories/class-course-progress-repository-aggregate.php',
+			'Sensei\\Student_Progress\\Repositories\\Course_Progress_Repository_Factory' => 'student-progress/repositories/class-course-progress-repository-factory.php',
+			'Sensei\\Student_Progress\\Repositories\\Lesson_Progress_Repository_Interface' => 'student-progress/repositories/class-lesson-progress-repository-interface.php',
+			'Sensei\\Student_Progress\\Repositories\\Lesson_Progress_Comments_Repository' => 'student-progress/repositories/class-lesson-progress-comments-repository.php',
+			'Sensei\\Student_Progress\\Repositories\\Lesson_Progress_Repository_Factory' => 'student-progress/repositories/class-lesson-progress-repository-factory.php',
+			'Sensei\\Student_Progress\\Repositories\\Quiz_Progress_Repository_Interface' => 'student-progress/repositories/class-quiz-progress-repository-interface.php',
+			'Sensei\\Student_Progress\\Repositories\\Quiz_Progress_Comments_Repository' => 'student-progress/repositories/class-quiz-progress-comments-repository.php',
+			'Sensei\\Student_Progress\\Repositories\\Quiz_Progress_Repository_Factory' => 'student-progress/repositories/class-quiz-progress-repository-factory.php',
 		);
 	}
 

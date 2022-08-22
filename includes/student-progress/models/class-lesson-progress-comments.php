@@ -1,20 +1,35 @@
 <?php
 /**
- * File containing the Sensei_Lesson_Progress_Abstract class.
+ * File containing the Lesson_Progress class.
  *
  * @package sensei
  */
+
+namespace Sensei\StudentProgress\Models;
+
+use DateTime;
+use Sensei_Lesson;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Sensei_Lesson_Progress_Abstract.
+ * Class Lesson_Progress.
  *
  * @since $$next-version$$
  */
-class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
+class Lesson_Progress_Comments implements Lesson_Progress_Interface {
+	/**
+	 * Status lesson in progress.
+	 */
+	public const STATUS_IN_PROGRESS = 'in-progress';
+
+	/**
+	 * Status lesson completed.
+	 */
+	public const STATUS_COMPLETE = 'complete';
+
 	/**
 	 * Progress identifier.
 	 *
@@ -72,14 +87,6 @@ class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
 	protected $updated_at;
 
 	/**
-	 * Course progress metadata.
-	 * Field exists for compatibility with the legacy code and will be removed in later versions.
-	 *
-	 * @var array
-	 */
-	protected $metadata;
-
-	/**
 	 * Sensei_Lesson_Progress constructor.
 	 *
 	 * @param int           $id         Progress identifier.
@@ -90,9 +97,8 @@ class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
 	 * @param DateTime|null $completed_at   Course completion date.
 	 * @param DateTime      $created_at     Course progress created date.
 	 * @param DateTime      $updated_at     Course progress updated date.
-	 * @param array         $metadata   Course progress metadata. Field exists for compatibility with the legacy code and will be removed in later versions.
 	 */
-	public function __construct( int $id, int $lesson_id, int $user_id, ?string $status, ?DateTime $started_at, ?DateTime $completed_at, DateTime $created_at, DateTime $updated_at, array $metadata ) {
+	public function __construct( int $id, int $lesson_id, int $user_id, ?string $status, ?DateTime $started_at, ?DateTime $completed_at, DateTime $created_at, DateTime $updated_at ) {
 		$this->id           = $id;
 		$this->lesson_id    = $lesson_id;
 		$this->user_id      = $user_id;
@@ -101,7 +107,6 @@ class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
 		$this->completed_at = $completed_at;
 		$this->created_at   = $created_at;
 		$this->updated_at   = $updated_at;
-		$this->metadata     = $metadata;
 	}
 
 	/**
@@ -111,7 +116,7 @@ class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
 	 */
 	public function start( ?DateTime $started_at = null ): void {
 		$this->started_at = $started_at ?? new DateTime();
-		$this->status     = Sensei_Lesson_Progress_Interface::STATUS_IN_PROGRESS;
+		$this->status     = self::STATUS_IN_PROGRESS;
 	}
 
 	/**
@@ -121,6 +126,8 @@ class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
 	 */
 	public function complete( ?DateTime $completed_at = null ): void {
 		$this->completed_at = $completed_at ?? new DateTime();
+		$has_questions      = Sensei_Lesson::lesson_quiz_has_questions( $this->lesson_id );
+		$this->status       = $has_questions ? Quiz_Progress::STATUS_PASSED : self::STATUS_COMPLETE;
 	}
 
 	/**
@@ -177,13 +184,18 @@ class Sensei_Lesson_Progress implements Sensei_Lesson_Progress_Interface {
 		return $this->completed_at;
 	}
 
-
 	/**
-	 * Returns the lesson progress metadata.
+	 * Returns if the lesson progress is complete.
 	 *
-	 * @return array The lesson progress metadata.
+	 * @return bool
 	 */
-	public function get_metadata(): array {
-		return $this->metadata;
+	public function is_complete(): bool {
+		$completed_statuses = [
+			self::STATUS_COMPLETE,
+			Quiz_Progress::STATUS_PASSED,
+			Quiz_Progress::STATUS_GRADED,
+		];
+
+		return in_array( $this->status, $completed_statuses, true );
 	}
 }

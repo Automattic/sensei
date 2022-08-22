@@ -1,20 +1,24 @@
 <?php
 /**
- * File containing the Sensei_Course_Progress_Comments class.
+ * File containing the Sensei_Course_Progress_Tables class.
  *
  * @package sensei
  */
+
+namespace Sensei\StudentProgress\Models;
+
+use DateTime;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Sensei_Course_Progress_Comments.
+ * Class Sensei_Course_Progress_Tables.
  *
  * @since $$next-version$$
  */
-class Sensei_Course_Progress_Comments extends Sensei_Course_Progress_Abstract {
+class Course_Progress_Tables extends Course_Progress_Abstract {
 	/**
 	 * Set in-progress status and start date.
 	 *
@@ -23,13 +27,6 @@ class Sensei_Course_Progress_Comments extends Sensei_Course_Progress_Abstract {
 	public function start( DateTime $started_at = null ): void {
 		$this->status     = 'in-progress';
 		$this->started_at = $started_at ?? new DateTime();
-		$this->metadata   = array_replace(
-			$this->metadata,
-			[
-				'complete' => 0,
-				'percent'  => 0,
-			]
-		);
 	}
 
 	/**
@@ -40,13 +37,5 @@ class Sensei_Course_Progress_Comments extends Sensei_Course_Progress_Abstract {
 	public function complete( DateTime $completed_at = null ): void {
 		$this->status       = 'complete';
 		$this->completed_at = $completed_at ?? new DateTime();
-
-		$course_lesson_ids = Sensei()->course->course_lessons( $this->get_course_id(), 'any', 'ids' );
-
-		$metadata       = [
-			'percent'  => 100,
-			'complete' => count( $course_lesson_ids ),
-		];
-		$this->metadata = array_replace( $this->metadata, $metadata );
 	}
 }
