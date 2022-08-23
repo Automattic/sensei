@@ -25,56 +25,56 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	 *
 	 * @var int
 	 */
-	private $id;
+	protected $id;
 
 	/**
 	 * Course identifier.
 	 *
 	 * @var int
 	 */
-	private $course_id;
+	protected $course_id;
 
 	/**
 	 * User identifier.
 	 *
 	 * @var int
 	 */
-	private $user_id;
+	protected $user_id;
 
 	/**
 	 * Progress data.
 	 *
 	 * @var string|null
 	 */
-	private $status;
+	protected $status;
 
 	/**
 	 * Course start date.
 	 *
 	 * @var DateTime|null
 	 */
-	private $started_at;
+	protected $started_at;
 
 	/**
 	 * Course completion date.
 	 *
 	 * @var DateTime|null
 	 */
-	private $completed_at;
+	protected $completed_at;
 
 	/**
 	 * Course progress created date.
 	 *
 	 * @var DateTime
 	 */
-	private $created_at;
+	protected $created_at;
 
 	/**
 	 * Course progress updated date.
 	 *
 	 * @var DateTime
 	 */
-	private $updated_at;
+	protected $updated_at;
 
 	/**
 	 * Course progress metadata.
@@ -82,7 +82,7 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	 *
 	 * @var array
 	 */
-	private $metadata;
+	protected $metadata;
 
 	/**
 	 * Course progress constructor.
