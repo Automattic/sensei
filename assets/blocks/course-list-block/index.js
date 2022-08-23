@@ -161,10 +161,12 @@ const hideCourseListPatternsCarouselViewControl = () => {
 	const controls = document.querySelectorAll( `${ patternsControlClass }` );
 	controls.forEach( ( control ) => {
 		const controlButtons = control.querySelectorAll( 'button' );
-		// Hide carousel pattern view button.
-		controlButtons[ 0 ].style.display = 'none';
-		// Select Grid view button.
+		// Select Grid view.
 		controlButtons[ 1 ].click();
+
+		// Hide all control buttons.
+		controlButtons[ 0 ].style.display = 'none';
+		controlButtons[ 1 ].style.display = 'none';
 	} );
 };
 
