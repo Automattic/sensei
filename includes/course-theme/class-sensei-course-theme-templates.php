@@ -142,7 +142,6 @@ class Sensei_Course_Theme_Templates {
 					'id'          => self::THEME_PREFIX . '//lesson',
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 					'content'     => file_get_contents( $base_path . 'lesson.html' ),
-					'post_types'  => [ 'lesson' ],
 				]
 			),
 			'quiz'   => array_merge(
@@ -154,7 +153,6 @@ class Sensei_Course_Theme_Templates {
 					'id'          => self::THEME_PREFIX . '//quiz',
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 					'content'     => file_get_contents( $base_path . 'quiz.html' ),
-					'post_types'  => [],
 				]
 			),
 		];
@@ -177,14 +175,16 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
-		$post_type = $query['post_type'] ?? null;
-		$slugs     = $query['slug__in'] ?? null;
+		$slugs = $query['slug__in'] ?? $query['post_type'] ?? null;
+		if ( $slugs && ! is_array( $slugs ) ) {
+			$slugs = [ $slugs ];
+		}
 
 		$supported_template_types = [ 'lesson', 'quiz' ];
 
-		$is_site_editor            = empty( $query );
-		$is_post_editor            = in_array( $post_type, $supported_template_types, true );
-		$is_learning_mode_frontend = ! empty( $slugs ) && ! empty( array_intersect( $supported_template_types, $slugs ) );
+		$is_course_theme_override = ! empty( $query['theme'] ) && ( Sensei_Course_Theme::THEME_NAME === $query['theme'] );
+		$is_site_editor           = empty( $query ) || $is_course_theme_override;
+		$is_supported_template    = $slugs && ! empty( array_intersect( $supported_template_types, $slugs ) );
 
 		// Remove file templates picked up from the sensei-course-theme theme directory when the theme override is active.
 		$templates = array_filter(
@@ -195,33 +195,31 @@ class Sensei_Course_Theme_Templates {
 			}
 		);
 
-		if ( ! $is_site_editor && ! $is_post_editor && ! $is_learning_mode_frontend ) {
+		if ( ! $is_site_editor && ! $is_supported_template ) {
 			return $templates;
 		}
 
-		$theme_templates = array_values( $this->get_block_templates() );
+		$course_theme_templates = $this->get_block_templates();
+		$extra_templates        = array_values( $course_theme_templates );
 
-		if ( $post_type ) {
-			// Only show templates matching the queried post type.
-			$theme_templates = array_filter(
-				$theme_templates,
-				function( $template ) use ( $post_type ) {
-					return ! empty( $template->post_types ) && in_array( $post_type, $template->post_types, true );
-				}
-			);
-		}
-
+		// Only show templates matching the queried slug or post type.
 		if ( $slugs ) {
-			// Only show templates matching the queried slug.
-			$theme_templates = array_filter(
-				$theme_templates,
+			$extra_templates = array_filter(
+				$extra_templates,
 				function( $template ) use ( $slugs ) {
 					return in_array( $template->slug, $slugs, true );
 				}
 			);
 		}
 
-		return array_merge( $theme_templates, $templates );
+		$templates = array_merge( $extra_templates, $templates );
+
+		// Return the lesson template as the default when there are no theme templates in the site editor.
+		if ( $is_course_theme_override && empty( $templates ) ) {
+			return [ $course_theme_templates['lesson'] ];
+		}
+
+		return $templates;
 	}
 
 	/**
