@@ -21,6 +21,12 @@
 		"customTextColor": {
 			"type": "string"
 		},
+        "defaultBackgroundColor": {
+			"type": "string"
+		},
+		"defaultTextColor": {
+			"type": "string"
+		},
 		"fontSize": {
 			"type": "string",
 			"default": "small"
