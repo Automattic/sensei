@@ -30,14 +30,20 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 	 * @return Course_Progress_Interface The course progress.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
-		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, 'in-progress' );
+		$metadata   = [
+			'start'    => current_time( 'mysql' ),
+			'percent'  => 0,
+			'complete' => 0,
+		];
+		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, Course_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
 
 		$comment    = get_comment( $comment_id );
 		$created_at = new DateTime( $comment->comment_date );
 
-		$comment_meta = get_comment_meta( $comment_id );
-		if ( ! $comment_meta ) {
-			$comment_meta = [];
+		$comment_meta = [];
+		$source_meta  = get_comment_meta( $comment_id );
+		foreach ( $source_meta as $key => $values ) {
+			$comment_meta[ $key ] = $values[0] ?? null;
 		}
 		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
 		unset( $comment_meta['start'] );
@@ -64,9 +70,10 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 		}
 
 		$created_at   = new DateTime( $comment->comment_date );
-		$comment_meta = get_comment_meta( $comment->ID );
-		if ( ! $comment_meta ) {
-			$comment_meta = [];
+		$comment_meta = [];
+		$source_meta  = get_comment_meta( $comment->comment_ID );
+		foreach ( $source_meta as $key => $values ) {
+			$comment_meta[ $key ] = $values[0] ?? null;
 		}
 		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
 		unset( $comment_meta['start'] );

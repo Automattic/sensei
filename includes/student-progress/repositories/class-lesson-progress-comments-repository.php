@@ -30,14 +30,16 @@ class Lesson_Progress_Comments_Repository implements Lesson_Progress_Repository_
 	 * @return Lesson_Progress_Comments The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
-		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+		$metadata   = [
+			'start' => current_time( 'mysql' ),
+		];
+		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress_Comments::STATUS_IN_PROGRESS, $metadata );
 
 		$comment    = get_comment( $comment_id );
 		$created_at = new DateTime( $comment->comment_date );
 
-		$comment_meta = get_comment_meta( $comment_id );
-		$started_at   = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
-		unset( $comment_meta['start'] );
+		$meta_start = get_comment_meta( $comment_id, 'start', true );
+		$started_at = ! empty( $meta_start ) ? new DateTime( $meta_start ) : new DateTime();
 
 		return new Lesson_Progress_Comments( $comment_id, $lesson_id, $user_id, $comment->comment_approved, $started_at, null, $created_at, $created_at );
 	}

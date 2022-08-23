@@ -504,10 +504,10 @@ class Sensei_Utils {
 
 		$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create();
 		$lesson_progress            = $lesson_progress_repository->get( $lesson_id, $user_id );
-		$existing_progress          = false;
+		$existing_progress          = true;
 		if ( ! $lesson_progress ) {
 			$lesson_progress   = $lesson_progress_repository->create( $lesson_id, $user_id );
-			$existing_progress = true;
+			$existing_progress = false;
 		}
 
 		$status_changed = false;
@@ -1920,7 +1920,7 @@ class Sensei_Utils {
 		if ( empty( $post_id ) || empty( $data_key )
 			|| ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
 			|| ! get_userdata( $user_id )
-			|| ! in_array( $post_type, $supported_post_types ) ) {
+			|| ! in_array( $post_type, $supported_post_types, true ) ) {
 
 			return false;
 		}
@@ -1973,7 +1973,7 @@ class Sensei_Utils {
 		if ( empty( $post_id ) || empty( $data_key )
 			|| ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
 			|| ! get_userdata( $user_id )
-			|| ! in_array( $post_type, $supported_post_types ) ) {
+			|| ! in_array( $post_type, $supported_post_types, true ) ) {
 
 			return false;
 		}
@@ -2014,7 +2014,7 @@ class Sensei_Utils {
 		if ( empty( $post_id ) || empty( $data_key )
 			|| ! is_int( $post_id ) || ! ( intval( $post_id ) > 0 ) || ! ( intval( $user_id ) > 0 )
 			|| ! get_userdata( $user_id )
-			|| ! in_array( $post_type, $supported_post_types ) ) {
+			|| ! in_array( $post_type, $supported_post_types, true ) ) {
 
 			return false;
 		}
@@ -2311,19 +2311,24 @@ class Sensei_Utils {
 	 *
 	 * @param int $user_id The user ID.
 	 * @param int $course_id The course ID.
-	 * @return false|int Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
+	 * @return int Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
 	 */
 	public static function start_user_on_course( $user_id, $course_id ) {
 		$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-		$course_progress            = $course_progress_repository->create( $user_id, $course_id );
+		$course_progress            = $course_progress_repository->create( $course_id, $user_id );
 
 		// Allow further actions.
-		if ( $course_progress ) {
-			do_action( 'sensei_user_course_start', $user_id, $course_id );
-			return $course_progress->get_id();
+		$course_metadata = [
+			'percent'  => 0,
+			'complete' => 0,
+		];
+		foreach ( $course_metadata as $key => $value ) {
+			update_comment_meta( $course_progress->get_id(), $key, $value );
 		}
 
-		return false;
+		do_action( 'sensei_user_course_start', $user_id, $course_id );
+
+		return $course_progress->get_id();
 	}
 
 	public static function is_plugin_present_and_activated( $plugin_class_to_look_for, $plugin_registered_path ) {
