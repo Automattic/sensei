@@ -73,7 +73,8 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
 		if (
 			'core/query' === selectedBlock?.name &&
-			'wp-block-sensei-lms-course-list' === selectedBlock?.attributes?.className
+			'wp-block-sensei-lms-course-list' ===
+				selectedBlock?.attributes?.className
 		) {
 			hideUnnecessarySettingsForCourseList();
 		}
