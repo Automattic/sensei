@@ -49,7 +49,7 @@ interface Lesson_Progress_Repository_Interface {
 	/**
 	 * Save the lesson progress.
 	 *
-	 * @param Lesson_Progress_Interface $lesson_progress
+	 * @param Lesson_Progress_Interface $lesson_progress The lesson progress.
 	 */
 	public function save( Lesson_Progress_Interface $lesson_progress ): void;
 
