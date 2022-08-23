@@ -165,8 +165,9 @@ const hideCourseListPatternsCarouselViewControl = () => {
 		controlButtons[ 1 ].click();
 
 		// Hide all control buttons.
-		controlButtons[ 0 ].style.display = 'none';
-		controlButtons[ 1 ].style.display = 'none';
+		controlButtons.forEach( ( button ) => {
+			button.style.display = 'none';
+		} );
 	} );
 };
 
