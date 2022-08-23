@@ -28,6 +28,7 @@ class Quiz_Progress_Comments_Repository implements Quiz_Progress_Repository_Inte
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return Quiz_Progress
+	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
 		$progress = $this->get( $quiz_id, $user_id );

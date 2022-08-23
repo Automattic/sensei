@@ -57,6 +57,7 @@ class Course_Progress_Repository_Factory {
 	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
 	 * @return Course_Progress_Repository_Interface
+	 * @throws InvalidArgumentException When the course progress is not supported.
 	 */
 	public function create_for( Course_Progress_Interface $course_progress ): Course_Progress_Repository_Interface {
 		if ( $course_progress instanceof Course_Progress_Comments ) {

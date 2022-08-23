@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 interface Course_Progress_Repository_Interface {
 	/**
 	 * Creates a new course progress.
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
@@ -29,6 +30,7 @@ interface Course_Progress_Repository_Interface {
 
 	/**
 	 * Gets a course progress.
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface|null The course progress.
@@ -46,6 +48,7 @@ interface Course_Progress_Repository_Interface {
 
 	/**
 	 * Save course progress.
+	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void;

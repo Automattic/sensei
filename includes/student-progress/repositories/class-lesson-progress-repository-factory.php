@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Lesson_Progress_Repository_Factory {
 	/**
 	 * Creates a new lesson progress repository.
+	 *
 	 * @return Lesson_Progress_Repository_Interface The repository.
 	 */
 	public function create(): Lesson_Progress_Repository_Interface {

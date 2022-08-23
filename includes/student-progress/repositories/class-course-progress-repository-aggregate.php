@@ -22,12 +22,14 @@ class Course_Progress_Repository_Aggregate implements Course_Progress_Repository
 
 	/**
 	 * Repository for course progress in custom tables.
+	 *
 	 * @var Course_Progress_Tables_Repository
 	 */
 	private $repository_tables;
 
 	/**
 	 * Repository for course progress in comments.
+	 *
 	 * @var Course_Progress_Comments_Repository
 	 */
 	private $repository_comments;
@@ -41,6 +43,7 @@ class Course_Progress_Repository_Aggregate implements Course_Progress_Repository
 
 	/**
 	 * Sensei_Course_Progress_Repository_Aggregate constructor.
+	 *
 	 * @param Course_Progress_Tables_Repository   $tables Repository for course progress in custom tables.
 	 * @param Course_Progress_Comments_Repository $comments Repository for course progress in comments.
 	 * @param bool                                $use_tables Whether to use the custom tables repository.
@@ -57,6 +60,7 @@ class Course_Progress_Repository_Aggregate implements Course_Progress_Repository
 
 	/**
 	 * Creates a new course progress.
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
@@ -71,6 +75,7 @@ class Course_Progress_Repository_Aggregate implements Course_Progress_Repository
 
 	/**
 	 * Gets a course progress.
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
@@ -98,6 +103,7 @@ class Course_Progress_Repository_Aggregate implements Course_Progress_Repository
 
 	/**
 	 * Saves a course progress.
+	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
