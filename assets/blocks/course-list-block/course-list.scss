@@ -2,4 +2,7 @@
 	.wp-block-post-title {
 		text-align: left;
 	}
+	.hide-url-underline > a  {
+		text-decoration: none;
+	}
 }
