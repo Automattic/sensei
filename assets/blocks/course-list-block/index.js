@@ -142,6 +142,7 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		) {
 			hideCourseListPatternsCarouselViewControl();
 			hideNonCourseListBlockPatternContainers();
+			addClassToPatternPickerContainerForCourseList();
 			return <Fragment />;
 		}
 		return <BlockEdit { ...props } />;
@@ -190,4 +191,13 @@ const hideNonCourseListBlockPatternContainers = () => {
 			pattern.style.display = 'none';
 		}
 	} );
+};
+
+const addClassToPatternPickerContainerForCourseList = () => {
+	const patternPickerContainer = document.querySelector(
+		'.block-editor-block-pattern-setup__container'
+	);
+	if ( patternPickerContainer ) {
+		patternPickerContainer.classList.add( 'course-list-pattern-picker' );
+	}
 };

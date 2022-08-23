@@ -5,3 +5,11 @@
 		}
 	}
 }
+.block-editor-block-pattern-setup.view-mode-grid {
+	.block-editor-block-pattern-setup__grid {
+		.block-editor-block-pattern-setup__container.course-list-pattern-picker {
+			display: grid;
+			grid-template-columns: 32.5% 32.5% 32.5%;
+		}
+	}
+}
