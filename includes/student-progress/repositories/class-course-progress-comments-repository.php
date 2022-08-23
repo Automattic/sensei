@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Course_Progress_Comments_Repository implements Course_Progress_Repository_Interface {
 	/**
 	 * Creates a new course progress.
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
@@ -35,7 +36,10 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 		$created_at = new DateTime( $comment->comment_date );
 
 		$comment_meta = get_comment_meta( $comment_id );
-		$started_at   = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
+		if ( ! $comment_meta ) {
+			$comment_meta = [];
+		}
+		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
 		unset( $comment_meta['start'] );
 
 		return new Course_Progress_Comments( $comment_id, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
@@ -43,6 +47,7 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 
 	/**
 	 * Gets a course progress.
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Comments|null The course progress.
@@ -60,10 +65,13 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 
 		$created_at   = new DateTime( $comment->comment_date );
 		$comment_meta = get_comment_meta( $comment->ID );
-		$started_at   = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
+		if ( ! $comment_meta ) {
+			$comment_meta = [];
+		}
+		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
 		unset( $comment_meta['start'] );
 
-		return new Course_Progress_Comments( $comment->ID, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
+		return new Course_Progress_Comments( (int) $comment->comment_ID, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
 	}
 
 	/**
@@ -85,6 +93,7 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 
 	/**
 	 * Save course progress.
+	 *
 	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {

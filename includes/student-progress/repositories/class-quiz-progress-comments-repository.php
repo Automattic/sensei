@@ -76,7 +76,7 @@ class Quiz_Progress_Comments_Repository implements Quiz_Progress_Repository_Inte
 			? $comment->comment_approved
 			: Quiz_Progress::STATUS_IN_PROGRESS;
 
-		return new Quiz_Progress( $comment->ID, $quiz_id, $user_id, $status, $started_at, null, $created_at, $created_at, $comment_meta );
+		return new Quiz_Progress( (int) $comment->comment_ID, $quiz_id, $user_id, $status, $started_at, null, $created_at, $created_at );
 	}
 
 	/**

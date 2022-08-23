@@ -64,7 +64,7 @@ class Lesson_Progress_Comments_Repository implements Lesson_Progress_Repository_
 		$meta_start = get_comment_meta( $comment->ID, 'start', true );
 		$started_at = ! empty( $meta_start ) ? new DateTime( $meta_start ) : new DateTime();
 
-		return new Lesson_Progress_Comments( $comment->ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, null, $created_at, $created_at, $comment_meta );
+		return new Lesson_Progress_Comments( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, null, $created_at, $created_at, $comment_meta );
 	}
 
 	/**
