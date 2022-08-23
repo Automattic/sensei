@@ -10,7 +10,7 @@ import { Fragment } from '@wordpress/element';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
-		className: 'course-list-block',
+		className: 'sensei-lms-course-list-block',
 		query: {
 			perPage: 3,
 			pages: 0,
@@ -73,7 +73,7 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
 		if (
 			'core/query' === selectedBlock?.name &&
-			'course-list-block' === selectedBlock?.attributes?.className
+			'sensei-lms-course-list-block' === selectedBlock?.attributes?.className
 		) {
 			hideUnnecessarySettingsForCourseList();
 		}
@@ -125,7 +125,7 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
 			isQueryLoopBlock &&
-			'course-list-block' === props.attributes.className;
+			'sensei-lms-course-list-block' === props.attributes.className;
 
 		if ( isCourseListBlock && props.isSelected ) {
 			isCourseListBlockSelected = true;
