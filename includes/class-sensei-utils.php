@@ -1,6 +1,6 @@
 <?php
 
-use Sensei\StudentProgress\Models\Course_Progress_Interface;
+use Sensei\Student_Progress\Models\Course_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

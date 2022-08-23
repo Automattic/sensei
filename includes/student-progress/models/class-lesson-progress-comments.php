@@ -5,7 +5,7 @@
  * @package sensei
  */
 
-namespace Sensei\StudentProgress\Models;
+namespace Sensei\Student_Progress\Models;
 
 use DateTime;
 use Sensei_Lesson;

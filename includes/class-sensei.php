@@ -1,8 +1,8 @@
 <?php
 
-use Sensei\StudentProgress\Repositories\Course_Progress_Repository_Factory;
-use Sensei\StudentProgress\Repositories\Lesson_Progress_Repository_Factory;
-use Sensei\StudentProgress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Student_Progress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\Student_Progress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\Student_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

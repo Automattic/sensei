@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\StudentProgress\Repositories;
+namespace Sensei\Student_Progress\Repositories;
 
-use Sensei\StudentProgress\Models\Lesson_Progress_Interface;
+use Sensei\Student_Progress\Models\Lesson_Progress_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -5,7 +5,7 @@
  * @package sensei
  */
 
-namespace Sensei\StudentProgress\Repositories;
+namespace Sensei\Student_Progress\Repositories;
 
 /**
  * Class Quiz_Progress_Repository_Factory.

@@ -5,12 +5,12 @@
  * @package sensei
  */
 
-namespace Sensei\StudentProgress\Repositories;
+namespace Sensei\Student_Progress\Repositories;
 
 use InvalidArgumentException;
-use Sensei\StudentProgress\Models\Course_Progress_Comments;
-use Sensei\StudentProgress\Models\Course_Progress_Interface;
-use Sensei\StudentProgress\Models\Course_Progress_Tables;
+use Sensei\Student_Progress\Models\Course_Progress_Comments;
+use Sensei\Student_Progress\Models\Course_Progress_Interface;
+use Sensei\Student_Progress\Models\Course_Progress_Tables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
