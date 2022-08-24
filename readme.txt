@@ -127,7 +127,6 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Add: Support for passing a custom footer to the Modal component [#5503](https://github.com/Automattic/sensei/pull/5503)
 * Fix: Template selection logic when learning mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
 * Fix: Course Outline - Show private lessons only for those who can view them. [#5468](https://github.com/Automattic/sensei/pull/5468)
-* Tweak: Use Ubuntu Latest instead of Ubuntu 18.04 on Github Actions workflow [#5506](https://github.com/Automattic/sensei/pull/5506)
 * Tweak: Combine PHP and JS strings in POT generation command [#5486](https://github.com/Automattic/sensei/pull/5486)
 * Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
 * Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
