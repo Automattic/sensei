@@ -5,7 +5,10 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-const { createCourse } = require( '../../../helpers/api' );
+const {
+	createCourse,
+	createCourseCategory,
+} = require( '../../../helpers/api' );
 const { describe, use, beforeAll } = test;
 
 /**
@@ -16,12 +19,35 @@ const PostType = require( '../../../pages/admin/postType' );
 
 describe( 'Courses List Block', () => {
 	use( { storageState: getContextByRole( 'admin' ) } );
-	const courses = [ 'course a', 'course b', 'course c' ];
+	const courses = [
+		{
+			title: 'Photography',
+			excerpt: 'Course about photography',
+			category: 'category a',
+		},
+		{
+			title: 'Music',
+			excerpt: 'Course about music',
+			category: 'category b',
+		},
+		{
+			title: 'Audio',
+			excerpt: 'Course about Audio',
+			category: 'category c',
+		},
+	];
 
 	beforeAll( async ( { request } ) => {
-		return Promise.all(
-			courses.map( async ( course ) => createCourse( request, course ) )
-		);
+		courses.forEach( async ( course ) => {
+			const category = await createCourseCategory( request, {
+				name: course.category,
+			} );
+
+			await createCourse( request, {
+				...course,
+				categories: [ category.id ],
+			} );
+		} );
 	} );
 
 	test( 'it should render a list of courses', async ( { page } ) => {
@@ -29,15 +55,31 @@ describe( 'Courses List Block', () => {
 
 		await postTypePage.goToNewPage();
 		const courseList = await postTypePage.addBlock( 'Course List' );
-		await courseList.choosePattern( 'Grid of courses' );
+		await courseList.choosePattern( 'Grid of courses with details' );
 
 		await postTypePage.publish();
 		await postTypePage.preview();
 
-		await expect(
-			page.locator( `text='${ courses[ 0 ] }'` )
-		).toBeVisible();
+		courses.forEach( async ( course ) => {
+			await expect(
+				page.locator( `text='${ course.title }'` ),
+				'renders the title'
+			).toBeVisible();
 
-		//TODO: Add more checks
+			await expect(
+				page.locator( `text='${ course.excerpt }'` ),
+				'renders the excerpts'
+			).toBeVisible();
+
+			await expect(
+				page.locator( `text='${ course.category }'` ),
+				'renders the categories'
+			).toBeVisible();
+		} );
+
+		await expect(
+			page.locator( `text='Start Course'` ),
+			'renders the start courses buttons'
+		).toHaveCount( courses.length );
 	} );
 } );

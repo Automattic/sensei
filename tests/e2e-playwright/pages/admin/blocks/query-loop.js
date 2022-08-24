@@ -1,11 +1,9 @@
 class QueryLoopBlock {
 	constructor( base, page ) {
 		this.base = base;
-		this.chooseAPatternButton = base.locator( 'button:has-text("Choose")' );
+		this.page = page;
+		this.choosePatternButton = base.locator( 'button:has-text("Choose")' );
 		this.choosePatternModal = page.locator( 'role=dialog' );
-		this.chooseTheSelectedPatternButton = this.choosePatternModal.locator(
-			'.block-editor-block-pattern-setup__actions > button:has-text("Choose")'
-		);
 	}
 
 	async isPatternActive( patternName ) {
@@ -17,15 +15,12 @@ class QueryLoopBlock {
 	}
 
 	async choosePattern( patternName ) {
-		await this.chooseAPatternButton.click();
+		await this.choosePatternButton.click();
 
-		while ( ! ( await this.isPatternActive( patternName ) ) ) {
-			await this.choosePatternModal
-				.locator( '[aria-label="Next pattern"]' )
-				.click();
-		}
-
-		return this.chooseTheSelectedPatternButton.click();
+		return await this.page
+			.locator( `[aria-label="${ patternName }"] div` )
+			.nth( 1 )
+			.click();
 	}
 }
 exports.QueryLoopBlock = QueryLoopBlock;
