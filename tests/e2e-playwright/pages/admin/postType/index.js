@@ -42,7 +42,9 @@ class PostType {
 	}
 
 	async preview() {
-		return this.page.locator( 'text=View Page' ).click();
+		return this.page
+			.locator( '[aria-label="Editor publish"] >> text=View Page' )
+			.click();
 	}
 }
 
