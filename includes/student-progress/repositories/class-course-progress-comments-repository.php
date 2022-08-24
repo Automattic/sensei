@@ -28,6 +28,7 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress_Interface The course progress.
+	 * @throws \RuntimeException If the course progress could not be created.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress_Interface {
 		$metadata   = [

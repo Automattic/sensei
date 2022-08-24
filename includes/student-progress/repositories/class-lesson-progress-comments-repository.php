@@ -29,6 +29,7 @@ class Lesson_Progress_Comments_Repository implements Lesson_Progress_Repository_
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress_Comments The lesson progress.
+	 * @throws RuntimeException When the lesson progress could not be created.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress_Interface {
 		$metadata   = [
