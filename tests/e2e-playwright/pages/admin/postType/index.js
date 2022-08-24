@@ -13,6 +13,7 @@ class PostType {
 		this.queryLoopPatternSelection = page.locator(
 			'[aria-label="Block: Query Loop"]'
 		);
+		this.previewURL = null;
 	}
 
 	async goToNewPage() {
@@ -30,21 +31,26 @@ class PostType {
 		return new QueryLoopBlock( this.queryLoopPatternSelection, this.page );
 	}
 
+	async getPreviewURL() {
+		const params = new URL( await this.page.url() ).searchParams;
+		return `/?page_id=${ params.get( 'post' ) }`;
+	}
+
 	async publish() {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
 			.click();
 
-		return this.page
+		await this.page
 			.locator( '[aria-label="Editor publish"] >> text=Publish' )
 			.first()
 			.click();
+
+		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
 	}
 
 	async preview() {
-		return this.page
-			.locator( '[aria-label="Editor publish"] >> text=View Page' )
-			.click();
+		return this.page.goto( await this.getPreviewURL() );
 	}
 }
 
