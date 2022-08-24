@@ -60,7 +60,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:sensei-lms/course-categories {"textColor":"background","backgroundColor":"accent"} /-->
 
-						<!-- wp:post-title {"level":1,"fontSize":"large"} /-->
+						<!-- wp:post-title {"level":1,"fontSize":"large","isLink":true,"className":"hide-url-underline"} /-->
 
 						<!-- wp:post-author /-->
 
@@ -81,7 +81,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:sensei-lms/course-categories {"textColor":"background","backgroundColor":"accent"} /-->
 
-						<!-- wp:post-title {"level":1,"fontSize":"x-large"} /-->' . $course_action_button . '
+						<!-- wp:post-title {"level":1,"fontSize":"x-large","isLink":true,"className":"hide-url-underline"} /-->' . $course_action_button . '
 						<!-- /wp:post-template -->' . $pagination,
 				],
 			'course-list-columns-description' =>
@@ -96,7 +96,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:sensei-lms/course-categories {"textColor":"background","backgroundColor":"accent"} /-->
 
-						<!-- wp:post-title {"level":1,"fontSize":"x-large"} /-->
+						<!-- wp:post-title {"level":1,"fontSize":"x-large","isLink":true,"className":"hide-url-underline"} /-->
 
 						<!-- wp:post-excerpt {"fontSize":"medium"} /-->' . $course_action_button . '
 						<!-- /wp:post-template -->' . $pagination,
@@ -119,7 +119,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:sensei-lms/course-categories {"textColor":"background","backgroundColor":"accent"} /-->
 
-						<!-- wp:post-title {"fontSize":"x-large"} /-->
+						<!-- wp:post-title {"fontSize":"x-large","isLink":true,"className":"hide-url-underline"} /-->
 
 						<!-- wp:post-author /-->
 
@@ -154,7 +154,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:sensei-lms/course-categories {"textColor":"background","backgroundColor":"accent"} /-->
 
-						<!-- wp:post-title {"fontSize":"x-large"} /-->
+						<!-- wp:post-title {"fontSize":"x-large","isLink":true,"className":"hide-url-underline"} /-->
 
 						</div>
 						<!-- /wp:column -->
@@ -185,7 +185,7 @@ class Sensei_Course_List_Block_Patterns {
 
 						<!-- wp:sensei-lms/course-categories {"textColor":"background","backgroundColor":"accent"} /-->
 
-						<!-- wp:post-title {"fontSize":"x-large"} /-->
+						<!-- wp:post-title {"fontSize":"x-large","isLink":true,"className":"hide-url-underline"} /-->
 						<!-- wp:post-excerpt /-->
 						</div>
 						<!-- /wp:column -->

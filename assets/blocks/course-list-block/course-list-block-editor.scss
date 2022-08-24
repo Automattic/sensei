@@ -3,5 +3,8 @@
 		.components-button.is-secondary {
 			display: none;
 		}
+		.hide-url-underline > a {
+			text-decoration: none;
+		}
 	}
 }
