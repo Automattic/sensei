@@ -70,14 +70,20 @@ class Quiz_Progress_Comments_Repository implements Quiz_Progress_Repository_Inte
 			Quiz_Progress::STATUS_UNGRADED,
 		];
 
-		$created_at = new DateTime( $comment->comment_date );
-		$meta_start = get_comment_meta( $comment->ID, 'start', true );
-		$started_at = ! empty( $meta_start ) ? new DateTime( $meta_start ) : new DateTime();
-		$status     = in_array( $comment->comment_approved, $supported_statuses, true )
+		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
+		$meta_start   = get_comment_meta( $comment->ID, 'start', true );
+		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
+		$status       = in_array( $comment->comment_approved, $supported_statuses, true )
 			? $comment->comment_approved
 			: Quiz_Progress::STATUS_IN_PROGRESS;
 
-		return new Quiz_Progress( (int) $comment->comment_ID, $quiz_id, $user_id, $status, $started_at, null, $created_at, $created_at );
+		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
+			$completed_at = $comment_date;
+		} else {
+			$completed_at = null;
+		}
+
+		return new Quiz_Progress( (int) $comment->comment_ID, $quiz_id, $user_id, $status, $started_at, $completed_at, $comment_date, $comment_date );
 	}
 
 	/**

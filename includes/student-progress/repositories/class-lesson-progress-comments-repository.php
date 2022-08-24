@@ -8,6 +8,7 @@
 namespace Sensei\Student_Progress\Repositories;
 
 use DateTime;
+use SebastianBergmann\Timer\RuntimeException;
 use Sensei\Student_Progress\Models\Lesson_Progress_Comments;
 use Sensei\Student_Progress\Models\Lesson_Progress_Interface;
 use Sensei_Utils;
@@ -34,14 +35,11 @@ class Lesson_Progress_Comments_Repository implements Lesson_Progress_Repository_
 			'start' => current_time( 'mysql' ),
 		];
 		$comment_id = Sensei_Utils::update_lesson_status( $user_id, $lesson_id, Lesson_Progress_Comments::STATUS_IN_PROGRESS, $metadata );
+		if ( ! $comment_id ) {
+			throw new RuntimeException( "Can't create a lesson progress" );
+		}
 
-		$comment    = get_comment( $comment_id );
-		$created_at = new DateTime( $comment->comment_date );
-
-		$meta_start = get_comment_meta( $comment_id, 'start', true );
-		$started_at = ! empty( $meta_start ) ? new DateTime( $meta_start ) : new DateTime();
-
-		return new Lesson_Progress_Comments( $comment_id, $lesson_id, $user_id, $comment->comment_approved, $started_at, null, $created_at, $created_at );
+		return $this->get( $lesson_id, $user_id );
 	}
 
 	/**
@@ -62,11 +60,17 @@ class Lesson_Progress_Comments_Repository implements Lesson_Progress_Repository_
 			return null;
 		}
 
-		$created_at = new DateTime( $comment->comment_date );
-		$meta_start = get_comment_meta( $comment->ID, 'start', true );
-		$started_at = ! empty( $meta_start ) ? new DateTime( $meta_start ) : new DateTime();
+		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
+		$meta_start   = get_comment_meta( $comment->ID, 'start', true );
+		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
 
-		return new Lesson_Progress_Comments( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, null, $created_at, $created_at );
+		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {
+			$completed_at = $comment_date;
+		} else {
+			$completed_at = null;
+		}
+
+		return new Lesson_Progress_Comments( (int) $comment->comment_ID, $lesson_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
 	}
 
 	/**
@@ -96,7 +100,16 @@ class Lesson_Progress_Comments_Repository implements Lesson_Progress_Repository_
 		if ( $lesson_progress->get_started_at() ) {
 			$metadata['start'] = $lesson_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 		}
-		Sensei_Utils::update_lesson_status( $lesson_progress->get_user_id(), $lesson_progress->get_lesson_id(), $lesson_progress->get_status(), $metadata );
+		$comment_id = Sensei_Utils::update_lesson_status( $lesson_progress->get_user_id(), $lesson_progress->get_lesson_id(), $lesson_progress->get_status(), $metadata );
+
+		if ( $lesson_progress->is_complete() && $comment_id ) {
+			$comment = [
+				'comment_ID'   => $comment_id,
+				'comment_date' => $lesson_progress->get_completed_at()->format( 'Y-m-d H:i:s' ),
+			];
+			wp_update_comment( $comment );
+			Sensei()->flush_comment_counts_cache( $lesson_progress->get_lesson_id() );
+		}
 	}
 
 	/**

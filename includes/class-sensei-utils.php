@@ -490,48 +490,28 @@ class Sensei_Utils {
 
 		$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 		if ( $course_id ) {
-			$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-			$course_has_progress        = $course_progress_repository->has( $course_id, $user_id );
-			if ( ! $course_has_progress ) {
-				$course_progress_repository->create( $course_id, $user_id );
+			$is_user_taking_course = self::has_started_course( $course_id, $user_id );
+			if ( ! $is_user_taking_course ) {
+				self::user_start_course( $user_id, $course_id );
 			}
 		}
-
-		$metadata = array();
 
 		// Note: When this action runs the lesson status may not yet exist.
 		do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
 		$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create();
 		$lesson_progress            = $lesson_progress_repository->get( $lesson_id, $user_id );
-		$existing_progress          = true;
 		if ( ! $lesson_progress ) {
-			$lesson_progress   = $lesson_progress_repository->create( $lesson_id, $user_id );
-			$existing_progress = false;
+			$lesson_progress = $lesson_progress_repository->create( $lesson_id, $user_id );
+			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
+			if ( $complete && $has_questions ) {
+				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
+			}
 		}
 
-		$status_changed = false;
 		if ( $complete && ! $lesson_progress->is_complete() ) {
 			$lesson_progress->complete();
-			$status_changed = true;
-			$has_questions  = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
-			if ( $has_questions ) {
-				$metadata['grade'] = 0;
-			}
-		}
-
-		if ( $status_changed ) {
 			$lesson_progress_repository->save( $lesson_progress );
-
-			if ( $existing_progress && $complete ) {
-				Sensei()->flush_comment_counts_cache( $lesson_id );
-			}
-		}
-
-		if ( count( $metadata ) ) {
-			foreach ( $metadata as $key => $value ) {
-				update_comment_meta( $lesson_progress->get_id(), $key, $value );
-			}
 		}
 
 		if ( $complete ) {
@@ -1283,25 +1263,19 @@ class Sensei_Utils {
 
 		if ( ! $user_id ) {
 			$user_id = get_current_user_id();
-			if ( ! $user_id ) {
-				return false;
-			}
 		}
 
-		$activity_args = array(
-			'post_id' => $course_id,
-			'user_id' => $user_id,
-			'type'    => 'sensei_course_status',
-			'field'   => 'comment_ID',
-		);
-
-		$course_progress_comment_id = self::sensei_get_activity_value( $activity_args );
-
-		if ( empty( $course_progress_comment_id ) ) {
+		if ( ! $user_id ) {
 			return false;
 		}
 
-		return $course_progress_comment_id;
+		$course_progress_repository = Sensei()->course_progress_repository_factory->create();
+		$course_progress            = $course_progress_repository->get( $course_id, $user_id );
+		if ( ! $course_progress ) {
+			return false;
+		}
+
+		return $course_progress->get_id();
 	}
 
 	/**
@@ -1558,7 +1532,7 @@ class Sensei_Utils {
 				}
 
 				// the user is not logged in
-				if ( 0 < (int) $user_id ) {
+				if ( 0 >= (int) $user_id ) {
 					return false;
 				}
 				$_user_lesson_status = self::user_lesson_status( $lesson, $user_id );

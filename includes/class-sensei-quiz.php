@@ -816,6 +816,7 @@ class Sensei_Quiz {
 		// Get Lesson Grading Setting.
 		$lesson_metadata = array();
 		$lesson_status   = 'ungraded'; // Default when completing a quiz.
+		$quiz_progress->ungrade();
 
 		// At this point the answers have been submitted.
 		$answers_submitted = true;

@@ -7,7 +7,7 @@
 
 namespace Sensei\Student_Progress\Models;
 
-use DateTime;
+use DateTimeInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,28 +51,28 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	/**
 	 * Course start date.
 	 *
-	 * @var DateTime|null
+	 * @var DateTimeInterface|null
 	 */
 	protected $started_at;
 
 	/**
 	 * Course completion date.
 	 *
-	 * @var DateTime|null
+	 * @var DateTimeInterface|null
 	 */
 	protected $completed_at;
 
 	/**
 	 * Course progress created date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	protected $created_at;
 
 	/**
 	 * Course progress updated date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	protected $updated_at;
 
@@ -87,17 +87,17 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	/**
 	 * Course progress constructor.
 	 *
-	 * @param int           $id          Progress identifier.
-	 * @param int           $course_id Course identifier.
-	 * @param int           $user_id  User identifier.
-	 * @param DateTime      $created_at Course progress created date.
-	 * @param string|null   $status   Progress status.
-	 * @param DateTime|null $started_at Course start date.
-	 * @param DateTime|null $completed_at Course completion date.
-	 * @param DateTime|null $updated_at Course progress updated date.
-	 * @param array         $metadata Course progress metadata.
+	 * @param int                    $id          Progress identifier.
+	 * @param int                    $course_id Course identifier.
+	 * @param int                    $user_id  User identifier.
+	 * @param DateTimeInterface      $created_at Course progress created date.
+	 * @param string|null            $status   Progress status.
+	 * @param DateTimeInterface|null $started_at Course start date.
+	 * @param DateTimeInterface|null $completed_at Course completion date.
+	 * @param DateTimeInterface|null $updated_at Course progress updated date.
+	 * @param array                  $metadata Course progress metadata.
 	 */
-	public function __construct( int $id, int $course_id, int $user_id, DateTime $created_at, string $status = null, DateTime $started_at = null, DateTime $completed_at = null, DateTime $updated_at = null, array $metadata = [] ) {
+	public function __construct( int $id, int $course_id, int $user_id, DateTimeInterface $created_at, string $status = null, DateTimeInterface $started_at = null, DateTimeInterface $completed_at = null, DateTimeInterface $updated_at = null, array $metadata = [] ) {
 		$this->id           = $id;
 		$this->course_id    = $course_id;
 		$this->user_id      = $user_id;
@@ -112,16 +112,16 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	/**
 	 * Set in-progress status and start date.
 	 *
-	 * @param DateTime|null $started_at Course start date.
+	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
-	abstract public function start( DateTime $started_at = null ): void;
+	abstract public function start( DateTimeInterface $started_at = null ): void;
 
 	/**
 	 * Set complete status and completion date.
 	 *
-	 * @param DateTime|null $completed_at Course completion date.
+	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
-	abstract public function complete( DateTime $completed_at = null ): void;
+	abstract public function complete( DateTimeInterface $completed_at = null ): void;
 
 	/**
 	 * Returns the progress identifier.
@@ -162,18 +162,18 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	/**
 	 * Returns the course start date.
 	 *
-	 * @return DateTime|null
+	 * @return DateTimeInterface|null
 	 */
-	public function get_started_at(): ?DateTime {
+	public function get_started_at(): ?DateTimeInterface {
 		return $this->started_at;
 	}
 
 	/**
 	 * Returns the course completion date.
 	 *
-	 * @return DateTime|null
+	 * @return DateTimeInterface|null
 	 */
-	public function get_completed_at(): ?DateTime {
+	public function get_completed_at(): ?DateTimeInterface {
 		return $this->completed_at;
 	}
 
@@ -190,27 +190,27 @@ abstract class Course_Progress_Abstract implements Course_Progress_Interface {
 	/**
 	 * Returns the course progress updated date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_updated_at(): DateTime {
+	public function get_updated_at(): DateTimeInterface {
 		return $this->updated_at;
 	}
 
 	/**
 	 * Returns the course progress created date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_created_at(): DateTime {
+	public function get_created_at(): DateTimeInterface {
 		return $this->created_at;
 	}
 
 	/**
 	 * Set the course progress updated date.
 	 *
-	 * @param DateTime $updated_at Course progress updated date.
+	 * @param DateTimeInterface $updated_at Course progress updated date.
 	 */
-	public function set_updated_at( DateTime $updated_at ): void {
+	public function set_updated_at( DateTimeInterface $updated_at ): void {
 		$this->updated_at = $updated_at;
 	}
 }

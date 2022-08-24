@@ -7,7 +7,7 @@
 
 namespace Sensei\Student_Progress\Models;
 
-use DateTime;
+use DateTimeInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -32,16 +32,16 @@ interface Course_Progress_Interface {
 	/**
 	 * Set in-progress status and start date.
 	 *
-	 * @param DateTime|null $started_at Course start date.
+	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
-	public function start( DateTime $started_at = null ): void;
+	public function start( DateTimeInterface $started_at = null ): void;
 
 	/**
 	 * Set complete status and completion date.
 	 *
-	 * @param DateTime|null $completed_at Course completion date.
+	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
-	public function complete( DateTime $completed_at = null ): void;
+	public function complete( DateTimeInterface $completed_at = null ): void;
 
 	/**
 	 * Returns the progress identifier.
@@ -74,30 +74,30 @@ interface Course_Progress_Interface {
 	/**
 	 * Returns the course start date.
 	 *
-	 * @return DateTime|null
+	 * @return DateTimeInterface|null
 	 */
-	public function get_started_at(): ?DateTime;
+	public function get_started_at(): ?DateTimeInterface;
 
 	/**
 	 * Returns the course completion date.
 	 *
-	 * @return DateTime|null
+	 * @return DateTimeInterface|null
 	 */
-	public function get_completed_at(): ?DateTime;
+	public function get_completed_at(): ?DateTimeInterface;
 
 	/**
 	 * Returns the course progress created date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_created_at(): DateTime;
+	public function get_created_at(): DateTimeInterface;
 
 	/**
 	 * Returns the course progress updated date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_updated_at(): DateTime;
+	public function get_updated_at(): DateTimeInterface;
 
 	/**
 	 * Returns the course progress metadata.
@@ -110,7 +110,7 @@ interface Course_Progress_Interface {
 	/**
 	 * Set the course progress updated date.
 	 *
-	 * @param DateTime $updated_at Course progress updated date.
+	 * @param DateTimeInterface $updated_at Course progress updated date.
 	 */
-	public function set_updated_at( DateTime $updated_at ): void;
+	public function set_updated_at( DateTimeInterface $updated_at ): void;
 }

@@ -7,7 +7,7 @@
 
 namespace Sensei\Student_Progress\Models;
 
-use DateTime;
+use DateTimeInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,11 +22,11 @@ class Course_Progress_Comments extends Course_Progress_Abstract {
 	/**
 	 * Set in-progress status and start date.
 	 *
-	 * @param DateTime|null $started_at Course start date.
+	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
-	public function start( DateTime $started_at = null ): void {
+	public function start( DateTimeInterface $started_at = null ): void {
 		$this->status     = 'in-progress';
-		$this->started_at = $started_at ?? new DateTime();
+		$this->started_at = $started_at ?? current_datetime();
 		$this->metadata   = array_replace(
 			$this->metadata,
 			[
@@ -39,10 +39,10 @@ class Course_Progress_Comments extends Course_Progress_Abstract {
 	/**
 	 * Set complete status and completion date.
 	 *
-	 * @param DateTime|null $completed_at Course completion date.
+	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
-	public function complete( DateTime $completed_at = null ): void {
+	public function complete( DateTimeInterface $completed_at = null ): void {
 		$this->status       = 'complete';
-		$this->completed_at = $completed_at ?? new DateTime();
+		$this->completed_at = $completed_at ?? current_datetime();
 	}
 }

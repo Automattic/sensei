@@ -7,7 +7,7 @@
 
 namespace Sensei\Student_Progress\Models;
 
-use DateTime;
+use DateTimeInterface;
 use Sensei_Lesson;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -61,44 +61,44 @@ class Lesson_Progress_Comments implements Lesson_Progress_Interface {
 	/**
 	 * Course start date.
 	 *
-	 * @var DateTime|null
+	 * @var DateTimeInterface|null
 	 */
 	protected $started_at;
 
 	/**
 	 * Course completion date.
 	 *
-	 * @var DateTime|null
+	 * @var DateTimeInterface|null
 	 */
 	protected $completed_at;
 
 	/**
 	 * Course progress created date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	protected $created_at;
 
 	/**
 	 * Course progress updated date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	protected $updated_at;
 
 	/**
 	 * Sensei_Lesson_Progress constructor.
 	 *
-	 * @param int           $id         Progress identifier.
-	 * @param int           $lesson_id  Lesson identifier.
-	 * @param int           $user_id    User identifier.
-	 * @param string|null   $status     Progress status.
-	 * @param DateTime|null $started_at     Course start date.
-	 * @param DateTime|null $completed_at   Course completion date.
-	 * @param DateTime      $created_at     Course progress created date.
-	 * @param DateTime      $updated_at     Course progress updated date.
+	 * @param int                    $id         Progress identifier.
+	 * @param int                    $lesson_id  Lesson identifier.
+	 * @param int                    $user_id    User identifier.
+	 * @param string|null            $status     Progress status.
+	 * @param DateTimeInterface|null $started_at     Course start date.
+	 * @param DateTimeInterface|null $completed_at   Course completion date.
+	 * @param DateTimeInterface      $created_at     Course progress created date.
+	 * @param DateTimeInterface      $updated_at     Course progress updated date.
 	 */
-	public function __construct( int $id, int $lesson_id, int $user_id, ?string $status, ?DateTime $started_at, ?DateTime $completed_at, DateTime $created_at, DateTime $updated_at ) {
+	public function __construct( int $id, int $lesson_id, int $user_id, ?string $status, ?DateTimeInterface $started_at, ?DateTimeInterface $completed_at, DateTimeInterface $created_at, DateTimeInterface $updated_at ) {
 		$this->id           = $id;
 		$this->lesson_id    = $lesson_id;
 		$this->user_id      = $user_id;
@@ -112,20 +112,20 @@ class Lesson_Progress_Comments implements Lesson_Progress_Interface {
 	/**
 	 * Changes the lesson progress status and start date.
 	 *
-	 * @param DateTime|null $started_at The start date.
+	 * @param DateTimeInterface|null $started_at The start date.
 	 */
-	public function start( ?DateTime $started_at = null ): void {
-		$this->started_at = $started_at ?? new DateTime();
+	public function start( ?DateTimeInterface $started_at = null ): void {
+		$this->started_at = $started_at ?? current_datetime();
 		$this->status     = self::STATUS_IN_PROGRESS;
 	}
 
 	/**
 	 * Changes the lesson progress status and completion date.
 	 *
-	 * @param DateTime|null $completed_at The completion date.
+	 * @param DateTimeInterface|null $completed_at The completion date.
 	 */
-	public function complete( ?DateTime $completed_at = null ): void {
-		$this->completed_at = $completed_at ?? new DateTime();
+	public function complete( ?DateTimeInterface $completed_at = null ): void {
+		$this->completed_at = $completed_at ?? current_datetime();
 		$has_questions      = Sensei_Lesson::lesson_quiz_has_questions( $this->lesson_id );
 		$this->status       = $has_questions ? Quiz_Progress::STATUS_PASSED : self::STATUS_COMPLETE;
 	}
@@ -169,18 +169,18 @@ class Lesson_Progress_Comments implements Lesson_Progress_Interface {
 	/**
 	 * Returns the lesson start date.
 	 *
-	 * @return DateTime|null
+	 * @return DateTimeInterface|null
 	 */
-	public function get_started_at(): ?DateTime {
+	public function get_started_at(): ?DateTimeInterface {
 		return $this->started_at;
 	}
 
 	/**
 	 * Returns the lesson completion date.
 	 *
-	 * @return DateTime|null
+	 * @return DateTimeInterface|null
 	 */
-	public function get_completed_at(): ?DateTime {
+	public function get_completed_at(): ?DateTimeInterface {
 		return $this->completed_at;
 	}
 

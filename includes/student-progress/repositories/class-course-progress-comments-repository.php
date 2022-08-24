@@ -36,19 +36,11 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 			'complete' => 0,
 		];
 		$comment_id = Sensei_Utils::update_course_status( $user_id, $course_id, Course_Progress_Interface::STATUS_IN_PROGRESS, $metadata );
-
-		$comment    = get_comment( $comment_id );
-		$created_at = new DateTime( $comment->comment_date );
-
-		$comment_meta = [];
-		$source_meta  = get_comment_meta( $comment_id );
-		foreach ( $source_meta as $key => $values ) {
-			$comment_meta[ $key ] = $values[0] ?? null;
+		if ( ! $comment_id ) {
+			throw new \RuntimeException( "Can't create a course progress" );
 		}
-		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
-		unset( $comment_meta['start'] );
 
-		return new Course_Progress_Comments( $comment_id, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
+		return $this->get( $course_id, $user_id );
 	}
 
 	/**
@@ -69,16 +61,22 @@ class Course_Progress_Comments_Repository implements Course_Progress_Repository_
 			return null;
 		}
 
-		$created_at   = new DateTime( $comment->comment_date );
+		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		$comment_meta = [];
 		$source_meta  = get_comment_meta( $comment->comment_ID );
 		foreach ( $source_meta as $key => $values ) {
 			$comment_meta[ $key ] = $values[0] ?? null;
 		}
-		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'] ) : new DateTime();
+		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'], wp_timezone() ) : current_datetime();
 		unset( $comment_meta['start'] );
 
-		return new Course_Progress_Comments( (int) $comment->comment_ID, $course_id, $user_id, $created_at, $comment->comment_approved, $started_at, null, $created_at, $comment_meta );
+		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
+			$completed_at = $comment_date;
+		} else {
+			$completed_at = null;
+		}
+
+		return new Course_Progress_Comments( (int) $comment->comment_ID, $course_id, $user_id, $comment_date, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_meta );
 	}
 
 	/**
