@@ -38,16 +38,18 @@ describe( 'Courses List Block', () => {
 	];
 
 	beforeAll( async ( { request } ) => {
-		courses.forEach( async ( course ) => {
-			const category = await createCourseCategory( request, {
-				name: course.category,
-			} );
+		return Promise.all(
+			courses.map( async ( course ) => {
+				const category = await createCourseCategory( request, {
+					name: course.category,
+				} );
 
-			await createCourse( request, {
-				...course,
-				categoryIds: [ category.id ],
-			} );
-		} );
+				return createCourse( request, {
+					...course,
+					categoryIds: [ category.id ],
+				} );
+			} )
+		);
 	} );
 
 	test( 'it should render a list of courses', async ( { page } ) => {
@@ -60,22 +62,24 @@ describe( 'Courses List Block', () => {
 		await postTypePage.publish();
 		await postTypePage.preview();
 
-		courses.forEach( async ( course ) => {
-			await expect(
-				page.locator( `text='${ course.title }'` ),
-				'renders the title'
-			).toBeVisible();
+		await Promise.all(
+			courses.map( async ( course ) => {
+				await expect(
+					page.locator( `text='${ course.title }'` ),
+					'renders the title'
+				).toBeVisible();
 
-			await expect(
-				page.locator( `text='${ course.excerpt }'` ),
-				'renders the excerpts'
-			).toBeVisible();
+				await expect(
+					page.locator( `text='${ course.excerpt }'` ),
+					'renders the excerpts'
+				).toBeVisible();
 
-			await expect(
-				page.locator( `text='${ course.category }'` ),
-				'renders the categories'
-			).toBeVisible();
-		} );
+				return expect(
+					page.locator( `text='${ course.category }'` ),
+					'renders the categories'
+				).toBeVisible();
+			} )
+		);
 
 		// It is possible to have more courses created by other test.
 
