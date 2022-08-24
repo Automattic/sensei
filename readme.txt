@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.8
 Tested up to: 6.0
 Requires PHP: 7.2
-Stable tag: 4.6.2
+Stable tag: 4.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,6 +115,23 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-08-24 - version 4.6.3
+* New: Course List block (beta)
+    * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
+    * Add the Course Categories block [#5455](https://github.com/Automattic/sensei/pull/5455)
+    * Add new patterns for Course List [#5433](https://github.com/Automattic/sensei/pull/5433)
+    * Add Course Actions block [#5430](https://github.com/Automattic/sensei/pull/5430)
+    * Make Continue button take user to the lesson they were working on [#5496](https://github.com/Automattic/sensei/pull/5496)
+    * Make the Course List block with inner blocks globally available [#5473](https://github.com/Automattic/sensei/pull/5473)
+    * Add notice to show invalid usage when blocks are used out of course context [#5489](https://github.com/Automattic/sensei/pull/5489)
+* Add: Support for passing a custom footer to the Modal component [#5503](https://github.com/Automattic/sensei/pull/5503)
+* Fix: Template selection logic when learning mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
+* Fix: Course Outline - Show private lessons only for those who can view them. [#5468](https://github.com/Automattic/sensei/pull/5468)
+* Tweak: Use Ubuntu Latest instead of Ubuntu 18.04 on Github Actions workflow [#5506](https://github.com/Automattic/sensei/pull/5506)
+* Tweak: Combine PHP and JS strings in POT generation command [#5486](https://github.com/Automattic/sensei/pull/5486)
+* Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
+* Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
+
 2022-08-17 - version 4.6.2
 * Fix: Learning Mode - Do not filter templates for query slugs if it is indexing. [#5460](https://github.com/Automattic/sensei/pull/5460)
 * Fix: Do not save -1 values on quiz meta [#5461](https://github.com/Automattic/sensei/pull/5461)
@@ -135,19 +152,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Add: Add current time to player and hook to get the video duration [#5410](https://github.com/Automattic/sensei/pull/5410)
 * Fix: Fix html entities bug for question answers. [#5414](https://github.com/Automattic/sensei/pull/5414)
 * Fix: Fix loading issue where the player wasn't detected correctly on the editor [#5421](https://github.com/Automattic/sensei/pull/5421)
-
-
-2022-07-25 - version 4.6.0
-* Add: Add custom slug in module block [#5207](https://github.com/Automattic/sensei/pull/5207)
-* Add: Add Confirm Dialog component [#5361](https://github.com/Automattic/sensei/pull/5361)
-* Add: Enable _lesson_preview show-in-rest meta settings [#5369](https://github.com/Automattic/sensei/pull/5369)
-* Add: Change video api scripts to be more generic  [#5359](https://github.com/Automattic/sensei/pull/5359)
-* Add: Add hooks to allow adding filters to reports [#5365](https://github.com/Automattic/sensei/pull/5365)
-* Fix: Update videopress event name [#5373](https://github.com/Automattic/sensei/pull/5373)
-* Fix: Fix url encoding of timezone for reports [#5362](https://github.com/Automattic/sensei/pull/5362)
-* Fix: Fix Gutenberg compatibility issue [#5379](https://github.com/Automattic/sensei/pull/5379)
-* Fix: Render additional css on feedback answers block [#5371](https://github.com/Automattic/sensei/pull/5371)
-* Fix: Remove additional line from login redirection code [#5380](https://github.com/Automattic/sensei/pull/5380)
-* Fix: Modules loosing configuration when module is changed [#5387](https://github.com/Automattic/sensei/pull/5387)
-* Tweak: Hide action buttons' notification [#5386](https://github.com/Automattic/sensei/pull/5386)
-
