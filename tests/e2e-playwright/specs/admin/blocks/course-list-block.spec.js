@@ -77,9 +77,15 @@ describe( 'Courses List Block', () => {
 			).toBeVisible();
 		} );
 
+		// It is possible to have more courses created by other test.
+
+		const buttonsCount = await page
+			.locator( `text='Start Course'` )
+			.count();
+
 		await expect(
-			page.locator( `text='Start Course'` ),
-			'renders the start courses buttons'
-		).toHaveCount( courses.length );
+			buttonsCount >= courses.length,
+			'renders a start button by course'
+		).toEqual( true );
 	} );
 } );
