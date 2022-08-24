@@ -1,3 +1,5 @@
+const { memoize } = require( 'lodash' );
+
 const createStudent = async ( context, name ) => {
 	const nonce = await getNonce( context );
 
@@ -61,7 +63,7 @@ const createCourseCategory = async ( context, { name, description, slug } ) => {
 	return response.json();
 };
 
-const getNonce = async ( context ) => {
+const getNonce = memoize( async ( context ) => {
 	const response = await context.get(
 		'/wp-admin/admin-ajax.php?action=rest-nonce',
 		{
@@ -69,7 +71,7 @@ const getNonce = async ( context ) => {
 		}
 	);
 	return response.text();
-};
+} );
 
 module.exports = {
 	createStudent,
