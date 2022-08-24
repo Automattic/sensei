@@ -45,7 +45,7 @@ describe( 'Courses List Block', () => {
 
 			await createCourse( request, {
 				...course,
-				categories: [ category.id ],
+				categoryIds: [ category.id ],
 			} );
 		} );
 	} );

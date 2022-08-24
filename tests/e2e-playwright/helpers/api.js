@@ -21,9 +21,11 @@ const createStudent = async ( context, name ) => {
 
 const createCourse = async (
 	context,
-	{ title, excerpt = '', categories = [] }
+	{ title, excerpt = '', categoryIds }
 ) => {
 	const nonce = await getNonce( context );
+
+	const categories = categoryIds ? { 'course-category': categoryIds } : {};
 	const response = await context.post(
 		`/index.php?rest_route=/wp/v2/courses`,
 		{
@@ -37,7 +39,7 @@ const createCourse = async (
 				content:
 					'<!-- wp:sensei-lms/button-take-course -->\n<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>\n<!-- /wp:sensei-lms/button-take-course -->\n\n<!-- wp:sensei-lms/button-contact-teacher -->\n<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">Contact Teacher</a></div>\n<!-- /wp:sensei-lms/button-contact-teacher -->\n\n<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->\n\n<!-- wp:sensei-lms/course-outline /-->',
 				excerpt,
-				'course-category': categories,
+				...categories,
 			},
 		}
 	);
