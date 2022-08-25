@@ -38,7 +38,7 @@ describe( 'Courses List Block', () => {
 	];
 
 	beforeAll( async ( { request } ) => {
-		courses.forEach( async ( course ) => {
+		for ( const course of courses ) {
 			const category = await createCourseCategory( request, {
 				name: course.category,
 			} );
@@ -47,7 +47,7 @@ describe( 'Courses List Block', () => {
 				...course,
 				categoryIds: [ category.id ],
 			} );
-		} );
+		}
 	} );
 
 	test( 'it should render a list of courses', async ( { page } ) => {
@@ -60,12 +60,11 @@ describe( 'Courses List Block', () => {
 		await postTypePage.publish();
 		await postTypePage.preview();
 
-		courses.forEach( async ( course ) => {
+		for ( const course of courses ) {
 			await expect(
 				page.locator( `text='${ course.title }'` ),
 				'renders the title'
 			).toBeVisible();
-
 			await expect(
 				page.locator( `text='${ course.excerpt }'` ),
 				'renders the excerpts'
@@ -75,7 +74,7 @@ describe( 'Courses List Block', () => {
 				page.locator( `text='${ course.category }'` ),
 				'renders the categories'
 			).toBeVisible();
-		} );
+		}
 
 		// It is possible to have more courses created by other test.
 		const buttonsCount = await page
