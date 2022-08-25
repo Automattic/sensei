@@ -108,9 +108,7 @@ class Sensei_Course_Video_Settings {
 	 * @return void
 	 */
 	public function enqueue_frontend_scripts() {
-		$post = get_post();
-
-		if ( is_admin() || 'lesson' !== $post->post_type ) {
+		if ( is_admin() || get_post_type() !== 'lesson' ) {
 			return;
 		}
 
@@ -131,6 +129,7 @@ class Sensei_Course_Video_Settings {
 
 		wp_add_inline_script( 'sensei-course-video-blocks-extension', $script, 'before' );
 
+		$post = get_post();
 		if ( has_block( 'core/video', $post ) || has_block( 'core/embed', $post ) ) {
 			Sensei()->assets->enqueue_script( 'sensei-course-video-blocks-extension' );
 		}
