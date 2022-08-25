@@ -1,6 +1,8 @@
 <?php
 /**
- * File containing the Grade class.
+ * File containing the Grade_Comments class.
+ *
+ * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
  *
  * @package sensei
  */
@@ -8,31 +10,18 @@
 namespace Sensei\Quiz_Submission\Models;
 
 use DateTime;
+use RuntimeException;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Grade.
+ * Class Grade_Comments.
  *
  * @since $$next-version$$
  */
-class Grade {
-	/**
-	 * The grade ID.
-	 *
-	 * @var int
-	 */
-	private $id;
-
-	/**
-	 * The answer ID.
-	 *
-	 * @var int
-	 */
-	private $answer_id;
-
+class Grade_Comments implements Grade_Interface {
 	/**
 	 * The question ID.
 	 *
@@ -48,20 +37,6 @@ class Grade {
 	private $points;
 
 	/**
-	 * The created date.
-	 *
-	 * @var DateTime
-	 */
-	private $created_at;
-
-	/**
-	 * The updated date.
-	 *
-	 * @var DateTime|null
-	 */
-	private $updated_at;
-
-	/**
 	 * The grade feedback.
 	 *
 	 * @var string|null
@@ -71,48 +46,38 @@ class Grade {
 	/**
 	 * Constructor.
 	 *
-	 * @param int           $id          The grade ID.
-	 * @param int           $answer_id   The answer ID.
-	 * @param int           $question_id The question ID.
-	 * @param int           $points      The grade points.
-	 * @param DateTime      $created_at  The created date.
-	 * @param DateTime|null $updated_at  The updated date.
-	 * @param string|null   $feedback    The grade feedback.
+	 * @param int         $question_id The question ID.
+	 * @param int         $points      The grade points.
+	 * @param string|null $feedback    The grade feedback.
 	 */
 	public function __construct(
-		int $id,
-		int $answer_id,
 		int $question_id,
 		int $points,
-		DateTime $created_at,
-		DateTime $updated_at = null,
 		string $feedback = null
 	) {
-		$this->id          = $id;
-		$this->answer_id   = $answer_id;
 		$this->question_id = $question_id;
 		$this->points      = $points;
 		$this->feedback    = $feedback;
-		$this->created_at  = $created_at;
-		$this->updated_at  = $updated_at ?? $created_at;
 	}
 
 	/**
 	 * Get the grade ID.
 	 *
 	 * @return int
+	 * @throws RuntimeException When called.
 	 */
 	public function get_id(): int {
-		return $this->id;
+		throw new RuntimeException( 'This legacy model has no `id`' );
 	}
 
 	/**
 	 * Get the answer ID.
 	 *
 	 * @return int
+	 * @throws RuntimeException When called.
 	 */
 	public function get_answer_id(): int {
-		return $this->answer_id;
+		throw new RuntimeException( 'This legacy model has no `answer_id`' );
 	}
 
 	/**
@@ -146,17 +111,19 @@ class Grade {
 	 * Get the created date.
 	 *
 	 * @return DateTime
+	 * @throws RuntimeException When called.
 	 */
 	public function get_created_at(): DateTime {
-		return $this->created_at;
+		throw new RuntimeException( 'This legacy model has no `created_at`' );
 	}
 
 	/**
 	 * Get the updated date.
 	 *
 	 * @return DateTime
+	 * @throws RuntimeException When called.
 	 */
 	public function get_updated_at(): DateTime {
-		return $this->updated_at;
+		throw new RuntimeException( 'This legacy model has no `updated_at`' );
 	}
 }

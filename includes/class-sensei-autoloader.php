@@ -243,7 +243,9 @@ class Sensei_Autoloader {
 			 * Quiz Submission
 			 */
 			'Sensei\Quiz_Submission\Models\Answer'         => 'quiz-submission/models/class-answer.php',
-			'Sensei\Quiz_Submission\Models\Grade'          => 'quiz-submission/models/class-grade.php',
+			'Sensei\Quiz_Submission\Models\Grade_Comments' => 'quiz-submission/models/class-grade-comments.php',
+			'Sensei\Quiz_Submission\Models\Grade_Tables'   => 'quiz-submission/models/class-grade-tables.php',
+			'Sensei\Quiz_Submission\Models\Grade_Interface' => 'quiz-submission/models/class-grade-interface.php',
 			'Sensei\Quiz_Submission\Models\Submission'     => 'quiz-submission/models/class-submission.php',
 			'Sensei\Quiz_Submission\Repositories\Answer_Comments_Repository' => 'quiz-submission/repositories/class-answer-comments-repository.php',
 			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Aggregate' => 'quiz-submission/repositories/class-answer-repository-aggregate.php',

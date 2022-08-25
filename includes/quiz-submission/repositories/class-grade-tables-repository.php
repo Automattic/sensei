@@ -20,35 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Grade_Tables_Repository implements Grade_Repository_Interface {
 	/**
-	 * Create a new grade.
-	 *
-	 * @param int         $answer_id   The answer ID.
-	 * @param int         $question_id The question ID.
-	 * @param int         $points      The points.
-	 * @param string|null $feedback    The feedback.
-	 *
-	 * @return Grade The grade model.
-	 */
-	public function create( int $answer_id, int $question_id, int $points, string $feedback = null ): Grade {
-		// TODO: Implement create() method.
-
-		return new Grade();
-	}
-
-	/**
-	 * Get a grade.
-	 *
-	 * @param int $answer_id The answer ID.
-	 *
-	 * @return Grade|null The grade model.
-	 */
-	public function get( int $answer_id ): ?Grade {
-		// TODO: Implement get() method.
-
-		return null;
-	}
-
-	/**
 	 * Get all grades for a quiz submission.
 	 *
 	 * @param int $submission_id The submission ID.
