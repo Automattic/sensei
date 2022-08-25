@@ -26,8 +26,6 @@ const initVideoPressPlayer = ( iframe ) => {
 
 export const initVideoPressExtension = () => {
 	document
-		.querySelectorAll(
-			'.sensei-course-video-container.videopress-extension iframe'
-		)
+		.querySelectorAll( '.wp-block-embed-videopress iframe' )
 		.forEach( initVideoPressPlayer );
 };

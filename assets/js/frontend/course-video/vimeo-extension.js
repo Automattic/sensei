@@ -31,8 +31,6 @@ const initVimeoPlayer = ( iframe ) => {
 
 export const initVimeoExtension = () => {
 	document
-		.querySelectorAll(
-			'.sensei-course-video-container.vimeo-extension iframe'
-		)
+		.querySelectorAll( '.wp-block-embed-vimeo iframe' )
 		.forEach( initVimeoPlayer );
 };

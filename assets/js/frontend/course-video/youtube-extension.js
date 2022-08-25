@@ -28,8 +28,6 @@ const initYouTubePlayer = ( iframe ) => {
 
 export const initYouTubeExtension = () => {
 	document
-		.querySelectorAll(
-			'.sensei-course-video-container.youtube-extension iframe'
-		)
+		.querySelectorAll( '.wp-block-embed-youtube iframe' )
 		.forEach( initYouTubePlayer );
 };

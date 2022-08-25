@@ -26,6 +26,6 @@ const initVideoPlayer = ( video ) => {
 
 export const initVideoExtension = () => {
 	document
-		.querySelectorAll( '.sensei-course-video-container video' )
+		.querySelectorAll( '.wp-block-video video' )
 		.forEach( initVideoPlayer );
 };
