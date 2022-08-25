@@ -459,7 +459,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 		$files = $this->factory->generate_test_files( $test_user_quiz_answers );
 		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, $files, $test_lesson_id, $test_user_id );
-		delete_site_transient( $transient_key );
+		delete_transient( $transient_key );
 		Sensei()->quiz->get_user_answers( $test_lesson_id, $test_user_id );
 		$transient_data_after_retrieval = get_transient( $transient_key );
 
@@ -989,7 +989,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		// Set up the next assertion data.
 		$transient_key = 'quiz_grades_' . $test_user_id . '_' . $test_lesson_id;
 		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
-		delete_site_transient( $transient_key );
+		delete_transient( $transient_key );
 		Sensei()->quiz->get_user_grades( $test_lesson_id, $test_user_id );
 		$transient_val = get_transient( $transient_key );
 
@@ -1042,7 +1042,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		// Setup the next assertion.
 		$transient_key = 'quiz_grades_' . $test_user_id . '_' . $test_lesson_id;
-		delete_site_transient( $transient_key );
+		delete_transient( $transient_key );
 		Sensei_Utils::delete_user_data( 'quiz_grades', $test_lesson_id, $test_user_id );
 		$random_question_id   = array_rand( $test_user_grades );
 		$old_data_args        = array(
@@ -1320,7 +1320,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 
 		Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
-		delete_site_transient( $transient_key );
+		delete_transient( $transient_key );
 		Sensei()->quiz->get_user_answers_feedback( $test_lesson_id, $test_user_id );
 		$transient_data_after_get_call = get_transient( $transient_key );
 
