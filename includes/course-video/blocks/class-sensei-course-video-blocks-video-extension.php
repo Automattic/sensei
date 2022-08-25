@@ -53,12 +53,15 @@ class Sensei_Course_Video_Blocks_Video_Extension {
 	/**
 	 * Wrap Video in a container.
 	 *
+	 * @access private
+	 *
 	 * @param string $html
 	 *
 	 * @return string
 	 */
 	public function wrap_video( $html ): string {
 		wp_enqueue_script( 'sensei-course-video-blocks-extension' );
-		return '<div class="sensei-course-video-container video-extension">' . $html . '</div>';
+
+		return $html;
 	}
 }

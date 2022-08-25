@@ -26,34 +26,29 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Returns wrapped video block.
 	 *
-	 * @param string $html
-	 * @param string $url
+	 * @access private
+	 *
+	 * @param string $html Video HTML.
+	 * @param string $url  Video URL.
 	 *
 	 * @return string
 	 */
 	public function wrap_video( $html, $url ): string {
-		if ( ! $this->is_supported( $url ) ) {
-			return $html;
+		if ( $this->is_supported( $url ) ) {
+			wp_enqueue_script( 'sensei-course-video-blocks-extension' );
 		}
 
-		wp_enqueue_script( 'sensei-course-video-blocks-extension' );
-
-		return "<div class='sensei-course-video-container {$this->get_extension_class_name()}'>$html</div>";
+		return $html;
 	}
 
 	/**
 	 * Returns if the URL is supported by the extension.
 	 *
-	 * @param string $url
+	 * @deprecated $$next-version$$
+	 *
+	 * @param string $url Video URL.
 	 *
 	 * @return bool
 	 */
 	abstract protected function is_supported( string $url ): bool;
-
-	/**
-	 * Returns a class name for the extension.
-	 *
-	 * @return string
-	 */
-	abstract protected function get_extension_class_name(): string;
 }

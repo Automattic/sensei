@@ -59,9 +59,13 @@ class Sensei_Course_Video_Blocks_Vimeo_Extension extends Sensei_Course_Video_Blo
 	/**
 	 * Returns the class name for the extension.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @return string
 	 */
 	protected function get_extension_class_name(): string {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return 'vimeo-extension';
 	}
 }
