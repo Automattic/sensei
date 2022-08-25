@@ -1,0 +1,10 @@
+.editor-styles-wrapper {
+	.wp-block-sensei-lms-course-list {
+		.components-button.is-secondary {
+			display: none;
+		}
+		.hide-url-underline > a {
+			text-decoration: none;
+		}
+	}
+}

@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "sensei-lms/course-categories",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "left"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"customBackgroundColor": {
+			"type": "string"
+		},
+		"customTextColor": {
+			"type": "string"
+		},
+        "defaultBackgroundColor": {
+			"type": "string"
+		},
+		"defaultTextColor": {
+			"type": "string"
+		},
+		"fontSize": {
+			"type": "string",
+			"default": "small"
+		}
+	},
+	"usesContext": [ "postId", "postType" ],
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		},
+		"textAlign": true,
+		"align": true,
+		"alignWide": true,
+		"typography": {
+			"lineHeight": true,
+			"fontSize": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		}
+	}
+}

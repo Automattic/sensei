@@ -152,4 +152,19 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 		$this->assertEmpty( $result );
 	}
 
+	/**
+	 * Doesn't render the block if it's not running in a course context.
+	 *
+	 * @covers Sensei_Block_Take_Course::render_take_course_block
+	 */
+	public function testRenderTakeCourseBlock_Page_ReturnsEmptyString() {
+		$GLOBALS['post'] = (object) [
+			'ID'        => 0,
+			'post_type' => 'page',
+		];
+
+		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
+
+		$this->assertEmpty( $result );
+	}
 }
