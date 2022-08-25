@@ -109,3 +109,19 @@ export const onTimeupdate = ( player, callback ) => {
 		player.off( 'timeupdate', transformedCallback );
 	};
 };
+
+/**
+ * Add an ended event listener to the player.
+ *
+ * @param {Object}   player   The Vimeo player instance.
+ * @param {Function} callback Listener callback.
+ *
+ * @return {Function} The function to unsubscribe the event.
+ */
+export const onEnded = ( player, callback ) => {
+	player.on( 'ended', callback );
+
+	return () => {
+		player.off( 'ended', callback );
+	};
+};
