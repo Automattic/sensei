@@ -26,8 +26,7 @@
 			"default": "small"
 		},
         "previewCategories": {
-            "type": "array",
-            "default": []
+            "type": "array"
         }
 	},
 	"usesContext": [ "postId", "postType" ],
