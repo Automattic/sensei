@@ -110,7 +110,7 @@ class Sensei_Course_Video_Settings {
 	public function enqueue_frontend_scripts() {
 		$post = get_post();
 
-		if ( is_admin() || $post->post_type !== 'lesson' ) {
+		if ( is_admin() || 'lesson' !== $post->post_type ) {
 			return;
 		}
 
