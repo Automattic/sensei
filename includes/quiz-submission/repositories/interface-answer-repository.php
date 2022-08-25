@@ -50,6 +50,15 @@ interface Answer_Repository_Interface {
 	public function get_all( int $submission_id ): array;
 
 	/**
+	 * Get all answers and grades for a quiz submission.
+	 *
+	 * @param int $submission_id The submission ID.
+	 *
+	 * @return Answer[] An array of answers.
+	 */
+	public function get_all_answers_and_grades( int $submission_id ): array;
+
+	/**
 	 * Save the answer.
 	 *
 	 * @param Answer $answer The answer model.

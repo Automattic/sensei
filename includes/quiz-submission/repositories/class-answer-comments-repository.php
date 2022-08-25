@@ -92,6 +92,28 @@ class Answer_Comments_Repository implements Answer_Repository_Interface {
 	}
 
 	/**
+	 * Get all answers and grades for a quiz submission.
+	 *
+	 * @param int $submission_id The submission ID.
+	 *
+	 * @return Answer[] An array of answers.
+	 */
+	public function get_all_answers_and_grades( int $submission_id ): array {
+		$answers = $this->get_all( $submission_id );
+		$grades  = $this->grade_repository->get_all( $submission_id );
+
+		foreach ( $answers as $answer ) {
+			foreach ( $grades as $grade ) {
+				if ( $grade->get_question_id() === $answer->get_question_id() ) {
+					$answer->set_grade( $grade );
+				}
+			}
+		}
+
+		return $answers;
+	}
+
+	/**
 	 * Save the answer.
 	 *
 	 * @param Answer $answer The answer model.

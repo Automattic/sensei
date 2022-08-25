@@ -106,6 +106,21 @@ class Answer_Repository_Aggregate implements Answer_Repository_Interface {
 	}
 
 	/**
+	 * Get all answers and grades for a quiz submission.
+	 *
+	 * @param int $submission_id The submission ID.
+	 *
+	 * @return Answer[] An array of answers.
+	 */
+	public function get_all_answers_and_grades( int $submission_id ): array {
+		if ( $this->use_tables ) {
+			return $this->tables_repository->get_all_answers_and_grades( $submission_id );
+		}
+
+		return $this->comments_repository->get_all_answers_and_grades( $submission_id );
+	}
+
+	/**
 	 * Save the answer.
 	 *
 	 * @param Answer $answer The answer model.

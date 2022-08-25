@@ -34,6 +34,13 @@ class Grade {
 	private $answer_id;
 
 	/**
+	 * The question ID.
+	 *
+	 * @var int
+	 */
+	private $question_id;
+
+	/**
 	 * The grade points.
 	 *
 	 * @var int
@@ -64,27 +71,30 @@ class Grade {
 	/**
 	 * Constructor.
 	 *
-	 * @param int           $id         The grade ID.
-	 * @param int           $answer_id  The answer ID.
-	 * @param int           $points     The grade points.
-	 * @param DateTime      $created_at The created date.
-	 * @param DateTime|null $updated_at The updated date.
-	 * @param string|null   $feedback   The grade feedback.
+	 * @param int           $id          The grade ID.
+	 * @param int           $answer_id   The answer ID.
+	 * @param int           $question_id The question ID.
+	 * @param int           $points      The grade points.
+	 * @param DateTime      $created_at  The created date.
+	 * @param DateTime|null $updated_at  The updated date.
+	 * @param string|null   $feedback    The grade feedback.
 	 */
 	public function __construct(
 		int $id,
 		int $answer_id,
+		int $question_id,
 		int $points,
 		DateTime $created_at,
 		DateTime $updated_at = null,
 		string $feedback = null
 	) {
-		$this->id         = $id;
-		$this->answer_id  = $answer_id;
-		$this->points     = $points;
-		$this->feedback   = $feedback;
-		$this->created_at = $created_at;
-		$this->updated_at = $updated_at ?? $created_at;
+		$this->id          = $id;
+		$this->answer_id   = $answer_id;
+		$this->question_id = $question_id;
+		$this->points      = $points;
+		$this->feedback    = $feedback;
+		$this->created_at  = $created_at;
+		$this->updated_at  = $updated_at ?? $created_at;
 	}
 
 	/**
@@ -103,6 +113,15 @@ class Grade {
 	 */
 	public function get_answer_id(): int {
 		return $this->answer_id;
+	}
+
+	/**
+	 * Get the question ID.
+	 *
+	 * @return int
+	 */
+	public function get_question_id(): int {
+		return $this->question_id;
 	}
 
 	/**

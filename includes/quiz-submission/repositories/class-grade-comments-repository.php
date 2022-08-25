@@ -7,6 +7,7 @@
 
 namespace Sensei\Quiz_Submission\Repositories;
 
+use DateTime;
 use Sensei\Quiz_Submission\Models\Grade;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,13 +23,14 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 	/**
 	 * Create a new grade.
 	 *
-	 * @param int         $answer_id The answer ID.
-	 * @param int         $points    The points.
-	 * @param string|null $feedback  The feedback.
+	 * @param int         $answer_id   The answer ID.
+	 * @param int         $question_id The question ID.
+	 * @param int         $points      The points.
+	 * @param string|null $feedback    The feedback.
 	 *
 	 * @return Grade The grade model.
 	 */
-	public function create( int $answer_id, int $points, string $feedback = null ): Grade {
+	public function create( int $answer_id, int $question_id, int $points, string $feedback = null ): Grade {
 		// TODO: Implement create() method.
 
 		return new Grade();
@@ -55,9 +57,21 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 	 * @return Grade[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
-		// TODO: Implement get_all() method.
+		$grades_map = get_comment_meta( $submission_id, 'quiz_grades', true );
 
-		return [];
+		if ( ! $grades_map ) {
+			return [];
+		}
+
+		$feedback_map = get_comment_meta( $submission_id, 'quiz_answers_feedback', true );
+
+		$grades = [];
+		foreach ( $grades_map as $question_id => $points ) {
+			$feedback = $feedback_map[ $question_id ] ?? null;
+			$grades[] = new Grade( 0, 0, $question_id, $points, new DateTime(), null, $feedback );
+		}
+
+		return $grades;
 	}
 
 	/**

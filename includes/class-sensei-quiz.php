@@ -1,6 +1,7 @@
 <?php
 
 use Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory;
+use Sensei\Quiz_Submission\Repositories\Grade_Repository_Factory;
 use Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1008,42 +1009,57 @@ class Sensei_Quiz {
 	 * @param $lesson_id
 	 * @param $user_id (Optional) will use the current user if not supplied
 	 *
-	 * @return array $user_quiz_grades or false if none exists for this users
+	 * @return array|false $user_quiz_grades or false if none exists for this users
 	 */
 	public function get_user_grades( $lesson_id, $user_id = 0 ) {
-
-		$user_grades = array();
 
 		// get the user_id if none was passed in use the current logged in user
 		if ( ! intval( $user_id ) > 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		if ( ! intval( $lesson_id ) > 0 || 'lesson' != get_post_type( $lesson_id )
-			|| ! intval( $user_id ) > 0 || ! get_userdata( $user_id ) ) {
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		if (
+			! intval( $lesson_id ) > 0
+			|| ! $quiz_id
+			|| 'lesson' !== get_post_type( $lesson_id )
+			|| ! intval( $user_id ) > 0
+			|| ! get_userdata( $user_id )
+		) {
 			return false;
 		}
 
 		// save some time and get the transient cached data
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
-		$user_grades   = get_transient( $transient_key );
+		$grades_map    = get_transient( $transient_key );
 
 		// get the data if nothing was stored in the transient
-		if ( empty( $user_grades ) || false != $user_grades ) {
+		if ( false === $grades_map ) {
+			$submission_repository = ( new Submission_Repository_Factory() )->create();
+			$submission            = $submission_repository->get( $quiz_id, $user_id );
+			if ( ! $submission ) {
+				return false;
+			}
 
-			$user_grades = Sensei_Utils::get_user_data( 'quiz_grades', $lesson_id, $user_id );
+			$grade_repository = ( new Grade_Repository_Factory() )->create();
+			$grades           = $grade_repository->get_all( $submission->get_id() );
+
+			$grades_map = [];
+			foreach ( $grades as $grade ) {
+				$grades_map[ $grade->get_question_id() ] = $grade->get_points();
+			}
 
 			// set the transient with the new valid data for faster retrieval in future
-			set_transient( $transient_key, $user_grades, 10 * DAY_IN_SECONDS );
-
+			set_transient( $transient_key, $grades_map, 10 * DAY_IN_SECONDS );
 		}
 
 		// if there is no data for this user
-		if ( ! is_array( $user_grades ) ) {
+		if ( ! is_array( $grades_map ) ) {
 			return false;
 		}
 
-		return $user_grades;
+		return $grades_map;
 
 	}
 

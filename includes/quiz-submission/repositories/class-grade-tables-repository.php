@@ -22,13 +22,14 @@ class Grade_Tables_Repository implements Grade_Repository_Interface {
 	/**
 	 * Create a new grade.
 	 *
-	 * @param int         $answer_id The answer ID.
-	 * @param int         $points    The points.
-	 * @param string|null $feedback  The feedback.
+	 * @param int         $answer_id   The answer ID.
+	 * @param int         $question_id The question ID.
+	 * @param int         $points      The points.
+	 * @param string|null $feedback    The feedback.
 	 *
 	 * @return Grade The grade model.
 	 */
-	public function create( int $answer_id, int $points, string $feedback = null ): Grade {
+	public function create( int $answer_id, int $question_id, int $points, string $feedback = null ): Grade {
 		// TODO: Implement create() method.
 
 		return new Grade();

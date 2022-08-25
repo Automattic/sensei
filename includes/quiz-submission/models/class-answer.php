@@ -62,6 +62,13 @@ class Answer {
 	private $updated_at;
 
 	/**
+	 * The grade model.
+	 *
+	 * @var Grade|null
+	 */
+	private $grade;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param int           $id            The answer ID.
@@ -139,5 +146,23 @@ class Answer {
 	 */
 	public function get_updated_at(): DateTime {
 		return $this->updated_at;
+	}
+
+	/**
+	 * Get the grade model.
+	 *
+	 * @return Grade|null
+	 */
+	public function get_grade(): ?Grade {
+		return $this->grade;
+	}
+
+	/**
+	 * Set the grade model.
+	 *
+	 * @param Grade $grade The grade model.
+	 */
+	public function set_grade( Grade $grade ): void {
+		$this->grade = $grade;
 	}
 }
