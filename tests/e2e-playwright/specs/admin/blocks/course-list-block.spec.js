@@ -5,20 +5,15 @@ const { test, expect } = require( '@playwright/test' );
 /**
  * Internal dependencies
  */
-const {
-	createCourse,
-	createCourseCategory,
-} = require( '../../../helpers/api' );
-const { describe, use, beforeAll } = test;
-
-/**
- * Internal dependencies
- */
+const { createCourse, createCourseCategory } = require( '../../../helpers/api' );
 const { getContextByRole } = require( '../../../helpers/context' );
-const PostType = require( '../../../pages/admin/postType' );
+const PostType = require( '../../../pages/admin/post-type' );
+
+const { describe, use, beforeAll } = test;
 
 describe( 'Courses List Block', () => {
 	use( { storageState: getContextByRole( 'admin' ) } );
+
 	const courses = [
 		{
 			title: 'Photography',
@@ -51,39 +46,24 @@ describe( 'Courses List Block', () => {
 	} );
 
 	test( 'it should render a list of courses', async ( { page } ) => {
-		const postTypePage = new PostType( page, { postType: 'page' } );
+		const postTypePage = new PostType( page, 'page' );
 
-		await postTypePage.goToNewPage();
+		await postTypePage.goToPostTypeCreationPage();
 		const courseList = await postTypePage.addBlock( 'Course List' );
 		await courseList.choosePattern( 'Grid of courses with details' );
 
 		await postTypePage.publish();
-		await postTypePage.preview();
+		await postTypePage.gotToPreviewPage();
 
 		for ( const course of courses ) {
-			await expect(
-				page.locator( `text='${ course.title }'` ),
-				'renders the title'
-			).toBeVisible();
-			await expect(
-				page.locator( `text='${ course.excerpt }'` ),
-				'renders the excerpts'
-			).toBeVisible();
-
-			await expect(
-				page.locator( `text='${ course.category }'` ),
-				'renders the categories'
-			).toBeVisible();
+			await expect( page.locator( `text='${ course.title }'` ) ).toBeVisible();
+			await expect( page.locator( `text='${ course.excerpt }'` ) ).toBeVisible();
+			await expect( page.locator( `text='${ course.category }'` ) ).toBeVisible();
 		}
 
 		// It is possible to have more courses created by other test.
-		const buttonsCount = await page
-			.locator( `text='Start Course'` )
-			.count();
+		const buttonsCount = await page.locator( `text='Start Course'` ).count();
 
-		await expect(
-			buttonsCount >= courses.length,
-			'renders a start button by course'
-		).toEqual( true );
+		await expect( buttonsCount >= courses.length, 'renders a start button by course' ).toEqual( true );
 	} );
 } );

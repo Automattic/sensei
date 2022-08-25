@@ -1,8 +1,13 @@
 module.exports = {
+	root: true,
 	extends: [ 'plugin:playwright/playwright-test' ],
 	rules: {
-		'jest/no-done-callback': 'off',
-		'jest/valid-expect': 'off',
 		'max-len': [ 'error', { code: 200 } ],
+	},
+	parserOptions: {
+		ecmaVersion: 'latest',
+	},
+	env: {
+		es6: true,
 	},
 };
