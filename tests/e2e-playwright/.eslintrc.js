@@ -3,6 +3,5 @@ module.exports = {
 	rules: {
 		'jest/no-done-callback': 'off',
 		'jest/valid-expect': 'off',
-		'max-len': [ 'error', { code: 200 } ],
 	},
 };
