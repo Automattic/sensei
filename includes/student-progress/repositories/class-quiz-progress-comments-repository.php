@@ -51,7 +51,11 @@ class Quiz_Progress_Comments_Repository implements Quiz_Progress_Repository_Inte
 	 * @return Quiz_Progress
 	 */
 	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress {
-		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		if ( ! $lesson_id ) {
+			return null;
+		}
+
 		$activity_args = [
 			'post_id' => $lesson_id,
 			'user_id' => $user_id,

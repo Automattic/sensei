@@ -1,0 +1,150 @@
+<?php
+
+namespace SenseiTest\Student_Progress\Repositories;
+
+use Sensei\Student_Progress\Models\Lesson_Progress_Interface;
+use Sensei\Student_Progress\Repositories\Lesson_Progress_Comments_Repository;
+
+/**
+ * Tests for the Lesson_Progress_Comments_Repository class.
+ *
+ * @covers \Sensei\Student_Progress\Repositories\Lesson_Progress_Comments_Repository
+ */
+class Lesson_Progress_Comments_Repository_Test extends \WP_UnitTestCase {
+	private $factory;
+
+	public function setup() {
+		parent::setup();
+		$this->factory = new \Sensei_Factory();
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
+
+	public function testGet_WhenStatusFound_ReturnsLessonProgress(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		/* Act. */
+		$progress = $repository->get( $lesson_id, $user_id );
+
+		/* Assert. */
+		$expected = [
+			'user_id'   => $user_id,
+			'lesson_id' => $lesson_id,
+			'status'    => 'in-progress',
+		];
+		self::assertSame( $expected, $this->export_progress( $progress ) );
+	}
+
+	public function testGet_WhenStatusNotFound_ReturnsNull(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+
+		/* Act. */
+		$progress = $repository->get( $lesson_id, $user_id );
+
+		/* Assert. */
+		self::assertNull( $progress );
+	}
+
+	public function testGet_WhenCreated_ReturnsSameProgress(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+		$created    = $repository->create( $lesson_id, $user_id );
+
+		/* Act. */
+		$progress = $repository->get( $lesson_id, $user_id );
+
+		/* Assert. */
+		self::assertSame( $this->export_progress( $created ), $this->export_progress( $progress ) );
+	}
+
+	public function testHas_WhenStatusFound_ReturnsTrue(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		/* Act. */
+		$has = $repository->has( $lesson_id, $user_id );
+
+		/* Assert. */
+		self::assertTrue( $has );
+	}
+
+	public function testHas_WhenStatusNotFound_ReturnsFalse(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+
+		/* Act. */
+		$has = $repository->has( $lesson_id, $user_id );
+
+		/* Assert. */
+		self::assertFalse( $has );
+	}
+
+	public function testGet_WhenProgressChangedAndSaved_ReturnsUpdatedProgress(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+		$progress   = $repository->create( $lesson_id, $user_id );
+		$progress->complete();
+		$repository->save( $progress );
+
+		/* Act. */
+		$actual = $repository->get( $lesson_id, $user_id );
+
+		/* Assert. */
+		self::assertSame( $this->export_progress( $progress ), $this->export_progress( $actual ) );
+	}
+
+	public function testCount_WhenNoProgress_ReturnsZero(): void {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+
+		/* Act. */
+		$count = $repository->count( $course_id, $user_id );
+
+		/* Assert. */
+		self::assertSame( 0, $count );
+	}
+
+	public function testCount_WhenProgressCreated_ReturnsOne(): void {
+		/* Arrange. */
+		$course_id  = $this->factory->course->create();
+		$lesson_id  = $this->factory->lesson->create( [ 'meta_input' => [ '_lesson_course' => $course_id ] ] );
+		$user_id    = $this->factory->user->create();
+		$repository = new Lesson_Progress_Comments_Repository();
+		$repository->create( $lesson_id, $user_id );
+
+		/* Act. */
+		$count = $repository->count( $course_id, $user_id );
+
+		/* Assert. */
+		self::assertSame( 1, $count );
+	}
+
+	private function export_progress( Lesson_Progress_Interface $progress ): array {
+		return [
+			'user_id'   => $progress->get_user_id(),
+			'lesson_id' => $progress->get_lesson_id(),
+			'status'    => $progress->get_status(),
+		];
+	}
+}
