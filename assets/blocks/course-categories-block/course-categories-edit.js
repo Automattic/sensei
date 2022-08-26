@@ -73,7 +73,9 @@ export function CourseCategoryEdit( props ) {
 	};
 
 	if ( previewCategories ) {
-		return getCategories( previewCategories );
+		return (
+			<div { ...blockProps }>{ getCategories( previewCategories ) }</div>
+		);
 	}
 
 	if ( 'course' !== postType ) {
