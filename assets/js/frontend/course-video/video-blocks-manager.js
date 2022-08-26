@@ -214,6 +214,7 @@ if ( courseVideoAutoPause && document.hidden !== undefined ) {
 			if ( ! document.hidden ) {
 				return;
 			}
+
 			for ( const url in videos ) {
 				const pause = videos[ url ].pauseVideo;
 				if ( 'function' === typeof pause ) {

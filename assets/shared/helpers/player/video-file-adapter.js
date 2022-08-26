@@ -110,3 +110,19 @@ export const onTimeupdate = ( player, callback ) => {
 		player.removeEventListener( 'timeupdate', transformedCallback );
 	};
 };
+
+/**
+ * Add an ended event listener to the player.
+ *
+ * @param {HTMLVideoElement} player   The player element.
+ * @param {Function}         callback Listener callback.
+ *
+ * @return {Function} The function to unsubscribe the event.
+ */
+export const onEnded = ( player, callback ) => {
+	player.addEventListener( 'ended', callback );
+
+	return () => {
+		player.removeEventListener( 'timeupdate', callback );
+	};
+};
