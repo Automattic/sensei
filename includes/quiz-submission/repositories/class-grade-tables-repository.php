@@ -8,7 +8,7 @@
 namespace Sensei\Quiz_Submission\Repositories;
 
 use Sensei\Quiz_Submission\Models\Grade_Interface;
-use Sensei\Quiz_Submission\Models\Grade_Tables;
+use Sensei\Quiz_Submission\Models\Tables_Based_Grade;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -29,12 +29,12 @@ class Grade_Tables_Repository implements Grade_Repository_Interface {
 	 * @param int         $points        The points.
 	 * @param string|null $feedback      The feedback.
 	 *
-	 * @return Grade_Tables The grade.
+	 * @return Tables_Based_Grade The grade.
 	 */
 	public function create( int $submission_id, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade_Interface {
 		// TODO: Implement create() method.
 
-		return new Grade_Tables();
+		return new Tables_Based_Grade();
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Grade_Tables_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade_Tables[] An array of grades.
+	 * @return Tables_Based_Grade[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
 		// TODO: Implement get_all() method.

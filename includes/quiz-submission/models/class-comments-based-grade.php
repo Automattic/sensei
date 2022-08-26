@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Grade_Comments class.
+ * File containing the Comments_Based_Grade class.
  *
  * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
  *
@@ -17,11 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Grade_Comments.
+ * Class Comments_Based_Grade.
  *
  * @since $$next-version$$
  */
-class Grade_Comments implements Grade_Interface {
+class Comments_Based_Grade implements Grade_Interface {
 	/**
 	 * The question ID.
 	 *

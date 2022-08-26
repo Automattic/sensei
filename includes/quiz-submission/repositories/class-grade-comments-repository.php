@@ -8,7 +8,7 @@
 namespace Sensei\Quiz_Submission\Repositories;
 
 use DateTime;
-use Sensei\Quiz_Submission\Models\Grade_Comments;
+use Sensei\Quiz_Submission\Models\Comments_Based_Grade;
 use Sensei\Quiz_Submission\Models\Grade_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,7 +47,7 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 			update_comment_meta( $submission_id, 'quiz_answers_feedback', $feedback_map );
 		}
 
-		return new Grade_Comments( $question_id, $points, $feedback );
+		return new Comments_Based_Grade( $question_id, $points, $feedback );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade_Comments[] An array of grades.
+	 * @return Comments_Based_Grade[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
 		$grades_map = get_comment_meta( $submission_id, 'quiz_grades', true );
@@ -69,7 +69,7 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 		$grades = [];
 		foreach ( $grades_map as $question_id => $points ) {
 			$feedback = $feedback_map[ $question_id ] ?? null;
-			$grades[] = new Grade_Comments( $question_id, $points, $feedback );
+			$grades[] = new Comments_Based_Grade( $question_id, $points, $feedback );
 		}
 
 		return $grades;

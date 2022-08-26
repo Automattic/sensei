@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Grade_Tables class.
+ * File containing the Tables_Based_Grade class.
  *
  * @package sensei
  */
@@ -14,11 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Grade.
+ * Class Tables_Based_Grade.
  *
  * @since $$next-version$$
  */
-class Grade_Tables implements Grade_Interface {
+class Tables_Based_Grade implements Grade_Interface {
 	/**
 	 * The grade ID.
 	 *
