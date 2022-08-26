@@ -30,7 +30,10 @@
 		"fontSize": {
 			"type": "string",
 			"default": "small"
-		}
+		},
+        "previewCategories": {
+            "type": "array"
+        }
 	},
 	"usesContext": [ "postId", "postType" ],
 	"supports": {
