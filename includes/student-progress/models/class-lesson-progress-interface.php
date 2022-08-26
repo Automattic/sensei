@@ -16,6 +16,16 @@ use DateTimeInterface;
  */
 interface Lesson_Progress_Interface {
 	/**
+	 * Status lesson in progress.
+	 */
+	public const STATUS_IN_PROGRESS = 'in-progress';
+
+	/**
+	 * Status lesson completed.
+	 */
+	public const STATUS_COMPLETE = 'complete';
+
+	/**
 	 * Changes the lesson progress status and start date.
 	 *
 	 * @param DateTimeInterface|null $started_at The start date.
@@ -77,4 +87,25 @@ interface Lesson_Progress_Interface {
 	 * @return bool
 	 */
 	public function is_complete(): bool;
+
+	/**
+	 * Returns the lesson progress created date.
+	 *
+	 * @return DateTimeInterface
+	 */
+	public function get_created_at(): DateTimeInterface;
+
+	/**
+	 * Returns the lesson progress updated date.
+	 *
+	 * @return DateTimeInterface
+	 */
+	public function get_updated_at(): DateTimeInterface;
+
+	/**
+	 * Set lesson progress updated date.
+	 *
+	 * @param DateTimeInterface $updated_at The updated date.
+	 */
+	public function set_updated_at( DateTimeInterface $updated_at ): void;
 }

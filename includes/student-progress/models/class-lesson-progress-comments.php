@@ -21,16 +21,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Lesson_Progress_Comments implements Lesson_Progress_Interface {
 	/**
-	 * Status lesson in progress.
-	 */
-	public const STATUS_IN_PROGRESS = 'in-progress';
-
-	/**
-	 * Status lesson completed.
-	 */
-	public const STATUS_COMPLETE = 'complete';
-
-	/**
 	 * Progress identifier.
 	 *
 	 * @var int
@@ -197,5 +187,32 @@ class Lesson_Progress_Comments implements Lesson_Progress_Interface {
 		];
 
 		return in_array( $this->status, $completed_statuses, true );
+	}
+
+	/**
+	 * Returns the lesson progress created date.
+	 *
+	 * @return DateTimeInterface
+	 */
+	public function get_created_at(): DateTimeInterface {
+		return $this->created_at;
+	}
+
+	/**
+	 * Returns the lesson progress updated date.
+	 *
+	 * @return DateTimeInterface
+	 */
+	public function get_updated_at(): DateTimeInterface {
+		return $this->updated_at;
+	}
+
+	/**
+	 * Set lesson progress updated date.
+	 *
+	 * @param DateTimeInterface $updated_at The updated date.
+	 */
+	public function set_updated_at( DateTimeInterface $updated_at ): void {
+		$this->updated_at = $updated_at;
 	}
 }

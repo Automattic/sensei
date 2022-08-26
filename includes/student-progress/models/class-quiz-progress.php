@@ -240,4 +240,13 @@ class Quiz_Progress {
 	public function get_updated_at(): DateTimeInterface {
 		return $this->updated_at;
 	}
+
+	/**
+	 * Set the quiz progress updated date.
+	 *
+	 * @param DateTimeInterface $updated_at Quiz progress updated date.
+	 */
+	public function set_updated_at( DateTimeInterface $updated_at ): void {
+		$this->updated_at = $updated_at;
+	}
 }
