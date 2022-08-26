@@ -1029,11 +1029,12 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$test_user_grades       = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
+		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, [], $test_lesson_id, $test_user_id );
 		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
 		$test_question_id = array_rand( $test_user_grades );
 		$retrieved_grade  = Sensei()->quiz->get_user_question_grade( $test_lesson_id, $test_question_id, $test_user_id );
 
-		// Test if the the question grade can be retrieved.
+		// Test if the question grade can be retrieved.
 		$this->assertEquals(
 			$test_user_grades[ $test_question_id ],
 			$retrieved_grade,
@@ -1070,6 +1071,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id           = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
 		$test_user_grades       = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
+		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, [], $test_lesson_id, $test_user_id );
 		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
 		$test_question_id = array_rand( $test_user_grades );
 

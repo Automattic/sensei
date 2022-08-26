@@ -971,31 +971,45 @@ class Sensei_Quiz {
 			$user_id = get_current_user_id();
 		}
 
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
 		// make sure the parameters are valid before continuing
-		if ( empty( $lesson_id ) || empty( $user_id )
-			|| 'lesson' != get_post_type( $lesson_id )
+		if (
+			! $quiz_id
+			|| empty( $user_id )
+			|| 'lesson' !== get_post_type( $lesson_id )
 			|| ! get_userdata( $user_id )
-			|| ! is_array( $quiz_grades ) ) {
-
+			|| ! is_array( $quiz_grades )
+		) {
 			return false;
-
 		}
 
-		$success = false;
-
-		// save that data for the user on the lesson comment meta
-		$comment_meta_id = Sensei_Utils::add_user_data( 'quiz_grades', $lesson_id, $quiz_grades, $user_id );
-
-		// were the grades save successfully ?
-		if ( intval( $comment_meta_id ) > 0 ) {
-
-			$success = true;
-			// save transient
-			$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
-			set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
+		$submission_repository = ( new Submission_Repository_Factory() )->create();
+		$submission            = $submission_repository->get( $quiz_id, $user_id );
+		if ( ! $submission ) {
+			return false;
 		}
 
-		return $success;
+		$grade_repository = ( new Grade_Repository_Factory() )->create();
+		$grade_repository->delete_all( $submission->get_id() );
+
+		$answer_repository = ( new Answer_Repository_Factory() )->create();
+		$answers           = $answer_repository->get_all( $submission->get_id() );
+		$answers_map       = [];
+
+		foreach ( $answers as $answer ) {
+			$answers_map[ $answer->get_question_id() ] = $answer;
+		}
+
+		foreach ( $quiz_grades as $question_id => $points ) {
+			$answer = $answers_map[ $question_id ];
+			$grade_repository->create( $submission->get_id(), $answer->get_id(), $question_id, $points );
+		}
+
+		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
+		set_transient( $transient_key, $quiz_grades, 10 * DAY_IN_SECONDS );
+
+		return true;
 
 	}
 

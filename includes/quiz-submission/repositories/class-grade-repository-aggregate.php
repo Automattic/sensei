@@ -58,6 +58,25 @@ class Grade_Repository_Aggregate implements Grade_Repository_Interface {
 	}
 
 	/**
+	 * Creates a new grade.
+	 *
+	 * @param int         $submission_id The submission ID.
+	 * @param int         $answer_id     The answer ID.
+	 * @param int         $question_id   The question ID.
+	 * @param int         $points        The points.
+	 * @param string|null $feedback      The feedback.
+	 *
+	 * @return Grade_Interface The grade.
+	 */
+	public function create( int $submission_id, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade_Interface {
+		if ( $this->use_tables ) {
+			return $this->tables_repository->create( $submission_id, $answer_id, $question_id, $points, $feedback );
+		}
+
+		return $this->comments_repository->create( $submission_id, $answer_id, $question_id, $points, $feedback );
+	}
+
+	/**
 	 * Get all grades for a quiz submission.
 	 *
 	 * @param int $submission_id The submission ID.
