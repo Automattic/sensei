@@ -92,6 +92,20 @@ class Grade_Repository_Aggregate implements Grade_Repository_Interface {
 	}
 
 	/**
+	 * Save multiple grades.
+	 *
+	 * @param Grade_Interface[] $grades        An array of grades.
+	 * @param int               $submission_id The submission ID.
+	 */
+	public function save_many( array $grades, int $submission_id ): void {
+		if ( $this->use_tables ) {
+			$this->tables_repository->save_many( $grades, $submission_id );
+		}
+
+		$this->comments_repository->save_many( $grades, $submission_id );
+	}
+
+	/**
 	 * Delete all grades for a submission.
 	 *
 	 * @param int $submission_id The submission ID.

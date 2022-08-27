@@ -50,9 +50,16 @@ interface Grade_Interface {
 	/**
 	 * Get the grade feedback.
 	 *
-	 * @return int
+	 * @return string|null
 	 */
-	public function get_feedback(): int;
+	public function get_feedback(): ?string;
+
+	/**
+	 * Set the grade feedback.
+	 *
+	 * @param string $feedback The feedback string.
+	 */
+	public function set_feedback( string $feedback ): void;
 
 	/**
 	 * Get the created date.

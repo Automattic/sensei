@@ -143,6 +143,15 @@ class Tables_Based_Grade implements Grade_Interface {
 	}
 
 	/**
+	 * Set the grade feedback.
+	 *
+	 * @param string $feedback The feedback string.
+	 */
+	public function set_feedback( string $feedback ): void {
+		$this->feedback = $feedback;
+	}
+
+	/**
 	 * Get the created date.
 	 *
 	 * @return DateTime

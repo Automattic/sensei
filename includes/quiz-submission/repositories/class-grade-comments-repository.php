@@ -76,6 +76,25 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 	}
 
 	/**
+	 * Save multiple grades.
+	 *
+	 * @param Grade_Interface[] $grades        An array of grades.
+	 * @param int               $submission_id The submission ID.
+	 */
+	public function save_many( array $grades, int $submission_id ): void {
+		$grades_map   = [];
+		$feedback_map = [];
+
+		foreach ( $grades as $grade ) {
+			$grades_map[ $grade->get_question_id() ]   = $grade->get_points();
+			$feedback_map[ $grade->get_question_id() ] = $grade->get_feedback();
+		}
+
+		update_comment_meta( $submission_id, 'quiz_grades', $grades_map );
+		update_comment_meta( $submission_id, 'quiz_answers_feedback', $feedback_map );
+	}
+
+	/**
 	 * Delete all grades for a submission.
 	 *
 	 * @param int $submission_id The submission ID.

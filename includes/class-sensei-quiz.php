@@ -1149,18 +1149,21 @@ class Sensei_Quiz {
 	 * @param int   $lesson_id
 	 * @param int   $user_id
 	 *
-	 * @return false or int $feedback_saved
+	 * @return bool
 	 */
 	public function save_user_answers_feedback( $answers_feedback, $lesson_id, $user_id = 0 ) {
 
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
 		// make sure the parameters are valid before continuing
-		if ( empty( $lesson_id ) || empty( $user_id )
-			|| 'lesson' != get_post_type( $lesson_id )
+		if (
+			! $quiz_id
+			|| empty( $user_id )
+			|| 'lesson' !== get_post_type( $lesson_id )
 			|| ! get_userdata( $user_id )
-			|| ! is_array( $answers_feedback ) ) {
-
+			|| ! is_array( $answers_feedback )
+		) {
 			return false;
-
 		}
 
 		// check if the lesson is started before saving, if not start the lesson for the user
@@ -1174,19 +1177,27 @@ class Sensei_Quiz {
 			$encoded_answers_feedback[ $question_id ] = base64_encode( $feedback );
 		}
 
-		// save the user data
-		$feedback_saved = Sensei_Utils::add_user_data( 'quiz_answers_feedback', $lesson_id, $encoded_answers_feedback, $user_id );
-
-		// Were the the question feedback save correctly?
-		if ( intval( $feedback_saved ) > 0 ) {
-
-			// save transient to make retrieval faster in future
-			 $transient_key = 'sensei_answers_feedback_' . $user_id . '_' . $lesson_id;
-			 set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
-
+		$submission_repository = ( new Submission_Repository_Factory() )->create();
+		$submission            = $submission_repository->get( $quiz_id, $user_id );
+		if ( ! $submission ) {
+			return false;
 		}
 
-		return $feedback_saved;
+		$grade_repository = ( new Grade_Repository_Factory() )->create();
+		$grades           = $grade_repository->get_all( $submission->get_id() );
+
+		foreach ( $grades as $grade ) {
+			$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
+			$grade->set_feedback( $feedback );
+		}
+
+		$grade_repository->save_many( $grades, $submission->get_id() );
+
+		// Save transient to make retrieval faster in the future.
+		$transient_key = 'sensei_answers_feedback_' . $user_id . '_' . $lesson_id;
+		set_transient( $transient_key, $encoded_answers_feedback, 10 * DAY_IN_SECONDS );
+
+		return true;
 
 	}
 

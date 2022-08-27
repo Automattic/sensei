@@ -1121,8 +1121,15 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertFalse( Sensei()->quiz->save_user_answers_feedback( '', array(), '', '' ), 'save_user_answers_feedback does not return false incorrectly formatted answers' );
 
 		// Test a case that is setup correctly which should return a positive result.
-		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
+
+		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, [], $test_lesson_id, $test_user_id );
+
+		$test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
+		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
+
+		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
 		$lesson_data_saved = Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
 
 		// Did the correct data return a valid comment id on the lesson as a result?
@@ -1317,12 +1324,21 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 
 		// Setup next assertion.
-		$test_quiz_id               = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
-		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
+		$test_quiz_id = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
+
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 
+		$test_user_quiz_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		Sensei()->quiz->save_user_answers( $test_user_quiz_answers, [], $test_lesson_id, $test_user_id );
+
+		$test_user_grades = $this->factory->generate_user_quiz_grades( $test_user_quiz_answers );
+		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
+
+		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
 		Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
+
 		delete_transient( $transient_key );
+
 		Sensei()->quiz->get_user_answers_feedback( $test_lesson_id, $test_user_id );
 		$transient_data_after_get_call = get_transient( $transient_key );
 
