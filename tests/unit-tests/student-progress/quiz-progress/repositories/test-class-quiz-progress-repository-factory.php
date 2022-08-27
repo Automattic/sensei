@@ -7,6 +7,7 @@ use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_
 
 /**
  * Tests for the Quiz_Progress_Repository_Factory class.
+ *
  * @covers \Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory
  */
 class Quiz_Progress_Repository_Factory_Test extends \WP_UnitTestCase {

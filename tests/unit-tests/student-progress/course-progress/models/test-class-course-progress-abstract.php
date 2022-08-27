@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class Course_Progress_Abstract_Test.
+ *
  * @covers \Sensei\Student_Progress\Course_Progress\Models\Course_Progress_Abstract
  */
 class Course_Progress_Abstract_Test extends \WP_UnitTestCase {
