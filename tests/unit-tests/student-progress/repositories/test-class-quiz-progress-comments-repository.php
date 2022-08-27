@@ -12,6 +12,8 @@ use Sensei\Student_Progress\Repositories\Quiz_Progress_Comments_Repository;
  */
 class Quiz_Progress_Comments_Repository_Test extends \WP_UnitTestCase {
 	/**
+	 * Sensei factory.
+	 *
 	 * @var \Sensei_Factory
 	 */
 	private $factory;
