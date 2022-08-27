@@ -1130,7 +1130,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->set_user_grades( $test_user_grades, $test_lesson_id, $test_user_id );
 
 		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
-		$lesson_data_saved = Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
+		$lesson_data_saved          = Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
 
 		// Did the correct data return a valid comment id on the lesson as a result?
 		$this->assertTrue( intval( $lesson_data_saved ) > 0, 'The comment id returned after saving the quiz feedback does not represent a valid comment ' );
