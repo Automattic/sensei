@@ -2,6 +2,7 @@
 
 namespace SenseiTest\Student_Progress\Repositories;
 
+use Sensei\Student_Progress\Models\Course_Progress_Interface;
 use Sensei\Student_Progress\Repositories\Course_Progress_Comments_Repository;
 use Sensei\Student_Progress\Repositories\Course_Progress_Repository_Aggregate;
 use Sensei\Student_Progress\Repositories\Course_Progress_Tables_Repository;
