@@ -8,7 +8,6 @@ use Sensei\Student_Progress\Repositories\Course_Progress_Comments_Repository;
 use Sensei\Student_Progress\Repositories\Course_Progress_Repository_Aggregate;
 use Sensei\Student_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Student_Progress\Repositories\Course_Progress_Tables_Repository;
-use WP_UnitTestCase;
 
 
 /**
@@ -16,7 +15,7 @@ use WP_UnitTestCase;
  *
  * @covers \Sensei\Student_Progress\Repositories\Course_Progress_Repository_Factory
  */
-class Course_Progress_Repository_Factory_Test extends WP_UnitTestCase {
+class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenCalled_ReturnsCourseProgressRepository(): void {
 		/* Arrange. */

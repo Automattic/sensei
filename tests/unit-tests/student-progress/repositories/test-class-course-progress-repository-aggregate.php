@@ -2,13 +2,16 @@
 
 namespace SenseiTest\Student_Progress\Repositories;
 
-use Sensei\Student_Progress\Models\Course_Progress_Interface;
 use Sensei\Student_Progress\Repositories\Course_Progress_Comments_Repository;
 use Sensei\Student_Progress\Repositories\Course_Progress_Repository_Aggregate;
 use Sensei\Student_Progress\Repositories\Course_Progress_Tables_Repository;
-use WP_UnitTestCase;
 
-class Course_Progress_Repository_Aggregate_Test extends WP_UnitTestCase {
+/**
+ * Tests for Course_Progress_Repository_Aggregate.
+ *
+ * @covers \Sensei\Student_Progress\Repositories\Course_Progress_Repository_Aggregate
+ */
+class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenTablesEnabled_CallsTablesCreateMethod(): void {
 		/* Arrange. */
@@ -85,6 +88,4 @@ class Course_Progress_Repository_Aggregate_Test extends WP_UnitTestCase {
 			->with( 1, 1 );
 		$aggregate->get( 1, 1 );
 	}
-
-
 }
