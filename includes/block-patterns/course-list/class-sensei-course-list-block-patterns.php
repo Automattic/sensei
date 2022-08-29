@@ -56,9 +56,12 @@ class Sensei_Course_List_Block_Patterns {
 				'description' => 'course-list-element',
 				'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":4},"displayLayout":{"type":"flex","columns":3},"align":"wide","layout":{"inherit":true}} -->
 						<div class="wp-block-query wp-block-sensei-lms-course-list alignwide"><!-- wp:post-template {"align":"wide"} -->
+
+						<!-- wp:sensei-lms/course-categories {"isTop": true}/-->
+
 						<!-- wp:post-featured-image {"isLink":true,"width":"100%","height":"318px"} /-->
 
-						<!-- wp:sensei-lms/course-categories /-->
+						<!-- wp:sensei-lms/course-categories {"isTop": false}/-->
 
 						<!-- wp:post-title {"level":1,"fontSize":"large","isLink":true,"className":"hide-url-underline"} /-->
 

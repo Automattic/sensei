@@ -1,6 +1,9 @@
 .wp-block-sensei-lms-course-categories {
-	margin: 10px 0;
+	//margin: 10px 0;
 	width: 100%;
+	margin-bottom: -90px !important;
+	margin-left: 10px !important;
+	position: relative;
 
 	> a {
 		display: inline-flex;
