@@ -30,3 +30,12 @@ $block: '.wp-block-sensei-lms-course-list';
 		}
 	}
 }
+
+/* Divi overrides */
+#left-area #{$block} {
+	.wp-block-post-template {
+		list-style: none;
+		margin-left: 0;
+		padding: 1.25em;
+	}
+}
