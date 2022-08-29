@@ -13,14 +13,14 @@
 		&:not( :last-child ) {
 			margin-right: 10px;
 		}
-	}
 
-	&:not(.has-background) > a {
-		background-color:  #1a1d20;
-	}
+		&:not( .has-background ) {
+			background-color: #1a1d20;
+		}
 
-	&:not(.has-text-color) > a {
-		color: #fff;
+		&:not( .has-text-color ) {
+			color: #fff;
+		}
 	}
 
 	&.alignright {
