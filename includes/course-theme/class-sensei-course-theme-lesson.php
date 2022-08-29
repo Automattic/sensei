@@ -201,12 +201,12 @@ class Sensei_Course_Theme_Lesson {
 
 			$text = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
 				// translators: Placeholder is the link to the prerequisite lesson.
-				? sprintf( esc_html__( 'You will be able to view this lesson once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
+				? sprintf( esc_html__( 'You will be able to view this content once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
 				// translators: Placeholder is the link to the prerequisite lesson.
-				: sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
+				: sprintf( esc_html__( 'Please complete the %1$s to view this content.', 'sensei-lms' ), $prerequisite_lesson_link );
 
 			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
-			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ), [], 'lock' );
+			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this content', 'sensei-lms' ), [], 'lock' );
 		}
 	}
 
