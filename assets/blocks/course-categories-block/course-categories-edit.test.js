@@ -61,6 +61,7 @@ describe( 'CourseCategoryEdit', () => {
 				clientId="some-client-id"
 				attributes={ attributes }
 				context={ context }
+				setAttributes={ () => {} }
 			/>
 		);
 		categories.forEach( ( category ) =>
@@ -77,6 +78,7 @@ describe( 'CourseCategoryEdit', () => {
 					postId: 'some-post-id',
 					postType: 'page',
 				} }
+				setAttributes={ () => {} }
 			/>
 		);
 

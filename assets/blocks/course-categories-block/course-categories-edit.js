@@ -32,6 +32,7 @@ export function CourseCategoryEdit( props ) {
 		defaultBackgroundColor,
 		defaultTextColor,
 		textColor,
+		setAttributes,
 	} = props;
 
 	const { textAlign, previewCategories } = attributes;
@@ -79,6 +80,7 @@ export function CourseCategoryEdit( props ) {
 	}
 
 	if ( 'course' !== postType ) {
+		setAttributes( { align: false } );
 		return (
 			<InvalidUsageError
 				message={ __(

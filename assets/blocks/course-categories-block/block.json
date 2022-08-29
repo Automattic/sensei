@@ -44,7 +44,7 @@
 			"blockGap": true
 		},
 		"textAlign": true,
-		"align": true,
+        "align": true,
 		"alignWide": true,
 		"typography": {
 			"lineHeight": true,
