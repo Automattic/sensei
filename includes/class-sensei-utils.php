@@ -1139,8 +1139,29 @@ class Sensei_Utils {
 				}
 			} else {  // Lesson/Quiz not complete
 
+				$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
+
+				if ( !$is_lesson && $lesson_prerequisite > 0 ) {
+					$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_prerequisite, $user_id );
+
+					$prerequisite_lesson_link = '<a href="'
+						. esc_url( get_permalink( $lesson_prerequisite ) )
+						. '" title="'
+						// translators: Placeholder is the item title.
+						. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+						. '">'
+						. esc_html__( 'prerequisites', 'sensei-lms' )
+						. '</a>';
+
+					$message = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
+						// translators: Placeholder is the link to the prerequisite lesson.
+						? sprintf( esc_html__( 'You will be able to access this quiz once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
+						// translators: Placeholder is the link to the prerequisite lesson.
+						: sprintf( esc_html__( 'Please complete the %1$s to access this quiz.', 'sensei-lms' ), $prerequisite_lesson_link );
+				}
+
 				// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete)
-				if ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
+				elseif ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
 					$status    = 'complete';
 					$box_class = 'info';
 					if ( $is_lesson ) {
