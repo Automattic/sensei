@@ -34,7 +34,7 @@ class Sensei_Course_List_Block_Patterns {
 			<!-- /wp:query-pagination -->';
 
 		$patterns = [
-			'course-list'             =>
+			'course-list' =>
 			[
 				'title'       => __( 'Courses displayed in a list', 'sensei-lms' ),
 				'categories'  => array( 'query' ),
@@ -85,7 +85,7 @@ class Sensei_Course_List_Block_Patterns {
 					'</div>
 				<!-- /wp:query -->',
 			],
-			'course-grid'                     =>
+			'course-grid' =>
 				[
 					'title'       => __( 'Courses displayed in a grid', 'sensei-lms' ),
 					'categories'  => array( 'query' ),
