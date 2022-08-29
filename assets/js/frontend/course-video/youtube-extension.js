@@ -12,17 +12,18 @@ import Player from '../../../shared/helpers/player';
 const initYouTubePlayer = ( iframe ) => {
 	const player = new Player( iframe );
 
-	player.getPlayer().then( ( nativeYoutubePlayer ) => {
-		registerVideo( {
-			pauseVideo: () => {
-				player.pause();
-			},
-			registerVideoEndHandler: ( cb ) => {
-				player.on( 'ended', cb );
-			},
-			url: nativeYoutubePlayer.getVideoUrl(),
-			blockElement: iframe.closest( 'figure' ),
-		} );
+	const videoId = iframe.src.split( '?' )[ 0 ].split( '/' ).pop();
+	const url = 'https://www.youtube.com/watch?v=' + videoId;
+
+	registerVideo( {
+		pauseVideo: () => {
+			player.pause();
+		},
+		registerVideoEndHandler: ( cb ) => {
+			player.on( 'ended', cb );
+		},
+		url,
+		blockElement: iframe.closest( 'figure' ),
 	} );
 };
 
