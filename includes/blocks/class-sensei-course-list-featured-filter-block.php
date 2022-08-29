@@ -54,10 +54,10 @@ class Sensei_Course_List_Featured_Filter_Block {
 	 * @return string
 	 */
 	public function render_block( $attributes, $content, WP_Block $block ): string {
-		$args = array(
+		$args             = array(
 			'hide_empty' => true,
 		);
-		$category_id = 0;
+		$category_id      = 0;
 		$filter_param_key = 'course-filter-query-' . $block->context['queryId'] . '-category';
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_GET[ $filter_param_key ] ) ) {
@@ -65,12 +65,12 @@ class Sensei_Course_List_Featured_Filter_Block {
 		}
 		$course_categories         = get_terms( 'course-category', $args );
 		$category_selector_content = '<select name="course_list_category_filter" class="course_list_category_filter" data-query-id="' . $block->context['queryId'] . '" >
-			<option value="">' . esc_html( 'Select Category', 'sensei-lms' ) . '</option>' .
+			<option value="">' . esc_html__( 'Select Category', 'sensei-lms' ) . '</option>' .
 			join(
 				'',
 				array_map(
 					function ( $category ) use ( $block, $category_id ) {
-						return '<option ' . selected( $category_id, $category->term_id ) . ' value="' . esc_attr( $category->term_id ) . '">' . esc_html( $category->name ) . '</option>';
+						return '<option ' . selected( $category_id, $category->term_id, false ) . ' value="' . esc_attr( $category->term_id ) . '">' . esc_html( $category->name ) . '</option>';
 					},
 					$course_categories
 				)
@@ -97,12 +97,12 @@ class Sensei_Course_List_Featured_Filter_Block {
 		if ( ! isset( $_GET[ $filter_param_key ] ) ) {
 			return $context;
 		}
-
+		// phpcs:ignore WordPress.Security.NonceVerification
 		$category_id = intval( $_GET[ $filter_param_key ] );
 
 		$course_categories = get_terms( 'course-category', [ 'fields' => 'ids' ] );
 
-		if ( ! is_array( $course_categories ) || ! in_array( $category_id, $course_categories ) ) {
+		if ( ! is_array( $course_categories ) || ! in_array( $category_id, $course_categories, true ) ) {
 			return $context;
 		}
 		$tax_query = array(
@@ -121,7 +121,7 @@ class Sensei_Course_List_Featured_Filter_Block {
 		);
 
 		$course_ids_not_in_category = get_posts( $args );
-		if ( ! array_key_exists( $context['query']['exclude'] ) || ! is_array( $context['query']['exclude'] ) ) {
+		if ( ! array_key_exists( 'exclude', $context['query'] ) || ! is_array( $context['query']['exclude'] ) ) {
 			$context['query']['exclude'] = [];
 		}
 		$context['query']['exclude'] = array_merge( $context['query']['exclude'], $course_ids_not_in_category );
