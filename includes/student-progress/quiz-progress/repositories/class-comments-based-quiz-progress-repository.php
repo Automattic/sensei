@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Quiz_Progress_Comments_Repository class.
+ * File containing the Comments_Based_Quiz_Progress_Repository class.
  *
  * @package sensei
  */
@@ -9,7 +9,6 @@ namespace Sensei\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTime;
 use Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
-use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 use Sensei_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Quiz_Progress_Comments_Repository.
+ * Class Comments_Based_Quiz_Progress_Repository.
  *
  * @since $$next-version$$
  */

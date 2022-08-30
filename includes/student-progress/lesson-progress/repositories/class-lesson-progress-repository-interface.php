@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Lesson_Progress_Repository_Interface class.
+ * File containing the Lesson_Progress_Repository_Interface class.
  *
  * @package sensei
  */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Interface Sensei_Lesson_Progress_Repository_Interface.
+ * Interface Lesson_Progress_Repository_Interface.
  *
  * @since $$next-version$$
  */

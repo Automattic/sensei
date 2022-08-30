@@ -7,9 +7,6 @@
 
 namespace Sensei\Student_Progress\Quiz_Progress\Repositories;
 
-use Sensei\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
-use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
-
 /**
  * Class Quiz_Progress_Repository_Factory.
  *

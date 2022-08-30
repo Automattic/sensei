@@ -9,7 +9,6 @@ namespace Sensei\Student_Progress\Lesson_Progress\Models;
 
 use DateTimeInterface;
 use Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
-use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
 use Sensei_Lesson;
 
 if ( ! defined( 'ABSPATH' ) ) {

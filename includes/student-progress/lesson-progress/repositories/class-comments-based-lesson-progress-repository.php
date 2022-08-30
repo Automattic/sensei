@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Lesson_Progress_Comments_Repository class.
+ * File containing the Comments_Based_Lesson_Progress_Repository class.
  *
  * @package sensei
  */
@@ -11,7 +11,6 @@ use DateTime;
 use SebastianBergmann\Timer\RuntimeException;
 use Sensei\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
 use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress_Interface;
-use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Lesson_Progress_Comments_Repository.
+ * Class Comments_Based_Lesson_Progress_Repository.
  *
  * @since $$next-version$$
  */

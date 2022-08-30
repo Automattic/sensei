@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Quiz_Progress class.
+ * File containing the Quiz_Progress class.
  *
  * @package sensei
  */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Quiz_Progress.
+ * Class Quiz_Progress.
  *
  * @since $$next-version$$
  */

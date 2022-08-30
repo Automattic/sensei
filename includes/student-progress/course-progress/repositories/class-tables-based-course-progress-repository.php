@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei\Student_Progress\Course_Progress_Tables_Repository class.
+ * File containing the Sensei\Student_Progress\Tables_Based_Course_Progress_Repository class.
  *
  * @package sensei
  */
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Course_Progress_Tables_Repository.
+ * Class Tables_Based_Course_Progress_Repository.
  *
  * @since $$next-version$$
  */

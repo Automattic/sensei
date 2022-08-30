@@ -10,7 +10,7 @@ namespace Sensei\Student_Progress\Lesson_Progress\Models;
 use DateTimeInterface;
 
 /**
- * Class Lesson_Progress.
+ * Interface Lesson_Progress_Interface.
  *
  * @since $$next-version$$
  */

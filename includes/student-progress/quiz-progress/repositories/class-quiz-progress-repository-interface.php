@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Quiz_Progress_Repository_Interface interface.
+ * File containing the Quiz_Progress_Repository_Interface interface.
  *
  * @package sensei
  */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Interface Sensei_Quiz_Progress_Repository_Interface.
+ * Interface Quiz_Progress_Repository_Interface.
  *
  * @since $$next-version$$
  */

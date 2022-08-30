@@ -42,7 +42,7 @@ class Course_Progress_Repository_Aggregate implements Course_Progress_Repository
 	private $use_tables;
 
 	/**
-	 * Sensei_Course_Progress_Repository_Aggregate constructor.
+	 * Course_Progress_Repository_Aggregate constructor.
 	 *
 	 * @param Tables_Based_Course_Progress_Repository   $tables Repository for course progress in custom tables.
 	 * @param Comments_Based_Course_Progress_Repository $comments Repository for course progress in comments.

@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei_Course_Progress_Comments_Repository class.
+ * File containing the Comments_Based_Course_Progress_Repository class.
  *
  * @package sensei
  */
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Sensei_Course_Progress_Comments_Repository
+ * Class Comments_Based_Course_Progress_Repository
  *
  * @since $$next-version$$
  */
