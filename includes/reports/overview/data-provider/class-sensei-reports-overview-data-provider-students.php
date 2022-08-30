@@ -44,13 +44,18 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 * @return array
 	 */
 	public function get_items( array $filters ): array {
+		global $wpdb;
+		$enrolment_prefix = $wpdb->get_blog_prefix() . \Sensei_Course_Enrolment::META_PREFIX_ENROLMENT_RESULTS;
+
 		$this->date_from = $filters['last_activity_date_from'] ?? null;
 		$this->date_to   = $filters['last_activity_date_to'] ?? null;
 
 		$query_args = array(
-			'fields'  => [ 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' ],
-			'orderby' => $filters['orderby'] ?? '',
-			'order'   => $filters['order'] ?? 'ASC',
+			'fields'           => [ 'ID', 'user_login', 'user_email', 'user_registered', 'display_name' ],
+			'orderby'          => $filters['orderby'] ?? '',
+			'order'            => $filters['order'] ?? 'ASC',
+			'meta_compare_key' => 'LIKE',
+			'meta_key'         => $enrolment_prefix, // phpcs:ignore WordPress.DB.SlowDBQuery -- Filter enrolled users only.
 		);
 
 		$query_args = array_merge( $query_args, $filters );
@@ -66,7 +71,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 */
 		$query_args = apply_filters( 'sensei_analysis_overview_filter_users', $query_args );
 
-		add_action( 'pre_user_query', [ $this, 'only_course_enrolled_users' ] );
+		add_action( 'pre_user_query', [ $this, 'group_by_users' ] );
 		add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 		add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
@@ -113,12 +118,16 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Filter the users to ones enrolled in a course.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @since  4.4.1
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.
 	 */
 	public function only_course_enrolled_users( WP_User_Query $query ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		global $wpdb;
 
 		$query->query_from .= "
@@ -126,6 +135,20 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 				ON {$wpdb->comments}.user_id = {$wpdb->users}.ID
 				AND {$wpdb->comments}.comment_type = 'sensei_course_status'
 		";
+
+		$query->query_where .= " GROUP BY {$wpdb->users}.ID ";
+	}
+
+	/**
+	 * Group query by users.
+	 *
+	 * @since  $$next-version$$
+	 * @access private
+	 *
+	 * @param WP_User_Query $query The user query.
+	 */
+	public function group_by_users( WP_User_Query $query ) {
+		global $wpdb;
 
 		$query->query_where .= " GROUP BY {$wpdb->users}.ID ";
 	}
