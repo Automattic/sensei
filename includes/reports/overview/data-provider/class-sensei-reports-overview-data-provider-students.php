@@ -73,7 +73,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		add_action( 'pre_user_query', [ $this, 'group_by_users' ] );
 
-		if ( $this->can_use_users_relationship() ) {
+		if ( Sensei_Utils::can_use_users_relationship() ) {
 			add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 			add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
@@ -95,42 +95,6 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$this->last_total_items = $wp_user_search->get_total();
 
 		return $learners;
-	}
-
-	/**
-	 * Check if it's possible to use a relationship between users and posts table. It's used to
-	 * check environments where the users table lives in a different places and the relationship
-	 * doesn't work.
-	 *
-	 * @return boolean Whether the users relationship is possible.
-	 */
-	private function can_use_users_relationship() {
-		$can_use_users_relationship = wp_cache_get( 'sensei_can_use_users_relationship' );
-
-		if ( false === $can_use_users_relationship ) {
-			global $wpdb;
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result     = $wpdb->get_var( "SELECT p.ID FROM {$wpdb->posts} p LIMIT 1;" );
-			$have_posts = null !== $result;
-
-			/**
-			 * If site doesn't have posts yet, it considers that we can't use the user relationship,
-			 * but it might not be true because we can't check it. This case is not cached, in case
-			 * it changes.
-			 */
-			if ( ! $have_posts ) {
-				return false;
-			}
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result                     = $wpdb->get_var( "SELECT u.ID FROM {$wpdb->users} u, {$wpdb->posts} p WHERE u.ID = p.post_author LIMIT 1;" );
-			$can_use_users_relationship = null !== $result;
-
-			wp_cache_set( 'sensei_can_use_users_relationship', $can_use_users_relationship );
-		}
-
-		return $can_use_users_relationship;
 	}
 
 	/**

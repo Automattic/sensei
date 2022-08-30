@@ -282,4 +282,51 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
 	}
+
+	/**
+	 * Tests that check returns `false` for users relationship when there are no posts.
+	 *
+	 * @covers Sensei_Utils::can_use_users_relationship
+	 */
+	public function testCanUseUserRelationshipNoPosts() {
+		/* Act */
+		$actual = Sensei_Utils::can_use_users_relationship();
+
+		/* Assert */
+		$this->assertFalse( $actual, 'Users relationship check should be false when there are no posts' );
+	}
+
+	/**
+	 * Tests that check returns `false` for users relationship when there are no posts related to valid users.
+	 *
+	 * @covers Sensei_Utils::can_use_users_relationship
+	 */
+	public function testCanUseUserRelationshipWithInvalidAuthors() {
+		/* Arrange */
+		$this->factory->user->create();
+		$this->factory->post->create( [ 'post_author' => '0' ] );
+
+		/* Act */
+		$actual = Sensei_Utils::can_use_users_relationship();
+
+		/* Assert */
+		$this->assertFalse( $actual, 'Users relationship check should be false when there are no posts related to valid users' );
+	}
+
+	/**
+	 * Tests that check returns `true` for users relationship when there are posts related to users.
+	 *
+	 * @covers Sensei_Utils::can_use_users_relationship
+	 */
+	public function testCanUseUserRelationshipWithPosts() {
+		/* Arrange */
+		$user_id = $this->factory->user->create();
+		$this->factory->post->create( [ 'post_author' => $user_id ] );
+
+		/* Act */
+		$actual = Sensei_Utils::can_use_users_relationship();
+
+		/* Assert */
+		$this->assertTrue( $actual, 'Users relationship check should be true when there are posts related to users' );
+	}
 }
