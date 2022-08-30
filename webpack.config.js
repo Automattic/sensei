@@ -103,7 +103,7 @@ const files = [
 	'css/sensei-theme-blocks.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
-	'course-theme/blocks/blocks.js',
+	'course-theme/blocks/index.js',
 ];
 
 function getName( filename ) {

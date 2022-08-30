@@ -1,6 +1,6 @@
 {
 	"name": "sensei-lms/ui",
-	"category": "sensei-lms",
+	"category": "theme",
 	"apiVersion": 2,
 	"supports": {
 		"color": {

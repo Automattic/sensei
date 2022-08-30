@@ -155,7 +155,7 @@ class Sensei_Course_Theme_Editor {
 	public function enqueue_site_editor_assets() {
 
 		if ( $this->lesson_has_learning_mode() || $this->is_site_editor() ) {
-			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/blocks.js', [ 'sensei-shared-blocks' ] );
+			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'course-theme/blocks/index.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei_Course_Theme::instance()->enqueue_fonts();
 
@@ -181,7 +181,7 @@ class Sensei_Course_Theme_Editor {
 	/**
 	 * Check if the post being edited is a lesson with Learning Mode enabled.
 	 *
-	 * @param WP_Post? $post
+	 * @param WP_Post? $post The post to check.
 	 *
 	 * @return bool
 	 */
