@@ -111,6 +111,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'last_activity'   => array( 'last_activity_date', false ),
 		];
 
+		if ( ! Sensei_Utils::can_use_users_relationship() ) {
+			unset( $columns['last_activity'] );
+		}
+
 		// Backwards compatible filter name, moving forward should have single filter name.
 		$columns = apply_filters( 'sensei_analysis_overview_users_columns_sortable', $columns, $this );
 		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
