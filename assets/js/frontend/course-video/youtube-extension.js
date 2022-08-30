@@ -12,7 +12,11 @@ import Player from '../../../shared/helpers/player';
 const initYouTubePlayer = ( iframe ) => {
 	const player = new Player( iframe );
 
+	// iframe.src should be in the format:
+	// https://www.youtube.com/embed/VIDEO_ID?other-query-parameters=and-their-values&origin=https://example.com
 	const videoId = iframe.src.split( '?' )[ 0 ].split( '/' ).pop();
+	// We compute the URL like this to allow backward compatibility with the value returned from
+	// nativeYoutubePlayer.getVideoUrl() - so we just add the videoId to the prefix used by YouTube for videos.
 	const url = 'https://www.youtube.com/watch?v=' + videoId;
 
 	registerVideo( {
