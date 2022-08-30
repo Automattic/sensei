@@ -89,6 +89,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $total_average_grade ),
 		);
 
+		if ( ! Sensei_Utils::can_use_users_relationship() ) {
+			unset( $columns['last_activity'] );
+		}
+
 		// Backwards compatible filter name, moving forward should have single filter name.
 		$columns = apply_filters( 'sensei_analysis_overview_users_columns', $columns, $this );
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
@@ -166,22 +170,31 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			$user_average_grade .= '%';
 		}
 
-		$last_activity_date = __( 'N/A', 'sensei-lms' );
-		if ( $item->last_activity_date ) {
-			$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
+		$last_activity_date = null;
+		if ( Sensei_Utils::can_use_users_relationship() ) {
+			$last_activity_date = __( 'N/A', 'sensei-lms' );
+			if ( $item->last_activity_date ) {
+				$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
+			}
 		}
+
+		$column_data = array(
+			'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
+			'email'             => $user_email,
+			'date_registered'   => $this->format_date_registered( $item->user_registered ),
+			'last_activity'     => $last_activity_date,
+			'active_courses'    => ( $user_courses_started - $user_courses_ended ),
+			'completed_courses' => $user_courses_ended,
+			'average_grade'     => $user_average_grade,
+		);
+
+		if ( null === $last_activity_date ) {
+			unset( $column_data['last_activity'] );
+		}
+
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
-			array(
-				'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
-				'email'             => $user_email,
-				'date_registered'   => $this->format_date_registered( $item->user_registered ),
-				'last_activity'     => $last_activity_date,
-				'active_courses'    => ( $user_courses_started - $user_courses_ended ),
-				'completed_courses' => $user_courses_ended,
-				'average_grade'     => $user_average_grade,
-			),
-			$item,
+			$column_data,
 			$this
 		);
 
