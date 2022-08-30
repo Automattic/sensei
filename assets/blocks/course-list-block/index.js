@@ -142,8 +142,8 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		) {
 			hideCourseListPatternsCarouselViewControl();
 			hideNonCourseListBlockPatternContainers();
-			return <Fragment />;
 		}
+
 		return <BlockEdit { ...props } />;
 	};
 };
