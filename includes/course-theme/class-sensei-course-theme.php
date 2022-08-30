@@ -37,6 +37,11 @@ class Sensei_Course_Theme {
 	const THEME_NAME = 'sensei-course-theme';
 
 	/**
+	 * CSS version to use when there is no version tag found in the template.
+	 */
+	const DEFAULT_CSS_VERSION = '4-8-0';
+
+	/**
 	 * Instance of class.
 	 *
 	 * @var self
@@ -323,13 +328,34 @@ class Sensei_Course_Theme {
 		return $classes;
 	}
 
+
+	/**
+	 * Get the version of the active Learning Mode template.
+	 *
+	 * @return string|null Version string in the format of 4-0-2
+	 */
+	public function get_template_version() {
+		global $_wp_current_template_content;
+
+		preg_match( '/sensei-version--(\d+-\d+-\d+)/', $_wp_current_template_content ?? '', $version_matches );
+		return $version_matches[1] ?? null;
+	}
+
 	/**
 	 * Enqueue styles.
 	 *
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/learning-mode.css' );
+
+		$version  = $this->get_template_version();
+		$css_file = 'css/learning-mode.' . $version . '.css';
+
+		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $css_file ) ) ) {
+			$css_file = 'css/learning-mode.' . self::DEFAULT_CSS_VERSION . '.css';
+		}
+
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );

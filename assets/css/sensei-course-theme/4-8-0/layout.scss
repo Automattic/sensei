@@ -1,0 +1,112 @@
+:root {
+	--header-height: 65px;
+	--header-progress-bar-height: 4px;
+	--sidebar-width: 300px;
+	--content-padding: 32px;
+}
+
+body.sensei-course-theme {
+	--top-offset: var(--sensei-wpadminbar-offset, 0px);
+	padding: 0!important;
+	margin: 0!important;
+}
+
+.wp-site-blocks {
+	padding: 0!important;
+	margin: 0!important;
+	// This var needs to be in another level because we update the `--header-height` in the body.
+	--full-header-height: calc(var(--header-height) + var(--top-offset));
+}
+
+.sensei-course-theme__frame {
+
+	.sensei-block-wrapper {
+		margin: 0;
+	}
+
+	section {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+}
+
+.sensei-course-theme {
+
+	&__header {
+		margin: 0;
+		position: fixed;
+		left: 0;
+		right: 0;
+		height: var(--header-height);
+		top: var(--top-offset);
+		background-color: var(--bg-color);
+		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		> .wp-block-group:first-child {
+			flex: 1;
+		}
+	}
+
+	&__header ~ &__columns {
+		margin-top: var(--header-height) !important;
+	}
+
+	&__spacer-flex {
+		flex: 1;
+	}
+
+	&__sidebar {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: var(--sidebar-width);
+		border-right: 1px solid var(--border-color);
+		background-color: var(--bg-color);
+		overflow: auto;
+		overscroll-behavior: contain;
+		display: flex;
+		flex-direction: column;
+		scrollbar-gutter: stable both-edges;
+
+	}
+
+	&__header ~ &__columns &__sidebar {
+		top: var(--full-header-height) !important;
+	}
+
+	&__main-content ~ &__sidebar {
+		left: unset;
+		right: 0;
+		border-right: unset;
+		border-left: 1px solid var(--border-color);
+
+	}
+
+	&__main-content {
+		padding: 32px 0;
+		margin-right: var(--sidebar-width) !important;
+
+		// A Divi fix since it doesn't load Gutenberg block library styles.
+		@at-root {
+			.et_pb_pagebuilder_layout & {
+				flex: 1;
+			}
+		}
+	}
+
+	&__sidebar ~ &__main-content {
+		margin-right: unset ! important;
+		margin-left: var(--sidebar-width) !important;
+	}
+
+	&__header {
+
+	}
+
+	&__actions {
+		flex: 0 0 auto !important;
+	}
+
+}
