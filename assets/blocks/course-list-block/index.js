@@ -119,10 +119,83 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
+// Create a feature badge.
+const getFeaturedBadge = () => {
+	const featureBadge = document.createElement( 'div' );
+	featureBadge.classList.add( 'featured-badge' );
+	featureBadge.textContent = __( 'Featured', 'sensei-lms' );
+	return featureBadge;
+};
+
+const addFeatureBadgeToElement = ( child, className ) => {
+	const wrapper = document.createElement( 'div' );
+	wrapper.classList.add( className );
+	child.parentNode.insertBefore( wrapper, child );
+	wrapper.appendChild( getFeaturedBadge() );
+	wrapper.appendChild( child );
+};
+
+const addFeaturedBadgeToCourses = () => {
+	const templates = document.querySelectorAll(
+		'[data-type="core/post-template"]'
+	);
+	if ( ! templates || templates.length <= 0 ) {
+		return;
+	}
+	templates.forEach( ( t ) => {
+		// If the courses are not yet loaded return.
+		if ( ! ( t.tagName === 'UL' ) ) {
+			return;
+		}
+
+		const courses = t.querySelectorAll( 'li' );
+		courses.forEach( ( course ) => {
+			course.childNodes.forEach( ( child ) => {
+				// If the badge is already added return.
+				if (
+					course.classList.contains(
+						'featured-course-no-image-wrapper'
+					) ||
+					course.classList.contains(
+						'featured-course-with-image-wrapper'
+					)
+				) {
+					return;
+				}
+
+				if ( child.tagName === 'FIGURE' ) {
+					// Add feature badge to feature image.
+					course.classList.add(
+						'featured-course-with-image-wrapper'
+					);
+					addFeatureBadgeToElement( child, 'featured-image-wrapper' );
+				} else if ( child.classList.contains( 'wp-block' ) ) {
+					// Add feature badge to course categories.
+					const courseCategory = child.querySelector(
+						'.wp-block-sensei-lms-course-categories'
+					);
+					if ( courseCategory ) {
+						course.classList.add(
+							'featured-course-no-image-wrapper'
+						);
+						addFeatureBadgeToElement(
+							child,
+							'featured-category-wrapper'
+						);
+					}
+				}
+			} );
+		} );
+	} );
+};
+
 let isCourseListBlockSelected = false;
 
 const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 	return ( props ) => {
+		// Course Featured Badge.
+		addFeaturedBadgeToCourses();
+
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
 			isQueryLoopBlock &&

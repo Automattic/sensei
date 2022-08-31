@@ -6,3 +6,47 @@
 		text-decoration: none;
 	}
 }
+
+.featured-badge {
+	display: none;
+}
+
+.featured-course-with-image-wrapper {
+	.featured-image-wrapper {
+		position: relative;
+		.featured-badge {
+			display: block;
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background-color: #1d2327;
+			padding: 3px 6px;
+			text-decoration: none;
+			border-radius: 2px;
+			white-space: nowrap;
+			z-index: 1000;
+		}
+	}
+
+}
+
+.featured-course-no-image-wrapper {
+
+	.featured-category-wrapper {
+		display: flex;
+		flex-direction: row;
+
+		.featured-badge {
+			display: block;
+			margin-right: 10px;
+			height: 100%;
+			margin-top: 10px;
+			background-color: #1d2327;
+			padding: 3px 6px;
+			text-decoration: none;
+			border-radius: 2px;
+			white-space: nowrap;
+		}
+	}
+}
+
