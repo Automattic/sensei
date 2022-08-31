@@ -2635,14 +2635,19 @@ class Sensei_Utils {
 				return false;
 			}
 
+			// Temporarily suppress errors for this DB check.
+			$previous_suppress_errors = $wpdb->suppress_errors;
+			$wpdb->suppress_errors( true );
+
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
 			$result                     = $wpdb->get_var( "SELECT u.ID FROM {$wpdb->users} u, {$wpdb->posts} p WHERE u.ID = p.post_author LIMIT 1;" );
-			$can_use_users_relationship = null !== $result;
+			$can_use_users_relationship = null !== $result ? 1 : 0;
 
+			$wpdb->suppress_errors( $previous_suppress_errors );
 			wp_cache_set( 'sensei_can_use_users_relationship', $can_use_users_relationship );
 		}
 
-		return $can_use_users_relationship;
+		return 1 === $can_use_users_relationship;
 	}
 }
 
