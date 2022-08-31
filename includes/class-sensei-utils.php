@@ -2606,49 +2606,6 @@ class Sensei_Utils {
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
-
-	/**
-	 * Check if it's possible to use a relationship between users and posts table. It's used to
-	 * check environments where the users table lives in a different places and the relationship
-	 * doesn't work.
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @return boolean Whether the users relationship is possible.
-	 */
-	public static function can_use_users_relationship() {
-		$can_use_users_relationship = wp_cache_get( 'sensei_can_use_users_relationship' );
-
-		if ( false === $can_use_users_relationship ) {
-			global $wpdb;
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result     = $wpdb->get_var( "SELECT p.ID FROM {$wpdb->posts} p LIMIT 1;" );
-			$have_posts = null !== $result;
-
-			/**
-			 * If site doesn't have posts yet, it considers that we can't use the user relationship,
-			 * but it might not be true because we can't check it. This case is not cached, in case
-			 * it changes.
-			 */
-			if ( ! $have_posts ) {
-				return false;
-			}
-
-			// Temporarily suppress errors for this DB check.
-			$previous_suppress_errors = $wpdb->suppress_errors;
-			$wpdb->suppress_errors( true );
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result                     = $wpdb->get_var( "SELECT u.ID FROM {$wpdb->users} u, {$wpdb->posts} p WHERE u.ID = p.post_author LIMIT 1;" );
-			$can_use_users_relationship = null !== $result ? 1 : 0;
-
-			$wpdb->suppress_errors( $previous_suppress_errors );
-			wp_cache_set( 'sensei_can_use_users_relationship', $can_use_users_relationship );
-		}
-
-		return 1 === $can_use_users_relationship;
-	}
 }
 
 /**

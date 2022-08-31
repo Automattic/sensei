@@ -307,7 +307,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			<?php $this->output_course_select_input(); ?>
 		<?php endif ?>
 
-		<?php if ( 'courses' === $this->type || ( 'users' === $this->type && Sensei_Utils::can_use_users_relationship() ) ) : ?>
+		<?php if ( 'courses' === $this->type || ( 'users' === $this->type && $this->data_provider->get_is_last_activity_filter_enabled() ) ) : ?>
 			<label for="sensei-start-date-filter">
 				<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
 			</label>

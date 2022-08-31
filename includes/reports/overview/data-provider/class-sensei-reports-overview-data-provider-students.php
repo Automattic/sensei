@@ -73,7 +73,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 
 		add_action( 'pre_user_query', [ $this, 'group_by_users' ] );
 
-		if ( Sensei_Utils::can_use_users_relationship() ) {
+		if ( $this->get_is_last_activity_filter_enabled() ) {
 			add_action( 'pre_user_query', [ $this, 'add_last_activity_to_user_query' ] );
 			add_action( 'pre_user_query', [ $this, 'filter_users_by_last_activity' ] );
 
@@ -95,6 +95,26 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$this->last_total_items = $wp_user_search->get_total();
 
 		return $learners;
+	}
+
+	/**
+	 * Check if last activity filter is enabled.
+	 *
+	 * @return {bolean} Whether last activity filter is enabled.
+	 */
+	public function get_is_last_activity_filter_enabled() {
+		/**
+		 * Filters if the last activity filter by date and the last activity sorting are enabled in
+		 * the students report.
+		 *
+		 * @hook  sensei_students_report_last_activity_filter_enabled
+		 * @since $$next-version$$
+		 *
+		 * @param {boolean} $enabled Whether the students last activity filter is enabled.
+		 *
+		 * @return {boolean} Whether the students last activity filter is enabled.
+		 */
+		return apply_filters( 'sensei_students_report_last_activity_filter_enabled', true );
 	}
 
 	/**

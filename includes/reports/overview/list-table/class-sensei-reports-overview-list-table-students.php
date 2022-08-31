@@ -111,10 +111,6 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 			'last_activity'   => array( 'last_activity_date', false ),
 		];
 
-		if ( ! Sensei_Utils::can_use_users_relationship() ) {
-			unset( $columns['last_activity'] );
-		}
-
 		// Backwards compatible filter name, moving forward should have single filter name.
 		$columns = apply_filters( 'sensei_analysis_overview_users_columns_sortable', $columns, $this );
 		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
@@ -172,27 +168,22 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$last_activity_date = __( 'N/A', 'sensei-lms' );
 
-		if ( ! Sensei_Utils::can_use_users_relationship() ) {
-			$item->last_activity_date = $this->get_user_last_activity_date( $item->ID );
-		}
-
-		if ( $item->last_activity_date ) {
+		if ( ! empty( $item->last_activity_date ) ) {
 			$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 		}
 
-		$column_data = array(
-			'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
-			'email'             => $user_email,
-			'date_registered'   => $this->format_date_registered( $item->user_registered ),
-			'last_activity'     => $last_activity_date,
-			'active_courses'    => ( $user_courses_started - $user_courses_ended ),
-			'completed_courses' => $user_courses_ended,
-			'average_grade'     => $user_average_grade,
-		);
-
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
-			$column_data,
+			array(
+				'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
+				'email'             => $user_email,
+				'date_registered'   => $this->format_date_registered( $item->user_registered ),
+				'last_activity'     => $last_activity_date,
+				'active_courses'    => ( $user_courses_started - $user_courses_ended ),
+				'completed_courses' => $user_courses_ended,
+				'average_grade'     => $user_average_grade,
+			),
+			$item,
 			$this
 		);
 
@@ -266,30 +257,5 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		);
 
 		return '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
-	}
-
-	/**
-	 * Get the last activity date from a user.
-	 *
-	 * @param int $user_id User ID.
-	 *
-	 * @return string Last activity date string from the database.
-	 */
-	private function get_user_last_activity_date( $user_id ) {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Query to get last activity date.
-		return $wpdb->get_var(
-			$wpdb->prepare(
-				"
-				SELECT MAX({$wpdb->comments}.comment_date_gmt)
-				FROM {$wpdb->comments}
-				WHERE {$wpdb->comments}.user_id = %d
-				AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
-				AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'
-				ORDER BY {$wpdb->comments}.comment_date_gmt DESC",
-				$user_id
-			)
-		);
 	}
 }
