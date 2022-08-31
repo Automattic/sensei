@@ -23,6 +23,13 @@ class Sensei_Course_Theme_Templates {
 	const THEME_PREFIX = Sensei_Course_Theme::THEME_NAME;
 
 	/**
+	 * The default Learning Mode block template name.
+	 *
+	 * @var string
+	 */
+	const DEFAULT_TEMPLATE_NAME = 'clean';
+
+	/**
 	 * Instance of class.
 	 *
 	 * @var self
@@ -110,6 +117,148 @@ class Sensei_Course_Theme_Templates {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns a list of Learning Mode templates that are available.
+	 *
+	 * @throws Error If the extra templates provided by third party does not abide by the required structure.
+	 */
+	public static function get_available_block_templates() {
+		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
+		require_once "$base_path/clean/class-sensei-lm-template-clean.php";
+		require_once "$base_path/modern/class-sensei-lm-template-modern.php";
+		require_once "$base_path/video/class-sensei-lm-template-video.php";
+		require_once "$base_path/video-full/class-sensei-lm-template-video-full.php";
+
+		$templates                                        = [];
+		$templates[ Sensei_LM_Template_Clean::NAME ]      = Sensei_LM_Template_Clean::get_info();
+		$templates[ Sensei_LM_Template_Modern::NAME ]     = Sensei_LM_Template_Modern::get_info();
+		$templates[ Sensei_LM_Template_Video::NAME ]      = Sensei_LM_Template_Video::get_info();
+		$templates[ Sensei_LM_Template_Video_Full::NAME ] = Sensei_LM_Template_Video_Full::get_info();
+
+		/**
+		 * Allows adding extra Learning Mode block templates.
+		 *
+		 * @since $$next-version$$
+		 * @hook  sensei_learning_mode_block_templates_extra
+		 *
+		 * @param array[] $extra_templates {
+		 *     The list of extra learning mode block templates. Each template is an array
+		 *     with the following structure.
+		 *
+		 *     @type string   $name        The unique name of the block template.
+		 *     @type string   $title       The title of the block template.
+		 *     @type string   $version     The version number of the block template. For example "1.0.0".
+		 *     @type string[] $styles      An array of styles that needs to be enqueued with this block template.
+		 *                                 The styles needs to be registered beforehand via wp_register_style()
+		 *                                 function.
+		 *     @type string[] $scripts     An array of scripts that needs to be enqueued with this block template.
+		 *                                 The scripts needs to be registered beforehand via wp_register_script()
+		 *                                 function.
+		 *     @type array    $screenshots {
+		 *         The screenshots of the block templates that are displayed in the settings for user to see.
+		 *
+		 *         @type string $full      The url to the full size screenshot of the block template.
+		 *         @type string $thumbnail The url to the thumbnail size screenshot of the block template.
+		 *     }
+		 *     @type array    $templates   {
+		 *         The actual html content of the templates.
+		 *
+		 *         @type string $lesson The html content of the block template for lessons.
+		 *         @type string $quiz   The html content of the block template for quizzes.
+		 *     }
+		 * }
+		 *
+		 * @return array[] The list of extra learning mode block templates.
+		 */
+		$extra_templates = apply_filters( 'sensei_learning_mode_block_templates_extra', [] );
+
+		// Add extra templates to the rest of the templates.
+		foreach ( $extra_templates as $extra_template ) {
+			// The block templates must have name.
+			if ( ! isset( $extra_template['name'] ) || ! $extra_template['name'] ) {
+				throw new Error( 'The Learning Mode block templates must have name property.' );
+			}
+
+			// Prefix the names of the extra templates so they don't collide with the Sensei ones.
+			$extra_template['name'] = 'third-party-template-' . $extra_template['name'];
+
+			// Append extra template.
+			$template[ $extra_template['name'] ] = $extra_template;
+		}
+
+		// Allow sensei-pro to provide content for pro templates.
+		$pro_template_names = [ 'modern', 'video', 'video-full' ];
+		foreach ( $templates as $template_name => $template ) {
+
+			/**
+			 * Allows to update the Learning Mode block template.
+			 *
+			 * @since $$next-version$$
+			 * @access private
+			 *
+			 * @hook sensei_learning_mode_block_template_{$template_name}
+			 *
+			 * @param array $template The template properties.
+			 * @return array The template properties.
+			 */
+			$template = apply_filters( "sensei_learning_mode_block_template_{$template_name}", $template );
+
+			if ( in_array( $template_name, $pro_template_names, true ) ) {
+				if ( ! isset( $template['content']['lesson'] ) || ! $template['content']['lesson'] ) {
+					$templates[ $template_name ]['upsell'] = [
+						'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
+						'url'   => 'https://senseilms.com/pricing/',
+					];
+				}
+			} elseif ( isset( $template['upsell'] ) ) {
+				// Non pro templates are not allowed to have upsell.
+				unset( $template['upsell'] );
+			}
+
+			$templates[ $template_name ] = $template;
+		}
+
+		return $templates;
+	}
+
+	/**
+	 * Retrieves the block template data that is currently activated in the settings.
+	 */
+	public function get_active_block_template() {
+		$template_name    = \Sensei()->settings->get( 'sensei_learning_mode_template' );
+		$templates        = self::get_available_block_templates();
+		$default_template = $templates[ self::DEFAULT_TEMPLATE_NAME ];
+		if ( isset( $templates[ $template_name ] ) ) {
+			$template = $templates[ $template_name ];
+
+			// In case the selected template does not have the template contents somehow
+			// supply the default template contents.
+			if ( ! isset( $template['content'] ) ) {
+				$template['content'] = [];
+			}
+
+			// Make sure the lesson content is not empty.
+			if (
+				! isset( $template['content']['lesson'] ) ||
+				! $template['content']['lesson']
+			) {
+				$template['content']['lesson'] = $default_template['content']['lesson'];
+			}
+
+			// Make sure the quiz content is not empty.
+			if (
+				! isset( $template['content']['quiz'] ) ||
+				! $template['content']['quiz']
+			) {
+				$template['content']['quiz'] = $default_template['content']['quiz'];
+			}
+		} else {
+			$template = $default_template;
+		}
+
+		return $template;
 	}
 
 	/**
