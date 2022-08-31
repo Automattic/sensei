@@ -121,7 +121,7 @@ const hideUnnecessarySettingsForCourseList = () => {
 
 let isCourseListBlockSelected = false;
 
-const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
+const withQueryLoopPatternsAndSettingsHiddenForCourseList = ( BlockEdit ) => {
 	return ( props ) => {
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
@@ -134,6 +134,22 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 			isCourseListBlockSelected = false;
 		}
 
+		// Hide query loop toolbar settings for grid/list outlook.
+		if (
+			isBlockAlreadyAddedInEditor( props.clientId ) &&
+			isCourseListBlockSelected
+		) {
+			const settingsName = __( 'Grid view', 'sensei-lms' );
+			const outlookSettings = document.querySelector(
+				`[aria-label="${ settingsName }"]`
+			);
+			if ( outlookSettings ) {
+				const toolbarElement = outlookSettings.parentNode;
+				toolbarElement.style.display = 'none';
+			}
+		}
+
+		// Hide query loop patterns for course list.
 		if (
 			isCourseListBlockSelected &&
 			isQueryLoopBlock &&
@@ -151,7 +167,7 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 addFilter(
 	'editor.BlockEdit',
 	'sensei-lms/course-list-block',
-	withQueryLoopPatternsHiddenForCourseList
+	withQueryLoopPatternsAndSettingsHiddenForCourseList
 );
 
 // Hide patterns control so only Grid view can be selected.
