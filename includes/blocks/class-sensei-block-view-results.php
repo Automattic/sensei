@@ -72,11 +72,13 @@ class Sensei_Block_View_Results {
 			return '';
 		}
 
-		return preg_replace(
-			'/<a(.*)>/',
-			'<a href="' . esc_url( Sensei_Course::get_view_results_link( $course_id ) ) . '" $1>',
-			$content,
-			1
-		);
+		return '<div class="sensei-block-wrapper">' .
+			preg_replace(
+				'/<a(.*)>/',
+				'<a href="' . esc_url( Sensei_Course::get_view_results_link( $course_id ) ) . '" $1>',
+				$content,
+				1
+			) .
+		'</div>';
 	}
 }
