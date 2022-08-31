@@ -193,8 +193,6 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	 * Test getting course structure when a module has no published lessons while in view context.
 	 */
 	public function testGetModulesWithEmptyLessonsView() {
-		$this->login_as_admin();
-
 		$course_id = $this->factory->course->create();
 
 		$lessons            = $this->factory->lesson->create_many( 2 );

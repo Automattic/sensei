@@ -44,20 +44,26 @@ class Sensei_Block_View_Results {
 	 * @return string The HTML of the block.
 	 */
 	public function render( $attributes, $content ): string {
+		$course_id = get_the_ID();
+
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return '';
+		}
+
 		/**
-		 * Whether render the view results block.
+		 * Whether to render the View Results block.
 		 *
 		 * @since 3.13.3
 		 *
-		 * @param {boolean} $render     Whether render the view results block.
+		 * @param {boolean} $render     Whether to render the View Results block.
 		 * @param {array}   $attributes Block attributes.
 		 * @param {string}  $content    Block HTML.
 		 *
-		 * @return {boolean} Whether render the view results block.
+		 * @return {boolean} Whether to render the View Results block.
 		 */
 		$render = apply_filters(
 			'sensei_render_view_results_block',
-			Sensei()->course::is_user_enrolled( get_the_ID() ),
+			Sensei_Utils::user_completed_course( $course_id, get_current_user_id() ),
 			$attributes,
 			$content
 		);
@@ -68,7 +74,7 @@ class Sensei_Block_View_Results {
 
 		return preg_replace(
 			'/<a(.*)>/',
-			'<a href="' . esc_url( Sensei_Course::get_view_results_link( get_the_ID() ) ) . '" $1>',
+			'<a href="' . esc_url( Sensei_Course::get_view_results_link( $course_id ) ) . '" $1>',
 			$content,
 			1
 		);

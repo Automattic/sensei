@@ -191,3 +191,33 @@ export const onTimeupdate = ( player, callback, w = window ) => {
 		w.removeEventListener( 'message', transformedCallback );
 	};
 };
+
+/**
+ * Add an timeupdate event listener to the player.
+ *
+ * @param {HTMLIFrameElement} player   The player element.
+ * @param {Function}          callback Listener callback.
+ * @param {Window}            w        A custom window.
+ *
+ * @return {Function} The function to unsubscribe the event.
+ */
+export const onEnded = ( player, callback, w = window ) => {
+	const transformedCallback = ( event ) => {
+		if (
+			event.source !== player.contentWindow ||
+			event.data.event !== `videopress_ended`
+		) {
+			return;
+		}
+
+		callback();
+	};
+
+	// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+	w.addEventListener( 'message', transformedCallback );
+
+	return () => {
+		// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+		w.removeEventListener( 'message', transformedCallback );
+	};
+};

@@ -10,6 +10,7 @@ import { subscribe, select } from '@wordpress/data';
 import registerSenseiBlocks from './register-sensei-blocks';
 import ContactTeacherBlock from './contact-teacher-block';
 import ConditionalContentBlock from './conditional-content-block';
+import { registerCourseListBlock } from './course-list-block';
 
 // Post types where blocks should be loaded. Or null if it should be loaded for any post type.
 const BLOCKS_PER_POST_TYPE = {
@@ -18,6 +19,8 @@ const BLOCKS_PER_POST_TYPE = {
 };
 
 registerSenseiBlocks( [ ContactTeacherBlock, ConditionalContentBlock ] );
+
+registerCourseListBlock();
 
 let postType = null;
 

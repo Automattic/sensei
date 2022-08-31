@@ -1,0 +1,8 @@
+{
+	"name": "sensei-lms/course-actions",
+	"category": "sensei-lms",
+	"supports": {
+		"html": false
+	},
+	"usesContext": [ "postType" ]
+}
