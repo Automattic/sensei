@@ -1,5 +1,3 @@
-/* eslint-disable jest/no-done-callback */
-
 /**
  * External dependencies
  */
@@ -22,40 +20,30 @@ test.describe.serial( 'Students Management', () => {
 
 	test.beforeAll( async ( { request } ) => {
 		student = await createStudent( request, STUDENT_NAME );
-		course = await createCourse( request, COURSE_NAME );
+		course = await createCourse( request, { title: COURSE_NAME } );
 	} );
 
 	test( 'it should add a student to a course', async ( { page } ) => {
 		const studentsPage = new StudentsPage( page );
 		await studentsPage.goTo();
 
-		await studentsPage.openStudentAction(
-			student.username,
-			'Add to Course'
-		);
+		await studentsPage.openStudentAction( student.username, 'Add to Course' );
 
 		await studentsPage.modal.selectCourse( course.title.raw );
 		await studentsPage.modal.addToCourseButton.click();
 
-		await expect(
-			await studentsPage.getRowByStudent( student.username )
-		).toContainText( COURSE_NAME );
+		await expect( await studentsPage.getRowByStudent( student.username ) ).toContainText( COURSE_NAME );
 	} );
 
 	test( 'it should remove the student from course', async ( { page } ) => {
 		const studentsPage = new StudentsPage( page );
 		await studentsPage.goTo();
 
-		await studentsPage.openStudentAction(
-			student.username,
-			'Remove From Course'
-		);
+		await studentsPage.openStudentAction( student.username, 'Remove From Course' );
 
 		await studentsPage.modal.selectCourse( course.title.raw );
 		await studentsPage.modal.removeFromCourseButton.click();
 
-		await expect(
-			await studentsPage.getRowByStudent( student.username )
-		).not.toContainText( COURSE_NAME );
+		await expect( await studentsPage.getRowByStudent( student.username ) ).not.toContainText( COURSE_NAME );
 	} );
 } );
