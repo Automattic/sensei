@@ -4,13 +4,13 @@ namespace SenseiTest\Student_Progress\Course_Progress\Repositories;
 
 use Sensei\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
 use Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
-use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Aggregate;
+use Sensei\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository;
 use Sensei\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 
 /**
  * Tests for Course_Progress_Repository_Aggregate.
  *
- * @covers \Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Aggregate
+ * @covers \Sensei\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository
  */
 class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 
@@ -18,7 +18,7 @@ class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$tables    = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 		$comments  = $this->createMock( Comments_Based_Course_Progress_Repository::class );
-		$aggregate = new Course_Progress_Repository_Aggregate( $tables, $comments, true );
+		$aggregate = new Aggregate_Course_Progress_Repository( $tables, $comments, true );
 
 		/* Expect & Act. */
 		$tables
@@ -32,7 +32,7 @@ class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$tables    = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 		$comments  = $this->createMock( Comments_Based_Course_Progress_Repository::class );
-		$aggregate = new Course_Progress_Repository_Aggregate( $tables, $comments, false );
+		$aggregate = new Aggregate_Course_Progress_Repository( $tables, $comments, false );
 
 		/* Expect & Act. */
 		$tables
@@ -46,7 +46,7 @@ class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$tables    = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 		$comments  = $this->createMock( Comments_Based_Course_Progress_Repository::class );
-		$aggregate = new Course_Progress_Repository_Aggregate( $tables, $comments, true );
+		$aggregate = new Aggregate_Course_Progress_Repository( $tables, $comments, true );
 
 		/* Expect & Act. */
 		$tables
@@ -67,7 +67,7 @@ class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 			->willReturn( $progress );
 
 		$comments  = $this->createMock( Comments_Based_Course_Progress_Repository::class );
-		$aggregate = new Course_Progress_Repository_Aggregate( $tables, $comments, true );
+		$aggregate = new Aggregate_Course_Progress_Repository( $tables, $comments, true );
 
 		/* Act. */
 		$actual = $aggregate->get( 1, 1 );
@@ -80,7 +80,7 @@ class Course_Progress_Repository_Aggregate_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$tables    = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 		$comments  = $this->createMock( Comments_Based_Course_Progress_Repository::class );
-		$aggregate = new Course_Progress_Repository_Aggregate( $tables, $comments, false );
+		$aggregate = new Aggregate_Course_Progress_Repository( $tables, $comments, false );
 
 		/* Expect & Act. */
 		$tables

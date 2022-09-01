@@ -253,7 +253,7 @@ class Sensei_Autoloader {
 			\Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::class => 'student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php',
 			\Sensei\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository::class => 'student-progress/course-progress/repositories/class-tables-based-course-progress-repository.php',
 			\Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory::class => 'student-progress/course-progress/repositories/class-course-progress-repository-factory.php',
-			\Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Aggregate::class => 'student-progress/course-progress/repositories/class-course-progress-repository-aggregate.php',
+			\Sensei\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository::class => 'student-progress/course-progress/repositories/class-aggregate-course-progress-repository.php',
 			\Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface::class => 'student-progress/lesson-progress/repositories/class-lesson-progress-repository-interface.php',
 			\Sensei\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::class => 'student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php',
 			\Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory::class => 'student-progress/lesson-progress/repositories/class-lesson-progress-repository-factory.php',

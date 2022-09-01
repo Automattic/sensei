@@ -28,7 +28,7 @@ class Course_Progress_Repository_Factory {
 	 * @return Course_Progress_Repository_Interface
 	 */
 	public function create(): Course_Progress_Repository_Interface {
-		return new Course_Progress_Repository_Aggregate(
+		return new Aggregate_Course_Progress_Repository(
 			$this->create_tables(),
 			$this->create_comments(),
 			false

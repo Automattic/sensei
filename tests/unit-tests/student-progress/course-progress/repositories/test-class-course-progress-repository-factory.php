@@ -5,7 +5,7 @@ namespace SenseiTest\Student_Progress\Course_Progress\Repositories;
 use Sensei\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
 use Sensei\Student_Progress\Course_Progress\Models\Tables_Based_Course_Progress;
 use Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
-use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Aggregate;
+use Sensei\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository;
 use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 
@@ -25,7 +25,7 @@ class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 		$actual = $factory->create();
 
 		/* Assert. */
-		self::assertInstanceOf( Course_Progress_Repository_Aggregate::class, $actual );
+		self::assertInstanceOf( Aggregate_Course_Progress_Repository::class, $actual );
 	}
 
 	/**

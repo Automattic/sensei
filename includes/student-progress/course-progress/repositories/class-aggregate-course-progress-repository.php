@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since $$next-version$$
  */
-class Course_Progress_Repository_Aggregate implements Course_Progress_Repository_Interface {
+class Aggregate_Course_Progress_Repository implements Course_Progress_Repository_Interface {
 
 	/**
 	 * Repository for course progress in custom tables.
