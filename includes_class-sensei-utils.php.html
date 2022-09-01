@@ -1170,10 +1170,30 @@ class Sensei_Utils {
 									. '&lt;/a>';
 					}
 				}
-			} else {  // Lesson/Quiz not complete
+			} else {  // Lesson/Quiz not complete.
 
-				// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete)
-				if ( isset( $user_lesson_status->comment_approved ) &amp;&amp; 'ungraded' == $user_lesson_status->comment_approved ) {
+				$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
+
+				if ( ! $is_lesson &amp;&amp; $lesson_prerequisite > 0 ) {
+					$lesson_status = self::user_lesson_status( $lesson_prerequisite, $user_id );
+
+					$prerequisite_lesson_link = '&lt;a href="'
+						. esc_url( get_permalink( $lesson_prerequisite ) )
+						. '" title="'
+						// translators: Placeholder is the item title.
+						. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+						. '">'
+						. esc_html__( 'prerequisites', 'sensei-lms' )
+						. '&lt;/a>';
+
+					$message = ! empty( $lesson_status ) &amp;&amp; 'ungraded' === $lesson_status->comment_approved
+						// translators: Placeholder is the link to the prerequisite lesson.
+						? sprintf( esc_html__( 'You will be able to access this quiz once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
+						// translators: Placeholder is the link to the prerequisite lesson.
+						: sprintf( esc_html__( 'Please complete the %1$s to access this quiz.', 'sensei-lms' ), $prerequisite_lesson_link );
+
+					// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete).
+				} elseif ( isset( $user_lesson_status->comment_approved ) &amp;&amp; 'ungraded' == $user_lesson_status->comment_approved ) {
 					$status    = 'complete';
 					$box_class = 'info';
 					if ( $is_lesson ) {
@@ -1183,9 +1203,9 @@ class Sensei_Utils {
 						// translators: Placeholder is the quiz passmark.
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
 					}
-				}
-				// Lesson status must be "failed"
-				elseif ( isset( $user_lesson_status->comment_approved ) &amp;&amp; 'failed' == $user_lesson_status->comment_approved ) {
+
+					// Lesson status must be "failed".
+				} elseif ( isset( $user_lesson_status->comment_approved ) &amp;&amp; 'failed' == $user_lesson_status->comment_approved ) {
 					$status    = 'failed';
 					$box_class = 'alert';
 					if ( $is_lesson ) {
@@ -1195,9 +1215,9 @@ class Sensei_Utils {
 						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
 						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
 					}
-				}
-				// Lesson/Quiz requires a pass
-				elseif ( $pass_required ) {
+
+					// Lesson/Quiz requires a pass.
+				} elseif ( $pass_required ) {
 					$status    = 'not_started';
 					$box_class = 'info';
 
