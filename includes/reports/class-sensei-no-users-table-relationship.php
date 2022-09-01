@@ -60,6 +60,25 @@ class Sensei_No_Users_Table_Relationship {
 	 * @return boolean Whether the users relationship is possible.
 	 */
 	public function can_use_users_relationship() {
+		/**
+		 * Filters if site environment is able make queries including a relationship between users
+		 * table and others.
+		 *
+		 * @hook  sensei_can_use_users_relationship
+		 * @since $$next-version$$
+		 *
+		 * @param {null} $can_use_users_relationship Default value is `null`. With this value the
+		 *                                           filter is ignored.
+		 *
+		 * @return {boolean|null} Whether the site environment is able to make queries including a
+		 *                        relationship between users table and others..
+		 */
+		$filtered_can_use_users_relationship = apply_filters( 'sensei_can_use_users_relationship', null );
+
+		if ( null !== $filtered_can_use_users_relationship ) {
+			return $filtered_can_use_users_relationship;
+		}
+
 		$can_use_users_relationship = wp_cache_get( 'sensei_can_use_users_relationship' );
 
 		if ( false === $can_use_users_relationship ) {
