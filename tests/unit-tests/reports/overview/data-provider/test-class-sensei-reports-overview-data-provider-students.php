@@ -20,6 +20,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 */
 	public function setup() {
 		parent::setUp();
+		$this->resetCourseEnrolmentManager();
 
 		$this->factory = new Sensei_Factory();
 
@@ -320,7 +321,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$user_id   = $this->factory->user->create( $user_args );
 		$course_id = $course_id ?? $this->factory->course->create();
 
-		$this->directlyEnrolStudent( $user_id, $course_id );
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
 
 		return $user_id;
 	}
