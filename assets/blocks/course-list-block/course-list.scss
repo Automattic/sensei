@@ -1,6 +1,6 @@
 $block: '.wp-block-sensei-lms-course-list';
 
-// Match styles applied to block on single course page.
+/* Match styles applied to block on single course page. */
 #{$block} {
 	.course {
 		border: 0;
@@ -23,7 +23,7 @@ $block: '.wp-block-sensei-lms-course-list';
 	}
 
 	&--is-grid-view {
-		// Align button to bottom of card.
+		/* Align button to bottom of card. */
 		.wp-block-post {
 			display: flex;
 			flex-direction: column;
