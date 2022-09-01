@@ -36,9 +36,22 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	private $category;
 
 	/**
+	 * Skip tests for wp versions older than query block.
+	 */
+	private $skip_tests = false;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp() {
+		global $wp_version;
+
+		$version = str_replace( '-src', '', $wp_version );
+		if ( version_compare( $version, '5.8', '<' ) ) {
+			$this->skip_tests = true;
+			return;
+		}
+
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 
@@ -55,6 +68,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	}
 
 	public function testCourseFilterBlock_ShowsCoursesAndCategoriesProperly_WhenRendered() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
 		/* ACT */
 		$result = do_blocks( self::get_content_for_type( 'categories' ) );
 
@@ -65,6 +81,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithNonCategoryFilterParam_ShowsAllCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
 		/* ARRANGE */
 		$_GET['course-list-category-filter-13'] = 0;
 
@@ -77,6 +96,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithCategoryFilterParam_ShowsOnlyFilteredCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
 		/* ARRANGE */
 		$_GET['course-list-category-filter-13'] = $this->category->term_id;
 
