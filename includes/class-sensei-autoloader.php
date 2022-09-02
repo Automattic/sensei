@@ -244,24 +244,17 @@ class Sensei_Autoloader {
 			 */
 			'Sensei\Quiz_Submission\Models\Answer'         => 'quiz-submission/models/class-answer.php',
 			'Sensei\Quiz_Submission\Models\Comments_Based_Grade' => 'quiz-submission/models/class-comments-based-grade.php',
-			'Sensei\Quiz_Submission\Models\Tables_Based_Grade' => 'quiz-submission/models/class-tables-based-grade.php',
 			'Sensei\Quiz_Submission\Models\Grade_Interface' => 'quiz-submission/models/class-grade-interface.php',
 			'Sensei\Quiz_Submission\Models\Submission'     => 'quiz-submission/models/class-submission.php',
 			'Sensei\Quiz_Submission\Repositories\Answer_Comments_Repository' => 'quiz-submission/repositories/class-answer-comments-repository.php',
-			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Aggregate' => 'quiz-submission/repositories/class-answer-repository-aggregate.php',
 			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory' => 'quiz-submission/repositories/class-answer-repository-factory.php',
 			'Sensei\Quiz_Submission\Repositories\Answer_Repository_Interface' => 'quiz-submission/repositories/class-answer-repository-interface.php',
-			'Sensei\Quiz_Submission\Repositories\Answer_Tables_Repository' => 'quiz-submission/repositories/class-answer-tables-repository.php',
 			'Sensei\Quiz_Submission\Repositories\Grade_Comments_Repository' => 'quiz-submission/repositories/class-grade-comments-repository.php',
-			'Sensei\Quiz_Submission\Repositories\Grade_Repository_Aggregate' => 'quiz-submission/repositories/class-grade-repository-aggregate.php',
 			'Sensei\Quiz_Submission\Repositories\Grade_Repository_Factory' => 'quiz-submission/repositories/class-grade-repository-factory.php',
 			'Sensei\Quiz_Submission\Repositories\Grade_Repository_Interface' => 'quiz-submission/repositories/class-grade-repository-interface.php',
-			'Sensei\Quiz_Submission\Repositories\Grade_Tables_Repository' => 'quiz-submission/repositories/class-grade-tables-repository.php',
 			'Sensei\Quiz_Submission\Repositories\Submission_Comments_Repository' => 'quiz-submission/repositories/class-submission-comments-repository.php',
-			'Sensei\Quiz_Submission\Repositories\Submission_Repository_Aggregate' => 'quiz-submission/repositories/class-submission-repository-aggregate.php',
 			'Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory' => 'quiz-submission/repositories/class-submission-repository-factory.php',
 			'Sensei\Quiz_Submission\Repositories\Submission_Repository_Interface' => 'quiz-submission/repositories/class-submission-repository-interface.php',
-			'Sensei\Quiz_Submission\Repositories\Submission_Tables_Repository' => 'quiz-submission/repositories/class-submission-tables-repository.php',
 		);
 	}
 
