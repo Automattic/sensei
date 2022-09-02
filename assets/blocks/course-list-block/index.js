@@ -56,6 +56,32 @@ export const registerCourseListBlock = () => {
 	} );
 };
 
+/* Add support for borders to the Query Loop block. */
+function addBorderSupport( settings, name ) {
+	if ( name !== 'core/query' ) {
+		return settings;
+	}
+
+	return {
+		...settings,
+		supports: {
+			...settings.supports,
+			__experimentalBorder: {
+				color: true,
+				radius: true,
+				style: true,
+				width: true,
+			},
+		},
+	};
+}
+
+wp.hooks.addFilter(
+	'blocks.registerBlockType',
+	'sensei-lms/course-list-block',
+	addBorderSupport
+);
+
 const unsubscribe = subscribe( () => {
 	const blockSettingsPanel = document.querySelector(
 		'.interface-interface-skeleton__sidebar'
@@ -71,12 +97,21 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 	// eslint-disable-next-line no-undef
 	const observer = new MutationObserver( () => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+
+		if ( 'core/query' !== selectedBlock?.name ) {
+			return;
+		}
+
 		if (
-			'core/query' === selectedBlock?.name &&
 			'wp-block-sensei-lms-course-list' ===
-				selectedBlock?.attributes?.className
+			selectedBlock?.attributes?.className
 		) {
 			hideUnnecessarySettingsForCourseList();
+		} else if ( document.querySelector( '.border-block-support-panel' ) ) {
+			// Hide border setting for Query Loop block (leave for Course List block).
+			document.querySelector(
+				'.border-block-support-panel'
+			).style.display = 'none';
 		}
 	} );
 
