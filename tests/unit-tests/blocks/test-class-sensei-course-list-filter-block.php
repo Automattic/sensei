@@ -110,6 +110,72 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->assertNotContains( $this->course2->post_title, $result );
 	}
 
+	public function testCourseFilterBlock_WhenCalledWithFeaturedFilterParam_ShowsOnlyFeaturedCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$_GET['course-list-featured-filter-13'] = 'featured';
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+
+		/* ASSERT */
+		$this->assertContains( $this->course1->post_title, $result );
+		$this->assertNotContains( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenCalledWithFeaturedFilterParamSetAll_ShowsAllCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$_GET['course-list-featured-filter-13'] = 'all';
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+
+		/* ASSERT */
+		$this->assertContains( $this->course1->post_title, $result );
+		$this->assertContains( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenCalledFeaturedAndCategoryFilterTogether_ShowsFilteredCoursesProperly() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$_GET['course-list-featured-filter-13'] = 'featured';
+		$_GET['course-list-category-filter-13'] = $this->category->term_id;
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+
+		/* ASSERT */
+		$this->assertContains( $this->course1->post_title, $result );
+		$this->assertNotContains( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenCalledFeaturedAndCategoryFilterTogether_ShowsNoCoursesWhenApplicable() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$_GET['course-list-featured-filter-13'] = 'featured';
+		$_GET['course-list-category-filter-13'] = $this->category->term_id;
+		update_post_meta( $this->course2->ID, '_course_featured', 'featured' );
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+
+		/* ASSERT */
+		$this->assertNotContains( $this->course1->post_title, $result );
+		$this->assertNotContains( $this->course2->post_title, $result );
+	}
+
 	/**
 	 * Block content.
 	 */

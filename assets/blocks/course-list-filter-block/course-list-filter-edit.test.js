@@ -61,7 +61,7 @@ describe( 'CourseListFilterBlockEdit', () => {
 				context={ context }
 			/>
 		);
-		expect( getByText( 'All Courses' ) ).toBeInTheDocument();
+		expect( getByText( 'Featured' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render the dropdown for activity filter', () => {

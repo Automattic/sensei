@@ -64,11 +64,7 @@ function useFilterOptions( type ) {
 				filters.featured.defaultOption,
 				{
 					label: __( 'Featured', 'sensei-lms' ),
-					value: 'yes',
-				},
-				{
-					label: __( 'Not Featured', 'sensei-lms' ),
-					value: 'no',
+					value: 'featured',
 				},
 			];
 		case 'activity':

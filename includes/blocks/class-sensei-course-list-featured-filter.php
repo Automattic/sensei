@@ -33,9 +33,8 @@ class Sensei_Course_List_Featured_Filter {
 	 */
 	public function __construct() {
 		$this->featured_options = [
-			'all' => __( 'All Courses', 'sensei-lms' ),
-			'yes' => __( 'Featured', 'sensei-lms' ),
-			'no'  => __( 'Not Featured', 'sensei-lms' ),
+			'all'      => __( 'All Courses', 'sensei-lms' ),
+			'featured' => __( 'Featured', 'sensei-lms' ),
 		];
 	}
 	/**
@@ -85,9 +84,18 @@ class Sensei_Course_List_Featured_Filter {
 		$args = array(
 			'post_type'      => 'course',
 			'posts_per_page' => -1,
-			'meta_value'     => 'featured', // phpcs:ignore WordPress.DB.SlowDBQuery
-			'meta_key'       => '_course_featured', // phpcs:ignore WordPress.DB.SlowDBQuery
-			'meta_compare'   => 'yes' === $selected_option ? '!=' : '=',
+			'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery
+				'relation' => 'OR',
+				[
+					'key'     => '_course_featured',
+					'compare' => 'NOT EXISTS',
+				],
+				[
+					'key'     => '_course_featured',
+					'value'   => 'featured',
+					'compare' => '!=',
+				],
+			],
 			'fields'         => 'ids',
 		);
 
