@@ -1,6 +1,6 @@
 <?php
 /**
- * The class file for Sensei_LM_Template_Clean.
+ * The class file for Sensei_LM_Template_Default.
  *
  * @author      Automattic
  * @package     Sensei
@@ -8,9 +8,9 @@
  */
 
 /**
- * Class Sensei_LM_Template_Clean
+ * Class Sensei_LM_Template_Default
  */
-class Sensei_LM_Template_Clean {
+class Sensei_LM_Template_Default {
 	/**
 	 * The version of this template.
 	 *
@@ -23,7 +23,7 @@ class Sensei_LM_Template_Clean {
 	 *
 	 * @var string
 	 */
-	const NAME = 'clean';
+	const NAME = 'default';
 
 	/**
 	 * Returns the template info.
@@ -35,7 +35,7 @@ class Sensei_LM_Template_Clean {
 
 		return [
 			'name'        => $name,
-			'title'       => __( 'Clean', 'sensei-lms' ),
+			'title'       => __( 'Default', 'sensei-lms' ),
 			'content'     => [
 				'lesson' => "$base_path/$name/lesson.html",
 				'quiz'   => "$base_path/$name/quiz.html",

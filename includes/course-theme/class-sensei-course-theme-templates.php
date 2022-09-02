@@ -27,7 +27,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @var string
 	 */
-	const DEFAULT_TEMPLATE_NAME = 'clean';
+	const DEFAULT_TEMPLATE_NAME = 'default';
 
 	/**
 	 * Instance of class.
@@ -126,13 +126,13 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public static function get_available_block_templates() {
 		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
-		require_once "$base_path/clean/class-sensei-lm-template-clean.php";
+		require_once "$base_path/default/class-sensei-lm-template-default.php";
 		require_once "$base_path/modern/class-sensei-lm-template-modern.php";
 		require_once "$base_path/video/class-sensei-lm-template-video.php";
 		require_once "$base_path/video-full/class-sensei-lm-template-video-full.php";
 
 		$templates                                        = [];
-		$templates[ Sensei_LM_Template_Clean::NAME ]      = Sensei_LM_Template_Clean::get_info();
+		$templates[ Sensei_LM_Template_Default::NAME ]    = Sensei_LM_Template_Default::get_info();
 		$templates[ Sensei_LM_Template_Modern::NAME ]     = Sensei_LM_Template_Modern::get_info();
 		$templates[ Sensei_LM_Template_Video::NAME ]      = Sensei_LM_Template_Video::get_info();
 		$templates[ Sensei_LM_Template_Video_Full::NAME ] = Sensei_LM_Template_Video_Full::get_info();
