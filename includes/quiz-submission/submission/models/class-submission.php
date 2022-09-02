@@ -7,7 +7,7 @@
 
 namespace Sensei\Quiz_Submission\Submission\Models;
 
-use DateTime;
+use DateTimeInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -50,33 +50,33 @@ class Submission {
 	/**
 	 * The created date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	private $created_at;
 
 	/**
 	 * The updated date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	private $updated_at;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param int           $id          The submission ID.
-	 * @param int           $quiz_id     The quiz post ID.
-	 * @param int           $user_id     The user ID.
-	 * @param DateTime|null $created_at  The created date.
-	 * @param DateTime|null $updated_at  The updated date.
-	 * @param float|null    $final_grade The final grade (%).
+	 * @param int                    $id          The submission ID.
+	 * @param int                    $quiz_id     The quiz post ID.
+	 * @param int                    $user_id     The user ID.
+	 * @param DateTimeInterface|null $created_at  The created date.
+	 * @param DateTimeInterface|null $updated_at  The updated date.
+	 * @param float|null             $final_grade The final grade (%).
 	 */
 	public function __construct(
 		int $id,
 		int $quiz_id,
 		int $user_id,
-		DateTime $created_at,
-		DateTime $updated_at = null,
+		DateTimeInterface $created_at,
+		DateTimeInterface $updated_at = null,
 		float $final_grade = null
 	) {
 		$this->id          = $id;
@@ -135,18 +135,18 @@ class Submission {
 	/**
 	 * Get the created date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_created_at(): DateTime {
+	public function get_created_at(): DateTimeInterface {
 		return $this->created_at;
 	}
 
 	/**
 	 * Get the updated date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_updated_at(): DateTime {
+	public function get_updated_at(): DateTimeInterface {
 		return $this->updated_at;
 	}
 }

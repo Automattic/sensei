@@ -9,7 +9,7 @@
 
 namespace Sensei\Quiz_Submission\Grade\Models;
 
-use DateTime;
+use DateTimeInterface;
 use RuntimeException;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -119,20 +119,20 @@ class Comments_Based_Grade implements Grade_Interface {
 	/**
 	 * Get the created date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 * @throws RuntimeException When called.
 	 */
-	public function get_created_at(): DateTime {
+	public function get_created_at(): DateTimeInterface {
 		throw new RuntimeException( 'This legacy model has no `created_at`' );
 	}
 
 	/**
 	 * Get the updated date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 * @throws RuntimeException When called.
 	 */
-	public function get_updated_at(): DateTime {
+	public function get_updated_at(): DateTimeInterface {
 		throw new RuntimeException( 'This legacy model has no `updated_at`' );
 	}
 }

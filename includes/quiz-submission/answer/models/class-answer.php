@@ -7,7 +7,8 @@
 
 namespace Sensei\Quiz_Submission\Answer\Models;
 
-use DateTime;
+use DateTimeInterface;
+use Sensei\Quiz_Submission\Grade\Models\Grade_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -50,41 +51,41 @@ class Answer {
 	/**
 	 * The created date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	private $created_at;
 
 	/**
 	 * The updated date.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	private $updated_at;
 
 	/**
 	 * The grade model.
 	 *
-	 * @var Grade|null
+	 * @var Grade_Interface|null
 	 */
 	private $grade;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param int           $id            The answer ID.
-	 * @param int           $submission_id The submission ID.
-	 * @param int           $question_id   The question ID.
-	 * @param string        $value         The answer value.
-	 * @param DateTime      $created_at    The created date.
-	 * @param DateTime|null $updated_at    The updated date.
+	 * @param int                    $id            The answer ID.
+	 * @param int                    $submission_id The submission ID.
+	 * @param int                    $question_id   The question ID.
+	 * @param string                 $value         The answer value.
+	 * @param DateTimeInterface      $created_at    The created date.
+	 * @param DateTimeInterface|null $updated_at    The updated date.
 	 */
 	public function __construct(
 		int $id,
 		int $submission_id,
 		int $question_id,
 		string $value,
-		DateTime $created_at,
-		DateTime $updated_at = null
+		DateTimeInterface $created_at,
+		DateTimeInterface $updated_at = null
 	) {
 		$this->id            = $id;
 		$this->submission_id = $submission_id;
@@ -133,36 +134,36 @@ class Answer {
 	/**
 	 * Get the created date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_created_at(): DateTime {
+	public function get_created_at(): DateTimeInterface {
 		return $this->created_at;
 	}
 
 	/**
 	 * Get the updated date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_updated_at(): DateTime {
+	public function get_updated_at(): DateTimeInterface {
 		return $this->updated_at;
 	}
 
 	/**
 	 * Get the grade model.
 	 *
-	 * @return Grade|null
+	 * @return Grade_Interface|null
 	 */
-	public function get_grade(): ?Grade {
+	public function get_grade(): ?Grade_Interface {
 		return $this->grade;
 	}
 
 	/**
 	 * Set the grade model.
 	 *
-	 * @param Grade $grade The grade model.
+	 * @param Grade_Interface $grade The grade model.
 	 */
-	public function set_grade( Grade $grade ): void {
+	public function set_grade( Grade_Interface $grade ): void {
 		$this->grade = $grade;
 	}
 }

@@ -8,6 +8,7 @@
 namespace Sensei\Quiz_Submission\Submission\Repositories;
 
 use DateTime;
+use DateTimeInterface;
 use Exception;
 use Sensei\Quiz_Submission\Submission\Models\Submission;
 use Sensei_Utils;
@@ -151,12 +152,14 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 	 *
 	 * @param WP_Comment $status_comment The lesson status comment.
 	 *
-	 * @return DateTime  The created date.
-	 * @throws Exception Emits Exception in case of a date error.
+	 * @return DateTimeInterface The created date.
+	 * @throws Exception In case of a date error.
 	 */
-	private function get_created_date( WP_Comment $status_comment ): DateTime {
+	private function get_created_date( WP_Comment $status_comment ): DateTimeInterface {
 		$start_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
 
-		return $start_date ? new DateTime( $start_date ) : new DateTime();
+		return $start_date
+			? new DateTime( $start_date, wp_timezone() )
+			: current_datetime();
 	}
 }

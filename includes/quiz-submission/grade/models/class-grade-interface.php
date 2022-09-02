@@ -7,7 +7,7 @@
 
 namespace Sensei\Quiz_Submission\Grade\Models;
 
-use DateTime;
+use DateTimeInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,14 +64,14 @@ interface Grade_Interface {
 	/**
 	 * Get the created date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_created_at(): DateTime;
+	public function get_created_at(): DateTimeInterface;
 
 	/**
 	 * Get the updated date.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function get_updated_at(): DateTime;
+	public function get_updated_at(): DateTimeInterface;
 }
