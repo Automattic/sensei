@@ -22,6 +22,13 @@ class Sensei_Course_List_Filter_Block {
 	private $category_filter;
 
 	/**
+	 * Instance of Sensei_Course_List_Featured_Filter class.
+	 *
+	 * @var Sensei_Course_List_Featured_Filter
+	 */
+	private $featured_filter;
+
+	/**
 	 * Sensei_Course_List_Filter_Block constructor.
 	 */
 	public function __construct() {
@@ -30,6 +37,7 @@ class Sensei_Course_List_Filter_Block {
 		add_filter( 'render_block_data', [ $this, 'filter_course_list' ] );
 
 		$this->category_filter = new Sensei_Course_List_Categories_Filter();
+		$this->featured_filter = new Sensei_Course_List_Featured_Filter();
 	}
 
 	/**
@@ -65,6 +73,8 @@ class Sensei_Course_List_Filter_Block {
 				$content = $this->category_filter->get_content( $block->context['queryId'] );
 				break;
 			case 'featured':
+				$content = $this->featured_filter->get_content( $block->context['queryId'] );
+				break;
 			case 'activity':
 			default:
 				break;
@@ -90,6 +100,7 @@ class Sensei_Course_List_Filter_Block {
 			return $parsed_block;
 		}
 		$category_filtered_ids = $this->category_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
+		$featured_filtered_ids = $this->featured_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
 
 		if ( ! array_key_exists( 'exclude', $parsed_block['attrs']['query'] ) || ! is_array( $parsed_block['attrs']['query']['exclude'] ) ) {
 			$parsed_block['attrs']['query']['exclude'] = [];
@@ -98,7 +109,11 @@ class Sensei_Course_List_Filter_Block {
 		// We are changing updating the attribute of the parent Query Loop block here
 		// Which will be provided to all the children using context. So no need update each child's (pagination, next page etc.) context
 		// separately.
-		$parsed_block['attrs']['query']['exclude'] = array_merge( $parsed_block['attrs']['query']['exclude'], $category_filtered_ids );
+		$parsed_block['attrs']['query']['exclude'] = array_merge(
+			$parsed_block['attrs']['query']['exclude'],
+			$category_filtered_ids,
+			$featured_filtered_ids
+		);
 		return $parsed_block;
 	}
 }
