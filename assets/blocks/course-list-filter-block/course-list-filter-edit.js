@@ -100,6 +100,7 @@ function CourseListFilter( {
 				</PanelBody>
 			</InspectorControls>
 			<SelectControl
+				className="sensei-lms-course-list-filter__select"
 				style={ { width: 'auto' } }
 				options={ options }
 				onChange={ () => {} }
