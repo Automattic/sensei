@@ -80,8 +80,9 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 		}
 
 		if (
-			'wp-block-sensei-lms-course-list' ===
-			selectedBlock?.attributes?.className
+			selectedBlock?.attributes?.className?.includes(
+				'wp-block-sensei-lms-course-list'
+			)
 		) {
 			hideUnnecessarySettingsForCourseList();
 		} else if ( document.querySelector( '.border-block-support-panel' ) ) {
