@@ -2,8 +2,14 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
+import { useSelect } from '@wordpress/data';
 import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+
+/**
+ * Internal dependencies
+ */
+import InvalidUsageError from '../../shared/components/invalid-usage';
 
 const filters = {
 	categories: {
@@ -28,15 +34,6 @@ const filters = {
 		},
 	},
 };
-/**
- * Internal dependencies
- */
-import { useSelect } from '@wordpress/data';
-/**
- * External dependencies
- */
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import InvalidUsageError from '../../shared/components/invalid-usage';
 
 function useFilterOptions( type ) {
 	const categories = useSelect( ( select ) => {
