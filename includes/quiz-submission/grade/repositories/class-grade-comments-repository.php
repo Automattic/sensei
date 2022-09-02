@@ -5,11 +5,10 @@
  * @package sensei
  */
 
-namespace Sensei\Quiz_Submission\Repositories;
+namespace Sensei\Quiz_Submission\Grade\Repositories;
 
-use DateTime;
-use Sensei\Quiz_Submission\Models\Comments_Based_Grade;
-use Sensei\Quiz_Submission\Models\Grade_Interface;
+use Sensei\Quiz_Submission\Grade\Models\Comments_Based_Grade;
+use Sensei\Quiz_Submission\Grade\Models\Grade_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -7,7 +7,7 @@
  * @package sensei
  */
 
-namespace Sensei\Quiz_Submission\Models;
+namespace Sensei\Quiz_Submission\Grade\Models;
 
 use DateTime;
 use RuntimeException;

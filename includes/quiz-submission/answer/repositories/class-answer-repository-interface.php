@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Quiz_Submission\Repositories;
+namespace Sensei\Quiz_Submission\Answer\Repositories;
 
-use Sensei\Quiz_Submission\Models\Answer;
+use Sensei\Quiz_Submission\Answer\Models\Answer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -242,19 +242,19 @@ class Sensei_Autoloader {
 			/**
 			 * Quiz Submission
 			 */
-			\Sensei\Quiz_Submission\Models\Answer::class   => 'quiz-submission/models/class-answer.php',
-			\Sensei\Quiz_Submission\Models\Comments_Based_Grade::class => 'quiz-submission/models/class-comments-based-grade.php',
-			\Sensei\Quiz_Submission\Models\Grade_Interface::class => 'quiz-submission/models/class-grade-interface.php',
-			\Sensei\Quiz_Submission\Models\Submission::class => 'quiz-submission/models/class-submission.php',
-			\Sensei\Quiz_Submission\Repositories\Answer_Comments_Repository::class => 'quiz-submission/repositories/class-answer-comments-repository.php',
-			\Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory::class => 'quiz-submission/repositories/class-answer-repository-factory.php',
-			\Sensei\Quiz_Submission\Repositories\Answer_Repository_Interface::class => 'quiz-submission/repositories/class-answer-repository-interface.php',
-			\Sensei\Quiz_Submission\Repositories\Grade_Comments_Repository::class => 'quiz-submission/repositories/class-grade-comments-repository.php',
-			\Sensei\Quiz_Submission\Repositories\Grade_Repository_Factory::class => 'quiz-submission/repositories/class-grade-repository-factory.php',
-			\Sensei\Quiz_Submission\Repositories\Grade_Repository_Interface::class => 'quiz-submission/repositories/class-grade-repository-interface.php',
-			\Sensei\Quiz_Submission\Repositories\Submission_Comments_Repository::class => 'quiz-submission/repositories/class-submission-comments-repository.php',
-			\Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory::class => 'quiz-submission/repositories/class-submission-repository-factory.php',
-			\Sensei\Quiz_Submission\Repositories\Submission_Repository_Interface::class => 'quiz-submission/repositories/class-submission-repository-interface.php',
+			\Sensei\Quiz_Submission\Answer\Models\Answer::class => 'quiz-submission/answer/models/class-answer.php',
+			\Sensei\Quiz_Submission\Answer\Repositories\Answer_Comments_Repository::class => 'quiz-submission/answer/repositories/class-answer-comments-repository.php',
+			\Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory::class => 'quiz-submission/answer/repositories/class-answer-repository-factory.php',
+			\Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface::class => 'quiz-submission/answer/repositories/class-answer-repository-interface.php',
+			\Sensei\Quiz_Submission\Grade\Models\Comments_Based_Grade::class => 'quiz-submission/grade/models/class-comments-based-grade.php',
+			\Sensei\Quiz_Submission\Grade\Models\Grade_Interface::class => 'quiz-submission/grade/models/class-grade-interface.php',
+			\Sensei\Quiz_Submission\Grade\Repositories\Grade_Comments_Repository::class => 'quiz-submission/grade/repositories/class-grade-comments-repository.php',
+			\Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory::class => 'quiz-submission/grade/repositories/class-grade-repository-factory.php',
+			\Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface::class => 'quiz-submission/grade/repositories/class-grade-repository-interface.php',
+			\Sensei\Quiz_Submission\Submission\Models\Submission::class => 'quiz-submission/submission/models/class-submission.php',
+			\Sensei\Quiz_Submission\Submission\Repositories\Submission_Comments_Repository::class => 'quiz-submission/submission/repositories/class-submission-comments-repository.php',
+			\Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory::class => 'quiz-submission/submission/repositories/class-submission-repository-factory.php',
+			\Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface::class => 'quiz-submission/submission/repositories/class-submission-repository-interface.php',
 		);
 	}
 

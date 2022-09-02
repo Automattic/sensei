@@ -1,8 +1,8 @@
 <?php
 
-use Sensei\Quiz_Submission\Repositories\Answer_Repository_Factory;
-use Sensei\Quiz_Submission\Repositories\Grade_Repository_Factory;
-use Sensei\Quiz_Submission\Repositories\Submission_Repository_Factory;
+use Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
+use Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
+use Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

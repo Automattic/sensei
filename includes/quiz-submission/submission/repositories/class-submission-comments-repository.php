@@ -5,11 +5,11 @@
  * @package sensei
  */
 
-namespace Sensei\Quiz_Submission\Repositories;
+namespace Sensei\Quiz_Submission\Submission\Repositories;
 
 use DateTime;
 use Exception;
-use Sensei\Quiz_Submission\Models\Submission;
+use Sensei\Quiz_Submission\Submission\Models\Submission;
 use Sensei_Utils;
 use WP_Comment;
 

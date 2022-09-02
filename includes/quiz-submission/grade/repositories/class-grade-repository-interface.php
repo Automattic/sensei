@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Quiz_Submission\Repositories;
+namespace Sensei\Quiz_Submission\Grade\Repositories;
 
-use Sensei\Quiz_Submission\Models\Grade_Interface;
+use Sensei\Quiz_Submission\Grade\Models\Grade_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
