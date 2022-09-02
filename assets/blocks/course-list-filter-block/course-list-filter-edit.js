@@ -106,6 +106,7 @@ function CourseListFilter( {
 				</PanelBody>
 			</InspectorControls>
 			<SelectControl
+				className="sensei-lms-course-list-filter__select"
 				options={ options }
 				onChange={ () => {} }
 				value={ filters[ type ].defaultOption.value }
