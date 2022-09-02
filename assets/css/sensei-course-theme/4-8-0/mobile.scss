@@ -22,11 +22,6 @@
 			--header-height: 90px;
 			overflow: hidden;
 
-			.sensei-course-theme__header__container {
-				padding-bottom: var(--header-open-height);
-				height: var(--header-height);
-			}
-
 			.sensei-course-theme-course-progress-bar {
 				margin: 0 24px;
 			}
@@ -37,6 +32,7 @@
 				left: 24px;
 				top: calc( var(--header-height) - 36px);
 			}
+
 			.sensei-course-theme-course-progress-bar {
 				height: 8px;
 				position: absolute;
