@@ -5,8 +5,11 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
-import { addFilter } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import './hooks';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -55,32 +58,6 @@ export const registerCourseListBlock = () => {
 		scope: [ 'inserter' ],
 	} );
 };
-
-/* Add support for borders to the Query Loop block. */
-function addBorderSupport( settings, name ) {
-	if ( name !== 'core/query' ) {
-		return settings;
-	}
-
-	return {
-		...settings,
-		supports: {
-			...settings.supports,
-			__experimentalBorder: {
-				color: true,
-				radius: true,
-				style: true,
-				width: true,
-			},
-		},
-	};
-}
-
-wp.hooks.addFilter(
-	'blocks.registerBlockType',
-	'sensei-lms/course-list-block',
-	addBorderSupport
-);
 
 const unsubscribe = subscribe( () => {
 	const blockSettingsPanel = document.querySelector(
@@ -150,95 +127,6 @@ const hideUnnecessarySettingsForCourseList = () => {
 		) {
 			element.closest( '.components-base-control' ).style.display =
 				'none';
-		}
-	} );
-};
-
-let isCourseListBlockSelected = false;
-
-const withQueryLoopPatternsAndSettingsHiddenForCourseList = ( BlockEdit ) => {
-	return ( props ) => {
-		const isQueryLoopBlock = 'core/query' === props.name;
-		const isCourseListBlock =
-			isQueryLoopBlock &&
-			'wp-block-sensei-lms-course-list' === props.attributes.className;
-
-		if ( isCourseListBlock && props.isSelected ) {
-			isCourseListBlockSelected = true;
-		} else if ( props.isSelected ) {
-			isCourseListBlockSelected = false;
-		}
-
-		// Hide query loop toolbar settings for grid/list outlook.
-		if (
-			isBlockAlreadyAddedInEditor( props.clientId ) &&
-			isCourseListBlockSelected
-		) {
-			const settingsName = __( 'Grid view', 'sensei-lms' );
-			const outlookSettings = document.querySelector(
-				`[aria-label="${ settingsName }"]`
-			);
-			if ( outlookSettings ) {
-				const toolbarElement = outlookSettings.parentNode;
-				toolbarElement.style.display = 'none';
-			}
-		}
-
-		// Hide query loop patterns for course list.
-		if (
-			isCourseListBlockSelected &&
-			isQueryLoopBlock &&
-			! isCourseListBlock &&
-			! isBlockAlreadyAddedInEditor( props.clientId )
-		) {
-			hideCourseListPatternsCarouselViewControl();
-			hideNonCourseListBlockPatternContainers();
-			return <Fragment />;
-		}
-		return <BlockEdit { ...props } />;
-	};
-};
-
-addFilter(
-	'editor.BlockEdit',
-	'sensei-lms/course-list-block',
-	withQueryLoopPatternsAndSettingsHiddenForCourseList
-);
-
-// Hide patterns control so only Grid view can be selected.
-const hideCourseListPatternsCarouselViewControl = () => {
-	const patternsControlClass =
-		'.block-editor-block-pattern-setup__display-controls';
-	// Hide a carousel control button and switch to grid view.
-	const controls = document.querySelectorAll( `${ patternsControlClass }` );
-	controls.forEach( ( control ) => {
-		const controlButtons = control.querySelectorAll( 'button' );
-		// Select Grid view.
-		controlButtons[ 1 ].click();
-
-		// Hide all control buttons.
-		controlButtons.forEach( ( button ) => {
-			button.style.display = 'none';
-		} );
-	} );
-};
-
-const isBlockAlreadyAddedInEditor = ( clientId ) => {
-	return !! document.getElementById( 'block-' + clientId );
-};
-
-// Hide non course list patterns.
-const hideNonCourseListBlockPatternContainers = () => {
-	const patternsClass = '.block-editor-block-pattern-setup-list__list-item';
-	const customPatternDescription = 'course-list-element';
-
-	const patterns = document.querySelectorAll( `${ patternsClass }` );
-	patterns.forEach( ( pattern ) => {
-		const isCourseListPattern = [
-			...pattern.querySelectorAll( 'div' ),
-		].find( ( e ) => e.innerText === customPatternDescription );
-		if ( ! isCourseListPattern ) {
-			pattern.style.display = 'none';
 		}
 	} );
 };
