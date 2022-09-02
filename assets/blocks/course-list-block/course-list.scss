@@ -1,8 +1,41 @@
-.wp-block-sensei-lms-course-list {
-	.wp-block-post-title {
-		text-align: left;
+$block: '.wp-block-sensei-lms-course-list';
+
+// Match styles applied to block on single course page.
+#{$block} {
+	.course {
+		border: 0;
+		margin: 0 0 1.618em;
+		padding: 0 0 25px;
 	}
-	.hide-url-underline > a  {
-		text-decoration: none;
+
+	.wp-block-post-featured-image {
+		margin: 0 auto 1.618em;
+	}
+
+	@media ( min-width: 782px ) {
+		&--is-list-view {
+			.wp-block-sensei-lms-button-take-course,
+			.wp-block-sensei-lms-button-continue-course,
+			.wp-block-sensei-lms-button-view-results {
+				text-align: right;
+			}
+		}
+	}
+
+	@media ( max-width: 599px ) {
+		&--is-grid-view {
+			.wp-block-post-template.is-flex-container li.course {
+				width: 100%;
+			}
+		}
+	}
+}
+
+/* Divi overrides */
+#left-area #{$block} {
+	.wp-block-post-template {
+		list-style: none;
+		margin-left: 0;
+		padding: 1.25em;
 	}
 }
