@@ -89,7 +89,7 @@ class Sensei_Notices {
 			];
 		}
 
-		// if a notice is added after we've printed print it immediately.
+		// if a notice is added after we've printed, print it immediately.
 		if ( $this->has_printed ) {
 			$this->maybe_print_notices();
 		}
@@ -101,7 +101,7 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_print_notices() {
-		if ( count( $this->notices ) > 0 ) {
+		if ( ! empty( $this->notices ) ) {
 			foreach ( $this->notices  as  $notice ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in generate_notice
 				echo $this->generate_notice( $notice['type'], $notice['content'] );
