@@ -100,14 +100,6 @@ interface Course_Progress_Interface {
 	public function get_updated_at(): DateTimeInterface;
 
 	/**
-	 * Returns the course progress metadata.
-	 * Method exists for compatibility with the legacy code and will be removed in later versions.
-	 *
-	 * @return array Course progress metadata.
-	 */
-	public function get_metadata(): array;
-
-	/**
 	 * Set the course progress updated date.
 	 *
 	 * @param DateTimeInterface $updated_at Course progress updated date.

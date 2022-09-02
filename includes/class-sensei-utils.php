@@ -1375,13 +1375,13 @@ class Sensei_Utils {
 
 		Sensei()->course_progress_repository->save( $course_progress );
 
-		$course_metadata = [
+		$course_progress_metadata = [
 			// How many lessons have been completed.
 			'complete' => $lessons_completed,
 			// Overall percentage of the course lessons complete (or graded) compared to 'in-progress' regardless of the above.
 			'percent'  => self::quotient_as_absolute_rounded_percentage( $lessons_completed, $total_lessons ),
 		];
-		foreach ( $course_metadata as $key => $value ) {
+		foreach ( $course_progress_metadata as $key => $value ) {
 			update_comment_meta( $course_progress->get_id(), $key, $value );
 		}
 

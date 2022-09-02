@@ -712,11 +712,11 @@ class Sensei_Quiz {
 			Sensei()->lesson_progress_repository->save( $lesson_progress );
 
 			// Save updated metadata.
-			$metadata = [
+			$lesson_progress_metadata = [
 				'questions_asked' => '',
 				'grade'           => '',
 			];
-			foreach ( $metadata as $key => $value ) {
+			foreach ( $lesson_progress_metadata as $key => $value ) {
 				update_comment_meta( $lesson_progress->get_id(), $key, $value );
 			}
 		}
@@ -725,7 +725,17 @@ class Sensei_Quiz {
 		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( $course_progress ) {
 			$course_progress->start();
+
 			Sensei()->course_progress_repository->save( $course_progress );
+
+			// Reset the course progress metadata.
+			$course_progress_metadata = [
+				'complete' => 0,
+				'percent'  => 0,
+			];
+			foreach ( $course_progress_metadata as $key => $value ) {
+				update_comment_meta( $course_progress->get_id(), $key, $value );
+			}
 		}
 
 		// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson().

@@ -62,22 +62,17 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			return null;
 		}
 
-		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
-		$comment_meta = [];
-		$source_meta  = get_comment_meta( $comment->comment_ID );
-		foreach ( $source_meta as $key => $values ) {
-			$comment_meta[ $key ] = $values[0] ?? null;
-		}
-		$started_at = ! empty( $comment_meta['start'] ) ? new DateTime( $comment_meta['start'], wp_timezone() ) : current_datetime();
-		unset( $comment_meta['start'] );
+		$meta_start = get_comment_meta( $comment->comment_ID, 'start', true );
+		$started_at = $meta_start ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
 
+		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
 		if ( Course_Progress_Interface::STATUS_COMPLETE === $comment->comment_approved ) {
 			$completed_at = $comment_date;
 		} else {
 			$completed_at = null;
 		}
 
-		return new Comments_Based_Course_Progress( (int) $comment->comment_ID, $course_id, $user_id, $comment_date, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_meta );
+		return new Comments_Based_Course_Progress( (int) $comment->comment_ID, $course_id, $user_id, $comment_date, $comment->comment_approved, $started_at, $completed_at, $comment_date );
 	}
 
 	/**
@@ -103,7 +98,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	 * @param Course_Progress_Interface $course_progress The course progress.
 	 */
 	public function save( Course_Progress_Interface $course_progress ): void {
-		$metadata = $course_progress->get_metadata();
+		$metadata = [];
 		if ( $course_progress->get_started_at() ) {
 			$metadata['start'] = $course_progress->get_started_at()->format( 'Y-m-d H:i:s' );
 		}

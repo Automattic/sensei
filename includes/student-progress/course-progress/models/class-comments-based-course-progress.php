@@ -76,14 +76,6 @@ class Comments_Based_Course_Progress implements Course_Progress_Interface {
 	protected $updated_at;
 
 	/**
-	 * Course progress metadata.
-	 * Field exists for compatibility with the legacy code and will be removed in later versions.
-	 *
-	 * @var array
-	 */
-	protected $metadata;
-
-	/**
 	 * Course progress constructor.
 	 *
 	 * @param int                    $id          Progress identifier.
@@ -94,9 +86,8 @@ class Comments_Based_Course_Progress implements Course_Progress_Interface {
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 * @param DateTimeInterface|null $updated_at Course progress updated date.
-	 * @param array                  $metadata Course progress metadata.
 	 */
-	public function __construct( int $id, int $course_id, int $user_id, DateTimeInterface $created_at, string $status = null, DateTimeInterface $started_at = null, DateTimeInterface $completed_at = null, DateTimeInterface $updated_at = null, array $metadata = [] ) {
+	public function __construct( int $id, int $course_id, int $user_id, DateTimeInterface $created_at, string $status = null, DateTimeInterface $started_at = null, DateTimeInterface $completed_at = null, DateTimeInterface $updated_at = null ) {
 		$this->id           = $id;
 		$this->course_id    = $course_id;
 		$this->user_id      = $user_id;
@@ -105,7 +96,6 @@ class Comments_Based_Course_Progress implements Course_Progress_Interface {
 		$this->completed_at = $completed_at;
 		$this->created_at   = $created_at;
 		$this->updated_at   = $updated_at ?? $created_at;
-		$this->metadata     = $metadata;
 	}
 
 	/**
@@ -116,13 +106,6 @@ class Comments_Based_Course_Progress implements Course_Progress_Interface {
 	public function start( DateTimeInterface $started_at = null ): void {
 		$this->status     = 'in-progress';
 		$this->started_at = $started_at ?? current_datetime();
-		$this->metadata   = array_replace(
-			$this->metadata,
-			[
-				'complete' => 0,
-				'percent'  => 0,
-			]
-		);
 	}
 
 	/**
@@ -187,16 +170,6 @@ class Comments_Based_Course_Progress implements Course_Progress_Interface {
 	 */
 	public function get_completed_at(): ?DateTimeInterface {
 		return $this->completed_at;
-	}
-
-	/**
-	 * Returns the course progress metadata.
-	 * Method exists for compatibility with the legacy code and will be removed in later versions.
-	 *
-	 * @return array Course progress metadata.
-	 */
-	public function get_metadata(): array {
-		return $this->metadata;
 	}
 
 	/**
