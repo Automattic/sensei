@@ -15,19 +15,7 @@ import SenseiIcon from '../../icons/sensei.svg';
 
 const meta = {
 	category: 'theme',
-	supports: {
-		align: true,
-		color: true,
-		spacing: {
-			margin: true,
-			padding: true,
-			blockGap: true,
-		},
-		typography: {
-			fontSize: true,
-			lineHeight: true,
-		},
-	},
+	supports: {},
 	attributes: {},
 	icon: {
 		src: <SenseiIcon width="20" height="20" />,
