@@ -20,11 +20,11 @@ const filters = {
 			value: 'all',
 		},
 	},
-	activity: {
-		label: __( 'Activity', 'sensei-lms' ),
+	student_course: {
+		label: __( 'Student Courses', 'sensei-lms' ),
 		defaultOption: {
 			label: __( 'All Courses', 'sensei-lms' ),
-			value: 0,
+			value: 'all',
 		},
 	},
 };
@@ -67,8 +67,18 @@ function useFilterOptions( type ) {
 					value: 'featured',
 				},
 			];
-		case 'activity':
-			return [ filters.activity.defaultOption ];
+		case 'student_course':
+			return [
+				filters.student_course.defaultOption,
+				{
+					label: __( 'Active', 'sensei-lms' ),
+					value: 'active',
+				},
+				{
+					label: __( 'Completed', 'sensei-lms' ),
+					value: 'completed',
+				},
+			];
 	}
 }
 

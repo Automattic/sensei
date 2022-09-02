@@ -29,6 +29,13 @@ class Sensei_Course_List_Filter_Block {
 	private $featured_filter;
 
 	/**
+	 * Instance of Sensei_Course_List_Student_Course_Filter class.
+	 *
+	 * @var Sensei_Course_List_Student_Course_Filter
+	 */
+	private $student_course_filter;
+
+	/**
 	 * Sensei_Course_List_Filter_Block constructor.
 	 */
 	public function __construct() {
@@ -36,8 +43,9 @@ class Sensei_Course_List_Filter_Block {
 
 		add_filter( 'render_block_data', [ $this, 'filter_course_list' ] );
 
-		$this->category_filter = new Sensei_Course_List_Categories_Filter();
-		$this->featured_filter = new Sensei_Course_List_Featured_Filter();
+		$this->category_filter       = new Sensei_Course_List_Categories_Filter();
+		$this->featured_filter       = new Sensei_Course_List_Featured_Filter();
+		$this->student_course_filter = new Sensei_Course_List_Student_Course_Filter();
 	}
 
 	/**
@@ -75,7 +83,9 @@ class Sensei_Course_List_Filter_Block {
 			case 'featured':
 				$content = $this->featured_filter->get_content( $block->context['queryId'] );
 				break;
-			case 'activity':
+			case 'student_course':
+				$content = $this->student_course_filter->get_content( $block->context['queryId'] );
+				break;
 			default:
 				break;
 		}
@@ -99,8 +109,9 @@ class Sensei_Course_List_Filter_Block {
 		if ( 'core/query' !== $parsed_block['blockName'] || 'course' !== $parsed_block['attrs']['query']['postType'] ) {
 			return $parsed_block;
 		}
-		$category_filtered_ids = $this->category_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
-		$featured_filtered_ids = $this->featured_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
+		$category_filtered_ids       = $this->category_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
+		$featured_filtered_ids       = $this->featured_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
+		$student_course_filtered_ids = $this->student_course_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
 
 		if ( ! array_key_exists( 'exclude', $parsed_block['attrs']['query'] ) || ! is_array( $parsed_block['attrs']['query']['exclude'] ) ) {
 			$parsed_block['attrs']['query']['exclude'] = [];
@@ -112,7 +123,8 @@ class Sensei_Course_List_Filter_Block {
 		$parsed_block['attrs']['query']['exclude'] = array_merge(
 			$parsed_block['attrs']['query']['exclude'],
 			$category_filtered_ids,
-			$featured_filtered_ids
+			$featured_filtered_ids,
+			$student_course_filtered_ids
 		);
 		return $parsed_block;
 	}
