@@ -138,76 +138,56 @@ class Sensei_Course_Theme_Templates {
 		$templates[ Sensei_LM_Template_Video_Full::NAME ] = Sensei_LM_Template_Video_Full::get_info();
 
 		/**
-		 * Allows adding extra Learning Mode block templates.
+		 * Filters the Learning Mode block templates list. Allows to add additional ones too.
 		 *
 		 * @since $$next-version$$
-		 * @hook  sensei_learning_mode_block_templates_extra
+		 * @hook  sensei_learning_mode_block_templates
 		 *
-		 * @param array[] $extra_templates {
-		 *     The list of extra learning mode block templates. Each template is an array
-		 *     with the following structure.
+		 * @param array[] $templates {
+		 *     The list of Learning Mode block templates. If adding a new template then it's key
+		 *     should be the template name. Each template is an array with the following structure.
 		 *
 		 *     @type string   $name        The unique name of the block template.
 		 *     @type string   $title       The title of the block template.
 		 *     @type string   $version     The version number of the block template. For example "1.0.0".
-		 *     @type string[] $styles      An array of styles that needs to be enqueued with this block template.
-		 *                                 The styles needs to be registered beforehand via wp_register_style()
-		 *                                 function.
-		 *     @type string[] $scripts     An array of scripts that needs to be enqueued with this block template.
-		 *                                 The scripts needs to be registered beforehand via wp_register_script()
-		 *                                 function.
+		 *     @type string[] $styles      An array of urls of styles that needs to be enqueued with this block template.
+		 *     @type string[] $scripts     An array of urls of scripts that needs to be enqueued with this block template.
 		 *     @type array    $screenshots {
 		 *         The screenshots of the block templates that are displayed in the settings for user to see.
 		 *
 		 *         @type string $full      The url to the full size screenshot of the block template.
 		 *         @type string $thumbnail The url to the thumbnail size screenshot of the block template.
 		 *     }
-		 *     @type array    $templates   {
-		 *         The actual html content of the templates.
+		 *     @type array    $content     {
+		 *         The paths to actual html content of the templates.
 		 *
-		 *         @type string $lesson The html content of the block template for lessons.
-		 *         @type string $quiz   The html content of the block template for quizzes.
+		 *         @type string $lesson The path to html content of the block template for lessons.
+		 *         @type string $quiz   The path to html content of the block template for quizzes.
 		 *     }
 		 * }
 		 *
 		 * @return array[] The list of extra learning mode block templates.
 		 */
-		$extra_templates = apply_filters( 'sensei_learning_mode_block_templates_extra', [] );
+		$templates = apply_filters( 'sensei_learning_mode_block_templates', $templates );
 
-		// Add extra templates to the rest of the templates.
-		foreach ( $extra_templates as $extra_template ) {
+		// Make sure each template is mapped to it's own name in the array.
+		$mapped_templates = [];
+		foreach ( $templates as $template_name => $template ) {
 			// The block templates must have name.
-			if ( ! isset( $extra_template['name'] ) || ! $extra_template['name'] ) {
-				throw new Error( 'The Learning Mode block templates must have name property.' );
+			if ( ! isset( $template['name'] ) || ! $template['name'] ) {
+				throw new Error( 'The Learning Mode block templates must have "name" property.' );
 			}
 
-			// Prefix the names of the extra templates so they don't collide with the Sensei ones.
-			$extra_template['name'] = 'third-party-template-' . $extra_template['name'];
-
-			// Append extra template.
-			$template[ $extra_template['name'] ] = $extra_template;
+			$mapped_templates[ $template['name'] ] = $template;
 		}
+		$templates = $mapped_templates;
 
-		// Allow sensei-pro to provide content for pro templates.
+		// Add upsell to premium templates if they are empty.
 		$pro_template_names = [ 'modern', 'video', 'video-full' ];
 		foreach ( $templates as $template_name => $template ) {
-
-			/**
-			 * Allows to update the Learning Mode block template.
-			 *
-			 * @since $$next-version$$
-			 * @access private
-			 *
-			 * @hook sensei_learning_mode_block_template_{$template_name}
-			 *
-			 * @param array $template The template properties.
-			 * @return array The template properties.
-			 */
-			$template = apply_filters( "sensei_learning_mode_block_template_{$template_name}", $template );
-
 			if ( in_array( $template_name, $pro_template_names, true ) ) {
-				if ( ! isset( $template['content']['lesson'] ) || ! $template['content']['lesson'] ) {
-					$templates[ $template_name ]['upsell'] = [
+				if ( ! isset( $template['content']['lesson'] ) || empty( $template['content']['lesson'] ) ) {
+					$template['upsell'] = [
 						'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
 						'url'   => 'https://senseilms.com/pricing/',
 					];
