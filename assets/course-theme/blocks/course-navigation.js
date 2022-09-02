@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { useLayoutEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -13,7 +12,6 @@ import HalfCircleIcon from '../../icons/half-filled-circle.svg';
 import CheckCircleIcon from '../../icons/check-filled-circle.svg';
 import LockIcon from '../../icons/lock.svg';
 import EyeIcon from '../../icons/eye.svg';
-import { updateIframeHeight } from '../site-editor';
 
 const ICONS = {
 	'not-started': CircleIcon,
@@ -136,10 +134,6 @@ export default {
 	title: __( 'Course Navigation', 'sensei-lms' ),
 	name: 'sensei-lms/course-navigation',
 	edit: function EditCourseNavigationBlock() {
-		useLayoutEffect( () => {
-			updateIframeHeight();
-		}, [] );
-
 		return (
 			<div className="sensei-lms-course-navigation">
 				<div className="sensei-lms-course-navigation__modules">
