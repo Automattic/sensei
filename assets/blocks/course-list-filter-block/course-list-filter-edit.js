@@ -15,7 +15,7 @@ const filters = {
 	categories: {
 		label: __( 'Categories', 'sensei-lms' ),
 		defaultOption: {
-			label: __( 'Select Category', 'sensei-lms' ),
+			label: __( 'All Categories', 'sensei-lms' ),
 			value: 0,
 		},
 	},
