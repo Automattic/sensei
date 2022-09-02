@@ -6,6 +6,16 @@
  * @group course-structure
  */
 class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Login_Helpers;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	private $factory;
 
 	/**
 	 * Instance of Sensei_Course_List_Filter_Block.
@@ -53,6 +63,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		}
 
 		parent::setUp();
+		$this->prepareEnrolmentManager();
 		$this->factory = new Sensei_Factory();
 
 		$this->block    = new Sensei_Course_List_Filter_Block();
@@ -65,6 +76,11 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-list-filter' );
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		self::resetEnrolmentProviders();
 	}
 
 	public function testCourseFilterBlock_ShowsCoursesAndCategoriesProperly_WhenRendered() {
@@ -170,6 +186,128 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 
 		/* ACT */
 		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+
+		/* ASSERT */
+		$this->assertNotContains( $this->course1->post_title, $result );
+		$this->assertNotContains( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenRenderingStudentCourseBlock_DoesNotRenderIfNotLoggedIn() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+
+		/* ASSERT */
+		$this->assertNotContains( 'Completed', $result );
+	}
+
+	public function testCourseFilterBlock_WhenRenderingStudentCourseBlock_RendersWhenLoggedIn() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$this->login_as_student();
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+
+		/* ASSERT */
+		$this->assertContains( 'Completed', $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForActiveCourses_RendersTheActiveCoursesOnly() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+		$_GET['course-list-student-course-filter-13'] = 'active';
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+
+		/* ASSERT */
+		$this->assertContains( $this->course1->post_title, $result );
+		$this->assertNotContains( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForCompletedCourses_RendersTheCompletedCoursesOnly() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
+		Sensei_Utils::update_course_status( $student, $this->course2->ID, 'complete' );
+		$_GET['course-list-student-course-filter-13'] = 'completed';
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+
+		/* ASSERT */
+		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertNotContains( $this->course1->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForCompletedFeaturedAndCategory_RendersProperly() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+		// Enrol.
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
+		// Complete.
+		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
+
+		// Featured.
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		// Params.
+		$_GET['course-list-featured-filter-13']       = 'featured';
+		$_GET['course-list-category-filter-13']       = $this->category->term_id;
+		$_GET['course-list-student-course-filter-13'] = 'completed';
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+
+		/* ASSERT */
+		$this->assertContains( $this->course1->post_title, $result );
+		$this->assertNotContains( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForCompletedFeaturedAndCategory_RendersEmptyWhenApplicable() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+		// Enrol.
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
+		// Complete.
+		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
+
+		// Featured.
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		// Params.
+		$_GET['course-list-featured-filter-13']       = 'featured';
+		$_GET['course-list-category-filter-13']       = $this->category->term_id;
+		$_GET['course-list-student-course-filter-13'] = 'active';
+
+		/* ACT */
+		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
 
 		/* ASSERT */
 		$this->assertNotContains( $this->course1->post_title, $result );

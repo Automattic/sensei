@@ -66,15 +66,17 @@ describe( 'CourseListFilterBlockEdit', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'should render the dropdown for activity filter', () => {
-		const { getByText } = render(
+	it( 'should render the dropdown for student course filter', () => {
+		const { getByRole } = render(
 			<CourseListFilter
 				clientId="some-client-id"
-				attributes={ { type: 'activity' } }
+				attributes={ { type: 'student_course' } }
 				context={ context }
 			/>
 		);
-		expect( getByText( 'All Courses' ) ).toBeInTheDocument();
+		expect(
+			within( getByRole( 'combobox' ) ).getByText( 'Completed' )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render an error', () => {
