@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render } from '@testing-library/react';
+import { render, within } from '@testing-library/react';
 /**
  * Internal dependencies
  */
@@ -54,14 +54,16 @@ describe( 'CourseListFilterBlockEdit', () => {
 	} );
 
 	it( 'should render the dropdown for featured filter', () => {
-		const { getByText } = render(
+		const { getByRole } = render(
 			<CourseListFilter
 				clientId="some-client-id"
 				attributes={ { type: 'featured' } }
 				context={ context }
 			/>
 		);
-		expect( getByText( 'Featured' ) ).toBeInTheDocument();
+		expect(
+			within( getByRole( 'combobox' ) ).getByText( 'Featured' )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render the dropdown for activity filter', () => {
