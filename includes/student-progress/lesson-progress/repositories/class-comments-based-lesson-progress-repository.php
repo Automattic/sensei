@@ -62,7 +62,7 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		}
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
-		$meta_start   = get_comment_meta( $comment->ID, 'start', true );
+		$meta_start   = get_comment_meta( $comment->comment_ID, 'start', true );
 		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
 
 		if ( in_array( $comment->comment_approved, [ 'complete', 'passed', 'graded' ], true ) ) {

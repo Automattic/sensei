@@ -75,7 +75,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		];
 
 		$comment_date = new DateTime( $comment->comment_date, wp_timezone() );
-		$meta_start   = get_comment_meta( $comment->ID, 'start', true );
+		$meta_start   = get_comment_meta( $comment->comment_ID, 'start', true );
 		$started_at   = ! empty( $meta_start ) ? new DateTime( $meta_start, wp_timezone() ) : current_datetime();
 		$status       = in_array( $comment->comment_approved, $supported_statuses, true )
 			? $comment->comment_approved
