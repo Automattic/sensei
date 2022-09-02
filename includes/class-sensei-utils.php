@@ -499,10 +499,9 @@ class Sensei_Utils {
 		// Note: When this action runs the lesson status may not yet exist.
 		do_action( 'sensei_user_lesson_start', $user_id, $lesson_id );
 
-		$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create();
-		$lesson_progress            = $lesson_progress_repository->get( $lesson_id, $user_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
-			$lesson_progress = $lesson_progress_repository->create( $lesson_id, $user_id );
+			$lesson_progress = Sensei()->lesson_progress_repository->create( $lesson_id, $user_id );
 			$has_questions   = Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 			if ( $complete && $has_questions ) {
 				update_comment_meta( $lesson_progress->get_id(), 'grade', 0 );
@@ -511,7 +510,7 @@ class Sensei_Utils {
 
 		if ( $complete && ! $lesson_progress->is_complete() ) {
 			$lesson_progress->complete();
-			$lesson_progress_repository->save( $lesson_progress );
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
 		}
 
 		if ( $complete ) {
@@ -1269,8 +1268,7 @@ class Sensei_Utils {
 			return false;
 		}
 
-		$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-		$course_progress            = $course_progress_repository->get( $course_id, $user_id );
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( ! $course_progress ) {
 			return false;
 		}
@@ -1320,10 +1318,9 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-		$course_progress            = $course_progress_repository->get( $course_id, $user_id );
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( ! $course_progress ) {
-			$course_progress = $course_progress_repository->create( $course_id, $user_id );
+			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		}
 		$course_progress->start();
 
@@ -1376,7 +1373,7 @@ class Sensei_Utils {
 			$course_progress->complete();
 		}
 
-		$course_progress_repository->save( $course_progress );
+		Sensei()->course_progress_repository->save( $course_progress );
 
 		$course_metadata = [
 			// How many lessons have been completed.
@@ -1454,8 +1451,7 @@ class Sensei_Utils {
 				$course = (int) $course;
 			}
 
-			$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-			$course_progress            = $course_progress_repository->get( $course, $user_id );
+			$course_progress = Sensei()->course_progress_repository->get( $course, $user_id );
 			if ( $course_progress ) {
 				$user_course_status = $course_progress->get_status();
 			}
@@ -1485,8 +1481,7 @@ class Sensei_Utils {
 			$user_id = get_current_user_id();
 		}
 
-		$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create();
-		$lesson_progress            = $lesson_progress_repository->get( $lesson_id, $user_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( ! $lesson_progress ) {
 			return false;
 		}
@@ -1505,9 +1500,7 @@ class Sensei_Utils {
 	 * @return int Lesson count.
 	 */
 	public static function user_started_lesson_count( int $course_id, int $user_id ) : int {
-		$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create();
-
-		return $lesson_progress_repository->count( $course_id, $user_id );
+		return Sensei()->lesson_progress_repository->count( $course_id, $user_id );
 	}
 
 	/**
@@ -2288,8 +2281,7 @@ class Sensei_Utils {
 	 * @return int Returns the ID of the user course progress or false on failure. The progress ID might have different meanings depending on the underlying implementation.
 	 */
 	public static function start_user_on_course( $user_id, $course_id ) {
-		$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-		$course_progress            = $course_progress_repository->create( $course_id, $user_id );
+		$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 
 		// Allow further actions.
 		$course_metadata = [

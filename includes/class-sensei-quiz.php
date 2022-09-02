@@ -706,11 +706,10 @@ class Sensei_Quiz {
 		// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
 		Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
 
-		$lesson_progress_repository = Sensei()->lesson_progress_repository_factory->create();
-		$lesson_progress            = $lesson_progress_repository->get( $lesson_id, $user_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 		if ( $lesson_progress ) {
 			$lesson_progress->start();
-			$lesson_progress_repository->save( $lesson_progress );
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
 
 			// Save updated metadata.
 			$metadata = [
@@ -723,11 +722,10 @@ class Sensei_Quiz {
 		}
 
 		// Update course completion.
-		$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-		$course_progress            = $course_progress_repository->get( $course_id, $user_id );
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
 		if ( $course_progress ) {
 			$course_progress->start();
-			$course_progress_repository->save( $course_progress );
+			Sensei()->course_progress_repository->save( $course_progress );
 		}
 
 		// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson().
@@ -786,13 +784,12 @@ class Sensei_Quiz {
 		// This is to ensure we save the questions that we've asked this user and that this can't be change unless
 		// the quiz is reset by admin or user( user: only if the setting is enabled ).
 		// get the questions asked when when the quiz questions were generated for the user : Sensei_Lesson::lesson_quiz_questions.
-		$quiz_progress_repository = Sensei()->quiz_progress_repository_factory->create();
-		$has_quiz_progress        = $quiz_progress_repository->has( $quiz_id, $user_id );
+		$has_quiz_progress = Sensei()->quiz_progress_repository->has( $quiz_id, $user_id );
 		if ( ! $has_quiz_progress ) {
 			Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 		}
 
-		$quiz_progress = $quiz_progress_repository->get( $quiz_id, $user_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 		if ( ! $quiz_progress ) {
 			// Even after starting a lesson we can't find the progress. Leave immediately.
 			return false;
@@ -844,7 +841,7 @@ class Sensei_Quiz {
 			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz_auto()" above.
 		}
 
-		$quiz_progress_repository->save( $quiz_progress );
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
 		foreach ( $lesson_metadata as $key => $value ) {
 			update_comment_meta( $quiz_progress->get_id(), $key, $value );
 		}

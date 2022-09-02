@@ -1,8 +1,11 @@
 <?php
 
 use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -227,25 +230,25 @@ class Sensei_Main {
 	public $blocks;
 
 	/**
-	 * Course progress repository factory.
+	 * Course progress repository.
 	 *
-	 * @var Course_Progress_Repository_Factory
+	 * @var Course_Progress_Repository_Interface
 	 */
-	public $course_progress_repository_factory;
+	public $course_progress_repository;
 
 	/**
-	 * Lesson progress repository factory.
+	 * Lesson progress repository.
 	 *
-	 * @var Lesson_Progress_Repository_Factory
+	 * @var Lesson_Progress_Repository_Interface
 	 */
-	public $lesson_progress_repository_factory;
+	public $lesson_progress_repository;
 
 	/**
-	 * Quiz progress repository factory.
+	 * Quiz progress repository.
 	 *
-	 * @var Quiz_Progress_Repository_Factory
+	 * @var Quiz_Progress_Repository_Interface
 	 */
-	public $quiz_progress_repository_factory;
+	public $quiz_progress_repository;
 
 	/**
 	 * Constructor method.
@@ -499,10 +502,10 @@ class Sensei_Main {
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
-		// Student progress factories.
-		$this->course_progress_repository_factory = new Course_Progress_Repository_Factory();
-		$this->lesson_progress_repository_factory = new Lesson_Progress_Repository_Factory();
-		$this->quiz_progress_repository_factory   = new Quiz_Progress_Repository_Factory();
+		// Student progress repositories.
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
 	}
 
 	/**

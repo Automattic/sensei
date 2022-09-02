@@ -744,10 +744,9 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
-					$course_progress_repository = Sensei()->course_progress_repository_factory->create();
-					$course_progress            = $course_progress_repository->get( $sanitized_course_id, $current_user->ID );
+					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
 					if ( null === $course_progress ) {
-						$course_progress = $course_progress_repository->create( $sanitized_course_id, $current_user->ID );
+						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 					}
 
 					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
@@ -756,7 +755,7 @@ class Sensei_Frontend {
 					}
 
 					$course_progress->complete();
-					$course_progress_repository->save( $course_progress );
+					Sensei()->course_progress_repository->save( $course_progress );
 
 					$course_metadata = [
 						'percent'  => 100,

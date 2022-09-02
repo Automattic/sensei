@@ -685,8 +685,7 @@ class Sensei_Grading {
 		// store the feedback from grading
 		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
 
-		$quiz_progress_repository = Sensei()->quiz_progress_repository_factory->create();
-		$quiz_progress            = $quiz_progress_repository->get( $quiz_id, $user_id );
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
 		if ( ! $quiz_progress ) {
 			return false;
 		}
@@ -726,7 +725,7 @@ class Sensei_Grading {
 			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz()" above.
 		}
 
-		$quiz_progress_repository->save( $quiz_progress );
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
 		if ( count( $lesson_metadata ) ) {
 			foreach ( $lesson_metadata as $key => $value ) {
 				update_comment_meta( $quiz_progress->get_id(), $key, $value );
