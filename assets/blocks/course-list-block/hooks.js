@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
 
 let isCourseListBlockSelected = false;
 
@@ -98,7 +97,9 @@ export const withQueryLoopPatternsAndSettingsHiddenForCourseList = (
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
 			isQueryLoopBlock &&
-			'wp-block-sensei-lms-course-list' === props.attributes.className;
+			props?.attributes?.className?.includes(
+				'wp-block-sensei-lms-course-list'
+			);
 
 		if ( isCourseListBlock && props.isSelected ) {
 			isCourseListBlockSelected = true;
@@ -130,7 +131,6 @@ export const withQueryLoopPatternsAndSettingsHiddenForCourseList = (
 		) {
 			hideCourseListPatternControls();
 			hideNonCourseListBlockPatternContainers();
-			return <Fragment />;
 		}
 
 		return <BlockEdit { ...props } />;
