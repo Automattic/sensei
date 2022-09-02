@@ -68,6 +68,8 @@ class Sensei_Notices {
 		);
 
 		add_action( 'template_redirect', [ $this, 'setup_block_notices' ] );
+		add_action( 'init', [ $this, 'maybe_load_notices' ] );
+		add_action( 'shutdown', [ $this, 'maybe_persist_notices' ] );
 	}
 
 	/**
