@@ -45,7 +45,7 @@ interface Grade_Repository_Interface {
 	 * Save multiple grades.
 	 *
 	 * @param Grade[] $grades        An array of grades.
-	 * @param int               $submission_id The submission ID.
+	 * @param int     $submission_id The submission ID.
 	 */
 	public function save_many( array $grades, int $submission_id ): void;
 
