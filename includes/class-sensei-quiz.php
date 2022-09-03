@@ -1,9 +1,5 @@
 <?php
 
-use Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
-use Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
-use Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -289,13 +285,11 @@ class Sensei_Quiz {
 		}
 
 		// save the user data
-		$submission_repository = ( new Submission_Repository_Factory() )->create();
-		$submission            = $submission_repository->get_or_create( $quiz_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		$answer_repository = ( new Answer_Repository_Factory() )->create();
-		$answer_repository->delete_all_answers_and_grades( $submission->get_id() );
+		Sensei()->quiz_answer_repository->delete_all_answers_and_grades( $submission->get_id() );
 		foreach ( $prepared_answers as $question_id => $answer ) {
-			$answer_repository->create( $submission->get_id(), $question_id, $answer );
+			Sensei()->quiz_answer_repository->create( $submission->get_id(), $question_id, $answer );
 		}
 
 		// Save transient to make retrieval faster.
@@ -340,14 +334,12 @@ class Sensei_Quiz {
 				return false;
 			}
 
-			$submission_repository = ( new Submission_Repository_Factory() )->create();
-			$submission            = $submission_repository->get( $quiz_id, $user_id );
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			if ( ! $submission ) {
 				return false;
 			}
 
-			$answer_repository = ( new Answer_Repository_Factory() )->create();
-			$answers           = $answer_repository->get_all( $submission->get_id() );
+			$answers = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
 			foreach ( $answers as $answer ) {
 				$encoded_answers_map[ $answer->get_question_id() ] = $answer->get_value();
 			}
@@ -984,26 +976,22 @@ class Sensei_Quiz {
 			return false;
 		}
 
-		$submission_repository = ( new Submission_Repository_Factory() )->create();
-		$submission            = $submission_repository->get( $quiz_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 		if ( ! $submission ) {
 			return false;
 		}
 
-		$grade_repository = ( new Grade_Repository_Factory() )->create();
-		$grade_repository->delete_all( $submission->get_id() );
+		Sensei()->quiz_grade_repository->delete_all( $submission->get_id() );
 
-		$answer_repository = ( new Answer_Repository_Factory() )->create();
-		$answers           = $answer_repository->get_all( $submission->get_id() );
-		$answers_map       = [];
-
+		$answers     = Sensei()->quiz_answer_repository->get_all( $submission->get_id() );
+		$answers_map = [];
 		foreach ( $answers as $answer ) {
 			$answers_map[ $answer->get_question_id() ] = $answer;
 		}
 
 		foreach ( $quiz_grades as $question_id => $points ) {
 			$answer = $answers_map[ $question_id ];
-			$grade_repository->create( $submission->get_id(), $answer->get_id(), $question_id, $points );
+			Sensei()->quiz_grade_repository->create( $submission->get_id(), $answer->get_id(), $question_id, $points );
 		}
 
 		$transient_key = 'quiz_grades_' . $user_id . '_' . $lesson_id;
@@ -1050,15 +1038,12 @@ class Sensei_Quiz {
 
 		// get the data if nothing was stored in the transient
 		if ( false === $grades_map ) {
-			$submission_repository = ( new Submission_Repository_Factory() )->create();
-			$submission            = $submission_repository->get( $quiz_id, $user_id );
+			$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			if ( ! $submission ) {
 				return false;
 			}
 
-			$grade_repository = ( new Grade_Repository_Factory() )->create();
-			$grades           = $grade_repository->get_all( $submission->get_id() );
-
+			$grades     = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
 			$grades_map = [];
 			foreach ( $grades as $grade ) {
 				$grades_map[ $grade->get_question_id() ] = $grade->get_points();
@@ -1177,21 +1162,18 @@ class Sensei_Quiz {
 			$encoded_answers_feedback[ $question_id ] = base64_encode( $feedback );
 		}
 
-		$submission_repository = ( new Submission_Repository_Factory() )->create();
-		$submission            = $submission_repository->get( $quiz_id, $user_id );
+		$submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 		if ( ! $submission ) {
 			return false;
 		}
 
-		$grade_repository = ( new Grade_Repository_Factory() )->create();
-		$grades           = $grade_repository->get_all( $submission->get_id() );
-
+		$grades = Sensei()->quiz_grade_repository->get_all( $submission->get_id() );
 		foreach ( $grades as $grade ) {
 			$feedback = $encoded_answers_feedback[ $grade->get_question_id() ];
 			$grade->set_feedback( $feedback );
 		}
 
-		$grade_repository->save_many( $grades, $submission->get_id() );
+		Sensei()->quiz_grade_repository->save_many( $grades, $submission->get_id() );
 
 		// Save transient to make retrieval faster in the future.
 		$transient_key = 'sensei_answers_feedback_' . $user_id . '_' . $lesson_id;
