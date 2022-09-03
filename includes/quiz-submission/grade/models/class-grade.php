@@ -1,8 +1,6 @@
 <?php
 /**
- * File containing the Comments_Based_Grade class.
- *
- * phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
+ * File containing the Grade class.
  *
  * @package sensei
  */
@@ -10,18 +8,31 @@
 namespace Sensei\Quiz_Submission\Grade\Models;
 
 use DateTimeInterface;
-use RuntimeException;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Class Comments_Based_Grade.
+ * Class Grade.
  *
  * @since $$next-version$$
  */
-class Comments_Based_Grade implements Grade_Interface {
+class Grade {
+	/**
+	 * The grade ID.
+	 *
+	 * @var int
+	 */
+	private $id;
+
+	/**
+	 * The answer ID.
+	 *
+	 * @var int
+	 */
+	private $answer_id;
+
 	/**
 	 * The question ID.
 	 *
@@ -44,40 +55,64 @@ class Comments_Based_Grade implements Grade_Interface {
 	private $feedback;
 
 	/**
+	 * The created date.
+	 *
+	 * @var DateTimeInterface
+	 */
+	private $created_at;
+
+	/**
+	 * The updated date.
+	 *
+	 * @var DateTimeInterface|null
+	 */
+	private $updated_at;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param int         $question_id The question ID.
-	 * @param int         $points      The grade points.
-	 * @param string|null $feedback    The grade feedback.
+	 * @param int                    $id          The grade ID.
+	 * @param int                    $answer_id   The answer ID.
+	 * @param int                    $question_id The question ID.
+	 * @param int                    $points      The grade points.
+	 * @param string|null            $feedback    The grade feedback.
+	 * @param DateTimeInterface      $created_at  The created data.
+	 * @param DateTimeInterface|null $updated_at  The update date.
 	 */
 	public function __construct(
+		int $id,
+		int $answer_id,
 		int $question_id,
 		int $points,
-		string $feedback = null
+		?string $feedback,
+		DateTimeInterface $created_at,
+		?DateTimeInterface $updated_at = null
 	) {
+		$this->id          = $id;
+		$this->answer_id   = $answer_id;
 		$this->question_id = $question_id;
 		$this->points      = $points;
 		$this->feedback    = $feedback;
+		$this->created_at  = $created_at;
+		$this->updated_at  = $updated_at ?? $created_at;
 	}
 
 	/**
 	 * Get the grade ID.
 	 *
 	 * @return int
-	 * @throws RuntimeException When called.
 	 */
 	public function get_id(): int {
-		throw new RuntimeException( 'This legacy model has no `id`' );
+		return $this->id;
 	}
 
 	/**
 	 * Get the answer ID.
 	 *
 	 * @return int
-	 * @throws RuntimeException When called.
 	 */
 	public function get_answer_id(): int {
-		throw new RuntimeException( 'This legacy model has no `answer_id`' );
+		return $this->answer_id;
 	}
 
 	/**
@@ -120,19 +155,17 @@ class Comments_Based_Grade implements Grade_Interface {
 	 * Get the created date.
 	 *
 	 * @return DateTimeInterface
-	 * @throws RuntimeException When called.
 	 */
 	public function get_created_at(): DateTimeInterface {
-		throw new RuntimeException( 'This legacy model has no `created_at`' );
+		return $this->created_at;
 	}
 
 	/**
 	 * Get the updated date.
 	 *
 	 * @return DateTimeInterface
-	 * @throws RuntimeException When called.
 	 */
 	public function get_updated_at(): DateTimeInterface {
-		throw new RuntimeException( 'This legacy model has no `updated_at`' );
+		return $this->updated_at;
 	}
 }

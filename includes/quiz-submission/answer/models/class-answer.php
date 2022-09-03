@@ -8,7 +8,7 @@
 namespace Sensei\Quiz_Submission\Answer\Models;
 
 use DateTimeInterface;
-use Sensei\Quiz_Submission\Grade\Models\Grade_Interface;
+use Sensei\Quiz_Submission\Grade\Models\Grade;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -65,7 +65,7 @@ class Answer {
 	/**
 	 * The grade model.
 	 *
-	 * @var Grade_Interface|null
+	 * @var Grade|null
 	 */
 	private $grade;
 
@@ -152,18 +152,18 @@ class Answer {
 	/**
 	 * Get the grade model.
 	 *
-	 * @return Grade_Interface|null
+	 * @return Grade|null
 	 */
-	public function get_grade(): ?Grade_Interface {
+	public function get_grade(): ?Grade {
 		return $this->grade;
 	}
 
 	/**
 	 * Set the grade model.
 	 *
-	 * @param Grade_Interface $grade The grade model.
+	 * @param Grade $grade The grade model.
 	 */
-	public function set_grade( Grade_Interface $grade ): void {
+	public function set_grade( Grade $grade ): void {
 		$this->grade = $grade;
 	}
 }

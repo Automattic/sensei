@@ -7,7 +7,7 @@
 
 namespace Sensei\Quiz_Submission\Grade\Repositories;
 
-use Sensei\Quiz_Submission\Grade\Models\Grade_Interface;
+use Sensei\Quiz_Submission\Grade\Models\Grade;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,23 +28,23 @@ interface Grade_Repository_Interface {
 	 * @param int         $points        The points.
 	 * @param string|null $feedback      The feedback.
 	 *
-	 * @return Grade_Interface The grade.
+	 * @return Grade The grade.
 	 */
-	public function create( int $submission_id, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade_Interface;
+	public function create( int $submission_id, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade;
 
 	/**
 	 * Get all grades for a quiz submission.
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade_Interface[] An array of grades.
+	 * @return Grade[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array;
 
 	/**
 	 * Save multiple grades.
 	 *
-	 * @param Grade_Interface[] $grades        An array of grades.
+	 * @param Grade[] $grades        An array of grades.
 	 * @param int               $submission_id The submission ID.
 	 */
 	public function save_many( array $grades, int $submission_id ): void;
