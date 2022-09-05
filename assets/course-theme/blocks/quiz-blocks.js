@@ -42,6 +42,7 @@ export default [
 						className="sensei-progress-bar__bar"
 					>
 						<div
+							className="sensei-progress-bar__progress"
 							style={ {
 								width: '20%',
 								backgroundColor:
