@@ -174,7 +174,7 @@ class Sensei_Course_Theme_Templates {
 		$mapped_templates = [];
 		foreach ( $templates as $template_name => $template ) {
 			// The block templates must have name.
-			if ( ! isset( $template['name'] ) || ! $template['name'] ) {
+			if ( ! isset( $template['name'] ) || empty( $template['name'] ) ) {
 				throw new Error( 'The Learning Mode block templates must have "name" property.' );
 			}
 
@@ -222,7 +222,7 @@ class Sensei_Course_Theme_Templates {
 			// Make sure the lesson content is not empty.
 			if (
 				! isset( $template['content']['lesson'] ) ||
-				! $template['content']['lesson']
+				empty( $template['content']['lesson'] )
 			) {
 				$template['content']['lesson'] = $default_template['content']['lesson'];
 			}
@@ -230,7 +230,7 @@ class Sensei_Course_Theme_Templates {
 			// Make sure the quiz content is not empty.
 			if (
 				! isset( $template['content']['quiz'] ) ||
-				! $template['content']['quiz']
+				empty( $template['content']['quiz'] )
 			) {
 				$template['content']['quiz'] = $default_template['content']['quiz'];
 			}
@@ -267,7 +267,7 @@ class Sensei_Course_Theme_Templates {
 			'lesson' => array_merge(
 				$common_options,
 				[
-					// translators: %s is the block template name.
+					// translators: %1$s is the block template name.
 					'title'       => sprintf( __( 'Lesson (Learning Mode - %1$s)', 'sensei-lms' ), $title ),
 					'description' => __( 'Displays course content.', 'sensei-lms' ),
 					'slug'        => 'lesson',
@@ -278,7 +278,7 @@ class Sensei_Course_Theme_Templates {
 			'quiz'   => array_merge(
 				$common_options,
 				[
-					// translators: %s is the block template name.
+					// translators: %1$s is the block template name.
 					'title'       => sprintf( __( 'Quiz (Learning Mode - %1$s)', 'sensei-lms' ), $title ),
 					'description' => __( 'Displays a lesson quiz.', 'sensei-lms' ),
 					'slug'        => 'quiz',

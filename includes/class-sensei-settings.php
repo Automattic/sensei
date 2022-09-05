@@ -977,7 +977,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php foreach ( $args['data']['options'] as $template ) : ?>
 				<?php
 					$upsell   = isset( $template['upsell'] ) ? $template['upsell'] : false;
-					$title    = isset( $template['title'] ) ? $template['title'] : $template['name'];
+					$title    = isset( $template['title'] ) || empty( $template['title'] ) ? $template['title'] : $template['name'];
 					$disabled = (bool) $upsell;
 				?>
 				<li class="sensei-lm-block-template__option">
