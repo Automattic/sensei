@@ -276,7 +276,7 @@ class Sensei_Quiz {
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// start the lesson before saving the data in case the user has not started the lesson
-		$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		// prepare the answers
 		$prepared_answers = self::prepare_form_submitted_answers( $quiz_answers, $files );
@@ -811,15 +811,6 @@ class Sensei_Quiz {
 		if ( ! $quiz_progress ) {
 			// Even after starting a lesson we can't find the progress. Leave immediately.
 			return false;
-		}
-
-		$questions_asked = get_comment_meta( $quiz_progress->get_id(), 'questions_asked', true ) ?? [];
-		if ( empty( $questions_asked ) ) {
-			$questions_asked        = array_keys( $quiz_answers );
-			$questions_asked_string = implode( ',', $questions_asked );
-
-			// Save questions that were asked in this quiz.
-			update_comment_meta( $quiz_progress->get_id(), 'questions_asked', $questions_asked_string );
 		}
 
 		// Save Quiz Answers for grading, the save function also calls the sensei_start_lesson.
