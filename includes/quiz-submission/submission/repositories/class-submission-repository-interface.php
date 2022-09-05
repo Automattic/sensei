@@ -52,6 +52,16 @@ interface Submission_Repository_Interface {
 	public function get( int $quiz_id, int $user_id ): ?Submission;
 
 	/**
+	 * Get the question IDs related to this quiz submission.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID.
+	 *
+	 * @return array An array of question post IDs.
+	 */
+	public function get_question_ids( int $quiz_id, int $user_id ): array;
+
+	/**
 	 * Save quiz submission.
 	 *
 	 * @param Submission $submission The quiz submission.
