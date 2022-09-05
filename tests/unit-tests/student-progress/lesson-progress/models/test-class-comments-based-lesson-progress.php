@@ -5,7 +5,7 @@
 
 namespace SenseiTest\Student_Progress\Lesson_Progress\Models;
 
-use Sensei\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress;
+use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Lesson_Progress_Comments_Test.
  *
- * @covers \Sensei\Student_Progress\Lesson_Progress\Models\Comments_Based_Lesson_Progress
+ * @covers \Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress
  */
 class Comments_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 
@@ -196,8 +196,8 @@ class Comments_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( $completed_at, $progress->get_completed_at() );
 	}
 
-	private function createProgress( string $status = null ): Comments_Based_Lesson_Progress {
-		return new Comments_Based_Lesson_Progress(
+	private function createProgress( string $status = null ): Lesson_Progress {
+		return new Lesson_Progress(
 			1,
 			2,
 			3,

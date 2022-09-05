@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Comments_Based_Lesson_Progress class.
+ * File containing the Lesson_Progress class.
  *
  * @package sensei
  */
@@ -16,11 +16,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Comments_Based_Lesson_Progress.
+ * Class Lesson_Progress.
  *
  * @since $$next-version$$
  */
-class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
+class Lesson_Progress {
+	/**
+	 * Status lesson in progress.
+	 */
+	public const STATUS_IN_PROGRESS = 'in-progress';
+
+	/**
+	 * Status lesson completed.
+	 */
+	public const STATUS_COMPLETE = 'complete';
+
 	/**
 	 * Progress identifier.
 	 *
@@ -78,7 +88,7 @@ class Comments_Based_Lesson_Progress implements Lesson_Progress_Interface {
 	protected $updated_at;
 
 	/**
-	 * Sensei_Lesson_Progress constructor.
+	 * Lesson progress constructor.
 	 *
 	 * @param int                    $id         Progress identifier.
 	 * @param int                    $lesson_id  Lesson identifier.
