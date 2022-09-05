@@ -31,16 +31,6 @@ interface Answer_Repository_Interface {
 	public function create( int $submission_id, int $question_id, string $value ): Answer;
 
 	/**
-	 * Get an answer.
-	 *
-	 * @param int $submission_id The submission ID.
-	 * @param int $question_id   The question ID.
-	 *
-	 * @return Answer|null The answer model.
-	 */
-	public function get( int $submission_id, int $question_id ): ?Answer;
-
-	/**
 	 * Get all answers for a quiz submission.
 	 *
 	 * @param int $submission_id The submission ID.
@@ -50,25 +40,9 @@ interface Answer_Repository_Interface {
 	public function get_all( int $submission_id ): array;
 
 	/**
-	 * Get all answers and grades for a quiz submission.
-	 *
-	 * @param int $submission_id The submission ID.
-	 *
-	 * @return Answer[] An array of answers.
-	 */
-	public function get_all_answers_and_grades( int $submission_id ): array;
-
-	/**
-	 * Save the answer.
-	 *
-	 * @param Answer $answer The answer model.
-	 */
-	public function save( Answer $answer ): void;
-
-	/**
-	 * Delete all answers, including their grades.
+	 * Delete all answers for a submission.
 	 *
 	 * @param int $submission_id The submission ID.
 	 */
-	public function delete_all_answers_and_grades( int $submission_id ): void;
+	public function delete_all( int $submission_id ): void;
 }

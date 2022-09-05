@@ -7,8 +7,6 @@
 
 namespace Sensei\Quiz_Submission\Answer\Repositories;
 
-use Sensei\Quiz_Submission\Grade\Repositories\Grade_Comments_Repository;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -25,6 +23,6 @@ class Answer_Repository_Factory {
 	 * @return Answer_Repository_Interface
 	 */
 	public function create(): Answer_Repository_Interface {
-		return new Answer_Comments_Repository( new Grade_Comments_Repository() );
+		return new Answer_Comments_Repository();
 	}
 }

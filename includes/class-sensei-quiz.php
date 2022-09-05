@@ -287,7 +287,9 @@ class Sensei_Quiz {
 		// save the user data
 		$submission = Sensei()->quiz_submission_repository->get_or_create( $quiz_id, $user_id );
 
-		Sensei()->quiz_answer_repository->delete_all_answers_and_grades( $submission->get_id() );
+		Sensei()->quiz_grade_repository->delete_all( $submission->get_id() );
+		Sensei()->quiz_answer_repository->delete_all( $submission->get_id() );
+
 		foreach ( $prepared_answers as $question_id => $answer ) {
 			Sensei()->quiz_answer_repository->create( $submission->get_id(), $question_id, $answer );
 		}
