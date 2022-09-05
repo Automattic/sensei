@@ -9,7 +9,7 @@ namespace Sensei\Quiz_Submission\Submission\Repositories;
 
 use DateTime;
 use DateTimeInterface;
-use Exception;
+use RuntimeException;
 use Sensei\Quiz_Submission\Submission\Models\Submission;
 use Sensei_Utils;
 use WP_Comment;
@@ -31,14 +31,14 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The course progress.
-	 * @throws Exception  Emits Exception in case the lesson status is missing.
+	 * @return Submission       The course progress.
+	 * @throws RuntimeException In case the lesson status is missing.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
 		if ( ! $status_comment ) {
-			throw new Exception( 'The lesson status is missing.' );
+			throw new RuntimeException( 'Missing lesson status.' );
 		}
 
 		if ( null !== $final_grade ) {
@@ -109,13 +109,13 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 	 *
 	 * @param Submission $submission The quiz submission.
 	 *
-	 * @throws Exception Emits Exception in case the lesson status is missing.
+	 * @throws RuntimeException In case the lesson status is missing.
 	 */
 	public function save( Submission $submission ): void {
 		$status_comment = $this->get_status_comment( $submission->get_quiz_id(), $submission->get_user_id() );
 
 		if ( ! $status_comment ) {
-			throw new Exception( 'The lesson status is missing.' );
+			throw new RuntimeException( 'Missing lesson status.' );
 		}
 
 		$final_grade = $submission->get_final_grade();
@@ -138,7 +138,7 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 
 		$status_comment = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
 
-		if ( ! is_a( $status_comment, WP_comment::class ) ) {
+		if ( ! $status_comment ) {
 			return null;
 		}
 
@@ -153,7 +153,6 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 	 * @param WP_Comment $status_comment The lesson status comment.
 	 *
 	 * @return DateTimeInterface The created date.
-	 * @throws Exception In case of a date error.
 	 */
 	private function get_created_date( WP_Comment $status_comment ): DateTimeInterface {
 		$start_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
