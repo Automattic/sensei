@@ -45,12 +45,14 @@ class Sensei_Course_Theme_Lesson {
 	 * Initializes the class.
 	 */
 	public function init() {
-		if ( 'lesson' !== get_post_type() ) {
+		$post_type = get_post_type();
+		if ( 'lesson' === $post_type || 'quiz' === $post_type ) {
+			$this->maybe_add_lesson_prerequisite_notice();
+		} elseif ( 'lesson' !== get_post_type() ) {
 			return;
 		}
 
 		$this->maybe_add_quiz_results_notice();
-		$this->maybe_add_lesson_prerequisite_notice();
 		$this->maybe_add_not_enrolled_notice();
 	}
 
