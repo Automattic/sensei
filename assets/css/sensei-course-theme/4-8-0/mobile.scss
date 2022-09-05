@@ -105,7 +105,8 @@
 
 		&:not(&--sidebar-open) &__sidebar {
 			bottom: 100vh;
-			top: -100vh;
+			top: -100vh !important;
+			padding: 0;
 		}
 
 		&__main-content {
@@ -125,10 +126,10 @@
 			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
 			transition: bottom 800ms ease-in;
 
-
-				padding: 24px;
-				display: flex;
-				gap: 24px;
+			padding: 12px !important;
+			display: flex;
+			gap: 12px;
+			align-items: center;
 
 				> * {
 					flex: 1;

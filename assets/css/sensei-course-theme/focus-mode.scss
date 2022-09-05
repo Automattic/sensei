@@ -22,7 +22,7 @@ $base: '.sensei-course-theme';
 	body:not(.sensei-course-theme--focus-mode) {
 
 		// Toogle in the header and without focus mode.
-		.sensei-course-theme__header__left .sensei-course-theme__focus-mode-toggle {
+		.sensei-course-theme__header .sensei-course-theme__focus-mode-toggle {
 			transform: rotate(90deg)
 		}
 
@@ -80,7 +80,7 @@ $base: '.sensei-course-theme';
 		}
 
 		// Toogle in the header.
-		.sensei-course-theme__header__left .sensei-course-theme__focus-mode-toggle {
+		.sensei-course-theme__header .sensei-course-theme__focus-mode-toggle {
 			.sensei-course-theme__focus-mode-toggle-icon {
 				transform: rotate(90deg);
 			}
