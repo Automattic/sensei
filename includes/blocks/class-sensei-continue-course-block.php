@@ -64,7 +64,7 @@ class Sensei_Continue_Course_Block {
 
 		$target_post_id = $this->get_target_page_post_id_for_continue_url( $course_id, $user_id );
 
-		return '<div class="sensei-block-wrapper">' .
+		return '<div class="sensei-block-wrapper sensei-cta">' .
 			preg_replace(
 				'/<a(.*)>/',
 				'<a href="' . esc_url( get_permalink( absint( $target_post_id ?? $course_id ) ) ) . '" $1>',
