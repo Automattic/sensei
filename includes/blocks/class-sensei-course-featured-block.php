@@ -43,12 +43,6 @@ class Sensei_Course_Featured_Block {
 		);
 	}
 
-	private function is_course_featured( $post_id ) {
-		// Check if the course is featured.
-		$course_featured = get_post_meta( $post_id, '_course_featured', true );
-		return 'featured' === $course_featured;
-	}
-
 	/**
 	 * Render the Course Categories block.
 	 *
@@ -69,8 +63,11 @@ class Sensei_Course_Featured_Block {
 			return '';
 		}
 
-		if ( $this->is_course_featured( $post_id ) ) {
-			 return '<div class="class-course-featured"></div>';
+		// Check if the course is featured.
+		$course_featured = get_post_meta( $post_id, '_course_featured', true );
+		$course_featured = 'featured' === $course_featured;
+		if ( $course_featured ) {
+			return '<div class="class-course-featured"></div>';
 		}
 		return '';
 	}

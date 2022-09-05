@@ -82,6 +82,9 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * @return string $block_content block content.
 	 */
 	public function add_course_featured_badge( $block_content, $block_parent ): string {
+		if ( empty( $block_content ) ) {
+			return $block_content;
+		}
 		// Add featured course badge to a featured image block.
 		if ( 'core/post-featured-image' === $block_parent['blockName'] ) {
 			if ( ! empty( $block_content ) ) {

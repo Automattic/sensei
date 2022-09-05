@@ -6,7 +6,6 @@ import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -71,10 +70,12 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 	// eslint-disable-next-line no-undef
 	const observer = new MutationObserver( () => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+
 		if (
 			'core/query' === selectedBlock?.name &&
-			'wp-block-sensei-lms-course-list' ===
-				selectedBlock?.attributes?.className
+			selectedBlock?.attributes?.className?.includes(
+				'wp-block-sensei-lms-course-list'
+			)
 		) {
 			hideUnnecessarySettingsForCourseList();
 		}
@@ -123,6 +124,7 @@ const hideUnnecessarySettingsForCourseList = () => {
 const getFeaturedBadge = () => {
 	const featureBadge = document.createElement( 'div' );
 	featureBadge.classList.add( 'featured-badge' );
+	featureBadge.classList.add( 'featured-badge-edit' );
 	featureBadge.textContent = __( 'Featured', 'sensei-lms' );
 	return featureBadge;
 };
@@ -150,48 +152,51 @@ const addFeaturedBadgeToCourses = () => {
 
 		const courses = t.querySelectorAll( 'li' );
 		courses.forEach( ( course ) => {
-			course.childNodes.forEach( ( child ) => {
-				// If the badge is already added return.
-				if (
-					course.classList.contains(
-						'featured-course-no-image-wrapper'
-					) ||
-					course.classList.contains(
-						'featured-course-with-image-wrapper'
-					)
-				) {
-					return;
-				}
+			const featuredCourse = course.querySelector(
+				'.class-course-featured'
+			);
+			if ( ! featuredCourse ) {
+				return;
+			}
+			if (
+				course.classList.contains(
+					'featured-course-with-image-wrapper'
+				) ||
+				course.classList.contains( 'featured-course-no-image-wrapper' )
+			) {
+				return;
+			}
+			const featuredImageBlock = course.querySelector(
+				'.wp-block-post-featured-image'
+			);
 
-				if ( child.tagName === 'FIGURE' ) {
-					// Add feature badge to feature image.
-					course.classList.add(
-						'featured-course-with-image-wrapper'
-					);
-					addFeatureBadgeToElement( child, 'featured-image-wrapper' );
-				} else if ( child.classList.contains( 'wp-block' ) ) {
-					// Add feature badge to course categories.
-					const courseCategory = child.querySelector(
-						'.wp-block-sensei-lms-course-categories'
-					);
-					if ( courseCategory ) {
-						course.classList.add(
-							'featured-course-no-image-wrapper'
-						);
-						addFeatureBadgeToElement(
-							child,
-							'featured-category-wrapper'
-						);
-					}
-				}
-			} );
+			// Add badge to featured image, if the course has featured image or add to category block.
+			if (
+				featuredImageBlock &&
+				featuredImageBlock.tagName === 'FIGURE'
+			) {
+				course.classList.add( 'featured-course-with-image-wrapper' );
+				addFeatureBadgeToElement(
+					featuredImageBlock,
+					'featured-image-wrapper'
+				);
+			} else {
+				const courseCategoryBlock = course.querySelector(
+					'.wp-block-sensei-lms-course-categories'
+				);
+				course.classList.add( 'featured-course-no-image-wrapper' );
+				addFeatureBadgeToElement(
+					courseCategoryBlock,
+					'featured-category-wrapper'
+				);
+			}
 		} );
 	} );
 };
 
 let isCourseListBlockSelected = false;
 
-const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
+const withQueryLoopPatternsAndSettingsHiddenForCourseList = ( BlockEdit ) => {
 	return ( props ) => {
 		// Course Featured Badge.
 		addFeaturedBadgeToCourses();
@@ -199,7 +204,9 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
 			isQueryLoopBlock &&
-			'wp-block-sensei-lms-course-list' === props.attributes.className;
+			props?.attributes?.className?.includes(
+				'wp-block-sensei-lms-course-list'
+			);
 
 		if ( isCourseListBlock && props.isSelected ) {
 			isCourseListBlockSelected = true;
@@ -207,6 +214,22 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 			isCourseListBlockSelected = false;
 		}
 
+		// Hide query loop toolbar settings for grid/list outlook.
+		if (
+			isBlockAlreadyAddedInEditor( props.clientId ) &&
+			isCourseListBlockSelected
+		) {
+			const settingsName = __( 'Grid view', 'sensei-lms' );
+			const outlookSettings = document.querySelector(
+				`[aria-label="${ settingsName }"]`
+			);
+			if ( outlookSettings ) {
+				const toolbarElement = outlookSettings.parentNode;
+				toolbarElement.style.display = 'none';
+			}
+		}
+
+		// Hide query loop patterns for course list.
 		if (
 			isCourseListBlockSelected &&
 			isQueryLoopBlock &&
@@ -215,8 +238,8 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 		) {
 			hideCourseListPatternsCarouselViewControl();
 			hideNonCourseListBlockPatternContainers();
-			return <Fragment />;
 		}
+
 		return <BlockEdit { ...props } />;
 	};
 };
@@ -224,7 +247,7 @@ const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
 addFilter(
 	'editor.BlockEdit',
 	'sensei-lms/course-list-block',
-	withQueryLoopPatternsHiddenForCourseList
+	withQueryLoopPatternsAndSettingsHiddenForCourseList
 );
 
 // Hide patterns control so only Grid view can be selected.
