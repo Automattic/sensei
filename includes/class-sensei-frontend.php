@@ -826,7 +826,7 @@ class Sensei_Frontend {
 	 * Outputs all notices.
 	 */
 	public function sensei_frontend_messages() {
-		Sensei()->notices->maybe_print_notices();
+		Sensei()->notices->maybe_print_notices_container();
 	}
 
 	/**
@@ -1038,7 +1038,7 @@ class Sensei_Frontend {
 
 		?>
 		<div id="my-courses">
-			<?php Sensei()->notices->maybe_print_notices(); ?>
+			<?php Sensei()->notices->maybe_print_notices_container(); ?>
 			<div class="col2-set" id="customer_login">
 
 				<div class="col-1">

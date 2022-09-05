@@ -318,4 +318,4 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
  *
  * Frontend notices may display on any post, page or custom post type (used in Sensei blocks).
  */
-add_action( 'wp_body_open', array( $sensei->notices, 'maybe_print_notices' ) );
+add_action( 'wp_body_open', array( $sensei->notices, 'maybe_print_notices_container' ) );

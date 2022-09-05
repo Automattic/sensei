@@ -97,28 +97,19 @@ class Sensei_Notices {
 
 		// if a notice is added after we've printed, print it immediately.
 		if ( $this->has_printed ) {
-			$this->maybe_print_notices();
+			$this->maybe_print_notices_container();
 		}
 	}
 
 	/**
-	 * Output all notices added
+	 * Output the container to put the notices.
 	 *
 	 * @return void
 	 */
-	public function maybe_print_notices() {
-		if ( ! empty( $this->notices ) ) {
-			foreach ( $this->notices  as  $notice ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in generate_notice
-				echo $this->generate_notice( $notice['type'], $notice['content'] );
-			}
-			// empty the notice queue to avoid reprinting the same notices.
-			$this->clear_notices();
-
-		}
-
-		// set this to print immediately if notices are added after the notices were printed.
-		$this->has_printed = true;
+	public function maybe_print_notices_container() {
+		?>
+		<div class="sensei-notices-container"></div>
+		<?php
 	}
 
 	/**
@@ -173,7 +164,7 @@ class Sensei_Notices {
 		if ( in_the_loop() && is_main_query() ) {
 
 			ob_start();
-			$this->maybe_print_notices();
+			$this->maybe_print_notices_container();
 			$notice = ob_get_clean();
 
 			return $notice . $content;
