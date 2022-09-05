@@ -24,7 +24,7 @@
 
 			.sensei-course-theme__header__container {
 				padding-bottom: var(--header-open-height);
-
+				height: var(--header-height);
 			}
 
 			.sensei-course-theme-course-progress-bar {
@@ -35,7 +35,15 @@
 				display: block;
 				position: absolute;
 				left: 24px;
-				bottom: 22px;
+				top: calc( var(--header-height) - 36px);
+			}
+			.sensei-course-theme-course-progress-bar {
+				height: 8px;
+				position: absolute;
+				top: calc( var(--header-height) - 12px);
+				margin: 0;
+				left: 24px;
+				right: 24px;
 			}
 		}
 
@@ -75,9 +83,10 @@
 				font-size: 14px;
 			}
 
-			.sensei-course-theme-course-progress-bar {
-				height: 10px;
 			}
+
+		&__sidebar__content {
+			padding: 24px;
 		}
 
 		&__sidebar-toggle {
@@ -87,7 +96,7 @@
 			background: none;
 			border: none;
 			padding: 0;
-			color: var(--text-color);
+			color: inherit;
 
 			svg {
 				width: 24px;

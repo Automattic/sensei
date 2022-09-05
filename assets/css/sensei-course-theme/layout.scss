@@ -59,10 +59,16 @@ body.sensei-course-theme {
 
 	&__header {
 		margin: 0;
-		position: sticky;
+		position: fixed;
+		left: 0;
+		right: 0;
 		top: var(--top-offset);
 		background-color: var(--bg-color);
 		z-index: 100;
+	}
+
+	&__columns {
+		margin-top: var(--header-height) !important;
 	}
 
 	&__sidebar {
@@ -77,6 +83,7 @@ body.sensei-course-theme {
 		overscroll-behavior: contain;
 		display: flex;
 		flex-direction: column;
+		scrollbar-gutter: stable both-edges;
 
 		@media screen and (min-width: $breakpoint ) {
 			&--hidden {
@@ -89,8 +96,7 @@ body.sensei-course-theme {
 
 		&__content, &__footer {
 			margin: 0 !important;
-			padding: 24px;
-			padding-right: 16px;
+			padding: 12px;
 			padding-bottom: 12px;
 		}
 
@@ -110,9 +116,17 @@ body.sensei-course-theme {
 		}
 	}
 
+	&__main-content ~ &__sidebar {
+		left: unset;
+		right: 0;
+		border-right: unset;
+		border-left: 1px solid var(--border-color);
+
+	}
+
 	&__main-content {
 		padding: 32px 0;
-		margin-left: var(--sidebar-width) !important;
+		margin-right: var(--sidebar-width) !important;
 
 		// A Divi fix since it doesn't load Gutenberg block library styles.
 		@at-root {
@@ -120,6 +134,11 @@ body.sensei-course-theme {
 				flex: 1;
 			}
 		}
+	}
+
+	&__sidebar ~ &__main-content {
+		margin-right: unset ! important;
+		margin-left: var(--sidebar-width) !important;
 	}
 
 	&__header {
@@ -130,8 +149,8 @@ body.sensei-course-theme {
 			flex-wrap: nowrap;
 			padding: 0 24px;
 			margin: 0 !important;
-			gap: 24px;
-			height: calc(var(--header-height) - 10px);
+			gap: 24px!important;
+			height: calc(var(--header-height) - var(--header-progress-bar-height));
 		}
 
 		&__left {
