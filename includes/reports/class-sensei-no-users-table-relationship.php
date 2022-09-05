@@ -61,7 +61,7 @@ class Sensei_No_Users_Table_Relationship {
 	 */
 	public function can_use_users_relationship() : bool {
 		/**
-		 * Filters if site environment is able make queries including a relationship between users
+		 * Filters if site environment is able to make queries including a relationship between users
 		 * table and others.
 		 *
 		 * @hook  sensei_can_use_users_relationship
