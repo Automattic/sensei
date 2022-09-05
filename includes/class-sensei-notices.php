@@ -100,6 +100,30 @@ class Sensei_Notices {
 	}
 
 	/**
+	 * Output all notices added as scripts to the last "sensei-notices-container" element.
+	 *
+	 * @return void
+	 */
+	public function maybe_print_notices_on_script() {
+		if ( ! empty( $this->notices ) ) {
+			$result = '';
+			foreach ( $this->notices as $notice ) {
+				$result .= $this->generate_notice( $notice['type'], $notice['content'] );
+			}
+			?>
+			<script type="text/javascript">
+				( function(d) {
+					const containers = Array.from( d.querySelectorAll( ".sensei-notices-container" ) );
+					containers.pop().innerHTML = <?php echo wp_json_encode( $result ); ?>;
+				} )(document);
+			</script>
+			<?php
+			// empty the notice queue to avoid reprinting the same notices.
+			$this->clear_notices();
+		}
+	}
+
+	/**
 	 * Load the notices from the user meta, if the user is logged in, and delete them.
 	 *
 	 * @return void

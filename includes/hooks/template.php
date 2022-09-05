@@ -324,3 +324,4 @@ add_action( 'sensei_single_lesson_content_inside_before', array( $sensei->notice
 add_action( 'sensei_taxonomy_module_content_inside_before', array( $sensei->notices, 'maybe_print_notices_container' ), 40 );
 add_action( 'sensei_single_quiz_content_inside_before', array( $sensei->notices, 'maybe_print_notices_container' ), 50 );
 add_action( 'wp_body_open', array( $sensei->notices, 'maybe_print_notices_container' ) );
+add_action( 'wp_footer', array( $sensei->notices, 'maybe_print_notices_on_script' ) );
