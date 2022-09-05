@@ -8,6 +8,7 @@ import TakeCourseBlock from './take-course-block';
 import ViewResultsBlock from './view-results-block';
 import { registerCourseListBlock } from './course-list-block';
 import CourseCategoriesBlock from './course-categories-block';
+import CourseListFilterBlock from './course-list-filter-block';
 
 registerCourseListBlock();
 
@@ -18,4 +19,5 @@ registerSenseiBlocks( [
 	TakeCourseBlock,
 	ViewResultsBlock,
 	CourseCategoriesBlock,
+	CourseListFilterBlock,
 ] );

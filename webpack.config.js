@@ -66,6 +66,7 @@ const files = [
 	'blocks/global-blocks-style.scss',
 	'blocks/global-blocks-style-editor.scss',
 	'blocks/single-lesson-style-editor.scss',
+	'blocks/course-list-filter-block/course-list-filter.js',
 	'blocks/quiz/index.js',
 	'blocks/quiz/ordering-promo/index.js',
 	'blocks/quiz/quiz.editor.scss',
