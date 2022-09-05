@@ -38,7 +38,7 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 
 		ob_start();
 		do_blocks( $post_content );
-		Sensei()->notices->maybe_print_notices();
+		Sensei()->notices->maybe_print_notices_on_script();
 		$result = ob_get_clean();
 
 		$this->assertContains( 'There is no published content in this course yet.', $result );

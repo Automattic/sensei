@@ -50,7 +50,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		new Sensei_Block_Contact_Teacher();
 
 		ob_start();
-		Sensei()->notices->maybe_print_notices();
+		Sensei()->notices->maybe_print_notices_on_script();
 		$notices = ob_get_clean();
 
 		$this->assertContains( 'Your private message has been sent.', $notices );
