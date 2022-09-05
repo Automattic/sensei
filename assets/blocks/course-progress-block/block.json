@@ -38,6 +38,7 @@
       "default": false
     }
   },
+  "usesContext": [ "postType" ],
   "example": {
     "attributes": {
       "customBarBackgroundColor": "#999999",

@@ -39,6 +39,7 @@ class Sensei_Block_Patterns {
 	public function init() {
 		add_action( 'init', [ $this, 'maybe_register_pattern_block_polyfill' ], 99 );
 		add_action( 'init', [ $this, 'register_block_patterns_category' ] );
+		add_action( 'init', [ $this, 'register_course_list_block_patterns' ] );
 		add_action( 'current_screen', [ $this, 'register_block_patterns' ] );
 		add_action( 'enqueue_block_assets', [ $this, 'enqueue_scripts' ] );
 	}
@@ -61,6 +62,15 @@ class Sensei_Block_Patterns {
 		);
 	}
 
+	/**
+	 * Register patterns for course list block.
+	 *
+	 * @access private
+	 */
+	public function register_course_list_block_patterns() {
+		require __DIR__ . '/course-list/class-sensei-course-list-block-patterns.php';
+		( new Sensei_Course_List_Block_Patterns() )->register_course_list_block_patterns();
+	}
 	/**
 	 * Register block patterns.
 	 *

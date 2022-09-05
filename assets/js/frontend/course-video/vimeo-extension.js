@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { registerVideo } from './video-blocks-manager';
+import Player from '../../../shared/helpers/player';
 
 /**
  * Initializes Vimeo block video player.
@@ -9,28 +10,27 @@ import { registerVideo } from './video-blocks-manager';
  * @param {HTMLElement} iframe The iframe element of the Vimeo video block.
  */
 const initVimeoPlayer = ( iframe ) => {
-	let onVideoEnd = () => {};
-	const player = new Vimeo.Player( iframe );
-	player.on( 'ended', () => {
-		onVideoEnd();
-	} );
+	const player = new Player( iframe );
 
-	player.getVideoUrl().then( ( url ) => {
-		registerVideo( {
-			registerVideoEndHandler: ( cb ) => {
-				onVideoEnd = cb;
-			},
-			pauseVideo: player.pause.bind( player ),
-			url,
-			blockElement: iframe.closest( 'figure' ),
+	player
+		.getPlayer()
+		.then( ( nativeVimeoPlayer ) => nativeVimeoPlayer.getVideoUrl() )
+		.then( ( url ) => {
+			registerVideo( {
+				pauseVideo: () => {
+					player.pause();
+				},
+				registerVideoEndHandler: ( cb ) => {
+					player.on( 'ended', cb );
+				},
+				url,
+				blockElement: iframe.closest( 'figure' ),
+			} );
 		} );
-	} );
 };
 
 export const initVimeoExtension = () => {
 	document
-		.querySelectorAll(
-			'.sensei-course-video-container.vimeo-extension iframe'
-		)
+		.querySelectorAll( '.wp-block-embed-vimeo iframe' )
 		.forEach( initVimeoPlayer );
 };

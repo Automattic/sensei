@@ -24,10 +24,15 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Initialize blocks that are used in page post types.
 	 */
 	public function initialize_blocks() {
+		new Sensei_Block_Take_Course();
+		new Sensei_Block_View_Results();
+		new Sensei_Continue_Course_Block();
+		new Sensei_Course_Completed_Actions_Block();
+		new Sensei_Course_Progress_Block();
+		new Sensei_Course_Results_Block();
 		new Sensei_Learner_Courses_Block();
 		new Sensei_Learner_Messages_Button_Block();
-		new Sensei_Course_Completed_Actions_Block();
-		new Sensei_Course_Results_Block();
+		new Sensei_Course_Categories_Block();
 	}
 
 	/**
@@ -41,6 +46,10 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		Sensei()->assets->enqueue(
 			'sensei-single-page-blocks-style',
 			'blocks/single-page-style.css'
+		);
+		Sensei()->assets->enqueue(
+			'sensei-shared-blocks-style',
+			'blocks/shared-style.css'
 		);
 	}
 
