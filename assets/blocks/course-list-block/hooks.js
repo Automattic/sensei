@@ -57,33 +57,6 @@ const hideNonCourseListBlockPatternContainers = () => {
 };
 
 /**
- * Add support for borders to the Query Loop block.
- *
- * @param {Object} settings Block settings.
- * @param {string} name     Block name.
- *
- * @return {boolean} Block settings.
- */
-export const addBorderSupport = ( settings, name ) => {
-	if ( name !== 'core/query' ) {
-		return settings;
-	}
-
-	return {
-		...settings,
-		supports: {
-			...settings.supports,
-			__experimentalBorder: {
-				color: true,
-				radius: true,
-				style: true,
-				width: true,
-			},
-		},
-	};
-};
-
-/**
  * Hide patterns and settings that aren't applicable for Course List.
  *
  * @param {Function} BlockEdit Block's edit component.
@@ -136,12 +109,6 @@ export const withQueryLoopPatternsAndSettingsHiddenForCourseList = (
 		return <BlockEdit { ...props } />;
 	};
 };
-
-addFilter(
-	'blocks.registerBlockType',
-	'sensei-lms/course-list-block',
-	addBorderSupport
-);
 
 addFilter(
 	'editor.BlockEdit',
