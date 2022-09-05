@@ -33,7 +33,7 @@ class Sensei_No_Users_Table_Relationship {
 	 *
 	 * @return self
 	 */
-	public static function instance() {
+	public static function instance() : self {
 		if ( ! self::$instance ) {
 			self::$instance = new self();
 		}
@@ -43,7 +43,7 @@ class Sensei_No_Users_Table_Relationship {
 	/**
 	 * Initializes the class.
 	 */
-	public function init() {
+	public function init() : void {
 		// Students report.
 		add_filter( 'sensei_students_report_last_activity_filter_enabled', [ $this, 'can_use_users_relationship' ] );
 		add_filter( 'sensei_analysis_overview_users_columns_sortable', [ $this, 'filter_analysis_overview_users_columns_sortable' ] );
@@ -59,7 +59,7 @@ class Sensei_No_Users_Table_Relationship {
 	 *
 	 * @return boolean Whether the users relationship is possible.
 	 */
-	public function can_use_users_relationship() {
+	public function can_use_users_relationship() : bool {
 		/**
 		 * Filters if site environment is able make queries including a relationship between users
 		 * table and others.

@@ -100,7 +100,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Check if last activity filter is enabled.
 	 *
-	 * @return {bolean} Whether last activity filter is enabled.
+	 * @return {boolean} Whether last activity filter is enabled.
 	 */
 	public function get_is_last_activity_filter_enabled() {
 		/**
