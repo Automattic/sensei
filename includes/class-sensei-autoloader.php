@@ -242,8 +242,7 @@ class Sensei_Autoloader {
 			/**
 			 * Student Progress
 			 */
-			\Sensei\Student_Progress\Course_Progress\Models\Course_Progress_Interface::class => 'student-progress/course-progress/models/class-course-progress-interface.php',
-			\Sensei\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress::class => 'student-progress/course-progress/models/class-comments-based-course-progress.php',
+			\Sensei\Student_Progress\Course_Progress\Models\Course_Progress::class => 'student-progress/course-progress/models/class-course-progress.php',
 			\Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress::class => 'student-progress/lesson-progress/models/class-lesson-progress.php',
 			\Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class => 'student-progress/quiz-progress/models/class-quiz-progress.php',
 			\Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface::class => 'student-progress/course-progress/repositories/class-course-progress-repository-interface.php',

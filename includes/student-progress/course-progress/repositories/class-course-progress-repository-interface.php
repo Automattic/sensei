@@ -7,7 +7,7 @@
 
 namespace Sensei\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,18 +24,18 @@ interface Course_Progress_Repository_Interface {
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress_Interface The course progress.
+	 * @return Course_Progress The course progress.
 	 */
-	public function create( int $course_id, int $user_id ): Course_Progress_Interface;
+	public function create( int $course_id, int $user_id ): Course_Progress;
 
 	/**
 	 * Gets a course progress.
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
-	 * @return Course_Progress_Interface|null The course progress.
+	 * @return Course_Progress|null The course progress.
 	 */
-	public function get( int $course_id, int $user_id ): ?Course_Progress_Interface;
+	public function get( int $course_id, int $user_id ): ?Course_Progress;
 
 	/**
 	 * Checks if a course progress exists.
@@ -49,7 +49,7 @@ interface Course_Progress_Repository_Interface {
 	/**
 	 * Save course progress.
 	 *
-	 * @param Course_Progress_Interface $course_progress The course progress.
+	 * @param Course_Progress $course_progress The course progress.
 	 */
-	public function save( Course_Progress_Interface $course_progress ): void;
+	public function save( Course_Progress $course_progress ): void;
 }

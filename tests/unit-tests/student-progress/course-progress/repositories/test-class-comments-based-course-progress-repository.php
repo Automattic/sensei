@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Student_Progress\Course_Progress\Models\Course_Progress_Interface;
+use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
 use Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
 
 /**
@@ -115,7 +115,7 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $this->export_progress( $created ), $this->export_progress( $actual ) );
 	}
 
-	private function export_progress( Course_Progress_Interface $progress ): array {
+	private function export_progress( Course_Progress $progress ): array {
 		return [
 			'user_id'   => $progress->get_user_id(),
 			'course_id' => $progress->get_course_id(),

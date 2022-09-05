@@ -7,12 +7,12 @@
 
 namespace SenseiTest\Student_Progress\Course_Progress\Models;
 
-use Sensei\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress;
+use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
 
 /**
  * Class Comments_Based_Course_Progress_Test.
  *
- * @covers \Sensei\Student_Progress\Course_Progress\Models\Comments_Based_Course_Progress
+ * @covers \Sensei\Student_Progress\Course_Progress\Models\Course_Progress
  */
 class Comments_Based_Course_Progress_Test extends \WP_UnitTestCase {
 	public function testGetStartedAt_WhenStartWithStartedAtCalled_ReturnsSameStartedAt(): void {
@@ -61,8 +61,8 @@ class Comments_Based_Course_Progress_Test extends \WP_UnitTestCase {
 		self::assertSame( 'complete', $progress->get_status() );
 	}
 
-	private function createProgress(): Comments_Based_Course_Progress {
-		return new Comments_Based_Course_Progress(
+	private function createProgress(): Course_Progress {
+		return new Course_Progress(
 			1,
 			2,
 			3,

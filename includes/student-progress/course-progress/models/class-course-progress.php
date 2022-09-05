@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Comments_Based_Course_Progress class.
+ * File containing the Course_Progress class.
  *
  * @package sensei
  */
@@ -14,11 +14,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Comments_Based_Course_Progress.
+ * Class Course_Progress.
  *
  * @since $$next-version$$
  */
-class Comments_Based_Course_Progress implements Course_Progress_Interface {
+class Course_Progress {
+	/**
+	 * Status course in progress.
+	 */
+	public const STATUS_IN_PROGRESS = 'in-progress';
+
+	/**
+	 * Status course complete.
+	 */
+	public const STATUS_COMPLETE = 'complete';
+
 	/**
 	 * Progress identifier.
 	 *
