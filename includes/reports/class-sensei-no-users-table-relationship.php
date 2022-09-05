@@ -102,7 +102,7 @@ class Sensei_No_Users_Table_Relationship {
 			$wpdb->suppress_errors( true );
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Database relationship check.
-			$result                     = $wpdb->get_var( "SELECT u.ID FROM {$wpdb->users} u, {$wpdb->posts} p WHERE u.ID = p.post_author LIMIT 1;" );
+			$result                     = $wpdb->get_var( "SELECT u.ID FROM {$wpdb->users} u INNER JOIN {$wpdb->posts} p ON u.ID = p.post_author LIMIT 1;" );
 			$can_use_users_relationship = null !== $result ? 1 : 0;
 
 			$wpdb->suppress_errors( $previous_suppress_errors );
