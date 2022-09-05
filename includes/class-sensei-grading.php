@@ -722,7 +722,6 @@ class Sensei_Grading {
 				$lesson_status = 'graded';
 				$quiz_progress->grade();
 			}
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz()" above.
 		}
 
 		Sensei()->quiz_progress_repository->save( $quiz_progress );
