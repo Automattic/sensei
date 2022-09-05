@@ -2524,6 +2524,7 @@ class Sensei_Lesson {
 	 * Enqueue legacy meta box quiz editor assets.
 	 */
 	private function enqueue_scripts_meta_box_quiz_editor() {
+
 		wp_enqueue_media();
 
 		// Load the lessons script.
@@ -3644,7 +3645,8 @@ class Sensei_Lesson {
 				// Get number of questions to show.
 				$show_questions = (int) get_post_meta( $quiz_id, '_show_questions', true );
 
-				if ( $show_questions ) {
+				// Negative amount is considered as All (same as zero).
+				if ( $show_questions > 0 ) {
 					// Get random set of array keys from selected questions array.
 					$selected_questions = array_rand(
 						$questions_array,
