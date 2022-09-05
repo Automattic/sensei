@@ -33,13 +33,6 @@ class Sensei_Notices {
 	protected $notices;
 
 	/**
-	 * Has Printed.
-	 *
-	 * @var boolean $has_printed
-	 */
-	protected $has_printed;
-
-	/**
 	 * The HTML allowed for message boxes.
 	 *
 	 * @var array The HTML allowed for message boxes.
@@ -52,7 +45,6 @@ class Sensei_Notices {
 	public function __construct() {
 		// initialize the notices variable.
 		$this->notices      = array();
-		$this->has_printed  = false;
 		$this->allowed_html = array_merge(
 			wp_kses_allowed_html( 'post' ),
 			array(
@@ -93,11 +85,6 @@ class Sensei_Notices {
 				'content' => $content,
 				'type'    => $type,
 			];
-		}
-
-		// if a notice is added after we've printed, print it immediately.
-		if ( $this->has_printed ) {
-			$this->maybe_print_notices_container();
 		}
 	}
 
