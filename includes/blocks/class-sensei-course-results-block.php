@@ -285,8 +285,8 @@ class Sensei_Course_Results_Block {
 		$section_content[] = esc_html( $item['title'] );
 		$section_content[] = '</span>';
 
-		$grade = $this->get_lesson_grade( $item['id'] );
-		if ( null !== $grade ) {
+		$grade = Sensei()->quiz->get_user_quiz_grade( $item['id'], get_current_user_id() );
+		if ( $grade ) {
 			$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson-score">';
 			$section_content[] = $grade . '%';
 			$section_content[] = '</span>';
@@ -296,39 +296,6 @@ class Sensei_Course_Results_Block {
 		$section_content[] = '</li>';
 
 		return implode( $section_content );
-	}
-
-	/**
-	 * Get the lesson grade.
-	 *
-	 * @param int $lesson_id
-	 *
-	 * @return string|null
-	 */
-	private function get_lesson_grade( $lesson_id ) {
-		$activity_args   = [
-			'post_id' => $lesson_id,
-			'user_id' => get_current_user_id(),
-			'type'    => 'sensei_lesson_status',
-			'status'  => [ 'graded', 'passed', 'failed' ],
-		];
-		$lesson_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
-		if ( empty( $lesson_activity ) ) {
-			return null;
-		}
-
-		if ( is_array( $lesson_activity ) ) {
-			$lesson_activity = $lesson_activity[0];
-		}
-
-		$grade = get_comment_meta( $lesson_activity->comment_ID, 'grade', true );
-
-		if ( false === $grade || '' === $grade ) {
-			return null;
-		}
-
-		return $grade;
 	}
 
 	/**
