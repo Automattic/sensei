@@ -1,0 +1,10 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/mixins';
+
+@include wordpress-admin-schemes();
+
+@import './templates/styles';
+@import './template-option/styles';
+@import './template-preview/styles';
+

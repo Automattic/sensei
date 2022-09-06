@@ -928,11 +928,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $args The field arguments.
 	 */
 	public function render_learning_mode_setting( $args ) {
-		$options       = $this->get_settings();
-		$key           = $args['key'];
-		$value         = $options[ $key ];
-		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
-		$theme_key     = 'sensei_learning_mode_theme';
+		$options   = $this->get_settings();
+		$key       = $args['key'];
+		$value     = $options[ $key ];
+		$theme_key = 'sensei_learning_mode_theme';
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -941,13 +940,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-		<?php if ( $customize_url ) { ?>
-			<p class="extra-content">
-				<a href="<?php echo esc_url( $customize_url ); ?>">
-					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
-				</a>
-			</p>
-		<?php } ?>
 		<div class="extra-content">
 			<label for="<?php echo esc_attr( $theme_key ); ?>">
 				<input id="<?php echo esc_attr( $theme_key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$theme_key}]" ); ?>"
@@ -973,7 +965,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$value    = $settings[ $key ];
 		?>
 			<p> <?php echo esc_html( $args['data']['description'] ); ?></p>
-			<ul class="sensei-lm-block-template__options">
+			<ul class="sensei-lm-block-template__options" id="sensei-lm-block-template__options">
 			<?php foreach ( $args['data']['options'] as $template ) : ?>
 				<?php
 					$upsell   = isset( $template->upsell ) ? $template->upsell : false;
@@ -1006,6 +998,21 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<?php endforeach; ?>
 			</ul>
 		<?php
+
+		$inline_data = [
+			'name'         => "{$this->token}[{$key}]",
+			'value'        => $value,
+			'options'      => $args['data']['options'],
+			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url(),
+			'formId'       => "{$this->token}-form",
+		];
+		Sensei()->assets->enqueue( 'learning-mode-templates-styles', 'course-theme/learning-mode-templates/styles.css', [ 'wp-components' ] );
+		Sensei()->assets->enqueue( 'learning-mode-templates-script', 'course-theme/learning-mode-templates/index.js', [ 'wp-element', 'wp-components' ], true );
+		wp_add_inline_script(
+			'learning-mode-templates-script',
+			sprintf( 'window.sensei = window.sensei || {}; window.sensei.learningModeTemplateSetting = %s;', wp_json_encode( $inline_data ) ),
+			'before'
+		);
 	}
 }
 

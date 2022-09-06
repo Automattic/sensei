@@ -211,6 +211,7 @@ class Sensei_Settings_API {
 					'href'  => '#' . esc_attr( $k ),
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
+					'badge' => esc_html( $v['badge'] ),
 				);
 			}
 
@@ -218,9 +219,13 @@ class Sensei_Settings_API {
 			foreach ( $sections as $k => $v ) {
 				$count++;
 				$html .= '<li><a href="' . esc_url( $v['href'] ) . '"';
-				if ( isset( $v['class'] ) && ( $v['class'] != '' ) ) {
+				if ( isset( $v['class'] ) && ( '' !== $v['class'] ) ) {
 					$html .= ' class="' . esc_attr( $v['class'] ) . '"'; }
-				$html .= '>' . esc_html( $v['name'] ) . '</a>';
+				$html .= '>' . esc_html( $v['name'] );
+				if ( ! empty( $v['badge'] ) ) {
+					$html .= ' <span class="sensei-settings-tab__badge">' . $v['badge'] . '</span>';
+				}
+				$html .= '</a>';
 				if ( $count <= count( $sections ) ) {
 					$html .= ' | '; }
 				$html .= '</li>' . "\n";
@@ -416,7 +421,7 @@ class Sensei_Settings_API {
 
 		<?php do_action( 'settings_before_form' ); ?>
 
-		<form action="options.php" method="post">
+		<form id="<?php echo esc_attr( $this->token ); ?>-form" action="options.php" method="post">
 
 		<?php
 		$this->settings_tabs();
