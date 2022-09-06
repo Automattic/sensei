@@ -445,6 +445,8 @@ class Sensei_Main {
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
 			new Sensei_Admin_Notices();
+
+			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
 
 			// Load Frontend Class

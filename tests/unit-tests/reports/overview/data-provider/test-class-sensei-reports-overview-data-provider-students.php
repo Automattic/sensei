@@ -20,6 +20,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 */
 	public function setup() {
 		parent::setUp();
+		$this->resetCourseEnrolmentManager();
 
 		$this->factory = new Sensei_Factory();
 
@@ -259,6 +260,21 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$this->assertSame( 2, $data_provider->get_last_total_items() );
 	}
 
+	public function testGetItems_NoUsersRelationship_ReturnsNoLastActivityDate() {
+		/* Arrange. */
+		tests_add_filter( 'sensei_can_use_users_relationship', '__return_false' );
+		Sensei_No_Users_Table_Relationship::instance()->init();
+
+		$user_with_last_activity = $this->createUserWithActivity( '2022-03-01 00:00:00' );
+		$data_provider           = new Sensei_Reports_Overview_Data_Provider_Students();
+
+		/* Act. */
+		$students = $data_provider->get_items( [ 'number' => -1 ] );
+
+		/* Assert. */
+		$this->assertFalse( isset( $students[0]->last_activity_date ) );
+	}
+
 	/**
 	 * Export the students to an array that is easier to assert against.
 	 *
@@ -320,7 +336,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 		$user_id   = $this->factory->user->create( $user_args );
 		$course_id = $course_id ?? $this->factory->course->create();
 
-		$this->directlyEnrolStudent( $user_id, $course_id );
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
 
 		return $user_id;
 	}
