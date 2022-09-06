@@ -152,11 +152,11 @@ class Sensei_Course_Theme_Templates {
 	 * Retrieves the block template data that is currently activated in the settings.
 	 */
 	public function get_active_block_template(): Sensei_LM_Template {
-		$template_name    = \Sensei()->settings->get( 'sensei_learning_mode_template' );
+		$active_template  = \Sensei()->settings->get( 'sensei_learning_mode_template' );
 		$templates        = self::get_available_block_templates();
 		$default_template = $templates[ self::DEFAULT_TEMPLATE_NAME ];
-		if ( isset( $templates[ $template_name ] ) ) {
-			$template = $templates[ $template_name ];
+		if ( isset( $templates[ $active_template ] ) ) {
+			$template = $templates[ $active_template ];
 
 			// In case the selected template does not have the template contents somehow
 			// supply the default template contents.
