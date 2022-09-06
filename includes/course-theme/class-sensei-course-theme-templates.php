@@ -165,18 +165,12 @@ class Sensei_Course_Theme_Templates {
 			}
 
 			// Make sure the lesson content is not empty.
-			if (
-				! isset( $template->content['lesson'] ) ||
-				empty( $template->content['lesson'] )
-			) {
+			if ( empty( $template->content['lesson'] ) ) {
 				$template->content['lesson'] = $default_template->content['lesson'];
 			}
 
 			// Make sure the quiz content is not empty.
-			if (
-				! isset( $template->content['quiz'] ) ||
-				empty( $template->content['quiz'] )
-			) {
+			if ( empty( $template->content['quiz'] ) ) {
 				$template->content['quiz'] = $default_template->content['quiz'];
 			}
 		} else {
@@ -234,14 +228,14 @@ class Sensei_Course_Theme_Templates {
 		];
 
 		// Enqueue styles of the current active template.
-		if ( isset( $template->styles ) && is_array( $template->styles ) ) {
+		if ( is_array( $template->styles ) ) {
 			foreach ( $template->styles as $index => $style_url ) {
 				wp_enqueue_style( self::THEME_PREFIX . '-' . $template->name . "-styles-$index", $style_url, [], $template->version );
 			}
 		}
 
 		// Enqueue scripts of the current active template.
-		if ( isset( $template->scripts ) && is_array( $template->scripts ) ) {
+		if ( is_array( $template->scripts ) ) {
 			foreach ( $template->scripts as $index => $script_url ) {
 				wp_enqueue_script( self::THEME_PREFIX . '-' . $template->name . "-scripts-$index", $script_url, [], $template->version, true );
 			}
