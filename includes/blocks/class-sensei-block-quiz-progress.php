@@ -43,7 +43,7 @@ class Sensei_Block_Quiz_Progress {
 
 		$quiz_id = get_the_ID();
 
-		$total         = count( Sensei()->quiz->get_questions( $quiz_id ) );
+		$total         = count( Sensei()->lesson->lesson_quiz_questions( $quiz_id, 'publish' ) );
 		$user_id       = get_current_user_id();
 		$lesson_id     = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$answers       = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
