@@ -41,10 +41,6 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	 * Test success message is displayed after submitting.
 	 */
 	public function testSuccessMessageDisplayed() {
-		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
-		$property->setValue( Sensei()->notices, false );
-
 		$_GET['send'] = 'complete';
 
 		new Sensei_Block_Contact_Teacher();

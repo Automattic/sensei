@@ -115,10 +115,6 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	 * When the course has an unmet prerequisite, button is disabled with a message.
 	 */
 	public function testDisabledWhenPrerequisiteUnmet() {
-		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
-		$property->setValue( Sensei()->notices, false );
-
 		$course_pre = $this->factory->course->create_and_get();
 		add_post_meta( $this->course->ID, '_course_prerequisite', $course_pre->ID );
 

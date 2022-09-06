@@ -28,10 +28,6 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 	 * Test that a message is shown when there is no content.
 	 */
 	public function testEmptyBlock() {
-		$property = new ReflectionProperty( 'Sensei_Notices', 'has_printed' );
-		$property->setAccessible( true );
-		$property->setValue( Sensei()->notices, false );
-
 		$post_content = file_get_contents( 'sample-data/outline-block-post-content.html', true );
 
 		$this->mockPostCourseStructure( [] );
