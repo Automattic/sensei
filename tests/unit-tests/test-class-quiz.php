@@ -1598,4 +1598,39 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertNull( $result );
 	}
 
+	public function testGetUserQuizGrade_WhenHasNoGrade_ReturnsZero() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act. */
+		$grade = Sensei()->quiz->get_user_quiz_grade( $lesson_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( 0.0, $grade );
+	}
+
+	public function testGetUserQuizGrade_WhenHasGrade_ReturnsTheGrade() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
+
+		/* Act. */
+		$grade = Sensei()->quiz->get_user_quiz_grade( $lesson_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( 12.34, $grade );
+	}
+
 }
