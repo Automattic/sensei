@@ -85,6 +85,28 @@ describe( 'CourseCategoryEdit', () => {
 		expect( getByText( message ) ).toBeInTheDocument();
 	} );
 
+	it( 'should render na placeholder when there is not course categories', () => {
+		useCourseCategories.mockReturnValue( {
+			isLoading: false,
+			hasPostTerms: false,
+			postTerms: [],
+		} );
+
+		const { getByText } = render(
+			<CourseCategoryEdit
+				clientId="some-client-id"
+				attributes={ attributes }
+				context={ {
+					postId: 'some-post-id',
+					postType: 'course',
+				} }
+				setAttributes={ () => {} }
+			/>
+		);
+
+		expect( getByText( 'No course category' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should not fallback the colors', () => {
 		useCourseCategories.mockReturnValue( {
 			isLoading: false,

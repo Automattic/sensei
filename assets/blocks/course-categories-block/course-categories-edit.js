@@ -63,7 +63,7 @@ export function CourseCategoryEdit( props ) {
 	} );
 
 	const getCategories = ( categoriesToDisplay ) => {
-		return categoriesToDisplay.map( ( category ) => (
+		return categoriesToDisplay?.map( ( category ) => (
 			<a
 				key={ category.id }
 				href={ category.link }
@@ -96,7 +96,10 @@ export function CourseCategoryEdit( props ) {
 	return (
 		<div { ...blockProps }>
 			{ isLoading && <Spinner /> }
-			{ ! isLoading && hasCategories && getCategories( categories ) }
+			{ ! isLoading && getCategories( categories ) }
+			{ ! isLoading && ! hasCategories && (
+				<p>{ __( 'No course category', 'sensei-lms' ) }</p>
+			) }
 		</div>
 	);
 }
