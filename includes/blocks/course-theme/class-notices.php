@@ -44,6 +44,9 @@ class Notices {
 		$notices_html = Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'course-theme/lesson-quiz-notice.php' )
 			. Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' )
 			. Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->get_notices_html( 'course-theme/quiz-grade-notice.php' );
+		ob_start();
+		Sensei()->notices->maybe_print_notices_container();
+		$notices_html .= ob_get_clean();
 
 		return $notices_html;
 	}
