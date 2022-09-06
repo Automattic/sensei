@@ -1407,13 +1407,12 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 
 		// Get questions after submitting.
-		$questions_asked_string                 = get_comment_meta( $user_lesson_status_comment_id, 'questions_asked', true );
-		$questions_asked_count_after_submitting = count( explode( ',', $questions_asked_string ) );
+		$questions_asked_after_submitting = Sensei()->quiz_submission_repository->get_question_ids( $test_quiz_id, $test_user_id );
 
 		// Check if questions asked have not been overwritten.
-		$this->assertEquals(
+		$this->assertCount(
 			$questions_asked_count,
-			$questions_asked_count_after_submitting,
+			$questions_asked_after_submitting,
 			'Questions asked user data does not match what was set when the lesson quiz questions was generated.'
 		);
 
