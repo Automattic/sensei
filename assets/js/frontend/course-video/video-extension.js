@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { registerVideo } from './video-blocks-manager';
+import Player from '../../../shared/helpers/player';
 
 /**
  * Initializes the Video block player.
@@ -9,16 +10,15 @@ import { registerVideo } from './video-blocks-manager';
  * @param {HTMLElement} video The video element of the Video block.
  */
 const initVideoPlayer = ( video ) => {
-	let onVideoEnd = () => {};
-	video.addEventListener( 'ended', () => {
-		onVideoEnd();
-	} );
+	const player = new Player( video );
 
 	registerVideo( {
 		registerVideoEndHandler: ( cb ) => {
-			onVideoEnd = cb;
+			player.on( 'ended', cb );
 		},
-		pauseVideo: video.pause.bind( video ),
+		pauseVideo: () => {
+			player.pause();
+		},
 		url: video.src.split( '?' )[ 0 ],
 		blockElement: video.closest( 'figure' ),
 	} );
@@ -26,6 +26,6 @@ const initVideoPlayer = ( video ) => {
 
 export const initVideoExtension = () => {
 	document
-		.querySelectorAll( '.sensei-course-video-container video' )
+		.querySelectorAll( '.wp-block-video video' )
 		.forEach( initVideoPlayer );
 };
