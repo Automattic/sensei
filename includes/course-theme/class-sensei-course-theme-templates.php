@@ -23,13 +23,6 @@ class Sensei_Course_Theme_Templates {
 	const THEME_PREFIX = Sensei_Course_Theme::THEME_NAME;
 
 	/**
-	 * The default Learning Mode block template name.
-	 *
-	 * @var string
-	 */
-	const DEFAULT_TEMPLATE_NAME = 'default';
-
-	/**
 	 * Instance of class.
 	 *
 	 * @var self
@@ -120,67 +113,6 @@ class Sensei_Course_Theme_Templates {
 	}
 
 	/**
-	 * Returns a list of Learning Mode templates that are available.
-	 *
-	 * @throws Error If the extra templates provided by third party does not abide by the required structure.
-	 * @return Sensei_LM_Template[]
-	 */
-	public static function get_available_block_templates(): array {
-		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
-		require_once "$base_path/class-sensei-lm-templates.php";
-
-		$templates = Sensei_LM_Templates::get_templates();
-
-		/**
-		 * Filters the Learning Mode block templates list. Allows to add additional ones too.
-		 *
-		 * @since $$next-version$$
-		 * @hook  sensei_learning_mode_block_templates
-		 *
-		 * @param Sensei_LM_Template[] $templates {
-		 *     The list of Learning Mode block templates. If adding a new template then it's key
-		 *     should be the template name.
-		 *
-		 * @return Sensei_LM_Template[] The list of extra learning mode block templates.
-		 */
-		$templates = apply_filters( 'sensei_learning_mode_block_templates', $templates );
-
-		return $templates;
-	}
-
-	/**
-	 * Retrieves the block template data that is currently activated in the settings.
-	 */
-	public function get_active_block_template(): Sensei_LM_Template {
-		$active_template  = \Sensei()->settings->get( 'sensei_learning_mode_template' );
-		$templates        = self::get_available_block_templates();
-		$default_template = $templates[ self::DEFAULT_TEMPLATE_NAME ];
-		if ( isset( $templates[ $active_template ] ) ) {
-			$template = $templates[ $active_template ];
-
-			// In case the selected template does not have the template contents somehow
-			// supply the default template contents.
-			if ( ! isset( $template->content ) ) {
-				$template->content = [];
-			}
-
-			// Make sure the lesson content is not empty.
-			if ( empty( $template->content['lesson'] ) ) {
-				$template->content['lesson'] = $default_template->content['lesson'];
-			}
-
-			// Make sure the quiz content is not empty.
-			if ( empty( $template->content['quiz'] ) ) {
-				$template->content['quiz'] = $default_template->content['quiz'];
-			}
-		} else {
-			$template = $default_template;
-		}
-
-		return $template;
-	}
-
-	/**
 	 * Set up template data.
 	 */
 	private function load_file_templates() {
@@ -189,7 +121,7 @@ class Sensei_Course_Theme_Templates {
 			return;
 		}
 
-		$template = $this->get_active_block_template();
+		$template = Sensei_Course_Theme_Template_Selection::get_active_template();
 		$title    = $template->title ?? $template->name;
 
 		$common_options = [

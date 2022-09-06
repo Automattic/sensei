@@ -486,7 +486,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Chose a learning mode template that is most suited for your type of content and the style you want to offer to your students.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_templates',
 			'type'        => 'radio',
-			'default'     => Sensei_Course_Theme_Templates::DEFAULT_TEMPLATE_NAME,
+			'default'     => Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME,
 			'section'     => 'appearance-settings',
 			'options'     => $this->get_learning_mode_template_options(),
 		);
@@ -730,7 +730,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Get options for the learning mode templates.
 	 */
 	private function get_learning_mode_template_options() {
-		return Sensei_Course_Theme_Templates::get_available_block_templates();
+		return Sensei_Course_Theme_Template_Selection::get_templates();
 	}
 
 	/**
