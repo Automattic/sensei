@@ -23,7 +23,7 @@ const filters = {
 		label: __( 'Featured', 'sensei-lms' ),
 		defaultOption: {
 			label: __( 'All Courses', 'sensei-lms' ),
-			value: 0,
+			value: 'all',
 		},
 	},
 	activity: {
@@ -57,7 +57,13 @@ function useFilterOptions( type ) {
 		case 'categories':
 			return [ filters.categories.defaultOption, ...categories ];
 		case 'featured':
-			return [ filters.featured.defaultOption ];
+			return [
+				filters.featured.defaultOption,
+				{
+					label: __( 'Featured', 'sensei-lms' ),
+					value: 'featured',
+				},
+			];
 		case 'activity':
 			return [ filters.activity.defaultOption ];
 	}
@@ -98,10 +104,9 @@ function CourseListFilter( {
 			</InspectorControls>
 			<SelectControl
 				className="sensei-lms-course-list-filter__select"
-				style={ { width: 'auto' } }
 				options={ options }
 				onChange={ () => {} }
-				value={ 0 }
+				value={ filters[ type ].defaultOption.value }
 			/>
 		</div>
 	);
