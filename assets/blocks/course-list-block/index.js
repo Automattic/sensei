@@ -27,7 +27,7 @@ export const registerCourseListBlock = () => {
 
 	registerBlockVariation( 'core/query', {
 		name: 'sensei-lms/course-list',
-		title: __( 'Course List (Beta)', 'sensei-lms' ),
+		title: __( 'Course List', 'sensei-lms' ),
 		description: __( 'Show a list of courses.', 'sensei-lms' ),
 		icon: list,
 		category: 'sensei-lms',
