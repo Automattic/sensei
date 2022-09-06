@@ -1,6 +1,6 @@
 <?php
 /**
- * The class file for Sensei_LM_Template.
+ * The class file for Sensei_Course_Theme_Template.
  *
  * @author      Automattic
  * @package     Sensei
@@ -12,7 +12,7 @@
  *
  * @since $$next-version$$
  */
-class Sensei_LM_Template {
+class Sensei_Course_Theme_Template {
 
 	/**
 	 * The unique name of the block template.
