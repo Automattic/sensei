@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_context_notices - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_students_report_last_activity_filter_enabled - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_context_notices</h1>
+	<h1 class="page-title">Filter: sensei_students_report_last_activity_filter_enabled</h1>
 	
 
 	
@@ -43,14 +43,15 @@
 
     
 
-    <h4 class="name" id="sensei_context_notices">apply_filters( 'sensei_context_notices', <span class="signature">$notices, $context )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_students_report_last_activity_filter_enabled">apply_filters( 'sensei_students_report_last_activity_filter_enabled', <span class="signature">$enabled )</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the Course Theme notices.</p>
+    <p>Filters if the last activity filter by date and the last activity sorting are enabled in
+the students report.</p>
 </div>
 
 
@@ -84,13 +85,13 @@
 
         <tr>
             
-                <td class="name"><code>$notices</code></td>
+                <td class="name"><code>$enabled</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -100,30 +101,7 @@
 
             
 
-            <td class="description last"><p>Course Theme notices.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$context</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The context.</p></td>
+            <td class="description last"><p>Whether the students last activity filter is enabled.</p></td>
         </tr>
 
     
@@ -141,7 +119,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>3.15.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -167,7 +145,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-context-notices.php.html">includes/class-sensei-context-notices.php</a>, <a href="includes_class-sensei-context-notices.php.html#line113">line 113</a>
+        <a href="includes_reports_overview_data-provider_class-sensei-reports-overview-data-provider-students.php.html">includes/reports/overview/data-provider/class-sensei-reports-overview-data-provider-students.php</a>, <a href="includes_reports_overview_data-provider_class-sensei-reports-overview-data-provider-students.php.html#line106">line 106</a>
     </li></ul></dd>
     
 
@@ -194,7 +172,7 @@
 
         
 <div class="param-desc">
-    <p>Filtered Course Theme notices.</p>
+    <p>Whether the students last activity filter is enabled.</p>
 </div>
 
 
@@ -205,7 +183,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">boolean</span>
 
 
     </dd>
