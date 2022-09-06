@@ -150,7 +150,9 @@ class Sensei_Course_Theme_Templates {
 		foreach ( $templates as $template_name => $template ) {
 			// The block templates must have name.
 			if ( ! $template->name ) {
-				throw new Error( 'The Learning Mode block templates must have "name" property.' );
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Intended for communicating to the consumers of the above filter.
+				error_log( 'The Learning Mode block templates must have "name" property.' );
+				continue;
 			}
 
 			$mapped_templates[ $template->name ] = $template;
