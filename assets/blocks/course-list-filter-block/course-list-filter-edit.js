@@ -2,14 +2,20 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
+import { useSelect } from '@wordpress/data';
 import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+
+/**
+ * Internal dependencies
+ */
+import InvalidUsageError from '../../shared/components/invalid-usage';
 
 const filters = {
 	categories: {
 		label: __( 'Categories', 'sensei-lms' ),
 		defaultOption: {
-			label: __( 'Select Category', 'sensei-lms' ),
+			label: __( 'All Categories', 'sensei-lms' ),
 			value: 0,
 		},
 	},
@@ -28,15 +34,6 @@ const filters = {
 		},
 	},
 };
-/**
- * Internal dependencies
- */
-import { useSelect } from '@wordpress/data';
-/**
- * External dependencies
- */
-import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
-import InvalidUsageError from '../../shared/components/invalid-usage';
 
 function useFilterOptions( type ) {
 	const categories = useSelect( ( select ) => {

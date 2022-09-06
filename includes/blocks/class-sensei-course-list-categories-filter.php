@@ -41,7 +41,7 @@ class Sensei_Course_List_Categories_Filter {
 		);
 
 		return '<select class="course_list_filter_block" data-param-key="' . $this->param_key . '" data-query-id="' . $query_id . '" >
-			<option value="">' . esc_html__( 'Select Category', 'sensei-lms' ) . '</option>' .
+			<option value="">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
 			join(
 				'',
 				array_map(

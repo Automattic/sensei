@@ -30,7 +30,10 @@
 		"fontSize": {
 			"type": "string",
 			"default": "small"
-		}
+		},
+        "previewCategories": {
+            "type": "array"
+        }
 	},
 	"usesContext": [ "postId", "postType" ],
 	"supports": {
@@ -41,7 +44,7 @@
 			"blockGap": true
 		},
 		"textAlign": true,
-		"align": true,
+        "align": true,
 		"alignWide": true,
 		"typography": {
 			"lineHeight": true,

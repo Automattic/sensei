@@ -6,13 +6,13 @@
 	"textdomain": "sensei-lms",
 	"attributes": {
 		"type": {
-            "type": "string",
-            "default": "categories"
-        }
+			"type": "string",
+			"default": "categories"
+		}
 	},
 	"usesContext": [ "queryId", "query" ],
 	"supports": {
 		"align": true,
-        "html": false
+		"html": false
 	}
 }

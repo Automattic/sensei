@@ -3,8 +3,21 @@
 		.components-button.is-secondary {
 			display: none;
 		}
-		.hide-url-underline > a {
-			text-decoration: none;
+
+		&--is-grid-view {
+			/* Align button to bottom of card. */
+			[data-type="sensei-lms/course-actions"] {
+				margin-top: auto;
+			}
+
+			/* Fix for Divi centre aligning blocks. */
+			.wp-block-post-title,
+			.wp-block-post-author,
+			.wp-block-post-excerpt,
+			[data-type="sensei-lms/course-progress"],
+			[data-type="sensei-lms/course-actions"] {
+				width: 100%;
+			}
 		}
 	}
 }

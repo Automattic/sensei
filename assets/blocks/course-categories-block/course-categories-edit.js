@@ -32,11 +32,12 @@ export function CourseCategoryEdit( props ) {
 		defaultBackgroundColor,
 		defaultTextColor,
 		textColor,
+		setAttributes,
 	} = props;
-	const { textAlign } = attributes;
+
+	const { textAlign, previewCategories } = attributes;
 	const { postId, postType } = context;
 	const term = 'course-category';
-
 	const {
 		postTerms: categories,
 		hasPostTerms: hasCategories,
@@ -59,7 +60,27 @@ export function CourseCategoryEdit( props ) {
 		[ backgroundColor, defaultBackgroundColor, defaultTextColor, textColor ]
 	);
 
+	const getCategories = ( categoriesToDisplay ) => {
+		return categoriesToDisplay.map( ( category ) => (
+			<a
+				key={ category.id }
+				href={ category.link }
+				onClick={ ( event ) => event.preventDefault() }
+				style={ inlineStyle }
+			>
+				{ unescape( category.name ) }
+			</a>
+		) );
+	};
+
+	if ( previewCategories ) {
+		return (
+			<div { ...blockProps }>{ getCategories( previewCategories ) }</div>
+		);
+	}
+
 	if ( 'course' !== postType ) {
+		setAttributes( { align: false } );
 		return (
 			<InvalidUsageError
 				message={ __(
@@ -73,18 +94,7 @@ export function CourseCategoryEdit( props ) {
 	return (
 		<div { ...blockProps }>
 			{ isLoading && <Spinner /> }
-			{ ! isLoading &&
-				hasCategories &&
-				categories.map( ( category ) => (
-					<a
-						key={ category.id }
-						href={ category.link }
-						onClick={ ( event ) => event.preventDefault() }
-						style={ inlineStyle }
-					>
-						{ unescape( category.name ) }
-					</a>
-				) ) }
+			{ ! isLoading && hasCategories && getCategories( categories ) }
 		</div>
 	);
 }
