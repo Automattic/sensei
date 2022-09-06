@@ -145,20 +145,6 @@ class Sensei_Course_Theme_Templates {
 		 */
 		$templates = apply_filters( 'sensei_learning_mode_block_templates', $templates );
 
-		// Make sure each template is mapped to it's own name in the array.
-		$mapped_templates = [];
-		foreach ( $templates as $template_name => $template ) {
-			// The block templates must have name.
-			if ( ! $template->name ) {
-				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Intended for communicating to the consumers of the above filter.
-				error_log( 'The Learning Mode block templates must have "name" property.' );
-				continue;
-			}
-
-			$mapped_templates[ $template->name ] = $template;
-		}
-		$templates = $mapped_templates;
-
 		return $templates;
 	}
 
