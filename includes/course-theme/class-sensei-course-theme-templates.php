@@ -123,19 +123,13 @@ class Sensei_Course_Theme_Templates {
 	 * Returns a list of Learning Mode templates that are available.
 	 *
 	 * @throws Error If the extra templates provided by third party does not abide by the required structure.
+	 * @return Sensei_LM_Template[]
 	 */
-	public static function get_available_block_templates() {
+	public static function get_available_block_templates(): array {
 		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
-		require_once "$base_path/default/class-sensei-lm-template-default.php";
-		require_once "$base_path/modern/class-sensei-lm-template-modern.php";
-		require_once "$base_path/video/class-sensei-lm-template-video.php";
-		require_once "$base_path/video-full/class-sensei-lm-template-video-full.php";
+		require_once "$base_path/class-sensei-lm-templates.php";
 
-		$templates                                        = [];
-		$templates[ Sensei_LM_Template_Default::NAME ]    = Sensei_LM_Template_Default::get_info();
-		$templates[ Sensei_LM_Template_Modern::NAME ]     = Sensei_LM_Template_Modern::get_info();
-		$templates[ Sensei_LM_Template_Video::NAME ]      = Sensei_LM_Template_Video::get_info();
-		$templates[ Sensei_LM_Template_Video_Full::NAME ] = Sensei_LM_Template_Video_Full::get_info();
+		$templates = Sensei_LM_Templates::get_templates();
 
 		/**
 		 * Filters the Learning Mode block templates list. Allows to add additional ones too.
@@ -143,30 +137,11 @@ class Sensei_Course_Theme_Templates {
 		 * @since $$next-version$$
 		 * @hook  sensei_learning_mode_block_templates
 		 *
-		 * @param array[] $templates {
+		 * @param Sensei_LM_Template[] $templates {
 		 *     The list of Learning Mode block templates. If adding a new template then it's key
-		 *     should be the template name. Each template is an array with the following structure.
+		 *     should be the template name.
 		 *
-		 *     @type string   $name        The unique name of the block template.
-		 *     @type string   $title       The title of the block template.
-		 *     @type string   $version     The version number of the block template. For example "1.0.0".
-		 *     @type string[] $styles      An array of urls of styles that needs to be enqueued with this block template.
-		 *     @type string[] $scripts     An array of urls of scripts that needs to be enqueued with this block template.
-		 *     @type array    $screenshots {
-		 *         The screenshots of the block templates that are displayed in the settings for user to see.
-		 *
-		 *         @type string $full      The url to the full size screenshot of the block template.
-		 *         @type string $thumbnail The url to the thumbnail size screenshot of the block template.
-		 *     }
-		 *     @type array    $content     {
-		 *         The paths to actual html content of the templates.
-		 *
-		 *         @type string $lesson The path to html content of the block template for lessons.
-		 *         @type string $quiz   The path to html content of the block template for quizzes.
-		 *     }
-		 * }
-		 *
-		 * @return array[] The list of extra learning mode block templates.
+		 * @return Sensei_LM_Template[] The list of extra learning mode block templates.
 		 */
 		$templates = apply_filters( 'sensei_learning_mode_block_templates', $templates );
 
@@ -174,11 +149,11 @@ class Sensei_Course_Theme_Templates {
 		$mapped_templates = [];
 		foreach ( $templates as $template_name => $template ) {
 			// The block templates must have name.
-			if ( ! isset( $template['name'] ) || empty( $template['name'] ) ) {
+			if ( ! $template->name ) {
 				throw new Error( 'The Learning Mode block templates must have "name" property.' );
 			}
 
-			$mapped_templates[ $template['name'] ] = $template;
+			$mapped_templates[ $template->name ] = $template;
 		}
 		$templates = $mapped_templates;
 
@@ -186,15 +161,15 @@ class Sensei_Course_Theme_Templates {
 		$pro_template_names = [ 'modern', 'video', 'video-full' ];
 		foreach ( $templates as $template_name => $template ) {
 			if ( in_array( $template_name, $pro_template_names, true ) ) {
-				if ( ! isset( $template['content']['lesson'] ) || empty( $template['content']['lesson'] ) ) {
-					$template['upsell'] = [
+				if ( ! isset( $template->content['lesson'] ) || empty( $template->content['lesson'] ) ) {
+					$template->upsell = [
 						'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
 						'url'   => 'https://senseilms.com/pricing/',
 					];
 				}
-			} elseif ( isset( $template['upsell'] ) ) {
+			} elseif ( isset( $template->upsell ) ) {
 				// Non pro templates are not allowed to have upsell.
-				unset( $template['upsell'] );
+				$template->upsell = null;
 			}
 
 			$templates[ $template_name ] = $template;
@@ -206,7 +181,7 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Retrieves the block template data that is currently activated in the settings.
 	 */
-	public function get_active_block_template() {
+	public function get_active_block_template(): Sensei_LM_Template {
 		$template_name    = \Sensei()->settings->get( 'sensei_learning_mode_template' );
 		$templates        = self::get_available_block_templates();
 		$default_template = $templates[ self::DEFAULT_TEMPLATE_NAME ];
@@ -215,24 +190,24 @@ class Sensei_Course_Theme_Templates {
 
 			// In case the selected template does not have the template contents somehow
 			// supply the default template contents.
-			if ( ! isset( $template['content'] ) ) {
-				$template['content'] = [];
+			if ( ! isset( $template->content ) ) {
+				$template->content = [];
 			}
 
 			// Make sure the lesson content is not empty.
 			if (
-				! isset( $template['content']['lesson'] ) ||
-				empty( $template['content']['lesson'] )
+				! isset( $template->content['lesson'] ) ||
+				empty( $template->content['lesson'] )
 			) {
-				$template['content']['lesson'] = $default_template['content']['lesson'];
+				$template->content['lesson'] = $default_template->content['lesson'];
 			}
 
 			// Make sure the quiz content is not empty.
 			if (
-				! isset( $template['content']['quiz'] ) ||
-				empty( $template['content']['quiz'] )
+				! isset( $template->content['quiz'] ) ||
+				empty( $template->content['quiz'] )
 			) {
-				$template['content']['quiz'] = $default_template['content']['quiz'];
+				$template->content['quiz'] = $default_template->content['quiz'];
 			}
 		} else {
 			$template = $default_template;
@@ -251,7 +226,7 @@ class Sensei_Course_Theme_Templates {
 		}
 
 		$template = $this->get_active_block_template();
-		$title    = isset( $template['title'] ) ? $template['title'] : $template['name'];
+		$title    = isset( $template->title ) ? $template->title : $template->name;
 
 		$common_options = [
 			'type'           => 'wp_template',
@@ -272,7 +247,7 @@ class Sensei_Course_Theme_Templates {
 					'description' => __( 'Displays course content.', 'sensei-lms' ),
 					'slug'        => 'lesson',
 					'id'          => self::THEME_PREFIX . '//lesson',
-					'content'     => $template['content']['lesson'],
+					'content'     => $template->content['lesson'],
 				]
 			),
 			'quiz'   => array_merge(
@@ -283,22 +258,22 @@ class Sensei_Course_Theme_Templates {
 					'description' => __( 'Displays a lesson quiz.', 'sensei-lms' ),
 					'slug'        => 'quiz',
 					'id'          => self::THEME_PREFIX . '//quiz',
-					'content'     => $template['content']['quiz'],
+					'content'     => $template->content['quiz'],
 				]
 			),
 		];
 
 		// Enqueue styles of the current active template.
-		if ( isset( $template['styles'] ) && is_array( $template['styles'] ) ) {
-			foreach ( $template['styles'] as $index => $style_url ) {
-				wp_enqueue_style( self::THEME_PREFIX . '-' . $template['name'] . "-styles-$index", $style_url, [], $template['version'] );
+		if ( isset( $template->styles ) && is_array( $template->styles ) ) {
+			foreach ( $template->styles as $index => $style_url ) {
+				wp_enqueue_style( self::THEME_PREFIX . '-' . $template->name . "-styles-$index", $style_url, [], $template->version );
 			}
 		}
 
 		// Enqueue scripts of the current active template.
-		if ( isset( $template['scripts'] ) && is_array( $template['scripts'] ) ) {
-			foreach ( $template['scripts'] as $index => $script_url ) {
-				wp_enqueue_script( self::THEME_PREFIX . '-' . $template['name'] . "-scripts-$index", $script_url, [], $template['version'], true );
+		if ( isset( $template->scripts ) && is_array( $template->scripts ) ) {
+			foreach ( $template->scripts as $index => $script_url ) {
+				wp_enqueue_script( self::THEME_PREFIX . '-' . $template->name . "-scripts-$index", $script_url, [], $template->version, true );
 			}
 		}
 	}
