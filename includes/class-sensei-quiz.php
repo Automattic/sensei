@@ -1869,17 +1869,19 @@ class Sensei_Quiz {
 	 *
 	 * @return double $user_quiz_grade
 	 */
-	public static function get_user_quiz_grade( $lesson_id, $user_id ) {
+	public static function get_user_quiz_grade( int $lesson_id, int $user_id ): float {
 
-		// get the quiz grade.
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
-		$user_quiz_grade    = 0;
-		if ( isset( $user_lesson_status->comment_ID ) ) {
-			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return 0;
 		}
 
-		return (float) $user_quiz_grade;
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return 0;
+		}
 
+		return (float) $quiz_submission->get_final_grade();
 	}
 
 	/**
