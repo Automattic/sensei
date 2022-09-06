@@ -190,7 +190,7 @@ class Sensei_Course_Theme_Templates {
 		}
 
 		$template = $this->get_active_block_template();
-		$title    = isset( $template->title ) ? $template->title : $template->name;
+		$title    = $template->title ?? $template->name;
 
 		$common_options = [
 			'type'           => 'wp_template',
