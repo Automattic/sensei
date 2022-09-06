@@ -159,24 +159,6 @@ class Sensei_Course_Theme_Templates {
 		}
 		$templates = $mapped_templates;
 
-		// Add upsell to premium templates if they are empty.
-		$pro_template_names = [ 'modern', 'video', 'video-full' ];
-		foreach ( $templates as $template_name => $template ) {
-			if ( in_array( $template_name, $pro_template_names, true ) ) {
-				if ( ! isset( $template->content['lesson'] ) || empty( $template->content['lesson'] ) ) {
-					$template->upsell = [
-						'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
-						'url'   => 'https://senseilms.com/pricing/',
-					];
-				}
-			} elseif ( isset( $template->upsell ) ) {
-				// Non pro templates are not allowed to have upsell.
-				$template->upsell = null;
-			}
-
-			$templates[ $template_name ] = $template;
-		}
-
 		return $templates;
 	}
 
