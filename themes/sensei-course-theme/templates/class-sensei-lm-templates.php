@@ -22,6 +22,7 @@ class Sensei_LM_Templates {
 	public static function get_templates(): array {
 		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
 		$base_url  = Sensei_Course_Theme::instance()->get_course_theme_root_url() . '/templates';
+		$quiz_path = "$base_path/quiz.html";
 
 		return [
 
@@ -31,7 +32,7 @@ class Sensei_LM_Templates {
 					'title'       => __( 'Default', 'sensei-lms' ),
 					'content'     => [
 						'lesson' => "$base_path/default/lesson.html",
-						'quiz'   => "$base_path/default/quiz.html",
+						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
 					'styles'      => [],
@@ -49,7 +50,7 @@ class Sensei_LM_Templates {
 					'title'       => __( 'Modern', 'sensei-lms' ),
 					'content'     => [
 						'lesson' => '',
-						'quiz'   => '',
+						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
 					'styles'      => [],
@@ -67,7 +68,7 @@ class Sensei_LM_Templates {
 					'title'       => __( 'Video', 'sensei-lms' ),
 					'content'     => [
 						'lesson' => '',
-						'quiz'   => '',
+						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
 					'styles'      => [],
@@ -85,7 +86,7 @@ class Sensei_LM_Templates {
 					'title'       => __( 'Video Full', 'sensei-lms' ),
 					'content'     => [
 						'lesson' => '',
-						'quiz'   => '',
+						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
 					'styles'      => [],
