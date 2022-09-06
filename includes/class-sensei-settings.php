@@ -976,8 +976,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 			<ul class="sensei-lm-block-template__options">
 			<?php foreach ( $args['data']['options'] as $template ) : ?>
 				<?php
-					$upsell   = isset( $template['upsell'] ) ? $template['upsell'] : false;
-					$title    = isset( $template['title'] ) || empty( $template['title'] ) ? $template['title'] : $template['name'];
+					$upsell   = isset( $template->upsell ) ? $template->upsell : false;
+					$title    = isset( $template->title ) || empty( $template->title ) ? $template->title : $template->name;
 					$disabled = (bool) $upsell;
 				?>
 				<li class="sensei-lm-block-template__option">
@@ -986,9 +986,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 							<input
 								type="radio"
 								name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
-								value="<?php echo esc_attr( $template['name'] ); ?>"
+								value="<?php echo esc_attr( $template->name ); ?>"
 								<?php disabled( true, $disabled, true ); ?>
-								<?php checked( $template['name'], $value, true ); ?>
+								<?php checked( $template->name, $value, true ); ?>
 							/>
 							<h4 class="sensei-lm-block-template__option-title <?php echo $disabled ? 'sensei-lm-block-template__option-title--disabled' : ''; ?>">
 								<?php echo esc_html( $title ); ?>
@@ -1000,7 +1000,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 							<?php endif; ?>
 						</div>
 
-						<img alt="<?php esc_attr( $template['title'] ); ?>" src="<?php echo esc_attr( $template['screenshots']['thumbnail'] ); ?>" />
+						<img alt="<?php esc_attr( $template->title ); ?>" src="<?php echo esc_attr( $template->screenshots['thumbnail'] ); ?>" />
 					</label>
 				</li>	
 			<?php endforeach; ?>

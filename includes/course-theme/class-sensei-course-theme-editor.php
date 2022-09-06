@@ -178,8 +178,8 @@ class Sensei_Course_Theme_Editor {
 
 		// Also add the extra styles that comes with the active block template.
 		$template = Sensei_Course_Theme_Templates::instance()->get_active_block_template();
-		if ( isset( $template['styles'] ) && is_array( $template['styles'] ) ) {
-			foreach ( $template['styles'] as $url ) {
+		if ( isset( $template->styles ) && is_array( $template->styles ) ) {
+			foreach ( $template->styles as $url ) {
 				add_editor_style( $url );
 			}
 		}
