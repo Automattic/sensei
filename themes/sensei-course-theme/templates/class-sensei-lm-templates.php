@@ -23,6 +23,10 @@ class Sensei_LM_Templates {
 		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
 		$base_url  = Sensei_Course_Theme::instance()->get_course_theme_root_url() . '/templates';
 		$quiz_path = "$base_path/quiz.html";
+		$upsell    = [
+			'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
+			'url'   => 'https://senseilms.com/pricing/',
+		];
 
 		return [
 
@@ -59,6 +63,7 @@ class Sensei_LM_Templates {
 						'thumbnail' => "$base_url/modern/img-thumb.jpg",
 						'full'      => "$base_url/modern/img-full.jpg",
 					],
+					'upsell'      => $upsell,
 				]
 			),
 
@@ -77,6 +82,7 @@ class Sensei_LM_Templates {
 						'thumbnail' => "$base_url/video/img-thumb.jpg",
 						'full'      => "$base_url/video/img-full.jpg",
 					],
+					'upsell'      => $upsell,
 				]
 			),
 
@@ -95,6 +101,7 @@ class Sensei_LM_Templates {
 						'thumbnail' => "$base_url/video-full/img-thumb.jpg",
 						'full'      => "$base_url/video-full/img-full.jpg",
 					],
+					'upsell'      => $upsell,
 				]
 			),
 
