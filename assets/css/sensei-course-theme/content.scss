@@ -91,6 +91,7 @@ body {
 .entry-content {
 	--wp--custom--gap--horizontal: var(--content-padding);
 	--wp--custom--gap--vertical: 12px;
+	--wp--custom--spacing--outer: 0px;
 
 	img {
 		max-width: 100%;

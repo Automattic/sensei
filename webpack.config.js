@@ -97,13 +97,14 @@ const files = [
 	'css/ranges.css',
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
-	'css/learning-mode.scss',
+	'css/learning-mode.4-0-2.scss',
+	'css/learning-mode.4-8-0.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
-	'course-theme/blocks/blocks.js',
+	'course-theme/blocks/index.js',
 ];
 
 function getName( filename ) {

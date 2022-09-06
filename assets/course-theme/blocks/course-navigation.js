@@ -133,7 +133,7 @@ export default {
 	attributes: {},
 	title: __( 'Course Navigation', 'sensei-lms' ),
 	name: 'sensei-lms/course-navigation',
-	edit() {
+	edit: function EditCourseNavigationBlock() {
 		return (
 			<div className="sensei-lms-course-navigation">
 				<div className="sensei-lms-course-navigation__modules">

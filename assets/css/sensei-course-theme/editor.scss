@@ -1,6 +1,11 @@
+body, .wp-site-blocks.is-root-container {
+	height: 100vh;
+}
+
 body {
 	padding: 8px;
 	--wp--custom--gap--baseline: 0px;
+	--bg-color: none;
 }
 
 .wp-block {
@@ -17,22 +22,33 @@ body {
 
 }
 
+.sensei-course-theme__sidebar-toggle {
+	display: block;
+	width: 24px;
+	height: 24px;
+}
+
 .wp-block.sensei-course-theme {
-	&__sidebar {
-		position: static;
+	&__header, &__sidebar {
+		position: relative;
+		top: unset;
+		left: unset;
+		right: unset;
+		bottom: unset;
 	}
 	&__columns {
 		display: flex;
-	}
-	&__main-content {
-		margin-left: auto !important;
+		height: 100%;
+		margin: 0 !important;
 	}
 	&__main-content, &__main-content__container {
-		> * {
-			margin-left: auto !important;
-			margin-right: auto !important;
-		}
+		margin: 0 auto !important;
 	}
+
+	&__header ~ &__columns {
+		height: calc(100% - var(--header-height));
+		}
+
 }
 
 .wp-block-post-content {

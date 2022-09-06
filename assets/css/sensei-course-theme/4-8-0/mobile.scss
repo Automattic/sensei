@@ -22,11 +22,6 @@
 			--header-height: 90px;
 			overflow: hidden;
 
-			.sensei-course-theme__header__container {
-				padding-bottom: var(--header-open-height);
-				height: var(--header-height);
-			}
-
 			.sensei-course-theme-course-progress-bar {
 				margin: 0 24px;
 			}
@@ -37,6 +32,7 @@
 				left: 24px;
 				top: calc( var(--header-height) - 36px);
 			}
+
 			.sensei-course-theme-course-progress-bar {
 				height: 8px;
 				position: absolute;
@@ -45,15 +41,15 @@
 				left: 24px;
 				right: 24px;
 			}
+
+			.sensei-course-theme__sidebar {
+				padding: 24px !important;
+			}
 		}
 
 		&__header {
 
-			&__container {
-				align-items: flex-start!important;
-				padding-top: 12px;
-				overflow: hidden;
-			}
+			transition: none!important;
 
 			.sensei-course-theme-course-progress, .sensei-course-theme-prev-next-lesson-text {
 				display: none;
@@ -61,16 +57,6 @@
 
 			.sensei-course-theme-prev-next-lesson-a {
 				padding: 2px;
-			}
-
-			&__left {
-				gap: 12px;
-				height: 30px;
-			}
-
-			&__navigation {
-				gap: 12px;
-				height: 30px;
 			}
 
 			.wp-block-site-logo {
@@ -83,10 +69,6 @@
 				font-size: 14px;
 			}
 
-			}
-
-		&__sidebar__content {
-			padding: 24px;
 		}
 
 		&__sidebar-toggle {
@@ -113,8 +95,9 @@
 		&__sidebar {
 			z-index: 90;
 			background: var(--bg-color);
-			left: 0;
-			right: 0;
+			left: 0 !important;
+			right: 0 !important;
+			border: unset !important;
 			width: unset;
 			transition: all 300ms;
 
@@ -122,7 +105,8 @@
 
 		&:not(&--sidebar-open) &__sidebar {
 			bottom: 100vh;
-			top: -100vh;
+			top: -100vh !important;
+			padding: 0;
 		}
 
 		&__main-content {
@@ -133,7 +117,7 @@
 			position: relative;
 		}
 
-		&__actions {
+		&-lesson-actions {
 			position: fixed;
 			bottom: 0;
 			left: 0;
@@ -142,10 +126,10 @@
 			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
 			transition: bottom 800ms ease-in;
 
-			.sensei-course-theme-lesson-actions {
-				padding: 24px;
-				display: flex;
-				gap: 24px;
+			padding: 12px !important;
+			display: flex;
+			gap: 12px;
+			align-items: center;
 
 				> * {
 					flex: 1;
@@ -154,20 +138,20 @@
 				button {
 					width: 100%;
 				}
-			}
+
 		}
 
-		&--sidebar-open &__actions {
+		&--sidebar-open &-lesson-actions {
 			transition: bottom 300ms 0ms;
 			bottom: -30vh;
 		}
 
-		&.scroll-down &__actions {
+		&.scroll-down &-lesson-actions{
 			transition-delay: 200ms;
 			bottom: -100px;
 		}
 
-		&.scroll-bottom &__actions {
+		&.scroll-bottom &-lesson-actions {
 			bottom: 0;
 		}
 	}
