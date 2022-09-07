@@ -154,9 +154,6 @@ class Sensei_Course_Theme_Option {
 	 * @return boolean
 	 */
 	public static function should_override_theme() {
-
-		$enabled = ! \Sensei()->settings->get( 'sensei_learning_mode_theme' );
-
 		/**
 		 * Filters if the theme should be overriden for learning mode.
 		 *
@@ -167,7 +164,7 @@ class Sensei_Course_Theme_Option {
 		 *
 		 * @return {bool} The modified learning mode theme override setting.
 		 */
-		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', $enabled );
+		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', false );
 	}
 
 	/**
