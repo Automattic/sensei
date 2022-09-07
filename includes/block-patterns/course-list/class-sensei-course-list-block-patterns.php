@@ -44,8 +44,8 @@ class Sensei_Course_List_Block_Patterns {
 					<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
 						<!-- wp:post-template -->
 
-							<!-- wp:group {"align":"full","style":{"spacing":{"blockGap":"0.1em","padding":{"top":"0.1em","right":"0.1em","bottom":"0.1em","left":"0.1em"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-								<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:0.1em;padding-right:0.1em;padding-bottom:0.1em;padding-left:0.1em">
+							<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"2px","right":"2px","bottom":"2px","left":"2px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
+								<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:2px;padding-right:2px;padding-bottom:2px;padding-left:2px">
 
 									<!-- wp:post-featured-image {"isLink":true,"align":"center"} /-->
 									<!-- wp:columns -->
@@ -85,8 +85,8 @@ class Sensei_Course_List_Block_Patterns {
 										</div>
 									<!-- /wp:columns -->
 
-									</div>
-								<!-- /wp:group -->
+								</div>
+							<!-- /wp:group -->
 						<!-- /wp:post-template -->' .
 					$pagination .
 					'</div>
@@ -102,8 +102,8 @@ class Sensei_Course_List_Block_Patterns {
 						<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view alignwide">
 							<!-- wp:post-template {"align":"wide"} -->
 
-								<!-- wp:group {"align":"full","style":{"spacing":{"blockGap":"0.1em","padding":{"top":"0.1em","right":"0.1em","bottom":"0.1em","left":"0.1em"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-									<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:0.1em;padding-right:0.1em;padding-bottom:0.1em;padding-left:0.1em">
+								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"2px","right":"2px","bottom":"2px","left":"2px"},"blockGap":"2px"},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
+									<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:2px;padding-right:2px;padding-bottom:2px;padding-left:2px">
 
 										<!-- wp:post-featured-image {"isLink":true,"align":"center","lock":{"move": true}} /-->
 
