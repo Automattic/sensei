@@ -27,14 +27,17 @@ $block: '.wp-block-sensei-lms-course-list';
 		.wp-block-post {
 			display: flex;
 
-			.wp-block-group {
+			.wp-block-group, .wp-block-group__inner-container {
 				display: flex;
 				flex-direction: column;
+				height: 100%;
 				width: 100%;
-
 				.sensei-cta {
 					margin-top: auto;
 				}
+			}
+			.sensei-block-wrapper {
+				padding: 5px 0;
 			}
 		}
 
