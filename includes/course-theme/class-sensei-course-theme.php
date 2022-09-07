@@ -553,7 +553,7 @@ class Sensei_Course_Theme {
 		}
 
 		$button = $styles['elements']['button'] ?? $styles['blocks']['core/button'] ?? null;
-		if ( $button ) {
+		if ( ! empty( $button['color'] ) ) {
 			$vars['button-text-color']       = $button['color']['text'];
 			$vars['button-background-color'] = $button['color']['background'];
 		}
@@ -583,7 +583,7 @@ class Sensei_Course_Theme {
 
 		?>
 		<style>
-			:root {
+			body {
 			<?php echo esc_html( $css ); ?>
 			}
 		</style>
