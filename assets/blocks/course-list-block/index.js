@@ -85,11 +85,6 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 			)
 		) {
 			hideUnnecessarySettingsForCourseList();
-		} else if ( document.querySelector( '.border-block-support-panel' ) ) {
-			// Hide border setting for Query Loop block (leave for Course List block).
-			document.querySelector(
-				'.border-block-support-panel'
-			).style.display = 'none';
 		}
 	} );
 
