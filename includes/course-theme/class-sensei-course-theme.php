@@ -314,6 +314,17 @@ class Sensei_Course_Theme {
 	}
 
 	/**
+	 * Root URL for course theme.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_course_theme_root_url() {
+		return $this->theme_root_uri() . '/' . self::THEME_NAME;
+	}
+
+	/**
 	 * Add Sensei theme body class.
 	 *
 	 * @access private

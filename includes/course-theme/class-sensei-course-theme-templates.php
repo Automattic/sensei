@@ -121,7 +121,8 @@ class Sensei_Course_Theme_Templates {
 			return;
 		}
 
-		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates/';
+		$template = Sensei_Course_Theme_Template_Selection::get_active_template();
+		$title    = $template->title ?? $template->name;
 
 		$common_options = [
 			'type'           => 'wp_template',
@@ -137,26 +138,40 @@ class Sensei_Course_Theme_Templates {
 			'lesson' => array_merge(
 				$common_options,
 				[
-					'title'       => __( 'Lesson (Learning Mode)', 'sensei-lms' ),
+					// translators: %1$s is the block template name.
+					'title'       => sprintf( __( 'Lesson (Learning Mode - %1$s)', 'sensei-lms' ), $title ),
 					'description' => __( 'Displays course content.', 'sensei-lms' ),
 					'slug'        => 'lesson',
 					'id'          => self::THEME_PREFIX . '//lesson',
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-					'content'     => file_get_contents( $base_path . 'lesson.html' ),
+					'content'     => $template->content['lesson'],
 				]
 			),
 			'quiz'   => array_merge(
 				$common_options,
 				[
-					'title'       => __( 'Quiz (Learning Mode)', 'sensei-lms' ),
+					// translators: %1$s is the block template name.
+					'title'       => sprintf( __( 'Quiz (Learning Mode - %1$s)', 'sensei-lms' ), $title ),
 					'description' => __( 'Displays a lesson quiz.', 'sensei-lms' ),
 					'slug'        => 'quiz',
 					'id'          => self::THEME_PREFIX . '//quiz',
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-					'content'     => file_get_contents( $base_path . 'quiz.html' ),
+					'content'     => $template->content['quiz'],
 				]
 			),
 		];
+
+		// Enqueue styles of the current active template.
+		if ( is_array( $template->styles ) ) {
+			foreach ( $template->styles as $index => $style_url ) {
+				wp_enqueue_style( self::THEME_PREFIX . '-' . $template->name . "-styles-$index", $style_url, [], $template->version );
+			}
+		}
+
+		// Enqueue scripts of the current active template.
+		if ( is_array( $template->scripts ) ) {
+			foreach ( $template->scripts as $index => $script_url ) {
+				wp_enqueue_script( self::THEME_PREFIX . '-' . $template->name . "-scripts-$index", $script_url, [], $template->version, true );
+			}
+		}
 	}
 
 	/**
@@ -236,6 +251,12 @@ class Sensei_Course_Theme_Templates {
 		$templates    = [];
 
 		foreach ( $this->file_templates as $name => $template ) {
+			// Prefill the template contents from their content files.
+			if ( isset( $template['content'] ) && file_exists( $template['content'] ) ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+				$template['content'] = file_get_contents( $template['content'] );
+			}
+
 			$db_template     = $db_templates[ $name ] ?? null;
 			$template_object = (object) $template;
 
@@ -245,6 +266,7 @@ class Sensei_Course_Theme_Templates {
 				$template_object->wp_id  = null;
 				$template_object->author = null;
 			}
+
 			$templates[ $name ] = $template_object;
 		}
 
@@ -331,6 +353,16 @@ class Sensei_Course_Theme_Templates {
 
 		return $template;
 
+	}
+
+	/**
+	 * Gets the html content of the active block template by type.
+	 *
+	 * @param string $type The type of the template. Accepts 'lesson', 'quiz'.
+	 */
+	public function get_template_content( string $type ): string {
+		$templates = $this->get_block_templates();
+		return $templates[ $type ]->content;
 	}
 
 }
