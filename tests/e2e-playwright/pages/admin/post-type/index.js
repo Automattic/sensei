@@ -28,7 +28,7 @@ class PostType {
 	async addBlock( blockName ) {
 		await this.addBlockButton.click();
 		await this.searchBlock.fill( blockName );
-		await this.page.locator( `button[role="option"]:has-text("${ blockName }")` ).click();
+		await this.page.locator( 'button[role="option"]', { has: this.page.locator( `text="${ blockName }"` ) } ).click();
 
 		return new QueryLoop( this.queryLoopPatternSelection, this.page );
 	}
