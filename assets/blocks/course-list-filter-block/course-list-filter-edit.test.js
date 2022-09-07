@@ -44,7 +44,7 @@ describe( 'CourseListFilterBlockEdit', () => {
 		const { getByText } = render(
 			<CourseListFilter
 				clientId="some-client-id"
-				attributes={ { type: 'categories' } }
+				attributes={ { types: [ 'categories' ] } }
 				context={ context }
 			/>
 		);
@@ -57,7 +57,7 @@ describe( 'CourseListFilterBlockEdit', () => {
 		const { getByRole } = render(
 			<CourseListFilter
 				clientId="some-client-id"
-				attributes={ { type: 'featured' } }
+				attributes={ { types: [ 'featured' ] } }
 				context={ context }
 			/>
 		);
@@ -70,7 +70,7 @@ describe( 'CourseListFilterBlockEdit', () => {
 		const { getByRole } = render(
 			<CourseListFilter
 				clientId="some-client-id"
-				attributes={ { type: 'student_course' } }
+				attributes={ { types: [ 'student_course' ] } }
 				context={ context }
 			/>
 		);
@@ -83,7 +83,7 @@ describe( 'CourseListFilterBlockEdit', () => {
 		const { getByText } = render(
 			<CourseListFilter
 				clientId="some-client-id"
-				attributes={ { type: 'activity' } }
+				attributes={ { types: [ 'activity' ] } }
 				context={ { query: { postType: 'post' } } }
 			/>
 		);

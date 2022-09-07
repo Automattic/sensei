@@ -51,6 +51,15 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	private $skip_tests = false;
 
 	/**
+	 * Content of the block.
+	 */
+	private $content = '<!-- wp:query {"queryId":13,"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":4},"displayLayout":{"type":"flex","columns":3},"align":"wide","className":"wp-block-sensei-lms-course-list"} -->
+<div class="wp-block-query alignwide wp-block-sensei-lms-course-list"><!-- wp:sensei-lms/course-list-filter {"type":["categories","featured","student_course"]} /-->
+<!-- wp:post-template {"align":"wide"} -->
+<!-- wp:post-title {"level":1,"isLink":true,"className":"hide-url-underline","fontSize":"large"} /-->
+<!-- /wp:post-template --></div>
+<!-- /wp:query -->';
+	/**
 	 * Set up the test.
 	 */
 	public function setUp() {
@@ -88,7 +97,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'categories' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->category->name, $result );
@@ -104,7 +113,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$_GET['course-list-category-filter-13'] = 0;
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'categories' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -119,7 +128,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$_GET['course-list-category-filter-13'] = $this->category->term_id;
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'categories' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -135,7 +144,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -151,7 +160,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -168,7 +177,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -185,7 +194,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course2->ID, '_course_featured', 'featured' );
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'featured' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertNotContains( $this->course1->post_title, $result );
@@ -198,7 +207,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		}
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertNotContains( 'Completed', $result );
@@ -212,7 +221,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( 'Completed', $result );
@@ -229,7 +238,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$_GET['course-list-student-course-filter-13'] = 'active';
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -249,7 +258,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$_GET['course-list-student-course-filter-13'] = 'completed';
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course2->post_title, $result );
@@ -278,7 +287,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$_GET['course-list-student-course-filter-13'] = 'completed';
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertContains( $this->course1->post_title, $result );
@@ -307,22 +316,10 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$_GET['course-list-student-course-filter-13'] = 'active';
 
 		/* ACT */
-		$result = do_blocks( self::get_content_for_type( 'student_course' ) );
+		$result = do_blocks( $this->content );
 
 		/* ASSERT */
 		$this->assertNotContains( $this->course1->post_title, $result );
 		$this->assertNotContains( $this->course2->post_title, $result );
-	}
-
-	/**
-	 * Block content.
-	 */
-	private function get_content_for_type( $type ) {
-		return '<!-- wp:query {"queryId":13,"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":4},"displayLayout":{"type":"flex","columns":3},"align":"wide","className":"wp-block-sensei-lms-course-list"} -->
-<div class="wp-block-query alignwide wp-block-sensei-lms-course-list"><!-- wp:sensei-lms/course-list-filter {"type":"' . $type . '"} /-->
-<!-- wp:post-template {"align":"wide"} -->
-<!-- wp:post-title {"level":1,"isLink":true,"className":"hide-url-underline","fontSize":"large"} /-->
-<!-- /wp:post-template --></div>
-<!-- /wp:query -->';
 	}
 }
