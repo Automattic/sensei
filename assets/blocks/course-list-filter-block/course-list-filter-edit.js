@@ -11,31 +11,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
  */
 import InvalidUsageError from '../../shared/components/invalid-usage';
 
-const filters = {
-	categories: {
-		label: __( 'Categories', 'sensei-lms' ),
-		defaultOption: {
-			label: __( 'All Categories', 'sensei-lms' ),
-			value: 0,
-		},
-	},
-	featured: {
-		label: __( 'Featured', 'sensei-lms' ),
-		defaultOption: {
-			label: __( 'All Courses', 'sensei-lms' ),
-			value: 'all',
-		},
-	},
-	student_course: {
-		label: __( 'Student Courses', 'sensei-lms' ),
-		defaultOption: {
-			label: __( 'All Courses', 'sensei-lms' ),
-			value: 'all',
-		},
-	},
-};
-
-function useFilterOptions( type ) {
+function useFilterOptions() {
 	const categories = useSelect( ( select ) => {
 		const terms = select( 'core' ).getEntityRecords(
 			'taxonomy',
@@ -53,20 +29,39 @@ function useFilterOptions( type ) {
 		};
 	} );
 
-	switch ( type ) {
-		case 'categories':
-			return [ filters.categories.defaultOption, ...categories ];
-		case 'featured':
-			return [
-				filters.featured.defaultOption,
+	return {
+		categories: {
+			label: __( 'Categories', 'sensei-lms' ),
+			options: [
+				{
+					label: __( 'All Categories', 'sensei-lms' ),
+					value: 0,
+				},
+				...categories,
+			],
+			defaultOption: 0,
+		},
+		featured: {
+			label: __( 'Featured', 'sensei-lms' ),
+			options: [
+				{
+					label: __( 'All Courses', 'sensei-lms' ),
+					value: 'all',
+				},
 				{
 					label: __( 'Featured', 'sensei-lms' ),
 					value: 'featured',
 				},
-			];
-		case 'student_course':
-			return [
-				filters.student_course.defaultOption,
+			],
+			defaultOption: 'all',
+		},
+		student_course: {
+			label: __( 'Student Courses', 'sensei-lms' ),
+			options: [
+				{
+					label: __( 'All Courses', 'sensei-lms' ),
+					value: 'all',
+				},
 				{
 					label: __( 'Active', 'sensei-lms' ),
 					value: 'active',
@@ -75,16 +70,18 @@ function useFilterOptions( type ) {
 					label: __( 'Completed', 'sensei-lms' ),
 					value: 'completed',
 				},
-			];
-	}
+			],
+			defaultOption: 'all',
+		},
+	};
 }
 
 function CourseListFilter( {
-	attributes: { type },
+	attributes: { types },
 	context: { query },
 	setAttributes,
 } ) {
-	const options = useFilterOptions( type );
+	const filters = useFilterOptions();
 	const blockProps = useBlockProps();
 
 	if ( 'course' !== query?.postType ) {
@@ -106,18 +103,32 @@ function CourseListFilter( {
 						<ToggleControl
 							key={ key }
 							label={ filters[ key ].label }
-							checked={ key === type }
-							onChange={ () => setAttributes( { type: key } ) }
+							checked={ types.includes( key ) }
+							onChange={ ( checked ) => {
+								const newTypes = checked
+									? [ ...types, key ]
+									: types.filter( ( type ) => type !== key );
+								setAttributes( { types: newTypes } );
+							} }
 						/>
 					) ) }
 				</PanelBody>
 			</InspectorControls>
-			<SelectControl
-				className="sensei-lms-course-list-filter__select"
-				options={ options }
-				onChange={ () => {} }
-				value={ filters[ type ].defaultOption.value }
-			/>
+			<div className="sensei-lms-course-list-filter__filter-container">
+				{ Object.keys( filters ).map( ( key ) => {
+					const filter = filters[ key ];
+					return types.includes( key ) ? (
+						<SelectControl
+							key={ filter.label }
+							options={ filter.options }
+							onChange={ () => {} }
+							value={ filter.defaultOption }
+						/>
+					) : (
+						<> </>
+					);
+				} ) }
+			</div>
 		</div>
 	);
 }

@@ -12,7 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Course_List_Categories_Filter
  */
-class Sensei_Course_List_Categories_Filter {
+class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abstract {
+
+	/**
+	 * Name of the filter.
+	 */
+	const FILTER_NAME = 'categories';
 
 	/**
 	 * Unique key for the filter param.

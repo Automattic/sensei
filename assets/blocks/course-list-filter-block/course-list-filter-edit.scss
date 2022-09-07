@@ -1,7 +1,7 @@
 .editor-styles-wrapper {
-	.sensei-lms-course-list-filter__select {
-		.components-input-control__container {
-			width: auto;
-		}
+	.sensei-lms-course-list-filter__filter-container {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
 	}
 }
