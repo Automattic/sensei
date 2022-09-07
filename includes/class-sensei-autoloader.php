@@ -129,6 +129,7 @@ class Sensei_Autoloader {
 			'Sensei_Status'                                => 'admin/class-sensei-status.php',
 			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
 			'Sensei_Editor_Wizard'                         => 'admin/class-sensei-editor-wizard.php',
+			'Sensei_No_Users_Table_Relationship'           => 'reports/class-sensei-no-users-table-relationship.php',
 
 			/**
 			 * Admin Tools
