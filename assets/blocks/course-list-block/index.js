@@ -9,7 +9,7 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies
  */
-import icon from '../..//icons/course-list-icon.svg';
+import icon from '../../icons/course-list.svg';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
