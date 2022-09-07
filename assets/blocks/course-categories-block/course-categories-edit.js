@@ -44,13 +44,6 @@ export function CourseCategoryEdit( props ) {
 		isLoading,
 	} = useCourseCategories( postId );
 
-	const blockProps = useBlockProps( {
-		className: classnames( {
-			[ `has-text-align-${ textAlign }` ]: textAlign,
-			[ `taxonomy-${ term }` ]: term,
-		} ),
-	} );
-
 	const inlineStyle = useMemo(
 		() => ( {
 			backgroundColor:
@@ -60,8 +53,17 @@ export function CourseCategoryEdit( props ) {
 		[ backgroundColor, defaultBackgroundColor, defaultTextColor, textColor ]
 	);
 
+	const blockProps = useBlockProps( {
+		className: classnames( {
+			[ `has-text-align-${ textAlign }` ]: textAlign,
+			[ `taxonomy-${ term }` ]: term,
+			'has-background': !! inlineStyle?.backgroundColor,
+			'has-text-color': !! inlineStyle?.color,
+		} ),
+	} );
+
 	const getCategories = ( categoriesToDisplay ) => {
-		return categoriesToDisplay.map( ( category ) => (
+		return categoriesToDisplay?.map( ( category ) => (
 			<a
 				key={ category.id }
 				href={ category.link }
@@ -94,7 +96,10 @@ export function CourseCategoryEdit( props ) {
 	return (
 		<div { ...blockProps }>
 			{ isLoading && <Spinner /> }
-			{ ! isLoading && hasCategories && getCategories( categories ) }
+			{ ! isLoading && getCategories( categories ) }
+			{ ! isLoading && ! hasCategories && (
+				<p>{ __( 'No course category', 'sensei-lms' ) }</p>
+			) }
 		</div>
 	);
 }
