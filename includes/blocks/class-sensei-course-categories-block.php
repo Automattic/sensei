@@ -13,14 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Sensei_Course_Categories_Block
  */
 class Sensei_Course_Categories_Block {
-
-	/**
-	 * Rendered HTML output for the block.
-	 *
-	 * @var string
-	 */
-	private $block_content;
-
 	/**
 	 * Sensei_Course_Categories_Block constructor.
 	 */
@@ -75,8 +67,8 @@ class Sensei_Course_Categories_Block {
 
 		list( $wrapper_style ) = Sensei_Block_Helpers::css_variables(
 			[
-				'-text-color'       => $attributes['textColor'] ?? null,
-				'-background-color' => $attributes['backgroundColor'] ?? null,
+				'-text-color'       => $attributes['options']['textColor'] ?? null,
+				'-background-color' => $attributes['options']['backgroundColor'] ?? null,
 			],
 			'',
 			'--sensei-lms-course-categories'

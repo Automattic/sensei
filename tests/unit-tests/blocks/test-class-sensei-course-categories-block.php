@@ -7,9 +7,12 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
  * @group course-structure
  */
 class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
-	use Sensei_Course_Enrolment_Test_Helpers;
-	use Sensei_Course_Enrolment_Manual_Test_Helpers;
-	use Sensei_Test_Login_Helpers;
+	/**
+	 * Factory helper.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
 
 	/**
 	 * Take course block.
@@ -17,13 +20,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	 * @var Sensei_Course_Categories_Block
 	 */
 	private $block;
-
-	/**
-	 * Current course.
-	 *
-	 * @var WP_Post
-	 */
-	private $course;
 
 	/**
 	 * Current course category.
@@ -35,7 +31,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Block content.
 	 */
-	const CONTENT = '<!-- wp:sensei-lms/course-categories {"align":"center","textColor":"secondary","backgroundColor":"background"} /-->';
+	const CONTENT = '<!-- wp:sensei-lms/course-categories {"textAlign": "left", "align":"center", "options": {"textColor":"#cccccc","backgroundColor":"#dddddd"} } /-->';
 
 	/**
 	 * Set up the test.
@@ -43,15 +39,12 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
-		self::resetEnrolmentProviders();
-		$this->prepareEnrolmentManager();
-
 		$this->block    = new Sensei_Course_Categories_Block();
 		$this->category = $this->factory->course_category->create_and_get();
-		$this->course   = $this->factory->course->create_and_get( [ 'post_name' => 'some course' ] );
-		$this->factory->course_category->add_post_terms( $this->course->ID, [ $this->category->term_id ], 'course-category' );
+		$course         = $this->factory->course->create_and_get( [ 'post_name' => 'some course' ] );
+		$this->factory->course_category->add_post_terms( $course->ID, [ $this->category->term_id ], 'course-category' );
 
-		$GLOBALS['post'] = $this->course;
+		$GLOBALS['post'] = $course;
 	}
 
 	public function tearDown() {
@@ -61,19 +54,56 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 
 	public static function tearDownAfterClass() {
 		parent::tearDownAfterClass();
-		self::resetEnrolmentProviders();
+	}
+
+
+	/**
+	 * The course categories is registered
+	 *
+	 * @covers Sensei_Course_Categories_Block::construct
+	 */
+	public function testBlock_RegisterBlock() {
+		/* Arrange */
+		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-categories' );
+
+		/* Act */
+		new Sensei_Course_Categories_Block();
+
+		/* Assert */
+		$this->assertTrue(
+			WP_Block_Type_Registry::get_instance()->is_registered( 'sensei-lms/course-categories' )
+		);
 	}
 
 	/**
-	 * The course categories block is registered and renders content.
+	 * The course categories block renders content.
 	 *
 	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
-	public function testBlockRegistered() {
+	public function testBlock_RenderTheBlockContent() {
+		/* Act */
 		$result = do_blocks( self::CONTENT );
 
+		/* Assert */
 		$this->assertContains( $this->category->name, $result );
 		$this->assertContains( $this->category->slug, $result );
+	}
+
+	/**
+	 * The course categories block is rendering the style attributes properly.
+	 *
+	 * @covers Sensei_Course_Categories_Block::render_block
+	 */
+	public function testBlockRender_RenderTheAttributes() {
+		/* Act */
+		$result = do_blocks( self::CONTENT );
+
+		/* Assert */
+		$this->assertContains( 'has-text-align-left', $result );
+		$this->assertContains( 'aligncenter', $result );
+		$this->assertContains( '--sensei-lms-course-categories-text-color: #cccccc', $result );
+		$this->assertContains( '--sensei-lms-course-categories-background-color: #dddddd;', $result );
+
 	}
 
 	/**
@@ -82,12 +112,35 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testRenderBlock_Page_ReturnsEmptyString() {
+
+		/* Arrange */
 		$GLOBALS['post'] = (object) [
 			'post_type' => 'page',
 		];
 
+		/* Act */
 		$result = do_blocks( self::CONTENT );
 
+		/* Assert */
 		$this->assertEmpty( $result );
 	}
+
+	/**
+	 * Doesn't render the block if there are no course categories
+	 *
+	 * @covers Sensei_Course_Categories_Block::render_block
+	 */
+	public function testRenderBlockWithNoCourseCategories_Page_ReturnsEmptyString() {
+		/* Arrange */
+		$GLOBALS['post'] = $this->factory->course->create_and_get(
+			[ 'post_name' => 'course without course categories' ]
+		);
+
+		/* Act */
+		$result = do_blocks( self::CONTENT );
+
+		/* Assert */
+		$this->assertEmpty( $result );
+	}
+
 }
