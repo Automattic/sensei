@@ -2,18 +2,49 @@ $block: '.wp-block-sensei-lms-course-list';
 
 /* Match styles applied to block on single course page. */
 #{$block} {
-	.course {
+	.wp-block-post {
 		border: 0;
 		margin: 0 0 1.618em;
 		padding: 0 0 25px;
 	}
 
-	.wp-block-post-featured-image {
-		margin: 0 auto 1.618em;
-	}
-
 	select {
 		background-position-y: center;
+	}
+
+	.wp-block-post-template {
+		.wp-block-post-featured-image {
+			margin: 0 auto 1.618em;
+		}
+	}
+
+	&--is-grid-view {
+		/* Align button to bottom of card. */
+		.wp-block-post {
+			display: flex;
+
+			.wp-block-group,
+			.wp-block-group__inner-container {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+				width: 100%;
+
+				.sensei-cta {
+					margin-top: auto;
+				}
+			}
+
+			.sensei-block-wrapper {
+				padding: 5px 0;
+			}
+		}
+
+		@media ( max-width: 599px ) {
+			.wp-block-post-template.is-flex-container li.course {
+				width: 100%;
+			}
+		}
 	}
 
 	@media ( min-width: 782px ) {
@@ -22,24 +53,6 @@ $block: '.wp-block-sensei-lms-course-list';
 			.wp-block-sensei-lms-button-continue-course,
 			.wp-block-sensei-lms-button-view-results {
 				text-align: right;
-			}
-		}
-	}
-
-	&--is-grid-view {
-		/* Align button to bottom of card. */
-		.wp-block-post {
-			display: flex;
-			flex-direction: column;
-
-			.sensei-cta {
-				margin-top: auto;
-			}
-		}
-
-		@media ( max-width: 599px ) {
-			.wp-block-post-template.is-flex-container li.course {
-				width: 100%;
 			}
 		}
 	}

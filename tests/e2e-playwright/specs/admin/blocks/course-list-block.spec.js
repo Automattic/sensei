@@ -50,7 +50,7 @@ describe( 'Courses List Block', () => {
 
 		await postTypePage.goToPostTypeCreationPage();
 		const courseList = await postTypePage.addBlock( 'Course List' );
-		await courseList.choosePattern( 'Courses displayed in a list' );
+		await courseList.choosePattern( 'Courses displayed in a grid' );
 
 		await postTypePage.publish();
 		await postTypePage.gotToPreviewPage();
