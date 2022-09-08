@@ -3,9 +3,13 @@
  */
 import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
-import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies
+ */
+import icon from '../../icons/course-list.svg';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -27,9 +31,9 @@ export const registerCourseListBlock = () => {
 
 	registerBlockVariation( 'core/query', {
 		name: 'sensei-lms/course-list',
-		title: __( 'Course List (Beta)', 'sensei-lms' ),
+		title: __( 'Course List', 'sensei-lms' ),
 		description: __( 'Show a list of courses.', 'sensei-lms' ),
-		icon: list,
+		icon,
 		category: 'sensei-lms',
 		keywords: [
 			__( 'Course', 'sensei-lms' ),

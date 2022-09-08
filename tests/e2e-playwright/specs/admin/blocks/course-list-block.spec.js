@@ -49,7 +49,7 @@ describe( 'Courses List Block', () => {
 		const postTypePage = new PostType( page, 'page' );
 
 		await postTypePage.goToPostTypeCreationPage();
-		const courseList = await postTypePage.addBlock( 'Course List (Beta)' );
+		const courseList = await postTypePage.addBlock( 'Course List' );
 		await courseList.choosePattern( 'Courses displayed in a list' );
 
 		await postTypePage.publish();
