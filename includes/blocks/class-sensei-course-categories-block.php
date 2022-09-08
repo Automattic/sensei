@@ -59,7 +59,7 @@ class Sensei_Course_Categories_Block {
 			return '';
 		}
 
-		$wrapper_classes[] = 'taxonomy-course-category';
+		$wrapper_classes = [ 'taxonomy-course-category' ];
 
 		if ( isset( $attributes['textAlign'] ) ) {
 			$wrapper_classes[] = 'has-text-align-' . $attributes['textAlign'];
