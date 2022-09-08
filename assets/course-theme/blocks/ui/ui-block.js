@@ -13,7 +13,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import meta from './ui-block.json';
+import meta from './ui.block.json';
 import variations from './ui-block.variations';
 
 const helpers = {

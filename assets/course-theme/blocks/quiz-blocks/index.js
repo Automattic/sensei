@@ -7,11 +7,12 @@ import { useBlockProps } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
-import SenseiIcon from '../../icons/sensei.svg';
+import SenseiIcon from '../../../icons/sensei.svg';
+import quizActionsMeta from './quiz-actions.block.json';
+import quizBackToLessonMeta from './quiz-back-to-lesson.block.json';
+import quizProgressMeta from './quiz-progress.block.json';
 
 const meta = {
-	category: 'theme',
-	supports: {},
 	attributes: {},
 	icon: {
 		src: <SenseiIcon width="20" height="20" />,
@@ -21,9 +22,9 @@ const meta = {
 
 export default [
 	{
+		...quizProgressMeta,
 		...meta,
 		title: __( 'Quiz Progress Bar', 'sensei-lms' ),
-		name: 'sensei-lms/quiz-progress',
 		description: __(
 			'Display progress of questions answered in a quiz.',
 			'sensei-lms'
@@ -55,9 +56,9 @@ export default [
 		},
 	},
 	{
+		...quizBackToLessonMeta,
 		...meta,
 		title: __( 'Back to lesson', 'sensei-lms' ),
-		name: 'sensei-lms/quiz-back-to-lesson',
 		description: __(
 			'Return to the lesson the quiz belongs to.',
 			'sensei-lms'
@@ -71,9 +72,9 @@ export default [
 		},
 	},
 	{
+		...quizActionsMeta,
 		...meta,
 		title: __( 'Quiz Actions and Pagination', 'sensei-lms' ),
-		name: 'sensei-lms/quiz-actions',
 		description: __(
 			'Display pagination and actions the learner can take for the current quiz page.',
 			'sensei-lms'
