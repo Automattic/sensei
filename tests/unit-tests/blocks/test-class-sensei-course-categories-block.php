@@ -38,7 +38,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->factory = new Sensei_Factory();
+		$this->factory  = new Sensei_Factory();
 		$this->block    = new Sensei_Course_Categories_Block();
 		$this->category = $this->factory->course_category->create_and_get();
 		$course         = $this->factory->course->create_and_get( [ 'post_name' => 'some course' ] );
@@ -51,11 +51,6 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-categories' );
 	}
-
-	public static function tearDownAfterClass() {
-		parent::tearDownAfterClass();
-	}
-
 
 	/**
 	 * The course categories is registered
