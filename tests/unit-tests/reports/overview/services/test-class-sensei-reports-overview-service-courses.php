@@ -14,7 +14,7 @@ class Sensei_Reports_Overview_Service_Courses_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();

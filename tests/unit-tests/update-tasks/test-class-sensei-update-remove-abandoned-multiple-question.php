@@ -13,7 +13,7 @@ class Sensei_Update_Remove_Abandoned_Multiple_Question_Test extends WP_UnitTestC
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Set up the tests.

@@ -19,7 +19,7 @@ class Sensei_Update_Fix_Question_Author_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Set up the tests.

@@ -22,7 +22,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Setup method. Run first on every test execution.

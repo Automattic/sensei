@@ -13,7 +13,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Set up before each test.

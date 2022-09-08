@@ -25,7 +25,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Instance of `Sensei_Course_Theme_Option` under test.

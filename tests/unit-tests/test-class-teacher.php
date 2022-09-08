@@ -8,7 +8,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Constructor function

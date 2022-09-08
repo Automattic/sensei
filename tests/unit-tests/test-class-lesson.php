@@ -6,7 +6,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	/**
 	 * @var Sensei_Factory
 	 */
-	protected $factory;
+	private $factory;
 
 	/**
 	 * Keep initial state of Sensei()->course.
