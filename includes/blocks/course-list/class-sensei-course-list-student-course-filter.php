@@ -55,7 +55,7 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 		$filter_param_key = $this->param_key . $query_id;
 		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 
-		return '<select data-param-key="' . $filter_param_key . '">' .
+		return '<select data-param-key="' . $this->param_key . '" data-query-id="' . $query_id . '" >' .
 			join(
 				'',
 				array_map(
