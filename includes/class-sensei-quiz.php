@@ -544,9 +544,11 @@ class Sensei_Quiz {
 		$lesson_id          = Sensei()->quiz->get_lesson_id( $post->ID );
 		$user_quizzes       = Sensei()->quiz->get_user_answers( $lesson_id, get_current_user_id() );
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $current_user->ID );
-		$user_quiz_grade    = 0;
-		if ( isset( $user_lesson_status->comment_ID ) ) {
-			$user_quiz_grade = get_comment_meta( $user_lesson_status->comment_ID, 'grade', true );
+
+		$user_quiz_grade = 0;
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $post->ID, $current_user->ID );
+		if ( $quiz_submission ) {
+			$user_quiz_grade = $quiz_submission->get_final_grade();
 		}
 
 		if ( ! is_array( $user_quizzes ) ) {
