@@ -65,8 +65,6 @@ jobs:
                     - php: 7.2
                       wp: latest
                       wpmu: 1
-                    - wp: nightly
-                      php: 7.2
         env:
             WP_VERSION: ${{ matrix.wp }}
             WP_MULTISITE: ${{ matrix.wpmu }}
