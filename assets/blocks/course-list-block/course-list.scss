@@ -12,6 +12,10 @@ $block: '.wp-block-sensei-lms-course-list';
 		margin: 0 auto 1.618em;
 	}
 
+	select {
+		background-position-y: center;
+	}
+
 	@media ( min-width: 782px ) {
 		&--is-list-view {
 			.wp-block-sensei-lms-button-take-course,
