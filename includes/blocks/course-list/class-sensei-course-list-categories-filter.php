@@ -32,12 +32,8 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
 	 */
 	public function get_content( $query_id ) : string {
-		$category_id      = 0;
-		$filter_param_key = $this->param_key . $query_id;
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_GET[ $filter_param_key ] ) ) {
-			$category_id = intval( $_GET[ $filter_param_key ] ); // phpcs:ignore WordPress.Security.NonceVerification
-		}
+		$filter_param_key  = $this->param_key . $query_id;
+		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 		$course_categories = get_terms(
 			[
 				'taxonomy'   => 'course-category',

@@ -44,7 +44,7 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 		];
 	}
 	/**
-	 * Get the content to be be rendered inside the filtered block.
+	 * Get the content to be rendered inside the filtered block.
 	 *
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
 	 */
@@ -52,12 +52,8 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 		if ( empty( get_current_user_id() ) ) {
 			return '';
 		}
-		$selected_option  = 'all';
 		$filter_param_key = $this->param_key . $query_id;
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_GET[ $filter_param_key ] ) ) {
-			$selected_option = sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-		}
+		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 
 		return '<select data-param-key="' . $this->param_key . '" data-query-id="' . $query_id . '" >' .
 			join(
