@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Course_Categories_Block {
 
-
-
 	/**
 	 * Rendered HTML output for the block.
 	 *
@@ -52,7 +50,7 @@ class Sensei_Course_Categories_Block {
 	 * @param WP_Block $block      The block instance.
 	 * @return string
 	 */
-	public function render_block( $attributes, $content, WP_Block $block ): string {
+	public function render_block($attributes, $content, WP_Block $block): string {
 		if ( ! isset( $block->context['postId'] ) ) {
 			return '';
 		}
@@ -69,24 +67,37 @@ class Sensei_Course_Categories_Block {
 			return '';
 		}
 
-		$css             = Sensei_Block_Helpers::build_styles( $attributes );
-		$wrapper_classes = 'taxonomy-course-category';
+		$wrapper_classes[] = 'taxonomy-course-category';
 
-		if ( isset( $attributes['textAlign'] ) ) {
-			$wrapper_classes .= ' has-text-align-' . $attributes['textAlign'];
+		if (isset($attributes['textAlign'])) {
+			$wrapper_classes[] = 'has-text-align-' . $attributes['textAlign'];
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => $wrapper_classes ) );
-		$link_attributes    = '<a ' . Sensei_Block_Helpers::render_style_attributes( $wrapper_attributes, $css );
+		list($wrapper_style) = Sensei_Block_Helpers::css_variables(
+			[
+				'-text-color'               => $attributes['textColor'] ?? null,
+				'-background-color'         => $attributes['backgroundColor'] ?? null,
+			],
+			'',
+			'--sensei-lms-course-categories'
+		);
+
+		$wrapper_attributes = get_block_wrapper_attributes(array(
+			'class' => implode(' ', $wrapper_classes),
+			'style' => $wrapper_style
+		));
 
 		$terms = get_the_term_list(
 			$post_id,
 			'course-category',
-			"<div $wrapper_attributes>",
+			"<div $wrapper_attributes >",
 			'',
 			'</div>'
 		);
 
-		return str_replace( '<a ', $link_attributes, $terms );
+		$pattern = '/<a (.*?)>(.*?)<\/a>/i';
+		$replacement = "<a $1><span>$2</span></a>";
+
+		return preg_replace($pattern, $replacement, $terms);
 	}
 }

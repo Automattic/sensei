@@ -1,33 +1,37 @@
-.wp-block-sensei-lms-course-categories {
-	margin: 10px 0;
-	width: 100%;
+$block: 'sensei-lms-course-categories';
 
-	> a {
-		display: inline-flex;
-		padding: 3px 6px;
-		text-decoration: none;
-		border-radius: 2px;
-		white-space: nowrap;
-		margin-bottom: 5px;
+.wp-block-#{$block} {
+	--#{$block}-text-color: #ffffff;
+	--#{$block}-background-color: currentColor;
 
-		&:not( :last-child ) {
-			margin-right: 10px;
+	// Increase the CSS Specificity
+	&.taxonomy-course-category {
+		margin: 10px 0;
+		width: 100%;
+
+		> a {
+			display: inline-flex;
+			padding: 3px 6px;
+			text-decoration: none;
+			border-radius: 2px;
+			white-space: nowrap;
+			margin-bottom: 5px;
+			background-color: var( --#{$block}-background-color );
+
+			&:not( :last-child ) {
+				margin-right: 10px;
+			}
+			& span {
+				color: var( --#{$block}-text-color );
+			}
 		}
 
-		&:not( .has-background ) {
-			background-color: #3858E9;
+		&.alignright {
+			text-align: right;
 		}
 
-		&:not( .has-text-color ) {
-			color: #fff;
+		&.aligncenter {
+			text-align: center;
 		}
-	}
-
-	&.alignright {
-		text-align: right;
-	}
-
-	&.aligncenter {
-		text-align: center;
 	}
 }

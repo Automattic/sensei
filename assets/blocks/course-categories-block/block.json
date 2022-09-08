@@ -9,30 +9,15 @@
 			"type": "string",
 			"default": "left"
 		},
-		"textColor": {
-			"type": "string"
-		},
-		"backgroundColor": {
-			"type": "string"
-		},
-		"customBackgroundColor": {
-			"type": "string"
-		},
-		"customTextColor": {
-			"type": "string"
-		},
-        "defaultBackgroundColor": {
-			"type": "string"
-		},
-		"defaultTextColor": {
-			"type": "string"
-		},
 		"fontSize": {
 			"type": "string",
 			"default": "small"
 		},
         "previewCategories": {
             "type": "array"
+        },
+        "options": {
+            "type": "object" 
         }
 	},
 	"usesContext": [ "postId", "postType" ],

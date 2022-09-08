@@ -48,6 +48,15 @@ const categories = [
 	},
 ];
 
+const defaultProps = {
+	clientId: 'some-client-id',
+	attributes,
+	context,
+	setAttributes: jest.fn(),
+	setBackgroundColor: jest.fn(),
+	setTextColor: jest.fn(),
+};
+
 describe( 'CourseCategoryEdit', () => {
 	it( 'should render the categories', () => {
 		useCourseCategories.mockReturnValue( {
@@ -57,35 +66,28 @@ describe( 'CourseCategoryEdit', () => {
 		} );
 
 		const { getByText } = render(
-			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ context }
-				setAttributes={ () => {} }
-			/>
+			<CourseCategoryEdit { ...defaultProps } />
 		);
 		categories.forEach( ( category ) =>
 			expect( getByText( category.name ) ).toBeInTheDocument()
 		);
 	} );
 
-	it( 'should render an error', () => {
+	it( 'should render an error when the block is not using the correct post type', () => {
 		const { getByText } = render(
 			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
+				{ ...defaultProps }
 				context={ {
 					postId: 'some-post-id',
 					postType: 'page',
 				} }
-				setAttributes={ () => {} }
 			/>
 		);
 
 		expect( getByText( message ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render na placeholder when there is not course categories', () => {
+	it( 'should render a placeholder when there are no course categories', () => {
 		useCourseCategories.mockReturnValue( {
 			isLoading: false,
 			hasPostTerms: false,
@@ -93,61 +95,42 @@ describe( 'CourseCategoryEdit', () => {
 		} );
 
 		const { getByText } = render(
-			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ {
-					postId: 'some-post-id',
-					postType: 'course',
-				} }
-				setAttributes={ () => {} }
-			/>
+			<CourseCategoryEdit { ...defaultProps } />
 		);
 
 		expect( getByText( 'No course category' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should not fallback the colors', () => {
+	it( 'should update the color attributes during the component loading', () => {
+		const setBackgroundColor = jest.fn();
+		const setTextColor = jest.fn();
+
+		const attributesWithOptions = {
+			...attributes,
+			options: {
+				backgroundColor: 'some-background-color',
+				textColor: 'some-text-color',
+			},
+		};
+
 		useCourseCategories.mockReturnValue( {
 			isLoading: false,
 			hasPostTerms: true,
 			postTerms: categories,
 		} );
 
-		const { container } = render(
+		render(
 			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ context }
-				setAttributes={ () => {} }
-				defaultBackgroundColor={ { color: 'some-color' } }
-				defaultTextColor={ { color: 'some-color' } }
+				{ ...defaultProps }
+				attributes={ attributesWithOptions }
+				setBackgroundColor={ setBackgroundColor }
+				setTextColor={ setTextColor }
 			/>
 		);
-
-		expect( container.firstChild ).toHaveClass( 'has-background' );
-		expect( container.firstChild ).toHaveClass( 'has-text-color' );
-	} );
-
-	it( 'should fallback the colors', () => {
-		useCourseCategories.mockReturnValue( {
-			isLoading: false,
-			hasPostTerms: true,
-			postTerms: categories,
-		} );
-
-		const { container } = render(
-			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ context }
-				setAttributes={ () => {} }
-				defaultBackgroundColor={ null }
-				defaultTextColor={ null }
-			/>
+		expect( setBackgroundColor ).toHaveBeenCalledWith(
+			'some-background-color'
 		);
 
-		expect( container.firstChild ).not.toHaveClass( 'has-background' );
-		expect( container.firstChild ).not.toHaveClass( 'has-text-color' );
+		expect( setTextColor ).toHaveBeenCalledWith( 'some-text-color' );
 	} );
 } );
