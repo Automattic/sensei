@@ -56,7 +56,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	private $content = '<!-- wp:query {"queryId":13,"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":4},"displayLayout":{"type":"flex","columns":3},"align":"wide","className":"wp-block-sensei-lms-course-list"} -->
 <div class="wp-block-query alignwide wp-block-sensei-lms-course-list"><!-- wp:sensei-lms/course-list-filter {"type":["categories","featured","student_course"]} /-->
 <!-- wp:post-template {"align":"wide"} -->
-<!-- wp:post-title {"level":1,"isLink":true,"className":"hide-url-underline","fontSize":"large"} /-->
+<!-- wp:post-title {"level":1,"isLink":true,"fontSize":"large"} /-->
 <!-- /wp:post-template --></div>
 <!-- /wp:query -->';
 	/**
