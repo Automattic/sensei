@@ -2,7 +2,7 @@ $block: '.wp-block-sensei-lms-course-list';
 
 /* Match styles applied to block on single course page. */
 #{$block} {
-	.course {
+	.wp-block-post {
 		border: 0;
 		margin: 0 0 1.618em;
 		padding: 0 0 25px;
@@ -26,10 +26,20 @@ $block: '.wp-block-sensei-lms-course-list';
 		/* Align button to bottom of card. */
 		.wp-block-post {
 			display: flex;
-			flex-direction: column;
 
-			.sensei-cta {
-				margin-top: auto;
+			.wp-block-group, .wp-block-group__inner-container {
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+				width: 100%;
+
+				.sensei-cta {
+					margin-top: auto;
+				}
+			}
+
+			.sensei-block-wrapper {
+				padding: 5px 0;
 			}
 		}
 
