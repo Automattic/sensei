@@ -1,5 +1,5 @@
 const courseListFeaturedFilterElements = document.querySelectorAll(
-	'.wp-block-sensei-lms-course-list-filter select'
+	'.wp-sensei-course-list-block-filter select'
 );
 
 courseListFeaturedFilterElements.forEach( ( element ) => {

@@ -70,7 +70,7 @@ class Sensei_Course_List_Filter_Block {
 			}
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes();
+		$wrapper_attributes = get_block_wrapper_attributes( [ 'class' => 'wp-sensei-course-list-block-filter' ] );
 
 		return sprintf(
 			'<div %s>%s</div>',
