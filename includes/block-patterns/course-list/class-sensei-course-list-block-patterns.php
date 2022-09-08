@@ -44,8 +44,8 @@ class Sensei_Course_List_Block_Patterns {
 					<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
 						<!-- wp:post-template -->
 
-							<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"2px","right":"2px","bottom":"2px","left":"2px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-								<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:2px;padding-right:2px;padding-bottom:2px;padding-left:2px">
+							<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
+								<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
 
 									<!-- wp:post-featured-image {"isLink":true,"align":"center"} /-->
 									<!-- wp:columns -->
@@ -102,8 +102,8 @@ class Sensei_Course_List_Block_Patterns {
 						<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view alignwide">
 							<!-- wp:post-template {"align":"wide"} -->
 
-								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"2px","right":"2px","bottom":"2px","left":"2px"},"blockGap":"2px"},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-									<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:2px;padding-right:2px;padding-bottom:2px;padding-left:2px">
+								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"},"blockGap":"2px"},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
+									<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
 
 										<!-- wp:post-featured-image {"isLink":true,"align":"center","lock":{"move": true}} /-->
 
