@@ -42,6 +42,7 @@ class Sensei_Course_List_Block_Patterns {
 				'description' => 'course-list-element',
 				'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":6},"displayLayout":{"type":"list"},"layout":{"inherit":true}} -->
 					<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
+
 						<!-- wp:sensei-lms/course-list-filter {"align":"full","types":["student_course","featured","categories"]} /-->
 
 						<!-- wp:post-template -->
