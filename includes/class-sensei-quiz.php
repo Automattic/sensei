@@ -708,25 +708,21 @@ class Sensei_Quiz {
 		delete_transient( $grades_transient_key );
 		delete_transient( $answers_feedback_transient_key );
 
-		// Reset the quiz answers and feedback notes.
-		Sensei_Utils::delete_user_data( 'quiz_answers', $lesson_id, $user_id );
-		Sensei_Utils::delete_user_data( 'quiz_grades', $lesson_id, $user_id );
-		Sensei_Utils::delete_user_data( 'quiz_answers_feedback', $lesson_id, $user_id );
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( $lesson_progress ) {
+			$lesson_progress->start();
+			Sensei()->lesson_progress_repository->save( $lesson_progress );
+		}
 
 		if ( $quiz_id ) {
 			// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
 			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
 
-			$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
-			if ( $lesson_progress ) {
-				$lesson_progress->start();
-				Sensei()->lesson_progress_repository->save( $lesson_progress );
-			}
-
 			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			if ( $quiz_submission ) {
 				$quiz_submission->set_final_grade( null );
 				Sensei()->quiz_submission_repository->save( $quiz_submission );
+				Sensei()->quiz_grade_repository->delete_all( $quiz_submission->get_id() );
 				Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
 			}
 		}

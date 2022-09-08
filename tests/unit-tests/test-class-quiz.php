@@ -1633,7 +1633,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $grade );
 	}
 
-	public function testResetUserLessonData_WhenCalled_ResetsTheQuizSubmissionGrade() {
+	public function testResetUserLessonData_WhenCalled_ResetsTheQuizFinalGrade() {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create();
@@ -1674,8 +1674,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 		$this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
 
-		$quiz_answers = $this->factory->generate_user_quiz_answers( $quiz_id );
-		Sensei()->quiz->save_user_answers( $quiz_answers, [], $lesson_id, $user_id );
+		$quiz_answers_map = $this->factory->generate_user_quiz_answers( $quiz_id );
+		Sensei()->quiz->save_user_answers( $quiz_answers_map, [], $lesson_id, $user_id );
 		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
 		/* Act. */
@@ -1688,5 +1688,39 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEmpty( $quiz_answers );
+	}
+
+	public function testResetUserLessonData_WhenCalled_ResetsTheQuizGrades() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+		$this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		$quiz_answers_map = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$quiz_grades_map  = $this->factory->generate_user_quiz_grades( $quiz_answers_map );
+
+		Sensei()->quiz->save_user_answers( $quiz_answers_map, [], $lesson_id, $user_id );
+		Sensei()->quiz->set_user_grades( $quiz_grades_map, $lesson_id, $user_id );
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		/* Act. */
+		ob_start();
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		ob_end_clean();
+
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		$quiz_grades     = Sensei()->quiz_grade_repository->get_all( $quiz_submission->get_id() );
+
+		/* Assert. */
+		$this->assertEmpty( $quiz_grades );
 	}
 }

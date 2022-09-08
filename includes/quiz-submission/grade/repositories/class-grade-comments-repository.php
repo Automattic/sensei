@@ -57,7 +57,6 @@ class Grade_Comments_Repository implements Grade_Repository_Interface {
 	 */
 	public function get_all( int $submission_id ): array {
 		$grades_map = get_comment_meta( $submission_id, 'quiz_grades', true );
-
 		if ( ! $grades_map || ! is_array( $grades_map ) ) {
 			return [];
 		}
