@@ -33,7 +33,7 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 */
 	public function get_content( $query_id ) : string {
 		$filter_param_key  = $this->param_key . $query_id;
-		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 		$course_categories = get_terms(
 			[
 				'taxonomy'   => 'course-category',
@@ -42,7 +42,7 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 		);
 
 		return '<select class="course_list_filter_block" data-param-key="' . $this->param_key . '" data-query-id="' . $query_id . '" >
-			<option value="">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
+			<option value="-1">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
 			join(
 				'',
 				array_map(

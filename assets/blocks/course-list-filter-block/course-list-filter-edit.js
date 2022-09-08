@@ -35,11 +35,11 @@ function useFilterOptions() {
 			options: [
 				{
 					label: __( 'All Categories', 'sensei-lms' ),
-					value: 0,
+					value: -1,
 				},
 				...categories,
 			],
-			defaultOption: 0,
+			defaultOption: -1,
 		},
 		featured: {
 			label: __( 'Featured', 'sensei-lms' ),
