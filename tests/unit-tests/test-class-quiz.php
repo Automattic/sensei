@@ -1633,4 +1633,60 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $grade );
 	}
 
+	public function testResetUserLessonData_WhenCalled_ResetsTheQuizSubmissionGrade() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
+
+		/* Act. */
+		ob_start();
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		ob_end_clean();
+
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertNull( $quiz_submission->get_final_grade() );
+	}
+
+	public function testResetUserLessonData_WhenCalled_ResetsTheQuizAnswers() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+		$this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		$quiz_answers = $this->factory->generate_user_quiz_answers( $quiz_id );
+		Sensei()->quiz->save_user_answers( $quiz_answers, [], $lesson_id, $user_id );
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		/* Act. */
+		ob_start();
+		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
+		ob_end_clean();
+
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		$quiz_answers    = Sensei()->quiz_answer_repository->get_all( $quiz_submission->get_id() );
+
+		/* Assert. */
+		$this->assertEmpty( $quiz_answers );
+	}
 }
