@@ -50,7 +50,7 @@ class Sensei_Course_Categories_Block {
 	 * @param WP_Block $block      The block instance.
 	 * @return string
 	 */
-	public function render_block($attributes, $content, WP_Block $block): string {
+	public function render_block( $attributes, $content, WP_Block $block ): string {
 		if ( ! isset( $block->context['postId'] ) ) {
 			return '';
 		}
@@ -69,23 +69,25 @@ class Sensei_Course_Categories_Block {
 
 		$wrapper_classes[] = 'taxonomy-course-category';
 
-		if (isset($attributes['textAlign'])) {
+		if ( isset( $attributes['textAlign'] ) ) {
 			$wrapper_classes[] = 'has-text-align-' . $attributes['textAlign'];
 		}
 
-		list($wrapper_style) = Sensei_Block_Helpers::css_variables(
+		list( $wrapper_style ) = Sensei_Block_Helpers::css_variables(
 			[
-				'-text-color'               => $attributes['textColor'] ?? null,
-				'-background-color'         => $attributes['backgroundColor'] ?? null,
+				'-text-color'       => $attributes['textColor'] ?? null,
+				'-background-color' => $attributes['backgroundColor'] ?? null,
 			],
 			'',
 			'--sensei-lms-course-categories'
 		);
 
-		$wrapper_attributes = get_block_wrapper_attributes(array(
-			'class' => implode(' ', $wrapper_classes),
-			'style' => $wrapper_style
-		));
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'class' => implode( ' ', $wrapper_classes ),
+				'style' => $wrapper_style,
+			)
+		);
 
 		$terms = get_the_term_list(
 			$post_id,
@@ -95,9 +97,9 @@ class Sensei_Course_Categories_Block {
 			'</div>'
 		);
 
-		$pattern = '/<a (.*?)>(.*?)<\/a>/i';
-		$replacement = "<a $1><span>$2</span></a>";
+		$pattern     = '/<a (.*?)>(.*?)<\/a>/i';
+		$replacement = '<a $1><span>$2</span></a>';
 
-		return preg_replace($pattern, $replacement, $terms);
+		return preg_replace( $pattern, $replacement, $terms );
 	}
 }
