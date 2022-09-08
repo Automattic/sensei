@@ -6,6 +6,8 @@ import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
+import useSelectWithDebounce from "../../react-hooks/use-select-with-debounce";
+import { store as coreDataStore } from "@wordpress/core-data";
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -120,86 +122,82 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
-// Create a feature badge.
-const getFeaturedBadge = () => {
-	const featureBadge = document.createElement( 'div' );
-	featureBadge.classList.add( 'featured-badge' );
-	featureBadge.classList.add( 'featured-badge-edit' );
-	featureBadge.textContent = __( 'Featured', 'sensei-lms' );
-	return featureBadge;
-};
-
-const addFeatureBadgeToElement = ( child, className ) => {
-	const wrapper = document.createElement( 'div' );
-	wrapper.classList.add( className );
-	child.parentNode.insertBefore( wrapper, child );
-	wrapper.appendChild( getFeaturedBadge() );
-	wrapper.appendChild( child );
-};
-
-const addFeaturedBadgeToCourses = () => {
-	const templates = document.querySelectorAll(
-		'[data-type="core/post-template"]'
+const getCourses = ( courseId ) => {
+	return useSelectWithDebounce(
+		( sel ) => {
+			const store = sel( coreDataStore );
+			const query = { id: courseId };
+			return {
+				courses:
+					store.getEntityRecords( 'postType', 'course', query ) || [],
+				isFetching: ! store.hasFinishedResolution( 'getEntityRecords', [
+					'postType',
+					'course',
+					query,
+				] ),
+			};
+		},
+		[],
+		500
 	);
-	if ( ! templates || templates.length <= 0 ) {
-		return;
+}
+
+const shouldAddFeaturedBadge = ( clientId ) => {
+	const elementByClientId = document.querySelector(`[data-block="${clientId}"]`);
+	if(! elementByClientId) {
+
+		return false;
 	}
-	templates.forEach( ( t ) => {
-		// If the courses are not yet loaded return.
-		if ( ! ( t.tagName === 'UL' ) ) {
-			return;
+	const getParent = elementByClientId.parentNode;
+	if(! getParent) {
+		return false;
+	}
+	return getParent.classList.contains('wp-block');
+}
+
+const addFeatureBadgeToTheCourseBlock = (BlockListBlock) => {
+	return ( props ) => {
+
+		// Add feature badge to course categories.
+		if(props.name === 'sensei-lms/course-categories') {
+			const clientId = props.clientId;
+			const shouldAddBadge = shouldAddFeaturedBadge(clientId);
+
+			if( shouldAddBadge ) {
+				const courseId = props.attributes.id;
+				const { courses, isFetching } = getCourses( courseId );
+				let isFeatured;
+				let hasFeaturedImage;
+				if( courses ) {
+					const course = courses.find(c => c.id === courseId);
+
+					if( course ){
+						const courseFeatured = course.meta._course_featured;
+						hasFeaturedImage = course.featured_media || course.featured_media === 0;
+						isFeatured = courseFeatured === 'featured';
+					}
+					return (isFetching || ! isFeatured || hasFeaturedImage) ? <BlockListBlock { ...props } /> : <div { ...props } className="featured-category-wrapper">
+						<div className="featured-badge">Featured</div>
+						<BlockListBlock { ...props } />
+					</div>;
+				}
+			}
 		}
 
-		const courses = t.querySelectorAll( 'li' );
-		courses.forEach( ( course ) => {
-			const featuredCourse = course.querySelector(
-				'.class-course-featured'
-			);
-			if ( ! featuredCourse ) {
-				return;
-			}
-			if (
-				course.classList.contains(
-					'featured-course-with-image-wrapper'
-				) ||
-				course.classList.contains( 'featured-course-no-image-wrapper' )
-			) {
-				return;
-			}
-			const featuredImageBlock = course.querySelector(
-				'.wp-block-post-featured-image'
-			);
+		// if(props.name === 'core/post-featured-image') {
+		// 	const clientId = props.clientId;
+		// 	const elementByClientId = document.querySelector(`[data-block="${clientId}"]`);
+		// }
 
-			// Add badge to featured image, if the course has featured image or add to category block.
-			if (
-				featuredImageBlock &&
-				featuredImageBlock.tagName === 'FIGURE'
-			) {
-				course.classList.add( 'featured-course-with-image-wrapper' );
-				addFeatureBadgeToElement(
-					featuredImageBlock,
-					'featured-image-wrapper'
-				);
-			} else {
-				const courseCategoryBlock = course.querySelector(
-					'.wp-block-sensei-lms-course-categories'
-				);
-				course.classList.add( 'featured-course-no-image-wrapper' );
-				addFeatureBadgeToElement(
-					courseCategoryBlock,
-					'featured-category-wrapper'
-				);
-			}
-		} );
-	} );
-};
+		return <BlockListBlock { ...props } />;
+	}
+}
 
 let isCourseListBlockSelected = false;
 
 const withQueryLoopPatternsAndSettingsHiddenForCourseList = ( BlockEdit ) => {
+
 	return ( props ) => {
-		// Course Featured Badge.
-		addFeaturedBadgeToCourses();
 
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
@@ -248,6 +246,12 @@ addFilter(
 	'editor.BlockEdit',
 	'sensei-lms/course-list-block',
 	withQueryLoopPatternsAndSettingsHiddenForCourseList
+);
+
+addFilter(
+	'editor.BlockEdit',
+	'sensei-lms/course-categories',
+	addFeatureBadgeToTheCourseBlock
 );
 
 // Hide patterns control so only Grid view can be selected.

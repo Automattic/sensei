@@ -91,6 +91,7 @@ export function CourseCategoryEdit( props ) {
 		);
 	}
 
+	setAttributes( { id: postId } );
 	return (
 		<div { ...blockProps }>
 			{ isLoading && <Spinner /> }
