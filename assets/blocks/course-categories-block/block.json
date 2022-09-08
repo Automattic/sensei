@@ -21,7 +21,7 @@
 		"customTextColor": {
 			"type": "string"
 		},
-        "defaultBackgroundColor": {
+		"defaultBackgroundColor": {
 			"type": "string"
 		},
 		"defaultTextColor": {
@@ -31,9 +31,9 @@
 			"type": "string",
 			"default": "small"
 		},
-        "previewCategories": {
-            "type": "array"
-        }
+		"previewCategories": {
+			"type": "array"
+		}
 	},
 	"usesContext": [ "postId", "postType" ],
 	"supports": {
@@ -44,7 +44,7 @@
 			"blockGap": true
 		},
 		"textAlign": true,
-        "align": true,
+		"align": true,
 		"alignWide": true,
 		"typography": {
 			"lineHeight": true,
