@@ -76,6 +76,30 @@ function useFilterOptions() {
 	};
 }
 
+function updateSelectedTypesList( checked, types, setAttributes, key ) {
+	const newTypes = checked
+		? [ ...types, key ]
+		: types.filter( ( type ) => type !== key );
+	setAttributes( { types: newTypes } );
+}
+
+function SelectedFilters( { filters, types } ) {
+	if ( ! types || types.length < 1 ) {
+		return null;
+	}
+	return Object.keys( filters ).map( ( key ) => {
+		const filter = filters[ key ];
+		return types.includes( key ) ? (
+			<SelectControl
+				key={ filter.label }
+				options={ filter.options }
+				onChange={ () => {} }
+				value={ filter.defaultOption }
+			/>
+		) : null;
+	} );
+}
+
 function CourseListFilter( {
 	attributes: { types },
 	context: { query },
@@ -104,31 +128,19 @@ function CourseListFilter( {
 							key={ key }
 							label={ filters[ key ].label }
 							checked={ types.includes( key ) }
-							onChange={ ( checked ) => {
-								const newTypes = checked
-									? [ ...types, key ]
-									: types.filter( ( type ) => type !== key );
-								setAttributes( { types: newTypes } );
-							} }
+							onChange={ ( checked ) =>
+								updateSelectedTypesList(
+									checked,
+									types,
+									setAttributes,
+									key
+								)
+							}
 						/>
 					) ) }
 				</PanelBody>
 			</InspectorControls>
-			<div className="sensei-lms-course-list-filter__filter-container">
-				{ Object.keys( filters ).map( ( key ) => {
-					const filter = filters[ key ];
-					return types.includes( key ) ? (
-						<SelectControl
-							key={ filter.label }
-							options={ filter.options }
-							onChange={ () => {} }
-							value={ filter.defaultOption }
-						/>
-					) : (
-						<> </>
-					);
-				} ) }
-			</div>
+			<SelectedFilters filters={ filters } types={ types } />
 		</div>
 	);
 }
