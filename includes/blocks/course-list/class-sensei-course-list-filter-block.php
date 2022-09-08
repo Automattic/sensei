@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_List_Filter_Block {
 
 	/**
-	 * Instance of Sensei_Course_List_Categories_Filter class.
+	 * List of filter class instances.
 	 *
 	 * @var Sensei_Course_List_Filter_Abstract[]
 	 */

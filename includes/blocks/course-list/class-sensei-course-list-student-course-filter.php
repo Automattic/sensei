@@ -34,7 +34,7 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 	private $filter_options = [];
 
 	/**
-	 * Constructor for Sensei_Course_List_Featured_Filter class.
+	 * Constructor for Sensei_Course_List_Student_Course_Filter class.
 	 */
 	public function __construct() {
 		$this->filter_options = [
