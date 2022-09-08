@@ -140,11 +140,7 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 			throw new RuntimeException( 'Missing lesson status.' );
 		}
 
-		$final_grade = $submission->get_final_grade();
-
-		if ( null !== $final_grade ) {
-			update_comment_meta( $status_comment->comment_ID, 'grade', $final_grade );
-		}
+		update_comment_meta( $status_comment->comment_ID, 'grade', $submission->get_final_grade() );
 	}
 
 	/**

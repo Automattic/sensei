@@ -720,15 +720,13 @@ class Sensei_Quiz {
 		if ( $lesson_progress ) {
 			$lesson_progress->start();
 			Sensei()->lesson_progress_repository->save( $lesson_progress );
+		}
 
-			// Save updated metadata.
-			$lesson_progress_metadata = [
-				'questions_asked' => '',
-				'grade'           => '',
-			];
-			foreach ( $lesson_progress_metadata as $key => $value ) {
-				update_comment_meta( $lesson_progress->get_id(), $key, $value );
-			}
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( $quiz_submission ) {
+			$quiz_submission->set_final_grade( null );
+			Sensei()->quiz_submission_repository->save( $quiz_submission );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
 		}
 
 		// Update course completion.

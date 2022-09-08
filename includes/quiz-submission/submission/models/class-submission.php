@@ -126,9 +126,9 @@ class Submission {
 	/**
 	 * Set the final grade.
 	 *
-	 * @param float $final_grade The final grade.
+	 * @param float|null $final_grade The final grade.
 	 */
-	public function set_final_grade( float $final_grade ): void {
+	public function set_final_grade( ?float $final_grade ): void {
 		$this->final_grade = $final_grade;
 	}
 
