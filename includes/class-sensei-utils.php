@@ -687,19 +687,32 @@ class Sensei_Utils {
 		return $delete_answers;
 	}
 
-	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
-		if ( intval( $user_id ) == 0 ) {
+	/**
+	 * Delete the quiz submission grade.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
+	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ): bool {
+		if ( intval( $user_id ) === 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		$delete_grade = false;
-		if ( intval( $quiz_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$delete_grade       = delete_comment_meta( $user_lesson_status->comment_ID, 'grade' );
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		return $delete_grade;
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
+		}
+
+		$quiz_submission->set_final_grade( null );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		return true;
 	}
 
 	/**
