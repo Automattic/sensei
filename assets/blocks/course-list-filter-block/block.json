@@ -5,10 +5,10 @@
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
 	"attributes": {
-        "align": {
-            "type": "string",
-            "default": "wide"
-        },
+		"align": {
+			"type": "string",
+			"default": "wide"
+		},
 		"types": {
 			"type": "array",
 			"default": [ "categories", "featured", "student_course" ]
