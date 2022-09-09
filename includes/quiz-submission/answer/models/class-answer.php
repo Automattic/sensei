@@ -77,7 +77,7 @@ class Answer {
 		int $question_id,
 		string $value,
 		DateTimeInterface $created_at,
-		DateTimeInterface $updated_at = null
+		?DateTimeInterface $updated_at = null
 	) {
 		$this->id            = $id;
 		$this->submission_id = $submission_id;

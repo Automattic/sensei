@@ -51,9 +51,8 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 			$status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
-			$created_at,
-			null,
-			$final_grade
+			$final_grade,
+			$created_at
 		);
 	}
 
@@ -98,9 +97,8 @@ class Submission_Comments_Repository implements Submission_Repository_Interface 
 			$status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
-			$created_at,
-			null,
-			$final_grade ? $final_grade : null
+			$final_grade ? $final_grade : null,
+			$created_at
 		);
 	}
 
