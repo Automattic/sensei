@@ -109,6 +109,9 @@ function CourseListFilter( {
 	const blockProps = useBlockProps();
 
 	if ( 'course' !== query?.postType ) {
+		setAttributes( {
+			className: 'wp-block-sensei-lms-course-list-filter__warning',
+		} );
 		return (
 			<InvalidUsageError
 				message={ __(
