@@ -6,8 +6,7 @@ import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
-import useSelectWithDebounce from "../../react-hooks/use-select-with-debounce";
-import { store as coreDataStore } from "@wordpress/core-data";
+import FeaturedLabel from './featured-label';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -122,83 +121,35 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
-const getCourses = ( courseId ) => {
-	return useSelectWithDebounce(
-		( sel ) => {
-			const store = sel( coreDataStore );
-			const query = { id: courseId };
-			return {
-				courses:
-					store.getEntityRecords( 'postType', 'course', query ) || [],
-				isFetching: ! store.hasFinishedResolution( 'getEntityRecords', [
-					'postType',
-					'course',
-					query,
-				] ),
-			};
+function addWrapperAroundFeaturedImageBlock( settings, name ) {
+	if ( 'core/post-featured-image' !== name ) {
+		return settings;
+	}
+	const BlockEdit = settings.edit;
+
+	settings = {
+		...settings,
+		edit: ( props ) => {
+			return (
+				<FeaturedLabel postId={ props.context.postId }>
+					<BlockEdit { ...props } />
+				</FeaturedLabel>
+			);
 		},
-		[],
-		500
-	);
+	};
+	return settings;
 }
 
-const shouldAddFeaturedBadge = ( clientId ) => {
-	const elementByClientId = document.querySelector(`[data-block="${clientId}"]`);
-	if(! elementByClientId) {
-
-		return false;
-	}
-	const getParent = elementByClientId.parentNode;
-	if(! getParent) {
-		return false;
-	}
-	return getParent.classList.contains('wp-block');
-}
-
-const addFeatureBadgeToTheCourseBlock = (BlockListBlock) => {
-	return ( props ) => {
-
-		// Add feature badge to course categories.
-		if(props.name === 'sensei-lms/course-categories') {
-			const clientId = props.clientId;
-			const shouldAddBadge = shouldAddFeaturedBadge(clientId);
-
-			if( shouldAddBadge ) {
-				const courseId = props.attributes.id;
-				const { courses, isFetching } = getCourses( courseId );
-				let isFeatured;
-				let hasFeaturedImage;
-				if( courses ) {
-					const course = courses.find(c => c.id === courseId);
-
-					if( course ){
-						const courseFeatured = course.meta._course_featured;
-						hasFeaturedImage = course.featured_media || course.featured_media === 0;
-						isFeatured = courseFeatured === 'featured';
-					}
-					return (isFetching || ! isFeatured || hasFeaturedImage) ? <BlockListBlock { ...props } /> : <div { ...props } className="featured-category-wrapper">
-						<div className="featured-badge">Featured</div>
-						<BlockListBlock { ...props } />
-					</div>;
-				}
-			}
-		}
-
-		// if(props.name === 'core/post-featured-image') {
-		// 	const clientId = props.clientId;
-		// 	const elementByClientId = document.querySelector(`[data-block="${clientId}"]`);
-		// }
-
-		return <BlockListBlock { ...props } />;
-	}
-}
+addFilter(
+	'blocks.registerBlockType',
+	'sensei-lms/course-list-block',
+	addWrapperAroundFeaturedImageBlock
+);
 
 let isCourseListBlockSelected = false;
 
 const withQueryLoopPatternsAndSettingsHiddenForCourseList = ( BlockEdit ) => {
-
 	return ( props ) => {
-
 		const isQueryLoopBlock = 'core/query' === props.name;
 		const isCourseListBlock =
 			isQueryLoopBlock &&
@@ -246,12 +197,6 @@ addFilter(
 	'editor.BlockEdit',
 	'sensei-lms/course-list-block',
 	withQueryLoopPatternsAndSettingsHiddenForCourseList
-);
-
-addFilter(
-	'editor.BlockEdit',
-	'sensei-lms/course-categories',
-	addFeatureBadgeToTheCourseBlock
 );
 
 // Hide patterns control so only Grid view can be selected.

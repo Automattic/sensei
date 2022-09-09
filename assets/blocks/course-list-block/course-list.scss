@@ -7,6 +7,18 @@ $block: '.wp-block-sensei-lms-course-list';
 		margin: 0 0 1.618em;
 		padding: 0 0 25px;
 	}
+	.featured-course-wrapper{
+		position: relative ;
+		.course-list-featured-label{
+			position: absolute;
+			top: 5px;
+			left: 5px;
+			background-color: #1d2327;
+			color: #fff;
+			padding: 5px;
+			z-index: 999;
+		}
+	}
 
 	.wp-block-post-featured-image {
 		margin: 0 auto 1.618em;
