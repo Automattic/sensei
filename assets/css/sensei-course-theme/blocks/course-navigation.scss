@@ -1,5 +1,8 @@
-@import '../../shared/styles/collapsible-content';
+@import '../../../shared/styles/collapsible-content';
 
+@mixin text-gray() {
+	opacity: 0.7;
+}
 
 .editor-styles-wrapper .sensei-lms-course-navigation,
 .sensei-lms-course-navigation {

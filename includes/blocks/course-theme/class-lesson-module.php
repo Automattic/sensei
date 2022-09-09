@@ -41,6 +41,7 @@ class Lesson_Module {
 			'sensei-lms/course-theme-lesson-module',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}

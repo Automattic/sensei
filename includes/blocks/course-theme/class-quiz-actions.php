@@ -28,6 +28,7 @@ class Quiz_Actions {
 			'sensei-lms/quiz-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}

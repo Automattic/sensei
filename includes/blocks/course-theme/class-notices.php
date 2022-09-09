@@ -27,6 +27,7 @@ class Notices {
 			'sensei-lms/course-theme-notices',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}

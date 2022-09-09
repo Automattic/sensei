@@ -26,6 +26,7 @@ class Exit_Course {
 			'sensei-lms/exit-course',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}

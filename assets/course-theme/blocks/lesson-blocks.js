@@ -34,9 +34,9 @@ export default [
 		),
 		edit() {
 			return (
-				<h2 className="wp-block-sensei-lms-course-title">
+				<div className="wp-block-sensei-lms-course-title">
 					{ __( 'Course Title', 'sensei-lms' ) }
-				</h2>
+				</div>
 			);
 		},
 	},
@@ -79,9 +79,12 @@ export default [
 	},
 	{
 		...meta,
-		title: __( 'Sidebar Toggle', 'sensei-lms' ),
+		title: __( 'Sidebar Menu Toggle', 'sensei-lms' ),
 		name: 'sensei-lms/sidebar-toggle-button',
-		description: __( 'Toggle the Learning Mode sidebar.', 'sensei-lms' ),
+		description: __(
+			'Turn the Sidebar block into an overlay menu on mobile screens.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme__sidebar-toggle">

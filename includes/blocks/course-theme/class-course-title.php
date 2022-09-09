@@ -27,6 +27,7 @@ class Course_Title {
 			'sensei-lms/course-title',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}

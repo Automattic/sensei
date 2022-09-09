@@ -26,6 +26,7 @@ class Prev_Next_Lesson {
 			'sensei-lms/course-theme-prev-next-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}

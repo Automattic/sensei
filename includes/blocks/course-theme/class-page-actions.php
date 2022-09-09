@@ -26,6 +26,7 @@ class Page_Actions {
 			'sensei-lms/page-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			]
 		);
 	}
