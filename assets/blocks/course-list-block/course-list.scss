@@ -24,14 +24,14 @@ $block: '.wp-block-sensei-lms-course-list';
 		}
 	}
 
-	.featured-badge {
+	.sensei-lms-featured-badge {
 		display: none;
 	}
 
 	.featured-image-wrapper {
 		position: relative;
 
-		.featured-badge {
+		.sensei-lms-featured-badge {
 			display: block;
 			position: absolute;
 			top: 10px;
@@ -44,7 +44,7 @@ $block: '.wp-block-sensei-lms-course-list';
 		display: flex;
 		flex-direction: row;
 
-		.featured-badge {
+		.sensei-lms-featured-badge {
 			display: block;
 			margin-right: 10px;
 			margin-top: 10px;

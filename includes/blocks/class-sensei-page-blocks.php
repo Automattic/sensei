@@ -41,7 +41,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			return $block_content;
 		}
 
-		return '<div class="featured-image-wrapper"><div class="featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
+		return '<div class="featured-image-wrapper"><div class="sensei-lms-featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
 	}
 
 	/**
@@ -70,7 +70,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			return $block_content;
 		}
 
-		return '<div class="featured-category-wrapper"><div class="featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
+		return '<div class="featured-category-wrapper"><div class="sensei-lms-featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
 	}
 
 	/**
