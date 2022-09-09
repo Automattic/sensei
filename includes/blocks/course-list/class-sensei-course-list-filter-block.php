@@ -59,7 +59,12 @@ class Sensei_Course_List_Filter_Block {
 	 * @return string
 	 */
 	public function render_block( $attributes, $content, WP_Block $block ): string {
-		if ( ! isset( $attributes['types'] ) || ! is_array( $attributes['types'] ) ) {
+		if (
+			! isset( $attributes['types'] ) ||
+			! is_array( $attributes['types'] ) ||
+			! isset( $block->context['queryId'] ) ||
+			'course' !== $block->context['query']['postType']
+		) {
 			return '';
 		}
 		$content = '';

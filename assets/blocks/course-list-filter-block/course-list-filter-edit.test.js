@@ -85,6 +85,7 @@ describe( 'CourseListFilterBlockEdit', () => {
 				clientId="some-client-id"
 				attributes={ { types: [ 'activity' ] } }
 				context={ { query: { postType: 'post' } } }
+				setAttributes={ jest.fn() }
 			/>
 		);
 
