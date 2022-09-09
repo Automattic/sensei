@@ -6,6 +6,10 @@ import { registerBlockVariation } from '@wordpress/blocks';
 import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
 import { addFilter } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies
+ */
 import FeaturedLabel from './featured-label';
 
 export const registerCourseListBlock = () => {
@@ -121,6 +125,12 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
+/**
+ * Add a HOC to a featured image block.
+ *
+ * @param {Object} settings Block settings.
+ * @param {string} name     Block name.
+ */
 function addWrapperAroundFeaturedImageBlock( settings, name ) {
 	if ( 'core/post-featured-image' !== name ) {
 		return settings;
