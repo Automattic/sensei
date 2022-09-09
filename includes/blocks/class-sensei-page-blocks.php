@@ -59,8 +59,9 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		if ( 'sensei-lms/course-categories' !== $block_parent['blockName'] ) {
 			return $block_content;
 		}
+
 		// Add featured course badge to a featured image block.
-		if ( empty( $block_content ) || 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
+		if ( 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
 			return $block_content;
 		}
 
