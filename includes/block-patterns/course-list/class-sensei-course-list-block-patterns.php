@@ -43,45 +43,50 @@ class Sensei_Course_List_Block_Patterns {
 				'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":6},"displayLayout":{"type":"list"},"layout":{"inherit":true}} -->
 					<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
 						<!-- wp:post-template -->
-							<!-- wp:post-featured-image {"isLink":true,"align":"center", "withInstanceId": true} /-->
-							<!-- wp:columns -->
-								<div class="wp-block-columns">
 
-									<!-- wp:column {"width":"66.66%"} -->
-										<div class="wp-block-column" style="flex-basis:66.66%">
+							<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
+								<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
 
-											<!-- wp:sensei-lms/course-categories /-->
+									<!-- wp:post-featured-image {"isLink":true,"align":"center"} /-->
+									<!-- wp:columns -->
+										<div class="wp-block-columns">
 
-											<!-- wp:post-title {"textAlign":"left","isLink":true} /-->
+											<!-- wp:column {"width":"66.66%"} -->
+												<div class="wp-block-column" style="flex-basis:66.66%">
+													<!-- wp:sensei-lms/course-categories /-->
 
-											<!-- wp:post-author {"textAlign":"left"} /-->
+													<!-- wp:post-title {"textAlign":"left","isLink":true} /-->
 
-											<!-- wp:post-excerpt {"textAlign":"left"} /-->
+													<!-- wp:post-author {"textAlign":"left"} /-->
 
-											<!-- wp:sensei-lms/course-progress /-->
+													<!-- wp:post-excerpt {"textAlign":"left"} /-->
 
+													<!-- wp:sensei-lms/course-progress /-->
+												</div>
+											<!-- /wp:column -->
+
+											<!-- wp:column {"width":"33.33%"} -->
+												<div class="wp-block-column" style="flex-basis:33.33%">
+													<!-- wp:sensei-lms/course-actions -->
+														<!-- wp:sensei-lms/button-take-course {"align":"right"} -->
+															<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link">Start Course</button></div>
+														<!-- /wp:sensei-lms/button-take-course -->
+
+														<!-- wp:sensei-lms/button-continue-course {"align":"right"} -->
+															<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><a class="wp-block-button__link">Continue</a></div>
+														<!-- /wp:sensei-lms/button-continue-course -->
+
+														<!-- wp:sensei-lms/button-view-results {"align":"right","className":"is-style-default"} -->
+															<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><a class="wp-block-button__link">Visit Results</a></div>
+														<!-- /wp:sensei-lms/button-view-results -->
+													<!-- /wp:sensei-lms/course-actions -->
+												</div>
+											<!-- /wp:column -->
 										</div>
-									<!-- /wp:column -->
+									<!-- /wp:columns -->
 
-									<!-- wp:column {"width":"33.33%"} -->
-										<div class="wp-block-column" style="flex-basis:33.33%">
-											<!-- wp:sensei-lms/course-actions -->
-												<!-- wp:sensei-lms/button-take-course {"align":"right"} -->
-													<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link">Start Course</button></div>
-												<!-- /wp:sensei-lms/button-take-course -->
-
-												<!-- wp:sensei-lms/button-continue-course {"align":"right"} -->
-													<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><a class="wp-block-button__link">Continue</a></div>
-												<!-- /wp:sensei-lms/button-continue-course -->
-
-												<!-- wp:sensei-lms/button-view-results {"align":"right","className":"is-style-default"} -->
-													<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><a class="wp-block-button__link">Visit Results</a></div>
-												<!-- /wp:sensei-lms/button-view-results -->
-											<!-- /wp:sensei-lms/course-actions -->
-										</div>
-									<!-- /wp:column -->
 								</div>
-							<!-- /wp:columns -->
+							<!-- /wp:group -->
 						<!-- /wp:post-template -->' .
 					$pagination .
 					'</div>
@@ -96,37 +101,44 @@ class Sensei_Course_List_Block_Patterns {
 					'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":12},"displayLayout":{"type":"flex","columns":3},"align":"wide","layout":{"inherit":true}} -->
 						<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view alignwide">
 							<!-- wp:post-template {"align":"wide"} -->
-								<!-- wp:post-featured-image {"isLink":true,"align":"center","lock":{"move": true}, "withInstanceId": true} /-->
 
-								<!-- wp:sensei-lms/course-categories {"lock":{"move": true}} /-->
+								<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"},"blockGap":"2px"},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
+									<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px">
 
-								<!-- wp:post-title {"textAlign":"left","isLink":true,"lock":{"move": true}} /-->
+										<!-- wp:post-featured-image {"isLink":true,"align":"center","lock":{"move": true}} /-->
 
-								<!-- wp:post-author {"textAlign":"left","lock":{"move": true}} /-->
+										<!-- wp:sensei-lms/course-categories {"lock":{"move": true}} /-->
 
-								<!-- wp:post-excerpt {"textAlign":"left","lock":{"move": true}} /-->
+										<!-- wp:post-title {"textAlign":"left","isLink":true,"lock":{"move": true}} /-->
 
-								<!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
+										<!-- wp:post-author {"textAlign":"left","lock":{"move": true}} /-->
 
-								<!-- wp:sensei-lms/course-actions {"lock":{"move": true}} -->
-									<!-- wp:sensei-lms/button-take-course {"align":"full"} -->
-										<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
-											<button class="wp-block-button__link">Start Course</button>
-										</div>
-									<!-- /wp:sensei-lms/button-take-course -->
+										<!-- wp:post-excerpt {"textAlign":"left","lock":{"move": true}} /-->
 
-									<!-- wp:sensei-lms/button-continue-course {"align":"full"} -->
-										<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
-											<a class="wp-block-button__link">Continue</a>
-										</div>
-									<!-- /wp:sensei-lms/button-continue-course -->
+										<!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
 
-									<!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default"} -->
-										<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
-											<a class="wp-block-button__link">Visit Results</a>
-										</div>
-									<!-- /wp:sensei-lms/button-view-results -->
-								<!-- /wp:sensei-lms/course-actions -->
+										<!-- wp:sensei-lms/course-actions {"lock":{"move": true}} -->
+											<!-- wp:sensei-lms/button-take-course {"align":"full"} -->
+												<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
+													<button class="wp-block-button__link">Start Course</button>
+												</div>
+											<!-- /wp:sensei-lms/button-take-course -->
+
+											<!-- wp:sensei-lms/button-continue-course {"align":"full"} -->
+												<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
+													<a class="wp-block-button__link">Continue</a>
+												</div>
+											<!-- /wp:sensei-lms/button-continue-course -->
+
+											<!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default"} -->
+												<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full">
+													<a class="wp-block-button__link">Visit Results</a>
+												</div>
+											<!-- /wp:sensei-lms/button-view-results -->
+										<!-- /wp:sensei-lms/course-actions -->
+
+									</div>
+								<!-- /wp:group -->
 
 							<!-- /wp:post-template -->' .
 						$pagination .

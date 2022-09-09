@@ -159,12 +159,19 @@ class Player {
 	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
 	 */
 	on( eventName, callback ) {
-		// Check supported events.
-		if ( eventName !== 'timeupdate' ) {
+		// Supported events.
+		const events = {
+			timeupdate: this.onTimeUpdate.bind( this ),
+			ended: this.onEnded.bind( this ),
+		};
+
+		const event = events[ eventName ];
+
+		if ( ! event ) {
 			throw new Error( `Event ${ eventName } not supported` );
 		}
 
-		return this.onTimeUpdate( callback );
+		return event( callback );
 	}
 
 	/**
@@ -187,6 +194,21 @@ class Player {
 				transformedCallback,
 				this.w
 			)
+		);
+	}
+
+	/**
+	 * Wrapper to the `onEnded` event from the adapters.
+	 *
+	 * @access private
+	 *
+	 * @param {Function} callback Listener callback.
+	 *
+	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
+	 */
+	onEnded( callback ) {
+		return this.getPlayer().then( ( player ) =>
+			this.getAdapter().onEnded( player, callback, this.w )
 		);
 	}
 }

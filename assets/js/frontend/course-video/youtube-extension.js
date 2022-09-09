@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { registerVideo } from './video-blocks-manager';
+import Player from '../../../shared/helpers/player';
 
 /**
  * Initializes the YouTube video block player.
@@ -9,56 +10,29 @@ import { registerVideo } from './video-blocks-manager';
  * @param {HTMLElement} iframe The iframe element of the YouTube video block.
  */
 const initYouTubePlayer = ( iframe ) => {
-	let onVideoEnd = () => {};
+	const player = new Player( iframe );
 
-	const player = YT.get( iframe.id ) || new YT.Player( iframe );
+	// iframe.src should be in the format:
+	// https://www.youtube.com/embed/VIDEO_ID?other-query-parameters=and-their-values&origin=https://example.com
+	const videoId = iframe.src.split( '?' )[ 0 ].split( '/' ).pop();
+	// We compute the URL like this to allow backward compatibility with the value returned from
+	// nativeYoutubePlayer.getVideoUrl() - so we just add the videoId to the prefix used by YouTube for videos.
+	const url = 'https://www.youtube.com/watch?v=' + videoId;
 
-	const onReady = () => {
-		registerVideo( {
-			pauseVideo: player.pauseVideo.bind( player ),
-			registerVideoEndHandler: ( cb ) => {
-				onVideoEnd = cb;
-			},
-			url: player.getVideoUrl(),
-			blockElement: iframe.closest( 'figure' ),
-		} );
-	};
-
-	if ( player.getDuration ) {
-		// Just in case it's called after the player is ready.
-		onReady();
-	} else {
-		player.addEventListener( 'onReady', onReady );
-	}
-
-	player.addEventListener( 'onStateChange', ( event ) => {
-		const playerStatus = event.data;
-		if ( playerStatus === YT.PlayerState.ENDED ) {
-			onVideoEnd();
-		}
+	registerVideo( {
+		pauseVideo: () => {
+			player.pause();
+		},
+		registerVideoEndHandler: ( cb ) => {
+			player.on( 'ended', cb );
+		},
+		url,
+		blockElement: iframe.closest( 'figure' ),
 	} );
 };
 
-// For YouTube extension, we need to make sure both window.load
-// and window.YouTubeIframeAPIReady are fired.
-let windowLoaded = false;
-let youtubeIframeReady = false;
-const init = () => {
-	if ( windowLoaded && youtubeIframeReady ) {
-		document
-			.querySelectorAll(
-				'.sensei-course-video-container.youtube-extension iframe'
-			)
-			.forEach( initYouTubePlayer );
-	}
-};
-
 export const initYouTubeExtension = () => {
-	windowLoaded = true;
-	init();
+	document
+		.querySelectorAll( '.wp-block-embed-youtube iframe' )
+		.forEach( initYouTubePlayer );
 };
-
-window.senseiYouTubeIframeAPIReady.then( () => {
-	youtubeIframeReady = true;
-	init();
-} );

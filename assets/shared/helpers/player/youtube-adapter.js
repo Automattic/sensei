@@ -162,3 +162,26 @@ export const onTimeupdate = ( player, callback, w = window ) => {
 		player.removeEventListener( 'onStateChange', onEnded );
 	};
 };
+
+/**
+ * Add an ended event listener to the player.
+ *
+ * @param {Object}   player   The YouTube player instance.
+ * @param {Function} callback Listener callback.
+ * @param {Window}   w        A custom window.
+ *
+ * @return {Function} The function to unsubscribe the event.
+ */
+export const onEnded = ( player, callback, w = window ) => {
+	const transformedCallback = () => {
+		if ( player.getPlayerState() === w.YT.PlayerState.ENDED ) {
+			callback();
+		}
+	};
+
+	player.addEventListener( 'onStateChange', transformedCallback );
+
+	return () => {
+		player.removeEventListener( 'onStateChange', transformedCallback );
+	};
+};
