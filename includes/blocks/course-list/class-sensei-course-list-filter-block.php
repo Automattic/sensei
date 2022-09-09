@@ -72,6 +72,10 @@ class Sensei_Course_List_Filter_Block {
 
 		$wrapper_attributes = get_block_wrapper_attributes();
 
+		if ( empty( $content ) ) {
+			return '';
+		}
+
 		return sprintf(
 			'<div %s>%s</div>',
 			$wrapper_attributes,
