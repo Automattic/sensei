@@ -153,7 +153,7 @@ function addWrapperAroundFeaturedImageBlock( settings, name ) {
 		...settings,
 		edit: ( props ) => {
 			if ( props.context.postType !== 'course' ) {
-				return <BlockEdit { ...props } />;
+				return null;
 			}
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const isInsideQueryLoop = useSelect( ( mapSelect ) => {
@@ -175,7 +175,7 @@ function addWrapperAroundFeaturedImageBlock( settings, name ) {
 			} );
 
 			if ( ! isInsideQueryLoop ) {
-				return <BlockEdit { ...props } />;
+				<BlockEdit { ...props } />;
 			}
 
 			return (
