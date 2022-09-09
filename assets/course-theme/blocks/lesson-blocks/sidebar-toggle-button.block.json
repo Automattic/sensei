@@ -2,5 +2,12 @@
   "name": "sensei-lms/sidebar-toggle-button",
   "category": "theme",
   "apiVersion": 2,
-  "supports": {}
+  "supports": {
+    "align": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    }
+  }
 }

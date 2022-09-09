@@ -2,5 +2,16 @@
   "name": "sensei-lms/course-theme-lesson-module",
   "category": "theme",
   "apiVersion": 2,
-  "supports": {}
+  "supports": {
+    "align": true,
+    "color": {
+      "gradients": true,
+      "link": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    }
+  }
 }

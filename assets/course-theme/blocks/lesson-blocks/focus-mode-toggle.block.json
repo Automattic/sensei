@@ -2,5 +2,8 @@
   "name": "sensei-lms/focus-mode-toggle",
   "category": "theme",
   "apiVersion": 2,
-  "supports": {}
+  "supports": {
+    "align": true,
+    "color": true
+  }
 }
