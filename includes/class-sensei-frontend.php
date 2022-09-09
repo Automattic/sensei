@@ -744,39 +744,34 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
-					// Add user to course.
-					$course_metadata = array(
-						'start'    => current_time( 'mysql' ),
-						'percent'  => 0, // No completed lessons yet.
-						'complete' => 0,
-					);
-					$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'in-progress', $course_metadata );
-
-					if ( $activity_logged ) {
-						// Get all course lessons.
-						$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
-						// Mark all quiz user meta lessons as complete.
-						foreach ( $course_lesson_ids as $lesson_item_id ) {
-							// Mark lesson as complete.
-							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, true );
-						}
-
-						// Update with final stats.
-						$course_metadata = array(
-							'percent'  => 100,
-							'complete' => count( $course_lesson_ids ),
-						);
-						$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'complete', $course_metadata );
-
-						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
-
-						// Success message.
-						$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
-							// translators: Placeholder is the Course title.
-							. sprintf( __( '%1$s marked as complete.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
-							. '</div></header>';
+					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
+					if ( null === $course_progress ) {
+						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 					}
 
+					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
+					foreach ( $course_lesson_ids as $lesson_id ) {
+						Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+					}
+
+					$course_progress->complete();
+					Sensei()->course_progress_repository->save( $course_progress );
+
+					$course_metadata = [
+						'percent'  => 100,
+						'complete' => count( $course_lesson_ids ),
+					];
+					foreach ( $course_metadata as $key => $value ) {
+						update_comment_meta( $course_progress->get_id(), $key, $value );
+					}
+
+					do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
+
+					// Success message.
+					$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
+						// translators: Placeholder is the Course title.
+						. sprintf( __( '%1$s marked as complete.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
+						. '</div></header>';
 					break;
 
 				default:

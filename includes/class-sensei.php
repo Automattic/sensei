@@ -1,4 +1,12 @@
 <?php
+
+use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -220,6 +228,27 @@ class Sensei_Main {
 	 * @var Sensei_Blocks
 	 */
 	public $blocks;
+
+	/**
+	 * Course progress repository.
+	 *
+	 * @var Course_Progress_Repository_Interface
+	 */
+	public $course_progress_repository;
+
+	/**
+	 * Lesson progress repository.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	public $lesson_progress_repository;
+
+	/**
+	 * Quiz progress repository.
+	 *
+	 * @var Quiz_Progress_Repository_Interface
+	 */
+	public $quiz_progress_repository;
 
 	/**
 	 * Constructor method.
@@ -472,6 +501,11 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
+
+		// Student progress repositories.
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
 	}
 
 	/**
