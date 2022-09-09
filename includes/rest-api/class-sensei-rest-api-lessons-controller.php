@@ -52,10 +52,10 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 			'course',
 			'_course_featured',
 			[
-				'show_in_rest'      => true,
-				'single'            => true,
-				'type'              => 'string',
-				'auth_callback'     => [ $this, 'auth_callback' ],
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'auth_callback' => [ $this, 'auth_callback' ],
 			]
 		);
 
