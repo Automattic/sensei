@@ -7,9 +7,9 @@ $block: '.wp-block-sensei-lms-course-list';
 		margin: 0 0 1.618em;
 		padding: 0 0 25px;
 	}
-	.featured-course-wrapper{
-		position: relative ;
-		.course-list-featured-label{
+	.featured-course-wrapper__featured-image {
+		position: relative;
+		.course-list-featured-label__featured-image{
 			position: absolute;
 			top: 5px;
 			left: 5px;
@@ -17,6 +17,23 @@ $block: '.wp-block-sensei-lms-course-list';
 			color: #fff;
 			padding: 5px;
 			z-index: 999;
+		}
+	}
+
+	.featured-course-wrapper__course-categories {
+		display: flex;
+		flex-direction: row;
+		.course-list-featured-label__course-categories{
+			display: block;
+			margin-right: 10px;
+			height: max-content;
+			margin-top: 10px;
+			background-color: #1d2327;
+			padding: 3px 6px;
+			text-decoration: none;
+			border-radius: 2px;
+			white-space: nowrap;
+			font-size: var(--wp--preset--font-size--small) !important;
 		}
 	}
 

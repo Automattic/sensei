@@ -141,7 +141,10 @@ function addWrapperAroundFeaturedImageBlock( settings, name ) {
 		...settings,
 		edit: ( props ) => {
 			return (
-				<FeaturedLabel postId={ props.context.postId }>
+				<FeaturedLabel
+					postId={ props.context.postId }
+					isFeaturedImage={ true }
+				>
 					<BlockEdit { ...props } />
 				</FeaturedLabel>
 			);
@@ -154,6 +157,39 @@ addFilter(
 	'blocks.registerBlockType',
 	'sensei-lms/course-list-block',
 	addWrapperAroundFeaturedImageBlock
+);
+
+/**
+ * Add a HOC to a featured course categories block.
+ *
+ * @param {Object} settings Block settings.
+ * @param {string} name     Block name.
+ */
+const addWrapperAroundCourseCategoriesBlock = ( settings, name ) => {
+	if ( 'sensei-lms/course-categories' !== name ) {
+		return settings;
+	}
+
+	const BlockEdit = settings.edit;
+	settings.attributes.align = false;
+
+	settings = {
+		...settings,
+		edit: ( props ) => {
+			return (
+				<FeaturedLabel postId={ props.context.postId }>
+					<BlockEdit { ...props } />
+				</FeaturedLabel>
+			);
+		},
+	};
+	return settings;
+};
+
+addFilter(
+	'blocks.registerBlockType',
+	'sensei-lms/course-categories',
+	addWrapperAroundCourseCategoriesBlock
 );
 
 let isCourseListBlockSelected = false;
