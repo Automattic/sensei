@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
-import { select, subscribe } from '@wordpress/data';
+import { select, subscribe, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -152,6 +152,32 @@ function addWrapperAroundFeaturedImageBlock( settings, name ) {
 	settings = {
 		...settings,
 		edit: ( props ) => {
+			if ( props.context.postType !== 'course' ) {
+				return null;
+			}
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const isInsideQueryLoop = useSelect( ( mapSelect ) => {
+				const {
+					getBlockParentsByBlockName,
+					getBlockAttributes,
+				} = mapSelect( 'core/block-editor' );
+
+				const parentBlocks = getBlockParentsByBlockName(
+					props.clientId,
+					'core/query'
+				);
+				return parentBlocks.some( ( blockId ) => {
+					const parentAttributes = getBlockAttributes( blockId );
+					return parentAttributes?.className?.includes(
+						'wp-block-sensei-lms-course-list'
+					);
+				} );
+			} );
+
+			if ( ! isInsideQueryLoop ) {
+				<BlockEdit { ...props } />;
+			}
+
 			return (
 				<FeaturedLabel
 					postId={ props.context.postId }

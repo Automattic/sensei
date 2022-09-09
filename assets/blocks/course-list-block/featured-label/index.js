@@ -20,7 +20,8 @@ const FeaturedLabel = ( { postId, isFeaturedImage, children } ) => {
 		'featured_media',
 		postId
 	);
-	const isFeatured = !! meta._course_featured;
+
+	const isFeatured = !! meta?._course_featured;
 	const hasImage = media > 0;
 
 	const wrapperClassName = isFeaturedImage
