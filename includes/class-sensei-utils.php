@@ -373,7 +373,7 @@ class Sensei_Utils {
 	 *
 	 * @return boolean
 	 */
-	public static function sensei_grade_quiz( int $quiz_id = 0, float $grade = 0, int $user_id = 0, string $quiz_grade_type = 'auto' ): bool {
+	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ): bool {
 		$user_id = $user_id ? $user_id : get_current_user_id();
 
 		if ( ! $quiz_id || ! $user_id ) {
