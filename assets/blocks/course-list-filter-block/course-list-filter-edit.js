@@ -110,6 +110,7 @@ function CourseListFilter( {
 
 	if ( 'course' !== query?.postType ) {
 		setAttributes( {
+			align: false,
 			className: 'wp-block-sensei-lms-course-list-filter__warning',
 		} );
 		return (
