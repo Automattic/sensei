@@ -46,7 +46,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * A function to add a course Featured course badge to the course categories block.
 	 *
-	 * @access public
+	 * @access private
 	 * @since $$next-version$$
 	 *
 	 * @param string   $block_content This is block content.
