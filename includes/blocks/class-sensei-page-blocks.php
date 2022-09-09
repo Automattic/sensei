@@ -19,10 +19,23 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	public function __construct() {
 		parent::__construct( [ 'page' ] );
 
-		add_filter( 'render_block_core/post-featured-image', [ $this, 'add_a_badge'], 10, 3 );
+		add_filter( 'render_block_core/post-featured-image', [ $this, 'add_badge' ], 10, 3 );
 		add_filter( 'render_block', array( $this, 'add_course_featured_badge' ), 11, 3 );
 	}
-	public function add_a_badge( string $block_content, array $block, WP_Block $instance ) {
+
+	/**
+	 * Function to add a Featured Course badge to block.
+	 *
+	 * @access private
+	 * @since $$next-version$$
+	 *
+	 * @param string   $block_content Block content.
+	 * @param array    $block Block.
+	 * @param WP_Block $instance Block instance.
+	 *
+	 * @return string
+	 */
+	public function add_badge( string $block_content, array $block, WP_Block $instance ) {
 		// Add featured course badge to a featured image block.
 		if ( empty( $block_content ) || 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
 			return $block_content;
@@ -31,19 +44,19 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	}
 
 	/**
-	 * A function to add a course featured badge to the course list.
+	 * A function to add a course Featured course badge to the course categories block.
 	 *
 	 * @access public
 	 * @since $$next-version$$
 	 *
-	 * @param string $block_content This is block content.
-	 * @param object $block_parent This is block parent.
+	 * @param string   $block_content This is block content.
+	 * @param object   $block_parent This is block parent.
+	 * @param WP_Block $instance Block instance.
 	 *
 	 * @return string $block_content block content.
 	 */
-	public function add_course_featured_badge( $block_content, $block_parent, WP_Block $instance  ): string
-	{
-		if('sensei-lms/course-categories' !== $block_parent['blockName']) {
+	public function add_course_featured_badge( $block_content, $block_parent, WP_Block $instance ): string {
+		if ( 'sensei-lms/course-categories' !== $block_parent['blockName'] ) {
 			return $block_content;
 		}
 		// Add featured course badge to a featured image block.
@@ -51,7 +64,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			return $block_content;
 		}
 
-		if(get_post_meta( $instance->context['postId'], '_thumbnail_id')) {
+		if ( get_post_meta( $instance->context['postId'], '_thumbnail_id' ) ) {
 			return $block_content;
 		}
 
