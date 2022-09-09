@@ -10,6 +10,20 @@
  */
 class Sensei_Settings_Test extends WP_UnitTestCase {
 	/**
+	 * Tracking original request method.
+	 *
+	 * @var string
+	 */
+	protected $original_request_method;
+
+	/**
+	 * Tracking original screen ID.
+	 *
+	 * @var string
+	 */
+	protected $original_screen;
+
+	/**
 	 * Set up for tests.
 	 */
 	public function setUp() {
