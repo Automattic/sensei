@@ -1,13 +1,14 @@
 /**
  * WordPress dependencies
  */
+import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { customizeUrl, inputName, formId } from './data';
+import { customizeUrl, inputName, formId, tabId } from './data';
 
 /**
  * Renders the template action buttons.
@@ -21,6 +22,17 @@ import { customizeUrl, inputName, formId } from './data';
  */
 export const TemplateActions = ( props ) => {
 	const { upsell, name, isActive } = props;
+
+	// Update the _wp_http_referer so it opens the current settings
+	// tab after page refresh.
+	const handleSubmit = useCallback( () => {
+		const referrerInput = document.querySelector(
+			`#${ formId } input[name="_wp_http_referer"]`
+		);
+		const redirectUrl = referrerInput.getAttribute( 'value' );
+		referrerInput.setAttribute( 'value', `${ redirectUrl }#${ tabId }` );
+	}, [] );
+
 	return (
 		<>
 			{ upsell && (
@@ -36,6 +48,7 @@ export const TemplateActions = ( props ) => {
 					value={ name }
 					name={ inputName }
 					form={ formId }
+					onClick={ handleSubmit }
 				>
 					{ __( 'Activate', 'sensei-lms' ) }
 				</Button>
