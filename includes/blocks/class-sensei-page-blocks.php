@@ -40,7 +40,8 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		if ( empty( $block_content ) || 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
 			return $block_content;
 		}
-		return '<div class="featured-image-wrapper"><div class="featured-badge">Featured</div>' . $block_content . '</div>';
+
+		return '<div class="featured-image-wrapper"><div class="featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
 	}
 
 	/**
@@ -69,7 +70,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			return $block_content;
 		}
 
-		return '<div class="featured-category-wrapper"><div class="featured-badge">Featured</div>' . $block_content . '</div>';
+		return '<div class="featured-category-wrapper"><div class="featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
 	}
 
 	/**
