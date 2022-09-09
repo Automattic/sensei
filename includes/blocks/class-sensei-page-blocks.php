@@ -36,6 +36,9 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * @return string
 	 */
 	public function add_badge( string $block_content, array $block, WP_Block $instance ) {
+		if ( ! isset( $instance->context['postId'] ) ) {
+			return $block_content;
+		}
 		// Add featured course badge to a featured image block.
 		if ( empty( $block_content ) || 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
 			return $block_content;
@@ -57,6 +60,11 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * @return string $block_content block content.
 	 */
 	public function add_course_featured_badge( $block_content, $block_parent, WP_Block $instance ): string {
+
+		if ( ! isset( $instance->context['postId'] ) ) {
+			return $block_content;
+		}
+
 		if ( 'sensei-lms/course-categories' !== $block_parent['blockName'] ) {
 			return $block_content;
 		}
