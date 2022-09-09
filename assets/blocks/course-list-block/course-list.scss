@@ -18,6 +18,10 @@ $block: '.wp-block-sensei-lms-course-list';
 		padding: 0 0 25px;
 	}
 
+	select {
+		background-position-y: center;
+	}
+
 	.wp-block-post-template {
 		.wp-block-post-featured-image {
 			margin: 0 auto 1.618em;
