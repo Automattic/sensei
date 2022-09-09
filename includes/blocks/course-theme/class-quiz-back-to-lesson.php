@@ -19,14 +19,21 @@ use \Sensei_Blocks;
  */
 class Quiz_Back_To_Lesson {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/quiz-blocks/quiz-back-to-lesson.block.json';
+
+	/**
 	 * Quiz_Back_To_Lesson constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/quiz-back-to-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+			],
+			$block_json_path
 		);
 	}
 
@@ -40,6 +47,9 @@ class Quiz_Back_To_Lesson {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
+		$wrapper_attributes = get_block_wrapper_attributes();
+		//var_dump($attributes);
+		//var_dump($wrapper_attributes);exit;
 		if ( get_post_type() !== 'quiz' ) {
 			return '';
 		}

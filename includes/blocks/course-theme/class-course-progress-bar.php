@@ -19,14 +19,21 @@ use \Sensei_Blocks;
  */
 class Course_Progress_Bar {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-course-progress-bar.block.json';
+
+	/**
 	 * Course_Progress_Bar constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-course-progress-bar',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+			],
+			$block_json_path
 		);
 	}
 

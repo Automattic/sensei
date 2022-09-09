@@ -18,6 +18,10 @@ use \Sensei_Blocks;
  * Display the title of the current module for the current lesson.
  */
 class Lesson_Module {
+	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-lesson-module.block.json';
 
 	/**
 	 * Allowed HTML wrapper tag names for this block.
@@ -37,11 +41,13 @@ class Lesson_Module {
 	 * Lesson_Module constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-module',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+			],
+			$block_json_path
 		);
 	}
 

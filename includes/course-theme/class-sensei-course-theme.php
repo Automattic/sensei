@@ -89,8 +89,6 @@ class Sensei_Course_Theme {
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
-
-		add_action( 'setup_theme', [ $this, 'register_course_theme_blocks' ] );
 	}
 
 
@@ -535,19 +533,5 @@ class Sensei_Course_Theme {
 		}
 
 		return $content;
-	}
-
-	/**
-	 * Register all course theme custom blocks.
-	 *
-	 * @return void
-	 */
-	public function register_course_theme_blocks() {
-		$theme_blocks_path = Sensei()->assets->src_path( 'course-theme/blocks' );
-		$block_json_files  = glob( $theme_blocks_path . '/*/*.block.json' );
-
-		foreach ( $block_json_files as $json_file ) {
-			register_block_type_from_metadata( $json_file );
-		}
 	}
 }

@@ -19,14 +19,21 @@ use \Sensei_Blocks;
  */
 class Sidebar_Toggle_Button {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/sidebar-toggle-button.block.json';
+
+	/**
 	 * Sidebar_Toggle_Button constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/sidebar-toggle-button',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+			],
+			$block_json_path
 		);
 	}
 
