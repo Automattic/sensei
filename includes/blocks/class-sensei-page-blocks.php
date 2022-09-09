@@ -17,10 +17,17 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Sensei_Page_Blocks constructor.
 	 */
 	public function __construct() {
+		global $wp_version;
+
 		parent::__construct( [ 'page' ] );
 
 		add_filter( 'render_block_core/post-featured-image', [ $this, 'add_badge' ], 10, 3 );
-		add_filter( 'render_block', array( $this, 'add_course_featured_badge' ), 11, 3 );
+
+		$version = str_replace( '-src', '', $wp_version );
+
+		if ( ! version_compare( $version, '5.9', '<' ) ) {
+			add_filter( 'render_block', array( $this, 'add_course_featured_badge' ), 11, 3 );
+		}
 	}
 
 	/**
