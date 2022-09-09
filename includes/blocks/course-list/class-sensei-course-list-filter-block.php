@@ -15,18 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Course_List_Filter_Block {
 
 	/**
-	 * Instance of Sensei_Course_List_Categories_Filter class.
+	 * List of filter class instances.
 	 *
-	 * @var Sensei_Course_List_Categories_Filter
+	 * @var Sensei_Course_List_Filter_Abstract[]
 	 */
-	private $category_filter;
-
-	/**
-	 * Instance of Sensei_Course_List_Featured_Filter class.
-	 *
-	 * @var Sensei_Course_List_Featured_Filter
-	 */
-	private $featured_filter;
+	private $filters;
 
 	/**
 	 * Sensei_Course_List_Filter_Block constructor.
@@ -36,8 +29,11 @@ class Sensei_Course_List_Filter_Block {
 
 		add_filter( 'render_block_data', [ $this, 'filter_course_list' ] );
 
-		$this->category_filter = new Sensei_Course_List_Categories_Filter();
-		$this->featured_filter = new Sensei_Course_List_Featured_Filter();
+		$this->filters = [
+			new Sensei_Course_List_Categories_Filter(),
+			new Sensei_Course_List_Featured_Filter(),
+			new Sensei_Course_List_Student_Course_Filter(),
+		];
 	}
 
 	/**
@@ -63,23 +59,22 @@ class Sensei_Course_List_Filter_Block {
 	 * @return string
 	 */
 	public function render_block( $attributes, $content, WP_Block $block ): string {
-		if ( ! isset( $attributes['type'] ) ) {
+		if ( ! isset( $attributes['types'] ) || ! is_array( $attributes['types'] ) ) {
 			return '';
 		}
 		$content = '';
 
-		switch ( $attributes['type'] ) {
-			case 'categories':
-				$content = $this->category_filter->get_content( $block->context['queryId'] );
-				break;
-			case 'featured':
-				$content = $this->featured_filter->get_content( $block->context['queryId'] );
-				break;
-			case 'activity':
-			default:
-				break;
+		foreach ( $this->filters as $filter ) {
+			if ( in_array( $filter->get_filter_name(), $attributes['types'], true ) ) {
+				$content .= $filter->get_content( $block->context['queryId'] );
+			}
 		}
-		$wrapper_attributes = get_block_wrapper_attributes( [ 'class' => 'wp-sensei-course-list-block-filter' ] );
+
+		$wrapper_attributes = get_block_wrapper_attributes();
+
+		if ( empty( $content ) ) {
+			return '';
+		}
 
 		return sprintf(
 			'<div %s>%s</div>',
@@ -99,20 +94,23 @@ class Sensei_Course_List_Filter_Block {
 		if ( 'core/query' !== $parsed_block['blockName'] || 'course' !== $parsed_block['attrs']['query']['postType'] ) {
 			return $parsed_block;
 		}
-		$category_filtered_ids = $this->category_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
-		$featured_filtered_ids = $this->featured_filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
 
 		if ( ! array_key_exists( 'exclude', $parsed_block['attrs']['query'] ) || ! is_array( $parsed_block['attrs']['query']['exclude'] ) ) {
 			$parsed_block['attrs']['query']['exclude'] = [];
 		}
+
 		// All the filtered course ids that need to be excluded are merged here.
 		// We are changing updating the attribute of the parent Query Loop block here
 		// Which will be provided to all the children using context. So no need update each child's (pagination, next page etc.) context
 		// separately.
 		$parsed_block['attrs']['query']['exclude'] = array_merge(
 			$parsed_block['attrs']['query']['exclude'],
-			$category_filtered_ids,
-			$featured_filtered_ids
+			...array_map(
+				function ( $filter ) use ( $parsed_block ) {
+					return $filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
+				},
+				$this->filters
+			)
 		);
 		return $parsed_block;
 	}
