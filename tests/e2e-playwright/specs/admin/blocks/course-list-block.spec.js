@@ -56,9 +56,9 @@ describe( 'Courses List Block', () => {
 		await postTypePage.gotToPreviewPage();
 
 		for ( const course of courses ) {
-			await expect( page.locator( `text='${ course.title }'` ) ).toBeVisible();
+			await expect( page.locator( `role=heading[name=${ course.title }]` ) ).toBeVisible();
 			await expect( page.locator( `text='${ course.excerpt }'` ) ).toBeVisible();
-			await expect( page.locator( `text='${ course.category }'` ) ).toBeVisible();
+			await expect( page.locator( `role=link[name='${ course.category }']` ) ).toBeVisible();
 		}
 
 		// It is possible to have more courses created by other test.
