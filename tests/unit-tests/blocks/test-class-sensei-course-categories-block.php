@@ -82,9 +82,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
 	public function testRenderBlock_Page_ReturnsEmptyString() {
-		$GLOBALS['post'] = (object) [
-			'post_type' => 'page',
-		];
+		$GLOBALS['post'] = $this->factory->post->create_and_get( [ 'post_name' => 'some post' ] );
 
 		$result = do_blocks( self::CONTENT );
 
