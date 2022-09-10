@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Submission_Comments_Repository class.
+ * File containing the Submission_Comments_Based_Repository class.
  *
  * @package sensei
  */
@@ -19,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Submission_Comments_Repository.
+ * Class Submission_Comments_Based_Repository.
  *
  * @since $$next-version$$
  */
-class Submission_Comments_Repository implements Submission_Repository_Interface {
+class Submission_Comments_Based_Repository implements Submission_Repository_Interface {
 	/**
 	 * Creates a new quiz submission.
 	 *

@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Grade_Comments_Repository class.
+ * File containing the Grade_Comments_Based_Repository class.
  *
  * @package sensei
  */
@@ -14,11 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Grade_Comments_Repository.
+ * Class Grade_Comments_Based_Repository.
  *
  * @since $$next-version$$
  */
-class Grade_Comments_Repository implements Grade_Repository_Interface {
+class Grade_Comments_Based_Repository implements Grade_Repository_Interface {
 	/**
 	 * Creates a new grade.
 	 *

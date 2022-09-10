@@ -23,6 +23,6 @@ class Submission_Repository_Factory {
 	 * @return Submission_Repository_Interface
 	 */
 	public function create(): Submission_Repository_Interface {
-		return new Submission_Comments_Repository();
+		return new Submission_Comments_Based_Repository();
 	}
 }

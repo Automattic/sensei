@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Answer_Comments_Repository class.
+ * File containing the Answer_Comments_Based_Repository class.
  *
  * @package sensei
  */
@@ -14,11 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Answer_Comments_Repository.
+ * Class Answer_Comments_Based_Repository.
  *
  * @since $$next-version$$
  */
-class Answer_Comments_Repository implements Answer_Repository_Interface {
+class Answer_Comments_Based_Repository implements Answer_Repository_Interface {
 	/**
 	 * Create a new answer.
 	 *

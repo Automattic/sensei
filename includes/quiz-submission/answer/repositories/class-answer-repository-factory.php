@@ -23,6 +23,6 @@ class Answer_Repository_Factory {
 	 * @return Answer_Repository_Interface
 	 */
 	public function create(): Answer_Repository_Interface {
-		return new Answer_Comments_Repository();
+		return new Answer_Comments_Based_Repository();
 	}
 }
