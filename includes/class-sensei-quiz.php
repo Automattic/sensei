@@ -161,10 +161,9 @@ class Sensei_Quiz {
 			}
 		}
 
-		$quiz      = get_post( $quiz_id );
-		$lesson_id = $quiz->post_parent;
+		$quiz = get_post( $quiz_id );
 
-		return $lesson_id;
+		return $quiz ? $quiz->post_parent : false;
 
 	}
 
