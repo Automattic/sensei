@@ -28,7 +28,7 @@ class Lesson_Module {
 	 *
 	 * @var array
 	 */
-	const ALLOWED_HTML_TAG_NAMES = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span' ];
+	const ALLOWED_HTML_TAG_NAMES = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span' );
 
 	/**
 	 * The default HTML tag name.
@@ -44,9 +44,9 @@ class Lesson_Module {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-module',
-			[
-				'render_callback' => [ $this, 'render' ],
-			],
+			array(
+				'render_callback' => array( $this, 'render' ),
+			),
 			$block_json_path
 		);
 	}
@@ -60,7 +60,7 @@ class Lesson_Module {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ): string {
+	public function render( array $attributes = array() ): string {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
 		if ( ! $lesson_id ) {
 			return '';
@@ -94,6 +94,6 @@ class Lesson_Module {
 			)
 		);
 
-		return sprintf('<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attr, $title );
+		return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attr, $title );
 	}
 }
