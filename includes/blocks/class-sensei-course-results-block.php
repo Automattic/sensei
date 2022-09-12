@@ -285,8 +285,8 @@ class Sensei_Course_Results_Block {
 		$section_content[] = esc_html( $item['title'] );
 		$section_content[] = '</span>';
 
-		$grade = Sensei()->quiz->get_user_quiz_grade( $item['id'], get_current_user_id() );
-		if ( $grade ) {
+		$grade = $this->get_lesson_grade( $item['id'] );
+		if ( null !== $grade ) {
 			$section_content[] = '<span class="wp-block-sensei-lms-course-results__lesson-score">';
 			$section_content[] = $grade . '%';
 			$section_content[] = '</span>';
@@ -296,6 +296,27 @@ class Sensei_Course_Results_Block {
 		$section_content[] = '</li>';
 
 		return implode( $section_content );
+	}
+
+	/**
+	 * Get the lesson grade.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 *
+	 * @return float|null
+	 */
+	private function get_lesson_grade( $lesson_id ): ?float {
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
+			return null;
+		}
+
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, get_current_user_id() );
+		if ( ! $quiz_submission ) {
+			return null;
+		}
+
+		return $quiz_submission->get_final_grade();
 	}
 
 	/**
