@@ -143,15 +143,24 @@ const hideUnnecessarySettingsForCourseList = () => {
  * @param {Object} settings Block settings.
  * @param {string} name     Block name.
  */
-function addWrapperAroundFeaturedImageBlock( settings, name ) {
+export function addWrapperAroundFeaturedImageBlock( settings, name ) {
 	if ( 'core/post-featured-image' !== name ) {
 		return settings;
 	}
+
 	const BlockEdit = settings.edit;
 
 	settings = {
 		...settings,
 		edit: ( props ) => {
+			const shouldWrap =
+				props.context?.postType === 'course' &&
+				!! props.context?.queryId;
+
+			if ( ! shouldWrap ) {
+				return <BlockEdit { ...props } />;
+			}
+
 			return (
 				<FeaturedLabel
 					postId={ props.context.postId }
