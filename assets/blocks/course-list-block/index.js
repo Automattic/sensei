@@ -186,7 +186,7 @@ addFilter(
  * @param {Object} settings Block settings.
  * @param {string} name     Block name.
  */
-const addWrapperAroundCourseCategoriesBlock = ( settings, name ) => {
+export function addWrapperAroundCourseCategoriesBlock( settings, name ) {
 	if ( 'sensei-lms/course-categories' !== name ) {
 		return settings;
 	}
@@ -197,6 +197,14 @@ const addWrapperAroundCourseCategoriesBlock = ( settings, name ) => {
 	settings = {
 		...settings,
 		edit: ( props ) => {
+			const shouldWrap =
+				props.context?.postType === 'course' &&
+				!! props.context?.queryId;
+
+			if ( ! shouldWrap ) {
+				return <BlockEdit { ...props } />;
+			}
+
 			return (
 				<FeaturedLabel postId={ props.context.postId }>
 					<BlockEdit { ...props } />
@@ -205,7 +213,7 @@ const addWrapperAroundCourseCategoriesBlock = ( settings, name ) => {
 		},
 	};
 	return settings;
-};
+}
 
 addFilter(
 	'blocks.registerBlockType',
