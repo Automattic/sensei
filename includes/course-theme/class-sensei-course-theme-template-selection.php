@@ -19,6 +19,40 @@ class Sensei_Course_Theme_Template_Selection {
 	const DEFAULT_TEMPLATE_NAME = 'default';
 
 	/**
+	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 */
+	private function __construct() {
+
+	}
+
+	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * Initialize the class.
+	 */
+	public function init() {
+		add_action( 'save_post', [ $this, 'maybe_set_block_template_name' ], 10, 3 );
+	}
+
+	/**
 	 * Returns the templates info.
 	 *
 	 * @return Sensei_Course_Theme_Template[]
@@ -157,6 +191,37 @@ class Sensei_Course_Theme_Template_Selection {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Get active LM template name.
+	 */
+	public static function get_active_template_name(): string {
+		return \Sensei()->settings->get( 'sensei_learning_mode_template' ) ?? self::DEFAULT_TEMPLATE_NAME;
+	}
+
+	/**
+	 * Sets the LM template name as a meta value for the custom LM template in the db.
+	 *
+	 * @param int     $post_id The id of the post saved.
+	 * @param WP_Post $post The instance of the post that was saved.
+	 * @param boolean $update Whether this was an update of the existing post or not.
+	 */
+	public function maybe_set_block_template_name( $post_id, $post, $update ) {
+		if (
+			// We set the template name meta only for wp_template post types.
+			'wp_template' !== $post->post_type ||
+
+			// We set the template name meta only for templates for lesson and quiz posts.
+			! in_array( $post->post_name, [ 'lesson', 'quiz' ], true )
+		) {
+			return;
+		}
+
+		$active_template_name = self::get_active_template_name();
+		$post->post_name      = $post->post_name . '___' . $active_template_name;
+
+		wp_update_post( $post );
 	}
 
 }
