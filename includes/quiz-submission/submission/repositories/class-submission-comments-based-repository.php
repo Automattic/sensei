@@ -121,7 +121,10 @@ class Submission_Comments_Based_Repository implements Submission_Repository_Inte
 			return [];
 		}
 
-		return explode( ',', $questions_asked_csv );
+		return array_map(
+			'intval',
+			explode( ',', $questions_asked_csv )
+		);
 	}
 
 	/**
