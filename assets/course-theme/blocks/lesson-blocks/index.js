@@ -28,7 +28,6 @@ import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
 
 const meta = {
 	category: 'theme',
-	supports: {},
 	attributes: {},
 	icon: {
 		src: <SenseiIcon width="20" height="20" />,

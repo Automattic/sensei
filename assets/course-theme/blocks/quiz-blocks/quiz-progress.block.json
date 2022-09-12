@@ -1,7 +1,6 @@
 {
   "name": "sensei-lms/quiz-progress",
   "category": "theme",
-  "apiVersion": 2,
   "supports": {
     "align": true,
     "color": true,

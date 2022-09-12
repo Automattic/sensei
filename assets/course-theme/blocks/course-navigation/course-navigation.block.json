@@ -1,13 +1,11 @@
 {
   "name": "sensei-lms/course-navigation",
   "category": "theme",
-  "apiVersion": 2,
   "supports": {
     "align": true,
     "color": {
       "gradients": true,
-      "link": true,
-      "background": false
+      "link": true
     },
     "spacing": {
       "margin": true,

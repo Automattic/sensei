@@ -1,7 +1,6 @@
 {
   "name": "sensei-lms/course-theme-lesson-actions",
   "category": "theme",
-  "apiVersion": 2,
   "supports": {
     "align": true,
     "color": {
