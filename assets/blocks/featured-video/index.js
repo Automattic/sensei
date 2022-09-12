@@ -2,15 +2,14 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks, BlockIcon } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
-import { video as icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-
 import metadata from './block.json';
+const FEATURED_VIDEO_TEMPLATE = [ [ 'core/video' ] ];
 const ALLOWED_BLOCKS = [
 	'core/embed',
 	'core/video',
@@ -24,35 +23,23 @@ export default {
 		'sensei-lms'
 	),
 	...metadata,
-	edit: ( { className, clientId } ) => {
+	edit: function EditBlock( { className, clientId } ) {
 		const innerBlockCount = useSelect(
 			( select ) =>
 				select( 'core/block-editor' ).getBlock( clientId ).innerBlocks
 		);
-
 		const appenderToUse = () => {
 			if ( innerBlockCount.length < 1 ) {
-				return (
-					<>
-						<div className="sensei-featured-video">
-							<BlockIcon icon={ icon } />
-							Featured Video
-						</div>
-						<legend className="sensei-featured-video-legend">
-							Add a featured video.
-						</legend>
-						<InnerBlocks.ButtonBlockAppender />
-					</>
-				);
+				return <InnerBlocks.ButtonBlockAppender />;
 			}
 			return false;
 		};
-
 		return (
 			<div className={ className }>
 				{
 					<InnerBlocks
 						allowedBlocks={ ALLOWED_BLOCKS }
+						template={ FEATURED_VIDEO_TEMPLATE }
 						renderAppender={ () => appenderToUse() }
 					/>
 				}
