@@ -1,0 +1,19 @@
+.wp-block-sensei-lms-featured-video {
+	border: 1px solid black;
+	padding: 20px;
+  }
+.sensei-featured-video {
+  display: flex;
+  align-items: center;
+  font-size: 18pt;
+  margin-bottom: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+.sensei-featured-video span {
+	margin-right: 1ch;
+}
+.sensei-featured-video-legend {
+	font-size: 11pt;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	margin: 10px 0px;
+}
