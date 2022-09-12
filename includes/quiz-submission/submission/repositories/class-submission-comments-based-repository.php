@@ -97,7 +97,7 @@ class Submission_Comments_Based_Repository implements Submission_Repository_Inte
 			$status_comment->comment_ID,
 			$quiz_id,
 			$user_id,
-			$final_grade ? $final_grade : null,
+			is_numeric( $final_grade ) ? $final_grade : null,
 			$created_at
 		);
 	}

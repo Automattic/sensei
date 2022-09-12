@@ -135,6 +135,24 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $this->export_submission( $submission ) );
 	}
 
+	public function testGet_WhenFinalGradeIsZero_ReturnsSubmissionWithZeroFinalGrade(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		$repository->create( $quiz_id, $user_id, 0 );
+
+		/* Act. */
+		$submission = $repository->get( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( 0.0, $submission->get_final_grade() );
+	}
+
 	public function testGetQuestionIds_WhenLessonStatusNotFound_ReturnsEmptyArray(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
