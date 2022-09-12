@@ -2,20 +2,23 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks, BlockIcon } from '@wordpress/block-editor';
-import { useSelect } from '@wordpress/data';
+import { useMemo } from '@wordpress/element';
+
+import {
+	InnerBlocks,
+	BlockIcon,
+	MediaPlaceholder,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
+import { createBlock } from '@wordpress/blocks';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { video as icon } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-
+import { createUpgradedEmbedBlock } from './embed-util';
 import metadata from './block.json';
-const ALLOWED_BLOCKS = [
-	'core/embed',
-	'core/video',
-	'sensei-pro/interactive-video',
-];
 
 export default {
 	title: __( 'Featured Video', 'sensei-lms' ),
@@ -24,62 +27,72 @@ export default {
 		'sensei-lms'
 	),
 	...metadata,
-	edit: ( { className, clientId } ) => {
-		const innerBlockCount = useSelect(
-			( select ) =>
-				select( 'core/block-editor' ).getBlock( clientId ).innerBlocks
-		);
+	edit: function EditVideoBlock( { clientId } ) {
+		const videoBlock = useSelect( ( select ) =>
+			select( 'core/block-editor' ).getBlocks( clientId )
+		)?.[ 0 ];
 
-		const appenderToUse = () => {
-			if ( innerBlockCount.length < 1 ) {
-				return (
-					<>
-						<div className="sensei-featured-video">
-							<BlockIcon icon={ icon } />
-							Featured Video
-						</div>
-						<legend className="sensei-featured-video-legend">
-							Add a featured video.
-						</legend>
-						<InnerBlocks.ButtonBlockAppender />
-					</>
-				);
-			}
-			return false;
+		const { insertBlock } = useDispatch( blockEditorStore );
+
+		const addVideoBlock = ( attrs ) => {
+			const newVideoBlock = createBlock( 'core/video', attrs, [] );
+			insertBlock( newVideoBlock, 0, clientId, true );
 		};
 
+		const onSelectVideo = ( media ) => {
+			if ( ! media || ! media.url ) {
+				return;
+			}
+
+			addVideoBlock( {
+				src: media.url,
+				id: media.id,
+				poster:
+					media.image?.src !== media.icon
+						? media.image?.src
+						: undefined,
+			} );
+		};
+
+		const onSelectURL = ( src ) => {
+			// Check if there's an embed block that handles this URL.
+			const embedBlock = createUpgradedEmbedBlock( {
+				attributes: { url: src },
+			} );
+			if ( embedBlock ) {
+				insertBlock( embedBlock, 0, clientId, true );
+			} else {
+				addVideoBlock( { src, id: undefined, poster: undefined } );
+			}
+		};
+
+		const innerBlockProps = useMemo(
+			() =>
+				videoBlock
+					? { template: [ videoBlock.name ], templateLock: true }
+					: {},
+			[ videoBlock ]
+		);
+
 		return (
-			<div className={ className }>
-				{
-					<InnerBlocks
-						allowedBlocks={ ALLOWED_BLOCKS }
-						renderAppender={ () => appenderToUse() }
+			<>
+				<InnerBlocks { ...innerBlockProps } renderAppender={ false } />
+				{ ! videoBlock && (
+					<MediaPlaceholder
+						icon={ <BlockIcon icon={ icon } /> }
+						labels={ {
+							title: __( 'Featured Video', 'sensei-lms' ),
+						} }
+						onSelect={ onSelectVideo }
+						onSelectURL={ onSelectURL }
+						accept="video/*"
+						allowedTypes={ [ 'video' ] }
 					/>
-				}
-			</div>
+				) }
+			</>
 		);
 	},
 	save: () => {
 		return <InnerBlocks.Content />;
 	},
 };
-
-wp.domReady( function () {
-	const allowedEmbedBlocks = [
-		'vimeo',
-		'youtube',
-		'videopress',
-		'dailymotion',
-		'wordpress-tv',
-	];
-	wp.blocks
-		.getBlockVariations( 'core/embed' )
-		.forEach( function ( blockVariation ) {
-			if ( -1 === allowedEmbedBlocks.indexOf( blockVariation.name ) ) {
-				wp.blocks.unregisterBlockVariation(
-					'core/embed',
-					blockVariation.name
-				);
-			}
-		} );
-} );
