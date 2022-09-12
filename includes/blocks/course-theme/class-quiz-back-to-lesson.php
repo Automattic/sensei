@@ -60,6 +60,16 @@ class Quiz_Back_To_Lesson {
 
 		$text = $attributes['text'] ?? __( 'Back to lesson', 'sensei-lms' );
 
-		return '<a href="' . esc_url( $lesson_url ) . '" class="sensei-lms-quiz-back-to-lesson">&lt; ' . esc_html( $text ) . '</a>';
+		$wrapper_attr = get_block_wrapper_attributes(
+			array(
+				'class' => 'sensei-lms-quiz-back-to-lesson',
+			)
+		);
+		return sprintf(
+			'<a href="%s" %s>&lt; %s</a>',
+			esc_url( $lesson_url ),
+			$wrapper_attr,
+			esc_html( $text )
+		);
 	}
 }

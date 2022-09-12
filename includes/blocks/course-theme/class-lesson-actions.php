@@ -134,8 +134,14 @@ class Lesson_Actions {
 			return '';
 		}
 
-		return '<div class="sensei-course-theme-lesson-actions">
-			' . implode( '', $actions ) . '
-		</div>';
+		$wrapper_attr = get_block_wrapper_attributes(
+			array(
+				'class' => 'sensei-course-theme-lesson-actions',
+			)
+		);
+
+		return sprintf('<div %s>
+			%s
+		</div>', $wrapper_attr, implode( '', $actions ) );
 	}
 }

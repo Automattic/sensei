@@ -96,6 +96,12 @@ class Prev_Next_Lesson {
 		$prev = $this->get_link( $urls, 'previous', __( 'Previous', 'sensei-lms' ), 'chevron-left', __( 'Previous Lesson', 'sensei-lms' ) );
 		$next = $this->get_link( $urls, 'next', __( 'Next', 'sensei-lms' ), 'chevron-right', __( 'Next Lesson', 'sensei-lms' ) );
 
-		return '<nav class="sensei-course-theme-prev-next-lesson-container">' . $prev . $next . '</nav>';
+		$wrapper_attr = get_block_wrapper_attributes(
+			array(
+				'class' => 'sensei-course-theme-prev-next-lesson-container',
+			)
+		);
+
+		return sprintf('<nav %s>%s %s</nav>', $wrapper_attr, $prev, $next );
 	}
 }

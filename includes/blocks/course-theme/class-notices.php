@@ -52,6 +52,7 @@ class Notices {
 			. Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' )
 			. Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->get_notices_html( 'course-theme/quiz-grade-notice.php' );
 
-		return $notices_html;
+		$wrapper_attr = get_block_wrapper_attributes();
+		return sprintf( '<div %1$s>%2$s</div>', $wrapper_attr, $notices_html );
 	}
 }

@@ -49,6 +49,17 @@ class Sidebar_Toggle_Button {
 	public function render( array $attributes = [] ) : string {
 		$icon  = \Sensei()->assets->get_icon( 'menu' );
 		$label = __( 'Toggle course navigation', 'sensei-lms' );
-		return "<button class='sensei-course-theme__sidebar-toggle' onclick='sensei.courseTheme.toggleSidebar()' title='{$label}'>{$icon}</button>";
+
+		$wrapper_attr = get_block_wrapper_attributes(
+			array(
+				'class' => 'sensei-course-theme__sidebar-toggle',
+			)
+		);
+		return sprintf(
+			'<button %s onclick="sensei.courseTheme.toggleSidebar()" title="%s">%s</button>',
+			$wrapper_attr,
+			$label,
+			$icon
+		);
 	}
 }

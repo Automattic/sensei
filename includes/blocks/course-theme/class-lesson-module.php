@@ -88,6 +88,12 @@ class Lesson_Module {
 			$class = sanitize_html_class( $attributes['className'], $class );
 		}
 
-		return "<{$tag_name} class='{$class}'>{$title}</{$tag_name}>";
+		$wrapper_attr = get_block_wrapper_attributes(
+			array(
+				'class' => $class,
+			)
+		);
+
+		return sprintf('<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attr, $title );
 	}
 }

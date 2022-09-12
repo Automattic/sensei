@@ -15,7 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Course navigation block.
  */
 class Course_Navigation {
-	const ICONS = [
+	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/course-navigation/course-navigation.block.json';
+
+	const ICONS = array(
 		'not-started' => 'circle',
 		'in-progress' => 'half-filled-circle',
 		'ungraded'    => 'half-filled-circle',
@@ -23,7 +28,7 @@ class Course_Navigation {
 		'failed'      => 'half-filled-circle',
 		'locked'      => 'lock',
 		'preview'     => 'eye',
-	];
+	);
 
 	/**
 	 * Course ID.
@@ -57,13 +62,15 @@ class Course_Navigation {
 	 * Register course navigation block.
 	 */
 	private function register_block() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		\Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-navigation',
-			[
-				'render_callback' => [ $this, 'render_course_navigation' ],
+			array(
+				'render_callback' => array( $this, 'render_course_navigation' ),
 				'style'           => 'sensei-theme-blocks',
 				'script'          => 'sensei-blocks-frontend',
-			]
+			),
+			$block_json_path
 		);
 	}
 
@@ -77,7 +84,7 @@ class Course_Navigation {
 	public function render_course_navigation() {
 		$this->course_id = \Sensei_Utils::get_current_course();
 
-		if ( ! $this->course_id || ! in_array( get_post_type(), [ 'lesson', 'quiz' ], true ) ) {
+		if ( ! $this->course_id || ! in_array( get_post_type(), array( 'lesson', 'quiz' ), true ) ) {
 			return '';
 		}
 
@@ -123,10 +130,22 @@ class Course_Navigation {
 			</ol>';
 		}
 
-		return '<nav class="sensei-lms-course-navigation" aria-label="' . esc_attr__( 'Course outline', 'sensei-lms' ) . '">
-			' . $modules_html . '
-			' . $lessons_html . '
-		</nav>';
+		$wrapper_attr = get_block_wrapper_attributes(
+			array(
+				'class' => 'sensei-lms-course-navigation',
+			)
+		);
+
+		return sprintf(
+			'<nav aria-label="%1$s"%2$s>
+			%3$s
+			%4$s
+		</nav>',
+			esc_attr__( 'Course outline', 'sensei-lms' ),
+			$wrapper_attr,
+			$modules_html,
+			$lessons_html
+		);
 	}
 
 	/**
@@ -181,7 +200,7 @@ class Course_Navigation {
 			? sprintf( $summary_lessons, $lesson_count )
 			: sprintf( $summary_lessons . ', ' . $summary_quizzes, $lesson_count, $quiz_count );
 
-		$classes   = [ 'sensei-lms-course-navigation-module sensei-collapsible' ];
+		$classes   = array( 'sensei-lms-course-navigation-module sensei-collapsible' );
 		$collapsed = '';
 		if ( ! $is_current_module ) {
 			$collapsed = 'collapsed';
@@ -190,7 +209,7 @@ class Course_Navigation {
 		$content_id = esc_attr( 'sensei-course-navigation-module-' . $module_id . '-' . wp_generate_uuid4() );
 
 		return '
-			<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+			<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, array() ) . '>
 				<div class="sensei-lms-course-navigation-module__header">
 					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '"
 						aria-controls="' . $content_id . '" aria-expanded="' . esc_attr( $is_current_module ? 'true' : 'false' ) . '">
@@ -223,7 +242,7 @@ class Course_Navigation {
 		$has_quiz      = \Sensei_Lesson::lesson_quiz_has_questions( $lesson_id );
 		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
-		$classes = [ 'sensei-lms-course-navigation-lesson', 'status-' . $status ];
+		$classes = array( 'sensei-lms-course-navigation-lesson', 'status-' . $status );
 
 		if ( $is_current ) {
 			$classes[] = 'current-lesson';
@@ -242,7 +261,7 @@ class Course_Navigation {
 		}
 
 		return '
-		<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, [] ) . '>
+		<li ' . \Sensei_Block_Helpers::render_style_attributes( $classes, array() ) . '>
 			<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" class="sensei-lms-course-navigation-lesson__link">
 				' . $this->lesson_status_icon( $status ) . '
 				<span class="sensei-lms-course-navigation-lesson__title">
@@ -256,7 +275,7 @@ class Course_Navigation {
 	/**
 	 * Get the lesson status icon.
 	 *
-	 * @param string $status
+	 * @param string $status The lesson status.
 	 *
 	 * @return string Icon HTML.
 	 */
@@ -284,7 +303,7 @@ class Course_Navigation {
 		$lesson_id            = $lesson['id'];
 		$status               = 'not-started';
 		$completed            = \Sensei_Utils::user_completed_lesson( $lesson_id, $this->user_id );
-		$in_progress_statuses = [ 'failed', 'ungraded' ];
+		$in_progress_statuses = array( 'failed', 'ungraded' );
 
 		if ( $completed ) {
 			$status = 'completed';

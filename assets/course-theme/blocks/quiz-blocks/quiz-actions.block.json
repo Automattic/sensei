@@ -1,22 +1,5 @@
 {
   "name": "sensei-lms/quiz-actions",
   "category": "theme",
-  "supports": {
-    "align": true,
-    "color": {
-      "gradients": true,
-      "link": true
-    },
-    "spacing": {
-      "margin": true,
-      "padding": true,
-      "blockGap": true
-    },
-    "__experimentalBorder": {
-      "color": true,
-      "radius": true,
-      "style": true,
-      "width": true
-    }
-  }
+  "supports": {}
 }
