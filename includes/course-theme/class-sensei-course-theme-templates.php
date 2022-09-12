@@ -295,9 +295,26 @@ class Sensei_Course_Theme_Templates {
 			]
 		);
 
-		$db_templates = $db_templates_query->posts ?? [];
+		$db_templates         = $db_templates_query->posts ?? [];
+		$active_db_templates  = [];
+		$active_template_name = Sensei_Course_Theme_Template_Selection::get_active_template_name();
+		foreach ( $db_templates as $db_template ) {
+			$post_name = $db_template->post_name;
 
-		return array_column( $db_templates, null, 'post_name' );
+			if ( strpos( $post_name, $active_template_name ) === false ) {
+				continue;
+			}
+
+			if ( strpos( $post_name, 'lesson' ) === 0 ) {
+				$db_template->post_name = 'lesson';
+				$active_db_templates[]  = $db_template;
+			} elseif ( strpos( $post_name, 'quiz' ) === 0 ) {
+				$db_template->post_name = 'quiz';
+				$active_db_templates[]  = $db_template;
+			}
+		}
+
+		return array_column( $active_db_templates, null, 'post_name' );
 	}
 
 	/**
