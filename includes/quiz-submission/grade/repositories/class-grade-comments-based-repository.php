@@ -45,7 +45,7 @@ class Grade_Comments_Based_Repository implements Grade_Repository_Interface {
 			update_comment_meta( $submission_id, 'quiz_answers_feedback', $feedback_map );
 		}
 
-		return new Grade( 0, $answer_id, $question_id, $points, $feedback, current_datetime() );
+		return new Grade( 0, 0, $question_id, $points, $feedback, current_datetime() );
 	}
 
 	/**
@@ -75,10 +75,10 @@ class Grade_Comments_Based_Repository implements Grade_Repository_Interface {
 	/**
 	 * Save multiple grades.
 	 *
-	 * @param Grade[] $grades        An array of grades.
 	 * @param int     $submission_id The submission ID.
+	 * @param Grade[] $grades        An array of grades.
 	 */
-	public function save_many( array $grades, int $submission_id ): void {
+	public function save_many( int $submission_id, array $grades ): void {
 		$grades_map   = [];
 		$feedback_map = [];
 

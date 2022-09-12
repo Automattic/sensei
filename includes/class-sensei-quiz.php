@@ -1176,7 +1176,7 @@ class Sensei_Quiz {
 			$grade->set_feedback( $feedback );
 		}
 
-		Sensei()->quiz_grade_repository->save_many( $grades, $submission->get_id() );
+		Sensei()->quiz_grade_repository->save_many( $submission->get_id(), $grades );
 
 		// Save transient to make retrieval faster in the future.
 		$transient_key = 'sensei_answers_feedback_' . $user_id . '_' . $lesson_id;
