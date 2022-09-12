@@ -1,0 +1,250 @@
+<?php
+
+namespace SenseiTest\Quiz_Submission\Submission\Repositories;
+
+use RuntimeException;
+use Sensei\Quiz_Submission\Submission\Models\Submission;
+use Sensei\Quiz_Submission\Submission\Repositories\Submission_Comments_Based_Repository;
+use Sensei_Utils;
+
+/**
+ * Class Submission_Comments_Based_Repository_Test
+ *
+ * @covers \Sensei\Quiz_Submission\Submission\Repositories\Submission_Comments_Based_Repository
+ */
+class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
+
+	private $factory;
+
+	public function setup() {
+		parent::setup();
+		$this->factory = new \Sensei_Factory();
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+		$this->factory->tearDown();
+	}
+
+	public function testCreate_WhenLessonStatusNotFound_ThrowsException(): void {
+		/* Arrange. */
+		$repository = new Submission_Comments_Based_Repository();
+
+		/* Assert. */
+		$this->expectException( RuntimeException::class );
+		$this->expectExceptionMessage( 'Missing lesson status.' );
+
+		/* Act. */
+		$repository->create( 1, 2 );
+	}
+
+	public function testCreate_WhenLessonStatusFound_ReturnsSubmission(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		/* Act. */
+		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
+
+		/* Assert. */
+		$expected = [
+			'quiz_id'     => $quiz_id,
+			'user_id'     => $user_id,
+			'final_grade' => 12.34,
+		];
+
+		$this->assertSame( $expected, $this->export_submission( $submission ) );
+	}
+
+	public function testGetOrCreate_WhenSubmissionExists_ReturnsExistingSubmission(): void {
+		/* Arrange. */
+		$repository_mock = $this->getMockBuilder( Submission_Comments_Based_Repository::class )
+			->setMethods( [ 'get', 'create' ] )
+			->getMock();
+
+		/* Assert. */
+		$repository_mock
+			->expects( $this->once() )
+			->method( 'get' )
+			->willReturn( $this->createMock( Submission::class ) );
+
+		$repository_mock
+			->expects( $this->never() )
+			->method( 'create' );
+
+		/* Act. */
+		$repository_mock->get_or_create( 1, 2 );
+	}
+
+	public function testGetOrCreate_WhenSubmissionDoesNotExist_ReturnsNewSubmission(): void {
+		/* Arrange. */
+		$repository_mock = $this->getMockBuilder( Submission_Comments_Based_Repository::class )
+			->setMethods( [ 'get', 'create' ] )
+			->getMock();
+
+		/* Assert. */
+		$repository_mock
+			->expects( $this->once() )
+			->method( 'get' )
+			->willReturn( null );
+
+		$repository_mock
+			->expects( $this->once() )
+			->method( 'create' );
+
+		/* Act. */
+		$repository_mock->get_or_create( 1, 2 );
+	}
+
+	public function testGet_WhenLessonStatusNotFound_ReturnsNull(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		/* Act. */
+		$submission = $repository->get( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertNull( $submission );
+	}
+
+	public function testGet_WhenLessonStatusFound_ReturnsSubmission(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		/* Act. */
+		$submission = $repository->get( $quiz_id, $user_id );
+
+		/* Assert. */
+		$expected = [
+			'quiz_id'     => $quiz_id,
+			'user_id'     => $user_id,
+			'final_grade' => null,
+		];
+		$this->assertSame( $expected, $this->export_submission( $submission ) );
+	}
+
+	public function testGetQuestionIds_WhenLessonStatusNotFound_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		/* Act. */
+		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( [], $question_ids );
+	}
+
+	public function testGetQuestionIds_WhenLessonStatusFound_ReturnsQuestionIds(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		$comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		update_comment_meta( $comment_id, 'questions_asked', implode( ',', [ 1, 2, 3 ] ) );
+
+		/* Act. */
+		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( [ 1, 2, 3 ], $question_ids );
+	}
+
+	public function testGetQuestionIds_WhenNoQuestionsAsked_ReturnsEmptyArray(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		/* Act. */
+		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+
+		/* Assert. */
+		$this->assertSame( [], $question_ids );
+	}
+
+	public function testSave_WhenLessonStatusNotFound_ThrowsException(): void {
+		/* Arrange. */
+		$submission = $this->createMock( Submission::class );
+		$repository = new Submission_Comments_Based_Repository();
+
+		/* Assert. */
+		$this->expectException( RuntimeException::class );
+		$this->expectExceptionMessage( 'Missing lesson status.' );
+
+		/* Act. */
+		$repository->save( $submission );
+	}
+
+	public function testSave_WhenGradeIsSet_UpdatesTheGrade(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		$submission = $repository->create( $quiz_id, $user_id );
+
+		/* Act. */
+		$submission->set_final_grade( 12.34 );
+		$repository->save( $submission );
+
+		/* Assert. */
+		$this->assertEquals(
+			$this->export_submission( $submission ),
+			$this->export_submission( $repository->get( $quiz_id, $user_id ) )
+		);
+	}
+
+	public function testSave_WhenGradeIsSetToNull_UpdatesTheGrade(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Submission_Comments_Based_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
+
+		/* Act. */
+		$submission->set_final_grade( null );
+		$repository->save( $submission );
+
+		/* Assert. */
+		$this->assertNull(
+			$repository->get( $quiz_id, $user_id )->get_final_grade()
+		);
+	}
+
+	private function export_submission( Submission $submission ): array {
+		return [
+			'quiz_id'     => $submission->get_quiz_id(),
+			'user_id'     => $submission->get_user_id(),
+			'final_grade' => $submission->get_final_grade(),
+		];
+	}
+
+}
