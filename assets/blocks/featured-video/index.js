@@ -32,14 +32,11 @@ export default {
 		const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 		const innerBlockCount = useSelect(
 			( select ) =>
-				select( 'core/block-editor' ).getBlock( clientId ).innerBlocks
+				select( 'core/block-editor' ).getBlocks( clientId ).length
 		);
 		const previousBlockCount = useRef( innerBlockCount );
 		useEffect( () => {
-			if (
-				previousBlockCount.current.length > 0 &&
-				innerBlockCount.length === 0
-			) {
+			if ( previousBlockCount.current > 0 && innerBlockCount === 0 ) {
 				replaceInnerBlocks(
 					clientId,
 					[ createBlock( 'core/video' ) ],
