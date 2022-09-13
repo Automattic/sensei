@@ -87,10 +87,23 @@ class Sensei_Course_Theme_Templates {
 	 * @return string[]
 	 */
 	public function set_single_template_hierarchy( $templates ) {
+
+		// Don't change if a block template is already selected for the post.
+		$is_default_template = count( $templates ) && str_ends_with( $templates[0], '.php' );
+
+		if ( ! $is_default_template ) {
+			return $templates;
+		}
+
 		if ( $this->should_use_quiz_template() ) {
 			return array_merge( [ 'quiz', 'lesson' ], $templates );
 		}
-		return array_merge( [ 'lesson', 'quiz' ], $templates );
+
+		if ( ! in_array( 'lesson', $templates, true ) ) {
+			return array_merge( [ 'lesson' ], $templates );
+		}
+
+		return $templates;
 	}
 
 	/**
