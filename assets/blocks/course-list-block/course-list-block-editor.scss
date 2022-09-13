@@ -19,5 +19,9 @@
 				width: 100%;
 			}
 		}
+		/* Fixes left or right alignment of filter block or post template breaking the design in Divi */
+		& > * {
+			clear: both;
+		}
 	}
 }
