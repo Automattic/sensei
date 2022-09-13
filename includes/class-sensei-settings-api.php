@@ -211,8 +211,11 @@ class Sensei_Settings_API {
 					'href'  => '#' . esc_attr( $k ),
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
-					'badge' => esc_html( $v['badge'] ),
 				);
+
+				if ( ! empty( $v['badge'] ) ) {
+					$sections[ $k ]['badge'] = esc_html( $v['badge'] );
+				}
 			}
 
 			$count = 1;
