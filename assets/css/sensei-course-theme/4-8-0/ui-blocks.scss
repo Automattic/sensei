@@ -35,11 +35,8 @@ body.sensei-course-theme {
 		top: var(--top-offset);
 		background-color: var(--bg-color);
 		z-index: 100;
-		display: flex;
-		align-items: center;
-		& > :first-child {
-			flex: 1;
-		}
+		// TODO Fix vertical content alignment on mobile.
+
 		img {
 			max-height: var(--header-height);
 		}
