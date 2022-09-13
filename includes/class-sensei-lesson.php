@@ -5161,7 +5161,7 @@ class Sensei_Lesson {
 			}
 
 			// update random question order.
-			if ( - 1 !== $new_settings['random_question_order'] ) {
+			if ( '-1' !== $new_settings['random_question_order'] ) {
 
 				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
 				update_post_meta( $quiz_id, '_random_question_order', $checked );
