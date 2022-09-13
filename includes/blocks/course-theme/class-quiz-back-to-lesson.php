@@ -61,9 +61,9 @@ class Quiz_Back_To_Lesson {
 		$text = $attributes['text'] ?? __( 'Back to lesson', 'sensei-lms' );
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => 'sensei-lms-quiz-back-to-lesson',
-			)
+			]
 		);
 		return sprintf(
 			'<a href="%s" %s>&lt; %s</a>',

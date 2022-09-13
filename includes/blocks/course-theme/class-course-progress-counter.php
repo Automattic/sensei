@@ -30,9 +30,9 @@ class Course_Progress_Counter {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-course-progress-counter',
-			array(
-				'render_callback' => array( $this, 'render' ),
-			),
+			[
+				'render_callback' => [ $this, 'render' ],
+			],
 			$block_json_path
 		);
 	}
@@ -60,9 +60,9 @@ class Course_Progress_Counter {
 		);
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => 'sensei-course-theme-course-progress',
-			)
+			]
 		);
 
 		return sprintf(

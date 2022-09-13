@@ -53,9 +53,9 @@ class Course_Progress_Bar {
 		$stats = Sensei()->course->get_progress_stats( $course_id );
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => 'sensei-course-theme-course-progress-bar',
-			)
+			]
 		);
 
 		return sprintf(

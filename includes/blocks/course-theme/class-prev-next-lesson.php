@@ -30,9 +30,9 @@ class Prev_Next_Lesson {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-prev-next-lesson',
-			array(
-				'render_callback' => array( $this, 'render' ),
-			),
+			[
+				'render_callback' => [ $this, 'render' ],
+			],
 			$block_json_path
 		);
 	}
@@ -97,9 +97,9 @@ class Prev_Next_Lesson {
 		$next = $this->get_link( $urls, 'next', __( 'Next', 'sensei-lms' ), 'chevron-right', __( 'Next Lesson', 'sensei-lms' ) );
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => 'sensei-course-theme-prev-next-lesson-container',
-			)
+			]
 		);
 
 		return sprintf( '<nav %s>%s %s</nav>', $wrapper_attr, $prev, $next );

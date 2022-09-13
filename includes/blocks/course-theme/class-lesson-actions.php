@@ -33,9 +33,9 @@ class Lesson_Actions {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-actions',
-			array(
-				'render_callback' => array( $this, 'render' ),
-			),
+			[
+				'render_callback' => [ $this, 'render' ],
+			],
 			$block_json_path
 		);
 	}
@@ -94,7 +94,7 @@ class Lesson_Actions {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = array() ) : string {
+	public function render( array $attributes = [] ) : string {
 		$lesson_id = Sensei_Utils::get_current_lesson();
 		$user_id   = get_current_user_id();
 
@@ -115,7 +115,7 @@ class Lesson_Actions {
 		$quiz_permalink              = Sensei()->lesson->get_quiz_permalink( $lesson_id );
 		$is_quiz_submitted           = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
 		$is_pass_required            = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
-		$actions                     = array();
+		$actions                     = [];
 
 		// Quiz button.
 		if ( ! empty( $quiz_permalink ) && ! Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id ) ) {
@@ -135,9 +135,9 @@ class Lesson_Actions {
 		}
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => 'sensei-course-theme-lesson-actions',
-			)
+			]
 		);
 
 		return sprintf(

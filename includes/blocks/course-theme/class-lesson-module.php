@@ -89,9 +89,9 @@ class Lesson_Module {
 		}
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => $class,
-			)
+			]
 		);
 
 		return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attr, $title );

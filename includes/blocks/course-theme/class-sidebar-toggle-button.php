@@ -51,9 +51,9 @@ class Sidebar_Toggle_Button {
 		$label = __( 'Toggle course navigation', 'sensei-lms' );
 
 		$wrapper_attr = get_block_wrapper_attributes(
-			array(
+			[
 				'class' => 'sensei-course-theme__sidebar-toggle',
-			)
+			]
 		);
 		return sprintf(
 			'<button %s onclick="sensei.courseTheme.toggleSidebar()" title="%s">%s</button>',
