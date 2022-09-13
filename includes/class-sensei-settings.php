@@ -471,15 +471,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'appearance-settings',
 		);
 
-		// Rendered as part of the 'Learning Mode' setting.
-		$fields['sensei_learning_mode_theme'] = array(
-			'name'        => __( 'Learning Mode Theme Styles', 'sensei-lms' ),
-			'description' => __( 'Load styles and blocks of the active theme in Learning Mode.', 'sensei-lms' ),
-			'type'        => 'checkbox',
-			'default'     => false,
-			'section'     => 'hidden',
-		);
-
 		// Course Settings.
 		$fields['sensei_learning_mode_template'] = array(
 			'name'        => __( 'Learning Mode Templates', 'sensei-lms' ),
@@ -946,7 +937,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
 				</a>
 			</p>
-		<?php }
+			<?php
+		}
 	}
 
 	/**
