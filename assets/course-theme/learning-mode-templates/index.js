@@ -6,8 +6,8 @@ import { render } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { Templates } from './templates';
+import { TemplateSelector } from './template-selector';
 
 const element = document.getElementById( 'sensei-lm-block-template__options' );
 
-render( <Templates />, element );
+render( <TemplateSelector />, element );

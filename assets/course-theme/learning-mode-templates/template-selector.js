@@ -6,11 +6,11 @@ import { useState, useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { templates, activeTemplateName } from '../data';
-import { TemplateOption } from '../template-option';
-import { TemplatePreview } from '../template-preview';
+import { templates, activeTemplateName } from './data';
+import { TemplateOption } from './template-option/template-option';
+import { TemplatePreview } from './template-preview';
 
-export const Templates = () => {
+export const TemplateSelector = () => {
 	const [ previewTemplateName, setPreviewTemplate ] = useState( null );
 	const previewTemplate = templates[ previewTemplateName ] || {};
 

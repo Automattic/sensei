@@ -7,7 +7,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { TemplateActions } from '../template-actions';
+import { TemplateActions } from './template-actions';
 
 /**
  * Renders the template preview.

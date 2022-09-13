@@ -6,8 +6,8 @@ import { useCallback } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import { Footer } from './footer';
-import { Thumbnail } from './thumbnail';
+import { TemplateOptionFooter } from './template-option-footer';
+import { TemplateOptionThumbnail } from './template-option-thumbnail';
 
 /**
  * Renders the individual template.
@@ -29,12 +29,12 @@ export const TemplateOption = ( props ) => {
 
 	return (
 		<li className="sensei-lm-template-option__container">
-			<Thumbnail
+			<TemplateOptionThumbnail
 				title={ title }
 				url={ screenshots.thumbnail }
 				onPreview={ handlePreview }
 			/>
-			<Footer { ...props } />
+			<TemplateOptionFooter { ...props } />
 		</li>
 	);
 };

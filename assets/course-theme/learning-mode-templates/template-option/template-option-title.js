@@ -4,14 +4,14 @@
 import classnames from 'classnames';
 
 /**
- * Renders a template title.
+ * Renders a template option title.
  *
  * @param {Object}  props
  * @param {string}  props.children The title.
  * @param {string}  props.tag      A tag for template to indicate it belongs to some group of templates. E.g.: "PREMIUM"
  * @param {boolean} props.isActive If the template is activated.
  */
-export const Title = ( { children, isActive, tag = '' } ) => {
+export const TemplateOptionTitle = ( { children, isActive, tag = '' } ) => {
 	return (
 		<h4
 			className={ classnames( {

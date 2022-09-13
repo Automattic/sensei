@@ -4,7 +4,7 @@
 
 @include wordpress-admin-schemes();
 
-@import './templates/styles';
-@import './template-option/styles';
-@import './template-preview/styles';
+@import './template-selector';
+@import './template-option/template-option';
+@import './template-preview';
 

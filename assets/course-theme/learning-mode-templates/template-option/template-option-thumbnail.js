@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  * @param {string}   props.url       The url of the image.
  * @param {Function} props.onPreview The callback to show preview.
  */
-export const Thumbnail = ( { title, url, onPreview } ) => {
+export const TemplateOptionThumbnail = ( { title, url, onPreview } ) => {
 	return (
 		<div
 			className="sensei-lm-template-option__thumbnail"

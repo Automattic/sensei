@@ -11,8 +11,8 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { Title } from './title';
-import { TemplateActions } from '../../template-actions';
+import { TemplateOptionTitle } from './template-option-title';
+import { TemplateActions } from '../template-actions';
 
 /**
  * Renders the Learning Mode template option's footer.
@@ -24,7 +24,7 @@ import { TemplateActions } from '../../template-actions';
  * @param {Object} props.upsell     The upsell data.
  * @param {string} props.upsell.tag The upsell tag.
  */
-export const Footer = ( props ) => {
+export const TemplateOptionFooter = ( props ) => {
 	const { title, isActive, upsell } = props;
 	return (
 		<div
@@ -33,9 +33,12 @@ export const Footer = ( props ) => {
 				'sensei-lm-template-option__footer--active': isActive,
 			} ) }
 		>
-			<Title isActive={ isActive } tag={ isActive ? title : upsell?.tag }>
+			<TemplateOptionTitle
+				isActive={ isActive }
+				tag={ isActive ? title : upsell?.tag }
+			>
 				{ isActive ? __( 'Active', 'sensei-lms' ) : title }
-			</Title>
+			</TemplateOptionTitle>
 
 			<div className="sensei-lm-template-option__actions">
 				<TemplateActions { ...props } />
