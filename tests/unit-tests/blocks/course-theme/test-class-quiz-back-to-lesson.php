@@ -24,9 +24,10 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
+
 		WP_Block_Supports::$block_to_render = [
-			'attrs' => [],
-			'blockName'  => 'sensei-lms/quiz-back-to-lesson',
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/quiz-back-to-lesson',
 		];
 	}
 
