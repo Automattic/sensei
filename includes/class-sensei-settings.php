@@ -919,9 +919,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $args The field arguments.
 	 */
 	public function render_learning_mode_setting( $args ) {
-		$options   = $this->get_settings();
-		$key       = $args['key'];
-		$value     = $options[ $key ];
+		$options       = $this->get_settings();
+		$key           = $args['key'];
+		$value         = $options[ $key ];
 		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
