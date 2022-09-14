@@ -931,7 +931,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$options   = $this->get_settings();
 		$key       = $args['key'];
 		$value     = $options[ $key ];
-		$theme_key = 'sensei_learning_mode_theme';
+		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -940,18 +940,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-		<div class="extra-content">
-			<label for="<?php echo esc_attr( $theme_key ); ?>">
-				<input id="<?php echo esc_attr( $theme_key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$theme_key}]" ); ?>"
-					type="checkbox" value="1" <?php checked( $options[ $theme_key ], '1' ); ?> />
-				<?php esc_html_e( 'Enable theme styles', 'sensei-lms' ); ?>
-			</label>
-			<p>
-				<span
-					class="description"><?php echo esc_html( $this->fields[ $theme_key ]['description'] ); ?></span>
+		<?php if ( $customize_url ) { ?>
+			<p class="extra-content">
+				<a href="<?php echo esc_url( $customize_url ); ?>">
+					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
+				</a>
 			</p>
-		</div>
-		<?php
+		<?php }
 	}
 
 	/**
