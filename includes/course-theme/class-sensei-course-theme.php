@@ -83,6 +83,7 @@ class Sensei_Course_Theme {
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
 		add_action( 'registered_taxonomy', [ $this, 'add_taxonomy_rewrite_rules' ], 10, 3 );
+		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
@@ -114,6 +115,27 @@ class Sensei_Course_Theme {
 		}
 
 		return home_url( '/' . self::QUERY_VAR . '/' . $path );
+	}
+
+	/**
+	 * Replace theme for the current request if it's for course theme mode.
+	 */
+	public function maybe_override_theme() {
+
+		// Do a cheaper preliminary check first.
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! preg_match( '#' . preg_quote( '/' . self::QUERY_VAR . '/', '#' ) . '#i', $uri ) && ! isset( $_GET[ self::QUERY_VAR ] ) ) {
+			return;
+		}
+
+		// Then parse the request and make sure the query var is correct.
+		wp_load_translations_early();
+		wp();
+
+		if ( get_query_var( self::QUERY_VAR ) ) {
+			$this->override_theme();
+		}
 	}
 
 	/**
