@@ -124,14 +124,8 @@ class Sensei_Course_Theme_Editor {
 		$is_site_editor_rest = preg_match( '#/wp-json/.*/' . self::THEME_PREFIX . '#i', $uri ) || preg_match( '#/wp-json/wp/v2/templates#i', $uri );
 
 		if ( $is_site_editor || $is_site_editor_rest ) {
-
 			$this->add_site_editor_hooks();
-
-			if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() && ! Sensei_Course_Theme::instance()->is_active() ) {
-				Sensei_Course_Theme::instance()->override_theme();
-			}
 		}
-
 	}
 
 	/**
@@ -145,6 +139,29 @@ class Sensei_Course_Theme_Editor {
 
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_site_editor_assets' ] );
 		add_action( 'admin_init', [ $this, 'add_editor_styles' ] );
+
+		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
+			add_filter( 'theme_file_path', [ $this, 'override_theme_block_template_file' ], 10, 2 );
+		}
+	}
+
+	/**
+	 * Enable the site editor by returning a block file template for the wp_is_block_theme check.
+	 *
+	 * @access
+	 *
+	 * @param string $path The file path.
+	 * @param string $file The requested file to search for.
+	 *
+	 * @return string
+	 */
+	public function override_theme_block_template_file( $path, $file ) {
+
+		if ( 'index.html' === substr( $file, -1 * strlen( 'index.html' ) ) ) {
+			return Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates/index.html';
+		}
+
+		return $path;
 	}
 
 	/**
