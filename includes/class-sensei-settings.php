@@ -471,15 +471,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'appearance-settings',
 		);
 
-		// Rendered as part of the 'Learning Mode' setting.
-		$fields['sensei_learning_mode_theme'] = array(
-			'name'        => __( 'Learning Mode Theme Styles', 'sensei-lms' ),
-			'description' => __( 'Load styles and blocks of the active theme in Learning Mode.', 'sensei-lms' ),
-			'type'        => 'checkbox',
-			'default'     => false,
-			'section'     => 'hidden',
-		);
-
 		// Course Settings.
 		$fields['sensei_learning_mode_template'] = array(
 			'name'        => __( 'Learning Mode Templates', 'sensei-lms' ),
@@ -928,10 +919,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $args The field arguments.
 	 */
 	public function render_learning_mode_setting( $args ) {
-		$options   = $this->get_settings();
-		$key       = $args['key'];
-		$value     = $options[ $key ];
-		$theme_key = 'sensei_learning_mode_theme';
+		$options       = $this->get_settings();
+		$key           = $args['key'];
+		$value         = $options[ $key ];
+		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -940,22 +931,18 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-		<div class="extra-content">
-			<label for="<?php echo esc_attr( $theme_key ); ?>">
-				<input id="<?php echo esc_attr( $theme_key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$theme_key}]" ); ?>"
-					type="checkbox" value="1" <?php checked( $options[ $theme_key ], '1' ); ?> />
-				<?php esc_html_e( 'Enable theme styles', 'sensei-lms' ); ?>
-			</label>
-			<p>
-				<span
-					class="description"><?php echo esc_html( $this->fields[ $theme_key ]['description'] ); ?></span>
+		<?php if ( $customize_url ) { ?>
+			<p class="extra-content">
+				<a href="<?php echo esc_url( $customize_url ); ?>">
+					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
+				</a>
 			</p>
-		</div>
-		<?php
+			<?php
+		}
 	}
 
 	/**
-	 * Renders the Learnin Mode template selection setting.
+	 * Renders the Learning Mode template selection setting.
 	 *
 	 * @param array $args The field arguments.
 	 */
