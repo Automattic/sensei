@@ -2,6 +2,7 @@
   "name": "sensei-lms/quiz-back-to-lesson",
   "category": "theme",
   "supports": {
+    "align": true,
     "color": {
       "gradients": true,
       "link": true
