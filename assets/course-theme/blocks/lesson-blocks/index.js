@@ -45,11 +45,7 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
-			return (
-				<h2 className="wp-block-sensei-lms-course-title">
-					{ __( 'Course Title', 'sensei-lms' ) }
-				</h2>
-			);
+			return <>{ __( 'Course Title', 'sensei-lms' ) }</>;
 		},
 	},
 	{
