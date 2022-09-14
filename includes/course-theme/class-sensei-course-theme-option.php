@@ -159,6 +159,7 @@ class Sensei_Course_Theme_Option {
 		 *
 		 * @since 4.0.2
 		 * @hook  sensei_course_learning_mode_theme_override_enabled
+		 * @deprecated $$next-version$$
 		 *
 		 * @param {bool} $enabled True if the learning mode theme override is enabled.
 		 *
