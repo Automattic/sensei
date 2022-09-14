@@ -238,6 +238,7 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+			'Sensei\Blocks\Course_Theme\Ui'                => 'blocks/course-theme/class-ui.php',
 		);
 	}
 
