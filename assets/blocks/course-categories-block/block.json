@@ -21,7 +21,7 @@
 		"customTextColor": {
 			"type": "string"
 		},
-        "defaultBackgroundColor": {
+		"defaultBackgroundColor": {
 			"type": "string"
 		},
 		"defaultTextColor": {
@@ -30,9 +30,12 @@
 		"fontSize": {
 			"type": "string",
 			"default": "small"
+		},
+		"previewCategories": {
+			"type": "array"
 		}
 	},
-	"usesContext": [ "postId", "postType" ],
+	"usesContext": [ "postId", "postType", "queryId" ],
 	"supports": {
 		"html": false,
 		"spacing": {

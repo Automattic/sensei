@@ -10,16 +10,24 @@
 		white-space: nowrap;
 		margin-bottom: 5px;
 
-		&:not(:last-child) {
+		&:not( :last-child ) {
 			margin-right: 10px;
+		}
+
+		&:not( .has-background ) {
+			background-color: #3858E9;
+		}
+
+		&:not( .has-text-color ) {
+			color: #fff;
 		}
 	}
 
-	&.alignright{
+	&.alignright {
 		text-align: right;
 	}
 
-	&.aligncenter{
+	&.aligncenter {
 		text-align: center;
 	}
 }
