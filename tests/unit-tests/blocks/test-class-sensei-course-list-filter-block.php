@@ -15,7 +15,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Instance of Sensei_Course_List_Filter_Block.
