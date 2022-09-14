@@ -18,16 +18,21 @@ use \Sensei_Blocks;
  * Support for focus mode.
  */
 class Focus_Mode {
-
+	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/focus-mode-toggle.block.json';
 	/**
 	 * Course_Title constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/focus-mode-toggle',
 			[
 				'render_callback' => [ $this, 'render_focus_mode_toggle' ],
-			]
+			],
+			$block_json_path
 		);
 	}
 

@@ -22,14 +22,21 @@ use \Sensei_Utils;
  */
 class Lesson_Actions {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-lesson-actions.block.json';
+
+	/**
 	 * Lesson_Actions constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+			],
+			$block_json_path
 		);
 	}
 
@@ -127,8 +134,18 @@ class Lesson_Actions {
 			return '';
 		}
 
-		return '<div class="sensei-course-theme-lesson-actions">
-			' . implode( '', $actions ) . '
-		</div>';
+		$wrapper_attr = get_block_wrapper_attributes(
+			[
+				'class' => 'sensei-course-theme-lesson-actions',
+			]
+		);
+
+		return sprintf(
+			'<div %s>
+			%s
+		</div>',
+			$wrapper_attr,
+			implode( '', $actions )
+		);
 	}
 }

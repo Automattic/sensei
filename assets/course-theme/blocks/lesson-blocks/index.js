@@ -7,15 +7,27 @@ import { useBlockProps } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
-import ChevronLeft from '../../icons/chevron-left.svg';
-import ChevronRight from '../../icons/chevron-right.svg';
-import DoubleChevronRight from '../../icons/double-chevron-right.svg';
-import MenuIcon from '../../icons/menu.svg';
-import SenseiIcon from '../../icons/sensei.svg';
+import ChevronLeft from '../../../icons/chevron-left.svg';
+import ChevronRight from '../../../icons/chevron-right.svg';
+import DoubleChevronRight from '../../../icons/double-chevron-right.svg';
+import MenuIcon from '../../../icons/menu.svg';
+import SenseiIcon from '../../../icons/sensei.svg';
+import courseContentMeta from './course-content.block.json';
+import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
+import courseThemeCourseProgressCounterMeta from './course-theme-course-progress-counter.block.json';
+import courseThemeLessonActionsMeta from './course-theme-lesson-actions.block.json';
+import courseThemeLessonModuleMeta from './course-theme-lesson-module.block.json';
+import courseThemeNoticesMeta from './course-theme-notices.block.json';
+import courseThemePostTitleMeta from './course-theme-post-title.block.json';
+import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
+import courseTitleMeta from './course-title.block.json';
+import exitCourseMeta from './exit-course.block.json';
+import focusModeToggleMeta from './focus-mode-toggle.block.json';
+import pageActionsMeta from './page-actions.block.json';
+import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
 
 const meta = {
 	category: 'theme',
-	supports: {},
 	attributes: {},
 	icon: {
 		src: <SenseiIcon width="20" height="20" />,
@@ -25,9 +37,9 @@ const meta = {
 
 export default [
 	{
+		...courseTitleMeta,
 		...meta,
 		title: __( 'Course Title', 'sensei-lms' ),
-		name: 'sensei-lms/course-title',
 		description: __(
 			'Display title of the course the current lesson or quiz belongs to.',
 			'sensei-lms'
@@ -41,9 +53,9 @@ export default [
 		},
 	},
 	{
+		...courseThemeCourseProgressCounterMeta,
 		...meta,
 		title: __( 'Course Progress', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-course-progress-counter',
 		description: __(
 			'Display number of completed and total lessons in the course.',
 			'sensei-lms'
@@ -57,9 +69,9 @@ export default [
 		},
 	},
 	{
+		...courseThemePrevNextLessonMeta,
 		...meta,
 		title: __( 'Previous & Next Lesson', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-prev-next-lesson',
 		description: __(
 			'Link to the previous and next lessons.',
 			'sensei-lms'
@@ -78,9 +90,9 @@ export default [
 		},
 	},
 	{
+		...sideBarToggleButtonMeta,
 		...meta,
 		title: __( 'Sidebar Toggle', 'sensei-lms' ),
-		name: 'sensei-lms/sidebar-toggle-button',
 		description: __( 'Toggle the Learning Mode sidebar.', 'sensei-lms' ),
 		edit() {
 			return (
@@ -91,9 +103,9 @@ export default [
 		},
 	},
 	{
+		...courseThemeLessonActionsMeta,
 		...meta,
 		title: __( 'Lesson Actions (Learning Mode)', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-lesson-actions',
 		description: __(
 			'Display buttons for actions the learner can take for the current lesson.',
 			'sensei-lms'
@@ -112,9 +124,9 @@ export default [
 		},
 	},
 	{
+		...courseThemeCourseProgressBarMeta,
 		...meta,
 		title: __( 'Course Progress Bar', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-course-progress-bar',
 		description: __( 'Display course progress.', 'sensei-lms' ),
 		edit() {
 			return (
@@ -128,9 +140,9 @@ export default [
 		},
 	},
 	{
+		...focusModeToggleMeta,
 		...meta,
 		title: __( 'Focus Mode Toggle', 'sensei-lms' ),
-		name: 'sensei-lms/focus-mode-toggle',
 		description: __(
 			'Toggle a minimalized view of Learning Mode.',
 			'sensei-lms'
@@ -144,9 +156,9 @@ export default [
 		},
 	},
 	{
+		...exitCourseMeta,
 		...meta,
 		title: __( 'Exit Course', 'sensei-lms' ),
-		name: 'sensei-lms/exit-course',
 		description: __(
 			'Exit Learning Mode and return to the course page.',
 			'sensei-lms'
@@ -160,9 +172,9 @@ export default [
 		},
 	},
 	{
+		...courseThemeLessonModuleMeta,
 		...meta,
 		title: __( 'Module Title', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-lesson-module',
 		description: __(
 			'Display title of the module the current lesson belongs to.',
 			'sensei-lms'
@@ -172,9 +184,9 @@ export default [
 		},
 	},
 	{
+		...courseThemePostTitleMeta,
 		...meta,
 		title: __( 'Post Title', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-post-title',
 		description: __(
 			'Display title of the current lesson or quiz.',
 			'sensei-lms'
@@ -184,9 +196,9 @@ export default [
 		},
 	},
 	{
+		...courseContentMeta,
 		...meta,
 		title: __( 'Course Content', 'sensei-lms' ),
-		name: 'sensei-lms/course-content',
 		description: __(
 			'Display lesson or quiz content, if the learner has access to it.',
 			'sensei-lms'
@@ -196,9 +208,9 @@ export default [
 		},
 	},
 	{
+		...courseThemeNoticesMeta,
 		...meta,
 		title: __( 'Notices', 'sensei-lms' ),
-		name: 'sensei-lms/course-theme-notices',
 		description: __(
 			'Display Sensei notices about the current lesson or quiz.',
 			'sensei-lms'
@@ -214,9 +226,9 @@ export default [
 		},
 	},
 	{
+		...pageActionsMeta,
 		...meta,
 		title: __( 'Page Actions', 'sensei-lms' ),
-		name: 'sensei-lms/page-actions',
 		description: __(
 			'Display pagination and related actions for the current page.',
 			'sensei-lms'

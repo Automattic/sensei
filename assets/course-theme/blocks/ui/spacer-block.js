@@ -6,6 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { Icon, resizeCornerNE as spacerIcon } from '@wordpress/icons';
 
 /**
+ * Internal dependencies
+ */
+import meta from './spacer.block.json';
+
+/**
  * Factory function for generating the edit/save components of the spacer block.
  *
  * @param {Function} blockPropsFn useBlockProps|useBlockProps.save
@@ -25,10 +30,9 @@ const SpacerBlock = ( blockPropsFn ) => () => {
  * Spacer block that fills available space in flex containers.
  */
 export default {
-	name: 'sensei-lms/spacer-flex',
+	...meta,
 	title: __( 'Spacer (Auto)', 'sensei-lms' ),
 	scope: [ 'inserter' ],
-	apiVersion: 2,
 	icon: {
 		src: <Icon icon={ spacerIcon } />,
 		foreground: '#43AF99',

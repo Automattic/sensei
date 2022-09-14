@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import meta from './ui-block.json';
+import meta from './ui.block.json';
 
 /**
  * Settings shared between variations.
