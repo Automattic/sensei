@@ -25,6 +25,11 @@
 
 			&__header {
 				transition: none !important;
+				display: flex;
+				flex-direction: column;
+				> *:first-child {
+					flex: 1;
+				}
 
 				.sensei-course-theme-prev-next-lesson-text {
 					display: none;
