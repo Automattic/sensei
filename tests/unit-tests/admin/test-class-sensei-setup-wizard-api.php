@@ -115,37 +115,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests welcome endpoint returning the current usage tracking setting.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
-	 */
-	public function testGetWelcomeReturnsUsageTrackingData() {
-
-		Sensei()->usage_tracking->set_tracking_enabled( true );
-		$result = $this->request( 'GET', '' );
-
-		$this->assertEquals( array( 'usage_tracking' => true ), $result['welcome'] );
-
-		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$result = $this->request( 'GET', '' );
-
-		$this->assertEquals( array( 'usage_tracking' => false ), $result['welcome'] );
-	}
-
-	/**
-	 * Tests that submitting to welcome endpoint updates usage tracking preference.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
-	 */
-	public function testSubmitWelcomeUpdatesUsageTrackingSetting() {
-
-		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$this->request( 'POST', 'welcome', [ 'usage_tracking' => true ] );
-
-		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
-	}
-
-	/**
 	 * Tests that submitting to welcome endpoint creates Sensei Courses and My Courses pages.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
@@ -264,6 +233,37 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			],
 			$data['purpose']
 		);
+	}
+
+	/**
+	 * Tests tracking endpoint returning the current usage tracking setting.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
+	 */
+	public function testGetTrackingReturnsUsageTrackingData() {
+
+		Sensei()->usage_tracking->set_tracking_enabled( true );
+		$result = $this->request( 'GET', '' );
+
+		$this->assertEquals( array( 'usage_tracking' => true ), $result['tracking'] );
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$result = $this->request( 'GET', '' );
+
+		$this->assertEquals( array( 'usage_tracking' => false ), $result['tracking'] );
+	}
+
+	/**
+	 * Tests that submitting to tracking endpoint updates usage tracking preference.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_tracking
+	 */
+	public function testSubmitTrackingUpdatesUsageTrackingSetting() {
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$this->request( 'POST', 'tracking', [ 'usage_tracking' => true ] );
+
+		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
 	}
 
 	/**

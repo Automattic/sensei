@@ -65,6 +65,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_get_features_route();
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
+		$this->register_submit_tracking_route();
 		$this->register_submit_features_route();
 		$this->register_submit_features_installation_route();
 		$this->register_complete_wizard_route();
@@ -100,12 +101,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'submit_welcome' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-					'args'                => [
-						'usage_tracking' => [
-							'required' => true,
-							'type'     => 'boolean',
-						],
-					],
 				],
 			]
 		);
@@ -135,6 +130,29 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						'other'    => [
 							'required' => true,
 							'type'     => 'string',
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Register /tracking endpoint.
+	 */
+	public function register_submit_tracking_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/tracking',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_tracking' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'usage_tracking' => [
+							'required' => true,
+							'type'     => 'boolean',
 						],
 					],
 				],
@@ -258,12 +276,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		return [
 			'completedSteps' => $user_data['steps'],
-			'welcome'        => [
-				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
-			],
 			'purpose'        => [
 				'selected' => $user_data['purpose']['selected'],
 				'other'    => $user_data['purpose']['other'],
+			],
+			'tracking'       => [
+				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
 			],
 			'features'       => $this->get_features_data( $user_data ),
 			'ready'          => $this->setup_wizard->get_mailing_list_form_data(),
@@ -347,15 +365,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'type'        => 'array',
 					'readonly'    => true,
 				],
-				'welcome'        => [
-					'type'       => 'object',
-					'properties' => [
-						'usage_tracking' => [
-							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
-							'type'        => 'boolean',
-						],
-					],
-				],
 				'features'       => $this->get_features_schema(),
 				'purpose'        => [
 					'type'       => 'object',
@@ -367,6 +376,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						'other'    => [
 							'description' => __( 'Other free-text purpose.', 'sensei-lms' ),
 							'type'        => 'string',
+						],
+					],
+				],
+				'tracking'       => [
+					'type'       => 'object',
+					'properties' => [
+						'usage_tracking' => [
+							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
+							'type'        => 'boolean',
 						],
 					],
 				],
@@ -387,9 +405,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	public function submit_welcome( $data ) {
 		$this->mark_step_complete( 'welcome' );
 		$this->setup_wizard->pages->create_pages();
-
-		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		Sensei()->usage_tracking->send_usage_data();
 
 		return true;
 	}
@@ -423,6 +438,22 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'purpose' => $purpose_data,
 			]
 		);
+	}
+
+	/**
+	 * Submit form on tracking step.
+	 *
+	 * @param array $data Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function submit_tracking( $data ) {
+		$this->mark_step_complete( 'tracking' );
+
+		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
+		Sensei()->usage_tracking->send_usage_data();
+
+		return true;
 	}
 
 	/**
