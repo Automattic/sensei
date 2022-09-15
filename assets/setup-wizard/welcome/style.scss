@@ -1,0 +1,33 @@
+.sensei-setup-wizard {
+	background-image: url("../images/onboarding-bottom-left-illustration.png"), url("../images/onboarding-top-right-illustration.png");
+	background-position: -346px 100%, calc( 100% + 277px ) 0;
+	background-repeat: no-repeat;
+	transition: 0.5s background-position;
+
+	@media (min-height: 460px) {
+		background-size: auto 220px;
+	}
+
+	@media (min-width: 1100px) and (min-height: 700px) {
+		background-size: auto;
+	}
+}
+
+.sensei-setup-wizard-page--welcome .sensei-setup-wizard {
+	@media (min-height: 460px) {
+		background-position: -35px 102%, calc( 100% + 100px ) 0;
+	}
+
+	@media (min-width: 1100px) and (min-height: 700px) {
+		background-position: 0 100%, 100% 0;
+	}
+
+	&__welcome-step {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+	}
+}
