@@ -1,5 +1,4 @@
 <?php
-
 /**
  * File containing the Sensei_Featured_Video_Block class.
  *
