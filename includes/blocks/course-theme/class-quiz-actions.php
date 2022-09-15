@@ -47,7 +47,6 @@ class Quiz_Actions {
 	 * @return string The block HTML.
 	 */
 	public function render() : string {
-
 		if ( ! sensei_can_user_view_lesson() || 'quiz' !== get_post_type() ) {
 			return '';
 		}
@@ -55,10 +54,14 @@ class Quiz_Actions {
 		global $sensei_question_loop;
 		$pagination_enabled = $sensei_question_loop && $sensei_question_loop['total_pages'] > 1;
 
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+
 		// Get quiz actions. Either actions with pagination
 		// or only action if pagination is not enabled.
+		// Also, don't paginate if quiz has been completed.
 		ob_start();
-		if ( $pagination_enabled ) {
+		if ( $pagination_enabled && $status && 'in-progress' === $status->comment_approved ) {
 			Sensei_Quiz::the_quiz_pagination();
 			Sensei_Quiz::output_quiz_hidden_fields();
 		} else {

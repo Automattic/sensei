@@ -1537,7 +1537,11 @@ class Sensei_Quiz {
 			true
 		);
 
-		if ( ! empty( $pagination_settings['pagination_number'] ) ) {
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+
+		// Don't paginate if quiz has been completed.
+		if ( ! empty( $pagination_settings['pagination_number'] ) && $status && 'in-progress' === $status->comment_approved ) {
 			$sensei_question_loop['posts_per_page'] = (int) $pagination_settings['pagination_number'];
 
 			// phpcs:ignore WordPress.Security.NonceVerification -- Argument is used for pagination in the frontend.
