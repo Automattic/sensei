@@ -6,7 +6,7 @@
  * @package sensei
  */
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -31,9 +31,9 @@ class Sensei_Featured_Video_Block {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/featured-video',
 			[
-				'render_callback' => [$this, 'render_featured_video'],
+				'render_callback' => [ $this, 'render_featured_video' ],
 			],
-			Sensei()->assets->src_path('blocks/featured-video')
+			Sensei()->assets->src_path( 'blocks/featured-video' )
 		);
 	}
 
@@ -45,7 +45,7 @@ class Sensei_Featured_Video_Block {
 	 *
 	 * @return string The HTML of the block.
 	 */
-	public function render_featured_video(array $attributes, string $content): string {
-		return !empty($content) ? '<div class="sensei-block-wrapper">' . $content . '</div>' : '';
+	public function render_featured_video( array $attributes, string $content ): string {
+		return ! empty( $content ) ? '<div class="sensei-block-wrapper">' . $content . '</div>' : '';
 	}
 }
