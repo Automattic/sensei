@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { registerStore } from '@wordpress/data';
+import { createReduxStore, register } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,13 +13,15 @@ import controls from './controls';
 import * as resolvers from './resolvers';
 
 const registerSetupWizardStore = () => {
-	registerStore( 'sensei/setup-wizard', {
+	const store = createReduxStore( 'sensei/setup-wizard', {
 		reducer,
 		actions,
 		selectors,
 		controls,
 		resolvers,
 	} );
+
+	register( store );
 };
 
 export default registerSetupWizardStore;
