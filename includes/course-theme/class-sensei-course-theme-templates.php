@@ -106,8 +106,11 @@ class Sensei_Course_Theme_Templates {
 			$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
 			if ( ! $status ) {
 				\Sensei_Utils::sensei_start_lesson( $lesson_id );
+				return true;
 			}
-			return true;
+			if ( $status && 'in-progress' === $status->comment_approved ) {
+				return true;
+			}
 		}
 
 		return false;
