@@ -21,12 +21,12 @@ const DEFAULT_STATE = {
 	submitError: false,
 	data: {
 		completedSteps: [],
-		welcome: {
-			usage_tracking: false,
-		},
 		purpose: {
 			selected: [],
 			other: '',
+		},
+		tracking: {
+			usage_tracking: false,
 		},
 		features: {
 			selected: [],

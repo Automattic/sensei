@@ -76,7 +76,7 @@ const purposes = [
 /**
  * Purpose step for Setup Wizard.
  */
-export const Purpose = () => {
+const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
 	const {
@@ -105,7 +105,7 @@ export const Purpose = () => {
 	};
 
 	const onSubmitSuccess = () => {
-		goTo( 'features' );
+		goTo( 'tracking' );
 	};
 
 	const submitPage = () => {
@@ -168,3 +168,5 @@ export const Purpose = () => {
 		</>
 	);
 };
+
+export default Purpose;
