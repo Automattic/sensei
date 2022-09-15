@@ -8,15 +8,12 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { getFeatureObservation } from './feature-description-utils';
-import FeatureDescription from './feature-description';
-import FeatureStatus, {
+import {
 	INSTALLING_STATUS,
 	ERROR_STATUS,
 	EXTERNAL_STATUS,
 } from './feature-status';
 import useFeaturesPolling from './use-features-polling';
-import List from '../../shared/components/list';
 
 /**
  * Installation feedback component.
@@ -107,41 +104,7 @@ const InstallationFeedback = ( { onContinue, onRetry } ) => {
 
 	return (
 		<div className="sensei-setup-wizard__features-installation-feedback">
-			<List
-				items={ features.map(
-					( { slug, title, excerpt, link, error, status } ) => ( {
-						title,
-						content: (
-							<>
-								<FeatureDescription
-									slug={ slug }
-									excerpt={ excerpt }
-									link={ link }
-									observation={ getFeatureObservation(
-										slug,
-										features
-									) }
-								/>
-								{ error && (
-									<p className="sensei-setup-wizard__error-message">
-										{ error }{ ' ' }
-										<button
-											className="sensei-setup-wizard__retry-button"
-											type="button"
-											onClick={ () =>
-												onRetry( [ slug ] )
-											}
-										>
-											{ __( 'Retry?', 'sensei-lms' ) }
-										</button>
-									</p>
-								) }
-							</>
-						),
-						before: <FeatureStatus status={ status } />,
-					} )
-				) }
-			/>
+			OLD LIST
 			<div className="sensei-setup-wizard__group-buttons group-center">
 				{ actionButtons }
 			</div>

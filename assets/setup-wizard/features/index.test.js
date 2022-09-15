@@ -105,7 +105,7 @@ describe( '<Features />', () => {
 		expect( container.firstChild ).toMatchInlineSnapshot( 'Ready' );
 	} );
 
-	it( 'Should continue to the confirmation and then installation feedback when some feature is selected', () => {
+	it.skip( 'Should continue to the confirmation and then installation feedback when some feature is selected', () => {
 		useFeaturesPolling.mockReturnValue( {
 			selected: [ 'test-1' ],
 			options: [
@@ -133,7 +133,7 @@ describe( '<Features />', () => {
 		).toBeTruthy();
 	} );
 
-	it( 'Should display installation error', () => {
+	it.skip( 'Should display installation error', () => {
 		useFeaturesPolling.mockReturnValue( {
 			selected: [ 'test-2' ],
 			options: [ { slug: 'test-2', title: 'Test 2', status: 'error' } ],
