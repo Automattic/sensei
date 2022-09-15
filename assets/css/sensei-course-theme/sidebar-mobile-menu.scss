@@ -45,7 +45,7 @@ $breakpoint: 783px;
 			overflow: hidden;
 
 			.sensei-course-theme__sidebar {
-				padding: 24px;
+				padding: 24px!important;
 				transition: all 400ms, padding-top 0ms 0ms;
 			}
 		}
@@ -63,6 +63,10 @@ $breakpoint: 783px;
 			transition: all 300ms;
 			overflow: auto;
 
+		}
+
+		&__secondary-sidebar {
+			top: unset;
 		}
 
 		&:not(&--sidebar-open) &__sidebar {
