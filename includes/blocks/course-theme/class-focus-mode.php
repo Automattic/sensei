@@ -31,6 +31,7 @@ class Focus_Mode {
 			'sensei-lms/focus-mode-toggle',
 			[
 				'render_callback' => [ $this, 'render_focus_mode_toggle' ],
+				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
 		);

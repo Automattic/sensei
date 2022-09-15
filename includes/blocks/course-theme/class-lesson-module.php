@@ -44,9 +44,10 @@ class Lesson_Module {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-module',
-			array(
-				'render_callback' => array( $this, 'render' ),
-			),
+			[
+				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
+			],
 			$block_json_path
 		);
 	}

@@ -1,0 +1,116 @@
+
+:root {
+	--header-progress-bar-height: 4px;
+	--sidebar-width: 300px;
+	--content-padding: 32px;
+}
+
+$breakpoint: 783px;
+
+// Fixed sidebar.
+
+.sensei-course-theme {
+	&__sidebar {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: var(--sidebar-width);
+		border-right: 1px solid var(--border-color);
+		background-color: var(--bg-color);
+		overflow: auto;
+		overscroll-behavior: contain;
+		display: flex;
+		flex-direction: column;
+		scrollbar-gutter: stable both-edges;
+		padding: 12px;
+
+	}
+
+	&__header ~ &__columns &__sidebar {
+		top: var(--full-header-height) !important;
+	}
+
+	&__main-content ~ &__sidebar {
+		left: unset;
+		right: 0;
+		border-right: unset;
+		border-left: 1px solid var(--border-color);
+
+	}
+
+	&__main-content {
+		padding: 32px 0;
+		margin-right: var(--sidebar-width) !important;
+
+		// A Divi fix since it doesn't load Gutenberg block library styles.
+		@at-root {
+			.et_pb_pagebuilder_layout & {
+				flex: 1;
+			}
+		}
+	}
+
+	&__sidebar ~ &__main-content {
+		margin-right: unset ! important;
+		margin-left: var(--sidebar-width) !important;
+	}
+
+}
+
+// Mobile.
+
+@media screen and (max-width: ($breakpoint - 1)) {
+	body {
+		--sidebar-width: 0px;
+	}
+
+	.sensei-course-theme {
+
+		&__columns {
+			display: block;
+		}
+
+		&__sidebar {
+			position: static;
+			width: unset;
+			border: unset;
+		}
+
+		&__main-content {
+			flex: 1 !important;
+			margin-left: 0!important;
+		}
+
+		&__header {
+			.sensei-course-theme-course-progress {
+				display: none;
+			}
+		}
+
+		&--sidebar-open {
+			--header-height: 90px;
+			overflow: hidden;
+
+			.sensei-course-theme-course-progress-bar {
+				margin: 0 24px;
+			}
+
+			.sensei-course-theme__header .sensei-course-theme-course-progress {
+				display: block;
+				position: absolute;
+				left: 24px;
+				top: calc(var(--full-header-height) - 52px);
+			}
+
+			.sensei-course-theme__header .sensei-course-theme-course-progress-bar {
+				height: 8px;
+				position: absolute;
+				top: calc(var(--full-header-height) - 32px);
+				margin: 0;
+				left: 24px;
+				right: 24px;
+			}
+		}
+	}
+}

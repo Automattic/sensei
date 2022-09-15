@@ -35,6 +35,7 @@ class Lesson_Actions {
 			'sensei-lms/course-theme-lesson-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
 		);

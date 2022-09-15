@@ -32,6 +32,7 @@ class Course_Progress_Bar {
 			'sensei-lms/course-theme-course-progress-bar',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
 		);

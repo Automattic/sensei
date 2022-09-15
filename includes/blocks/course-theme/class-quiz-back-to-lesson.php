@@ -32,6 +32,7 @@ class Quiz_Back_To_Lesson {
 			'sensei-lms/quiz-back-to-lesson',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
 		);

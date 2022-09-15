@@ -44,7 +44,7 @@ class Sensei_Course_Theme_Template_Selection {
 						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
-					'styles'      => [],
+					'styles'      => [ Sensei()->assets->asset_url( 'course-theme/themes/default-theme.css' ) ],
 					'scripts'     => [],
 					'screenshots' => [
 						'thumbnail' => "$base_url/default/img-thumb.jpg",

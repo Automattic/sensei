@@ -41,7 +41,7 @@ body {
 		height: 100%;
 		margin: 0 !important;
 	}
-	&__main-content, &__main-content__container {
+	&__main-content, &__main-content__container, &__sidebar ~ &__main-content {
 		margin: 0 auto !important;
 	}
 
