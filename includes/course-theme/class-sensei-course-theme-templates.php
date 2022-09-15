@@ -102,6 +102,11 @@ class Sensei_Course_Theme_Templates {
 		$post = get_post();
 
 		if ( $post && 'quiz' === $post->post_type ) {
+			$lesson_id = \Sensei_Utils::get_current_lesson();
+			$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+			if ( ! $status ) {
+				\Sensei_Utils::sensei_start_lesson( $lesson_id );
+			}
 			return true;
 		}
 
