@@ -94,7 +94,7 @@ class Sensei_Course_Theme_Template_Selection {
 			'video-full' => new Sensei_Course_Theme_Template(
 				[
 					'name'        => 'video-full',
-					'title'       => __( 'Video Full', 'sensei-lms' ),
+					'title'       => __( 'Large Video', 'sensei-lms' ),
 					'content'     => [
 						'lesson' => '',
 						'quiz'   => $quiz_path,
