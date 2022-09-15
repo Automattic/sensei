@@ -148,7 +148,7 @@ class Sensei_Course_Theme_Editor {
 	/**
 	 * Enable the site editor by returning a block file template for the wp_is_block_theme check.
 	 *
-	 * @access
+	 * @access private
 	 *
 	 * @param string $path The file path.
 	 * @param string $file The requested file to search for.

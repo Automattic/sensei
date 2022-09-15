@@ -31,9 +31,8 @@ class Ui {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/ui',
 			[
-				'render_callback' => [ $this, 'render' ],
-				'style'           => 'sensei-learning-mode',
-				'editorStyle'     => 'sensei-learning-mode-editor',
+				'style'       => 'sensei-learning-mode',
+				'editorStyle' => 'sensei-learning-mode-editor',
 			],
 			$block_json_path
 		);
