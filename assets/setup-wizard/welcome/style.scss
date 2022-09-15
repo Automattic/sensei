@@ -3,10 +3,7 @@
 	background-position: -346px 100%, calc( 100% + 277px ) 0;
 	background-repeat: no-repeat;
 	transition: 0.5s background-position;
-
-	@media (min-height: 460px) {
-		background-size: auto 220px;
-	}
+	background-size: auto 220px;
 
 	@media (min-width: 1100px) and (min-height: 700px) {
 		background-size: auto;
