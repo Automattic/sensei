@@ -46,8 +46,7 @@ body.sensei-course-theme {
 	}
 
 	&__header + * {
-		top: var(--header-height) !important;
-		position: relative;
+		margin-top: var(--header-height) !important;
 	}
 
 	&__spacer-flex {
