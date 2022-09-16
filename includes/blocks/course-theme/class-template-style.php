@@ -70,6 +70,12 @@ class Template_Style {
 			[
 				'blockName'    => self::BLOCK_NAME,
 				'innerContent' => [ '<style>', $content, '</style>' ],
+				'attrs'        => [
+					'lock' => [
+						'move'   => true,
+						'remove' => true,
+					],
+				],
 			]
 		);
 	}
