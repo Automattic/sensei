@@ -21,7 +21,6 @@ body {
 	margin: 0;
 }
 
-
 .sensei-course-theme__sidebar-toggle {
 	display: block;
 	width: 24px;
@@ -48,6 +47,9 @@ body {
 
 	&__header ~ &__columns {
 		height: calc(100% - var(--header-height));
+	}
+	&__header + * {
+		margin-top: unset !important;
 	}
 
 }

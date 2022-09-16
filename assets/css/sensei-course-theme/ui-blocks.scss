@@ -24,6 +24,10 @@ body.sensei-course-theme {
 	}
 }
 
+.wp-block-sensei-lms-ui {
+	box-sizing: border-box;
+}
+
 .sensei-course-theme {
 
 	&__header {
@@ -35,7 +39,6 @@ body.sensei-course-theme {
 		top: var(--top-offset);
 		background-color: var(--bg-color);
 		z-index: 100;
-		// TODO Fix vertical content alignment on mobile.
 
 		img {
 			max-height: var(--header-height);
@@ -43,8 +46,7 @@ body.sensei-course-theme {
 	}
 
 	&__header + * {
-		top: var(--header-height) !important;
-		position: relative;
+		margin-top: var(--header-height) !important;
 	}
 
 	&__spacer-flex {
@@ -80,6 +82,5 @@ body.sensei-course-theme {
 			margin-left: var(--sidebar-width) !important;
 		}
 	}
-
 }
 

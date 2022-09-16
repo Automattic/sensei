@@ -37,11 +37,6 @@ class Sensei_Course_Theme {
 	const THEME_NAME = 'sensei-course-theme';
 
 	/**
-	 * CSS version to use when there is no version tag found in the template.
-	 */
-	const DEFAULT_CSS_VERSION = '4-8-0';
-
-	/**
 	 * Instance of class.
 	 *
 	 * @var self
@@ -345,7 +340,7 @@ class Sensei_Course_Theme {
 	 *
 	 * @return string|null Version string in the format of 4-0-2
 	 */
-	public function get_template_version() {
+	private function get_template_version() {
 		global $_wp_current_template_content;
 
 		preg_match( '/sensei-version--(\d+-\d+-\d+)/', $_wp_current_template_content ?? '', $version_matches );
@@ -363,7 +358,7 @@ class Sensei_Course_Theme {
 		$css_file = 'css/learning-mode.' . $version . '.css';
 
 		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $css_file ) ) ) {
-			$css_file = 'css/learning-mode.' . self::DEFAULT_CSS_VERSION . '.css';
+			$css_file = 'css/learning-mode.css';
 		}
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
