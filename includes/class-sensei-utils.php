@@ -2630,6 +2630,8 @@ class Sensei_Utils {
 	/**
 	 * Get's the HTML content from the Featured Video for a post
 	 *
+	 * @since $$next-version$$
+	 *
 	 * @param string $post_id
 	 *
 	 * @return string The featured video HTML output
