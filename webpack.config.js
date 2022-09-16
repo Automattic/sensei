@@ -98,7 +98,6 @@ const files = [
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
 	'css/learning-mode.4-0-2.scss',
-	'css/learning-mode.4-8-0.scss',
 	'css/learning-mode.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
