@@ -2641,7 +2641,7 @@ class Sensei_Utils {
 			$post   = get_post( $post_id );
 			$blocks = parse_blocks( $post->post_content );
 			foreach ( $blocks as $block ) {
-				if ( $block['blockName'] === 'sensei-lms/featured-video' ) {
+				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
 					return trim( render_block( $block ) );
 				}
 			}
