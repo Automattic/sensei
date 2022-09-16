@@ -1,0 +1,17 @@
+name: InstaWP WordPress Testing
+
+on:
+    pull_request:
+        types: [ opened ]
+
+jobs:
+    create-wp-for-testing:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: instawp/wordpress-testing-automation@main
+                with:
+                    GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                    INSTAWP_TOKEN: ${{secrets.INSTAWP_TOKEN}}
+                    INSTAWP_TEMPLATE_SLUG: default2
+                    REPO_ID: 47
+                    INSTAWP_ACTION: create-site-template
