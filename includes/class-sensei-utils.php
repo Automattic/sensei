@@ -2626,6 +2626,29 @@ class Sensei_Utils {
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
+
+	/**
+	 * Get's the HTML content from the Featured Video for a post
+	 *
+	 * @param string $post_id
+	 *
+	 * @return string The featured video HTML output
+	 */
+	public static function get_featured_video_html( $post_id ) {
+		if ( has_blocks( $post_id ) ) {
+			$post   = get_post( $post_id );
+			$blocks = parse_blocks( $post->post_content );
+			foreach ( $blocks as $block ) {
+				if ( $block['blockName'] === 'sensei-lms/featured-video' ) {
+					return trim( render_block( $block ) );
+				}
+			}
+		} else {
+			ob_start();
+			Sensei()->frontend->sensei_lesson_video( $post_id );
+			return trim( ob_get_clean() );
+		}
+	}
 }
 
 /**
