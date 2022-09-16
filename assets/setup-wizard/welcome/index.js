@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -28,17 +29,38 @@ const Welcome = () => {
 		submitStep( {}, { onSuccess: onSubmitSuccess } );
 	};
 
+	/**
+	 * Filters the title from the Welcome step in the Setup Wizard.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {string} title Title text.
+	 *
+	 * @return {string} Filtered title text.
+	 */
+	const title = applyFilters(
+		'sensei.setupWizard.welcomeTitle',
+		__( 'Welcome to Sensei LMS', 'sensei-lms' )
+	);
+
+	/**
+	 * Filters the paragraph from the Welcome step in the Setup Wizard.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {string} paragraph Paragraph text.
+	 *
+	 * @return {string} Filtered paragraph text.
+	 */
+	const paragraph = applyFilters(
+		'sensei.setupWizard.welcomeParagraph',
+		__( "We'll have your first course live in no time.", 'sensei-lms' )
+	);
+
 	return (
 		<div className="sensei-setup-wizard__welcome-step">
-			<H className="sensei-setup-wizard__step-title">
-				{ __( 'Welcome to Sensei LMS', 'sensei-lms' ) }
-			</H>
-			<p>
-				{ __(
-					"We'll have your first course live in no time.",
-					'sensei-lms'
-				) }
-			</p>
+			<H className="sensei-setup-wizard__step-title">{ title }</H>
+			<p>{ paragraph }</p>
 			<div className="sensei-setup-wizard__actions">
 				{ errorNotice }
 				<button
