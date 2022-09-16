@@ -32,7 +32,7 @@ const UsageTracking = () => {
 	};
 
 	return (
-		<div className="sensei-setup-wizard__welcome-step">
+		<div>
 			<H className="sensei-setup-wizard__step-title">
 				{ __( 'Help us improve your Sensei experience', 'sensei-lms' ) }
 			</H>
