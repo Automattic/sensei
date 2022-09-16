@@ -48,6 +48,9 @@ body {
 	&__header ~ &__columns {
 		height: calc(100% - var(--header-height));
 		}
+	&__header + * {
+		margin-top: unset !important;
+	}
 
 }
 
