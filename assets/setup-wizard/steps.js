@@ -7,7 +7,7 @@ import UsageTracking from './usage-tracking';
 import Features from './features';
 import Ready from './ready';
 
-export const steps = [
+const steps = [
 	{
 		key: 'welcome',
 		container: <Welcome />,
@@ -29,3 +29,5 @@ export const steps = [
 		container: <Ready />,
 	},
 ];
+
+export default steps;

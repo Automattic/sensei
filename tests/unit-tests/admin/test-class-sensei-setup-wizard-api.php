@@ -267,48 +267,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests that completed steps are empty when nothing has been submitted.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
-	 */
-	public function testDefaultProgressIsEmpty() {
-		$data = $this->request( 'GET', '' );
-		$this->assertEquals( [], $data['completedSteps'] );
-	}
-
-	/**
-	 * Tests that welcome step is completed after submitting it.
-	 *
-	 * @dataProvider step_form_data
-	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
-	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
-	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_features
-	 *
-	 * @param string $step      Step.
-	 * @param mixed  $form_data Data submitted.
-	 */
-	public function testStepCompletedAfterSubmit( $step, $form_data ) {
-		$this->request( 'POST', $step, $form_data );
-		$data = $this->request( 'GET', '' );
-		$this->assertEquals( [ $step ], $data['completedSteps'] );
-	}
-
-	public function testMultipleStepsCompleted() {
-
-		$steps_data = $this->step_form_data();
-
-		foreach ( $steps_data as $step_data ) {
-			list( $step, $form_data ) = $step_data;
-			$this->request( 'POST', $step, $form_data );
-		}
-
-		$data = $this->request( 'GET', '' );
-		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['completedSteps'] );
-
-	}
-
-
-	/**
 	 * Tests that submitting to features endpoint saves submitted data
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features

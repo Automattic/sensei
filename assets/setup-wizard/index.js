@@ -18,6 +18,7 @@ import QueryStringRouter, {
 } from '../shared/query-string-router';
 import ProgressBar from './progress-bar';
 import LogoTree from '../icons/logo-tree.svg';
+import steps from './steps';
 
 /**
  * Register setup wizard store.
@@ -44,12 +45,11 @@ const Fullscreen = () => {
  * Sensei setup wizard page.
  */
 const SenseiSetupWizardPage = () => {
-	const { isFetching, error, navigationSteps } = useSelect( ( select ) => {
+	const { isFetching, error } = useSelect( ( select ) => {
 		const store = select( 'sensei/setup-wizard' );
 		return {
 			isFetching: store.isFetching(),
 			error: store.getFetchError(),
-			navigationSteps: store.getNavigationSteps(),
 		};
 	}, [] );
 	const { fetchSetupWizardData } = useDispatch( 'sensei/setup-wizard' );
@@ -77,7 +77,7 @@ const SenseiSetupWizardPage = () => {
 	} else {
 		content = (
 			<div className="sensei-setup-wizard__container">
-				{ navigationSteps.map( ( step ) => (
+				{ steps.map( ( step ) => (
 					<Route key={ step.key } route={ step.key }>
 						{ step.container }
 					</Route>
@@ -89,10 +89,10 @@ const SenseiSetupWizardPage = () => {
 	return (
 		<QueryStringRouter
 			paramName={ PARAM_NAME }
-			defaultRoute={ navigationSteps.find( ( step ) => step.isNext ).key }
+			defaultRoute={ steps[ 0 ].key }
 		>
 			<Fullscreen />
-			<ProgressBar steps={ navigationSteps } />
+			<ProgressBar steps={ steps } />
 
 			<h1 className="sensei-setup-wizard__sensei-logo">
 				<LogoTree /> Sensei

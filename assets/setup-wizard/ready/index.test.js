@@ -189,19 +189,6 @@ describe( '<Ready />', () => {
 		);
 	} );
 
-	it( 'Should submit the ready step', () => {
-		const submitMock = jest.fn();
-
-		mockStepData( {
-			isComplete: false,
-			submitStep: submitMock,
-		} );
-
-		render( <Ready /> );
-
-		expect( submitMock ).toBeCalled();
-	} );
-
 	it( 'Should not submit the ready step when it is already complete', () => {
 		const submitMock = jest.fn();
 

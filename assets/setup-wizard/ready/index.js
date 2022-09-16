@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -9,56 +8,45 @@ import { __ } from '@wordpress/i18n';
  */
 import { MailingListSignupForm } from './mailinglist-signup-form';
 import { logLink } from '../../shared/helpers/log-event';
-import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { H, Section } from '../../shared/components/section';
 
 /**
  * Ready step for Setup Wizard.
  */
-const Ready = () => {
-	const { submitStep, isComplete } = useSetupWizardStep( 'ready' );
-
-	useEffect( () => {
-		if ( ! isComplete ) {
-			submitStep();
-		}
-	}, [ isComplete, submitStep ] );
-
-	return (
-		<>
-			<div className="sensei-setup-wizard__title">
-				<H>
-					{ __(
-						`You're ready to start creating online courses!`,
-						'sensei-lms'
-					) }
-				</H>
-			</div>
+const Ready = () => (
+	<>
+		<div className="sensei-setup-wizard__title">
+			<H>
+				{ __(
+					`You're ready to start creating online courses!`,
+					'sensei-lms'
+				) }
+			</H>
+		</div>
+		<div>
 			<div>
-				<div>
-					<Section className="sensei-setup-wizard__mailinglist-signup">
-						<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
-						<p>
-							{ __(
-								`We're here for you — get tips, product updates, and inspiration straight to your mailbox.`,
-								'sensei-lms'
-							) }
-						</p>
-						<MailingListSignupForm />
-					</Section>
-				</div>
+				<Section className="sensei-setup-wizard__mailinglist-signup">
+					<H>{ __( `Join our mailing list`, 'sensei-lms' ) }</H>
+					<p>
+						{ __(
+							`We're here for you — get tips, product updates, and inspiration straight to your mailbox.`,
+							'sensei-lms'
+						) }
+					</p>
+					<MailingListSignupForm />
+				</Section>
 			</div>
-			<div className="sensei-setup-wizard__bottom-actions">
-				<a
-					className="link__color-secondary"
-					href="edit.php?post_type=course"
-					{ ...logLink( 'setup_wizard_ready_exit' ) }
-				>
-					{ __( 'Exit to Courses', 'sensei-lms' ) }
-				</a>
-			</div>
-		</>
-	);
-};
+		</div>
+		<div className="sensei-setup-wizard__bottom-actions">
+			<a
+				className="link__color-secondary"
+				href="edit.php?post_type=course"
+				{ ...logLink( 'setup_wizard_ready_exit' ) }
+			>
+				{ __( 'Exit to Courses', 'sensei-lms' ) }
+			</a>
+		</div>
+	</>
+);
 
 export default Ready;

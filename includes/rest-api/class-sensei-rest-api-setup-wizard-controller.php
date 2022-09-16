@@ -275,16 +275,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$user_data = $this->setup_wizard->get_wizard_user_data();
 
 		return [
-			'completedSteps' => $user_data['steps'],
-			'purpose'        => [
+			'purpose'  => [
 				'selected' => $user_data['purpose']['selected'],
 				'other'    => $user_data['purpose']['other'],
 			],
-			'tracking'       => [
+			'tracking' => [
 				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
 			],
-			'features'       => $this->get_features_data( $user_data ),
-			'ready'          => $this->setup_wizard->get_mailing_list_form_data(),
+			'features' => $this->get_features_data( $user_data ),
+			'ready'    => $this->setup_wizard->get_mailing_list_form_data(),
 		];
 	}
 
@@ -360,13 +359,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		return [
 			'type'       => 'object',
 			'properties' => [
-				'completedSteps' => [
-					'description' => __( 'Completed steps.', 'sensei-lms' ),
-					'type'        => 'array',
-					'readonly'    => true,
-				],
-				'features'       => $this->get_features_schema(),
-				'purpose'        => [
+				'features' => $this->get_features_schema(),
+				'purpose'  => [
 					'type'       => 'object',
 					'properties' => [
 						'selected' => [
@@ -379,7 +373,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'tracking'       => [
+				'tracking' => [
 					'type'       => 'object',
 					'properties' => [
 						'usage_tracking' => [
@@ -388,7 +382,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'ready'          => [
+				'ready'    => [
 					'type' => 'object',
 				],
 			],
