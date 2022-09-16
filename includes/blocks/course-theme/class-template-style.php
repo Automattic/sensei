@@ -18,6 +18,14 @@ use \Sensei_Blocks;
  * Allows to embed css styles into the block templates. Used for Learning Mode block templates.
  */
 class Template_Style {
+
+	/**
+	 * Block name
+	 *
+	 * @var string
+	 */
+	const BLOCK_NAME = 'sensei-lms/template-style';
+
 	/**
 	 * Block JSON file.
 	 */
@@ -29,7 +37,7 @@ class Template_Style {
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/template-style',
+			self::BLOCK_NAME,
 			[
 				'render_callback' => [ $this, 'render' ],
 				'style'           => 'sensei-theme-blocks',
@@ -57,13 +65,12 @@ class Template_Style {
 	 *
 	 * @param string $content The css content of the Template_Style block.
 	 */
-	public static function render_embed( string $content = '' ): string {
-		return "
-            <!-- wp:sensei-lms/template-style -->
-            <style>
-                {$content}
-            </style>
-            <!-- /wp:sensei-lms/template-style -->
-		";
+	public static function serialize_block( string $content = '' ): string {
+		return serialize_block(
+			[
+				'blockName'    => self::BLOCK_NAME,
+				'innerContent' => [ '<style>', $content, '</style>' ],
+			]
+		);
 	}
 }

@@ -286,7 +286,7 @@ class Sensei_Course_Theme_Templates {
 							}
 						}
 					}
-					$template_object->content = $html . Template_Style::render_embed( $css );
+					$template_object->content = $html . Template_Style::serialize_block( $css );
 				}
 				$template_object->wp_id  = null;
 				$template_object->author = null;
