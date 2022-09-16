@@ -2632,7 +2632,7 @@ class Sensei_Utils {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param string $post_id
+	 * @param string $post_id the post ID
 	 *
 	 * @return string The featured video HTML output
 	 */
