@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Sensei_Blocks_Initializer;
-use \Sensei_Course_Theme_Option;
 use \Sensei\Blocks\Course_Theme as Blocks;
 
 /**
@@ -46,6 +45,7 @@ class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
+		new Blocks\Ui();
 		new Blocks\Course_Title();
 		new Blocks\Course_Navigation();
 		new Blocks\Site_Logo();
