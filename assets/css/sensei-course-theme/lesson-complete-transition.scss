@@ -4,10 +4,10 @@
 }
 
 .sensei-course-theme-lesson-completion-notice {
-	position: fixed;
+	position: sticky;
 	z-index: 90;
 	height: calc(100vh - var(--full-header-height));
-	left: var(--sidebar-width);
+	top: var(--full-header-height);
 	right: 0;
 	display: flex;
 	flex-direction: column;

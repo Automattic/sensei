@@ -79,6 +79,7 @@ class Sensei_Course_Theme_Template {
 	 *
 	 * @var array {
 	 *     @type string $title The CTA title of the upsell.
+	 *     @type string $tag   The tag for the template to indicate that it belongs to a group of templates. E.g.: "PREMIUM"
 	 *     @type string $url   The url to the upsell web page.
 	 * }
 	 */

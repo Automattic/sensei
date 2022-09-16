@@ -22,6 +22,7 @@ const SENSEI_BLOCKS = {
 		lessonActions: 'sensei-lms/lesson-actions',
 		lessonProperties: 'sensei-lms/lesson-properties',
 		contactTeacher: 'sensei-lms/button-contact-teacher',
+		featuredVideo: 'sensei-lms/featured-video',
 	},
 };
 

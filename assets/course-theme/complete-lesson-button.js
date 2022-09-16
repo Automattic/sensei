@@ -18,9 +18,9 @@ export const initCompleteLessonTransition = () => {
 		const progressBars = document.querySelectorAll(
 			'.sensei-course-theme-course-progress-bar-inner'
 		);
-		const mainContent = document.querySelector(
-			'.sensei-course-theme__main-content'
-		);
+		const mainContent =
+			document.querySelector( '.sensei-course-theme__main-content' ) ??
+			document.body;
 
 		/**
 		 * Disable complete buttons.
@@ -72,7 +72,7 @@ export const initCompleteLessonTransition = () => {
 			runProgressBarAnimation();
 
 			mainContent.insertAdjacentHTML(
-				'beforebegin',
+				'afterbegin',
 				`<div class="sensei-course-theme-lesson-completion-notice">
 					${ window.sensei.checkCircleIcon }
 					<p role="alert" class="sensei-course-theme-lesson-completion-notice__text">

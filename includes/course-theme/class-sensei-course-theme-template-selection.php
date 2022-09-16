@@ -63,6 +63,7 @@ class Sensei_Course_Theme_Template_Selection {
 		$quiz_path = "$base_path/quiz.html";
 		$upsell    = [
 			'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
+			'tag'   => __( 'Premium', 'sensei-lms' ),
 			'url'   => 'https://senseilms.com/pricing/',
 		];
 
@@ -77,7 +78,7 @@ class Sensei_Course_Theme_Template_Selection {
 						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
-					'styles'      => [],
+					'styles'      => [ Sensei()->assets->asset_url( 'course-theme/themes/default-theme.css' ) ],
 					'scripts'     => [],
 					'screenshots' => [
 						'thumbnail' => "$base_url/default/img-thumb.jpg",

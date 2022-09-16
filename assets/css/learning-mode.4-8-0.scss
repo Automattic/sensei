@@ -1,17 +1,12 @@
 @import 'sensei-course-theme/content'; // Review
-@import 'sensei-course-theme/base'; // Split to colors, merge frame styles with layout
-@import 'sensei-course-theme/4-8-0/layout'; // Rename to ui.
-@import 'sensei-course-theme/buttons'; // Replace all with wp-block-button?
-@import 'sensei-course-theme/header'; // Replace with block styles
-@import 'sensei-course-theme/focus-mode'; // Remove feature? Merge with mobile toggle?
-@import 'sensei-course-theme/4-8-0/mobile'; // Rename to ui.mobile
-@import 'sensei-course-theme/lesson-complete-transition'; // Review
+@import 'sensei-course-theme/base';
+@import 'sensei-course-theme/4-8-0/ui-blocks';
+@import 'assets/css/sensei-course-theme/theme-fixes';
 
+@import 'sensei-course-theme/buttons';
+@import 'sensei-course-theme/focus-mode';
+@import 'sensei-course-theme/mobile';
+
+@import 'sensei-course-theme/lesson-complete-transition';
 @import 'sensei-course-theme/quiz';
 @import 'sensei-course-theme/notices'; // Keep
-@import 'sensei-theme-blocks';
-@import 'sensei-course-theme/course-progress-bar'; // Replace with block styles
-@import 'sensei-course-theme/contact-teacher'; // Move to block
-@import 'sensei-course-theme/lesson-module'; // Replace with block styles, except font?
-
-@import 'sensei-course-theme/post-title'; // Remove
