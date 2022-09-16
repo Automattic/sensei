@@ -88,8 +88,11 @@ export default [
 	{
 		...sideBarToggleButtonMeta,
 		...meta,
-		title: __( 'Sidebar Toggle', 'sensei-lms' ),
-		description: __( 'Toggle the Learning Mode sidebar.', 'sensei-lms' ),
+		title: __( 'Sidebar Menu Toggle', 'sensei-lms' ),
+		description: __(
+			'Turn the Sidebar block into an overlay menu on mobile screens.',
+			'sensei-lms'
+		),
 		edit() {
 			return (
 				<div className="sensei-course-theme__sidebar-toggle">

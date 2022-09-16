@@ -30,7 +30,7 @@ class Sensei_Course_Theme_Template_Selection {
 		$upsell    = [
 			'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
 			'tag'   => __( 'Premium', 'sensei-lms' ),
-			'url'   => 'https://senseilms.com/pricing/',
+			'url'   => 'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=learning-mode-themes',
 		];
 
 		$templates = [
@@ -44,7 +44,7 @@ class Sensei_Course_Theme_Template_Selection {
 						'quiz'   => $quiz_path,
 					],
 					'version'     => '1.0.0',
-					'styles'      => [],
+					'styles'      => [ Sensei()->assets->asset_url( 'course-theme/themes/default-theme.css' ) ],
 					'scripts'     => [],
 					'screenshots' => [
 						'thumbnail' => "$base_url/default/img-thumb.jpg",
@@ -94,7 +94,7 @@ class Sensei_Course_Theme_Template_Selection {
 			'video-full' => new Sensei_Course_Theme_Template(
 				[
 					'name'        => 'video-full',
-					'title'       => __( 'Video Full', 'sensei-lms' ),
+					'title'       => __( 'Large Video', 'sensei-lms' ),
 					'content'     => [
 						'lesson' => '',
 						'quiz'   => $quiz_path,

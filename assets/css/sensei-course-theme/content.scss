@@ -11,7 +11,7 @@ body {
 	--wp--custom--layout--content-size: 900px;
 	--wp--custom--layout--wide-size: 1100px;
 
-	--max-content-size: calc(100vw - var(--sidebar-width) - 2 * var(--content-padding));
+	--max-content-size: calc(100vw - var(--content-padding));
 	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
 	--wide-size: min(var(--wp--custom--layout--wide-size), var(--max-content-size));
 

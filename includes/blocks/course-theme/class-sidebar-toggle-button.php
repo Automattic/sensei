@@ -27,11 +27,16 @@ class Sidebar_Toggle_Button {
 	 * Sidebar_Toggle_Button constructor.
 	 */
 	public function __construct() {
+
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
+
+		Sensei()->assets->register( 'sensei-sidebar-mobile-menu', 'css/sensei-course-theme/sidebar-mobile-menu.css' );
+
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/sidebar-toggle-button',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-sidebar-mobile-menu',
 			],
 			$block_json_path
 		);

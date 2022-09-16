@@ -32,6 +32,7 @@ class Course_Progress_Counter {
 			'sensei-lms/course-theme-course-progress-counter',
 			[
 				'render_callback' => [ $this, 'render' ],
+				'style'           => 'sensei-theme-blocks',
 			],
 			$block_json_path
 		);

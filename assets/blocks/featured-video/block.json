@@ -1,0 +1,9 @@
+{
+	"name": "sensei-lms/featured-video",
+    "icon": "format-video",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"supports": {
+        "multiple": false
+	}
+}
