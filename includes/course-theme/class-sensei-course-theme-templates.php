@@ -101,19 +101,20 @@ class Sensei_Course_Theme_Templates {
 	public function should_use_quiz_template() {
 		$post = get_post();
 
-		if ( $post && 'quiz' === $post->post_type ) {
-			$lesson_id = \Sensei_Utils::get_current_lesson();
-			$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
-			if ( ! $status ) {
-				\Sensei_Utils::sensei_start_lesson( $lesson_id );
-				return true;
-			}
-			if ( $status && 'in-progress' === $status->comment_approved ) {
-				return true;
-			}
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+
+		$has_submitted_quiz = $status && in_array( $status->comment_approved, [ 'ungraded', 'graded', 'passed', 'failed' ], true );
+
+		if ( ! $post || 'quiz' !== $post->post_type || $has_submitted_quiz ) {
+			return false;
 		}
 
-		return false;
+		if ( ! $status ) {
+			\Sensei_Utils::sensei_start_lesson( $lesson_id );
+		}
+
+		return true;
 	}
 
 	/**
