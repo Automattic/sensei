@@ -58,7 +58,7 @@ const Welcome = () => {
 	);
 
 	return (
-		<div className="sensei-setup-wizard__welcome-step">
+		<div className="sensei-setup-wizard__welcome-step sensei-setup-wizard__slide-in-from-bottom-animation">
 			<H className="sensei-setup-wizard__step-title">{ title }</H>
 			<p>{ paragraph }</p>
 			<div className="sensei-setup-wizard__actions">

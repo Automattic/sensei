@@ -5,6 +5,17 @@
 
 $small-screen-width: 600px;
 
+@keyframes slideInFromBottom {
+	0% {
+		transform: translateY(20px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 100%;
+	}
+}
+
 .sensei-setup-wizard {
 	display: flex;
 	flex-direction: column;
@@ -123,6 +134,10 @@ $small-screen-width: 600px;
 
 	&__submit-error {
 		margin-bottom: 32px;
+	}
+
+	&__slide-in-from-bottom-animation {
+		animation: 0.5s slideInFromBottom;
 	}
 }
 

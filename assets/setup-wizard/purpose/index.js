@@ -113,7 +113,7 @@ const Purpose = () => {
 	};
 
 	return (
-		<>
+		<div className="sensei-setup-wizard__slide-in-from-bottom-animation">
 			<div className="sensei-setup-wizard__title">
 				<H className="sensei-setup-wizard__step-title">
 					{ __(
@@ -170,7 +170,7 @@ const Purpose = () => {
 					</Button>
 				</CardBody>
 			</Card>
-		</>
+		</div>
 	);
 };
 
