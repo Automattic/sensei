@@ -1,0 +1,39 @@
+$usage-tracking-break: 1000px;
+
+.sensei-setup-wizard {
+	&__usage-tracking {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+
+		@media (min-width: $usage-tracking-break) {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+	}
+
+	&__usage-tracking-content {
+		padding-bottom: 24px;
+
+		@media (min-width: $usage-tracking-break) {
+			width: 30%;
+		}
+	}
+
+	&__usage-tracking-illustration {
+		margin-left: -$small-horizontal-padding;
+		flex: 1;
+		animation: 0.5s slideInFromRight;
+		background: no-repeat url("../images/onboarding-improve-experience-illustration.png");
+		background-size: 100% auto;
+
+		@media (min-width: $usage-tracking-break) {
+			flex: none;
+			width: 50%;
+		}
+
+		@media (min-width: $small-screen-width) {
+			margin-left: -$big-horizontal-padding;
+		}
+	}
+}
