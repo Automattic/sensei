@@ -4,6 +4,8 @@
  * Tool to list whether there is a changelog entry.
  *
  * @package Sensei
+ *
+ * phpcs:ignoreFile
  */
 
 chdir( __DIR__ . '/../' );
