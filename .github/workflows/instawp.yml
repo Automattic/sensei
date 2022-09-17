@@ -2,16 +2,31 @@ name: InstaWP WordPress Testing
 
 on:
     pull_request:
-        types: [ opened ]
+        types: [ opened, closed, merged ]
 
 jobs:
     create-wp-for-testing:
         runs-on: ubuntu-latest
         steps:
             -   uses: instawp/wordpress-testing-automation@main
+                if: github.event.action == 'opened'
                 with:
                     GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
                     INSTAWP_TOKEN: ${{secrets.INSTAWP_TOKEN}}
                     INSTAWP_TEMPLATE_SLUG: default2
                     REPO_ID: 47
                     INSTAWP_ACTION: create-site-template
+    
+    destroy-wp-after-testing:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: instawp/wordpress-testing-automation@main
+                if: github.event.action == 'closed' || github.event.action == 'merged'
+                id: detroy-wp
+                with:
+                    GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                    INSTAWP_TOKEN: ${{secrets.INSTAWP_TOKEN}}
+                    INSTAWP_DOMAIN: ${{secrets.INSTAWP_DOMAIN}}
+                    INSTAWP_TEMPLATE_SLUG: gutenawithkit
+                    REPO_ID: 22
+                    INSTAWP_ACTION: destroy-site
