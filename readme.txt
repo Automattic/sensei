@@ -115,7 +115,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022-08-24 - version 4.6.3
+## 4.6.3 - 2022-08-24
 * New: Course List block (beta)
     * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
     * Add the Course Categories block [#5455](https://github.com/Automattic/sensei/pull/5455)
@@ -131,7 +131,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
 * Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
 
-2022-08-17 - version 4.6.2
+## 4.6.2 - 2022-08-17
 * Fix: Learning Mode - Do not filter templates for query slugs if it is indexing. [#5460](https://github.com/Automattic/sensei/pull/5460)
 * Fix: Do not save -1 values on quiz meta [#5461](https://github.com/Automattic/sensei/pull/5461)
 * Fix: Revert "Change className prop to not use classnames" [#5464](https://github.com/Automattic/sensei/pull/5464)
@@ -141,8 +141,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Add: Change confirm dialog styles [#5454](https://github.com/Automattic/sensei/pull/5454)
 * Add: Fix set current time to keep the same behavior for all players [#5416](https://github.com/Automattic/sensei/pull/5416)
 
-
-2022-08-09 - version 4.6.1
+## 4.6.1 - 2022-08-09
 * Fix: Fix lesson quick edit and bulk edit for quiz settings [#4404](https://github.com/Automattic/sensei/pull/4404)
 * Fix: Use standard approach of displaying filters for list tables [#5174](https://github.com/Automattic/sensei/pull/5174)
 * Fix: Improve test coverage for Sensei_Lesson [#5389](https://github.com/Automattic/sensei/pull/5389)
