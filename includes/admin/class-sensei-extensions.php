@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei_Extensions class.
  *
- * All functionality pertaining to the admin area's extension directory.
+ * Has functionality pertaining to the extension management system.
  *
  * @since 2.0.0
  */
@@ -28,7 +28,7 @@ final class Sensei_Extensions {
 	private static $instance;
 
 	/**
-	 * Courses constructor. Prevents other instances from being created outside of `Sensei_Extensions::instance()`.
+	 * Courses constructor. Prevents other instances from being created outside `Sensei_Extensions::instance()`.
 	 */
 	private function __construct() {}
 
@@ -36,9 +36,10 @@ final class Sensei_Extensions {
 	 * Initializes the class and adds all filters and actions related to the extension directory.
 	 *
 	 * @since 2.0.0
+	 * @deprecated $$next-version$$
 	 */
 	public function init() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 	}
 
 	/**
@@ -46,58 +47,20 @@ final class Sensei_Extensions {
 	 *
 	 * @since  2.0.0
 	 * @access private
+	 * @deprecated $$next-version$$
 	 */
 	public function enqueue_admin_assets() {
-		$screen = get_current_screen();
-
-		if ( in_array( $screen->id, [ 'course_page_sensei-extensions' ], true ) ) {
-			Sensei()->assets->enqueue( 'sensei-extensions', 'extensions/index.js', [], true );
-			Sensei()->assets->enqueue( 'sensei-extensions-style', 'extensions/extensions.css', [ 'sensei-wp-components' ] );
-			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
-
-			$this->localize_script();
-		}
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 	}
 
 	/**
 	 * Localize extensions script.
 	 *
 	 * @since 3.11.0
+	 * @deprecated $$next-version$$
 	 */
 	private function localize_script() {
-		$data = array(
-			'connectUrl' => add_query_arg(
-				array(
-					'page'              => 'wc-addons',
-					'section'           => 'helper',
-					'wc-helper-connect' => 1,
-					'wc-helper-nonce'   => wp_create_nonce( 'connect' ),
-				),
-				admin_url( 'admin.php' )
-			),
-		);
-
-		if ( ! Sensei_Utils::is_woocommerce_installed() ) {
-			$data['installUrl'] = self_admin_url( 'plugin-install.php?s=woocommerce&tab=search&type=term&plugin_details=woocommerce' );
-		} elseif ( ! Sensei_Utils::is_woocommerce_active() ) {
-			$plugin_file         = 'woocommerce/woocommerce.php';
-			$data['activateUrl'] = wp_nonce_url(
-				add_query_arg(
-					array(
-						'action' => 'activate',
-						'plugin' => $plugin_file,
-					),
-					self_admin_url( 'plugins.php' )
-				),
-				'activate-plugin_' . $plugin_file
-			);
-		}
-
-		wp_localize_script(
-			'sensei-extensions',
-			'sensei_extensions',
-			$data
-		);
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 	}
 
 	/**
@@ -237,21 +200,6 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Get updates count.
-	 *
-	 * @return int Updates count.
-	 */
-	private function get_has_update_count() {
-		$extensions = $this->get_extensions( 'plugin' );
-
-		return count(
-			array_filter(
-				array_column( $extensions, 'has_update' )
-			)
-		);
-	}
-
-	/**
 	 * Get installed Sensei plugins.
 	 *
 	 * @param bool $only_woo Only include WooCommerce.com extensions.
@@ -277,28 +225,15 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Adds the menu item for the Extensions page.
+	 * Adds the menu item for the Home page.
 	 *
-	 * @since  2.0.0
+	 * @since  $$next-version$$
 	 *
 	 * @access private
+	 * @deprecated $$next-version$$
 	 */
 	public function add_admin_menu_item() {
-		$updates_html = '';
-		$updates      = $this->get_has_update_count();
-
-		if ( $updates > 0 ) {
-			$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
-		}
-
-		add_submenu_page(
-			'edit.php?post_type=course',
-			__( 'Sensei LMS Extensions', 'sensei-lms' ),
-			__( 'Extensions', 'sensei-lms' ) . $updates_html,
-			'install_plugins',
-			'sensei-extensions',
-			[ $this, 'render' ]
-		);
+		_deprecated_function(__METHOD__, '$$next-version$$');
 	}
 
 	/**
@@ -306,17 +241,10 @@ final class Sensei_Extensions {
 	 *
 	 * @since  2.0.0
 	 * @access private
+	 * @deprecated $$next-version$$
 	 */
 	public function render() {
-		// phpcs:ignore WordPress.Security.NonceVerification
-		$tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : null;
-
-		sensei_log_event(
-			'extensions_view',
-			[ 'view' => $tab ? $tab : '_all' ]
-		);
-
-		echo '<div id="sensei-extensions-page" class="sensei-extensions-page"></div>';
+		_deprecated_function(__METHOD__, '$$next-version$$');
 	}
 
 	/**
