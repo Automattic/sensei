@@ -20,7 +20,7 @@ import WooCommerceNotice from './update-notification/woocommerce-notice';
 import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
 import FilteredExtensions from './filtered-extensions';
-import { EXTENSIONS_STORE } from './store';
+import { EXTENSIONS_STORE } from '../extensions/store';
 import { Grid, Col } from './grid';
 
 const Main = () => {

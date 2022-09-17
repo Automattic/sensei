@@ -13,7 +13,7 @@ import { useSelect } from '@wordpress/data';
  */
 import Card from './card';
 import { Grid, Col } from './grid';
-import { EXTENSIONS_STORE } from './store';
+import { EXTENSIONS_STORE } from '../extensions/store';
 
 /**
  * Renders the sections based on the skeleton structure. It can also render subsections recursively.

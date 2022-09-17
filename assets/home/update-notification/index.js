@@ -12,7 +12,7 @@ import UpdateAvailable from './update-available';
 import { Col } from '../grid';
 import UpdateIcon from '../../icons/update.svg';
 import { useDispatch } from '@wordpress/data';
-import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../../extensions/store';
 
 /**
  * Update notification component.

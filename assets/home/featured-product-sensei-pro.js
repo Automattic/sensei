@@ -8,7 +8,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies
  */
 import FeaturedProduct from './featured-product';
-import { EXTENSIONS_STORE } from './store';
+import { EXTENSIONS_STORE } from '../extensions/store';
 
 /*
  * Sensei Pro featured product component.

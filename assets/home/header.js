@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 const Header = () => (
 	<header>
 		<h1 className="wp-heading-inline">
-			{ __( 'Sensei LMS Extensions', 'sensei-lms' ) }
+			{ __( 'Sensei Home', 'sensei-lms' ) }
 		</h1>
 	</header>
 );

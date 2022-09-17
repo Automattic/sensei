@@ -9,7 +9,7 @@ import { check } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import { EXTENSIONS_STORE, isLoadingStatus } from './store';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../extensions/store';
 import UpdateIcon from '../icons/update.svg';
 import { logEvent } from '../shared/helpers/log-event';
 import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
