@@ -6,7 +6,7 @@
 		background: no-repeat url("../images/onboarding-newsletter-illustration.png") 50% 0;
 		background-size: 130% auto;
 
-		@media (min-width: $small-screen-width) {
+		@media (min-width: $small-screen-break) {
 			background-size: 100% auto;
 			margin: 0 (-$big-horizontal-padding) (-$big-vertical-padding);
 		}

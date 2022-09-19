@@ -6,7 +6,7 @@
 		background: no-repeat url("../images/onboarding-improve-experience-illustration.png");
 		background-size: 100% auto;
 
-		@media (min-width: $small-screen-width) {
+		@media (min-width: $small-screen-break) {
 			margin: 0 0 (-$big-vertical-padding) (-$big-horizontal-padding);
 		}
 

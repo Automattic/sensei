@@ -1,4 +1,4 @@
-$small-screen-width: 600px;
+$small-screen-break: 600px;
 $columns-break: 1000px;
 
 $small-vertical-padding: 20px;
@@ -26,7 +26,7 @@ $big-horizontal-padding: 80px;
 	color: #000;
 	font-size: 16px;
 
-	@media (min-width: $small-screen-width) {
+	@media (min-width: $small-screen-break) {
 		font-size: 18px;
 	}
 
@@ -40,7 +40,7 @@ $big-horizontal-padding: 80px;
 		line-height: 1.4;
 		margin: 0 0 32px;
 
-		@media (min-width: $small-screen-width) {
+		@media (min-width: $small-screen-break) {
 			font-size: 18px;
 		}
 	}
@@ -56,7 +56,7 @@ $big-horizontal-padding: 80px;
 		font-family: Recoleta, sans-serif;
 		font-size: 18px;
 
-		@media (min-width: $small-screen-width) {
+		@media (min-width: $small-screen-break) {
 			margin: 24px;
 		}
 
@@ -74,7 +74,7 @@ $big-horizontal-padding: 80px;
 		line-height: 1.1;
 		margin: 0 0 12px;
 
-		@media (min-width: $small-screen-width) {
+		@media (min-width: $small-screen-break) {
 			font-size: 44px;
 		}
 	}
@@ -84,7 +84,7 @@ $big-horizontal-padding: 80px;
 		flex: 1;
 		padding: $small-vertical-padding $small-horizontal-padding;
 
-		@media (min-width: $small-screen-width) {
+		@media (min-width: $small-screen-break) {
 			padding: $big-vertical-padding $big-horizontal-padding;
 		}
 	}
@@ -133,14 +133,14 @@ $big-horizontal-padding: 80px;
 		&--full-width {
 			text-align: center;
 
-			@media (min-width: $small-screen-width) {
+			@media (min-width: $small-screen-break) {
 				text-align: left;
 			}
 
 			> * {
 				width: 100%;
 
-				@media (min-width: $small-screen-width) {
+				@media (min-width: $small-screen-break) {
 					width: auto;
 				}
 			}
