@@ -110,10 +110,6 @@ class Sensei_Course_Theme_Templates {
 			return false;
 		}
 
-		if ( ! $status ) {
-			\Sensei_Utils::sensei_start_lesson( $lesson_id );
-		}
-
 		return true;
 	}
 
