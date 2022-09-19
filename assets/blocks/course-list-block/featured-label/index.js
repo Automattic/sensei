@@ -34,11 +34,20 @@ const FeaturedLabel = ( { postId, isFeaturedImage, children } ) => {
 		( hasImage && isFeaturedImage ) || ( ! hasImage && ! isFeaturedImage );
 	return (
 		<div className={ wrapperClassName }>
-			{ isFeatured && shouldDisplayFeatureLabel && (
-				<span className={ featuredLabelClassName }>
-					{ __( 'Featured', 'sensei-lms' ) }
-				</span>
-			) }
+			{ isFeatured &&
+				shouldDisplayFeatureLabel &&
+				( isFeaturedImage ? (
+					<span className={ featuredLabelClassName }>
+						{ __( 'Featured', 'sensei-lms' ) }
+					</span>
+				) : (
+					<span
+						className={ featuredLabelClassName }
+						data-block="featured-badge"
+					>
+						{ __( 'Featured', 'sensei-lms' ) }
+					</span>
+				) ) }
 			{ children }
 		</div>
 	);
