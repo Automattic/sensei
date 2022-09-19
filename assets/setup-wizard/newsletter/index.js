@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import SignupForm from './signup-form';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { H } from '../../shared/components/section';
 
@@ -14,6 +15,10 @@ import { H } from '../../shared/components/section';
  */
 const Newsletter = () => {
 	const { goTo } = useQueryStringRouter();
+
+	const goToNextStep = () => {
+		goTo( 'features' );
+	};
 
 	return (
 		<div className="sensei-setup-wizard__columns">
@@ -30,21 +35,12 @@ const Newsletter = () => {
 						'sensei-lms'
 					) }
 				</p>
-				<div className="sensei-setup-wizard__actions">
-					<button
-						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-						onClick={ () => {
-							goTo( 'features' );
-						} }
-					>
-						{ __( 'Nice! Sign me up', 'sensei-lms' ) }
-					</button>
+				<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+					<SignupForm onSubmit={ goToNextStep } />
 					<div className="sensei-setup-wizard__action-skip">
 						<button
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-							onClick={ () => {
-								goTo( 'features' );
-							} }
+							onClick={ goToNextStep }
 						>
 							{ __( 'Skip newsletter signup', 'sensei-lms' ) }
 						</button>
