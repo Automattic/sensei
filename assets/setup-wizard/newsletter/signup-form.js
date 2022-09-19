@@ -34,7 +34,7 @@ const SignupForm = ( { onSubmit } ) => {
 			action={ stepData.mc_url }
 			method="post"
 			target="_blank"
-			className="sensei-setup-wizard__signup-form"
+			className="sensei-signup-form"
 			onSubmit={ submitHandler }
 		>
 			<input
@@ -44,6 +44,7 @@ const SignupForm = ( { onSubmit } ) => {
 			/>
 
 			<TextControl
+				className="sensei-signup-form__text-control"
 				label={ __( 'Your email address', 'sensei-lms' ) }
 				type="email"
 				name="EMAIL"
@@ -51,7 +52,7 @@ const SignupForm = ( { onSubmit } ) => {
 			/>
 
 			<button
-				className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+				className="sensei-setup-wizard__button sensei-setup-wizard__button--primary sensei-signup-form__button"
 				type="submit"
 				{ ...logLink( 'setup_wizard_newsletter_signup' ) }
 			>
