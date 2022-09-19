@@ -118,15 +118,27 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function maybe_add_site_editor_hooks() {
 
+		if ( $this->is_site_editor_request() ) {
+			$this->add_site_editor_hooks();
+		}
+	}
+
+	/**
+	 * Check if the current request is for the site editor.
+	 *
+	 * @since $next-version$
+	 */
+	public static function is_site_editor_request() {
+
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 
 		$is_site_editor      = preg_match( '#/wp-admin/site-editor.php#i', $uri ) || preg_match( '#/wp-admin/themes.php\?.*page=gutenberg-edit-site#i', $uri );
 		$is_site_editor_rest = preg_match( '#/wp-json/.*/' . self::THEME_PREFIX . '#i', $uri ) || preg_match( '#/wp-json/wp/v2/templates#i', $uri );
 
-		if ( $is_site_editor || $is_site_editor_rest ) {
-			$this->add_site_editor_hooks();
-		}
+		return $is_site_editor || $is_site_editor_rest;
 	}
+
+
 
 	/**
 	 * Add template editing hooks.
