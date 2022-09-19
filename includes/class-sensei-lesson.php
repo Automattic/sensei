@@ -635,7 +635,7 @@ class Sensei_Lesson {
 	 */
 	public function meta_box_save( $post_id ) {
 
-		// This should only run on the Classic Editor
+		// This should only run on the Classic Editor.
 		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
 			return false;
 		}
