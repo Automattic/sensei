@@ -81,36 +81,5 @@ $breakpoint: 783px;
 			flex: 1 !important;
 			margin-left: 0!important;
 		}
-
-		&__header {
-			.sensei-course-theme-course-progress {
-				display: none;
-			}
-		}
-
-		&--sidebar-open {
-			--header-height: 90px;
-			overflow: hidden;
-
-			.sensei-course-theme-course-progress-bar {
-				margin: 0 24px;
-			}
-
-			.sensei-course-theme__header .sensei-course-theme-course-progress {
-				display: block;
-				position: absolute;
-				left: 24px;
-				top: calc(var(--full-header-height) - 52px);
-			}
-
-			.sensei-course-theme__header .sensei-course-theme-course-progress-bar {
-				height: 8px;
-				position: absolute;
-				top: calc(var(--full-header-height) - 32px);
-				margin: 0;
-				left: 24px;
-				right: 24px;
-			}
-		}
 	}
 }
