@@ -19,6 +19,14 @@ class Sensei_Course_Theme_Template_Selection {
 	const DEFAULT_TEMPLATE_NAME = 'default';
 
 	/**
+	 * The seperator used when appending the template name to
+	 * post_name.
+	 *
+	 * @var string
+	 */
+	const TEMPLATE_NAME_SEPERATOR = '___';
+
+	/**
 	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
@@ -201,7 +209,7 @@ class Sensei_Course_Theme_Template_Selection {
 	}
 
 	/**
-	 * Sets the LM template name as a meta value for the custom LM template in the db.
+	 * Sets the LM template name as a post_name suffix for the custom LM template in the db.
 	 *
 	 * @param int     $post_id The id of the post saved.
 	 * @param WP_Post $post The instance of the post that was saved.
@@ -219,7 +227,7 @@ class Sensei_Course_Theme_Template_Selection {
 		}
 
 		$active_template_name = self::get_active_template_name();
-		$post->post_name      = $post->post_name . '___' . $active_template_name;
+		$post->post_name      = $post->post_name . self::TEMPLATE_NAME_SEPERATOR . $active_template_name;
 
 		wp_update_post( $post );
 	}
