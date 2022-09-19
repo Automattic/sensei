@@ -142,6 +142,7 @@ class Sensei_Course_Theme_Editor {
 
 		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
 			add_filter( 'theme_file_path', [ $this, 'override_theme_block_template_file' ], 10, 2 );
+			add_filter( 'pre_option_stylesheet', [ Sensei_Course_Theme::instance(), 'theme_stylesheet' ] );
 		}
 	}
 
