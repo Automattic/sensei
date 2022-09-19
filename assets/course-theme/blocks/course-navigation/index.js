@@ -6,12 +6,13 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import ChevronUp from '../../icons/chevron-up.svg';
-import CircleIcon from '../../icons/circle.svg';
-import HalfCircleIcon from '../../icons/half-filled-circle.svg';
-import CheckCircleIcon from '../../icons/check-filled-circle.svg';
-import LockIcon from '../../icons/lock.svg';
-import EyeIcon from '../../icons/eye.svg';
+import ChevronUp from '../../../icons/chevron-up.svg';
+import CircleIcon from '../../../icons/circle.svg';
+import HalfCircleIcon from '../../../icons/half-filled-circle.svg';
+import CheckCircleIcon from '../../../icons/check-filled-circle.svg';
+import LockIcon from '../../../icons/lock.svg';
+import EyeIcon from '../../../icons/eye.svg';
+import meta from './course-navigation.block.json';
 
 const ICONS = {
 	'not-started': CircleIcon,
@@ -129,10 +130,9 @@ const Lesson = ( { title, quiz, status } ) => {
  * Course Navigation block.
  */
 export default {
-	supports: {},
+	...meta,
 	attributes: {},
 	title: __( 'Course Navigation', 'sensei-lms' ),
-	name: 'sensei-lms/course-navigation',
 	edit: function EditCourseNavigationBlock() {
 		return (
 			<div className="sensei-lms-course-navigation">

@@ -20,14 +20,22 @@ use \Sensei_Context_Notices;
  */
 class Notices {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-notices.block.json';
+
+	/**
 	 * Notices constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-notices',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+				'style'           => 'sensei-theme-blocks',
+			],
+			$block_json_path
 		);
 	}
 
@@ -45,6 +53,7 @@ class Notices {
 			. Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'course-theme/locked-lesson-notice.php' )
 			. Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->get_notices_html( 'course-theme/quiz-grade-notice.php' );
 
-		return $notices_html;
+		$wrapper_attr = get_block_wrapper_attributes();
+		return sprintf( '<div %1$s>%2$s</div>', $wrapper_attr, $notices_html );
 	}
 }

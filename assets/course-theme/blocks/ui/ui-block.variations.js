@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import meta from './ui-block.json';
+import meta from './ui.block.json';
 
 /**
  * Settings shared between variations.
@@ -139,9 +139,38 @@ export const TwoColumnLayoutBlock = {
 	},
 };
 
+/**
+ * Video container UI block variation definition.
+ */
+export const VideoContainerBlock = {
+	...shared,
+	name: 'sensei-lms/video-container',
+	title: __( 'Video Container', 'sensei-lms' ),
+	description: __( 'Container for a video with a sidebar.', 'sensei-lms' ),
+	attributes: {
+		elementClass: 'sensei-course-theme__video-container',
+	},
+	innerBlocks: [
+		[ 'core/video', [] ],
+		createBlockTemplate( SidebarBlock, {
+			lock: {
+				remove: true,
+				move: false,
+			},
+		} ),
+	],
+	meta: {
+		innerBlocksProps: {
+			orientation: 'horizontal',
+		},
+		isFrame: false,
+	},
+};
+
 export default [
 	FixedHeaderBlock,
 	TwoColumnLayoutBlock,
 	MainContentBlock,
 	SidebarBlock,
+	VideoContainerBlock,
 ];

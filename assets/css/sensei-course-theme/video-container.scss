@@ -1,0 +1,100 @@
+
+:root {
+	--sidebar-width: 300px;
+}
+
+
+// Mobile
+@media screen and (max-width: ($breakpoint - 1)) {
+	.sensei-course-theme {
+		&__video-container {
+			border-width: 0 !important;
+			padding: 0 !important;
+			display: contents;
+		}
+	}
+
+}
+
+// Desktop
+@media screen and (min-width: ($breakpoint)) {
+	.sensei-course-theme {
+		&__video-container {
+			display: flex;
+			position: relative;
+			gap: var(--wp--style--block-gap, 2em);
+			border: 1px solid currentColor;
+		}
+
+		&__video-container::after {
+			flex: 0 0 var(--sidebar-width);
+			content: '';
+		}
+
+		&__video-container &__sidebar {
+
+			position: absolute;
+			width: var(--sidebar-width);
+			top: 20px;
+			bottom: 20px;
+			right: 20px;
+			overflow-y: auto;
+			scrollbar-gutter: stable both-edges;
+
+			&::-webkit-scrollbar {
+				width: 6px;
+				margin: 2px;
+			}
+
+			&::-webkit-scrollbar-track {
+				background: transparent;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background-color: rgba(155, 155, 155, 0.3);
+				border-radius: 20px;
+				border: transparent;
+			}
+
+		}
+
+		/**
+		 * Fixed right sidebar mode when there is no video.
+		 */
+		&__video-container.no-video {
+			width: var(--sidebar-width);
+			justify-content: flex-end;
+			position: fixed;
+			right: 20px;
+			top: 150px;
+			bottom: 100px;
+			overflow-y: auto;
+			scrollbar-gutter: stable both-edges;
+
+			&:after {
+				content: none;
+			}
+
+			.wp-block-cover {
+				display: none;
+			}
+
+			.sensei-course-theme__sidebar {
+				width: unset;
+				background: #fff;
+				position: static;
+				overflow-y: unset;
+				scrollbar-gutter: unset;
+			}
+
+			& ~ * .sensei-course-theme__secondary-sidebar {
+				position: fixed;
+				right: 20px;
+				top: calc(100vh - 100px);
+				bottom: 0px;
+				width: var(--sidebar-width);
+			}
+
+		}
+	}
+}

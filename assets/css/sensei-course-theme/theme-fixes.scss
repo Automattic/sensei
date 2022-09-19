@@ -1,0 +1,22 @@
+
+// Theme compatibilty fixes
+
+.wp-block-site-logo {
+	.custom-logo-link {
+		margin: 0;
+	}
+}
+
+.sensei-course-theme__frame {
+
+	// Twenty twenty one
+	.wp-block-group::before, .wp-block-group::after {  // Limit to rows with is-content-justification-* ?
+		content: none;
+	}
+
+	// Twenty twenty
+	.wp-block-group.wp-block-group.wp-block-group {
+		margin: unset;
+	}
+}
+

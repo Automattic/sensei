@@ -85,8 +85,7 @@ class Sensei_Course_Theme_Option {
 
 		$url = get_pagenum_link( 1, false );
 		if ( $should_use_theme ) {
-			$url = str_replace( trailingslashit( home_url() ), '', $url );
-			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );
+			return;
 		} else {
 			$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
 			$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
@@ -155,20 +154,18 @@ class Sensei_Course_Theme_Option {
 	 * @return boolean
 	 */
 	public static function should_override_theme() {
-
-		$enabled = ! \Sensei()->settings->get( 'sensei_learning_mode_theme' );
-
 		/**
 		 * Filters if the theme should be overriden for learning mode.
 		 *
 		 * @since 4.0.2
 		 * @hook  sensei_course_learning_mode_theme_override_enabled
+		 * @deprecated $$next-version$$
 		 *
 		 * @param {bool} $enabled True if the learning mode theme override is enabled.
 		 *
 		 * @return {bool} The modified learning mode theme override setting.
 		 */
-		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', $enabled );
+		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', false );
 	}
 
 	/**

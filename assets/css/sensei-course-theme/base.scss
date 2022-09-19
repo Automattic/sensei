@@ -1,8 +1,4 @@
 
-@mixin text-gray() {
-	opacity: 0.7;
-}
-
 $breakpoint: 783px;
 
 body {
@@ -20,6 +16,7 @@ body {
 .sensei-course-theme__frame {
 
 	--wp--style--block-gap: 0px;
+	box-sizing: border-box;
 
 	a {
 		color: inherit;
