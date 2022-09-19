@@ -100,7 +100,6 @@ $block: '.wp-block-sensei-lms-course-list';
 				&, .wp-block-group__inner-container {
 					display: flex;
 					flex-direction: column;
-					height: 100%;
 					width: 100%;
 					gap: 18px;
 
@@ -129,6 +128,9 @@ $block: '.wp-block-sensei-lms-course-list';
 					.course-list-featured-label__course-categories {
 						margin-right: 10px;
 					}
+				}
+				.wp-block-group__inner-container {
+					height: 100%;
 				}
 			}
 
