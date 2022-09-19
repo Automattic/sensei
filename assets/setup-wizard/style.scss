@@ -1,5 +1,7 @@
 $small-screen-width: 600px;
+$small-vertical-padding: 20px;
 $small-horizontal-padding: 20px;
+$big-vertical-padding: 60px;
 $big-horizontal-padding: 80px;
 
 @import '../css/font-recoleta';
@@ -77,10 +79,10 @@ $big-horizontal-padding: 80px;
 	// Container.
 	&__container {
 		flex: 1;
-		padding: 20px $small-horizontal-padding 0;
+		padding: $small-vertical-padding $small-horizontal-padding;
 
 		@media (min-width: $small-screen-width) {
-			padding: 60px 80px 0;
+			padding: $big-vertical-padding $big-horizontal-padding;
 		}
 	}
 
