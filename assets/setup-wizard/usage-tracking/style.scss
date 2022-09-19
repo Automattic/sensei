@@ -33,7 +33,7 @@ $usage-tracking-break: 1000px;
 		}
 
 		@media (min-width: $small-screen-width) {
-			margin: 0 0 (-$big-vertical-padding) (-$big-horizontal-padding);
+			margin: 0 0 (-$big-vertical-padding) 0;
 		}
 	}
 }
