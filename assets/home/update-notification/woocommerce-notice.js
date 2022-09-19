@@ -24,8 +24,8 @@ const WooCommerceNotice = ( { extensions, connected } ) => {
 	);
 
 	const updatesCount = extensionsWithUpdate.length;
-	const isInstalled = ! window.sensei_extensions?.installUrl;
-	const isActive = ! window.sensei_extensions?.activateUrl;
+	const isInstalled = ! window.sensei_home?.installUrl;
+	const isActive = ! window.sensei_home?.activateUrl;
 
 	if ( 0 === updatesCount || ( isInstalled && isActive && connected ) ) {
 		return null;
@@ -46,7 +46,7 @@ const WooCommerceNotice = ( { extensions, connected } ) => {
 			{
 				key: 'connect',
 				children: __( 'Connect account', 'sensei-lms' ),
-				href: window.sensei_extensions?.connectUrl,
+				href: window.sensei_home?.connectUrl,
 				isLink: false,
 				isPrimary: true,
 			},
@@ -62,7 +62,7 @@ const WooCommerceNotice = ( { extensions, connected } ) => {
 			{
 				key: 'install',
 				children: __( 'Install WooCommerce', 'sensei-lms' ),
-				href: window.sensei_extensions?.installUrl,
+				href: window.sensei_home?.installUrl,
 				isLink: false,
 				isPrimary: true,
 			},
@@ -78,7 +78,7 @@ const WooCommerceNotice = ( { extensions, connected } ) => {
 			{
 				key: 'activate',
 				children: __( 'Activate WooCommerce', 'sensei-lms' ),
-				href: window.sensei_extensions?.activateUrl,
+				href: window.sensei_home?.activateUrl,
 				isLink: false,
 				isPrimary: true,
 			},

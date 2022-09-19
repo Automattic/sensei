@@ -93,7 +93,7 @@ final class Sensei_Home {
 
 		wp_localize_script(
 			'sensei-home',
-			'Sensei_Home',
+			'sensei_home',
 			$data
 		);
 	}
