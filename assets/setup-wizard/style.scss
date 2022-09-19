@@ -1,4 +1,6 @@
 $small-screen-width: 600px;
+$columns-break: 1000px;
+
 $small-vertical-padding: 20px;
 $small-horizontal-padding: 20px;
 $big-vertical-padding: 60px;
@@ -159,6 +161,26 @@ $big-horizontal-padding: 80px;
 
 	&__slide-in-from-bottom-animation {
 		animation: 0.5s slideInFromBottom;
+	}
+
+	// Columns.
+	&__columns {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+
+		@media (min-width: $columns-break) {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+	}
+
+	&__columns-content {
+		padding-bottom: 30px;
+
+		@media (min-width: $columns-break) {
+			width: 30%;
+		}
 	}
 }
 
