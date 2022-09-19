@@ -1,18 +1,22 @@
 .sensei-setup-wizard {
 	&__newsletter-illustration {
-		margin: 0 0 (-$small-vertical-padding) (-$small-horizontal-padding);
+		margin: 0 (-$small-horizontal-padding) (-$small-vertical-padding);
 		flex: 1;
 		animation: 0.5s slideInFromRight;
-		background: no-repeat url("../images/onboarding-newsletter-illustration.png");
-		background-size: 100% auto;
+		background: no-repeat url("../images/onboarding-newsletter-illustration.png") 50% 0;
+		background-size: 130% auto;
+
+		@media (min-width: $small-screen-width) {
+			background-size: 100% auto;
+			margin: 0 (-$big-horizontal-padding) (-$big-vertical-padding);
+		}
 
 		@media (min-width: $columns-break) {
 			flex: none;
-			width: 50%;
-		}
-
-		@media (min-width: $small-screen-width) {
-			margin: 0 (-28px -$big-horizontal-padding) (-$big-vertical-padding) (-28px -$big-horizontal-padding);
+			width: calc( 50% + 28px + $big-horizontal-padding );
+			margin-right: -28px -$big-horizontal-padding;
+			margin-bottom: -$big-vertical-padding;
+			background-position: 0 100%;
 		}
 	}
 }

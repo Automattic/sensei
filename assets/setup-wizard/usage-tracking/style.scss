@@ -6,13 +6,13 @@
 		background: no-repeat url("../images/onboarding-improve-experience-illustration.png");
 		background-size: 100% auto;
 
+		@media (min-width: $small-screen-width) {
+			margin: 0 0 (-$big-vertical-padding) (-$big-horizontal-padding);
+		}
+
 		@media (min-width: $columns-break) {
 			flex: none;
 			width: 50%;
-		}
-
-		@media (min-width: $small-screen-width) {
-			margin: 0 0 (-$big-vertical-padding) 0;
 		}
 	}
 }
