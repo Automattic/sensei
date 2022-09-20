@@ -48,25 +48,25 @@ const FeaturedProduct = ( props ) => {
 		<article
 			{ ...htmlProps }
 			className={ classnames(
-				'sensei-extensions__featured-product',
+				'sensei-home__featured-product',
 				htmlProps?.className
 			) }
 		>
-			<section className="sensei-extensions__featured-product__column">
-				<div className="sensei-extensions__featured-product__content">
-					<header className="sensei-extensions__featured-product__header">
-						<h2 className="sensei-extensions__featured-product__title">
+			<section className="sensei-home__featured-product__column">
+				<div className="sensei-home__featured-product__content">
+					<header className="sensei-home__featured-product__header">
+						<h2 className="sensei-home__featured-product__title">
 							{ getProductText }
 						</h2>
 
 						{ badgeLabel && (
-							<small className="sensei-extensions__featured-product__badge">
+							<small className="sensei-home__featured-product__badge">
 								{ badgeLabel }
 							</small>
 						) }
 					</header>
 
-					<div className="sensei-extensions__featured-product__description">
+					<div className="sensei-home__featured-product__description">
 						<p>{ description }</p>
 
 						{ features && (
@@ -81,21 +81,21 @@ const FeaturedProduct = ( props ) => {
 			</section>
 
 			<section
-				className="sensei-extensions__featured-product__column"
+				className="sensei-home__featured-product__column"
 				style={ {
 					backgroundImage,
 				} }
 			>
-				<div className="sensei-extensions__featured-product__card">
-					<h2 className="sensei-extensions__featured-product__card__title">
+				<div className="sensei-home__featured-product__card">
+					<h2 className="sensei-home__featured-product__card__title">
 						{ title }
 					</h2>
 
-					<p className="sensei-extensions__featured-product__card__description">
+					<p className="sensei-home__featured-product__card__description">
 						{ excerpt }
 					</p>
 
-					<div className="sensei-extensions__featured-product__card__price">
+					<div className="sensei-home__featured-product__card__price">
 						{ price }
 					</div>
 
@@ -104,7 +104,7 @@ const FeaturedProduct = ( props ) => {
 						target="_blank"
 						rel="noreferrer external"
 						className={ classnames(
-							'sensei-extensions__featured-product__card__button',
+							'sensei-home__featured-product__card__button',
 							'components-button',
 							'is-primary',
 							'is-large'

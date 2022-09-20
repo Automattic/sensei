@@ -12,7 +12,7 @@ import classnames from 'classnames';
  * @param {Object} props.children  Children.
  */
 export const Grid = ( { as: Component = 'div', className, children } ) => (
-	<Component className={ classnames( className, 'sensei-extensions__grid' ) }>
+	<Component className={ classnames( className, 'sensei-home__grid' ) }>
 		{ children }
 	</Component>
 );
@@ -35,7 +35,7 @@ export const Col = ( {
 	<Component
 		className={ classnames(
 			className,
-			'sensei-extensions__grid__col',
+			'sensei-home__grid__col',
 			`--col-${ cols }`
 		) }
 	>

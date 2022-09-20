@@ -8,9 +8,9 @@ const Tabs = ( { tabs } ) => {
 
 	return (
 		<nav>
-			<ul className="subsubsub sensei-extensions__tabs">
+			<ul className="subsubsub sensei-home__tabs">
 				{ tabs.map( ( { id, label, count } ) => (
-					<li key={ id } className="sensei-extensions__tabs__tab">
+					<li key={ id } className="sensei-home__tabs__tab">
 						<a
 							href={ `#${ id }-extensions` }
 							onClick={ ( e ) => {
@@ -23,7 +23,7 @@ const Tabs = ( { tabs } ) => {
 							} ) }
 						>
 							{ label }
-							<span className="sensei-extensions__tabs__count count">
+							<span className="sensei-home__tabs__count count">
 								({ count })
 							</span>
 						</a>

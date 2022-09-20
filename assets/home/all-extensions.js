@@ -26,20 +26,20 @@ const renderSections = ( layout, extensions ) =>
 		<Col
 			key={ section.key }
 			as="section"
-			className={ classnames( 'sensei-extensions__section', {
-				'sensei-extensions__section--with-inner-sections':
+			className={ classnames( 'sensei-home__section', {
+				'sensei-home__section--with-inner-sections':
 					section.innerSections,
 			} ) }
 			cols={ section.columns }
 		>
 			{ section.title && (
-				<h2 className="sensei-extensions__section__title">
+				<h2 className="sensei-home__section__title">
 					{ section.title }
 				</h2>
 			) }
 
 			{ section.description && (
-				<p className="sensei-extensions__section__description">
+				<p className="sensei-home__section__description">
 					{ section.description }
 				</p>
 			) }
@@ -51,8 +51,8 @@ const renderSections = ( layout, extensions ) =>
 			) : (
 				<ul
 					className={ classnames(
-						'sensei-extensions__section__content',
-						`sensei-extensions__${ section.type }`
+						'sensei-home__section__content',
+						`sensei-home__${ section.type }`
 					) }
 				>
 					{ section.items.map(
@@ -69,14 +69,14 @@ const renderSections = ( layout, extensions ) =>
 									{ ...itemProps }
 									key={ key }
 									className={ classnames(
-										'sensei-extensions__list-item',
+										'sensei-home__list-item',
 										itemProps?.className
 									) }
 								>
 									<div
 										{ ...wrapperProps }
 										className={ classnames(
-											'sensei-extensions__card-wrapper',
+											'sensei-home__card-wrapper',
 											wrapperProps?.className
 										) }
 									>

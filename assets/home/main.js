@@ -48,7 +48,7 @@ const Main = () => {
 
 	if ( isExtensionsLoading ) {
 		return (
-			<div className="sensei-extensions__loader">
+			<div className="sensei-home__loader">
 				<Spinner />
 			</div>
 		);
@@ -116,9 +116,9 @@ const Main = () => {
 
 	return (
 		<>
-			<Grid as="main" className="sensei-extensions">
+			<Grid as="main" className="sensei-home">
 				<QueryStringRouter paramName="tab" defaultRoute="all">
-					<Col className="sensei-extensions__section" cols={ 12 }>
+					<Col className="sensei-home__section" cols={ 12 }>
 						{ ! hideFeaturedProduct && <FeaturedProduct /> }
 
 						<Header />

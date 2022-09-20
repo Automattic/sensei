@@ -21,12 +21,9 @@ import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com'
  * @param {Array}  props.actions Actions array containing objects with props for link or button.
  */
 const ExtensionActions = ( { actions } ) => (
-	<ul className="sensei-extensions__extension-actions">
+	<ul className="sensei-home__extension-actions">
 		{ actions.map( ( { key, children, ...actionProps } ) => (
-			<li
-				key={ key }
-				className="sensei-extensions__extension-actions__item"
-			>
+			<li key={ key } className="sensei-home__extension-actions__item">
 				<Button
 					isPrimary={ ! actionProps.href }
 					isLink={ !! actionProps.href }
@@ -65,7 +62,7 @@ export const useExtensionActions = ( extension ) => {
 	if ( isLoadingStatus( extension.status ) ) {
 		actionProps = {
 			children: __( 'In progress…', 'sensei-lms' ),
-			className: 'sensei-extensions__rotating-icon',
+			className: 'sensei-home__rotating-icon',
 			icon: UpdateIcon,
 			disabled: true,
 			...actionProps,

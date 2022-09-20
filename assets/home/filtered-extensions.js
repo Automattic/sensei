@@ -11,14 +11,14 @@ import { Col } from './grid';
  * @param {Array}  props.extensions Filtered extensions.
  */
 const FilteredExtensions = ( { extensions } ) => (
-	<Col as="section" className="sensei-extensions__section" cols={ 12 }>
-		<ul className="sensei-extensions__grid-list">
+	<Col as="section" className="sensei-home__section" cols={ 12 }>
+		<ul className="sensei-home__grid-list">
 			{ extensions.map( ( extension ) => (
 				<li
 					key={ extension.product_slug }
-					className="sensei-extensions__list-item"
+					className="sensei-home__list-item"
 				>
-					<div className="sensei-extensions__card-wrapper">
+					<div className="sensei-home__card-wrapper">
 						<Card { ...extension } />
 					</div>
 				</li>

@@ -15,7 +15,7 @@ import UpdateIcon from '../../icons/update.svg';
  * @param {number} props.updatesCount Number of extension updates.
  */
 const UpdateAvailable = ( { updatesCount } ) => (
-	<small className="sensei-extensions__update-badge">
+	<small className="sensei-home__update-badge">
 		<UpdateIcon />
 
 		{ 1 === updatesCount

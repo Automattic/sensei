@@ -86,24 +86,21 @@ const WooCommerceNotice = ( { extensions, connected } ) => {
 	}
 
 	return (
-		<Col as="section" className="sensei-extensions__section" cols={ 12 }>
-			<div
-				role="alert"
-				className="sensei-extensions__update-notification"
-			>
+		<Col as="section" className="sensei-home__section" cols={ 12 }>
+			<div role="alert" className="sensei-home__update-notification">
 				<UpdateAvailable updatesCount={ updatesCount } />
 
-				<h3 className="sensei-extensions__update-notification__title">
+				<h3 className="sensei-home__update-notification__title">
 					{ title }
 				</h3>
 
 				{ 1 === updatesCount ? (
 					<>
-						<div className="sensei-extensions__update-notification__description">
+						<div className="sensei-home__update-notification__description">
 							<span>{ extensionsWithUpdate[ 0 ].title } </span>
 							<a
 								href={ extensionsWithUpdate[ 0 ].link }
-								className="sensei-extensions__update-notification__version-link"
+								className="sensei-home__update-notification__version-link"
 								target="_blank"
 								rel="noreferrer external"
 							>
