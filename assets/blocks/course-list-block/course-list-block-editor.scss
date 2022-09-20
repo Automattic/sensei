@@ -22,6 +22,10 @@
 			.wp-block-post {
 				.wp-block-group {
 					height: 100%;
+
+					.wp-block-post-excerpt {
+						flex: 1;
+					}
 				}
 			}
 		}
