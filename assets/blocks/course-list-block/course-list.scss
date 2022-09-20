@@ -34,8 +34,8 @@ $block: '.wp-block-sensei-lms-course-list';
 		.sensei-lms-featured-badge {
 			display: block;
 			position: absolute;
-			top: 10px;
-			left: 10px;
+			top: 18px;
+			left: 18px;
 			@include featured-badge-format;
 		}
 	}
@@ -58,8 +58,8 @@ $block: '.wp-block-sensei-lms-course-list';
 
 		.course-list-featured-label__featured-image {
 			position: absolute;
-			top: 5px;
-			left: 5px;
+			top: 18px;
+			left: 18px;
 			background-color: #1d2327;
 			color: #fff;
 			padding: 5px;
