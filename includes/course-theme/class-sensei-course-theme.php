@@ -74,6 +74,7 @@ class Sensei_Course_Theme {
 	 */
 	public function init() {
 		Sensei_Course_Theme_Templates::instance()->init();
+		Sensei_Course_Theme_Template_Selection::instance()->init();
 
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );

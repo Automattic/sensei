@@ -293,7 +293,43 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	private function get_custom_templates() {
+		$active_db_templates     = [];
+		$active_template_name    = Sensei_Course_Theme_Template_Selection::get_active_template_name();
+		$template_name_seperator = Sensei_Course_Theme_Template_Selection::TEMPLATE_NAME_SEPERATOR;
+		$default_template_name   = Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME;
+		$db_templates            = self::get_db_templates();
 
+		// Collect only those templates that correspond to the template that is set
+		// in the Sensei Settings.
+		foreach ( $db_templates as $db_template ) {
+			$post_name = $db_template->post_name;
+
+			// If the post_name does not have a template name suffix
+			// then it is considered a default template.
+			if ( strpos( $post_name, $template_name_seperator ) === false ) {
+				$post_name .= "{$template_name_seperator}{$default_template_name}";
+			}
+
+			// Get only active templates.
+			list( $post_type, $template_name ) = explode( $template_name_seperator, $post_name );
+			if ( $template_name !== $active_template_name ) {
+				continue;
+			}
+
+			// The post_name of the template should be the post type that
+			// the template is related to.
+			$db_template->post_name = $post_type;
+
+			$active_db_templates[] = $db_template;
+		}
+
+		return array_column( $active_db_templates, null, 'post_name' );
+	}
+
+	/**
+	 * Retrieves the Learning Mode templates that are stored in the db.
+	 */
+	public static function get_db_templates(): array {
 		$db_templates_query = new \WP_Query(
 			[
 				'post_type'      => 'wp_template',
@@ -309,9 +345,7 @@ class Sensei_Course_Theme_Templates {
 			]
 		);
 
-		$db_templates = $db_templates_query->posts ?? [];
-
-		return array_column( $db_templates, null, 'post_name' );
+		return $db_templates_query->posts ?? [];
 	}
 
 	/**
