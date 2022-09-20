@@ -64,7 +64,9 @@ class Sensei_Course_Theme_Templates {
 		// The below hooks enable block theme support and inject the learning mode templates.
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
-		add_filter( 'pre_get_block_file_template', array( $this, 'get_single_block_template' ), 10, 3 );
+		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
+		add_filter( 'theme_lesson_templates', [ $this, 'add_lesson_template' ], 10, 4 );
+		add_filter( 'theme_quiz_templates', [ $this, 'add_quiz_template' ], 10, 4 );
 
 	}
 
@@ -79,6 +81,44 @@ class Sensei_Course_Theme_Templates {
 			add_theme_support( 'block-templates' );
 			add_theme_support( 'align-wide' );
 		}
+	}
+
+	/**
+	 * Add learning mode templates to theme lesson templates.
+	 *
+	 * @param string[]     $post_templates Array of template header names keyed by the template file name.
+	 * @param WP_Theme     $theme          The theme object.
+	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
+	 * @param string       $post_type      Post type to get the templates for.
+	 */
+	public function add_lesson_template( $post_templates, $theme, $post, $post_type ) {
+		if ( 'lesson' !== $post_type ) {
+			return $post_templates;
+		}
+
+		$this->load_file_templates();
+		$post_templates[ $this->file_templates['lesson']['slug'] ] = $this->file_templates['lesson']['title'];
+
+		return $post_templates;
+	}
+
+	/**
+	 * Add learning mode templates to theme quiz templates.
+	 *
+	 * @param string[]     $post_templates Array of template header names keyed by the template file name.
+	 * @param WP_Theme     $theme          The theme object.
+	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
+	 * @param string       $post_type      Post type to get the templates for.
+	 */
+	public function add_quiz_template( $post_templates, $theme, $post, $post_type ) {
+		if ( 'quiz' !== $post_type ) {
+			return $post_templates;
+		}
+
+		$this->load_file_templates();
+		$post_templates[ $this->file_templates['quiz']['slug'] ] = $this->file_templates['quiz']['title'];
+
+		return $post_templates;
 	}
 
 	/**
