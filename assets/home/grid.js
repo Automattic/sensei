@@ -20,11 +20,11 @@ export const Grid = ( { as: Component = 'div', className, children } ) => (
 /**
  * Col component (should be used inside the Grid).
  *
- * @param {Object} props           Component props.
- * @param {Array}  props.as        Tag or component to render as wrapper.
- * @param {Array}  props.className Class name to be added in the wrapper.
- * @param {Array}  props.cols      Number of columns to use.
- * @param {Object} props.children  Children.
+ * @param {Object}       props           Component props.
+ * @param {Array}        props.as        Tag or component to render as wrapper.
+ * @param {Array|string} props.className Class name to be added in the wrapper.
+ * @param {number}       props.cols      Number of columns to use.
+ * @param {Object}       props.children  Children.
  */
 export const Col = ( {
 	as: Component = 'div',
