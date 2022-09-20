@@ -1,5 +1,6 @@
 {
   "name": "sensei-lms",
+  "title": "Sensei LMS", 
   "version": "4.6.4",
   "description": "Sensei LMS",
   "author": "Automattic",
