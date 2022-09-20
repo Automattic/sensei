@@ -49,6 +49,12 @@ $break-medium: 783px; // adminbar goes big
 		}
 	}
 
+	.postbox .hndle {
+			margin: 0;
+			padding: 8px 12px;
+			cursor: unset;
+	}
+
 	.sensei-home {
 		.components-button {
 			&:not(.is-link) {

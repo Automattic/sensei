@@ -14,34 +14,29 @@ import { applyFilters } from '@wordpress/hooks';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import FeaturedProductSenseiPro from './featured-product-sensei-pro';
 import Header from './header';
-import UpdateNotification from './update-notification';
-import WooCommerceNotice from './update-notification/woocommerce-notice';
 import AllExtensions from './all-extensions';
 import { EXTENSIONS_STORE } from '../extensions/store';
 import { Grid, Col } from './grid';
+import Section from './section';
 
 const Main = () => {
 	useSenseiColorTheme();
 
-	const {
-		extensions,
-		connected,
-		layout,
-		isExtensionsLoading,
-		error,
-	} = useSelect( ( select ) => {
-		const store = select( EXTENSIONS_STORE );
+	const { extensions, layout, isExtensionsLoading, error } = useSelect(
+		( select ) => {
+			const store = select( EXTENSIONS_STORE );
 
-		return {
-			isExtensionsLoading: ! store.hasFinishedResolution(
-				'getExtensions'
-			),
-			extensions: store.getExtensions(),
-			connected: store.getConnectionStatus(),
-			layout: store.getLayout(),
-			error: store.getError(),
-		};
-	}, [] );
+			return {
+				isExtensionsLoading: ! store.hasFinishedResolution(
+					'getExtensions'
+				),
+				extensions: store.getExtensions(),
+				layout: store.getLayout(),
+				error: store.getError(),
+			};
+		},
+		[]
+	);
 
 	if ( isExtensionsLoading ) {
 		return (
@@ -54,13 +49,6 @@ const Main = () => {
 	if ( 0 === extensions.length || 0 === layout.length ) {
 		return <div>{ __( 'No extensions found.', 'sensei-lms' ) }</div>;
 	}
-
-	const wooExtensions = extensions.filter(
-		( extension ) => extension.wccom_product_id
-	);
-	const nonWooExtensions = extensions.filter(
-		( extension ) => ! extension.wccom_product_id
-	);
 
 	/**
 	 * Filters the featured product display.
@@ -98,17 +86,44 @@ const Main = () => {
 						</Notice>
 					) }
 				</Col>
+				<Col cols={ 12 }>
+					<Section>Task List stuff</Section>
+				</Col>
 
-				<WooCommerceNotice
-					connected={ connected }
-					extensions={ wooExtensions }
-				/>
+				<Col cols={ 6 }>
+					<Section title="Quick Links">
+						<ul>
+							<li>Test</li>
+						</ul>
+					</Section>
+				</Col>
+				<Col cols={ 6 }>
+					<Section title="Get help">
+						<ul>
+							<li>Test 2</li>
+						</ul>
+					</Section>
+				</Col>
+				<Col cols={ 6 }>
+					<Section title="Sensei Guides">
+						<ul>
+							<li>Test 3</li>
+						</ul>
+					</Section>
+				</Col>
+				<Col cols={ 6 }>
+					<Section title="Latest News">
+						<ul>
+							<li>Test 4</li>
+						</ul>
+					</Section>
+				</Col>
 
-				<UpdateNotification
-					extensions={ connected ? extensions : nonWooExtensions }
-				/>
-
-				<AllExtensions layout={ layout } />
+				<Col cols={ 12 }>
+					<Section title="Extensions">
+						<AllExtensions layout={ layout } />
+					</Section>
+				</Col>
 			</Grid>
 			<EditorNotices />
 		</>
