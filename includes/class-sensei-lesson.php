@@ -74,7 +74,7 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
 
-			// Lesson Featured Video Thumbnail Creation
+			// Lesson Featured Video Thumbnail Creation.
 			add_action( 'save_post', array( $this, 'save_lesson_featured_video_thumbnail' ) );
 
 			// Custom Write Panel Columns
