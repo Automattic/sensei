@@ -25,6 +25,7 @@ import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
 import pageActionsMeta from './page-actions.block.json';
 import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
+import courseThemeLessonVideoMeta from './course-theme-lesson-video.block.json';
 
 const meta = {
 	category: 'theme',
@@ -255,6 +256,22 @@ export default [
 							</li>
 						</ul>
 					</div>
+				</div>
+			);
+		},
+	},
+	{
+		...courseThemeLessonVideoMeta,
+		...meta,
+		title: __( 'Lesson Video (Learning Mode)', 'sensei-lms' ),
+		description: __(
+			'Displays the featured video if there is one for the lesson.',
+			'sensei-lms'
+		),
+		edit() {
+			return (
+				<div className="sensei-course-theme-lesson-video">
+					Lesson Video
 				</div>
 			);
 		},
