@@ -57,7 +57,7 @@ $break-medium: 783px; // adminbar goes big
 
 	.sensei-home {
 		.components-button {
-			&:not(.is-link) {
+			&.is-secondary {
 				min-width: 112px;
 				min-height: 36px;
 				--wp-admin-theme-color: #000;
