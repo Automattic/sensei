@@ -64,5 +64,6 @@ class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 		new Blocks\Quiz_Actions();
 		new Blocks\Page_Actions();
 		new \Sensei_Block_Quiz_Progress();
+		new Blocks\Lesson_Video();
 	}
 }
