@@ -732,24 +732,24 @@ class Sensei_Lesson {
 	/**
 	 * Parses YouTube URL to retrieve thumbnail image.
 	 *
-	 * @param string $url
+	 * @param string $url The YouTube Video URL.
 	 * @return string|null String if image found, null if not.
 	 */
 	public function get_youtube_thumbnail( $url ) {
 		$re = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
-		preg_match($re, $url, $matches);
+		preg_match( $re, $url, $matches );
 		return 'https://img.youtube.com/vi/' . $matches[1] . '/maxresdefault.jpg';
 	}
 
 	/**
 	 * Parses Vimeo URL to retrieve thumbnail image.
 	 *
-	 * @param string $url
+	 * @param string $url The Vimieo Video URL.
 	 * @return string|null String if image found, null if not.
 	 */
 	public function get_vimeo_thumbnail( $url ) {
 		$re = '/(?:http|https)?:?\/?\/?(?:www\.)?(?:player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)/';
-		preg_match($re, $url, $matches);
+		preg_match( $re, $url, $matches );
 		$data = wp_remote_get( 'http://vimeo.com/api/v2/video/' . $matches[1] . '.json' );
 		if ( is_array( $data ) && count( $data ) > 0 ) {
 			$body = json_decode( $data['body'] );
@@ -762,12 +762,12 @@ class Sensei_Lesson {
 	/**
 	 * Parses VideoPress URL to retrieve thumbnail image.
 	 *
-	 * @param string $url
+	 * @param string $url The VideoPress Video URL.
 	 * @return string|null String if image found, null if not.
 	 */
 	public function get_videopress_thumbnail( $url ) {
 		$url_parse = wp_parse_url( $url );
-		$re = '/(?<=\/v\/).*/';
+		$re        = '/(?<=\/v\/).*/';
 		preg_match( $re, $url_parse['path'], $matches );
 		$data = wp_remote_get( 'https://public-api.wordpress.com/rest/v1.1/videos/' . $matches[0] . '/poster' );
 		if ( is_array( $data ) ) {
@@ -780,14 +780,14 @@ class Sensei_Lesson {
 	/**
 	 * Get Featured Video from "Video Embed Code" legacy metadata in the Classic Editor
 	 *
-	 * @param string $url
+	 * @param string $url The Video Embed URL.
 	 * @return string The video thumbnail URL.
 	 */
 	private function get_featured_video_media_from_classic_editor( $url ) {
 		$url_parse = wp_parse_url( $url );
 
 		if ( false !== strpos( $url_parse['host'], 'youtube' ) ) {
-			return $this->get_youtube_thumbnail($url);
+			return $this->get_youtube_thumbnail( $url );
 		}
 		if ( false !== strpos( $url_parse['host'], 'vimeo' ) ) {
 			return $this->get_vimeo_thumbnail( $url );
@@ -807,11 +807,11 @@ class Sensei_Lesson {
 		$blocks = parse_blocks( $post->post_content );
 		foreach ( $blocks as $block ) {
 			if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-				if ( $block['innerBlocks'][0]['blockName'] === 'sensei-pro/interactive-video' ) {
+				if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
 					$block = $block['innerBlocks'][0];
 				}
 				if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
-					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames']  ) {
+					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) {
 						return $block['attrs']['poster'];
 					} else {
 						return wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
@@ -820,10 +820,10 @@ class Sensei_Lesson {
 				if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
 					$url = $block['innerBlocks'][0]['attrs']['url'];
 					if ( 'youtube' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_youtube_thumbnail($url);
-					} else if ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_youtube_thumbnail( $url );
+					} elseif ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
 						return $this->get_vimeo_thumbnail( $url );
-					} else if ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+					} elseif ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
 						return $this->get_videopress_thumbnail( $url );
 					}
 				}
@@ -836,10 +836,9 @@ class Sensei_Lesson {
 	 * Save Lesson Featured Video thumbnail to post meta
 	 *
 	 * @param int $post_id The Post Id.
-	 *
 	 */
-	public function save_lesson_featured_video_thumbnail( $post_id ){
-		$meta_key = '_featured_video_thumbnail';
+	public function save_lesson_featured_video_thumbnail( $post_id ) {
+		$meta_key       = '_featured_video_thumbnail';
 		$thumbnail_meta = get_post_meta( $post_id, $meta_key, true );
 
 		if ( has_blocks( $post_id ) ) {
@@ -858,7 +857,7 @@ class Sensei_Lesson {
 	/**
 	 * Get the featured video thumbnail URL from a Post's metadata.
 	 *
-	 * @param int $post_id
+	 * @param int $post_id The Post ID.
 	 * @return string The video thumbnail URL.
 	 */
 	public static function get_featured_video_thumbnail_url( $post_id ) {
