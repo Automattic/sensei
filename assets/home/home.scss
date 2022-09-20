@@ -60,6 +60,7 @@ $break-medium: 783px; // adminbar goes big
 			&:not(.is-link) {
 				min-width: 112px;
 				min-height: 36px;
+				--wp-admin-theme-color: #000;
 			}
 
 			&.is-large {

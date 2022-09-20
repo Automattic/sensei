@@ -26,7 +26,7 @@ const ExtensionActions = ( { actions } ) => (
 			<li key={ key } className="sensei-home__extension-actions__item">
 				<Button
 					isPrimary={ ! actionProps.href }
-					isLink={ !! actionProps.href }
+					isSecondary={ !! actionProps.href }
 					{ ...actionProps }
 				>
 					{ children }

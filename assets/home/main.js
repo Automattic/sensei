@@ -14,10 +14,14 @@ import { applyFilters } from '@wordpress/hooks';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import FeaturedProductSenseiPro from './featured-product-sensei-pro';
 import Header from './header';
-import AllExtensions from './all-extensions';
 import { EXTENSIONS_STORE } from '../extensions/store';
-import { Grid, Col } from './grid';
-import Section from './section';
+import { Col, Grid } from './grid';
+import QuickLinks from './sections/quick-links';
+import TaskList from './sections/task-list';
+import GetHelp from './sections/get-help';
+import SenseiGuides from './sections/sensei-guides';
+import LatestNews from './sections/latest-news';
+import Extensions from './sections/extensions';
 
 const Main = () => {
 	useSenseiColorTheme();
@@ -86,43 +90,27 @@ const Main = () => {
 						</Notice>
 					) }
 				</Col>
+
 				<Col cols={ 12 }>
-					<Section>Task List stuff</Section>
+					<TaskList />
 				</Col>
 
 				<Col cols={ 6 }>
-					<Section title="Quick Links">
-						<ul>
-							<li>Test</li>
-						</ul>
-					</Section>
+					<QuickLinks />
+				</Col>
+
+				<Col cols={ 6 }>
+					<GetHelp />
 				</Col>
 				<Col cols={ 6 }>
-					<Section title="Get help">
-						<ul>
-							<li>Test 2</li>
-						</ul>
-					</Section>
+					<SenseiGuides />
 				</Col>
 				<Col cols={ 6 }>
-					<Section title="Sensei Guides">
-						<ul>
-							<li>Test 3</li>
-						</ul>
-					</Section>
-				</Col>
-				<Col cols={ 6 }>
-					<Section title="Latest News">
-						<ul>
-							<li>Test 4</li>
-						</ul>
-					</Section>
+					<LatestNews />
 				</Col>
 
 				<Col cols={ 12 }>
-					<Section title="Extensions">
-						<AllExtensions layout={ layout } />
-					</Section>
+					<Extensions extensions={ extensions } />
 				</Col>
 			</Grid>
 			<EditorNotices />
