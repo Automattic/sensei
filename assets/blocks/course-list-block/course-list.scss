@@ -89,6 +89,10 @@ $block: '.wp-block-sensei-lms-course-list';
 	}
 
 	&--is-grid-view {
+		.wp-block-sensei-lms-course-list-filter {
+			max-width: none;
+		}
+
 		.wp-block-post {
 			display: flex;
 

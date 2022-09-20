@@ -7,7 +7,7 @@
 	"attributes": {
 		"align": {
 			"type": "string",
-			"default": "wide"
+			"default": "left"
 		},
 		"types": {
 			"type": "array",
@@ -16,7 +16,7 @@
 	},
 	"usesContext": [ "queryId", "query" ],
 	"supports": {
-		"align": true,
+		"align": [ "left", "right" ],
 		"html": false
 	}
 }
