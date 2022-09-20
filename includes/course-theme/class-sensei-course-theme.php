@@ -76,24 +76,33 @@ class Sensei_Course_Theme {
 		Sensei_Course_Theme_Templates::instance()->init();
 		Sensei_Course_Theme_Template_Selection::instance()->init();
 
+		// The following actions add '/learn' route. The '/learn' route is used only when the theme is overridden.
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
 		add_action( 'registered_taxonomy', [ $this, 'add_taxonomy_rewrite_rules' ], 10, 3 );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
+
+		// Initialize quiz and lesson specific functionality.
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
-		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
+
+		// Load learning mode assets and add hooks.
+		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 	}
 
 
 	/**
-	 * Is the theme active for the current request.
+	 * Checks if the theme is overridden which currently is not done by default.
+	 *
+	 * @deprecated
 	 *
 	 * @return bool
 	 */
 	public function is_active() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return self::THEME_NAME === get_stylesheet();
 	}
 
@@ -114,7 +123,7 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Replace theme for the current request if it's for course theme mode.
+	 * Replace theme for the current request if the '/learn' route is used.
 	 */
 	public function maybe_override_theme() {
 

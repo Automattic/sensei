@@ -61,6 +61,7 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function init() {
 
+		// The below hooks enable block theme support and inject the learning mode templates.
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
 		add_filter( 'pre_get_block_file_template', array( $this, 'get_single_block_template' ), 10, 3 );
