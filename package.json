@@ -151,8 +151,5 @@
     "*.php": [
       "scripts/linter-new-php"
     ]
-  },
-  "config": {
-    "wp_org_slug": "sensei-lms"
   }
 }
