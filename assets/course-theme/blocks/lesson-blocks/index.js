@@ -270,8 +270,27 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme-lesson-video">
-					Lesson Video
+				<div
+					className=""
+					style={ {
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						height: '350px',
+					} }
+				>
+					<p
+						className="has-text-align-center"
+						style={ { fontSize: '100px' } }
+					>
+						<img
+							className="emoji"
+							alt="▶"
+							src="https://s.w.org/images/core/emoji/14.0.0/svg/25b6.svg"
+							width="250"
+							height="250"
+						/>{ ' ' }
+					</p>
 				</div>
 			);
 		},

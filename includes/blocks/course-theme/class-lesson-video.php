@@ -33,10 +33,10 @@ class Lesson_Video {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-video',
-			array(
-				'render_callback' => array( $this, 'render' ),
+			[
+				'render_callback' => [ $this, 'render' ],
 				'style'           => 'sensei-theme-blocks',
-			),
+			],
 			$block_json_path
 		);
 	}
@@ -50,7 +50,7 @@ class Lesson_Video {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = array() ) : string {
+	public function render( array $attributes = [] ) : string {
 		remove_action( 'sensei_lesson_video', [ Sensei_Frontend::class, 'sensei_lesson_video' ] );
 		$lesson_id = Sensei_Utils::get_current_lesson();
 		$user_id   = get_current_user_id();
@@ -68,11 +68,9 @@ class Lesson_Video {
 			return '';
 		}
 
-		$content = Sensei_Utils::get_featured_video_html( $lesson_id ) ?? 'No Lesson Video';
-		preg_match_all( '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#i', $content, $matches );
-		$video_link = $matches[0][0] ?? '';
+		$content = Sensei_Utils::get_featured_video_html( $lesson_id ) ?? '';
 
-		if ( empty( $content ) || empty( $video_link ) ) {
+		if ( empty( $content ) ) {
 			return '';
 		}
 
@@ -83,9 +81,9 @@ class Lesson_Video {
 		);
 
 		return sprintf(
-			'<figure %s>
+			'<div %s>
 				%s
-				</figure>',
+				</div>',
 			$wrapper_attr,
 			$content
 		);

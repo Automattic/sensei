@@ -1,8 +1,7 @@
 .sensei-course-theme-lesson-video {
-  height: 100%;
 
-  iframe {
-    width:100%;
+  iframe, video {
+    width: 100% !important;
   }
 
 }
