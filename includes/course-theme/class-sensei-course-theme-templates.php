@@ -280,27 +280,11 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	private function get_custom_templates() {
-
-		$db_templates_query = new \WP_Query(
-			[
-				'post_type'      => 'wp_template',
-				'posts_per_page' => -1,
-				'no_found_rows'  => true,
-				'tax_query'      => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-					[
-						'taxonomy' => 'wp_theme',
-						'field'    => 'name',
-						'terms'    => [ self::THEME_PREFIX ],
-					],
-				],
-			]
-		);
-
-		$db_templates            = $db_templates_query->posts ?? [];
 		$active_db_templates     = [];
 		$active_template_name    = Sensei_Course_Theme_Template_Selection::get_active_template_name();
 		$template_name_seperator = Sensei_Course_Theme_Template_Selection::TEMPLATE_NAME_SEPERATOR;
 		$default_template_name   = Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME;
+		$db_templates            = self::get_db_templates();
 
 		// Collect only those templates that correspond to the template that is set
 		// in the Sensei Settings.
@@ -327,6 +311,28 @@ class Sensei_Course_Theme_Templates {
 		}
 
 		return array_column( $active_db_templates, null, 'post_name' );
+	}
+
+	/**
+	 * Retrieves the Learning Mode templates that are stored in the db.
+	 */
+	public static function get_db_templates(): array {
+		$db_templates_query = new \WP_Query(
+			[
+				'post_type'      => 'wp_template',
+				'posts_per_page' => -1,
+				'no_found_rows'  => true,
+				'tax_query'      => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					[
+						'taxonomy' => 'wp_theme',
+						'field'    => 'name',
+						'terms'    => [ self::THEME_PREFIX ],
+					],
+				],
+			]
+		);
+
+		return $db_templates_query->posts ?? [];
 	}
 
 	/**

@@ -58,6 +58,7 @@ class Sensei_Course_Theme_Template_Selection {
 	 */
 	public function init() {
 		add_action( 'save_post', [ $this, 'maybe_set_block_template_name' ], 10, 3 );
+		add_action( 'update_option_sensei-settings', [ $this, 'update_legacy_template_naming' ], 10, 3 );
 	}
 
 	/**
@@ -230,6 +231,35 @@ class Sensei_Course_Theme_Template_Selection {
 		$post->post_name      = $post->post_name . self::TEMPLATE_NAME_SEPERATOR . $active_template_name;
 
 		wp_update_post( $post );
+	}
+
+	/**
+	 * Updates the legacy lm template naming in the db.
+	 *
+	 * @param mixed  $old_settings The old value of the option.
+	 * @param mixed  $new_settings The new value of the option.
+	 * @param string $option The name of the option being updated.
+	 */
+	public function update_legacy_template_naming( $old_settings, $new_settings, $option ) {
+		$key          = 'sensei_learning_mode_template';
+		$old_template = empty( $old_settings[ $key ] ) ? self::DEFAULT_TEMPLATE_NAME : $old_settings[ $key ];
+		$new_template = empty( $new_settings[ $key ] ) ? self::DEFAULT_TEMPLATE_NAME : $new_settings[ $key ];
+
+		// Do nothing if active lm template hasn't changed.
+		if ( $old_template === $new_template ) {
+			return;
+		}
+
+		// Get lm templates that are stored in the db.
+		$db_templates = Sensei_Course_Theme_Templates::get_db_templates();
+
+		// Check each lm template and append a template name postfix if they don't have it.
+		foreach ( $db_templates as $db_template ) {
+			if ( in_array( $db_template->post_name, [ 'lesson', 'quiz' ], true ) ) {
+				$db_template->post_name = $db_template->post_name . self::TEMPLATE_NAME_SEPERATOR . self::DEFAULT_TEMPLATE_NAME;
+				wp_update_post( $db_template );
+			}
+		}
 	}
 
 }
