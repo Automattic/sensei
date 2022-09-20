@@ -193,14 +193,6 @@ class Sensei_Course_Theme_Editor {
 		add_editor_style( Sensei()->assets->asset_url( 'css/learning-mode.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/learning-mode.editor.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/frontend.css' ) );
-
-		// Also add the extra styles that comes with the active block template.
-		$template = Sensei_Course_Theme_Template_Selection::get_active_template();
-		if ( isset( $template->styles ) && is_array( $template->styles ) ) {
-			foreach ( $template->styles as $url ) {
-				add_editor_style( $url );
-			}
-		}
 	}
 
 	/**

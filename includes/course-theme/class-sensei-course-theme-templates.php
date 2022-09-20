@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use \Sensei\Blocks\Course_Theme\Template_Style;
+
 /**
  * Sensei's block templates.
  *
@@ -158,6 +160,7 @@ class Sensei_Course_Theme_Templates {
 					'slug'        => 'lesson',
 					'id'          => self::THEME_PREFIX . '//lesson',
 					'content'     => $template->content['lesson'],
+					'styles'      => $template->styles,
 				]
 			),
 			'quiz'   => array_merge(
@@ -169,16 +172,10 @@ class Sensei_Course_Theme_Templates {
 					'slug'        => 'quiz',
 					'id'          => self::THEME_PREFIX . '//quiz',
 					'content'     => $template->content['quiz'],
+					'styles'      => $template->styles,
 				]
 			),
 		];
-
-		// Enqueue styles of the current active template.
-		if ( is_array( $template->styles ) ) {
-			foreach ( $template->styles as $index => $style_url ) {
-				wp_enqueue_style( self::THEME_PREFIX . '-' . $template->name . "-styles-$index", $style_url, [], $template->version );
-			}
-		}
 
 		// Enqueue scripts of the current active template.
 		if ( is_array( $template->scripts ) ) {
@@ -265,11 +262,6 @@ class Sensei_Course_Theme_Templates {
 		$templates    = [];
 
 		foreach ( $this->file_templates as $name => $template ) {
-			// Prefill the template contents from their content files.
-			if ( isset( $template['content'] ) && file_exists( $template['content'] ) ) {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-				$template['content'] = file_get_contents( $template['content'] );
-			}
 
 			$db_template     = $db_templates[ $name ] ?? null;
 			$template_object = (object) $template;
@@ -277,6 +269,25 @@ class Sensei_Course_Theme_Templates {
 			if ( ! empty( $db_template ) ) {
 				$template_object = $this->build_template_from_post( $db_template );
 			} else {
+				// Prefill the template contents from their content files.
+				if ( ! empty( $template['content'] ) && file_exists( $template['content'] ) ) {
+					// Get the block template html.
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+					$html = file_get_contents( $template['content'] );
+
+					// Get the block template styles.
+					$css = '';
+					if ( ! empty( $template['styles'] ) && is_array( $template['styles'] ) ) {
+						foreach ( $template['styles'] as $template_style_url ) {
+							$response = wp_remote_get( $template_style_url );
+							if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
+								$css .= "\n\n";
+								$css .= $response['body'];
+							}
+						}
+					}
+					$template_object->content = $html . Template_Style::serialize_block( $css );
+				}
 				$template_object->wp_id  = null;
 				$template_object->author = null;
 			}
