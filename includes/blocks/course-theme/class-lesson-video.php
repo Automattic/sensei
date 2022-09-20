@@ -30,6 +30,7 @@ class Lesson_Video {
 	 * Lesson_Actions constructor.
 	 */
 	public function __construct() {
+		add_filter( 'the_content', [ $this, 'remove_featured_video_content' ], 1 );
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-video',
@@ -87,5 +88,32 @@ class Lesson_Video {
 			$wrapper_attr,
 			$content
 		);
+	}
+
+	/**
+	 * Removes the featured video html from the content.
+	 *
+	 * @access private
+	 *
+	 * @param string $content The content of the post.
+	 *
+	 * @return string HTML
+	 */
+	public function remove_featured_video_content( $content ) {
+		$active_template = \Sensei()->settings->get( 'sensei_learning_mode_template' );
+		if ( ! \Sensei_Course_Theme_Option::should_use_learning_mode() || in_array( $active_template, [ 'default', 'modern' ], true ) ) {
+			return $content;
+		}
+
+		$blocks = parse_blocks( $content );
+
+		$blocks = array_filter(
+			$blocks,
+			function ( $block ) {
+				return 'sensei-lms/featured-video' !== $block['blockName'];
+			}
+		);
+
+		return serialize_blocks( $blocks );
 	}
 }
