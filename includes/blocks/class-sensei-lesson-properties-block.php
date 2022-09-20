@@ -43,7 +43,22 @@ class Sensei_Lesson_Properties_Block {
 			return $content;
 		}
 
-		$content = '<div class="wp-block-sensei-lms-lesson-properties">';
+		$class_name             = 'wp-block-sensei-lms-lesson-properties';
+		$lm_template_class_name = 'wp-block-sensei-lms-lesson-properties--lm-template-part';
+		$final_class_name       = $class_name;
+		$style                  = '';
+		if ( true === $attributes['lmTemplatePart'] ) {
+			$final_class_name .= " {$lm_template_class_name}";
+			$style             = "
+				<style>
+					.{$class_name}:not(.{$lm_template_class_name}) {
+						display: none;
+					}
+				</style>
+			";
+		}
+
+		$content = "<div class='{$final_class_name}'>";
 
 		if ( $length ) {
 			$content .=
@@ -71,6 +86,7 @@ class Sensei_Lesson_Properties_Block {
 		}
 
 		$content .= '</div>';
+		$content .= $style;
 
 		return $content;
 	}

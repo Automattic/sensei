@@ -7,6 +7,7 @@ import uiBlocks from './ui';
 import lessonBlocks from './lesson-blocks';
 import quizBlocks from './quiz-blocks';
 import { templateStyleBlock } from './template-style';
+import lessonPropertiesBlock from '../../blocks/lesson-properties';
 
 const blocks = [
 	...lessonBlocks,
@@ -14,6 +15,7 @@ const blocks = [
 	...uiBlocks,
 	courseNavigationBlock,
 	templateStyleBlock,
+	lessonPropertiesBlock,
 ];
 
 registerTemplateBlocks( blocks );

@@ -3,15 +3,11 @@
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
 	"attributes": {
-		"difficulty": {
-			"type": "string",
-			"source": "meta",
-			"meta": "_lesson_complexity"
+		"readOnly": {
+			"type": "boolean"
 		},
-		"length": {
-			"type": "number",
-			"source": "meta",
-			"meta": "_lesson_length"
+		"lmTemplatePart": {
+			"type": "boolean"
 		}
 	}
 }
