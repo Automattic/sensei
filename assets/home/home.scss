@@ -110,20 +110,6 @@ $break-medium: 783px; // adminbar goes big
 			}
 		}
 
-		&__tabs {
-			float: none;
-
-			&__tab {
-				&:not(:last-child)::after {
-					content: '|';
-				}
-			}
-
-			&__count::before {
-				content: ' ';
-			}
-		}
-
 		&__update-badge {
 			display: flex;
 			align-items: center;

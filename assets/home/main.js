@@ -14,12 +14,9 @@ import { applyFilters } from '@wordpress/hooks';
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
 import FeaturedProductSenseiPro from './featured-product-sensei-pro';
 import Header from './header';
-import Tabs from './tabs';
 import UpdateNotification from './update-notification';
 import WooCommerceNotice from './update-notification/woocommerce-notice';
-import QueryStringRouter, { Route } from '../shared/query-string-router';
 import AllExtensions from './all-extensions';
-import FilteredExtensions from './filtered-extensions';
 import { EXTENSIONS_STORE } from '../extensions/store';
 import { Grid, Col } from './grid';
 
@@ -44,7 +41,7 @@ const Main = () => {
 			layout: store.getLayout(),
 			error: store.getError(),
 		};
-	} );
+	}, [] );
 
 	if ( isExtensionsLoading ) {
 		return (
@@ -58,39 +55,12 @@ const Main = () => {
 		return <div>{ __( 'No extensions found.', 'sensei-lms' ) }</div>;
 	}
 
-	const freeExtensions = extensions.filter(
-		( extension ) => extension.price === '0'
-	);
-	const installedExtensions = extensions.filter(
-		( extension ) => extension.is_installed
-	);
 	const wooExtensions = extensions.filter(
 		( extension ) => extension.wccom_product_id
 	);
 	const nonWooExtensions = extensions.filter(
 		( extension ) => ! extension.wccom_product_id
 	);
-
-	const tabs = [
-		{
-			id: 'all',
-			label: __( 'All', 'sensei-lms' ),
-			count: extensions.length,
-			content: <AllExtensions layout={ layout } />,
-		},
-		{
-			id: 'free',
-			label: __( 'Free', 'sensei-lms' ),
-			count: freeExtensions.length,
-			content: <FilteredExtensions extensions={ freeExtensions } />,
-		},
-		{
-			id: 'installed',
-			label: __( 'Installed', 'sensei-lms' ),
-			count: installedExtensions.length,
-			content: <FilteredExtensions extensions={ installedExtensions } />,
-		},
-	];
 
 	/**
 	 * Filters the featured product display.
@@ -117,36 +87,28 @@ const Main = () => {
 	return (
 		<>
 			<Grid as="main" className="sensei-home">
-				<QueryStringRouter paramName="tab" defaultRoute="all">
-					<Col className="sensei-home__section" cols={ 12 }>
-						{ ! hideFeaturedProduct && <FeaturedProduct /> }
+				<Col className="sensei-home__section" cols={ 12 }>
+					{ ! hideFeaturedProduct && <FeaturedProduct /> }
 
-						<Header />
+					<Header />
 
-						<Tabs tabs={ tabs } />
+					{ error !== null && (
+						<Notice status="error" isDismissible={ false }>
+							<RawHTML>{ error }</RawHTML>
+						</Notice>
+					) }
+				</Col>
 
-						{ error !== null && (
-							<Notice status="error" isDismissible={ false }>
-								<RawHTML>{ error }</RawHTML>
-							</Notice>
-						) }
-					</Col>
+				<WooCommerceNotice
+					connected={ connected }
+					extensions={ wooExtensions }
+				/>
 
-					<WooCommerceNotice
-						connected={ connected }
-						extensions={ wooExtensions }
-					/>
+				<UpdateNotification
+					extensions={ connected ? extensions : nonWooExtensions }
+				/>
 
-					<UpdateNotification
-						extensions={ connected ? extensions : nonWooExtensions }
-					/>
-
-					{ tabs.map( ( tab ) => (
-						<Route key={ tab.id } route={ tab.id }>
-							{ tab.content }
-						</Route>
-					) ) }
-				</QueryStringRouter>
+				<AllExtensions layout={ layout } />
 			</Grid>
 			<EditorNotices />
 		</>
