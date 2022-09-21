@@ -397,6 +397,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 */
 	public function submit_welcome( $data ) {
 		$this->setup_wizard->pages->create_pages();
+		$this->setup_wizard->set_setup_wizard_as_started();
 
 		return true;
 	}
