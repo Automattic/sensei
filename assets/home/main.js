@@ -43,9 +43,7 @@ const Main = () => {
 					<GetHelp />
 				</Col>
 
-				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<FeaturedProductSenseiPro />
-				</Col>
+				<FeaturedProductSenseiPro />
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<SenseiGuides />

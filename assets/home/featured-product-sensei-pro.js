@@ -9,6 +9,7 @@ import { useSelect } from '@wordpress/data';
  */
 import FeaturedProduct from './featured-product';
 import { EXTENSIONS_STORE } from '../extensions/store';
+import { Col } from './grid';
 
 /*
  * Sensei Pro featured product component.
@@ -28,34 +29,36 @@ const FeaturedProductSenseiPro = () => {
 	}
 
 	return (
-		<FeaturedProduct
-			title={ senseiProExtension.title }
-			excerpt={ senseiProExtension.excerpt }
-			description={ __(
-				'By upgrading to Sensei Pro, you get all the great features found in Sensei LMS plus:',
-				'sensei-lms'
-			) }
-			features={ [
-				__( 'WooCommerce integration', 'sensei-lms' ),
-				__( 'Schedule ‘drip’ content', 'sensei-lms' ),
-				__( 'Set expiration date of courses', 'sensei-lms' ),
-				__( 'Advanced quiz features', 'sensei-lms' ),
-				__(
-					'Flashcard, image hotspot, and tasklist blocks',
+		<Col as="section" className="sensei-home__section" cols={ 12 }>
+			<FeaturedProduct
+				title={ senseiProExtension.title }
+				excerpt={ senseiProExtension.excerpt }
+				description={ __(
+					'By upgrading to Sensei Pro, you get all the great features found in Sensei LMS plus:',
 					'sensei-lms'
-				),
-				__( 'Premium support', 'sensei-lms' ),
-			] }
-			image={ senseiProExtension.image_large }
-			badgeLabel={ __( 'new', 'sensei-lms' ) }
-			price={ sprintf(
-				// translators: placeholder is the price.
-				__( '%s USD / year (1 site)', 'sensei-lms' ),
-				senseiProExtension.price
-			) }
-			buttonLink="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
-			buttonTitle={ __( 'Learn More', 'sensei-lms' ) }
-		/>
+				) }
+				features={ [
+					__( 'WooCommerce integration', 'sensei-lms' ),
+					__( 'Schedule ‘drip’ content', 'sensei-lms' ),
+					__( 'Set expiration date of courses', 'sensei-lms' ),
+					__( 'Advanced quiz features', 'sensei-lms' ),
+					__(
+						'Flashcard, image hotspot, and tasklist blocks',
+						'sensei-lms'
+					),
+					__( 'Premium support', 'sensei-lms' ),
+				] }
+				image={ senseiProExtension.image_large }
+				badgeLabel={ __( 'new', 'sensei-lms' ) }
+				price={ sprintf(
+					// translators: placeholder is the price.
+					__( '%s USD / year (1 site)', 'sensei-lms' ),
+					senseiProExtension.price
+				) }
+				buttonLink="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
+				buttonTitle={ __( 'Learn More', 'sensei-lms' ) }
+			/>
+		</Col>
 	);
 };
 
