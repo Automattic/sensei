@@ -81,9 +81,13 @@ class Lesson_Actions {
 		$quiz_permalink = esc_url( $quiz_permalink );
 		$text           = esc_html__( 'Take quiz', 'sensei-lms' );
 
-		return '<a href="' . $quiz_permalink . '" class="sensei-course-theme__button is-primary" ' . $disabled . '>'
-			. $text .
-		'</a>';
+		return ( '
+			<form method="GET" action="' . $quiz_permalink . '">
+				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button is-primary" ' . $disabled . '>
+					' . $text . '
+				</button>
+			</form>
+		' );
 	}
 
 	/**
