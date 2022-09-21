@@ -2,13 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	Card,
-	CardBody,
-	Button,
-	CheckboxControl,
-	TextControl,
-} from '@wordpress/components';
+import { CheckboxControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 /**
@@ -20,52 +14,28 @@ import { H } from '../../shared/components/section';
 
 const purposes = [
 	{
-		id: 'share_knowledge',
+		id: 'sell_courses',
 		title: __( 'Sell courses and generate income', 'sensei-lms' ),
 		description: __(
-			'You are a hobbyist interested in sharing your knowledge.',
-			'sensei-lms'
-		),
-	},
-	{
-		id: 'generate_income',
-		title: __( 'Generate income', 'sensei-lms' ),
-		description: __(
-			'You would like to generate additional income for yourself or your business.',
-			'sensei-lms'
-		),
-	},
-	{
-		id: 'promote_business',
-		title: __( 'Promote your business', 'sensei-lms' ),
-		description: __(
-			'You own a business and would like to use online courses to promote it.',
+			'We will install WooCommerce for free.',
 			'sensei-lms'
 		),
 	},
 	{
 		id: 'provide_certification',
-		title: __( 'Provide certification training', 'sensei-lms' ),
+		title: __( 'Provide certification', 'sensei-lms' ),
 		description: __(
-			'You want to help people become certified professionals.',
-			'sensei-lms'
-		),
-	},
-	{
-		id: 'train_employees',
-		title: __( 'Train employees', 'sensei-lms' ),
-		description: __(
-			'You work at a company that regularly trains new or existing employees.',
+			'We will install Sensei LMS Certificates for free.',
 			'sensei-lms'
 		),
 	},
 	{
 		id: 'educate_students',
 		title: __( 'Educate students', 'sensei-lms' ),
-		description: __(
-			'You are an educator who would like to create an online classroom.',
-			'sensei-lms'
-		),
+	},
+	{
+		id: 'train_employees',
+		title: __( 'Train employees', 'sensei-lms' ),
 	},
 	{
 		id: 'other',
@@ -104,12 +74,12 @@ const Purpose = () => {
 		} ) );
 	};
 
-	const onSubmitSuccess = () => {
+	const goToNextStep = () => {
 		goTo( 'tracking' );
 	};
 
 	const submitPage = () => {
-		submitStep( { selected, other }, { onSuccess: onSubmitSuccess } );
+		submitStep( { selected, other }, { onSuccess: goToNextStep } );
 	};
 
 	return (
@@ -128,48 +98,50 @@ const Purpose = () => {
 					) }
 				</p>
 			</div>
-			<Card className="sensei-setup-wizard__card" elevation={ 2 }>
-				<CardBody>
-					<div className="sensei-setup-wizard__checkbox-list">
-						{ purposes.map( ( { id, title, description } ) => (
-							<CheckboxControl
-								key={ id }
-								label={ title }
-								help={ description }
-								onChange={ () => toggleItem( id ) }
-								checked={ selected.includes( id ) }
-								className="sensei-setup-wizard__checkbox"
-							/>
-						) ) }
-						{ selected.includes( 'other' ) && (
-							<TextControl
-								className="sensei-setup-wizard__textcontrol-other"
-								value={ other }
-								placeholder={ __(
-									'Description',
-									'sensei-lms'
-								) }
-								onChange={ ( value ) =>
-									setFormState( ( formState ) => ( {
-										...formState,
-										other: value,
-									} ) )
-								}
-							/>
-						) }
-					</div>
-					{ errorNotice }
-					<Button
-						isPrimary
-						isBusy={ isSubmitting }
-						disabled={ isSubmitting || isEmpty }
-						className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
-						onClick={ submitPage }
+			<div className="sensei-setup-wizard__checkbox-list">
+				{ purposes.map( ( { id, title, description } ) => (
+					<CheckboxControl
+						key={ id }
+						label={ title }
+						help={ description }
+						onChange={ () => toggleItem( id ) }
+						checked={ selected.includes( id ) }
+						className="sensei-setup-wizard__checkbox"
+					/>
+				) ) }
+				{ selected.includes( 'other' ) && (
+					<TextControl
+						className="sensei-setup-wizard__textcontrol-other"
+						value={ other }
+						placeholder={ __( 'Description', 'sensei-lms' ) }
+						onChange={ ( value ) =>
+							setFormState( ( formState ) => ( {
+								...formState,
+								other: value,
+							} ) )
+						}
+					/>
+				) }
+			</div>
+			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+				{ errorNotice }
+				<button
+					disabled={ isSubmitting || isEmpty }
+					className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+					onClick={ submitPage }
+				>
+					{ __( 'Continue', 'sensei-lms' ) }
+				</button>
+				<div className="sensei-setup-wizard__action-skip">
+					<button
+						disabled={ isSubmitting }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
+						onClick={ goToNextStep }
 					>
-						{ __( 'Continue', 'sensei-lms' ) }
-					</Button>
-				</CardBody>
-			</Card>
+						{ __( 'Skip customization', 'sensei-lms' ) }
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 };
