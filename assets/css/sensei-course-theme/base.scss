@@ -1,4 +1,3 @@
-
 $breakpoint: 783px;
 
 body {
@@ -18,16 +17,16 @@ body {
 	--wp--style--block-gap: 0px;
 	box-sizing: border-box;
 
-	a {
+	a, [class*='sensei-'] a, a[class*='sensei-'] {
 		color: inherit;
 		text-decoration: none;
-	}
 
-	a:hover, a:hover * {
-		color: var(--primary-color);
-		fill: var(--primary-color);
-		cursor: pointer;
-		background: none;
+		&:hover, &:hover * {
+			color: var(--primary-color);
+			fill: var(--primary-color);
+			cursor: pointer;
+			background: none;
+		}
 	}
 
 	button:hover {
