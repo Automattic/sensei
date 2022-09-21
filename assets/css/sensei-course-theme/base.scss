@@ -2,11 +2,11 @@
 $breakpoint: 783px;
 
 body {
-	--primary-color: var(--sensei-global-styles-button-background-color, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
-	--bg-color: var(--sensei-global-styles-background-color, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
-	--primary-contrast-color: var(--sensei-global-styles-button-text-color, var(--bg-color, #FFFFFF));
+	--primary-color: var(--sensei-primary-color, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
+	--bg-color: var(--sensei-background-color, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
+	--primary-contrast-color: var(--bg-color, #FFFFFF);
 
-	--text-color: var(--sensei-global-styles-text-color, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, #1E1E1E)));
+	--text-color: var(--sensei-text-color, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
 	--border-color: rgba(125, 125, 125, 0.3);
 
 	background-color: var(--bg-color);
