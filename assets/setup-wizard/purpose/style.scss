@@ -22,6 +22,11 @@
 				font-size: 18px;
 			}
 		}
+
+		.components-checkbox-control__input[type=checkbox]:checked {
+			background: #000000;
+			border-color: #000000;
+		}
 	}
 
 	&__purpose-children {
