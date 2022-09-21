@@ -1,26 +1,25 @@
+$small-screen-width: 600px;
+$small-vertical-padding: 20px;
+$small-horizontal-padding: 20px;
+$big-vertical-padding: 60px;
+$big-horizontal-padding: 80px;
+
 @import '../css/font-recoleta';
 @import 'fullscreen';
+@import 'animations';
 @import 'welcome/style';
+@import 'usage-tracking/style';
 @import 'progress-bar/style';
 
-$small-screen-width: 600px;
-
-@keyframes slideInFromBottom {
-	0% {
-		transform: translateY(20px);
-		opacity: 0;
-	}
-	100% {
-		transform: translateY(0);
-		opacity: 100%;
-	}
+.sensei-setup-wizard-page {
+	overflow-x: hidden;
+	background-color: #b7c9be;
 }
 
 .sensei-setup-wizard {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
-	background-color: #b7c9be;
 	color: #000;
 	font-size: 16px;
 
@@ -49,10 +48,14 @@ $small-screen-width: 600px;
 
 	&__sensei-logo {
 		display: flex;
-		margin: 24px;
+		margin: $small-horizontal-padding;
 		align-items: center;
 		font-family: Recoleta, sans-serif;
 		font-size: 18px;
+
+		@media (min-width: $small-screen-width) {
+			margin: 24px;
+		}
 
 		> svg {
 			width: 32px;
@@ -76,10 +79,10 @@ $small-screen-width: 600px;
 	// Container.
 	&__container {
 		flex: 1;
-		padding: 20px;
+		padding: $small-vertical-padding $small-horizontal-padding;
 
 		@media (min-width: $small-screen-width) {
-			padding: 60px 80px;
+			padding: $big-vertical-padding $big-horizontal-padding;
 		}
 	}
 
@@ -123,6 +126,24 @@ $small-screen-width: 600px;
 	}
 
 	// Actions.
+	&__actions {
+		&--full-width {
+			text-align: center;
+
+			@media (min-width: $small-screen-width) {
+				text-align: left;
+			}
+
+			> * {
+				width: 100%;
+
+				@media (min-width: $small-screen-width) {
+					width: auto;
+				}
+			}
+		}
+	}
+
 	&__action-skip {
 		padding-top: 18px;
 		display: block;

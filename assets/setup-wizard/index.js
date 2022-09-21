@@ -36,7 +36,10 @@ const PARAM_NAME = 'step';
 const Fullscreen = () => {
 	const { currentRoute } = useQueryStringRouter();
 
-	useWpAdminFullscreen( [ `sensei-setup-wizard-page--${ currentRoute }` ] );
+	useWpAdminFullscreen( [
+		'sensei-setup-wizard-page',
+		`sensei-setup-wizard-page--${ currentRoute }`,
+	] );
 
 	return null;
 };

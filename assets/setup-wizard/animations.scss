@@ -1,0 +1,21 @@
+@keyframes slideInFromBottom {
+	0% {
+		transform: translateY(20px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 100%;
+	}
+}
+
+@keyframes slideInFromRight {
+	0% {
+		transform: translateX(500px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateX(0);
+		opacity: 100%;
+	}
+}
