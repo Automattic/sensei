@@ -233,7 +233,7 @@ final class Sensei_Extensions {
 	 * @deprecated $$next-version$$
 	 */
 	public function add_admin_menu_item() {
-		_deprecated_function(__METHOD__, '$$next-version$$');
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 	}
 
 	/**
@@ -244,7 +244,7 @@ final class Sensei_Extensions {
 	 * @deprecated $$next-version$$
 	 */
 	public function render() {
-		_deprecated_function(__METHOD__, '$$next-version$$');
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 	}
 
 	/**
