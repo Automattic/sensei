@@ -1,0 +1,13 @@
+{
+	"name": "sensei-lms/template-style",
+	"category": "theme",
+	"parent": [],
+	"apiVersion": 2,
+	"attributes": {
+		"content": {
+            "source": "text",
+			"type": "string",
+			"selector": "style"
+		}
+	}
+}

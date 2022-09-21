@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use \Sensei\Blocks\Course_Theme\Template_Style;
+
 /**
  * Sensei's block templates.
  *
@@ -61,9 +63,12 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function init() {
 
+		// The below hooks enable block theme support and inject the learning mode templates.
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
-		add_filter( 'pre_get_block_file_template', array( $this, 'get_single_block_template' ), 10, 3 );
+		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
+		add_filter( 'theme_lesson_templates', [ $this, 'add_lesson_template' ], 10, 4 );
+		add_filter( 'theme_quiz_templates', [ $this, 'add_quiz_template' ], 10, 4 );
 
 	}
 
@@ -81,6 +86,44 @@ class Sensei_Course_Theme_Templates {
 	}
 
 	/**
+	 * Add learning mode templates to theme lesson templates.
+	 *
+	 * @param string[]     $post_templates Array of template header names keyed by the template file name.
+	 * @param WP_Theme     $theme          The theme object.
+	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
+	 * @param string       $post_type      Post type to get the templates for.
+	 */
+	public function add_lesson_template( $post_templates, $theme, $post, $post_type ) {
+		if ( 'lesson' !== $post_type ) {
+			return $post_templates;
+		}
+
+		$this->load_file_templates();
+		$post_templates[ $this->file_templates['lesson']['slug'] ] = $this->file_templates['lesson']['title'];
+
+		return $post_templates;
+	}
+
+	/**
+	 * Add learning mode templates to theme quiz templates.
+	 *
+	 * @param string[]     $post_templates Array of template header names keyed by the template file name.
+	 * @param WP_Theme     $theme          The theme object.
+	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
+	 * @param string       $post_type      Post type to get the templates for.
+	 */
+	public function add_quiz_template( $post_templates, $theme, $post, $post_type ) {
+		if ( 'quiz' !== $post_type ) {
+			return $post_templates;
+		}
+
+		$this->load_file_templates();
+		$post_templates[ $this->file_templates['quiz']['slug'] ] = $this->file_templates['quiz']['title'];
+
+		return $post_templates;
+	}
+
+	/**
 	 * Add course theme block templates to single template hierarchy.
 	 *
 	 * @param string[] $templates The list of template names.
@@ -88,10 +131,23 @@ class Sensei_Course_Theme_Templates {
 	 * @return string[]
 	 */
 	public function set_single_template_hierarchy( $templates ) {
+
+		// Don't change if a block template is already selected for the post.
+		$is_default_template = count( $templates ) && str_ends_with( $templates[0], '.php' );
+
+		if ( ! $is_default_template ) {
+			return $templates;
+		}
+
 		if ( $this->should_use_quiz_template() ) {
 			return array_merge( [ 'quiz', 'lesson' ], $templates );
 		}
-		return array_merge( [ 'lesson', 'quiz' ], $templates );
+
+		if ( ! in_array( 'lesson', $templates, true ) ) {
+			return array_merge( [ 'lesson' ], $templates );
+		}
+
+		return $templates;
 	}
 
 	/**
@@ -102,15 +158,16 @@ class Sensei_Course_Theme_Templates {
 	public function should_use_quiz_template() {
 		$post = get_post();
 
-		if ( $post && 'quiz' === $post->post_type ) {
-			$lesson_id = \Sensei_Utils::get_current_lesson();
-			$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
-			if ( $status && 'in-progress' === $status->comment_approved ) {
-				return true;
-			}
+		$lesson_id = \Sensei_Utils::get_current_lesson();
+		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+
+		$has_submitted_quiz = $status && in_array( $status->comment_approved, [ 'ungraded', 'graded', 'passed', 'failed' ], true );
+
+		if ( ! $post || 'quiz' !== $post->post_type || $has_submitted_quiz ) {
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -145,6 +202,7 @@ class Sensei_Course_Theme_Templates {
 					'slug'        => 'lesson',
 					'id'          => self::THEME_PREFIX . '//lesson',
 					'content'     => $template->content['lesson'],
+					'styles'      => $template->styles,
 				]
 			),
 			'quiz'   => array_merge(
@@ -156,16 +214,10 @@ class Sensei_Course_Theme_Templates {
 					'slug'        => 'quiz',
 					'id'          => self::THEME_PREFIX . '//quiz',
 					'content'     => $template->content['quiz'],
+					'styles'      => $template->styles,
 				]
 			),
 		];
-
-		// Enqueue styles of the current active template.
-		if ( is_array( $template->styles ) ) {
-			foreach ( $template->styles as $index => $style_url ) {
-				wp_enqueue_style( self::THEME_PREFIX . '-' . $template->name . "-styles-$index", $style_url, [], $template->version );
-			}
-		}
 
 		// Enqueue scripts of the current active template.
 		if ( is_array( $template->scripts ) ) {
@@ -252,11 +304,6 @@ class Sensei_Course_Theme_Templates {
 		$templates    = [];
 
 		foreach ( $this->file_templates as $name => $template ) {
-			// Prefill the template contents from their content files.
-			if ( isset( $template['content'] ) && file_exists( $template['content'] ) ) {
-				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-				$template['content'] = file_get_contents( $template['content'] );
-			}
 
 			$db_template     = $db_templates[ $name ] ?? null;
 			$template_object = (object) $template;
@@ -264,6 +311,25 @@ class Sensei_Course_Theme_Templates {
 			if ( ! empty( $db_template ) ) {
 				$template_object = $this->build_template_from_post( $db_template );
 			} else {
+				// Prefill the template contents from their content files.
+				if ( ! empty( $template['content'] ) && file_exists( $template['content'] ) ) {
+					// Get the block template html.
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
+					$html = file_get_contents( $template['content'] );
+
+					// Get the block template styles.
+					$css = '';
+					if ( ! empty( $template['styles'] ) && is_array( $template['styles'] ) ) {
+						foreach ( $template['styles'] as $template_style_url ) {
+							$response = wp_remote_get( $template_style_url );
+							if ( ! is_wp_error( $response ) && ! empty( $response['body'] ) ) {
+								$css .= "\n\n";
+								$css .= $response['body'];
+							}
+						}
+					}
+					$template_object->content = $html . Template_Style::serialize_block( $css );
+				}
 				$template_object->wp_id  = null;
 				$template_object->author = null;
 			}
@@ -280,7 +346,43 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	private function get_custom_templates() {
+		$active_db_templates     = [];
+		$active_template_name    = Sensei_Course_Theme_Template_Selection::get_active_template_name();
+		$template_name_seperator = Sensei_Course_Theme_Template_Selection::TEMPLATE_NAME_SEPERATOR;
+		$default_template_name   = Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME;
+		$db_templates            = self::get_db_templates();
 
+		// Collect only those templates that correspond to the template that is set
+		// in the Sensei Settings.
+		foreach ( $db_templates as $db_template ) {
+			$post_name = $db_template->post_name;
+
+			// If the post_name does not have a template name suffix
+			// then it is considered a default template.
+			if ( strpos( $post_name, $template_name_seperator ) === false ) {
+				$post_name .= "{$template_name_seperator}{$default_template_name}";
+			}
+
+			// Get only active templates.
+			list( $post_type, $template_name ) = explode( $template_name_seperator, $post_name );
+			if ( $template_name !== $active_template_name ) {
+				continue;
+			}
+
+			// The post_name of the template should be the post type that
+			// the template is related to.
+			$db_template->post_name = $post_type;
+
+			$active_db_templates[] = $db_template;
+		}
+
+		return array_column( $active_db_templates, null, 'post_name' );
+	}
+
+	/**
+	 * Retrieves the Learning Mode templates that are stored in the db.
+	 */
+	public static function get_db_templates(): array {
 		$db_templates_query = new \WP_Query(
 			[
 				'post_type'      => 'wp_template',
@@ -296,9 +398,7 @@ class Sensei_Course_Theme_Templates {
 			]
 		);
 
-		$db_templates = $db_templates_query->posts ?? [];
-
-		return array_column( $db_templates, null, 'post_name' );
+		return $db_templates_query->posts ?? [];
 	}
 
 	/**
