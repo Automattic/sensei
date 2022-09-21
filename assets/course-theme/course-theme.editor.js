@@ -4,6 +4,11 @@
  */
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 
+/**
+ * Internal dependencies
+ */
+import './supports-color';
+
 window.addEventListener( 'locationchange', redirectToCourseThemeOverride );
 window.addEventListener( 'popstate', redirectToCourseThemeOverride );
 
