@@ -40,7 +40,7 @@ class Sensei_Setup_Wizard {
 			'selected' => [],
 			'other'    => '',
 		],
-		'__version' => '1',
+		'__version' => '2',
 	];
 
 	/**
