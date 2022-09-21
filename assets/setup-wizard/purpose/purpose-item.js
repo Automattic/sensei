@@ -21,7 +21,7 @@ const PurposeItem = ( { label, checked, onToggle, children } ) => (
 			onChange={ onToggle }
 		/>
 
-		{ checked && (
+		{ checked && children && (
 			<small className="sensei-setup-wizard__purpose-children">
 				{ children }
 			</small>

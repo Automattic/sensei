@@ -25,6 +25,16 @@ describe( '<PurposeItem />', () => {
 		expect( queryByText( 'Content' ) ).toBeFalsy();
 	} );
 
+	it( 'Should not display children when checked, but without children', () => {
+		const { container } = render(
+			<PurposeItem checked={ true }></PurposeItem>
+		);
+
+		expect(
+			container.querySelector( '.sensei-setup-wizard__purpose-children' )
+		).toBeFalsy();
+	} );
+
 	it( 'Should trigger onToggle when checked', () => {
 		const onToggleMock = jest.fn();
 
