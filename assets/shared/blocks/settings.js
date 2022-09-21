@@ -69,6 +69,13 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 		},
 	} ) );
 
+	const isUsingCSSVars =
+		props.backgroundColor?.color?.includes( 'var' ) ||
+		props.textColor?.color?.includes( 'var' );
+
+	const shouldUseContrastChecker =
+		props.backgroundColor && props.textColor && ! isUsingCSSVars;
+
 	return (
 		<InspectorControls>
 			<PanelColorSettings
@@ -76,7 +83,7 @@ export const ColorSettings = ( { colorSettings, props } ) => {
 				initialOpen={ false }
 				colorSettings={ settings }
 			>
-				{ props.backgroundColor && props.textColor && (
+				{ shouldUseContrastChecker && (
 					<ContrastChecker
 						{ ...{
 							textColor: props.textColor.color,
