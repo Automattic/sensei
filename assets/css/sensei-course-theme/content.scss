@@ -10,6 +10,8 @@ body {
 	--wp--custom--list--spacing--padding--left: 16px;
 	--wp--custom--layout--content-size: 900px;
 	--wp--custom--layout--wide-size: 1100px;
+	--wp--style--root--padding-top: 0px !important;
+	--wp--style--root--padding-bottom: 0px;
 
 	--max-content-size: calc(100vw - var(--content-padding));
 	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
