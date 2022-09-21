@@ -128,6 +128,19 @@ $big-horizontal-padding: 80px;
 		}
 	}
 
+	// Text control.
+	&__text-control {
+		.components-base-control__label {
+			font-size: 14px;
+		}
+
+		.components-text-control__input {
+			height: 36px;
+			border-radius: 5px;
+			margin: 0;
+		}
+	}
+
 	// Actions.
 	&__actions {
 		&--full-width {
