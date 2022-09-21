@@ -49,6 +49,19 @@ $break-medium: 783px; // adminbar goes big
 		}
 	}
 
+	.components-notice {
+		&__content {
+			display: grid;
+			grid-template-columns: 1fr auto;
+
+		}
+
+		.components-button {
+			align-self: center;
+			margin-top: 0;
+		}
+	}
+
 	.postbox .hndle {
 			margin: 0;
 			padding: 8px 12px;
