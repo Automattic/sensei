@@ -80,23 +80,23 @@ const Purpose = () => {
 	};
 
 	return (
-		<div className="sensei-setup-wizard__slide-in-from-bottom-animation">
-			<div className="sensei-setup-wizard__title">
-				<H className="sensei-setup-wizard__step-title">
-					{ __(
-						'Tailor your course creation experience',
-						'sensei-lms'
-					) }
-				</H>
-				<p>
-					{ __(
-						'Choose your primary purpose for offering courses, and we will guide you to complete them. You can choose all that apply.',
-						'sensei-lms'
-					) }
-				</p>
-			</div>
-			<div className="sensei-setup-wizard__checkbox-list">
-				<ul>
+		<div className="sensei-setup-wizard__columns">
+			<div className="sensei-setup-wizard__columns-content sensei-setup-wizard__slide-in-from-bottom-animation">
+				<div className="sensei-setup-wizard__title">
+					<H className="sensei-setup-wizard__step-title">
+						{ __(
+							'Tailor your course creation experience',
+							'sensei-lms'
+						) }
+					</H>
+					<p>
+						{ __(
+							'Choose your primary purpose for offering courses, and we will guide you to complete them. You can choose all that apply.',
+							'sensei-lms'
+						) }
+					</p>
+				</div>
+				<ul className="sensei-setup-wizard__purpose-list">
 					{ purposes.map( ( { id, label, description } ) => (
 						<PurposeItem
 							key={ id }
@@ -126,26 +126,30 @@ const Purpose = () => {
 						/>
 					</PurposeItem>
 				</ul>
-			</div>
-			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
-				{ errorNotice }
-				<button
-					disabled={ isSubmitting || isEmpty }
-					className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-					onClick={ submitPage }
-				>
-					{ __( 'Continue', 'sensei-lms' ) }
-				</button>
-				<div className="sensei-setup-wizard__action-skip">
+				<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+					{ errorNotice }
 					<button
-						disabled={ isSubmitting }
-						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-						onClick={ goToNextStep }
+						disabled={ isSubmitting || isEmpty }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+						onClick={ submitPage }
 					>
-						{ __( 'Skip customization', 'sensei-lms' ) }
+						{ __( 'Continue', 'sensei-lms' ) }
 					</button>
+					<div className="sensei-setup-wizard__action-skip">
+						<button
+							disabled={ isSubmitting }
+							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
+							onClick={ goToNextStep }
+						>
+							{ __( 'Skip customization', 'sensei-lms' ) }
+						</button>
+					</div>
 				</div>
 			</div>
+			<div
+				className="sensei-setup-wizard__purpose-illustration"
+				aria-hidden="true"
+			></div>
 		</div>
 	);
 };

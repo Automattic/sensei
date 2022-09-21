@@ -13,7 +13,7 @@ import { CheckboxControl } from '@wordpress/components';
  * @param {Object}   props.children Component children, which is displayed when it's checked.
  */
 const PurposeItem = ( { label, checked, onToggle, children } ) => (
-	<li>
+	<li className="sensei-setup-wizard__purpose-item">
 		<CheckboxControl
 			className="sensei-setup-wizard__checkbox"
 			label={ label }
@@ -21,7 +21,11 @@ const PurposeItem = ( { label, checked, onToggle, children } ) => (
 			onChange={ onToggle }
 		/>
 
-		{ checked && <small>{ children }</small> }
+		{ checked && (
+			<small className="sensei-setup-wizard__purpose-children">
+				{ children }
+			</small>
+		) }
 	</li>
 );
 

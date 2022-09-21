@@ -10,6 +10,7 @@ $big-horizontal-padding: 80px;
 @import 'fullscreen';
 @import 'animations';
 @import 'welcome/style';
+@import 'purpose/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
 @import 'progress-bar/style';
@@ -138,6 +139,10 @@ $big-horizontal-padding: 80px;
 			height: 36px;
 			border-radius: 5px;
 			margin: 0;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
 		}
 	}
 
