@@ -1,25 +1,4 @@
-$usage-tracking-break: 1000px;
-
 .sensei-setup-wizard {
-	&__usage-tracking {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-
-		@media (min-width: $usage-tracking-break) {
-			flex-direction: row;
-			justify-content: space-between;
-		}
-	}
-
-	&__usage-tracking-content {
-		padding-bottom: 24px;
-
-		@media (min-width: $usage-tracking-break) {
-			width: 30%;
-		}
-	}
-
 	&__usage-tracking-illustration {
 		margin: 0 0 (-$small-vertical-padding) (-$small-horizontal-padding);
 		flex: 1;
@@ -27,13 +6,13 @@ $usage-tracking-break: 1000px;
 		background: no-repeat url("../images/onboarding-improve-experience-illustration.png");
 		background-size: 100% auto;
 
-		@media (min-width: $usage-tracking-break) {
-			flex: none;
-			width: 50%;
+		@media (min-width: $small-screen-break) {
+			margin: 0 0 (-$big-vertical-padding) (-$big-horizontal-padding);
 		}
 
-		@media (min-width: $small-screen-width) {
-			margin: 0 0 (-$big-vertical-padding) 0;
+		@media (min-width: $columns-break) {
+			flex: none;
+			width: 50%;
 		}
 	}
 }

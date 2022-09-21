@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { MailingListSignupForm } from './mailinglist-signup-form';
 import { logLink } from '../../shared/helpers/log-event';
 import { H, Section } from '../../shared/components/section';
 
@@ -33,7 +32,6 @@ const Ready = () => (
 							'sensei-lms'
 						) }
 					</p>
-					<MailingListSignupForm />
 				</Section>
 			</div>
 		</div>

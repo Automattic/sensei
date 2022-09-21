@@ -271,22 +271,20 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
-
 		$user_data = $this->setup_wizard->get_wizard_user_data();
 
 		return [
-			'purpose'  => [
+			'purpose'    => [
 				'selected' => $user_data['purpose']['selected'],
 				'other'    => $user_data['purpose']['other'],
 			],
-			'tracking' => [
+			'tracking'   => [
 				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
 			],
-			'features' => $this->get_features_data( $user_data ),
-			'ready'    => $this->setup_wizard->get_mailing_list_form_data(),
+			'newsletter' => $this->setup_wizard->get_mailing_list_form_data(),
+			'features'   => $this->get_features_data( $user_data ),
 		];
 	}
-
 
 	/**
 	 * Get features data for Setup Wizard frontend.
@@ -381,9 +379,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 							'type'        => 'boolean',
 						],
 					],
-				],
-				'ready'    => [
-					'type' => 'object',
 				],
 			],
 		];

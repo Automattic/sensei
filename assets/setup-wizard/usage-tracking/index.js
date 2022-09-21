@@ -21,7 +21,7 @@ const UsageTracking = () => {
 	);
 
 	const onSubmitSuccess = () => {
-		goTo( 'features' );
+		goTo( 'newsletter' );
 	};
 
 	const submitPage = ( allowUsageTracking ) => () => {
@@ -32,8 +32,8 @@ const UsageTracking = () => {
 	};
 
 	return (
-		<div className="sensei-setup-wizard__usage-tracking">
-			<div className="sensei-setup-wizard__usage-tracking-content sensei-setup-wizard__slide-in-from-bottom-animation">
+		<div className="sensei-setup-wizard__columns">
+			<div className="sensei-setup-wizard__columns-content sensei-setup-wizard__slide-in-from-bottom-animation">
 				<H className="sensei-setup-wizard__step-title">
 					{ __(
 						'Help us improve your Sensei experience',

@@ -51,22 +51,6 @@ describe( '<Ready />', () => {
 		delete window.sensei_log_event;
 	} );
 
-	it( 'Should have a sign-up form pointing to the mailing list provider', () => {
-		const { container } = render( <Ready /> );
-
-		const form = container.querySelector( 'form' );
-		expect( form.getAttribute( 'action' ) ).toEqual( stepData.mc_url );
-	} );
-
-	it( 'Should have the admin e-mail pre-filled in the sign-up form', () => {
-		const { container } = render( <Ready /> );
-
-		const form = container.querySelector( 'form' );
-		expect( form.querySelector( 'input[type=email]' ).value ).toEqual(
-			stepData.admin_email
-		);
-	} );
-
 	it.skip( 'Should have a create course button', () => {
 		const { queryByText } = render( <Ready /> );
 
@@ -100,21 +84,6 @@ describe( '<Ready />', () => {
 		expect(
 			queryByText( 'Install a sample course', { selector: 'button' } )
 		).toBeTruthy();
-	} );
-
-	it( 'Should log event when clicking to join mailing list', () => {
-		const { queryByText } = render( <Ready /> );
-		const button = queryByText( 'Yes, please!' );
-
-		// Temporarily set button type to "button" to prevent form submission.
-		button.setAttribute( 'type', 'button' );
-		fireEvent.click( button );
-		button.setAttribute( 'type', 'submit' );
-
-		expect( window.sensei_log_event ).toHaveBeenCalledWith(
-			'setup_wizard_ready_mailing_list',
-			undefined
-		);
 	} );
 
 	it.skip( 'Should log event when clicking "Create a Course" button', () => {
