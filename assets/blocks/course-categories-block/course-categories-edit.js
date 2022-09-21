@@ -2,12 +2,15 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { unescape } from 'lodash';
+import { unescape, noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -19,6 +22,7 @@ import { useEffect } from '@wordpress/element';
 import useCourseCategories from './hooks/use-course-categories';
 import InvalidUsageError from '../../shared/components/invalid-usage';
 import { withColorSettings } from '../../shared/blocks/settings';
+import { useDispatch } from '@wordpress/data';
 
 const CSS_VARIABLE_PREFIX = '--sensei-lms-course-categories';
 
@@ -53,25 +57,34 @@ export function CourseCategoryEdit( props ) {
 		} ),
 	} );
 
+	const { __unstableMarkNextChangeAsNotPersistent = noop } = useDispatch(
+		blockEditorStore
+	);
+
 	useEffect( () => {
 		if ( options ) {
 			setBackgroundColor( options.backgroundColor );
 			setTextColor( options.textColor );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	// We need to store the colors in inside the option attribute because
+	// We need to store the colors inside the option attribute because
 	// by default the root backgroundColor and textColor are overwritten by
 	// Gutenberg withColors HOC.
 	useEffect( () => {
+		__unstableMarkNextChangeAsNotPersistent();
 		setAttributes( {
 			options: {
 				backgroundColor: backgroundColor?.color,
 				textColor: textColor?.color,
 			},
 		} );
-	}, [ backgroundColor, textColor, setAttributes ] );
+	}, [
+		backgroundColor,
+		textColor,
+		setAttributes,
+		__unstableMarkNextChangeAsNotPersistent,
+	] );
 
 	const getCategories = ( categoriesToDisplay ) => {
 		return categoriesToDisplay?.map( ( category ) => (
