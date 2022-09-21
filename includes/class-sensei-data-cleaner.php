@@ -59,6 +59,7 @@ class Sensei_Data_Cleaner {
 		'sensei_course_order',
 		'skip_install_sensei_pages', // deprecated 3.1.0.
 		'sensei_suggest_setup_wizard',
+		'sensei_setup_wizard_started',
 		'sensei-data-port-jobs',
 		'sensei_setup_wizard_data',
 		'sensei_exit_survey_data',
