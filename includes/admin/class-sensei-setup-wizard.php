@@ -40,7 +40,6 @@ class Sensei_Setup_Wizard {
 			'selected' => [],
 			'other'    => '',
 		],
-		'steps'     => [],
 		'__version' => '1',
 	];
 
@@ -268,7 +267,7 @@ class Sensei_Setup_Wizard {
 		}
 
 		$setup_wizard_user_data   = get_option( self::USER_DATA_OPTION, false );
-		$setup_wizard_in_progress = $setup_wizard_user_data && ! empty( $setup_wizard_user_data['steps'] );
+		$setup_wizard_in_progress = $setup_wizard_user_data;
 
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
 
