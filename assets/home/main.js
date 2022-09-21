@@ -23,35 +23,35 @@ const Main = () => {
 	return (
 		<>
 			<Grid as="main" className="sensei-home">
-				<Col className="sensei-home__section" cols={ 12 }>
+				<Col as="section" className="sensei-home__section" cols={ 12 }>
 					<Header />
 				</Col>
 
-				<Col cols={ 12 }>
+				<Col cols={ 12 } as="section">
 					<TaskList />
 				</Col>
 
-				<Col cols={ 6 }>
+				<Col cols={ 6 } as="section">
 					<QuickLinks />
 				</Col>
 
-				<Col cols={ 6 }>
+				<Col cols={ 6 } as="section">
 					<GetHelp />
 				</Col>
 
-				<Col cols={ 12 }>
+				<Col cols={ 12 } as="section">
 					<FeaturedProductSenseiPro />
 				</Col>
 
-				<Col cols={ 6 }>
+				<Col cols={ 6 } as="section">
 					<SenseiGuides />
 				</Col>
 
-				<Col cols={ 6 }>
+				<Col cols={ 6 } as="section">
 					<LatestNews />
 				</Col>
 
-				<Col cols={ 12 }>
+				<Col cols={ 12 } as="section">
 					<Extensions />
 				</Col>
 			</Grid>

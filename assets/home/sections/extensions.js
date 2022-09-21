@@ -50,7 +50,6 @@ const Extensions = () => {
 				{ extensions.map( ( extension ) => (
 					<Col
 						key={ extension.product_slug }
-						as="section"
 						className="sensei-extensions__card-wrapper"
 						cols={ 4 }
 					>
