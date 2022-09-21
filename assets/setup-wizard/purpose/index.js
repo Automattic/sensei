@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { CheckboxControl, TextControl } from '@wordpress/components';
+import { TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 /**
@@ -11,11 +11,12 @@ import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { H } from '../../shared/components/section';
+import PurposeItem from './purpose-item';
 
 const purposes = [
 	{
 		id: 'sell_courses',
-		title: __( 'Sell courses and generate income', 'sensei-lms' ),
+		label: __( 'Sell courses and generate income', 'sensei-lms' ),
 		description: __(
 			'We will install WooCommerce for free.',
 			'sensei-lms'
@@ -23,7 +24,7 @@ const purposes = [
 	},
 	{
 		id: 'provide_certification',
-		title: __( 'Provide certification', 'sensei-lms' ),
+		label: __( 'Provide certification', 'sensei-lms' ),
 		description: __(
 			'We will install Sensei LMS Certificates for free.',
 			'sensei-lms'
@@ -31,15 +32,11 @@ const purposes = [
 	},
 	{
 		id: 'educate_students',
-		title: __( 'Educate students', 'sensei-lms' ),
+		label: __( 'Educate students', 'sensei-lms' ),
 	},
 	{
 		id: 'train_employees',
-		title: __( 'Train employees', 'sensei-lms' ),
-	},
-	{
-		id: 'other',
-		title: __( 'Other', 'sensei-lms' ),
+		label: __( 'Train employees', 'sensei-lms' ),
 	},
 ];
 
@@ -99,29 +96,36 @@ const Purpose = () => {
 				</p>
 			</div>
 			<div className="sensei-setup-wizard__checkbox-list">
-				{ purposes.map( ( { id, title, description } ) => (
-					<CheckboxControl
-						key={ id }
-						label={ title }
-						help={ description }
-						onChange={ () => toggleItem( id ) }
-						checked={ selected.includes( id ) }
-						className="sensei-setup-wizard__checkbox"
-					/>
-				) ) }
-				{ selected.includes( 'other' ) && (
-					<TextControl
-						className="sensei-setup-wizard__textcontrol-other"
-						value={ other }
-						placeholder={ __( 'Description', 'sensei-lms' ) }
-						onChange={ ( value ) =>
-							setFormState( ( formState ) => ( {
-								...formState,
-								other: value,
-							} ) )
-						}
-					/>
-				) }
+				<ul>
+					{ purposes.map( ( { id, label, description } ) => (
+						<PurposeItem
+							key={ id }
+							label={ label }
+							checked={ selected.includes( id ) }
+							onToggle={ () => toggleItem( id ) }
+						>
+							{ description }
+						</PurposeItem>
+					) ) }
+
+					<PurposeItem
+						label={ __( 'Other', 'sensei-lms' ) }
+						checked={ selected.includes( 'other' ) }
+						onToggle={ () => toggleItem( 'other' ) }
+					>
+						<TextControl
+							className="sensei-setup-wizard__text-control"
+							value={ other }
+							placeholder={ __( 'Description', 'sensei-lms' ) }
+							onChange={ ( value ) =>
+								setFormState( ( formState ) => ( {
+									...formState,
+									other: value,
+								} ) )
+							}
+						/>
+					</PurposeItem>
+				</ul>
 			</div>
 			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
 				{ errorNotice }
