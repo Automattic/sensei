@@ -29,15 +29,15 @@ export function registerTemplateBlocks( blocks ) {
 
 	// TODO Only subscribe when in the post editor.
 	subscribe( () => {
-		const postType = select( 'core/editor' ).getCurrentPostType();
+		const postType = select( 'core/editor' )?.getCurrentPostType();
+		const editPost = select( 'core/edit-post' );
 
-		if ( ! postType ) {
+		if ( ! postType || ! editPost ) {
 			return;
 		}
 
-		const { isEditingTemplate } = select( 'core/edit-post' );
-
-		const isTemplate = 'lesson' === postType && isEditingTemplate();
+		const isTemplate =
+			'lesson' === postType && editPost.isEditingTemplate();
 		toggleBlockRegistration( isTemplate );
 	} );
 }
