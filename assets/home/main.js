@@ -27,31 +27,31 @@ const Main = () => {
 					<Header />
 				</Col>
 
-				<Col cols={ 12 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 12 }>
 					<TaskList />
 				</Col>
 
-				<Col cols={ 6 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<QuickLinks />
 				</Col>
 
-				<Col cols={ 6 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<GetHelp />
 				</Col>
 
-				<Col cols={ 12 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 12 }>
 					<FeaturedProductSenseiPro />
 				</Col>
 
-				<Col cols={ 6 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<SenseiGuides />
 				</Col>
 
-				<Col cols={ 6 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<LatestNews />
 				</Col>
 
-				<Col cols={ 12 } as="section">
+				<Col as="section" className="sensei-home__section" cols={ 12 }>
 					<Extensions />
 				</Col>
 			</Grid>
