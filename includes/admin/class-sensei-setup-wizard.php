@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
-	const SETUP_WIZARD_STARTED_OPTION = 'sensei_setup_wizard_started';
 	const WCCOM_INSTALLING_TRANSIENT  = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
@@ -267,11 +266,6 @@ class Sensei_Setup_Wizard {
 			return;
 		}
 
-		$setup_wizard_started = get_option( self::SETUP_WIZARD_STARTED_OPTION );
-
-		// The steps check is for backwards compatibility.
-		$setup_wizard_in_progress = $setup_wizard_started || ! empty( $setup_wizard_user_data['steps'] );
-
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
 		$skip_url  = add_query_arg( 'sensei_skip_setup_wizard', '1' );
 		$skip_url  = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
@@ -281,13 +275,7 @@ class Sensei_Setup_Wizard {
 
 			<p class="submit">
 				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
-					<?php
-					if ( $setup_wizard_in_progress ) {
-						esc_html_e( 'Complete Setup', 'sensei-lms' );
-					} else {
-						esc_html_e( 'Run the Setup Wizard', 'sensei-lms' );
-					}
-					?>
+					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
 				</a>
 
 				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">
@@ -296,13 +284,6 @@ class Sensei_Setup_Wizard {
 			</p>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Set setup wizard as started.
-	 */
-	public function set_setup_wizard_as_started() {
-		update_option( self::SETUP_WIZARD_STARTED_OPTION, 1 );
 	}
 
 	/**
