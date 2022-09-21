@@ -82,28 +82,31 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	public function get_data() {
 
 		return [
-			'tasks'       => [
-				// TODO: Generate based on Setup Wizard data + site info.
-				[
-					'title' => 'Set up Course Site',
-					'done'  => true,
-					'url'   => null,
+			'tasks_list'  => [
+				'tasks' => [
+					// TODO: Generate based on Setup Wizard data + site info.
+					[
+						'title' => 'Set up Course Site',
+						'done'  => true,
+						'url'   => null,
+					],
+					[
+						'title' => 'Create your first Course',
+						'done'  => false,
+						'url'   => '/wp-admin/edit.php?post_type=course',
+					],
+					[
+						'title' => 'Configure Learning Mode',
+						'done'  => false,
+						'url'   => '/wp-admin/edit.php?post_type=course&page=sensei-settings#course-settings',
+					],
+					[
+						'title' => 'Publish your first Course',
+						'done'  => false,
+						'url'   => '???',
+					],
 				],
-				[
-					'title' => 'Create your first Course',
-					'done'  => false,
-					'url'   => '/wp-admin/edit.php?post_type=course',
-				],
-				[
-					'title' => 'Configure Learning Mode',
-					'done'  => false,
-					'url'   => '/wp-admin/edit.php?post_type=course&page=sensei-settings#course-settings',
-				],
-				[
-					'title' => 'Publish your first Course',
-					'done'  => false,
-					'url'   => '???',
-				],
+				'image' => 'http://...', // For the moment we are returning the task_list image url from the backend. We could see how to calculate this on frontend based on tasks response.
 			],
 			'quick_links' => [
 				// TODO: Generate or hardcode in frontend.
