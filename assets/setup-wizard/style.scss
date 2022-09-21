@@ -199,6 +199,7 @@ $big-horizontal-padding: 80px;
 
 		@media (min-width: $columns-break) {
 			width: 30%;
+			min-width: 370px;
 			padding-bottom: 0;
 		}
 	}
