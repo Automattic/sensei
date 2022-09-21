@@ -145,6 +145,7 @@ class Sensei_Course_Theme {
 		}
 
 		Sensei_Course_Theme_Compat::instance()->load_theme();
+		Sensei_Course_Theme_Styles::init();
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
@@ -152,7 +153,6 @@ class Sensei_Course_Theme {
 
 		add_action( 'template_redirect', [ $this, 'admin_menu_init' ], 20 );
 		add_action( 'admin_init', [ $this, 'admin_menu_init' ], 20 );
-		add_filter( 'wp_head', [ $this, 'use_global_styles_colors' ] );
 
 		/**
 		 * Fires when learning mode is loaded for a page.
@@ -531,86 +531,4 @@ class Sensei_Course_Theme {
 		return $content;
 	}
 
-	/**
-	 * Get global styles colors and output them as CSS variables.
-	 *
-	 * @access private
-	 */
-	public function use_global_styles_colors() {
-
-		$styles = wp_get_global_styles();
-
-		$vars = [];
-
-		if ( ! empty( $styles['color'] ) ) {
-			$vars['text-color']       = $styles['color']['text'];
-			$vars['background-color'] = $styles['color']['background'];
-		}
-
-		$button = $styles['elements']['button'] ?? $styles['blocks']['core/button'] ?? null;
-		if ( ! empty( $button['color'] ) ) {
-			$vars['button-text-color']       = $button['color']['text'];
-			$vars['button-background-color'] = $button['color']['background'];
-		}
-
-		self::output_style_variables( $vars, 'sensei-global-styles-' );
-
-	}
-
-	/**
-	 * Generate a style tag with the given CSS variables.
-	 *
-	 * @param array  $variables Key-value pair of variable names and values.
-	 * @param string $prefix    Variable prefix.
-	 */
-	public static function output_style_variables( $variables, $prefix = '' ) {
-
-		$css = '';
-
-		foreach ( $variables as $variable => $value ) {
-			if ( $prefix ) {
-				$variable = $prefix . $variable;
-			}
-			if ( $value ) {
-				$css .= sprintf( "--%s: %s;\n", $variable, self::get_property_value( $value ) );
-			}
-		}
-
-		?>
-		<style>
-			body {
-			<?php echo esc_html( $css ); ?>
-			}
-		</style>
-		<?php
-	}
-
-	/**
-	 * Converts CSS Custom Property stored as
-	 * "var:preset|color|secondary" to the form
-	 * "--wp--preset--color--secondary".
-	 *
-	 * Based on \WP_Theme_JSON::get_property_value
-	 *
-	 * @param string $value CSS value.
-	 *
-	 * @return string Style property value.
-	 */
-	protected static function get_property_value( $value ) {
-
-		$prefix     = 'var:';
-		$prefix_len = strlen( $prefix );
-		$token_in   = '|';
-		$token_out  = '--';
-		if ( 0 === strncmp( $value, $prefix, $prefix_len ) ) {
-			$unwrapped_name = str_replace(
-				$token_in,
-				$token_out,
-				substr( $value, $prefix_len )
-			);
-			$value          = "var(--wp--$unwrapped_name)";
-		}
-
-		return $value;
-	}
 }
