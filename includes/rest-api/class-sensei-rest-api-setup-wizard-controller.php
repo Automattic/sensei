@@ -315,11 +315,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Mark the given step as completed.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param string $step Step.
 	 *
 	 * @return bool Success.
 	 */
 	public function mark_step_complete( $step ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'steps' => array_unique( array_merge( $this->setup_wizard->get_wizard_user_data( 'steps' ), [ $step ] ) ),
@@ -392,7 +396,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_welcome( $data ) {
-		$this->mark_step_complete( 'welcome' );
 		$this->setup_wizard->pages->create_pages();
 
 		return true;
@@ -406,9 +409,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_purpose( $form ) {
-
-		$this->mark_step_complete( 'purpose' );
-
 		$purpose_data = [
 			'selected' => $form['selected'],
 			'other'    => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
@@ -437,8 +437,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_tracking( $data ) {
-		$this->mark_step_complete( 'tracking' );
-
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
 		Sensei()->usage_tracking->send_usage_data();
 
@@ -453,9 +451,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_features( $form ) {
-
-		$this->mark_step_complete( 'features' );
-
 		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'features' => [
@@ -482,7 +477,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Complete setup wizard
 	 */
 	public function complete_setup_wizard() {
-		$this->mark_step_complete( 'ready' );
 		$this->setup_wizard->finish_setup_wizard();
 
 		return true;
