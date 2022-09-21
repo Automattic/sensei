@@ -45,14 +45,11 @@ class Lesson_Video {
 	/**
 	 * Renders the block.
 	 *
-	 * @param array $attributes The block attributes.
-	 *
 	 * @access private
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ) : string {
-		remove_action( 'sensei_lesson_video', [ Sensei_Frontend::class, 'sensei_lesson_video' ] );
+	public function render() : string {
 		$lesson_id = Sensei_Utils::get_current_lesson();
 		$user_id   = get_current_user_id();
 
@@ -80,6 +77,8 @@ class Lesson_Video {
 				'class' => 'sensei-course-theme-lesson-video wp-block-video is-type-video wp-has-aspect-ratio',
 			]
 		);
+
+		remove_action( 'sensei_lesson_video', [ Sensei_Frontend::class, 'sensei_lesson_video' ] );
 
 		return sprintf(
 			'<div %s>
