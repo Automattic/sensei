@@ -69,27 +69,23 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
-	 * Ensure the learning mode prefix is set if required or removed
-	 * if not allowed.
+	 * Ensure the learning mode prefix is removed if the theme is not overridden.
 	 *
 	 * @access private
 	 */
 	public function ensure_learning_mode_url_prefix() {
 
-		$using_theme      = Sensei_Course_Theme::instance()->is_active();
-		$should_use_theme = self::should_use_learning_mode() && self::should_override_theme();
+		$is_theme_overridden   = Sensei_Course_Theme::instance()::THEME_NAME === get_stylesheet();
+		$should_override_theme = self::should_use_learning_mode() && self::should_override_theme();
 
-		if ( is_admin() || $using_theme === $should_use_theme ) {
+		// Remove the prefix only if the theme should not be overridden.
+		if ( is_admin() || ! $is_theme_overridden || $should_override_theme ) {
 			return;
 		}
 
-		$url = get_pagenum_link( 1, false );
-		if ( $should_use_theme ) {
-			return;
-		} else {
-			$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
-			$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
-		}
+		$url    = get_pagenum_link( 1, false );
+		$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
+		$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
 
 		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
 			$url = esc_url_raw( wp_unslash( $url . '?' . $_SERVER['QUERY_STRING'] ) );
