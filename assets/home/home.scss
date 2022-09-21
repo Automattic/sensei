@@ -50,6 +50,8 @@ $break-medium: 783px; // adminbar goes big
 	}
 
 	.components-notice {
+		background-color: #fff;
+
 		&__content {
 			display: grid;
 			grid-template-columns: 1fr auto;
