@@ -115,37 +115,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests welcome endpoint returning the current usage tracking setting.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
-	 */
-	public function testGetWelcomeReturnsUsageTrackingData() {
-
-		Sensei()->usage_tracking->set_tracking_enabled( true );
-		$result = $this->request( 'GET', '' );
-
-		$this->assertEquals( array( 'usage_tracking' => true ), $result['welcome'] );
-
-		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$result = $this->request( 'GET', '' );
-
-		$this->assertEquals( array( 'usage_tracking' => false ), $result['welcome'] );
-	}
-
-	/**
-	 * Tests that submitting to welcome endpoint updates usage tracking preference.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
-	 */
-	public function testSubmitWelcomeUpdatesUsageTrackingSetting() {
-
-		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$this->request( 'POST', 'welcome', [ 'usage_tracking' => true ] );
-
-		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
-	}
-
-	/**
 	 * Tests that submitting to welcome endpoint creates Sensei Courses and My Courses pages.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
@@ -267,46 +236,35 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests that completed steps are empty when nothing has been submitted.
+	 * Tests tracking endpoint returning the current usage tracking setting.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
 	 */
-	public function testDefaultProgressIsEmpty() {
-		$data = $this->request( 'GET', '' );
-		$this->assertEquals( [], $data['completedSteps'] );
+	public function testGetTrackingReturnsUsageTrackingData() {
+
+		Sensei()->usage_tracking->set_tracking_enabled( true );
+		$result = $this->request( 'GET', '' );
+
+		$this->assertEquals( array( 'usage_tracking' => true ), $result['tracking'] );
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$result = $this->request( 'GET', '' );
+
+		$this->assertEquals( array( 'usage_tracking' => false ), $result['tracking'] );
 	}
 
 	/**
-	 * Tests that welcome step is completed after submitting it.
+	 * Tests that submitting to tracking endpoint updates usage tracking preference.
 	 *
-	 * @dataProvider step_form_data
-	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_welcome
-	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
-	 * @covers       Sensei_REST_API_Setup_Wizard_Controller::submit_features
-	 *
-	 * @param string $step      Step.
-	 * @param mixed  $form_data Data submitted.
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_tracking
 	 */
-	public function testStepCompletedAfterSubmit( $step, $form_data ) {
-		$this->request( 'POST', $step, $form_data );
-		$data = $this->request( 'GET', '' );
-		$this->assertEquals( [ $step ], $data['completedSteps'] );
+	public function testSubmitTrackingUpdatesUsageTrackingSetting() {
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$this->request( 'POST', 'tracking', [ 'usage_tracking' => true ] );
+
+		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
 	}
-
-	public function testMultipleStepsCompleted() {
-
-		$steps_data = $this->step_form_data();
-
-		foreach ( $steps_data as $step_data ) {
-			list( $step, $form_data ) = $step_data;
-			$this->request( 'POST', $step, $form_data );
-		}
-
-		$data = $this->request( 'GET', '' );
-		$this->assertEqualSets( [ 'welcome', 'features', 'purpose' ], $data['completedSteps'] );
-
-	}
-
 
 	/**
 	 * Tests that submitting to features endpoint saves submitted data

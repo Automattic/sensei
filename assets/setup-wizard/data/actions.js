@@ -174,12 +174,12 @@ export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
  * @property {Object} data Step data.
  */
 /**
- * Set welcome step data action creator.
+ * Set step data action creator.
  *
  * @param {string} step Step name.
  * @param {Object} data Step data object.
  *
- * @return {SetStepDataAction} Set welcome step data action.
+ * @return {SetStepDataAction} Set step data action.
  */
 export const setStepData = ( step, data ) => ( {
 	type: SET_STEP_DATA,

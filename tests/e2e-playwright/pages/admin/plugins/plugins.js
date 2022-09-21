@@ -24,58 +24,33 @@ class PluginsPage {
 	}
 
 	async findExitSurvey() {
-		return this.page.waitForSelector(
-			`#sensei-exit-survey-modal button:not(:disabled)`
-		);
+		return this.page.waitForSelector( `#sensei-exit-survey-modal button:not(:disabled)` );
 	}
 
 	async stepIsComplete( page, label ) {
-		return expect(
-			page
-				.locator( '.sensei-stepper__step.is-complete' )
-				.locator( `text=${ label }` )
-		).toHaveCount( 1 );
+		return expect( page.locator( '.sensei-stepper__step.is-complete' ).locator( `text=${ label }` ) ).toHaveCount( 1 );
 	}
 
 	async closeUserTrackingModal() {
-		await this.page
-			.locator( '.sensei-setup-wizard__usage-modal button' )
-			.locator( 'text=Continue' )
-			.click();
+		await this.page.locator( '.sensei-setup-wizard__usage-modal button' ).locator( 'text=Continue' ).click();
 	}
 
 	async fillOutPurposeForm() {
-		await this.page
-			.locator( 'label' )
-			.locator( 'text=Promote your business' )
-			.click();
+		await this.page.locator( 'label' ).locator( 'text=Sell courses and generate income' ).click();
 		await this.page.locator( 'label' ).locator( 'text=Other' ).click();
-		await this.page.fill(
-			'.sensei-setup-wizard__textcontrol-other input',
-			'Other'
-		);
+		await this.page.fill( '.sensei-setup-wizard__textcontrol-other input', 'Other' );
 	}
 
 	async goToReadyStep() {
-		await this.page
-			.locator( '.sensei-stepper__step' )
-			.locator( 'text=Ready' )
-			.click();
+		await this.page.locator( '.sensei-stepper__step' ).locator( 'text=Ready' ).click();
 	}
 
 	async fillOutFeaturesForm() {
-		return this.page
-			.locator( 'label' )
-			.locator( 'text=Sensei LMS Certificates' )
-			.click();
+		return this.page.locator( 'label' ).locator( 'text=Sensei LMS Certificates' ).click();
 	}
 
 	async stepIsActive( page, label ) {
-		return expect(
-			page
-				.locator( '.sensei-stepper__step.is-active' )
-				.locator( `text=${ label }` )
-		).toHaveCount( 1 );
+		return expect( page.locator( '.sensei-stepper__step.is-active' ).locator( `text=${ label }` ) ).toHaveCount( 1 );
 	}
 
 	async goToPluginsAndGetDeactivationLink( slug ) {
@@ -96,9 +71,7 @@ class PluginsPage {
 	}
 
 	async activatePlugin( slug, forceReactivate = false ) {
-		const deactivateLink = await this.goToPluginsAndGetDeactivationLink(
-			slug
-		);
+		const deactivateLink = await this.goToPluginsAndGetDeactivationLink( slug );
 
 		if ( deactivateLink ) {
 			if ( forceReactivate ) {

@@ -1,0 +1,12 @@
+.sensei-setup-wizard {
+	&__progress-bar {
+		height: 8px;
+		background-color: #ffffff;
+	}
+
+	&__progress-bar-filled {
+		background-color: #000000;
+		height: 100%;
+		transition: 0.5s width;
+	}
+}

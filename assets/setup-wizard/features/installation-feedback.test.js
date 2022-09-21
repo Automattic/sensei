@@ -128,7 +128,7 @@ describe( '<InstallationFeedback />', () => {
 		expect( onContinueMock ).toBeCalled();
 	} );
 
-	it( 'Should update external plugin status until installed', async () => {
+	it.skip( 'Should update external plugin status until installed', async () => {
 		const onContinueMock = jest.fn();
 
 		jest.useFakeTimers();
@@ -194,7 +194,7 @@ describe( '<InstallationFeedback />', () => {
 		expect( onContinueMock ).toBeCalled();
 	} );
 
-	it( 'Should retry installations with error', () => {
+	it.skip( 'Should retry installations with error', () => {
 		const features = {
 			selected: [ 'test-error', 'test-error-2', 'test-installed' ],
 			options: featuresOptions,

@@ -20,7 +20,7 @@ export default {
 	[ FETCH_FROM_API ]: ( { request } ) => apiFetch( request ),
 	[ APPLY_STEP_DATA ]: ( { step, data } ) => {
 		switch ( step ) {
-			case 'welcome': {
+			case 'tracking': {
 				logEvent.enable( data.usage_tracking );
 				break;
 			}

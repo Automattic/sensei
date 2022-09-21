@@ -23,7 +23,7 @@ const features = [
 ];
 
 describe( '<ConfirmationModal />', () => {
-	it( 'Should run the confirmation modal with the items', () => {
+	it.skip( 'Should run the confirmation modal with the items', () => {
 		render(
 			<ConfirmationModal
 				features={ features }

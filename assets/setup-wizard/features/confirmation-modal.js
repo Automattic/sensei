@@ -8,9 +8,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { getWccomProductId } from '../../shared/helpers/woocommerce-com';
-import { getFeatureObservation } from './feature-description-utils';
-import FeatureDescription from './feature-description';
-import List from '../../shared/components/list';
 
 /**
  * @typedef  {Object} Feature
@@ -43,19 +40,6 @@ const ConfirmationModal = ( {
 		) }
 		isDismissible={ false }
 	>
-		<List
-			items={ features.map( ( { slug, title, excerpt } ) => ( {
-				title,
-				content: (
-					<FeatureDescription
-						slug={ slug }
-						excerpt={ excerpt }
-						observation={ getFeatureObservation( slug, features ) }
-					/>
-				),
-			} ) ) }
-		/>
-
 		<div className="sensei-setup-wizard__modal-footer">
 			<p>
 				{ __(

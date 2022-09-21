@@ -124,10 +124,7 @@ describe( 'Setup wizard reducer', () => {
 
 	it( 'Should set isSubmitting to false on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
 		const state = reducer(
-			{
-				isSubmitting: true,
-				data: { completedSteps: [] },
-			},
+			{ isSubmitting: true },
 			{
 				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 				step: 'test',
@@ -135,21 +132,6 @@ describe( 'Setup wizard reducer', () => {
 		);
 
 		expect( state.isSubmitting ).toBeFalsy();
-	} );
-
-	it( 'Should mark step as completed on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
-		const state = reducer(
-			{
-				isSubmitting: true,
-				data: { completedSteps: [] },
-			},
-			{
-				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
-				step: 'test',
-			}
-		);
-
-		expect( state.data.completedSteps ).toContain( 'test' );
 	} );
 
 	it( 'Should set error on ERROR_SUBMIT_SETUP_WIZARD_DATA action', () => {

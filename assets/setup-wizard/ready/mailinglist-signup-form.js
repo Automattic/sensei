@@ -9,7 +9,6 @@ import { __ } from '@wordpress/i18n';
  */
 import { logLink } from '../../shared/helpers/log-event';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
-import List from '../../shared/components/list';
 
 /**
  * Sign up to Sensei Mailing list.
@@ -32,33 +31,22 @@ export const MailingListSignupForm = () => {
 				name={ `gdpr[${ stepData.gdpr_field }]` }
 				value="Y"
 			/>
-			<List
-				className="sensei-setup-wizard__item-list"
-				items={ [
-					{
-						title: '',
-						content: (
-							<TextControl
-								type="email"
-								name="EMAIL"
-								defaultValue={ stepData.admin_email }
-							/>
-						),
-						after: (
-							<Button
-								className="sensei-setup-wizard__button"
-								isPrimary
-								type="submit"
-								{ ...logLink(
-									'setup_wizard_ready_mailing_list'
-								) }
-							>
-								{ __( 'Yes, please!', 'sensei-lms' ) }
-							</Button>
-						),
-					},
-				] }
-			/>
+			<div>
+				<TextControl
+					type="email"
+					name="EMAIL"
+					defaultValue={ stepData.admin_email }
+				/>
+
+				<Button
+					className="sensei-setup-wizard__button"
+					isPrimary
+					type="submit"
+					{ ...logLink( 'setup_wizard_ready_mailing_list' ) }
+				>
+					{ __( 'Yes, please!', 'sensei-lms' ) }
+				</Button>
+			</div>
 		</form>
 	);
 };
