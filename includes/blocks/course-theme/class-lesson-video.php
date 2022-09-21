@@ -66,7 +66,7 @@ class Lesson_Video {
 			return '';
 		}
 
-		$content = Sensei_Utils::get_featured_video_html( $lesson_id ) ?? '';
+		$content = self::get_featured_video_html( $lesson_id ) ?? '';
 
 		if ( empty( $content ) ) {
 			return '';
@@ -99,7 +99,7 @@ class Lesson_Video {
 	 * @return string HTML
 	 */
 	public function remove_featured_video_content( $content ) {
-		$active_template = \Sensei()->settings->get( 'sensei_learning_mode_template' );
+		$active_template = \Sensei_Course_Theme_Template_Selection::get_active_template_name();
 		if ( ! \Sensei_Course_Theme_Option::should_use_learning_mode() || in_array( $active_template, [ 'default', 'modern' ], true ) ) {
 			return $content;
 		}
@@ -114,5 +114,33 @@ class Lesson_Video {
 		);
 
 		return serialize_blocks( $blocks );
+	}
+
+	/**
+	 * Gets the HTML content from the Featured Video for a post.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $post_id the post ID.
+	 *
+	 * @return string The featured video HTML output.
+	 */
+	public static function get_featured_video_html( $post_id ) {
+		global $wp_embed;
+		if ( has_blocks( $post_id ) ) {
+			$post   = get_post( $post_id );
+			$blocks = parse_blocks( $post->post_content );
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+					$content = render_block( $block );
+					$content = $wp_embed->run_shortcode( $content );
+					return $wp_embed->autoembed( $content );
+				}
+			}
+		} else {
+			ob_start();
+			Sensei()->frontend->sensei_lesson_video( $post_id );
+			return trim( ob_get_clean() );
+		}
 	}
 }
