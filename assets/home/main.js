@@ -24,6 +24,10 @@ const Main = () => {
 		<>
 			<Grid as="main" className="sensei-home">
 				<Col as="section" className="sensei-home__section" cols={ 12 }>
+					<EditorNotices />
+				</Col>
+
+				<Col as="section" className="sensei-home__section" cols={ 12 }>
 					<Header />
 				</Col>
 
@@ -55,7 +59,6 @@ const Main = () => {
 					<Extensions />
 				</Col>
 			</Grid>
-			<EditorNotices />
 		</>
 	);
 };
