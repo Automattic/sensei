@@ -5,19 +5,8 @@
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
 	"attributes": {
-		"align": {
-			"type": "string",
-			"default": "left"
-		},
-		"fontSize": {
-			"type": "string",
-			"default": "small"
-		},
         "previewCategories": {
             "type": "array"
-        },
-        "options": {
-            "type": "object" 
         }
 	},
 	"usesContext": [ "postId", "postType" ],
