@@ -40,7 +40,6 @@ class Sensei_Setup_Wizard {
 			'selected' => [],
 			'other'    => '',
 		],
-		'steps'     => [],
 		'__version' => '1',
 	];
 
@@ -267,26 +266,16 @@ class Sensei_Setup_Wizard {
 			return;
 		}
 
-		$setup_wizard_user_data   = get_option( self::USER_DATA_OPTION, false );
-		$setup_wizard_in_progress = $setup_wizard_user_data && ! empty( $setup_wizard_user_data['steps'] );
-
 		$setup_url = admin_url( 'admin.php?page=' . $this->page_slug );
-
-		$skip_url = add_query_arg( 'sensei_skip_setup_wizard', '1' );
-		$skip_url = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
+		$skip_url  = add_query_arg( 'sensei_skip_setup_wizard', '1' );
+		$skip_url  = wp_nonce_url( $skip_url, 'sensei_skip_setup_wizard' );
 		?>
 		<div id="message" class="updated sensei-message sensei-connect">
 			<p><?php echo wp_kses_post( __( '<strong>Welcome to Sensei LMS</strong> &#8211; You\'re almost ready to start creating online courses!', 'sensei-lms' ) ); ?></p>
 
 			<p class="submit">
 				<a href="<?php echo esc_url( $setup_url ); ?>" class="button-primary">
-					<?php
-					if ( $setup_wizard_in_progress ) {
-						esc_html_e( 'Complete Setup', 'sensei-lms' );
-					} else {
-						esc_html_e( 'Run the Setup Wizard', 'sensei-lms' );
-					}
-					?>
+					<?php esc_html_e( 'Run the Setup Wizard', 'sensei-lms' ); ?>
 				</a>
 
 				<a class="button" href="<?php echo esc_url( $skip_url ); ?>">

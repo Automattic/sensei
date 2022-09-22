@@ -21,7 +21,7 @@ import { H } from '../../shared/components/section';
 const purposes = [
 	{
 		id: 'share_knowledge',
-		title: __( 'Share your knowledge', 'sensei-lms' ),
+		title: __( 'Sell courses and generate income', 'sensei-lms' ),
 		description: __(
 			'You are a hobbyist interested in sharing your knowledge.',
 			'sensei-lms'
@@ -76,7 +76,7 @@ const purposes = [
 /**
  * Purpose step for Setup Wizard.
  */
-export const Purpose = () => {
+const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
 	const {
@@ -105,7 +105,7 @@ export const Purpose = () => {
 	};
 
 	const onSubmitSuccess = () => {
-		goTo( 'features' );
+		goTo( 'tracking' );
 	};
 
 	const submitPage = () => {
@@ -113,15 +113,20 @@ export const Purpose = () => {
 	};
 
 	return (
-		<>
+		<div className="sensei-setup-wizard__slide-in-from-bottom-animation">
 			<div className="sensei-setup-wizard__title">
-				<H>
+				<H className="sensei-setup-wizard__step-title">
 					{ __(
-						'What is your primary purpose for offering online courses?',
+						'Tailor your course creation experience',
 						'sensei-lms'
 					) }
 				</H>
-				<p> { __( 'Choose any that apply', 'sensei-lms' ) } </p>
+				<p>
+					{ __(
+						'Choose your primary purpose for offering courses, and we will guide you to complete them. You can choose all that apply.',
+						'sensei-lms'
+					) }
+				</p>
 			</div>
 			<Card className="sensei-setup-wizard__card" elevation={ 2 }>
 				<CardBody>
@@ -165,6 +170,8 @@ export const Purpose = () => {
 					</Button>
 				</CardBody>
 			</Card>
-		</>
+		</div>
 	);
 };
+
+export default Purpose;

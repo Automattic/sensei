@@ -65,6 +65,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_get_features_route();
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
+		$this->register_submit_tracking_route();
 		$this->register_submit_features_route();
 		$this->register_submit_features_installation_route();
 		$this->register_complete_wizard_route();
@@ -100,12 +101,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'submit_welcome' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-					'args'                => [
-						'usage_tracking' => [
-							'required' => true,
-							'type'     => 'boolean',
-						],
-					],
 				],
 			]
 		);
@@ -135,6 +130,29 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						'other'    => [
 							'required' => true,
 							'type'     => 'string',
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Register /tracking endpoint.
+	 */
+	public function register_submit_tracking_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/tracking',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_tracking' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'usage_tracking' => [
+							'required' => true,
+							'type'     => 'boolean',
 						],
 					],
 				],
@@ -253,23 +271,20 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
-
 		$user_data = $this->setup_wizard->get_wizard_user_data();
 
 		return [
-			'completedSteps' => $user_data['steps'],
-			'welcome'        => [
-				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
-			],
-			'purpose'        => [
+			'purpose'    => [
 				'selected' => $user_data['purpose']['selected'],
 				'other'    => $user_data['purpose']['other'],
 			],
-			'features'       => $this->get_features_data( $user_data ),
-			'ready'          => $this->setup_wizard->get_mailing_list_form_data(),
+			'tracking'   => [
+				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
+			],
+			'newsletter' => $this->setup_wizard->get_mailing_list_form_data(),
+			'features'   => $this->get_features_data( $user_data ),
 		];
 	}
-
 
 	/**
 	 * Get features data for Setup Wizard frontend.
@@ -300,11 +315,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Mark the given step as completed.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param string $step Step.
 	 *
 	 * @return bool Success.
 	 */
 	public function mark_step_complete( $step ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'steps' => array_unique( array_merge( $this->setup_wizard->get_wizard_user_data( 'steps' ), [ $step ] ) ),
@@ -342,22 +361,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		return [
 			'type'       => 'object',
 			'properties' => [
-				'completedSteps' => [
-					'description' => __( 'Completed steps.', 'sensei-lms' ),
-					'type'        => 'array',
-					'readonly'    => true,
-				],
-				'welcome'        => [
-					'type'       => 'object',
-					'properties' => [
-						'usage_tracking' => [
-							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
-							'type'        => 'boolean',
-						],
-					],
-				],
-				'features'       => $this->get_features_schema(),
-				'purpose'        => [
+				'features' => $this->get_features_schema(),
+				'purpose'  => [
 					'type'       => 'object',
 					'properties' => [
 						'selected' => [
@@ -370,8 +375,14 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
-				'ready'          => [
-					'type' => 'object',
+				'tracking' => [
+					'type'       => 'object',
+					'properties' => [
+						'usage_tracking' => [
+							'description' => __( 'Usage tracking preference given by the site owner.', 'sensei-lms' ),
+							'type'        => 'boolean',
+						],
+					],
 				],
 			],
 		];
@@ -385,11 +396,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_welcome( $data ) {
-		$this->mark_step_complete( 'welcome' );
 		$this->setup_wizard->pages->create_pages();
-
-		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
-		Sensei()->usage_tracking->send_usage_data();
 
 		return true;
 	}
@@ -402,9 +409,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_purpose( $form ) {
-
-		$this->mark_step_complete( 'purpose' );
-
 		$purpose_data = [
 			'selected' => $form['selected'],
 			'other'    => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
@@ -426,6 +430,20 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Submit form on tracking step.
+	 *
+	 * @param array $data Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function submit_tracking( $data ) {
+		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
+		Sensei()->usage_tracking->send_usage_data();
+
+		return true;
+	}
+
+	/**
 	 * Submit form on features step.
 	 *
 	 * @param array $form Form data.
@@ -433,9 +451,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_features( $form ) {
-
-		$this->mark_step_complete( 'features' );
-
 		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'features' => [
@@ -462,7 +477,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Complete setup wizard
 	 */
 	public function complete_setup_wizard() {
-		$this->mark_step_complete( 'ready' );
 		$this->setup_wizard->finish_setup_wizard();
 
 		return true;

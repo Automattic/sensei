@@ -20,13 +20,12 @@ const DEFAULT_STATE = {
 	isSubmitting: false,
 	submitError: false,
 	data: {
-		completedSteps: [],
-		welcome: {
-			usage_tracking: false,
-		},
 		purpose: {
 			selected: [],
 			other: '',
+		},
+		tracking: {
+			usage_tracking: false,
 		},
 		features: {
 			selected: [],
@@ -129,13 +128,6 @@ export default ( state = DEFAULT_STATE, action ) => {
 			return {
 				...state,
 				isSubmitting: false,
-				data: {
-					...state.data,
-					completedSteps: [
-						...state.data.completedSteps,
-						action.step,
-					],
-				},
 			};
 
 		case ERROR_SUBMIT_SETUP_WIZARD_DATA:
