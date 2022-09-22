@@ -82,7 +82,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	public function get_data() {
 
 		return [
-			'tasks_list'            => [
+			'tasks_list'                  => [
 				'tasks' => [
 					// TODO: Generate based on Setup Wizard data + site info.
 					[
@@ -111,7 +111,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					],
 				],
 			],
-			'quick_links'           => [
+			'quick_links'                 => [
 				// TODO: Replace with real implementation.
 				[
 					'title' => 'Courses',
@@ -177,7 +177,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					],
 				],
 			],
-			'help'                  => [
+			'help'                        => [
 				// TODO: Replace with real implementation.
 				[
 					'title' => 'Get the most out of Sensei',
@@ -204,7 +204,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					],
 				],
 			],
-			'guides'                => [
+			'guides'                      => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
 				'items'    => [
 					[
@@ -222,7 +222,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				],
 				'more_url' => 'http://senseilms.com/category/guides/',
 			],
-			'news'                  => [
+			'news'                        => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
 				'items'    => [
 					[
@@ -238,7 +238,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				],
 				'more_url' => 'https://senseilms.com/blog/',
 			],
-			'extensions'            => [
+			'extensions'                  => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro}.json.
 				[
 					'title'        => 'Sensei LMS Post to Course Creator',
@@ -249,8 +249,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
 			],
-			'show_sensei_pro_promo' => false, // Whether we should show the promotional banner for Sensei Pro or not.
-			'notifications'         => [
+			'show_sensei_pro_promo'       => false, // Whether we should show the promotional banner for Sensei Pro or not.
+			'notifications'               => [
 				[
 					'title'            => 'Your Sensei Pro license expires on 12.09.2022.',
 					'main_action'      => [
@@ -278,6 +278,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'dismissible'      => true, // The default value is true.
 				],
 			],
+			'products_pending_activation' => [ 'sensei-pro' ],
 		];
 	}
 }
