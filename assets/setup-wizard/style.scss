@@ -191,6 +191,7 @@ $big-horizontal-padding: 80px;
 		@media (min-width: $columns-break) {
 			flex-direction: row;
 			justify-content: space-between;
+			align-items: center;
 		}
 	}
 
