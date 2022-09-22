@@ -2642,7 +2642,10 @@ class Sensei_Utils {
 			$blocks = parse_blocks( $post->post_content );
 			foreach ( $blocks as $block ) {
 				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-					return trim( render_block( $block ) );
+					if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+						$block = $block['innerBlocks'][0];
+					}
+					return wp_oembed_get( $block['innerBlocks'][0]['attrs']['url'] );
 				}
 			}
 		} else {
