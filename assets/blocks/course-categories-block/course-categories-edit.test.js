@@ -22,6 +22,8 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	),
 	Warning: () => <div>{ message }</div>,
 	withColors: () => ( Component ) => Component,
+	BlockControls: () => null,
+	AlignmentToolbar: () => null,
 } ) );
 
 jest.mock( './hooks/use-course-categories' );

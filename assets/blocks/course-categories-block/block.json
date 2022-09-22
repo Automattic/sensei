@@ -17,9 +17,7 @@
 			"padding": true,
 			"blockGap": true
 		},
-		"textAlign": true,
-        "align": true,
-		"alignWide": true,
+		"className": true,
 		"typography": {
 			"lineHeight": true,
 			"fontSize": true,

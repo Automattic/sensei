@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import { unescape, noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import {
-	useBlockProps,
 	store as blockEditorStore,
+	BlockControls,
+	AlignmentToolbar,
 } from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
@@ -105,9 +105,6 @@ export function CourseCategoryEdit( props ) {
 	}
 
 	if ( 'course' !== postType ) {
-		setAttributes( {
-			align: false,
-		} );
 		return (
 			<InvalidUsageError
 				message={ __(
@@ -119,13 +116,23 @@ export function CourseCategoryEdit( props ) {
 	}
 
 	return (
-		<div { ...blockProps }>
-			{ isLoading && <Spinner /> }
-			{ ! isLoading && getCategories( categories ) }
-			{ ! isLoading && ! hasCategories && (
-				<p>{ __( 'No course category', 'sensei-lms' ) }</p>
-			) }
-		</div>
+		<>
+			<BlockControls>
+				<AlignmentToolbar
+					value={ textAlign }
+					onChange={ ( nextAlign ) => {
+						setAttributes( { textAlign: nextAlign } );
+					} }
+				/>
+			</BlockControls>
+			<div { ...blockProps }>
+				{ isLoading && <Spinner /> }
+				{ ! isLoading && getCategories( categories ) }
+				{ ! isLoading && ! hasCategories && (
+					<p>{ __( 'No course category', 'sensei-lms' ) }</p>
+				) }
+			</div>
+		</>
 	);
 }
 
