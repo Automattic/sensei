@@ -204,8 +204,8 @@ $big-horizontal-padding: 80px;
 
 	&__columns-illustration {
 		flex: 1;
-		animation: 0.5s slideInFromRight;
 		align-self: stretch;
+		animation: 0.5s slideInFromRight;
 
 		@media (min-width: $columns-break) {
 			flex: none;

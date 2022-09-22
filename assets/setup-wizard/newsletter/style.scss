@@ -5,7 +5,6 @@
 		background-size: 130% auto;
 
 		@media (min-width: $small-screen-break) {
-			background-size: 100% auto;
 			margin: 0 (-$big-horizontal-padding) (-$big-vertical-padding);
 		}
 
@@ -13,7 +12,7 @@
 			width: calc( 50% + 28px + $big-horizontal-padding );
 			margin-right: -28px -$big-horizontal-padding;
 			margin-bottom: -$big-vertical-padding;
-			background-position: 0 0;
+			background-size: 100% auto;
 		}
 	}
 }
