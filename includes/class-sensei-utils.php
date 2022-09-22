@@ -2651,6 +2651,16 @@ class Sensei_Utils {
 			return trim( ob_get_clean() );
 		}
 	}
+
+	/**
+	 * Get the featured video thumbnail URL from a Post's metadata.
+	 *
+	 * @param int $post_id The Post ID.
+	 * @return string The video thumbnail URL.
+	 */
+	public static function get_featured_video_thumbnail_url( $post_id ) {
+		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
+	}
 }
 
 /**
