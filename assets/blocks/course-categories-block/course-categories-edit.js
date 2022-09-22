@@ -10,6 +10,7 @@ import {
 	store as blockEditorStore,
 	BlockControls,
 	AlignmentToolbar,
+	useBlockProps,
 } from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
@@ -23,7 +24,7 @@ import useCourseCategories from './hooks/use-course-categories';
 import InvalidUsageError from '../../shared/components/invalid-usage';
 import { withColorSettings } from '../../shared/blocks/settings';
 import { useDispatch } from '@wordpress/data';
-import useCourseCategoriesProps from './hooks/use-course-categories-props';
+import { getStyleAndClassesFromAttributes } from './utils/style';
 
 export function CourseCategoryEdit( props ) {
 	const {
@@ -73,6 +74,10 @@ export function CourseCategoryEdit( props ) {
 		__unstableMarkNextChangeAsNotPersistent,
 	] );
 
+	const blockProps = useBlockProps(
+		getStyleAndClassesFromAttributes( attributes )
+	);
+
 	const getCategories = ( categoriesToDisplay ) => {
 		return categoriesToDisplay?.map( ( category ) => (
 			<a
@@ -84,8 +89,6 @@ export function CourseCategoryEdit( props ) {
 			</a>
 		) );
 	};
-
-	const blockProps = useCourseCategoriesProps( attributes );
 
 	if ( previewCategories ) {
 		return (
@@ -103,7 +106,6 @@ export function CourseCategoryEdit( props ) {
 			/>
 		);
 	}
-
 	return (
 		<>
 			<BlockControls>

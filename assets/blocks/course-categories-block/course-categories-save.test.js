@@ -6,7 +6,6 @@ import { render } from '@testing-library/react';
  * Internal dependencies
  */
 import CourseCategorySave from './course-categories-save';
-import useCourseCategoriesProps from './hooks/use-course-categories-props';
 
 const attributes = {
 	textAlign: 'left',
@@ -17,37 +16,40 @@ const defaultProps = {
 	attributes,
 };
 
-jest.mock( './hooks/use-course-categories-props' );
+jest.mock( '@wordpress/block-editor', () => ( {
+	useBlockProps: { save: jest.fn( ( params ) => params ) },
+} ) );
 
 describe( 'CourseCategorySave', () => {
 	it( 'should render classes from the hook', () => {
-		useCourseCategoriesProps.mockReturnValue( {
-			style: { color: 'some-color' },
-			className: 'has-class',
-		} );
+		const props = {
+			...defaultProps,
+			attributes: {
+				textAlign: 'left',
+			},
+		};
 
-		const { container } = render(
-			<CourseCategorySave { ...defaultProps } />
-		);
+		const { container } = render( <CourseCategorySave { ...props } /> );
 
 		expect(
-			container.firstChild.classList.contains( 'has-class' )
+			container.firstChild.classList.contains( 'has-text-align-left' )
 		).toEqual( true );
 	} );
 
-	it( 'should render styles from the hook', () => {
-		useCourseCategoriesProps.mockReturnValue( {
-			style: { backgroundColor: 'red' },
-			className: 'has-class',
-		} );
-
-		const { container } = render(
-			<CourseCategorySave { ...defaultProps } />
-		);
+	it( 'should render styles from the attributes', () => {
+		const props = {
+			...defaultProps,
+			attributes: {
+				options: {
+					backgroundColor: 'red',
+				},
+			},
+		};
+		const { container } = render( <CourseCategorySave { ...props } /> );
 
 		expect( container.firstChild ).toHaveAttribute(
 			'style',
-			'background-color: red;'
+			'--sensei-lms-course-categories-background-color: red;'
 		);
 	} );
 } );

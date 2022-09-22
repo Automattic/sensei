@@ -59,11 +59,6 @@ const defaultProps = {
 	setTextColor: jest.fn(),
 };
 
-jest.mock( './hooks/use-course-categories-props', () => () => ( {
-	style: {},
-	classnames: [],
-} ) );
-
 describe( 'CourseCategoryEdit', () => {
 	it( 'should render the categories', () => {
 		useCourseCategories.mockReturnValue( {

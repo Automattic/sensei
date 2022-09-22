@@ -1,10 +1,16 @@
 /**
+ * WordPress dependencies
+ */
+import { useBlockProps } from '@wordpress/block-editor';
+/**
  * Internal dependencies
  */
-import useCourseCategoriesProps from './hooks/use-course-categories-props';
+import { getStyleAndClassesFromAttributes } from './utils/style';
 
 const CourseCategoriesSave = ( { attributes } ) => {
-	const blockProps = useCourseCategoriesProps( attributes );
+	const blockProps = useBlockProps.save(
+		getStyleAndClassesFromAttributes( attributes )
+	);
 
 	return <div { ...blockProps }></div>;
 };

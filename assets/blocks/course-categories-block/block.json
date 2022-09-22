@@ -5,9 +5,12 @@
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
 	"attributes": {
-        "previewCategories": {
-            "type": "array"
-        }
+		"previewCategories": {
+		    "type": "array"
+		},
+		"textAlign": {
+			"type": "string"
+		}
 	},
 	"usesContext": [ "postId", "postType", "queryId" ],
 	"supports": {
@@ -17,6 +20,8 @@
 			"padding": true,
 			"blockGap": true
 		},
+		"align": false,
+		"alignWide": false,
 		"className": true,
 		"typography": {
 			"lineHeight": true,

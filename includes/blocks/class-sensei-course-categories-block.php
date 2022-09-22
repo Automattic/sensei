@@ -60,14 +60,20 @@ class Sensei_Course_Categories_Block {
 			return '';
 		}
 
-		preg_match( '/(<[a-z]+ *[^\/]*?>)(<\/.*>)/', $content, $matches );
+		$wrapper = '<div class="wp-block-sensei-lms-course-categories">';
+		$end = '</div>';
+
+		if (preg_match('/(<[a-z]+ *[^\/]*?>)(<\/.*>)/', $content, $matches)) {
+			$wrapper = $matches[1];
+			$end = $matches[2];
+		}
 
 		$terms = get_the_term_list(
 			$post_id,
 			'course-category',
-			$matches[1],
+			$wrapper,
 			'',
-			$matches[2],
+			$end
 		);
 
 		$pattern     = '/<a (.*?)>(.*?)<\/a>/i';
