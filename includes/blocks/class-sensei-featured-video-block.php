@@ -45,6 +45,11 @@ class Sensei_Featured_Video_Block {
 	 * @return string The HTML of the block.
 	 */
 	public function render_featured_video( array $attributes, string $content ): string {
-		return ! empty( $content ) ? '<div class="sensei-block-wrapper">' . $content . '</div>' : '';
+		global $has_rendered_lesson_video;
+
+		if ( $has_rendered_lesson_video ) {
+			return '';
+		}
+		return $content;
 	}
 }
