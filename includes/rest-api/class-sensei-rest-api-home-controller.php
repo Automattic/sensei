@@ -249,7 +249,35 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
 			],
-			'show_sensei_pro_promo' => false, // Whether we should show the promotional banner for Sensei Pro or not..
+			'show_sensei_pro_promo' => false, // Whether we should show the promotional banner for Sensei Pro or not.
+			'notifications'         => [
+				[
+					'title'            => 'Your Sensei Pro license expires on 12.09.2022.',
+					'main_action'      => [
+						'title' => 'Update now',
+						'url'   => 'https://...',
+					],
+					'secondary_action' => [
+						'title' => 'What\'s new',
+						'url'   => 'https://...',
+					],
+					'level'            => 'error', // One of: info, warning, error.
+					'dismissible'      => false, // The default value is true.
+				],
+				[
+					'title'            => 'Good news, reminder to update to latest version',
+					'main_action'      => [
+						'title' => 'Update now',
+						'url'   => 'https://...',
+					],
+					'secondary_action' => [
+						'title' => 'Link for more information',
+						'url'   => 'https://...',
+					],
+					'level'            => 'info', // One of: info, warning, error.
+					'dismissible'      => true, // The default value is true.
+				],
+			],
 		];
 	}
 }
