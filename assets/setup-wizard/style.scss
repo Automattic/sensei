@@ -178,10 +178,6 @@ $big-horizontal-padding: 80px;
 		margin-bottom: 32px;
 	}
 
-	&__slide-in-from-bottom-animation {
-		animation: 0.5s slideInFromBottom;
-	}
-
 	// Columns.
 	&__columns {
 		display: flex;
@@ -197,6 +193,7 @@ $big-horizontal-padding: 80px;
 
 	&__columns-content {
 		padding-bottom: 30px;
+		animation: 0.5s slideInFromBottom;
 
 		@media (min-width: $columns-break) {
 			width: 30%;

@@ -33,7 +33,7 @@ const UsageTracking = () => {
 
 	return (
 		<div className="sensei-setup-wizard__columns">
-			<div className="sensei-setup-wizard__columns-content sensei-setup-wizard__slide-in-from-bottom-animation">
+			<div className="sensei-setup-wizard__columns-content">
 				<H className="sensei-setup-wizard__step-title">
 					{ __(
 						'Help us improve your Sensei experience',
