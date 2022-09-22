@@ -227,12 +227,12 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				'items'    => [
 					[
 						'title' => 'Introducing Interactive Videos For WordPress',
-						'date'  => '2022-08-31T21:41:38',
+						'date'  => '2022-08-31', // Localized for user.
 						'url'   => 'http://senseilms.com/inroducing-interactive-videos/',
 					],
 					[
 						'title' => 'New Block Visibility, Scheduled Content, and Group Features',
-						'date'  => '2022-08-09T20:51:51',
+						'date'  => '2022-08-09', // Localized for user.
 						'url'   => 'http://senseilms.com/conditional-content/',
 					],
 				],
