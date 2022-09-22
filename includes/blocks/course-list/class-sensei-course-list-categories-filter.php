@@ -12,7 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Sensei_Course_List_Categories_Filter
  */
-class Sensei_Course_List_Categories_Filter {
+class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abstract {
+
+	/**
+	 * Name of the filter.
+	 */
+	const FILTER_NAME = 'categories';
 
 	/**
 	 * Unique key for the filter param.
@@ -27,12 +32,8 @@ class Sensei_Course_List_Categories_Filter {
 	 * @param int $query_id The id of the Query block this filter is rendering inside.
 	 */
 	public function get_content( $query_id ) : string {
-		$category_id      = 0;
-		$filter_param_key = $this->param_key . $query_id;
-		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_GET[ $filter_param_key ] ) ) {
-			$category_id = intval( $_GET[ $filter_param_key ] ); // phpcs:ignore WordPress.Security.NonceVerification
-		}
+		$filter_param_key  = $this->param_key . $query_id;
+		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 		$course_categories = get_terms(
 			[
 				'taxonomy'   => 'course-category',
@@ -40,8 +41,8 @@ class Sensei_Course_List_Categories_Filter {
 			]
 		);
 
-		return '<select class="course_list_filter_block" data-param-key="' . $this->param_key . '" data-query-id="' . $query_id . '" >
-			<option value="">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
+		return '<select data-param-key="' . esc_attr( $filter_param_key ) . '">
+			<option value="-1">' . esc_html__( 'All Categories', 'sensei-lms' ) . '</option>' .
 			join(
 				'',
 				array_map(

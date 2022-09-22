@@ -24,9 +24,9 @@ class Sensei_Import_Block_Migrator_Test extends WP_UnitTestCase {
 	 * Set up the tests.
 	 */
 	public function setUp() {
-		$this->factory = new Sensei_Factory();
+		parent::setUp();
 
-		return parent::setUp();
+		$this->factory = new Sensei_Factory();
 	}
 
 	/**

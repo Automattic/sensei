@@ -5,14 +5,18 @@
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
 	"attributes": {
-		"type": {
+		"align": {
 			"type": "string",
-			"default": "categories"
+			"default": "left"
+		},
+		"types": {
+			"type": "array",
+			"default": [ "categories", "featured", "student_course" ]
 		}
 	},
 	"usesContext": [ "queryId", "query" ],
 	"supports": {
-		"align": true,
+		"align": [ "left", "right" ],
 		"html": false
 	}
 }

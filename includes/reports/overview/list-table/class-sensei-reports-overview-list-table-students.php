@@ -167,9 +167,11 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		}
 
 		$last_activity_date = __( 'N/A', 'sensei-lms' );
-		if ( $item->last_activity_date ) {
+
+		if ( ! empty( $item->last_activity_date ) ) {
 			$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 		}
+
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(

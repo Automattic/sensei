@@ -16,7 +16,7 @@ class Sensei_Tool_Module_Slugs_Mismatch_Tests extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	public function setUp() {
 		parent::setUp();

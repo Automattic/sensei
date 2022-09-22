@@ -9,7 +9,7 @@
             "type": "array"
         }
 	},
-	"usesContext": [ "postId", "postType" ],
+	"usesContext": [ "postId", "postType", "queryId" ],
 	"supports": {
 		"html": false,
 		"spacing": {
