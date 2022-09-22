@@ -89,24 +89,27 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 						'title' => 'Set up Course Site',
 						'done'  => true,
 						'url'   => null,
+						'image' => 'http://...', // Optional image to be used by the frontend.
 					],
 					[
 						'title' => 'Create your first Course',
 						'done'  => false,
 						'url'   => '/wp-admin/edit.php?post_type=course',
+						'image' => 'http://...', // Optional image to be used by the frontend.
 					],
 					[
 						'title' => 'Configure Learning Mode',
 						'done'  => false,
 						'url'   => '/wp-admin/edit.php?post_type=course&page=sensei-settings#course-settings',
+						'image' => 'http://...', // Optional image to be used by the frontend.
 					],
 					[
 						'title' => 'Publish your first Course',
 						'done'  => false,
 						'url'   => '???',
+						'image' => 'http://...', // Optional image to be used by the frontend.
 					],
 				],
-				'image' => 'http://...', // For the moment we are returning the task_list image url from the backend. We could see how to calculate this on frontend based on tasks response.
 			],
 			'quick_links' => [
 				// TODO: Generate or hardcode in frontend.
