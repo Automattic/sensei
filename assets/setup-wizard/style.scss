@@ -204,6 +204,16 @@ $big-horizontal-padding: 80px;
 			padding-bottom: 0;
 		}
 	}
+
+	&__columns-illustration {
+		flex: 1;
+		animation: 0.5s slideInFromRight;
+		align-self: stretch;
+
+		@media (min-width: $columns-break) {
+			flex: none;
+		}
+	}
 }
 
 // Background animation with the books illustration.

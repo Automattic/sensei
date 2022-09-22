@@ -67,7 +67,7 @@ const UsageTracking = () => {
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__usage-tracking-illustration"
+				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__usage-tracking-illustration"
 				aria-hidden="true"
 			></div>
 		</div>

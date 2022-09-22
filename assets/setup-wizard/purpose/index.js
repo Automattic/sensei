@@ -147,7 +147,7 @@ const Purpose = () => {
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__purpose-illustration"
+				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__purpose-illustration"
 				aria-hidden="true"
 			></div>
 		</div>

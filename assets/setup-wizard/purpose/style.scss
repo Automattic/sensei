@@ -40,10 +40,9 @@
 	}
 
 	&__purpose-illustration {
-		@media (min-width: $small-screen-break) {
+		@media (min-width: $columns-break) {
 			width: calc( 40% + $big-horizontal-padding );
 			margin: 0 (-$big-horizontal-padding) (-$big-vertical-padding);
-			animation: 0.5s slideInFromRight;
 			background: no-repeat url("../images/onboarding-purpose-illustration.png") 100% 0;
 			background-size: 100% auto;
 		}

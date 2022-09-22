@@ -48,7 +48,7 @@ const Newsletter = () => {
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__newsletter-illustration"
+				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__newsletter-illustration"
 				aria-hidden="true"
 			></div>
 		</div>

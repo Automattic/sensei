@@ -1,8 +1,6 @@
 .sensei-setup-wizard {
 	&__usage-tracking-illustration {
 		margin: 0 0 (-$small-vertical-padding) (-$small-horizontal-padding);
-		flex: 1;
-		animation: 0.5s slideInFromRight;
 		background: no-repeat url("../images/onboarding-improve-experience-illustration.png");
 		background-size: 100% auto;
 
@@ -11,7 +9,6 @@
 		}
 
 		@media (min-width: $columns-break) {
-			flex: none;
 			width: 50%;
 		}
 	}
