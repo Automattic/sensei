@@ -215,6 +215,8 @@ $big-horizontal-padding: 80px;
 
 		@media (min-width: $columns-break) {
 			flex: none;
+			margin-bottom: -$big-vertical-padding;
+			max-height: calc( 100vh - 88px ); // Discounts top bar and progress bar.
 		}
 	}
 
