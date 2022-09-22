@@ -112,59 +112,68 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				],
 			],
 			'quick_links' => [
-				// TODO: Generate or hardcode in frontend.
-				'Courses'           => [
-					[
-						'title' => 'Getting Started Guide',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Create a Course',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Import a Course',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Reports',
-						'url'   => 'http://...',
-					],
-				],
-				'Settings'          => [
-					[
-						'title' => 'Email notifications',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Learning Mode',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'WooCommerce',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Content Drip',
-						'url'   => 'http://...',
+				// TODO: Replace with real implementation.
+				[
+					'title' => 'Courses',
+					'items' => [
+						[
+							'title' => 'Getting Started Guide',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Create a Course',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Import a Course',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Reports',
+							'url'   => 'http://...',
+						],
 					],
 				],
-				'Advanced Features' => [
-					[
-						'title' => 'Interactive Blocks',
-						'url'   => 'http://...',
+				[
+					'title' => 'Settings',
+					'items' => [
+						[
+							'title' => 'Email notifications',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Learning Mode',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'WooCommerce',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Content Drip',
+							'url'   => 'http://...',
+						],
 					],
-					[
-						'title' => 'Groups & Cohorts',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Quizzes',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'Integrations',
-						'url'   => 'http://...',
+				],
+				[
+					'title' => 'Advanced Features',
+					'items' => [
+						[
+							'title' => 'Interactive Blocks',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Groups & Cohorts',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Quizzes',
+							'url'   => 'http://...',
+						],
+						[
+							'title' => 'Integrations',
+							'url'   => 'http://...',
+						],
 					],
 				],
 			],
