@@ -1,9 +1,6 @@
 .sensei-setup-wizard {
 	&__usage-tracking-illustration {
 		margin: 0 0 (-$small-vertical-padding) (-$small-horizontal-padding);
-		background: no-repeat url("../images/onboarding-improve-experience-illustration.png");
-		background-size: 110% auto;
-		background-position: 100% 0;
 
 		@media (min-width: $small-screen-break) {
 			margin: 0 0 (-$big-vertical-padding) (-$big-horizontal-padding);
@@ -11,7 +8,7 @@
 
 		@media (min-width: $columns-break) {
 			width: 50%;
-			background-size: 100% auto;
+			margin: 0;
 		}
 	}
 }

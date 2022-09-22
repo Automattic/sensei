@@ -149,7 +149,16 @@ const Purpose = () => {
 			<div
 				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__purpose-illustration"
 				aria-hidden="true"
-			></div>
+			>
+				<img
+					className="sensei-setup-wizard__columns-illustration-image"
+					src={
+						window.sensei.imagesPath +
+						'onboarding-purpose-illustration.png'
+					}
+					alt=""
+				/>
+			</div>
 		</div>
 	);
 };

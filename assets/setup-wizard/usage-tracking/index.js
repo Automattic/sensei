@@ -69,7 +69,16 @@ const UsageTracking = () => {
 			<div
 				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__usage-tracking-illustration"
 				aria-hidden="true"
-			></div>
+			>
+				<img
+					className="sensei-setup-wizard__columns-illustration-image"
+					src={
+						window.sensei.imagesPath +
+						'onboarding-improve-experience-illustration.png'
+					}
+					alt=""
+				/>
+			</div>
 		</div>
 	);
 };

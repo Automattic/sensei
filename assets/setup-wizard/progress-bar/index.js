@@ -33,7 +33,9 @@ const ProgressBar = ( { steps } ) => {
 				aria-valuenow={ percentage }
 				className="sensei-setup-wizard__progress-bar-filled"
 				style={ { width: `${ percentage }%` } }
-			/>
+			>
+				&nbsp;
+			</div>
 		</div>
 	);
 };

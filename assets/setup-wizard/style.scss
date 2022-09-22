@@ -83,10 +83,16 @@ $big-horizontal-padding: 80px;
 	// Container.
 	&__container {
 		flex: 1;
+		min-height: 0; // Fix issue with flexbox + overflow.
 		padding: $small-vertical-padding $small-horizontal-padding;
 
 		@media (min-width: $small-screen-break) {
 			padding: $big-vertical-padding $big-horizontal-padding;
+		}
+
+		@media (min-width: $columns-break) {
+			padding: 0 $big-horizontal-padding $big-vertical-padding;
+			min-height: auto;
 		}
 	}
 
@@ -204,12 +210,18 @@ $big-horizontal-padding: 80px;
 
 	&__columns-illustration {
 		flex: 1;
-		align-self: stretch;
+		overflow: hidden;
 		animation: 0.5s slideInFromRight;
 
 		@media (min-width: $columns-break) {
 			flex: none;
 		}
+	}
+
+	&__columns-illustration-image {
+		display: block;
+		width: 100%;
+		pointer-events: none;
 	}
 }
 
