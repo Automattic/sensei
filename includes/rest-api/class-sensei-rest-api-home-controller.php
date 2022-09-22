@@ -245,7 +245,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'image'        => 'http://senseilms.com/wp-content/uploads/2022/02/sensei-post-to-course-80x80.png',
 					'description'  => 'Turn your blog posts into online courses.',
 					'price'        => 0,
-					'is_featured'  => false, // To be used to differentiate between featured and not featured extensions.
 					'product_slug' => 'sensei-post-to-course', // To be used with the installation function `Sensei_Setup_Wizard::install_extensions`.
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
