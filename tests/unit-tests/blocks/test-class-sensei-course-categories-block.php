@@ -31,7 +31,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Block content.
 	 */
-	const CONTENT = '<!-- wp:sensei-lms/course-categories {"textAlign": "left", "align":"center", "options": {"textColor":"#cccccc","backgroundColor":"#dddddd"} } /-->';
+	const CONTENT = '<!-- wp:sensei-lms/course-categories --><div></div>-->';
 
 	/**
 	 * Set up the test.
@@ -85,20 +85,18 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The course categories block is rendering the style attributes properly.
+	 * The course categories block is rendering the style and the class attributes from the wrapper.
 	 *
 	 * @covers Sensei_Course_Categories_Block::render_block
 	 */
-	public function testBlockRender_RenderTheAttributes() {
+	public function testBlockRender_RenderTheAttributesFromTheWrapper() {
 		/* Act */
-		$result = do_blocks( self::CONTENT );
+		$content_with_attributes = '<!-- wp:sensei-lms/course-categories --><div class="some-class" style="some-style"></div>-->';
+		$result = do_blocks( $content_with_attributes );
 
 		/* Assert */
-		$this->assertContains( 'has-text-align-left', $result );
-		$this->assertContains( 'aligncenter', $result );
-		$this->assertContains( '--sensei-lms-course-categories-text-color: #cccccc', $result );
-		$this->assertContains( '--sensei-lms-course-categories-background-color: #dddddd;', $result );
-
+		$this->assertContains( 'class="some-class"', $result);
+		$this->assertContains( 'style="some-style"', $result);
 	}
 
 	/**

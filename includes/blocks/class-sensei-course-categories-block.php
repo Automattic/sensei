@@ -40,9 +40,10 @@ class Sensei_Course_Categories_Block {
 	 * @param Array    $attributes The block's attributes.
 	 * @param string   $content    The block's content.
 	 * @param WP_Block $block      The block instance.
+	 *
 	 * @return string
 	 */
-	public function render_block( $attributes, $content, WP_Block $block ): string {
+	public function render_block( array $attributes, string $content, WP_Block $block ): string {
 		if ( ! isset( $block->context['postId'] ) ) {
 			return '';
 		}
@@ -59,34 +60,14 @@ class Sensei_Course_Categories_Block {
 			return '';
 		}
 
-		$wrapper_classes = [ 'taxonomy-course-category' ];
-
-		if ( isset( $attributes['textAlign'] ) ) {
-			$wrapper_classes[] = 'has-text-align-' . $attributes['textAlign'];
-		}
-
-		list( $wrapper_style ) = Sensei_Block_Helpers::css_variables(
-			[
-				'-text-color'       => $attributes['options']['textColor'] ?? null,
-				'-background-color' => $attributes['options']['backgroundColor'] ?? null,
-			],
-			'',
-			'--sensei-lms-course-categories'
-		);
-
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class' => implode( ' ', $wrapper_classes ),
-				'style' => $wrapper_style,
-			)
-		);
+		preg_match( '/(<[a-z]+ *[^\/]*?>)(<\/.*>)/', $content, $matches );
 
 		$terms = get_the_term_list(
 			$post_id,
 			'course-category',
-			"<div $wrapper_attributes >",
+			$matches[1],
 			'',
-			'</div>'
+			$matches[2],
 		);
 
 		$pattern     = '/<a (.*?)>(.*?)<\/a>/i';

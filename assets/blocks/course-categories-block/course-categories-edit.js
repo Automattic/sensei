@@ -23,8 +23,7 @@ import useCourseCategories from './hooks/use-course-categories';
 import InvalidUsageError from '../../shared/components/invalid-usage';
 import { withColorSettings } from '../../shared/blocks/settings';
 import { useDispatch } from '@wordpress/data';
-
-const CSS_VARIABLE_PREFIX = '--sensei-lms-course-categories';
+import useCourseCategoriesProps from './hooks/use-course-categories-props';
 
 export function CourseCategoryEdit( props ) {
 	const {
@@ -39,23 +38,11 @@ export function CourseCategoryEdit( props ) {
 
 	const { textAlign, previewCategories, options } = attributes;
 	const { postId, postType } = context;
-	const term = 'course-category';
 	const {
 		postTerms: categories,
 		hasPostTerms: hasCategories,
 		isLoading,
 	} = useCourseCategories( postId );
-
-	const blockProps = useBlockProps( {
-		style: {
-			[ `${ CSS_VARIABLE_PREFIX }-background-color` ]: options?.backgroundColor,
-			[ `${ CSS_VARIABLE_PREFIX }-text-color` ]: options?.textColor,
-		},
-		className: classnames( {
-			[ `has-text-align-${ textAlign }` ]: textAlign,
-			[ `taxonomy-${ term }` ]: term,
-		} ),
-	} );
 
 	const { __unstableMarkNextChangeAsNotPersistent = noop } = useDispatch(
 		blockEditorStore
@@ -97,6 +84,8 @@ export function CourseCategoryEdit( props ) {
 			</a>
 		) );
 	};
+
+	const blockProps = useCourseCategoriesProps( attributes );
 
 	if ( previewCategories ) {
 		return (
