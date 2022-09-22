@@ -178,7 +178,31 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				],
 			],
 			'help'        => [
-				// TODO: Generate or hardcode in frontend.
+				// TODO: Replace with real implementation.
+				[
+					'title' => 'Get the most out of Sensei',
+					'items' => [
+						[
+							'title' => 'Sensei Documentation',
+							'url'   => 'http://...',
+							'icon'  => null,
+						],
+						[
+							'title' => 'Support forums',
+							'url'   => 'http://...',
+							'icon'  => null,
+						],
+						[
+							'title'        => 'Create a support ticket',
+							'url'          => null,
+							'extra_action' => [
+								'title' => 'Upgrade to Sensei Pro',
+								'url'   => 'https://...',
+							],
+							'icon'         => 'lock',
+						],
+					],
+				],
 			],
 			'guides'      => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
