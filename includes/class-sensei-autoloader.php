@@ -63,6 +63,7 @@ class Sensei_Autoloader {
 
 		$this->autoloader_bundles = array(
 			new Sensei_Autoloader_Bundle( 'rest-api' ),
+			new Sensei_Autoloader_Bundle( 'rest-api/mappers' ),
 			new Sensei_Autoloader_Bundle( '' ),
 			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
@@ -79,6 +80,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'reports/overview/data-provider' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/list-table' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/services' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/quick-links' ),
 		);
 
 		// Add Sensei custom auto loader.
@@ -131,13 +133,6 @@ class Sensei_Autoloader {
 			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
 			'Sensei_Editor_Wizard'                         => 'admin/class-sensei-editor-wizard.php',
 			'Sensei_No_Users_Table_Relationship'           => 'reports/class-sensei-no-users-table-relationship.php',
-
-			/**
-			 * Admin Sensei Home
-			 */
-			'Sensei_Home_Quick_Links_Item'                 => 'admin/home/quick-links/class-sensei-home-quick-links-item.php',
-			'Sensei_Home_Quick_Links_Category'             => 'admin/home/quick-links/class-sensei-home-quick-links-category.php',
-			'Sensei_Home_Quick_Links_Provider'             => 'admin/home/quick-links/class-sensei-home-quick-links-provider.php',
 
 			/**
 			 * Admin Tools
