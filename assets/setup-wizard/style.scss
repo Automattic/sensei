@@ -83,10 +83,16 @@ $big-horizontal-padding: 80px;
 	// Container.
 	&__container {
 		flex: 1;
+		min-height: 0; // Fix issue with flexbox + overflow.
 		padding: $small-vertical-padding $small-horizontal-padding;
 
 		@media (min-width: $small-screen-break) {
 			padding: $big-vertical-padding $big-horizontal-padding;
+		}
+
+		@media (min-width: $columns-break) {
+			padding: 0 $big-horizontal-padding $big-vertical-padding;
+			min-height: auto;
 		}
 	}
 
@@ -179,10 +185,6 @@ $big-horizontal-padding: 80px;
 		margin-bottom: 32px;
 	}
 
-	&__slide-in-from-bottom-animation {
-		animation: 0.5s slideInFromBottom;
-	}
-
 	// Columns.
 	&__columns {
 		display: flex;
@@ -192,17 +194,37 @@ $big-horizontal-padding: 80px;
 		@media (min-width: $columns-break) {
 			flex-direction: row;
 			justify-content: space-between;
+			align-items: center;
 		}
 	}
 
 	&__columns-content {
 		padding-bottom: 30px;
+		animation: 0.5s slideInFromBottom;
 
 		@media (min-width: $columns-break) {
 			width: 30%;
 			min-width: 370px;
 			padding-bottom: 0;
 		}
+	}
+
+	&__columns-illustration {
+		flex: 1;
+		overflow: hidden;
+		animation: 0.5s slideInFromRight;
+
+		@media (min-width: $columns-break) {
+			flex: none;
+			margin-bottom: -$big-vertical-padding;
+			max-height: calc( 100vh - 88px ); // Discounts top bar and progress bar.
+		}
+	}
+
+	&__columns-illustration-image {
+		display: block;
+		width: 100%;
+		pointer-events: none;
 	}
 }
 

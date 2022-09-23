@@ -132,10 +132,12 @@ class Sensei_Setup_Wizard {
 		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
 
-		wp_localize_script(
+		$images_path = Sensei()->assets->get_image( '' );
+
+		wp_add_inline_script(
 			$handle,
-			'sensei_setup_wizard',
-			[ 'nonce' => wp_create_nonce( $handle ) ]
+			"window.sensei = window.sensei || {}; window.sensei.imagesPath = '$images_path';",
+			'before'
 		);
 	}
 

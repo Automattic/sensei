@@ -81,7 +81,7 @@ const Purpose = () => {
 
 	return (
 		<div className="sensei-setup-wizard__columns">
-			<div className="sensei-setup-wizard__columns-content sensei-setup-wizard__slide-in-from-bottom-animation">
+			<div className="sensei-setup-wizard__columns-content">
 				<div className="sensei-setup-wizard__title">
 					<H className="sensei-setup-wizard__step-title">
 						{ __(
@@ -147,9 +147,18 @@ const Purpose = () => {
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__purpose-illustration"
+				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__purpose-illustration"
 				aria-hidden="true"
-			></div>
+			>
+				<img
+					className="sensei-setup-wizard__columns-illustration-image"
+					src={
+						window.sensei.imagesPath +
+						'onboarding-purpose-illustration.png'
+					}
+					alt=""
+				/>
+			</div>
 		</div>
 	);
 };

@@ -52,12 +52,12 @@ $unchecked-color: #757575;
 	}
 
 	&__purpose-illustration {
-		@media (min-width: $small-screen-break) {
+		display: none;
+
+		@media (min-width: $columns-break) {
+			display: block;
 			width: calc( 40% + $big-horizontal-padding );
-			margin: 0 (-$big-horizontal-padding) (-$big-vertical-padding);
-			animation: 0.5s slideInFromRight;
-			background: no-repeat url("../images/onboarding-purpose-illustration.png") 100% 0;
-			background-size: 100% auto;
+			margin: 0 (-$big-horizontal-padding);
 		}
 	}
 }
