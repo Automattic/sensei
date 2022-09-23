@@ -57,7 +57,9 @@ class Sensei_Usage_Tracking_Data {
 			'teachers'                      => self::get_teacher_count(),
 			'courses_using_course_theme'    => self::get_courses_using_course_theme_count(),
 			'course_theme_enabled_globally' => self::get_is_course_theme_enabled_globally() ? 1 : 0,
-			'course_theme_theme_styles'     => self::get_course_theme_has_theme_styles_enabled() ? 1 : 0,
+			'course_theme_template'         => self::get_selected_course_theme_template(),
+			'course_theme_is_customized'    => self::get_course_theme_is_customized(),
+			'course_theme_template_version' => self::get_template_version(),
 		);
 
 		return array_merge( $question_type_count, $usage_data, $quiz_stats );
@@ -954,17 +956,6 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
-	 * Checks if theme styles are enabled for learning mode
-	 *
-	 * @since 4.0.2
-	 *
-	 * @return bool
-	 */
-	private static function get_course_theme_has_theme_styles_enabled() {
-		return (bool) \Sensei()->settings->get( 'sensei_learning_mode_theme' );
-	}
-
-	/**
 	 * Get the question type key. Replaces dashes with underscores in order to conform to
 	 * Tracks naming conventions.
 	 *
@@ -976,5 +967,35 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_question_type_key( $key ) {
 		return str_replace( '-', '_', 'question_' . $key );
+	}
+
+	/**
+	 * Get the selected course theme template.
+	 *
+	 * @return string Selected template name.
+	 */
+	private static function get_selected_course_theme_template() {
+		return \Sensei_Course_Theme_Template_Selection::get_active_template_name();
+	}
+
+	/**
+	 * Check if the course theme is customised.
+	 *
+	 * @return bool Is customised?
+	 */
+	private static function get_course_theme_is_customized() {
+		return count( \Sensei_Course_Theme_Templates::get_db_templates() ) > 0;
+	}
+
+	/**
+	 * Get the version of the active Learning Mode template.
+	 *
+	 * @return string Version string in the format of 4-0-2
+	 */
+	private static function get_template_version() {
+		global $_wp_current_template_content;
+
+		preg_match( '/sensei-version--(\d+-\d+-\d+)/', $_wp_current_template_content ?? '', $version_matches );
+		return $version_matches[1] ?? 'latest';
 	}
 }
