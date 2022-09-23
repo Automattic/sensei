@@ -112,11 +112,11 @@ class Sensei_Wp_Kses {
 	 * @param array  $allowed_html
 	 * @return string Content
 	 */
-	public static function maybe_sanitize( $content, $allowed_html ) {
-		$html_security = ! Sensei()->settings->get( 'sensei_video_embed_html_sanitization_disable' );
+public static function maybe_sanitize( $content, $allowed_html ) {
+	$html_security = ! Sensei()->settings->get( 'sensei_video_embed_html_sanitization_disable' );
 
-		return $html_security ? self::wp_kses( $content, $allowed_html ) : $content;
-	}
+	return $html_security ? self::wp_kses( $content, $allowed_html ) : $content;
+}
 
 	/**
 	 * Sanitizes content for an array of HTML elements.
@@ -129,19 +129,19 @@ class Sensei_Wp_Kses {
 								  wp_kses_allowed_html( 'post' )).
 	 * @return array Escaped data.
 	 **/
-	public static function wp_kses_array( $unescaped_data, $allowed_html = array() ) {
-		$escaped_data = array();
+public static function wp_kses_array( $unescaped_data, $allowed_html = array() ) {
+	$escaped_data = array();
 
-		foreach ( $unescaped_data as $key => $data ) {
-			$escaped_data[ $key ] = wp_kses(
-				$data,
-				array_merge(
-					wp_kses_allowed_html( 'post' ),
-					$allowed_html
-				)
-			);
-		}
-
-		return $escaped_data;
+	foreach ( $unescaped_data as $key => $data ) {
+		$escaped_data[ $key ] = wp_kses(
+			$data,
+			array_merge(
+				wp_kses_allowed_html( 'post' ),
+				$allowed_html
+			)
+		);
 	}
+
+	return $escaped_data;
+}
 }
