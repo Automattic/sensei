@@ -31,14 +31,36 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	protected $rest_base = 'home';
 
+	/**
+	 * Mapper.
+	 *
+	 * @var Sensei_REST_API_Home_Controller_Mapper
+	 */
+	private $mapper;
+
+	/**
+	 * Quick Links provider.
+	 *
+	 * @var Sensei_Home_Quick_Links_Provider
+	 */
+	private $quick_links_provider;
+
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
-	 * @param string $namespace Routes namespace.
+	 * @param string                                 $namespace Routes namespace.
+	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper Sensei Home REST API mapper.
+	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
 	 */
-	public function __construct( $namespace ) {
-		$this->namespace = $namespace;
+	public function __construct(
+		$namespace,
+		Sensei_REST_API_Home_Controller_Mapper $mapper,
+		Sensei_Home_Quick_Links_Provider $quick_links_provider
+	) {
+		$this->namespace            = $namespace;
+		$this->mapper               = $mapper;
+		$this->quick_links_provider = $quick_links_provider;
 	}
 
 	/**
@@ -111,68 +133,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					],
 				],
 			],
-			'quick_links'                 => [
-				// TODO: Replace with real implementation.
-				[
-					'title' => 'Courses',
-					'items' => [
-						[
-							'title' => 'Create a Course',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Import a Course',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Reports',
-							'url'   => 'http://...',
-						],
-					],
-				],
-				[
-					'title' => 'Settings',
-					'items' => [
-						[
-							'title' => 'Email notifications',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Learning Mode',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'WooCommerce',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Content Drip',
-							'url'   => 'http://...',
-						],
-					],
-				],
-				[
-					'title' => 'Advanced Features',
-					'items' => [
-						[
-							'title' => 'Interactive Blocks',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Groups & Cohorts',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Quizzes',
-							'url'   => 'http://...',
-						],
-						[
-							'title' => 'Integrations',
-							'url'   => 'http://...',
-						],
-					],
-				],
-			],
+			'quick_links'                 => $this->mapper->map_quick_links( $this->quick_links_provider->get() ),
 			'help'                        => [
 				// TODO: Replace with real implementation.
 				[
