@@ -79,7 +79,7 @@ class Sensei_Course_Theme_Styles {
 		}
 
 		$colors = self::get_colors( $styles );
-		return self::format_css_variables( $colors, 'sensei-' );
+		return self::format_css_variables( $colors );
 	}
 
 	/**
@@ -99,14 +99,14 @@ class Sensei_Course_Theme_Styles {
 
 		$element_colors = $styles['color'] ?? $styles['elements']['color'] ?? null;
 
-		$vars['text-color']             = $element_colors['text'] ?? $styles['textColor'] ?? null;
-		$vars['background-color']       = $element_colors['background'] ?? $styles['backgroundColor'] ?? null;
-		$vars['primary-contrast-color'] = $vars['--sensei-background-color'];
+		$vars['--sensei-text-color']             = $element_colors['text'] ?? $styles['textColor'] ?? null;
+		$vars['--sensei-background-color']       = $element_colors['background'] ?? $styles['backgroundColor'] ?? null;
+		$vars['--sensei-primary-contrast-color'] = $vars['--sensei-background-color'];
 
 		$link = $styles['elements']['link']['color'] ?? null;
 
 		if ( ! empty( $link ) ) {
-			$vars['primary-color'] = $link['text'];
+			$vars['--sensei-primary-color'] = $link['text'];
 		}
 
 		return $vars;
@@ -142,18 +142,14 @@ class Sensei_Course_Theme_Styles {
 	/**
 	 * Generate CSS variables.
 	 *
-	 * @param array  $variables Key-value pair of variable names and values.
-	 * @param string $prefix    Variable prefix.
+	 * @param array $variables Key-value pair of variable names and values.
 	 */
-	private static function format_css_variables( $variables, $prefix = '' ) {
+	private static function format_css_variables( $variables ) {
 		$css = [];
 
 		foreach ( $variables as $variable => $value ) {
-			if ( $prefix ) {
-				$variable = $prefix . $variable;
-			}
 			if ( $value ) {
-				$css[] = sprintf( '--%s: %s;', $variable, self::get_property_value( $value ) );
+				$css[] = sprintf( '%s: %s;', $variable, self::get_property_value( $value ) );
 			}
 		}
 
@@ -163,7 +159,7 @@ class Sensei_Course_Theme_Styles {
 	/**
 	 * Generate a style tag with the given CSS properties.
 	 *
-	 * @param string $css      CSS properties.
+	 * @param string $css CSS properties.
 	 */
 	private static function output_style( $css ) {
 		?>

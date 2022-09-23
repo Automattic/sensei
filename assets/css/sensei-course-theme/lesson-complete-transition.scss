@@ -13,7 +13,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--bg-color);
+	background-color: var(--sensei-background-color);
 
 	&__text {
 		margin: 25px 0;
@@ -24,7 +24,7 @@
 	> svg {
 		width: 70px;
 		height: 70px;
-		color: var(--primary-color);
+		color: var(--sensei-primary-color);
 	}
 
 	.sensei-course-theme--focus-mode & {

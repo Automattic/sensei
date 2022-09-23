@@ -48,11 +48,11 @@ function getCSSVariables( attributes ) {
 
 	const vars = {};
 	if ( link ) {
-		vars[ '--primary-color' ] = compileStyleValue( link );
+		vars[ '--sensei-primary-color' ] = compileStyleValue( link );
 	}
 	if ( background ) {
-		vars[ '--bg-color' ] = background;
-		vars[ '--primary-contrast-color' ] = vars[ '--bg-color' ];
+		vars[ '--sensei-background-color' ] = background;
+		vars[ '--sensei-primary-contrast-color' ] = background;
 	}
 	return vars;
 }

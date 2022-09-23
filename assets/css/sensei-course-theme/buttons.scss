@@ -5,7 +5,7 @@
 		}
 		&:focus-visible {
 			transition: none;
-			outline: dashed 1px var(--primary-color);
+			outline: dashed 1px var(--sensei-primary-color);
 		}
 	}
 }
@@ -44,7 +44,7 @@
 	&.is-secondary,
 	&.wp-block-button > .wp-block-button__link {
 		padding: 8px 11px;
-		border: solid 1px var(--primary-color);
+		border: solid 1px var(--sensei-primary-color);
 		font-weight: 700;
 		text-decoration: none;
 		border-radius: 2px;
@@ -56,7 +56,7 @@
 			padding: 8px 11px;
 			display: block;
 			&:focus {
-				outline: dashed 1px var(--primary-color);
+				outline: dashed 1px var(--sensei-primary-color);
 				margin: -1px;
 				padding: 9px 12px;
 			}
@@ -66,24 +66,24 @@
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		&:not(:hover) {
-			background-color: var(--primary-color) !important;
-			color: var(--primary-contrast-color);
+			background-color: var(--sensei-primary-color) !important;
+			color: var(--sensei-primary-contrast-color);
 		}
 		&:hover {
-			color: var(--primary-color);
+			color: var(--sensei-primary-color);
 			background: none;
 		}
 	}
 
 	&.is-secondary,
 	&.wp-block-button.is-style-outline {
-		color: var(--primary-color);
-		--wp--custom--button--border--color: var(--primary-color);
+		color: var(--sensei-primary-color);
+		--wp--custom--button--border--color: var(--sensei-primary-color);
 		&:hover {
-			background-color: var(--primary-color) !important;
-			color: var(--primary-contrast-color);
+			background-color: var(--sensei-primary-color) !important;
+			color: var(--sensei-primary-contrast-color);
 			.wp-block-button__link {
-				border-color: var(--primary-color);
+				border-color: var(--sensei-primary-color);
 			}
 		}
 	}
@@ -97,7 +97,7 @@
 		color: inherit !important;
 
 		&:hover {
-			color: var(--primary-color) !important;;
+			color: var(--sensei-primary-color) !important;;
 		}
 	}
 
