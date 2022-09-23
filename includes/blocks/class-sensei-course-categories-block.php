@@ -61,11 +61,11 @@ class Sensei_Course_Categories_Block {
 		}
 
 		$wrapper = '<div class="wp-block-sensei-lms-course-categories">';
-		$end = '</div>';
+		$end     = '</div>';
 
-		if (preg_match('/(<[a-z]+ *[^\/]*?>)(<\/.*>)/', $content, $matches)) {
+		if ( preg_match( '/(<[a-z]+ *[^\/]*?>)(<\/.*>)/', $content, $matches ) ) {
 			$wrapper = $matches[1];
-			$end = $matches[2];
+			$end     = $matches[2];
 		}
 
 		$terms = get_the_term_list(

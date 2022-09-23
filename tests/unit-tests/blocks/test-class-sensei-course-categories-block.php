@@ -92,11 +92,11 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	public function testBlockRender_RenderTheAttributesFromTheWrapper() {
 		/* Act */
 		$content_with_attributes = '<!-- wp:sensei-lms/course-categories --><div class="some-class" style="some-style"></div>-->';
-		$result = do_blocks( $content_with_attributes );
+		$result                  = do_blocks( $content_with_attributes );
 
 		/* Assert */
-		$this->assertContains( 'class="some-class"', $result);
-		$this->assertContains( 'style="some-style"', $result);
+		$this->assertContains( 'class="some-class"', $result );
+		$this->assertContains( 'style="some-style"', $result );
 	}
 
 	/**
