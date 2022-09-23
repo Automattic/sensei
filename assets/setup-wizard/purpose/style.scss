@@ -23,9 +23,13 @@
 			}
 		}
 
-		.components-checkbox-control__input[type=checkbox]:checked {
-			background: #000000;
-			border-color: #000000;
+		.components-checkbox-control__input[type=checkbox] {
+			border-color: #757575;
+
+			&:checked {
+				background: #000000;
+				border-color: #000000;
+			}
 		}
 	}
 
