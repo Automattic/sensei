@@ -15,9 +15,9 @@ class Sensei_Home_Quick_Links_Item_Test extends WP_UnitTestCase {
 
 	/**
 	/**
-	 * Test category properties are correctly set.
+	 * Test item properties are correctly set.
 	 */
-	public function testCategoryKeepsCorrectTitleAndItems() {
+	public function testItemKeepsCorrectTitleAndUrl() {
 		$the_title = 'Some random title';
 		$the_url   = 'Some random url';
 
