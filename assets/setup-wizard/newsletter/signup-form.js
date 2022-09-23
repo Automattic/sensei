@@ -44,7 +44,7 @@ const SignupForm = ( { onSubmit } ) => {
 			/>
 
 			<TextControl
-				className="sensei-signup-form__text-control"
+				className="sensei-setup-wizard__text-control sensei-signup-form__text-control"
 				label={ __( 'Your email address', 'sensei-lms' ) }
 				type="email"
 				name="EMAIL"

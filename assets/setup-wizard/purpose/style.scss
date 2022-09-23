@@ -1,0 +1,63 @@
+$checked-color: #000000;
+$unchecked-color: #757575;
+
+.sensei-setup-wizard {
+	&__purpose-list {
+		list-style: none;
+		margin: 0 0 32px;
+		padding: 0;
+	}
+
+	&__purpose-item {
+		padding: 18px;
+		margin-bottom: 18px;
+		border: 1px solid $unchecked-color;
+		border-radius: 8px;
+		transition: 0.3s border-color;
+
+		&--checked {
+			border-color: $checked-color;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+
+		.components-checkbox-control__label {
+			font-size: 16px;
+
+			@media (min-width: $small-screen-break) {
+				font-size: 18px;
+			}
+		}
+
+		.components-checkbox-control__input[type=checkbox] {
+			border-color: $unchecked-color;
+
+			&:checked {
+				background: $checked-color;
+				border-color: $checked-color;
+			}
+		}
+	}
+
+	&__purpose-children {
+		display: block;
+		padding: 5px 0 0 36px;
+		font-size: 14px;
+
+		@media (min-width: $small-screen-break) {
+			padding-left: 32px;
+		}
+	}
+
+	&__purpose-illustration {
+		@media (min-width: $small-screen-break) {
+			width: calc( 40% + $big-horizontal-padding );
+			margin: 0 (-$big-horizontal-padding) (-$big-vertical-padding);
+			animation: 0.5s slideInFromRight;
+			background: no-repeat url("../images/onboarding-purpose-illustration.png") 100% 0;
+			background-size: 100% auto;
+		}
+	}
+}

@@ -10,6 +10,7 @@ $big-horizontal-padding: 80px;
 @import 'fullscreen';
 @import 'animations';
 @import 'welcome/style';
+@import 'purpose/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
 @import 'progress-bar/style';
@@ -101,6 +102,7 @@ $big-horizontal-padding: 80px;
 		padding: 10px 24px;
 		font-size: 14px;
 		cursor: pointer;
+		transition: 0.3s opacity;
 
 		&--primary {
 			background-color: #101517;
@@ -125,6 +127,23 @@ $big-horizontal-padding: 80px;
 		&[disabled] {
 			opacity: 0.5;
 			cursor: not-allowed;
+		}
+	}
+
+	// Text control.
+	&__text-control {
+		.components-base-control__label {
+			font-size: 14px;
+		}
+
+		.components-text-control__input {
+			height: 36px;
+			border-radius: 5px;
+			margin: 0;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
 		}
 	}
 
@@ -181,6 +200,7 @@ $big-horizontal-padding: 80px;
 
 		@media (min-width: $columns-break) {
 			width: 30%;
+			min-width: 370px;
 			padding-bottom: 0;
 		}
 	}
