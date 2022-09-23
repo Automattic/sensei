@@ -97,13 +97,11 @@ class Sensei_Course_Theme_Styles {
 
 		$vars = [];
 
-		$colors = $styles['color'] ?? $styles['elements']['color'] ?? null;
+		$element_colors = $styles['color'] ?? $styles['elements']['color'] ?? null;
 
-		if ( ! empty( $colors ) ) {
-			$vars['text-color']             = $styles['color']['text'] ?? null;
-			$vars['background-color']       = $styles['color']['background'] ?? null;
-			$vars['primary-contrast-color'] = $vars['background-color'];
-		}
+		$vars['text-color']             = $element_colors['text'] ?? $styles['textColor'] ?? null;
+		$vars['background-color']       = $element_colors['background'] ?? $styles['backgroundColor'] ?? null;
+		$vars['primary-contrast-color'] = $vars['--sensei-background-color'];
 
 		$link = $styles['elements']['link']['color'] ?? null;
 
@@ -115,18 +113,6 @@ class Sensei_Course_Theme_Styles {
 	}
 
 	/**
-	 * Get colors set in the customizer.
-	 */
-	private static function get_customizer_colors() {
-		$colors = [
-			'sensei-course-theme-primary-color',
-			'sensei-course-theme-background-color',
-			'sensei-course-theme-foreground-color',
-		];
-		return array_map( 'get_option', $colors );
-	}
-
-	/**
 	 * Get CSS variables for the block from its style attributes.
 	 *
 	 * @param array $attributes Block attributes.
@@ -135,7 +121,13 @@ class Sensei_Course_Theme_Styles {
 	 */
 	private static function get_block_colors( $attributes ) {
 
-		$styles = $attributes['style'] ?? null;
+		$styles = $attributes['style'] ?? [];
+
+		foreach ( [ 'textColor', 'backgroundColor' ] as $color ) {
+			if ( ! empty( $attributes[ $color ] ) ) {
+				$styles[ $color ] = $attributes[ $color ];
+			}
+		}
 
 		if ( empty( $styles ) ) {
 			return [];
@@ -185,7 +177,7 @@ class Sensei_Course_Theme_Styles {
 
 	/**
 	 * Converts CSS Custom Property stored as
-	 * "var:preset|color|secondary" to the form
+	 * "var:preset|color|secondary", or single named values stored as 'secondary' to the form
 	 * "--wp--preset--color--secondary".
 	 *
 	 * Based on \WP_Theme_JSON::get_property_value
@@ -207,6 +199,8 @@ class Sensei_Course_Theme_Styles {
 				substr( $value, $prefix_len )
 			);
 			$value          = "var(--wp--$unwrapped_name)";
+		} elseif ( preg_match( '/^[a-z0-9-]+$/i', $value ) ) {
+			$value = "var(--wp--preset--color--${value})";
 		}
 
 		return $value;
