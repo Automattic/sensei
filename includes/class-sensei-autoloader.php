@@ -133,6 +133,13 @@ class Sensei_Autoloader {
 			'Sensei_No_Users_Table_Relationship'           => 'reports/class-sensei-no-users-table-relationship.php',
 
 			/**
+			 * Admin Sensei Home
+			 */
+			'Sensei_Home_Quick_Links_Item'                 => 'admin/home/quick-links/class-sensei-home-quick-links-item.php',
+			'Sensei_Home_Quick_Links_Category'             => 'admin/home/quick-links/class-sensei-home-quick-links-category.php',
+			'Sensei_Home_Quick_Links_Provider'             => 'admin/home/quick-links/class-sensei-home-quick-links-provider.php',
+
+			/**
 			 * Admin Tools
 			 */
 			'Sensei_Tools'                                 => 'admin/class-sensei-tools.php',
