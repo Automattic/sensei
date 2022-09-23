@@ -70,14 +70,21 @@ const UsageTracking = () => {
 				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__usage-tracking-illustration"
 				aria-hidden="true"
 			>
-				<img
-					className="sensei-setup-wizard__columns-illustration-image"
-					src={
-						window.sensei.imagesPath +
-						'onboarding-improve-experience-illustration.png'
-					}
-					alt=""
-				/>
+				<picture>
+					<source
+						media="(max-width: 999px)"
+						srcSet={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration-small.png` }
+					/>
+					<source
+						media="(min-width: 1000px)"
+						srcSet={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration.png` }
+					/>
+					<img
+						className="sensei-setup-wizard__columns-illustration-image"
+						src={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration.png` }
+						alt=""
+					/>
+				</picture>
 			</div>
 		</div>
 	);
