@@ -1,6 +1,6 @@
 
 :root {
-	--sidebar-width: 300px;
+
 }
 
 
@@ -20,6 +20,7 @@
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
 		&__video-container {
+			--sidebar-width: 300px;
 			display: flex;
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);
@@ -80,8 +81,7 @@
 			}
 
 			.sensei-course-theme__sidebar {
-				width: unset;
-				background: #fff;
+				width: 100%;
 				position: static;
 				overflow-y: unset;
 				scrollbar-gutter: unset;
