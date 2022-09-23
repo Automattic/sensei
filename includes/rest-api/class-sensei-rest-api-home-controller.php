@@ -189,13 +189,13 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 							'icon'  => null,
 						],
 						[
-							'title'        => 'Create a support ticket',
-							'url'          => null,
-							'extra_action' => [
-								'title' => 'Upgrade to Sensei Pro',
+							'title'      => 'Create a support ticket',
+							'url'        => null,
+							'extra_link' => [
+								'label' => 'Upgrade to Sensei Pro',
 								'url'   => 'https://...',
 							],
-							'icon'         => 'lock',
+							'icon'       => 'lock',
 						],
 					],
 				],
@@ -248,30 +248,32 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 			'show_sensei_pro_promo'       => false, // Whether we should show the promotional banner for Sensei Pro or not.
 			'notifications'               => [
 				[
-					'title'       => 'Your Sensei Pro license expires on 12.09.2022.',
+					'heading'     => null, // Not needed for the moment.
+					'message'     => 'Your Sensei Pro license expires on 12.09.2022.',
 					'actions'     => [
 						[
-							'title' => 'Update now',
+							'label' => 'Update now',
 							'url'   => 'https://...',
 						],
 					],
 					'info_link'   => [
-						'title' => 'What\'s new',
+						'label' => 'What\'s new',
 						'url'   => 'https://...',
 					],
 					'level'       => 'error', // One of: info, warning, error.
 					'dismissible' => false, // The default value is true.
 				],
 				[
-					'title'       => 'Good news, reminder to update to latest version',
+					'heading'     => null, // Not needed for the moment.
+					'message'     => 'Good news, reminder to update to latest version',
 					'actions'     => [
 						[
-							'title' => 'Update now',
+							'label' => 'Update now',
 							'url'   => 'https://...',
 						],
 					],
 					'info_link'   => [
-						'title' => 'Link for more information',
+						'label' => 'Link for more information',
 						'url'   => 'https://...',
 					],
 					'level'       => 'info', // One of: info, warning, error.
