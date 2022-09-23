@@ -10,7 +10,10 @@
 		},
 		"textAlign": {
 			"type": "string"
-		}
+		},
+        "options": {
+            "type": "object"
+        }
 	},
 	"usesContext": [ "postId", "postType", "queryId" ],
 	"supports": {
