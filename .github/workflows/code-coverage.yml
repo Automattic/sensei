@@ -1,7 +1,5 @@
 name: PHP & JavaScript Code Coverage
 
-on: pull_request
-
 jobs:
     coverage:
         name: PHP and JS Test Coverage
