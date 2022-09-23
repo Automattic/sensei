@@ -1,3 +1,6 @@
+$checked-color: #000000;
+$unchecked-color: #757575;
+
 .sensei-setup-wizard {
 	&__purpose-list {
 		list-style: none;
@@ -8,8 +11,13 @@
 	&__purpose-item {
 		padding: 18px;
 		margin-bottom: 18px;
-		border: 1px solid #000000;
+		border: 1px solid $unchecked-color;
 		border-radius: 8px;
+		transition: 0.3s border-color;
+
+		&--checked {
+			border-color: $checked-color;
+		}
 
 		.components-base-control__field {
 			margin-bottom: 0;
@@ -24,11 +32,11 @@
 		}
 
 		.components-checkbox-control__input[type=checkbox] {
-			border-color: #757575;
+			border-color: $unchecked-color;
 
 			&:checked {
-				background: #000000;
-				border-color: #000000;
+				background: $checked-color;
+				border-color: $checked-color;
 			}
 		}
 	}

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { CheckboxControl } from '@wordpress/components';
@@ -13,7 +18,11 @@ import { CheckboxControl } from '@wordpress/components';
  * @param {Object}   props.children Component children, which is displayed when it's checked.
  */
 const PurposeItem = ( { label, checked, onToggle, children } ) => (
-	<li className="sensei-setup-wizard__purpose-item">
+	<li
+		className={ classnames( 'sensei-setup-wizard__purpose-item', {
+			'sensei-setup-wizard__purpose-item--checked': checked,
+		} ) }
+	>
 		<CheckboxControl
 			className="sensei-setup-wizard__checkbox"
 			label={ label }

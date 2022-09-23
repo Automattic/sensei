@@ -102,6 +102,7 @@ $big-horizontal-padding: 80px;
 		padding: 10px 24px;
 		font-size: 14px;
 		cursor: pointer;
+		transition: 0.3s opacity;
 
 		&--primary {
 			background-color: #101517;
