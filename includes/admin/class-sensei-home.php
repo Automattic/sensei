@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Extensions class.
+ * File containing Sensei_Home class.
  *
  * @package Sensei\Admin
  * @since 2.0.0
