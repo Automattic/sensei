@@ -7,7 +7,7 @@ import { EditorNotices } from '@wordpress/editor';
  * Internal dependencies
  */
 import { useSenseiColorTheme } from '../react-hooks/use-sensei-color-theme';
-import FeaturedProductSenseiPro from './featured-product-sensei-pro';
+import SenseiProAd from './sections/sensei-pro-ad';
 import Header from './header';
 import { Col, Grid } from './grid';
 import QuickLinks from './sections/quick-links';
@@ -43,7 +43,7 @@ const Main = () => {
 					<GetHelp />
 				</Col>
 
-				<FeaturedProductSenseiPro />
+				<SenseiProAd />
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<SenseiGuides />
