@@ -660,7 +660,7 @@ class Sensei_Messages {
 				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
 				exit;
 			} else {
-				wp_redirect( home_url( '/wp-login.php' ), 303 );
+				wp_safe_redirect( home_url( '/wp-login.php' ), 303 );
 				exit;
 			}
 		}
