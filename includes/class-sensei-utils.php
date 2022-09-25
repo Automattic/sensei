@@ -2650,11 +2650,10 @@ class Sensei_Utils {
 
 		if ( 'http' === substr( $url, 0, 4 ) ) {
 			// V2 - make width and height a setting for video embed.
-			$lesson_video_embed = wp_oembed_get( esc_url( $url ) );
-			$lesson_video_embed = do_shortcode( html_entity_decode( $lesson_video_embed ) );
-			return Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $allowed_html );
+			$url = wp_oembed_get( esc_url( $url ) );
+			$url = do_shortcode( html_entity_decode( $url ) );
 		}
-		return null;
+		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
 	}
 	/**
 	 * Gets the HTML content from the Featured Video for a post
