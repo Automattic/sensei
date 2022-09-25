@@ -2195,7 +2195,14 @@ class Sensei_Core_Modules {
 			return $term_owner;
 
 		}
+		$term = get_term_by( 'slug', $slug, 'module' );
 
+		if ( $term ) {
+			$author_meta = get_term_meta( $term->term_id, 'module_author', true );
+			if ( $author_meta ) {
+				return get_user_by( 'id', $author_meta );
+			}
+		}
 		// look for the author in the slug
 		$slug_parts = explode( '-', $slug );
 
@@ -2629,4 +2636,23 @@ class Sensei_Core_Modules {
 		wp_reset_query();
 	}
 
+	/**
+	 * Set teacher meta for module.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param int $module_id  Term ID.
+	 * @param int $teacher_id ID of module teacher.
+	 */
+	public static function update_module_teacher_meta( $module_id, $teacher_id ) {
+		if ( user_can( $teacher_id, 'manage_options' ) ) {
+			delete_term_meta( $module_id, 'module_author' );
+		} else {
+			update_term_meta(
+				$module_id,
+				'module_author',
+				$teacher_id
+			);
+		}
+	}
 }

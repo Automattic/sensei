@@ -166,6 +166,172 @@ describe( 'syncStructureToBlocks', () => {
 			},
 		] );
 	} );
+
+	it( 'merges with existing blocks using the id', () => {
+		const blocks = [
+			createBlock( 'sensei-lms/course-outline-module', {
+				title: 'M1',
+				type: 'module',
+				description: 'Module 1',
+				id: 1,
+				style: { color: 'red' },
+			} ),
+		];
+
+		const changed = [
+			{
+				description: 'Module 1 description updated',
+				type: 'module',
+				title: 'M1 updated',
+				id: 1,
+			},
+		];
+
+		const newBlocks = syncStructureToBlocks( changed, blocks );
+
+		expect( newBlocks ).toEqual( [
+			{
+				clientId: blocks[ 0 ].clientId,
+				name: 'sensei-lms/course-outline-module',
+				attributes: {
+					title: 'M1 updated',
+					description: 'Module 1 description updated',
+					id: 1,
+					style: { color: 'red' },
+				},
+				innerBlocks: [],
+				isValid: true,
+			},
+		] );
+	} );
+
+	it( 'merges with existing blocks using the title when there is not id', () => {
+		const blocks = [
+			createBlock( 'sensei-lms/course-outline-module', {
+				title: 'M1',
+				type: 'module',
+				description: 'Module 1',
+				style: { color: 'red' },
+			} ),
+		];
+
+		const changed = [
+			{
+				description: 'Module 1 description updated',
+				type: 'module',
+				title: 'M1',
+				id: 2,
+			},
+		];
+
+		const newBlocks = syncStructureToBlocks( changed, blocks );
+
+		expect( newBlocks ).toEqual( [
+			{
+				clientId: blocks[ 0 ].clientId,
+				name: 'sensei-lms/course-outline-module',
+				attributes: {
+					title: 'M1',
+					description: 'Module 1 description updated',
+					id: 2,
+					style: { color: 'red' },
+				},
+				innerBlocks: [],
+				isValid: true,
+			},
+		] );
+	} );
+
+	it( 'merges with existing blocks using the lastTitle', () => {
+		const blocks = [
+			createBlock( 'sensei-lms/course-outline-module', {
+				title: 'M1',
+				type: 'module',
+				description: 'Module 1',
+				id: 1,
+				style: { color: 'red' },
+			} ),
+		];
+
+		const changed = [
+			{
+				description: 'Module 1 description updated',
+				type: 'module',
+				title: 'M1 updated',
+				lastTitle: 'M1',
+				id: 2,
+			},
+		];
+
+		const newBlocks = syncStructureToBlocks( changed, blocks );
+
+		expect( newBlocks ).toEqual( [
+			{
+				clientId: blocks[ 0 ].clientId,
+				name: 'sensei-lms/course-outline-module',
+				attributes: {
+					title: 'M1 updated',
+					lastTitle: 'M1',
+					description: 'Module 1 description updated',
+					id: 2,
+					style: { color: 'red' },
+				},
+				innerBlocks: [],
+				isValid: true,
+			},
+		] );
+	} );
+
+	it( 'merges with existing blocks looking on inner blocks', () => {
+		const innerId = 99;
+		const innerBlock = createBlock( 'sensei-lms/course-outline-lesson', {
+			title: 'lesson 1 title',
+			type: 'lesson',
+			description: 'Lesson 1',
+			id: innerId,
+			style: { color: 'blue' },
+		} );
+
+		const blocks = [
+			createBlock(
+				'sensei-lms/course-outline-module',
+				{
+					title: 'M1',
+					type: 'module',
+					description: 'Module 1',
+					id: 1,
+					style: { color: 'red' },
+				},
+				[ innerBlock ]
+			),
+		];
+
+		const changed = [
+			{
+				description: 'Lesson 1 description updated',
+				type: 'lesson',
+				title: 'Lesson 1 title updated',
+				id: innerId,
+			},
+		];
+
+		const newBlocks = syncStructureToBlocks( changed, blocks );
+
+		expect( newBlocks ).toEqual( [
+			{
+				clientId: innerBlock.clientId,
+				name: 'sensei-lms/course-outline-lesson',
+				attributes: {
+					title: 'Lesson 1 title updated',
+					description: 'Lesson 1 description updated',
+					id: 99,
+					style: { color: 'blue' },
+				},
+				innerBlocks: [],
+				isValid: true,
+			},
+		] );
+	} );
 } );
 
 describe( 'getFirstBlockByName', () => {

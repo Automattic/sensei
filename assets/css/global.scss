@@ -80,12 +80,7 @@ $sensei-notice-icon-width: 30px;
 /*  Sensei Icon Font */
 @font-face {
 	font-family: 'sensei';
-	src: url( '../css/fonts/sensei/sensei.eot' );
-	src: url( '../css/fonts/sensei/sensei.eot?#iefix' ) format( 'embedded-opentype' ),
-		url( '../css/fonts/sensei/sensei.woff2' ) format( 'woff2' ),
-		url( '../css/fonts/sensei/sensei.woff' ) format( 'woff' ),
-		url( '../css/fonts/sensei/sensei.ttf' ) format( 'truetype' ),
-		url( '../css/fonts/sensei/sensei.svg#sensei' ) format( 'svg' );
+	src: url( '../css/fonts/sensei/sensei.woff2' ) format( 'woff2' ), url( '../css/fonts/sensei/sensei.woff' ) format( 'woff' );
 	font-weight: normal;
 	font-style: normal;
 }
@@ -129,20 +124,4 @@ body #menu-posts-course {
 
 .edit-php.post-type-quiz .add-new-h2 {
 	display: none;
-}
-
-.sensei-badge {
-	display: inline-block;
-	padding: 0 5px;
-	border-radius: 9px;
-	font-size: 12px;
-
-	&--success {
-		background-color: #28a745;
-		color: #ffffff;
-	}
-
-	&--after-text {
-		margin-left: 5px;
-	}
 }

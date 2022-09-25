@@ -1,5 +1,69 @@
 *** Changelog ***
 
+2022-08-24 - version 4.6.3
+* New: Course List block (beta)
+    * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
+    * Add the Course Categories block [#5455](https://github.com/Automattic/sensei/pull/5455)
+    * Add new patterns for Course List [#5433](https://github.com/Automattic/sensei/pull/5433)
+    * Add Course Actions block [#5430](https://github.com/Automattic/sensei/pull/5430)
+    * Make Continue button take user to the lesson they were working on [#5496](https://github.com/Automattic/sensei/pull/5496)
+    * Make the Course List block with inner blocks globally available [#5473](https://github.com/Automattic/sensei/pull/5473)
+    * Add notice to show invalid usage when blocks are used out of course context [#5489](https://github.com/Automattic/sensei/pull/5489)
+* Add: Support for passing a custom footer to the Modal component [#5503](https://github.com/Automattic/sensei/pull/5503)
+* Fix: Template selection logic when learning mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
+* Fix: Course Outline - Show private lessons only for those who can view them. [#5468](https://github.com/Automattic/sensei/pull/5468)
+* Tweak: Combine PHP and JS strings in POT generation command [#5486](https://github.com/Automattic/sensei/pull/5486)
+* Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
+* Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
+
+2022-08-17 - version 4.6.2
+* Fix: Learning Mode - Do not filter templates for query slugs if it is indexing. [#5460](https://github.com/Automattic/sensei/pull/5460)
+* Fix: Do not save -1 values on quiz meta [#5461](https://github.com/Automattic/sensei/pull/5461)
+* Fix: Revert "Change className prop to not use classnames" [#5464](https://github.com/Automattic/sensei/pull/5464)
+* Fix: Fix timeupdate event on the youtube adapter [#5452](https://github.com/Automattic/sensei/pull/5452)
+* Fix: Fix interactive video when no video is set [#5442](https://github.com/Automattic/sensei/pull/5442)
+* Add: Add className prop to Sensei modal [#5462](https://github.com/Automattic/sensei/pull/5462)
+* Add: Change confirm dialog styles [#5454](https://github.com/Automattic/sensei/pull/5454)
+* Add: Fix set current time to keep the same behavior for all players [#5416](https://github.com/Automattic/sensei/pull/5416)
+
+2022-08-09 - version 4.6.1
+* Fix: Fix lesson quick edit and bulk edit for quiz settings [#4404](https://github.com/Automattic/sensei/pull/4404)
+* Fix: Use standard approach of displaying filters for list tables [#5174](https://github.com/Automattic/sensei/pull/5174)
+* Fix: Improve test coverage for Sensei_Lesson [#5389](https://github.com/Automattic/sensei/pull/5389)
+* Fix: Fix player API on the editor side when editing embeds with no changes [#5392](https://github.com/Automattic/sensei/pull/5392)
+* Fix: Fix multiple emails are send when completing a course in the backend [#5393](https://github.com/Automattic/sensei/pull/5393)
+* Add: Add current time to player and hook to get the video duration [#5410](https://github.com/Automattic/sensei/pull/5410)
+* Fix: Fix html entities bug for question answers. [#5414](https://github.com/Automattic/sensei/pull/5414)
+* Fix: Fix loading issue where the player wasn't detected correctly on the editor [#5421](https://github.com/Automattic/sensei/pull/5421)
+
+2022-07-25 - version 4.6.0
+* Add: Add custom slug in module block [#5207](https://github.com/Automattic/sensei/pull/5207)
+* Add: Add Confirm Dialog component [#5361](https://github.com/Automattic/sensei/pull/5361)
+* Add: Enable _lesson_preview show-in-rest meta settings [#5369](https://github.com/Automattic/sensei/pull/5369)
+* Add: Change video api scripts to be more generic  [#5359](https://github.com/Automattic/sensei/pull/5359)
+* Add: Add hooks to allow adding filters to reports [#5365](https://github.com/Automattic/sensei/pull/5365)
+* Fix: Update videopress event name [#5373](https://github.com/Automattic/sensei/pull/5373)
+* Fix: Fix url encoding of timezone for reports [#5362](https://github.com/Automattic/sensei/pull/5362)
+* Fix: Fix Gutenberg compatibility issue [#5379](https://github.com/Automattic/sensei/pull/5379)
+* Fix: Render additional css on feedback answers block [#5371](https://github.com/Automattic/sensei/pull/5371)
+* Fix: Remove additional line from login redirection code [#5380](https://github.com/Automattic/sensei/pull/5380) 
+* Fix: Modules loosing configuration when module is changed [#5387](https://github.com/Automattic/sensei/pull/5387)
+* Tweak: Hide action buttons' notification [#5386](https://github.com/Automattic/sensei/pull/5386)
+
+2022-07-14 - version 4.5.2
+* Add: New upsells students group page
+* Add: `sensei_user_course_end' hook before redirecting to completed page
+* Add: Bump the minimum required PHP version to 7.2 
+* Fix: Placeholder images for courses
+* Fix: Update the course Editor to display 'Learners' instead of Students 
+* Fix: Bulk Edit options (on Lessons menu) do not work
+* Fix: Change 'Manage Learners' to 'Manage Students' on the course management meta box
+* Fix: Quiz questions not being properly saved.
+* Fix: Lessons screen js error caused by the module column
+* Fix: Layout issues with Learning Mode when using Divi
+* Fix: issue on grading page
+* Fix: Errors on the students admin area
+
 2022-06-20 - version 4.5.1
 * Fix: remove upsell from wizard when woothemes-sensei is installed [#5282](https://github.com/Automattic/sensei/pull/5282)
 * Fix: Guarantee that the wizard link will stay as white after visiting it [#5281](https://github.com/Automattic/sensei/pull/5281)

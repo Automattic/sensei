@@ -344,7 +344,7 @@ class Sensei_Main {
 	/**
 	 * Initialize the cache groups used in Sensei
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 */
 	protected function initialize_cache_groups() {
 		wp_cache_add_non_persistent_groups( 'sensei/temporary' );
@@ -433,18 +433,20 @@ class Sensei_Main {
 		// Editor Wizard.
 		Sensei_Editor_Wizard::instance()->init();
 
+		// Load Analysis Reports.
+		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
-			// Load Admin Class
+			// Load Admin Class.
 			$this->admin = new Sensei_Admin();
-
-			// Load Analysis Reports
-			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
 
 			new Sensei_Import();
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
 			new Sensei_Admin_Notices();
+
+			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
 
 			// Load Frontend Class

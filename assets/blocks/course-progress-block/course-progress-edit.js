@@ -21,6 +21,7 @@ import { COURSE_STATUS_STORE } from '../course-outline/status-preview/status-sto
 import ProgressBar, {
 	ProgressBarSettings,
 } from '../../shared/blocks/progress-bar';
+import InvalidUsageError from '../../shared/components/invalid-usage';
 
 /**
  * Edit course progress bar component.
@@ -43,6 +44,7 @@ export const CourseProgressEdit = ( props ) => {
 		defaultBarColor,
 		barBackgroundColor,
 		textColor,
+		context: { postType },
 		attributes: { height, borderRadius },
 		setAttributes,
 	} = props;
@@ -76,6 +78,17 @@ export const CourseProgressEdit = ( props ) => {
 			borderRadius,
 		},
 	};
+
+	if ( 'course' !== postType ) {
+		return (
+			<InvalidUsageError
+				message={ __(
+					'The Course Progress block can only be used inside the Course List block.',
+					'sensei-lms'
+				) }
+			/>
+		);
+	}
 
 	return (
 		<>

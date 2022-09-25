@@ -81,7 +81,7 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Add course theme block templates to single template hierarchy.
 	 *
-	 * @param string[] $templates
+	 * @param string[] $templates The list of template names.
 	 *
 	 * @return string[]
 	 */
@@ -142,7 +142,6 @@ class Sensei_Course_Theme_Templates {
 					'id'          => self::THEME_PREFIX . '//lesson',
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 					'content'     => file_get_contents( $base_path . 'lesson.html' ),
-					'post_types'  => [],
 				]
 			),
 			'quiz'   => array_merge(
@@ -154,7 +153,6 @@ class Sensei_Course_Theme_Templates {
 					'id'          => self::THEME_PREFIX . '//quiz',
 					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
 					'content'     => file_get_contents( $base_path . 'quiz.html' ),
-					'post_types'  => [],
 				]
 			),
 		];
@@ -163,9 +161,9 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Add Course Theme block templates.
 	 *
-	 * @param array $templates
-	 * @param array $query
-	 * @param array $template_type
+	 * @param array $templates     List of WP templates.
+	 * @param array $query         The query arguments to retrieve templates.
+	 * @param array $template_type The type of the template.
 	 *
 	 * @access private
 	 *
@@ -177,39 +175,51 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
-		// Remove templates picked up from the sensei-course-theme theme if it's active, to only show the templates explicitly listed above.
+		$slugs = $query['slug__in'] ?? $query['post_type'] ?? null;
+		if ( $slugs && ! is_array( $slugs ) ) {
+			$slugs = [ $slugs ];
+		}
+
+		$supported_template_types = [ 'lesson', 'quiz' ];
+
+		$is_course_theme_override = ! empty( $query['theme'] ) && ( Sensei_Course_Theme::THEME_NAME === $query['theme'] );
+		$is_site_editor           = empty( $query ) || $is_course_theme_override;
+		$is_supported_template    = $slugs && ! empty( array_intersect( $supported_template_types, $slugs ) );
+
+		// Remove file templates picked up from the sensei-course-theme theme directory when the theme override is active.
 		$templates = array_filter(
 			$templates,
 			function( $template ) {
-				return ! preg_match( '#^' . Sensei_Course_Theme::THEME_NAME . '//.*$#', $template->id );
+				$is_sensei_template = preg_match( '#^' . Sensei_Course_Theme::THEME_NAME . '//.*$#', $template->id );
+				return ! ( $is_sensei_template && $template->has_theme_file );
 			}
 		);
 
-		$theme_templates = array_values( $this->get_block_templates() );
-
-		$post_type = $query['post_type'] ?? null;
-		$slugs     = $query['slug__in'] ?? null;
-
-		if ( $post_type ) {
-			$theme_templates = array_filter(
-				$theme_templates,
-				function( $template ) use ( $post_type ) {
-					return in_array( $post_type, $template->post_types, true );
-				}
-			);
+		if ( ! $is_site_editor && ! $is_supported_template ) {
+			return $templates;
 		}
 
+		$course_theme_templates = $this->get_block_templates();
+		$extra_templates        = array_values( $course_theme_templates );
+
+		// Only show templates matching the queried slug or post type.
 		if ( $slugs ) {
-			$theme_templates = array_filter(
-				$theme_templates,
+			$extra_templates = array_filter(
+				$extra_templates,
 				function( $template ) use ( $slugs ) {
 					return in_array( $template->slug, $slugs, true );
 				}
 			);
 		}
 
-		return array_merge( $theme_templates, $templates );
+		$templates = array_merge( $extra_templates, $templates );
 
+		// Return the lesson template as the default when there are no theme templates in the site editor.
+		if ( $is_course_theme_override && empty( $templates ) ) {
+			return [ $course_theme_templates['lesson'] ];
+		}
+
+		return $templates;
 	}
 
 	/**
@@ -297,7 +307,7 @@ class Sensei_Course_Theme_Templates {
 	/**
 	 * Build a template object from a post.
 	 *
-	 * @param WP_Post $post
+	 * @param WP_Post $post The post.
 	 *
 	 * @return WP_Block_Template
 	 */

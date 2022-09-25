@@ -1,0 +1,32 @@
+.sensei-confirm-dialog {
+	width: 100%;
+
+	@media (min-width: 600px) {
+		width: 400px;
+	}
+
+	&__message {
+		padding: 0 0 40px;
+	}
+	&__button-container {
+		display: flex;
+		justify-content: end;
+	}
+	&__button {
+		margin-left: 15px;
+	}
+
+	.components-modal__header {
+		border: none;
+
+		.components-modal__header-heading {
+			font-size: 1.2rem;
+			font-weight: normal;
+		}
+
+		.components-button svg {
+			width: 35px;
+			height: 35px;
+		}
+	}
+}

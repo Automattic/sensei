@@ -28,7 +28,16 @@ class Sensei_Quiz {
 	public function __construct( $file = __FILE__ ) {
 		$this->file        = $file;
 		$this->token       = 'quiz';
-		$this->meta_fields = array( 'quiz_passmark', 'quiz_lesson', 'quiz_type', 'quiz_grade_type', 'pass_required', 'enable_quiz_reset' );
+		$this->meta_fields = array(
+			'quiz_passmark',
+			'quiz_lesson',
+			'quiz_type',
+			'quiz_grade_type',
+			'pass_required',
+			'enable_quiz_reset',
+			'show_questions',
+			'random_question_order',
+		);
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
 		// Redirect if the lesson is protected.
@@ -1303,25 +1312,52 @@ class Sensei_Quiz {
 	/**
 	 * Get the contents for the correct answer feedback block.
 	 *
-	 * @param int $question_id
-	 *
-	 * @return string
+	 * @param int $question_id Question Id.
+	 * @return string block rendered
 	 */
 	public static function get_correct_answer_feedback( $question_id ) {
-		$block = self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-correct' );
+		$block = self::get_correct_answer_feedback_block( $question_id );
 		return $block ? render_block( $block ) : '';
 	}
 
 	/**
 	 * Get the contents for the incorrect answer feedback block.
 	 *
+	 * @access public
 	 * @param int $question_id
 	 *
 	 * @return string
 	 */
 	public static function get_incorrect_answer_feedback( $question_id ) {
-		$block = self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
+		$block = self::get_incorrect_answer_feedback_block( $question_id );
 		return $block ? render_block( $block ) : '';
+	}
+
+
+	/**
+	 * Get the contents for the correct answer feedback block.
+	 *
+	 * @access public
+	 * @since 4.6.0
+	 * @param int $question_id Question Id.
+	 *
+	 * @return string
+	 */
+	public static function get_correct_answer_feedback_block( $question_id ) {
+		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-correct' );
+	}
+
+	/**
+	 * Get the contents for the incorrect answer feedback block.
+	 *
+	 * @since 4.6.0
+	 * @access public
+	 * @param int $question_id Question Id.
+	 *
+	 * @return string
+	 */
+	public static function get_incorrect_answer_feedback_block( $question_id ) {
+		return self::get_question_inner_block( $question_id, 'sensei-lms/quiz-question-feedback-incorrect' );
 	}
 
 	/**

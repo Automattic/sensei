@@ -49,6 +49,17 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		);
 
 		register_post_meta(
+			'course',
+			'_course_featured',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'auth_callback' => [ $this, 'auth_callback' ],
+			]
+		);
+
+		register_post_meta(
 			'lesson',
 			'_lesson_complexity',
 			[
@@ -89,6 +100,17 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'integer',
+				'auth_callback' => [ $this, 'auth_callback' ],
+			]
+		);
+
+		register_post_meta(
+			'lesson',
+			'_lesson_preview',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
 				'auth_callback' => [ $this, 'auth_callback' ],
 			]
 		);

@@ -20,7 +20,7 @@ class Sensei_Import_Question_Model_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Setup function.

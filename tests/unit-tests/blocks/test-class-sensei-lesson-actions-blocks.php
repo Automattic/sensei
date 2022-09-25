@@ -15,7 +15,7 @@ class Sensei_Lesson_Actions_Blocks extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Set up the test.

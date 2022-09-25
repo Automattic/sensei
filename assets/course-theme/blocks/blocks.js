@@ -92,7 +92,7 @@ const blocks = [
 	},
 	{
 		...meta,
-		title: __( 'Lesson Actions', 'sensei-lms' ),
+		title: __( 'Lesson Actions (Learning Mode)', 'sensei-lms' ),
 		name: 'sensei-lms/course-theme-lesson-actions',
 		description: __(
 			'Display buttons for actions the learner can take for the current lesson.',

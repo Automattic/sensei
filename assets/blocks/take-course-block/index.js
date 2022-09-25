@@ -34,4 +34,11 @@ export default createButtonBlockType( {
 			},
 		},
 	},
+	invalidUsage: {
+		message: __(
+			'The Course Signup block can only be used inside the Course List block.',
+			'sensei-lms'
+		),
+		validPostTypes: [ 'course' ],
+	},
 } );

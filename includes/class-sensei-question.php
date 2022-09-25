@@ -632,7 +632,7 @@ class Sensei_Question {
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 		$title_html  = '<span class="question question-title">';
-		$title_html .= wp_kses_post( $title );
+		$title_html .= esc_html( $title );
 		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		$title_html .= '</span>';
 
@@ -770,11 +770,38 @@ class Sensei_Question {
 		echo self::question_media_kses( self::get_the_question_media( $question_id ) );
 	}
 
+
+	/**
+	 * Return the answer feedback CSS classes (default and custom) based if the answer is correct or not
+	 *
+	 * @param int  $question_id Question id.
+	 * @param bool $answer_correct Flag indicating if the answer is correct or not.
+	 * @return array CSS classes
+	 */
+	private static function get_answer_feedback_classes( $question_id, bool $answer_correct ): array {
+		if ( $answer_correct ) {
+			$feedback_block = Sensei_Quiz::get_correct_answer_feedback_block( $question_id );
+
+			return [
+				'sensei-lms-question__answer-feedback--correct',
+				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+			];
+
+		} else {
+			$feedback_block = Sensei_Quiz::get_incorrect_answer_feedback_block( $question_id );
+			return [
+				'sensei-lms-question__answer-feedback--incorrect',
+				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+
+			];
+		}
+	}
+
 	/**
 	 * Special kses processing for media output to allow 'source' video tag.
 	 *
 	 * @since 3.0.0
-	 * @param string $source_string
+	 * @param string $source_string Source string.
 	 * @return string with allowed html elements
 	 */
 	private static function question_media_kses( $source_string ) {
@@ -865,16 +892,15 @@ class Sensei_Question {
 		$answer_grade   = (int) Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 		$answer_correct = $answer_grade > 0;
 
-		$answer_notes_classname = '';
-		$answer_feedback_title  = '';
+		$answer_notes_classnames = [];
+		$answer_feedback_title   = '';
 
 		if ( $indicate_incorrect ) {
+			$answer_notes_classnames = self::get_answer_feedback_classes( $question_id, $answer_correct );
 			if ( $answer_correct ) {
-				$answer_notes_classname = 'sensei-lms-question__answer-feedback--correct';
-				$answer_feedback_title  = __( 'Correct', 'sensei-lms' );
+				$answer_feedback_title = __( 'Correct', 'sensei-lms' );
 			} else {
-				$answer_notes_classname = 'sensei-lms-question__answer-feedback--incorrect';
-				$answer_feedback_title  = __( 'Incorrect', 'sensei-lms' );
+				$answer_feedback_title = __( 'Incorrect', 'sensei-lms' );
 			}
 		}
 
@@ -892,10 +918,9 @@ class Sensei_Question {
 		 *
 		 * @return {string} Space-separated CSS classes to apply to answer message.
 		 */
-		$answer_notes_classname = apply_filters( 'sensei_question_answer_message_css_class', $answer_notes_classname, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
+		$answer_notes_classnames = apply_filters( 'sensei_question_answer_message_css_class', $answer_notes_classnames, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
 
 		$answer_notes = $show_feedback_notes ? Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() ) : null;
-
 		/**
 		 * Filter the answer feedback.
 		 *
@@ -946,12 +971,11 @@ class Sensei_Question {
 		 *
 		 * @return {string} Answer message.
 		 */
-		$correct_answer = apply_filters( 'sensei_question_answer_message_correct_answer', $correct_answer, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
-
+		$correct_answer   = apply_filters( 'sensei_question_answer_message_correct_answer', $correct_answer, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
 		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
 
 		?>
-		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( $answer_notes_classname ); ?>">
+		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
 			<?php if ( $indicate_incorrect ) { ?>
 				<div class="sensei-lms-question__answer-feedback__header">
 					<span class="sensei-lms-question__answer-feedback__icon"></span>
@@ -1445,21 +1469,21 @@ class Sensei_Question {
 		} elseif ( 'multiple-choice' == $type ) {
 
 			$right_answer = (array) $right_answer;
-			$right_answer = implode( ', ', $right_answer );
+			$right_answer = esc_html( implode( ', ', $right_answer ) );
 
 		} elseif ( 'gap-fill' == $type ) {
 
 			$right_answer_array = explode( '||', $right_answer );
 			if ( isset( $right_answer_array[0] ) ) {
-				$gapfill_pre = $right_answer_array[0];
+				$gapfill_pre = esc_html( $right_answer_array[0] );
 			} else {
 				$gapfill_pre = ''; }
 			if ( isset( $right_answer_array[1] ) ) {
-				$gapfill_gap = $right_answer_array[1];
+				$gapfill_gap = esc_html( $right_answer_array[1] );
 			} else {
 				$gapfill_gap = ''; }
 			if ( isset( $right_answer_array[2] ) ) {
-				$gapfill_post = $right_answer_array[2];
+				$gapfill_post = esc_html( $right_answer_array[2] );
 			} else {
 				$gapfill_post = ''; }
 

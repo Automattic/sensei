@@ -139,6 +139,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		// Actions.
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'add_learners_box' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
+
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
 	}
 
@@ -1012,21 +1014,26 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$cats = get_terms( 'course-category', array( 'hide_empty' => false ) );
 
 			echo '<div class="select-box">' . "\n";
-
-				echo '<select id="course-category-options" data-placeholder="' . esc_attr__( 'Course Category', 'sensei-lms' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
-
-					echo '<option value="0">' . esc_html__( 'All Course Categories', 'sensei-lms' ) . '</option>' . "\n";
+			echo '<select id="course-category-options" data-placeholder="' . esc_attr__( 'Course Category', 'sensei-lms' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
+			echo '<option value="0">' . esc_html__( 'All Course Categories', 'sensei-lms' ) . '</option>' . "\n";
 
 			foreach ( $cats as $cat ) {
 				echo '<option value="' . esc_attr( $cat->term_id ) . '"' . selected( $cat->term_id, $selected_cat, false ) . '>' . esc_html( $cat->name ) . '</option>' . "\n";
 			}
 
-				echo '</select>' . "\n";
+			echo '</select>' . "\n";
 
 			echo '</div>' . "\n";
 		}
 		echo '</div><!-- /.learners-selects -->';
+	}
 
+	/**
+	 * Gets the list of views available on this table.
+	 *
+	 * @return array
+	 */
+	public function get_views() {
 		$menu = array();
 
 		if ( $this->course_id && ! $this->lesson_id ) {
@@ -1040,19 +1047,39 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			}
 
 			$menu['lessons'] = $this->lessons_link();
-
 		}
 
-		$menu = apply_filters( 'sensei_learners_sub_menu', $menu );
+		return apply_filters( 'sensei_learners_sub_menu', $menu );
+	}
 
-		if ( ! empty( $menu ) ) {
-			echo '<ul class="subsubsub">' . "\n";
-			foreach ( $menu as $class => $item ) {
-				$menu[ $class ] = "\t<li class='$class'>$item";
-			}
-			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
-			echo '</ul>' . "\n";
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
+	public function extra_tablenav( $which ) {
+		if ( 'top' === $which ) {
+			echo '<div class="alignleft actions">';
 		}
+		parent::extra_tablenav( $which );
+
+		if ( 'bottom' === $which ) {
+			do_action( 'sensei_learners_extra' );
+		}
+
+		if ( 'top' === $which ) {
+			echo '</div>';
+		}
+	}
+
+	/**
+	 * Output search form for table.
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
 	/**

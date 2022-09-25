@@ -64,7 +64,7 @@ class Sensei_Blocks {
 		$this->lesson = new Sensei_Lesson_Blocks();
 		$this->quiz   = new Sensei_Quiz_Blocks();
 		$this->page   = new Sensei_Page_Blocks();
-
+		new Sensei_Global_Blocks();
 		new Sensei\Blocks\Course_Theme_Blocks();
 	}
 
@@ -82,6 +82,24 @@ class Sensei_Blocks {
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
 		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css' );
+
+		wp_register_script( 'sensei-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', false );
+		wp_register_script( 'sensei-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', false );
+
+		wp_add_inline_script(
+			'sensei-youtube-iframe-api',
+			'window.senseiYouTubeIframeAPIReady = new Promise( ( resolve ) => {
+				const previousYouTubeIframeAPIReady =
+					window.onYouTubeIframeAPIReady !== undefined
+						? window.onYouTubeIframeAPIReady
+						: () => {};
+				window.onYouTubeIframeAPIReady = () => {
+					resolve();
+					previousYouTubeIframeAPIReady();
+				};
+			} )',
+			'before'
+		);
 	}
 
 	/**
@@ -154,7 +172,7 @@ class Sensei_Blocks {
 	/**
 	 * Check if the current post has any Sensei blocks.
 	 *
-	 * @param int|WP_Post|null $post
+	 * @param int|WP_Post|null $post Post.
 	 *
 	 * @return bool
 	 */
