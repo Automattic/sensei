@@ -118,7 +118,6 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 2022-09-26 - version 4.6.4
 * Add: Show Course Categories preview [#5513](https://github.com/Automattic/sensei/pull/5513)
 * Add: Learning Mode - Add a prerequisite notice to the quiz page. [#5476](https://github.com/Automattic/sensei/pull/5476
-* Add: e2e tests to course list [#5476](https://github.com/Automattic/sensei/pull/5478
 * Add: Add course list filter block [#5567](https://github.com/Automattic/sensei/pull/5567
 * Add: Course list icon [#5595](https://github.com/Automattic/sensei/pull/5595
 * Add: Border setting to Course List block [#5576](https://github.com/Automattic/sensei/pull/5576
@@ -142,7 +141,6 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Remove unneeded icon font formats [#5655](https://github.com/Automattic/sensei/pull/5655
 * Fix: Spacings, alignments and sizes for course list patterns [#5710](https://github.com/Automattic/sensei/pull/5710
 * Tweak: Remove "Beta" label from Course List block [#5593](https://github.com/Automattic/sensei/pull/5593
-* Tweak: Refactor video extension feature removing wrapper [#5549](https://github.com/Automattic/sensei/pull/5549
 
 2022-08-24 - version 4.6.3
 * New: Course List block (beta)
