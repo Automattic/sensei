@@ -14,7 +14,7 @@ import { useQueryStringRouter } from '../../shared/query-string-router';
  * @param {Object} props       Component props.
  * @param {Array}  props.steps The available steps.
  */
-const ProgressBar = ( { steps } ) => {
+const NavigationBar = ( { steps } ) => {
 	const { currentRoute } = useQueryStringRouter();
 
 	const length = steps.length;
@@ -26,16 +26,16 @@ const ProgressBar = ( { steps } ) => {
 	const percentage = ( ( currentStep + 1 ) / length ) * 100;
 
 	return (
-		<div className="sensei-setup-wizard__progress-bar">
+		<div className="sensei-setup-wizard__navigation-bar">
 			<div
 				role="progressbar"
 				aria-label={ __( 'Sensei Onboarding Progress', 'sensei-lms' ) }
 				aria-valuenow={ percentage }
-				className="sensei-setup-wizard__progress-bar-filled"
+				className="sensei-setup-wizard__navigation-bar-filled"
 				style={ { width: `${ percentage }%` } }
 			/>
 		</div>
 	);
 };
 
-export default ProgressBar;
+export default NavigationBar;

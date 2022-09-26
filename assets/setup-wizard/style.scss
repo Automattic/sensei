@@ -9,11 +9,11 @@ $big-horizontal-padding: 80px;
 @import '../css/font-recoleta';
 @import 'fullscreen';
 @import 'animations';
+@import 'navigation-bar/style';
 @import 'welcome/style';
 @import 'purpose/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
-@import 'progress-bar/style';
 
 .sensei-setup-wizard-page {
 	overflow-x: hidden;

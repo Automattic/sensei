@@ -16,7 +16,7 @@ import QueryStringRouter, {
 	Route,
 	useQueryStringRouter,
 } from '../shared/query-string-router';
-import ProgressBar from './progress-bar';
+import NavigationBar from './navigation-bar';
 import LogoTree from '../icons/logo-tree.svg';
 import steps from './steps';
 
@@ -95,7 +95,7 @@ const SenseiSetupWizardPage = () => {
 			defaultRoute={ steps[ 0 ].key }
 		>
 			<Fullscreen />
-			<ProgressBar steps={ steps } />
+			<NavigationBar steps={ steps } />
 
 			<h1 className="sensei-setup-wizard__sensei-logo">
 				<LogoTree /> Sensei

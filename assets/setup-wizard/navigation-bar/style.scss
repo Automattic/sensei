@@ -1,11 +1,11 @@
 .sensei-setup-wizard {
-	&__progress-bar {
+	&__navigation-bar {
 		height: 8px;
-		min-height: 8px; // Fixes issue that progress bar disappears with scroll.
+		min-height: 8px; // Fixes issue that navigation bar disappears with scroll.
 		background-color: #ffffff;
 	}
 
-	&__progress-bar-filled {
+	&__navigation-bar-filled {
 		background-color: #000000;
 		height: 100%;
 		transition: 0.5s width;
