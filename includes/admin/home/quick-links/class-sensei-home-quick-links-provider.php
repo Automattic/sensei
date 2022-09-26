@@ -11,6 +11,8 @@
  */
 class Sensei_Home_Quick_Links_Provider {
 
+	const ACTION_INSTALL_DEMO_COURSE = 'sensei://install-demo-course';
+
 	/**
 	 * Return a list of categories which each contain multiple quick link items.
 	 *
@@ -22,7 +24,7 @@ class Sensei_Home_Quick_Links_Provider {
 				__( 'Courses', 'sensei-lms' ),
 				[
 					new Sensei_Home_Quick_Links_Item( __( 'Create a Course', 'sensei-lms' ), admin_url( '/post-new.php?post_type=course' ) ),
-					new Sensei_Home_Quick_Links_Item( __( 'Install a Demo Course', 'sensei-lms' ), 'sensei://install-demo-course' ),
+					new Sensei_Home_Quick_Links_Item( __( 'Install a Demo Course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE ),
 					new Sensei_Home_Quick_Links_Item( __( 'Import a Course', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei-tools&tool=import-content' ) ),
 					new Sensei_Home_Quick_Links_Item( __( 'Reports', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei_reports' ) ),
 				]

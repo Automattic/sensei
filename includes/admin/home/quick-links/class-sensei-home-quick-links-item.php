@@ -48,7 +48,8 @@ class Sensei_Home_Quick_Links_Item {
 	}
 
 	/**
-	 * Get quick link title.
+	 * Get quick link url. Special actions are returned as a url under the `sensei://` protocol.
+	 * Check `Sensei_Home_Quick_Links_Provider::ACTION_*` constants for available special actions.
 	 *
 	 * @return string
 	 */

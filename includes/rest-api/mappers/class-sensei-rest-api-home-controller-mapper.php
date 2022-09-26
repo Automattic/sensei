@@ -36,6 +36,8 @@ class Sensei_REST_API_Home_Controller_Mapper {
 
 	/**
 	 * Maps an item to its REST representation.
+	 * Url might represent some special actions by using the `sensei://` protocol.
+	 * Check `Sensei_Home_Quick_Links_Provider::ACTION_*` constants for available values.
 	 *
 	 * @param Sensei_Home_Quick_Links_Item $item The quick links item to map.
 	 * @return array
