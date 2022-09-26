@@ -282,7 +282,7 @@ export default [
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
-						height: '350px',
+						height: '500px',
 					} }
 				>
 					<p
