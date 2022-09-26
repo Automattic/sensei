@@ -2628,31 +2628,65 @@ class Sensei_Utils {
 	}
 
 	/**
-	 * Gets the HTML content from the Featured Video for a post.
+	 * Render a video embed.
+	 *
+	 * @param string $url The URL for the video embed.
+	 *
+	 * @return string an embeddable HTML string.
+	 */
+	public static function render_video_embed( $url ) {
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'title'           => array(),
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
+		);
+
+		if ( 'http' === substr( $url, 0, 4 ) ) {
+			// V2 - make width and height a setting for video embed.
+			$url = wp_oembed_get( esc_url( $url ) );
+			$url = do_shortcode( html_entity_decode( $url ) );
+		}
+		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
+	}
+	/**
+	 * Gets the HTML content from the Featured Video for a post
 	 *
 	 * @since $$next-version$$
 	 *
 	 * @param string $post_id the post ID.
 	 *
-	 * @return string The featured video HTML output.
+	 * @return string|false The featured video HTML output if it exists, or false if it doesn't.
 	 */
 	public static function get_featured_video_html( $post_id ) {
-		global $wp_embed;
+		$video_embed = '';
 		if ( has_blocks( $post_id ) ) {
 			$post   = get_post( $post_id );
 			$blocks = parse_blocks( $post->post_content );
 			foreach ( $blocks as $block ) {
 				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-					$content = render_block( $block );
-					$content = $wp_embed->run_shortcode( $content );
-					return $wp_embed->autoembed( $content );
+					// Handle Media Library Files.
+					if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+						$block = $block['innerBlocks'][0];
+					}
+					// Handle Media Library Videos.
+					if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
+						return trim( $block['innerBlocks'][0]['innerHTML'] );
+					}
+					// Handle oEmbeds.
+					$video_embed = $block['innerBlocks'][0]['attrs']['url'];
 				}
 			}
 		} else {
-			ob_start();
-			Sensei()->frontend->sensei_lesson_video( $post_id );
-			return trim( ob_get_clean() );
+			$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 		}
+		return self::render_video_embed( $video_embed );
 	}
 }
 
