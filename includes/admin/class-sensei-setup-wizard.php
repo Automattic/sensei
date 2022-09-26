@@ -25,7 +25,7 @@ class Sensei_Setup_Wizard {
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
 	const MC_GDPR_FIELD               = '23563';
-	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
+	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post-json?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
 
 	/**
 	 * Default value for setup wizard user data.
