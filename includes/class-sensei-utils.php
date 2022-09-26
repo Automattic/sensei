@@ -2655,8 +2655,9 @@ class Sensei_Utils {
 		}
 		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
 	}
+
 	/**
-	 * Gets the HTML content from the Featured Video for a post
+	 * Gets the HTML content from the Featured Video for a lesson.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -2665,30 +2666,21 @@ class Sensei_Utils {
 	 * @return string|false The featured video HTML output if it exists, or false if it doesn't.
 	 */
 	public static function get_featured_video_html( $post_id = null ) {
-		$video_embed = '';
 		$post = get_post( $post_id );
 
-		if ( has_blocks( $post ) ) {
-
+		if ( has_block( 'sensei-lms/featured-video', $post ) ) {
 			$blocks = parse_blocks( $post->post_content );
 			foreach ( $blocks as $block ) {
 				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-					// Handle Media Library Files.
-					if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
-						$block = $block['innerBlocks'][0];
-					}
-					// Handle Media Library Videos.
-					if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
-						return trim( $block['innerBlocks'][0]['innerHTML'] );
-					}
-					// Handle oEmbeds.
-					$video_embed = $block['innerBlocks'][0]['attrs']['url'];
+					$content = render_block( $block );
+					global $wp_embed;
+					return $wp_embed->autoembed( $content );
 				}
 			}
-		} else {
-			$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
 		}
-		return self::render_video_embed( $video_embed );
+		$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
+		return $video_embed ? self::render_video_embed( $video_embed ) : '';
+
 	}
 }
 
