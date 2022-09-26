@@ -65,6 +65,7 @@ class Sensei_Course_Theme_Templates {
 
 		// The below hooks enable block theme support and inject the learning mode templates.
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
+		add_action( 'admin_init', [ $this, 'maybe_add_theme_supports' ] );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_lesson_template' ], 10, 4 );
@@ -75,6 +76,8 @@ class Sensei_Course_Theme_Templates {
 
 	/**
 	 * Use course theme if it's enabled for the current lesson or quiz.
+	 *
+	 * @access private
 	 */
 	public function maybe_use_course_theme_templates() {
 		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
@@ -82,6 +85,18 @@ class Sensei_Course_Theme_Templates {
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
 			add_theme_support( 'block-templates' );
 			add_theme_support( 'align-wide' );
+		}
+	}
+
+	/**
+	 * Add block template supports in admin.
+	 *
+	 * @access private
+	 */
+	public function maybe_add_theme_supports() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Argument cast to int and used for comparison.
+		if ( isset( $_GET['post'] ) && in_array( get_post_type( (int) $_GET['post'] ), [ 'lesson', 'quiz' ], true ) ) {
+			add_theme_support( 'block-templates' );
 		}
 	}
 
