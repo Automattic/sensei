@@ -263,7 +263,7 @@ export default [
 	{
 		...courseThemeLessonVideoMeta,
 		...meta,
-		title: __( 'Lesson Video (Learning Mode)', 'sensei-lms' ),
+		title: __( 'Lesson Video', 'sensei-lms' ),
 		description: __(
 			'Displays the featured video if there is one for the lesson.',
 			'sensei-lms'
