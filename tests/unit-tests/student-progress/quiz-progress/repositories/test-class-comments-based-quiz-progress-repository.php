@@ -16,7 +16,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 	 *
 	 * @var \Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	public function setup() {
 		parent::setup();

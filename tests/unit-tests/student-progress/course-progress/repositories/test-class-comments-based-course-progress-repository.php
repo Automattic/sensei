@@ -11,7 +11,7 @@ use Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_P
  * @covers \Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository
  */
 class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
-	private $factory;
+	protected $factory;
 
 	public function setup() {
 		parent::setup();
