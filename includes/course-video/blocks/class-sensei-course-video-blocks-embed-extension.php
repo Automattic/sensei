@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.15.0
  *
- * @deprecated 4.6.4
+ * @deprecated $$next-version$$
  */
 abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Initialize hooks.
 	 */
 	public function init() {
-		_deprecated_function( __METHOD__, '4.6.4' );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		add_filter( 'embed_oembed_html', [ $this, 'wrap_video' ], 10, 2 );
 	}
@@ -30,7 +30,7 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Returns wrapped video block.
 	 *
-	 * @deprecated 4.6.4
+	 * @deprecated $$next-version$$
 	 *
 	 * @param string $html Video HTML.
 	 * @param string $url  Video URL.
@@ -38,7 +38,7 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	 * @return string
 	 */
 	public function wrap_video( $html, $url ): string {
-		_deprecated_function( __METHOD__, '4.6.4' );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		if ( ! $this->is_supported( $url ) ) {
 			return $html;
@@ -52,7 +52,7 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Returns if the URL is supported by the extension.
 	 *
-	 * @deprecated 4.6.4
+	 * @deprecated $$next-version$$
 	 *
 	 * @param string $url Video URL.
 	 *
@@ -63,7 +63,7 @@ abstract class Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
 	 * Returns a class name for the extension.
 	 *
-	 * @deprecated 4.6.4
+	 * @deprecated $$next-version$$
 	 *
 	 * @return string
 	 */

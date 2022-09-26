@@ -108,7 +108,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		 * the students report.
 		 *
 		 * @hook  sensei_students_report_last_activity_filter_enabled
-		 * @since 4.6.4
+		 * @since $$next-version$$
 		 *
 		 * @param {boolean} $enabled Whether the students last activity filter is enabled.
 		 *
@@ -141,7 +141,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Filter the users to ones enrolled in a course.
 	 *
-	 * @deprecated 4.6.4
+	 * @deprecated $$next-version$$
 	 *
 	 * @since  4.4.1
 	 * @access private
@@ -149,7 +149,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	 * @param WP_User_Query $query The user query.
 	 */
 	public function only_course_enrolled_users( WP_User_Query $query ) {
-		_deprecated_function( __METHOD__, '4.6.4' );
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		global $wpdb;
 
@@ -165,7 +165,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 	/**
 	 * Group query by users.
 	 *
-	 * @since  4.6.4
+	 * @since  $$next-version$$
 	 * @access private
 	 *
 	 * @param WP_User_Query $query The user query.

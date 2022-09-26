@@ -87,7 +87,7 @@ class Sensei_Wp_Kses {
 	 * see https://www.w3schools.com/html/html_formatting.asp
 	 *
 	 * @access public
-	 * @since 4.6.4
+	 * @since $$next-version$$
 	 *
 	 * @return array HTML formatting tags
 	 */public static function get_allowed_html_formatting_tags(): array {

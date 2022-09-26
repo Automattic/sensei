@@ -33,7 +33,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Function to add a Featured Course badge to block.
 	 *
 	 * @access private
-	 * @since 4.6.4
+	 * @since $$next-version$$
 	 *
 	 * @param string   $block_content Block content.
 	 * @param array    $block Block.
@@ -57,7 +57,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * A function to add a course Featured course badge to the course categories block.
 	 *
 	 * @access private
-	 * @since 4.6.4
+	 * @since $$next-version$$
 	 *
 	 * @param string   $block_content This is block content.
 	 * @param object   $block_parent This is block parent.
