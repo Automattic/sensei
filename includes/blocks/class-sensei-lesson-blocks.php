@@ -111,6 +111,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
 		new Sensei_Block_Contact_Teacher();
+		new Sensei_Featured_Video_Block();
 
 		$this->remove_block_related_content();
 
