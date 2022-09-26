@@ -21,7 +21,7 @@ const UsageTracking = () => {
 	);
 
 	const onSubmitSuccess = () => {
-		goTo( 'newsletter' );
+		goTo( 'preparing' );
 	};
 
 	const submitPage = ( allowUsageTracking ) => () => {

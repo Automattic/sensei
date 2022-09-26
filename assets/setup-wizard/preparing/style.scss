@@ -1,0 +1,34 @@
+.sensei-setup-wizard {
+	&__preparing-step {
+		display: flex;
+		flex-direction: column;
+		max-width: 520px;
+		height: 100%;
+		margin: 0 auto;
+		justify-content: center;
+		text-align: center;
+		animation: 0.5s slideInFromBottom;
+	}
+
+	&__preparing-status {
+		margin-bottom: 24px;
+		font-family: $recoleta-font-family;
+		font-size: 28px;
+		line-height: 120%;
+
+		@media (min-width: $small-screen-break) {
+			font-size: 32px;
+		}
+	}
+
+	&__preparing-progress-bar {
+		height: 4px;
+		background-color: #ffffff;
+	}
+
+	&__preparing-progress-bar-filled {
+		background-color: #217D7C;
+		height: 100%;
+		transition: 0.5s width;
+	}
+}

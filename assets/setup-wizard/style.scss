@@ -6,6 +6,8 @@ $small-horizontal-padding: 20px;
 $big-vertical-padding: 60px;
 $big-horizontal-padding: 80px;
 
+$recoleta-font-family: Recoleta, sans-serif;
+
 @import '../css/font-recoleta';
 @import 'fullscreen';
 @import 'animations';
@@ -14,6 +16,7 @@ $big-horizontal-padding: 80px;
 @import 'purpose/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
+@import 'preparing/style';
 
 .sensei-setup-wizard-page {
 	overflow-x: hidden;
@@ -54,7 +57,7 @@ $big-horizontal-padding: 80px;
 		display: flex;
 		margin: $small-horizontal-padding;
 		align-items: center;
-		font-family: Recoleta, sans-serif;
+		font-family: $recoleta-font-family;
 		font-size: 18px;
 
 		@media (min-width: $small-screen-break) {
@@ -69,7 +72,7 @@ $big-horizontal-padding: 80px;
 	}
 
 	&__step-title {
-		font-family: Recoleta, sans-serif;
+		font-family: $recoleta-font-family;
 		font-size: 28px;
 		font-weight: 400;
 		line-height: 1.1;
@@ -241,7 +244,8 @@ $big-horizontal-padding: 80px;
 	}
 
 	@at-root {
-		.sensei-setup-wizard-page--welcome & {
+		.sensei-setup-wizard-page--welcome &,
+		.sensei-setup-wizard-page--preparing & {
 			@media (min-height: 460px) {
 				background-position: -35px 102%, calc( 100% + 100px ) 0;
 			}
