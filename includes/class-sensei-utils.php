@@ -2664,10 +2664,12 @@ class Sensei_Utils {
 	 *
 	 * @return string|false The featured video HTML output if it exists, or false if it doesn't.
 	 */
-	public static function get_featured_video_html( $post_id ) {
+	public static function get_featured_video_html( $post_id = null ) {
 		$video_embed = '';
-		if ( has_blocks( $post_id ) ) {
-			$post   = get_post( $post_id );
+		$post = get_post( $post_id );
+
+		if ( has_blocks( $post ) ) {
+
 			$blocks = parse_blocks( $post->post_content );
 			foreach ( $blocks as $block ) {
 				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
