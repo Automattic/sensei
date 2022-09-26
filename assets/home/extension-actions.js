@@ -9,7 +9,7 @@ import { check } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import { EXTENSIONS_STORE, isLoadingStatus } from './store';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../extensions/store';
 import UpdateIcon from '../icons/update.svg';
 import { logEvent } from '../shared/helpers/log-event';
 import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
@@ -21,15 +21,12 @@ import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com'
  * @param {Array}  props.actions Actions array containing objects with props for link or button.
  */
 const ExtensionActions = ( { actions } ) => (
-	<ul className="sensei-extensions__extension-actions">
+	<ul className="sensei-home__extension-actions">
 		{ actions.map( ( { key, children, ...actionProps } ) => (
-			<li
-				key={ key }
-				className="sensei-extensions__extension-actions__item"
-			>
+			<li key={ key } className="sensei-home__extension-actions__item">
 				<Button
 					isPrimary={ ! actionProps.href }
-					isLink={ !! actionProps.href }
+					isSecondary={ !! actionProps.href }
 					{ ...actionProps }
 				>
 					{ children }
@@ -65,7 +62,7 @@ export const useExtensionActions = ( extension ) => {
 	if ( isLoadingStatus( extension.status ) ) {
 		actionProps = {
 			children: __( 'In progress…', 'sensei-lms' ),
-			className: 'sensei-extensions__rotating-icon',
+			className: 'sensei-home__rotating-icon',
 			icon: UpdateIcon,
 			disabled: true,
 			...actionProps,

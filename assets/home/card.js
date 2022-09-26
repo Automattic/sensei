@@ -42,33 +42,31 @@ const Card = ( props ) => {
 		<article
 			{ ...htmlProps }
 			className={ classnames(
-				'sensei-extensions__card',
+				'sensei-home__card',
 				htmlProps?.className
 			) }
 		>
 			<div
-				className="sensei-extensions__card__image"
+				className="sensei-home__card__image"
 				style={ {
 					backgroundImage,
 				} }
 			/>
-			<div className="sensei-extensions__card__content">
-				<header className="sensei-extensions__card__header">
-					<h3 className="sensei-extensions__card__title">
-						{ title }
-					</h3>
+			<div className="sensei-home__card__content">
+				<header className="sensei-home__card__header">
+					<h3 className="sensei-home__card__title">{ title }</h3>
 					{
 						// eslint-disable-next-line dot-notation -- Data coming from API.
 						( badgeLabel || props?.[ 'has_update' ] ) && (
-							<small className="sensei-extensions__card__new-badge">
+							<small className="sensei-home__card__new-badge">
 								{ badgeLabel ||
 									__( 'New version', 'sensei-lms' ) }
 							</small>
 						)
 					}
 				</header>
-				<div className="sensei-extensions__card__body">
-					<p className="sensei-extensions__card__description">
+				<div className="sensei-home__card__body">
+					<p className="sensei-home__card__description">
 						{ excerpt }
 					</p>
 					{ actions && <ExtensionActions actions={ actions } /> }
