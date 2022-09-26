@@ -22,8 +22,8 @@ class Sensei_Home_Quick_Links_Category_Test extends WP_UnitTestCase {
 
 		$category = new Sensei_Home_Quick_Links_Category( $the_title, $items );
 
-		$this->assertEquals( $the_title, $category->title );
-		$this->assertSame( $items, $category->items );
+		$this->assertEquals( $the_title, $category->get_title() );
+		$this->assertSame( $items, $category->get_items() );
 	}
 
 	/**
@@ -34,9 +34,9 @@ class Sensei_Home_Quick_Links_Category_Test extends WP_UnitTestCase {
 
 		$category = new Sensei_Home_Quick_Links_Category( $the_title );
 
-		$this->assertEquals( $the_title, $category->title );
-		$this->assertIsArray( $category->items );
-		$this->assertEmpty( $category->items );
+		$this->assertEquals( $the_title, $category->get_title() );
+		$this->assertIsArray( $category->get_items() );
+		$this->assertEmpty( $category->get_items() );
 	}
 
 }
