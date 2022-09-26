@@ -115,6 +115,35 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-09-26 - version 4.6.4
+* Add: Show Course Categories preview [#5513](https://github.com/Automattic/sensei/pull/5513)
+* Add: Learning Mode - Add a prerequisite notice to the quiz page. [#5476](https://github.com/Automattic/sensei/pull/5476
+* Add: e2e tests to course list [#5476](https://github.com/Automattic/sensei/pull/5478
+* Add: Add course list filter block [#5567](https://github.com/Automattic/sensei/pull/5567
+* Add: Course list icon [#5595](https://github.com/Automattic/sensei/pull/5595
+* Add: Border setting to Course List block [#5576](https://github.com/Automattic/sensei/pull/5576
+* Add: Make course list filter single block and implement student course filter [#5578](https://github.com/Automattic/sensei/pull/5578
+* Add: Course list filter block to patterns [#5612](https://github.com/Automattic/sensei/pull/5612
+* Add: Show featured course label on course list block [#5571](https://github.com/Automattic/sensei/pull/5571
+* Add: Support to render html tags incoming from legacy questions [#5737](https://github.com/Automattic/sensei/pull/5737
+* Fix: Fatal error in Jetpack REST API endpoint [#5548](https://github.com/Automattic/sensei/pull/5548
+* Fix: Remove block align to avoid error message have different width [#5546](https://github.com/Automattic/sensei/pull/5546
+* Fix: Hide"List view" and "Grid view" toolbar options [#5558](https://github.com/Automattic/sensei/pull/5558com/Automattic/sensei/pull/5558
+* Fix: Simplify Course List block patterns and ensure they look good on Divi [#5556](https://github.com/Automattic/sensei/pull/5556
+* Fix: Align buttons to bottom of column in Course List block grid pattern [#5566](https://github.com/Automattic/sensei/pull/5566
+* Fix: Ignore negative numbers for `show_questions` option. [#5579](https://github.com/Automattic/sensei/pull/5579
+* Fix: Update students report to work in environments that don't support users table relationship [#5565](https://github.com/Automattic/sensei/pull/5565
+* Fix: Jetpack video initialization in the editor [#5577](https://github.com/Automattic/sensei/pull/5577
+* Fix: Fatal error when printing notices on redirect [#5568](https://github.com/Automattic/sensei/pull/5568
+* Fix: Add color fallback to course categories block [#5557](https://github.com/Automattic/sensei/pull/5557
+* Fix: Course List block UI improvements for Astra [#5604](https://github.com/Automattic/sensei/pull/5604
+* Fix: Issues for when course list filter is added to non course list blocks [#5617](https://github.com/Automattic/sensei/pull/5617
+* Fix: Remove featured label hook for course categories for older wp version [#5635](https://github.com/Automattic/sensei/pull/5635
+* Fix: Remove unneeded icon font formats [#5655](https://github.com/Automattic/sensei/pull/5655
+* Fix: Spacings, alignments and sizes for course list patterns [#5710](https://github.com/Automattic/sensei/pull/5710
+* Tweak: Remove "Beta" label from Course List block [#5593](https://github.com/Automattic/sensei/pull/5593
+* Tweak: Refactor video extension feature removing wrapper [#5549](https://github.com/Automattic/sensei/pull/5549
+
 2022-08-24 - version 4.6.3
 * New: Course List block (beta)
     * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
@@ -140,14 +169,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Add: Add className prop to Sensei modal [#5462](https://github.com/Automattic/sensei/pull/5462)
 * Add: Change confirm dialog styles [#5454](https://github.com/Automattic/sensei/pull/5454)
 * Add: Fix set current time to keep the same behavior for all players [#5416](https://github.com/Automattic/sensei/pull/5416)
-
-
-2022-08-09 - version 4.6.1
-* Fix: Fix lesson quick edit and bulk edit for quiz settings [#4404](https://github.com/Automattic/sensei/pull/4404)
-* Fix: Use standard approach of displaying filters for list tables [#5174](https://github.com/Automattic/sensei/pull/5174)
-* Fix: Improve test coverage for Sensei_Lesson [#5389](https://github.com/Automattic/sensei/pull/5389)
-* Fix: Fix player API on the editor side when editing embeds with no changes [#5392](https://github.com/Automattic/sensei/pull/5392)
-* Fix: Fix multiple emails are send when completing a course in the backend [#5393](https://github.com/Automattic/sensei/pull/5393)
-* Add: Add current time to player and hook to get the video duration [#5410](https://github.com/Automattic/sensei/pull/5410)
-* Fix: Fix html entities bug for question answers. [#5414](https://github.com/Automattic/sensei/pull/5414)
-* Fix: Fix loading issue where the player wasn't detected correctly on the editor [#5421](https://github.com/Automattic/sensei/pull/5421)
