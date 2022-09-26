@@ -42,8 +42,8 @@ class Sensei_REST_API_Home_Controller_Mapper {
 	 */
 	private function map_quick_links_item( Sensei_Home_Quick_Links_Item $item ): array {
 		return [
-			'title' => $item->title,
-			'url'   => $item->url,
+			'title' => $item->get_title(),
+			'url'   => $item->get_url(),
 		];
 	}
 }

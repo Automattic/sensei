@@ -18,14 +18,14 @@ class Sensei_Home_Quick_Links_Item {
 	 *
 	 * @var string
 	 */
-	public $title;
+	private $title;
 
 	/**
 	 * The quick link url.
 	 *
 	 * @var string
 	 */
-	public $url;
+	private $url;
 
 	/**
 	 * Constructor for Sensei_Home_Quick_Links_Item.
@@ -36,6 +36,24 @@ class Sensei_Home_Quick_Links_Item {
 	public function __construct( string $title, string $url ) {
 		$this->title = $title;
 		$this->url   = $url;
+	}
+
+	/**
+	 * Get quick link title.
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return $this->title;
+	}
+
+	/**
+	 * Get quick link title.
+	 *
+	 * @return string
+	 */
+	public function get_url(): string {
+		return $this->url;
 	}
 
 }

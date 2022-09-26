@@ -23,8 +23,8 @@ class Sensei_Home_Quick_Links_Item_Test extends WP_UnitTestCase {
 
 		$category = new Sensei_Home_Quick_Links_Item( $the_title, $the_url );
 
-		$this->assertEquals( $the_title, $category->title );
-		$this->assertEquals( $the_url, $category->url );
+		$this->assertEquals( $the_title, $category->get_title() );
+		$this->assertEquals( $the_url, $category->get_url() );
 	}
 
 }
