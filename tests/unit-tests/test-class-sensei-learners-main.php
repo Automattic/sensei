@@ -14,7 +14,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 
-	private $factory;
+	protected $factory;
 
 	private $course_id;
 

@@ -103,9 +103,6 @@ class Sensei_Notices {
 	public function maybe_print_notices() {
 		if ( count( $this->notices ) > 0 ) {
 			foreach ( $this->notices  as  $notice ) {
-
-				$classes = 'sensei-message ' . $notice['type'];
-
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in generate_notice
 				echo $this->generate_notice( $notice['type'], $notice['content'] );
 			}
