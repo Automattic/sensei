@@ -36,8 +36,12 @@ class Sensei_Home_Quick_Links_Provider_Test extends WP_UnitTestCase {
 
 		foreach ( $categories as $category ) {
 			$this->assertInstanceOf( Sensei_Home_Quick_Links_Category::class, $category );
-			$this->assertNotNull( $category->get_title() );
+			$this->assertIsString( $category->get_title() );
 			$this->assertIsArray( $category->get_items() );
+			foreach ( $category->get_items() as $item ) {
+				$this->assertIsString( $item->get_title() );
+				$this->assertIsString( $item->get_url() );
+			}
 		}
 	}
 }
