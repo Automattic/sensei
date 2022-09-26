@@ -56,12 +56,7 @@ class Lesson_Video {
 			return '';
 		}
 
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-
-		if (
-			! Sensei_Course::is_user_enrolled( $course_id )
-			|| Sensei_Utils::user_completed_lesson( $lesson_id )
-		) {
+		if ( ! sensei_can_user_view_lesson() ) {
 			return '';
 		}
 
