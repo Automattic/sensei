@@ -88,6 +88,7 @@ class Sensei_Setup_Wizard {
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
+			add_action( 'current_screen', [ $this, 'remove_notices_from_setup_wizard' ] );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
@@ -119,6 +120,19 @@ class Sensei_Setup_Wizard {
 				$this->page_slug,
 				[ $this, 'render_wizard_page' ]
 			);
+		}
+	}
+
+	/**
+	 * Remove notices from Sensei Setup Wizard.
+	 *
+	 * @access private
+	 *
+	 * @param WP_Screen $current_screen Current screen object.
+	 */
+	public function remove_notices_from_setup_wizard( $current_screen ) {
+		if ( strpos( $current_screen->id, $this->page_slug ) !== false ) {
+			remove_all_actions( 'admin_notices' );
 		}
 	}
 
