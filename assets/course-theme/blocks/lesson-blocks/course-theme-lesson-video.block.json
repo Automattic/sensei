@@ -3,6 +3,7 @@
   "category": "theme",
   "supports": {
     "align": true,
+    "alignWide": true,
     "color": {
       "gradients": true,
       "link": true,

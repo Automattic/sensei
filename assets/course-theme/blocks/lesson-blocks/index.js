@@ -268,11 +268,17 @@ export default [
 			'Displays the featured video if there is one for the lesson.',
 			'sensei-lms'
 		),
-		edit() {
+		apiVersion: 2,
+		edit: function EditLessonVideo() {
+			const blockProps = useBlockProps( {
+				className: 'sensei-course-theme-lesson-video',
+			} );
 			return (
 				<div
-					className=""
+					{ ...blockProps }
 					style={ {
+						backgroundColor: '#000',
+						color: '#fff',
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
@@ -283,13 +289,7 @@ export default [
 						className="has-text-align-center"
 						style={ { fontSize: '100px' } }
 					>
-						<img
-							className="emoji"
-							alt="▶"
-							src="https://s.w.org/images/core/emoji/14.0.0/svg/25b6.svg"
-							width="250"
-							height="250"
-						/>{ ' ' }
+						▶
 					</p>
 				</div>
 			);

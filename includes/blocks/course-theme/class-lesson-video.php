@@ -79,15 +79,13 @@ class Lesson_Video {
 
 		remove_action( 'sensei_lesson_video', [ Sensei_Frontend::class, 'sensei_lesson_video' ] );
 
-		global $has_rendered_lesson_video;
-		$has_rendered_lesson_video = true;
+		global $sensei_template_has_lesson_video_block;
+		$sensei_template_has_lesson_video_block = true;
 
 		return sprintf(
-			'<div %s>
-				%s
-				</div>',
+			'<div %1s>%2s</div>',
 			$wrapper_attr,
-			$content
+			trim( $content )
 		);
 	}
 }

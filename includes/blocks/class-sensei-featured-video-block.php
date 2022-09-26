@@ -45,9 +45,9 @@ class Sensei_Featured_Video_Block {
 	 * @return string The HTML of the block.
 	 */
 	public function render_featured_video( array $attributes, string $content ): string {
-		global $has_rendered_lesson_video;
+		global $sensei_template_has_lesson_video_block;
 
-		if ( $has_rendered_lesson_video ) {
+		if ( $sensei_template_has_lesson_video_block ) {
 			return '';
 		}
 		return $content;
