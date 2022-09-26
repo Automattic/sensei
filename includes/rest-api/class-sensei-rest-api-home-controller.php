@@ -51,7 +51,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 *
 	 * @param string                                 $namespace Routes namespace.
 	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper Sensei Home REST API mapper.
-	 * @param Sensei_Home_Quick_Links_1Provider       $quick_links_provider Quick Links provider.
+	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
 	 */
 	public function __construct(
 		$namespace,
