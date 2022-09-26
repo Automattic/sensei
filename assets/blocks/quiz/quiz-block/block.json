@@ -1,5 +1,7 @@
 {
   "name": "sensei-lms/quiz",
+  "title": "Quiz",
+  "description": "Evaluate progress and strengthen understanding of course concepts.",
   "category": "sensei-lms",
   "supports": {
     "html": false,

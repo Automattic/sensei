@@ -1,5 +1,7 @@
 {
   "name": "sensei-lms/course-outline-module",
+  "title": "Module",
+  "description": "Group related lessons together.",
   "category": "sensei-lms",
   "parent": [
     "sensei-lms/course-outline"

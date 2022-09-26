@@ -13,6 +13,7 @@ import metadata from './block.json';
 import icon from '../../icons/conditional-content.svg';
 
 export default {
+	...metadata,
 	title: __( 'Conditional Content', 'sensei-lms' ),
 	description: __(
 		'Content inside this block will be shown to the selected subgroup of users.',
@@ -31,7 +32,6 @@ export default {
 	icon,
 	edit,
 	save,
-	...metadata,
 	transforms: {
 		from: [
 			{

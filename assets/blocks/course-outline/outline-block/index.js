@@ -12,6 +12,7 @@ import edit from './outline-edit';
 import save from './outline-save';
 
 export default {
+	...metadata,
 	title: __( 'Course Outline', 'sensei-lms' ),
 	description: __( 'Manage your Sensei LMS course outline.', 'sensei-lms' ),
 	keywords: [
@@ -75,7 +76,6 @@ export default {
 			},
 		],
 	},
-	...metadata,
 	icon,
 	edit,
 	save,

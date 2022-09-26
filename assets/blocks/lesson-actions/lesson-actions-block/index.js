@@ -12,6 +12,7 @@ import save from './lesson-actions-save';
 import icon from '../../../icons/buttons.svg';
 
 export default {
+	...metadata,
 	title: __( 'Lesson Actions', 'sensei-lms' ),
 	description: __(
 		'Enable a student to perform specific actions for a lesson.',
@@ -32,7 +33,6 @@ export default {
 			{ name: 'sensei-lms/button-reset-lesson' },
 		],
 	},
-	...metadata,
 	icon,
 	edit,
 	save,

@@ -1,5 +1,7 @@
 {
   "name": "sensei-lms/course-outline-lesson",
+  "title": "Lesson",
+  "description": "Where your course content lives.",
   "category": "sensei-lms",
   "parent": [
     "sensei-lms/course-outline",

@@ -11,6 +11,7 @@ import metadata from './block.json';
 import edit from './course-results-edit';
 
 export default {
+	...metadata,
 	title: __( 'Course Results', 'sensei-lms' ),
 	description: __(
 		'Show course results to students on the course completion page.',
@@ -37,7 +38,6 @@ export default {
 	example: {
 		attributes: {},
 	},
-	...metadata,
 	icon,
 	edit,
 };

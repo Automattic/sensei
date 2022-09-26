@@ -11,6 +11,7 @@ import edit from './course-progress-edit';
 import metadata from './block.json';
 
 export default {
+	...metadata,
 	title: __( 'Course Progress', 'sensei-lms' ),
 	description: __(
 		"Display the user's progress in the course. This block is only displayed if the user is enrolled.",
@@ -22,6 +23,5 @@ export default {
 		__( 'Course', 'sensei-lms' ),
 	],
 	icon,
-	...metadata,
 	edit,
 };

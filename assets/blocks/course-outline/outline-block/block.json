@@ -1,5 +1,7 @@
 {
   "name": "sensei-lms/course-outline",
+  "title": "Course Outline",
+  "description": "Manage your Sensei LMS course outline.",
   "category": "sensei-lms",
   "supports": {
     "html": false,

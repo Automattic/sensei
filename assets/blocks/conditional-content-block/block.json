@@ -1,5 +1,7 @@
 {
   "name": "sensei-lms/conditional-content",
+  "title": "Conditional Content",
+  "description": "Content inside this block will be shown to the selected subgroup of users.",
   "category": "sensei-lms",
   "supports": {
     "html": false,

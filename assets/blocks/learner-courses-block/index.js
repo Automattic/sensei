@@ -11,6 +11,7 @@ import metadata from './block.json';
 import icon from '../../icons/learner-courses.svg';
 
 export default {
+	...metadata,
 	title: __( 'Student Courses', 'sensei-lms' ),
 	description: __(
 		'Manage what students see on their dashboard. This block is only displayed to logged in students.',
@@ -28,5 +29,4 @@ export default {
 	example: {},
 	icon,
 	edit,
-	...metadata,
 };

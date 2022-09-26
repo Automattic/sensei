@@ -11,6 +11,7 @@ import metadata from './block.json';
 import edit from './lesson-properties-edit';
 
 export default {
+	...metadata,
 	title: __( 'Lesson Properties', 'sensei-lms' ),
 	description: __(
 		'Add lesson properties such as length and difficulty.',
@@ -25,7 +26,6 @@ export default {
 		__( 'Lesson Properties', 'sensei-lms' ),
 	],
 	icon,
-	...metadata,
 	example: {
 		attributes: {
 			difficulty: 'easy',

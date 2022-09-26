@@ -1,5 +1,7 @@
 {
   "name": "sensei-lms/quiz-question",
+  "title": "Question",
+  "description": "The building block of all quizzes.",
   "parent": [ "sensei-lms/quiz" ],
   "category": "sensei-lms",
   "supports": {
