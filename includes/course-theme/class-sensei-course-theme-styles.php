@@ -101,7 +101,7 @@ class Sensei_Course_Theme_Styles {
 
 		$vars['text-color']             = $element_colors['text'] ?? $styles['textColor'] ?? null;
 		$vars['background-color']       = $element_colors['background'] ?? $styles['backgroundColor'] ?? null;
-		$vars['primary-contrast-color'] = $vars['--sensei-background-color'];
+		$vars['primary-contrast-color'] = $vars['background-color'];
 
 		$link = $styles['elements']['link']['color'] ?? null;
 
