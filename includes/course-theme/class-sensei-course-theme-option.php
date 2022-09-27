@@ -118,9 +118,9 @@ class Sensei_Course_Theme_Option {
 	 */
 	public static function should_use_learning_mode() {
 
-		$is_course_content = is_singular( 'lesson' ) || is_singular( 'quiz' ) || is_tax( 'module' );
+		$is_course_content = is_singular( [ 'lesson', 'quiz' ] ) || is_tax( 'module' );
 
-		if ( ! $is_course_content ) {
+		if ( ! $is_course_content && ! is_admin() ) {
 			return false;
 		}
 
@@ -132,14 +132,7 @@ class Sensei_Course_Theme_Option {
 
 		$course_id = absint( $course_id );
 
-		if (
-			self::has_learning_mode_enabled( $course_id ) ||
-			Sensei_Course_Theme::is_preview_mode( $course_id )
-		) {
-			return true;
-		}
-
-		return false;
+		return self::has_learning_mode_enabled( $course_id ) || Sensei_Course_Theme::is_preview_mode( $course_id );
 	}
 
 
