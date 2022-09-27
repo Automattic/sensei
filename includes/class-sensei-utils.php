@@ -2456,6 +2456,10 @@ class Sensei_Utils {
 			'version'      => $plugin_information->version,
 		];
 
+		// Add installed properties to the object.
+		$wc_information = Sensei_Extensions::instance()->add_installed_extensions_properties( [ $wc_information ] );
+		$wc_information = $wc_information[0];
+
 		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
 
 		return $wc_information;
