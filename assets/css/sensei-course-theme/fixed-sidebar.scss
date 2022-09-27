@@ -58,30 +58,4 @@ $breakpoint: 783px;
 		}
 
 	}
-
 }
-// Mobile.
-//
-//@media screen and (max-width: ($breakpoint - 1)) {
-//	body {
-//		--sidebar-width: 0px;
-//	}
-//
-//	.sensei-course-theme {
-//
-//		&__columns {
-//			display: block;
-//		}
-//
-//		&__columns &__sidebar {
-//			position: static;
-//			width: unset;
-//			border: unset;
-//		}
-//
-//		&__columns &__main-content {
-//			flex: 1 !important;
-//			margin-left: 0 !important;
-//		}
-//	}
-//}
