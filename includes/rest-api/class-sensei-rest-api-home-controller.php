@@ -52,6 +52,13 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	private $help_provider;
 
+	/**
+	 * Sensei Pro Promo provider.
+	 *
+	 * @var Sensei_Home_Sensei_Pro_Promo_Provider
+	 */
+	private $pro_promo_provider;
+
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
@@ -60,17 +67,20 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper Sensei Home REST API mapper.
 	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
 	 * @param Sensei_Home_Help_Provider              $help_provider Help provider.
+	 * @param Sensei_Home_Sensei_Pro_Promo_Provider  $pro_promo_provider Sensei Pro Promo provider.
 	 */
 	public function __construct(
 		$namespace,
 		Sensei_REST_API_Home_Controller_Mapper $mapper,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider,
-		Sensei_Home_Help_Provider $help_provider
+		Sensei_Home_Help_Provider $help_provider,
+		Sensei_Home_Sensei_Pro_Promo_Provider $pro_promo_provider
 	) {
 		$this->namespace            = $namespace;
 		$this->mapper               = $mapper;
 		$this->quick_links_provider = $quick_links_provider;
 		$this->help_provider        = $help_provider;
+		$this->pro_promo_provider   = $pro_promo_provider;
 	}
 
 	/**
@@ -190,7 +200,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
 			],
-			'show_sensei_pro_promo'       => false, // Whether we should show the promotional banner for Sensei Pro or not.
+			'show_sensei_pro_promo'       => $this->pro_promo_provider->get(),
 			'notifications'               => [
 				[
 					'heading'     => null, // Not needed for the moment.

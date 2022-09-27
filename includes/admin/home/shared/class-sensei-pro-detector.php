@@ -12,6 +12,7 @@
  * @since $$next-version$$
  */
 class Sensei_Pro_Detector {
+
 	/**
 	 * Whether Sensei Pro is loaded or not.
 	 *
