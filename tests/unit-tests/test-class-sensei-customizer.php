@@ -38,7 +38,7 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 		$customize_manager = new WP_Customize_Manager();
 
 		$this->customizer->add_customizer_settings( $customize_manager );
-		$section = $customize_manager->get_section( 'sensei-course-theme' );
+		$section = $customize_manager->get_section( 'sensei-learning-mode' );
 
 		$expected = [
 			'priority'       => 40,
@@ -86,24 +86,24 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 
 	public function providerAddCustomizerSettings_CustomizeManagerGiven_AddsSettingToCustomizeManager(): array {
 		return [
-			'sensei-course-theme-primary-color'    => [
-				'sensei-course-theme-primary-color',
+			'sensei-learning-mode-primary-color'    => [
+				'sensei-learning-mode-primary-color',
 				[
 					'default'   => '#1e1e1e',
 					'transport' => 'postMessage',
 					'type'      => 'option',
 				],
 			],
-			'sensei-course-theme-background-color' => [
-				'sensei-course-theme-background-color',
+			'sensei-learning-mode-background-color' => [
+				'sensei-learning-mode-background-color',
 				[
 					'default'   => '#ffffff',
 					'transport' => 'postMessage',
 					'type'      => 'option',
 				],
 			],
-			'sensei-course-theme-foreground-color' => [
-				'sensei-course-theme-foreground-color',
+			'sensei-learning-mode-foreground-color' => [
+				'sensei-learning-mode-foreground-color',
 				[
 					'default'   => '#1e1e1e',
 					'transport' => 'postMessage',
@@ -140,27 +140,27 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 
 	public function providerAddCustomizerSettings_CustomizeManagerGiven_AddsControlToCustomizeManager(): array {
 		return [
-			'sensei-course-theme-primary-color'    => [
-				'sensei-course-theme-primary-color',
+			'sensei-learning-mode-primary-color'    => [
+				'sensei-learning-mode-primary-color',
 				[
 					'label'   => 'Primary Color',
-					'section' => 'sensei-course-theme',
+					'section' => 'sensei-learning-mode',
 					'type'    => 'color',
 				],
 			],
-			'sensei-course-theme-background-color' => [
-				'sensei-course-theme-background-color',
+			'sensei-learning-mode-background-color' => [
+				'sensei-learning-mode-background-color',
 				[
 					'label'   => 'Background Color',
-					'section' => 'sensei-course-theme',
+					'section' => 'sensei-learning-mode',
 					'type'    => 'color',
 				],
 			],
-			'sensei-course-theme-foreground-color' => [
-				'sensei-course-theme-foreground-color',
+			'sensei-learning-mode-foreground-color' => [
+				'sensei-learning-mode-foreground-color',
 				[
 					'label'   => 'Text Color',
-					'section' => 'sensei-course-theme',
+					'section' => 'sensei-learning-mode',
 					'type'    => 'color',
 				],
 			],
@@ -168,9 +168,9 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 	}
 
 	public function testOutputCustomSettings_DefaultValuesSet_OutputsCustomSettings() {
-		add_option( 'sensei-course-theme-primary-color', '#1e1e1e' );
-		add_option( 'sensei-course-theme-background-color', '#ffffff' );
-		add_option( 'sensei-course-theme-foreground-color', '#1e1e1e' );
+		add_option( 'sensei-learning-mode-primary-color', '#1e1e1e' );
+		add_option( 'sensei-learning-mode-background-color', '#ffffff' );
+		add_option( 'sensei-learning-mode-foreground-color', '#1e1e1e' );
 
 		ob_start();
 		$this->customizer->output_custom_settings();
@@ -186,9 +186,9 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 	}
 
 	public function testOutputCustomSettings_CustomValuesSet_OutputsCustomSettings() {
-		add_option( 'sensei-course-theme-primary-color', 'a' );
-		add_option( 'sensei-course-theme-background-color', 'b' );
-		add_option( 'sensei-course-theme-foreground-color', 'c' );
+		add_option( 'sensei-learning-mode-primary-color', 'a' );
+		add_option( 'sensei-learning-mode-background-color', 'b' );
+		add_option( 'sensei-learning-mode-foreground-color', 'c' );
 
 		ob_start();
 		$this->customizer->output_custom_settings();
@@ -196,9 +196,9 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 
 		$expected = '		<style>
 			:root {
-			--sensei-course-theme-primary-color: a;
---sensei-course-theme-background-color: b;
---sensei-course-theme-foreground-color: c;
+			--sensei-learning-mode-primary-color: a;
+--sensei-learning-mode-background-color: b;
+--sensei-learning-mode-foreground-color: c;
 			}
 		</style>
 		';
@@ -212,19 +212,19 @@ class Sensei_Customizer_Test extends WP_UnitTestCase {
 		$actual = ob_get_clean();
 
 		$expected = '		<script type="text/javascript">
-						wp.customize( \'sensei-course-theme-primary-color\', ( setting ) => {
+						wp.customize( \'sensei-learning-mode-primary-color\', ( setting ) => {
 				setting.bind( ( value ) => {
-					document.documentElement.style.setProperty( \'--sensei-course-theme-primary-color\', value )
+					document.documentElement.style.setProperty( \'--sensei-learning-mode-primary-color\', value )
 				} );
 			} );
-							wp.customize( \'sensei-course-theme-background-color\', ( setting ) => {
+							wp.customize( \'sensei-learning-mode-background-color\', ( setting ) => {
 				setting.bind( ( value ) => {
-					document.documentElement.style.setProperty( \'--sensei-course-theme-background-color\', value )
+					document.documentElement.style.setProperty( \'--sensei-learning-mode-background-color\', value )
 				} );
 			} );
-							wp.customize( \'sensei-course-theme-foreground-color\', ( setting ) => {
+							wp.customize( \'sensei-learning-mode-foreground-color\', ( setting ) => {
 				setting.bind( ( value ) => {
-					document.documentElement.style.setProperty( \'--sensei-course-theme-foreground-color\', value )
+					document.documentElement.style.setProperty( \'--sensei-learning-mode-foreground-color\', value )
 				} );
 			} );
 						</script>

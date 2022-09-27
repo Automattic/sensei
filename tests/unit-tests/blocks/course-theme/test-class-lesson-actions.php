@@ -16,7 +16,7 @@ use \Sensei\Blocks\Course_Theme\Lesson_Actions;
 /**
  * Tests for Lesson_Actions_Test class.
  *
- * @group course-theme
+ * @group learning-mode
  */
 class Lesson_Actions_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
@@ -33,7 +33,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 
 		WP_Block_Supports::$block_to_render = [
 			'attrs'     => [],
-			'blockName' => 'sensei-lms/course-theme-lesson-actions',
+			'blockName' => 'sensei-lms/learning-mode-lesson-actions',
 		];
 	}
 

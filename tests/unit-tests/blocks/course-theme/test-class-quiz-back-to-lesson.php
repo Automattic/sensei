@@ -14,7 +14,7 @@ use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
 /**
  * Tests for Quiz_Back_To_Lesson_Test class.
  *
- * @group course-theme
+ * @group learning-mode
  */
 class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 	/**

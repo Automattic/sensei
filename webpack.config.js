@@ -102,13 +102,13 @@ const files = [
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
-	'css/sensei-course-theme/sidebar-mobile-menu.scss',
-	'course-theme/learning-mode.js',
-	'course-theme/course-theme.editor.js',
-	'course-theme/blocks/index.js',
-	'course-theme/themes/default-theme.scss',
-	'course-theme/learning-mode-templates/index.js',
-	'course-theme/learning-mode-templates/styles.scss',
+	'css/sensei-learning-mode/sidebar-mobile-menu.scss',
+	'learning-mode/learning-mode.js',
+	'learning-mode/learning-mode.editor.js',
+	'learning-mode/blocks/index.js',
+	'learning-mode/themes/default-theme.scss',
+	'learning-mode/learning-mode-templates/index.js',
+	'learning-mode/learning-mode-templates/styles.scss',
 ];
 
 function getName( filename ) {

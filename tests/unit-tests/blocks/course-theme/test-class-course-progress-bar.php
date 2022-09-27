@@ -14,7 +14,7 @@ use \Sensei\Blocks\Course_Theme\Course_Progress_Bar;
 /**
  * Tests for Course_Progress_Bar_Test class.
  *
- * @group course-theme
+ * @group learning-mode
  */
 class Course_Progress_Bar_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
@@ -28,7 +28,7 @@ class Course_Progress_Bar_Test extends WP_UnitTestCase {
 
 		WP_Block_Supports::$block_to_render = [
 			'attrs'     => [],
-			'blockName' => 'sensei-lms/course-theme-course-progress-bar',
+			'blockName' => 'sensei-lms/learning-mode-course-progress-bar',
 		];
 	}
 

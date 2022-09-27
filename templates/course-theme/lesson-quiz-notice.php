@@ -58,7 +58,7 @@ if ( ! function_exists( 'sensei_lesson_quiz_notice_actions_map' ) ) {
 					<?php echo wp_kses_post( $action['label'] ); ?>
 					<?php
 						// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
-						echo Sensei()->assets->get_icon( 'chevron-right', 'sensei-course-theme-lesson-quiz-notice__link-chevron' );
+						echo Sensei()->assets->get_icon( 'chevron-right', 'sensei-learning-mode-lesson-quiz-notice__link-chevron' );
 					?>
 				</a>
 				<?php

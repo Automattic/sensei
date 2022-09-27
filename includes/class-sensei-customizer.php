@@ -23,15 +23,15 @@ class Sensei_Customizer {
 	 */
 	public function __construct() {
 		$this->colors = [
-			'sensei-course-theme-primary-color'    => [
+			'sensei-learning-mode-primary-color'    => [
 				'label'   => __( 'Primary Color', 'sensei-lms' ),
 				'default' => '#1e1e1e',
 			],
-			'sensei-course-theme-background-color' => [
+			'sensei-learning-mode-background-color' => [
 				'label'   => __( 'Background Color', 'sensei-lms' ),
 				'default' => '#ffffff',
 			],
-			'sensei-course-theme-foreground-color' => [
+			'sensei-learning-mode-foreground-color' => [
 				'label'   => __( 'Text Color', 'sensei-lms' ),
 				'default' => '#1e1e1e',
 			],
@@ -50,7 +50,7 @@ class Sensei_Customizer {
 	public function add_customizer_settings( WP_Customize_Manager $wp_customize ) {
 
 		$wp_customize->add_section(
-			'sensei-course-theme',
+			'sensei-learning-mode',
 			[
 				'priority'       => 40,
 				'capability'     => 'manage_sensei',
@@ -76,7 +76,7 @@ class Sensei_Customizer {
 					$variable,
 					array(
 						'label'       => $settings['label'],
-						'section'     => 'sensei-course-theme',
+						'section'     => 'sensei-learning-mode',
 						'settings'    => $variable,
 						'description' => $settings['description'] ?? null,
 

@@ -994,8 +994,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'formId'       => "{$this->token}-form",
 			'section'      => $args['data']['section'],
 		];
-		Sensei()->assets->enqueue( 'learning-mode-templates-styles', 'course-theme/learning-mode-templates/styles.css', [ 'wp-components' ] );
-		Sensei()->assets->enqueue( 'learning-mode-templates-script', 'course-theme/learning-mode-templates/index.js', [ 'wp-element', 'wp-components' ], true );
+		Sensei()->assets->enqueue( 'learning-mode-templates-styles', 'learning-mode/learning-mode-templates/styles.css', [ 'wp-components' ] );
+		Sensei()->assets->enqueue( 'learning-mode-templates-script', 'learning-mode/learning-mode-templates/index.js', [ 'wp-element', 'wp-components' ], true );
 		wp_add_inline_script(
 			'learning-mode-templates-script',
 			sprintf( 'window.sensei = window.sensei || {}; window.sensei.learningModeTemplateSetting = %s;', wp_json_encode( $inline_data ) ),

@@ -6,7 +6,7 @@
  * @group context-notices
  */
 class Sensei_Context_Notices_Test extends WP_UnitTestCase {
-	const TEMPLATE = 'course-theme/lesson-quiz-notice.php';
+	const TEMPLATE = 'learning-mode/lesson-quiz-notice.php';
 
 	/**
 	 * Testing the Course Theme class to make sure it is loaded.

@@ -139,7 +139,7 @@ if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
 	} );
 }
 
-registerPlugin( 'sensei-course-theme-plugin', {
+registerPlugin( 'sensei-learning-mode-plugin', {
 	render: CourseTheme,
 	icon: null,
 } );
