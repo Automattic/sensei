@@ -1,80 +1,87 @@
 $breakpoint: 783px;
 
-
 .sensei-course-theme {
 	&__columns {
-		--sidebar-width: 300px;
+		display: flow-root;
 	}
-
-	&__columns &__sidebar {
-		position: fixed;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		width: var(--sidebar-width);
-		border-right: 1px solid var(--border-color);
-		background-color: var(--sensei-background-color);
-		overflow: auto;
-		overscroll-behavior: contain;
-		display: flex;
-		flex-direction: column;
-		scrollbar-gutter: stable both-edges;
-		padding: 12px;
-	}
-
-	&__header ~ &__columns &__sidebar {
-		top: var(--full-header-height) !important;
-	}
-
-	&__columns &__main-content ~ &__sidebar {
-		left: unset;
-		right: 0;
-		border-right: unset;
-		border-left: 1px solid var(--border-color);
-
-	}
-
-	&__columns &__main-content {
-		padding: 32px 0;
-		margin-right: var(--sidebar-width) !important;
-
-		// A Divi fix since it doesn't load Gutenberg block library styles.
-		@at-root {
-			.et_pb_pagebuilder_layout & {
-				flex: 1;
-			}
-		}
-	}
-
-	&__columns &__sidebar ~ &__main-content {
-		margin-right: unset ! important;
-		margin-left: var(--sidebar-width) !important;
-	}
-
 }
 
-// Mobile.
-
-@media screen and (max-width: ($breakpoint - 1)) {
-	body {
-		--sidebar-width: 0px;
-	}
-
+@media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
-
 		&__columns {
-			display: block;
+			--sidebar-width: 300px;
 		}
 
 		&__columns &__sidebar {
-			position: static;
-			width: unset;
-			border: unset;
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			width: var(--sidebar-width);
+			border-right: 1px solid var(--border-color);
+			background-color: var(--sensei-background-color);
+			overflow: auto;
+			overscroll-behavior: contain;
+			display: flex;
+			flex-direction: column;
+			scrollbar-gutter: stable both-edges;
+			padding: 12px;
+		}
+
+		&__header ~ &__columns &__sidebar {
+			top: var(--full-header-height) !important;
+		}
+
+		&__columns &__main-content ~ &__sidebar {
+			left: unset;
+			right: 0;
+			border-right: unset;
+			border-left: 1px solid var(--border-color);
+
 		}
 
 		&__columns &__main-content {
-			flex: 1 !important;
-			margin-left: 0 !important;
+			padding: 32px 0;
+			margin-right: var(--sidebar-width) !important;
+
+			// A Divi fix since it doesn't load Gutenberg block library styles.
+			@at-root {
+				.et_pb_pagebuilder_layout & {
+					flex: 1;
+				}
+			}
 		}
+
+		&__columns &__sidebar ~ &__main-content {
+			margin-right: unset ! important;
+			margin-left: var(--sidebar-width) !important;
+		}
+
 	}
+
 }
+// Mobile.
+//
+//@media screen and (max-width: ($breakpoint - 1)) {
+//	body {
+//		--sidebar-width: 0px;
+//	}
+//
+//	.sensei-course-theme {
+//
+//		&__columns {
+//			display: block;
+//		}
+//
+//		&__columns &__sidebar {
+//			position: static;
+//			width: unset;
+//			border: unset;
+//		}
+//
+//		&__columns &__main-content {
+//			flex: 1 !important;
+//			margin-left: 0 !important;
+//		}
+//	}
+//}
