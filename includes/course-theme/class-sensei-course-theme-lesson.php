@@ -62,6 +62,12 @@ class Sensei_Course_Theme_Lesson {
 	 * @param array $notice The notice to intercept.
 	 */
 	public static function intercept_notice( array $notice ) {
+		// Do nothing if it is not lesson or quiz post.
+		$post_type = get_post_type();
+		if ( ! in_array( $post_type, [ 'lesson', 'quiz' ], true ) ) {
+			return $notice;
+		}
+
 		// Do nothing if learning mode is not used.
 		$course_id = \Sensei_Utils::get_current_course();
 		if ( ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
