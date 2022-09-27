@@ -57,6 +57,10 @@ class Sensei_Course_Theme_Styles {
 	 * @access private
 	 */
 	public static function output_global_styles_colors() {
+		if ( ! function_exists( 'wp_get_global_styles' ) ) {
+			return;
+		}
+
 		$styles = wp_get_global_styles();
 		$vars   = self::get_colors_as_css_variables( $styles );
 
@@ -163,7 +167,7 @@ class Sensei_Course_Theme_Styles {
 	/**
 	 * Generate a style tag with the given CSS properties.
 	 *
-	 * @param string $css      CSS properties.
+	 * @param string $css CSS properties.
 	 */
 	private static function output_style( $css ) {
 		?>
