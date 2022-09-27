@@ -1,5 +1,5 @@
 .sensei-setup-wizard {
-	&__preparing-step {
+	&__features-step {
 		display: flex;
 		flex-direction: column;
 		max-width: 520px;
@@ -10,7 +10,7 @@
 		animation: 0.5s slideInFromBottom;
 	}
 
-	&__preparing-status {
+	&__features-status {
 		margin-bottom: 24px;
 		font-family: $recoleta-font-family;
 		font-size: 28px;
@@ -21,12 +21,12 @@
 		}
 	}
 
-	&__preparing-progress-bar {
+	&__features-progress-bar {
 		height: 4px;
 		background-color: #ffffff;
 	}
 
-	&__preparing-progress-bar-filled {
+	&__features-progress-bar-filled {
 		background-color: #217D7C;
 		height: 100%;
 		transition: 0.5s width;

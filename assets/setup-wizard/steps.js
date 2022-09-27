@@ -5,7 +5,7 @@ import Welcome from './welcome';
 import Purpose from './purpose';
 import UsageTracking from './usage-tracking';
 import Newsletter from './newsletter';
-import Preparing from './preparing';
+import Features from './features';
 
 const steps = [
 	{
@@ -25,8 +25,8 @@ const steps = [
 		container: <Newsletter />,
 	},
 	{
-		key: 'preparing',
-		container: <Preparing />,
+		key: 'features',
+		container: <Features />,
 	},
 ];
 

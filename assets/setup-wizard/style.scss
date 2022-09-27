@@ -16,7 +16,7 @@ $recoleta-font-family: Recoleta, sans-serif;
 @import 'purpose/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
-@import 'preparing/style';
+@import 'features/style';
 
 .sensei-setup-wizard-page {
 	overflow-x: hidden;
@@ -245,7 +245,7 @@ $recoleta-font-family: Recoleta, sans-serif;
 
 	@at-root {
 		.sensei-setup-wizard-page--welcome &,
-		.sensei-setup-wizard-page--preparing & {
+		.sensei-setup-wizard-page--features & {
 			@media (min-height: 460px) {
 				background-position: -35px 102%, calc( 100% + 100px ) 0;
 			}

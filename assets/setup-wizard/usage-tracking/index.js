@@ -21,7 +21,7 @@ const UsageTracking = () => {
 	);
 
 	const onSubmitSuccess = () => {
-		goTo( 'preparing' );
+		goTo( 'features' );
 	};
 
 	const submitPage = ( allowUsageTracking ) => () => {

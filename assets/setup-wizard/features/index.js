@@ -4,22 +4,22 @@
 import { __ } from '@wordpress/i18n';
 
 /**
- * Preparing step for Setup Wizard.
+ * Features step for Setup Wizard.
  */
-const Preparing = () => {
+const Features = () => {
 	const percentage = 30;
 
 	return (
-		<div className="sensei-setup-wizard__preparing-step">
+		<div className="sensei-setup-wizard__features-step">
 			<div
-				className="sensei-setup-wizard__preparing-status"
+				className="sensei-setup-wizard__features-status"
 				role="status"
 				aria-live="polite"
 			>
 				{ __( 'Preparing your tailored experience', 'sensei-lms' ) }
 			</div>
 
-			<div className="sensei-setup-wizard__preparing-progress-bar">
+			<div className="sensei-setup-wizard__features-progress-bar">
 				<div
 					role="progressbar"
 					aria-label={ __(
@@ -27,7 +27,7 @@ const Preparing = () => {
 						'sensei-lms'
 					) }
 					aria-valuenow={ percentage }
-					className="sensei-setup-wizard__preparing-progress-bar-filled"
+					className="sensei-setup-wizard__features-progress-bar-filled"
 					style={ { width: `${ percentage }%` } }
 				/>
 			</div>
@@ -35,4 +35,4 @@ const Preparing = () => {
 	);
 };
 
-export default Preparing;
+export default Features;
