@@ -64,7 +64,7 @@ class Sensei_Course_Theme_Lesson {
 	public static function intercept_notice( array $notice ) {
 		// Do nothing if learning mode is not used.
 		$course_id = \Sensei_Utils::get_current_course();
-		if ( ! $course_id && ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		if ( ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
 			return $notice;
 		}
 
