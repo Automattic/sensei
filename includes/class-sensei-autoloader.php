@@ -240,6 +240,7 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
 			'Sensei\Blocks\Course_Theme\Ui'                => 'blocks/course-theme/class-ui.php',
 			'Sensei\Blocks\Course_Theme\Template_Style'    => 'blocks/course-theme/class-template-style.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Video'      => 'blocks/course-theme/class-lesson-video.php',
 		);
 	}
 
