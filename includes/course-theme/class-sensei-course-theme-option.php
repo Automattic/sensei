@@ -65,7 +65,6 @@ class Sensei_Course_Theme_Option {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
 		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
-		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
 	}
 
 	/**
@@ -224,39 +223,6 @@ class Sensei_Course_Theme_Option {
 		}
 
 		return $show_admin_bar;
-	}
-
-	/**
-	 * Adds a course theme notice.
-	 *
-	 * @access private
-	 *
-	 * @param array $notices Notices list.
-	 *
-	 * @return array Notices including the course theme notice.
-	 */
-	public function add_course_theme_notice( array $notices ) {
-		$notices['sensei-course-theme'] = [
-			'type'       => 'user',
-			'icon'       => 'sensei',
-			'heading'    => __( 'Sensei’s new Learning Mode is here!', 'sensei-lms' ),
-			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
-			'actions'    => [
-				[
-					'label'  => __( 'Learn more', 'sensei-lms' ),
-					'url'    => 'https://senseilms.com/wordpress-course-theme',
-					'target' => '_blank',
-				],
-			],
-			'conditions' => [
-				[
-					'type'    => 'screens',
-					'screens' => [ 'sensei*' ],
-				],
-			],
-		];
-
-		return $notices;
 	}
 
 	/**
