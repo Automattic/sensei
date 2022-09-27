@@ -63,6 +63,7 @@ class Sensei_Autoloader {
 
 		$this->autoloader_bundles = array(
 			new Sensei_Autoloader_Bundle( 'rest-api' ),
+			new Sensei_Autoloader_Bundle( 'rest-api/mappers' ),
 			new Sensei_Autoloader_Bundle( '' ),
 			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
@@ -79,6 +80,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'reports/overview/data-provider' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/list-table' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/services' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/quick-links' ),
 		);
 
 		// Add Sensei custom auto loader.
