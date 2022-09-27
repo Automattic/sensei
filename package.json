@@ -150,5 +150,8 @@
     "*.php": [
       "scripts/linter-new-php"
     ]
+  },
+  "woorelease": {
+    "wp_org_slug": "sensei-lms"
   }
 }
