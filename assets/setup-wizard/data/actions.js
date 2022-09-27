@@ -13,7 +13,6 @@ import {
 	SET_STEP_DATA,
 	APPLY_STEP_DATA,
 } from './constants';
-import { normalizeSetupWizardData } from './normalizer';
 
 /**
  * @typedef  {Object} FetchFromAPIAction
@@ -42,7 +41,7 @@ export function* fetchSetupWizardData() {
 		const data = yield fetchFromAPI( {
 			path: API_BASE_PATH.replace( /\/$/, '' ),
 		} );
-		yield successFetch( normalizeSetupWizardData( data ) );
+		yield successFetch( data );
 	} catch ( error ) {
 		yield errorFetch( error );
 	}

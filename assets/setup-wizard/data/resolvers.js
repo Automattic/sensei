@@ -3,7 +3,6 @@
  */
 import { API_BASE_PATH } from './constants';
 import { fetchFromAPI, setStepData } from './actions';
-import { normalizeFeaturesData } from './normalizer';
 
 export function* getStepData( step, shouldResolve ) {
 	if ( ! shouldResolve ) {
@@ -14,5 +13,5 @@ export function* getStepData( step, shouldResolve ) {
 		path: API_BASE_PATH + step,
 	} );
 
-	return setStepData( step, normalizeFeaturesData( data ) );
+	return setStepData( step, data );
 }

@@ -37,5 +37,4 @@ export const APPLY_STEP_DATA = 'APPLY_STEP_DATA';
 /**
  * Statuses.
  */
-export const INSTALLED_STATUS = 'installed';
 export const INSTALLING_STATUS = 'installing';
