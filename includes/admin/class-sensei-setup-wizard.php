@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Setup_Wizard {
 	const SUGGEST_SETUP_WIZARD_OPTION = 'sensei_suggest_setup_wizard';
-	const WCCOM_INSTALLING_TRANSIENT  = 'sensei_setup_wizard_wccom_installing';
 	const USER_DATA_OPTION            = 'sensei_setup_wizard_data';
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
@@ -93,7 +92,6 @@ class Sensei_Setup_Wizard {
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
-			add_action( 'admin_init', [ $this, 'close_wccom_install' ] );
 
 			// Maybe prevent WooCommerce help tab.
 			add_filter( 'woocommerce_enable_admin_help_tab', [ $this, 'should_enable_woocommerce_help_tab' ] );
@@ -445,6 +443,8 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get feature with status.
 	 *
+	 * @since $$next-version$$ It doesn't support WCCOM extensions anymore.
+	 *
 	 * @param stdClass   $extension          Extension object.
 	 * @param stdClass[] $installing_plugins Plugins which are installing.
 	 * @param stdClass[] $selected_plugins   Plugins selected for installation.
@@ -454,9 +454,6 @@ class Sensei_Setup_Wizard {
 	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
-		if ( in_array( $extension->product_slug, $selected_plugins, true ) && isset( $extension->wccom_product_id ) ) {
-			$extension->status = 'external';
-		}
 		if ( false !== $installing_key ) {
 			if ( isset( $installing_plugins[ $installing_key ]->error ) ) {
 				$extension->error  = $installing_plugins[ $installing_key ]->error;
@@ -515,47 +512,40 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Filter extensions to install and call installation.
 	 *
+	 * @since $$next-version$$ It doesn't install extensions from WCCOM anymore.
+	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
-
 		$extensions_to_install = [];
-		$wccom_extensions      = [];
 
 		foreach ( $this->get_sensei_extensions() as $extension ) {
 			if ( ! in_array( $extension->product_slug, $extension_slugs, true ) ) {
 				continue;
 			}
 
-			if ( isset( $extension->wccom_product_id ) ) {
-				$wccom_extensions[] = $extension->product_slug;
-			} else {
-				$extensions_to_install[] = $extension;
-			}
+			$extensions_to_install[] = $extension;
 		}
-
-		if ( ! empty( $wccom_extensions ) ) {
-			$event_name       = 'setup_wizard_features_install_paid';
-			$event_properties = [ 'slug' => join( ',', $wccom_extensions ) ];
-
-			sensei_log_jetpack_event( $event_name, $event_properties );
-		}
-
-		set_transient( self::WCCOM_INSTALLING_TRANSIENT, $wccom_extensions, 10 * 60 );
 
 		Sensei_Plugins_Installation::instance()->install_plugins( $extensions_to_install );
 	}
 
 	/**
 	 * Close the browser tab if it's a redirect from WooCommerce.com after a successful extension install.
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public static function close_wccom_install() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		$wccom_installing_transient = 'sensei_setup_wizard_wccom_installing';
+
 		if (
 			isset( $_SERVER['HTTP_REFERER'] ) &&
 			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore sanitization ok.
-			false !== get_transient( self::WCCOM_INSTALLING_TRANSIENT )
+			false !== get_transient( $wccom_installing_transient )
 		) {
-			delete_transient( self::WCCOM_INSTALLING_TRANSIENT );
+			delete_transient( $wccom_installing_transient );
 
 			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion -- Inline script.
 			wp_register_script( 'sensei-close-window', '', [], false, false );

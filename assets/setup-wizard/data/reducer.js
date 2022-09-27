@@ -11,8 +11,7 @@ import {
 	SET_STEP_DATA,
 } from './constants';
 
-import { EXTERNAL_STATUS, INSTALLING_STATUS } from '../features/feature-status';
-import { getWccomProductId } from '../../shared/helpers/woocommerce-com';
+import { INSTALLING_STATUS } from '../features/feature-status';
 
 const DEFAULT_STATE = {
 	isFetching: true,
@@ -54,9 +53,7 @@ const updatePreInstallation = ( selected, options ) =>
 		if ( selected.includes( feature.slug ) ) {
 			return {
 				...feature,
-				status: getWccomProductId( feature )
-					? EXTERNAL_STATUS
-					: INSTALLING_STATUS,
+				status: INSTALLING_STATUS,
 				error: null,
 			};
 		}
