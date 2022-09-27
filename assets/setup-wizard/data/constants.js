@@ -33,3 +33,9 @@ export const SET_STEP_DATA = 'SET_STEP_DATA';
  * Run any side-effect for state changes.
  */
 export const APPLY_STEP_DATA = 'APPLY_STEP_DATA';
+
+/**
+ * Statuses.
+ */
+export const INSTALLED_STATUS = 'installed';
+export const INSTALLING_STATUS = 'installing';

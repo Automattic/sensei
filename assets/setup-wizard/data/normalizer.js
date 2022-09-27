@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { INSTALLED_STATUS } from '../features/feature-status';
+import { INSTALLED_STATUS } from './constants';
 
 /**
  * Add details to title.
