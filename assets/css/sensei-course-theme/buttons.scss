@@ -23,6 +23,7 @@
 		&:hover {
 			background-color: inherit !important;
 			color: inherit !important;
+			text-decoration: none !important;
 		}
 	}
 	font-family: 'Inter', sans-serif;
@@ -39,6 +40,7 @@
 	padding: 0;
 	margin: 0;
 	border-radius: 2px;
+	text-decoration: none !important;
 
 	&.is-primary,
 	&.is-secondary,
@@ -92,12 +94,12 @@
 
 	&.is-link {
 		font-weight: 600;
-		text-decoration: underline;
+		text-decoration: underline !important;
 		background: none !important;
 		color: inherit !important;
 
 		&:hover {
-			color: var(--primary-color) !important;;
+			color: var(--primary-color) !important;
 		}
 	}
 
