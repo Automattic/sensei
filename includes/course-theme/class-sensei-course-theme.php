@@ -85,6 +85,7 @@ class Sensei_Course_Theme {
 
 		// Initialize quiz and lesson specific functionality.
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
+		add_filter( 'sensei_notice', [ Sensei_Course_Theme_Lesson::instance(), 'intercept_notice' ], 10, 1 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
 
