@@ -2464,9 +2464,13 @@ class Sensei_Utils {
 	/**
 	 * Get data used for WooCommerce.com purchase redirect.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @return array The data.
 	 */
 	public static function get_woocommerce_connect_data() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$wc_params                = [];
 		$is_woocommerce_installed = self::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
 
