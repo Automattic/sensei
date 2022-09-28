@@ -84,6 +84,7 @@ class Sensei_Course_Theme {
 		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
 		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
+		add_filter( 'template_redirect', [ $this, 'redirect_modules_to_first_lesson' ] );
 	}
 
 	/**
@@ -495,5 +496,28 @@ class Sensei_Course_Theme {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Redirect all module pages to the first module lesson.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function redirect_modules_to_first_lesson(): void {
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() || ! is_tax( 'module' ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+		$course_id = ! empty( $_GET['course_id'] ) ? (int) $_GET['course_id'] : Sensei_Utils::get_current_course();
+		if ( ! $course_id ) {
+			return;
+		}
+
+		$module_lessons = Sensei()->modules->get_lessons( $course_id, get_queried_object_id() );
+		if ( $module_lessons ) {
+			wp_safe_redirect( get_permalink( $module_lessons[0] ) );
+			die();
+		}
 	}
 }
