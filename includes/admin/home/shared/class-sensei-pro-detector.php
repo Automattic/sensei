@@ -18,6 +18,6 @@ class Sensei_Pro_Detector {
 	 * @return bool
 	 */
 	public function is_loaded() {
-		return class_exists( '\Sensei_Pro\Sensei_Pro' );
+		return apply_filters( 'sensei_is_sensei_pro_active', false );
 	}
 }
