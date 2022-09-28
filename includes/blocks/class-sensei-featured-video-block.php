@@ -50,6 +50,15 @@ class Sensei_Featured_Video_Block {
 		if ( $sensei_template_has_lesson_video_block ) {
 			return '';
 		}
+
+		global $wp_embed;
+		$original_content_width   = $GLOBALS['content_width'] ?? null;
+		$GLOBALS['content_width'] = 1200;
+
+		$content = $wp_embed->autoembed( $content );
+
+		$GLOBALS['content_width'] = $original_content_width;
+
 		return $content;
 	}
 }

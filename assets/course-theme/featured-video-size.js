@@ -43,6 +43,11 @@ function updateElementHeightOnResize( block ) {
 
 	function resizeElement() {
 		element = getVideoElement();
+
+		if ( ! element ) {
+			return;
+		}
+
 		const { offsetHeight, offsetWidth } = element;
 		const height = offsetWidth / ratio;
 
