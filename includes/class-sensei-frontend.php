@@ -837,13 +837,7 @@ class Sensei_Frontend {
 	public function sensei_lesson_video( $post_id = 0 ) {
 		if ( 0 < intval( $post_id ) && sensei_can_user_view_lesson( $post_id ) ) {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
-			if ( 'http' == substr( $lesson_video_embed, 0, 4 ) ) {
-				// V2 - make width and height a setting for video embed.
-				$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed ) );
-			}
-
-			$lesson_video_embed = do_shortcode( html_entity_decode( $lesson_video_embed ) );
-			$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
+			$lesson_video_embed = Sensei_Utils::render_video_embed( $lesson_video_embed );
 
 			if ( '' != $lesson_video_embed ) {
 				?>

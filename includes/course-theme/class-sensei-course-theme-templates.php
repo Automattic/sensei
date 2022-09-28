@@ -133,7 +133,7 @@ class Sensei_Course_Theme_Templates {
 	public function set_single_template_hierarchy( $templates ) {
 
 		// Don't change if a block template is already selected for the post.
-		$is_default_template = count( $templates ) && str_ends_with( $templates[0], '.php' );
+		$is_default_template = count( $templates ) && preg_match( '/\.php$/', $templates[0] );
 
 		if ( ! $is_default_template ) {
 			return $templates;
@@ -251,8 +251,9 @@ class Sensei_Course_Theme_Templates {
 
 		$supported_template_types = [ 'lesson', 'quiz' ];
 
+		$is_site_editor_request   = Sensei_Course_Theme_Editor::is_site_editor_request();
 		$is_course_theme_override = ! empty( $query['theme'] ) && ( Sensei_Course_Theme::THEME_NAME === $query['theme'] );
-		$is_site_editor           = empty( $query ) || $is_course_theme_override;
+		$is_site_editor           = $is_site_editor_request || $is_course_theme_override;
 		$is_supported_template    = $slugs && ! empty( array_intersect( $supported_template_types, $slugs ) );
 
 		// Remove file templates picked up from the sensei-course-theme theme directory when the theme override is active.
@@ -284,7 +285,7 @@ class Sensei_Course_Theme_Templates {
 		$templates = array_merge( $extra_templates, $templates );
 
 		// Return the lesson template as the default when there are no theme templates in the site editor.
-		if ( $is_course_theme_override && empty( $templates ) ) {
+		if ( $is_site_editor && empty( $templates ) ) {
 			return [ $course_theme_templates['lesson'] ];
 		}
 

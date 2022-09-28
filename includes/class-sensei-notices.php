@@ -76,17 +76,39 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function add_notice( string $content, string $type = 'alert', string $key = null ) {
+		$notice = [
+			'content' => $content,
+			'type'    => $type,
+			'key'     => $key,
+		];
+
+		/**
+		 * Allows to modify a sensei notice that will be shown to the user.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_notice
+		 *
+		 * @param array $notice {
+		 *     The notice data with the following properties.
+		 *
+		 *     @type string $content The message text of the notice.
+		 *     @type string $type    The type of the notice. Default: "alert".
+		 *     @type string $key     Optional. The identifier key for the notice.
+		 * }
+		 *
+		 * @return array|null The notice data. Or return null if you want to prevent the notice showing up.
+		 */
+		$notice = apply_filters( 'sensei_notice', $notice );
+
+		if ( empty( $notice ) ) {
+			return;
+		}
+
 		// append the new notice.
-		if ( null === $key ) {
-			$this->notices[] = [
-				'content' => $content,
-				'type'    => $type,
-			];
+		if ( empty( $notice['key'] ) ) {
+			$this->notices[] = $notice;
 		} else {
-			$this->notices[ $key ] = [
-				'content' => $content,
-				'type'    => $type,
-			];
+			$this->notices[ $notice['key'] ] = $notice;
 		}
 
 		// if a notice is added after we've printed print it immediately.

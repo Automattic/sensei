@@ -99,20 +99,20 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		$post_type_object->template = apply_filters( 'sensei_lesson_block_template', $block_template, $post_type_object->template ?? [] );
 
 		new Sensei_Conditional_Content_Block();
-
-		if ( ! Sensei()->lesson->has_sensei_blocks() ) {
-			return;
-		}
-
 		new Sensei_Lesson_Actions_Block();
 		new Sensei_Lesson_Properties_Block();
 		new Sensei_Next_Lesson_Block();
 		new Sensei_Complete_Lesson_Block();
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
-		new Sensei_Block_Contact_Teacher();
+		new Sensei_Featured_Video_Block();
 
-		$this->remove_block_related_content();
+		if ( Sensei()->lesson->has_sensei_blocks() ) {
+			$this->remove_block_related_content();
+
+			// This constructor has some sideeffects so only initialize it when the lesson has Sensei blocks.
+			new Sensei_Block_Contact_Teacher();
+		}
 
 	}
 

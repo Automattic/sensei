@@ -24,6 +24,10 @@
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);
 			border: 1px solid currentColor;
+
+			.wp-block-sensei-lms-course-theme-lesson-video {
+				flex: 1;
+			}
 		}
 
 		&__video-container::after {
