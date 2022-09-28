@@ -21,7 +21,6 @@
 
 		.sensei-course-theme {
 			--content-padding: 18px;
-			--header-height: 60px;
 
 			&__header {
 				transition: none !important;
@@ -63,7 +62,6 @@
 			}
 
 			&--sidebar-open {
-				--header-height: 90px;
 				overflow: hidden;
 
 				.sensei-course-theme__header .sensei-course-theme-course-progress {

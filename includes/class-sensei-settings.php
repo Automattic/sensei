@@ -981,7 +981,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 						<img alt="<?php esc_attr( $template->title ); ?>" src="<?php echo esc_attr( $template->screenshots['thumbnail'] ); ?>" />
 					</label>
-				</li>	
+				</li>
 			<?php endforeach; ?>
 			</ul>
 		<?php

@@ -115,6 +115,12 @@ export const createButtonBlockType = ( {
 			supports: {
 				color: {
 					gradients: true,
+					link: true,
+					__experimentalDefaultControls: {
+						background: true,
+						text: true,
+						link: true,
+					},
 				},
 				__experimentalColor: {
 					gradients: true,
