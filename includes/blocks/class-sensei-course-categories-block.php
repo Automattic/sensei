@@ -53,9 +53,6 @@ class Sensei_Course_Categories_Block {
 	 * @return string
 	 */
 	public function render_block( $attributes, $content, WP_Block $block ): string {
-
-		$css = Sensei_Block_Helpers::build_styles( $attributes );
-
 		if ( ! isset( $block->context['postId'] ) ) {
 			return '';
 		}
@@ -72,6 +69,7 @@ class Sensei_Course_Categories_Block {
 			return '';
 		}
 
+		$css             = Sensei_Block_Helpers::build_styles( $attributes );
 		$wrapper_classes = 'taxonomy-course-category';
 
 		if ( isset( $attributes['textAlign'] ) ) {
@@ -79,9 +77,9 @@ class Sensei_Course_Categories_Block {
 		}
 
 		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => $wrapper_classes ) );
+		$link_attributes    = '<a ' . Sensei_Block_Helpers::render_style_attributes( $wrapper_attributes, $css );
 
-		$link_attributes = '<a ' . Sensei_Block_Helpers::render_style_attributes( [], $css );
-		$terms           = get_the_term_list(
+		$terms = get_the_term_list(
 			$post_id,
 			'course-category',
 			"<div $wrapper_attributes>",

@@ -635,6 +635,11 @@ class Sensei_Lesson {
 	 */
 	public function meta_box_save( $post_id ) {
 
+		// This should only run on the Classic Editor.
+		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
+			return false;
+		}
+
 		// Verify the nonce before proceeding.
 		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
@@ -671,12 +676,12 @@ class Sensei_Lesson {
 			}
 		}
 
-		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : '-1';
-		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : '-1';
-		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : '-1';
-		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : '-1';
-		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : '-1';
-		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : '-1';
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : null;
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : null;
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : null;
+		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : null;
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : null;
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : null;
 
 		$new_settings = array(
 			'pass_required'         => $new_pass_required,
@@ -2491,6 +2496,7 @@ class Sensei_Lesson {
 	 * Enqueue legacy meta box quiz editor assets.
 	 */
 	private function enqueue_scripts_meta_box_quiz_editor() {
+
 		wp_enqueue_media();
 
 		// Load the lessons script.
@@ -3611,7 +3617,8 @@ class Sensei_Lesson {
 				// Get number of questions to show.
 				$show_questions = (int) get_post_meta( $quiz_id, '_show_questions', true );
 
-				if ( $show_questions ) {
+				// Negative amount is considered as All (same as zero).
+				if ( $show_questions > 0 ) {
 					// Get random set of array keys from selected questions array.
 					$selected_questions = array_rand(
 						$questions_array,
@@ -5135,7 +5142,7 @@ class Sensei_Lesson {
 		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
 
 			// update pass required.
-			if ( - 1 !== $new_settings['pass_required'] ) {
+			if ( null !== $new_settings['pass_required'] ) {
 
 				$checked = $new_settings['pass_required'] ? 'on' : 'off';
 				update_post_meta( $quiz_id, '_pass_required', $checked );
@@ -5150,7 +5157,7 @@ class Sensei_Lesson {
 			}
 
 			// update enable quiz reset.
-			if ( - 1 !== $new_settings['enable_quiz_reset'] ) {
+			if ( null !== $new_settings['enable_quiz_reset'] ) {
 
 				$checked = $new_settings['enable_quiz_reset'] ? 'on' : '';
 				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
@@ -5159,7 +5166,7 @@ class Sensei_Lesson {
 			}
 
 			// update random question order.
-			if ( - 1 !== $new_settings['random_question_order'] ) {
+			if ( null !== $new_settings['random_question_order'] ) {
 
 				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
 				update_post_meta( $quiz_id, '_random_question_order', $checked );
@@ -5167,7 +5174,7 @@ class Sensei_Lesson {
 			}
 
 			// update quiz grade type.
-			if ( - 1 !== $new_settings['quiz_grade_type'] ) {
+			if ( null !== $new_settings['quiz_grade_type'] ) {
 
 				$checked = $new_settings['quiz_grade_type'] ? 'auto' : 'manual';
 				update_post_meta( $quiz_id, '_quiz_grade_type', $checked );
