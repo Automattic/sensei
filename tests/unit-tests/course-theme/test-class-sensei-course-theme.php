@@ -112,4 +112,21 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		// Expect only one video embed class.
 		$this->assertEquals( 1, substr_count( $output, Sensei_Frontend::VIDEO_EMBED_CLASS ) );
 	}
+
+	public function testPreventLinkToModule_WhenLearningModeEnabled_ReturnsFalse() {
+		/* Arrange. */
+		$course = $this->factory->course->create_and_get();
+		$lesson = $this->factory->lesson->create_and_get();
+
+		add_post_meta( $lesson->ID, '_lesson_course', $course->ID );
+		add_post_meta( $course->ID, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$this->go_to( get_permalink( $lesson ) );
+
+		/* Act. */
+		$result = $this->instance->prevent_link_to_module( true );
+
+		/* Assert. */
+		$this->assertFalse( $result );
+	}
 }
