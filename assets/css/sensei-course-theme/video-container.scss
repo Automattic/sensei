@@ -16,6 +16,12 @@
 
 }
 
+.sensei-course-theme {
+	&__video-container.has-background-color &__sidebar {
+		background: inherit;
+	}
+}
+
 // Desktop
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
@@ -41,6 +47,7 @@
 			right: 20px;
 			overflow-y: auto;
 			scrollbar-gutter: stable both-edges;
+
 
 			&::-webkit-scrollbar {
 				width: 6px;
@@ -71,6 +78,8 @@
 			bottom: 100px;
 			overflow-y: auto;
 			scrollbar-gutter: stable both-edges;
+			background: var(--bg-color);
+			color: var(--text-color);
 
 			&:after {
 				content: none;
@@ -82,6 +91,7 @@
 
 			.sensei-course-theme__sidebar {
 				width: 100%;
+				background: inherit;
 				position: static;
 				overflow-y: unset;
 				scrollbar-gutter: unset;
