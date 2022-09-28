@@ -142,13 +142,6 @@ class Sensei_Setup_Wizard {
 	 * @access private
 	 */
 	public function enqueue_scripts() {
-		/**
-		 * Triggered on the Setup Wizard page to add additional scripts and behaviors to the page.
-		 *
-		 * @since $$next-version$$
-		 * @hook sensei_setup_wizard_enqueue_scripts
-		 */
-		do_action( 'sensei_setup_wizard_enqueue_scripts' );
 		$handle = 'sensei-setup-wizard';
 		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
