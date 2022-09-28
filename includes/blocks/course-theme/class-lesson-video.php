@@ -49,18 +49,12 @@ class Lesson_Video {
 	 * @return string The block HTML.
 	 */
 	public function render() : string {
-		$lesson_id = Sensei_Utils::get_current_lesson();
-		$user_id   = get_current_user_id();
-
-		if ( empty( $lesson_id ) || empty( $user_id ) ) {
-			return '';
-		}
 
 		if ( ! sensei_can_user_view_lesson() ) {
 			return '';
 		}
 
-		$content = Sensei_Utils::get_featured_video_html( $lesson_id ) ?? '';
+		$content = Sensei_Utils::get_featured_video_html() ?? '';
 
 		if ( empty( $content ) ) {
 			return '';
