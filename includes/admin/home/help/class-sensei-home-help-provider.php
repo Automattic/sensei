@@ -54,12 +54,14 @@ class Sensei_Home_Help_Provider {
 	private function create_support_ticket_item() {
 		$url        = null;
 		$extra_link = null;
+		$icon       = null;
 		if ( $this->pro_detector->is_loaded() ) {
 			$url = 'https://senseilms.com/contact/';
 		} else {
 			$extra_link = new Sensei_Home_Help_Extra_Link( __( 'Upgrade to Sensei Pro', 'sensei-lms' ), 'https://senseilms.com/pricing/' );
+			$icon       = 'lock';
 		}
-		return new Sensei_Home_Help_Item( __( 'Create a support ticket', 'sensei-lms' ), $url, 'lock', $extra_link );
+		return new Sensei_Home_Help_Item( __( 'Create a support ticket', 'sensei-lms' ), $url, $icon, $extra_link );
 	}
 
 }

@@ -70,6 +70,8 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		$this->assertNull( $create_ticket_item->get_url() );
 		// Create ticket item contains extra link.
 		$this->assertInstanceOf( Sensei_Home_Help_Extra_Link::class, $create_ticket_item->get_extra_link() );
+		// Create ticket item has the 'lock' icon.
+		$this->assertEquals( 'lock', $create_ticket_item->get_icon() );
 	}
 
 	public function testCreateSupportTicketIsEnabledAndWithoutExtralinkWhenSenseiProIsLoaded() {
@@ -86,6 +88,9 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		$this->assertIsString( $create_ticket_item->get_url() );
 		// Create ticket item does not contain extra link.
 		$this->assertNull( $create_ticket_item->get_extra_link() );
+		// Create ticket item does not have any special icon.
+		$this->assertNull( $create_ticket_item->get_icon() );
+
 	}
 
 	/**
