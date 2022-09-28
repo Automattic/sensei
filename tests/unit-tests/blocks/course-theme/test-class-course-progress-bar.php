@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei\Blocks\Course_Theme\Course_Progress_Bar;
+use \Sensei\Blocks\Learning_Mode\Course_Progress_Bar;
 
 /**
  * Tests for Course_Progress_Bar_Test class.
@@ -41,7 +41,7 @@ class Course_Progress_Bar_Test extends WP_UnitTestCase {
 	 * Testing the Course Progress Bar class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( '\Sensei\Blocks\Course_Theme\Course_Progress_Bar' ), '\Sensei\Blocks\Course_Theme\Course_Progress_Bar class should exist' );
+		$this->assertTrue( class_exists( '\Sensei\Blocks\Learning_Mode\Course_Progress_Bar' ), '\Sensei\Blocks\Learning_Mode\Course_Progress_Bar class should exist' );
 	}
 
 	/**

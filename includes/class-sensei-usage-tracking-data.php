@@ -932,8 +932,8 @@ class Sensei_Usage_Tracking_Data {
 				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Needed to identify courses with Sensei theme.
 				'meta_query' => array(
 					array(
-						'key'   => Sensei_Course_Theme_Option::THEME_POST_META_NAME,
-						'value' => Sensei_Course_Theme_Option::SENSEI_THEME,
+						'key'   => Sensei_Learning_Mode_Option::THEME_POST_META_NAME,
+						'value' => Sensei_Learning_Mode_Option::SENSEI_THEME,
 					),
 				),
 			)

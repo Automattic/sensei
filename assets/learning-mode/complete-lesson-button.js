@@ -19,7 +19,7 @@ export const initCompleteLessonTransition = () => {
 			'.sensei-learning-mode-course-progress-bar-inner'
 		);
 		const mainContent =
-			document.querySelector( '.sensei-course-theme__main-content' ) ??
+			document.querySelector( '.sensei-learning-mode__main-content' ) ??
 			document.body;
 
 		/**
@@ -73,9 +73,9 @@ export const initCompleteLessonTransition = () => {
 
 			mainContent.insertAdjacentHTML(
 				'afterbegin',
-				`<div class="sensei-course-theme-lesson-completion-notice">
+				`<div class="sensei-learning-mode-lesson-completion-notice">
 					${ window.sensei.checkCircleIcon }
-					<p role="alert" class="sensei-course-theme-lesson-completion-notice__text">
+					<p role="alert" class="sensei-learning-mode-lesson-completion-notice__text">
 						${ __( 'Lesson complete', 'sensei-lms' ) }
 					</p>
 				</div>`

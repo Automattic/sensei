@@ -23,7 +23,7 @@ import {
 	IN_PROGRESS_PREVIEW,
 } from './constants';
 
-const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
+const learningModeEnabled = window?.sensei?.learningModeEnabled || false;
 
 /**
  * Edit lesson actions block component.
@@ -66,7 +66,7 @@ const LessonActionsEdit = ( props ) => {
 		? 'allowed'
 		: 'not-allowed';
 
-	if ( courseThemeEnabled ) {
+	if ( learningModeEnabled ) {
 		return null;
 	}
 

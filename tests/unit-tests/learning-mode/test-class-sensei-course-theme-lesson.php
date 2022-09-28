@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Course_Theme_Lesson_Test class.
+ * This file contains the Sensei_Learning_Mode_Lesson_Test class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Course_Theme_Lesson_Test class.
+ * Tests for Sensei_Learning_Mode_Lesson_Test class.
  *
  * @group learning-mode
  */
-class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
+class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
@@ -30,7 +30,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 	 * Testing the Course Theme Lesson class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( 'Sensei_Course_Theme_Lesson' ), 'Sensei Course Theme class should exist' );
+		$this->assertTrue( class_exists( 'Sensei_Learning_Mode_Lesson' ), 'Sensei Course Theme class should exist' );
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		];
 		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
 
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'Lesson quiz in progress', $html, 'Should return quiz progress notice' );
@@ -79,7 +79,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		];
 		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
 
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'quiz-page=1', $html, 'Should have the link to quiz page with the first unanswered question' );
@@ -87,7 +87,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		// Remove quiz pagination.
 		delete_post_meta( $quiz_id, '_pagination' );
 
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertNotContains( 'quiz-page=', $html, 'Should not have the link to a specific page' );
@@ -100,7 +100,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$lesson  = $this->create_lesson_with_submitted_answers();
 		$user_id = get_current_user_id();
 
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
@@ -115,7 +115,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$user_id = get_current_user_id();
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson->ID, 'failed' );
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
@@ -130,7 +130,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$user_id = get_current_user_id();
 
 		Sensei_Utils::update_lesson_status( $user_id, $lesson->ID, 'graded' );
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
@@ -155,7 +155,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$this->login_as_student();
 		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
@@ -180,7 +180,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 
 		$this->login_as_student();
 		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
@@ -209,7 +209,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post']        = $lesson;
 
 		$this->login_as_student();
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
@@ -224,7 +224,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson;
 
 		wp_logout();
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
@@ -245,7 +245,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson;
 
 		wp_logout();
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
@@ -260,7 +260,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson;
 
 		$this->login_as_student();
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
@@ -281,7 +281,7 @@ class Sensei_Course_Theme_Lesson_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson;
 
 		$this->login_as_student();
-		\Sensei_Course_Theme_Lesson::instance()->init();
+		\Sensei_Learning_Mode_Lesson::instance()->init();
 
 		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 

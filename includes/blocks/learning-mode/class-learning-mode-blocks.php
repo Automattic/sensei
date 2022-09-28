@@ -21,7 +21,7 @@ use \Sensei\Blocks\Learning_Mode as Blocks;
  */
 class Learning_Mode_Blocks extends Sensei_Blocks_Initializer {
 	/**
-	 * Course_Theme constructor.
+	 * Learning_Mode constructor.
 	 */
 	public function __construct() {
 		parent::__construct( null );

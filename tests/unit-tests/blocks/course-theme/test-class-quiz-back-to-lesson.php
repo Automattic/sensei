@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson;
+use \Sensei\Blocks\Learning_Mode\Quiz_Back_To_Lesson;
 
 /**
  * Tests for Quiz_Back_To_Lesson_Test class.
@@ -40,7 +40,7 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 	 * Testing the Quiz Back To Lesson class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( '\Sensei\Blocks\Course_Theme\Quiz_Back_To_Lesson' ), 'Quiz Back To Lesson class should exist' );
+		$this->assertTrue( class_exists( '\Sensei\Blocks\Learning_Mode\Quiz_Back_To_Lesson' ), 'Quiz Back To Lesson class should exist' );
 	}
 
 	/**

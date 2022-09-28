@@ -40,7 +40,7 @@ const toggleFocusMode = ( on, restore ) => {
 	const { classList } = document.body;
 
 	const courseNavigation = document.querySelector(
-		'.sensei-course-theme__sidebar'
+		'.sensei-learning-mode__sidebar'
 	);
 	const isActive = classList.contains( FOCUS_MODE_CLASS );
 	const next = 'undefined' === typeof on ? ! isActive : on;
@@ -60,14 +60,14 @@ window.addEventListener( 'DOMContentLoaded', () => {
 	initFocusMode();
 
 	document
-		.querySelector( '.sensei-course-theme__sidebar' )
+		.querySelector( '.sensei-learning-mode__sidebar' )
 		.addEventListener( 'transitionend', ( e ) => {
 			if (
 				'left' === e.propertyName &&
 				document.body.classList.contains( FOCUS_MODE_CLASS )
 			) {
 				document
-					.querySelector( '.sensei-course-theme__sidebar' )
+					.querySelector( '.sensei-learning-mode__sidebar' )
 					.classList.add( HIDDEN_CLASS_NAME );
 			}
 		} );

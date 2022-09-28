@@ -53,8 +53,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			wp_add_inline_script(
 				'sensei-single-lesson-blocks',
 				sprintf(
-					'window.sensei = window.sensei || {}; window.sensei.courseThemeEnabled = %s;',
-					Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ? 'true' : 'false'
+					'window.sensei = window.sensei || {}; window.sensei.learningModeEnabled = %s;',
+					Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id ) ? 'true' : 'false'
 				),
 				'before'
 			);

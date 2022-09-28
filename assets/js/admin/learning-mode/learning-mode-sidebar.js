@@ -83,7 +83,7 @@ const usePreviewAndCustomizerLinks = () => {
 
 	let customizerUrl = '';
 	if ( previewUrl ) {
-		customizerUrl = `/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=${ encodeURIComponent(
+		customizerUrl = `/wp-admin/customize.php?autofocus[section]=sensei-learning-mode&url=${ encodeURIComponent(
 			previewUrl
 		) }`;
 	}
@@ -94,7 +94,7 @@ const usePreviewAndCustomizerLinks = () => {
 /**
  * Course Theme Sidebar component.
  */
-const CourseThemeSidebar = () => {
+const LearningModeSidebar = () => {
 	const globalLearningModeEnabled =
 		window.sensei?.senseiSettings?.sensei_learning_mode_all || false;
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
@@ -102,8 +102,8 @@ const CourseThemeSidebar = () => {
 
 	return (
 		<PluginDocumentSettingPanel
-			name="sensei-course-theme"
-			title={ __( 'Learning Mode', 'sensei-lms' )  }
+			name="sensei-learning-mode"
+			title={ __( 'Learning Mode', 'sensei-lms' ) }
 		>
 			{ globalLearningModeEnabled ? (
 				<p>
@@ -151,4 +151,4 @@ const CourseThemeSidebar = () => {
 	);
 };
 
-export default CourseThemeSidebar;
+export default LearningModeSidebar;

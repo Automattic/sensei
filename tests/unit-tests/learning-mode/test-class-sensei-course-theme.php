@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Course_Theme_Test class.
+ * This file contains the Sensei_Learning_Mode_Test class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Course_Theme_Test class.
+ * Tests for Sensei_Learning_Mode_Test class.
  *
  * @group learning-mode
  */
-class Sensei_Course_Theme_Test extends WP_UnitTestCase {
+class Sensei_Learning_Mode_Test extends WP_UnitTestCase {
 
 	use Sensei_Test_Login_Helpers;
 	use Sensei_Course_Enrolment_Test_Helpers;
@@ -28,9 +28,9 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	private $factory;
 
 	/**
-	 * Instance of `Sensei_Course_Theme_Option` under test.
+	 * Instance of `Sensei_Learning_Mode_Option` under test.
 	 *
-	 * @var Sensei_Course_Theme_Theme
+	 * @var Sensei_Learning_Mode_Theme
 	 */
 	private $instance;
 
@@ -40,7 +40,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	public function setup() {
 		parent::setup();
 		$this->factory  = new Sensei_Factory();
-		$this->instance = Sensei_Course_Theme::instance();
+		$this->instance = Sensei_Learning_Mode::instance();
 		$this->prepareEnrolmentManager();
 	}
 
@@ -48,7 +48,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	 * Testing the Course Theme class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( 'Sensei_Course_Theme' ), 'Sensei Course Theme class should exist' );
+		$this->assertTrue( class_exists( 'Sensei_Learning_Mode' ), 'Sensei Course Theme class should exist' );
 	}
 
 	public function testPreviewModeNotAllowedToNonPreviliged() {
@@ -57,8 +57,8 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 
 		$this->login_as_student();
 
-		$_GET[ Sensei_Course_Theme::PREVIEW_QUERY_VAR ] = (string) $course->ID;
-		$allowed                                        = Sensei_Course_Theme::is_preview_mode( $course->ID );
+		$_GET[ Sensei_Learning_Mode::PREVIEW_QUERY_VAR ] = (string) $course->ID;
+		$allowed                                        = Sensei_Learning_Mode::is_preview_mode( $course->ID );
 		$this->assertFalse( $allowed, 'Should not allow preview to students.' );
 	}
 
@@ -68,7 +68,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 
-		$allowed = Sensei_Course_Theme::is_preview_mode( $post->ID );
+		$allowed = Sensei_Learning_Mode::is_preview_mode( $post->ID );
 		$this->assertFalse( $allowed, 'Should not allow preview if not a course related page.' );
 	}
 
@@ -79,8 +79,8 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 
-		$_GET[ Sensei_Course_Theme::PREVIEW_QUERY_VAR ] = (string) $another_course->ID;
-		$allowed                                        = Sensei_Course_Theme::is_preview_mode( $course->ID );
+		$_GET[ Sensei_Learning_Mode::PREVIEW_QUERY_VAR ] = (string) $another_course->ID;
+		$allowed                                        = Sensei_Learning_Mode::is_preview_mode( $course->ID );
 		$this->assertFalse( $allowed, 'Should not allow preview if preview query id is not current course page.' );
 	}
 
@@ -99,7 +99,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		update_post_meta( $lesson_id, '_lesson_video_embed', 'VIDEO_EMBED_CODE' );
 
 		// Enable Learning Mode (course theme).
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::SENSEI_THEME );
 
 		// Enrol student in course.
 		$user_id = $this->login_as_student()->get_user_by_role( 'subscriber' );

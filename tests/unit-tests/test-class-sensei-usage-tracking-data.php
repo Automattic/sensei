@@ -1602,7 +1602,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			2,
 			[
 				'meta_input' => [
-					Sensei_Course_Theme_Option::THEME_POST_META_NAME => Sensei_Course_Theme_Option::SENSEI_THEME,
+					Sensei_Learning_Mode_Option::THEME_POST_META_NAME => Sensei_Learning_Mode_Option::SENSEI_THEME,
 				],
 			]
 		);
@@ -1610,7 +1610,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 			2,
 			[
 				'meta_input' => [
-					Sensei_Course_Theme_Option::THEME_POST_META_NAME => Sensei_Course_Theme_Option::WORDPRESS_THEME,
+					Sensei_Learning_Mode_Option::THEME_POST_META_NAME => Sensei_Learning_Mode_Option::WORDPRESS_THEME,
 				],
 			]
 		);

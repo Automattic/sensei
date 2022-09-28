@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei\Blocks\Course_Theme\Quiz_Content class.
+ * File containing the Sensei\Blocks\Learning_Mode\Quiz_Content class.
  *
  * @package sensei
  * @since   4.0.0

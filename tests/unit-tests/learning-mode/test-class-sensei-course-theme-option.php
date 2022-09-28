@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the Sensei_Course_Theme_Option_Test class.
+ * This file contains the Sensei_Learning_Mode_Option_Test class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Course_Theme_Option class.
+ * Tests for Sensei_Learning_Mode_Option class.
  *
  * @group learning-mode
  */
-class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
+class Sensei_Learning_Mode_Option_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
@@ -41,10 +41,10 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Testing the Sensei_Course_Theme_Option class to make sure it is loaded.
+	 * Testing the Sensei_Learning_Mode_Option class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( 'Sensei_Course_Theme_Option' ), 'Sensei Course Theme class should exist' );
+		$this->assertTrue( class_exists( 'Sensei_Learning_Mode_Option' ), 'Sensei Course Theme class should exist' );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testHasSenseiThemeEnabledReturnsFalseByDefault() {
 		$course_id = $this->factory->course->create();
 
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 
 		$this->assertFalse( $output, 'By default the `has_sensei_theme_enabled` method must return false.' );
 	}
@@ -63,9 +63,9 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	 */
 	public function testHasSenseiThemeEnabledReturnsFalseWhenUsingWordpressTheme() {
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::WORDPRESS_THEME );
 
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 
 		$this->assertFalse( $output, '`has_sensei_theme_enabled` method must return false when WordPress theme is enabled.' );
 	}
@@ -75,9 +75,9 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	 */
 	public function testHasSenseiThemeEnabledReturnsTrueWhenUsingSenseiTheme() {
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::SENSEI_THEME );
 
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is enabled.' );
 	}
@@ -88,7 +88,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOffAndCourseNull() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
 		$course_id = $this->factory->course->create();
-		$output    = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$output    = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertFalse( $output, '`has_sensei_theme_enabled` method must return false when Sensei theme is globally off and for course null.' );
 	}
 
@@ -98,8 +98,8 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOffAndCourseOff() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::WORDPRESS_THEME );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertFalse( $output, '`has_sensei_theme_enabled` method must return false when Sensei theme is globally off and for course off.' );
 	}
 
@@ -109,8 +109,8 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOffAndCourseOn() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::SENSEI_THEME );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return false when Sensei theme is globally off and for course on.' );
 	}
 
@@ -120,7 +120,7 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOnAndCourseNull() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', true );
 		$course_id = $this->factory->course->create();
-		$output    = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$output    = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course null.' );
 	}
 
@@ -130,8 +130,8 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOnAndCourseOff() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', true );
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::WORDPRESS_THEME );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course off.' );
 	}
 
@@ -141,8 +141,8 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOnAndCourseOn() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', true );
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::SENSEI_THEME );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally on and for course on.' );
 	}
 
@@ -152,9 +152,9 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 	public function testSenseiThemeGloballyOffAndCourseOffAndFilterOn() {
 		\Sensei()->settings->set( 'sensei_learning_mode_all', false );
 		$course_id = $this->factory->course->create();
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::WORDPRESS_THEME );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::WORDPRESS_THEME );
 		add_filter( 'sensei_course_learning_mode_enabled', '__return_true' );
-		$output = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		$output = Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 		$this->assertTrue( $output, '`has_sensei_theme_enabled` method must return true when Sensei theme is globally off for course off and via filter on.' );
 	}
 
@@ -165,22 +165,22 @@ class Sensei_Course_Theme_Option_Test extends WP_UnitTestCase {
 		$lesson_id = $this->factory->get_random_lesson_id();
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
-		update_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+		update_post_meta( $course_id, Sensei_Learning_Mode_Option::THEME_POST_META_NAME, Sensei_Learning_Mode_Option::SENSEI_THEME );
 
 		global $post;
 		$post = get_post( $lesson_id );
 
 		// Student on learning mode.
 		$this->login_as_student();
-		$this->assertFalse( Sensei_Course_Theme_Option::instance()->show_admin_bar_only_for_editors( true ), 'Should return `false` to hide admin bar on learning mode.' );
+		$this->assertFalse( Sensei_Learning_Mode_Option::instance()->show_admin_bar_only_for_editors( true ), 'Should return `false` to hide admin bar on learning mode.' );
 
 		// Admin on learning mode.
 		$this->login_as_admin();
-		$this->assertTrue( Sensei_Course_Theme_Option::instance()->show_admin_bar_only_for_editors( false ), 'Should return `true` to hide admin bar on learning mode.' );
+		$this->assertTrue( Sensei_Learning_Mode_Option::instance()->show_admin_bar_only_for_editors( false ), 'Should return `true` to hide admin bar on learning mode.' );
 
 		// Student outside of learning mode.
 		$post = $this->factory->post->create_and_get();
 		$this->login_as_student();
-		$this->assertTrue( Sensei_Course_Theme_Option::instance()->show_admin_bar_only_for_editors( true ), 'Should return the default value to hide admin bar outside of learning mode.' );
+		$this->assertTrue( Sensei_Learning_Mode_Option::instance()->show_admin_bar_only_for_editors( true ), 'Should return the default value to hide admin bar outside of learning mode.' );
 	}
 }

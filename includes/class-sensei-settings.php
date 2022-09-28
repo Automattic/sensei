@@ -477,7 +477,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Chose a learning mode template that is most suited for your type of content and the style you want to offer to your students.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_templates',
 			'type'        => 'radio',
-			'default'     => Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME,
+			'default'     => Sensei_Learning_Mode_Template_Selection::DEFAULT_TEMPLATE_NAME,
 			'section'     => 'appearance-settings',
 			'options'     => $this->get_learning_mode_template_options(),
 		);
@@ -721,7 +721,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * Get options for the learning mode templates.
 	 */
 	private function get_learning_mode_template_options() {
-		return Sensei_Course_Theme_Template_Selection::get_templates();
+		return Sensei_Learning_Mode_Template_Selection::get_templates();
 	}
 
 	/**
@@ -922,7 +922,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$options       = $this->get_settings();
 		$key           = $args['key'];
 		$value         = $options[ $key ];
-		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
+		$customize_url = Sensei_Learning_Mode::get_sensei_theme_customize_url();
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -990,7 +990,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'         => "{$this->token}[{$key}]",
 			'value'        => $value,
 			'options'      => $args['data']['options'],
-			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url(),
+			'customizeUrl' => Sensei_Learning_Mode::get_sensei_theme_customize_url(),
 			'formId'       => "{$this->token}-form",
 			'section'      => $args['data']['section'],
 		];

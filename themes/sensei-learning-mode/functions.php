@@ -5,13 +5,13 @@
  * @package sensei
  */
 
-namespace Sensei\Themes\Sensei_Course_Theme;
+namespace Sensei\Themes\Sensei_Learning_Mode;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-add_action( 'after_setup_theme', '\Sensei\Themes\Sensei_Course_Theme\setup_theme' );
+add_action( 'after_setup_theme', '\Sensei\Themes\Sensei_Learning_Mode\setup_theme' );
 
 /**
  * Set up the theme.

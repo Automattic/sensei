@@ -9,7 +9,7 @@
  * @version     3.15.0
  */
 
-namespace Sensei\Themes\Sensei_Course_Theme\Compat;
+namespace Sensei\Themes\Sensei_Learning_Mode\Compat;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <?php
-	\Sensei_Course_Theme_Compat::instance()->the_course_theme_layout();
+	\Sensei_Learning_Mode_Compat::instance()->the_course_theme_layout();
 	wp_footer();
 ?>
 </body>

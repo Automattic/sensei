@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 
-use \Sensei\Blocks\Course_Theme\Lesson_Actions;
+use \Sensei\Blocks\Learning_Mode\Lesson_Actions;
 
 /**
  * Tests for Lesson_Actions_Test class.
@@ -47,7 +47,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	 * Testing the Lesson_Actions class to make sure it is loaded.
 	 */
 	public function testClassInstance() {
-		$this->assertTrue( class_exists( '\Sensei\Blocks\Course_Theme\Lesson_Actions' ), '\Sensei\Blocks\Course_Theme\Lesson_Actions class should exist' );
+		$this->assertTrue( class_exists( '\Sensei\Blocks\Learning_Mode\Lesson_Actions' ), '\Sensei\Blocks\Learning_Mode\Lesson_Actions class should exist' );
 	}
 
 	/**

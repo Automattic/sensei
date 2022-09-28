@@ -33,7 +33,7 @@ export function submitContactTeacher( ev ) {
 	const closeButton = form.parentElement.querySelector(
 		'.sensei-contact-teacher-close'
 	);
-	submitButton.classList.add( 'sensei-course-theme__button', 'is-busy' );
+	submitButton.classList.add( 'sensei-learning-mode__button', 'is-busy' );
 	submitButton.disabled = true;
 
 	const fieldNames = [

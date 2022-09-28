@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Sensei\Blocks\Course_Theme\Course_Content class.
+ * File containing the Sensei\Blocks\Learning_Mode\Course_Content class.
  *
  * @package sensei
  * @since   4.0.0
@@ -63,7 +63,7 @@ class Course_Content {
 	 */
 	public function render_content( $content ) {
 
-		if ( ! \Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+		if ( ! \Sensei_Learning_Mode_Option::should_use_learning_mode() ) {
 			return $content;
 		}
 

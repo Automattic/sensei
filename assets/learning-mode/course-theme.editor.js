@@ -4,21 +4,21 @@
  */
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 
-window.addEventListener( 'locationchange', redirectToCourseThemeOverride );
-window.addEventListener( 'popstate', redirectToCourseThemeOverride );
+window.addEventListener( 'locationchange', redirectToLearningModeOverride );
+window.addEventListener( 'popstate', redirectToLearningModeOverride );
 
 /**
  * Reload the page when opening or closing a course theme template, to ensure the active theme styles are not loaded.
  */
-function redirectToCourseThemeOverride() {
+function redirectToLearningModeOverride() {
 	const query = getQueryArgs( document.location );
-	const isCourseThemeDocument =
-		query.postId && query.postId.match( /sensei-course-theme/ );
+	const isLearningModeDocument =
+		query.postId && query.postId.match( /sensei-learning-mode/ );
 
-	const isCourseThemeActive = query.learn;
+	const isLearningModeActive = query.learn;
 
-	query.learn = isCourseThemeDocument ? '1' : undefined;
-	if ( !! query.learn !== !! isCourseThemeActive ) {
+	query.learn = isLearningModeDocument ? '1' : undefined;
+	if ( !! query.learn !== !! isLearningModeActive ) {
 		const url = addQueryArgs( document.location.path, query );
 		document.body.style.display = 'none';
 		document.location.replace( url );

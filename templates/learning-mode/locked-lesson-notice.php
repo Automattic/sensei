@@ -1,6 +1,6 @@
 <?php
 /**
- * The Template for displaying locked lesson notice in lesson page when using Course Theme.
+ * The Template for displaying locked lesson notice in lesson page when using Learning Mode.
  *
  * @author      Automattic
  * @package     Sensei
@@ -20,26 +20,26 @@ if ( ! function_exists( 'sensei_locked_lesson_notices_map' ) ) {
 	 */
 	function sensei_locked_lesson_notices_map( $notice ) {
 		?>
-		<div class="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-locked-lesson-notice">
+		<div class="sensei-learning-mode__frame sensei-lms-notice sensei-learning-mode-locked-lesson-notice">
 			<?php if ( ! empty( $notice['title'] ) ) { ?>
-			<div class="sensei-course-theme-locked-lesson-notice__header">
+			<div class="sensei-learning-mode-locked-lesson-notice__header">
 				<?php if ( ! empty( $notice['icon'] ) ) { ?>
-				<div class="sensei-course-theme-locked-lesson-notice__icon">
+				<div class="sensei-learning-mode-locked-lesson-notice__icon">
 					<?php
 					// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 					echo Sensei()->assets->get_icon( $notice['icon'] );
 					?>
 				</div>
 				<?php } ?>
-				<div class="sensei-course-theme-locked-lesson-notice__title">
+				<div class="sensei-learning-mode-locked-lesson-notice__title">
 					<?php echo wp_kses_post( $notice['title'] ); ?>
 				</div>
 			</div>
 			<?php } ?>
-			<div class="sensei-course-theme-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></div>
+			<div class="sensei-learning-mode-locked-lesson-notice__text"><?php echo wp_kses_post( $notice['text'] ); ?></div>
 
 			<?php if ( ! empty( $notice['actions'] ) ) { ?>
-				<div class="sensei-course-theme-locked-lesson-notice__actions">
+				<div class="sensei-learning-mode-locked-lesson-notice__actions">
 				<?php implode( '', array_map( 'sensei_locked_lesson_notice_actions_map', $notice['actions'] ) ); ?>
 				</div>
 			<?php } ?>
@@ -80,7 +80,7 @@ if ( ! function_exists( 'sensei_locked_lesson_notice_actions_map' ) ) {
 				);
 			} else {
 				?>
-				<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-course-theme__button is-<?php echo esc_attr( $action['style'] ); ?>">
+				<a href="<?php echo esc_url( $action['url'] ); ?>" class="sensei-learning-mode__button is-<?php echo esc_attr( $action['style'] ); ?>">
 					<?php echo wp_kses_post( $action['label'] ); ?>
 				</a>
 				<?php

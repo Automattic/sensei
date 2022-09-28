@@ -9,7 +9,7 @@ $breakpoint: 783px;
 
 // Fixed sidebar.
 
-.sensei-course-theme {
+.sensei-learning-mode {
 	&__sidebar {
 		position: fixed;
 		top: 0;
@@ -65,7 +65,7 @@ $breakpoint: 783px;
 		--sidebar-width: 0px;
 	}
 
-	.sensei-course-theme {
+	.sensei-learning-mode {
 
 		&__columns {
 			display: block;

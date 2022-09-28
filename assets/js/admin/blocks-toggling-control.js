@@ -120,9 +120,9 @@ export const startBlocksTogglingControl = ( postType ) => {
 	 */
 	const toggleLegacyOrBlocksNotice = () => {
 		const withSenseiBlocks = hasSenseiBlocks();
-		const courseThemeEnabled = window?.sensei?.courseThemeEnabled;
+		const learningModeEnabled = window?.sensei?.learningModeEnabled;
 
-		if ( withSenseiBlocks || courseThemeEnabled ) {
+		if ( withSenseiBlocks || learningModeEnabled ) {
 			removeNotice( 'sensei-using-template' );
 		} else {
 			createWarningNotice(

@@ -10,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import { startBlocksTogglingControl } from './blocks-toggling-control';
-import CourseTheme from './course-theme';
+import LearningMode from './learning-mode';
 import CourseVideoSidebar from './course-video-sidebar';
 import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
 import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
@@ -140,7 +140,7 @@ if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
 }
 
 registerPlugin( 'sensei-learning-mode-plugin', {
-	render: CourseTheme,
+	render: LearningMode,
 	icon: null,
 } );
 
