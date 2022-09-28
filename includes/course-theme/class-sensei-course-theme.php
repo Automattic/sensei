@@ -84,8 +84,8 @@ class Sensei_Course_Theme {
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
 		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
+		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
 	}
-
 
 	/**
 	 * Is the theme active for the current request.
@@ -496,5 +496,22 @@ class Sensei_Course_Theme {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Prevent modules to be linked in learning mode.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param bool $do_link_to_module True if module should be linked to.
+	 *
+	 * @return bool
+	 */
+	public function prevent_link_to_module( bool $do_link_to_module ): bool {
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+			return $do_link_to_module;
+		}
+
+		return false;
 	}
 }
