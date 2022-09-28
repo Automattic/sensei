@@ -16,7 +16,7 @@ class Sensei_Tool_Remove_Deleted_User_Data_Tests extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	public function setUp() {
 		parent::setUp();

@@ -153,8 +153,11 @@ const useEditorPlayer = ( videoBlock ) => {
 			return;
 		}
 
+		const isJetpackVideoPress = !! videoBlock.attributes
+			.videoPressClassNames;
+
 		// Video file block.
-		if ( 'core/video' === videoBlock.name ) {
+		if ( 'core/video' === videoBlock.name && ! isJetpackVideoPress ) {
 			const video = document.querySelector(
 				`#block-${ videoBlock.clientId } video`
 			);
@@ -183,20 +186,15 @@ const useEditorPlayer = ( videoBlock ) => {
 			setPlayer( new Player( playerIframe, w ) );
 		};
 
-		switch ( videoBlock.attributes.providerNameSlug ) {
-			case 'youtube': {
-				prepareYouTubeIframe( playerIframe, w );
-				addScript( doc, YOUTUBE_API_SRC, setIframePlayer );
-				break;
-			}
-			case 'vimeo': {
-				addScript( doc, VIMEO_API_SRC, setIframePlayer );
-				break;
-			}
-			case 'videopress': {
-				setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
-				break;
-			}
+		const { providerNameSlug } = videoBlock.attributes;
+
+		if ( 'videopress' === providerNameSlug || isJetpackVideoPress ) {
+			setPlayer( new Player( doc.querySelector( 'iframe' ), w ) );
+		} else if ( 'youtube' === providerNameSlug ) {
+			prepareYouTubeIframe( playerIframe, w );
+			addScript( doc, YOUTUBE_API_SRC, setIframePlayer );
+		} else if ( 'vimeo' === providerNameSlug ) {
+			addScript( doc, VIMEO_API_SRC, setIframePlayer );
 		}
 	}, [ fetching, preview, isBlockSelected, lastBlockAttributeChange ] );
 
