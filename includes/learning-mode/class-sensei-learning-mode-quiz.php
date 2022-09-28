@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Theme_Quiz class.
+ * File containing Sensei_Learning_Mode_Quiz class.
  *
  * @package sensei-lms
  * @since 3.15.0
@@ -11,9 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Course_Theme_Quiz class.
+ * Sensei_Learning_Mode_Quiz class.
+ *
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Quiz {
+class Sensei_Learning_Mode_Quiz {
 
 	/**
 	 * Instance of class.
@@ -23,7 +25,7 @@ class Sensei_Course_Theme_Quiz {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Theme_Quiz constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode_Quiz constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {}
 
@@ -110,7 +112,7 @@ class Sensei_Course_Theme_Quiz {
 		// Prepare contact teacher button.
 		$actions[] = self::render_contact_teacher();
 
-		$notices = \Sensei_Context_Notices::instance( 'course_theme_quiz_grade' );
+		$notices = \Sensei_Context_Notices::instance( 'learning_mode_quiz_grade' );
 		$notices->add_notice( 'learning-mode-quiz-grade', $text, $title, $actions );
 	}
 
@@ -143,3 +145,13 @@ class Sensei_Course_Theme_Quiz {
 	}
 
 }
+
+/**
+ * Class Sensei_Course_Theme_Quiz
+ *
+ * @ignore only for backward compatibility.
+ * @since 3.15.0
+ */
+class Sensei_Course_Theme_Quiz extends Sensei_Learning_Mode_Quiz {
+}
+

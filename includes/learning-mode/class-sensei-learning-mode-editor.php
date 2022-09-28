@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Theme_Editor class.
+ * File containing Sensei_Learning_Mode_Editor class.
  *
  * @package sensei-lms
  * @since   3.15.0
@@ -13,14 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Add Sensei's block templates to the site editor.
  *
- * @since 3.15.0
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Editor {
+class Sensei_Learning_Mode_Editor {
 
 	/**
-	 * Directory for the course theme.
+	 * Directory for learning mode.
 	 */
-	const THEME_PREFIX = Sensei_Course_Theme::THEME_NAME;
+	const THEME_PREFIX = Sensei_Learning_Mode::THEME_NAME;
 
 	/**
 	 * Instance of class.
@@ -30,7 +30,7 @@ class Sensei_Course_Theme_Editor {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode_Editor constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 
@@ -50,7 +50,7 @@ class Sensei_Course_Theme_Editor {
 	}
 
 	/**
-	 * Initializes the Course Theme Editor.
+	 * Initializes the Learning Mode Editor.
 	 */
 	public function init() {
 		add_action( 'setup_theme', [ $this, 'maybe_add_site_editor_hooks' ], 1 );
@@ -87,7 +87,7 @@ class Sensei_Course_Theme_Editor {
 	}
 
 	/**
-	 * Load the course theme for the lesson editor if it has Learning Mode enabled.
+	 * Load the learning mode theme for the lesson editor if it has Learning Mode enabled.
 	 */
 	public function maybe_override_lesson_theme() {
 
@@ -104,8 +104,8 @@ class Sensei_Course_Theme_Editor {
 		if ( $this->lesson_has_learning_mode( get_post( $post_id ) ) ) {
 			$this->add_editor_styles();
 
-			if ( Sensei_Course_Theme_Option::should_override_theme() ) {
-				Sensei_Course_Theme::instance()->override_theme();
+			if ( Sensei_Learning_Mode_Option::should_override_theme() ) {
+				Sensei_Learning_Mode::instance()->override_theme();
 			}
 		}
 
@@ -170,33 +170,33 @@ class Sensei_Course_Theme_Editor {
 	public function override_theme_block_template_file( $path, $file ) {
 
 		if ( 'index.html' === substr( $file, -1 * strlen( 'index.html' ) ) ) {
-			return Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates/index.html';
+			return Sensei_Learning_Mode::instance()->get_learning_mode_root() . '/templates/index.html';
 		}
 
 		return $path;
 	}
 
 	/**
-	 * Enqueue course theme blocks and styles.
+	 * Enqueue learning mode blocks and styles.
 	 *
 	 * @access private
 	 */
 	public function enqueue_site_editor_assets() {
 
 		if ( $this->lesson_has_learning_mode() || $this->is_site_editor() ) {
-			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-blocks', 'learning-mode/blocks/index.js', [ 'sensei-shared-blocks' ] );
+			Sensei()->assets->enqueue( Sensei_Learning_Mode::THEME_NAME . '-blocks', 'learning-mode/blocks/index.js', [ 'sensei-shared-blocks' ] );
 			Sensei()->assets->enqueue_style( 'sensei-shared-blocks-editor-style' );
 			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
-			Sensei_Course_Theme::instance()->enqueue_fonts();
+			Sensei_Learning_Mode::instance()->enqueue_fonts();
 
-			if ( Sensei_Course_Theme_Option::should_override_theme() ) {
-				Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'learning-mode/learning-mode.editor.js' );
+			if ( Sensei_Learning_Mode_Option::should_override_theme() ) {
+				Sensei()->assets->enqueue( Sensei_Learning_Mode::THEME_NAME . '-editor', 'learning-mode/learning-mode.editor.js' );
 			}
 		}
 	}
 
 	/**
-	 * Register course theme styles as editor styles.
+	 * Register learning mode styles as editor styles.
 	 *
 	 * @access private
 	 */
@@ -224,7 +224,7 @@ class Sensei_Course_Theme_Editor {
 
 		$course_id = Sensei()->lesson->get_course_id( $post->ID );
 
-		return Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		return Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id );
 	}
 
 	/**
@@ -239,4 +239,13 @@ class Sensei_Course_Theme_Editor {
 		return ! empty( $screen ) && in_array( $screen->id, [ 'widgets', 'site-editor', 'customize', 'appearance_page_gutenberg-edit-site' ], true );
 	}
 
+}
+
+/**
+ * Class Sensei_Course_Theme_Editor
+ *
+ * @ignore only for backward compatibility.
+ * @since 3.15.0
+ */
+class Sensei_Course_Theme_Editor extends Sensei_Learning_Mode_Editor {
 }

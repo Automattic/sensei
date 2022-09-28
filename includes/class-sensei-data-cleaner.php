@@ -86,7 +86,7 @@ class Sensei_Data_Cleaner {
 		'widget_sensei_category_courses',
 		'sensei_dismiss_wcpc_prompt',
 		'sensei-cancelled-wccom-connect-dismissed',
-		'sensei_course_theme_query_var_flushed',
+		'sensei_learning_mode_query_var_flushed',
 	);
 
 	/**

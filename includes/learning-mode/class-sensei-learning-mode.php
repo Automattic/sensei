@@ -32,7 +32,7 @@ class Sensei_Learning_Mode {
 	const PREVIEW_QUERY_VAR = 'sensei_theme_preview';
 
 	/**
-	 * Directory for the course theme.
+	 * Directory for the learning mode.
 	 */
 	const THEME_NAME = 'sensei-learning-mode';
 
@@ -51,7 +51,7 @@ class Sensei_Learning_Mode {
 	private $original_theme;
 
 	/**
-	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 	}
@@ -73,8 +73,8 @@ class Sensei_Learning_Mode {
 	 * Initializes the Course Theme.
 	 */
 	public function init() {
-		Sensei_Course_Theme_Templates::instance()->init();
-		Sensei_Course_Theme_Template_Selection::instance()->init();
+		Sensei_Learning_Mode_Templates::instance()->init();
+		Sensei_Learning_Mode_Template_Selection::instance()->init();
 
 		// The following actions add '/learn' route. The '/learn' route is used only when the theme is overridden.
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
@@ -84,9 +84,9 @@ class Sensei_Learning_Mode {
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 
 		// Initialize quiz and lesson specific functionality.
-		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
-		add_filter( 'sensei_notice', [ Sensei_Course_Theme_Lesson::instance(), 'intercept_notice' ], 10, 1 );
-		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
+		add_action( 'template_redirect', [ Sensei_Learning_Mode_Lesson::instance(), 'init' ] );
+		add_filter( 'sensei_notice', [ Sensei_Learning_Mode_Lesson::instance(), 'intercept_notice' ], 10, 1 );
+		add_action( 'template_redirect', [ Sensei_Learning_Mode_Quiz::instance(), 'init' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
 
 		// Load learning mode assets and add hooks.
@@ -151,11 +151,11 @@ class Sensei_Learning_Mode {
 	 */
 	public function load_theme() {
 
-		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+		if ( ! Sensei_Learning_Mode_Option::should_use_learning_mode() ) {
 			return;
 		}
 
-		Sensei_Course_Theme_Compat::instance()->load_theme();
+		Sensei_Learning_Mode_Compat::instance()->load_theme();
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
@@ -219,9 +219,9 @@ class Sensei_Learning_Mode {
 	 */
 	public function maybe_flush_rewrite_rules() {
 
-		if ( self::REWRITE_VERSION !== get_option( 'sensei_course_theme_query_var_flushed' ) ) {
+		if ( self::REWRITE_VERSION !== get_option( 'sensei_learning_mode_query_var_flushed' ) ) {
 			flush_rewrite_rules( false );
-			update_option( 'sensei_course_theme_query_var_flushed', self::REWRITE_VERSION );
+			update_option( 'sensei_learning_mode_query_var_flushed', self::REWRITE_VERSION );
 		}
 	}
 
@@ -315,7 +315,7 @@ class Sensei_Learning_Mode {
 	 *
 	 * @return string
 	 */
-	public function get_course_theme_root() {
+	public function get_learning_mode_root() {
 		return $this->get_plugin_themes_root() . '/' . self::THEME_NAME;
 	}
 
@@ -326,7 +326,7 @@ class Sensei_Learning_Mode {
 	 *
 	 * @return string
 	 */
-	public function get_course_theme_root_url() {
+	public function get_learning_mode_root_url() {
 		return $this->theme_root_uri() . '/' . self::THEME_NAME;
 	}
 
@@ -382,7 +382,7 @@ class Sensei_Learning_Mode {
 
 		$this->enqueue_fonts();
 
-		if ( Sensei_Course_Theme_Option::should_override_theme() ) {
+		if ( Sensei_Learning_Mode_Option::should_override_theme() ) {
 
 			Sensei()->assets->enqueue( self::THEME_NAME . '-theme-style', 'css/learning-mode.theme.css' );
 
@@ -458,7 +458,7 @@ class Sensei_Learning_Mode {
 		$lesson      = $result[0];
 		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
 		$preview_url = '/?p=' . $lesson->ID;
-		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		if ( ! Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id ) ) {
 			$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
 		}
 		return '/wp-admin/customize.php?autofocus[section]=sensei-learning-mode&url=' . rawurlencode( $preview_url );
@@ -524,7 +524,7 @@ class Sensei_Learning_Mode {
 	public function add_lesson_video_to_content( $content ) {
 		$course_id = \Sensei_Utils::get_current_course();
 
-		if ( is_admin() || ! is_single() || 'lesson' !== get_post_type() || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		if ( is_admin() || ! is_single() || 'lesson' !== get_post_type() || ! Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id ) ) {
 			return $content;
 		}
 

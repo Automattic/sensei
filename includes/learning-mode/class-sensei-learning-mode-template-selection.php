@@ -1,6 +1,6 @@
 <?php
 /**
- * The class file for Sensei_Course_Theme_Template_Selection.
+ * The class file for Sensei_Learning_Mode_Template_Selection.
  *
  * @author      Automattic
  * @package     Sensei
@@ -8,9 +8,11 @@
  */
 
 /**
- * Class Sensei_Course_Theme_Template_Selection
+ * Class Sensei_Learning_Mode_Template_Selection
+ *
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Template_Selection {
+class Sensei_Learning_Mode_Template_Selection {
 	/**
 	 * The default Learning Mode block template name.
 	 *
@@ -27,7 +29,7 @@ class Sensei_Course_Theme_Template_Selection {
 	const TEMPLATE_NAME_SEPERATOR = '___';
 
 	/**
-	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode_Template_Selection constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 
@@ -64,11 +66,11 @@ class Sensei_Course_Theme_Template_Selection {
 	/**
 	 * Returns the templates info.
 	 *
-	 * @return Sensei_Course_Theme_Template[]
+	 * @return Sensei_Learning_Mode_Template[]
 	 */
 	public static function get_templates(): array {
-		$base_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates';
-		$base_url  = Sensei_Course_Theme::instance()->get_course_theme_root_url() . '/templates';
+		$base_path = Sensei_Learning_Mode::instance()->get_learning_mode_root() . '/templates';
+		$base_url  = Sensei_Learning_Mode::instance()->get_learning_mode_root_url() . '/templates';
 		$quiz_path = "$base_path/quiz.html";
 		$upsell    = [
 			'title' => __( 'Upgrade to Pro', 'sensei-lms' ),
@@ -78,7 +80,7 @@ class Sensei_Course_Theme_Template_Selection {
 
 		$templates = [
 
-			'default'    => new Sensei_Course_Theme_Template(
+			'default'    => new Sensei_Learning_Mode_Template(
 				[
 					'name'        => 'default',
 					'title'       => __( 'Default', 'sensei-lms' ),
@@ -96,7 +98,7 @@ class Sensei_Course_Theme_Template_Selection {
 				]
 			),
 
-			'modern'     => new Sensei_Course_Theme_Template(
+			'modern'     => new Sensei_Learning_Mode_Template(
 				[
 					'name'        => 'modern',
 					'title'       => __( 'Modern', 'sensei-lms' ),
@@ -115,7 +117,7 @@ class Sensei_Course_Theme_Template_Selection {
 				]
 			),
 
-			'video'      => new Sensei_Course_Theme_Template(
+			'video'      => new Sensei_Learning_Mode_Template(
 				[
 					'name'        => 'video',
 					'title'       => __( 'Video', 'sensei-lms' ),
@@ -134,7 +136,7 @@ class Sensei_Course_Theme_Template_Selection {
 				]
 			),
 
-			'video-full' => new Sensei_Course_Theme_Template(
+			'video-full' => new Sensei_Learning_Mode_Template(
 				[
 					'name'        => 'video-full',
 					'title'       => __( 'Large Video', 'sensei-lms' ),
@@ -161,11 +163,11 @@ class Sensei_Course_Theme_Template_Selection {
 		 * @since $$next-version$$
 		 * @hook  sensei_learning_mode_block_templates
 		 *
-		 * @param Sensei_Course_Theme_Template[] $templates {
+		 * @param Sensei_Learning_Mode_Template[] $templates {
 		 *     The list of Learning Mode block templates. If adding a new template then it's key
 		 *     should be the template name.
 		 *
-		 * @return Sensei_Course_Theme_Template[] The list of extra learning mode block templates.
+		 * @return Sensei_Learning_Mode_Template[] The list of extra learning mode block templates.
 		 */
 		return apply_filters( 'sensei_learning_mode_block_templates', $templates );
 	}
@@ -173,7 +175,7 @@ class Sensei_Course_Theme_Template_Selection {
 	/**
 	 * Retrieves the block template data that is currently activated in the settings.
 	 */
-	public static function get_active_template(): Sensei_Course_Theme_Template {
+	public static function get_active_template(): Sensei_Learning_Mode_Template {
 		$active_template  = \Sensei()->settings->get( 'sensei_learning_mode_template' );
 		$templates        = self::get_templates();
 		$default_template = $templates[ self::DEFAULT_TEMPLATE_NAME ];
@@ -251,7 +253,7 @@ class Sensei_Course_Theme_Template_Selection {
 		}
 
 		// Get lm templates that are stored in the db.
-		$db_templates = Sensei_Course_Theme_Templates::get_db_templates();
+		$db_templates = Sensei_Learning_Mode_Templates::get_db_templates();
 
 		// Check each lm template and append a template name postfix if they don't have it.
 		foreach ( $db_templates as $db_template ) {
@@ -262,4 +264,13 @@ class Sensei_Course_Theme_Template_Selection {
 		}
 	}
 
+}
+
+/**
+ * Class Sensei_Course_Theme_Template_Selection
+ *
+ * @ignore only for backward compatibility.
+ * @since $$next-version$$
+ */
+class Sensei_Course_Theme_Template_Selection extends Sensei_Learning_Mode_Template_Selection {
 }

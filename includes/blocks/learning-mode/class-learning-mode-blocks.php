@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the class Course_Theme.
+ * File containing the class Learning_Mode_Blocks.
  *
  * @package sensei
  */
@@ -12,12 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Sensei_Blocks_Initializer;
-use \Sensei\Blocks\Course_Theme as Blocks;
+use \Sensei\Blocks\Learning_Mode as Blocks;
 
 /**
- * Class Course_Theme
+ * Class Learning_Mode_Blocks
+ *
+ * * @since $$next-version$$
  */
-class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
+class Learning_Mode_Blocks extends Sensei_Blocks_Initializer {
 	/**
 	 * Course_Theme constructor.
 	 */
@@ -67,4 +69,12 @@ class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 		new \Sensei_Block_Quiz_Progress();
 		new Blocks\Lesson_Video();
 	}
+}
+
+/**
+ * Class Course_Theme_Blocks
+ *
+ * @ignore only for backward compatibility.
+ */
+class Course_Theme_Blocks extends Learning_Mode_Blocks {
 }

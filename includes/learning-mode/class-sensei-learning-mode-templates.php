@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Theme_Templates class.
+ * File containing Sensei_Learning_Mode_Templates class.
  *
  * @package sensei-lms
  * @since   4.0.2
@@ -10,19 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use \Sensei\Blocks\Course_Theme\Template_Style;
+use \Sensei\Blocks\Learning_Mode\Template_Style;
 
 /**
  * Sensei's block templates.
  *
- * @since 4.0.2
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Templates {
+class Sensei_Learning_Mode_Templates {
 
 	/**
-	 * Directory for the course theme.
+	 * Directory for the learning mode.
 	 */
-	const THEME_PREFIX = Sensei_Course_Theme::THEME_NAME;
+	const THEME_PREFIX = Sensei_Learning_Mode::THEME_NAME;
 
 	/**
 	 * Instance of class.
@@ -39,7 +39,7 @@ class Sensei_Course_Theme_Templates {
 	private $file_templates = [];
 
 	/**
-	 * Sensei_Course_Theme constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 
@@ -64,8 +64,8 @@ class Sensei_Course_Theme_Templates {
 	public function init() {
 
 		// The below hooks enable block theme support and inject the learning mode templates.
-		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
-		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
+		add_action( 'template_redirect', [ $this, 'maybe_use_learning_mode_templates' ], 1 );
+		add_filter( 'get_block_templates', [ $this, 'add_learning_mode_block_templates' ], 10, 3 );
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_lesson_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_quiz_template' ], 10, 4 );
@@ -74,10 +74,10 @@ class Sensei_Course_Theme_Templates {
 
 
 	/**
-	 * Use course theme if it's enabled for the current lesson or quiz.
+	 * Use learning mode if it's enabled for the current lesson or quiz.
 	 */
-	public function maybe_use_course_theme_templates() {
-		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+	public function maybe_use_learning_mode_templates() {
+		if ( Sensei_Learning_Mode_Option::should_use_learning_mode() ) {
 			add_filter( 'sensei_use_sensei_template', '__return_false' );
 			add_filter( 'single_template_hierarchy', [ $this, 'set_single_template_hierarchy' ] );
 			add_theme_support( 'block-templates' );
@@ -124,7 +124,7 @@ class Sensei_Course_Theme_Templates {
 	}
 
 	/**
-	 * Add course theme block templates to single template hierarchy.
+	 * Add learning mode block templates to single template hierarchy.
 	 *
 	 * @param string[] $templates The list of template names.
 	 *
@@ -179,7 +179,7 @@ class Sensei_Course_Theme_Templates {
 			return;
 		}
 
-		$template = Sensei_Course_Theme_Template_Selection::get_active_template();
+		$template = Sensei_Learning_Mode_Template_Selection::get_active_template();
 		$title    = $template->title ?? $template->name;
 
 		$common_options = [
@@ -238,7 +238,7 @@ class Sensei_Course_Theme_Templates {
 	 *
 	 * @return array
 	 */
-	public function add_course_theme_block_templates( $templates, $query, $template_type ) {
+	public function add_learning_mode_block_templates( $templates, $query, $template_type ) {
 
 		if ( 'wp_template' !== $template_type ) {
 			return $templates;
@@ -251,16 +251,16 @@ class Sensei_Course_Theme_Templates {
 
 		$supported_template_types = [ 'lesson', 'quiz' ];
 
-		$is_site_editor_request   = Sensei_Course_Theme_Editor::is_site_editor_request();
-		$is_course_theme_override = ! empty( $query['theme'] ) && ( Sensei_Course_Theme::THEME_NAME === $query['theme'] );
-		$is_site_editor           = $is_site_editor_request || $is_course_theme_override;
-		$is_supported_template    = $slugs && ! empty( array_intersect( $supported_template_types, $slugs ) );
+		$is_site_editor_request    = Sensei_Learning_Mode_Editor::is_site_editor_request();
+		$is_learning_mode_override = ! empty( $query['theme'] ) && ( Sensei_Learning_Mode::THEME_NAME === $query['theme'] );
+		$is_site_editor            = $is_site_editor_request || $is_learning_mode_override;
+		$is_supported_template     = $slugs && ! empty( array_intersect( $supported_template_types, $slugs ) );
 
 		// Remove file templates picked up from the sensei-learning-mode theme directory when the theme override is active.
 		$templates = array_filter(
 			$templates,
 			function( $template ) {
-				$is_sensei_template = preg_match( '#^' . Sensei_Course_Theme::THEME_NAME . '//.*$#', $template->id );
+				$is_sensei_template = preg_match( '#^' . Sensei_Learning_Mode::THEME_NAME . '//.*$#', $template->id );
 				return ! ( $is_sensei_template && $template->has_theme_file );
 			}
 		);
@@ -269,8 +269,8 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
-		$course_theme_templates = $this->get_block_templates();
-		$extra_templates        = array_values( $course_theme_templates );
+		$learning_mode_templates = $this->get_block_templates();
+		$extra_templates         = array_values( $learning_mode_templates );
 
 		// Only show templates matching the queried slug or post type.
 		if ( $slugs ) {
@@ -286,7 +286,7 @@ class Sensei_Course_Theme_Templates {
 
 		// Return the lesson template as the default when there are no theme templates in the site editor.
 		if ( $is_site_editor && empty( $templates ) ) {
-			return [ $course_theme_templates['lesson'] ];
+			return [ $learning_mode_templates['lesson'] ];
 		}
 
 		return $templates;
@@ -348,9 +348,9 @@ class Sensei_Course_Theme_Templates {
 	 */
 	private function get_custom_templates() {
 		$active_db_templates     = [];
-		$active_template_name    = Sensei_Course_Theme_Template_Selection::get_active_template_name();
-		$template_name_seperator = Sensei_Course_Theme_Template_Selection::TEMPLATE_NAME_SEPERATOR;
-		$default_template_name   = Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME;
+		$active_template_name    = Sensei_Learning_Mode_Template_Selection::get_active_template_name();
+		$template_name_seperator = Sensei_Learning_Mode_Template_Selection::TEMPLATE_NAME_SEPERATOR;
+		$default_template_name   = Sensei_Learning_Mode_Template_Selection::DEFAULT_TEMPLATE_NAME;
 		$db_templates            = self::get_db_templates();
 
 		// Collect only those templates that correspond to the template that is set
@@ -403,7 +403,7 @@ class Sensei_Course_Theme_Templates {
 	}
 
 	/**
-	 * Return a block template for the course theme.
+	 * Return a block template for learning mode.
 	 *
 	 * @access private
 	 *
@@ -467,4 +467,13 @@ class Sensei_Course_Theme_Templates {
 		return $templates[ $type ]->content;
 	}
 
+}
+
+/**
+ * Class Sensei_Course_Theme_Templates
+ *
+ * @ignore only for backward compatibility.
+ * @since 4.0.2
+ */
+class Sensei_Course_Theme_Templates extends Sensei_Learning_Mode_Templates {
 }

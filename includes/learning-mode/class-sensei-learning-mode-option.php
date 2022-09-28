@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Theme_Option class.
+ * File containing Learning_Mode_Option class.
  *
  * @package sensei-lms
  * @since   3.13.4
@@ -11,15 +11,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Handle using the Course Theme for a given course.
+ * Handle using the Learning Mode for a given course.
  *
- * @since 3.13.4
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Option {
+class Sensei_Learning_Mode_Option {
+	/**
+	 * Old course post meta for theme preference.
+	 */
+	const OLD_THEME_POST_META_NAME = '_course_theme';
+
 	/**
 	 * Course post meta for theme preference.
 	 */
-	const THEME_POST_META_NAME = '_course_theme';
+	const THEME_POST_META_NAME = '_learning_mode';
 
 	/**
 	 * Default theme setting value.
@@ -39,7 +44,7 @@ class Sensei_Course_Theme_Option {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Theme_Option constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Learning_Mode_Option constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 	}
@@ -58,7 +63,7 @@ class Sensei_Course_Theme_Option {
 	}
 
 	/**
-	 * Initializes the Course Theme.
+	 * Initializes Learning Mode.
 	 */
 	public function init() {
 
@@ -75,7 +80,7 @@ class Sensei_Course_Theme_Option {
 	 */
 	public function ensure_learning_mode_url_prefix() {
 
-		$is_theme_overridden   = Sensei_Course_Theme::instance()::THEME_NAME === get_stylesheet();
+		$is_theme_overridden   = Sensei_Learning_Mode::instance()::THEME_NAME === get_stylesheet();
 		$should_override_theme = self::should_use_learning_mode() && self::should_override_theme();
 
 		// Remove the prefix only if the theme should not be overridden.
@@ -84,7 +89,7 @@ class Sensei_Course_Theme_Option {
 		}
 
 		$url    = get_pagenum_link( 1, false );
-		$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
+		$prefix = Sensei_Learning_Mode::instance()->get_theme_redirect_url( '' );
 		$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
 
 		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
@@ -103,12 +108,12 @@ class Sensei_Course_Theme_Option {
 	/**
 	 * Check if it should use Learning Mode template.
 	 *
-	 * @deprecated 4.0.2 Use Sensei_Course_Theme_Option::should_use_learning_mode
+	 * @deprecated 4.0.2 Use Learning_Mode_Option::should_use_learning_mode
 	 *
 	 * @return boolean
 	 */
 	public function should_use_sensei_theme() {
-		_deprecated_function( __METHOD__, '4.0.2', 'Sensei_Course_Theme_Option::should_use_learning_mode' );
+		_deprecated_function( __METHOD__, '4.0.2', 'Learning_Mode_Option::should_use_learning_mode' );
 		return self::should_use_learning_mode();
 	}
 
@@ -135,14 +140,13 @@ class Sensei_Course_Theme_Option {
 
 		if (
 			self::has_learning_mode_enabled( $course_id ) ||
-			Sensei_Course_Theme::is_preview_mode( $course_id )
+			Sensei_Learning_Mode::is_preview_mode( $course_id )
 		) {
 			return true;
 		}
 
 		return false;
 	}
-
 
 	/**
 	 * Check if it should override the theme for Learning Mode with the course theme.
@@ -169,12 +173,12 @@ class Sensei_Course_Theme_Option {
 	 *
 	 * @param int $course_id Course ID.
 	 *
-	 * @deprecated 4.0.2 Use Sensei_Course_Theme_Option::has_learning_mode_enabled
+	 * @deprecated 4.0.2 Use Learning_Mode_Option::has_learning_mode_enabled
 	 *
 	 * @return bool
 	 */
 	public static function has_sensei_theme_enabled( $course_id ) {
-		_deprecated_function( __METHOD__, '4.0.2', 'Sensei_Course_Theme_Option::has_learning_mode_enabled' );
+		_deprecated_function( __METHOD__, '4.0.2', 'Learning_Mode_Option::has_learning_mode_enabled' );
 		return self::has_learning_mode_enabled( $course_id );
 	}
 
@@ -265,6 +269,20 @@ class Sensei_Course_Theme_Option {
 	 * @access private
 	 */
 	public function register_post_meta() {
+		// Migrate old meta value if exists, then unregister the old meta.
+		$course_id      = \Sensei_Utils::get_current_course();
+		$old_theme_meta = get_post_meta( $course_id, self::OLD_THEME_POST_META_NAME, true );
+
+		if ( $old_theme_meta ) {
+			unregister_post_meta( 'course', self::OLD_THEME_POST_META_NAME );
+		}
+
+		$default = self::WORDPRESS_THEME;
+
+		if ( $old_theme_meta === self::THEME_POST_META_NAME ) {
+			$default = self::THEME_POST_META_NAME;
+		}
+
 		register_post_meta(
 			'course',
 			self::THEME_POST_META_NAME,
@@ -272,11 +290,20 @@ class Sensei_Course_Theme_Option {
 				'show_in_rest'  => true,
 				'single'        => true,
 				'type'          => 'string',
-				'default'       => self::WORDPRESS_THEME,
+				'default'       => $default,
 				'auth_callback' => function( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},
 			]
 		);
 	}
+}
+
+/**
+ * Class Sensei_Course_Theme_Option
+ *
+ * @ignore only for backward compatibility.
+ * @since 3.13.4
+ */
+class Sensei_Course_Theme_Option extends Sensei_Learning_Mode_Option {
 }

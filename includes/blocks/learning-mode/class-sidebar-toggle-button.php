@@ -6,7 +6,7 @@
  * @since 3.13.4
  */
 
-namespace Sensei\Blocks\Course_Theme;
+namespace Sensei\Blocks\Learning_Mode;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

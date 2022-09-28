@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Course_Theme_Lesson class.
+ * File containing Sensei_Learning_Mode_Lesson class.
  *
  * @package sensei-lms
  * @since 3.15.0
@@ -11,11 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei_Course_Theme_Lesson class.
+ * Sensei_Learning_Mode_Lesson class.
  *
- * @since 3.15.0
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Lesson {
+class Sensei_Learning_Mode_Lesson {
 	/**
 	 * Instance of class.
 	 *
@@ -24,7 +24,7 @@ class Sensei_Course_Theme_Lesson {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Theme_Lesson constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode_Lesson constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {}
 
@@ -70,12 +70,12 @@ class Sensei_Course_Theme_Lesson {
 
 		// Do nothing if learning mode is not used.
 		$course_id = \Sensei_Utils::get_current_course();
-		if ( ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+		if ( ! $course_id || ! Sensei_Learning_Mode_Option::has_learning_mode_enabled( $course_id ) ) {
 			return $notice;
 		}
 
 		// Add the notice to lesson notices.
-		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_regular' );
+		$notices = \Sensei_Context_Notices::instance( 'learning_mode_lesson_regular' );
 		$notices->add_notice( $notice['content'], $notice['content'], null, [], $notice['type'] );
 
 		return null;
@@ -98,7 +98,7 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$notices       = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' );
+		$notices       = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' );
 		$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$user_answers  = Sensei()->quiz->get_user_answers( $lesson_id, $user_id );
 		$lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $user_id );
@@ -230,7 +230,7 @@ class Sensei_Course_Theme_Lesson {
 				// translators: Placeholder is the link to the prerequisite lesson.
 				: sprintf( esc_html__( 'Please complete the %1$s to view this lesson content.', 'sensei-lms' ), $prerequisite_lesson_link );
 
-			$notices = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+			$notices = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' );
 			$notices->add_notice( 'locked_lesson', $text, __( 'You don\'t have access to this lesson', 'sensei-lms' ), [], 'lock' );
 		}
 	}
@@ -248,7 +248,7 @@ class Sensei_Course_Theme_Lesson {
 			return;
 		}
 
-		$notices      = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' );
+		$notices      = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' );
 		$notice_key   = 'locked_lesson';
 		$notice_title = __( 'You don\'t have access to this lesson', 'sensei-lms' );
 		$notice_icon  = 'lock';
@@ -332,4 +332,13 @@ class Sensei_Course_Theme_Lesson {
 			$notice_icon
 		);
 	}
+}
+
+/**
+ * Class Sensei_Course_Theme_Lesson
+ *
+ * @ignore only for backward compatibility.
+ * @since 3.15.0
+ */
+class Sensei_Course_Theme_Lesson extends Sensei_Learning_Mode_Lesson {
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * The class file for Sensei_Course_Theme_Template.
+ * The class file for Sensei_Learning_Mode_Template.
  *
  * @author      Automattic
  * @package     Sensei
@@ -12,7 +12,7 @@
  *
  * @since $$next-version$$
  */
-class Sensei_Course_Theme_Template {
+class Sensei_Learning_Mode_Template {
 
 	/**
 	 * The unique name of the block template.
@@ -97,4 +97,13 @@ class Sensei_Course_Theme_Template {
 			}
 		}
 	}
+}
+
+/**
+ * Class Sensei_Course_Theme_Template
+ *
+ * @ignore only for backward compatibility.
+ * @since $$next-version$$
+ */
+class Sensei_Course_Theme_Template extends Sensei_Learning_Mode_Template {
 }

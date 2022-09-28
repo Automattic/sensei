@@ -1,6 +1,6 @@
 <?php
 /**
- * Sensei Course Theme compatibility functions. Used for WordPress 5.7 and 5.8  support.
+ * Sensei Learning Mode compatibility functions. Used for WordPress 5.7 and 5.8  support.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Course Theme compatibility.
+ * Sensei Learning Mode compatibility.
  *
- * @since 4.0.2
+ * @since $$next-version$$
  */
-class Sensei_Course_Theme_Compat {
+class Sensei_Learning_Mode_Compat {
 
 	/**
 	 * Instance of class.
@@ -24,7 +24,7 @@ class Sensei_Course_Theme_Compat {
 	private static $instance;
 
 	/**
-	 * Sensei_Course_Theme_Compat constructor. Prevents other instances from being created outside of `self::instance()`.
+	 * Sensei_Learning_Mode_Compat constructor. Prevents other instances from being created outside of `self::instance()`.
 	 */
 	private function __construct() {
 	}
@@ -58,9 +58,9 @@ class Sensei_Course_Theme_Compat {
 	 *
 	 * @access private
 	 */
-	public function the_course_theme_layout() {
+	public function the_learning_mode_layout() {
 
-		$template = \Sensei_Course_Theme_Templates::instance()->should_use_quiz_template() ? 'quiz' : 'lesson';
+		$template = \Sensei_Learning_Mode_Templates::instance()->should_use_quiz_template() ? 'quiz' : 'lesson';
 		$content  = $this->load_block_template( $template );
 
 		//phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Theme function.
@@ -87,7 +87,7 @@ class Sensei_Course_Theme_Compat {
 		}
 
 		if ( ! preg_match( '/template-canvas.php$/', $template ) ) {
-			return Sensei_Course_Theme::instance()->get_course_theme_root() . '/index.php';
+			return Sensei_Learning_Mode::instance()->get_learning_mode_root() . '/index.php';
 		}
 
 		return $template;
@@ -101,7 +101,7 @@ class Sensei_Course_Theme_Compat {
 	 * @return string
 	 */
 	private function load_block_template( $template ) {
-		$template_content = Sensei_Course_Theme_Templates::instance()->get_template_content( $template );
+		$template_content = Sensei_Learning_Mode_Templates::instance()->get_template_content( $template );
 		return $this->get_the_block_template_html( $template_content );
 	}
 
@@ -141,7 +141,7 @@ class Sensei_Course_Theme_Compat {
 			return $custom_logo;
 		}
 
-		$theme_mods = get_option( 'theme_mods_' . \Sensei_Course_Theme::instance()->get_original_theme() );
+		$theme_mods = get_option( 'theme_mods_' . \Sensei_Learning_Mode::instance()->get_original_theme() );
 
 		if ( ! empty( $theme_mods['custom_logo'] ) ) {
 			return $theme_mods['custom_logo'];
@@ -150,4 +150,13 @@ class Sensei_Course_Theme_Compat {
 		return $custom_logo;
 
 	}
+}
+
+/**
+ * Class Sensei_Course_Theme_Compat
+ *
+ * @ignore only for backward compatibility.
+ * @since 4.0.2
+ */
+class Sensei_Course_Theme_Compat extends Sensei_Learning_Mode_Compat {
 }
