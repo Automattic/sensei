@@ -1,0 +1,46 @@
+
+$breakpoint: 783px;
+
+body {
+	--primary-color: var(--sensei-learning-mode-primary-color, var(--wp--preset--color--primary, #307771));
+	--bg-color: var(--sensei-learning-mode-background-color, var(--wp--preset--color--background, #FFFFFF));
+	--primary-contrast-color: var(--bg-color);
+	--text-color: var(--sensei-learning-mode-foreground-color, var(--wp--preset--color--text, #1E1E1E));
+	--border-color: rgba(125, 125, 125, 0.3);
+
+	background-color: var(--bg-color);
+	color: var(--text-color);
+}
+
+.sensei-learning-mode__frame {
+
+	--wp--style--block-gap: 0px;
+	box-sizing: border-box;
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	a:hover, a:hover * {
+		color: var(--primary-color);
+		fill: var(--primary-color);
+		cursor: pointer;
+		background: none;
+	}
+
+	button:hover {
+		cursor: pointer;
+	}
+
+	font-family: 'Inter', sans-serif;
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 1.5;
+	letter-spacing: normal;
+
+	* {
+		font-family: 'Inter', sans-serif;
+	}
+
+}

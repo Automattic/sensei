@@ -49,10 +49,10 @@ class Notices {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [] ) : string {
-		$notices_html = Sensei_Context_Notices::instance( 'course_theme_lesson_regular' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' )
-			. Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' )
-			. Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' )
-			. Sensei_Context_Notices::instance( 'course_theme_quiz_grade' )->get_notices_html( 'learning-mode/quiz-grade-notice.php' );
+		$notices_html = Sensei_Context_Notices::instance( 'learning_mode_lesson_regular' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' )
+			. Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' )
+			. Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' )
+			. Sensei_Context_Notices::instance( 'learning_mode_quiz_grade' )->get_notices_html( 'learning-mode/quiz-grade-notice.php' );
 
 		$wrapper_attr = get_block_wrapper_attributes();
 		return sprintf( '<div %1$s>%2$s</div>', $wrapper_attr, $notices_html );

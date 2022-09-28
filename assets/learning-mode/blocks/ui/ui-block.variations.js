@@ -61,7 +61,7 @@ export const FixedHeaderBlock = {
 	),
 	isDefault: true,
 	attributes: {
-		elementClass: 'sensei-course-theme__header',
+		elementClass: 'sensei-learning-mode__header',
 	},
 	innerBlocks: [ row ],
 	meta: {
@@ -81,7 +81,7 @@ export const SidebarBlock = {
 		'sensei-lms'
 	),
 	attributes: {
-		elementClass: 'sensei-course-theme__sidebar',
+		elementClass: 'sensei-learning-mode__sidebar',
 	},
 	meta: {
 		isFrame: true,
@@ -97,7 +97,7 @@ export const MainContentBlock = {
 	title: __( 'Main Content', 'sensei-lms' ),
 	description: __( 'Content Area.', 'sensei-lms' ),
 	attributes: {
-		elementClass: 'sensei-course-theme__main-content',
+		elementClass: 'sensei-learning-mode__main-content',
 	},
 	meta: {
 		isFrame: false,
@@ -113,7 +113,7 @@ export const TwoColumnLayoutBlock = {
 	title: __( 'Two-column Layout', 'sensei-lms' ),
 	description: __( 'Layout with a fixed sidebar', 'sensei-lms' ),
 	attributes: {
-		elementClass: 'sensei-course-theme__columns',
+		elementClass: 'sensei-learning-mode__columns',
 	},
 	innerBlocks: [
 		createBlockTemplate( MainContentBlock, {
@@ -148,7 +148,7 @@ export const VideoContainerBlock = {
 	title: __( 'Video Container', 'sensei-lms' ),
 	description: __( 'Container for a video with a sidebar.', 'sensei-lms' ),
 	attributes: {
-		elementClass: 'sensei-course-theme__video-container',
+		elementClass: 'sensei-learning-mode__video-container',
 	},
 	innerBlocks: [
 		[ 'core/video', [] ],

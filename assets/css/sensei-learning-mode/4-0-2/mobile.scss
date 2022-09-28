@@ -1,0 +1,80 @@
+@media screen and (max-width: ($breakpoint - 1)) {
+	body {
+		--sidebar-width: 0px;
+	}
+
+	.sensei-learning-mode {
+
+		&--sidebar-open {
+			--header-height: 90px;
+			overflow: hidden;
+
+			.sensei-learning-mode__header__container {
+				padding-bottom: var(--header-open-height);
+				height: var(--header-height);
+			}
+
+			.sensei-learning-mode-course-progress-bar {
+				margin: 0 24px;
+			}
+
+			.sensei-learning-mode__header .sensei-learning-mode-course-progress {
+				display: block;
+				position: absolute;
+				left: 24px;
+				top: calc( var(--header-height) - 36px);
+			}
+			.sensei-learning-mode-course-progress-bar {
+				height: 8px;
+				position: absolute;
+				top: calc( var(--header-height) - 12px);
+				margin: 0;
+				left: 24px;
+				right: 24px;
+			}
+		}
+
+		&__header {
+
+			&__container {
+				align-items: flex-start!important;
+				padding-top: 12px;
+				overflow: hidden;
+			}
+
+			.sensei-learning-mode-course-progress, .sensei-learning-mode-prev-next-lesson-text {
+				display: none;
+			}
+
+			.sensei-learning-mode-prev-next-lesson-a {
+				padding: 2px;
+			}
+
+			&__left {
+				gap: 12px;
+				height: 30px;
+			}
+
+			&__navigation {
+				gap: 12px;
+				height: 30px;
+			}
+
+		}
+
+		&__sidebar__content {
+			padding: 0;
+		}
+
+		&__sidebar {
+			width: unset!important;
+			margin: 0 !important;
+		}
+
+		&__main-content {
+			flex: 1 !important;
+			margin-left: 0!important;
+		}
+
+	}
+}

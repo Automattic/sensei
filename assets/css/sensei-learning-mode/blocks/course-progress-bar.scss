@@ -1,0 +1,11 @@
+.sensei-learning-mode-course-progress-bar {
+	height: var(--header-progress-bar-height, 4px);
+	background-color: var(--border-color);
+	margin: 0 !important;
+	width: 100%;
+
+	&-inner {
+		height: 100%;
+		background-color: var(--primary-color);
+	}
+}

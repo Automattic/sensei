@@ -491,7 +491,7 @@ div.sensei-quiz-actions {
 }
 
 
-.quiz:not(.quiz-blocks):not(.sensei-course-theme), .lesson {
+.quiz:not(.quiz-blocks):not(.sensei-learning-mode), .lesson {
   button.quiz-submit {
     &.complete {
       background: $success;
@@ -509,7 +509,7 @@ div.sensei-quiz-actions {
   }
 }
 
-.quiz-blocks:not(.sensei-course-theme) {
+.quiz-blocks:not(.sensei-learning-mode) {
   .wp-block-buttons {
     display: flex;
     flex-direction: row;
@@ -1026,7 +1026,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
   }
 }
 
-.course-container, .course, .lesson, .quiz:not(.quiz-blocks):not(.sensei-course-theme)  {
+.course-container, .course, .lesson, .quiz:not(.quiz-blocks):not(.sensei-learning-mode)  {
   a.button, a.button:visited,
   a.comment-reply-link,
   #commentform #submit,

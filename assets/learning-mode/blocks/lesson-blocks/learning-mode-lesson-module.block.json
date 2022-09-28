@@ -1,0 +1,16 @@
+{
+  "name": "sensei-lms/learning-mode-lesson-module",
+  "category": "theme",
+  "supports": {
+    "align": true,
+    "color": {
+      "gradients": true,
+      "link": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    }
+  }
+}

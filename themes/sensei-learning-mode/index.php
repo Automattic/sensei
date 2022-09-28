@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <?php
-	\Sensei_Learning_Mode_Compat::instance()->the_course_theme_layout();
+	\Sensei_Learning_Mode_Compat::instance()->the_learning_mode_layout();
 	wp_footer();
 ?>
 </body>

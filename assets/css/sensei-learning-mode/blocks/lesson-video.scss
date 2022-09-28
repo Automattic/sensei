@@ -1,0 +1,16 @@
+.sensei-learning-mode-lesson-video {
+
+	.wp-block-embed, .wp-block-video {
+		margin: 0;
+	}
+
+	iframe, video {
+		width: 100% !important;
+	}
+
+	@media screen and (max-width: (782px)) {
+
+		margin: 0 calc(-1 * var(--content-padding));
+	}
+
+}

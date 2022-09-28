@@ -57,11 +57,11 @@ class Sidebar_Toggle_Button {
 
 		$wrapper_attr = get_block_wrapper_attributes(
 			[
-				'class' => 'sensei-course-theme__sidebar-toggle',
+				'class' => 'sensei-learning-mode__sidebar-toggle',
 			]
 		);
 		return sprintf(
-			'<button %s onclick="sensei.courseTheme.toggleSidebar()" title="%s">%s</button>',
+			'<button %s onclick="sensei.learningMode.toggleSidebar()" title="%s">%s</button>',
 			$wrapper_attr,
 			$label,
 			$icon

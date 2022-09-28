@@ -1,0 +1,103 @@
+$base: '.sensei-learning-mode';
+
+@media screen and (min-width: $breakpoint ) {
+	.sensei-learning-mode__focus-mode-toggle {
+		padding: 4px;
+		border: none;
+		background-color: unset !important;
+		cursor: pointer;
+		color: inherit !important;
+		line-height: 10px;
+		&:hover {
+			color: var(--primary-color) !important;
+		}
+
+		.sensei-learning-mode__focus-mode-toggle-icon {
+			width: 10px;
+			height: 10px;
+			transform: rotate(180deg);
+		}
+	}
+
+	body:not(.sensei-learning-mode--focus-mode) {
+
+		// Toogle in the header and without focus mode.
+		.sensei-learning-mode__header .sensei-learning-mode__focus-mode-toggle {
+			transform: rotate(90deg)
+		}
+
+		// Toggle in the sidebar and without focus mode.
+		.sensei-learning-mode__sidebar .sensei-learning-mode__focus-mode-toggle {
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
+			box-sizing: border-box;
+			padding-right: 6px;
+		}
+	}
+
+	.sensei-learning-mode--focus-mode {
+		--header-height: 45px;
+
+		.sensei-learning-mode {
+			&__header {
+				&__container {
+					height: 39px;
+					overflow: hidden;
+				}
+				.wp-block-site-logo, .sensei-learning-mode-course-progress, .sensei-learning-mode-prev-next-lesson-text {
+					display: none;
+				}
+				.wp-block-sensei-lms-course-title {
+					font-size: 16px;
+				}
+				.sensei-learning-mode-course-progress-bar {
+					height: 6px;
+				}
+				.sensei-learning-mode__button {
+					font-size: 12px;
+					padding: 3px 8px;
+					font-weight: 700;
+				}
+			}
+
+			&__sidebar {
+				left: -400px;
+				overflow: visible;
+			}
+			&__main-content ~ .sensei-learning-mode__sidebar {
+				left: unset;
+				right: -400px;
+			}
+			&__main-content {
+				margin-left: 0 !important;
+			}
+			&__focus-mode-toggle {
+				.sensei-learning-mode__focus-mode-toggle-icon {
+					transform: rotate(0);
+				}
+			}
+		}
+
+		// Toogle in the header.
+		.sensei-learning-mode__header .sensei-learning-mode__focus-mode-toggle {
+			.sensei-learning-mode__focus-mode-toggle-icon {
+				transform: rotate(90deg);
+			}
+		}
+
+		// Toggle in the sidebar.
+		.sensei-learning-mode__sidebar .sensei-learning-mode__focus-mode-toggle {
+			position: absolute;
+			left: 405px;
+		}
+	}
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+	.sensei-learning-mode--focus-mode--animated {
+		* {
+			transition: all 300ms ease-out;
+		}
+	}
+}

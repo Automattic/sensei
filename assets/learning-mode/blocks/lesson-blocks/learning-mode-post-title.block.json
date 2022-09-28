@@ -1,0 +1,13 @@
+{
+  "name": "sensei-lms/learning-mode-post-title",
+  "category": "theme",
+  "supports": {
+    "align": true,
+    "color": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    }
+  }
+}

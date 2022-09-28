@@ -46,7 +46,7 @@ const helpers = {
 	) => {
 		const frameClass =
 			variation?.meta?.isFrame ?? true
-				? 'sensei-course-theme__frame'
+				? 'sensei-learning-mode__frame'
 				: '';
 
 		return {

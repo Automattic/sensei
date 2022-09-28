@@ -70,7 +70,7 @@ class Sensei_Learning_Mode_Option {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
 		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
-		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
+		add_filter( 'sensei_admin_notices', [ $this, 'add_learning_mode_notice' ] );
 	}
 
 	/**
@@ -239,7 +239,7 @@ class Sensei_Learning_Mode_Option {
 	 *
 	 * @return array Notices including the course theme notice.
 	 */
-	public function add_course_theme_notice( array $notices ) {
+	public function add_learning_mode_notice( array $notices ) {
 		$notices['sensei-learning-mode'] = [
 			'type'       => 'user',
 			'icon'       => 'sensei',

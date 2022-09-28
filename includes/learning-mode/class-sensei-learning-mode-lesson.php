@@ -312,7 +312,7 @@ class Sensei_Learning_Mode_Lesson {
 			'<form method="POST" action="' . esc_url( get_permalink( $course_id ) ) . '">
 				<input type="hidden" name="course_start" value="1" />
 				' . $nonce . '
-				<button type="submit" class="sensei-course-theme__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
+				<button type="submit" class="sensei-learning-mode__button is-primary">' . esc_html__( 'Take course', 'sensei-lms' ) . '</button>
 			</form>',
 		];
 

@@ -69,7 +69,7 @@ const usePreviewAndCustomizerLinks = () => {
 		if (
 			! firstLesson.draft &&
 			( globalLearningModeEnabled ||
-				currentPost.meta._course_theme === SENSEI_THEME )
+				currentPost.meta._learning_mode === SENSEI_THEME )
 		) {
 			previewUrl = `/?p=${ firstLesson.id }`;
 		} else {
@@ -97,7 +97,7 @@ const usePreviewAndCustomizerLinks = () => {
 const LearningModeSidebar = () => {
 	const globalLearningModeEnabled =
 		window.sensei?.senseiSettings?.sensei_learning_mode_all || false;
-	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
+	const [ theme, setTheme ] = useCourseMeta( '_learning_mode' );
 	const { previewUrl, customizerUrl } = usePreviewAndCustomizerLinks();
 
 	return (

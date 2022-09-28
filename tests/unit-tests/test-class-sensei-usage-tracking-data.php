@@ -1595,9 +1595,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	 * Tests getting courses using course theme count.
 	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_courses_using_course_theme_count
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_using_learning_mode_count
 	 */
-	public function testGetCoursesUsingCourseThemeCount() {
+	public function testGetCoursesUsingLearningModeCount() {
 		$this->factory->course->create_many(
 			2,
 			[
@@ -1618,47 +1618,47 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'courses_using_course_theme', $usage_data, 'Key' );
-		$this->assertEquals( 2, $usage_data['courses_using_course_theme'], 'Count' );
+		$this->assertArrayHasKey( 'courses_using_learning_mode', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['courses_using_learning_mode'], 'Count' );
 	}
 
 	/**
 	 * Tests getting if course theme is enabled globally.
 	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_is_course_theme_enabled_globally
+	 * @covers Sensei_Usage_Tracking_Data::get_is_learning_mode_enabled_globally
 	 */
-	public function testGetIsCourseThemeEnabledGlobally() {
+	public function testGetIsLearningModeEnabledGlobally() {
 		Sensei()->settings->set( 'sensei_learning_mode_all', false );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
-		$this->assertEquals( 0, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['learning_mode_enabled_globally'], 'Boolean int' );
 
 		Sensei()->settings->set( 'sensei_learning_mode_all', true );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_enabled_globally', $usage_data, 'Key' );
-		$this->assertEquals( 1, $usage_data['course_theme_enabled_globally'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['learning_mode_enabled_globally'], 'Boolean int' );
 	}
 
 	/**
 	 * Tests getting if course theme is enabled globally.
 	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
-	 * @covers Sensei_Usage_Tracking_Data::get_course_theme_has_theme_styles_enabled
+	 * @covers Sensei_Usage_Tracking_Data::get_learning_mode_has_theme_styles_enabled
 	 */
-	public function testGetDoesCourseThemeHasThemeStyles() {
+	public function testGetDoesLearningModeHasThemeStyles() {
 		Sensei()->settings->set( 'sensei_learning_mode_theme', false );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_theme_styles', $usage_data, 'Key' );
-		$this->assertEquals( 0, $usage_data['course_theme_theme_styles'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_theme_styles', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['learning_mode_theme_styles'], 'Boolean int' );
 
 		Sensei()->settings->set( 'sensei_learning_mode_theme', true );
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
-		$this->assertArrayHasKey( 'course_theme_theme_styles', $usage_data, 'Key' );
-		$this->assertEquals( 1, $usage_data['course_theme_theme_styles'], 'Boolean int' );
+		$this->assertArrayHasKey( 'learning_mode_theme_styles', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['learning_mode_theme_styles'], 'Boolean int' );
 	}
 }

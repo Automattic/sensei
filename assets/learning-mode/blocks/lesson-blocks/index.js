@@ -13,19 +13,19 @@ import DoubleChevronRight from '../../../icons/double-chevron-right.svg';
 import MenuIcon from '../../../icons/menu.svg';
 import SenseiIcon from '../../../icons/sensei.svg';
 import courseContentMeta from './course-content.block.json';
-import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
-import courseThemeCourseProgressCounterMeta from './course-theme-course-progress-counter.block.json';
-import courseThemeLessonActionsMeta from './course-theme-lesson-actions.block.json';
-import courseThemeLessonModuleMeta from './course-theme-lesson-module.block.json';
-import courseThemeNoticesMeta from './course-theme-notices.block.json';
-import courseThemePostTitleMeta from './course-theme-post-title.block.json';
-import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
+import learningModeCourseProgressBarMeta from './learning-mode-course-progress-bar.block.json';
+import learningModeCourseProgressCounterMeta from './learning-mode-course-progress-counter.block.json';
+import learningModeLessonActionsMeta from './learning-mode-lesson-actions.block.json';
+import learningModeLessonModuleMeta from './learning-mode-lesson-module.block.json';
+import learningModeNoticesMeta from './learning-mode-notices.block.json';
+import learningModePostTitleMeta from './learning-mode-post-title.block.json';
+import learningModePrevNextLessonMeta from './learning-mode-prev-next-lesson.block.json';
 import courseTitleMeta from './course-title.block.json';
 import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
 import pageActionsMeta from './page-actions.block.json';
 import sideBarToggleButtonMeta from './sidebar-toggle-button.block.json';
-import courseThemeLessonVideoMeta from './course-theme-lesson-video.block.json';
+import learningModeLessonVideoMeta from './learning-mode-lesson-video.block.json';
 
 const meta = {
 	category: 'theme',
@@ -50,7 +50,7 @@ export default [
 		},
 	},
 	{
-		...courseThemeCourseProgressCounterMeta,
+		...learningModeCourseProgressCounterMeta,
 		...meta,
 		title: __( 'Course Progress', 'sensei-lms' ),
 		description: __(
@@ -59,14 +59,14 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme-course-progress">
+				<div className="sensei-learning-mode-course-progress">
 					{ __( '2 of 10 lessons complete (20%)', 'sensei-lms' ) }
 				</div>
 			);
 		},
 	},
 	{
-		...courseThemePrevNextLessonMeta,
+		...learningModePrevNextLessonMeta,
 		...meta,
 		title: __( 'Previous & Next Lesson', 'sensei-lms' ),
 		description: __(
@@ -75,11 +75,11 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme-prev-next-lesson-container">
-					<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__prev">
+				<div className="sensei-learning-mode-prev-next-lesson-container">
+					<div className="sensei-learning-mode-prev-next-lesson-a sensei-learning-mode-prev-next-lesson-a__prev">
 						<ChevronLeft />
 					</div>
-					<div className="sensei-course-theme-prev-next-lesson-a sensei-course-theme-prev-next-lesson-a__next">
+					<div className="sensei-learning-mode-prev-next-lesson-a sensei-learning-mode-prev-next-lesson-a__next">
 						<ChevronRight />
 					</div>
 				</div>
@@ -96,14 +96,14 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme__sidebar-toggle">
+				<div className="sensei-learning-mode__sidebar-toggle">
 					<MenuIcon />
 				</div>
 			);
 		},
 	},
 	{
-		...courseThemeLessonActionsMeta,
+		...learningModeLessonActionsMeta,
 		...meta,
 		title: __( 'Lesson Actions (Learning Mode)', 'sensei-lms' ),
 		description: __(
@@ -112,11 +112,11 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme-lesson-actions">
-					<div className="sensei-course-theme__button is-primary">
+				<div className="sensei-learning-mode-lesson-actions">
+					<div className="sensei-learning-mode__button is-primary">
 						{ __( 'Take Quiz', 'sensei-lms' ) }
 					</div>
-					<div className="sensei-course-theme__button is-secondary">
+					<div className="sensei-learning-mode__button is-secondary">
 						{ __( 'Complete Course', 'sensei-lms' ) }
 					</div>
 				</div>
@@ -124,15 +124,15 @@ export default [
 		},
 	},
 	{
-		...courseThemeCourseProgressBarMeta,
+		...learningModeCourseProgressBarMeta,
 		...meta,
 		title: __( 'Course Progress Bar', 'sensei-lms' ),
 		description: __( 'Display course progress.', 'sensei-lms' ),
 		edit() {
 			return (
-				<div className="sensei-course-theme-course-progress-bar">
+				<div className="sensei-learning-mode-course-progress-bar">
 					<div
-						className="sensei-course-theme-course-progress-bar-inner"
+						className="sensei-learning-mode-course-progress-bar-inner"
 						style={ { width: '20%' } }
 					/>
 				</div>
@@ -149,8 +149,8 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme__focus-mode-toggle">
-					<DoubleChevronRight className="sensei-course-theme__focus-mode-toggle-icon" />
+				<div className="sensei-learning-mode__focus-mode-toggle">
+					<DoubleChevronRight className="sensei-learning-mode__focus-mode-toggle-icon" />
 				</div>
 			);
 		},
@@ -172,7 +172,7 @@ export default [
 		},
 	},
 	{
-		...courseThemeLessonModuleMeta,
+		...learningModeLessonModuleMeta,
 		...meta,
 		title: __( 'Module Title', 'sensei-lms' ),
 		description: __(
@@ -184,7 +184,7 @@ export default [
 		},
 	},
 	{
-		...courseThemePostTitleMeta,
+		...learningModePostTitleMeta,
 		...meta,
 		title: __( 'Post Title', 'sensei-lms' ),
 		description: __(
@@ -208,7 +208,7 @@ export default [
 		},
 	},
 	{
-		...courseThemeNoticesMeta,
+		...learningModeNoticesMeta,
 		...meta,
 		title: __( 'Notices', 'sensei-lms' ),
 		description: __(
@@ -217,8 +217,8 @@ export default [
 		),
 		edit() {
 			return (
-				<div className="sensei-course-theme__frame sensei-lms-notice sensei-course-theme-lesson-quiz-notice">
-					<div className="sensei-course-theme-lesson-quiz-notice__content">
+				<div className="sensei-learning-mode__frame sensei-lms-notice sensei-learning-mode-lesson-quiz-notice">
+					<div className="sensei-learning-mode-lesson-quiz-notice__content">
 						{ __( 'Notice', 'sensei-lms' ) }
 					</div>
 				</div>
@@ -261,7 +261,7 @@ export default [
 		},
 	},
 	{
-		...courseThemeLessonVideoMeta,
+		...learningModeLessonVideoMeta,
 		...meta,
 		title: __( 'Lesson Video', 'sensei-lms' ),
 		description: __(

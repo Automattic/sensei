@@ -65,7 +65,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
 
 		\Sensei_Learning_Mode_Lesson::instance()->init();
-		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'Lesson quiz in progress', $html, 'Should return quiz progress notice' );
 		$this->assertContains( '2 of 3', $html, 'Should return quiz progress notice' );
@@ -80,7 +80,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		$lesson_data_saved = Sensei()->quiz->save_user_answers( $user_quiz_answers, array(), $lesson_id, $user_id );
 
 		\Sensei_Learning_Mode_Lesson::instance()->init();
-		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'quiz-page=1', $html, 'Should have the link to quiz page with the first unanswered question' );
 
@@ -88,7 +88,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		delete_post_meta( $quiz_id, '_pagination' );
 
 		\Sensei_Learning_Mode_Lesson::instance()->init();
-		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertNotContains( 'quiz-page=', $html, 'Should not have the link to a specific page' );
 	}
@@ -102,7 +102,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'Awaiting grade', $html, 'Should return quiz ungraded notice' );
 	}
@@ -117,7 +117,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson->ID, 'failed' );
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'You require <strong>80</strong>% to pass this lesson\'s quiz. Your grade is <strong>0</strong>%.', $html, 'Should return quiz failed notice' );
 	}
@@ -132,7 +132,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		Sensei_Utils::update_lesson_status( $user_id, $lesson->ID, 'graded' );
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_lesson_quiz' )->get_notices_html( 'learning-mode/lesson-quiz-notice.php' );
 
 		$this->assertContains( 'Your Grade: <strong class="sensei-learning-mode-lesson-quiz-notice__grade">0</strong>%', $html, 'Should return quiz graded notice' );
 	}
@@ -157,7 +157,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertRegExp( '/Please complete the .* to view this lesson content/', $html, 'Should return prerequisite notice' );
 	}
@@ -182,7 +182,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		tests_add_filter( 'sensei_is_enrolled', '__return_true' );
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertRegExp( '/You will be able to view this lesson once the .* are completed and graded./', $html, 'Should return ungraded prerequisite notice' );
 	}
@@ -211,7 +211,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertRegExp( '/You must first complete .* before taking this course./', $html, 'Should return course prerequisite notice' );
 	}
@@ -226,7 +226,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		wp_logout();
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertContains( 'Please register or sign in to access the course content.', $html, 'Should return logged out notice' );
 	}
@@ -247,7 +247,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		wp_logout();
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertContains( 'Register or sign in to take this lesson.', $html, 'Should return logged out preview notice' );
 	}
@@ -262,7 +262,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertContains( 'Please register for this course to access the content.', $html, 'Should return not enrolled notice' );
 	}
@@ -283,7 +283,7 @@ class Sensei_Learning_Mode_Lesson_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 		\Sensei_Learning_Mode_Lesson::instance()->init();
 
-		$html = \Sensei_Context_Notices::instance( 'course_theme_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
+		$html = \Sensei_Context_Notices::instance( 'learning_mode_locked_lesson' )->get_notices_html( 'learning-mode/locked-lesson-notice.php' );
 
 		$this->assertContains( 'Register for this course to take this lesson.', $html, 'Should return not enrolled preview notice' );
 	}

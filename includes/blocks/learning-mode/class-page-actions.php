@@ -69,7 +69,7 @@ class Page_Actions {
 		$actions = wp_link_pages(
 			[
 				'echo'   => false,
-				'before' => '<div class="wp-block-sensei-lms-page-actions sensei-course-theme__post-pagination">',
+				'before' => '<div class="wp-block-sensei-lms-page-actions sensei-learning-mode__post-pagination">',
 				'after'  => '</div>',
 			]
 		);

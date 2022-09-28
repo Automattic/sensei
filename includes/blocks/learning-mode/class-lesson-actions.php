@@ -61,7 +61,7 @@ class Lesson_Actions {
 			<form data-id="complete-lesson-form" class="sensei-learning-mode-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
+				<button type="submit" data-id="complete-lesson-button" class="sensei-learning-mode__button ' . $button_class . '" ' . $disabled_attribute . '>
 					' . $text . '
 				</button>
 			</form>
@@ -81,7 +81,7 @@ class Lesson_Actions {
 		$quiz_permalink = esc_url( $quiz_permalink );
 		$text           = esc_html__( 'Take quiz', 'sensei-lms' );
 
-		return '<a href="' . $quiz_permalink . '" class="sensei-course-theme__button is-primary" ' . $disabled . '>'
+		return '<a href="' . $quiz_permalink . '" class="sensei-learning-mode__button is-primary" ' . $disabled . '>'
 			. $text .
 		'</a>';
 	}

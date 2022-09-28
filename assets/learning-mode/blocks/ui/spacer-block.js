@@ -20,7 +20,7 @@ const SpacerBlock = ( blockPropsFn ) => () => {
 	return (
 		<div
 			{ ...blockPropsFn( {
-				className: 'sensei-course-theme__spacer-flex',
+				className: 'sensei-learning-mode__spacer-flex',
 			} ) }
 		/>
 	);

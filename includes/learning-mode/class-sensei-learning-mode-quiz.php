@@ -128,7 +128,7 @@ class Sensei_Learning_Mode_Quiz {
 			<form class='sensei-learning-mode-quiz-graded-notice__reset-quiz-form' method='POST' action='{$permalink}'>
 				{$nonce}
 				<input type='hidden' name='quiz_reset' value='true' />
-				<button type='submit' class='sensei-course-theme__button is-link'>
+				<button type='submit' class='sensei-learning-mode__button is-link'>
 					{$text}
 				</button>
 			</form>
@@ -139,7 +139,7 @@ class Sensei_Learning_Mode_Quiz {
 	 * Renders the contact teacher button.
 	 */
 	private static function render_contact_teacher() {
-		$link  = '<a href="#" class="sensei-course-theme__button is-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
+		$link  = '<a href="#" class="sensei-learning-mode__button is-link">' . __( 'Contact teacher', 'sensei-lms' ) . '</a>';
 		$block = new Sensei_Block_Contact_Teacher();
 		return $block->render_contact_teacher_block( null, $link );
 	}
