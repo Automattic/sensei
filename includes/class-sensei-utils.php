@@ -2672,9 +2672,7 @@ class Sensei_Utils {
 			$blocks = parse_blocks( $post->post_content );
 			foreach ( $blocks as $block ) {
 				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-					$content = render_block( $block );
-					global $wp_embed;
-					return $wp_embed->autoembed( $content );
+					return render_block( $block );
 				}
 			}
 		}
