@@ -52,6 +52,7 @@ body.sensei-course-theme {
 
 	&__header + * {
 		margin-top: var(--header-height) !important;
+		display: flow-root;
 	}
 
 	&__spacer-flex {
