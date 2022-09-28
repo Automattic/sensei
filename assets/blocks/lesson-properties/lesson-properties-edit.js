@@ -19,14 +19,12 @@ import NumberControl from '../editor-components/number-control';
 import { DIFFICULTIES } from './constants';
 
 const LessonPropertiesEdit = ( props ) => {
-	const {
-		className,
-		attributes: { readOnly },
-	} = props;
+	const { className } = props;
 
 	const [ meta, setMeta ] = useEntityProp( 'postType', 'lesson', 'meta' );
 	const { _lesson_complexity: difficulty = '', _lesson_length: length = 10 } =
 		meta || {};
+	const readOnly = ! meta;
 
 	const handlePostMetaChange = useCallback(
 		( key, value ) => {

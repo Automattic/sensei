@@ -1,13 +1,5 @@
 {
 	"name": "sensei-lms/lesson-properties",
 	"category": "sensei-lms",
-	"textdomain": "sensei-lms",
-	"attributes": {
-		"readOnly": {
-			"type": "boolean"
-		},
-		"lmTemplatePart": {
-			"type": "boolean"
-		}
-	}
+	"textdomain": "sensei-lms"
 }

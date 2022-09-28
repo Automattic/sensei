@@ -12,6 +12,7 @@ import ChevronRight from '../../../icons/chevron-right.svg';
 import DoubleChevronRight from '../../../icons/double-chevron-right.svg';
 import MenuIcon from '../../../icons/menu.svg';
 import SenseiIcon from '../../../icons/sensei.svg';
+import lessonPropertiesBlock from '../../../blocks/lesson-properties';
 import courseContentMeta from './course-content.block.json';
 import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
 import courseThemeCourseProgressCounterMeta from './course-theme-course-progress-counter.block.json';
@@ -294,5 +295,10 @@ export default [
 				</div>
 			);
 		},
+	},
+	{
+		...lessonPropertiesBlock,
+		...meta,
+		name: 'sensei-lms/template-lesson-properties',
 	},
 ];
