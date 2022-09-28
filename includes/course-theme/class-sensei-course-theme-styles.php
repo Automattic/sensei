@@ -62,7 +62,8 @@ class Sensei_Course_Theme_Styles {
 		}
 
 		$styles = wp_get_global_styles();
-		$vars   = self::get_colors_as_css_variables( $styles );
+		$colors = self::get_colors( $styles );
+		$vars   = self::format_css_variables( $colors, '-global' );
 
 		if ( ! empty( $vars ) ) {
 			self::output_style( implode( "\n", $vars ) );
@@ -82,8 +83,6 @@ class Sensei_Course_Theme_Styles {
 			return [];
 		}
 
-		$colors = self::get_colors( $styles );
-		return self::format_css_variables( $colors );
 	}
 
 	/**
@@ -105,7 +104,7 @@ class Sensei_Course_Theme_Styles {
 
 		$vars['--sensei-text-color']             = $element_colors['text'] ?? $styles['textColor'] ?? null;
 		$vars['--sensei-background-color']       = $element_colors['background'] ?? $styles['backgroundColor'] ?? null;
-		$vars['--sensei-primary-contrast-color'] = $vars['background-color'];
+		$vars['--sensei-primary-contrast-color'] = $vars['--sensei-background-color'];
 
 		$link = $styles['elements']['link']['color'] ?? null;
 
@@ -147,11 +146,15 @@ class Sensei_Course_Theme_Styles {
 	 * Generate CSS variables.
 	 *
 	 * @param array $variables Key-value pair of variable names and values.
+	 * @param array $postfix   Optional variable name postfix.
 	 */
-	private static function format_css_variables( $variables ) {
+	private static function format_css_variables( $variables, $postfix = '' ) {
 		$css = [];
 
 		foreach ( $variables as $variable => $value ) {
+			if ( $postfix ) {
+				$variable = $variable . $postfix;
+			}
 			if ( $value ) {
 				$css[] = sprintf( '%s: %s;', $variable, self::get_property_value( $value ) );
 			}
