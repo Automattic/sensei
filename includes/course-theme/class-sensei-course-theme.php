@@ -248,9 +248,11 @@ class Sensei_Course_Theme {
 			return;
 		}
 
+		global $wp_rewrite;
+
 		$slug = preg_quote( $args['rewrite']['slug'] ?? $taxonomy, '/' );
 
-		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $taxonomy . '=$matches[1]', 'top' );
+		add_rewrite_rule( '^' . self::QUERY_VAR . $wp_rewrite->front . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $taxonomy . '=$matches[1]', 'top' );
 	}
 
 	/**
