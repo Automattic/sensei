@@ -21,7 +21,7 @@ import courseThemeLessonModuleMeta from './course-theme-lesson-module.block.json
 import courseThemeNoticesMeta from './course-theme-notices.block.json';
 import courseThemePostTitleMeta from './course-theme-post-title.block.json';
 import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
-import learningModeLessonProperties from './learning-mode-lesson-properties.block.json';
+import learningModeLessonPropertiesMeta from './learning-mode-lesson-properties.block.json';
 import courseTitleMeta from './course-title.block.json';
 import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
@@ -299,7 +299,7 @@ export default [
 	},
 	{
 		...lessonPropertiesBlock,
-		...learningModeLessonProperties,
+		...learningModeLessonPropertiesMeta,
 		...meta,
 	},
 ];

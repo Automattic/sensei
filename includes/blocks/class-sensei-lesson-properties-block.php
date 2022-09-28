@@ -43,7 +43,9 @@ class Sensei_Lesson_Properties_Block {
 			return $content;
 		}
 
-		$content = '<div class="wp-block-sensei-lms-lesson-properties">';
+		$wrapper_attributes = get_block_wrapper_attributes( [ 'class' => 'wp-block-sensei-lms-lesson-properties' ] );
+
+		$content = "<div {$wrapper_attributes}>";
 
 		if ( $length ) {
 			$content .=
