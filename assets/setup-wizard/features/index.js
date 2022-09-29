@@ -4,9 +4,16 @@
 import { __ } from '@wordpress/i18n';
 
 /**
+ * Internal dependencies
+ */
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
+
+/**
  * Features step for Setup Wizard.
  */
 const Features = () => {
+	const { stepData } = useSetupWizardStep( 'features' );
+
 	const percentage = 30;
 
 	return (
@@ -30,6 +37,11 @@ const Features = () => {
 					className="sensei-setup-wizard__features-progress-bar-filled"
 					style={ { width: `${ percentage }%` } }
 				/>
+			</div>
+
+			<div>
+				To be installed or activated (if not yet):{ ' ' }
+				{ stepData.selected.join( ', ' ) }
 			</div>
 		</div>
 	);
