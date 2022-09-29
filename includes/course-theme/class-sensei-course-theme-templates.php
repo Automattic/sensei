@@ -242,7 +242,7 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
-		if ( $this->should_hide_lesson_template( $query['post_type'] ) ) {
+		if ( $this->should_hide_lesson_template( $query['post_type'] ?? null ) ) {
 			return $templates;
 		}
 
