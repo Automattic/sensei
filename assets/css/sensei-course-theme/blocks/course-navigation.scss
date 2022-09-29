@@ -34,7 +34,7 @@
 		color: inherit !important;
 
 		&:hover {
-			color: var(--primary-color) !important;
+			color: var(--sensei-primary-color) !important;
 			text-decoration: underline;
 		}
 
@@ -50,7 +50,7 @@
 
 	&__title {
 		flex: 1;
-		color: var(--primary-color);
+		color: var(--sensei-primary-color);
 		font-weight: 600;
 		font-size: 18px;
 		line-height: 22px;

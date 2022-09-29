@@ -133,7 +133,7 @@ class Sensei_Course_Theme_Templates {
 	public function set_single_template_hierarchy( $templates ) {
 
 		// Don't change if a block template is already selected for the post.
-		$is_default_template = count( $templates ) && str_ends_with( $templates[0], '.php' );
+		$is_default_template = count( $templates ) && preg_match( '/\.php$/', $templates[0] );
 
 		if ( ! $is_default_template ) {
 			return $templates;

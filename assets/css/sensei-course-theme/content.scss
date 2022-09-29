@@ -1,20 +1,27 @@
 
 body {
-	--wp--custom--form--color--background: var(--bg-color);
+	--wp--custom--form--color--background: var(--sensei-background-color);
 	--wp--custom--form--border--width: 1.5px;
 	--wp--custom--form--border--style: solid;
-	--wp--custom--form--border--color: var(--text-color);
+	--wp--custom--form--border--color: var(--sensei-text-color);
 	--wp--custom--form--border--radius: 2px;
 	--wp--custom--form--color--text: inherit;
 	--wp--custom--form--padding: 6px 8px;
 	--wp--custom--list--spacing--padding--left: 16px;
 	--wp--custom--layout--content-size: 900px;
 	--wp--custom--layout--wide-size: 1100px;
+	--wp--style--root--padding-top: 0px !important;
+	--wp--style--root--padding-bottom: 0px;
 
 	--max-content-size: calc(100vw - var(--content-padding));
 	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
 	--wide-size: min(var(--wp--custom--layout--wide-size), var(--max-content-size));
 
+}
+
+::selection {
+	background-color: var(--sensei-text-color);
+	color: var(--sensei-background-color);
 }
 
 .wp-block-post-title {

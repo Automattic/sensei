@@ -467,7 +467,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_setting',
 			'type'        => 'checkbox',
-			'default'     => false,
+			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '$$next-version$$', '>=' ),
 			'section'     => 'appearance-settings',
 		);
 
@@ -981,7 +981,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 						<img alt="<?php esc_attr( $template->title ); ?>" src="<?php echo esc_attr( $template->screenshots['thumbnail'] ); ?>" />
 					</label>
-				</li>	
+				</li>
 			<?php endforeach; ?>
 			</ul>
 		<?php

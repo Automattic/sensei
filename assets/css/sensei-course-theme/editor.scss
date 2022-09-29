@@ -1,11 +1,11 @@
 body, .wp-site-blocks.is-root-container {
-	height: 100vh;
+	min-height: 100vh;
 }
 
 body {
 	padding: 8px;
 	--wp--custom--gap--baseline: 0px;
-	--bg-color: none;
+	--sensei-background-color: none;
 }
 
 .wp-block {

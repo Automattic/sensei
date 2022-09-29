@@ -37,8 +37,13 @@ body.sensei-course-theme {
 		right: 0;
 		height: var(--header-height);
 		top: var(--top-offset);
-		background-color: var(--bg-color);
+		background-color: var(--sensei-background-color);
 		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		& > :first-child {
+			flex: 1;
+		}
 
 		img {
 			max-height: var(--header-height);
@@ -47,6 +52,7 @@ body.sensei-course-theme {
 
 	&__header + * {
 		margin-top: var(--header-height) !important;
+		display: flow-root;
 	}
 
 	&__spacer-flex {
@@ -81,6 +87,10 @@ body.sensei-course-theme {
 			margin-right: unset ! important;
 			margin-left: var(--sidebar-width) !important;
 		}
+	}
+
+	&__content-footer {
+		border-top: 1px solid var(--border-color, #1E1E1E);
 	}
 }
 

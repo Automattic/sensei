@@ -189,9 +189,8 @@ class Sensei_Course_Theme_Editor {
 			Sensei()->assets->enqueue_style( 'sensei-learning-mode-editor' );
 			Sensei_Course_Theme::instance()->enqueue_fonts();
 
-			if ( Sensei_Course_Theme_Option::should_override_theme() ) {
-				Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
-			}
+			Sensei()->assets->enqueue( Sensei_Course_Theme::THEME_NAME . '-editor', 'course-theme/course-theme.editor.js' );
+
 		}
 	}
 
