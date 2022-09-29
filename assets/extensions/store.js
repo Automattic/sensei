@@ -7,7 +7,8 @@ import { keyBy, merge, isEqual } from 'lodash';
  * WordPress dependencies
  */
 import {
-	registerStore,
+	createReduxStore,
+	register,
 	select,
 	dispatch,
 	createRegistrySelector,
@@ -29,11 +30,6 @@ const STATUS = {
 	IN_PROGRESS: 'in-progress',
 	IN_QUEUE: 'in-queue',
 };
-
-/**
- * Store name.
- */
-export const EXTENSIONS_STORE = 'sensei/extensions';
 
 /**
  * Default store state.
@@ -395,10 +391,12 @@ const reducer = {
 	DEFAULT: ( action, state ) => state,
 };
 
-registerStore( EXTENSIONS_STORE, {
+export const EXTENSIONS_STORE = createReduxStore( 'sensei/extensions', {
 	reducer: createReducerFromActionMap( reducer, DEFAULT_STATE ),
 	actions,
 	selectors,
 	resolvers,
 	controls,
 } );
+
+register( EXTENSIONS_STORE );

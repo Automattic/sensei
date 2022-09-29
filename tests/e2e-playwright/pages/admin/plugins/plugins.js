@@ -38,7 +38,7 @@ class PluginsPage {
 	async fillOutPurposeForm() {
 		await this.page.locator( 'label' ).locator( 'text=Sell courses and generate income' ).click();
 		await this.page.locator( 'label' ).locator( 'text=Other' ).click();
-		await this.page.fill( '.sensei-setup-wizard__textcontrol-other input', 'Other' );
+		await this.page.fill( '.sensei-setup-wizard__text-control input', 'Other' );
 	}
 
 	async goToReadyStep() {

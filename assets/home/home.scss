@@ -22,7 +22,7 @@ $break-medium: 783px; // adminbar goes big
 	src: url('../css/fonts/Reforma1918-Blanca.otf') format('opentype');
 }
 
-.sensei-extensions-page {
+.sensei-home-page {
 	margin-right: 10px;
 
 	@media (min-width: 783px) {
@@ -49,11 +49,33 @@ $break-medium: 783px; // adminbar goes big
 		}
 	}
 
-	.sensei-extensions {
+	.components-notice {
+		background-color: #fff;
+
+		&__content {
+			display: grid;
+			grid-template-columns: 1fr auto;
+
+		}
+
 		.components-button {
-			&:not(.is-link) {
+			align-self: center;
+			margin-top: 0;
+		}
+	}
+
+	.postbox .hndle {
+			margin: 0;
+			padding: 8px 12px;
+			cursor: unset;
+	}
+
+	.sensei-home {
+		.components-button {
+			&.is-secondary {
 				min-width: 112px;
 				min-height: 36px;
+				--wp-admin-theme-color: #000;
 			}
 
 			&.is-large {
@@ -102,67 +124,11 @@ $break-medium: 783px; // adminbar goes big
 				width: 100%;
 				padding: 0 9px;
 
-				&.--col-12 {
-					@include col-width( 12 );
+				@for $i from 1 to 12 {
+					&.--col-#{$i} {
+						@include col-width( $i );
+					}
 				}
-
-				&.--col-11 {
-					@include col-width( 11 );
-				}
-
-				&.--col-10 {
-					@include col-width( 10 );
-				}
-
-				&.--col-9 {
-					@include col-width( 9 );
-				}
-
-				&.--col-8 {
-					@include col-width( 8 );
-				}
-
-				&.--col-7 {
-					@include col-width( 7 );
-				}
-
-				&.--col-6 {
-					@include col-width( 6 );
-				}
-
-				&.--col-5 {
-					@include col-width( 5 );
-				}
-
-				&.--col-4 {
-					@include col-width( 4 );
-				}
-
-				&.--col-3 {
-					@include col-width( 3 );
-				}
-
-				&.--col-2 {
-					@include col-width( 2 );
-				}
-
-				&.--col-1 {
-					@include col-width( 1 );
-				}
-			}
-		}
-
-		&__tabs {
-			float: none;
-
-			&__tab {
-				&:not(:last-child)::after {
-					content: '|';
-				}
-			}
-
-			&__count::before {
-				content: ' ';
 			}
 		}
 
@@ -185,7 +151,7 @@ $break-medium: 783px; // adminbar goes big
 			padding: 17px 50px;
 			border-left: solid 5px $primary;
 
-			.sensei-extensions__update-badge {
+			.sensei-home__update-badge {
 				margin-left: -29px;
 			}
 
@@ -231,7 +197,7 @@ $break-medium: 783px; // adminbar goes big
 				padding: 50px 45px;
 			}
 
-			.sensei-extensions__list-item {
+			.sensei-home__list-item {
 				box-sizing: border-box;
 				padding: 10px;
 				margin: 0;
@@ -246,7 +212,7 @@ $break-medium: 783px; // adminbar goes big
 				}
 			}
 
-			.sensei-extensions__card {
+			.sensei-home__card {
 				border-radius: 8px;
 				flex-direction: column;
 
@@ -255,13 +221,13 @@ $break-medium: 783px; // adminbar goes big
 				}
 			}
 
-			.sensei-extensions__card-wrapper {
+			.sensei-home__card-wrapper {
 				height: 100%;
 				box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.16);
 				border-radius: 8px;
 			}
 
-			&__card-wrapper, .sensei-extensions__card {
+			&__card-wrapper, .sensei-home__card {
 				height: 100%;
 			}
 
@@ -272,7 +238,7 @@ $break-medium: 783px; // adminbar goes big
 			@include white-box;
 			margin: 0;
 
-			.sensei-extensions__list-item {
+			.sensei-home__list-item {
 				margin: 0;
 
 				&:not(:last-child) {
@@ -282,25 +248,25 @@ $break-medium: 783px; // adminbar goes big
 		}
 
 		&__small-list {
-			.sensei-extensions__card__image {
+			.sensei-home__card__image {
 				display: none;
 			}
 		}
 
 		&__large-list {
-			&__item:first-child .sensei-extensions__card__image {
+			&__item:first-child .sensei-home__card__image {
 				border-radius: 2px 2px 0 0;
 				@media (min-width: $break-large) {
 					border-radius: 2px 0 0 0;
 				}
 			}
-			&__item:last-child .sensei-extensions__card__image {
+			&__item:last-child .sensei-home__card__image {
 				@media (min-width: $break-large) {
 					border-radius: 0 0 0 2px;
 				}
 			}
 			@media (max-width: $break-large) {
-				.sensei-extensions__card {
+				.sensei-home__card {
 					flex-direction: column;
 				}
 			}
@@ -308,10 +274,10 @@ $break-medium: 783px; // adminbar goes big
 
 		@media (min-width: $break-large) and (max-width: 1100px) {
 			&__small-list {
-				.sensei-extensions__card__header {
+				.sensei-home__card__header {
 					display: block;
 				}
-				.sensei-extensions__card__new-badge {
+				.sensei-home__card__new-badge {
 					display: block;
 					text-align: right;
 					padding-left: 0;
@@ -321,20 +287,20 @@ $break-medium: 783px; // adminbar goes big
 
 		@media (min-width: $break-large) {
 			&__large-list {
-				.sensei-extensions__card {
+				.sensei-home__card {
 				}
-				.sensei-extensions__card__body {
+				.sensei-home__card__body {
 
 				}
-				.sensei-extensions__card__image {
+				.sensei-home__card__image {
 				}
-				.sensei-extensions__card__description {
+				.sensei-home__card__description {
 
 				}
-				.sensei-extensions__extension-actions {
+				.sensei-home__extension-actions {
 
 				}
-				.sensei-extensions__extension-actions__details-link {
+				.sensei-home__extension-actions__details-link {
 
 				}
 			}
@@ -344,12 +310,12 @@ $break-medium: 783px; // adminbar goes big
 			padding: 0;
 			margin-bottom: -15px;
 
-			@extend .sensei-extensions__grid;
+			@extend .sensei-home__grid;
 
-			.sensei-extensions__list-item {
+			.sensei-home__list-item {
 				margin: 0 0 15px;
 
-				@extend .sensei-extensions__grid__col;
+				@extend .sensei-home__grid__col;
 
 				@media (min-width: $break-large) {
 					@include col-width(6);
@@ -360,12 +326,12 @@ $break-medium: 783px; // adminbar goes big
 				}
 			}
 
-			.sensei-extensions__card-wrapper {
+			.sensei-home__card-wrapper {
 				@include white-box(2px);
 				height: 100%
 			}
 
-			.sensei-extensions__card {
+			.sensei-home__card {
 				flex-direction: column;
 				&__image {
 					border-radius: 2px 2px 0 0;

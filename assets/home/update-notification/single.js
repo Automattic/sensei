@@ -14,10 +14,10 @@ const Single = ( { extension } ) => {
 
 	return (
 		<>
-			<h3 className="sensei-extensions__update-notification__title">
+			<h3 className="sensei-home__update-notification__title">
 				{ extension.title }
 			</h3>
-			<p className="sensei-extensions__update-notification__description">
+			<p className="sensei-home__update-notification__description">
 				{ extension.excerpt }
 			</p>
 			<ExtensionActions actions={ actions } />

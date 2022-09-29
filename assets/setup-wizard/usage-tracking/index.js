@@ -33,7 +33,7 @@ const UsageTracking = () => {
 
 	return (
 		<div className="sensei-setup-wizard__columns">
-			<div className="sensei-setup-wizard__columns-content sensei-setup-wizard__slide-in-from-bottom-animation">
+			<div className="sensei-setup-wizard__columns-content">
 				<H className="sensei-setup-wizard__step-title">
 					{ __(
 						'Help us improve your Sensei experience',
@@ -67,9 +67,25 @@ const UsageTracking = () => {
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__usage-tracking-illustration"
+				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__usage-tracking-illustration"
 				aria-hidden="true"
-			></div>
+			>
+				<picture>
+					<source
+						media="(max-width: 999px)"
+						srcSet={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration-small.png` }
+					/>
+					<source
+						media="(min-width: 1000px)"
+						srcSet={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration.png` }
+					/>
+					<img
+						className="sensei-setup-wizard__columns-illustration-image"
+						src={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration.png` }
+						alt=""
+					/>
+				</picture>
+			</div>
 		</div>
 	);
 };
