@@ -301,5 +301,22 @@ export default [
 		...lessonPropertiesBlock,
 		...learningModeLessonPropertiesMeta,
 		...meta,
+		description: __(
+			'Displays the lesson properties such as lengh and difficulty.',
+			'sensei-lms'
+		),
+		edit: function EditLearningModeLessonProperties() {
+			return (
+				<div
+					{ ...useBlockProps( {
+						className: 'wp-block-sensei-lms-lesson-properties',
+					} ) }
+				>
+					<span className="wp-block-sensei-lms-lesson-properties__difficulty">
+						{ lessonPropertiesBlock.title }
+					</span>
+				</div>
+			);
+		},
 	},
 ];
