@@ -474,6 +474,32 @@ class Sensei_Learning_Mode_Templates {
  *
  * @ignore only for backward compatibility.
  * @since 4.0.2
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Templates.
  */
 class Sensei_Course_Theme_Templates extends Sensei_Learning_Mode_Templates {
+	/**
+	 * Use learning mode if it's enabled for the current lesson or quiz.
+	 */
+	public function maybe_use_course_theme_templates() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		return $this->maybe_use_learning_mode_templates();
+	}
+
+	/**
+	 * Add Course Theme block templates.
+	 *
+	 * @param array $templates     List of WP templates.
+	 * @param array $query         The query arguments to retrieve templates.
+	 * @param array $template_type The type of the template.
+	 *
+	 * @access private
+	 *
+	 * @return array
+	 */
+	public function add_course_theme_block_templates() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		return $this->add_learning_mode_block_templates();
+	}
 }

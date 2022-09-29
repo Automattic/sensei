@@ -339,6 +339,7 @@ class Sensei_Learning_Mode_Lesson {
  *
  * @ignore only for backward compatibility.
  * @since 3.15.0
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Lesson.
  */
 class Sensei_Course_Theme_Lesson extends Sensei_Learning_Mode_Lesson {
 }

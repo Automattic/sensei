@@ -547,6 +547,32 @@ class Sensei_Learning_Mode {
  *
  * @ignore only for backward compatibility.
  * @since 3.15.0
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode.
  */
 class Sensei_Course_Theme extends Sensei_Learning_Mode {
+	/**
+	 * Directory for course theme.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_learning_mode_root() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		return $this->get_learning_mode_root();
+	}
+
+	/**
+	 * Root URL for course theme.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_learning_mode_root_url() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		return $this->get_learning_mode_root_url();
+	}
 }

@@ -138,8 +138,6 @@ class Sensei_Learning_Mode_Editor {
 		return $is_site_editor || $is_site_editor_rest;
 	}
 
-
-
 	/**
 	 * Add template editing hooks.
 	 *
@@ -246,6 +244,7 @@ class Sensei_Learning_Mode_Editor {
  *
  * @ignore only for backward compatibility.
  * @since 3.15.0
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Editor.
  */
 class Sensei_Course_Theme_Editor extends Sensei_Learning_Mode_Editor {
 }

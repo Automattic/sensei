@@ -152,11 +152,24 @@ class Sensei_Learning_Mode_Compat {
 	}
 }
 
+// @codingStandardsIgnoreStart
 /**
  * Class Sensei_Course_Theme_Compat
  *
  * @ignore only for backward compatibility.
  * @since 4.0.2
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Compat.
  */
 class Sensei_Course_Theme_Compat extends Sensei_Learning_Mode_Compat {
+	// @codingStandardsIgnoreEnd
+	/**
+	 * Load the layout and render its blocks.
+	 *
+	 * @access private
+	 */
+	public function the_course_theme_layout() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		return $this->the_learning_mode_layout();
+	}
 }

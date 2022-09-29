@@ -151,6 +151,7 @@ class Sensei_Learning_Mode_Quiz {
  *
  * @ignore only for backward compatibility.
  * @since 3.15.0
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Quiz.
  */
 class Sensei_Course_Theme_Quiz extends Sensei_Learning_Mode_Quiz {
 }

@@ -271,6 +271,7 @@ class Sensei_Learning_Mode_Template_Selection {
  *
  * @ignore only for backward compatibility.
  * @since $$next-version$$
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Template_Selection.
  */
 class Sensei_Course_Theme_Template_Selection extends Sensei_Learning_Mode_Template_Selection {
 }

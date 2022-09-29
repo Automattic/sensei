@@ -104,6 +104,7 @@ class Sensei_Learning_Mode_Template {
  *
  * @ignore only for backward compatibility.
  * @since $$next-version$$
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Template.
  */
 class Sensei_Course_Theme_Template extends Sensei_Learning_Mode_Template {
 }

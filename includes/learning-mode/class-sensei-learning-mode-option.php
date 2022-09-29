@@ -304,6 +304,21 @@ class Sensei_Learning_Mode_Option {
  *
  * @ignore only for backward compatibility.
  * @since 3.13.4
+ * @deprecated $$next-version$$ Use \Sensei_Learning_Mode_Option.
  */
 class Sensei_Course_Theme_Option extends Sensei_Learning_Mode_Option {
+	/**
+	 * Adds a course theme notice.
+	 *
+	 * @access private
+	 *
+	 * @param array $notices Notices list.
+	 *
+	 * @return array Notices including the course theme notice.
+	 */
+	public function add_course_theme_notice() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		return $this->add_learning_mode_notice();
+	}
 }
