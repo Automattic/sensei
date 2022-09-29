@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { H } from '../../shared/components/section';
+import { logEvent } from '../../shared/helpers/log-event';
 
 /**
  * Usage Tracking step for Setup Wizard.
@@ -20,14 +21,16 @@ const UsageTracking = () => {
 		'tracking'
 	);
 
-	const onSubmitSuccess = () => {
+	const onSubmitSuccess = ( allowUsageTracking ) => () => {
+		logEvent.enable( allowUsageTracking );
+
 		goTo( 'features' );
 	};
 
 	const submitPage = ( allowUsageTracking ) => () => {
 		submitStep(
-			{ usage_tracking: allowUsageTracking },
-			{ onSuccess: onSubmitSuccess }
+			{ tracking: { usage_tracking: allowUsageTracking } },
+			{ onSuccess: onSubmitSuccess( allowUsageTracking ) }
 		);
 	};
 
