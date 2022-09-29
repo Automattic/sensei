@@ -35,7 +35,25 @@ class Sensei_Lesson_Properties_Block {
 	 *
 	 * @return string HTML of the block.
 	 */
-	public function render( array $attributes, string $content ) : string {
+	public function render( array $attributes, string $content ): string {
+		// Do not render if the Learning Mode is enabled.
+		$course_id = Sensei_Utils::get_current_course();
+		if ( Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			return '';
+		}
+
+		return self::render_content( $attributes, $content );
+	}
+
+	/**
+	 * Renders lesson properties block on the frontend.
+	 *
+	 * @param array  $attributes Block attributes.
+	 * @param string $content    Inner block content.
+	 *
+	 * @return string HTML of the block.
+	 */
+	public static function render_content( array $attributes, string $content ) : string {
 		$length     = get_post_meta( get_the_ID(), '_lesson_length', true );
 		$difficulty = get_post_meta( get_the_ID(), '_lesson_complexity', true );
 

@@ -50,17 +50,6 @@ class Lesson_Properties {
 	 * @return string The block HTML.
 	 */
 	public function render( array $attributes = [], string $content = '' ) : string {
-		$lesson_properties = new Sensei_Lesson_Properties_Block();
-		$content           = $lesson_properties->render( $attributes, $content );
-		if ( $content ) {
-			$content .= '
-				<style>
-					.wp-block-sensei-lms-lesson-properties:not(.wp-block-sensei-lms-learning-mode-lesson-properties) {
-						display: none;
-					}
-				</style>
-			';
-		}
-		return $content;
+		return Sensei_Lesson_Properties_Block::render_content( $attributes, $content );
 	}
 }
