@@ -64,6 +64,9 @@ class Sensei_REST_API_Home_Controller_Tests extends WP_Test_REST_TestCase {
 	public function testRESTRequestReturns200ForAdmins() {
 		$this->login_as_admin();
 
+		// Prevent requests.
+		add_filter( 'pre_http_request', '__return_empty_array' );
+
 		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE );
 		$response = $this->server->dispatch( $request );
 
