@@ -512,11 +512,13 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Filter extensions to install and call installation.
 	 *
-	 * @since $$next-version$$ It doesn't install extensions from WCCOM anymore.
+	 * @deprecated $$next-version$$
 	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$extensions_to_install = [];
 
 		foreach ( $this->get_sensei_extensions() as $extension ) {

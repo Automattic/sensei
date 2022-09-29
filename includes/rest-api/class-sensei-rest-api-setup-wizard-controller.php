@@ -503,11 +503,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit features installation step.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param array $form Form data.
 	 *
 	 * @return bool Success.
 	 */
 	public function submit_features_installation( $form ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$this->setup_wizard->install_extensions( $form['selected'] );
 
 		return true;
