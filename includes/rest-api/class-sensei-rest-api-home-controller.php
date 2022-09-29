@@ -45,21 +45,30 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	private $quick_links_provider;
 
+	/**
+	 * Home data provider.
+	 *
+	 * @var Sensei_Home_Data_Provider
+	 */
+	private $home_data_provider;
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
-	 * @param string                                 $namespace Routes namespace.
-	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper Sensei Home REST API mapper.
+	 * @param string                                 $namespace            Routes namespace.
+	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper               Sensei Home REST API mapper.
+	 * @param Sensei_Home_Data_Provider              $home_data_provider   Fetch home data helper.
 	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
 	 */
 	public function __construct(
 		$namespace,
 		Sensei_REST_API_Home_Controller_Mapper $mapper,
+		Sensei_Home_Data_Provider $home_data_provider,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider
 	) {
 		$this->namespace            = $namespace;
 		$this->mapper               = $mapper;
+		$this->home_data_provider   = $home_data_provider;
 		$this->quick_links_provider = $quick_links_provider;
 	}
 
@@ -102,6 +111,9 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
+		$home_data = $this->home_data_provider->fetch( HOUR_IN_SECONDS );
+		$guides    = $home_data['guides'] ?? [];
+		$news      = $home_data['news'] ?? [];
 
 		return [
 			'tasks_list'                  => [
@@ -161,40 +173,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					],
 				],
 			],
-			'guides'                      => [
-				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
-				'items'    => [
-					[
-						'title' => 'How to Sell Online Courses',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'How to Creating Video Courses',
-						'url'   => 'http://...',
-					],
-					[
-						'title' => 'How to Choose the Right Hosting Provider',
-						'url'   => 'http://...',
-					],
-				],
-				'more_url' => 'http://senseilms.com/category/guides/',
-			],
-			'news'                        => [
-				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
-				'items'    => [
-					[
-						'title' => 'Introducing Interactive Videos For WordPress',
-						'date'  => '2022-08-31', // Localized for user.
-						'url'   => 'http://senseilms.com/inroducing-interactive-videos/',
-					],
-					[
-						'title' => 'New Block Visibility, Scheduled Content, and Group Features',
-						'date'  => '2022-08-09', // Localized for user.
-						'url'   => 'http://senseilms.com/conditional-content/',
-					],
-				],
-				'more_url' => 'https://senseilms.com/blog/',
-			],
+			'guides'                      => $guides,
+			'news'                        => $news,
 			'extensions'                  => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro}.json.
 				[
