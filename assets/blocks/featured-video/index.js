@@ -1,14 +1,11 @@
 /**
  * WordPress dependencies
  */
+import { useRef, useEffect } from '@wordpress/element';
 import { createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
-/**
- * External dependencies
- */
-import { useRef, useEffect } from 'react';
 
 /**
  * Internal dependencies
@@ -29,7 +26,9 @@ export default {
 	),
 	...metadata,
 	edit: function EditBlock( { className, clientId } ) {
-		const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+		const { replaceInnerBlocks, moveBlockToPosition } = useDispatch(
+			'core/block-editor'
+		);
 		const innerBlockCount = useSelect(
 			( select ) =>
 				select( 'core/block-editor' ).getBlocks( clientId ).length
@@ -45,6 +44,36 @@ export default {
 			}
 			previousBlockCount.current = innerBlockCount;
 		}, [ innerBlockCount, clientId, replaceInnerBlocks ] );
+
+		const { parentBlocks, rootClientId, blockIndex } = useSelect(
+			( select ) => {
+				const {
+					getBlockParents,
+					getBlockRootClientId,
+					getBlockIndex,
+				} = select( 'core/block-editor' );
+				return {
+					parentBlocks: getBlockParents( clientId ),
+					rootClientId: getBlockRootClientId( clientId ),
+					blockIndex: getBlockIndex( clientId ),
+				};
+			},
+			[ clientId ]
+		);
+
+		// Move Featured Video block to top at top level.
+		useEffect( () => {
+			if ( parentBlocks?.length || blockIndex ) {
+				moveBlockToPosition( clientId, rootClientId, '', 0 );
+			}
+		}, [
+			parentBlocks,
+			rootClientId,
+			blockIndex,
+			moveBlockToPosition,
+			clientId,
+		] );
+
 		return (
 			<div className={ className }>
 				{
