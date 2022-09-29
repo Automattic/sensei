@@ -80,6 +80,13 @@ class Sensei_REST_API_Home_Controller_Tests extends WP_Test_REST_TestCase {
 		$quick_links_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_quick_links );
+
+		// Mock Home Data.
+		$mocked_home_data_mock = $this->createMock( Sensei_Home_Data_Provider::class );
+		$mocked_home_data_mock->expects( $this->once() )
+			->method( 'fetch' )
+			->willReturn( [] );
+
 		// Mock mapper call and response.
 		$mapper_mock            = $this->createMock( Sensei_REST_API_Home_Controller_Mapper::class );
 		$mocked_mapped_response = [ 'mocked_response' ];
@@ -89,7 +96,7 @@ class Sensei_REST_API_Home_Controller_Tests extends WP_Test_REST_TestCase {
 			->willReturn( $mocked_mapped_response );
 
 		// Do the actual call.
-		$controller = new Sensei_REST_API_Home_Controller( 'namespace', $mapper_mock, $quick_links_provider_mock );
+		$controller = new Sensei_REST_API_Home_Controller( 'namespace', $mapper_mock, $mocked_home_data_mock, $quick_links_provider_mock );
 		$result     = $controller->get_data();
 
 		// Assert 'quick_links' are returned as they are received from the mapper.
