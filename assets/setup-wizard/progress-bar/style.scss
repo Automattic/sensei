@@ -1,6 +1,7 @@
 .sensei-setup-wizard {
 	&__progress-bar {
 		height: 8px;
+		min-height: 8px; // Fixes issue that progress bar disappears with scroll.
 		background-color: #ffffff;
 	}
 

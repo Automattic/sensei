@@ -80,6 +80,31 @@ class Sensei_Wp_Kses {
 		);
 	}
 
+
+
+	/**
+	 * Return all HTML formatting tags to be used with wp_kses
+	 * see https://www.w3schools.com/html/html_formatting.asp
+	 *
+	 * @access public
+	 * @since 4.6.4
+	 *
+	 * @return array HTML formatting tags
+	 */public static function get_allowed_html_formatting_tags(): array {
+		return array(
+			'b'      => array(),
+			'strong' => array(),
+			'i'      => array(),
+			'em'     => array(),
+			'mark'   => array(),
+			'small'  => array(),
+			'del'    => array(),
+			'ins'    => array(),
+			'sub'    => array(),
+			'sup'    => array(),
+		);
+}
+
 	/**
 	 * Will act as a sanitization or an identity function, depending on HTML security settings.
 	 *

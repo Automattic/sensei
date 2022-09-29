@@ -12,23 +12,6 @@
 class Sensei_Home_Help_Provider {
 
 	/**
-	 * Sensei Pro detector.
-	 *
-	 * @var Sensei_Pro_Detector
-	 */
-	private $pro_detector;
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param Sensei_Pro_Detector $pro_detector The Sensei Pro detector.
-	 */
-	public function __construct( Sensei_Pro_Detector $pro_detector ) {
-		$this->pro_detector = $pro_detector;
-	}
-
-
-	/**
 	 * Return a list of categories which each contain multiple help items.
 	 *
 	 * @return Sensei_Home_Help_Category[]
@@ -54,12 +37,26 @@ class Sensei_Home_Help_Provider {
 	private function create_support_ticket_item() {
 		$url        = null;
 		$extra_link = null;
-		if ( $this->pro_detector->is_loaded() ) {
-			$url = 'https://senseilms.com/contact/';
-		} else {
+		$icon       = null;
+
+		/**
+		 * Filter to disable upsell to Sensei Pro in Sensei Home's action to create support tickets.
+		 *
+		 * @hook sensei_home_support_ticket_creation_upsell_show
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $show_upsell True if upsell must be shown.
+		 *
+		 * @return {bool}
+		 */
+		if ( apply_filters( 'sensei_home_support_ticket_creation_upsell_show', true ) ) {
 			$extra_link = new Sensei_Home_Help_Extra_Link( __( 'Upgrade to Sensei Pro', 'sensei-lms' ), 'https://senseilms.com/pricing/' );
+			$icon       = 'lock';
+		} else {
+			$url = 'https://senseilms.com/contact/';
 		}
-		return new Sensei_Home_Help_Item( __( 'Create a support ticket', 'sensei-lms' ), $url, 'lock', $extra_link );
+
+		return new Sensei_Home_Help_Item( __( 'Create a support ticket', 'sensei-lms' ), $url, $icon, $extra_link );
 	}
 
 }

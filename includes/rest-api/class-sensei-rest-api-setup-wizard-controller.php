@@ -44,7 +44,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Available 'purpose' options.
 	 */
-	const PURPOSES = [ 'share_knowledge', 'generate_income', 'promote_business', 'provide_certification', 'train_employees', 'educate_students', 'other' ];
+	const PURPOSES = [ 'sell_courses', 'provide_certification', 'educate_students', 'train_employees', 'other' ];
 
 	/**
 	 * Sensei_REST_API_Setup_Wizard_Controller constructor.

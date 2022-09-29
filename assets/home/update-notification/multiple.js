@@ -17,17 +17,17 @@ import ExtensionActions from '../extension-actions';
  */
 const Multiple = ( { extensions, actions } ) => (
 	<>
-		<ul className="sensei-extensions__update-notification__list">
+		<ul className="sensei-home__update-notification__list">
 			{ extensions.map( ( extension ) => (
 				<li
 					key={ extension.product_slug }
-					className="sensei-extensions__update-notification__list__item"
+					className="sensei-home__update-notification__list__item"
 				>
 					{ extension.title }{ ' ' }
 					{ extension.changelog_url && (
 						<a
 							href={ extension.changelog_url }
-							className="sensei-extensions__update-notification__version-link"
+							className="sensei-home__update-notification__version-link"
 							target="_blank"
 							rel="noreferrer external"
 						>

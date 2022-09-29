@@ -25,7 +25,7 @@ class Sensei_Setup_Wizard {
 	const MC_LIST_ID                  = '4fa225a515';
 	const MC_USER_ID                  = '7a061a9141b0911d6d9bafe3a';
 	const MC_GDPR_FIELD               = '23563';
-	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
+	const MC_URL                      = 'https://senseilms.us19.list-manage.com/subscribe/post-json?u=' . self::MC_USER_ID . '&id=' . self::MC_LIST_ID;
 
 	/**
 	 * Default value for setup wizard user data.
@@ -40,7 +40,7 @@ class Sensei_Setup_Wizard {
 			'selected' => [],
 			'other'    => '',
 		],
-		'__version' => '1',
+		'__version' => '2',
 	];
 
 	/**
@@ -88,6 +88,7 @@ class Sensei_Setup_Wizard {
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', [ $this, 'register_wizard_page' ], 20 );
+			add_action( 'current_screen', [ $this, 'remove_notices_from_setup_wizard' ] );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
 			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
@@ -123,6 +124,19 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
+	 * Remove notices from Sensei Setup Wizard.
+	 *
+	 * @access private
+	 *
+	 * @param WP_Screen $current_screen Current screen object.
+	 */
+	public function remove_notices_from_setup_wizard( $current_screen ) {
+		if ( strpos( $current_screen->id, $this->page_slug ) !== false ) {
+			remove_all_actions( 'admin_notices' );
+		}
+	}
+
+	/**
 	 * Enqueue JS for Setup Wizard page.
 	 *
 	 * @access private
@@ -132,10 +146,12 @@ class Sensei_Setup_Wizard {
 		Sensei()->assets->enqueue( $handle, 'setup-wizard/index.js', [ 'sensei-event-logging' ], true );
 		Sensei()->assets->preload_data( [ '/sensei-internal/v1/setup-wizard' ] );
 
-		wp_localize_script(
+		$images_path = Sensei()->assets->get_image( '' );
+
+		wp_add_inline_script(
 			$handle,
-			'sensei_setup_wizard',
-			[ 'nonce' => wp_create_nonce( $handle ) ]
+			"window.sensei = window.sensei || {}; window.sensei.imagesPath = '$images_path';",
+			'before'
 		);
 	}
 

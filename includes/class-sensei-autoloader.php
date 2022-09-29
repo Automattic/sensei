@@ -82,7 +82,6 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'reports/overview/services' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/quick-links' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/help' ),
-			new Sensei_Autoloader_Bundle( 'admin/home/shared' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/promo' ),
 		);
 
@@ -125,6 +124,7 @@ class Sensei_Autoloader {
 			'Sensei_Learner_Management'                    => 'admin/class-sensei-learner-management.php',
 			'Sensei_Extensions'                            => 'admin/class-sensei-extensions.php',
 			'Sensei_Exit_Survey'                           => 'admin/class-sensei-exit-survey.php',
+			'Sensei_Home'                                  => 'admin/class-sensei-home.php',
 			'Sensei_Learners_Admin_Bulk_Actions_Controller' => 'admin/class-sensei-learners-admin-bulk-actions-controller.php',
 			'Sensei_Learners_Admin_Bulk_Actions_View'      => 'admin/class-sensei-learners-admin-bulk-actions-view.php',
 			'Sensei_Learners_Main'                         => 'admin/class-sensei-learners-main.php',

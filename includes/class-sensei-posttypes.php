@@ -1109,7 +1109,7 @@ class Sensei_PostTypes {
 		Sensei()->analysis->analysis_admin_menu();
 		Sensei()->settings->register_settings_screen();
 		Sensei_Tools::instance()->add_menu_pages();
-		Sensei_Extensions::instance()->add_admin_menu_item();
+		Sensei_Home::instance()->add_admin_menu_item();
 	}
 
 	/**

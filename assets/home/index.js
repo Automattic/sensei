@@ -8,4 +8,4 @@ import { render } from '@wordpress/element';
  */
 import Main from './main';
 
-render( <Main />, document.getElementById( 'sensei-extensions-page' ) );
+render( <Main />, document.getElementById( 'sensei-home-page' ) );

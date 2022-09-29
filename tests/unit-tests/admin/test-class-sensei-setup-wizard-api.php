@@ -144,14 +144,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'share_knowledge', 'other' ],
+				'selected' => [ 'sell_courses', 'other' ],
 				'other'    => 'Test',
 			]
 		);
 
 		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
-		$this->assertEquals( [ 'share_knowledge', 'other' ], $data['purpose']['selected'] );
+		$this->assertEquals( [ 'sell_courses', 'other' ], $data['purpose']['selected'] );
 		$this->assertEquals( 'Test', $data['purpose']['other'] );
 	}
 
@@ -175,7 +175,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'share_knowledge' ],
+				'selected' => [ 'sell_courses' ],
 				'other'    => 'Discard this',
 			]
 		);
@@ -297,14 +297,14 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'share_knowledge', 'other' ],
+				'selected' => [ 'sell_courses', 'other' ],
 				'other'    => 'Test',
 			]
 		);
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_setup_wizard_purpose_continue' );
 		$this->assertCount( 1, $events );
-		$this->assertEquals( 'share_knowledge,other', $events[0]['url_args']['purpose'] );
+		$this->assertEquals( 'sell_courses,other', $events[0]['url_args']['purpose'] );
 		$this->assertEquals( 'Test', $events[0]['url_args']['purpose_details'] );
 	}
 

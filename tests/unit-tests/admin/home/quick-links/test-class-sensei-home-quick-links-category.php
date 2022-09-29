@@ -27,7 +27,7 @@ class Sensei_Home_Quick_Links_Category_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test category properties are correctly set.
+	 * Test empty array is set by default for optional property.
 	 */
 	public function testCategorySetsEmptyArrayForItemsByDefault() {
 		$the_title = 'Some random title';

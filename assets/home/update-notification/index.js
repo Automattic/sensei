@@ -12,7 +12,7 @@ import UpdateAvailable from './update-available';
 import { Col } from '../grid';
 import UpdateIcon from '../../icons/update.svg';
 import { useDispatch } from '@wordpress/data';
-import { EXTENSIONS_STORE, isLoadingStatus } from '../store';
+import { EXTENSIONS_STORE, isLoadingStatus } from '../../extensions/store';
 
 /**
  * Update notification component.
@@ -50,7 +50,7 @@ const UpdateNotification = ( { extensions } ) => {
 	if ( inProgress ) {
 		actionProps = {
 			children: __( 'Updating…', 'sensei-lms' ),
-			className: 'sensei-extensions__rotating-icon',
+			className: 'sensei-home__rotating-icon',
 			icon: UpdateIcon,
 			disabled: true,
 			...actionProps,
@@ -65,11 +65,8 @@ const UpdateNotification = ( { extensions } ) => {
 	const actions = [ actionProps ];
 
 	return (
-		<Col as="section" className="sensei-extensions__section" cols={ 12 }>
-			<div
-				role="alert"
-				className="sensei-extensions__update-notification"
-			>
+		<Col as="section" className="sensei-home__section" cols={ 12 }>
+			<div role="alert" className="sensei-home__update-notification">
 				<UpdateAvailable updatesCount={ updatesCount } />
 				{ 1 === updatesCount ? (
 					<Single extension={ extensionsWithUpdate[ 0 ] } />

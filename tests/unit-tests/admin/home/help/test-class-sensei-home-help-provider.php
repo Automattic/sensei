@@ -21,29 +21,39 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 	private $provider;
 
 	/**
-	 * The Sensei_Pro_Detector mock.
+	 * Did the test have the upsell filter overridden?
 	 *
-	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Pro_Detector
+	 * @var bool
 	 */
-	private $pro_detector_mock;
+	private $had_upsell_filter_overridden;
 
 	/**
 	 * Setup.
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->pro_detector_mock = $this->createMock( Sensei_Pro_Detector::class );
-		$this->provider          = new Sensei_Home_Help_Provider( $this->pro_detector_mock );
+
+		$this->had_upsell_filter_overridden = has_filter( 'sensei_home_support_ticket_creation_upsell_show', '__return_false' );
+		$this->provider                     = new Sensei_Home_Help_Provider();
 	}
+
+	/**
+	 * Tear down.
+	 */
+	protected function tearDown() {
+		// Clean filter after test if it wasn't set initially.
+		if ( ! $this->had_upsell_filter_overridden ) {
+			remove_filter( 'sensei_home_support_ticket_creation_upsell_show', '__return_false' );
+		}
+
+		parent::tearDown();
+	}
+
 
 	/**
 	 * Assert that all elements returned by the provider are a correct Sensei_Home_Quick_Links_Category.
 	 */
 	public function testAllOutputAreCorrectQuickLinksCategories() {
-		$this->pro_detector_mock->expects( $this->once() )
-			->method( 'is_loaded' )
-			->willReturn( true );
-
 		$categories = $this->provider->get();
 
 		foreach ( $categories as $category ) {
@@ -56,36 +66,34 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		}
 	}
 
-	public function testCreateSupportTicketIsDisabledAndHasExtraLinkWhenSenseiProNotLoaded() {
-		$this->pro_detector_mock->expects( $this->once() )
-			->method( 'is_loaded' )
-			->willReturn( false );
-
+	public function testCreateSupportTicketIsDisabledAndHasExtraLinkByDefault() {
 		$categories = $this->provider->get();
 
 		$create_ticket_item = $this->get_item_by_text( $categories, __( 'Create a support ticket', 'sensei-lms' ) );
-		$this->assertNotNull( $create_ticket_item, 'Create suppoort ticket item could not be found!' );
+		$this->assertNotNull( $create_ticket_item, 'Create support ticket item could not be found!' );
 
 		// Create ticket item is disabled.
 		$this->assertNull( $create_ticket_item->get_url() );
 		// Create ticket item contains extra link.
 		$this->assertInstanceOf( Sensei_Home_Help_Extra_Link::class, $create_ticket_item->get_extra_link() );
+		// Create ticket item has the 'lock' icon.
+		$this->assertEquals( 'lock', $create_ticket_item->get_icon() );
 	}
 
-	public function testCreateSupportTicketIsEnabledAndWithoutExtralinkWhenSenseiProIsLoaded() {
-		$this->pro_detector_mock->expects( $this->once() )
-			->method( 'is_loaded' )
-			->willReturn( true );
+	public function testCreateSupportTicketIsEnabledAndWithoutExtralinkWhenFilterIsOverrided() {
+		add_filter( 'sensei_home_support_ticket_creation_upsell_show', '__return_false' );
 
 		$categories = $this->provider->get();
 
 		$create_ticket_item = $this->get_item_by_text( $categories, __( 'Create a support ticket', 'sensei-lms' ) );
-		$this->assertNotNull( $create_ticket_item, 'Create suppoort ticket item could not be found!' );
-
+		$this->assertNotNull( $create_ticket_item, 'Create support ticket item could not be found!' );
 		// Create ticket item has a string as url.
-		$this->assertIsString( $create_ticket_item->get_url() );
+		$this->assertIsString( $create_ticket_item->get_url(), 'URL must be valid when upsell is disabled.' );
 		// Create ticket item does not contain extra link.
-		$this->assertNull( $create_ticket_item->get_extra_link() );
+		$this->assertNull( $create_ticket_item->get_extra_link(), 'Extra link must be null since we expect the upsell to be disabled.' );
+		// Create ticket item does not have any special icon.
+		$this->assertNull( $create_ticket_item->get_icon(), 'Icon must be null since we expect to use default icon when upsell is disabled.' );
+
 	}
 
 	/**
