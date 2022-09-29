@@ -345,7 +345,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		return [
 			'selected' => $user_data['features']['selected'],
-			'options'  => $this->setup_wizard->get_sensei_extensions( $clear_active_plugins_cache ),
+			'options'  => Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
 		];
 	}
 

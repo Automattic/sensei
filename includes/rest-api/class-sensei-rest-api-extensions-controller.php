@@ -197,13 +197,13 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function install_extension( WP_REST_Request $request ) {
-		$json_params    = $request->get_json_params();
-		$plugin_slug    = $json_params['plugin'];
-		$sensei_plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+		$json_params       = $request->get_json_params();
+		$plugin_slug       = $json_params['plugin'];
+		$available_plugins = Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' );
 
 		$plugin_to_install = array_values(
 			array_filter(
-				$sensei_plugins,
+				$available_plugins,
 				function( $plugin ) use ( $plugin_slug ) {
 					return $plugin->product_slug === $plugin_slug;
 				}
@@ -222,7 +222,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		}
 
 		$installed_plugins = array_filter(
-			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			$available_plugins,
 			function( $plugin ) use ( $plugin_slug ) {
 				return $plugin->product_slug === $plugin_slug;
 			}
@@ -350,8 +350,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	private function create_extensions_response( array $plugins, string $extensions_key, bool $full_response = false ): WP_REST_Response {
 		$mapped_plugins = array_map(
 			function ( $plugin ) {
-				$plugin->price      = html_entity_decode( $plugin->price );
-				$plugin->image      = $plugin->image_large;
+				$plugin->price      = isset( $plugin->price ) ? html_entity_decode( $plugin->price ) : '';
+				$plugin->image      = isset( $plugin->image_large ) ? $plugin->image_large : '';
 				$plugin->can_update = empty( $plugin->wccom_product_id );
 				return $plugin;
 			},
