@@ -238,7 +238,7 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function add_course_theme_block_templates( $templates, $query, $template_type ) {
 
-		if ( 'wp_template' !== $template_type ) {
+		if ( 'wp_template' !== $template_type || $query['wp_id'] ) {
 			return $templates;
 		}
 
