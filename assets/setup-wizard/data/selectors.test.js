@@ -47,13 +47,13 @@ describe( 'Setup wizard selectors', () => {
 	it( 'Should get usage tracking data', () => {
 		const state = {
 			data: {
-				welcome: {
+				tracking: {
 					usage_tracking: true,
 				},
 			},
 		};
 
-		expect( getStepData( state, 'welcome' ) ).toEqual( {
+		expect( getStepData( state, 'tracking' ) ).toEqual( {
 			usage_tracking: true,
 		} );
 	} );

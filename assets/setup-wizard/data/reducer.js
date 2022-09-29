@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { mergeWith } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -8,8 +13,7 @@ import {
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_STEP_DATA,
-	INSTALLING_STATUS,
+	SET_DATA,
 } from './constants';
 
 const DEFAULT_STATE = {
@@ -29,35 +33,8 @@ const DEFAULT_STATE = {
 			selected: [],
 			options: [],
 		},
-		ready: {},
 	},
 };
-
-/**
- * @typedef  {Object} Feature
- * @property {string} slug   Feature slug.
- * @property {string} status Feature status.
- * @property {Object} error  Feature error.
- */
-/**
- * Update status pre-installation.
- *
- * @param {string[]}  selected Feature slugs.
- * @param {Feature[]} options  Options.
- *
- * @return {Feature[]} Updated options.
- */
-const updatePreInstallation = ( selected, options ) =>
-	options.map( ( feature ) => {
-		if ( selected.includes( feature.slug ) ) {
-			return {
-				...feature,
-				status: INSTALLING_STATUS,
-				error: null,
-			};
-		}
-		return feature;
-	} );
 
 /**
  * Setup wizard reducer.
@@ -94,28 +71,8 @@ export default ( state = DEFAULT_STATE, action ) => {
 			};
 
 		case START_SUBMIT_SETUP_WIZARD_DATA:
-			const { stepData, step } = action;
-			let newState = null;
-
-			// Clear status and error for retry.
-			if ( 'features-installation' === step ) {
-				newState = {
-					...state,
-					data: {
-						...state.data,
-						features: {
-							...state.data.features,
-							options: updatePreInstallation(
-								stepData.selected,
-								state.data.features.options
-							),
-						},
-					},
-				};
-			}
-
 			return {
-				...( newState || state ),
+				...state,
 				isSubmitting: true,
 				submitError: false,
 			};
@@ -133,16 +90,17 @@ export default ( state = DEFAULT_STATE, action ) => {
 				submitError: action.error,
 			};
 
-		case SET_STEP_DATA:
+		case SET_DATA:
+			// It avoids merging arrays, so it works properly when removing item from arrays.
+			const mergeCustomizer = ( objValue, srcValue ) => {
+				if ( Array.isArray( srcValue ) ) {
+					return srcValue;
+				}
+			};
+
 			return {
 				...state,
-				data: {
-					...state.data,
-					[ action.step ]: {
-						...state.data[ action.step ],
-						...action.data,
-					},
-				},
+				data: mergeWith( state.data, action.data, mergeCustomizer ),
 			};
 
 		default:
