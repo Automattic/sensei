@@ -112,4 +112,32 @@ class Sensei_REST_API_Home_Controller_Mapper {
 			'is_visible' => $banner->is_visible(),
 		];
 	}
+
+	/**
+	 * Maps a Sensei_Home_Tasks to a basic array structure to be used as response for the REST API.
+	 *
+	 * @param Sensei_Home_Tasks $tasks The tasks structure.
+	 *
+	 * @return array
+	 */
+	public function map_tasks( Sensei_Home_Tasks $tasks ): array {
+		return [
+			'items' => array_map( [ $this, 'map_task' ], $tasks->get_items() ),
+		];
+	}
+
+	/**
+	 * Maps a specific Sensei_Home_Task to a basic array structure. Will execute the code in `is_completed` for all entries.
+	 *
+	 * @param Sensei_Home_Task $task The actual task to map.
+	 * @return array
+	 */
+	private function map_task( Sensei_Home_Task $task ): array {
+		return [
+			'title' => $task->get_title(),
+			'url'   => $task->get_url(),
+			'image' => $task->get_image(),
+			'done'  => $task->is_completed(),
+		];
+	}
 }
