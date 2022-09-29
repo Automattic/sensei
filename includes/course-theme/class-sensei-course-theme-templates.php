@@ -242,6 +242,10 @@ class Sensei_Course_Theme_Templates {
 			return $templates;
 		}
 
+		if ( $this->should_hide_lesson_template( $query['post_type'] ) ) {
+			return $templates;
+		}
+
 		$slugs = $query['slug__in'] ?? $query['post_type'] ?? null;
 		if ( $slugs && ! is_array( $slugs ) ) {
 			$slugs = [ $slugs ];
@@ -464,5 +468,31 @@ class Sensei_Course_Theme_Templates {
 		$templates = $this->get_block_templates();
 		return $templates[ $type ]->content;
 	}
+
+	/**
+	 * Hides the lesson template in the post editor if the lesson does not have learning mode enabled.
+	 *
+	 * @param string $post_type The query post type.
+	 *
+	 * @return bool True if template should be hidden.
+	 */
+	private function should_hide_lesson_template( $post_type ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && 'lesson' === $post_type ) {
+
+			$referer = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
+
+			// Hide the lesson only in the post editor.
+			if ( ! preg_match( '#.*/wp-admin/post.php\?.*post=(\d+)#', $referer, $matches ) ) {
+				return false;
+			}
+
+			$course_id = Sensei()->lesson->get_course_id( $matches[1] );
+
+			return ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		}
+
+		return false;
+	}
+
 
 }
