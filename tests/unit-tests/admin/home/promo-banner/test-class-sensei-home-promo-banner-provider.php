@@ -39,7 +39,7 @@ class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down.
 	 */
-	protected function tearDown() {
+	public function tearDown() {
 		// Clean filter after test if it wasn't set initially.
 		if ( ! $this->had_promo_banner_filter_overridden ) {
 			remove_filter( 'sensei_home_promo_banner_show', '__return_false' );
