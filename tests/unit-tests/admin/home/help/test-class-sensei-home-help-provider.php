@@ -40,7 +40,7 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down.
 	 */
-	protected function tearDown() {
+	public function tearDown() {
 		// Clean filter after test if it wasn't set initially.
 		if ( ! $this->had_upsell_filter_overridden ) {
 			remove_filter( 'sensei_home_support_ticket_creation_upsell_show', '__return_false' );
