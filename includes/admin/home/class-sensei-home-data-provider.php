@@ -80,13 +80,13 @@ class Sensei_Home_Data_Provider {
 		 * Filter the primary plugin slug.
 		 *
 		 * @since $$next-version$$
-		 * @hook sensei_home_data_primary_plugint_slug
+		 * @hook sensei_home_data_primary_plugin_slug
 		 *
 		 * @param {string} $primary_plugin_slug The primary plugin slug.
 		 *
 		 * @return {string} The filtered primary plugin slug.
 		 */
-		return apply_filters( 'sensei_home_data_primary_plugint_slug', $this->primary_plugin_slug );
+		return apply_filters( 'sensei_home_data_primary_plugin_slug', $this->primary_plugin_slug );
 	}
 
 	/**
