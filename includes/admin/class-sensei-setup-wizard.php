@@ -443,7 +443,7 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get feature with status.
 	 *
-	 * @since $$next-version$$ It doesn't support WCCOM extensions anymore.
+	 * @deprecated $$next-version$$
 	 *
 	 * @param stdClass   $extension          Extension object.
 	 * @param stdClass[] $installing_plugins Plugins which are installing.
@@ -452,6 +452,8 @@ class Sensei_Setup_Wizard {
 	 * @return stdClass Extension with status.
 	 */
 	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
 		if ( false !== $installing_key ) {
@@ -473,11 +475,15 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
 	 *
 	 * @return array Sensei extensions.
 	 */
 	public function get_sensei_extensions( $clear_active_plugins_cache = false ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		if ( $clear_active_plugins_cache ) {
 			wp_cache_delete( 'alloptions', 'options' );
 		}
