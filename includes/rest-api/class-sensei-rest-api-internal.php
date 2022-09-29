@@ -58,7 +58,7 @@ class Sensei_REST_API_Internal {
 	public function __construct() {
 		$this->home_controller_mapper = new Sensei_REST_API_Home_Controller_Mapper();
 		$this->quick_links_provider   = new Sensei_Home_Quick_Links_Provider();
-		$this->help_provider          = new Sensei_Home_Help_Provider( new Sensei_Pro_Detector() );
+		$this->help_provider          = new Sensei_Home_Help_Provider();
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
 
