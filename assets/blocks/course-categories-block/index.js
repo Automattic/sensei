@@ -19,6 +19,20 @@ export default {
 		__( 'Lessons', 'sensei-lms' ),
 		__( 'Categories', 'sensei-lms' ),
 	],
+	example: {
+		attributes: {
+			previewCategories: [
+				{
+					id: 1,
+					name: __( 'Music', 'sensei-lms' ),
+				},
+				{
+					id: 2,
+					name: __( 'Movies', 'sensei-lms' ),
+				},
+			],
+		},
+	},
 	icon,
 	edit,
 };
