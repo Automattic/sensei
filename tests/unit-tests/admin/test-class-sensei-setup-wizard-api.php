@@ -144,7 +144,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'purpose' => [
+				'purpose'  => [
 					'selected' => [ 'sell_courses', 'other' ],
 					'other'    => 'Test',
 				],
