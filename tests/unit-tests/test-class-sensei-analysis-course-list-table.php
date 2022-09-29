@@ -71,6 +71,47 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
+	public function testPrepareItems_DefaultDateFilterSet_SetsMatchingItems() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		$user1_id = $this->factory->user->create();
+		$user2_id = $this->factory->user->create();
+		$user3_id = $this->factory->user->create();
+		$user4_id = $this->factory->user->create();
+
+		$activity1_id = Sensei_Utils::start_user_on_course( $user1_id, $course_id );
+		$activity2_id = Sensei_Utils::start_user_on_course( $user2_id, $course_id );
+		$activity3_id = Sensei_Utils::start_user_on_course( $user3_id, $course_id );
+		$activity4_id = Sensei_Utils::start_user_on_course( $user4_id, $course_id );
+
+		$more_than_30days_ago = new DateTime( '-31 day' );
+		$exactly_30days_ago   = new DateTime( '-30 day' );
+		$week_ago             = new DateTime( '-7 day' );
+		$today                = new DateTime( 'now' );
+
+		update_comment_meta( $activity1_id, 'start', $more_than_30days_ago->format( 'Y-m-d' ) );
+		update_comment_meta( $activity2_id, 'start', $exactly_30days_ago->format( 'Y-m-d' ) );
+		update_comment_meta( $activity3_id, 'start', $week_ago->format( 'Y-m-d' ) );
+		update_comment_meta( $activity4_id, 'start', $today->format( 'Y-m-d' ) );
+
+		$_GET['view'] = 'user';
+
+		/* Act. */
+		$table = new Sensei_Analysis_Course_List_Table( $course_id );
+		$table->prepare_items();
+
+		/* Assert. */
+		$expected = [
+			$user1_id,
+			$user2_id,
+			$user3_id,
+			$user4_id,
+		];
+		sort( $expected );
+		self::assertSame( $expected, $this->export_items( $table->items ) );
+	}
+
 	public function testTableFooter_WhenCalledWithNoData_NotDisplayTheExportButton() {
 		/* Arrange. */
 		$list_table = new Sensei_Analysis_Course_List_Table();
