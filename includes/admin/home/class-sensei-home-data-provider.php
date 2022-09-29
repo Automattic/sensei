@@ -37,7 +37,7 @@ class Sensei_Home_Data_Provider {
 	 *
 	 * @return array|false
 	 */
-	public function fetch( int $max_age = null ) : array {
+	public function fetch( int $max_age = null ) {
 		$url           = $this->get_api_url();
 		$transient_key = self::CACHE_KEY_PREFIX . md5( $url );
 		$data          = get_transient( $transient_key );
