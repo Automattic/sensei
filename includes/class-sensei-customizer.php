@@ -40,12 +40,14 @@ class Sensei_Customizer {
 		add_action( 'customize_register', [ $this, 'add_customizer_settings' ] );
 		add_action( 'customize_preview_init', [ $this, 'enqueue_customizer_helper' ] );
 		add_action( 'wp_head', [ $this, 'output_custom_settings' ] );
+
+		$this->maybe_migrate_settings();
 	}
 
 	/**
 	 * Add Sensei section and settings to Customizer.
 	 *
-	 * @param WP_Customize_Manager $wp_customize
+	 * @param WP_Customize_Manager $wp_customize The customizer object.
 	 */
 	public function add_customizer_settings( WP_Customize_Manager $wp_customize ) {
 
@@ -139,5 +141,28 @@ class Sensei_Customizer {
 			?>
 		</script>
 		<?php
+	}
+
+	/**
+	 * Migrate old learning mode settings to the new Customizer settings.
+	 */
+	public function maybe_migrate_settings() {
+		// Return early if nothing to migrate.
+		if ( ! get_option( 'sensei-course-theme-primary-color' ) ) {
+			return;
+		}
+		$old_new_settings_map = [
+			'sensei-course-theme-primary-color'    => 'sensei-learning-mode-primary-color',
+			'sensei-course-theme-background-color' => 'sensei-learning-mode-background-color',
+			'sensei-course-theme-foreground-color' => 'sensei-learning-mode-foreground-color',
+		];
+
+		foreach ( $old_new_settings_map as $old_setting => $new_setting ) {
+			$value = get_option( $old_setting );
+			if ( $value ) {
+				update_option( $new_setting, $value );
+				delete_option( $old_setting );
+			}
+		}
 	}
 }
