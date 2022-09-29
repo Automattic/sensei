@@ -75,9 +75,9 @@ export const FixedHeaderBlock = {
 export const SidebarBlock = {
 	...shared,
 	name: 'sensei-lms/sidebar',
-	title: __( 'Sidebar', 'sensei-lms' ),
+	title: __( 'Sidebar Menu', 'sensei-lms' ),
 	description: __(
-		'Fixed left or right sidebar (Desktop). Displayed as an overlay menu on Mobile. Add the "Sidebar Toggle" block to a header to allow opening and closing the overlay menu.',
+		'A sidebar displayed as an overlay menu on mobile screens. Add the "Sidebar Toggle" block to a header to allow opening and closing.',
 		'sensei-lms'
 	),
 	attributes: {
@@ -111,7 +111,10 @@ export const TwoColumnLayoutBlock = {
 	...shared,
 	name: 'sensei-lms/main-columns',
 	title: __( 'Two-column Layout', 'sensei-lms' ),
-	description: __( 'Layout with a fixed sidebar', 'sensei-lms' ),
+	description: __(
+		'Layout with a fixed left or right sidebar.',
+		'sensei-lms'
+	),
 	attributes: {
 		elementClass: 'sensei-course-theme__columns',
 	},

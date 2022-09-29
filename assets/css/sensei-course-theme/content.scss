@@ -19,6 +19,11 @@ body {
 
 }
 
+::selection {
+	background-color: var(--sensei-text-color);
+	color: var(--sensei-background-color);
+}
+
 .wp-block-post-title {
 	margin-top: 20px!important;
 	margin-bottom: 20px!important;

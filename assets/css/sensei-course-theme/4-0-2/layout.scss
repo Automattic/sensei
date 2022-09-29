@@ -72,18 +72,7 @@ body.sensei-course-theme {
 	}
 
 	&__sidebar {
-		position: fixed;
 		top: var(--full-header-height);
-		bottom: 0;
-		left: 0;
-		width: var(--sidebar-width);
-		border-right: 1px solid var(--border-color);
-		background-color: var(--sensei-background-color);
-		overflow: auto;
-		overscroll-behavior: contain;
-		display: flex;
-		flex-direction: column;
-		scrollbar-gutter: stable both-edges;
 
 		@media screen and (min-width: $breakpoint ) {
 			&--hidden {
