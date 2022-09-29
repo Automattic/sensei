@@ -509,7 +509,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'is_installed' => false,
 				'is_activated' => false,
 			],
-			get_transient( Sensei_Utils::WC_INFORMATION_TRANSIENT ),
+			Sensei_Utils::get_woocommerce_plugin_information(),
 		];
 		$extensions          = Sensei()->setup_wizard->get_sensei_extensions();
 
