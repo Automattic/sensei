@@ -48,9 +48,9 @@ class Sensei_REST_API_Internal {
 	/**
 	 * Sensei Home Data provider.
 	 *
-	 * @var Sensei_Home_Data_Provider
+	 * @var Sensei_Home_Remote_Data_Provider
 	 */
-	private $home_data_provider;
+	private $remote_data_provider;
 
 	/**
 	 * Sensei_REST_API_Internal constructor.
@@ -58,7 +58,7 @@ class Sensei_REST_API_Internal {
 	public function __construct() {
 		$this->home_controller_mapper = new Sensei_REST_API_Home_Controller_Mapper();
 		$this->quick_links_provider   = new Sensei_Home_Quick_Links_Provider();
-		$this->home_data_provider     = new Sensei_Home_Data_Provider( 'sensei-lms' );
+		$this->remote_data_provider   = new Sensei_Home_Remote_Data_Provider( 'sensei-lms' );
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
 
@@ -81,7 +81,7 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Home_Controller(
 				$this->namespace,
 				$this->home_controller_mapper,
-				$this->home_data_provider,
+				$this->remote_data_provider,
 				$this->quick_links_provider
 			),
 		];

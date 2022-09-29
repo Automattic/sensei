@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing Sensei_Home_Data_Provider class.
+ * File containing Sensei_Home_Remote_Data_Provider class.
  *
  * @package sensei-lms
  * @since   $$next-version$$
@@ -9,9 +9,9 @@
 /**
  * Class responsible for fetching data from SenseiLMS.com.
  */
-class Sensei_Home_Data_Provider {
+class Sensei_Home_Remote_Data_Provider {
 	const API_BASE_URL     = 'https://senseilms.com/wp-json/senseilms-home/1.0/';
-	const CACHE_KEY_PREFIX = 'sensei_home_data_';
+	const CACHE_KEY_PREFIX = 'sensei_home_remote_data_';
 	const CACHE_TTL        = DAY_IN_SECONDS;
 
 	/**
@@ -22,7 +22,7 @@ class Sensei_Home_Data_Provider {
 	private $primary_plugin_slug;
 
 	/**
-	 * Sensei_Home_Data_Provider constructor.
+	 * Sensei_Home_Remote_Data_Provider constructor.
 	 *
 	 * @param string $primary_plugin_slug The primary plugin slug.
 	 */
@@ -80,13 +80,13 @@ class Sensei_Home_Data_Provider {
 		 * Filter the primary plugin slug.
 		 *
 		 * @since $$next-version$$
-		 * @hook sensei_home_data_primary_plugin_slug
+		 * @hook sensei_home_remote_data_primary_plugin_slug
 		 *
 		 * @param {string} $primary_plugin_slug The primary plugin slug.
 		 *
 		 * @return {string} The filtered primary plugin slug.
 		 */
-		return apply_filters( 'sensei_home_data_primary_plugin_slug', $this->primary_plugin_slug );
+		return apply_filters( 'sensei_home_remote_data_primary_plugin_slug', $this->primary_plugin_slug );
 	}
 
 	/**
@@ -99,13 +99,13 @@ class Sensei_Home_Data_Provider {
 		* Filter the other plugins used for Sensei Home.
 		*
 		* @since $$next-version$$
-		* @hook sensei_home_data_other_plugins
+		* @hook sensei_home_remote_data_other_plugins
 		*
 		* @param {array} $other_plugins The other plugins.
 		*
 		* @return {array} The filtered other plugins.
 		*/
-		return array_diff( apply_filters( 'sensei_home_data_other_plugins', [] ), [ $this->get_primary_plugin_slug() ] );
+		return array_diff( apply_filters( 'sensei_home_remote_data_other_plugins', [] ), [ $this->get_primary_plugin_slug() ] );
 	}
 
 	/**

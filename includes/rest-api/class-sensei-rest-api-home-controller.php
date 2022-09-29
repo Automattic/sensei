@@ -48,27 +48,27 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	/**
 	 * Home data provider.
 	 *
-	 * @var Sensei_Home_Data_Provider
+	 * @var Sensei_Home_Remote_Data_Provider
 	 */
-	private $home_data_provider;
+	private $remote_data_provider;
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
 	 * @param string                                 $namespace            Routes namespace.
 	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper               Sensei Home REST API mapper.
-	 * @param Sensei_Home_Data_Provider              $home_data_provider   Fetch home data helper.
+	 * @param Sensei_Home_Remote_Data_Provider       $remote_data_provider   Fetch home data helper.
 	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
 	 */
 	public function __construct(
 		$namespace,
 		Sensei_REST_API_Home_Controller_Mapper $mapper,
-		Sensei_Home_Data_Provider $home_data_provider,
+		Sensei_Home_Remote_Data_Provider $remote_data_provider,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider
 	) {
 		$this->namespace            = $namespace;
 		$this->mapper               = $mapper;
-		$this->home_data_provider   = $home_data_provider;
+		$this->remote_data_provider = $remote_data_provider;
 		$this->quick_links_provider = $quick_links_provider;
 	}
 
@@ -111,7 +111,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
-		$home_data = $this->home_data_provider->fetch( HOUR_IN_SECONDS );
+		$home_data = $this->remote_data_provider->fetch( HOUR_IN_SECONDS );
 		$guides    = $home_data['guides'] ?? [];
 		$news      = $home_data['news'] ?? [];
 

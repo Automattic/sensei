@@ -85,7 +85,7 @@ class Sensei_REST_API_Home_Controller_Tests extends WP_Test_REST_TestCase {
 			->willReturn( $mocked_quick_links );
 
 		// Mock Home Data.
-		$mocked_home_data_mock = $this->createMock( Sensei_Home_Data_Provider::class );
+		$mocked_home_data_mock = $this->createMock( Sensei_Home_Remote_Data_Provider::class );
 		$mocked_home_data_mock->expects( $this->once() )
 			->method( 'fetch' )
 			->willReturn( [] );
