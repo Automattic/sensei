@@ -144,8 +144,13 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'sell_courses', 'other' ],
-				'other'    => 'Test',
+				'purpose' => [
+					'selected' => [ 'sell_courses', 'other' ],
+					'other'    => 'Test',
+				],
+				'features' => [
+					'selected' => [ 'woocommerce' ],
+				],
 			]
 		);
 
@@ -153,6 +158,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$this->assertEquals( [ 'sell_courses', 'other' ], $data['purpose']['selected'] );
 		$this->assertEquals( 'Test', $data['purpose']['other'] );
+		$this->assertEquals( [ 'woocommerce' ], $data['features']['selected'] );
 	}
 
 	/**
@@ -175,8 +181,10 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'sell_courses' ],
-				'other'    => 'Discard this',
+				'purpose' => [
+					'selected' => [ 'sell_courses' ],
+					'other'    => 'Discard this',
+				],
 			]
 		);
 
@@ -197,14 +205,20 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'invalid_data' ],
-				'other'    => '',
+				'purpose'  => [
+					'selected' => [ 'invalid_data' ],
+					'other'    => '',
+				],
+				'features' => [
+					'selected' => [ 'invalid_data' ],
+				],
 			]
 		);
 
 		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
-		$this->assertNotContains( [ 'invalid_data' ], $data['purpose'] );
+		$this->assertNotContains( [ 'invalid_data' ], $data['purpose']['selected'] );
+		$this->assertNotContains( [ 'invalid_data' ], $data['features']['selected'] );
 	}
 
 
@@ -261,29 +275,9 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	public function testSubmitTrackingUpdatesUsageTrackingSetting() {
 
 		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$this->request( 'POST', 'tracking', [ 'usage_tracking' => true ] );
+		$this->request( 'POST', 'tracking', [ 'tracking' => [ 'usage_tracking' => true ] ] );
 
 		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
-	}
-
-	/**
-	 * Tests that submitting to features endpoint saves submitted data
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features
-	 */
-	public function testSubmitFeaturesSavesData() {
-
-		$this->request(
-			'POST',
-			'features',
-			[
-				'selected' => [ 'sensei-certificates' ],
-			]
-		);
-
-		$data = Sensei()->setup_wizard->get_wizard_user_data();
-
-		$this->assertEquals( [ 'selected' => [ 'sensei-certificates' ] ], $data['features'] );
 	}
 
 	/**
@@ -297,8 +291,10 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 			'POST',
 			'purpose',
 			[
-				'selected' => [ 'sell_courses', 'other' ],
-				'other'    => 'Test',
+				'purpose' => [
+					'selected' => [ 'sell_courses', 'other' ],
+					'other'    => 'Test',
+				],
 			]
 		);
 
@@ -327,70 +323,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$this->assertEquals( $data['options'][0]->product_slug, 'slug-1' );
 		$this->assertEquals( $data['selected'], [] );
-	}
-
-	/**
-	 * Tests that submitting features installation starts installation.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_features_installation
-	 */
-	public function testSubmitFeaturesInstallation() {
-		if ( is_multisite() ) {
-			$this->markTestSkipped( 'Skip test for multisite because user will not have the needed permissions.' );
-		}
-
-		// Mock fetch from senseilms.com.
-		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
-		add_filter(
-			'pre_http_request',
-			function() use ( $response_body ) {
-				return [ 'body' => $response_body ];
-			}
-		);
-
-		// Create user with needed capabilities.
-		$user_id = $this->factory->user->create();
-		$user    = get_user_by( 'id', $user_id );
-
-		$user->add_cap( 'manage_sensei' );
-		$user->add_cap( 'install_plugins' );
-		wp_set_current_user( $user_id );
-
-		$this->request( 'POST', 'features-installation', [ 'selected' => [ 'slug-1' ] ], $user );
-
-		$expected_extension = (object) [
-			'product_slug' => 'slug-1',
-			'plugin_file'  => 'test/test.php',
-			'status'       => 'installing',
-			'is_installed' => false,
-			'is_activated' => false,
-		];
-		$sensei_extensions  = Sensei()->setup_wizard->get_sensei_extensions();
-
-		$this->assertEquals( $expected_extension, $sensei_extensions[0] );
-	}
-
-	/**
-	 * Tests that user cannot install features without capability.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::can_user_install_plugins
-	 */
-	public function testUserCannotInstallFeaturesWithoutCapability() {
-		$user_id = $this->factory->user->create();
-		$user    = get_user_by( 'id', $user_id );
-
-		$user->add_cap( 'manage_sensei' ); // Without install_plugins capability.
-		wp_set_current_user( $user_id );
-
-		$this->assertEquals( current_user_can( 'install_plugins' ), false );
-
-		$request = new WP_REST_Request( 'POST', '/sensei-internal/v1/setup-wizard/features-installation' );
-		$request->set_header( 'content-type', 'application/json' );
-		$request->set_body( wp_json_encode( [ 'selected' => [] ] ) );
-
-		$response = $this->server->dispatch( $request );
-
-		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	/**
@@ -432,25 +364,5 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		}
 
 		return $this->server->dispatch( $request )->get_data();
-	}
-
-	/**
-	 * Valid form data for step submissions.
-	 *
-	 * @access private
-	 * @return array
-	 */
-	public function step_form_data() {
-		return [
-			'Welcome'  => [ 'welcome', [ 'usage_tracking' => true ] ],
-			'Purpose'  => [
-				'purpose',
-				[
-					'selected' => [ 'share_knowledge', 'other' ],
-					'other'    => 'Test',
-				],
-			],
-			'Features' => [ 'features', [ 'selected' => [ 'sensei-certificates' ] ] ],
-		];
 	}
 }
