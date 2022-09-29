@@ -12,6 +12,25 @@
  * @since $$next-version$$
  */
 class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
+
+	/**
+	 * The ID for the task.
+	 *
+	 * @return string
+	 */
+	public function get_id(): string {
+		return 'setup-site';
+	}
+
+	/**
+	 * Number used to sort in frontend.
+	 *
+	 * @return int
+	 */
+	public function get_priority(): int {
+		return 100;
+	}
+
 	/**
 	 * Task title.
 	 *

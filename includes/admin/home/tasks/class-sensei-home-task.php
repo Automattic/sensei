@@ -14,6 +14,20 @@
 interface Sensei_Home_Task {
 
 	/**
+	 * The task ID.
+	 *
+	 * @return string
+	 */
+	public function get_id() : string;
+
+	/**
+	 * Number used to sort in frontend.
+	 *
+	 * @return int
+	 */
+	public function get_priority() : int;
+
+	/**
 	 * The task title.
 	 *
 	 * @return string
@@ -33,7 +47,6 @@ interface Sensei_Home_Task {
 	 * @return string|null
 	 */
 	public function get_image() : ?string;
-
 
 	/**
 	 * Whether the task has been completed or not.

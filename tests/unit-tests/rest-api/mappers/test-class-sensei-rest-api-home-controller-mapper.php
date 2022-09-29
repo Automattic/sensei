@@ -167,26 +167,31 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 
 	public function dataTestMapTasksMapsTasksToAssociativeArray() {
 		$completed_task = $this->createMock( Sensei_Home_Task::class );
+		$completed_task->method( 'get_id' )->willReturn( 'completed-task' );
 		$completed_task->method( 'get_title' )->willReturn( 'title 1' );
 		$completed_task->method( 'get_url' )->willReturn( 'url 1' );
 		$completed_task->method( 'get_image' )->willReturn( 'image 1' );
 		$completed_task->method( 'is_completed' )->willReturn( true );
+		$completed_task->method( 'get_priority' )->willReturn( 100 );
 		$uncompleted_task = $this->createMock( Sensei_Home_Task::class );
+		$uncompleted_task->method( 'get_id' )->willReturn( 'uncompleted-task' );
 		$uncompleted_task->method( 'get_title' )->willReturn( 'title 2' );
 		$uncompleted_task->method( 'get_url' )->willReturn( 'url 2' );
 		$uncompleted_task->method( 'get_image' )->willReturn( 'image 2' );
 		$uncompleted_task->method( 'is_completed' )->willReturn( false );
+		$uncompleted_task->method( 'get_priority' )->willReturn( 200 );
 		return [
 			[ [], [ 'items' => [] ], 'Empty tasks return empty array under tasks property.' ],
 			[
 				[ $completed_task ],
 				[
 					'items' => [
-						[
-							'title' => 'title 1',
-							'url'   => 'url 1',
-							'image' => 'image 1',
-							'done'  => true,
+						'completed-task' => [
+							'title'    => 'title 1',
+							'url'      => 'url 1',
+							'image'    => 'image 1',
+							'done'     => true,
+							'priority' => 100,
 						],
 					],
 				],
@@ -196,17 +201,19 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 				[ $completed_task, $uncompleted_task ],
 				[
 					'items' => [
-						[
-							'title' => 'title 1',
-							'url'   => 'url 1',
-							'image' => 'image 1',
-							'done'  => true,
+						'completed-task'   => [
+							'title'    => 'title 1',
+							'url'      => 'url 1',
+							'image'    => 'image 1',
+							'done'     => true,
+							'priority' => 100,
 						],
-						[
-							'title' => 'title 2',
-							'url'   => 'url 2',
-							'image' => 'image 2',
-							'done'  => false,
+						'uncompleted-task' => [
+							'title'    => 'title 2',
+							'url'      => 'url 2',
+							'image'    => 'image 2',
+							'done'     => false,
+							'priority' => 200,
 						],
 					],
 

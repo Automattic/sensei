@@ -121,8 +121,30 @@ class Sensei_REST_API_Home_Controller_Mapper {
 	 * @return array
 	 */
 	public function map_tasks( Sensei_Home_Tasks $tasks ): array {
+		$mapped = [];
+		foreach ( $tasks->get_items() as $task ) {
+			$mapped[ $task->get_id() ] = $this->map_task( $task );
+		}
+
 		return [
-			'items' => array_map( [ $this, 'map_task' ], $tasks->get_items() ),
+			/**
+			 * Filter to alter the list of tasks that will be sent to the frontend.
+			 * New tasks can be added and existing tasks modified or removed.
+			 * Each item must have:
+			 * - title: the title of the task.
+			 * - priority: number used in frontend to sort tasks.
+			 * - url: optional string with a url users will be taken when clicking on the task.
+			 * - image: optional string with a path/url to a featured image.
+			 * - done: boolean to mark task as done or not.
+			 *
+			 * @hook sensei_home_tasks_items
+			 * @since $$next-version$$
+			 *
+			 * @param array $tasks An array indexed by task ID.
+			 *
+			 * @return {bool}
+			 */
+			'items' => apply_filters( 'sensei_home_tasks_items', $mapped ),
 		];
 	}
 
@@ -134,10 +156,11 @@ class Sensei_REST_API_Home_Controller_Mapper {
 	 */
 	private function map_task( Sensei_Home_Task $task ): array {
 		return [
-			'title' => $task->get_title(),
-			'url'   => $task->get_url(),
-			'image' => $task->get_image(),
-			'done'  => $task->is_completed(),
+			'title'    => $task->get_title(),
+			'priority' => $task->get_priority(),
+			'url'      => $task->get_url(),
+			'image'    => $task->get_image(),
+			'done'     => $task->is_completed(),
 		];
 	}
 }
