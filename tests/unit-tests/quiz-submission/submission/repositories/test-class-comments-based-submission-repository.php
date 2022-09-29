@@ -14,7 +14,7 @@ use Sensei_Utils;
  */
 class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
-	private $factory;
+	protected $factory;
 
 	public function setup() {
 		parent::setup();
