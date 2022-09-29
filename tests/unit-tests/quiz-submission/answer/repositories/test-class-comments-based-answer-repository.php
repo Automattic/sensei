@@ -3,15 +3,15 @@
 namespace SenseiTest\Quiz_Submission\Answer\Repositories;
 
 use Sensei\Quiz_Submission\Answer\Models\Answer;
-use Sensei\Quiz_Submission\Answer\Repositories\Answer_Comments_Based_Repository;
+use Sensei\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository;
 use Sensei_Utils;
 
 /**
- * Class Answer_Comments_Based_Repository_Test
+ * Class Comments_Based_Answer_Repository_Test
  *
- * @covers \Sensei\Quiz_Submission\Answer\Repositories\Answer_Comments_Based_Repository
+ * @covers \Sensei\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository
  */
-class Answer_Comments_Based_Repository_Test extends \WP_UnitTestCase {
+class Comments_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	private $factory;
 
@@ -30,7 +30,7 @@ class Answer_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
 		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-		$answer_repository = new Answer_Comments_Based_Repository();
+		$answer_repository = new Comments_Based_Answer_Repository();
 
 		/* Act. */
 		$answer = $answer_repository->create( $submission_id, 1, 'Yes' );
@@ -49,7 +49,7 @@ class Answer_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
 		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-		$answer_repository = new Answer_Comments_Based_Repository();
+		$answer_repository = new Comments_Based_Answer_Repository();
 
 		/* Act. */
 		$answer_repository->create( $submission_id, 1, 'Yes' );
@@ -70,7 +70,7 @@ class Answer_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
 		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-		$answer_repository = new Answer_Comments_Based_Repository();
+		$answer_repository = new Comments_Based_Answer_Repository();
 
 		/* Act. */
 		$answer_repository->create( $submission_id, 1, 'Yes' );
@@ -88,7 +88,7 @@ class Answer_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
 		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-		$answer_repository = new Answer_Comments_Based_Repository();
+		$answer_repository = new Comments_Based_Answer_Repository();
 
 		$answer_1 = $answer_repository->create( $submission_id, 1, 'Yes' );
 		$answer_2 = $answer_repository->create( $submission_id, 2, 'No' );
@@ -114,7 +114,7 @@ class Answer_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id         = $this->factory->lesson->create();
 		$user_id           = $this->factory->user->create();
 		$submission_id     = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
-		$answer_repository = new Answer_Comments_Based_Repository();
+		$answer_repository = new Comments_Based_Answer_Repository();
 
 		$answer_repository->create( $submission_id, 1, 'Yes' );
 

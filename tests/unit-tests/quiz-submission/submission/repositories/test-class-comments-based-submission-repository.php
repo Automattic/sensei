@@ -4,15 +4,15 @@ namespace SenseiTest\Quiz_Submission\Submission\Repositories;
 
 use RuntimeException;
 use Sensei\Quiz_Submission\Submission\Models\Submission;
-use Sensei\Quiz_Submission\Submission\Repositories\Submission_Comments_Based_Repository;
+use Sensei\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository;
 use Sensei_Utils;
 
 /**
- * Class Submission_Comments_Based_Repository_Test
+ * Class Comments_Based_Submission_Repository_Test
  *
- * @covers \Sensei\Quiz_Submission\Submission\Repositories\Submission_Comments_Based_Repository
+ * @covers \Sensei\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository
  */
-class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
+class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	private $factory;
 
@@ -28,7 +28,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenLessonStatusNotFound_ThrowsException(): void {
 		/* Arrange. */
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		/* Assert. */
 		$this->expectException( RuntimeException::class );
@@ -43,7 +43,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -62,7 +62,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGetOrCreate_WhenSubmissionExists_ReturnsExistingSubmission(): void {
 		/* Arrange. */
-		$repository_mock = $this->getMockBuilder( Submission_Comments_Based_Repository::class )
+		$repository_mock = $this->getMockBuilder( Comments_Based_Submission_Repository::class )
 			->setMethods( [ 'get', 'create' ] )
 			->getMock();
 
@@ -82,7 +82,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGetOrCreate_WhenSubmissionDoesNotExist_ReturnsNewSubmission(): void {
 		/* Arrange. */
-		$repository_mock = $this->getMockBuilder( Submission_Comments_Based_Repository::class )
+		$repository_mock = $this->getMockBuilder( Comments_Based_Submission_Repository::class )
 			->setMethods( [ 'get', 'create' ] )
 			->getMock();
 
@@ -105,7 +105,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		/* Act. */
 		$submission = $repository->get( $quiz_id, $user_id );
@@ -119,7 +119,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -140,7 +140,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -158,7 +158,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		/* Act. */
 		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
@@ -172,7 +172,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		$comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -190,7 +190,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -204,7 +204,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 	public function testSave_WhenLessonStatusNotFound_ThrowsException(): void {
 		/* Arrange. */
 		$submission = $this->createMock( Submission::class );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		/* Assert. */
 		$this->expectException( RuntimeException::class );
@@ -219,7 +219,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
@@ -241,7 +241,7 @@ class Submission_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Submission_Comments_Based_Repository();
+		$repository = new Comments_Based_Submission_Repository();
 
 		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 

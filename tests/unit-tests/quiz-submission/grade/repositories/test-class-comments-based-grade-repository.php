@@ -3,15 +3,15 @@
 namespace SenseiTest\Quiz_Submission\Grade\Repositories;
 
 use Sensei\Quiz_Submission\Grade\Models\Grade;
-use Sensei\Quiz_Submission\Grade\Repositories\Grade_Comments_Based_Repository;
+use Sensei\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository;
 use Sensei_Utils;
 
 /**
- * Class Grade_Comments_Based_Repository_Test
+ * Class Comments_Based_Grade_Repository_Test
  *
- * @covers \Sensei\Quiz_Submission\Grade\Repositories\Grade_Comments_Based_Repository
+ * @covers \Sensei\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository
  */
-class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
+class Comments_Based_Grade_Repository_Test extends \WP_UnitTestCase {
 
 	private $factory;
 
@@ -29,7 +29,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Act. */
@@ -50,7 +50,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Act. */
@@ -71,7 +71,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Act. */
@@ -92,7 +92,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Act. */
@@ -106,7 +106,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		$grade_1 = $grade_repository->create( $submission_id, 0, 1, 22, 'Great!' );
@@ -132,7 +132,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		$grade_1 = $grade_repository->create( $submission_id, 0, 1, 22, 'Great!' );
@@ -161,7 +161,7 @@ class Grade_Comments_Based_Repository_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$lesson_id        = $this->factory->lesson->create();
 		$user_id          = $this->factory->user->create();
-		$grade_repository = new Grade_Comments_Based_Repository();
+		$grade_repository = new Comments_Based_Grade_Repository();
 		$submission_id    = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		$grade_repository->create( $submission_id, 0, 1, 22, 'Great!' );

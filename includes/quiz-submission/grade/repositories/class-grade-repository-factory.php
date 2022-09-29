@@ -23,6 +23,6 @@ class Grade_Repository_Factory {
 	 * @return Grade_Repository_Interface
 	 */
 	public function create(): Grade_Repository_Interface {
-		return new Grade_Comments_Based_Repository();
+		return new Comments_Based_Grade_Repository();
 	}
 }
