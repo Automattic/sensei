@@ -31,7 +31,7 @@ class Lesson_Video {
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'learning-mode/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/learning-mode-lesson-video',
+			'sensei-lms/course-theme-lesson-video',
 			[
 				'render_callback' => [ $this, 'render' ],
 				'style'           => 'sensei-theme-blocks',

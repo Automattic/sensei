@@ -29,7 +29,7 @@ class Course_Progress_Counter {
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'learning-mode/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
-			'sensei-lms/learning-mode-course-progress-counter',
+			'sensei-lms/course-theme-course-progress-counter',
 			[
 				'render_callback' => [ $this, 'render' ],
 				'style'           => 'sensei-theme-blocks',
