@@ -46,10 +46,10 @@ class Sensei_Home_Help_Item {
 	 *
 	 * @param string                           $title      The localised title.
 	 * @param string|null                      $url        The destination url. Can be set as null if the item is disabled.
-	 * @param string|null                      $icon       The icon. But default null and will use the default icon (if any).
+	 * @param string|null                      $icon       The icon. Null by default which will use the default icon (if any).
 	 * @param Sensei_Home_Help_Extra_Link|null $extra_link An optional link with extra information.
 	 */
-	public function __construct( string $title, $url, string $icon = null, Sensei_Home_Help_Extra_Link $extra_link = null ) {
+	public function __construct( string $title, ?string $url, ?string $icon = null, ?Sensei_Home_Help_Extra_Link $extra_link = null ) {
 		$this->title      = $title;
 		$this->url        = $url;
 		$this->icon       = $icon;
