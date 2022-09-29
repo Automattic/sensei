@@ -30,9 +30,10 @@ export const StylesProbe = () => {
 		const { color: linkColor } = getComputedStyle( link );
 
 		const updates = {
-			'primary-color': linkColor,
-			'text-color': color,
-			'bg-color': backgroundColor,
+			'--sensei-primary-color': linkColor,
+			'--sensei-text-color': color,
+			'--sensei-background-color': backgroundColor,
+			'--sensei-primary-contrast-color': backgroundColor,
 		};
 
 		for ( const name in { ...updates } ) {
@@ -48,7 +49,7 @@ export const StylesProbe = () => {
 
 	function setVariables( updates ) {
 		for ( const [ name, value ] of Object.entries( updates ) ) {
-			root.style.setProperty( `--${ name }`, value );
+			root.style.setProperty( name, value );
 		}
 	}
 

@@ -1,15 +1,15 @@
 $breakpoint: 783px;
 
 body {
-	--primary-color: var(--sensei-primary-color, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
-	--bg-color: var(--sensei-background-color, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
-	--primary-contrast-color: var(--bg-color, #FFFFFF);
-
-	--text-color: var(--sensei-text-color, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
+	// Try to pick up global styles, customizer or theme colors.
+	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
+	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
+	--sensei-primary-contrast-color: var(--sensei-background-color-global, #FFFFFF);
+	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
 	--border-color: rgba(125, 125, 125, 0.3);
 
-	background-color: var(--bg-color);
-	color: var(--text-color);
+	background-color: var(--sensei-background-color);
+	color: var(--sensei-text-color);
 }
 
 .sensei-course-theme__frame {
@@ -22,8 +22,8 @@ body {
 		text-decoration: none;
 
 		&:hover, &:hover * {
-			color: var(--primary-color);
-			fill: var(--primary-color);
+			color: var(--sensei-primary-color);
+			fill: var(--sensei-primary-color);
 			cursor: pointer;
 			background: none;
 			text-decoration: underline;
