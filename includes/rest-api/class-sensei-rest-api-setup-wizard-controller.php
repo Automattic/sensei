@@ -65,9 +65,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Register the REST API endpoints for Setup Wizard.
 	 */
 	public function register_routes() {
-
 		$this->register_get_data_route();
-		$this->register_get_features_route();
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
 		$this->register_submit_tracking_route();
@@ -283,8 +281,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register GET / endpoint for features step.
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function register_get_features_route() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features',

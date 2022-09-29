@@ -305,27 +305,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
-	 * Tests that features get endpoint returns fetched data.
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_features_data
-	 */
-	public function testGetFeaturesReturnsFetchedData() {
-		// Mock fetch from senseilms.com.
-		$response_body = '{ "products": [ { "product_slug": "slug-1", "plugin_file": "test/test.php" } ] }';
-		add_filter(
-			'pre_http_request',
-			function() use ( $response_body ) {
-				return [ 'body' => $response_body ];
-			}
-		);
-
-		$data = $this->request( 'GET', 'features' );
-
-		$this->assertEquals( $data['options'][0]->product_slug, 'slug-1' );
-		$this->assertEquals( $data['selected'], [] );
-	}
-
-	/**
 	 * Tests that the complete wizard endpoint clears setup wizard prompts.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::complete_setup_wizard
