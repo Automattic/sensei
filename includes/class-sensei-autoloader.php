@@ -83,6 +83,8 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'admin/home/quick-links' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/help' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/promo-banner' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/tasks' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/tasks/task' ),
 		);
 
 		// Add Sensei custom auto loader.
