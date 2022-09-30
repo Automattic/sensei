@@ -313,7 +313,10 @@ export default [
 					} ) }
 				>
 					<span className="wp-block-sensei-lms-lesson-properties__difficulty">
-						{ lessonPropertiesBlock.title }
+						{ __(
+							'The Learning Mode Lesson Properties block will display the lesson complexity and length. To set these properties, you need to add a Lesson Properties block to each individual lesson.',
+							'sensei-lms'
+						) }
 					</span>
 				</div>
 			);
