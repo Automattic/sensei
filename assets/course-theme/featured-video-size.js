@@ -3,9 +3,9 @@
  */
 import domReady from '@wordpress/dom-ready';
 
-function setupLessonVideoIframes() {
+function setupLessonVideoBlocks() {
 	document
-		.querySelectorAll( '.sensei-course-theme-lesson-video iframe' )
+		.querySelectorAll( '.sensei-course-theme-lesson-video' )
 		.forEach( updateElementHeightOnResize );
 }
 
@@ -27,15 +27,27 @@ function getAspectRatio( { width, height } ) {
 /**
  * Update video height when its width changes to keep original aspect ratio.
  *
- * @param {HTMLElement} element Element to track. Must have width and height attributes.
+ * @param {HTMLElement} block Container to track. Must have an <iframe> width and height attributes.
  */
-function updateElementHeightOnResize( element ) {
-	const ratio = getAspectRatio( element );
+function updateElementHeightOnResize( block ) {
+	const getVideoElement = () => block.querySelector( 'iframe' );
+	let element = getVideoElement();
+	const ratio = element && getAspectRatio( element );
 
-	const observer = new window.ResizeObserver( resizeElement );
-	observer.observe( element );
+	if ( ! ratio ) {
+		return;
+	}
+
+	new window.ResizeObserver( resizeElement ).observe( block );
+	resizeElement();
 
 	function resizeElement() {
+		element = getVideoElement();
+
+		if ( ! element ) {
+			return;
+		}
+
 		const { offsetHeight, offsetWidth } = element;
 		const height = offsetWidth / ratio;
 
@@ -47,4 +59,4 @@ function updateElementHeightOnResize( element ) {
 	}
 }
 
-domReady( setupLessonVideoIframes );
+domReady( setupLessonVideoBlocks );
