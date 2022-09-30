@@ -302,7 +302,7 @@ export default [
 		...learningModeLessonPropertiesMeta,
 		...meta,
 		description: __(
-			'Displays the lesson properties such as lengh and difficulty.',
+			'Displays the lesson properties such as length and difficulty.',
 			'sensei-lms'
 		),
 		edit: function EditLearningModeLessonProperties() {
