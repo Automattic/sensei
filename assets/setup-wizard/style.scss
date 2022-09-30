@@ -229,6 +229,10 @@ $recoleta-font-family: Recoleta, sans-serif;
 		width: 100%;
 		pointer-events: none;
 	}
+
+	&__fade-in {
+		animation: 0.5s fadeIn;
+	}
 }
 
 // Background animation with the books illustration.

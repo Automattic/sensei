@@ -29,6 +29,6 @@
 	&__features-progress-bar-filled {
 		background-color: #217D7C;
 		height: 100%;
-		transition: 0.5s width;
+		transition: 1.5s width linear;
 	}
 }
