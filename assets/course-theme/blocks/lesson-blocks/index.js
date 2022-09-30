@@ -12,6 +12,7 @@ import ChevronRight from '../../../icons/chevron-right.svg';
 import DoubleChevronRight from '../../../icons/double-chevron-right.svg';
 import MenuIcon from '../../../icons/menu.svg';
 import SenseiIcon from '../../../icons/sensei.svg';
+import lessonPropertiesBlock from '../../../blocks/lesson-properties';
 import courseContentMeta from './course-content.block.json';
 import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
 import courseThemeCourseProgressCounterMeta from './course-theme-course-progress-counter.block.json';
@@ -20,6 +21,7 @@ import courseThemeLessonModuleMeta from './course-theme-lesson-module.block.json
 import courseThemeNoticesMeta from './course-theme-notices.block.json';
 import courseThemePostTitleMeta from './course-theme-post-title.block.json';
 import courseThemePrevNextLessonMeta from './course-theme-prev-next-lesson.block.json';
+import learningModeLessonPropertiesMeta from './learning-mode-lesson-properties.block.json';
 import courseTitleMeta from './course-title.block.json';
 import exitCourseMeta from './exit-course.block.json';
 import focusModeToggleMeta from './focus-mode-toggle.block.json';
@@ -291,6 +293,31 @@ export default [
 					>
 						▶
 					</p>
+				</div>
+			);
+		},
+	},
+	{
+		...lessonPropertiesBlock,
+		...learningModeLessonPropertiesMeta,
+		...meta,
+		description: __(
+			'Displays the lesson properties such as length and difficulty.',
+			'sensei-lms'
+		),
+		edit: function EditLearningModeLessonProperties() {
+			return (
+				<div
+					{ ...useBlockProps( {
+						className: 'wp-block-sensei-lms-lesson-properties',
+					} ) }
+				>
+					<span className="wp-block-sensei-lms-lesson-properties__difficulty">
+						{ __(
+							'The Learning Mode Lesson Properties block will display the lesson complexity and length. To set these properties, you need to add a Lesson Properties block to each individual lesson.',
+							'sensei-lms'
+						) }
+					</span>
 				</div>
 			);
 		},
