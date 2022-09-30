@@ -190,6 +190,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Install extension.
 	 *
+	 * @since $$next-version$$ If the plugin is already installed, it just activates it.
+	 *
 	 * @access private
 	 *
 	 * @param WP_REST_Request $request The request.
@@ -211,7 +213,9 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		)[0];
 
 		try {
-			Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			if ( ! $plugin_to_install->is_installed ) {
+				Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			}
 			wp_clean_plugins_cache();
 			Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
 		} catch ( Exception $e ) {
