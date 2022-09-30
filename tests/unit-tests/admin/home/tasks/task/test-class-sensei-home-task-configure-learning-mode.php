@@ -1,0 +1,49 @@
+<?php
+/**
+ * This file contains the Sensei_Home_Task_Configure_Learning_Mode_Test class.
+ *
+ * @package sensei
+ */
+
+
+/**
+ * Tests for Sensei_Home_Task_Configure_Learning_Mode class.
+ *
+ * @covers Sensei_Home_Task_Configure_Learning_Mode
+ */
+class Sensei_Home_Task_Configure_Learning_Mode_Test extends WP_UnitTestCase {
+
+	/**
+	 * The task under test.
+	 *
+	 * @var Sensei_Home_Task_Configure_Learning_Mode
+	 */
+	private $task;
+
+	public function setUp() {
+		parent::setUp();
+		$this->task = new Sensei_Home_Task_Configure_Learning_Mode();
+	}
+
+	public function tearDown() {
+		delete_site_option( Sensei_Home_Task_Configure_Learning_Mode::VISITED_SETTING_SECTIONS_OPTION_KEY );
+		parent::tearDown();
+	}
+
+
+	/**
+	 * Test task is not completed by default.
+	 */
+	public function testTaskIsNotCompletedByDefault() {
+		$this->assertFalse( $this->task->is_completed() );
+	}
+
+	/**
+	 * Test adding the proper option marks task as complete.
+	 */
+	public function testTaskIsCompletedWhenAddingTheSettingsVisitedOption() {
+		add_site_option( Sensei_Home_Task_Configure_Learning_Mode::VISITED_SETTING_SECTIONS_OPTION_KEY, [ 'appearance-settings' ] );
+
+		$this->assertTrue( $this->task->is_completed() );
+	}
+}
