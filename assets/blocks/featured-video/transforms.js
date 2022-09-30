@@ -8,11 +8,6 @@ import { createBlock } from '@wordpress/blocks';
  */
 import blockMeta from './block.json';
 
-const transformFrom = ( blockName, attributes, innerBlocks ) =>
-	createBlock( blockMeta.name, {}, [
-		createBlock( blockName, attributes, innerBlocks ),
-	] );
-
 export const transforms = {
 	from: [ 'core/video', 'core/embed', 'sensei-pro/interactive-video' ].map(
 		( blockName ) => ( {
@@ -23,7 +18,9 @@ export const transforms = {
 				if ( 'core/embed' === name && ! attributes.providerNameSlug ) {
 					name = 'core/video';
 				}
-				return transformFrom( name, attributes, innerBlocks );
+				return createBlock( blockMeta.name, {}, [
+					createBlock( name, attributes, innerBlocks ),
+				] );
 			},
 		} )
 	),
