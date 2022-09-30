@@ -32,11 +32,11 @@ describe( 'useActionsNavigator', () => {
 	};
 
 	it( 'should render the first step properly', () => {
-		const { queryByText } = render(
+		const { findByText } = render(
 			<TestComponent actions={ actionsSample } />
 		);
 
-		expect( queryByText( 'a' ) ).toBeTruthy();
-		expect( queryByText( '50' ) ).toBeTruthy();
+		expect( findByText( 'a' ) ).toBeTruthy();
+		expect( findByText( '50' ) ).toBeTruthy();
 	} );
 } );

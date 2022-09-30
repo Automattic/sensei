@@ -30,8 +30,11 @@ const useActionsNavigator = ( actions ) => {
 
 	// Navigate through the actions.
 	useEffect( () => {
+		// This is to make sure that the bar will run the CSS transition for the first step.
 		if ( undefined === currentAction ) {
-			setCurrentAction( 0 );
+			setTimeout( () => {
+				setCurrentAction( 0 );
+			} );
 			return;
 		}
 
