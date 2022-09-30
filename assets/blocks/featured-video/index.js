@@ -11,6 +11,8 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import metadata from './block.json';
+import { transforms } from './transforms';
+
 const FEATURED_VIDEO_TEMPLATE = [ [ 'core/video' ] ];
 const ALLOWED_BLOCKS = [
 	'core/embed',
@@ -89,4 +91,5 @@ export default {
 	save: () => {
 		return <InnerBlocks.Content />;
 	},
+	transforms,
 };
