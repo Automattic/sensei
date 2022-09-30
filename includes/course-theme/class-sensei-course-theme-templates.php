@@ -65,16 +65,19 @@ class Sensei_Course_Theme_Templates {
 
 		// The below hooks enable block theme support and inject the learning mode templates.
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
+		add_action( 'admin_init', [ $this, 'maybe_add_theme_supports' ] );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
-		add_filter( 'theme_lesson_templates', [ $this, 'add_lesson_template' ], 10, 4 );
-		add_filter( 'theme_quiz_templates', [ $this, 'add_quiz_template' ], 10, 4 );
+		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
+		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 
 	}
 
 
 	/**
 	 * Use course theme if it's enabled for the current lesson or quiz.
+	 *
+	 * @access private
 	 */
 	public function maybe_use_course_theme_templates() {
 		if ( Sensei_Course_Theme_Option::should_use_learning_mode() ) {
@@ -86,39 +89,34 @@ class Sensei_Course_Theme_Templates {
 	}
 
 	/**
-	 * Add learning mode templates to theme lesson templates.
+	 * Add block template supports in admin.
 	 *
-	 * @param string[]     $post_templates Array of template header names keyed by the template file name.
-	 * @param WP_Theme     $theme          The theme object.
-	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
-	 * @param string       $post_type      Post type to get the templates for.
+	 * @access private
 	 */
-	public function add_lesson_template( $post_templates, $theme, $post, $post_type ) {
-		if ( 'lesson' !== $post_type ) {
-			return $post_templates;
+	public function maybe_add_theme_supports() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Argument cast to int and used for comparison.
+		if ( isset( $_GET['post'] ) && in_array( get_post_type( (int) $_GET['post'] ), [ 'lesson', 'quiz' ], true ) ) {
+			add_theme_support( 'block-templates' );
 		}
-
-		$this->load_file_templates();
-		$post_templates[ $this->file_templates['lesson']['slug'] ] = $this->file_templates['lesson']['title'];
-
-		return $post_templates;
 	}
 
 	/**
-	 * Add learning mode templates to theme quiz templates.
+	 * Add learning mode templates to theme templates for quizzes and lessons.
+	 *
+	 * @access private
 	 *
 	 * @param string[]     $post_templates Array of template header names keyed by the template file name.
 	 * @param WP_Theme     $theme          The theme object.
 	 * @param WP_Post|null $post           The post being edited, provided for context, or null.
 	 * @param string       $post_type      Post type to get the templates for.
 	 */
-	public function add_quiz_template( $post_templates, $theme, $post, $post_type ) {
-		if ( 'quiz' !== $post_type ) {
+	public function add_learning_mode_template( $post_templates, $theme, $post, $post_type ) {
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
 			return $post_templates;
 		}
 
 		$this->load_file_templates();
-		$post_templates[ $this->file_templates['quiz']['slug'] ] = $this->file_templates['quiz']['title'];
+		$post_templates[ $this->file_templates[ $post_type ]['slug'] ] = $this->file_templates[ $post_type ]['title'];
 
 		return $post_templates;
 	}
@@ -240,7 +238,11 @@ class Sensei_Course_Theme_Templates {
 	 */
 	public function add_course_theme_block_templates( $templates, $query, $template_type ) {
 
-		if ( 'wp_template' !== $template_type ) {
+		if ( 'wp_template' !== $template_type || $query['wp_id'] ) {
+			return $templates;
+		}
+
+		if ( $this->should_hide_lesson_template( $query['post_type'] ?? null ) ) {
 			return $templates;
 		}
 
@@ -466,5 +468,31 @@ class Sensei_Course_Theme_Templates {
 		$templates = $this->get_block_templates();
 		return $templates[ $type ]->content;
 	}
+
+	/**
+	 * Hides the lesson template in the post editor if the lesson does not have learning mode enabled.
+	 *
+	 * @param string $post_type The query post type.
+	 *
+	 * @return bool True if template should be hidden.
+	 */
+	private function should_hide_lesson_template( $post_type ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST && 'lesson' === $post_type ) {
+
+			$referer = isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
+
+			// Hide the lesson only in the post editor.
+			if ( ! preg_match( '#.*/wp-admin/post.php\?.*post=(\d+)#', $referer, $matches ) ) {
+				return false;
+			}
+
+			$course_id = Sensei()->lesson->get_course_id( $matches[1] );
+
+			return ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		}
+
+		return false;
+	}
+
 
 }
