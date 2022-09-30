@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { useMemo } from '@wordpress/element';
+import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
@@ -58,7 +59,7 @@ const getFeatureActions = ( { selected, options } ) => {
  * Features step for Setup Wizard.
  */
 const Features = () => {
-	const { stepData } = useSetupWizardStep( 'features' );
+	const { stepData, submitStep, error } = useSetupWizardStep( 'features' );
 
 	// Create list of actions.
 	const actions = useMemo(
@@ -72,19 +73,42 @@ const Features = () => {
 				action: () =>
 					new Promise( ( resolve ) => {
 						setTimeout( () => {
-							window.location.href = senseiHomePath;
-							resolve();
+							submitStep(
+								{},
+								{
+									onSuccess: () => {
+										window.location.href = senseiHomePath;
+										resolve();
+									},
+								}
+							);
 						}, actionMinimumTimer );
 					} ),
 			},
 		],
-		[ stepData ]
+		[ stepData, submitStep ]
 	);
 
 	const { percentage, label } = useActionsNavigator( actions );
 
 	return (
 		<div className="sensei-setup-wizard__features-step">
+			{ error && (
+				<Notice
+					status="error"
+					className="sensei-setup-wizard__submit-error"
+					isDismissible={ false }
+					actions={ [
+						{
+							label: __( 'Go to Sensei Home', 'sensei-lms' ),
+							url: senseiHomePath,
+						},
+					] }
+				>
+					{ error.message }
+				</Notice>
+			) }
+
 			<div
 				className="sensei-setup-wizard__features-status"
 				role="status"
