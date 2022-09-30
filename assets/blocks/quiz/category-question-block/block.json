@@ -4,6 +4,7 @@
   "description": "Pull questions from a question category.",
   "parent": [ "sensei-lms/quiz" ],
   "category": "sensei-lms",
+  "textdomain": "sensei-lms",
   "supports": {
     "html": false
   },

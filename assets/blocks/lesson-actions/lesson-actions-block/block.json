@@ -3,6 +3,7 @@
   "title": "Lesson Actions",
   "description": "Enable a student to perform specific actions for a lesson.",
   "category": "sensei-lms",
+  "textdomain": "sensei-lms",
   "supports": {
     "html": false
   },

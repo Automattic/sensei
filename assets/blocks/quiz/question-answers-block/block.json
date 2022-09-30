@@ -4,6 +4,7 @@
 	"description": "Question Answers.",
 	"parent": [ "sensei-lms/quiz-question" ],
 	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
 	"supports": {
 		"html": false
 	},

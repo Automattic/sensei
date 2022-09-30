@@ -4,6 +4,7 @@
   "description": "The building block of all quizzes.",
   "parent": [ "sensei-lms/quiz" ],
   "category": "sensei-lms",
+  "textdomain": "sensei-lms",
   "supports": {
     "html": false
   },

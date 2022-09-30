@@ -3,6 +3,7 @@
   "title": "Course Outline",
   "description": "Manage your Sensei LMS course outline.",
   "category": "sensei-lms",
+  "textdomain": "sensei-lms",
   "supports": {
     "html": false,
     "multiple": false,
