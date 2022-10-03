@@ -840,6 +840,7 @@ class Sensei_Lesson {
 	public function save_lesson_featured_video_thumbnail( $post_id ) {
 		$meta_key       = '_featured_video_thumbnail';
 		$thumbnail_meta = get_post_meta( $post_id, $meta_key, true );
+		$thumbnail      = null;
 
 		if ( has_blocks( $post_id ) ) {
 			$thumbnail = $this->get_featured_video_media_from_blocks( $post_id );
@@ -849,7 +850,7 @@ class Sensei_Lesson {
 				$thumbnail = $this->get_featured_video_media_from_classic_editor( $video_embed );
 			}
 		}
-		if ( null !== $thumbnail && $thumbnail !== $thumbnail_meta ) {
+		if ( ! empty( $thumbnail ) && ( $thumbnail !== $thumbnail_meta ) ) {
 			update_post_meta( $post_id, $meta_key, $thumbnail );
 		}
 	}

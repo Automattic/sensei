@@ -6,6 +6,8 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
+import { useCallback } from '@wordpress/element';
+import { useEntityProp } from '@wordpress/core-data';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
@@ -17,46 +19,67 @@ import NumberControl from '../editor-components/number-control';
 import { DIFFICULTIES } from './constants';
 
 const LessonPropertiesEdit = ( props ) => {
-	const {
-		className,
-		attributes: { difficulty, length },
-		setAttributes,
-	} = props;
+	const { className } = props;
+
+	const [ meta, setMeta ] = useEntityProp( 'postType', 'lesson', 'meta' );
+	const { _lesson_complexity: difficulty = '', _lesson_length: length = 10 } =
+		meta || {};
+	const readOnly = ! meta;
+
+	const handlePostMetaChange = useCallback(
+		( key, value ) => {
+			setMeta( {
+				...meta,
+				[ key ]: value,
+			} );
+		},
+		[ meta, setMeta ]
+	);
 
 	return (
 		<>
-			<InspectorControls>
-				<PanelBody title={ __( 'Properties', 'sensei-lms' ) }>
-					<NumberControl
-						id="sensei-lesson-length"
-						label={ __( 'Length', 'sensei-lms' ) }
-						min={ 0 }
-						step={ 1 }
-						value={ length }
-						onChange={ ( newLength ) =>
-							setAttributes( { length: newLength } )
-						}
-						suffix={ _n(
-							'minute',
-							'minutes',
-							length,
-							'sensei-lms'
-						) }
-					/>
+			{ ! readOnly && (
+				<InspectorControls>
+					<PanelBody title={ __( 'Properties', 'sensei-lms' ) }>
+						<NumberControl
+							id="sensei-lesson-length"
+							label={ __( 'Length', 'sensei-lms' ) }
+							min={ 0 }
+							step={ 1 }
+							value={ length }
+							onChange={ ( newLength ) =>
+								handlePostMetaChange(
+									'_lesson_length',
+									newLength
+								)
+							}
+							suffix={ _n(
+								'minute',
+								'minutes',
+								length,
+								'sensei-lms'
+							) }
+						/>
 
-					<SelectControl
-						label={ __( 'Difficulty', 'sensei-lms' ) }
-						options={ DIFFICULTIES.map( ( { label, value } ) => ( {
-							label,
-							value,
-						} ) ) }
-						value={ difficulty }
-						onChange={ ( newDifficulty ) =>
-							setAttributes( { difficulty: newDifficulty } )
-						}
-					/>
-				</PanelBody>
-			</InspectorControls>
+						<SelectControl
+							label={ __( 'Difficulty', 'sensei-lms' ) }
+							options={ DIFFICULTIES.map(
+								( { label, value } ) => ( {
+									label,
+									value,
+								} )
+							) }
+							value={ difficulty }
+							onChange={ ( newComplexity ) =>
+								handlePostMetaChange(
+									'_lesson_complexity',
+									newComplexity
+								)
+							}
+						/>
+					</PanelBody>
+				</InspectorControls>
+			) }
 
 			<div className={ className }>
 				<span
