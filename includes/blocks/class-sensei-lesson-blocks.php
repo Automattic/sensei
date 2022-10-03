@@ -48,17 +48,16 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			true
 		);
 
-		$course_id = Sensei_Utils::get_current_course();
-		if ( ! empty( $course_id ) ) {
-			wp_add_inline_script(
-				'sensei-single-lesson-blocks',
-				sprintf(
-					'window.sensei = window.sensei || {}; window.sensei.courseThemeEnabled = %s;',
-					Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ? 'true' : 'false'
-				),
-				'before'
-			);
-		}
+		$course_id         = Sensei_Utils::get_current_course();
+		$has_learning_mode = ! empty( $course_id ) && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+
+		wp_add_inline_script(
+			'sensei-single-lesson-blocks',
+			'window.sensei = window.sensei || {}; ' .
+			sprintf( 'window.sensei.courseThemeEnabled = %s;', $has_learning_mode ? 'true' : 'false' ) .
+			sprintf( 'window.sensei.assetUrl = "%s";', Sensei()->assets->asset_url( '' ) ),
+			'before'
+		);
 
 		Sensei()->assets->enqueue(
 			'sensei-single-lesson-blocks-editor-style',

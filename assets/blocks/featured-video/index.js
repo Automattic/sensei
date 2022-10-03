@@ -26,6 +26,16 @@ export default {
 		'Add a featured video to your lesson to highlight the video and make use of our video templates.',
 		'sensei-lms'
 	),
+	example: {
+		innerBlocks: [
+			{
+				name: 'core/image',
+				attributes: {
+					url: `${ window.sensei?.assetUrl }/images/featured-video-example.png`,
+				},
+			},
+		],
+	},
 	...metadata,
 	edit: function EditBlock( { className, clientId } ) {
 		const { replaceInnerBlocks, moveBlockToPosition } = useDispatch(
