@@ -3,6 +3,10 @@
 	.wp-block-embed, .wp-block-video, .ast-oembed-container, .wp-block-embed__wrapper {
 		margin: 0;
 		padding: 0;
+		&::before, &::after {
+			content: unset!important;
+			display: none!important;
+		}
 	}
 
 	iframe, video {
