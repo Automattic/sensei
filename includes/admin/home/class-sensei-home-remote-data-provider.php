@@ -35,7 +35,7 @@ class Sensei_Home_Remote_Data_Provider {
 	 *
 	 * @param int $max_age Maximum age of the cached data in seconds. Max is 1 day (in seconds).
 	 *
-	 * @return array|false
+	 * @return array|\WP_Error
 	 */
 	public function fetch( int $max_age = null ) {
 		$url           = $this->get_api_url();
@@ -56,12 +56,12 @@ class Sensei_Home_Remote_Data_Provider {
 			$response = wp_safe_remote_get( $url );
 
 			if ( is_wp_error( $response ) ) {
-				return false;
+				return $response;
 			}
 
 			$data = json_decode( wp_remote_retrieve_body( $response ), true );
 			if ( ! is_array( $data ) ) {
-				return false;
+				return new WP_Error( 'sensei-home-remote-data-invalid-response' );
 			}
 
 			set_transient( $transient_key, array_merge( $data, [ '_fetched' => time() ] ), self::CACHE_TTL );
@@ -113,7 +113,7 @@ class Sensei_Home_Remote_Data_Provider {
 	 *
 	 * @return string
 	 */
-	private function get_api_url() : string {
+	protected function get_api_url() : string {
 		$url = sprintf( self::API_BASE_URL . '%s.json', $this->get_primary_plugin_slug() );
 
 		$query_args = [
