@@ -7,8 +7,10 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { category as icon } from '@wordpress/icons';
+
 import metadata from './block.json';
 import edit from './course-categories-edit';
+import save from './course-categories-save';
 
 export default {
 	...metadata,
@@ -35,4 +37,5 @@ export default {
 	},
 	icon,
 	edit,
+	save,
 };
