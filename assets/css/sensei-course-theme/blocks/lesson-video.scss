@@ -1,17 +1,19 @@
 .sensei-course-theme-lesson-video {
 
 	.wp-block-embed, .wp-block-video, .ast-oembed-container, .wp-block-embed__wrapper {
-		margin: 0;
-		padding: 0;
+		margin: 0 !important;
+		padding: 0 !important;
+
 		&::before, &::after {
-			content: unset!important;
-			display: none!important;
+			content: unset !important;
+			display: none !important;
 		}
 	}
 
 	iframe, video {
 		position: static !important;
 		width: 100% !important;
+		max-height: calc(100vh - var(--full-header-height, 0px));
 	}
 
 	@media screen and (max-width: (782px)) {
