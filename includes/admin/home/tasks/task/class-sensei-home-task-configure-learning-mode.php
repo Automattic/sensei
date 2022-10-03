@@ -13,8 +13,6 @@
  */
 class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 
-	const VISITED_SETTING_SECTIONS_OPTION_KEY = 'sensei-settings-sections-visited';
-
 	/**
 	 * The ID for the task.
 	 *
@@ -67,6 +65,7 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * @return bool
 	 */
 	public function is_completed(): bool {
-		return in_array( 'appearance-settings', get_site_option( self::VISITED_SETTING_SECTIONS_OPTION_KEY, [] ), true );
+		$visited_settings_sections = get_site_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, [] );
+		return in_array( 'appearance-settings', $visited_settings_sections, true );
 	}
 }
