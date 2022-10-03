@@ -170,10 +170,28 @@ export const VideoContainerBlock = {
 	},
 };
 
+/**
+ * Video container UI block variation definition.
+ */
+export const ContentFooterBlock = {
+	...shared,
+	name: 'sensei-lms/content-footer',
+	title: __( 'Content Footer', 'sensei-lms' ),
+	description: __( 'Navigation area below the content.', 'sensei-lms' ),
+	attributes: {
+		elementClass: 'sensei-course-theme__content-footer',
+	},
+	innerBlocks: [ row ],
+	meta: {
+		isFrame: true,
+	},
+};
+
 export default [
 	FixedHeaderBlock,
 	TwoColumnLayoutBlock,
 	MainContentBlock,
 	SidebarBlock,
 	VideoContainerBlock,
+	ContentFooterBlock,
 ];
