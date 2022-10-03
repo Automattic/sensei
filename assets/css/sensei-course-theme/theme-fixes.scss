@@ -19,7 +19,8 @@
 		margin: unset;
 	}
 	.is-content-justification-space-between > * {
-		margin: unset;
+		margin: unset !important;
+		max-width: none;
 	}
 }
 
@@ -29,10 +30,11 @@
 {
 	width: auto;
 }
-
-[class*="__inner-container"] {
-	.wp-block-group:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright), .wp-block-cover:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright) {
-		max-width: unset;
-		margin: unset;
+[class*='__inner-container'] {
+	> *, > .wp-block-group, > .wp-block-cover {
+		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+			max-width: unset;
+			margin: unset;
+		}
 	}
 }

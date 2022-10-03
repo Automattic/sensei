@@ -3,6 +3,7 @@
 	.wp-block-embed, .wp-block-video, .ast-oembed-container, .wp-block-embed__wrapper {
 		margin: 0 !important;
 		padding: 0 !important;
+		background: #000;
 
 		&::before, &::after {
 			content: unset !important;
