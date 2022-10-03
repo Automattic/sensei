@@ -45,6 +45,13 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	private $quick_links_provider;
 
+	/**
+	 * Help provider.
+	 *
+	 * @var Sensei_Home_Help_Provider
+	 */
+	private $help_provider;
+
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
@@ -52,15 +59,18 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param string                                 $namespace Routes namespace.
 	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper Sensei Home REST API mapper.
 	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
+	 * @param Sensei_Home_Help_Provider              $help_provider Help provider.
 	 */
 	public function __construct(
 		$namespace,
 		Sensei_REST_API_Home_Controller_Mapper $mapper,
-		Sensei_Home_Quick_Links_Provider $quick_links_provider
+		Sensei_Home_Quick_Links_Provider $quick_links_provider,
+		Sensei_Home_Help_Provider $help_provider
 	) {
 		$this->namespace            = $namespace;
 		$this->mapper               = $mapper;
 		$this->quick_links_provider = $quick_links_provider;
+		$this->help_provider        = $help_provider;
 	}
 
 	/**
@@ -134,33 +144,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				],
 			],
 			'quick_links'           => $this->mapper->map_quick_links( $this->quick_links_provider->get() ),
-			'help'                  => [
-				// TODO: Replace with real implementation.
-				[
-					'title' => 'Get the most out of Sensei',
-					'items' => [
-						[
-							'title' => 'Sensei Documentation',
-							'url'   => 'http://...',
-							'icon'  => null,
-						],
-						[
-							'title' => 'Support forums',
-							'url'   => 'http://...',
-							'icon'  => null,
-						],
-						[
-							'title'      => 'Create a support ticket',
-							'url'        => null,
-							'extra_link' => [
-								'label' => 'Upgrade to Sensei Pro',
-								'url'   => 'https://...',
-							],
-							'icon'       => 'lock',
-						],
-					],
-				],
-			],
+			'help'                  => $this->mapper->map_help( $this->help_provider->get() ),
 			'guides'                => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
 				'items'    => [
