@@ -99,4 +99,17 @@ class Sensei_REST_API_Home_Controller_Mapper {
 			'url'   => $link->get_url(),
 		];
 	}
+
+	/**
+	 * Maps a Sensei_Home_Promo_Banner to a basic array structure to be used as response for the REST API.
+	 *
+	 * @param Sensei_Home_Promo_Banner $banner All the information relative to the promotional banner.
+	 *
+	 * @return array
+	 */
+	public function map_promo_banner( Sensei_Home_Promo_Banner $banner ): array {
+		return [
+			'is_visible' => $banner->is_visible(),
+		];
+	}
 }
