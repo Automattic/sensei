@@ -438,31 +438,44 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Returns the url for sensei theme customization.
+	 *
+	 * @param bool        $use_customizer True to use the customizer, false to use the site editor.
+	 * @param string|null $post_type The post type to customize.
+	 *
+	 * @return The customization url
 	 */
-	public static function get_sensei_theme_customize_url() {
-		// Get the last modified lesson.
-		$result = get_posts(
-			[
-				'posts_per_page' => 1,
-				'post_type'      => 'lesson',
-				'orderby'        => 'modified',
-				'meta'           => [
-					'key'     => '_lesson_course',
-					'compare' => 'EXISTS',
-				],
-			]
-		);
-		if ( empty( $result ) ) {
-			return '';
+	public static function get_sensei_theme_customize_url( bool $use_customizer = true, string $post_type = null ) : string {
+		if ( $use_customizer ) {
+			// Get the last modified lesson.
+			$result = get_posts(
+				[
+					'posts_per_page' => 1,
+					'post_type'      => 'lesson',
+					'orderby'        => 'modified',
+					'meta'           => [
+						'key'     => '_lesson_course',
+						'compare' => 'EXISTS',
+					],
+				]
+			);
+			if ( empty( $result ) ) {
+				return '';
+			}
+
+			$lesson      = $result[0];
+			$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+			$preview_url = '/?p=' . $lesson->ID;
+
+			if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+				$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+			}
+
+			return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 		}
 
-		$lesson      = $result[0];
-		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
-		$preview_url = '/?p=' . $lesson->ID;
-		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
-			$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
-		}
-		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
+		$post_type = $post_type ?? 'lesson';
+
+		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . $post_type );
 	}
 
 	/**
@@ -500,7 +513,7 @@ class Sensei_Course_Theme {
 			array(
 				'id'    => 'site-editor',
 				'title' => __( 'Edit Site', 'sensei-lms' ),
-				'href'  => admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+				'href'  => self::get_sensei_theme_customize_url( false, get_post_type() ),
 			)
 		);
 	}
