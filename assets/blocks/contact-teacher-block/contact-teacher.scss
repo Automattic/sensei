@@ -5,22 +5,22 @@
 		display: block;
 		font-size: 24px;
 		font-weight: 700;
-		margin-bottom: 60px;
+		margin-bottom: 30px;
 	}
 
 	textarea {
-		border: 1px solid #757575;
+		border: 1px solid var(--border-color, #757575);
 		border-radius: 2px;
 		padding: 10px;
 		background-color: inherit;
 		color: inherit;
 		margin-bottom: 20px;
-		width: 355px;
+		width: 100%;
+		height: 200px;
 	}
 
 	&__actions {
 		margin: 0;
-		margin-bottom: 30px;
 	}
 
 	&__submit {
