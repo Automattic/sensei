@@ -45,7 +45,7 @@ const UsageTracking = () => {
 				</H>
 				<p>
 					{ __(
-						'Help us build a better Sensei by sharing anonymous and non-sensitive data with our team. No personal data is tracked or stored, and this helps us track down bugs and plan future improvements.',
+						'Help us build a better Sensei by sharing anonymous and non-sensitive data with our team. No personal data will be tracked or stored.',
 						'sensei-lms'
 					) }
 				</p>
@@ -64,7 +64,7 @@ const UsageTracking = () => {
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
 							onClick={ submitPage( false ) }
 						>
-							{ __( 'Skip sharing data', 'sensei-lms' ) }
+							{ __( 'No thanks', 'sensei-lms' ) }
 						</button>
 					</div>
 				</div>

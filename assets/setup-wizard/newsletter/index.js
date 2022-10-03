@@ -31,7 +31,7 @@ const Newsletter = () => {
 				</H>
 				<p>
 					{ __(
-						'Sensei is growing fast and we’re constantly releasing new features. Join on our mailing list to find out about everything that we release and how you can make the most out of it.',
+						'Sensei is growing fast and we’re constantly releasing new features. Join on our mailing list to know first.',
 						'sensei-lms'
 					) }
 				</p>

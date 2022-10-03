@@ -54,7 +54,10 @@ const Welcome = () => {
 	 */
 	const paragraph = applyFilters(
 		'sensei.setupWizard.welcomeParagraph',
-		__( "We'll have your first course live in no time.", 'sensei-lms' )
+		__(
+			'Let’s set up your site to launch your first course.',
+			'sensei-lms'
+		)
 	);
 
 	return (

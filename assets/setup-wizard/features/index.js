@@ -15,8 +15,8 @@ import useActionsNavigator, {
 } from './use-actions-navigator';
 
 const featureLabels = {
-	woocommerce: __( 'Adding WooCommerce', 'sensei-lms' ),
-	'sensei-certificates': __( 'Adding certificates', 'sensei-lms' ),
+	woocommerce: __( 'Installing WooCommerce', 'sensei-lms' ),
+	'sensei-certificates': __( 'Installing Certificates', 'sensei-lms' ),
 };
 
 const senseiHomePath = '/wp-admin/admin.php?page=sensei-home';
@@ -65,11 +65,11 @@ const Features = () => {
 	const actions = useMemo(
 		() => [
 			{
-				label: __( 'Preparing your tailored experience', 'sensei-lms' ),
+				label: __( 'Applying your choices', 'sensei-lms' ),
 			},
 			...getFeatureActions( stepData ),
 			{
-				label: __( 'Taking you to your new Sensei Home', 'sensei-lms' ),
+				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
 				action: () =>
 					new Promise( ( resolve ) => {
 						setTimeout( () => {
