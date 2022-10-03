@@ -101,6 +101,10 @@
 			button {
 				width: 100%;
 			}
+
+			&.lesson-completed {
+				display: none;
+			}
 		}
 
 		&--sidebar-open &-lesson-actions {

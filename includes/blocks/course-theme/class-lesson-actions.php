@@ -61,7 +61,7 @@ class Lesson_Actions {
 			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button ' . $button_class . '" ' . $disabled_attribute . '>
+				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
 					' . $text . '
 				</button>
 			</form>
@@ -77,7 +77,7 @@ class Lesson_Actions {
 		$label = esc_html__( 'Completed', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'checked' );
 
-		return ( '<button disabled="disabled" class="sensei-course-theme__button is-secondary is-completed has-icon">' . $icon . ' <span>' . $label . '</span></button>' );
+		return ( '<button disabled="disabled" class="sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon . ' <span>' . $label . '</span></button>' );
 
 	}
 
@@ -99,7 +99,7 @@ class Lesson_Actions {
 		$label = __( 'Next Lesson', 'sensei-lms' );
 		$icon  = \Sensei()->assets->get_icon( 'chevron-right' );
 
-		return ( "<a class='sensei-course-theme__button is-link has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
+		return ( "<a class='sensei-course-theme-lesson-actions__next-lesson sensei-course-theme__button is-link has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 
 	}
 
@@ -117,8 +117,8 @@ class Lesson_Actions {
 		$text           = esc_html__( 'Take Quiz', 'sensei-lms' );
 
 		return ( '
-			<form method="GET" action="' . $quiz_permalink . '">
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme__button is-primary" ' . $disabled . '>
+			<form method="GET" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
+				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme-lesson-actions__take-quiz sensei-course-theme__button is-primary" ' . $disabled . '>
 					' . $text . '
 			</button>
 			</form>
@@ -139,6 +139,7 @@ class Lesson_Actions {
 		$user_id   = get_current_user_id();
 
 		$actions = [];
+		$class   = [ 'sensei-course-theme-lesson-actions' ];
 
 		if ( empty( $lesson_id ) || empty( $user_id ) ) {
 			return '';
@@ -153,6 +154,7 @@ class Lesson_Actions {
 		}
 
 		if ( Sensei_Utils::user_completed_lesson( $lesson_id ) ) {
+			$class[]   = 'lesson-completed';
 			$actions[] = $this->render_completed_lesson();
 
 			if ( ! empty( $attributes['options']['nextLesson'] ) ) {
@@ -185,7 +187,7 @@ class Lesson_Actions {
 
 		$wrapper_attr = get_block_wrapper_attributes(
 			[
-				'class' => 'sensei-course-theme-lesson-actions',
+				'class' => implode( ' ', $class ),
 			]
 		);
 
