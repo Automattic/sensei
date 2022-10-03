@@ -22,12 +22,13 @@
 				display: block;
 				position: absolute;
 				left: 24px;
-				top: calc( var(--header-height) - 36px);
+				top: calc(var(--header-height) - 36px);
 			}
+
 			.sensei-course-theme-course-progress-bar {
 				height: 8px;
 				position: absolute;
-				top: calc( var(--header-height) - 12px);
+				top: calc(var(--header-height) - 12px);
 				margin: 0;
 				left: 24px;
 				right: 24px;
@@ -37,7 +38,7 @@
 		&__header {
 
 			&__container {
-				align-items: flex-start!important;
+				align-items: flex-start !important;
 				padding-top: 12px;
 				overflow: hidden;
 			}
@@ -67,14 +68,59 @@
 		}
 
 		&__sidebar {
-			width: unset!important;
+			width: unset !important;
 			margin: 0 !important;
 		}
 
 		&__main-content {
 			flex: 1 !important;
-			margin-left: 0!important;
+			margin-left: 0 !important;
 		}
 
+
+		// Floating lesson actions footer.
+
+		&-lesson-actions {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: var(--sensei-background-color);
+			box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
+			transition: bottom 800ms ease-in;
+
+			padding: 12px !important;
+			display: flex;
+			gap: 12px;
+			align-items: center;
+
+			> * {
+				flex: 1;
+			}
+
+			button {
+				width: 100%;
+			}
+		}
+
+		&--sidebar-open &-lesson-actions {
+			transition: bottom 300ms 0ms;
+			bottom: -30vh;
+		}
+
+		&.scroll-down &-lesson-actions {
+			transition-delay: 200ms;
+			bottom: -100px;
+		}
+
+		&.scroll-bottom &-lesson-actions {
+			bottom: 0;
+		}
 	}
+
+	body {
+		padding-bottom: 140px;
+	}
+
+
 }
