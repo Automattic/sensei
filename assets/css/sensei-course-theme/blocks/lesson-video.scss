@@ -1,10 +1,12 @@
 .sensei-course-theme-lesson-video {
 
-	.wp-block-embed, .wp-block-video {
+	.wp-block-embed, .wp-block-video, .ast-oembed-container, .wp-block-embed__wrapper {
 		margin: 0;
+		padding: 0;
 	}
 
 	iframe, video {
+		position: static !important;
 		width: 100% !important;
 	}
 
