@@ -10,7 +10,7 @@
 .sensei-course-theme__frame {
 
 	// Twenty twenty one
-	.wp-block-group::before, .wp-block-group::after {  // Limit to rows with is-content-justification-* ?
+	.wp-block-group::before, .wp-block-group::after {
 		content: none;
 	}
 
@@ -18,5 +18,21 @@
 	.wp-block-group.wp-block-group.wp-block-group.wp-block-group {
 		margin: unset;
 	}
+	.is-content-justification-space-between > * {
+		margin: unset;
+	}
 }
 
+// Twenty twenty
+
+.entry-content > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide)
+{
+	width: auto;
+}
+
+[class*="__inner-container"] {
+	.wp-block-group:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright), .wp-block-cover:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright) {
+		max-width: unset;
+		margin: unset;
+	}
+}

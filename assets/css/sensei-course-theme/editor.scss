@@ -9,17 +9,16 @@ body {
 }
 
 .wp-block {
-	max-width: 900px;
-	margin-left: auto;
-	margin-right: auto;
+	max-width: none;
 }
 
-.wp-site-blocks, .wp-block,
-.sensei-course-theme__frame .wp-block[data-type='core/group'].wp-block[data-type='core/group'].wp-block[data-type='core/group'],
-.editor-styles-wrapper .block-editor-block-list__layout.is-root-container .sensei-course-theme__frame.wp-block[data-type='sensei-lms/ui'] {
-	max-width: none;
-	margin: 0;
-}
+
+//.wp-site-blocks, .wp-block,
+//.sensei-course-theme__frame .wp-block[data-type='core/group'].wp-block[data-type='core/group'].wp-block[data-type='core/group'],
+//.editor-styles-wrapper .block-editor-block-list__layout.is-root-container > .sensei-course-theme__frame.wp-block[data-type='sensei-lms/ui'] {
+//	max-width: none;
+//	margin: 0;
+//}
 
 .sensei-course-theme__sidebar-toggle {
 	display: block;
