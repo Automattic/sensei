@@ -171,7 +171,7 @@ export const VideoContainerBlock = {
 };
 
 /**
- * Video container UI block variation definition.
+ * Navigation area in the footer.
  */
 export const ContentFooterBlock = {
 	...shared,
