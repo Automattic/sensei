@@ -41,6 +41,7 @@ body {
 		height: 100%;
 		margin: 0 !important;
 	}
+
 	&__main-content, &__main-content__container, &__sidebar ~ &__main-content {
 		margin: 0 auto !important;
 	}
@@ -48,6 +49,7 @@ body {
 	&__header ~ &__columns {
 		height: calc(100% - var(--header-height));
 	}
+
 	&__header + * {
 		margin-top: unset !important;
 	}
@@ -73,4 +75,17 @@ input, textarea {
 	&:hover {
 		cursor: default;
 	}
+}
+
+/**
+ *  Theme fixes.
+ */
+
+// Astra
+.wp-block:not(.has-text-color) {
+	color: unset;
+}
+
+.wp-block:not(.has-background) {
+	background-color: unset;
 }
