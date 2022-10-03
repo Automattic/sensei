@@ -46,6 +46,20 @@ class Sensei_REST_API_Internal {
 	private $quick_links_provider;
 
 	/**
+	 * Sensei Home Help provider.
+	 *
+	 * @var Sensei_Home_Help_Provider
+	 */
+	private $help_provider;
+
+	/**
+	 * Sensei Home Sensei Pro provider.
+	 *
+	 * @var Sensei_Home_Promo_Banner_Provider
+	 */
+	private $promo_provider;
+
+	/**
 	 * Sensei Home Data provider.
 	 *
 	 * @var Sensei_Home_Remote_Data_Provider
@@ -58,6 +72,8 @@ class Sensei_REST_API_Internal {
 	public function __construct() {
 		$this->home_controller_mapper = new Sensei_REST_API_Home_Controller_Mapper();
 		$this->quick_links_provider   = new Sensei_Home_Quick_Links_Provider();
+		$this->help_provider          = new Sensei_Home_Help_Provider();
+		$this->promo_provider         = new Sensei_Home_Promo_Banner_Provider();
 		$this->remote_data_provider   = new Sensei_Home_Remote_Data_Provider( 'sensei-lms' );
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
@@ -82,7 +98,9 @@ class Sensei_REST_API_Internal {
 				$this->namespace,
 				$this->home_controller_mapper,
 				$this->remote_data_provider,
-				$this->quick_links_provider
+				$this->quick_links_provider,
+				$this->help_provider,
+				$this->promo_provider
 			),
 		];
 

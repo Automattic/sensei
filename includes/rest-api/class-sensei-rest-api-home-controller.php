@@ -53,23 +53,44 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	private $remote_data_provider;
 
 	/**
+	 * Help provider.
+	 *
+	 * @var Sensei_Home_Help_Provider
+	 */
+	private $help_provider;
+
+	/**
+	 * Promo banner provider.
+	 *
+	 * @var Sensei_Home_Promo_Banner_Provider
+	 */
+	private $promo_banner_provider;
+
+
+	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
-	 * @param string                                 $namespace            Routes namespace.
-	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper               Sensei Home REST API mapper.
-	 * @param Sensei_Home_Remote_Data_Provider       $remote_data_provider   Fetch home data helper.
-	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider Quick Links provider.
+	 * @param string                                 $namespace             Routes namespace.
+	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper                Sensei Home REST API mapper.
+	 * @param Sensei_Home_Remote_Data_Provider       $remote_data_provider  Fetch home data helper.
+	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider  Quick Links provider.
+	 * @param Sensei_Home_Help_Provider              $help_provider         Help provider.
+	 * @param Sensei_Home_Promo_Banner_Provider      $promo_banner_provider Promo banner provider.
 	 */
 	public function __construct(
 		$namespace,
 		Sensei_REST_API_Home_Controller_Mapper $mapper,
 		Sensei_Home_Remote_Data_Provider $remote_data_provider,
-		Sensei_Home_Quick_Links_Provider $quick_links_provider
+		Sensei_Home_Quick_Links_Provider $quick_links_provider,
+		Sensei_Home_Help_Provider $help_provider,
+		Sensei_Home_Promo_Banner_Provider $promo_banner_provider
 	) {
-		$this->namespace            = $namespace;
-		$this->mapper               = $mapper;
-		$this->remote_data_provider = $remote_data_provider;
-		$this->quick_links_provider = $quick_links_provider;
+		$this->namespace             = $namespace;
+		$this->mapper                = $mapper;
+		$this->remote_data_provider  = $remote_data_provider;
+		$this->quick_links_provider  = $quick_links_provider;
+		$this->help_provider         = $help_provider;
+		$this->promo_banner_provider = $promo_banner_provider;
 	}
 
 	/**
@@ -112,11 +133,14 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function get_data() {
 		$home_data = $this->remote_data_provider->fetch( HOUR_IN_SECONDS );
-		$guides    = $home_data['guides'] ?? [];
-		$news      = $home_data['news'] ?? [];
+		if ( is_wp_error( $home_data ) ) {
+			exit;
+		}
+		$guides = $home_data['guides'] ?? [];
+		$news   = $home_data['news'] ?? [];
 
 		return [
-			'tasks_list'            => [
+			'tasks_list'    => [
 				'tasks' => [
 					// TODO: Generate based on Setup Wizard data + site info.
 					[
@@ -145,37 +169,11 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					],
 				],
 			],
-			'quick_links'           => $this->mapper->map_quick_links( $this->quick_links_provider->get() ),
-			'help'                  => [
-				// TODO: Replace with real implementation.
-				[
-					'title' => 'Get the most out of Sensei',
-					'items' => [
-						[
-							'title' => 'Sensei Documentation',
-							'url'   => 'http://...',
-							'icon'  => null,
-						],
-						[
-							'title' => 'Support forums',
-							'url'   => 'http://...',
-							'icon'  => null,
-						],
-						[
-							'title'      => 'Create a support ticket',
-							'url'        => null,
-							'extra_link' => [
-								'label' => 'Upgrade to Sensei Pro',
-								'url'   => 'https://...',
-							],
-							'icon'       => 'lock',
-						],
-					],
-				],
-			],
-			'guides'                => $guides,
-			'news'                  => $news,
-			'extensions'            => [
+			'quick_links'   => $this->mapper->map_quick_links( $this->quick_links_provider->get() ),
+			'help'          => $this->mapper->map_help( $this->help_provider->get() ),
+			'guides'        => $guides,
+			'news'          => $news,
+			'extensions'    => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro}.json.
 				[
 					'title'        => 'Sensei LMS Post to Course Creator',
@@ -186,8 +184,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
 			],
-			'show_sensei_pro_promo' => false, // Whether we should show the promotional banner for Sensei Pro or not.
-			'notifications'         => [
+			'promo_banner'  => $this->mapper->map_promo_banner( $this->promo_banner_provider->get() ),
+			'notifications' => [
 				[
 					'heading'     => null, // Not needed for the moment.
 					'message'     => 'Your Sensei Pro license expires on 12.09.2022.',
