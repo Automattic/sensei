@@ -64,8 +64,8 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * Doesn't render the block if the student is enrolled and has already completed the course.
-	*
-	* @covers Sensei_Continue_Course_Block::render
+	 *
+	 * @covers Sensei_Continue_Course_Block::render
 	*/
 	public function testRender_EnrolledAndCourseCompleted_ReturnsEmptyString() {
 		$user_id = $this->factory->user->create();
@@ -80,9 +80,9 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 	/**
 	 * Renders the block and links to the course page if the student is enrolled but has not completed the course.
-	*
-	* @covers Sensei_Continue_Course_Block::render
-	*/
+	 *
+	 * @covers Sensei_Continue_Course_Block::render
+	 */
 	public function testRender_EnrolledAndCourseNotCompleted_ReturnsModifiedBlockContent() {
 		$user_id = $this->factory->user->create();
 		$this->manuallyEnrolStudentInCourse( $user_id, $this->course->ID );
