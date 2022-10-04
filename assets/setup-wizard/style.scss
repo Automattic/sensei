@@ -27,10 +27,6 @@ $recoleta-font-family: Recoleta, sans-serif;
 	color: #000;
 	font-size: 16px;
 
-	@media (min-width: $small-screen-break) {
-		font-size: 18px;
-	}
-
 	a {
 		color: inherit;
 		text-decoration: underline;
@@ -40,10 +36,6 @@ $recoleta-font-family: Recoleta, sans-serif;
 		font-size: 16px;
 		line-height: 1.4;
 		margin: 0 0 40px;
-
-		@media (min-width: $small-screen-break) {
-			font-size: 18px;
-		}
 	}
 
 	h2, h3 {
@@ -83,8 +75,10 @@ $recoleta-font-family: Recoleta, sans-serif;
 	// Container.
 	&__container {
 		flex: 1;
-		min-height: 0; // Fix issue with flexbox + overflow.
 		padding: $small-vertical-padding $small-horizontal-padding;
+
+		display: flex;
+		flex-direction: column;
 
 		@media (min-width: $small-screen-break) {
 			padding: $big-vertical-padding $big-horizontal-padding;
@@ -194,7 +188,7 @@ $recoleta-font-family: Recoleta, sans-serif;
 		justify-content: center;
 		align-items: center;
 		text-align: center;
-		animation: 0.5s slideInFromBottom;
+		animation: 0.5s fadeIn;
 		padding: $small-vertical-padding $small-horizontal-padding;
 		box-sizing: border-box;
 
@@ -209,27 +203,41 @@ $recoleta-font-family: Recoleta, sans-serif;
 	}
 
 	// Columns.
-	&__columns {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
+	&__content {
+		max-width: 414px;
+		margin: 0 auto;
+		animation: 0.5s fadeIn;
+
+		@media (min-width: $small-screen-break) {
+			text-align: center;
+		}
 	}
 
-	&__columns-content {
-		padding-bottom: 30px;
-		animation: 0.5s slideInFromBottom;
-	}
-
-	&__columns-illustration {
+	&__illustration {
 		flex: 1;
-		overflow: hidden;
-		animation: 0.5s slideInFromRight;
-	}
+		animation: 0.5s slideInFromBottom;
+		background-repeat: no-repeat;
+		background-position: 50% 0;
+		background-size: 100% auto;
+		margin: 64px 0 (-$small-vertical-padding);
 
-	&__columns-illustration-image {
-		display: block;
-		width: 100%;
-		pointer-events: none;
+		@media (min-width: $small-screen-break) {
+			margin-bottom: -$big-vertical-padding;
+		}
+
+		@media (min-width: 1010px) {
+			background-size: auto;
+		}
+
+		&--tracking {
+			background-image: url("../images/onboarding-improve-experience-illustration.png");
+		}
+
+		&--newsletter {
+			background-image: url("../images/onboarding-newsletter-illustration.png");
+			margin-left: -$small-vertical-padding;
+			margin-right: -$small-vertical-padding;
+		}
 	}
 
 	&__fade-in {
