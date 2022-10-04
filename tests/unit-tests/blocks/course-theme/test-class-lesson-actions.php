@@ -153,27 +153,6 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$this->assertContains( 'Completed', $block->render(), 'Should render "Completed" button if user already completed the lesson.' );
 	}
 
-
-	/**
-	 * Test lesson actions block when user already completed the lesson.
-	 */
-	public function testAlreadyCompletedShowsNextLesson() {
-		list( $lesson, $course ) = $this->create_enrolled_lesson();
-		$this->factory->lesson->create_and_get(
-			[
-				'meta_input' => [
-					'_lesson_course' => $course->ID,
-				],
-			]
-		);
-		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
-
-		$block = new Lesson_Actions();
-
-		$this->assertContains( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should render "Next Lesson" link if the option is enabled.' );
-	}
-
-
 	/**
 	 * Test lesson actions block for a lesson with a pre-requisite lesson.
 	 */
