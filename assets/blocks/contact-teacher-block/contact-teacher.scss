@@ -1,5 +1,8 @@
 .sensei-contact-teacher-form {
 	position: relative;
+	&, * {
+		box-sizing: border-box;
+	}
 
 	label {
 		display: block;

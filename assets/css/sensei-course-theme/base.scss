@@ -4,7 +4,7 @@ body {
 	// Try to pick up global styles, customizer or theme colors.
 	--sensei-primary-color: var(--sensei-primary-color-global, var(--sensei-course-theme-primary-color, var(--wp--preset--color--primary, #307771)));
 	--sensei-background-color: var(--sensei-background-color-global, var(--sensei-course-theme-background-color, var(--wp--preset--color--background, #ffffff)));
-	--sensei-primary-contrast-color: var(--sensei-background-color-global, #FFFFFF);
+	--sensei-primary-contrast-color: var(--sensei-background-color, #FFFFFF);
 	--sensei-text-color: var(--sensei-text-color-global, var(--sensei-course-theme-foreground-color, var(--wp--preset--color--text, var(--wp--preset--color--foreground, #1E1E1E))));
 	--border-color: rgba(125, 125, 125, 0.3);
 
