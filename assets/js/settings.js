@@ -1,8 +1,3 @@
-/**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
 jQuery( document ).ready( function ( $ ) {
 	/***** Settings Tabs *****/
 	const $senseiSettings = $( '#woothemes-sensei.sensei-settings' );
