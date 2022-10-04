@@ -221,7 +221,7 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 					],
 
 				],
-				'Returns just one completed task.',
+				'Returns a completed and an uncompleted task.',
 			],
 		];
 	}
