@@ -14,5 +14,9 @@
 	&__button {
 		width: 100%;
 		margin-top: 18px;
+
+		@media (min-width: $small-screen-break) {
+			margin-top: 8px;
+		}
 	}
 }
