@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Sensei_Blocks_Initializer;
-use \Sensei_Course_Theme_Option;
 use \Sensei\Blocks\Course_Theme as Blocks;
 
 /**
@@ -46,6 +45,7 @@ class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 	 * Initializes the blocks.
 	 */
 	public function initialize_blocks() {
+		new Blocks\Ui();
 		new Blocks\Course_Title();
 		new Blocks\Course_Navigation();
 		new Blocks\Site_Logo();
@@ -63,6 +63,9 @@ class Course_Theme_Blocks extends Sensei_Blocks_Initializer {
 		new Blocks\Sidebar_Toggle_Button();
 		new Blocks\Quiz_Actions();
 		new Blocks\Page_Actions();
+		new Blocks\Template_Style();
 		new \Sensei_Block_Quiz_Progress();
+		new Blocks\Lesson_Properties();
+		new Blocks\Lesson_Video();
 	}
 }
