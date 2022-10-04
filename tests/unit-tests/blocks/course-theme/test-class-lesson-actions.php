@@ -81,7 +81,9 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	 * Test lesson actions block when the user is not enrolled.
 	 */
 	public function testNotEnrolled() {
-		$this->create_enrolled_lesson();
+		$lesson = $this->factory->lesson->create_and_get();
+		$this->login_as_student();
+		$GLOBALS['post'] = $lesson;
 
 		$block = new Lesson_Actions();
 
@@ -156,7 +158,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	 * Test lesson actions block when user already completed the lesson.
 	 */
 	public function testAlreadyCompletedShowsNextLesson() {
-		list( $lesson ) = $this->create_enrolled_lesson_with_quiz();
+		list( $lesson ) = $this->create_enrolled_lesson();
 		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
 
 		$block = new Lesson_Actions();
