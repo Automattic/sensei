@@ -19,9 +19,6 @@ export default {
 	metadata,
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
-	example: {
-		attributes: { title: __( 'Example Quiz Question', 'sensei-lms' ) },
-	},
 	deprecated,
 	edit,
 	save: () => <InnerBlocks.Content />,

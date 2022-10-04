@@ -74,25 +74,38 @@ class Sensei_Course_Theme {
 	 */
 	public function init() {
 		Sensei_Course_Theme_Templates::instance()->init();
+		Sensei_Course_Theme_Template_Selection::instance()->init();
 
+		// The following actions add '/learn' route. The '/learn' route is used only when the theme is overridden.
 		add_action( 'setup_theme', [ $this, 'add_query_var' ], 1 );
 		add_action( 'registered_post_type', [ $this, 'add_post_type_rewrite_rules' ], 10, 2 );
-		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 		add_action( 'setup_theme', [ $this, 'maybe_override_theme' ], 2 );
+		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
+
+		// Initialize quiz and lesson specific functionality.
 		add_action( 'template_redirect', [ $this, 'redirect_modules_to_first_lesson' ], 9 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
+		add_filter( 'sensei_notice', [ Sensei_Course_Theme_Lesson::instance(), 'intercept_notice' ], 10, 1 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
-		add_action( 'template_redirect', [ $this, 'load_theme' ] );
 		add_filter( 'the_content', [ $this, 'add_lesson_video_to_content' ], 80, 1 );
+
+		// Load learning mode assets and add hooks.
+		add_action( 'template_redirect', [ $this, 'load_theme' ] );
+
+		// Prevent module links in learning mode.
 		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
 	}
 
 	/**
-	 * Is the theme active for the current request.
+	 * Checks if the theme is overridden which currently is not done by default.
+	 *
+	 * @deprecated
 	 *
 	 * @return bool
 	 */
 	public function is_active() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return self::THEME_NAME === get_stylesheet();
 	}
 
@@ -113,7 +126,7 @@ class Sensei_Course_Theme {
 	}
 
 	/**
-	 * Replace theme for the current request if it's for course theme mode.
+	 * Replace theme for the current request if the '/learn' route is used.
 	 */
 	public function maybe_override_theme() {
 
@@ -145,6 +158,7 @@ class Sensei_Course_Theme {
 		}
 
 		Sensei_Course_Theme_Compat::instance()->load_theme();
+		Sensei_Course_Theme_Styles::init();
 
 		add_filter( 'sensei_use_sensei_template', '__return_false' );
 		add_filter( 'body_class', [ $this, 'add_sensei_theme_body_class' ] );
@@ -292,6 +306,17 @@ class Sensei_Course_Theme {
 	}
 
 	/**
+	 * Root URL for course theme.
+	 *
+	 * @access private
+	 *
+	 * @return string
+	 */
+	public function get_course_theme_root_url() {
+		return $this->theme_root_uri() . '/' . self::THEME_NAME;
+	}
+
+	/**
 	 * Add Sensei theme body class.
 	 *
 	 * @access private
@@ -306,13 +331,34 @@ class Sensei_Course_Theme {
 		return $classes;
 	}
 
+
+	/**
+	 * Get the version of the active Learning Mode template.
+	 *
+	 * @return string|null Version string in the format of 4-0-2
+	 */
+	private function get_template_version() {
+		global $_wp_current_template_content;
+
+		preg_match( '/sensei-version--(\d+-\d+-\d+)/', $_wp_current_template_content ?? '', $version_matches );
+		return $version_matches[1] ?? null;
+	}
+
 	/**
 	 * Enqueue styles.
 	 *
 	 * @access private
 	 */
 	public function enqueue_styles() {
-		Sensei()->assets->enqueue( self::THEME_NAME . '-style', 'css/learning-mode.css' );
+
+		$version  = $this->get_template_version();
+		$css_file = 'css/learning-mode.' . $version . '.css';
+
+		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $css_file ) ) ) {
+			$css_file = 'css/learning-mode.css';
+		}
+
+		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
@@ -377,31 +423,44 @@ class Sensei_Course_Theme {
 
 	/**
 	 * Returns the url for sensei theme customization.
+	 *
+	 * @param bool        $use_customizer True to use the customizer, false to use the site editor.
+	 * @param string|null $post_type The post type to customize.
+	 *
+	 * @return The customization url
 	 */
-	public static function get_sensei_theme_customize_url() {
-		// Get the last modified lesson.
-		$result = get_posts(
-			[
-				'posts_per_page' => 1,
-				'post_type'      => 'lesson',
-				'orderby'        => 'modified',
-				'meta'           => [
-					'key'     => '_lesson_course',
-					'compare' => 'EXISTS',
-				],
-			]
-		);
-		if ( empty( $result ) ) {
-			return '';
+	public static function get_sensei_theme_customize_url( bool $use_customizer = true, string $post_type = null ) : string {
+		if ( $use_customizer ) {
+			// Get the last modified lesson.
+			$result = get_posts(
+				[
+					'posts_per_page' => 1,
+					'post_type'      => 'lesson',
+					'orderby'        => 'modified',
+					'meta'           => [
+						'key'     => '_lesson_course',
+						'compare' => 'EXISTS',
+					],
+				]
+			);
+			if ( empty( $result ) ) {
+				return '';
+			}
+
+			$lesson      = $result[0];
+			$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+			$preview_url = '/?p=' . $lesson->ID;
+
+			if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+				$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+			}
+
+			return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 		}
 
-		$lesson      = $result[0];
-		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
-		$preview_url = '/?p=' . $lesson->ID;
-		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
-			$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
-		}
-		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
+		$post_type = $post_type ?? 'lesson';
+
+		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . $post_type );
 	}
 
 	/**
@@ -439,7 +498,7 @@ class Sensei_Course_Theme {
 			array(
 				'id'    => 'site-editor',
 				'title' => __( 'Edit Site', 'sensei-lms' ),
-				'href'  => admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . get_post_type() ),
+				'href'  => self::get_sensei_theme_customize_url( false, get_post_type() ),
 			)
 		);
 	}

@@ -1,0 +1,101 @@
+@import '../../../blocks/contact-teacher-block/contact-teacher';
+
+.sensei-contact-teacher-form {
+	font-family: 'Inter', sans-serif;
+}
+
+.sensei-contact-teacher-form__submit {
+	padding: 10px 20px;
+	background-color: var(--sensei-primary-color);
+	color: var(--sensei-primary-contrast-color);
+	border: 1px solid var(--sensei-primary-color);
+	font-weight: 700;
+	font-size: 14px;
+	border-radius: 2px;
+	&:hover {
+		color: var(--sensei-primary-color);
+		background-color: transparent;
+	}
+
+	&.is-busy {
+		background-image: linear-gradient(
+				-45deg,
+				rgba(255, 255, 255, 0.5) 28%,
+				rgba(255, 255, 255, 0.1) 28%,
+				rgba(255, 255, 255, 0.1) 72%,
+				rgba(255, 255, 255, 0.5) 72%
+		);
+		animation: components-button__busy-animation 25000ms infinite linear;
+
+		&:disabled {
+			cursor: not-allowed;
+		}
+	}
+}
+
+	.sensei-contact-teacher-success {
+		font-family: inherit;
+		display: block;
+		position: absolute;
+		top: -5px;
+		right: -5px;
+		bottom: -5px;
+		left: -5px;
+		padding-top: 30px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		z-index: -1;
+		opacity: 0;
+		transition: opacity 100ms ease-out;
+		background: var(--sensei-background-color);
+
+		svg {
+			width: 42px;
+			height: 42px;
+			margin-bottom: 20px;
+			color: var(--sensei-primary-color);
+		}
+
+		p {
+			font-weight: 500;
+			font-size: 24px;
+			line-height: 32px;
+			width: 235px;
+			max-width: 100%;
+			text-align: center;
+		}
+	}
+
+.sensei-contact-teacher-form {
+	textarea {
+
+		}
+		&.is-success {
+			.sensei-contact-teacher-success {
+				z-index: 1;
+				opacity: 1;
+
+		}
+	}
+}
+
+.sensei-course-theme-contact-teacher__button {
+	display: block;
+	width: 100%;
+	border: 1px solid currentColor;
+	border-radius: 2px;
+	padding: 11px;
+	box-sizing: border-box;
+	text-align: center;
+	font-size: 14px;
+	line-height: 17px;
+	font-weight: 700;
+}
+
+@keyframes components-button__busy-animation {
+	0% {
+		background-position: 2000px 0;
+	}
+}

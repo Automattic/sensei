@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { InnerBlocks } from '@wordpress/block-editor';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -19,22 +18,6 @@ const quizBlock = {
 	icon,
 	providesContext: {
 		'sensei-lms/quizId': 'id',
-	},
-	example: {
-		innerBlocks: [
-			{
-				name: 'sensei-lms/quiz-question',
-				attributes: {
-					title: __( 'First Example Question', 'sensei-lms' ),
-				},
-			},
-			{
-				name: 'sensei-lms/quiz-question',
-				attributes: {
-					title: __( 'Second Example Question', 'sensei-lms' ),
-				},
-			},
-		],
 	},
 	edit,
 	save: () => <InnerBlocks.Content />,

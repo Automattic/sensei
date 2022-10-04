@@ -11,17 +11,5 @@
 		"difficulty",
 		"lesson information",
 		"lesson properties"
-	],
-	"attributes": {
-		"difficulty": {
-			"type": "string",
-			"source": "meta",
-			"meta": "_lesson_complexity"
-		},
-		"length": {
-			"type": "number",
-			"source": "meta",
-			"meta": "_lesson_length"
-		}
-	}
+	]
 }
