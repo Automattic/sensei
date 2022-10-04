@@ -5,6 +5,9 @@
  * @package sensei
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Tests for Sensei_Home_Tasks_Provider class.

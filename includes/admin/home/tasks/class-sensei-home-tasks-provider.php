@@ -6,6 +6,10 @@
  * @since   $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class responsible for generating the Tasks structure for Sensei Home screen.
  */
