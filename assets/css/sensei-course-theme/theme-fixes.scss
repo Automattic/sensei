@@ -7,17 +7,24 @@
 	}
 }
 
-.sensei-course-theme__frame {
+.sensei-course-theme {
 
 	// Twenty twenty one
+
 	.wp-block-group::before, .wp-block-group::after {
 		content: none;
 	}
+	--responsive--aligndefault-width: 1200px;
+}
+
+.sensei-course-theme__frame {
 
 	// Twenty twenty
+
 	.wp-block-group.wp-block-group.wp-block-group.wp-block-group {
 		margin: unset;
 	}
+
 	.is-content-justification-space-between > * {
 		margin: unset !important;
 		max-width: none;
