@@ -73,7 +73,7 @@
 		/**
 		 * Fixed right sidebar mode when there is no video.
 		 */
-		&__video-container.no-video {
+		body:not(.sensei-video-lesson) &__video-container {
 			width: var(--sidebar-width);
 			justify-content: flex-end;
 			position: fixed;
