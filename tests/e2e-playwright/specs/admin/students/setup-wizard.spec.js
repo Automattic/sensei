@@ -43,7 +43,7 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 
 		test( 'marks welcome step done and goes to purpose step', async () => {
 			await page.locator( `text=Get started` ).click();
-			await expect( page.locator( 'text=Tailor your course creation experience' ) ).toHaveCount( 1 );
+			await expect( page.locator( 'text=Choose the purpose of your site' ) ).toHaveCount( 1 );
 		} );
 	} );
 
