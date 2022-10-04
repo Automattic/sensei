@@ -30,7 +30,7 @@ class Sensei_Home_Tasks {
 	}
 
 	/**
-	 * The the actual tasks.
+	 * The actual tasks.
 	 *
 	 * @return Sensei_Home_Task[]
 	 */
