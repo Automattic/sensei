@@ -75,8 +75,8 @@ jQuery( document ).ready( function ( $ ) {
 	function markSectionAsVisited( sectionId ) {
 		const data = new FormData();
 		data.append( 'action', 'sensei_settings_section_visited' );
-		data.append( 'sectionId', sectionId );
-		data.append( 'nonce', window.sensei_settings_section_visit_nonce );
+		data.append( 'section_id', sectionId );
+		data.append( 'nonce', window.senseiSettingsSectionVisitNonce );
 		fetch( ajaxurl, { method: 'POST', body: data } );
 	}
 

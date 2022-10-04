@@ -951,7 +951,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Generate nonce for marking section visited action.
 		wp_add_inline_script(
 			'sensei-settings',
-			'window.sensei_settings_section_visit_nonce  = "' . wp_create_nonce( 'sensei-mark-settings-section-visited' ) . '";',
+			'window.senseiSettingsSectionVisitNonce  = "' . wp_create_nonce( 'sensei-mark-settings-section-visited' ) . '";',
 			'before'
 		);
 	}
@@ -961,8 +961,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function mark_section_as_visited() {
 		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'sensei-mark-settings-section-visited' ) ) {
-			if ( isset( $_POST['sectionId'] ) ) {
-				$section_id = sanitize_key( $_POST['sectionId'] );
+			if ( isset( $_POST['section_id'] ) ) {
+				$section_id = sanitize_key( $_POST['section_id'] );
 				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );
 				if ( ! in_array( $section_id, $visited, true ) ) {
 					$visited[] = $section_id;
