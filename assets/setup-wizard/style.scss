@@ -1,6 +1,4 @@
 $small-screen-break: 600px;
-$columns-break: 1000px;
-
 $small-vertical-padding: 20px;
 $small-horizontal-padding: 20px;
 $big-vertical-padding: 60px;
@@ -91,11 +89,6 @@ $recoleta-font-family: Recoleta, sans-serif;
 
 		@media (min-width: $small-screen-break) {
 			padding: $big-vertical-padding $big-horizontal-padding;
-		}
-
-		@media (min-width: $columns-break) {
-			padding: 0 $big-horizontal-padding $big-vertical-padding;
-			min-height: auto;
 		}
 	}
 
@@ -194,35 +187,17 @@ $recoleta-font-family: Recoleta, sans-serif;
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-
-		@media (min-width: $columns-break) {
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: center;
-		}
 	}
 
 	&__columns-content {
 		padding-bottom: 30px;
 		animation: 0.5s slideInFromBottom;
-
-		@media (min-width: $columns-break) {
-			width: 30%;
-			min-width: 370px;
-			padding-bottom: 0;
-		}
 	}
 
 	&__columns-illustration {
 		flex: 1;
 		overflow: hidden;
 		animation: 0.5s slideInFromRight;
-
-		@media (min-width: $columns-break) {
-			flex: none;
-			margin-bottom: -$big-vertical-padding;
-			max-height: calc( 100vh - 88px ); // Discounts top bar and progress bar.
-		}
 	}
 
 	&__columns-illustration-image {

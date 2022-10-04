@@ -53,11 +53,5 @@ $unchecked-color: #757575;
 
 	&__purpose-illustration {
 		display: none;
-
-		@media (min-width: $columns-break) {
-			display: block;
-			width: calc( 40% + $big-horizontal-padding );
-			margin: 0 (-$big-horizontal-padding);
-		}
 	}
 }

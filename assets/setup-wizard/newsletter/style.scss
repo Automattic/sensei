@@ -5,34 +5,14 @@
 		@media (min-width: $small-screen-break) {
 			margin: 0 calc(-15% - $big-horizontal-padding) (-$big-vertical-padding);
 		}
-
-		@media (min-width: $columns-break) {
-			width: calc( 50% + 28px + $big-horizontal-padding );
-			margin: 0 (-28px -$big-horizontal-padding) 0 0;
-		}
 	}
 }
 
 .sensei-signup-form {
 	text-align: left;
 
-	@media (min-width: $columns-break) {
-		display: flex;
-		align-items: flex-end;
-
-		&__text-control {
-			flex: 1;
-		}
-	}
-
 	&__button {
 		width: 100%;
 		margin-top: 18px;
-
-		@media (min-width: $columns-break) {
-			width: auto;
-			white-space: nowrap;
-			margin-left: 8px;
-		}
 	}
 }
