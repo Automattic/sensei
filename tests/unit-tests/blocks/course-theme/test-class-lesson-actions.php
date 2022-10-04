@@ -158,7 +158,14 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	 * Test lesson actions block when user already completed the lesson.
 	 */
 	public function testAlreadyCompletedShowsNextLesson() {
-		list( $lesson ) = $this->create_enrolled_lesson();
+		list( $lesson, $course ) = $this->create_enrolled_lesson();
+		$this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course->ID,
+				],
+			]
+		);
 		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
 
 		$block = new Lesson_Actions();
