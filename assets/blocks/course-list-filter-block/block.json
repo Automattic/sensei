@@ -6,6 +6,13 @@
 	"description": "Filter courses in Course List block",
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"categories",
+		"lessons",
+		"featured",
+		"filter"
+	],
 	"attributes": {
 		"align": {
 			"type": "string",

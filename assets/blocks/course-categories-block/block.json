@@ -6,6 +6,11 @@
 	"description": "Show the course categories",
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"lessons",
+		"categories"
+	],
 	"attributes": {
 		"previewCategories": {
 		    "type": "array"

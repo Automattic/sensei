@@ -4,6 +4,13 @@
   "description": "Evaluate progress and strengthen understanding of course concepts.",
   "category": "sensei-lms",
   "textdomain": "sensei-lms",
+  "keywords": [
+    "exam",
+    "questions",
+    "test",
+    "assessment",
+    "evaluation"
+  ],
   "supports": {
     "html": false,
     "multiple": false

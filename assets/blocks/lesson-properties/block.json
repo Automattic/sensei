@@ -4,6 +4,14 @@
 	"description": "Add lesson properties such as length and difficulty.",
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
+	"keywords": [
+		"metadata",
+		"length",
+		"complexity",
+		"difficulty",
+		"lesson information",
+		"lesson properties"
+	],
 	"attributes": {
 		"difficulty": {
 			"type": "string",
