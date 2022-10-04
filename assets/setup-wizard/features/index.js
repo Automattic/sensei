@@ -92,44 +92,46 @@ const Features = () => {
 	const { percentage, label } = useActionsNavigator( actions );
 
 	return (
-		<div className="sensei-setup-wizard__features-step">
-			{ error && (
-				<Notice
-					status="error"
-					className="sensei-setup-wizard__submit-error"
-					isDismissible={ false }
-					actions={ [
-						{
-							label: __( 'Go to Sensei Home', 'sensei-lms' ),
-							url: senseiHomePath,
-						},
-					] }
-				>
-					{ error.message }
-				</Notice>
-			) }
+		<div className="sensei-setup-wizard__full-centered-step">
+			<div className="sensei-setup-wizard__full-centered-content">
+				{ error && (
+					<Notice
+						status="error"
+						className="sensei-setup-wizard__submit-error"
+						isDismissible={ false }
+						actions={ [
+							{
+								label: __( 'Go to Sensei Home', 'sensei-lms' ),
+								url: senseiHomePath,
+							},
+						] }
+					>
+						{ error.message }
+					</Notice>
+				) }
 
-			<div
-				className="sensei-setup-wizard__features-status"
-				role="status"
-				aria-live="polite"
-			>
-				<div className="sensei-setup-wizard__fade-in" key={ label }>
-					{ label }
-				</div>
-			</div>
-
-			<div className="sensei-setup-wizard__features-progress-bar">
 				<div
-					role="progressbar"
-					aria-label={ __(
-						'Sensei Onboarding Progress',
-						'sensei-lms'
-					) }
-					aria-valuenow={ percentage }
-					className="sensei-setup-wizard__features-progress-bar-filled"
-					style={ { width: `${ percentage }%` } }
-				/>
+					className="sensei-setup-wizard__features-status"
+					role="status"
+					aria-live="polite"
+				>
+					<div className="sensei-setup-wizard__fade-in" key={ label }>
+						{ label }
+					</div>
+				</div>
+
+				<div className="sensei-setup-wizard__features-progress-bar">
+					<div
+						role="progressbar"
+						aria-label={ __(
+							'Sensei Onboarding Progress',
+							'sensei-lms'
+						) }
+						aria-valuenow={ percentage }
+						className="sensei-setup-wizard__features-progress-bar-filled"
+						style={ { width: `${ percentage }%` } }
+					/>
+				</div>
 			</div>
 		</div>
 	);

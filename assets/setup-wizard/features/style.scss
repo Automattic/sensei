@@ -1,15 +1,4 @@
 .sensei-setup-wizard {
-	&__features-step {
-		display: flex;
-		flex-direction: column;
-		max-width: 520px;
-		height: 100%;
-		margin: 0 auto;
-		justify-content: center;
-		text-align: center;
-		animation: 0.5s slideInFromBottom;
-	}
-
 	&__features-status {
 		margin-bottom: 24px;
 		font-family: $recoleta-font-family;

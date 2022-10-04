@@ -10,7 +10,6 @@ $recoleta-font-family: Recoleta, sans-serif;
 @import 'fullscreen';
 @import 'animations';
 @import 'navigation-bar/style';
-@import 'welcome/style';
 @import 'purpose/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
@@ -40,7 +39,7 @@ $recoleta-font-family: Recoleta, sans-serif;
 	p {
 		font-size: 16px;
 		line-height: 1.4;
-		margin: 0 0 32px;
+		margin: 0 0 40px;
 
 		@media (min-width: $small-screen-break) {
 			font-size: 18px;
@@ -180,6 +179,33 @@ $recoleta-font-family: Recoleta, sans-serif;
 	&__submit-error {
 		text-align: left;
 		margin: 0 0 32px;
+	}
+
+	// Content centered in full size.
+	&__full-centered-step {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		min-height: 440px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		animation: 0.5s slideInFromBottom;
+		padding: $small-vertical-padding $small-horizontal-padding;
+		box-sizing: border-box;
+
+		@media (min-width: $small-screen-break) {
+			padding: $big-vertical-padding $big-horizontal-padding;
+		}
+	}
+
+	&__full-centered-content {
+		width: 100%;
+		max-width: 520px;
 	}
 
 	// Columns.
