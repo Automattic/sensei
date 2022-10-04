@@ -71,6 +71,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'data-port/export-tasks' ),
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 			new Sensei_Autoloader_Bundle( 'blocks' ),
+			new Sensei_Autoloader_Bundle( 'blocks/course-list' ),
 			new Sensei_Autoloader_Bundle( 'course-theme' ),
 			new Sensei_Autoloader_Bundle( 'course-video' ),
 			new Sensei_Autoloader_Bundle( 'course-video/blocks' ),
@@ -129,6 +130,7 @@ class Sensei_Autoloader {
 			'Sensei_Status'                                => 'admin/class-sensei-status.php',
 			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
 			'Sensei_Editor_Wizard'                         => 'admin/class-sensei-editor-wizard.php',
+			'Sensei_No_Users_Table_Relationship'           => 'reports/class-sensei-no-users-table-relationship.php',
 
 			/**
 			 * Admin Tools

@@ -1213,6 +1213,10 @@ class Sensei_Frontend {
 				 */
 				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
+				if ( 'publish' !== get_post_status( $post ) ) {
+					wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
+					exit();
+				}
 				if ( false !== $redirect_url ) {
 					?>
 

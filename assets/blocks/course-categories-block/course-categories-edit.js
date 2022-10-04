@@ -1,63 +1,100 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
-import { unescape } from 'lodash';
+import { unescape, noop } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-import { useBlockProps } from '@wordpress/block-editor';
-import { useMemo } from '@wordpress/element';
+import {
+	store as blockEditorStore,
+	BlockControls,
+	AlignmentToolbar,
+	useBlockProps,
+} from '@wordpress/block-editor';
 import { Spinner } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+import { useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import useCourseCategories from './hooks/use-course-categories';
 import InvalidUsageError from '../../shared/components/invalid-usage';
-
-import {
-	withColorSettings,
-	withDefaultColor,
-} from '../../shared/blocks/settings';
+import { withColorSettings } from '../../shared/blocks/settings';
+import { useDispatch } from '@wordpress/data';
+import { getStyleAndClassesFromAttributes } from './utils/style';
 
 export function CourseCategoryEdit( props ) {
 	const {
 		attributes,
 		backgroundColor,
 		context,
-		defaultBackgroundColor,
-		defaultTextColor,
 		textColor,
+		setAttributes,
+		setBackgroundColor,
+		setTextColor,
 	} = props;
-	const { textAlign } = attributes;
-	const { postId, postType } = context;
-	const term = 'course-category';
 
+	const { textAlign, previewCategories, options } = attributes;
+	const { postId, postType } = context;
 	const {
 		postTerms: categories,
 		hasPostTerms: hasCategories,
 		isLoading,
 	} = useCourseCategories( postId );
 
-	const blockProps = useBlockProps( {
-		className: classnames( {
-			[ `has-text-align-${ textAlign }` ]: textAlign,
-			[ `taxonomy-${ term }` ]: term,
-		} ),
-	} );
-
-	const inlineStyle = useMemo(
-		() => ( {
-			backgroundColor:
-				backgroundColor?.color || defaultBackgroundColor?.color,
-			color: textColor?.color || defaultTextColor?.color,
-		} ),
-		[ backgroundColor, defaultBackgroundColor, defaultTextColor, textColor ]
+	const { __unstableMarkNextChangeAsNotPersistent = noop } = useDispatch(
+		blockEditorStore
 	);
+
+	useEffect( () => {
+		if ( options ) {
+			setBackgroundColor( options.backgroundColor );
+			setTextColor( options.textColor );
+		}
+	}, [] );
+
+	// We need to store the colors inside the option attribute because
+	// by default the root backgroundColor and textColor are overwritten by
+	// Gutenberg withColors HOC.
+	useEffect( () => {
+		__unstableMarkNextChangeAsNotPersistent();
+		setAttributes( {
+			options: {
+				backgroundColor: backgroundColor?.color,
+				textColor: textColor?.color,
+			},
+		} );
+	}, [
+		backgroundColor,
+		textColor,
+		setAttributes,
+		__unstableMarkNextChangeAsNotPersistent,
+	] );
+
+	const blockProps = useBlockProps(
+		getStyleAndClassesFromAttributes( attributes )
+	);
+
+	const getCategories = ( categoriesToDisplay ) => {
+		return categoriesToDisplay?.map( ( category ) => (
+			<a
+				key={ category.id }
+				href={ category.link }
+				onClick={ ( event ) => event.preventDefault() }
+			>
+				<span>{ unescape( category.name ) }</span>
+			</a>
+		) );
+	};
+
+	if ( previewCategories ) {
+		return (
+			<div { ...blockProps }>{ getCategories( previewCategories ) }</div>
+		);
+	}
 
 	if ( 'course' !== postType ) {
 		return (
@@ -69,23 +106,24 @@ export function CourseCategoryEdit( props ) {
 			/>
 		);
 	}
-
 	return (
-		<div { ...blockProps }>
-			{ isLoading && <Spinner /> }
-			{ ! isLoading &&
-				hasCategories &&
-				categories.map( ( category ) => (
-					<a
-						key={ category.id }
-						href={ category.link }
-						onClick={ ( event ) => event.preventDefault() }
-						style={ inlineStyle }
-					>
-						{ unescape( category.name ) }
-					</a>
-				) ) }
-		</div>
+		<>
+			<BlockControls>
+				<AlignmentToolbar
+					value={ textAlign }
+					onChange={ ( nextAlign ) => {
+						setAttributes( { textAlign: nextAlign } );
+					} }
+				/>
+			</BlockControls>
+			<div { ...blockProps }>
+				{ isLoading && <Spinner /> }
+				{ ! isLoading && getCategories( categories ) }
+				{ ! isLoading && ! hasCategories && (
+					<p>{ __( 'No course category', 'sensei-lms' ) }</p>
+				) }
+			</div>
+		</>
 	);
 }
 
@@ -97,17 +135,7 @@ export default compose(
 		},
 		backgroundColor: {
 			style: 'background-color',
-			label: __( 'Category background color', 'sensei-lms' ),
-		},
-	} ),
-	withDefaultColor( {
-		defaultTextColor: {
-			style: 'color',
-			probeKey: 'primaryContrastColor',
-		},
-		defaultBackgroundColor: {
-			style: 'background-color',
-			probeKey: 'primaryColor',
+			label: __( 'Background color', 'sensei-lms' ),
 		},
 	} )
 )( CourseCategoryEdit );

@@ -84,6 +84,7 @@ class Sensei_Course_Theme {
 		add_action( 'shutdown', [ $this, 'maybe_flush_rewrite_rules' ] );
 
 		// Initialize quiz and lesson specific functionality.
+		add_action( 'template_redirect', [ $this, 'redirect_modules_to_first_lesson' ], 9 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Lesson::instance(), 'init' ] );
 		add_filter( 'sensei_notice', [ Sensei_Course_Theme_Lesson::instance(), 'intercept_notice' ], 10, 1 );
 		add_action( 'template_redirect', [ Sensei_Course_Theme_Quiz::instance(), 'init' ] );
@@ -91,8 +92,10 @@ class Sensei_Course_Theme {
 
 		// Load learning mode assets and add hooks.
 		add_action( 'template_redirect', [ $this, 'load_theme' ] );
-	}
 
+		// Prevent module links in learning mode.
+		add_filter( 'sensei_do_link_to_module', [ $this, 'prevent_link_to_module' ] );
+	}
 
 	/**
 	 * Checks if the theme is overridden which currently is not done by default.
@@ -246,23 +249,6 @@ class Sensei_Course_Theme {
 		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $post_type . '=$matches[1]&page=$matches[2]&$matches[3]', 'top' );
 		add_rewrite_tag( '%' . self::QUERY_VAR . '%', '([^?]+)' );
 
-	}
-
-	/**
-	 * Add a route with a /learn prefix for using course theme for a taxonomy.
-	 *
-	 * @param string $taxonomy    Taxonomy slug.
-	 * @param array  $object_type Array of object types supported by the taxonomy.
-	 * @param array  $args        Arguments used to register the taxonomy.
-	 */
-	public function add_taxonomy_rewrite_rules( $taxonomy, $object_type, $args ) {
-		if ( ! in_array( $taxonomy, [ 'module' ], true ) ) {
-			return;
-		}
-
-		$slug = preg_quote( $args['rewrite']['slug'] ?? $taxonomy, '/' );
-
-		add_rewrite_rule( '^' . self::QUERY_VAR . '/' . $slug . '/([^/]+)(?:/([0-9]+))?\??(.*)', 'index.php?' . self::QUERY_VAR . '=1&' . $taxonomy . '=$matches[1]', 'top' );
 	}
 
 	/**
@@ -542,4 +528,43 @@ class Sensei_Course_Theme {
 		return $content;
 	}
 
+	/**
+	 * Prevent modules to be linked in learning mode.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param bool $do_link_to_module True if module should be linked to.
+	 *
+	 * @return bool
+	 */
+	public function prevent_link_to_module( bool $do_link_to_module ): bool {
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() ) {
+			return $do_link_to_module;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Redirect all module pages to the first module lesson.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function redirect_modules_to_first_lesson(): void {
+		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() || ! is_tax( 'module' ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+		$course_id = ! empty( $_GET['course_id'] ) ? (int) $_GET['course_id'] : Sensei_Utils::get_current_course();
+		if ( ! $course_id ) {
+			return;
+		}
+
+		$module_lessons = Sensei()->modules->get_lessons( $course_id, get_queried_object_id() );
+		if ( $module_lessons ) {
+			wp_safe_redirect( get_permalink( $module_lessons[0] ) );
+			die();
+		}
+	}
 }
