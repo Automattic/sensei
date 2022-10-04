@@ -147,16 +147,8 @@ $recoleta-font-family: Recoleta, sans-serif;
 		&--full-width {
 			text-align: center;
 
-			@media (min-width: $small-screen-break) {
-				text-align: left;
-			}
-
 			> * {
 				width: 100%;
-
-				@media (min-width: $small-screen-break) {
-					width: auto;
-				}
 			}
 		}
 	}
@@ -204,12 +196,12 @@ $recoleta-font-family: Recoleta, sans-serif;
 
 	// Columns.
 	&__content {
-		max-width: 414px;
 		margin: 0 auto;
 		animation: 0.5s fadeIn;
 
 		@media (min-width: $small-screen-break) {
 			text-align: center;
+			max-width: 414px;
 		}
 	}
 
