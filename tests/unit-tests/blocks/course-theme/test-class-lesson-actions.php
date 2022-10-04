@@ -124,8 +124,8 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block_html      = $block->render();
 
 		// Check for is-secondary class suffix.
-		$this->assertRegExp( '/<button.*is-secondary.*>.*\n.*Complete lesson/', $block_html, 'Should render complete button as secondary CTA' );
-		$this->assertContains( 'Take quiz', $block_html, 'Should render the take quiz button' );
+		$this->assertRegExp( '/<button.*is-secondary.*>.*\n.*Complete Lesson/', $block_html, 'Should render complete button as secondary CTA' );
+		$this->assertContains( 'Take Quiz', $block_html, 'Should render the take quiz button' );
 	}
 
 	/**
@@ -154,8 +154,8 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block           = new Lesson_Actions();
 
 		// Check for empty response.
-		$this->assertNotContains( 'Complete lesson', $block->render(), 'Should not render the complete lesson button.' );
-		$this->assertContains( 'Take quiz', $block->render(), 'Should render the take quiz button.' );
+		$this->assertNotContains( 'Complete Lesson', $block->render(), 'Should not render the complete lesson button.' );
+		$this->assertContains( 'Take Quiz', $block->render(), 'Should render the take quiz button.' );
 	}
 
 	/**
@@ -254,6 +254,6 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block           = new Lesson_Actions();
 
 		// Check for Complete lesson button.
-		$this->assertContains( 'Complete lesson', $block->render(), 'Should render "Complete lesson" button if user can mark lesson as complete.' );
+		$this->assertContains( 'Complete Lesson', $block->render(), 'Should render "Complete lesson" button if user can mark lesson as complete.' );
 	}
 }
