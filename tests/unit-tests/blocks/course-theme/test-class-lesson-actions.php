@@ -154,6 +154,39 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test lesson actions block when user already completed the lesson.
+	 */
+	public function testAlreadyCompletedNextLesson() {
+		list( $lesson, $course ) = $this->create_enrolled_lesson();
+		$lesson2                 = $this->factory->lesson->create_and_get(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course->ID,
+				],
+			]
+		);
+		$lesson_order            = [ $lesson->ID, $lesson2->ID ];
+		Sensei()->admin->save_lesson_order( implode( ',', $lesson_order ), $course->ID );
+
+		\Sensei_Utils::sensei_start_lesson( $lesson->ID, get_current_user_id(), true );
+
+		$block = new Lesson_Actions();
+
+		$this->assertContains( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should render "Next Lesson" link if the option is enabled and there is a next lesson in the course.' );
+	}
+
+	/**
+	 * Test lesson actions block when user already completed the lesson.
+	 */
+	public function testAlreadyCompletedNoNextLesson() {
+		$this->create_enrolled_lesson();
+
+		$block = new Lesson_Actions();
+
+		$this->assertNotContains( 'Next Lesson', $block->render( [ 'options' => [ 'nextLesson' => true ] ] ), 'Should not render "Next Lesson" link if the option is enabled but there is no next lesson in the course.' );
+	}
+
+	/**
 	 * Test lesson actions block for a lesson with a pre-requisite lesson.
 	 */
 	public function testHasPreRequisite() {
