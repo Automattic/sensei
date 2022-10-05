@@ -91,68 +91,6 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testMapHelpMapsCategoriesToAssociativeArray() {
-		$result = $this->mapper->map_help(
-			[
-				new Sensei_Home_Help_Category( 'First Category', [] ),
-				new Sensei_Home_Help_Category(
-					'Second Category',
-					[
-						new Sensei_Home_Help_Item( 'First Item', 'https://url-1' ),
-						new Sensei_Home_Help_Item( 'Second Item', 'https://url-2', 'an-icon' ),
-						new Sensei_Home_Help_Item(
-							'Third Item',
-							'https://url-3',
-							null,
-							new Sensei_Home_Help_Extra_Link(
-								'Extra link label',
-								'Extra link url'
-							)
-						),
-					]
-				),
-			]
-		);
-
-		$this->assertIsArray( $result );
-		$this->assertEquals(
-			[
-				[
-					'title' => 'First Category',
-					'items' => [],
-				],
-				[
-					'title' => 'Second Category',
-					'items' => [
-						[
-							'title'      => 'First Item',
-							'url'        => 'https://url-1',
-							'icon'       => null,
-							'extra_link' => null,
-						],
-						[
-							'title'      => 'Second Item',
-							'url'        => 'https://url-2',
-							'icon'       => 'an-icon',
-							'extra_link' => null,
-						],
-						[
-							'title'      => 'Third Item',
-							'url'        => 'https://url-3',
-							'icon'       => null,
-							'extra_link' => [
-								'label' => 'Extra link label',
-								'url'   => 'Extra link url',
-							],
-						],
-					],
-				],
-
-			],
-			$result
-		);
-	}
-
 	/**
 	 * Tests map_tasks method creates the expected structures.
 	 *
