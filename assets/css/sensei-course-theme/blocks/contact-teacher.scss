@@ -35,7 +35,6 @@
 
 	.sensei-contact-teacher-success {
 		font-family: inherit;
-		display: block;
 		position: absolute;
 		top: -5px;
 		right: -5px;
@@ -76,6 +75,7 @@
 			.sensei-contact-teacher-success {
 				z-index: 1;
 				opacity: 1;
+				display: flex;
 
 		}
 	}
