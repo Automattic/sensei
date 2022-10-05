@@ -27,7 +27,7 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Setup.
