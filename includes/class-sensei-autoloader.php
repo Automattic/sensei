@@ -5,6 +5,9 @@
  * @package sensei
  */
 
+use Sensei\Installer\Installer;
+use Sensei\Installer\Schema;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // security check, don't load file outside WP.
 }
@@ -240,6 +243,12 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+
+			/**
+			 * Installer
+			 */
+			\Sensei\Installer\Installer::class             => 'installer/class-installer.php',
+			\Sensei\Installer\Schema::class                => 'installer/class-schema.php',
 
 			/**
 			 * Student Progress
