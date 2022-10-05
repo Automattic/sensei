@@ -134,7 +134,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 
 		return [
 			'tasks'         => $this->mapper->map_tasks( $this->tasks_provider->get() ),
-			'quick_links'   => $this->mapper->map_quick_links( $this->quick_links_provider->get() ),
+			'quick_links'   => $this->quick_links_provider->get(),
 			'help'          => $this->help_provider->get(),
 			'guides'        => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro|interactive-blocks}.json.
