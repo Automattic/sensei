@@ -23,10 +23,11 @@ const minimumTimerPromise = () =>
  *
  * @param {Array} actions
  *
- * @return {{percentage: number, label: string}} Current action data.
+ * @return {{percentage: number, label: string, error: object}} Current action data.
  */
 const useActionsNavigator = ( actions ) => {
 	const [ currentAction, setCurrentAction ] = useState();
+	const [ error, setError ] = useState( false );
 
 	// Navigate through the actions.
 	useEffect( () => {
@@ -39,19 +40,25 @@ const useActionsNavigator = ( actions ) => {
 		}
 
 		// Run action.
+		setError( false );
 		Promise.all( [
 			minimumTimerPromise(),
 			actions[ currentAction ]?.action?.(),
-		] ).then( () => {
-			if ( currentAction + 1 < actions.length ) {
-				setCurrentAction( ( prev ) => prev + 1 );
-			}
-		} );
+		] )
+			.then( () => {
+				if ( currentAction + 1 < actions.length ) {
+					setCurrentAction( ( prev ) => prev + 1 );
+				}
+			} )
+			.catch( ( err ) => {
+				setError( err );
+			} );
 	}, [ currentAction, actions ] );
 
 	return {
 		percentage: ( ( currentAction + 1 ) / actions.length ) * 100 || 0,
 		label: actions[ currentAction ]?.label,
+		error,
 	};
 };
 

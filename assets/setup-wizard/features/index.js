@@ -41,16 +41,12 @@ const getFeatureActions = ( { selected, options } ) => {
 	return featuresToInstall.map( ( slug ) => ( {
 		label: featureLabels[ slug ],
 		action: () =>
-			new Promise( ( resolve ) => {
-				apiFetch( {
-					path: '/sensei-internal/v1/sensei-extensions/install',
-					method: 'POST',
-					data: {
-						plugin: slug,
-					},
-				} ).then( () => {
-					resolve();
-				} );
+			apiFetch( {
+				path: '/sensei-internal/v1/sensei-extensions/install',
+				method: 'POST',
+				data: {
+					plugin: slug,
+				},
 			} ),
 	} ) );
 };
@@ -59,7 +55,9 @@ const getFeatureActions = ( { selected, options } ) => {
  * Features step for Setup Wizard.
  */
 const Features = () => {
-	const { stepData, submitStep, error } = useSetupWizardStep( 'features' );
+	const { stepData, submitStep, error: submitError } = useSetupWizardStep(
+		'features'
+	);
 
 	// Create list of actions.
 	const actions = useMemo(
@@ -89,7 +87,11 @@ const Features = () => {
 		[ stepData, submitStep ]
 	);
 
-	const { percentage, label } = useActionsNavigator( actions );
+	const { percentage, label, error: actionError } = useActionsNavigator(
+		actions
+	);
+
+	const error = actionError || submitError;
 
 	return (
 		<div className="sensei-setup-wizard__full-centered-step">
