@@ -70,7 +70,6 @@ class Installer {
 	public function init() {
 		register_activation_hook( SENSEI_LMS_PLUGIN_FILE, [ $this, 'install' ] );
 		add_action( 'plugins_loaded', [ $this, 'install' ] );
-		add_action( 'init', [ $this, 'migrate' ], 5 );
 	}
 
 	/**
