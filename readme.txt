@@ -17,27 +17,22 @@ Create beautiful and engaging online courses, lessons, and quizzes.
 
 [Sensei LMS](https://senseilms.com) is a teaching and learning management plugin built by Automattic, the company behind WordPress.com, WooCommerce, and Jetpack. In fact, Sensei LMS is used to power all of Automattic’s employee training and courses too.
 
-[Check out our Sensei Demo Course here](https://senseilms.com/lesson/overview/).
-
 Your knowledge is worth teaching - teach freely with Sensei LMS!
 
-### Works With Your Existing Theme ###
-Sensei LMS integrates seamlessly with your WordPress site, and courses look great with any theme.
+### Powerful LMS Features ###
 
-Add blocks for course and student information to any page or post.
-
-Customize the look and feel to match your branding and site style.
-
-### Learning Mode ###
-Enable the optional Learning Mode for a distraction free and immersive learning experience. Learning Mode is Full Site Editing ready for additional personalization and customization.
-
-https://videopress.com/v/WLDfZydJ
+- Integrates seamlessly with your WordPress site, and courses look great with any theme.
+- Track student progress and performance with detailed reports.
+- Craft engaging lessons with no code required.
+- Embed videos from YouTube, Vimeo, and VideoPress for video-based courses.
+- Add the Course List block to any page or post to display available courses.
+- Customize the look and feel to match your branding and site style.
+- Enable the optional Learning Mode for a distraction free and immersive learning experience. 
 
 ### Quizzes That Reinforce ###
 Leverage the power of quizzes to strengthen your students’ understanding of key concepts and evaluate their progress.
 
 Choose from many question types and quiz settings, including multiple-choice, fill-in-the-blank, true/false, free response, file uploads, and more.
-
 
 ### Get More with Sensei Pro ###
 
@@ -47,11 +42,17 @@ Do more and sell courses with Sensei Pro, which includes:
 
 **Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
 
-**Interactive Blocks:** Flashcards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post.
+**Interactive Blocks:** Videos, flashcards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post.
+
+https://videopress.com/v/tLYw7R27
 
 **Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz. 
 
-**Course Expiration:** Select an end date or a specific amount of time that courses will remain accessible to students.
+**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences. 
+
+**Course Access Periods:** Select a start date, end date, or a specific amount of time that courses will remain accessible to students.
+ 
+**Conditional Content:** Hide and show lessons and content in lessons based on groups, enrollment status, and date.
 
 **Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
 
