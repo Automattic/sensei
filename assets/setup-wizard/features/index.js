@@ -99,7 +99,7 @@ const Features = () => {
 				{ error && (
 					<Notice
 						status="error"
-						className="sensei-setup-wizard__submit-error"
+						className="sensei-setup-wizard__error-notice"
 						isDismissible={ false }
 						actions={ [
 							{
