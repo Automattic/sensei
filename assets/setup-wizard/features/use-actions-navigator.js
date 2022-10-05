@@ -55,8 +55,10 @@ const useActionsNavigator = ( actions ) => {
 			} );
 	}, [ currentAction, actions ] );
 
+	const stepNumber = currentAction + ( error ? 0 : 1 );
+
 	return {
-		percentage: ( ( currentAction + 1 ) / actions.length ) * 100 || 0,
+		percentage: ( stepNumber / actions.length ) * 100 || 0,
 		label: actions[ currentAction ]?.label,
 		error,
 	};
