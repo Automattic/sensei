@@ -33,6 +33,7 @@ class Sensei_Home_Tasks_Provider {
 		// TODO Implement the logic for this.
 		return [
 			new Sensei_Home_Task_Setup_Site(),
+			new Sensei_Home_Task_Configure_Learning_Mode(),
 		];
 	}
 

@@ -40,7 +40,16 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( Sensei_Home_Tasks::class, $tasks );
 		$items = $tasks->get_items();
 		$this->assertIsArray( $items );
-		$this->assertCount( 1, $items, 'At the moment only one task is expected.' );
-		$this->assertInstanceOf( Sensei_Home_Task_Setup_Site::class, $items[0] );
+		$this->assertTrue( $this->containsInstanceOf( $items, Sensei_Home_Task_Setup_Site::class ), 'Setup Site task must be returned.' );
+		$this->assertTrue( $this->containsInstanceOf( $items, Sensei_Home_Task_Configure_Learning_Mode::class ), 'Configure Learning Mode task must be returned' );
+	}
+
+	private function containsInstanceOf( $items, $class ) {
+		foreach ( $items as $item ) {
+			if ( $item instanceof $class ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

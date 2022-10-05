@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Settings extends Sensei_Settings_API {
 
+	const VISITED_SECTIONS_OPTION_KEY = 'sensei_settings_sections_visited';
+
 	/**
 	 * Constructor.
 	 *
@@ -45,6 +47,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
 		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
 
+		// Mark settings section as visited on ajax action received.
+		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
 	}
 
 	/**
@@ -936,6 +940,36 @@ class Sensei_Settings extends Sensei_Settings_API {
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Enqueue javascript.
+	 */
+	public function enqueue_scripts() {
+		parent::enqueue_scripts();
+
+		// Generate nonce for marking section visited action.
+		wp_add_inline_script(
+			'sensei-settings',
+			'window.senseiSettingsSectionVisitNonce  = "' . wp_create_nonce( 'sensei-mark-settings-section-visited' ) . '";',
+			'before'
+		);
+	}
+
+	/**
+	 * Marks the given section as visited.
+	 */
+	public function mark_section_as_visited() {
+		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'sensei-mark-settings-section-visited' ) ) {
+			if ( isset( $_POST['section_id'] ) ) {
+				$section_id = sanitize_key( $_POST['section_id'] );
+				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );
+				if ( ! in_array( $section_id, $visited, true ) ) {
+					$visited[] = $section_id;
+					update_option( self::VISITED_SECTIONS_OPTION_KEY, $visited );
+				}
+			}
+		}
 	}
 }
 
