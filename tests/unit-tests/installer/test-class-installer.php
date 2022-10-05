@@ -43,7 +43,7 @@ class Installer_Test extends \WP_UnitTestCase {
 
 	public function testInstall_WhenNotInstalling_ShouldRun(): void {
 		/* Arrange. */
-		$install_runs = did_action( 'sensei_lms_stalled' );
+		$install_runs = did_action( 'sensei_lms_installed' );
 
 		/* Act. */
 		$this->installer->install();
@@ -69,7 +69,7 @@ class Installer_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		update_option( 'sensei_lms_version', '0.0.1' );
 
-		$install_runs = did_action( 'sensei_pro_installed' );
+		$install_runs = did_action( 'sensei_lms_installed' );
 
 		/* Act. */
 		$this->installer->install();
