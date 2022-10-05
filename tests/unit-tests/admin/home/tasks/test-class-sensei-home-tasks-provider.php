@@ -29,7 +29,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that provider returns Sensei_Home_Task_Setup_Site task.
+	 * Test that provider returns Sensei_Home_Task_Setup_Site task and Sensei_Home_Task_Create_First_Course.
 	 */
 	public function testProviderReturnsSetupSiteTask() {
 		$tasks = $this->provider->get();
@@ -37,7 +37,9 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( Sensei_Home_Tasks::class, $tasks );
 		$items = $tasks->get_items();
 		$this->assertIsArray( $items );
-		$this->assertCount( 1, $items, 'At the moment only one task is expected.' );
+		$this->assertCount( 2, $items, 'At the moment only two tasks are expected.' );
 		$this->assertInstanceOf( Sensei_Home_Task_Setup_Site::class, $items[0] );
+		$this->assertInstanceOf( Sensei_Home_Task_Create_First_Course::class, $items[1] );
+
 	}
 }
