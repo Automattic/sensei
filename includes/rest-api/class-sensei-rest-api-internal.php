@@ -53,11 +53,18 @@ class Sensei_REST_API_Internal {
 	private $help_provider;
 
 	/**
-	 * Sensei Home Sensei Pro provider.
+	 * Sensei Home Promo Banner provider.
 	 *
 	 * @var Sensei_Home_Promo_Banner_Provider
 	 */
 	private $promo_provider;
+
+	/**
+	 * Sensei Home Tasks provider.
+	 *
+	 * @var Sensei_Home_Tasks_Provider
+	 */
+	private $tasks_provider;
 
 	/**
 	 * Sensei_REST_API_Internal constructor.
@@ -67,6 +74,7 @@ class Sensei_REST_API_Internal {
 		$this->quick_links_provider   = new Sensei_Home_Quick_Links_Provider();
 		$this->help_provider          = new Sensei_Home_Help_Provider();
 		$this->promo_provider         = new Sensei_Home_Promo_Banner_Provider();
+		$this->tasks_provider         = new Sensei_Home_Tasks_Provider();
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
 
@@ -91,7 +99,8 @@ class Sensei_REST_API_Internal {
 				$this->home_controller_mapper,
 				$this->quick_links_provider,
 				$this->help_provider,
-				$this->promo_provider
+				$this->promo_provider,
+				$this->tasks_provider
 			),
 		];
 
