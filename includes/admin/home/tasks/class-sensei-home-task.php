@@ -22,7 +22,7 @@ interface Sensei_Home_Task {
 	 *
 	 * @return string
 	 */
-	public function get_id() : string;
+	public static function get_id() : string;
 
 	/**
 	 * Number used to sort in frontend.
