@@ -79,10 +79,10 @@ class Sensei_Block_Contact_Teacher {
 		$contact_form = $this->teacher_contact_form( $post );
 		$text_close   = __( 'Close', 'sensei-lms' );
 
-		return '<div id="private_message" class="sensei-block-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
+		return '<div id="private_message" class="sensei-block-wrapper sensei-contact-teacher-wrapper sensei-collapsible" data-sensei-modal ' . ( $contact_form_open ? 'data-sensei-modal-is-open' : '' ) . '>
 				' . ( $this->add_button_attributes( $content, $contact_form_link ) ) . '
 				<a href="' . $post_link . '" data-sensei-modal-overlay aria-label="' . $text_close . '"></a>
-				<div data-sensei-modal-content>
+				<div data-sensei-modal-content class="sensei-course-theme__frame">
 					' . $contact_form . '
 					<a class="sensei-contact-teacher-close" href="' . $post_link . '" data-sensei-modal-close title="' . $text_close . '">
 						' . \Sensei()->assets->get_icon( 'close' ) . '

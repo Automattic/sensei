@@ -201,9 +201,9 @@ class Sensei_Course_Theme_Editor {
 	 */
 	public function add_editor_styles() {
 
+		add_editor_style( Sensei()->assets->asset_url( 'css/frontend.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/learning-mode.css' ) );
 		add_editor_style( Sensei()->assets->asset_url( 'css/learning-mode.editor.css' ) );
-		add_editor_style( Sensei()->assets->asset_url( 'css/frontend.css' ) );
 	}
 
 	/**
