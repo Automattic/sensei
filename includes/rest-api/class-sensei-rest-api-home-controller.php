@@ -181,7 +181,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
 			],
-			'promo_banner'  => $this->mapper->map_promo_banner( $this->promo_banner_provider->get() ),
+			'promo_banner'  => $this->promo_banner_provider->get(),
 			'notifications' => [
 				[
 					'heading'     => null, // Not needed for the moment.

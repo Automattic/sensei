@@ -148,24 +148,18 @@ class Sensei_REST_API_Home_Controller_Test extends WP_Test_REST_TestCase {
 		$quick_links_provider_stub = $this->createMock( Sensei_Home_Quick_Links_Provider::class );
 		$help_provider_stub        = $this->createMock( Sensei_Home_Help_Provider::class );
 		$tasks_provider_stub       = $this->createMock( Sensei_Home_Tasks_Provider::class );
+		$mapper_stub               = $this->createMock( Sensei_REST_API_Home_Controller_Mapper::class );
 		// Mock provider
-		$mocked_banner       = $this->createMock( Sensei_Home_Promo_Banner::class );
+		$mocked_banner       = [ 'banner' ];
 		$promo_provider_mock = $this->createMock( Sensei_Home_Promo_Banner_Provider::class );
 		$promo_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_banner );
-		// Mock mapper
-		$mocked_mapped_response = [ 'mocked_response' ];
-		$mapper_mock            = $this->createMock( Sensei_REST_API_Home_Controller_Mapper::class );
-		$mapper_mock->expects( $this->once() )
-			->method( 'map_promo_banner' )
-			->with( $mocked_banner )
-			->willReturn( $mocked_mapped_response );
 
 		// Do the actual call.
 		$controller = new Sensei_REST_API_Home_Controller(
 			'namespace',
-			$mapper_mock,
+			$mapper_stub,
 			$quick_links_provider_stub,
 			$help_provider_stub,
 			$promo_provider_mock,
@@ -175,7 +169,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_Test_REST_TestCase {
 
 		// Assert 'help' is returned as received from the mapper.
 		$this->assertArrayHasKey( 'promo_banner', $result );
-		$this->assertSame( $mocked_mapped_response, $result['promo_banner'] );
+		$this->assertSame( $mocked_banner, $result['promo_banner'] );
 	}
 
 	/**
