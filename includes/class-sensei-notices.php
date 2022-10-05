@@ -20,6 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.6.3
  */
 class Sensei_Notices {
+	/**
+	 * The key to use for storing the notices as user meta
+	 */
+	private const USER_META_KEY = 'sensei_notices';
 
 	/**
 	 * Notices.
@@ -64,6 +68,8 @@ class Sensei_Notices {
 		);
 
 		add_action( 'template_redirect', [ $this, 'setup_block_notices' ] );
+		add_action( 'init', [ $this, 'maybe_load_notices' ] );
+		add_action( 'shutdown', [ $this, 'maybe_persist_notices' ] );
 	}
 
 	/**
@@ -111,7 +117,7 @@ class Sensei_Notices {
 			$this->notices[ $notice['key'] ] = $notice;
 		}
 
-		// if a notice is added after we've printed print it immediately.
+		// if a notice is added after we've printed, print it immediately.
 		if ( $this->has_printed ) {
 			$this->maybe_print_notices();
 		}
@@ -123,11 +129,8 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_print_notices() {
-		if ( count( $this->notices ) > 0 ) {
+		if ( ! empty( $this->notices ) ) {
 			foreach ( $this->notices  as  $notice ) {
-
-				$classes = 'sensei-message ' . $notice['type'];
-
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in generate_notice
 				echo $this->generate_notice( $notice['type'], $notice['content'] );
 			}
@@ -138,6 +141,36 @@ class Sensei_Notices {
 
 		// set this to print immediately if notices are added after the notices were printed.
 		$this->has_printed = true;
+	}
+
+	/**
+	 * Load the notices from the user meta, if the user is logged in, and delete them.
+	 *
+	 * @return void
+	 */
+	public function maybe_load_notices() {
+		if ( is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+			$values  = get_user_meta( $user_id, self::USER_META_KEY );
+
+			$this->notices = array_merge( $this->notices, ...$values );
+			foreach ( $values as $value ) {
+				delete_user_meta( $user_id, self::USER_META_KEY, $value );
+			}
+		}
+	}
+
+	/**
+	 * If the user is logged in and there's notices to print, persist the saved notices as user meta, and clear the
+	 * notice list.
+	 *
+	 * @return void
+	 */
+	public function maybe_persist_notices() {
+		if ( ! empty( $this->notices ) && is_user_logged_in() ) {
+			add_user_meta( get_current_user_id(), self::USER_META_KEY, $this->notices );
+			$this->clear_notices();
+		}
 	}
 
 	/**

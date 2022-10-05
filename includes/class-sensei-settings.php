@@ -922,7 +922,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$options       = $this->get_settings();
 		$key           = $args['key'];
 		$value         = $options[ $key ];
-		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
+		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' );
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -990,7 +990,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'         => "{$this->token}[{$key}]",
 			'value'        => $value,
 			'options'      => $args['data']['options'],
-			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url(),
+			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' ),
 			'formId'       => "{$this->token}-form",
 			'section'      => $args['data']['section'],
 		];
