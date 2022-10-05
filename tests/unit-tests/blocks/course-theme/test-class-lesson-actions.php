@@ -32,6 +32,10 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
 
+		if ( ! isset( Sensei()->admin ) ) {
+			Sensei()->admin = new Sensei_Admin();
+		}
+
 		WP_Block_Supports::$block_to_render = [
 			'attrs'     => [],
 			'blockName' => 'sensei-lms/course-theme-lesson-actions',
