@@ -187,6 +187,7 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 				[
 					'items' => [
 						'completed-task' => [
+							'id'       => 'completed-task',
 							'title'    => 'title 1',
 							'url'      => 'url 1',
 							'image'    => 'image 1',
@@ -202,6 +203,7 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 				[
 					'items' => [
 						'completed-task'   => [
+							'id'       => 'completed-task',
 							'title'    => 'title 1',
 							'url'      => 'url 1',
 							'image'    => 'image 1',
@@ -209,6 +211,7 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 							'priority' => 100,
 						],
 						'uncompleted-task' => [
+							'id'       => 'uncompleted-task',
 							'title'    => 'title 2',
 							'url'      => 'url 2',
 							'image'    => 'image 2',
@@ -218,7 +221,7 @@ class Sensei_REST_API_Home_Controller_Mapper_Test extends WP_UnitTestCase {
 					],
 
 				],
-				'Returns just one completed task.',
+				'Returns a completed and an uncompleted task.',
 			],
 		];
 	}

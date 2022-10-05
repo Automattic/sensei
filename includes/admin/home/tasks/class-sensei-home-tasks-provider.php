@@ -6,6 +6,10 @@
  * @since   $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class responsible for generating the Tasks structure for Sensei Home screen.
  */
@@ -30,6 +34,7 @@ class Sensei_Home_Tasks_Provider {
 		return [
 			new Sensei_Home_Task_Setup_Site(),
 			new Sensei_Home_Task_Create_First_Course(),
+			new Sensei_Home_Task_Configure_Learning_Mode(),
 		];
 	}
 

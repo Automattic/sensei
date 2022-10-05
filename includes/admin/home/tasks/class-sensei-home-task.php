@@ -6,6 +6,10 @@
  * @since $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Sensei_Home_Task interface.
  *

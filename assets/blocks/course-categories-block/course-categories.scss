@@ -1,7 +1,13 @@
-.wp-block-sensei-lms-course-categories {
+$block: 'sensei-lms-course-categories';
+
+// :root selector increases the CSS specificity,
+// without it the text-decoration: none; for links is ignored.
+:root .wp-block-#{$block} {
+	--#{$block}-text-color: #ffffff;
+	--#{$block}-background-color: #0170B9;
+
 	margin: 10px 0;
 	width: 100%;
-
 	> a {
 		display: inline-flex;
 		padding: 3px 6px;
@@ -9,25 +15,14 @@
 		border-radius: 2px;
 		white-space: nowrap;
 		margin-bottom: 5px;
+		background-color: var( --#{$block}-background-color );
 
 		&:not( :last-child ) {
 			margin-right: 10px;
 		}
 
-		&:not( .has-background ) {
-			background-color: #3858E9;
+		& span {
+			color: var( --#{$block}-text-color );
 		}
-
-		&:not( .has-text-color ) {
-			color: #fff;
-		}
-	}
-
-	&.alignright {
-		text-align: right;
-	}
-
-	&.aligncenter {
-		text-align: center;
 	}
 }

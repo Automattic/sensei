@@ -6,6 +6,10 @@
  * @since $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Sensei_Home_Tasks class.
  *
@@ -30,7 +34,7 @@ class Sensei_Home_Tasks {
 	}
 
 	/**
-	 * The the actual tasks.
+	 * The actual tasks.
 	 *
 	 * @return Sensei_Home_Task[]
 	 */
