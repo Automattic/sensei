@@ -761,7 +761,7 @@ class Sensei_Admin {
 	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
-		$lessons              = Sensei()->course->course_lessons( $old_course_id );
+		$lessons              = Sensei()->course->course_lessons( $old_course_id, 'any' );
 		$new_lesson_id_lookup = array();
 		$lessons_to_update    = array();
 

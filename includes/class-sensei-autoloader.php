@@ -243,10 +243,14 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Content'      => 'blocks/course-theme/class-quiz-content.php',
 			'Sensei\Blocks\Course_Theme\Post_Title'        => 'blocks/course-theme/class-post-title.php',
 			'Sensei\Blocks\Course_Theme\Lesson_Module'     => 'blocks/course-theme/class-lesson-module.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Properties' => 'blocks/course-theme/class-lesson-properties.php',
 			'Sensei\Blocks\Course_Theme\Sidebar_Toggle_Button' => 'blocks/course-theme/class-sidebar-toggle-button.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+			'Sensei\Blocks\Course_Theme\Ui'                => 'blocks/course-theme/class-ui.php',
+			'Sensei\Blocks\Course_Theme\Template_Style'    => 'blocks/course-theme/class-template-style.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Video'      => 'blocks/course-theme/class-lesson-video.php',
 		);
 	}
 

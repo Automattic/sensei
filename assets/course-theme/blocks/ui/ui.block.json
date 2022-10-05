@@ -1,0 +1,44 @@
+{
+	"name": "sensei-lms/ui",
+	"category": "theme",
+	"apiVersion": 2,
+	"supports": {
+		"align": true,
+		"alignWide": true,
+		"color": {
+			"gradients": true,
+			"link": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true,
+				"link": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		},
+		"__experimentalLayout": true,
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		}
+	},
+	"attributes": {
+		"tagName": {
+			"type": "string",
+			"default": "div"
+		},
+		"elementClass": {
+			"type": "string",
+			"default": ""
+		}
+	}
+}
