@@ -14,6 +14,7 @@
 	justify-content: center;
 	align-items: center;
 	background-color: var(--sensei-background-color);
+	max-width: var(--content-size) fit-content !important;
 
 	&__text {
 		margin: 25px 0;
