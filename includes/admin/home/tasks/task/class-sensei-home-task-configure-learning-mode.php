@@ -28,7 +28,7 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * @return int
 	 */
 	public function get_priority(): int {
-		return 200;
+		return 300;
 	}
 
 	/**
