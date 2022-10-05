@@ -136,3 +136,5 @@ if ( ! function_exists( 'activate_sensei' ) ) {
 		Sensei()->activate();
 	}
 }
+
+\Sensei\Installer\Installer::instance()->init();
