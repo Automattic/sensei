@@ -12,12 +12,21 @@
 }
 
 .sensei-course-theme__post-pagination {
-	margin-top: 36px;
-	margin-bottom: 36px;
 
 	display: flex;
 	align-items: flex-start;
 	flex-wrap: wrap;
 	gap: 12px;
+
+	.post-page-numbers {
+		padding: 8px 13px;
+		border: 1px solid var(--border-color);
+		font-weight: 700;
+		text-decoration: none;
+		border-radius: 2px;
+		&.current {
+			opacity: 0.5;
+		}
+	}
 
 }

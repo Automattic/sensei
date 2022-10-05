@@ -57,7 +57,6 @@
 
 			}
 
-
 			&__header {
 				.sensei-course-theme-course-progress {
 					display: none;
@@ -66,36 +65,6 @@
 
 			&--sidebar-open {
 				overflow: hidden;
-
-				.sensei-course-theme__header::after {
-					content: '';
-					background: inherit;
-					position: absolute;
-					left: 0;
-					right: 0;
-					bottom: -24px;
-					height: 24px;
-					z-index: 0;
-				}
-
-				.sensei-course-theme__header .sensei-course-theme-course-progress {
-					display: block;
-					position: absolute;
-					left: 24px;
-					top: calc(var(--header-height) - 12px);
-					z-index: 1;
-				}
-
-				.sensei-course-theme__header .sensei-course-theme-course-progress-bar {
-					height: 8px;
-					position: absolute;
-					top: calc(var(--header-height) + 10px);
-					margin: 0;
-					left: 24px;
-					right: 24px;
-					width: auto;
-					z-index: 1;
-				}
 			}
 		}
 	}

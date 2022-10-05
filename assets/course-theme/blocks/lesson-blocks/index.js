@@ -242,21 +242,9 @@ export default [
 			} );
 			return (
 				<div { ...blockProps }>
-					<div className="sensei-quiz-pagination__list">
-						<ul className="page-numbers">
-							<li>
-								<span className="page-numbers current">1</span>
-							</li>
-							<li>
-								<span className="page-numbers">2</span>
-							</li>
-							<li>
-								<span className="page-numbers dots">…</span>
-							</li>
-							<li>
-								<span className="page-numbers">10</span>
-							</li>
-						</ul>
+					<div className="sensei-course-theme__post-pagination">
+						<span className="post-page-numbers current">1</span>
+						<span className="post-page-numbers">2</span>
 					</div>
 				</div>
 			);

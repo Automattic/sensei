@@ -55,7 +55,7 @@ function updateElementHeightOnResize( block ) {
 			return;
 		}
 
-		element.setAttribute( 'height', offsetWidth / ratio );
+		element.style.setProperty( 'height', `${ height }px` );
 	}
 }
 

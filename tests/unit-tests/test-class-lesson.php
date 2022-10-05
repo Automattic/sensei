@@ -1569,8 +1569,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$lesson              = new Sensei_Lesson();
 		$lesson->meta_fields = [ 'lesson_video_embed', 'lesson_preview', 'lesson_length' ];
 
-		// We need to enable this filter so that meta_box_save can properly run.
-		add_filter( 'sensei_quiz_enable_block_based_editor', '__return_false' );
 		/* Act */
 		$lesson->meta_box_save( $post->ID );
 

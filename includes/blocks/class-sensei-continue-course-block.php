@@ -110,8 +110,9 @@ class Sensei_Continue_Course_Block {
 			// If there is no such lesson, get the first lesson that the user has not yet started.
 			$completed_lessons     = Sensei()->course->get_completed_lesson_ids( $course_id, $user_id );
 			$not_completed_lessons = array_diff( $course_lessons, $completed_lessons );
+
 			if ( count( $course_lessons ) !== count( $not_completed_lessons ) && ! empty( $not_completed_lessons ) ) {
-				return $not_completed_lessons[0];
+				return current( $not_completed_lessons );
 			}
 		}
 		return $course_id;
