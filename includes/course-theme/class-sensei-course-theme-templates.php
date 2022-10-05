@@ -331,7 +331,12 @@ class Sensei_Course_Theme_Templates {
 							}
 						}
 					}
-					$template_object->content = $html . Template_Style::serialize_block( $css );
+
+					$template_object->content = $html;
+
+					if ( ! empty( $css ) ) {
+						$template_object->content .= Template_Style::serialize_block( $css );
+					}
 				}
 				$template_object->wp_id  = null;
 				$template_object->author = null;
