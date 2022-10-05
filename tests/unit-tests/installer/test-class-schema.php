@@ -38,6 +38,7 @@ class Schema_Test extends \WP_UnitTestCase {
 		$this->schema->create_tables();
 
 		/* Assert. */
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$created_tables = $wpdb->get_col( "SHOW TABLES LIKE '{$wpdb->prefix}sensei_lms%'" );
 		foreach ( $expected_tables as $table ) {
 			$this->assertContains( $table, $created_tables );
@@ -54,6 +55,7 @@ class Schema_Test extends \WP_UnitTestCase {
 
 		// Remove any existing tables in the environment.
 		$query = 'DROP TABLE IF EXISTS ' . implode( ',', $this->schema->get_tables() );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$wpdb->query( $query );
 	}
 }
