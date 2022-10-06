@@ -179,8 +179,8 @@ class Sensei_Setup_Wizard {
 	 * Set up hooks for loading Setup Wizard page assets.
 	 */
 	public function prepare_wizard_page() {
-		add_action( 'admin_print_scripts', [ $this, 'enqueue_scripts' ] );
-		add_action( 'admin_print_styles', [ $this, 'enqueue_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_styles' ] );
 		add_action( 'admin_body_class', [ $this, 'filter_body_class' ] );
 
 		add_filter( 'show_admin_bar', '__return_false' );

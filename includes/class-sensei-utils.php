@@ -2630,6 +2630,70 @@ class Sensei_Utils {
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
 	}
+
+	/**
+	 * Render a video embed.
+	 *
+	 * @param string $url The URL for the video embed.
+	 *
+	 * @return string an embeddable HTML string.
+	 */
+	public static function render_video_embed( $url ) {
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'title'           => array(),
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
+		);
+
+		if ( 'http' === substr( $url, 0, 4 ) ) {
+			// V2 - make width and height a setting for video embed.
+			$url = wp_oembed_get( esc_url( $url ) );
+			$url = do_shortcode( html_entity_decode( $url ) );
+		}
+		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
+	}
+
+	/**
+	 * Gets the HTML content from the Featured Video for a lesson.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $post_id the post ID.
+	 *
+	 * @return string|false The featured video HTML output if it exists, or false if it doesn't.
+	 */
+	public static function get_featured_video_html( $post_id = null ) {
+		$post = get_post( $post_id );
+
+		if ( has_block( 'sensei-lms/featured-video', $post ) ) {
+			$blocks = parse_blocks( $post->post_content );
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+					return render_block( $block );
+				}
+			}
+		}
+		$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
+		return $video_embed ? self::render_video_embed( $video_embed ) : '';
+
+	}
+
+	/**
+	 * Get the featured video thumbnail URL from a Post's metadata.
+	 *
+	 * @param int $post_id The Post ID.
+	 * @return string The video thumbnail URL.
+	 */
+	public static function get_featured_video_thumbnail_url( $post_id ) {
+		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
+	}
 }
 
 /**

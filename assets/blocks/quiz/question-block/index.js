@@ -21,9 +21,6 @@ export default {
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
 	description: __( 'The building block of all quizzes.', 'sensei-lms' ),
-	example: {
-		attributes: { title: __( 'Example Quiz Question', 'sensei-lms' ) },
-	},
 	deprecated,
 	edit,
 	save: () => <InnerBlocks.Content />,
