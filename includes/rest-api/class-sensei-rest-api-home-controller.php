@@ -39,13 +39,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	private $quick_links_provider;
 
 	/**
-	 * Home remote data helper.
-	 *
-	 * @var Sensei_Home_Remote_Data_API
-	 */
-	private $remote_data_api;
-
-	/**
 	 * Help provider.
 	 *
 	 * @var Sensei_Home_Help_Provider
@@ -70,7 +63,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
 	 * @param string                            $namespace             Routes namespace.
-	 * @param Sensei_Home_Remote_Data_API       $remote_data_api  Fetch home data helper.
 	 * @param Sensei_Home_Quick_Links_Provider  $quick_links_provider  Quick Links provider.
 	 * @param Sensei_Home_Help_Provider         $help_provider         Help provider.
 	 * @param Sensei_Home_Promo_Banner_Provider $promo_banner_provider Promo banner provider.
@@ -78,14 +70,12 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function __construct(
 		$namespace,
-		Sensei_Home_Remote_Data_API $remote_data_api,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider,
 		Sensei_Home_Help_Provider $help_provider,
 		Sensei_Home_Promo_Banner_Provider $promo_banner_provider,
 		Sensei_Home_Tasks_Provider $tasks_provider
 	) {
 		$this->namespace             = $namespace;
-		$this->remote_data_api       = $remote_data_api;
 		$this->quick_links_provider  = $quick_links_provider;
 		$this->help_provider         = $help_provider;
 		$this->promo_banner_provider = $promo_banner_provider;
@@ -131,19 +121,12 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
-		$home_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
-		if ( is_wp_error( $home_data ) ) {
-			exit;
-		}
-		$guides = $home_data['guides'] ?? [];
-		$news   = $home_data['news'] ?? [];
-
 		return [
 			'tasks'         => $this->tasks_provider->get(),
 			'quick_links'   => $this->quick_links_provider->get(),
 			'help'          => $this->help_provider->get(),
-			'guides'        => $guides,
-			'news'          => $news,
+			'guides'        => [],
+			'news'          => [],
 			'extensions'    => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro}.json.
 				[
