@@ -22,7 +22,7 @@ class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 	 *
 	 * @return string
 	 */
-	public function get_id(): string {
+	public static function get_id(): string {
 		return 'setup-site';
 	}
 

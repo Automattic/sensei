@@ -21,7 +21,7 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 	 *
 	 * @return string
 	 */
-	public function get_id(): string {
+	public static function get_id(): string {
 		return 'create-first-course';
 	}
 

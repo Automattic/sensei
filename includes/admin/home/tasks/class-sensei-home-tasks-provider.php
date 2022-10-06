@@ -18,23 +18,70 @@ class Sensei_Home_Tasks_Provider {
 	/**
 	 * Returns the Tasks.
 	 *
-	 * @return Sensei_Home_Tasks
+	 * @return array
 	 */
-	public function get(): Sensei_Home_Tasks {
-		return new Sensei_Home_Tasks( $this->calculate_tasks() );
+	public function get(): array {
+		return [
+			'items' => $this->get_tasks(),
+		];
 	}
 
 	/**
 	 * Actual logic to decide what tasks have to be returned.
 	 *
-	 * @return Sensei_Home_Task[]
+	 * @return array[]
 	 */
-	private function calculate_tasks(): array {
+	private function get_tasks(): array {
 		// TODO Implement the logic for this.
-		return [
+		$core_tasks = [
 			new Sensei_Home_Task_Setup_Site(),
 			new Sensei_Home_Task_Create_First_Course(),
 			new Sensei_Home_Task_Configure_Learning_Mode(),
+		];
+
+		$tasks = [];
+		/**
+		 * Each one of the core tasks.
+		 *
+		 * @var Sensei_Home_Task $core_task
+		 */
+		foreach ( $core_tasks as $core_task ) {
+			$tasks[ $core_task::get_id() ] = $this->map_task( $core_task );
+		}
+
+		/**
+		 * Filters the list of tasks that will be later displayed in the Sensei Home header.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param array $tasks {
+		 *  A dictionary of tasks indexed by task ID.
+		 *
+		 *  @type string $id The task ID. Must be unique.
+		 *  @type string $title The task title.
+		 *  @type int $priority Number used in frontend to sort tasks in ascending order.
+		 *  @type string $url Optional. Destination URL for users when clicking on the task.
+		 *  @type string $image Optional. Source url or path for the featured image when this task is the first pending one.
+		 *  @type bool $done Whether the task is considered done or not.
+		 * }
+		 */
+		return apply_filters( 'sensei_home_tasks', $tasks );
+	}
+
+	/**
+	 * Maps a specific Sensei_Home_Task to a basic array structure. Will execute the code in `is_completed` for all entries.
+	 *
+	 * @param Sensei_Home_Task $task The actual task to map.
+	 * @return array
+	 */
+	private function map_task( Sensei_Home_Task $task ): array {
+		return [
+			'id'       => $task::get_id(),
+			'title'    => $task->get_title(),
+			'priority' => $task->get_priority(),
+			'url'      => $task->get_url(),
+			'image'    => $task->get_image(),
+			'done'     => $task->is_completed(),
 		];
 	}
 
