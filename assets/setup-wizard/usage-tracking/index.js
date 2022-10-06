@@ -24,7 +24,7 @@ const UsageTracking = () => {
 	const onSubmitSuccess = ( allowUsageTracking ) => () => {
 		logEvent.enable( allowUsageTracking );
 
-		goTo( 'features' );
+		goTo( 'newsletter' );
 	};
 
 	const submitPage = ( allowUsageTracking ) => () => {
@@ -35,8 +35,8 @@ const UsageTracking = () => {
 	};
 
 	return (
-		<div className="sensei-setup-wizard__columns">
-			<div className="sensei-setup-wizard__columns-content">
+		<>
+			<div className="sensei-setup-wizard__content">
 				<H className="sensei-setup-wizard__step-title">
 					{ __(
 						'Help us improve your Sensei experience',
@@ -45,7 +45,7 @@ const UsageTracking = () => {
 				</H>
 				<p>
 					{ __(
-						'Help us build a better Sensei by sharing anonymous and non-sensitive data with our team. No personal data is tracked or stored, and this helps us track down bugs and plan future improvements.',
+						'Help us build a better Sensei by sharing anonymous and non-sensitive data with our team. No personal data will be tracked or stored.',
 						'sensei-lms'
 					) }
 				</p>
@@ -64,32 +64,16 @@ const UsageTracking = () => {
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
 							onClick={ submitPage( false ) }
 						>
-							{ __( 'Skip sharing data', 'sensei-lms' ) }
+							{ __( 'No thanks', 'sensei-lms' ) }
 						</button>
 					</div>
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__usage-tracking-illustration"
+				className="sensei-setup-wizard__illustration sensei-setup-wizard__illustration--tracking"
 				aria-hidden="true"
-			>
-				<picture>
-					<source
-						media="(max-width: 999px)"
-						srcSet={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration-small.png` }
-					/>
-					<source
-						media="(min-width: 1000px)"
-						srcSet={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration.png` }
-					/>
-					<img
-						className="sensei-setup-wizard__columns-illustration-image"
-						src={ `${ window.sensei.imagesPath }onboarding-improve-experience-illustration.png` }
-						alt=""
-					/>
-				</picture>
-			</div>
-		</div>
+			/>
+		</>
 	);
 };
 

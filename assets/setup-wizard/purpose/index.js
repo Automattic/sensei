@@ -46,20 +46,15 @@ const getInstallDescription = ( slug, features ) => {
 	const feature = features.find( ( i ) => i.product_slug === slug );
 
 	if ( ! feature.is_activated ) {
-		let action = __( 'install', 'sensei-lms' );
-		let freeText = __( ' for free', 'sensei-lms' );
-
-		if ( feature.is_installed ) {
-			action = __( 'activate', 'sensei-lms' );
-			freeText = '';
-		}
+		const action = feature.is_installed
+			? __( 'activated', 'sensei-lms' )
+			: __( 'installed for free', 'sensei-lms' );
 
 		return sprintf(
-			// translators: %1$s Action that will be done, %2$s Plugin name, %3$s.
-			__( 'We will %1$s %2$s%3$s.', 'sensei-lms' ),
-			action,
+			// translators: %1$s Plugin name, %2$s Action that will be done.
+			__( '%1$s will be %2$s.', 'sensei-lms' ),
 			feature.title,
-			freeText
+			action
 		);
 	}
 
@@ -115,88 +110,70 @@ const Purpose = () => {
 	};
 
 	return (
-		<div className="sensei-setup-wizard__columns">
-			<div className="sensei-setup-wizard__columns-content">
-				<div className="sensei-setup-wizard__title">
-					<H className="sensei-setup-wizard__step-title">
-						{ __(
-							'Tailor your course creation experience',
-							'sensei-lms'
-						) }
-					</H>
-					<p>
-						{ __(
-							'Choose your primary purpose for offering courses, and we will guide you to complete them. You can choose all that apply.',
-							'sensei-lms'
-						) }
-					</p>
-				</div>
-				<ul className="sensei-setup-wizard__purpose-list">
-					{ purposes.map( ( { id, label, feature } ) => (
-						<PurposeItem
-							key={ id }
-							label={ label }
-							checked={ selected.includes( id ) }
-							onToggle={ () => toggleItem( id ) }
-						>
-							{ feature &&
-								getInstallDescription(
-									feature,
-									featuresData.options
-								) }
-						</PurposeItem>
-					) ) }
-
-					<PurposeItem
-						label={ __( 'Other', 'sensei-lms' ) }
-						checked={ selected.includes( 'other' ) }
-						onToggle={ () => toggleItem( 'other' ) }
-					>
-						<TextControl
-							className="sensei-setup-wizard__text-control"
-							value={ other }
-							placeholder={ __( 'Description', 'sensei-lms' ) }
-							onChange={ ( value ) =>
-								setFormState( ( formState ) => ( {
-									...formState,
-									other: value,
-								} ) )
-							}
-						/>
-					</PurposeItem>
-				</ul>
-				<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
-					{ errorNotice }
-					<button
-						disabled={ isSubmitting || isEmpty }
-						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-						onClick={ submitPage }
-					>
-						{ __( 'Continue', 'sensei-lms' ) }
-					</button>
-					<div className="sensei-setup-wizard__action-skip">
-						<button
-							disabled={ isSubmitting }
-							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-							onClick={ goToNextStep }
-						>
-							{ __( 'Skip customization', 'sensei-lms' ) }
-						</button>
-					</div>
-				</div>
+		<div className="sensei-setup-wizard__content">
+			<div className="sensei-setup-wizard__title">
+				<H className="sensei-setup-wizard__step-title">
+					{ __( 'Choose the purpose of your site', 'sensei-lms' ) }
+				</H>
+				<p>
+					{ __(
+						'Select your goals for offering courses, and we will help you set everything up.',
+						'sensei-lms'
+					) }
+				</p>
 			</div>
-			<div
-				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__purpose-illustration"
-				aria-hidden="true"
-			>
-				<img
-					className="sensei-setup-wizard__columns-illustration-image"
-					src={
-						window.sensei.imagesPath +
-						'onboarding-purpose-illustration.png'
-					}
-					alt=""
-				/>
+			<ul className="sensei-setup-wizard__purpose-list">
+				{ purposes.map( ( { id, label, feature } ) => (
+					<PurposeItem
+						key={ id }
+						label={ label }
+						checked={ selected.includes( id ) }
+						onToggle={ () => toggleItem( id ) }
+					>
+						{ feature &&
+							getInstallDescription(
+								feature,
+								featuresData.options
+							) }
+					</PurposeItem>
+				) ) }
+
+				<PurposeItem
+					label={ __( 'Other', 'sensei-lms' ) }
+					checked={ selected.includes( 'other' ) }
+					onToggle={ () => toggleItem( 'other' ) }
+				>
+					<TextControl
+						className="sensei-setup-wizard__text-control"
+						value={ other }
+						placeholder={ __( 'Description', 'sensei-lms' ) }
+						onChange={ ( value ) =>
+							setFormState( ( formState ) => ( {
+								...formState,
+								other: value,
+							} ) )
+						}
+					/>
+				</PurposeItem>
+			</ul>
+			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+				{ errorNotice }
+				<button
+					disabled={ isSubmitting || isEmpty }
+					className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+					onClick={ submitPage }
+				>
+					{ __( 'Continue', 'sensei-lms' ) }
+				</button>
+				<div className="sensei-setup-wizard__action-skip">
+					<button
+						disabled={ isSubmitting }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
+						onClick={ goToNextStep }
+					>
+						{ __( 'Skip customization', 'sensei-lms' ) }
+					</button>
+				</div>
 			</div>
 		</div>
 	);

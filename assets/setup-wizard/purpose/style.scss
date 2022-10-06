@@ -1,17 +1,17 @@
 $checked-color: #000000;
-$unchecked-color: #757575;
 
 .sensei-setup-wizard {
 	&__purpose-list {
 		list-style: none;
 		margin: 0 0 32px;
 		padding: 0;
+		text-align: left;
 	}
 
 	&__purpose-item {
 		padding: 18px;
 		margin-bottom: 18px;
-		border: 1px solid $unchecked-color;
+		border: 1px solid #92A198;
 		border-radius: 8px;
 		transition: 0.3s border-color;
 
@@ -32,7 +32,8 @@ $unchecked-color: #757575;
 		}
 
 		.components-checkbox-control__input[type=checkbox] {
-			border-color: $unchecked-color;
+			border-color: #757575;
+			background-color: transparent;
 
 			&:checked {
 				background: $checked-color;
@@ -45,6 +46,7 @@ $unchecked-color: #757575;
 		display: block;
 		padding: 5px 0 0 36px;
 		font-size: 14px;
+		opacity: 0.6;
 
 		@media (min-width: $small-screen-break) {
 			padding-left: 32px;
@@ -53,11 +55,5 @@ $unchecked-color: #757575;
 
 	&__purpose-illustration {
 		display: none;
-
-		@media (min-width: $columns-break) {
-			display: block;
-			width: calc( 40% + $big-horizontal-padding );
-			margin: 0 (-$big-horizontal-padding);
-		}
 	}
 }

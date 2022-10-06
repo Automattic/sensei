@@ -15,8 +15,8 @@ import useActionsNavigator, {
 } from './use-actions-navigator';
 
 const featureLabels = {
-	woocommerce: __( 'Adding WooCommerce', 'sensei-lms' ),
-	'sensei-certificates': __( 'Adding certificates', 'sensei-lms' ),
+	woocommerce: __( 'Installing WooCommerce', 'sensei-lms' ),
+	'sensei-certificates': __( 'Installing Certificates', 'sensei-lms' ),
 };
 
 const senseiHomePath = '/wp-admin/admin.php?page=sensei-home';
@@ -65,11 +65,11 @@ const Features = () => {
 	const actions = useMemo(
 		() => [
 			{
-				label: __( 'Preparing your tailored experience', 'sensei-lms' ),
+				label: __( 'Applying your choices', 'sensei-lms' ),
 			},
 			...getFeatureActions( stepData ),
 			{
-				label: __( 'Taking you to your new Sensei Home', 'sensei-lms' ),
+				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
 				action: () =>
 					new Promise( ( resolve ) => {
 						setTimeout( () => {
@@ -92,44 +92,46 @@ const Features = () => {
 	const { percentage, label } = useActionsNavigator( actions );
 
 	return (
-		<div className="sensei-setup-wizard__features-step">
-			{ error && (
-				<Notice
-					status="error"
-					className="sensei-setup-wizard__submit-error"
-					isDismissible={ false }
-					actions={ [
-						{
-							label: __( 'Go to Sensei Home', 'sensei-lms' ),
-							url: senseiHomePath,
-						},
-					] }
-				>
-					{ error.message }
-				</Notice>
-			) }
+		<div className="sensei-setup-wizard__full-centered-step">
+			<div className="sensei-setup-wizard__full-centered-content">
+				{ error && (
+					<Notice
+						status="error"
+						className="sensei-setup-wizard__submit-error"
+						isDismissible={ false }
+						actions={ [
+							{
+								label: __( 'Go to Sensei Home', 'sensei-lms' ),
+								url: senseiHomePath,
+							},
+						] }
+					>
+						{ error.message }
+					</Notice>
+				) }
 
-			<div
-				className="sensei-setup-wizard__features-status"
-				role="status"
-				aria-live="polite"
-			>
-				<div className="sensei-setup-wizard__fade-in" key={ label }>
-					{ label }
-				</div>
-			</div>
-
-			<div className="sensei-setup-wizard__features-progress-bar">
 				<div
-					role="progressbar"
-					aria-label={ __(
-						'Sensei Onboarding Progress',
-						'sensei-lms'
-					) }
-					aria-valuenow={ percentage }
-					className="sensei-setup-wizard__features-progress-bar-filled"
-					style={ { width: `${ percentage }%` } }
-				/>
+					className="sensei-setup-wizard__features-status"
+					role="status"
+					aria-live="polite"
+				>
+					<div className="sensei-setup-wizard__fade-in" key={ label }>
+						{ label }
+					</div>
+				</div>
+
+				<div className="sensei-setup-wizard__features-progress-bar">
+					<div
+						role="progressbar"
+						aria-label={ __(
+							'Sensei Onboarding Progress',
+							'sensei-lms'
+						) }
+						aria-valuenow={ percentage }
+						className="sensei-setup-wizard__features-progress-bar-filled"
+						style={ { width: `${ percentage }%` } }
+					/>
+				</div>
 			</div>
 		</div>
 	);

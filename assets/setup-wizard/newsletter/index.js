@@ -21,8 +21,8 @@ const Newsletter = () => {
 	};
 
 	return (
-		<div className="sensei-setup-wizard__columns">
-			<div className="sensei-setup-wizard__columns-content">
+		<>
+			<div className="sensei-setup-wizard__content">
 				<H className="sensei-setup-wizard__step-title">
 					{ __(
 						'Be the first to know about new features',
@@ -31,7 +31,7 @@ const Newsletter = () => {
 				</H>
 				<p>
 					{ __(
-						'Sensei is growing fast and we’re constantly releasing new features. Join on our mailing list to find out about everything that we release and how you can make the most out of it.',
+						'Sensei is growing fast and we’re constantly releasing new features. Join on our mailing list to know first.',
 						'sensei-lms'
 					) }
 				</p>
@@ -48,19 +48,10 @@ const Newsletter = () => {
 				</div>
 			</div>
 			<div
-				className="sensei-setup-wizard__columns-illustration sensei-setup-wizard__newsletter-illustration"
+				className="sensei-setup-wizard__illustration sensei-setup-wizard__illustration--newsletter"
 				aria-hidden="true"
-			>
-				<img
-					className="sensei-setup-wizard__columns-illustration-image"
-					src={
-						window.sensei.imagesPath +
-						'onboarding-newsletter-illustration.png'
-					}
-					alt=""
-				/>
-			</div>
-		</div>
+			/>
+		</>
 	);
 };
 

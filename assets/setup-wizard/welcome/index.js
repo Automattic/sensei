@@ -54,26 +54,31 @@ const Welcome = () => {
 	 */
 	const paragraph = applyFilters(
 		'sensei.setupWizard.welcomeParagraph',
-		__( "We'll have your first course live in no time.", 'sensei-lms' )
+		__(
+			'Let’s set up your site to launch your first course.',
+			'sensei-lms'
+		)
 	);
 
 	return (
-		<div className="sensei-setup-wizard__welcome-step">
-			<H className="sensei-setup-wizard__step-title">{ title }</H>
-			<p>{ paragraph }</p>
-			<div className="sensei-setup-wizard__actions">
-				{ errorNotice }
-				<button
-					disabled={ isSubmitting }
-					className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-					onClick={ submitPage }
-				>
-					{ __( 'Get started', 'sensei-lms' ) }
-				</button>
-				<div className="sensei-setup-wizard__action-skip">
-					<a href="edit.php?post_type=course">
-						{ __( 'Skip onboarding', 'sensei-lms' ) }
-					</a>
+		<div className="sensei-setup-wizard__full-centered-step">
+			<div className="sensei-setup-wizard__full-centered-content">
+				<H className="sensei-setup-wizard__step-title">{ title }</H>
+				<p>{ paragraph }</p>
+				<div className="sensei-setup-wizard__actions">
+					{ errorNotice }
+					<button
+						disabled={ isSubmitting }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+						onClick={ submitPage }
+					>
+						{ __( 'Get started', 'sensei-lms' ) }
+					</button>
+					<div className="sensei-setup-wizard__action-skip">
+						<a href="edit.php?post_type=course">
+							{ __( 'Skip onboarding', 'sensei-lms' ) }
+						</a>
+					</div>
 				</div>
 			</div>
 		</div>
