@@ -35,7 +35,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down.
 	 */
-	protected function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 
 		remove_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
