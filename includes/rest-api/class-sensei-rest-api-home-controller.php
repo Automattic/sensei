@@ -67,19 +67,22 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_Help_Provider         $help_provider         Help provider.
 	 * @param Sensei_Home_Promo_Banner_Provider $promo_banner_provider Promo banner provider.
 	 * @param Sensei_Home_Tasks_Provider        $tasks_provider        Tasks provider.
+	 * @param Sensei_Home_News_Provider         $news_provider        News provider.
 	 */
 	public function __construct(
 		$namespace,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider,
 		Sensei_Home_Help_Provider $help_provider,
 		Sensei_Home_Promo_Banner_Provider $promo_banner_provider,
-		Sensei_Home_Tasks_Provider $tasks_provider
+		Sensei_Home_Tasks_Provider $tasks_provider,
+		Sensei_Home_News_Provider $news_provider
 	) {
 		$this->namespace             = $namespace;
 		$this->quick_links_provider  = $quick_links_provider;
 		$this->help_provider         = $help_provider;
 		$this->promo_banner_provider = $promo_banner_provider;
 		$this->tasks_provider        = $tasks_provider;
+		$this->news_provider         = $news_provider;
 	}
 
 	/**
@@ -126,7 +129,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 			'quick_links'   => $this->quick_links_provider->get(),
 			'help'          => $this->help_provider->get(),
 			'guides'        => [],
-			'news'          => [],
+			'news'          => $this->news_provider->get(),
 			'extensions'    => [
 				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro}.json.
 				[
