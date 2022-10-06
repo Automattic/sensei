@@ -28,7 +28,7 @@ const Main = () => {
 	 * @param {JSX.Element} element The element to be injected
 	 * @return {JSX.Element} Filtered element.
 	 */
-	const topRow = applyFilters( 'sensei.home.top', <></> );
+	const topRow = applyFilters( 'sensei.home.top', null );
 
 	return (
 		<>
