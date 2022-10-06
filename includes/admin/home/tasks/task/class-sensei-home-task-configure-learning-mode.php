@@ -18,7 +18,7 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 *
 	 * @return string
 	 */
-	public function get_id(): string {
+	public static function get_id(): string {
 		return 'configure-learning-mode';
 	}
 
