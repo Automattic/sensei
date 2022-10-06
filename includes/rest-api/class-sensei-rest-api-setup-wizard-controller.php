@@ -69,6 +69,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
 		$this->register_submit_tracking_route();
+		$this->register_submit_features_route();
 		$this->register_complete_wizard_route();
 	}
 
@@ -187,11 +188,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /features endpoint.
 	 *
-	 * @deprecated $$next-version$$
+	 * @since $$next-version$$ It just completes the setup wizard after the features were installed.
 	 */
 	public function register_submit_features_route() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features',
@@ -200,15 +199,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => [ $this, 'submit_features' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
-					'args'                => [
-						'selected' => [
-							'required' => true,
-							'type'     => 'array',
-							'items'    => [
-								'type' => 'string',
-							],
-						],
-					],
 				],
 			]
 		);
@@ -345,7 +335,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 		return [
 			'selected' => $user_data['features']['selected'],
-			'options'  => $this->setup_wizard->get_sensei_extensions( $clear_active_plugins_cache ),
+			'options'  => Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
 		];
 	}
 
@@ -482,22 +472,14 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit form on features step.
 	 *
-	 * @deprecated $$next-version$$
-	 *
-	 * @param array $form Form data.
+	 * @since $$next-version$$ Complete the setup wizard.
 	 *
 	 * @return bool Success.
 	 */
-	public function submit_features( $form ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+	public function submit_features() {
+		$this->setup_wizard->finish_setup_wizard();
 
-		return $this->setup_wizard->update_wizard_user_data(
-			[
-				'features' => [
-					'selected' => $form['selected'],
-				],
-			]
-		);
+		return true;
 	}
 
 	/**
@@ -519,8 +501,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Complete setup wizard
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function complete_setup_wizard() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$this->setup_wizard->finish_setup_wizard();
 
 		return true;

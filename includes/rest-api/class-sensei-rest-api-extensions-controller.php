@@ -190,6 +190,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Install extension.
 	 *
+	 * @since $$next-version$$ If the plugin is already installed, it just activates it.
+	 *
 	 * @access private
 	 *
 	 * @param WP_REST_Request $request The request.
@@ -197,13 +199,13 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function install_extension( WP_REST_Request $request ) {
-		$json_params    = $request->get_json_params();
-		$plugin_slug    = $json_params['plugin'];
-		$sensei_plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+		$json_params       = $request->get_json_params();
+		$plugin_slug       = $json_params['plugin'];
+		$available_plugins = Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' );
 
 		$plugin_to_install = array_values(
 			array_filter(
-				$sensei_plugins,
+				$available_plugins,
 				function( $plugin ) use ( $plugin_slug ) {
 					return $plugin->product_slug === $plugin_slug;
 				}
@@ -211,7 +213,9 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		)[0];
 
 		try {
-			Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			if ( ! $plugin_to_install->is_installed ) {
+				Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			}
 			wp_clean_plugins_cache();
 			Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
 		} catch ( Exception $e ) {
@@ -222,7 +226,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		}
 
 		$installed_plugins = array_filter(
-			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			$available_plugins,
 			function( $plugin ) use ( $plugin_slug ) {
 				return $plugin->product_slug === $plugin_slug;
 			}
@@ -350,8 +354,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	private function create_extensions_response( array $plugins, string $extensions_key, bool $full_response = false ): WP_REST_Response {
 		$mapped_plugins = array_map(
 			function ( $plugin ) {
-				$plugin->price      = html_entity_decode( $plugin->price );
-				$plugin->image      = $plugin->image_large;
+				$plugin->price      = isset( $plugin->price ) ? html_entity_decode( $plugin->price ) : '';
+				$plugin->image      = isset( $plugin->image_large ) ? $plugin->image_large : '';
 				$plugin->can_update = empty( $plugin->wccom_product_id );
 				return $plugin;
 			},

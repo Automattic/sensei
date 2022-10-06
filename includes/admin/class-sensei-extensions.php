@@ -114,6 +114,25 @@ final class Sensei_Extensions {
 	}
 
 	/**
+	 * Get Sensei extensions and WooCommerce.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param  string $type                  Product type ('plugin' or 'theme').
+	 * @param  string $category              Category to fetch (null = all).
+	 * @param  string $additional_query_args Additional query arguments.
+	 * @return array
+	 */
+	public function get_extensions_and_woocommerce( $type = null, $category = null, $additional_query_args = [] ) {
+		$extensions = $this->get_extensions( $type, $category, $additional_query_args );
+
+		// Add WooCommerce.
+		array_push( $extensions, Sensei_Utils::get_woocommerce_plugin_information() );
+
+		return $extensions;
+	}
+
+	/**
 	 * Map the extensions array, adding the installed properties.
 	 *
 	 * @since $$next-version$$ It doesn't add WCCOM extensions properties anymore.

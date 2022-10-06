@@ -185,6 +185,7 @@ $recoleta-font-family: Recoleta, sans-serif;
 	}
 
 	&__submit-error {
+		text-align: left;
 		margin: 0 0 32px;
 	}
 
@@ -228,6 +229,10 @@ $recoleta-font-family: Recoleta, sans-serif;
 		display: block;
 		width: 100%;
 		pointer-events: none;
+	}
+
+	&__fade-in {
+		animation: 0.5s fadeIn;
 	}
 }
 
