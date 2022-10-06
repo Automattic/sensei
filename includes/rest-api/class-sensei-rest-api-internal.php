@@ -63,10 +63,10 @@ class Sensei_REST_API_Internal {
 	 * Sensei_REST_API_Internal constructor.
 	 */
 	public function __construct() {
-		$this->quick_links_provider   = new Sensei_Home_Quick_Links_Provider();
-		$this->help_provider          = new Sensei_Home_Help_Provider();
-		$this->promo_provider         = new Sensei_Home_Promo_Banner_Provider();
-		$this->tasks_provider         = new Sensei_Home_Tasks_Provider();
+		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
+		$this->help_provider        = new Sensei_Home_Help_Provider();
+		$this->promo_provider       = new Sensei_Home_Promo_Banner_Provider();
+		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
 
