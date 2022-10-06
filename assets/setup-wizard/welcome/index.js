@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { H } from '../../shared/components/section';
+import { HOME_PATH } from '../constants';
 
 /**
  * Welcome step for Setup Wizard.
@@ -75,7 +76,7 @@ const Welcome = () => {
 						{ __( 'Get started', 'sensei-lms' ) }
 					</button>
 					<div className="sensei-setup-wizard__action-skip">
-						<a href="edit.php?post_type=course">
+						<a href={ HOME_PATH }>
 							{ __( 'Skip onboarding', 'sensei-lms' ) }
 						</a>
 					</div>
