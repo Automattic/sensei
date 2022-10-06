@@ -116,6 +116,8 @@ final class Sensei_Extensions {
 	/**
 	 * Map the extensions array, adding the installed properties.
 	 *
+	 * @since $$next-version$$ It doesn't add WCCOM extensions properties anymore.
+	 *
 	 * @param array $extensions Extensions.
 	 *
 	 * @return array Extensions with installed properties.
@@ -125,33 +127,15 @@ final class Sensei_Extensions {
 
 		$installed_plugins = get_plugins();
 
-		$wccom_subscriptions = [];
-
-		if ( class_exists( 'WC_Helper_Options' ) ) {
-			$wccom_subscriptions = WC_Helper::get_subscriptions();
-		}
-
 		// Includes installed version, whether it has update and WC.com metadata.
 		$extensions = array_map(
-			function( $extension ) use ( $installed_plugins, $wccom_subscriptions ) {
+			function( $extension ) use ( $installed_plugins ) {
 				$extension->is_installed = isset( $installed_plugins[ $extension->plugin_file ] );
 				$extension->is_activated = $extension->is_installed && is_plugin_active( $extension->plugin_file );
 
 				if ( $extension->is_installed ) {
 					$extension->installed_version = $installed_plugins[ $extension->plugin_file ]['Version'];
 					$extension->has_update        = isset( $extension->version ) && version_compare( $extension->version, $extension->installed_version, '>' );
-				}
-
-				if ( isset( $extension->wccom_product_id ) ) {
-					foreach ( $wccom_subscriptions as $wccom_subscription ) {
-						if ( (int) $extension->wccom_product_id === $wccom_subscription['product_id'] ) {
-							$extension->wccom_expired = $wccom_subscription['expired'];
-
-							if ( ! $extension->wccom_expired ) {
-								break;
-							}
-						}
-					}
 				}
 
 				return $extension;
@@ -202,11 +186,15 @@ final class Sensei_Extensions {
 	/**
 	 * Get installed Sensei plugins.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param bool $only_woo Only include WooCommerce.com extensions.
 	 *
 	 * @return array
 	 */
 	public function get_installed_plugins( $only_woo = false ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$extensions = $this->get_extensions( 'plugin' );
 
 		return array_filter(

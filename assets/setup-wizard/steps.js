@@ -6,7 +6,6 @@ import Purpose from './purpose';
 import UsageTracking from './usage-tracking';
 import Newsletter from './newsletter';
 import Features from './features';
-import Ready from './ready';
 
 const steps = [
 	{
@@ -28,10 +27,6 @@ const steps = [
 	{
 		key: 'features',
 		container: <Features />,
-	},
-	{
-		key: 'ready',
-		container: <Ready />,
 	},
 ];
 

@@ -6,13 +6,13 @@ import { render } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import ProgressBar from './index';
+import NavigationBar from './index';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 
 jest.mock( '../../shared/query-string-router' );
 
-describe( '<ProgressBar />', () => {
-	it( 'Should render progress bar properly filled', () => {
+describe( '<NavigationBar />', () => {
+	it( 'Should render navigation bar properly filled', () => {
 		useQueryStringRouter.mockReturnValue( { currentRoute: 'B' } );
 
 		const steps = [
@@ -21,7 +21,7 @@ describe( '<ProgressBar />', () => {
 			{ key: 'C' },
 			{ key: 'D' },
 		];
-		const { getByRole } = render( <ProgressBar steps={ steps } /> );
+		const { getByRole } = render( <NavigationBar steps={ steps } /> );
 
 		expect(
 			getByRole( 'progressbar' ).getAttribute( 'aria-valuenow' )

@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 
@@ -11,8 +11,6 @@ import { check } from '@wordpress/icons';
  */
 import { EXTENSIONS_STORE, isLoadingStatus } from '../extensions/store';
 import UpdateIcon from '../icons/update.svg';
-import { logEvent } from '../shared/helpers/log-event';
-import { getWoocommerceComPurchaseUrl } from '../shared/helpers/woocommerce-com';
 
 /**
  * Extension actions component.
@@ -46,9 +44,6 @@ export default ExtensionActions;
  * @return {Array|null} Array of actions, or null if it's not a valid extension.
  */
 export const useExtensionActions = ( extension ) => {
-	const { wccom } = useSelect( ( select ) => ( {
-		wccom: select( EXTENSIONS_STORE ).getWccomData(),
-	} ) );
 	const { installExtension, updateExtensions } = useDispatch(
 		EXTENSIONS_STORE
 	);
@@ -90,20 +85,6 @@ export const useExtensionActions = ( extension ) => {
 		actionProps = {
 			children: `${ __( 'Install', 'sensei-lms' ) } - ${ price }`,
 			onClick: () => {
-				if ( extension.wccom_product_id ) {
-					const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
-						[ extension ],
-						wccom
-					);
-
-					logEvent( 'extensions_install', {
-						slug: extension.product_slug,
-					} );
-					window.open( wcPurchaseUrl );
-
-					return;
-				}
-
 				installExtension( extension.product_slug );
 			},
 			...actionProps,

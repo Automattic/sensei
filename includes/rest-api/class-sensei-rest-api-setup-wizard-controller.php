@@ -289,6 +289,8 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get features data for Setup Wizard frontend.
 	 *
+	 * @since $$next-version$$ It doesn't add the wccom connection data anymore.
+	 *
 	 * @param mixed $user_data Optional user data param. If it's not set, it will be fetched.
 	 *
 	 * @return array Features data
@@ -308,7 +310,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		return [
 			'selected' => $user_data['features']['selected'],
 			'options'  => $this->setup_wizard->get_sensei_extensions( $clear_active_plugins_cache ),
-			'wccom'    => Sensei_Utils::get_woocommerce_connect_data(),
 		];
 	}
 
