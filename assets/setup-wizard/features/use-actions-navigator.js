@@ -1,7 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 // Minimum timer for the actions, to make sure the user will have time to read the texts.
 export const actionMinimumTimer = 1500;
@@ -23,11 +24,32 @@ const minimumTimerPromise = () =>
  *
  * @param {Array} actions
  *
- * @return {{percentage: number, label: string, error: object}} Current action data.
+ * @return {{percentage: number, label: string, error: object, errorActions: object}} Current action data.
  */
 const useActionsNavigator = ( actions ) => {
 	const [ currentAction, setCurrentAction ] = useState();
 	const [ error, setError ] = useState( false );
+
+	const goToNextAction = useCallback( () => {
+		if ( currentAction + 1 < actions.length ) {
+			setCurrentAction( ( prev ) => prev + 1 );
+		}
+	}, [ currentAction, actions.length ] );
+
+	const runAction = useCallback( () => {
+		// Run action.
+		setError( false );
+		Promise.all( [
+			minimumTimerPromise(),
+			actions[ currentAction ]?.action?.(),
+		] )
+			.then( () => {
+				goToNextAction();
+			} )
+			.catch( ( err ) => {
+				setError( err );
+			} );
+	}, [ actions, currentAction, goToNextAction ] );
 
 	// Navigate through the actions.
 	useEffect( () => {
@@ -39,21 +61,19 @@ const useActionsNavigator = ( actions ) => {
 			return;
 		}
 
-		// Run action.
-		setError( false );
-		Promise.all( [
-			minimumTimerPromise(),
-			actions[ currentAction ]?.action?.(),
-		] )
-			.then( () => {
-				if ( currentAction + 1 < actions.length ) {
-					setCurrentAction( ( prev ) => prev + 1 );
-				}
-			} )
-			.catch( ( err ) => {
-				setError( err );
-			} );
-	}, [ currentAction, actions ] );
+		runAction();
+	}, [ currentAction, runAction ] );
+
+	const errorActions = error && [
+		{
+			label: __( 'Retry', 'sensei-lms' ),
+			onClick: runAction,
+		},
+		{
+			label: __( 'Skip', 'sensei-lms' ),
+			onClick: goToNextAction,
+		},
+	];
 
 	const stepNumber = currentAction + ( error ? 0 : 1 );
 
@@ -61,6 +81,7 @@ const useActionsNavigator = ( actions ) => {
 		percentage: ( stepNumber / actions.length ) * 100 || 0,
 		label: actions[ currentAction ]?.label,
 		error,
+		errorActions,
 	};
 };
 

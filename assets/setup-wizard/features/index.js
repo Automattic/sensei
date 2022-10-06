@@ -87,31 +87,18 @@ const Features = () => {
 		[ stepData, submitStep ]
 	);
 
-	const { percentage, label, error: actionError } = useActionsNavigator(
-		actions
-	);
+	const {
+		percentage,
+		label,
+		error: actionError,
+		errorActions,
+	} = useActionsNavigator( actions );
 
 	const error = actionError || submitError;
 
 	return (
 		<div className="sensei-setup-wizard__full-centered-step">
 			<div className="sensei-setup-wizard__full-centered-content">
-				{ error && (
-					<Notice
-						status="error"
-						className="sensei-setup-wizard__error-notice"
-						isDismissible={ false }
-						actions={ [
-							{
-								label: __( 'Go to Sensei Home', 'sensei-lms' ),
-								url: senseiHomePath,
-							},
-						] }
-					>
-						{ error.message }
-					</Notice>
-				) }
-
 				<div
 					className="sensei-setup-wizard__features-status"
 					role="status"
@@ -121,6 +108,27 @@ const Features = () => {
 						{ label }
 					</div>
 				</div>
+
+				{ error && (
+					<Notice
+						status="error"
+						className="sensei-setup-wizard__error-notice"
+						isDismissible={ false }
+						actions={
+							errorActions || [
+								{
+									label: __(
+										'Go to Sensei Home',
+										'sensei-lms'
+									),
+									url: senseiHomePath,
+								},
+							]
+						}
+					>
+						{ error.message }
+					</Notice>
+				) }
 
 				<div className="sensei-setup-wizard__features-progress-bar">
 					<div
