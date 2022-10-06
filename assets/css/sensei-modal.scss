@@ -21,7 +21,7 @@
 		top: 200%;
 		left: 50%;
 		transform: translate( -50%, -40% );
-		background-color: #fff;
+		background-color: var(--sensei-background-color, #fff);
 		border: 1px solid #ddd;
 		border-radius: 2px;
 		padding: 30px;

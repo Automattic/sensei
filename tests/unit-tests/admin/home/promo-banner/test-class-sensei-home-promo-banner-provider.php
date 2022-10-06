@@ -55,8 +55,9 @@ class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
 
 		$banner = $this->provider->get();
 
-		$this->assertInstanceOf( Sensei_Home_Promo_Banner::class, $banner );
-		$this->assertTrue( $banner->is_visible(), 'Promotional banner must be visible by default.' );
+		$this->assertIsArray( $banner );
+		$this->assertArrayHasKey( 'is_visible', $banner );
+		$this->assertTrue( $banner['is_visible'], 'Promotional banner must be visible by default.' );
 	}
 
 	/**
@@ -67,7 +68,8 @@ class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
 
 		$banner = $this->provider->get();
 
-		$this->assertInstanceOf( Sensei_Home_Promo_Banner::class, $banner );
-		$this->assertFalse( $banner->is_visible(), 'Promotional banner must not be visible when filter overridden.' );
+		$this->assertIsArray( $banner );
+		$this->assertArrayHasKey( 'is_visible', $banner );
+		$this->assertFalse( $banner['is_visible'], 'Promotional banner must not be visible when filter overridden.' );
 	}
 }

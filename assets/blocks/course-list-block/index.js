@@ -206,7 +206,10 @@ export function addWrapperAroundCourseCategoriesBlock( settings, name ) {
 			}
 
 			return (
-				<FeaturedLabel postId={ props.context.postId }>
+				<FeaturedLabel
+					postId={ props.context.postId }
+					isFeaturedImage={ false }
+				>
 					<BlockEdit { ...props } />
 				</FeaturedLabel>
 			);

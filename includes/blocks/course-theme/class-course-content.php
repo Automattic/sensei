@@ -28,6 +28,7 @@ class Course_Content {
 				'core/post-content',
 				[
 					'render_callback' => [ $this, 'render_content_block' ],
+					'style'           => 'sensei-theme-blocks',
 				]
 			);
 		}

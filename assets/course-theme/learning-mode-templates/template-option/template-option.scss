@@ -1,0 +1,113 @@
+.sensei-lm-template-option {
+    &__container {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        max-width: 335px;
+        margin: 32px 32px 0 0;
+        border: 1px solid $gray-400;
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease-in-out;
+        }
+    }
+
+    &__thumbnail {
+        position: relative;
+        display: flex;
+        width: 100%;
+        img {
+            max-width: 100%;
+        }
+        cursor: pointer;
+
+        &:focus {
+            box-shadow: inset 0 0 0 1px #fff, 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+        }
+    }
+
+    &__preview {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+
+    }
+
+    &__preview-title {
+        font-size: 13px;
+        line-height: 16px;
+        padding: 16px 62px;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #ffffff;
+    }
+
+    &__footer {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        height: 48px;
+        padding: 0 0 0 16px;
+        border-top: 1px solid $gray-400;
+        background-color: #ffffff;
+
+        &--active {
+            background-color: var(--wp-admin-theme-color) ;
+
+            .sensei-lm-template-option {
+                &__title,
+                &__title-tag {
+                    color: #ffffff;
+                }
+                &__actions {
+                    background-color: rgba(0, 0, 0, 0.2);
+                }
+            }
+        }
+    }
+
+    &__title {
+        padding: 16px 0;
+        font-size: 13px;
+        line-height: 16px;
+        font-weight: 600;
+    }
+
+    &__title-tag {
+        text-transform: uppercase;
+        color: #30968b;
+    }
+
+    &__container:not(:hover):not(:focus-within) &__actions {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    &__actions {
+        height: 100%;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        margin-left: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 16px;
+    }
+
+}
+
+.sensei-lm-template-option__thumbnail:focus,
+.sensei-lm-template-option__container:hover {
+    .sensei-lm-template-option__preview {
+        opacity: 1;
+    }
+}

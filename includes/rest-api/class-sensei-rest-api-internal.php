@@ -32,13 +32,6 @@ class Sensei_REST_API_Internal {
 	private $controllers = [];
 
 	/**
-	 * Sensei Home REST Mapper.
-	 *
-	 * @var Sensei_REST_API_Home_Controller_Mapper
-	 */
-	private $home_controller_mapper;
-
-	/**
 	 * Sensei Home Quick Links provider.
 	 *
 	 * @var Sensei_Home_Quick_Links_Provider
@@ -53,11 +46,18 @@ class Sensei_REST_API_Internal {
 	private $help_provider;
 
 	/**
-	 * Sensei Home Sensei Pro provider.
+	 * Sensei Home Promo Banner provider.
 	 *
 	 * @var Sensei_Home_Promo_Banner_Provider
 	 */
 	private $promo_provider;
+
+	/**
+	 * Sensei Home Tasks provider.
+	 *
+	 * @var Sensei_Home_Tasks_Provider
+	 */
+	private $tasks_provider;
 
 	/**
 	 * Sensei Home Data provider.
@@ -70,10 +70,10 @@ class Sensei_REST_API_Internal {
 	 * Sensei_REST_API_Internal constructor.
 	 */
 	public function __construct() {
-		$this->home_controller_mapper = new Sensei_REST_API_Home_Controller_Mapper();
-		$this->quick_links_provider   = new Sensei_Home_Quick_Links_Provider();
-		$this->help_provider          = new Sensei_Home_Help_Provider();
-		$this->promo_provider         = new Sensei_Home_Promo_Banner_Provider();
+		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
+		$this->help_provider        = new Sensei_Home_Help_Provider();
+		$this->promo_provider       = new Sensei_Home_Promo_Banner_Provider();
+		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
 		$this->remote_data_provider   = new Sensei_Home_Remote_Data_Provider( 'sensei-lms' );
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
@@ -96,11 +96,11 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Course_Progress_Controller( $this->namespace ),
 			new Sensei_REST_API_Home_Controller(
 				$this->namespace,
-				$this->home_controller_mapper,
 				$this->remote_data_provider,
 				$this->quick_links_provider,
 				$this->help_provider,
-				$this->promo_provider
+				$this->promo_provider,
+				$this->tasks_provider
 			),
 		];
 

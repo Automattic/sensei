@@ -32,13 +32,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	protected $rest_base = 'home';
 
 	/**
-	 * Mapper.
-	 *
-	 * @var Sensei_REST_API_Home_Controller_Mapper
-	 */
-	private $mapper;
-
-	/**
 	 * Quick Links provider.
 	 *
 	 * @var Sensei_Home_Quick_Links_Provider
@@ -66,31 +59,37 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	private $promo_banner_provider;
 
+	/**
+	 * Tasks provider.
+	 *
+	 * @var Sensei_Home_Tasks_Provider
+	 */
+	private $tasks_provider;
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
-	 * @param string                                 $namespace             Routes namespace.
-	 * @param Sensei_REST_API_Home_Controller_Mapper $mapper                Sensei Home REST API mapper.
-	 * @param Sensei_Home_Remote_Data_Provider       $remote_data_provider  Fetch home data helper.
-	 * @param Sensei_Home_Quick_Links_Provider       $quick_links_provider  Quick Links provider.
-	 * @param Sensei_Home_Help_Provider              $help_provider         Help provider.
-	 * @param Sensei_Home_Promo_Banner_Provider      $promo_banner_provider Promo banner provider.
+	 * @param string                            $namespace             Routes namespace.
+	 * @param Sensei_Home_Remote_Data_Provider  $remote_data_provider  Fetch home data helper.
+	 * @param Sensei_Home_Quick_Links_Provider  $quick_links_provider  Quick Links provider.
+	 * @param Sensei_Home_Help_Provider         $help_provider         Help provider.
+	 * @param Sensei_Home_Promo_Banner_Provider $promo_banner_provider Promo banner provider.
+	 * @param Sensei_Home_Tasks_Provider        $tasks_provider Tasks provider.
 	 */
 	public function __construct(
 		$namespace,
-		Sensei_REST_API_Home_Controller_Mapper $mapper,
 		Sensei_Home_Remote_Data_Provider $remote_data_provider,
 		Sensei_Home_Quick_Links_Provider $quick_links_provider,
 		Sensei_Home_Help_Provider $help_provider,
-		Sensei_Home_Promo_Banner_Provider $promo_banner_provider
+		Sensei_Home_Promo_Banner_Provider $promo_banner_provider,
+		Sensei_Home_Tasks_Provider $tasks_provider
 	) {
 		$this->namespace             = $namespace;
-		$this->mapper                = $mapper;
 		$this->remote_data_provider  = $remote_data_provider;
 		$this->quick_links_provider  = $quick_links_provider;
 		$this->help_provider         = $help_provider;
 		$this->promo_banner_provider = $promo_banner_provider;
+		$this->tasks_provider        = $tasks_provider;
 	}
 
 	/**
@@ -140,37 +139,9 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		$news   = $home_data['news'] ?? [];
 
 		return [
-			'tasks_list'    => [
-				'tasks' => [
-					// TODO: Generate based on Setup Wizard data + site info.
-					[
-						'title' => 'Set up Course Site',
-						'done'  => true,
-						'url'   => null,
-						'image' => 'http://...', // Optional image to be used by the frontend.
-					],
-					[
-						'title' => 'Create your first Course',
-						'done'  => false,
-						'url'   => '/wp-admin/edit.php?post_type=course',
-						'image' => 'http://...', // Optional image to be used by the frontend.
-					],
-					[
-						'title' => 'Configure Learning Mode',
-						'done'  => false,
-						'url'   => '/wp-admin/edit.php?post_type=course&page=sensei-settings#course-settings',
-						'image' => 'http://...', // Optional image to be used by the frontend.
-					],
-					[
-						'title' => 'Publish your first Course',
-						'done'  => false,
-						'url'   => '???',
-						'image' => 'http://...', // Optional image to be used by the frontend.
-					],
-				],
-			],
-			'quick_links'   => $this->mapper->map_quick_links( $this->quick_links_provider->get() ),
-			'help'          => $this->mapper->map_help( $this->help_provider->get() ),
+			'tasks'         => $this->tasks_provider->get(),
+			'quick_links'   => $this->quick_links_provider->get(),
+			'help'          => $this->help_provider->get(),
 			'guides'        => $guides,
 			'news'          => $news,
 			'extensions'    => [
@@ -184,7 +155,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
 				],
 			],
-			'promo_banner'  => $this->mapper->map_promo_banner( $this->promo_banner_provider->get() ),
+			'promo_banner'  => $this->promo_banner_provider->get(),
 			'notifications' => [
 				[
 					'heading'     => null, // Not needed for the moment.

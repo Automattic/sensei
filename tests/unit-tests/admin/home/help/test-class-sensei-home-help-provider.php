@@ -51,17 +51,19 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 
 
 	/**
-	 * Assert that all elements returned by the provider are a correct Sensei_Home_Quick_Links_Category.
+	 * Assert that all elements returned by the provider have the correct structure.
 	 */
-	public function testAllOutputAreCorrectQuickLinksCategories() {
+	public function testAllResultsHaveCorrectHelpStructure() {
 		$categories = $this->provider->get();
 
 		foreach ( $categories as $category ) {
-			$this->assertInstanceOf( Sensei_Home_Help_Category::class, $category );
-			$this->assertIsString( $category->get_title() );
-			$this->assertIsArray( $category->get_items() );
-			foreach ( $category->get_items() as $item ) {
-				$this->assertIsString( $item->get_title() );
+			$this->assertIsArray( $category );
+			$this->assertArrayHasKey( 'title', $category );
+			$this->assertIsString( $category['title'] );
+			$this->assertArrayHasKey( 'items', $category );
+			$this->assertIsArray( $category['items'] );
+			foreach ( $category['items'] as $item ) {
+				$this->assertIsString( $item['title'] );
 			}
 		}
 	}
@@ -73,11 +75,11 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		$this->assertNotNull( $create_ticket_item, 'Create support ticket item could not be found!' );
 
 		// Create ticket item is disabled.
-		$this->assertNull( $create_ticket_item->get_url() );
+		$this->assertNull( $create_ticket_item['url'] );
 		// Create ticket item contains extra link.
-		$this->assertInstanceOf( Sensei_Home_Help_Extra_Link::class, $create_ticket_item->get_extra_link() );
+		$this->assertIsArray( $create_ticket_item['extra_link'] );
 		// Create ticket item has the 'lock' icon.
-		$this->assertEquals( 'lock', $create_ticket_item->get_icon() );
+		$this->assertEquals( 'lock', $create_ticket_item['icon'] );
 	}
 
 	public function testCreateSupportTicketIsEnabledAndWithoutExtralinkWhenFilterIsOverrided() {
@@ -88,25 +90,25 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		$create_ticket_item = $this->get_item_by_text( $categories, __( 'Create a support ticket', 'sensei-lms' ) );
 		$this->assertNotNull( $create_ticket_item, 'Create support ticket item could not be found!' );
 		// Create ticket item has a string as url.
-		$this->assertIsString( $create_ticket_item->get_url(), 'URL must be valid when upsell is disabled.' );
+		$this->assertIsString( $create_ticket_item['url'], 'URL must be valid when upsell is disabled.' );
 		// Create ticket item does not contain extra link.
-		$this->assertNull( $create_ticket_item->get_extra_link(), 'Extra link must be null since we expect the upsell to be disabled.' );
+		$this->assertNull( $create_ticket_item['extra_link'], 'Extra link must be null since we expect the upsell to be disabled.' );
 		// Create ticket item does not have any special icon.
-		$this->assertNull( $create_ticket_item->get_icon(), 'Icon must be null since we expect to use default icon when upsell is disabled.' );
+		$this->assertNull( $create_ticket_item['icon'], 'Icon must be null since we expect to use default icon when upsell is disabled.' );
 
 	}
 
 	/**
 	 * Given a list of categories retrieve an item matching by item's title.
 	 *
-	 * @param Sensei_Home_Help_Category[] $categories
+	 * @param array[] $categories
 	 * @param string $text
-	 * @return Sensei_Home_Help_Item
+	 * @return array
 	 */
 	private function get_item_by_text( $categories, $text ) {
 		foreach ( $categories as $category ) {
-			foreach ( $category->get_items() as $item ) {
-				if ( $item->get_title() === $text ) {
+			foreach ( $category['items'] as $item ) {
+				if ( $item['title'] === $text ) {
 					return $item;
 				}
 			}
