@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import '../shared/data/api-fetch-preloaded-once';
-import registerSetupWizardStore from './data';
+import registerSetupWizardStore, { store as setupWizardStore } from './data';
 import { useWpAdminFullscreen } from '../react-hooks';
 import QueryStringRouter, {
 	Route,
@@ -49,13 +49,13 @@ const Fullscreen = () => {
  */
 const SenseiSetupWizardPage = () => {
 	const { isFetching, error } = useSelect( ( select ) => {
-		const store = select( 'sensei/setup-wizard' );
+		const store = select( setupWizardStore );
 		return {
 			isFetching: store.isFetching(),
 			error: store.getFetchError(),
 		};
 	}, [] );
-	const { fetchSetupWizardData } = useDispatch( 'sensei/setup-wizard' );
+	const { fetchSetupWizardData } = useDispatch( setupWizardStore );
 
 	// We want to show the loading before any content.
 	useLayoutEffect( () => {

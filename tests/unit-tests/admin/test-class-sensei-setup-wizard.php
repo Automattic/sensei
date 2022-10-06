@@ -509,7 +509,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 				'is_installed' => false,
 				'is_activated' => false,
 			],
-			get_transient( Sensei_Utils::WC_INFORMATION_TRANSIENT ),
+			Sensei_Utils::get_woocommerce_plugin_information(),
 		];
 		$extensions          = Sensei()->setup_wizard->get_sensei_extensions();
 
@@ -517,54 +517,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$property->setValue( $real_instance );
 
 		$this->assertEquals( $expected_extensions, $extensions );
-	}
-
-	/**
-	 * Tests that not allowed extensions are not installed.
-	 *
-	 * @covers Sensei_Setup_Wizard::install_extensions
-	 */
-	public function testInstallNotAllowedExtension() {
-		// Mock fetch from senseilms.com.
-		$response_body = '{
-			"products": [
-				{ "product_slug": "allowed", "plugin_file": "test/test.php" },
-				{ "product_slug": "allowed-2", "plugin_file": "test/test.php" }
-			]
-		}';
-		add_filter(
-			'pre_http_request',
-			function() use ( $response_body ) {
-				return [ 'body' => $response_body ];
-			}
-		);
-
-		$expected_extensions = [
-			(object) [
-				'product_slug' => 'allowed',
-				'plugin_file'  => 'test/test.php',
-				'is_installed' => false,
-				'is_activated' => false,
-			],
-		];
-
-		// Mock install plugins method.
-		$mock = $this->getMockBuilder( Sensei_Plugins_Installation::class )
-			->disableOriginalConstructor()
-			->setMethods( [ 'install_plugins' ] )
-			->getMock();
-
-		$property = new ReflectionProperty( 'Sensei_Plugins_Installation', 'instance' );
-		$property->setAccessible( true );
-		$real_instance = $property->getValue();
-		$property->setValue( $mock );
-
-		$mock->expects( $this->once() )->method( 'install_plugins' )->with( $this->equalTo( $expected_extensions ) );
-
-		Sensei()->setup_wizard->install_extensions( [ 'allowed', 'not-allowed' ] );
-
-		// Revert mocked instance.
-		$property->setValue( $real_instance );
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
@@ -17,18 +17,12 @@ const purposes = [
 	{
 		id: 'sell_courses',
 		label: __( 'Sell courses and generate income', 'sensei-lms' ),
-		description: __(
-			'We will install WooCommerce for free.',
-			'sensei-lms'
-		),
+		feature: 'woocommerce',
 	},
 	{
 		id: 'provide_certification',
 		label: __( 'Provide certification', 'sensei-lms' ),
-		description: __(
-			'We will install Sensei LMS Certificates for free.',
-			'sensei-lms'
-		),
+		feature: 'sensei-certificates',
 	},
 	{
 		id: 'educate_students',
@@ -39,6 +33,38 @@ const purposes = [
 		label: __( 'Train employees', 'sensei-lms' ),
 	},
 ];
+
+/**
+ * Get a description of a feature that will be installed or activated.
+ *
+ * @param {string} slug     Slug of the feature to check.
+ * @param {Array}  features Features list.
+ *
+ * @return {string|null} Install description or `null` if it won't install anything.
+ */
+const getInstallDescription = ( slug, features ) => {
+	const feature = features.find( ( i ) => i.product_slug === slug );
+
+	if ( ! feature.is_activated ) {
+		let action = __( 'install', 'sensei-lms' );
+		let freeText = __( ' for free', 'sensei-lms' );
+
+		if ( feature.is_installed ) {
+			action = __( 'activate', 'sensei-lms' );
+			freeText = '';
+		}
+
+		return sprintf(
+			// translators: %1$s Action that will be done, %2$s Plugin name, %3$s.
+			__( 'We will %1$s %2$s%3$s.', 'sensei-lms' ),
+			action,
+			feature.title,
+			freeText
+		);
+	}
+
+	return null;
+};
 
 /**
  * Purpose step for Setup Wizard.
@@ -52,6 +78,8 @@ const Purpose = () => {
 		isSubmitting,
 		errorNotice,
 	} = useSetupWizardStep( 'purpose' );
+
+	const { stepData: featuresData } = useSetupWizardStep( 'features' );
 
 	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
@@ -76,7 +104,14 @@ const Purpose = () => {
 	};
 
 	const submitPage = () => {
-		submitStep( { selected, other }, { onSuccess: goToNextStep } );
+		const features = purposes
+			.filter( ( i ) => i.feature && selected.includes( i.id ) )
+			.map( ( i ) => i.feature );
+
+		submitStep(
+			{ purpose: { selected, other }, features: { selected: features } },
+			{ onSuccess: goToNextStep }
+		);
 	};
 
 	return (
@@ -97,14 +132,18 @@ const Purpose = () => {
 					</p>
 				</div>
 				<ul className="sensei-setup-wizard__purpose-list">
-					{ purposes.map( ( { id, label, description } ) => (
+					{ purposes.map( ( { id, label, feature } ) => (
 						<PurposeItem
 							key={ id }
 							label={ label }
 							checked={ selected.includes( id ) }
 							onToggle={ () => toggleItem( id ) }
 						>
-							{ description }
+							{ feature &&
+								getInstallDescription(
+									feature,
+									featuresData.options
+								) }
 						</PurposeItem>
 					) ) }
 

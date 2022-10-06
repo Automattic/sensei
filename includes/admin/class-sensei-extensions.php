@@ -118,11 +118,13 @@ final class Sensei_Extensions {
 	 *
 	 * @since $$next-version$$ It doesn't add WCCOM extensions properties anymore.
 	 *
+	 * @access private
+	 *
 	 * @param array $extensions Extensions.
 	 *
 	 * @return array Extensions with installed properties.
 	 */
-	private function add_installed_extensions_properties( $extensions ) {
+	public function add_installed_extensions_properties( $extensions ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		$installed_plugins = get_plugins();

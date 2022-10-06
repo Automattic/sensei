@@ -47,6 +47,11 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	const PURPOSES = [ 'sell_courses', 'provide_certification', 'educate_students', 'train_employees', 'other' ];
 
 	/**
+	 * Available 'feature' options.
+	 */
+	const FEATURES = [ 'woocommerce', 'sensei-certificates' ];
+
+	/**
 	 * Sensei_REST_API_Setup_Wizard_Controller constructor.
 	 *
 	 * @param string $namespace Routes namespace.
@@ -60,14 +65,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * Register the REST API endpoints for Setup Wizard.
 	 */
 	public function register_routes() {
-
 		$this->register_get_data_route();
-		$this->register_get_features_route();
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
 		$this->register_submit_tracking_route();
-		$this->register_submit_features_route();
-		$this->register_submit_features_installation_route();
 		$this->register_complete_wizard_route();
 	}
 
@@ -119,17 +120,35 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'callback'            => [ $this, 'submit_purpose' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 					'args'                => [
-						'selected' => [
-							'required' => true,
-							'type'     => 'array',
-							'items'    => [
-								'type' => 'string',
-								'enum' => self::PURPOSES,
+						'purpose'  => [
+							'type'       => 'object',
+							'properties' => [
+								'selected' => [
+									'required' => true,
+									'type'     => 'array',
+									'items'    => [
+										'type' => 'string',
+										'enum' => self::PURPOSES,
+									],
+								],
+								'other'    => [
+									'required' => true,
+									'type'     => 'string',
+								],
 							],
 						],
-						'other'    => [
-							'required' => true,
-							'type'     => 'string',
+						'features' => [
+							'type'       => 'object',
+							'properties' => [
+								'selected' => [
+									'required' => true,
+									'type'     => 'array',
+									'items'    => [
+										'type' => 'string',
+										'enum' => self::FEATURES,
+									],
+								],
+							],
 						],
 					],
 				],
@@ -150,9 +169,14 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 					'callback'            => [ $this, 'submit_tracking' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 					'args'                => [
-						'usage_tracking' => [
-							'required' => true,
-							'type'     => 'boolean',
+						'tracking' => [
+							'type'       => 'object',
+							'properties' => [
+								'usage_tracking' => [
+									'required' => true,
+									'type'     => 'boolean',
+								],
+							],
 						],
 					],
 				],
@@ -162,8 +186,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register /features endpoint.
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function register_submit_features_route() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features',
@@ -188,8 +216,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register /features-installation endpoint.
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function register_submit_features_installation_route() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features-installation',
@@ -249,8 +281,12 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 
 	/**
 	 * Register GET / endpoint for features step.
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function register_get_features_route() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base . '/features',
@@ -342,7 +378,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => [
 				'selected' => [
-					'description' => __( 'Slugs of extensions selected by the site owner.', 'sensei-lms' ),
+					'description' => __( 'Slug of extensions to be installed.', 'sensei-lms' ),
 					'type'        => 'array',
 				],
 				'options'  => [
@@ -405,29 +441,28 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit form on purpose step.
 	 *
+	 * @since $$next-version$$ Accepts features.
+	 *
 	 * @param array $form Form data.
 	 *
 	 * @return bool Success.
 	 */
 	public function submit_purpose( $form ) {
-		$purpose_data = [
-			'selected' => $form['selected'],
-			'other'    => ( in_array( 'other', $form['selected'], true ) ? $form['other'] : '' ),
-		];
+		$json = $form->get_json_params();
+
+		if ( ! in_array( 'other', $json['purpose']['selected'], true ) ) {
+			$json['purpose']['other'] = '';
+		}
 
 		sensei_log_event(
 			'setup_wizard_purpose_continue',
 			[
-				'purpose'         => join( ',', $purpose_data['selected'] ),
-				'purpose_details' => $purpose_data['other'],
+				'purpose'         => join( ',', $json['purpose']['selected'] ),
+				'purpose_details' => $json['purpose']['other'],
 			]
 		);
 
-		return $this->setup_wizard->update_wizard_user_data(
-			[
-				'purpose' => $purpose_data,
-			]
-		);
+		return $this->setup_wizard->update_wizard_user_data( $json );
 	}
 
 	/**
@@ -438,7 +473,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	 * @return bool Success.
 	 */
 	public function submit_tracking( $data ) {
-		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['usage_tracking'] );
+		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['tracking']['usage_tracking'] );
 		Sensei()->usage_tracking->send_usage_data();
 
 		return true;
@@ -447,11 +482,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit form on features step.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param array $form Form data.
 	 *
 	 * @return bool Success.
 	 */
 	public function submit_features( $form ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		return $this->setup_wizard->update_wizard_user_data(
 			[
 				'features' => [
@@ -464,11 +503,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit features installation step.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @param array $form Form data.
 	 *
 	 * @return bool Success.
 	 */
 	public function submit_features_installation( $form ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$this->setup_wizard->install_extensions( $form['selected'] );
 
 		return true;
