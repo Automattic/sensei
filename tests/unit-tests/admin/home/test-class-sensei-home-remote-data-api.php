@@ -1,29 +1,29 @@
 <?php
 /**
- * This file contains the Sensei_Home_Remote_Data_Provider class.
+ * This file contains the Sensei_Home_Remote_Data_API class.
  *
  * @package sensei
  */
 
 
 /**
- * Tests for Sensei_Home_Remote_Data_Provider class.
+ * Tests for Sensei_Home_Remote_Data_API class.
  *
- * @covers Sensei_Home_Remote_Data_Provider
+ * @covers Sensei_Home_Remote_Data_API
  */
-class Sensei_Home_Remote_Data_Provider_Test extends WP_UnitTestCase {
+class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 	/**
 	 * Tests to make sure we are using the correct endpoint.
 	 */
 	public function testFetchCorrectPluginData() {
 		$http_requests = $this->trackHttpRequests( [] );
-		$provider      = new Sensei_Home_Remote_Data_Provider( 'dinosaurs' );
+		$provider      = new Sensei_Home_Remote_Data_API( 'dinosaurs' );
 		$remote_data   = $provider->fetch();
 
 		$this->stopTrackingHttpRequests();
 
 		$this->assertEquals( 1, $http_requests->count() );
-		$expected_url   = Sensei_Home_Remote_Data_Provider::API_BASE_URL . 'dinosaurs.json';
+		$expected_url   = Sensei_Home_Remote_Data_API::API_BASE_URL . 'dinosaurs.json';
 		$requested_path = strtok( $http_requests[0]['url'], '?' );
 		$this->assertEquals( $expected_url, $requested_path );
 	}
@@ -40,14 +40,14 @@ class Sensei_Home_Remote_Data_Provider_Test extends WP_UnitTestCase {
 		);
 
 		$http_requests = $this->trackHttpRequests( [] );
-		$provider      = new Sensei_Home_Remote_Data_Provider( 'dinosaurs' );
+		$provider      = new Sensei_Home_Remote_Data_API( 'dinosaurs' );
 		$remote_data   = $provider->fetch();
 
 		$this->stopTrackingHttpRequests();
 		remove_all_filters( 'sensei_home_remote_data_primary_plugin' );
 
 		$this->assertEquals( 1, $http_requests->count() );
-		$expected_url   = Sensei_Home_Remote_Data_Provider::API_BASE_URL . 'penguins.json';
+		$expected_url   = Sensei_Home_Remote_Data_API::API_BASE_URL . 'penguins.json';
 		$requested_path = strtok( $http_requests[0]['url'], '?' );
 		$this->assertEquals( $expected_url, $requested_path );
 	}
@@ -64,7 +64,7 @@ class Sensei_Home_Remote_Data_Provider_Test extends WP_UnitTestCase {
 			}
 		);
 
-		$provider     = new Sensei_Home_Remote_Data_Provider( 'dinosaurs' );
+		$provider     = new Sensei_Home_Remote_Data_API( 'dinosaurs' );
 		$first_fetch  = $provider->fetch();
 		$second_fetch = $provider->fetch();
 		$this->stopTrackingHttpRequests();
@@ -90,9 +90,9 @@ class Sensei_Home_Remote_Data_Provider_Test extends WP_UnitTestCase {
 
 		// Test max age of 60 seconds.
 		$max_age = 60;
-		$url     = Sensei_Home_Remote_Data_Provider::API_BASE_URL . '/test.json';
+		$url     = Sensei_Home_Remote_Data_API::API_BASE_URL . '/test.json';
 
-		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_Provider::class )
+		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
 			->setConstructorArgs( [ 'dinosaurs' ] )
 			->setMethods( [ 'get_api_url' ] )
 			->getMock();
@@ -119,7 +119,7 @@ class Sensei_Home_Remote_Data_Provider_Test extends WP_UnitTestCase {
 	 * @param int    $fetched_cahange The time to set the fetched time to.
 	 */
 	private function artificiallyChangeCacheFetched( $url, $fetched_change ) {
-		$cache_key          = Sensei_Home_Remote_Data_Provider::CACHE_KEY_PREFIX . md5( $url );
+		$cache_key          = Sensei_Home_Remote_Data_API::CACHE_KEY_PREFIX . md5( $url );
 		$cached             = get_transient( $cache_key );
 		$cached['_fetched'] = $cached['_fetched'] - $fetched_change;
 		set_transient( $cache_key, $cached );
@@ -136,8 +136,8 @@ class Sensei_Home_Remote_Data_Provider_Test extends WP_UnitTestCase {
 		add_filter(
 			'pre_http_request',
 			function( $preempt, $args, $url ) use ( $tracker, $response ) {
-				// We are only tracking requests related to the remote data provider.
-				if ( 0 !== strpos( $url, Sensei_Home_Remote_Data_Provider::API_BASE_URL ) ) {
+				// We are only tracking requests related to the remote data helper.
+				if ( 0 !== strpos( $url, Sensei_Home_Remote_Data_API::API_BASE_URL ) ) {
 					return $preempt;
 				}
 

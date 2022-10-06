@@ -95,7 +95,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_Test_REST_TestCase {
 			->willReturn( $mocked_quick_links );
 
 		// Mock Home Data.
-		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_Provider::class );
+		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_API::class );
 		$home_data_mock->expects( $this->once() )
 			->method( 'fetch' )
 			->willReturn( [] );
@@ -126,7 +126,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_Test_REST_TestCase {
 		$tasks_provider_stub       = $this->createMock( Sensei_Home_Tasks_Provider::class );
 
 		// Mock Home Data.
-		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_Provider::class );
+		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_API::class );
 		$home_data_mock->expects( $this->once() )
 			->method( 'fetch' )
 			->willReturn( [] );
@@ -171,7 +171,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_Test_REST_TestCase {
 			->willReturn( $mocked_banner );
 
 		// Mock Home Data.
-		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_Provider::class );
+		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_API::class );
 		$home_data_mock->expects( $this->once() )
 			->method( 'fetch' )
 			->willReturn( [] );
@@ -202,7 +202,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_Test_REST_TestCase {
 		$promo_provider_stub       = $this->createMock( Sensei_Home_Promo_Banner_Provider::class );
 
 		// Mock Home Data.
-		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_Provider::class );
+		$home_data_mock = $this->createMock( Sensei_Home_Remote_Data_API::class );
 		$home_data_mock->expects( $this->once() )
 			->method( 'fetch' )
 			->willReturn( [] );
