@@ -32,7 +32,7 @@ class Sensei_Home_News_Provider {
 	 * @return array
 	 */
 	public function get(): array {
-		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
+		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS, true );
 		$news        = $remote_data['news'] ?? [];
 
 		if ( isset( $news['items'] ) ) {
@@ -40,7 +40,6 @@ class Sensei_Home_News_Provider {
 		}
 
 		return $news;
-
 	}
 
 	/**

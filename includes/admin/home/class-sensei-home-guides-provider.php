@@ -32,7 +32,7 @@ class Sensei_Home_Guides_Provider {
 	 * @return array
 	 */
 	public function get(): array {
-		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
+		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS, true );
 		$guides      = $remote_data['guides'] ?? [];
 
 		if ( isset( $guides['items'] ) ) {
@@ -40,7 +40,6 @@ class Sensei_Home_Guides_Provider {
 		}
 
 		return $guides;
-
 	}
 
 	/**

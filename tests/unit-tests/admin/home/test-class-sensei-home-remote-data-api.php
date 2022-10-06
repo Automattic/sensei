@@ -75,7 +75,6 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 		$this->assertEquals( $first_fetch['hit'], $second_fetch['hit'], 'The two requests should return the same unique ID' );
 	}
 
-
 	/**
 	 * Tests to make sure the max age is respected.
 	 */
@@ -96,14 +95,17 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 			->setConstructorArgs( [ 'dinosaurs' ] )
 			->setMethods( [ 'get_api_url' ] )
 			->getMock();
-		$provider->expects( $this->exactly( 2 ) )->method( 'get_api_url' )->willReturn( $url );
+		$provider->expects( $this->any() )->method( 'get_api_url' )->willReturn( $url );
+
+		// Clone to avoid local caches.
+		$provider_b = clone $provider;
 
 		$first_fetch = $provider->fetch( $max_age );
 
 		// Artificially change the fetched time of the cached data.
-		$this->artificiallyChangeCacheFetched( $url, time() - $max_age - 1 );
+		$this->artificiallyChangeCache( $url, [ '_fetched' => time() - $max_age - 1 ] );
 
-		$second_fetch = $provider->fetch( $max_age );
+		$second_fetch = $provider_b->fetch( $max_age );
 		$this->stopTrackingHttpRequests();
 
 		$this->assertIsArray( $first_fetch );
@@ -113,16 +115,99 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Tests to make sure local cache is used when hydrated.
+	 */
+	public function testFetchLocalCacheUsed() {
+		$http_requests = $this->trackHttpRequests(
+			function() {
+				return [
+					'hit' => uniqid(),
+				];
+			}
+		);
+
+		// Test max age of 60 seconds.
+		$max_age = 60;
+		$url     = Sensei_Home_Remote_Data_API::API_BASE_URL . '/test.json';
+
+		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
+			->setConstructorArgs( [ 'dinosaurs' ] )
+			->setMethods( [ 'get_api_url' ] )
+			->getMock();
+		$provider->expects( $this->any() )->method( 'get_api_url' )->willReturn( $url );
+
+		$first_fetch = $provider->fetch( $max_age );
+
+		// Artificially change the fetched time of the cached data.
+		$this->artificiallyChangeCache( $url, [ '_bad' => true ] );
+
+		$second_fetch = $provider->fetch( $max_age );
+		$this->stopTrackingHttpRequests();
+
+		$this->assertIsArray( $first_fetch );
+		$this->assertIsArray( $second_fetch );
+
+		$this->assertEquals( $first_fetch['hit'], $second_fetch['hit'] );
+		$this->assertFalse( isset( $second_fetch['_bad'] ), 'The second fetch should not be from our tainted cache.' );
+	}
+
+	/**
+	 * Tests to make sure errors are returned when the API is down for multiple requests.
+	 */
+	public function testFetchErrorReturnedBeforeRetry() {
+		$this->trackHttpRequests(
+			function() {
+				return '<html><body>Internal Server Error</body></html>';
+			}
+		);
+
+		// Test max age of 60 seconds.
+		$max_age = 60;
+		$url     = Sensei_Home_Remote_Data_API::API_BASE_URL . '/test.json';
+
+		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
+			->setConstructorArgs( [ 'dinosaurs' ] )
+			->setMethods( [ 'get_api_url' ] )
+			->getMock();
+		$provider->expects( $this->any() )->method( 'get_api_url' )->willReturn( $url );
+
+		// Clone the provider to avoid local cache issues.
+		$provider_b = clone $provider;
+
+		$first_fetch = $provider->fetch( $max_age );
+		$this->stopTrackingHttpRequests();
+		$this->assertWPError( $first_fetch );
+
+		// From now on, all requests will succeed.
+		$this->trackHttpRequests(
+			function() {
+				return [ 'hit' => uniqid() ];
+			}
+		);
+
+		$second_fetch = $provider_b->fetch( $max_age );
+		$this->assertWPError( $second_fetch );
+		$this->assertEquals( $first_fetch->get_error_code(), $second_fetch->get_error_code(), 'The error codes should be the same' );
+
+		$third_fetch_with_retry = $provider_b->fetch( $max_age, true );
+		$this->stopTrackingHttpRequests();
+
+		$this->assertIsArray( $third_fetch_with_retry );
+		$this->assertArrayHasKey( 'hit', $third_fetch_with_retry );
+
+	}
+
+	/**
 	 * Artificially change the fetched time of the cached data.
 	 *
-	 * @param string $url             The URL used to generate cache key.
-	 * @param int    $fetched_cahange The time to set the fetched time to.
+	 * @param string $url     The URL used to generate cache key.
+	 * @param array  $changes Changes to make to the cache.
 	 */
-	private function artificiallyChangeCacheFetched( $url, $fetched_change ) {
-		$cache_key          = Sensei_Home_Remote_Data_API::CACHE_KEY_PREFIX . md5( $url );
-		$cached             = get_transient( $cache_key );
-		$cached['_fetched'] = $cached['_fetched'] - $fetched_change;
-		set_transient( $cache_key, $cached );
+	private function artificiallyChangeCache( $url, $changes ) {
+		$cache_key = Sensei_Home_Remote_Data_API::CACHE_KEY_PREFIX . md5( $url );
+		$cached    = get_transient( $cache_key );
+
+		set_transient( $cache_key, array_merge( $cached, $changes ) );
 	}
 
 	/**
@@ -150,7 +235,9 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 					$response = $response( $args, $url );
 				}
 
-				return [ 'body' => wp_json_encode( $response ) ];
+				$serial_response = is_string( $response ) ? $response : wp_json_encode( $response );
+
+				return [ 'body' => $serial_response ];
 			},
 			10,
 			3
