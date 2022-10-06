@@ -65,7 +65,7 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * @return bool
 	 */
 	public function is_completed(): bool {
-		$visited_settings_sections = get_site_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, [] );
+		$visited_settings_sections = get_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, [] );
 		return in_array( 'appearance-settings', $visited_settings_sections, true );
 	}
 }

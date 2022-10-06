@@ -26,7 +26,7 @@ class Sensei_Home_Task_Configure_Learning_Mode_Test extends WP_UnitTestCase {
 	}
 
 	public function tearDown() {
-		delete_site_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY );
+		delete_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY );
 		parent::tearDown();
 	}
 
@@ -42,7 +42,7 @@ class Sensei_Home_Task_Configure_Learning_Mode_Test extends WP_UnitTestCase {
 	 * Test adding the proper option marks task as complete.
 	 */
 	public function testTaskIsCompletedWhenAddingTheSettingsVisitedOption() {
-		add_site_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, [ 'appearance-settings' ] );
+		add_option( Sensei_Settings::VISITED_SECTIONS_OPTION_KEY, [ 'appearance-settings' ] );
 
 		$this->assertTrue( $this->task->is_completed() );
 	}
