@@ -37,7 +37,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	 */
 	public function tearDown() {
 		parent::tearDown();
-
 		remove_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
 	}
 
@@ -52,8 +51,9 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'items', $result );
 		$items = $result['items'];
 		$this->assertIsArray( $items );
-		$this->assertCount( 2, $items );
+		$this->assertCount( 3, $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Setup_Site::get_id(), $items );
+		$this->assertArrayHasKey( Sensei_Home_Task_Create_First_Course::get_id(), $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Configure_Learning_Mode::get_id(), $items );
 	}
 
@@ -67,7 +67,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'items', $result );
 		$items = $result['items'];
 		$this->assertIsArray( $items );
-		$this->assertCount( 2, $items );
+		$this->assertCount( 3, $items );
 
 		add_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
 
