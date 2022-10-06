@@ -176,15 +176,15 @@ class Sensei_Home_Remote_Data_API {
 	 */
 	private function get_other_plugins() : array {
 		/**
-		* Filter the other plugins used for Sensei Home.
-		*
-		* @since $$next-version$$
-		* @hook sensei_home_remote_data_other_plugins
-		*
-		* @param {array} $other_plugins The other plugins.
-		*
-		* @return {array} The filtered other plugins.
-		*/
+		 * Filter the other plugins used for Sensei Home.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_home_remote_data_other_plugins
+		 *
+		 * @param {array} $other_plugins The other plugins.
+		 *
+		 * @return {array} The filtered other plugins.
+		 */
 		return array_diff( apply_filters( 'sensei_home_remote_data_other_plugins', [] ), [ $this->get_primary_plugin_slug() ] );
 	}
 
