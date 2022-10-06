@@ -68,11 +68,11 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 	 */
 	public function is_completed(): bool {
 		global $wpdb;
-		$prefix      = Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG;
 		$cache_key   = 'home/tasks/create-first-course';
 		$cache_group = 'sensei/temporary';
 		$result      = wp_cache_get( $cache_key, $cache_group );
 		if ( false === $result ) {
+			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
 			$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_name NOT LIKE %s", "{$prefix}%" ) );
 			if ( null === $result ) {
