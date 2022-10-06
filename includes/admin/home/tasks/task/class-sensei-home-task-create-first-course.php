@@ -73,7 +73,7 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 		$cache_group = 'sensei/temporary';
 		$result      = wp_cache_get( $cache_key, $cache_group );
 		if ( false === $result ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Safe-ish and rare query.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
 			$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_name NOT LIKE %s", "{$prefix}%" ) );
 			if ( null === $result ) {
 				$result = 0;
