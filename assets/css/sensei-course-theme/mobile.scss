@@ -20,7 +20,7 @@
 		}
 
 		.sensei-course-theme {
-			--content-padding: 18px;
+			--content-padding: 24px;
 
 			&__header {
 				transition: none !important;
@@ -34,7 +34,7 @@
 					gap: 12px !important;
 				}
 
-				.sensei-course-theme-prev-next-lesson-text {
+				.sensei-course-theme-prev-next-lesson-text, .wp-block-sensei-lms-exit-course {
 					display: none;
 				}
 

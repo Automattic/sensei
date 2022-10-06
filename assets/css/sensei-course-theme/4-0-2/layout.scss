@@ -114,7 +114,7 @@ body.sensei-course-theme {
 	}
 
 	&__main-content {
-		padding: 32px 0;
+		padding: 32px var(--content-padding);
 		margin-right: var(--sidebar-width) !important;
 
 		// A Divi fix since it doesn't load Gutenberg block library styles.
