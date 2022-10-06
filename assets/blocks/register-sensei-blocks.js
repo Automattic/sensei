@@ -19,8 +19,8 @@ const registerSenseiBlocks = ( blocks ) => {
 	} );
 
 	blocks.forEach( ( block ) => {
-		const { name, ...settings } = block;
-		registerBlockType( name, settings );
+		const { metadata, name, ...settings } = block;
+		registerBlockType( metadata || name, settings );
 	} );
 };
 
