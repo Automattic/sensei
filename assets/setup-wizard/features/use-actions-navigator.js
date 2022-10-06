@@ -29,6 +29,7 @@ const minimumTimerPromise = () =>
 const useActionsNavigator = ( actions ) => {
 	const [ currentAction, setCurrentAction ] = useState();
 	const [ error, setError ] = useState( false );
+	const action = actions[ currentAction ]?.action;
 
 	const goToNextAction = useCallback( () => {
 		if ( currentAction + 1 < actions.length ) {
@@ -37,19 +38,20 @@ const useActionsNavigator = ( actions ) => {
 	}, [ currentAction, actions.length ] );
 
 	const runAction = useCallback( () => {
-		// Run action.
 		setError( false );
-		Promise.all( [
-			minimumTimerPromise(),
-			actions[ currentAction ]?.action?.(),
-		] )
+
+		const actionPromise = action?.();
+
+		Promise.all( [ minimumTimerPromise(), actionPromise ] )
 			.then( () => {
 				goToNextAction();
 			} )
 			.catch( ( err ) => {
 				setError( err );
 			} );
-	}, [ actions, currentAction, goToNextAction ] );
+
+		return actionPromise?.clearAction;
+	}, [ action, goToNextAction ] );
 
 	// Navigate through the actions.
 	useEffect( () => {
@@ -61,7 +63,11 @@ const useActionsNavigator = ( actions ) => {
 			return;
 		}
 
-		runAction();
+		const clearAction = runAction();
+
+		return () => {
+			clearAction?.();
+		};
 	}, [ currentAction, runAction ] );
 
 	const errorActions = error && [

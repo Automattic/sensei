@@ -68,9 +68,11 @@ const Features = () => {
 			...getFeatureActions( stepData ),
 			{
 				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
-				action: () =>
-					new Promise( ( resolve ) => {
-						setTimeout( () => {
+				action: () => {
+					let timeoutId;
+
+					const action = new Promise( ( resolve ) => {
+						timeoutId = setTimeout( () => {
 							submitStep(
 								{},
 								{
@@ -81,7 +83,12 @@ const Features = () => {
 								}
 							);
 						}, actionMinimumTimer );
-					} ),
+					} );
+
+					action.clearAction = () => clearTimeout( timeoutId );
+
+					return action;
+				},
 			},
 		],
 		[ stepData, submitStep ]
