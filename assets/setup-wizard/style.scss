@@ -166,6 +166,14 @@ $recoleta-font-family: Recoleta, sans-serif;
 		text-align: left;
 		margin: 0 0 32px;
 		animation: 0.5s slideDown;
+
+		.components-notice__actions {
+			margin-top: 5px;
+		}
+
+		.components-notice__action.components-button {
+			margin-left: 0;
+		}
 	}
 
 	// Content centered in full size.
