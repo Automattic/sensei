@@ -468,7 +468,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 
 		if ( $courses_total > $visible_count ) {
-			$more_button = '<a href="#" data-nonce="' . wp_create_nonce('get_course_list' ) .  '" data-user-id="' . esc_attr( $user_id ) . '" class="sensei-students__enrolled-courses-more-link">' .
+			$more_button = '<a href="#" data-nonce="' . wp_create_nonce( 'get_course_list' ) . '" data-user-id="' . esc_attr( $user_id ) . '" class="sensei-students__enrolled-courses-more-link">' .
 				sprintf(
 					/* translators: %d: the number of links to be displayed */
 					esc_html__( '+%d more', 'sensei-lms' ),
