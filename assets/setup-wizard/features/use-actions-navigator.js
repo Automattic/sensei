@@ -72,6 +72,7 @@ const useActionsNavigator = ( actions ) => {
 
 	const errorActions = error && [
 		{
+			variant: 'primary',
 			label: __( 'Retry', 'sensei-lms' ),
 			onClick: runAction,
 		},
