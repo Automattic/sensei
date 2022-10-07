@@ -1,6 +1,6 @@
 jQuery( document ).ready( function ( $ ) {
 	/***** Settings Tabs *****/
-	$senseiSettings = $( '#woothemes-sensei.sensei-settings' );
+	const $senseiSettings = $( '#woothemes-sensei.sensei-settings' );
 
 	function hideAllSections() {
 		$senseiSettings.find( 'section' ).hide();
@@ -13,6 +13,7 @@ jQuery( document ).ready( function ( $ ) {
 			.find( `[href="#${ sectionId }"]` )
 			.addClass( 'current' );
 		sensei_log_event( 'settings_view', { view: sectionId } );
+		markSectionAsVisited( sectionId );
 	}
 
 	// Hide header and submit on page load if needed
@@ -70,6 +71,14 @@ jQuery( document ).ready( function ( $ ) {
 		show( sectionId );
 		return false;
 	} );
+
+	function markSectionAsVisited( sectionId ) {
+		const data = new FormData();
+		data.append( 'action', 'sensei_settings_section_visited' );
+		data.append( 'section_id', sectionId );
+		data.append( 'nonce', window.senseiSettingsSectionVisitNonce );
+		fetch( ajaxurl, { method: 'POST', body: data } );
+	}
 
 	/***** Colour pickers *****/
 

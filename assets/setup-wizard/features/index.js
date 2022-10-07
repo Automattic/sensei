@@ -13,13 +13,12 @@ import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import useActionsNavigator, {
 	actionMinimumTimer,
 } from './use-actions-navigator';
+import { HOME_PATH } from '../constants';
 
 const featureLabels = {
 	woocommerce: __( 'Installing WooCommerce', 'sensei-lms' ),
 	'sensei-certificates': __( 'Installing Certificates', 'sensei-lms' ),
 };
-
-const senseiHomePath = '/wp-admin/admin.php?page=sensei-home';
 
 /**
  * Get actions for the features to be installed.
@@ -77,7 +76,7 @@ const Features = () => {
 								{},
 								{
 									onSuccess: () => {
-										window.location.href = senseiHomePath;
+										window.location.href = HOME_PATH;
 										resolve();
 									},
 								}
@@ -128,7 +127,7 @@ const Features = () => {
 										'Go to Sensei Home',
 										'sensei-lms'
 									),
-									url: senseiHomePath,
+									url: HOME_PATH,
 								},
 							]
 						}

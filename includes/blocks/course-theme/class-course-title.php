@@ -18,16 +18,23 @@ use \Sensei_Blocks;
  * Display the title of the current course for the current lesson/quiz/module.
  */
 class Course_Title {
+	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-title.block.json';
 
 	/**
 	 * Course_Title constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-title',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+				'style'           => 'sensei-theme-blocks',
+			],
+			$block_json_path
 		);
 	}
 

@@ -74,6 +74,9 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
 
+			// Lesson Featured Video Thumbnail Creation.
+			add_action( 'save_post', array( $this, 'save_lesson_featured_video_thumbnail' ) );
+
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
@@ -671,12 +674,12 @@ class Sensei_Lesson {
 			}
 		}
 
-		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : '-1';
-		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : '-1';
-		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : '-1';
-		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : '-1';
-		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : '-1';
-		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : '-1';
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : null;
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : null;
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : null;
+		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : null;
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : null;
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : null;
 
 		$new_settings = array(
 			'pass_required'         => $new_pass_required,
@@ -724,6 +727,132 @@ class Sensei_Lesson {
 
 		// Assumes Sensei admin is loaded.
 		Sensei()->admin->save_lesson_order( '', $course_id );
+	}
+
+	/**
+	 * Parses YouTube URL to retrieve thumbnail image.
+	 *
+	 * @param string $url The YouTube Video URL.
+	 * @return string|null String if image found, null if not.
+	 */
+	public function get_youtube_thumbnail( $url ) {
+		$re = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
+		preg_match( $re, $url, $matches );
+		return 'https://img.youtube.com/vi/' . $matches[1] . '/maxresdefault.jpg';
+	}
+
+	/**
+	 * Parses Vimeo URL to retrieve thumbnail image.
+	 *
+	 * @param string $url The Vimieo Video URL.
+	 * @return string|null String if image found, null if not.
+	 */
+	public function get_vimeo_thumbnail( $url ) {
+		$re = '/(?:http|https)?:?\/?\/?(?:www\.)?(?:player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)/';
+		preg_match( $re, $url, $matches );
+		$data = wp_remote_get( 'http://vimeo.com/api/v2/video/' . $matches[1] . '.json' );
+		if ( is_array( $data ) && count( $data ) > 0 ) {
+			$body = json_decode( $data['body'] );
+			return $body[0]->thumbnail_large;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Parses VideoPress URL to retrieve thumbnail image.
+	 *
+	 * @param string $url The VideoPress Video URL.
+	 * @return string|null String if image found, null if not.
+	 */
+	public function get_videopress_thumbnail( $url ) {
+		$url_parse = wp_parse_url( $url );
+		$re        = '/(?<=\/v\/).*/';
+		preg_match( $re, $url_parse['path'], $matches );
+		$data = wp_remote_get( 'https://public-api.wordpress.com/rest/v1.1/videos/' . $matches[0] . '/poster' );
+		if ( is_array( $data ) ) {
+			$body = json_decode( $data['body'] );
+			return $body->poster;
+		} else {
+			return null;
+		}
+	}
+	/**
+	 * Get Featured Video from "Video Embed Code" legacy metadata in the Classic Editor
+	 *
+	 * @param string $url The Video Embed URL.
+	 * @return string The video thumbnail URL.
+	 */
+	private function get_featured_video_media_from_classic_editor( $url ) {
+		$url_parse = wp_parse_url( $url );
+
+		if ( false !== strpos( $url_parse['host'], 'youtube' ) ) {
+			return $this->get_youtube_thumbnail( $url );
+		}
+		if ( false !== strpos( $url_parse['host'], 'vimeo' ) ) {
+			return $this->get_vimeo_thumbnail( $url );
+		}
+		if ( false !== strpos( $url_parse['host'], 'videopress' ) ) {
+			return $this->get_videopress_thumbnail( $url );
+		}
+	}
+	/**
+	 * Get featured video url from the Featured Video Block
+	 *
+	 * @param int $post_id The post id.
+	 * @return string|null The URL string or null if the post does not have one.
+	 */
+	private function get_featured_video_media_from_blocks( $post_id ) {
+		$post   = get_post( $post_id );
+		$blocks = parse_blocks( $post->post_content );
+		foreach ( $blocks as $block ) {
+			if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+				if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+					$block = $block['innerBlocks'][0];
+				}
+				if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
+					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) {
+						return $block['attrs']['poster'];
+					} else {
+						return wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
+					}
+				}
+				if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
+					$url = $block['innerBlocks'][0]['attrs']['url'];
+					if ( 'youtube' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_youtube_thumbnail( $url );
+					} elseif ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_vimeo_thumbnail( $url );
+					} elseif ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_videopress_thumbnail( $url );
+					}
+				}
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * Save Lesson Featured Video thumbnail to post meta
+	 *
+	 * @param int $post_id The Post Id.
+	 */
+	public function save_lesson_featured_video_thumbnail( $post_id ) {
+		$meta_key       = '_featured_video_thumbnail';
+		$thumbnail_meta = get_post_meta( $post_id, $meta_key, true );
+		$thumbnail      = null;
+
+		if ( has_blocks( $post_id ) ) {
+			$thumbnail = $this->get_featured_video_media_from_blocks( $post_id );
+		} else {
+			$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
+			if ( $video_embed ) {
+				$thumbnail = $this->get_featured_video_media_from_classic_editor( $video_embed );
+			}
+		}
+		if ( ! empty( $thumbnail ) && ( $thumbnail !== $thumbnail_meta ) ) {
+			update_post_meta( $post_id, $meta_key, $thumbnail );
+		}
 	}
 
 	/**
@@ -5107,20 +5236,10 @@ class Sensei_Lesson {
 	 */
 	public function has_sensei_blocks( $lesson = null ) {
 		$lesson = get_post( $lesson );
+		$post   = $lesson->post_content ?? null;
 
-		$lesson_blocks = [
-			'sensei-lms/lesson-actions',
-			'sensei-lms/lesson-properties',
-			'sensei-lms/button-contact-teacher',
-		];
+		return ! empty( $post ) && has_blocks( $post ) && ( false !== strpos( $post, '<!-- wp:sensei-lms/' ) );
 
-		foreach ( $lesson_blocks as $block ) {
-			if ( has_block( $block, $lesson ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -5137,7 +5256,7 @@ class Sensei_Lesson {
 		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
 
 			// update pass required.
-			if ( - 1 !== $new_settings['pass_required'] ) {
+			if ( null !== $new_settings['pass_required'] ) {
 
 				$checked = $new_settings['pass_required'] ? 'on' : 'off';
 				update_post_meta( $quiz_id, '_pass_required', $checked );
@@ -5152,7 +5271,7 @@ class Sensei_Lesson {
 			}
 
 			// update enable quiz reset.
-			if ( - 1 !== $new_settings['enable_quiz_reset'] ) {
+			if ( null !== $new_settings['enable_quiz_reset'] ) {
 
 				$checked = $new_settings['enable_quiz_reset'] ? 'on' : '';
 				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
@@ -5161,7 +5280,7 @@ class Sensei_Lesson {
 			}
 
 			// update random question order.
-			if ( - 1 !== $new_settings['random_question_order'] ) {
+			if ( null !== $new_settings['random_question_order'] ) {
 
 				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
 				update_post_meta( $quiz_id, '_random_question_order', $checked );
@@ -5169,7 +5288,7 @@ class Sensei_Lesson {
 			}
 
 			// update quiz grade type.
-			if ( - 1 !== $new_settings['quiz_grade_type'] ) {
+			if ( null !== $new_settings['quiz_grade_type'] ) {
 
 				$checked = $new_settings['quiz_grade_type'] ? 'auto' : 'manual';
 				update_post_meta( $quiz_id, '_quiz_grade_type', $checked );

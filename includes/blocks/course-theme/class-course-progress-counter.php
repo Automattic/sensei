@@ -19,14 +19,22 @@ use \Sensei_Blocks;
  */
 class Course_Progress_Counter {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-course-progress-counter.block.json';
+
+	/**
 	 * Course_Progress_Counter constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-course-progress-counter',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+				'style'           => 'sensei-theme-blocks',
+			],
+			$block_json_path
 		);
 	}
 
@@ -52,10 +60,20 @@ class Course_Progress_Counter {
 			$stats['completed_lessons_percentage']
 		);
 
-		return ( "
-			<div class='sensei-course-theme-course-progress'>
-				{$output}
+		$wrapper_attr = get_block_wrapper_attributes(
+			[
+				'class' => 'sensei-course-theme-course-progress',
+			]
+		);
+
+		return sprintf(
+			'
+			<div %s>
+				%s
 			</div>
-		" );
+		',
+			$wrapper_attr,
+			$output
+		);
 	}
 }
