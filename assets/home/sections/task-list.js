@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 import Section from '../section';
-import Ready from '../tasks/ready';
+import Tasks from '../tasks/tasks';
 
 /**
  * Task List section component.
  */
 const TaskList = () => (
 	<Section>
-		<Ready />
+		<Tasks />
 	</Section>
 );
 
