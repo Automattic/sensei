@@ -138,7 +138,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 
 		$first_fetch = $provider->fetch( $max_age );
 
-		// Artificially change the fetched time of the cached data.
+		// Artificially mark the cache as bad.
 		$this->artificiallyChangeCache( $url, [ '_bad' => true ] );
 
 		$second_fetch = $provider->fetch( $max_age );
