@@ -40,6 +40,7 @@ class Sensei_Home_Tasks_Provider {
 			new Sensei_Home_Task_Setup_Site(),
 			new Sensei_Home_Task_Create_First_Course(),
 			new Sensei_Home_Task_Configure_Learning_Mode(),
+			new Sensei_Home_Task_Publish_First_Course(),
 		];
 
 		$tasks = [];
