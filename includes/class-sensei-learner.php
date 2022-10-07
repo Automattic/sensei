@@ -57,6 +57,8 @@ class Sensei_Learner {
 	 * @since 3.0.0
 	 */
 	public function init() {
+		add_action( 'wp_ajax_get_course_list', array( $this, 'get_course_list' ) );
+
 		// Delete user activity and enrolment terms when user is deleted.
 		add_action( 'deleted_user', array( $this, 'delete_all_user_activity' ) );
 
@@ -706,5 +708,39 @@ class Sensei_Learner {
 		}
 
 		return get_user_by( 'login', $query_var );
+	}
+	/**
+	 * Returns course list for AJAX "more" call on Students page.
+	 *
+	 * @return void
+	 */
+	public function get_course_list() {
+
+		if ( ! isset( $_POST['user_id'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'get_course_list' ) ) {
+			wp_die( 'Not allowed' );
+		}
+
+		$user_id         = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : '';
+		$learner_manager = self::instance();
+		$controller      = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), $learner_manager );
+		$base_query_args = [ 'posts_per_page' => -1 ];
+		$posts           = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args )->posts;
+		$courses         = 0;
+		if ( $posts ) {
+			// We only want to show courses after the third one in the UI.
+			$courses = array_slice( $posts, 3 );
+		}
+
+		$html_items = [];
+		if ( count( $courses ) > 0 ) {
+			foreach ( $courses as $course ) {
+				$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
+								'" class="sensei-students__enrolled-course" data-course-id="' . esc_attr( $course->ID ) . '">' .
+								esc_html( $course->post_title ) .
+								'</a>';
+			}
+		}
+		wp_send_json_success( $html_items );
+		exit();
 	}
 }
