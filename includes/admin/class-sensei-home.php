@@ -30,7 +30,19 @@ final class Sensei_Home {
 	/**
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
-	private function __construct() {}
+	private function __construct() {
+		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms' );
+		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api );
+	}
+
+	/**
+	 * Gets the remote data API.
+	 *
+	 * @return Sensei_Home_Remote_Data_API
+	 */
+	public function get_remote_data_api() {
+		return $this->remote_data_api;
+	}
 
 	/**
 	 * Initializes the class and adds all filters and actions related to Sensei Home.
@@ -38,6 +50,8 @@ final class Sensei_Home {
 	 * @since $$next-version$$
 	 */
 	public function init() {
+		$this->notices->init();
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 	}
 

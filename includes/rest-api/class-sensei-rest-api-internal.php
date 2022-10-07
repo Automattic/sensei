@@ -77,7 +77,7 @@ class Sensei_REST_API_Internal {
 	 * Sensei_REST_API_Internal constructor.
 	 */
 	public function __construct() {
-		$remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms' );
+		$remote_data_api = Sensei_Home::instance()->get_remote_data_api();
 
 		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
 		$this->help_provider        = new Sensei_Home_Help_Provider();
