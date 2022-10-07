@@ -716,7 +716,7 @@ class Sensei_Learner {
 	 */
 	public function get_course_list() {
 
-		if ( ! isset( $_POST['user_id'] ) || ! wp_verify_nonce( sanitize_text_field( ( wp_unslash( $_POST['nonce'] ) ), 'get_course_list' ) ) {
+		if ( ! isset( $_POST['user_id'] ) || ! wp_verify_nonce( sanitize_text_field( ( wp_unslash( $_POST['nonce'] ) ) ), 'get_course_list' ) ) {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
