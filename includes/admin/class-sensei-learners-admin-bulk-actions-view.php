@@ -247,6 +247,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						'a'     => array(
 							'class'          => true,
 							'data-course-id' => true,
+							'data-user-id'   => true,
+							'data-nonce'     => true,
 							'href'           => true,
 							'title'          => true,
 						),
@@ -446,14 +448,14 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return string The HTML for the column.
 	 */
 	private function get_learner_courses_html( $user_id ) {
-		$query   = $this->learner->get_enrolled_courses_query( $user_id );
-		$courses = $query->get_posts();
+		$base_query_args = [ 'posts_per_page' => 3 ];
+		$query           = $this->learner->get_enrolled_courses_query( $user_id, $base_query_args );
+		$courses         = $query->get_posts();
 
 		if ( empty( $courses ) ) {
 			return __( 'N/A', 'sensei-lms' );
 		}
-
-		$courses_total = $query->post_count;
+		$courses_total = $this->learner->get_enrolled_courses_count_query( $user_id );
 		$visible_count = 3;
 		$html_items    = [];
 		$more_button   = '';
@@ -466,7 +468,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 
 		if ( $courses_total > $visible_count ) {
-			$more_button = '<a href="#" class="sensei-students__enrolled-courses-more-link">' .
+			$more_button = '<a href="#" data-nonce="' . wp_create_nonce('get_course_list' ) .  '" data-user-id="' . esc_attr( $user_id ) . '" class="sensei-students__enrolled-courses-more-link">' .
 				sprintf(
 					/* translators: %d: the number of links to be displayed */
 					esc_html__( '+%d more', 'sensei-lms' ),
@@ -478,7 +480,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$visible_courses = implode( '', array_slice( $html_items, 0, $visible_count ) );
 		$hidden_courses  = implode( '', array_slice( $html_items, $visible_count ) );
 
-		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail hidden">' . $hidden_courses . '</div>' . $more_button;
+		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail">' . $hidden_courses . '</div>' . $more_button;
 	}
 
 	/**
