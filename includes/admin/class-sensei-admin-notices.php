@@ -56,7 +56,7 @@ class Sensei_Admin_Notices {
 		'edit-question-type',
 		'edit-question-category',
 		'edit-lesson-tag',
-		'course_page_sensei-home',
+		Sensei_Home::SCREEN_ID,
 		'course_page_' . Sensei_Analysis::PAGE_SLUG,
 		'course_page_sensei_learners',
 		'course_page_sensei-settings',

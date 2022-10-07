@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 final class Sensei_Home {
+	const SCREEN_ID = 'course_page_sensei-home';
+
 	/**
 	 * Instance of class.
 	 *
@@ -48,7 +50,7 @@ final class Sensei_Home {
 	public function enqueue_admin_assets() {
 		$screen = get_current_screen();
 
-		if ( 'course_page_sensei-home' === $screen->id ) {
+		if ( self::SCREEN_ID === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-home', 'home/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-home-style', 'home/home.css', [ 'sensei-wp-components' ] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
