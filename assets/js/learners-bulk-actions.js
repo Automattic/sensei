@@ -225,7 +225,6 @@ jQuery( document ).ready( function () {
 							$hiddenPosts.append( data.data );
 						},
 						error: function(errorThrown){
-							console.log( errorThrown );
 							$hiddenPosts.append( "<p>There was an error fetching courses: " + errorThrown.statusText + ': ' + errorThrown.status + "</p>" )
 						}
 					}
