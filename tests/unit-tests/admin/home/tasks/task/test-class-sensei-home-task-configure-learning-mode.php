@@ -5,6 +5,9 @@
  * @package sensei
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 /**
  * Tests for Sensei_Home_Task_Configure_Learning_Mode class.
