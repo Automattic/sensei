@@ -217,16 +217,18 @@ class Sensei_Admin_Notices {
 	 *
 	 * @access private
 	 *
+	 * @param string $screen_id The screen ID.
+	 *
 	 * @return array
 	 */
-	public function get_notices_to_display() {
+	public function get_notices_to_display( $screen_id = null ) {
 		$notices = [];
 		foreach ( $this->get_notices() as $notice_id => $notice ) {
 			$notice = $this->normalize_notice( $notice );
 
 			$is_user_notification = 'user' === $notice['type'];
 
-			if ( ! isset( $notice['message'] ) || $this->is_notice_dismissed( $notice_id, $is_user_notification ) || ! $this->check_notice_conditions( $notice ) ) {
+			if ( ! isset( $notice['message'] ) || $this->is_notice_dismissed( $notice_id, $is_user_notification ) || ! $this->check_notice_conditions( $notice, $screen_id ) ) {
 				continue;
 			}
 
@@ -239,11 +241,12 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check notice conditions.
 	 *
-	 * @param array $notice The notice configuration.
+	 * @param array  $notice The notice configuration.
+	 * @param string $screen_id The screen ID.
 	 *
 	 * @return bool
 	 */
-	private function check_notice_conditions( $notice ) {
+	private function check_notice_conditions( $notice, $screen_id = null ) {
 		if ( ! isset( $notice['conditions'] ) || ! is_array( $notice['conditions'] ) ) {
 			$notice['conditions'] = [];
 		}
@@ -296,7 +299,7 @@ class Sensei_Admin_Notices {
 					}
 
 					$has_screen_condition = true;
-					if ( ! $this->condition_check_screen( $condition['screens'] ) ) {
+					if ( ! $this->condition_check_screen( $condition['screens'], $screen_id ) ) {
 						$can_see_notice = false;
 						break 2;
 					}
@@ -369,10 +372,12 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check a screen condition.
 	 *
-	 * @param array $allowed_screens Array of allowed screen IDs. `sensei*` is a special screen ID for any Sensei screen.
+	 * @param array  $allowed_screens Array of allowed screen IDs. `sensei*` is a special screen ID for any Sensei screen.
+	 * @param string $screen_id       The screen ID.
+	 *
 	 * @return bool
 	 */
-	private function condition_check_screen( array $allowed_screens ) : bool {
+	private function condition_check_screen( array $allowed_screens, $screen_id = null ) : bool {
 		$allowed_screen_ids = array_merge( self::SENSEI_SCREEN_IDS, self::OTHER_ALLOWED_SCREEN_IDS );
 		$condition_pass     = true;
 
@@ -381,7 +386,8 @@ class Sensei_Admin_Notices {
 		}
 
 		$screens   = array_intersect( $allowed_screen_ids, $allowed_screens );
-		$screen_id = $this->get_screen_id();
+		$screen_id = $screen_id ?? $this->get_screen_id();
+
 		if ( ! $screen_id || ! in_array( $screen_id, $screens, true ) ) {
 			$condition_pass = false;
 		}
