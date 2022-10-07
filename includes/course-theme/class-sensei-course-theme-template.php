@@ -4,13 +4,13 @@
  *
  * @author      Automattic
  * @package     Sensei
- * @version     $$next-version$$
+ * @version     4.7.0
  */
 
 /**
  * Class representing a Learning Mode block template.
  *
- * @since $$next-version$$
+ * @since 4.7.0
  */
 class Sensei_Course_Theme_Template {
 
@@ -18,7 +18,7 @@ class Sensei_Course_Theme_Template {
 	 * The unique name of the block template.
 	 *
 	 * @var string
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public $name;
 
@@ -26,7 +26,7 @@ class Sensei_Course_Theme_Template {
 	 * The title of the block template.
 	 *
 	 * @var string
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public $title;
 
@@ -34,7 +34,7 @@ class Sensei_Course_Theme_Template {
 	 * The version number of the block template. For example "1.0.0".
 	 *
 	 * @var string
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public $version;
 
@@ -42,14 +42,14 @@ class Sensei_Course_Theme_Template {
 	 * An array of urls of styles that needs to be enqueued with this block template.
 	 *
 	 * @var string[]
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public $styles;
 	/**
 	 * An array of urls of scripts that needs to be enqueued with this block template.
 	 *
 	 * @var string[]
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public $scripts;
 
@@ -60,7 +60,7 @@ class Sensei_Course_Theme_Template {
 	 *     @type string $full      The url to the full size screenshot of the block template.
 	 *     @type string $thumbnail The url to the thumbnail size screenshot of the block template.
 	 * }
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public $screenshots;
 

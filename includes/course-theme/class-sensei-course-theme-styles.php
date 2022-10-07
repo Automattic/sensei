@@ -3,7 +3,7 @@
  * File containing Sensei_Course_Theme_Styles class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.7.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Add support for global styles colors.
  *
- * @since $$next-version$$
+ * @since 4.7.0
  */
 class Sensei_Course_Theme_Styles {
 
