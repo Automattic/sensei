@@ -1,7 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 // Minimum timer for the actions, to make sure the user will have time to read the texts.
 export const actionMinimumTimer = 1500;
@@ -23,10 +24,34 @@ const minimumTimerPromise = () =>
  *
  * @param {Array} actions
  *
- * @return {{percentage: number, label: string}} Current action data.
+ * @return {{percentage: number, label: string, error: object, errorActions: object}} Current action data.
  */
 const useActionsNavigator = ( actions ) => {
 	const [ currentAction, setCurrentAction ] = useState();
+	const [ error, setError ] = useState( false );
+	const action = actions[ currentAction ]?.action;
+
+	const goToNextAction = useCallback( () => {
+		if ( currentAction + 1 < actions.length ) {
+			setCurrentAction( ( prev ) => prev + 1 );
+		}
+	}, [ currentAction, actions.length ] );
+
+	const runAction = useCallback( () => {
+		setError( false );
+
+		const actionPromise = action?.();
+
+		Promise.all( [ minimumTimerPromise(), actionPromise ] )
+			.then( () => {
+				goToNextAction();
+			} )
+			.catch( ( err ) => {
+				setError( err );
+			} );
+
+		return actionPromise?.clearAction;
+	}, [ action, goToNextAction ] );
 
 	// Navigate through the actions.
 	useEffect( () => {
@@ -38,20 +63,32 @@ const useActionsNavigator = ( actions ) => {
 			return;
 		}
 
-		// Run action.
-		Promise.all( [
-			minimumTimerPromise(),
-			actions[ currentAction ]?.action?.(),
-		] ).then( () => {
-			if ( currentAction + 1 < actions.length ) {
-				setCurrentAction( ( prev ) => prev + 1 );
-			}
-		} );
-	}, [ currentAction, actions ] );
+		const clearAction = runAction();
+
+		return () => {
+			clearAction?.();
+		};
+	}, [ currentAction, runAction ] );
+
+	const errorActions = error && [
+		{
+			variant: 'primary',
+			label: __( 'Retry', 'sensei-lms' ),
+			onClick: runAction,
+		},
+		{
+			label: __( 'Skip', 'sensei-lms' ),
+			onClick: goToNextAction,
+		},
+	];
+
+	const stepNumber = currentAction + ( error ? 0 : 1 );
 
 	return {
-		percentage: ( ( currentAction + 1 ) / actions.length ) * 100 || 0,
+		percentage: ( stepNumber / actions.length ) * 100 || 0,
 		label: actions[ currentAction ]?.label,
+		error,
+		errorActions,
 	};
 };
 

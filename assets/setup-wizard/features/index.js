@@ -40,16 +40,12 @@ const getFeatureActions = ( { selected, options } ) => {
 	return featuresToInstall.map( ( slug ) => ( {
 		label: featureLabels[ slug ],
 		action: () =>
-			new Promise( ( resolve ) => {
-				apiFetch( {
-					path: '/sensei-internal/v1/sensei-extensions/install',
-					method: 'POST',
-					data: {
-						plugin: slug,
-					},
-				} ).then( () => {
-					resolve();
-				} );
+			apiFetch( {
+				path: '/sensei-internal/v1/sensei-extensions/install',
+				method: 'POST',
+				data: {
+					plugin: slug,
+				},
 			} ),
 	} ) );
 };
@@ -58,7 +54,9 @@ const getFeatureActions = ( { selected, options } ) => {
  * Features step for Setup Wizard.
  */
 const Features = () => {
-	const { stepData, submitStep, error } = useSetupWizardStep( 'features' );
+	const { stepData, submitStep, error: submitError } = useSetupWizardStep(
+		'features'
+	);
 
 	// Create list of actions.
 	const actions = useMemo(
@@ -69,9 +67,11 @@ const Features = () => {
 			...getFeatureActions( stepData ),
 			{
 				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
-				action: () =>
-					new Promise( ( resolve ) => {
-						setTimeout( () => {
+				action: () => {
+					let timeoutId;
+
+					const action = new Promise( ( resolve ) => {
+						timeoutId = setTimeout( () => {
 							submitStep(
 								{},
 								{
@@ -82,33 +82,29 @@ const Features = () => {
 								}
 							);
 						}, actionMinimumTimer );
-					} ),
+					} );
+
+					action.clearAction = () => clearTimeout( timeoutId );
+
+					return action;
+				},
 			},
 		],
 		[ stepData, submitStep ]
 	);
 
-	const { percentage, label } = useActionsNavigator( actions );
+	const {
+		percentage,
+		label,
+		error: actionError,
+		errorActions,
+	} = useActionsNavigator( actions );
+
+	const error = actionError || submitError;
 
 	return (
 		<div className="sensei-setup-wizard__full-centered-step">
 			<div className="sensei-setup-wizard__full-centered-content">
-				{ error && (
-					<Notice
-						status="error"
-						className="sensei-setup-wizard__submit-error"
-						isDismissible={ false }
-						actions={ [
-							{
-								label: __( 'Go to Sensei Home', 'sensei-lms' ),
-								url: HOME_PATH,
-							},
-						] }
-					>
-						{ error.message }
-					</Notice>
-				) }
-
 				<div
 					className="sensei-setup-wizard__features-status"
 					role="status"
@@ -118,6 +114,27 @@ const Features = () => {
 						{ label }
 					</div>
 				</div>
+
+				{ error && (
+					<Notice
+						status="error"
+						className="sensei-setup-wizard__error-notice"
+						isDismissible={ false }
+						actions={
+							errorActions || [
+								{
+									label: __(
+										'Go to Sensei Home',
+										'sensei-lms'
+									),
+									url: HOME_PATH,
+								},
+							]
+						}
+					>
+						{ error.message }
+					</Notice>
+				) }
 
 				<div className="sensei-setup-wizard__features-progress-bar">
 					<div
