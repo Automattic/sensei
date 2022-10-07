@@ -152,6 +152,22 @@ class Sensei_Admin_Notices {
 	 * @access private
 	 */
 	public function add_admin_notices() {
+		$screen_id = $this->get_screen_id();
+
+		/**
+		 * Adds the ability to hide notices on a specific screen.
+		 *
+		 * @hook sensei_hide_admin_notices_on_screen
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $hide_notices_on_screen Whether to hide notices on the screen.
+		 *
+		 * @return {bool} Whether to hide notices on the screen.
+		 */
+		if ( ! apply_filters( "sensei_show_admin_notices_{$screen_id}", true ) ) {
+			return;
+		}
+
 		foreach ( $this->get_notices_to_display() as $notice_id => $notice ) {
 			$this->add_admin_notice( $notice_id, $notice );
 		}

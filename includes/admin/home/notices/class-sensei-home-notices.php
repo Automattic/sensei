@@ -30,6 +30,7 @@ class Sensei_Home_Notices {
 	 * Add the hooks related to this class.
 	 */
 	public function init() {
+		add_filter( 'sensei_show_admin_notices_' . Sensei_Home::SCREEN_ID, '__return_false' );
 		add_action( 'sensei_admin_notices', [ $this, 'add_update_notices' ] );
 	}
 
