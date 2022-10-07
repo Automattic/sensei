@@ -1,5 +1,7 @@
 @import '../shared/styles/variables';
 @import '../shared/styles/wp-admin';
+@import '../css/font-recoleta';
+@import 'tasks/style';
 
 $break-wide: 1281px;
 $break-large: 961px;  // admin sidebar auto folds
