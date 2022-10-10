@@ -74,7 +74,7 @@ class Sensei_Home_Extensions_Provider {
 	 * @param array $remote_plugin_data Plugin information on remote.
 	 * @return array
 	 */
-	public function map_plugin( $remote_plugin_data ) {
+	private function map_plugin( $remote_plugin_data ) {
 
 		return [
 			'title'        => $remote_plugin_data['title'],
