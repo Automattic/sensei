@@ -104,9 +104,10 @@ const QuickLinksColumn = ( { data } ) => (
  * @param {Array}  props.quickLinks The links to show on the Quick Links section.
  */
 const QuickLinks = ( { quickLinks } ) => {
-	const columnCount = Math.floor( 12 / quickLinks.length );
-	const columns = new Array( quickLinks.length ).fill( columnCount );
-	columns[ columns.length - 1 ] += 12 % quickLinks.length;
+	const numberColumns = quickLinks?.length ?? 0;
+	const columnCount = Math.floor( numberColumns ? 12 / numberColumns : 0 );
+	const columns = new Array( numberColumns ).fill( columnCount );
+	columns[ columns.length - 1 ] += 12 % numberColumns;
 	return (
 		<Section title={ __( 'Quick Links', 'sensei-lms' ) }>
 			<Grid>
