@@ -90,7 +90,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_Tasks_Provider        $tasks_provider        Tasks provider.
 	 * @param Sensei_Home_News_Provider         $news_provider         News provider.
 	 * @param Sensei_Home_Guides_Provider       $guides_provider       Guides provider.
-	 * @param Sensei_Home_Extensions_Provider   $extensions_prodiver       Extensions provider.
+	 * @param Sensei_Home_Extensions_Provider   $extensions_prodiver   Extensions provider.
 	 */
 	public function __construct(
 		$namespace,
