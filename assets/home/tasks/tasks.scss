@@ -2,8 +2,13 @@
 	&__title {
 		margin: 0 0 12px;
 		font-family: $recoleta-font-family;
-		font-size: 32px;
+		font-size: 28px;
 		font-weight: 400;
+		line-height: 1.2;
+
+		@media ( min-width: $break-large ) {
+			font-size: 32px;
+		}
 	}
 
 	&__description {

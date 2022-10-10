@@ -1,12 +1,17 @@
+$small-padding: 36px;
+$medium-padding: 48px;
+
 .sensei-home-first-course {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
 	box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
-	margin-right: -12px;
 
 	&__site-header {
 		display: flex;
 		align-items: center;
 		min-height: 54px;
-		padding: 0 36px;
+		padding: 0 $small-padding;
 		background-color: #000;
 		border-radius: 16px 0 0;
 		overflow: hidden;
@@ -15,7 +20,7 @@
 
 		@media ( min-width: $break-large ) {
 			min-height: 72px;
-			padding: 0 48px;
+			padding: 0 $medium-padding;
 		}
 	}
 
@@ -41,29 +46,26 @@
 		}
 	}
 
-	&__featured-image {
-		background: url( '../images/home-course-featured-image.png' ) no-repeat;
-		background-size: cover;
-		min-height: 286px;
-	}
-
 	&__content {
-		padding-left: 36px;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding-left: $small-padding;
 
 		@media ( min-width: $break-large ) {
-			padding-left: 48px;
+			padding-left: $medium-padding;
 		}
 	}
 
 	&__course-title {
-		padding: 24px 0 18px;
+		padding: 24px $small-padding 18px 0;
 		margin: 0;
 		font-size: 36px;
 		font-family: $recoleta-font-family;
 		font-weight: 300;
 
 		@media ( min-width: $break-large ) {
-			padding: 32px 0 24px;
+			padding: 32px $medium-padding 24px 0;
 		}
 	}
 
@@ -77,5 +79,12 @@
 			width: 260px;
 			height: 40px;
 		}
+	}
+
+	&__featured-image {
+		flex: 1;
+		background: url( '../images/home-course-featured-image.png' ) no-repeat;
+		background-size: cover;
+		min-height: 286px;
 	}
 }
