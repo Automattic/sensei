@@ -10,6 +10,8 @@
  * Class that gathers and produces the local notices for Sensei Home.
  */
 class Sensei_Home_Notices {
+	const HOME_NOTICE_KEY_PREFIX = 'sensei_home_';
+
 	/**
 	 * The remote data helper.
 	 *
