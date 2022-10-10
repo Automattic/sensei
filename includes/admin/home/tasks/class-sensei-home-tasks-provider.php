@@ -25,7 +25,7 @@ class Sensei_Home_Tasks_Provider {
 	public function get(): array {
 		return [
 			'items'        => $this->get_tasks(),
-			'is_completed' => get_option( self::COMPLETED_TASKS_OPTION_KEY, false ),
+			'is_completed' => (bool) get_option( self::COMPLETED_TASKS_OPTION_KEY, false ),
 		];
 	}
 
