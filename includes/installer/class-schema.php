@@ -76,7 +76,7 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	started_at datetime,
 	completed_at datetime,
 	created_at datetime NOT NULL,
-	update_at datetime NOT NULL,
+	updated_at datetime NOT NULL,
 	PRIMARY KEY  (id),
 	UNIQUE KEY user_progress (post_id, user_id, type),
 	KEY status (status)
@@ -105,7 +105,7 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 		 *
 		 * @since $$next-version$$
 		 *
-		 * @param array $tables An array of Sensei Pro specific database table names.
+		 * @param array $tables An array of Sensei specific database table names.
 		 */
 		$tables = apply_filters( 'sensei_lms_schema_get_tables', $tables );
 
