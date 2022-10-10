@@ -17,9 +17,20 @@ import GetHelp from './sections/get-help';
 import SenseiGuides from './sections/sensei-guides';
 import LatestNews from './sections/latest-news';
 import Extensions from './sections/extensions';
+import { useEffect, useState } from '@wordpress/element';
+import apiFetch from '@wordpress/api-fetch';
 
 const Main = () => {
 	useSenseiColorTheme();
+	const [ data, setData ] = useState( {} );
+
+	useEffect( async () => {
+		const remoteData = await apiFetch( {
+			path: '/sensei-internal/v1/home',
+			method: 'GET',
+		} );
+		setData( remoteData );
+	}, [] );
 
 	/**
 	 * Filters the component that will be injected on the top of the Sensei Home
@@ -48,7 +59,7 @@ const Main = () => {
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<GetHelp />
+					<GetHelp categories={ data?.help } />
 				</Col>
 
 				<SenseiProAd />

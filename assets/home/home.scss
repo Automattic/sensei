@@ -569,5 +569,38 @@ $break-medium: 783px; // adminbar goes big
 		.components-notice {
 			margin: 10px 0 0;
 		}
+
+		&__help {
+			&-category {
+				& h3 {
+					font-size: 13px;
+					line-height: 16px;
+					margin: 0;
+				}
+			}
+
+			&-item {
+				font-size: 13px;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+
+				& a {
+					text-decoration: unset;
+				}
+
+				&__title {
+					margin-left: 16px;
+
+					&--disabled {
+						opacity: 0.6;
+					}
+				}
+
+				&__extra-link {
+					margin-left: 13px;
+				}
+			}
+		}
 	}
 }
