@@ -27,6 +27,12 @@ class Lesson_Progress_Repository_Factory {
 	 * @return Lesson_Progress_Repository_Interface The repository.
 	 */
 	public function create(): Lesson_Progress_Repository_Interface {
-		return new Comments_Based_Lesson_Progress_Repository();
+		global $wpdb;
+
+		return new Aggregate_Lesson_Progress_Repository(
+			new Comments_Based_Lesson_Progress_Repository(),
+			new Tables_Based_Lesson_Progress_Repository( $wpdb ),
+			true
+		);
 	}
 }

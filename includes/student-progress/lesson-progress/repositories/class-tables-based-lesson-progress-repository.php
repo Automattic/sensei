@@ -142,6 +142,14 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 	}
 
+	/**
+	 * Returns the number of started lessons for a user in a course.
+	 * The number of started lessons is the same as the number of lessons that have a progress record.
+	 *
+	 * @param int $course_id The course ID.
+	 * @param int $user_id The user ID.
+	 * @return int
+	 */
 	public function count( int $course_id, int $user_id ): int {
 		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'publish', 'ids' );
 

@@ -23,6 +23,12 @@ class Quiz_Progress_Repository_Factory {
 	 * @return Quiz_Progress_Repository_Interface
 	 */
 	public function create(): Quiz_Progress_Repository_Interface {
-		return new Comments_Based_Quiz_Progress_Repository();
+		global $wpdb;
+
+		return new Aggregate_Quiz_Progress_Repository(
+			new Comments_Based_Quiz_Progress_Repository(),
+			new Tables_Based_Quiz_Progress_Repository( $wpdb ),
+			true
+		);
 	}
 }
