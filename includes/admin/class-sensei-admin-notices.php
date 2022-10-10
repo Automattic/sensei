@@ -79,9 +79,35 @@ class Sensei_Admin_Notices {
 	];
 
 	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * Class constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
+		// Silence is golden.
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	public function init() {
 		if ( ! is_admin() ) {
 			return;
 		}

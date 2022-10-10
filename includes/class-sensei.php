@@ -451,8 +451,10 @@ class Sensei_Main {
 		Sensei_Editor_Wizard::instance()->init();
 
 		// Load Analysis Reports.
-		$this->analysis      = new Sensei_Analysis( $this->main_plugin_file_name );
-		$this->admin_notices = new Sensei_Admin_Notices();
+		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+		// Admin notices.
+		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
