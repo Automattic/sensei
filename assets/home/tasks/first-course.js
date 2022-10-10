@@ -31,7 +31,7 @@ const FirstCourse = ( { siteTitle, courseTitle, siteLogo, featuredImage } ) => (
 				className="sensei-home-first-course__featured-image"
 				style={
 					featuredImage && {
-						backgroundImage: `url( "${ featuredImage }" )`,
+						backgroundImage: `url("${ featuredImage }")`,
 					}
 				}
 			/>
