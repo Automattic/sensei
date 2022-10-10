@@ -27,6 +27,12 @@ class Course_Progress_Repository_Factory {
 	 * @return Course_Progress_Repository_Interface
 	 */
 	public function create(): Course_Progress_Repository_Interface {
-		return new Comments_Based_Course_Progress_Repository();
+		global $wpdb;
+
+		return new Aggregate_Course_Progress_Repository(
+			new Comments_Based_Course_Progress_Repository(),
+			new Tables_Based_Course_Progress_Repository( $wpdb ),
+			true
+		);
 	}
 }
