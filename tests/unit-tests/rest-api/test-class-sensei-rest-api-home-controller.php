@@ -25,42 +25,42 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	 *
 	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Home_Help_Provider
 	 */
-	private $help_provider_stub;
+	private $help_provider_mock;
 
 	/**
 	 * Promo provider mock.
 	 *
 	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Home_Promo_Banner_Provider
 	 */
-	private $promo_provider_stub;
+	private $promo_provider_mock;
 
 	/**
 	 * Tasks provider mock.
 	 *
 	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Home_Tasks_Provider
 	 */
-	private $tasks_provider_stub;
+	private $tasks_provider_mock;
 
 	/**
 	 * News provider mock.
 	 *
 	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Home_News_Provider
 	 */
-	private $news_provider_stub;
+	private $news_provider_mock;
 
 	/**
 	 * Guides provider mock.
 	 *
 	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Home_Guides_Provider
 	 */
-	private $guides_provider_stub;
+	private $guides_provider_mock;
 
 	/**
 	 * Extensions provider mock.
 	 *
 	 * @var \PHPUnit\Framework\MockObject\MockObject|Sensei_Home_Extensions_Provider
 	 */
-	private $extensions_provider_stub;
+	private $extensions_provider_mock;
 
 	/**
 	 * Controller under test.
@@ -74,22 +74,22 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->quick_links_provider_mock = $this->createMock( Sensei_Home_Quick_Links_Provider::class );
-		$this->help_provider_stub        = $this->createMock( Sensei_Home_Help_Provider::class );
-		$this->promo_provider_stub       = $this->createMock( Sensei_Home_Promo_Banner_Provider::class );
-		$this->tasks_provider_stub       = $this->createMock( Sensei_Home_Tasks_Provider::class );
-		$this->news_provider_stub        = $this->createMock( Sensei_Home_News_Provider::class );
-		$this->guides_provider_stub      = $this->createMock( Sensei_Home_Guides_Provider::class );
-		$this->extensions_provider_stub  = $this->createMock( Sensei_Home_Extensions_Provider::class );
+		$this->help_provider_mock        = $this->createMock( Sensei_Home_Help_Provider::class );
+		$this->promo_provider_mock       = $this->createMock( Sensei_Home_Promo_Banner_Provider::class );
+		$this->tasks_provider_mock       = $this->createMock( Sensei_Home_Tasks_Provider::class );
+		$this->news_provider_mock        = $this->createMock( Sensei_Home_News_Provider::class );
+		$this->guides_provider_mock      = $this->createMock( Sensei_Home_Guides_Provider::class );
+		$this->extensions_provider_mock  = $this->createMock( Sensei_Home_Extensions_Provider::class );
 
 		$this->controller = new Sensei_REST_API_Home_Controller(
 			'namespace',
 			$this->quick_links_provider_mock,
-			$this->help_provider_stub,
-			$this->promo_provider_stub,
-			$this->tasks_provider_stub,
-			$this->news_provider_stub,
-			$this->guides_provider_stub,
-			$this->extensions_provider_stub
+			$this->help_provider_mock,
+			$this->promo_provider_mock,
+			$this->tasks_provider_mock,
+			$this->news_provider_mock,
+			$this->guides_provider_mock,
+			$this->extensions_provider_mock
 		);
 	}
 
@@ -111,7 +111,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	public function testGetData_GivenAMockedNewsProvider_ReturnsNewsSection() {
 		// Arrange
 		$mocked_response = [ 'mocked_response' ];
-		$this->news_provider_stub->expects( $this->once() )
+		$this->news_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_response );
 
@@ -126,7 +126,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	public function testGetData_GivenAMockedGuidesProvider_ReturnsGuidesSection() {
 		// Arrange
 		$mocked_response = [ 'mocked_response' ];
-		$this->guides_provider_stub->expects( $this->once() )
+		$this->guides_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_response );
 
@@ -141,7 +141,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	public function testGetData_GivenAMockedHelpProvider_ReturnsHelpSection() {
 		// Arrange
 		$mocked_response = [ 'mocked_response' ];
-		$this->help_provider_stub->expects( $this->once() )
+		$this->help_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_response );
 
@@ -156,7 +156,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	public function testGetData_GivenAMockedPromoProvider_ReturnsPromoSection() {
 		// Arrange
 		$mocked_response = [ 'mocked_response' ];
-		$this->promo_provider_stub->expects( $this->once() )
+		$this->promo_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_response );
 
@@ -171,7 +171,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	public function testGetData_GivenAMockedTasksProvider_ReturnsTasksSection() {
 		// Arrange
 		$mocked_response = [ 'mocked_response' ];
-		$this->tasks_provider_stub->expects( $this->once() )
+		$this->tasks_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_response );
 
@@ -186,7 +186,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	public function testGetData_GivenAMockedExtensionsProvider_ReturnsExtensionsSection() {
 		// Arrange
 		$mocked_response = [ 'mocked_response' ];
-		$this->extensions_provider_stub->expects( $this->once() )
+		$this->extensions_provider_mock->expects( $this->once() )
 			->method( 'get' )
 			->willReturn( $mocked_response );
 
