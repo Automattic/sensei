@@ -74,6 +74,13 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	private $guides_provider;
 
 	/**
+	 * Extensions provider.
+	 *
+	 * @var Sensei_Home_Extensions_Provider
+	 */
+	private $extensions_provider;
+
+	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
 	 * @param string                            $namespace             Routes namespace.
@@ -83,6 +90,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_Tasks_Provider        $tasks_provider        Tasks provider.
 	 * @param Sensei_Home_News_Provider         $news_provider         News provider.
 	 * @param Sensei_Home_Guides_Provider       $guides_provider       Guides provider.
+	 * @param Sensei_Home_Extensions_Provider   $extensions_prodiver   Extensions provider.
 	 */
 	public function __construct(
 		$namespace,
@@ -91,7 +99,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		Sensei_Home_Promo_Banner_Provider $promo_banner_provider,
 		Sensei_Home_Tasks_Provider $tasks_provider,
 		Sensei_Home_News_Provider $news_provider,
-		Sensei_Home_Guides_Provider $guides_provider
+		Sensei_Home_Guides_Provider $guides_provider,
+		Sensei_Home_Extensions_Provider $extensions_prodiver
 	) {
 		$this->namespace             = $namespace;
 		$this->quick_links_provider  = $quick_links_provider;
@@ -100,6 +109,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		$this->tasks_provider        = $tasks_provider;
 		$this->news_provider         = $news_provider;
 		$this->guides_provider       = $guides_provider;
+		$this->extensions_provider   = $extensions_prodiver;
 	}
 
 	/**
@@ -147,17 +157,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 			'help'          => $this->help_provider->get(),
 			'guides'        => $this->guides_provider->get(),
 			'news'          => $this->news_provider->get(),
-			'extensions'    => [
-				// TODO: Load from https://senseilms.com/wp-json/senseilms-home/1.0/{sensei-lms|sensei-pro}.json.
-				[
-					'title'        => 'Sensei LMS Post to Course Creator',
-					'image'        => 'http://senseilms.com/wp-content/uploads/2022/02/sensei-post-to-course-80x80.png',
-					'description'  => 'Turn your blog posts into online courses.',
-					'price'        => 0,
-					'product_slug' => 'sensei-post-to-course', // To be used with the installation function `Sensei_Setup_Wizard::install_extensions`.
-					'more_url'     => 'http://senseilms.com/product/sensei-lms-post-to-course-creator/',
-				],
-			],
+			'extensions'    => $this->extensions_provider->get(),
 			'promo_banner'  => $this->promo_banner_provider->get(),
 			'notifications' => [
 				[
