@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Home_Tasks_Provider {
 
+	const COMPLETED_TASKS_OPTION_KEY = 'sensei_home_tasks_list_is_completed';
+
 	/**
 	 * Returns the Tasks.
 	 *
@@ -22,7 +24,8 @@ class Sensei_Home_Tasks_Provider {
 	 */
 	public function get(): array {
 		return [
-			'items' => $this->get_tasks(),
+			'items'        => $this->get_tasks(),
+			'is_completed' => get_option( self::COMPLETED_TASKS_OPTION_KEY, false ),
 		];
 	}
 
@@ -85,4 +88,12 @@ class Sensei_Home_Tasks_Provider {
 		];
 	}
 
+	/**
+	 * Mark tasks list as completed.
+	 *
+	 * @param bool $completed Whether the task list must be marked as completed or uncompleted.
+	 */
+	public function mark_as_completed( $completed = true ) {
+		update_option( self::COMPLETED_TASKS_OPTION_KEY, $completed, false );
+	}
 }

@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @covers Sensei_Home_Tasks_Provider
  */
 class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
+
 	const FAKE_TASK_ID = 'fake-task-id';
 
 	/**
@@ -24,29 +25,21 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	 */
 	private $provider;
 
-	/**
-	 * Setup.
-	 */
 	public function setUp() {
 		parent::setUp();
 		$this->provider = new Sensei_Home_Tasks_Provider();
 	}
 
-	/**
-	 * Tear down.
-	 */
 	public function tearDown() {
-		parent::tearDown();
 		remove_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
+		parent::tearDown();
 	}
 
-
-	/**
-	 * Test that provider returns expected tasks.
-	 */
-	public function testProviderReturnsExpectedTasks() {
+	public function testGet_WhenCalled_ReturnsReturnsExpectedTasks() {
+		// Act
 		$result = $this->provider->get();
 
+		// Assert
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'items', $result );
 		$items = $result['items'];
@@ -57,22 +50,15 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( Sensei_Home_Task_Configure_Learning_Mode::get_id(), $items );
 	}
 
-	/**
-	 * Test that provider tasks can be filtered.
-	 */
-	public function testProviderAllowsForFilteredTasks() {
-		$result = $this->provider->get();
-
-		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'items', $result );
-		$items = $result['items'];
-		$this->assertIsArray( $items );
-		$this->assertCount( 3, $items );
-
+	public function testGet_GivenAFilterThatOverridesTasks_ReturnSingleOverriddenResult() {
+		// Arrange
 		add_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
 
+		// Act
 		$result = $this->provider->get();
-		$items  = $result['items'];
+
+		// Assert
+		$items = $result['items'];
 		$this->assertCount( 1, $items );
 		$this->assertArrayHasKey( self::FAKE_TASK_ID, $items );
 	}
@@ -80,12 +66,46 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	/**
 	 * Override tasks with a single fake one.
 	 *
-	 * @param array $tasks The original tasks.
 	 * @return array
 	 */
-	public function overrideWithFakeTask( $tasks ) : array {
+	public function overrideWithFakeTask() : array {
 		return [
 			self::FAKE_TASK_ID => [ 'fake' ],
 		];
 	}
+
+	public function testGet_WhenCalled_ReturnsIsCompletedFalseAsDefault() {
+		// Act
+		$result = $this->provider->get();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'is_completed', $result );
+		$this->assertFalse( $result['is_completed'] );
+	}
+
+	public function testGet_WhenCalled_ReturnsIsCompletedFromOption() {
+		// Arrange
+		update_option( Sensei_Home_Tasks_Provider::COMPLETED_TASKS_OPTION_KEY, true );
+
+		// Act
+		$result = $this->provider->get();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'is_completed', $result );
+		$this->assertTrue( $result['is_completed'] );
+	}
+
+	public function testMarkAsCompleted_WhenCalled_SetsExpectedOption() {
+		// Pre-Assert
+		$this->assertFalse( get_option( Sensei_Home_Tasks_Provider::COMPLETED_TASKS_OPTION_KEY, false ) );
+
+		// Act
+		$this->provider->mark_as_completed( true );
+
+		// Assert
+		$this->assertTrue( get_option( Sensei_Home_Tasks_Provider::COMPLETED_TASKS_OPTION_KEY, false ) );
+	}
+
 }

@@ -197,4 +197,19 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'extensions', $result );
 		$this->assertEquals( $mocked_response, $result['extensions'] );
 	}
+
+	public function testMarkTestsCompleted_GivenAMockedExtensionsProvider_CallsExpectedMethod() {
+		// Arrange
+		$mocked_response = [ 'mocked_response' ];
+		$this->tasks_provider_mock->expects( $this->once() )
+			->method( 'mark_as_completed' )
+			->with( true );
+
+		// Act
+		$result = $this->controller->mark_tasks_completed();
+
+		// Assert
+		$this->assertArrayHasKey( 'success', $result );
+		$this->assertTrue( $result['success'] );
+	}
 }
