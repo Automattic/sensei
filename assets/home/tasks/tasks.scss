@@ -9,7 +9,7 @@
 	&__description {
 		margin: 0 0 32px;
 		font-size: 14px;
-		color: #3c434a;
+		color: $gray-70;
 	}
 
 	&__list {
@@ -28,7 +28,7 @@
 		}
 
 		&--completed {
-			color: #646970;
+			color: $gray-50;
 		}
 	}
 
