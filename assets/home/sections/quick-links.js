@@ -11,7 +11,7 @@ import { useState, useRef } from '@wordpress/element';
 import Section from '../section';
 import { Grid, Col } from '../grid';
 
-const quickLinksMapping = {
+const quickLinksSpecialMapping = {
 	'sensei://install-demo-course': ( { setTitle, originalTitle, timer } ) => {
 		setTitle( 'Installing' );
 		const installedMessage = 'Installed!';
@@ -53,8 +53,8 @@ const QuickLink = ( { item } ) => {
 
 	let onClick = null;
 
-	const callback = quickLinksMapping[ url ];
-	if ( ! callback ) {
+	const callback = quickLinksSpecialMapping[ url ];
+	if ( !! callback ) {
 		url = '#';
 		onClick = ( e ) => {
 			e.preventDefault();
