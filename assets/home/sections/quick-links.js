@@ -11,6 +11,12 @@ import { useState, useRef } from '@wordpress/element';
 import Section from '../section';
 import { Grid, Col } from '../grid';
 
+/**
+ * Component that shows a Quick Link.
+ *
+ * @param {Object} props      Component props.
+ * @param {Object} props.item The item to show.
+ */
 const QuickLink = ( { item } ) => {
 	let { url, title: originalTitle } = item;
 	const [ title, setTitle ] = useState( originalTitle );
@@ -66,6 +72,12 @@ const QuickLink = ( { item } ) => {
 	);
 };
 
+/**
+ * A column on the Quick Links section.
+ *
+ * @param {Object} props      Component props.
+ * @param {Object} props.data The data related to the column of quick links.
+ */
 const QuickLinksColumn = ( { data } ) => (
 	<ul>
 		<li>
