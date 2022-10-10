@@ -1,0 +1,81 @@
+.sensei-home-first-course {
+	box-shadow: 0px 3px 30px rgba(25, 30, 35, 0.2);
+	margin-right: -12px;
+
+	&__site-header {
+		display: flex;
+		align-items: center;
+		min-height: 54px;
+		padding: 0 36px;
+		background-color: #000;
+		border-radius: 16px 0 0;
+		overflow: hidden;
+		font-size: 13px;
+		color: #ffffff;
+
+		@media ( min-width: $break-large ) {
+			min-height: 72px;
+			padding: 0 48px;
+		}
+	}
+
+	&__site-logo {
+		height: 18px;
+		margin-right: 9px;
+
+		@media ( min-width: $break-large ) {
+			height: 24px;
+			margin-right: 12px;
+		}
+	}
+
+	&__site-title-placeholder {
+		width: 148px;
+		height: 18px;
+		border-radius: 12px;
+		background-color: $gray-70;
+
+		@media ( min-width: $break-large ) {
+			width: 111px;
+			height: 24px;
+		}
+	}
+
+	&__featured-image {
+		background: url( '../images/home-course-featured-image.png' ) no-repeat;
+		background-size: cover;
+		min-height: 286px;
+	}
+
+	&__content {
+		padding-left: 36px;
+
+		@media ( min-width: $break-large ) {
+			padding-left: 48px;
+		}
+	}
+
+	&__course-title {
+		padding: 24px 0 18px;
+		margin: 0;
+		font-size: 36px;
+		font-family: $recoleta-font-family;
+		font-weight: 300;
+
+		@media ( min-width: $break-large ) {
+			padding: 32px 0 24px;
+		}
+	}
+
+	&__course-title-placeholder {
+		width: 196px;
+		height: 30px;
+		border-radius: 20px;
+		background-color: #f0f0f0;
+
+		@media ( min-width: $break-large ) {
+			width: 260px;
+			height: 40px;
+		}
+	}
+}
