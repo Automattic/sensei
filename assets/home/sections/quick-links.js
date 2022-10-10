@@ -98,16 +98,29 @@ const QuickLinksColumn = ( { data } ) => (
 );
 
 /**
+ * Returns an array with the column size of a given set of columns, distributed over a given total.
+ *
+ * @param {number} columnCount The number of columns to return the size for.
+ * @param {number} columnTotal The total size of the columns. By default, it's 12.
+ * @return {number[]} An array containing the sizes of each column.
+ */
+const getColumnsSize = ( columnCount, columnTotal = 12 ) => {
+	const columnCountRounded = Math.floor(
+		columnCount ? columnTotal / columnCount : 0
+	);
+	const columns = new Array( columnCount ).fill( columnCountRounded );
+	columns[ columns.length - 1 ] += columnTotal % columnCountRounded;
+	return columns;
+};
+
+/**
  * Quick Links section component.
  *
  * @param {Object} props            Component props.
  * @param {Array}  props.quickLinks The links to show on the Quick Links section.
  */
 const QuickLinks = ( { quickLinks } ) => {
-	const numberColumns = quickLinks?.length ?? 0;
-	const columnCount = Math.floor( numberColumns ? 12 / numberColumns : 0 );
-	const columns = new Array( numberColumns ).fill( columnCount );
-	columns[ columns.length - 1 ] += 12 % numberColumns;
+	const columns = getColumnsSize( quickLinks?.length ?? 0 );
 	return (
 		<Section title={ __( 'Quick Links', 'sensei-lms' ) }>
 			<Grid>
