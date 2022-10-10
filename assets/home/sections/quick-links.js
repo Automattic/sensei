@@ -11,6 +11,35 @@ import { useState, useRef } from '@wordpress/element';
 import Section from '../section';
 import { Grid, Col } from '../grid';
 
+const quickLinksMapping = {
+	'sensei://install-demo-course': ( { setTitle, originalTitle, timer } ) => {
+		setTitle( 'Installing' );
+		const installedMessage = 'Installed!';
+		const clear = () => {
+			if ( timer.current ) {
+				clearTimeout( timer.current );
+			}
+			timer.current = 0;
+		};
+		const run = () => {
+			setTitle( ( oldTitle ) => {
+				if ( installedMessage === oldTitle ) {
+					clear();
+					return originalTitle;
+				}
+				if ( ! oldTitle.includes( '...' ) ) {
+					timer.current = setTimeout( run, 500 );
+					return oldTitle + '.';
+				}
+				timer.current = setTimeout( run, 2000 );
+				return installedMessage;
+			} );
+		};
+		clear();
+		timer.current = setTimeout( run, 500 );
+	},
+};
+
 /**
  * Component that shows a Quick Link.
  *
@@ -23,34 +52,13 @@ const QuickLink = ( { item } ) => {
 	const timer = useRef( 0 );
 
 	let onClick = null;
-	if ( 'sensei://install-demo-course' === url ) {
+
+	const callback = quickLinksMapping[ url ];
+	if ( ! callback ) {
 		url = '#';
 		onClick = ( e ) => {
 			e.preventDefault();
-			setTitle( 'Installing' );
-			const installedMessage = 'Installed!';
-			const clear = () => {
-				if ( timer.current ) {
-					clearTimeout( timer.current );
-				}
-				timer.current = 0;
-			};
-			const run = () => {
-				setTitle( ( oldTitle ) => {
-					if ( installedMessage === oldTitle ) {
-						clear();
-						return originalTitle;
-					}
-					if ( ! oldTitle.includes( '...' ) ) {
-						timer.current = setTimeout( run, 500 );
-						return oldTitle + '.';
-					}
-					timer.current = setTimeout( run, 2000 );
-					return installedMessage;
-				} );
-			};
-			clear();
-			timer.current = setTimeout( run, 500 );
+			callback( { setTitle, originalTitle, timer } );
 		};
 	}
 	// TODO: improve check to verify if a URL is external or not
