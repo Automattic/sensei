@@ -3,6 +3,7 @@
 namespace SenseiTest\Installer;
 
 use Sensei\Installer\Installer;
+use Sensei\Installer\Schema;
 
 /**
  * Test for \Sensei_Pro_Installer\Installer.
@@ -87,7 +88,19 @@ class Installer_Test extends \WP_UnitTestCase {
 		$this->assertSame( SENSEI_LMS_VERSION, $version );
 	}
 
-	/**
+	public function testGetSchema_ConstructedWithSchema_ReturnsSameSchema(): void {
+		/* Arrange. */
+		$schema    = $this->createMock( Schema::class );
+		$installer = new Installer( $schema );
+
+		/* Act. */
+		$actual = $installer->get_schema();
+
+		/* Assert. */
+		$this->assertSame( $schema, $actual );
+	}
+
+	/*
 	 * Reset the installer state.
 	 *
 	 * This is needed, because the `Installer::install()` method is called once before the tests are run.
