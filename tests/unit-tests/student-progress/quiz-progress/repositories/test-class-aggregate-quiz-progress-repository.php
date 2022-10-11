@@ -6,9 +6,8 @@ use Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 use Sensei\Student_Progress\Quiz_Progress\Repositories\Aggregate_Quiz_Progress_Repository;
 use Sensei\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository;
 use Sensei\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
-use WP_UnitTestCase;
 
-class Aggregate_Quiz_Progress_Repository_Test extends WP_UnitTestCase {
+class Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Quiz_Progress_Repository::class );
