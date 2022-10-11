@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-10-11T08:32:23+00:00\n"
+"POT-Creation-Date: 2022-10-11T21:43:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: sensei-lms\n"
 
 #. Plugin Name of the plugin
@@ -178,7 +178,6 @@ msgstr ""
 msgid "Bulk Student Actions"
 msgstr ""
 
-#. Translators: placeholder is the student's name.
 #: includes/admin/class-sensei-learners-admin-bulk-actions-controller.php:133
 #: assets/admin/students/student-action-menu/index.js:38
 #: assets/admin/students/student-modal/index.js:41
@@ -188,7 +187,6 @@ msgstr ""
 msgid "Add to Course"
 msgstr ""
 
-#. Translators: placeholder is the student's name.
 #: includes/admin/class-sensei-learners-admin-bulk-actions-controller.php:134
 #: assets/admin/students/student-action-menu/index.js:42
 #: assets/admin/students/student-modal/index.js:77
@@ -198,7 +196,6 @@ msgstr ""
 msgid "Remove from Course"
 msgstr ""
 
-#. Translators: placeholder is the student's name.
 #: includes/admin/class-sensei-learners-admin-bulk-actions-controller.php:135
 #: assets/admin/students/student-action-menu/index.js:46
 #: assets/admin/students/student-modal/index.js:114
@@ -5539,6 +5536,7 @@ msgstr ""
 
 #: includes/email-signup/template.php:25
 #: assets/dist/setup-wizard/index.js:486
+#: assets/setup-wizard/ready/index.js:52
 msgid "We're here for you — get tips, product updates, and inspiration straight to your mailbox."
 msgstr ""
 
@@ -6388,7 +6386,6 @@ msgstr ""
 msgid "%s USD"
 msgstr ""
 
-#. translators: placeholder is the price.
 #: assets/admin/editor-wizard/steps/course-upgrade-step.js:48
 #: assets/dist/admin/editor-wizard/index.js:91
 msgid "per year, 1 site"
@@ -6586,6 +6583,14 @@ msgstr ""
 msgid "Select the course(s) you would like to add <strong>%s</strong> to:"
 msgstr ""
 
+#: assets/admin/students/student-modal/index.js:43
+#: assets/dist/admin/students/student-action-menu/index.js:73
+#: assets/dist/admin/students/student-bulk-action-button/index.js:59
+msgid "Unable to add student. Please try again."
+msgid_plural "Unable to add students. Please try again."
+msgstr[0] ""
+msgstr[1] ""
+
 #. Translators: placeholder is the number of selected students.
 #: assets/admin/students/student-modal/index.js:63
 #: assets/dist/admin/students/student-action-menu/index.js:74
@@ -6600,6 +6605,14 @@ msgstr ""
 msgid "Select the course(s) you would like to remove <strong>%s</strong> from:"
 msgstr ""
 
+#: assets/admin/students/student-modal/index.js:79
+#: assets/dist/admin/students/student-action-menu/index.js:75
+#: assets/dist/admin/students/student-bulk-action-button/index.js:61
+msgid "Unable to remove student. Please try again."
+msgid_plural "Unable to remove students. Please try again."
+msgstr[0] ""
+msgstr[1] ""
+
 #. Translators: placeholder is the number of selected students.
 #: assets/admin/students/student-modal/index.js:100
 #: assets/dist/admin/students/student-action-menu/index.js:78
@@ -6613,6 +6626,14 @@ msgstr ""
 #: assets/dist/admin/students/student-bulk-action-button/index.js:65
 msgid "Select the course(s) you would like to reset or remove progress from for <strong>%s</strong>:"
 msgstr ""
+
+#: assets/admin/students/student-modal/index.js:116
+#: assets/dist/admin/students/student-action-menu/index.js:79
+#: assets/dist/admin/students/student-bulk-action-button/index.js:65
+msgid "Unable to reset or remove progress for this student. Please try again."
+msgid_plural "Unable to reset or remove progress for these students. Please try again."
+msgstr[0] ""
+msgstr[1] ""
 
 #: assets/admin/students/student-modal/index.js:187
 #: assets/dist/admin/students/student-action-menu/index.js:79
@@ -7736,6 +7757,26 @@ msgstr ""
 msgid "Shared Question"
 msgstr ""
 
+#. Translators: placeholder is the grade for the questions.
+#: assets/blocks/quiz/question-block/question-edit.js:75
+#: assets/dist/blocks/quiz/index.js:597
+msgid "%d point"
+msgid_plural "%d points"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/blocks/quiz/question-block/question-edit.js:192
+#: assets/dist/blocks/quiz/index.js:597
+msgid "Question Title"
+msgstr ""
+
+#: assets/blocks/quiz/question-block/question-grade-control.js:28
+#: assets/dist/blocks/quiz/index.js:604
+msgid "Point"
+msgid_plural "Points"
+msgstr[0] ""
+msgstr[1] ""
+
 #: assets/blocks/quiz/question-block/question-settings.js:34
 #: assets/dist/blocks/quiz/index.js:622
 msgid "Question settings"
@@ -7889,7 +7930,6 @@ msgstr ""
 msgid "Add Selected (%s)"
 msgstr ""
 
-#. translators: Number of selected questions.
 #: assets/blocks/quiz/quiz-block/questions-modal/actions.js:55
 #: assets/dist/blocks/quiz/index.js:777
 msgid "Clear Selected"
@@ -8424,6 +8464,13 @@ msgstr ""
 msgid "Export content to a CSV file"
 msgstr ""
 
+#: assets/data-port/export/export-progress-page.js:67
+#: assets/dist/data-port/export.js:25
+msgid "The following file was exported:"
+msgid_plural "The following files were exported:"
+msgstr[0] ""
+msgstr[1] ""
+
 #: assets/data-port/export/export-progress-page.js:96
 #: assets/dist/data-port/export.js:25
 msgid "Export More Content"
@@ -8620,17 +8667,6 @@ msgstr ""
 msgid "%1$d of %2$d %3$s completed"
 msgstr ""
 
-#. Translators: placeholder is the grade for the questions.
-#: assets/dist/blocks/quiz/index.js:597
-msgid "%d point"
-msgid_plural "%d points"
-msgstr[0] ""
-msgstr[1] ""
-
-#: assets/dist/blocks/quiz/index.js:597
-msgid "Question Title"
-msgstr ""
-
 #: assets/dist/data-port/export.js:17
 msgid "This tool enables you to export courses, lessons, and questions to CSV files. These files are bundled together and downloaded to your computer in .zip format."
 msgstr ""
@@ -8707,7 +8743,6 @@ msgstr ""
 msgid "%s USD / year (1 site)"
 msgstr ""
 
-#. translators: placeholder is the price.
 #: assets/dist/extensions/index.js:80
 #: assets/extensions/featured-product-sensei-pro.js:57
 msgid "Learn More"
@@ -9052,14 +9087,17 @@ msgid "Choose any that apply"
 msgstr ""
 
 #: assets/dist/setup-wizard/index.js:486
+#: assets/setup-wizard/ready/index.js:41
 msgid "You're ready to start creating online courses!"
 msgstr ""
 
 #: assets/dist/setup-wizard/index.js:486
+#: assets/setup-wizard/ready/index.js:50
 msgid "Join our mailing list"
 msgstr ""
 
 #: assets/dist/setup-wizard/index.js:486
+#: assets/setup-wizard/ready/index.js:60
 msgid "What's next?"
 msgstr ""
 
@@ -9069,6 +9107,7 @@ msgid "Create some courses"
 msgstr ""
 
 #: assets/dist/setup-wizard/index.js:486
+#: assets/setup-wizard/ready/index.js:68
 msgid "You're ready to create online courses."
 msgstr ""
 
@@ -9171,4 +9210,54 @@ msgstr ""
 #: assets/blocks/quiz/quiz-block/block.json
 msgctxt "block title"
 msgid ""
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font size name"
+msgid "Small"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font size name"
+msgid "Normal"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font size name"
+msgid "Medium"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font size name"
+msgid "Large"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font size name"
+msgid "Huge"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font family name"
+msgid "Source Serif Pro"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Font family name"
+msgid "Inter"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Color name"
+msgid "Text"
+msgstr ""
+
+#: themes/sensei-course-theme/theme.json
+msgctxt "Color name"
+msgid "Background"
 msgstr ""
