@@ -40,6 +40,7 @@ class Sensei_Home_Notices_Provider {
 		return array_filter(
 			$notices,
 			function( $notice_key ) {
+				// We only care about home notices for now.
 				return strpos( $notice_key, Sensei_Home_Notices::HOME_NOTICE_KEY_PREFIX ) === 0;
 			},
 			ARRAY_FILTER_USE_KEY
