@@ -23,7 +23,7 @@ import '../shared/data/api-fetch-preloaded-once';
 
 const Main = () => {
 	useSenseiColorTheme();
-	const [ data, setData ] = useState( {} );
+	const [ data, setData ] = useState();
 
 	useEffect( () => {
 		async function fetchAndSetData() {
@@ -35,6 +35,10 @@ const Main = () => {
 		}
 		fetchAndSetData();
 	}, [] );
+
+	if ( ! data ) {
+		return null;
+	}
 
 	/**
 	 * Filters the component that will be injected on the top of the Sensei Home
@@ -55,7 +59,7 @@ const Main = () => {
 				{ topRow }
 
 				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<TasksSection />
+					<TasksSection data={ data.tasks } />
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>

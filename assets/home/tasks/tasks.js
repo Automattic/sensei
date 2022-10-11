@@ -10,8 +10,11 @@ import TaskItem from './task-item';
 
 /**
  * Tasks component.
+ *
+ * @param {Object}   props       Component props.
+ * @param {Object[]} props.items The tasks.
  */
-const Tasks = () => (
+const Tasks = ( { items } ) => (
 	<div className="sensei-home-tasks">
 		<h1 className="sensei-home-tasks__title">
 			{ __( 'Welcome to your new Sensei course site.', 'sensei-lms' ) }
@@ -25,11 +28,14 @@ const Tasks = () => (
 		</p>
 
 		<ul className="sensei-home-tasks__list">
-			<TaskItem label="Set up Course Site" href="#" completed />
-			<TaskItem label="Create your first Course" href="#" completed />
-			<TaskItem label="Create your first Course" href="#" />
-			<TaskItem label="Configure Learning Mode" href="#" />
-			<TaskItem label="Publish your first Course" href="#" />
+			{ items.map( ( task ) => (
+				<TaskItem
+					key={ task.id }
+					label={ task.title }
+					href={ task.url }
+					completed={ task.done }
+				/>
+			) ) }
 		</ul>
 	</div>
 );
