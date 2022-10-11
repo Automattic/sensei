@@ -25,12 +25,15 @@ const Main = () => {
 	useSenseiColorTheme();
 	const [ data, setData ] = useState( {} );
 
-	useEffect( async () => {
-		const remoteData = await apiFetch( {
-			path: '/sensei-internal/v1/home',
-			method: 'GET',
-		} );
-		setData( remoteData );
+	useEffect( () => {
+		async function fetchAndSetData() {
+			const remoteData = await apiFetch( {
+				path: '/sensei-internal/v1/home',
+				method: 'GET',
+			} );
+			setData( remoteData );
+		}
+		fetchAndSetData();
 	}, [] );
 
 	/**
