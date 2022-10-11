@@ -77,7 +77,7 @@ class Sensei_Home_Notices {
 
 			if ( $has_license ) {
 				$notice = $this->get_plugin_update_notice( $plugin_data );
-			} elseif ( $plugin_data['active'] ) {
+			} elseif ( ! $plugin_data['active'] ) {
 				$notice = $this->get_deactivated_plugin_update_notice( $plugin_data );
 			} else {
 				$notice = $this->get_unlicensed_plugin_update_notice( $plugin_data );
@@ -97,7 +97,7 @@ class Sensei_Home_Notices {
 	 *
 	 * @return bool
 	 */
-	private function is_plugin_update_available( $plugin_slug, $latest_version ) {
+	protected function is_plugin_update_available( $plugin_slug, $latest_version ) {
 		$available_updates = $this->get_local_plugin_updates();
 
 		return isset( $available_updates[ $plugin_slug ] ) && $latest_version === $available_updates[ $plugin_slug ];
