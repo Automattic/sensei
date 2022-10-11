@@ -603,7 +603,7 @@ $break-medium: 783px; // adminbar goes big
 				}
 
 				&__title {
-					margin-left: 16px;
+					margin-left: 12px;
 
 					&--disabled {
 						opacity: 0.6;
@@ -612,6 +612,17 @@ $break-medium: 783px; // adminbar goes big
 
 				&__extra-link {
 					margin-left: 13px;
+
+					& a {
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+
+						& svg {
+							fill: currentColor;
+							margin-left: 7px;
+						}
+					}
 				}
 			}
 		}

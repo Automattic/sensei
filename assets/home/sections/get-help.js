@@ -36,7 +36,7 @@ const Item = ( { title, url, extraLink } ) => {
 	return (
 		<li className="sensei-home__help-item">
 			<div className="sensei-home__help-item__icon">
-				<Icon icon={ isTitleInteractive ? help : lock } size={ 22 } />
+				<Icon icon={ isTitleInteractive ? help : lock } size={ 24 } />
 			</div>
 			<div
 				className={ classNames( 'sensei-home__help-item__title', {
@@ -49,7 +49,7 @@ const Item = ( { title, url, extraLink } ) => {
 				<div className="sensei-home__help-item__extra-link">
 					<a href={ extraLink.url } target="_blank" rel="noreferrer">
 						{ extraLink.label }{ ' ' }
-						<Icon icon={ external } size={ 10 } />
+						<Icon icon={ external } size={ 16 } />
 					</a>
 				</div>
 			) }
