@@ -1,5 +1,8 @@
 *** Changelog ***
 
+2022-10-11 - version 4.7.1
+* Fix: Prevent Learning Mode styles from overriding global styles. [#5903](https://github.com/Automattic/sensei/pull/5903)
+
 2022-10-11 - version 4.7.0
 * New: Learning Mode version 2
     * Do not show the exceprt in post content if it exists in the template [#5871](https://github.com/Automattic/sensei/pull/5871)
