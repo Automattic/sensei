@@ -22,7 +22,7 @@ class Sensei_Home_Notices_Provider {
 	 *
 	 * @param Sensei_Admin_Notices $admin_notices   The remote admin notices helper.
 	 */
-	public function __construct( Sensei_Admin_Notices $admin_notices = null ) {
+	public function __construct( $admin_notices = null ) {
 		$this->admin_notices = $admin_notices;
 	}
 
