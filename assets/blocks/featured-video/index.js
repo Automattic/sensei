@@ -37,6 +37,7 @@ export default {
 		],
 	},
 	...metadata,
+	metadata,
 	edit: function EditBlock( { className, clientId } ) {
 		const { replaceInnerBlocks, moveBlockToPosition } = useDispatch(
 			'core/block-editor'

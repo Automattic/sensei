@@ -14,6 +14,7 @@ import icon from '../../../icons/question.svg';
  * Question answers block.
  */
 export default {
+	...metadata,
 	metadata,
 	icon,
 	edit,

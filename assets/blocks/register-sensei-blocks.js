@@ -20,6 +20,9 @@ const registerSenseiBlocks = ( blocks ) => {
 
 	blocks.forEach( ( block ) => {
 		const { metadata, name, ...settings } = block;
+
+		// For the block to be fully translatable, the `block.json` metadata object should be passed.
+		// @see https://github.com/Automattic/sensei/pull/5782
 		registerBlockType( metadata || name, settings );
 	} );
 };

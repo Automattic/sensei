@@ -14,6 +14,7 @@ import metadata from './block.json';
  * Quiz block definition.
  */
 const quizBlock = {
+	...metadata,
 	metadata,
 	icon,
 	providesContext: {

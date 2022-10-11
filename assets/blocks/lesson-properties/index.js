@@ -6,6 +6,7 @@ import metadata from './block.json';
 import edit from './lesson-properties-edit';
 
 export default {
+	...metadata,
 	metadata,
 	icon,
 	example: {
