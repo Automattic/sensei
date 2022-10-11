@@ -53,8 +53,6 @@ class Sensei_Home_Notices {
 	 * @return array
 	 */
 	public function add_update_notices( $notices ) {
-		$notices = [];
-
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			return $notices;
 		}
