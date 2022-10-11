@@ -67,7 +67,18 @@ class Sensei_Home_Notices {
 		foreach ( $plugins_with_updates as $plugin_slug => $plugin_data ) {
 			$notice_id = self::HOME_NOTICE_KEY_PREFIX . $plugin_slug . '_update_' . $plugin_data['latest_version'];
 
-			// Plugins that don't need a license are by default licensed.
+			/**
+			 * Filter whether a plugin has an active licensed.
+			 *
+			 * Defaults to true for plugins that don't need a license.
+			 *
+			 * @hook sensei_home_is_plugin_licensed_{$plugin_slug}
+			 * @since $$next-version$$
+			 *
+			 * @param {bool} $is_licensed Whether the plugin has an active license.
+			 *
+			 * @return {bool} Whether the plugin has an active license.
+			 */
 			$has_license = apply_filters( 'sensei_home_is_plugin_licensed_' . $plugin_slug, ! $plugin_data['licensed'] );
 
 			if ( $has_license && ! $this->is_plugin_update_available( $plugin_slug, $plugin_data['latest_version'] ) ) {
