@@ -14,10 +14,18 @@ import { Icon, help, lock, external } from '@wordpress/icons';
  */
 import Section from '../section';
 
+/**
+ * Component representing each of the items under a Help Category.
+ *
+ * @param {Object}      props           Component properties.
+ * @param {string}      props.title     The title.
+ * @param {string|null} props.url       Optional url. When missing the title will not be clickable.
+ * @param {Object|null} props.extraLink An extra link that will be displayed next to the main title.
+ */
 const Item = ( { title, url, extraLink } ) => {
-	const isLinkEnabled = url !== null;
+	const isTitleInteractive = url !== null;
 
-	const link = isLinkEnabled ? (
+	const link = isTitleInteractive ? (
 		<a href={ url } target="_blank" rel="noreferrer">
 			{ title }
 		</a>
@@ -28,11 +36,11 @@ const Item = ( { title, url, extraLink } ) => {
 	return (
 		<li className="sensei-home__help-item">
 			<div className="sensei-home__help-item__icon">
-				<Icon icon={ isLinkEnabled ? help : lock } size={ 16 } />
+				<Icon icon={ isTitleInteractive ? help : lock } size={ 22 } />
 			</div>
 			<div
 				className={ classNames( 'sensei-home__help-item__title', {
-					'sensei-home__help-item__title--disabled': ! isLinkEnabled,
+					'sensei-home__help-item__title--disabled': ! isTitleInteractive,
 				} ) }
 			>
 				{ link }
@@ -49,6 +57,13 @@ const Item = ( { title, url, extraLink } ) => {
 	);
 };
 
+/**
+ * Help Category component. It's composed by a title and a list of items.
+ *
+ * @param {Object}   props       Component properties.
+ * @param {string}   props.title The title.
+ * @param {Object[]} props.items List of items under the specific category.
+ */
 const Category = ( { title, items } ) => {
 	return (
 		<div className="sensei-home__help-category">
@@ -71,8 +86,8 @@ const Category = ( { title, items } ) => {
 /**
  * Get Help section component.
  *
- * @param {Object} props            Properties.
- * @param {Object} props.categories The actual data.
+ * @param {Object}   props            Properties.
+ * @param {Object[]} props.categories A list of categories and its items.
  */
 const GetHelp = ( { categories } ) => {
 	if ( categories === undefined ) {
