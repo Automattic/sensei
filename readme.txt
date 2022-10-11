@@ -116,6 +116,9 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-10-11 - version 4.7.1
+* Fix: Prevent Learning Mode styles from overriding global styles. [#5903](https://github.com/Automattic/sensei/pull/5903)
+
 2022-10-11 - version 4.7.0
 * New: Learning Mode version 2
     * Do not show the exceprt in post content if it exists in the template [#5871](https://github.com/Automattic/sensei/pull/5871)
@@ -190,19 +193,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Remove unneeded icon font formats [#5655](https://github.com/Automattic/sensei/pull/5655)
 * Fix: Spacings, alignments and sizes for course list patterns [#5710](https://github.com/Automattic/sensei/pull/5710)
 * Tweak: Remove "Beta" label from Course List block [#5593](https://github.com/Automattic/sensei/pull/5593)
-
-2022-08-24 - version 4.6.3
-* New: Course List block (beta)
-    * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
-    * Add the Course Categories block [#5455](https://github.com/Automattic/sensei/pull/5455)
-    * Add new patterns for Course List [#5433](https://github.com/Automattic/sensei/pull/5433)
-    * Add Course Actions block [#5430](https://github.com/Automattic/sensei/pull/5430)
-    * Make Continue button take user to the lesson they were working on [#5496](https://github.com/Automattic/sensei/pull/5496)
-    * Make the Course List block with inner blocks globally available [#5473](https://github.com/Automattic/sensei/pull/5473)
-    * Add notice to show invalid usage when blocks are used out of course context [#5489](https://github.com/Automattic/sensei/pull/5489)
-* Add: Support for passing a custom footer to the Modal component [#5503](https://github.com/Automattic/sensei/pull/5503)
-* Fix: Template selection logic when learning mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
-* Fix: Course Outline - Show private lessons only for those who can view them. [#5468](https://github.com/Automattic/sensei/pull/5468)
-* Tweak: Combine PHP and JS strings in POT generation command [#5486](https://github.com/Automattic/sensei/pull/5486)
-* Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
-* Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
