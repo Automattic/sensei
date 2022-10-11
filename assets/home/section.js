@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * Renders the section title, or null if there's no section title.
  *
  * @param {Object}           props       Component props.
@@ -18,15 +23,19 @@ const SectionTitle = ( { title } ) => {
 /**
  * Component that looks like a metabox, but it's not a metabox.
  *
- * @param {Object}       props          Component props.
- * @param {string}       props.title    Section title.
- * @param {Object|Array} props.children Section content.
+ * @param {Object}       props                 Component props.
+ * @param {string}       props.className       Wrapper class name.
+ * @param {string}       props.insideClassName Inside class name.
+ * @param {string}       props.title           Section title.
+ * @param {Object|Array} props.children        Section content.
  */
-const Section = ( { title, children } ) => {
+const Section = ( { className, insideClassName, title, children } ) => {
 	return (
-		<div className="postbox">
+		<div className={ classnames( 'postbox', className ) }>
 			<SectionTitle title={ title } />
-			<div className="inside">{ children }</div>
+			<div className={ classnames( 'inside', insideClassName ) }>
+				{ children }
+			</div>
 		</div>
 	);
 };
