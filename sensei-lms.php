@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'SENSEI_LMS_VERSION', '4.7.0' ); // WRCS: DEFINED_VERSION.
+define( 'SENSEI_LMS_VERSION', '4.7.1' ); // WRCS: DEFINED_VERSION.
 define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 
 if ( class_exists( 'Sensei_Main' ) ) {
