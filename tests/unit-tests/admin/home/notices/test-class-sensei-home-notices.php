@@ -96,6 +96,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
 		$notices          = $this->getNoticesMock( $remote_data_mock );
 		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
+		grant_super_admin( $user->ID );
 		wp_set_current_user( $user->ID );
 
 		// Act.
@@ -121,6 +122,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
 		$notices          = $this->getNoticesMock( $remote_data_mock, false );
 		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
+		grant_super_admin( $user->ID );
 		wp_set_current_user( $user->ID );
 
 		// Act.
