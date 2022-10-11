@@ -36,7 +36,7 @@ class Sensei_Main {
 	 * Main reference to the plugin's version when it was installed.
 	 * Or false if the install version is not available.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 * @var string|false
 	 */
 	public $install_version;

@@ -104,7 +104,7 @@ class Sensei_Course_Theme {
 	 * @return bool
 	 */
 	public function is_active() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.7.0' );
 
 		return self::THEME_NAME === get_stylesheet();
 	}
@@ -543,7 +543,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Prevent modules to be linked in learning mode.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 *
 	 * @param bool $do_link_to_module True if module should be linked to.
 	 *
@@ -560,7 +560,7 @@ class Sensei_Course_Theme {
 	/**
 	 * Redirect all module pages to the first module lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 */
 	public function redirect_modules_to_first_lesson(): void {
 		if ( ! Sensei_Course_Theme_Option::should_use_learning_mode() || ! is_tax( 'module' ) ) {
