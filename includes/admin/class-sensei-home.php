@@ -51,7 +51,7 @@ final class Sensei_Home {
 		if ( 'course_page_sensei-home' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-home', 'home/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-home-style', 'home/home.css', [ 'sensei-wp-components' ] );
-			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin' ] );
+			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin', '/sensei-internal/v1/home' ] );
 
 			$this->localize_script();
 		}
