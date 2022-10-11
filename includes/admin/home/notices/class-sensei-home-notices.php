@@ -145,7 +145,7 @@ class Sensei_Home_Notices {
 		$info_link = false;
 		if ( ! empty( $changelog ) ) {
 			$info_link = [
-				'label' => esc_html__( 'View changelog', 'sensei-lms' ),
+				'label' => esc_html__( 'What\'s new', 'sensei-lms' ),
 				'url'   => esc_url( $changelog_url ),
 			];
 		}
