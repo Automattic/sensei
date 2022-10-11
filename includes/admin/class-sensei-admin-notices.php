@@ -122,6 +122,10 @@ class Sensei_Admin_Notices {
 	 * @return string|null
 	 */
 	protected function get_screen_id() {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return null;
+		}
+
 		$screen = get_current_screen();
 
 		return $screen ? $screen->id : null;
@@ -361,7 +365,7 @@ class Sensei_Admin_Notices {
 		}
 
 		// If no screens condition was set, only show this message on Sensei screens.
-		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ] ) ) {
+		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ], $screen_id ) ) {
 			$can_see_notice = false;
 		}
 
