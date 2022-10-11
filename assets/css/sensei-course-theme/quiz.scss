@@ -72,6 +72,7 @@ $tablet-breakpoint: 768px;
 
 		.wp-block-group__inner-container {
 			margin: unset;
+			width: 100%;
 		}
 
 		.sensei-quiz-actions {
@@ -83,6 +84,10 @@ $tablet-breakpoint: 768px;
 		.sensei-quiz-pagination {
 			flex: 1;
 			margin: 0;
+			&__list {
+				margin-right: auto;
+			}
+
 			.sensei-quiz-pagination__list ul.page-numbers{
 				gap: 1rem;
 			}
