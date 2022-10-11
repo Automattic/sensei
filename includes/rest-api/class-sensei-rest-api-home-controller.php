@@ -117,7 +117,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function register_routes() {
 		$this->register_get_data_route();
-		$this->register_mark_tasks_completed_route();
+		$this->register_mark_tasks_complete_route();
 	}
 
 	/**
@@ -147,12 +147,12 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Register POST /tasks/completed endpoint.
+	 * Register POST /tasks/complete endpoint.
 	 */
-	public function register_mark_tasks_completed_route() {
+	public function register_mark_tasks_complete_route() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/tasks/completed',
+			$this->rest_base . '/tasks/complete',
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
