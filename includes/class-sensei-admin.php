@@ -79,7 +79,6 @@ class Sensei_Admin {
 		// Add AJAX endpoint for event logging.
 		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
 
-		Sensei_Home::instance()->init();
 		Sensei_Tools::instance()->init();
 		Sensei_Status::instance()->init();
 

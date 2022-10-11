@@ -442,6 +442,9 @@ class Sensei_Main {
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 
+		// Sensei Home.
+		Sensei_Home::instance()->init();
+
 		Sensei_Scheduler::init();
 
 		// Block patterns.
