@@ -6,9 +6,8 @@ use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Student_Progress\Lesson_Progress\Repositories\Aggregate_Lesson_Progress_Repository;
 use Sensei\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository;
 use Sensei\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
-use WP_UnitTestCase;
 
-class Aggregate_Lesson_Progress_Repository_Test extends WP_UnitTestCase {
+class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );

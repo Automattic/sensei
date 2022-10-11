@@ -8,6 +8,7 @@
 namespace Sensei\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
+use RuntimeException;
 use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use wpdb;
 
@@ -37,6 +38,15 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$this->wpdb = $wpdb;
 	}
 
+	/**
+	 * Creates a new lesson progress.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id The user ID.
+	 *
+	 * @return Lesson_Progress The lesson progress.
+	 * @throws RuntimeException When the lesson progress could not be created.
+	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
 		$current_datetime = current_datetime();
 		$this->wpdb->insert(
@@ -78,15 +88,25 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 	}
 
+	/**
+	 * Finds a lesson progress by lesson and user.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id The user ID.
+	 *
+	 * @return Lesson_Progress|null The lesson progress or null if not found.
+	 */
 	public function get( int $lesson_id, int $user_id ): ?Lesson_Progress {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT * FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
 			$lesson_id,
 			$user_id,
 			'lesson'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
 			return null;
@@ -104,20 +124,34 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 	}
 
+	/**
+	 * Check if a lesson progress exists.
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 * @param int $user_id The user ID.
+	 * @return bool
+	 */
 	public function has( int $lesson_id, int $user_id ): bool {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT COUNT(*) FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
 			$lesson_id,
 			$user_id,
 			'lesson'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$count = (int) $this->wpdb->get_var( $query );
 
 		return $count > 0;
 	}
 
+	/**
+	 * Save the lesson progress.
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
 	public function save( Lesson_Progress $lesson_progress ): void {
 		$this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
@@ -161,11 +195,13 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT COUNT(*) FROM ' . $table_name . ' WHERE post_id IN (' . $clean_lesson_ids . ') AND user_id = %d AND type = %s',
 			$user_id,
 			'lesson'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$count = $this->wpdb->get_var( $query );
 
 		return (int) $count;

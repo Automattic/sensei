@@ -13,6 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class Aggregate_Quiz_Progress_Repository.
+ *
+ * Aggregate repository is an intermediate repository that delegates the calls to the appropriate repository implementation.
+ *
+ * @since $$next-version$$
+ */
 class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Interface {
 	/**
 	 * Comments based quiz progress repository implementation.

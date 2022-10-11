@@ -37,6 +37,14 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		$this->wpdb = $wpdb;
 	}
 
+	/**
+	 * Create a new quiz progress.
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 * @param int $user_id User identifier.
+	 * @return Quiz_Progress
+	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
+	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
 		$current_datetime = current_datetime();
 		$this->wpdb->insert(
@@ -78,15 +86,24 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		);
 	}
 
+	/**
+	 * Find a quiz progress by quiz and user identifiers.
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 * @param int $user_id User identifier.
+	 * @return Quiz_Progress
+	 */
 	public function get( int $quiz_id, int $user_id ): ?Quiz_Progress {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT * FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
 			$quiz_id,
 			$user_id,
 			'quiz'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
 			return null;
@@ -104,20 +121,34 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		);
 	}
 
+	/**
+	 * Check if a quiz progress exists.
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 * @param int $user_id User identifier.
+	 * @return bool
+	 */
 	public function has( int $quiz_id, int $user_id ): bool {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT COUNT(*) FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
 			$quiz_id,
 			$user_id,
 			'quiz'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$count = (int) $this->wpdb->get_var( $query );
 
 		return $count > 0;
 	}
 
+	/**
+	 * Save the quiz progress.
+	 *
+	 * @param Quiz_Progress $quiz_progress Quiz progress.
+	 */
 	public function save( Quiz_Progress $quiz_progress ): void {
 		$this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
