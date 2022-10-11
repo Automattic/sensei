@@ -577,9 +577,10 @@ $break-medium: 783px; // adminbar goes big
 		&__help {
 			&-category {
 				& h3 {
+					color: #1E1E1E;
 					font-size: 13px;
 					line-height: 16px;
-					margin: 0;
+					margin: 14px 0 19px 0;
 				}
 			}
 
@@ -588,9 +589,17 @@ $break-medium: 783px; // adminbar goes big
 				display: flex;
 				flex-direction: row;
 				flex-wrap: wrap;
+				align-items: center;
+				margin-bottom: 18px;
 
 				& a {
 					text-decoration: unset;
+				}
+
+				&__icon {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
 				}
 
 				&__title {
