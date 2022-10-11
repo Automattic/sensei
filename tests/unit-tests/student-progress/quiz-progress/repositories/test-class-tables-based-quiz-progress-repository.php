@@ -50,10 +50,10 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 					null,
 					'%s',
 					'%s',
-					'%d',
+					'%s',
 					null,
-					'%d',
-					'%d',
+					'%s',
+					'%s',
 				]
 			);
 		$repository->create( 1, 2 );
@@ -106,10 +106,10 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 					'parent_post_id' => null,
 					'type'           => 'quiz',
 					'status'         => 'in-progress',
-					'created_at'     => ( new DateTimeImmutable( '2022-01-01 00:00:00', wp_timezone() ) )->getTimestamp(),
-					'updated_at'     => ( new DateTimeImmutable( '2022-01-02 00:00:00', wp_timezone() ) )->getTimestamp(),
-					'started_at'     => ( new DateTimeImmutable( '2022-01-03 00:00:00', wp_timezone() ) )->getTimestamp(),
-					'completed_at'   => ( new DateTimeImmutable( '2022-01-04 00:00:00', wp_timezone() ) )->getTimestamp(),
+					'created_at'     => '2022-01-01 00:00:00',
+					'updated_at'     => '2022-01-02 00:00:00',
+					'started_at'     => '2022-01-03 00:00:00',
+					'completed_at'   => '2022-01-04 00:00:00',
 				]
 			);
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
@@ -169,10 +169,10 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 			2,
 			3,
 			'complete',
-			new DateTimeImmutable( '@1', wp_timezone() ),
-			new DateTimeImmutable( '@2', wp_timezone() ),
-			new DateTimeImmutable( '@3', wp_timezone() ),
-			new DateTimeImmutable( '@4', wp_timezone() )
+			new DateTimeImmutable( '2022-01-01 00:00:01', wp_timezone() ),
+			new DateTimeImmutable( '2022-01-02 00:00:01', wp_timezone() ),
+			new DateTimeImmutable( '2022-01-03 00:00:01', wp_timezone() ),
+			new DateTimeImmutable( '2022-01-04 00:00:01', wp_timezone() )
 		);
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
@@ -187,10 +187,10 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 						if ( ! isset( $data['status'] ) || 'complete' !== $data['status'] ) {
 							return false;
 						}
-						if ( ! isset( $data['started_at'] ) || 1 !== $data['started_at'] ) {
+						if ( ! isset( $data['started_at'] ) || '2022-01-01 00:00:01' !== $data['started_at'] ) {
 							return false;
 						}
-						if ( ! isset( $data['completed_at'] ) || 2 !== $data['completed_at'] ) {
+						if ( ! isset( $data['completed_at'] ) || '2022-01-02 00:00:01' !== $data['completed_at'] ) {
 							return false;
 						}
 						return true;
@@ -201,9 +201,9 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 				],
 				[
 					'%s',
-					'%d',
-					'%d',
-					'%d',
+					'%s',
+					'%s',
+					'%s',
 				],
 				[
 					'%d',
