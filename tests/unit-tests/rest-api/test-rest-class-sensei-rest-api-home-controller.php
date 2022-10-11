@@ -67,7 +67,7 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 	public function testPostMarkTasksCompleteRequestReturns401ForGuests() {
 		$this->login_as( null );
 
-		$response = $this->dispatchRequest( 'POST', '/tasks/completed' );
+		$response = $this->dispatchRequest( 'POST', '/tasks/complete' );
 
 		$this->assertEquals( 401, $response->get_status() );
 	}
@@ -75,7 +75,7 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 	public function testPostMarkTasksCompleteRequestReturns200ForAdmins() {
 		$this->login_as_admin();
 
-		$response = $this->dispatchRequest( 'POST', '/tasks/completed' );
+		$response = $this->dispatchRequest( 'POST', '/tasks/complete' );
 
 		$this->assertEquals( 200, $response->get_status() );
 	}
