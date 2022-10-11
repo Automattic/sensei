@@ -70,6 +70,10 @@ $break-medium: 783px; // adminbar goes big
 			cursor: unset;
 	}
 
+	.postbox .inside {
+		padding: 0 12px;
+	}
+
 	.sensei-home {
 		.components-button {
 			&.is-secondary {
