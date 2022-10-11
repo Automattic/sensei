@@ -19,6 +19,7 @@ import LatestNews from './sections/latest-news';
 import Extensions from './sections/extensions';
 import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import '../shared/data/api-fetch-preloaded-once';
 
 const Main = () => {
 	useSenseiColorTheme();
