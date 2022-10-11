@@ -43,10 +43,10 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return Quiz_Progress
-	 * @throws \RuntimeException When the quiz progress doesn't exist. In this implementation we re-use lesson progress.
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
 		$current_datetime = current_datetime();
+		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -55,10 +55,10 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'parent_post_id' => null,
 				'type'           => 'quiz',
 				'status'         => Quiz_Progress::STATUS_IN_PROGRESS,
-				'started_at'     => $current_datetime->getTimestamp(),
+				'started_at'     => $current_datetime->format( $date_format ),
 				'completed_at'   => null,
-				'created_at'     => $current_datetime->getTimestamp(),
-				'updated_at'     => $current_datetime->getTimestamp(),
+				'created_at'     => $current_datetime->format( $date_format ),
+				'updated_at'     => $current_datetime->format( $date_format ),
 			],
 			[
 				'%d',
@@ -66,10 +66,10 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				null,
 				'%s',
 				'%s',
-				'%d',
+				'%s',
 				null,
-				'%d',
-				'%d',
+				'%s',
+				'%s',
 			]
 		);
 		$id = (int) $this->wpdb->insert_id;
@@ -114,10 +114,10 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			new DateTimeImmutable( "@{$row->started_at}", wp_timezone() ),
-			$row->completed_at ? new DateTimeImmutable( "@{$row->completed_at}", wp_timezone() ) : null,
-			new DateTimeImmutable( "@{$row->created_at}", wp_timezone() ),
-			new DateTimeImmutable( "@{$row->updated_at}", wp_timezone() )
+			new DateTimeImmutable( $row->started_at, wp_timezone() ),
+			$row->completed_at ? new DateTimeImmutable( $row->completed_at, wp_timezone() ) : null,
+			new DateTimeImmutable( $row->created_at, wp_timezone() ),
+			new DateTimeImmutable( $row->updated_at, wp_timezone() )
 		);
 	}
 
@@ -150,22 +150,23 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function save( Quiz_Progress $quiz_progress ): void {
+		$date_format = 'Y-m-d H:i:s';
 		$this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $quiz_progress->get_status(),
-				'started_at'   => $quiz_progress->get_started_at()->getTimestamp(),
-				'completed_at' => $quiz_progress->get_completed_at() ? $quiz_progress->get_completed_at()->getTimestamp() : null,
-				'updated_at'   => current_datetime()->getTimestamp(),
+				'started_at'   => $quiz_progress->get_started_at() ? $quiz_progress->get_started_at()->format( $date_format ) : null,
+				'completed_at' => $quiz_progress->get_completed_at() ? $quiz_progress->get_completed_at()->format( $date_format ) : null,
+				'updated_at'   => current_datetime()->format( $date_format ),
 			],
 			[
 				'id' => $quiz_progress->get_id(),
 			],
 			[
 				'%s',
-				'%d',
-				$quiz_progress->get_completed_at() ? '%d' : null,
-				'%d',
+				'%s',
+				$quiz_progress->get_completed_at() ? '%s' : null,
+				'%s',
 			],
 			[
 				'%d',
