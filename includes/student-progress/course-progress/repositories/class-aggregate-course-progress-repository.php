@@ -13,6 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class Aggregate_Course_Progress_Repository.
+ *
+ * Aggregate repository is an intermediate repository that delegates the calls to the appropriate repository implementation.
+ *
+ * @since $$next-version$$
+ */
 class Aggregate_Course_Progress_Repository implements Course_Progress_Repository_Interface {
 	/**
 	 * Comments based course progress repository implementation.

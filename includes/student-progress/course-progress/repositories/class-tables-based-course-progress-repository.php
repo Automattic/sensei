@@ -95,12 +95,14 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	public function get( int $course_id, int $user_id ): ?Course_Progress {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT * FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
 			$course_id,
 			$user_id,
 			'course'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$row = $this->wpdb->get_row( $query );
 		if ( ! $row ) {
 			return null;
@@ -128,12 +130,14 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	public function has( int $course_id, int $user_id ): bool {
 		$table_name = $this->wpdb->prefix . 'sensei_lms_progress';
 		$query      = $this->wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			'SELECT COUNT(*) FROM ' . $table_name . ' WHERE post_id = %d AND user_id = %d AND type = %s',
 			$course_id,
 			$user_id,
 			'course'
 		);
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$count = (int) $this->wpdb->get_var( $query );
 
 		return $count > 0;

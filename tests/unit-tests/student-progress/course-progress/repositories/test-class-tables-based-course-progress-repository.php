@@ -2,8 +2,10 @@
 
 namespace SenseiTest\Student_Progress\Course_Progress\Repositories;
 
+use DateTimeImmutable;
 use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
 use Sensei\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
+use wpdb;
 
 /**
  * Tests for Tables_Based_Course_Progress_Repository.
@@ -14,7 +16,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_InsertsToWpdb(): void {
 		/* Arrange. */
-		$wpdb       = $this->createMock( \wpdb::class );
+		$wpdb       = $this->createMock( wpdb::class );
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
 		/* Expect & Act. */
@@ -25,19 +27,19 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 				'sensei_lms_progress',
 				$this->callback(
 					function( $array ) {
-						if ( ! isset( $array['post_id'] ) || $array['post_id'] !== 1 ) {
-							  return false;
+						if ( ! isset( $array['post_id'] ) || 1 !== $array['post_id'] ) {
+							return false;
 						}
-						if ( ! isset( $array['user_id'] ) || $array['user_id'] !== 2 ) {
+						if ( ! isset( $array['user_id'] ) || 2 !== $array['user_id'] ) {
 							return false;
 						}
 						if ( ! array_key_exists( 'parent_post_id', $array ) || ! is_null( $array['parent_post_id'] ) ) {
 							return false;
 						}
-						if ( ! isset( $array['type'] ) || $array['type'] !== 'course' ) {
+						if ( ! isset( $array['type'] ) || 'course' !== $array['type'] ) {
 							return false;
 						}
-						if ( ! isset( $array['status'] ) || $array['status'] !== 'in-progress' ) {
+						if ( ! isset( $array['status'] ) || 'in-progress' !== $array['status'] ) {
 							return false;
 						}
 						return true;
@@ -60,7 +62,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_ParamsGiven_ReturnsMatchingCourseProgress(): void {
 		/* Arrange. */
-		$wpdb            = $this->createMock( \wpdb::class );
+		$wpdb            = $this->createMock( wpdb::class );
 		$wpdb->insert_id = 3;
 		$repository      = new Tables_Based_Course_Progress_Repository( $wpdb );
 
@@ -79,7 +81,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGet_NotFound_ReturnsNull(): void {
 		/* Arrange. */
-		$wpdb = $this->createMock( \wpdb::class );
+		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
 			->method( 'get_row' )
 			->willReturn( null );
@@ -94,7 +96,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGet_ProgressFound_ReturnsMatchingProgress(): void {
 		/* Arrange. */
-		$wpdb = $this->createMock( \wpdb::class );
+		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
 			->method( 'get_row' )
 			->willReturn(
@@ -105,10 +107,10 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 					'parent_post_id' => null,
 					'type'           => 'course',
 					'status'         => 'in-progress',
-					'created_at'     => ( new \DateTimeImmutable( '2022-01-01 00:00:00', wp_timezone() ) )->getTimestamp(),
-					'updated_at'     => ( new \DateTimeImmutable( '2022-01-02 00:00:00', wp_timezone() ) )->getTimestamp(),
-					'started_at'     => ( new \DateTimeImmutable( '2022-01-03 00:00:00', wp_timezone() ) )->getTimestamp(),
-					'completed_at'   => ( new \DateTimeImmutable( '2022-01-04 00:00:00', wp_timezone() ) )->getTimestamp(),
+					'created_at'     => ( new DateTimeImmutable( '2022-01-01 00:00:00', wp_timezone() ) )->getTimestamp(),
+					'updated_at'     => ( new DateTimeImmutable( '2022-01-02 00:00:00', wp_timezone() ) )->getTimestamp(),
+					'started_at'     => ( new DateTimeImmutable( '2022-01-03 00:00:00', wp_timezone() ) )->getTimestamp(),
+					'completed_at'   => ( new DateTimeImmutable( '2022-01-04 00:00:00', wp_timezone() ) )->getTimestamp(),
 				]
 			);
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
@@ -132,7 +134,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testHas_NotFound_ReturnsFalse(): void {
 		/* Arrange. */
-		$wpdb = $this->createMock( \wpdb::class );
+		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
 			->method( 'get_var' )
 			->willReturn( 0 );
@@ -147,7 +149,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testHas_ProgressFound_ReturnsFalse(): void {
 		/* Arrange. */
-		$wpdb = $this->createMock( \wpdb::class );
+		$wpdb = $this->createMock( wpdb::class );
 		$wpdb
 			->method( 'get_var' )
 			->willReturn( 2 );
@@ -162,16 +164,16 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_ProgressGiven_CallsWpdbUpdate(): void {
 		/* Arrange. */
-		$wpdb       = $this->createMock( \wpdb::class );
+		$wpdb       = $this->createMock( wpdb::class );
 		$progress   = new Course_Progress(
 			1,
 			2,
 			3,
-			new \DateTimeImmutable( '@1', wp_timezone() ),
+			new DateTimeImmutable( '@1', wp_timezone() ),
 			'complete',
-			new \DateTimeImmutable( '@2', wp_timezone() ),
-			new \DateTimeImmutable( '@3', wp_timezone() ),
-			new \DateTimeImmutable( '@4', wp_timezone() )
+			new DateTimeImmutable( '@2', wp_timezone() ),
+			new DateTimeImmutable( '@3', wp_timezone() ),
+			new DateTimeImmutable( '@4', wp_timezone() )
 		);
 		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
 
@@ -184,7 +186,7 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 				$this->callback(
 					function ( $data ) {
 						if ( ! isset( $data['status'] ) || 'complete' !== $data['status'] ) {
-							  return false;
+							return false;
 						}
 						if ( ! isset( $data['started_at'] ) || 2 !== $data['started_at'] ) {
 							return false;
