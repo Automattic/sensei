@@ -27,7 +27,9 @@
 	// Twenty twenty
 
 	.wp-block-group.wp-block-group.wp-block-group.wp-block-group {
-		margin: unset;
+		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+			margin: unset;
+		}
 	}
 
 	.is-content-justification-space-between > * {
