@@ -209,6 +209,11 @@ class Sensei_Course_Theme_Option {
 	 */
 	public function show_admin_bar_only_for_editors( $show_admin_bar ) {
 		$lesson_id = Sensei_Utils::get_current_lesson();
+
+		if ( null === $lesson_id || null === get_post_type( 'lesson' ) ) {
+			return $show_admin_bar;
+		}
+
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
 		if ( self::has_learning_mode_enabled( $course_id ) ) {
