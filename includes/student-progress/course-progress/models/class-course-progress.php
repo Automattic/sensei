@@ -91,13 +91,13 @@ class Course_Progress {
 	 * @param int                    $id          Progress identifier.
 	 * @param int                    $course_id Course identifier.
 	 * @param int                    $user_id  User identifier.
-	 * @param DateTimeInterface      $created_at Course progress created date.
 	 * @param string|null            $status   Progress status.
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 * @param DateTimeInterface|null $completed_at Course completion date.
-	 * @param DateTimeInterface|null $updated_at Course progress updated date.
+	 * @param DateTimeInterface      $created_at Course progress created date.
+	 * @param DateTimeInterface      $updated_at Course progress updated date.
 	 */
-	public function __construct( int $id, int $course_id, int $user_id, DateTimeInterface $created_at, string $status = null, DateTimeInterface $started_at = null, DateTimeInterface $completed_at = null, DateTimeInterface $updated_at = null ) {
+	public function __construct( int $id, int $course_id, int $user_id, ?string $status, ?DateTimeInterface $started_at, ?DateTimeInterface $completed_at, DateTimeInterface $created_at, DateTimeInterface $updated_at ) {
 		$this->id           = $id;
 		$this->course_id    = $course_id;
 		$this->user_id      = $user_id;
@@ -105,7 +105,7 @@ class Course_Progress {
 		$this->started_at   = $started_at;
 		$this->completed_at = $completed_at;
 		$this->created_at   = $created_at;
-		$this->updated_at   = $updated_at ?? $created_at;
+		$this->updated_at   = $updated_at;
 	}
 
 	/**
