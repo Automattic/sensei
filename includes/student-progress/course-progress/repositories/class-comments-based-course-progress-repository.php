@@ -72,7 +72,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 			$completed_at = null;
 		}
 
-		return new Course_Progress( (int) $comment->comment_ID, $course_id, $user_id, $comment_date, $comment->comment_approved, $started_at, $completed_at, $comment_date );
+		return new Course_Progress( (int) $comment->comment_ID, $course_id, $user_id, $comment->comment_approved, $started_at, $completed_at, $comment_date, $comment_date );
 	}
 
 	/**
