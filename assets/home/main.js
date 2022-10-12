@@ -77,7 +77,7 @@ const Main = () => {
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<Extensions />
+					<Extensions extensions={ data?.extensions } />
 				</Col>
 			</Grid>
 		</>
