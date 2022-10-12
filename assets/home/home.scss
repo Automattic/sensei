@@ -355,10 +355,9 @@ $break-medium: 783px; // adminbar goes big
 			}
 
 			&__content {
-				padding: 25px;
 				display: flex;
 				flex-direction: column;
-				flex: 1;
+				flex: 1 1 33%;
 
 				@media (min-width: $break-large) {
 					min-height: 170px;
@@ -372,10 +371,10 @@ $break-medium: 783px; // adminbar goes big
 			}
 
 			&__title {
+				font-weight: 600;
+				font-size: 13px;
+				line-height: 16px;
 				margin: 0;
-				font-size: 16px;
-				font-weight: bold;
-				color: inherit;
 			}
 
 			&__price {
@@ -387,7 +386,7 @@ $break-medium: 783px; // adminbar goes big
 				background-color: $gray-0;
 				background-size: cover;
 				background-position: center center;
-				flex: 0 0 220px;
+				flex: 0 0 180px;
 			}
 
 			&__new-badge {
