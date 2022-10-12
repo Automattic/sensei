@@ -57,11 +57,22 @@ $tablet-breakpoint: 768px;
 	}
 
 	&__footer {
-		padding: 24px;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+		max-width: var(--content-size);
+		margin: 0 auto;
+		padding: 24px 0;
 
 		&__wrapper {
 			margin: 0 !important;
 			display: block;
+		}
+
+		.wp-block-group__inner-container {
+			margin: unset;
+			width: 100%;
 		}
 
 		.sensei-quiz-actions {
@@ -73,10 +84,20 @@ $tablet-breakpoint: 768px;
 		.sensei-quiz-pagination {
 			flex: 1;
 			margin: 0;
+			&__list {
+				margin-right: auto;
+			}
+
 			.sensei-quiz-pagination__list ul.page-numbers{
 				gap: 1rem;
 			}
 		}
+	}
+}
+
+[class*="__inner-container"] {
+	.sensei-course-theme__quiz__footer {
+		max-width: var(--content-size);
 	}
 }
 
