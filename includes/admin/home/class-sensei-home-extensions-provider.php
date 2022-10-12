@@ -79,10 +79,10 @@ class Sensei_Home_Extensions_Provider {
 		return [
 			'title'        => $remote_plugin_data['title'],
 			'product_slug' => $remote_plugin_data['product_slug'],
-			'description'  => $remote_plugin_data['excerpt'] ?? null,
-			'image'        => $remote_plugin_data['image'] ?? null,
+			'excerpt'      => $remote_plugin_data['excerpt'] ?? null,
+			'image'        => $remote_plugin_data['image_large'] ?? null,
 			'price'        => $remote_plugin_data['price'] ?? null,
-			'more_url'     => $remote_plugin_data['link'] ?? null,
+			'link'         => $remote_plugin_data['link'] ?? null,
 		];
 	}
 
