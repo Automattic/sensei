@@ -70,7 +70,7 @@ class Comments_Based_Course_Progress_Test extends \WP_UnitTestCase {
 			new \DateTime( '2020-01-01 00:00:01' ),
 			new \DateTime( '2020-01-01 00:00:02' ),
 			new \DateTime( '2020-01-01 00:00:00' ),
-			new \DateTime( '2020-01-01 00:00:03' ),
+			new \DateTime( '2020-01-01 00:00:03' )
 		);
 	}
 }
