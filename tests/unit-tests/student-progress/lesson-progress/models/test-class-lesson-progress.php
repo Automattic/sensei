@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Lesson_Progress_Comments_Test class.
+ * File containing the Lesson_Progress_Test class.
  */
 
 namespace SenseiTest\Student_Progress\Lesson_Progress\Models;
@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class Lesson_Progress_Comments_Test.
+ * Class Lesson_Progress_Test.
  *
  * @covers \Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress
  */
-class Comments_Based_Lesson_Progress_Test extends \WP_UnitTestCase {
+class Lesson_Progress_Test extends \WP_UnitTestCase {
 
 	public function testGetId_ConstructedWithId_ReturnsSameId(): void {
 		/* Arrange. */

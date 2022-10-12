@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the Comments_Based_Course_Progress_Test class.
+ * File containing the Course_Progress_Test class.
  *
  * @package sensei
  */
@@ -10,11 +10,11 @@ namespace SenseiTest\Student_Progress\Course_Progress\Models;
 use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
 
 /**
- * Class Comments_Based_Course_Progress_Test.
+ * Class Course_Progress_Test.
  *
  * @covers \Sensei\Student_Progress\Course_Progress\Models\Course_Progress
  */
-class Comments_Based_Course_Progress_Test extends \WP_UnitTestCase {
+class Course_Progress_Test extends \WP_UnitTestCase {
 	public function testGetStartedAt_WhenStartWithStartedAtCalled_ReturnsSameStartedAt(): void {
 		/* Arrange. */
 		$started_at = new \DateTimeImmutable();
