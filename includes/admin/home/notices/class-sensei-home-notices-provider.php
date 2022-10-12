@@ -73,8 +73,9 @@ class Sensei_Home_Notices_Provider {
 	private function format_item( $notice ) {
 		return [
 			'level'       => $notice['level'] ?? 'info',
+			'header'      => $notice['heading'] ?? null,
 			'message'     => $notice['message'],
-			'info_link'   => $notice['info_link'] ?? false,
+			'info_link'   => $notice['info_link'] ?? null,
 			'actions'     => $notice['actions'] ?? [],
 			'dismissible' => $notice['dismissible'] ?? false,
 		];
