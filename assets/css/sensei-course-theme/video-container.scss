@@ -30,10 +30,12 @@
 			display: flex;
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);
-			border: 1px solid currentColor;
 
 			.wp-block-sensei-lms-course-theme-lesson-video {
 				flex: 1;
+			}
+			&:not(.has-background) {
+				border: 1px solid currentColor;
 			}
 		}
 
@@ -73,17 +75,15 @@
 		/**
 		 * Fixed right sidebar mode when there is no video.
 		 */
-		&__video-container.no-video {
-			width: var(--sidebar-width);
+		body:not(.sensei-video-lesson) &__video-container {
 			justify-content: flex-end;
-			position: fixed;
-			right: 20px;
-			top: 150px;
-			bottom: 100px;
-			overflow-y: auto;
-			scrollbar-gutter: stable both-edges;
-			background: var(--bg-color);
-			color: var(--text-color);
+			border: none;
+			height: 0;
+			overflow: visible;
+			padding: 0!important;
+			margin-top: 0!important;
+			margin-bottom: 0!important;
+			transition: none;
 
 			&:after {
 				content: none;
@@ -94,19 +94,23 @@
 			}
 
 			.sensei-course-theme__sidebar {
-				width: 100%;
-				background: inherit;
+				height: max-content;
+				max-height: 80vh;
 				position: static;
-				overflow-y: unset;
-				scrollbar-gutter: unset;
+				padding: 12px;
+				background: var(--sensei-background-color);
+				color: var(--sensei-text-color);
+			}
+
+			&:not(.has-background) .sensei-course-theme__sidebar {
+				border: 1px solid currentColor;
 			}
 
 			& ~ * .sensei-course-theme__secondary-sidebar {
-				position: fixed;
-				right: 20px;
-				top: calc(100vh - 100px);
-				bottom: 0px;
+				position: relative;
+				top: calc(80vh + 48px);
 				width: var(--sidebar-width);
+				left: var(--wp--style--block-gap, 2em);
 			}
 
 		}

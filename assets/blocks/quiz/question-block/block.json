@@ -1,13 +1,15 @@
 {
 	"name": "sensei-lms/quiz-question",
+	"title": "Question",
+	"description": "The building block of all quizzes.",
 	"parent": [
 		"sensei-lms/quiz"
 	],
 	"category": "sensei-lms",
+    "textdomain": "sensei-lms",
 	"supports": {
 		"html": false
 	},
-	"textdomain": "sensei-lms",
 	"example": {
 		"attributes": {
 			"title": "What are power chords?",

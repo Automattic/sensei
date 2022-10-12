@@ -3,7 +3,7 @@
  * File containing the Lesson_Properties class.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 4.7.0
  */
 
 namespace Sensei\Blocks\Course_Theme;

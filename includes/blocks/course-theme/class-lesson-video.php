@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Sensei_Blocks;
-use \Sensei_Course;
 use \Sensei_Utils;
 use \Sensei_Frontend;
 
@@ -48,15 +47,18 @@ class Lesson_Video {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render() : string {
+	public function render(): string {
 
-		if ( ! sensei_can_user_view_lesson() ) {
-			return '';
-		}
+		$video = sensei_can_user_view_lesson() ? Sensei_Utils::get_featured_video_html() : null;
 
-		$content = Sensei_Utils::get_featured_video_html() ?? '';
-
-		if ( empty( $content ) ) {
+		if ( ! empty( $video ) ) {
+			add_filter(
+				'body_class',
+				function( $classes ) {
+					return array_merge( $classes, [ 'sensei-video-lesson' ] );
+				}
+			);
+		} else {
 			return '';
 		}
 
@@ -74,7 +76,7 @@ class Lesson_Video {
 		return sprintf(
 			'<div %1s>%2s</div>',
 			$wrapper_attr,
-			trim( $content )
+			trim( $video )
 		);
 	}
 }

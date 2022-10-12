@@ -471,14 +471,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_setting',
 			'type'        => 'checkbox',
-			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '$$next-version$$', '>=' ),
+			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '4.7.0', '>=' ),
 			'section'     => 'appearance-settings',
 		);
 
 		// Course Settings.
 		$fields['sensei_learning_mode_template'] = array(
 			'name'        => __( 'Learning Mode Templates', 'sensei-lms' ),
-			'description' => __( 'Chose a learning mode template that is most suited for your type of content and the style you want to offer to your students.', 'sensei-lms' ),
+			'description' => __( 'Choose a learning mode template that is most suited for your type of content and the style you want to offer to your students.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_templates',
 			'type'        => 'radio',
 			'default'     => Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME,

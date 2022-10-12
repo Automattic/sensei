@@ -97,9 +97,12 @@ class Course_Content {
 	/**
 	 * Render the current lesson page's content.
 	 *
+	 * @global string $_wp_current_template_content
+	 *
 	 * @return false|string
 	 */
 	private function render_lesson_content() {
+		global $_wp_current_template_content;
 
 		if ( ! in_the_loop() && have_posts() ) {
 			the_post();
@@ -109,7 +112,7 @@ class Course_Content {
 
 		if ( sensei_can_user_view_lesson() ) {
 			the_content();
-		} else {
+		} elseif ( empty( $_wp_current_template_content ) || ! has_block( 'core/post-excerpt', $_wp_current_template_content ) ) {
 			the_excerpt();
 		}
 

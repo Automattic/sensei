@@ -7,16 +7,48 @@
 	}
 }
 
-.sensei-course-theme__frame {
+// Blockbase
+.wp-site-blocks {
+	display: block;
+}
+
+.sensei-course-theme {
 
 	// Twenty twenty one
-	.wp-block-group::before, .wp-block-group::after {  // Limit to rows with is-content-justification-* ?
+
+	.wp-block-group::before, .wp-block-group::after {
 		content: none;
 	}
+	--responsive--aligndefault-width: 1200px;
+}
+
+.sensei-course-theme__frame {
 
 	// Twenty twenty
+
 	.wp-block-group.wp-block-group.wp-block-group.wp-block-group {
-		margin: unset;
+		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+			margin: unset;
+		}
+	}
+
+	.is-content-justification-space-between > * {
+		margin: unset !important;
+		max-width: none;
 	}
 }
 
+// Twenty twenty
+
+.entry-content > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide)
+{
+	width: auto;
+}
+[class*='__inner-container'] {
+	> *, > .wp-block-group, > .wp-block-cover {
+		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+			max-width: unset;
+			margin: unset;
+		}
+	}
+}

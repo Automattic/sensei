@@ -4,7 +4,7 @@
  *
  * @author      Automattic
  * @package     Sensei
- * @version     $$next-version$$
+ * @version     4.7.0
  */
 
 /**
@@ -158,7 +158,7 @@ class Sensei_Course_Theme_Template_Selection {
 		/**
 		 * Filters the Learning Mode block templates list. Allows to add additional ones too.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.7.0
 		 * @hook  sensei_learning_mode_block_templates
 		 *
 		 * @param Sensei_Course_Theme_Template[] $templates {
