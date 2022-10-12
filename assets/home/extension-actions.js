@@ -78,7 +78,7 @@ export const useExtensionActions = ( extension ) => {
 		};
 	} else {
 		const price =
-			extension.price !== '0'
+			extension.price !== '0' && extension.price !== 0
 				? extension.price
 				: __( 'Free', 'sensei-lms' );
 
