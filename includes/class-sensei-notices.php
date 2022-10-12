@@ -91,7 +91,7 @@ class Sensei_Notices {
 		/**
 		 * Allows to modify a sensei notice that will be shown to the user.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.7.0
 		 * @hook sensei_notice
 		 *
 		 * @param array $notice {

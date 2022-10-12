@@ -2659,7 +2659,7 @@ class Sensei_Utils {
 	/**
 	 * Gets the HTML content from the Featured Video for a lesson.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 *
 	 * @param string $post_id the post ID.
 	 *
