@@ -78,7 +78,11 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 	private function getSimpleResponse() {
 		return [
 			Sensei_Home_Notices::HOME_NOTICE_KEY_PREFIX . 'test-notice' => [
-				'test' => true,
+				'level'       => 'info',
+				'message'     => 'A test notice',
+				'info_link'   => false,
+				'actions'     => [],
+				'dismissible' => false,
 			],
 		];
 	}
@@ -89,13 +93,25 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 	private function getMixedReesponse() {
 		return [
 			Sensei_Home_Notices::HOME_NOTICE_KEY_PREFIX . 'test-notice' => [
-				'test' => true,
+				'level'       => 'info',
+				'message'     => 'A test notice A',
+				'info_link'   => false,
+				'actions'     => [],
+				'dismissible' => false,
 			],
 			Sensei_Home_Notices::HOME_NOTICE_KEY_PREFIX . 'test-notice-2' => [
-				'test' => true,
+				'level'       => 'info',
+				'message'     => 'A test notice B',
+				'info_link'   => false,
+				'actions'     => [],
+				'dismissible' => false,
 			],
 			'a-foreign-notice' => [
-				'test' => false,
+				'level'       => 'info',
+				'message'     => 'A test notice C',
+				'info_link'   => false,
+				'actions'     => [],
+				'dismissible' => false,
 			],
 		];
 	}

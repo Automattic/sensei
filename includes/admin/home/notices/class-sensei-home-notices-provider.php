@@ -55,7 +55,24 @@ class Sensei_Home_Notices_Provider {
 	 * @return array
 	 */
 	public function get( $max_age = null ): array {
-		return isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( Sensei_Home::SCREEN_ID ) : $this->local_only();
+		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( Sensei_Home::SCREEN_ID ) : $this->local_only();
+
+		return array_map( [ $this, 'format_item' ], $notices );
 	}
 
+	/**
+	 * Format a notice item.
+	 *
+	 * @param array $notice The unformatted notice.
+	 * @return array
+	 */
+	private function format_item( $notice ) {
+		return [
+			'level'       => $notice['level'] ?? 'info',
+			'message'     => $notice['message'],
+			'info_link'   => $notice['info_link'] ?? false,
+			'actions'     => $notice['actions'] ?? [],
+			'dismissible' => $notice['dismissible'] ?? false,
+		];
+	}
 }
