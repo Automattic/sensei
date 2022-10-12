@@ -64,12 +64,12 @@ class Answer {
 	/**
 	 * Constructor.
 	 *
-	 * @param int                    $id            The answer ID.
-	 * @param int                    $submission_id The submission ID.
-	 * @param int                    $question_id   The question ID.
-	 * @param string                 $value         The answer value.
-	 * @param DateTimeInterface      $created_at    The created date.
-	 * @param DateTimeInterface|null $updated_at    The updated date.
+	 * @param int               $id            The answer ID.
+	 * @param int               $submission_id The submission ID.
+	 * @param int               $question_id   The question ID.
+	 * @param string            $value         The answer value.
+	 * @param DateTimeInterface $created_at    The created date.
+	 * @param DateTimeInterface $updated_at    The updated date.
 	 */
 	public function __construct(
 		int $id,
@@ -77,14 +77,14 @@ class Answer {
 		int $question_id,
 		string $value,
 		DateTimeInterface $created_at,
-		?DateTimeInterface $updated_at = null
+		DateTimeInterface $updated_at
 	) {
 		$this->id            = $id;
 		$this->submission_id = $submission_id;
 		$this->question_id   = $question_id;
 		$this->value         = $value;
 		$this->created_at    = $created_at;
-		$this->updated_at    = $updated_at ?? $created_at;
+		$this->updated_at    = $updated_at;
 	}
 
 	/**

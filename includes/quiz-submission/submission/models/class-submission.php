@@ -64,12 +64,12 @@ class Submission {
 	/**
 	 * Constructor.
 	 *
-	 * @param int                    $id          The submission ID.
-	 * @param int                    $quiz_id     The quiz post ID.
-	 * @param int                    $user_id     The user ID.
-	 * @param float|null             $final_grade The final grade (%).
-	 * @param DateTimeInterface|null $created_at  The created date.
-	 * @param DateTimeInterface|null $updated_at  The updated date.
+	 * @param int               $id          The submission ID.
+	 * @param int               $quiz_id     The quiz post ID.
+	 * @param int               $user_id     The user ID.
+	 * @param float|null        $final_grade The final grade (%).
+	 * @param DateTimeInterface $created_at  The created date.
+	 * @param DateTimeInterface $updated_at  The updated date.
 	 */
 	public function __construct(
 		int $id,
@@ -77,14 +77,14 @@ class Submission {
 		int $user_id,
 		?float $final_grade,
 		DateTimeInterface $created_at,
-		?DateTimeInterface $updated_at = null
+		DateTimeInterface $updated_at
 	) {
 		$this->id          = $id;
 		$this->quiz_id     = $quiz_id;
 		$this->user_id     = $user_id;
 		$this->final_grade = $final_grade;
 		$this->created_at  = $created_at;
-		$this->updated_at  = $updated_at ?? $created_at;
+		$this->updated_at  = $updated_at;
 	}
 
 	/**

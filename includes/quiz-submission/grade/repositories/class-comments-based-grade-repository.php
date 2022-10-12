@@ -45,7 +45,9 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 			update_comment_meta( $submission_id, 'quiz_answers_feedback', $feedback_map );
 		}
 
-		return new Grade( 0, 0, $question_id, $points, $feedback, current_datetime() );
+		$created_at = current_datetime();
+
+		return new Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
 	}
 
 	/**
@@ -62,11 +64,12 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 		}
 
 		$feedback_map = get_comment_meta( $submission_id, 'quiz_answers_feedback', true );
+		$created_at   = current_datetime();
+		$grades       = [];
 
-		$grades = [];
 		foreach ( $grades_map as $question_id => $points ) {
 			$feedback = $feedback_map[ $question_id ] ?? null;
-			$grades[] = new Grade( 0, 0, $question_id, $points, $feedback, current_datetime() );
+			$grades[] = new Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
 		}
 
 		return $grades;

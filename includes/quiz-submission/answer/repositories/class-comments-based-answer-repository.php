@@ -36,7 +36,9 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 		update_comment_meta( $submission_id, 'quiz_answers', $answers_map );
 		update_comment_meta( $submission_id, 'questions_asked', $questions_asked_csv );
 
-		return new Answer( 0, $submission_id, $question_id, $value, current_datetime() );
+		$created_at = current_datetime();
+
+		return new Answer( 0, $submission_id, $question_id, $value, $created_at, $created_at );
 	}
 
 	/**
@@ -47,9 +49,11 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 * @return Answer[] An array of answers.
 	 */
 	public function get_all( int $submission_id ): array {
-		$answers = [];
+		$answers    = [];
+		$created_at = current_datetime();
+
 		foreach ( $this->get_answers_map( $submission_id ) as $question_id => $value ) {
-			$answers[] = new Answer( 0, $submission_id, $question_id, $value, current_datetime() );
+			$answers[] = new Answer( 0, $submission_id, $question_id, $value, $created_at, $created_at );
 		}
 
 		return $answers;

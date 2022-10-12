@@ -52,6 +52,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 			$quiz_id,
 			$user_id,
 			$final_grade,
+			$created_at,
 			$created_at
 		);
 	}
@@ -98,6 +99,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 			$quiz_id,
 			$user_id,
 			is_numeric( $final_grade ) ? $final_grade : null,
+			$created_at,
 			$created_at
 		);
 	}

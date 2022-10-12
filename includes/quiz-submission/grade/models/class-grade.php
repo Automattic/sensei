@@ -64,20 +64,20 @@ class Grade {
 	/**
 	 * The updated date.
 	 *
-	 * @var DateTimeInterface|null
+	 * @var DateTimeInterface
 	 */
 	private $updated_at;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param int                    $id          The grade ID.
-	 * @param int                    $answer_id   The answer ID.
-	 * @param int                    $question_id The question ID.
-	 * @param int                    $points      The grade points.
-	 * @param string|null            $feedback    The grade feedback.
-	 * @param DateTimeInterface      $created_at  The created data.
-	 * @param DateTimeInterface|null $updated_at  The update date.
+	 * @param int               $id          The grade ID.
+	 * @param int               $answer_id   The answer ID.
+	 * @param int               $question_id The question ID.
+	 * @param int               $points      The grade points.
+	 * @param string|null       $feedback    The grade feedback.
+	 * @param DateTimeInterface $created_at  The created data.
+	 * @param DateTimeInterface $updated_at  The update date.
 	 */
 	public function __construct(
 		int $id,
@@ -86,7 +86,7 @@ class Grade {
 		int $points,
 		?string $feedback,
 		DateTimeInterface $created_at,
-		?DateTimeInterface $updated_at = null
+		DateTimeInterface $updated_at
 	) {
 		$this->id          = $id;
 		$this->answer_id   = $answer_id;
@@ -94,7 +94,7 @@ class Grade {
 		$this->points      = $points;
 		$this->feedback    = $feedback;
 		$this->created_at  = $created_at;
-		$this->updated_at  = $updated_at ?? $created_at;
+		$this->updated_at  = $updated_at;
 	}
 
 	/**
