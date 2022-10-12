@@ -46,12 +46,6 @@ const Card = ( props ) => {
 				htmlProps?.className
 			) }
 		>
-			<div
-				className="sensei-home__card__image"
-				style={ {
-					backgroundImage,
-				} }
-			/>
 			<div className="sensei-home__card__content">
 				<header className="sensei-home__card__header">
 					<h3 className="sensei-home__card__title">{ title }</h3>
@@ -65,6 +59,12 @@ const Card = ( props ) => {
 						)
 					}
 				</header>
+				<div
+					className="sensei-home__card__image"
+					style={ {
+						backgroundImage,
+					} }
+				/>
 				<div className="sensei-home__card__body">
 					<p className="sensei-home__card__description">
 						{ excerpt }
