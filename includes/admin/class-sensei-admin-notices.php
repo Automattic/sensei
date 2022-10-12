@@ -499,7 +499,7 @@ class Sensei_Admin_Notices {
 	 */
 	protected function get_active_plugins() {
 		if ( ! function_exists( 'get_plugins' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugins = get_plugins();

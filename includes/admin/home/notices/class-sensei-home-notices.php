@@ -86,7 +86,7 @@ class Sensei_Home_Notices {
 			$has_license = apply_filters( 'sensei_home_is_plugin_licensed_' . $plugin_slug, ! $plugin_data['licensed'] );
 
 			if ( $has_license && ! $this->is_plugin_update_available( $plugin_slug, $plugin_data['latest_version'] ) ) {
-				// If this is a licensed plugin, wait until WordPress knows about the update package to present th notice.
+				// If this is a licensed plugin, wait until WordPress knows about the update package to present the notice.
 				continue;
 			}
 
@@ -283,7 +283,7 @@ class Sensei_Home_Notices {
 	 */
 	private function get_plugins_with_updates( $versions ) {
 		if ( ! function_exists( 'get_plugins' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugins_with_updates = [];
