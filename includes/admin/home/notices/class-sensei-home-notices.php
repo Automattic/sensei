@@ -152,7 +152,7 @@ class Sensei_Home_Notices {
 		$changelog_url = $plugin_data['changelog'] ?? false;
 
 		$info_link = false;
-		if ( ! empty( $changelog ) ) {
+		if ( ! empty( $changelog_url ) ) {
 			$info_link = [
 				'label' => esc_html__( 'What\'s new', 'sensei-lms' ),
 				'url'   => esc_url( $changelog_url ),
