@@ -6,6 +6,10 @@
  * @since   $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class that gathers and produces the local notices for Sensei Home.
  */
