@@ -61,7 +61,6 @@ const QuickLink = ( { item } ) => {
 			callback( { setTitle, originalTitle, timer } );
 		};
 	}
-	// TODO: improve check to verify if a URL is external or not
 	const isExternal = url && url !== '#' && ! url.includes( '/wp-admin/' );
 	return (
 		<li>
