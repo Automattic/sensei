@@ -118,7 +118,7 @@ class Sensei_Home_Tasks_Provider {
 		if ( false === $result ) {
 			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
-			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='course' AND post_name NOT LIKE %s LIMIT 1", "{$prefix}%" ) );
+			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s LIMIT 1", "{$prefix}%" ) );
 			if ( null === $post_id ) {
 				$result = null;
 			} else {
