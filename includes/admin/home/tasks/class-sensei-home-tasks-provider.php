@@ -100,7 +100,7 @@ class Sensei_Home_Tasks_Provider {
 		$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 		return [
 			'title' => get_bloginfo( 'name' ),
-			'image' => $image[0],
+			'image' => $image ? $image[0] : null,
 		];
 	}
 
