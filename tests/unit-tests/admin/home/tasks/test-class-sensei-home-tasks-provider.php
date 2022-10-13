@@ -40,8 +40,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function tearDown() {
 		remove_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
-		remove_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomLogo' ] );
-		remove_filter( 'post_thumbnail_url', [ $this, 'overrideWithCustomImage' ] );
+		remove_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomImage' ] );
 		parent::tearDown();
 	}
 
@@ -89,23 +88,14 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	 *
 	 * @return string[]
 	 */
-	public function overrideWithCustomLogo() : array {
+	public function overrideWithCustomImage() : array {
 		return [ 'test-image.png' ];
-	}
-
-	/**
-	 * Callback to be used in filter, to return a custom placeholder image for posts.
-	 *
-	 * @return string
-	 */
-	public function overrideWithCustomImage(): string {
-		return 'test-featured-image.png';
 	}
 
 	public function testGet_WhenCalled_ReturnsSiteContainingSiteInfo() {
 		// Arrange
 		update_option( 'blogname', 'Test site' );
-		add_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomLogo' ] );
+		add_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomImage' ] );
 
 		// Act
 		$result = $this->provider->get();
@@ -178,7 +168,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 			]
 		);
 		update_post_meta( $course_id, '_thumbnail_id', 42 );
-		add_filter( 'post_thumbnail_url', [ $this, 'overrideWithCustomImage' ] );
+		add_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomImage' ] );
 		self::flush_cache();
 
 		// Act
@@ -189,7 +179,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'course', $result );
 		$this->assertIsArray( $result['course'] );
 		$this->assertEquals( 'Test Course', $result['course']['title'] );
-		$this->assertEquals( 'test-featured-image.png', $result['course']['image'] );
+		$this->assertEquals( 'test-image.png', $result['course']['image'] );
 	}
 
 	public function testGet_WhenCalled_ReturnsCourseAsNullWhenTheCourseIsOnTrash() {
