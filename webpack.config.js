@@ -164,6 +164,13 @@ function getWebpackConfig( env, argv ) {
 		output: {
 			path: path.resolve( '.', baseDist ),
 		},
+		resolve: {
+			...webpackConfig.resolve,
+			alias: {
+				...webpackConfig.resolve.alias,
+				senseiAssets: path.resolve( __dirname, 'assets' ),
+			},
+		},
 		optimization: {
 			concatenateModules: false,
 			minimizer: [
