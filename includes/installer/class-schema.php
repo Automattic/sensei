@@ -80,6 +80,37 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 	PRIMARY KEY  (id),
 	UNIQUE KEY user_progress (post_id, user_id, type),
 	KEY status (status)
+) $collate;
+CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_submissions (
+	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+	quiz_id bigint UNSIGNED NOT NULL,
+	user_id bigint UNSIGNED NOT NULL,
+	final_grade decimal(5,2),
+	created_at datetime NOT NULL,
+	updated_at datetime NOT NULL,
+	PRIMARY KEY  (id),
+	UNIQUE KEY user_quiz (quiz_id, user_id)
+) $collate;
+CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_answers (
+	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+	submission_id bigint UNSIGNED NOT NULL,
+	question_id bigint UNSIGNED NOT NULL,
+	value longtext NOT NULL,
+	created_at datetime NOT NULL,
+	updated_at datetime NOT NULL,
+	PRIMARY KEY  (id),
+	UNIQUE KEY question_submission (submission_id, question_id)
+) $collate;
+CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
+	id bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+	answer_id bigint UNSIGNED NOT NULL,
+	question_id bigint UNSIGNED NOT NULL,
+	points int NOT NULL,
+	feedback longtext,
+	created_at datetime NOT NULL,
+	updated_at datetime NOT NULL,
+	PRIMARY KEY  (id),
+	UNIQUE KEY question_answer (answer_id, question_id)
 ) $collate;";
 	}
 
@@ -96,6 +127,9 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_progress (
 
 		$tables = [
 			"{$wpdb->prefix}sensei_lms_progress",
+			"{$wpdb->prefix}sensei_lms_quiz_submissions",
+			"{$wpdb->prefix}sensei_lms_quiz_answers",
+			"{$wpdb->prefix}sensei_lms_quiz_grades",
 		];
 
 		/**
