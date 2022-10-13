@@ -18,7 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 final class Sensei_Home {
-	const SCREEN_ID = 'course_page_sensei-home';
+	const SCREEN_ID                  = 'course_page_sensei-home';
+	const DISMISS_TASKS_NONCE_ACTION = 'sensei-lms-dismiss-tasks';
+	const DISMISS_TASKS_OPTION       = 'sensei-home-tasks-dismissed';
 
 	/**
 	 * Instance of class.
@@ -68,6 +70,7 @@ final class Sensei_Home {
 		$this->notices->init();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'wp_ajax_sensei_home_tasks_dismiss', [ $this, 'handle_tasks_dismiss' ] );
 	}
 
 	/**
@@ -121,6 +124,8 @@ final class Sensei_Home {
 				'activate-plugin_' . $plugin_file
 			);
 		}
+
+		$data['dismiss_tasks_nonce'] = wp_create_nonce( self::DISMISS_TASKS_NONCE_ACTION );
 
 		wp_localize_script(
 			'sensei-home',
@@ -178,6 +183,20 @@ final class Sensei_Home {
 	 */
 	public function render() {
 		require __DIR__ . '/views/html-admin-page-home.php';
+	}
+	/**
+	 * Handle tasks dismissal.
+	 *
+	 * @access private
+	 */
+	public function handle_tasks_dismiss() {
+		check_ajax_referer( self::DISMISS_TASKS_NONCE_ACTION );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( '', '', 403 );
+		}
+
+		update_option( self::DISMISS_TASKS_OPTION, 1 );
 	}
 
 	/**
