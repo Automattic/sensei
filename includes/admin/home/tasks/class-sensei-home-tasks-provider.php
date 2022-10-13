@@ -83,7 +83,6 @@ class Sensei_Home_Tasks_Provider {
 			'title'    => $task->get_title(),
 			'priority' => $task->get_priority(),
 			'url'      => $task->get_url(),
-			'image'    => $task->get_image(),
 			'done'     => $task->is_completed(),
 		];
 	}
