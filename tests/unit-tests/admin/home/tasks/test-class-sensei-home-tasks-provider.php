@@ -150,8 +150,9 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		// Arrange
 		$this->factory->course->create(
 			[
-				'post_name'  => 'testing',
-				'post_title' => 'Test Course',
+				'post_name'   => 'testing',
+				'post_title'  => 'Test Course',
+				'post_status' => 'draft',
 			]
 		);
 		self::flush_cache();
@@ -171,8 +172,9 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		// Arrange
 		$course_id = $this->factory->course->create(
 			[
-				'post_name'  => 'testing',
-				'post_title' => 'Test Course',
+				'post_name'   => 'testing',
+				'post_title'  => 'Test Course',
+				'post_status' => 'publish',
 			]
 		);
 		update_post_meta( $course_id, '_thumbnail_id', 42 );
@@ -188,6 +190,28 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertIsArray( $result['course'] );
 		$this->assertEquals( 'Test Course', $result['course']['title'] );
 		$this->assertEquals( 'test-featured-image.png', $result['course']['image'] );
+	}
+
+	public function testGet_WhenCalled_ReturnsCourseAsNullWhenTheCourseIsOnTrash() {
+		// Arrange
+		$course_id = $this->factory->course->create(
+			[
+				'post_name'   => 'testing',
+				'post_title'  => 'Test Course',
+				'post_status' => 'trash',
+			]
+		);
+		update_post_meta( $course_id, '_thumbnail_id', 42 );
+		add_filter( 'post_thumbnail_url', [ $this, 'overrideWithCustomImage' ] );
+		self::flush_cache();
+
+		// Act
+		$result = $this->provider->get();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'course', $result );
+		$this->assertNull( $result['course'] );
 	}
 
 	public function testGet_WhenCalled_ReturnsIsCompletedFalseAsDefault() {
