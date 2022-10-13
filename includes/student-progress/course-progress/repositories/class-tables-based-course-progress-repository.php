@@ -78,10 +78,10 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			$id,
 			$course_id,
 			$user_id,
-			$current_datetime,
 			Course_Progress::STATUS_IN_PROGRESS,
 			$current_datetime,
 			null,
+			$current_datetime,
 			$current_datetime
 		);
 	}
@@ -113,10 +113,10 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
-			new DateTimeImmutable( $row->created_at, wp_timezone() ),
 			$row->status,
 			$row->started_at ? new DateTimeImmutable( $row->started_at, wp_timezone() ) : null,
 			$row->completed_at ? new DateTimeImmutable( $row->completed_at, wp_timezone() ) : null,
+			new DateTimeImmutable( $row->created_at, wp_timezone() ),
 			new DateTimeImmutable( $row->updated_at, wp_timezone() )
 		);
 	}
