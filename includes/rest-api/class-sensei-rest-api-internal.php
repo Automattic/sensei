@@ -85,7 +85,6 @@ class Sensei_REST_API_Internal {
 		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
 		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
 		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
-		$this->extensions_provider  = new Sensei_Home_Extensions_Provider( $remote_data_api );
 
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
@@ -113,8 +112,7 @@ class Sensei_REST_API_Internal {
 				$this->promo_provider,
 				$this->tasks_provider,
 				$this->news_provider,
-				$this->guides_provider,
-				$this->extensions_provider
+				$this->guides_provider
 			),
 		];
 
