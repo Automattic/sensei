@@ -54,11 +54,9 @@ class Sensei_Home_Notices_Provider {
 	/**
 	 * Returns all the information for the notices section.
 	 *
-	 * @param int $max_age The maximum age of the remote data.
-	 *
 	 * @return array
 	 */
-	public function get( $max_age = null ): array {
+	public function get(): array {
 		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( Sensei_Home::SCREEN_ID ) : $this->local_only();
 
 		return array_map( [ $this, 'format_item' ], $notices );
