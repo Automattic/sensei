@@ -25,6 +25,7 @@ class Sensei_Home_Tasks_Provider {
 	public function get(): array {
 		return [
 			'items'        => $this->get_tasks(),
+			'site'         => $this->get_site(),
 			'is_completed' => (bool) get_option( self::COMPLETED_TASKS_OPTION_KEY, false ),
 		];
 	}
@@ -85,6 +86,20 @@ class Sensei_Home_Tasks_Provider {
 			'url'      => $task->get_url(),
 			'image'    => $task->get_image(),
 			'done'     => $task->is_completed(),
+		];
+	}
+
+	/**
+	 * Return the site information needed for the task list component.
+	 *
+	 * @return array The site info, including title and image (which is the custom logo) URl.
+	 */
+	private function get_site() {
+		$custom_logo_id = get_theme_mod( 'custom_logo' );
+		$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
+		return [
+			'title' => get_bloginfo( 'name' ),
+			'image' => $image[0],
 		];
 	}
 
