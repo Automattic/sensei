@@ -46,13 +46,6 @@ interface Sensei_Home_Task {
 	public function get_url() : ?string;
 
 	/**
-	 * An optional url to an image.
-	 *
-	 * @return string|null
-	 */
-	public function get_image() : ?string;
-
-	/**
 	 * Whether the task has been completed or not.
 	 *
 	 * @return bool
