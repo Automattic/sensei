@@ -187,7 +187,7 @@ class Sensei_Admin_Notices {
 		/**
 		 * Adds the ability to hide notices on a specific screen.
 		 *
-		 * @hook sensei_hide_admin_notices_on_screen
+		 * @hook sensei_show_admin_notices_{$screen_id}
 		 * @since $$next-version$$
 		 *
 		 * @param {bool} $hide_notices_on_screen Whether to hide notices on the screen.
