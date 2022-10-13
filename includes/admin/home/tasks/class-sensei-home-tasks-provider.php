@@ -127,7 +127,7 @@ class Sensei_Home_Tasks_Provider {
 					'title' => get_the_title( $post_id ),
 					'image' => $image ? $image : null,
 				];
-				wp_cache_set( $cache_key, $result, $cache_group );
+				wp_cache_set( $cache_key, $result, $cache_group, 60 );
 			}
 		}
 		return $result;
