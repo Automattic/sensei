@@ -8,6 +8,16 @@
 		padding: 52px 0;
 	}
 
+	&__dismiss {
+		position: absolute;
+		top: -3px;
+		right: 8px;
+		padding: 0;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+	}
+
 	&__check-icon {
 		display: inline-flex;
 		justify-content: center;

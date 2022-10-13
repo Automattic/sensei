@@ -4,6 +4,7 @@
 @import 'ready';
 
 .sensei-home-tasks-section {
+	position: relative;
 	background-image: url("../images/home-top-left-illustration.png"), url("../images/home-bottom-right-illustration.png");
 	background-position: -197px 0, calc( 100% + 197px ) 100%;
 	background-repeat: no-repeat;

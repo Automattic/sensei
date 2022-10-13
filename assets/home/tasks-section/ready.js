@@ -2,6 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Icon } from '@wordpress/components';
+import { closeSmall } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -16,6 +18,13 @@ import TwitterCircleIcon from '../../icons/twitter-circle.svg';
  */
 const Ready = () => (
 	<div role="alert" className="sensei-home-ready">
+		<button
+			className="sensei-home-ready__dismiss"
+			title={ __( 'Dismiss tasks', 'sensei-lms' ) }
+		>
+			<Icon icon={ closeSmall } />
+		</button>
+
 		<div className="sensei-home-ready__check-icon">
 			<CheckIcon />
 		</div>
