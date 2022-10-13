@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { Notice } from '@wordpress/components';
@@ -31,7 +36,6 @@ const useReadyState = (
 
 	useEffect( () => {
 		if ( ! ready && totalCompletedTasks === totalTasks ) {
-			setReadyError( false );
 			apiFetch( {
 				path: '/sensei-internal/v1/home/tasks/complete',
 				method: 'POST',
@@ -103,7 +107,9 @@ const TasksSection = ( { data } ) => {
 
 	return (
 		<Section
-			className="sensei-home-tasks-section"
+			className={ classnames( 'sensei-home-tasks-section', {
+				'sensei-home-tasks-section--ready': ready,
+			} ) }
 			insideClassName="sensei-home-tasks-section__inside"
 		>
 			{ content }
