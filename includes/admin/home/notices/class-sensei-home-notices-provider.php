@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class that gathers and produces the local notices for Sensei Home.
+ * Class that formats the notices for the Sensei Home endpoint.
  */
 class Sensei_Home_Notices_Provider {
 	/**
