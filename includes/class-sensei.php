@@ -1,5 +1,11 @@
 <?php
 
+use Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
+use Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
+use Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
+use Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
+use Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
+use Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
 use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
@@ -249,6 +255,27 @@ class Sensei_Main {
 	 * @var Quiz_Progress_Repository_Interface
 	 */
 	public $quiz_progress_repository;
+
+	/**
+	 * Quiz submission repository.
+	 *
+	 * @var Submission_Repository_Interface
+	 */
+	public $quiz_submission_repository;
+
+	/**
+	 * Quiz answer repository.
+	 *
+	 * @var Answer_Repository_Interface
+	 */
+	public $quiz_answer_repository;
+
+	/**
+	 * Quiz grade repository.
+	 *
+	 * @var Grade_Repository_Interface
+	 */
+	public $quiz_grade_repository;
 
 	/**
 	 * Constructor method.
@@ -508,6 +535,11 @@ class Sensei_Main {
 		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
 		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
 		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+
+		// Quiz submission repositories.
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
 	}
 
 	/**

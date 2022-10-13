@@ -366,29 +366,33 @@ class Sensei_Utils {
 	/**
 	 * Grade quiz
 	 *
-	 * @param  integer $quiz_id ID of quiz
-	 * @param  integer $grade   Grade received
-	 * @param  integer $user_id ID of user being graded
-	 * @param  string  $quiz_grade_type default 'auto'
+	 * @param  integer $quiz_id ID of quiz.
+	 * @param  float   $grade   Grade received.
+	 * @param  integer $user_id ID of user being graded.
+	 * @param  string  $quiz_grade_type default 'auto'.
+	 *
 	 * @return boolean
 	 */
-	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ) {
-		if ( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
+	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ): bool {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		$activity_logged = false;
-		if ( intval( $quiz_id ) > 0 && intval( $user_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$activity_logged    = update_comment_meta( $user_lesson_status->comment_ID, 'grade', $grade );
-
-			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-
-			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
 		}
 
-		return $activity_logged;
+		$quiz_submission->set_final_grade( $grade );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+
+		do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+
+		return true;
 	}
 
 	/**
@@ -683,19 +687,32 @@ class Sensei_Utils {
 		return $delete_answers;
 	}
 
-	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
-		if ( intval( $user_id ) == 0 ) {
+	/**
+	 * Delete the quiz submission grade.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
+	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ): bool {
+		if ( intval( $user_id ) === 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		$delete_grade = false;
-		if ( intval( $quiz_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$delete_grade       = delete_comment_meta( $user_lesson_status->comment_ID, 'grade' );
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		return $delete_grade;
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
+		}
+
+		$quiz_submission->set_final_grade( null );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		return true;
 	}
 
 	/**
@@ -1640,7 +1657,7 @@ class Sensei_Utils {
 	 * @since 1.7.0
 	 * @param int $lesson_id
 	 * @param int $user_id
-	 * @return object | bool
+	 * @return WP_Comment|false
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
 
