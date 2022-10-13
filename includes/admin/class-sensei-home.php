@@ -27,6 +27,21 @@ final class Sensei_Home {
 	 */
 	private static $instance;
 
+
+	/**
+	 * The remote data helper instance.
+	 *
+	 * @var Sensei_Home_Remote_Data_API
+	 */
+	private $remote_data_api;
+
+	/**
+	 * The Sensei Home Notices instance.
+	 *
+	 * @var Sensei_Home_Notices
+	 */
+	private $notices;
+
 	/**
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
