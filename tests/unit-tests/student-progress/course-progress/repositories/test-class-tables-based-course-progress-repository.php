@@ -169,8 +169,8 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 			1,
 			2,
 			3,
-			new DateTimeImmutable( '2022-01-01 00:00:01', wp_timezone() ),
 			'complete',
+			new DateTimeImmutable( '2022-01-01 00:00:01', wp_timezone() ),
 			new DateTimeImmutable( '2022-01-02 00:00:01', wp_timezone() ),
 			new DateTimeImmutable( '2022-01-03 00:00:01', wp_timezone() ),
 			new DateTimeImmutable( '2022-01-04 00:00:01', wp_timezone() )
@@ -188,10 +188,10 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 						if ( ! isset( $data['status'] ) || 'complete' !== $data['status'] ) {
 							return false;
 						}
-						if ( ! isset( $data['started_at'] ) || '2022-01-02 00:00:01' !== $data['started_at'] ) {
+						if ( ! isset( $data['started_at'] ) || '2022-01-01 00:00:01' !== $data['started_at'] ) {
 							return false;
 						}
-						if ( ! isset( $data['completed_at'] ) || '2022-01-03 00:00:01' !== $data['completed_at'] ) {
+						if ( ! isset( $data['completed_at'] ) || '2022-01-02 00:00:01' !== $data['completed_at'] ) {
 							return false;
 						}
 						return true;

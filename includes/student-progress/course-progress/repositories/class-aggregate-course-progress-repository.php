@@ -107,10 +107,10 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 					$tables_based_progress->get_id(),
 					$tables_based_progress->get_course_id(),
 					$tables_based_progress->get_user_id(),
-					$tables_based_progress->get_created_at(),
 					$course_progress->get_status(),
 					$course_progress->get_started_at(),
 					$course_progress->get_completed_at(),
+					$tables_based_progress->get_created_at(),
 					$tables_based_progress->get_updated_at()
 				);
 				$this->tables_based_repository->save( $progress_to_save );

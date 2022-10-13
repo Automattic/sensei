@@ -99,12 +99,7 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	 */
 	public function testSave_Always_CallsCommentsBasedRepository( bool $use_tables ): void {
 		/* Arrange. */
-		$progress       = new Course_Progress(
-			1,
-			2,
-			3,
-			new \DateTimeImmutable()
-		);
+		$progress       = $this->create_course_progress();
 		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
 		$repository     = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, $use_tables );
@@ -126,18 +121,8 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_UseTablesOnAndProgressFound_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress       = new Course_Progress(
-			1,
-			2,
-			3,
-			new \DateTimeImmutable()
-		);
-		$found_progress = new Course_Progress(
-			2,
-			3,
-			4,
-			new \DateTimeImmutable()
-		);
+		$progress       = $this->create_course_progress();
+		$found_progress = $this->create_course_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
@@ -166,12 +151,7 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_UseTablesOnAndProgressNotFound_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress = new Course_Progress(
-			1,
-			2,
-			3,
-			new \DateTimeImmutable()
-		);
+		$progress = $this->create_course_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
@@ -187,5 +167,23 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 			->expects( $this->never() )
 			->method( 'save' );
 		$repository->save( $progress );
+	}
+
+	/**
+	 * Creates a course progress object.
+	 *
+	 * @return Course_Progress
+	 */
+	public function create_course_progress(): Course_Progress {
+		return new Course_Progress(
+			1,
+			2,
+			3,
+			'in-progress',
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable()
+		);
 	}
 }
