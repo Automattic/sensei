@@ -85,7 +85,7 @@ class Sensei_Home_Task_Publish_First_Course implements Sensei_Home_Task {
 		if ( false === $result ) {
 			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish query.
-			$result = $wpdb->get_row( $wpdb->prepare( "SELECT ID, post_status='publish' as published FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s ORDER BY published DESC, ID DESC LIMIT 1", "{$prefix}%" ) );
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT ID, post_status='publish' as published FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s ORDER BY published DESC, ID ASC LIMIT 1", "{$prefix}%" ) );
 			wp_cache_set( $cache_key, $result, $cache_group );
 		}
 		return $result;
