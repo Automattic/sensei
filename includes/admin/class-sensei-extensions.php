@@ -54,16 +54,6 @@ final class Sensei_Extensions {
 	}
 
 	/**
-	 * Localize extensions script.
-	 *
-	 * @since 3.11.0
-	 * @deprecated $$next-version$$
-	 */
-	private function localize_script() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-	}
-
-	/**
 	 * Call API to get Sensei extensions.
 	 *
 	 * @since  2.0.0

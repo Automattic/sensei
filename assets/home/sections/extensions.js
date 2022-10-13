@@ -2,6 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -9,15 +11,36 @@ import { __ } from '@wordpress/i18n';
 import { Col, Grid } from '../grid';
 import Card from '../card';
 import Section from '../section';
+import { EXTENSIONS_STORE } from '../../extensions/store';
 
 /**
  * Extensions section component.
- *
- * @param {Object}   props
- * @param {Object[]} props.extensions
  */
-const Extensions = ( { extensions } ) => {
-	if ( extensions === undefined || extensions.length === 0 ) {
+const Extensions = () => {
+	const { extensions, isExtensionsLoading } = useSelect( ( select ) => {
+		const store = select( EXTENSIONS_STORE );
+
+		return {
+			isExtensionsLoading: ! store.hasFinishedResolution(
+				'getExtensions'
+			),
+			extensions: store
+				.getExtensions()
+				.filter(
+					( extension ) => extension.product_slug !== 'sensei-pro'
+				),
+		};
+	}, [] );
+
+	if ( isExtensionsLoading ) {
+		return (
+			<div className="sensei-home__loader">
+				<Spinner />
+			</div>
+		);
+	}
+
+	if ( 0 === extensions.length ) {
 		return null;
 	}
 
