@@ -62,15 +62,6 @@ class Sensei_Home_Task_Publish_First_Course implements Sensei_Home_Task {
 	}
 
 	/**
-	 * Task image.
-	 *
-	 * @return string|null
-	 */
-	public function get_image(): ?string {
-		return null;
-	}
-
-	/**
 	 * Whether the task is completed or not.
 	 *
 	 * @return bool
