@@ -21,7 +21,7 @@ $break-medium: 783px; // adminbar goes big
 
 @font-face {
 	font-family: Reforma;
-	src: url('../css/fonts/Reforma1918-Blanca.otf') format('opentype');
+	src: url('senseiAssets/css/fonts/Reforma1918-Blanca.otf') format('opentype');
 }
 
 .sensei-home-page {
@@ -462,7 +462,7 @@ $break-medium: 783px; // adminbar goes big
 					}
 
 					&:before {
-						content: url(../icons/checked-white.svg);
+						content: url(senseiAssets/icons/checked-white.svg);
 						margin-right: 10px;
 					}
 				}

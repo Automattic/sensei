@@ -229,11 +229,11 @@ $big-horizontal-padding: 80px;
 		}
 
 		&--tracking {
-			background-image: url("../images/onboarding-improve-experience-illustration.png");
+			background-image: url("senseiAssets/images/onboarding-improve-experience-illustration.png");
 		}
 
 		&--newsletter {
-			background-image: url("../images/onboarding-newsletter-illustration.png");
+			background-image: url("senseiAssets/images/onboarding-newsletter-illustration.png");
 			margin-left: -$small-vertical-padding;
 			margin-right: -$small-vertical-padding;
 		}
@@ -246,7 +246,7 @@ $big-horizontal-padding: 80px;
 
 // Background animation with the books illustration.
 .sensei-setup-wizard {
-	background-image: url("../images/onboarding-bottom-left-illustration.png"), url("../images/onboarding-top-right-illustration.png");
+	background-image: url("senseiAssets/images/onboarding-bottom-left-illustration.png"), url("senseiAssets/images/onboarding-top-right-illustration.png");
 	background-position: -358px 100%, calc( 100% + 355px ) 0;
 	background-repeat: no-repeat;
 	transition: 0.5s background-position;
