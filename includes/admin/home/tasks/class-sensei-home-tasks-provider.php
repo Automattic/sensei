@@ -25,6 +25,8 @@ class Sensei_Home_Tasks_Provider {
 	public function get(): array {
 		return [
 			'items'        => $this->get_tasks(),
+			'site'         => $this->get_site(),
+			'course'       => $this->get_course(),
 			'is_completed' => (bool) get_option( self::COMPLETED_TASKS_OPTION_KEY, false ),
 		];
 	}
@@ -86,6 +88,50 @@ class Sensei_Home_Tasks_Provider {
 			'url'      => $task->get_url(),
 			'done'     => $task->is_completed(),
 		];
+	}
+
+	/**
+	 * Return the site information needed for the task list component.
+	 *
+	 * @return array The site info, including title and image (which is the custom logo) URL.
+	 */
+	private function get_site() {
+		$custom_logo_id = get_theme_mod( 'custom_logo' );
+		$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
+		return [
+			'title' => get_bloginfo( 'name' ),
+			'image' => $image ? $image[0] : null,
+		];
+	}
+
+	/**
+	 * Return the course information needed for the task list component, including title and image (which is the
+	 * featured image) for that course. Please note that the data for the demo course is never returned by this method.
+	 *
+	 * @return array|null The course information, including title, the permalink and the URL for the featured image.
+	 */
+	private function get_course() {
+		global $wpdb;
+		$cache_key   = 'home/metadata/tasks/course';
+		$cache_group = 'sensei/temporary';
+		$result      = wp_cache_get( $cache_key, $cache_group );
+		if ( false === $result ) {
+			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
+			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s ORDER BY post_status='published' DESC, ID ASC LIMIT 1", "{$prefix}%" ) );
+			if ( null === $post_id ) {
+				$result = null;
+			} else {
+				$image  = get_the_post_thumbnail_url( $post_id, 'full' );
+				$result = [
+					'title'     => get_the_title( $post_id ),
+					'permalink' => get_permalink( $post_id ),
+					'image'     => $image ? $image : null,
+				];
+				wp_cache_set( $cache_key, $result, $cache_group, 60 );
+			}
+		}
+		return $result;
 	}
 
 	/**
