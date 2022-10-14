@@ -1,0 +1,36 @@
+@import 'progress';
+@import 'tasks';
+@import 'first-course';
+@import 'ready';
+
+.sensei-home-tasks-section {
+	&__inside{
+		@media ( min-width: $break-large ) {
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+
+	&__content {
+		padding-top: 8px;
+		padding-bottom: 32px;
+
+		@media ( min-width: $break-large ) {
+			padding: 52px;
+			max-width: 337px;
+		}
+	}
+
+	&__first-course {
+		margin-right: -12px;
+		margin-bottom: -23px;
+
+		@media ( min-width: $break-large ) {
+			flex: 1;
+			max-width: 615px;
+			display: flex;
+			align-items: stretch;
+			margin-top: 29px;
+		}
+	}
+}

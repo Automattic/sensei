@@ -67,9 +67,13 @@
 		}
 	}
 
+.sensei-contact-teacher-wrapper {
+	display: flex;
+}
+
 .sensei-contact-teacher-form {
 	textarea {
-
+		font-family: inherit;
 		}
 		&.is-success {
 			.sensei-contact-teacher-success {

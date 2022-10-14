@@ -12,7 +12,7 @@ import SenseiProAd from './sections/sensei-pro-ad';
 import Header from './header';
 import { Col, Grid } from './grid';
 import QuickLinks from './sections/quick-links';
-import TaskList from './sections/task-list';
+import TasksSection from './tasks';
 import GetHelp from './sections/get-help';
 import SenseiGuides from './sections/sensei-guides';
 import LatestNews from './sections/latest-news';
@@ -55,7 +55,7 @@ const Main = () => {
 				{ topRow }
 
 				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<TaskList />
+					<TasksSection />
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>

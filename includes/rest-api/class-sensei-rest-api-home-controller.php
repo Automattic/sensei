@@ -107,6 +107,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function register_routes() {
 		$this->register_get_data_route();
+		$this->register_mark_tasks_complete_route();
 	}
 
 	/**
@@ -129,6 +130,23 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_data' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Register POST /tasks/complete endpoint.
+	 */
+	public function register_mark_tasks_complete_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/tasks/complete',
+			[
+				[
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => [ $this, 'mark_tasks_completed' ],
 					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
 				],
 			]
@@ -183,5 +201,15 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 				],
 			],
 		];
+	}
+
+	/**
+	 * Mark tasks list as fully completed for the first time.
+	 *
+	 * @return array
+	 */
+	public function mark_tasks_completed() {
+		$this->tasks_provider->mark_as_completed( true );
+		return [ 'success' => true ];
 	}
 }

@@ -44,11 +44,10 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Asserts that guests cannot access Home Data.
 	 */
-	public function testRESTRequestReturns401ForGuests() {
+	public function testGetHomeDataRequestReturns401ForGuests() {
 		$this->login_as( null );
 
-		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE );
-		$response = $this->server->dispatch( $request );
+		$response = $this->dispatchRequest( 'GET' );
 
 		$this->assertEquals( 401, $response->get_status() );
 	}
@@ -56,9 +55,32 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Asserts that admins can access Home Data.
 	 */
-	public function testRESTRequestReturns200ForAdmins() {
+	public function testGetHomeDataRequestReturns200ForAdmins() {
 		$this->login_as_admin();
 
+		$response = $this->dispatchRequest( 'GET' );
+
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+
+	public function testPostMarkTasksCompleteRequestReturns401ForGuests() {
+		$this->login_as( null );
+
+		$response = $this->dispatchRequest( 'POST', '/tasks/complete' );
+
+		$this->assertEquals( 401, $response->get_status() );
+	}
+
+	public function testPostMarkTasksCompleteRequestReturns200ForAdmins() {
+		$this->login_as_admin();
+
+		$response = $this->dispatchRequest( 'POST', '/tasks/complete' );
+
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	private function dispatchRequest( $method, $route = '' ) {
 		// Prevent requests.
 		add_filter(
 			'pre_http_request',
@@ -67,10 +89,10 @@ class Sensei_REST_API_Home_Controller_REST_Test extends WP_Test_REST_TestCase {
 			}
 		);
 
-		$request  = new WP_REST_Request( 'GET', self::REST_ROUTE );
+		$request  = new WP_REST_Request( $method, self::REST_ROUTE . $route );
 		$response = $this->server->dispatch( $request );
 		remove_all_filters( 'pre_http_request' );
 
-		$this->assertEquals( 200, $response->get_status() );
+		return $response;
 	}
 }
