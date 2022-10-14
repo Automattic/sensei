@@ -221,7 +221,7 @@ class Sensei_Home_Notices {
 		$notice            = $this->get_base_plugin_notice( $plugin_data );
 		$notice['message'] = wp_kses(
 			sprintf(
-				// translators: Placeholder is the plugin name.
+				// translators: First placeholder is the plugin name and second placeholder is the latest version available.
 				__( 'There is a new version of <strong>%1$s</strong> available (%2$s). Please activate the plugin in order to proceed with the update process.', 'sensei-lms' ),
 				$plugin_name,
 				$latest_version
@@ -255,7 +255,7 @@ class Sensei_Home_Notices {
 		$notice            = $this->get_base_plugin_notice( $plugin_data );
 		$notice['message'] = wp_kses(
 			sprintf(
-					// translators: Placeholder is the plugin name.
+					// translators: First placeholder is the plugin name and second placeholder is the latest version available.
 				__( 'There is a new version of <strong>%1$s</strong> available (%2$s). Please update to ensure you have the latest features and fixes.', 'sensei-lms' ),
 				$plugin_name,
 				$latest_version
