@@ -919,10 +919,15 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $args The field arguments.
 	 */
 	public function render_learning_mode_setting( $args ) {
-		$options       = $this->get_settings();
-		$key           = $args['key'];
-		$value         = $options[ $key ];
-		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' );
+		$options = $this->get_settings();
+		$key     = $args['key'];
+		$value   = $options[ $key ];
+
+		$color_customizer_url = '';
+		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
+			$color_customizer_url = Sensei_Course_Theme::get_learning_mode_customizer_url();
+		}
+
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -931,14 +936,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-		<?php if ( $customize_url ) { ?>
+
+		<?php if ( $color_customizer_url ) : ?>
 			<p class="extra-content">
-				<a href="<?php echo esc_url( $customize_url ); ?>">
-					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
+				<a href="<?php echo esc_url( $color_customizer_url ); ?>">
+					<?php esc_html_e( 'Customize Colors', 'sensei-lms' ); ?>
 				</a>
 			</p>
-			<?php
-		}
+		<?php endif; ?>
+
+		<?php
 	}
 
 	/**
@@ -990,7 +997,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'         => "{$this->token}[{$key}]",
 			'value'        => $value,
 			'options'      => $args['data']['options'],
-			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' ),
+			'customizeUrl' => Sensei_Course_Theme::get_learning_mode_fse_url(),
 			'formId'       => "{$this->token}-form",
 			'section'      => $args['data']['section'],
 		];
