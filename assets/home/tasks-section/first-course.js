@@ -1,19 +1,19 @@
 /**
  * First Course component.
  *
- * @param {Object} props               Component props.
- * @param {string} props.siteTitle     Site title.
- * @param {string} props.courseTitle   Course title.
- * @param {string} props.siteLogo      Site logo.
- * @param {string} props.featuredImage Course featured image.
+ * @param {Object} props             Component props.
+ * @param {string} props.siteTitle   Site title.
+ * @param {string} props.siteImage   Site image.
+ * @param {string} props.courseTitle Course title.
+ * @param {string} props.courseImage Course image.
  */
-const FirstCourse = ( { siteTitle, courseTitle, siteLogo, featuredImage } ) => (
+const FirstCourse = ( { siteTitle, siteImage, courseTitle, courseImage } ) => (
 	<section className="sensei-home-first-course">
 		<header className="sensei-home-first-course__site-header">
-			{ siteLogo && (
+			{ siteImage && (
 				<img
 					className="sensei-home-first-course__site-logo"
-					src={ siteLogo }
+					src={ siteImage }
 					alt="Site logo"
 				/>
 			) }
@@ -30,8 +30,8 @@ const FirstCourse = ( { siteTitle, courseTitle, siteLogo, featuredImage } ) => (
 			<div
 				className="sensei-home-first-course__featured-image"
 				style={
-					featuredImage && {
-						backgroundImage: `url("${ featuredImage }")`,
+					courseImage && {
+						backgroundImage: `url("${ courseImage }")`,
 					}
 				}
 			/>

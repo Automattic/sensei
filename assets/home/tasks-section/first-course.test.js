@@ -13,9 +13,9 @@ describe( '<FirstCourse />', () => {
 		const { container, queryByText } = render(
 			<FirstCourse
 				siteTitle="SITE_TITLE"
+				siteImage="SITE_IMAGE"
 				courseTitle="COURSE_TITLE"
-				siteLogo="SITE_LOGO"
-				featuredImage="FEATURED_IMAGE"
+				courseImage="COURSE_IMAGE"
 			/>
 		);
 
@@ -29,8 +29,8 @@ describe( '<FirstCourse />', () => {
 
 		expect( queryByText( 'SITE_TITLE' ) ).toBeTruthy();
 		expect( queryByText( 'COURSE_TITLE' ) ).toBeTruthy();
-		expect( siteLogo ).toEqual( 'SITE_LOGO' );
-		expect( featuredImage ).toEqual( `url(FEATURED_IMAGE)` );
+		expect( siteLogo ).toEqual( 'SITE_IMAGE' );
+		expect( featuredImage ).toEqual( `url(COURSE_IMAGE)` );
 	} );
 
 	it( 'Should render the first course with placeholders', () => {
