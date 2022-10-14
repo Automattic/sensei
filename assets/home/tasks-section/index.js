@@ -132,7 +132,12 @@ const TasksSection = ( { data } ) => {
 			</Notice>
 		);
 	} else if ( ready ) {
-		content = <Ready onDismiss={ onDismiss } />;
+		content = (
+			<Ready
+				coursePermalink="https://automattic.com"
+				onDismiss={ onDismiss }
+			/>
+		);
 	} else {
 		content = (
 			<>

@@ -20,7 +20,12 @@ describe( '<Ready />', () => {
 
 		const scope = nock( 'http://localhost' ).post( '/' ).reply( 200, {} );
 
-		const { container } = render( <Ready onDismiss={ onDismissMock } /> );
+		const { container } = render(
+			<Ready
+				coursePermalink="http://my-site/my-course"
+				onDismiss={ onDismissMock }
+			/>
+		);
 
 		fireEvent.click(
 			container.querySelector( '.sensei-home-ready__dismiss' )
