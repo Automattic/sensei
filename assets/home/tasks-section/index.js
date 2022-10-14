@@ -37,16 +37,18 @@ const useReadyState = (
 
 	useEffect( () => {
 		if ( ! ready && totalCompletedTasks === totalTasks ) {
-			apiFetch( {
-				path: '/sensei-internal/v1/home/tasks/complete',
-				method: 'POST',
-			} )
-				.then( () => {
-					setReady( true );
+			setTimeout( () => {
+				apiFetch( {
+					path: '/sensei-internal/v1/home/tasks/complete',
+					method: 'POST',
 				} )
-				.catch( ( err ) => {
-					setReadyError( err );
-				} );
+					.then( () => {
+						setReady( true );
+					} )
+					.catch( ( err ) => {
+						setReadyError( err );
+					} );
+			}, 1500 );
 		}
 	}, [ totalTasks, totalCompletedTasks, ready ] );
 
