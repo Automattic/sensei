@@ -7,12 +7,13 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { Notice } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
+import { Col } from '../grid';
 import Section from '../section';
 import Progress from './progress';
 import Tasks from './tasks';
@@ -56,6 +57,41 @@ const useReadyState = (
 };
 
 /**
+ * Dismiss hook.
+ *
+ * @return {{dismissed:boolean, onDismiss:Function}} Object with dismissed and onDismiss callback.
+ */
+const useDismiss = () => {
+	const [ dismissed, setDismissed ] = useState( false );
+
+	const onDismiss = () => {
+		setDismissed( true );
+	};
+
+	return { dismissed, onDismiss };
+};
+
+/**
+ * Col preparation to height animation. Basically, it sets a max-height in the component based on
+ * its real height.
+ *
+ * @return {{colRef:Object, colStyle:Object}} Object with colRef and colStyle.
+ */
+const useColPreparationToHeightAnimation = () => {
+	const colRef = useRef();
+	const [ colStyle, setColStyle ] = useState( {} );
+
+	useEffect( () => {
+		setColStyle( {
+			overflow: 'hidden',
+			maxHeight: colRef.current.offsetHeight,
+		} );
+	}, [] );
+
+	return { colRef, colStyle };
+};
+
+/**
  * Tasks section component.
  *
  * @param {Object} props      Component props.
@@ -73,6 +109,10 @@ const TasksSection = ( { data } ) => {
 		completedItems.length
 	);
 
+	const { dismissed, onDismiss } = useDismiss();
+
+	const { colRef, colStyle } = useColPreparationToHeightAnimation();
+
 	let content;
 
 	if ( readyError ) {
@@ -82,7 +122,7 @@ const TasksSection = ( { data } ) => {
 			</Notice>
 		);
 	} else if ( ready ) {
-		content = <Ready />;
+		content = <Ready onDismiss={ onDismiss } />;
 	} else {
 		content = (
 			<>
@@ -106,14 +146,24 @@ const TasksSection = ( { data } ) => {
 	}
 
 	return (
-		<Section
-			className={ classnames( 'sensei-home-tasks-section', {
-				'sensei-home-tasks-section--ready': ready,
+		<Col
+			as="section"
+			className={ classnames( 'sensei-home__section', {
+				'sensei-home__section--dismissed': dismissed,
 			} ) }
-			insideClassName="sensei-home-tasks-section__inside"
+			cols={ 12 }
+			ref={ colRef }
+			style={ colStyle }
 		>
-			{ content }
-		</Section>
+			<Section
+				className={ classnames( 'sensei-home-tasks-section', {
+					'sensei-home-tasks-section--ready': ready,
+				} ) }
+				insideClassName="sensei-home-tasks-section__inside"
+			>
+				{ content }
+			</Section>
+		</Col>
 	);
 };
 

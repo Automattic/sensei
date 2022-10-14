@@ -21,18 +21,16 @@ import TwitterCircleIcon from '../../icons/twitter-circle.svg';
  */
 const Ready = ( { onDismiss } ) => {
 	const dismissTasks = () => {
+		onDismiss();
+
 		const formData = new window.FormData();
 		formData.append( '_wpnonce', window.sensei_home.dismiss_tasks_nonce );
 		formData.append( 'action', 'sensei_home_tasks_dismiss' );
 
-		window
-			.fetch( window.ajaxurl, {
-				method: 'POST',
-				body: formData,
-			} )
-			.then( () => {
-				onDismiss();
-			} );
+		window.fetch( window.ajaxurl, {
+			method: 'POST',
+			body: formData,
+		} );
 	};
 
 	return (

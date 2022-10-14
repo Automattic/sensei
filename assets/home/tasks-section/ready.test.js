@@ -18,7 +18,7 @@ describe( '<Ready />', () => {
 		};
 		window.ajaxurl = '/';
 
-		nock( 'http://localhost' ).post( '/' ).reply( 200, {} );
+		const scope = nock( 'http://localhost' ).post( '/' ).reply( 200, {} );
 
 		const { container } = render( <Ready onDismiss={ onDismissMock } /> );
 
@@ -28,6 +28,7 @@ describe( '<Ready />', () => {
 
 		await waitFor( () => {
 			expect( onDismissMock ).toBeCalled();
+			scope.done();
 		} );
 	} );
 } );
