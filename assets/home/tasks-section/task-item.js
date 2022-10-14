@@ -12,16 +12,16 @@ import ChevronRightIcon from '../../icons/chevron-right.svg';
 /**
  * Tasks item component.
  *
- * @param {Object} props           Component props.
- * @param {Object} props.completed Whether item is completed.
- * @param {Object} props.href      Item link.
- * @param {Object} props.label     Item label.
+ * @param {Object} props       Component props.
+ * @param {Object} props.title Item title.
+ * @param {Object} props.url   Item URL.
+ * @param {Object} props.done  Whether item is completed.
  */
-const TaskItem = ( { completed, href, label } ) => {
-	const Tag = completed ? 'span' : 'a';
+const TaskItem = ( { title, url, done } ) => {
+	const Tag = done ? 'span' : 'a';
 
-	const linkProps = ! completed && {
-		href,
+	const linkProps = ! done && {
+		href: url,
 		target: '_blank',
 		rel: 'noreferrer',
 	};
@@ -29,15 +29,15 @@ const TaskItem = ( { completed, href, label } ) => {
 	return (
 		<li
 			className={ classnames( 'sensei-home-tasks__item', {
-				'sensei-home-tasks__item--completed': completed,
+				'sensei-home-tasks__item--done': done,
 			} ) }
 		>
 			<Tag className="sensei-home-tasks__link" { ...linkProps }>
-				{ completed && (
+				{ done && (
 					<CheckIcon className="sensei-home-tasks__check-icon" />
 				) }
-				<span className="sensei-home-tasks__item-label">{ label }</span>
-				{ ! completed && (
+				<span className="sensei-home-tasks__item-title">{ title }</span>
+				{ ! done && (
 					<ChevronRightIcon className="sensei-home-tasks__link-chevron" />
 				) }
 			</Tag>

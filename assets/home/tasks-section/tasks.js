@@ -31,9 +31,9 @@ const Tasks = ( { items } ) => (
 			{ items.map( ( task ) => (
 				<TaskItem
 					key={ task.id }
-					label={ task.title }
-					href={ task.url }
-					completed={ task.done }
+					title={ task.title }
+					url={ task.url }
+					done={ task.done }
 				/>
 			) ) }
 		</ul>
