@@ -7,13 +7,14 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Icon, help, external } from '@wordpress/icons';
+import { Icon, help } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import Section from '../section';
 import LockIcon from '../../icons/lock.svg';
+import Link from '../link';
 
 /**
  * Component representing each of the items under a Help Category.
@@ -51,12 +52,7 @@ const Item = ( { title, url, extraLink } ) => {
 				) }
 			</div>
 			{ extraLink && (
-				<div className="sensei-home__help-item__extra-link">
-					<a href={ extraLink.url } target="_blank" rel="noreferrer">
-						{ extraLink.label }{ ' ' }
-						<Icon icon={ external } size={ 16 } />
-					</a>
-				</div>
+				<Link label={ extraLink.label } url={ extraLink.url } />
 			) }
 		</li>
 	);

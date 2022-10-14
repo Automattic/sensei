@@ -45,19 +45,8 @@
 					}
 				}
 
-				&__extra-link {
+				.sensei-home__link {
 					margin-left: 13px;
-
-					& a {
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-
-						& svg {
-							fill: currentColor;
-							margin-left: 7px;
-						}
-					}
 				}
 			}
 		}
