@@ -15,17 +15,24 @@ import TwitterCircleIcon from '../../icons/twitter-circle.svg';
 
 /**
  * Tasks ready component.
+ *
+ * @param {Object}   props           Component props.
+ * @param {Function} props.onDismiss Dismiss callback.
  */
-const Ready = () => {
+const Ready = ( { onDismiss } ) => {
 	const dismissTasks = () => {
 		const formData = new window.FormData();
 		formData.append( '_wpnonce', window.sensei_home.dismiss_tasks_nonce );
 		formData.append( 'action', 'sensei_home_tasks_dismiss' );
 
-		window.fetch( window.ajaxurl, {
-			method: 'POST',
-			body: formData,
-		} );
+		window
+			.fetch( window.ajaxurl, {
+				method: 'POST',
+				body: formData,
+			} )
+			.then( () => {
+				onDismiss();
+			} );
 	};
 
 	return (
