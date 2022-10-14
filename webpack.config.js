@@ -142,11 +142,24 @@ function getWebpackConfig( env, argv ) {
 				( useRule ) =>
 					require.resolve( 'sass-loader' ) === useRule.loader
 			);
+			const computeSourceMap =
+				use[ sassRuleIndex ].options.sourceMap ?? ! isProduction;
+
+			use[ sassRuleIndex ] = {
+				...use[ sassRuleIndex ],
+				options: {
+					...use[ sassRuleIndex ].options,
+					// Always enable Source Maps, because resolve-url-loader will
+					// need these source maps to work correctly.
+					sourceMap: true,
+				},
+			};
+
 			// Insert resolve-url-loader just before the sass-loader.
 			use.splice( sassRuleIndex, 0, {
 				loader: require.resolve( 'resolve-url-loader' ),
 				options: {
-					sourceMap: ! isProduction,
+					sourceMap: computeSourceMap,
 				},
 			} );
 			return {
