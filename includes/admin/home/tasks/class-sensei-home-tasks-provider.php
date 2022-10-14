@@ -108,7 +108,7 @@ class Sensei_Home_Tasks_Provider {
 	 * Return the course information needed for the task list component, including title and image (which is the
 	 * featured image) for that course. Please note that the data for the demo course is never returned by this method.
 	 *
-	 * @return array|null The course information, including title and image URL.
+	 * @return array|null The course information, including title, the permalink and the URL for the featured image.
 	 */
 	private function get_course() {
 		global $wpdb;
