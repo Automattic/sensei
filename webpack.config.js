@@ -132,6 +132,31 @@ function getWebpackConfig( env, argv ) {
 	const styleSheetFiles = /\.(sc|sa|c)ss$/i;
 	const scriptFiles = /\.[jt]sx?$/i;
 
+	const isProduction = process.env.NODE_ENV === 'production';
+
+	webpackConfig.module.rules = webpackConfig.module.rules.map( ( rule ) => {
+		if ( rule.test.test( 'test.scss' ) ) {
+			const use = rule.use.slice();
+			// Find where the sass-loader is installed.
+			const sassRuleIndex = use.findIndex(
+				( useRule ) =>
+					require.resolve( 'sass-loader' ) === useRule.loader
+			);
+			// Insert resolve-url-loader just before the sass-loader.
+			use.splice( sassRuleIndex, 0, {
+				loader: require.resolve( 'resolve-url-loader' ),
+				options: {
+					sourceMap: ! isProduction,
+				},
+			} );
+			return {
+				...rule,
+				use,
+			};
+		}
+		return rule;
+	} );
+
 	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
 
 	// Handle SVG images only in CSS files.
