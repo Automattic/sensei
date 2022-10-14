@@ -82,6 +82,10 @@ const useColPreparationToHeightAnimation = () => {
 	const [ colStyle, setColStyle ] = useState( {} );
 
 	useEffect( () => {
+		if ( ! colRef.current ) {
+			return;
+		}
+
 		setColStyle( {
 			overflow: 'hidden',
 			maxHeight: colRef.current.offsetHeight,
@@ -112,6 +116,10 @@ const TasksSection = ( { data } ) => {
 	const { dismissed, onDismiss } = useDismiss();
 
 	const { colRef, colStyle } = useColPreparationToHeightAnimation();
+
+	if ( window.sensei_home.tasks_dismissed ) {
+		return null;
+	}
 
 	let content;
 

@@ -127,6 +127,8 @@ final class Sensei_Home {
 
 		$data['dismiss_tasks_nonce'] = wp_create_nonce( self::DISMISS_TASKS_NONCE_ACTION );
 
+		$data['tasks_dismissed'] = get_option( self::DISMISS_TASKS_OPTION );
+
 		wp_localize_script(
 			'sensei-home',
 			'sensei_home',
@@ -196,7 +198,7 @@ final class Sensei_Home {
 			wp_die( '', '', 403 );
 		}
 
-		update_option( self::DISMISS_TASKS_OPTION, 1 );
+		update_option( self::DISMISS_TASKS_OPTION, 1, false );
 	}
 
 	/**
