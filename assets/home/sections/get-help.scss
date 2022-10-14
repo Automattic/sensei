@@ -26,6 +26,15 @@
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
+
+					svg {
+						width: 24px;
+						height: 22px;
+
+						&.sensei-home__help-item__icon__lock {
+							height: 16px;
+						}
+					}
 				}
 
 				&__title {

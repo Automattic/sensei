@@ -7,12 +7,13 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Icon, help, lock, external } from '@wordpress/icons';
+import { Icon, help, external } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import Section from '../section';
+import LockIcon from '../../icons/lock.svg';
 
 /**
  * Component representing each of the items under a Help Category.
@@ -28,7 +29,13 @@ const Item = ( { title, url, extraLink } ) => {
 	return (
 		<li className="sensei-home__help-item">
 			<div className="sensei-home__help-item__icon">
-				<Icon icon={ isTitleInteractive ? help : lock } size={ 24 } />
+				{ isTitleInteractive ? (
+					<Icon icon={ help } />
+				) : (
+					<LockIcon
+						className={ 'sensei-home__help-item__icon__lock' }
+					/>
+				) }
 			</div>
 			<div
 				className={ classNames( 'sensei-home__help-item__title', {
