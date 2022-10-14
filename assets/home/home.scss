@@ -1,5 +1,6 @@
 @import '../shared/styles/variables';
 @import '../shared/styles/wp-admin';
+@import 'extensions';
 
 $break-wide: 1281px;
 $break-large: 961px;  // admin sidebar auto folds
@@ -343,75 +344,6 @@ $break-medium: 783px; // adminbar goes big
 			}
 		}
 
-		&__card {
-			display: flex;
-			align-items: stretch;
-			height: 100%;
-
-			&__header {
-				display: flex;
-				justify-content: space-between;
-				margin-bottom: 10px;
-			}
-
-			&__content {
-				display: flex;
-				flex-direction: column;
-				flex: 1 1 33%;
-
-				@media (min-width: $break-large) {
-					min-height: 170px;
-				}
-			}
-
-			&__body {
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-			}
-
-			&__title {
-				font-weight: 600;
-				font-size: 13px;
-				line-height: 16px;
-				margin: 0;
-			}
-
-			&__price {
-				margin-bottom: 10px;
-				font-size: 16px;
-			}
-
-			&__image {
-				background-color: $gray-0;
-				background-size: cover;
-				background-position: center center;
-				flex: 0 0 180px;
-			}
-
-			&__new-badge {
-				padding-left: 10px;
-				font-size: 12px;
-				white-space: nowrap;
-
-				&::before {
-					content: "";
-					display: inline-block;
-					width: 8px;
-					height: 8px;
-					margin-right: 7px;
-					background-color: $primary;
-					border-radius: 50%;
-				}
-			}
-
-			&__description {
-				margin: 0 0 10px;
-				font-size: 14px;
-				flex: 1;
-			}
-		}
-
 		&__featured-product {
 			display: flex;
 			flex-direction: column-reverse;
@@ -542,25 +474,6 @@ $break-medium: 783px; // adminbar goes big
 				&__button {
 					max-width: 320px;
 					font-size: 16px;
-				}
-			}
-		}
-
-		&__extension-actions {
-			display: flex;
-			align-items: center;
-			margin: 0;
-			padding: 0;
-
-			&__item {
-				margin: 0;
-
-				&:not(:first-child) {
-					margin-left: 20px;
-				}
-
-				a {
-					color: inherit;
 				}
 			}
 		}

@@ -19,9 +19,12 @@ import UpdateIcon from '../icons/update.svg';
  * @param {Array}  props.actions Actions array containing objects with props for link or button.
  */
 const ExtensionActions = ( { actions } ) => (
-	<ul className="sensei-home__extension-actions">
+	<ul className="sensei-home__card__extension-actions">
 		{ actions.map( ( { key, children, ...actionProps } ) => (
-			<li key={ key } className="sensei-home__extension-actions__item">
+			<li
+				key={ key }
+				className="sensei-home__card__extension-actions__item"
+			>
 				<Button
 					isPrimary={ ! actionProps.href }
 					isSecondary={ !! actionProps.href }

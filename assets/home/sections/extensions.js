@@ -58,6 +58,17 @@ const Extensions = () => {
 						</Col>
 					);
 				} ) }
+				{ extensions.map( ( extension ) => {
+					return (
+						<Col
+							key={ extension.product_slug }
+							className="sensei-extensions__card-wrapper"
+							cols={ 4 }
+						>
+							<Card { ...extension } />
+						</Col>
+					);
+				} ) }
 			</Grid>
 		</Section>
 	);
