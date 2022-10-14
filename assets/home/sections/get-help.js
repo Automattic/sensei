@@ -50,10 +50,10 @@ const Item = ( { title, url, extraLink } ) => {
 				) : (
 					<span>{ title }</span>
 				) }
+				{ extraLink && (
+					<Link label={ extraLink.label } url={ extraLink.url } />
+				) }
 			</div>
-			{ extraLink && (
-				<Link label={ extraLink.label } url={ extraLink.url } />
-			) }
 		</li>
 	);
 };
