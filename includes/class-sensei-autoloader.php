@@ -81,6 +81,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'reports/overview/list-table' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/services' ),
 			new Sensei_Autoloader_Bundle( 'admin/home' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/notices' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/quick-links' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/help' ),
 			new Sensei_Autoloader_Bundle( 'admin/home/promo-banner' ),

@@ -6,6 +6,10 @@
  * @since   $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class responsible for fetching data from SenseiLMS.com.
  */

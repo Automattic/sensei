@@ -56,11 +56,11 @@ class Sensei_Admin_Notices {
 		'edit-question-type',
 		'edit-question-category',
 		'edit-lesson-tag',
+		Sensei_Home::SCREEN_ID,
 		'course_page_' . Sensei_Analysis::PAGE_SLUG,
 		'course_page_sensei_learners',
 		'course_page_sensei-settings',
 		'course_page_sensei_grading',
-		'course_page_sensei-extensions',
 		'course_page_sensei-tools',
 		'course_page_lesson-order',
 	];
@@ -79,9 +79,35 @@ class Sensei_Admin_Notices {
 	];
 
 	/**
+	 * Instance of class.
+	 *
+	 * @var self
+	 */
+	private static $instance;
+
+	/**
+	 * Fetches an instance of the class.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * Class constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
+		// Silence is golden.
+	}
+
+	/**
+	 * Initialize hooks.
+	 */
+	public function init() {
 		if ( ! is_admin() ) {
 			return;
 		}
@@ -96,6 +122,10 @@ class Sensei_Admin_Notices {
 	 * @return string|null
 	 */
 	protected function get_screen_id() {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return null;
+		}
+
 		$screen = get_current_screen();
 
 		return $screen ? $screen->id : null;
@@ -152,6 +182,22 @@ class Sensei_Admin_Notices {
 	 * @access private
 	 */
 	public function add_admin_notices() {
+		$screen_id = $this->get_screen_id();
+
+		/**
+		 * Adds the ability to hide notices on a specific screen.
+		 *
+		 * @hook sensei_show_admin_notices_{$screen_id}
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $hide_notices_on_screen Whether to hide notices on the screen.
+		 *
+		 * @return {bool} Whether to hide notices on the screen.
+		 */
+		if ( ! apply_filters( "sensei_show_admin_notices_{$screen_id}", true ) ) {
+			return;
+		}
+
 		foreach ( $this->get_notices_to_display() as $notice_id => $notice ) {
 			$this->add_admin_notice( $notice_id, $notice );
 		}
@@ -217,16 +263,18 @@ class Sensei_Admin_Notices {
 	 *
 	 * @access private
 	 *
+	 * @param string $screen_id The screen ID.
+	 *
 	 * @return array
 	 */
-	public function get_notices_to_display() {
+	public function get_notices_to_display( $screen_id = null ) {
 		$notices = [];
 		foreach ( $this->get_notices() as $notice_id => $notice ) {
 			$notice = $this->normalize_notice( $notice );
 
 			$is_user_notification = 'user' === $notice['type'];
 
-			if ( ! isset( $notice['message'] ) || $this->is_notice_dismissed( $notice_id, $is_user_notification ) || ! $this->check_notice_conditions( $notice ) ) {
+			if ( ! isset( $notice['message'] ) || $this->is_notice_dismissed( $notice_id, $is_user_notification ) || ! $this->check_notice_conditions( $notice, $screen_id ) ) {
 				continue;
 			}
 
@@ -239,11 +287,12 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check notice conditions.
 	 *
-	 * @param array $notice The notice configuration.
+	 * @param array  $notice The notice configuration.
+	 * @param string $screen_id The screen ID.
 	 *
 	 * @return bool
 	 */
-	private function check_notice_conditions( $notice ) {
+	private function check_notice_conditions( $notice, $screen_id = null ) {
 		if ( ! isset( $notice['conditions'] ) || ! is_array( $notice['conditions'] ) ) {
 			$notice['conditions'] = [];
 		}
@@ -296,7 +345,7 @@ class Sensei_Admin_Notices {
 					}
 
 					$has_screen_condition = true;
-					if ( ! $this->condition_check_screen( $condition['screens'] ) ) {
+					if ( ! $this->condition_check_screen( $condition['screens'], $screen_id ) ) {
 						$can_see_notice = false;
 						break 2;
 					}
@@ -316,7 +365,7 @@ class Sensei_Admin_Notices {
 		}
 
 		// If no screens condition was set, only show this message on Sensei screens.
-		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ] ) ) {
+		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ], $screen_id ) ) {
 			$can_see_notice = false;
 		}
 
@@ -369,10 +418,12 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check a screen condition.
 	 *
-	 * @param array $allowed_screens Array of allowed screen IDs. `sensei*` is a special screen ID for any Sensei screen.
+	 * @param array  $allowed_screens Array of allowed screen IDs. `sensei*` is a special screen ID for any Sensei screen.
+	 * @param string $screen_id       The screen ID.
+	 *
 	 * @return bool
 	 */
-	private function condition_check_screen( array $allowed_screens ) : bool {
+	private function condition_check_screen( array $allowed_screens, $screen_id = null ) : bool {
 		$allowed_screen_ids = array_merge( self::SENSEI_SCREEN_IDS, self::OTHER_ALLOWED_SCREEN_IDS );
 		$condition_pass     = true;
 
@@ -381,7 +432,8 @@ class Sensei_Admin_Notices {
 		}
 
 		$screens   = array_intersect( $allowed_screen_ids, $allowed_screens );
-		$screen_id = $this->get_screen_id();
+		$screen_id = $screen_id ?? $this->get_screen_id();
+
 		if ( ! $screen_id || ! in_array( $screen_id, $screens, true ) ) {
 			$condition_pass = false;
 		}
@@ -447,7 +499,7 @@ class Sensei_Admin_Notices {
 	 */
 	protected function get_active_plugins() {
 		if ( ! function_exists( 'get_plugins' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugins = get_plugins();
