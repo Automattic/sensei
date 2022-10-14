@@ -124,8 +124,9 @@ class Sensei_Home_Tasks_Provider {
 			} else {
 				$image  = get_the_post_thumbnail_url( $post_id, 'full' );
 				$result = [
-					'title' => get_the_title( $post_id ),
-					'image' => $image ? $image : null,
+					'title'     => get_the_title( $post_id ),
+					'permalink' => get_permalink( $post_id ),
+					'image'     => $image ? $image : null,
 				];
 				wp_cache_set( $cache_key, $result, $cache_group, 60 );
 			}

@@ -138,7 +138,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsCourseTitleWhenACourseIsFound() {
 		// Arrange
-		$this->factory->course->create(
+		$course_id = $this->factory->course->create(
 			[
 				'post_name'   => 'testing',
 				'post_title'  => 'Test Course',
@@ -155,6 +155,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'course', $result );
 		$this->assertIsArray( $result['course'] );
 		$this->assertEquals( 'Test Course', $result['course']['title'] );
+		$this->assertStringContainsString( 'p=' . $course_id, $result['course']['permalink'] );
 		$this->assertNull( $result['course']['image'] );
 	}
 
@@ -179,6 +180,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'course', $result );
 		$this->assertIsArray( $result['course'] );
 		$this->assertEquals( 'Test Course', $result['course']['title'] );
+		$this->assertStringContainsString( 'testing', $result['course']['permalink'] );
 		$this->assertEquals( 'test-image.png', $result['course']['image'] );
 	}
 
