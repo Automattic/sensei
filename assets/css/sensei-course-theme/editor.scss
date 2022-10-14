@@ -1,38 +1,50 @@
+body, .wp-site-blocks.is-root-container {
+	min-height: 100vh;
+}
+
 body {
 	padding: 8px;
 	--wp--custom--gap--baseline: 0px;
+	--sensei-background-color: none;
 }
 
 .wp-block {
-	max-width: 900px;
-	margin-left: auto;
-	margin-right: auto;
+	max-width: none;
 }
 
-.wp-site-blocks {
-	.wp-block {
-		max-width: none;
-		margin: 0;
-	}
-
+.sensei-course-theme__sidebar-toggle {
+	display: block;
+	width: 24px;
+	height: 24px;
 }
 
 .wp-block.sensei-course-theme {
-	&__sidebar {
-		position: static;
+	&__header, &__sidebar {
+		position: relative;
+		top: unset;
+		left: unset;
+		right: unset;
+		bottom: unset;
 	}
+
 	&__columns {
 		display: flex;
+		height: 100%;
+		margin: 0 !important;
 	}
-	&__main-content {
-		margin-left: auto !important;
+
+	&__main-content, &__main-content__container, &__sidebar ~ &__main-content {
+		margin: 0 auto !important;
 	}
-	&__main-content, &__main-content__container {
-		> * {
-			margin-left: auto !important;
-			margin-right: auto !important;
-		}
+
+	&__header ~ &__columns {
+		height: calc(100% - var(--header-height));
 	}
+
+	&__header + * {
+		margin-top: unset !important;
+	}
+
 }
 
 .wp-block-post-content {
@@ -40,7 +52,7 @@ body {
 }
 
 .wp-block-post-title {
-	font-size: 48px!important;
+	font-size: 48px !important;
 }
 
 input, textarea {
@@ -50,7 +62,21 @@ input, textarea {
 
 .sensei-course-theme__button {
 	pointer-events: none;
+
 	&:hover {
 		cursor: default;
 	}
+}
+
+/**
+ *  Theme fixes.
+ */
+
+// Astra
+.wp-block:not(.has-text-color) {
+	color: unset;
+}
+
+.wp-block:not(.has-background) {
+	background-color: unset;
 }

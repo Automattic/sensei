@@ -21,12 +21,11 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 
 		parent::__construct( [ 'page' ] );
 
-		add_filter( 'render_block_core/post-featured-image', [ $this, 'add_badge' ], 10, 3 );
-
 		$version = str_replace( '-src', '', $wp_version );
 
 		if ( ! version_compare( $version, '5.9', '<' ) ) {
 			add_filter( 'render_block', array( $this, 'add_course_featured_badge' ), 11, 3 );
+			add_filter( 'render_block_core/post-featured-image', [ $this, 'add_badge' ], 10, 3 );
 		}
 	}
 
@@ -34,7 +33,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * Function to add a Featured Course badge to block.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.6.4
 	 *
 	 * @param string   $block_content Block content.
 	 * @param array    $block Block.
@@ -58,7 +57,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	 * A function to add a course Featured course badge to the course categories block.
 	 *
 	 * @access private
-	 * @since $$next-version$$
+	 * @since 4.6.4
 	 *
 	 * @param string   $block_content This is block content.
 	 * @param object   $block_parent This is block parent.

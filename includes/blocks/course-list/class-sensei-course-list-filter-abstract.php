@@ -8,7 +8,7 @@
 /**
  * Class Sensei_Course_List_Filter_Abstract.
  *
- * @since $$next-version$$
+ * @since 4.6.4
  */
 abstract class Sensei_Course_List_Filter_Abstract {
 	/**

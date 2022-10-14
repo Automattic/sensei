@@ -143,6 +143,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Settings that apply to the entire plugin.', 'sensei-lms' ),
 		);
 
+		$sections['appearance-settings'] = array(
+			'name'        => __( 'Appearance', 'sensei-lms' ),
+			'description' => __( 'Settings that apply to the entire plugin.', 'sensei-lms' ),
+			'badge'       => __( 'new', 'sensei-lms' ),
+		);
+
 		$sections['course-settings'] = array(
 			'name'        => __( 'Courses', 'sensei-lms' ),
 			'description' => __( 'Settings that apply to all Courses.', 'sensei-lms' ),
@@ -340,25 +346,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'default-settings',
 		);
 
-		// Course Settings.
-		$fields['sensei_learning_mode_all'] = array(
-			'name'        => __( 'Learning Mode', 'sensei-lms' ),
-			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
-			'form'        => 'render_learning_mode_setting',
-			'type'        => 'checkbox',
-			'default'     => false,
-			'section'     => 'course-settings',
-		);
-
-		// Rendered as part of the 'Learning Mode' setting.
-		$fields['sensei_learning_mode_theme'] = array(
-			'name'        => __( 'Learning Mode Theme Styles', 'sensei-lms' ),
-			'description' => __( 'Load styles and blocks of the active theme in Learning Mode.', 'sensei-lms' ),
-			'type'        => 'checkbox',
-			'default'     => false,
-			'section'     => 'hidden',
-		);
-
 		$fields['course_completion'] = array(
 			'name'        => __( 'Courses are complete:', 'sensei-lms' ),
 			'description' => __( 'This will determine when courses are marked as complete.', 'sensei-lms' ),
@@ -474,7 +461,28 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'required'    => 0,
 		);
 
-		// Lesson Settings
+		// Course Settings.
+		$fields['sensei_learning_mode_all'] = array(
+			'name'        => __( 'Learning Mode', 'sensei-lms' ),
+			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
+			'form'        => 'render_learning_mode_setting',
+			'type'        => 'checkbox',
+			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '4.7.0', '>=' ),
+			'section'     => 'appearance-settings',
+		);
+
+		// Course Settings.
+		$fields['sensei_learning_mode_template'] = array(
+			'name'        => __( 'Learning Mode Templates', 'sensei-lms' ),
+			'description' => __( 'Choose a learning mode template that is most suited for your type of content and the style you want to offer to your students.', 'sensei-lms' ),
+			'form'        => 'render_learning_mode_templates',
+			'type'        => 'radio',
+			'default'     => Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME,
+			'section'     => 'appearance-settings',
+			'options'     => $this->get_learning_mode_template_options(),
+		);
+
+		// Lesson Settings.
 		$fields['lesson_comments'] = array(
 			'name'        => __( 'Allow Comments for Lessons', 'sensei-lms' ),
 			'description' => __( 'This will allow students to post comments on the single Lesson page, only student who have access to the Lesson will be allowed to comment.', 'sensei-lms' ),
@@ -710,6 +718,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 	}
 
 	/**
+	 * Get options for the learning mode templates.
+	 */
+	private function get_learning_mode_template_options() {
+		return Sensei_Course_Theme_Template_Selection::get_templates();
+	}
+
+	/**
 	 * Get options for the duration fields.
 	 *
 	 * @since  1.0.0
@@ -907,8 +922,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$options       = $this->get_settings();
 		$key           = $args['key'];
 		$value         = $options[ $key ];
-		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url();
-		$theme_key     = 'sensei_learning_mode_theme';
+		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' );
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -923,19 +937,70 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
 				</a>
 			</p>
-		<?php } ?>
-		<div class="extra-content">
-			<label for="<?php echo esc_attr( $theme_key ); ?>">
-				<input id="<?php echo esc_attr( $theme_key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$theme_key}]" ); ?>"
-					type="checkbox" value="1" <?php checked( $options[ $theme_key ], '1' ); ?> />
-				<?php esc_html_e( 'Enable theme styles', 'sensei-lms' ); ?>
-			</label>
-			<p>
-				<span
-					class="description"><?php echo esc_html( $this->fields[ $theme_key ]['description'] ); ?></span>
-			</p>
-		</div>
+			<?php
+		}
+	}
+
+	/**
+	 * Renders the Learning Mode template selection setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_learning_mode_templates( $args ) {
+		$settings = $this->get_settings();
+		$key      = $args['key'];
+		$value    = $settings[ $key ];
+		?>
+			<p> <?php echo esc_html( $args['data']['description'] ); ?></p>
+			<ul class="sensei-lm-block-template__options" id="sensei-lm-block-template__options">
+			<?php foreach ( $args['data']['options'] as $template ) : ?>
+				<?php
+					$upsell   = isset( $template->upsell ) ? $template->upsell : false;
+					$title    = isset( $template->title ) || empty( $template->title ) ? $template->title : $template->name;
+					$disabled = (bool) $upsell;
+				?>
+				<li class="sensei-lm-block-template__option">
+					<label class="sensei-lm-block-template__option-label">
+						<div class="sensei-lm-block-template__option-header">
+							<input
+								type="radio"
+								name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+								value="<?php echo esc_attr( $template->name ); ?>"
+								<?php disabled( true, $disabled, true ); ?>
+								<?php checked( $template->name, $value, true ); ?>
+							/>
+							<h4 class="sensei-lm-block-template__option-title <?php echo $disabled ? 'sensei-lm-block-template__option-title--disabled' : ''; ?>">
+								<?php echo esc_html( $title ); ?>
+							</h4>
+							<?php if ( $disabled ) : ?>
+								<a href="<?php echo esc_attr( $upsell['url'] ); ?>" target="_blank" rel="noopener">
+									<?php echo esc_attr( $upsell['title'] ); ?>
+								</a>
+							<?php endif; ?>
+						</div>
+
+						<img alt="<?php esc_attr( $template->title ); ?>" src="<?php echo esc_attr( $template->screenshots['thumbnail'] ); ?>" />
+					</label>
+				</li>
+			<?php endforeach; ?>
+			</ul>
 		<?php
+
+		$inline_data = [
+			'name'         => "{$this->token}[{$key}]",
+			'value'        => $value,
+			'options'      => $args['data']['options'],
+			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' ),
+			'formId'       => "{$this->token}-form",
+			'section'      => $args['data']['section'],
+		];
+		Sensei()->assets->enqueue( 'learning-mode-templates-styles', 'course-theme/learning-mode-templates/styles.css', [ 'wp-components' ] );
+		Sensei()->assets->enqueue( 'learning-mode-templates-script', 'course-theme/learning-mode-templates/index.js', [ 'wp-element', 'wp-components' ], true );
+		wp_add_inline_script(
+			'learning-mode-templates-script',
+			sprintf( 'window.sensei = window.sensei || {}; window.sensei.learningModeTemplateSetting = %s;', wp_json_encode( $inline_data ) ),
+			'before'
+		);
 	}
 }
 

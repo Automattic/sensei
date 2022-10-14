@@ -43,7 +43,7 @@ class Sensei_Course_List_Block_Patterns {
 				'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","categoryIds":[],"tagIds":[],"order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":6},"displayLayout":{"type":"list"},"layout":{"inherit":true}} -->
 					<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
 
-						<!-- wp:sensei-lms/course-list-filter {"align":"full","types":["student_course","featured","categories"]} /-->
+						<!-- wp:sensei-lms/course-list-filter {"align":"left","types":["student_course","categories"],"lock":{"move": true}} /-->
 
 						<!-- wp:post-template -->
 
@@ -56,7 +56,9 @@ class Sensei_Course_List_Block_Patterns {
 
 											<!-- wp:column {"width":"66.66%"} -->
 												<div class="wp-block-column" style="flex-basis:66.66%">
-													<!-- wp:sensei-lms/course-categories /-->
+													<!-- wp:sensei-lms/course-categories -->
+														<div class="wp-block-sensei-lms-course-categories"></div>
+													<!-- /wp:sensei-lms/course-categories -->
 
 													<!-- wp:post-title {"textAlign":"left","isLink":true} /-->
 
@@ -104,7 +106,7 @@ class Sensei_Course_List_Block_Patterns {
 					'content'     => '<!-- wp:query {"query":{"offset":0,"postType":"course","order":"desc","orderBy":"date","author":"","search":"","sticky":"","perPage":12},"displayLayout":{"type":"flex","columns":3},"align":"wide","layout":{"inherit":true}} -->
 						<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-grid-view alignwide">
 
-							<!-- wp:sensei-lms/course-list-filter {"align":"full","types":["student_course","featured","categories"]} /-->
+							<!-- wp:sensei-lms/course-list-filter {"align":"left","types":["student_course","categories"],"lock":{"move": true}} /-->
 
 							<!-- wp:post-template {"align":"wide"} -->
 
@@ -113,7 +115,9 @@ class Sensei_Course_List_Block_Patterns {
 
 										<!-- wp:post-featured-image {"isLink":true,"height":"180px","lock":{"move":true}} /-->
 
-										<!-- wp:sensei-lms/course-categories {"lock":{"move": true}} /-->
+										<!-- wp:sensei-lms/course-categories -->
+											<div class="wp-block-sensei-lms-course-categories"></div>
+										<!-- /wp:sensei-lms/course-categories -->
 
 										<!-- wp:post-title {"textAlign":"left","isLink":true,"lock":{"move": true},"style":{"typography":{"fontSize":"36px"}}} /-->
 
