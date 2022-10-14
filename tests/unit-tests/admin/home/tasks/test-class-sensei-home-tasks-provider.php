@@ -44,10 +44,11 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'items', $result );
 		$items = $result['items'];
 		$this->assertIsArray( $items );
-		$this->assertCount( 3, $items );
+		$this->assertCount( 4, $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Setup_Site::get_id(), $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Create_First_Course::get_id(), $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Configure_Learning_Mode::get_id(), $items );
+		$this->assertArrayHasKey( Sensei_Home_Task_Publish_First_Course::get_id(), $items );
 	}
 
 	public function testGet_GivenAFilterThatOverridesTasks_ReturnSingleOverriddenResult() {
