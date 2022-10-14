@@ -1,0 +1,56 @@
+.sensei-home-page {
+	.sensei-home {
+		&__help {
+			&-category {
+				& h3 {
+					color: #1E1E1E;
+					font-size: 13px;
+					line-height: 16px;
+					margin: 14px 0 19px 0;
+				}
+			}
+
+			&-item {
+				font-size: 13px;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				align-items: center;
+				margin-bottom: 18px;
+
+				& a {
+					text-decoration: unset;
+				}
+
+				&__icon {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+				}
+
+				&__title {
+					margin-left: 12px;
+
+					&--disabled {
+						opacity: 0.6;
+					}
+				}
+
+				&__extra-link {
+					margin-left: 13px;
+
+					& a {
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+
+						& svg {
+							fill: currentColor;
+							margin-left: 7px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
