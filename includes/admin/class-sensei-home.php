@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Sensei_Home {
 	const SCREEN_ID                  = 'course_page_sensei-home';
 	const DISMISS_TASKS_NONCE_ACTION = 'sensei-lms-dismiss-tasks';
-	const DISMISS_TASKS_OPTION       = 'sensei-home-tasks-dismissed';
+	const DISMISS_TASKS_OPTION       = 'sensei_home_tasks_dismissed';
 
 	/**
 	 * Instance of class.
