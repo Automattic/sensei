@@ -174,10 +174,7 @@ div.question_boolean_fields { margin-bottom: 10px; }
  * Sensei custom navigation
  */
 .sensei-custom-navigation {
-	display: flex;
-	flex-flow: column wrap;
-	align-items: flex-start;
-	gap: 20px;
+	display: grid;
 	margin: 30px auto 20px;
 }
 
