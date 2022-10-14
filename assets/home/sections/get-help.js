@@ -25,14 +25,6 @@ import Section from '../section';
 const Item = ( { title, url, extraLink } ) => {
 	const isTitleInteractive = url !== null;
 
-	const link = isTitleInteractive ? (
-		<a href={ url } target="_blank" rel="noreferrer">
-			{ title }
-		</a>
-	) : (
-		title
-	);
-
 	return (
 		<li className="sensei-home__help-item">
 			<div className="sensei-home__help-item__icon">
@@ -43,7 +35,13 @@ const Item = ( { title, url, extraLink } ) => {
 					'sensei-home__help-item__title--disabled': ! isTitleInteractive,
 				} ) }
 			>
-				{ link }
+				{ isTitleInteractive ? (
+					<a href={ url } target="_blank" rel="noreferrer">
+						{ title }
+					</a>
+				) : (
+					<span>{ title }</span>
+				) }
 			</div>
 			{ extraLink && (
 				<div className="sensei-home__help-item__extra-link">
