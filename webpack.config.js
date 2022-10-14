@@ -170,8 +170,7 @@ function getWebpackConfig( env, argv ) {
 	} );
 
 	// Handle only images in JS files
-	webpackConfig.module.rules = [
-		...webpackConfig.module.rules,
+	webpackConfig.module.rules.push(
 		{
 			test: /\.(?:gif|jpg|jpeg|png)$/i,
 			issuer: scriptFiles,
@@ -185,8 +184,8 @@ function getWebpackConfig( env, argv ) {
 			test: /\.svg$/,
 			issuer: scriptFiles,
 			use: [ '@svgr/webpack' ],
-		},
-	];
+		}
+	);
 
 	return {
 		...webpackConfig,
