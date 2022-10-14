@@ -154,14 +154,20 @@ function getWebpackConfig( env, argv ) {
 				use,
 			};
 		}
+		if ( rule.test.test( 'image.svg' ) ) {
+			// Handle SVG images only in CSS files.
+			return {
+				...rule,
+				test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i,
+				issuer: styleSheetFiles,
+				generator: {
+					...rule.generator,
+					publicPath: '../',
+				},
+			};
+		}
 		return rule;
 	} );
-
-	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
-
-	// Handle SVG images only in CSS files.
-	webpackConfig.module.rules[ 3 ].test = /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i;
-	webpackConfig.module.rules[ 3 ].issuer = styleSheetFiles;
 
 	// Handle only images in JS files
 	webpackConfig.module.rules = [
