@@ -93,7 +93,7 @@ class Sensei_Home_Tasks_Provider {
 	/**
 	 * Return the site information needed for the task list component.
 	 *
-	 * @return array The site info, including title and image (which is the custom logo) URl.
+	 * @return array The site info, including title and image (which is the custom logo) URL.
 	 */
 	private function get_site() {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
