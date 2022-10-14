@@ -10,6 +10,10 @@ import nock from 'nock';
 import TasksSection from './index';
 
 describe( '<TasksSection />', () => {
+	beforeAll( () => {
+		window.sensei_home = { tasks_dismissed: false };
+	} );
+
 	it( 'Should render tasks section properly', () => {
 		const data = {
 			is_completed: false,
@@ -94,5 +98,22 @@ describe( '<TasksSection />', () => {
 		await waitFor( () => {
 			expect( queryByText( errorMessage ) ).toBeTruthy();
 		} );
+	} );
+
+	it( 'Should not render tasks when it was dismissed', () => {
+		const data = {
+			is_completed: true,
+			items: [],
+		};
+
+		window.sensei_home = { tasks_dismissed: true };
+
+		const { queryByText } = render( <TasksSection data={ data } /> );
+
+		expect(
+			queryByText(
+				'Your new course is ready to meet its students! Share it with the world.'
+			)
+		).toBeFalsy();
 	} );
 } );
