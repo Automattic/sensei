@@ -70,7 +70,7 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 				$result = 0;
 			} else {
 				$result = (int) $result;
-				wp_cache_set( $cache_key, $result, $cache_group );
+				wp_cache_set( $cache_key, $result, $cache_group, 60 );
 			}
 		}
 		return $result > 0;
