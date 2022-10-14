@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Tests for Sensei_Home_Tasks_Provider class.
+ * Tests for Sensei_Home_Task_Publish_First_Course class.
  *
  * @covers Sensei_Home_Task_Publish_First_Course
  */
