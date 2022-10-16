@@ -39,7 +39,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 
 		$this->_setRole( 'administrator' );
 		$_POST['nonce']   = wp_create_nonce( 'get_course_list' );
-		$_POST['user_id'] = 2;
+		$_POST['user_id'] = $users[0];
 
 		try {
 			$this->_handleAjax( 'get_course_list' );
