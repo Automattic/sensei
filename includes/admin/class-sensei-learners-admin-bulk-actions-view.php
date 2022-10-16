@@ -478,9 +478,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 
 		$visible_courses = implode( '', array_slice( $html_items, 0, $visible_count ) );
-		$hidden_courses  = implode( '', array_slice( $html_items, $visible_count ) );
 
-		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail">' . $hidden_courses . '</div>' . $more_button;
+		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail"></div>' . $more_button;
 	}
 
 	/**
