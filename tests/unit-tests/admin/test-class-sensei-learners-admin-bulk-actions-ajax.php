@@ -44,10 +44,10 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		try {
 			$this->_handleAjax( 'get_course_list' );
 		} catch ( \WPAjaxDieContinueException $e ) {
+			unset( $e );
 		}
 		$response = json_decode( $this->_last_response );
 
-		$this->assertTrue( isset( $e ) );
 		$this->assertInternalType( 'object', $response );
 		$this->assertObjectHasAttribute( 'success', $response );
 		$this->assertTrue( $response->success );
