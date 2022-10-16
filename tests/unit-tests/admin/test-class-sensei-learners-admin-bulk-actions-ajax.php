@@ -27,12 +27,12 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		$courses = $this->factory->get_courses();
 
 		// Generate 2 Students
-		$users = $this->factory->user->create_many( 2, array( 'role' => 'subscriber' ) );
+		$users    = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
+		$provider = $this->getManualEnrolmentProvider();
 
 		// Enroll users into courses
 		foreach ( $users as $user ) {
 			foreach ( $courses as $course ) {
-				$provider = $this->getManualEnrolmentProvider();
 				$provider->enrol_learner( $user, $course );
 			}
 		}
