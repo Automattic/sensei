@@ -719,7 +719,7 @@ class Sensei_Learner {
 			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
 		}
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't modify the nonce.
-		if ( ! isset( $_POST['user_id'] ) || ! wp_verify_nonce( ( wp_unslash( $_POST['nonce'] ) ), 'get_course_list' ) ) {
+		if ( ! isset( $_POST['user_id'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'get_course_list' ) ) {
 			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
 		}
 
