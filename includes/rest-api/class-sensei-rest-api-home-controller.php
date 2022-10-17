@@ -74,11 +74,11 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	private $guides_provider;
 
 	/**
-	 * Extensions provider.
+	 * Notices provider.
 	 *
-	 * @var Sensei_Home_Extensions_Provider
+	 * @var Sensei_Home_Notices_Provider
 	 */
-	private $extensions_provider;
+	private $notices_provider;
 
 	/**
 	 * Sensei_REST_API_Home_Controller constructor.
@@ -90,7 +90,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_Tasks_Provider        $tasks_provider        Tasks provider.
 	 * @param Sensei_Home_News_Provider         $news_provider         News provider.
 	 * @param Sensei_Home_Guides_Provider       $guides_provider       Guides provider.
-	 * @param Sensei_Home_Extensions_Provider   $extensions_provider   Extensions provider.
 	 * @param Sensei_Home_Notices_Provider      $notices_provider      Notices provider.
 	 */
 	public function __construct(
@@ -101,7 +100,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		Sensei_Home_Tasks_Provider $tasks_provider,
 		Sensei_Home_News_Provider $news_provider,
 		Sensei_Home_Guides_Provider $guides_provider,
-		Sensei_Home_Extensions_Provider $extensions_provider,
 		Sensei_Home_Notices_Provider $notices_provider
 	) {
 		$this->namespace             = $namespace;
@@ -111,7 +109,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		$this->tasks_provider        = $tasks_provider;
 		$this->news_provider         = $news_provider;
 		$this->guides_provider       = $guides_provider;
-		$this->extensions_provider   = $extensions_provider;
 		$this->notices_provider      = $notices_provider;
 	}
 
@@ -178,7 +175,6 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 			'help'         => $this->help_provider->get(),
 			'guides'       => $this->guides_provider->get(),
 			'news'         => $this->news_provider->get(),
-			'extensions'   => $this->extensions_provider->get(),
 			'promo_banner' => $this->promo_banner_provider->get(),
 			'notices'      => $this->notices_provider->get(),
 		];

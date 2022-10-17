@@ -47,7 +47,8 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 		// Arrange
 		$this->factory->course->create(
 			[
-				'post_name' => 'testing',
+				'post_name'   => 'testing',
+				'post_status' => 'draft',
 			]
 		);
 		self::flush_cache();
@@ -58,7 +59,25 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 		// Assert
 		$this->assertTrue( $is_completed );
 	}
+	/**
+	 * Verify if is_completed returns false when a course that doesn't have the sample course slug is on trash.
+	 */
+	public function testIsCompleted_NonSampleCourseOnTrash_ReturnsFalse() {
+		// Arrange
+		$this->factory->course->create(
+			[
+				'post_name'   => 'testing',
+				'post_status' => 'trash',
+			]
+		);
+		self::flush_cache();
 
+		// Act
+		$is_completed = $this->task->is_completed();
+
+		// Assert
+		$this->assertFalse( $is_completed );
+	}
 
 	/**
 	 * Verify if is_completed still returns false when a course that has the sample course slug is registered.
@@ -67,7 +86,8 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 		// Arrange
 		$this->factory->course->create(
 			[
-				'post_name' => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+				'post_name'   => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+				'post_status' => 'draft',
 			]
 		);
 		self::flush_cache();
@@ -86,12 +106,14 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 		// Arrange
 		$this->factory->course->create(
 			[
-				'post_name' => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+				'post_name'   => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+				'post_status' => 'draft',
 			]
 		);
 		$this->factory->course->create(
 			[
-				'post_name' => 'test',
+				'post_name'   => 'test',
+				'post_status' => 'draft',
 			]
 		);
 		self::flush_cache();

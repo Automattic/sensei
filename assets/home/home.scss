@@ -5,7 +5,9 @@ $break-medium: 783px; // adminbar goes big
 @import '../shared/styles/variables';
 @import '../shared/styles/wp-admin';
 @import '../css/font-recoleta';
-@import 'tasks/style';
+@import 'tasks-section/style';
+@import 'sections/extensions';
+@import 'sections/get-help';
 
 @mixin white-box( $r: 2px ) {
 	border-radius: $r;
@@ -345,76 +347,6 @@ $break-medium: 783px; // adminbar goes big
 			}
 		}
 
-		&__card {
-			display: flex;
-			align-items: stretch;
-			height: 100%;
-
-			&__header {
-				display: flex;
-				justify-content: space-between;
-				margin-bottom: 10px;
-			}
-
-			&__content {
-				padding: 25px;
-				display: flex;
-				flex-direction: column;
-				flex: 1;
-
-				@media (min-width: $break-large) {
-					min-height: 170px;
-				}
-			}
-
-			&__body {
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-			}
-
-			&__title {
-				margin: 0;
-				font-size: 16px;
-				font-weight: bold;
-				color: inherit;
-			}
-
-			&__price {
-				margin-bottom: 10px;
-				font-size: 16px;
-			}
-
-			&__image {
-				background-color: $gray-0;
-				background-size: cover;
-				background-position: center center;
-				flex: 0 0 220px;
-			}
-
-			&__new-badge {
-				padding-left: 10px;
-				font-size: 12px;
-				white-space: nowrap;
-
-				&::before {
-					content: "";
-					display: inline-block;
-					width: 8px;
-					height: 8px;
-					margin-right: 7px;
-					background-color: $primary;
-					border-radius: 50%;
-				}
-			}
-
-			&__description {
-				margin: 0 0 10px;
-				font-size: 14px;
-				flex: 1;
-			}
-		}
-
 		&__featured-product {
 			display: flex;
 			flex-direction: column-reverse;
@@ -549,25 +481,6 @@ $break-medium: 783px; // adminbar goes big
 			}
 		}
 
-		&__extension-actions {
-			display: flex;
-			align-items: center;
-			margin: 0;
-			padding: 0;
-
-			&__item {
-				margin: 0;
-
-				&:not(:first-child) {
-					margin-left: 20px;
-				}
-
-				a {
-					color: inherit;
-				}
-			}
-		}
-
 		&__rotating-icon svg {
 			animation: rotation 2s infinite linear;
 		}
@@ -576,55 +489,17 @@ $break-medium: 783px; // adminbar goes big
 			margin: 10px 0 0;
 		}
 
-		&__help {
-			&-category {
-				& h3 {
-					color: #1E1E1E;
-					font-size: 13px;
-					line-height: 16px;
-					margin: 14px 0 19px 0;
-				}
-			}
-
-			&-item {
-				font-size: 13px;
+		&__link {
+			& a {
 				display: flex;
 				flex-direction: row;
-				flex-wrap: wrap;
 				align-items: center;
-				margin-bottom: 18px;
 
-				& a {
-					text-decoration: unset;
-				}
-
-				&__icon {
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-				}
-
-				&__title {
-					margin-left: 12px;
-
-					&--disabled {
-						opacity: 0.6;
-					}
-				}
-
-				&__extra-link {
-					margin-left: 13px;
-
-					& a {
-						display: flex;
-						flex-direction: row;
-						align-items: center;
-
-						& svg {
-							fill: currentColor;
-							margin-left: 7px;
-						}
-					}
+				& svg {
+					fill: currentColor;
+					margin-left: 7px;
+					width: 16px;
+					height: 16px;
 				}
 			}
 		}
