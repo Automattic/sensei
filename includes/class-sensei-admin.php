@@ -42,6 +42,7 @@ class Sensei_Admin {
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_print_scripts', array( $this, 'sensei_set_plugin_url' ) );
 
 		// Duplicate lesson & courses
@@ -1807,6 +1808,21 @@ class Sensei_Admin {
 		}
 
 		return $course_structure;
+	}
+
+	/**
+	 * Registers the hook to call mark_completed when the wc-admin page on WooCommerce is visited.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	public function admin_init() {
+		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
+			add_action(
+				get_plugin_page_hook( 'wc-admin', 'woocommerce' ),
+				'Sensei_Home_Task_Sell_Course_With_WooCommerce::mark_completed'
+			);
+		}
 	}
 
 	function sensei_add_custom_menu_items() {
