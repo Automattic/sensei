@@ -3,7 +3,6 @@
  */
 import { useRef, useEffect } from '@wordpress/element';
 import { createBlock } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 
@@ -21,11 +20,8 @@ const ALLOWED_BLOCKS = [
 ];
 
 export default {
-	title: __( 'Featured Video', 'sensei-lms' ),
-	description: __(
-		'Add a featured video to your lesson to highlight the video and make use of our video templates.',
-		'sensei-lms'
-	),
+	...metadata,
+	metadata,
 	example: {
 		innerBlocks: [
 			{
@@ -36,8 +32,6 @@ export default {
 			},
 		],
 	},
-	...metadata,
-	metadata,
 	edit: function EditBlock( { className, clientId } ) {
 		const { replaceInnerBlocks, moveBlockToPosition } = useDispatch(
 			'core/block-editor'
