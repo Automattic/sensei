@@ -210,9 +210,6 @@ if ( ! function_exists( 'sensei_rgb_from_hex' ) ) {
 	 */
 	function sensei_rgb_from_hex( $color ) {
 		$color = str_replace( '#', '', $color );
-		if ( strlen( $color ) > 3 && strlen( $color ) < 6 ) {
-			$color = substr( $color, 0, 3 );
-		}
 		// Convert shorthand colors to full format, e.g. "FFF" -> "FFFFFF"
 		$color = preg_replace( '~^(.)(.)(.)$~', '$1$1$2$2$3$3', $color );
 
