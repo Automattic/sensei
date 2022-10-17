@@ -150,10 +150,10 @@ const TasksSection = ( { data } ) => {
 				</div>
 				<div className="sensei-home-tasks-section__first-course">
 					<FirstCourse
-						siteTitle="Learn Photography"
-						siteImage="https://techcrunch.com/wp-content/uploads/2022/06/Leica-on-black.jpeg?w=1390&crop=1"
-						courseTitle="Architectural Photography"
-						courseImage="https://techcrunch.com/wp-content/uploads/2022/06/Leica-on-black.jpeg?w=1390&crop=1"
+						siteTitle={ data.site?.title }
+						siteImage={ data.site?.image }
+						courseTitle={ data.course?.title }
+						courseImage={ data.course?.image }
 					/>
 				</div>
 			</>
