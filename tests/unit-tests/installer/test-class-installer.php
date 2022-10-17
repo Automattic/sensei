@@ -24,7 +24,7 @@ class Installer_Test extends \WP_UnitTestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->installer = Installer::instance();
+		$this->installer = Installer::instance( SENSEI_LMS_VERSION );
 
 		$this->reset_installer_state();
 	}
@@ -55,7 +55,7 @@ class Installer_Test extends \WP_UnitTestCase {
 
 	public function testInstall_WhenTheVersionIsUpToDate_ShouldNotRun(): void {
 		/* Arrange. */
-		update_option( 'sensei_lms_version', SENSEI_LMS_VERSION );
+		update_option( 'sensei-version', SENSEI_LMS_VERSION );
 
 		$install_runs = did_action( 'sensei_lms_installed' );
 
@@ -68,7 +68,7 @@ class Installer_Test extends \WP_UnitTestCase {
 
 	public function testInstall_WhenTheVersionIsNotUpToDate_ShouldRun(): void {
 		/* Arrange. */
-		update_option( 'sensei_lms_version', '0.0.1' );
+		update_option( 'sensei-version', '0.0.1' );
 
 		$install_runs = did_action( 'sensei_lms_installed' );
 
@@ -79,19 +79,21 @@ class Installer_Test extends \WP_UnitTestCase {
 		$this->assertSame( $install_runs + 1, did_action( 'sensei_lms_installed' ) );
 	}
 
-	public function testInstall_WhenRun_ShouldUpdateTheVersion(): void {
+	public function testInstall_WhenCalled_ShouldNotUpdateTheVersion(): void {
+		/* Arrange. */
+		update_option( 'sensei-version', '0.0.1' );
 		/* Act. */
 		$this->installer->install();
 
 		/* Assert. */
-		$version = get_option( 'sensei_lms_version' );
-		$this->assertSame( SENSEI_LMS_VERSION, $version );
+		$version = get_option( 'sensei-version' );
+		$this->assertSame( '0.0.1', $version );
 	}
 
 	public function testGetSchema_ConstructedWithSchema_ReturnsSameSchema(): void {
 		/* Arrange. */
 		$schema    = $this->createMock( Schema::class );
-		$installer = new Installer( $schema );
+		$installer = new Installer( $schema, '1.0.0' );
 
 		/* Act. */
 		$actual = $installer->get_schema();
@@ -107,6 +109,6 @@ class Installer_Test extends \WP_UnitTestCase {
 	 */
 	private function reset_installer_state(): void {
 		delete_transient( 'sensei_lms_installing' );
-		delete_option( 'sensei_lms_version' );
+		delete_option( 'sensei-version' );
 	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Sensei\Installer\Installer;
+
 class Sensei_Globals_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
@@ -51,7 +53,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	public function testUpdateNewInstall() {
 		$this->resetUpdateOptions();
 
-		Sensei()->update();
+		Installer::instance( SENSEI_LMS_VERSION )->update();
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should not be set on new installs' );
@@ -68,7 +70,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 		$this->resetUpdateOptions();
 
-		Sensei()->update();
+		Installer::instance( SENSEI_LMS_VERSION )->update();
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set on updates even when course and progress artifacts exist' );
@@ -88,7 +90,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		update_option( 'woothemes-sensei-version', '1.9.0' );
 		update_option( 'woothemes-sensei-settings', [ 'settings' => true ] );
 
-		Sensei()->update();
+		Installer::instance( SENSEI_LMS_VERSION )->update();
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set during v1 updates with progress artifacts' );
@@ -104,7 +106,8 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		update_option( 'woothemes-sensei-version', '1.9.0' );
 		update_option( 'woothemes-sensei-settings', [ 'settings' => true ] );
 
-		Sensei()->update();
+		Installer::instance( SENSEI_LMS_VERSION )->update();
+
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should NOT be set during v1 updates without progress artifacts' );
@@ -119,7 +122,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 		update_option( 'sensei-version', '2.4.0' );
 
-		Sensei()->update();
+		Installer::instance( SENSEI_LMS_VERSION )->update();
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set during v2 updates with known previous version' );
@@ -136,7 +139,7 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 		$this->resetUpdateOptions();
 
-		Sensei()->update();
+		Installer::instance( SENSEI_LMS_VERSION )->update();
 
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set during v2 updates with progress' );
