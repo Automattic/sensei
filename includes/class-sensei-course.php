@@ -3217,7 +3217,11 @@ class Sensei_Course {
 	 * @return bool
 	 */
 	public static function can_current_user_manually_enrol( $course_id ) {
-		if ( ! is_user_logged_in() ) {
+		if (
+			! is_user_logged_in() ||
+			! self::is_prerequisite_complete( $course_id ) ||
+			post_password_required()
+		) {
 			return false;
 		}
 
