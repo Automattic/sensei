@@ -28,7 +28,13 @@ const Link = ( { label, url } ) => {
 	return (
 		<div className="sensei-home__link">
 			<a href={ url } target="_blank" rel="noreferrer">
-				{ label } { isExternal && <Icon icon={ external } /> }
+				{ label }
+				{ isExternal && (
+					<Icon
+						icon={ external }
+						className="sensei-home__link__external-icon"
+					/>
+				) }
 			</a>
 		</div>
 	);
