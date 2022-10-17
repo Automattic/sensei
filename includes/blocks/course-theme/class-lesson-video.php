@@ -69,6 +69,7 @@ class Lesson_Video {
 		);
 
 		remove_action( 'sensei_lesson_video', [ Sensei_Frontend::class, 'sensei_lesson_video' ] );
+		remove_action( 'the_content', [ \Sensei_Course_Theme::instance(), 'add_lesson_video_to_content' ], 80 );
 
 		global $sensei_template_has_lesson_video_block;
 		$sensei_template_has_lesson_video_block = true;
