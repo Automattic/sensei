@@ -132,15 +132,58 @@ function getWebpackConfig( env, argv ) {
 	const styleSheetFiles = /\.(sc|sa|c)ss$/i;
 	const scriptFiles = /\.[jt]sx?$/i;
 
-	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
+	const isProduction = process.env.NODE_ENV === 'production';
 
-	// Handle SVG images only in CSS files.
-	webpackConfig.module.rules[ 3 ].test = /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i;
-	webpackConfig.module.rules[ 3 ].issuer = styleSheetFiles;
+	webpackConfig.module.rules = webpackConfig.module.rules.map( ( rule ) => {
+		if ( rule.test.test( 'test.scss' ) ) {
+			const use = rule.use.slice();
+			// Find where the sass-loader is installed.
+			const sassRuleIndex = use.findIndex(
+				( useRule ) =>
+					require.resolve( 'sass-loader' ) === useRule.loader
+			);
+			const computeSourceMap =
+				use[ sassRuleIndex ].options.sourceMap ?? ! isProduction;
+
+			use[ sassRuleIndex ] = {
+				...use[ sassRuleIndex ],
+				options: {
+					...use[ sassRuleIndex ].options,
+					// Always enable Source Maps, because resolve-url-loader will
+					// need these source maps to work correctly.
+					sourceMap: true,
+				},
+			};
+
+			// Insert resolve-url-loader just before the sass-loader.
+			use.splice( sassRuleIndex, 0, {
+				loader: require.resolve( 'resolve-url-loader' ),
+				options: {
+					sourceMap: computeSourceMap,
+				},
+			} );
+			return {
+				...rule,
+				use,
+			};
+		}
+		if ( rule.test.test( 'image.svg' ) ) {
+			// Handle SVG images only in CSS files.
+			return {
+				...rule,
+				test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i,
+				issuer: styleSheetFiles,
+				generator: {
+					...rule.generator,
+					publicPath: '../',
+				},
+			};
+		}
+		return rule;
+	} );
 
 	// Handle only images in JS files
-	webpackConfig.module.rules = [
-		...webpackConfig.module.rules,
+	webpackConfig.module.rules.push(
 		{
 			test: /\.(?:gif|jpg|jpeg|png)$/i,
 			issuer: scriptFiles,
@@ -154,8 +197,8 @@ function getWebpackConfig( env, argv ) {
 			test: /\.svg$/,
 			issuer: scriptFiles,
 			use: [ '@svgr/webpack' ],
-		},
-	];
+		}
+	);
 
 	return {
 		...webpackConfig,
