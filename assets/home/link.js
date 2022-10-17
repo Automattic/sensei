@@ -34,7 +34,13 @@ const Link = ( { label, url, onClick } ) => {
 				rel="noreferrer"
 				onClick={ onClick }
 			>
-				{ label } { isExternal && <Icon icon={ external } /> }
+				{ label }
+				{ isExternal && (
+					<Icon
+						icon={ external }
+						className="sensei-home__link__external-icon"
+					/>
+				) }
 			</a>
 		</div>
 	);
