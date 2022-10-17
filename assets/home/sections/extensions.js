@@ -2,6 +2,8 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -9,9 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { Col, Grid } from '../grid';
 import Card from '../card';
 import Section from '../section';
-import { useSelect } from '@wordpress/data';
 import { EXTENSIONS_STORE } from '../../extensions/store';
-import { Spinner } from '@wordpress/components';
 
 /**
  * Extensions section component.
@@ -47,15 +47,17 @@ const Extensions = () => {
 	return (
 		<Section title={ __( 'Extensions', 'sensei-lms' ) }>
 			<Grid>
-				{ extensions.map( ( extension ) => (
-					<Col
-						key={ extension.product_slug }
-						className="sensei-extensions__card-wrapper"
-						cols={ 4 }
-					>
-						<Card { ...extension } />
-					</Col>
-				) ) }
+				{ extensions.map( ( extension ) => {
+					return (
+						<Col
+							key={ extension.product_slug }
+							className="sensei-extensions__card-wrapper"
+							cols={ 4 }
+						>
+							<Card { ...extension } />
+						</Col>
+					);
+				} ) }
 			</Grid>
 		</Section>
 	);

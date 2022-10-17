@@ -80,7 +80,11 @@ const Main = () => {
 					<LatestNews />
 				</Col>
 
-				<Col as="section" className="sensei-home__section" cols={ 12 }>
+				<Col
+					as="section"
+					className="sensei-home__section sensei-home__section__extensions"
+					cols={ 12 }
+				>
 					<Extensions />
 				</Col>
 			</Grid>
