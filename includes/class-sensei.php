@@ -1415,7 +1415,6 @@ class Sensei_Main {
 		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
 	}
 
-
 		/**
 		 * Returns the admin configuration url for the admin general configuration page
 		 *
