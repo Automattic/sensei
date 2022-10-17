@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Icon, external } from '@wordpress/icons';
 import { useState, useRef } from '@wordpress/element';
 
 /**
@@ -10,6 +9,7 @@ import { useState, useRef } from '@wordpress/element';
  */
 import Section from '../section';
 import { Grid, Col } from '../grid';
+import Link from '../link';
 
 const quickLinksSpecialMapping = {
 	'sensei://install-demo-course': ( { setTitle, originalTitle, timer } ) => {
@@ -61,20 +61,9 @@ const QuickLink = ( { item } ) => {
 			callback( { setTitle, originalTitle, timer } );
 		};
 	}
-	const isExternal = url && url !== '#' && ! url.includes( '/wp-admin/' );
 	return (
 		<li>
-			{ /* eslint-disable-next-line react/jsx-no-target-blank */ }
-			<a
-				href={ url }
-				target={ isExternal ? '_blank' : null }
-				onClick={ onClick }
-			>
-				{ title }
-				{ isExternal ? (
-					<Icon icon={ external } size={ 16 } fill="currentColor" />
-				) : null }
-			</a>
+			<Link url={ url } onClick={ onClick } label={ title } />
 		</li>
 	);
 };
@@ -121,7 +110,10 @@ const getColumnsSize = ( columnCount, columnTotal = 12 ) => {
 const QuickLinks = ( { quickLinks } ) => {
 	const columns = getColumnsSize( quickLinks?.length ?? 0 );
 	return (
-		<Section title={ __( 'Quick Links', 'sensei-lms' ) }>
+		<Section
+			title={ __( 'Quick Links', 'sensei-lms' ) }
+			className="sensei-home__quick-links"
+		>
 			<Grid>
 				{ columns.map( ( cols, index ) => (
 					<Col cols={ cols } key={ quickLinks[ index ].title }>
