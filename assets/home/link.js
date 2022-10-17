@@ -18,16 +18,22 @@ const getHostname = ( url ) => {
 /**
  * Link component. Will add an external link icon if the url is for an external domain.
  *
- * @param {Object} props       Component props.
- * @param {Array}  props.label The label for the link.
- * @param {Array}  props.url   The target URL.
+ * @param {Object}   props         Component props.
+ * @param {string}   props.label   The label for the link.
+ * @param {string}   props.url     The target URL.
+ * @param {Function} props.onClick The event listener for the click event.
  */
-const Link = ( { label, url } ) => {
+const Link = ( { label, url, onClick } ) => {
 	const isExternal = getHostname( window.location ) !== getHostname( url );
 
 	return (
 		<div className="sensei-home__link">
-			<a href={ url } target="_blank" rel="noreferrer">
+			<a
+				href={ url }
+				target={ onClick ? undefined : '_blank' }
+				rel="noreferrer"
+				onClick={ onClick }
+			>
 				{ label } { isExternal && <Icon icon={ external } /> }
 			</a>
 		</div>
