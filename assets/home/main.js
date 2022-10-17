@@ -20,44 +20,52 @@ import Extensions from './sections/extensions';
 import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import '../shared/data/api-fetch-preloaded-once';
+import { Notice, Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 const Main = () => {
 	useSenseiColorTheme();
 	const [ data, setData ] = useState();
+	const [ error, setError ] = useState( null );
+	const [ isFetching, setIsFetching ] = useState( true );
 
 	useEffect( () => {
 		async function fetchAndSetData() {
-			const remoteData = await apiFetch( {
-				path: '/sensei-internal/v1/home',
-				method: 'GET',
-			} );
-			setData( remoteData );
+			try {
+				const remoteData = await apiFetch( {
+					path: '/sensei-internal/v1/home',
+					method: 'GET',
+				} );
+				setData( remoteData );
+				setIsFetching( false );
+			} catch ( exceptionError ) {
+				setError( exceptionError );
+				setIsFetching( false );
+			}
 		}
 		fetchAndSetData();
 	}, [] );
 
-	if ( ! data ) {
-		return null;
-	}
+	let content = null;
 
-	/**
-	 * Filters the component that will be injected on the top of the Sensei Home
-	 *
-	 * @since $$next-version$$
-	 * @param {JSX.Element} element The element to be injected
-	 * @return {JSX.Element} Filtered element.
-	 */
-	const topRow = applyFilters( 'sensei.home.top', null );
-
-	return (
-		<>
-			<Grid as="main" className="sensei-home">
-				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<Header />
-				</Col>
-
-				{ topRow }
-
+	if ( isFetching ) {
+		content = <Spinner />;
+	} else if ( error ) {
+		content = (
+			<Col as="section" className="sensei-home__section" cols={ 12 }>
+				<Notice status="error" isDismissible={ false }>
+					{ __(
+						'An error has occurred while fetching the data. Please try again later!',
+						'sensei-lms'
+					) }
+					<br />
+					{ __( 'Error details:', 'sensei-lms' ) } { error.message }
+				</Notice>
+			</Col>
+		);
+	} else {
+		content = (
+			<>
 				<Col as="section" className="sensei-home__section" cols={ 12 }>
 					<TasksSection data={ data.tasks } />
 				</Col>
@@ -87,6 +95,29 @@ const Main = () => {
 				>
 					<Extensions />
 				</Col>
+			</>
+		);
+	}
+
+	/**
+	 * Filters the component that will be injected on the top of the Sensei Home
+	 *
+	 * @since $$next-version$$
+	 * @param {JSX.Element} element The element to be injected
+	 * @return {JSX.Element} Filtered element.
+	 */
+	const topRow = applyFilters( 'sensei.home.top', null );
+
+	return (
+		<>
+			<Grid as="main" className="sensei-home">
+				<Col as="section" className="sensei-home__section" cols={ 12 }>
+					<Header />
+				</Col>
+
+				{ topRow }
+
+				{ content }
 			</Grid>
 		</>
 	);
