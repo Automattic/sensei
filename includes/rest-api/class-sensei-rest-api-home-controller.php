@@ -74,6 +74,13 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	private $guides_provider;
 
 	/**
+	 * Notices provider.
+	 *
+	 * @var Sensei_Home_Notices_Provider
+	 */
+	private $notices_provider;
+
+	/**
 	 * Sensei_REST_API_Home_Controller constructor.
 	 *
 	 * @param string                            $namespace             Routes namespace.
@@ -83,6 +90,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @param Sensei_Home_Tasks_Provider        $tasks_provider        Tasks provider.
 	 * @param Sensei_Home_News_Provider         $news_provider         News provider.
 	 * @param Sensei_Home_Guides_Provider       $guides_provider       Guides provider.
+	 * @param Sensei_Home_Notices_Provider      $notices_provider      Notices provider.
 	 */
 	public function __construct(
 		$namespace,
@@ -91,7 +99,8 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		Sensei_Home_Promo_Banner_Provider $promo_banner_provider,
 		Sensei_Home_Tasks_Provider $tasks_provider,
 		Sensei_Home_News_Provider $news_provider,
-		Sensei_Home_Guides_Provider $guides_provider
+		Sensei_Home_Guides_Provider $guides_provider,
+		Sensei_Home_Notices_Provider $notices_provider
 	) {
 		$this->namespace             = $namespace;
 		$this->quick_links_provider  = $quick_links_provider;
@@ -100,6 +109,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 		$this->tasks_provider        = $tasks_provider;
 		$this->news_provider         = $news_provider;
 		$this->guides_provider       = $guides_provider;
+		$this->notices_provider      = $notices_provider;
 	}
 
 	/**
@@ -160,46 +170,13 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 */
 	public function get_data() {
 		return [
-			'tasks'         => $this->tasks_provider->get(),
-			'quick_links'   => $this->quick_links_provider->get(),
-			'help'          => $this->help_provider->get(),
-			'guides'        => $this->guides_provider->get(),
-			'news'          => $this->news_provider->get(),
-			'promo_banner'  => $this->promo_banner_provider->get(),
-			'notifications' => [
-				[
-					'heading'     => null, // Not needed for the moment.
-					'message'     => 'Your Sensei Pro license expires on 12.09.2022.',
-					'actions'     => [
-						[
-							'label' => 'Update now',
-							'url'   => 'https://...',
-						],
-					],
-					'info_link'   => [
-						'label' => 'What\'s new',
-						'url'   => 'https://...',
-					],
-					'level'       => 'error', // One of: info, warning, error.
-					'dismissible' => false, // The default value is true.
-				],
-				[
-					'heading'     => null, // Not needed for the moment.
-					'message'     => 'Good news, reminder to update to latest version',
-					'actions'     => [
-						[
-							'label' => 'Update now',
-							'url'   => 'https://...',
-						],
-					],
-					'info_link'   => [
-						'label' => 'Link for more information',
-						'url'   => 'https://...',
-					],
-					'level'       => 'info', // One of: info, warning, error.
-					'dismissible' => true, // The default value is true.
-				],
-			],
+			'tasks'        => $this->tasks_provider->get(),
+			'quick_links'  => $this->quick_links_provider->get(),
+			'help'         => $this->help_provider->get(),
+			'guides'       => $this->guides_provider->get(),
+			'news'         => $this->news_provider->get(),
+			'promo_banner' => $this->promo_banner_provider->get(),
+			'notices'      => $this->notices_provider->get(),
 		];
 	}
 

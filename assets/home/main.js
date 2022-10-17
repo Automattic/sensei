@@ -12,7 +12,7 @@ import SenseiProAd from './sections/sensei-pro-ad';
 import Header from './header';
 import { Col, Grid } from './grid';
 import QuickLinks from './sections/quick-links';
-import TasksSection from './tasks';
+import TasksSection from './tasks-section';
 import GetHelp from './sections/get-help';
 import SenseiGuides from './sections/sensei-guides';
 import LatestNews from './sections/latest-news';
@@ -25,7 +25,7 @@ import { __ } from '@wordpress/i18n';
 
 const Main = () => {
 	useSenseiColorTheme();
-	const [ data, setData ] = useState( {} );
+	const [ data, setData ] = useState();
 	const [ error, setError ] = useState( null );
 	const [ isFetching, setIsFetching ] = useState( true );
 
@@ -67,7 +67,7 @@ const Main = () => {
 		content = (
 			<>
 				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<TasksSection />
+					<TasksSection data={ data.tasks } />
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
