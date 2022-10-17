@@ -6,6 +6,10 @@
  * @since   $$next-version$$
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 /**
  * Class that generates all the information relevant to the news section in the Sensei Home screen.
  */
