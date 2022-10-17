@@ -134,7 +134,7 @@ const TasksSection = ( { data } ) => {
 	} else if ( ready ) {
 		content = (
 			<Ready
-				coursePermalink="https://automattic.com"
+				coursePermalink={ data.course?.permalink }
 				onDismiss={ onDismiss }
 			/>
 		);
