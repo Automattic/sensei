@@ -75,14 +75,14 @@ const QuickLink = ( { item } ) => {
  * @param {Object} props.data The data related to the column of quick links.
  */
 const QuickLinksColumn = ( { data } ) => (
-	<ul>
-		<li>
-			<b> { data.title }</b>
-		</li>
-		{ data.items.map( ( item ) => (
-			<QuickLink key={ item.url } item={ item }></QuickLink>
-		) ) }
-	</ul>
+	<>
+		<h3 className="sensei-home__quick-links__title">{ data.title }</h3>
+		<ul>
+			{ data.items.map( ( item ) => (
+				<QuickLink key={ item.url } item={ item }></QuickLink>
+			) ) }
+		</ul>
+	</>
 );
 
 /**
