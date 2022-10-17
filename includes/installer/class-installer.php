@@ -8,6 +8,8 @@
 
 namespace Sensei\Installer;
 
+use Sensei_Updates;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -20,6 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 class Installer {
+
+	private const SENSEI_VERSION_OPTION_NAME = 'sensei-version';
+
 	/**
 	 * Instance of the class.
 	 *
@@ -37,14 +42,23 @@ class Installer {
 	private $schema;
 
 	/**
+	 * Current Sensei version.
+	 *
+	 * @var string|null
+	 */
+	private $version;
+
+	/**
 	 * Constructor.
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param Schema $schema Schema migration object.
+	 * @param Schema      $schema Schema migration object.
+	 * @param string|null $version Current Sensei version.
 	 */
-	public function __construct( Schema $schema ) {
-		$this->schema = $schema;
+	public function __construct( Schema $schema, ?string $version ) {
+		$this->schema  = $schema;
+		$this->version = $version;
 	}
 
 	/**
@@ -52,11 +66,12 @@ class Installer {
 	 *
 	 * @since $$next-version$$
 	 *
+	 * @param string|null $version Current Sensei version.
 	 * @return self
 	 */
-	public static function instance(): self {
+	public static function instance( ?string $version = null ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self( new Schema() );
+			self::$instance = new self( new Schema(), $version );
 		}
 
 		return self::$instance;
@@ -70,6 +85,7 @@ class Installer {
 	public function init() {
 		register_activation_hook( SENSEI_LMS_PLUGIN_FILE, [ $this, 'install' ] );
 		add_action( 'plugins_loaded', [ $this, 'install' ] );
+		add_action( 'init', array( $this, 'update' ) );
 	}
 
 	/**
@@ -91,7 +107,6 @@ class Installer {
 		set_transient( 'sensei_lms_installing', 'yes', MINUTE_IN_SECONDS * 10 );
 
 		$this->schema->create_tables();
-		$this->update_version();
 
 		delete_transient( 'sensei_lms_installing' );
 
@@ -101,6 +116,24 @@ class Installer {
 		 * @since $$next-version$$
 		 */
 		do_action( 'sensei_lms_installed' );
+	}
+
+	/**
+	 * Checks for plugin update tasks and ensures the current version is set.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function update(): void {
+		$current_version = get_option( self::SENSEI_VERSION_OPTION_NAME );
+		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
+
+		// Make sure the current version is up-to-date.
+		if ( ! $current_version || $is_upgrade ) {
+			$this->update_version();
+		}
+
+		$updates = Updates_Factory::create( $current_version, $is_upgrade );
+		$updates->run_updates();
 	}
 
 	/**
@@ -133,7 +166,7 @@ class Installer {
 	 * @return bool
 	 */
 	private function requires_install(): bool {
-		$version = get_option( 'sensei_lms_version' );
+		$version = get_option( self::SENSEI_VERSION_OPTION_NAME );
 
 		return version_compare( $version, SENSEI_LMS_VERSION, '<' );
 	}
@@ -143,8 +176,11 @@ class Installer {
 	 *
 	 * @since $$next-version$$
 	 */
-	private function update_version() {
-		update_option( 'sensei_lms_version', SENSEI_LMS_VERSION );
+	private function update_version(): void {
+		if ( ! $this->version ) {
+			return;
+		}
+		update_option( self::SENSEI_VERSION_OPTION_NAME, $this->version );
 	}
 }
 
