@@ -61,7 +61,7 @@ describe( '<QuickLinks />', () => {
 							{
 								title: 'internal link',
 								url:
-									'http://senseilms.com/wp-admin/post-new.php?post_type=course',
+									'http://localhost/wp-admin/post-new.php?post_type=course',
 							},
 						],
 					},
@@ -72,9 +72,9 @@ describe( '<QuickLinks />', () => {
 		const link = container.querySelector( 'a' );
 
 		expect( queryByText( 'internal link' ) ).toBeTruthy();
-		expect( link.target ).not.toEqual( '_blank' );
+		expect( link.target ).toEqual( '_blank' );
 		expect( link.href ).toEqual(
-			'http://senseilms.com/wp-admin/post-new.php?post_type=course'
+			'http://localhost/wp-admin/post-new.php?post_type=course'
 		);
 		expect( link.querySelector( 'svg' ) ).toBeFalsy();
 	} );
