@@ -1,7 +1,17 @@
 <?php
+/**
+ * File containing the class \Sensei\Installer\Updates_Factory.
+ *
+ * @package sensei
+ */
 
 namespace Sensei\Installer;
 
+/**
+ * Updates factory class.
+ *
+ * @since $$next-version$$
+ */
 class Updates_Factory {
 	/**
 	 * Create Updates instance.

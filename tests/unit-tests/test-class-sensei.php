@@ -108,7 +108,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 		Installer::instance( SENSEI_LMS_VERSION )->update();
 
-
 		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
 		$this->assertEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should NOT be set during v1 updates without progress artifacts' );
 	}
