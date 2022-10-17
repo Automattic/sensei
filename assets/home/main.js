@@ -81,7 +81,7 @@ const Main = () => {
 				<SenseiProAd />
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<SenseiGuides />
+					<SenseiGuides data={ data?.guides } />
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>

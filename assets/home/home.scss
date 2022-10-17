@@ -8,6 +8,7 @@ $break-medium: 783px; // adminbar goes big
 @import 'tasks-section/style';
 @import 'sections/extensions';
 @import 'sections/get-help';
+@import 'sections/sensei-guides';
 
 @mixin white-box( $r: 2px ) {
 	border-radius: $r;
@@ -494,6 +495,7 @@ $break-medium: 783px; // adminbar goes big
 				display: flex;
 				flex-direction: row;
 				align-items: center;
+				text-decoration: unset;
 
 				& svg {
 					fill: currentColor;
