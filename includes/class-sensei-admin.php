@@ -362,7 +362,7 @@ class Sensei_Admin {
 		Sensei()->assets->register(
 			'sensei-learners-admin-bulk-actions-js',
 			'js/learners-bulk-actions.js',
-			[ 'jquery', 'sensei-core-select2', 'jquery-modal' ],
+			[ 'jquery', 'sensei-core-select2', 'jquery-modal', 'wp-i18n' ],
 			true
 		);
 

@@ -125,6 +125,7 @@ jQuery( document ).ready( function () {
 	} )();
 
 	( function ( bulkUserActions ) {
+		const { __ } = wp.i18n;
 		var $hiddenSelectedUserIdsField = $( '#bulk-action-user-ids' ),
 			$actionSelector = $( '#bulk-action-selector-top' ),
 			$courseSelect = $( '.sensei-course-select' ),
@@ -225,7 +226,7 @@ jQuery( document ).ready( function () {
 							$hiddenPosts.append( data.data );
 						},
 						error: function(errorThrown){
-							$hiddenPosts.append( "<p>There was an error fetching courses: " + errorThrown.statusText + ': ' + errorThrown.status + "</p>" )
+							$hiddenPosts.append( __( "<p>There was an error fetching courses: ", 'sensei-lms' ) + errorThrown.statusText + ': ' + errorThrown.status + "</p>" )
 						}
 					}
 				);
