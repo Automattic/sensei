@@ -5,6 +5,15 @@
 				display: flex;
 				flex-direction: column;
 				gap: 12px;
+				flex-wrap: wrap;
+
+				li {
+					margin: 0;
+					display: flex;
+					flex-direction: row;
+					flex-wrap: wrap;
+					gap: 4px;
+				}
 			}
 
 			&__more-link {
@@ -13,7 +22,6 @@
 
 			&__date {
 				color: #949494;
-				margin-top: 4px;
 			}
 		}
 	}
