@@ -10,7 +10,7 @@ import TaskItem from './task-item';
 
 describe( '<TaskItem />', () => {
 	it( 'Should render an anchor when item is not completed', () => {
-		const { container } = render( <TaskItem href="#" /> );
+		const { container } = render( <TaskItem url="#" /> );
 
 		const renderedTag = container.querySelector(
 			'.sensei-home-tasks__link'
@@ -20,7 +20,7 @@ describe( '<TaskItem />', () => {
 	} );
 
 	it( 'Should render a span when item is completed', () => {
-		const { container } = render( <TaskItem href="#" completed /> );
+		const { container } = render( <TaskItem url="#" done /> );
 
 		const renderedTag = container.querySelector(
 			'.sensei-home-tasks__link'

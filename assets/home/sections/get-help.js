@@ -7,12 +7,14 @@ import classNames from 'classnames';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Icon, help, lock, external } from '@wordpress/icons';
+import { Icon, help } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import Section from '../section';
+import LockIcon from '../../icons/lock.svg';
+import Link from '../link';
 
 /**
  * Component representing each of the items under a Help Category.
@@ -25,34 +27,33 @@ import Section from '../section';
 const Item = ( { title, url, extraLink } ) => {
 	const isTitleInteractive = url !== null;
 
-	const link = isTitleInteractive ? (
-		<a href={ url } target="_blank" rel="noreferrer">
-			{ title }
-		</a>
-	) : (
-		title
-	);
-
 	return (
 		<li className="sensei-home__help-item">
 			<div className="sensei-home__help-item__icon">
-				<Icon icon={ isTitleInteractive ? help : lock } size={ 24 } />
+				{ isTitleInteractive ? (
+					<Icon icon={ help } />
+				) : (
+					<LockIcon
+						className={ 'sensei-home__help-item__icon__lock' }
+					/>
+				) }
 			</div>
 			<div
 				className={ classNames( 'sensei-home__help-item__title', {
 					'sensei-home__help-item__title--disabled': ! isTitleInteractive,
 				} ) }
 			>
-				{ link }
-			</div>
-			{ extraLink && (
-				<div className="sensei-home__help-item__extra-link">
-					<a href={ extraLink.url } target="_blank" rel="noreferrer">
-						{ extraLink.label }{ ' ' }
-						<Icon icon={ external } size={ 16 } />
+				{ isTitleInteractive ? (
+					<a href={ url } target="_blank" rel="noreferrer">
+						{ title }
 					</a>
-				</div>
-			) }
+				) : (
+					<span>{ title }</span>
+				) }
+				{ extraLink && (
+					<Link label={ extraLink.label } url={ extraLink.url } />
+				) }
+			</div>
 		</li>
 	);
 };

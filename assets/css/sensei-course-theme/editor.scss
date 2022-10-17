@@ -9,16 +9,7 @@ body {
 }
 
 .wp-block {
-	max-width: 900px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.wp-site-blocks, .wp-block,
-.sensei-course-theme__frame .wp-block[data-type='core/group'].wp-block[data-type='core/group'].wp-block[data-type='core/group'],
-.editor-styles-wrapper .block-editor-block-list__layout.is-root-container .sensei-course-theme__frame.wp-block[data-type='sensei-lms/ui'] {
 	max-width: none;
-	margin: 0;
 }
 
 .sensei-course-theme__sidebar-toggle {
@@ -41,6 +32,7 @@ body {
 		height: 100%;
 		margin: 0 !important;
 	}
+
 	&__main-content, &__main-content__container, &__sidebar ~ &__main-content {
 		margin: 0 auto !important;
 	}
@@ -48,6 +40,7 @@ body {
 	&__header ~ &__columns {
 		height: calc(100% - var(--header-height));
 	}
+
 	&__header + * {
 		margin-top: unset !important;
 	}
@@ -73,4 +66,17 @@ input, textarea {
 	&:hover {
 		cursor: default;
 	}
+}
+
+/**
+ *  Theme fixes.
+ */
+
+// Astra
+.wp-block:not(.has-text-color) {
+	color: unset;
+}
+
+.wp-block:not(.has-background) {
+	background-color: unset;
 }

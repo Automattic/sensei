@@ -1,6 +1,16 @@
 {
 	"name": "sensei-lms/course-results",
+	"title": "Course Results",
+	"description": "Show course results to students on the course completion page.",
 	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"lessons",
+		"modules",
+		"results",
+		"completion"
+	],
 	"supports": {
 		"html": false,
 		"multiple": false,

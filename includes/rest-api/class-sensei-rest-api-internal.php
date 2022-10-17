@@ -74,10 +74,17 @@ class Sensei_REST_API_Internal {
 	private $guides_provider;
 
 	/**
+	 * Sensei Notices provider.
+	 *
+	 * @var Sensei_Home_Notices_Provider
+	 */
+	private $notices_provider;
+
+	/**
 	 * Sensei_REST_API_Internal constructor.
 	 */
 	public function __construct() {
-		$remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms' );
+		$remote_data_api = Sensei_Home::instance()->get_remote_data_api();
 
 		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
 		$this->help_provider        = new Sensei_Home_Help_Provider();
@@ -85,7 +92,7 @@ class Sensei_REST_API_Internal {
 		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
 		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
 		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
-		$this->extensions_provider  = new Sensei_Home_Extensions_Provider( $remote_data_api );
+		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance() );
 
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
@@ -114,7 +121,7 @@ class Sensei_REST_API_Internal {
 				$this->tasks_provider,
 				$this->news_provider,
 				$this->guides_provider,
-				$this->extensions_provider
+				$this->notices_provider
 			),
 		];
 

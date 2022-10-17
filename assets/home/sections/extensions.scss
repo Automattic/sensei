@@ -1,0 +1,106 @@
+.sensei-home-page {
+	.sensei-extensions {
+		&__card-wrapper {
+			margin-top: 13px;
+		}
+	}
+	.sensei-home {
+		&__section__extensions .postbox .inside {
+			// Correct marging for Extensions section.
+			margin: 0 0 10px 0;
+		}
+
+		&__card {
+			display: flex;
+			flex-direction: column;
+			height: 100%; // Card must occupy as much as possible.
+
+			&__header {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 12px;
+			}
+
+			&__body {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+			}
+
+			&__title {
+				font-weight: 600;
+				font-size: 13px;
+				line-height: 16px;
+				margin: 0;
+			}
+
+			&__price {
+				margin-bottom: 10px;
+				font-size: 16px;
+			}
+
+			&__image {
+				background-color: $gray-0;
+				background-size: cover;
+				background-position: center center;
+				flex: 0 0 180px;
+			}
+
+			&__new-badge {
+				padding-left: 10px;
+				font-size: 12px;
+				white-space: nowrap;
+
+				&::before {
+					content: "";
+					display: inline-block;
+					width: 8px;
+					height: 8px;
+					margin-right: 7px;
+					background-color: $primary;
+					border-radius: 50%;
+				}
+			}
+
+			&__description {
+				margin: 12px 0 18px 0;
+				font-size: 14px;
+				flex-grow: 1;
+				line-height: 20px;
+				letter-spacing: -0.15px;
+			}
+
+			&__extension-actions {
+				display: flex;
+				flex-direction: column;
+				margin: 0;
+				padding: 0;
+				flex-wrap: wrap;
+				gap: 10px;
+
+				@media (min-width: $break-large) {
+					flex-direction: row;
+					gap: 10px 18px;
+				}
+
+				&__item {
+					margin: 0;
+
+					a {
+						color: inherit;
+					}
+
+					& .components-button {
+						padding: 10px 24px;
+						width: 100%;
+						justify-content: center;
+
+						&.is-primary {
+							background-color: #43AF99;
+						}
+					}
+				}
+			}
+		}
+	}
+}

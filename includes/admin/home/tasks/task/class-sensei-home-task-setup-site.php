@@ -54,16 +54,6 @@ class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 	}
 
 	/**
-	 * Task image.
-	 *
-	 * @return string|null
-	 */
-	public function get_image(): ?string {
-		// TODO Add image path.
-		return null;
-	}
-
-	/**
 	 * Whether the task is completed or not.
 	 *
 	 * @return bool

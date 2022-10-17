@@ -1,6 +1,18 @@
 {
   "name": "sensei-lms/learner-courses",
+  "title": "Student Courses",
+  "description": "Manage what students see on their dashboard. This block is only displayed to logged in students.",
   "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "keywords": [
+    "student courses",
+    "my courses",
+    "dashboard",
+    "courses",
+    "enrolled",
+    "learner",
+    "student"
+  ],
   "supports": {
     "html": false
   },

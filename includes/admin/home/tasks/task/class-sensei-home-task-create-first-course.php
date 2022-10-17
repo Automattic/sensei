@@ -53,15 +53,6 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 	}
 
 	/**
-	 * Task image.
-	 *
-	 * @return string|null
-	 */
-	public function get_image(): ?string {
-		return null;
-	}
-
-	/**
 	 * Whether the task is completed or not.
 	 *
 	 * @return bool
@@ -74,12 +65,12 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 		if ( false === $result ) {
 			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
-			$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_name NOT LIKE %s", "{$prefix}%" ) );
+			$result = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name NOT LIKE %s", "{$prefix}%" ) );
 			if ( null === $result ) {
 				$result = 0;
 			} else {
 				$result = (int) $result;
-				wp_cache_set( $cache_key, $result, $cache_group );
+				wp_cache_set( $cache_key, $result, $cache_group, 60 );
 			}
 		}
 		return $result > 0;

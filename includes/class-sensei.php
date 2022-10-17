@@ -36,7 +36,7 @@ class Sensei_Main {
 	 * Main reference to the plugin's version when it was installed.
 	 * Or false if the install version is not available.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.7.0
 	 * @var string|false
 	 */
 	public $install_version;
@@ -229,6 +229,13 @@ class Sensei_Main {
 	 * @var Sensei_Blocks
 	 */
 	public $blocks;
+
+	/**
+	 * Admin notices.
+	 *
+	 * @var Sensei_Admin_Notices
+	 */
+	public $admin_notices;
 
 	/**
 	 * Constructor method.
@@ -435,6 +442,9 @@ class Sensei_Main {
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 
+		// Sensei Home.
+		Sensei_Home::instance()->init();
+
 		Sensei_Scheduler::init();
 
 		// Block patterns.
@@ -446,6 +456,9 @@ class Sensei_Main {
 		// Load Analysis Reports.
 		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
 
+		// Admin notices.
+		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class.
@@ -454,7 +467,6 @@ class Sensei_Main {
 			new Sensei_Import();
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
-			new Sensei_Admin_Notices();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
