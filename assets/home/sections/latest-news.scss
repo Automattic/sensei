@@ -1,0 +1,20 @@
+.sensei-home-page {
+	.sensei-home {
+		&__latest-news {
+			ul {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+			}
+
+			&__more-link {
+				margin-top: 18px;
+			}
+
+			&__date {
+				color: #949494;
+				margin-top: 4px;
+			}
+		}
+	}
+}

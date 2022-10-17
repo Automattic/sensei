@@ -85,7 +85,7 @@ const Main = () => {
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<LatestNews />
+					<LatestNews data={ data?.news } />
 				</Col>
 
 				<Col
