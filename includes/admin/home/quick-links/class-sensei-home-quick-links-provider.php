@@ -72,7 +72,7 @@ class Sensei_Home_Quick_Links_Provider {
 			}
 		}
 		if ( null !== $result ) {
-			return $this->create_item( __( 'Edit Demo Course', 'sensei-lms' ), get_edit_post_link( $result, 'api' ) );
+			return $this->create_item( __( 'Edit Demo Course', 'sensei-lms' ), get_edit_post_link( $result, '&' ) );
 		}
 		return $this->create_item( __( 'Install a Demo Course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE );
 	}
