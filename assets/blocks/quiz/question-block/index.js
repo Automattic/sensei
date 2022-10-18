@@ -16,6 +16,7 @@ import icon from '../../../icons/question.svg';
  * Quiz question block definition.
  */
 export default {
+	...metadata,
 	metadata,
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],

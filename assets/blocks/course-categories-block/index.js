@@ -13,6 +13,7 @@ import edit from './course-categories-edit';
 import save from './course-categories-save';
 
 export default {
+	...metadata,
 	metadata,
 	example: {
 		attributes: {

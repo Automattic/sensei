@@ -11,6 +11,7 @@ import metadata from './block.json';
 import edit from './course-results-edit';
 
 export default {
+	...metadata,
 	metadata,
 	styles: [
 		{
