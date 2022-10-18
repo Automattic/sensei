@@ -107,7 +107,7 @@ class Sensei_Admin {
 		}
 
 		if ( $menu_cap ) {
-			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
+			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', '', '', '50' );
 		}
 	}
 
