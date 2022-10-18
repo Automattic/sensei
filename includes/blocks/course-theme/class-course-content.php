@@ -48,8 +48,15 @@ class Course_Content {
 
 		ob_start();
 		the_content();
-		return ob_get_clean();
+		$content = ob_get_clean();
 
+		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'entry-content' ) );
+
+		return (
+			'<div ' . $wrapper_attributes . '>' .
+			$content .
+			'</div>'
+		);
 	}
 
 	/**
@@ -82,15 +89,9 @@ class Course_Content {
 				break;
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'entry-content' ) );
-
 		add_filter( 'the_content', [ $this, 'render_content' ] );
 
-		return (
-			'<div ' . $wrapper_attributes . '>' .
-			$content .
-			'</div>'
-		);
+		return $content;
 
 	}
 
