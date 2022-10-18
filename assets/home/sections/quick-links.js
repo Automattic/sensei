@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState, useRef } from '@wordpress/element';
+import { useState, useRef, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -11,21 +11,34 @@ import Section from '../section';
 import { Grid, Col } from '../grid';
 import Link from '../link';
 
-const quickLinksSpecialMapping = {
-	'sensei://install-demo-course': ( { setTitle, originalTitle, timer } ) => {
-		setTitle( 'Installing' );
-		const installedMessage = 'Installed!';
-		const clear = () => {
-			if ( timer.current ) {
-				clearTimeout( timer.current );
-			}
-			timer.current = 0;
-		};
+/**
+ * Component to Install Demo Course. Invoked when clicking on a link pointing to "sensei://install-demo-course".
+ *
+ * @param {Object}   props        Component props.
+ * @param {Function} props.remove Function to call to remove the item from the Quick Links Column.
+ * @return {string} A message to the user with the status of the installation.
+ */
+function InstallDemoCourse( { remove } ) {
+	const [ title, setTitle ] = useState( 'Installing' );
+	const timer = useRef( 0 );
+	const installedMessage = 'Installed!';
+	const clear = () => {
+		if ( timer.current ) {
+			clearTimeout( timer.current );
+		}
+		timer.current = 0;
+	};
+	useEffect( () => {
+		if ( null === title ) {
+			remove();
+		}
+	}, [ title, remove ] );
+	useEffect( () => {
 		const run = () => {
 			setTitle( ( oldTitle ) => {
 				if ( installedMessage === oldTitle ) {
 					clear();
-					return originalTitle;
+					return null;
 				}
 				if ( ! oldTitle.includes( '...' ) ) {
 					timer.current = setTimeout( run, 500 );
@@ -37,7 +50,12 @@ const quickLinksSpecialMapping = {
 		};
 		clear();
 		timer.current = setTimeout( run, 500 );
-	},
+	}, [] );
+	return title;
+}
+
+const quickLinksSpecialMapping = {
+	'sensei://install-demo-course': InstallDemoCourse,
 };
 
 /**
@@ -47,23 +65,33 @@ const quickLinksSpecialMapping = {
  * @param {Object} props.item The item to show.
  */
 const QuickLink = ( { item } ) => {
-	let { url, title: originalTitle } = item;
-	const [ title, setTitle ] = useState( originalTitle );
-	const timer = useRef( 0 );
+	let { url, title } = item;
 
 	let onClick = null;
+	const [ showComponent, setShowComponent ] = useState( false );
+	const [ remove, setRemove ] = useState( false );
 
-	const callback = quickLinksSpecialMapping[ url ];
-	if ( !! callback ) {
+	const Component = quickLinksSpecialMapping[ url ];
+	if ( !! Component ) {
 		url = '#';
 		onClick = ( e ) => {
 			e.preventDefault();
-			callback( { setTitle, originalTitle, timer } );
+			setShowComponent( true );
 		};
+	}
+	if ( remove ) {
+		return null;
 	}
 	return (
 		<li>
-			<Link url={ url } onClick={ onClick } label={ title } />
+			{ showComponent ? (
+				<Component
+					restoreLink={ () => setShowComponent( false ) }
+					remove={ () => setRemove( true ) }
+				/>
+			) : (
+				<Link url={ url } onClick={ onClick } label={ title } />
+			) }
 		</li>
 	);
 };
