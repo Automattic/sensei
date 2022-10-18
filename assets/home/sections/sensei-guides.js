@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -28,7 +29,10 @@ const SenseiGuides = ( { data } ) => {
 			<ul>
 				{ data.items.map( ( item, key ) => (
 					<li key={ key }>
-						<Link label={ item.title } url={ item.url } />
+						<Link
+							label={ decodeEntities( item.title ) }
+							url={ item.url }
+						/>
 					</li>
 				) ) }
 			</ul>
