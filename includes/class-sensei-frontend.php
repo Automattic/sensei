@@ -1174,6 +1174,8 @@ class Sensei_Frontend {
 			&& isset( $_POST['course_start'] )
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
 			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
+			&& Sensei_Course::is_prerequisite_complete( $post->ID )
+			&& ! post_password_required( $post->ID )
 		) {
 
 			/**
