@@ -86,19 +86,15 @@ $sensei-notice-icon-width: 30px;
 }
 
 /* Sensei LMS menu */
-body #menu-posts-course {
+body #toplevel_page_sensei {
 	div.wp-menu-image:before {
 		font-family: 'sensei';
 		content: "\f101";
 	}
 
 	ul li a {
-		&[href="post-new.php?post_type=course"] {
-			display: none;
-		}
-
-		&[href="edit.php?post_type=course&page=sensei_learners"],
-		&[href="edit.php?post_type=course&page=sensei_reports"] {
+		&[href="admin.php?page=sensei_learners"],
+		&[href="admin.php?page=sensei_reports"] {
 			border-top: solid 1px;
 			margin-top: 10px;
 			padding-top: 10px;

@@ -159,7 +159,7 @@ class Sensei_Learner_Management {
 	public function learners_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				$this->name,
 				$this->name,
 				'manage_sensei_grades',

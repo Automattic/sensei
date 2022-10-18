@@ -67,7 +67,7 @@ class Sensei_Grading {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				__( 'Grading', 'sensei-lms' ),
 				__( 'Grading', 'sensei-lms' ) . $indicator_html,
 				'manage_sensei_grades',

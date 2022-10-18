@@ -105,7 +105,7 @@ class Sensei_Tools {
 		$title = esc_html__( 'Tools', 'sensei-lms' );
 
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			$title,
 			$title,
 			'manage_sensei',

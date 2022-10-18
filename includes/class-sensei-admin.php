@@ -39,6 +39,7 @@ class Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
 		add_action( 'admin_menu', array( $this, 'add_lesson_order' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
@@ -88,16 +89,15 @@ class Sensei_Admin {
 	/**
 	 * Add items to admin menu
 	 *
-	 * @since  1.4.0
-	 * @deprecated 4.0.0
+	 * @since 1.4.0
+	 * @since $$next-version$$ Reactivate method since we have a new home page.
 	 *
 	 * @return void
 	 */
 	public function admin_menu() {
-		_deprecated_function( __METHOD__, '4.0.0' );
-
 		global $menu;
 		$menu_cap = '';
+
 		if ( current_user_can( 'manage_sensei' ) ) {
 			$menu_cap = 'manage_sensei';
 		} else {
@@ -107,13 +107,8 @@ class Sensei_Admin {
 		}
 
 		if ( $menu_cap ) {
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to add separator above our menu group.
-			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
 			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
 		}
-
-		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_published_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
 	}
 
 	/**

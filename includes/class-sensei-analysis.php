@@ -181,7 +181,7 @@ class Sensei_Analysis {
 	public function analysis_admin_menu() {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				$this->name,
 				$this->name,
 				'manage_sensei_grades',
