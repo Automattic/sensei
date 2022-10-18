@@ -89,6 +89,7 @@ class Sensei_Data_Cleaner {
 		'sensei_course_theme_query_var_flushed',
 		'sensei_settings_sections_visited',
 		'sensei_home_tasks_list_is_completed',
+		'sensei_home_tasks_dismissed',
 	);
 
 	/**
