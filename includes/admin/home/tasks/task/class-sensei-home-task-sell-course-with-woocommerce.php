@@ -74,6 +74,9 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	 * @return bool Whether the task should be active or not.
 	 */
 	public static function is_active() {
+		if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+			return false;
+		}
 		$features = Sensei_Setup_Wizard::instance()->get_wizard_user_data( 'features' );
 		return in_array( 'woocommerce', $features['selected'], true );
 	}
