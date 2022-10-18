@@ -1818,10 +1818,10 @@ class Sensei_Admin {
 	 */
 	public function admin_init() {
 		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
-			add_action(
-				get_plugin_page_hook( 'wc-admin', 'woocommerce' ),
-				'Sensei_Home_Task_Sell_Course_With_WooCommerce::mark_completed'
-			);
+			$hook = get_plugin_page_hook( 'wc-admin', 'woocommerce' );
+			if ( null !== $hook ) {
+				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
+			}
 		}
 	}
 
