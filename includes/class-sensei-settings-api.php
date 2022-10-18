@@ -933,7 +933,7 @@ class Sensei_Settings_API {
 		foreach ( $this->fields as $k => $v ) {
 			if ( 'color' === $v['type'] ) {
 				$input[ $k ] = str_replace( '#', '', $input[ $k ] );
-				if ( ! ctype_xdigit( $input ) && strlen( $input[ $k ] ) !== 6 ) {
+				if ( ! ctype_xdigit( $input[ $k ] ) || strlen( $input[ $k ] ) !== 6 ) {
 					$input[ $k ] = false;
 				}
 			}
