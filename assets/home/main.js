@@ -66,9 +66,7 @@ const Main = () => {
 	} else {
 		content = (
 			<>
-				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<TasksSection data={ data.tasks } />
-				</Col>
+				<TasksSection data={ data.tasks } />
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<QuickLinks />
