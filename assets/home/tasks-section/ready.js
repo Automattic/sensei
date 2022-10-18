@@ -10,7 +10,7 @@ import { closeSmall } from '@wordpress/icons';
  */
 import CheckIcon from '../../icons/checked.svg';
 import FacebookCircleIcon from '../../icons/facebook-circle.svg';
-import InstagramCircleIcon from '../../icons/instagram-circle.svg';
+import TumblrCircleIcon from '../../icons/tumblr-circle.svg';
 import TwitterCircleIcon from '../../icons/twitter-circle.svg';
 
 /**
@@ -88,19 +88,6 @@ const Ready = ( { coursePermalink, onDismiss } ) => {
 				<li>
 					<a
 						className="sensei-home-ready__social-link"
-						href={ tumblerLink }
-						target="_blank"
-						rel="noreferrer"
-					>
-						<InstagramCircleIcon />
-						<span className="screen-reader-text">
-							{ __( 'Instagram', 'sensei-lms' ) }
-						</span>
-					</a>
-				</li>
-				<li>
-					<a
-						className="sensei-home-ready__social-link"
 						href={ twitterLink }
 						target="_blank"
 						rel="noreferrer"
@@ -108,6 +95,19 @@ const Ready = ( { coursePermalink, onDismiss } ) => {
 						<TwitterCircleIcon />
 						<span className="screen-reader-text">
 							{ __( 'Twitter', 'sensei-lms' ) }
+						</span>
+					</a>
+				</li>
+				<li>
+					<a
+						className="sensei-home-ready__social-link"
+						href={ tumblerLink }
+						target="_blank"
+						rel="noreferrer"
+					>
+						<TumblrCircleIcon />
+						<span className="screen-reader-text">
+							{ __( 'Instagram', 'sensei-lms' ) }
 						</span>
 					</a>
 				</li>
