@@ -229,7 +229,7 @@ class Sensei_Tools {
 	 * @return string
 	 */
 	public function get_tools_url() {
-		return admin_url( 'edit.php?post_type=course&page=sensei-tools' );
+		return admin_url( 'admin.php?page=sensei-tools' );
 	}
 
 	/**

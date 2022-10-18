@@ -181,10 +181,12 @@ class Sensei_Admin {
 	 * Handle highlighting of admin menu items
 	 *
 	 * @since 1.4.0
+	 * @since $$next-version$$ General review after adding the new Sensei Home page.
+	 *
 	 * @return void
 	 */
 	public function admin_menu_highlight() {
-		global $parent_file, $submenu_file, $post_type, $taxonomy;
+		global $parent_file, $submenu_file, $taxonomy, $_wp_real_parent_file;
 
 		$screen = get_current_screen();
 
@@ -193,24 +195,39 @@ class Sensei_Admin {
 		}
 
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to highlight our special pages in menu.
-		if ( $screen->base == 'post' && $post_type == 'course' ) {
-
-			$parent_file = 'edit.php?post_type=course';
-
-		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'course-category' ) {
-
-			$submenu_file = 'edit-tags.php?taxonomy=course-category&amp;post_type=course';
-			$parent_file  = 'edit.php?post_type=course';
-
-		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'module' ) {
-
-			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
-			$parent_file  = 'edit.php?post_type=course';
-
-		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
-
-			$submenu_file = 'edit.php?post_type=sensei_message';
+		if ( 'edit-tags' === $screen->base && 'module' === $taxonomy ) {
 			$parent_file  = 'sensei';
+			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
+
+		} else if ( in_array( $screen->id, [ 'edit-module', 'admin_page_module-order' ], true ) ) {
+			// Module pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit-tags.php?taxonomy=module&post_type=course';
+
+		} else if ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
+			// Course pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=course';
+
+		} else if ( in_array( $screen->id, [ 'lesson', 'edit-lesson-tag', 'admin_page_lesson-order' ], true ) ) {
+			// Lesson pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=lesson';
+
+		} else if ( in_array( $screen->id, [ 'question', 'edit-question-category' ], true ) ) {
+			// Question pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=question';
+
+		} else if ( in_array( $screen->id, [ 'sensei_message' ], true ) ) {
+			// Message pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=sensei_message';
 
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited

@@ -107,11 +107,12 @@ class Sensei_Core_Modules {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
 	 * Highlight the menu item for the modules pages.
+	 *
+	 * @deprecated $$next-version$$
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -121,6 +122,8 @@ class Sensei_Core_Modules {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$screen = get_current_screen();
 		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
 			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
@@ -160,7 +163,7 @@ class Sensei_Core_Modules {
 					<h1><?php esc_html_e( 'Modules', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__links">
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 		</div>
