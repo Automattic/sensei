@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useState, useRef, useEffect } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -90,7 +91,11 @@ const QuickLink = ( { item } ) => {
 					remove={ () => setRemove( true ) }
 				/>
 			) : (
-				<Link url={ url } onClick={ onClick } label={ title } />
+				<Link
+					url={ url }
+					onClick={ onClick }
+					label={ decodeEntities( title ) }
+				/>
 			) }
 		</li>
 	);
