@@ -24,7 +24,7 @@ const LatestNews = ( { data } ) => {
 	return (
 		<Section
 			title={ __( 'Latest News', 'sensei-lms' ) }
-			className="sensei-home__latest-news"
+			className="sensei-home-latest-news"
 		>
 			<ul>
 				{ data.items.map( ( item, key ) => (
@@ -33,14 +33,14 @@ const LatestNews = ( { data } ) => {
 							label={ decodeEntities( item.title ) }
 							url={ item.url }
 						/>
-						<div className="sensei-home__latest-news__date">
+						<div className="sensei-home-latest-news__date">
 							{ decodeEntities( item.date ) }
 						</div>
 					</li>
 				) ) }
 			</ul>
 			{ data.more_url && (
-				<div className="sensei-home__guides__more-link">
+				<div className="sensei-home-latest-news__more-link">
 					<Link
 						label={ __( 'See more', 'sensei-lms' ) }
 						url={ data.more_url }
