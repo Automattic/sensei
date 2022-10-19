@@ -42,6 +42,12 @@ class Installer {
 	private $schema;
 
 	/**
+	 * Sensei Updates factory.
+	 *
+	 * @var Updates_Factory
+	 */
+	private $updates_factory;
+	/**
 	 * Current Sensei version.
 	 *
 	 * @var string|null
@@ -53,12 +59,14 @@ class Installer {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param Schema      $schema Schema migration object.
-	 * @param string|null $version Current Sensei version.
+	 * @param Schema          $schema Schema migration object.
+	 * @param Updates_Factory $updates_factory Updates factory object.
+	 * @param string|null     $version Current Sensei version.
 	 */
-	public function __construct( Schema $schema, ?string $version ) {
-		$this->schema  = $schema;
-		$this->version = $version;
+	public function __construct( Schema $schema, Updates_Factory $updates_factory, ?string $version ) {
+		$this->schema          = $schema;
+		$this->updates_factory = $updates_factory;
+		$this->version         = $version;
 	}
 
 	/**
@@ -71,7 +79,7 @@ class Installer {
 	 */
 	public static function instance( ?string $version = null ): self {
 		if ( ! self::$instance ) {
-			self::$instance = new self( new Schema(), $version );
+			self::$instance = new self( new Schema(), new Updates_Factory(), $version );
 		}
 
 		return self::$instance;
@@ -125,15 +133,10 @@ class Installer {
 	 */
 	public function update(): void {
 		$current_version = get_option( self::SENSEI_VERSION_OPTION_NAME );
-		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
+		$updates         = $this->updates_factory->create( $current_version, $this->version );
 
-		// Make sure the current version is up-to-date.
-		if ( ! $current_version || $is_upgrade ) {
-			$this->update_version();
-		}
-
-		$updates = Updates_Factory::create( $current_version, $is_upgrade );
 		$updates->run_updates();
+		$this->update_version();
 	}
 
 	/**
