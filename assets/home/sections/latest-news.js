@@ -8,7 +8,6 @@ import { __ } from '@wordpress/i18n';
  */
 import Section from '../section';
 import Link from '../link';
-import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Latest News section component.
@@ -29,12 +28,9 @@ const LatestNews = ( { data } ) => {
 			<ul>
 				{ data.items.map( ( item, key ) => (
 					<li key={ key }>
-						<Link
-							label={ decodeEntities( item.title ) }
-							url={ item.url }
-						/>
+						<Link label={ item.title } url={ item.url } />
 						<div className="sensei-home-latest-news__date">
-							{ decodeEntities( item.date ) }
+							{ item.date }
 						</div>
 					</li>
 				) ) }
