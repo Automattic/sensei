@@ -69,7 +69,7 @@ const Main = () => {
 				<TasksSection data={ data.tasks } />
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<QuickLinks />
+					<QuickLinks quickLinks={ data?.quick_links } />
 				</Col>
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>

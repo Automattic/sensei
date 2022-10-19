@@ -497,6 +497,15 @@ $break-medium: 783px; // adminbar goes big
 			margin: 10px 0 0;
 		}
 
+		&__quick-links {
+			height: 100%;
+
+			&__title {
+				font-size: 13px;
+				margin: 0;
+			}
+		}
+
 		&__link {
 			& a {
 				text-decoration: unset;
