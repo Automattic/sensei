@@ -196,7 +196,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 	 */
 	private function getNoticesMock( $remote_data_mock, $local_update_available = true ) {
 		$notices_mock = $this->getMockBuilder( Sensei_Home_Notices::class )
-			->setConstructorArgs( [ $remote_data_mock ] )
+			->setConstructorArgs( [ $remote_data_mock, Sensei_Home::SCREEN_ID ] )
 			->setMethods( [ 'is_plugin_update_available' ] )
 			->getMock();
 

@@ -24,6 +24,13 @@ class Sensei_Home_Notices {
 	private $remote_data_api;
 
 	/**
+	 * Screen ID to show notices on.
+	 *
+	 * @var array
+	 */
+	private $screen_id;
+
+	/**
 	 * Cache of local plugin updates.
 	 *
 	 * @var array
@@ -34,16 +41,18 @@ class Sensei_Home_Notices {
 	 * Sensei_Home_Notices constructor.
 	 *
 	 * @param Sensei_Home_Remote_Data_API $remote_data_api The remote data helper.
+	 * @param string                      $screen_id       The screen ID to show notices on.
 	 */
-	public function __construct( Sensei_Home_Remote_Data_API $remote_data_api ) {
+	public function __construct( Sensei_Home_Remote_Data_API $remote_data_api, string $screen_id ) {
 		$this->remote_data_api = $remote_data_api;
+		$this->screen_id       = $screen_id;
 	}
 
 	/**
 	 * Add the hooks related to this class.
 	 */
 	public function init() {
-		add_filter( 'sensei_show_admin_notices_' . Sensei_Home::SCREEN_ID, '__return_false' );
+		add_filter( 'sensei_show_admin_notices_' . $this->screen_id, '__return_false' );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_update_notices' ] );
 	}
 
