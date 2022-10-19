@@ -79,8 +79,7 @@ class Sensei_Quiz {
 
 		$current_screen = function_exists('get_current_screen') ? get_current_screen() : null;
 
-		// If custom question types have been registered, or the Classic Editor plugin is activated,
-		// disable the block based quiz editor for now.
+		// Disable block editor functions if custom question types have been registered, or we are not in the block editor.
 		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && $current_screen && $current_screen->is_block_editor();
 
 
