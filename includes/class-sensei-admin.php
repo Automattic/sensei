@@ -382,7 +382,7 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
-		if ( in_array( $screen->id, [ 'course_page_course-order', 'course_page_lesson-order' ], true ) ) {
+		if ( in_array( $screen->id, [ 'admin_page_course-order', 'admin_page_lesson-order' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
@@ -1324,11 +1324,10 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->course_order_page_slug,
 						'ordered'   => $ordered,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1510,12 +1509,11 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->lesson_order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $course_id,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1558,7 +1556,7 @@ class Sensei_Admin {
 
 			$courses = get_posts( $args );
 
-			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";

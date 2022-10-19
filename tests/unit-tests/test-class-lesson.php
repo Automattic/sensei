@@ -867,8 +867,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="http://example.org/wp-admin/post-new.php?post_type=lesson">New Lesson</a>
-					<a href="http://example.org/wp-admin/edit.php?post_type=course&#038;page=lesson-order">Order Lessons</a>
-					<a href="http://example.org/wp-admin/edit.php?post_type=course&#038;page=sensei-settings#lesson-settings">Lesson Settings</a>
+					<a href="http://example.org/wp-admin/admin.php?page=lesson-order">Order Lessons</a>
+					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings#lesson-settings">Lesson Settings</a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">

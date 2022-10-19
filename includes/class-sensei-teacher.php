@@ -642,8 +642,8 @@ class Sensei_Teacher {
 		$screen            = get_current_screen();
 		$sensei_post_types = array( 'course', 'lesson', 'question' );
 
-		// exit early for the following conditions
-		$limit_screen_ids = array( 'course_page_' . Sensei_Analysis::PAGE_SLUG, 'course_page_module-order' );
+		// exit early for the following conditions.
+		$limit_screen_ids = array( 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG, 'sensei-lms_page_module-order' );
 
 		if ( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id, $limit_screen_ids )
 			|| ! in_array( $query->query['post_type'], $sensei_post_types ) ) {
