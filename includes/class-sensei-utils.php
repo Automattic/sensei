@@ -2663,10 +2663,14 @@ class Sensei_Utils {
 	 *
 	 * @param string $post_id the post ID.
 	 *
-	 * @return string|false The featured video HTML output if it exists, or false if it doesn't.
+	 * @return string|null The featured video HTML output if it exists.
 	 */
 	public static function get_featured_video_html( $post_id = null ) {
 		$post = get_post( $post_id );
+
+		if ( empty( $post ) ) {
+			return null;
+		}
 
 		if ( has_block( 'sensei-lms/featured-video', $post ) ) {
 			$blocks = parse_blocks( $post->post_content );
@@ -2676,8 +2680,8 @@ class Sensei_Utils {
 				}
 			}
 		}
-		$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
-		return $video_embed ? self::render_video_embed( $video_embed ) : '';
+		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
+		return $video_embed ? self::render_video_embed( $video_embed ) : null;
 
 	}
 
