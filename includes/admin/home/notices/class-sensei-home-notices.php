@@ -182,7 +182,7 @@ class Sensei_Home_Notices {
 			'conditions'  => [
 				[
 					'type'    => 'screens',
-					'screens' => [ Sensei_Home::SCREEN_ID ],
+					'screens' => [ $this->screen_id ],
 				],
 			],
 			'dismissible' => $is_dismissible,

@@ -20,14 +20,22 @@ class Sensei_Home_Notices_Provider {
 	 * @var Sensei_Admin_Notices
 	 */
 	private $admin_notices;
+	/**
+	 * Screen ID to show notices on.
+	 *
+	 * @var array
+	 */
+	private $screen_id;
 
 	/**
 	 * Sensei_Home_News_Provider constructor.
 	 *
 	 * @param Sensei_Admin_Notices $admin_notices   The remote admin notices helper.
+	 * @param string               $screen_id       The screen ID to show notices on.
 	 */
-	public function __construct( $admin_notices = null ) {
+	public function __construct( $admin_notices = null, $screen_id = null ) {
 		$this->admin_notices = $admin_notices;
+		$this->screen_id     = $screen_id;
 	}
 
 	/**
@@ -57,7 +65,7 @@ class Sensei_Home_Notices_Provider {
 	 * @return array
 	 */
 	public function get(): array {
-		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( Sensei_Home::SCREEN_ID ) : $this->local_only();
+		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( $this->screen_id ) : $this->local_only();
 
 		return array_map( [ $this, 'format_item' ], $notices );
 	}
