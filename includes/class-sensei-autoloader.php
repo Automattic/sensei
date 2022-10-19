@@ -71,6 +71,7 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'data-port/export-tasks' ),
 			new Sensei_Autoloader_Bundle( 'data-port/models' ),
 			new Sensei_Autoloader_Bundle( 'blocks' ),
+			new Sensei_Autoloader_Bundle( 'blocks/course-list' ),
 			new Sensei_Autoloader_Bundle( 'course-theme' ),
 			new Sensei_Autoloader_Bundle( 'course-video' ),
 			new Sensei_Autoloader_Bundle( 'course-video/blocks' ),
@@ -129,6 +130,7 @@ class Sensei_Autoloader {
 			'Sensei_Status'                                => 'admin/class-sensei-status.php',
 			'Sensei_Admin_Notices'                         => 'admin/class-sensei-admin-notices.php',
 			'Sensei_Editor_Wizard'                         => 'admin/class-sensei-editor-wizard.php',
+			'Sensei_No_Users_Table_Relationship'           => 'reports/class-sensei-no-users-table-relationship.php',
 
 			/**
 			 * Admin Tools
@@ -234,10 +236,14 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Content'      => 'blocks/course-theme/class-quiz-content.php',
 			'Sensei\Blocks\Course_Theme\Post_Title'        => 'blocks/course-theme/class-post-title.php',
 			'Sensei\Blocks\Course_Theme\Lesson_Module'     => 'blocks/course-theme/class-lesson-module.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Properties' => 'blocks/course-theme/class-lesson-properties.php',
 			'Sensei\Blocks\Course_Theme\Sidebar_Toggle_Button' => 'blocks/course-theme/class-sidebar-toggle-button.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+			'Sensei\Blocks\Course_Theme\Ui'                => 'blocks/course-theme/class-ui.php',
+			'Sensei\Blocks\Course_Theme\Template_Style'    => 'blocks/course-theme/class-template-style.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Video'      => 'blocks/course-theme/class-lesson-video.php',
 		);
 	}
 

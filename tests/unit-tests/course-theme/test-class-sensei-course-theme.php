@@ -25,7 +25,7 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Instance of `Sensei_Course_Theme_Option` under test.
@@ -111,5 +111,58 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 		$output = $this->instance->add_lesson_video_to_content( $output );
 		// Expect only one video embed class.
 		$this->assertEquals( 1, substr_count( $output, Sensei_Frontend::VIDEO_EMBED_CLASS ) );
+	}
+
+	public function testPreventLinkToModule_WhenLearningModeEnabled_ReturnsFalse() {
+		/* Arrange. */
+		$course = $this->factory->course->create_and_get();
+		$lesson = $this->factory->lesson->create_and_get();
+
+		add_post_meta( $lesson->ID, '_lesson_course', $course->ID );
+		add_post_meta( $course->ID, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$this->go_to( get_permalink( $lesson ) );
+
+		/* Act. */
+		$result = $this->instance->prevent_link_to_module( true );
+
+		/* Assert. */
+		$this->assertFalse( $result );
+	}
+
+	public function testRedirectModulesToFirstLesson_WhenLearningModeEnabled_RedirectsToLesson() {
+		/* Arrange. */
+		$course_info = $this->factory->get_course_with_lessons( [ 'module_count' => 1 ] );
+		$course_id   = $course_info['course_id'];
+		$lesson_id   = array_pop( $course_info['lesson_ids'] );
+		$module_id   = array_pop( $course_info['modules'] );
+		$module      = get_term( $module_id );
+
+		add_post_meta( $course_id, Sensei_Course_Theme_Option::THEME_POST_META_NAME, Sensei_Course_Theme_Option::SENSEI_THEME );
+
+		$this->go_to( sensei_get_navigation_url( $course_id, $module ) );
+
+		/* Act. */
+		$halt_redirect = function( $location, $status ) {
+			throw new \Exception(
+				wp_json_encode(
+					[
+						'location' => $location,
+						'status'   => $status,
+					]
+				)
+			);
+		};
+		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
+		try {
+			$this->instance->redirect_modules_to_first_lesson();
+		} catch ( \Exception $e ) {
+			$redirect = json_decode( $e->getMessage(), true );
+		}
+		remove_filter( 'wp_redirect', $halt_redirect, 1, 2 );
+
+		/* Assert. */
+		$this->assertEquals( 302, $redirect['status'] );
+		$this->assertEquals( get_permalink( $lesson_id ), $redirect['location'] );
 	}
 }

@@ -1,0 +1,185 @@
+$block: '.wp-block-sensei-lms-course-list';
+
+@mixin featured-badge-format {
+	background-color: #1d2327;
+	color: #fff;
+	padding: 3px 6px;
+	text-decoration: none;
+	border-radius: 2px;
+	white-space: nowrap;
+	z-index: 1000;
+}
+
+/* Match styles applied to block on single course page. */
+#{$block} {
+	.wp-block-post {
+		border: 0;
+		margin: 0 0 1.618em;
+		padding: 0 0 25px;
+	}
+
+	select {
+		background-position-y: center;
+	}
+
+	.wp-block-post-template {
+		.wp-block-post-featured-image {
+			margin: 0 auto 1.618em;
+		}
+	}
+
+	.featured-image-wrapper {
+		position: relative;
+
+		.sensei-lms-featured-badge {
+			display: block;
+			position: absolute;
+			top: 18px;
+			left: 18px;
+			@include featured-badge-format;
+		}
+	}
+
+	.featured-category-wrapper {
+		display: flex;
+		flex-direction: row;
+
+		.sensei-lms-featured-badge {
+			display: block;
+			margin-right: 10px;
+			margin-top: 10px;
+			height: max-content;
+			@include featured-badge-format;
+		}
+	}
+
+	.featured-course-wrapper__featured-image {
+		position: relative;
+
+		.course-list-featured-label__featured-image {
+			position: absolute;
+			top: 18px;
+			left: 18px;
+			background-color: #1d2327;
+			color: #fff;
+			padding: 5px;
+			z-index: 999;
+			display: block;
+		}
+	}
+
+	.featured-course-wrapper__course-categories {
+		display: flex;
+		flex-direction: row;
+
+		.course-list-featured-label__course-categories {
+			display: block;
+			margin-right: 10px;
+			height: max-content;
+			margin-top: 10px;
+			color: #fff;
+			background-color: #1d2327;
+			padding: 3px 6px;
+			text-decoration: none;
+			border-radius: 2px;
+			white-space: nowrap;
+			display: block;
+		}
+	}
+
+	&--is-grid-view {
+		.wp-block-sensei-lms-course-list-filter {
+			max-width: none;
+		}
+
+		.wp-block-post {
+			display: flex;
+
+			& > .wp-block {
+				width: 100%;
+			}
+
+			.wp-block-group {
+				&, .wp-block-group__inner-container {
+					display: flex;
+					flex-direction: column;
+					width: 100%;
+					gap: 18px;
+
+					& > * {
+						margin-block-start: 0px;
+						margin-block-end: 0px;
+					}
+
+					.wp-block-post-title {
+						line-height: 41px;
+						text-align: left;
+					}
+
+					.wp-block-post-excerpt {
+						flex: 1;
+					}
+
+					figure,
+					.wp-block,
+					.course-list-featured-label__course-categories,
+					.wp-block-post-featured-image,
+					.wp-block-sensei-lms-course-progress{
+						margin: 0px;
+					}
+
+					.course-list-featured-label__course-categories {
+						margin-right: 10px;
+					}
+
+					.sensei-cta > * {
+						margin: 0px;
+					}
+				}
+				.wp-block-group__inner-container {
+					height: 100%;
+				}
+			}
+
+			.sensei-block-wrapper {
+				padding: 5px 0;
+			}
+		}
+
+		@media ( max-width: 599px ) {
+			.wp-block-post-template.is-flex-container li.course {
+				width: 100%;
+			}
+		}
+	}
+
+	@media ( min-width: 782px ) {
+		&--is-list-view {
+			.wp-block-sensei-lms-button-take-course,
+			.wp-block-sensei-lms-button-continue-course,
+			.wp-block-sensei-lms-button-view-results {
+				text-align: right;
+			}
+		}
+	}
+}
+
+/* Divi overrides */
+#left-area #{$block} {
+	.wp-block-post-template {
+		list-style: none;
+		margin-left: 0;
+		padding: 1.25em;
+	}
+}
+
+.course-list-featured-label__featured-image {
+	display: none;
+}
+.course-list-featured-label__course-categories {
+	display: none;
+}
+
+.sensei-lms-featured-badge {
+	display: none;
+}

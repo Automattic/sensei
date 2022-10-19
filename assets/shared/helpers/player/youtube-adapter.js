@@ -8,8 +8,6 @@ export const ADAPTER_NAME = 'youtube';
  */
 export const EMBED_PATTERN = /(youtu\.be|youtube\.com)\/.+/i;
 
-let lastTime;
-
 /**
  * Initialize the player.
  *
@@ -32,6 +30,20 @@ export const initializePlayer = ( element, w = window ) =>
 				onReady();
 			} else {
 				player.addEventListener( 'onReady', onReady );
+			}
+
+			// Add a dataset to identify if video has played already.
+			const onStateChange = ( e ) => {
+				if ( e.data === w.YT.PlayerState.PLAYING ) {
+					element.dataset.hasPlayed = 'has-played';
+					player.removeEventListener(
+						'onStateChange',
+						onStateChange
+					);
+				}
+			};
+			if ( 'has-played' !== element.dataset.hasPlayed ) {
+				player.addEventListener( 'onStateChange', onStateChange );
 			}
 		} );
 	} );
@@ -70,8 +82,17 @@ export const getCurrentTime = ( player ) =>
  */
 export const setCurrentTime = ( player, seconds ) =>
 	new Promise( ( resolve ) => {
-		player.seekTo( seconds );
-		resolve();
+		if ( player.i.dataset.hasPlayed ) {
+			player.seekTo( seconds );
+			resolve();
+		} else {
+			play( player )
+				.then( () => pause( player ) )
+				.then( () => {
+					player.seekTo( seconds );
+					resolve();
+				} );
+		}
 	} );
 
 /**
@@ -111,11 +132,12 @@ export const pause = ( player ) =>
  */
 export const onTimeupdate = ( player, callback, w = window ) => {
 	const timer = 250;
+	let previousCurrentTime;
 
 	const updateCurrentTime = ( currentTime ) => {
-		if ( lastTime !== currentTime ) {
+		if ( previousCurrentTime !== currentTime ) {
 			callback( currentTime );
-			lastTime = currentTime;
+			previousCurrentTime = currentTime;
 		}
 	};
 
@@ -138,5 +160,28 @@ export const onTimeupdate = ( player, callback, w = window ) => {
 	return () => {
 		clearInterval( interval );
 		player.removeEventListener( 'onStateChange', onEnded );
+	};
+};
+
+/**
+ * Add an ended event listener to the player.
+ *
+ * @param {Object}   player   The YouTube player instance.
+ * @param {Function} callback Listener callback.
+ * @param {Window}   w        A custom window.
+ *
+ * @return {Function} The function to unsubscribe the event.
+ */
+export const onEnded = ( player, callback, w = window ) => {
+	const transformedCallback = () => {
+		if ( player.getPlayerState() === w.YT.PlayerState.ENDED ) {
+			callback();
+		}
+	};
+
+	player.addEventListener( 'onStateChange', transformedCallback );
+
+	return () => {
+		player.removeEventListener( 'onStateChange', transformedCallback );
 	};
 };

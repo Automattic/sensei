@@ -10,6 +10,7 @@ import * as videoFileAdapter from './video-file-adapter';
 import * as videopressAdapter from './videopress-adapter';
 import * as youtubeAdapter from './youtube-adapter';
 import * as vimeoAdapter from './vimeo-adapter';
+import roundWithDecimals from './round-with-decimals';
 
 const VIDEO_TYPE = videoFileAdapter.ADAPTER_NAME;
 const VIDEOPRESS_TYPE = videopressAdapter.ADAPTER_NAME;
@@ -105,9 +106,11 @@ class Player {
 	 * @return {Promise<number>} The current video time in seconds through a promise.
 	 */
 	getCurrentTime() {
-		return this.getPlayer().then( ( player ) =>
-			this.getAdapter().getCurrentTime( player )
-		);
+		return this.getPlayer()
+			.then( ( player ) => this.getAdapter().getCurrentTime( player ) )
+			.then( ( seconds ) => {
+				return roundWithDecimals( seconds, 3 );
+			} );
 	}
 
 	/**
@@ -156,13 +159,56 @@ class Player {
 	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
 	 */
 	on( eventName, callback ) {
-		// Check supported events.
-		if ( eventName !== 'timeupdate' ) {
+		// Supported events.
+		const events = {
+			timeupdate: this.onTimeUpdate.bind( this ),
+			ended: this.onEnded.bind( this ),
+		};
+
+		const event = events[ eventName ];
+
+		if ( ! event ) {
 			throw new Error( `Event ${ eventName } not supported` );
 		}
 
+		return event( callback );
+	}
+
+	/**
+	 * Wrapper to the `onTimeUpdate` event from the adapters.
+	 *
+	 * @access private
+	 *
+	 * @param {Function} callback Listener callback.
+	 *
+	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
+	 */
+	onTimeUpdate( callback ) {
+		const transformedCallback = ( seconds ) => {
+			callback( roundWithDecimals( seconds, 3 ) );
+		};
+
 		return this.getPlayer().then( ( player ) =>
-			this.getAdapter().onTimeupdate( player, callback, this.w )
+			this.getAdapter().onTimeupdate(
+				player,
+				transformedCallback,
+				this.w
+			)
+		);
+	}
+
+	/**
+	 * Wrapper to the `onEnded` event from the adapters.
+	 *
+	 * @access private
+	 *
+	 * @param {Function} callback Listener callback.
+	 *
+	 * @return {Promise<Function>} The function to unsubscribe the event through a promise.
+	 */
+	onEnded( callback ) {
+		return this.getPlayer().then( ( player ) =>
+			this.getAdapter().onEnded( player, callback, this.w )
 		);
 	}
 }

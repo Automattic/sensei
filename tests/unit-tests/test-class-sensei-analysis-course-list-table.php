@@ -71,7 +71,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
-	public function testPrepareItems_DefaultDateStartedFilterSet_SetsMatchingItems() {
+	public function testPrepareItems_DefaultDateFilterSet_SetsMatchingItems() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 
@@ -103,6 +103,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = [
+			$user1_id,
 			$user2_id,
 			$user3_id,
 			$user4_id,

@@ -49,6 +49,17 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 		);
 
 		register_post_meta(
+			'course',
+			'_course_featured',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'auth_callback' => [ $this, 'auth_callback' ],
+			]
+		);
+
+		register_post_meta(
 			'lesson',
 			'_lesson_complexity',
 			[
@@ -128,6 +139,8 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 * @return array Modified data object with additional fields.
 	 */
 	protected function add_additional_fields_to_object( $prepared, $request ) {
+
+		$prepared = parent::add_additional_fields_to_object( $prepared, $request );
 
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
 		if ( 'edit' === $context && isset( $prepared['content']['raw'] ) ) {

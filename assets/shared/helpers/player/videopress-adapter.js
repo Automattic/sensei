@@ -47,11 +47,14 @@ export const initializePlayer = ( element, w = window ) =>
 
 				resolve( element );
 			} else if (
-				data.event === `videopress_timeupdate` &&
+				data.event === 'videopress_timeupdate' &&
 				data.currentTimeMs
 			) {
 				// Set the current time to a dataset in order to be available later.
 				element.dataset.currentTime = data.currentTimeMs / 1000;
+			} else if ( data.event === 'videopress_play' ) {
+				// Identify that video was already played.
+				element.dataset.hasPlayed = 'has-played';
 			}
 		};
 
@@ -106,14 +109,24 @@ export const getCurrentTime = ( player ) =>
  */
 export const setCurrentTime = ( player, seconds ) =>
 	new Promise( ( resolve ) => {
-		player.contentWindow.postMessage(
-			{
-				event: 'videopress_action_set_currenttime',
-				currentTime: seconds,
-			},
-			'*'
-		);
-		resolve();
+		const run = () => {
+			player.contentWindow.postMessage(
+				{
+					event: 'videopress_action_set_currenttime',
+					currentTime: seconds,
+				},
+				'*'
+			);
+			resolve();
+		};
+
+		if ( player.dataset.hasPlayed ) {
+			run();
+		} else {
+			play( player )
+				.then( () => pause( player ) )
+				.then( run );
+		}
 	} );
 
 /**
@@ -168,6 +181,36 @@ export const onTimeupdate = ( player, callback, w = window ) => {
 		}
 
 		callback( event.data.currentTimeMs / 1000 );
+	};
+
+	// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+	w.addEventListener( 'message', transformedCallback );
+
+	return () => {
+		// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.
+		w.removeEventListener( 'message', transformedCallback );
+	};
+};
+
+/**
+ * Add an timeupdate event listener to the player.
+ *
+ * @param {HTMLIFrameElement} player   The player element.
+ * @param {Function}          callback Listener callback.
+ * @param {Window}            w        A custom window.
+ *
+ * @return {Function} The function to unsubscribe the event.
+ */
+export const onEnded = ( player, callback, w = window ) => {
+	const transformedCallback = ( event ) => {
+		if (
+			event.source !== player.contentWindow ||
+			event.data.event !== `videopress_ended`
+		) {
+			return;
+		}
+
+		callback();
 	};
 
 	// eslint-disable-next-line @wordpress/no-global-event-listener -- Not in a React context.

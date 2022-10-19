@@ -54,26 +54,36 @@ export const withColorSettings = ( colorSettings ) => {
  */
 export const ColorSettings = ( { colorSettings, props } ) => {
 	const colors = Object.keys( colorSettings );
+
+	const settings = colors.map( ( color ) => ( {
+		value: props[ color ].color,
+		label: colorSettings[ color ].label,
+		onChange: ( newColor ) => {
+			props[ `set${ upperFirst( color ) }` ]( newColor );
+
+			if ( colorSettings[ color ].onChange )
+				colorSettings[ color ].onChange( {
+					...props,
+					colorValue: newColor,
+				} );
+		},
+	} ) );
+
+	const isUsingCSSVars =
+		props.backgroundColor?.color?.includes( 'var' ) ||
+		props.textColor?.color?.includes( 'var' );
+
+	const shouldUseContrastChecker =
+		props.backgroundColor && props.textColor && ! isUsingCSSVars;
+
 	return (
 		<InspectorControls>
 			<PanelColorSettings
 				title={ __( 'Color settings', 'sensei-lms' ) }
 				initialOpen={ false }
-				colorSettings={ colors.map( ( color ) => ( {
-					value: props[ color ].color,
-					label: colorSettings[ color ].label,
-					onChange: ( newColor ) => {
-						props[ `set${ upperFirst( color ) }` ]( newColor );
-
-						if ( colorSettings[ color ].onChange )
-							colorSettings[ color ].onChange( {
-								...props,
-								colorValue: newColor,
-							} );
-					},
-				} ) ) }
+				colorSettings={ settings }
 			>
-				{ props.backgroundColor && props.textColor && (
+				{ shouldUseContrastChecker && (
 					<ContrastChecker
 						{ ...{
 							textColor: props.textColor.color,

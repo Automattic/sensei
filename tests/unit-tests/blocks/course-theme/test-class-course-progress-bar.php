@@ -25,6 +25,16 @@ class Course_Progress_Bar_Test extends WP_UnitTestCase {
 		parent::setup();
 
 		$this->factory = new Sensei_Factory();
+
+		WP_Block_Supports::$block_to_render = [
+			'attrs'     => [],
+			'blockName' => 'sensei-lms/course-theme-course-progress-bar',
+		];
+	}
+
+	public static function tearDownAfterClass() {
+		parent::tearDownAfterClass();
+		WP_Block_Supports::$block_to_render = null;
 	}
 
 	/**

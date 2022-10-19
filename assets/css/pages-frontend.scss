@@ -1,4 +1,8 @@
+/**
+ * Imports
+ */
 @import 'fontawesome';
+@import 'mixins';
 
 /**
  * Course Completed Page
@@ -11,5 +15,54 @@
 		margin: 0;
 		padding: 0;
 		visibility: hidden;
+	}
+}
+
+/**
+ * Sensei Notices
+ */
+.sensei-message {
+	clear: both;
+	margin-top: 1.387em;
+	margin-bottom: 1.618em;
+	padding: 1em 1.618em;
+	border:none!important;
+	@include border_radius(5px);
+
+	a {
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
+	&:after {
+		content: '';
+		clear: both;
+		display: block;
+	}
+
+	&:before  {
+		@include iconbefore();
+		font-size: 1.387em;
+		position: relative;
+		top: .1em;
+	}
+
+	&.info {
+		background:#eee;
+
+		&:before {
+			content: '\f05a';
+		}
+
+		a {
+			color: darken($color_body, 10%);
+
+			&:hover {
+				color: darken($color_body, 15%);
+			}
+		}
 	}
 }

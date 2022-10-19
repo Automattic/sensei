@@ -1137,10 +1137,30 @@ class Sensei_Utils {
 									. '</a>';
 					}
 				}
-			} else {  // Lesson/Quiz not complete
+			} else {  // Lesson/Quiz not complete.
 
-				// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete)
-				if ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
+				$lesson_prerequisite = \Sensei_Lesson::find_first_prerequisite_lesson( $lesson_id, $user_id );
+
+				if ( ! $is_lesson && $lesson_prerequisite > 0 ) {
+					$lesson_status = self::user_lesson_status( $lesson_prerequisite, $user_id );
+
+					$prerequisite_lesson_link = '<a href="'
+						. esc_url( get_permalink( $lesson_prerequisite ) )
+						. '" title="'
+						// translators: Placeholder is the item title.
+						. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
+						. '">'
+						. esc_html__( 'prerequisites', 'sensei-lms' )
+						. '</a>';
+
+					$message = ! empty( $lesson_status ) && 'ungraded' === $lesson_status->comment_approved
+						// translators: Placeholder is the link to the prerequisite lesson.
+						? sprintf( esc_html__( 'You will be able to access this quiz once the %1$s are completed and graded.', 'sensei-lms' ), $prerequisite_lesson_link )
+						// translators: Placeholder is the link to the prerequisite lesson.
+						: sprintf( esc_html__( 'Please complete the %1$s to access this quiz.', 'sensei-lms' ), $prerequisite_lesson_link );
+
+					// Lesson/Quiz isn't "complete" instead it's ungraded (previously this "state" meant that it *was* complete).
+				} elseif ( isset( $user_lesson_status->comment_approved ) && 'ungraded' == $user_lesson_status->comment_approved ) {
 					$status    = 'complete';
 					$box_class = 'info';
 					if ( $is_lesson ) {
@@ -1150,9 +1170,9 @@ class Sensei_Utils {
 						// translators: Placeholder is the quiz passmark.
 						$message = sprintf( __( 'You have completed this quiz and it will be graded soon. You require %1$s%% to pass.', 'sensei-lms' ), self::round( $quiz_passmark, 2 ) );
 					}
-				}
-				// Lesson status must be "failed"
-				elseif ( isset( $user_lesson_status->comment_approved ) && 'failed' == $user_lesson_status->comment_approved ) {
+
+					// Lesson status must be "failed".
+				} elseif ( isset( $user_lesson_status->comment_approved ) && 'failed' == $user_lesson_status->comment_approved ) {
 					$status    = 'failed';
 					$box_class = 'alert';
 					if ( $is_lesson ) {
@@ -1162,9 +1182,9 @@ class Sensei_Utils {
 						// translators: Placeholders are the quiz passmark and the learner's grade, respectively.
 						$message = sprintf( __( 'You require %1$d%% to pass this quiz. Your grade is %2$s%%', 'sensei-lms' ), self::round( $quiz_passmark, 2 ), self::round( $quiz_grade, 2 ) );
 					}
-				}
-				// Lesson/Quiz requires a pass
-				elseif ( $pass_required ) {
+
+					// Lesson/Quiz requires a pass.
+				} elseif ( $pass_required ) {
 					$status    = 'not_started';
 					$box_class = 'info';
 
@@ -2605,6 +2625,70 @@ class Sensei_Utils {
 		}
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Render a video embed.
+	 *
+	 * @param string $url The URL for the video embed.
+	 *
+	 * @return string an embeddable HTML string.
+	 */
+	public static function render_video_embed( $url ) {
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'title'           => array(),
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
+		);
+
+		if ( 'http' === substr( $url, 0, 4 ) ) {
+			// V2 - make width and height a setting for video embed.
+			$url = wp_oembed_get( esc_url( $url ) );
+			$url = do_shortcode( html_entity_decode( $url ) );
+		}
+		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
+	}
+
+	/**
+	 * Gets the HTML content from the Featured Video for a lesson.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param string $post_id the post ID.
+	 *
+	 * @return string|false The featured video HTML output if it exists, or false if it doesn't.
+	 */
+	public static function get_featured_video_html( $post_id = null ) {
+		$post = get_post( $post_id );
+
+		if ( has_block( 'sensei-lms/featured-video', $post ) ) {
+			$blocks = parse_blocks( $post->post_content );
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+					return render_block( $block );
+				}
+			}
+		}
+		$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
+		return $video_embed ? self::render_video_embed( $video_embed ) : '';
+
+	}
+
+	/**
+	 * Get the featured video thumbnail URL from a Post's metadata.
+	 *
+	 * @param int $post_id The Post ID.
+	 * @return string The video thumbnail URL.
+	 */
+	public static function get_featured_video_thumbnail_url( $post_id ) {
+		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
 	}
 }
 

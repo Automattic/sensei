@@ -19,10 +19,8 @@ trait Sensei_Reports_Helper_Date_Range_Trait {
 	 * @return string The start date.
 	 */
 	protected function get_start_date_filter_value(): string {
-		$default = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
-
 		// phpcs:ignore WordPress.Security -- The date is sanitized by DateTime.
-		$start_date = $_GET['start_date'] ?? $default;
+		$start_date = $_GET['start_date'] ?? '';
 
 		return DateTime::createFromFormat( 'Y-m-d', $start_date ) ? $start_date : '';
 	}

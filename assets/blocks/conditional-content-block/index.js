@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 
 /**
@@ -13,25 +12,11 @@ import metadata from './block.json';
 import icon from '../../icons/conditional-content.svg';
 
 export default {
-	title: __( 'Conditional Content', 'sensei-lms' ),
-	description: __(
-		'Content inside this block will be shown to the selected subgroup of users.',
-		'sensei-lms'
-	),
-	keywords: [
-		__( 'Enrolled', 'sensei-lms' ),
-		__( 'Content', 'sensei-lms' ),
-		__( 'Locked', 'sensei-lms' ),
-		__( 'Private', 'sensei-lms' ),
-		__( 'Completed', 'sensei-lms' ),
-		__( 'Not Enrolled', 'sensei-lms' ),
-		__( 'Restrict', 'sensei-lms' ),
-		__( 'Access', 'sensei-lms' ),
-	],
+	...metadata,
+	metadata,
 	icon,
 	edit,
 	save,
-	...metadata,
 	transforms: {
 		from: [
 			{

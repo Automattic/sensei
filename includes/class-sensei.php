@@ -33,6 +33,15 @@ class Sensei_Main {
 	public $version;
 
 	/**
+	 * Main reference to the plugin's version when it was installed.
+	 * Or false if the install version is not available.
+	 *
+	 * @since 4.7.0
+	 * @var string|false
+	 */
+	public $install_version;
+
+	/**
 	 * Public token, referencing for the text domain.
 	 */
 	public $token = 'sensei';
@@ -235,6 +244,7 @@ class Sensei_Main {
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
+		$this->install_version       = get_option( 'sensei-install-version' );
 
 		// Initialize the core Sensei functionality
 		$this->init();
@@ -433,18 +443,20 @@ class Sensei_Main {
 		// Editor Wizard.
 		Sensei_Editor_Wizard::instance()->init();
 
+		// Load Analysis Reports.
+		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
-			// Load Admin Class
+			// Load Admin Class.
 			$this->admin = new Sensei_Admin();
-
-			// Load Analysis Reports
-			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
 
 			new Sensei_Import();
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
 			new Sensei_Admin_Notices();
+
+			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
 
 			// Load Frontend Class
@@ -657,7 +669,7 @@ class Sensei_Main {
 
 		// Make sure the current version is up-to-date.
 		if ( ! $current_version || $is_upgrade ) {
-			$this->register_plugin_version();
+			$this->register_plugin_version( $is_new_install );
 		}
 
 		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
@@ -744,13 +756,17 @@ class Sensei_Main {
 	 *
 	 * @access public
 	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
 	 * @return void
 	 */
-	private function register_plugin_version() {
+	private function register_plugin_version( $is_new_install ) {
 		if ( isset( $this->version ) ) {
 
 			update_option( 'sensei-version', $this->version );
 
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
 		}
 	}
 
