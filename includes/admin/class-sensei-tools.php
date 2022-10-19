@@ -113,7 +113,7 @@ class Sensei_Tools {
 			[ $this, 'output' ]
 		);
 
-		add_action( 'load-course_page_sensei-tools', [ $this, 'process' ] );
+		add_action( 'load-sensei-lms_page_sensei-tools', [ $this, 'process' ] );
 	}
 
 	/**
