@@ -25,17 +25,17 @@ class Sensei_Home_Quick_Links_Provider {
 				[
 					$this->create_item( __( 'Create a Course', 'sensei-lms' ), admin_url( '/post-new.php?post_type=course' ) ),
 					$this->create_item( __( 'Install a Demo Course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE ),
-					$this->create_item( __( 'Import a Course', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei-tools&tool=import-content' ) ),
-					$this->create_item( __( 'Reports', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei_reports' ) ),
+					$this->create_item( __( 'Import a Course', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-tools&tool=import-content' ) ),
+					$this->create_item( __( 'Reports', 'sensei-lms' ), admin_url( '/admin.php?page=sensei_reports' ) ),
 				]
 			),
 			$this->create_category(
 				__( 'Settings', 'sensei-lms' ),
 				[
-					$this->create_item( __( 'Email notifications', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei-settings#email-notification-settings' ) ),
-					$this->create_item( __( 'Learning Mode', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei-settings#course-settings' ) ),
-					$this->create_item( __( 'WooCommerce', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei-settings#woocommerce-settings' ) ),
-					$this->create_item( __( 'Content Drip', 'sensei-lms' ), admin_url( '/edit.php?post_type=course&page=sensei-settings#sensei-content-drip-settings' ) ),
+					$this->create_item( __( 'Email notifications', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#email-notification-settings' ) ),
+					$this->create_item( __( 'Learning Mode', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#course-settings' ) ),
+					$this->create_item( __( 'WooCommerce', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#woocommerce-settings' ) ),
+					$this->create_item( __( 'Content Drip', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#sensei-content-drip-settings' ) ),
 				]
 			),
 			$this->create_category(
