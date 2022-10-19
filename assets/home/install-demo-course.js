@@ -13,13 +13,13 @@ import { buildJobEndpointUrl } from '../data-port/import/helpers/url';
 import Link from './link';
 
 const useDemoCourseInstaller = () => {
-	const [ error, setError ] = useState( null );
+	const [ hasError, setHasError ] = useState( false );
 	const [ jobId, setJobId ] = useState( null );
 	const [ pollingCount, setPollingCount ] = useState( 0 );
 
-	const catchError = ( e ) => {
+	const catchError = () => {
 		setPollingCount( 0 );
-		setError( e.message );
+		setHasError( true );
 		setJobId( null );
 	};
 
@@ -56,7 +56,7 @@ const useDemoCourseInstaller = () => {
 			.catch( catchError );
 	}, [] );
 
-	return [ jobId, pollingCount, error ];
+	return [ jobId, pollingCount, hasError ];
 };
 
 /**
@@ -81,7 +81,7 @@ function InstallDemoCourse( { remove, restoreLink } ) {
 		}
 	}, [ error, pollingCount, remove, restoreLink ] );
 	if ( error ) {
-		return __( 'Error while installing demo course', 'sensei-lms' );
+		return __( 'Error while installing. Try again.', 'sensei-lms' );
 	}
 	if ( showInstalledLink ) {
 		const { setupSampleCourseNonce } = window.sensei_home;
