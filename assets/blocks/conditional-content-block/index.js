@@ -12,6 +12,7 @@ import metadata from './block.json';
 import icon from '../../icons/conditional-content.svg';
 
 export default {
+	...metadata,
 	metadata,
 	icon,
 	edit,

@@ -12,6 +12,7 @@ import edit from './outline-edit';
 import save from './outline-save';
 
 export default {
+	...metadata,
 	metadata,
 	styles: [
 		{
