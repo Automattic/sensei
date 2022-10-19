@@ -16,15 +16,16 @@ class Updates_Factory {
 	/**
 	 * Create Updates instance.
 	 *
-	 * @param mixed $sensei_version Current Sensei version based on stored settings.
-	 * @param bool  $is_upgrade     Whether this is an upgrade or not.
+	 * @param mixed       $current_version Current Sensei version based on stored settings.
+	 * @param string|null $plugin_version Sensei version based on plugin code.
 	 *
 	 * @return \Sensei_Updates
 	 */
-	public static function create( $sensei_version, bool $is_upgrade ): \Sensei_Updates {
-		$is_new_install = ! $sensei_version && ! self::course_exists();
+	public function create( $current_version, ?string $plugin_version ): \Sensei_Updates {
+		$is_upgrade     = $current_version && version_compare( $plugin_version, $current_version, '>' );
+		$is_new_install = ! $current_version && ! $this->course_exists();
 
-		return new \Sensei_Updates( $sensei_version, $is_new_install, $is_upgrade );
+		return new \Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
 	}
 
 	/**
@@ -32,7 +33,7 @@ class Updates_Factory {
 	 *
 	 * @return bool
 	 */
-	private static function course_exists() {
+	private function course_exists(): bool {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
