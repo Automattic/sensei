@@ -64,6 +64,13 @@ interface Lesson_Progress_Repository_Interface {
 	public function save( Lesson_Progress $lesson_progress ): void;
 
 	/**
+	 * Delete the lesson progress.
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
+	public function delete( Lesson_Progress $lesson_progress ): void;
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
 	 *

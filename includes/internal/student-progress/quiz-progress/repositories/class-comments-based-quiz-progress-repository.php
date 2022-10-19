@@ -132,4 +132,15 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		}
 		Sensei_Utils::update_lesson_status( $quiz_progress->get_user_id(), $lesson_id, $quiz_progress->get_status(), $metadata );
 	}
+
+	/**
+	 * Delete the quiz progress.
+	 *
+	 * @param Quiz_Progress $quiz_progress Quiz progress.
+	 */
+	public function delete( Quiz_Progress $quiz_progress ): void {
+		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
+		Sensei_Utils::sensei_delete_quiz_grade( $lesson_id, $quiz_progress->get_user_id() );
+		Sensei_Utils::sensei_delete_quiz_answers( $lesson_id, $quiz_progress->get_user_id() );
+	}
 }

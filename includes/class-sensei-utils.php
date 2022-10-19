@@ -551,14 +551,11 @@ class Sensei_Utils {
 		// Delete quiz saved answers
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-		// Delete lesson status
-		$args = array(
-			'post_id' => $lesson_id,
-			'type'    => 'sensei_lesson_status',
-			'user_id' => $user_id,
-		);
-		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked
-		self::sensei_delete_activities( $args );
+		// Delete lesson progress.
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( $lesson_progress ) {
+			Sensei()->lesson_progress_repository->delete( $lesson_progress );
+		}
 
 		if ( ! $from_course ) {
 			do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
@@ -590,14 +587,11 @@ class Sensei_Utils {
 			self::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
 		}
 
-		// Delete course status
-		$args = array(
-			'post_id' => $course_id,
-			'type'    => 'sensei_course_status',
-			'user_id' => $user_id,
-		);
-
-		self::sensei_delete_activities( $args );
+		// Delete course progress.
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( $course_progress ) {
+			Sensei()->course_progress_repository->delete( $course_progress );
+		}
 
 		do_action( 'sensei_user_course_reset', $user_id, $course_id );
 
