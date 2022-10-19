@@ -23,7 +23,7 @@ const SenseiGuides = ( { data } ) => {
 	return (
 		<Section
 			title={ __( 'Sensei Guides', 'sensei-lms' ) }
-			className="sensei-home__guides"
+			className="sensei-home-guides"
 		>
 			<ul>
 				{ data.items.map( ( item, key ) => (
@@ -33,7 +33,7 @@ const SenseiGuides = ( { data } ) => {
 				) ) }
 			</ul>
 			{ data.more_url && (
-				<div className="sensei-home__guides__more-link">
+				<div className="sensei-home-guides__more-link">
 					<Link
 						label={ __( 'See more', 'sensei-lms' ) }
 						url={ data.more_url }
