@@ -199,31 +199,31 @@ class Sensei_Admin {
 			$parent_file  = 'sensei';
 			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
 
-		} else if ( in_array( $screen->id, [ 'edit-module', 'admin_page_module-order' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'edit-module', 'admin_page_module-order' ], true ) ) {
 			// Module pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit-tags.php?taxonomy=module&post_type=course';
 
-		} else if ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
 			// Course pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit.php?post_type=course';
 
-		} else if ( in_array( $screen->id, [ 'lesson', 'edit-lesson-tag', 'admin_page_lesson-order' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'lesson', 'edit-lesson-tag', 'admin_page_lesson-order' ], true ) ) {
 			// Lesson pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit.php?post_type=lesson';
 
-		} else if ( in_array( $screen->id, [ 'question', 'edit-question-category' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'question', 'edit-question-category' ], true ) ) {
 			// Question pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
 			$submenu_file             = 'edit.php?post_type=question';
 
-		} else if ( in_array( $screen->id, [ 'sensei_message' ], true ) ) {
+		} elseif ( in_array( $screen->id, [ 'sensei_message' ], true ) ) {
 			// Message pages.
 			$parent_file              = 'sensei';
 			$_wp_real_parent_file[''] = 'sensei';
@@ -1324,8 +1324,8 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'page'      => $this->course_order_page_slug,
-						'ordered'   => $ordered,
+						'page'    => $this->course_order_page_slug,
+						'ordered' => $ordered,
 					),
 					admin_url( 'admin.php' )
 				)
