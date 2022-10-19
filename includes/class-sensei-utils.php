@@ -2680,8 +2680,7 @@ class Sensei_Utils {
 				}
 			}
 		}
-		$video_embed = get_post_meta( $post->ID
-			, '_lesson_video_embed', true );
+		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
 		return $video_embed ? self::render_video_embed( $video_embed ) : null;
 
 	}
