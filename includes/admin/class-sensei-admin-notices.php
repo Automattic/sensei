@@ -57,11 +57,11 @@ class Sensei_Admin_Notices {
 		'edit-question-category',
 		'edit-lesson-tag',
 		Sensei_Home::SCREEN_ID,
-		'course_page_' . Sensei_Analysis::PAGE_SLUG,
-		'course_page_sensei_learners',
-		'course_page_sensei-settings',
-		'course_page_sensei_grading',
-		'course_page_sensei-tools',
+		'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG,
+		'sensei-lms_page_sensei_learners',
+		'sensei-lms_page_sensei-settings',
+		'sensei-lms_page_sensei_grading',
+		'sensei-lms_page_sensei-tools',
 		'course_page_lesson-order',
 	];
 
