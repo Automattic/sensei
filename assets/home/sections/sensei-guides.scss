@@ -1,0 +1,19 @@
+.sensei-home-page {
+	.sensei-home {
+		&__guides {
+			ul {
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+
+				li {
+					margin: 0;
+				}
+			}
+
+			&__more-link {
+				margin-top: 18px;
+			}
+		}
+	}
+}
