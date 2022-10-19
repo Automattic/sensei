@@ -214,7 +214,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 	private function getRemoteDataMock( $response ) {
 		$remote_data_api = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
 			->setMethods( [ 'fetch' ] )
-			->setConstructorArgs( [ 'example-plugin' ] )
+			->setConstructorArgs( [ 'example-plugin', '1.0.0' ] )
 			->getMock();
 
 		$remote_data_api->expects( $this->any() )
