@@ -62,7 +62,7 @@ class Sensei_Admin_Notices {
 		'sensei-lms_page_sensei-settings',
 		'sensei-lms_page_sensei_grading',
 		'sensei-lms_page_sensei-tools',
-		'course_page_lesson-order',
+		'admin_page_lesson-order',
 	];
 
 	const OTHER_ALLOWED_SCREEN_IDS = [

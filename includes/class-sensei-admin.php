@@ -418,8 +418,8 @@ class Sensei_Admin {
 			'edit-lesson-tag',
 			'edit-question',
 			'edit-question-category',
-			'course_page_' . Sensei_Analysis::PAGE_SLUG,
-			'course_page_sensei_learners',
+			'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG,
+			'sensei-lms_page_sensei_learners',
 		];
 		/**
 		 * Allows modifying the list of screens where the scripts for custom

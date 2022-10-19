@@ -751,9 +751,9 @@ class Sensei_Teacher {
 			return $query;
 		}
 		switch ( $screen->id ) {
-			case 'course_page_sensei_grading':
-			case 'course_page_' . Sensei_Analysis::PAGE_SLUG:
-			case 'course_page_sensei_learners':
+			case 'sensei-lms_page_sensei_grading':
+			case 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG:
+			case 'sensei-lms_page_sensei_learners':
 			case 'lesson':
 			case 'course':
 			case 'question':
@@ -1532,8 +1532,8 @@ class Sensei_Teacher {
 			'edit-lesson',
 			'edit-course',
 			'edit-question',
-			'course_page_course-order',
-			'course_page_lesson-order',
+			'admin_page_course-order',
+			'admin_page_lesson-order',
 		);
 
 		if ( in_array( $screen->id, $limit_screens ) ) {

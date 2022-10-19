@@ -124,7 +124,7 @@ class Sensei_Learner_Management {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
+		if ( in_array( $screen->id, [ 'sensei-lms_page_sensei_learners' ], true ) && ( 'term' !== $screen->base ) ) {
 			$this->display_students_navigation( $screen );
 		}
 	}
