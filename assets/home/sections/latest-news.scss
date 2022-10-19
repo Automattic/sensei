@@ -1,17 +1,26 @@
 .sensei-home {
-	&-guides {
+	&-latest-news {
 		ul {
 			display: flex;
 			flex-direction: column;
 			gap: 12px;
+			flex-wrap: wrap;
 
 			li {
 				margin: 0;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				gap: 4px;
 			}
 		}
 
 		&__more-link {
 			margin-top: 18px;
+		}
+
+		&__date {
+			color: #949494;
 		}
 	}
 }

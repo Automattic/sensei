@@ -13,6 +13,7 @@ import transforms from './transforms';
 import metadata from './block.json';
 
 export default {
+	...metadata,
 	metadata,
 	icon,
 	example: {

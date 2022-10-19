@@ -9,6 +9,7 @@ $break-medium: 783px; // adminbar goes big
 @import 'sections/extensions';
 @import 'sections/get-help';
 @import 'sections/sensei-guides';
+@import 'sections/latest-news';
 
 @mixin white-box( $r: 2px ) {
 	border-radius: $r;

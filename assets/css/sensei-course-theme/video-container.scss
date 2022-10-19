@@ -75,14 +75,14 @@
 		/**
 		 * Fixed right sidebar mode when there is no video.
 		 */
-		body:not(.sensei-video-lesson) &__video-container {
+		body:not(.sensei-video-lesson):not(.editor-styles-wrapper) &__video-container {
 			justify-content: flex-end;
 			border: none;
 			height: 0;
 			overflow: visible;
 			padding: 0!important;
 			margin-top: 0!important;
-			margin-bottom: 0!important;
+			margin-bottom: -32px!important;
 			transition: none;
 
 			&:after {
