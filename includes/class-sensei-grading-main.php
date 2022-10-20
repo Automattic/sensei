@@ -489,10 +489,34 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$inprogress_args['view'] = 'in-progress';
 
 		$format              = '<a class="%s" href="%s">%s <span class="count">(%s)</span></a>';
-		$menu['all']         = sprintf( $format, $all_class, esc_url( add_query_arg( $all_args, admin_url( 'admin.php' ) ) ), __( 'All', 'sensei-lms' ), number_format( (int) $all_lessons_count ) );
-		$menu['ungraded']    = sprintf( $format, $ungraded_class, esc_url( add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ) ), __( 'Ungraded', 'sensei-lms' ), number_format( (int) $ungraded_lessons_count ) );
-		$menu['graded']      = sprintf( $format, $graded_class, esc_url( add_query_arg( $graded_args, admin_url( 'admin.php' ) ) ), __( 'Graded', 'sensei-lms' ), number_format( (int) $graded_lessons_count ) );
-		$menu['in-progress'] = sprintf( $format, $inprogress_class, esc_url( add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ) ), __( 'In Progress', 'sensei-lms' ), number_format( (int) $inprogress_lessons_count ) );
+		$menu['all']         = sprintf(
+			$format,
+			$all_class,
+			esc_url( add_query_arg( $all_args, admin_url( 'admin.php' ) ) ),
+			__( 'All', 'sensei-lms' ),
+			number_format( (int) $all_lessons_count )
+		);
+		$menu['ungraded']    = sprintf(
+			$format,
+			$ungraded_class,
+			esc_url( add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ) ),
+			__( 'Ungraded', 'sensei-lms' ),
+			number_format( (int) $ungraded_lessons_count )
+		);
+		$menu['graded']      = sprintf(
+			$format,
+			$graded_class,
+			esc_url( add_query_arg( $graded_args, admin_url( 'admin.php' ) ) ),
+			__( 'Graded', 'sensei-lms' ),
+			number_format( (int) $graded_lessons_count )
+		);
+		$menu['in-progress'] = sprintf(
+			$format,
+			$inprogress_class,
+			esc_url( add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ) ),
+			__( 'In Progress', 'sensei-lms' ),
+			number_format( (int) $inprogress_lessons_count )
+		);
 
 		return apply_filters( 'sensei_grading_sub_menu', $menu );
 	}
