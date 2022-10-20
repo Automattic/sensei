@@ -226,7 +226,7 @@ jQuery( document ).ready( function () {
 							$hiddenPosts.append( data.data );
 						},
 						error: function(errorThrown){
-							$hiddenPosts.append( __( "<p>There was an error fetching courses: ", 'sensei-lms' ) + errorThrown.statusText + ': ' + errorThrown.status + "</p>" )
+							$hiddenPosts.append( "<p>" + __( "There was an error fetching courses: ", 'sensei-lms' ) + errorThrown.statusText + ': ' + errorThrown.status + "</p>" )
 						}
 					}
 				);
