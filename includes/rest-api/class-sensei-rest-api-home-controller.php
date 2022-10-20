@@ -169,18 +169,24 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
-		$show_extensions = current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
+		$show_extensions        = current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
+		$can_user_manage_sensei = current_user_can( 'manage_sensei' );
 
-		return [
-			'tasks'           => $this->tasks_provider->get(),
-			'quick_links'     => $this->quick_links_provider->get(),
-			'help'            => $this->help_provider->get(),
-			'guides'          => $this->guides_provider->get(),
+		$data = [
 			'news'            => $this->news_provider->get(),
-			'promo_banner'    => $this->promo_banner_provider->get(),
-			'notices'         => $this->notices_provider->get(),
+			'guides'          => $this->guides_provider->get(),
 			'show_extensions' => $show_extensions,
 		];
+
+		if ( $can_user_manage_sensei ) {
+			$data['quick_links']  = $this->quick_links_provider->get();
+			$data['help']         = $this->help_provider->get();
+			$data['promo_banner'] = $this->promo_banner_provider->get();
+			$data['tasks']        = $this->tasks_provider->get();
+			$data['notices']      = $this->notices_provider->get();
+		}
+
+		return $data;
 	}
 
 	/**

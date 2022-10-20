@@ -88,7 +88,7 @@ const Main = () => {
 					</Col>
 				) }
 
-				<SenseiProAd />
+				{ data?.promo_banner && <SenseiProAd /> }
 
 				{ data?.guides && data?.guides?.items.length > 0 && (
 					<Col
