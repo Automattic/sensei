@@ -14,11 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Grade_Repository_Factory.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Grade_Repository_Factory {
 	/**
 	 * Create a repository for the grades.
+	 *
+	 * @internal
 	 *
 	 * @return Grade_Repository_Interface
 	 */

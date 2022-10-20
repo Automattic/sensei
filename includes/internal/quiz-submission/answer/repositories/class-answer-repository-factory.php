@@ -14,11 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Answer_Repository_Factory.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Answer_Repository_Factory {
 	/**
 	 * Create a repository for the answers.
+	 *
+	 * @internal
 	 *
 	 * @return Answer_Repository_Interface
 	 */

@@ -16,11 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Comments_Based_Answer_Repository.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Create a new answer.
+	 *
+	 * @internal
 	 *
 	 * @param int    $submission_id The submission ID.
 	 * @param int    $question_id   The question ID.
@@ -44,6 +48,8 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	/**
 	 * Get all answers for a quiz submission.
 	 *
+	 * @internal
+	 *
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Answer[] An array of answers.
@@ -61,6 +67,8 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 
 	/**
 	 * Delete all answers for a submission.
+	 *
+	 * @internal
 	 *
 	 * @param int $submission_id The submission ID.
 	 */

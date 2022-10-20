@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Answer.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Answer {
@@ -64,6 +66,8 @@ class Answer {
 	/**
 	 * Constructor.
 	 *
+	 * @internal
+	 *
 	 * @param int               $id            The answer ID.
 	 * @param int               $submission_id The submission ID.
 	 * @param int               $question_id   The question ID.
@@ -90,6 +94,8 @@ class Answer {
 	/**
 	 * Get the answer ID.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_id(): int {
@@ -98,6 +104,8 @@ class Answer {
 
 	/**
 	 * Get the submission ID.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -108,6 +116,8 @@ class Answer {
 	/**
 	 * Get the question ID.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_question_id(): int {
@@ -116,6 +126,8 @@ class Answer {
 
 	/**
 	 * Get the answer value.
+	 *
+	 * @internal
 	 *
 	 * @return string
 	 */
@@ -126,6 +138,8 @@ class Answer {
 	/**
 	 * Get the created date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_created_at(): DateTimeInterface {
@@ -134,6 +148,8 @@ class Answer {
 
 	/**
 	 * Get the updated date.
+	 *
+	 * @internal
 	 *
 	 * @return DateTimeInterface
 	 */

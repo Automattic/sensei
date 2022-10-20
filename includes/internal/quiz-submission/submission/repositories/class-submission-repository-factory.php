@@ -14,11 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Submission_Repository_Factory.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Submission_Repository_Factory {
 	/**
 	 * Create a repository for the quiz submissions.
+	 *
+	 * @internal
 	 *
 	 * @return Submission_Repository_Interface
 	 */

@@ -16,11 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Submission_Repository_Interface.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 interface Submission_Repository_Interface {
 	/**
 	 * Creates a new quiz submission.
+	 *
+	 * @internal
 	 *
 	 * @param int        $quiz_id     The quiz ID.
 	 * @param int        $user_id     The user ID.
@@ -33,6 +37,8 @@ interface Submission_Repository_Interface {
 	/**
 	 * Get or create a new quiz submission if it doesn't exist.
 	 *
+	 * @internal
+	 *
 	 * @param int        $quiz_id     The quiz ID.
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
@@ -44,6 +50,8 @@ interface Submission_Repository_Interface {
 	/**
 	 * Gets a quiz submission.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
@@ -54,6 +62,8 @@ interface Submission_Repository_Interface {
 	/**
 	 * Get the question IDs related to this quiz submission.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
@@ -63,6 +73,8 @@ interface Submission_Repository_Interface {
 
 	/**
 	 * Save quiz submission.
+	 *
+	 * @internal
 	 *
 	 * @param Submission $submission The quiz submission.
 	 */

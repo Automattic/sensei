@@ -21,11 +21,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Comments_Based_Submission_Repository.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Comments_Based_Submission_Repository implements Submission_Repository_Interface {
 	/**
 	 * Creates a new quiz submission.
+	 *
+	 * @internal
 	 *
 	 * @param int        $quiz_id     The quiz ID.
 	 * @param int        $user_id     The user ID.
@@ -60,6 +64,8 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	/**
 	 * Get or create a new quiz submission if it doesn't exist.
 	 *
+	 * @internal
+	 *
 	 * @param int        $quiz_id     The quiz ID.
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
@@ -78,6 +84,8 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 
 	/**
 	 * Gets a course progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
@@ -107,6 +115,8 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	/**
 	 * Get the question IDs related to this quiz submission.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 *
@@ -131,6 +141,8 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 
 	/**
 	 * Save quiz submission.
+	 *
+	 * @internal
 	 *
 	 * @param Submission $submission The quiz submission.
 	 *

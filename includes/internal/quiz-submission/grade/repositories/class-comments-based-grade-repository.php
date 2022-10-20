@@ -16,11 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Comments_Based_Grade_Repository.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Creates a new grade.
+	 *
+	 * @internal
 	 *
 	 * @param int         $submission_id The submission ID.
 	 * @param int         $answer_id     The answer ID.
@@ -53,6 +57,8 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Get all grades for a quiz submission.
 	 *
+	 * @internal
+	 *
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Grade[] An array of grades.
@@ -78,6 +84,8 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**
 	 * Save multiple grades.
 	 *
+	 * @internal
+	 *
 	 * @param int     $submission_id The submission ID.
 	 * @param Grade[] $grades        An array of grades.
 	 */
@@ -96,6 +104,8 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 	/**
 	 * Delete all grades for a submission.
+	 *
+	 * @internal
 	 *
 	 * @param int $submission_id The submission ID.
 	 */

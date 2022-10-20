@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Grade.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Grade {
@@ -71,6 +73,8 @@ class Grade {
 	/**
 	 * Constructor.
 	 *
+	 * @internal
+	 *
 	 * @param int               $id          The grade ID.
 	 * @param int               $answer_id   The answer ID.
 	 * @param int               $question_id The question ID.
@@ -100,6 +104,8 @@ class Grade {
 	/**
 	 * Get the grade ID.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_id(): int {
@@ -108,6 +114,8 @@ class Grade {
 
 	/**
 	 * Get the answer ID.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -118,6 +126,8 @@ class Grade {
 	/**
 	 * Get the question ID.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_question_id(): int {
@@ -126,6 +136,8 @@ class Grade {
 
 	/**
 	 * Get the grade points.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -136,6 +148,8 @@ class Grade {
 	/**
 	 * Get the grade feedback.
 	 *
+	 * @internal
+	 *
 	 * @return string|null
 	 */
 	public function get_feedback(): ?string {
@@ -144,6 +158,8 @@ class Grade {
 
 	/**
 	 * Set the grade feedback.
+	 *
+	 * @internal
 	 *
 	 * @param string $feedback The feedback string.
 	 */
@@ -154,6 +170,8 @@ class Grade {
 	/**
 	 * Get the created date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_created_at(): DateTimeInterface {
@@ -162,6 +180,8 @@ class Grade {
 
 	/**
 	 * Get the updated date.
+	 *
+	 * @internal
 	 *
 	 * @return DateTimeInterface
 	 */

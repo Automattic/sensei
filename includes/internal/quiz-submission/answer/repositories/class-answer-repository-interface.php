@@ -16,11 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Answer_Repository_Interface.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 interface Answer_Repository_Interface {
 	/**
 	 * Create a new answer.
+	 *
+	 * @internal
 	 *
 	 * @param int    $submission_id The submission ID.
 	 * @param int    $question_id   The question ID.
@@ -33,6 +37,8 @@ interface Answer_Repository_Interface {
 	/**
 	 * Get all answers for a quiz submission.
 	 *
+	 * @internal
+	 *
 	 * @param int $submission_id The submission ID.
 	 *
 	 * @return Answer[] An array of answers.
@@ -41,6 +47,8 @@ interface Answer_Repository_Interface {
 
 	/**
 	 * Delete all answers for a submission.
+	 *
+	 * @internal
 	 *
 	 * @param int $submission_id The submission ID.
 	 */

@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Submission.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Submission {
@@ -64,6 +66,8 @@ class Submission {
 	/**
 	 * Constructor.
 	 *
+	 * @internal
+	 *
 	 * @param int               $id          The submission ID.
 	 * @param int               $quiz_id     The quiz post ID.
 	 * @param int               $user_id     The user ID.
@@ -90,6 +94,8 @@ class Submission {
 	/**
 	 * Get the submission ID.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_id(): int {
@@ -98,6 +104,8 @@ class Submission {
 
 	/**
 	 * Get the quiz ID.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -108,6 +116,8 @@ class Submission {
 	/**
 	 * Get the user ID.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_user_id(): int {
@@ -116,6 +126,8 @@ class Submission {
 
 	/**
 	 * Get the final grade.
+	 *
+	 * @internal
 	 *
 	 * @return float|null
 	 */
@@ -126,6 +138,8 @@ class Submission {
 	/**
 	 * Set the final grade.
 	 *
+	 * @internal
+	 *
 	 * @param float|null $final_grade The final grade.
 	 */
 	public function set_final_grade( ?float $final_grade ): void {
@@ -135,6 +149,8 @@ class Submission {
 	/**
 	 * Get the created date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_created_at(): DateTimeInterface {
@@ -143,6 +159,8 @@ class Submission {
 
 	/**
 	 * Get the updated date.
+	 *
+	 * @internal
 	 *
 	 * @return DateTimeInterface
 	 */
