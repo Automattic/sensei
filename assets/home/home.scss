@@ -29,10 +29,12 @@ $break-medium: 783px; // adminbar goes big
 }
 
 .sensei-home-page {
-	margin-right: 10px;
+	max-width: 1244px;
+	margin: 0 auto;
+	padding-right: 10px;
 
 	@media (min-width: 783px) {
-		margin-right: 20px;
+		padding-right: 20px;
 	}
 
 	color: $gray-100;
@@ -70,6 +72,10 @@ $break-medium: 783px; // adminbar goes big
 		}
 	}
 
+	.postbox {
+		height: 100%;
+	}
+
 	.postbox .hndle {
 			margin: 0;
 			padding: 8px 12px;
@@ -105,7 +111,6 @@ $break-medium: 783px; // adminbar goes big
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			margin-bottom: 38px;
 			transition: 0.5s max-height, 0.5s margin-bottom; // For dismissable sections.
 
 			&--dismissed {
@@ -498,8 +503,6 @@ $break-medium: 783px; // adminbar goes big
 		}
 
 		&__quick-links {
-			height: 100%;
-
 			&__title {
 				font-size: 13px;
 				margin: 0;
@@ -525,5 +528,22 @@ $break-medium: 783px; // adminbar goes big
 				height: 16px;
 			}
 		}
+	}
+}
+
+.sensei-home-title {
+	display: flex;
+	margin: 31px 0;
+
+	&__logo {
+		width: 40px;
+		height: 40px;
+		margin-right: 12px;
+		color: #43AF99;
+	}
+
+	&__logotype {
+		width: 80px;
+		color: #26212E;
 	}
 }
