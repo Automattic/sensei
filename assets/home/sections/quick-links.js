@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useState, useRef, useEffect } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
@@ -11,49 +11,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 import Section from '../section';
 import { Grid, Col } from '../grid';
 import Link from '../link';
-
-/**
- * Component to Install Demo Course. Invoked when clicking on a link pointing to "sensei://install-demo-course".
- *
- * @param {Object}   props        Component props.
- * @param {Function} props.remove Function to call to remove the item from the Quick Links Column.
- * @return {string} A message to the user with the status of the installation.
- */
-function InstallDemoCourse( { remove } ) {
-	const [ title, setTitle ] = useState( 'Installing' );
-	const timer = useRef( 0 );
-	const installedMessage = 'Installed!';
-	const clear = () => {
-		if ( timer.current ) {
-			clearTimeout( timer.current );
-		}
-		timer.current = 0;
-	};
-	useEffect( () => {
-		if ( null === title ) {
-			remove();
-		}
-	}, [ title, remove ] );
-	useEffect( () => {
-		const run = () => {
-			setTitle( ( oldTitle ) => {
-				if ( installedMessage === oldTitle ) {
-					clear();
-					return null;
-				}
-				if ( ! oldTitle.includes( '...' ) ) {
-					timer.current = setTimeout( run, 500 );
-					return oldTitle + '.';
-				}
-				timer.current = setTimeout( run, 2000 );
-				return installedMessage;
-			} );
-		};
-		clear();
-		timer.current = setTimeout( run, 500 );
-	}, [] );
-	return title;
-}
+import InstallDemoCourse from '../install-demo-course';
 
 const quickLinksSpecialMapping = {
 	'sensei://install-demo-course': InstallDemoCourse,

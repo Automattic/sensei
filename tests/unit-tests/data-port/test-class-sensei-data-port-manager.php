@@ -295,7 +295,7 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 	public function redirectImportSampleDataSources() {
 		return [
 			'valid'         => [
-				wp_create_nonce( 'sensei-setup-wizard' ),
+				wp_create_nonce( 'sensei-home' ),
 				$this->once(),
 				false,
 			],

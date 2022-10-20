@@ -129,6 +129,8 @@ final class Sensei_Home {
 
 		$data['tasks_dismissed'] = get_option( self::DISMISS_TASKS_OPTION );
 
+		$data['setupSampleCourseNonce'] = wp_create_nonce( 'sensei-home' );
+
 		wp_localize_script(
 			'sensei-home',
 			'sensei_home',
