@@ -92,7 +92,7 @@ class Sensei_REST_API_Internal {
 		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
 		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
 		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
-		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance() );
+		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), Sensei_Home::SCREEN_ID );
 
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}

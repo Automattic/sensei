@@ -24,7 +24,7 @@ class Sensei_Home_Quick_Links_Provider {
 				__( 'Courses', 'sensei-lms' ),
 				[
 					$this->create_item( __( 'Create a Course', 'sensei-lms' ), admin_url( '/post-new.php?post_type=course' ) ),
-					$this->create_item( __( 'Install a Demo Course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE ),
+					$this->create_demo_link(),
 					$this->create_item( __( 'Import a Course', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-tools&tool=import-content' ) ),
 					$this->create_item( __( 'Reports', 'sensei-lms' ), admin_url( '/admin.php?page=sensei_reports' ) ),
 				]
@@ -48,6 +48,33 @@ class Sensei_Home_Quick_Links_Provider {
 				]
 			),
 		];
+	}
+
+	/**
+	 * Return the magical link to create a demo course, or the link to edit the demo course.
+	 *
+	 * @return array The magical link to create a demo course or the link to edit the demo course.
+	 */
+	private function create_demo_link() {
+		global $wpdb;
+		$cache_key   = 'home/metadata/demo-course';
+		$cache_group = 'sensei/temporary';
+		$result      = wp_cache_get( $cache_key, $cache_group );
+		if ( false === $result ) {
+			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
+			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name LIKE %s ORDER BY post_status='published' DESC, ID ASC LIMIT 1", "{$prefix}%" ) );
+			if ( null === $post_id ) {
+				$result = null;
+			} else {
+				$result = $post_id;
+				wp_cache_set( $cache_key, $result, $cache_group, 60 );
+			}
+		}
+		if ( null !== $result ) {
+			return $this->create_item( __( 'Edit Demo Course', 'sensei-lms' ), get_edit_post_link( $result, '&' ) );
+		}
+		return $this->create_item( __( 'Install a Demo Course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE );
 	}
 
 	/**

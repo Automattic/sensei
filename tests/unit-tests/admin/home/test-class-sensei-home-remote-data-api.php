@@ -17,7 +17,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 	 */
 	public function testFetchCorrectPluginData() {
 		$http_requests = $this->trackHttpRequests( [] );
-		$provider      = new Sensei_Home_Remote_Data_API( 'dinosaurs' );
+		$provider      = new Sensei_Home_Remote_Data_API( 'dinosaurs', '1.0.0' );
 		$remote_data   = $provider->fetch();
 
 		$this->stopTrackingHttpRequests();
@@ -40,7 +40,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 		);
 
 		$http_requests = $this->trackHttpRequests( [] );
-		$provider      = new Sensei_Home_Remote_Data_API( 'dinosaurs' );
+		$provider      = new Sensei_Home_Remote_Data_API( 'dinosaurs', '1.0.0' );
 		$remote_data   = $provider->fetch();
 
 		$this->stopTrackingHttpRequests();
@@ -64,7 +64,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 			}
 		);
 
-		$provider     = new Sensei_Home_Remote_Data_API( 'dinosaurs' );
+		$provider     = new Sensei_Home_Remote_Data_API( 'dinosaurs', '1.0.0' );
 		$first_fetch  = $provider->fetch();
 		$second_fetch = $provider->fetch();
 		$this->stopTrackingHttpRequests();
@@ -92,7 +92,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 		$url     = Sensei_Home_Remote_Data_API::API_BASE_URL . '/test.json';
 
 		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
-			->setConstructorArgs( [ 'dinosaurs' ] )
+			->setConstructorArgs( [ 'dinosaurs', '1.0.0' ] )
 			->setMethods( [ 'get_api_url' ] )
 			->getMock();
 		$provider->expects( $this->any() )->method( 'get_api_url' )->willReturn( $url );
@@ -131,7 +131,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 		$url     = Sensei_Home_Remote_Data_API::API_BASE_URL . '/test.json';
 
 		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
-			->setConstructorArgs( [ 'dinosaurs' ] )
+			->setConstructorArgs( [ 'dinosaurs', '1.0.0' ] )
 			->setMethods( [ 'get_api_url' ] )
 			->getMock();
 		$provider->expects( $this->any() )->method( 'get_api_url' )->willReturn( $url );
@@ -166,7 +166,7 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 		$url     = Sensei_Home_Remote_Data_API::API_BASE_URL . '/test.json';
 
 		$provider = $this->getMockBuilder( Sensei_Home_Remote_Data_API::class )
-			->setConstructorArgs( [ 'dinosaurs' ] )
+			->setConstructorArgs( [ 'dinosaurs', '1.0.0' ] )
 			->setMethods( [ 'get_api_url' ] )
 			->getMock();
 		$provider->expects( $this->any() )->method( 'get_api_url' )->willReturn( $url );

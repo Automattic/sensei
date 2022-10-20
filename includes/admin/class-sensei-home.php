@@ -48,8 +48,8 @@ final class Sensei_Home {
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
 	private function __construct() {
-		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms' );
-		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api );
+		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
+		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api, self::SCREEN_ID );
 	}
 
 	/**
@@ -128,6 +128,8 @@ final class Sensei_Home {
 		$data['dismiss_tasks_nonce'] = wp_create_nonce( self::DISMISS_TASKS_NONCE_ACTION );
 
 		$data['tasks_dismissed'] = get_option( self::DISMISS_TASKS_OPTION );
+
+		$data['setupSampleCourseNonce'] = wp_create_nonce( 'sensei-home' );
 
 		wp_localize_script(
 			'sensei-home',
