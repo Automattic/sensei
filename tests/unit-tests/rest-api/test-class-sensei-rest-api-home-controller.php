@@ -12,6 +12,7 @@
  * @covers Sensei_REST_API_Home_Controller
  */
 class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * Quick Links provider mock.
@@ -93,8 +94,9 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		);
 	}
 
-	public function testGetData_GivenAMockedQuickLinksProvider_ReturnsQuickLinksSection() {
+	public function testGetData_GivenAMockedQuickLinksProviderAsAdmin_ReturnsQuickLinksSection() {
 		// Arrange
+		$this->login_as_admin();
 		$mocked_response = [ 'mocked_response' ];
 		$this->quick_links_provider_mock->expects( $this->once() )
 			->method( 'get' )
@@ -106,6 +108,17 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		// Assert
 		$this->assertArrayHasKey( 'quick_links', $result );
 		$this->assertEquals( $mocked_response, $result['quick_links'] );
+	}
+
+	public function testGetData_GivenAMockedQuickLinksProviderAsTeacher_NotIncluded() {
+		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$result = $this->controller->get_data();
+
+		// Assert
+		$this->assertArrayNotHasKey( 'quick_links', $result );
 	}
 
 	public function testGetData_GivenAMockedNewsProvider_ReturnsNewsSection() {
@@ -138,8 +151,9 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$this->assertEquals( $mocked_response, $result['guides'] );
 	}
 
-	public function testGetData_GivenAMockedHelpProvider_ReturnsHelpSection() {
+	public function testGetData_GivenAMockedHelpProviderAsAdmin_ReturnsHelpSection() {
 		// Arrange
+		$this->login_as_admin();
 		$mocked_response = [ 'mocked_response' ];
 		$this->help_provider_mock->expects( $this->once() )
 			->method( 'get' )
@@ -153,8 +167,20 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$this->assertEquals( $mocked_response, $result['help'] );
 	}
 
-	public function testGetData_GivenAMockedPromoProvider_ReturnsPromoSection() {
+	public function testGetData_GivenAMockedHelpProviderAsTeacher_NotIncluded() {
 		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$result = $this->controller->get_data();
+
+		// Assert
+		$this->assertArrayNotHasKey( 'help', $result );
+	}
+
+	public function testGetData_GivenAMockedPromoProviderAsAdmin_ReturnsPromoSection() {
+		// Arrange
+		$this->login_as_admin();
 		$mocked_response = [ 'mocked_response' ];
 		$this->promo_provider_mock->expects( $this->once() )
 			->method( 'get' )
@@ -168,8 +194,20 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$this->assertEquals( $mocked_response, $result['promo_banner'] );
 	}
 
-	public function testGetData_GivenAMockedTasksProvider_ReturnsTasksSection() {
+	public function testGetData_GivenAMockedPromoProviderAsTeacher_NotIncluded() {
 		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$result = $this->controller->get_data();
+
+		// Assert
+		$this->assertArrayNotHasKey( 'promo_banner', $result );
+	}
+
+	public function testGetData_GivenAMockedTasksProviderAsAdmin_ReturnsTasksSection() {
+		// Arrange
+		$this->login_as_admin();
 		$mocked_response = [ 'mocked_response' ];
 		$this->tasks_provider_mock->expects( $this->once() )
 			->method( 'get' )
@@ -183,8 +221,20 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		$this->assertEquals( $mocked_response, $result['tasks'] );
 	}
 
-	public function testGetData_GivenAMockedNoticesProvider_ReturnsNoticesSection() {
+	public function testGetData_GivenAMockedTasksProvideAsTeacher_NotIncluded() {
 		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$result = $this->controller->get_data();
+
+		// Assert
+		$this->assertArrayNotHasKey( 'tasks', $result );
+	}
+
+	public function testGetData_GivenAMockedNoticesProviderAsAdmin_ReturnsNoticesSection() {
+		// Arrange
+		$this->login_as_admin();
 		$mocked_response = [ 'mocked_response' ];
 		$this->notices_provider_mock->expects( $this->once() )
 			->method( 'get' )
@@ -196,5 +246,16 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 		// Assert
 		$this->assertArrayHasKey( 'notices', $result );
 		$this->assertEquals( $mocked_response, $result['notices'] );
+	}
+
+	public function testGetData_GivenAMockedNoticesProviderAsTeacher_NotIncluded() {
+		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$result = $this->controller->get_data();
+
+		// Assert
+		$this->assertArrayNotHasKey( 'notices', $result );
 	}
 }
