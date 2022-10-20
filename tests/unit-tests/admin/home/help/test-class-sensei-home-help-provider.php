@@ -12,6 +12,7 @@
  * @covers Sensei_Home_Help_Provider
  */
 class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * The class under test.
@@ -49,13 +50,28 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		parent::tearDown();
 	}
 
+	public function testGet_WhenTeacher_ReturnsEmptyArray() {
+		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$categories = $this->provider->get();
+
+		// Assert
+		$this->assertEquals( [], $categories );
+	}
 
 	/**
 	 * Assert that all elements returned by the provider have the correct structure.
 	 */
-	public function testAllResultsHaveCorrectHelpStructure() {
+	public function testGet_WhenAdmin_ReturnsCorrectFormat() {
+		// Arrange
+		$this->login_as_admin();
+
+		// Act
 		$categories = $this->provider->get();
 
+		// Assert
 		foreach ( $categories as $category ) {
 			$this->assertIsArray( $category );
 			$this->assertArrayHasKey( 'title', $category );
@@ -68,9 +84,14 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		}
 	}
 
-	public function testCreateSupportTicketIsDisabledAndHasExtraLinkByDefault() {
+	public function testGet_WhenUpsetIsTrue_CreateSupportTicketIsDisabledAndHasExtraLinkByDefault() {
+		// Arrange
+		$this->login_as_admin();
+
+		// Act
 		$categories = $this->provider->get();
 
+		// Assert
 		$create_ticket_item = $this->get_item_by_text( $categories, __( 'Create a support ticket', 'sensei-lms' ) );
 		$this->assertNotNull( $create_ticket_item, 'Create support ticket item could not be found!' );
 
@@ -82,11 +103,15 @@ class Sensei_Home_Help_Provider_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'lock', $create_ticket_item['icon'] );
 	}
 
-	public function testCreateSupportTicketIsEnabledAndWithoutExtralinkWhenFilterIsOverrided() {
+	public function testGet_WhenUpsetIsFalse_CreateSupportTicketIsEnabledAndWithoutExtralink() {
+		// Arrange
+		$this->login_as_admin();
 		add_filter( 'sensei_home_support_ticket_creation_upsell_show', '__return_false' );
 
+		// Act
 		$categories = $this->provider->get();
 
+		// Assert
 		$create_ticket_item = $this->get_item_by_text( $categories, __( 'Create a support ticket', 'sensei-lms' ) );
 		$this->assertNotNull( $create_ticket_item, 'Create support ticket item could not be found!' );
 		// Create ticket item has a string as url.

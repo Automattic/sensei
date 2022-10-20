@@ -12,6 +12,7 @@
  * @covers Sensei_Home_Promo_Banner_Provider
  */
 class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * The provider under test.
@@ -48,26 +49,47 @@ class Sensei_Home_Promo_Banner_Provider_Test extends WP_UnitTestCase {
 		parent::tearDown();
 	}
 
+	public function testGet_AsTeacher_IsVisibleDefaultsToFalse() {
+		// Arrange
+		$this->login_as_teacher();
+
+		// Act
+		$banner = $this->provider->get();
+
+		// Assert
+		$this->assertIsArray( $banner );
+		$this->assertArrayHasKey( 'is_visible', $banner );
+		$this->assertFalse( $banner['is_visible'], 'Promotional banner must be hidden for teachers.' );
+	}
+
 	/**
 	 * Assert that promo banner is visible by default.
 	 */
-	public function testProviderReturnsVisibleBannerByDefault() {
+	public function testGet_WhenAdmin_IsVisibleDefaultsToTrue() {
+		// Arrange
+		$this->login_as_admin();
 
+		// Act
 		$banner = $this->provider->get();
 
+		// Assert
 		$this->assertIsArray( $banner );
 		$this->assertArrayHasKey( 'is_visible', $banner );
-		$this->assertTrue( $banner['is_visible'], 'Promotional banner must be visible by default.' );
+		$this->assertTrue( $banner['is_visible'], 'Promotional banner must be visible by default for admins.' );
 	}
 
 	/**
 	 * Assert that promo banner is not visible when filter overridden.
 	 */
-	public function testProviderReturnsNonVisibleBannerWhenFilterOverridden() {
+	public function testGet_WhenFilterIsUsed_IsVisibleReturnsFalse() {
+		// Arrange
+		$this->login_as_admin();
 		add_filter( 'sensei_home_promo_banner_show', '__return_false' );
 
+		// Act
 		$banner = $this->provider->get();
 
+		// Assert
 		$this->assertIsArray( $banner );
 		$this->assertArrayHasKey( 'is_visible', $banner );
 		$this->assertFalse( $banner['is_visible'], 'Promotional banner must not be visible when filter overridden.' );

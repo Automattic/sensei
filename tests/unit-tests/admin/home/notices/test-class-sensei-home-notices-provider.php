@@ -11,8 +11,33 @@
  * @covers Sensei_Home_Notices_Provider
  */
 class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
-	public function testGet_GivenSimpleFilterResponse_ReturnsFilterValue() {
+	use Sensei_Test_Login_Helpers;
+
+	public function testGet_GivenSimpleFilterResponseAsTeacher_ReturnsEmptyArray() {
 		// Arrange.
+		$this->login_as_teacher();
+		$notices_provider = new Sensei_Home_Notices_Provider();
+
+		$test_data = $this->getSimpleResponse();
+
+		add_filter(
+			'sensei_admin_notices',
+			function() use ( $test_data ) {
+				return $test_data;
+			}
+		);
+
+		// Act.
+		$notices = $notices_provider->get();
+
+		// Assert.
+		$this->assertEquals( [], $notices );
+	}
+
+	public function testGet_GivenSimpleFilterResponseAsAdmin_ReturnsFilterValue() {
+		// Arrange.
+		$this->login_as_admin();
+		remove_all_filters( 'sensei_admin_notices' );
 		$notices_provider = new Sensei_Home_Notices_Provider();
 
 		$test_data = $this->getSimpleResponse();
@@ -33,6 +58,8 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_GivenMixedNotices_ReturnsHomeNoticesOnly() {
 		// Arrange.
+		$this->login_as_admin();
+		remove_all_filters( 'sensei_admin_notices' );
 		$notices_provider = new Sensei_Home_Notices_Provider();
 		add_filter(
 			'sensei_admin_notices',
@@ -53,6 +80,8 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_GivenSenseiAdminNoticeResponse_ReturnsAdminNoticeResponse() {
 		// Arrange.
+		$this->login_as_admin();
+		remove_all_filters( 'sensei_admin_notices' );
 		$test_response      = $this->getSimpleResponse();
 		$admin_notices_mock = $this->createMock( Sensei_Admin_Notices::class );
 
