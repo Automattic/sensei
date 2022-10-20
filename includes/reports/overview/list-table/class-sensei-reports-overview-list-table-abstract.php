@@ -415,7 +415,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'timezone'               => rawurlencode( $this->get_timezone() ),
 				's'                      => $this->get_search_value(),
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		/**

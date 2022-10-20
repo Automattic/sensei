@@ -1387,11 +1387,10 @@ class Sensei_Core_Modules {
 				esc_url(
 					add_query_arg(
 						[
-							'post_type' => 'course',
 							'page'      => 'module-order',
 							'course_id' => $course_id,
 						],
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				),
 				esc_html__( 'Order Modules', 'sensei-lms' )

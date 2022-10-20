@@ -371,10 +371,9 @@ class Sensei_Learner_Management {
 		} else {
 			$back_url = add_query_arg(
 				[
-					'post_type' => 'course',
-					'page'      => 'sensei_learners',
+					'page' => 'sensei_learners',
 				],
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 		}
 

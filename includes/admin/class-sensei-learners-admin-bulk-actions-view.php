@@ -308,14 +308,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$text = __( 'No students found.', 'sensei-lms' );
 		} else {
 			$add_students_args = [
-				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'course_id' => $course_id,
 				'view'      => 'learners',
 			];
 
 			$message = __( 'This course doesn\'t have any students yet, you can add them below.', 'sensei-lms' );
-			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'edit.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
+			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
 			$text    = '<div class="sensei-students__call-to-action"><div>' . $message . '</div><div>' . $button . '</div></div>';
 		}
 
