@@ -23,7 +23,7 @@ class Sensei_Home_Notices_Provider {
 	/**
 	 * Screen ID to show notices on.
 	 *
-	 * @var array
+	 * @var string
 	 */
 	private $screen_id;
 
