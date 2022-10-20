@@ -12,7 +12,6 @@
  * @covers Sensei_Home_Quick_Links_Provider
  */
 class Sensei_Home_Quick_Links_Provider_Test extends WP_UnitTestCase {
-	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * The class under test.
@@ -29,25 +28,12 @@ class Sensei_Home_Quick_Links_Provider_Test extends WP_UnitTestCase {
 		$this->provider = new Sensei_Home_Quick_Links_Provider();
 	}
 
-	public function testGet_AsTeacher_ReturnsEmptyArray() {
-		// Arrange
-		$this->login_as_teacher();
-
-		// Act
+	/**
+	 * Assert that all elements returned by the provider are a correct Sensei_Home_Quick_Links_Category.
+	 */
+	public function testAllOutputAreCorrectQuickLinksCategories() {
 		$categories = $this->provider->get();
 
-		// Assert
-		$this->assertEquals( [], $categories );
-	}
-
-	public function testGet_AsAdmin_ReturnsCorrectFormat() {
-		// Arrange
-		$this->login_as_admin();
-
-		// Act
-		$categories = $this->provider->get();
-
-		// Assert
 		foreach ( $categories as $category ) {
 			$this->assertIsArray( $category );
 			$this->assertArrayHasKey( 'title', $category );

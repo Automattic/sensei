@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @covers Sensei_Home_Tasks_Provider
  */
 class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
-	use Sensei_Test_Login_Helpers;
 
 	const FAKE_TASK_ID = 'fake-task-id';
 
@@ -45,21 +44,7 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		parent::tearDown();
 	}
 
-	public function testGet_WhenCalledAsTeacher_ReturnsNull() {
-		// Arrange
-		$this->login_as_teacher();
-
-		// Act
-		$result = $this->provider->get();
-
-		// Assert
-		$this->assertNull( $result );
-	}
-
-	public function testGet_WhenCalledAsAdmin_ReturnsExpectedTasks() {
-		// Arrange
-		$this->login_as_admin();
-
+	public function testGet_WhenCalled_ReturnsReturnsExpectedTasks() {
 		// Act
 		$result = $this->provider->get();
 
@@ -77,7 +62,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_GivenAFilterThatOverridesTasks_ReturnSingleOverriddenResult() {
 		// Arrange
-		$this->login_as_admin();
 		add_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
 
 		// Act
@@ -111,7 +95,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsSiteContainingSiteInfo() {
 		// Arrange
-		$this->login_as_admin();
 		update_option( 'blogname', 'Test site' );
 		add_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomImage' ] );
 
@@ -128,7 +111,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsSiteImageAsNullWhenNoCustomLogoIsDefined() {
 		// Arrange
-		$this->login_as_admin();
 		update_option( 'blogname', 'Test site' );
 
 		// Act
@@ -144,7 +126,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsNullAsCourseWhenNoCourseIsFound() {
 		// Arrange
-		$this->login_as_admin();
 		self::flush_cache();
 
 		// Act
@@ -158,7 +139,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsCourseTitleWhenACourseIsFound() {
 		// Arrange
-		$this->login_as_admin();
 		$course_id = $this->factory->course->create(
 			[
 				'post_name'   => 'testing',
@@ -182,7 +162,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsCourseImageWhenACourseIsFound() {
 		// Arrange
-		$this->login_as_admin();
 		$course_id = $this->factory->course->create(
 			[
 				'post_name'   => 'testing',
@@ -208,7 +187,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsCourseAsNullWhenTheCourseIsOnTrash() {
 		// Arrange
-		$this->login_as_admin();
 		$course_id = $this->factory->course->create(
 			[
 				'post_name'   => 'testing',
@@ -230,9 +208,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	}
 
 	public function testGet_WhenCalled_ReturnsIsCompletedFalseAsDefault() {
-		// Arrange
-		$this->login_as_admin();
-
 		// Act
 		$result = $this->provider->get();
 
@@ -244,7 +219,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_WhenCalled_ReturnsIsCompletedFromOption() {
 		// Arrange
-		$this->login_as_admin();
 		update_option( Sensei_Home_Tasks_Provider::COMPLETED_TASKS_OPTION_KEY, true );
 
 		// Act
@@ -257,9 +231,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	}
 
 	public function testMarkAsCompleted_WhenCalled_SetsExpectedOption() {
-		// Arrange
-		$this->login_as_admin();
-
 		// Pre-Assert
 		$this->assertFalse( get_option( Sensei_Home_Tasks_Provider::COMPLETED_TASKS_OPTION_KEY, false ) );
 
