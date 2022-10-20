@@ -750,21 +750,19 @@ class Sensei_Course {
 
 		$manage_url  = add_query_arg(
 			array(
-				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 		$grading_url = add_query_arg(
 			array(
-				'post_type' => 'course',
 				'page'      => 'sensei_grading',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Students', 'sensei-lms' ) . '</a></li>';
