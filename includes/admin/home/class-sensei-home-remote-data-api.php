@@ -27,6 +27,13 @@ class Sensei_Home_Remote_Data_API {
 	private $primary_plugin_slug;
 
 	/**
+	 * The plugin version.
+	 *
+	 * @var string
+	 */
+	private $plugin_version;
+
+	/**
 	 * The local cache for multiple calls to `fetch` within the same request.
 	 *
 	 * @var array
@@ -37,9 +44,11 @@ class Sensei_Home_Remote_Data_API {
 	 * Sensei_Home_Remote_Data_API constructor.
 	 *
 	 * @param string $primary_plugin_slug The primary plugin slug.
+	 * @param string $plugin_version      The plugin version.
 	 */
-	public function __construct( string $primary_plugin_slug ) {
+	public function __construct( string $primary_plugin_slug, string $plugin_version ) {
 		$this->primary_plugin_slug = $primary_plugin_slug;
+		$this->plugin_version      = $plugin_version;
 	}
 
 	/**
@@ -201,7 +210,7 @@ class Sensei_Home_Remote_Data_API {
 		$url = sprintf( self::API_BASE_URL . '%s.json', $this->get_primary_plugin_slug() );
 
 		$query_args = [
-			'version' => Sensei()->version,
+			'version' => $this->plugin_version,
 			'lang'    => determine_locale(),
 		];
 

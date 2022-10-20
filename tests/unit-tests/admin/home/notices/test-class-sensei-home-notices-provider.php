@@ -13,7 +13,7 @@
 class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 	public function testGet_GivenSimpleFilterResponse_ReturnsFilterValue() {
 		// Arrange.
-		$notices_provider = new Sensei_Home_Notices_Provider();
+		$notices_provider = new Sensei_Home_Notices_Provider( null, 'screen-id' );
 
 		$test_data = $this->getSimpleResponse();
 
@@ -33,7 +33,7 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 
 	public function testGet_GivenMixedNotices_ReturnsHomeNoticesOnly() {
 		// Arrange.
-		$notices_provider = new Sensei_Home_Notices_Provider();
+		$notices_provider = new Sensei_Home_Notices_Provider( null, 'screen-id' );
 		add_filter(
 			'sensei_admin_notices',
 			function() {
@@ -61,7 +61,7 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 			->method( 'get_notices_to_display' )
 			->willReturn( $test_response );
 
-		$notices_provider = new Sensei_Home_Notices_Provider( $admin_notices_mock );
+		$notices_provider = new Sensei_Home_Notices_Provider( $admin_notices_mock, null );
 
 		// Act.
 		$notices = $notices_provider->get();

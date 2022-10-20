@@ -48,8 +48,8 @@ final class Sensei_Home {
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
 	private function __construct() {
-		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms' );
-		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api );
+		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
+		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api, self::SCREEN_ID );
 	}
 
 	/**
