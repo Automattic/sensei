@@ -126,7 +126,7 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @return bool Whether the user can access the Sensei Home REST API.
 	 */
 	public function can_user_access_rest_api() {
-		return current_user_can( 'manage_sensei' );
+		return current_user_can( Sensei_Admin::get_top_menu_capability() );
 	}
 
 	/**
@@ -169,14 +169,17 @@ class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 	 * @return array Setup Wizard data
 	 */
 	public function get_data() {
+		$show_extensions = current_user_can( 'activate_plugins' ) && current_user_can( 'update_plugins' );
+
 		return [
-			'tasks'        => $this->tasks_provider->get(),
-			'quick_links'  => $this->quick_links_provider->get(),
-			'help'         => $this->help_provider->get(),
-			'guides'       => $this->guides_provider->get(),
-			'news'         => $this->news_provider->get(),
-			'promo_banner' => $this->promo_banner_provider->get(),
-			'notices'      => $this->notices_provider->get(),
+			'tasks'           => $this->tasks_provider->get(),
+			'quick_links'     => $this->quick_links_provider->get(),
+			'help'            => $this->help_provider->get(),
+			'guides'          => $this->guides_provider->get(),
+			'news'            => $this->news_provider->get(),
+			'promo_banner'    => $this->promo_banner_provider->get(),
+			'notices'         => $this->notices_provider->get(),
+			'show_extensions' => $show_extensions,
 		];
 	}
 
