@@ -109,7 +109,6 @@ $break-medium: 783px; // adminbar goes big
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			margin-bottom: 38px;
 			transition: 0.5s max-height, 0.5s margin-bottom; // For dismissable sections.
 
 			&--dismissed {
