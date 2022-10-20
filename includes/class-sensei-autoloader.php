@@ -248,18 +248,18 @@ class Sensei_Autoloader {
 			/**
 			 * Student Progress
 			 */
-			\Sensei\Student_Progress\Course_Progress\Models\Course_Progress::class => 'student-progress/course-progress/models/class-course-progress.php',
-			\Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress::class => 'student-progress/lesson-progress/models/class-lesson-progress.php',
-			\Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class => 'student-progress/quiz-progress/models/class-quiz-progress.php',
-			\Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface::class => 'student-progress/course-progress/repositories/class-course-progress-repository-interface.php',
-			\Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::class => 'student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php',
-			\Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory::class => 'student-progress/course-progress/repositories/class-course-progress-repository-factory.php',
-			\Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface::class => 'student-progress/lesson-progress/repositories/class-lesson-progress-repository-interface.php',
-			\Sensei\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::class => 'student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php',
-			\Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory::class => 'student-progress/lesson-progress/repositories/class-lesson-progress-repository-factory.php',
-			\Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface::class => 'student-progress/quiz-progress/repositories/class-quiz-progress-repository-interface.php',
-			\Sensei\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::class => 'student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php',
-			\Sensei\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class => 'student-progress/quiz-progress/repositories/class-quiz-progress-repository-factory.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress::class => 'internal/student-progress/course-progress/models/class-course-progress.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress::class => 'internal/student-progress/lesson-progress/models/class-lesson-progress.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class => 'internal/student-progress/quiz-progress/models/class-quiz-progress.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface::class => 'internal/student-progress/course-progress/repositories/class-course-progress-repository-interface.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::class => 'internal/student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory::class => 'internal/student-progress/course-progress/repositories/class-course-progress-repository-factory.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface::class => 'internal/student-progress/lesson-progress/repositories/class-lesson-progress-repository-interface.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::class => 'internal/student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory::class => 'internal/student-progress/lesson-progress/repositories/class-lesson-progress-repository-factory.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-interface.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-factory.php',
 
 			/**
 			 * Quiz Submission
