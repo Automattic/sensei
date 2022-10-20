@@ -17,10 +17,6 @@ class Sensei_Home_Help_Provider {
 	 * @return array[]
 	 */
 	public function get(): array {
-		if ( ! current_user_can( 'manage_sensei' ) ) {
-			return [];
-		}
-
 		return [
 			$this->create_category(
 				__( 'Get the most out of Sensei', 'sensei-lms' ),
