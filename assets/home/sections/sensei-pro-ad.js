@@ -31,11 +31,11 @@ const SenseiProAd = () => {
 
 	return (
 		<Col as="section" className="sensei-home__section" cols={ 12 }>
-			<article className="sensei-home__featured-product">
-				<section className="sensei-home__featured-product__column">
-					<div className="sensei-home__featured-product__content">
-						<header className="sensei-home__featured-product__header">
-							<h2 className="sensei-home__featured-product__title">
+			<article className="sensei-home__sensei-pro-ad">
+				<section className="sensei-home__sensei-pro-ad__column">
+					<div className="sensei-home__sensei-pro-ad__content">
+						<header className="sensei-home__sensei-pro-ad__header">
+							<h2 className="sensei-home__sensei-pro-ad__title">
 								{ __(
 									'Start selling with Sensei Pro',
 									'sensei-lms'
@@ -43,7 +43,7 @@ const SenseiProAd = () => {
 							</h2>
 						</header>
 
-						<div className="sensei-home__featured-product__description">
+						<div className="sensei-home__sensei-pro-ad__description">
 							<p>
 								{ __(
 									'All the features in one package made so that you can start selling your courses right away.',
@@ -89,21 +89,21 @@ const SenseiProAd = () => {
 				</section>
 
 				<section
-					className="sensei-home__featured-product__column"
+					className="sensei-home__sensei-pro-ad__column"
 					style={ {
 						backgroundImage: `url(${ senseiProExtension.image_large })`,
 					} }
 				>
-					<div className="sensei-home__featured-product__card">
-						<h2 className="sensei-home__featured-product__card__title">
+					<div className="sensei-home__sensei-pro-ad__card">
+						<h2 className="sensei-home__sensei-pro-ad__card__title">
 							{ senseiProExtension.title }
 						</h2>
 
-						<p className="sensei-home__featured-product__card__description">
+						<p className="sensei-home__sensei-pro-ad__card__description">
 							{ senseiProExtension.excerpt }
 						</p>
 
-						<div className="sensei-home__featured-product__card__price">
+						<div className="sensei-home__sensei-pro-ad__card__price">
 							{ sprintf(
 								// translators: placeholder is the price.
 								__( '%s USD / year (1 site)', 'sensei-lms' ),
@@ -115,7 +115,7 @@ const SenseiProAd = () => {
 							href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
 							target="_blank"
 							rel="noreferrer external"
-							className="sensei-home__featured-product__card__button components-button is-primary is-large"
+							className="sensei-home__sensei-pro-ad__card__button components-button is-primary is-large"
 						>
 							{ __( 'Learn More', 'sensei-lms' ) }
 						</a>
