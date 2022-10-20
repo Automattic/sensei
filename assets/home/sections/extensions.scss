@@ -89,6 +89,7 @@
 					color: inherit;
 				}
 
+				& .components-button.has-icon.has-text, // Just to increase specificity for this case.
 				& .components-button {
 					padding: 10px 24px;
 					width: 100%;
