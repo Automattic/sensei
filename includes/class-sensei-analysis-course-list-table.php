@@ -456,7 +456,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 							array(
 								'page'      => $this->page_slug,
 								'lesson_id' => $item->ID,
-							),
+							)
 						);
 						$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
