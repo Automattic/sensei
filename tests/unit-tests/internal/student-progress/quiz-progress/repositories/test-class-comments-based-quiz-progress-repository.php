@@ -148,6 +148,53 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress( $actual ) );
 	}
 
+	public function testDelete_ProgressGiven_DeletesAllUserAnswers(): void {
+		/* Arrange. */
+		$lesson_id   = $this->factory->lesson->create();
+		$user_id     = $this->factory->user->create();
+		$quiz_id     = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$question_id = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+
+		$progress = $repository->get( $quiz_id, $user_id );
+		$progress->pass();
+		$repository->save( $progress );
+
+		update_comment_meta( $quiz_id, 'quiz_answers', [ $question_id => 'answer' ] );
+
+		/* Act. */
+		$repository->delete( $progress );
+
+		/* Assert. */
+		$actual = get_comment_meta( $quiz_id, 'quiz_answers', true );
+		self::assertEmpty( $actual );
+	}
+
+	public function testDelete_ProgressGiven_DeletesGrade(): void {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+		$quiz_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		\Sensei_Utils::update_lesson_status( $user_id, $lesson_id, 'in-progress' );
+
+		$repository = new Comments_Based_Quiz_Progress_Repository();
+
+		$progress = $repository->get( $quiz_id, $user_id );
+		$progress->pass();
+		$repository->save( $progress );
+
+		update_comment_meta( $progress->get_id(), 'grade', 1 );
+
+		/* Act. */
+		$repository->delete( $progress );
+
+		/* Assert. */
+		$actual = get_comment_meta( $progress->get_id(), 'grade', true );
+		self::assertEmpty( $actual );
+	}
+
 	private function export_progress( Quiz_Progress $progress ): array {
 		return [
 			'user_id' => $progress->get_user_id(),
