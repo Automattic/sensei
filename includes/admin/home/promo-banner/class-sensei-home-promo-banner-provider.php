@@ -17,6 +17,10 @@ class Sensei_Home_Promo_Banner_Provider {
 	 * @return array
 	 */
 	public function get(): array {
+		$default_show_banner = true;
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			$default_show_banner = false;
+		}
 
 		return [
 			/**
@@ -29,7 +33,7 @@ class Sensei_Home_Promo_Banner_Provider {
 			 *
 			 * @return {bool}
 			 */
-			'is_visible' => apply_filters( 'sensei_home_promo_banner_show', true ),
+			'is_visible' => apply_filters( 'sensei_home_promo_banner_show', $default_show_banner ),
 		];
 	}
 }
