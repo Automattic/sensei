@@ -19,7 +19,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	public function __construct() {
 		parent::__construct( [ 'lesson' ] );
 
-		add_action( 'init', [ $this, 'remove_block_related_content' ] );
+		add_action( 'template_redirect', [ $this, 'remove_block_related_content' ] );
 	}
 
 	/**
