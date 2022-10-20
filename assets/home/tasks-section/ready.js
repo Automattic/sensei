@@ -38,7 +38,6 @@ const Ready = ( { coursePermalink, onDismiss } ) => {
 	const shareLink = encodeURIComponent( coursePermalink );
 	const facebookLink = `https://www.facebook.com/sharer/sharer.php?u=${ shareLink }`;
 	const tumblrLink = sprintf(
-		// translators: %1$s placeholder is the share link, %2$s placeholder is the share link.
 		'https://www.tumblr.com/widgets/share/tool?posttype=link&caption=%1$s&content=%2$s&canonicalUrl=%2$s',
 		__( 'My new course is ready!', 'sensei-lms' ),
 		shareLink
