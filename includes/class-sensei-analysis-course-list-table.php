@@ -57,13 +57,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 	public $view = 'lesson';
 
 	/**
-	 * The post type under which is the page registered.
-	 *
-	 * @var string
-	 */
-	private $post_type = 'course';
-
-	/**
 	 * Constructor
 	 *
 	 * @param int $course_id Course ID.
@@ -379,9 +372,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 							'page'      => $this->page_slug,
 							'user_id'   => $item->user_id,
 							'course_id' => $this->course_id,
-							'post_type' => $this->post_type,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					);
 
 					$user_name = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
@@ -464,9 +456,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 							array(
 								'page'      => $this->page_slug,
 								'lesson_id' => $item->ID,
-								'post_type' => $this->post_type,
 							),
-							admin_url( 'edit.php' )
 						);
 						$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
@@ -534,9 +524,8 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 							array(
 								'page'      => $this->page_slug,
 								'lesson_id' => $item->ID,
-								'post_type' => $this->post_type,
 							),
-							admin_url( 'edit.php' )
+							admin_url( 'admin.php' )
 						);
 						$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
@@ -704,10 +693,9 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$url_args     = array(
 			'page'      => $this->page_slug,
 			'course_id' => $this->course_id,
-			'post_type' => $this->post_type,
 		);
-		$learners_url = add_query_arg( array_merge( $url_args, array( 'view' => 'user' ) ), admin_url( 'edit.php' ) );
-		$lessons_url  = add_query_arg( array_merge( $url_args, array( 'view' => 'lesson' ) ), admin_url( 'edit.php' ) );
+		$learners_url = add_query_arg( array_merge( $url_args, array( 'view' => 'user' ) ), admin_url( 'admin.php' ) );
+		$lessons_url  = add_query_arg( array_merge( $url_args, array( 'view' => 'lesson' ) ), admin_url( 'admin.php' ) );
 
 		$learners_class = $lessons_class = '';
 
@@ -809,7 +797,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'course_id'              => $this->course_id,
 			'view'                   => $this->view,
 			'sensei_report_download' => $report,
-			'post_type'              => $this->post_type,
 			'start_date'             => $this->get_start_date_filter_value(),
 			'end_date'               => $this->get_end_date_filter_value(),
 			's'                      => $this->get_search_value(),
@@ -819,7 +806,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			$url_args['user_id'] = $this->user_id;
 		}
 
-		$url = add_query_arg( $url_args, admin_url( 'edit.php' ) );
+		$url = add_query_arg( $url_args, admin_url( 'admin.php' ) );
 
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
