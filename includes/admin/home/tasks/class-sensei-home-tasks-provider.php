@@ -20,13 +20,9 @@ class Sensei_Home_Tasks_Provider {
 	/**
 	 * Returns the Tasks.
 	 *
-	 * @return array|null
+	 * @return array
 	 */
-	public function get() {
-		if ( ! current_user_can( 'manage_sensei' ) ) {
-			return null;
-		}
-
+	public function get(): array {
 		return [
 			'items'        => $this->get_tasks(),
 			'site'         => $this->get_site(),
