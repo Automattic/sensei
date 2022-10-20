@@ -16,16 +16,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Course_Progress.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Course_Progress {
 	/**
 	 * Status course in progress.
+	 *
+	 * @internal
 	 */
 	public const STATUS_IN_PROGRESS = 'in-progress';
 
 	/**
 	 * Status course complete.
+	 *
+	 * @internal
 	 */
 	public const STATUS_COMPLETE = 'complete';
 
@@ -88,6 +94,8 @@ class Course_Progress {
 	/**
 	 * Course progress constructor.
 	 *
+	 * @internal
+	 *
 	 * @param int                    $id          Progress identifier.
 	 * @param int                    $course_id Course identifier.
 	 * @param int                    $user_id  User identifier.
@@ -111,6 +119,8 @@ class Course_Progress {
 	/**
 	 * Set in-progress status and start date.
 	 *
+	 * @internal
+	 *
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
 	public function start( DateTimeInterface $started_at = null ): void {
@@ -120,6 +130,8 @@ class Course_Progress {
 
 	/**
 	 * Set complete status and completion date.
+	 *
+	 * @internal
 	 *
 	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
@@ -131,6 +143,8 @@ class Course_Progress {
 	/**
 	 * Returns the progress identifier.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_id(): int {
@@ -139,6 +153,8 @@ class Course_Progress {
 
 	/**
 	 * Returns the course identifier.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -149,6 +165,8 @@ class Course_Progress {
 	/**
 	 * Returns the user identifier.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_user_id(): int {
@@ -157,6 +175,8 @@ class Course_Progress {
 
 	/**
 	 * Returns the course progress status.
+	 *
+	 * @internal
 	 *
 	 * @return string|null
 	 */
@@ -167,6 +187,8 @@ class Course_Progress {
 	/**
 	 * Returns the course start date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface|null
 	 */
 	public function get_started_at(): ?DateTimeInterface {
@@ -175,6 +197,8 @@ class Course_Progress {
 
 	/**
 	 * Returns the course completion date.
+	 *
+	 * @internal
 	 *
 	 * @return DateTimeInterface|null
 	 */
@@ -185,6 +209,8 @@ class Course_Progress {
 	/**
 	 * Returns the course progress updated date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_updated_at(): DateTimeInterface {
@@ -194,6 +220,8 @@ class Course_Progress {
 	/**
 	 * Returns the course progress created date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_created_at(): DateTimeInterface {
@@ -202,6 +230,8 @@ class Course_Progress {
 
 	/**
 	 * Set the course progress updated date.
+	 *
+	 * @internal
 	 *
 	 * @param DateTimeInterface $updated_at Course progress updated date.
 	 */

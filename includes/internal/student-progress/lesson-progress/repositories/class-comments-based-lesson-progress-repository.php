@@ -19,11 +19,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Comments_Based_Lesson_Progress_Repository.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repository_Interface {
 	/**
 	 * Creates a new lesson progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -45,6 +49,8 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 
 	/**
 	 * Finds a lesson progress by lesson and user.
+	 *
+	 * @internal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -78,6 +84,8 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	/**
 	 * Check if a lesson progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return bool
@@ -94,6 +102,8 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 
 	/**
 	 * Save the lesson progress.
+	 *
+	 * @internal
 	 *
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
@@ -117,6 +127,8 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.

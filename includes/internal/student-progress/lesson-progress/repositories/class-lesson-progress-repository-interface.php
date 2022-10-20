@@ -16,11 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Lesson_Progress_Repository_Interface.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 interface Lesson_Progress_Repository_Interface {
 	/**
 	 * Creates a new lesson progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -31,6 +35,8 @@ interface Lesson_Progress_Repository_Interface {
 	/**
 	 * Finds a lesson progress by lesson and user.
 	 *
+	 * @internal
+	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress|null The lesson progress or null if not found.
@@ -39,6 +45,8 @@ interface Lesson_Progress_Repository_Interface {
 
 	/**
 	 * Check if a lesson progress exists.
+	 *
+	 * @internal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -49,6 +57,8 @@ interface Lesson_Progress_Repository_Interface {
 	/**
 	 * Save the lesson progress.
 	 *
+	 * @internal
+	 *
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
 	public function save( Lesson_Progress $lesson_progress ): void;
@@ -56,6 +66,8 @@ interface Lesson_Progress_Repository_Interface {
 	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.

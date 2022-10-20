@@ -14,11 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Lesson_Progress_Repository_Factory.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Lesson_Progress_Repository_Factory {
 	/**
 	 * Creates a new lesson progress repository.
+	 *
+	 * @internal
 	 *
 	 * @return Lesson_Progress_Repository_Interface The repository.
 	 */

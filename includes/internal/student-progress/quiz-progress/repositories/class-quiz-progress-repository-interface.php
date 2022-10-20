@@ -16,11 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface Quiz_Progress_Repository_Interface.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 interface Quiz_Progress_Repository_Interface {
 	/**
 	 * Create a new quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
@@ -31,6 +35,8 @@ interface Quiz_Progress_Repository_Interface {
 	/**
 	 * Find a quiz progress by quiz and user identifiers.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return Quiz_Progress
@@ -40,6 +46,8 @@ interface Quiz_Progress_Repository_Interface {
 	/**
 	 * Check if a quiz progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return bool
@@ -48,6 +56,8 @@ interface Quiz_Progress_Repository_Interface {
 
 	/**
 	 * Save the quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */

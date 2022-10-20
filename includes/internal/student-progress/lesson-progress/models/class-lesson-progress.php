@@ -18,16 +18,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Lesson_Progress.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Lesson_Progress {
 	/**
 	 * Status lesson in progress.
+	 *
+	 * @internal
 	 */
 	public const STATUS_IN_PROGRESS = 'in-progress';
 
 	/**
 	 * Status lesson completed.
+	 *
+	 * @internal
 	 */
 	public const STATUS_COMPLETE = 'complete';
 
@@ -90,6 +96,8 @@ class Lesson_Progress {
 	/**
 	 * Lesson progress constructor.
 	 *
+	 * @internal
+	 *
 	 * @param int                    $id         Progress identifier.
 	 * @param int                    $lesson_id  Lesson identifier.
 	 * @param int                    $user_id    User identifier.
@@ -113,6 +121,8 @@ class Lesson_Progress {
 	/**
 	 * Changes the lesson progress status and start date.
 	 *
+	 * @internal
+	 *
 	 * @param DateTimeInterface|null $started_at The start date.
 	 */
 	public function start( ?DateTimeInterface $started_at = null ): void {
@@ -122,6 +132,8 @@ class Lesson_Progress {
 
 	/**
 	 * Changes the lesson progress status and completion date.
+	 *
+	 * @internal
 	 *
 	 * @param DateTimeInterface|null $completed_at The completion date.
 	 */
@@ -134,6 +146,8 @@ class Lesson_Progress {
 	/**
 	 * Returns the progress identifier.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_id(): int {
@@ -142,6 +156,8 @@ class Lesson_Progress {
 
 	/**
 	 * Returns the lesson identifier.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -152,6 +168,8 @@ class Lesson_Progress {
 	/**
 	 * Returns the user identifier.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_user_id(): int {
@@ -160,6 +178,8 @@ class Lesson_Progress {
 
 	/**
 	 * Returns the lesson progress status.
+	 *
+	 * @internal
 	 *
 	 * @return string|null
 	 */
@@ -170,6 +190,8 @@ class Lesson_Progress {
 	/**
 	 * Returns the lesson start date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface|null
 	 */
 	public function get_started_at(): ?DateTimeInterface {
@@ -179,6 +201,8 @@ class Lesson_Progress {
 	/**
 	 * Returns the lesson completion date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface|null
 	 */
 	public function get_completed_at(): ?DateTimeInterface {
@@ -187,6 +211,8 @@ class Lesson_Progress {
 
 	/**
 	 * Returns if the lesson progress is complete.
+	 *
+	 * @internal
 	 *
 	 * @return bool
 	 */
@@ -203,6 +229,8 @@ class Lesson_Progress {
 	/**
 	 * Returns the lesson progress created date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_created_at(): DateTimeInterface {
@@ -212,6 +240,8 @@ class Lesson_Progress {
 	/**
 	 * Returns the lesson progress updated date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_updated_at(): DateTimeInterface {
@@ -220,6 +250,8 @@ class Lesson_Progress {
 
 	/**
 	 * Set lesson progress updated date.
+	 *
+	 * @internal
 	 *
 	 * @param DateTimeInterface $updated_at The updated date.
 	 */

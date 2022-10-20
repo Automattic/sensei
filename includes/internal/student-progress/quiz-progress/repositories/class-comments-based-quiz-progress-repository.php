@@ -18,12 +18,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Comments_Based_Quiz_Progress_Repository.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_Interface {
 
 	/**
 	 * Create a new quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
@@ -45,6 +49,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 	/**
 	 * Find a quiz progress by quiz and user identifiers.
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
@@ -93,6 +99,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	/**
 	 * Check if a quiz progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return bool
@@ -111,6 +119,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 
 	/**
 	 * Save the quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */

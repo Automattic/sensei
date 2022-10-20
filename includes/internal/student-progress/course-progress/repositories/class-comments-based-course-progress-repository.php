@@ -18,11 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Comments_Based_Course_Progress_Repository
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Comments_Based_Course_Progress_Repository implements Course_Progress_Repository_Interface {
 	/**
 	 * Creates a new course progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
@@ -45,6 +49,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 
 	/**
 	 * Gets a course progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
@@ -78,6 +84,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	/**
 	 * Checks if a course progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return bool Whether the course progress exists.
@@ -94,6 +102,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 
 	/**
 	 * Save course progress.
+	 *
+	 * @internal
 	 *
 	 * @param Course_Progress $course_progress The course progress.
 	 */

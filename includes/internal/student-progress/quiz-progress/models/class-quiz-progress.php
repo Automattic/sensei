@@ -16,31 +16,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Quiz_Progress.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Quiz_Progress {
 	/**
 	 * In progress quiz status.
+	 *
+	 * @internal
 	 */
 	public const STATUS_IN_PROGRESS = 'in-progress';
 
 	/**
 	 * Passed quiz status.
+	 *
+	 * @internal
 	 */
 	public const STATUS_PASSED = 'passed';
 
 	/**
 	 * Graded quiz status.
+	 *
+	 * @internal
 	 */
 	public const STATUS_GRADED = 'graded';
 
 	/**
 	 * Ungraded quiz status.
+	 *
+	 * @internal
 	 */
 	public const STATUS_UNGRADED = 'ungraded';
 
 	/**
 	 * Failed quiz status.
+	 *
+	 * @internal
 	 */
 	public const STATUS_FAILED = 'failed';
 
@@ -103,6 +115,8 @@ class Quiz_Progress {
 	/**
 	 * Sensei_Lesson_Progress constructor.
 	 *
+	 * @internal
+	 *
 	 * @param int                    $id Progress identifier.
 	 * @param int                    $quiz_id Quiz identifier.
 	 * @param int                    $user_id User identifier.
@@ -126,6 +140,8 @@ class Quiz_Progress {
 	/**
 	 * Set the status of the quiz to 'in-progress' and start date.
 	 *
+	 * @internal
+	 *
 	 * @param DateTimeInterface|null $started_at Quiz start date.
 	 */
 	public function start( ?DateTimeInterface $started_at = null ): void {
@@ -135,6 +151,8 @@ class Quiz_Progress {
 
 	/**
 	 * Set the status of the quiz to 'passed' and completion date.
+	 *
+	 * @internal
 	 *
 	 * @param DateTimeInterface|null $passed_at Quiz completion date.
 	 */
@@ -146,6 +164,8 @@ class Quiz_Progress {
 	/**
 	 * Set the status of the quiz to 'graded' and completion date.
 	 *
+	 * @internal
+	 *
 	 * @param DateTimeInterface|null $graded_at Quiz completion date.
 	 */
 	public function grade( ?DateTimeInterface $graded_at = null ): void {
@@ -155,6 +175,8 @@ class Quiz_Progress {
 
 	/**
 	 * Set the status of the quiz to 'ungraded' and reset completion date.
+	 *
+	 * @internal
 	 */
 	public function ungrade(): void {
 		$this->status       = self::STATUS_UNGRADED;
@@ -163,6 +185,8 @@ class Quiz_Progress {
 
 	/**
 	 * Set the status of the quiz to 'failed' and reset completion date.
+	 *
+	 * @internal
 	 */
 	public function fail(): void {
 		$this->status       = self::STATUS_FAILED;
@@ -171,6 +195,8 @@ class Quiz_Progress {
 
 	/**
 	 * Get the progress identifier.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -181,6 +207,8 @@ class Quiz_Progress {
 	/**
 	 * Get the quiz identifier.
 	 *
+	 * @internal
+	 *
 	 * @return int
 	 */
 	public function get_quiz_id(): int {
@@ -189,6 +217,8 @@ class Quiz_Progress {
 
 	/**
 	 * Get the user identifier.
+	 *
+	 * @internal
 	 *
 	 * @return int
 	 */
@@ -199,6 +229,8 @@ class Quiz_Progress {
 	/**
 	 * Get the progress status.
 	 *
+	 * @internal
+	 *
 	 * @return string|null
 	 */
 	public function get_status(): ?string {
@@ -207,6 +239,8 @@ class Quiz_Progress {
 
 	/**
 	 * Get the quiz start date.
+	 *
+	 * @internal
 	 *
 	 * @return DateTimeInterface|null
 	 */
@@ -217,6 +251,8 @@ class Quiz_Progress {
 	/**
 	 * Get the quiz completion date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface|null
 	 */
 	public function get_completed_at(): ?DateTimeInterface {
@@ -225,6 +261,8 @@ class Quiz_Progress {
 
 	/**
 	 * Get the quiz progress created date.
+	 *
+	 * @internal
 	 *
 	 * @return DateTimeInterface
 	 */
@@ -235,6 +273,8 @@ class Quiz_Progress {
 	/**
 	 * Get the quiz progress updated date.
 	 *
+	 * @internal
+	 *
 	 * @return DateTimeInterface
 	 */
 	public function get_updated_at(): DateTimeInterface {
@@ -243,6 +283,8 @@ class Quiz_Progress {
 
 	/**
 	 * Set the quiz progress updated date.
+	 *
+	 * @internal
 	 *
 	 * @param DateTimeInterface $updated_at Quiz progress updated date.
 	 */

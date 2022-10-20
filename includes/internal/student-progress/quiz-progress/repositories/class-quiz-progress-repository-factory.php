@@ -10,11 +10,15 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 /**
  * Class Quiz_Progress_Repository_Factory.
  *
+ * @internal
+ *
  * @since $$next-version$$
  */
 class Quiz_Progress_Repository_Factory {
 	/**
 	 * Creates a new quiz progress repository.
+	 *
+	 * @internal
 	 *
 	 * @return Quiz_Progress_Repository_Interface
 	 */
