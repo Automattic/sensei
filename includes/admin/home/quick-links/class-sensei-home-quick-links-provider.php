@@ -19,6 +19,10 @@ class Sensei_Home_Quick_Links_Provider {
 	 * @return array[]
 	 */
 	public function get(): array {
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			return [];
+		}
+
 		return [
 			$this->create_category(
 				__( 'Courses', 'sensei-lms' ),
