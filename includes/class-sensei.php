@@ -1,11 +1,11 @@
 <?php
 
-use Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
-use Sensei\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
-use Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
-use Sensei\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
-use Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
-use Sensei\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
 use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 use Sensei\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
 use Sensei\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
