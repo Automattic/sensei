@@ -57,11 +57,6 @@ class Sensei_Home_Notices_Provider {
 	 * @return array
 	 */
 	public function get(): array {
-		// For now, we don't want to show notices to non-admins.
-		if ( ! current_user_can( 'manage_sensei' ) ) {
-			return [];
-		}
-
 		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( Sensei_Home::SCREEN_ID ) : $this->local_only();
 
 		return array_map( [ $this, 'format_item' ], $notices );
