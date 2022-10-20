@@ -106,7 +106,7 @@ const Ready = ( { coursePermalink, onDismiss } ) => {
 					>
 						<TumblrCircleIcon />
 						<span className="screen-reader-text">
-							{ __( 'Instagram', 'sensei-lms' ) }
+							{ __( 'Tumblr', 'sensei-lms' ) }
 						</span>
 					</a>
 				</li>
