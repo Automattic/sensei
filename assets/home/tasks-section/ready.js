@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Icon } from '@wordpress/components';
 import { closeSmall } from '@wordpress/icons';
 
@@ -10,16 +10,17 @@ import { closeSmall } from '@wordpress/icons';
  */
 import CheckIcon from '../../icons/checked.svg';
 import FacebookCircleIcon from '../../icons/facebook-circle.svg';
-import InstagramCircleIcon from '../../icons/instagram-circle.svg';
+import TumblrCircleIcon from '../../icons/tumblr-circle.svg';
 import TwitterCircleIcon from '../../icons/twitter-circle.svg';
 
 /**
  * Tasks ready component.
  *
- * @param {Object}   props           Component props.
- * @param {Function} props.onDismiss Dismiss callback.
+ * @param {Object}   props                 Component props.
+ * @param {string}   props.coursePermalink Course permalink.
+ * @param {Function} props.onDismiss       Dismiss callback.
  */
-const Ready = ( { onDismiss } ) => {
+const Ready = ( { coursePermalink, onDismiss } ) => {
 	const dismissTasks = () => {
 		onDismiss();
 
@@ -32,6 +33,21 @@ const Ready = ( { onDismiss } ) => {
 			body: formData,
 		} );
 	};
+
+	// Prepare social media links.
+	const shareLink = encodeURIComponent( coursePermalink );
+	const facebookLink = `https://www.facebook.com/sharer/sharer.php?u=${ shareLink }`;
+	const tumblrLink = sprintf(
+		'https://www.tumblr.com/widgets/share/tool?posttype=link&caption=%1$s&content=%2$s&canonicalUrl=%2$s',
+		__( 'My new course is ready!', 'sensei-lms' ),
+		shareLink
+	);
+	const twitterText = sprintf(
+		// translators: placeholder is the share link.
+		__( 'My new course is ready! Check it here: %s', 'sensei-lms' ),
+		shareLink
+	);
+	const twitterLink = `https://twitter.com/intent/tweet?text=${ twitterText }`;
 
 	return (
 		<div role="alert" className="sensei-home-ready">
@@ -58,7 +74,9 @@ const Ready = ( { onDismiss } ) => {
 				<li>
 					<a
 						className="sensei-home-ready__social-link"
-						href="https://TODO"
+						href={ facebookLink }
+						target="_blank"
+						rel="noreferrer"
 					>
 						<FacebookCircleIcon />
 						<span className="screen-reader-text">
@@ -69,22 +87,26 @@ const Ready = ( { onDismiss } ) => {
 				<li>
 					<a
 						className="sensei-home-ready__social-link"
-						href="https://TODO"
+						href={ twitterLink }
+						target="_blank"
+						rel="noreferrer"
 					>
-						<InstagramCircleIcon />
+						<TwitterCircleIcon />
 						<span className="screen-reader-text">
-							{ __( 'Instagram', 'sensei-lms' ) }
+							{ __( 'Twitter', 'sensei-lms' ) }
 						</span>
 					</a>
 				</li>
 				<li>
 					<a
 						className="sensei-home-ready__social-link"
-						href="https://TODO"
+						href={ tumblrLink }
+						target="_blank"
+						rel="noreferrer"
 					>
-						<TwitterCircleIcon />
+						<TumblrCircleIcon />
 						<span className="screen-reader-text">
-							{ __( 'Twitter', 'sensei-lms' ) }
+							{ __( 'Tumblr', 'sensei-lms' ) }
 						</span>
 					</a>
 				</li>

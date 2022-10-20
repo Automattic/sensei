@@ -13,24 +13,24 @@ describe( '<FirstCourse />', () => {
 		const { container, queryByText } = render(
 			<FirstCourse
 				siteTitle="SITE_TITLE"
+				siteImage="SITE_IMAGE"
 				courseTitle="COURSE_TITLE"
-				siteLogo="SITE_LOGO"
-				featuredImage="FEATURED_IMAGE"
+				courseImage="COURSE_IMAGE"
 			/>
 		);
 
-		const siteLogo = container
+		const siteImage = container
 			.querySelector( '.sensei-home-first-course__site-logo' )
 			.getAttribute( 'src' );
 
-		const featuredImage = container.querySelector(
+		const courseImage = container.querySelector(
 			'.sensei-home-first-course__featured-image'
 		).style.backgroundImage;
 
 		expect( queryByText( 'SITE_TITLE' ) ).toBeTruthy();
 		expect( queryByText( 'COURSE_TITLE' ) ).toBeTruthy();
-		expect( siteLogo ).toEqual( 'SITE_LOGO' );
-		expect( featuredImage ).toEqual( `url(FEATURED_IMAGE)` );
+		expect( siteImage ).toEqual( 'SITE_IMAGE' );
+		expect( courseImage ).toEqual( `url(COURSE_IMAGE)` );
 	} );
 
 	it( 'Should render the first course with placeholders', () => {
@@ -43,16 +43,16 @@ describe( '<FirstCourse />', () => {
 			'.sensei-home-first-course__course-title-placeholder'
 		);
 
-		const siteLogo = container.querySelector(
+		const siteImage = container.querySelector(
 			'.sensei-home-first-course__site-logo'
 		);
-		const featuredImage = container.querySelector(
+		const courseImage = container.querySelector(
 			'.sensei-home-first-course__featured-image'
 		).style.backgroundImage;
 
 		expect( siteTitlePlaceholder ).toBeTruthy();
 		expect( courseTitlePlaceholder ).toBeTruthy();
-		expect( siteLogo ).toBeFalsy();
-		expect( featuredImage ).toEqual( '' );
+		expect( siteImage ).toBeFalsy();
+		expect( courseImage ).toEqual( '' );
 	} );
 } );
