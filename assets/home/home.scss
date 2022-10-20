@@ -29,10 +29,12 @@ $break-medium: 783px; // adminbar goes big
 }
 
 .sensei-home-page {
-	margin-right: 10px;
+	max-width: 1244px;
+	margin: 0 auto;
+	padding-right: 10px;
 
 	@media (min-width: 783px) {
-		margin-right: 20px;
+		padding-right: 20px;
 	}
 
 	color: $gray-100;
