@@ -926,7 +926,7 @@ class Sensei_Learner_Management {
 		return add_query_arg(
 			array(
 				'post_type' => $this->menu_post_type,
-				'page'      => $this->page_slug,
+				'page'      => $this->page_slug
 			),
 			admin_url( 'edit.php' )
 		);
