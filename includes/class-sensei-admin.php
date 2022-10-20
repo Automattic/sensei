@@ -95,20 +95,24 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_menu() {
-		global $menu;
-		$menu_cap = '';
+		add_menu_page( _x( 'Sensei LMS', 'admin menu', 'sensei-lms' ), _x( 'Sensei LMS', 'admin menu', 'sensei-lms' ), self::get_top_menu_capability(), 'sensei', '', '', '50' );
+	}
 
-		if ( current_user_can( 'manage_sensei' ) ) {
-			$menu_cap = 'manage_sensei';
-		} else {
-			if ( current_user_can( 'manage_sensei_grades' ) ) {
-				$menu_cap = 'manage_sensei_grades';
-			}
+	/**
+	 * Get the top menu minimum capability.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string
+	 */
+	public static function get_top_menu_capability() {
+		$menu_cap = 'manage_sensei';
+
+		if ( ! current_user_can( 'manage_sensei' ) && current_user_can( 'manage_sensei_grades' ) ) {
+			$menu_cap = 'manage_sensei_grades';
 		}
 
-		if ( $menu_cap ) {
-			add_menu_page( _x( 'Sensei LMS', 'admin menu', 'sensei-lms' ), _x( 'Sensei LMS', 'admin menu', 'sensei-lms' ), $menu_cap, 'sensei', '', '', '50' );
-		}
+		return $menu_cap;
 	}
 
 	/**
