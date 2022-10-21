@@ -214,6 +214,8 @@ final class Sensei_Home {
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
+		$menu_cap = Sensei_Admin::get_top_menu_capability();
+
 		$notices_html  = '';
 		$notices_count = $this->get_notices_count();
 
@@ -225,7 +227,7 @@ final class Sensei_Home {
 			'sensei',
 			__( 'Sensei LMS Home', 'sensei-lms' ),
 			__( 'Home', 'sensei-lms' ) . $notices_html,
-			'manage_sensei',
+			$menu_cap,
 			'sensei',
 			[ $this, 'render' ],
 			0
