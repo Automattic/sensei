@@ -66,10 +66,6 @@
 			max-width: 420px;
 			font-size: 13px;
 			font-weight: 400;
-
-			p {
-				margin: 0 0 24px;
-			}
 		}
 
 		&__title {
@@ -91,6 +87,11 @@
 				font-weight: 700;
 				font-size: 32px;
 				margin-bottom: 0;
+				margin-top: 24px;
+			}
+
+			p {
+				margin-bottom: 24px;
 			}
 		}
 
