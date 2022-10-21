@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { RawHTML } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * External dependencies
@@ -12,6 +13,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import SenseiCircleLogo from '../images/sensei-circle-logo.svg';
+import Link from './link';
 
 /**
  * Component to render an action of a given notice.
@@ -70,6 +72,21 @@ const NoticeHeading = ( { heading } ) => {
 };
 
 /**
+ * Renders the info link of a given notice, or null if there's no info link.
+ *
+ * @param {Object} props          Component props.
+ * @param {Object} props.infoLink The info link to render, if any.
+ */
+const NoticeInfoLink = ( { infoLink } ) => {
+	if ( ! infoLink ) {
+		return null;
+	}
+	return (
+		<Link label={ decodeEntities( infoLink.label ) } url={ infoLink.url } />
+	);
+};
+
+/**
  * Component that renders a single notice.
  *
  * @param {Object} props              Component props.
@@ -106,8 +123,8 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 					<RawHTML>{ notice.message }</RawHTML>
 				</div>
 			</div>
-
-			<NoticeActions info_link actions={ notice.actions } />
+			<NoticeInfoLink infoLink={ notice.info_link } />
+			<NoticeActions actions={ notice.actions } />
 		</div>
 	);
 };
