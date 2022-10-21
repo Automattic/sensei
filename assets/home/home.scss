@@ -1,8 +1,4 @@
-$break-wide: 1281px;
-$break-large: 961px;  // admin sidebar auto folds
-$break-medium: 783px; // adminbar goes big
-
-@import '../shared/styles/variables';
+@import './variables';
 @import '../shared/styles/wp-admin';
 @import '../css/font-recoleta';
 @import 'tasks-section/style';
@@ -11,6 +7,7 @@ $break-medium: 783px; // adminbar goes big
 @import 'sections/sensei-guides';
 @import 'sections/latest-news';
 @import 'notices';
+@import 'sections/sensei-pro-ad';
 
 @mixin white-box( $r: 2px ) {
 	border-radius: $r;
@@ -88,19 +85,6 @@ $break-medium: 783px; // adminbar goes big
 	}
 
 	.sensei-home {
-		.components-button {
-			&.is-secondary {
-				min-width: 112px;
-				min-height: 36px;
-				--wp-admin-theme-color: #000;
-			}
-
-			&.is-large {
-				width: 100%;
-				min-height: 54px;
-			}
-		}
-
 		&__loader {
 			height: 80vh;
 			display: flex;
@@ -357,140 +341,6 @@ $break-medium: 783px; // adminbar goes big
 				flex-direction: column;
 				&__image {
 					border-radius: 2px 2px 0 0;
-				}
-			}
-		}
-
-		&__featured-product {
-			display: flex;
-			flex-direction: column-reverse;
-			margin: 0 -10px 20px;
-			font-size: 18px;
-			font-family: Inter, sans-serif;
-			line-height: 1.5;
-			background-color: #26212e;
-
-			@media (min-width: $break-medium) {
-				flex-direction: row;
-				margin: 20px 0;
-			}
-
-			p {
-				font-size: 18px;
-			}
-
-			&__column {
-				background-size: cover;
-				background-position: center center;
-
-				@media (min-width: $break-medium) {
-					width: 50%;
-				}
-			}
-
-			&__content {
-				padding: 32px 16px;
-				color: $white;
-
-				@media (min-width: $break-medium) {
-					padding: 48px;
-				}
-
-				ul {
-					margin: 0;
-				}
-
-				li {
-					margin: 0;
-
-					~ li {
-						margin-top: 13px;
-					}
-
-					&:before {
-						content: url(../icons/checked-white.svg);
-						margin-right: 10px;
-					}
-				}
-			}
-
-			&__header {
-				display: flex;
-				align-items: center;
-				margin-bottom: 16px;
-
-				@media (min-width: $break-medium) {
-					margin: 0 0 24px -4px;
-				}
-			}
-
-			&__description {
-				max-width: 420px;
-
-				p {
-					margin: 0 0 24px;
-				}
-			}
-
-			&__title {
-				margin: 0;
-				line-height: 1.3;
-				color: $white;
-				font-weight: 400;
-				font-size: 24px;
-
-				@media (min-width: $break-large) {
-					font-size: 40px;
-				}
-			}
-
-			&__badge {
-				margin-left: 16px;
-				padding: 4px 8px;
-				font-size: 16px;
-				line-height: 1.2;
-				color: $gray-80;
-				background-color: #43af99;
-				border-radius: 14px;
-			}
-
-			&__card {
-				margin: 24px 16px;
-				padding: 48px 24px 24px;
-				text-align: center;
-				background-color: $white;
-
-				@media (min-width: $break-medium) {
-					margin: 54px 24px 81px;
-				}
-
-				@media (min-width: $break-wide) {
-					margin: 54px 76px 81px;
-					padding: 48px;
-				}
-
-				&__title {
-					margin: 0 0 16px;
-					font-family: Reforma, serif;
-					font-size: 48px;
-					font-weight: 400;
-					line-height: 1.3;
-				}
-
-				&__description {
-					max-width: 270px;
-					margin: 0 auto 48px;
-				}
-
-				&__price {
-					margin-bottom: 20px;
-					font-size: 24px;
-					color: #43af99;
-				}
-
-				&__button {
-					max-width: 320px;
-					font-size: 16px;
 				}
 			}
 		}

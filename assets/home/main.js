@@ -89,7 +89,9 @@ const Main = () => {
 					</Col>
 				) }
 
-				{ data.promo_banner && <SenseiProAd /> }
+				{ data.promo_banner && (
+					<SenseiProAd show={ data.promo_banner.is_visible } />
+				) }
 
 				{ data.guides && data.guides?.items.length > 0 && (
 					<Col

@@ -5,130 +5,19 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * Internal dependencies
  */
 import { EXTENSIONS_STORE } from '../../extensions/store';
 import { Col } from '../grid';
+import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
+import SenseiProAdCTA from '../../images/sensei-pro-ad-cta.svg';
 
 /**
- * Extensions featured product component.
+ * Sensei Pro Ad to be shown on Sensei Home.
  *
- * @param {Object} props             Component props.
- * @param {string} props.title       Product title.
- * @param {string} props.description Product description.
- * @param {Array}  props.features    Product features.
- * @param {string} props.badgeLabel  Badge label.
- * @param {string} props.excerpt     Product excerpt.
- * @param {string} props.image       Product image.
- * @param {string} props.price       Product price.
- * @param {string} props.buttonLink  CTA button link.
- * @param {string} props.buttonTitle CTA button title.
- * @param {Object} props.htmlProps   Wrapper extra props.
+ * @param {boolean} show Whether to show or not the ad.
  */
-const FeaturedProduct = ( props ) => {
-	const {
-		title,
-		description,
-		features,
-		badgeLabel,
-		excerpt,
-		image,
-		price,
-		buttonLink,
-		buttonTitle,
-		htmlProps,
-	} = props;
-
-	const backgroundImage = image && `url(${ image })`;
-	const getProductText = sprintf(
-		// translators: placeholder is the product title.
-		__( 'Get %s', 'sensei-lms' ),
-		title
-	);
-
-	return (
-		<article
-			{ ...htmlProps }
-			className={ classnames(
-				'sensei-home__featured-product',
-				htmlProps?.className
-			) }
-		>
-			<section className="sensei-home__featured-product__column">
-				<div className="sensei-home__featured-product__content">
-					<header className="sensei-home__featured-product__header">
-						<h2 className="sensei-home__featured-product__title">
-							{ getProductText }
-						</h2>
-
-						{ badgeLabel && (
-							<small className="sensei-home__featured-product__badge">
-								{ badgeLabel }
-							</small>
-						) }
-					</header>
-
-					<div className="sensei-home__featured-product__description">
-						<p>{ description }</p>
-
-						{ features && (
-							<ul>
-								{ features.map( ( feature, key ) => (
-									<li key={ key }>{ feature }</li>
-								) ) }
-							</ul>
-						) }
-					</div>
-				</div>
-			</section>
-
-			<section
-				className="sensei-home__featured-product__column"
-				style={ {
-					backgroundImage,
-				} }
-			>
-				<div className="sensei-home__featured-product__card">
-					<h2 className="sensei-home__featured-product__card__title">
-						{ title }
-					</h2>
-
-					<p className="sensei-home__featured-product__card__description">
-						{ excerpt }
-					</p>
-
-					<div className="sensei-home__featured-product__card__price">
-						{ price }
-					</div>
-
-					<a
-						href={ buttonLink }
-						target="_blank"
-						rel="noreferrer external"
-						className={ classnames(
-							'sensei-home__featured-product__card__button',
-							'components-button',
-							'is-primary',
-							'is-large'
-						) }
-					>
-						{ buttonTitle }
-					</a>
-				</div>
-			</section>
-		</article>
-	);
-};
-
-/*
- * Sensei Pro featured product component.
- */
-const SenseiProAd = () => {
+const SenseiProAd = ( { show } ) => {
 	const { senseiProExtension } = useSelect(
 		( select ) => ( {
 			senseiProExtension: select(
@@ -138,40 +27,125 @@ const SenseiProAd = () => {
 		[]
 	);
 
-	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
-		return <></>;
+	if ( ! senseiProExtension || ! show ) {
+		return null;
 	}
 
 	return (
 		<Col as="section" className="sensei-home__section" cols={ 12 }>
-			<FeaturedProduct
-				title={ senseiProExtension.title }
-				excerpt={ senseiProExtension.excerpt }
-				description={ __(
-					'By upgrading to Sensei Pro, you get all the great features found in Sensei LMS plus:',
-					'sensei-lms'
-				) }
-				features={ [
-					__( 'WooCommerce integration', 'sensei-lms' ),
-					__( 'Schedule ‘drip’ content', 'sensei-lms' ),
-					__( 'Set expiration date of courses', 'sensei-lms' ),
-					__( 'Advanced quiz features', 'sensei-lms' ),
-					__(
-						'Flashcard, image hotspot, and tasklist blocks',
-						'sensei-lms'
-					),
-					__( 'Premium support', 'sensei-lms' ),
-				] }
-				image={ senseiProExtension.image_large }
-				badgeLabel={ __( 'new', 'sensei-lms' ) }
-				price={ sprintf(
-					// translators: placeholder is the price.
-					__( '%s USD / year (1 site)', 'sensei-lms' ),
-					senseiProExtension.price
-				) }
-				buttonLink="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
-				buttonTitle={ __( 'Learn More', 'sensei-lms' ) }
-			/>
+			<article className="sensei-home__sensei-pro-ad">
+				<section className="sensei-home__sensei-pro-ad__column">
+					<div className="sensei-home__sensei-pro-ad__content">
+						<header className="sensei-home__sensei-pro-ad__header">
+							<h2 className="sensei-home__sensei-pro-ad__title">
+								{ __(
+									'Start selling with Sensei Pro',
+									'sensei-lms'
+								) }
+							</h2>
+						</header>
+
+						<div className="sensei-home__sensei-pro-ad__description">
+							<p>
+								{ __(
+									'All the features in one package made so that you can start selling your courses right away.',
+									'sensei-lms'
+								) }
+							</p>
+
+							<div className="sensei-home__sensei-pro-ad__price">
+								<h3 className="sensei-home__sensei-pro-ad__price__title">
+									{ sprintf(
+										// translators: placeholder is the price.
+										__( '%s USD', 'sensei-lms' ),
+										senseiProExtension.price.replace(
+											'.00',
+											''
+										)
+									) }
+								</h3>
+								<p>
+									{ __( 'per year, 1 site', 'sensei-lms' ) }
+								</p>
+							</div>
+
+							<ul>
+								<li>
+									{ __(
+										'WooCommerce integration',
+										'sensei-lms'
+									) }
+								</li>
+								<li>
+									{ __(
+										'Schedule ‘drip’ content',
+										'sensei-lms'
+									) }
+								</li>
+								<li>
+									{ __(
+										'Set expiration date of courses',
+										'sensei-lms'
+									) }
+								</li>
+								<li>{ __( 'Quiz timer', 'sensei-lms' ) }</li>
+								<li>
+									{ __(
+										'Flashcards, Image Hotspots, Checklists and Interactive Video',
+										'sensei-lms'
+									) }
+								</li>
+								<li>
+									{ __(
+										'1 year of updates & support',
+										'sensei-lms'
+									) }
+								</li>
+							</ul>
+
+							<a
+								href="https://senseilms.com/checkout/?add-to-cart=7009"
+								target="_blank"
+								rel="noreferrer external"
+								className="sensei-home__sensei-pro-ad__button is-primary is-large components-button"
+							>
+								{ __( 'Get Sensei Pro', 'sensei-lms' ) }
+							</a>
+
+							<a
+								href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
+								target="_blank"
+								rel="noreferrer external"
+								className="sensei-home__sensei-pro-ad__button is-secondary is-large components-button"
+							>
+								{ __( 'Learn More', 'sensei-lms' ) }
+							</a>
+						</div>
+					</div>
+				</section>
+
+				<section
+					className="sensei-home__sensei-pro-ad__column"
+					aria-hidden="true"
+				>
+					<div className="sensei-home__sensei-pro-ad__card">
+						<img
+							src={
+								window.sensei.pluginUrl + senseiProAdImageUrl
+							}
+							alt={ __(
+								'Image in black and white of a man looking at a microphone',
+								'sensei-lms'
+							) }
+							className="sensei-home__sensei-pro-ad__card--image"
+						/>
+						<div className="sensei-home__sensei-pro-ad__card--price">
+							$29.99
+						</div>
+						<SenseiProAdCTA className="sensei-home__sensei-pro-ad__card--cta" />
+					</div>
+				</section>
+			</article>
 		</Col>
 	);
 };
