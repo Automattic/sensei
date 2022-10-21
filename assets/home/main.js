@@ -76,7 +76,7 @@ const Main = () => {
 					<GetHelp categories={ data?.help } />
 				</Col>
 
-				<SenseiProAd />
+				<SenseiProAd show={ data?.promo_banner.is_visible } />
 
 				<Col as="section" className="sensei-home__section" cols={ 6 }>
 					<SenseiGuides data={ data?.guides } />
