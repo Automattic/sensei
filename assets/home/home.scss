@@ -84,19 +84,6 @@
 	}
 
 	.sensei-home {
-		.components-button {
-			&.is-secondary {
-				min-width: 112px;
-				min-height: 36px;
-				--wp-admin-theme-color: #000;
-			}
-
-			&.is-large {
-				width: 100%;
-				min-height: 54px;
-			}
-		}
-
 		&__loader {
 			height: 80vh;
 			display: flex;
