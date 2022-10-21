@@ -2071,7 +2071,7 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course', 'lesson', 'course_page_sensei-home' ], true ) ) {
+		if ( in_array( $screen->id, [ 'course', 'lesson', 'toplevel_page_sensei' ], true ) ) {
 			?>
 			<script>
 				window.sensei = window.sensei || {};
