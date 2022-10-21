@@ -142,12 +142,18 @@ const Main = () => {
 					<Header />
 				</Col>
 
-				<Col as="section" className="sensei-home__section" cols={ 12 }>
-					<Notices
-						notices={ notices }
-						dismissNonce={ dismissNoticesNonce }
-					/>
-				</Col>
+				{ Object.keys( notices ).length > 0 ? (
+					<Col
+						as="section"
+						className="sensei-home__section sensei-home__notices"
+						cols={ 12 }
+					>
+						<Notices
+							notices={ notices }
+							dismissNonce={ dismissNoticesNonce }
+						/>
+					</Col>
+				) : null }
 
 				{ topRow }
 

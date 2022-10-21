@@ -135,6 +135,10 @@ $break-medium: 783px; // adminbar goes big
 			}
 		}
 
+		&__notices {
+			margin-bottom: 31px;
+		}
+
 		&__grid {
 			display: flex;
 			flex-wrap: wrap;
