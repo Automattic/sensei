@@ -85,6 +85,7 @@ final class Sensei_Home {
 		if ( self::SCREEN_ID === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-home', 'home/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-home-style', 'home/home.css', [ 'sensei-wp-components' ] );
+			Sensei()->assets->enqueue( 'sensei-dismiss-notices', 'js/admin/sensei-notice-dismiss.js', [] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin', '/sensei-internal/v1/home' ] );
 
 			$this->localize_script();
