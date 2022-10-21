@@ -57,7 +57,7 @@ const NoticeActions = ( { actions } ) => {
 };
 
 /**
- * Renders the heaidng of a given notice, wrapped with a proper CSS class, or null if there's no heading.
+ * Renders the heading of a given notice, wrapped with a proper CSS class, or null if there's no heading.
  *
  * @param {Object} props         Component props.
  * @param {string} props.heading The heading to render.
