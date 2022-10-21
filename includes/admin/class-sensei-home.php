@@ -45,11 +45,19 @@ final class Sensei_Home {
 	private $notices;
 
 	/**
+	 * The Sensei Home Notices Provider instance.
+	 *
+	 * @var Sensei_Home_Notices_Provider
+	 */
+	private $notices_provider;
+
+	/**
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
 	private function __construct() {
-		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
-		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api, self::SCREEN_ID );
+		$this->remote_data_api  = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
+		$this->notices          = new Sensei_Home_Notices( $this->remote_data_api, self::SCREEN_ID );
+		$this->notices_provider = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), self::SCREEN_ID );
 	}
 
 	/**
@@ -59,6 +67,15 @@ final class Sensei_Home {
 	 */
 	public function get_remote_data_api() {
 		return $this->remote_data_api;
+	}
+
+	/**
+	 * Gets the Sensei Home Notices provider instance.
+	 *
+	 * @return Sensei_Home_Remote_Data_API
+	 */
+	public function get_notices_provider() {
+		return $this->notices_provider;
 	}
 
 	/**
@@ -139,18 +156,12 @@ final class Sensei_Home {
 	}
 
 	/**
-	 * Get updates count.
+	 * Get notices count.
 	 *
-	 * @return int Updates count.
+	 * @return int Notices count.
 	 */
-	private function get_has_update_count() {
-		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin' );
-
-		return count(
-			array_filter(
-				array_column( $extensions, 'has_update' )
-			)
-		);
+	private function get_notices_count() {
+		return $this->notices_provider->get_badge_count();
 	}
 
 	/**
@@ -161,17 +172,17 @@ final class Sensei_Home {
 	 * @access private
 	 */
 	public function add_admin_menu_item() {
-		$updates_html = '';
-		$updates      = $this->get_has_update_count();
+		$notices_html  = '';
+		$notices_count = $this->get_notices_count();
 
-		if ( $updates > 0 ) {
-			$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
+		if ( $notices_count > 0 ) {
+			$notices_html = ' <span class="awaiting-mod">' . (int) $notices_count . '</span>';
 		}
 
 		add_submenu_page(
 			'sensei',
 			__( 'Sensei LMS Home', 'sensei-lms' ),
-			__( 'Home', 'sensei-lms' ) . $updates_html,
+			__( 'Home', 'sensei-lms' ) . $notices_html,
 			'manage_sensei',
 			'sensei',
 			[ $this, 'render' ],

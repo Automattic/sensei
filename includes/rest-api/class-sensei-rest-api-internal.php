@@ -84,15 +84,16 @@ class Sensei_REST_API_Internal {
 	 * Sensei_REST_API_Internal constructor.
 	 */
 	public function __construct() {
-		$remote_data_api = Sensei_Home::instance()->get_remote_data_api();
+		$sensei_home     = Sensei_Home::instance();
+		$remote_data_api = $sensei_home->get_remote_data_api();
 
+		$this->notices_provider     = $sensei_home->get_notices_provider();
 		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
 		$this->help_provider        = new Sensei_Home_Help_Provider();
 		$this->promo_provider       = new Sensei_Home_Promo_Banner_Provider();
 		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
 		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
 		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
-		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), Sensei_Home::SCREEN_ID );
 
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
