@@ -25,7 +25,7 @@ import { __ } from '@wordpress/i18n';
 
 const Main = () => {
 	useSenseiColorTheme();
-	const [ data, setData ] = useState();
+	const [ data, setData ] = useState( {} );
 	const [ error, setError ] = useState( null );
 	const [ isFetching, setIsFetching ] = useState( true );
 
@@ -66,9 +66,9 @@ const Main = () => {
 	} else {
 		content = (
 			<>
-				{ data?.tasks && <TasksSection data={ data.tasks } /> }
+				{ data.tasks && <TasksSection data={ data.tasks } /> }
 
-				{ data?.quick_links && data?.quick_links.length > 0 && (
+				{ data.quick_links && data.quick_links.length > 0 && (
 					<Col
 						as="section"
 						className="sensei-home__section"
@@ -78,7 +78,7 @@ const Main = () => {
 					</Col>
 				) }
 
-				{ data?.help && data?.help.length > 0 && (
+				{ data.help && data.help.length > 0 && (
 					<Col
 						as="section"
 						className="sensei-home__section"
@@ -88,9 +88,9 @@ const Main = () => {
 					</Col>
 				) }
 
-				{ data?.promo_banner && <SenseiProAd /> }
+				{ data.promo_banner && <SenseiProAd /> }
 
-				{ data?.guides && data?.guides?.items.length > 0 && (
+				{ data.guides && data.guides?.items.length > 0 && (
 					<Col
 						as="section"
 						className="sensei-home__section"
@@ -100,7 +100,7 @@ const Main = () => {
 					</Col>
 				) }
 
-				{ data?.news && data?.news?.items.length > 0 && (
+				{ data.news && data.news?.items.length > 0 && (
 					<Col
 						as="section"
 						className="sensei-home__section"
@@ -110,7 +110,7 @@ const Main = () => {
 					</Col>
 				) }
 
-				{ data?.show_extensions && (
+				{ data.show_extensions && (
 					<Col
 						as="section"
 						className="sensei-home__section sensei-home__section__extensions"
