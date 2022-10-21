@@ -4604,9 +4604,8 @@ class Sensei_Lesson {
 	 */
 	public static function is_prerequisite_complete( $lesson_id, $user_id ) {
 
-		if ( empty( $lesson_id ) || empty( $user_id )
-		|| 'lesson' != get_post_type( $lesson_id )
-		|| ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
+		if ( empty( $lesson_id )
+		|| 'lesson' != get_post_type( $lesson_id ) ) {
 
 			return false;
 

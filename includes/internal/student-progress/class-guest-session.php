@@ -29,7 +29,20 @@ class Guest_Session {
 	}
 
 	public function init() {
-		if ( isset( $_REQUEST['guest-learner'] ) ) {
+
+		if ( ! session_id() ) {
+			session_start();
+		}
+
+		if ( isset( $_GET['start-guest-session'] ) ) {
+			$this->start_guest_session();
+		}
+
+		if ( isset( $_GET['end-guest-session'] ) ) {
+			$this->end_guest_session();
+		}
+
+		if ( $this->is_guest_session() ) {
 
 			// Student progress repositories.
 			Sensei()->course_progress_repository = new Session_Based_Course_Progress_Repository();
@@ -37,8 +50,23 @@ class Guest_Session {
 			Sensei()->quiz_progress_repository   = new Session_Based_Quiz_Progress_Repository();
 
 			add_filter('determine_current_user', function() { return 1; });
-			add_filter('sensei_is_enrolled', '__return_true');
 
+			// Need to check if 'Guest access' is allowed for the course, or it's a teacher preview session.
+			add_filter('sensei_is_enrolled', '__return_true' );
+			add_filter('sensei_is_login_required', '__return_false' );
 		}
 	}
+
+	public function is_guest_session() {
+		return isset( $_SESSION['guest-learner'] );
+	}
+
+	public function start_guest_session() {
+		$_SESSION['guest-learner'] = true;
+	}
+
+	public function end_guest_session() {
+		unset( $_SESSION['guest-learner'] );
+	}
+
 }

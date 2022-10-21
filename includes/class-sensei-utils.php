@@ -119,7 +119,6 @@ class Sensei_Utils {
 
 		// A user ID of 0 is in valid, so shortcut this
 		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
-			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
 
@@ -1543,6 +1542,11 @@ class Sensei_Utils {
 	 * @return boolean
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ): bool {
+
+		$progress = Sensei()->lesson_progress_repository->get( $lesson, $user_id );
+
+		return ! empty( $progress ) && $progress->is_complete();
+
 		if ( $lesson ) {
 			$lesson_id = 0;
 			if ( is_object( $lesson ) ) {

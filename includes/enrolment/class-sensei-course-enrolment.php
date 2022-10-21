@@ -103,9 +103,6 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
-		if ( ! $user_id ) {
-			return false;
-		}
 
 		/**
 		 * Allow complete side-stepping of enrolment handling in Sensei.

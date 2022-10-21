@@ -29,9 +29,6 @@ class Session_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposi
 	private $session = [];
 
 	public function __construct() {
-		if ( ! session_id() ) {
-			session_start();
-		}
 		$this->session = $_SESSION['lessons'] ?? [];
 	}
 
