@@ -104,7 +104,7 @@ const SenseiProAd = ( { show } ) => {
 							</ul>
 
 							<a
-								href="https://href.li/?https://senseilms.com/checkout/?add-to-cart=7009"
+								href="https://senseilms.com/checkout/?add-to-cart=7009"
 								target="_blank"
 								rel="noreferrer external"
 								className="sensei-home__sensei-pro-ad__button is-primary is-large components-button"
