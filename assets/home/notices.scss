@@ -1,0 +1,32 @@
+
+.sensei-home {
+&__notices {
+	margin-bottom: 31px;
+
+	.sensei-notice {
+		margin-left: 0;
+		margin-right: 0;
+
+		&__wrapper {
+			height: 100%;
+		}
+
+		&__content {
+			display: flex;
+			align-items: center;
+		}
+
+		&__logo {
+			margin-right: 18px;
+		}
+
+		.sensei-home {
+			&__link {
+				display: flex;
+				align-items: center;
+				height: 100%;
+			}
+		}
+	}
+}
+}
