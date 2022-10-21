@@ -75,6 +75,19 @@ class Sensei_Home_Notices_Provider {
 	}
 
 	/**
+	 * Get the number of notices for the Sensei Home badge.
+	 *
+	 * @return int
+	 */
+	public function get_badge_count(): int {
+		add_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
+		$notices = $this->get( DAY_IN_SECONDS );
+		remove_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
+
+		return count( $notices );
+	}
+
+	/**
 	 * Format a notice item.
 	 *
 	 * @param array $notice The unformatted notice.
