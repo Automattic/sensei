@@ -62,4 +62,13 @@ interface Course_Progress_Repository_Interface {
 	 * @param Course_Progress $course_progress The course progress.
 	 */
 	public function save( Course_Progress $course_progress ): void;
+
+	/**
+	 * Delete course progress.
+	 *
+	 * @internal
+	 *
+	 * @param Course_Progress $course_progress The course progress.
+	 */
+	public function delete( Course_Progress $course_progress ): void;
 }

@@ -114,4 +114,21 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		}
 		Sensei_Utils::update_course_status( $course_progress->get_user_id(), $course_progress->get_course_id(), $course_progress->get_status(), $metadata );
 	}
+
+	/**
+	 * Delete course progress.
+	 *
+	 * @internal
+	 *
+	 * @param Course_Progress $course_progress The course progress.
+	 */
+	public function delete( Course_Progress $course_progress ): void {
+		$args = array(
+			'post_id' => $course_progress->get_course_id(),
+			'type'    => 'sensei_course_status',
+			'user_id' => $course_progress->get_user_id(),
+		);
+
+		Sensei_Utils::sensei_delete_activities( $args );
+	}
 }

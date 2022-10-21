@@ -125,6 +125,24 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	}
 
 	/**
+	 * Delete the lesson progress.
+	 *
+	 * @internal
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
+	public function delete( Lesson_Progress $lesson_progress ): void {
+		$args = array(
+			'post_id' => $lesson_progress->get_lesson_id(),
+			'type'    => 'sensei_lesson_status',
+			'user_id' => $lesson_progress->get_user_id(),
+		);
+
+		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked.
+		Sensei_Utils::sensei_delete_activities( $args );
+	}
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
 	 *

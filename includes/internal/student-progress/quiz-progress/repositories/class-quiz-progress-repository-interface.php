@@ -62,4 +62,13 @@ interface Quiz_Progress_Repository_Interface {
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function save( Quiz_Progress $quiz_progress ): void;
+
+	/**
+	 * Delete the quiz progress.
+	 *
+	 * @internal
+	 *
+	 * @param Quiz_Progress $quiz_progress The quiz progress.
+	 */
+	public function delete( Quiz_Progress $quiz_progress ): void;
 }

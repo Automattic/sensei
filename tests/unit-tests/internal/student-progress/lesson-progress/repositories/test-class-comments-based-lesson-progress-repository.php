@@ -140,6 +140,20 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( 1, $count );
 	}
 
+	public function testDelete_WhenProgressGiven_DeletesProgress(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$repository = new Comments_Based_Lesson_Progress_Repository();
+		$progress   = $repository->create( $lesson_id, $user_id );
+
+		/* Act. */
+		$repository->delete( $progress );
+
+		/* Assert. */
+		self::assertFalse( $repository->has( $lesson_id, $user_id ) );
+	}
+
 	private function export_progress( Lesson_Progress $progress ): array {
 		return [
 			'user_id'   => $progress->get_user_id(),
