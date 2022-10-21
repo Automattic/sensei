@@ -742,8 +742,50 @@ class Sensei_Main {
 			$this->register_plugin_version( $is_new_install );
 		}
 
-		$this->updates = Updates_Factory::create( $current_version, $is_upgrade );
+		$updates_factory = new Updates_Factory();
+		$this->updates   = $updates_factory->create( $current_version, $is_upgrade, $is_new_install );
 		$this->updates->run_updates();
+	}
+
+	/**
+	 * Helper function to check to see if any courses exist in the database.
+	 *
+	 * @deprected $$next-version$$
+	 *
+	 * @return bool
+	 */
+	private function course_exists(): bool {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
+
+		return ! empty( $course_sample_id );
+	}
+
+	/**
+	 * Register the plugin's version.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
+	 * @return void
+	 *
+	 * @deprecated $$next-version$$
+	 */
+	private function register_plugin_version( $is_new_install ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		if ( isset( $this->version ) ) {
+
+			update_option( 'sensei-version', $this->version );
+
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
+		}
 	}
 
 	/**
@@ -805,27 +847,6 @@ class Sensei_Main {
 
 		update_option( 'sensei_installed', 1 );
 
-	}
-
-	/**
-	 * Register the plugin's version.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @param boolean $is_new_install Is this a new install.
-	 * @return void
-	 *
-	 * @deprecated $$next-version$$
-	 */
-	private function register_plugin_version( $is_new_install ) {
-		if ( isset( $this->version ) ) {
-
-			update_option( 'sensei-version', $this->version );
-
-			if ( $is_new_install ) {
-				update_option( 'sensei-install-version', $this->version );
-			}
-		}
 	}
 
 	/**

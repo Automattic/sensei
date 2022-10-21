@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Installer {
 
 	private const SENSEI_VERSION_OPTION_NAME = 'sensei-version';
+	const SENSEI_INSTALL_VERSION_OPTION_NAME = 'sensei-install-version';
 
 	/**
 	 * Instance of the class.
@@ -133,10 +134,11 @@ class Installer {
 	 */
 	public function update(): void {
 		$current_version = get_option( self::SENSEI_VERSION_OPTION_NAME );
-		$updates         = $this->updates_factory->create( $current_version, $this->version );
+		$is_new_install  = $this->is_new_install( $current_version );
+		$updates         = $this->updates_factory->create( $current_version, $this->version, $is_new_install );
 
 		$updates->run_updates();
-		$this->update_version();
+		$this->update_version( $is_new_install );
 	}
 
 	/**
@@ -178,12 +180,34 @@ class Installer {
 	 * Update the plugin's version to the current one.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @param bool $is_new_install Whether this is a new install.
 	 */
-	private function update_version(): void {
+	private function update_version( bool $is_new_install ): void {
 		if ( ! $this->version ) {
 			return;
 		}
 		update_option( self::SENSEI_VERSION_OPTION_NAME, $this->version );
+
+		if ( $is_new_install ) {
+			update_option( self::SENSEI_INSTALL_VERSION_OPTION_NAME, $this->version );
+		}
+	}
+
+	/**
+	 * Checks if the plugin is being installed for the first time.
+	 *
+	 * @param mixed $current_version The current version of the plugin, based on settings.
+	 *
+	 * @return bool
+	 */
+	private function is_new_install( $current_version ): bool {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
+
+		return ! $current_version && empty( $course_sample_id );
 	}
 }
 
