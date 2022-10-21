@@ -5,6 +5,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { Spinner, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import SenseiGuides from './sections/sensei-guides';
 import LatestNews from './sections/latest-news';
 import Extensions from './sections/extensions';
 import '../shared/data/api-fetch-preloaded-once';
-import { __ } from '@wordpress/i18n';
 import Notices from './notices';
 
 const Main = () => {
