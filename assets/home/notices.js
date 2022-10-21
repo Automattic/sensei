@@ -60,19 +60,6 @@ const NoticeActions = ( { actions } ) => {
 };
 
 /**
- * Renders the heading of a given notice, wrapped with a proper CSS class, or null if there's no heading.
- *
- * @param {Object} props         Component props.
- * @param {string} props.heading The heading to render.
- */
-const NoticeHeading = ( { heading } ) => {
-	if ( ! heading ) {
-		return null;
-	}
-	return <div className="sensei-notice__heading">{ heading }</div>;
-};
-
-/**
  * Renders the info link of a given notice, or null if there's no info link.
  *
  * @param {Object} props          Component props.
@@ -113,13 +100,17 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 		containerProps[ 'data-dismiss-nonce' ] = dismissNonce;
 	}
 
+	const message =
+		( notice.heading
+			? `<div class="sensei-notice__heading">${ notice.heading }</div>`
+			: '' ) + notice.message;
+
 	return (
 		<div { ...containerProps }>
 			<div className="sensei-notice__wrapper">
 				<div className="sensei-notice__content">
 					<SenseiCircleLogo className="sensei-notice__logo" />
-					<NoticeHeading heading={ notice.heading } />
-					<RawHTML>{ notice.message }</RawHTML>
+					<RawHTML>{ message }</RawHTML>
 				</div>
 			</div>
 			<NoticeInfoLink infoLink={ notice.info_link } />
