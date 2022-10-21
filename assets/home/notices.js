@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { RawHTML } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * External dependencies
@@ -83,9 +82,7 @@ const NoticeInfoLink = ( { infoLink } ) => {
 	if ( ! infoLink ) {
 		return null;
 	}
-	return (
-		<Link label={ decodeEntities( infoLink.label ) } url={ infoLink.url } />
-	);
+	return <Link label={ infoLink.label } url={ infoLink.url } />;
 };
 
 /**
