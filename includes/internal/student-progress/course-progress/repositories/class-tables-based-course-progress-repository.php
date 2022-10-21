@@ -5,10 +5,10 @@
  * @package sensei
  */
 
-namespace Sensei\Student_Progress\Course_Progress\Repositories;
+namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class Tables_Based_Course_Progress_Repository
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -31,6 +33,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Tables_Based_Course_Progress_Repository constructor.
 	 *
+	 * @internal
+	 *
 	 * @param wpdb $wpdb WordPress database object.
 	 */
 	public function __construct( wpdb $wpdb ) {
@@ -39,6 +43,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 
 	/**
 	 * Creates a new course progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
@@ -89,6 +95,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Gets a course progress.
 	 *
+	 * @internal
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress|null The course progress or null if it does not exist.
@@ -124,6 +132,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Checks if a course progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return bool Whether the course progress exists.
@@ -147,6 +157,8 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	/**
 	 * Save course progress.
 	 *
+	 * @internal
+	 *
 	 * @param Course_Progress $course_progress The course progress.
 	 */
 	public function save( Course_Progress $course_progress ): void {
@@ -167,6 +179,25 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 				$course_progress->get_started_at() ? '%s' : null,
 				$course_progress->get_completed_at() ? '%s' : null,
 				'%s',
+			],
+			[
+				'%d',
+			]
+		);
+	}
+
+	/**
+	 * Delete course progress.
+	 *
+	 * @internal
+	 *
+	 * @param Course_Progress $course_progress The course progress.
+	 */
+	public function delete( Course_Progress $course_progress ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'id' => $course_progress->get_id(),
 			],
 			[
 				'%d',

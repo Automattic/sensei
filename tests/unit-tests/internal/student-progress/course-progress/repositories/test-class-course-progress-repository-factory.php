@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository;
 use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
 
 /**

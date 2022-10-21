@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Student_Progress\Course_Progress\Repositories;
+namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Aggregate_Course_Progress_Repository.
  *
  * Aggregate repository is an intermediate repository that delegates the calls to the appropriate repository implementation.
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -45,6 +47,8 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 	/**
 	 * Aggregate_Course_Progress_Repository constructor.
 	 *
+	 * @internal
+	 *
 	 * @param Comments_Based_Course_Progress_Repository $comments_based_repository Comments based course progress repository implementation.
 	 * @param Tables_Based_Course_Progress_Repository   $tables_based_repository  Tables based course progress repository implementation.
 	 * @param bool                                      $use_tables  The flag if the tables based implementation is available for use.
@@ -57,6 +61,8 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 
 	/**
 	 * Creates a new course progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
@@ -73,6 +79,8 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 	/**
 	 * Gets a course progress.
 	 *
+	 * @internal
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return Course_Progress|null The course progress or null if it does not exist.
@@ -84,6 +92,8 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 	/**
 	 * Checks if a course progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.
 	 * @return bool Whether the course progress exists.
@@ -94,6 +104,8 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 
 	/**
 	 * Save course progress.
+	 *
+	 * @internal
 	 *
 	 * @param Course_Progress $course_progress The course progress.
 	 */
@@ -115,6 +127,20 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 				);
 				$this->tables_based_repository->save( $progress_to_save );
 			}
+		}
+	}
+
+	/**
+	 * Deletes a course progress.
+	 *
+	 * @internal
+	 *
+	 * @param Course_Progress $course_progress The course progress.
+	 */
+	public function delete( Course_Progress $course_progress ): void {
+		$this->comments_based_repository->delete( $course_progress );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete( $course_progress );
 		}
 	}
 }

@@ -5,11 +5,10 @@
  * @package sensei
  */
 
-namespace Sensei\Student_Progress\Lesson_Progress\Repositories;
+namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
-use RuntimeException;
-use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class Tables_Based_Lesson_Progress_Repository
+ *
+ * @intenal
  *
  * @since $$next-version$$
  */
@@ -32,6 +33,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Tables_Based_Course_Progress_Repository constructor.
 	 *
+	 * @intenal
+	 *
 	 * @param wpdb $wpdb WordPress database object.
 	 */
 	public function __construct( wpdb $wpdb ) {
@@ -40,6 +43,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 	/**
 	 * Creates a new lesson progress.
+	 *
+	 * @intenal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -91,6 +96,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Finds a lesson progress by lesson and user.
 	 *
+	 * @internal
+	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 *
@@ -127,6 +134,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	/**
 	 * Check if a lesson progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return bool
@@ -149,6 +158,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 
 	/**
 	 * Save the lesson progress.
+	 *
+	 * @internal
 	 *
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
@@ -178,8 +189,29 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	}
 
 	/**
+	 * Delete the lesson progress.
+	 *
+	 * @internal
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
+	public function delete( Lesson_Progress $lesson_progress ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'id' => $lesson_progress->get_id(),
+			],
+			[
+				'%d',
+			]
+		);
+	}
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
+	 *
+	 * @internal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.

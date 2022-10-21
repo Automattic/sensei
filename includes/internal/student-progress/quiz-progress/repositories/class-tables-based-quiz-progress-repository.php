@@ -5,10 +5,10 @@
  * @package sensei
  */
 
-namespace Sensei\Student_Progress\Quiz_Progress\Repositories;
+namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 use wpdb;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class Tables_Based_Quiz_Progress_Repository
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -31,6 +33,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Tables_Based_Course_Progress_Repository constructor.
 	 *
+	 * @internal
+	 *
 	 * @param wpdb $wpdb WordPress database object.
 	 */
 	public function __construct( wpdb $wpdb ) {
@@ -39,6 +43,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 
 	/**
 	 * Create a new quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
@@ -89,6 +95,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Find a quiz progress by quiz and user identifiers.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return Quiz_Progress
@@ -124,6 +132,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Check if a quiz progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id Quiz identifier.
 	 * @param int $user_id User identifier.
 	 * @return bool
@@ -147,6 +157,8 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	/**
 	 * Save the quiz progress.
 	 *
+	 * @internal
+	 *
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function save( Quiz_Progress $quiz_progress ): void {
@@ -167,6 +179,25 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'%s',
 				$quiz_progress->get_completed_at() ? '%s' : null,
 				'%s',
+			],
+			[
+				'%d',
+			]
+		);
+	}
+
+	/**
+	 * Delete a quiz progress.
+	 *
+	 * @internal
+	 *
+	 * @param Quiz_Progress $quiz_progress Quiz progress.
+	 */
+	public function delete( Quiz_Progress $quiz_progress ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'id' => $quiz_progress->get_id(),
 			],
 			[
 				'%d',

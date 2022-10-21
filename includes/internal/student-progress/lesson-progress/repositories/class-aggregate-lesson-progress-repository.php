@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Student_Progress\Lesson_Progress\Repositories;
+namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
-use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Aggregate_Lesson_Progress_Repository.
  *
  * Aggregate repository is an intermediate repository that delegates the calls to the appropriate repository implementation.
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -45,6 +47,8 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	/**
 	 * Aggregate_Lesson_Progress_Repository constructor.
 	 *
+	 * @internal
+	 *
 	 * @param Comments_Based_Lesson_Progress_Repository $comments_based_repository Comments based lesson progress repository implementation.
 	 * @param Tables_Based_Lesson_Progress_Repository   $tables_based_repository  Tables based lesson progress repository implementation.
 	 * @param bool                                      $use_tables  The flag if the tables based implementation is available for use.
@@ -57,6 +61,8 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 
 	/**
 	 * Creates a new lesson progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
@@ -73,6 +79,8 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	/**
 	 * Gets a lesson progress.
 	 *
+	 * @internal
+	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return Lesson_Progress|null The lesson progress or null if it does not exist.
@@ -84,6 +92,8 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	/**
 	 * Checks if a lesson progress exists.
 	 *
+	 * @intenal
+	 *
 	 * @param int $lesson_id The lesson ID.
 	 * @param int $user_id The user ID.
 	 * @return bool Whether the lesson progress exists.
@@ -94,6 +104,8 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 
 	/**
 	 * Save lesson progress.
+	 *
+	 * @internal
 	 *
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
@@ -119,8 +131,24 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	}
 
 	/**
+	 * Deletes a lesson progress.
+	 *
+	 * @intenal
+	 *
+	 * @param Lesson_Progress $lesson_progress The lesson progress.
+	 */
+	public function delete( Lesson_Progress $lesson_progress ): void {
+		$this->comments_based_repository->delete( $lesson_progress );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete( $lesson_progress );
+		}
+	}
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
+	 *
+	 * @intenal
 	 *
 	 * @param int $course_id The course ID.
 	 * @param int $user_id The user ID.

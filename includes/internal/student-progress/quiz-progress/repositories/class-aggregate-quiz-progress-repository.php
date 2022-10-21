@@ -5,9 +5,9 @@
  * @package sensei
  */
 
-namespace Sensei\Student_Progress\Quiz_Progress\Repositories;
+namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
-use Sensei\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class Aggregate_Quiz_Progress_Repository.
  *
  * Aggregate repository is an intermediate repository that delegates the calls to the appropriate repository implementation.
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -45,6 +47,8 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 	/**
 	 * Aggregate_Quiz_Progress_Repository constructor.
 	 *
+	 * @internal
+	 *
 	 * @param Comments_Based_Quiz_Progress_Repository $comments_based_repository Comments based quiz progress repository implementation.
 	 * @param Tables_Based_Quiz_Progress_Repository   $tables_based_repository  Tables based quiz progress repository implementation.
 	 * @param bool                                    $use_tables  The flag if the tables based implementation is available for use.
@@ -57,6 +61,8 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 
 	/**
 	 * Creates a new quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
@@ -73,6 +79,8 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 	/**
 	 * Gets a quiz progress.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 * @return Quiz_Progress|null The quiz progress or null if it does not exist.
@@ -84,6 +92,8 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 	/**
 	 * Checks if a quiz progress exists.
 	 *
+	 * @internal
+	 *
 	 * @param int $quiz_id The quiz ID.
 	 * @param int $user_id The user ID.
 	 * @return bool Whether the quiz progress exists.
@@ -94,6 +104,8 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 
 	/**
 	 * Save quiz progress.
+	 *
+	 * @internal
 	 *
 	 * @param Quiz_Progress $quiz_progress The quiz progress.
 	 */
@@ -115,6 +127,20 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 				);
 				$this->tables_based_repository->save( $progress_to_save );
 			}
+		}
+	}
+
+	/**
+	 * Deletes a quiz progress.
+	 *
+	 * @internal
+	 *
+	 * @param Quiz_Progress $quiz_progress The quiz progress.
+	 */
+	public function delete( Quiz_Progress $quiz_progress ): void {
+		$this->comments_based_repository->delete( $quiz_progress );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete( $quiz_progress );
 		}
 	}
 }
