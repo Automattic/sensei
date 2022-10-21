@@ -24,9 +24,7 @@ const SenseiProAd = () => {
 		[]
 	);
 
-	if (
-		! senseiProExtension /* || senseiProExtension.is_installed === true */
-	) {
+	if ( ! senseiProExtension || senseiProExtension.is_installed === true ) {
 		return null;
 	}
 
