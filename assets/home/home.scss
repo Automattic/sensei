@@ -137,6 +137,11 @@ $break-medium: 783px; // adminbar goes big
 
 		&__notices {
 			margin-bottom: 31px;
+
+			.notice {
+				margin-left: 0;
+				margin-right: 0;
+			}
 		}
 
 		&__grid {
