@@ -240,10 +240,7 @@ class Sensei_Home_Notices {
 
 		$notice['actions'][] = [
 			'label' => __( 'Activate', 'sensei-lms' ),
-			'url'   => wp_nonce_url(
-				self_admin_url( 'plugin.php?action=activate&plugin=' . $plugin_file ),
-				'activate-plugin_' . $plugin_file
-			),
+			'url'   => add_query_arg( '_wpnonce', wp_create_nonce( 'activate-plugin_' . $plugin_file ), self_admin_url( 'plugins.php?action=activate&plugin=' . $plugin_file ) ),
 		];
 
 		return $notice;
