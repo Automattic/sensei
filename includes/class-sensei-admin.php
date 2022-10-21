@@ -95,7 +95,7 @@ class Sensei_Admin {
 	 * @return void
 	 */
 	public function admin_menu() {
-		add_menu_page( _x( 'Sensei LMS', 'admin menu', 'sensei-lms' ), _x( 'Sensei LMS', 'admin menu', 'sensei-lms' ), self::get_top_menu_capability(), 'sensei', '', '', '50' );
+		add_menu_page( 'Sensei LMS', 'Sensei LMS', self::get_top_menu_capability(), 'sensei', '', '', '50' );
 	}
 
 	/**
