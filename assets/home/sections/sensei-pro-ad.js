@@ -13,7 +13,7 @@ import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
 import SenseiProAdCTA from '../../images/sensei-pro-ad-cta.svg';
 
 /*
- * Sensei Pro featured product component.
+ * Sensei Pro ad
  */
 const SenseiProAd = () => {
 	const { senseiProExtension } = useSelect(
