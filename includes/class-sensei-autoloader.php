@@ -261,6 +261,11 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php',
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-factory.php',
 
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Session_Based_Course_Progress_Repository::class => 'internal/student-progress/course-progress/repositories/class-session-based-course-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Session_Based_Lesson_Progress_Repository::class => 'internal/student-progress/lesson-progress/repositories/class-session-based-lesson-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Session_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-session-based-quiz-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Guest_Session::class => 'internal/student-progress/class-guest-session.php',
+
 			/**
 			 * Quiz Submission
 			 */

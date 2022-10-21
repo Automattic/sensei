@@ -550,6 +550,8 @@ class Sensei_Main {
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
+		
+		new \Sensei\Internal\Student_Progress\Guest_Session();
 	}
 
 	/**
