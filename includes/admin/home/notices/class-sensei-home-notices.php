@@ -271,10 +271,7 @@ class Sensei_Home_Notices {
 
 		$notice['actions'][] = [
 			'label' => __( 'Update', 'sensei-lms' ),
-			'url'   => wp_nonce_url(
-				self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . $plugin_file ),
-				'upgrade-plugin_' . $plugin_file
-			),
+			'url'   => add_query_arg( '_wpnonce', wp_create_nonce( 'upgrade-plugin_' . $plugin_file ), self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . $plugin_file ) ),
 		];
 
 		return $notice;
