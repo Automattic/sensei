@@ -1,17 +1,17 @@
 <?php
 
-namespace SenseiTest\Student_Progress\Lesson_Progress\Repositories;
+namespace SenseiTest\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
-use Sensei\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
-use Sensei\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository;
 use Sensei_Course;
 use wpdb;
 
 /**
  * Tests for Tables_Based_Lesson_Progress_Repository.
  *
- * @covers \Sensei\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository
+ * @covers \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository
  */
 class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_ParamsGiven_InsertsToWpdb(): void {

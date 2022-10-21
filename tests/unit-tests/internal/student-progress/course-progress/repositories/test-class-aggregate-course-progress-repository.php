@@ -1,11 +1,11 @@
 <?php
 
-namespace SenseiTest\Student_Progress\Course_Progress\Repositories;
+namespace SenseiTest\Internal\Student_Progress\Course_Progress\Repositories;
 
-use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
-use Sensei\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository;
-use Sensei\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
-use Sensei\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository;
 
 class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	public function testCreate_UseTablesOn_CallsTablesBasedRepository(): void {
