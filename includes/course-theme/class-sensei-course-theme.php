@@ -341,7 +341,15 @@ class Sensei_Course_Theme {
 		global $_wp_current_template_content;
 
 		preg_match( '/sensei-version--(\d+-\d+-\d+)/', $_wp_current_template_content ?? '', $version_matches );
-		return $version_matches[1] ?? null;
+
+		$version = $version_matches[1] ?? null;
+
+		// Versions before 4.0.2 didn't have a version tag, check for Ui blocks instead.
+		if ( ! $version && ! preg_match( '/wp:sensei-lms\/ui/', $_wp_current_template_content ) ) {
+			$version = '4-0-2';
+		}
+
+		return $version;
 	}
 
 	/**

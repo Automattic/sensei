@@ -3613,9 +3613,6 @@ class Sensei_Lesson {
 			$user_id = get_current_user_id();
 		}
 
-		// Get the users current status on the lesson.
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
-
 		// If viewing quiz on the frontend then show questions in random order if set.
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
@@ -3637,17 +3634,12 @@ class Sensei_Lesson {
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$questions_asked_string = ! empty( $user_lesson_status->comment_ID ) ? get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true ) : false;
-			if ( ! empty( $questions_asked_string ) ) {
+			$quiz_submission_question_ids = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
 
-				$selected_questions = explode( ',', $questions_asked_string );
-
+			if ( $quiz_submission_question_ids ) {
 				// Fetch each question in the order in which they were asked.
 				$questions = [];
-				foreach ( $selected_questions as $question_id ) {
-					if ( ! $question_id ) {
-						continue;
-					}
+				foreach ( $quiz_submission_question_ids as $question_id ) {
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
 						continue;
