@@ -138,9 +138,18 @@ $break-medium: 783px; // adminbar goes big
 		&__notices {
 			margin-bottom: 31px;
 
-			.notice {
+			.sensei-notice {
 				margin-left: 0;
 				margin-right: 0;
+
+				&__wrapper {
+					height: 100%;
+				}
+
+				&__content {
+					display: flex;
+					align-items: center;
+				}
 			}
 		}
 
