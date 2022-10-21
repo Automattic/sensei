@@ -129,7 +129,7 @@ const SenseiProAd = () => {
 								window.sensei.pluginUrl + senseiProAdImageUrl
 							}
 							alt={ __(
-								'Image in black and white representing a course costing $29.99',
+								'Image in black and white of a man looking at a microphone',
 								'sensei-lms'
 							) }
 							className="sensei-home__sensei-pro-ad__card--image"
