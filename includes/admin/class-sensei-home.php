@@ -29,14 +29,6 @@ final class Sensei_Home {
 	 */
 	private static $instance;
 
-
-	/**
-	 * The remote data helper instance.
-	 *
-	 * @var Sensei_Home_Remote_Data_API
-	 */
-	private $remote_data_api;
-
 	/**
 	 * The Sensei Home Notices instance.
 	 *
@@ -45,7 +37,49 @@ final class Sensei_Home {
 	private $notices;
 
 	/**
-	 * The Sensei Home Notices Provider instance.
+	 * Sensei Home Quick Links provider.
+	 *
+	 * @var Sensei_Home_Quick_Links_Provider
+	 */
+	private $quick_links_provider;
+
+	/**
+	 * Sensei Home Help provider.
+	 *
+	 * @var Sensei_Home_Help_Provider
+	 */
+	private $help_provider;
+
+	/**
+	 * Sensei Home Promo Banner provider.
+	 *
+	 * @var Sensei_Home_Promo_Banner_Provider
+	 */
+	private $promo_provider;
+
+	/**
+	 * Sensei Home Tasks provider.
+	 *
+	 * @var Sensei_Home_Tasks_Provider
+	 */
+	private $tasks_provider;
+
+	/**
+	 * Sensei Home News provider.
+	 *
+	 * @var Sensei_Home_News_Provider
+	 */
+	private $news_provider;
+
+	/**
+	 * Sensei Home Guides provider.
+	 *
+	 * @var Sensei_Home_Guides_Provider
+	 */
+	private $guides_provider;
+
+	/**
+	 * Sensei Notices provider.
 	 *
 	 * @var Sensei_Home_Notices_Provider
 	 */
@@ -55,27 +89,35 @@ final class Sensei_Home {
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
 	private function __construct() {
-		$this->remote_data_api  = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
-		$this->notices          = new Sensei_Home_Notices( $this->remote_data_api, self::SCREEN_ID );
-		$this->notices_provider = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), self::SCREEN_ID );
+		$remote_data_api            = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
+		$this->notices              = new Sensei_Home_Notices( $remote_data_api, self::SCREEN_ID );
+		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), self::SCREEN_ID );
+		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
+		$this->help_provider        = new Sensei_Home_Help_Provider();
+		$this->promo_provider       = new Sensei_Home_Promo_Banner_Provider();
+		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
+		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
+		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
 	}
 
 	/**
-	 * Gets the remote data API.
+	 * Gets a REST API controller for Sensei Home.
 	 *
-	 * @return Sensei_Home_Remote_Data_API
-	 */
-	public function get_remote_data_api() {
-		return $this->remote_data_api;
-	}
-
-	/**
-	 * Gets the Sensei Home Notices provider instance.
+	 * @param string $namespace The REST API namespace.
 	 *
-	 * @return Sensei_Home_Remote_Data_API
+	 * @return Sensei_REST_API_Home_Controller
 	 */
-	public function get_notices_provider() {
-		return $this->notices_provider;
+	public function get_rest_api_controller( $namespace ) {
+		return new Sensei_REST_API_Home_Controller(
+			$namespace,
+			$this->quick_links_provider,
+			$this->help_provider,
+			$this->promo_provider,
+			$this->tasks_provider,
+			$this->news_provider,
+			$this->guides_provider,
+			$this->notices_provider
+		);
 	}
 
 	/**
