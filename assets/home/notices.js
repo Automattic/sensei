@@ -107,9 +107,9 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 
 	return (
 		<div { ...containerProps }>
+			<SenseiCircleLogo className="sensei-notice__icon" />
 			<div className="sensei-notice__wrapper">
 				<div className="sensei-notice__content">
-					<SenseiCircleLogo className="sensei-notice__logo" />
 					<RawHTML>{ message }</RawHTML>
 				</div>
 			</div>
