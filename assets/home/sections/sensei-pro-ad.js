@@ -10,6 +10,7 @@ import { useSelect } from '@wordpress/data';
 import { EXTENSIONS_STORE } from '../../extensions/store';
 import { Col } from '../grid';
 import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
+import SenseiProAdCTA from '../../images/sensei-pro-ad-cta.svg';
 
 /*
  * Sensei Pro featured product component.
@@ -121,14 +122,23 @@ const SenseiProAd = () => {
 					</div>
 				</section>
 
-				<section className="sensei-home__sensei-pro-ad__column sensei-home__sensei-pro-ad__image">
-					<img
-						src={ window.sensei.pluginUrl + senseiProAdImageUrl }
-						alt={ __(
-							'Image in black and white representing a course costing $29.99',
-							'sensei-lms'
-						) }
-					/>
+				<section className="sensei-home__sensei-pro-ad__column">
+					<div className="sensei-home__sensei-pro-ad__card">
+						<img
+							src={
+								window.sensei.pluginUrl + senseiProAdImageUrl
+							}
+							alt={ __(
+								'Image in black and white representing a course costing $29.99',
+								'sensei-lms'
+							) }
+							className="sensei-home__sensei-pro-ad__card--image"
+						/>
+						<div className="sensei-home__sensei-pro-ad__card--price">
+							$29.99
+						</div>
+						<SenseiProAdCTA className="sensei-home__sensei-pro-ad__card--cta" />
+					</div>
 				</section>
 			</article>
 		</Col>
