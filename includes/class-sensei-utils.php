@@ -1543,7 +1543,9 @@ class Sensei_Utils {
 	 */
 	public static function user_completed_lesson( $lesson = 0, $user_id = 0 ): bool {
 
-		$progress = Sensei()->lesson_progress_repository->get( $lesson, $user_id );
+		$lesson_id = $lesson->comment_post_ID ?? $lesson;
+
+		$progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
 
 		return ! empty( $progress ) && $progress->is_complete();
 
