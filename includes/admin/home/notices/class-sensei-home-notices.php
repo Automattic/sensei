@@ -167,8 +167,8 @@ class Sensei_Home_Notices {
 		$info_link = false;
 		if ( ! empty( $changelog_url ) ) {
 			$info_link = [
-				'label' => esc_html__( 'What\'s new', 'sensei-lms' ),
-				'url'   => esc_url( $changelog_url ),
+				'label' => __( 'What\'s new', 'sensei-lms' ),
+				'url'   => esc_url_raw( $changelog_url ),
 			];
 		}
 
