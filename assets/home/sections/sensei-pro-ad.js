@@ -116,7 +116,7 @@ const SenseiProAd = ( { show } ) => {
 								href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
 								target="_blank"
 								rel="noreferrer external"
-								className="sensei-home__sensei-pro-ad__button is-secondary is-large components-button "
+								className="sensei-home__sensei-pro-ad__button is-secondary is-large components-button"
 							>
 								{ __( 'Learn More', 'sensei-lms' ) }
 							</a>

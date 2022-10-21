@@ -122,8 +122,12 @@
 			padding: 24px;
 			margin-top: 48px;
 
-			&--image {
+			&--image, &--cta {
 				width: 100%;
+			}
+
+			&--cta {
+				max-width: 300px;
 			}
 
 			&--price {
