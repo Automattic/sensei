@@ -30,39 +30,6 @@
 
 	color: $gray-100;
 
-	// Adjust the position of the notices
-	.components-editor-notices__snackbar {
-		position: fixed;
-		left: 0;
-		right: 0;
-		bottom: 40px;
-		padding-left: 16px;
-		padding-right: 16px;
-
-		@media (min-width: 783px) {
-			left: 50px;
-		}
-
-		@media (min-width: $break-large) {
-			left: 175px;
-		}
-	}
-
-	.components-notice {
-		background-color: #fff;
-
-		&__content {
-			display: grid;
-			grid-template-columns: 1fr auto;
-
-		}
-
-		.components-button {
-			align-self: center;
-			margin-top: 0;
-		}
-	}
-
 	.postbox {
 		height: 100%;
 	}
@@ -131,55 +98,6 @@
 			}
 		}
 
-		&__update-badge {
-			display: flex;
-			align-items: center;
-			font-size: 14px;
-			font-weight: 500;
-			color: inherit;
-
-			svg {
-				width: 24px;
-				height: 24px;
-				margin-right: 5px;
-			}
-		}
-
-		&__update-notification {
-			@include white-box;
-			padding: 17px 50px;
-			border-left: solid 5px $primary;
-
-			.sensei-home__update-badge {
-				margin-left: -29px;
-			}
-
-			&__title {
-				margin: 10px 0;
-				font-size: 18px;
-			}
-
-			&__description {
-				margin: 0 0 30px;
-				font-size: 14px;
-			}
-
-			&__list {
-				margin: 10px 0 30px;
-
-				&__item {
-					margin: 0;
-
-					&::before {
-						content: "- "
-					}
-				}
-			}
-
-			&__version-link {
-				color: inherit;
-			}
-		}
 
 		&__featured-list {
 			@include white-box;
@@ -340,10 +258,6 @@
 
 		&__rotating-icon svg {
 			animation: rotation 2s infinite linear;
-		}
-
-		.components-notice {
-			margin: 10px 0 0;
 		}
 
 		&__link {
