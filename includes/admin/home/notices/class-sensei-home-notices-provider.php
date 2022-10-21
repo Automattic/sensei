@@ -83,7 +83,9 @@ class Sensei_Home_Notices_Provider {
 			'message'     => $notice['message'],
 			'info_link'   => $notice['info_link'] ?? null,
 			'actions'     => $notice['actions'] ?? [],
-			'dismissible' => $notice['dismissible'] ?? false,
+			// If we have Sensei_Admin_Notices, we consider it as being, by default, dismissible, given that
+			// this is the default on Sensei_Admin_Notices.
+			'dismissible' => $notice['dismissible'] ?? class_exists( 'Sensei_Admin_Notices' ),
 		];
 	}
 }
