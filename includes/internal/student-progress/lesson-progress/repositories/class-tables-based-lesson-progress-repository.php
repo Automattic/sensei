@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Lesson_Progress\Repositories;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use wpdb;
 
@@ -52,8 +53,8 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @return Lesson_Progress The lesson progress.
 	 */
 	public function create( int $lesson_id, int $user_id ): Lesson_Progress {
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
-		$current_datetime = current_datetime();
 		$this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
@@ -119,15 +120,17 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 			return null;
 		}
 
+		$timezone = new DateTimeZone( 'UTC' );
+
 		return new Lesson_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			$row->started_at ? new DateTimeImmutable( $row->started_at, wp_timezone() ) : null,
-			$row->completed_at ? new DateTimeImmutable( $row->completed_at, wp_timezone() ) : null,
-			new DateTimeImmutable( $row->created_at, wp_timezone() ),
-			new DateTimeImmutable( $row->updated_at, wp_timezone() )
+			$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
+			new DateTimeImmutable( $row->created_at, $timezone ),
+			new DateTimeImmutable( $row->updated_at, $timezone )
 		);
 	}
 
@@ -164,6 +167,9 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
 	public function save( Lesson_Progress $lesson_progress ): void {
+		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		$lesson_progress->set_updated_at( $updated_at );
+
 		$date_format = 'Y-m-d H:i:s';
 		$this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
@@ -171,7 +177,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 				'status'       => $lesson_progress->get_status(),
 				'started_at'   => $lesson_progress->get_started_at() ? $lesson_progress->get_started_at()->format( $date_format ) : null,
 				'completed_at' => $lesson_progress->get_completed_at() ? $lesson_progress->get_completed_at()->format( $date_format ) : null,
-				'updated_at'   => current_datetime()->format( $date_format ),
+				'updated_at'   => $lesson_progress->get_updated_at()->format( $date_format ),
 			],
 			[
 				'id' => $lesson_progress->get_id(),

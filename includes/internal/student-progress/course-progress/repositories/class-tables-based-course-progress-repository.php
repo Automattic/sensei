@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 use wpdb;
 
@@ -51,7 +52,7 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 * @return Course_Progress The course progress.
 	 */
 	public function create( int $course_id, int $user_id ): Course_Progress {
-		$current_datetime = current_datetime();
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
@@ -117,15 +118,17 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			return null;
 		}
 
+		$timezone = new DateTimeZone( 'UTC' );
+
 		return new Course_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			$row->started_at ? new DateTimeImmutable( $row->started_at, wp_timezone() ) : null,
-			$row->completed_at ? new DateTimeImmutable( $row->completed_at, wp_timezone() ) : null,
-			new DateTimeImmutable( $row->created_at, wp_timezone() ),
-			new DateTimeImmutable( $row->updated_at, wp_timezone() )
+			$row->started_at ? new DateTimeImmutable( $row->started_at, $timezone ) : null,
+			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
+			new DateTimeImmutable( $row->created_at, $timezone ),
+			new DateTimeImmutable( $row->updated_at, $timezone )
 		);
 	}
 
@@ -163,13 +166,17 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 	 */
 	public function save( Course_Progress $course_progress ): void {
 		$date_format = 'Y-m-d H:i:s';
+
+		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		$course_progress->set_updated_at( $updated_at );
+
 		$this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
 				'status'       => $course_progress->get_status(),
 				'started_at'   => $course_progress->get_started_at() ? $course_progress->get_started_at()->format( $date_format ) : null,
 				'completed_at' => $course_progress->get_completed_at() ? $course_progress->get_completed_at()->format( $date_format ) : null,
-				'updated_at'   => current_datetime()->format( $date_format ),
+				'updated_at'   => $course_progress->get_updated_at()->format( $date_format ),
 			],
 			[
 				'id' => $course_progress->get_id(),

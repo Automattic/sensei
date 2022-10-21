@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 use wpdb;
 
@@ -51,7 +52,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @return Quiz_Progress
 	 */
 	public function create( int $quiz_id, int $user_id ): Quiz_Progress {
-		$current_datetime = current_datetime();
+		$current_datetime = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 		$date_format      = 'Y-m-d H:i:s';
 		$this->wpdb->insert(
 			$this->wpdb->prefix . 'sensei_lms_progress',
@@ -117,15 +118,17 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			return null;
 		}
 
+		$timezone = new DateTimeZone( 'UTC' );
+
 		return new Quiz_Progress(
 			(int) $row->id,
 			(int) $row->post_id,
 			(int) $row->user_id,
 			$row->status,
-			new DateTimeImmutable( $row->started_at, wp_timezone() ),
-			$row->completed_at ? new DateTimeImmutable( $row->completed_at, wp_timezone() ) : null,
-			new DateTimeImmutable( $row->created_at, wp_timezone() ),
-			new DateTimeImmutable( $row->updated_at, wp_timezone() )
+			new DateTimeImmutable( $row->started_at, $timezone ),
+			$row->completed_at ? new DateTimeImmutable( $row->completed_at, $timezone ) : null,
+			new DateTimeImmutable( $row->created_at, $timezone ),
+			new DateTimeImmutable( $row->updated_at, $timezone )
 		);
 	}
 
@@ -162,6 +165,9 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function save( Quiz_Progress $quiz_progress ): void {
+		$updated_at = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
+		$quiz_progress->set_updated_at( $updated_at );
+
 		$date_format = 'Y-m-d H:i:s';
 		$this->wpdb->update(
 			$this->wpdb->prefix . 'sensei_lms_progress',
@@ -169,7 +175,7 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 				'status'       => $quiz_progress->get_status(),
 				'started_at'   => $quiz_progress->get_started_at() ? $quiz_progress->get_started_at()->format( $date_format ) : null,
 				'completed_at' => $quiz_progress->get_completed_at() ? $quiz_progress->get_completed_at()->format( $date_format ) : null,
-				'updated_at'   => current_datetime()->format( $date_format ),
+				'updated_at'   => $quiz_progress->get_updated_at()->format( $date_format ),
 			],
 			[
 				'id' => $quiz_progress->get_id(),
