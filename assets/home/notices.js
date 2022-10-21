@@ -47,7 +47,7 @@ const NoticeAction = ( { action } ) => {
  * @param {Object[]} props.actions The list of actions to render.
  */
 const NoticeActions = ( { actions } ) => {
-	if ( ! actions || ! Array.isArray( actions ) ) {
+	if ( ! actions || ! Array.isArray( actions ) || ! actions.length ) {
 		return null;
 	}
 	return (
