@@ -406,7 +406,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'page'                   => $this->page_slug,
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
-				'post_type'              => $this->post_type,
 				'orderby'                => $this->get_orderby_value(),
 				'order'                  => $this->get_order_value(),
 				'course_filter'          => $this->get_course_filter_value(),
@@ -415,7 +414,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'timezone'               => rawurlencode( $this->get_timezone() ),
 				's'                      => $this->get_search_value(),
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		/**

@@ -759,50 +759,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that highlight_menu_item returns expected value.
-	 *
-	 * @dataProvider providerHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile
-	 */
-	public function testHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile( $submenu_file, $screen_id, $expected ): void {
-		/* Arrange */
-		$screen = WP_Screen::get( $screen_id );
-		$screen->set_current_screen();
-
-		$lesson = new Sensei_Lesson();
-
-		/* Act */
-		$actual = $lesson->highlight_menu_item( $submenu_file );
-
-		/* Assert */
-		self::assertSame( $expected, $actual );
-	}
-
-	public function providerHighlightMenuItem_WhenSubmenuGiven_ReturnsMatchingSubmenuFile(): array {
-		return [
-			'edit lesson'              => [
-				'edit.php',
-				'edit-lesson',
-				'edit.php?post_type=lesson',
-			],
-			'edit lesson tag'          => [
-				'edit.php',
-				'edit-lesson-tag',
-				'edit.php?post_type=lesson',
-			],
-			'course page lesson order' => [
-				'edit.php',
-				'course_page_lesson-order',
-				'edit.php?post_type=lesson',
-			],
-			'other id'                 => [
-				'edit.php',
-				'other-id',
-				'edit.php',
-			],
-		];
-	}
-
-	/**
 	 * Test that add_custom_navigation doesn't have output when there is a wrong scree.
 	 *
 	 * @dataProvider providerAddCustomNavigation_WhenWrongScreen_DoesntHaveOutput
@@ -867,8 +823,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="http://example.org/wp-admin/post-new.php?post_type=lesson">New Lesson</a>
-					<a href="http://example.org/wp-admin/edit.php?post_type=course&#038;page=lesson-order">Order Lessons</a>
-					<a href="http://example.org/wp-admin/edit.php?post_type=course&#038;page=sensei-settings#lesson-settings">Lesson Settings</a>
+					<a href="http://example.org/wp-admin/admin.php?page=lesson-order">Order Lessons</a>
+					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings#lesson-settings">Lesson Settings</a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">

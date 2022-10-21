@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since $$next-version$$
  */
 final class Sensei_Home {
-	const SCREEN_ID                  = 'course_page_sensei-home';
+	const SCREEN_ID                  = 'toplevel_page_sensei';
 	const DISMISS_TASKS_NONCE_ACTION = 'sensei-lms-dismiss-tasks';
 	const DISMISS_TASKS_OPTION       = 'sensei_home_tasks_dismissed';
 
@@ -169,11 +169,11 @@ final class Sensei_Home {
 		}
 
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			__( 'Sensei LMS Home', 'sensei-lms' ),
 			__( 'Home', 'sensei-lms' ) . $updates_html,
-			'install_plugins',
-			'sensei-home',
+			'manage_sensei',
+			'sensei',
 			[ $this, 'render' ],
 			0
 		);
