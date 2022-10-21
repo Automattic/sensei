@@ -82,8 +82,8 @@ const NoticeInfoLink = ( { infoLink } ) => {
  */
 const Notice = ( { noticeId, notice, dismissNonce } ) => {
 	let noticeClass = '';
-	if ( !! notice.style ) {
-		noticeClass = 'sensei-notice-' + notice.style;
+	if ( !! notice.level ) {
+		noticeClass = 'sensei-notice-' + notice.level;
 	}
 
 	const isDismissible = notice.dismissible && dismissNonce;
