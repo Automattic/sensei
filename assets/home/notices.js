@@ -26,7 +26,9 @@ const NoticeAction = ( { action } ) => {
 		return null;
 	}
 
-	const buttonClass = action.primary ? 'button-primary' : 'button-secondary';
+	const isPrimary = action.primary ?? true;
+
+	const buttonClass = isPrimary ? 'button-primary' : 'button-secondary';
 	return (
 		<a
 			href={ action.url }
