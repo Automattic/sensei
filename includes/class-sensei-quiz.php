@@ -770,8 +770,7 @@ class Sensei_Quiz {
 
 			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 			if ( $quiz_submission ) {
-				$quiz_submission->set_final_grade( null );
-				Sensei()->quiz_submission_repository->save( $quiz_submission );
+				Sensei()->quiz_submission_repository->delete( $quiz_submission );
 				Sensei()->quiz_grade_repository->delete_all( $quiz_submission->get_id() );
 				Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
 			}

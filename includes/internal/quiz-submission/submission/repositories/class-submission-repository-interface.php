@@ -79,4 +79,13 @@ interface Submission_Repository_Interface {
 	 * @param Submission $submission The quiz submission.
 	 */
 	public function save( Submission $submission ): void;
+
+	/**
+	 * Delete the quiz submission.
+	 *
+	 * @internal
+	 *
+	 * @param Submission $submission The quiz submission.
+	 */
+	public function delete( Submission $submission ): void;
 }
