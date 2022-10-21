@@ -11,12 +11,13 @@ import { EXTENSIONS_STORE } from '../../extensions/store';
 import { Col } from '../grid';
 import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
 import SenseiProAdCTA from '../../images/sensei-pro-ad-cta.svg';
-import { applyFilters } from '@wordpress/hooks';
 
-/*
- * Sensei Pro ad
+/**
+ * Sensei Pro Ad to be shown on Sensei Home.
+ *
+ * @param {boolean} show Whether to show or not the ad.
  */
-const SenseiProAd = () => {
+const SenseiProAd = ( { show } ) => {
 	const { senseiProExtension } = useSelect(
 		( select ) => ( {
 			senseiProExtension: select(
@@ -26,20 +27,7 @@ const SenseiProAd = () => {
 		[]
 	);
 
-	/**
-	 * Filters if the Sensei Pro Ad on Sensei Home should show or not
-	 *
-	 * @since $$next-version$$
-	 *
-	 * @param {boolean} senseiHomeAdHide Whether to hide the Sensei Pro Ad on Sensei Home.
-	 * @return {boolean} Whether to hide the Sensei Pro Ad on Sensei Home.
-	 */
-	const senseiHomeAdHide = applyFilters(
-		'senseiHomeAdHide',
-		! senseiProExtension || senseiProExtension.is_activated === true
-	);
-
-	if ( senseiHomeAdHide ) {
+	if ( ! senseiProExtension || ! show ) {
 		return null;
 	}
 
