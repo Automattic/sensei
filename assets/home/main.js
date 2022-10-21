@@ -47,7 +47,7 @@ const Main = () => {
 	}, [] );
 
 	let content = null;
-	const notices = data?.notices ?? [];
+	const notices = data?.notices ?? {};
 
 	if ( isFetching ) {
 		content = <Spinner />;
