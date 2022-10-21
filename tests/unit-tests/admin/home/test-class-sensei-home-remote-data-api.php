@@ -174,7 +174,9 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 		// Clone the provider to avoid local cache issues.
 		$provider_b = clone $provider;
 
+		add_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 		$first_fetch = $provider->fetch( $max_age );
+		remove_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 		$this->stopTrackingHttpRequests();
 		$this->assertWPError( $first_fetch );
 
@@ -184,8 +186,9 @@ class Sensei_Home_Remote_Data_API_Test extends WP_UnitTestCase {
 				return [ 'hit' => uniqid() ];
 			}
 		);
-
+		add_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 		$second_fetch = $provider_b->fetch( $max_age );
+		remove_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 		$this->assertWPError( $second_fetch );
 		$this->assertEquals( $first_fetch->get_error_code(), $second_fetch->get_error_code(), 'The error codes should be the same' );
 
