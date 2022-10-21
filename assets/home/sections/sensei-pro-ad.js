@@ -122,7 +122,10 @@ const SenseiProAd = () => {
 					</div>
 				</section>
 
-				<section className="sensei-home__sensei-pro-ad__column">
+				<section
+					className="sensei-home__sensei-pro-ad__column"
+					aria-hidden="true"
+				>
 					<div className="sensei-home__sensei-pro-ad__card">
 						<img
 							src={
