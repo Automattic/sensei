@@ -39,6 +39,18 @@ class Installer_Test extends \WP_UnitTestCase {
 		$this->reset_installer_state();
 	}
 
+	public function testInit_WhenCalled_RegistersHooks(): void {
+		/* Arrange. */
+		$installer = new Installer( new Schema(), new Updates_Factory(), SENSEI_LMS_VERSION );
+
+		/* Act. */
+		$installer->init();
+
+		/* Assert. */
+		$this->assertSame( 10, has_action( 'plugins_loaded', [ $installer, 'install' ] ) );
+		$this->assertSame( 10, has_action( 'init', [ $installer, 'update' ] ) );
+	}
+
 	public function testInstall_WhenAlreadyInstalling_ShouldNotRun(): void {
 		/* Arrange. */
 		set_transient( 'sensei_lms_installing', 'yes', MINUTE_IN_SECONDS * 10 );
