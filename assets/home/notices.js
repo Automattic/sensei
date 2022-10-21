@@ -31,7 +31,7 @@ const NoticeAction = ( { action } ) => {
 	return (
 		<a
 			href={ action.url }
-			target={ action.target ?? '_blank' }
+			target={ action.target ?? '_self' }
 			rel="noopener noreferrer"
 			className={ classnames( 'button', buttonClass ) }
 		>
