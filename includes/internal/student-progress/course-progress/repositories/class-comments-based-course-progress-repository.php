@@ -118,6 +118,8 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 	/**
 	 * Delete course progress.
 	 *
+	 * @internal
+	 *
 	 * @param Course_Progress $course_progress The course progress.
 	 */
 	public function delete( Course_Progress $course_progress ): void {

@@ -127,6 +127,8 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 	/**
 	 * Delete the lesson progress.
 	 *
+	 * @internal
+	 *
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
 	public function delete( Lesson_Progress $lesson_progress ): void {

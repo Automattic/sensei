@@ -136,6 +136,8 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	/**
 	 * Delete the quiz progress.
 	 *
+	 * @internal
+	 *
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function delete( Quiz_Progress $quiz_progress ): void {

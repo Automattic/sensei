@@ -66,6 +66,8 @@ interface Lesson_Progress_Repository_Interface {
 	/**
 	 * Delete the lesson progress.
 	 *
+	 * @internal
+	 *
 	 * @param Lesson_Progress $lesson_progress The lesson progress.
 	 */
 	public function delete( Lesson_Progress $lesson_progress ): void;
