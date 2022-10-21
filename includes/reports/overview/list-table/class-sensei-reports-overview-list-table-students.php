@@ -249,11 +249,10 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 
 		$url = add_query_arg(
 			array(
-				'page'      => $this->page_slug,
-				'user_id'   => $user_id,
-				'post_type' => $this->post_type,
+				'page'    => $this->page_slug,
+				'user_id' => $user_id,
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		return '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';

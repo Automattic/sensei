@@ -125,7 +125,7 @@ class Sensei_Messages {
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				__( 'Messages', 'sensei-lms' ),
 				__( 'Messages', 'sensei-lms' ),
 				'edit_courses',

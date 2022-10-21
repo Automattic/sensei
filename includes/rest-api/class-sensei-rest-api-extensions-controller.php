@@ -52,7 +52,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_extensions' ],
-					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+					'permission_callback' => [ $this, 'can_user_read_plugins' ],
 					'args'                => [
 						'installed'  => [
 							'type'              => 'bool',
@@ -133,6 +133,25 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 				],
 			]
 		);
+	}
+
+	/**
+	 * Check user permission for reading plugins.
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return bool|WP_Error Whether the user can read extensions.
+	 */
+	public function can_user_read_plugins( WP_REST_Request $request ) {
+		if ( ! current_user_can( Sensei_Admin::get_top_menu_capability() ) ) {
+			return new WP_Error(
+				'rest_cannot_view_plugins',
+				__( 'Sorry, you are not allowed to read available plugins for this site.', 'sensei-lms' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		return true;
 	}
 
 	/**

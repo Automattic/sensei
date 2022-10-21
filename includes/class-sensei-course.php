@@ -148,11 +148,12 @@ class Sensei_Course {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
 	 * Highlight the menu item for the course pages.
+	 *
+	 * @deprecated $$next-version$$
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -162,6 +163,8 @@ class Sensei_Course {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-course', 'edit-course-category', 'course_page_course-order' ], true ) ) {
@@ -203,8 +206,8 @@ class Sensei_Course {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=course' ) ); ?>"><?php esc_html_e( 'New Course', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=course-order' ) ); ?>"><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=course-order' ) ); ?>"><?php esc_html_e( 'Order Courses', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#course-settings' ) ); ?>"><?php esc_html_e( 'Course Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -747,21 +750,19 @@ class Sensei_Course {
 
 		$manage_url  = add_query_arg(
 			array(
-				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 		$grading_url = add_query_arg(
 			array(
-				'post_type' => 'course',
 				'page'      => 'sensei_grading',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		echo '<ul><li><a href=' . esc_url( $manage_url ) . '>' . esc_html__( 'Manage Students', 'sensei-lms' ) . '</a></li>';

@@ -517,7 +517,7 @@ class Sensei_Course_Enrolment_Manager {
 	 */
 	public function add_wcpc_1_notice() {
 		$screen        = get_current_screen();
-		$valid_screens = [ 'dashboard', 'plugins', 'plugins-network', 'course_page_sensei_learners' ];
+		$valid_screens = [ 'dashboard', 'plugins', 'plugins-network', 'sensei-lms_page_sensei_learners' ];
 
 		if ( ! current_user_can( 'activate_plugins' ) || ! in_array( $screen->id, $valid_screens, true ) ) {
 			return;

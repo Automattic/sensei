@@ -234,7 +234,7 @@ class Sensei_Setup_Wizard {
 	private function should_current_page_display_wizard() {
 		$screen = get_current_screen();
 
-		if ( false !== strpos( $screen->id, 'course_page_sensei' ) ) {
+		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
 			return true;
 		}
 
@@ -244,12 +244,12 @@ class Sensei_Setup_Wizard {
 			'edit-sensei_message',
 			'edit-course',
 			'edit-course-category',
-			'course_page_course-order',
+			'admin_page_course-order',
 			'edit-module',
-			'course_page_module-order',
+			'admin_page_module-order',
 			'edit-lesson',
 			'edit-lesson-tag',
-			'course_page_lesson-order',
+			'admin_page_lesson-order',
 			'edit-question',
 			'question',
 			'edit-question-category',

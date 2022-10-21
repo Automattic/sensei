@@ -25,7 +25,7 @@ import { __ } from '@wordpress/i18n';
 
 const Main = () => {
 	useSenseiColorTheme();
-	const [ data, setData ] = useState();
+	const [ data, setData ] = useState( {} );
 	const [ error, setError ] = useState( null );
 	const [ isFetching, setIsFetching ] = useState( true );
 
@@ -66,33 +66,61 @@ const Main = () => {
 	} else {
 		content = (
 			<>
-				<TasksSection data={ data.tasks } />
+				{ data.tasks && <TasksSection data={ data.tasks } /> }
 
-				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<QuickLinks quickLinks={ data?.quick_links } />
-				</Col>
+				{ data.quick_links && data.quick_links.length > 0 && (
+					<Col
+						as="section"
+						className="sensei-home__section"
+						cols={ 6 }
+					>
+						<QuickLinks quickLinks={ data.quick_links } />
+					</Col>
+				) }
 
-				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<GetHelp categories={ data?.help } />
-				</Col>
+				{ data.help && data.help.length > 0 && (
+					<Col
+						as="section"
+						className="sensei-home__section"
+						cols={ 6 }
+					>
+						<GetHelp categories={ data.help } />
+					</Col>
+				) }
 
-				<SenseiProAd show={ data?.promo_banner.is_visible } />
+				{ data.promo_banner && (
+					<SenseiProAd show={ data.promo_banner.is_visible } />
+				) }
 
-				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<SenseiGuides data={ data?.guides } />
-				</Col>
+				{ data.guides && data.guides?.items.length > 0 && (
+					<Col
+						as="section"
+						className="sensei-home__section"
+						cols={ 6 }
+					>
+						<SenseiGuides data={ data.guides } />
+					</Col>
+				) }
 
-				<Col as="section" className="sensei-home__section" cols={ 6 }>
-					<LatestNews data={ data?.news } />
-				</Col>
+				{ data.news && data.news?.items.length > 0 && (
+					<Col
+						as="section"
+						className="sensei-home__section"
+						cols={ 6 }
+					>
+						<LatestNews data={ data.news } />
+					</Col>
+				) }
 
-				<Col
-					as="section"
-					className="sensei-home__section sensei-home__section__extensions"
-					cols={ 12 }
-				>
-					<Extensions />
-				</Col>
+				{ data.show_extensions && (
+					<Col
+						as="section"
+						className="sensei-home__section sensei-home__section__extensions"
+						cols={ 12 }
+					>
+						<Extensions />
+					</Col>
+				) }
 			</>
 		);
 	}

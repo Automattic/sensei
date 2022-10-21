@@ -17,13 +17,6 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	public $page_slug;
 
 	/**
-	 * The post type under which is the page registered.
-	 *
-	 * @var string
-	 */
-	private $post_type = 'course';
-
-	/**
 	 * Constructor
 	 *
 	 * @since  1.2.0
@@ -232,9 +225,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 					'page'      => $this->page_slug,
 					'user_id'   => $this->user_id,
 					'course_id' => $item->comment_post_ID,
-					'post_type' => $this->post_type,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 
 			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $course_title ) . '</a></strong>';
@@ -377,9 +369,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 				'page'                   => $this->page_slug,
 				'user_id'                => $this->user_id,
 				'sensei_report_download' => $report,
-				'post_type'              => $this->post_type,
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
