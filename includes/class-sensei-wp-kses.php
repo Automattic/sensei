@@ -80,6 +80,32 @@ class Sensei_Wp_Kses {
 		);
 	}
 
+
+
+	/**
+	 * Return all HTML formatting tags to be used with wp_kses
+	 * see https://www.w3schools.com/html/html_formatting.asp
+	 *
+	 * @access public
+	 * @since 4.6.4
+	 *
+	 * @return array HTML formatting tags
+	 */
+	public static function get_allowed_html_formatting_tags(): array {
+		return array(
+			'b'      => array(),
+			'strong' => array(),
+			'i'      => array(),
+			'em'     => array(),
+			'mark'   => array(),
+			'small'  => array(),
+			'del'    => array(),
+			'ins'    => array(),
+			'sub'    => array(),
+			'sup'    => array(),
+		);
+	}
+
 	/**
 	 * Will act as a sanitization or an identity function, depending on HTML security settings.
 	 *
@@ -100,8 +126,7 @@ class Sensei_Wp_Kses {
 	 * @since 1.12.2
 	 *
 	 * @param array $unescaped_data Array of unescaped data.
-	 * @param array $allowed_html List of allowed HTML elements (to be merged with results of
-								  wp_kses_allowed_html( 'post' )).
+	 * @param array $allowed_html List of allowed HTML elements (to be merged with results of wp_kses_allowed_html( 'post' )).
 	 * @return array Escaped data.
 	 **/
 	public static function wp_kses_array( $unescaped_data, $allowed_html = array() ) {

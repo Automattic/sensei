@@ -1,6 +1,6 @@
 <?php
 
-use Sensei\Student_Progress\Course_Progress\Models\Course_Progress;
+use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -366,29 +366,33 @@ class Sensei_Utils {
 	/**
 	 * Grade quiz
 	 *
-	 * @param  integer $quiz_id ID of quiz
-	 * @param  integer $grade   Grade received
-	 * @param  integer $user_id ID of user being graded
-	 * @param  string  $quiz_grade_type default 'auto'
+	 * @param  integer $quiz_id ID of quiz.
+	 * @param  float   $grade   Grade received.
+	 * @param  integer $user_id ID of user being graded.
+	 * @param  string  $quiz_grade_type default 'auto'.
+	 *
 	 * @return boolean
 	 */
-	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ) {
-		if ( intval( $user_id ) == 0 ) {
-			$user_id = get_current_user_id();
+	public static function sensei_grade_quiz( $quiz_id = 0, $grade = 0, $user_id = 0, $quiz_grade_type = 'auto' ): bool {
+		$user_id = $user_id ? $user_id : get_current_user_id();
+
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		$activity_logged = false;
-		if ( intval( $quiz_id ) > 0 && intval( $user_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$activity_logged    = update_comment_meta( $user_lesson_status->comment_ID, 'grade', $grade );
-
-			$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-
-			do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
 		}
 
-		return $activity_logged;
+		$quiz_submission->set_final_grade( $grade );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+
+		do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
+
+		return true;
 	}
 
 	/**
@@ -547,14 +551,11 @@ class Sensei_Utils {
 		// Delete quiz saved answers
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 
-		// Delete lesson status
-		$args = array(
-			'post_id' => $lesson_id,
-			'type'    => 'sensei_lesson_status',
-			'user_id' => $user_id,
-		);
-		// This auto deletes the corresponding meta data, such as the quiz grade, and questions asked
-		self::sensei_delete_activities( $args );
+		// Delete lesson progress.
+		$lesson_progress = Sensei()->lesson_progress_repository->get( $lesson_id, $user_id );
+		if ( $lesson_progress ) {
+			Sensei()->lesson_progress_repository->delete( $lesson_progress );
+		}
 
 		if ( ! $from_course ) {
 			do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
@@ -586,14 +587,11 @@ class Sensei_Utils {
 			self::sensei_remove_user_from_lesson( $lesson_id, $user_id, true );
 		}
 
-		// Delete course status
-		$args = array(
-			'post_id' => $course_id,
-			'type'    => 'sensei_course_status',
-			'user_id' => $user_id,
-		);
-
-		self::sensei_delete_activities( $args );
+		// Delete course progress.
+		$course_progress = Sensei()->course_progress_repository->get( $course_id, $user_id );
+		if ( $course_progress ) {
+			Sensei()->course_progress_repository->delete( $course_progress );
+		}
 
 		do_action( 'sensei_user_course_reset', $user_id, $course_id );
 
@@ -683,19 +681,32 @@ class Sensei_Utils {
 		return $delete_answers;
 	}
 
-	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ) {
-		if ( intval( $user_id ) == 0 ) {
+	/**
+	 * Delete the quiz submission grade.
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 * @param int $user_id The user ID. Defaults to the current user ID.
+	 *
+	 * @return bool
+	 */
+	public static function sensei_delete_quiz_grade( $quiz_id = 0, $user_id = 0 ): bool {
+		if ( intval( $user_id ) === 0 ) {
 			$user_id = get_current_user_id();
 		}
 
-		$delete_grade = false;
-		if ( intval( $quiz_id ) > 0 ) {
-			$lesson_id          = get_post_meta( $quiz_id, '_quiz_lesson', true );
-			$user_lesson_status = self::user_lesson_status( $lesson_id, $user_id );
-			$delete_grade       = delete_comment_meta( $user_lesson_status->comment_ID, 'grade' );
+		if ( ! $quiz_id || ! $user_id ) {
+			return false;
 		}
 
-		return $delete_grade;
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_submission ) {
+			return false;
+		}
+
+		$quiz_submission->set_final_grade( null );
+		Sensei()->quiz_submission_repository->save( $quiz_submission );
+
+		return true;
 	}
 
 	/**
@@ -1640,7 +1651,7 @@ class Sensei_Utils {
 	 * @since 1.7.0
 	 * @param int $lesson_id
 	 * @param int $user_id
-	 * @return object | bool
+	 * @return WP_Comment|false
 	 */
 	public static function user_lesson_status( $lesson_id = 0, $user_id = 0 ) {
 
@@ -2593,6 +2604,74 @@ class Sensei_Utils {
 		}
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Render a video embed.
+	 *
+	 * @param string $url The URL for the video embed.
+	 *
+	 * @return string an embeddable HTML string.
+	 */
+	public static function render_video_embed( $url ) {
+		$allowed_html = array(
+			'embed'  => array(),
+			'iframe' => array(
+				'title'           => array(),
+				'width'           => array(),
+				'height'          => array(),
+				'src'             => array(),
+				'frameborder'     => array(),
+				'allowfullscreen' => array(),
+			),
+			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
+		);
+
+		if ( 'http' === substr( $url, 0, 4 ) ) {
+			// V2 - make width and height a setting for video embed.
+			$url = wp_oembed_get( esc_url( $url ) );
+			$url = do_shortcode( html_entity_decode( $url ) );
+		}
+		return Sensei_Wp_Kses::maybe_sanitize( $url, $allowed_html );
+	}
+
+	/**
+	 * Gets the HTML content from the Featured Video for a lesson.
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param string $post_id the post ID.
+	 *
+	 * @return string|null The featured video HTML output if it exists.
+	 */
+	public static function get_featured_video_html( $post_id = null ) {
+		$post = get_post( $post_id );
+
+		if ( empty( $post ) ) {
+			return null;
+		}
+
+		if ( has_block( 'sensei-lms/featured-video', $post ) ) {
+			$blocks = parse_blocks( $post->post_content );
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+					return render_block( $block );
+				}
+			}
+		}
+		$video_embed = get_post_meta( $post->ID, '_lesson_video_embed', true );
+		return $video_embed ? self::render_video_embed( $video_embed ) : null;
+
+	}
+
+	/**
+	 * Get the featured video thumbnail URL from a Post's metadata.
+	 *
+	 * @param int $post_id The Post ID.
+	 * @return string The video thumbnail URL.
+	 */
+	public static function get_featured_video_thumbnail_url( $post_id ) {
+		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
 	}
 }
 

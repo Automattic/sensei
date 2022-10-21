@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.15.0
  *
- * @deprecated $$next-version$$
+ * @deprecated 4.6.4
  */
 class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_Blocks_Embed_Extension {
 	/**
@@ -28,12 +28,12 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	/**
 	 * Returns an instance of the class.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.6.4
 	 *
 	 * @return static
 	 */
 	public static function instance() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 
 		if ( self::$instance ) {
 			return self::$instance;
@@ -46,16 +46,16 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	/**
 	 * Sensei_Course_Video_Blocks_Youtube_Extension constructor.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.6.4
 	 */
 	private function __construct() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 	}
 	/**
 	 * Initialize the class and hooks.
 	 */
 	public function init() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 
 		parent::init();
 		add_filter( 'embed_oembed_html', [ $this, 'replace_iframe_url' ], 11, 2 );
@@ -64,7 +64,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	/**
 	 * Replace the iframe URL enabling JS API and providing origin.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.6.4
 	 *
 	 * @param string $html
 	 * @param string $url
@@ -72,7 +72,7 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	 * @return string
 	 */
 	public function replace_iframe_url( $html, $url ): string {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 
 		if ( ! $this->is_supported( $url ) ) {
 			return $html;
@@ -98,14 +98,14 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	/**
 	 * Check if the URL is a YouTube URL.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.6.4
 	 *
 	 * @param string $url
 	 *
 	 * @return bool
 	 */
 	protected function is_supported( string $url ): bool {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 
 		$host = wp_parse_url( $url, PHP_URL_HOST );
 
@@ -115,12 +115,12 @@ class Sensei_Course_Video_Blocks_Youtube_Extension extends Sensei_Course_Video_B
 	/**
 	 * Returns the class name for the extension.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.6.4
 	 *
 	 * @return string
 	 */
 	protected function get_extension_class_name(): string {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.6.4' );
 
 		return 'youtube-extension';
 	}

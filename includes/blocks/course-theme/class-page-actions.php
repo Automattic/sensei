@@ -19,14 +19,22 @@ use \Sensei_Blocks;
  */
 class Page_Actions {
 	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/page-actions.block.json';
+
+	/**
 	 * Exit_Course constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/page-actions',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+				'style'           => 'sensei-theme-blocks',
+			],
+			$block_json_path
 		);
 	}
 

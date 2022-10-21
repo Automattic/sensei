@@ -1600,5 +1600,60 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Assert */
 		self::assertStringContainsString( 'Test Question', $result );
 	}
+
+	public function testLessonQuizQuestions_WhenCalled_ReturnsTheQuizQuestions(): void {
+		/* Arrange */
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		$question_1 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$question_2 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		/* Act */
+		$questions    = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+		$question_ids = wp_list_pluck( $questions, 'ID' );
+
+		/* Assert */
+		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
+	}
+
+	public function testLessonQuizQuestions_WhenUserAlreadySubmittedTheQuizButQuestionsHaveChanged_ReturnsTheInitiallyAskedQuestions(): void {
+		/* Arrange. */
+		$user_id = $this->factory->user->create();
+		wp_set_current_user( $user_id );
+
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		// Submit the quiz with two question.
+		$question_1 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$question_2 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+		$answers    = $this->factory->generate_user_quiz_answers( $quiz_id );
+		Sensei_Quiz::submit_answers_for_grading( $answers, [], $lesson_id, $user_id );
+
+		// Add another question.
+		$question_3 = $this->factory->question->create( [ 'quiz_id' => $quiz_id ] );
+
+		/* Act. */
+		$questions    = Sensei()->lesson->lesson_quiz_questions( $quiz_id );
+		$question_ids = wp_list_pluck( $questions, 'ID' );
+
+		/* Assert. */
+		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
+	}
 }
 

@@ -1,0 +1,28 @@
+{
+  "name": "sensei-lms/course-theme-lesson-video",
+  "category": "theme",
+  "supports": {
+    "align": true,
+    "alignWide": true,
+    "color": {
+      "gradients": true,
+      "link": true,
+      "background": false
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    }
+  }
+}

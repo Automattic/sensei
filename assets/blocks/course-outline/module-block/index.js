@@ -13,15 +13,8 @@ import transforms from './transforms';
 import metadata from './block.json';
 
 export default {
-	title: __( 'Module', 'sensei-lms' ),
-	description: __( 'Group related lessons together.', 'sensei-lms' ),
-	keywords: [
-		__( 'Module', 'sensei-lms' ),
-		__( 'Course Module', 'sensei-lms' ),
-		__( 'Group', 'sensei-lms' ),
-		__( 'Lessons', 'sensei-lms' ),
-	],
 	...metadata,
+	metadata,
 	icon,
 	example: {
 		attributes: {

@@ -17,13 +17,9 @@ import icon from '../../../icons/question.svg';
  */
 export default {
 	...metadata,
-	title: __( 'Question', 'sensei-lms' ),
+	metadata,
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
-	description: __( 'The building block of all quizzes.', 'sensei-lms' ),
-	example: {
-		attributes: { title: __( 'Example Quiz Question', 'sensei-lms' ) },
-	},
 	deprecated,
 	edit,
 	save: () => <InnerBlocks.Content />,

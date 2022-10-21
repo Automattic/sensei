@@ -131,17 +131,18 @@ class Sensei_Block_Helpers {
 	 *
 	 * @param array  $variables CSS variable key - value pairs.
 	 * @param string $separator Separator string between variables.
+	 * @param string $prefix CSS variable prefix.
 	 *
 	 * @return array CSS styles and classlist.
 	 */
-	public static function css_variables( $variables, $separator = "\n" ) {
+	public static function css_variables( $variables, $separator = "\n", $prefix = '--sensei-' ) {
 		$style   = '';
 		$classes = '';
 		foreach ( $variables as $variable => $value ) {
 			if ( ! isset( $value ) || '' === $value ) {
 				continue;
 			}
-			$style   .= '--sensei-' . $variable . ': ' . $value . ';' . $separator;
+			$style   .= $prefix . $variable . ': ' . $value . ';' . $separator;
 			$classes .= ' has-sensei-' . $variable . ' ';
 		}
 

@@ -12,19 +12,8 @@ import save from './course-actions-save';
 import icon from '../../../icons/buttons.svg';
 
 export default {
-	title: __( 'Course Actions', 'sensei-lms' ),
-	description: __(
-		'Enable a student to perform specific actions for a course.',
-		'sensei-lms'
-	),
-	keywords: [
-		__( 'Course', 'sensei-lms' ),
-		__( 'Actions', 'sensei-lms' ),
-		__( 'Buttons', 'sensei-lms' ),
-		__( 'Start Course', 'sensei-lms' ),
-		__( 'Continue', 'sensei-lms' ),
-		__( 'Visit Results', 'sensei-lms' ),
-	],
+	...metadata,
+	metadata,
 	example: {
 		innerBlocks: [
 			{
@@ -35,7 +24,6 @@ export default {
 			},
 		],
 	},
-	...metadata,
 	icon,
 	edit,
 	save,

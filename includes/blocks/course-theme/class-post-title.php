@@ -26,6 +26,7 @@ class Post_Title {
 				'core/post-title',
 				[
 					'render_callback' => [ $this, 'render_title_block' ],
+					'style'           => 'sensei-theme-blocks',
 				]
 			);
 		}
