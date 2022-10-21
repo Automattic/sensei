@@ -29,14 +29,6 @@ final class Sensei_Home {
 	 */
 	private static $instance;
 
-
-	/**
-	 * The remote data helper instance.
-	 *
-	 * @var Sensei_Home_Remote_Data_API
-	 */
-	private $remote_data_api;
-
 	/**
 	 * The Sensei Home Notices instance.
 	 *
@@ -45,20 +37,87 @@ final class Sensei_Home {
 	private $notices;
 
 	/**
+	 * Sensei Home Quick Links provider.
+	 *
+	 * @var Sensei_Home_Quick_Links_Provider
+	 */
+	private $quick_links_provider;
+
+	/**
+	 * Sensei Home Help provider.
+	 *
+	 * @var Sensei_Home_Help_Provider
+	 */
+	private $help_provider;
+
+	/**
+	 * Sensei Home Promo Banner provider.
+	 *
+	 * @var Sensei_Home_Promo_Banner_Provider
+	 */
+	private $promo_provider;
+
+	/**
+	 * Sensei Home Tasks provider.
+	 *
+	 * @var Sensei_Home_Tasks_Provider
+	 */
+	private $tasks_provider;
+
+	/**
+	 * Sensei Home News provider.
+	 *
+	 * @var Sensei_Home_News_Provider
+	 */
+	private $news_provider;
+
+	/**
+	 * Sensei Home Guides provider.
+	 *
+	 * @var Sensei_Home_Guides_Provider
+	 */
+	private $guides_provider;
+
+	/**
+	 * Sensei Notices provider.
+	 *
+	 * @var Sensei_Home_Notices_Provider
+	 */
+	private $notices_provider;
+
+	/**
 	 * Home constructor. Prevents other instances from being created outside `Sensei_Home::instance()`.
 	 */
 	private function __construct() {
-		$this->remote_data_api = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
-		$this->notices         = new Sensei_Home_Notices( $this->remote_data_api, self::SCREEN_ID );
+		$remote_data_api            = new Sensei_Home_Remote_Data_API( 'sensei-lms', SENSEI_LMS_VERSION );
+		$this->notices              = new Sensei_Home_Notices( $remote_data_api, self::SCREEN_ID );
+		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), self::SCREEN_ID );
+		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
+		$this->help_provider        = new Sensei_Home_Help_Provider();
+		$this->promo_provider       = new Sensei_Home_Promo_Banner_Provider();
+		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
+		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
+		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
 	}
 
 	/**
-	 * Gets the remote data API.
+	 * Gets a REST API controller for Sensei Home.
 	 *
-	 * @return Sensei_Home_Remote_Data_API
+	 * @param string $namespace The REST API namespace.
+	 *
+	 * @return Sensei_REST_API_Home_Controller
 	 */
-	public function get_remote_data_api() {
-		return $this->remote_data_api;
+	public function get_rest_api_controller( $namespace ) {
+		return new Sensei_REST_API_Home_Controller(
+			$namespace,
+			$this->quick_links_provider,
+			$this->help_provider,
+			$this->promo_provider,
+			$this->tasks_provider,
+			$this->news_provider,
+			$this->guides_provider,
+			$this->notices_provider
+		);
 	}
 
 	/**
@@ -139,18 +198,12 @@ final class Sensei_Home {
 	}
 
 	/**
-	 * Get updates count.
+	 * Get notices count.
 	 *
-	 * @return int Updates count.
+	 * @return int Notices count.
 	 */
-	private function get_has_update_count() {
-		$extensions = Sensei_Extensions::instance()->get_extensions( 'plugin' );
-
-		return count(
-			array_filter(
-				array_column( $extensions, 'has_update' )
-			)
-		);
+	private function get_notices_count() {
+		return $this->notices_provider->get_badge_count();
 	}
 
 	/**
@@ -163,17 +216,17 @@ final class Sensei_Home {
 	public function add_admin_menu_item() {
 		$menu_cap = Sensei_Admin::get_top_menu_capability();
 
-		$updates_html = '';
-		$updates      = $this->get_has_update_count();
+		$notices_html  = '';
+		$notices_count = $this->get_notices_count();
 
-		if ( $updates > 0 ) {
-			$updates_html = ' <span class="awaiting-mod">' . esc_html( $updates ) . '</span>';
+		if ( $notices_count > 0 ) {
+			$notices_html = ' <span class="awaiting-mod">' . (int) $notices_count . '</span>';
 		}
 
 		add_submenu_page(
 			'sensei',
 			__( 'Sensei LMS Home', 'sensei-lms' ),
-			__( 'Home', 'sensei-lms' ) . $updates_html,
+			__( 'Home', 'sensei-lms' ) . $notices_html,
 			$menu_cap,
 			'sensei',
 			[ $this, 'render' ],

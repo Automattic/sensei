@@ -32,68 +32,9 @@ class Sensei_REST_API_Internal {
 	private $controllers = [];
 
 	/**
-	 * Sensei Home Quick Links provider.
-	 *
-	 * @var Sensei_Home_Quick_Links_Provider
-	 */
-	private $quick_links_provider;
-
-	/**
-	 * Sensei Home Help provider.
-	 *
-	 * @var Sensei_Home_Help_Provider
-	 */
-	private $help_provider;
-
-	/**
-	 * Sensei Home Promo Banner provider.
-	 *
-	 * @var Sensei_Home_Promo_Banner_Provider
-	 */
-	private $promo_provider;
-
-	/**
-	 * Sensei Home Tasks provider.
-	 *
-	 * @var Sensei_Home_Tasks_Provider
-	 */
-	private $tasks_provider;
-
-	/**
-	 * Sensei Home News provider.
-	 *
-	 * @var Sensei_Home_News_Provider
-	 */
-	private $news_provider;
-
-	/**
-	 * Sensei Home Guides provider.
-	 *
-	 * @var Sensei_Home_Guides_Provider
-	 */
-	private $guides_provider;
-
-	/**
-	 * Sensei Notices provider.
-	 *
-	 * @var Sensei_Home_Notices_Provider
-	 */
-	private $notices_provider;
-
-	/**
 	 * Sensei_REST_API_Internal constructor.
 	 */
 	public function __construct() {
-		$remote_data_api = Sensei_Home::instance()->get_remote_data_api();
-
-		$this->quick_links_provider = new Sensei_Home_Quick_Links_Provider();
-		$this->help_provider        = new Sensei_Home_Help_Provider();
-		$this->promo_provider       = new Sensei_Home_Promo_Banner_Provider();
-		$this->tasks_provider       = new Sensei_Home_Tasks_Provider();
-		$this->news_provider        = new Sensei_Home_News_Provider( $remote_data_api );
-		$this->guides_provider      = new Sensei_Home_Guides_Provider( $remote_data_api );
-		$this->notices_provider     = new Sensei_Home_Notices_Provider( Sensei_Admin_Notices::instance(), Sensei_Home::SCREEN_ID );
-
 		add_action( 'rest_api_init', [ $this, 'register' ] );
 	}
 
@@ -113,16 +54,7 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Send_Message_Controller( $this->namespace ),
 			new Sensei_REST_API_Course_Students_Controller( $this->namespace ),
 			new Sensei_REST_API_Course_Progress_Controller( $this->namespace ),
-			new Sensei_REST_API_Home_Controller(
-				$this->namespace,
-				$this->quick_links_provider,
-				$this->help_provider,
-				$this->promo_provider,
-				$this->tasks_provider,
-				$this->news_provider,
-				$this->guides_provider,
-				$this->notices_provider
-			),
+			Sensei_Home::instance()->get_rest_api_controller( $this->namespace ),
 		];
 
 		foreach ( $this->controllers as $controller ) {

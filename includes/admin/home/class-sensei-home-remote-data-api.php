@@ -54,15 +54,26 @@ class Sensei_Home_Remote_Data_API {
 	/**
 	 * Fetch data from SenseiLMS.com.
 	 *
-	 * @param int  $max_age      Maximum age of the cached data in seconds. Max is 1 day (in seconds).
-	 * @param bool $retry_error  Retry failed requests.
+	 * @param int $max_age Maximum age of the cached data in seconds. Max is 1 day (in seconds).
 	 *
 	 * @return array|\WP_Error
 	 */
-	public function fetch( int $max_age = null, $retry_error = false ) {
+	public function fetch( int $max_age = null ) {
 		$url       = $this->get_api_url();
 		$cache_key = self::CACHE_KEY_PREFIX . md5( $url );
 		$data      = $this->remote_data[ $cache_key ] ?? get_transient( $cache_key );
+
+		/**
+		 * Filter if we should retry errors when fetching remote data.
+		 *
+		 * @since $$next-version$$
+		 * @hook sensei_home_remote_data_retry_error
+		 *
+		 * @param {bool} $retry_error If we should retry errors. Default true.
+		 *
+		 * @return {bool} If we should retry errors.
+		 */
+		$retry_error = apply_filters( 'sensei_home_remote_data_retry_error', true );
 
 		// If the cached data is an error, return it unless we've forced a refresh.
 		if ( isset( $data['error'] ) ) {

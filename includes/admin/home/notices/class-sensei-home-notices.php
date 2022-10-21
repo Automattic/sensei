@@ -53,7 +53,7 @@ class Sensei_Home_Notices {
 	 */
 	public function init() {
 		add_filter( 'sensei_show_admin_notices_' . $this->screen_id, '__return_false' );
-		add_filter( 'sensei_admin_notices', [ $this, 'add_update_notices' ] );
+		add_filter( 'sensei_admin_notices', [ $this, 'add_update_notices' ], 10, 2 );
 	}
 
 	/**
@@ -61,16 +61,17 @@ class Sensei_Home_Notices {
 	 *
 	 * @access private
 	 *
-	 * @param array $notices The notices to add the update notices to.
+	 * @param array    $notices The notices to add the update notices to.
+	 * @param int|null $max_age The max age (seconds) of the source data.
 	 *
 	 * @return array
 	 */
-	public function add_update_notices( $notices ) {
+	public function add_update_notices( $notices, $max_age = null ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			return $notices;
 		}
 
-		$data = $this->remote_data_api->fetch();
+		$data = $this->remote_data_api->fetch( $max_age );
 		if ( $data instanceof \WP_Error || empty( $data['versions'] ) ) {
 			return $notices;
 		}

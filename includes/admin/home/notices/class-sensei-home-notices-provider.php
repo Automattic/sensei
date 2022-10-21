@@ -41,13 +41,15 @@ class Sensei_Home_Notices_Provider {
 	/**
 	 * Fallback for when we're in an environment that doesn't have `Sensei_Admin_Notices`.
 	 *
+	 * @param int|null $max_age The max age (seconds) of the source data.
+	 *
 	 * @return array
 	 */
-	private function local_only() : array {
+	private function local_only( $max_age = null ) : array {
 		/**
 		 * This filter is documented in `class-sensei-admin-notices.php`.
 		 */
-		$notices = apply_filters( 'sensei_admin_notices', [] );
+		$notices = apply_filters( 'sensei_admin_notices', [], $max_age );
 
 		return array_filter(
 			$notices,
@@ -62,12 +64,27 @@ class Sensei_Home_Notices_Provider {
 	/**
 	 * Returns all the information for the notices section.
 	 *
+	 * @param int|null $max_age The max age (seconds) of the source data.
+	 *
 	 * @return array
 	 */
-	public function get(): array {
-		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( $this->screen_id ) : $this->local_only();
+	public function get( $max_age = HOUR_IN_SECONDS ): array {
+		$notices = isset( $this->admin_notices ) ? $this->admin_notices->get_notices_to_display( $this->screen_id, $max_age ) : $this->local_only( $max_age );
 
 		return array_map( [ $this, 'format_item' ], $notices );
+	}
+
+	/**
+	 * Get the number of notices for the Sensei Home badge.
+	 *
+	 * @return int
+	 */
+	public function get_badge_count(): int {
+		add_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
+		$notices = $this->get( DAY_IN_SECONDS );
+		remove_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
+
+		return count( $notices );
 	}
 
 	/**

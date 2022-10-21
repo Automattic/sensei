@@ -70,10 +70,30 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 		$this->assertEquals( wp_json_encode( $test_response ), wp_json_encode( $notices ) );
 	}
 
+
+	public function testGetBadgeCount_GivenSenseiAdminNoticeResponse_ReturnsAdminNoticeCount() {
+		// Arrange.
+		$test_response      = $this->getSimpleResponse();
+		$admin_notices_mock = $this->createMock( Sensei_Admin_Notices::class );
+
+		$admin_notices_mock
+			->expects( $this->once() )
+			->method( 'get_notices_to_display' )
+			->willReturn( $test_response );
+
+		$notices_provider = new Sensei_Home_Notices_Provider( $admin_notices_mock, null );
+
+		// Act.
+		$notices = $notices_provider->get_badge_count();
+
+		// Assert.
+		$this->assertEquals( count( $test_response ), wp_json_encode( $notices ) );
+	}
+
 	/**
 	 * Provides a very simple response.
 	 *
-	 * @return arraay
+	 * @return array
 	 */
 	private function getSimpleResponse() {
 		return [

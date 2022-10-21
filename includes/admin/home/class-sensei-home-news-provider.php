@@ -36,7 +36,7 @@ class Sensei_Home_News_Provider {
 	 * @return array
 	 */
 	public function get(): array {
-		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS, true );
+		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
 		$news        = $remote_data['news'] ?? [];
 
 		if ( isset( $news['items'] ) ) {
