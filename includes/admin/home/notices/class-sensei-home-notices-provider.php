@@ -49,7 +49,7 @@ class Sensei_Home_Notices_Provider {
 		/**
 		 * This filter is documented in `class-sensei-admin-notices.php`.
 		 */
-		$notices = apply_filters( 'sensei_admin_notices', [] );
+		$notices = apply_filters( 'sensei_admin_notices', [], $max_age );
 
 		return array_filter(
 			$notices,
