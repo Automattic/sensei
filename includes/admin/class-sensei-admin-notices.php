@@ -134,11 +134,27 @@ class Sensei_Admin_Notices {
 	/**
 	 * Get notices.
 	 *
+	 * @param int|null $max_age The max age (seconds) of the source data.
+	 *
 	 * @return array
 	 */
-	protected function get_notices() {
+	protected function get_notices( $max_age = null ) {
 		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
-		$notices       = get_transient( $transient_key );
+		$data          = get_transient( $transient_key );
+		$notices       = false;
+
+		// If the data is too old, fetch it again.
+		if ( $max_age && is_array( $data ) ) {
+			$age = time() - ( $data['_fetched'] ?? 0 );
+			if ( $age > $max_age ) {
+				$data = false;
+			}
+		}
+
+		if ( isset( $data['notices'] ) ) {
+			$notices = $data['notices'];
+		}
+
 		if ( false === $notices ) {
 			$notices_response = wp_safe_remote_get(
 				add_query_arg(
@@ -153,8 +169,12 @@ class Sensei_Admin_Notices {
 			if ( ! is_wp_error( $notices_response ) && 200 === wp_remote_retrieve_response_code( $notices_response ) ) {
 				$notices_response_body = json_decode( wp_remote_retrieve_body( $notices_response ), true );
 				if ( $notices_response_body && isset( $notices_response_body['notices'] ) ) {
-					$notices = $notices_response_body['notices'];
-					set_transient( $transient_key, $notices, HOUR_IN_SECONDS );
+					$notices     = $notices_response_body['notices'];
+					$cached_data = [
+						'_fetched' => time(),
+						'notices'  => $notices,
+					];
+					set_transient( $transient_key, $cached_data, DAY_IN_SECONDS );
 				}
 			}
 		}
@@ -168,10 +188,12 @@ class Sensei_Admin_Notices {
 		 *
 		 * @hook sensei_admin_notices
 		 *
-		 * @param {array} $notices The admin notices.
+		 * @param {array}    $notices The admin notices.
+		 * @param {int|null} $max_age The max age (seconds) of the source data.
+		 *
 		 * @return {array} The admin notices.
 		 */
-		$notices = apply_filters( 'sensei_admin_notices', $notices );
+		$notices = apply_filters( 'sensei_admin_notices', $notices, $max_age );
 
 		return $notices;
 	}
@@ -263,13 +285,14 @@ class Sensei_Admin_Notices {
 	 *
 	 * @access private
 	 *
-	 * @param string $screen_id The screen ID.
+	 * @param string   $screen_id The screen ID.
+	 * @param int|null $max_age   The max age (seconds) of the source data.
 	 *
 	 * @return array
 	 */
-	public function get_notices_to_display( $screen_id = null ) {
+	public function get_notices_to_display( $screen_id = null, $max_age = null ) {
 		$notices = [];
-		foreach ( $this->get_notices() as $notice_id => $notice ) {
+		foreach ( $this->get_notices( $max_age ) as $notice_id => $notice ) {
 			$notice = $this->normalize_notice( $notice );
 
 			$is_user_notification = 'user' === $notice['type'];
