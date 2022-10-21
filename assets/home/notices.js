@@ -9,6 +9,11 @@ import { RawHTML } from '@wordpress/element';
 import classnames from 'classnames';
 
 /**
+ * Internal dependencies
+ */
+import SenseiCircleLogo from '../images/sensei-circle-logo.svg';
+
+/**
  * Component to render an action of a given notice.
  *
  * @param {Object} props        Component props.
@@ -96,6 +101,7 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 		<div { ...containerProps }>
 			<div className="sensei-notice__wrapper">
 				<div className="sensei-notice__content">
+					<SenseiCircleLogo className="sensei-notice__logo" />
 					<NoticeHeading heading={ notice.heading } />
 					<RawHTML>{ notice.message }</RawHTML>
 				</div>

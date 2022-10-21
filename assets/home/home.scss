@@ -150,6 +150,10 @@ $break-medium: 783px; // adminbar goes big
 					display: flex;
 					align-items: center;
 				}
+
+				&__logo {
+					margin-right: 18px;
+				}
 			}
 		}
 
