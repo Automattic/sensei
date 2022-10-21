@@ -213,6 +213,41 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testDelete_ProgressGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$progress   = new Course_Progress(
+			1,
+			2,
+			3,
+			'complete',
+			new DateTimeImmutable( '2022-01-01 00:00:01', wp_timezone() ),
+			new DateTimeImmutable( '2022-01-02 00:00:01', wp_timezone() ),
+			new DateTimeImmutable( '2022-01-03 00:00:01', wp_timezone() ),
+			new DateTimeImmutable( '2022-01-04 00:00:01', wp_timezone() )
+		);
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'post_id' => 2,
+					'user_id' => 3,
+					'type'    => 'course',
+				],
+				[
+					'%d',
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete( $progress );
+	}
+
 	private function export_progress( Course_Progress $progress ): array {
 		return [
 			'id'        => $progress->get_id(),

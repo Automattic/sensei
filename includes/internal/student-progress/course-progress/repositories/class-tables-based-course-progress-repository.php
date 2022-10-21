@@ -197,10 +197,14 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
-				'id' => $course_progress->get_id(),
+				'post_id' => $course_progress->get_course_id(),
+				'user_id' => $course_progress->get_user_id(),
+				'type'    => 'course',
 			],
 			[
 				'%d',
+				'%d',
+				'%s',
 			]
 		);
 	}

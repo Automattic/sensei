@@ -169,6 +169,69 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testDelete_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+		/* Arrange. */
+		$progress = $this->create_course_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, false );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->never() )
+			->method( 'delete' );
+		$repository->delete( $progress );
+	}
+
+	public function testDelete_UseTablesOn_CallsTablesBasedRepository(): void {
+		/* Arrange. */
+		$progress = $this->create_course_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->once() )
+			->method( 'delete' )
+			->with( $progress );
+		$repository->delete( $progress );
+	}
+
+	/**
+	 * Test that the repository will always use comments based repository while deleting.
+	 *
+	 * @param bool $use_tables
+	 *
+	 * @dataProvider providerDelete_Always_CallsCommentsBasedRepository
+	 */
+	public function testDelete_Always_CallsCommentsBasedRepository( $use_tables ): void {
+		/* Arrange. */
+		$progress = $this->create_course_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, $use_tables );
+
+		/* Expect & Act. */
+		$comments_based
+			->expects( $this->once() )
+			->method( 'delete' );
+		$repository->delete( $progress );
+	}
+
+	public function providerDelete_Always_CallsCommentsBasedRepository(): array {
+		return [
+			'uses tables'         => [ true ],
+			'does not use tables' => [ false ],
+		];
+	}
+
 	/**
 	 * Creates a course progress object.
 	 *

@@ -199,10 +199,14 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
-				'id' => $lesson_progress->get_id(),
+				'post_id' => $lesson_progress->get_lesson_id(),
+				'user_id' => $lesson_progress->get_user_id(),
+				'type'    => 'lesson',
 			],
 			[
 				'%d',
+				'%d',
+				'%s',
 			]
 		);
 	}

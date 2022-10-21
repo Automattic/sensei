@@ -104,16 +104,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	 */
 	public function testSave_Always_CallsCommentsBasedRepository( bool $use_tables ): void {
 		/* Arrange. */
-		$progress       = new Lesson_Progress(
-			1,
-			2,
-			3,
-			'a',
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable()
-		);
+		$progress       = $this->create_lesson_progress();
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
 		$repository     = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, $use_tables );
@@ -135,16 +126,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_UseTablesOnAndProgressFound_CallsTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress       = new Lesson_Progress(
-			1,
-			2,
-			3,
-			'a',
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable()
-		);
+		$progress       = $this->create_lesson_progress();
 		$found_progress = new Lesson_Progress(
 			2,
 			3,
@@ -183,16 +165,7 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	public function testSave_UseTablesOnAndProgressNotFound_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
-		$progress = new Lesson_Progress(
-			1,
-			2,
-			3,
-			'a',
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable(),
-			new \DateTimeImmutable()
-		);
+		$progress = $this->create_lesson_progress();
 
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
 		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
@@ -210,6 +183,69 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testDelete_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+		/* Arrange. */
+		$progress = $this->create_lesson_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
+
+		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, false );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->never() )
+			->method( 'delete' );
+		$repository->delete( $progress );
+	}
+
+	public function testDelete_UseTablesOn_CallsTablesBasedRepository(): void {
+		/* Arrange. */
+		$progress = $this->create_lesson_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
+
+		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->once() )
+			->method( 'delete' )
+			->with( $progress );
+		$repository->delete( $progress );
+	}
+
+	/**
+	 * Test that the repository will always use comments based repository while deleting.
+	 *
+	 * @param bool $use_tables
+	 *
+	 * @dataProvider providerDelete_Always_CallsCommentsBasedRepository
+	 */
+	public function testDelete_Always_CallsCommentsBasedRepository( $use_tables ): void {
+		/* Arrange. */
+		$progress = $this->create_lesson_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Lesson_Progress_Repository::class );
+
+		$repository = new Aggregate_Lesson_Progress_Repository( $comments_based, $tables_based, $use_tables );
+
+		/* Expect & Act. */
+		$comments_based
+			->expects( $this->once() )
+			->method( 'delete' );
+		$repository->delete( $progress );
+	}
+
+	public function providerDelete_Always_CallsCommentsBasedRepository(): array {
+		return [
+			'uses tables'         => [ true ],
+			'does not use tables' => [ false ],
+		];
+	}
+
 	public function testCount_Always_CallsCommentsBasedRepository(): void {
 		/* Arrange. */
 		$comments_based = $this->createMock( Comments_Based_Lesson_Progress_Repository::class );
@@ -222,5 +258,23 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 			->method( 'count' )
 			->with( 1, 2 );
 		$repository->count( 1, 2 );
+	}
+
+	/**
+	 * Create a lesson progress.
+	 *
+	 * @return Lesson_Progress
+	 */
+	public function create_lesson_progress(): Lesson_Progress {
+		return new Lesson_Progress(
+			1,
+			2,
+			3,
+			'a',
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable(),
+			new \DateTimeImmutable()
+		);
 	}
 }

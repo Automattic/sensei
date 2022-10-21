@@ -197,10 +197,14 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
 			[
-				'id' => $quiz_progress->get_id(),
+				'post_id' => $quiz_progress->get_quiz_id(),
+				'user_id' => $quiz_progress->get_user_id(),
+				'type'    => 'quiz',
 			],
 			[
 				'%d',
+				'%d',
+				'%s',
 			]
 		);
 	}
