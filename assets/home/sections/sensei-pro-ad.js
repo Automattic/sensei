@@ -9,6 +9,7 @@ import { useSelect } from '@wordpress/data';
  */
 import { EXTENSIONS_STORE } from '../../extensions/store';
 import { Col } from '../grid';
+import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
 
 /*
  * Sensei Pro featured product component.
@@ -51,6 +52,22 @@ const SenseiProAd = () => {
 								) }
 							</p>
 
+							<div className="sensei-home__sensei-pro-ad__price">
+								<h3 className="sensei-home__sensei-pro-ad__price__title">
+									{ sprintf(
+										// translators: placeholder is the price.
+										__( '%s USD', 'sensei-lms' ),
+										senseiProExtension.price.replace(
+											'.00',
+											''
+										)
+									) }
+								</h3>
+								<p>
+									{ __( 'per year, 1 site', 'sensei-lms' ) }
+								</p>
+							</div>
+
 							<ul>
 								<li>
 									{ __(
@@ -84,42 +101,36 @@ const SenseiProAd = () => {
 									) }
 								</li>
 							</ul>
+
+							<a
+								href="https://href.li/?https://senseilms.com/checkout/?add-to-cart=7009"
+								target="_blank"
+								rel="noreferrer external"
+								className="sensei-home__sensei-pro-ad__button is-primary is-large components-button"
+							>
+								{ __( 'Get Sensei Pro', 'sensei-lms' ) }
+							</a>
+
+							<a
+								href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
+								target="_blank"
+								rel="noreferrer external"
+								className="sensei-home__sensei-pro-ad__button is-secondary is-large components-button "
+							>
+								{ __( 'Learn More', 'sensei-lms' ) }
+							</a>
 						</div>
 					</div>
 				</section>
 
-				<section
-					className="sensei-home__sensei-pro-ad__column"
-					style={ {
-						backgroundImage: `url(${ senseiProExtension.image_large })`,
-					} }
-				>
-					<div className="sensei-home__sensei-pro-ad__card">
-						<h2 className="sensei-home__sensei-pro-ad__card__title">
-							{ senseiProExtension.title }
-						</h2>
-
-						<p className="sensei-home__sensei-pro-ad__card__description">
-							{ senseiProExtension.excerpt }
-						</p>
-
-						<div className="sensei-home__sensei-pro-ad__card__price">
-							{ sprintf(
-								// translators: placeholder is the price.
-								__( '%s USD / year (1 site)', 'sensei-lms' ),
-								senseiProExtension.price
-							) }
-						</div>
-
-						<a
-							href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
-							target="_blank"
-							rel="noreferrer external"
-							className="sensei-home__sensei-pro-ad__card__button components-button is-primary is-large"
-						>
-							{ __( 'Learn More', 'sensei-lms' ) }
-						</a>
-					</div>
+				<section className="sensei-home__sensei-pro-ad__column sensei-home__sensei-pro-ad__image">
+					<img
+						src={ window.sensei.pluginUrl + senseiProAdImageUrl }
+						alt={ __(
+							'Image in black and white representing a course costing $29.99',
+							'sensei-lms'
+						) }
+					/>
 				</section>
 			</article>
 		</Col>
