@@ -1,8 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { EditorNotices } from '@wordpress/editor';
-import { applyFilters, addFilter } from '@wordpress/hooks';
+import { applyFilters } from '@wordpress/hooks';
+import { Spinner, Notice } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
+import { useEffect, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -17,11 +20,8 @@ import GetHelp from './sections/get-help';
 import SenseiGuides from './sections/sensei-guides';
 import LatestNews from './sections/latest-news';
 import Extensions from './sections/extensions';
-import { useEffect, useState } from '@wordpress/element';
-import apiFetch from '@wordpress/api-fetch';
 import '../shared/data/api-fetch-preloaded-once';
-import { Notice, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import Notices from './notices';
 
 const Main = () => {
 	useSenseiColorTheme();
@@ -47,6 +47,7 @@ const Main = () => {
 	}, [] );
 
 	let content = null;
+	const notices = data?.notices ?? {};
 
 	if ( isFetching ) {
 		content = <Spinner />;
@@ -125,6 +126,8 @@ const Main = () => {
 		);
 	}
 
+	const { dismissNoticesNonce } = window.sensei_home;
+
 	/**
 	 * Filters the component that will be injected on the top of the Sensei Home
 	 *
@@ -141,6 +144,19 @@ const Main = () => {
 					<Header />
 				</Col>
 
+				{ Object.keys( notices ).length > 0 ? (
+					<Col
+						as="section"
+						className="sensei-home__section sensei-home__notices"
+						cols={ 12 }
+					>
+						<Notices
+							notices={ notices }
+							dismissNonce={ dismissNoticesNonce }
+						/>
+					</Col>
+				) : null }
+
 				{ topRow }
 
 				{ content }
@@ -148,24 +164,5 @@ const Main = () => {
 		</>
 	);
 };
-
-/**
- * Filter to add the notices section based on the EditorNotices component.
- *
- * @param {JSX.Element} previous The previous element to be added
- * @return {JSX.Element} The new top of the Sensei Home page, with the editor notices as a column.
- */
-function addNotices( previous ) {
-	return (
-		<>
-			{ previous }
-			<Col as="section" className="sensei-home__section" cols={ 12 }>
-				<EditorNotices />
-			</Col>
-		</>
-	);
-}
-
-addFilter( 'sensei.home.top', 'sensei/home/top/add-notices', addNotices );
 
 export default Main;

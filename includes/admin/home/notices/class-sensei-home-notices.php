@@ -168,8 +168,8 @@ class Sensei_Home_Notices {
 		$info_link = false;
 		if ( ! empty( $changelog_url ) ) {
 			$info_link = [
-				'label' => esc_html__( 'What\'s new', 'sensei-lms' ),
-				'url'   => esc_url( $changelog_url ),
+				'label' => __( 'What\'s new', 'sensei-lms' ),
+				'url'   => esc_url_raw( $changelog_url ),
 			];
 		}
 
@@ -241,10 +241,7 @@ class Sensei_Home_Notices {
 
 		$notice['actions'][] = [
 			'label' => __( 'Activate', 'sensei-lms' ),
-			'url'   => wp_nonce_url(
-				self_admin_url( 'plugin.php?action=activate&plugin=' . $plugin_file ),
-				'activate-plugin_' . $plugin_file
-			),
+			'url'   => add_query_arg( '_wpnonce', wp_create_nonce( 'activate-plugin_' . $plugin_file ), self_admin_url( 'plugins.php?action=activate&plugin=' . $plugin_file ) ),
 		];
 
 		return $notice;
@@ -275,10 +272,7 @@ class Sensei_Home_Notices {
 
 		$notice['actions'][] = [
 			'label' => __( 'Update', 'sensei-lms' ),
-			'url'   => wp_nonce_url(
-				self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . $plugin_file ),
-				'upgrade-plugin_' . $plugin_file
-			),
+			'url'   => add_query_arg( '_wpnonce', wp_create_nonce( 'upgrade-plugin_' . $plugin_file ), self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . $plugin_file ) ),
 		];
 
 		return $notice;

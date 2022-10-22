@@ -144,6 +144,7 @@ final class Sensei_Home {
 		if ( self::SCREEN_ID === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-home', 'home/index.js', [], true );
 			Sensei()->assets->enqueue( 'sensei-home-style', 'home/home.css', [ 'sensei-wp-components' ] );
+			Sensei()->assets->enqueue( 'sensei-dismiss-notices', 'js/admin/sensei-notice-dismiss.js', [] );
 			Sensei()->assets->preload_data( [ '/sensei-internal/v1/sensei-extensions?type=plugin', '/sensei-internal/v1/home' ] );
 
 			$this->localize_script();
@@ -185,6 +186,12 @@ final class Sensei_Home {
 		}
 
 		$data['dismiss_tasks_nonce'] = wp_create_nonce( self::DISMISS_TASKS_NONCE_ACTION );
+
+		$data['dismissNoticesNonce'] = null;
+
+		if ( class_exists( 'Sensei_Admin_Notices' ) ) {
+			$data['dismissNoticesNonce'] = wp_create_nonce( Sensei_Admin_Notices::DISMISS_NOTICE_NONCE_ACTION );
+		}
 
 		$data['tasks_dismissed'] = get_option( self::DISMISS_TASKS_OPTION );
 
