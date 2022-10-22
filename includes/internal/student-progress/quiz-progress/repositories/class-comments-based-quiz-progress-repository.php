@@ -141,8 +141,6 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function delete( Quiz_Progress $quiz_progress ): void {
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
-
-		Sensei_Utils::sensei_delete_quiz_answers( $lesson_id, $quiz_progress->get_user_id() );
+		Sensei_Utils::sensei_delete_quiz_answers( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
 	}
 }
