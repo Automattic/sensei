@@ -148,7 +148,6 @@ class Sensei_Lesson {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
@@ -175,6 +174,8 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @since 4.0.0
 	 * @access private
 	 *
@@ -183,6 +184,8 @@ class Sensei_Lesson {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
@@ -207,8 +210,8 @@ class Sensei_Lesson {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">

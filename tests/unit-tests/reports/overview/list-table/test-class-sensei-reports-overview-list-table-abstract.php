@@ -119,7 +119,7 @@ class Sensei_Reports_Overview_List_Table_Abstract_Test extends WP_UnitTestCase {
 		$actual = ob_get_clean();
 
 		/* Assert. */
-		$expected = '<a class="button button-primary" href="http://example.org/wp-admin/edit.php?page=sensei_reports&#038;view=a&#038;sensei_report_download=user-overview&#038;post_type=course&#038;orderby=id&#038;order=asc&#038;course_filter=1&#038;start_date=2022-03-01&#038;end_date=2022-03-01&#038;timezone=UTC&#038;s=course+5&#038;_sdl_nonce=' . $nonce . '">Export all rows (CSV)</a>';
+		$expected = '<a class="button button-primary" href="http://example.org/wp-admin/admin.php?page=sensei_reports&#038;view=a&#038;sensei_report_download=user-overview&#038;orderby=id&#038;order=asc&#038;course_filter=1&#038;start_date=2022-03-01&#038;end_date=2022-03-01&#038;timezone=UTC&#038;s=course+5&#038;_sdl_nonce=' . $nonce . '">Export all rows (CSV)</a>';
 		self::assertSame( $expected, $actual, 'The export button should be displayed' );
 	}
 

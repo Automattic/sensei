@@ -1,0 +1,23 @@
+.sensei-setup-wizard {
+	&__features-status {
+		margin-bottom: 24px;
+		font-family: $recoleta-font-family;
+		font-size: 28px;
+		line-height: 120%;
+
+		@media (min-width: $small-screen-break) {
+			font-size: 32px;
+		}
+	}
+
+	&__features-progress-bar {
+		height: 4px;
+		background-color: #ffffff;
+	}
+
+	&__features-progress-bar-filled {
+		background-color: #217D7C;
+		height: 100%;
+		transition: 1.5s width linear;
+	}
+}

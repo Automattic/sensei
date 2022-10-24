@@ -27,15 +27,11 @@ const adminTracking = [
 		eventName: 'questions_view',
 	},
 	{
-		selector:
-			selector +
-			'a[href="edit.php?post_type=course&page=sensei_learners"]',
+		selector: selector + 'a[href="admin.php?page=sensei_learners"]',
 		eventName: 'student_management_view',
 	},
 	{
-		selector:
-			selector +
-			'a[href="edit.php?post_type=course&page=sensei_grading"]',
+		selector: selector + 'a[href="admin.php?page=sensei_grading"]',
 		eventName: 'grading_view',
 	},
 	{
@@ -43,14 +39,11 @@ const adminTracking = [
 		eventName: 'messages_view',
 	},
 	{
-		selector:
-			selector +
-			'a[href="edit.php?post_type=course&page=sensei_reports"]',
+		selector: selector + 'a[href="admin.php?page=sensei_reports"]',
 		eventName: 'analysis_view',
 	},
 	{
-		selector:
-			selector + 'a[href="edit.php?post_type=course&page=sensei-tools"]',
+		selector: selector + 'a[href="admin.php?page=sensei-tools"]',
 		eventName: 'tools_view',
 	},
 ];

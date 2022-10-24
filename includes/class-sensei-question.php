@@ -40,7 +40,6 @@ class Sensei_Question {
 
 			// Add custom navigation.
 			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-			add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 		}
 
 		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
@@ -67,6 +66,8 @@ class Sensei_Question {
 	/**
 	 * Highlight the menu item for the question pages.
 	 *
+	 * @deprecated $$next-version$$
+	 *
 	 * @since 4.0.0
 	 * @access private
 	 *
@@ -75,6 +76,8 @@ class Sensei_Question {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$screen = get_current_screen();
 
 		if ( $screen && 'edit-question-category' === $screen->id ) {

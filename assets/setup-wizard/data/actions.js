@@ -1,36 +1,21 @@
 /**
+ * WordPress dependencies
+ */
+import { apiFetch } from '@wordpress/data-controls';
+
+/**
  * Internal dependencies
  */
 import {
 	API_BASE_PATH,
-	FETCH_FROM_API,
 	START_FETCH_SETUP_WIZARD_DATA,
 	SUCCESS_FETCH_SETUP_WIZARD_DATA,
 	ERROR_FETCH_SETUP_WIZARD_DATA,
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_STEP_DATA,
-	APPLY_STEP_DATA,
+	SET_DATA,
 } from './constants';
-import { normalizeSetupWizardData } from './normalizer';
-
-/**
- * @typedef  {Object} FetchFromAPIAction
- * @property {string} type    Action type.
- * @property {Object} request Object that is used to fetch.
- */
-/**
- * Fetch action creator.
- *
- * @param {Object} request Object that is used to fetch.
- *
- * @return {FetchFromAPIAction} Fetch action.
- */
-export const fetchFromAPI = ( request ) => ( {
-	type: FETCH_FROM_API,
-	request,
-} );
 
 /**
  * Fetch setup wizard data action creator.
@@ -39,10 +24,10 @@ export function* fetchSetupWizardData() {
 	yield startFetch();
 
 	try {
-		const data = yield fetchFromAPI( {
+		const data = yield apiFetch( {
 			path: API_BASE_PATH.replace( /\/$/, '' ),
 		} );
-		yield successFetch( normalizeSetupWizardData( data ) );
+		yield successFetch( data );
 	} catch ( error ) {
 		yield errorFetch( error );
 	}
@@ -94,26 +79,19 @@ export const startFetch = () => ( {
 /**
  * Start submit action creator.
  *
- * @param {string} step     Step name.
- * @param {Object} stepData Data to submit.
- *
  * @return {{type: string}} Start submit action.
  */
-export const startSubmit = ( step, stepData ) => ( {
+export const startSubmit = () => ( {
 	type: START_SUBMIT_SETUP_WIZARD_DATA,
-	step,
-	stepData,
 } );
 
 /**
  * Success submit action creator.
  *
- * @param {string} step Completed step.
- * @return {{type: string, step: string}} Success submit action.
+ * @return {{type: string}} Success submit action.
  */
-export const successSubmit = ( step ) => ( {
+export const successSubmit = () => ( {
 	type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
-	step,
 } );
 
 /**
@@ -137,23 +115,22 @@ export const errorSubmit = ( error ) => ( {
  * Submit step action creator.
  *
  * @param {string}   step                Step name.
- * @param {Object}   stepData            Data to submit.
+ * @param {Object}   data                Data to submit.
  * @param {Object}   [options]
  * @param {Function} [options.onSuccess] Step name.
  * @param {Function} [options.onError]   Data to submit.
  */
-export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
-	yield startSubmit( step, stepData );
+export function* submitStep( step, data, { onSuccess, onError } = {} ) {
+	yield startSubmit();
 
 	try {
-		yield fetchFromAPI( {
+		yield apiFetch( {
 			path: API_BASE_PATH + step,
 			method: 'POST',
-			data: stepData,
+			data,
 		} );
-		yield successSubmit( step );
-		yield applyStepData( step, stepData );
-		yield setStepData( step, stepData );
+		yield successSubmit();
+		yield setData( data );
 
 		if ( onSuccess ) {
 			onSuccess();
@@ -168,33 +145,18 @@ export function* submitStep( step, stepData, { onSuccess, onError } = {} ) {
 }
 
 /**
- * @typedef  {Object} SetStepDataAction
+ * @typedef  {Object} SetDataAction
  * @property {string} type Action type.
- * @property {string} step Step name.
- * @property {Object} data Step data.
+ * @property {Object} data Data object.
  */
 /**
- * Set welcome step data action creator.
+ * Set data action creator.
  *
- * @param {string} step Step name.
- * @param {Object} data Step data object.
+ * @param {Object} data Data object.
  *
- * @return {SetStepDataAction} Set welcome step data action.
+ * @return {SetDataAction} Set data action.
  */
-export const setStepData = ( step, data ) => ( {
-	type: SET_STEP_DATA,
-	step,
-	data,
-} );
-
-/**
- * Apply side-effects for data change.
- *
- * @param {string} step Step name.
- * @param {Object} data Step data object.
- */
-export const applyStepData = ( step, data ) => ( {
-	type: APPLY_STEP_DATA,
-	step,
+export const setData = ( data ) => ( {
+	type: SET_DATA,
 	data,
 } );

@@ -7,8 +7,6 @@ import {
 	isSubmitting,
 	getSubmitError,
 	getStepData,
-	getNavigationSteps,
-	isCompleteStep,
 } from './selectors';
 
 describe( 'Setup wizard selectors', () => {
@@ -49,51 +47,14 @@ describe( 'Setup wizard selectors', () => {
 	it( 'Should get usage tracking data', () => {
 		const state = {
 			data: {
-				welcome: {
+				tracking: {
 					usage_tracking: true,
 				},
 			},
 		};
 
-		expect( getStepData( state, 'welcome' ) ).toEqual( {
+		expect( getStepData( state, 'tracking' ) ).toEqual( {
 			usage_tracking: true,
 		} );
-	} );
-
-	it( 'Should get navigation data', () => {
-		const state = {
-			data: {
-				completedSteps: [ 'welcome' ],
-			},
-		};
-
-		expect( getNavigationSteps( state )[ 0 ] ).toHaveProperty(
-			'isComplete',
-			true
-		);
-		expect( getNavigationSteps( state )[ 0 ] ).toHaveProperty(
-			'isNext',
-			false
-		);
-
-		expect( getNavigationSteps( state )[ 1 ] ).toHaveProperty(
-			'isComplete',
-			false
-		);
-		expect( getNavigationSteps( state )[ 1 ] ).toHaveProperty(
-			'isNext',
-			true
-		);
-	} );
-
-	it( 'Should return whether step is complete or not', () => {
-		const state = {
-			data: {
-				completedSteps: [ 'welcome' ],
-			},
-		};
-
-		expect( isCompleteStep( state, 'welcome' ) ).toBeTruthy();
-		expect( isCompleteStep( state, 'other' ) ).toBeFalsy();
 	} );
 } );
