@@ -3,7 +3,7 @@
 Contributors: automattic, aaronfc, alexsanford1, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, guzluis, imranh920, jakeom, lavagolem, luchad0res, merkushin, m1r0, nurguly, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 7.2
 Stable tag: 4.7.1
 License: GPLv2 or later
@@ -115,6 +115,16 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 4. Course editor
 
 == Changelog ==
+
+2022-10-24 - version 4.7.2
+* Fix: Change admin bar visibility only in lesson pages [#5909](https://github.com/Automattic/sensei/pull/5909)
+* Fix container sizing in Video Template [#5926](https://github.com/Automattic/sensei/pull/5926)
+* Fix: Prevent course enrollment if user did not complete prerequisites or if course requires a password [#5957](https://github.com/Automattic/sensei/pull/5957)
+* Fix broken Quiz and Question blocks [#5905](https://github.com/Automattic/sensei/pull/5905)
+* Fix lesson video not showing  [#5956](https://github.com/Automattic/sensei/pull/5956)
+* Fix styling for older Learning Mode templates [#5969](https://github.com/Automattic/sensei/pull/5969)
+* Fix lesson action buttons not showing when a quiz block is added [#5970](https://github.com/Automattic/sensei/pull/5970)
+* Fix: Validate colors when saving email template options. [#5959](https://github.com/Automattic/sensei/pull/5959)
 
 2022-10-11 - version 4.7.1
 * Fix: Prevent Learning Mode styles from overriding global styles. [#5903](https://github.com/Automattic/sensei/pull/5903)

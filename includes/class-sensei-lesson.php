@@ -5233,7 +5233,23 @@ class Sensei_Lesson {
 		$lesson = get_post( $lesson );
 		$post   = $lesson->post_content ?? null;
 
-		return ! empty( $post ) && has_blocks( $post ) && ( false !== strpos( $post, '<!-- wp:sensei-lms/' ) );
+		if ( empty( $post ) || ! has_blocks( $post ) ) {
+			return false;
+		}
+
+		$lesson_blocks = [
+			'sensei-lms/lesson-actions',
+			'sensei-lms/lesson-properties',
+			'sensei-lms/button-contact-teacher',
+		];
+
+		foreach ( $lesson_blocks as $block ) {
+			if ( has_block( $block, $lesson ) ) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 

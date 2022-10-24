@@ -12,7 +12,7 @@ namespace Sensei\Internal\Student_Progress\Quiz_Progress\Repositories;
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.7.2
  */
 class Quiz_Progress_Repository_Factory {
 	/**
