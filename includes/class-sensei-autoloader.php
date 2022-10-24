@@ -260,9 +260,9 @@ class Sensei_Autoloader {
 			/**
 			 * Installer
 			 */
-			\Sensei\Internal\Installer\Installer::class             => 'internal/installer/class-installer.php',
-			\Sensei\Internal\Installer\Schema::class                => 'internal/installer/class-schema.php',
-			\Sensei\Internal\Installer\Updates_Factory::class       => 'internal/installer/class-updates-factory.php',
+			\Sensei\Internal\Installer\Installer::class    => 'internal/installer/class-installer.php',
+			\Sensei\Internal\Installer\Schema::class       => 'internal/installer/class-schema.php',
+			\Sensei\Internal\Installer\Updates_Factory::class => 'internal/installer/class-updates-factory.php',
 
 			/**
 			 * Installer
