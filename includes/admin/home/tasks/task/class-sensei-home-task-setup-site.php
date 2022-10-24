@@ -41,7 +41,7 @@ class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_title(): string {
-		return __( 'Set up Course Site', 'sensei-lms' );
+		return __( 'Set up course site', 'sensei-lms' );
 	}
 
 	/**
