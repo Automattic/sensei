@@ -40,7 +40,7 @@ class Sensei_Home_Task_Create_First_Course implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_title(): string {
-		return __( 'Create your first Course', 'sensei-lms' );
+		return __( 'Create your first course', 'sensei-lms' );
 	}
 
 	/**

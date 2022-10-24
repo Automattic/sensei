@@ -37,7 +37,7 @@ class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_title(): string {
-		return __( 'Configure Learning Mode', 'sensei-lms' );
+		return __( 'Configure learning mode', 'sensei-lms' );
 	}
 
 	/**
