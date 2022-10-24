@@ -39,7 +39,7 @@ const SenseiProAd = ( { show } ) => {
 						<header className="sensei-home__sensei-pro-ad__header">
 							<h2 className="sensei-home__sensei-pro-ad__title">
 								{ __(
-									'Start selling with Sensei Pro',
+									'Better courses with Sensei Pro',
 									'sensei-lms'
 								) }
 							</h2>
@@ -48,7 +48,7 @@ const SenseiProAd = ( { show } ) => {
 						<div className="sensei-home__sensei-pro-ad__description">
 							<p>
 								{ __(
-									'All the features in one package made so that you can start selling your courses right away.',
+									'Get everything you need to sell courses and take your lessons to the next level.',
 									'sensei-lms'
 								) }
 							</p>
@@ -72,32 +72,37 @@ const SenseiProAd = ( { show } ) => {
 							<ul>
 								<li>
 									{ __(
-										'WooCommerce integration',
+										'Sell courses with WooCommerce',
 										'sensei-lms'
 									) }
 								</li>
 								<li>
 									{ __(
-										'Schedule ‘drip’ content',
+										'Schedule and drip courses and lessons',
 										'sensei-lms'
 									) }
 								</li>
 								<li>
 									{ __(
-										'Set expiration date of courses',
-										'sensei-lms'
-									) }
-								</li>
-								<li>{ __( 'Quiz timer', 'sensei-lms' ) }</li>
-								<li>
-									{ __(
-										'Flashcards, Image Hotspots, Checklists and Interactive Video',
+										'Manage groups and cohorts',
 										'sensei-lms'
 									) }
 								</li>
 								<li>
 									{ __(
-										'1 year of updates & support',
+										'Create interactive videos and lessons',
+										'sensei-lms'
+									) }
+								</li>
+								<li>
+									{ __(
+										'Add advanced quiz features',
+										'sensei-lms'
+									) }
+								</li>
+								<li>
+									{ __(
+										'Contact our experts for help',
 										'sensei-lms'
 									) }
 								</li>
