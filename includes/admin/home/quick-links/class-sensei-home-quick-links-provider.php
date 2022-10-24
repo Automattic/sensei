@@ -33,7 +33,7 @@ class Sensei_Home_Quick_Links_Provider {
 				__( 'Settings', 'sensei-lms' ),
 				[
 					$this->create_item( __( 'Email notifications', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#email-notification-settings' ) ),
-					$this->create_item( __( 'Learning mode', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#course-settings' ) ),
+					$this->create_item( __( 'Learning mode', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#appearance-settings' ) ),
 					$this->create_item( __( 'WooCommerce', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#woocommerce-settings' ) ),
 					$this->create_item( __( 'Content drip', 'sensei-lms' ), admin_url( '/admin.php?page=sensei-settings#sensei-content-drip-settings' ) ),
 				]
