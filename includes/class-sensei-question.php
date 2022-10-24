@@ -235,7 +235,7 @@ class Sensei_Question {
 	 *
 	 * @access private
 	 *
-	 * @param array $post_types
+	 * @param array $post_types Post types.
 	 *
 	 * @return array
 	 */
