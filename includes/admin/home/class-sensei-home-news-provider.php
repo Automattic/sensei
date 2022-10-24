@@ -33,15 +33,25 @@ class Sensei_Home_News_Provider {
 	/**
 	 * Returns all the information for the news section.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public function get(): array {
+	public function get() {
 		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
-		$news        = $remote_data['news'] ?? [];
-
-		if ( isset( $news['items'] ) ) {
-			$news['items'] = array_filter( array_map( [ $this, 'format_item' ], $news['items'] ) );
+		if (
+			! $remote_data
+			|| $remote_data instanceof WP_Error
+			|| ! isset( $remote_data['news'] )
+			|| ! isset( $remote_data['news']['items'] )
+			|| ! is_array( $remote_data['news']['items'] )
+		) {
+			return null;
 		}
+
+		$news          = [
+			'items'    => $remote_data['news']['items'],
+			'more_url' => $remote_data['news']['more_url'] ?? null,
+		];
+		$news['items'] = array_filter( array_map( [ $this, 'format_item' ], $news['items'] ) );
 
 		return $news;
 	}
