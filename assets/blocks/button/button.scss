@@ -5,6 +5,12 @@
 
 	.wp-block-button__link {
 		box-sizing: border-box;
+
+		&:disabled {
+			pointer-events: none;
+			opacity: 0.5;
+			filter: grayscale(100%);
+		}
 	}
 
 	&.has-text-align-full {
@@ -15,12 +21,6 @@
 			width: 100%;
 			flex: 1;
 		}
-	}
-
-	.wp-block-button__link:disabled {
-		pointer-events: none;
-		opacity: 0.5;
-		filter: grayscale(100%);
 	}
 
 	&__notice {
