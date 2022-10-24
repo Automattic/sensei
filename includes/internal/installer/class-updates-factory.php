@@ -1,20 +1,24 @@
 <?php
 /**
- * File containing the class \Sensei\Installer\Updates_Factory.
+ * File containing the class \Sensei\Internal\Installer\Updates_Factory.
  *
  * @package sensei
  */
 
-namespace Sensei\Installer;
+namespace Sensei\Internal\Installer;
 
 /**
  * Updates factory class.
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
 class Updates_Factory {
 	/**
 	 * Create Updates instance.
+	 *
+	 * @internal
 	 *
 	 * @param mixed       $current_version Current Sensei version based on stored settings.
 	 * @param string|null $plugin_version Sensei version based on plugin code.
