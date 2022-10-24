@@ -33,15 +33,25 @@ class Sensei_Home_Guides_Provider {
 	/**
 	 * Returns all the information for the guides section.
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public function get(): array {
+	public function get() {
 		$remote_data = $this->remote_data_api->fetch( HOUR_IN_SECONDS );
-		$guides      = $remote_data['guides'] ?? [];
-
-		if ( isset( $guides['items'] ) ) {
-			$guides['items'] = array_filter( array_map( [ $this, 'format_item' ], $guides['items'] ) );
+		if (
+			! $remote_data
+			|| $remote_data instanceof WP_Error
+			|| ! isset( $remote_data['guides'] )
+			|| ! isset( $remote_data['guides']['items'] )
+			|| ! is_array( $remote_data['guides']['items'] )
+		) {
+			return null;
 		}
+
+		$guides          = [
+			'items'    => $remote_data['guides']['items'],
+			'more_url' => $remote_data['guides']['more_url'] ?? null,
+		];
+		$guides['items'] = array_filter( array_map( [ $this, 'format_item' ], $guides['items'] ) );
 
 		return $guides;
 	}
