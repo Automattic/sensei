@@ -4,7 +4,7 @@
  */
 class Sensei_Course_Overview_Block_Test extends WP_UnitTestCase {
 	/**
-	 * Continue Course block.
+	 * Course Overview block.
 	 *
 	 * @var Sensei_Course_Overview_Block
 	 */
