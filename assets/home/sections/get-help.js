@@ -96,7 +96,7 @@ const GetHelp = ( { categories } ) => {
 	}
 
 	return (
-		<Section title={ __( 'Get help', 'sensei-lms' ) }>
+		<Section title={ __( 'Get Help', 'sensei-lms' ) }>
 			{ categories.map( ( category, categoryIndex ) => (
 				<Category
 					key={ categoryIndex }

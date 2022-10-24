@@ -38,7 +38,7 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	 * @return string
 	 */
 	public function get_title(): string {
-		return __( 'Sell your Course with WooCommerce', 'sensei-lms' );
+		return __( 'Sell your course with WooCommerce', 'sensei-lms' );
 	}
 
 	/**
