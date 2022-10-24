@@ -163,6 +163,17 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	}
 
 	/**
+	 * Delete the quiz submission.
+	 *
+	 * @internal
+	 *
+	 * @param Submission $submission The quiz submission.
+	 */
+	public function delete( Submission $submission ): void {
+		delete_comment_meta( $submission->get_id(), 'grade' );
+	}
+
+	/**
 	 * Get the lesson status comment.
 	 *
 	 * @param int $quiz_id The quiz ID.
