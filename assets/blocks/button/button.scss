@@ -3,6 +3,10 @@
 		display: block;
 	}
 
+	.wp-block-button__link {
+		box-sizing: border-box;
+	}
+
 	&.has-text-align-full {
 		text-align: center;
 
@@ -29,8 +33,8 @@
 }
 
 /**
-  * Buttons in container.
-  */
+	* Buttons in container.
+	*/
 .sensei-buttons-container {
 	margin: -9px;
 	overflow: hidden; /* Clearfix solution */
