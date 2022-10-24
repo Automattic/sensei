@@ -35,7 +35,7 @@ describe( '<QuickLinks />', () => {
 						items: [
 							{
 								title: 'external link',
-								url: 'https://senseilms.com/',
+								url: 'https://whatever.com/',
 							},
 						],
 					},
@@ -46,7 +46,7 @@ describe( '<QuickLinks />', () => {
 		const link = container.querySelector( 'a' );
 
 		expect( queryByText( 'external link' ) ).toBeTruthy();
-		expect( link.href ).toEqual( 'https://senseilms.com/' );
+		expect( link.href ).toEqual( 'https://whatever.com/' );
 		expect( link.target ).toEqual( '_blank' );
 		expect( link.querySelector( 'svg' ) ).toBeTruthy();
 	} );
@@ -102,5 +102,32 @@ describe( '<QuickLinks />', () => {
 		expect( link.target ).not.toEqual( '_blank' );
 		expect( link.href ).toEqual( 'http://localhost/#' );
 		expect( link.querySelector( 'svg' ) ).toBeFalsy();
+	} );
+
+	it( 'Should add UTMs to senseilms.com links.', () => {
+		const { container, queryByText } = render(
+			<QuickLinks
+				quickLinks={ [
+					{
+						title: 'first column',
+						items: [
+							{
+								title: 'external link',
+								url: 'https://senseilms.com/',
+							},
+						],
+					},
+				] }
+			/>
+		);
+
+		const link = container.querySelector( 'a' );
+
+		expect( queryByText( 'external link' ) ).toBeTruthy();
+		expect( link.href ).toEqual(
+			'https://senseilms.com/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei_home'
+		);
+		expect( link.target ).toEqual( '_blank' );
+		expect( link.querySelector( 'svg' ) ).toBeTruthy();
 	} );
 } );

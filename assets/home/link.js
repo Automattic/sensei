@@ -4,6 +4,11 @@
 import { external, Icon } from '@wordpress/icons';
 
 /**
+ * Internal dependencies
+ */
+import { addUtms } from './utils';
+
+/**
  * Return hostname for a given URL.
  *
  * @param {string} url URL to parse.
@@ -29,7 +34,7 @@ const Link = ( { label, url, onClick } ) => {
 	return (
 		<div className="sensei-home__link">
 			<a
-				href={ url }
+				href={ addUtms( url ) }
 				target={ onClick ? undefined : '_blank' }
 				rel="noreferrer"
 				onClick={ onClick }

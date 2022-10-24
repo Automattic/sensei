@@ -44,9 +44,7 @@ const Item = ( { title, url, extraLink } ) => {
 				} ) }
 			>
 				{ isTitleInteractive ? (
-					<a href={ url } target="_blank" rel="noreferrer">
-						{ title }
-					</a>
+					<Link label={ title } url={ url } />
 				) : (
 					<span>{ title }</span>
 				) }
