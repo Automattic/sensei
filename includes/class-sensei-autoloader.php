@@ -5,6 +5,9 @@
  * @package sensei
  */
 
+use Sensei\Installer\Installer;
+use Sensei\Installer\Schema;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // security check, don't load file outside WP.
 }
@@ -244,6 +247,13 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Ui'                => 'blocks/course-theme/class-ui.php',
 			'Sensei\Blocks\Course_Theme\Template_Style'    => 'blocks/course-theme/class-template-style.php',
 			'Sensei\Blocks\Course_Theme\Lesson_Video'      => 'blocks/course-theme/class-lesson-video.php',
+
+			/**
+			 * Installer
+			 */
+			\Sensei\Internal\Installer\Installer::class    => 'internal/installer/class-installer.php',
+			\Sensei\Internal\Installer\Schema::class       => 'internal/installer/class-schema.php',
+			\Sensei\Internal\Installer\Updates_Factory::class => 'internal/installer/class-updates-factory.php',
 
 			/**
 			 * Student Progress
