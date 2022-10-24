@@ -1,29 +1,30 @@
 
 .sensei-home {
-&__notices {
-	margin-bottom: 31px;
+	&__notices {
+		margin-bottom: 31px;
 
-	.sensei-notice {
-		margin-left: 0;
-		margin-right: 0;
-		padding: 10px 16px;
+		.sensei-notice {
+			margin-left: 0;
+			margin-right: 0;
+			padding: 10px 16px;
 
-		&__wrapper {
-			height: 100%;
-		}
+			&__wrapper {
+				height: 100%;
+			}
 
-		&__content {
-			display: flex;
-			align-items: center;
-		}
-
-		.sensei-home {
-			&__link {
+			&__content {
 				display: flex;
 				align-items: center;
-				height: 100%;
+			}
+
+			.sensei-home {
+				&__link {
+					display: flex;
+					align-items: center;
+					height: 100%;
+					white-space: nowrap;
+				}
 			}
 		}
 	}
-}
 }
