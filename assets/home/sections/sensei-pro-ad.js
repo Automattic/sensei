@@ -104,7 +104,7 @@ const SenseiProAd = ( { show } ) => {
 							</ul>
 
 							<a
-								href="https://senseilms.com/checkout/?add-to-cart=7009"
+								href="https://senseilms.com/checkout/?add-to-cart=7009&utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei_home"
 								target="_blank"
 								rel="noreferrer external"
 								className="sensei-home__sensei-pro-ad__button is-primary is-large components-button"
@@ -113,7 +113,7 @@ const SenseiProAd = ( { show } ) => {
 							</a>
 
 							<a
-								href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=extensions_header"
+								href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei_home"
 								target="_blank"
 								rel="noreferrer external"
 								className="sensei-home__sensei-pro-ad__button is-secondary is-large components-button"

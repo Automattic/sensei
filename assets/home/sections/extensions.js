@@ -12,6 +12,7 @@ import { Col, Grid } from '../grid';
 import Card from '../card';
 import Section from '../section';
 import { EXTENSIONS_STORE } from '../../extensions/store';
+import { addUtms } from '../utils';
 
 /**
  * Extensions section component.
@@ -48,6 +49,9 @@ const Extensions = () => {
 		<Section title={ __( 'Extensions', 'sensei-lms' ) }>
 			<Grid>
 				{ extensions.map( ( extension ) => {
+					if ( extension.link ) {
+						extension.link = addUtms( extension.link );
+					}
 					return (
 						<Col
 							key={ extension.product_slug }
