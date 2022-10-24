@@ -8,8 +8,6 @@
 
 namespace Sensei\Internal\Installer;
 
-use Sensei_Updates;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
