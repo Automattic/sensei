@@ -251,9 +251,9 @@ class Sensei_Autoloader {
 			/**
 			 * Installer
 			 */
-			\Sensei\Installer\Installer::class             => 'installer/class-installer.php',
-			\Sensei\Installer\Schema::class                => 'installer/class-schema.php',
-			\Sensei\Installer\Updates_Factory::class       => 'installer/class-updates-factory.php',
+			\Sensei\Internal\Installer\Installer::class             => 'internal/installer/class-installer.php',
+			\Sensei\Internal\Installer\Schema::class                => 'internal/installer/class-schema.php',
+			\Sensei\Internal\Installer\Updates_Factory::class       => 'internal/installer/class-updates-factory.php',
 
 			/**
 			 * Student Progress

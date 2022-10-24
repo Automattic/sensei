@@ -1,13 +1,13 @@
 <?php
 
-namespace SenseiTest\Installer;
+namespace SenseiTest\Internal\Installer;
 
-use Sensei\Installer\Schema;
+use Sensei\Internal\Installer\Schema;
 
 /**
- * Test for \Sensei\Installer\Schema.
+ * Test for \Sensei\Internal\Installer\Schema.
  *
- * @covers \Sensei\Installer\Schema
+ * @covers \Sensei\Internal\Installer\Schema
  */
 class Schema_Test extends \WP_UnitTestCase {
 	/**

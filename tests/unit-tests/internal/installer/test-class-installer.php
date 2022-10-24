@@ -1,17 +1,17 @@
 <?php
 
-namespace SenseiTest\Installer;
+namespace SenseiTest\Internal\Installer;
 
-use Sensei\Installer\Installer;
-use Sensei\Installer\Schema;
-use Sensei\Installer\Updates_Factory;
+use Sensei\Internal\Installer\Installer;
+use Sensei\Internal\Installer\Schema;
+use Sensei\Internal\Installer\Updates_Factory;
 use Sensei_Factory;
 use Sensei_Utils;
 
 /**
- * Test for \Sensei_Pro_Installer\Installer.
+ * Test for \Sensei\Internal\Installer\Installer.
  *
- * @covers \Sensei\Installer\Installer
+ * @covers \Sensei\Internal\Installer\Installer
  */
 class Installer_Test extends \WP_UnitTestCase {
 	/**
