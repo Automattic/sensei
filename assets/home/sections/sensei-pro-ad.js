@@ -11,6 +11,7 @@ import { EXTENSIONS_STORE } from '../../extensions/store';
 import { Col } from '../grid';
 import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
 import SenseiProAdCTA from '../../images/sensei-pro-ad-cta.svg';
+import { addUtms } from '../utils';
 
 /**
  * Sensei Pro Ad to be shown on Sensei Home.
@@ -104,7 +105,9 @@ const SenseiProAd = ( { show } ) => {
 							</ul>
 
 							<a
-								href="https://senseilms.com/checkout/?add-to-cart=7009&utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei_home"
+								href={ addUtms(
+									'https://senseilms.com/checkout/?add-to-cart=7009'
+								) }
 								target="_blank"
 								rel="noreferrer external"
 								className="sensei-home__sensei-pro-ad__button is-primary is-large components-button"
@@ -113,7 +116,9 @@ const SenseiProAd = ( { show } ) => {
 							</a>
 
 							<a
-								href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=sensei_home"
+								href={ addUtms(
+									'https://senseilms.com/sensei-pro/'
+								) }
 								target="_blank"
 								rel="noreferrer external"
 								className="sensei-home__sensei-pro-ad__button is-secondary is-large components-button"
