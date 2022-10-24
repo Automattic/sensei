@@ -3,7 +3,7 @@
  * Sensei Home REST API.
  *
  * @package Sensei\Admin
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei Home REST API endpoints.
  *
- * @since $$next-version$$
+ * @since 4.8.0
  */
 class Sensei_REST_API_Home_Controller extends \WP_REST_Controller {
 

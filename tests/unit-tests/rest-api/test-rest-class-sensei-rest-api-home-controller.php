@@ -3,7 +3,7 @@
  * Sensei REST API: Sensei_REST_API_Home_Controller tests
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 /**

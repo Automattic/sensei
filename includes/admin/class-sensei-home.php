@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * All functionality pertaining to Sensei Home page.
  *
- * @since $$next-version$$
+ * @since 4.8.0
  */
 final class Sensei_Home {
 	const SCREEN_ID                  = 'toplevel_page_sensei';
@@ -123,7 +123,7 @@ final class Sensei_Home {
 	/**
 	 * Initializes the class and adds all filters and actions related to Sensei Home.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 */
 	public function init() {
 		$this->notices->init();
@@ -135,7 +135,7 @@ final class Sensei_Home {
 	/**
 	 * Enqueues admin scripts when needed on different screens.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 * @access private
 	 */
 	public function enqueue_admin_assets() {
@@ -154,7 +154,7 @@ final class Sensei_Home {
 	/**
 	 * Localize Home script.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 */
 	private function localize_script() {
 		$data = array(
@@ -216,7 +216,7 @@ final class Sensei_Home {
 	/**
 	 * Adds the menu item for the Home page.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.8.0
 	 *
 	 * @access private
 	 */
@@ -244,7 +244,7 @@ final class Sensei_Home {
 	/**
 	 * Renders Sensei Home.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.8.0
 	 * @access private
 	 */
 	public function render() {

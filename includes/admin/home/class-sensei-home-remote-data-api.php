@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Remote_Data_API class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,7 +66,7 @@ class Sensei_Home_Remote_Data_API {
 		/**
 		 * Filter if we should retry errors when fetching remote data.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.8.0
 		 * @hook sensei_home_remote_data_retry_error
 		 *
 		 * @param {bool} $retry_error If we should retry errors. Default true.
@@ -183,7 +183,7 @@ class Sensei_Home_Remote_Data_API {
 		/**
 		 * Filter the primary plugin slug.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.8.0
 		 * @hook sensei_home_remote_data_primary_plugin_slug
 		 *
 		 * @param {string} $primary_plugin_slug The primary plugin slug.
@@ -202,7 +202,7 @@ class Sensei_Home_Remote_Data_API {
 		/**
 		 * Filter the other plugins used for Sensei Home.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.8.0
 		 * @hook sensei_home_remote_data_other_plugins
 		 *
 		 * @param {array} $other_plugins The other plugins.

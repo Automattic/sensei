@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Help_Provider class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 /**
@@ -92,7 +92,7 @@ class Sensei_Home_Help_Provider {
 		 * Filter to disable upsell to Sensei Pro in Sensei Home's action to create support tickets.
 		 *
 		 * @hook sensei_home_support_ticket_creation_upsell_show
-		 * @since $$next-version$$
+		 * @since 4.8.0
 		 *
 		 * @param {bool} $show_upsell True if upsell must be shown.
 		 *

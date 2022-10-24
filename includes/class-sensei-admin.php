@@ -90,7 +90,7 @@ class Sensei_Admin {
 	 * Add items to admin menu
 	 *
 	 * @since 1.4.0
-	 * @since $$next-version$$ Reactivate method since we have a new home page.
+	 * @since 4.8.0 Reactivate method since we have a new home page.
 	 *
 	 * @return void
 	 */
@@ -101,7 +101,7 @@ class Sensei_Admin {
 	/**
 	 * Get the top menu minimum capability.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 *
 	 * @return string
 	 */
@@ -185,7 +185,7 @@ class Sensei_Admin {
 	 * Handle highlighting of admin menu items
 	 *
 	 * @since 1.4.0
-	 * @since $$next-version$$ General review after adding the new Sensei Home page.
+	 * @since 4.8.0 General review after adding the new Sensei Home page.
 	 *
 	 * @return void
 	 */

@@ -3,7 +3,7 @@
  * File containing the Sensei_Home_Task_Setup_Site class.
  *
  * @package sensei-lms
- * @since $$next-version$$
+ * @since 4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei_Home_Task_Setup_Site class.
  *
- * @since $$next-version$$
+ * @since 4.8.0
  */
 class Sensei_Home_Task_Setup_Site implements Sensei_Home_Task {
 

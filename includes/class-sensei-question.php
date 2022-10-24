@@ -66,7 +66,7 @@ class Sensei_Question {
 	/**
 	 * Highlight the menu item for the question pages.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -76,7 +76,7 @@ class Sensei_Question {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$screen = get_current_screen();
 

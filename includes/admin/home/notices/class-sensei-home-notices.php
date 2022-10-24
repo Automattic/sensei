@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Notices class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -87,7 +87,7 @@ class Sensei_Home_Notices {
 			 * Defaults to true for plugins that don't need a license.
 			 *
 			 * @hook sensei_home_is_plugin_licensed_{$plugin_slug}
-			 * @since $$next-version$$
+			 * @since 4.8.0
 			 *
 			 * @param {bool} $is_licensed Whether the plugin has an active license.
 			 *

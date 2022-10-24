@@ -209,7 +209,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Install extension.
 	 *
-	 * @since $$next-version$$ If the plugin is already installed, it just activates it.
+	 * @since 4.8.0 If the plugin is already installed, it just activates it.
 	 *
 	 * @access private
 	 *
@@ -362,7 +362,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Generate a REST response from an array of plugins.
 	 *
-	 * @since $$next-version$$ It doesn't support WCCOM extensions anymore.
+	 * @since 4.8.0 It doesn't support WCCOM extensions anymore.
 	 *
 	 * @param array   $plugins        The plugins.
 	 * @param string  $extensions_key Response key for the extensions array.

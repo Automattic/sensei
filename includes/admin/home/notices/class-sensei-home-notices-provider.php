@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Notices_Provider class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

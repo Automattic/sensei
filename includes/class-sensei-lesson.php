@@ -174,7 +174,7 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -184,7 +184,7 @@ class Sensei_Lesson {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$screen = get_current_screen();
 
