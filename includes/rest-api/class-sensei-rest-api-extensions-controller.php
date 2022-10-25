@@ -218,13 +218,12 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function install_extension( WP_REST_Request $request ) {
-		$json_params       = $request->get_json_params();
-		$plugin_slug       = $json_params['plugin'];
-		$available_plugins = Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' );
+		$json_params = $request->get_json_params();
+		$plugin_slug = $json_params['plugin'];
 
 		$plugin_to_install = array_values(
 			array_filter(
-				$available_plugins,
+				Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
 				function( $plugin ) use ( $plugin_slug ) {
 					return $plugin->product_slug === $plugin_slug;
 				}
@@ -245,7 +244,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		}
 
 		$installed_plugins = array_filter(
-			$available_plugins,
+			Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
 			function( $plugin ) use ( $plugin_slug ) {
 				return $plugin->product_slug === $plugin_slug;
 			}
