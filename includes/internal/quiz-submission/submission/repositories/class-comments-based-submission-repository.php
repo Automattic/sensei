@@ -35,7 +35,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission       The course progress.
+	 * @return Submission       The quiz submission.
 	 * @throws RuntimeException In case the lesson status is missing.
 	 */
 	public function create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
@@ -70,7 +70,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	 * @param int        $user_id     The user ID.
 	 * @param float|null $final_grade The final grade.
 	 *
-	 * @return Submission The course progress.
+	 * @return Submission The quiz submission.
 	 */
 	public function get_or_create( int $quiz_id, int $user_id, float $final_grade = null ): Submission {
 		$submission = $this->get( $quiz_id, $user_id );
@@ -83,7 +83,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	}
 
 	/**
-	 * Gets a course progress.
+	 * Gets a quiz submission.
 	 *
 	 * @internal
 	 *
