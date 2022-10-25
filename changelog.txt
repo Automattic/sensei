@@ -42,9 +42,9 @@
     * Fetch data from SenseiLMS.com for Sensei Home [#5820](https://github.com/Automattic/sensei/pull/5820)
     * Add home tasks backend basic structure [#5815](https://github.com/Automattic/sensei/pull/5815)
     * Add Sensei Pro promo backend for Sensei Home [#5792](https://github.com/Automattic/sensei/pull/5792)
-    * Implement backend for Help section in Sensei Home. [#5786](https://github.com/Automattic/sensei/pull/5786)
+    * Implement backend for Help section in Sensei Home [#5786](https://github.com/Automattic/sensei/pull/5786)
     * Add Quick Links to Sensei Home REST API [#5761](https://github.com/Automattic/sensei/pull/5761)
-    * Add sensei home rest API mock. [#5728](https://github.com/Automattic/sensei/pull/5728)
+    * Add sensei home rest API mock [#5728](https://github.com/Automattic/sensei/pull/5728)
     * Add Sensei Home Structure [#5727](https://github.com/Automattic/sensei/pull/5727)
 
 2022-10-24 - version 4.7.2
