@@ -35,7 +35,7 @@ const Link = ( { label, url, onClick } ) => {
 		<div className="sensei-home__link">
 			<a
 				href={ addUtms( url ) }
-				target={ onClick ? undefined : '_blank' }
+				target={ onClick || ! isExternal ? undefined : '_blank' }
 				rel="noreferrer"
 				onClick={ onClick }
 			>
