@@ -22,8 +22,6 @@ const TaskItem = ( { title, url, done } ) => {
 
 	const linkProps = ! done && {
 		href: url,
-		target: '_blank',
-		rel: 'noreferrer',
 	};
 
 	return (
