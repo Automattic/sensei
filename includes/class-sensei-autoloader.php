@@ -5,9 +5,6 @@
  * @package sensei
  */
 
-use Sensei\Installer\Installer;
-use Sensei\Installer\Schema;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // security check, don't load file outside WP.
 }
@@ -263,12 +260,6 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Installer\Installer::class    => 'internal/installer/class-installer.php',
 			\Sensei\Internal\Installer\Schema::class       => 'internal/installer/class-schema.php',
 			\Sensei\Internal\Installer\Updates_Factory::class => 'internal/installer/class-updates-factory.php',
-
-			/**
-			 * Installer
-			 */
-			\Sensei\Installer\Installer::class             => 'installer/class-installer.php',
-			\Sensei\Installer\Schema::class                => 'installer/class-schema.php',
 
 			/**
 			 * Student Progress
