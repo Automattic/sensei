@@ -8,6 +8,7 @@ import classnames from 'classnames';
  */
 import CheckIcon from '../../icons/checked.svg';
 import ChevronRightIcon from '../../icons/chevron-right.svg';
+import { isUrlExternal } from '../utils';
 
 /**
  * Tasks item component.
@@ -22,6 +23,7 @@ const TaskItem = ( { title, url, done } ) => {
 
 	const linkProps = ! done && {
 		href: url,
+		target: isUrlExternal( url ) ? '_blank' : undefined,
 	};
 
 	return (
