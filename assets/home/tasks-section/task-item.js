@@ -12,10 +12,10 @@ import ChevronRightIcon from '../../icons/chevron-right.svg';
 /**
  * Tasks item component.
  *
- * @param {Object} props       Component props.
- * @param {Object} props.title Item title.
- * @param {Object} props.url   Item URL.
- * @param {Object} props.done  Whether item is completed.
+ * @param {Object}  props       Component props.
+ * @param {string}  props.title Item title.
+ * @param {string}  props.url   Item URL.
+ * @param {boolean} props.done  Whether item is completed.
  */
 const TaskItem = ( { title, url, done } ) => {
 	const Tag = done ? 'span' : 'a';
