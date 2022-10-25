@@ -162,13 +162,13 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$progress->pass();
 		$repository->save( $progress );
 
-		update_comment_meta( $quiz_id, 'quiz_answers', [ $question_id => 'answer' ] );
+		update_comment_meta( $progress->get_id(), 'quiz_answers', [ $question_id => 'answer' ] );
 
 		/* Act. */
 		$repository->delete( $progress );
 
 		/* Assert. */
-		$actual = get_comment_meta( $quiz_id, 'quiz_answers', true );
+		$actual = get_comment_meta( $progress->get_id(), 'quiz_answers', true );
 		self::assertEmpty( $actual );
 	}
 

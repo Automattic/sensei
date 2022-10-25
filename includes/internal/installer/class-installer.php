@@ -1,14 +1,12 @@
 <?php
 /**
- * File containing the class \Sensei\Installer\Installer.
+ * File containing the class \Sensei\Internal\Installer\Installer.
  *
  * @package sensei
  * @since $$next-version$$
  */
 
-namespace Sensei\Installer;
-
-use Sensei_Updates;
+namespace Sensei\Internal\Installer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Installer class.
  *
  * Responsible for running DB updates that need to be run per version.
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -58,6 +58,8 @@ class Installer {
 	/**
 	 * Constructor.
 	 *
+	 * @internal
+	 *
 	 * @since $$next-version$$
 	 *
 	 * @param Schema          $schema Schema migration object.
@@ -72,6 +74,8 @@ class Installer {
 
 	/**
 	 * Fetches an instance of the class.
+	 *
+	 * @internal
 	 *
 	 * @since $$next-version$$
 	 *
@@ -89,6 +93,8 @@ class Installer {
 	/**
 	 * Initialize necessary hooks.
 	 *
+	 * @internal
+	 *
 	 * @since $$next-version$$
 	 */
 	public function init() {
@@ -101,6 +107,8 @@ class Installer {
 	 * Run the installer.
 	 *
 	 * This method is executed when the plugin is installed or updated.
+	 *
+	 * @internal
 	 *
 	 * @since $$next-version$$
 	 */
@@ -130,6 +138,8 @@ class Installer {
 	/**
 	 * Checks for plugin update tasks and ensures the current version is set.
 	 *
+	 * @internal
+	 *
 	 * @since $$next-version$$
 	 */
 	public function update(): void {
@@ -143,6 +153,8 @@ class Installer {
 
 	/**
 	 * Get the Schema instance.
+	 *
+	 * @internal
 	 *
 	 * @since $$next-version$$
 	 *

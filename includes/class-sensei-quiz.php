@@ -716,14 +716,6 @@ class Sensei_Quiz {
 		if ( $quiz_id ) {
 			// Delete quiz answers, this auto deletes the corresponding meta data, such as the question/answer grade.
 			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $user_id );
-
-			$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			if ( $quiz_submission ) {
-				$quiz_submission->set_final_grade( null );
-				Sensei()->quiz_submission_repository->save( $quiz_submission );
-				Sensei()->quiz_grade_repository->delete_all( $quiz_submission->get_id() );
-				Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
-			}
 		}
 
 		// Update course completion.

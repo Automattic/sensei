@@ -1,15 +1,17 @@
 <?php
 /**
- * File containing the class \Sensei\Installer\Schema.
+ * File containing the class \Sensei\Internal\Installer\Schema.
  *
  * @package sensei
  * @since   $$next-version$$
  */
 
-namespace Sensei\Installer;
+namespace Sensei\Internal\Installer;
 
 /**
  * Schema class.
+ *
+ * @internal
  *
  * @since $$next-version$$
  */
@@ -30,6 +32,8 @@ class Schema {
 	 * WARNING: If you are modifying this method, make sure that its safe to call regardless of the state of database.
 	 *
 	 * This is called from `Installer::install()` method and is executed in-sync when the plugin is installed or updated.
+	 *
+	 * @internal
 	 *
 	 * @since $$next-version$$
 	 */
@@ -54,6 +58,8 @@ class Schema {
 	 * indexes first causes too much load on some servers/larger DB.
 	 *
 	 * When adding or removing a table, make sure to update the list of tables in `Schema::get_tables()`.
+	 *
+	 * @internal
 	 *
 	 * @see https://codex.wordpress.org/Creating_Tables_with_Plugins#Creating_or_Updating_the_Table
 	 * @since $$next-version$$
@@ -117,6 +123,8 @@ CREATE TABLE {$wpdb->prefix}sensei_lms_quiz_grades (
 	/**
 	 * Return a list of tables. Used to make sure all tables are dropped when uninstalling the plugin
 	 * in a single site or multi-site environment.
+	 *
+	 * @internal
 	 *
 	 * @since $$next-version$$
 	 *
