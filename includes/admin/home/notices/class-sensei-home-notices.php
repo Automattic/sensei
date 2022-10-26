@@ -140,15 +140,17 @@ class Sensei_Home_Notices {
 
 			$available_updates = get_plugin_updates();
 			foreach ( $available_updates as $plugin_data ) {
-				$plugin_slug    = $plugin_data->update->slug;
-				$update_version = $plugin_data->update->new_version;
-				$update_package = $plugin_data->update->package;
+				$plugin_slug_given = $plugin_data->update->slug;
+				$plugin_slug_file  = dirname( $plugin_data->update->plugin );
+				$update_version    = $plugin_data->update->new_version;
+				$update_package    = $plugin_data->update->package;
 
-				if ( ! $plugin_slug || ! $update_version || ! $update_package ) {
+				if ( ! $plugin_slug_given || ! $plugin_slug_file || ! $update_version || ! $update_package ) {
 					continue;
 				}
 
-				$this->local_plugin_updates[ $plugin_slug ] = $update_version;
+				$this->local_plugin_updates[ $plugin_slug_given ] = $update_version;
+				$this->local_plugin_updates[ $plugin_slug_file ]  = $update_version;
 			}
 		}
 
