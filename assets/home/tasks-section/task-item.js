@@ -8,22 +8,24 @@ import classnames from 'classnames';
  */
 import CheckIcon from '../../icons/checked.svg';
 import ChevronRightIcon from '../../icons/chevron-right.svg';
+import { isUrlExternal } from '../utils';
 
 /**
  * Tasks item component.
  *
- * @param {Object} props       Component props.
- * @param {Object} props.title Item title.
- * @param {Object} props.url   Item URL.
- * @param {Object} props.done  Whether item is completed.
+ * @param {Object}  props       Component props.
+ * @param {string}  props.title Item title.
+ * @param {string}  props.url   Item URL.
+ * @param {boolean} props.done  Whether item is completed.
  */
 const TaskItem = ( { title, url, done } ) => {
 	const Tag = done ? 'span' : 'a';
+	const isExternal = isUrlExternal( url );
 
 	const linkProps = ! done && {
 		href: url,
-		target: '_blank',
-		rel: 'noreferrer',
+		target: isExternal ? '_blank' : undefined,
+		rel: isExternal ? 'noreferrer' : undefined,
 	};
 
 	return (
