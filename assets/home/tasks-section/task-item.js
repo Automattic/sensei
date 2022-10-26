@@ -20,10 +20,12 @@ import { isUrlExternal } from '../utils';
  */
 const TaskItem = ( { title, url, done } ) => {
 	const Tag = done ? 'span' : 'a';
+	const isExternal = isUrlExternal( url );
 
 	const linkProps = ! done && {
 		href: url,
-		target: isUrlExternal( url ) ? '_blank' : undefined,
+		target: isExternal ? '_blank' : undefined,
+		rel: isExternal ? 'noreferrer' : undefined,
 	};
 
 	return (

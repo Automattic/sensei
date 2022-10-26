@@ -18,14 +18,15 @@ import { addUtms, isUrlExternal } from './utils';
  */
 const Link = ( { label, url, onClick } ) => {
 	const isExternal = isUrlExternal( url );
+	const linkProps = {
+		href: addUtms( url ),
+		target: onClick || ! isExternal ? undefined : '_blank',
+		rel: isExternal ? 'noreferrer' : undefined,
+		onClick,
+	};
 	return (
 		<div className="sensei-home__link">
-			<a
-				href={ addUtms( url ) }
-				target={ onClick || ! isExternal ? undefined : '_blank' }
-				rel="noreferrer"
-				onClick={ onClick }
-			>
+			<a { ...linkProps }>
 				{ label }
 				{ isExternal && (
 					<Icon
