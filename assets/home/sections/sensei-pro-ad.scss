@@ -16,6 +16,7 @@
 
 		p {
 			font-size: 18px;
+			margin-top: 0;
 		}
 
 		&__column {
@@ -33,12 +34,13 @@
 			}
 
 			ul {
-				margin: 0;
+				margin-top: 24px;
+				margin-bottom: 0;
 				line-height: 140%;
 			}
 
 			li {
-				margin: 0;
+				margin: 4px 0 0 0;
 
 				~ li {
 					margin-top: 13px;
@@ -54,11 +56,7 @@
 		&__header {
 			display: flex;
 			align-items: center;
-			margin-bottom: 16px;
-
-			@media (min-width: $break-medium) {
-				margin-bottom: 24px;
-			}
+			margin-bottom: 8px;
 		}
 
 		&__description {
@@ -80,17 +78,19 @@
 			color: $gray-10;
 			font-size: 12px;
 			font-weight: 500;
+			margin-top: 24px;
 
 			&__title {
 				color: $white;
 				font-weight: 700;
 				font-size: 32px;
 				margin-bottom: 0;
-				margin-top: 24px;
+				margin-top: 0;
 			}
 
 			p {
-				margin-bottom: 24px;
+				margin-top: 8px;
+				margin-bottom: 0px;
 			}
 		}
 
@@ -98,7 +98,7 @@
 			font-size: 14px;
 			font-weight: 500;
 			min-height: 40px;
-			margin-top: 27px;
+			margin-top: 24px;
 
 			&.is-primary {
 				margin-right: 18px;
