@@ -241,11 +241,20 @@ class Sensei_Admin_Notices {
 			$notice_class = 'sensei-notice-' . $notice['style'];
 		}
 
-		wp_enqueue_script( 'sensei-dismiss-notices' );
-
+		$is_dismissible       = $notice['dismissible'];
+		$notice_wrapper_extra = '';
+		if ( $is_dismissible ) {
+			wp_enqueue_script( 'sensei-dismiss-notices' );
+			$notice_class        .= ' is-dismissible';
+			$notice_wrapper_extra = sprintf( ' data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="%1$s" data-dismiss-nonce="%2$s"', esc_attr( $notice_id ), esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ) );
+		}
 		?>
-		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?> is-dismissible" data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="<?php echo esc_attr( $notice_id ); ?>"
-				data-dismiss-nonce="<?php echo esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ); ?>">
+		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?>"
+			<?php
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+			echo $notice_wrapper_extra;
+			?>
+		>
 			<?php
 			if ( ! empty( $notice['icon'] ) ) {
 				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
@@ -297,7 +306,11 @@ class Sensei_Admin_Notices {
 
 			$is_user_notification = 'user' === $notice['type'];
 
-			if ( ! isset( $notice['message'] ) || $this->is_notice_dismissed( $notice_id, $is_user_notification ) || ! $this->check_notice_conditions( $notice, $screen_id ) ) {
+			if (
+				! isset( $notice['message'] )
+				|| ( $notice['dismissible'] && $this->is_notice_dismissed( $notice_id, $is_user_notification ) )
+				|| ! $this->check_notice_conditions( $notice, $screen_id )
+			) {
 				continue;
 			}
 
@@ -559,6 +572,10 @@ class Sensei_Admin_Notices {
 			];
 		}
 
+		if ( ! isset( $notice['dismissible'] ) ) {
+			$notice['dismissible'] = true;
+		}
+
 		return $notice;
 	}
 
@@ -624,8 +641,13 @@ class Sensei_Admin_Notices {
 			return;
 		}
 
-		$is_user_notification = 'user' === $notices[ $notice_id ]['type'];
-		if ( ! $is_user_notification && ! current_user_can( 'manage_options' ) ) {
+		$notice = $this->normalize_notice( $notices[ $notice_id ] );
+
+		$is_user_notification = 'user' === $notice['type'];
+		if (
+			! $notice['dismissible']
+			|| ( ! $is_user_notification && ! current_user_can( 'manage_options' ) )
+		) {
 			wp_die( '', '', 403 );
 		}
 
