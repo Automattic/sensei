@@ -153,20 +153,6 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$this->assertSame( 0.0, $submission->get_final_grade() );
 	}
 
-	public function testGetQuestionIds_WhenLessonStatusNotFound_ReturnsEmptyArray(): void {
-		/* Arrange. */
-		$lesson_id  = $this->factory->lesson->create();
-		$user_id    = $this->factory->user->create();
-		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
-		$repository = new Comments_Based_Submission_Repository();
-
-		/* Act. */
-		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
-
-		/* Assert. */
-		$this->assertSame( [], $question_ids );
-	}
-
 	public function testGetQuestionIds_WhenLessonStatusFound_ReturnsQuestionIds(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
@@ -179,7 +165,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		update_comment_meta( $comment_id, 'questions_asked', implode( ',', [ 1, 2, 3 ] ) );
 
 		/* Act. */
-		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+		$question_ids = $repository->get_question_ids( $comment_id );
 
 		/* Assert. */
 		$this->assertSame( [ 1, 2, 3 ], $question_ids );
@@ -192,10 +178,10 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$comment_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		/* Act. */
-		$question_ids = $repository->get_question_ids( $quiz_id, $user_id );
+		$question_ids = $repository->get_question_ids( $comment_id );
 
 		/* Assert. */
 		$this->assertSame( [], $question_ids );
