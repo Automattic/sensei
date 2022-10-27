@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { select, subscribe } from '@wordpress/data';
+import { select, subscribe, dispatch, useSelect } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin, getPlugin } from '@wordpress/plugins';
@@ -21,9 +21,14 @@ import {
 } from '../../blocks/course-outline/data';
 
 import SenseiIcon from '../../icons/logo-tree.svg';
-import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
+import {
+	PluginDocumentSettingPanel,
+	PluginSidebar,
+	PluginSidebarMoreMenuItem,
+} from '@wordpress/edit-post';
 
-const pluginHandle = 'sensei-lms-course-sidebar';
+const pluginSidebarHandle = 'sensei-lms-course-settings-sidebar';
+const pluginDocumentHandle = 'sensei-lms-document-settings-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -117,13 +122,13 @@ const CourseSidebar = () => {
 	return (
 		<>
 			<PluginSidebarMoreMenuItem
-				target={ pluginHandle }
+				target={ pluginSidebarHandle }
 				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
 			>
 				{ __( 'Sensei Settings', 'sensei-lms' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
-				name={ pluginHandle }
+				name={ pluginSidebarHandle }
 				title={ __( 'Sensei Settings', 'sensei-lms' ) }
 				icon={ <SenseiIcon color="#43AF99" /> }
 			></PluginSidebar>
@@ -131,8 +136,37 @@ const CourseSidebar = () => {
 	);
 };
 
-registerPlugin( pluginHandle, {
+registerPlugin( pluginSidebarHandle, {
 	render: CourseSidebar,
+} );
+
+const SenseiSettingsDocumentSidebar = () => {
+	const isSenseiEditorPanelOpen = useSelect( ( select ) => {
+		return select( 'core/edit-post' ).isEditorPanelOpened(
+			`${ pluginDocumentHandle }/${ pluginDocumentHandle }`
+		);
+	} );
+	if ( isSenseiEditorPanelOpen ) {
+		// when 'Sensei Settings' is clicked, isSenseiEditorPanelOpen returns true, so we open the 'Sensei Settings'
+		// plugin sidebar and then close the 'Sensei Settings' panel which sets isSenseiEditorPanelOpen back to false.
+		dispatch( 'core/edit-post' ).openGeneralSidebar(
+			`${ pluginSidebarHandle }/${ pluginSidebarHandle }`
+		);
+		dispatch( 'core/edit-post' ).toggleEditorPanelOpened(
+			`${ pluginDocumentHandle }/${ pluginDocumentHandle }`
+		);
+	}
+	return (
+		<PluginDocumentSettingPanel
+			name={ pluginDocumentHandle }
+			title={ __( 'Sensei Settings ', 'sensei-lms' ) }
+		></PluginDocumentSettingPanel>
+	);
+};
+
+registerPlugin( pluginDocumentHandle, {
+	render: SenseiSettingsDocumentSidebar,
+	icon: null,
 } );
 
 /**
