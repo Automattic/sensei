@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Tasks_Provider class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -62,7 +62,7 @@ class Sensei_Home_Tasks_Provider {
 		/**
 		 * Filters the list of tasks that will be later displayed in the Sensei Home header.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.8.0
 		 *
 		 * @param array $tasks {
 		 *  A dictionary of tasks indexed by task ID.

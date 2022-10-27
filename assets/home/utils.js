@@ -17,3 +17,25 @@ export const addUtms = ( url ) => {
 		return url;
 	}
 };
+
+/**
+ * Return hostname for a given URL.
+ *
+ * @param {string} url URL to parse.
+ * @return {string} The hostname for the given URL.
+ */
+const getHostname = ( url ) => {
+	const element = document.createElement( 'a' );
+	element.href = url;
+	return element.hostname;
+};
+
+/**
+ * Verifies if a given URL is external or not.
+ *
+ * @param {string} url The URL to analyze.
+ * @return {boolean} If it's external or not.
+ */
+export const isUrlExternal = ( url ) => {
+	return getHostname( window.location ) !== getHostname( url );
+};

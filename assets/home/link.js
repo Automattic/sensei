@@ -6,19 +6,7 @@ import { external, Icon } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import { addUtms } from './utils';
-
-/**
- * Return hostname for a given URL.
- *
- * @param {string} url URL to parse.
- * @return {string} The hostname for the given URL.
- */
-const getHostname = ( url ) => {
-	const element = document.createElement( 'a' );
-	element.href = url;
-	return element.hostname;
-};
+import { addUtms, isUrlExternal } from './utils';
 
 /**
  * Link component. Will add an external link icon if the url is for an external domain.
@@ -29,16 +17,16 @@ const getHostname = ( url ) => {
  * @param {Function} props.onClick The event listener for the click event.
  */
 const Link = ( { label, url, onClick } ) => {
-	const isExternal = getHostname( window.location ) !== getHostname( url );
-
+	const isExternal = isUrlExternal( url );
+	const linkProps = {
+		href: addUtms( url ),
+		target: onClick || ! isExternal ? undefined : '_blank',
+		rel: isExternal ? 'noreferrer' : undefined,
+		onClick,
+	};
 	return (
 		<div className="sensei-home__link">
-			<a
-				href={ addUtms( url ) }
-				target={ onClick ? undefined : '_blank' }
-				rel="noreferrer"
-				onClick={ onClick }
-			>
+			<a { ...linkProps }>
 				{ label }
 				{ isExternal && (
 					<Icon

@@ -3,19 +3,21 @@
 .sensei-home {
 	&__sensei-pro-ad {
 		display: flex;
-		flex-direction: column-reverse;
+		flex-direction: column;
 		margin-bottom: 20px;
 		font-size: 18px;
 		line-height: 1.5;
 		background-color: #26212e;
-		padding: 48px 64px;
+		padding: 14px 12px;
 
 		@media (min-width: $break-medium) {
 			flex-direction: row;
+			padding: 48px 64px;
 		}
 
 		p {
 			font-size: 18px;
+			margin-top: 0;
 		}
 
 		&__column {
@@ -25,7 +27,6 @@
 		}
 
 		&__content {
-			padding: 32px 16px;
 			color: $white;
 
 			@media (min-width: $break-medium) {
@@ -33,12 +34,13 @@
 			}
 
 			ul {
-				margin: 0;
+				margin-top: 24px;
+				margin-bottom: 0;
 				line-height: 140%;
 			}
 
 			li {
-				margin: 0;
+				margin: 4px 0 0 0;
 
 				~ li {
 					margin-top: 13px;
@@ -54,11 +56,7 @@
 		&__header {
 			display: flex;
 			align-items: center;
-			margin-bottom: 16px;
-
-			@media (min-width: $break-medium) {
-				margin-bottom: 24px;
-			}
+			margin-bottom: 8px;
 		}
 
 		&__description {
@@ -80,17 +78,19 @@
 			color: $gray-10;
 			font-size: 12px;
 			font-weight: 500;
+			margin-top: 24px;
 
 			&__title {
 				color: $white;
 				font-weight: 700;
 				font-size: 32px;
 				margin-bottom: 0;
-				margin-top: 24px;
+				margin-top: 0;
 			}
 
 			p {
-				margin-bottom: 24px;
+				margin-top: 8px;
+				margin-bottom: 0px;
 			}
 		}
 
@@ -98,7 +98,7 @@
 			font-size: 14px;
 			font-weight: 500;
 			min-height: 40px;
-			margin-top: 27px;
+			margin-top: 24px;
 
 			&.is-primary {
 				margin-right: 18px;
@@ -106,6 +106,10 @@
 
 			&.is-primary, &.is-secondary {
 				width: 142px;
+
+				@media (max-width: $break-medium) {
+					width: 100%
+				}
 			}
 
 			&.is-secondary {
@@ -115,29 +119,34 @@
 		}
 
 		&__card {
-			display:flex;
-			justify-content: center;
-			align-items:center;
 			background-color: $white;
-			flex-direction: column;
-			padding: 24px;
 			margin-top: 48px;
 
-			&--image, &--cta {
+			&--image {
 				width: 100%;
 			}
 
-			&--cta {
-				max-width: 300px;
-			}
-
-			&--price {
-				width: 100%;
+			&--quote {
+				max-width: 335px;
 				font-family: Inter, sans-serif;
-				color: $gray-30;
-				text-align: center;
-				margin: 18px 0;
-				font-size: 16px;
+				font-weight: 400;
+				font-size: 20px;
+				color: #000;
+				margin: 31px 0 13px 35px;
+				padding-left: 19px;
+				background: url(../../images/sensei-pro-ad-quote.png) 0 0 no-repeat;
+			}
+
+			&--author {
+				font-weight: 400;
+				font-size: 13px;
+				color: #000;
+				margin: 13px 0 0 54px;
+				min-height: 50px;
+			}
+
+			&--stars {
+				margin-left: 16px;
 			}
 		}
 	}

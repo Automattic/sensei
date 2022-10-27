@@ -126,7 +126,7 @@ class Sensei_Course_Theme_Editor {
 	/**
 	 * Check if the current request is for the site editor.
 	 *
-	 * @since $next-version$
+	 * @since 4.7.0
 	 */
 	public static function is_site_editor_request() {
 

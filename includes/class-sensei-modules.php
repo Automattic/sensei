@@ -112,7 +112,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Highlight the menu item for the modules pages.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -122,7 +122,7 @@ class Sensei_Core_Modules {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$screen = get_current_screen();
 		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {

@@ -36,10 +36,10 @@ final class Sensei_Extensions {
 	 * Initializes the class and adds all filters and actions related to the extension directory.
 	 *
 	 * @since 2.0.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function init() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**
@@ -47,10 +47,10 @@ final class Sensei_Extensions {
 	 *
 	 * @since  2.0.0
 	 * @access private
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function enqueue_admin_assets() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**
@@ -106,7 +106,7 @@ final class Sensei_Extensions {
 	/**
 	 * Get Sensei extensions and WooCommerce.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 *
 	 * @param  string $type                  Product type ('plugin' or 'theme').
 	 * @param  string $category              Category to fetch (null = all).
@@ -125,7 +125,7 @@ final class Sensei_Extensions {
 	/**
 	 * Map the extensions array, adding the installed properties.
 	 *
-	 * @since $$next-version$$ It doesn't add WCCOM extensions properties anymore.
+	 * @since 4.8.0 It doesn't add WCCOM extensions properties anymore.
 	 *
 	 * @access private
 	 *
@@ -197,14 +197,14 @@ final class Sensei_Extensions {
 	/**
 	 * Get installed Sensei plugins.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param bool $only_woo Only include WooCommerce.com extensions.
 	 *
 	 * @return array
 	 */
 	public function get_installed_plugins( $only_woo = false ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$extensions = $this->get_extensions( 'plugin' );
 
@@ -226,13 +226,13 @@ final class Sensei_Extensions {
 	/**
 	 * Adds the menu item for the Home page.
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.8.0
 	 *
 	 * @access private
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function add_admin_menu_item() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**
@@ -240,10 +240,10 @@ final class Sensei_Extensions {
 	 *
 	 * @since  2.0.0
 	 * @access private
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function render() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**

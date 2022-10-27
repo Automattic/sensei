@@ -1,5 +1,9 @@
 *** Changelog ***
 
+2022-10-27 - Version 4.8.0
+* New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
+* New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
+
 2022-10-24 - version 4.7.2
 * Fix: Change admin bar visibility only in lesson pages [#5909](https://github.com/Automattic/sensei/pull/5909)
 * Fix container sizing in Video Template [#5926](https://github.com/Automattic/sensei/pull/5926)

@@ -3,13 +3,13 @@
  * File containing the Sensei_Home_Task_Sell_Course_With_WooCommerce class.
  *
  * @package sensei-lms
- * @since $$next-version$$
+ * @since 4.8.0
  */
 
 /**
  * Sensei_Home_Task_Sell_Course_With_WooCommerce class.
  *
- * @since $$next-version$$
+ * @since 4.8.0
  */
 class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task {
 	const VISITED_WOOCOMMERCE_ADMIN_OPTION_KEY = 'sensei_home_task_visited_woocommerce';
