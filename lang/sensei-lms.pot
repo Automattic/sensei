@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-10-24T21:14:37-03:00\n"
+"POT-Creation-Date: 2022-10-27T16:25:33-03:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: sensei-lms\n"
@@ -956,7 +956,7 @@ msgstr ""
 
 #: includes/admin/home/notices/class-sensei-home-notices.php:274
 #: includes/class-sensei-lesson.php:1584
-#: assets/dist/home/index.js:336
+#: assets/dist/home/index.js:326
 #: assets/home/extension-actions.js:70
 msgid "Update"
 msgstr ""
@@ -3037,7 +3037,7 @@ msgstr ""
 #: includes/class-sensei-settings-api.php:111
 #: assets/admin/editor-wizard/steps/course-upgrade-step.js:125
 #: assets/dist/admin/editor-wizard/index.js:92
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:120
 msgid "Get Sensei Pro"
 msgstr ""
@@ -5827,16 +5827,16 @@ msgstr ""
 msgid "Sorry, you are not allowed to manage plugins for this site."
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-extensions-controller.php:281
+#: includes/rest-api/class-sensei-rest-api-extensions-controller.php:280
 msgid "No plugins to update found."
 msgstr ""
 
 #. translators: Placeholder is the name of the plugin that failed.
-#: includes/rest-api/class-sensei-rest-api-extensions-controller.php:341
+#: includes/rest-api/class-sensei-rest-api-extensions-controller.php:340
 msgid "Failed to update plugin %s"
 msgstr ""
 
-#: includes/rest-api/class-sensei-rest-api-extensions-controller.php:355
+#: includes/rest-api/class-sensei-rest-api-extensions-controller.php:354
 msgid "Plugin update failed."
 msgstr ""
 
@@ -6362,14 +6362,14 @@ msgstr ""
 #. translators: placeholder is the price.
 #: assets/admin/editor-wizard/steps/course-upgrade-step.js:43
 #: assets/dist/admin/editor-wizard/index.js:91
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:61
 msgid "%s USD"
 msgstr ""
 
 #: assets/admin/editor-wizard/steps/course-upgrade-step.js:48
 #: assets/dist/admin/editor-wizard/index.js:91
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:69
 msgid "per year, 1 site"
 msgstr ""
@@ -8204,7 +8204,7 @@ msgstr ""
 
 #: assets/data-port/import.js:42
 #: assets/dist/data-port/import.js:809
-#: assets/dist/home/index.js:391
+#: assets/dist/home/index.js:381
 #: assets/dist/setup-wizard/index.js:626
 #: assets/home/main.js:58
 #: assets/setup-wizard/index.js:72
@@ -8213,7 +8213,7 @@ msgstr ""
 
 #: assets/data-port/import.js:47
 #: assets/dist/data-port/import.js:809
-#: assets/dist/home/index.js:391
+#: assets/dist/home/index.js:381
 #: assets/dist/setup-wizard/index.js:626
 #: assets/home/main.js:63
 #: assets/setup-wizard/index.js:77
@@ -8353,27 +8353,27 @@ msgid "Choose one or more CSV files to upload from your computer."
 msgstr ""
 
 #: assets/dist/admin/editor-wizard/index.js:206
-#: assets/dist/home/index.js:259
+#: assets/dist/home/index.js:249
 #: assets/extensions/store.js:139
 msgid "Update completed successfully!"
 msgstr ""
 
 #. translators: Placeholder is the underlying error message.
 #: assets/dist/admin/editor-wizard/index.js:207
-#: assets/dist/home/index.js:260
+#: assets/dist/home/index.js:250
 #: assets/extensions/store.js:144
 msgid "There was an error while updating the plugin: %1$s"
 msgstr ""
 
 #: assets/dist/admin/editor-wizard/index.js:207
-#: assets/dist/home/index.js:260
+#: assets/dist/home/index.js:250
 #: assets/extensions/store.js:150
 msgid "Installation completed successfully!"
 msgstr ""
 
 #. translators: Placeholder is the underlying error message.
 #: assets/dist/admin/editor-wizard/index.js:208
-#: assets/dist/home/index.js:261
+#: assets/dist/home/index.js:251
 #: assets/extensions/store.js:155
 msgid "There was an error while installing the plugin: %1$s"
 msgstr ""
@@ -8408,141 +8408,156 @@ msgstr ""
 msgid "Warning"
 msgstr ""
 
-#: assets/dist/home/index.js:319
+#: assets/dist/home/index.js:309
 #: assets/home/card.js:53
 msgid "New version"
 msgstr ""
 
-#: assets/dist/home/index.js:336
+#: assets/dist/home/index.js:326
 #: assets/home/extension-actions.js:62
 msgid "In progress…"
 msgstr ""
 
-#: assets/dist/home/index.js:336
-#: assets/dist/home/index.js:373
+#: assets/dist/home/index.js:326
+#: assets/dist/home/index.js:363
 #: assets/home/extension-actions.js:77
 #: assets/home/install-demo-course.js:96
 msgid "Installed"
 msgstr ""
 
-#: assets/dist/home/index.js:336
+#: assets/dist/home/index.js:326
 #: assets/home/extension-actions.js:86
 msgid "Free"
 msgstr ""
 
-#: assets/dist/home/index.js:336
+#: assets/dist/home/index.js:326
 #: assets/home/extension-actions.js:89
 msgid "Install"
 msgstr ""
 
-#: assets/dist/home/index.js:336
+#: assets/dist/home/index.js:326
 #: assets/home/extension-actions.js:112
 msgid "More details"
 msgstr ""
 
-#: assets/dist/home/index.js:354
+#: assets/dist/home/index.js:344
 #: assets/home/header.js:16
 msgid "Sensei"
 msgstr ""
 
-#: assets/dist/home/index.js:373
+#: assets/dist/home/index.js:363
 #: assets/home/install-demo-course.js:84
 msgid "Error while installing. Try again."
 msgstr ""
 
-#: assets/dist/home/index.js:373
+#: assets/dist/home/index.js:363
 #: assets/home/install-demo-course.js:91
 msgid "Edit Demo Course"
 msgstr ""
 
-#: assets/dist/home/index.js:373
+#: assets/dist/home/index.js:363
 #: assets/home/install-demo-course.js:101
 msgid "Installing"
 msgstr ""
 
-#: assets/dist/home/index.js:425
+#: assets/dist/home/index.js:415
 #: assets/home/sections/extensions.js:49
 msgid "Extensions"
 msgstr ""
 
-#: assets/dist/home/index.js:434
+#: assets/dist/home/index.js:424
 #: assets/home/sections/get-help.js:97
 msgid "Get Help"
 msgstr ""
 
-#: assets/dist/home/index.js:443
+#: assets/dist/home/index.js:433
 #: assets/home/sections/latest-news.js:25
 msgid "Latest News"
 msgstr ""
 
-#: assets/dist/home/index.js:443
-#: assets/dist/home/index.js:461
+#: assets/dist/home/index.js:433
+#: assets/dist/home/index.js:451
 #: assets/home/sections/latest-news.js:41
 #: assets/home/sections/sensei-guides.js:38
 msgid "See more"
 msgstr ""
 
-#: assets/dist/home/index.js:452
+#: assets/dist/home/index.js:442
 #: assets/home/sections/quick-links.js:105
 msgid "Quick Links"
 msgstr ""
 
-#: assets/dist/home/index.js:461
+#: assets/dist/home/index.js:451
 #: assets/home/sections/sensei-guides.js:25
 msgid "Sensei Guides"
 msgstr ""
 
-#: assets/dist/home/index.js:470
+#: assets/dist/home/index.js:460
 #: assets/home/sections/sensei-pro-ad.js:42
 msgid "Better courses with Sensei Pro"
 msgstr ""
 
-#: assets/dist/home/index.js:470
+#: assets/dist/home/index.js:460
 #: assets/home/sections/sensei-pro-ad.js:51
 msgid "Get everything you need to sell courses and take your lessons to the next level."
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:75
 msgid "Sell courses with WooCommerce"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:81
 msgid "Schedule and drip courses and lessons"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:87
 msgid "Manage groups and cohorts"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:93
 msgid "Create interactive videos and lessons"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:99
 msgid "Add advanced quiz features"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:105
 msgid "Contact our experts for help"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:131
 msgid "Learn More"
 msgstr ""
 
-#: assets/dist/home/index.js:471
+#: assets/dist/home/index.js:461
 #: assets/home/sections/sensei-pro-ad.js:146
-msgid "Image in black and white of a man looking at a microphone"
+msgid "Photo of Gonzalo de la Campa smiling"
 msgstr ""
 
-#: assets/dist/home/index.js:498
+#: assets/dist/home/index.js:461
+#: assets/home/sections/sensei-pro-ad.js:153
+msgid "Thanks to Sensei Pro, I have been able to generate recurring income every month."
+msgstr ""
+
+#: assets/dist/home/index.js:461
+#: assets/home/sections/sensei-pro-ad.js:160
+msgid "WordPress Educator"
+msgstr ""
+
+#: assets/dist/home/index.js:461
+#: assets/home/sections/sensei-pro-ad.js:166
+msgid "Image containing five stars, representing the rating of the plugin"
+msgstr ""
+
+#: assets/dist/home/index.js:488
 #: assets/dist/setup-wizard/index.js:219
 #: assets/dist/setup-wizard/index.js:241
 #: assets/home/tasks-section/progress.js:25
@@ -8551,48 +8566,48 @@ msgstr ""
 msgid "Sensei Onboarding Progress"
 msgstr ""
 
-#: assets/dist/home/index.js:507
+#: assets/dist/home/index.js:497
 #: assets/home/tasks-section/ready.js:42
 msgid "My new course is ready!"
 msgstr ""
 
 #. translators: placeholder is the share link.
-#: assets/dist/home/index.js:508
+#: assets/dist/home/index.js:498
 #: assets/home/tasks-section/ready.js:47
 msgid "My new course is ready! Check it here: %s"
 msgstr ""
 
-#: assets/dist/home/index.js:508
+#: assets/dist/home/index.js:498
 #: assets/home/tasks-section/ready.js:56
 msgid "Dismiss tasks"
 msgstr ""
 
-#: assets/dist/home/index.js:508
+#: assets/dist/home/index.js:498
 #: assets/home/tasks-section/ready.js:67
 msgid "Your new course is ready to meet its students! Share it with the world."
 msgstr ""
 
-#: assets/dist/home/index.js:508
+#: assets/dist/home/index.js:498
 #: assets/home/tasks-section/ready.js:83
 msgid "Facebook"
 msgstr ""
 
-#: assets/dist/home/index.js:508
+#: assets/dist/home/index.js:498
 #: assets/home/tasks-section/ready.js:96
 msgid "Twitter"
 msgstr ""
 
-#: assets/dist/home/index.js:508
+#: assets/dist/home/index.js:498
 #: assets/home/tasks-section/ready.js:109
 msgid "Tumblr"
 msgstr ""
 
-#: assets/dist/home/index.js:526
+#: assets/dist/home/index.js:516
 #: assets/home/tasks-section/tasks.js:20
 msgid "Welcome to your new Sensei course site."
 msgstr ""
 
-#: assets/dist/home/index.js:526
+#: assets/dist/home/index.js:516
 #: assets/home/tasks-section/tasks.js:24
 msgid "Keep the momentum going and let’s get your first Course in front of your students."
 msgstr ""
