@@ -22,7 +22,7 @@ class Sensei_Home_Help_Provider {
 				__( 'Get the most out of Sensei', 'sensei-lms' ),
 				[
 
-					$this->create_item( __( 'Sensei documentation', 'sensei-lms' ), 'https://senseilms.com/documentation/' ),
+					$this->create_item( __( 'Sensei documentation', 'sensei-lms' ), 'https://senseilms.com/docs/' ),
 					$this->create_item( __( 'Support forums', 'sensei-lms' ), 'https://wordpress.org/support/plugin/sensei-lms/' ),
 					$this->create_support_ticket_item(),
 				]
