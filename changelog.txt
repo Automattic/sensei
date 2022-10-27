@@ -1,51 +1,8 @@
 *** Changelog ***
 
 2022-10-27 - Version 4.8.0
-* New: Onboarding Wizard
-    * Add installation error handler in the onboarding [#5867](https://github.com/Automattic/sensei/pull/5867)
-    * Change onboarding design [#5847](https://github.com/Automattic/sensei/pull/5847)
-    * Add onboarding features installation [#5824](https://github.com/Automattic/sensei/pull/5824)
-    * Last onboarding step data handling [#5823](https://github.com/Automattic/sensei/pull/5823)
-    * Add last onboarding step and remove/deprecate some code [#5780](https://github.com/Automattic/sensei/pull/5780)
-    * Remove notices from setup wizard [#5778](https://github.com/Automattic/sensei/pull/5778)
-    * Add new purpose step [#5733](https://github.com/Automattic/sensei/pull/5733)
-    * Add newsletter step [#5716](https://github.com/Automattic/sensei/pull/5716)
-    * Add usage tracking step styles [#5703](https://github.com/Automattic/sensei/pull/5703)
-    * Add new onboarding structure [#5694](https://github.com/Automattic/sensei/pull/5694)
-* New: Sensei Home
-    * Improve links in Sensei Home [#6007](https://github.com/Automattic/sensei/pull/6007)
-    * Improve error handling on News and Guides section [#6006](https://github.com/Automattic/sensei/pull/6006)
-    * Adjust texts on the Sensei Pro Ad in Sensei Home [#6005](https://github.com/Automattic/sensei/pull/6005)
-    * Make character case more consistent in Sensei Home content and titles [#6002](https://github.com/Automattic/sensei/pull/6002)
-    * Split up Sensei Homes' home.scss into separate files [#5997](https://github.com/Automattic/sensei/pull/5997)
-    * Add notification area for JITMs on Sensei Home [#5991](https://github.com/Automattic/sensei/pull/5991)
-    * Add Sensei Home notice badge count [#5988](https://github.com/Automattic/sensei/pull/5988)
-    * Adapt Sensei Pro Ad on Sensei Home [#5987](https://github.com/Automattic/sensei/pull/5987)
-    * Style fixes in Sensei Home [#5986](https://github.com/Automattic/sensei/pull/5986)
-    * Allow Teachers to access Sensei Home [#5980](https://github.com/Automattic/sensei/pull/5980)
-    * Add "Install Demo Course" Quick (Magical) Link [#5964](https://github.com/Automattic/sensei/pull/5964)
-    * Change sensei admin menu to have Home as the default menu [#5962](https://github.com/Automattic/sensei/pull/5962)
-    * Ignore courses on trash and adjust cache expiration on task "Create your First Course" [#5948](https://github.com/Automattic/sensei/pull/5948)
-    * Add course and share dynamic data [#5946](https://github.com/Automattic/sensei/pull/5946)
-    * Add tasks completion [#5933](https://github.com/Automattic/sensei/pull/5933)
-    * Remove image attribute from the object returned by map_task [#5932](https://github.com/Automattic/sensei/pull/5932)
-    * Add tasks data [#5902](https://github.com/Automattic/sensei/pull/5902)
-    * Add Sensei Home plugin update notices to REST API [#5900](https://github.com/Automattic/sensei/pull/5900)
-    * Add help section for Sensei Home [#5895](https://github.com/Automattic/sensei/pull/5895)
-    * Add completed tasks support [#5893](https://github.com/Automattic/sensei/pull/5893)
-    * Add extensions backend [#5892](https://github.com/Automattic/sensei/pull/5892)
-    * Add "Publish your first course" task [#5888](https://github.com/Automattic/sensei/pull/5888)
-    * Add home task list [#5885](https://github.com/Automattic/sensei/pull/5885)
-    * Add installation error handler in the onboarding [#5867](https://github.com/Automattic/sensei/pull/5867)
-    * Add task Create your First Course [#5854](https://github.com/Automattic/sensei/pull/5854)
-    * Add configure learning mode task [#5827](https://github.com/Automattic/sensei/pull/5827)
-    * Fetch data from SenseiLMS.com for Sensei Home [#5820](https://github.com/Automattic/sensei/pull/5820)
-    * Add home tasks backend basic structure [#5815](https://github.com/Automattic/sensei/pull/5815)
-    * Add Sensei Pro promo backend for Sensei Home [#5792](https://github.com/Automattic/sensei/pull/5792)
-    * Implement backend for Help section in Sensei Home [#5786](https://github.com/Automattic/sensei/pull/5786)
-    * Add Quick Links to Sensei Home REST API [#5761](https://github.com/Automattic/sensei/pull/5761)
-    * Add sensei home rest API mock [#5728](https://github.com/Automattic/sensei/pull/5728)
-    * Add Sensei Home Structure [#5727](https://github.com/Automattic/sensei/pull/5727)
+* New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
+* New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
 
 2022-10-24 - version 4.7.2
 * Fix: Change admin bar visibility only in lesson pages [#5909](https://github.com/Automattic/sensei/pull/5909)
