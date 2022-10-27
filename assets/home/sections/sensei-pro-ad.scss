@@ -8,10 +8,11 @@
 		font-size: 18px;
 		line-height: 1.5;
 		background-color: #26212e;
-		padding: 48px 64px;
+		padding: 14px 12px;
 
 		@media (min-width: $break-medium) {
 			flex-direction: row;
+			padding: 48px 64px;
 		}
 
 		p {
@@ -26,7 +27,6 @@
 		}
 
 		&__content {
-			padding: 32px 16px;
 			color: $white;
 
 			@media (min-width: $break-medium) {
