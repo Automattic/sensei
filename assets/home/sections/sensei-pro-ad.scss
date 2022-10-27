@@ -106,6 +106,10 @@
 
 			&.is-primary, &.is-secondary {
 				width: 142px;
+
+				@media (max-width: $break-medium) {
+					width: 100%
+				}
 			}
 
 			&.is-secondary {
