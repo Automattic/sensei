@@ -286,6 +286,7 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory::class => 'internal/quiz-submission/grade/repositories/class-grade-repository-factory.php',
 			\Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface::class => 'internal/quiz-submission/grade/repositories/class-grade-repository-interface.php',
 			\Sensei\Internal\Quiz_Submission\Submission\Models\Submission::class => 'internal/quiz-submission/submission/models/class-submission.php',
+			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Aggregate_Submission_Repository::class => 'internal/quiz-submission/submission/repositories/class-aggregate-submission-repository.php',
 			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository::class => 'internal/quiz-submission/submission/repositories/class-comments-based-submission-repository.php',
 			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Tables_Based_Submission_Repository::class => 'internal/quiz-submission/submission/repositories/class-tables-based-submission-repository.php',
 			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory::class => 'internal/quiz-submission/submission/repositories/class-submission-repository-factory.php',
