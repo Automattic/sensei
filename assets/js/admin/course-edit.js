@@ -4,7 +4,8 @@
 import { select, subscribe } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
-import { registerPlugin } from '@wordpress/plugins';
+import { registerPlugin, getPlugin } from '@wordpress/plugins';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -18,6 +19,11 @@ import {
 	extractStructure,
 	getFirstBlockByName,
 } from '../../blocks/course-outline/data';
+
+import SenseiIcon from '../../icons/logo-tree.svg';
+import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
+
+const pluginHandle = 'sensei-lms-course-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
@@ -106,6 +112,28 @@ domReady( () => {
 /**
  * Plugins
  */
+
+const CourseSidebar = () => {
+	return (
+		<>
+			<PluginSidebarMoreMenuItem
+				target={ pluginHandle }
+				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
+			>
+				{ __( 'Sensei Settings', 'sensei-lms' ) }
+			</PluginSidebarMoreMenuItem>
+			<PluginSidebar
+				name={ pluginHandle }
+				title={ __( 'Sensei Settings', 'sensei-lms' ) }
+				icon={ <SenseiIcon color="#43AF99" /> }
+			></PluginSidebar>
+		</>
+	);
+};
+
+registerPlugin( pluginHandle, {
+	render: CourseSidebar,
+} );
 
 /**
  * Filters the course pricing sidebar toggle.
