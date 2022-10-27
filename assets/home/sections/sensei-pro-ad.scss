@@ -3,15 +3,16 @@
 .sensei-home {
 	&__sensei-pro-ad {
 		display: flex;
-		flex-direction: column-reverse;
+		flex-direction: column;
 		margin-bottom: 20px;
 		font-size: 18px;
 		line-height: 1.5;
 		background-color: #26212e;
-		padding: 48px 64px;
+		padding: 14px 12px;
 
 		@media (min-width: $break-medium) {
 			flex-direction: row;
+			padding: 48px 64px;
 		}
 
 		p {
@@ -26,7 +27,6 @@
 		}
 
 		&__content {
-			padding: 32px 16px;
 			color: $white;
 
 			@media (min-width: $break-medium) {
@@ -106,6 +106,10 @@
 
 			&.is-primary, &.is-secondary {
 				width: 142px;
+
+				@media (max-width: $break-medium) {
+					width: 100%
+				}
 			}
 
 			&.is-secondary {
