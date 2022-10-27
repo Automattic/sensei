@@ -2207,7 +2207,10 @@ class Sensei_Core_Modules {
 		// look for the author in the slug
 		$slug_parts = explode( '-', $slug );
 
-		if ( count( $slug_parts ) > 1 ) {
+		if (
+			count( $slug_parts ) > 1
+			&& is_numeric( $slug_parts[0] )
+		) {
 
 			// get the user data
 			$possible_user_id = $slug_parts[0];
