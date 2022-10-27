@@ -3631,12 +3631,15 @@ class Sensei_Lesson {
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$quiz_submission_question_ids = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
+			$submission              = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$submission_question_ids = $submission
+				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
+				: [];
 
-			if ( $quiz_submission_question_ids ) {
+			if ( $submission_question_ids ) {
 				// Fetch each question in the order in which they were asked.
 				$questions = [];
-				foreach ( $quiz_submission_question_ids as $question_id ) {
+				foreach ( $submission_question_ids as $question_id ) {
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
 						continue;

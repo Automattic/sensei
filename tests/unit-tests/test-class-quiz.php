@@ -1407,7 +1407,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 
 		// Get questions after submitting.
-		$questions_asked_after_submitting = Sensei()->quiz_submission_repository->get_question_ids( $test_quiz_id, $test_user_id );
+		$questions_asked_after_submitting = Sensei()->quiz_submission_repository->get_question_ids( $user_lesson_status_comment_id );
 
 		// Check if questions asked have not been overwritten.
 		$this->assertCount(
