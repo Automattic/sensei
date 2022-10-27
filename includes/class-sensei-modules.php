@@ -2541,6 +2541,11 @@ class Sensei_Core_Modules {
 				continue;
 			}
 
+			if ( 'module' !== $term->taxonomy ) {
+				$users_terms[] = $term;
+				continue;
+			}
+
 			$author = self::get_term_author( $term->slug );
 
 			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
