@@ -114,7 +114,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$this->assertNull( $submission );
 	}
 
-	public function testGet_WhenLessonStatusFound_ReturnsSubmission(): void {
+	public function testGet_WhenNoQuestionsSubmitted_ReturnsNull(): void {
 		/* Arrange. */
 		$lesson_id  = $this->factory->lesson->create();
 		$user_id    = $this->factory->user->create();
@@ -127,12 +127,7 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$submission = $repository->get( $quiz_id, $user_id );
 
 		/* Assert. */
-		$expected = [
-			'quiz_id'     => $quiz_id,
-			'user_id'     => $user_id,
-			'final_grade' => null,
-		];
-		$this->assertSame( $expected, $this->export_submission( $submission ) );
+		$this->assertNull( $submission );
 	}
 
 	public function testGet_WhenFinalGradeIsZero_ReturnsSubmissionWithZeroFinalGrade(): void {
@@ -142,9 +137,11 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		$repository->create( $quiz_id, $user_id, 0 );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */
 		$submission = $repository->get( $quiz_id, $user_id );
@@ -207,9 +204,11 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
 
 		$submission = $repository->create( $quiz_id, $user_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */
 		$submission->set_final_grade( 12.34 );
@@ -229,7 +228,9 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
 
@@ -250,7 +251,9 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
 		$repository = new Comments_Based_Submission_Repository();
 
-		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$submission_id = Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
 

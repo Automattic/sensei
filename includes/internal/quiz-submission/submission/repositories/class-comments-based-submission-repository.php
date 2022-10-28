@@ -95,7 +95,10 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 	public function get( int $quiz_id, int $user_id ): ?Submission {
 		$status_comment = $this->get_status_comment( $quiz_id, $user_id );
 
-		if ( ! $status_comment ) {
+		if (
+			! $status_comment
+			|| ! $this->get_question_ids( $status_comment->comment_ID )
+		) {
 			return null;
 		}
 
