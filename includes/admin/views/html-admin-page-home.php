@@ -10,8 +10,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <div id="sensei-home-page" class="sensei-home-page">
-	<h1><?php esc_html_e( 'Sensei Home', 'sensei-lms' ); ?></h1>
-	<?php
-	require_once __DIR__ . '/html-admin-page-home-messages.php';
-	?>
+	<noscript><?php esc_html_e( 'This page requires JavaScript to work.', 'sensei-lms' ); ?></noscript>
 </div>
