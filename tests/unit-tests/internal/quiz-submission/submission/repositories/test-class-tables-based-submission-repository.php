@@ -40,9 +40,9 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 				'sensei_lms_quiz_submissions',
 				$this->callback(
 					function( $array ) {
-						return $array['quiz_id'] === 1
-							&& $array['user_id'] === 2
-							&& $array['final_grade'] === 12.34;
+						return 1 === $array['quiz_id']
+							&& 2 === $array['user_id']
+							&& 12.34 === $array['final_grade'];
 					}
 				),
 				[
