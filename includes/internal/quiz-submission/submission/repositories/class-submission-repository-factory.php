@@ -27,6 +27,12 @@ class Submission_Repository_Factory {
 	 * @return Submission_Repository_Interface
 	 */
 	public function create(): Submission_Repository_Interface {
-		return new Comments_Based_Submission_Repository();
+		global $wpdb;
+
+		return new Aggregate_Submission_Repository(
+			new Comments_Based_Submission_Repository(),
+			new Tables_Based_Submission_Repository( $wpdb ),
+			true
+		);
 	}
 }
