@@ -1,24 +1,17 @@
 /**
  * WordPress dependencies
  */
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
-import { ToggleControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { ToggleControl, PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import useCourseMeta from '../../../react-hooks/use-course-meta';
-import {
-	SENSEI_THEME,
-	WORDPRESS_THEME,
-	SENSEI_PREVIEW_QUERY,
-} from './constants';
+import { SENSEI_THEME, WORDPRESS_THEME } from './constants';
 import courseOutlineBlock from '../../../blocks/course-outline/outline-block/block.json';
 import courseModuleBlock from '../../../blocks/course-outline/module-block/block.json';
 import courseLessonBlock from '../../../blocks/course-outline/lesson-block/block.json';
-import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 
 const courseOutlineBlockName = courseOutlineBlock.name;
 const courseModuleBlockName = courseModuleBlock.name;
@@ -36,10 +29,7 @@ const CourseThemeSidebar = () => {
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
 	return (
-		<PluginDocumentSettingPanel
-			name="sensei-course-theme"
-			title={ __( 'Learning Mode', 'sensei-lms' ) }
-		>
+		<PanelBody title={ __( 'Learning Mode', 'sensei-lms' ) }>
 			{ globalLearningModeEnabled ? (
 				<p>
 					<a href="/wp-admin/admin.php?page=sensei-settings#appearance-settings">
@@ -69,7 +59,7 @@ const CourseThemeSidebar = () => {
 					</p>
 				</>
 			) }
-		</PluginDocumentSettingPanel>
+		</PanelBody>
 	);
 };
 
