@@ -293,7 +293,9 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			]
 		);
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
 
 		/* Act. */
 		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );

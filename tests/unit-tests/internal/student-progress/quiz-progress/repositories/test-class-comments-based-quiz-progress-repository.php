@@ -162,6 +162,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$progress->pass();
 		$repository->save( $progress );
 
+		update_comment_meta( $progress->get_id(), 'questions_asked', $question_id );
 		update_comment_meta( $progress->get_id(), 'quiz_answers', [ $question_id => 'answer' ] );
 
 		/* Act. */
@@ -185,6 +186,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$progress->pass();
 		$repository->save( $progress );
 
+		update_comment_meta( $progress->get_id(), 'questions_asked', '1,2' );
 		update_comment_meta( $progress->get_id(), 'grade', 1 );
 
 		/* Act. */
