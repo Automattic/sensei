@@ -10,5 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <div id="sensei-home-page" class="sensei-home-page">
-	<noscript><?php esc_html_e( 'This page requires JavaScript to work.', 'sensei-lms' ); ?></noscript>
+	<noscript>
+		<h1>Sensei Home</h1>
+		<div class="notice sensei-notice sensei-notice-error">
+			<div class="sensei-notice__wrapper">
+				<div class="sensei-notice__content">
+					<div class="sensei-notice__heading">
+						<?php esc_html_e( 'Error while loading Sensei Home', 'sensei-lms' ); ?>
+					</div>
+					<?php echo esc_html_e( 'This page requires JavaScript to work. Please enable JavaScript in your browser settings.', 'sensei-lms' ); ?>
+				</div>
+			</div>
+		</div>
+	</noscript>
 </div>
