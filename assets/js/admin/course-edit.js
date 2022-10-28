@@ -4,8 +4,14 @@
 import { select, subscribe, dispatch, useSelect } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
-import { registerPlugin, getPlugin } from '@wordpress/plugins';
+import { registerPlugin } from '@wordpress/plugins';
 import { __ } from '@wordpress/i18n';
+import {
+	PluginDocumentSettingPanel,
+	PluginSidebar,
+	PluginSidebarMoreMenuItem,
+} from '@wordpress/edit-post';
+import { Slot } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -21,11 +27,6 @@ import {
 } from '../../blocks/course-outline/data';
 
 import SenseiIcon from '../../icons/logo-tree.svg';
-import {
-	PluginDocumentSettingPanel,
-	PluginSidebar,
-	PluginSidebarMoreMenuItem,
-} from '@wordpress/edit-post';
 
 const pluginSidebarHandle = 'sensei-lms-course-settings-sidebar';
 const pluginDocumentHandle = 'sensei-lms-document-settings-sidebar';
@@ -119,6 +120,11 @@ domReady( () => {
  */
 
 const CourseSidebar = () => {
+	const hideCoursePricing = applyFilters( 'senseiCoursePricingHide', false );
+	const hideAccessPeriod = applyFilters(
+		'senseiCourseAccessPeriodHide',
+		false
+	);
 	return (
 		<>
 			<PluginSidebarMoreMenuItem
@@ -131,7 +137,14 @@ const CourseSidebar = () => {
 				name={ pluginSidebarHandle }
 				title={ __( 'Sensei Settings', 'sensei-lms' ) }
 				icon={ <SenseiIcon color="#43AF99" /> }
-			></PluginSidebar>
+				position={ 1 }
+			>
+				{ ! hideCoursePricing && <CoursePricingPromoSidebar /> }
+				{ ! hideAccessPeriod && <CourseAccessPeriodPromoSidebar /> }
+				<Slot name="SenseiCourseSidebar" />
+				<CourseTheme />
+				<CourseVideoSidebar />
+			</PluginSidebar>
 		</>
 	);
 };
@@ -166,47 +179,5 @@ const SenseiSettingsDocumentSidebar = () => {
 
 registerPlugin( pluginDocumentHandle, {
 	render: SenseiSettingsDocumentSidebar,
-	icon: null,
-} );
-
-/**
- * Filters the course pricing sidebar toggle.
- *
- * @since 4.1.0
- *
- * @hook  senseiCoursePricingHide     Hook used to hide course pricing promo sidebar.
- *
- * @param {boolean} hideCoursePricing Boolean value that defines if the course pricing promo sidebar should be hidden.
- * @return {boolean}                  Returns a boolean value that defines if the course pricing promo sidebar should be hidden.
- */
-if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
-	registerPlugin( 'sensei-course-pricing-promo-sidebar', {
-		render: CoursePricingPromoSidebar,
-		icon: null,
-	} );
-}
-
-/**
- * Filters the course access period display.
- *
- * @since 4.1.0
- *
- * @param {boolean} hideCourseAccessPeriod Whether to hide the access period.
- * @return {boolean} Whether to hide the access period.
- */
-if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
-	registerPlugin( 'sensei-course-access-period-promo-plugin', {
-		render: CourseAccessPeriodPromoSidebar,
-		icon: null,
-	} );
-}
-
-registerPlugin( 'sensei-course-theme-plugin', {
-	render: CourseTheme,
-	icon: null,
-} );
-
-registerPlugin( 'sensei-course-video-progression-plugin', {
-	render: CourseVideoSidebar,
 	icon: null,
 } );
