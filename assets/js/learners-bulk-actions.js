@@ -197,41 +197,46 @@ jQuery( document ).ready( function () {
 
 		$modalToggle.attr( 'disabled', true );
 
-		$moreLink.on(
-			'click',
-			function( event ) {
-				event.preventDefault();
-				event.stopPropagation();
-				$( event.target )
-					.addClass( 'hidden' )
-					.prev()
-					.removeClass( 'hidden' );
+		$moreLink.on( 'click', function ( event ) {
+			event.preventDefault();
+			event.stopPropagation();
+			$( event.target )
+				.addClass( 'hidden' )
+				.prev()
+				.removeClass( 'hidden' );
 
-				let $userId      = $( event.target ).attr( 'data-user-id' );
-				let $dataNonce   = $( event.target ).attr( 'data-nonce' );
-				let $hiddenPosts = $( event.target ).prev();
+			let $userId = $( event.target ).attr( 'data-user-id' );
+			let $dataNonce = $( event.target ).attr( 'data-nonce' );
+			let $hiddenPosts = $( event.target ).prev();
 
-				let data = {
-					action: 'get_course_list',
-					user_id: $userId,
-					nonce: $dataNonce,
-				};
+			let data = {
+				action: 'get_course_list',
+				user_id: $userId,
+				nonce: $dataNonce,
+			};
 
-				$.ajax(
-					{
-						type: "POST",
-						url: ajax_object.ajax_url,
-						data: data,
-						success:function( data ) {
-							$hiddenPosts.append( data.data );
-						},
-						error: function(errorThrown){
-							$hiddenPosts.append( "<p>" + __( "There was an error fetching courses: ", 'sensei-lms' ) + errorThrown.statusText + ': ' + errorThrown.status + "</p>" )
-						}
-					}
-				);
-			}
-		);
+			$.ajax( {
+				type: 'POST',
+				url: ajax_object.ajax_url,
+				data: data,
+				success: function ( data ) {
+					$hiddenPosts.append( data.data );
+				},
+				error: function ( errorThrown ) {
+					$hiddenPosts.append(
+						'<p>' +
+							__(
+								'There was an error fetching courses: ',
+								'sensei-lms'
+							) +
+							errorThrown.statusText +
+							': ' +
+							errorThrown.status +
+							'</p>'
+					);
+				},
+			} );
+		} );
 
 		$actionSelector.on( 'change', function () {
 			bulkUserActions.setAction( $actionSelector.val().trim() );
