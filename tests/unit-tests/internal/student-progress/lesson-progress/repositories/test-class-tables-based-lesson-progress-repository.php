@@ -27,22 +27,13 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 				'sensei_lms_progress',
 				$this->callback(
 					function( $array ) {
-						if ( ! isset( $array['post_id'] ) || 1 !== $array['post_id'] ) {
-							return false;
-						}
-						if ( ! isset( $array['user_id'] ) || 2 !== $array['user_id'] ) {
-							return false;
-						}
-						if ( ! array_key_exists( 'parent_post_id', $array ) || ! is_null( $array['parent_post_id'] ) ) {
-							return false;
-						}
-						if ( ! isset( $array['type'] ) || 'lesson' !== $array['type'] ) {
-							return false;
-						}
-						if ( ! isset( $array['status'] ) || 'in-progress' !== $array['status'] ) {
-							return false;
-						}
-						return true;
+                        return isset( $array['post_id'], $array['user_id'], $array['type'], $array['status'] )
+                            && array_key_exists( 'parent_post_id', $array )
+                            && 1 === $array['post_id']
+                            && 2 === $array['user_id']
+                            && 'lesson' === $array['type']
+                            && 'in-progress' === $array['status']
+                            && is_null( $array['parent_post_id'] );
 					}
 				),
 				[
@@ -185,16 +176,10 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 				'sensei_lms_progress',
 				$this->callback(
 					function ( $data ) {
-						if ( ! isset( $data['status'] ) || 'complete' !== $data['status'] ) {
-							return false;
-						}
-						if ( ! isset( $data['started_at'] ) || '2022-01-01 00:00:01' !== $data['started_at'] ) {
-							return false;
-						}
-						if ( ! isset( $data['completed_at'] ) || '2022-01-02 00:00:01' !== $data['completed_at'] ) {
-							return false;
-						}
-						return true;
+                        return isset( $data['status'], $data['started_at'], $data['completed_at'] )
+                            && 'complete' === $data['status']
+                            && '2022-01-01 00:00:01' === $data['started_at']
+                            && '2022-01-02 00:00:01' === $data['completed_at'];
 					}
 				),
 				[
