@@ -149,6 +149,35 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->save( $progress );
 	}
 
+	public function testSave_UseTablesOnAndProgressFound_ConvertsTimeToUtc(): void {
+		/* Arrange. */
+		$progress = $this->create_course_progress( new \DateTimeImmutable( '2020-01-01 03:00:00', new \DateTimeZone( 'GMT+03:00' ) ) );
+
+		$found_progress = $this->create_course_progress();
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+		$tables_based
+			->method( 'get' )
+			->with( 2, 3 )
+			->willReturn( $found_progress );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->once() )
+			->method( 'save' )
+			->with(
+				$this->callback(
+					function ( Course_Progress $progress_to_save ) {
+						return '2020-01-01 00:00:00' === $progress_to_save->get_started_at()->format( 'Y-m-d H:i:s' );
+					}
+				)
+			);
+		$repository->save( $progress );
+	}
+
 	public function testSave_UseTablesOnAndProgressNotFound_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
 		$progress = $this->create_course_progress();
@@ -235,15 +264,16 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Creates a course progress object.
 	 *
+	 * @param \DateTimeInterface|null $started_at Started at date.
 	 * @return Course_Progress
 	 */
-	public function create_course_progress(): Course_Progress {
+	public function create_course_progress( $started_at = null ): Course_Progress {
 		return new Course_Progress(
 			1,
 			2,
 			3,
 			'in-progress',
-			new \DateTimeImmutable(),
+			$started_at ?? new \DateTimeImmutable(),
 			new \DateTimeImmutable(),
 			new \DateTimeImmutable(),
 			new \DateTimeImmutable()
