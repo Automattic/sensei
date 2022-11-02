@@ -291,10 +291,10 @@ class Aggregate_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 	/**
 	 * Create a lesson progress.
 	 *
-     * @param \DateTimeInterface|null $started_at The started at date.
+	 * @param \DateTimeInterface|null $started_at The started at date.
 	 * @return Lesson_Progress
 	 */
-	public function create_lesson_progress( $started_at = null): Lesson_Progress {
+	public function create_lesson_progress( $started_at = null ): Lesson_Progress {
 		return new Lesson_Progress(
 			1,
 			2,
