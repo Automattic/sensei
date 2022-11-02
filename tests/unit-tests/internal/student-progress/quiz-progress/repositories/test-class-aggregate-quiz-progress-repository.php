@@ -190,7 +190,7 @@ class Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 				)
 			);
 		$repository->save( $progress );
-    }
+	}
 
 	public function testSave_UseTablesOnAndProgressNotFound_DoesntCallTablesBasedRepository(): void {
 		/* Arrange. */
@@ -277,8 +277,8 @@ class Aggregate_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 
 	/**
 	 * Create a quiz progress.
-     * 
-     * @param \DateTimeInterface|null $started_at Started at.
+	 *
+	 * @param \DateTimeInterface|null $started_at Started at.
 	 * @return Quiz_Progress
 	 */
 	public function create_quiz_progress( $started_at = null ): Quiz_Progress {

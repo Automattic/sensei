@@ -26,13 +26,13 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 				'sensei_lms_progress',
 				$this->callback(
 					function( $array ) {
-                        return isset( $array['post_id'], $array['user_id'], $array['type'], $array['status'] )
-                            && array_key_exists( 'parent_post_id', $array )
-                            && 1 === $array['post_id']
-                            && 2 === $array['user_id']
-                            && 'quiz' === $array['type']
-                            && 'in-progress' === $array['status']
-                            && is_null( $array['parent_post_id'] );
+						return isset( $array['post_id'], $array['user_id'], $array['type'], $array['status'] )
+							&& array_key_exists( 'parent_post_id', $array )
+							&& 1 === $array['post_id']
+							&& 2 === $array['user_id']
+							&& 'quiz' === $array['type']
+							&& 'in-progress' === $array['status']
+							&& is_null( $array['parent_post_id'] );
 					}
 				),
 				[
@@ -122,6 +122,53 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress_with_dates( $progress ) );
 	}
 
+	public function testGet_WithRealDbProgressFound_ReturnsMatchingProgress(): void {
+		/* Arrange. */
+		$date = ( new DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_progress',
+			[
+				'post_id'        => 1,
+				'user_id'        => 2,
+				'parent_post_id' => null,
+				'type'           => 'quiz',
+				'status'         => 'in-progress',
+				'started_at'     => $date,
+				'completed_at'   => null,
+				'created_at'     => $date,
+				'updated_at'     => $date,
+			],
+			[
+				'%d',
+				'%d',
+				null,
+				'%s',
+				'%s',
+				'%s',
+				null,
+				'%s',
+				'%s',
+			]
+		);
+		$quiz_progress_id = $wpdb->insert_id;
+
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Act. */
+		$progress = $repository->get( 1, 2 );
+
+		/* Assert. */
+		$expected = [
+			'id'      => $quiz_progress_id,
+			'quiz_id' => 1,
+			'user_id' => 2,
+			'status'  => 'in-progress',
+		];
+		self::assertSame( $expected, $this->export_progress( $progress ) );
+	}
+
 	public function testHas_NotFound_ReturnsFalse(): void {
 		/* Arrange. */
 		$wpdb = $this->createMock( wpdb::class );
@@ -143,6 +190,47 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$wpdb
 			->method( 'get_var' )
 			->willReturn( 2 );
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Act. */
+		$has = $repository->has( 1, 2 );
+
+		/* Assert. */
+		self::assertTrue( $has );
+	}
+
+	public function testHas_WithRealDbAndProgressFound_ReturnsFalse(): void {
+		/* Arrange. */
+		$date = ( new DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
+
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_progress',
+			[
+				'post_id'        => 1,
+				'user_id'        => 2,
+				'parent_post_id' => null,
+				'type'           => 'quiz',
+				'status'         => 'in-progress',
+				'started_at'     => $date,
+				'completed_at'   => null,
+				'created_at'     => $date,
+				'updated_at'     => $date,
+			],
+			[
+				'%d',
+				'%d',
+				null,
+				'%s',
+				'%s',
+				'%s',
+				null,
+				'%s',
+				'%s',
+			]
+		);
+
 		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
 
 		/* Act. */
@@ -175,10 +263,10 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 				'sensei_lms_progress',
 				$this->callback(
 					function ( $data ) {
-                        return isset( $data['status'], $data['started_at'], $data['completed_at'] )
-                            && 'complete' === $data['status']
-                            && '2022-01-01 00:00:01' === $data['started_at']
-                            && '2022-01-02 00:00:01' === $data['completed_at'];
+						return isset( $data['status'], $data['started_at'], $data['completed_at'] )
+							&& 'complete' === $data['status']
+							&& '2022-01-01 00:00:01' === $data['started_at']
+							&& '2022-01-02 00:00:01' === $data['completed_at'];
 					}
 				),
 				[

@@ -114,14 +114,14 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 		if ( $this->use_tables ) {
 			$tables_based_progress = $this->tables_based_repository->get( $lesson_progress->get_lesson_id(), $lesson_progress->get_user_id() );
 			if ( $tables_based_progress ) {
-                $started_at = null;
-                if ( $lesson_progress->get_started_at() ) {
-                    $started_at = new \DateTimeImmutable( '@' . $lesson_progress->get_started_at()->getTimestamp() );
-                }
-                $completed_at = null;
-                if ( $lesson_progress->get_completed_at() ) {
-                    $completed_at = new \DateTimeImmutable( '@' . $lesson_progress->get_completed_at()->getTimestamp() );
-                }
+				$started_at = null;
+				if ( $lesson_progress->get_started_at() ) {
+					$started_at = new \DateTimeImmutable( '@' . $lesson_progress->get_started_at()->getTimestamp() );
+				}
+				$completed_at = null;
+				if ( $lesson_progress->get_completed_at() ) {
+					$completed_at = new \DateTimeImmutable( '@' . $lesson_progress->get_completed_at()->getTimestamp() );
+				}
 
 				$progress_to_save = new Lesson_Progress(
 					$tables_based_progress->get_id(),
@@ -129,7 +129,7 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 					$tables_based_progress->get_user_id(),
 					$lesson_progress->get_status(),
 					$started_at,
-                    $completed_at,
+					$completed_at,
 					$tables_based_progress->get_created_at(),
 					$tables_based_progress->get_updated_at()
 				);
