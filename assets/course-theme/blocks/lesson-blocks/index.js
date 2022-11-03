@@ -47,8 +47,13 @@ export default [
 			'Display title of the course the current lesson or quiz belongs to.',
 			'sensei-lms'
 		),
-		edit() {
-			return <>{ __( 'Course Title', 'sensei-lms' ) }</>;
+		edit: function CourseTitleEdit() {
+			const blockProps = useBlockProps();
+			return (
+				<span { ...blockProps }>
+					{ __( 'Course Title', 'sensei-lms' ) }
+				</span>
+			);
 		},
 	},
 	{
