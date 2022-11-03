@@ -1,14 +1,20 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps,
+	useInnerBlocksProps,
+} from '@wordpress/block-editor';
 
-const LessonActionsSave = ( { className } ) => (
-	<div className={ className }>
-		<div className="sensei-buttons-container">
-			<InnerBlocks.Content />
-		</div>
+const LessonActionsSave = ({ className }) => {
+	const blockProps = useBlockProps.save({ className });
+	const innerBlocksProps = useInnerBlocksProps.save(blockProps);
+	console.log({ innerBlocksProps });
+
+	<div {...innerBlocksProps}>
+
 	</div>
-);
+};
 
 export default LessonActionsSave;

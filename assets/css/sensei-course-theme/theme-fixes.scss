@@ -52,3 +52,12 @@
 		}
 	}
 }
+
+// Astra
+.wp-block:not(.has-text-color) {
+	color: unset;
+}
+
+.wp-block:not(.has-background) {
+	background-color: unset;
+}

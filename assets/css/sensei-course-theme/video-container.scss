@@ -1,9 +1,4 @@
 
-:root {
-
-}
-
-
 // Mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	.sensei-course-theme {
@@ -25,8 +20,8 @@
 // Desktop
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
+		--sidebar-width: var(--sidebar-width, 300px);
 		&__video-container {
-			--sidebar-width: 300px;
 			display: flex;
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);

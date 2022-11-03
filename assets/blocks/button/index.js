@@ -26,15 +26,15 @@ import { withDefaultBlockStyle } from '../../shared/blocks/settings';
 export const BlockStyles = {
 	Fill: {
 		name: 'default',
-		label: __( 'Fill', 'sensei-lms' ),
+		label: __('Fill', 'sensei-lms'),
 	},
 	Outline: {
 		name: 'outline',
-		label: __( 'Outline', 'sensei-lms' ),
+		label: __('Outline', 'sensei-lms'),
 	},
 	Link: {
 		name: 'link',
-		label: __( 'Link', 'sensei-lms' ),
+		label: __('Link', 'sensei-lms'),
 	},
 };
 
@@ -48,15 +48,15 @@ export const BlockStyles = {
  * @param {Object}   opts.invalidUsage Info about whether this block is being used in the proper context.
  * @param {Function} opts.EditWrapper  Custom edit wrapper component.
  */
-export const createButtonBlockType = ( {
+export const createButtonBlockType = ({
 	settings,
 	invalidUsage,
 	EditWrapper,
 	...options
-} ) => {
+}) => {
 	options = {
 		alignmentOptions: {
-			controls: [ 'left', 'center', 'right', 'full' ],
+			controls: ['left', 'center', 'right', 'full'],
 			default: 'left',
 		},
 		...options,
@@ -64,19 +64,17 @@ export const createButtonBlockType = ( {
 
 	const styles = settings.styles
 		? settings.styles
-		: [ { ...BlockStyles.Fill, isDefault: true }, BlockStyles.Outline ];
+		: [{ ...BlockStyles.Fill, isDefault: true }, BlockStyles.Outline];
 
-	const defaultStyle = find( styles, 'isDefault' )?.name;
-
-	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const ButtonEditWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
-		ButtonEdit
-	);
+	const defaultStyle = find(styles, 'isDefault')?.name;
 
 	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
-	const ButtonSaveWithBlockStyle = withDefaultBlockStyle( defaultStyle )(
-		ButtonSave
-	);
+	const ButtonEditWithBlockStyle =
+		withDefaultBlockStyle(defaultStyle)(ButtonEdit);
+
+	// eslint-disable-next-line @wordpress/no-unused-vars-before-return -- We don't wanna recreate the component every edit render.
+	const ButtonSaveWithBlockStyle =
+		withDefaultBlockStyle(defaultStyle)(ButtonSave);
 
 	return merge(
 		{
@@ -111,7 +109,7 @@ export const createButtonBlockType = ( {
 					default: [],
 				},
 			},
-			usesContext: [ 'postType' ],
+			usesContext: ['postType'],
 			supports: {
 				color: {
 					gradients: true,
@@ -130,15 +128,15 @@ export const createButtonBlockType = ( {
 			},
 			icon,
 			styles,
-			edit( props ) {
+			edit(props) {
 				const { postType } = props.context;
 				const content = (
-					<ButtonEditWithBlockStyle { ...props } { ...options } />
+					<ButtonEditWithBlockStyle {...props} {...options} />
 				);
 
 				if (
 					invalidUsage?.validPostTypes &&
-					! invalidUsage.validPostTypes.includes( postType )
+					!invalidUsage.validPostTypes.includes(postType)
 				) {
 					const message =
 						invalidUsage?.message ||
@@ -147,33 +145,34 @@ export const createButtonBlockType = ( {
 							'sensei-lms'
 						);
 
-					return <InvalidUsageError message={ message } />;
+					return <InvalidUsageError message={message} />;
 				}
 
-				if ( EditWrapper ) {
-					return <EditWrapper { ...props }>{ content }</EditWrapper>;
+				if (EditWrapper) {
+					return <EditWrapper {...props}>{content}</EditWrapper>;
 				}
 
 				return content;
 			},
-			save( props ) {
+			save(props) {
 				return (
 					<ButtonSaveWithBlockStyle
-						{ ...props }
-						{ ...options }
-						blockName={ settings.name }
+						{...props}
+						{...options}
+						blockName={settings.name}
 					/>
 				);
 			},
-			getEditWrapperProps( { inContainer, align } ) {
-				if ( inContainer ) {
+			getEditWrapperProps({ inContainer, align }) {
+				if (inContainer) {
 					return {
 						className: classnames(
 							'sensei-buttons-container__button-block',
-							getBlockDefaultClassName( settings.name ) +
+							getBlockDefaultClassName(settings.name) +
 								'__wrapper',
 							{
-								[ `sensei-buttons-container__button-align-${ align }` ]: align,
+								[`sensei-buttons-container__button-align-${align}`]:
+									align,
 							}
 						),
 					};

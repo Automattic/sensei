@@ -185,15 +185,12 @@ class Lesson_Actions {
 			return '';
 		}
 
-		$wrapper_attr = get_block_wrapper_attributes(
-			[
-				'class' => implode( ' ', $class ),
-			]
-		);
+		$wrapper_attributes = get_block_wrapper_attributes(['class' =>  implode( ' ', $class) ]);
+
 
 		return sprintf(
 			'<div %s>%s</div>',
-			$wrapper_attr,
+			$wrapper_attributes,
 			implode( '', $actions )
 		);
 	}

@@ -48,7 +48,12 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
-			return <>{ __( 'Course Title', 'sensei-lms' ) }</>;
+			const blockProps = useBlockProps();
+			return (
+				<span { ...blockProps }>
+					{ __( 'Course Title', 'sensei-lms' ) }
+				</span>
+			);
 		},
 	},
 	{
@@ -60,8 +65,11 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
+			const blockProps = useBlockProps({
+				className: 'sensei-course-theme-course-progress',
+			});
 			return (
-				<div className="sensei-course-theme-course-progress">
+				<div { ...blockProps }>
 					{ __( '2 of 10 lessons complete (20%)', 'sensei-lms' ) }
 				</div>
 			);
@@ -113,8 +121,11 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
+			const blockProps = useBlockProps({
+				className: 'sensei-course-theme-lesson-actions',
+			});
 			return (
-				<div className="sensei-course-theme-lesson-actions">
+				<div { ...blockProps }>
 					<div className="sensei-course-theme__button is-primary">
 						{ __( 'Take Quiz', 'sensei-lms' ) }
 					</div>
@@ -131,8 +142,11 @@ export default [
 		title: __( 'Course Progress Bar', 'sensei-lms' ),
 		description: __( 'Display course progress.', 'sensei-lms' ),
 		edit() {
+			const blockProps = useBlockProps({
+				className: 'sensei-course-theme-course-progress-bar',
+			});
 			return (
-				<div className="sensei-course-theme-course-progress-bar">
+				<div { ...blockProps }>
 					<div
 						className="sensei-course-theme-course-progress-bar-inner"
 						style={ { width: '20%' } }
@@ -166,8 +180,9 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
+			const blockProps = useBlockProps({ className: 'sensei-lms-href' });
 			return (
-				<span className="sensei-lms-href">
+				<span { ...blockProps }>
 					{ __( 'Exit Course', 'sensei-lms' ) }
 				</span>
 			);
@@ -182,7 +197,10 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
-			return <em>{ __( 'MODULE', 'sensei-lms' ) }</em>;
+			const blockProps = useBlockProps();
+			return (
+				<span { ...blockProps }>{ __( 'MODULE', 'sensei-lms' ) }</span>
+			);
 		},
 	},
 	{
@@ -206,7 +224,7 @@ export default [
 			'sensei-lms'
 		),
 		edit() {
-			return <p>{ __( 'Course Content.', 'sensei-lms' ) }</p>;
+			return <p>{__( 'Course Content.', 'sensei-lms' )}</p>;
 		},
 	},
 	{
@@ -237,9 +255,9 @@ export default [
 		),
 		apiVersion: 2,
 		edit: function EditPageActions() {
-			const blockProps = useBlockProps( {
+			const blockProps = useBlockProps({
 				className: 'sensei-quiz-pagination',
-			} );
+			});
 			return (
 				<div { ...blockProps }>
 					<div className="sensei-course-theme__post-pagination">
@@ -260,20 +278,20 @@ export default [
 		),
 		apiVersion: 2,
 		edit: function EditLessonVideo() {
-			const blockProps = useBlockProps( {
+			const blockProps = useBlockProps({
 				className: 'sensei-course-theme-lesson-video',
-			} );
+			});
 			return (
 				<div
 					{ ...blockProps }
-					style={ {
+					style={{
 						backgroundColor: '#000',
 						color: '#fff',
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
 						height: '500px',
-					} }
+					}}
 				>
 					<p
 						className="has-text-align-center"
@@ -294,12 +312,11 @@ export default [
 			'sensei-lms'
 		),
 		edit: function EditLearningModeLessonProperties() {
+			const blockProps = useBlockProps( {
+				className: 'wp-block-sensei-lms-lesson-properties',
+			} );
 			return (
-				<div
-					{ ...useBlockProps( {
-						className: 'wp-block-sensei-lms-lesson-properties',
-					} ) }
-				>
+				<div { ...blockProps }>
 					<span className="wp-block-sensei-lms-lesson-properties__difficulty">
 						{ __(
 							'The Learning Mode Lesson Properties block will display the lesson complexity and length. To set these properties, you need to add a Lesson Properties block to each individual lesson.',

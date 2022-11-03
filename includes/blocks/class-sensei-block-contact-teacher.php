@@ -8,7 +8,6 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 /**
  * Block for Contact teacher button.
  */
@@ -65,9 +64,8 @@ class Sensei_Block_Contact_Teacher {
 		) {
 			return '';
 		}
-
 		if ( ! $content ) {
-			$content = '<a class="sensei-course-theme-contact-teacher__button">' . __( 'Contact Teacher', 'sensei-lms' ) . '</a>';
+			$content = '<a class="sensei-course-theme-contact-teacher__button wp-element-button">' . __( 'Contact Teacher', 'sensei-lms' ) . '</a>';
 		}
 
 		$contact_form_link = add_query_arg( array( 'contact' => $post->post_type ) );

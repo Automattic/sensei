@@ -23,11 +23,12 @@
 }
 
 .sensei-lms-course-navigation-module {
+	margin-bottom: 24px;
+
 	.sensei-collapsible__toggle {
 		display: flex;
 		align-items: flex-start;
 		width: 100%;
-		margin: 12px 0;
 		padding: 0;
 		border: unset;
 		background: unset!important;
@@ -46,6 +47,7 @@
 		&.collapsed .sensei-lms-course-navigation-module__collapsible-icon {
 			transform: rotate(180deg);
 		}
+
 	}
 
 	&__title {
@@ -90,6 +92,7 @@
 		flex: 1;
 		display: flex;
 		color: inherit;
+		align-items: baseline;
 	}
 
 	&__title {

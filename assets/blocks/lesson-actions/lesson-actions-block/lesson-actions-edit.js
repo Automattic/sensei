@@ -6,7 +6,11 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps,
+	useInnerBlocksProps,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -35,69 +39,71 @@ const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
  * @param {Object}   props.attributes               Block attributes.
  * @param {Object}   props.attributes.toggledBlocks Toggled blocks, where the key is the block name.
  */
-const LessonActionsEdit = ( props ) => {
+const LessonActionsEdit = (props) => {
 	const {
 		className,
 		clientId,
 		setAttributes,
 		attributes: { toggledBlocks },
 	} = props;
-	const [ previewState, onPreviewChange ] = usePreviewState(
-		IN_PROGRESS_PREVIEW
-	);
+	const [previewState, onPreviewChange] =
+		usePreviewState(IN_PROGRESS_PREVIEW);
 
-	const toggleBlocks = useToggleBlocks( {
+	const toggleBlocks = useToggleBlocks({
 		parentClientId: clientId,
 		setAttributes,
 		toggledBlocks,
 		blocks: [
 			{
 				blockName: 'sensei-lms/button-reset-lesson',
-				label: __( 'Reset Lesson', 'sensei-lms' ),
+				label: __('Reset Lesson', 'sensei-lms'),
 			},
 		],
-	} );
+	});
 
 	const hasQuiz = useHasQuiz();
 	const quizStateClass = hasQuiz ? 'has-quiz' : 'no-quiz';
 
-	const completeLessonAllowed = useCompleteLessonAllowed( hasQuiz );
+	const completeLessonAllowed = useCompleteLessonAllowed(hasQuiz);
 	const completeLessonAllowedClass = completeLessonAllowed
 		? 'allowed'
 		: 'not-allowed';
 
-	if ( courseThemeEnabled ) {
-		return null;
-	}
-
 	// Filter inner blocks based on the settings.
 	const filteredInnerBlocksTemplate = INNER_BLOCKS_TEMPLATE.filter(
-		( i ) => false !== toggledBlocks[ i[ 0 ] ]
+		(i) => false !== toggledBlocks[i[0]]
 	);
+
+	const innerBlockProps = useInnerBlocksProps( {
+		allowedBlocks: ACTION_BLOCKS,
+		template: filteredInnerBlocksTemplate,
+		templateLock: 'all',
+		templateInsertUpdatesSelection: false,
+	});
+
+	if (courseThemeEnabled) {
+		return null;
+	}
 
 	return (
 		<>
 			<LessonActionsSettings
-				previewState={ previewState }
-				onPreviewChange={ onPreviewChange }
-				toggleBlocks={ toggleBlocks }
+				previewState={previewState}
+				onPreviewChange={onPreviewChange}
+				toggleBlocks={toggleBlocks}
 			/>
 			<div
-				className={ classnames(
+				className={classnames(
 					className,
-					`wp-block-sensei-lms-lesson-actions__preview-${ previewState }`,
-					`wp-block-sensei-lms-lesson-actions__${ quizStateClass }`,
-					`wp-block-sensei-lms-lesson-actions__complete_lessons-${ completeLessonAllowedClass }`
-				) }
+					`wp-block-sensei-lms-lesson-actions__preview-${previewState}`,
+					`wp-block-sensei-lms-lesson-actions__${quizStateClass}`,
+					`wp-block-sensei-lms-lesson-actions__complete_lessons-${completeLessonAllowedClass}`
+				)}
 			>
-				<div className="sensei-buttons-container">
-					<InnerBlocks
-						allowedBlocks={ ACTION_BLOCKS }
-						template={ filteredInnerBlocksTemplate }
-						templateLock="all"
-						templateInsertUpdatesSelection={ false }
-					/>
-				</div>
+				<div
+					className="sensei-buttons-container"
+					{...innerBlockProps}
+				/>
 			</div>
 		</>
 	);

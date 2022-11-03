@@ -74,13 +74,16 @@ class Page_Actions {
 			]
 		);
 
+		$wrapper_attributes = get_block_wrapper_attributes();
+
 		// Prev and next navigation, and lesson actions.
+
 		$actions = $actions .
 			'<div class="screen-reader-text">' .
 				do_blocks( '<!-- wp:sensei-lms/course-theme-prev-next-lesson /-->' ) .
 				do_blocks( '<!-- wp:sensei-lms/course-theme-lesson-actions /-->' ) .
 			'</div>';
 
-		return $actions;
+		return '<div '. $wrapper_attributes . '>' . $actions . '</div>';
 	}
 }

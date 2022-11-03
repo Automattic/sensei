@@ -13,6 +13,8 @@ import CheckCircleIcon from '../../../icons/check-filled-circle.svg';
 import LockIcon from '../../../icons/lock.svg';
 import EyeIcon from '../../../icons/eye.svg';
 import meta from './course-navigation.block.json';
+import SenseiIcon from '../../../icons/sensei.svg';
+import { useBlockProps } from '@wordpress/block-editor';
 
 const ICONS = {
 	'not-started': CircleIcon,
@@ -131,15 +133,24 @@ const Lesson = ( { title, quiz, status } ) => {
  */
 export default {
 	...meta,
+	icon: {
+		src: <SenseiIcon width="20" height="20" />,
+		foreground: '#43AF99',
+	},
 	attributes: {},
-	title: __( 'Course Navigation', 'sensei-lms' ),
+	title: __('Course Navigation', 'sensei-lms'),
 	edit: function EditCourseNavigationBlock() {
+		const blockProps = useBlockProps({
+			className: 'sensei-lms-course-navigation',
+		});
+
+		console.log({blockProps})
 		return (
-			<div className="sensei-lms-course-navigation">
+			<div {...blockProps} >
 				<div className="sensei-lms-course-navigation__modules">
-					{ sampleStructure.map( ( module ) => (
-						<Module { ...module } key={ module.title } />
-					) ) }
+					{sampleStructure.map((module) => (
+						<Module {...module} key={module.title} />
+					))}
 				</div>
 			</div>
 		);

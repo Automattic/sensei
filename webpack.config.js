@@ -176,9 +176,7 @@ function getWebpackConfig( env, argv ) {
 				} ),
 			],
 		},
-		devtool:
-			process.env.SOURCEMAP ||
-			( isDevelopment ? 'eval-source-map' : false ),
+		devtool: 'inline-source-map',
 		plugins: [
 			...webpackConfig.plugins,
 			new GenerateChunksMapPlugin( {

@@ -366,7 +366,9 @@ class Sensei_Course_Theme {
 			$css_file = 'css/learning-mode.css';
 		}
 
-		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
+		// if(!current_theme_supports('sensei-learning-mode')) {
+			Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file);
+		// }
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
