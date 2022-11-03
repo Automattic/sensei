@@ -359,14 +359,20 @@ class Sensei_Course_Theme {
 	 */
 	public function enqueue_styles() {
 
-		$version  = $this->get_template_version();
-		$css_file = 'css/learning-mode.' . $version . '.css';
+		$version         = $this->get_template_version();
+		$css_file        = 'css/learning-mode.' . $version . '.css';
+		$compat_css_file = 'css/learning-mode-compat.' . $version . '.css';
 
 		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $css_file ) ) ) {
-			$css_file = 'css/learning-mode.css';
+			$css_file        = 'css/learning-mode.css';
+			$compat_css_file = 'css/learning-mode-compat.css';
 		}
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
+
+		if ( ! current_theme_supports( 'sensei-learning-mode' ) ) {
+			Sensei()->assets->enqueue( self::THEME_NAME . 'compatibility-style', $compat_css_file );
+		}
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
