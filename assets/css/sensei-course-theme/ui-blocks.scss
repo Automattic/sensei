@@ -1,9 +1,9 @@
 $breakpoint: 783px;
 
 :root {
-	--header-height: 65px;
+	--header-height: var( --lm-header-height, 65px);
 	--header-progress-bar-height: 4px;
-	--sidebar-width: 300px;
+	--sidebar-width: var(--sidebar-width, 300px);
 	--content-padding: 32px;
 }
 
