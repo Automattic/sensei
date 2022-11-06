@@ -1,5 +1,5 @@
 :root {
-	--header-height: 65px;
+	--header-height: var(--header-height,  65px);
 	--header-progress-bar-height: 4px;
 	--sidebar-width: var(--sidebar-width, 300px);
 	--content-padding: 32px;
