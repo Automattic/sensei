@@ -28,31 +28,4 @@ body.sensei-course-theme {
 		margin: 0 !important;
 		padding: 0 !important;
 	}
-
-	--wp--style--block-gap: 0px;
-	box-sizing: border-box;
-
-	a, [class*='sensei-'] a, a[class*='sensei-'] {
-		color: inherit;
-		text-decoration: none;
-
-		&:hover, &:hover * {
-			color: var(--sensei-primary-color);
-			fill: var(--sensei-primary-color);
-			cursor: pointer;
-			background: none;
-			text-decoration: underline;
-		}
-	}
-
-	font-family: 'Inter', sans-serif;
-	font-weight: 400;
-	font-size: 13px;
-	line-height: 1.5;
-	letter-spacing: normal;
-
-	* {
-		font-family: 'Inter', sans-serif;
-	}
-
 }
