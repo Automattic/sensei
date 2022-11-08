@@ -260,6 +260,10 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-interface.php',
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php',
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-factory.php',
+			\Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler::class => 'internal/student-progress/services/class-course-deleted-handler.php',
+			\Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler::class => 'internal/student-progress/services/class-lesson-deleted-handler.php',
+			\Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler::class => 'internal/student-progress/services/class-quiz-deleted-handler.php',
+			\Sensei\Internal\Student_Progress\Services\User_Deleted_Handler::class => 'internal/student-progress/services/class-user-deleted-handler.php',
 
 			/**
 			 * Quiz Submission

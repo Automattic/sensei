@@ -12,6 +12,11 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progres
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\Quiz_Deleted_Handler;
+use Sensei\Internal\Student_Progress\Services\User_Deleted_Handler;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -550,6 +555,12 @@ class Sensei_Main {
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
+
+		// Init student progress handlers.
+		( new Course_Deleted_Handler( $this->course_progress_repository ) )->init();
+		( new Lesson_Deleted_Handler( $this->lesson_progress_repository ) )->init();
+		( new Quiz_Deleted_Handler( $this->quiz_progress_repository ) )->init();
+		( new User_Deleted_Handler( $this->course_progress_repository, $this->lesson_progress_repository, $this->quiz_progress_repository ) )->init();
 	}
 
 	/**
