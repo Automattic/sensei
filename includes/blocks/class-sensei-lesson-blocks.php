@@ -108,8 +108,16 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_View_Quiz_Block();
 		new Sensei_Featured_Video_Block();
 
+		$course_id         = Sensei_Utils::get_current_course();
+		$has_learning_mode = ! empty( $course_id ) && Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+
 		// This constructor has some sideeffects so only initialize it when the lesson has Sensei blocks.
-		if ( is_admin() || has_block( 'sensei-lms/button-contact-teacher' ) ) {
+		if (
+			is_admin()
+			|| has_block( 'sensei-lms/button-contact-teacher' )
+			// If contact teacher is in the Learning Mode template, but not in the post content.
+			|| $has_learning_mode
+		) {
 			new Sensei_Block_Contact_Teacher();
 		}
 
