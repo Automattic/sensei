@@ -256,7 +256,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		wp_remove_object_terms( $course['course_id'], $module['term_id'], 'module' );
 
 		/* Assert */
-		$this->assertSame( get_term_meta( $module['term_id'], 'module_author', true ), '' );
+		$this->assertSame( '', get_term_meta( $module['term_id'], 'module_author', true ) );
 	}
 
 	public function testModuleTeacherMeta_WhenCourseTeacherChanged_TeacherIdMetaChangesAccordingly() {
