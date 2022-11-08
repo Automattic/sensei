@@ -141,12 +141,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 	 * @param Quiz_Progress $quiz_progress Quiz progress.
 	 */
 	public function delete( Quiz_Progress $quiz_progress ): void {
-		$this->delete_grade_and_answers( $quiz_progress->get_id() );
-
-		// Backward compatibility with Sensei prior to 1.7.
-		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_progress->get_quiz_id() );
-		Sensei_Utils::sensei_delete_quiz_grade( $lesson_id, $quiz_progress->get_user_id() );
-		Sensei_Utils::sensei_delete_quiz_answers( $lesson_id, $quiz_progress->get_user_id() );
+		Sensei_Utils::sensei_delete_quiz_answers( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
 	}
 
 	public function delete_for_quiz( int $quiz_id ): void {
@@ -158,7 +153,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		];
 		$comments = Sensei_Utils::sensei_check_for_activity($activity_args, true);
 		foreach ( $comments as $comment ) {
-			$this->delete_grade_and_answers( $comment->comment_ID );
+      Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $comment->user_id );
 		}
 	}
 

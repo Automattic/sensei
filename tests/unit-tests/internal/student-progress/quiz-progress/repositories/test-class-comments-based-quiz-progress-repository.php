@@ -168,7 +168,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 
 		/* Assert. */
-		$actual = get_comment_meta( $quiz_id, 'quiz_answers', true );
+		$actual = get_comment_meta( $progress->get_id(), 'quiz_answers', true );
 		self::assertEmpty( $actual );
 	}
 

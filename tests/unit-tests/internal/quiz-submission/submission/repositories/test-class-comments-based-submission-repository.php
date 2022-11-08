@@ -257,6 +257,24 @@ class Comments_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		);
 	}
 
+	public function testDelete_WhenCalled_DeletesTheGrade(): void {
+		/* Arrange. */
+		$lesson_id  = $this->factory->lesson->create();
+		$user_id    = $this->factory->user->create();
+		$quiz_id    = $this->factory->quiz->create( [ 'post_parent' => $lesson_id ] );
+		$repository = new Comments_Based_Submission_Repository();
+
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+
+		$submission = $repository->create( $quiz_id, $user_id, 12.34 );
+
+		/* Act. */
+		$repository->delete( $submission );
+
+		/* Assert. */
+		$this->assertNull( $repository->get( $quiz_id, $user_id )->get_final_grade() );
+	}
+
 	private function export_submission( Submission $submission ): array {
 		return [
 			'quiz_id'     => $submission->get_quiz_id(),

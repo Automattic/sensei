@@ -1,5 +1,6 @@
 <?php
 
+use Sensei\Internal\Installer\Updates_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
@@ -600,7 +601,6 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
-		add_action( 'init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
@@ -738,8 +738,12 @@ class Sensei_Main {
 	 * Checks for plugin update tasks and ensures the current version is set.
 	 *
 	 * @since 2.0.0
+	 *
+	 * @deprecated $$next-version$$
 	 */
 	public function update() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$current_version = get_option( 'sensei-version' );
 		$is_new_install  = ! $current_version && ! $this->course_exists();
 		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
@@ -749,8 +753,50 @@ class Sensei_Main {
 			$this->register_plugin_version( $is_new_install );
 		}
 
-		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
+		$updates_factory = new Updates_Factory();
+		$this->updates   = $updates_factory->create( $current_version, $is_upgrade, $is_new_install );
 		$this->updates->run_updates();
+	}
+
+	/**
+	 * Helper function to check to see if any courses exist in the database.
+	 *
+	 * @deprected $$next-version$$
+	 *
+	 * @return bool
+	 */
+	private function course_exists(): bool {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
+
+		return ! empty( $course_sample_id );
+	}
+
+	/**
+	 * Register the plugin's version.
+	 *
+	 * @access public
+	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
+	 * @return void
+	 *
+	 * @deprecated $$next-version$$
+	 */
+	private function register_plugin_version( $is_new_install ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
+		if ( isset( $this->version ) ) {
+
+			update_option( 'sensei-version', $this->version );
+
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
+		}
 	}
 
 	/**
@@ -796,20 +842,6 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Helper function to check to see if any courses exists in the database.
-	 *
-	 * @return bool
-	 */
-	private function course_exists() {
-		global $wpdb;
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
-		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
-
-		return ! empty( $course_sample_id );
-	}
-
-	/**
 	 * Run on activation of the plugin.
 	 *
 	 * @access public
@@ -826,25 +858,6 @@ class Sensei_Main {
 
 		update_option( 'sensei_installed', 1 );
 
-	}
-
-	/**
-	 * Register the plugin's version.
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @param boolean $is_new_install Is this a new install.
-	 * @return void
-	 */
-	private function register_plugin_version( $is_new_install ) {
-		if ( isset( $this->version ) ) {
-
-			update_option( 'sensei-version', $this->version );
-
-			if ( $is_new_install ) {
-				update_option( 'sensei-install-version', $this->version );
-			}
-		}
 	}
 
 	/**
@@ -1421,7 +1434,6 @@ class Sensei_Main {
 	public function is_general_configuration_page() {
 		return isset( $_GET['page'] ) && 'sensei-settings' === trim( $_GET['page'] ) && ( ! isset( $_GET['tab'] ) || 'general' === trim( $_GET['tab'] ) );
 	}
-
 
 		/**
 		 * Returns the admin configuration url for the admin general configuration page
