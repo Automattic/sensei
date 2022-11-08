@@ -18,6 +18,8 @@ import { __, _n } from '@wordpress/i18n';
 import NumberControl from '../editor-components/number-control';
 import { DIFFICULTIES } from './constants';
 
+const courseThemeEnabled = window?.sensei?.courseThemeEnabled || false;
+
 const LessonPropertiesEdit = ( props ) => {
 	const { className } = props;
 
@@ -35,6 +37,10 @@ const LessonPropertiesEdit = ( props ) => {
 		},
 		[ meta, setMeta ]
 	);
+
+	if ( courseThemeEnabled ) {
+		return null;
+	}
 
 	return (
 		<>
