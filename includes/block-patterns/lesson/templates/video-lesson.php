@@ -10,11 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<!-- wp:video -->
-<figure class="wp-block-video"></figure>
-<!-- /wp:video -->
+<!-- wp:sensei-lms/featured-video /-->
 
-<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>"} -->
+<!-- wp:paragraph {"placeholder":"<?php esc_attr_e( 'Include a transcript, link to a transcript, or a summary of the video.', 'sensei-lms' ); ?>"} -->
 <p></p>
 <!-- /wp:paragraph -->
 

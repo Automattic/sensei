@@ -50,6 +50,10 @@ class Sensei_Block_Take_Course {
 		$course_id = $post->ID;
 		$html      = '';
 
+		if ( 'course' !== get_post_type( $course_id ) ) {
+			return '';
+		}
+
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
 				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );
@@ -71,14 +75,14 @@ class Sensei_Block_Take_Course {
 			$html = $this->render_with_login( $content );
 		}
 
-		return ! empty( $html ) ? '<div class="sensei-block-wrapper">' . $html . '</div>' : '';
+		return ! empty( $html ) ? '<div class="sensei-block-wrapper sensei-cta">' . $html . '</div>' : '';
 	}
 
 	/**
 	 * Render block with start course action.
 	 *
-	 * @param int    $course_id
-	 * @param string $button Block HTML.
+	 * @param int    $course_id ID of the course.
+	 * @param string $button    Block HTML.
 	 *
 	 * @return string
 	 */
@@ -156,7 +160,7 @@ class Sensei_Block_Take_Course {
 	/**
 	 * Message text for prerequisite course the learner has to complete.
 	 *
-	 * @param int $course_id
+	 * @param int $course_id ID of the course.
 	 *
 	 * @deprecated 3.8.0 use Sensei_Course::get_course_prerequisite_message.
 	 *

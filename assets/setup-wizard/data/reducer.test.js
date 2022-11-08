@@ -8,7 +8,7 @@ import {
 	START_SUBMIT_SETUP_WIZARD_DATA,
 	SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 	ERROR_SUBMIT_SETUP_WIZARD_DATA,
-	SET_STEP_DATA,
+	SET_DATA,
 } from './constants';
 import reducer from './reducer';
 
@@ -73,61 +73,9 @@ describe( 'Setup wizard reducer', () => {
 		expect( state.submitError ).toBeFalsy();
 	} );
 
-	it( 'Should update the features statuses on START_SUBMIT_SETUP_WIZARD_DATA action', () => {
-		const state = reducer(
-			{
-				data: {
-					features: {
-						options: [
-							{
-								slug: 'slug-1',
-								status: 'error',
-								error: { msg: 'Error message' },
-							},
-							{
-								slug: 'slug-2',
-								status: 'error',
-								error: { msg: 'Error message' },
-							},
-							{
-								slug: 'starting-installation',
-							},
-						],
-					},
-				},
-			},
-			{
-				type: START_SUBMIT_SETUP_WIZARD_DATA,
-				step: 'features-installation',
-				stepData: { selected: [ 'slug-1', 'starting-installation' ] },
-			}
-		);
-
-		expect( state.data.features.options ).toEqual( [
-			{
-				slug: 'slug-1',
-				status: 'installing',
-				error: null,
-			},
-			{
-				slug: 'slug-2',
-				status: 'error',
-				error: { msg: 'Error message' },
-			},
-			{
-				slug: 'starting-installation',
-				status: 'installing',
-				error: null,
-			},
-		] );
-	} );
-
 	it( 'Should set isSubmitting to false on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
 		const state = reducer(
-			{
-				isSubmitting: true,
-				data: { completedSteps: [] },
-			},
+			{ isSubmitting: true },
 			{
 				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
 				step: 'test',
@@ -135,21 +83,6 @@ describe( 'Setup wizard reducer', () => {
 		);
 
 		expect( state.isSubmitting ).toBeFalsy();
-	} );
-
-	it( 'Should mark step as completed on SUCCESS_SUBMIT_SETUP_WIZARD_DATA action', () => {
-		const state = reducer(
-			{
-				isSubmitting: true,
-				data: { completedSteps: [] },
-			},
-			{
-				type: SUCCESS_SUBMIT_SETUP_WIZARD_DATA,
-				step: 'test',
-			}
-		);
-
-		expect( state.data.completedSteps ).toContain( 'test' );
 	} );
 
 	it( 'Should set error on ERROR_SUBMIT_SETUP_WIZARD_DATA action', () => {
@@ -168,15 +101,27 @@ describe( 'Setup wizard reducer', () => {
 		expect( state.submitError ).toEqual( error );
 	} );
 
-	it( 'Should set the step data on SET_STEP_DATA action', () => {
-		const data = { usage_tracking: true };
+	it( 'Should set the step data on SET_DATA action', () => {
+		const data = { tracking: { usage_tracking: true } };
 		const state = reducer( undefined, {
-			type: SET_STEP_DATA,
+			type: SET_DATA,
 			data,
-			step: 'welcome',
 		} );
 
-		expect( state.data.welcome ).toEqual( data );
+		expect( state.data.tracking ).toEqual( data.tracking );
+	} );
+
+	it( 'Should set the step data on SET_DATA action, removing item from array', () => {
+		const data = { features: { selected: [ 1, 3 ] } };
+		const state = reducer(
+			{ features: { selected: [ 1, 2 ] } },
+			{
+				type: SET_DATA,
+				data,
+			}
+		);
+
+		expect( state.data.features ).toEqual( data.features );
 	} );
 
 	it( 'Should return the current state for unknown types', () => {

@@ -39,9 +39,11 @@ class Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
 		add_action( 'admin_menu', array( $this, 'add_lesson_order' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_print_scripts', array( $this, 'sensei_set_plugin_url' ) );
 
 		// Duplicate lesson & courses
@@ -79,7 +81,6 @@ class Sensei_Admin {
 		// Add AJAX endpoint for event logging.
 		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
 
-		Sensei_Extensions::instance()->init();
 		Sensei_Tools::instance()->init();
 		Sensei_Status::instance()->init();
 
@@ -88,32 +89,30 @@ class Sensei_Admin {
 	/**
 	 * Add items to admin menu
 	 *
-	 * @since  1.4.0
-	 * @deprecated 4.0.0
+	 * @since 1.4.0
+	 * @since 4.8.0 Reactivate method since we have a new home page.
 	 *
 	 * @return void
 	 */
 	public function admin_menu() {
-		_deprecated_function( __METHOD__, '4.0.0' );
+		add_menu_page( 'Sensei LMS', 'Sensei LMS', self::get_top_menu_capability(), 'sensei', '', '', '50' );
+	}
 
-		global $menu;
-		$menu_cap = '';
-		if ( current_user_can( 'manage_sensei' ) ) {
-			$menu_cap = 'manage_sensei';
-		} else {
-			if ( current_user_can( 'manage_sensei_grades' ) ) {
-				$menu_cap = 'manage_sensei_grades';
-			}
+	/**
+	 * Get the top menu minimum capability.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public static function get_top_menu_capability() {
+		$menu_cap = 'manage_sensei';
+
+		if ( ! current_user_can( 'manage_sensei' ) && current_user_can( 'manage_sensei_grades' ) ) {
+			$menu_cap = 'manage_sensei_grades';
 		}
 
-		if ( $menu_cap ) {
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to add separator above our menu group.
-			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
-		}
-
-		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_published_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
+		return $menu_cap;
 	}
 
 	/**
@@ -186,10 +185,12 @@ class Sensei_Admin {
 	 * Handle highlighting of admin menu items
 	 *
 	 * @since 1.4.0
+	 * @since 4.8.0 General review after adding the new Sensei Home page.
+	 *
 	 * @return void
 	 */
 	public function admin_menu_highlight() {
-		global $parent_file, $submenu_file, $post_type, $taxonomy;
+		global $parent_file, $submenu_file, $taxonomy, $_wp_real_parent_file;
 
 		$screen = get_current_screen();
 
@@ -198,24 +199,39 @@ class Sensei_Admin {
 		}
 
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to highlight our special pages in menu.
-		if ( $screen->base == 'post' && $post_type == 'course' ) {
-
-			$parent_file = 'edit.php?post_type=course';
-
-		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'course-category' ) {
-
-			$submenu_file = 'edit-tags.php?taxonomy=course-category&amp;post_type=course';
-			$parent_file  = 'edit.php?post_type=course';
-
-		} elseif ( $screen->base == 'edit-tags' && $taxonomy == 'module' ) {
-
-			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
-			$parent_file  = 'edit.php?post_type=course';
-
-		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
-
-			$submenu_file = 'edit.php?post_type=sensei_message';
+		if ( 'edit-tags' === $screen->base && 'module' === $taxonomy ) {
 			$parent_file  = 'sensei';
+			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
+
+		} elseif ( in_array( $screen->id, [ 'edit-module', 'admin_page_module-order' ], true ) ) {
+			// Module pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit-tags.php?taxonomy=module&post_type=course';
+
+		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
+			// Course pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=course';
+
+		} elseif ( in_array( $screen->id, [ 'lesson', 'edit-lesson-tag', 'admin_page_lesson-order' ], true ) ) {
+			// Lesson pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=lesson';
+
+		} elseif ( in_array( $screen->id, [ 'question', 'edit-question-category' ], true ) ) {
+			// Question pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=question';
+
+		} elseif ( in_array( $screen->id, [ 'sensei_message' ], true ) ) {
+			// Message pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=sensei_message';
 
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -370,7 +386,7 @@ class Sensei_Admin {
 		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
-		if ( in_array( $screen->id, [ 'course_page_course-order', 'course_page_lesson-order' ], true ) ) {
+		if ( in_array( $screen->id, [ 'admin_page_course-order', 'admin_page_lesson-order' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
@@ -406,8 +422,8 @@ class Sensei_Admin {
 			'edit-lesson-tag',
 			'edit-question',
 			'edit-question-category',
-			'course_page_' . Sensei_Analysis::PAGE_SLUG,
-			'course_page_sensei_learners',
+			'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG,
+			'sensei-lms_page_sensei_learners',
 		];
 		/**
 		 * Allows modifying the list of screens where the scripts for custom
@@ -761,7 +777,7 @@ class Sensei_Admin {
 	 * @return int Number of lessons duplicated.
 	 */
 	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
-		$lessons              = Sensei()->course->course_lessons( $old_course_id );
+		$lessons              = Sensei()->course->course_lessons( $old_course_id, 'any' );
 		$new_lesson_id_lookup = array();
 		$lessons_to_update    = array();
 
@@ -1312,11 +1328,10 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
-						'page'      => $this->course_order_page_slug,
-						'ordered'   => $ordered,
+						'page'    => $this->course_order_page_slug,
+						'ordered' => $ordered,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1498,12 +1513,11 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->lesson_order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $course_id,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1546,7 +1560,7 @@ class Sensei_Admin {
 
 			$courses = get_posts( $args );
 
-			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="lesson-order" />' . "\n";
 			$html .= '<select id="lesson-order-course" name="course_id">' . "\n";
@@ -1810,6 +1824,21 @@ class Sensei_Admin {
 		return $course_structure;
 	}
 
+	/**
+	 * Registers the hook to call mark_completed when the wc-admin page on WooCommerce is visited.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	public function admin_init() {
+		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
+			$hook = get_plugin_page_hook( 'wc-admin', 'woocommerce' );
+			if ( null !== $hook ) {
+				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
+			}
+		}
+	}
+
 	function sensei_add_custom_menu_items() {
 		global $pagenow;
 
@@ -2042,7 +2071,7 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course', 'lesson' ], true ) ) {
+		if ( in_array( $screen->id, [ 'course', 'lesson', Sensei_Home::SCREEN_ID ], true ) ) {
 			?>
 			<script>
 				window.sensei = window.sensei || {};

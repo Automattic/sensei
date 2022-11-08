@@ -64,7 +64,7 @@ class Sensei_Blocks {
 		$this->lesson = new Sensei_Lesson_Blocks();
 		$this->quiz   = new Sensei_Quiz_Blocks();
 		$this->page   = new Sensei_Page_Blocks();
-
+		new Sensei_Global_Blocks();
 		new Sensei\Blocks\Course_Theme_Blocks();
 	}
 
@@ -82,6 +82,8 @@ class Sensei_Blocks {
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
 		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css' );
+		Sensei()->assets->register( 'sensei-learning-mode', 'css/learning-mode.css', [ 'sensei-theme-blocks' ] );
+		Sensei()->assets->register( 'sensei-learning-mode-editor', 'css/learning-mode.editor.css', [ 'sensei-learning-mode', 'sensei-theme-blocks' ] );
 
 		wp_register_script( 'sensei-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', false );
 		wp_register_script( 'sensei-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', false );

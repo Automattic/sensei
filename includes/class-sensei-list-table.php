@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Generic Data Table parent Class in Sensei.
  *
- * @package Core
  * @author Automattic
  *
  * @since 1.2.0
+ * @package Core
  */
 class Sensei_List_Table extends WP_List_Table {
 	public $token;
@@ -307,13 +307,35 @@ class Sensei_List_Table extends WP_List_Table {
 	 * bulk_actions output for the bulk actions area
 	 *
 	 * @since  1.2.0
-	 * @return void
 	 */
 	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left
 		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
 	}
 
+	/**
+	 * Generates the table navigation above or below the table.
+	 *
+	 * @param string $which Which type of navigation to generate: top or bottom.
+	 */
+	protected function display_tablenav( $which ) {
+		?>
+		<div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+			<?php if ( $this->has_items() ) : ?>
+				<div class="alignleft actions bulkactions">
+					<?php $this->bulk_actions( $which ); ?>
+				</div>
+				<?php
+			endif;
+			$this->extra_tablenav( $which );
+			$this->pagination( $which );
+			?>
+
+			<br class="clear" />
+		</div>
+		<?php
+	}
 }
 
 /**

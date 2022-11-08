@@ -33,7 +33,7 @@ class Sensei_Groups_Landing_Page {
 		$menu_item_title = __( 'Groups', 'sensei-lms' );
 		$badge_text      = __( 'Pro', 'sensei-lms' );
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			__( 'Groups', 'sensei-lms' ),
 			// Translators: first placeholder value is menu item title, second is badge text.
 			sprintf( '%s <span class="awaiting-mod sensei-promo-groups__badge">%s</span>', $menu_item_title, $badge_text ),

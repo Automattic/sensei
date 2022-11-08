@@ -107,7 +107,6 @@ class Sensei_Core_Modules {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 
 		// Update module teacher meta when added to course.
 		add_action( 'added_term_relationship', [ $this, 'add_teacher_id_in_module_meta_when_added_to_course' ], 10, 3 );
@@ -201,6 +200,8 @@ class Sensei_Core_Modules {
 	/**
 	 * Highlight the menu item for the modules pages.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @since 4.0.0
 	 * @access private
 	 *
@@ -209,6 +210,8 @@ class Sensei_Core_Modules {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$screen = get_current_screen();
 		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
 			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
@@ -248,7 +251,7 @@ class Sensei_Core_Modules {
 					<h1><?php esc_html_e( 'Modules', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__links">
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 		</div>
@@ -1254,12 +1257,11 @@ class Sensei_Core_Modules {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $_POST['course_id'],
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1290,7 +1292,7 @@ class Sensei_Core_Modules {
 
 			$courses = Sensei()->course->get_all_courses();
 
-			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
 			$html .= '<select id="module-order-course" name="course_id">' . "\n";
@@ -1473,11 +1475,10 @@ class Sensei_Core_Modules {
 				esc_url(
 					add_query_arg(
 						[
-							'post_type' => 'course',
 							'page'      => 'module-order',
 							'course_id' => $course_id,
 						],
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				),
 				esc_html__( 'Order Modules', 'sensei-lms' )
@@ -1886,7 +1887,7 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array( 'course_page_module-order' )
+			array( 'admin_page_module-order' )
 		);
 
 		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
@@ -2727,7 +2728,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Set teacher meta for module.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.6.0
 	 *
 	 * @param int $module_id  Term ID.
 	 * @param int $teacher_id ID of module teacher.

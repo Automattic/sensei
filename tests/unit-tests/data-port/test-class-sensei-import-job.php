@@ -20,11 +20,11 @@ class Sensei_Import_Job_Test extends WP_UnitTestCase {
 	 * Set up the tests.
 	 */
 	public function setUp() {
+		parent::setUp();
+
 		// Make sure CSVs are allowed on WordPress multi-site.
 		update_site_option( 'upload_filetypes', 'csv' );
 		$this->factory = new Sensei_Factory();
-
-		return parent::setUp();
 	}
 
 	/**
