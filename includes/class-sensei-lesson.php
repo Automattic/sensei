@@ -74,6 +74,9 @@ class Sensei_Lesson {
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
 			add_action( 'save_post', array( $this, 'add_lesson_to_course_order' ) );
 
+			// Lesson Featured Video Thumbnail Creation.
+			add_action( 'save_post', array( $this, 'save_lesson_featured_video_thumbnail' ) );
+
 			// Custom Write Panel Columns
 			add_filter( 'manage_edit-lesson_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
@@ -145,7 +148,6 @@ class Sensei_Lesson {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
@@ -172,6 +174,8 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @since 4.0.0
 	 * @access private
 	 *
@@ -180,6 +184,8 @@ class Sensei_Lesson {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
@@ -204,8 +210,8 @@ class Sensei_Lesson {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -636,7 +642,7 @@ class Sensei_Lesson {
 	public function meta_box_save( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) != $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		}
 		// Get the post type object.
@@ -670,6 +676,27 @@ class Sensei_Lesson {
 
 			}
 		}
+
+		$new_pass_required     = isset( $_POST['pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['pass_required'] ) ) : null;
+		$new_pass_percentage   = isset( $_POST['quiz_passmark'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_passmark'] ) ) : null;
+		$new_enable_quiz_reset = isset( $_POST['enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_quiz_reset'] ) ) : null;
+		$show_questions        = isset( $_POST['show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['show_questions'] ) ) : null;
+		$random_question_order = isset( $_POST['random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['random_question_order'] ) ) : null;
+		$quiz_grade_type       = isset( $_POST['quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['quiz_grade_type'] ) ) : null;
+
+		$new_settings = array(
+			'pass_required'         => $new_pass_required,
+			'pass_percentage'       => $new_pass_percentage,
+			'enable_quiz_reset'     => $new_enable_quiz_reset,
+			'show_questions'        => $show_questions,
+			'random_question_order' => $random_question_order,
+			'quiz_grade_type'       => $quiz_grade_type,
+		);
+
+		$this->save_quiz_settings( $post_id, $new_settings );
+
+		return $post_id;
+
 	}
 
 	/**
@@ -703,6 +730,132 @@ class Sensei_Lesson {
 
 		// Assumes Sensei admin is loaded.
 		Sensei()->admin->save_lesson_order( '', $course_id );
+	}
+
+	/**
+	 * Parses YouTube URL to retrieve thumbnail image.
+	 *
+	 * @param string $url The YouTube Video URL.
+	 * @return string|null String if image found, null if not.
+	 */
+	public function get_youtube_thumbnail( $url ) {
+		$re = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
+		preg_match( $re, $url, $matches );
+		return 'https://img.youtube.com/vi/' . $matches[1] . '/maxresdefault.jpg';
+	}
+
+	/**
+	 * Parses Vimeo URL to retrieve thumbnail image.
+	 *
+	 * @param string $url The Vimieo Video URL.
+	 * @return string|null String if image found, null if not.
+	 */
+	public function get_vimeo_thumbnail( $url ) {
+		$re = '/(?:http|https)?:?\/?\/?(?:www\.)?(?:player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)/';
+		preg_match( $re, $url, $matches );
+		$data = wp_remote_get( 'http://vimeo.com/api/v2/video/' . $matches[1] . '.json' );
+		if ( is_array( $data ) && count( $data ) > 0 ) {
+			$body = json_decode( $data['body'] );
+			return $body[0]->thumbnail_large;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Parses VideoPress URL to retrieve thumbnail image.
+	 *
+	 * @param string $url The VideoPress Video URL.
+	 * @return string|null String if image found, null if not.
+	 */
+	public function get_videopress_thumbnail( $url ) {
+		$url_parse = wp_parse_url( $url );
+		$re        = '/(?<=\/v\/).*/';
+		preg_match( $re, $url_parse['path'], $matches );
+		$data = wp_remote_get( 'https://public-api.wordpress.com/rest/v1.1/videos/' . $matches[0] . '/poster' );
+		if ( is_array( $data ) ) {
+			$body = json_decode( $data['body'] );
+			return $body->poster;
+		} else {
+			return null;
+		}
+	}
+	/**
+	 * Get Featured Video from "Video Embed Code" legacy metadata in the Classic Editor
+	 *
+	 * @param string $url The Video Embed URL.
+	 * @return string The video thumbnail URL.
+	 */
+	private function get_featured_video_media_from_classic_editor( $url ) {
+		$url_parse = wp_parse_url( $url );
+
+		if ( false !== strpos( $url_parse['host'], 'youtube' ) ) {
+			return $this->get_youtube_thumbnail( $url );
+		}
+		if ( false !== strpos( $url_parse['host'], 'vimeo' ) ) {
+			return $this->get_vimeo_thumbnail( $url );
+		}
+		if ( false !== strpos( $url_parse['host'], 'videopress' ) ) {
+			return $this->get_videopress_thumbnail( $url );
+		}
+	}
+	/**
+	 * Get featured video url from the Featured Video Block
+	 *
+	 * @param int $post_id The post id.
+	 * @return string|null The URL string or null if the post does not have one.
+	 */
+	private function get_featured_video_media_from_blocks( $post_id ) {
+		$post   = get_post( $post_id );
+		$blocks = parse_blocks( $post->post_content );
+		foreach ( $blocks as $block ) {
+			if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
+				if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+					$block = $block['innerBlocks'][0];
+				}
+				if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
+					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) {
+						return $block['attrs']['poster'];
+					} else {
+						return wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
+					}
+				}
+				if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
+					$url = $block['innerBlocks'][0]['attrs']['url'];
+					if ( 'youtube' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_youtube_thumbnail( $url );
+					} elseif ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_vimeo_thumbnail( $url );
+					} elseif ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+						return $this->get_videopress_thumbnail( $url );
+					}
+				}
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * Save Lesson Featured Video thumbnail to post meta
+	 *
+	 * @param int $post_id The Post Id.
+	 */
+	public function save_lesson_featured_video_thumbnail( $post_id ) {
+		$meta_key       = '_featured_video_thumbnail';
+		$thumbnail_meta = get_post_meta( $post_id, $meta_key, true );
+		$thumbnail      = null;
+
+		if ( has_blocks( $post_id ) ) {
+			$thumbnail = $this->get_featured_video_media_from_blocks( $post_id );
+		} else {
+			$video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
+			if ( $video_embed ) {
+				$thumbnail = $this->get_featured_video_media_from_classic_editor( $video_embed );
+			}
+		}
+		if ( ! empty( $thumbnail ) && ( $thumbnail !== $thumbnail_meta ) ) {
+			update_post_meta( $post_id, $meta_key, $thumbnail );
+		}
 	}
 
 	/**
@@ -865,7 +1018,7 @@ class Sensei_Lesson {
 	 *
 	 * @access private
 	 *
-	 * @param  {string} $field Field name.
+	 * @param  {array} $field Field description, see Sensei_Lesson::get_quiz_settings() for more information.
 	 *
 	 * @return string|null
 	 */
@@ -2470,6 +2623,7 @@ class Sensei_Lesson {
 	 * Enqueue legacy meta box quiz editor assets.
 	 */
 	private function enqueue_scripts_meta_box_quiz_editor() {
+
 		wp_enqueue_media();
 
 		// Load the lessons script.
@@ -3459,9 +3613,6 @@ class Sensei_Lesson {
 			$user_id = get_current_user_id();
 		}
 
-		// Get the users current status on the lesson.
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
-
 		// If viewing quiz on the frontend then show questions in random order if set.
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
@@ -3483,17 +3634,12 @@ class Sensei_Lesson {
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$questions_asked_string = ! empty( $user_lesson_status->comment_ID ) ? get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true ) : false;
-			if ( ! empty( $questions_asked_string ) ) {
+			$quiz_submission_question_ids = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
 
-				$selected_questions = explode( ',', $questions_asked_string );
-
+			if ( $quiz_submission_question_ids ) {
 				// Fetch each question in the order in which they were asked.
 				$questions = [];
-				foreach ( $selected_questions as $question_id ) {
-					if ( ! $question_id ) {
-						continue;
-					}
+				foreach ( $quiz_submission_question_ids as $question_id ) {
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
 						continue;
@@ -3590,7 +3736,8 @@ class Sensei_Lesson {
 				// Get number of questions to show.
 				$show_questions = (int) get_post_meta( $quiz_id, '_show_questions', true );
 
-				if ( $show_questions ) {
+				// Negative amount is considered as All (same as zero).
+				if ( $show_questions > 0 ) {
 					// Get random set of array keys from selected questions array.
 					$selected_questions = array_rand(
 						$questions_array,
@@ -3954,55 +4101,101 @@ class Sensei_Lesson {
 
 					<h4><?php esc_html_e( 'Quiz Settings', 'sensei-lms' ); ?> </h4>
 
-					<?php
+				<?php
 
-					//
-					// Lesson require pass to complete
-					//
-					$pass_required_options = array(
-						'-1' => $no_change_text,
-						'0'  => esc_html__( 'No', 'sensei-lms' ),
-						'1'  => esc_html__( 'Yes', 'sensei-lms' ),
-					);
+				//
+				// Lesson require pass to complete
+				//
+				$pass_required_options = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
 
-					$pass_required_select_attributes = array(
-						'name'  => 'pass_required',
-						'id'    => 'sensei-edit-lesson-pass-required',
-						'class' => ' ',
-					);
-					$require_pass_field              = Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
+				$pass_required_select_attributes = array(
+					'name'  => 'pass_required',
+					'id'    => 'sensei-edit-lesson-pass-required',
+					'class' => ' ',
+				);
+				$require_pass_field              = Sensei_Utils::generate_drop_down( '-1', $pass_required_options, $pass_required_select_attributes, false );
 
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'sensei-lms' ), $require_pass_field );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass required', 'sensei-lms' ), $require_pass_field );
 
-					//
-					// Quiz pass percentage
-					//
-					$quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
+				//
+				// Quiz pass percentage
+				//
+				$quiz_pass_percentage_field = '<input name="quiz_passmark" id="sensei-edit-quiz-pass-percentage" type="number" />';
 
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'sensei-lms' ), $quiz_pass_percentage_field );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Pass Percentage', 'sensei-lms' ), $quiz_pass_percentage_field );
 
-					//
-					// Enable quiz reset button
-					//
-					$quiz_reset_select__options   = array(
-						'-1' => $no_change_text,
-						'0'  => esc_html__( 'No', 'sensei-lms' ),
-						'1'  => esc_html__( 'Yes', 'sensei-lms' ),
-					);
-					$quiz_reset_name_id           = 'sensei-edit-enable-quiz-reset';
-					$quiz_reset_select_attributes = array(
-						'name'  => 'enable_quiz_reset',
-						'id'    => $quiz_reset_name_id,
-						'class' => ' ',
-					);
-					$quiz_reset_field             = Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
+				//
+				// Enable quiz reset button
+				//
+				$quiz_reset_select__options   = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
+				$quiz_reset_name_id           = 'sensei-edit-enable-quiz-reset';
+				$quiz_reset_select_attributes = array(
+					'name'  => 'enable_quiz_reset',
+					'id'    => $quiz_reset_name_id,
+					'class' => ' ',
+				);
+				$quiz_reset_field             = Sensei_Utils::generate_drop_down( '-1', $quiz_reset_select__options, $quiz_reset_select_attributes, false );
 
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
-					echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Enable quiz reset button', 'sensei-lms' ), $quiz_reset_field );
 
-					?>
+				/*
+				/* Number of questions to show
+				*/
+				$show_questions_field = '<input name="show_questions" id="sensei-edit-show-questions" type="number" />';
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Number of questions to show', 'sensei-lms' ), $show_questions_field );
+
+				/*
+				/* Randomise question order
+				*/
+				$random_question_order_options = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
+
+				$random_question_order_select_attributes = array(
+					'name'  => 'random_question_order',
+					'id'    => 'sensei-edit-random-question-order',
+					'class' => ' ',
+				);
+				$random_question_order_field             = Sensei_Utils::generate_drop_down( '-1', $random_question_order_options, $random_question_order_select_attributes, false );
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Randomise question order', 'sensei-lms' ), $random_question_order_field );
+
+				/*
+				/* Grade quiz automatically
+				*/
+				$grade_quiz_automatically_options = array(
+					'-1' => $no_change_text,
+					'0'  => esc_html__( 'No', 'sensei-lms' ),
+					'1'  => esc_html__( 'Yes', 'sensei-lms' ),
+				);
+
+				$grade_quiz_automatically_select_attributes = array(
+					'name'  => 'quiz_grade_type',
+					'id'    => 'sensei-edit-quiz-grade-type',
+					'class' => ' ',
+				);
+				$grade_quiz_automatically_field             = Sensei_Utils::generate_drop_down( '-1', $grade_quiz_automatically_options, $grade_quiz_automatically_select_attributes, false );
+
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in called method.
+				echo $this->generate_all_lessons_edit_field( esc_html__( 'Grade quiz automatically', 'sensei-lms' ), $grade_quiz_automatically_field );
+
+				?>
 			</div>
 		</fieldset>
 		<?php
@@ -4022,11 +4215,12 @@ class Sensei_Lesson {
 	public function generate_all_lessons_edit_field( $title, $field ) {
 
 		$html  = '';
-		$html  = '<div class="inline-edit-group" >';
+		$html  = '<div class="inline-edit-group sensei-quiz-settings" >';
 		$html .= '<span class="title">' . esc_html( $title ) . '</span> ';
 		$html .= '<span class="input-text-wrap">';
 		$html .= $field;
 		$html .= '</span>';
+
 		$html .= '</div>';
 
 		return wp_kses(
@@ -4062,63 +4256,44 @@ class Sensei_Lesson {
 	function save_all_lessons_edit_fields() {
 
 		// verify all the data before attempting to save
-		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' )
-			|| empty( $_POST['post_ids'] ) || ! is_array( $_POST['post_ids'] ) ) {
+		if ( ! isset( $_POST['security'] ) || ! check_ajax_referer( 'bulk-edit-lessons', 'security' ) || empty( $_POST['post_ids'] ) || ! is_array( $_POST['post_ids'] ) ) {
 			die();
 		}
 
 		// get our variables
-		$new_course            = sanitize_text_field( $_POST['sensei_edit_lesson_course'] );
-		$new_complexity        = sanitize_text_field( $_POST['sensei_edit_complexity'] );
-		$new_pass_required     = sanitize_text_field( $_POST['sensei_edit_pass_required'] );
-		$new_pass_percentage   = sanitize_text_field( $_POST['sensei_edit_pass_percentage'] );
-		$new_enable_quiz_reset = sanitize_text_field( $_POST['sensei_edit_enable_quiz_reset'] );
-		// store the values for all selected posts
+		$new_course            = isset( $_POST['sensei_edit_lesson_course'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_lesson_course'] ) ) : '';
+		$new_complexity        = isset( $_POST['sensei_edit_complexity'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_complexity'] ) ) : '';
+		$new_pass_required     = isset( $_POST['sensei_edit_pass_required'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_pass_required'] ) ) : '';
+		$new_pass_percentage   = isset( $_POST['sensei_edit_pass_percentage'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_pass_percentage'] ) ) : '';
+		$new_enable_quiz_reset = isset( $_POST['sensei_edit_enable_quiz_reset'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_enable_quiz_reset'] ) ) : '';
+		$show_questions        = isset( $_POST['sensei_edit_show_questions'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_show_questions'] ) ) : '';
+		$random_question_order = isset( $_POST['sensei_edit_random_question_order'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_random_question_order'] ) ) : '';
+		$quiz_grade_type       = isset( $_POST['sensei_edit_quiz_grade_type'] ) ? sanitize_text_field( wp_unslash( $_POST['sensei_edit_quiz_grade_type'] ) ) : '';
+		// store the values for all selected posts.
 		foreach ( $_POST['post_ids'] as $lesson_id ) {
-
-			// get the quiz id needed for the quiz meta
-			$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 			// do not save the items if the value is -1 as this
 			// means it was not changed
 			// update lesson course
-			if ( -1 != $new_course ) {
+			if ( - 1 !== $new_course ) {
 				update_post_meta( $lesson_id, '_lesson_course', $new_course );
 			}
 			// update lesson complexity
-			if ( -1 != $new_complexity ) {
+			if ( -1 !== $new_complexity ) {
 				update_post_meta( $lesson_id, '_lesson_complexity', $new_complexity );
 			}
 
-			// Quiz Related settings
-			if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
+			$new_settings = array(
+				'pass_required'         => $new_pass_required,
+				'pass_percentage'       => $new_pass_percentage,
+				'enable_quiz_reset'     => $new_enable_quiz_reset,
+				'show_questions'        => $show_questions,
+				'random_question_order' => $random_question_order,
+				'quiz_grade_type'       => $quiz_grade_type,
+			);
 
-				// update pass required
-				if ( -1 != $new_pass_required ) {
+			$this->save_quiz_settings( $lesson_id, $new_settings );
 
-					$checked = $new_pass_required ? 'on' : '';
-					update_post_meta( $quiz_id, '_pass_required', $checked );
-					unset( $checked );
-				}
-
-				// update pass percentage
-				if ( ! empty( $new_pass_percentage ) && is_numeric( $new_pass_percentage ) ) {
-
-						update_post_meta( $quiz_id, '_quiz_passmark', $new_pass_percentage );
-
-				}
-
-				//
-				// update enable quiz reset
-				//
-				if ( -1 != $new_enable_quiz_reset ) {
-
-					$checked = $new_enable_quiz_reset ? 'on' : '';
-					update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
-					unset( $checked );
-
-				}
-			}
 		}
 
 		die();
@@ -4804,7 +4979,7 @@ class Sensei_Lesson {
 	public static function user_lesson_quiz_status_message( $lesson_id = 0, $user_id = 0 ) {
 
 		$lesson_id                 = empty( $lesson_id ) ? get_the_ID() : $lesson_id;
-		$user_id                   = empty( $lesson_id ) ? get_current_user_id() : $user_id;
+		$user_id                   = empty( $user_id ) ? get_current_user_id() : $user_id;
 		$lesson_course_id          = (int) get_post_meta( $lesson_id, '_lesson_course', true );
 		$quiz_id                   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 		$has_user_completed_lesson = Sensei_Utils::user_completed_lesson( intval( $lesson_id ), $user_id );
@@ -5056,6 +5231,11 @@ class Sensei_Lesson {
 	 */
 	public function has_sensei_blocks( $lesson = null ) {
 		$lesson = get_post( $lesson );
+		$post   = $lesson->post_content ?? null;
+
+		if ( empty( $post ) || ! has_blocks( $post ) ) {
+			return false;
+		}
 
 		$lesson_blocks = [
 			'sensei-lms/lesson-actions',
@@ -5070,6 +5250,69 @@ class Sensei_Lesson {
 		}
 
 		return false;
+
+	}
+
+	/**
+	 *
+	 * Saves the quiz post meta settings
+	 *
+	 * @param int|null $lesson_id ID if the lesson.
+	 * @param array    $new_settings New settings to be saved.
+	 */
+	private function save_quiz_settings( $lesson_id, array $new_settings ) {
+
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+
+		if ( isset( $quiz_id ) && 0 < intval( $quiz_id ) ) {
+
+			// update pass required.
+			if ( null !== $new_settings['pass_required'] ) {
+
+				$checked = $new_settings['pass_required'] ? 'on' : 'off';
+				update_post_meta( $quiz_id, '_pass_required', $checked );
+				unset( $checked );
+			}
+
+			// update pass percentage.
+			if ( ! empty( $new_settings['pass_percentage'] ) && '-1' !== $new_settings['pass_percentage'] && is_numeric( $new_settings['pass_percentage'] ) ) {
+
+				update_post_meta( $quiz_id, '_quiz_passmark', $new_settings['pass_percentage'] );
+
+			}
+
+			// update enable quiz reset.
+			if ( null !== $new_settings['enable_quiz_reset'] ) {
+
+				$checked = $new_settings['enable_quiz_reset'] ? 'on' : '';
+				update_post_meta( $quiz_id, '_enable_quiz_reset', $checked );
+				unset( $checked );
+
+			}
+
+			// update random question order.
+			if ( null !== $new_settings['random_question_order'] ) {
+
+				$checked = $new_settings['random_question_order'] ? 'yes' : 'no';
+				update_post_meta( $quiz_id, '_random_question_order', $checked );
+				unset( $checked );
+			}
+
+			// update quiz grade type.
+			if ( null !== $new_settings['quiz_grade_type'] ) {
+
+				$checked = $new_settings['quiz_grade_type'] ? 'auto' : 'manual';
+				update_post_meta( $quiz_id, '_quiz_grade_type', $checked );
+				unset( $checked );
+			}
+
+			// update number of questions to show.
+			if ( ! empty( $new_settings['show_questions'] ) && '-1' !== $new_settings['show_questions'] ) {
+
+				update_post_meta( $quiz_id, '_show_questions', $new_settings['show_questions'] );
+
+			}
+		}
 	}
 }
 

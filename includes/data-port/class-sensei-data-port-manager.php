@@ -115,7 +115,7 @@ class Sensei_Data_Port_Manager implements JsonSerializable {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'sensei-setup-wizard' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'sensei-home' ) ) {
 			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 		}
 

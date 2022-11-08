@@ -1,0 +1,13 @@
+{
+  "name": "sensei-lms/course-theme-post-title",
+  "category": "theme",
+  "supports": {
+    "align": true,
+    "color": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    }
+  }
+}

@@ -6,7 +6,7 @@
 import { querySelectorAncestor } from '../shared/helpers/DOM';
 
 /**
- * @modulw sensei-modal
+ * @module sensei-modal
  * @description Adds a basic suport for modals via "data-sensei-modal-*" attribures on HTML elements.
  *
  * @usage

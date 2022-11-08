@@ -151,9 +151,8 @@ class Sensei_Reports_Overview_List_Table_Lessons extends Sensei_Reports_Overview
 				array(
 					'page'      => $this->page_slug,
 					'lesson_id' => $item->ID,
-					'post_type' => $this->post_type,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';

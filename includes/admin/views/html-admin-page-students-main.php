@@ -27,14 +27,13 @@ do_action( 'sensei_learner_admin_before_container' );
 	do_action( 'sensei_learner_admin_wrapper_container', 'top' );
 	?>
 
-	<div id="poststuff" class="sensei-learners-wrap">
-		<div class="sensei-learners-main">
-			<?php $sensei_list_table->display(); ?>
-		</div>
-		<div class="sensei-learners-extra">
+			<?php $sensei_list_table->views(); ?>
+			<form id="students-filter" method="get">
+				<?php Sensei_Utils::output_query_params_as_inputs( [ 's', 'filter_by_course_id', '_wpnonce', '_wp_http_referer' ] ); ?>
+				<?php $sensei_list_table->table_search_form(); ?>
+				<?php $sensei_list_table->display(); ?>
+			</form>
 			<?php do_action( 'sensei_learner_admin_extra' ); ?>
-		</div>
-	</div>
 
 	<?php do_action( 'sensei_learner_admin_wrapper_container', 'bottom' ); ?>
 </div>

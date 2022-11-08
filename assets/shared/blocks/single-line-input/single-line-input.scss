@@ -4,6 +4,7 @@
 	background-color: transparent;
 	border: none;
 	outline: none;
+	resize: none !important;
 
 	&:focus {
 		box-shadow: none;

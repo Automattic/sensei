@@ -26,6 +26,7 @@ class Site_Logo {
 				'core/site-logo',
 				[
 					'render_callback' => [ $this, 'render_site_logo' ],
+					'style'           => 'sensei-theme-blocks',
 				]
 			);
 		}

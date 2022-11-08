@@ -120,7 +120,7 @@ describe( '<StudentActionMenu />', () => {
 		fireEvent.click( menuItem );
 
 		expect( windowSpy ).toBeCalledWith(
-			`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ studentName }`,
+			`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
 			'_self'
 		);
 

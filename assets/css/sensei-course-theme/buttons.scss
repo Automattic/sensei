@@ -5,13 +5,13 @@
 		}
 		&:focus-visible {
 			transition: none;
-			outline: dashed 1px var(--primary-color);
+			outline: dashed 1px var(--sensei-primary-color);
 		}
 	}
 }
 
 
-.sensei-course-theme__button, .wp-block-button, .sensei-course-theme__button[type=submit], .sensei-course-theme__button[type=button] {
+.sensei-course-theme__button, .sensei-course-theme .wp-block-button, .sensei-course-theme__button[type=submit], .sensei-course-theme__button[type=button] {
 
 	.wp-block-button__link {
 		font-family: inherit;
@@ -23,6 +23,7 @@
 		&:hover {
 			background-color: inherit !important;
 			color: inherit !important;
+			text-decoration: none !important;
 		}
 	}
 	font-family: 'Inter', sans-serif;
@@ -39,15 +40,22 @@
 	padding: 0;
 	margin: 0;
 	border-radius: 2px;
+	text-decoration: none !important;
+
+	&.is-primary,
+	&.is-secondary,
+	&.is-link,
+	&.wp-block-button > .wp-block-button__link {
+		padding: 8px 11px;
+		font-weight: 700;
+		text-decoration: none;
+		border-radius: 2px;
+	}
 
 	&.is-primary,
 	&.is-secondary,
 	&.wp-block-button > .wp-block-button__link {
-		padding: 8px 11px;
-		border: solid 1px var(--primary-color);
-		font-weight: 700;
-		text-decoration: none;
-		border-radius: 2px;
+		border: solid 1px var(--sensei-primary-color);
 	}
 
 	&.wp-block-button {
@@ -56,7 +64,7 @@
 			padding: 8px 11px;
 			display: block;
 			&:focus {
-				outline: dashed 1px var(--primary-color);
+				outline: dashed 1px var(--sensei-primary-color);
 				margin: -1px;
 				padding: 9px 12px;
 			}
@@ -66,24 +74,24 @@
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
 		&:not(:hover) {
-			background-color: var(--primary-color) !important;
-			color: var(--primary-contrast-color);
+			background-color: var(--sensei-primary-color) !important;
+			color: var(--sensei-primary-contrast-color);
 		}
 		&:hover {
-			color: var(--primary-color);
+			color: var(--sensei-primary-color);
 			background: none;
 		}
 	}
 
 	&.is-secondary,
 	&.wp-block-button.is-style-outline {
-		color: var(--primary-color);
-		--wp--custom--button--border--color: var(--primary-color);
+		color: var(--sensei-primary-color);
+		--wp--custom--button--border--color: var(--sensei-primary-color);
 		&:hover {
-			background-color: var(--primary-color) !important;
-			color: var(--primary-contrast-color);
+			background-color: var(--sensei-primary-color) !important;
+			color: var(--sensei-primary-contrast-color);
 			.wp-block-button__link {
-				border-color: var(--primary-color);
+				border-color: var(--sensei-primary-color);
 			}
 		}
 	}
@@ -92,20 +100,32 @@
 
 	&.is-link {
 		font-weight: 600;
-		text-decoration: underline;
+		text-decoration: underline !important;
 		background: none !important;
 		color: inherit !important;
 
 		&:hover {
-			color: var(--primary-color) !important;;
+			color: var(--sensei-primary-color) !important;
 		}
 	}
 
 	&[aria-disabled='true'],
 	&:disabled {
-		opacity: 0.4;
+		opacity: 0.5;
 		pointer-events: none;
 		cursor: not-allowed;
+	}
+	&.is-completed.is-primary {
+		opacity: 0.8;
+		color: var(--bg-color)!important;
+		background: var(--text-color)!important;
+		border-color: var(--text-color)!important;
+	}
+	&.is-completed.is-secondary {
+		opacity: 0.8;
+		color: var(--text-color)!important;
+
+		border-color: var(--text-color)!important;
 	}
 	&.is-busy {
 		background-image: linear-gradient(
@@ -122,14 +142,22 @@
 	}
 }
 
-@keyframes components-button__busy-animation {
-	0% {
-		background-position: 2000px 0;
-	}
-}
-
-.wp-block-buttons {
+.sensei-course-theme .wp-block-buttons {
 	display: flex;
 	align-items: center;
 	gap: 12px;
+}
+
+.sensei-course-theme__button,
+.sensei-course-theme__link {
+	&.has-icon {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
 }
