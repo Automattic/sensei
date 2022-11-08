@@ -35,8 +35,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'SENSEI_LMS_VERSION', '4.8.0' ); // WRCS: DEFINED_VERSION.
-define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
+if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
+	define( 'SENSEI_LMS_VERSION', '4.8.0' ); // WRCS: DEFINED_VERSION.
+}
+
+if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
+}
 
 if ( class_exists( 'Sensei_Main' ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
