@@ -1,11 +1,13 @@
 $block: '.wp-block-sensei-lms-course-list';
 
 @mixin featured-badge-format {
-	background-color: #1d2327;
-	color: #fff;
+	background-color: var(--wp--preset--color--background,  #1d2327);
+	border-radius: 2px;
+	color: var(--wp--preset--color--foreground, #ffffff);
+	font-size: 11px;
+	line-height: 16px;
 	padding: 3px 6px;
 	text-decoration: none;
-	border-radius: 2px;
 	white-space: nowrap;
 	z-index: 1000;
 }
