@@ -71,4 +71,22 @@ interface Course_Progress_Repository_Interface {
 	 * @param Course_Progress $course_progress The course progress.
 	 */
 	public function delete( Course_Progress $course_progress ): void;
+
+	/**
+	 * Delete course progress for a given course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id The course ID.
+	 */
+	public function delete_for_course( int $course_id ): void;
+
+	/**
+	 * Delete course progress for a given user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void;
 }
