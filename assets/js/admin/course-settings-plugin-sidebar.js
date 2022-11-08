@@ -16,8 +16,9 @@ import { Slot } from '@wordpress/components';
  */
 import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
 import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
-import CourseTheme from './course-theme';
+import CourseThemeSidebar from './course-theme/course-theme-sidebar';
 import CourseVideoSidebar from './course-video-sidebar';
+import CourseGeneralSidebar from './course-general-sidebar';
 import SenseiIcon from '../../icons/logo-tree.svg';
 
 export const pluginSidebarHandle = 'sensei-lms-course-settings-sidebar';
@@ -45,8 +46,9 @@ export const CourseSidebar = () => {
 				{ ! hideCoursePricing && <CoursePricingPromoSidebar /> }
 				{ ! hideAccessPeriod && <CourseAccessPeriodPromoSidebar /> }
 				<Slot name="SenseiCourseSidebar" />
-				<CourseTheme />
+				<CourseThemeSidebar />
 				<CourseVideoSidebar />
+				<CourseGeneralSidebar />
 			</PluginSidebar>
 		</>
 	);
@@ -71,7 +73,7 @@ export const SenseiSettingsDocumentSidebar = () => {
 	return (
 		<PluginDocumentSettingPanel
 			name={ pluginDocumentHandle }
-			title={ __( 'Sensei Settings ', 'sensei-lms' ) }
+			title={ __( 'Sensei Settings', 'sensei-lms' ) }
 		></PluginDocumentSettingPanel>
 	);
 };

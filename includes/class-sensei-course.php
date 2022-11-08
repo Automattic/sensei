@@ -240,6 +240,23 @@ class Sensei_Course {
 				sprintf( 'window.sensei = window.sensei || {}; window.sensei.senseiSettings = %s;', $settings_json ),
 				'before'
 			);
+			// course settings sidebar data.
+			wp_localize_script( 'sensei-admin-course-edit', 'courseSettingsSidebar', [
+				'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
+				'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
+				'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
+				'courses'     => get_posts(
+						array(
+							'post_type'        => 'course',
+							'posts_per_page'   => -1,
+							'orderby'          => 'title',
+							'order'            => 'DESC',
+							'exclude'          => get_the_ID(),
+							'suppress_filters' => 0,
+							'post_status'      => 'any',
+						)
+				)
+			]);
 		}
 
 		if ( 'edit-course' === $screen->id ) {
@@ -371,6 +388,43 @@ class Sensei_Course {
 	 * Sets up the meta fields used for courses.
 	 */
 	public function set_up_meta_fields() {
+		register_post_meta(
+			'course',
+			'_course_prerequisite',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'integer',
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
+		register_post_meta(
+			'course',
+			'_course_featured',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
+		register_post_meta(
+			'course',
+			'disable_notification',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
 		/**
 		 * Sets up the meta fields saved on course save in WP admin.
 		 *
@@ -390,21 +444,20 @@ class Sensei_Course {
 	public function meta_box_setup() {
 
 		// Add Meta Box for Prerequisite Course
-		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'sensei-lms' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'sensei-lms' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
 		// Add Meta Box for Featured Course
-		add_meta_box( 'course-featured', __( 'Featured Course', 'sensei-lms' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-featured', __( 'Featured Course', 'sensei-lms' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
 		// Add Meta Box for Course Meta
 		add_meta_box( 'course-video', __( 'Course Video', 'sensei-lms' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
 		add_meta_box( 'course-lessons', __( 'Course Lessons', 'sensei-lms' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
 		// Add Meta Box to link to Manage Learners
-		add_meta_box( 'course-manage', __( 'Course Management', 'sensei-lms' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default' );
+		add_meta_box( 'course-manage', __( 'Course Management', 'sensei-lms' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 
 		// add Disable email notification box
-		add_meta_box( 'course-notifications', __( 'Course Notifications', 'sensei-lms' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default' );
-
+		add_meta_box( 'course-notifications', __( 'Course Notifications', 'sensei-lms' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
 	}
 
 	/**
@@ -595,7 +648,6 @@ class Sensei_Course {
 		}
 
 	}
-
 
 	/**
 	 * save_post_meta function.

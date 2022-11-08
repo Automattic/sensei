@@ -35,6 +35,18 @@ class Sensei_Teacher {
 	public $token;
 
 	/**
+	 * The nonce name when submitting a new message.
+	 *
+	 * @var string
+	 */
+	const NONCE_FIELD_NAME = 'sensei_meta_nonce';
+
+	/**
+	 * The nonce action name when submitting a new message.
+	 */
+	const NONCE_ACTION_NAME = 'sensei_save_data';
+
+	/**
 	 * Sensei_Teacher::__constructor
 	 *
 	 * Constructor Function
@@ -236,7 +248,11 @@ class Sensei_Teacher {
 			array( $this, 'teacher_meta_box_content' ),
 			'course',
 			'side',
-			'core'
+			'core',
+			array(
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box' => true
+			)
 		);
 
 	}
@@ -251,7 +267,7 @@ class Sensei_Teacher {
 	 * @parameters
 	 */
 	public function teacher_meta_box_content( $post ) {
-		wp_nonce_field( 'sensei_save_data', 'sensei_meta_nonce' );
+		wp_nonce_field( self::NONCE_ACTION_NAME, self::NONCE_FIELD_NAME );
 
 		// get the current author
 		$current_author = $post->post_author;
@@ -321,7 +337,7 @@ class Sensei_Teacher {
 	 * @param  string|array $fields Fields to return from DB. Defaults to 'ID'.
 	 * @return array
 	 */
-	private function get_teachers_and_authors_with_fields( $fields = 'ID' ) {
+	public function get_teachers_and_authors_with_fields( $fields = 'ID' ) {
 		$ids = $this->get_teachers_and_authors();
 
 		return get_users(
@@ -336,18 +352,18 @@ class Sensei_Teacher {
 	/**
 	 * Sensei_Teacher::save_teacher_meta_box
 	 *
-	 * Save the new teacher / author to course and all lessons
+	 * Save the new teacher / author from the meta box form.
 	 *
 	 * Hooked into admin_init
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * @parameters
-	 * @return array $users user id array
+	 * @param $course_id
+	 * @return void
 	 */
 	public function save_teacher_meta_box( $course_id ) {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-		if ( empty( $_POST['sensei_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['sensei_meta_nonce'] ), 'sensei_save_data' ) ) {
+		if ( empty( $_POST[ self::NONCE_FIELD_NAME ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ self::NONCE_FIELD_NAME ] ), self::NONCE_ACTION_NAME ) ) {
 			return;
 		}
 
@@ -370,35 +386,49 @@ class Sensei_Teacher {
 		// don't fire this hook again
 		remove_action( 'save_post', array( $this, 'save_teacher_meta_box' ) );
 
-		// get the current post object
+		$new_teacher = absint( $_POST['sensei-course-teacher-author'] );
+		$this->save_teacher( $course_id, $new_teacher );
+	}
+
+	/**
+	 * Sensei_Teacher::save_teacher
+	 *
+	 * Save the new teacher / author to course and all lessons
+	 *
+	 * @access public
+	 * @param $course_id
+	 * @param $new_teacher
+	 * @return void
+	 */
+	public function save_teacher( $course_id, $new_teacher ) {
 		$post = get_post( $course_id );
 
 		// get the current teacher/author
-		$current_author = absint( $post->post_author );
-
-		$new_author = absint( $_POST['sensei-course-teacher-author'] );
+		$current_teacher = absint( $post->post_author );
 
 		// loop through all post lessons to update their authors as well
-		$this->update_course_lessons_author( $course_id, $new_author );
+		$this->update_course_lessons_author( $course_id, $new_teacher );
 
 		// do not do any processing if the selected author is the same as the current author
-		if ( $current_author == $new_author ) {
+		if ( $current_teacher == $new_teacher ) {
 			return;
 		}
 
 		// save the course  author
 		$post_updates = array(
 			'ID'          => $post->ID,
-			'post_author' => $new_author,
+			'post_author' => $new_teacher,
 		);
 
 		wp_update_post( $post_updates );
 
-		// ensure the the modules are update so that then new teacher has access to them
-		self::update_course_modules_author( $course_id, $new_author );
+		// ensure the modules are update so that then new teacher has access to them.
+		self::update_course_modules_author( $course_id, $new_teacher );
 
 		// notify the new teacher
-		$this->teacher_course_assigned_notification( $new_author, $course_id );
+		$this->teacher_course_assigned_notification( $new_teacher, $course_id );
+
+		return true;
 
 	}
 

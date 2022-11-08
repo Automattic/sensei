@@ -29,7 +29,10 @@ const CourseThemeSidebar = () => {
 	const [ theme, setTheme ] = useCourseMeta( '_course_theme' );
 
 	return (
-		<PanelBody title={ __( 'Learning Mode', 'sensei-lms' ) }>
+		<PanelBody
+			title={ __( 'Learning Mode', 'sensei-lms' ) }
+			initialOpen={ false }
+		>
 			{ globalLearningModeEnabled ? (
 				<p>
 					<a href="/wp-admin/admin.php?page=sensei-settings#appearance-settings">

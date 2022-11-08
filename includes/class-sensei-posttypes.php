@@ -218,7 +218,7 @@ class Sensei_PostTypes {
 			'has_archive'           => $this->get_course_post_type_archive_slug(),
 			'hierarchical'          => false,
 			'menu_position'         => 51,
-			'supports'              => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
+			'supports'              => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields', 'author' ),
 			'show_in_rest'          => true,
 			'rest_base'             => 'courses',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',

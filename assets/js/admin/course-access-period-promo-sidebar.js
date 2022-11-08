@@ -9,7 +9,10 @@ import { __ } from '@wordpress/i18n';
  */
 const CourseAccessPeriodPromoSidebar = () => {
 	return (
-		<PanelBody title={ __( 'Access Period', 'sensei-lms' ) }>
+		<PanelBody
+			title={ __( 'Access Period', 'sensei-lms' ) }
+			initialOpen={ false }
+		>
 			<div className="sensei-course-access-period-promo">
 				<p>
 					<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_access_period">
