@@ -427,9 +427,6 @@ class Sensei_Teacher {
 
 		// notify the new teacher
 		$this->teacher_course_assigned_notification( $new_teacher, $course_id );
-
-		return true;
-
 	}
 
 	/**

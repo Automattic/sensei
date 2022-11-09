@@ -240,32 +240,42 @@ class Sensei_Course {
 				sprintf( 'window.sensei = window.sensei || {}; window.sensei.senseiSettings = %s;', $settings_json ),
 				'before'
 			);
-			// course settings sidebar data.
-			wp_localize_script(
+
+			$settings_sidebar = wp_json_encode( self::getCourseSettingsSidebarVars() );
+			wp_add_inline_script(
 				'sensei-admin-course-edit',
-				'courseSettingsSidebar',
-				[
-					'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
-					'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
-					'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
-					'courses'     => get_posts(
-						[
-							'post_type'        => 'course',
-							'posts_per_page'   => -1,
-							'orderby'          => 'title',
-							'order'            => 'DESC',
-							'exclude'          => get_the_ID(),
-							'suppress_filters' => 0,
-							'post_status'      => 'any',
-						]
-					),
-				]
+				sprintf( 'window.sensei = window.sensei || {}; window.sensei.courseSettingsSidebar = %s;', $settings_sidebar ),
+				'before'
 			);
 		}
 
 		if ( 'edit-course' === $screen->id ) {
 			Sensei()->assets->enqueue( 'sensei-admin-course-index', 'js/admin/course-index.js', [ 'jquery' ], true );
 		}
+	}
+
+	/**
+	 * Get Course Settings Sidebar Variables.
+	 *
+	 * @return array
+	 */
+	public static function getCourseSettingsSidebarVars() {
+		return [
+			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
+			'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
+			'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
+			'courses'     => get_posts(
+				[
+					'post_type'        => 'course',
+					'posts_per_page'   => -1,
+					'orderby'          => 'title',
+					'order'            => 'DESC',
+					'exclude'          => get_the_ID(),
+					'suppress_filters' => 0,
+					'post_status'      => 'any',
+				]
+			),
+		];
 	}
 
 	/**

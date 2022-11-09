@@ -19,7 +19,7 @@ const CourseGeneralSidebar = () => {
 	} );
 	const [ author, setAuthor ] = useState( course.author );
 
-	let courses = window.courseSettingsSidebar.courses;
+	let courses = window.sensei.courseSettingsSidebar.courses;
 	if ( courses && courses.length ) {
 		courses = courses.map( ( course ) => {
 			return { label: course.post_title, value: course.ID };
@@ -27,7 +27,7 @@ const CourseGeneralSidebar = () => {
 		courses.push( { label: __( 'None', 'sensei-lms' ), value: 0 } );
 	}
 
-	let teachers = window.courseSettingsSidebar.teachers;
+	let teachers = window.sensei.courseSettingsSidebar.teachers;
 	if ( teachers && teachers.length ) {
 		teachers = teachers.map( ( usr ) => {
 			return { label: usr.display_name, value: usr.id };
@@ -47,16 +47,19 @@ const CourseGeneralSidebar = () => {
 		if ( isSavingPost && ! isAutosavingPost && didPostSaveRequestSucceed ) {
 			unsubscribe();
 
-			apiFetch( {
-				path: '/sensei-internal/v1/course-utils/update-teacher',
-				method: 'PUT',
-				data: {
-					[ window.courseSettingsSidebar.nonce_name ]:
-						window.courseSettingsSidebar.nonce_value,
-					post_id: course.id,
-					teacher: author,
-				},
-			} );
+			// Only update author if its value has changed.
+			if ( author !== course.author ) {
+				apiFetch( {
+					path: '/sensei-internal/v1/course-utils/update-teacher',
+					method: 'PUT',
+					data: {
+						[ window.sensei.courseSettingsSidebar.nonce_name ]:
+							window.sensei.courseSettingsSidebar.nonce_value,
+						post_id: course.id,
+						teacher: author,
+					},
+				} );
+			}
 		}
 	} );
 
