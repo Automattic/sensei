@@ -144,6 +144,13 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		Sensei_Utils::sensei_delete_quiz_answers( $quiz_progress->get_quiz_id(), $quiz_progress->get_user_id() );
 	}
 
+	/**
+	 * Delete all quiz progress for a given quiz.
+	 *
+	 * @internal
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 */
 	public function delete_for_quiz( int $quiz_id ): void {
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -151,14 +158,16 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			'post_id' => $lesson_id,
 			'type'    => 'sensei_lesson_status',
 		];
-		$comments = Sensei_Utils::sensei_check_for_activity($activity_args, true);
+		$comments      = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		foreach ( $comments as $comment ) {
-      Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $comment->user_id );
+			Sensei_Utils::sensei_delete_quiz_answers( $quiz_id, $comment->user_id );
 		}
 	}
 
 	/**
 	 * Delete all quiz grades and answers for a user.
+	 *
+	 * @internal
 	 *
 	 * @param int $user_id User identifier.
 	 */
@@ -167,7 +176,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 			'user_id' => $user_id,
 			'type'    => 'sensei_lesson_status',
 		];
-		$comments = Sensei_Utils::sensei_check_for_activity($activity_args, true);
+		$comments      = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 		foreach ( $comments as $comment ) {
 			$this->delete_grade_and_answers( $comment->comment_ID );
 		}
