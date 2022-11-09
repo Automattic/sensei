@@ -77,7 +77,7 @@ class Sensei_Course_Categories_Block {
 		);
 
 		$pattern     = '/<a (.*?)>(.*?)<\/a>/i';
-		$replacement = '<a $1><span>$2</span></a>';
+		$replacement = '<a $1>$2</a>';
 
 		return preg_replace( $pattern, $replacement, $terms );
 	}

@@ -85,7 +85,7 @@ export function CourseCategoryEdit( props ) {
 				href={ category.link }
 				onClick={ ( event ) => event.preventDefault() }
 			>
-				<span>{ unescape( category.name ) }</span>
+				{ unescape( category.name ) }
 			</a>
 		) );
 	};
