@@ -11,7 +11,7 @@ class Course_Deleted_Handler_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$course_progress_repository = $this->createMock( Course_Progress_Repository_Interface::class );
 
-		$handler = new Course_Deleted_Handler( $course_progress_repository );
+		$handler      = new Course_Deleted_Handler( $course_progress_repository );
 		$deleted_post = new WP_Post( (object) [ 'post_type' => 'post' ] );
 
 		/* Expect & Act. */
@@ -35,7 +35,7 @@ class Course_Deleted_Handler_Test extends \WP_UnitTestCase {
 	public function testInit_WhenCalled_AddsAction() {
 		/* Arrange. */
 		$course_progress_repository = $this->createMock( Course_Progress_Repository_Interface::class );
-		$handler = new Course_Deleted_Handler( $course_progress_repository );
+		$handler                    = new Course_Deleted_Handler( $course_progress_repository );
 
 		/* Act. */
 		$handler->init();

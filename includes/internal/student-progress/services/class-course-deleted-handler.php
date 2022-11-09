@@ -1,6 +1,7 @@
 <?php
 /**
  * File containing the class Course_Deleted_Handler.
+ *
  * @package sensei-lms
  */
 
@@ -14,18 +15,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Handles the deletion of a course.
+ *
+ * @internal
+ *
+ * @since $$next-version$$
  */
 class Course_Deleted_Handler {
-
-
+	/**
+	 * The course deleted handler constructor.
+	 *
+	 * @param Course_Progress_Repository_Interface $course_progress_repository The course progress repository.
+	 */
 	public function __construct( Course_Progress_Repository_Interface $course_progress_repository ) {
 		$this->course_progress_repository = $course_progress_repository;
 	}
 
+	/**
+	 * Adds hooks to handle the deletion of a course.
+	 */
 	public function init() {
 		add_action( 'deleted_post', [ $this, 'handle' ], 10, 2 );
 	}
 
+	/**
+	 * Handles the deletion of a course.
+	 *
+	 * @param int     $course_id The post ID.
+	 * @param WP_Post $course The post object.
+	 */
 	public function handle( $course_id, $course ) {
 		if ( ! $course || 'course' !== $course->post_type ) {
 			return;

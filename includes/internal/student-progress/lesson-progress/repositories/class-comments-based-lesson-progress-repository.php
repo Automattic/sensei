@@ -202,6 +202,11 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		return Sensei_Utils::sensei_check_for_activity( $activity_args );
 	}
 
+	/**
+	 * Delete activity comments by given arguments.
+	 *
+	 * @param array $args Arguments to delete activity comments.
+	 */
 	private function delete_activities( array $args ): void {
 		$comments = Sensei_Utils::sensei_check_for_activity( $args, true );
 		if ( ! $comments ) {
@@ -225,3 +230,4 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 		}
 	}
 }
+

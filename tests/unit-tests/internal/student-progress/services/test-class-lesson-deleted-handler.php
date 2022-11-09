@@ -23,7 +23,7 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 
 	public function testHandle_WhenPostWasNotLesson_DoesntCallDeleteForLesson() {
 		/* Arrange. */
-		$deleted_post = new \WP_Post( (object) [ 'post_type' => 'post' ] );
+		$deleted_post               = new \WP_Post( (object) [ 'post_type' => 'post' ] );
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 
 		$handler = new Lesson_Deleted_Handler( $lesson_progress_repository );
@@ -37,7 +37,7 @@ class Lesson_Deleted_Handler_Test extends \WP_UnitTestCase {
 
 	public function testHandle_WhenLessonGiven_CallsDeleteForLesson() {
 		/* Arrange. */
-		$deleted_post = new \WP_Post( (object) [ 'post_type' => 'lesson' ] );
+		$deleted_post               = new \WP_Post( (object) [ 'post_type' => 'lesson' ] );
 		$lesson_progress_repository = $this->createMock( Lesson_Progress_Repository_Interface::class );
 
 		$handler = new Lesson_Deleted_Handler( $lesson_progress_repository );

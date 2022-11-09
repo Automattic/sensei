@@ -37,6 +37,9 @@ class Quiz_Deleted_Handler {
 		$this->quiz_progress_repository = $quiz_progress_repository;
 	}
 
+	/**
+	 * Adds action hook for quiz deletion.
+	 */
 	public function init(): void {
 		add_action( 'deleted_post', [ $this, 'handle' ], 10, 2 );
 	}
@@ -44,7 +47,8 @@ class Quiz_Deleted_Handler {
 	/**
 	 * Handles the quiz deletion.
 	 *
-	 * @param int $quiz_id The quiz ID.
+	 * @param int     $quiz_id The quiz ID.
+	 * @param WP_Post $post The post object.
 	 */
 	public function handle( int $quiz_id, $post ): void {
 		if ( ! $post || 'quiz' !== $post->post_type ) {

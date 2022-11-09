@@ -37,6 +37,9 @@ class Lesson_Deleted_Handler {
 		$this->lesson_progress_repository = $lesson_progress_repository;
 	}
 
+	/**
+	 * Adds hooks to handle lesson deletion.
+	 */
 	public function init(): void {
 		add_action( 'deleted_post', [ $this, 'handle' ], 10, 2 );
 	}
@@ -44,7 +47,8 @@ class Lesson_Deleted_Handler {
 	/**
 	 * Handles the lesson deletion.
 	 *
-	 * @param int $lesson_id The lesson ID.
+	 * @param int     $lesson_id The lesson ID.
+	 * @param WP_Post $post The post object.
 	 */
 	public function handle( int $lesson_id, $post ): void {
 		if ( ! $post || 'lesson' !== $post->post_type ) {

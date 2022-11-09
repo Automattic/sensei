@@ -164,6 +164,11 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		$this->delete_activities( $args );
 	}
 
+	/**
+	 * Delete activity comments for a given set of arguments.
+	 *
+	 * @param array $args The arguments.
+	 */
 	private function delete_activities( array $args ): void {
 		$comments = Sensei_Utils::sensei_check_for_activity( $args, true );
 		if ( ! $comments ) {

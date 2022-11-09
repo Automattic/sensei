@@ -203,8 +203,8 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$lesson2_id = $this->factory->lesson->create();
 		$user1_id   = $this->factory->user->create();
 		$user2_id   = $this->factory->user->create();
-		$quiz1_id  	= $this->factory->quiz->create( [ 'post_parent' => $lesson1_id ] );
-		$quiz2_id  	= $this->factory->quiz->create( [ 'post_parent' => $lesson2_id ] );
+		$quiz1_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson1_id ] );
+		$quiz2_id   = $this->factory->quiz->create( [ 'post_parent' => $lesson2_id ] );
 		\Sensei_Utils::update_lesson_status( $user1_id, $lesson1_id, 'in-progress' );
 		\Sensei_Utils::update_lesson_status( $user1_id, $lesson2_id, 'in-progress' );
 		\Sensei_Utils::update_lesson_status( $user2_id, $lesson1_id, 'in-progress' );
@@ -230,7 +230,7 @@ class Comments_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete_for_quiz( $quiz1_id );
 
 		/* Assert. */
-		$actual = [
+		$actual   = [
 			'progress1 grade' => get_comment_meta( $progress1->get_id(), 'grade', true ),
 			'progress2 grade' => get_comment_meta( $progress2->get_id(), 'grade', true ),
 			'progress3 grade' => get_comment_meta( $progress3->get_id(), 'grade', true ),
