@@ -1,7 +1,7 @@
 $block: '.wp-block-sensei-lms-course-list';
 
-@mixin featured-badge-format {
-	background-color: var(--wp--preset--color--background,  #1d2327);
+@mixin featured-label {
+	background-color: var(--wp--preset--color--background, #1d2327);
 	border-radius: 2px;
 	color: var(--wp--preset--color--foreground, #ffffff);
 	font-size: 11px;
@@ -30,62 +30,31 @@ $block: '.wp-block-sensei-lms-course-list';
 		}
 	}
 
-	.featured-image-wrapper {
+	/* Featured label overlaid on image. */
+	.sensei-lms-course-list-featured-label__image-wrapper {
 		position: relative;
 
-		.sensei-lms-featured-badge {
+		.sensei-lms-course-list-featured-label__text {
+			@include featured-label;
+
 			display: block;
 			position: absolute;
 			top: 18px;
 			left: 18px;
-			@include featured-badge-format;
 		}
 	}
 
-	.featured-category-wrapper {
+	/* Featured label beside course categories. */
+	.sensei-lms-course-list-featured-label__meta-wrapper {
 		display: flex;
 		flex-direction: row;
 
-		.sensei-lms-featured-badge {
+		.sensei-lms-course-list-featured-label__text {
+			@include featured-label;
+
 			display: block;
-			margin-right: 10px;
-			margin-top: 10px;
 			height: max-content;
-			@include featured-badge-format;
-		}
-	}
-
-	.featured-course-wrapper__featured-image {
-		position: relative;
-
-		.course-list-featured-label__featured-image {
-			position: absolute;
-			top: 18px;
-			left: 18px;
-			background-color: #1d2327;
-			color: #fff;
-			padding: 5px;
-			z-index: 999;
-			display: block;
-		}
-	}
-
-	.featured-course-wrapper__course-categories {
-		display: flex;
-		flex-direction: row;
-
-		.course-list-featured-label__course-categories {
-			display: block;
 			margin-right: 10px;
-			height: max-content;
-			margin-top: 10px;
-			color: #fff;
-			background-color: #1d2327;
-			padding: 3px 6px;
-			text-decoration: none;
-			border-radius: 2px;
-			white-space: nowrap;
-			display: block;
 		}
 	}
 
@@ -124,13 +93,13 @@ $block: '.wp-block-sensei-lms-course-list';
 
 					figure,
 					.wp-block,
-					.course-list-featured-label__course-categories,
+					.sensei-lms-course-list-featured-label__text,
 					.wp-block-post-featured-image,
 					.wp-block-sensei-lms-course-progress{
 						margin: 0;
 					}
 
-					.course-list-featured-label__course-categories {
+					.sensei-lms-course-list-featured-label__text {
 						margin-right: 10px;
 					}
 
@@ -173,15 +142,4 @@ $block: '.wp-block-sensei-lms-course-list';
 		margin-left: 0;
 		padding: 1.25em;
 	}
-}
-
-.course-list-featured-label__featured-image {
-	display: none;
-}
-.course-list-featured-label__course-categories {
-	display: none;
-}
-
-.sensei-lms-featured-badge {
-	display: none;
 }
