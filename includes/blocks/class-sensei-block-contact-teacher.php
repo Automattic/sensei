@@ -38,6 +38,7 @@ class Sensei_Block_Contact_Teacher {
 
 	/**
 	 * Check if a notice should be displayed.
+	 * Currently, it's also handling notices for legacy lessons (using templates).
 	 *
 	 * @access private
 	 */
