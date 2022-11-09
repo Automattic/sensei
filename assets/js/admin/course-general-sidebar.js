@@ -48,7 +48,7 @@ const CourseGeneralSidebar = () => {
 			unsubscribe();
 
 			apiFetch( {
-				path: '/sensei-internal/v1/course-utils/update-meta-teacher',
+				path: '/sensei-internal/v1/course-utils/update-teacher',
 				method: 'PUT',
 				data: {
 					[ window.courseSettingsSidebar.nonce_name ]:

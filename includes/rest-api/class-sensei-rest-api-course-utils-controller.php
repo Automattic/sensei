@@ -62,7 +62,7 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/update-meta-teacher',
+			$this->rest_base . '/update-teacher',
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [ $this, 'update_teacher' ],
@@ -98,7 +98,10 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 
 		$result = Sensei()->teacher->save_teacher( $post_id, $teacher );
 
-		return new WP_REST_Response( $result, WP_HTTP::OK );
+		if ( $result ) {
+			return new WP_REST_Response( [ 'status' => 'success' ], WP_HTTP::OK );
+		}
+		return new WP_REST_Response( [ 'status' => 'fail' ], WP_HTTP::INTERNAL_SERVER_ERROR );
 	}
 
 	/**
