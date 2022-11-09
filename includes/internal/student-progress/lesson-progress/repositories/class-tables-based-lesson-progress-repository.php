@@ -217,6 +217,13 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 	}
 
+	/**
+	 * Delete all lesson progress for a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 */
 	public function delete_for_lesson( int $lesson_id ): void {
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
@@ -231,6 +238,13 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 	}
 
+	/**
+	 * Delete all lesson progress for a user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
 	public function delete_for_user( int $user_id ): void {
 		$this->wpdb->delete(
 			$this->wpdb->prefix . 'sensei_lms_progress',
