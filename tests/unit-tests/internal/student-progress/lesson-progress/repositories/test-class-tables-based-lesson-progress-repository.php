@@ -321,6 +321,52 @@ class Tables_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 	}
 
+	public function testDeleteForLesson_LessonIdGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'post_id' => 2,
+					'type'    => 'lesson',
+				],
+				[
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete_for_lesson( 2 );
+	}
+
+	public function testDeleteForUser_UserIdGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Lesson_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'user_id' => 2,
+					'type'    => 'lesson',
+				],
+				[
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete_for_user( 2 );
+	}
+
 	public function testCount_ParamsGiven_ReturnsMatchingValue(): void {
 		/* Arrange. */
 		$course = $this->createMock( Sensei_Course::class );
