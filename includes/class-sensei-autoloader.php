@@ -5,9 +5,6 @@
  * @package sensei
  */
 
-use Sensei\Installer\Installer;
-use Sensei\Installer\Schema;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // security check, don't load file outside WP.
 }
@@ -263,12 +260,18 @@ class Sensei_Autoloader {
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class => 'internal/student-progress/quiz-progress/models/class-quiz-progress.php',
 			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface::class => 'internal/student-progress/course-progress/repositories/class-course-progress-repository-interface.php',
 			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::class => 'internal/student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Tables_Based_Course_Progress_Repository::class => 'internal/student-progress/course-progress/repositories/class-tables-based-course-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Aggregate_Course_Progress_Repository::class => 'internal/student-progress/course-progress/repositories/class-aggregate-course-progress-repository.php',
 			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory::class => 'internal/student-progress/course-progress/repositories/class-course-progress-repository-factory.php',
 			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface::class => 'internal/student-progress/lesson-progress/repositories/class-lesson-progress-repository-interface.php',
 			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::class => 'internal/student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Tables_Based_Lesson_Progress_Repository::class => 'internal/student-progress/lesson-progress/repositories/class-tables-based-lesson-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Aggregate_Lesson_Progress_Repository::class => 'internal/student-progress/lesson-progress/repositories/class-aggregate-lesson-progress-repository.php',
 			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory::class => 'internal/student-progress/lesson-progress/repositories/class-lesson-progress-repository-factory.php',
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-interface.php',
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-tables-based-quiz-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Aggregate_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-aggregate-quiz-progress-repository.php',
 			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-factory.php',
 			\Sensei\Internal\Student_Progress\Services\Course_Deleted_Handler::class => 'internal/student-progress/services/class-course-deleted-handler.php',
 			\Sensei\Internal\Student_Progress\Services\Lesson_Deleted_Handler::class => 'internal/student-progress/services/class-lesson-deleted-handler.php',
