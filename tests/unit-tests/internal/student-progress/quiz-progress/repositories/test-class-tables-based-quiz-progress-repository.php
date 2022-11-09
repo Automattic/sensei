@@ -320,6 +320,52 @@ class Tables_Based_Quiz_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 	}
 
+	public function testDeleteForQuiz_QuizIdGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'post_id' => 2,
+					'type'    => 'quiz',
+				],
+				[
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete_for_quiz( 2 );
+	}
+
+	public function testDeleteForUser_UserIdGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Quiz_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'user_id' => 2,
+					'type'    => 'quiz',
+				],
+				[
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete_for_user( 2 );
+	}
+
 	private function export_progress( Quiz_Progress $progress ): array {
 		return [
 			'id'      => $progress->get_id(),

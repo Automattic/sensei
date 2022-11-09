@@ -261,6 +261,132 @@ class Aggregate_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		];
 	}
 
+	public function testDeleteForCourse_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+		/* Arrange. */
+		$course_id = 2;
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, false );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->never() )
+			->method( 'delete_for_course' );
+		$repository->delete_for_course( $course_id );
+	}
+
+	public function testDeleteForCourse_UseTablesOn_CallsTablesBasedRepository(): void {
+		/* Arrange. */
+		$course_id = 2;
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->once() )
+			->method( 'delete_for_course' )
+			->with( $course_id );
+		$repository->delete_for_course( $course_id );
+	}
+
+	/**
+	 * Test that the repository will always use comments based repository while deleting.
+	 *
+	 * @param bool $use_tables
+	 *
+	 * @dataProvider providerDeleteForCourse_Always_CallsCommentsBasedRepository
+	 */
+	public function testDeleteForCourse_Always_CallsCommentsBasedRepository( $use_tables ): void {
+		/* Arrange. */
+		$course_id = 2;
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, $use_tables );
+
+		/* Expect & Act. */
+		$comments_based
+			->expects( $this->once() )
+			->method( 'delete_for_course' );
+		$repository->delete_for_course( $course_id );
+	}
+
+	public function providerDeleteForCourse_Always_CallsCommentsBasedRepository(): array {
+		return [
+			'uses tables'         => [ true ],
+			'does not use tables' => [ false ],
+		];
+	}
+
+	public function testDeleteForUser_UseTablesOff_DoesntCallTablesBasedRepository(): void {
+		/* Arrange. */
+		$user_id = 2;
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, false );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->never() )
+			->method( 'delete_for_user' );
+		$repository->delete_for_user( $user_id );
+	}
+
+	public function testDeleteForUser_UseTablesOn_CallsTablesBasedRepository(): void {
+		/* Arrange. */
+		$user_id = 2;
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, true );
+
+		/* Expect & Act. */
+		$tables_based
+			->expects( $this->once() )
+			->method( 'delete_for_user' )
+			->with( $user_id );
+		$repository->delete_for_user( $user_id );
+	}
+
+	/**
+	 * Test that the repository will always use comments based repository while deleting.
+	 *
+	 * @param bool $use_tables
+	 *
+	 * @dataProvider providerDeleteForUser_Always_CallsCommentsBasedRepository
+	 */
+	public function testDeleteForUser_Always_CallsCommentsBasedRepository( $use_tables ): void {
+		/* Arrange. */
+		$user_id = 2;
+
+		$comments_based = $this->createMock( Comments_Based_Course_Progress_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Course_Progress_Repository::class );
+
+		$repository = new Aggregate_Course_Progress_Repository( $comments_based, $tables_based, $use_tables );
+
+		/* Expect & Act. */
+		$comments_based
+			->expects( $this->once() )
+			->method( 'delete_for_user' );
+		$repository->delete_for_user( $user_id );
+	}
+
+	public function providerDeleteForUser_Always_CallsCommentsBasedRepository(): array {
+		return [
+			'uses tables'         => [ true ],
+			'does not use tables' => [ false ],
+		];
+	}
+
 	/**
 	 * Creates a course progress object.
 	 *
