@@ -73,13 +73,13 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 						'required'          => true,
 						'validate_callback' => [ $this, 'validate_nonce_value' ],
 					],
-					'post_id'                          => [
+					'post_id'                         => [
 						'type'     => 'number',
 						'required' => true,
 					],
-					'teacher'                  => [
-						'type'              => 'number',
-						'required'          => true,
+					'teacher'                         => [
+						'type'     => 'number',
+						'required' => true,
 					],
 				],
 			]

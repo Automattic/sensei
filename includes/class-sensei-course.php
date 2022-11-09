@@ -55,47 +55,47 @@ class Sensei_Course {
 
 		$this->token = 'course';
 
-		add_action( 'init', array( $this, 'set_up_meta_fields' ) );
+		add_action( 'init', [ $this, 'set_up_meta_fields' ] );
 
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( $this, 'meta_box_save' ) );
+			add_action( 'add_meta_boxes', [ $this, 'meta_box_setup' ], 20 );
+			add_action( 'save_post', [ $this, 'meta_box_save' ] );
 
 			// Custom Write Panel Columns
-			add_filter( 'manage_course_posts_columns', array( $this, 'add_column_headings' ), 20, 1 );
-			add_action( 'manage_course_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
+			add_filter( 'manage_course_posts_columns', [ $this, 'add_column_headings' ], 20, 1 );
+			add_action( 'manage_course_posts_custom_column', [ $this, 'add_column_data' ], 10, 2 );
 
 			// Enqueue scripts.
-			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
+			add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
 		} else {
 			$this->my_courses_page = false;
 		}
 
-		self::$allowed_html = array(
-			'embed'  => array(),
-			'iframe' => array(
-				'width'           => array(),
-				'height'          => array(),
-				'src'             => array(),
-				'frameborder'     => array(),
-				'allowfullscreen' => array(),
-			),
+		self::$allowed_html = [
+			'embed'  => [],
+			'iframe' => [
+				'width'           => [],
+				'height'          => [],
+				'src'             => [],
+				'frameborder'     => [],
+				'allowfullscreen' => [],
+			],
 			'video'  => Sensei_Wp_Kses::get_video_html_tag_allowed_attributes(),
 			'source' => Sensei_Wp_Kses::get_source_html_tag_allowed_attributes(),
-		);
+		];
 
 		// Update course completion upon completion of a lesson
-		add_action( 'sensei_user_lesson_end', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
+		add_action( 'sensei_user_lesson_end', [ $this, 'update_status_after_lesson_change' ], 10, 2 );
 		// Update course completion upon reset of a lesson
-		add_action( 'sensei_user_lesson_reset', array( $this, 'update_status_after_lesson_change' ), 10, 2 );
+		add_action( 'sensei_user_lesson_reset', [ $this, 'update_status_after_lesson_change' ], 10, 2 );
 		// Update course completion upon grading of a quiz
-		add_action( 'sensei_user_quiz_grade', array( $this, 'update_status_after_quiz_submission' ), 10, 2 );
+		add_action( 'sensei_user_quiz_grade', [ $this, 'update_status_after_quiz_submission' ], 10, 2 );
 
 		// provide an option to block all emails related to a selected course
-		add_filter( 'sensei_send_emails', array( $this, 'block_notification_emails' ) );
-		add_action( 'save_post', array( $this, 'save_course_notification_meta_box' ) );
+		add_filter( 'sensei_send_emails', [ $this, 'block_notification_emails' ] );
+		add_action( 'save_post', [ $this, 'save_course_notification_meta_box' ] );
 
 		// Log course content counter.
 		add_action( 'save_post_course', [ $this, 'mark_updating_course_id' ], 10, 2 );
@@ -103,41 +103,41 @@ class Sensei_Course {
 		add_action( 'rest_api_init', [ $this, 'disable_log_course_update' ] );
 
 		// preview lessons on the course content
-		add_action( 'sensei_course_content_inside_after', array( $this, 'the_course_free_lesson_preview' ) );
+		add_action( 'sensei_course_content_inside_after', [ $this, 'the_course_free_lesson_preview' ] );
 
 		// the course meta
-		add_action( 'sensei_course_content_inside_before', array( $this, 'the_course_meta' ) );
+		add_action( 'sensei_course_content_inside_before', [ $this, 'the_course_meta' ] );
 
 		// The course enrolment actions.
-		add_action( 'sensei_output_course_enrolment_actions', array( __CLASS__, 'output_course_enrolment_actions' ) );
+		add_action( 'sensei_output_course_enrolment_actions', [ __CLASS__, 'output_course_enrolment_actions' ] );
 
 		// add the user status on the course to the markup as a class
-		add_filter( 'post_class', array( __CLASS__, 'add_course_user_status_class' ), 20, 3 );
+		add_filter( 'post_class', [ __CLASS__, 'add_course_user_status_class' ], 20, 3 );
 
 		// filter the course query in Sensei specific instances
-		add_filter( 'pre_get_posts', array( __CLASS__, 'course_query_filter' ) );
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_query_filter' ] );
 
 		// attache the sorting to the course archive
-		add_action( 'sensei_archive_before_course_loop', array( 'Sensei_Course', 'course_archive_sorting' ) );
+		add_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_sorting' ] );
 
 		// attach the filter links to the course archive
-		add_action( 'sensei_archive_before_course_loop', array( 'Sensei_Course', 'course_archive_filters' ) );
+		add_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_filters' ] );
 
 		// filter the course query when featured filter is applied
-		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_featured_filter' ), 10, 1 );
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ], 10, 1 );
 
 		// Handle the ordering for the courses archive page.
-		add_filter( 'pre_get_posts', array( __CLASS__, 'course_archive_set_order_by' ), 10, 1 );
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_set_order_by' ], 10, 1 );
 
 		// ensure the course category page respects the manual order set for courses
-		add_filter( 'pre_get_posts', array( __CLASS__, 'alter_course_category_order' ), 10, 1 );
+		add_filter( 'pre_get_posts', [ __CLASS__, 'alter_course_category_order' ], 10, 1 );
 
 		// Filter the redirect url after enrolment.
-		add_filter( 'sensei_start_course_redirect_url', array( __CLASS__, 'alter_redirect_url_after_enrolment' ), 10, 2 );
+		add_filter( 'sensei_start_course_redirect_url', [ __CLASS__, 'alter_redirect_url_after_enrolment' ], 10, 2 );
 
 		// Allow course archive to be setup as the home page
 		if ( (int) get_option( 'page_on_front' ) > 0 ) {
-			add_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ), 9, 1 );
+			add_action( 'pre_get_posts', [ $this, 'allow_course_archive_on_front_page' ], 9, 1 );
 		}
 
 		// Log event on the initial publish for a course.
@@ -241,12 +241,15 @@ class Sensei_Course {
 				'before'
 			);
 			// course settings sidebar data.
-			wp_localize_script( 'sensei-admin-course-edit', 'courseSettingsSidebar', [
-				'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
-				'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
-				'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
-				'courses'     => get_posts(
-						array(
+			wp_localize_script(
+				'sensei-admin-course-edit',
+				'courseSettingsSidebar',
+				[
+					'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
+					'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
+					'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
+					'courses'     => get_posts(
+						[
 							'post_type'        => 'course',
 							'posts_per_page'   => -1,
 							'orderby'          => 'title',
@@ -254,9 +257,10 @@ class Sensei_Course {
 							'exclude'          => get_the_ID(),
 							'suppress_filters' => 0,
 							'post_status'      => 'any',
-						)
-				)
-			]);
+						]
+					),
+				]
+			);
 		}
 
 		if ( 'edit-course' === $screen->id ) {
@@ -404,11 +408,11 @@ class Sensei_Course {
 			'course',
 			'_course_featured',
 			[
-				'show_in_rest'  => true,
-				'single'        => true,
-				'type'          => 'string',
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+				'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},
 			]
@@ -432,7 +436,7 @@ class Sensei_Course {
 		 *
 		 * @param string[] $course_meta_fields Array of meta field key names to save on course save.
 		 */
-		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', array( 'course_prerequisite', 'course_featured', 'course_video_embed' ) );
+		$this->meta_fields = apply_filters( 'sensei_course_meta_fields', [ 'course_prerequisite', 'course_featured', 'course_video_embed' ] );
 	}
 
 	/**
@@ -444,20 +448,64 @@ class Sensei_Course {
 	public function meta_box_setup() {
 
 		// Add Meta Box for Prerequisite Course
-		add_meta_box( 'course-prerequisite', __( 'Course Prerequisite', 'sensei-lms' ), array( $this, 'course_prerequisite_meta_box_content' ), $this->token, 'side', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
+		add_meta_box(
+			'course-prerequisite',
+			__( 'Course Prerequisite', 'sensei-lms' ),
+			[ $this, 'course_prerequisite_meta_box_content' ],
+			$this->token,
+			'side',
+			'default',
+			[
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box'             => true,
+			]
+		);
 		// Add Meta Box for Featured Course
-		add_meta_box( 'course-featured', __( 'Featured Course', 'sensei-lms' ), array( $this, 'course_featured_meta_box_content' ), $this->token, 'side', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
+		add_meta_box(
+			'course-featured',
+			__( 'Featured Course', 'sensei-lms' ),
+			[ $this, 'course_featured_meta_box_content' ],
+			$this->token,
+			'side',
+			'default',
+			[
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box'             => true,
+			]
+		);
 		// Add Meta Box for Course Meta
-		add_meta_box( 'course-video', __( 'Course Video', 'sensei-lms' ), array( $this, 'course_video_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-video', __( 'Course Video', 'sensei-lms' ), [ $this, 'course_video_meta_box_content' ], $this->token, 'normal', 'default' );
 		// Add Meta Box for Course Lessons
-		add_meta_box( 'course-lessons', __( 'Course Lessons', 'sensei-lms' ), array( $this, 'course_lessons_meta_box_content' ), $this->token, 'normal', 'default' );
+		add_meta_box( 'course-lessons', __( 'Course Lessons', 'sensei-lms' ), [ $this, 'course_lessons_meta_box_content' ], $this->token, 'normal', 'default' );
 		// Add Meta Box to link to Manage Learners
-		add_meta_box( 'course-manage', __( 'Course Management', 'sensei-lms' ), array( $this, 'course_manage_meta_box_content' ), $this->token, 'side', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
+		add_meta_box(
+			'course-manage',
+			__( 'Course Management', 'sensei-lms' ),
+			[ $this, 'course_manage_meta_box_content' ],
+			$this->token,
+			'side',
+			'default',
+			[
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box'             => true,
+			]
+		);
 		// Remove "Custom Settings" meta box.
 		remove_meta_box( 'woothemes-settings', $this->token, 'normal' );
 
 		// add Disable email notification box
-		add_meta_box( 'course-notifications', __( 'Course Notifications', 'sensei-lms' ), array( $this, 'course_notification_meta_box_content' ), 'course', 'normal', 'default', array( '__block_editor_compatible_meta_box' => true, '__back_compat_meta_box' => true ) );
+		add_meta_box(
+			'course-notifications',
+			__( 'Course Notifications', 'sensei-lms' ),
+			[ $this, 'course_notification_meta_box_content' ],
+			'course',
+			'normal',
+			'default',
+			[
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box'             => true,
+			]
+		);
 	}
 
 	/**
@@ -471,7 +519,7 @@ class Sensei_Course {
 
 		$select_course_prerequisite = get_post_meta( $post->ID, '_course_prerequisite', true );
 
-		$post_args   = array(
+		$post_args   = [
 			'post_type'        => 'course',
 			'posts_per_page'   => -1,
 			'orderby'          => 'title',
@@ -479,7 +527,7 @@ class Sensei_Course {
 			'exclude'          => $post->ID,
 			'suppress_filters' => 0,
 			'post_status'      => 'any',
-		);
+		];
 		$posts_array = get_posts( $post_args );
 
 		$html = '';
@@ -501,23 +549,23 @@ class Sensei_Course {
 			$html,
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
-				array(
-					'input'  => array(
-						'id'    => array(),
-						'name'  => array(),
-						'type'  => array(),
-						'value' => array(),
-					),
-					'option' => array(
-						'selected' => array(),
-						'value'    => array(),
-					),
-					'select' => array(
-						'class' => array(),
-						'id'    => array(),
-						'name'  => array(),
-					),
-				)
+				[
+					'input'  => [
+						'id'    => [],
+						'name'  => [],
+						'type'  => [],
+						'value' => [],
+					],
+					'option' => [
+						'selected' => [],
+						'value'    => [],
+					],
+					'select' => [
+						'class' => [],
+						'id'    => [],
+						'name'  => [],
+					],
+				]
 			)
 		);
 	}
@@ -548,15 +596,15 @@ class Sensei_Course {
 			$html,
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
-				array(
-					'input' => array(
-						'checked' => array(),
-						'id'      => array(),
-						'name'    => array(),
-						'type'    => array(),
-						'value'   => array(),
-					),
-				)
+				[
+					'input' => [
+						'checked' => [],
+						'id'      => [],
+						'name'    => [],
+						'type'    => [],
+						'value'   => [],
+					],
+				]
 			)
 		);
 	}
@@ -587,20 +635,20 @@ class Sensei_Course {
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
 				self::$allowed_html,
-				array(
+				[
 					// Explicitly allow label tag for WP.com.
-					'label'    => array(
-						'class' => array(),
-						'for'   => array(),
-					),
-					'textarea' => array(
-						'cols'     => array(),
-						'id'       => array(),
-						'name'     => array(),
-						'rows'     => array(),
-						'tabindex' => array(),
-					),
-				)
+					'label'    => [
+						'class' => [],
+						'for'   => [],
+					],
+					'textarea' => [
+						'cols'     => [],
+						'id'       => [],
+						'name'     => [],
+						'rows'     => [],
+						'tabindex' => [],
+					],
+				]
 			)
 		);
 	}
@@ -719,7 +767,7 @@ class Sensei_Course {
 		global $post;
 
 		// Setup Lesson Query
-		$posts_array = array();
+		$posts_array = [];
 		if ( 0 < $post->ID ) {
 
 			$posts_array = $this->course_lessons( $post->ID, 'any' );
@@ -777,14 +825,14 @@ class Sensei_Course {
 			$html,
 			array_merge(
 				wp_kses_allowed_html( 'post' ),
-				array(
-					'input' => array(
-						'id'    => array(),
-						'name'  => array(),
-						'type'  => array(),
-						'value' => array(),
-					),
-				)
+				[
+					'input' => [
+						'id'    => [],
+						'name'  => [],
+						'type'  => [],
+						'value' => [],
+					],
+				]
 			)
 		);
 	}
@@ -801,19 +849,19 @@ class Sensei_Course {
 		global $post;
 
 		$manage_url  = add_query_arg(
-			array(
+			[
 				'page'      => 'sensei_learners',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
-			),
+			],
 			admin_url( 'admin.php' )
 		);
 		$grading_url = add_query_arg(
-			array(
+			[
 				'page'      => 'sensei_grading',
 				'course_id' => $post->ID,
 				'view'      => 'learners',
-			),
+			],
 			admin_url( 'admin.php' )
 		);
 
@@ -926,7 +974,7 @@ class Sensei_Course {
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
-	public function course_query( $amount = 0, $type = 'default', $includes = array(), $excludes = array() ) {
+	public function course_query( $amount = 0, $type = 'default', $includes = [], $excludes = [] ) {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( 'usercourses' === $type ) {
@@ -945,7 +993,7 @@ class Sensei_Course {
 			return $learner_manager->get_enrolled_courses_query( get_current_user_id(), $base_query )->posts;
 		}
 
-		$results_array = array();
+		$results_array = [];
 
 		$post_args = $this->get_archive_query_args( $type, $amount, $includes, $excludes );
 
@@ -981,7 +1029,7 @@ class Sensei_Course {
 	 * @param array  $includes (default: array())
 	 * @return array
 	 */
-	public function get_archive_query_args( $type = '', $amount = 0, $includes = array(), $excludes = array() ) {
+	public function get_archive_query_args( $type = '', $amount = 0, $includes = [], $excludes = [] ) {
 		_deprecated_function( __METHOD__, '3.0.0' );
 
 		global $wp_query;
@@ -1008,19 +1056,19 @@ class Sensei_Course {
 
 			case 'usercourses':
 				$learner_manager = Sensei_Learner::instance();
-				$post_args       = array(
+				$post_args       = [
 					'orderby'          => $orderby,
 					'order'            => $order,
 					'post__in'         => $includes,
 					'post__not_in'     => $excludes,
 					'suppress_filters' => 0,
-				);
+				];
 				$post_args       = $learner_manager->get_enrolled_courses_query_args( get_current_user_id(), $post_args );
 
 				break;
 
 			case 'featuredcourses':
-				$post_args = array(
+				$post_args = [
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
 					'order'            => $order,
@@ -1030,17 +1078,17 @@ class Sensei_Course {
 					'meta_compare'     => '=',
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
-				);
+				];
 				break;
 			default:
-				$post_args = array(
+				$post_args = [
 					'post_type'        => 'course',
 					'orderby'          => $orderby,
 					'order'            => $order,
 					'post_status'      => 'publish',
 					'exclude'          => $excludes,
 					'suppress_filters' => 0,
-				);
+				];
 				break;
 
 		}
@@ -1129,9 +1177,9 @@ class Sensei_Course {
 		if ( has_post_thumbnail( $course_id ) ) {
 			// Get Featured Image
 			if ( $sensei_is_block ) {
-				$img_html = get_the_post_thumbnail( $course_id, 'medium', array( 'class' => $classes ) );
+				$img_html = get_the_post_thumbnail( $course_id, 'medium', [ 'class' => $classes ] );
 			} else {
-				$img_html = get_the_post_thumbnail( $course_id, array( $width, $height ), array( 'class' => $classes ) );
+				$img_html = get_the_post_thumbnail( $course_id, [ $width, $height ], [ 'class' => $classes ] );
 			}
 		} else {
 
@@ -1142,9 +1190,9 @@ class Sensei_Course {
 				if ( has_post_thumbnail( $lesson_item->ID ) ) {
 					// Get Featured Image
 					if ( $sensei_is_block ) {
-						$img_html = get_the_post_thumbnail( $lesson_item->ID, 'medium', array( 'class' => $classes ) );
+						$img_html = get_the_post_thumbnail( $lesson_item->ID, 'medium', [ 'class' => $classes ] );
 					} else {
-						$img_html = get_the_post_thumbnail( $lesson_item->ID, array( $width, $height ), array( 'class' => $classes ) );
+						$img_html = get_the_post_thumbnail( $lesson_item->ID, [ $width, $height ], [ 'class' => $classes ] );
 					}
 
 					if ( '' !== $img_html ) {
@@ -1218,13 +1266,13 @@ class Sensei_Course {
 	 */
 	public function course_count( $post_status = 'publish' ) {
 
-		$post_args = array(
+		$post_args = [
 			'post_type'        => 'course',
 			'posts_per_page'   => -1,
 			'post_status'      => $post_status,
 			'suppress_filters' => 0,
 			'fields'           => 'ids',
-		);
+		];
 
 		// Allow WP to generate the complex final query, just shortcut to only do an overall count
 		$courses_query = new WP_Query( apply_filters( 'sensei_course_count', $post_args ) );
@@ -1288,7 +1336,7 @@ class Sensei_Course {
 				$lesson->course_order = $order ? $order : 100000;
 			}
 
-			uasort( $lessons, array( $this, '_short_course_lessons_callback' ) );
+			uasort( $lessons, [ $this, '_short_course_lessons_callback' ] );
 		}
 
 		/**
@@ -1306,7 +1354,7 @@ class Sensei_Course {
 		// objects
 		if ( 'ids' === $fields ) {
 			$lesson_objects = $lessons;
-			$lessons        = array();
+			$lessons        = [];
 
 			foreach ( $lesson_objects as $lesson ) {
 				$lessons[] = $lesson->ID;
@@ -1346,7 +1394,7 @@ class Sensei_Course {
 	 */
 	public function course_quizzes( $course_id = 0, $boolean_check = false ) {
 
-		$course_quizzes = array();
+		$course_quizzes = [];
 
 		if ( $course_id ) {
 			$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
@@ -1393,7 +1441,7 @@ class Sensei_Course {
 	 */
 	public function course_author_lesson_count( $author_id = 0, $course_id = 0 ) {
 
-		$lesson_args   = array(
+		$lesson_args   = [
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'author'           => $author_id,
@@ -1402,7 +1450,7 @@ class Sensei_Course {
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
-		);
+		];
 		$lessons_array = get_posts( $lesson_args );
 		$count         = count( $lessons_array );
 		return $count;
@@ -1418,7 +1466,7 @@ class Sensei_Course {
 	 */
 	public function course_lesson_count( $course_id = 0 ) {
 
-		$lesson_args   = array(
+		$lesson_args   = [
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'meta_key'         => '_lesson_course',
@@ -1426,7 +1474,7 @@ class Sensei_Course {
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
 			'fields'           => 'ids', // less data to retrieve
-		);
+		];
 		$lessons_array = get_posts( $lesson_args );
 
 		$count = count( $lessons_array );
@@ -1444,23 +1492,23 @@ class Sensei_Course {
 	 */
 	public function course_lesson_preview_count( $course_id = 0 ) {
 
-		$lesson_args   = array(
+		$lesson_args   = [
 			'post_type'        => 'lesson',
 			'posts_per_page'   => -1,
 			'post_status'      => 'publish',
 			'suppress_filters' => 0,
-			'meta_query'       => array(
-				array(
+			'meta_query'       => [
+				[
 					'key'   => '_lesson_course',
 					'value' => $course_id,
-				),
-				array(
+				],
+				[
 					'key'   => '_lesson_preview',
 					'value' => 'preview',
-				),
-			),
+				],
+			],
 			'fields'           => 'ids', // less data to retrieve
-		);
+		];
 		$lessons_array = get_posts( $lesson_args );
 
 		$count = count( $lessons_array );
@@ -1567,7 +1615,7 @@ class Sensei_Course {
 				// Get Course Categories
 				$category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
 
-				$active_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
+				$active_html .= '<article class="' . esc_attr( join( ' ', get_post_class( [ 'course', 'post' ], $course_item->ID ) ) ) . '">';
 
 				// Image
 				$active_html .= Sensei()->course->course_image( absint( $course_item->ID ), '100', '100', true );
@@ -1632,7 +1680,7 @@ class Sensei_Course {
 
 					$active_html .= '<section class="entry-actions">';
 
-					$active_html .= '<form method="POST" action="' . esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ) . '">';
+					$active_html .= '<form method="POST" action="' . esc_url( remove_query_arg( [ 'active_page', 'completed_page' ] ) ) . '">';
 
 					$active_html .= '<input type="hidden" name="' . esc_attr( 'woothemes_sensei_complete_course_noonce' ) . '" id="' . esc_attr( 'woothemes_sensei_complete_course_noonce' ) . '" value="' . esc_attr( wp_create_nonce( 'woothemes_sensei_complete_course_noonce' ) ) . '" />';
 
@@ -1708,7 +1756,7 @@ class Sensei_Course {
 				// Get Course Categories
 				$category_output = get_the_term_list( $course_item->ID, 'course-category', '', ', ', '' );
 
-				$complete_html .= '<article class="' . esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), $course_item->ID ) ) ) . '">';
+				$complete_html .= '<article class="' . esc_attr( join( ' ', get_post_class( [ 'course', 'post' ], $course_item->ID ) ) ) . '">';
 
 				// Image
 				$complete_html .= Sensei()->course->course_image( absint( $course_item->ID ), 100, 100, true );
@@ -1860,24 +1908,24 @@ class Sensei_Course {
 						$active_html,
 						array_merge(
 							wp_kses_allowed_html( 'post' ),
-							array(
+							[
 								// Explicitly allow form tag for WP.com.
-								'form'  => array(
-									'action' => array(),
-									'method' => array(),
-								),
-								'input' => array(
-									'class' => array(),
-									'id'    => array(),
-									'name'  => array(),
-									'type'  => array(),
-									'value' => array(),
-								),
+								'form'  => [
+									'action' => [],
+									'method' => [],
+								],
+								'input' => [
+									'class' => [],
+									'id'    => [],
+									'name'  => [],
+									'type'  => [],
+									'value' => [],
+								],
 								// Explicitly allow nav tag for WP.com.
-								'nav'   => array(
-									'class' => array(),
-								),
-							)
+								'nav'   => [
+									'class' => [],
+								],
+							]
 						)
 					);
 
@@ -1912,12 +1960,12 @@ class Sensei_Course {
 						$complete_html,
 						array_merge(
 							wp_kses_allowed_html( 'post' ),
-							array(
+							[
 								// Explicitly allow nav tag for WP.com.
-								'nav' => array(
-									'class' => array(),
-								),
-							)
+								'nav' => [
+									'class' => [],
+								],
+							]
 						)
 					);
 				} else {
@@ -1957,14 +2005,14 @@ class Sensei_Course {
 	 */
 	public static function get_all_courses() {
 
-		$args = array(
+		$args = [
 			'post_type'        => 'course',
 			'posts_per_page'   => -1,
 			'orderby'          => 'title',
 			'order'            => 'ASC',
 			'post_status'      => 'any',
 			'suppress_filters' => 0,
-		);
+		];
 
 		$wp_query_obj = new WP_Query( $args );
 
@@ -2142,7 +2190,7 @@ class Sensei_Course {
 			$user_id = get_current_user_id();
 		}
 
-		$completed_lesson_ids = array();
+		$completed_lesson_ids = [];
 
 		$course_lessons = $this->course_lessons( $course_id );
 
@@ -2334,12 +2382,12 @@ class Sensei_Course {
 						esc_attr( $author_display_name ),
 						esc_html( $author_display_name )
 					),
-					array(
-						'a' => array(
-							'href'  => array(),
-							'title' => array(),
-						),
-					)
+					[
+						'a' => [
+							'href'  => [],
+							'title' => [],
+						],
+					]
 				) .
 			'</span>';
 		}
@@ -2452,7 +2500,7 @@ class Sensei_Course {
 
 		?>
 			<section class="entry-actions">
-				<form method="POST" action="<?php echo esc_url( remove_query_arg( array( 'active_page', 'completed_page' ) ) ); ?>">
+				<form method="POST" action="<?php echo esc_url( remove_query_arg( [ 'active_page', 'completed_page' ] ) ); ?>">
 
 					<input type="hidden"
 						name="<?php echo esc_attr( 'woothemes_sensei_complete_course_noonce' ); ?>"
@@ -2576,7 +2624,7 @@ class Sensei_Course {
 		global $sensei_course_loop;
 
 		if ( ! isset( $sensei_course_loop ) ) {
-			$sensei_course_loop = array();
+			$sensei_course_loop = [];
 		}
 
 		if ( ! isset( $sensei_course_loop['counter'] ) ) {
@@ -2590,7 +2638,7 @@ class Sensei_Course {
 		// increment the counter
 		$sensei_course_loop['counter']++;
 
-		$extra_classes = array();
+		$extra_classes = [];
 
 		// Apply "first" and "last" CSS classes for grid-based layouts.
 		if ( 1 !== $sensei_course_loop['columns'] ) {
@@ -2666,11 +2714,11 @@ class Sensei_Course {
 		 */
 		$course_order_by_options = apply_filters(
 			'sensei_archive_course_order_by_options',
-			array(
+			[
 				'default' => __( 'Default sort', 'sensei-lms' ),
 				'newness' => __( 'Sort by newest first', 'sensei-lms' ),
 				'title'   => __( 'Sort by title A-Z', 'sensei-lms' ),
-			)
+			]
 		);
 
 		// setup the currently selected item.
@@ -2732,18 +2780,18 @@ class Sensei_Course {
 		 */
 		$filters = apply_filters(
 			'sensei_archive_course_filter_by_options',
-			array(
-				array(
+			[
+				[
 					'id'    => 'all',
 					'url'   => self::get_courses_page_url(),
 					'title' => __( 'All', 'sensei-lms' ),
-				),
-				array(
+				],
+				[
 					'id'    => 'featured',
-					'url'   => add_query_arg( array( 'course_filter' => 'featured' ), self::get_courses_page_url() ),
+					'url'   => add_query_arg( [ 'course_filter' => 'featured' ], self::get_courses_page_url() ),
 					'title' => __( 'Featured', 'sensei-lms' ),
-				),
-			)
+				],
+			]
 		);
 
 		?>
@@ -3015,7 +3063,7 @@ class Sensei_Course {
 		 */
 		if ( apply_filters( 'sensei_course_content_has_access', true, get_the_ID() ) ) {
 			if ( empty( $content ) ) {
-				remove_filter( 'the_content', array( 'Sensei_Course', 'single_course_content' ) );
+				remove_filter( 'the_content', [ 'Sensei_Course', 'single_course_content' ] );
 				$course = get_post( get_the_ID() );
 
 				$content = apply_filters( 'the_content', $course->post_content );
@@ -3106,52 +3154,52 @@ class Sensei_Course {
 
 		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
 
-		$course_lesson_query_args = array(
+		$course_lesson_query_args = [
 			'post_status'      => $course_lessons_post_status,
 			'post_type'        => 'lesson',
 			'posts_per_page'   => 500,
 			'orderby'          => 'date',
 			'order'            => 'ASC',
-			'meta_query'       => array(
-				array(
+			'meta_query'       => [
+				[
 					'key'   => '_lesson_course',
 					'value' => intval( $course_id ),
-				),
-			),
+				],
+			],
 			'suppress_filters' => 0,
-		);
+		];
 
 		// Exclude lessons belonging to modules as they are queried along with the modules.
 		$modules = Sensei()->modules->get_course_modules( $course_id );
 		if ( ! is_wp_error( $modules ) && ! empty( $modules ) && is_array( $modules ) ) {
 
-			$terms_ids = array();
+			$terms_ids = [];
 			foreach ( $modules as $term ) {
 
 				$terms_ids[] = $term->term_id;
 
 			}
 
-			$course_lesson_query_args['tax_query'] = array(
-				array(
+			$course_lesson_query_args['tax_query'] = [
+				[
 					'taxonomy' => 'module',
 					'field'    => 'id',
 					'terms'    => $terms_ids,
 					'operator' => 'NOT IN',
-				),
-			);
+				],
+			];
 		}
 
 		// setting lesson order
 		$course_lesson_order = get_post_meta( $course_id, '_lesson_order', true );
 		$all_ids             = get_posts(
-			array(
+			[
 				'post_type'      => 'lesson',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
 				'meta_key'       => '_lesson_course',
 				'meta_value'     => intval( $course_id ),
-			)
+			]
 		);
 		if ( ! empty( $course_lesson_order ) ) {
 
@@ -3503,13 +3551,13 @@ class Sensei_Course {
 	 * @return array
 	 */
 	public static function get_default_query_args() {
-		return array(
+		return [
 			'post_type'        => 'course',
 			'posts_per_page'   => 1000,
 			'orderby'          => 'date',
 			'order'            => 'DESC',
 			'suppress_filters' => 0,
-		);
+		];
 	}
 
 	/**
@@ -3562,7 +3610,7 @@ class Sensei_Course {
 
 		// We don't need this callback to run for subsequent queries (nothing after the main query interests us
 		// besides the need to avoid an infinite loop of doom when we call get_posts() on our cloned query
-		remove_action( 'pre_get_posts', array( $this, 'allow_course_archive_on_front_page' ) );
+		remove_action( 'pre_get_posts', [ $this, 'allow_course_archive_on_front_page' ] );
 
 		// Set the flag indicating our test query is (about to be) running
 		$query_check = clone $query;
@@ -3845,7 +3893,7 @@ class Sensei_Course {
 		add_action( 'sensei_single_course_content_inside_before', [ $sensei->post_types->messages, 'send_message_link' ], 35 );
 
 		// Course prerequisite completion message.
-		add_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
+		add_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'prerequisite_complete_message' ], 20 );
 
 	}
 
@@ -3868,7 +3916,7 @@ class Sensei_Course {
 		remove_action( 'sensei_single_course_content_inside_before', [ __CLASS__, 'the_course_enrolment_actions' ], 30 );
 
 		// Course prerequisite completion message.
-		remove_action( 'sensei_single_course_content_inside_before', array( 'Sensei_Course', 'prerequisite_complete_message' ), 20 );
+		remove_action( 'sensei_single_course_content_inside_before', [ 'Sensei_Course', 'prerequisite_complete_message' ], 20 );
 
 		// Add message links to courses.
 		remove_action( 'sensei_single_course_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 35 );

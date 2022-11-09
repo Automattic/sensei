@@ -249,10 +249,10 @@ class Sensei_Teacher {
 			'course',
 			'side',
 			'core',
-			array(
+			[
 				'__block_editor_compatible_meta_box' => true,
-				'__back_compat_meta_box' => true
-			)
+				'__back_compat_meta_box'             => true,
+			]
 		);
 
 	}
@@ -358,7 +358,7 @@ class Sensei_Teacher {
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * @param $course_id
+	 * @param  int  $course_id  Course ID.
 	 * @return void
 	 */
 	public function save_teacher_meta_box( $course_id ) {
@@ -396,8 +396,8 @@ class Sensei_Teacher {
 	 * Save the new teacher / author to course and all lessons
 	 *
 	 * @access public
-	 * @param $course_id
-	 * @param $new_teacher
+	 * @param int $course_id  Course ID.
+	 * @param int $new_teacher  Course ID.
 	 * @return void
 	 */
 	public function save_teacher( $course_id, $new_teacher ) {
