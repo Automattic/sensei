@@ -11,7 +11,9 @@ import {
 } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import apiFetch from '@wordpress/api-fetch';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
+
+import editorLifecycle from '../../shared/helpers/editor-lifecycle';
 
 const CourseGeneralSidebar = () => {
 	const course = useSelect( ( select ) => {
@@ -39,33 +41,28 @@ const CourseGeneralSidebar = () => {
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
 
-	const unsubscribe = subscribe( () => {
-		let editor = select( 'core/editor' );
-		var isSavingPost = editor.isSavingPost();
-		var isAutosavingPost = editor.isAutosavingPost();
-		var didPostSaveRequestSucceed = editor.didPostSaveRequestSucceed();
-		if ( isSavingPost && ! isAutosavingPost && didPostSaveRequestSucceed ) {
-			unsubscribe();
-
-			// Only update author if its value has changed.
-			if ( author !== course.author ) {
-				apiFetch( {
-					path: '/sensei-internal/v1/course-utils/update-teacher',
-					method: 'PUT',
-					data: {
-						[ window.sensei.courseSettingsSidebar.nonce_name ]:
-							window.sensei.courseSettingsSidebar.nonce_value,
-						post_id: course.id,
-						teacher: author,
-					},
-				} );
-			}
-		}
-	} );
+	useEffect( () =>
+		editorLifecycle( {
+			onSaveStart: () => {
+				if ( author !== course.author ) {
+					apiFetch( {
+						path: '/sensei-internal/v1/course-utils/update-teacher',
+						method: 'PUT',
+						data: {
+							[ window.sensei.courseSettingsSidebar.nonce_name ]:
+								window.sensei.courseSettingsSidebar.nonce_value,
+							post_id: course.id,
+							teacher: author,
+						},
+					} );
+				}
+			},
+		} )
+	);
 
 	return (
 		<PanelBody title={ __( 'General', 'sensei-lms' ) } initialOpen={ true }>
-			<h3>Teacher</h3>
+			<h3>{ __( 'Teacher', 'sensei-lms' ) }</h3>
 			{ teachers.length ? (
 				<SelectControl
 					value={ author }
@@ -76,14 +73,13 @@ const CourseGeneralSidebar = () => {
 
 			<HorizontalRule />
 
-			<h3>Course Prerequisite</h3>
+			<h3>{ __( 'Course Prerequisite', 'sensei-lms' ) }</h3>
 			{ ! courses.length ? (
 				<p>
-					{ ' ' }
 					{ __(
 						'No courses exist yet. Please add some first.',
 						'sensei-lms'
-					) }{ ' ' }
+					) }
 				</p>
 			) : null }
 			{ courses.length ? (
@@ -91,25 +87,28 @@ const CourseGeneralSidebar = () => {
 					value={ prerequisite }
 					options={ courses }
 					onChange={ ( value ) =>
-						setMeta( { _course_prerequisite: value } )
+						setMeta( { ...meta, _course_prerequisite: value } )
 					}
 				/>
 			) : null }
 
 			<HorizontalRule />
 
-			<h3>Featured Course</h3>
+			<h3>{ __( 'Featured Course', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __( 'Feature this course.', 'sensei-lms' ) }
 				checked={ featured === 'featured' }
 				onChange={ ( checked ) =>
-					setMeta( { _course_featured: checked ? 'featured' : '' } )
+					setMeta( {
+						...meta,
+						_course_featured: checked ? 'featured' : '',
+					} )
 				}
 			/>
 
 			<HorizontalRule />
 
-			<h3>Course Notifications</h3>
+			<h3>{ __( 'Course Notifications', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __(
 					'Disable notifications on this course?',
@@ -117,13 +116,13 @@ const CourseGeneralSidebar = () => {
 				) }
 				checked={ notification }
 				onChange={ ( checked ) =>
-					setMeta( { disable_notification: checked } )
+					setMeta( { ...meta, disable_notification: checked } )
 				}
 			/>
 
 			<HorizontalRule />
 
-			<h3>Course Management</h3>
+			<h3>{ __( 'Course Management', 'sensei-lms' ) }</h3>
 			<p>
 				<a
 					href={ `/wp-admin/admin.php?page=sensei_learners&course_id=${ course.id }&view=learners` }
