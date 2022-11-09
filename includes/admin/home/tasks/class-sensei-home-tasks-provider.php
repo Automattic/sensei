@@ -126,9 +126,10 @@ class Sensei_Home_Tasks_Provider {
 			if ( null === $post_id ) {
 				$result = null;
 			} else {
+				$post   = get_post( $post_id );
 				$image  = get_the_post_thumbnail_url( $post_id, 'full' );
 				$result = [
-					'title'     => get_the_title( $post_id ),
+					'title'     => $post->post_title,
 					'permalink' => get_permalink( $post_id ),
 					'image'     => $image ? $image : null,
 				];
