@@ -151,4 +151,32 @@ class Aggregate_Course_Progress_Repository implements Course_Progress_Repository
 			$this->tables_based_repository->delete( $course_progress );
 		}
 	}
+
+	/**
+	 * Deletes all course progress for a course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id The course ID.
+	 */
+	public function delete_for_course( int $course_id ): void {
+		$this->comments_based_repository->delete_for_course( $course_id );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete_for_course( $course_id );
+		}
+	}
+
+	/**
+	 * Deletes all course progress for a user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$this->comments_based_repository->delete_for_user( $user_id );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete_for_user( $user_id );
+		}
+	}
 }

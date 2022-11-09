@@ -215,4 +215,46 @@ class Tables_Based_Course_Progress_Repository implements Course_Progress_Reposit
 			]
 		);
 	}
+
+	/**
+	 * Delete course progress for a given course.
+	 *
+	 * @internal
+	 *
+	 * @param int $course_id The course ID.
+	 */
+	public function delete_for_course( int $course_id ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'post_id' => $course_id,
+				'type'    => 'course',
+			],
+			[
+				'%d',
+				'%s',
+			]
+		);
+	}
+
+	/**
+	 * Delete course progress for a given user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'user_id' => $user_id,
+				'type'    => 'course',
+			],
+			[
+				'%d',
+				'%s',
+			]
+		);
+	}
 }

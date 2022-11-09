@@ -151,4 +151,32 @@ class Aggregate_Quiz_Progress_Repository implements Quiz_Progress_Repository_Int
 			$this->tables_based_repository->delete( $quiz_progress );
 		}
 	}
+
+	/**
+	 * Deletes all quiz progresses for the given quiz.
+	 *
+	 * @internal
+	 *
+	 * @param int $quiz_id The quiz ID.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$this->comments_based_repository->delete_for_quiz( $quiz_id );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete_for_quiz( $quiz_id );
+		}
+	}
+
+	/**
+	 * Deletes all quiz progresses for the given user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$this->comments_based_repository->delete_for_user( $user_id );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete_for_user( $user_id );
+		}
+	}
 }

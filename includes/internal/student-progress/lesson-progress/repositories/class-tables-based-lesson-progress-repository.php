@@ -217,6 +217,34 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		);
 	}
 
+	public function delete_for_lesson( int $lesson_id ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'post_id' => $lesson_id,
+				'type'    => 'lesson',
+			],
+			[
+				'%d',
+				'%s',
+			]
+		);
+	}
+
+	public function delete_for_user( int $user_id ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'user_id' => $user_id,
+				'type'    => 'lesson',
+			],
+			[
+				'%d',
+				'%s',
+			]
+		);
+	}
+
 	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
