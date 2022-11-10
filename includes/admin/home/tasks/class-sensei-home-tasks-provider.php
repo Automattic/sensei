@@ -103,7 +103,8 @@ class Sensei_Home_Tasks_Provider {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 		return [
-			'title' => get_bloginfo( 'name' ),
+			// Title is persisted with encoded specialchars. We need to decode so that consumer decides what to do with it.
+			'title' => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 			'image' => $image ? $image[0] : null,
 		];
 	}
@@ -126,9 +127,10 @@ class Sensei_Home_Tasks_Provider {
 			if ( null === $post_id ) {
 				$result = null;
 			} else {
+				$post   = get_post( $post_id );
 				$image  = get_the_post_thumbnail_url( $post_id, 'full' );
 				$result = [
-					'title'     => get_the_title( $post_id ),
+					'title'     => $post->post_title,
 					'permalink' => get_permalink( $post_id ),
 					'image'     => $image ? $image : null,
 				];
