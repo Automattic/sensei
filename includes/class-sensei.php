@@ -560,9 +560,10 @@ class Sensei_Main {
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
 
 		// Student progress repositories.
-		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
-		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
-		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+		$use_tables                       = $this->feature_flags->is_enabled( 'tables_based_progress' );
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory( $use_tables ) )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory( $use_tables ) )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory( $use_tables ) )->create();
 
 		// Quiz submission repositories.
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();

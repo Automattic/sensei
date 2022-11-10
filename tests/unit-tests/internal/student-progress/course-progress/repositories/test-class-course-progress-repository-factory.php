@@ -11,9 +11,14 @@ use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progres
  * @covers \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory
  */
 class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
-	public function testCreate_WhenCalled_ReturnsCourseProgressRepository(): void {
+	/**
+	 * Tests that the factory creates the correct repository.
+	 *
+	 * @dataProvider providerCreate_WhenCalled_ReturnsCourseProgressRepository
+	 */
+	public function testCreate_WhenCalled_ReturnsCourseProgressRepository( bool $use_tables ): void {
 		/* Arrange. */
-		$factory = new Course_Progress_Repository_Factory();
+		$factory = new Course_Progress_Repository_Factory( $use_tables );
 
 		/* Act. */
 		$actual = $factory->create();
@@ -22,4 +27,10 @@ class Course_Progress_Repository_Factory_Test extends \WP_UnitTestCase {
 		self::assertInstanceOf( Aggregate_Course_Progress_Repository::class, $actual );
 	}
 
+	public function providerCreate_WhenCalled_ReturnsCourseProgressRepository(): array {
+		return [
+			'use tables'        => [ true ],
+			'do not use tables' => [ false ],
+		];
+	}
 }
