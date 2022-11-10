@@ -103,8 +103,8 @@ class Sensei_REST_API_Course_Utils_Controller_Test extends WP_Test_REST_TestCase
 		$request->set_body(
 			wp_json_encode(
 				[
-					'teacher'           => $teacher_id,
-					'post_id'           => $course_id,
+					'teacher' => $teacher_id,
+					'post_id' => $course_id,
 				]
 			)
 		);
