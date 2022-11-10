@@ -3626,20 +3626,20 @@ class Sensei_Lesson {
 		$questions_array = $questions;
 
 		// If viewing quiz on frontend or in grading then only single questions must be shown.
-		$selected_questions = false;
+		$selected_questions = [];
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Input used for comparisons.
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$submission              = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-			$submission_question_ids = $submission
+			$submission         = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+			$selected_questions = $submission
 				? Sensei()->quiz_submission_repository->get_question_ids( $submission->get_id() )
 				: [];
 
-			if ( $submission_question_ids ) {
+			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
 				$questions = [];
-				foreach ( $submission_question_ids as $question_id ) {
+				foreach ( $selected_questions as $question_id ) {
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
 						continue;
