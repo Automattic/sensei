@@ -358,7 +358,7 @@ class Sensei_Teacher {
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * @param  int  $course_id  Course ID.
+	 * @param int $course_id Course ID.
 	 * @return void
 	 */
 	public function save_teacher_meta_box( $course_id ) {

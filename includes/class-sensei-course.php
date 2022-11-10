@@ -241,7 +241,7 @@ class Sensei_Course {
 				'before'
 			);
 
-			$settings_sidebar = wp_json_encode( self::getCourseSettingsSidebarVars() );
+			$settings_sidebar = wp_json_encode( self::get_course_settings_sidebar_vars() );
 			wp_add_inline_script(
 				'sensei-admin-course-edit',
 				sprintf( 'window.sensei = window.sensei || {}; window.sensei.courseSettingsSidebar = %s;', $settings_sidebar ),
@@ -259,7 +259,7 @@ class Sensei_Course {
 	 *
 	 * @return array
 	 */
-	public static function getCourseSettingsSidebarVars() {
+	public static function get_course_settings_sidebar_vars() {
 		return [
 			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
 			'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
