@@ -71,7 +71,7 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 			}
 		} else {
 			// Re-schedule immediately.
-			$this->schedule_job( $job, time() );
+			$this->schedule_job( $job );
 		}
 
 		$this->current_job = null;
