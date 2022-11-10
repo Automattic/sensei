@@ -116,7 +116,21 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022-10-27 - Version 4.8.0
+2022-11-10 - version 4.8.1
+* New: Course Overview block for the Course List block [#5996](https://github.com/Automattic/sensei/pull/5996)
+* Add: Message for users without JavaScript enabled on Sensei Home [#6059](https://github.com/Automattic/sensei/pull/6059)
+* Fix: Course start date reset on lesson completion [#6079](https://github.com/Automattic/sensei/pull/6079)
+* Fix: Contact Teacher block not working [#6058](https://github.com/Automattic/sensei/pull/6058)
+* Fix: Random questions change for answered quizzes [#6088](https://github.com/Automattic/sensei/pull/6088)
+* Fix: Issue with enrolling students in the course view in a course with no students [#5583](https://github.com/Automattic/sensei/pull/5583)
+* Fix: Disable broken sorting under Reports [#6094](https://github.com/Automattic/sensei/pull/6094)
+* Fix: Course List buttons extending outside container [#6010](https://github.com/Automattic/sensei/pull/6010)
+* Fix: Checks for modules when adding author name to module name [#6034](https://github.com/Automattic/sensei/pull/6034)
+* Fix: PHP notice on course category archive view [#6069](https://github.com/Automattic/sensei/pull/6069)
+* Fix: Error when activating Sensei LMS + Sensei Pro (WC Paid Courses) [#6080](https://github.com/Automattic/sensei/pull/6080)
+* Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083)
+
+2022-10-27 - version 4.8.0
 * New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
 * New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
 
