@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.8.0
+Stable tag: 4.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ Your knowledge is worth teaching - teach freely with Sensei LMS!
 - Embed videos from YouTube, Vimeo, and VideoPress for video-based courses.
 - Add the Course List block to any page or post to display available courses.
 - Customize the look and feel to match your branding and site style.
-- Enable the optional Learning Mode for a distraction free and immersive learning experience. 
+- Enable the optional Learning Mode for a distraction free and immersive learning experience.
 
 ### Quizzes That Reinforce ###
 Leverage the power of quizzes to strengthen your students’ understanding of key concepts and evaluate their progress.
@@ -46,12 +46,12 @@ Do more and sell courses with Sensei Pro, which includes:
 
 https://videopress.com/v/tLYw7R27
 
-**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz. 
+**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz.
 
-**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences. 
+**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences.
 
 **Course Access Periods:** Select a start date, end date, or a specific amount of time that courses will remain accessible to students.
- 
+
 **Conditional Content:** Hide and show lessons and content in lessons based on groups, enrollment status, and date.
 
 **Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
