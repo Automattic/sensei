@@ -11,6 +11,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 	 * Gets the manual enrolment manager.
 	 *
 	 * @return false|Sensei_Course_Manual_Enrolment_Provider
+	 * @throws Exception
 	 */
 	private function getManualEnrolmentProvider() {
 		return Sensei_Course_Enrolment_Manager::instance()->get_manual_enrolment_provider();
@@ -54,7 +55,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		$this->assertCount( 9, $response->data );
 
 		foreach ( $response->data as $item ) {
-			$this->assertContains( '<a href="http://example.org/wp-admin/edit.php?post_type=course', $item );
+			$this->assertContains( 'Course title', $item );
 		}
 	}
 }
