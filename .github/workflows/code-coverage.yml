@@ -69,7 +69,7 @@ jobs:
                 run: php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover ./coverage.xml
 
             -   name: Updates the npm version
-                run: npm install -g npm@8.9.0
+                run: npm install -g npm@^8
 
             -   uses: actions/cache@v3
                 with:

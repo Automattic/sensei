@@ -28,7 +28,7 @@ jobs:
               run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
             - name: Updates the npm version
-              run: npm install -g npm@8.9.0
+              run: npm install -g npm@^8
 
             - uses: actions/cache@v3
               with:
