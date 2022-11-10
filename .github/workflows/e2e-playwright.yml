@@ -43,7 +43,7 @@ jobs:
               run: CI=true npm run test:e2e -- --grep-invert @setup
 
             - name: Archive report
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               if: failure()
               with:
                   name: playwright-report
