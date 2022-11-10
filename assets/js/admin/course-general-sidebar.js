@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useSelect, subscribe, select } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import {
 	PanelBody,
 	CheckboxControl,
@@ -19,7 +19,9 @@ const CourseGeneralSidebar = () => {
 	const course = useSelect( ( select ) => {
 		return select( 'core/editor' ).getCurrentPost();
 	} );
-	const [ author, setAuthor ] = useState( course.author );
+	const [ author, setAuthor ] = useState(
+		window.sensei.courseSettingsSidebar.author
+	);
 
 	let courses = window.sensei.courseSettingsSidebar.courses;
 	if ( courses && courses.length ) {
@@ -97,7 +99,7 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Featured Course', 'sensei-lms' ) }</h3>
 			<CheckboxControl
 				label={ __( 'Feature this course.', 'sensei-lms' ) }
-				checked={ featured === 'featured' }
+				checked={ featured == 'featured' }
 				onChange={ ( checked ) =>
 					setMeta( {
 						...meta,

@@ -275,6 +275,7 @@ class Sensei_Course {
 					'post_status'      => 'any',
 				]
 			),
+			'author'      => absint( get_the_author_meta( 'ID' ) ),
 		];
 	}
 
