@@ -103,7 +103,8 @@ class Sensei_Home_Tasks_Provider {
 		$custom_logo_id = get_theme_mod( 'custom_logo' );
 		$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
 		return [
-			'title' => get_bloginfo( 'name' ),
+			// Title is persisted with encoded specialchars. We need to decode so that consumer decides what to do with it.
+			'title' => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
 			'image' => $image ? $image[0] : null,
 		];
 	}
