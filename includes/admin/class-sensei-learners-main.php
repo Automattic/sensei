@@ -503,7 +503,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 						$row_actions[] =
 							'<span class="delete">' .
-								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" href="#">' .
 									esc_html__( 'Remove Progress', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
