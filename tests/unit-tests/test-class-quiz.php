@@ -1173,9 +1173,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	public function testGetUserAnswersFeedback() {
 
 		// Setup the data and objects needed for this test.
-		$test_user_id   = wp_create_user( 'studentFeedbackGet', 'studentFeedbackGet', 'studentFeedbackGet@test.com' );
-		$test_lesson_id = $this->factory->get_random_lesson_id();
-		$test_quiz_id   = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
+		$user_id   = wp_create_user( 'studentFeedbackGet', 'studentFeedbackGet', 'studentFeedbackGet@test.com' );
+		$lesson_id = $this->factory->get_random_lesson_id();
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $lesson_id );
 
 		// Does the save_user_answers function exist?
 		$this->assertTrue(
@@ -1189,13 +1189,17 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertFalse( Sensei()->quiz->get_user_answers_feedback( -1000, -121 ), 'The function should return false for incorrect parameters' );
 
 		// Save the answers to setup the next assertion.
-		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
-		$test_lesson_id             = $this->factory->get_random_lesson_id();
-		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
-		Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
-		$retrieved_answer_feedback = Sensei()->quiz->get_user_answers_feedback( $test_lesson_id, $test_user_id );
+		Sensei_Utils::sensei_start_lesson( $lesson_id, $user_id );
+		$lesson_id          = $this->factory->get_random_lesson_id();
+		$generated_answers  = $this->factory->generate_user_quiz_answers( $quiz_id );
+		$generated_feedback = $this->factory->generate_user_answers_feedback( $quiz_id );
 
-		$this->assertEquals( $test_user_answers_feedback, $retrieved_answer_feedback, 'Feedback retrieved does not match the saved data.' );
+		Sensei()->quiz->save_user_answers( $generated_answers, [], $lesson_id, $user_id );
+		Sensei()->quiz->save_user_answers_feedback( $generated_feedback, $lesson_id, $user_id );
+
+		$retrieved_feedback = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
+
+		$this->assertEquals( $generated_feedback, $retrieved_feedback, 'Feedback retrieved does not match the saved data.' );
 
 	}
 
@@ -1222,6 +1226,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_lesson_id             = $this->factory->get_random_lesson_id();
 		$test_quiz_id               = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
+
+		$generated_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		Sensei()->quiz->save_user_answers( $generated_answers, [], $test_lesson_id, $test_user_id );
+
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
 		Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
 		$test_question_id = array_rand( $test_user_answers_feedback );
@@ -1267,6 +1275,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$test_quiz_id               = Sensei()->lesson->lesson_quizzes( $test_lesson_id );
 		$test_user_answers_feedback = $this->factory->generate_user_answers_feedback( $test_quiz_id );
 		Sensei_Utils::sensei_start_lesson( $test_lesson_id, $test_user_id );
+
+		$generated_answers = $this->factory->generate_user_quiz_answers( $test_quiz_id );
+		Sensei()->quiz->save_user_answers( $generated_answers, [], $test_lesson_id, $test_user_id );
+
 		Sensei()->quiz->save_user_answers_feedback( $test_user_answers_feedback, $test_lesson_id, $test_user_id );
 
 		// Was it saved correctly?
@@ -1407,7 +1419,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		);
 
 		// Get questions after submitting.
-		$questions_asked_after_submitting = Sensei()->quiz_submission_repository->get_question_ids( $test_quiz_id, $test_user_id );
+		$questions_asked_after_submitting = Sensei()->quiz_submission_repository->get_question_ids( $user_lesson_status_comment_id );
 
 		// Check if questions asked have not been overwritten.
 		$this->assertCount(
@@ -1623,7 +1635,9 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			]
 		);
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
+
 		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
 
 		/* Act. */
@@ -1633,7 +1647,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $grade );
 	}
 
-	public function testResetUserLessonData_WhenCalled_ResetsTheQuizFinalGrade() {
+	public function testResetUserLessonData_WhenCalled_ResetsTheQuizSubmission() {
 		/* Arrange. */
 		$user_id   = $this->factory->user->create();
 		$lesson_id = $this->factory->lesson->create();
@@ -1646,7 +1660,10 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 			]
 		);
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		update_comment_meta( $submission_id, 'questions_asked', '1,2' );
+
 		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
 
 		/* Act. */
@@ -1657,7 +1674,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 
 		/* Assert. */
-		$this->assertNull( $quiz_submission->get_final_grade() );
+		$this->assertNull( $quiz_submission );
 	}
 
 	public function testResetUserLessonData_WhenCalled_ResetsTheQuizAnswers() {
@@ -1676,15 +1693,15 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		$quiz_answers_map = $this->factory->generate_user_quiz_answers( $quiz_id );
 		Sensei()->quiz->save_user_answers( $quiz_answers_map, [], $lesson_id, $user_id );
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
 		/* Act. */
 		ob_start();
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 		ob_end_clean();
 
-		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		$quiz_answers    = Sensei()->quiz_answer_repository->get_all( $quiz_submission->get_id() );
+		$quiz_answers = Sensei()->quiz_answer_repository->get_all( $submission_id );
 
 		/* Assert. */
 		$this->assertEmpty( $quiz_answers );
@@ -1710,15 +1727,14 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		Sensei()->quiz->save_user_answers( $quiz_answers_map, [], $lesson_id, $user_id );
 		Sensei()->quiz->set_user_grades( $quiz_grades_map, $lesson_id, $user_id );
 
-		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+		$submission_id = Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
 
 		/* Act. */
 		ob_start();
 		Sensei()->quiz->reset_user_lesson_data( $lesson_id, $user_id );
 		ob_end_clean();
 
-		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
-		$quiz_grades     = Sensei()->quiz_grade_repository->get_all( $quiz_submission->get_id() );
+		$quiz_grades = Sensei()->quiz_grade_repository->get_all( $submission_id );
 
 		/* Assert. */
 		$this->assertEmpty( $quiz_grades );
