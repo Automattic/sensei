@@ -140,9 +140,9 @@ class Sensei_Home_Notices {
 
 			$available_updates = get_plugin_updates();
 			foreach ( $available_updates as $plugin_data ) {
-				$plugin_slug    = dirname( $plugin_data->update->plugin );
-				$update_version = $plugin_data->update->new_version;
-				$update_package = $plugin_data->update->package;
+				$plugin_slug    = dirname( $plugin_data->update->plugin ?? null );
+				$update_version = $plugin_data->update->new_version ?? null;
+				$update_package = $plugin_data->update->package ?? null;
 
 				if ( ! $plugin_slug || ! $update_version || ! $update_package ) {
 					continue;
