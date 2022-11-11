@@ -31,7 +31,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View_AJAX_Test extends WP_Ajax_UnitTest
 		unset( $GLOBALS['comment'] );
 		remove_filter( 'wp_die_ajax_handler', array( $this, 'getDieHandler' ), 1, 1 );
 		remove_action( 'clear_auth_cookie', array( $this, 'logout' ) );
-		error_reporting( $this->_error_level );
 		parent::tearDown();
 		$current_screen_globals = array( 'current_screen', 'taxnow', 'typenow' );
 		foreach ( $current_screen_globals as $global ) {
