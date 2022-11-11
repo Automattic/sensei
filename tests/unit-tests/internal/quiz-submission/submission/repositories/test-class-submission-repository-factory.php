@@ -12,9 +12,14 @@ use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repositor
  */
 class Submission_Repository_Factory_Test extends \WP_UnitTestCase {
 
-	public function testCreate_WhenCalled_ReturnsSubmissionRepository(): void {
+	/**
+	 * Tests that the factory creates the correct repository.
+	 *
+	 * @dataProvider providerCreate_WhenCalled_ReturnsSubmissionRepository
+	 */
+	public function testCreate_WhenCalled_ReturnsSubmissionRepository( bool $use_tables ): void {
 		/* Arrange. */
-		$factory = new Submission_Repository_Factory();
+		$factory = new Submission_Repository_Factory( $use_tables );
 
 		/* Act. */
 		$actual = $factory->create();
@@ -23,4 +28,10 @@ class Submission_Repository_Factory_Test extends \WP_UnitTestCase {
 		self::assertInstanceOf( Submission_Repository_Interface::class, $actual );
 	}
 
+	public function providerCreate_WhenCalled_ReturnsSubmissionRepository(): array {
+		return [
+			'use tables'        => [ true ],
+			'do not use tables' => [ false ],
+		];
+	}
 }
