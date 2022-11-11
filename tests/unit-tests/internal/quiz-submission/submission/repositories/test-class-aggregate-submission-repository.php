@@ -94,15 +94,20 @@ class Aggregate_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	public function testGetOrCreate_WhenHasNoSubmission_CallsCreate(): void {
 		/* Arrange. */
-		$repository = $this->getMockBuilder( Aggregate_Submission_Repository::class )
-			->disableOriginalConstructor()
-			->setMethods( [ 'get', 'create' ] )
-			->getMock();
+		$comments_based = $this->createMock( Comments_Based_Submission_Repository::class );
+		$tables_based   = $this->createMock( Tables_Based_Submission_Repository::class );
+		$repository     = new Aggregate_Submission_Repository( $comments_based, $tables_based, true );
 
 		/* Expect & Act. */
-		$repository
+		$comments_based
 			->expects( $this->once() )
-			->method( 'create' );
+			->method( 'create' )
+			->with( 1, 2, 12.34 );
+
+		$tables_based
+			->expects( $this->once() )
+			->method( 'create' )
+			->with( 1, 2, 12.34 );
 
 		$repository->get_or_create( 1, 2, 12.34 );
 	}
