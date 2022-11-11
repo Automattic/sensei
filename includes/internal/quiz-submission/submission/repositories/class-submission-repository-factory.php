@@ -20,6 +20,22 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Submission_Repository_Factory {
 	/**
+	 * Use tables-based repository.
+	 *
+	 * @var bool
+	 */
+	private $use_tables;
+
+	/**
+	 * Submission_Repository_Factory constructor.
+	 *
+	 * @param bool $use_tables Use tables-based repository.
+	 */
+	public function __construct( $use_tables = false ) {
+		$this->use_tables = $use_tables;
+	}
+
+	/**
 	 * Create a repository for the quiz submissions.
 	 *
 	 * @internal
@@ -32,7 +48,7 @@ class Submission_Repository_Factory {
 		return new Aggregate_Submission_Repository(
 			new Comments_Based_Submission_Repository(),
 			new Tables_Based_Submission_Repository( $wpdb ),
-			true
+			$this->use_tables
 		);
 	}
 }
