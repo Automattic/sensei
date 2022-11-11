@@ -50,13 +50,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	private $page_slug;
 
 	/**
-	 * Post type that the Student Management menu is associated with.
-	 *
-	 * @var string $menu_post_type
-	 */
-	private $menu_post_type;
-
-	/**
 	 * The enrollment status of the learners.
 	 *
 	 * @var string
@@ -130,8 +123,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			$this->view = 'learners';
 		}
 
-		$this->page_slug      = 'sensei_learners';
-		$this->menu_post_type = 'course';
+		$this->page_slug = 'sensei_learners';
 
 		// Load Parent token into constructor.
 		parent::__construct( 'learners_main' );
@@ -449,7 +441,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$withdraw_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
-									'post_type'        => $this->menu_post_type,
 									'page'             => 'sensei_learners',
 									'view'             => 'learners',
 									'learner_action'   => 'withdraw',
@@ -457,7 +448,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
 								),
-								admin_url( 'edit.php' )
+								admin_url( 'admin.php' )
 							),
 							'sensei-learner-action-withdraw'
 						);
@@ -471,7 +462,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 						$row_actions[] =
 							'<span class="delete">' .
-								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" href="#">' .
 									esc_html__( 'Reset Progress', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
@@ -491,7 +482,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						$enrol_action_url = wp_nonce_url(
 							add_query_arg(
 								array(
-									'post_type'        => $this->menu_post_type,
 									'page'             => 'sensei_learners',
 									'view'             => 'learners',
 									'learner_action'   => $enrol_data_action,
@@ -499,7 +489,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 									'user_id'          => $user_activity->user_id,
 									'enrolment_status' => $this->enrolment_status,
 								),
-								admin_url( 'edit.php' )
+								admin_url( 'admin.php' )
 							),
 							'sensei-learner-action-' . $enrol_data_action
 						);
@@ -513,7 +503,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 						$row_actions[] =
 							'<span class="delete">' .
-								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+								'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" href="#">' .
 									esc_html__( 'Remove Progress', 'sensei-lms' ) .
 								'</a>' .
 							'</span>';
@@ -522,14 +512,14 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					// Lessons.
 					$row_actions[] =
 						'<span class="delete">' .
-							'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+							'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="reset_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" href="#">' .
 								esc_html__( 'Reset Progress', 'sensei-lms' ) .
 							'</a>' .
 						'</span>';
 
 					$row_actions[] =
 						'<span class="delete">' .
-							'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '">' .
+							'<a class="learner-async-action delete" data-user-id="' . esc_attr( $user_activity->user_id ) . '" data-action="remove_progress" data-post-id="' . esc_attr( $post_id ) . '" data-post-type="' . esc_attr( $post_type ) . '" href="#">' .
 								esc_html__( 'Remove Progress', 'sensei-lms' ) .
 							'</a>' .
 						'</span>';
@@ -633,12 +623,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$grading_action = ' <a class="button" href="' . esc_url(
 						add_query_arg(
 							array(
-								'post_type' => $this->menu_post_type,
 								'page'      => 'sensei_grading',
 								'lesson_id' => $item->ID,
 								'course_id' => $this->course_id,
 							),
-							admin_url( 'edit.php' )
+							admin_url( 'admin.php' )
 						)
 					) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
 				}
@@ -657,13 +646,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 						'actions'      => '<a class="button" href="' . esc_url(
 							add_query_arg(
 								array(
-									'post_type' => $this->menu_post_type,
 									'page'      => $this->page_slug,
 									'lesson_id' => $item->ID,
 									'course_id' => $this->course_id,
 									'view'      => 'learners',
 								),
-								admin_url( 'edit.php' )
+								admin_url( 'admin.php' )
 							)
 						) . '">' . esc_html__( 'Manage students', 'sensei-lms' ) . '</a> ' . $grading_action,
 					),
@@ -693,11 +681,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$grading_action = ' <a class="button" href="' . esc_url(
 					add_query_arg(
 						array(
-							'post_type' => $this->menu_post_type,
 							'page'      => 'sensei_grading',
 							'course_id' => $item->ID,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
 
@@ -709,12 +696,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 								'<a class="row-title" href="' . esc_url(
 									add_query_arg(
 										array(
-											'post_type' => $this->menu_post_type,
 											'page'      => 'sensei_learners',
 											'course_id' => $item->ID,
 											'view'      => 'learners',
 										),
-										admin_url( 'edit.php' )
+										admin_url( 'admin.php' )
 									)
 								) . '" title="' . esc_attr( $a_title ) . '">' .
 									esc_html( $title ) .
@@ -1091,7 +1077,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 */
 	private function learners_link( $enrolment_status ) {
 		$query_args = array(
-			'post_type'        => $this->menu_post_type,
 			'page'             => $this->page_slug,
 			'course_id'        => $this->course_id,
 			'view'             => 'learners',
@@ -1099,7 +1084,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		);
 
 		$is_selected = 'learners' === $this->view && $enrolment_status === $this->enrolment_status;
-		$url         = add_query_arg( $query_args, admin_url( 'edit.php' ) );
+		$url         = add_query_arg( $query_args, admin_url( 'admin.php' ) );
 		$link_title  = false;
 
 		switch ( $enrolment_status ) {
@@ -1131,13 +1116,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 */
 	private function lessons_link() {
 		$query_args = array(
-			'post_type' => $this->menu_post_type,
 			'page'      => $this->page_slug,
 			'course_id' => $this->course_id,
 			'view'      => 'lessons',
 		);
 
-		$url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
+		$url = add_query_arg( $query_args, admin_url( 'admin.php' ) );
 
 		return '<a ' . ( 'lessons' === $this->view ? 'class="current"' : '' ) . ' href="' . esc_url( $url ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
 	}

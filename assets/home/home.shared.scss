@@ -1,0 +1,136 @@
+@import './variables';
+@import '../shared/styles/wp-admin';
+@import '../css/font-recoleta';
+
+@mixin white-box( $r: 2px ) {
+	border-radius: $r;
+	background-color: $white;
+	box-shadow: 0 0 0 1px $gray-5;
+}
+
+@mixin col-width($w) {
+	@media (min-width: $break-large) {
+		width: calc(#{$w} / 12 * 100%);
+	}
+}
+
+@font-face {
+	font-family: Reforma;
+	src: url('../css/fonts/Reforma1918-Blanca.otf') format('opentype');
+}
+
+.sensei-home-page {
+	max-width: 1244px;
+	margin: 0 auto;
+	padding-right: 10px;
+
+	@media (min-width: 783px) {
+		padding-right: 20px;
+	}
+
+	color: $gray-100;
+
+	.postbox {
+		height: 100%;
+	}
+
+	.postbox .hndle {
+			margin: 0;
+			padding: 8px 12px;
+			cursor: unset;
+	}
+
+	.postbox .inside {
+		padding: 0 12px;
+	}
+
+	.sensei-home {
+		&__loader {
+			height: 80vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		&__section {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			transition: 0.5s max-height, 0.5s margin-bottom; // For dismissable sections.
+
+			&--dismissed {
+				max-height: 0 !important;
+				margin-bottom: 0;
+			}
+
+			&--with-inner-sections {
+				margin-bottom: 0;
+			}
+
+			&__title {
+				margin: 0 0 17px;
+			}
+
+			&__description {
+				margin: 0 0 17px;
+			}
+
+			&__body {
+				flex: 1;
+			}
+		}
+
+		&__grid {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0 -9px;
+
+			&__col {
+				box-sizing: border-box;
+				width: 100%;
+				padding: 0 9px;
+
+				@for $i from 1 to 12 {
+					&.--col-#{$i} {
+						@include col-width( $i );
+					}
+				}
+			}
+		}
+
+		&__rotating-icon svg {
+			animation: rotation 2s infinite linear;
+		}
+
+		&__link {
+			& a {
+				text-decoration: unset;
+			}
+
+			&__external-icon {
+				margin-left: 4px;
+				vertical-align: text-bottom;
+				fill: currentColor;
+				width: 16px;
+				height: 16px;
+			}
+		}
+	}
+}
+
+.sensei-home-title {
+	display: flex;
+	margin: 31px 0;
+
+	&__logo {
+		width: 40px;
+		height: 40px;
+		margin-right: 12px;
+		color: #43AF99;
+	}
+
+	&__logotype {
+		width: 80px;
+		color: #26212E;
+	}
+}

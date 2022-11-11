@@ -931,6 +931,12 @@ class Sensei_Settings_API {
 		$options = $this->get_settings();
 
 		foreach ( $this->fields as $k => $v ) {
+			if ( 'color' === $v['type'] ) {
+				$input[ $k ] = str_replace( '#', '', $input[ $k ] );
+				if ( ! ctype_xdigit( $input[ $k ] ) || strlen( $input[ $k ] ) !== 6 ) {
+					$input[ $k ] = false;
+				}
+			}
 			// Make sure checkboxes are present even when false.
 			if ( $v['type'] == 'checkbox' && ! isset( $input[ $k ] ) ) {
 				$input[ $k ] = false; }

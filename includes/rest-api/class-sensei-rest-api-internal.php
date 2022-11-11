@@ -54,6 +54,7 @@ class Sensei_REST_API_Internal {
 			new Sensei_REST_API_Send_Message_Controller( $this->namespace ),
 			new Sensei_REST_API_Course_Students_Controller( $this->namespace ),
 			new Sensei_REST_API_Course_Progress_Controller( $this->namespace ),
+			Sensei_Home::instance()->get_rest_api_controller( $this->namespace ),
 		];
 
 		foreach ( $this->controllers as $controller ) {

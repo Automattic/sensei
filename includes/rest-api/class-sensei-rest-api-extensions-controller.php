@@ -52,7 +52,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 				[
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_extensions' ],
-					'permission_callback' => [ $this, 'can_user_manage_plugins' ],
+					'permission_callback' => [ $this, 'can_user_read_plugins' ],
 					'args'                => [
 						'installed'  => [
 							'type'              => 'bool',
@@ -136,6 +136,25 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Check user permission for reading plugins.
+	 *
+	 * @param WP_REST_Request $request WordPress request object.
+	 *
+	 * @return bool|WP_Error Whether the user can read extensions.
+	 */
+	public function can_user_read_plugins( WP_REST_Request $request ) {
+		if ( ! current_user_can( Sensei_Admin::get_top_menu_capability() ) ) {
+			return new WP_Error(
+				'rest_cannot_view_plugins',
+				__( 'Sorry, you are not allowed to read available plugins for this site.', 'sensei-lms' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Check user permission for managing plugins.
 	 *
 	 * @param WP_REST_Request $request WordPress request object.
@@ -190,6 +209,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Install extension.
 	 *
+	 * @since 4.8.0 If the plugin is already installed, it just activates it.
+	 *
 	 * @access private
 	 *
 	 * @param WP_REST_Request $request The request.
@@ -197,13 +218,12 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function install_extension( WP_REST_Request $request ) {
-		$json_params    = $request->get_json_params();
-		$plugin_slug    = $json_params['plugin'];
-		$sensei_plugins = Sensei_Extensions::instance()->get_extensions( 'plugin' );
+		$json_params = $request->get_json_params();
+		$plugin_slug = $json_params['plugin'];
 
 		$plugin_to_install = array_values(
 			array_filter(
-				$sensei_plugins,
+				Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
 				function( $plugin ) use ( $plugin_slug ) {
 					return $plugin->product_slug === $plugin_slug;
 				}
@@ -211,7 +231,9 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		)[0];
 
 		try {
-			Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			if ( ! $plugin_to_install->is_installed ) {
+				Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
+			}
 			wp_clean_plugins_cache();
 			Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
 		} catch ( Exception $e ) {
@@ -222,7 +244,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 		}
 
 		$installed_plugins = array_filter(
-			Sensei_Extensions::instance()->get_extensions( 'plugin' ),
+			Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
 			function( $plugin ) use ( $plugin_slug ) {
 				return $plugin->product_slug === $plugin_slug;
 			}
@@ -339,6 +361,8 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	/**
 	 * Generate a REST response from an array of plugins.
 	 *
+	 * @since 4.8.0 It doesn't support WCCOM extensions anymore.
+	 *
 	 * @param array   $plugins        The plugins.
 	 * @param string  $extensions_key Response key for the extensions array.
 	 * @param boolean $full_response  Whether it's creating the response for the main fetch.
@@ -346,18 +370,11 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	private function create_extensions_response( array $plugins, string $extensions_key, bool $full_response = false ): WP_REST_Response {
-		$wccom_connected = false;
-
-		if ( class_exists( 'WC_Helper_Options' ) ) {
-			$auth            = WC_Helper_Options::get( 'auth' );
-			$wccom_connected = ! empty( $auth['access_token'] );
-		}
-
 		$mapped_plugins = array_map(
-			function ( $plugin ) use ( $wccom_connected ) {
-				$plugin->price      = html_entity_decode( $plugin->price );
-				$plugin->image      = $plugin->image_large;
-				$plugin->can_update = empty( $plugin->wccom_product_id ) || ( $wccom_connected && empty( $plugin->wccom_expired ) );
+			function ( $plugin ) {
+				$plugin->price      = isset( $plugin->price ) ? html_entity_decode( $plugin->price ) : '';
+				$plugin->image      = isset( $plugin->image_large ) ? $plugin->image_large : '';
+				$plugin->can_update = empty( $plugin->wccom_product_id );
 				return $plugin;
 			},
 			$plugins
@@ -367,9 +384,7 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 
 		if ( $full_response ) {
 			$response_json = [
-				'layout'          => Sensei_Extensions::instance()->get_layout(),
-				'wccom'           => Sensei_Utils::get_woocommerce_connect_data(),
-				'wccom_connected' => $wccom_connected,
+				'layout' => Sensei_Extensions::instance()->get_layout(),
 			];
 		}
 
@@ -388,87 +403,71 @@ class Sensei_REST_API_Extensions_Controller extends WP_REST_Controller {
 	 */
 	public function get_extensions_schema() : array {
 		return [
-			'extensions'      => [
+			'extensions' => [
 				'type'  => 'array',
 				'items' => [
 					'type'       => 'object',
 					'properties' => [
-						'hash'             => [
+						'hash'            => [
 							'type'        => 'string',
 							'description' => 'Product ID.',
 						],
-						'title'            => [
+						'title'           => [
 							'type'        => 'string',
 							'description' => 'Extension title.',
 						],
-						'image'            => [
+						'image'           => [
 							'type'        => 'string',
 							'description' => 'Extension image.',
 						],
-						'excerpt'          => [
+						'excerpt'         => [
 							'type'        => 'string',
 							'description' => 'Extension excerpt',
 						],
-						'link'             => [
+						'link'            => [
 							'type'        => 'string',
 							'description' => 'Extension link.',
 						],
-						'price'            => [
+						'price'           => [
 							'type'        => 'string',
 							'description' => 'Extension price.',
 						],
-						'is_featured'      => [
+						'is_featured'     => [
 							'type'        => 'boolean',
 							'description' => 'Whether its a featured extension.',
 						],
-						'product_slug'     => [
+						'product_slug'    => [
 							'type'        => 'string',
 							'description' => 'Extension product slug.',
 						],
-						'hosted_location'  => [
+						'hosted_location' => [
 							'type'        => 'string',
 							'description' => 'Where the extension is hosted (dotorg or external)',
 						],
-						'type'             => [
+						'type'            => [
 							'type'        => 'string',
 							'description' => 'Whether this is a plugin or a theme',
 						],
-						'plugin_file'      => [
+						'plugin_file'     => [
 							'type'        => 'string',
 							'description' => 'Main plugin file.',
 						],
-						'version'          => [
+						'version'         => [
 							'type'        => 'string',
 							'description' => 'Extension version.',
 						],
-						'wccom_product_id' => [
-							'type'        => 'string',
-							'description' => 'WooCommerce.com product ID.',
-						],
-						'is_installed'     => [
+						'is_installed'    => [
 							'type'        => 'boolean',
 							'description' => 'Whether the extension is installed.',
 						],
-						'has_update'       => [
+						'has_update'      => [
 							'type'        => 'boolean',
 							'description' => 'Whether the extension has available updates.',
-						],
-						'wccom_expired'    => [
-							'type'        => 'boolean',
-							'description' => 'Whether the WC.com subscription is expired.',
 						],
 					],
 				],
 			],
-			'wccom'           => [
-				'type'        => 'object',
-				'description' => 'WC.com data.',
-			],
-			'wccom_connected' => [
-				'type'        => 'boolean',
-				'description' => 'Whether the site is connected to WC.com.',
-			],
-			'layout'          => [ $this, 'get_layout_schema' ],
+			'layout'     => [ $this, 'get_layout_schema' ],
 		];
 	}
 

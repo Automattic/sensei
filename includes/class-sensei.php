@@ -1,4 +1,18 @@
 <?php
+
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -231,6 +245,55 @@ class Sensei_Main {
 	public $blocks;
 
 	/**
+	 * Admin notices.
+	 *
+	 * @var Sensei_Admin_Notices
+	 */
+	public $admin_notices;
+
+	/**
+	 * Course progress repository.
+	 *
+	 * @var Course_Progress_Repository_Interface
+	 */
+	public $course_progress_repository;
+
+	/**
+	 * Lesson progress repository.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	public $lesson_progress_repository;
+
+	/**
+	 * Quiz progress repository.
+	 *
+	 * @var Quiz_Progress_Repository_Interface
+	 */
+	public $quiz_progress_repository;
+
+	/**
+	 * Quiz submission repository.
+	 *
+	 * @var Submission_Repository_Interface
+	 */
+	public $quiz_submission_repository;
+
+	/**
+	 * Quiz answer repository.
+	 *
+	 * @var Answer_Repository_Interface
+	 */
+	public $quiz_answer_repository;
+
+	/**
+	 * Quiz grade repository.
+	 *
+	 * @var Grade_Repository_Interface
+	 */
+	public $quiz_grade_repository;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -435,6 +498,9 @@ class Sensei_Main {
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 
+		// Sensei Home.
+		Sensei_Home::instance()->init();
+
 		Sensei_Scheduler::init();
 
 		// Block patterns.
@@ -446,6 +512,9 @@ class Sensei_Main {
 		// Load Analysis Reports.
 		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
 
+		// Admin notices.
+		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class.
@@ -454,7 +523,6 @@ class Sensei_Main {
 			new Sensei_Import();
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
-			new Sensei_Admin_Notices();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
@@ -484,6 +552,16 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
+
+		// Student progress repositories.
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+
+		// Quiz submission repositories.
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
 	}
 
 	/**

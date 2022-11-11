@@ -301,34 +301,22 @@ class Sensei_Course_Results_Block {
 	/**
 	 * Get the lesson grade.
 	 *
-	 * @param int $lesson_id
+	 * @param int $lesson_id The lesson ID.
 	 *
-	 * @return string|null
+	 * @return float|null
 	 */
-	private function get_lesson_grade( $lesson_id ) {
-		$activity_args   = [
-			'post_id' => $lesson_id,
-			'user_id' => get_current_user_id(),
-			'type'    => 'sensei_lesson_status',
-			'status'  => [ 'graded', 'passed', 'failed' ],
-		];
-		$lesson_activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
-
-		if ( empty( $lesson_activity ) ) {
+	private function get_lesson_grade( $lesson_id ): ?float {
+		$quiz_id = Sensei()->lesson->lesson_quizzes( $lesson_id );
+		if ( ! $quiz_id ) {
 			return null;
 		}
 
-		if ( is_array( $lesson_activity ) ) {
-			$lesson_activity = $lesson_activity[0];
-		}
-
-		$grade = get_comment_meta( $lesson_activity->comment_ID, 'grade', true );
-
-		if ( false === $grade || '' === $grade ) {
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, get_current_user_id() );
+		if ( ! $quiz_submission ) {
 			return null;
 		}
 
-		return $grade;
+		return $quiz_submission->get_final_grade();
 	}
 
 	/**

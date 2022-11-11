@@ -50,7 +50,7 @@ export const StudentActionMenu = ( {
 			title: __( 'Grading', 'sensei-lms' ),
 			onClick: () =>
 				window.open(
-					`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ studentName }`,
+					`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
 					'_self'
 				),
 		},

@@ -24,8 +24,8 @@ Sensei()->learners->learners_headers();
 <form id="learners-filter" method="get">
 	<?php Sensei_Utils::output_query_params_as_inputs( [ 's' ] ); ?>
 	<?php $sensei_list_table->table_search_form(); ?>
-	<?php $sensei_list_table->display(); ?>
 </form>
+<?php $sensei_list_table->display(); ?>
 <?php
 do_action( 'learners_wrapper_container', 'bottom' );
 do_action( 'learners_after_container' );

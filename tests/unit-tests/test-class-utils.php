@@ -268,6 +268,30 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
 	}
 
+	public function testSenseiGradeQuiz_WhenCalled_UpdatesTheFinalGrade() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		/* Act. */
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
+
+		/* Assert. */
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+
+		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
+	}
+
 	/**
 	 * Returns an associative array with parameters needed to run lesson completion test.
 	 *
