@@ -7,7 +7,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use RuntimeException;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
@@ -203,7 +203,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		$start_date = get_comment_meta( $status_comment->comment_ID, 'start', true );
 
 		return $start_date
-			? new DateTime( $start_date, wp_timezone() )
-			: current_datetime();
+			? new DateTimeImmutable( $start_date, wp_timezone() )
+			: new DateTimeImmutable( 'now', wp_timezone() );
 	}
 }
