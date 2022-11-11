@@ -148,7 +148,6 @@ class Sensei_Lesson {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
@@ -175,6 +174,8 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @since 4.0.0
 	 * @access private
 	 *
@@ -183,6 +184,8 @@ class Sensei_Lesson {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
@@ -207,8 +210,8 @@ class Sensei_Lesson {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -3610,9 +3613,6 @@ class Sensei_Lesson {
 			$user_id = get_current_user_id();
 		}
 
-		// Get the users current status on the lesson.
-		$user_lesson_status = Sensei_Utils::user_lesson_status( $quiz_lesson_id, $user_id );
-
 		// If viewing quiz on the frontend then show questions in random order if set.
 		if ( ! is_admin() ) {
 			$random_order = get_post_meta( $quiz_id, '_random_question_order', true );
@@ -3634,17 +3634,12 @@ class Sensei_Lesson {
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$questions_asked_string = ! empty( $user_lesson_status->comment_ID ) ? get_comment_meta( $user_lesson_status->comment_ID, 'questions_asked', true ) : false;
-			if ( ! empty( $questions_asked_string ) ) {
+			$selected_questions = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
 
-				$selected_questions = explode( ',', $questions_asked_string );
-
+			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
 				$questions = [];
 				foreach ( $selected_questions as $question_id ) {
-					if ( ! $question_id ) {
-						continue;
-					}
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
 						continue;
@@ -3666,7 +3661,7 @@ class Sensei_Lesson {
 				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
 				$questions_array = [];
-				foreach ( $questions_loop as $k => $question ) {
+				foreach ( $questions_loop as $question ) {
 
 					// If this is a single question then include it.
 					if ( 'question' === $question->post_type ) {
@@ -5238,7 +5233,23 @@ class Sensei_Lesson {
 		$lesson = get_post( $lesson );
 		$post   = $lesson->post_content ?? null;
 
-		return ! empty( $post ) && has_blocks( $post ) && ( false !== strpos( $post, '<!-- wp:sensei-lms/' ) );
+		if ( empty( $post ) || ! has_blocks( $post ) ) {
+			return false;
+		}
+
+		$lesson_blocks = [
+			'sensei-lms/lesson-actions',
+			'sensei-lms/lesson-properties',
+			'sensei-lms/button-contact-teacher',
+		];
+
+		foreach ( $lesson_blocks as $block ) {
+			if ( has_block( $block, $lesson ) ) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 

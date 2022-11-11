@@ -1,0 +1,11 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "sensei-lms/course-overview",
+	"title": "Course Overview",
+	"category": "sensei-lms",
+	"description": "Displays a link to the course.",
+	"textdomain": "sensei-lms",
+	"usesContext": [ "postType" ],
+	"example": {}
+}

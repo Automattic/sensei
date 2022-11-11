@@ -22,13 +22,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private $page_slug;
 
 	/**
-	 * Post type that the Student Management menu is associated with.
-	 *
-	 * @var string $menu_post_type
-	 */
-	private $menu_post_type;
-
-	/**
 	 * The page name.
 	 *
 	 * @var string
@@ -76,7 +69,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$this->learner            = $learner;
 		$this->name               = $controller->get_name();
 		$this->page_slug          = $controller->get_page_slug();
-		$this->menu_post_type     = 'course';
 		$this->query_args         = $this->parse_query_args();
 		$this->page_slug          = 'sensei_learner_admin';
 
@@ -318,14 +310,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$text = __( 'No students found.', 'sensei-lms' );
 		} else {
 			$add_students_args = [
-				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'course_id' => $course_id,
 				'view'      => 'learners',
 			];
 
 			$message = __( 'This course doesn\'t have any students yet, you can add them below.', 'sensei-lms' );
-			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'edit.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
+			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
 			$text    = '<div class="sensei-students__call-to-action"><div>' . $message . '</div><div>' . $button . '</div></div>';
 		}
 
@@ -567,10 +558,9 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$filter_type_input = sanitize_text_field( wp_unslash( $_GET['filter_type'] ) );
 			$filter_type       = in_array( $filter_type_input, array( 'inc', 'exc' ), true ) ? $filter_type_input : 'inc';
 		}
-		$page      = $this->page_slug;
-		$post_type = $this->menu_post_type;
-		$view      = $this->controller->get_view();
-		$args      = compact( 'page', 'post_type', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
+		$page = $this->page_slug;
+		$view = $this->controller->get_view();
+		$args = compact( 'page', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
 
 		return $args;
 	}

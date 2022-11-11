@@ -66,6 +66,8 @@ class Sensei_Course_List_Block_Patterns {
 
 													<!-- wp:post-excerpt {"textAlign":"left"} /-->
 
+													<!-- wp:sensei-lms/course-overview /-->
+
 													<!-- wp:sensei-lms/course-progress /-->
 												</div>
 											<!-- /wp:column -->
@@ -124,6 +126,8 @@ class Sensei_Course_List_Block_Patterns {
 										<!-- wp:post-author {"textAlign":"left","lock":{"move": true}} /-->
 
 										<!-- wp:post-excerpt {"textAlign":"left","lock":{"move": true}} /-->
+
+										<!-- wp:sensei-lms/course-overview /-->
 
 										<!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
 

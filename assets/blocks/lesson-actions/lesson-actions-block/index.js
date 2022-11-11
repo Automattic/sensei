@@ -7,6 +7,7 @@ import save from './lesson-actions-save';
 import icon from '../../../icons/buttons.svg';
 
 export default {
+	...metadata,
 	metadata,
 	example: {
 		innerBlocks: [

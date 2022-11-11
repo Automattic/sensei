@@ -141,6 +141,8 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	protected function add_additional_fields_to_object( $prepared, $request ) {
 		global $pagenow;
 
+		$prepared = parent::add_additional_fields_to_object( $prepared, $request );
+
 		if ( ! Sensei()->quiz->is_block_based_editor_enabled() || 'post-new.php' === $pagenow ) {
 			return $prepared;
 		}

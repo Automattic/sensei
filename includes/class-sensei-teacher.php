@@ -642,8 +642,8 @@ class Sensei_Teacher {
 		$screen            = get_current_screen();
 		$sensei_post_types = array( 'course', 'lesson', 'question' );
 
-		// exit early for the following conditions
-		$limit_screen_ids = array( 'course_page_' . Sensei_Analysis::PAGE_SLUG, 'course_page_module-order' );
+		// exit early for the following conditions.
+		$limit_screen_ids = array( 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG, 'sensei-lms_page_module-order' );
 
 		if ( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id, $limit_screen_ids )
 			|| ! in_array( $query->query['post_type'], $sensei_post_types ) ) {
@@ -751,9 +751,9 @@ class Sensei_Teacher {
 			return $query;
 		}
 		switch ( $screen->id ) {
-			case 'course_page_sensei_grading':
-			case 'course_page_' . Sensei_Analysis::PAGE_SLUG:
-			case 'course_page_sensei_learners':
+			case 'sensei-lms_page_sensei_grading':
+			case 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG:
+			case 'sensei-lms_page_sensei_learners':
 			case 'lesson':
 			case 'course':
 			case 'question':
@@ -791,7 +791,7 @@ class Sensei_Teacher {
 		// check if we're on the grading screen
 		$screen = get_current_screen();
 
-		if ( empty( $screen ) || 'course_page_sensei_grading' != $screen->id ) {
+		if ( empty( $screen ) || 'sensei-lms_page_sensei_grading' != $screen->id ) {
 			return $comments;
 		}
 
@@ -1532,8 +1532,8 @@ class Sensei_Teacher {
 			'edit-lesson',
 			'edit-course',
 			'edit-question',
-			'course_page_course-order',
-			'course_page_lesson-order',
+			'admin_page_course-order',
+			'admin_page_lesson-order',
 		);
 
 		if ( in_array( $screen->id, $limit_screens ) ) {

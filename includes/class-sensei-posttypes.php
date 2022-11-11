@@ -204,7 +204,7 @@ class Sensei_PostTypes {
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
-			'show_in_menu'          => true,
+			'show_in_menu'          => false,
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
@@ -798,7 +798,7 @@ class Sensei_PostTypes {
 		$this->labels['course']            = array(
 			'singular' => __( 'Course', 'sensei-lms' ),
 			'plural'   => __( 'Courses', 'sensei-lms' ),
-			'menu'     => __( 'Sensei LMS', 'sensei-lms' ),
+			'menu'     => __( 'Courses', 'sensei-lms' ),
 		);
 		$this->labels['lesson']            = array(
 			'singular' => __( 'Lesson', 'sensei-lms' ),
@@ -1054,8 +1054,18 @@ class Sensei_PostTypes {
 	 * @since 4.0.0
 	 */
 	public function add_submenus() {
+		Sensei_Home::instance()->add_admin_menu_item();
+
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
+			__( 'Courses', 'sensei-lms' ),
+			__( 'Courses', 'sensei-lms' ),
+			'edit_courses',
+			'edit.php?post_type=course'
+		);
+
+		add_submenu_page(
+			'sensei',
 			__( 'Modules', 'sensei-lms' ),
 			__( 'Modules', 'sensei-lms' ),
 			'manage_categories',
@@ -1063,7 +1073,7 @@ class Sensei_PostTypes {
 		);
 
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			__( 'Lessons', 'sensei-lms' ),
 			__( 'Lessons', 'sensei-lms' ),
 			'edit_lessons',
@@ -1071,7 +1081,7 @@ class Sensei_PostTypes {
 		);
 
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			__( 'Questions', 'sensei-lms' ),
 			__( 'Questions', 'sensei-lms' ),
 			'edit_questions',
@@ -1109,7 +1119,6 @@ class Sensei_PostTypes {
 		Sensei()->analysis->analysis_admin_menu();
 		Sensei()->settings->register_settings_screen();
 		Sensei_Tools::instance()->add_menu_pages();
-		Sensei_Extensions::instance()->add_admin_menu_item();
 	}
 
 	/**

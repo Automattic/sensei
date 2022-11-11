@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Settings extends Sensei_Settings_API {
 
+	const VISITED_SECTIONS_OPTION_KEY = 'sensei_settings_sections_visited';
+
 	/**
 	 * Constructor.
 	 *
@@ -45,6 +47,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
 		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
 
+		// Mark settings section as visited on ajax action received.
+		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
 	}
 
 	/**
@@ -92,7 +96,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function register_settings_screen() {
 		$this->settings_version = Sensei()->version; // Use the global plugin version on this settings screen.
 		$this->hook             = add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			$this->name,
 			$this->menu_label,
 			'manage_sensei',
@@ -467,7 +471,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
 			'form'        => 'render_learning_mode_setting',
 			'type'        => 'checkbox',
-			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '$$next-version$$', '>=' ),
+			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '4.7.0', '>=' ),
 			'section'     => 'appearance-settings',
 		);
 
@@ -919,10 +923,15 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @param array $args The field arguments.
 	 */
 	public function render_learning_mode_setting( $args ) {
-		$options       = $this->get_settings();
-		$key           = $args['key'];
-		$value         = $options[ $key ];
-		$customize_url = Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' );
+		$options = $this->get_settings();
+		$key     = $args['key'];
+		$value   = $options[ $key ];
+
+		$color_customizer_url = '';
+		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
+			$color_customizer_url = Sensei_Course_Theme::get_learning_mode_customizer_url();
+		}
+
 		?>
 		<label for="<?php echo esc_attr( $key ); ?>">
 			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
@@ -931,14 +940,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 		<p>
 			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
 		</p>
-		<?php if ( $customize_url ) { ?>
+
+		<?php if ( $color_customizer_url ) : ?>
 			<p class="extra-content">
-				<a href="<?php echo esc_url( $customize_url ); ?>">
-					<?php esc_html_e( 'Customize', 'sensei-lms' ); ?>
+				<a href="<?php echo esc_url( $color_customizer_url ); ?>">
+					<?php esc_html_e( 'Customize Colors', 'sensei-lms' ); ?>
 				</a>
 			</p>
-			<?php
-		}
+		<?php endif; ?>
+
+		<?php
 	}
 
 	/**
@@ -990,7 +1001,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'name'         => "{$this->token}[{$key}]",
 			'value'        => $value,
 			'options'      => $args['data']['options'],
-			'customizeUrl' => Sensei_Course_Theme::get_sensei_theme_customize_url( false, 'lesson' ),
+			'customizeUrl' => Sensei_Course_Theme::get_learning_mode_fse_url(),
 			'formId'       => "{$this->token}-form",
 			'section'      => $args['data']['section'],
 		];
@@ -1001,6 +1012,36 @@ class Sensei_Settings extends Sensei_Settings_API {
 			sprintf( 'window.sensei = window.sensei || {}; window.sensei.learningModeTemplateSetting = %s;', wp_json_encode( $inline_data ) ),
 			'before'
 		);
+	}
+
+	/**
+	 * Enqueue javascript.
+	 */
+	public function enqueue_scripts() {
+		parent::enqueue_scripts();
+
+		// Generate nonce for marking section visited action.
+		wp_add_inline_script(
+			'sensei-settings',
+			'window.senseiSettingsSectionVisitNonce  = "' . wp_create_nonce( 'sensei-mark-settings-section-visited' ) . '";',
+			'before'
+		);
+	}
+
+	/**
+	 * Marks the given section as visited.
+	 */
+	public function mark_section_as_visited() {
+		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'sensei-mark-settings-section-visited' ) ) {
+			if ( isset( $_POST['section_id'] ) ) {
+				$section_id = sanitize_key( $_POST['section_id'] );
+				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );
+				if ( ! in_array( $section_id, $visited, true ) ) {
+					$visited[] = $section_id;
+					update_option( self::VISITED_SECTIONS_OPTION_KEY, $visited );
+				}
+			}
+		}
 	}
 }
 

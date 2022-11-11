@@ -6,13 +6,18 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Notice } from '@wordpress/components';
 
 /**
+ * Internal dependencies
+ */
+import { store as setupWizardStore } from './index';
+
+/**
  * @typedef {Object} StepStoreHookHandle
  *
- * @property {boolean}  isSubmitting Submitting state.
  * @property {Object}   stepData     Data for the step.
+ * @property {Function} submitStep   Method to POST to endpoint.
+ * @property {boolean}  isSubmitting Submitting state.
  * @property {Object}   error        Submit error.
  * @property {Element}  errorNotice  Error notice element.
- * @property {Function} submitStep   Method to POST to endpoint.
  */
 /**
  * Use Setup Wizard State store and REST API for the given step.
@@ -24,21 +29,22 @@ import { Notice } from '@wordpress/components';
  * @return {StepStoreHookHandle} handle
  */
 export const useSetupWizardStep = ( step ) => {
-	const { stepData, isSubmitting, error, isComplete } = useSelect(
-		( select ) => ( {
-			stepData: select( 'sensei/setup-wizard' ).getStepData( step ),
-			isSubmitting: select( 'sensei/setup-wizard' ).isSubmitting(),
-			error: select( 'sensei/setup-wizard' ).getSubmitError(),
-			isComplete: select( 'sensei/setup-wizard' ).isCompleteStep( step ),
-		} ),
-		[]
-	);
-	const { submitStep } = useDispatch( 'sensei/setup-wizard' );
+	const { stepData, isSubmitting, error } = useSelect( ( select ) => {
+		const store = select( setupWizardStore );
+
+		return {
+			stepData: store.getStepData( step ),
+			isSubmitting: store.isSubmitting(),
+			error: store.getSubmitError(),
+		};
+	}, [] );
+
+	const { submitStep } = useDispatch( setupWizardStore );
 
 	const errorNotice = error ? (
 		<Notice
 			status="error"
-			className="sensei-setup-wizard__submit-error"
+			className="sensei-setup-wizard__error-notice"
 			isDismissible={ false }
 		>
 			{ error.message }
@@ -56,6 +62,5 @@ export const useSetupWizardStep = ( step ) => {
 		isSubmitting,
 		error,
 		errorNotice,
-		isComplete,
 	};
 };

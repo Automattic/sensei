@@ -2,80 +2,7 @@
 /* Backend Global Stylesheet */
 /*-----------------------------------------------------------------------------------*/
 
-$sensei-notice-icon-height: 30px;
-$sensei-notice-icon-width: 30px;
-
-/* Sensei Notice */
-.wp-core-ui .notice {
-	&.is-dismissible {
-		padding: 10px 16px;
-	}
-}
-
-.sensei-notice {
-	@import '../shared/styles/wp-admin';
-
-	align-items: flex-start;
-	border-left-color: $primary;
-	display: flex;
-	gap: 10px;
-	min-height: 40px;
-
-	&__icon {
-		color: #26212E;
-		flex: 0 0 auto;
-		margin-top: 0.5em;
-		width: $sensei-notice-icon-width;
-		height: $sensei-notice-icon-height;
-	}
-
-	&__wrapper {
-		padding: 0;
-		font-size: 14px;
-
-		@media (min-width: 500px) {
-			display: flex;
-			flex: 1 1 auto;
-			gap: 10px;
-		}
-	}
-
-	&__content a {
-		color: #000;
-	}
-
-	&__heading {
-		margin: 5px 0;
-		font-weight: bold;
-	}
-
-	&__actions {
-		margin: 0.5em 0 0.5em auto;
-		align-self: center;
-
-		.button {
-			padding: 3px 12px;
-		}
-	}
-
-	.notice-dismiss {
-		align-self: center;
-		padding: 0;
-		position: static;
-	}
-
-	&.sensei-notice-error {
-		border-left-color: $notice-error;
-	}
-
-	&.sensei-notice-warning {
-		border-left-color: $notice-warning;
-	}
-
-	&.sensei-notice-info {
-		border-left-color: $notice-info;
-	}
-}
+@import './admin-notices';
 
 /*  Sensei Icon Font */
 @font-face {
@@ -86,19 +13,15 @@ $sensei-notice-icon-width: 30px;
 }
 
 /* Sensei LMS menu */
-body #menu-posts-course {
+body #toplevel_page_sensei {
 	div.wp-menu-image:before {
 		font-family: 'sensei';
 		content: "\f101";
 	}
 
 	ul li a {
-		&[href="post-new.php?post_type=course"] {
-			display: none;
-		}
-
-		&[href="edit.php?post_type=course&page=sensei_learners"],
-		&[href="edit.php?post_type=course&page=sensei_reports"] {
+		&[href="admin.php?page=sensei_learners"],
+		&[href="admin.php?page=sensei_reports"] {
 			border-top: solid 1px;
 			margin-top: 10px;
 			padding-top: 10px;
