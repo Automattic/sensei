@@ -18,7 +18,7 @@ class Quiz_Progress_Repository_Factory {
 
 	/**
 	 * Use tables based progress flag.
-	 * 
+	 *
 	 * @var bool
 	 */
 	private $use_tables;
