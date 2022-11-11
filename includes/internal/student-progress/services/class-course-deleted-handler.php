@@ -22,6 +22,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Course_Deleted_Handler {
 	/**
+	 * Course progress repository.
+	 *
+	 * @var Course_Progress_Repository_Interface
+	 */
+	private $course_progress_repository;
+
+	/**
 	 * The course deleted handler constructor.
 	 *
 	 * @param Course_Progress_Repository_Interface $course_progress_repository The course progress repository.
