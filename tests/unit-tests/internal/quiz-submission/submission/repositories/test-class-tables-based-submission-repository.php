@@ -190,13 +190,51 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$this->assertSame( $expected, $this->export_submission_with_dates( $submission ) );
 	}
 
+	public function testGet_WithDbSubmissionFound_ReturnsSubmission(): void {
+		/* Arrange. */
+		global $wpdb;
+
+		$date = ( new DateTimeImmutable() )->format( 'Y-m-d H:i:s' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->insert(
+			$wpdb->prefix . 'sensei_lms_quiz_submissions',
+			[
+				'quiz_id'     => 1,
+				'user_id'     => 2,
+				'final_grade' => 12.34,
+				'created_at'  => $date,
+				'updated_at'  => $date,
+			],
+			[
+				'%d',
+				'%d',
+				'%f',
+				'%s',
+				'%s',
+			]
+		);
+		$submission_id = $wpdb->insert_id;
+		$repository    = new Tables_Based_Submission_Repository( $wpdb );
+
+		/* Act. */
+		$submission = $repository->get( 1, 2 );
+
+		/* Assert. */
+		$expected = [
+			'id'          => $submission_id,
+			'quiz_id'     => 1,
+			'user_id'     => 2,
+			'final_grade' => 12.34,
+		];
+		self::assertSame( $expected, $this->export_submission( $submission ) );
+	}
+
 	public function testGetQuestionIds_WhenHasQuestions_ReturnsTheQuestionIds() {
 		/* Arrange. */
 		global $wpdb;
 
 		$repository = new Tables_Based_Submission_Repository( $wpdb );
 
-		// Todo: Replace the wpdb inserts with calls to the quiz answers repository.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$wpdb->insert(
 			$wpdb->prefix . 'sensei_lms_quiz_answers',
