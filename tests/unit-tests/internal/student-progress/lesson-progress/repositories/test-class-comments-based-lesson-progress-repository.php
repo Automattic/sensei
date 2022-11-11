@@ -154,6 +154,40 @@ class Comments_Based_Lesson_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertFalse( $repository->has( $lesson_id, $user_id ) );
 	}
 
+	public function testDeleteForLesson_WhenLessonGiven_DeletesProgressForLesson(): void {
+		/* Arrange. */
+		$lesson_id              = $this->factory->lesson->create();
+		$second_lesson_id       = $this->factory->lesson->create();
+		$user_id                = $this->factory->user->create();
+		$repository             = new Comments_Based_Lesson_Progress_Repository();
+		$progress_to_be_deleted = $repository->create( $lesson_id, $user_id );
+		$progress_to_be_kept    = $repository->create( $second_lesson_id, $user_id );
+
+		/* Act. */
+		$repository->delete_for_lesson( $lesson_id );
+
+		/* Assert. */
+		self::assertFalse( $repository->has( $lesson_id, $user_id ) );
+		self::assertTrue( $repository->has( $second_lesson_id, $user_id ) );
+	}
+
+	public function testDeleteForUser_WhenUserGiven_DeletesProgressForUser(): void {
+		/* Arrange. */
+		$lesson_id              = $this->factory->lesson->create();
+		$user_id                = $this->factory->user->create();
+		$deleted_user_id        = $this->factory->user->create();
+		$repository             = new Comments_Based_Lesson_Progress_Repository();
+		$progress_to_be_deleted = $repository->create( $lesson_id, $user_id );
+		$progress_to_be_kept    = $repository->create( $lesson_id, $deleted_user_id );
+
+		/* Act. */
+		$repository->delete_for_user( $deleted_user_id );
+
+		/* Assert. */
+		self::assertFalse( $repository->has( $lesson_id, $deleted_user_id ) );
+		self::assertTrue( $repository->has( $lesson_id, $user_id ) );
+	}
+
 	private function export_progress( Lesson_Progress $progress ): array {
 		return [
 			'user_id'   => $progress->get_user_id(),

@@ -153,6 +153,34 @@ class Aggregate_Lesson_Progress_Repository implements Lesson_Progress_Repository
 	}
 
 	/**
+	 * Deletes all lesson progress for a lesson.
+	 *
+	 * @internal
+	 *
+	 * @param int $lesson_id The lesson ID.
+	 */
+	public function delete_for_lesson( int $lesson_id ): void {
+		$this->comments_based_repository->delete_for_lesson( $lesson_id );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete_for_lesson( $lesson_id );
+		}
+	}
+
+	/**
+	 * Deletes all lesson progress for a user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$this->comments_based_repository->delete_for_user( $user_id );
+		if ( $this->use_tables ) {
+			$this->tables_based_repository->delete_for_user( $user_id );
+		}
+	}
+
+	/**
 	 * Returns the number of started lessons for a user in a course.
 	 * The number of started lessons is the same as the number of lessons that have a progress record.
 	 *

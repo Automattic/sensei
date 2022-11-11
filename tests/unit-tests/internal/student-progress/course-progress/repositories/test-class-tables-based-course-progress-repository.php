@@ -322,6 +322,52 @@ class Tables_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		$repository->delete( $progress );
 	}
 
+	public function testDeleteForCourse_CourseIdGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'post_id' => 2,
+					'type'    => 'course',
+				],
+				[
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete_for_course( 2 );
+	}
+
+	public function testDeleteForUser_UserIdGiven_CallsWpdbDelete(): void {
+		/* Arrange. */
+		$wpdb       = $this->createMock( wpdb::class );
+		$repository = new Tables_Based_Course_Progress_Repository( $wpdb );
+
+		/* Expect & Act. */
+		$wpdb
+			->expects( self::once() )
+			->method( 'delete' )
+			->with(
+				'sensei_lms_progress',
+				[
+					'user_id' => 2,
+					'type'    => 'course',
+				],
+				[
+					'%d',
+					'%s',
+				]
+			);
+		$repository->delete_for_user( 2 );
+	}
+
 	private function export_progress( Course_Progress $progress ): array {
 		return [
 			'id'        => $progress->get_id(),

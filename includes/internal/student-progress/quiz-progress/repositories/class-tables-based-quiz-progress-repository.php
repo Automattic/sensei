@@ -214,4 +214,46 @@ class Tables_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_
 			]
 		);
 	}
+
+	/**
+	 * Delete all quiz progress for a quiz.
+	 *
+	 * @internal
+	 *
+	 * @param int $quiz_id Quiz identifier.
+	 */
+	public function delete_for_quiz( int $quiz_id ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'post_id' => $quiz_id,
+				'type'    => 'quiz',
+			],
+			[
+				'%d',
+				'%s',
+			]
+		);
+	}
+
+	/**
+	 * Delete all quiz progress for a user.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id User identifier.
+	 */
+	public function delete_for_user( int $user_id ): void {
+		$this->wpdb->delete(
+			$this->wpdb->prefix . 'sensei_lms_progress',
+			[
+				'user_id' => $user_id,
+				'type'    => 'quiz',
+			],
+			[
+				'%d',
+				'%s',
+			]
+		);
+	}
 }
