@@ -125,6 +125,18 @@ div.question_boolean_fields { margin-bottom: 10px; }
     text-decoration: none;
 }
 
+.sensei-edit-field-set .sensei-quiz-settings {
+	display: flex;
+	width: 40%;
+	flex-wrap: wrap;
+	margin-bottom: 0.3em;
+}
+
+.sensei-edit-field-set .sensei-quiz-settings .title {
+	flex-basis: 90%;
+	flex-shrink: 0;
+}
+
 .wp-list-table {
 	.sensei-wp-list-table-link {
 		display: block;

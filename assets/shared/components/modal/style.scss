@@ -1,0 +1,78 @@
+.sensei-modal {
+
+	color: #1E1E1E;
+
+	& &__overlay {
+		position: fixed;
+		z-index: 99999;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background-color: rgba(0, 0, 0, 0.8);
+	}
+
+	& &__wrapper {
+		position: fixed;
+		display: flex;
+		flex-direction: column;
+		z-index: 100000;
+		width: 700px;
+		max-width: 96%;
+		max-height: 80%;
+		top: 50%;
+		left: 50%;
+		background-color: #fff;
+		border: 1px solid #ddd;
+		border-radius: 2px;
+		transform: translate(-50%, -50%);
+		box-shadow: rgba(0, 0, 0, 0.2) 0 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
+	}
+
+	& &__title {
+		display: block;
+		min-height: 60px;
+		padding: 18px 30px;
+		border-bottom: 1px solid #ddd;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 24px;
+		box-sizing: border-box;
+	}
+
+	& &__header {
+		min-height: 60px;
+	}
+
+	& &__content {
+		padding: 26px;
+		overflow: auto;
+		flex-grow: 1;
+	}
+
+	& &__close-button {
+		position: absolute;
+		z-index: 2;
+		top: 19px;
+		right: 24px;
+		width: 24px;
+		height: 20px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border: 0;
+		background: none;
+		cursor: pointer;
+		padding: 0;
+		margin: 0;
+		outline: unset;
+
+		&.sensei-modal:not(:hover) {
+			background: none;
+		}
+	}
+
+	& &__footer {
+		padding: 26px;
+	}
+}

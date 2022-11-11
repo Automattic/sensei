@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 3.6.0
  */
 class Sensei_Course_Structure {
-	const PUBLISHED_POST_STATUSES = [ 'publish', 'private' ];
-
 	/**
 	 * Course instances.
 	 *
@@ -80,8 +78,8 @@ class Sensei_Course_Structure {
 
 		$structure = [];
 
-		$published_lessons_only = 'view' === $context;
-		$post_status            = $published_lessons_only ? self::PUBLISHED_POST_STATUSES : 'any';
+		$published_lessons_only = 'view' === $context && ! current_user_can( 'read_private_posts' );
+		$post_status            = $published_lessons_only ? 'publish' : 'any';
 		$no_module_lessons      = wp_list_pluck( Sensei()->modules->get_none_module_lessons( $this->course_id, $post_status ), 'ID' );
 		$modules                = $this->get_modules();
 
@@ -138,22 +136,26 @@ class Sensei_Course_Structure {
 	 *     @type int    $id          The module term id.
 	 *     @type string $title       The module name.
 	 *     @type string $teacher     Name of the teacher of this module, gets populated only in admin panel for admins and if the teacher is not admin.
+	 *     @type int    $teacherId   ID of the module author, used by block editor to detect change of teacher.
 	 *     @type string $lastTitle   Used in the block editor for unchanged title state reference.
+	 *     @type string $slug        Slug of the module, not empty only if the slug is custom.
 	 *     @type string $description The module description.
 	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
 	 * }
 	 */
 	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
-		$lessons = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
-		$author  = Sensei_Core_Modules::get_term_author( $module_term->slug );
-
-		$module = [
+		$lessons      = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
+		$author       = Sensei_Core_Modules::get_term_author( $module_term->slug );
+		$default_slug = $this->get_module_slug( $module_term->name );
+		$module       = [
 			'type'        => 'module',
 			'id'          => $module_term->term_id,
 			'title'       => $module_term->name,
 			'description' => $module_term->description,
 			'teacher'     => user_can( $author, 'manage_options' ) ? '' : $author->display_name,
+			'teacherId'   => $author->ID,
 			'lastTitle'   => $module_term->name,
+			'slug'        => $module_term->slug === $default_slug ? '' : $module_term->slug,
 			'lessons'     => [],
 		];
 
@@ -262,7 +264,6 @@ class Sensei_Course_Structure {
 				update_post_meta( $lesson_id, '_order_' . $this->course_id, count( $lesson_order ) );
 			}
 		}
-
 		// Save the module association.
 		$module_diff = array_diff( $current_module_ids, $module_order );
 		if ( ! empty( $module_diff ) || count( $current_module_ids ) !== count( $module_order ) ) {
@@ -299,14 +300,22 @@ class Sensei_Course_Structure {
 	 * }
 	 */
 	private function save_module( array $item ) {
-		if ( $item['id'] ) {
-			$term = get_term( $item['id'], 'module' );
-			$slug = $this->get_module_slug( $item['title'] );
+		if ( $item['id'] || $item['slug'] ) {
+			$term         = get_term( $item['id'], 'module' );
+			$author       = get_post( $this->course_id )->post_author;
+			$default_slug = $this->get_module_slug( $item['title'] );
+			// Custom slug gets priority over conventional slug.
+			$slug = $item['slug'] ?? $default_slug;
 
-			// Slug has changed.
-			if ( $term->slug !== $slug ) {
-				$existing_module_id = $this->get_existing_module( $item['title'] );
-				$module_id          = $existing_module_id ? $existing_module_id : $this->create_module( $item );
+			if ( ! $term || $term->slug !== $slug ) {
+				$existing_module = $this->try_get_existing_module_by_slug_or_title_for_author( $slug, $item['title'] );
+				if ( $existing_module ) {
+					$temp_item       = $item;
+					$temp_item['id'] = $existing_module->term_id;
+					$module_id       = $this->update_module( $temp_item );
+				} else {
+					$module_id = $this->create_module( $item );
+				}
 			} else {
 				$module_id = $this->update_module( $item );
 			}
@@ -320,6 +329,7 @@ class Sensei_Course_Structure {
 
 		$lesson_ids       = [];
 		$lesson_order_key = '_order_module_' . $module_id;
+
 		foreach ( $item['lessons'] as $lesson_item ) {
 			$lesson_id = $this->save_lesson( $lesson_item, $module_id );
 			if ( ! $lesson_id ) {
@@ -332,6 +342,19 @@ class Sensei_Course_Structure {
 
 			$lesson_ids[] = $lesson_id;
 		}
+
+		if ( $item['slug'] ) {
+			// If a custom slug is defined, remove any unused module generated when changing teacher.
+			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
+			$previous_term && Sensei()->modules->remove_if_unused( $previous_term->term_id );
+			// If the previous id does not match the current id, remove the previous module.
+			if ( $item['id'] && $item['id'] !== $module_id ) {
+				wp_remove_object_terms( $this->course_id, $item['id'], 'module' );
+				Sensei()->modules->remove_if_unused( $item['id'] );
+			}
+		}
+
+		Sensei_Core_Modules::update_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );
 
 		return [
 			$module_id,
@@ -367,7 +390,7 @@ class Sensei_Course_Structure {
 	private function create_module( array $item ) {
 		$args = [
 			'description' => $item['description'],
-			'slug'        => $this->get_module_slug( $item['title'] ),
+			'slug'        => $item['slug'] ?? $this->get_module_slug( $item['title'] ),
 		];
 
 		$create_result = wp_insert_term( $item['title'], 'module', $args );
@@ -394,6 +417,9 @@ class Sensei_Course_Structure {
 		}
 		if ( $term->description !== $item['description'] ) {
 			$changed_args['description'] = $item['description'];
+		}
+		if ( $item['slug'] && $term->slug !== $item['slug'] ) {
+			$changed_args['slug'] = $item['slug'];
 		}
 
 		if ( ! empty( $changed_args ) ) {
@@ -722,7 +748,39 @@ class Sensei_Course_Structure {
 			}
 
 			$item['description'] = isset( $raw_item['description'] ) ? trim( wp_kses_post( $raw_item['description'] ) ) : null;
+			$item['slug']        = ! empty( $raw_item['slug'] ) ? trim( sanitize_text_field( $raw_item['slug'] ) ) : null;
+			$item['lastTitle']   = ! empty( $raw_item['lastTitle'] ) ? trim( sanitize_text_field( $raw_item['lastTitle'] ) ) : null;
 			$item['lessons']     = [];
+
+			if ( $item['slug'] ) {
+				$course_name = Sensei_Teacher::is_module_in_use_by_different_course_and_teacher( $item['slug'], $this->course_id, absint( $raw_item['teacherId'] ) );
+				if ( $course_name ) {
+					return new WP_Error(
+						'module_in_use_in_different_course_by_different_teacher',
+						sprintf(
+						/* translators: Placeholder 1 is the module slug and 2 is course name. */
+							__( 'Slug %1$s exists and is being used in %2$s course', 'sensei-lms' ),
+							$item['slug'],
+							$course_name
+						)
+					);
+				}
+
+				if ( Sensei_Core_Modules::get_term_author( $item['slug'] )->ID !== wp_get_current_user()->ID &&
+					! current_user_can( 'manage_options' ) &&
+					get_term_by( 'slug', $item['slug'], 'module' )
+				) {
+					return new WP_Error(
+						'module_belongs_to_another_user',
+						sprintf(
+						/* translators: Placeholder is the module slug. */
+							__( 'A module with the slug %s is already owned by another teacher', 'sensei-lms' ),
+							$item['slug']
+						)
+					);
+				}
+			}
+
 			foreach ( $raw_item['lessons'] as $raw_lesson ) {
 				$lesson = $this->sanitize_item( $raw_lesson );
 				if ( is_wp_error( $lesson ) ) {
@@ -863,5 +921,50 @@ class Sensei_Course_Structure {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Try getting an existing module by custom slug, default slug, or name for course teacher.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param string $slug  The slug of the module.
+	 * @param string $title The title of the module.
+	 *
+	 * @return WP_Term|null The module if it exists, null otherwise.
+	 */
+	private function try_get_existing_module_by_slug_or_title_for_author( $slug, $title ) {
+		$default_slug = $this->get_module_slug( $title );
+
+		// First try to get an existing module directly by the provided slug.
+		$existing_module = get_term_by( 'slug', $slug, 'module' );
+
+		// If not found, try to find if this teacher already has a module for this, with the default slug.
+		if ( ! $existing_module && $slug !== $default_slug ) {
+			$existing_module = get_term_by( 'slug', $default_slug, 'module' );
+		}
+
+		$author = get_post( $this->course_id )->post_author;
+		// If not found, try to find module for this teacher using term-meta.
+		if ( ! $existing_module && ! user_can( $author, 'manage_options' ) ) {
+			$modules = get_terms(
+				array(
+					'taxonomy'   => 'module',
+					'name'       => $title,
+					'hide_empty' => false,
+					'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only executed while saving, not too many data possibly.
+						array(
+							'key'     => 'module_author',
+							'value'   => $author,
+							'compare' => '=',
+						),
+					),
+				)
+			);
+			if ( ! empty( $modules ) ) {
+				$existing_module = $modules[0];
+			}
+		}
+		return $existing_module;
 	}
 }

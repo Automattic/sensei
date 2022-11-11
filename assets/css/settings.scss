@@ -44,7 +44,6 @@
 	}
 }
 #woothemes-sensei  {
-	position: relative;
 	.fl  {
 		float: left;
 	}
@@ -70,11 +69,54 @@
 	z-index: 2;
 }
 /* Analysis */
+.wrap {
+	.sensei-analysis {
+		&__no-items-message {
+			margin: 50px 0;
+			text-align: center;
+			font-size: 14px;
+		}
+
+		&__top-filters {
+			float: left;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			margin-bottom: 14px;
+		}
+	}
+
+	.sensei-date-picker {
+		max-width: 100px;
+	}
+
+	#sensei-course-filter {
+		float: none;
+		margin-bottom: 4px;
+	}
+
+	.postbox {
+		padding: 1em 0px 0px 1em;
+		h2#add-student-to-course-header {
+			padding: 0px;
+		}
+		.inside {
+			padding: 0px;
+		}
+	}
+
+	@media screen and (max-width: 782px) {
+		.sensei-actions__always-visible {
+			display: block !important;
+		}
+	}
+}
+
 .sensei-analysis-wrap {
-	padding-top: 18px;
 	display: flex;
 	gap: 20px;
 	flex-flow: row;
+	clear: both;
 
 	@media (max-width: 850px) {
 		flex-direction: column;
@@ -98,11 +140,6 @@
 
 	.sensei-analysis-main {
 		flex: 1;
-		.tablenav {
-			.tablenav-pages {
-				margin-right: 20px;
-			}
-		}
 	}
 
 	.sensei-analysis, .sensei-analysis-course {
@@ -227,78 +264,67 @@
 		}
 	}
 }
-.sensei-grading-wrap, .sensei-learners-wrap  {
-	margin-right: 15px;
-	h3.grading-header  {
-		float: left;
-		padding: 7px 0!important;
-	}
-	.postbox h2.postbox-title {
-		border-bottom: 1px solid #ccd0d4;
-	}
-	table  {
-		td  {
-			padding: 12px 7px 12px;
-		}
-		.user_status  {
-			span  {
-				display: inline-block;
-				padding: 5px 10px;
-				@include border_radius(3px);
-				white-space: nowrap;
-			}
-		}
 
-		.enrolment_status  {
-			span  {
-				display: inline-block;
-				@include border_radius(3px);
-				white-space: nowrap;
-			}
-			.not-enrolled  {
-				background: darken($bg_light, 5%);
-			}
-			.enrolled  {
-				background: $success;
-				color: #fff;
-			}
+table.wp_list_table_grading_mains,   {
+	td  {
+		padding: 12px 7px 12px;
+	}
+	.user_status  {
+		span  {
+			display: inline-block;
+			padding: 5px 10px;
+			@include border_radius(3px);
+			white-space: nowrap;
 		}
+	}
 
-		.row-actions {
-			a {
-				cursor: pointer;
-			}
+	.enrolment_status  {
+		span  {
+			display: inline-block;
+			@include border_radius(3px);
+			white-space: nowrap;
+		}
+		.not-enrolled  {
+			background: darken($bg_light, 5%);
+		}
+		.enrolled  {
+			background: $success;
+			color: #fff;
+		}
+	}
+
+	.row-actions {
+		a {
+			cursor: pointer;
 		}
 	}
 }
 
-.sensei-grading-wrap  {
-	table  {
-		.user_status  {
-			.ungraded  {
-				background: darken($bg_light, 5%);
-			}
-			.in-progress  {
-				background: #ffffe0;
-			}
-			.graded  {
-				background: #52a8e8;
-				color: #fff;
-			}
-			.passed  {
-				background: $success;
-				color: #fff;
-			}
-			.failed  {
-				background: #ed6c6c;
-				color: #fff;
-			}
+table.wp_list_table_grading_mains  {
+	.user_status  {
+		.ungraded  {
+			background: darken($bg_light, 5%);
+		}
+		.in-progress  {
+			background: #ffffe0;
+		}
+		.graded  {
+			background: #52a8e8;
+			color: #fff;
+		}
+		.passed  {
+			background: $success;
+			color: #fff;
+		}
+		.failed  {
+			background: #ed6c6c;
+			color: #fff;
 		}
 	}
 }
 
-.sensei-learners-wrap  {
-	table .user_status  {
+table.wp_list_table_sensei_learner_admins  {
+	.user_status  {
 		span {
 			padding: 0 10px;
 		}
@@ -325,16 +351,13 @@
 			}
 		}
 	}
-	@media screen and (min-width: 1140px) {
-		.search-box {
-			margin-left: 10px;
-		}
+}
+
+.wrap {
+	.select2-container--default .select2-selection--single {
+		min-height: 30px;
 	}
-	@media screen and (min-width: 783px) {
-		.search-box {
-			margin-bottom: 10px;
-		}
-	}
+
 	.sensei-learners-extra {
 		.add-student-form-container {
 			&.student-search-empty .select2-selection:before {
@@ -726,6 +749,20 @@
 	margin-right: 0px;
 }
 
+.sensei-grading-filters__reset-button {
+	width: 200px;
+	margin-bottom: 10px;
+
+	&.disabled {
+		margin-bottom: 10px;
+	}
+
+	@media screen and (min-width: 782px) {
+		width: auto;
+		margin-bottom: auto;
+	}
+}
+
 @media screen and (max-width: 782px) {
 	.sensei-student-bulk-actions__container .select2 {
 		margin-top: 6px;
@@ -995,4 +1032,16 @@ $promo_highlight: #43af99;
 	background: $promo_highlight;
 	color: #2c3338;
 	font-weight: 400;
+}
+
+.sensei-settings-tab {
+	&__badge {
+		background-color: var(--wp-admin-theme-color);
+		color: white;
+		font-size: 11px;
+		height: 16px;
+		line-height: 16px;
+		border-radius: 12px;
+		padding: 1px 5px 3px;
+	}
 }

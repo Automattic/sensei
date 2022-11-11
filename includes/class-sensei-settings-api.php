@@ -212,15 +212,23 @@ class Sensei_Settings_API {
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
 				);
+
+				if ( ! empty( $v['badge'] ) ) {
+					$sections[ $k ]['badge'] = esc_html( $v['badge'] );
+				}
 			}
 
 			$count = 1;
 			foreach ( $sections as $k => $v ) {
 				$count++;
 				$html .= '<li><a href="' . esc_url( $v['href'] ) . '"';
-				if ( isset( $v['class'] ) && ( $v['class'] != '' ) ) {
+				if ( isset( $v['class'] ) && ( '' !== $v['class'] ) ) {
 					$html .= ' class="' . esc_attr( $v['class'] ) . '"'; }
-				$html .= '>' . esc_html( $v['name'] ) . '</a>';
+				$html .= '>' . esc_html( $v['name'] );
+				if ( ! empty( $v['badge'] ) ) {
+					$html .= ' <span class="sensei-settings-tab__badge">' . $v['badge'] . '</span>';
+				}
+				$html .= '</a>';
 				if ( $count <= count( $sections ) ) {
 					$html .= ' | '; }
 				$html .= '</li>' . "\n";
@@ -416,7 +424,7 @@ class Sensei_Settings_API {
 
 		<?php do_action( 'settings_before_form' ); ?>
 
-		<form action="options.php" method="post">
+		<form id="<?php echo esc_attr( $this->token ); ?>-form" action="options.php" method="post">
 
 		<?php
 		$this->settings_tabs();
@@ -923,6 +931,12 @@ class Sensei_Settings_API {
 		$options = $this->get_settings();
 
 		foreach ( $this->fields as $k => $v ) {
+			if ( 'color' === $v['type'] ) {
+				$input[ $k ] = str_replace( '#', '', $input[ $k ] );
+				if ( ! ctype_xdigit( $input[ $k ] ) || strlen( $input[ $k ] ) !== 6 ) {
+					$input[ $k ] = false;
+				}
+			}
 			// Make sure checkboxes are present even when false.
 			if ( $v['type'] == 'checkbox' && ! isset( $input[ $k ] ) ) {
 				$input[ $k ] = false; }

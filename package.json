@@ -1,6 +1,7 @@
 {
   "name": "sensei-lms",
-  "version": "4.5.2",
+  "title": "Sensei LMS",
+  "version": "4.8.1",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -64,7 +65,7 @@
     "@babel/runtime": "7.17.9",
     "@es-joy/jsdoccomment": "0.8.0",
     "@lifeomic/attempt": "3.0.3",
-    "@playwright/test": "1.21.1",
+    "@playwright/test": "1.25.0",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",
     "@testing-library/jest-dom": "5.11.10",
@@ -72,10 +73,9 @@
     "@testing-library/react-hooks": "5.1.1",
     "@testing-library/user-event": "12.8.3",
     "@woocommerce/e2e-environment": "0.1.5",
-    "@wordpress/babel-plugin-makepot": "wp-5.9",
     "@wordpress/babel-preset-default": "wp-5.9",
     "@wordpress/e2e-test-utils": "wp-5.9",
-    "@wordpress/env": "wp-5.9",
+    "@wordpress/env": "wp-6.0",
     "@wordpress/eslint-plugin": "wp-5.9",
     "@wordpress/jest-preset-default": "wp-5.9",
     "@wordpress/postcss-themes": "wp-5.9",
@@ -87,10 +87,12 @@
     "eslint": "7.30.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-jsdoc": "35.4.1",
+    "eslint-plugin-playwright": "0.11.1",
     "expect-puppeteer": "4.4.0",
     "gettext-parser": "4.0.4",
     "husky": "6.0.0",
     "jest-environment-jsdom": "27.5.1",
+    "jest-when": "3.5.1",
     "jsdoc": "3.6.7",
     "lint-staged": "10.2.11",
     "mkdirp": "0.5.5",
@@ -100,6 +102,7 @@
     "puppeteer-core": "npm:puppeteer-core@8.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "resolve-url-loader": "5.0.0",
     "svg-spritemap-webpack-plugin": "4.4.0",
     "webpack": "5.64.4",
     "wp-hookdoc": "0.2.0"
@@ -112,10 +115,7 @@
     "build:vendor": "cp ./node_modules/select2/dist/css/select2.min.css ./node_modules/select2/dist/js/select2.full.js ./node_modules/select2/dist/js/select2.full.min.js ./assets/vendor/select2",
     "archive": "composer archive --file=$npm_package_name --format=zip",
     "postarchive": "rm -rf $npm_package_name && unzip $npm_package_name.zip -d $npm_package_name && rm $npm_package_name.zip && zip -r $npm_package_name.zip $npm_package_name && rm -rf $npm_package_name",
-    "i18n:clean": "rm -f ./lang/tmp-*",
-    "i18n:js": "npx babel --config-file ./babel.makepot.js -o ./lang/tmp-babel.log assets --ignore \"**/*.test.js\",\"./assets/dist\",\"./assets/vendor\",\"./build\"",
-    "i18n:php": "wp i18n make-pot --merge=lang/tmp-sensei-lms-js.pot --skip-js --exclude=build --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
-    "i18n:build": "npm run build:assets && npm run i18n:clean && npm run i18n:js && npm run i18n:php && node ./scripts/pot-dist-references.js && npm run i18n:clean",
+    "i18n:build": "npm run build:assets && wp i18n make-pot --exclude=build,lib,vendor,node_modules,assets/vendor --headers='{\"Last-Translator\":null,\"Language-Team\":null,\"Report-Msgid-Bugs-To\":\"https://wordpress.org/support/plugin/sensei-lms\"}' . lang/sensei-lms.pot",
     "format": "wp-scripts format",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
@@ -126,6 +126,8 @@
     "start": "NODE_ENV=development calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
     "test-js": "wp-scripts test-unit-js",
+    "test-js:watch": "wp-scripts test-unit-js --watch",
+    "test-js:coverage": "wp-scripts test-unit-js --coverage",
     "test-php": "./vendor/bin/phpunit",
     "test-php:coverage-html": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
     "test-php:coverage-clover": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml",
@@ -150,7 +152,7 @@
       "scripts/linter-new-php"
     ]
   },
-  "config": {
+  "woorelease": {
     "wp_org_slug": "sensei-lms"
   }
 }

@@ -64,11 +64,42 @@ class Sensei_Course_Video_Settings {
 	public function init() {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
+		add_filter( 'embed_oembed_html', [ $this, 'enable_youtube_api' ], 11, 2 );
+	}
 
-		Sensei_Course_Video_Blocks_Youtube_Extension::instance()->init();
-		Sensei_Course_Video_Blocks_Video_Extension::instance()->init();
-		Sensei_Course_Video_Blocks_Vimeo_Extension::instance()->init();
-		Sensei_Course_Video_Blocks_VideoPress_Extension::instance()->init();
+	/**
+	 * Replace the YouTube iframe URL enabling JS API and providing origin.
+	 *
+	 * @access private
+	 *
+	 * @param string $html Embed HTML.
+	 * @param string $url  Embed URL.
+	 *
+	 * @return string
+	 */
+	public function enable_youtube_api( $html, $url ): string {
+		$host = wp_parse_url( $url, PHP_URL_HOST );
+
+		// Skip if it's not a YouTube embed.
+		if ( strpos( $host, 'youtu.be' ) === false && strpos( $host, 'youtube.com' ) === false ) {
+			return $html;
+		}
+
+		return preg_replace_callback(
+			'/src="(.*?)"/',
+			function ( $matches ) {
+				$modified_url = add_query_arg(
+					array(
+						'enablejsapi' => 1,
+						'origin'      => esc_url( home_url() ),
+					),
+					$matches[1]
+				);
+
+				return 'src="' . $modified_url . '"';
+			},
+			$html
+		);
 	}
 
 	/**
@@ -81,12 +112,10 @@ class Sensei_Course_Video_Settings {
 			return;
 		}
 
-		wp_register_script( 'sensei-course-video-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', true );
-		wp_register_script( 'sensei-course-video-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', true );
 		Sensei()->assets->register(
 			'sensei-course-video-blocks-extension',
 			'js/frontend/course-video/video-blocks-extension.js',
-			[ 'sensei-course-video-youtube-iframe-api', 'sensei-course-video-vimeo-iframe-api' ],
+			[ 'sensei-youtube-iframe-api', 'sensei-vimeo-iframe-api' ],
 			true
 		);
 
@@ -99,6 +128,11 @@ class Sensei_Course_Video_Settings {
 		$script              = "window.sensei = window.sensei || {}; window.sensei.courseVideoSettings = $video_settings_json;";
 
 		wp_add_inline_script( 'sensei-course-video-blocks-extension', $script, 'before' );
+
+		$post = get_post();
+		if ( has_block( 'core/video', $post ) || has_block( 'core/embed', $post ) ) {
+			Sensei()->assets->enqueue_script( 'sensei-course-video-blocks-extension' );
+		}
 	}
 
 	/**

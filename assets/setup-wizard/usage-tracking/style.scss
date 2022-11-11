@@ -1,0 +1,9 @@
+.sensei-setup-wizard {
+	&__usage-tracking-illustration {
+		margin: 0 0 (-$small-vertical-padding) (-$small-horizontal-padding);
+
+		@media (min-width: $small-screen-break) {
+			margin: 0 0 (-$big-vertical-padding) (-$big-horizontal-padding);
+		}
+	}
+}

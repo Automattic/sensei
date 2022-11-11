@@ -6,7 +6,7 @@
  */
 import { createBlock } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
-import { invert } from 'lodash';
+import { curry, invert } from 'lodash';
 
 /**
  * Course structure data.
@@ -72,25 +72,49 @@ export const syncStructureToBlocks = ( structure, blocks ) => {
 };
 
 /**
+ * Check if the block is related to the current course structure CourseLessonData|CourseModuleData
+ *
+ * @param {block}                             block      Gutenberg Block stored on the editor store
+ * @param {CourseLessonData|CourseModuleData} courseData Course Lesson Data or Course Module Data..
+ * @return {boolean} returns if the block matches with the data structure.
+ */
+const byCourseData = curry( ( courseData, block ) => {
+	const { name, attributes } = block;
+	const isTheCorrectBlockType = Object.keys( blockTypes ).includes( name );
+
+	const findById = () => !! attributes.id && courseData.id === attributes.id;
+	const findByTitle = () => attributes.title === courseData.title;
+	const findByLastTitle = () => attributes.title === courseData.lastTitle;
+
+	if ( ! isTheCorrectBlockType ) {
+		return false;
+	}
+
+	return [ findById(), findByTitle(), findByLastTitle() ].includes( true );
+} );
+
+const findInInnerBlocks = ( blocks, predicate ) =>
+	blocks.reduce(
+		( found, block ) => found || block.innerBlocks.find( predicate ),
+		false
+	);
+
+/**
  * Find the block for a given lesson/module item.
  *
- * @param {Object[]}                                    blocks Block.
- * @param {Array.<(CourseLessonData|CourseModuleData)>} item   Structure item.
+ * @param {Object[]}                                    blocks     Block.
+ * @param {Array.<(CourseLessonData|CourseModuleData)>} courseData Course item.
  * @return {Object} The block, if found.
  */
-const findBlock = ( blocks, { id, type, title } ) => {
-	const compare = ( { name, attributes } ) =>
-		( id === attributes.id ||
-			( ! attributes.id && attributes.title === title ) ) &&
-		blockNames[ type ] === name;
-	return (
-		blocks.find( compare ) ||
-		( 'lesson' === type &&
-			blocks.reduce(
-				( found, block ) => found || block.innerBlocks.find( compare ),
-				false
-			) )
-	);
+const findBlock = ( blocks, courseData ) => {
+	const isLesson = ( value ) => value === 'lesson';
+	const found = blocks.find( byCourseData( courseData ) );
+
+	if ( ! found && isLesson( courseData.type ) ) {
+		return findInInnerBlocks( blocks, byCourseData( courseData ) );
+	}
+
+	return found;
 };
 /**
  * Convert blocks to course structure.
@@ -104,7 +128,9 @@ export const extractStructure = ( blocks ) => {
 			description: block.attributes.description,
 			lessons: extractStructure( block.innerBlocks ),
 			teacher: block.attributes.teacher,
+			teacherId: block.attributes.teacherId,
 			lastTitle: block.attributes.lastTitle,
+			slug: block.attributes.slug,
 		} ),
 		lesson: ( block ) => ( {
 			draft: block.attributes.draft,

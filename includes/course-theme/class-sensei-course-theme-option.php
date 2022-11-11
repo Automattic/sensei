@@ -65,32 +65,26 @@ class Sensei_Course_Theme_Option {
 		add_action( 'init', [ $this, 'register_post_meta' ] );
 		add_action( 'template_redirect', [ $this, 'ensure_learning_mode_url_prefix' ] );
 		add_filter( 'show_admin_bar', [ $this, 'show_admin_bar_only_for_editors' ] );
-		add_filter( 'sensei_admin_notices', [ $this, 'add_course_theme_notice' ] );
 	}
 
 	/**
-	 * Ensure the learning mode prefix is set if required or removed
-	 * if not allowed.
+	 * Ensure the learning mode prefix is removed if the theme is not overridden.
 	 *
 	 * @access private
 	 */
 	public function ensure_learning_mode_url_prefix() {
 
-		$using_theme      = Sensei_Course_Theme::instance()->is_active();
-		$should_use_theme = self::should_use_learning_mode() && self::should_override_theme();
+		$is_theme_overridden   = Sensei_Course_Theme::instance()::THEME_NAME === get_stylesheet();
+		$should_override_theme = self::should_use_learning_mode() && self::should_override_theme();
 
-		if ( is_admin() || $using_theme === $should_use_theme ) {
+		// Remove the prefix only if the theme should not be overridden.
+		if ( is_admin() || ! $is_theme_overridden || $should_override_theme ) {
 			return;
 		}
 
-		$url = get_pagenum_link( 1, false );
-		if ( $should_use_theme ) {
-			$url = str_replace( trailingslashit( home_url() ), '', $url );
-			$url = Sensei_Course_Theme::instance()->get_theme_redirect_url( $url );
-		} else {
-			$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
-			$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
-		}
+		$url    = get_pagenum_link( 1, false );
+		$prefix = Sensei_Course_Theme::instance()->get_theme_redirect_url( '' );
+		$url    = str_replace( $prefix, trailingslashit( home_url() ), $url );
 
 		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
 			$url = esc_url_raw( wp_unslash( $url . '?' . $_SERVER['QUERY_STRING'] ) );
@@ -124,9 +118,9 @@ class Sensei_Course_Theme_Option {
 	 */
 	public static function should_use_learning_mode() {
 
-		$is_course_content = is_singular( 'lesson' ) || is_singular( 'quiz' ) || is_tax( 'module' );
+		$is_course_content = is_singular( [ 'lesson', 'quiz' ] ) || is_tax( 'module' );
 
-		if ( ! $is_course_content ) {
+		if ( ! $is_course_content && ! is_admin() ) {
 			return false;
 		}
 
@@ -138,14 +132,7 @@ class Sensei_Course_Theme_Option {
 
 		$course_id = absint( $course_id );
 
-		if (
-			self::has_learning_mode_enabled( $course_id ) ||
-			Sensei_Course_Theme::is_preview_mode( $course_id )
-		) {
-			return true;
-		}
-
-		return false;
+		return self::has_learning_mode_enabled( $course_id ) || Sensei_Course_Theme::is_preview_mode( $course_id );
 	}
 
 
@@ -155,20 +142,18 @@ class Sensei_Course_Theme_Option {
 	 * @return boolean
 	 */
 	public static function should_override_theme() {
-
-		$enabled = ! \Sensei()->settings->get( 'sensei_learning_mode_theme' );
-
 		/**
 		 * Filters if the theme should be overriden for learning mode.
 		 *
 		 * @since 4.0.2
 		 * @hook  sensei_course_learning_mode_theme_override_enabled
+		 * @deprecated 4.7.0
 		 *
 		 * @param {bool} $enabled True if the learning mode theme override is enabled.
 		 *
 		 * @return {bool} The modified learning mode theme override setting.
 		 */
-		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', $enabled );
+		return (bool) apply_filters( 'sensei_course_learning_mode_theme_override_enabled', false );
 	}
 
 	/**
@@ -224,6 +209,11 @@ class Sensei_Course_Theme_Option {
 	 */
 	public function show_admin_bar_only_for_editors( $show_admin_bar ) {
 		$lesson_id = Sensei_Utils::get_current_lesson();
+
+		if ( null === $lesson_id || null === get_post_type( 'lesson' ) ) {
+			return $show_admin_bar;
+		}
+
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
 		if ( self::has_learning_mode_enabled( $course_id ) ) {
@@ -231,39 +221,6 @@ class Sensei_Course_Theme_Option {
 		}
 
 		return $show_admin_bar;
-	}
-
-	/**
-	 * Adds a course theme notice.
-	 *
-	 * @access private
-	 *
-	 * @param array $notices Notices list.
-	 *
-	 * @return array Notices including the course theme notice.
-	 */
-	public function add_course_theme_notice( array $notices ) {
-		$notices['sensei-course-theme'] = [
-			'type'       => 'user',
-			'icon'       => 'sensei',
-			'heading'    => __( 'Sensei’s new Learning Mode is here!', 'sensei-lms' ),
-			'message'    => __( 'Give your students an intuitive and distraction-free learning experience.', 'sensei-lms' ),
-			'actions'    => [
-				[
-					'label'  => __( 'Learn more', 'sensei-lms' ),
-					'url'    => 'https://senseilms.com/wordpress-course-theme',
-					'target' => '_blank',
-				],
-			],
-			'conditions' => [
-				[
-					'type'    => 'screens',
-					'screens' => [ 'sensei*' ],
-				],
-			],
-		];
-
-		return $notices;
 	}
 
 	/**

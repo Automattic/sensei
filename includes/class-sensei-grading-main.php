@@ -50,6 +50,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 	}
 
 	/**
@@ -260,12 +261,11 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$quiz_id   = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
 		$quiz_link = add_query_arg(
 			array(
-				'post_type' => 'course',
-				'page'      => $this->page_slug,
-				'user'      => $item->user_id,
-				'quiz_id'   => $quiz_id,
+				'page'    => $this->page_slug,
+				'user'    => $item->user_id,
+				'quiz_id' => $quiz_id,
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		$grade_link = '';
@@ -288,11 +288,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 			$course_title = '<a href="' . esc_url(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->page_slug,
 						'course_id' => $course_id,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			) . '">' . esc_html( get_the_title( $course_id ) ) . '</a>';
 		}
@@ -300,11 +299,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$lesson_title = '<a href="' . esc_url(
 			add_query_arg(
 				array(
-					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'lesson_id' => $item->comment_post_ID,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			)
 		) . '">' . esc_html( get_the_title( $item->comment_post_ID ) ) . '</a>';
 
@@ -314,11 +312,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				'title'       => '<strong><a class="row-title" href="' . esc_url(
 					add_query_arg(
 						array(
-							'post_type' => 'course',
-							'page'      => $this->page_slug,
-							'user_id'   => $item->user_id,
+							'page'    => $this->page_slug,
+							'user_id' => $item->user_id,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				) . '">' . esc_html( $title ) . '</a></strong>',
 				'course'      => $course_title,
@@ -361,68 +358,81 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
-		global  $wp_version;
-
-		echo '<div class="grading-selects">';
 		do_action( 'sensei_grading_before_dropdown_filters' );
 
-		echo '<div class="select-box">' . "\n";
+		echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
+			echo wp_kses(
+				Sensei()->grading->courses_drop_down_html( $this->course_id ),
+				array(
+					'option' => array(
+						'selected' => array(),
+						'value'    => array(),
+					),
+				)
+			);
+		echo '</select>' . "\n";
 
-			echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";
+		echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'sensei-lms' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
+			echo wp_kses(
+				Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id ),
+				array(
+					'option' => array(
+						'selected' => array(),
+						'value'    => array(),
+					),
+				)
+			);
+		echo '</select>' . "\n";
 
-				echo wp_kses(
-					Sensei()->grading->courses_drop_down_html( $this->course_id ),
-					array(
-						'option' => array(
-							'selected' => array(),
-							'value'    => array(),
-						),
-					)
-				);
-
-			echo '</select>' . "\n";
-
-		echo '</div>' . "\n";
-
-		echo '<div class="select-box">' . "\n";
-
-			echo '<select id="grading-lesson-options" data-placeholder="&larr; ' . esc_attr__( 'Select a course', 'sensei-lms' ) . '" name="grading_lesson" class="chosen_select widefat">' . "\n";
-
-				echo wp_kses(
-					Sensei()->grading->lessons_drop_down_html( $this->course_id, $this->lesson_id ),
-					array(
-						'option' => array(
-							'selected' => array(),
-							'value'    => array(),
-						),
-					)
-				);
-
-			echo '</select>' . "\n";
-
-		echo '</div>' . "\n";
-
-		if ( $this->course_id && $this->lesson_id ) {
-
-			echo '<div class="select-box reset-filter">' . "\n";
-
-				echo '<a class="button-secondary" href="' . esc_url( remove_query_arg( array( 'lesson_id', 'course_id' ) ) ) . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
-
-			echo '</div>' . "\n";
-
+		$reset_button_enabled = $this->course_id && $this->lesson_id;
+		$reset_button_href    = $reset_button_enabled ? remove_query_arg( array( 'lesson_id', 'course_id' ) ) : '#';
+		$reset_button_classes = [ 'button-secondary', 'sensei-grading-filters__reset-button' ];
+		if ( ! $reset_button_enabled ) {
+			$reset_button_classes[] = 'disabled';
 		}
+		echo '<a class="' . esc_attr( implode( ' ', $reset_button_classes ) ) . '" href="' . esc_url( $reset_button_href ) . '">' . esc_html__( 'Reset filter', 'sensei-lms' ) . '</a>' . "\n";
+	}
 
-		echo '</div><!-- /.grading-selects -->';
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
+	public function extra_tablenav( $which ) {
+		if ( 'top' === $which ) {
+			echo '<div class="alignleft actions sensei-actions__always-visible">';
+		}
+		parent::extra_tablenav( $which );
 
+		if ( 'top' === $which ) {
+			echo '</div>';
+		}
+	}
+
+	/**
+	 * Output search form for table.
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+	}
+
+	/**
+	 * Gets the list of views available on this table.
+	 *
+	 * @return array
+	 */
+	public function get_views() {
 		$menu = array();
 
-		// Setup counters
+		// Setup counters.
 		$count_args = array(
 			'type' => 'lesson',
 		);
 		$query_args = array(
-			'post_type' => 'course',
-			'page'      => $this->page_slug,
+			'page' => $this->page_slug,
 		);
 		if ( $this->course_id ) {
 			$query_args['course_id'] = $this->course_id;
@@ -430,7 +440,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		}
 		if ( $this->lesson_id ) {
 			$query_args['lesson_id'] = $this->lesson_id;
-			// Restrict to a single lesson
+			// Restrict to a single lesson.
 			$count_args['post_id'] = $this->lesson_id;
 		}
 		if ( $this->search ) {
@@ -448,11 +458,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$all_class         = $ungraded_class = $graded_class = $inprogress_class = '';
 
 		switch ( $this->view ) :
-			case 'all':
-				$all_class = 'current';
-				break;
 			case 'ungraded':
-			default:
 				$ungraded_class = 'current';
 				break;
 			case 'graded':
@@ -460,6 +466,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 				break;
 			case 'in-progress':
 				$inprogress_class = 'current';
+				break;
+			case 'all':
+			default:
+				$all_class = 'current';
 				break;
 		endswitch;
 
@@ -482,43 +492,33 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		$menu['all']         = sprintf(
 			$format,
 			$all_class,
-			esc_url( add_query_arg( $all_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $all_args, admin_url( 'admin.php' ) ) ),
 			__( 'All', 'sensei-lms' ),
 			number_format( (int) $all_lessons_count )
 		);
 		$menu['ungraded']    = sprintf(
 			$format,
 			$ungraded_class,
-			esc_url( add_query_arg( $ungraded_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $ungraded_args, admin_url( 'admin.php' ) ) ),
 			__( 'Ungraded', 'sensei-lms' ),
 			number_format( (int) $ungraded_lessons_count )
 		);
 		$menu['graded']      = sprintf(
 			$format,
 			$graded_class,
-			esc_url( add_query_arg( $graded_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $graded_args, admin_url( 'admin.php' ) ) ),
 			__( 'Graded', 'sensei-lms' ),
 			number_format( (int) $graded_lessons_count )
 		);
 		$menu['in-progress'] = sprintf(
 			$format,
 			$inprogress_class,
-			esc_url( add_query_arg( $inprogress_args, admin_url( 'edit.php' ) ) ),
+			esc_url( add_query_arg( $inprogress_args, admin_url( 'admin.php' ) ) ),
 			__( 'In Progress', 'sensei-lms' ),
 			number_format( (int) $inprogress_lessons_count )
 		);
 
-		$menu = apply_filters( 'sensei_grading_sub_menu', $menu );
-		if ( ! empty( $menu ) ) {
-			echo '<ul class="subsubsub">' . "\n";
-			foreach ( $menu as $class => $item ) {
-				$menu[ $class ] = "\t<li class='$class'>$item";
-			}
-
-			echo wp_kses_post( implode( " |</li>\n", $menu ) ) . "</li>\n";
-			echo '</ul>' . "\n";
-		}
-
+		return apply_filters( 'sensei_grading_sub_menu', $menu );
 	}
 
 	/**

@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "sensei-lms/course-list-filter",
+	"title": "Course List Filter",
+	"description": "Filter courses in Course List block",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"categories",
+		"lessons",
+		"featured",
+		"filter"
+	],
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "left"
+		},
+		"types": {
+			"type": "array",
+			"default": [ "categories", "featured", "student_course" ]
+		}
+	},
+	"usesContext": [ "queryId", "query" ],
+	"supports": {
+		"align": [ "left", "right" ],
+		"html": false
+	}
+}

@@ -107,11 +107,12 @@ class Sensei_Core_Modules {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 	}
 
 	/**
 	 * Highlight the menu item for the modules pages.
+	 *
+	 * @deprecated 4.8.0
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -121,6 +122,8 @@ class Sensei_Core_Modules {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$screen = get_current_screen();
 		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
 			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
@@ -160,7 +163,7 @@ class Sensei_Core_Modules {
 					<h1><?php esc_html_e( 'Modules', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__links">
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 		</div>
@@ -1166,12 +1169,11 @@ class Sensei_Core_Modules {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $_POST['course_id'],
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1202,7 +1204,7 @@ class Sensei_Core_Modules {
 
 			$courses = Sensei()->course->get_all_courses();
 
-			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
 			$html .= '<select id="module-order-course" name="course_id">' . "\n";
@@ -1385,11 +1387,10 @@ class Sensei_Core_Modules {
 				esc_url(
 					add_query_arg(
 						[
-							'post_type' => 'course',
 							'page'      => 'module-order',
 							'course_id' => $course_id,
 						],
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				),
 				esc_html__( 'Order Modules', 'sensei-lms' )
@@ -1798,7 +1799,7 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array( 'course_page_module-order' )
+			array( 'admin_page_module-order' )
 		);
 
 		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
@@ -2195,11 +2196,21 @@ class Sensei_Core_Modules {
 			return $term_owner;
 
 		}
+		$term = get_term_by( 'slug', $slug, 'module' );
 
+		if ( $term ) {
+			$author_meta = get_term_meta( $term->term_id, 'module_author', true );
+			if ( $author_meta ) {
+				return get_user_by( 'id', $author_meta );
+			}
+		}
 		// look for the author in the slug
 		$slug_parts = explode( '-', $slug );
 
-		if ( count( $slug_parts ) > 1 ) {
+		if (
+			count( $slug_parts ) > 1
+			&& is_numeric( $slug_parts[0] )
+		) {
 
 			// get the user data
 			$possible_user_id = $slug_parts[0];
@@ -2543,6 +2554,11 @@ class Sensei_Core_Modules {
 				continue;
 			}
 
+			if ( 'module' !== $term->taxonomy ) {
+				$users_terms[] = $term;
+				continue;
+			}
+
 			$author = self::get_term_author( $term->slug );
 
 			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
@@ -2639,4 +2655,23 @@ class Sensei_Core_Modules {
 		wp_reset_query();
 	}
 
+	/**
+	 * Set teacher meta for module.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param int $module_id  Term ID.
+	 * @param int $teacher_id ID of module teacher.
+	 */
+	public static function update_module_teacher_meta( $module_id, $teacher_id ) {
+		if ( user_can( $teacher_id, 'manage_options' ) ) {
+			delete_term_meta( $module_id, 'module_author' );
+		} else {
+			update_term_meta(
+				$module_id,
+				'module_author',
+				$teacher_id
+			);
+		}
+	}
 }

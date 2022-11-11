@@ -396,6 +396,7 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 		);
 
 		$mock = $this->getMockBuilder( 'Sensei_Admin_Notices' )
+			->disableOriginalConstructor()
 			->setMethods( [ 'get_notices', 'get_screen_id', 'get_active_plugins' ] )
 			->getMock();
 

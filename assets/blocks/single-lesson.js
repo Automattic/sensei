@@ -10,6 +10,7 @@ import {
 	ViewQuizBlock,
 } from './lesson-actions';
 import LessonPropertiesBlock from './lesson-properties';
+import FeaturedVideoBlock from './featured-video';
 
 registerSenseiBlocks( [
 	LessonActionsBlock,
@@ -18,4 +19,5 @@ registerSenseiBlocks( [
 	NextLessonBlock,
 	ResetLessonBlock,
 	ViewQuizBlock,
+	FeaturedVideoBlock,
 ] );

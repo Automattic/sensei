@@ -94,6 +94,9 @@ class Sensei_Teacher {
 		add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page' ), 10 );
 		add_filter( 'pre_get_comments', array( $this, 'restrict_comment_moderation' ), 10, 1 );
 
+		// If slug changed to custom, try to extract and save teacher id.
+		add_action( 'edit_module', [ $this, 'extract_and_save_teacher_to_meta_from_slug' ] );
+
 	}
 
 	/**
@@ -258,6 +261,7 @@ class Sensei_Teacher {
 
 		?>
 		<input type="hidden" name="post_author_override" value="<?php echo intval( $current_author ); ?>" />
+		<input type="hidden" name="course_module_custom_slugs" />
 		<select name="sensei-course-teacher-author" class="sensei course teacher">
 
 			<?php foreach ( $users as $user_data ) { ?>
@@ -392,6 +396,17 @@ class Sensei_Teacher {
 			return;
 		}
 
+		// If a custom slug is of a module that belongs to another teacher from another course, don't process farther.
+		if ( isset( $_POST['course_module_custom_slugs'] ) ) {
+			$module_custom_slugs = json_decode( sanitize_text_field( wp_unslash( $_POST['course_module_custom_slugs'] ) ) );
+			foreach ( $module_custom_slugs as $module_custom_slug ) {
+				$course_name = self::is_module_in_use_by_different_course_and_teacher( $module_custom_slug, $course_id, absint( $_POST['sensei-course-teacher-author'] ) );
+				if ( $course_name ) {
+					return;
+				}
+			}
+		}
+
 		// don't fire this hook again
 		remove_action( 'save_post', array( $this, 'save_teacher_meta_box' ) );
 
@@ -416,6 +431,7 @@ class Sensei_Teacher {
 			'ID'          => $post->ID,
 			'post_author' => $new_author,
 		);
+
 		wp_update_post( $post_updates );
 
 		// ensure the the modules are update so that then new teacher has access to them
@@ -424,6 +440,48 @@ class Sensei_Teacher {
 		// notify the new teacher
 		$this->teacher_course_assigned_notification( $new_author, $course_id );
 
+	}
+
+	/**
+	 * Check if the module with the slug provided is
+	 * a part of any other course taught by a different teacher.
+	 *
+	 * @since 4.6.0
+	 * @access private
+	 *
+	 * @param  string $module_slug Slug of the module to check for.
+	 * @param  int    $course_id   Slugs of the modules to check for.
+	 * @param  int    $teacher_id  Slugs of the modules to check for.
+	 *
+	 * @return string|boolean Returns the name of the first course it finds a match for, false otherwise.
+	 */
+	public static function is_module_in_use_by_different_course_and_teacher( $module_slug, $course_id, $teacher_id ) {
+		$existing_module_by_slug = get_term_by( 'slug', $module_slug, 'module' );
+		if ( $existing_module_by_slug ) {
+			$args           = array(
+				'post_type'      => 'course',
+				'post_status'    => [ 'publish', 'draft', 'private' ],
+				'posts_per_page' => -1,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery
+					array(
+						'taxonomy' => 'module',
+						'field'    => 'id',
+						'terms'    => $existing_module_by_slug->term_id,
+					),
+				),
+			);
+			$module_courses = get_posts( $args );
+			foreach ( $module_courses as $module_course ) {
+				if ( intval( $module_course->post_author ) !== intval( $teacher_id ) &&
+					intval( $course_id ) !== $module_course->ID ) {
+					if ( user_can( $module_course->post_author, 'manage_options' ) && user_can( $teacher_id, 'manage_options' ) ) {
+						continue;
+					}
+					return $module_course->post_title;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -503,6 +561,8 @@ class Sensei_Teacher {
 
 				$term_id        = $new_term['term_id'];
 				$module_order[] = $term_id;
+
+				Sensei_Core_Modules::update_module_teacher_meta( $term_id, $new_teacher_id );
 
 				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
@@ -622,8 +682,8 @@ class Sensei_Teacher {
 		$screen            = get_current_screen();
 		$sensei_post_types = array( 'course', 'lesson', 'question' );
 
-		// exit early for the following conditions
-		$limit_screen_ids = array( 'course_page_' . Sensei_Analysis::PAGE_SLUG, 'course_page_module-order' );
+		// exit early for the following conditions.
+		$limit_screen_ids = array( 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG, 'sensei-lms_page_module-order' );
 
 		if ( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id, $limit_screen_ids )
 			|| ! in_array( $query->query['post_type'], $sensei_post_types ) ) {
@@ -731,9 +791,9 @@ class Sensei_Teacher {
 			return $query;
 		}
 		switch ( $screen->id ) {
-			case 'course_page_sensei_grading':
-			case 'course_page_' . Sensei_Analysis::PAGE_SLUG:
-			case 'course_page_sensei_learners':
+			case 'sensei-lms_page_sensei_grading':
+			case 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG:
+			case 'sensei-lms_page_sensei_learners':
 			case 'lesson':
 			case 'course':
 			case 'question':
@@ -771,7 +831,7 @@ class Sensei_Teacher {
 		// check if we're on the grading screen
 		$screen = get_current_screen();
 
-		if ( empty( $screen ) || 'course_page_sensei_grading' != $screen->id ) {
+		if ( empty( $screen ) || 'sensei-lms_page_sensei_grading' != $screen->id ) {
 			return $comments;
 		}
 
@@ -1512,8 +1572,8 @@ class Sensei_Teacher {
 			'edit-lesson',
 			'edit-course',
 			'edit-question',
-			'course_page_course-order',
-			'course_page_lesson-order',
+			'admin_page_course-order',
+			'admin_page_lesson-order',
 		);
 
 		if ( in_array( $screen->id, $limit_screens ) ) {
@@ -1689,4 +1749,29 @@ class Sensei_Teacher {
 
 	}
 
+	/**
+	 * Try to extract teacher id from module slug to term meta
+	 * if the meta does not exist already
+	 *
+	 * @since 4.6.0
+	 * @access private
+	 *
+	 * @param int $term_id ID of the term being edited.
+	 * @return void
+	 */
+	public function extract_and_save_teacher_to_meta_from_slug( $term_id ) {
+		$term_meta = get_term_meta( $term_id, 'module_author', true );
+
+		if ( $term_meta ) {
+			return;
+		}
+
+		$term       = get_term( $term_id, 'module' );
+		$split_slug = explode( '-', $term->slug );
+
+		if ( count( $split_slug ) > 1 && is_numeric( $split_slug[0] ) ) {
+			$user = get_user_by( 'id', $split_slug[0] );
+			$user && Sensei_Core_Modules::update_module_teacher_meta( $term_id, $user->ID );
+		}
+	}
 }

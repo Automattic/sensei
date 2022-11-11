@@ -31,4 +31,11 @@ export default createButtonBlockType( {
 			BlockStyles.Link,
 		],
 	},
+	invalidUsage: {
+		message: __(
+			'The View Results block can only be used inside the Course List block.',
+			'sensei-lms'
+		),
+		validPostTypes: [ 'course' ],
+	},
 } );
