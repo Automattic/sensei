@@ -11,6 +11,7 @@ import edit from './lesson-edit';
 import metadata from './block.json';
 
 export default {
+	...metadata,
 	metadata,
 	icon,
 	example: {

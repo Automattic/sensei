@@ -14,6 +14,7 @@ import icon from '../../../icons/question.svg';
  * Question description block.
  */
 export default {
+	...metadata,
 	metadata,
 	icon,
 	usesContext: [ 'sensei-lms/quizId' ],
