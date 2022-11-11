@@ -215,13 +215,13 @@ class Comments_Based_Lesson_Progress_Repository implements Lesson_Progress_Repos
 
 		$comments = is_array( $comments ) ? $comments : [ $comments ];
 		$post_ids = [];
-		foreach ( $comments as $key => $value ) {
-			if ( isset( $value->comment_post_ID ) ) {
-				$post_ids[] = $value->comment_post_ID;
+		foreach ( $comments as $comment ) {
+			if ( isset( $comment->comment_post_ID ) ) {
+				$post_ids[] = $comment->comment_post_ID;
 			}
 
-			if ( isset( $value->comment_ID ) && 0 < $value->comment_ID ) {
-				$dataset_changes = wp_delete_comment( intval( $value->comment_ID ), true );
+			if ( isset( $comment->comment_ID ) && 0 < $comment->comment_ID ) {
+				wp_delete_comment( intval( $comment->comment_ID ), true );
 			}
 		}
 
