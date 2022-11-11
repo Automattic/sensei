@@ -143,3 +143,8 @@ $block: '.wp-block-sensei-lms-course-list';
 		padding: 1.25em;
 	}
 }
+
+/* Hide featured label when not inside Course List. */
+.sensei-lms-course-list-featured-label__text {
+	display: none;
+}
