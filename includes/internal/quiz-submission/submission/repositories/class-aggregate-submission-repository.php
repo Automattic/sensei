@@ -7,6 +7,7 @@
 
 namespace Sensei\Internal\Quiz_Submission\Submission\Repositories;
 
+use DateTimeImmutable;
 use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -140,13 +141,18 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 			$tables_based_submission = $this->tables_based_repository->get( $submission->get_quiz_id(), $submission->get_user_id() );
 
 			if ( $tables_based_submission ) {
+				// Make sure the dates are in UTC.
+				// This is not the case if the submission is originating from the comments based repository.
+				$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
+				$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
+
 				$submission_to_save = new Submission(
 					$tables_based_submission->get_id(),
 					$submission->get_quiz_id(),
 					$submission->get_user_id(),
 					$submission->get_final_grade(),
-					$submission->get_created_at(),
-					$submission->get_updated_at()
+					$created_at,
+					$updated_at
 				);
 
 				$this->tables_based_repository->save( $submission_to_save );
