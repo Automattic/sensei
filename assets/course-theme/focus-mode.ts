@@ -36,7 +36,7 @@ const restoreFocusModeState = () => {
  * @param {boolean?} on
  * @param {boolean?} restore Whether restoring.
  */
-const toggleFocusMode = ( on: boolean, restore?: boolean ): void => {
+const toggleFocusMode = ( on?: boolean, restore?: boolean ): void => {
 	const { classList } = document.body;
 
 	const courseNavigation = document.querySelector(
