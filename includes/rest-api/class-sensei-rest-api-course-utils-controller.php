@@ -99,7 +99,7 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 		Sensei()->teacher->save_teacher( $post_id, $teacher );
 		return new WP_REST_Response(
 			[
-				'status'       => 'success',
+				'status' => 'success',
 			],
 			WP_HTTP::OK
 		);

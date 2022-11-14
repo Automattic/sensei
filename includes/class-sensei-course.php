@@ -60,7 +60,7 @@ class Sensei_Course {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+			require_once ABSPATH . 'wp-admin/includes/screen.php';
 			$current_screen = get_current_screen();
 			if (
 				method_exists( $current_screen, 'is_block_editor' )
