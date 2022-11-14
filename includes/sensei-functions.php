@@ -519,3 +519,17 @@ function sensei_log_jetpack_event( $event_name, $properties = [] ) {
 		$tracking->record_user_event( $event_name, $properties );
 	}
 }
+
+/**
+ * Determine if the current page is a block editor page.
+ *
+ * @since $$next-version$$
+ *
+ * @return bool True if current page is a block editor page.
+ */
+function sensei_is_block_editor() {
+	require_once ABSPATH . 'wp-admin/includes/screen.php';
+	$current_screen = get_current_screen();
+
+	return ! empty( $current_screen ) && method_exists( $current_screen, 'is_block_editor' ) && $current_screen->is_block_editor();
+}

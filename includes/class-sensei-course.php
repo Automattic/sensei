@@ -60,12 +60,7 @@ class Sensei_Course {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			require_once ABSPATH . 'wp-admin/includes/screen.php';
-			$current_screen = get_current_screen();
-			if (
-				method_exists( $current_screen, 'is_block_editor' )
-				&& $current_screen->is_block_editor()
-			) {
+			if ( sensei_is_block_editor() ) {
 				add_action( 'add_meta_boxes', [ $this, 'meta_box_setup' ], 20 );
 				add_action( 'save_post', [ $this, 'meta_box_save' ] );
 			}
