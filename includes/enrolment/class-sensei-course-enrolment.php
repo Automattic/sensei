@@ -124,6 +124,10 @@ class Sensei_Course_Enrolment {
 			return $is_enrolled;
 		}
 
+		if ( ! $user_id ) {
+			return false;
+		}
+
 		// User is not enrolled if the course is not published or he is removed.
 		if ( 'publish' !== get_post_status( $this->course_id ) || $this->is_learner_removed( $user_id ) ) {
 			return false;

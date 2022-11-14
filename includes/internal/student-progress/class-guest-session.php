@@ -13,7 +13,7 @@ use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Session_Based_
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Session_Based_Quiz_Progress_Repository;
 
 /**
- * Class Guest_Learner.
+ * Session-based student progress mode for guests or course previews.
  *
  * @internal
  *
@@ -28,8 +28,12 @@ class Guest_Session {
 
 	}
 
-	public function init() {
+	private function init() {
+		if ( ! $this->can_start_guest_session() ) {
+			return;
+		}
 
+		// TODO Use some other implementation than PHP sessions?
 		if ( ! session_id() ) {
 			session_start();
 		}
@@ -49,24 +53,49 @@ class Guest_Session {
 			Sensei()->lesson_progress_repository = new Session_Based_Lesson_Progress_Repository();
 			Sensei()->quiz_progress_repository   = new Session_Based_Quiz_Progress_Repository();
 
-			add_filter('determine_current_user', function() { return 1; });
+//			add_filter( 'determine_current_user', function() {
+//				return 1;
+//			} );
 
-			// Need to check if 'Guest access' is allowed for the course, or it's a teacher preview session.
-			add_filter('sensei_is_enrolled', '__return_true' );
-			add_filter('sensei_is_login_required', '__return_false' );
+			add_filter( 'sensei_is_enrolled', '__return_true' );
+			add_filter( 'sensei_is_login_required', '__return_false' );
+			add_filter( 'sensei_grade_question_auto', [ $this, 'grade_question' ], 10, 4 );
 		}
 	}
 
-	public function is_guest_session() {
+	public function can_start_guest_session() {
+		$course_id = \Sensei_Utils::get_current_course();
+
+		$is_teacher = is_user_logged_in() && current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
+		$is_guest   = ! is_user_logged_in() && $this->is_guest_course( $course_id );
+
+		return $is_teacher || $is_guest;
+
+	}
+
+	public function is_guest_course( $course_id ) {
+		return true || get_post_meta( $course_id, '_guest_access', true );
+	}
+
+	private function is_guest_session() {
 		return isset( $_SESSION['guest-learner'] );
 	}
 
-	public function start_guest_session() {
+	private function start_guest_session() {
 		$_SESSION['guest-learner'] = true;
 	}
 
-	public function end_guest_session() {
+	private function end_guest_session() {
 		unset( $_SESSION['guest-learner'] );
+	}
+
+	private function grade_question( $question_grade, $question_id, $question_type, $answer ) {
+		if ( false !== $question_grade ) {
+			return $question_grade;
+		}
+
+		// Always pass questions that can't be autograded.
+		return Sensei()->question->get_question_grade( $question_id );
 	}
 
 }
