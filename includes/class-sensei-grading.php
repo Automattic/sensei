@@ -917,27 +917,27 @@ class Sensei_Grading {
 		$all_question_grades = array();
 		foreach ( $submitted as $question_id => $answer ) {
 
-			// check if the question is autogradable, either by type, or because the grade is 0
+			// Check if the question is autogradable, either by type, or because the grade is 0.
 			$question_type    = Sensei()->question->get_question_type( $question_id );
 			$achievable_grade = Sensei()->question->get_question_grade( $question_id );
-			// Question has a zero grade, so skip grading
-			if ( 0 == $achievable_grade ) {
+			// Question has a zero grade, so skip grading.
+			if ( 0 === $achievable_grade ) {
 				$all_question_grades[ $question_id ] = $achievable_grade;
-			} elseif ( in_array( $question_type, $autogradable_question_types ) ) {
-				// Get user question grade
-				$question_grade                      = self::grade_question_auto( $question_id, $question_type, $answer, $user_id );
-				$all_question_grades[ $question_id ] = $question_grade;
-				$grade_total                        += $question_grade;
-
 			} else {
+				// Get user question grade.
+				$question_grade = self::grade_question_auto( $question_id, $question_type, $answer, $user_id );
 
-				// There is a question that cannot be autograded
-				$quiz_autogradable = false;
-
+				if ( false !== $question_grade ) {
+					$all_question_grades[ $question_id ] = $question_grade;
+					$grade_total                        += $question_grade;
+				} else {
+					// There is a question that cannot be autograded.
+					$quiz_autogradable = false;
+				}
 			}
 		}
 
-		// Only if the whole quiz was autogradable do we set a grade
+		// Only if the whole quiz was autogradable do we set a grade.
 		if ( $quiz_autogradable ) {
 			$quiz_total = Sensei_Utils::sensei_get_quiz_total( $quiz_id );
 			$grade      = Sensei_Utils::quotient_as_absolute_rounded_percentage( $grade_total, $quiz_total, 2 );
