@@ -9,6 +9,7 @@
  * Tests for Sensei_Scheduler_Action_Scheduler class.
  *
  * @group background-jobs
+ * @covers Sensei_Scheduler_Action_Scheduler
  */
 class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	use Sensei_Scheduler_Test_Helpers;
@@ -83,6 +84,31 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 
 		$result = _as_get_scheduled_actions( $job->get_name(), [ $job->get_args() ], null );
 		$this->assertEquals( 0, count( $result ), 'The job should no longer be queued' );
+	}
+
+	/**
+	 * Tests to make sure an action is enqueued before running the job run() method to have as fallback.
+	 */
+	public function testRunEnqueuesDelayedActionInCaseOfFailure() {
+		$job       = new Sensei_Background_Job_Stub();
+		$scheduler = Sensei_Scheduler::instance();
+
+		// Setup job for failure.
+		$expected_exception = new Exception();
+		$job->run_callback  = function() use ( $expected_exception ) {
+			throw $expected_exception;
+		};
+
+		// Schedule and run
+		$scheduler->schedule_job( $job );
+		try {
+			$scheduler->run( $job );
+		} catch ( Exception $exception ) {
+			$this->assertSame( $expected_exception, $exception );
+		}
+
+		$result = _as_get_scheduled_actions( $job->get_name(), [ $job->get_args() ], null );
+		$this->assertEquals( 1, count( $result ), 'The job should still have an enqueued action even if it failed' );
 	}
 
 	/**
