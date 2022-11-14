@@ -142,7 +142,6 @@ class Aggregate_Submission_Repository implements Submission_Repository_Interface
 
 			if ( $tables_based_submission ) {
 				// Make sure the dates are in UTC.
-				// This is not the case if the submission is originating from the comments based repository.
 				$created_at = new DateTimeImmutable( '@' . $submission->get_created_at()->getTimestamp() );
 				$updated_at = new DateTimeImmutable( '@' . $submission->get_updated_at()->getTimestamp() );
 
