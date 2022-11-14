@@ -90,15 +90,19 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	 * Save new teacher.
 	 *
 	 * @param WP_REST_Request $request The request object.
-	 * @return string The json response.
+	 * @return WP_REST_Response The json response.
 	 */
 	public function update_teacher( WP_REST_Request $request ) {
 		$post_id = $request->get_param( 'post_id' );
 		$teacher = $request->get_param( 'teacher' );
 
 		Sensei()->teacher->save_teacher( $post_id, $teacher );
-
-		return new WP_REST_Response( [ 'status' => 'success' ], WP_HTTP::OK );
+		return new WP_REST_Response(
+			[
+				'status'       => 'success',
+			],
+			WP_HTTP::OK
+		);
 	}
 
 	/**

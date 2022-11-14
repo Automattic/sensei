@@ -674,6 +674,9 @@ class Sensei_Course {
 	 * @return int
 	 */
 	public function meta_box_save( $post_id ) {
+		if ( WP_Screen::is_block_editor() ) {
+			return;
+		}
 		global $post;
 
 		/* Verify the nonce before proceeding. */
