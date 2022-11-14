@@ -60,8 +60,15 @@ class Sensei_Course {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			add_action( 'add_meta_boxes', [ $this, 'meta_box_setup' ], 20 );
-			add_action( 'save_post', [ $this, 'meta_box_save' ] );
+			require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+			$current_screen = get_current_screen();
+			if (
+				method_exists( $current_screen, 'is_block_editor' )
+				&& $current_screen->is_block_editor()
+			) {
+				add_action( 'add_meta_boxes', [ $this, 'meta_box_setup' ], 20 );
+				add_action( 'save_post', [ $this, 'meta_box_save' ] );
+			}
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_course_posts_columns', [ $this, 'add_column_headings' ], 20, 1 );
@@ -674,9 +681,6 @@ class Sensei_Course {
 	 * @return int
 	 */
 	public function meta_box_save( $post_id ) {
-		if ( WP_Screen::is_block_editor() ) {
-			return;
-		}
 		global $post;
 
 		/* Verify the nonce before proceeding. */

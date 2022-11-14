@@ -56,8 +56,16 @@ class Sensei_Teacher {
 	 */
 	public function __construct() {
 
-		add_action( 'add_meta_boxes', array( $this, 'add_teacher_meta_boxes' ), 10, 2 );
-		add_action( 'save_post', array( $this, 'save_teacher_meta_box' ) );
+		require_once( ABSPATH . 'wp-admin/includes/screen.php' );
+		$current_screen = get_current_screen();
+		if (
+			method_exists( $current_screen, 'is_block_editor' )
+			&& $current_screen->is_block_editor()
+		) {
+			add_action( 'add_meta_boxes', [ $this, 'add_teacher_meta_boxes' ], 10, 2 );
+			add_action( 'save_post', [ $this, 'save_teacher_meta_box' ] );
+		}
+
 		add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ) );
 		add_filter( 'pre_get_posts', array( $this, 'course_analysis_teacher_access_limit' ) );
 		add_filter( 'wp_count_posts', array( $this, 'list_table_counts' ), 10, 3 );
