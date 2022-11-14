@@ -68,7 +68,7 @@ class Sensei_Lesson {
 		if ( is_admin() ) {
 
 			// Metabox functions
-			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'add_meta_boxes_' . $this->token, array( $this, 'add_video_meta_box' ), 10, 1 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
@@ -2579,7 +2579,7 @@ class Sensei_Lesson {
 		 * @param {array} $allowed_post_types Allowed post types.
 		 * @return {array} Allowed post types.
 		 */
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson' ) );
 
 		/**
 		 * Only load lesson scripts for particular post type pages.
