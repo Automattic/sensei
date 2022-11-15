@@ -60,10 +60,8 @@ class Sensei_Course {
 		// Admin actions
 		if ( is_admin() ) {
 			// Metabox functions
-			if ( sensei_is_block_editor() ) {
-				add_action( 'add_meta_boxes', [ $this, 'meta_box_setup' ], 20 );
-				add_action( 'save_post', [ $this, 'meta_box_save' ] );
-			}
+			add_action( 'add_meta_boxes', [ $this, 'meta_box_setup' ], 20 );
+			add_action( 'save_post', [ $this, 'meta_box_save' ] );
 
 			// Custom Write Panel Columns
 			add_filter( 'manage_course_posts_columns', [ $this, 'add_column_headings' ], 20, 1 );
@@ -459,7 +457,6 @@ class Sensei_Course {
 	 * @return void
 	 */
 	public function meta_box_setup() {
-
 		// Add Meta Box for Prerequisite Course
 		add_meta_box(
 			'course-prerequisite',
@@ -735,7 +732,10 @@ class Sensei_Course {
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
 			// phpcs:ignore WordPress.Security.NonceVerification
-			$new_meta_value = ( isset( $_POST[ $post_key ] ) ? sanitize_html_class( $_POST[ $post_key ] ) : '' );
+			if ( ! isset( $_POST[ $post_key ] ) ) {
+				return;
+			}
+			$new_meta_value = sanitize_html_class( $_POST[ $post_key ] );
 		}
 
 		/**
