@@ -45,6 +45,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 	 * Test that prepared items have the last activity date field with matching data.
 	 */
 	public function testPrepareItems_WhenCalled_ReturnsStudentsWithLastActivityDate() {
+		$GLOBALS['current_screen'] = null;
 		// Arrange
 		$bulk_action_view_instance = new Sensei_Learners_Admin_Bulk_Actions_View(
 			Sensei()->learners->bulk_actions_controller,
