@@ -322,7 +322,7 @@ class Sensei_REST_API_Lesson_Quiz_Controller extends \WP_REST_Controller {
 			return false;
 		}
 
-		return wp_get_current_user()->ID === (int) $lesson->post_author || current_user_can( 'manage_options' );
+		return current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson->ID ) || current_user_can( 'manage_options' );
 	}
 
 	/**
