@@ -4,3 +4,19 @@
 */
 @import 'sensei-course-theme/theme-fixes';
 @import 'sensei-course-theme/buttons';
+
+.sensei-course-theme__frame {
+	a, [class*='sensei-'] a, a[class*='sensei-'] {
+		text-decoration: none;
+
+		&:hover, &:hover * {
+			text-decoration: underline;
+		}
+	}
+
+	font-family: 'Inter', sans-serif;
+
+	* {
+		font-family: 'Inter', sans-serif;
+	}
+}
