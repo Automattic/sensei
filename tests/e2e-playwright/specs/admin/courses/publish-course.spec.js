@@ -26,7 +26,7 @@ describe( 'Create Courses', () => {
 		await coursesPage.dialogCloseButton.click();
 
 		// Fill in the course title and description.
-		const wizardForm = page.locator( '.sensei-editor-wizard-step__form' ).first();
+		const wizardForm = await page.locator( '.sensei-editor-wizard-step__form' ).first();
 		await wizardForm.locator( 'input' ).first().fill( 'Test Create Course' );
 		await wizardForm.locator( 'textarea' ).first().fill( 'Test Create Course Description' );
 
