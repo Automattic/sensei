@@ -46,6 +46,10 @@ class PostType {
 		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
 	}
 
+	async goToPostTypeListingPage() {
+		return this.page.goto( `/wp-admin/edit.php?post_type=${ this.postType }` );
+	}
+
 	async gotToPreviewPage() {
 		return this.page.goto( await this.getPreviewURL() );
 	}
