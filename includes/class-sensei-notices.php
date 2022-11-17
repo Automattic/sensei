@@ -68,7 +68,6 @@ class Sensei_Notices {
 		);
 
 		add_action( 'template_redirect', [ $this, 'setup_block_notices' ] );
-		add_action( 'init', [ $this, 'maybe_load_notices' ] );
 		add_action( 'shutdown', [ $this, 'maybe_persist_notices' ] );
 	}
 
@@ -129,6 +128,7 @@ class Sensei_Notices {
 	 * @return void
 	 */
 	public function maybe_print_notices() {
+		$this->maybe_load_notices();
 		if ( ! empty( $this->notices ) ) {
 			foreach ( $this->notices  as  $notice ) {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in generate_notice
