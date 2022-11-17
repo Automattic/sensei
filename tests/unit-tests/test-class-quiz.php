@@ -1725,7 +1725,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 	}
 
 	public function testCreatingQuizSetsAuthorToLessonTeacher() {
-		$main_teacher_id = $this->factory->user->create( [ 'role' => 'teacher' ] );
+		$main_teacher_id  = $this->factory->user->create( [ 'role' => 'teacher' ] );
 		$other_teacher_id = $this->factory->user->create( [ 'role' => 'teacher' ] );
 
 		$data = $this->factory->get_course_with_lessons(
@@ -1744,7 +1744,7 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		// Create a quiz for the Lesson.
 		$lesson_id = $data['lesson_ids'][0];
-		$quiz_id = wp_insert_post(
+		$quiz_id   = wp_insert_post(
 			[
 				'post_type'   => 'quiz',
 				'post_title'  => 'Lesson Quiz',
