@@ -156,4 +156,22 @@ class Sensei_Learners_Admin_Bulk_Actions_View_Test extends WP_UnitTestCase {
 			],
 		];
 	}
+
+	public function testGetSortableColumns_WhenCalled_ReturnsMatchingColumns() {
+		/* Arrange. */
+		$controller         = $this->createMock( Sensei_Learners_Admin_Bulk_Actions_Controller::class );
+		$learner_management = $this->createMock( Sensei_Learner_Management::class );
+		$learner = $this->createMock( Sensei_Learner::class );
+		$view = new Sensei_Learners_Admin_Bulk_Actions_View( $controller, $learner_management, $learner );
+
+		/* Act. */
+		$actual = $view->get_sortable_columns();
+
+		/* Assert. */
+		$expected = [
+			'learner' => [ 'learner', false ],
+		];
+
+		$this->assertEquals( $expected, $actual );
+	}
 }
