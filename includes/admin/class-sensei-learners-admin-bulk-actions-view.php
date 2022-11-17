@@ -152,7 +152,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	public function get_sortable_columns() {
 		$columns = array(
 			'learner'            => array( 'learner', false ),
-			'last_activity_date' => array( 'last_activity_date', false ),
 		);
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
