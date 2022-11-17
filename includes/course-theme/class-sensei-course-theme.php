@@ -364,7 +364,10 @@ class Sensei_Course_Theme {
 		$compat_css_file = 'css/learning-mode-compat.' . $version . '.css';
 
 		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $css_file ) ) ) {
-			$css_file        = 'css/learning-mode.css';
+			$css_file = 'css/learning-mode.css';
+		}
+
+		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $compat_css_file ) ) ) {
 			$compat_css_file = 'css/learning-mode-compat.css';
 		}
 
