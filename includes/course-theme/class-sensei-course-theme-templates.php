@@ -67,13 +67,154 @@ class Sensei_Course_Theme_Templates {
 		add_action( 'template_redirect', [ $this, 'maybe_use_course_theme_templates' ], 1 );
 		add_action( 'admin_init', [ $this, 'maybe_add_theme_supports' ] );
 		add_filter( 'get_block_templates', [ $this, 'add_course_theme_block_templates' ], 10, 3 );
+		add_filter( 'get_block_templates', [ $this, 'get_single_course_template' ], 11, 3 );
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 
 	}
 
+	/**
+	 * Replace a content of a file.
+	 *
+	 * @access private
+	 *
+	 * @param string $str String to replace.
+	 * @param string $needle_start  Beginning of file.
+	 * @param string $needle_end End of the file.
+	 * @param string $replacement Replacement.
+	 *
+	 * @return array|string|string[]
+	 */
+	private function replace_between( $str, $needle_start, $needle_end, $replacement ) {
+		$pos   = strpos( $str, $needle_start );
+		$start = false === $pos ? 0 : $pos;
 
+		$pos = strpos( $str, $needle_end, $start );
+		$end = false === $pos ? strlen( $str ) : $pos + strlen( $needle_end );
+
+		return substr_replace( $str, $replacement, $start, $end - $start );
+	}
+
+	/**
+	 * Get custom template for single course.
+	 *
+	 * @return object WP_Block_Template template.
+	 */
+	public function get_custom_template() {
+		$plugin                   = 'sensei';
+		$slug                     = 'single-course-template';
+		$template_id              = $plugin . '//' . $slug;
+		$title                    = 'Single course';
+		$description              = 'Single course template to use in sensei course theme';
+		$template                 = new WP_Block_Template();
+		$template->id             = $template_id;
+		$template->theme          = $plugin;
+		$template->content        = '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+
+<!-- wp:group {"style":{"spacing":{"padding":{"left":"20px","right":"20px"}}},"layout":{"type":"constrained","contentSize":"1000px","wideSize":"1000px"}} -->
+<div class="wp-block-group" style="padding-right:20px;padding-left:20px">
+
+	<!-- wp:group {"layout":{"type":"constrained","contentSize":"666px","justifyContent":"left"}} -->
+	<div class="wp-block-group"><!-- wp:post-title {"level":1,"align":"wide","style":{"typography":{"lineHeight":0.9,"textTransform":"uppercase"}},"fontSize":"2-5x-large"} /--></div>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"tagName":"main","lock":{"move":false,"remove":true},"style":{"border":{"bottom":{"width":"1px"},"radius":"0px"}}} -->
+	<main class="wp-block-group" style="border-radius:0px;border-bottom-width:1px">
+		<!-- wp:spacer {"height":"5rem"} -->
+		<div style="height:5rem" aria-hidden="true" class="wp-block-spacer"></div>
+		<!-- /wp:spacer -->
+
+		<!-- wp:post-featured-image /-->
+
+		<!-- wp:spacer {"height":"5rem"} -->
+		<div style="height:5rem" aria-hidden="true" class="wp-block-spacer"></div>
+		<!-- /wp:spacer -->
+
+		<!-- wp:columns {"style":{"spacing":{"blockGap":{"top":"0px","left":"0px"},"padding":{"bottom":"40px"}}}} -->
+		<div class="wp-block-columns" style="padding-bottom:40px">
+
+			<!-- wp:column {"width":"100%","style":{"spacing":{"padding":{"bottom":"40px"}},"typography":{"letterSpacing":"-0.01em"}}} -->
+			<div class="wp-block-column" style="flex-basis:62.6%;letter-spacing:-0.01em;padding-bottom:40px">
+				<!-- wp:group {"style":{"typography":{"fontStyle":"normal","fontWeight":"600","lineHeight":"1","letterSpacing":"-0.02em"},"spacing":{"blockGap":"0.5rem"}},"layout":{"type":"flex","flexWrap":"nowrap"},"fontSize":"xx-small"} -->
+				<div class="wp-block-group has-xx-small-font-size" style="font-style:normal;font-weight:600;letter-spacing:-0.02em;line-height:1">
+
+					<!-- wp:post-date {"fontSize":"xx-small"} /-->
+
+					<!-- wp:heading {"level":6,"style":{"typography":{"fontStyle":"normal","fontWeight":"600"}},"fontFamily":"system"} -->
+					<h6 class="has-system-font-family" style="font-style:normal;font-weight:600">— by</h6>
+					<!-- /wp:heading -->
+
+					<!-- wp:post-author {"textAlign":"left","showAvatar":false,"showBio":false,"fontSize":"xx-small","fontFamily":"system"} /-->
+				</div>
+				<!-- /wp:group -->
+				<!-- wp:post-content {"layout":{"type":"constrained"},"lock":{"move":false,"remove":true}} /-->
+
+				<!-- wp:spacer {"height":"20px"} -->
+				<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+				<!-- /wp:spacer -->
+
+				<!-- wp:post-terms {"term":"category","style":{"typography":{"lineHeight":"1"}},"fontSize":"xx-small","fontFamily":"system"} /-->
+
+				<!-- wp:spacer {"height":"10px"} -->
+				<div style="height:10px" aria-hidden="true" class="wp-block-spacer"></div>
+				<!-- /wp:spacer -->
+
+				<!-- wp:post-terms {"term":"post_tag","style":{"typography":{"lineHeight":"1"}},"fontSize":"xx-small","fontFamily":"system"} /-->
+
+			</div>
+		</div>
+		<!-- /wp:columns -->
+
+	</main>
+	<!-- /wp:group -->
+
+	<!-- wp:group {"layout":{"type":"constrained"}} -->
+	<div class="wp-block-group"><!-- wp:spacer {"height":"4rem"} -->
+		<div style="height:4rem" aria-hidden="true" class="wp-block-spacer"></div>
+		<!-- /wp:spacer -->
+		<!-- wp:pattern {"slug":"course/comments"} /--></div>
+	<!-- /wp:group -->
+
+</div>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->';
+		$template->slug           = $slug;
+		$template->source         = 'plugin';
+		$template->type           = 'wp_template';
+		$template->title          = $title;
+		$template->status         = 'publish';
+		$template->has_theme_file = false;
+		$template->is_custom      = true;
+		$template->description    = $description;
+		return $template;
+	}
+
+	/**
+	 * Get custom template for single course.
+	 *
+	 * @access private
+	 *
+	 * @param object $query_result query result.
+	 * @param string $query query.
+	 * @param string $template_type template type.
+	 *
+	 * @return object query result.
+	 */
+	public function get_single_course_template( $query_result, $query, $template_type ) {
+
+		// Check if theme is course theme.
+		$theme = wp_get_theme();
+		if ( 'Course' !== $theme['Name'] ) {
+			return $query_result;
+		}
+
+		if ( empty( $query ) && 'wp_template' === $template_type ) {
+			$query_result[] = $this->get_custom_template();
+		}
+		return $query_result;
+	}
 	/**
 	 * Use course theme if it's enabled for the current lesson or quiz.
 	 *
@@ -237,7 +378,6 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	public function add_course_theme_block_templates( $templates, $query, $template_type ) {
-
 		if ( 'wp_template' !== $template_type || ! empty( $query['wp_id'] ) ) {
 			return $templates;
 		}
@@ -290,7 +430,6 @@ class Sensei_Course_Theme_Templates {
 		if ( $is_site_editor && empty( $templates ) ) {
 			return [ $course_theme_templates['lesson'] ];
 		}
-
 		return $templates;
 	}
 
@@ -300,7 +439,6 @@ class Sensei_Course_Theme_Templates {
 	 * @return array
 	 */
 	public function get_block_templates() {
-
 		$this->load_file_templates();
 
 		$db_templates = $this->get_custom_templates();
