@@ -168,7 +168,7 @@ class Sensei_Notices {
 	 */
 	public function maybe_persist_notices() {
 		if ( ! empty( $this->notices ) && is_user_logged_in() ) {
-			add_user_meta( get_current_user_id(), self::USER_META_KEY, $this->notices );
+			update_user_meta( get_current_user_id(), self::USER_META_KEY, $this->notices );
 			$this->clear_notices();
 		}
 	}
