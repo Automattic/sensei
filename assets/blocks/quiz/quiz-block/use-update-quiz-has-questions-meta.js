@@ -9,6 +9,10 @@ import { useSelect, useDispatch } from '@wordpress/data';
  */
 import { isQuestionEmpty } from '../data';
 
+const isPreview = document.documentElement.classList.contains(
+	'block-editor-block-preview__content-iframe'
+);
+
 /**
  * Monitor for questions and disable the lesson quiz when none have been added.
  *
@@ -32,6 +36,10 @@ export const useUpdateQuizHasQuestionsMeta = ( clientId ) => {
 	const { editPost } = useDispatch( 'core/editor' );
 	const setQuizHasQuestionsMeta = useCallback(
 		( enable ) => {
+			if ( isPreview ) {
+				return;
+			}
+
 			return editPost( {
 				meta: { [ META_KEY ]: enable ? 1 : 0 },
 			} );
