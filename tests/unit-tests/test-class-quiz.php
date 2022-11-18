@@ -1724,7 +1724,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		$this->assertEmpty( $quiz_grades );
 	}
 
-	public function testCreatingQuizSetsAuthorToLessonTeacher() {
+	public function testSetQuizAuthorOnCreate_WhenCreatingQuiz_SetsAuthorToLessonTeacher() {
+		// Arrange.
 		$main_teacher_id  = $this->factory->user->create( [ 'role' => 'teacher' ] );
 		$other_teacher_id = $this->factory->user->create( [ 'role' => 'teacher' ] );
 
@@ -1742,6 +1743,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 		// Log in as other teacher.
 		wp_set_current_user( $other_teacher_id );
 
+		// Act.
+
 		// Create a quiz for the Lesson.
 		$lesson_id = $data['lesson_ids'][0];
 		$quiz_id   = wp_insert_post(
@@ -1756,6 +1759,8 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 				],
 			]
 		);
+
+		// Assert.
 
 		// Ensure the quiz author is changed to main_teacher_id.
 		$this->assertEquals( $main_teacher_id, get_post_field( 'post_author', $quiz_id ) );
