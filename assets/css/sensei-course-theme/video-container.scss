@@ -21,7 +21,7 @@
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
 		&__video-container {
-			--sidebar-width: var(--sidebar-width, 300px);
+			--sidebar-width: 300px;
 			display: flex;
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);
