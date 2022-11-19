@@ -56,6 +56,7 @@ class Sensei_Course {
 		$this->token = 'course';
 
 		add_action( 'init', [ $this, 'set_up_meta_fields' ] );
+		add_action( 'rest_api_init', [ $this, 'add_author_support' ] );
 
 		// Admin actions
 		if ( is_admin() ) {
@@ -260,6 +261,7 @@ class Sensei_Course {
 	 * @return array
 	 */
 	public static function get_course_settings_sidebar_vars() {
+		$course_id = get_the_ID();
 		return [
 			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
 			'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
@@ -270,12 +272,12 @@ class Sensei_Course {
 					'posts_per_page'   => -1,
 					'orderby'          => 'title',
 					'order'            => 'DESC',
-					'exclude'          => get_the_ID(),
+					'exclude'          => $course_id,
 					'suppress_filters' => 0,
 					'post_status'      => 'any',
 				]
 			),
-			'author'      => absint( get_the_author_meta( 'ID' ) ),
+			'author'      => absint( get_post( $course_id )->post_author ),
 		];
 	}
 
@@ -516,6 +518,18 @@ class Sensei_Course {
 				'__back_compat_meta_box'             => true,
 			]
 		);
+	}
+
+	/**
+	 * Add author support when it's a REST request to allow save teacher via the Rest API.
+	 *
+	 * Hooked into `rest_api_init`.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 */
+	public function add_author_support() {
+		add_post_type_support( 'course', 'author' );
 	}
 
 	/**

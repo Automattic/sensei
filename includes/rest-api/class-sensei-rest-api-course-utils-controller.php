@@ -120,7 +120,11 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	 *
 	 * @return boolean
 	 */
-	public function check_edit_permissions() {
-		return current_user_can( 'edit_courses' );
+	public function check_edit_permissions( WP_REST_Request $request ) {
+		$post_id = $request->get_param( 'post_id' );
+		$post    = get_post( $post_id );
+
+		$post_type = get_post_type_object( $post->post_type );
+		return current_user_can( $post_type->cap->edit_post, $post_id );
 	}
 }
