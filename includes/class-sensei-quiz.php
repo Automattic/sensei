@@ -127,7 +127,7 @@ class Sensei_Quiz {
 	 * @return mixed
 	 */
 	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update = null ) {
-		// Compatibility for WP < 6.0
+		// Compatibility for WP < 6.0.
 		if ( null === $update ) {
 			$update = ! empty( $postarr['ID'] );
 		}
