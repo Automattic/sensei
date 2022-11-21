@@ -745,6 +745,7 @@ class Sensei_Course {
 			$new_meta_value = ( isset( $_POST[ $post_key ] ) ) ? $_POST[ $post_key ] : '';
 			$new_meta_value = Sensei_Wp_Kses::maybe_sanitize( $new_meta_value, self::$allowed_html );
 		} else {
+			// phpcs:ignore WordPress.Security.NonceVerification
 			if ( ! isset( $_POST[ $post_key ] ) ) {
 				return;
 			}

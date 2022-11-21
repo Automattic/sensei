@@ -118,6 +118,7 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	/**
 	 * Check if the current user has permission to edit the post.
 	 *
+	 * @param WP_REST_Request $request The request object.
 	 * @return boolean
 	 */
 	public function check_edit_permissions( WP_REST_Request $request ) {

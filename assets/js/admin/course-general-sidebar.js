@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
+import { useSelect, dispatch } from '@wordpress/data';
 import {
 	PanelBody,
 	CheckboxControl,
@@ -69,7 +69,15 @@ const CourseGeneralSidebar = () => {
 				<SelectControl
 					value={ author }
 					options={ teachers }
-					onChange={ ( new_author ) => setAuthor( new_author ) }
+					onChange={ ( new_author ) => {
+						setAuthor( new_author );
+						dispatch( 'core' ).editEntityRecord(
+							'postType',
+							'course',
+							course.id,
+							{ author: new_author }
+						);
+					} }
 				/>
 			) : null }
 
