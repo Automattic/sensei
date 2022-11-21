@@ -22,7 +22,7 @@ async function enroll( page: Page, course: Course ) {
 }
 
 const testMode = ( courseMode: CourseMode ) =>
-	describe.serial.only( `Course Frontend (${ courseMode })`, () => {
+	describe( `Course Frontend (${ courseMode })`, () => {
 		use( { courseMode } );
 		use( studentRole() );
 
