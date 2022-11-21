@@ -151,35 +151,20 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'user':
 				$columns = array(
-					'title'       => array( 'title', false ),
-					'started'     => array( 'started', false ),
-					'completed'   => array( 'completed', false ),
-					'user_status' => array( 'user_status', false ),
-					'percent'     => array( 'percent', false ),
+					'completed' => array( 'comment_date', false ),
 				);
 				break;
 
 			case 'lesson':
 			default:
 				if ( $this->user_id ) {
-
 					$columns = array(
-						'title'       => array( 'title', false ),
-						'started'     => array( 'started', false ),
-						'completed'   => array( 'completed', false ),
-						'user_status' => array( 'user_status', false ),
-						'grade'       => array( 'grade', false ),
+						'title' => array( 'title', false ),
 					);
-
 				} else {
-
 					$columns = array(
-						'title'         => array( 'title', false ),
-						'num_learners'  => array( 'num_learners', false ),
-						'completions'   => array( 'completions', false ),
-						'average_grade' => array( 'average_grade', false ),
+						'title' => array( 'title', false ),
 					);
-
 				}
 				break;
 		}
@@ -626,6 +611,7 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 			'posts_per_page'   => $args['number'],
 			'offset'           => $args['offset'],
 			'order'            => $args['order'],
+			'orderby'          => $args['orderby'],
 			'meta_query'       => array(
 				array(
 					'key'   => '_lesson_course',

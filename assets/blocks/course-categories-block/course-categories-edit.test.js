@@ -89,20 +89,6 @@ describe( 'CourseCategoryEdit', () => {
 		expect( getByText( message ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render a placeholder when there are no course categories', () => {
-		useCourseCategories.mockReturnValue( {
-			isLoading: false,
-			hasPostTerms: false,
-			postTerms: [],
-		} );
-
-		const { getByText } = render(
-			<CourseCategoryEdit { ...defaultProps } />
-		);
-
-		expect( getByText( 'No course category' ) ).toBeInTheDocument();
-	} );
-
 	it( 'should update the color attributes during the component loading', () => {
 		const setBackgroundColor = jest.fn();
 		const setTextColor = jest.fn();

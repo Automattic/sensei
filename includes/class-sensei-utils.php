@@ -1353,7 +1353,9 @@ class Sensei_Utils {
 		if ( ! $course_progress ) {
 			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		}
-		$course_progress->start();
+		if ( ! $course_progress->get_started_at() ) {
+			$course_progress->start();
+		}
 
 		$course_completion  = Sensei()->settings->settings['course_completion'];
 		$lessons_completed  = 0;
