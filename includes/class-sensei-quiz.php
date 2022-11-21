@@ -126,7 +126,7 @@ class Sensei_Quiz {
 	 * @param bool  $update              Whether the action is for an existing post being updated or not.
 	 * @return mixed
 	 */
-	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update ) {
+	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update = false ) {
 		// Only handle new posts.
 		if ( $update ) {
 			return $data;
