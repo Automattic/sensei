@@ -280,7 +280,9 @@ class Course_Navigation {
 	 * @return string Icon HTML.
 	 */
 	private function lesson_status_icon( $status ) {
-		return Sensei()->assets->get_icon( self::ICONS[ $status ], 'sensei-lms-course-navigation-lesson__status' );
+		$icon = Sensei()->assets->get_icon( self::ICONS[ $status ], 'sensei-lms-course-navigation-lesson__status' );
+
+		return apply_filters( 'sensei_learning_mode_lesson_status_icon', $icon, $status );
 	}
 
 	/**
