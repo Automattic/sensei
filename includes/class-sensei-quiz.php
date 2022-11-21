@@ -120,13 +120,18 @@ class Sensei_Quiz {
 	/**
 	 * Hooks into `wp_insert_post_data` and updates the quiz author to the lesson author on create.
 	 *
-	 * @param mixed $data                The data to be saved.
-	 * @param mixed $postarr             The post data.
-	 * @param mixed $unsanitized_postarr Unsanitized post data.
-	 * @param bool  $update              Whether the action is for an existing post being updated or not.
+	 * @param mixed     $data                The data to be saved.
+	 * @param mixed     $postarr             The post data.
+	 * @param mixed     $unsanitized_postarr Unsanitized post data.
+	 * @param bool|null $update              Whether the action is for an existing post being updated or not.
 	 * @return mixed
 	 */
-	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update ) {
+	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update = null ) {
+		// Compatibility for WP < 6.0
+		if ( null === $update ) {
+			$update = ! empty( $postarr['ID'] );
+		}
+
 		// Only handle new posts.
 		if ( $update ) {
 			return $data;
