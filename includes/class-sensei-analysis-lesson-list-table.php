@@ -64,11 +64,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 	 */
 	function get_sortable_columns() {
 		$columns = array(
-			'title'     => array( 'title', false ),
-			'started'   => array( 'started', false ),
-			'completed' => array( 'completed', false ),
-			'status'    => array( 'status', false ),
-			'grade'     => array( 'grade', false ),
+			'completed' => array( 'comment_date', false ),
 		);
 		$columns = apply_filters( 'sensei_analysis_lesson_columns_sortable', $columns, $this );
 		return $columns;

@@ -455,15 +455,11 @@ class Sensei_PostTypes {
 			'has_archive'           => true,
 			'hierarchical'          => false,
 			'menu_position'         => 51,
-			'supports'              => array( 'title', 'revisions' ),
+			'supports'              => array( 'title', 'editor', 'revisions' ),
 			'show_in_rest'          => true,
 			'rest_base'             => 'questions',
 			'rest_controller_class' => 'Sensei_REST_API_Questions_Controller',
 		);
-
-		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
-			$args['supports'][] = 'editor';
-		}
 
 		/**
 		 * Filter the arguments passed in when registering the Sensei Question post type.

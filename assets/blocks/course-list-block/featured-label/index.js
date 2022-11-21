@@ -24,18 +24,15 @@ const FeaturedLabel = ( { postId, isFeaturedImage, children } ) => {
 	const hasImage = media > 0;
 
 	const wrapperClassName = isFeaturedImage
-		? 'featured-course-wrapper__featured-image'
-		: 'featured-course-wrapper__course-categories';
-	const featuredLabelClassName = isFeaturedImage
-		? 'course-list-featured-label__featured-image'
-		: 'course-list-featured-label__course-categories';
+		? 'sensei-lms-course-list-featured-label__image-wrapper'
+		: 'sensei-lms-course-list-featured-label__meta-wrapper';
 
 	const shouldDisplayFeatureLabel =
 		( hasImage && isFeaturedImage ) || ( ! hasImage && ! isFeaturedImage );
 	return (
 		<div className={ wrapperClassName }>
 			{ isFeatured && shouldDisplayFeatureLabel && (
-				<span className={ featuredLabelClassName }>
+				<span className="sensei-lms-course-list-featured-label__text">
 					{ __( 'Featured', 'sensei-lms' ) }
 				</span>
 			) }
