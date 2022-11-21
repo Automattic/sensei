@@ -838,10 +838,11 @@ class Sensei_Teacher {
 		// get the course and determine if the current teacher is the owner
 		// if not remove it from the list of comments to be returned
 		foreach ( $comments as $key => $comment ) {
-			$lesson    = get_post( $comment->comment_post_ID );
-			$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
-			$course    = get_post( $course_id );
-			if ( ! isset( $course->post_author ) || intval( $course->post_author ) != intval( get_current_user_id() ) ) {
+			$lesson           = get_post( $comment->comment_post_ID );
+			$course_id        = Sensei()->lesson->get_course_id( $lesson->ID );
+			$course           = get_post( $course_id );
+			$allowed_user_ids = apply_filters( 'sensei_grading_allowed_user_ids', [ intval( $course->post_author ) ], $course_id );
+			if ( ! isset( $course->post_author ) || ! in_array( intval( get_current_user_id() ), $allowed_user_ids ) ) {
 				// remove this as the teacher should see this.
 				unset( $comments[ $key ] );
 			}
