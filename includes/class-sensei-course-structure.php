@@ -302,7 +302,6 @@ class Sensei_Course_Structure {
 	private function save_module( array $item ) {
 		if ( $item['id'] || $item['slug'] ) {
 			$term         = get_term( $item['id'], 'module' );
-			$author       = get_post( $this->course_id )->post_author;
 			$default_slug = $this->get_module_slug( $item['title'] );
 			// Custom slug gets priority over conventional slug.
 			$slug = $item['slug'] ?? $default_slug;
@@ -347,11 +346,12 @@ class Sensei_Course_Structure {
 			// If a custom slug is defined, remove any unused module generated when changing teacher.
 			$previous_term = get_term_by( 'slug', $this->get_module_slug( $item['lastTitle'] ), 'module' );
 			$previous_term && Sensei()->modules->remove_if_unused( $previous_term->term_id );
-			// If the previous id does not match the current id, remove the previous module.
-			if ( $item['id'] && $item['id'] !== $module_id ) {
-				wp_remove_object_terms( $this->course_id, $item['id'], 'module' );
-				Sensei()->modules->remove_if_unused( $item['id'] );
-			}
+		}
+
+		// If the previous id does not match the current id, remove the previous module.
+		if ( $item['id'] && $item['id'] !== $module_id ) {
+			wp_remove_object_terms( $this->course_id, $item['id'], 'module' );
+			Sensei()->modules->remove_if_unused( $item['id'] );
 		}
 
 		Sensei_Core_Modules::update_module_teacher_meta( $module_id, get_post( $this->course_id )->post_author );

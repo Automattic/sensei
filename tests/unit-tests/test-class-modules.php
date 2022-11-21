@@ -1,6 +1,7 @@
 <?php
 
 class Sensei_Class_Modules_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * Constructor function
@@ -200,4 +201,97 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertNotContains( 'more', $column_output, 'The "more" link shouldn\'t be present.' );
 	}
 
+	public function testModuleTeacherMeta_WhenAddedToACourse_TeacherIdGetsAddedToMeta() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 0,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$module = wp_insert_term(
+			'Get Started',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'get-started',
+			)
+		);
+
+		/* Act */
+		wp_set_object_terms( $course['course_id'], [ $module['term_id'] ], 'module' );
+
+		/* Assert */
+		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID );
+	}
+
+	public function testModuleTeacherMeta_WhenRemovedFromACourse_TeacherIdGetsRemovedFromMeta() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 0,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$module = wp_insert_term(
+			'Get Started',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'get-started',
+			)
+		);
+
+		wp_set_object_terms( $course['course_id'], [ $module['term_id'] ], 'module' );
+
+		/* Act */
+		wp_remove_object_terms( $course['course_id'], $module['term_id'], 'module' );
+
+		/* Assert */
+		$this->assertSame( '', get_term_meta( $module['term_id'], 'module_author', true ) );
+	}
+
+	public function testModuleTeacherMeta_WhenCourseTeacherChanged_TeacherIdMetaChangesAccordingly() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 0,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$module = wp_insert_term(
+			'Get Started',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'get-started',
+			)
+		);
+
+		wp_set_object_terms( $course['course_id'], [ $module['term_id'] ], 'module' );
+
+		$this->login_as_teacher_b();
+
+		/* Act */
+		$args = [
+			'ID'          => $course['course_id'],
+			'post_author' => wp_get_current_user()->ID,
+		];
+		wp_update_post( $args );
+
+		/* Assert */
+		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
+	}
 }

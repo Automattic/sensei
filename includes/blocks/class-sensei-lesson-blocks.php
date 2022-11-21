@@ -107,12 +107,7 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
 		new Sensei_Featured_Video_Block();
-
-		// This constructor has some sideeffects so only initialize it when the lesson has Sensei blocks.
-		if ( is_admin() || has_block( 'sensei-lms/contact-teacher' ) ) {
-			new Sensei_Block_Contact_Teacher();
-		}
-
+		new Sensei_Block_Contact_Teacher();
 	}
 
 	/**

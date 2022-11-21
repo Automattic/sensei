@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.8.0
+Stable tag: 4.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ Your knowledge is worth teaching - teach freely with Sensei LMS!
 - Embed videos from YouTube, Vimeo, and VideoPress for video-based courses.
 - Add the Course List block to any page or post to display available courses.
 - Customize the look and feel to match your branding and site style.
-- Enable the optional Learning Mode for a distraction free and immersive learning experience. 
+- Enable the optional Learning Mode for a distraction free and immersive learning experience.
 
 ### Quizzes That Reinforce ###
 Leverage the power of quizzes to strengthen your students’ understanding of key concepts and evaluate their progress.
@@ -46,12 +46,12 @@ Do more and sell courses with Sensei Pro, which includes:
 
 https://videopress.com/v/tLYw7R27
 
-**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz. 
+**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz.
 
-**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences. 
+**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences.
 
 **Course Access Periods:** Select a start date, end date, or a specific amount of time that courses will remain accessible to students.
- 
+
 **Conditional Content:** Hide and show lessons and content in lessons based on groups, enrollment status, and date.
 
 **Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
@@ -116,7 +116,21 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022-10-27 - Version 4.8.0
+2022-11-10 - version 4.8.1
+* New: Course Overview block for the Course List block [#5996](https://github.com/Automattic/sensei/pull/5996)
+* Add: Message for users without JavaScript enabled on Sensei Home [#6059](https://github.com/Automattic/sensei/pull/6059)
+* Fix: Course start date reset on lesson completion [#6079](https://github.com/Automattic/sensei/pull/6079)
+* Fix: Contact Teacher block not working [#6058](https://github.com/Automattic/sensei/pull/6058)
+* Fix: Random questions change for answered quizzes [#6088](https://github.com/Automattic/sensei/pull/6088)
+* Fix: Issue with enrolling students in the course view in a course with no students [#5583](https://github.com/Automattic/sensei/pull/5583)
+* Fix: Disable broken sorting under Reports [#6094](https://github.com/Automattic/sensei/pull/6094)
+* Fix: Course List buttons extending outside container [#6010](https://github.com/Automattic/sensei/pull/6010)
+* Fix: Checks for modules when adding author name to module name [#6034](https://github.com/Automattic/sensei/pull/6034)
+* Fix: PHP notice on course category archive view [#6069](https://github.com/Automattic/sensei/pull/6069)
+* Fix: Error when activating Sensei LMS + Sensei Pro (WC Paid Courses) [#6080](https://github.com/Automattic/sensei/pull/6080)
+* Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083)
+
+2022-10-27 - version 4.8.0
 * New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
 * New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
 

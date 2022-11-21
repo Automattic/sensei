@@ -271,10 +271,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * @return array
 	 */
 	public function get_system_data() {
-		$system_data                          = [];
-		$system_data['version']               = Sensei()->version;
-		$system_data['wcpc_version']          = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
-		$system_data['is_legacy_quiz_editor'] = Sensei()->quiz->is_block_based_editor_enabled() ? 0 : 1;
+		$system_data                 = [];
+		$system_data['version']      = Sensei()->version;
+		$system_data['wcpc_version'] = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
 
 		$legacy_flags = Sensei()->get_legacy_flags();
 		foreach ( $legacy_flags as $flag => $value ) {
