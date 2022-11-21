@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Notices_Provider class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -94,8 +94,14 @@ class Sensei_Home_Notices_Provider {
 	 * @return array
 	 */
 	private function format_item( $notice ) {
+		$level = 'info';
+		if ( array_key_exists( 'level', $notice ) ) {
+			$level = $notice['level'];
+		} elseif ( array_key_exists( 'style', $notice ) ) {
+			$level = $notice['style'];
+		}
 		return [
-			'level'       => ( $notice['level'] ?? $notice['style'] ) ?? 'info',
+			'level'       => $level,
 			'heading'     => $notice['heading'] ?? null,
 			'message'     => $notice['message'],
 			'info_link'   => $notice['info_link'] ?? null,

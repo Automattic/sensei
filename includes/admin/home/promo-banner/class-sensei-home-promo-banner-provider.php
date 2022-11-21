@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Promo_Banner_Provider class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 /**
@@ -23,7 +23,7 @@ class Sensei_Home_Promo_Banner_Provider {
 			 * Filter to disable the promotional banner in Sensei Home.
 			 *
 			 * @hook sensei_home_promo_banner_show
-			 * @since $$next-version$$
+			 * @since 4.8.0
 			 *
 			 * @param {bool} $show_promo_banner True if promotional banner must be shown.
 			 *

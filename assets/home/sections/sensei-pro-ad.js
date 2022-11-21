@@ -10,7 +10,7 @@ import { useSelect } from '@wordpress/data';
 import { EXTENSIONS_STORE } from '../../extensions/store';
 import { Col } from '../grid';
 import senseiProAdImageUrl from '../../images/sensei-pro-ad-image.png';
-import SenseiProAdCTA from '../../images/sensei-pro-ad-cta.svg';
+import senseiProAdStarsUrl from '../../images/sensei-pro-ad-stars.png';
 import { addUtms } from '../utils';
 
 /**
@@ -144,15 +144,32 @@ const SenseiProAd = ( { show } ) => {
 								window.sensei.pluginUrl + senseiProAdImageUrl
 							}
 							alt={ __(
-								'Image in black and white of a man looking at a microphone',
+								'Photo of Gonzalo de la Campa smiling',
 								'sensei-lms'
 							) }
 							className="sensei-home__sensei-pro-ad__card--image"
 						/>
-						<div className="sensei-home__sensei-pro-ad__card--price">
-							$29.99
+						<blockquote className="sensei-home__sensei-pro-ad__card--quote">
+							{ __(
+								'Thanks to Sensei Pro, I have been able to generate recurring income every month.',
+								'sensei-lms'
+							) }
+						</blockquote>
+						<div className="sensei-home__sensei-pro-ad__card--author">
+							Gonzalo de la Campa |{ ' ' }
+							{ __( 'WordPress Educator', 'sensei-lms' ) }
+							<img
+								src={
+									window.sensei.pluginUrl +
+									senseiProAdStarsUrl
+								}
+								alt={ __(
+									'Image containing five stars, representing the rating of the plugin',
+									'sensei-lms'
+								) }
+								className="sensei-home__sensei-pro-ad__card--stars"
+							/>
 						</div>
-						<SenseiProAdCTA className="sensei-home__sensei-pro-ad__card--cta" />
 					</div>
 				</section>
 			</article>

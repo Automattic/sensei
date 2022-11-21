@@ -222,12 +222,12 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	/**
 	 * Log plugin installation success for WooCommerce.com plugin on activation.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param string $plugin_file The activated plugin.
 	 */
 	public function log_wccom_plugin_install( $plugin_file ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 	}
 
 	/**

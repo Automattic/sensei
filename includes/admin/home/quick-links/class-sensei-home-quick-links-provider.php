@@ -3,7 +3,7 @@
  * File containing Sensei_Home_Quick_Links_Provider class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 /**

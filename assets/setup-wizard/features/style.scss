@@ -1,3 +1,14 @@
+$bar-color: #217D7C;
+
+@keyframes bar-animation {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 50px 50px;
+	}
+}
+
 .sensei-setup-wizard {
 	&__features-status {
 		margin-bottom: 24px;
@@ -16,8 +27,16 @@
 	}
 
 	&__features-progress-bar-filled {
-		background-color: #217D7C;
+		background-color: $bar-color;
+		background-image: linear-gradient(
+			135deg,
+			lighten($bar-color, 5%) 25%, $bar-color 25%,
+			$bar-color 50%, lighten($bar-color, 5%) 50%,
+			lighten($bar-color, 5%) 75%, $bar-color 75%
+		);
+		background-size: 50px 50px;
 		height: 100%;
 		transition: 1.5s width linear;
+		animation: bar-animation 3s linear infinite;
 	}
 }

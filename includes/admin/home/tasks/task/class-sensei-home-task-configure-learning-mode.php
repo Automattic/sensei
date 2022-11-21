@@ -3,13 +3,13 @@
  * File containing the Sensei_Home_Task_Configure_Learning_Mode class.
  *
  * @package sensei-lms
- * @since $$next-version$$
+ * @since 4.8.0
  */
 
 /**
  * Sensei_Home_Task_Configure_Learning_Mode class.
  *
- * @since $$next-version$$
+ * @since 4.8.0
  */
 class Sensei_Home_Task_Configure_Learning_Mode implements Sensei_Home_Task {
 

@@ -188,7 +188,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /features endpoint.
 	 *
-	 * @since $$next-version$$ It just completes the setup wizard after the features were installed.
+	 * @since 4.8.0 It just completes the setup wizard after the features were installed.
 	 */
 	public function register_submit_features_route() {
 		register_rest_route(
@@ -207,10 +207,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register /features-installation endpoint.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function register_submit_features_installation_route() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		register_rest_route(
 			$this->namespace,
@@ -272,10 +272,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Register GET / endpoint for features step.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function register_get_features_route() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		register_rest_route(
 			$this->namespace,
@@ -315,7 +315,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Get features data for Setup Wizard frontend.
 	 *
-	 * @since $$next-version$$ It doesn't add the wccom connection data anymore.
+	 * @since 4.8.0 It doesn't add the wccom connection data anymore.
 	 *
 	 * @param mixed $user_data Optional user data param. If it's not set, it will be fetched.
 	 *
@@ -342,14 +342,14 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Mark the given step as completed.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param string $step Step.
 	 *
 	 * @return bool Success.
 	 */
 	public function mark_step_complete( $step ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		return $this->setup_wizard->update_wizard_user_data(
 			[
@@ -431,7 +431,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit form on purpose step.
 	 *
-	 * @since $$next-version$$ Accepts features.
+	 * @since 4.8.0 Accepts features.
 	 *
 	 * @param array $form Form data.
 	 *
@@ -472,7 +472,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit form on features step.
 	 *
-	 * @since $$next-version$$ Complete the setup wizard.
+	 * @since 4.8.0 Complete the setup wizard.
 	 *
 	 * @return bool Success.
 	 */
@@ -485,14 +485,14 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Submit features installation step.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param array $form Form data.
 	 *
 	 * @return bool Success.
 	 */
 	public function submit_features_installation( $form ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$this->setup_wizard->install_extensions( $form['selected'] );
 
@@ -502,10 +502,10 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	/**
 	 * Complete setup wizard
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public function complete_setup_wizard() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$this->setup_wizard->finish_setup_wizard();
 

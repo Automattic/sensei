@@ -1353,7 +1353,9 @@ class Sensei_Utils {
 		if ( ! $course_progress ) {
 			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		}
-		$course_progress->start();
+		if ( ! $course_progress->get_started_at() ) {
+			$course_progress->start();
+		}
 
 		$course_completion  = Sensei()->settings->settings['course_completion'];
 		$lessons_completed  = 0;
@@ -2445,12 +2447,12 @@ class Sensei_Utils {
 	/**
 	 * Get data used for WooCommerce.com purchase redirect.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @return array The data.
 	 */
 	public static function get_woocommerce_connect_data() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$wc_params                = [];
 		$is_woocommerce_installed = self::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );

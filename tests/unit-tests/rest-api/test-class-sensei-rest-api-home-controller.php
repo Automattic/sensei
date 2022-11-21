@@ -3,7 +3,7 @@
  * File containing the Sensei_REST_API_Home_Controller_Test class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.8.0
  */
 
 /**

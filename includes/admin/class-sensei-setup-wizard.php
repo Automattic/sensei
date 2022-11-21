@@ -435,7 +435,7 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get feature with status.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param stdClass   $extension          Extension object.
 	 * @param stdClass[] $installing_plugins Plugins which are installing.
@@ -444,7 +444,7 @@ class Sensei_Setup_Wizard {
 	 * @return stdClass Extension with status.
 	 */
 	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
 
@@ -467,14 +467,14 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Get Sensei extensions for setup wizard.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param boolean $clear_active_plugins_cache Clear cache for `is_plugin_active`.
 	 *
 	 * @return array Sensei extensions.
 	 */
 	public function get_sensei_extensions( $clear_active_plugins_cache = false ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		if ( $clear_active_plugins_cache ) {
 			wp_cache_delete( 'alloptions', 'options' );
@@ -510,12 +510,12 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Filter extensions to install and call installation.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @param string[] $extension_slugs Extension slugs to install.
 	 */
 	public function install_extensions( $extension_slugs ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$extensions_to_install = [];
 
@@ -533,10 +533,10 @@ class Sensei_Setup_Wizard {
 	/**
 	 * Close the browser tab if it's a redirect from WooCommerce.com after a successful extension install.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 */
 	public static function close_wccom_install() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$wccom_installing_transient = 'sensei_setup_wizard_wccom_installing';
 

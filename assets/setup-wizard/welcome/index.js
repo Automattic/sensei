@@ -33,7 +33,7 @@ const Welcome = () => {
 	/**
 	 * Filters the title from the Welcome step in the Setup Wizard.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 *
 	 * @param {string} title Title text.
 	 *
@@ -47,7 +47,7 @@ const Welcome = () => {
 	/**
 	 * Filters the paragraph from the Welcome step in the Setup Wizard.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 *
 	 * @param {string} paragraph Paragraph text.
 	 *

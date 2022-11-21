@@ -174,7 +174,7 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.8.0
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -184,7 +184,7 @@ class Sensei_Lesson {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$screen = get_current_screen();
 
@@ -3634,12 +3634,12 @@ class Sensei_Lesson {
 		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && 'sensei_grading' === $_GET['page'] && isset( $_GET['user'] ) && isset( $_GET['quiz_id'] ) ) ) {
 
 			// Fetch the questions that the user was asked in their quiz if they have already completed it.
-			$quiz_submission_question_ids = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
+			$selected_questions = Sensei()->quiz_submission_repository->get_question_ids( $quiz_id, $user_id );
 
-			if ( $quiz_submission_question_ids ) {
+			if ( $selected_questions ) {
 				// Fetch each question in the order in which they were asked.
 				$questions = [];
-				foreach ( $quiz_submission_question_ids as $question_id ) {
+				foreach ( $selected_questions as $question_id ) {
 					$question = get_post( $question_id );
 					if ( ! isset( $question ) || ! isset( $question->ID ) ) {
 						continue;
@@ -3661,7 +3661,7 @@ class Sensei_Lesson {
 				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
 				$questions_array = [];
-				foreach ( $questions_loop as $k => $question ) {
+				foreach ( $questions_loop as $question ) {
 
 					// If this is a single question then include it.
 					if ( 'question' === $question->post_type ) {

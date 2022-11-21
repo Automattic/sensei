@@ -131,7 +131,7 @@ const Main = () => {
 	/**
 	 * Filters the component that will be injected on the top of the Sensei Home
 	 *
-	 * @since $$next-version$$
+	 * @since 4.8.0
 	 * @param {JSX.Element} element The element to be injected
 	 * @return {JSX.Element} Filtered element.
 	 */
