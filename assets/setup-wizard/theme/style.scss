@@ -1,0 +1,14 @@
+.sensei-setup-wizard {
+	&__theme-actions {
+		> * {
+			display: block;
+			width: 100%;
+
+			@media (min-width: $small-screen-break) {
+				display: revert;
+				width: auto;
+				margin: 0 8px;
+			}
+		}
+	}
+}

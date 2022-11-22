@@ -9,6 +9,7 @@ $big-horizontal-padding: 80px;
 @import 'animations';
 @import 'navigation-bar/style';
 @import 'purpose/style';
+@import 'theme/style';
 @import 'usage-tracking/style';
 @import 'newsletter/style';
 @import 'features/style';
@@ -116,6 +117,14 @@ $big-horizontal-padding: 80px;
 			text-decoration: underline;
 		}
 
+		&--only-medium {
+			display: none;
+
+			@media (min-width: $small-screen-break) {
+				display: revert;
+			}
+		}
+
 		&:disabled,
 		&[disabled] {
 			opacity: 0.5;
@@ -209,6 +218,10 @@ $big-horizontal-padding: 80px;
 		@media (min-width: $small-screen-break) {
 			text-align: center;
 			max-width: 414px;
+
+			&--large {
+				max-width: 538px;
+			}
 		}
 	}
 
