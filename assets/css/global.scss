@@ -14,11 +14,6 @@
 
 /* Sensei LMS menu */
 body #toplevel_page_sensei {
-	div.wp-menu-image:before {
-		font-family: 'sensei';
-		content: "\f101";
-	}
-
 	ul li a {
 		&[href="admin.php?page=sensei_learners"],
 		&[href="admin.php?page=sensei_reports"] {
