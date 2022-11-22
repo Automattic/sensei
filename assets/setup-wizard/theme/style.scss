@@ -12,3 +12,18 @@
 		}
 	}
 }
+
+.sensei-setup-wizard-theme {
+	padding-top: 64px;
+
+	&__image-wrapper {
+		padding: 16px;
+		border-radius: 16px;
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	&__image {
+		display: block;
+		width: 100%;
+	}
+}
