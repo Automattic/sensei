@@ -62,7 +62,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( '<form'p, $result );
+		$this->assertContains( '<form', $result );
 		$this->assertContains( 'Take Course</button>', $result );
 	}
 
