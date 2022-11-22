@@ -257,8 +257,10 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $item->user_id );
 
+		// Disable ownership check for teachers to allow access to Quiz ID.
 		remove_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
+		// Enable ownership check for teachers again.
 		add_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 		$quiz_link = add_query_arg(
 			array(
