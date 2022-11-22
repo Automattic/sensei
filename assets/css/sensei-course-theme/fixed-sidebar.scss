@@ -9,7 +9,7 @@ $breakpoint: 783px;
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
 		&__columns {
-			--sidebar-width: var(--sidebar-width, 300px);
+			--sidebar-width: 300px;
 		}
 
 		&__columns &__sidebar {
