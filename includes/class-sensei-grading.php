@@ -440,7 +440,7 @@ class Sensei_Grading {
 			$type = 'sensei_lesson_status';
 		}
 
-		$cache_key = 'sensei-statuses-' . md5( json_encode( $args ) );
+		$cache_key = 'sensei-statuses-' . md5( wp_json_encode( $args ) );
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 

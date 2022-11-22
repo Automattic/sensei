@@ -842,7 +842,7 @@ class Sensei_Teacher {
 			$course_id        = Sensei()->lesson->get_course_id( $lesson->ID );
 			$course           = get_post( $course_id );
 			$allowed_user_ids = apply_filters( 'sensei_grading_allowed_user_ids', [ intval( $course->post_author ) ], $course_id );
-			if ( ! isset( $course->post_author ) || ! in_array( intval( get_current_user_id() ), $allowed_user_ids ) ) {
+			if ( ! isset( $course->post_author ) || ! in_array( intval( get_current_user_id() ), $allowed_user_ids, true ) ) {
 				// remove this as the teacher should see this.
 				unset( $comments[ $key ] );
 			}
