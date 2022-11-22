@@ -157,11 +157,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		if ( $this->lesson_id ) {
 			$activity_args['post_id'] = $this->lesson_id;
 		} elseif ( $this->course_id ) {
-			// Disable ownership check for teachers to allow access to lesson IDs.
-			remove_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 			$activity_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
-			// Enable ownership check for teachers again.
-			add_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 		}
 		// Sub select to group of learners
 		if ( $this->user_ids ) {
@@ -261,11 +257,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $item->user_id );
 
-		// Disable ownership check for teachers to allow access to Quiz ID.
-		remove_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 		$quiz_id = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
-		// Enable ownership check for teachers again.
-		add_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 		$quiz_link = add_query_arg(
 			array(
 				'page'    => $this->page_slug,
@@ -443,11 +435,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 		);
 		if ( $this->course_id ) {
 			$query_args['course_id'] = $this->course_id;
-			// Disable ownership check for teachers to allow access to lesson IDs.
-			remove_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
-			$count_args['post__in'] = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
-			// Enable ownership check for teachers again.
-			add_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
+			$count_args['post__in']  = Sensei()->course->course_lessons( $this->course_id, 'any', 'ids' );
 		}
 		if ( $this->lesson_id ) {
 			$query_args['lesson_id'] = $this->lesson_id;

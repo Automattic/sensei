@@ -264,8 +264,6 @@ class Sensei_Grading {
 		$this->grading_user_quiz_nav();
 		do_action( 'sensei_grading_after_headers' );
 
-		// Disable ownership check for teachers to allow access to grading data – security check is already done above against `edit_post` capability.
-		remove_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
@@ -273,9 +271,6 @@ class Sensei_Grading {
 			</div>
 		</div>
 		<?php
-		// Enable ownership check for teachers again.
-		add_action( 'pre_get_posts', [ Sensei()->teacher, 'filter_queries' ] );
-
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
 	}
