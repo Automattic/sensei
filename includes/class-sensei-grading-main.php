@@ -257,7 +257,7 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 
 		$title = Sensei_Learner::get_full_name( $item->user_id );
 
-		$quiz_id = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
+		$quiz_id   = Sensei()->lesson->lesson_quizzes( $item->comment_post_ID, 'any' );
 		$quiz_link = add_query_arg(
 			array(
 				'page'    => $this->page_slug,
