@@ -75,7 +75,7 @@ class Sensei_Block_Take_Course {
 			$html = $this->render_with_login( $content );
 		}
 		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'sensei-block-wrapper sensei-cta' ) );
-		return ! empty( $html ) ? '<div' . $wrapper_attributes . '>' . $html . '</div>' : '';
+		return ! empty( $html ) ? '<div ' . $wrapper_attributes . '>' . $html . '</div>' : '';
 	}
 
 	/**
@@ -109,8 +109,8 @@ class Sensei_Block_Take_Course {
 
 		if ( preg_match( '/<button(.*)class="(.*)"/', $button ) ) {
 			return preg_replace(
-				'/<button(.*)class="(.*)"/',
-				'<button $1 class="sensei-stop-double-submission $2"',
+				'/<button(.*) class="(.*)"/',
+				'<button$1 class="sensei-stop-double-submission $2"',
 				$button,
 				1
 			);
