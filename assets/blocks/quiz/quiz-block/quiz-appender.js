@@ -35,6 +35,16 @@ const QuizAppender = ( { clientId, openModal } ) => {
 		);
 	};
 
+	/**
+	 * Filter the controls for the quiz question appender.
+	 *
+	 * @param {Object[]} controls
+	 * @param {string}   controls.id      Control ID.
+	 * @param {string}   controls.label   Control label.
+	 * @param {Function} controls.onClick Control click handler.
+	 *
+	 * @return {Object[]} Filtered controls.
+	 */
 	const controls = applyFilters( 'sensei-lms.Quiz.appender-controls', [
 		{
 			id: 'new-question',
