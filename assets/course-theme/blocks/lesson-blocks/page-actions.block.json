@@ -1,0 +1,32 @@
+{
+  "name": "sensei-lms/page-actions",
+  "category": "theme",
+  "apiVersion": 2,
+  "supports": {
+    "align": true,
+    "color": {
+      "gradients": true,
+      "link": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "__experimentalBorder": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
+    "typography": {
+        "fontSize": true,
+		"__experimentalFontFamily": true,
+		"__experimentalFontWeight": true,
+		"__experimentalFontStyle": true,
+		"__experimentalTextTransform": true,
+		"__experimentalTextDecoration": true,
+		"__experimentalLetterSpacing": true
+	}
+  }
+}

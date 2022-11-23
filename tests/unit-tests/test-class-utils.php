@@ -3,14 +3,6 @@
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
-	 * Constructor function
-	 */
-	public function __construct() {
-		parent::__construct();
-	}
-
-
-	/**
 	 * setup function
 	 *
 	 * This function sets up the lessons, quizzes and their questions. This function runs before
@@ -24,7 +16,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// remove this action so that no emails are sent during this test
 		remove_all_actions( 'sensei_user_course_start' );
 
-	}//end setup()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
@@ -38,7 +30,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// setup the test
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( class_exists( 'WooThemes_Sensei_Utils' ), 'Sensei Utils class constant is not loaded' );
-	} // end testClassInstance
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::update_user_data
@@ -99,7 +91,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// is the data saved still intact
 		$this->assertEquals( $test_array, $retrieved_array, 'The saved and retrieved data does not match' );
 
-	}//end testUpdateUserData()
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::get_user_data
@@ -152,7 +144,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		// doest this function return the data that was saved?
 		$this->assertEquals( $test_array, $retrieved_value, 'This function does not retrieve the data that was saved' );
 
-	}//end testGetUserData()
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::delete_user_data
@@ -205,7 +197,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertTrue( $deleted, 'The user data should have been deleted, but was not' );
 		$this->assertEmpty( $retrieved_value, 'After deleting the user data should return false' );
 
-	}//end testDeleteUserData()
+	}
 
 	/**
 	 * This tests Woothemes_Sensei_Utils::round
@@ -217,7 +209,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertTrue( doubleval( 2.13 ) == WooThemes_Sensei_Utils::round( 2.1256, 2 ), '2.1256 rounded with 2 precision should be 2.12' );
 		$this->assertTrue( 3 == WooThemes_Sensei_Utils::round( 2.5, 0 ), '2.5 rounded with 0 precision should be 3' );
 
-	}//end testRound()
+	}
 
 	/**
 	 * Test the array zip utility function
@@ -236,4 +228,82 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertEquals( $expected, $array_zipped );
 	}
 
-}//end class
+	/**
+	 * Test that the query params inputs are correct.
+	 *
+	 * @covers Sensei_Utils::output_query_params_as_inputs
+	 */
+	public function testOutputQueryParamsAsInputs() {
+		/* Arrange. */
+		$_GET = [
+			'param_1' => 'value_1',
+			'param_2' => 'value_2',
+		];
+
+		/* Act. */
+		ob_start();
+		Sensei_Utils::output_query_params_as_inputs( [ 'param_2' ] );
+		$output = ob_get_clean();
+
+		/* Assert. */
+		$this->assertContains( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
+		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+	}
+
+	/**
+	 * Tests that last activity date formatting function is working correctly.
+	 *
+	 * @dataProvider lastActivityDateTestingData
+	 */
+	public function testFormatLastActivityDate_WhenCalled_ReturnsCorrectlyFormattedDates( $minutes_count, $expected_output ) {
+		/* Arrange */
+		$gmt_time           = gmdate( 'Y-m-d H:i:s', strtotime( '-' . $minutes_count . ' seconds' ) );
+		$date_as_per_format = wp_date( get_option( 'date_format' ), ( new DateTime( $gmt_time ) )->getTimestamp(), new DateTimeZone( 'GMT' ) );
+
+		/* Act */
+		$actual = Sensei_Utils::format_last_activity_date( $gmt_time );
+
+		/* Assert */
+		$expected = empty( $expected_output ) ? $date_as_per_format : $expected_output;
+		self::assertEquals( $expected, $actual, 'Last activity date is not being formatted correctly' );
+	}
+
+	public function testSenseiGradeQuiz_WhenCalled_UpdatesTheFinalGrade() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+		$quiz_id   = $this->factory->quiz->create(
+			[
+				'post_parent' => $lesson_id,
+				'meta_input'  => [
+					'_quiz_lesson' => $lesson_id,
+				],
+			]
+		);
+
+		Sensei_Utils::user_start_lesson( $user_id, $lesson_id );
+
+		/* Act. */
+		Sensei_Utils::sensei_grade_quiz( $quiz_id, 12.34, $user_id );
+
+		/* Assert. */
+		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
+
+		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
+	}
+
+	/**
+	 * Returns an associative array with parameters needed to run lesson completion test.
+	 *
+	 * @return array
+	 */
+	public function lastActivityDateTestingData() {
+		return [
+			'days'    => [ ( 5 * 24 * 60 * 60 ), '5 days ago' ],
+			'hours'   => [ 60 * 5 * 60, '5 hours ago' ],
+			'minutes' => [ 20 * 60, '20 mins ago' ],
+			'seconds' => [ 20, '20 seconds ago' ],
+			'date'    => [ 8 * 24 * 60 * 60, null ],
+		];
+	}
+}

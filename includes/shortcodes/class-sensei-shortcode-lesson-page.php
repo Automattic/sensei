@@ -101,7 +101,7 @@ class Sensei_Shortcode_Lesson_Page implements Sensei_Shortcode_Interface {
 
 		return $shortcode_output;
 
-	}//end render()
+	}
 
-}//end class
+}
 

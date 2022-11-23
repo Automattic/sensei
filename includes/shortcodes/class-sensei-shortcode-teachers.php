@@ -71,7 +71,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
 		$this->user_query = new WP_User_Query( $user_query_args );
 
-	}//end setup_teacher_query()
+	}
 
 	/**
 	 * Rendering the shortcode this class is responsible for.
@@ -126,7 +126,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
 		return '<ul class="sensei-teachers">' . $users_output . '</ul>';
 
-	}//end render()
+	}
 
 	/**
 	 * remove duplicate user objects from and array of users
@@ -161,7 +161,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
 		return $users;
 
-	}//end users_unique()
+	}
 
 	/**
 	 * Exclude users based ont he ids given.
@@ -186,7 +186,7 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
 		return $users;
 
-	}//end exclude_users()
+	}
 
 	/**
 	 * Convert mixed array of user id and user names to only be an array of user_ids
@@ -277,6 +277,6 @@ class Sensei_Shortcode_Teachers implements Sensei_Shortcode_Interface {
 
 		return strcasecmp( $this->get_user_public_name( $user_1 ), $this->get_user_public_name( $user_2 ) );
 
-	}//end custom_user_sort()
+	}
 
-}//end class
+}

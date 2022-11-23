@@ -27,32 +27,39 @@ class Sensei_Usage_Tracking_Data {
 		$question_type_count = self::get_question_type_count();
 		$quiz_stats          = self::get_quiz_stats();
 		$usage_data          = array(
-			'courses'                 => wp_count_posts( 'course' )->publish,
-			'course_active'           => self::get_course_active_count(),
-			'course_completed'        => self::get_course_completed_count(),
-			'course_videos'           => self::get_course_videos_count(),
-			'course_no_notifications' => self::get_course_no_notifications_count(),
-			'course_prereqs'          => self::get_course_prereqs_count(),
-			'course_featured'         => self::get_course_featured_count(),
-			'enrolments'              => self::get_course_enrolments(),
-			'enrolment_first'         => self::get_first_course_enrolment(),
-			'enrolment_last'          => self::get_last_course_enrolment(),
-			'learners'                => self::get_learner_count(),
-			'lessons'                 => wp_count_posts( 'lesson' )->publish,
-			'lesson_modules'          => self::get_lesson_module_count(),
-			'lesson_prereqs'          => self::get_lesson_prerequisite_count(),
-			'lesson_previews'         => self::get_lesson_preview_count(),
-			'lesson_length'           => self::get_lesson_has_length_count(),
-			'lesson_complexity'       => self::get_lesson_with_complexity_count(),
-			'lesson_videos'           => self::get_lesson_with_video_count(),
-			'messages'                => wp_count_posts( 'sensei_message' )->publish,
-			'modules'                 => wp_count_terms( 'module' ),
-			'modules_max'             => self::get_max_module_count(),
-			'modules_min'             => self::get_min_module_count(),
-			'questions'               => wp_count_posts( 'question' )->publish,
-			'question_media'          => self::get_question_media_count(),
-			'question_random_order'   => self::get_question_random_order_count(),
-			'teachers'                => self::get_teacher_count(),
+			'courses'                        => wp_count_posts( 'course' )->publish,
+			'course_active'                  => self::get_course_active_count(),
+			'course_completed'               => self::get_course_completed_count(),
+			'course_completion_rate'         => self::get_course_completion_rate(),
+			'course_videos'                  => self::get_course_videos_count(),
+			'course_no_notifications'        => self::get_course_no_notifications_count(),
+			'course_prereqs'                 => self::get_course_prereqs_count(),
+			'course_featured'                => self::get_course_featured_count(),
+			'enrolments'                     => self::get_course_enrolments(),
+			'enrolment_first'                => self::get_first_course_enrolment(),
+			'enrolment_last'                 => self::get_last_course_enrolment(),
+			'enrolment_calculated'           => self::get_is_enrolment_calculated() ? 1 : 0,
+			'learners'                       => self::get_learner_count(),
+			'lessons'                        => wp_count_posts( 'lesson' )->publish,
+			'lesson_modules'                 => self::get_lesson_module_count(),
+			'lesson_prereqs'                 => self::get_lesson_prerequisite_count(),
+			'lesson_previews'                => self::get_lesson_preview_count(),
+			'lesson_length'                  => self::get_lesson_has_length_count(),
+			'lesson_complexity'              => self::get_lesson_with_complexity_count(),
+			'lesson_videos'                  => self::get_lesson_with_video_count(),
+			'messages'                       => wp_count_posts( 'sensei_message' )->publish,
+			'modules'                        => wp_count_terms( 'module' ),
+			'modules_max'                    => self::get_max_module_count(),
+			'modules_min'                    => self::get_min_module_count(),
+			'questions'                      => wp_count_posts( 'question' )->publish,
+			'question_media'                 => self::get_question_media_count(),
+			'question_random_order'          => self::get_question_random_order_count(),
+			'teachers'                       => self::get_teacher_count(),
+			'courses_using_learning_mode'    => self::get_courses_using_learning_mode_count(),
+			'learning_mode_enabled_globally' => self::get_is_learning_mode_enabled_globally() ? 1 : 0,
+			'learning_mode_template'         => self::get_selected_learning_mode_template(),
+			'learning_mode_is_customized'    => self::get_learning_mode_is_customized(),
+			'learning_mode_template_version' => self::get_template_version(),
 		);
 
 		return array_merge( $question_type_count, $usage_data, $quiz_stats );
@@ -68,7 +75,7 @@ class Sensei_Usage_Tracking_Data {
 	public static function get_event_logging_base_fields() {
 		$base_fields = [
 			'paid'     => 0,
-			'courses'  => wp_count_posts( 'course' )->publish,
+			'courses'  => post_type_exists( 'course' ) ? wp_count_posts( 'course' )->publish : 0,
 			'learners' => self::get_learner_count(),
 		];
 
@@ -264,6 +271,93 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
+	 * Calculate the average course completion rate.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return double Average course completion rate.
+	 */
+	private static function get_course_completion_rate() {
+		$course_args             = array(
+			'post_type'      => 'course',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+		);
+		$courses                 = get_posts( $course_args );
+		$course_count            = count( $courses );
+		$course_completion_rates = [];
+
+		foreach ( $courses as $course ) {
+			// Calculate number of learners who are enrolled in the course.
+			$learner_terms          = self::get_enrolled_learner_terms( $course->ID );
+			$enrolled_learner_count = 0;
+
+			if ( ! empty( $learner_terms ) && ! is_wp_error( $learner_terms ) ) {
+				$enrolled_learner_count = count( $learner_terms );
+			}
+
+			// Don't include this course in the calculation if no learners are enrolled.
+			if ( 0 === $enrolled_learner_count ) {
+				$course_count--;
+				continue;
+			}
+
+			// Get number of learners who are enrolled in and have completed the course.
+			$completed_course_count = self::get_completed_course_count( $course->ID, $learner_terms );
+
+			// Calculate the completion rate.
+			$course_completion_rates[] = $completed_course_count / $enrolled_learner_count;
+		}
+
+		if ( 0 === $course_count ) {
+			return '';
+		}
+
+		// Average course completion rate = Sum of course completion rates / # of courses.
+		return round( array_sum( $course_completion_rates ) / $course_count * 100, 2 );
+	}
+
+	/**
+	 * Get learner term data for non-admin learners who are enrolled in a course.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return array|WP_Error Learner term data or empty array if no terms found.
+	 */
+	private static function get_enrolled_learner_terms( $course_id ) {
+		$term_args = array(
+			'fields'  => 'names',
+			'exclude' => self::get_admin_learner_term_ids(),
+		);
+
+		return wp_get_object_terms( $course_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $term_args );
+	}
+
+	/**
+	 * Get number of non-admin learners who are enrolled in and have completed the course.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param int   $course_id Course ID.
+	 * @param array $learner_terms Learner term data.
+	 *
+	 * @return int Number of learners.
+	 */
+	private static function get_completed_course_count( $course_id, $learner_terms ) {
+		$enrolled_learner_ids = array_map( [ 'Sensei_learner', 'get_learner_id' ], $learner_terms );
+		$comment_args         = array(
+			'type'       => 'sensei_course_status',
+			'status'     => 'complete',
+			'post_id'    => $course_id,
+			'author__in' => $enrolled_learner_ids,
+		);
+
+		return Sensei_Utils::sensei_check_for_activity( $comment_args );
+	}
+
+	/**
 	 * Get the number of courses that have a video set.
 	 *
 	 * @since 1.9.20
@@ -375,17 +469,43 @@ class Sensei_Usage_Tracking_Data {
 	 * @return int Number of course enrolments.
 	 **/
 	private static function get_course_enrolments() {
-		global $wpdb;
-
-		return $wpdb->get_var(
-			"SELECT COUNT(DISTINCT c.user_id)
-			FROM {$wpdb->comments} c
-			INNER JOIN {$wpdb->usermeta} um ON c.user_id = um.user_id
-			INNER JOIN {$wpdb->posts} p ON p.ID = c.comment_post_ID
-			WHERE comment_type = 'sensei_course_status'
-				AND meta_key = '{$wpdb->prefix}capabilities' AND meta_value NOT LIKE '%administrator%'
-				AND post_status = 'publish' AND c.user_id <> 0"
+		return (int) get_terms(
+			[
+				'hide_empty' => true,
+				'fields'     => 'count',
+				'exclude'    => self::get_admin_learner_term_ids(),
+				'taxonomy'   => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
+			]
 		);
+	}
+
+	/**
+	 * Checks if enrolment has been calculated for the current Sensei version.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return bool
+	 */
+	private static function get_is_enrolment_calculated() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+
+		return get_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME ) === $enrolment_manager->get_enrolment_calculation_version();
+	}
+
+	/**
+	 * Get the learner term IDs for all admin users.
+	 *
+	 * @return int[]
+	 */
+	private static function get_admin_learner_term_ids() {
+		$admins         = get_users( [ 'role' => 'administrator' ] );
+		$admin_term_ids = [];
+		foreach ( $admins as $admin ) {
+			$learner_term     = Sensei_Learner::get_learner_term( $admin->ID );
+			$admin_term_ids[] = $learner_term->term_id;
+		}
+
+		return $admin_term_ids;
 	}
 
 	/**
@@ -800,6 +920,42 @@ class Sensei_Usage_Tracking_Data {
 	}
 
 	/**
+	 * Get the total number of courses with Sensei course theme enabled.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @return int Number of active courses.
+	 **/
+	private static function get_courses_using_learning_mode_count() {
+		$query = new WP_Query(
+			array(
+				'post_type'  => 'course',
+				'fields'     => 'ids',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Needed to identify courses with Sensei theme.
+				'meta_query' => array(
+					array(
+						'key'   => Sensei_Course_Theme_Option::THEME_POST_META_NAME,
+						'value' => Sensei_Course_Theme_Option::SENSEI_THEME,
+					),
+				),
+			)
+		);
+
+		return $query->found_posts;
+	}
+
+	/**
+	 * Checks if learning mode is enabled globally.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @return bool
+	 */
+	private static function get_is_learning_mode_enabled_globally() {
+		return (bool) \Sensei()->settings->get( 'sensei_learning_mode_all' );
+	}
+
+	/**
 	 * Get the question type key. Replaces dashes with underscores in order to conform to
 	 * Tracks naming conventions.
 	 *
@@ -811,5 +967,35 @@ class Sensei_Usage_Tracking_Data {
 	 **/
 	private static function get_question_type_key( $key ) {
 		return str_replace( '-', '_', 'question_' . $key );
+	}
+
+	/**
+	 * Get the selected course theme template.
+	 *
+	 * @return string Selected template name.
+	 */
+	private static function get_selected_learning_mode_template() {
+		return \Sensei_Course_Theme_Template_Selection::get_active_template_name();
+	}
+
+	/**
+	 * Check if the course theme is customised.
+	 *
+	 * @return bool Is customised?
+	 */
+	private static function get_learning_mode_is_customized() {
+		return count( \Sensei_Course_Theme_Templates::get_db_templates() ) > 0;
+	}
+
+	/**
+	 * Get the version of the active Learning Mode template.
+	 *
+	 * @return string Version string in the format of 4-0-2
+	 */
+	private static function get_template_version() {
+		global $_wp_current_template_content;
+
+		preg_match( '/sensei-version--(\d+-\d+-\d+)/', $_wp_current_template_content ?? '', $version_matches );
+		return $version_matches[1] ?? 'latest';
 	}
 }

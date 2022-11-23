@@ -25,9 +25,6 @@ class Sensei_Course_Results {
 	 */
 	public function __construct() {
 
-		// Setup learner profile URL base
-		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei-lms' ) );
-
 		// Setup permalink structure for course results
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 
@@ -37,13 +34,10 @@ class Sensei_Course_Results {
 		// Support newer WordPress theme (>= 4.4)
 		add_filter( 'document_title_parts', array( $this, 'page_title' ), 10, 2 );
 
-		// Load course results
-		add_action( 'sensei_course_results_content_inside_before', array( $this, 'deprecate_course_result_info_hook' ), 10 );
-
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'body_class' ), 10, 1 );
 
-	} // End __construct()
+	}
 
 	/**
 	 * Setup permalink structure for course results
@@ -52,6 +46,10 @@ class Sensei_Course_Results {
 	 * @return void
 	 */
 	public function setup_permastruct() {
+		// Setup course results URL base.
+		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei-lms' ) );
+
+		// Setup permalinks structure.
 		add_rewrite_rule( '^' . $this->courses_url_base . '/([^/]*)/results/?', 'index.php?course_results=$matches[1]', 'top' );
 		add_rewrite_tag( '%course_results%', '([^&]+)' );
 	}
@@ -103,22 +101,6 @@ class Sensei_Course_Results {
 	}
 
 	/**
-	 * Load content for course results
-	 *
-	 * @since  1.4.0
-	 * @return void
-	 */
-	public function content() {
-		global $wp_query;
-
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		if ( isset( $wp_query->query_vars['course_results'] ) ) {
-			Sensei_Templates::get_template( 'course-results/course-info.php' );
-		}
-	}
-
-	/**
 	 * Load course results info
 	 *
 	 * @since  1.4.0
@@ -130,20 +112,6 @@ class Sensei_Course_Results {
 
 		Sensei_Utils::sensei_user_course_status_message( $course->ID, get_current_user_id() );
 
-		sensei_do_deprecated_action( 'sensei_course_results_lessons', '1.9.', 'sensei_course_results_content_inside_after', $course );
-
-		sensei_do_deprecated_action( 'sensei_course_results_bottom', '1.9.', 'sensei_course_results_content_inside_after', $course->ID );
-
-	}
-
-	/**
-	 * Load template for displaying course lessons
-	 *
-	 * @since  1.4.0
-	 * @return void
-	 */
-	public function course_lessons() {
-		_deprecated_function( 'Sensei_modules course_lessons ', '1.9.0' );
 	}
 
 	/**
@@ -161,17 +129,6 @@ class Sensei_Course_Results {
 	}
 
 	/**
-	 * Deprecate the sensei_course_results_content hook
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_course_results_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_results_content', '1.9.0', 'sensei_course_results_content_before' );
-
-	}
-
-	/**
 	 * Fire the sensei frontend message hook
 	 *
 	 * @since 1.9.0
@@ -182,39 +139,7 @@ class Sensei_Course_Results {
 
 	}
 
-	/**
-	 * Deprecate the course_results info hook
-	 *
-	 * @since 1.9.0
-	 */
-	public static function deprecate_course_result_info_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_results_info', '1.9.0', 'sensei_course_results_content_inside_before' );
-
-	}
-
-	/**
-	 * Deprecate the sensei_course_results_top hook
-	 *
-	 * @deprecate since 1.9.0
-	 */
-	public static function deprecate_course_results_top_hook() {
-
-		global $course;
-		sensei_do_deprecated_action( 'sensei_course_results_top', '1.9.0', 'sensei_course_results_content_inside_before', $course->ID );
-
-	}
-
-	/**
-	 * Fire the course image hook
-	 *
-	 * @since 1.8.0
-	 */
-	public static function fire_course_image_hook() {
-		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID() ) );
-	}
-
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Course_Results

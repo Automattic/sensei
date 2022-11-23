@@ -1,7 +1,10 @@
 <?php
 
-require 'includes/class-sensei-data-cleaner.php';
+require dirname( dirname( __DIR__ ) ) . '/includes/class-sensei-data-cleaner.php';
 
+/**
+ * Class Sensei_Data_Cleaner_Test.
+ */
 class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	// Posts.
 	private $post_ids;
@@ -13,6 +16,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $regular_page_ids;
 	private $course_archive_page_id;
 	private $my_courses_page_id;
+	private $course_completed_page_id;
 
 	// Taxonomies.
 	private $modules;
@@ -22,6 +26,13 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	// Users.
 	private $regular_user_id;
 	private $teacher_user_id;
+
+	public function tearDown() {
+		parent::tearDown();
+
+		$GLOBALS['wp_roles']->for_site();
+		Sensei()->activate();
+	}
 
 	/**
 	 * Add some posts to run tests against. Any that are associated with Sensei
@@ -195,6 +206,15 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		);
 		Sensei()->settings->set( 'my_course_page', $this->my_courses_page_id );
 
+		// Create the Course Completed page.
+		$this->course_completed_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			)
+		);
+		Sensei()->settings->set( 'course_completed_page', $this->course_completed_page_id );
+
 		// Refresh the Sensei settings in memory.
 		Sensei()->settings->get_settings();
 	}
@@ -306,6 +326,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( 'trash', get_post_status( $this->course_archive_page_id ), 'Course Archive page should be trashed' );
 		$this->assertEquals( 'trash', get_post_status( $this->my_courses_page_id ), 'My Courses page should be trashed' );
+		$this->assertEquals( 'trash', get_post_status( $this->course_completed_page_id ), 'Course Completed page should be trashed' );
 
 		foreach ( $this->regular_page_ids as $page_id ) {
 			$this->assertNotEquals( 'trash', get_post_status( $page_id ), 'Regular page should not be trashed' );
@@ -556,6 +577,9 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 		// Sensei meta that needs to be deleted directly.
 		update_post_meta( $this->post_ids[0], 'sensei_payment_complete', true );
 		update_post_meta( $this->post_ids[1], 'sensei_products_processed', 3 );
+		update_post_meta( $this->post_ids[0], 'sensei_course_video_autocomplete', true );
+		update_post_meta( $this->post_ids[1], 'sensei_course_video_autopause', true );
+		update_post_meta( $this->post_ids[0], 'sensei_course_video_required', true );
 
 		Sensei_Data_Cleaner::cleanup_all();
 
@@ -571,7 +595,10 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 
 		// Ensure other Sensei meta is deleted.
 		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_payment_complete', true ), 'sensei_payment_complete should be deleted' );
-		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_products_processed', true ), 'sensei_products_processed should not be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_products_processed', true ), 'sensei_products_processed should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_course_video_autocomplete', true ), 'sensei_course_video_autocomplete should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[1], 'sensei_course_video_autopause', true ), 'sensei_course_video_autopause should be deleted' );
+		$this->assertEmpty( get_post_meta( $this->post_ids[0], 'sensei_course_video_required', true ), 'sensei_course_video_required should be deleted' );
 	}
 
 	/* Helper functions. */

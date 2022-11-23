@@ -35,6 +35,18 @@ class Sensei_Teacher {
 	public $token;
 
 	/**
+	 * The nonce name when submitting a new message.
+	 *
+	 * @var string
+	 */
+	const NONCE_FIELD_NAME = 'sensei_meta_nonce';
+
+	/**
+	 * The nonce action name when submitting a new message.
+	 */
+	const NONCE_ACTION_NAME = 'sensei_save_data';
+
+	/**
 	 * Sensei_Teacher::__constructor
 	 *
 	 * Constructor Function
@@ -44,8 +56,9 @@ class Sensei_Teacher {
 	 */
 	public function __construct() {
 
-		add_action( 'add_meta_boxes', array( $this, 'add_teacher_meta_boxes' ), 10, 2 );
-		add_action( 'save_post', array( $this, 'save_teacher_meta_box' ) );
+		add_action( 'add_meta_boxes', [ $this, 'add_teacher_meta_boxes' ], 10, 2 );
+		add_action( 'save_post', [ $this, 'save_teacher_meta_box' ] );
+
 		add_filter( 'parse_query', array( $this, 'limit_teacher_edit_screen_post_types' ) );
 		add_filter( 'pre_get_posts', array( $this, 'course_analysis_teacher_access_limit' ) );
 		add_filter( 'wp_count_posts', array( $this, 'list_table_counts' ), 10, 3 );
@@ -94,7 +107,10 @@ class Sensei_Teacher {
 		add_action( 'admin_menu', array( $this, 'restrict_posts_menu_page' ), 10 );
 		add_filter( 'pre_get_comments', array( $this, 'restrict_comment_moderation' ), 10, 1 );
 
-	} // end __constructor()
+		// If slug changed to custom, try to extract and save teacher id.
+		add_action( 'edit_module', [ $this, 'extract_and_save_teacher_to_meta_from_slug' ] );
+
+	}
 
 	/**
 	 * Sensei_Teacher::create_teacher_role
@@ -120,7 +136,7 @@ class Sensei_Teacher {
 		// add the capabilities before returning
 		$this->add_capabilities();
 
-	}//end create_role()
+	}
 
 	/**
 	 * Sensei_Teacher::add_capabilities
@@ -207,9 +223,9 @@ class Sensei_Teacher {
 			// load the capability on to the teacher role
 			$this->teacher_role->add_cap( $cap, $grant );
 
-		} // End foreach().
+		}
 
-	}//end add_capabilities()
+	}
 
 	/**
 	 * Sensei_Teacher::teacher_meta_box
@@ -233,10 +249,14 @@ class Sensei_Teacher {
 			array( $this, 'teacher_meta_box_content' ),
 			'course',
 			'side',
-			'core'
+			'core',
+			[
+				'__block_editor_compatible_meta_box' => true,
+				'__back_compat_meta_box'             => true,
+			]
 		);
 
-	} // end teacher_meta_box()
+	}
 
 	/**
 	 * Sensei_Teacher::teacher_meta_box_content
@@ -248,35 +268,38 @@ class Sensei_Teacher {
 	 * @parameters
 	 */
 	public function teacher_meta_box_content( $post ) {
-		wp_nonce_field( 'sensei_save_data', 'sensei_meta_nonce' );
+		wp_nonce_field( self::NONCE_ACTION_NAME, self::NONCE_FIELD_NAME );
 
 		// get the current author
 		$current_author = $post->post_author;
 
 		// get the users authorised to author courses
-		$users = $this->get_teachers_and_authors();
+		$users = $this->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] );
 
 		?>
+		<input type="hidden" name="post_author_override" value="<?php echo intval( $current_author ); ?>" />
+		<input type="hidden" name="course_module_custom_slugs" />
 		<select name="sensei-course-teacher-author" class="sensei course teacher">
 
-			<?php foreach ( $users as $user_id ) { ?>
+			<?php foreach ( $users as $user_data ) { ?>
 
 					<?php
-						$user = get_user_by( 'id', $user_id );
+						$user_id           = $user_data->ID;
+						$user_display_name = $user_data->display_name;
 					?>
 					<option <?php selected( $current_author, $user_id, true ); ?> value="<?php echo esc_attr( $user_id ); ?>" >
-						<?php echo esc_html( $user->display_name ); ?>
+						<?php echo esc_html( $user_display_name ); ?>
 					</option>
 
 				<?php
-			}// End foreach().
+			}
 			?>
 
 		</select>
 
 		<?php
 
-	} // end render_teacher_meta_box()
+	}
 
 	/**
 	 * Sensei_Teacher::get_teachers_and_authors
@@ -284,47 +307,64 @@ class Sensei_Teacher {
 	 * Get a list of users who can author courses, lessons and quizes.
 	 *
 	 * @since 1.8.0
-	 * @access public
+	 * @access private
 	 * @parameters
 	 * @return array $users user id array
 	 */
 	public function get_teachers_and_authors() {
+		$edit_course_roles = [];
+		foreach ( wp_roles()->roles as $role_slug => $role ) {
+			if ( ! empty( $role['capabilities']['edit_courses'] ) ) {
+				$edit_course_roles[] = $role_slug;
+			}
+		}
 
-		$author_query_args = array(
-			'blog_id' => $GLOBALS['blog_id'],
-			'fields'  => 'any',
-			'who'     => 'authors',
+		return get_users(
+			[
+				'blog_id'  => $GLOBALS['blog_id'],
+				'fields'   => 'any',
+				'role__in' => $edit_course_roles,
+			]
 		);
+	}
 
-		$authors = get_users( $author_query_args );
+	/**
+	 * Get list of users who can author courses, lessons, and quizzes.
+	 * Optionally specify the fields to return from the DB.
+	 *
+	 * @since 3.13.4
+	 * @access private
+	 *
+	 * @param  string|array $fields Fields to return from DB. Defaults to 'ID'.
+	 * @return array
+	 */
+	public function get_teachers_and_authors_with_fields( $fields = 'ID' ) {
+		$ids = $this->get_teachers_and_authors();
 
-		$teacher_query_args = array(
-			'blog_id' => $GLOBALS['blog_id'],
-			'fields'  => 'any',
-			'role'    => 'teacher',
+		return get_users(
+			[
+				'blog_id' => $GLOBALS['blog_id'],
+				'include' => $ids,
+				'fields'  => $fields,
+			]
 		);
-
-		$teachers = get_users( $teacher_query_args );
-
-		return array_unique( array_merge( $teachers, $authors ) );
-
-	}//end get_teachers_and_authors()
+	}
 
 	/**
 	 * Sensei_Teacher::save_teacher_meta_box
 	 *
-	 * Save the new teacher / author to course and all lessons
+	 * Save the new teacher / author from the meta box form.
 	 *
 	 * Hooked into admin_init
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * @parameters
-	 * @return array $users user id array
+	 * @param int $course_id Course ID.
+	 * @return void
 	 */
 	public function save_teacher_meta_box( $course_id ) {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
-		if ( empty( $_POST['sensei_meta_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['sensei_meta_nonce'] ), 'sensei_save_data' ) ) {
+		if ( empty( $_POST[ self::NONCE_FIELD_NAME ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ self::NONCE_FIELD_NAME ] ), self::NONCE_ACTION_NAME ) ) {
 			return;
 		}
 
@@ -333,39 +373,104 @@ class Sensei_Teacher {
 			return;
 		}
 
+		// If a custom slug is of a module that belongs to another teacher from another course, don't process farther.
+		if ( isset( $_POST['course_module_custom_slugs'] ) ) {
+			$module_custom_slugs = json_decode( sanitize_text_field( wp_unslash( $_POST['course_module_custom_slugs'] ) ) );
+			foreach ( $module_custom_slugs as $module_custom_slug ) {
+				$course_name = self::is_module_in_use_by_different_course_and_teacher( $module_custom_slug, $course_id, absint( $_POST['sensei-course-teacher-author'] ) );
+				if ( $course_name ) {
+					return;
+				}
+			}
+		}
+
 		// don't fire this hook again
 		remove_action( 'save_post', array( $this, 'save_teacher_meta_box' ) );
 
-		// get the current post object
+		$new_teacher = absint( $_POST['sensei-course-teacher-author'] );
+		$this->save_teacher( $course_id, $new_teacher );
+	}
+
+	/**
+	 * Sensei_Teacher::save_teacher
+	 *
+	 * Save the new teacher / author to course and all lessons
+	 *
+	 * @access public
+	 * @param int $course_id  Course ID.
+	 * @param int $new_teacher  Course ID.
+	 * @return void
+	 */
+	public function save_teacher( $course_id, $new_teacher ) {
 		$post = get_post( $course_id );
 
 		// get the current teacher/author
-		$current_author = absint( $post->post_author );
-
-		$new_author = absint( $_POST['sensei-course-teacher-author'] );
+		$current_teacher = absint( $post->post_author );
 
 		// loop through all post lessons to update their authors as well
-		$this->update_course_lessons_author( $course_id, $new_author );
+		$this->update_course_lessons_author( $course_id, $new_teacher );
 
 		// do not do any processing if the selected author is the same as the current author
-		if ( $current_author == $new_author ) {
+		if ( $current_teacher == $new_teacher ) {
 			return;
 		}
 
 		// save the course  author
 		$post_updates = array(
 			'ID'          => $post->ID,
-			'post_author' => $new_author,
+			'post_author' => $new_teacher,
 		);
+
 		wp_update_post( $post_updates );
 
-		// ensure the the modules are update so that then new teacher has access to them
-		self::update_course_modules_author( $course_id, $new_author );
+		// ensure the modules are update so that then new teacher has access to them.
+		self::update_course_modules_author( $course_id, $new_teacher );
 
 		// notify the new teacher
-		$this->teacher_course_assigned_notification( $new_author, $course_id );
+		$this->teacher_course_assigned_notification( $new_teacher, $course_id );
+	}
 
-	} // end save_teacher_meta_box
+	/**
+	 * Check if the module with the slug provided is
+	 * a part of any other course taught by a different teacher.
+	 *
+	 * @since 4.6.0
+	 * @access private
+	 *
+	 * @param  string $module_slug Slug of the module to check for.
+	 * @param  int    $course_id   Slugs of the modules to check for.
+	 * @param  int    $teacher_id  Slugs of the modules to check for.
+	 *
+	 * @return string|boolean Returns the name of the first course it finds a match for, false otherwise.
+	 */
+	public static function is_module_in_use_by_different_course_and_teacher( $module_slug, $course_id, $teacher_id ) {
+		$existing_module_by_slug = get_term_by( 'slug', $module_slug, 'module' );
+		if ( $existing_module_by_slug ) {
+			$args           = array(
+				'post_type'      => 'course',
+				'post_status'    => [ 'publish', 'draft', 'private' ],
+				'posts_per_page' => -1,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery
+					array(
+						'taxonomy' => 'module',
+						'field'    => 'id',
+						'terms'    => $existing_module_by_slug->term_id,
+					),
+				),
+			);
+			$module_courses = get_posts( $args );
+			foreach ( $module_courses as $module_course ) {
+				if ( intval( $module_course->post_author ) !== intval( $teacher_id ) &&
+					intval( $course_id ) !== $module_course->ID ) {
+					if ( user_can( $module_course->post_author, 'manage_options' ) && user_can( $teacher_id, 'manage_options' ) ) {
+						continue;
+					}
+					return $module_course->post_title;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Update all the course terms set(selected) on the given course. Moving course term ownership to
@@ -389,16 +494,17 @@ class Sensei_Teacher {
 		}
 
 		remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
-		$terms_selected_on_course = wp_get_object_terms( $course_id, 'module' );
+		$modules = Sensei()->modules->get_course_modules( $course_id );
 		add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
 
-		if ( empty( $terms_selected_on_course ) ) {
+		if ( empty( $modules ) ) {
 			return;
 		}
 
-		$lessons = Sensei()->course->course_lessons( $course_id );
+		$lessons      = Sensei()->course->course_lessons( $course_id, null );
+		$module_order = [];
 
-		foreach ( $terms_selected_on_course as $term ) {
+		foreach ( $modules as $term ) {
 			$term_author = Sensei_Core_Modules::get_term_author( $term->slug );
 
 			if ( ! $term_author || intval( $new_teacher_id ) !== intval( $term_author->ID ) ) {
@@ -441,7 +547,10 @@ class Sensei_Teacher {
 					continue;
 				}
 
-				$term_id = $new_term['term_id'];
+				$term_id        = $new_term['term_id'];
+				$module_order[] = $term_id;
+
+				Sensei_Core_Modules::update_module_teacher_meta( $term_id, $new_teacher_id );
 
 				// Set the terms selected on the course.
 				wp_set_object_terms( $course_id, $term_id, 'module', true );
@@ -476,17 +585,20 @@ class Sensei_Teacher {
 				Sensei()->modules->remove_if_unused( $term->term_id );
 			}
 		}
+
+		Sensei_Course_Structure::instance( $course_id )->save_module_order( $module_order );
 	}
 
 	/**
-	 * Sensei_Teacher::update_course_lessons_author
-	 *
-	 * Update all course lessons and their quiz with a new author
+	 * Update all course lessons and their quiz with a new author.
 	 *
 	 * @since 1.8.0
 	 * @access public
-	 * @parameters
-	 * @return array $users user id array
+	 *
+	 * @param int $course_id  The course id.
+	 * @param int $new_author The new authors id.
+	 *
+	 * @return bool True when the author is updated.
 	 */
 	public function update_course_lessons_author( $course_id, $new_author ) {
 
@@ -494,25 +606,25 @@ class Sensei_Teacher {
 			return false;
 		}
 
-		// get a list of course lessons
+		// Get a list of course lessons.
 		$lessons = Sensei()->course->course_lessons( $course_id, null );
 
 		if ( empty( $lessons ) || ! is_array( $lessons ) ) {
 			return false;
 		}
 
-		// Temporarily remove the author match filter
+		// Temporarily remove the author match filter.
 		remove_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99 );
 
-		// update each lesson and quiz author
+		// Update each lesson and quiz author.
 		foreach ( $lessons as $lesson ) {
 
-			// don't update if the author is tha same as the new author
+			// Don't update if the author is tha same as the new author.
 			if ( $new_author == $lesson->post_author ) {
 				continue;
 			}
 
-			// update lesson author
+			// Update lesson author.
 			wp_update_post(
 				array(
 					'ID'          => $lesson->ID,
@@ -520,35 +632,18 @@ class Sensei_Teacher {
 				)
 			);
 
-			// update quiz author
-			// get the lessons quiz
-			$lesson_quizzes = Sensei()->lesson->lesson_quizzes( $lesson->ID );
-			if ( is_array( $lesson_quizzes ) ) {
-				foreach ( $lesson_quizzes as $quiz_id ) {
-					// update quiz with new author
-					wp_update_post(
-						array(
-							'ID'          => $quiz_id,
-							'post_author' => $new_author,
-						)
-					);
-				}
-			} else {
-				wp_update_post(
-					array(
-						'ID'          => $lesson_quizzes,
-						'post_author' => $new_author,
-					)
-				);
+			// Update quiz author.
+			$lesson_quiz_id = Sensei()->lesson->lesson_quizzes( $lesson->ID );
+			if ( ! empty( $lesson_quiz_id ) ) {
+				Sensei()->quiz->update_quiz_author( (int) $lesson_quiz_id, (int) $new_author );
 			}
-		} // End foreach().
+		}
 
-		// Reinstate the author match filter
+		// Reinstate the author match filter.
 		add_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99, 2 );
 
 		return true;
-
-	}//end update_course_lessons_author()
+	}
 
 
 
@@ -575,8 +670,8 @@ class Sensei_Teacher {
 		$screen            = get_current_screen();
 		$sensei_post_types = array( 'course', 'lesson', 'question' );
 
-		// exit early for the following conditions
-		$limit_screen_ids = array( 'sensei-lms_page_sensei_analysis', 'course_page_module-order' );
+		// exit early for the following conditions.
+		$limit_screen_ids = array( 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG, 'sensei-lms_page_module-order' );
 
 		if ( ! $this->is_admin_teacher() || empty( $screen ) || ! in_array( $screen->id, $limit_screen_ids )
 			|| ! in_array( $query->query['post_type'], $sensei_post_types ) ) {
@@ -588,7 +683,7 @@ class Sensei_Teacher {
 		$query->set( 'author', $current_user->ID );
 		return $query;
 
-	}//end course_analysis_teacher_access_limit()
+	}
 
 
 	/**
@@ -602,6 +697,9 @@ class Sensei_Teacher {
 	 * @return bool $is_admin_teacher
 	 */
 	public function is_admin_teacher() {
+		if ( ! function_exists( 'is_user_logged_in' ) ) {
+			return false;
+		}
 
 		if ( ! is_user_logged_in() ) {
 			return false;
@@ -616,7 +714,7 @@ class Sensei_Teacher {
 
 		return $is_admin_teacher;
 
-	} // end is_admin_teacher
+	}
 
 	/**
 	 * Show correct post counts on list table for Sensei post types
@@ -682,7 +780,7 @@ class Sensei_Teacher {
 		}
 		switch ( $screen->id ) {
 			case 'sensei-lms_page_sensei_grading':
-			case 'sensei-lms_page_sensei_analysis':
+			case 'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG:
 			case 'sensei-lms_page_sensei_learners':
 			case 'lesson':
 			case 'course':
@@ -738,7 +836,7 @@ class Sensei_Teacher {
 		}
 		return $comments;
 
-	}//end filter_grading_activity_queries()
+	}
 
 	/**
 	 * Limit the grading screen totals to only show lessons in the course
@@ -862,12 +960,11 @@ class Sensei_Teacher {
 		}
 
 		// load the email class
-		include dirname( __FILE__ ) . '/emails/class-sensei-email-teacher-new-course-assignment.php';
 		$email = new Sensei_Email_Teacher_New_Course_Assignment();
 		$email->trigger( $teacher_id, $course_id );
 
 		return true;
-	} // end  teacher_course_assigned_notification
+	}
 
 	/**
 	 * Email the admin when a teacher creates a new course
@@ -964,15 +1061,16 @@ class Sensei_Teacher {
 
 		do_action( 'sensei_after_sending_email' );
 
-	}//end notify_admin_teacher_course_creation()
+	}
 
 	/**
-	 * Limit the analysis view to only the users taking courses belong to this teacher
+	 * Limit the analysis view to only the users taking courses belong to this teacher.
 	 *
-	 * Hooked into sensei_analysis_get_learners
+	 * Hooked into `sensei_analysis_overview_filter_users`.
 	 *
-	 * @param array $args WP_User_Query arguments
-	 * @return array $learners_query_results
+	 * @param array $args WP_User_Query arguments.
+	 *
+	 * @return array Learners query args.
 	 */
 	public function limit_analysis_learners( $args ) {
 
@@ -981,20 +1079,43 @@ class Sensei_Teacher {
 				return $args;
 		}
 
-		// for teachers all courses only return those which belong to the teacher
-		// as they don't have access to course belonging to other users
-		$teacher_courses = Sensei()->course->get_all_courses();
+		$learner_ids_for_courses_with_edit_permission = $this->get_learner_ids_for_courses_with_edit_permission();
 
-		// if the user has no courses they should see no users
-		if ( empty( $teacher_courses ) || ! is_array( $teacher_courses ) ) {
-			// tell the query to return 0 students
+		// if there are no students taking the courses by this teacher don't show them any of the other users
+		if ( empty( $learner_ids_for_courses_with_edit_permission ) ) {
+
 			$args['include'] = array( 0 );
-			return $args;
+
+		} else {
+
+			$args['include'] = $learner_ids_for_courses_with_edit_permission;
 
 		}
 
-		$learner_ids_for_teacher_courses = array();
-		foreach ( $teacher_courses as $course ) {
+		return $args;
+
+	}
+
+	/**
+	 * Get the learner IDs enrolled in courses where the current user has permission
+	 * to edit (author or admin).
+	 *
+	 * @since 3.9.0 Method extracted from `Sensei_Teacher::limit_analysis_learners`.
+	 *
+	 * @return int[] Learner IDs.
+	 */
+	public function get_learner_ids_for_courses_with_edit_permission() {
+		// for teachers all courses only return those which belong to the teacher
+		// as they don't have access to course belonging to other users
+		$courses_with_edit_permission = Sensei()->course->get_all_courses();
+
+		if ( empty( $courses_with_edit_permission ) || ! is_array( $courses_with_edit_permission ) ) {
+			return [];
+		}
+
+		$learner_ids_for_courses_with_edit_permission = [];
+
+		foreach ( $courses_with_edit_permission as $course ) {
 
 			$course_learner_ids = array();
 			$activity_comments  = Sensei_Utils::sensei_check_for_activity(
@@ -1032,25 +1153,12 @@ class Sensei_Teacher {
 			}
 
 			// add learners on this course to the all courses learner list
-			$learner_ids_for_teacher_courses = array_merge( $learner_ids_for_teacher_courses, $course_learner_ids );
-
-		}// End foreach().
-
-		// if there are no students taking the courses by this teacher don't show them any of the other users
-		if ( empty( $learner_ids_for_teacher_courses ) ) {
-
-			$args['include'] = array( 0 );
-
-		} else {
-
-			$args['include'] = $learner_ids_for_teacher_courses;
+			$learner_ids_for_courses_with_edit_permission = array_merge( $learner_ids_for_courses_with_edit_permission, $course_learner_ids );
 
 		}
 
-		// return the WP_Use_Query arguments
-		return $args;
-
-	}//end limit_analysis_learners()
+		return $learner_ids_for_courses_with_edit_permission;
+	}
 
 	/**
 	 * Give teacher full admin access to the question post type
@@ -1128,7 +1236,7 @@ class Sensei_Teacher {
 		}
 
 		return $wp_query;
-	}//end give_access_to_all_questions()
+	}
 
 	/**
 	 * Add new column heading to the course admin edit list
@@ -1147,7 +1255,7 @@ class Sensei_Teacher {
 		);
 		return array_merge( $columns, $new_columns );
 
-	}//end course_column_heading()
+	}
 
 	/**
 	 * Print out  teacher column data
@@ -1171,7 +1279,7 @@ class Sensei_Teacher {
 
 		echo '<a href="' . esc_url( get_edit_user_link( $teacher->ID ) ) . '" >' . esc_html( $teacher->display_name ) . '</a>';
 
-	}//end course_column_data()
+	}
 
 	/**
 	 * Return only courses belonging to the given teacher.
@@ -1360,7 +1468,7 @@ class Sensei_Teacher {
 		}
 
 		return $request;
-	} // End restrict_media_library()
+	}
 
 	/**
 	 * Only show current teacher's media in the media library modal on the course/lesson/quesion edit screen
@@ -1385,7 +1493,7 @@ class Sensei_Teacher {
 		}
 
 		return $query;
-	} // End restrict_media_library_modal()
+	}
 
 	/**
 	 * When saving the lesson, update the teacher if the lesson belongs to a course
@@ -1417,7 +1525,7 @@ class Sensei_Teacher {
 		$data['post_author'] = $course->post_author;
 
 		return $data;
-	} // end update_lesson_teacher
+	}
 
 	/**
 	 * Sensei_Teacher::limit_teacher_edit_screen_post_types
@@ -1452,8 +1560,8 @@ class Sensei_Teacher {
 			'edit-lesson',
 			'edit-course',
 			'edit-question',
-			'course_page_course-order',
-			'lesson_page_lesson-order',
+			'admin_page_course-order',
+			'admin_page_lesson-order',
 		);
 
 		if ( in_array( $screen->id, $limit_screens ) ) {
@@ -1464,7 +1572,7 @@ class Sensei_Teacher {
 
 		return $wp_query;
 
-	} // end limit_teacher_edit_screen_post_types()
+	}
 
 
 	/**
@@ -1483,10 +1591,10 @@ class Sensei_Teacher {
 		if ( user_can( $user, 'edit_courses' ) ) {
 
 			// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-			if ( isset( $_POST['redirect_to'] ) ) {
+			if ( isset( $_REQUEST['redirect_to'] ) ) {
 
 				// phpcs:ignore WordPress.Security.NonceVerification -- We are not making any changes based on this.
-				wp_safe_redirect( $_POST['redirect_to'], 303 );
+				wp_safe_redirect( wp_unslash( $_REQUEST['redirect_to'] ), 303 );
 
 				exit;
 
@@ -1499,7 +1607,7 @@ class Sensei_Teacher {
 			}
 		}
 
-	} // end teacher_login_redirect()
+	}
 
 
 
@@ -1546,7 +1654,7 @@ class Sensei_Teacher {
 			}
 		}
 
-	} // end restrict_posts_menu_page()
+	}
 
 	/**
 	 * Sensei_Teacher::restrict_comment_moderation()
@@ -1571,7 +1679,7 @@ class Sensei_Teacher {
 
 		return $clauses;
 
-	}   // end restrict_comment_moderation()
+	}
 
 	/**
 	 * Determine if a user is a teacher by ID
@@ -1594,7 +1702,7 @@ class Sensei_Teacher {
 
 		}
 
-	}//end is_a_teacher()
+	}
 
 	/**
 	 * The archive title on the teacher archive filter
@@ -1616,7 +1724,7 @@ class Sensei_Teacher {
 			</h2>
 		<?php
 
-	}//end archive_title()
+	}
 
 	/**
 	 * Removing course meta on the teacher archive page
@@ -1629,4 +1737,29 @@ class Sensei_Teacher {
 
 	}
 
-} // End Class
+	/**
+	 * Try to extract teacher id from module slug to term meta
+	 * if the meta does not exist already
+	 *
+	 * @since 4.6.0
+	 * @access private
+	 *
+	 * @param int $term_id ID of the term being edited.
+	 * @return void
+	 */
+	public function extract_and_save_teacher_to_meta_from_slug( $term_id ) {
+		$term_meta = get_term_meta( $term_id, 'module_author', true );
+
+		if ( $term_meta ) {
+			return;
+		}
+
+		$term       = get_term( $term_id, 'module' );
+		$split_slug = explode( '-', $term->slug );
+
+		if ( count( $split_slug ) > 1 && is_numeric( $split_slug[0] ) ) {
+			$user = get_user_by( 'id', $split_slug[0] );
+			$user && Sensei_Core_Modules::update_module_teacher_meta( $term_id, $user->ID );
+		}
+	}
+}

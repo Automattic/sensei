@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			</article>
 
-		<?php endwhile; // end course lessons loop ?>
+		<?php endwhile; ?>
 
 	<?php endif; ?>
 

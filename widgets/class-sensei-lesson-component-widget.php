@@ -50,7 +50,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 
 		/* Create the widget. */
 		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
-	} // End __construct()
+	}
 
 	/**
 	 * Display the widget on the frontend.
@@ -94,9 +94,9 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 
 			/* After widget (defined by themes). */
 			echo wp_kses_post( $after_widget );
-		} // End If Statement
+		}
 
-	} // End widget()
+	}
 
 	/**
 	 * Method to update the settings from the form() method.
@@ -119,7 +119,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 		$instance['limit'] = esc_attr( $new_instance['limit'] );
 
 		return $instance;
-	} // End update()
+	}
 
 	/**
 	 * The form on the widget control in the widget administration area.
@@ -163,7 +163,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 		</p>
 
 		<?php
-	} // End form()
+	}
 
 	/**
 	 * Load the desired component, if a method is available for it.
@@ -212,7 +212,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php } // End If Statement ?>
+					<?php } ?>
 					<?php if ( 0 < $lesson_course_id ) { ?>
 						<span class="lesson-course">
 							<?php
@@ -228,10 +228,10 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 					<?php } ?>
 					<br />
 				</li>
-			<?php } // End For Loop ?>
+			<?php } ?>
 			<?php echo '<li class="my-account fix"><a class="button" href="' . esc_url( get_post_type_archive_link( 'lesson' ) ) . '">' . esc_html__( 'More Lessons', 'sensei-lms' ) . '</a></li>'; ?>
 		</ul>
 			<?php
-		} // End If Statement
-	} // End load_component()
-} // End Class
+		}
+	}
+}

@@ -33,38 +33,49 @@ class Sensei_Grading {
 
 		// Admin functions
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( $this, 'grading_admin_menu' ), 20 );
 			add_action( 'grading_wrapper_container', array( $this, 'wrapper_container' ) );
+
 			if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 				add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 			}
 
 			add_action( 'admin_init', array( $this, 'admin_process_grading_submission' ) );
-
 			add_action( 'admin_notices', array( $this, 'add_grading_notices' ) );
-		} // End If Statement
+		}
 
 		// Ajax functions
 		if ( is_admin() ) {
 			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
 			add_action( 'wp_ajax_get_redirect_url', array( $this, 'get_redirect_url' ) );
-		} // End If Statement
-	} // End __construct()
+		}
+	}
 
 	/**
-	 * grading_admin_menu function.
+	 * Add the Grading submenu.
 	 *
 	 * @since  1.3.0
 	 * @access public
-	 * @return void
 	 */
 	public function grading_admin_menu() {
-		if ( current_user_can( 'manage_sensei_grades' ) ) {
-			add_submenu_page( 'sensei', __( 'Grading', 'sensei-lms' ), __( 'Grading', 'sensei-lms' ), 'manage_sensei_grades', $this->page_slug, array( $this, 'grading_page' ) );
+		$indicator_html = '';
+		$grading_counts = Sensei()->grading->count_statuses( [ 'type' => 'lesson' ] );
+
+		if ( intval( $grading_counts['ungraded'] ) > 0 ) {
+			$indicator_html = ' <span class="awaiting-mod">' . esc_html( $grading_counts['ungraded'] ) . '</span>';
 		}
 
-	} // End grading_admin_menu()
+		if ( current_user_can( 'manage_sensei_grades' ) ) {
+			add_submenu_page(
+				'sensei',
+				__( 'Grading', 'sensei-lms' ),
+				__( 'Grading', 'sensei-lms' ) . $indicator_html,
+				'manage_sensei_grades',
+				$this->page_slug,
+				array( $this, 'grading_page' )
+			);
+		}
+	}
 
 	/**
 	 * enqueue_scripts function.
@@ -76,12 +87,10 @@ class Sensei_Grading {
 	 */
 	public function enqueue_scripts() {
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		// Load Grading JS
-		wp_enqueue_script( 'sensei-grading-general', Sensei()->plugin_url . 'assets/js/grading-general' . $suffix . '.js', array( 'jquery', 'sensei-core-select2' ), Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-grading-general', 'js/grading-general.js', [ 'jquery', 'sensei-core-select2' ] );
 
-	} // End enqueue_scripts()
+	}
 
 	/**
 	 * enqueue_styles function.
@@ -95,9 +104,9 @@ class Sensei_Grading {
 
 		wp_enqueue_style( Sensei()->token . '-admin' );
 
-		wp_enqueue_style( 'sensei-settings-api', Sensei()->plugin_url . 'assets/css/settings.css', '', Sensei()->version );
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
-	} // End enqueue_styles()
+	}
 
 	/**
 	 * load_data_table_files loads required files for Grading
@@ -115,31 +124,36 @@ class Sensei_Grading {
 		);
 		foreach ( $classes_to_load as $class_file ) {
 			Sensei()->load_class( $class_file );
-		} // End For Loop
-	} // End load_data_table_files()
+		}
+	}
 
 	/**
 	 * load_data_object creates new instance of class
 	 *
 	 * @since  1.3.0
+	 * @deprecated 3.3.0  Use constructors instead.
+	 *
 	 * @param  string    $name          Name of class
 	 * @param  integer   $data          constructor arguments
 	 * @param  undefined $optional_data optional constructor arguments
 	 * @return object                 class instance object
 	 */
 	public function load_data_object( $name = '', $data = 0, $optional_data = null ) {
+		// Use constructors directly.
+		_deprecated_function( __METHOD__, '3.3.0', 'new Sensei_Grading_{$name}' );
+
 		// Load Analysis data
 		$object_name = 'Sensei_Grading_' . $name;
 		if ( is_null( $optional_data ) ) {
 			$sensei_grading_object = new $object_name( $data );
 		} else {
 			$sensei_grading_object = new $object_name( $data, $optional_data );
-		} // End If Statement
+		}
 		if ( 'Main' == $name ) {
 			$sensei_grading_object->prepare_items();
-		} // End If Statement
+		}
 		return $sensei_grading_object;
-	} // End load_data_object()
+	}
 
 	/**
 	 * grading_page function.
@@ -154,8 +168,8 @@ class Sensei_Grading {
 			$this->grading_user_quiz_view();
 		} else {
 			$this->grading_default_view();
-		} // End If Statement
-	} // End grading_page()
+		}
+	}
 
 	/**
 	 * grading_default_view default view for grading page
@@ -173,35 +187,50 @@ class Sensei_Grading {
 		// Load Grading data
 		if ( ! empty( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
+
+			if ( ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id ) ) {
+				return;
+			}
 		}
 		if ( ! empty( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
+
+			if ( ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id ) ) {
+				return;
+			}
 		}
+
 		if ( ! empty( $_GET['user_id'] ) ) {
 			$user_id = intval( $_GET['user_id'] );
 		}
 		if ( ! empty( $_GET['view'] ) ) {
 			$view = esc_html( $_GET['view'] );
 		}
-		$sensei_grading_overview = $this->load_data_object( 'Main', compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+
+		$sensei_grading_overview = new Sensei_Grading_Main( compact( 'course_id', 'lesson_id', 'user_id', 'view' ) );
+		$sensei_grading_overview->prepare_items();
 
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers();
+
+		$this->grading_default_nav();
+		do_action( 'sensei_grading_after_headers' );
+
+		$sensei_grading_overview->views();
 		?>
-		<div id="poststuff" class="sensei-grading-wrap">
-			<div class="sensei-grading-main">
-				<?php $sensei_grading_overview->display(); ?>
-			</div>
-			<div class="sensei-grading-extra">
-				<?php do_action( 'sensei_grading_extra' ); ?>
-			</div>
-		</div>
+		<form id="grading-filters" method="get">
+			<?php
+			Sensei_Utils::output_query_params_as_inputs( [ 'course_id', 'lesson_id', 's' ] );
+			$sensei_grading_overview->table_search_form();
+			$sensei_grading_overview->display();
+			?>
+		</form>
 		<?php
+		do_action( 'sensei_grading_extra' );
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
-	} // End grading_default_view()
+	}
 
 	/**
 	 * grading_user_quiz_view user quiz answers view for grading page
@@ -218,13 +247,23 @@ class Sensei_Grading {
 			$user_id = intval( $_GET['user'] );
 		}
 		if ( isset( $_GET['quiz_id'] ) ) {
-			$quiz_id = intval( $_GET['quiz_id'] );
+			$quiz_id   = intval( $_GET['quiz_id'] );
+			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
+
+			if ( ! current_user_can( get_post_type_object( 'lesson' )->cap->edit_post, $lesson_id ) ) {
+				return;
+			}
 		}
-		$sensei_grading_user_profile = $this->load_data_object( 'User_Quiz', $user_id, $quiz_id );
+
+		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
+
 		// Wrappers
 		do_action( 'grading_before_container' );
 		do_action( 'grading_wrapper_container', 'top' );
-		$this->grading_headers( array( 'nav' => 'user_quiz' ) );
+
+		$this->grading_user_quiz_nav();
+		do_action( 'sensei_grading_after_headers' );
+
 		?>
 		<div id="poststuff" class="sensei-grading-wrap user-profile">
 			<div class="sensei-grading-main">
@@ -234,21 +273,24 @@ class Sensei_Grading {
 		<?php
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
-	} // End grading_user_quiz_view()
+	}
 
 	/**
-	 * Outputs Grading general headers
+	 * Outputs Grading general headers.
 	 *
 	 * @since  1.3.0
+	 * @deprecated 3.13.4
+	 *
 	 * @param array $args
 	 * @return void
 	 */
 	public function grading_headers( $args = array( 'nav' => 'default' ) ) {
+		_deprecated_function( __METHOD__, '3.13.4' );
 
 		$function = 'grading_' . $args['nav'] . '_nav';
 		$this->$function();
 		do_action( 'sensei_grading_after_headers' );
-	} // End grading_headers()
+	}
 
 	/**
 	 * wrapper_container wrapper for Grading area
@@ -266,8 +308,8 @@ class Sensei_Grading {
 			?>
 			</div><!--/#woothemes-sensei-->
 			<?php
-		} // End If Statement
-	} // End wrapper_container()
+		}
+	}
 
 	/**
 	 * Default nav area for Grading
@@ -276,18 +318,11 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_nav() {
-
-		global  $wp_version;
-
 		$title = esc_html( $this->name );
 
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$title .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
-			} else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
-			}
+			$title    .= '<span class="course-title">&gt;&nbsp;&nbsp;' . esc_html( get_the_title( $course_id ) ) . '</span>';
 		}
 		if ( isset( $_GET['lesson_id'] ) ) {
 			$lesson_id = intval( $_GET['lesson_id'] );
@@ -298,11 +333,11 @@ class Sensei_Grading {
 			$user_name = Sensei_Learner::get_full_name( $_GET['user_id'] );
 			$title    .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . esc_html( $user_name ) . '</span>';
 
-		} // End If Statement
+		}
 		?>
 			<h1><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h1>
 		<?php
-	} // End grading_default_nav()
+	}
 
 	/**
 	 * Nav area for Grading specific users' quiz answers
@@ -311,26 +346,21 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_nav() {
-		global  $wp_version;
-
 		$title = esc_html( $this->name );
 
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id   = intval( $_GET['quiz_id'] );
 			$lesson_id = get_post_meta( $quiz_id, '_quiz_lesson', true );
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-			if ( version_compare( $wp_version, '4.1', '>=' ) ) {
-				$url    = add_query_arg(
-					array(
-						'page'      => $this->page_slug,
-						'course_id' => $course_id,
-					),
-					admin_url( 'admin.php' )
-				);
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
-			} else {
-				$title .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;%s</span>', esc_html( get_the_title( $course_id ) ) );
-			}
+			$url       = add_query_arg(
+				array(
+					'page'      => $this->page_slug,
+					'course_id' => $course_id,
+				),
+				admin_url( 'admin.php' )
+			);
+			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
+
 			$url    = add_query_arg(
 				array(
 					'page'      => $this->page_slug,
@@ -345,11 +375,11 @@ class Sensei_Grading {
 			$user_name = Sensei_Learner::get_full_name( $_GET['user'] );
 			$title    .= '&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;' . esc_html( $user_name ) . '</span>';
 
-		} // End If Statement
+		}
 		?>
 			<h2><?php echo wp_kses_post( apply_filters( 'sensei_grading_nav_title', $title ) ); ?></h2>
 		<?php
-	} // End grading_user_quiz_nav()
+	}
 
 	/**
 	 * Return array of valid statuses for either Course or Lesson
@@ -464,7 +494,7 @@ class Sensei_Grading {
 		}
 
 		return apply_filters( 'sensei_count_statuses', $counts, $type );
-	} // End sensei_count_statuses()
+	}
 
 	/**
 	 * Build the Courses dropdown for return in AJAX
@@ -491,11 +521,11 @@ class Sensei_Grading {
 		if ( count( $courses ) > 0 ) {
 			foreach ( $courses as $course_id ) {
 				$html .= '<option value="' . esc_attr( absint( $course_id ) ) . '" ' . selected( $course_id, $selected_course_id, false ) . '>' . esc_html( get_the_title( $course_id ) ) . '</option>' . "\n";
-			} // End For Loop
-		} // End If Statement
+			}
+		}
 
 		return $html;
-	} // End lessons_drop_down_html()
+	}
 
 	/**
 	 * Build the Lessons dropdown for return in AJAX
@@ -582,12 +612,12 @@ class Sensei_Grading {
 			if ( count( $lessons ) > 0 ) {
 				foreach ( $lessons as $lesson_id ) {
 					$html .= '<option value="' . esc_attr( absint( $lesson_id ) ) . '" ' . selected( $lesson_id, $selected_lesson_id, false ) . '>' . esc_html( get_the_title( $lesson_id ) ) . '</option>' . "\n";
-				} // End For Loop
-			} // End If Statement
-		} // End If Statement
+				}
+			}
+		}
 
 		return $html;
-	} // End lessons_drop_down_html()
+	}
 
 	/**
 	 * The process grading function handles admin grading submissions.
@@ -600,13 +630,13 @@ class Sensei_Grading {
 	 */
 	public function admin_process_grading_submission() {
 
-		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
+		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry.
 		if ( ! isset( $_POST['sensei_manual_grade'] )
 			|| ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
 			|| ! isset( $_GET['quiz_id'] )
 			|| $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
 
-			return false; // exit and do not grade
+			return false; // exit and do not grade.
 
 		}
 
@@ -616,24 +646,17 @@ class Sensei_Grading {
 		$questions            = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 		$quiz_lesson_id       = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$quiz_grade           = 0;
-		$count                = 0;
 		$quiz_grade_total     = $_POST['quiz_grade_total'];
 		$all_question_grades  = array();
 		$all_answers_feedback = array();
 
 		foreach ( $questions as $question ) {
 
-			++$count;
 			$question_id = $question->ID;
 
-			if ( isset( $_POST[ 'question_' . $question_id ] ) ) {
+			if ( isset( $_POST[ 'question_' . $question_id . '_grade' ] ) ) {
 
-				$question_grade = 0;
-				if ( $_POST[ 'question_' . $question_id ] == 'right' ) {
-
-					$question_grade = $_POST[ 'question_' . $question_id . '_grade' ];
-
-				}
+				$question_grade = absint( wp_unslash( $_POST[ 'question_' . $question_id . '_grade' ] ) ) ?? 0;
 
 				// add data to the array that will, after the loop, be stored on the lesson status
 				$all_question_grades[ $question_id ] = $question_grade;
@@ -652,7 +675,7 @@ class Sensei_Grading {
 			}
 			$all_answers_feedback[ $question_id ] = $question_feedback;
 
-		} // end for each $questions
+		}
 
 		// store all question grades on the lesson status
 		Sensei()->quiz->set_user_grades( $all_question_grades, $quiz_lesson_id, $user_id );
@@ -660,51 +683,67 @@ class Sensei_Grading {
 		// store the feedback from grading
 		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
 
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_progress ) {
+			return false;
+		}
+
+		$lesson_status   = 'ungraded';
+		$lesson_metadata = [];
+		$quiz_progress->ungrade();
+
 		// $_POST['all_questions_graded'] is set when all questions have been graded
 		// in the class sensei grading user quiz -> display()
 		if ( $_POST['all_questions_graded'] == 'yes' ) {
 
-			// set the users total quiz grade
+			// Set the users total quiz grade.
 			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
 			Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
 
-			// Duplicating what Frontend->sensei_complete_quiz() does
-			$pass_required   = get_post_meta( $quiz_id, '_pass_required', true );
-			$quiz_passmark   = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
-			$lesson_metadata = array();
+			// Duplicating what Frontend->sensei_complete_quiz() does.
+			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+			$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
+
 			if ( $pass_required ) {
-				// Student has reached the pass mark and lesson is complete
+				// Student has reached the pass mark and lesson is complete.
 				if ( $quiz_passmark <= $grade ) {
 					$lesson_status = 'passed';
+					$quiz_progress->pass();
 				} else {
 					$lesson_status = 'failed';
-				} // End If Statement
+					$quiz_progress->fail();
+				}
 			}
-			// Student only has to partake the quiz
+
+			// Student only has to partake the quiz.
 			else {
 				$lesson_status = 'graded';
+				$quiz_progress->grade();
 			}
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz()" above
+		}
 
-			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+		if ( count( $lesson_metadata ) ) {
+			foreach ( $lesson_metadata as $key => $value ) {
+				update_comment_meta( $quiz_progress->get_id(), $key, $value );
+			}
+		}
 
-			if ( in_array( $lesson_status, array( 'passed', 'graded' ) ) ) {
+		if ( in_array( $lesson_status, [ 'passed', 'graded' ], true ) ) {
 
-				/**
-				 * Summary.
-				 *
-				 * Description.
-				 *
-				 * @since 1.7.0
-				 *
-				 * @param int  $user_id
-				 * @param int $quiz_lesson_id
-				 */
-				do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+			/**
+			 * Summary.
+			 *
+			 * Description.
+			 *
+			 * @since 1.7.0
+			 *
+			 * @param int  $user_id
+			 * @param int $quiz_lesson_id
+			 */
+			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
 
-			} // end if in_array
-		}// end if $_POST['all_que...
-
+		}
 		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
 
 			$load_url = add_query_arg( array( 'message' => 'graded' ) );
@@ -722,7 +761,7 @@ class Sensei_Grading {
 		wp_safe_redirect( esc_url_raw( $load_url ) );
 		exit;
 
-	} // end admin_process_grading_submission
+	}
 
 	public function get_redirect_url() {
 		if ( ! isset( $_GET['course_id'] ) || ! isset( $_GET['lesson_id'] ) ) {
@@ -803,16 +842,18 @@ class Sensei_Grading {
 	}
 
 	public function add_grading_notices() {
-		if ( isset( $_GET['page'] ) && $this->page_slug == $_GET['page'] && isset( $_GET['message'] ) && $_GET['message'] ) {
-			if ( 'graded' == $_GET['message'] ) {
-				$msg = array(
-					'updated',
-					__( 'Quiz Graded Successfully!', 'sensei-lms' ),
-				);
-			}
+		$page    = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : false;
+		$message = isset( $_GET['message'] ) ? sanitize_text_field( wp_unslash( $_GET['message'] ) ) : false;
+
+		if (
+			$page
+			&& $message
+			&& $this->page_slug === $page
+			&& 'graded' === $message
+		) {
 			?>
-			<div class="grading-notice <?php echo esc_attr( $msg[0] ); ?>">
-				<p><?php echo esc_html( $msg[1] ); ?></p>
+			<div class="grading-notice updated">
+				<p><?php echo esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ); ?></p>
 			</div>
 			<?php
 		}
@@ -823,8 +864,8 @@ class Sensei_Grading {
 			echo '<div class="grading-notice updated">';
 				echo '<p>' . esc_html__( 'Quiz Graded Successfully!', 'sensei-lms' ) . '</p>';
 			echo '</div>';
-		} // End If Statement
-	} // End sensei_grading_notices()
+		}
+	}
 
 	/**
 	 * Grade quiz automatically
@@ -880,7 +921,7 @@ class Sensei_Grading {
 				$all_question_grades[ $question_id ] = $achievable_grade;
 			} elseif ( in_array( $question_type, $autogradable_question_types ) ) {
 				// Get user question grade
-				$question_grade                      = Sensei_Utils::sensei_grade_question_auto( $question_id, $question_type, $answer, $user_id );
+				$question_grade                      = self::grade_question_auto( $question_id, $question_type, $answer, $user_id );
 				$all_question_grades[ $question_id ] = $question_grade;
 				$grade_total                        += $question_grade;
 
@@ -889,8 +930,8 @@ class Sensei_Grading {
 				// There is a question that cannot be autograded
 				$quiz_autogradable = false;
 
-			} // end if in_array( $question_type...
-		}// end for each question
+			}
+		}
 
 		// Only if the whole quiz was autogradable do we set a grade
 		if ( $quiz_autogradable ) {
@@ -910,7 +951,7 @@ class Sensei_Grading {
 
 		return $grade;
 
-	} // End grade_quiz_auto()
+	}
 
 	/**
 	 * Grade question automatically
@@ -1001,10 +1042,10 @@ class Sensei_Grading {
 			 */
 			$question_grade = (int) apply_filters( 'sensei_grade_question_auto', $question_grade, $question_id, $question_type, $answer );
 
-		} // end if $question_type
+		}
 
 		return $question_grade;
-	} // end grade_question_auto
+	}
 
 	/**
 	 * Grading logic specifically for the gap fill questions
@@ -1098,6 +1139,31 @@ class Sensei_Grading {
 	}
 
 	/**
+	 * Get average grade of all lessons graded in all the courses.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 * @return double $graded_lesson_average_grade Average value of all the graded lessons in all the courses.
+	 */
+	public function get_graded_lessons_average_grade() {
+		global $wpdb;
+
+		// Fetching all the grades of all the lessons that are graded.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$sum_result          = $wpdb->get_row(
+			"SELECT SUM( {$wpdb->commentmeta}.meta_value ) AS grade_sum,COUNT( * ) as grade_count FROM {$wpdb->comments}
+             INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id )
+			 WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND ( {$wpdb->commentmeta}.meta_key = 'grade')"
+		);
+		$average_grade_value = 0;
+		if ( '0' === $sum_result->grade_count ) {
+			return $average_grade_value;
+		}
+		$average_grade_value = $sum_result->grade_sum / $sum_result->grade_count;
+		return $average_grade_value;
+	}
+
+	/**
 	 * Get the sum of all grades for the given user.
 	 *
 	 * @since 1.9.0
@@ -1142,7 +1208,7 @@ class Sensei_Grading {
 
 		return $sum_of_all_grades;
 
-	}//end get_lessons_users_grades_sum()
+	}
 
 	/**
 	 * Get the sum of all user grades for the given course.
@@ -1153,23 +1219,71 @@ class Sensei_Grading {
 	 * @return double
 	 */
 	public static function get_course_users_grades_sum( $course_id ) {
-
 		global $wpdb;
 
-		$clean_course_id               = esc_sql( $course_id );
+		$lesson_ids = Sensei()->course->course_lessons( $course_id, 'any', 'ids' );
+
+		if ( ! $lesson_ids ) {
+			return 0;
+		}
+
 		$comment_query_piece           = [];
+		$clean_lesson_ids              = implode( ',', esc_sql( $lesson_ids ) );
 		$comment_query_piece['select'] = "SELECT SUM({$wpdb->commentmeta}.meta_value) AS meta_sum";
 		$comment_query_piece['from']   = " FROM {$wpdb->comments}  INNER JOIN {$wpdb->commentmeta}  ON ( {$wpdb->comments}.comment_ID = {$wpdb->commentmeta}.comment_id ) ";
-		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_course_status') AND ( {$wpdb->commentmeta}.meta_key = 'percent') AND {$wpdb->comments}.comment_post_ID = {$clean_course_id} ";
+		$comment_query_piece['where']  = " WHERE {$wpdb->comments}.comment_type IN ('sensei_lesson_status') AND {$wpdb->comments}.comment_approved IN ('graded', 'passed', 'failed') AND ( {$wpdb->commentmeta}.meta_key = 'grade')
+			AND {$wpdb->comments}.comment_post_ID IN ({$clean_lesson_ids}) ";
 
 		$comment_query     = $comment_query_piece['select'] . $comment_query_piece['from'] . $comment_query_piece['where'];
 		$sum_of_all_grades = intval( $wpdb->get_var( $comment_query, 0, 0 ) );
 
 		return $sum_of_all_grades;
 
-	}//end get_course_users_grades_sum()
+	}
 
-} // End Class
+	/**
+	 * Get the average grade of all courses.
+	 *
+	 * @since 4.2.0
+	 * @access public
+	 *
+	 * @return double Average grade of all courses.
+	 */
+	public function get_courses_average_grade() {
+		global $wpdb;
+
+		/**
+		 * The subquery calculates the average grade per course, and the outer query then calculates the
+		 * average grade of all courses. To be included in the calculation, a lesson must:
+		 *   Have a status of 'graded', 'passed' or 'failed'.
+		 *   Have grade data.
+		 *   Be associated with a course.
+		 *   Have quiz questions (checking for the existence of '_quiz_has_questions' meta is sufficient;
+		 *   if it exists its value will be 1).
+		 */
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
+		$result = $wpdb->get_row(
+			"SELECT AVG(course_average) as courses_average
+			FROM (
+				SELECT AVG(cm.meta_value) as course_average
+				FROM {$wpdb->comments} c
+				INNER JOIN {$wpdb->commentmeta} cm ON c.comment_ID = cm.comment_id
+				INNER JOIN {$wpdb->postmeta} course ON c.comment_post_ID = course.post_id
+				INNER JOIN {$wpdb->postmeta} has_questions ON c.comment_post_ID = has_questions.post_id
+				INNER JOIN {$wpdb->posts} p ON p.ID = course.meta_value
+				WHERE c.comment_type = 'sensei_lesson_status'
+					AND c.comment_approved IN ( 'graded', 'passed', 'failed' )
+					AND cm.meta_key = 'grade'
+					AND course.meta_key = '_lesson_course'
+					AND course.meta_value <> ''
+					AND has_questions.meta_key = '_quiz_has_questions'
+				GROUP BY course.meta_value
+			) averages_by_course"
+		);
+
+		return doubleval( $result->courses_average );
+	}
+}
 
 /**
  * Class WooThemes_Sensei_Grading

@@ -1,0 +1,129 @@
+
+body {
+	--wp--custom--form--color--background: var(--sensei-background-color);
+	--wp--custom--form--border--width: 1.5px;
+	--wp--custom--form--border--style: solid;
+	--wp--custom--form--border--color: var(--sensei-text-color);
+	--wp--custom--form--border--radius: 2px;
+	--wp--custom--form--color--text: inherit;
+	--wp--custom--form--padding: 6px 8px;
+	--wp--custom--list--spacing--padding--left: 16px;
+	--wp--custom--layout--content-size: 900px;
+	--wp--custom--layout--wide-size: 1100px;
+	--wp--style--root--padding-top: 0px !important;
+	--wp--style--root--padding-bottom: 0px;
+	--wp--custom--gap--horizontal: var(--content-padding, 24px);
+
+	--max-content-size: 100vw;
+	--content-size: min(var(--wp--custom--layout--content-size), var(--max-content-size));
+	--wide-size: min(var(--wp--custom--layout--wide-size), var(--max-content-size));
+
+	h1, h2, h3, h4, h5, h6 {
+		color: var(--sensei-text-color);
+	}
+
+	.wp-site-blocks {
+		background-color: var(--sensei-background-color);
+	}
+
+}
+
+::selection {
+	background-color: var(--sensei-text-color);
+	color: var(--sensei-background-color);
+}
+
+.wp-block-post-title {
+	margin-top: 20px!important;
+	margin-bottom: 20px!important;
+}
+
+.wp-site-blocks {
+	padding: 0 var(--content-padding);
+}
+
+/**
+ * 4.0.1 Template compatibility.
+ */
+
+.sensei-course-theme__main-content {
+	> * {
+		max-width: var(--content-size) !important;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+/**
+ * Latest template version.
+ */
+
+.sensei-course-theme {
+
+	&__main-content__container, &__main-content__container > .wp-block-group__inner-container {
+		> * {
+			max-width: var(--content-size) !important;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	&__main-content__container > .wp-block-group__inner-container {
+		max-width: unset!important;
+	}
+
+	.wp-block-post-content {
+
+		& > *, .wp-block-group__inner-container > * {
+			max-width: var(--content-size) !important;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		&, & > & {
+			max-width: unset !important;
+			width: unset !important;
+			padding: 0!important;
+		}
+
+		.alignfull {
+			max-width: unset !important;
+		}
+
+		.alignwide {
+			max-width: var(--wide-size) !important;
+
+		}
+
+		.alignright {
+			position: static;
+			margin-right: 0;
+			float: right;
+		}
+
+		.alignleft {
+			position: static;
+			margin-left: 0;
+			float: left;
+		}
+	}
+}
+
+.entry-content {
+	--wp--custom--gap--horizontal: var(--content-padding);
+	--wp--custom--gap--vertical: 12px;
+	--wp--custom--spacing--outer: 0px;
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	embed,
+	iframe,
+	object {
+		max-width: 100%;
+	}
+
+}
+
+

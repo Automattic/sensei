@@ -1,0 +1,62 @@
+.wp-block-sensei-button {
+	.block-editor-rich-text {
+		display: block;
+	}
+
+	.wp-block-button__link {
+		box-sizing: border-box;
+
+		&:disabled {
+			pointer-events: none;
+			opacity: 0.5;
+			filter: grayscale(100%);
+		}
+	}
+
+	&.has-text-align-full {
+		text-align: center;
+
+		.wp-block-button__link {
+			display: block;
+			width: 100%;
+			flex: 1;
+		}
+	}
+
+	&__notice {
+		margin: .5em 0;
+	}
+
+	ins {
+		text-decoration: none;
+	}
+}
+
+/**
+	* Buttons in container.
+	*/
+.sensei-buttons-container {
+	margin: -9px;
+	overflow: hidden; /* Clearfix solution */
+}
+
+.sensei-buttons-container__button-block,
+body .editor-styles-wrapper .sensei-buttons-container .block-editor-inner-blocks .sensei-buttons-container__button-block {
+	float: left;
+	margin: 0;
+	padding: 9px;
+
+	&.sensei-buttons-container__button-align-full,
+	&.sensei-buttons-container__button-align-center {
+		float: none;
+		clear: both;
+	}
+
+	&.sensei-buttons-container__button-align-right {
+		float: right;
+	}
+
+	.wp-block-sensei-button {
+		margin: 0; /* Remove extra margin from some themes */
+	}
+}

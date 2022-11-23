@@ -1,0 +1,24 @@
+.sensei-input-control {
+	display: flex;
+	position: relative;
+
+	&__input {
+		flex: 1;
+		min-width: 0;
+
+		&--with-icon-right {
+			.sensei-input-control & {
+				padding-right: 34px;
+			}
+		}
+	}
+
+	&__icon {
+		display: flex;
+		align-items: center;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 5px;
+	}
+}

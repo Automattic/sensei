@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Settings extends Sensei_Settings_API {
 
+	const VISITED_SECTIONS_OPTION_KEY = 'sensei_settings_sections_visited';
+
 	/**
 	 * Constructor.
 	 *
@@ -34,14 +36,20 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$this->menu_label = __( 'Settings', 'sensei-lms' );
 			$this->page_slug  = 'sensei-settings';
 
-		} // End If Statement
+		}
 
 		$this->register_hook_listener();
 		$this->get_settings();
 
 		// Log when settings are updated by the user.
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
-	} // End __construct()
+
+		// Make sure we don't trigger queries if legacy options aren't loaded in pre-loaded options.
+		add_filter( 'alloptions', [ $this, 'no_special_query_for_legacy_options' ] );
+
+		// Mark settings section as visited on ajax action received.
+		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'mark_section_as_visited' ] );
+	}
 
 	/**
 	 * Get settings value
@@ -71,6 +79,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$settings             = $this->get_settings();
 		$settings[ $setting ] = $new_value;
+
+		// Update the cached setting.
+		$this->settings[ $setting ] = $new_value;
+
 		return update_option( $this->token, $settings );
 
 	}
@@ -80,20 +92,45 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
 	 */
 	public function register_settings_screen() {
-
 		$this->settings_version = Sensei()->version; // Use the global plugin version on this settings screen.
-		$hook                   = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
-		$this->hook             = $hook;
+		$this->hook             = add_submenu_page(
+			'sensei',
+			$this->name,
+			$this->menu_label,
+			'manage_sensei',
+			$this->page_slug,
+			array( $this, 'settings_screen' )
+		);
 
 		if ( isset( $_GET['page'] ) && ( $_GET['page'] == $this->page_slug ) ) {
 			add_action( 'admin_notices', array( $this, 'settings_errors' ) );
 			add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );
 			add_action( 'admin_print_styles', array( $this, 'enqueue_styles' ) );
 		}
-	} // End register_settings_screen()
+	}
+
+	/**
+	 * Add legacy options to alloptions if they don't exist.
+	 *
+	 * @since 3.0.1
+	 *
+	 * @param array $alloptions All options that are preloaded by WordPress.
+	 *
+	 * @return array
+	 */
+	public function no_special_query_for_legacy_options( $alloptions ) {
+		if ( ! isset( $alloptions['woothemes-sensei_user_dashboard_page_id'] ) ) {
+			$alloptions['woothemes-sensei_user_dashboard_page_id'] = 0;
+		}
+
+		if ( ! isset( $alloptions['woothemes-sensei_courses_page_id'] ) ) {
+			$alloptions['woothemes-sensei_courses_page_id'] = 0;
+		}
+
+		return $alloptions;
+	}
 
 	/**
 	 * Add settings sections.
@@ -108,6 +145,12 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$sections['default-settings'] = array(
 			'name'        => __( 'General', 'sensei-lms' ),
 			'description' => __( 'Settings that apply to the entire plugin.', 'sensei-lms' ),
+		);
+
+		$sections['appearance-settings'] = array(
+			'name'        => __( 'Appearance', 'sensei-lms' ),
+			'description' => __( 'Settings that apply to the entire plugin.', 'sensei-lms' ),
+			'badge'       => __( 'new', 'sensei-lms' ),
 		);
 
 		$sections['course-settings'] = array(
@@ -126,12 +169,46 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$sections['learner-profile-settings'] = array(
-			'name'        => __( 'Learner Profiles', 'sensei-lms' ),
-			'description' => __( 'Settings for public Learner Profiles.', 'sensei-lms' ),
+			'name'        => __( 'Student Profiles', 'sensei-lms' ),
+			'description' => __( 'Settings for public Student Profiles.', 'sensei-lms' ),
 		);
 
+		/**
+		 * Filters the woocommerce promo settings section.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 *
+		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 */
+		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
+		if ( ! $hide_woocommerce_settings ) {
+			$sections['woocommerce-settings'] = array(
+				'name'        => __( 'WooCommerce', 'sensei-lms' ),
+				'description' => __( 'Optional settings for WooCommerce functions.', 'sensei-lms' ),
+			);
+		}
+
+		/**
+		 * Filters the content drip promo settings section.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
+		 *
+		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 */
+		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
+		if ( ! $hide_content_drip_settings ) {
+			$sections['sensei-content-drip-settings'] = array(
+				'name'        => __( 'Content Drip', 'sensei-lms' ),
+				'description' => __( 'Optional settings for the Content Drip extension.', 'sensei-lms' ),
+			);
+		}
+
 		$this->sections = apply_filters( 'sensei_settings_tabs', $sections );
-	} // End init_sections()
+	}
 
 	/**
 	 * Add settings fields.
@@ -189,7 +266,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$fields['messages_disable'] = array(
 			'name'        => __( 'Disable Private Messages', 'sensei-lms' ),
-			'description' => __( 'Disable the private message functions between learners and teachers.', 'sensei-lms' ),
+			'description' => __( 'Disable the private message functions between students and teachers.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => false,
 			'section'     => 'default-settings',
@@ -210,6 +287,16 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'description' => __( 'The page to use to display the courses that a user is currently taking as well as the courses a user has complete.', 'sensei-lms' ),
 			'type'        => 'select',
 			'default'     => get_option( 'woothemes-sensei_user_dashboard_page_id', 0 ),
+			'section'     => 'default-settings',
+			'required'    => 0,
+			'options'     => $pages_array,
+		);
+
+		$fields['course_completed_page'] = array(
+			'name'        => __( 'Course Completed Page', 'sensei-lms' ),
+			'description' => __( 'The page that is displayed after a student completes a course.', 'sensei-lms' ),
+			'type'        => 'select',
+			'default'     => get_option( 'woothemes-sensei_course_completed_page_id', 0 ),
 			'section'     => 'default-settings',
 			'required'    => 0,
 			'options'     => $pages_array,
@@ -263,7 +350,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'section'     => 'default-settings',
 		);
 
-		// Course Settings
 		$fields['course_completion'] = array(
 			'name'        => __( 'Courses are complete:', 'sensei-lms' ),
 			'description' => __( 'This will determine when courses are marked as complete.', 'sensei-lms' ),
@@ -379,10 +465,31 @@ class Sensei_Settings extends Sensei_Settings_API {
 			'required'    => 0,
 		);
 
-		// Lesson Settings
+		// Course Settings.
+		$fields['sensei_learning_mode_all'] = array(
+			'name'        => __( 'Learning Mode', 'sensei-lms' ),
+			'description' => __( 'Show an immersive and distraction-free view for lessons and quizzes.', 'sensei-lms' ),
+			'form'        => 'render_learning_mode_setting',
+			'type'        => 'checkbox',
+			'default'     => \Sensei()->install_version && version_compare( \Sensei()->install_version, '4.7.0', '>=' ),
+			'section'     => 'appearance-settings',
+		);
+
+		// Course Settings.
+		$fields['sensei_learning_mode_template'] = array(
+			'name'        => __( 'Learning Mode Templates', 'sensei-lms' ),
+			'description' => __( 'Choose a learning mode template that is most suited for your type of content and the style you want to offer to your students.', 'sensei-lms' ),
+			'form'        => 'render_learning_mode_templates',
+			'type'        => 'radio',
+			'default'     => Sensei_Course_Theme_Template_Selection::DEFAULT_TEMPLATE_NAME,
+			'section'     => 'appearance-settings',
+			'options'     => $this->get_learning_mode_template_options(),
+		);
+
+		// Lesson Settings.
 		$fields['lesson_comments'] = array(
 			'name'        => __( 'Allow Comments for Lessons', 'sensei-lms' ),
-			'description' => __( 'This will allow learners to post comments on the single Lesson page, only learner who have access to the Lesson will be allowed to comment.', 'sensei-lms' ),
+			'description' => __( 'This will allow students to post comments on the single Lesson page, only student who have access to the Lesson will be allowed to comment.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'lesson-settings',
@@ -471,17 +578,17 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$profile_url_example = trailingslashit( get_home_url() ) . $profile_url_base . '/%username%';
 
 		$fields['learner_profile_enable'] = array(
-			'name'        => __( 'Public learner profiles', 'sensei-lms' ),
+			'name'        => __( 'Public student profiles', 'sensei-lms' ),
 			// translators: Placeholder is a profile URL example.
-			'description' => sprintf( __( 'Enable public learner profiles that will be accessible to everyone. Profile URL format: %s', 'sensei-lms' ), $profile_url_example ),
+			'description' => sprintf( __( 'Enable public student profiles that will be accessible to everyone. Profile URL format: %s', 'sensei-lms' ), $profile_url_example ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'learner-profile-settings',
 		);
 
 		$fields['learner_profile_show_courses'] = array(
-			'name'        => __( 'Show learner\'s courses', 'sensei-lms' ),
-			'description' => __( 'Display the learner\'s active and completed courses on their profile.', 'sensei-lms' ),
+			'name'        => __( 'Show student\'s courses', 'sensei-lms' ),
+			'description' => __( 'Display the student\'s active and completed courses on their profile.', 'sensei-lms' ),
 			'type'        => 'checkbox',
 			'default'     => true,
 			'section'     => 'learner-profile-settings',
@@ -494,11 +601,11 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$teacher_email_options = array(
-			'teacher-started-course'   => __( 'A learner starts their course', 'sensei-lms' ),
-			'teacher-completed-course' => __( 'A learner completes their course', 'sensei-lms' ),
-			'teacher-completed-lesson' => __( 'A learner completes a lesson', 'sensei-lms' ),
-			'teacher-quiz-submitted'   => __( 'A learner submits a quiz for grading', 'sensei-lms' ),
-			'teacher-new-message'      => __( 'A learner sends a private message to a teacher', 'sensei-lms' ),
+			'teacher-started-course'   => __( 'A student starts their course', 'sensei-lms' ),
+			'teacher-completed-course' => __( 'A student completes their course', 'sensei-lms' ),
+			'teacher-completed-lesson' => __( 'A student completes a lesson', 'sensei-lms' ),
+			'teacher-quiz-submitted'   => __( 'A student submits a quiz for grading', 'sensei-lms' ),
+			'teacher-new-message'      => __( 'A student sends a private message to a teacher', 'sensei-lms' ),
 		);
 
 		$global_email_options = array(
@@ -506,8 +613,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		);
 
 		$fields['email_learners'] = array(
-			'name'        => __( 'Emails Sent to Learners', 'sensei-lms' ),
-			'description' => __( 'Select the notifications that will be sent to learners.', 'sensei-lms' ),
+			'name'        => __( 'Emails Sent to Students', 'sensei-lms' ),
+			'description' => __( 'Select the notifications that will be sent to students.', 'sensei-lms' ),
 			'type'        => 'multicheck',
 			'options'     => $learner_email_options,
 			'defaults'    => array( 'learner-graded-quiz', 'learner-completed-course' ),
@@ -612,7 +719,14 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$this->fields = apply_filters( 'sensei_settings_fields', $fields );
 
-	} // End init_fields()
+	}
+
+	/**
+	 * Get options for the learning mode templates.
+	 */
+	private function get_learning_mode_template_options() {
+		return Sensei_Course_Theme_Template_Selection::get_templates();
+	}
 
 	/**
 	 * Get options for the duration fields.
@@ -639,7 +753,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		}
 
 		return $options;
-	} // End get_duration_options()
+	}
 
 	/**
 	 * Return an array of pages.
@@ -649,6 +763,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * @return array
 	 */
 	private function pages_array() {
+		if ( ! is_admin() ) {
+			return [];
+		}
+
 		// REFACTOR - Transform this into a field type instead.
 		// Setup an array of portfolio gallery terms for a dropdown.
 		$pages_dropdown = wp_dropdown_pages(
@@ -676,13 +794,13 @@ class Sensei_Settings extends Sensei_Settings_API {
 			if ( isset( $matches[1] ) ) {
 				$id                = $matches[1];
 				$page_items[ $id ] = trim( strip_tags( $v ) );
-			} // End If Statement
-		} // End For Loop
+			}
+		}
 
 		$pages_array = $page_items;
 
 		return $pages_array;
-	} // End pages_array()
+	}
 
 	/**
 	 * Flush the rewrite rules after the settings have been updated.
@@ -704,7 +822,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		}
 
-	}//end flush_rewrite_rules()
+	}
 
 	/**
 	 * Logs settings update from the Settings form.
@@ -717,7 +835,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 */
 	public function log_settings_update( $old_value, $value ) {
 		// Only process user-initiated settings updates.
-		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && 'options' === get_current_screen()->id ) ) {
+		if ( ! ( 'POST' === $_SERVER['REQUEST_METHOD'] && ! defined( 'REST_REQUEST' ) && 'options' === get_current_screen()->id ) ) {
 			return;
 		}
 
@@ -728,7 +846,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 			$old_field_value = isset( $old_value[ $field ] ) ? $old_value[ $field ] : '';
 			$new_field_value = isset( $value[ $field ] ) ? $value[ $field ] : '';
 
-			if ( $new_field_value !== $old_field_value ) {
+			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Loose comparison is okay for checking for changes.
+			if ( $new_field_value != $old_field_value ) {
 				// Create an array for this section of settings if needed.
 				$section = $field_config['section'];
 				if ( ! isset( $changed[ $section ] ) ) {
@@ -748,6 +867,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Log changed sections.
 		foreach ( $changed as $section => $fields ) {
+			if ( empty( $fields ) ) {
+				continue;
+			}
+
 			sensei_log_event(
 				'settings_update',
 				[
@@ -793,7 +916,134 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		return array_filter( array_merge( $added, $removed ) );
 	}
-} // End Class
+
+	/**
+	 * Learning mode setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_learning_mode_setting( $args ) {
+		$options = $this->get_settings();
+		$key     = $args['key'];
+		$value   = $options[ $key ];
+
+		$color_customizer_url = '';
+		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
+			$color_customizer_url = Sensei_Course_Theme::get_learning_mode_customizer_url();
+		}
+
+		?>
+		<label for="<?php echo esc_attr( $key ); ?>">
+			<input id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>" type="checkbox" value="1" <?php checked( $value, '1' ); ?> />
+			<?php esc_html_e( 'Enable for all courses', 'sensei-lms' ); ?>
+		</label>
+		<p>
+			<span class="description"><?php echo esc_html( $args['data']['description'] ); ?></span>
+		</p>
+
+		<?php if ( $color_customizer_url ) : ?>
+			<p class="extra-content">
+				<a href="<?php echo esc_url( $color_customizer_url ); ?>">
+					<?php esc_html_e( 'Customize Colors', 'sensei-lms' ); ?>
+				</a>
+			</p>
+		<?php endif; ?>
+
+		<?php
+	}
+
+	/**
+	 * Renders the Learning Mode template selection setting.
+	 *
+	 * @param array $args The field arguments.
+	 */
+	public function render_learning_mode_templates( $args ) {
+		$settings = $this->get_settings();
+		$key      = $args['key'];
+		$value    = $settings[ $key ];
+		?>
+			<p> <?php echo esc_html( $args['data']['description'] ); ?></p>
+			<ul class="sensei-lm-block-template__options" id="sensei-lm-block-template__options">
+			<?php foreach ( $args['data']['options'] as $template ) : ?>
+				<?php
+					$upsell   = isset( $template->upsell ) ? $template->upsell : false;
+					$title    = isset( $template->title ) || empty( $template->title ) ? $template->title : $template->name;
+					$disabled = (bool) $upsell;
+				?>
+				<li class="sensei-lm-block-template__option">
+					<label class="sensei-lm-block-template__option-label">
+						<div class="sensei-lm-block-template__option-header">
+							<input
+								type="radio"
+								name="<?php echo esc_attr( "{$this->token}[{$key}]" ); ?>"
+								value="<?php echo esc_attr( $template->name ); ?>"
+								<?php disabled( true, $disabled, true ); ?>
+								<?php checked( $template->name, $value, true ); ?>
+							/>
+							<h4 class="sensei-lm-block-template__option-title <?php echo $disabled ? 'sensei-lm-block-template__option-title--disabled' : ''; ?>">
+								<?php echo esc_html( $title ); ?>
+							</h4>
+							<?php if ( $disabled ) : ?>
+								<a href="<?php echo esc_attr( $upsell['url'] ); ?>" target="_blank" rel="noopener">
+									<?php echo esc_attr( $upsell['title'] ); ?>
+								</a>
+							<?php endif; ?>
+						</div>
+
+						<img alt="<?php esc_attr( $template->title ); ?>" src="<?php echo esc_attr( $template->screenshots['thumbnail'] ); ?>" />
+					</label>
+				</li>
+			<?php endforeach; ?>
+			</ul>
+		<?php
+
+		$inline_data = [
+			'name'         => "{$this->token}[{$key}]",
+			'value'        => $value,
+			'options'      => $args['data']['options'],
+			'customizeUrl' => Sensei_Course_Theme::get_learning_mode_fse_url(),
+			'formId'       => "{$this->token}-form",
+			'section'      => $args['data']['section'],
+		];
+		Sensei()->assets->enqueue( 'learning-mode-templates-styles', 'course-theme/learning-mode-templates/styles.css', [ 'wp-components' ] );
+		Sensei()->assets->enqueue( 'learning-mode-templates-script', 'course-theme/learning-mode-templates/index.js', [ 'wp-element', 'wp-components' ], true );
+		wp_add_inline_script(
+			'learning-mode-templates-script',
+			sprintf( 'window.sensei = window.sensei || {}; window.sensei.learningModeTemplateSetting = %s;', wp_json_encode( $inline_data ) ),
+			'before'
+		);
+	}
+
+	/**
+	 * Enqueue javascript.
+	 */
+	public function enqueue_scripts() {
+		parent::enqueue_scripts();
+
+		// Generate nonce for marking section visited action.
+		wp_add_inline_script(
+			'sensei-settings',
+			'window.senseiSettingsSectionVisitNonce  = "' . wp_create_nonce( 'sensei-mark-settings-section-visited' ) . '";',
+			'before'
+		);
+	}
+
+	/**
+	 * Marks the given section as visited.
+	 */
+	public function mark_section_as_visited() {
+		if ( isset( $_POST['nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'sensei-mark-settings-section-visited' ) ) {
+			if ( isset( $_POST['section_id'] ) ) {
+				$section_id = sanitize_key( $_POST['section_id'] );
+				$visited    = get_option( self::VISITED_SECTIONS_OPTION_KEY, [] );
+				if ( ! in_array( $section_id, $visited, true ) ) {
+					$visited[] = $section_id;
+					update_option( self::VISITED_SECTIONS_OPTION_KEY, $visited );
+				}
+			}
+		}
+	}
+}
 
 /**
  * Class WooThemes_Sensei_Settings

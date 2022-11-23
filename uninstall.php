@@ -29,6 +29,9 @@ if ( ! function_exists( 'Sensei' ) ) {
 	return;
 }
 
+// We don't want any jobs to be scheduled during uninstall.
+add_filter( 'sensei_is_enrolment_background_job_enabled', '__return_false' );
+
 require dirname( __FILE__ ) . '/includes/class-sensei-data-cleaner.php';
 
 // Cleanup all data.

@@ -1,0 +1,15 @@
+.editor-styles-wrapper {
+	.wp-block-sensei-lms-course-list-filter {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+
+		&__warning {
+			display: block;
+		}
+
+		&:after {
+			clear: both;
+		}
+	}
+}

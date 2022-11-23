@@ -1,8 +1,7 @@
-# [Sensei LMS](https://woocommerce.com/products/sensei/) [![Build Status](https://travis-ci.org/Automattic/sensei.svg?branch=master)](http://travis-ci.org/Automattic/sensei)
+# [Sensei LMS](https://senseilms.com)
+**A learning management plugin for WordPress for building online courses and quizzes.**
 
-**A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.**
-
-Sensei LMS is a commercial plugin available from https://woocommerce.com/products/sensei/. The plugin is hosted here on a public Github repository in order to better facilitate community contributions from developers and users alike. If you have a suggestion, a bug report, or a patch for an issue, feel free to submit it here (following the guidelines below). We do ask, however, that if you are using the plugin on a live site that you please purchase a valid license from the website. We cannot provide support or one-click updates to anyone that does not hold a valid license key.
+Sensei LMS is a free and open-source WordPress plugin available from https://senseilms.com. The plugin is hosted here on a public Github repository in order to better facilitate community contributions from developers and users alike. If you have a suggestion, a bug report, or a patch for an issue, feel free to submit it here (following the guidelines below). 
 
 ## Architecture
 
@@ -34,7 +33,7 @@ version, but serves as a model for future changes.
   * Permissions
 
 ## Contributing to Sensei LMS
-See our guidelines here: [Contributing to Sensei LMS](https://github.com/woothemes/sensei/blob/master/CONTRIBUTING.md)
+See our guidelines here: [Contributing to Sensei LMS](https://github.com/Automattic/sensei/blob/trunk/CONTRIBUTING.md)
 
 ## Development Blog
-Please follow further development updates at [https://senseilms.com/blog/](https://senseilms.com/blog/)
+Please follow further development updates at [https://senseilms.com/blog](https://senseilms.com/blog)

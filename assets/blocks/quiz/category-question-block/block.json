@@ -1,0 +1,30 @@
+{
+  "name": "sensei-lms/quiz-category-question",
+  "title": "Category Question",
+  "description": "Pull questions from a question category.",
+  "parent": [ "sensei-lms/quiz" ],
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "id": {
+      "type": "integer"
+    },
+    "type": {
+      "type": "string",
+      "default": "category-question"
+    },
+		"categoryName": {
+			"type": "string"
+		},
+    "options": {
+      "type": "object",
+      "default": {
+				"category": null,
+				"number": 1
+      }
+    }
+  }
+}

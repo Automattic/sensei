@@ -1,0 +1,56 @@
+{
+  "name": "sensei-lms/course-progress",
+  "title": "Course Progress",
+  "description": "Display the user's progress in the course. This block is only displayed if the user is enrolled.",
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "keywords": [
+    "progress",
+    "bar",
+    "course"
+  ],
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "textColor": {
+      "type": "string"
+    },
+    "customTextColor": {
+      "type": "string",
+      "default": ""
+    },
+    "barColor": {
+      "type": "string"
+    },
+    "customBarColor": {
+      "type": "string"
+    },
+    "defaultBarColor": {
+      "type": "string"
+    },
+    "barBackgroundColor": {
+      "type": "string"
+    },
+    "customBarBackgroundColor": {
+      "type": "string"
+    },
+    "height": {
+      "type": "integer"
+    },
+    "borderRadius": {
+      "type": "integer"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "usesContext": [ "postType" ],
+  "example": {
+    "attributes": {
+      "customBarBackgroundColor": "#999999",
+      "isPreview": true
+    }
+  }
+}

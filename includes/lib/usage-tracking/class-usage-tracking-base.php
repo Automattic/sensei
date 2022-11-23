@@ -2,7 +2,9 @@
 /**
  * Reusable Usage Tracking library. For sending plugin usage data and events to
  * Tracks.
- **/
+ *
+ * @package Sensei
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,24 +24,17 @@ abstract class Sensei_Usage_Tracking_Base {
 	 */
 
 	/**
-	 * The name of the option for hiding the Usage Tracking opt-in dialog.
-	 *
-	 * @var string
-	 **/
-	protected $hide_tracking_opt_in_option_name;
-
-	/**
 	 * The name of the cron job action for regularly logging usage data.
 	 *
 	 * @var string
-	 **/
+	 */
 	private $job_name;
 
 	/**
 	 * Callback function for the usage tracking job.
 	 *
 	 * @var array
-	 **/
+	 */
 	private $callback;
 
 
@@ -51,7 +46,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Subclass instances.
 	 *
 	 * @var array
-	 **/
+	 */
 	private static $instances = array();
 
 	/**
@@ -66,6 +61,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * This function cannot be abstract (because it is static) but it *must* be
 	 * implemented by subclasses.
+	 *
+	 * @throws Exception Method is not implemented in subclass.
 	 */
 	public static function get_instance() {
 		throw new Exception( 'Usage Tracking subclasses must implement get_instance. See class-usage-tracking-base.php' );
@@ -81,7 +78,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Get prefix for actions and strings. Should be unique to this plugin.
 	 *
 	 * @return string The prefix string
-	 **/
+	 */
 	abstract protected function get_prefix();
 
 	/**
@@ -89,22 +86,22 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * strings to be translated.
 	 *
 	 * @return string The text domain string
-	 **/
+	 */
 	abstract protected function get_text_domain();
 
 	/**
 	 * Determine whether usage tracking is enabled.
 	 *
 	 * @return bool true if usage tracking is enabled, false otherwise.
-	 **/
+	 */
 	abstract protected function get_tracking_enabled();
 
 	/**
 	 * Set whether usage tracking is enabled.
 	 *
 	 * @param bool $enable true if usage tracking should be enabled, false if
-	 * it should be disabled.
-	 **/
+	 *                     it should be disabled.
+	 */
 	abstract protected function set_tracking_enabled( $enable );
 
 	/**
@@ -112,7 +109,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 *
 	 * @return bool true if the current user is allowed to manage the tracking
 	 * options, false otherwise.
-	 **/
+	 */
 	abstract protected function current_user_can_manage_tracking();
 
 	/**
@@ -121,7 +118,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * is being tracked.
 	 *
 	 * @return string the text to display in the opt-in dialog.
-	 **/
+	 */
 	abstract protected function opt_in_dialog_text();
 
 	/**
@@ -133,7 +130,6 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * @return bool true if we send the version, false if not.
 	 */
 	abstract protected function do_track_plugin( $plugin_slug );
-
 
 	/*
 	 * Initialization.
@@ -147,17 +143,10 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * This class is meant to be a singleton, and assumes that the subclass is
 	 * implemented as such. If multiple instances are instantiated, the results
 	 * are undefined.
-	 **/
+	 */
 	protected function __construct() {
 		// Init instance vars.
-		$this->hide_tracking_opt_in_option_name = $this->get_prefix() . '_usage_tracking_opt_in_hide';
-		$this->job_name                         = $this->get_prefix() . '_usage_tracking_send_usage_data';
-
-		// Set up the opt-in dialog.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script_deps' ) );
-		add_action( 'admin_footer', array( $this, 'output_opt_in_js' ) );
-		add_action( 'admin_notices', array( $this, 'maybe_display_tracking_opt_in' ) );
-		add_action( 'wp_ajax_' . $this->get_prefix() . '_handle_tracking_opt_in', array( $this, 'handle_tracking_opt_in' ) );
+		$this->job_name = $this->get_prefix() . '_usage_tracking_send_usage_data';
 
 		// Set up schedule and action needed for cron job.
 		add_filter( 'cron_schedules', array( $this, 'add_usage_tracking_two_week_schedule' ) );
@@ -169,6 +158,8 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * subclass.
 	 *
 	 * @param string $subclass the name of the subclass.
+	 *
+	 * @return static Instance of subclass.
 	 */
 	protected static function get_instance_for_subclass( $subclass ) {
 		if ( ! isset( self::$instances[ $subclass ] ) ) {
@@ -187,22 +178,22 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * data to be logged periodically to Tracks.
 	 *
 	 * @param callable $callback the callback returning the usage data to be logged.
-	 **/
+	 */
 	public function set_callback( $callback ) {
 		$this->callback = $callback;
 	}
 
 	/**
-	 * Send an event to Tracks if tracking is enabled.
+	 * Send an event to Tracks if tracking is enabled, including site information.
 	 *
-	 * @param string   $event The event name. The prefix string will be
-	 *   automatically prepended to this, so please supply this string without a
-	 *   prefix.
-	 * @param array    $properties Event Properties.
+	 * @param string   $event           The event name. The prefix string will be
+	 *                                  automatically prepended to this, so please supply this string without a
+	 *                                  prefix.
+	 * @param array    $properties      Event Properties.
 	 * @param null|int $event_timestamp When the event occurred.
 	 *
-	 * @return null|WP_Error
-	 **/
+	 * @return bool
+	 */
 	public function send_event( $event, $properties = array(), $event_timestamp = null ) {
 
 		// Only continue if tracking is enabled.
@@ -210,21 +201,60 @@ abstract class Sensei_Usage_Tracking_Base {
 			return false;
 		}
 
-		$pixel      = 'http://pixel.wp.com/t.gif';
-		$event_name = $this->get_event_prefix() . '_' . $event;
-		$user       = wp_get_current_user();
-
-		if ( null === $event_timestamp ) {
-			$event_timestamp = time();
-		}
+		$user = wp_get_current_user();
 
 		$properties['admin_email'] = get_option( 'admin_email' );
 		$properties['_ut']         = $this->get_event_prefix() . ':site_url';
 		// Use site domain as the userid to enable usage tracking at the site level.
 		// Note that we would likely want to use site domain + user ID for userid if we were
 		// to ever add event tracking at the user level.
-		$properties['_ui'] = str_replace( 'www.', '', parse_url( site_url(), PHP_URL_HOST ) );
+		$properties['_ui'] = $this->get_site_id();
 		$properties['_ul'] = $user->user_login;
+
+		return $this->send_tracks_request( $event, $properties, $event_timestamp );
+
+	}
+
+
+	/**
+	 * Send an anonymous event to Tracks.
+	 *
+	 * @param string   $event           The event name. The prefix string will be
+	 *                                  automatically prepended to this, so please supply this string without a
+	 *                                  prefix.
+	 * @param array    $properties      Event Properties.
+	 * @param null|int $event_timestamp When the event occurred.
+	 *
+	 * @return bool
+	 */
+	public function send_anonymous_event( $event, $properties = array(), $event_timestamp = null ) {
+
+		$properties['_ut'] = $this->get_event_prefix() . ':site_url';
+		$properties['_ui'] = sha1( $this->get_site_id() );
+
+		return $this->send_tracks_request( $event, $properties, $event_timestamp );
+	}
+
+	/**
+	 * Submit request to Tracks pixel.
+	 *
+	 * @param string   $event           The event name. The prefix string will be
+	 *                                  automatically prepended to this, so please supply this string without a
+	 *                                  prefix.
+	 * @param array    $properties      Event Properties.
+	 * @param null|int $event_timestamp When the event occurred.
+	 *
+	 * @return bool
+	 */
+	private function send_tracks_request( $event, $properties = array(), $event_timestamp = null ) {
+
+		$pixel      = 'https://pixel.wp.com/t.gif';
+		$event_name = $this->get_event_prefix() . '_' . $event;
+
+		if ( null === $event_timestamp ) {
+			$event_timestamp = time();
+		}
+
 		$properties['_en'] = $event_name;
 		$properties['_ts'] = $event_timestamp . '000';
 		$properties['_rt'] = round( microtime( true ) * 1000 );  // log time.
@@ -234,27 +264,18 @@ abstract class Sensei_Usage_Tracking_Base {
 			$p[] = rawurlencode( $key ) . '=' . rawurlencode( $value );
 		}
 
-		$pixel   .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
-		$response = wp_remote_get(
+		$pixel .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
+
+		wp_safe_remote_get(
 			$pixel,
 			array(
-				'blocking'    => true,
+				'blocking'    => false,
 				'timeout'     => 1,
 				'redirection' => 2,
 				'httpversion' => '1.1',
 				'user-agent'  => $this->get_event_prefix() . '_usage_tracking',
 			)
 		);
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$code = isset( $response['response']['code'] ) ? $response['response']['code'] : 0;
-
-		if ( 200 !== $code ) {
-			return new WP_Error( 'request_failed', 'HTTP Request failed', $code );
-		}
 
 		return true;
 	}
@@ -263,7 +284,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Set up a regular cron job to send usage data. The job will only send
 	 * the data if tracking is enabled, so it is safe to call this function,
 	 * and schedule the job, before the user opts into tracking.
-	 **/
+	 */
 	public function schedule_tracking_task() {
 		if ( ! wp_next_scheduled( $this->job_name ) ) {
 			wp_schedule_event( time(), $this->get_prefix() . '_usage_tracking_two_weeks', $this->job_name );
@@ -273,7 +294,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Unschedule the job scheduled by schedule_tracking_task if any is
 	 * scheduled. This should be called on plugin deactivation.
-	 **/
+	 */
 	public function unschedule_tracking_task() {
 		if ( wp_next_scheduled( $this->job_name ) ) {
 			wp_clear_scheduled_hook( $this->job_name );
@@ -284,7 +305,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * Check if tracking is enabled.
 	 *
 	 * @return bool true if tracking is enabled, false otherwise
-	 **/
+	 */
 	public function is_tracking_enabled() {
 		// Defer to the plugin-specific function.
 		return $this->get_tracking_enabled();
@@ -293,20 +314,22 @@ abstract class Sensei_Usage_Tracking_Base {
 	/**
 	 * Call the usage data callback and send the usage data to Tracks. Only
 	 * sends data if tracking is enabled.
-	 **/
+	 */
 	public function send_usage_data() {
-		if ( ! self::is_tracking_enabled() || ! is_callable( $this->callback ) ) {
+		if ( ! $this->is_tracking_enabled() || ! is_callable( $this->callback ) ) {
 			return;
 		}
 
-		$usage_data = call_user_func( $this->callback );
+		$this->send_event( 'send_usage_data' );
+		$this->send_event( 'system_log', $this->get_system_data() );
+		$this->send_event( 'template_log', $this->get_template_data() );
 
+		$usage_data = call_user_func( $this->callback );
 		if ( ! is_array( $usage_data ) ) {
 			return;
 		}
 
-		self::send_event( 'system_log', $this->get_system_data() );
-		self::send_event( 'stats_log', $usage_data );
+		$this->send_event( 'stats_log', $usage_data );
 	}
 
 
@@ -328,7 +351,7 @@ abstract class Sensei_Usage_Tracking_Base {
 	 * externally.
 	 *
 	 * @param array $schedules the existing cron schedules.
-	 **/
+	 */
 	public function add_usage_tracking_two_week_schedule( $schedules ) {
 		$day_in_seconds = 86400;
 		$schedules[ $this->get_prefix() . '_usage_tracking_two_weeks' ] = array(
@@ -422,164 +445,79 @@ abstract class Sensei_Usage_Tracking_Base {
 	}
 
 	/**
+	 * Get user ID for the site.
+	 *
+	 * @return string
+	 */
+	private function get_site_id() {
+		return str_replace( 'www.', '', wp_parse_url( site_url(), PHP_URL_HOST ) );
+	}
+
+	/**
 	 * Hide the opt-in for enabling usage tracking.
-	 **/
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
+	 */
 	protected function hide_tracking_opt_in() {
-		update_option( $this->hide_tracking_opt_in_option_name, true );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::skip_setup_wizard' );
 	}
 
 	/**
 	 * Determine whether the opt-in for enabling usage tracking is hidden.
 	 *
-	 * @return bool true if the opt-in is hidden, false otherwise.
-	 **/
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
+	 */
 	protected function is_opt_in_hidden() {
-		return (bool) get_option( $this->hide_tracking_opt_in_option_name );
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
 	 * Allowed html tags, used by wp_kses, for the translated opt-in dialog
 	 * text.
 	 *
-	 * @return array the html tags.
-	 **/
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
+	 */
 	protected function opt_in_dialog_text_allowed_html() {
-		return array(
-			'a'      => array(
-				'href'   => array(),
-				'title'  => array(),
-				'target' => array(),
-			),
-			'em'     => array(),
-			'strong' => array(),
-		);
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
 	 * If needed, display opt-in dialog to enable tracking. Should not be
 	 * called externally.
-	 **/
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
+	 */
 	public function maybe_display_tracking_opt_in() {
-		$opt_in_hidden         = $this->is_opt_in_hidden();
-		$user_tracking_enabled = $this->is_tracking_enabled();
-		$can_manage_tracking   = $this->current_user_can_manage_tracking();
-
-		if ( ! $user_tracking_enabled && ! $opt_in_hidden && $can_manage_tracking ) { ?>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-notice" class="notice notice-info"
-				data-nonce="<?php echo esc_attr( wp_create_nonce( 'tracking-opt-in' ) ); ?>">
-				<p>
-					<?php echo wp_kses( $this->opt_in_dialog_text(), $this->opt_in_dialog_text_allowed_html() ); ?>
-				</p>
-				<p>
-					<button class="button button-primary" data-enable-tracking="yes">
-						<?php esc_html_e( 'Enable Usage Tracking', $this->get_text_domain() ); ?>
-					</button>
-					<button class="button" data-enable-tracking="no">
-						<?php esc_html_e( 'Disable Usage Tracking', $this->get_text_domain() ); ?>
-					</button>
-					<span id="progress" class="spinner alignleft"></span>
-				</p>
-			</div>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-enable-success" class="notice notice-success hidden">
-				<p><?php esc_html_e( 'Usage data enabled. Thank you!', $this->get_text_domain() ); ?></p>
-			</div>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-disable-success" class="notice notice-success hidden">
-				<p><?php esc_html_e( 'Disabled usage tracking.', $this->get_text_domain() ); ?></p>
-			</div>
-			<div id="<?php echo esc_attr( $this->get_prefix() ); ?>-usage-tracking-failure" class="notice notice-error hidden">
-				<p><?php esc_html_e( 'Something went wrong. Please try again later.', $this->get_text_domain() ); ?></p>
-			</div>
-			<?php
-		}
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
 	 * Handle ajax request from the opt-in dialog. Should not be called
 	 * externally.
-	 **/
+	 *
+	 * @deprecated 3.1.0 - Opt-in moved to Setup Wizard
+	 */
 	public function handle_tracking_opt_in() {
-		check_ajax_referer( 'tracking-opt-in', 'nonce' );
-
-		if ( ! $this->current_user_can_manage_tracking() ) {
-			wp_die( '', '', 403 );
-		}
-
-		$enable_tracking = isset( $_POST['enable_tracking'] ) && '1' === $_POST['enable_tracking'];
-		$this->set_tracking_enabled( $enable_tracking );
-		$this->hide_tracking_opt_in();
-		$this->send_usage_data();
-		wp_die();
+		_deprecated_function( __METHOD__, '3.1.0', 'Sensei_Setup_Wizard::setup_wizard_notice' );
 	}
 
 	/**
 	 * Ensure that jQuery has been enqueued since the opt-in dialog JS depends
 	 * on it. Should not be called externally.
-	 **/
+	 *
+	 * @deprecated 3.1.0
+	 */
 	public function enqueue_script_deps() {
-		// Ensure jQuery is loaded.
-		wp_enqueue_script(
-			$this->get_prefix() . '_usage-tracking-notice',
-			'',
-			array( 'jquery' ),
-			null,
-			true
-		);
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 
 	/**
 	 * Output the JS code to handle the opt-in dialog. Should not be called
 	 * externally.
-	 **/
+	 *
+	 * @deprecated 3.1.0
+	 */
 	public function output_opt_in_js() {
-		?>
-<script type="text/javascript">
-	(function( prefix ) {
-		jQuery( document ).ready( function() {
-			function displayProgressIndicator() {
-				jQuery( '#' + prefix + '-usage-tracking-notice #progress' ).addClass( 'is-active' );
-			}
-
-			function displaySuccess( enabledTracking ) {
-				if ( enabledTracking ) {
-					jQuery( '#' + prefix + '-usage-tracking-enable-success' ).show();
-				} else {
-					jQuery( '#' + prefix + '-usage-tracking-disable-success' ).show();
-				}
-				jQuery( '#' + prefix + '-usage-tracking-notice' ).hide();
-			}
-
-			function displayError() {
-				jQuery( '#' + prefix + '-usage-tracking-failure' ).show();
-				jQuery( '#' + prefix + '-usage-tracking-notice' ).hide();
-			}
-
-			// Handle button clicks
-			jQuery( '#' + prefix + '-usage-tracking-notice button' ).click( function( event ) {
-				event.preventDefault();
-
-				var enableTracking = jQuery( this ).data( 'enable-tracking' ) == 'yes';
-				var nonce          = jQuery( '#' + prefix + '-usage-tracking-notice' ).data( 'nonce' );
-
-				displayProgressIndicator();
-
-				jQuery.ajax( {
-					type: 'POST',
-					url: ajaxurl,
-					data: {
-						action: prefix + '_handle_tracking_opt_in',
-						enable_tracking: enableTracking ? 1 : 0,
-						nonce: nonce,
-					},
-					success: function() {
-						displaySuccess( enableTracking );
-					},
-					error: displayError,
-				} );
-			});
-		});
-	})( "<?php echo esc_js( $this->get_prefix() ); ?>" );
-</script>
-		<?php
+		_deprecated_function( __METHOD__, '3.1.0' );
 	}
 }
-// phpcs: enable

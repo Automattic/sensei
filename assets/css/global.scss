@@ -1,0 +1,50 @@
+/*-----------------------------------------------------------------------------------*/
+/* Backend Global Stylesheet */
+/*-----------------------------------------------------------------------------------*/
+
+@import './admin-notices';
+
+/*  Sensei Icon Font */
+@font-face {
+	font-family: 'sensei';
+	src: url( '../css/fonts/sensei/sensei.woff2' ) format( 'woff2' ), url( '../css/fonts/sensei/sensei.woff' ) format( 'woff' );
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Sensei LMS menu */
+body #toplevel_page_sensei {
+	div.wp-menu-image:before {
+		font-family: 'sensei';
+		content: "\f101";
+	}
+
+	ul li a {
+		&[href="admin.php?page=sensei_learners"],
+		&[href="admin.php?page=sensei_reports"] {
+			border-top: solid 1px;
+			margin-top: 10px;
+			padding-top: 10px;
+		}
+	}
+}
+
+/* Dashboard At a Glance */
+#dashboard_right_now a.course-count:before,
+#dashboard_right_now span.course-count:before {
+	content: '\f331';
+}
+
+#dashboard_right_now a.lesson-count:before,
+#dashboard_right_now span.lesson-count:before {
+	content: '\f163';
+}
+
+#dashboard_right_now a.question-count:before,
+#dashboard_right_now span.question-count:before {
+	content: '\f223';
+}
+
+.edit-php.post-type-quiz .add-new-h2 {
+	display: none;
+}

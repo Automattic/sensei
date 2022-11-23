@@ -33,11 +33,40 @@ class Sensei_Unit_Tests_Bootstrap {
 		tests_add_filter( 'muplugins_loaded', array( $this, 'load_sensei' ) );
 		// install Sensei
 		tests_add_filter( 'setup_theme', array( $this, 'install_sensei' ) );
+
+		// Enrolment checks should happen immediately in tests. Filter can be removed for specific tests.
+		tests_add_filter( 'sensei_should_defer_enrolment_check', '__return_false' );
+
+		// Prevent requests from `WP_Http::request` while testing.
+		tests_add_filter( 'pre_http_request', [ $this, 'prevent_requests' ], 99 );
+
+		/*
+		* Load PHPUnit Polyfills for the WP testing suite.
+		* @see https://github.com/WordPress/wordpress-develop/pull/1563/
+		*/
+		define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', __DIR__ . '/../vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php' );
+
 		// load the WP testing environment
 		require_once $this->wp_tests_dir . '/includes/bootstrap.php';
+
 		// load Sensei testing framework
 		$this->includes();
 	}
+
+	/**
+	 * Filter to alert to prevent requests in the tests.
+	 *
+	 * @param mixed $preempt
+	 * @return mixed
+	 */
+	public function prevent_requests( $preempt ) {
+		$error = 'You should use the filter `pre_http_request` to prevent requests in the tests';
+		if ( false === $preempt ) {
+			throw new Exception( $error );
+		}
+		return $preempt;
+	}
+
 	/**
 	 * Load Sensei.
 	 *
@@ -45,7 +74,22 @@ class Sensei_Unit_Tests_Bootstrap {
 	 */
 	public function load_sensei() {
 		require_once $this->plugin_dir . '/sensei-lms.php';
+
+		// Testing setup for scheduler.
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-scheduler-shim.php';
+
+		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_shim' ] );
 	}
+
+	/**
+	 * Scheduler: Use shim.
+	 *
+	 * @return string
+	 */
+	public static function scheduler_use_shim() {
+		return Sensei_Scheduler_Shim::class;
+	}
+
 	/**
 	 * Install Sensei after the test environment and Sensei have been loaded.
 	 *
@@ -55,6 +99,8 @@ class Sensei_Unit_Tests_Bootstrap {
 		// reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374
 		$GLOBALS['wp_roles']->for_site();
 		echo 'Installing Sensei...' . PHP_EOL;
+
+		Sensei()->activate();
 	}
 	/**
 	 * Load Sensei-specific test cases and factories.
@@ -62,13 +108,27 @@ class Sensei_Unit_Tests_Bootstrap {
 	 * @since 1.9
 	 */
 	public function includes() {
-		// factories
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-test-login-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-wp-cron-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-rest-api-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-helpers.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-manual-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-scheduler-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-background-job-stub.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-sensei-factory.php';
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/factories/class-wp-unittest-factory-for-post-sensei.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-data-port-test-helpers.php';
+		require_once SENSEI_TEST_FRAMEWORK_DIR . '/data-port/trait-sensei-export-task-tests.php';
 
 		// Testing setup for event logging.
 		require_once SENSEI_TEST_FRAMEWORK_DIR . '/class-sensei-test-events.php';
+
+		// Used for some libraries. Tests that require these libraries should be skipped if they don't exist.
+		$autoload_file = __DIR__ . '/../vendor/autoload.php';
+		if ( file_exists( $autoload_file ) ) {
+			require_once $autoload_file;
+		}
+
 		Sensei_Test_Events::init();
 	}
 	/**
@@ -84,5 +144,6 @@ class Sensei_Unit_Tests_Bootstrap {
 		return self::$instance;
 	}
 }
+
 Sensei_Unit_Tests_Bootstrap::instance();
 

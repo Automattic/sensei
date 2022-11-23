@@ -1,6 +1,7 @@
 <?php
 
 class Sensei_Class_Modules_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
 
 	/**
 	 * Constructor function
@@ -37,7 +38,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->modules ), 'Sensei Modules class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
 	 * @covers Sensei_Core_Modules::do_link_to_module
@@ -143,4 +144,154 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 
 	}
 
-} // end class
+	/**
+	 * Ensure the course modules column "more" link is shown
+	 * only if the course has more than 3 modules.
+	 *
+	 * @covers Sensei_Core_Modules::course_column_content
+	 * @covers Sensei_Core_Modules::output_course_modules_column
+	 */
+	public function testCourseModulesColumnShouldShowMoreLinkIfMoreThan3Modules() {
+		$course_id = $this->factory->course->create();
+		$modules   = [
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+		];
+
+		wp_set_object_terms( $course_id, wp_list_pluck( $modules, 'term_id' ), Sensei()->modules->taxonomy );
+
+		ob_start();
+		Sensei()->modules->course_column_content( 'modules', $course_id );
+		$column_output = ob_get_clean();
+
+		foreach ( $modules as $module ) {
+			$this->assertContains( $module->name, $column_output, 'The module link should be present.' );
+		}
+
+		$this->assertContains( '+1 more', $column_output, 'The "+1 more" link should be present.' );
+	}
+
+	/**
+	 * Ensure the course modules column "more" link is not shown
+	 * if the course has less than 4 modules.
+	 *
+	 * @covers Sensei_Core_Modules::course_column_content
+	 * @covers Sensei_Core_Modules::output_course_modules_column
+	 */
+	public function testCourseModulesColumnShouldNotShowMoreLinkIfLessThan4Modules() {
+		$course_id = $this->factory->course->create();
+		$modules   = [
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+			$this->factory->module->create_and_get(),
+		];
+
+		wp_set_object_terms( $course_id, wp_list_pluck( $modules, 'term_id' ), Sensei()->modules->taxonomy );
+
+		ob_start();
+		Sensei()->modules->course_column_content( 'modules', $course_id );
+		$column_output = ob_get_clean();
+
+		foreach ( $modules as $module ) {
+			$this->assertContains( $module->name, $column_output, 'The module link should be present.' );
+		}
+
+		$this->assertNotContains( 'more', $column_output, 'The "more" link shouldn\'t be present.' );
+	}
+
+	public function testModuleTeacherMeta_WhenAddedToACourse_TeacherIdGetsAddedToMeta() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 0,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$module = wp_insert_term(
+			'Get Started',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'get-started',
+			)
+		);
+
+		/* Act */
+		wp_set_object_terms( $course['course_id'], [ $module['term_id'] ], 'module' );
+
+		/* Assert */
+		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID );
+	}
+
+	public function testModuleTeacherMeta_WhenRemovedFromACourse_TeacherIdGetsRemovedFromMeta() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 0,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$module = wp_insert_term(
+			'Get Started',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'get-started',
+			)
+		);
+
+		wp_set_object_terms( $course['course_id'], [ $module['term_id'] ], 'module' );
+
+		/* Act */
+		wp_remove_object_terms( $course['course_id'], $module['term_id'], 'module' );
+
+		/* Assert */
+		$this->assertSame( '', get_term_meta( $module['term_id'], 'module_author', true ) );
+	}
+
+	public function testModuleTeacherMeta_WhenCourseTeacherChanged_TeacherIdMetaChangesAccordingly() {
+		/* Arrange */
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'module_count'   => 0,
+				'lesson_count'   => 1,
+				'question_count' => 0,
+			]
+		);
+
+		$module = wp_insert_term(
+			'Get Started',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => 'get-started',
+			)
+		);
+
+		wp_set_object_terms( $course['course_id'], [ $module['term_id'] ], 'module' );
+
+		$this->login_as_teacher_b();
+
+		/* Act */
+		$args = [
+			'ID'          => $course['course_id'],
+			'post_author' => wp_get_current_user()->ID,
+		];
+		wp_update_post( $args );
+
+		/* Assert */
+		$this->assertSame( absint( get_term_meta( $module['term_id'], 'module_author', true ) ), wp_get_current_user()->ID, 'Module teacher ID meta not set to the updated Author ID' );
+	}
+}

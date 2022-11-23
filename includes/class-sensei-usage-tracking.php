@@ -26,6 +26,9 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 
 		// Init event logging source filters.
 		add_action( 'init', [ $this, 'init_event_logging_sources' ] );
+
+		// Log when Sensei is updated.
+		add_action( 'sensei_log_update', [ $this, 'log_update' ] );
 	}
 
 	/*
@@ -65,7 +68,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 		return Sensei()->settings->get( self::SENSEI_SETTING_NAME ) || false;
 	}
 
-	protected function set_tracking_enabled( $enable ) {
+	public function set_tracking_enabled( $enable ) {
 		Sensei()->settings->set( self::SENSEI_SETTING_NAME, $enable );
 
 		// Refresh settings in-memory so we get the right value.
@@ -79,13 +82,11 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	protected function opt_in_dialog_text() {
 		return sprintf(
 			/*
-			 * translators: the href tag contains the URL for the page telling
+			 * translators: The href tag contains the URL for the page telling
 			 * users what data Sensei tracks.
 			 */
 			__(
-				"We'd love if you helped us make Sensei LMS better by allowing us to collect
-				<a href=\"%s\" target=\"_blank\">usage tracking data</a>.
-				No sensitive information is collected, and you can opt out at any time.",
+				"We'd love if you helped us make Sensei LMS better by allowing us to collect <a href=\"%s\" target=\"_blank\">usage tracking data</a>. No sensitive information is collected, and you can opt out at any time.",
 				'sensei-lms'
 			),
 			self::SENSEI_TRACKING_INFO_URL
@@ -119,18 +120,38 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 	 * Hooks.
 	 */
 
+	/**
+	 * Log an update event.
+	 *
+	 * @since 3.9.0
+	 * @access internal
+	 *
+	 * @param array $args Deferred event parameters.
+	 */
+	public function log_update( $args ) {
+		sensei_log_event(
+			'plugin_update',
+			$args
+		);
+	}
+
+	/**
+	 * Add setting field.
+	 *
+	 * @param array $fields Setting fields.
+	 *
+	 * @return array
+	 */
 	public function add_setting_field( $fields ) {
 		$fields[ self::SENSEI_SETTING_NAME ] = array(
 			'name'        => __( 'Enable usage tracking', 'sensei-lms' ),
 			'description' => sprintf(
 				/*
-				 * translators: the href tag contains the URL for the page telling
+				 * translators: The href tag contains the URL for the page telling
 				 * users what data Sensei tracks.
 				 */
 				__(
-					'Help us make Sensei LMS better by allowing us to collect
-					<a href="%s" target="_blank">usage tracking data</a>.
-					No sensitive information is collected.',
+					'Help us make Sensei LMS better by allowing us to collect <a href="%s" target="_blank">usage tracking data</a>. No sensitive information is collected.',
 					'sensei-lms'
 				),
 				self::SENSEI_TRACKING_INFO_URL
@@ -196,5 +217,69 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 				return 'data-import';
 			}
 		);
+	}
+
+	/**
+	 * Log plugin installation success for WooCommerce.com plugin on activation.
+	 *
+	 * @deprecated 4.8.0
+	 *
+	 * @param string $plugin_file The activated plugin.
+	 */
+	public function log_wccom_plugin_install( $plugin_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+	}
+
+	/**
+	 * Get the template override data.
+	 *
+	 * @return array
+	 */
+	public function get_template_data() {
+		$theme              = wp_get_theme();
+		$template_overrides = Sensei_Status::instance()->get_template_override_status();
+
+		$data = [
+			'version'       => Sensei()->version,
+			'theme'         => $theme['Name'],
+			'theme_version' => $theme['Version'],
+			'templates'     => count( $template_overrides ),
+			'mismatch'      => 0,
+		];
+
+		foreach ( $template_overrides as $template_path => $versions ) {
+			// Sanitize the template path as a tracks property and remove anything unexpected from the `@version` tag.
+			$property_key          = preg_replace( '/[^0-9_a-z]/', '_', strtr( strtolower( $template_path ), [ '.php' => '' ] ) );
+			$data[ $property_key ] = preg_replace( '/[^0-9.]/', '', $versions['theme_version'] );
+
+			if ( empty( $data[ $property_key ] ) ) {
+				$data[ $property_key ] = 'unknown';
+			}
+
+			if ( $versions['theme_version'] !== $versions['sensei_version'] ) {
+				$data['mismatch']++;
+				$data[ $property_key ] .= '*';
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Collect system data to track.
+	 *
+	 * @return array
+	 */
+	public function get_system_data() {
+		$system_data                 = [];
+		$system_data['version']      = Sensei()->version;
+		$system_data['wcpc_version'] = defined( 'SENSEI_WC_PAID_COURSES_VERSION' ) ? SENSEI_WC_PAID_COURSES_VERSION : null;
+
+		$legacy_flags = Sensei()->get_legacy_flags();
+		foreach ( $legacy_flags as $flag => $value ) {
+			$system_data[ 'legacy_flag_' . sanitize_key( $flag ) ] = $value ? 1 : 0;
+		}
+
+		return array_merge( $system_data, parent::get_system_data() );
 	}
 }

@@ -1,0 +1,9 @@
+paths:
+  "**":
+    - Check that the installed version is correct on the Plugins page.
+    - Create and publish a course, a module, and a lesson to the course.
+    - Enable the learning mode in the course.
+    - Log in with a user and complete the course.
+    - Visit Students in admin and observe that the user is displayed with the course completed.
+    - Disable learning mode in the course.
+    - Visit the course again to make sure that it displayed correctly.

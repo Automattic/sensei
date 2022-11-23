@@ -1,0 +1,66 @@
+@import 'learner-courses-mixins';
+@import '../../shared/blocks/progress-bar/progress-bar-settings';
+
+$block: '.wp-block-sensei-lms-learner-courses';
+$courses-list: '#{$block}__courses-list';
+
+.editor-styles-wrapper #{$courses-list} {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	&__featured-image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #C3C4C7;
+		fill: #FFF;
+	}
+
+	&__title {
+		&,
+		.editor-styles-wrapper .wp-block & {
+			margin: 0;
+		}
+
+		.has-primary-color & a {
+			color: var(--sensei-primary-color, inherit);
+		}
+	}
+
+	&__description {
+		margin: 16px 0 16px;
+	}
+
+	.wp-block-sensei-lms-course-progress {
+		margin-top: 10px;
+	}
+
+	.sensei-results-links {
+		@include buttons-wrapper;
+
+		.wp-block-button {
+			margin: 0;
+		}
+
+		.wp-block-button__link {
+			border-radius: inherit;
+			line-height: normal;
+			text-decoration: none;
+		}
+	}
+}
+
+/* List view */
+.editor-styles-wrapper #{$courses-list}--is-list-view {
+	#{$courses-list}__featured-image {
+		width: 150px;
+	}
+}
+
+/* Grid view */
+.editor-styles-wrapper #{$courses-list}--is-grid-view {
+	#{$courses-list}__featured-image {
+		height: 200px;
+	}
+}

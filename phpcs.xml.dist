@@ -13,17 +13,16 @@
 	<exclude-pattern type="relative">^vendor/*</exclude-pattern>
 	<exclude-pattern type="relative">^build/*</exclude-pattern>
 	<exclude-pattern type="relative">^tmp/*</exclude-pattern>
-	<exclude-pattern type="relative">^apigen/*</exclude-pattern>
 
 	<!-- Configs -->
-	<config name="minimum_supported_wp_version" value="4.9" />
-	<config name="testVersion" value="5.6-"/>
+	<config name="minimum_supported_wp_version" value="5.6" />
+	<config name="testVersion" value="7.3-"/>
 
 	<!-- Rules -->
 	<rule ref="PHPCompatibilityWP"/>
 	<rule ref="WordPress">
-        <exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
-    </rule>
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+	</rule>
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra" />
 
@@ -54,6 +53,9 @@
 	</rule>
 	<!-- End of Temporary Rule Exclusions -->
 
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>tests/framework/actionscheduler-mocks.php</exclude-pattern>
+	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array" value="sensei-lms" />
@@ -64,7 +66,6 @@
 		<exclude-pattern>tests/</exclude-pattern>
 		<exclude name="Squiz.Commenting.LongConditionClosingComment" />
 		<exclude name="Squiz.Commenting.PostStatementComment" />
-		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
@@ -76,5 +77,6 @@
 			</property>
 		</properties>
 		<exclude-pattern>**/views/*</exclude-pattern>
+		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
 	</rule>
 </ruleset>

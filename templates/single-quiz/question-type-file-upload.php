@@ -46,7 +46,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 		?>
 
 	</p>
-	<?php if ( ! $question_data['lesson_complete'] ) { ?>
+	<?php if ( ! $question_data['quiz_is_completed'] ) { ?>
 
 		<aside class="reupload_notice"><?php esc_html_e( 'Uploading a new file will replace your existing one:', 'sensei-lms' ); ?></aside>
 
@@ -54,7 +54,7 @@ $question_data = Sensei_Question::get_template_data( sensei_get_the_question_id(
 
 <?php } ?>
 
-<?php if ( ! $question_data['lesson_complete'] ) { ?>
+<?php if ( ! $question_data['quiz_is_completed'] ) { ?>
 
 	<input type="file" name="file_upload_<?php echo esc_attr( $question_data['ID'] ); ?>" />
 

@@ -1,0 +1,58 @@
+{
+	"name": "sensei-lms/course-results",
+	"title": "Course Results",
+	"description": "Show course results to students on the course completion page.",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"lessons",
+		"modules",
+		"results",
+		"completion"
+	],
+	"supports": {
+		"html": false,
+		"multiple": false,
+		"defaultStylePicker": false
+	},
+	"attributes": {
+		"id": {
+			"type": "integer"
+		},
+		"moduleBorder": {
+			"type": "boolean",
+			"default": true
+		},
+		"mainColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"customMainColor": {
+			"type": "string"
+		},
+		"customTextColor": {
+			"type": "string"
+		},
+		"customBorderColor": {
+			"type": "string"
+		},
+		"borderColorValue": {
+			"type": "string"
+		},
+		"defaultMainColor": {
+			"type": "string"
+		},
+		"defaultTextColor": {
+			"type": "string"
+		},
+		"defaultBorderColor": {
+			"type": "string"
+		}
+	}
+}

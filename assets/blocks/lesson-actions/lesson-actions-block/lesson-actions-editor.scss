@@ -1,0 +1,26 @@
+.wp-block-sensei-lms-lesson-actions {
+	&__preview-completed {
+		.wp-block-sensei-lms-button-complete-lesson {
+			opacity: 0.1;
+		}
+	}
+	&__preview-in-progress {
+		.wp-block-sensei-lms-button-reset-lesson,
+		.wp-block-sensei-lms-button-next-lesson {
+			opacity: 0.1;
+		}
+	}
+	&__no-quiz {
+		.wp-block-sensei-lms-button-view-quiz__wrapper {
+			display: none;
+		}
+	}
+	&__complete_lessons-not-allowed {
+		.wp-block-sensei-lms-button-complete-lesson__wrapper {
+			display: none;
+		}
+	}
+	&__notice {
+		margin: 0;
+	}
+}

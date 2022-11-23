@@ -41,6 +41,13 @@ class Sensei_PostTypes {
 	public $quiz;
 
 	/**
+	 * Messages object.
+	 *
+	 * @var Sensei_Messages
+	 */
+	public $messages;
+
+	/**
 	 * Array of post ID's for which to fire an "initial publish" action.
 	 *
 	 * @var array
@@ -59,7 +66,9 @@ class Sensei_PostTypes {
 		$this->token  = 'woothemes-sensei-posttypes';
 
 		$this->setup_post_type_labels_base();
+
 		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_action( 'template_redirect', array( $this, 'redirect_course_archive_page' ) );
 		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
 		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
@@ -83,26 +92,32 @@ class Sensei_PostTypes {
 			'messages' => 'Messages',
 		);
 		$this->load_posttype_objects( $default_post_types );
+		$this->set_role_cap_defaults( $default_post_types );
 
 		// Admin functions
-		if ( is_admin() || defined( 'WP_CLI' ) && WP_CLI ) {
-			$this->set_role_cap_defaults( $default_post_types );
+		if ( is_admin() ) {
 			global $pagenow;
 			if ( ( $pagenow == 'post.php' || $pagenow == 'post-new.php' ) ) {
 				add_filter( 'enter_title_here', array( $this, 'enter_title_here' ), 10 );
 				add_filter( 'post_updated_messages', array( $this, 'setup_post_type_messages' ) );
-			} // End If Statement
-		} // End If Statement
+			}
+		}
 
 		// REST API functionality.
 		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
 
+		// Add protections on feeds for certain CPTs.
+		add_action( 'wp', [ $this, 'protect_feeds' ] );
+
 		// Add 'Edit Quiz' link to admin bar
 		add_action( 'admin_bar_menu', array( $this, 'quiz_admin_bar_menu' ), 81 );
 
+		// Add Sensei LMS submenus.
+		add_action( 'admin_menu', array( $this, 'add_submenus' ) );
+
 		$this->setup_initial_publish_action();
 
-	} // End __construct()
+	}
 
 	/**
 	 * load_posttype_objects function.
@@ -121,9 +136,9 @@ class Sensei_PostTypes {
 			$this->$posttype_token        = new $class_name();
 			$this->$posttype_token->token = $posttype_token;
 
-		} // End For Loop
+		}
 
-	} // End load_posttype_objects
+	}
 
 	/**
 	 * Set up REST API for post types.
@@ -135,6 +150,42 @@ class Sensei_PostTypes {
 		// Ensure registered meta will show up in the REST API for courses and lessons.
 		add_post_type_support( 'course', 'custom-fields' );
 		add_post_type_support( 'lesson', 'custom-fields' );
+
+		// Hide post content for students who aren't enrolled.
+		add_filter( 'post_password_required', [ $this, 'lesson_is_protected' ], 10, 2 );
+	}
+
+	/**
+	 * Add protection to Sensei post type feeds.
+	 *
+	 * @access private
+	 */
+	public function protect_feeds() {
+		if ( is_feed() && is_post_type_archive( [ 'lesson', 'question', 'quiz', 'sensei_message' ] ) ) {
+			wp_die( esc_html__( 'Error: Feed does not exist', 'sensei-lms' ), '', [ 'response' => 404 ] );
+		}
+	}
+
+	/**
+	 * Helper function to hide lesson post content by artificially making this a password protected post in certain contexts.
+	 *
+	 * @access private
+	 *
+	 * @param bool    $is_password_protected Filtered value for if this is a password protected post.
+	 * @param WP_Post $post                  Post object.
+	 *
+	 * @return bool
+	 */
+	public function lesson_is_protected( $is_password_protected, $post ) {
+		if (
+			$post instanceof WP_Post
+			&& 'lesson' === $post->post_type
+			&& ! sensei_can_user_view_lesson( $post->ID, get_current_user_id() )
+		) {
+			return true;
+		}
+
+		return $is_password_protected;
 	}
 
 	/**
@@ -145,18 +196,20 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_course_post_type() {
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
 			'labels'                => $this->create_post_type_labels( $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
-			'show_in_menu'          => true,
+			'show_in_menu'          => false,
 			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url base', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
@@ -165,7 +218,7 @@ class Sensei_PostTypes {
 			'has_archive'           => $this->get_course_post_type_archive_slug(),
 			'hierarchical'          => false,
 			'menu_position'         => 51,
-			'supports'              => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
+			'supports'              => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
 			'show_in_rest'          => true,
 			'rest_base'             => 'courses',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
@@ -179,7 +232,37 @@ class Sensei_PostTypes {
 		 */
 		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
 
-	} // End setup_course_post_type()
+	}
+
+
+	/**
+	 * Redirect to the correct course archive link when using plain permalinks.
+	 *
+	 * @since 4.0.2
+	 * @uses  Sensei()
+	 * @access private
+	 * @return void
+	 */
+	public function redirect_course_archive_page() {
+		$settings = Sensei()->settings->settings;
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// When default permalinks are enabled, redirect course page to post type archive url.
+		$course_url = get_post_type_archive_link( 'course' );
+		if (
+			! empty( $_GET['page_id'] ) &&
+			'' === get_option( 'permalink_structure' ) &&
+			absint( $_GET['page_id'] ) === absint( $settings['course_page'] ) &&
+			$course_url
+		) {
+			foreach ( $_GET as $param => $value ) {
+				if ( 'page_id' !== $param ) {
+					$course_url = add_query_arg( $param, $value, $course_url );
+				}
+			}
+			wp_safe_redirect( esc_url_raw( $course_url ) );
+			exit;
+		}
+	}
 
 	/**
 	 * Figure out of the course post type has an archive and what it should be.
@@ -210,7 +293,7 @@ class Sensei_PostTypes {
 
 		}
 
-	}//end get_course_post_type_archive_slug()
+	}
 
 	/**
 	 * Check if given content has any of these old shortcodes:
@@ -229,7 +312,7 @@ class Sensei_PostTypes {
 		|| has_shortcode( $content, 'freecourses' )
 		|| has_shortcode( $content, 'paidcourses' ) );
 
-	}//end has_old_shortcodes()
+	}
 
 
 	/**
@@ -245,33 +328,37 @@ class Sensei_PostTypes {
 		$allow_comments = false;
 		if ( isset( Sensei()->settings->settings['lesson_comments'] ) ) {
 			$allow_comments = Sensei()->settings->settings['lesson_comments'];
-		} // End If Statement
+		}
 		if ( $allow_comments ) {
 			array_push( $supports_array, 'comments' );
-		} // End If Statement
+		}
+
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
 			'labels'                => $this->create_post_type_labels( $this->labels['lesson']['singular'], $this->labels['lesson']['plural'], $this->labels['lesson']['menu'] ),
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
-			'show_in_menu'          => true,
+			'show_in_menu'          => false,
+			'show_in_admin_bar'     => true,
 			'query_var'             => true,
 			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_lesson_slug', _x( 'lesson', 'post type single slug', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
 			'map_meta_cap'          => true,
 			'capability_type'       => 'lesson',
-			'has_archive'           => true,
+			'has_archive'           => false,
 			'hierarchical'          => false,
 			'menu_position'         => 52,
 			'supports'              => $supports_array,
 			'show_in_rest'          => true,
 			'rest_base'             => 'lessons',
-			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			'rest_controller_class' => 'Sensei_REST_API_Lessons_Controller',
 		);
 
 		/**
@@ -282,7 +369,7 @@ class Sensei_PostTypes {
 		 */
 		register_post_type( 'lesson', apply_filters( 'sensei_register_post_type_lesson', $args ) );
 
-	} // End setup_lesson_post_type()
+	}
 
 	/**
 	 * Setup the "quiz" post type, it's admin menu item and the appropriate labels and permissions.
@@ -292,6 +379,8 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_quiz_post_type() {
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
 			'labels'              => $this->create_post_type_labels(
@@ -303,12 +392,13 @@ class Sensei_PostTypes {
 			'publicly_queryable'  => true,
 			'show_ui'             => true,
 			'show_in_menu'        => false,
+			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => false,
 			'query_var'           => true,
 			'exclude_from_search' => true,
 			'rewrite'             => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_quiz_slug', _x( 'quiz', 'post type single slug', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
@@ -331,7 +421,7 @@ class Sensei_PostTypes {
 		 */
 		register_post_type( 'quiz', apply_filters( 'sensei_register_post_type_quiz', $args ) );
 
-	} // End setup_quiz_post_type()
+	}
 
 
 	/**
@@ -341,28 +431,34 @@ class Sensei_PostTypes {
 	 * @return void
 	 */
 	public function setup_question_post_type() {
+		// If Sensei LMS was first activated pre-3.7.0 and permalinks had a front value, `with_front` will be enabled.
+		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
-			'labels'              => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
-			'public'              => false,
-			'publicly_queryable'  => true,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => false,
-			'query_var'           => true,
-			'exclude_from_search' => true,
-			'rewrite'             => array(
+			'labels'                => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
+			'public'                => false,
+			'publicly_queryable'    => true,
+			'show_ui'               => true,
+			'show_in_menu'          => false,
+			'show_in_admin_bar'     => true,
+			'show_in_nav_menus'     => false,
+			'query_var'             => true,
+			'exclude_from_search'   => true,
+			'rewrite'               => array(
 				'slug'       => esc_attr( apply_filters( 'sensei_question_slug', _x( 'question', 'post type single slug', 'sensei-lms' ) ) ),
-				'with_front' => true,
+				'with_front' => $with_front,
 				'feeds'      => true,
 				'pages'      => true,
 			),
-			'map_meta_cap'        => true,
-			'capability_type'     => 'question',
-			'has_archive'         => true,
-			'hierarchical'        => false,
-			'menu_position'       => 51,
-			'supports'            => array( 'title', 'revisions' ),
+			'map_meta_cap'          => true,
+			'capability_type'       => 'question',
+			'has_archive'           => true,
+			'hierarchical'          => false,
+			'menu_position'         => 51,
+			'supports'              => array( 'title', 'editor', 'revisions' ),
+			'show_in_rest'          => true,
+			'rest_base'             => 'questions',
+			'rest_controller_class' => 'Sensei_REST_API_Questions_Controller',
 		);
 
 		/**
@@ -373,7 +469,7 @@ class Sensei_PostTypes {
 		 */
 		register_post_type( 'question', apply_filters( 'sensei_register_post_type_question', $args ) );
 
-	} // End setup_question_post_type()
+	}
 
 	/**
 	 * Setup the "multiple_question" post type, it's admin menu item and the appropriate labels and permissions.
@@ -407,7 +503,7 @@ class Sensei_PostTypes {
 		);
 
 		register_post_type( 'multiple_question', $args );
-	} // End setup_multiple_question_post_type()
+	}
 
 	/**
 	 * Setup the "sensei_message" post type, it's admin menu item and the appropriate labels and permissions.
@@ -424,7 +520,7 @@ class Sensei_PostTypes {
 				'public'                => true,
 				'publicly_queryable'    => true,
 				'show_ui'               => true,
-				'show_in_menu'          => 'admin.php?page=sensei',
+				'show_in_menu'          => false,
 				'show_in_nav_menus'     => true,
 				'query_var'             => true,
 				'exclude_from_search'   => true,
@@ -454,7 +550,7 @@ class Sensei_PostTypes {
 			 */
 			register_post_type( 'sensei_message', apply_filters( 'sensei_register_post_type_sensei_message', $args ) );
 		}
-	} // End setup_sensei_message_post_type()
+	}
 
 	/**
 	 * Registers the learner taxonomy.
@@ -487,12 +583,14 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Course Categories', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Course Category', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Course Category:', 'sensei-lms' ),
+			'view_item'         => __( 'View Course Category', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Course Category', 'sensei-lms' ),
 			'update_item'       => __( 'Update Course Category', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Course Category', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Course Category Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Course Categories', 'sensei-lms' ),
 			'popular_items'     => null, // Hides the "Popular" section above the "add" form in the admin.
+			'back_to_items'     => __( '&larr; Back to Course Categories', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -500,6 +598,7 @@ class Sensei_PostTypes {
 			'labels'            => $labels,
 			'show_in_rest'      => true,
 			'show_ui'           => true,
+			'show_in_menu'      => false,
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
@@ -513,7 +612,7 @@ class Sensei_PostTypes {
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
 
-	} // End setup_course_category_taxonomy()
+	}
 
 	/**
 	 * Setup the "quiz type" taxonomy, linked to the "quiz" post type.
@@ -550,7 +649,7 @@ class Sensei_PostTypes {
 		);
 
 		register_taxonomy( 'quiz-type', array( 'quiz' ), $args );
-	} // End setup_quiz_type_taxonomy()
+	}
 
 	/**
 	 * Setup the "question type" taxonomy, linked to the "question" post type.
@@ -584,11 +683,12 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+			'show_in_rest'      => true,
 			'rewrite'           => array( 'slug' => esc_attr( apply_filters( 'sensei_question_type_slug', _x( 'question-type', 'taxonomy archive slug', 'sensei-lms' ) ) ) ),
 		);
 
 		register_taxonomy( 'question-type', array( 'question' ), $args );
-	} // End setup_question_type_taxonomy()
+	}
 
 	/**
 	 * Setup the "question category" taxonomy, linked to the "question" post type.
@@ -605,11 +705,13 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Question Categories', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Question Category', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Question Category:', 'sensei-lms' ),
+			'view_item'         => __( 'View Question Category', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Question Category', 'sensei-lms' ),
 			'update_item'       => __( 'Update Question Category', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Question Category', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Question Category Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Categories', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Question Categories', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -620,6 +722,7 @@ class Sensei_PostTypes {
 			'query_var'         => false,
 			'show_in_nav_menus' => false,
 			'show_admin_column' => true,
+			'show_in_rest'      => true,
 			'capabilities'      => array(
 				'manage_terms' => 'manage_categories',
 				'edit_terms'   => 'edit_questions',
@@ -630,7 +733,7 @@ class Sensei_PostTypes {
 		);
 
 		register_taxonomy( 'question-category', array( 'question' ), $args );
-	} // End setup_question_type_taxonomy()
+	}
 
 	/**
 	 * Setup the "lesson tags" taxonomy, linked to the "lesson" post type.
@@ -647,11 +750,13 @@ class Sensei_PostTypes {
 			'all_items'         => __( 'All Lesson Tags', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Tag', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Tag:', 'sensei-lms' ),
+			'view_item'         => __( 'View Lesson Tag', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Lesson Tag', 'sensei-lms' ),
 			'update_item'       => __( 'Update Lesson Tag', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Lesson Tag', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Tag Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Lesson Tags', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Lesson Tags', 'sensei-lms' ),
 		);
 
 		$args = array(
@@ -671,13 +776,12 @@ class Sensei_PostTypes {
 		);
 
 		register_taxonomy( 'lesson-tag', array( 'lesson' ), $args );
-	} // End setup_lesson_tag_taxonomy()
+	}
 
 	/**
 	 * Setup the singular, plural and menu label names for the post types.
 	 *
 	 * @since  1.0.0
-	 * @return void
 	 */
 	private function setup_post_type_labels_base() {
 		$this->labels = array(
@@ -718,7 +822,7 @@ class Sensei_PostTypes {
 			'menu'     => __( 'Messages', 'sensei-lms' ),
 		);
 
-	} // End setup_post_type_labels_base()
+	}
 
 	/**
 	 * Create the labels for a specified post type.
@@ -739,12 +843,12 @@ class Sensei_PostTypes {
 			'add_new'            => __( 'Add New', 'sensei-lms' ),
 			// translators: Placeholder is the singular post type label.
 			'add_new_item'       => sprintf( __( 'Add New %s', 'sensei-lms' ), $singular ),
-			// translators: Placeholder is the singular post type label.
+			// translators: Placeholder is the item title/name.
 			'edit_item'          => sprintf( __( 'Edit %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the singular post type label.
 			'new_item'           => sprintf( __( 'New %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
-			'all_items'          => sprintf( __( 'All %s', 'sensei-lms' ), $plural ),
+			'all_items'          => $plural,
 			// translators: Placeholder is the singular post type label.
 			'view_item'          => sprintf( __( 'View %s', 'sensei-lms' ), $singular ),
 			// translators: Placeholder is the plural post type label.
@@ -758,7 +862,7 @@ class Sensei_PostTypes {
 		);
 
 		return $labels;
-	} // End create_post_type_labels()
+	}
 
 	/**
 	 * Setup update messages for the post types.
@@ -775,7 +879,7 @@ class Sensei_PostTypes {
 		$messages['multiple_question'] = $this->create_post_type_messages( 'multiple_question' );
 
 		return $messages;
-	} // End setup_post_type_messages()
+	}
 
 	/**
 	 * Create an array of messages for a specified post type.
@@ -820,7 +924,7 @@ class Sensei_PostTypes {
 		);
 
 		return $messages;
-	} // End create_post_type_messages()
+	}
 
 	/**
 	 * Change the "Enter Title Here" text for the "slide" post type.
@@ -832,13 +936,13 @@ class Sensei_PostTypes {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == 'course' ) {
-			$title = __( 'Enter a title for this course here', 'sensei-lms' );
+			$title = __( 'Course name', 'sensei-lms' );
 		} elseif ( get_post_type() == 'lesson' ) {
-			$title = __( 'Enter a title for this lesson here', 'sensei-lms' );
+			$title = __( 'Lesson name', 'sensei-lms' );
 		}
 
 		return $title;
-	} // End enter_title_here()
+	}
 
 	/**
 	 * Assigns the defaults for each user role capabilities.
@@ -913,9 +1017,9 @@ class Sensei_PostTypes {
 				'subscriber'    => array( 'read' ),
 
 			);
-		} // End For Loop
+		}
 
-	} // End set_role_cap_defaults()
+	}
 
 	/**
 	 * Adds a 'Edit Quiz' link to the admin bar when viewing a Quiz linked to a corresponding Lesson
@@ -938,6 +1042,79 @@ class Sensei_PostTypes {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Add submenus under "Sensei LMS" main menu.
+	 *
+	 * @since 4.0.0
+	 */
+	public function add_submenus() {
+		Sensei_Home::instance()->add_admin_menu_item();
+
+		add_submenu_page(
+			'sensei',
+			__( 'Courses', 'sensei-lms' ),
+			__( 'Courses', 'sensei-lms' ),
+			'edit_courses',
+			'edit.php?post_type=course'
+		);
+
+		add_submenu_page(
+			'sensei',
+			__( 'Modules', 'sensei-lms' ),
+			__( 'Modules', 'sensei-lms' ),
+			'manage_categories',
+			'edit-tags.php?taxonomy=module&post_type=course'
+		);
+
+		add_submenu_page(
+			'sensei',
+			__( 'Lessons', 'sensei-lms' ),
+			__( 'Lessons', 'sensei-lms' ),
+			'edit_lessons',
+			'edit.php?post_type=lesson'
+		);
+
+		add_submenu_page(
+			'sensei',
+			__( 'Questions', 'sensei-lms' ),
+			__( 'Questions', 'sensei-lms' ),
+			'edit_questions',
+			'edit.php?post_type=question'
+		);
+
+		Sensei()->learners->learners_admin_menu();
+
+		/**
+		 * Filter used to add new menu item.
+		 *
+		 * @since 4.5.0
+		 */
+		do_action( 'sensei_pro_groups_menu_item', [] );
+
+		/**
+		 * Filters the Student groups promo landing page.
+		 *
+		 * @hook  sensei_student_groups_hide
+		 * @since 4.5.2
+		 *
+		 * @param  {bool} $sensei_student_groups_hide Whether to hide the Student Groups promo landing page.
+		 * @return {bool} Whether to hide the Student groups landing page.
+		 */
+		if ( ! apply_filters( 'sensei_student_groups_hide', false ) ) {
+			$instance = new Sensei_Groups_Landing_Page();
+			$instance->add_groups_landing_page_menu_item();
+		}
+
+		Sensei()->grading->grading_admin_menu();
+
+		$sensei_messages = new Sensei_Messages();
+		$sensei_messages->add_menu_item();
+
+		Sensei()->analysis->analysis_admin_menu();
+		Sensei()->settings->register_settings_screen();
+		Sensei_Tools::instance()->add_menu_pages();
 	}
 
 	/**
@@ -1127,7 +1304,7 @@ class Sensei_PostTypes {
 		return get_post_meta( $post_id, '_sensei_already_published', true );
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_PostTypes

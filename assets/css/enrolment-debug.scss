@@ -1,0 +1,131 @@
+$positive_bg: rgba( 151, 195, 78, 0.5 );
+$negative_bg: rgba( 195, 150, 137, 0.74 );
+$neutral_bg: rgba( 0, 0, 0, 0.1 );
+
+.sensei-lms-tool-info {
+	.info {
+		display: inline-block;
+		padding: 1em;
+		margin: 0 .25em 0 0;
+		font-size: 14px;
+		background-color: $neutral_bg;
+
+		&.info-positive {
+			background-color: $positive_bg;
+		}
+
+		&.info-negative {
+			background-color: $negative_bg;
+		}
+	}
+
+	.info-buttons {
+		display: inline-block;
+		padding: .25em;
+	}
+}
+
+.sensei-lms-enrolment-debug {
+	.provider {
+		display: block;
+		margin: .5em 0;
+		padding: .5em;
+		border: 1px solid $neutral_bg;
+
+		.name {
+			padding: 1em;
+			background-color: $neutral_bg;
+
+			.tag {
+				display: inline;
+				float: right;
+				border-radius: 5px;
+				background-color: rgba( 255, 255, 255, .5 );
+				padding: .5em;
+				margin: -.5em 0;
+			}
+		}
+
+		&.enrolled {
+			.name {
+				background-color: $positive_bg;
+			}
+		}
+
+		.provider-details {
+			display: flex;
+			flex-direction: row;
+
+			.column {
+				flex: 3;
+				padding: .25em;
+			}
+
+			.column.column-history {
+				flex: 2;
+			}
+		}
+
+		.debug {
+			.message {
+				display: block;
+				padding: .4em;
+			}
+			.message:nth-child(even) {
+				background-color: rgba( 0, 0, 0, .05 );
+			}
+		}
+
+		.history,
+		.logs {
+			.message,
+			.history-item {
+				display: flex;
+				flex-wrap: nowrap;
+				padding: .4em;
+			}
+
+			.message:nth-child(even) {
+				background-color: rgba( 0, 0, 0, .05 );
+			}
+
+			.time {
+				border-radius: 5px;
+				background-color: rgba( 255, 255, 255, .5 );
+				padding: .25em;
+				text-align: center;
+				flex: 2;
+				margin-right: .25em;
+			}
+
+			.content {
+				flex: 5;
+				display: inline;
+
+				details {
+					max-width: 500px;
+					max-height: 200px;
+					overflow: scroll;
+				}
+			}
+
+			.history-item {
+				background-color: $neutral_bg;
+
+				&.positive {
+					background-color: $positive_bg;
+				}
+
+				&.negative {
+					background-color: $negative_bg;
+				}
+			}
+		}
+
+		.history {
+			.content {
+				flex: 1;
+			}
+		}
+	}
+}

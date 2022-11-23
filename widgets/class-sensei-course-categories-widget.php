@@ -46,7 +46,7 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 
 		/* Create the widget. */
 		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
-	} // End __construct()
+	}
 
 	/**
 	 * Display the widget on the frontend.
@@ -86,7 +86,7 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $after_widget );
 
-	} // End widget()
+	}
 
 	/**
 	 * Method to update the settings from the form() method.
@@ -100,17 +100,17 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title'] = strip_tags( $new_instance['title'] ?? '' );
 
 		/* The select box is returning a text value, so we escape it. */
-		$instance['limit'] = esc_attr( $new_instance['limit'] );
+		$instance['limit'] = (int) $new_instance['limit'] ?? 3;
 
 		/* The check box is returning a boolean value. */
-		$instance['count']        = $new_instance['count'];
-		$instance['hierarchical'] = $new_instance['hierarchical'];
+		$instance['count']        = $new_instance['count'] ?? 0;
+		$instance['hierarchical'] = $new_instance['hierarchical'] ?? 0;
 
 		return $instance;
-	} // End update()
+	}
 
 	/**
 	 * The form on the widget control in the widget administration area.
@@ -155,7 +155,7 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'hierarchical' ) ); ?>"><?php esc_html_e( 'Show hierarchy', 'sensei-lms' ); ?></label>
 		</p>
 		<?php
-	} // End form()
+	}
 
 	/**
 	 * Load the output.
@@ -179,9 +179,9 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		);
 		if ( 0 < $limit ) {
 			$cat_args['number'] = $limit;
-		} // End If Statement
+		}
 		echo '<ul>';
 			wp_list_categories( apply_filters( 'widget_course_categories_args', $cat_args ) );
 		echo '</ul>';
-	} // End load_component()
-} // End Class
+	}
+}

@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
+if ( ! class_exists( 'Sensei_Email_Teacher_New_Message', false ) ) :
 
 	/**
 	 * Teacher New Message
@@ -93,11 +93,9 @@ if ( ! class_exists( 'Sensei_Email_Teacher_New_Message' ) ) :
 
 			do_action( 'sensei_after_sending_email' );
 
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) . '#private_message' ) );
 			exit;
 		}
 	}
 
 endif;
-
-return new Sensei_Email_Teacher_New_Message();

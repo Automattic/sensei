@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course' ) ) :
+if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course', false ) ) :
 
 	/**
 	 * Learner Completed Course
@@ -47,7 +47,7 @@ if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course' ) ) :
 		function trigger( $user_id = 0, $course_id = 0 ) {
 			global  $sensei_email_data;
 
-			if ( ! Sensei_Utils::user_started_course( $course_id, $user_id ) ) {
+			if ( ! Sensei_Course::is_user_enrolled( $course_id, $user_id ) ) {
 				return;
 			}
 
@@ -90,5 +90,3 @@ if ( ! class_exists( 'Sensei_Email_Learner_Completed_Course' ) ) :
 	}
 
 endif;
-
-return new Sensei_Email_Learner_Completed_Course();

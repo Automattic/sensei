@@ -120,6 +120,8 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 	 * Create the posts query.
 	 */
 	private function setup_post_query() {
+		global $page, $cpage;
+
 		if ( empty( $this->post_id ) ) {
 			return;
 		}
@@ -127,6 +129,8 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 		$args = array(
 			'p'         => $this->post_id,
 			'post_type' => get_post_type( $this->post_id ),
+			'page'      => $page,
+			'cpage'     => $cpage,
 		);
 
 		$this->post_query = new WP_Query( $args );

@@ -56,7 +56,7 @@ class Sensei_Templates {
 
 		}
 
-	} // end get part
+	}
 
 	/**
 	 * Get the template.
@@ -86,7 +86,7 @@ class Sensei_Templates {
 
 		}
 
-	} // end get template
+	}
 
 	/**
 	 * Check if the template file exists. A wrapper for WP locate_template.
@@ -105,7 +105,7 @@ class Sensei_Templates {
 			$template_path = Sensei()->template_url;
 		}
 		if ( ! $default_path ) {
-			$default_path = Sensei()->plugin_path() . '/templates/';
+			$default_path = Sensei()->plugin_path() . 'templates/';
 		}
 
 		// Look within passed path within the theme - this is priority
@@ -130,7 +130,7 @@ class Sensei_Templates {
 		// Return what we found
 		return apply_filters( 'sensei_locate_template', $template, $template_name, $template_path );
 
-	} // end locate
+	}
 
 	/**
 	 * Determine which Sensei template to load based on the
@@ -147,6 +147,20 @@ class Sensei_Templates {
 
 		$find = array( 'sensei.php' );
 		$file = '';
+
+		/**
+		 * Filters if Sensei templates and content wrappers should be used. For development purposes.
+		 *
+		 * @hook   sensei_use_sensei_template
+		 *
+		 * @param  {bool} $use_templates Whether to use Sensei templates for the request.
+		 *
+		 * @since  3.6.0
+		 * @access private
+		 */
+		if ( ! apply_filters( 'sensei_use_sensei_template', true ) && ! isset( $email_template ) ) {
+			return $template;
+		}
 
 		if ( isset( $email_template ) && $email_template ) {
 
@@ -220,7 +234,7 @@ class Sensei_Templates {
 			$find[] = $file;
 			$find[] = Sensei()->template_url . $file;
 
-		} elseif ( is_tax( 'lesson-tag' ) ) {
+		} elseif ( is_tax( 'lesson-tag' ) || is_post_type_archive( 'lesson' ) ) {
 
 			// possible backward compatible template include if theme overrides 'taxonomy-lesson-tag.php'
 			// this template was removed in 1.9.0 and replaced by archive-lesson.php
@@ -265,11 +279,11 @@ class Sensei_Templates {
 			if ( ! $template ) {
 				$template = Sensei()->plugin_path() . '/templates/' . $file;
 			}
-		} // End If Statement
+		}
 
 		return $template;
 
-	} // End template_loader()
+	}
 
 	/**
 	 * This function loads the no-permissions template for users with no access
@@ -342,19 +356,6 @@ class Sensei_Templates {
 
 	}
 
-
-	/**
-	 * Hooks the deprecated archive content hook into the hook again just in
-	 * case other developers have used it.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecated_archive_course_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_archive_main_content', '1.9.0', 'sensei_loop_course_before' );
-
-	}//end deprecated_archive_course_content_hook()
-
 	/**
 	 * A generic function for echoing the post title
 	 *
@@ -401,210 +402,7 @@ class Sensei_Templates {
 		$html        .= '</' . $title_html_tag . '>';
 		echo wp_kses_post( $html );
 
-	}//end the_title()
-
-	/**
-	 * This function adds the hooks inside and above the single course content for
-	 * backwards compatibility sake.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 1.9.0
-	 */
-	public static function deprecated_single_course_inside_before_hooks() {
-
-		sensei_do_deprecated_action( 'sensei_course_image', '1.9.0', 'sensei_single_course_content_inside_before', array( get_the_ID() ) );
-		sensei_do_deprecated_action( 'sensei_course_single_title', '1.9.0', 'sensei_single_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_course_single_meta', '1.9.0', 'sensei_single_course_content_inside_before' );
-
-	}//end deprecated_single_course_inside_before_hooks()
-
-	/**
-	 * This function adds the hooks to sensei_course_single_lessons for
-	 * backwards compatibility sake.  and provides developers with an alternative.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 1.9.0
-	 */
-	public static function deprecate_sensei_course_single_lessons_hook() {
-
-		sensei_do_deprecated_action( 'sensei_course_single_lessons', '1.9.0', 'sensei_single_course_content_inside_after' );
-
-	}//end deprecate_sensei_course_single_lessons_hook()
-
-	/**
-	 * Deprecated all deprecated_single_main_content_hook hooked actions.
-	 *
-	 * The content must be dealt with inside the respective templates.
-	 *
-	 * @since 1.9.0
-	 * @deprecated 1.9.0
-	 */
-	public static function deprecated_single_main_content_hook() {
-
-		if ( is_singular( 'course' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_course_content_inside_before or sensei_single_course_content_inside_after' );
-
-		} elseif ( is_singular( 'message' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_message_content_inside_before or sensei_single_message_content_inside_after' );
-		}
-
-	}//end deprecated_single_main_content_hook()
-
-	/**
-	 * Deprecate the  old sensei modules
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_module_before_hook() {
-
-		sensei_do_deprecated_action( 'sensei_modules_page_before', '1.9.0', 'sensei_single_course_modules_after' );
-
 	}
-
-	/**
-	 * Deprecate the  old sensei modules after hooks
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_module_after_hook() {
-
-		sensei_do_deprecated_action( 'sensei_modules_page_after', '1.9.0', 'sensei_single_course_modules_after' );
-
-	}
-
-	/**
-	 * Deprecate the single message hooks for post types.
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_all_post_type_single_title_hooks() {
-
-		if ( is_singular( 'sensei_message' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_message_single_title', '1.9.0', 'sensei_single_message_content_inside_before' );
-
-		}
-
-	}
-
-	/**
-	 * course_single_meta function.
-	 *
-	 * @access public
-	 * @return void
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_course_single_meta_hooks() {
-
-		// deprecate all these hooks
-		sensei_do_deprecated_action( 'sensei_course_start', '1.9.0', 'sensei_single_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_course_meta', '1.9.0', 'sensei_single_course_content_inside_before' );
-		sensei_do_deprecated_action( 'sensei_course_meta_video', '1.9.0', 'sensei_single_course_content_inside_before' );
-
-	} // End deprecate_course_single_meta_hooks
-
-	/**
-	 * Run the deprecated hooks on the single lesson page
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_single_lesson_breadcrumbs_and_comments_hooks() {
-
-		if ( is_singular( 'lesson' ) ) {
-
-			sensei_do_deprecated_action( 'sensei_breadcrumb', '1.9.0', 'sensei_after_main_content', get_the_ID() );
-			sensei_do_deprecated_action( 'sensei_comments', '1.9.0', 'sensei_after_main_content', get_the_ID() );
-
-		}
-
-	}//end deprecate_single_lesson_breadcrumbs_and_comments_hooks()
-
-	/**
-	 * Deprecate the hook sensei_lesson_course_signup.
-	 *
-	 * The hook content will be linked directly on the recommended
-	 * sensei_single_lesson_content_inside_after
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_lesson_course_signup_hook() {
-
-		$lesson_course_id   = get_post_meta( get_the_ID(), '_lesson_course', true );
-		$user_taking_course = Sensei_Utils::user_started_course( $lesson_course_id, get_current_user_id() );
-
-		if ( ! $user_taking_course ) {
-
-			sensei_do_deprecated_action( 'sensei_lesson_course_signup', '1.9.0', 'sensei_single_lesson_content_inside_after', $lesson_course_id );
-
-		}
-	}//end deprecate_sensei_lesson_course_signup_hook()
-
-	/**
-	 * Running the deprecated hook: sensei_lesson_single_meta
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_lesson_single_meta_hook() {
-
-		if ( sensei_can_user_view_lesson() ) {
-
-			sensei_do_deprecated_action( 'sensei_lesson_single_meta', '1.9.0', 'sensei_single_lesson_content_inside_after' );
-
-		}
-
-	}//end deprecate_sensei_lesson_single_meta_hook()
-
-	/**
-	 * Deprecate the sensei lesson single title hook
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_lesson_single_title() {
-
-		sensei_do_deprecated_action( 'sensei_lesson_single_title', '1.9.0', 'sensei_single_lesson_content_inside_before', get_the_ID() );
-
-	}//end deprecate_sensei_lesson_single_title()
-
-	/**
-	 * hook in the deperecated single main content to the lesson
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_lesson_single_main_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_single_main_content', '1.9.0', 'sensei_single_lesson_content_inside_before' );
-
-	}//end deprecate_lesson_single_main_content_hook()
-
-	/**
-	 * hook in the deperecated single main content to the lesson
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_lesson_image_hook() {
-
-		sensei_do_deprecated_action( 'sensei_lesson_image', '1.9.0', 'sensei_single_lesson_content_inside_before', get_the_ID() );
-
-	}//end deprecate_lesson_image_hook()
-
-	/**
-	 * hook in the deprecated sensei_login_form hook for backwards
-	 * compatibility
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_login_form_hook() {
-
-		sensei_do_deprecated_action( 'sensei_login_form', '1.9.0', 'sensei_login_form_before' );
-
-	} // end deprecate_sensei_login_form_hook
 
 	/**
 	 * Fire the sensei_complete_course action.
@@ -630,104 +428,5 @@ class Sensei_Templates {
 
 		do_action( 'sensei_frontend_messages' );
 
-	}//end fire_frontend_messages_hook()
-
-	/**
-	 * deprecate the sensei_before_user_course_content hook in favor
-	 * of sensei_my_courses_content_inside_before.
-	 *
-	 * @deprected since 1.9.0
-	 */
-	public static function deprecate_sensei_before_user_course_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_before_user_course_content', '1.9.0', 'sensei_my_courses_content_inside_before', wp_get_current_user() );
-
-	}//end deprecate_sensei_before_user_course_content_hook()
-
-	/**
-	 * deprecate the sensei_before_user_course_content hook in favor
-	 * of sensei_my_courses_content_inside_after hook.
-	 *
-	 * @deprected since 1.9.0
-	 */
-	public static function deprecate_sensei_after_user_course_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_after_user_course_content', '1.9.0', 'sensei_my_courses_content_inside_after', wp_get_current_user() );
-
-	}//end deprecate_sensei_after_user_course_content_hook()
-
-	/**
-	 * Deprecate the 2 main hooks on the archive message template
-	 *
-	 * @deprecated since 1.9.0
-	 * @since 1.9.0
-	 */
-	public static function deprecated_archive_message_hooks() {
-
-		sensei_do_deprecated_action( 'sensei_message_archive_main_content', '1.9.0', 'sensei_archive_before_message_loop OR sensei_archive_after_message_loop' );
-		sensei_do_deprecated_action( 'sensei_message_archive_header', '1.9.0', 'sensei_archive_before_message_loop' );
-
 	}
-
-	/**
-	 * Run the sensei_complete_quiz for those still hooking
-	 * into but deprecated it.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_complete_quiz_action() {
-
-		sensei_do_deprecated_action( 'sensei_complete_quiz', '1.9.0', 'sensei_single_quiz_content_inside_before' );
-
-	}
-
-	/**
-	 * Run the sensei_quiz_question_type action for those still hooing into it, but depreate
-	 * it to provide user with a better alternative.
-	 *
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_quiz_question_type_action() {
-
-		// Question Type
-		global $sensei_question_loop;
-		$question_type = Sensei()->question->get_question_type( $sensei_question_loop['current_question']->ID );
-		sensei_do_deprecated_action( 'sensei_quiz_question_type', '1.9.0', 'sensei_quiz_question_inside_after', $question_type );
-
-	}
-
-
-	public static function the_register_button( $post_id = '' ) {
-		global $current_user;
-
-		// This function is no longer used internally. It should be removed in
-		// version 4.0.
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		if ( ! get_option( 'users_can_register' )
-			 || 'course' != get_post_type( $post_id )
-			 || ! empty( $current_user->caps )
-			 || ! Sensei()->settings->get( 'access_permission' ) ) {
-
-			return;
-		}
-
-		// if user is not logged in skipped for single lesson
-		// show a link to the my_courses page or the WordPress register page if
-		// not my courses page was set in the settings
-		$my_courses_page_id = 0;
-		if ( ! empty( $my_courses_page_id ) && $my_courses_page_id ) {
-
-			$my_courses_url = get_permalink( $my_courses_page_id );
-
-			echo '<div class="status register"><a href="' . esc_url( $my_courses_url ) . '">' .
-				esc_html__( 'Register', 'sensei-lms' ) . '</a></div>';
-
-		} else {
-
-			wp_register( '<div class="status register">', '</div>' );
-
-		}
-
-	}
-}//end class
+}

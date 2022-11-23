@@ -1,21 +1,21 @@
 <?php
 /**
  * Plugin Name: Sensei LMS
- * Plugin URI: https://woocommerce.com/products/sensei/
+ * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 3.0.0-dev
+ * Version: 4.8.1
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 4.9
- * Tested up to: 5.3
- * Requires PHP: 5.6
+ * Requires at least: 5.9
+ * Tested up to: 6.1
+ * Requires PHP: 7.2
  * Text Domain: sensei-lms
  * Domain path: /lang/
  */
 
 /**
- * Copyright 2013-2019 Automattic
+ * Copyright 2013-2022 Automattic
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -33,6 +33,14 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
+}
+
+if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
+	define( 'SENSEI_LMS_VERSION', '4.8.1' ); // WRCS: DEFINED_VERSION.
+}
+
+if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 }
 
 if ( class_exists( 'Sensei_Main' ) ) {
@@ -72,9 +80,18 @@ if ( class_exists( 'Sensei_Main' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
-if ( ! Sensei_Dependency_Checker::check_php() ) {
-	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_notice' ) );
+if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
 	return;
+}
+
+
+if ( ! Sensei_Dependency_Checker::check_future_php_requirement() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_future_php_version_notice' ) );
+}
+
+if ( ! Sensei_Dependency_Checker::check_assets() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_assets_notice' ) );
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
@@ -84,15 +101,17 @@ Sensei_Bootstrap::get_instance()->bootstrap();
 if ( ! function_exists( 'Sensei' ) ) {
 	/**
 	 * Returns the global Sensei Instance.
+	 * phpcs:disable WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	 *
 	 * @since 1.8.0
 	 */
 	function Sensei() {
-		return Sensei_Main::instance( array( 'version' => '3.0.0-dev' ) );
+		// phpcs:enable
+		return Sensei_Main::instance( array( 'version' => SENSEI_LMS_VERSION ) );
 	}
 }
 
-// backwards compatibility
+// For backwards compatibility, put plugin into the global variable.
 global $woothemes_sensei;
 $woothemes_sensei = Sensei();
 
@@ -101,17 +120,19 @@ $woothemes_sensei = Sensei();
  *
  * @since 1.8.0
  */
-register_activation_hook( __FILE__, 'activate_sensei' );
+register_activation_hook( SENSEI_LMS_PLUGIN_FILE, 'activate_sensei' );
 
 if ( ! function_exists( 'activate_sensei' ) ) {
 	/**
 	 * Activate_sensei
+	 * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 	 *
 	 * All the activation checks needed to ensure Sensei is ready for use
 	 *
 	 * @since 1.8.0
 	 */
 	function activate_sensei() {
+		// phpcs:enable
 		Sensei()->activate();
 	}
 }

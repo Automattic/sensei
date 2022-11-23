@@ -1,0 +1,238 @@
+@use 'sass:math';
+@import 'learner-courses-mixins';
+@import '../../shared/blocks/progress-bar/progress-bar';
+
+$block: '.wp-block-sensei-lms-learner-courses';
+$courses-list: '#{$block}__courses-list';
+
+/* Spacing defaults */
+.sensei .entry-content {
+	section {
+		padding: 0;
+	}
+}
+
+.sensei-pagination {
+	.page-numbers li {
+		display: inline-block;
+		list-style: none;
+		padding: 0;
+		margin: 12px;
+	}
+}
+
+/* Filters */
+.editor-styles-wrapper #{$block}__filter,
+#user-course-status-toggle {
+	display: flex;
+	border-bottom: 1px solid currentColor;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+
+	&__item, a {
+		margin: 0 math.div(34px, 2);
+		padding: 5px 0;
+		line-height: 1.25;
+
+		&:not(.active) {
+			color: var(--sensei-primary-color, inherit);
+		}
+
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:first-child {
+			margin-left: 0;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&.active {
+			color: inherit;
+			border-bottom: solid 3px currentColor;
+		}
+	}
+
+	& &__link {
+		color: inherit;
+		text-decoration: none;
+	}
+}
+
+/* Course list */
+#{$courses-list},
+.editor-styles-wrapper #{$courses-list} {
+	&__category {
+		font-size: 70%;
+		text-transform: uppercase;
+	}
+}
+
+/* List and grid view
+   Use #sensei-user-courses selector to override some theme styles (Divi). */
+#{$block} #sensei-user-courses {
+	.course-container,
+	.course {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		// Progress bar
+		.sensei-block-wrapper {
+			margin-top: 10px;
+		}
+	}
+
+	.course {
+		.course-title,
+		.course-excerpt {
+			margin: 0;
+		}
+
+		.course-excerpt {
+			margin: 16px 0 16px;
+		}
+
+		.entry-actions {
+			@include buttons-wrapper;
+
+			.button,
+			.course-complete,
+			.course-delete {
+				border: 0;
+				display: inline-block;
+				line-height: normal;
+				padding: 10px 20px;
+				text-decoration: none;
+			}
+		}
+
+		form,
+		.sensei-results-links {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 5px;
+			margin: 0;
+		}
+	}
+
+	.sensei-results-links {
+		margin: 0;
+	}
+}
+
+/* List view - Editor and front end */
+.editor-styles-wrapper #{$courses-list}--is-list-view,
+#{$block}--is-list-view #sensei-user-courses .course-container {
+	margin: 2rem 0;
+	overflow: auto;
+}
+
+.editor-styles-wrapper #{$courses-list}--is-list-view,
+#{$block}--is-list-view #sensei-user-courses {
+	.course {
+		border-bottom: 1px solid #e2e2e2;
+		padding-bottom: 2rem;
+
+		&:not(:first-child) {
+			padding-top: 2rem;
+		}
+
+		.entry {
+			display: flex;
+		}
+
+		img {
+			width: 150px;
+			height: 100%;
+			margin: 0;
+			object-fit: cover;
+		}
+
+		#{$courses-list}__details {
+			display: flex;
+			flex-direction: column;
+			flex: 2;
+
+			&:not(:only-child) {
+				margin-left: 15px;
+			}
+		}
+	}
+}
+
+/* Grid view - Editor and front end */
+.editor-styles-wrapper #{$courses-list}--is-grid-view,
+#{$block}--is-grid-view #sensei-user-courses .course-container {
+	display: grid;
+	gap: 2rem;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	padding: 2rem 0;
+
+	.course {
+		display: flex;
+		border: 0;
+		box-shadow: 0 1px 10px 0 rgba(25, 30, 35, 0.15);
+
+		.course-content,
+		.entry,
+		#{$courses-list}__details {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+		}
+
+		#{$courses-list}__details {
+			padding: 16px;
+		}
+
+		.entry-actions {
+			@include buttons-wrapper;
+		}
+	}
+}
+
+/* Grid view - Front end */
+#{$block}--is-grid-view .course-content {
+	img {
+		height: 200px;
+		width: 100%;
+		margin: 0;
+		object-fit: cover;
+	}
+}
+
+/* Progress bar */
+.sensei-progress-bar {
+	&__bar {
+		height: var(--sensei-progress-bar-height, 14px);
+		border-radius: var(--sensei-progress-bar-border-radius, 10px);
+		overflow: hidden;
+
+		div {
+			background-color: currentColor;
+			background-color: var(--sensei-accent-color, currentColor);
+		}
+	}
+}
+
+/* Colors */
+#{$block}.has-sensei-primary-color {
+	a {
+		color: var(--sensei-primary-color, inherit);
+	}
+
+	.button,
+	.course-complete,
+	.course-delete,
+	.wp-block-button__link {
+		background-color: var(--sensei-primary-color, inherit);
+		color: #fff;
+	}
+}

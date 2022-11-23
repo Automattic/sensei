@@ -41,4 +41,4 @@ class Sensei__S {
 		get_sidebar();
 
 	}
-} // end class
+}

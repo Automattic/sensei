@@ -107,11 +107,11 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 			$terms_html   .= '<li class="sensei course-category" >' . $category_link . '</li>';
 
 		}
-		$terms_html .= '<ul>';
+		$terms_html .= '</ul>';
 
 		return $terms_html;
 
-	}//end render()
+	}
 
 	/**
 	 * Convert an array of mixed ids, slugs or names to only the id's of those terms
@@ -153,7 +153,7 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 
 		return $cat_ids;
 
-	}//end generate_term_ids()
+	}
 
-}//end class
+}
 

@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Generic Data Table parent Class in Sensei.
  *
- * @package Core
  * @author Automattic
  *
  * @since 1.2.0
+ * @package Core
  */
 class Sensei_List_Table extends WP_List_Table {
 	public $token;
@@ -71,7 +71,7 @@ class Sensei_List_Table extends WP_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 
-	} // End __construct()
+	}
 
 	/**
 	 * remove_sortable_columns removes all sortable columns by returning an empty array
@@ -104,12 +104,12 @@ class Sensei_List_Table extends WP_List_Table {
 		if ( $which == 'top' ) {
 			// The code that goes before the table is here
 			do_action( 'sensei_before_list_table' );
-		} // End If Statement
+		}
 		if ( $which == 'bottom' ) {
 			// The code that goes after the table is there
 			do_action( 'sensei_after_list_table' );
-		} // End If Statement
-	} // End extra_tablenav()
+		}
+	}
 
 	/**
 	 * table_search_form outputs search form for table
@@ -123,22 +123,12 @@ class Sensei_List_Table extends WP_List_Table {
 		}
 		?><form method="get">
 			<?php
-			if ( isset( $_GET ) && count( $_GET ) > 0 ) {
-				foreach ( $_GET as $k => $v ) {
-					if ( 's' != $k ) {
-						?>
-
-						<input type="hidden" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $v ); ?>" />
-
-						<?php
-					}
-				}
-			}
+			Sensei_Utils::output_query_params_as_inputs( [ 's' ] );
+			$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 			?>
-			<?php $this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' ); ?>
 		</form>
 		<?php
-	} // End table_search_form()
+	}
 
 	/**
 	 * get_columns Define the columns that are going to be used in the table
@@ -148,7 +138,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		return $this->columns;
-	} // End get_columns()
+	}
 
 	/**
 	 * get_sortable_columns Decide which columns to activate the sorting functionality on
@@ -158,7 +148,7 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		return $this->sortable_columns;
-	} // End get_sortable_columns()
+	}
 
 	/**
 	 * Overriding parent WP-List-Table get_column_info()
@@ -223,30 +213,59 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	function single_row( $item ) {
 		static $row_class = '';
-		$row_class        = ( $row_class == '' ? 'alternate' : '' );
+
+		$row_class   = ( $row_class == '' ? 'alternate' : '' );
+		$column_data = $this->get_row_data( $item );
 
 		echo '<tr class="' . esc_attr( $row_class ) . '">';
 
-		$column_data = $this->get_row_data( $item );
-
-		list( $columns, $hidden ) = $this->get_column_info();
+		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		foreach ( $columns as $column_name => $column_display_name ) {
-			$style = '';
+			$classes = esc_attr( $column_name ) . ' column-' . esc_attr( $column_name );
+			$data    = '';
+			$style   = '';
 
-			if ( in_array( $column_name, $hidden ) ) {
-				$style = 'display:none;';
+			if ( $primary === $column_name ) {
+				$classes .= ' column-primary';
+			} elseif ( 'cb' === $column_name ) {
+				$classes .= ' check-column';
 			}
 
-			echo '<td class="' . esc_attr( $column_name ) . ' column-' . esc_attr( $column_name ) .
-				'" style="' . esc_attr( $style ) . '">';
+			if ( 'cb' !== $column_name ) {
+				$data = 'data-colname="' . esc_attr( $column_display_name ) . '"';
+			}
+
+			if ( in_array( $column_name, $hidden ) ) {
+				$style = 'style="display: none;"';
+			}
+
+			$attributes = "class='$classes' $data $style";
+
+			if ( 'cb' === $column_name ) {
+				// Checkbox element needs to be wrapped in a table header cell to have proper WordPress styles applied.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
+				echo "<th $attributes>";
+			} else {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $attributes escaped when prepared.
+				echo "<td $attributes>";
+			}
+
 			if ( isset( $column_data[ $column_name ] ) ) {
 				// $column_data is escaped in the individual get_row_data functions.
-
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped in `get_row_data` method implementations.
 				echo $column_data[ $column_name ];
 			}
-			echo '</td>';
+
+			if ( $column_name === $primary ) {
+				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '</span></button>';
+			}
+
+			if ( 'cb' === $column_name ) {
+				echo '</th>';
+			} else {
+				echo '</td>';
+			}
 		}
 
 		echo '</tr>';
@@ -272,7 +291,7 @@ class Sensei_List_Table extends WP_List_Table {
 
 		esc_html_e( 'No items found.', 'sensei-lms' );
 
-	} // End no_items()
+	}
 
 	/**
 	 * get_bulk_actions sets the bulk actions list
@@ -282,20 +301,42 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		return array();
-	} // End overview_actions_filters()
+	}
 
 	/**
 	 * bulk_actions output for the bulk actions area
 	 *
 	 * @since  1.2.0
-	 * @return void
 	 */
 	public function bulk_actions( $which = '' ) {
 		// This will be output Above the table headers on the left
 		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
-	} // End bulk_actions()
+	}
 
-} // End Class
+	/**
+	 * Generates the table navigation above or below the table.
+	 *
+	 * @param string $which Which type of navigation to generate: top or bottom.
+	 */
+	protected function display_tablenav( $which ) {
+		?>
+		<div class="tablenav <?php echo esc_attr( $which ); ?>">
+
+			<?php if ( $this->has_items() ) : ?>
+				<div class="alignleft actions bulkactions">
+					<?php $this->bulk_actions( $which ); ?>
+				</div>
+				<?php
+			endif;
+			$this->extra_tablenav( $which );
+			$this->pagination( $which );
+			?>
+
+			<br class="clear" />
+		</div>
+		<?php
+	}
+}
 
 /**
  * Class WooThemes_Sensei_List_Table

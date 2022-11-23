@@ -1,0 +1,57 @@
+.sensei-contact-teacher-form {
+	position: relative;
+	&, * {
+		box-sizing: border-box;
+	}
+
+	label {
+		display: block;
+		font-size: 24px;
+		font-weight: 700;
+		margin-bottom: 30px;
+	}
+
+	textarea {
+		border: 1px solid var(--border-color, #757575);
+		border-radius: 2px;
+		padding: 10px;
+		background-color: inherit;
+		color: inherit;
+		margin-bottom: 20px;
+		width: 100%;
+		height: 200px;
+	}
+
+	&__actions {
+		margin: 0;
+	}
+
+	&__submit {
+		padding: 10px 14px;
+		border: none;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 500;
+	}
+}
+
+a.sensei-contact-teacher-close {
+	position: absolute;
+	z-index: 2;
+	top: 19px;
+	right: 24px;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: inherit;
+	svg {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+.sensei-contact-teacher-success {
+	display: none;
+}

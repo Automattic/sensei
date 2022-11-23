@@ -20,7 +20,7 @@ class Sensei_Course_Enrolment_Provider_Results_Test extends WP_UnitTestCase {
 	 */
 	public function testFromJson() {
 		$base = [
-			't' => microtime( true ) - 4,
+			't' => time() - 4,
 			'v' => '###',
 			'r' => [
 				'testA' => true,

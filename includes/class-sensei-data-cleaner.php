@@ -22,7 +22,7 @@ class Sensei_Data_Cleaner {
 	/**
 	 * Custom post types to be deleted.
 	 *
-	 * @var $custom_post_types
+	 * @var string[]
 	 */
 	private static $custom_post_types = array(
 		'course',
@@ -36,7 +36,7 @@ class Sensei_Data_Cleaner {
 	/**
 	 * Taxonomies to be deleted.
 	 *
-	 * @var $taxonomies
+	 * @var string[]
 	 */
 	private static $taxonomies = array(
 		'module',
@@ -45,38 +45,58 @@ class Sensei_Data_Cleaner {
 		'question-type',
 		'question-category',
 		'lesson-tag',
+		'sensei_learner',
 	);
 
 	/**
 	 * Options to be deleted.
 	 *
-	 * @var $options
+	 * @var string[]
 	 */
 	private static $options = array(
 		'sensei_installed',
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
-		'skip_install_sensei_pages',
+		'skip_install_sensei_pages', // deprecated 3.1.0.
+		'sensei_suggest_setup_wizard',
+		'sensei-data-port-jobs',
+		'sensei_setup_wizard_data',
+		'sensei_exit_survey_data',
 		'sensei_flush_rewrite_rules',
 		'sensei_needs_language_pack_install',
 		'woothemes_sensei_language_pack_version',
 		'sensei-version',
 		'woothemes-sensei-version',
 		'sensei_enrolment_legacy',
-		'sensei_usage_tracking_opt_in_hide',
+		'sensei_usage_tracking_opt_in_hide', // deprecated 3.1.0.
 		'sensei-upgrades',
 		'woothemes-sensei-upgrades',
 		'woothemes-sensei-settings',
 		'sensei-settings',
+		'sensei_show_email_signup_form', // deprecated 3.1.0.
 		'sensei_courses_page_id',
 		'woothemes-sensei_courses_page_id',
 		'woothemes-sensei_user_dashboard_page_id',
+		'woothemes-sensei_course_completed_page_id',
+		'sensei-legacy-flags',
+		'sensei-scheduler-calculation-version',
+		'widget_sensei_course_component',
+		'widget_sensei_lesson_component',
+		'widget_sensei_course_categories',
+		'widget_sensei_category_courses',
+		'sensei_dismiss_wcpc_prompt',
+		'sensei-cancelled-wccom-connect-dismissed',
+		'sensei_course_theme_query_var_flushed',
+		'sensei_settings_sections_visited',
+		'sensei_home_tasks_list_is_completed',
+		'sensei_home_tasks_dismissed',
+		'sensei_home_task_visited_woocommerce',
 	);
 
 	/**
 	 * Role to be removed.
 	 *
-	 * @var $role
+	 * @var string
 	 */
 	private static $role = 'teacher';
 
@@ -84,14 +104,14 @@ class Sensei_Data_Cleaner {
 	 * Name of the role to be removed. This is used temporarily, and will never
 	 * be displayed, and so it doesn't need to be translated.
 	 *
-	 * @var $role_name
+	 * @var string
 	 */
 	private static $role_name = 'Teacher';
 
 	/**
-	 * Capbilities to be deleted.
+	 * Capabilities to be deleted.
 	 *
-	 * @var $caps
+	 * @var string[]
 	 */
 	private static $caps = array(
 		// General.
@@ -197,33 +217,47 @@ class Sensei_Data_Cleaner {
 	 * Transient names (as MySQL regexes) to be deleted. The prefixes
 	 * "_transient_" and "_transient_timeout_" will be prepended.
 	 *
-	 * @var $transients
+	 * @var string[]
 	 */
 	private static $transients = array(
 		'sensei_[0-9]+_none_module_lessons',
 		'sensei_answers_[0-9]+_[0-9]+',
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
+		'sensei_comment_counts_[0-9]+',
+		'sensei_activation_redirect',
+		'sensei_woocommerce_plugin_information',
+		'sensei_extensions_.*',
+		'sensei_background_job_.*',
+		'sensei_home_.*',
 	);
 
 	/**
 	 * User meta key names (as MySQL regexes) to be deleted.
 	 *
-	 * @var array $user_meta_keys
+	 * @var string[]
 	 */
 	private static $user_meta_keys = array(
 		'^sensei_hide_menu_settings_notice$',
 		'^_module_progress_[0-9]+_[0-9]+$',
+		'^%BLOG_PREFIX%sensei_learner_calculated_version$',
+		'^%BLOG_PREFIX%sensei_course_enrolment_[0-9]+$',
+		'^%BLOG_PREFIX%sensei_enrolment_providers_state$',
+		'^%BLOG_PREFIX%sensei_enrolment_providers_journal$',
 	);
 
 	/**
 	 * Post meta to be deleted.
 	 *
-	 * @var $post_meta
+	 * @var string[]
 	 */
 	private static $post_meta = array(
 		'sensei_payment_complete',
 		'sensei_products_processed',
+		'_sensei_attachment_source_key',
+		'sensei_course_video_autocomplete',
+		'sensei_course_video_autopause',
+		'sensei_course_video_required',
 	);
 
 	/**
@@ -232,6 +266,9 @@ class Sensei_Data_Cleaner {
 	 * @access public
 	 */
 	public static function cleanup_all() {
+		// Ensure module taxonomy is created before calling functions that rely on its existence.
+		Sensei()->modules->setup_modules_taxonomy();
+
 		self::cleanup_custom_post_types();
 		self::cleanup_post_meta();
 		self::cleanup_pages();
@@ -331,6 +368,12 @@ class Sensei_Data_Cleaner {
 		if ( $my_courses_page_id ) {
 			wp_trash_post( $my_courses_page_id );
 		}
+
+		// Trash the Course Completed page.
+		$course_completed_page_id = $settings->get( 'course_completed_page' );
+		if ( $course_completed_page_id ) {
+			wp_trash_post( $course_completed_page_id );
+		}
 	}
 
 	/**
@@ -388,6 +431,8 @@ class Sensei_Data_Cleaner {
 		global $wpdb;
 
 		foreach ( self::$user_meta_keys as $meta_key ) {
+			$meta_key = str_replace( '%BLOG_PREFIX%', preg_quote( $wpdb->get_blog_prefix(), null ), $meta_key );
+
 			$wpdb->query(
 				$wpdb->prepare(
 					"DELETE FROM {$wpdb->usermeta} WHERE meta_key RLIKE %s",

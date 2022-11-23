@@ -1,58 +1,102 @@
-jQuery(document).ready(function($) {
-
+jQuery( document ).ready( function ( $ ) {
 	/***** Settings Tabs *****/
+	const $senseiSettings = $( '#woothemes-sensei.sensei-settings' );
 
-	// Make sure each heading has a unique ID.
-	jQuery( 'ul#settings-sections.subsubsub' ).find( 'a' ).each( function () {
-		var id_value = jQuery( this ).attr( 'href' ).replace( '#', '' );
-		jQuery( 'h3:contains("' + jQuery( this ).text() + '")' ).attr( 'id', id_value ).addClass( 'section-heading' );
-	});
+	function hideAllSections() {
+		$senseiSettings.find( 'section' ).hide();
+		$senseiSettings.find( 'a.tab' ).removeClass( 'current' );
+	}
 
-	// Only show the General settings.
-	var defaultSettingsSlug = 'default-settings';
-	$( '#woothemes-sensei section' ).each( function () {
-		if ( this.id !== defaultSettingsSlug ) {
-			$( this ).hide();
+	function show( sectionId = '' ) {
+		$senseiSettings.find( `section#${ sectionId }` ).show();
+		$senseiSettings
+			.find( `[href="#${ sectionId }"]` )
+			.addClass( 'current' );
+		sensei_log_event( 'settings_view', { view: sectionId } );
+		markSectionAsVisited( sectionId );
+	}
+
+	// Hide header and submit on page load if needed
+	hideSettingsFormElements();
+
+	function hideSettingsFormElements() {
+		const urlHashSectionId = window.location.hash?.replace( '#', '' );
+		if ( urlHashSectionId === 'woocommerce-settings' ) {
+			const formRows = $senseiSettings.find( '#woocommerce-settings tr' );
+			// Hide header and submit if there is not settings form in section
+			hideHeaderAndSubmit(
+				! formRows.length &&
+					$senseiSettings.find( '#sensei-promo-banner' )
+			);
+		} else if ( urlHashSectionId === 'sensei-content-drip-settings' ) {
+			const formRows = $senseiSettings.find(
+				'#sensei-content-drip-settings tr'
+			);
+			// Hide header and submit if there is not settings form in section
+			hideHeaderAndSubmit(
+				! formRows.length &&
+					$senseiSettings.find( '#sensei-promo-banner' )
+			);
+		} else {
+			hideHeaderAndSubmit( false );
 		}
-	} );
-	sensei_log_event( 'settings_view', { view: defaultSettingsSlug } );
+	}
 
-	jQuery( '#woothemes-sensei .subsubsub a.tab' ).click( function () {
-		// Move the "current" CSS class.
-		jQuery( this ).parents( '.subsubsub' ).find( '.current' ).removeClass( 'current' );
-		jQuery( this ).addClass( 'current' );
+	function hideHeaderAndSubmit( shouldHide ) {
+		if ( shouldHide ) {
+			$senseiSettings.find( '#submit' ).hide();
+			$senseiSettings.find( 'h2' ).hide();
+		} else {
+			$senseiSettings.find( '#submit' ).show();
+			$senseiSettings.find( 'h2' ).show();
+		}
+	}
 
-		// Hide all sections.
-		jQuery( '#woothemes-sensei section' ).hide();
+	window.onhashchange = hideSettingsFormElements;
 
-		// If the link is a tab, show only the specified tab.
-		var toShow = jQuery( this ).attr( 'href' );
-		// Remove the first occurance of # from the selected string (will be added manually below).
-		toShow = toShow.replace( '#', '' );
-		jQuery('#'+toShow).show();
+	// Show general settings section if no section is selected in url hasn.
+	const defaultSectionId = 'default-settings';
+	const urlHashSectionId = window.location.hash?.replace( '#', '' );
+	hideAllSections();
+	if ( urlHashSectionId ) {
+		show( urlHashSectionId );
+	} else {
+		show( defaultSectionId );
+	}
 
-		sensei_log_event( 'settings_view', { view: toShow } );
-
+	$senseiSettings.find( 'a.tab' ).on( 'click', function () {
+		const sectionId = $( this ).attr( 'href' )?.replace( '#', '' );
+		window.location.hash = '#' + sectionId;
+		hideAllSections();
+		show( sectionId );
 		return false;
-	});
+	} );
+
+	function markSectionAsVisited( sectionId ) {
+		const data = new FormData();
+		data.append( 'action', 'sensei_settings_section_visited' );
+		data.append( 'section_id', sectionId );
+		data.append( 'nonce', window.senseiSettingsSectionVisitNonce );
+		fetch( ajaxurl, { method: 'POST', body: data } );
+	}
 
 	/***** Colour pickers *****/
 
-	jQuery('.colorpicker').hide();
-	jQuery('.colorpicker').each( function() {
-		jQuery(this).farbtastic( jQuery(this).prev('.color') );
-	});
+	jQuery( '.colorpicker' ).hide();
+	jQuery( '.colorpicker' ).each( function () {
+		jQuery( this ).farbtastic( jQuery( this ).prev( '.color' ) );
+	} );
 
-	jQuery('.color').click(function() {
-		jQuery(this).next('.colorpicker').fadeIn();
-	});
+	jQuery( '.color' ).click( function () {
+		jQuery( this ).next( '.colorpicker' ).fadeIn();
+	} );
 
-	jQuery(document).mousedown(function() {
-		jQuery('.colorpicker').each(function() {
-			var display = jQuery(this).css('display');
+	jQuery( document ).mousedown( function () {
+		jQuery( '.colorpicker' ).each( function () {
+			var display = jQuery( this ).css( 'display' );
 			if ( display == 'block' ) {
-				jQuery(this).fadeOut();
+				jQuery( this ).fadeOut();
 			}
-		});
-	});
-});
+		} );
+	} );
+} );

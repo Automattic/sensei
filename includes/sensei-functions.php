@@ -8,29 +8,41 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Global Sensei functions
  */
 
+/**
+ * Determine if the current page is a Sensei LMS page.
+ *
+ * @since 1.5.0
+ *
+ * @return bool True if current page is a Sensei LMS page.
+ */
 function is_sensei() {
 	global $post;
 
 	$is_sensei = false;
 
-	$post_types = array( 'lesson', 'course', 'quiz', 'question' );
+	$post_types = array( 'lesson', 'course', 'quiz', 'question', 'sensei_message' );
 	$taxonomies = array( 'course-category', 'quiz-type', 'question-type', 'lesson-tag', 'module' );
 
-	if ( is_post_type_archive( $post_types ) || is_singular( $post_types ) || is_tax( $taxonomies ) ) {
-
+	if ( is_post_type_archive( $post_types )
+		|| is_singular( $post_types )
+		|| is_tax( $taxonomies )
+	) {
 		$is_sensei = true;
+	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
+		$course_page_id           = intval( Sensei()->settings->settings['course_page'] );
+		$my_courses_page_id       = intval( Sensei()->settings->settings['my_course_page'] );
+		$course_completed_page_id = intval( Sensei()->settings->settings['course_completed_page'] );
 
-	}
-
-	if ( is_object( $post ) && ! is_wp_error( $post ) ) {
-
-		$course_page_id     = intval( Sensei()->settings->settings['course_page'] );
-		$my_courses_page_id = intval( Sensei()->settings->settings['my_course_page'] );
-
-		if ( in_array( $post->ID, array( $course_page_id, $my_courses_page_id ) ) ) {
-
+		if ( ! empty( $post->ID ) && in_array( $post->ID, [ $course_page_id, $my_courses_page_id, $course_completed_page_id ], true ) ) {
 			$is_sensei = true;
+		}
 
+		if ( Sensei_Utils::is_learner_profile_page()
+			|| Sensei_Utils::is_course_results_page()
+			|| Sensei_Utils::is_teacher_archive_page()
+			|| Sensei()->blocks->has_sensei_blocks()
+		) {
+			$is_sensei = true;
 		}
 	}
 
@@ -38,27 +50,130 @@ function is_sensei() {
 }
 
 /**
- * Determine if the current user is and admin that
- * can acess all of Sensei without restrictions
+ * Determine if a user is an admin that can access all of Sensei without restrictions or if he is a teacher accessing
+ * his own course.
  *
  * @since 1.4.0
+ * @since 3.0.0 Added `$user_id` argument. Preserves backward compatibility.
+ *
+ * @param int $user_id User ID. Defaults to current user.
+ *
  * @return boolean
  */
-function sensei_all_access() {
+function sensei_all_access( $user_id = null ) {
+	if ( null === $user_id ) {
+		$user_id = get_current_user_id();
+	}
 
-	$access = current_user_can( 'manage_sensei' ) || current_user_can( 'manage_sensei_grades' );
+	if ( empty( $user_id ) ) {
+		return false;
+	}
+
+	$access = false;
+
+	if ( user_can( $user_id, 'manage_sensei' ) ) {
+		$access = true;
+	} else {
+		$course_id = Sensei_Utils::get_current_course();
+
+		if ( $course_id ) {
+			$teacher = (int) get_post( $course_id )->post_author;
+			$access  = $user_id === $teacher;
+		}
+	}
+
+	if ( has_filter( 'sensei_all_access' ) ) {
+		// For backwards compatibility with filter, we temporarily need to change the current user.
+		$previous_current_user_id = get_current_user_id();
+		wp_set_current_user( $user_id );
+
+		/**
+		 * Filter sensei_all_access function result which determines if the current user
+		 * can access all of Sensei without restrictions.
+		 *
+		 * @since 1.4.0
+		 * @deprecated 3.0.0
+		 *
+		 * @param bool $access True if user has all access.
+		 */
+		$access = apply_filters_deprecated( 'sensei_all_access', [ $access ], '3.0.0', 'sensei_user_all_access' );
+
+		wp_set_current_user( $previous_current_user_id );
+	}
 
 	/**
-	 * Filter sensei_all_access function result
-	 * which determinse if the current user
-	 * can access all of Sensei without restrictions
+	 * Filter if a particular user has access to all of Sensei without restrictions.
 	 *
-	 * @since 1.4.0
-	 * @param bool $access
+	 * @since 3.0.0
+	 *
+	 * @param bool $access  True if user has all access.
+	 * @param int  $user_id User ID to check.
 	 */
-	return apply_filters( 'sensei_all_access', $access );
+	return apply_filters( 'sensei_user_all_access', $access, $user_id );
+}
 
-} // End sensei_all_access()
+/**
+ * Function to determine if the current user can
+ * access the current lesson content being viewed.
+ *
+ * This function checks in the following order
+ * - if the current user has all access based on their permissions
+ * - If the access permission setting is enabled for this site, if not the user has access
+ * - if the lesson has a pre-requisite and if the user has completed that
+ * - If it is a preview the user has access as well
+ *
+ * @since 1.9.0
+ *
+ * @param int $lesson_id Lesson post ID. Default: Use global post in loop.
+ * @param int $user_id   User ID. Default: Use currently logged in user ID.
+ * @return bool
+ */
+function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
+	if ( empty( $lesson_id ) ) {
+		$lesson_id = get_the_ID();
+	}
+
+	$context = 'lesson';
+	if ( 'quiz' === get_post_type( get_the_ID() ) ) {
+		$context   = 'quiz';
+		$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+	}
+
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
+
+	$user_can_view_course_content = false;
+	$course_id                    = Sensei()->lesson->get_course_id( $lesson_id );
+	if ( $course_id ) {
+		$user_can_view_course_content = Sensei()->course->can_access_course_content( $course_id, $user_id, $context );
+	}
+
+	// Check for prerequisite lesson completions.
+	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
+	$is_preview_lesson      = false;
+
+	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+		$is_preview_lesson      = true;
+		$pre_requisite_complete = true;
+	};
+
+	$can_user_view_lesson = ! sensei_is_login_required()
+							|| sensei_all_access( $user_id )
+							|| ( $user_can_view_course_content && $pre_requisite_complete )
+							|| $is_preview_lesson;
+
+	/**
+	 * Filter if the user can view lesson and quiz content.
+	 *
+	 * @since 1.9.0
+	 *
+	 * @param bool $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param int  $lesson_id            Lesson post ID.
+	 * @param int  $user_id              User ID.
+	 */
+	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+}
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
 
@@ -182,6 +297,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	if ( has_action( $hook_tag ) ) {
 
+		// translators: Placeholders are the hook tag and the version which it was deprecated, respectively.
 		$error_message = sprintf( __( "SENSEI: The hook '%1\$s', has been deprecated since '%2\$s'.", 'sensei-lms' ), $hook_tag, $version );
 
 		if ( ! empty( $alternative ) ) {
@@ -196,7 +312,7 @@ function sensei_do_deprecated_action( $hook_tag, $version, $alternative = '', $a
 
 	}
 
-}//end sensei_do_deprecated_action()
+}
 
 /**
  * Check the given post or post type id is a of the
@@ -214,6 +330,59 @@ function sensei_is_a_course( $post ) {
 }
 
 /**
+ * Get registration url.
+ *
+ * @since 3.15.0
+ *
+ * @param bool   $return_wp_registration_url Whether return the url if it should use the WP registration url.
+ * @param string $redirect                   Redirect url after registration.
+ *
+ * @return string|null The registration url.
+ *                     If wp registration is the return case and $return_wp_registration_url is
+ *                     true, it returns the url, otherwise it returns null.
+ */
+function sensei_user_registration_url( bool $return_wp_registration_url = true, string $redirect = '' ) {
+	/**
+	 * Filter to force Sensei to output the default WordPress user
+	 * registration link.
+	 *
+	 * @param bool $wp_register_link default false
+	 *
+	 * @since 1.9.0
+	 */
+	$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
+	$registration_url = '';
+	$settings         = Sensei()->settings->get_settings();
+
+	if ( empty( $settings['my_course_page'] ) || $wp_register_link ) {
+		if ( ! $return_wp_registration_url ) {
+			return null;
+		}
+
+		$registration_url = wp_registration_url();
+	} else {
+		$registration_url = get_permalink( intval( $settings['my_course_page'] ) );
+	}
+
+	if ( ! empty( $redirect ) ) {
+		$registration_url = add_query_arg( 'redirect_to', $redirect, $registration_url );
+	}
+
+	/**
+	 * Filter the registration URL.
+	 *
+	 * @since 4.4.1
+	 * @hook sensei_registration_url
+	 *
+	 * @param {string} $registration_url Registration URL.
+	 * @param {string} $redirect         Redirect url after registration.
+	 *
+	 * @return {string} Returns filtered registration URL.
+	 */
+	return apply_filters( 'sensei_registration_url', $registration_url, $redirect );
+}
+
+/**
  * Determine the login link
  * on the frontend.
  *
@@ -221,23 +390,41 @@ function sensei_is_a_course( $post ) {
  * or the wp-login link.
  *
  * @since 1.9.0
+ * @since 3.15.0 Introduce redirect param.
+ *
+ * @param string $redirect Redirect url after login.
+ *
+ * @return string The login url.
  */
-function sensei_user_login_url() {
-
+function sensei_user_login_url( string $redirect = '' ) {
+	$login_url          = '';
 	$my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
 	$page               = get_post( $my_courses_page_id );
 
 	if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID ) ) {
+		$my_courses_url = get_permalink( $page->ID );
+		if ( ! empty( $redirect ) ) {
+			$my_courses_url = add_query_arg( 'redirect_to', $redirect, $my_courses_url );
+		}
 
-		return get_permalink( $page->ID );
-
+		$login_url = $my_courses_url;
 	} else {
-
-		return wp_login_url();
-
+		$login_url = wp_login_url( $redirect );
 	}
 
-}//end sensei_user_login_url()
+	/**
+	 * Filter the login URL.
+	 *
+	 * @since 4.4.1
+	 * @hook sensei_login_url
+	 *
+	 * @param {string} $login_url Login URL.
+	 * @param {string} $redirect  Redirect url after login.
+	 *
+	 * @return {string} Returns filtered login URL.
+	 */
+	return apply_filters( 'sensei_login_url', $login_url, $redirect );
+}
 
 /**
  * Checks the settings to see
@@ -246,14 +433,28 @@ function sensei_user_login_url() {
  * duplicate of Sensei()->access_settings().
  *
  * @since 1.9.0
+ * @since 3.5.2 Added hook to filter the return.
  * @return bool
  */
 function sensei_is_login_required() {
+	$course_id = Sensei_Utils::get_current_course();
 
 	$login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
 
-	return $login_required;
-
+	/**
+	 * Filters the access_permission that says if the user must be logged
+	 * to view the lesson content.
+	 *
+	 * @since 3.5.2
+	 *
+	 * @hook sensei_is_login_required
+	 *
+	 * @param {bool}     $must_be_logged_to_view_lesson True if user need to be logged to see the lesson.
+	 * @param {int|null} $course_id                     Course post ID.
+	 *
+	 * @return {bool} Whether the user needs to be logged in to view content.
+	 */
+	return apply_filters( 'sensei_is_login_required', $login_required, $course_id );
 }
 
 /**
@@ -267,28 +468,6 @@ function sensei_does_theme_support_templates() {
 	$themes        = Sensei()->theme_integration_loader->get_supported_themes();
 
 	return in_array( $current_theme, $themes, true ) || current_theme_supports( 'sensei' );
-}
-
-if ( ! function_exists( 'sensei_check_woocommerce_version' ) ) {
-	/**
-	 * Check if WooCommerce version is greater than the one specified.
-	 *
-	 * @deprecated 2.0.0
-	 *
-	 * @param string $version Version to check against.
-	 * @return boolean
-	 */
-	function sensei_check_woocommerce_version( $version = '2.1' ) {
-		_deprecated_function( __FUNCTION__, '2.0.0' );
-
-		if ( method_exists( 'Sensei_WC', 'is_woocommerce_active' ) && Sensei_WC::is_woocommerce_active() ) {
-			global $woocommerce;
-			if ( version_compare( $woocommerce->version, $version, '>=' ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
 }
 
 /**
@@ -319,4 +498,24 @@ function sensei_log_event( $event_name, $properties = [] ) {
 	}
 
 	Sensei_Usage_Tracking::get_instance()->send_event( $event_name, $properties );
+}
+
+/**
+ * Track a Sensei event with Jetpack, when Jetpack is available.
+ *
+ * @since 3.7.0
+ *
+ * @param string $event_name The name of the event, without the `sensei_` prefix.
+ * @param array  $properties The event properties to be sent.
+ */
+function sensei_log_jetpack_event( $event_name, $properties = [] ) {
+	if ( ! class_exists( 'Automattic\Jetpack\Tracking' ) || ! Sensei()->usage_tracking->is_tracking_enabled() ) {
+		return;
+	}
+
+	$jetpack_connection = Jetpack::connection();
+	if ( $jetpack_connection->is_user_connected() ) {
+		$tracking = new Automattic\Jetpack\Tracking( 'sensei', $jetpack_connection );
+		$tracking->record_user_event( $event_name, $properties );
+	}
 }

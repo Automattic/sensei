@@ -1,0 +1,151 @@
+@import '~@wordpress/base-styles/variables';
+
+$gray-700: #757575;
+$gray-400: #ccc;
+
+@import 'question-block/question-block.editor';
+@import 'quiz-block/questions-modal/questions-modal-style';
+@import 'single-question.editor';
+@import '../../shared/components/text-appender/style';
+
+.wp-block[data-type='sensei-lms/quiz'] {
+	.editor-styles-wrapper & {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: none;
+		position: relative;
+	}
+
+	& > .block-editor-inner-blocks > .block-editor-block-list__layout > .block-list-appender {
+		margin: auto;
+		position: relative;
+	}
+
+	& > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		margin-left: 0px;
+	}
+
+	&:not(.is-selected):not(.has-child-selected) {
+		.wp-block:not(:first-child):nth-last-child(2) .sensei-lms-question-block.is-draft {
+			display: none;
+		}
+	}
+}
+
+/* Block Settings */
+.sensei-lms-quiz-block-settings {
+	&__question-count,
+	&__progress-bar {
+		align-items: baseline;
+		justify-content: flex-start;
+
+		.components-base-control {
+			margin-bottom: 0;
+			margin-right: 1em;
+		}
+	}
+
+	&__question-count {
+		margin-bottom: 12px;
+	}
+
+	&__quiz-timer-promo {
+		.components-base-control {
+			margin-bottom: 8px;
+		}
+	}
+}
+
+.sensei-lms-quiz-block {
+	&__separator {
+		position: relative;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		margin-top: $default-block-margin;
+		margin-bottom: $default-block-margin;
+
+		&::before, &::after {
+			content: '';
+			flex: 1;
+			background-color: currentColor;
+			opacity: 0.5;
+			height: 1px;
+		}
+
+		& > span {
+			font-size: $default-font-size;
+			position: relative;
+			text-transform: uppercase;
+			font-weight: 600;
+			font-family: $default-font;
+			opacity: 0.7;
+			border-radius: 4px;
+			padding: 6px 24px;
+		}
+	}
+
+	&__progress-bar {
+		margin-top: $default-block-margin;
+		margin-bottom: $default-block-margin;
+	}
+
+	&__pre-publish-validation {
+		&__notice {
+			margin: 0;
+			.components-notice__action.components-button.is-link {
+				display: block;
+				margin: 6px 0;
+			}
+		}
+	}
+
+	/* Settings */
+	&__settings-quick-nav {
+		display: flex;
+		justify-content: center;
+
+		button {
+			text-decoration: underline;
+
+			&:focus:not(:disabled) {
+				box-shadow: none;
+			}
+		}
+	}
+
+	/* Toolbar */
+	&__toolbar-group {
+		align-items: center;
+		padding: 0 1em;
+		width: 17em;
+
+		.components-base-control {
+			flex-basis: 62%;
+			margin-right: 1em;
+
+			&__field {
+				margin-bottom: 0;
+			}
+		}
+	}
+}
+
+.sensei-lms-block-validation-notice {
+	display: inline-block;
+	margin: 4px 0;
+
+	.components-notice__content {
+		display: flex;
+		&, * {
+			color: $gray-900!important;
+		}
+	}
+
+	&__icon {
+		width: 24px;
+		height: 24px;
+		fill: $gray-900;
+		margin-right: 4px;
+	}
+}

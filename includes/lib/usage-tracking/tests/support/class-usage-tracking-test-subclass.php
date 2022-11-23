@@ -45,6 +45,10 @@ class Usage_Tracking_Test_Subclass extends Sensei_Usage_Tracking_Base {
 		return false;
 	}
 
+	public function get_template_data() {
+		return [];
+	}
+
 	protected function get_plugins() {
 		return array(
 			'Hello.php'                                 => array(

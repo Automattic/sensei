@@ -1,0 +1,78 @@
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 100%;
+	}
+}
+
+.sensei-home-ready {
+	padding: 28px 0;
+	max-width: 510px;
+	margin: 0 auto;
+	text-align: center;
+	animation: 0.5s fadeIn;
+
+	@media ( min-width: $break-large ) {
+		padding: 52px 0;
+	}
+
+	&__dismiss {
+		position: absolute;
+		top: -3px;
+		right: 8px;
+		padding: 0;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+	}
+
+	&__check-icon {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		width: 60px;
+		height: 60px;
+		margin-bottom: 20px;
+		border-radius: 50%;
+		background-color: #43AF99;
+		color: $white;
+
+		> svg {
+			width: 30px;
+			height: 30px;
+		}
+	}
+
+	&__text {
+		margin: 0 0 40px;
+		font-family: $recoleta-font-family;
+		font-size: 28px;
+		line-height: 1.3;
+
+		@media ( min-width: $break-large ) {
+			font-size: 32px;
+		}
+	}
+
+	&__social-links {
+		display: inline;
+
+		> li {
+			display: inline;
+			margin: 0 8px;
+		}
+	}
+
+	&__social-link {
+		display: inline-block;
+		color: #000000;
+
+		> svg {
+			display: block;
+			width: 32px;
+			height: 32px;
+		}
+	}
+}

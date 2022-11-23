@@ -1,0 +1,88 @@
+{
+	"name": "sensei-lms/quiz",
+	"title": "Quiz",
+	"description": "Evaluate progress and strengthen understanding of course concepts.",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [
+		"exam",
+		"questions",
+		"test",
+		"assessment",
+		"evaluation"
+	],
+	"supports": {
+		"html": false,
+		"multiple": false
+	},
+	"attributes": {
+		"id": {
+			"type": "integer"
+		},
+		"options": {
+			"type": "object",
+			"default": {
+				"passRequired": false,
+				"quizPassmark": 100,
+				"autoGrade": true,
+				"allowRetakes": true,
+				"randomQuestionOrder": false,
+				"showQuestions": null,
+				"failedShowAnswerFeedback": false,
+				"failedShowCorrectAnswers": false,
+				"failedIndicateIncorrect": false,
+				"buttonTextColor": null,
+				"buttonBackgroundColor": null,
+				"pagination": {}
+			}
+		},
+		"isPostTemplate": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"example": {
+		"innerBlocks": [
+			{
+				"name": "sensei-lms/quiz-question",
+				"attributes": {
+					"title": "What are power chords?",
+					"answer": {
+						"answers": [
+							{
+								"label": "  A chord consisting of a root note of the chord and a 5th",
+								"correct": true
+							},
+							{
+								"label": "  A chord playing on an electric guitar",
+								"correct": false
+							}
+						]
+					}
+				}
+			},
+			{
+				"name": "sensei-lms/quiz-question",
+				"attributes": {
+					"title": "What part of the guitar do you adjust when tuning it?",
+					"answer": {
+						"answers": [
+							{
+								"label": "  The Tuning Pegs",
+								"correct": true
+							},
+							{
+								"label": "  The Fretboard",
+								"correct": false
+							},
+							{
+								"label": "  The Neck",
+								"correct": false
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}

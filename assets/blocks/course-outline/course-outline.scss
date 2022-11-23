@@ -1,0 +1,9 @@
+$dark-gray: #1a1d20;
+
+$outline: '.wp-block-sensei-lms-course-outline';
+$spacing: 16px;
+
+@import 'outline-block/outline';
+@import 'module-block/module';
+@import 'lesson-block/lesson';
+@import '../../shared/components/text-appender/style';

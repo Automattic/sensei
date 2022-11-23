@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     1.12.2
+ * @version     3.6.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,9 +31,8 @@ global $course, $wp_query;
 $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'course' );
 ?>
 
-<article <?php post_class( array( 'course', 'post', 'course-results' ) ); ?> >
+<div class="course course-results">
 
-	<section class="entry fix">
 
 		<?php
 		/**
@@ -72,8 +71,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
 
 			<section class="course-results-lessons">
 				<?php
-				$started_course = Sensei_Utils::user_started_course( $course->ID, get_current_user_id() );
-				if ( $started_course ) {
+				if ( Sensei_Utils::has_started_course( $course->ID, get_current_user_id() ) ) {
 
 					sensei_the_course_results_lessons();
 
@@ -96,9 +94,7 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
 		do_action( 'sensei_course_results_content_inside_after', $course->ID );
 		?>
 
-	</section>
-
-</article>
+</div>
 
 <?php
 /**

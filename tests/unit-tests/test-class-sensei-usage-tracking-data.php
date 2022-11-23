@@ -4,6 +4,8 @@
  * @group usage-tracking
  */
 class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+
 	private $course_ids;
 	private $modules;
 
@@ -14,12 +16,13 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
-	}//end setUp()
+		self::resetCourseEnrolmentManager();
+	}
 
 	public function tearDown() {
 		parent::tearDown();
 		$this->factory->tearDown();
-	} // end tearDown
+	}
 
 	private function setupCoursesAndModules() {
 		$this->course_ids = $this->factory->post->create_many(
@@ -963,6 +966,64 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Course completion rate.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_course_completion_rate
+	 * @covers Sensei_Usage_Tracking_Data::get_enrolled_learner_terms
+	 * @covers Sensei_Usage_Tracking_Data::get_completed_course_count
+	 */
+	public function testGetCourseCompletionRate() {
+		$this->setupCoursesAndModules();
+
+		// Create some admins and subscribers.
+		$admins      = $this->factory->user->create_many( 2, array( 'role' => 'administrator' ) );
+		$subscribers = $this->factory->user->create_many( 5, array( 'role' => 'subscriber' ) );
+
+		// Enroll some learners in some courses.
+		foreach ( array_merge( $admins, $subscribers ) as $user ) {
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[0],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'in-progress',
+				)
+			);
+
+			$this->factory->comment->create(
+				array(
+					'user_id'          => $user,
+					'comment_post_ID'  => $this->course_ids[1],
+					'comment_type'     => 'sensei_course_status',
+					'comment_approved' => 'complete',
+				)
+			);
+
+			// Set term data.
+			wp_set_object_terms(
+				$this->course_ids[0],
+				'user-' . $user,
+				Sensei_PostTypes::LEARNER_TAXONOMY_NAME
+			);
+
+			wp_set_object_terms(
+				$this->course_ids[1],
+				'user-' . $user,
+				Sensei_PostTypes::LEARNER_TAXONOMY_NAME
+			);
+		}
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'course_completion_rate', $usage_data, 'Key' );
+		// Course 1 - 5 non-admin learners enrolled, 0 completed; Completion rate = 0
+		// Course 2 - 5 non-admin learners enrolled, 5 non-admin learners completed, Completion rate = 1
+		// Course 3 - 0 enrolled
+		$this->assertEquals( 50, $usage_data['course_completion_rate'], 'Course completion rate' );
+	}
+
+	/**
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_courses_with_video_count
 	 */
@@ -1113,19 +1174,40 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( $subscribers as $subscriber ) {
-			$this->factory->comment->create(
-				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
 		$this->assertEquals( $enrolments, $usage_data['enrolments'], 'Count' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_is_enrolment_calculated
+	 */
+	public function testGetIsEnrolmentCalculatedTrue() {
+		$enrolment_manager = Sensei_Course_Enrolment_Manager::instance();
+		update_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME, $enrolment_manager->get_enrolment_calculation_version() );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['enrolment_calculated'], 'Boolean int' );
+	}
+
+	/**
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_is_enrolment_calculated
+	 */
+	public function testGetIsEnrolmentCalculatedFalse() {
+		delete_option( Sensei_Enrolment_Job_Scheduler::CALCULATION_VERSION_OPTION_NAME );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'enrolments', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['enrolment_calculated'], 'Boolean int' );
 	}
 
 	/**
@@ -1147,13 +1229,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( array_merge( $administrators, $subscribers ) as $user ) {
-			$this->factory->comment->create(
-				array(
-					'user_id'         => $user,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $user, $course_id );
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -1177,13 +1253,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		// Enroll users in course.
 		foreach ( $subscribers as $subscriber ) {
-			$this->factory->comment->create(
-				array(
-					'user_id'         => $subscriber,
-					'comment_post_ID' => $course_id,
-					'comment_type'    => 'sensei_course_status',
-				)
-			);
+			$this->manuallyEnrolStudentInCourse( $subscriber, $course_id );
 		}
 
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
@@ -1414,6 +1484,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test getting count of lessons with `_lesson_length` set.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_has_length_count
 	 */
@@ -1447,6 +1519,8 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test getting count of lessons with `_lesson_complexity` set.
+	 *
 	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
 	 * @covers Sensei_Usage_Tracking_Data::get_lesson_with_complexity_count
 	 */
@@ -1515,5 +1589,103 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'lesson_videos', $usage_data, 'Key' );
 		$this->assertEquals( $lessons_with_video, $usage_data['lesson_videos'], 'Count' );
+	}
+
+	/**
+	 * Tests getting courses using course theme count.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_courses_using_learning_mode_count
+	 */
+	public function testGetCoursesUsingCourseThemeCount() {
+		$this->factory->course->create_many(
+			2,
+			[
+				'meta_input' => [
+					Sensei_Course_Theme_Option::THEME_POST_META_NAME => Sensei_Course_Theme_Option::SENSEI_THEME,
+				],
+			]
+		);
+		$this->factory->course->create_many(
+			2,
+			[
+				'meta_input' => [
+					Sensei_Course_Theme_Option::THEME_POST_META_NAME => Sensei_Course_Theme_Option::WORDPRESS_THEME,
+				],
+			]
+		);
+		$this->factory->course->create_many( 2 );
+
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'courses_using_learning_mode', $usage_data, 'Key' );
+		$this->assertEquals( 2, $usage_data['courses_using_learning_mode'], 'Count' );
+	}
+
+	/**
+	 * Tests getting if course theme is enabled globally.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_is_learning_mode_enabled_globally
+	 */
+	public function testGetIsCourseThemeEnabledGlobally() {
+		Sensei()->settings->set( 'sensei_learning_mode_all', false );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 0, $usage_data['learning_mode_enabled_globally'], 'Boolean int' );
+
+		Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_enabled_globally', $usage_data, 'Key' );
+		$this->assertEquals( 1, $usage_data['learning_mode_enabled_globally'], 'Boolean int' );
+	}
+
+	/**
+	 * Tests getting selected course theme template.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_selected_learning_mode_template
+	 */
+	public function testGetCourseThemeTemplate() {
+		Sensei()->settings->set( 'sensei_learning_mode_template', 'default' );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_template', $usage_data, 'Key' );
+		$this->assertEquals( 'default', $usage_data['learning_mode_template'], 'String' );
+
+		Sensei()->settings->set( 'sensei_learning_mode_template', 'modern' );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_template', $usage_data, 'Key' );
+		$this->assertEquals( 'modern', $usage_data['learning_mode_template'], 'Boolean int' );
+	}
+
+	/**
+	 * Tests getting if the course theme is customised.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_learning_mode_is_customized
+	 */
+	public function testIsCourseThemeCustomised() {
+		Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_is_customized', $usage_data, 'Key' );
+		$this->assertEquals( false, $usage_data['learning_mode_is_customized'], 'Boolean int' );
+	}
+
+	/**
+	 * Tests getting the course theme template version.
+	 *
+	 * @covers Sensei_Usage_Tracking_Data::get_usage_data
+	 * @covers Sensei_Usage_Tracking_Data::get_template_version
+	 */
+	public function testCourseThemeTemplateVersion() {
+		Sensei()->settings->set( 'sensei_learning_mode_all', true );
+		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
+
+		$this->assertArrayHasKey( 'learning_mode_template_version', $usage_data, 'Key' );
 	}
 }

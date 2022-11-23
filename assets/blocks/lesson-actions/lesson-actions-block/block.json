@@ -1,0 +1,26 @@
+{
+  "name": "sensei-lms/lesson-actions",
+  "title": "Lesson Actions",
+  "description": "Enable a student to perform specific actions for a lesson.",
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "keywords": [
+    "lesson",
+    "actions",
+    "buttons",
+    "complete",
+    "next",
+    "reset"
+  ],
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "toggledBlocks": {
+      "type": "object",
+      "default": {
+        "sensei-lms/button-reset-lesson": true
+      }
+    }
+  }
+}

@@ -47,7 +47,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		/* Create the widget. */
 		parent::__construct( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 
-	} // End __construct()
+	}
 
 	/**
 	 * Display the widget on the frontend.
@@ -81,7 +81,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 
 		if ( 0 < intval( $instance['course_category'] ) ) {
 			$this->load_component( $instance );
-		} // End If Statement
+		}
 
 		// Add actions for plugins/themes to hook onto.
 		do_action( $this->widget_cssclass . '_bottom' );
@@ -89,7 +89,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		/* After widget (defined by themes). */
 		echo wp_kses_post( $after_widget );
 
-	} // End widget()
+	}
 
 	/**
 	 * Method to update the settings from the form() method.
@@ -112,7 +112,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		$instance['limit'] = strip_tags( $new_instance['limit'] );
 
 		return $instance;
-	} // End update()
+	}
 
 	/**
 	 * The form on the widget control in the widget administration area.
@@ -164,7 +164,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		</p>
 
 		<?php
-	} // End form()
+	}
 
 	/**
 	 * Load the output.
@@ -205,6 +205,7 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 				$user_info           = get_userdata( absint( $post_item->post_author ) );
 				$author_link         = get_author_posts_url( absint( $post_item->post_author ) );
 				$author_display_name = $user_info->display_name;
+				$lesson_count        = Sensei()->course->course_lesson_count( $post_id );
 				?>
 				<li class="fix">
 					<?php do_action( 'sensei_course_image', $post_id ); ?>
@@ -223,17 +224,22 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 							</a>
 						</span>
 						<br />
-					<?php } // End If Statement ?>
-					<span class="course-lesson-count"><?php echo esc_html( Sensei()->course->course_lesson_count( $post_id ) ) . '&nbsp;' . esc_html__( 'Lessons', 'sensei-lms' ); ?></span>
+					<?php } ?>
+					<span class="course-lesson-count">
+						<?php
+						// translators: Placeholder %d is the lesson count.
+						echo esc_html( sprintf( _n( '%d Lesson', '%d Lessons', $lesson_count, 'sensei-lms' ), $lesson_count ) );
+						?>
+					</span>
 					<br />
 					<?php
 					/** This action is documented in includes/class-sensei-frontend.php */
 					do_action( 'sensei_course_meta_inside_after', $post_id );
 					?>
 				</li>
-			<?php } // End For Loop ?>
+			<?php } ?>
 			</ul>
 			<?php
-		} // End If Statement
-	} // End load_component()
-} // End Class
+		}
+	}
+}

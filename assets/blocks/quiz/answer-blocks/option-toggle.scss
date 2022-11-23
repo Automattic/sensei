@@ -1,0 +1,111 @@
+$toogle-size: 26px;
+
+.sensei-lms-question-block__option-toggle {
+	color: inherit;
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+
+	.edit-post-visual-editor & {
+		font-family: inherit;
+		font-size: inherit;
+		padding: 0;
+		margin-right: 10px;
+		line-height: inherit;
+		height: auto;
+	}
+
+	&:before {
+		// Text baseline alignment helper.
+		content: 'A';
+		visibility: hidden;
+		width: 0;
+	}
+
+	&__control {
+		width: $toogle-size;
+		height: $toogle-size;
+		border-radius: 50%;
+		box-sizing: border-box;
+		border: solid 1.5px currentColor;
+		position: relative;
+		align-items: center;
+
+		&:after {
+			position: absolute;
+			content: '';
+			left: 0;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			margin: auto;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+		}
+
+		&.is-checkbox {
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			svg {
+				display: none;
+				width: 20px;
+				height: 20px;
+				fill: currentColor;
+			}
+
+			&:after {
+				content: none;
+			}
+		}
+	}
+
+	// Some extra specificity for themes compatibility.
+	&-input[type="radio"],
+	&-input[type="checkbox"] {
+		cursor: pointer;
+		top: auto;
+
+		&, &:disabled {
+			position: absolute;
+			z-index: 1;
+			opacity: 0;
+			width: $toogle-size;
+			height: $toogle-size;
+			margin: 0;
+			padding: 0;
+			border: none;
+		}
+	}
+
+	// Checked state.
+	&__control.is-checked,
+	&-input:checked + &__control {
+		svg {
+			display: revert;
+		}
+
+		&::after {
+			background: currentColor;
+		}
+	}
+
+	&-input:disabled {
+		cursor: not-allowed;
+
+		& + .sensei-lms-question-block__option-toggle__control {
+			opacity: 0.3;
+		}
+	}
+
+	&-input:focus-visible + &__control {
+		$box-shadow: 0 0 0 1.5px;
+
+		// Default styles for Firefox and Chrome.
+		box-shadow: $box-shadow Highlight;
+		box-shadow: $box-shadow -webkit-focus-ring-color;
+	}
+}

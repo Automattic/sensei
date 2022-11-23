@@ -1,0 +1,271 @@
+$small-screen-break: 600px;
+$small-vertical-padding: 20px;
+$small-horizontal-padding: 20px;
+$big-vertical-padding: 60px;
+$big-horizontal-padding: 80px;
+
+@import '../css/font-recoleta';
+@import 'fullscreen';
+@import 'animations';
+@import 'navigation-bar/style';
+@import 'purpose/style';
+@import 'usage-tracking/style';
+@import 'newsletter/style';
+@import 'features/style';
+
+.sensei-setup-wizard-page {
+	overflow-x: hidden;
+	background-color: #b7c9be;
+}
+
+.sensei-setup-wizard {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	color: #000;
+	font-size: 16px;
+
+	a {
+		color: inherit;
+		text-decoration: underline;
+	}
+
+	p {
+		font-size: 16px;
+		line-height: 1.4;
+		margin: 0 0 40px;
+	}
+
+	h2, h3 {
+		color: #000;
+	}
+
+	&__sensei-logo {
+		display: flex;
+		margin: $small-horizontal-padding;
+		align-items: center;
+		font-family: $recoleta-font-family;
+		font-size: 18px;
+
+		@media (min-width: $small-screen-break) {
+			margin: 24px;
+		}
+
+		> svg {
+			width: 32px;
+			height: 32px;
+			margin-right: 8px;
+		}
+	}
+
+	&__step-title {
+		font-family: $recoleta-font-family;
+		font-size: 28px;
+		font-weight: 400;
+		line-height: 1.1;
+		margin: 0 0 12px;
+
+		@media (min-width: $small-screen-break) {
+			font-size: 44px;
+		}
+	}
+
+	// Container.
+	&__container {
+		flex: 1;
+		padding: $small-vertical-padding $small-horizontal-padding;
+
+		display: flex;
+		flex-direction: column;
+
+		@media (min-width: $small-screen-break) {
+			padding: $big-vertical-padding $big-horizontal-padding;
+		}
+	}
+
+	// Main loader.
+	&__main-loader {
+		flex: 1;
+		align-self: center;
+	}
+
+	// Button styles.
+	&__button {
+		border-radius: 4px;
+		padding: 10px 24px;
+		font-size: 14px;
+		cursor: pointer;
+		transition: 0.3s opacity;
+
+		&--primary {
+			background-color: #101517;
+			color: #ffffff;
+			border: none;
+		}
+
+		&--secondary {
+			color: #101517;
+			border: solid 1px currentColor;
+			background-color: transparent
+		}
+
+		&--link {
+			padding: 0;
+			border: none;
+			background: transparent;
+			text-decoration: underline;
+		}
+
+		&:disabled,
+		&[disabled] {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+
+	// Text control.
+	&__text-control {
+		.components-base-control__label {
+			font-size: 14px;
+		}
+
+		.components-text-control__input {
+			height: 36px;
+			border-radius: 5px;
+			margin: 0;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	// Actions.
+	&__actions {
+		&--full-width {
+			text-align: center;
+
+			> * {
+				width: 100%;
+			}
+		}
+	}
+
+	&__action-skip {
+		padding-top: 18px;
+		display: block;
+
+		a {
+			font-size: 14px;
+		}
+	}
+
+	&__error-notice {
+		text-align: left;
+		margin: 0 0 32px;
+		animation: 0.5s slideDown;
+
+		.components-notice__actions {
+			margin-top: 5px;
+		}
+
+		.components-notice__action.components-button {
+			margin-left: 0;
+		}
+	}
+
+	// Content centered in full size.
+	&__full-centered-step {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		min-height: 440px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		animation: 0.5s fadeIn;
+		padding: $small-vertical-padding $small-horizontal-padding;
+		box-sizing: border-box;
+
+		@media (min-width: $small-screen-break) {
+			padding: $big-vertical-padding $big-horizontal-padding;
+		}
+	}
+
+	&__full-centered-content {
+		width: 100%;
+		max-width: 520px;
+	}
+
+	// Columns.
+	&__content {
+		margin: 0 auto;
+		animation: 0.5s fadeIn;
+
+		@media (min-width: $small-screen-break) {
+			text-align: center;
+			max-width: 414px;
+		}
+	}
+
+	&__illustration {
+		flex: 1;
+		animation: 0.5s slideInFromBottom;
+		background-repeat: no-repeat;
+		background-position: 50% 0;
+		background-size: 100% auto;
+		margin: 64px 0 (-$small-vertical-padding);
+
+		@media (min-width: $small-screen-break) {
+			margin-bottom: -$big-vertical-padding;
+		}
+
+		@media (min-width: 1010px) {
+			background-size: auto;
+		}
+
+		&--tracking {
+			background-image: url("../images/onboarding-improve-experience-illustration.png");
+		}
+
+		&--newsletter {
+			background-image: url("../images/onboarding-newsletter-illustration.png");
+			margin-left: -$small-vertical-padding;
+			margin-right: -$small-vertical-padding;
+		}
+	}
+
+	&__fade-in {
+		animation: 0.5s fadeIn;
+	}
+}
+
+// Background animation with the books illustration.
+.sensei-setup-wizard {
+	background-image: url("../images/onboarding-bottom-left-illustration.png"), url("../images/onboarding-top-right-illustration.png");
+	background-position: -358px 100%, calc( 100% + 355px ) 0;
+	background-repeat: no-repeat;
+	transition: 0.5s background-position;
+	background-size: auto 270px;
+
+	@media (min-width: 1100px) and (min-height: 700px) {
+		background-size: auto;
+	}
+
+	@at-root {
+		.sensei-setup-wizard-page--welcome &,
+		.sensei-setup-wizard-page--features & {
+			@media (min-height: 615px) {
+				background-position: -83px 100%, calc( 100% + 81px ) 0;
+			}
+
+			@media (min-width: 1100px) and (min-height: 700px) {
+				background-position: 0 100%, 100% 0;
+			}
+		}
+	}
+}

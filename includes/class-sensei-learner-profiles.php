@@ -31,12 +31,31 @@ class Sensei_Learner_Profiles {
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
 
+		// Scripts for frontend.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 		// Set heading for courses section of learner profiles
 		add_action( 'sensei_learner_profile_info', array( $this, 'learner_profile_courses_heading' ), 30, 1 );
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
-	} // End __construct()
+	}
+
+	/**
+	 * Enqueue frontend JavaScripts.
+	 *
+	 * @since  3.0.0
+	 * @access private
+	 */
+	public function enqueue_scripts() {
+		global $wp_query;
+
+		if ( ! Sensei_Utils::get_setting_as_flag( 'js_disable', 'sensei_settings_js_disable' ) &&
+			isset( $wp_query->query_vars['learner_profile'] ) ) {
+
+			wp_enqueue_script( Sensei()->token . '-user-dashboard' );
+		}
+	}
 
 	/**
 	 * Setup permalink structure for learner profiles
@@ -73,7 +92,7 @@ class Sensei_Learner_Profiles {
 
 			$name = Sensei_Learner::get_full_name( $learner_user->ID );
 
-			// translators: Placeholder is the full name of the learner.
+			// translators: Placeholder is the name of the student.
 			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) . ' ' . $sep . ' ';
 		}
 		return $title;
@@ -115,27 +134,6 @@ class Sensei_Learner_Profiles {
 	}
 
 	/**
-	 * Load content for learner profiles
-	 *
-	 * @since  1.4.0
-	 * @return void
-	 */
-	public function content() {
-		global $wp_query;
-
-		_deprecated_function( __METHOD__, '2.2.0' );
-
-		if ( isset( Sensei()->settings->settings['learner_profile_enable'] ) && Sensei()->settings->settings['learner_profile_enable'] ) {
-
-			if ( isset( $wp_query->query_vars['learner_profile'] ) ) {
-
-				Sensei_Templates::get_template( 'learner-profile/learner-info.php' );
-
-			}
-		}
-	}
-
-	/**
 	 * Set heading for courses section of learner profiles
 	 *
 	 * @since  1.4.0
@@ -149,7 +147,7 @@ class Sensei_Learner_Profiles {
 			$name = $user->display_name;
 		}
 		$name = apply_filters( 'sensei_learner_profile_courses_heading_name', $name );
-		// translators: Placeholder is the first name or the display name of the user.
+		// translators: Placeholder is the name of the student.
 		echo '<h2>' . wp_kses_post( apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) ) . '</h2>';
 	}
 
@@ -235,19 +233,7 @@ class Sensei_Learner_Profiles {
 		return $classes;
 	}
 
-	/**
-	 * Deprecate the deprecate_sensei_learner_profile_content hook
-	 *
-	 * @since 1.9.0
-	 */
-	public static function deprecate_sensei_learner_profile_content_hook() {
-
-		sensei_do_deprecated_action( 'sensei_learner_profile_content', '1.9.0', 'sensei_learner_profile_content_before' );
-
-	}
-
-
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Learner_Profiles

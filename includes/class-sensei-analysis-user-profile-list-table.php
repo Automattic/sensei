@@ -12,8 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.2.0
  */
 class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
+
 	public $user_id;
-	public $page_slug = 'sensei_analysis';
+	public $page_slug;
 
 	/**
 	 * Constructor
@@ -22,7 +23,8 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 * @return  void
 	 */
 	public function __construct( $user_id = 0 ) {
-		$this->user_id = intval( $user_id );
+		$this->user_id   = intval( $user_id );
+		$this->page_slug = Sensei_Analysis::PAGE_SLUG;
 
 		// Load Parent token into constructor
 		parent::__construct( 'analysis_user_profile' );
@@ -30,9 +32,10 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		// Actions
 		add_action( 'sensei_before_list_table', array( $this, 'data_table_header' ) );
 		add_action( 'sensei_after_list_table', array( $this, 'data_table_footer' ) );
+		remove_action( 'sensei_before_list_table', array( $this, 'table_search_form' ), 5 );
 
 		add_filter( 'sensei_list_table_search_button_text', array( $this, 'search_button' ) );
-	} // End __construct()
+	}
 
 	/**
 	 * Define the columns that are going to be used in the table
@@ -60,11 +63,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	function get_sortable_columns() {
 		$columns = array(
-			'title'     => array( 'title', false ),
-			'started'   => array( 'started', false ),
-			'completed' => array( 'completed', false ),
-			'status'    => array( 'status', false ),
-			'percent'   => array( 'percent', false ),
+			'completed' => array( 'comment_date', false ),
 		);
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', $columns );
 		return $columns;
@@ -82,7 +81,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -95,7 +94,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		$per_page = $this->get_items_per_page( 'sensei_comments_per_page' );
@@ -105,7 +104,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		$offset = 0;
 		if ( ! empty( $paged ) ) {
 			$offset = $per_page * ( $paged - 1 );
-		} // End If Statement
+		}
 
 		$args = array(
 			'number'  => $per_page,
@@ -115,7 +114,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
-		} // End If Statement
+		}
 
 		$this->items = $this->get_course_statuses( $args );
 
@@ -147,7 +146,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		if ( ! empty( $_GET['orderby'] ) ) {
 			if ( array_key_exists( esc_html( $_GET['orderby'] ), $this->get_sortable_columns() ) ) {
 				$orderby = esc_html( $_GET['orderby'] );
-			} // End If Statement
+			}
 		}
 
 		// Handle order
@@ -160,7 +159,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		$search = false;
 		if ( ! empty( $_GET['s'] ) ) {
 			$search = esc_html( $_GET['s'] );
-		} // End If Statement
+		}
 		$this->search = $search;
 
 		$args = array(
@@ -169,7 +168,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		);
 		if ( $this->search ) {
 			$args['search'] = $this->search;
-		} // End If Statement
+		}
 
 		// Start the csv with the column headings
 		$column_headers = array();
@@ -231,7 +230,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			if ( is_numeric( $course_percent ) ) {
 				$course_percent .= '%';
 			}
-		} // End If Statement
+		}
 		$column_data = apply_filters(
 			'sensei_analysis_user_profile_column_data',
 			array(
@@ -271,6 +270,10 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			'status'  => 'any',
 		);
 
+		if ( ! current_user_can( 'manage_sensei' ) ) {
+			$activity_args['post_author'] = get_current_user_id();
+		}
+
 		$activity_args = apply_filters( 'sensei_analysis_user_profile_filter_statuses', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice
@@ -300,7 +303,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		}
 
 		return $statuses;
-	} // End get_course_statuses()
+	}
 
 	/**
 	 * Sets output when no items are found
@@ -311,7 +314,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	public function no_items() {
 		echo esc_html__( 'No courses found.', 'sensei-lms' );
-	} // End no_items()
+	}
 
 	/**
 	 * Output for table heading
@@ -321,6 +324,31 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	public function data_table_header() {
 		echo '<strong>' . esc_html__( 'Courses', 'sensei-lms' ) . '</strong>';
+	}
+
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination.
+	 *
+	 * @param string $which The location of the extra table nav markup: 'top' or 'bottom'.
+	 */
+	public function extra_tablenav( $which ) {
+		?>
+		<div class="alignleft actions">
+			<?php
+			parent::extra_tablenav( $which );
+			?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Output search form for table.
+	 */
+	public function table_search_form() {
+		if ( empty( $_REQUEST['s'] ) && ! $this->has_items() ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
 	}
 
 	/**
@@ -340,7 +368,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 			),
 			admin_url( 'admin.php' )
 		);
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download-' . $report, '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
 	}
 
 	/**
@@ -353,7 +381,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 		return __( 'Search Courses', 'sensei-lms' );
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Analysis_User_Profile_List_Table

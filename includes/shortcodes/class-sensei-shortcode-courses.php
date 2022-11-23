@@ -42,7 +42,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 	protected $order;
 
 	/**
-	 * @var category can be completed or active or all
+	 * @var int|string course category id, slug or name
 	 */
 	protected $category;
 
@@ -57,7 +57,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 	protected $ids;
 
 	/**
-	 * @var exclude courses by id
+	 * @var string csv of course ids
 	 */
 	protected $exclude;
 
@@ -139,7 +139,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 						$teachers[ $index ] = $user->ID;
 
 					}
-				} // end for each
+				}
 
 				$teacher_query_by = 'author__in';
 				$this->teacher    = $teachers;
@@ -153,7 +153,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 			// attach teacher query by and teacher query value to the course query
 			$query_args[ $teacher_query_by ] = $this->teacher;
 
-		}// end if empty teacher
+		}
 
 		// add the course category taxonomy query
 		if ( ! empty( $this->category ) ) {
@@ -191,7 +191,7 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
 		$this->query = new WP_Query( $query_args );
 
-	}//end setup_course_query()
+	}
 
 	/**
 	 * Rendering the shortcode this class is responsible for.
@@ -214,6 +214,6 @@ class Sensei_Shortcode_Courses implements Sensei_Shortcode_Interface {
 
 		return $shortcode_output;
 
-	}//end render()
+	}
 
 }

@@ -1,0 +1,16 @@
+{
+	"name": "sensei-lms/question-description",
+	"title": "Description",
+	"description": "Question Description.",
+	"parent": [ "sensei-lms/quiz-question" ],
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"id": {
+			"type": "integer"
+		}
+	}
+}

@@ -2,15 +2,58 @@
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
 	"require-dev": {
-		"php": "^5.4 || ^7",
-		"apigen/apigen": "*",
-		"phpunit/phpunit": "^6.5",
-		"dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
-		"phpcompatibility/phpcompatibility-wp": "^2.0",
-		"squizlabs/php_codesniffer": "^3.3",
-		"wp-coding-standards/wpcs": "^2.2",
-		"sirbrillig/phpcs-variable-analysis": "^2.6",
-		"sirbrillig/phpcs-no-get-current-user": "^1.0"
+		"php": "^7.2 || ^8",
+		"bamarni/composer-bin-plugin": "^1.4",
+		"dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
+		"phpcompatibility/phpcompatibility-wp": "2.1.2",
+		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
+		"sirbrillig/phpcs-variable-analysis": "2.11.2",
+		"squizlabs/php_codesniffer": "3.6.0",
+		"wp-coding-standards/wpcs": "2.3.0",
+		"yoast/phpunit-polyfills": "1.0.3"
 	},
-	"prefer-stable": true
+	"prefer-stable": true,
+	"archive": {
+		"exclude": [
+			"/*",
+			"!/assets/*/*.js",
+			"!/assets/*/*/*.js",
+			"!/assets/*/*/*/*.js",
+			"!/assets/*/*/*/*/*.js",
+			"!/assets/*/*.json",
+			"!/assets/*/*/*.json",
+			"!/assets/*/*/*/*.json",
+			"!/assets/*/*/*/*/*.json",
+			"!/assets/dist",
+			"!/assets/vendor",
+			"!/sample-data",
+			"!/changelog.txt",
+			"!/CONTRIBUTING.md",
+			"!/LICENSE",
+			"!/includes",
+			"!/lang",
+			"!/readme.txt",
+			"!/templates",
+			"!/themes",
+			"!/uninstall.php",
+			"!/widgets",
+			"!/sensei-lms.php",
+			"!/wpml-config.xml",
+			".DS_Store",
+			".*",
+			"*.test.js",
+			"/assets/tests-helper/*.js"
+		]
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"sort-packages": true,
+		"platform": {
+			"php": "7.2"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"bamarni/composer-bin-plugin": true
+		}
+	}
 }

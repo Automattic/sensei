@@ -1,0 +1,15 @@
+.sensei-export {
+
+	&__select-content {
+
+		&__options {
+			margin: 12px 0;
+		}
+		&__option {
+
+			.components-base-control__field {
+				margin: 0;
+			}
+		}
+	}
+}

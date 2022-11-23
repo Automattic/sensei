@@ -1,0 +1,24 @@
+.sensei-lms-question-block__grade-toolbar {
+	align-items: center;
+	padding: 0 12px;
+	input[type=number] {
+		width: 100px;
+		font-weight: bold;
+		height: 32px;
+		min-height: 0;
+		background: none;
+		border-width: 1px;
+
+		&:not(:focus) {
+			border-color: currentColor;
+		}
+
+		border-radius: 2px;
+		outline: none;
+	}
+	.components-base-control__field {
+		margin: 0;
+	}
+
+}
+

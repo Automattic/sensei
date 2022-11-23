@@ -1,7 +1,21 @@
 <?php
+
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-} // End if().
+}
 
 /**
  * Responsible for loading Sensei and setting up the Main WordPress hooks.
@@ -11,6 +25,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Sensei_Main {
+	const COMMENT_COUNT_TRANSIENT_PREFIX = 'sensei_comment_counts_';
+	const LEGACY_FLAG_OPTION             = 'sensei-legacy-flags';
+	const LEGACY_FLAG_WITH_FRONT         = 'with_front';
 
 	/**
 	 * @var string
@@ -28,6 +45,15 @@ class Sensei_Main {
 	 * Main reference to the plugins current version
 	 */
 	public $version;
+
+	/**
+	 * Main reference to the plugin's version when it was installed.
+	 * Or false if the install version is not available.
+	 *
+	 * @since 4.7.0
+	 * @var string|false
+	 */
+	public $install_version;
 
 	/**
 	 * Public token, referencing for the text domain.
@@ -52,6 +78,13 @@ class Sensei_Main {
 	 * @var Sensei_Settings
 	 */
 	public $settings;
+
+	/**
+	 * Script and stylesheet loading.
+	 *
+	 * @var Sensei_Assets
+	 */
+	public $assets;
 
 	/**
 	 * @var Sensei_Course_Results
@@ -82,6 +115,11 @@ class Sensei_Main {
 	 * @var Sensei_Question
 	 */
 	public $question;
+
+	/**
+	 * @var Sensei_Messages
+	 */
+	public $messages;
 
 	/**
 	 * @var Sensei_Admin
@@ -124,7 +162,7 @@ class Sensei_Main {
 	public $teacher;
 
 	/**
-	 * @var Sensei_Learners
+	 * @var Sensei_Learner_Management
 	 */
 	public $learners;
 
@@ -146,16 +184,18 @@ class Sensei_Main {
 	public $analysis;
 
 	/**
-	 * @var Sensei_REST_API_V1
+	 * Internal REST API.
+	 *
+	 * @var Sensei_REST_API_Internal
 	 */
-	public $rest_api;
+	public $rest_api_internal;
 
 	/**
 	 * Global Usage Tracking object.
 	 *
 	 * @var Sensei_Usage_Tracking
 	 */
-	private $usage_tracking;
+	public $usage_tracking;
 
 	/**
 	 * @var $id
@@ -163,16 +203,22 @@ class Sensei_Main {
 	private $id;
 
 	/**
+	 * Shortcode loader.
+	 *
 	 * @var Sensei_Shortcode_Loader
 	 */
 	private $shortcode_loader;
 
 	/**
+	 * View Helper.
+	 *
 	 * @var Sensei_View_Helper
 	 */
 	public $view_helper;
 
 	/**
+	 * Experimental features.
+	 *
 	 * @var Sensei_Feature_Flags
 	 */
 	public $feature_flags;
@@ -180,9 +226,72 @@ class Sensei_Main {
 	/**
 	 * The scheduler which is responsible to recalculate user enrolments.
 	 *
-	 * @var Sensei_Enrolment_Calculation_Scheduler
+	 * @var Sensei_Enrolment_Job_Scheduler
 	 */
 	private $enrolment_scheduler;
+
+	/**
+	 * Setup wizard.
+	 *
+	 * @var Sensei_Setup_Wizard
+	 */
+	public $setup_wizard;
+
+	/**
+	 * Blocks.
+	 *
+	 * @var Sensei_Blocks
+	 */
+	public $blocks;
+
+	/**
+	 * Admin notices.
+	 *
+	 * @var Sensei_Admin_Notices
+	 */
+	public $admin_notices;
+
+	/**
+	 * Course progress repository.
+	 *
+	 * @var Course_Progress_Repository_Interface
+	 */
+	public $course_progress_repository;
+
+	/**
+	 * Lesson progress repository.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	public $lesson_progress_repository;
+
+	/**
+	 * Quiz progress repository.
+	 *
+	 * @var Quiz_Progress_Repository_Interface
+	 */
+	public $quiz_progress_repository;
+
+	/**
+	 * Quiz submission repository.
+	 *
+	 * @var Submission_Repository_Interface
+	 */
+	public $quiz_submission_repository;
+
+	/**
+	 * Quiz answer repository.
+	 *
+	 * @var Answer_Repository_Interface
+	 */
+	public $quiz_answer_repository;
+
+	/**
+	 * Quiz grade repository.
+	 *
+	 * @var Grade_Repository_Interface
+	 */
+	public $quiz_grade_repository;
 
 	/**
 	 * Constructor method.
@@ -198,6 +307,7 @@ class Sensei_Main {
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
+		$this->install_version       = get_option( 'sensei-install-version' );
 
 		// Initialize the core Sensei functionality
 		$this->init();
@@ -207,8 +317,6 @@ class Sensei_Main {
 			$this->install();
 		}
 
-		// Run this on activation.
-		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activation' ) );
 		// Run this on deactivation.
 		register_deactivation_hook( $this->main_plugin_file_name, array( $this, 'deactivation' ) );
 
@@ -218,7 +326,16 @@ class Sensei_Main {
 		// load all hooks
 		$this->load_hooks();
 
-	} // End __construct()
+		/**
+		 * Fires once all global objects have been set in Sensei.
+		 *
+		 * @hook sensei_loaded
+		 * @since 3.6.0
+		 *
+		 * @param {Sensei_Main} $sensei Sensei object.
+		 */
+		do_action( 'sensei_loaded', $this );
+	}
 
 	/**
 	 * Load the foundations of Sensei.
@@ -231,28 +348,9 @@ class Sensei_Main {
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
+		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
-
-		$this->maybe_init_email_signup_modal();
-	}
-
-	/**
-	 * Load the email signup modal if we haven't already.
-	 */
-	private function maybe_init_email_signup_modal() {
-		if ( get_option( 'sensei_show_email_signup_form', false ) ) {
-			add_action( 'admin_init', array( $this, 'load_email_signup_modal' ) );
-		}
-	}
-
-	/**
-	 * Load the email signup modal form.
-	 *
-	 * @access private
-	 */
-	public function load_email_signup_modal() {
-		Sensei_Email_Signup_Form::instance()->init();
-		delete_option( 'sensei_show_email_signup_form' );
+		$this->initialize_cli();
 	}
 
 	/**
@@ -269,8 +367,8 @@ class Sensei_Main {
 
 		if ( is_null( self::$_instance ) ) {
 
-			// Sensei requires a reference to the main Sensei plugin file
-			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/sensei-lms.php';
+			// Sensei requires a reference to the main Sensei plugin file.
+			$sensei_main_plugin_file = SENSEI_LMS_PLUGIN_FILE;
 
 			self::$_instance = new self( $sensei_main_plugin_file, $args );
 
@@ -278,7 +376,7 @@ class Sensei_Main {
 
 		return self::$_instance;
 
-	} // end instance()
+	}
 
 	/**
 	 * This function is linked into the activation
@@ -317,49 +415,61 @@ class Sensei_Main {
 	}
 
 	/**
+	 * Initialize the cache groups used in Sensei
+	 *
+	 * @since 4.6.0
+	 */
+	protected function initialize_cache_groups() {
+		wp_cache_add_non_persistent_groups( 'sensei/temporary' );
+	}
+
+	/**
 	 * Load the properties for the main Sensei object
 	 *
 	 * @since 1.9.0
 	 */
 	public function initialize_global_objects() {
-		// Setup settings
+		// Setup settings.
 		$this->settings = new Sensei_Settings();
 
-		// feature flags
+		// Asset loading.
+		$this->assets = new Sensei_Assets( $this->plugin_url, $this->plugin_path, $this->version );
+
+		// Feature flags.
 		$this->feature_flags = new Sensei_Feature_Flags();
 
-		// load the shortcode loader into memory, so as to listen to all for
-		// all shortcodes on the front end
+		// Load the shortcode loader into memory, so as to listen to all for
+		// all shortcodes on the front end.
 		$this->shortcode_loader = new Sensei_Shortcode_Loader();
 
 		// Setup post types.
 		$this->post_types = new Sensei_PostTypes();
 
-		// Lad the updates class
-		$this->updates = new Sensei_Updates( $this );
-
-		// Load Course Results Class
+		// Load Course Results Class.
 		$this->course_results = new Sensei_Course_Results();
 
-		// Load the teacher role
+		// Load the teacher role.
 		$this->teacher = new Sensei_Teacher();
 
-		// Add the Course class
+		// Add the Course class.
 		$this->course = $this->post_types->course;
 
-		// Add the lesson class
+		// Add the lesson class.
 		$this->lesson = $this->post_types->lesson;
 
-		// Add the question class
+		// Add the question class.
 		$this->question = $this->post_types->question;
 
-		// Add the quiz class
+		// Add the question class.
+		$this->messages = $this->post_types->messages;
+
+		// Add the quiz class.
 		$this->quiz = $this->post_types->quiz;
 
-		// load the modules class after all plugsin are loaded
+		// Load the modules class after all plugins are loaded.
 		$this->load_modules_class();
 
-		// Load Learner Management Functionality
+		// Load Learner Management Functionality.
 		$this->learners = new Sensei_Learner_Management( $this->main_plugin_file_name );
 
 		$this->view_helper = new Sensei_View_Helper();
@@ -373,33 +483,61 @@ class Sensei_Main {
 		// data will be sent.
 		$this->usage_tracking->schedule_tracking_task();
 
-		Sensei_Blocks::instance()->init();
+		$this->blocks = new Sensei_Blocks();
+
+		Sensei_Learner::instance()->init();
 		Sensei_Course_Enrolment_Manager::instance()->init();
-		$this->enrolment_scheduler = Sensei_Enrolment_Calculation_Scheduler::instance();
+		$this->enrolment_scheduler = Sensei_Enrolment_Job_Scheduler::instance();
+		$this->enrolment_scheduler->init();
+		Sensei_Data_Port_Manager::instance()->init();
+		Sensei_Course_Theme_Option::instance()->init();
+		Sensei_Course_Theme::instance()->init();
+		Sensei_Course_Theme_Editor::instance()->init();
+		new Sensei_Customizer();
+
+		// Setup Wizard.
+		$this->setup_wizard = Sensei_Setup_Wizard::instance();
+
+		// Sensei Home.
+		Sensei_Home::instance()->init();
+
+		Sensei_Scheduler::init();
+
+		// Block patterns.
+		Sensei_Block_Patterns::instance()->init();
+
+		// Editor Wizard.
+		Sensei_Editor_Wizard::instance()->init();
+
+		// Load Analysis Reports.
+		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+		// Admin notices.
+		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
-			// Load Admin Class
-			$this->admin = new Sensei_Admin( $this->main_plugin_file_name );
+			// Load Admin Class.
+			$this->admin = new Sensei_Admin();
 
-			// Load Analysis Reports
-			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+			new Sensei_Import();
+			new Sensei_Export();
+			new Sensei_Exit_Survey();
 
-			if ( $this->feature_flags->is_enabled( 'rest_api_testharness' ) ) {
-				$this->test_harness = new Sensei_Admin_Rest_Api_Testharness( $this->main_plugin_file_name );
-			}
+			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
 
 			// Load Frontend Class
 			$this->frontend = new Sensei_Frontend();
 
-			// Load notice Class
-			$this->notices = new Sensei_Notices();
-
 			// Load built in themes support integration
 			$this->theme_integration_loader = new Sensei_Theme_Integration_Loader();
 
 		}
+		Sensei_Course_Video_Settings::instance()->init( $this );
+
+		// Load notice Class
+		$this->notices = new Sensei_Notices();
 
 		// Load Grading Functionality
 		$this->grading = new Sensei_Grading( $this->main_plugin_file_name );
@@ -413,7 +551,30 @@ class Sensei_Main {
 		// Load WPML compatibility class
 		$this->Sensei_WPML = new Sensei_WPML();
 
-		$this->rest_api = new Sensei_REST_API_V1();
+		$this->rest_api_internal = new Sensei_REST_API_Internal();
+
+		// Student progress repositories.
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+
+		// Quiz submission repositories.
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
+	}
+
+	/**
+	 * Load the WP-CLI commands.
+	 *
+	 * @since 4.3.0
+	 */
+	private function initialize_cli() {
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			require_once $this->resolve_path( 'includes/class-sensei-cli.php' );
+
+			new Sensei_CLI();
+		}
 	}
 
 	/**
@@ -428,7 +589,7 @@ class Sensei_Main {
 		add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
 		// Filter comment counts
-		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 10, 2 );
+		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 999, 2 );
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
 
@@ -440,7 +601,7 @@ class Sensei_Main {
 
 		// check flush the rewrite rules if the option sensei_flush_rewrite_rules option is 1
 		add_action( 'admin_init', array( $this, 'flush_rewrite_rules' ), 101 );
-		add_action( 'admin_init', array( $this, 'update' ) );
+		add_action( 'init', array( $this, 'update' ) );
 
 		// Add plugin action links filter
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->main_plugin_file_name ), array( $this, 'plugin_action_links' ) );
@@ -454,20 +615,23 @@ class Sensei_Main {
 	}
 
 	/**
-	 * Run Sensei updates.
+	 * Run Sensei automatic data updates. This has been unused for many versions and should be considered destructive.
 	 *
-	 * @access  public
+	 * @deprecated 3.0.0
 	 * @since   1.1.0
+	 *
 	 * @return  void
 	 */
 	public function run_updates() {
+		_deprecated_function( __METHOD__, '3.0.0' );
+
 		// Run updates if administrator
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'manage_sensei' ) ) {
 
 			$this->updates->update();
 
-		} // End if().
-	} // End run_updates()
+		}
+	}
 
 	/**
 	 * Register the widgets.
@@ -492,11 +656,11 @@ class Sensei_Main {
 				require_once $this->plugin_path . 'widgets/class-sensei-' . $key . '-widget.php';
 				register_widget( 'Sensei_' . $value . '_Widget' );
 			}
-		} // End foreach().
+		}
 
 		do_action( 'sensei_register_widgets' );
 
-	} // End register_widgets()
+	}
 
 	/**
 	 * Load the plugin's localisation file.
@@ -509,7 +673,7 @@ class Sensei_Main {
 
 		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
-	} // End load_localisation()
+	}
 
 	/**
 	 * Load the plugin textdomain from the main WordPress "languages" folder.
@@ -519,10 +683,9 @@ class Sensei_Main {
 	 * @return  void
 	 */
 	public function load_plugin_textdomain() {
-		global $wp_version;
 		$domain = 'sensei-lms';
 
-		if ( version_compare( $wp_version, '4.7', '>=' ) && is_admin() ) {
+		if ( is_admin() ) {
 			$wp_user_locale = get_user_locale();
 		} else {
 			$wp_user_locale = get_locale();
@@ -533,20 +696,17 @@ class Sensei_Main {
 		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
 		load_plugin_textdomain( $domain, false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 
-	} // End load_plugin_textdomain()
+	}
 
 	/**
 	 * Run on activation.
 	 *
-	 * @access public
 	 * @since  1.0.0
-	 * @return void
+	 * @deprecated 3.0.0
 	 */
 	public function activation() {
-
-		$this->register_plugin_version();
-
-	} // End activation()
+		_deprecated_function( __METHOD__, '3.0.0' );
+	}
 
 	/**
 	 * Run on activation.
@@ -557,9 +717,9 @@ class Sensei_Main {
 	 */
 	public function deactivation() {
 		$this->usage_tracking->unschedule_tracking_task();
-		$this->enrolment_scheduler->stop();
+		Sensei_Scheduler::instance()->cancel_all_jobs();
+		Sensei_Data_Port_Manager::instance()->cancel_all_jobs();
 	}
-
 
 	/**
 	 * Register activation hooks.
@@ -573,28 +733,81 @@ class Sensei_Main {
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'activate_sensei' ) );
 		register_activation_hook( $this->main_plugin_file_name, array( $this, 'initiate_rewrite_rules_flush' ) );
 
-	} // End install()
+	}
 
 	/**
-	 * Check for plugin updates.
+	 * Checks for plugin update tasks and ensures the current version is set.
 	 *
 	 * @since 2.0.0
 	 */
 	public function update() {
-		if ( ! version_compare( $this->version, get_option( 'sensei-version' ), '>' ) ) {
-			return;
+		$current_version = get_option( 'sensei-version' );
+		$is_new_install  = ! $current_version && ! $this->course_exists();
+		$is_upgrade      = $current_version && version_compare( $this->version, $current_version, '>' );
+
+		// Make sure the current version is up-to-date.
+		if ( ! $current_version || $is_upgrade ) {
+			$this->register_plugin_version( $is_new_install );
 		}
 
-		// Mark site as having enrolment data from pre-3.0.0.
-		if ( version_compare( '3.0.0-dev', get_option( 'sensei-version' ), '>' ) ) {
-			update_option( 'sensei_enrolment_legacy', time() );
+		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
+		$this->updates->run_updates();
+	}
+
+	/**
+	 * Sets a legacy flag to a boolean value.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param string $flag  Short name for the flag to set.
+	 * @param bool   $value Boolean value to set.
+	 */
+	public function set_legacy_flag( $flag, $value ) {
+		$legacy_flags          = $this->get_legacy_flags();
+		$legacy_flags[ $flag ] = (bool) $value;
+
+		update_option( self::LEGACY_FLAG_OPTION, wp_json_encode( $legacy_flags ) );
+	}
+
+	/**
+	 * Get a legacy flag value.
+	 *
+	 * @param string $flag    Short name for the flag to set.
+	 * @param bool   $default Boolean value to set. Defaults to false.
+	 *
+	 * @return bool
+	 */
+	public function get_legacy_flag( $flag, $default = false ) {
+		$legacy_flags = $this->get_legacy_flags();
+
+		if ( isset( $legacy_flags[ $flag ] ) ) {
+			return (bool) $legacy_flags[ $flag ];
 		}
 
-		// Run updates.
-		$this->register_plugin_version();
+		return (bool) $default;
+	}
 
-		// Flush rewrite cache.
-		$this->initiate_rewrite_rules_flush();
+	/**
+	 * Get the legacy flags that have been set.
+	 *
+	 * @return array
+	 */
+	public function get_legacy_flags() {
+		return json_decode( get_option( self::LEGACY_FLAG_OPTION, '{}' ), true );
+	}
+
+	/**
+	 * Helper function to check to see if any courses exists in the database.
+	 *
+	 * @return bool
+	 */
+	private function course_exists() {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lightweight query run only once before post type is registered.
+		$course_sample_id = (int) $wpdb->get_var( "SELECT `ID` FROM {$wpdb->posts} WHERE `post_type`='course' LIMIT 1" );
+
+		return ! empty( $course_sample_id );
 	}
 
 	/**
@@ -607,28 +820,33 @@ class Sensei_Main {
 	public function activate_sensei() {
 
 		if ( false === get_option( 'sensei_installed', false ) ) {
-			update_option( 'sensei_show_email_signup_form', true );
+			set_transient( 'sensei_activation_redirect', 1, 30 );
+
+			update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 		}
 
-		update_option( 'skip_install_sensei_pages', 0 );
 		update_option( 'sensei_installed', 1 );
 
-	} // End activate_sensei()
+	}
 
 	/**
 	 * Register the plugin's version.
 	 *
 	 * @access public
 	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
 	 * @return void
 	 */
-	private function register_plugin_version() {
+	private function register_plugin_version( $is_new_install ) {
 		if ( isset( $this->version ) ) {
 
 			update_option( 'sensei-version', $this->version );
 
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
 		}
-	} // End register_plugin_version()
+	}
 
 	/**
 	 * Ensure that "post-thumbnails" support is available for those themes that don't register it.
@@ -642,22 +860,7 @@ class Sensei_Main {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
 			add_theme_support( 'post-thumbnails' ); }
 
-	} // End ensure_post_thumbnails_support()
-
-	/**
-	 * template_loader function.
-	 *
-	 * @access public
-	 * @param mixed $template
-	 * @return void
-	 * @deprecated
-	 */
-	public function template_loader( $template = '' ) {
-
-		_deprecated_function( 'Sensei()->template_loader', '1.9.0', 'Use Sensei_Templates::template_loader( $template ) instead' );
-		Sensei_Templates::template_loader( $template );
-
-	} // End template_loader()
+	}
 
 	/**
 	 * Determine the relative path to the plugin's directory.
@@ -680,7 +883,7 @@ class Sensei_Main {
 
 		return $sensei_plugin_path;
 
-	} // End plugin_path()
+	}
 
 	/**
 	 * Retrieve the ID of a specified page setting.
@@ -693,203 +896,7 @@ class Sensei_Main {
 	public function get_page_id( $page ) {
 		$page = apply_filters( 'sensei_get_' . esc_attr( $page ) . '_page_id', get_option( 'sensei_' . esc_attr( $page ) . '_page_id' ) );
 		return ( $page ) ? $page : -1;
-	} // End get_page_id()
-
-	/**
-	 * check_user_permissions function.
-	 *
-	 * @access public
-	 * @param string $page (default: '')
-	 * @deprecated 2.0.0
-	 *
-	 * @return bool
-	 */
-	public function check_user_permissions( $page = '' ) {
-		_deprecated_function( __METHOD__, '2.0.0', null );
-
-		global $current_user, $post;
-
-		$user_allowed = false;
-
-		switch ( $page ) {
-			case 'course-single':
-				// check for prerequisite course or lesson,
-				$course_prerequisite_id = (int) get_post_meta( $post->ID, '_course_prerequisite', true );
-
-				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
-					Sensei_WC::course_update( $post->ID );
-				}
-
-				// Count completed lessons
-				if ( 0 < absint( $course_prerequisite_id ) ) {
-
-					$prerequisite_complete = Sensei_Utils::user_completed_course( $course_prerequisite_id, $current_user->ID );
-
-				} else {
-					$prerequisite_complete = true;
-				} // End if().
-
-				// Handles restrictions on the course
-				if ( ( ! $prerequisite_complete && 0 < absint( $course_prerequisite_id ) ) ) {
-
-					$user_allowed = false;
-					$course_link  = '<a href="' . esc_url( get_permalink( $course_prerequisite_id ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
-
-					// translators: The placeholder %s is a link to the course.
-					$this->notices->add_notice( sprintf( __( 'Please complete the previous %1$s before taking this course.', 'sensei-lms' ), $course_link ), 'info' );
-
-				} elseif ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && Sensei_WC::is_course_purchasable( $post->ID ) && ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
-
-					// translators: The placeholders are the opening and closing tags for a link to log in.
-					$message = sprintf( __( 'Or %1$s login %2$s to access your purchased courses', 'sensei-lms' ), '<a href="' . sensei_user_login_url() . '">', '</a>' );
-					$this->notices->add_notice( $message, 'info' );
-
-				} elseif ( ! Sensei_Utils::user_started_course( $post->ID, $current_user->ID ) ) {
-
-					// users who haven't started the course are allowed to view it
-					$user_allowed = true;
-
-				} else {
-
-					$user_allowed = true;
-
-				} // End if().
-				break;
-			case 'lesson-single':
-				// Check for WC purchase
-				$lesson_course_id = get_post_meta( $post->ID, '_lesson_course', true );
-
-				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
-					Sensei_WC::course_update( $lesson_course_id );
-				}
-				$is_preview = Sensei_Utils::is_preview_lesson( $post->ID );
-
-				if ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) {
-					$user_allowed = true;
-				} elseif ( $this->access_settings() && false == $is_preview ) {
-
-					$user_allowed = true;
-
-				} else {
-					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
-					$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
-					$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
-					if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
-						if ( $is_preview ) {
-							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please purchase the %1$s to access all lessons.', 'sensei-lms' ), $course_link );
-						} else {
-							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Lesson.', 'sensei-lms' ), $course_link );
-						}
-					} else {
-						if ( $is_preview ) {
-							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'This is a preview lesson. Please sign up for the %1$s to access all lessons.', 'sensei-lms' ), $course_link );
-						} else {
-							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting the lesson.', 'sensei-lms' ), $course_link );
-						}
-					} // End if().
-				} // End if().
-				break;
-			case 'quiz-single':
-				$lesson_id        = get_post_meta( $post->ID, '_quiz_lesson', true );
-				$lesson_course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-
-				if ( method_exists( 'Sensei_WC', 'course_update' ) ) {
-					Sensei_WC::course_update( $lesson_course_id );
-				}
-				if ( ( $this->access_settings() && Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) ) || sensei_all_access() ) {
-
-					// Check for prerequisite lesson for this quiz
-					$lesson_prerequisite_id            = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
-					$user_lesson_prerequisite_complete = Sensei_Utils::user_completed_lesson( $lesson_prerequisite_id, $current_user->ID );
-
-					// Handle restrictions
-					if ( sensei_all_access() ) {
-
-						$user_allowed = true;
-
-					} else {
-
-						if ( 0 < absint( $lesson_prerequisite_id ) && ( ! $user_lesson_prerequisite_complete ) ) {
-
-							$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
-							$lesson_link                        = '<a href="' . esc_url( get_permalink( $lesson_prerequisite_id ) ) . '">' . __( 'lesson', 'sensei-lms' ) . '</a>';
-							// translators: The placeholder %1$s is a link to the Lesson.
-							$this->permissions_message['message'] = sprintf( __( 'Please complete the previous %1$s before taking this Quiz.', 'sensei-lms' ), $lesson_link );
-
-						} else {
-
-							$user_allowed = true;
-
-						} // End if().
-					} // End if().
-				} elseif ( $this->access_settings() ) {
-					// Check if the user has started the course
-					if ( is_user_logged_in() && ! Sensei_Utils::user_started_course( $lesson_course_id, $current_user->ID ) && ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) ) {
-
-						$user_allowed                       = false;
-						$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
-						$course_link                        = '<a href="' . esc_url( get_permalink( $lesson_course_id ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
-						$wc_post_id                         = get_post_meta( $lesson_course_id, '_course_woocommerce_product', true );
-						if ( class_exists( 'Sensei_WC' ) && Sensei_WC::is_woocommerce_active() && ( 0 < $wc_post_id ) ) {
-							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please purchase the %1$s before starting this Quiz.', 'sensei-lms' ), $course_link );
-						} else {
-							// translators: The placeholder %1$s is a link to the Course.
-							$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before starting this Quiz.', 'sensei-lms' ), $course_link );
-						} // End if().
-					} else {
-						$user_allowed = true;
-					} // End if().
-				} else {
-					$this->permissions_message['title'] = get_the_title( $post->ID ) . ': ' . __( 'Restricted Access', 'sensei-lms' );
-					$course_link                        = '<a href="' . esc_url( get_permalink( get_post_meta( get_post_meta( $post->ID, '_quiz_lesson', true ), '_lesson_course', true ) ) ) . '">' . __( 'course', 'sensei-lms' ) . '</a>';
-					// translators: The placeholder %1$s is a link to the Course.
-					$this->permissions_message['message'] = sprintf( __( 'Please sign up for the %1$s before taking this Quiz.', 'sensei-lms' ), $course_link );
-				} // End if().
-				break;
-			default:
-				$user_allowed = true;
-				break;
-
-		} // End switch().
-
-		/**
-		 * filter the permissions message shown on sensei post types.
-		 *
-		 * @since 1.8.7
-		 *
-		 * @param array $permissions_message{
-		 *
-		 *   @type string $title
-		 *   @type string $message
-		 *
-		 * }
-		 * @param string $post_id
-		 */
-		$this->permissions_message = apply_filters( 'sensei_permissions_message', $this->permissions_message, $post->ID );
-
-		// add the permissions message to the stack
-		if ( sensei_all_access() || Sensei_Utils::is_preview_lesson( $post->ID ) ) {
-			$user_allowed = true;
-		}
-
-		/**
-		 * Filter the permissions check final result. Which determines if the user has
-		 * access to the given page.
-		 *
-		 * @since 1.0
-		 *
-		 * @param boolean $user_allowed
-		 * @param integer $user_id
-		 */
-		return apply_filters( 'sensei_access_permissions', $user_allowed, $current_user->ID );
-
-	} // End get_placeholder_image()
-
+	}
 
 	/**
 	 * Check if visitors have access permission. If the "access_permission" setting is active, do a log in check.
@@ -904,16 +911,16 @@ class Sensei_Main {
 			return true;
 		}
 
-		if ( isset( $this->settings->settings['access_permission'] ) && ( true == $this->settings->settings['access_permission'] ) ) {
+		if ( sensei_is_login_required() ) {
 			if ( is_user_logged_in() ) {
 				return true;
 			} else {
 				return false;
-			} // End if().
+			}
 		} else {
 			return true;
-		} // End if().
-	} // End access_settings()
+		}
+	}
 
 	/**
 	 * load_class loads in class files
@@ -925,80 +932,181 @@ class Sensei_Main {
 	public function load_class( $class_name = '' ) {
 		if ( '' != $class_name && '' != $this->token ) {
 			require_once dirname( __FILE__ ) . '/class-' . esc_attr( $this->token ) . '-' . esc_attr( $class_name ) . '.php';
-		} // End if().
-	} // End load_class()
+		}
+	}
 
 	/**
-	 * Filtering wp_count_comments to ensure that Sensei comments are ignored
+	 * Filtering wp_count_comments to ensure that Sensei comments are ignored.
 	 *
 	 * @since   1.4.0
 	 * @access  public
-	 * @param  array   $comments
-	 * @param  integer $post_id
-	 * @return array
+	 *
+	 * @param stdClass $comment_counts Counts by comment status.
+	 * @param int      $post_id        Post ID.
+	 *
+	 * @return stdClass
 	 */
-	public function sensei_count_comments( $comments, $post_id ) {
-		global $wpdb;
+	public function sensei_count_comments( $comment_counts, $post_id ) {
+		if (
+			// If comment counts are empty, so far nothing has touched core's counts and we can return early.
+			empty( $comment_counts )
 
+			// If we are getting counts for a specific, non-Sensei post, return early.
+			|| (
+				! empty( $post_id )
+				&& ! in_array( get_post_type( $post_id ), [ 'course', 'lesson', 'quiz' ], true )
+			)
+
+			// If Sensei's comment counts aren't included, we don't need to adjust.
+			|| ! $this->comment_counts_include_sensei_comments( $post_id )
+		) {
+			return $comment_counts;
+		}
+
+		// If there are no Sensei comments to deduct, return early.
+		$sensei_counts = $this->get_sensei_comment_counts( $post_id );
+		if ( empty( $sensei_counts ) ) {
+			return $comment_counts;
+		}
+
+		// Subtract Sensei's comment counts from all the comment counts.
+		foreach ( array_keys( (array) $comment_counts ) as $count_type ) {
+			if ( isset( $sensei_counts[ $count_type ] ) ) {
+				$comment_counts->{$count_type} = max( 0, (int) $comment_counts->{$count_type} - $sensei_counts[ $count_type ] );
+			}
+		}
+
+		return $comment_counts;
+	}
+
+	/**
+	 * Get if the comment counts include Sensei comments.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return bool
+	 */
+	private function comment_counts_include_sensei_comments( $post_id ) {
+		// On a clean install, WordPress does not include Sensei's comments in its count.
+		$includes_sensei_comments = false;
+
+		// WooCommerce includes Sensei's comments in its counts.
+		if (
+			empty( $post_id )
+			&& has_filter( 'wp_count_comments', [ 'WC_Comments', 'wp_count_comments' ] )
+		) {
+			$includes_sensei_comments = true;
+		}
+
+		/**
+		 * Available to override if `wp_count_comments()` includes Sensei's comments in the count.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $includes_sensei_comments Whether the count already includes Sensei's comments.
+		 * @param int  $post_id                  Post ID.
+		 */
+		return apply_filters( 'sensei_comment_counts_include_sensei_comments', $includes_sensei_comments, $post_id );
+	}
+
+	/**
+	 * Clear the comment count cache.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public function flush_comment_counts_cache( $post_id ) {
 		$post_id = (int) $post_id;
 
-		$count = wp_cache_get( "comments-{$post_id}", 'counts' );
+		$post_transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . $post_id;
+		delete_transient( $post_transient_id );
 
-		if ( false !== $count ) {
-			return $count;
+		$all_transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . '0';
+		delete_transient( $all_transient_id );
+	}
+
+	/**
+	 * Get the Sensei related comment counts by comment_approved but use caching.
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return array
+	 */
+	private function get_sensei_comment_counts( $post_id ) {
+		$post_id = (int) $post_id;
+
+		$transient_id = self::COMMENT_COUNT_TRANSIENT_PREFIX . $post_id;
+		$stats        = get_transient( $transient_id );
+
+		if ( ! $stats || ! is_array( $stats ) ) {
+			$stats = $this->get_sensei_comment_counts_direct( $post_id );
+
+			set_transient( $transient_id, $stats );
 		}
 
-		$statuses = array( '' ); // Default to the WP normal comments
-		// WC excludes these so exclude them too
-		$wc_statuses_to_exclude = array( 'order_note', 'webhook_delivery' );
-		$stati                  = $wpdb->get_results( "SELECT comment_type FROM {$wpdb->comments} GROUP BY comment_type", ARRAY_A );
-		foreach ( (array) $stati as $status ) {
-			if ( 'sensei_' != substr( $status['comment_type'], 0, 7 ) &&
-				! in_array( $status['comment_type'], $wc_statuses_to_exclude ) ) {
-				$statuses[] = $status['comment_type'];
-			}
+		return $stats;
+	}
+
+	/**
+	 * Get the Sensei related comment counts by comment_approved.
+	 *
+	 * @param  int $post_id Post ID.
+	 *
+	 * @return array
+	 */
+	private function get_sensei_comment_counts_direct( $post_id ) {
+		global $wpdb;
+
+		$post_where = '';
+
+		if ( ! empty( $post_id ) ) {
+			$post_where = $wpdb->prepare( 'AND comment_post_ID=%d', $post_id );
 		}
-		$where = "WHERE comment_type IN ('" . join( "', '", array_unique( $statuses ) ) . "')";
 
-		if ( $post_id > 0 ) {
-			$where .= $wpdb->prepare( ' AND comment_post_ID = %d', $post_id );
-		}
-
-		$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} {$where} GROUP BY comment_approved", ARRAY_A );
-
-		$total    = 0;
-		$approved = array(
-			'0'            => 'moderated',
-			'1'            => 'approved',
-			'spam'         => 'spam',
-			'trash'        => 'trash',
-			'post-trashed' => 'post-trashed',
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- `$post_where` prepared above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching -- Cached in calling method.
+		$counts = $wpdb->get_results(
+			"
+					SELECT comment_approved, COUNT(*) AS num_comments
+					FROM {$wpdb->comments}
+					WHERE
+						comment_type LIKE 'sensei_%'
+						{$post_where}
+					GROUP BY comment_approved
+			",
+			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-		$stats               = [];
-		$statuses_to_exclude = array( 'post-trashed', 'trash' );
+		$stats = [
+			'all'            => 0,
+			'total_comments' => 0,
+		];
 
-		foreach ( (array) $count as $row ) {
+		foreach ( (array) $counts as $row ) {
+			$row['num_comments'] = (int) $row['num_comments'];
+
 			// Don't count post-trashed toward totals.
-			$comment_approved = $row['comment_approved'];
+			if ( ! in_array( $row['comment_approved'], [ 'post-trashed', 'trash' ], true ) ) {
+				$stats['total_comments'] += $row['num_comments'];
 
-			if ( ! in_array( $comment_approved, $statuses_to_exclude, true ) ) {
-				$total += $row['num_comments'];
+				if ( 'spam' !== $row['comment_approved'] ) {
+					$stats['all'] += $row['num_comments'];
+				}
 			}
-			if ( isset( $approved[ $row['comment_approved'] ] ) ) {
-				$stats[ $approved[ $row['comment_approved'] ] ] = $row['num_comments'];
+
+			if ( ! isset( $stats[ $row['comment_approved'] ] ) ) {
+				$stats[ $row['comment_approved'] ] = 0;
 			}
+
+			$stats[ $row['comment_approved'] ] += $row['num_comments'];
 		}
 
-		$stats['total_comments'] = $total;
-		foreach ( $approved as $key ) {
-			if ( empty( $stats[ $key ] ) ) {
-				$stats[ $key ] = 0;
-			}
+		if (
+			empty( $stats['total_comments'] )
+			&& 2 === count( $stats )
+		) {
+			return [];
 		}
-
-		$stats = (object) $stats;
-		wp_cache_set( "comments-{$post_id}", $stats, 'counts' );
 
 		return $stats;
 	}
@@ -1073,7 +1181,31 @@ class Sensei_Main {
 	public function body_class( $classes ) {
 		if ( is_sensei() ) {
 			$classes[] = 'sensei';
+			$post_type = get_post_type();
+
+			if ( ! empty( $post_type ) ) {
+				$classes[] = $post_type;
+
+				if ( 'lesson' === $post_type ) {
+					$course_id = Sensei()->lesson->get_course_id( get_the_ID() );
+					$classes[] = 'course-id-' . $course_id;
+				}
+
+				if ( 'quiz' === $post_type ) {
+					$lesson_id = Sensei()->quiz->get_lesson_id( get_the_ID() );
+					$classes[] = 'lesson-id-' . $lesson_id;
+
+					$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+					$classes[] = 'course-id-' . $course_id;
+				}
+			}
+
+			// Add class to Course Completed page.
+			if ( get_the_ID() === intval( Sensei()->settings->settings['course_completed_page'] ) ) {
+				$classes[] = 'course-completed';
+			}
 		}
+
 		return $classes;
 	}
 
@@ -1154,7 +1286,7 @@ class Sensei_Main {
 		</div>
 
 		<?php
-	}//end disable_sensei_modules_extension()
+	}
 
 	/**
 	 * Sensei wide rewrite flush call.
@@ -1183,7 +1315,7 @@ class Sensei_Main {
 
 		}
 
-	} // end flush_rewrite_rules
+	}
 
 	/**
 	 * Calling this function will tell Sensei to flush rewrite
@@ -1195,172 +1327,6 @@ class Sensei_Main {
 
 		update_option( 'sensei_flush_rewrite_rules', '1' );
 
-	}
-
-	/**
-	 * Sensei_woocommerce_email_course_details adds detail to email
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::email_course_details
-	 *
-	 * @since   1.4.5
-	 * @access  public
-	 * @param   WC_Order $order Order.
-	 *
-	 * @return  void
-	 */
-	public function sensei_woocommerce_email_course_details( $order ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::email_course_details' );
-
-		if ( ! method_exists( 'Sensei_WC', 'email_course_details' ) ) {
-			return;
-		}
-
-		Sensei_WC::email_course_details( $order );
-	} // end func email course details
-
-	/**
-	 * Sensei_woocommerce_complete_order description
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::complete_order( $order_id );
-	 *
-	 * @since   1.0.3
-	 * @access  public
-	 *
-	 * @param   int $order_id WC order ID.
-	 * @return  void
-	 */
-	public function sensei_woocommerce_complete_order( $order_id = 0 ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::complete_order' );
-
-		if ( ! method_exists( 'Sensei_WC', 'complete_order' ) ) {
-			return;
-		}
-
-		Sensei_WC::complete_order( $order_id );
-	}
-
-	/**
-	 * Runs when an order is cancelled.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::cancel_order
-	 *
-	 * @since   1.2.0
-	 *
-	 * @param   integer $order_id order ID.
-	 * @return  void
-	 */
-	public function sensei_woocommerce_cancel_order( $order_id ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::cancel_order' );
-
-		if ( ! method_exists( 'Sensei_WC', 'cancel_order' ) ) {
-			return;
-		}
-
-		Sensei_WC::cancel_order( $order_id );
-	} // End sensei_woocommerce_cancel_order()
-
-	/**
-	 * Sensei_activate_subscription runs when a subscription product is purchased
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::activate_subscription
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 *
-	 * @param   integer $order_id order ID.
-	 * @return  void
-	 */
-	public function sensei_activate_subscription( $order_id = 0 ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::activate_subscription' );
-
-		if ( ! method_exists( 'Sensei_WC', 'activate_subscription' ) ) {
-			return;
-		}
-
-		Sensei_WC::activate_subscription( $order_id );
-	} // End sensei_activate_subscription()
-
-	/**
-	 * If WooCommerce is activated and the customer has purchased the course, update Sensei to indicate that they are taking the course.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::course_update
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  int          $course_id  (default: 0) Course Post ID.
-	 * @param  array/Object $order_user (default: array()) Specific user's data.
-	 * @return bool|int
-	 */
-	public function woocommerce_course_update( $course_id = 0, $order_user = array() ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::course_update' );
-
-		if ( ! method_exists( 'Sensei_WC', 'course_update' ) ) {
-			return false;
-		}
-
-		return Sensei_WC::course_update( $course_id, $order_user );
-	} // End woocommerce_course_update()
-
-	/**
-	 * Returns the WooCommerce Product Object
-	 *
-	 * The code caters for pre and post WooCommerce 2.2 installations.
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::get_product_object
-	 * @since   1.1.1
-	 *
-	 * @param   integer $wc_product_id  Product ID or Variation ID.
-	 * @param   string  $product_type   Product type.
-	 *
-	 * @return   WC_Product $wc_product_object
-	 */
-	public function sensei_get_woocommerce_product_object( $wc_product_id = 0, $product_type = '' ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::get_product_object' );
-
-		if ( ! method_exists( 'Sensei_WC', 'get_product_object' ) ) {
-			return false;
-		}
-
-		return Sensei_WC::get_product_object( $wc_product_id, $product_type );
-	} // End sensei_get_woocommerce_product_object()
-
-	/**
-	 * Disable guest checkout if a course product is in the cart
-	 *
-	 * @deprecated since 1.9.0
-	 *
-	 * @param  boolean $guest_checkout Current guest checkout setting.
-	 * @return boolean                 Modified guest checkout setting.
-	 */
-	public function disable_guest_checkout( $guest_checkout ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::disable_guest_checkout' );
-
-		if ( ! method_exists( 'Sensei_WC', 'disable_guest_checkout' ) ) {
-			return $guest_checkout;
-		}
-
-		return Sensei_WC::disable_guest_checkout( $guest_checkout );
-	}//end disable_guest_checkout()
-
-	/**
-	 * Change order status with virtual products to completed
-	 *
-	 * @deprecated since 1.9.0 use Sensei_WC::virtual_order_payment_complete( $order_status, $order_id )
-	 *
-	 * @since  1.1.0
-	 *
-	 * @param string $order_status Order Status.
-	 * @param int    $order_id     Order ID.
-	 * @return string
-	 **/
-	public function virtual_order_payment_complete( $order_status, $order_id ) {
-		_deprecated_function( __METHOD__, '1.9.0', 'Sensei_WC::virtual_order_payment_complete' );
-
-		if ( ! method_exists( 'Sensei_WC', 'virtual_order_payment_complete' ) ) {
-			return '';
-		}
-
-		return Sensei_WC::virtual_order_payment_complete( $order_status, $order_id );
 	}
 
 	/**
@@ -1382,11 +1348,6 @@ class Sensei_Main {
 		if ( $this->get_documentation_url() ) {
 			/* translators: Docs as in Documentation */
 			$custom_actions['docs'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_documentation_url(), esc_html__( 'Docs', 'sensei-lms' ) );
-		}
-
-		// support url if any.
-		if ( $this->get_support_url() ) {
-			$custom_actions['support'] = sprintf( '<a href="%s" target="_blank">%s</a>', $this->get_support_url(), esc_html_x( 'Support', 'noun', 'sensei-lms' ) );
 		}
 
 		// add the links to the front of the actions list.
@@ -1422,29 +1383,33 @@ class Sensei_Main {
 		return admin_url( 'admin.php?page=sensei-settings&tab=general' );
 	}
 
-		/**
-		 * Gets the plugin documentation url, used for the 'Docs' plugin action
-		 *
-		 * @return string documentation URL
-		 */
+	/**
+	 * Gets the plugin documentation url, used for the 'Docs' plugin action
+	 *
+	 * @return string documentation URL
+	 */
 	public function get_documentation_url() {
-		return sprintf( 'https://docs.woothemes.com/documentation/plugins/sensei/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Docs&utm_campaign=SenseiPlugin' );
+		return sprintf( 'https://senseilms.com/documentation/' );
 	}
 
-		/**
-		 * Gets the support URL, used for the 'Support' plugin action link
-		 *
-		 * @return string support url
-		 */
+	/**
+	 * Gets the support URL, used for the 'Support' plugin action link
+	 *
+	 * @deprecated 3.1.1
+	 *
+	 * @return string support url
+	 */
 	public function get_support_url() {
+		_deprecated_function( __METHOD__, '3.1.1' );
+
 		return 'https://www.woothemes.com/my-account/create-a-ticket/?utm_source=SenseiPlugin&utm_medium=PluginPage&utm_content=Support&utm_campaign=SenseiPlugin';
 	}
 
-		/**
-		 * Returns the plugin id
-		 *
-		 * @return string plugin id
-		 */
+	/**
+	 * Returns the plugin id
+	 *
+	 * @return string plugin id
+	 */
 	public function get_id() {
 		return $this->id;
 	}
@@ -1478,12 +1443,63 @@ class Sensei_Main {
 		$this->teacher->create_role();
 
 		// Setup all the role capabilities needed.
-		$this->updates->add_sensei_caps();
-		$this->updates->add_editor_caps();
-		$this->updates->assign_role_caps();
+		$this->add_sensei_admin_caps();
+		$this->add_editor_caps();
+		$this->assign_role_caps();
 
 		// Flush rules.
 		add_action( 'activated_plugin', array( __CLASS__, 'activation_flush_rules' ), 10 );
+	}
+
+	/**
+	 * Assign role caps for the various post types.
+	 */
+	public function assign_role_caps() {
+		foreach ( $this->post_types->role_caps as $role_cap_set ) {
+			foreach ( $role_cap_set as $role_key => $capabilities_array ) {
+				// Get the role.
+				$role = get_role( $role_key );
+				foreach ( $capabilities_array as $cap_name ) {
+					// If the role exists, add required capabilities for the plugin.
+					if ( ! empty( $role ) ) {
+						if ( ! $role->has_cap( $cap_name ) ) {
+							$role->add_cap( $cap_name );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds Sensei capabilities to the editor role.
+	 *
+	 * @return bool
+	 */
+	public function add_editor_caps() {
+		$role = get_role( 'editor' );
+
+		if ( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Adds Sensei capabilities to admin.
+	 *
+	 * @return bool
+	 */
+	public function add_sensei_admin_caps() {
+		$role = get_role( 'administrator' );
+
+		if ( ! is_null( $role ) ) {
+			$role->add_cap( 'manage_sensei' );
+			$role->add_cap( 'manage_sensei_grades' );
+		}
+
+		return true;
 	}
 
 	/**
@@ -1506,7 +1522,7 @@ class Sensei_Main {
 		return trailingslashit( $this->plugin_path ) . $path;
 	}
 
-} // End Class
+}
 
 /**
  * Class Woothemes_Sensei

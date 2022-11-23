@@ -1,16 +1,18 @@
 <?php
 
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
+	use Sensei_Course_Enrolment_Test_Helpers;
+	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 
 	/**
-	 * Constructor function
+	 * Helper class to create testing data.
+	 *
+	 * @var Sensei_Factory
 	 */
-	public function __construct() {
-		parent::__construct();
-	}
+	protected $factory;
 
 	/**
-	 * setup function
+	 * Setup function.
 	 *
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
@@ -20,7 +22,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
-	}//end setup()
+	}
 
 	public function tearDown() {
 		parent::tearDown();
@@ -40,10 +42,10 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->course ), 'Sensei Course class is not loaded' );
 
-	} // end testClassInstance
+	}
 
 	/**
-	 * This tests Sensei_Courses::get_all_course
+	 * This tests Sensei_Courses::get_all_courses
 	 *
 	 * @since 1.8.0
 	 */
@@ -66,7 +68,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			'The number of course returned is not equal to what is actually available'
 		);
 
-	}//end testGetAllCourses()
+	}
 
 	/**
 	 *
@@ -107,7 +109,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// does it return all lessons
 		$this->assertEquals( count( $test_lessons ), count( Sensei()->course->get_completed_lesson_ids( $test_course_id, $test_user_id ) ), 'Course completed lesson count not accurate' );
 
-	}//end testGetCompletedLessonIds()
+	}
 
 	/**
 	 * This tests Sensei_Courses::get_completion_percentage
@@ -339,4 +341,212 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		$event = $events[0];
 		$this->assertEquals( 2, $event['url_args']['product_count'], 'Event should have 2 products attached to the course' );
 	}
-}//end class
+
+	/**
+	 * Checks to make sure standard users can view course content when the access permissions setting is disabled.
+	 */
+	public function testCanAccessCourseContentDisableAccessPermissionCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		Sensei()->settings->set( 'access_permission', false );
+		$result = $course_instance->can_access_course_content( $course_id, $user_id );
+		Sensei()->settings->set( 'access_permission', true );
+
+		$this->assertTrue( $result, 'Standard users should have access to course content when access permissions are disabled' );
+	}
+
+	/**
+	 * Checks to make sure admins always have access to course content.
+	 */
+	public function testCanAccessCourseContentAdminCan() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create( [ 'role' => 'administrator' ] );
+		$course_id       = $this->factory->course->create();
+
+		$user = get_user_by( 'id', $user_id );
+		$user->add_cap( 'manage_sensei' );
+
+		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Admins should have access to course content' );
+	}
+
+	/**
+	 * Checks to make sure standard users who aren't enrolled can't view course content.
+	 */
+	public function testCanAccessCourseContentStandardUserCanNot() {
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		$this->assertFalse( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are not enrolled should not have access to course content' );
+	}
+
+	/**
+	 * Checks to make sure standard users who are enrolled can view course content.
+	 */
+	public function testCanAccessCourseContentEnrolledStandardCan() {
+		$this->prepareEnrolmentManager();
+
+		$course_instance = Sensei()->course;
+		$user_id         = $this->factory->user->create();
+		$course_id       = $this->factory->course->create();
+
+		$this->manuallyEnrolStudentInCourse( $user_id, $course_id );
+
+		$this->assertTrue( $course_instance->can_access_course_content( $course_id, $user_id ), 'Standard users who are enrolled should have access to course content' );
+	}
+
+	/**
+	 * Test that the course completed page URL is returned.
+	 *
+	 * @covers Sensei_Course::get_view_results_link
+	 * @covers Sensei_Course::get_course_completed_page_url
+	 */
+	public function testGetViewResultsLinkCourseCompletedPage() {
+		$course_id = $this->factory->course->create();
+		$page_id   = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$expected = "http://example.org/?page_id={$page_id}&course_id={$course_id}";
+		$actual   = Sensei_Course::get_view_results_link( $course_id );
+
+		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * Test that the course results page URL is returned.
+	 *
+	 * @covers Sensei_Course::get_view_results_link
+	 * @covers Sensei_Course::get_course_completed_page_url
+	 */
+	public function testGetViewResultsLinkCourseResultsPage() {
+		$course_id = $this->factory->course->create(
+			[
+				'post_name' => 'a-course',
+			]
+		);
+
+		$expected = 'http://example.org/?course_results=a-course';
+		$actual   = Sensei_Course::get_view_results_link( $course_id );
+
+		$this->assertEquals( $expected, $actual );
+	}
+
+	/**
+	 * Test that the parameters are not added when hook function called out of the course archive page.
+	 *
+	 * @param bool $is_post_type_archive Returns true if the WP_Query is from an archive page.
+	 * @param bool $is_main_query Returns true if the WP_Query is the main query.
+	 * @param int $is_main_query_call_count Indicates the expectation for how many times $is_main_query will be called.
+	 * @param bool $set_current_screen_to_admin_panel Setting this to true will make the is_admin check return true, and otherwise it will return false.
+	 *
+	 * @dataProvider data_testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage
+	 */
+	public function testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage( $is_post_type_archive, $is_main_query, $is_main_query_call_count, $set_current_screen_to_admin_panel ) {
+		global $current_screen;
+		$initial_current_screen = $current_screen;
+
+		$wp_query = $this->createMock( 'WP_Query' );
+		// Returns true for the course archive page, but also returns true when the query is from 'wp-admin -> Sensei LMS -> Courses' or 'shortcode'
+		$wp_query->expects( $this->once() )
+			->method( 'is_post_type_archive' )
+			->with( 'course' )
+			->willReturn( $is_post_type_archive );
+		// We dont expect any parameter to be set the query.
+		$wp_query->expects( $this->never() )
+			->method( 'set' );
+		// Returns 'true' for actual course archive page query, returns 'false' for queries generated by other sources, like shortcodes
+		$wp_query->expects( $this->exactly( $is_main_query_call_count ) )
+			->method( 'is_main_query' )
+			->willReturn( $is_main_query );
+
+		if ( $set_current_screen_to_admin_panel ) {
+			// This will make the is_admin method return true.
+			set_current_screen( 'edit-post' );
+		}
+		Sensei_Course::course_archive_set_order_by( $wp_query );
+
+		// Reset $current_screen. This is needed for WordPress <= 5.8.
+		// @see https://core.trac.wordpress.org/ticket/53431
+		$current_screen = $initial_current_screen;
+	}
+
+	/**
+	 * Data source for ::testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage
+	 *
+	 * @return array
+	 */
+	public function data_testCourseArchiveOrderSetOrderByDoesNotAddParametersOutsideOfArchivePage() {
+		return array(
+			'Not an archive page query'              => array( false, true, 0, false ),
+			'In case of shortcode'                   => array( true, false, 1, false ),
+			'In case of admin dashboard for courses' => array( true, true, 1, true ),
+		);
+	}
+
+	/**
+	 * Test that the correct order parameter values are set for the WP_Query used in the course archive page.
+	 *
+	 * @param array  $request_parameters  $_REQUEST contents for the test. After the test the original values are restored.
+	 * @param string $course_order_option Value for the `sensei_course_order` option. Empty means it is not specified and any other value is understood as enabled.
+	 * @param string $expected_order_by   Expected ORDER BY value.
+	 * @param string $expected_order      Expected ORDER value (ASC or DESC).
+	 *
+	 * @dataProvider data_testCourseArchiveOrderSetOrderBy
+	 */
+	public function testCourseArchiveOrderSetOrderBy( $request_parameters, $course_order_option, $expected_order_by, $expected_order ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$original_request_object = $_REQUEST;
+		$_REQUEST                = $request_parameters;
+		$wp_query                = $this->createMock( 'WP_Query' );
+
+		// Mock request is for the course archive page.
+		$wp_query->expects( $this->once() )
+			->method( 'is_post_type_archive' )
+			->with( 'course' )
+			->willReturn( true );
+
+		$wp_query->expects( $this->once() )
+			->method( 'is_main_query' )
+			->willReturn( true );
+
+		// Set whether custom course order has been set or not.
+		update_option( 'sensei_course_order', $course_order_option );
+		// Create expectations for the correct 'orderby' and 'order' attributes.
+		$wp_query->expects( $this->exactly( 2 ) )
+			->method( 'set' )
+			->withConsecutive(
+				array( $this->equalTo( 'orderby' ), $this->equalTo( $expected_order_by ) ),
+				array( $this->equalTo( 'order' ), $this->equalTo( $expected_order ) )
+			);
+
+		Sensei_Course::course_archive_set_order_by( $wp_query );
+
+		// Restore original requests.
+		$_REQUEST = $original_request_object;
+	}
+
+	/**
+	 * Data source for ::testCourseArchiveOrderSetOrderBy
+	 *
+	 * @return array
+	 */
+	public function data_testCourseArchiveOrderSetOrderBy() {
+		return array(
+			'Default when no order set'                  => array( array(), '', 'date', 'DESC' ),
+			'No order set and newness option selected'   => array( array( 'course-orderby' => 'newness' ), '', 'date', 'DESC' ),
+			'No order set and title option selected'     => array( array( 'course-orderby' => 'title' ), '', 'title', 'ASC' ),
+			'No order set and default option selected'   => array( array( 'course-orderby' => 'default' ), '', 'date', 'DESC' ),
+			'Default when courses order is set'          => array( array(), 'anything', 'menu_order', 'ASC' ),
+			'Order set and newness option selected'      => array( array( 'course-orderby' => 'newness' ), 'anything', 'date', 'DESC' ),
+			'Order set and alphabetical option selected' => array( array( 'course-orderby' => 'title' ), 'anything', 'title', 'ASC' ),
+			'Order set and default option selected'      => array( array( 'course-orderby' => 'default' ), 'anything', 'menu_order', 'ASC' ),
+		);
+	}
+}

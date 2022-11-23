@@ -1,6 +1,12 @@
 <?php
+/**
+ * File containing the Sensei_Grading_User_Quiz class.
+ *
+ * @package sensei
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -12,32 +18,67 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.3.0
  */
 class Sensei_Grading_User_Quiz {
-	public $user_id;
-	public $lesson_id;
-	public $quiz_id;
+	/**
+	 * The user id which this quiz is for.
+	 *
+	 * @var int
+	 */
+	private $user_id;
 
 	/**
-	 * Constructor
+	 * The lesson id which the quiz belongs to.
+	 *
+	 * @var int
+	 */
+	private $lesson_id;
+
+	/**
+	 * The quiz id.
+	 *
+	 * @var int
+	 */
+	private $quiz_id;
+
+	/**
+	 * Sensei_Grading_User_Quiz constructor.
 	 *
 	 * @since  1.3.0
+	 *
+	 * @param int $user_id  The user id.
+	 * @param int $quiz_id  The quiz id.
 	 */
 	public function __construct( $user_id = 0, $quiz_id = 0 ) {
 		$this->user_id   = intval( $user_id );
 		$this->quiz_id   = intval( $quiz_id );
 		$this->lesson_id = get_post_meta( $this->quiz_id, '_quiz_lesson', true );
-	} // End __construct()
+	}
 
 	/**
-	 * build_data_array builds the data for use on the page
-	 * Overloads the parent method
+	 * Builds the data for use on the page.
 	 *
 	 * @since  1.3.0
 	 * @return array
 	 */
 	public function build_data_array() {
-		$data_array = Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
-		return $data_array;
-	} // End build_data_array()
+		return Sensei_Utils::sensei_get_quiz_questions( $this->quiz_id );
+	}
+
+	/**
+	 * Helper method which removes the hash from a filename if it starts with one.
+	 *
+	 * @param string $filename  The filename.
+	 *
+	 * @return string
+	 */
+	public static function remove_hash_prefix( $filename ) {
+		$starts_with_hash = preg_match( '/^[a-f0-9]{32}_/', $filename );
+
+		if ( $starts_with_hash ) {
+			return substr( $filename, 33 );
+		}
+
+		return $filename;
+	}
 
 	/**
 	 * Display output to the admin view
@@ -45,10 +86,9 @@ class Sensei_Grading_User_Quiz {
 	 * This view is shown when grading a quiz for a single user in admin under grading
 	 *
 	 * @since  1.3.0
-	 * @return html
 	 */
 	public function display() {
-		// Get data for the user
+		// Get data for the user.
 		$questions = $this->build_data_array();
 
 		$count                 = 0;
@@ -68,9 +108,9 @@ class Sensei_Grading_User_Quiz {
 				<span class="total_grade_total"><?php echo esc_html( $user_quiz_grade_total ); ?></span> / <span class="quiz_grade_total"><?php echo esc_html( $quiz_grade_total ); ?></span> (<span class="total_grade_percent"><?php echo esc_html( $quiz_grade ); ?></span>%)
 			</div>
 			<div class="buttons">
-				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
-				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
-				<input type="reset" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
+				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="<?php esc_attr_e( 'Saves grades as currently marked on this page', 'sensei-lms' ); ?>" />
+				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="<?php esc_attr_e( 'Where possible, automatically grades questions that have not yet been graded', 'sensei-lms' ); ?>" />
+				<input type="button" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-link button-link-delete" title="<?php esc_attr_e( 'Resets all questions to ungraded and total grade to 0', 'sensei-lms' ); ?>" />
 			</div>
 			<div class="clear"></div><br/>
 			<?php
@@ -94,7 +134,15 @@ class Sensei_Grading_User_Quiz {
 
 				$type = Sensei()->question->get_question_type( $question_id );
 
+				$custom_feedback       = Sensei()->quiz->get_user_answers_feedback( $lesson_id, $user_id );
+				$custom_feedback       = $custom_feedback[ $question_id ] ?? '';
+				$correct_feedback      = Sensei_Quiz::get_correct_answer_feedback( $question_id );
+				$incorrect_feedback    = Sensei_Quiz::get_incorrect_answer_feedback( $question_id );
 				$question_answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, $user_id );
+
+				if ( ! $correct_feedback && ! $incorrect_feedback ) {
+					$custom_feedback = $question_answer_notes;
+				}
 
 				$question_grade_total = Sensei()->question->get_question_grade( $question_id );
 				$quiz_grade_total    += $question_grade_total;
@@ -102,6 +150,7 @@ class Sensei_Grading_User_Quiz {
 				$right_answer        = get_post_meta( $question_id, '_question_right_answer', true );
 				$user_answer_content = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
 				$type_name           = __( 'Multiple Choice', 'sensei-lms' );
+				$grade_type          = 'manual-grade';
 
 				switch ( $type ) {
 					case 'boolean':
@@ -152,15 +201,16 @@ class Sensei_Grading_User_Quiz {
 						$type_name  = __( 'File Upload', 'sensei-lms' );
 						$grade_type = 'manual-grade';
 
-						// Get uploaded file
+						// Get uploaded file.
 						if ( $user_answer_content ) {
-							$attachment_id    = $user_answer_content;
-							$answer_media_url = $answer_media_filename = '';
+							$attachment_id = $user_answer_content;
 							if ( 0 < intval( $attachment_id ) ) {
 								$answer_media_url      = wp_get_attachment_url( $attachment_id );
-								$answer_media_filename = basename( $answer_media_url );
+								$filename_raw          = basename( $answer_media_url );
+								$answer_media_filename = self::remove_hash_prefix( $filename_raw );
+
 								if ( $answer_media_url && $answer_media_filename ) {
-									// translators: Placeholder is a link to the submitted file.
+									// translators: Placeholder %1$s is a link to the submitted file.
 									$user_answer_content = sprintf( __( 'Submitted file: %1$s', 'sensei-lms' ), '<a href="' . esc_url( $answer_media_url ) . '" target="_blank">' . esc_html( $answer_media_filename ) . '</a>' );
 								}
 							}
@@ -169,8 +219,38 @@ class Sensei_Grading_User_Quiz {
 						}
 						break;
 					default:
-						// Nothing
+						// Nothing.
 						break;
+				}
+
+				/**
+				 * Filters the various values which are displayed in the grading admin page for each quiz question.
+				 * The expected values are type_name, right_answer, user_answer_content and grade_type
+				 *
+				 * @since 3.15.0
+				 *
+				 * @hook sensei_grading_display_quiz_question
+				 *
+				 * @param {array|null}   $display_values {
+				 *     Optional. An array of arguments or null.
+				 *
+				 *     @key {string}       $type_name           The question type.
+				 *     @key {string|array} $right_answer        The right answer to the quiz.
+				 *     @key {string|array} $user_answer_content The user supplied answer to the quiz.
+				 *     @key {string}       $grade_type          Auto or manual grading.
+				 * }
+				 * @param {string} $type
+				 * @param {int}    $question_id
+				 *
+				 * @return {array|null}
+				 */
+				$possibly_new_args = apply_filters( 'sensei_grading_display_quiz_question', null, $type, $question_id, $right_answer, $user_answer_content );
+
+				if ( null !== $possibly_new_args && 0 < count( $possibly_new_args ) ) {
+					$type_name           = $possibly_new_args['type_name'] ?? $type_name;
+					$right_answer        = $possibly_new_args['right_answer'] ?? $right_answer;
+					$user_answer_content = $possibly_new_args['user_answer_content'] ?? $user_answer_content;
+					$grade_type          = $possibly_new_args['grade_type'] ?? $grade_type;
 				}
 
 				$quiz_grade_type = get_post_meta( $this->quiz_id, '_quiz_grade_type', true );
@@ -234,7 +314,7 @@ class Sensei_Grading_User_Quiz {
 						<h4><?php echo wp_kses_post( apply_filters( 'sensei_question_title', $question->post_title ) ); ?></h4>
 						<?php
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
-						echo apply_filters( 'the_content', wp_kses_post( $question->post_content ) );
+						echo Sensei_Question::get_the_question_description( $question_id );
 						?>
 						<p class="user-answer">
 						<?php
@@ -259,7 +339,7 @@ class Sensei_Grading_User_Quiz {
 							<?php
 							foreach ( $right_answer as $_right_answer ) {
 
-								if ( 'multi-line' == Sensei()->question->get_question_type( $question->ID ) ) {
+								if ( 'multi-line' === Sensei()->question->get_question_type( $question->ID ) ) {
 									$_right_answer = htmlspecialchars_decode( nl2br( $_right_answer ) );
 								}
 
@@ -270,8 +350,10 @@ class Sensei_Grading_User_Quiz {
 							</span>
 						</div>
 						<div class="answer-notes">
-							<h5><?php esc_html_e( 'Grading Notes', 'sensei-lms' ); ?></h5>
-							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add notes here...', 'sensei-lms' ); ?>"><?php echo esc_html( $question_answer_notes ); ?></textarea>
+							<h5><?php esc_html_e( 'Answer Feedback', 'sensei-lms' ); ?></h5>
+							<div class="answer-feedback-correct"><?php echo wp_kses_post( $correct_feedback ); ?></div>
+							<div class="answer-feedback-incorrect"><?php echo wp_kses_post( $incorrect_feedback ); ?></div>
+							<textarea class="correct-answer" name="questions_feedback[<?php echo esc_attr( $question_id ); ?>]" placeholder="<?php esc_attr_e( 'Add custom feedback here...', 'sensei-lms' ); ?>"><?php echo esc_html( $custom_feedback ); ?></textarea>
 						</div>
 					</div>
 				</div>
@@ -281,12 +363,12 @@ class Sensei_Grading_User_Quiz {
 
 			$quiz_grade = intval( $user_quiz_grade );
 			$all_graded = 'no';
-			if ( intval( $count ) == intval( $graded_count ) ) {
+			if ( intval( $count ) === intval( $graded_count ) ) {
 				$all_graded = 'yes';
 			}
 
 			?>
-		  <input type="hidden" name="total_grade" id="total_grade" value="<?php echo esc_attr( $user_quiz_grade_total ); ?>" />
+			<input type="hidden" name="total_grade" id="total_grade" value="<?php echo esc_attr( $user_quiz_grade_total ); ?>" />
 			<input type="hidden" name="total_questions" id="total_questions" value="<?php echo esc_attr( $count ); ?>" />
 			<input type="hidden" name="quiz_grade_total" id="quiz_grade_total" value="<?php echo esc_attr( $quiz_grade_total ); ?>" />
 			<input type="hidden" name="total_graded_questions" id="total_graded_questions" value="<?php echo esc_attr( $graded_count ); ?>" />
@@ -298,20 +380,13 @@ class Sensei_Grading_User_Quiz {
 			<div class="buttons">
 				<input type="submit" value="<?php esc_attr_e( 'Save', 'sensei-lms' ); ?>" class="grade-button button-primary" title="Saves grades as currently marked on this page" />
 				<input type="button" value="<?php esc_attr_e( 'Auto grade', 'sensei-lms' ); ?>" class="autograde-button button-secondary" title="Where possible, automatically grades questions that have not yet been graded" />
-				<input type="reset" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-secondary" title="Resets all questions to ungraded and total grade to 0" />
+				<input type="button" value="<?php esc_attr_e( 'Reset', 'sensei-lms' ); ?>" class="reset-button button-link button-link-delete" title="Resets all questions to ungraded and total grade to 0" />
 			</div>
 			<div class="clear"></div>
-			<script type="text/javascript">
-				jQuery( window ).load( function() {
-					// Calculate total grade on page load to make sure everything is set up correctly
-					jQuery.fn.autoGrade();
-				});
-			</script>
 		</form>
 		<?php
-	} // End display()
-
-} // End Class
+	}
+}
 
 /**
  * Class WooThemes_Sensei_Grading_User_Quiz

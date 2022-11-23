@@ -1,0 +1,40 @@
+Id,Course,Slug,Description,Excerpt,"Teacher Username","Teacher Email",Lessons,Modules,Prerequisite,Featured,Categories,Image,Video,"Disable Notifications"
+2990,"Getting Started with Sensei LMS",getting-started-with-sensei-lms,"<!-- wp:paragraph -->
+<p>Ready to publish your first course with Sensei LMS? This course will help you get started.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:sensei-lms/button-take-course -->
+<div class=""wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left""><button class=""wp-block-button__link"">Take Course</button></div>
+<!-- /wp:sensei-lms/button-take-course -->
+
+<!-- wp:sensei-lms/button-contact-teacher -->
+<div class=""wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left""><a class=""wp-block-button__link"">Contact Teacher</a></div>
+<!-- /wp:sensei-lms/button-contact-teacher -->
+
+<!-- wp:sensei-lms/course-progress /-->
+
+<!-- wp:sensei-lms/course-outline -->
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3941,""title"":""Courses"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3043,""title"":""Modules"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3063,""title"":""Lessons"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3106,""title"":""Quizzes"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3175,""title"":""Questions"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3210,""title"":""Analysis"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3162,""title"":""Grading"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3324,""title"":""Learner Management"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3520,""title"":""Messages"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3473,""title"":""Import"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3690,""title"":""Export"",""draft"":false} /-->
+
+<!-- wp:sensei-lms/course-outline-lesson {""id"":3566,""title"":""Settings"",""draft"":false} /-->
+<!-- /wp:sensei-lms/course-outline -->",,,,"id:3941,id:3043,id:3063,id:3106,id:3175,id:3210,id:3162,id:3324,id:3520,id:3473,id:3690,id:3566",,,0,,,,1

@@ -1,0 +1,54 @@
+{
+  "name": "sensei-lms/course-outline-lesson",
+  "title": "Lesson",
+  "description": "Where your course content lives.",
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "keywords": [
+    "course",
+    "lesson"
+  ],
+  "parent": [
+    "sensei-lms/course-outline",
+    "sensei-lms/course-outline-module"
+  ],
+  "attributes": {
+    "id": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "draft": {
+      "type": "boolean",
+      "default": true
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "customBackgroundColor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "customTextColor": {
+      "type": "string"
+    },
+    "fontSize": {
+      "type": "number"
+    },
+    "isExample": {
+      "type": "boolean",
+      "default": false
+    },
+    "placeholder": {
+      "type": "string"
+    }
+  },
+  "supports": {
+    "html": false,
+    "customClassName": true
+  }
+}

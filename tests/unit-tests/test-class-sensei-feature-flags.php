@@ -35,4 +35,4 @@ class Sensei_Class_Feature_Flags_Test extends WP_UnitTestCase {
 		$this->assertFalse( $flags->is_enabled( 'foo_feature' ), 'overriden by filter' );
 	}
 
-}//end class
+}

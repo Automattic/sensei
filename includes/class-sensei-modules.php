@@ -16,18 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Core_Modules {
 
-	private $dir;
 	private $file;
-	private $assets_dir;
-	private $assets_url;
 	private $order_page_slug;
 	public $taxonomy;
 
 	public function __construct( $file ) {
 		$this->file            = $file;
-		$this->dir             = dirname( $this->file );
-		$this->assets_dir      = trailingslashit( $this->dir ) . 'assets';
-		$this->assets_url      = esc_url( trailingslashit( plugins_url( '/assets/', $this->file ) ) );
 		$this->taxonomy        = 'module';
 		$this->order_page_slug = 'module-order';
 
@@ -39,9 +33,6 @@ class Sensei_Core_Modules {
 
 		// Save lesson meta box
 		add_action( 'save_post', array( $this, 'save_lesson_module' ), 10, 1 );
-
-		// Reset the none modules lessons transient
-		add_action( 'save_post', array( 'Sensei_Core_Modules', 'reset_none_modules_transient' ) );
 
 		// Frontend styling
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
@@ -55,11 +46,12 @@ class Sensei_Core_Modules {
 		add_action( 'sensei_user_lesson_reset', array( $this, 'save_lesson_module_progress' ), 10, 2 );
 		add_action( 'wp', array( $this, 'save_module_progress' ), 10 );
 
-		// Handle module ordering
-		add_action( 'admin_menu', array( $this, 'register_modules_admin_menu_items' ), 30 );
+		add_action( 'admin_menu', array( $this, 'add_submenus' ) );
 		add_action( 'admin_post_order_modules', array( $this, 'handle_order_modules' ) );
 		add_filter( 'manage_course_posts_columns', array( $this, 'course_columns' ), 11, 1 );
 		add_action( 'manage_course_posts_custom_column', array( $this, 'course_column_content' ), 11, 2 );
+		add_filter( 'manage_lesson_posts_columns', array( $this, 'add_lesson_columns' ), 11, 1 );
+		add_action( 'manage_lesson_posts_custom_column', array( $this, 'add_lesson_column_content' ), 11, 2 );
 
 		// Ensure modules always show under courses
 		add_action( 'admin_menu', array( $this, 'remove_lessons_menu_model_taxonomy' ), 10 );
@@ -69,9 +61,8 @@ class Sensei_Core_Modules {
 		// Add course field to taxonomy
 		add_action( $this->taxonomy . '_add_form_fields', array( $this, 'add_module_fields' ), 50, 1 );
 		add_action( $this->taxonomy . '_edit_form_fields', array( $this, 'edit_module_fields' ), 1, 1 );
-		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
-		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
 		add_action( 'created_' . $this->taxonomy, array( $this, 'track_module_creation' ), 10 );
+		add_action( 'admin_init', array( $this, 'add_module_admin_hooks' ) );
 		add_action( 'wp_ajax_sensei_json_search_courses', array( $this, 'search_courses_json' ) );
 
 		// Manage module taxonomy archive page
@@ -79,12 +70,10 @@ class Sensei_Core_Modules {
 		add_action( 'pre_get_posts', array( $this, 'module_archive_filter' ), 10, 1 );
 		add_filter( 'sensei_lessons_archive_text', array( $this, 'module_archive_title' ) );
 		add_action( 'sensei_loop_lesson_inside_before', array( $this, 'module_archive_description' ), 30 );
+		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'course_signup_link' ), 30 );
 		add_action( 'sensei_taxonomy_module_content_inside_before', array( $this, 'module_archive_description' ), 30 );
 
 		add_filter( 'body_class', array( $this, 'module_archive_body_class' ) );
-
-		// add modules to the single course template
-		add_action( 'sensei_single_course_content_inside_after', array( $this, 'load_course_module_content_template' ), 8 );
 
 		// Single Course modules actions. Add to single-course/course-modules.php
 		add_action( 'sensei_single_course_modules_before', array( $this, 'course_modules_title' ), 20 );
@@ -94,7 +83,6 @@ class Sensei_Core_Modules {
 
 		// Add 'Modules' columns to Analysis tables
 		add_filter( 'sensei_analysis_overview_columns', array( $this, 'analysis_overview_column_title' ), 10, 2 );
-		add_filter( 'sensei_analysis_overview_column_data', array( $this, 'analysis_overview_column_data' ), 10, 3 );
 		add_filter( 'sensei_analysis_course_columns', array( $this, 'analysis_course_column_title' ), 10, 2 );
 		add_filter( 'sensei_analysis_course_column_data', array( $this, 'analysis_course_column_data' ), 10, 3 );
 
@@ -106,6 +94,7 @@ class Sensei_Core_Modules {
 		// store new modules created on the course edit screen
 		add_action( 'wp_ajax_sensei_add_new_module_term', array( 'Sensei_Core_Modules', 'add_new_module_term' ) );
 		add_action( 'wp_ajax_sensei_get_course_modules', array( $this, 'ajax_get_course_modules' ) );
+		add_action( 'wp_ajax_sensei_get_lesson_module_metabox', array( $this, 'handle_get_lesson_module_metabox' ) );
 
 		// for non admin users, only show taxonomies that belong to them
 		add_filter( 'get_terms', array( $this, 'filter_module_terms' ), 20, 3 );
@@ -116,26 +105,158 @@ class Sensei_Core_Modules {
 		// remove the default modules  metabox
 		add_action( 'admin_init', array( 'Sensei_Core_Modules', 'remove_default_modules_box' ) );
 
-	} // end constructor
+		// Add custom navigation.
+		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+
+		// Update module teacher meta when added to course.
+		add_action( 'added_term_relationship', [ $this, 'add_teacher_id_in_module_meta_when_added_to_course' ], 10, 3 );
+
+		// Remove module teacher meta when removed from course.
+		add_action( 'delete_term_relationships', [ $this, 'remove_teacher_id_from_module_meta_when_removed_from_course' ], 10, 3 );
+
+		// Update module teacher meta on course teacher update.
+		add_action( 'post_updated', [ $this, 'update_module_teacher_id_meta_on_post_teacher_update' ], 10, 3 );
+	}
 
 	/**
-	 * Alter a module term slug when a new taxonomy term is created
-	 * This will add the creators user name to the slug for uniqueness.
+	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since 1.8.0
+	 * @since $$next-version$$
+	 * @access private
 	 *
-	 * @param $term_id
-	 * @param $tt_id
-	 * @param $taxonomy
-	 *
-	 * @return void
-	 * @deprecated since 1.9.0
+	 * @param int     $post_ID      Post ID.
+	 * @param WP_Post $post_after   Post object following the update.
+	 * @param WP_Post $post_before  Post object before the update.
 	 */
-	public function change_module_term_slug( $term_id, $tt_id, $taxonomy ) {
+	public function update_module_teacher_id_meta_on_post_teacher_update( int $post_ID, WP_Post $post_after, WP_Post $post_before ) {
+		if ( 'course' !== get_post( $post_ID )->post_type ) {
+			return;
+		}
 
-		_deprecated_function( 'change_module_term_slug', '1.9.0' );
+		if ( $post_after->post_author !== $post_before->post_author ) {
+			$modules = Sensei()->modules->get_course_modules( $post_ID );
+			foreach ( $modules as $module ) {
+				self::update_module_teacher_meta( $module->term_id, $post_after->post_author );
+			}
+		}
+	}
 
-	}//end change_module_term_slug()
+	/**
+	 * Add teacher id as term meta when a module is added to a course.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param int    $tt_id     Term taxonomy ID.
+	 * @param string $taxonomy  Taxonomy slug.
+	 */
+	public function add_teacher_id_in_module_meta_when_added_to_course( int $object_id, int $tt_id, string $taxonomy ) {
+		if ( 'module' !== $taxonomy ) {
+			return;
+		}
+
+		$course = get_post( $object_id );
+
+		self::update_module_teacher_meta( $tt_id, $course->post_author );
+	}
+
+	/**
+	 * Remove teacher id from term meta when a module is added to a course.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param array  $tt_ids    An array of term taxonomy IDs.
+	 * @param string $taxonomy  Taxonomy slug.
+	 */
+	public function remove_teacher_id_from_module_meta_when_removed_from_course( int $object_id, array $tt_ids, string $taxonomy ) {
+		if ( 'module' !== $taxonomy ) {
+			return;
+		}
+
+		foreach ( $tt_ids as $tt_id ) {
+			$args    = array(
+				'post_type'      => 'course',
+				'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
+				'posts_per_page' => -1,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => $this->taxonomy,
+						'field'    => 'id',
+						'terms'    => $tt_id,
+					),
+				),
+			);
+			$courses = get_posts( $args );
+			// Don't remove teacher id if this module is still being used in other courses.
+			if ( count( $courses ) < 2 ) {
+				delete_term_meta( $tt_id, 'module_author' );
+			}
+		}
+	}
+
+	/**
+	 * Highlight the menu item for the modules pages.
+	 *
+	 * @deprecated 4.8.0
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
+		$screen = get_current_screen();
+		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
+			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
+		}
+
+		return $submenu_file;
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( ( 'edit-module' === $screen->id ) && ( 'term' !== $screen->base ) ) {
+			$this->display_modules_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Display the modules' navigation.
+	 *
+	 * @param WP_Screen $screen WordPress current screen object.
+	 */
+	private function display_modules_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Modules', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
 
 	/**
 	 * Hook in all meta boxes related tot he modules taxonomy
@@ -168,27 +289,29 @@ class Sensei_Core_Modules {
 	 * Build content for custom module meta box
 	 *
 	 * @since 1.8.0
-	 * @param  object $post Current post object
+	 * @param  WP_Post $post Current post object.
 	 * @return void
 	 */
 	public function lesson_module_metabox( $post ) {
-		// Get lesson course
-		$lesson_course = get_post_meta( $post->ID, '_lesson_course', true );
+		$course_id = (int) get_post_meta( $post->ID, '_lesson_course', true );
 
-		$html = '<div id="lesson-module-metabox-select">';
+		$this->output_lesson_module_metabox( $post, $course_id );
+	}
 
-		// Only show module selection if this lesson is part of a course
-		if ( $lesson_course && $lesson_course > 0 ) {
+	/**
+	 * Outputs the lesson module meta box HTML.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param WP_Post $lesson_post The lesson post object.
+	 * @param int     $course_id   The course id.
+	 */
+	private function output_lesson_module_metabox( WP_Post $lesson_post, int $course_id ) {
+		// Get current lesson module.
+		$module_id = $course_id ? $this->get_lesson_module_if_exists( $lesson_post ) : null;
 
-			// Get existing lesson module
-			$lesson_module = $this->get_lesson_module_if_exists( $post );
-
-			$html .= $this->render_module_select_for_course( $lesson_course, $lesson_module );
-
-		} else {
-			// translators: The placeholders are opening and closing <em> tags.
-			$html .= '<p>' . sprintf( __( 'No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'sensei-lms' ), '<em>', '</em>' ) . '</p>';
-		} // End If Statement
+		$html  = '<div id="lesson-module-metabox-select">';
+		$html .= $this->render_lesson_module_select_for_course( $course_id, $module_id );
 		$html .= '</div>';
 
 		echo wp_kses(
@@ -223,8 +346,8 @@ class Sensei_Core_Modules {
 	 * @param WP_Post $post The post.
 	 * @return int
 	 */
-	private function get_lesson_module_if_exists( $post ) {
-		// Get existing lesson module
+	public function get_lesson_module_if_exists( $post ) {
+		// Get existing lesson module.
 		$lesson_module      = 0;
 		$lesson_module_list = wp_get_post_terms( $post->ID, $this->taxonomy );
 		if ( is_array( $lesson_module_list ) && count( $lesson_module_list ) > 0 ) {
@@ -236,34 +359,59 @@ class Sensei_Core_Modules {
 		return $lesson_module;
 	}
 
-	private function render_module_select_for_course( $lesson_course, $lesson_module = 0 ) {
-		// Get the available modules for this lesson's course
-		$modules = $this->get_course_modules( $lesson_course );
+	/**
+	 * Renders the lesson module select input.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int|null $course_id         The course post ID.
+	 * @param int|null $current_module_id The currently selected module post ID.
+	 *
+	 * @return string The lesson module select HTML.
+	 */
+	private function render_lesson_module_select_for_course( int $course_id = null, int $current_module_id = null ): string {
+		// Get the available modules for this lesson's course.
+		$modules = $course_id ? $this->get_course_modules( $course_id ) : [];
+
+		// Build the HTML.
+		$input_name = 'lesson_module';
 
 		$html  = '';
 		$html .= '<input type="hidden" name="' . esc_attr( 'woo_lesson_' . $this->taxonomy . '_nonce' ) . '" id="' . esc_attr( 'woo_lesson_' . $this->taxonomy . '_nonce' ) . '" value="' . esc_attr( wp_create_nonce( plugin_basename( $this->file ) ) ) . '" />';
 
-		// Build the HTML to output
-		if ( is_array( $modules ) && count( $modules ) > 0 ) {
-			$html .= '<select id="lesson-module-options" name="lesson_module" class="widefat" style="width: 100%">' . "\n";
+		if ( $modules ) {
+			$html .= '<select id="lesson-module-options" name="' . esc_attr( $input_name ) . '" class="widefat" style="width: 100%">' . "\n";
 			$html .= '<option value="">' . esc_html__( 'None', 'sensei-lms' ) . '</option>';
 			foreach ( $modules as $module ) {
-				$html .= '<option value="' . esc_attr( absint( $module->term_id ) ) . '"' . selected( $module->term_id, $lesson_module, false ) . '>' . esc_html( $module->name ) . '</option>' . "\n";
+				$html .= '<option value="' . esc_attr( absint( $module->term_id ) ) . '"' . selected( $module->term_id, $current_module_id, false ) . '>' . esc_html( $module->name ) . '</option>' . "\n";
 			}
 			$html .= '</select>' . "\n";
 		} else {
-			$course_url = admin_url( 'post.php?post=' . urlencode( $lesson_course ) . '&action=edit' );
+			$html .= '<input type="hidden" name="' . esc_attr( $input_name ) . '" value="">';
 
-			/*
-			 * translators: The placeholders are as follows:
-			 *
-			 * %1$s - <em>
-			 * %2$s - </em>
-			 * %3$s - Opening <a> tag to link to the Course URL.
-			 * %4$s - </a>
-			 */
-			$html .= '<p>' . wp_kses_post( sprintf( __( 'No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'sensei-lms' ), '<em>', '</em>', '<a href="' . esc_url( $course_url ) . '">', '</a>' ) ) . '</p>';
-		} // End If Statement
+			if ( $course_id ) {
+				$course_url = admin_url( 'post.php?post=' . $course_id . '&action=edit' );
+
+				/*
+				 * translators: The placeholders are as follows:
+				 *
+				 * %1$s - <em>
+				 * %2$s - </em>
+				 * %3$s - Opening <a> tag to link to the Course URL.
+				 * %4$s - </a>
+				 */
+				$html .= '<p>' . wp_kses_post( sprintf( __( 'No modules are available for this lesson yet. %1$sPlease add some to %3$sthe course%4$s.%2$s', 'sensei-lms' ), '<em>', '</em>', '<a href="' . esc_url( $course_url ) . '">', '</a>' ) ) . '</p>';
+			} else {
+				/*
+				 * translators: The placeholders are as follows:
+				 *
+				 * %1$s - <em>
+				 * %2$s - </em>
+				 */
+				$html .= '<p>' . sprintf( __( 'No modules are available for this lesson yet. %1$sPlease select a course first.%2$s', 'sensei-lms' ), '<em>', '</em>' ) . '</p>';
+			}
+		}
+
 		return $html;
 	}
 
@@ -322,10 +470,10 @@ class Sensei_Core_Modules {
 	 * @return mixed            Post ID on permissions failure, boolean true on success
 	 */
 	public function save_lesson_module( $post_id ) {
-		global $post;
+		$post = get_post( $post_id );
 
 		// Verify post type and nonce
-		if ( ( get_post_type() != 'lesson' ) || ! isset( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] )
+		if ( ( get_post_type( $post ) != 'lesson' ) || ! isset( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ] )
 			|| ! wp_verify_nonce( $_POST[ 'woo_lesson_' . $this->taxonomy . '_nonce' ], plugin_basename( $this->file ) ) ) {
 			return $post_id;
 		}
@@ -399,6 +547,17 @@ class Sensei_Core_Modules {
 	}
 
 	/**
+	 * Adds hooks for use with editing a taxonomy in WP Admin.
+	 *
+	 * @since 3.6.0
+	 * @access private
+	 */
+	public function add_module_admin_hooks() {
+		add_action( 'edited_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
+		add_action( 'created_' . $this->taxonomy, array( $this, 'save_module_course' ), 10, 2 );
+	}
+
+	/**
 	 * Display course field on module edit screen
 	 *
 	 * @since 1.8.0
@@ -461,10 +620,13 @@ class Sensei_Core_Modules {
 		 * verification.
 		 */
 
+		$is_rest_request = defined( 'REST_REQUEST' ) && REST_REQUEST;
+
 		// phpcs:ignore WordPress.Security.NonceVerification
-		if ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) {
+		if ( $is_rest_request || ( isset( $_POST['action'] ) && 'inline-save-tax' == $_POST['action'] ) ) {
 			return;
 		}
+
 		// Get module's existing courses
 		$args    = array(
 			'post_type'      => 'course',
@@ -574,24 +736,6 @@ class Sensei_Core_Modules {
 		die();
 	}
 
-	/**
-	 * display modules on single course pages
-	 *
-	 * @since 1.8.0
-	 * @return void
-	 */
-	public function single_course_modules() {
-
-		_deprecated_function( 'Sensei_Modules->single_course_modules', 'Sensei 1.9.0', 'Sensei()->modules->load_course_module_content_template' );
-		// only show modules on the course that has modules
-		if ( is_singular( 'course' ) && has_term( '', 'module' ) ) {
-
-			$this->load_course_module_content_template();
-
-		}
-
-	} // end single_course_modules
-
 	public function sensei_course_preview_titles( $title, $lesson_id ) {
 		global $post, $current_user;
 
@@ -680,7 +824,7 @@ class Sensei_Core_Modules {
 		 * @param bool    $link_to_current    Allow for linking to the currently displayed module.
 		 */
 		return apply_filters( 'sensei_do_link_to_module', $do_link_to_module, $module, $link_to_current );
-	} // End do_link_to_module()
+	}
 
 	/**
 	 * Checks if a module taxonomy template file has been overridden.
@@ -695,7 +839,7 @@ class Sensei_Core_Modules {
 		$template = locate_template( $find );
 
 		return (bool) $template;
-	} // End is_module_tax_template_overridden()
+	}
 
 	/**
 	 * Set lesson archive template to display on module taxonomy archive page
@@ -732,6 +876,12 @@ class Sensei_Core_Modules {
 	 * @return void
 	 */
 	public function module_archive_filter( $query ) {
+		// If there is already an "orderby" property set
+		// then no need to do anything.
+		if ( $query->get( 'orderby' ) ) {
+			return;
+		}
+
 		if ( $query->is_main_query() && is_tax( $this->taxonomy ) ) {
 
 			// Limit to lessons only
@@ -788,11 +938,13 @@ class Sensei_Core_Modules {
 
 			$module = get_queried_object();
 
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe handling of course ID query var.
+			$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
+			$user_id   = get_current_user_id();
+
 			$module_progress = false;
-			if ( is_user_logged_in() && isset( $_GET['course_id'] ) && intval( $_GET['course_id'] ) > 0 ) {
-				global $current_user;
-				wp_get_current_user();
-				$module_progress = $this->get_user_module_progress( $module->term_id, $_GET['course_id'], $current_user->ID );
+			if ( $user_id && ! empty( $course_id ) ) {
+				$module_progress = $this->get_user_module_progress( $module->term_id, $course_id, $user_id );
 			}
 
 			if ( $module_progress && $module_progress > 0 ) {
@@ -805,8 +957,111 @@ class Sensei_Core_Modules {
 				echo '<p class="status ' . esc_attr( $class ) . '">' . esc_html( $status ) . '</p>';
 			}
 
-			echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
+			if ( $this->can_view_module_content( $module, $course_id, $user_id ) ) {
+				echo '<p class="archive-description module-description">' . wp_kses_post( apply_filters( 'sensei_module_archive_description', nl2br( $module->description ), $module->term_id ) ) . '</p>';
+			}
 		}
+	}
+
+	/**
+	 * Check if we can view module content.
+	 *
+	 * @param WP_Term $module    Module term object. Defaults to the currently queried term.
+	 * @param int     $course_id Course post ID. May not be set if not viewing module in course context.
+	 * @param int     $user_id   User ID. Defaults to currently logged in user ID.
+	 *
+	 * @return bool
+	 */
+	public function can_view_module_content( WP_Term $module = null, $course_id = null, $user_id = null ) {
+		$can_view_module_content = false;
+
+		if ( null === $module ) {
+			$module = get_queried_object();
+		}
+
+		if ( ! $module instanceof WP_Term ) {
+			return false;
+		}
+
+		if ( null === $user_id ) {
+			$user_id = get_current_user_id();
+		}
+
+		if (
+			! sensei_is_login_required()
+			|| ( $course_id && Sensei()->course->can_access_course_content( $course_id, $user_id, 'module' ) )
+		) {
+			$can_view_module_content = true;
+		}
+
+		/**
+		 * Filter if the user can view module content.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $can_view_module_content True if they can view module content.
+		 * @param int  $module_term_id          Module term ID.
+		 * @param int  $course_id               Course post ID.
+		 * @param int  $user_id                 User ID.
+		 */
+		return apply_filters( 'sensei_can_user_view_module', $can_view_module_content, $module->term_id, $course_id, $user_id );
+	}
+
+	/**
+	 * Outputs the module course sign-up link.
+	 *
+	 * @access private
+	 * @since 3.0.0
+	 */
+	public function course_signup_link() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Safe use of retrieving course ID.
+		$course_id = isset( $_GET['course_id'] ) ? intval( $_GET['course_id'] ) : null;
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) ) {
+			return;
+		}
+
+		$show_course_signup_notice = ! $this->can_view_module_content( null, $course_id );
+
+		/**
+		 * Filter for if we should show the course sign up notice on the module page.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param bool $show_course_signup_notice True if we should show the signup notice to the user.
+		 * @param int  $course_id                 Post ID for the course.
+		 */
+		if ( ! apply_filters( 'sensei_module_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
+			return;
+		}
+
+		$course_link  = '<a href="' . esc_url( get_permalink( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
+		$course_link .= esc_html__( 'course', 'sensei-lms' );
+		$course_link .= '</a>';
+
+		// translators: Placeholder is a link to the Course.
+		$message_default = sprintf( esc_html__( 'Please sign up for the %1$s before starting the module.', 'sensei-lms' ), $course_link );
+
+		/**
+		 * Filter the course sign up notice message on the module page.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $message     Message to show user.
+		 * @param int    $course_id   Post ID for the course.
+		 * @param string $course_link Generated HTML link to the course.
+		 */
+		$message = apply_filters( 'sensei_module_course_signup_notice_message', $message_default, $course_id, $course_link );
+
+		/**
+		 * Filter the course sign up notice message alert level on the module page.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $notice_level Notice level to use for the shown alert (alert, tick, download, info).
+		 * @param int    $course_id    Post ID for the course.
+		 */
+		$notice_level = apply_filters( 'sensei_module_course_signup_notice_level', 'info', $course_id );
+		Sensei()->notices->add_notice( $message, $notice_level );
 	}
 
 	public function module_archive_body_class( $classes ) {
@@ -955,15 +1210,34 @@ class Sensei_Core_Modules {
 	 * Register admin screen for ordering modules
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.0.0
 	 *
 	 * @return void
 	 */
 	public function register_modules_admin_menu_items() {
+		_deprecated_function( __METHOD__, '4.0.0' );
+
 		// add the modules link under the Course main menu
-		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module', '' );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module&post_type=course', '' );
 
 		// Register new admin page for module ordering.
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei-lms' ), __( 'Order Modules', 'sensei-lms' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
+	}
+
+	/**
+	 * Add admin screens.
+	 *
+	 * @since 4.0.0
+	 */
+	public function add_submenus() {
+		add_submenu_page(
+			null, // Hide the submenu.
+			__( 'Order Modules', 'sensei-lms' ),
+			__( 'Order Modules', 'sensei-lms' ),
+			'edit_lessons',
+			$this->order_page_slug,
+			array( $this, 'module_order_screen' )
+		);
 	}
 
 	/**
@@ -974,6 +1248,7 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
+		$ordered = false;
 		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
 			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
 		}
@@ -982,12 +1257,11 @@ class Sensei_Core_Modules {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $_POST['course_id'],
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1004,149 +1278,259 @@ class Sensei_Core_Modules {
 		?>
 		<div id="<?php echo esc_attr( $this->order_page_slug ); ?>"
 			 class="wrap <?php echo esc_attr( $this->order_page_slug ); ?>">
-		<h1><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></h1>
-							  <?php
+			<h1><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></h1>
+			<?php
 
-								$html = '';
+			$html = '';
 
-								if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
-									$html .= '<div class="updated fade">' . "\n";
-									$html .= '<p>' . esc_html__( 'The module order has been saved for this course.', 'sensei-lms' ) . '</p>' . "\n";
-									$html .= '</div>' . "\n";
-								}
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- No need to unslash or sanitize in this case.
+			if ( isset( $_GET['ordered'] ) && $_GET['ordered'] ) {
+				$html .= '<div class="updated fade">' . "\n";
+				$html .= '<p>' . esc_html__( 'The module order has been saved for this course.', 'sensei-lms' ) . '</p>' . "\n";
+				$html .= '</div>' . "\n";
+			}
 
-								$courses = Sensei()->course->get_all_courses();
+			$courses = Sensei()->course->get_all_courses();
 
-								$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
-								$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
-								$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
-								$html .= '<select id="module-order-course" name="course_id">' . "\n";
-								$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
+			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
+			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
+			$html .= '<select id="module-order-course" name="course_id">' . "\n";
+			$html .= '<option value="">' . esc_html__( 'Select a course', 'sensei-lms' ) . '</option>' . "\n";
 
-								foreach ( $courses as $course ) {
-									if ( has_term( '', $this->taxonomy, $course->ID ) ) {
-										$course_id = '';
-										if ( isset( $_GET['course_id'] ) ) {
-											$course_id = intval( $_GET['course_id'] );
-										}
-										$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
-									}
-								}
+			foreach ( $courses as $course ) {
+				if ( has_term( '', $this->taxonomy, $course->ID ) ) {
+					$course_id = '';
+					if ( isset( $_GET['course_id'] ) ) {
+						$course_id = intval( $_GET['course_id'] );
+					}
+					$html .= '<option value="' . esc_attr( intval( $course->ID ) ) . '" ' . selected( $course->ID, $course_id, false ) . '>' . esc_html( get_the_title( $course->ID ) ) . '</option>' . "\n";
+				}
+			}
 
-								$html .= '</select>' . "\n";
-								$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
-								$html .= '</form>' . "\n";
+			$html .= '</select>' . "\n";
+			$html .= '<input type="submit" class="button-primary module-order-select-course-submit" value="' . esc_attr__( 'Select', 'sensei-lms' ) . '" />' . "\n";
+			$html .= '</form>' . "\n";
 
-								if ( isset( $_GET['course_id'] ) ) {
-									$course_id = intval( $_GET['course_id'] );
-									if ( $course_id > 0 ) {
-										$modules = $this->get_course_modules( $course_id );
-										$modules = $this->append_teacher_name_to_module( $modules, array( 'module' ), array() );
-										if ( $modules ) {
+			if ( isset( $_GET['course_id'] ) ) {
+				$course_id = intval( $_GET['course_id'] );
+				if ( $course_id > 0 ) {
+					$modules = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+					if ( ! empty( $modules ) ) {
+						$html .= '<form id="editgrouping" method="post" action="'
+							. esc_url( admin_url( 'admin-post.php' ) )
+							. '" class="validate">' . "\n";
+						$html .= '<ul class="sortable-module-list">' . "\n";
+						foreach ( $modules as $module ) {
+							if ( 'module' !== $module['type'] ) {
+								continue;
+							}
 
-											$order = $this->get_course_module_order( $course_id );
+							$html .= '<li class="' . $this->taxonomy . '"><span rel="' . esc_attr( $module['id'] ) . '" style="width: 100%;"> ' . esc_html( $module['title'] ) . '</span></li>' . "\n";
+						}
+						$html .= '</ul>' . "\n";
+						$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
+						$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
+						$html .= '<input type="hidden" name="module-order" value="" />' . "\n";
+						$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
+						$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'sensei-lms' ) . '" />' . "\n";
+						$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
+						$html .= '</form>';
+					}
+				}
+			}
 
-											$order_string = '';
-											if ( $order ) {
-												$order_string = implode( ',', $order );
-											}
+			echo wp_kses(
+				$html,
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					array(
+						// Explicitly allow form tag for WP.com.
+						'form'   => array(
+							'action' => array(),
+							'class'  => array(),
+							'id'     => array(),
+							'method' => array(),
+						),
+						'input'  => array(
+							'class' => array(),
+							'name'  => array(),
+							'type'  => array(),
+							'value' => array(),
+						),
+						'option' => array(
+							'selected' => array(),
+							'value'    => array(),
+						),
+						'select' => array(
+							'id'   => array(),
+							'name' => array(),
+						),
+						'span'   => array(
+							'rel'   => array(),
+							'style' => array(),
+						),
+					)
+				)
+			);
 
-											$html .= '<form id="editgrouping" method="post" action="'
-												. esc_url( admin_url( 'admin-post.php' ) )
-												. '" class="validate">' . "\n";
-											$html .= '<ul class="sortable-module-list">' . "\n";
-											$count = 0;
-											foreach ( $modules as $module ) {
-												$count++;
-												$class = $this->taxonomy;
-												if ( $count == 1 ) {
-													$class .= ' first';
-												}
-												if ( $count == count( $modules ) ) {
-													$class .= ' last';
-												}
-												if ( $count % 2 != 0 ) {
-													$class .= ' alternate';
-												}
-												$html .= '<li class="' . esc_attr( $class ) . '"><span rel="' . esc_attr( $module->term_id ) . '" style="width: 100%;"> ' . esc_html( $module->name ) . '</span></li>' . "\n";
-											}
-											$html .= '</ul>' . "\n";
-											$html .= '<input type="hidden" name="action" value="order_modules" />' . "\n";
-											$html .= wp_nonce_field( 'order_modules', '_wpnonce', true, false ) . "\n";
-											$html .= '<input type="hidden" name="module-order" value="' . esc_attr( $order_string ) . '" />' . "\n";
-											$html .= '<input type="hidden" name="course_id" value="' . esc_attr( $course_id ) . '" />' . "\n";
-											$html .= '<input type="submit" class="button-primary" value="' . esc_attr__( 'Save module order', 'sensei-lms' ) . '" />' . "\n";
-											$html .= '<a href="' . esc_url( admin_url( 'post.php?post=' . $course_id . '&action=edit' ) ) . '" class="button-secondary">' . esc_html__( 'Edit course', 'sensei-lms' ) . '</a>' . "\n";
-											$html .= '</form>';
-										}
-									}
-								}
-
-								echo wp_kses(
-									$html,
-									array_merge(
-										wp_kses_allowed_html( 'post' ),
-										array(
-											// Explicitly allow form tag for WP.com.
-											'form'   => array(
-												'action' => array(),
-												'class'  => array(),
-												'id'     => array(),
-												'method' => array(),
-											),
-											'input'  => array(
-												'class' => array(),
-												'name'  => array(),
-												'type'  => array(),
-												'value' => array(),
-											),
-											'option' => array(
-												'selected' => array(),
-												'value'    => array(),
-											),
-											'select' => array(
-												'id'   => array(),
-												'name' => array(),
-											),
-											'span'   => array(
-												'rel'   => array(),
-												'style' => array(),
-											),
-										)
-									)
-								);
-
-								?>
+			?>
 		</div>
 		<?php
 	}
 
 	/**
-	 * Add 'Module order' column to courses list table
+	 * Add custom columns to course list table.
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  array $columns Existing columns
-	 * @return array           Modifed columns
+	 * @param  array $columns Existing columns.
+	 * @return array          Modified columns.
 	 */
 	public function course_columns( $columns = array() ) {
-		$columns['module_order'] = __( 'Module order', 'sensei-lms' );
+		$columns['modules'] = __( 'Modules', 'sensei-lms' );
+
 		return $columns;
 	}
 
 	/**
-	 * Load content in 'Module order' column
+	 * Load content in the course custom columns.
 	 *
 	 * @since 1.8.0
 	 *
-	 * @param  string  $column Current column name
-	 * @param  integer $course_id ID of course
+	 * @param  string  $column    Current column name.
+	 * @param  integer $course_id The course ID.
 	 * @return void
 	 */
 	public function course_column_content( $column = '', $course_id = 0 ) {
-		if ( $column == 'module_order' ) {
-			if ( has_term( '', $this->taxonomy, $course_id ) ) {
-				echo '<a class="button-secondary" href="' . esc_url( admin_url( 'edit.php?post_type=course&page=module-order&course_id=' . urlencode( intval( $course_id ) ) ) ) . '">' . esc_html__( 'Order modules', 'sensei-lms' ) . '</a>';
+		if ( 'modules' === $column ) {
+			$this->output_course_modules_column( $course_id );
+		}
+	}
+
+	/**
+	 * Output the course modules column HTML.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param int $course_id
+	 */
+	private function output_course_modules_column( int $course_id ) {
+		$modules = $this->get_course_modules( $course_id );
+
+		if ( ! $modules ) {
+			return;
+		}
+
+		/**
+		 * Filter to change the number of links in the course modules column.
+		 *
+		 * @since 4.0.0
+		 * @hook  sensei_module_course_column_max_links_count
+		 *
+		 * @param  {int} $max_links_count The number of links.
+		 * @return {int}
+		 */
+		$max_links_count = apply_filters( 'sensei_module_course_column_max_links_count', 3 );
+		$links_count     = count( $modules );
+
+		foreach ( $modules as $index => $module ) {
+			$is_last     = $index + 1 === $links_count;
+			$should_hide = $index + 1 > $max_links_count;
+			$module_link = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'post_type'     => 'course',
+							$this->taxonomy => $module->slug,
+						],
+						admin_url( 'edit.php' )
+					)
+				),
+				esc_html( $module->name )
+			);
+			?>
+			<span class="<?php echo esc_attr( $should_hide ? 'hidden' : '' ); ?>">
+				<?php echo $module_link . ( $is_last ? '' : ', ' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is already escaped. ?>
+			</span>
+			<?php if ( $is_last && $should_hide ) { ?>
+				<a href="#" class="sensei-show-more">
+					<?php
+					printf(
+						/* translators: %d: the number of links to be displayed */
+						esc_html__( '+%d more', 'sensei-lms' ),
+						intval( $links_count - $max_links_count )
+					);
+					?>
+				</a>
+				<?php
+			}
+		}
+
+		if ( count( $modules ) > 1 ) {
+			// Output the edit modules order link.
+			echo sprintf(
+				'<a class="sensei-wp-list-table-link" href="%s">%s</a>',
+				esc_url(
+					add_query_arg(
+						[
+							'page'      => 'module-order',
+							'course_id' => $course_id,
+						],
+						admin_url( 'admin.php' )
+					)
+				),
+				esc_html__( 'Order Modules', 'sensei-lms' )
+			);
+		}
+	}
+
+	/**
+	 * Add custom columns to lesson list table.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 *
+	 * @param  array $columns Existing columns.
+	 * @return array          Modified columns.
+	 */
+	public function add_lesson_columns( $columns = array() ) {
+		// The lesson module column id should not be equal to "module".
+		// @see https://core.trac.wordpress.org/ticket/56185.
+		$columns['modules'] = __( 'Module', 'sensei-lms' );
+
+		return $columns;
+	}
+
+	/**
+	 * Load content in the lesson custom columns.
+	 *
+	 * @since  4.0.0
+	 * @access private
+	 *
+	 * @param  string  $column    Current column name.
+	 * @param  integer $lesson_id The lesson ID.
+	 */
+	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
+		if ( 'modules' === $column ) {
+			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
+			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
+
+			if ( $module ) {
+				printf(
+					'<a href="%s">%s</a>',
+					esc_url(
+						add_query_arg(
+							[
+								'post_type'     => 'lesson',
+								$this->taxonomy => $module->slug,
+							],
+							admin_url( 'edit.php' )
+						)
+					),
+					esc_html( $module->name )
+				);
 			}
 		}
 	}
@@ -1162,10 +1546,19 @@ class Sensei_Core_Modules {
 	 */
 	private function save_course_module_order( $order_string = '', $course_id = 0 ) {
 		if ( $order_string && $course_id ) {
-			$order = explode( ',', $order_string );
-			update_post_meta( intval( $course_id ), '_module_order', $order );
-			return true;
+			remove_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70 );
+			$course_structure = Sensei_Course_Structure::instance( $course_id )->get( 'edit' );
+			add_filter( 'get_terms', array( Sensei()->modules, 'append_teacher_name_to_module' ), 70, 3 );
+
+			$order = array_map( 'absint', explode( ',', $order_string ) );
+
+			$course_structure = Sensei_Course_Structure::sort_structure( $course_structure, $order, 'module' );
+
+			if ( true === Sensei_Course_Structure::instance( $course_id )->save( $course_structure ) ) {
+				return true;
+			}
 		}
+
 		return false;
 	}
 
@@ -1274,12 +1667,16 @@ class Sensei_Core_Modules {
 	 * Data for 'Module' column Analysis Lesson Overview table
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.3.0
 	 *
 	 * @param  array   $columns Table column data
 	 * @param  WP_Post $lesson
 	 * @return array              Updated column data
 	 */
 	public function analysis_overview_column_data( $columns, $lesson ) {
+
+		_deprecated_function( __METHOD__, '4.3.0' );
+
 		if ( isset( $_GET['view'] ) && 'lessons' == $_GET['view'] ) {
 			$lesson_module      = '';
 			$lesson_module_list = wp_get_post_terms( $lesson->ID, $this->taxonomy );
@@ -1383,7 +1780,7 @@ class Sensei_Core_Modules {
 		if ( isset( $course_id ) && 0 < $course_id ) {
 
 			// the course should contain the same module taxonomy term for this to be valid
-			if ( ! has_term( $module, $this->taxonomy, $course_id ) ) {
+			if ( ! has_term( $module->term_id, $this->taxonomy, $course_id ) ) {
 				return false;
 			}
 
@@ -1399,7 +1796,7 @@ class Sensei_Core_Modules {
 	 * @since 1.8.0
 	 *
 	 * @param  integer $course_id ID of course
-	 * @return array              Ordered array of module taxonomy term objects
+	 * @return WP_Term[]          Ordered array of module taxonomy term objects
 	 */
 	public function get_course_modules( $course_id = 0 ) {
 
@@ -1462,14 +1859,13 @@ class Sensei_Core_Modules {
 		$disable_styles = false;
 		if ( isset( Sensei()->settings->settings['styles_disable'] ) ) {
 			$disable_styles = Sensei()->settings->settings['styles_disable'];
-		} // End If Statement
+		}
 
 		// Add filter for theme overrides
 		$disable_styles = apply_filters( 'sensei_disable_styles', $disable_styles );
 
 		if ( ! $disable_styles ) {
-			wp_register_style( $this->taxonomy . '-frontend', esc_url( $this->assets_url ) . 'css/modules-frontend.css', array(), Sensei()->version );
-			wp_enqueue_style( $this->taxonomy . '-frontend' );
+			Sensei()->assets->enqueue( $this->taxonomy . '-frontend', 'css/modules-frontend.css' );
 		}
 
 	}
@@ -1491,26 +1887,35 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array( 'course_page_module-order' )
+			array( 'admin_page_module-order' )
 		);
 
-		// Only load module scripts when adding, editing or ordering modules.
-		if ( ! in_array( $hook, $script_on_pages_white_list )
-			&& ( ! $screen || 'module' !== $screen->taxonomy ) ) {
+		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
+		$screen_related =
+			$screen &&
+			(
+				'module' === $screen->taxonomy
+				|| 'course' === $screen->id
+				|| 'lesson' === $screen->id
+			);
+
+		if ( ! ( in_array( $hook, $script_on_pages_white_list ) || $screen_related ) ) {
 			return;
 		}
+		wp_enqueue_script( 'sensei-chosen-ajax' );
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
-		wp_enqueue_script( 'sensei-chosen', Sensei()->plugin_url . 'assets/chosen/chosen.jquery' . $suffix . '.js', array( 'jquery' ), Sensei()->version, true );
-		wp_enqueue_script( 'sensei-chosen-ajax', Sensei()->plugin_url . 'assets/chosen/ajax-chosen.jquery' . $suffix . '.js', array( 'jquery', 'sensei-chosen' ), Sensei()->version, true );
-		wp_enqueue_script( $this->taxonomy . '-admin', esc_url( $this->assets_url ) . 'js/modules-admin' . $suffix . '.js', array( 'jquery', 'sensei-chosen', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ), Sensei()->version, true );
+		Sensei()->assets->enqueue(
+			$this->taxonomy . '-admin',
+			'js/modules-admin.js',
+			[ 'jquery', 'sensei-chosen-ajax', 'jquery-ui-sortable', 'sensei-core-select2' ],
+			true
+		);
 
 		// localized module data
 		$localize_modulesAdmin = array(
-			'search_courses_nonce'  => wp_create_nonce( 'search-courses' ),
-			'getCourseModulesNonce' => wp_create_nonce( 'get-course-modules' ),
-			'selectPlaceholder'     => __( 'Search for courses', 'sensei-lms' ),
+			'search_courses_nonce'        => wp_create_nonce( 'search-courses' ),
+			'getLessonModuleMetaBoxNonce' => wp_create_nonce( 'get_lesson_module_metabox_nonce' ),
+			'selectPlaceholder'           => __( 'Search for courses', 'sensei-lms' ),
 		);
 
 		wp_localize_script( $this->taxonomy . '-admin', 'modulesAdmin', $localize_modulesAdmin );
@@ -1525,8 +1930,7 @@ class Sensei_Core_Modules {
 	 */
 	public function admin_enqueue_styles() {
 
-		wp_register_style( $this->taxonomy . '-sortable', esc_url( $this->assets_url ) . 'css/modules-admin.css', '', Sensei()->version );
-		wp_enqueue_style( $this->taxonomy . '-sortable' );
+		Sensei()->assets->enqueue( $this->taxonomy . '-sortable', 'css/modules-admin.css' );
 
 	}
 
@@ -1579,7 +1983,7 @@ class Sensei_Core_Modules {
 
 		Sensei_Templates::get_template( 'single-course/modules.php' );
 
-	} // end course_module_content
+	}
 
 	/**
 	 * Returns all lessons for the given module ID
@@ -1604,18 +2008,19 @@ class Sensei_Core_Modules {
 
 		}
 
-	} // end get lessons
+	}
 
 	/**
 	 * Returns all lessons for the given module ID
 	 *
-	 * @since 1.8.0
+	 * @param int          $course_id                  Course post ID.
+	 * @param int          $term_id                    Module term ID.
+	 * @param array|string $course_lessons_post_status Post status for lessons. Can be an array of statuses.
 	 *
-	 * @param $course_id
-	 * @param $term_id
 	 * @return WP_Query $lessons_query
+	 * @since 1.8.0
 	 */
-	public function get_lessons_query( $course_id, $term_id ) {
+	public function get_lessons_query( $course_id, $term_id, $course_lessons_post_status = null ) {
 		global $wp_query;
 		if ( empty( $term_id ) || empty( $course_id ) ) {
 
@@ -1623,7 +2028,9 @@ class Sensei_Core_Modules {
 
 		}
 
-		$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		if ( ! $course_lessons_post_status ) {
+			$course_lessons_post_status = isset( $wp_query ) && $wp_query->is_preview() ? 'all' : 'publish';
+		}
 
 		$args = array(
 			'post_type'        => 'lesson',
@@ -1650,90 +2057,48 @@ class Sensei_Core_Modules {
 
 		if ( version_compare( Sensei()->version, '1.6.0', '>=' ) ) {
 			$args['meta_key'] = '_order_module_' . intval( $term_id );
-			$args['orderby']  = 'meta_value_num date';
+			$args['orderby']  = 'meta_value_num date ID';
 		}
 
 		$lessons_query = new WP_Query( $args );
 
 		return $lessons_query;
 
-	} // end get lessons
+	}
 
 	/**
 	 * Find the lesson in the given course that doesn't belong
 	 * to any of the courses modules
 	 *
-	 * @param $course_id
+	 * @param int          $course_id    The course id.
+	 * @param string|array $post_status  The status of the lessons.
 	 *
 	 * @return array $non_module_lessons
 	 */
-	public function get_none_module_lessons( $course_id ) {
-
-		$non_module_lessons = array();
-
-		// exit if there is no course id passed in
-		if ( empty( $course_id ) || 'course' != get_post_type( $course_id ) ) {
-
-			return $non_module_lessons;
+	public function get_none_module_lessons( $course_id, $post_status = 'publish' ) {
+		// Return early if no course was passed.
+		if ( empty( $course_id ) || 'course' !== get_post_type( $course_id ) ) {
+			return [];
 		}
 
-		// save some time and check if we already have the saved
-		if ( get_transient( 'sensei_' . $course_id . '_none_module_lessons' ) ) {
-
-			return get_transient( 'sensei_' . $course_id . '_none_module_lessons' );
-
-		}
-
-		// create terms array which must be excluded from other arrays
+		// Fetch terms array which must be excluded from the result.
 		$course_modules = $this->get_course_modules( $course_id );
+		$base_args      = [];
 
-		// exit if there are no module on this course
-		if ( empty( $course_modules ) || ! is_array( $course_modules ) ) {
-
-			return Sensei()->course->course_lessons( $course_id );
-
-		}
-
-		$terms = array();
-		foreach ( $course_modules as $module ) {
-
-			array_push( $terms, $module->term_id );
-
-		}
-
-		$args = array(
-			'post_type'        => 'lesson',
-			'post_status'      => 'publish',
-			'posts_per_page'   => -1,
-			'meta_query'       => array(
-				array(
-					'key'     => '_lesson_course',
-					'value'   => intval( $course_id ),
-					'compare' => '=',
-				),
-			),
-			'tax_query'        => array(
-				array(
+		if ( ! empty( $course_modules ) && is_array( $course_modules ) ) {
+			$term_ids               = wp_list_pluck( $course_modules, 'term_id' );
+			$base_args['tax_query'] = [
+				[
 					'taxonomy' => 'module',
 					'field'    => 'id',
-					'terms'    => $terms,
+					'terms'    => $term_ids,
 					'operator' => 'NOT IN',
-				),
-			),
-			'orderby'          => 'menu_order',
-			'order'            => 'ASC',
-			'suppress_filters' => 0,
-		);
-
-		$wp_lessons_query = new WP_Query( $args );
-
-		if ( isset( $wp_lessons_query->posts ) && count( $wp_lessons_query->posts ) > 0 ) {
-			$non_module_lessons = $wp_lessons_query->get_posts();
-			set_transient( 'sensei_' . $course_id . '_none_module_lessons', $non_module_lessons, 10 * DAY_IN_SECONDS );
+				],
+			];
 		}
 
-		return $non_module_lessons;
-	} // end get_none_module_lessons
+		return Sensei()->course->course_lessons( $course_id, $post_status, 'all', $base_args );
+	}
 
 	/**
 	 * Register the modules taxonomy
@@ -1750,12 +2115,14 @@ class Sensei_Core_Modules {
 			'all_items'         => __( 'All Modules', 'sensei-lms' ),
 			'parent_item'       => __( 'Parent Module', 'sensei-lms' ),
 			'parent_item_colon' => __( 'Parent Module:', 'sensei-lms' ),
+			'view_item'         => __( 'View Module', 'sensei-lms' ),
 			'edit_item'         => __( 'Edit Module', 'sensei-lms' ),
 			'update_item'       => __( 'Update Module', 'sensei-lms' ),
 			'add_new_item'      => __( 'Add New Module', 'sensei-lms' ),
 			'new_item_name'     => __( 'New Module Name', 'sensei-lms' ),
 			'menu_name'         => __( 'Modules', 'sensei-lms' ),
 			'not_found'         => __( 'No modules found.', 'sensei-lms' ),
+			'back_to_items'     => __( '&larr; Back to Modules', 'sensei-lms' ),
 		);
 
 		/**
@@ -1769,7 +2136,7 @@ class Sensei_Core_Modules {
 		$args = array(
 			'public'             => true,
 			'hierarchical'       => true,
-			'show_admin_column'  => true,
+			'show_admin_column'  => false,
 			'capabilities'       => array(
 				'manage_terms' => 'manage_categories',
 				'edit_terms'   => 'edit_courses',
@@ -1785,7 +2152,7 @@ class Sensei_Core_Modules {
 
 		register_taxonomy( 'module', array( 'course', 'lesson' ), $args );
 
-	}//end setup_modules_taxonomy()
+	}
 
 	/**
 	 * When the wants to edit the lesson modules redirect them to the course modules.
@@ -1803,7 +2170,7 @@ class Sensei_Core_Modules {
 			wp_safe_redirect( esc_url_raw( 'edit-tags.php?taxonomy=module&post_type=course' ) );
 		}
 
-	}//end redirect_to_lesson_module_taxonomy_to_course()
+	}
 
 	/**
 	 * Completely remove the module menu item under lessons.
@@ -1828,7 +2195,7 @@ class Sensei_Core_Modules {
 			}
 		}
 
-	}//end remove_lessons_menu_model_taxonomy()
+	}
 
 	/**
 	 * Completely remove the second modules under courses
@@ -1853,7 +2220,7 @@ class Sensei_Core_Modules {
 			}
 		}
 
-	}//end remove_courses_menu_model_taxonomy()
+	}
 
 	/**
 	 * Determine the author of a module term term by looking at
@@ -1890,12 +2257,12 @@ class Sensei_Core_Modules {
 				// look for the author in the slug
 				$owners[] = self::get_term_author( $term->slug );
 
-			}// end if term name
-		} // end for each
+			}
+		}
 
 		return $owners;
 
-	}//end get_term_authors()
+	}
 
 	/**
 	 * Looks at a term slug and figures out
@@ -1917,11 +2284,21 @@ class Sensei_Core_Modules {
 			return $term_owner;
 
 		}
+		$term = get_term_by( 'slug', $slug, 'module' );
 
+		if ( $term ) {
+			$author_meta = get_term_meta( $term->term_id, 'module_author', true );
+			if ( $author_meta ) {
+				return get_user_by( 'id', $author_meta );
+			}
+		}
 		// look for the author in the slug
 		$slug_parts = explode( '-', $slug );
 
-		if ( count( $slug_parts ) > 1 ) {
+		if (
+			count( $slug_parts ) > 1
+			&& is_numeric( $slug_parts[0] )
+		) {
 
 			// get the user data
 			$possible_user_id = $slug_parts[0];
@@ -1955,20 +2332,9 @@ class Sensei_Core_Modules {
 
 		?>
 		<div id="taxonomy-<?php echo esc_attr( $tax_name ); ?>" class="categorydiv">
-			<ul id="<?php echo esc_attr( $tax_name ); ?>-tabs" class="category-tabs">
-				<li class="tabs"><a href="#<?php echo esc_url( $tax_name ); ?>-all"><?php echo esc_html( $taxonomy->labels->all_items ); ?></a></li>
-				<li class="hide-if-no-js"><a href="#<?php echo esc_url( $tax_name ); ?>-pop"><?php esc_html_e( 'Most Used', 'sensei-lms' ); ?></a></li>
-			</ul>
-
-			<div id="<?php echo esc_attr( $tax_name ); ?>-pop" class="tabs-panel" style="display: none;">
-				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist-pop" class="categorychecklist form-no-clear" >
-					<?php $popular_ids = wp_popular_terms_checklist( $tax_name ); ?>
-				</ul>
-			</div>
-
 			<div id="<?php echo esc_attr( $tax_name ); ?>-all" class="tabs-panel">
 				<?php
-				$name = ( $tax_name == 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
+				$name = ( $tax_name === 'category' ) ? 'post_category' : 'tax_input[' . $tax_name . ']';
 				echo "<input type='hidden' name='" . esc_attr( $name ) . "[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
 				?>
 				<ul id="<?php echo esc_attr( $tax_name ); ?>checklist" data-wp-lists="list:<?php echo esc_attr( $tax_name ); ?>" class="categorychecklist form-no-clear">
@@ -1976,8 +2342,7 @@ class Sensei_Core_Modules {
 					wp_terms_checklist(
 						$post->ID,
 						array(
-							'taxonomy'     => $tax_name,
-							'popular_cats' => $popular_ids,
+							'taxonomy' => $tax_name,
 						)
 					);
 					?>
@@ -2004,7 +2369,7 @@ class Sensei_Core_Modules {
 			<?php endif; ?>
 		</div>
 		<?php
-	} // end course_module_metabox
+	}
 
 
 	/**
@@ -2078,8 +2443,12 @@ class Sensei_Core_Modules {
 
 	/**
 	 * Get course modules
+	 *
+	 * @deprecated 3.15.0
 	 */
 	public function ajax_get_course_modules() {
+		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Core_Modules::handle_get_lesson_module_metabox' );
+
 		// Security check
 		check_ajax_referer( 'get-course-modules', 'security' );
 
@@ -2088,9 +2457,28 @@ class Sensei_Core_Modules {
 			wp_send_json_error( array( 'error' => 'invalid course id' ) );
 		}
 
-		$html_content = $this->render_module_select_for_course( $course_id );
+		$html_content = $this->render_lesson_module_select_for_course( $course_id );
 
 		wp_send_json_success( array( 'content' => $html_content ) );
+	}
+
+	/**
+	 * Handles the lesson module meta box ajax request by outputting the box content HTML.
+	 *
+	 * @since 3.15.0
+	 */
+	public function handle_get_lesson_module_metabox() {
+		// Security check.
+		check_ajax_referer( 'get_lesson_module_metabox_nonce', 'security' );
+
+		if ( isset( $_GET['lesson_id'] ) && isset( $_GET['course_id'] ) ) {
+			$this->output_lesson_module_metabox(
+				get_post( (int) $_GET['lesson_id'] ),
+				(int) $_GET['course_id']
+			);
+		}
+
+		wp_die(); // This is required to terminate immediately and return a proper response.
 	}
 
 	/**
@@ -2104,7 +2492,7 @@ class Sensei_Core_Modules {
 	public function filter_module_terms( $terms, $taxonomies, $args ) {
 
 		// dont limit for admins and other taxonomies. This should also only apply to admin
-		if ( current_user_can( 'manage_options' ) || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
+		if ( current_user_can( 'manage_options' ) || ! $taxonomies || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
 			return $terms;
 		}
 
@@ -2123,7 +2511,7 @@ class Sensei_Core_Modules {
 		$teachers_terms = $this->filter_terms_by_owner_no_infinite_loop( $terms, get_current_user_id() );
 
 		return $teachers_terms;
-	}//end filter_module_terms()
+	}
 
 	/**
 	 * Call filter_terms_by_owner without infinite loops
@@ -2173,7 +2561,7 @@ class Sensei_Core_Modules {
 
 		return $terms;
 
-	}//end filter_course_selected_terms()
+	}
 
 	/**
 	 * Filter the given terms and only return the
@@ -2205,7 +2593,7 @@ class Sensei_Core_Modules {
 
 		return $users_terms;
 
-	} // end filter terms by owner
+	}
 
 	/**
 	 * Add the teacher name next to modules. Only works in Admin for Admin users.
@@ -2217,7 +2605,7 @@ class Sensei_Core_Modules {
 	 */
 	public function append_teacher_name_to_module( $terms, $taxonomies, $args ) {
 		// only for admin users ont he module taxonomy
-		if ( empty( $terms ) || ! current_user_can( 'manage_options' ) || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
+		if ( empty( $terms ) || ! is_array( $taxonomies ) || ! current_user_can( 'manage_options' ) || ! in_array( 'module', $taxonomies ) || ! is_admin() ) {
 			return $terms;
 		}
 
@@ -2238,6 +2626,15 @@ class Sensei_Core_Modules {
 			if ( is_numeric( $term ) ) {
 				// the term id was given, get the term object
 				$term = get_term( $term, 'module' );
+			}
+
+			if ( ! $term instanceof WP_Term ) {
+				continue;
+			}
+
+			if ( 'module' !== $term->taxonomy ) {
+				$users_terms[] = $term;
+				continue;
 			}
 
 			$author = self::get_term_author( $term->slug );
@@ -2269,41 +2666,13 @@ class Sensei_Core_Modules {
 	 * When a course is save make sure to reset the transient set
 	 * for it when determining the none module lessons.
 	 *
-	 * @sine 1.9.0
-	 * @param $post_id
+	 * @since 1.9.0
+	 * @deprecated 3.6.0
+	 *
+	 * @param int $post_id The post ID.
 	 */
 	public static function reset_none_modules_transient( $post_id ) {
-
-		// this should only apply to course and lesson post types
-		if ( in_array( get_post_type( $post_id ), array( 'course', 'lesson' ) ) ) {
-
-			$course_id = '';
-
-			if ( 'lesson' == get_post_type( $post_id ) ) {
-
-				$course_id = Sensei()->lesson->get_course_id( $post_id );
-
-			}
-
-			if ( ! empty( $course_id ) ) {
-
-				delete_transient( 'sensei_' . $course_id . '_none_module_lessons' );
-
-			}
-		} // end if is a course or a lesson
-
-	} // end reset_none_modules_transient
-
-	/**
-	 * This function calls the deprecated hook 'sensei_single_course_modules_content' to fire
-	 *
-	 * @since 1.9.0
-	 * @deprecated since 1.9.0
-	 */
-	public static function deprecate_sensei_single_course_modules_content() {
-
-		sensei_do_deprecated_action( 'sensei_single_course_modules_content', '1.9.0', 'sensei_single_course_modules_before or sensei_single_course_modules_after' );
-
+		_deprecated_function( __METHOD__, '3.6.0' );
 	}
 
 	/**
@@ -2344,7 +2713,7 @@ class Sensei_Core_Modules {
 		$sensei_modules_loop['current']   = -1;
 		$sensei_modules_loop['course_id'] = $course_id;
 
-	}//end setup_single_course_module_loop()
+	}
 
 	/**
 	 * Tear down the course module loop.
@@ -2362,6 +2731,25 @@ class Sensei_Core_Modules {
 
 		// set the current course to be the global post again
 		wp_reset_query();
-	}//end teardown_single_course_module_loop()
+	}
 
-} // end modules class
+	/**
+	 * Set teacher meta for module.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param int $module_id  Term ID.
+	 * @param int $teacher_id ID of module teacher.
+	 */
+	public static function update_module_teacher_meta( $module_id, $teacher_id ) {
+		if ( user_can( $teacher_id, 'manage_options' ) ) {
+			delete_term_meta( $module_id, 'module_author' );
+		} else {
+			update_term_meta(
+				$module_id,
+				'module_author',
+				$teacher_id
+			);
+		}
+	}
+}

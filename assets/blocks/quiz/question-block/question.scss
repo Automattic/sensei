@@ -1,0 +1,73 @@
+@import '../answer-blocks/option-toggle';
+
+/**
+ * Sensei question and question block styles shared between frontend and editor.
+ */
+
+.sensei-lms-question__answer-feedback {
+	--color: #DCDCDE;
+	$horizontal-padding: 24px;
+	border: 1px solid var(--color);
+	border-radius: 1px;
+	margin: 12px auto;
+
+	&--correct {
+		--color: #B8E6BF;
+		--icon: '\f058';
+	}
+
+	&--incorrect {
+		--color: #F7DCC6;
+		--icon: '\f057';
+	}
+
+	&.empty {
+		--color: #DCDCDE;
+	}
+
+	&__header {
+		display: flex;
+		padding: 6px $horizontal-padding;
+		background: var(--color);
+		font-size: 80%;
+		align-items: center;
+	}
+	&__title {
+		flex: 1;
+	}
+
+	&__points {
+		font-weight: bold;
+	}
+
+	&__content {
+		padding: 12px $horizontal-padding;
+	}
+
+	&__correct-answer {
+		.highlight {
+			background: var(--color);
+			padding: 5px;
+			border-radius: 2px;
+		}
+	}
+
+	&__correct-answer + &__answer-notes {
+		border-top: 1px solid  var(--color);
+		margin-top: 12px;
+		padding-top: 12px;
+	}
+
+	&__answer-notes {
+		.entry-content & > *:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__icon:after {
+		content: var(--icon);
+		font-family: FontAwesomeSensei, FontAwesome, sans-serif;
+		margin-right: 6px;
+	}
+
+}

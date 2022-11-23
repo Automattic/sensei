@@ -1,0 +1,23 @@
+name: Report Plugin Build
+
+on:
+    workflow_run:
+        workflows: ['Plugin Build']
+        types:
+            - completed
+
+jobs:
+    report-build:
+        name: Report Plugin Build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Publish commit status with the link to download the plugin
+              id: plugin_artifact
+              uses: fjorgemota/github-action-report-artifact@v0
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  artifact-name: sensei-lms-${{ github.event.workflow_run.head_sha }}
+                  report-on: commit_status
+                  context: Plugin Build Download
+                  message: Click on "Details" to download the plugin zip file

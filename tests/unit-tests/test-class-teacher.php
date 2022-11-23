@@ -1,6 +1,14 @@
 <?php
 
 class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
+
+	/**
+	 * Factory object.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
 
 	/**
 	 * Constructor function
@@ -19,7 +27,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
-	}//end setup()
+	}
 
 	/**
 	 *
@@ -32,21 +40,21 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$lessons = get_posts( 'post_type=course' );
 		foreach ( $lessons as $index => $lesson ) {
 			wp_delete_post( $lesson->ID, true );
-		}// end for each
+		}
 
 		// remove all lessons
 		$lessons = get_posts( 'post_type=lesson' );
 		foreach ( $lessons as $index => $lesson ) {
 			wp_delete_post( $lesson->ID, true );
-		}// end for each
+		}
 
 		// remove all quizzes
 		$quizzes = get_posts( 'post_type=quiz' );
 		foreach ( $quizzes as $index => $quiz ) {
 			wp_delete_post( $quiz->ID, true );
-		}// end for each
+		}
 
-	}//end tearDown()
+	}
 
 	/**
 	 * Testing the quiz class to make sure it is loaded
@@ -56,7 +64,58 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->teacher ), 'Sensei Modules class is not loaded' );
 
-	} // end testClassInstance
+	}
+
+	/**
+	 * Test if the module order is updated after the teacher has changed.
+	 */
+	public function testUpdateCourseModules_TeacherUpdated_UpdatesTheModuleOrder() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$structure_source = [
+			[
+				'type'    => 'module',
+				'title'   => 'Module A',
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson A',
+					],
+				],
+			],
+			[
+				'type'    => 'module',
+				'title'   => 'Module B',
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson B',
+					],
+				],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$course_structure->save( $structure_source );
+
+		/* Act. */
+		Sensei_Teacher::update_course_modules_author( $course_id, $user_id );
+
+		/* Assert. */
+		$new_module_order = Sensei()->modules->get_course_module_order( $course_id );
+		$new_structure    = $course_structure->get( 'edit' );
+
+		$expected_module_order = [];
+		foreach ( $new_structure as $item ) {
+			if ( 'module' === $item['type'] ) {
+				$expected_module_order[] = $item['id'];
+			}
+		}
+
+		$this->assertEquals( $expected_module_order, $new_module_order );
+	}
 
 	/**
 	 * Testing Sensei_Teacher::update_course_modules_author
@@ -141,7 +200,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$message                           = 'A new admin term with slug {adminID}-slug should not have been created. The admin term should not be duplicated when passed back to admin';
 		$this->assertFalse( strpos( $admin_term_after_multiple_updates[0]->slug, (string) $administrator->ID ), $message );
 
-	} // end test author change
+	}
 
 	/**
 	 * Testing Sensei_Teacher::update_course_modules_author
@@ -213,7 +272,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 			$this->assertEquals( $expected_module_2_slug, $term_after_update[0]->slug, 'Lesson module was not updated, ID: ' . $lesson_id );
 		}
 
-	}//end testUpdateCourseModulesAuthorChangeLessons()
+	}
 
 	public function testUpdateLessonTeacher() {
 		// setup assertions
@@ -261,6 +320,86 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test to make sure questions change ownership when they can.
+	 */
+	public function testUpdateQuestionTeacher() {
+		$this->login_as_teacher_c();
+		$teacher_id_c            = get_current_user_id();
+		$quiz_id_c               = $this->factory->quiz->create();
+		$shared_questions_c      = $this->factory->question->create_many( 1, [ 'quiz_id' => $quiz_id_c ] );
+		$free_questions_c        = $this->factory->question->create_many( 1 );
+		$free_questions_c_remain = $this->factory->question->create_many( 1 );
+
+		$this->login_as_teacher_b();
+		$teacher_id_b       = get_current_user_id();
+		$quiz_id_b          = $this->factory->quiz->create();
+		$shared_questions_b = $this->factory->question->create_many( 1, [ 'quiz_id' => $quiz_id_b ] );
+		$free_questions_b   = $this->factory->question->create_many( 1 );
+
+		$this->login_as_teacher();
+		$teacher_id_a       = get_current_user_id();
+		$quiz_id_a          = $this->factory->quiz->create();
+		$shared_questions_a = $this->factory->question->create_many( 1, [ 'quiz_id' => $quiz_id_a ] );
+		$free_questions_a   = $this->factory->question->create_many( 1 );
+
+		$shared_questions_distribute = array_merge( $free_questions_c, $shared_questions_b, $free_questions_b, $shared_questions_c, $shared_questions_a, $free_questions_a );
+
+		$basic_course = $this->factory->get_course_with_lessons(
+			[
+				'reuse_questions'         => function () use ( &$shared_questions_distribute ) {
+					if ( empty( $shared_questions_distribute ) ) {
+						return [ 'post__in' => [ -1 ] ];
+					}
+
+					return [
+						'post__in' => array_filter(
+							[
+								array_pop( $shared_questions_distribute ),
+								array_pop( $shared_questions_distribute ),
+							]
+						),
+					];
+				},
+				'multiple_question_count' => 1,
+				'lesson_count'            => 3,
+			]
+		);
+
+		$multi_question_ids = get_posts(
+			[
+				'post_type' => 'multiple_question',
+				'fields'    => 'ids',
+			]
+		);
+
+		$this->login_as_admin();
+		Sensei()->teacher->update_course_lessons_author( $basic_course['course_id'], $teacher_id_b );
+
+		$this->assertPostAuthor( $teacher_id_c, $shared_questions_c, 'Shared questions from teacher C should still be authored by teacher C' );
+		$this->assertPostAuthor( $teacher_id_b, $shared_questions_b, 'Shared questions from teacher B should still be authored by teacher B' );
+		$this->assertPostAuthor( $teacher_id_a, $shared_questions_a, 'Shared questions from teacher A should still be authored by teacher A' );
+		$this->assertPostAuthor( $teacher_id_b, $free_questions_a, 'Free questions from teacher A should now be owned by teacher B' );
+		$this->assertPostAuthor( $teacher_id_b, $free_questions_b, 'Free questions from teacher B should still be owned by teacher B' );
+		$this->assertPostAuthor( $teacher_id_b, $free_questions_c, 'Free used questions from teacher C should now be owned by teacher B' );
+		$this->assertPostAuthor( $teacher_id_c, $free_questions_c_remain, 'Free unused questions from teacher C should still be owned by teacher C' );
+		$this->assertPostAuthor( $teacher_id_b, $multi_question_ids, 'All multi-questions should be transferred to teacher B' );
+	}
+
+	/**
+	 * Asset a list of posts have a certain post_author.
+	 *
+	 * @param int    $user_id  User ID to check.
+	 * @param array  $post_ids Post IDs to check.
+	 * @param string $message  Message to show..
+	 */
+	private function assertPostAuthor( int $user_id, array $post_ids, string $message = '' ) {
+		foreach ( $post_ids as $post_id ) {
+			$check_post = get_post( $post_id );
+			$this->assertEquals( $user_id, (int) $check_post->post_author, $message );
+		}
+	}
+
+	/**
 	 * Test Sensei()->Teacher->add_courses_to_author_archive
 	 * Test for the normal case on
 	 *
@@ -297,4 +436,47 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 
 	}
 
-} // end class
+	/**
+	 *
+	 * Asserts that only users with edit course capabilities are returned
+	 *
+	 * @covers Sensei_Teacher::get_teachers_and_authors
+	 */
+	public function testGetTeachersAndAuthors() {
+		$subscribers    = $this->factory->user->create_many( 2, [ 'role' => 'subscriber' ] );
+		$teachers       = $this->factory->user->create_many( 3, [ 'role' => 'teacher' ] );
+		$editors        = $this->factory->user->create_many( 1, [ 'role' => 'editor' ] );
+		$administrators = $this->factory->user->create_many( 1, [ 'role' => 'administrator' ] );
+
+		$users_with_edit_courses_rights_ids = Sensei()->teacher->get_teachers_and_authors();
+
+		foreach ( array_merge( $administrators, $editors, $teachers ) as $user_id ) {
+			$this->assertContains( $user_id, $users_with_edit_courses_rights_ids, 'Should include users which have the `edit_courses` capability.' );
+		}
+		foreach ( $subscribers as $subscriber_id ) {
+			$this->assertNotContains( $subscriber_id, $users_with_edit_courses_rights_ids, 'Should not include users that don\'t have the `edit_courses` capability.' );
+		}
+	}
+
+	public function testModuleSaving_ifCustomSlugAdded_savesExistingTeacherIdFromSlugToMeta() {
+		// Arrange.
+		$this->login_as_teacher();
+		$current_user_id = wp_get_current_user()->ID;
+
+		$new_term = wp_insert_term(
+			'Test module',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => $current_user_id . '-test-module',
+			)
+		);
+
+		// Act.
+		wp_update_term( $new_term['term_id'], 'module', [ 'slug' => 'custom-slug' ] );
+
+		// Assert.
+		$term_meta = get_term_meta( $new_term['term_id'], 'module_author', true );
+		$this->assertEquals( $current_user_id, $term_meta );
+	}
+}

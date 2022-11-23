@@ -19,6 +19,18 @@ class Sensei_Messages {
 	public $meta_fields;
 
 	/**
+	 * The nonce name when submitting a new message.
+	 *
+	 * @var string
+	 */
+	const NONCE_FIELD_NAME = 'sensei_message_teacher_nonce';
+
+	/**
+	 * The nonce action name when submitting a new message.
+	 */
+	const NONCE_ACTION_NAME = 'message_teacher';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since  1.6.0
@@ -28,34 +40,30 @@ class Sensei_Messages {
 		$this->post_type   = 'sensei_message';
 		$this->meta_fields = array( 'sender', 'receiver' );
 
-		// Add Messages page to admin menu
-		add_action( 'admin_menu', array( $this, 'add_menu_item' ), 40 );
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ), 10, 2 );
 		add_action( 'admin_menu', array( $this, 'remove_meta_box' ) );
 
 		// Save new private message (priority low to ensure sensei_message post type is
-		// registered
+		// registered.
 		add_action( 'init', array( $this, 'save_new_message' ), 101 );
 
-		// Monitor when new reply is posted
-		add_action( 'comment_post', array( $this, 'message_reply_received' ), 10, 1 );
+		// Monitor when new reply is posted.
+		add_action( 'comment_post', [ $this, 'message_reply_received' ], 10, 1 );
+		add_action( 'rest_insert_comment', [ $this, 'message_rest_insert' ], 10, 3 );
 
-		// Block WordPress from sending comment update emails for the messages post type
+		// Block WordPress from sending comment update emails for the messages post type.
 		add_filter( 'comment_notification_recipients', array( $this, 'stop_wp_comment_emails' ), 20, 2 );
 
-		// Block WordPress from sending comment moderator emails on the sensei messages post types
+		// Block WordPress from sending comment moderator emails on the sensei messages post types.
 		add_filter( 'comment_moderation_recipients', array( $this, 'stop_wp_comment_emails' ), 20, 2 );
 
-		// Add message links to courses & lessons
-		add_action( 'sensei_single_course_content_inside_before', array( $this, 'send_message_link' ), 35 );
-
-		// add message link to lesson
+		// Add message link to lesson.
 		add_action( 'sensei_single_lesson_content_inside_before', array( $this, 'send_message_link' ), 30, 2 );
 
-		// add message link to lesson
+		// Add message link to lesson.
 		add_action( 'sensei_single_quiz_questions_before', array( $this, 'send_message_link' ), 10, 2 );
 
-		// Hide messages and replies from users who do not have access
+		// Hide messages and replies from users who do not have access.
 		add_action( 'template_redirect', array( $this, 'message_login' ), 10, 1 );
 		add_action( 'pre_get_posts', array( $this, 'message_list' ), 10, 1 );
 		add_filter( 'the_title', array( $this, 'message_title' ), 10, 2 );
@@ -65,7 +73,10 @@ class Sensei_Messages {
 		add_filter( 'comments_open', array( $this, 'message_replies_open' ), 100, 2 );
 		add_action( 'pre_get_posts', array( $this, 'only_show_messages_to_owner' ) );
 		add_filter( 'comment_feed_where', array( $this, 'exclude_message_comments_from_feed_where' ) );
-	} // End __construct()
+		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
+		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
+		add_action( 'comment_form', [ $this, 'add_nonce_to_comment_form' ] );
+	}
 
 	public function only_show_messages_to_owner( $query ) {
 		if ( is_admin() ) {
@@ -111,9 +122,15 @@ class Sensei_Messages {
 	}
 
 	public function add_menu_item() {
-
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
-			add_submenu_page( 'sensei', __( 'Messages', 'sensei-lms' ), __( 'Messages', 'sensei-lms' ), 'edit_courses', 'edit.php?post_type=sensei_message' );
+
+			add_submenu_page(
+				'sensei',
+				__( 'Messages', 'sensei-lms' ),
+				__( 'Messages', 'sensei-lms' ),
+				'edit_courses',
+				'edit.php?post_type=sensei_message'
+			);
 		}
 	}
 
@@ -134,7 +151,7 @@ class Sensei_Messages {
 			array(
 				'id'          => 'sender',
 				'label'       => __( 'Message sent by:', 'sensei-lms' ),
-				'description' => __( 'The username of the learner who sent this message.', 'sensei-lms' ),
+				'description' => __( 'The username of the student who sent this message.', 'sensei-lms' ),
 				'type'        => 'plain-text',
 				'default'     => get_post_meta( $post->ID, '_sender', true ),
 			),
@@ -254,7 +271,9 @@ class Sensei_Messages {
 					$contact_button_text = __( 'Contact Teacher', 'sensei-lms' );
 				}
 
-				$html .= '<p><a class="button send-message-button" href="' . esc_url( $href ) . '#private_message">' . esc_html( $contact_button_text ) . '</a></p>';
+				$class = Sensei()->blocks->has_sensei_blocks() ? '' : 'button';
+
+				$html .= '<p><a class="' . esc_attr( $class ) . ' send-message-button" href="' . esc_url( $href ) . '#private_message">' . esc_html( $contact_button_text ) . '</a></p>';
 			}
 
 			if ( isset( $this->message_notice ) && isset( $this->message_notice['type'] ) && isset( $this->message_notice['notice'] ) ) {
@@ -314,18 +333,8 @@ class Sensei_Messages {
 			return $html;
 		}
 
-		// confirm private message
-		$confirmation = '';
-		if ( isset( $_GET['send'] ) && 'complete' == $_GET['send'] ) {
-
-			$confirmation_message = __( 'Your private message has been sent.', 'sensei-lms' );
-			$confirmation         = '<div class="sensei-message tick">' . esc_html( $confirmation_message ) . '</div>';
-
-		}
-
 		$html         .= '<h3 id="private_message">' . esc_html__( 'Send Private Message', 'sensei-lms' ) . '</h3>';
 		$html         .= '<p>';
-		$html         .= $confirmation;
 		$html         .= '</p>';
 		$html         .= '<form name="contact-teacher" action="" method="post" class="contact-teacher">';
 			$html     .= '<p class="form-row form-row-wide">';
@@ -333,7 +342,7 @@ class Sensei_Messages {
 			$html     .= '</p>';
 			$html     .= '<p class="form-row">';
 				$html .= '<input type="hidden" name="post_id" value="' . esc_attr( absint( $post->ID ) ) . '" />';
-				$html .= wp_nonce_field( 'message_teacher', 'sensei_message_teacher_nonce', true, false );
+				$html .= wp_nonce_field( self::NONCE_ACTION_NAME, self::NONCE_FIELD_NAME, true, false );
 				$html .= '<input type="submit" class="send_message" value="' . esc_attr__( 'Send Message', 'sensei-lms' ) . '" />';
 			$html     .= '</p>';
 			$html     .= '<div class="fix"></div>';
@@ -344,11 +353,12 @@ class Sensei_Messages {
 
 	public function save_new_message() {
 
-		if ( ! isset( $_POST['sensei_message_teacher_nonce'] ) || ! isset( $_POST['post_id'] ) ) {
+		if ( ! isset( $_POST[ self::NONCE_FIELD_NAME ] ) || ! isset( $_POST['post_id'] ) ) {
 			return;
 		}
 
-		if ( ! wp_verify_nonce( $_POST['sensei_message_teacher_nonce'], 'message_teacher' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Argument is used for comparison only.
+		if ( ! wp_verify_nonce( wp_unslash( $_POST[ self::NONCE_FIELD_NAME ] ), self::NONCE_ACTION_NAME ) ) {
 			return;
 		}
 
@@ -359,29 +369,87 @@ class Sensei_Messages {
 			return false;
 		}
 
-		$this->save_new_message_post( $current_user->ID, $post->post_author, sanitize_text_field( $_POST['contact_message'] ), $post->ID );
+		$message = empty( $_POST['contact_message'] )
+			? ''
+			: sanitize_text_field( wp_unslash( $_POST['contact_message'] ) );
+
+		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
+
+		if ( $message_id ) {
+			do_action( 'sensei_new_private_message', $message_id );
+		}
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
 
-		// Get comment object
+		// Get comment object.
 		$comment = get_comment( $comment_id );
 
 		if ( is_null( $comment ) ) {
 			return;
 		}
 
-		// Get message post object
+		// Get message post object.
 		$message = get_post( $comment->comment_post_ID );
 
 		if ( $message->post_type != $this->post_type ) {
 			return;
 		}
 
-		// Force comment to be approved
+		$should_verify_nonce = ! defined( 'XMLRPC_REQUEST' );
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification.
+		$nonce_verified = ! empty( $_POST['sensei_message_nonce'] ) && wp_verify_nonce( wp_unslash( $_POST['sensei_message_nonce'] ), 'sensei_post_message_reply' );
+
+		$comment_author   = get_userdata( $comment->user_id );
+		$user_can_comment = in_array( $comment_author->user_login, [ get_post_meta( $message->ID, '_receiver', true ), get_post_meta( $message->ID, '_sender', true ) ], true );
+
+		if ( ( $should_verify_nonce && ! $nonce_verified ) || ! $user_can_comment ) {
+			wp_set_comment_status( $comment_id, 'spam' );
+			return;
+		}
+
+		// Force comment to be approved.
 		wp_set_comment_status( $comment_id, 'approve' );
 
 		do_action( 'sensei_private_message_reply', $comment, $message );
+	}
+
+	/**
+	 * Marks comments created or updated by a REST call as spam, if the user is unauthorized.
+	 *
+	 * @access private
+	 *
+	 * @param WP_Comment      $comment  Inserted or updated comment object.
+	 * @param WP_REST_Request $request  Request object.
+	 * @param bool            $creating True when creating a comment, false
+	 *                                  when updating.
+	 */
+	public function message_rest_insert( WP_Comment $comment, WP_REST_Request $request, bool $creating ) {
+		$message = get_post( $comment->comment_post_ID );
+
+		if ( $message->post_type !== $this->post_type ) {
+			return;
+		}
+
+		$comment_author   = get_userdata( $comment->user_id );
+		$user_can_comment = in_array( $comment_author->user_login, [ get_post_meta( $message->ID, '_receiver', true ), get_post_meta( $message->ID, '_sender', true ) ], true );
+
+		if ( ! $user_can_comment ) {
+			wp_set_comment_status( $comment->comment_ID, 'spam' );
+		}
+	}
+
+	/**
+	 * Adds a nonce to the sensei message comment form.
+	 *
+	 * @access private
+	 *
+	 * @return void
+	 */
+	public function add_nonce_to_comment_form() {
+		if ( is_singular( $this->post_type ) ) {
+			wp_nonce_field( 'sensei_post_message_reply', 'sensei_message_nonce' );
+		}
 	}
 
 	/**
@@ -406,7 +474,7 @@ class Sensei_Messages {
 		}
 		return $emails;
 
-	}//end stop_wp_comment_emails()
+	}
 
 	/**
 	 * Save new message post
@@ -417,7 +485,7 @@ class Sensei_Messages {
 	 * @param  string  $post_id     ID of post related to message
 	 * @return mixed                Message ID on success, boolean false on failure
 	 */
-	private function save_new_message_post( $sender_id = 0, $receiver_id = 0, $message = '', $post_id = 0 ) {
+	public function save_new_message_post( $sender_id = 0, $receiver_id = 0, $message = '', $post_id = 0 ) {
 
 		$message_id = false;
 
@@ -455,8 +523,6 @@ class Sensei_Messages {
 				add_post_meta( $message_id, '_posttype', $post->post_type );
 				add_post_meta( $message_id, '_post', $post->ID );
 
-				do_action( 'sensei_new_private_message', $message_id );
-
 			} else {
 
 				$message_id = false;
@@ -465,6 +531,55 @@ class Sensei_Messages {
 		}
 
 		return $message_id;
+	}
+
+	/**
+	 * Checks if a user is capable of seeing a particular message.
+	 *
+	 * @param array $allcaps All capabilities.
+	 * @param array $caps    Capabilities.
+	 * @param array $args    Arguments.
+	 *
+	 * @return array The filtered array of all capabilities.
+	 */
+	public function user_messages_cap_check( $allcaps, $caps, $args ) {
+		if ( isset( $caps[0] ) && 'read' === $caps[0] ) {
+			$user_id      = isset( $args[1] ) ? intval( $args[1] ) : false;
+			$user         = $user_id ? get_user_by( 'ID', $user_id ) : false;
+			$message_post = isset( $args[2] ) ? get_post( $args[2] ) : false;
+
+			if ( $message_post && 'sensei_message' === $message_post->post_type ) {
+				$receiver_username   = get_post_meta( $message_post->ID, '_receiver', true );
+				$sender_username     = get_post_meta( $message_post->ID, '_sender', true );
+				$is_user_participant = $user
+										&& $receiver_username
+										&& $sender_username
+										&& in_array( $user->user_login, [ $receiver_username, $sender_username ], true );
+
+				$allcaps['read'] = current_user_can( 'manage_sensei' ) || $is_user_participant;
+			}
+		}
+
+		return $allcaps;
+	}
+
+	/**
+	 * Make sure user has permission to see the post content of a private message.
+	 */
+	public function check_permissions_edit_comments() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- No action based on input.
+		$post_id = isset( $_REQUEST['p'] ) ? (int) $_REQUEST['p'] : false;
+		if ( ! $post_id || 'sensei_message' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'read_post', $post_id ) ) {
+			wp_die(
+				'<h1>' . esc_html__( 'You need a higher level of permission.', 'sensei-lms' ) . '</h1>' .
+				'<p>' . esc_html__( 'Sorry, you are not allowed to edit this post\'s comments.', 'sensei-lms' ) . '</p>',
+				403
+			);
+		}
 	}
 
 	/**
@@ -539,13 +654,13 @@ class Sensei_Messages {
 		if ( is_single() && is_singular( $this->post_type )
 			|| is_post_type_archive( $this->post_type ) ) {
 
-			if ( isset( $my_courses_url ) ) {
+			$permalink = get_permalink();
 
-				wp_redirect( $my_courses_url, 303 );
+			if ( isset( $my_courses_url ) ) {
+				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
 				exit;
 			} else {
-
-				wp_redirect( home_url( '/wp-login.php' ), 303 );
+				wp_safe_redirect( home_url( '/wp-login.php' ), 303 );
 				exit;
 			}
 		}
@@ -741,7 +856,7 @@ class Sensei_Messages {
 		$content_post_id = get_post_meta( $post->ID, '_post', true );
 		if ( $content_post_id ) {
 			// translators: Placeholder is a link to post, with the post's title as the link text.
-			$title = wp_kses_post( sprintf( __( 'Re: %1$s', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
+			$title = wp_kses_post( sprintf( _x( 'Re: %1$s', 'message title with a link to the post', 'sensei-lms' ), '<a href="' . esc_url( get_permalink( $content_post_id ) ) . '">' . esc_html( get_the_title( $content_post_id ) ) . '</a>' ) );
 		} else {
 			$title = esc_html( get_the_title( $post->ID ) );
 		}
@@ -769,7 +884,7 @@ class Sensei_Messages {
 
 		<?php
 
-	} // End sensei_single_title()
+	}
 
 	/**
 	 * Generates the my messages
@@ -811,7 +926,7 @@ class Sensei_Messages {
 		</h2>
 
 		<?php
-	} //end the_message_header
+	}
 
 	/**
 	 * Get the message title that is going to be displayed.
@@ -827,7 +942,7 @@ class Sensei_Messages {
 		if ( $content_post_id ) {
 
 			// translators: Placeholder is the post title.
-			$title = sprintf( __( 'Re: %1$s', 'sensei-lms' ), get_the_title( $content_post_id ) );
+			$title = sprintf( _x( 'Re: %1$s', 'message title without a link to the post', 'sensei-lms' ), get_the_title( $content_post_id ) );
 
 		} else {
 
@@ -849,7 +964,7 @@ class Sensei_Messages {
 		$sender          = get_user_by( 'login', $sender_username );
 
 		if ( $sender_username && $sender instanceof WP_User ) {
-			// translators: Placeholders are the sender's display name and the date.
+			// translators: Placeholders are the sender's display name and the date, respectively.
 			$sender_display_name = sprintf( __( 'Sent by %1$s on %2$s.', 'sensei-lms' ), $sender->display_name, get_the_date() );
 			?>
 			<p class="message-meta">
@@ -859,9 +974,9 @@ class Sensei_Messages {
 			</p>
 
 			<?php
-		} // end if
+		}
 
-	} // end the_message_archive_sender
+	}
 
 	/**
 	 * Link to the users my messages page
@@ -881,7 +996,7 @@ class Sensei_Messages {
 		}
 	}
 
-} // End Class
+}
 
 /**
  * Class WooThemes_Sensei_Messages

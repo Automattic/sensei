@@ -1,0 +1,24 @@
+.sensei-lms-text-appender {
+	text-align: center;
+	height: unset !important;
+	line-height: 1 !important;
+
+	.block-editor-inserter__toggle {
+		display: block !important;
+	}
+
+	.editor-styles-wrapper &__placeholder {
+		opacity: 0.62;
+		margin: 0;
+		line-height: 1;
+
+		&::after {
+			margin-top: 6px;
+			content: attr(data-placeholder);
+		}
+	}
+
+	&__menu .components-dropdown-menu__menu-item {
+		min-width: 175px;
+	}
+}

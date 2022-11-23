@@ -1,0 +1,116 @@
+$dark-gray: #1a1d20;
+$spacing: 16px;
+$block: '.wp-block-sensei-lms-course-results';
+
+#{$block},
+.editor-styles-wrapper #{$block} {
+	&.is-style-default {
+		#{$block}__module-header:not(.has-background) {
+			background-color: $dark-gray;
+		}
+		#{$block}__module-header:not(.has-text-color) {
+			color: #FFF;
+		}
+	}
+
+	&__grade {
+		margin: auto 0;
+		text-align: center;
+		width: 100%;
+
+		&-label {
+			font-size: 1.1em;
+		}
+
+		&-score {
+			display: block;
+			font-size: 2em;
+			font-weight: bold;
+			line-height: normal;
+		}
+	}
+
+	&__course-title {
+		margin: 1em 0 0.5em;
+		padding: 0;
+		text-align: center;
+	}
+
+	&__separator {
+		display: block;
+		border: none;
+		height: 4px;
+		margin-left: 4px;
+		margin-right: 4px;
+		background-color: var(
+			--sensei-module-header-separator-color,
+			$dark-gray
+		);
+	}
+
+	&__module {
+		margin: 1em 0;
+
+		&--has-border {
+			border: 1px solid var( --sensei-module-border-color, $dark-gray );
+		}
+
+		&-header {
+			padding: $spacing;
+			font-weight: bold;
+			background: var( --sensei-module-header-bg-color );
+			color: var( --sensei-module-header-text-color );
+		}
+
+		&-title,
+		#{$block} &-title {
+			font-size: 1.1em;
+			font-weight: inherit;
+			margin: 0;
+			color: inherit;
+			&::before,
+			&::after {
+				content: none;
+			}
+		}
+	}
+
+	#left-area &__lessons, // Divi
+	&__lessons {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		&--has-other {
+			margin-bottom: 1em;
+		}
+
+		&--has-other #{$block}__lesson {
+			border-bottom: 1px solid $dark-gray;
+		}
+
+		#{$block}__lesson {
+			margin: 1px 0;
+			position: relative;
+
+			#{$block}__lesson-link {
+				align-items: center;
+				display: flex;
+				text-decoration: none;
+			}
+
+			&-title {
+				flex: 1;
+				padding: $spacing;
+			}
+
+			&-score {
+				display: inline-block;
+				flex: 0 0 40px;
+				margin: 0 $spacing;
+				flex-shrink: 0;
+				opacity: 0.9;
+			}
+		}
+	}
+}

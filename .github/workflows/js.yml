@@ -1,0 +1,47 @@
+name: JS Linting and Tests
+
+on: pull_request
+
+jobs:
+    lint:
+        name: JS Linting
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Updates the CI npm
+              run: npm install -g npm@^8
+
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm/
+                  key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+            - uses: actions/cache@v3
+              with:
+                  path: node_modules/
+                  key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+            - name: Install JS dependencies
+              run: npm ci
+            - name: Lint JS
+              run: npm run lint-js
+
+    test:
+        name: JS Testing
+        runs-on: ubuntu-latest
+        steps:
+            # clone the repository
+            - uses: actions/checkout@v3
+
+            - name: Updates the npm version
+              run: npm install -g npm@^8
+
+            - uses: actions/cache@v3
+              with:
+                  path: ~/.npm
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
+            - name: Install JS dependencies
+              run: npm ci
+            - name: Test JS
+              run: npm run test-js

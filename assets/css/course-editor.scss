@@ -1,0 +1,118 @@
+@import '~@wordpress/base-styles/breakpoints';
+$primary: #6FCFB2;
+$secondary: #0693e3;
+
+/* Course Theme Onboarding */
+.sensei-course-theme-onboarding {
+	&.components-guide {
+		width: 325px;
+		height: 504px;
+	}
+
+	&__image-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 253px;
+		margin-bottom: 16px;
+		background-color: $primary;
+	}
+
+	&__heading {
+		font-size: 20px;
+		font-weight: 400;
+		line-height: 1.4;
+		color: #1e1e1e;
+		margin: 16px 0 8px 0;
+		padding: 0 24px;
+	}
+
+	&__text {
+		font-size: 13px;
+		line-height: 1.4;
+		color: #757575;
+		margin: 0 0 24px 0;
+		padding: 0 24px;
+	}
+
+	&__learn-more {
+		padding: 10px;
+		color: #1e1e1e;
+		text-decoration: underline;
+
+		&:hover {
+			color: $primary;
+		}
+	}
+
+	.components-guide__page-control li[aria-current="step"] circle {
+		fill: $primary;
+	}
+
+	.components-guide__footer .components-button {
+		height: 36px;
+
+		&.components-guide {
+			&__forward-button,
+			&__finish-button {
+				display: inline-block;
+				width: 164px;
+				text-align: center;
+				font-weight: 400;
+				background-color: $primary;
+				border-color: $primary;
+				color: #000;
+
+				&:hover,
+				&:active {
+					background-color: lighten($primary, 5%);
+					border-color: lighten($primary, 5%);
+					text-decoration: none;
+				}
+
+				&:focus {
+					background-color: darken($primary, 5%);
+					border-color: darken($primary, 5%);
+					box-shadow: 0 0 0 1px #fff, 0 0 0 3px $primary;
+				}
+
+				&:hover,
+				&:active,
+				&:focus {
+					color: #000;
+				}
+			}
+
+			&__back-button {
+				padding: 10px;
+
+				&:focus {
+					box-shadow: 0 0 0 1px $primary;
+					color: $primary;
+				}
+			}
+		}
+	}
+}
+
+.sensei-pricing-promo {
+	&__upgrade-new-course-text {
+		opacity: 0.4;
+	}
+
+	&__upgrade-new-course {
+		padding: 12px;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+	}
+
+	&__upgrade_new_course_mock_button {
+		color: $secondary;
+		border: 1px solid $secondary;
+	}
+}
+
+.sensei-course-access-period-promo {
+	&__holder {
+		opacity: 0.4;
+	}
+}

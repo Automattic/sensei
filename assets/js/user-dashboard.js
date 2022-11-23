@@ -1,5 +1,4 @@
-jQuery(document).ready( function() {
-
+jQuery( document ).ready( function () {
 	/***************************************************************************************************
 	 * 	1 - Helper Functions.
 	 ***************************************************************************************************/
@@ -8,5 +7,4 @@ jQuery(document).ready( function() {
 	jQuery( '#my-courses' ).tabs();
 	jQuery( '#my-courses' ).removeClass( 'ui-corner-all' );
 	jQuery( '#my-courses ul' ).removeClass( 'ui-corner-all' );
-
-});
+} );

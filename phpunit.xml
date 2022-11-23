@@ -7,7 +7,6 @@
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
         verbose="true"
-        syntaxCheck="true"
 >
     <php>
         <server name='HTTP_HOST' value='http://localhost' />
@@ -22,15 +21,17 @@
         </testsuite>
     </testsuites>
     <filter>
-        <blacklist>
-            <directory suffix=".php">./apigen/</directory>
-            <directory suffix=".php">./tests/</directory>
-            <directory suffix=".php">./tmp/</directory>
-        </blacklist>
-    </filter>
-    <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src</directory>
+            <directory suffix=".php">./includes/</directory>
+			<exclude>
+				<directory suffix=".php">./includes/3rd-party/</directory>
+				<directory suffix=".php">./includes/admin/tools/views/</directory>
+				<directory suffix=".php">./includes/admin/views/</directory>
+				<directory suffix=".php">./includes/block-patterns/</directory>
+				<file>./includes/data-port/class-sensei-import-job-cli.php</file>
+				<file>./includes/email-signup/template.php</file>
+
+			</exclude>
         </whitelist>
     </filter>
     <!-- disable logging for speed purposes

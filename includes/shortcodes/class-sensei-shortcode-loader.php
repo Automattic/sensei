@@ -86,9 +86,6 @@ class Sensei_Shortcode_Loader {
 			)
 		);
 
-		// legacy shortcode handling:
-		Sensei_Legacy_Shortcodes::init();
-
 	}
 
 	/**
@@ -134,12 +131,12 @@ class Sensei_Shortcode_Loader {
 	 *
 	 * @return string
 	 */
-	public function render_shortcode( $attributes = '', $content = '', $code ) {
+	public function render_shortcode( $attributes = '', $content = '', $code = false ) {
 		global $wp_query;
 
 		// only respond if the shortcode that we've added shortcode
 		// classes for.
-		if ( ! isset( $this->shortcode_classes[ $code ] ) ) {
+		if ( ! $code || ! isset( $this->shortcode_classes[ $code ] ) ) {
 			return '';
 		}
 
@@ -209,5 +206,5 @@ class Sensei_Shortcode_Loader {
 
 	}
 
-} // end class Sensei_Shortcodes
+}
 new Sensei_Shortcode_Loader();

@@ -23,7 +23,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	/**
 	 * Time the results were generated.
 	 *
-	 * @var float
+	 * @var int
 	 */
 	private $time;
 
@@ -45,7 +45,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	public function __construct( $provider_results, $version_hash, $time = null ) {
 		$this->provider_results = $provider_results;
 		$this->version_hash     = $version_hash;
-		$this->time             = isset( $time ) ? $time : microtime( true );
+		$this->time             = isset( $time ) ? $time : time();
 	}
 
 	/**
@@ -63,7 +63,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 
 		$provider_results = isset( $json_arr['r'] ) ? array_map( 'boolval', $json_arr['r'] ) : [];
 		$version          = isset( $json_arr['v'] ) ? sanitize_text_field( $json_arr['v'] ) : -1;
-		$time             = isset( $json_arr['t'] ) ? floatval( $json_arr['t'] ) : null;
+		$time             = isset( $json_arr['t'] ) ? intval( $json_arr['t'] ) : null;
 
 		return new self( $provider_results, $version, $time );
 	}
@@ -121,7 +121,7 @@ final class Sensei_Course_Enrolment_Provider_Results implements JsonSerializable
 	/**
 	 * Get the time these results were generated.
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function get_time() {
 		return $this->time;

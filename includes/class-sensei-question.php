@@ -28,7 +28,7 @@ class Sensei_Question {
 		$this->meta_fields    = array( 'question_right_answer', 'question_wrong_answers' );
 		if ( is_admin() ) {
 			// Custom Write Panel Columns
-			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 10, 1 );
+			add_filter( 'manage_edit-question_columns', array( $this, 'add_column_headings' ), 20, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'add_column_data' ), 10, 2 );
 			add_action( 'add_meta_boxes', array( $this, 'question_edit_panel_metabox' ), 10, 2 );
 
@@ -37,10 +37,79 @@ class Sensei_Question {
 			add_filter( 'request', array( $this, 'filter_actions' ) );
 
 			add_action( 'save_post_question', array( $this, 'save_question' ), 10, 1 );
-		} // End If Statement
+
+			// Add custom navigation.
+			add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+		}
 
 		add_action( 'sensei_question_initial_publish', [ $this, 'log_initial_publish_event' ] );
-	} // End __construct()
+	}
+
+	/**
+	 * Add custom navigation to the admin pages.
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 */
+	public function add_custom_navigation() {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( in_array( $screen->id, [ 'edit-question', 'edit-question-category' ], true ) && ( 'term' !== $screen->base ) ) {
+			$this->display_question_navigation( $screen );
+		}
+	}
+
+	/**
+	 * Highlight the menu item for the question pages.
+	 *
+	 * @deprecated 4.8.0
+	 *
+	 * @since 4.0.0
+	 * @access private
+	 *
+	 * @param string $submenu_file The submenu file points to the certain item of the submenu.
+	 *
+	 * @return string
+	 */
+	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
+		$screen = get_current_screen();
+
+		if ( $screen && 'edit-question-category' === $screen->id ) {
+			$submenu_file = 'edit.php?post_type=question';
+		}
+
+		return $submenu_file;
+	}
+
+	/**
+	 * Display the lessons' navigation.
+	 *
+	 * @param WP_Screen $screen
+	 */
+	private function display_question_navigation( WP_Screen $screen ) {
+		?>
+		<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+			<div class="sensei-custom-navigation__heading">
+				<div class="sensei-custom-navigation__title">
+					<h1><?php esc_html_e( 'Questions ', 'sensei-lms' ); ?></h1>
+				</div>
+				<div class="sensei-custom-navigation__links">
+					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=question' ) ); ?>"><?php esc_html_e( 'New Question', 'sensei-lms' ); ?></a>
+				</div>
+			</div>
+			<div class="sensei-custom-navigation__tabbar">
+				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=question' ) ); ?>"><?php esc_html_e( 'All Questions', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'question-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) ); ?>"><?php esc_html_e( 'Question Categories', 'sensei-lms' ); ?></a>
+			</div>
+		</div>
+		<?php
+	}
 
 	public function question_types() {
 		$types = array(
@@ -52,19 +121,28 @@ class Sensei_Question {
 			'file-upload'     => __( 'File Upload', 'sensei-lms' ),
 		);
 
+		/**
+		 * Filter the question types.
+		 *
+		 * @hook sensei_question_types
+		 *
+		 * @param {string[]} $types Question types.
+		 * @return {string[]} Associative array of question types.
+		 */
 		return apply_filters( 'sensei_question_types', $types );
 	}
 
 	/**
-	 * Add column headings to the "lesson" post list screen.
+	 * Add column headings to the "question" post list screen,
+	 * while moving the existing ones to the end.
 	 *
-	 * @access public
+	 * @access private
 	 * @since  1.3.0
-	 * @param  array $defaults
-	 * @return array $new_columns
+	 * @param  array $defaults  Array of column header labels keyed by column ID.
+	 * @return array            Updated array of column header labels keyed by column ID.
 	 */
 	public function add_column_headings( $defaults ) {
-		$new_columns                      = array();
+		$new_columns                      = [];
 		$new_columns['cb']                = '<input type="checkbox" />';
 		$new_columns['title']             = _x( 'Question', 'column name', 'sensei-lms' );
 		$new_columns['question-type']     = _x( 'Type', 'column name', 'sensei-lms' );
@@ -73,8 +151,20 @@ class Sensei_Question {
 			$new_columns['date'] = $defaults['date'];
 		}
 
+		// Unset renamed existing columns.
+		unset( $defaults['taxonomy-question-type'] );
+		unset( $defaults['taxonomy-question-category'] );
+
+		// Add all remaining columns at the end.
+		foreach ( $defaults as $column_key => $column_value ) {
+			if ( ! isset( $new_columns[ $column_key ] ) ) {
+				$new_columns[ $column_key ] = $column_value;
+			}
+		}
+
 		return $new_columns;
-	} // End add_column_headings()
+	}
+
 
 	/**
 	 * Add data for our newly-added custom columns.
@@ -114,7 +204,7 @@ class Sensei_Question {
 
 		}
 
-	} // End add_column_data()
+	}
 
 	public function question_edit_panel_metabox( $post_type, $post ) {
 		if ( in_array( $post_type, array( 'question', 'multiple_question' ) ) ) {
@@ -132,14 +222,37 @@ class Sensei_Question {
 					}
 				}
 			}
-			add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+
 			add_meta_box( 'question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'question', 'side', 'default' );
-			add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
+
+			if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+				add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
+				add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+				add_filter( 'sensei_scripts_allowed_post_types', [ $this, 'load_lesson_edit_script' ] );
+			}
 		}
+	}
+
+	/**
+	 * Also load the lesson metabox scripts for the question post type when using the legacy editor.
+	 *
+	 * @access private
+	 *
+	 * @param array $post_types Post types.
+	 *
+	 * @return array
+	 */
+	public function load_lesson_edit_script( $post_types ) {
+		$post_types[] = 'question';
+		return $post_types;
 	}
 
 	public function question_edit_panel() {
 		global  $post, $pagenow;
+
+		if ( Sensei()->quiz->is_block_based_editor_enabled() ) {
+			return;
+		}
 
 		add_action( 'admin_enqueue_scripts', array( Sensei()->lesson, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( Sensei()->lesson, 'enqueue_styles' ) );
@@ -436,7 +549,7 @@ class Sensei_Question {
 
 		return $question_type;
 
-	}//end get_question_type()
+	}
 
 	/**
 	 * Given a question ID, return the grade that can be achieved.
@@ -467,11 +580,15 @@ class Sensei_Question {
 		/**
 		 * Filter the grade for the given question.
 		 *
-		 * @since 1.9.6 introduced
+		 * @since 1.9.6
+		 * @hook sensei_get_question_grade
+		 *
+		 * @param {int} $question_grade Question grade.
+		 * @param {int} $question_id    Question ID.
+		 * @return {int} Question grade.
 		 */
 		return apply_filters( 'sensei_get_question_grade', $question_grade, $question_id );
-
-	} // end get_question_grade
+	}
 
 
 	/**
@@ -516,24 +633,24 @@ class Sensei_Question {
 	 * @return string
 	 */
 	public static function get_the_question_title( $question_id ) {
-
 		/**
-		 * Filter the sensei question title
+		 * Filter the question title.
 		 *
 		 * @since 1.3.0
-		 * @param $question_title
+		 * @hook sensei_question_title
+		 *
+		 * @param {string} $title Question title.
+		 * @return {string} Question title.
 		 */
 		$title = apply_filters( 'sensei_question_title', get_the_title( $question_id ) );
 
-		/**
-		 * hook document in class-woothemes-sensei-message.php the_title()
-		 */
+		/** This filter is documented in includes/class-sensei-messages.php */
 		$title = apply_filters( 'sensei_single_title', $title, 'question' );
 
 		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 		$title_html  = '<span class="question question-title">';
-		$title_html .= wp_kses_post( $title );
+		$title_html .= esc_html( $title );
 		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
 		$title_html .= '</span>';
 
@@ -548,13 +665,23 @@ class Sensei_Question {
 	 */
 	public static function get_the_question_description( $question_id ) {
 
-		$question = get_post( $question_id );
+		$question             = get_post( $question_id );
+		$question_description = $question->post_content;
+
+		if ( has_blocks( $question_description ) ) {
+			$blocks = parse_blocks( $question_description );
+
+			foreach ( $blocks as $block ) {
+				if ( 'sensei-lms/question-description' === $block['blockName'] ) {
+					$question_description = render_block( $block );
+				}
+			}
+		}
 
 		/**
 		 * Already documented within WordPress Core
 		 */
-		return apply_filters( 'the_content', wp_kses_post( $question->post_content ) );
-
+		return apply_filters( 'the_content', wp_kses_post( $question_description ) );
 	}
 
 	/**
@@ -591,6 +718,15 @@ class Sensei_Question {
 					$question_media_description = $attachment->post_content;
 					switch ( $question_media_type ) {
 						case 'image':
+							/**
+							 * Filter the size of the question image.
+							 *
+							 * @hook sensei_question_image_size
+							 *
+							 * @param {string} $size        Image size.
+							 * @param {int}    $question_id Question ID.
+							 * @return {string} Image size.
+							 */
 							$image_size          = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
 							$attachment_src      = wp_get_attachment_image_src( $question_media, $image_size );
 							$question_media_link = '<a class="' . esc_attr( $question_media_type ) . '" title="' . esc_attr( $question_media_title ) . '" href="' . esc_url( $question_media_url ) . '" target="_blank"><img src="' . esc_url( $attachment_src[0] ) . '" width="' . esc_attr( $attachment_src[1] ) . '" height="' . esc_attr( $attachment_src[2] ) . '" /></a>';
@@ -617,16 +753,16 @@ class Sensei_Question {
 		if ( $question_media_link ) {
 
 				$output .= '<div class="question_media_display">';
-				$output .= wp_kses_post( $question_media_link );
+				$output .= self::question_media_kses( $question_media_link );
 				$output .= '<dl>';
 
-			if ( $question_media_title ) {
+			if ( ! empty( $question_media_title ) ) {
 
 				$output .= '<dt>' . wp_kses_post( $question_media_title ) . '</dt>';
 
 			}
 
-			if ( $question_media_description ) {
+			if ( ! empty( $question_media_description ) ) {
 
 				$output .= '<dd>' . wp_kses_post( $question_media_description ) . '</dd>';
 
@@ -639,8 +775,7 @@ class Sensei_Question {
 
 		return $output;
 
-	} // end get_the_question_media
-
+	}
 
 	/**
 	 * Output the question media
@@ -649,36 +784,85 @@ class Sensei_Question {
 	 * @param string $question_id
 	 */
 	public static function the_question_media( $question_id ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo self::question_media_kses( self::get_the_question_media( $question_id ) );
+	}
 
-		echo wp_kses_post( self::get_the_question_media( $question_id ) );
 
+	/**
+	 * Return the answer feedback CSS classes (default and custom) based if the answer is correct or not
+	 *
+	 * @param int  $question_id Question id.
+	 * @param bool $answer_correct Flag indicating if the answer is correct or not.
+	 * @return array CSS classes
+	 */
+	private static function get_answer_feedback_classes( $question_id, bool $answer_correct ): array {
+		if ( $answer_correct ) {
+			$feedback_block = Sensei_Quiz::get_correct_answer_feedback_block( $question_id );
+
+			return [
+				'sensei-lms-question__answer-feedback--correct',
+				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+			];
+
+		} else {
+			$feedback_block = Sensei_Quiz::get_incorrect_answer_feedback_block( $question_id );
+			return [
+				'sensei-lms-question__answer-feedback--incorrect',
+				isset( $feedback_block['attrs']['className'] ) ? $feedback_block['attrs']['className'] : '',
+
+			];
+		}
+	}
+
+	/**
+	 * Special kses processing for media output to allow 'source' video tag.
+	 *
+	 * @since 3.0.0
+	 * @param string $source_string Source string.
+	 * @return string with allowed html elements
+	 */
+	private static function question_media_kses( $source_string ) {
+		$source_tag   = array(
+			'source' => array(
+				'type' => true,
+				'src'  => true,
+			),
+		);
+		$allowed_html = array_merge( $source_tag, wp_kses_allowed_html( 'post' ) );
+
+		return wp_kses( $source_string, $allowed_html );
 	}
 
 	/**
 	 * Output a special field for the question needed for question submission.
 	 *
-	 * @since 1.9.0
+	 * @since      1.9.0
+	 * @deprecated 3.15.0 use Sensei_Quiz::output_quiz_hidden_fields
 	 *
 	 * @param $question_id
 	 */
 	public static function the_question_hidden_fields( $question_id ) {
-		?>
 
+		// To be removed in 5.0.0.
+		_deprecated_function( __METHOD__, '3.15.0', 'Sensei_Quiz::output_quiz_hidden_fields' );
+
+		?>
 			<input type="hidden" name="question_id_<?php echo esc_attr( $question_id ); ?>" value="<?php echo esc_attr( $question_id ); ?>" />
 			<input type="hidden" name="questions_asked[]" value="<?php echo esc_attr( $question_id ); ?>" />
-
 		<?php
+
 	}
 
 	/**
-	 * This function can only be run withing the single quiz question loop
+	 * Answer feedback (including correctness, grade, right answer and feedback notes) for a question.
 	 *
-	 * @since 1.9.0
+	 * @since 3.14.0
+	 *
 	 * @param $question_id
 	 */
-	public static function answer_feedback_notes( $question_id ) {
+	public static function the_answer_feedback( $question_id ) {
 
-		// IDS
 		$quiz_id   = get_the_ID();
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -688,62 +872,171 @@ class Sensei_Question {
 			return;
 		}
 
-		// Data to check before showing feedback
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$user_quiz_grade    = Sensei_Quiz::get_user_quiz_grade( $lesson_id, get_current_user_id() );
 		$reset_quiz_allowed = Sensei_Quiz::is_reset_allowed( $lesson_id );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'ungraded', 'in-progress' ) );
 
-		$quiz_required_pass_grade     = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
-		$succeeded                    = $user_quiz_grade >= $quiz_required_pass_grade;
-		$failed_and_reset_not_allowed = ! $succeeded && ! $reset_quiz_allowed;
+		$quiz_required_pass_grade = intval( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
+		$succeeded                = $user_quiz_grade >= $quiz_required_pass_grade;
 
-		// Check if answers must be shown
-		$show_answers = $quiz_graded && ( $succeeded || $failed_and_reset_not_allowed );
+		if ( ! $quiz_graded ) {
+			return;
+		}
+
+		$default = ! $reset_quiz_allowed;
+
+		// Explicit gradual feedback options.
+		$indicate_incorrect   = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', $default );
+		$show_correct_answers = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', $default );
+		$show_feedback_notes  = $succeeded || Sensei_Quiz::get_option( $lesson_id, 'failed_show_answer_feedback', $default );
 
 		/**
 		 * Allow dynamic overriding of whether to show question answers or not
 		 *
+		 * @hook  sensei_question_show_answers
 		 * @since 1.9.7
 		 *
-		 * @param boolean $show_answers
-		 * @param integer $question_id
-		 * @param integer $quiz_id
-		 * @param integer $lesson_id
-		 * @param integer $user_id
+		 * @param {bool} $show_answers Whether to show the answer to the question.
+		 * @param {int}  $question_id  Question ID.
+		 * @param {int}  $quiz_id      Quiz ID.
+		 * @param {int}  $lesson_id    Lesson ID.
+		 * @param {int}  $user_id      User ID.
+		 *
+		 * @return {bool} Whether to show the answer to the question.
 		 */
-		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
+		$show_correct_answers = apply_filters( 'sensei_question_show_answers', $show_correct_answers, $question_id, $quiz_id, $lesson_id, get_current_user_id() );
 
-		// Show answers if allowed
-		if ( $show_answers ) {
-			$answer_notes = Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() );
+		$answer_grade   = (int) Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+		$answer_correct = $answer_grade > 0;
 
-			if ( $answer_notes ) {
-				?>
+		$answer_notes_classnames = [];
+		$answer_feedback_title   = '';
 
-				<div class="sensei-message info info-special answer-feedback">
-
-					<?php
-
-						/**
-						 * Filter the answer feedback
-						 * Since 1.9.0
-						 *
-						 * @param string $answer_notes
-						 * @param string $question_id
-						 * @param string $lesson_id
-						 */
-						echo wp_kses_post( apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id ) );
-
-					?>
-
-				</div>
-
-				<?php
+		if ( $indicate_incorrect ) {
+			$answer_notes_classnames = self::get_answer_feedback_classes( $question_id, $answer_correct );
+			if ( $answer_correct ) {
+				$answer_feedback_title = __( 'Correct', 'sensei-lms' );
+			} else {
+				$answer_feedback_title = __( 'Incorrect', 'sensei-lms' );
 			}
-		}// end if we can show answer feedback
+		}
 
-	}//end answer_feedback_notes()
+		/**
+		 * Filter the answer message CSS classes.
+		 *
+		 * @hook  sensei_question_answer_message_css_class
+		 * @since  1.9.0
+		 *
+		 * @param {string} $answer_notes_classname Space-separated CSS classes to apply to answer message.
+		 * @param {int}    $lesson_id              Lesson ID.
+		 * @param {int}    $question_id            Question ID.
+		 * @param {int}    $user_id                User ID.
+		 * @param {bool}   $answer_correct         Whether this is the correct answer.
+		 *
+		 * @return {string} Space-separated CSS classes to apply to answer message.
+		 */
+		$answer_notes_classnames = apply_filters( 'sensei_question_answer_message_css_class', $answer_notes_classnames, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
+
+		$answer_notes = $show_feedback_notes ? Sensei()->quiz->get_user_question_feedback( $lesson_id, $question_id, get_current_user_id() ) : null;
+		/**
+		 * Filter the answer feedback.
+		 *
+		 * @since  1.9.0
+		 * @hook   sensei_question_answer_notes
+		 *
+		 * @param  {bool|string} $answer_notes Answer notes.
+		 * @param  {int}         $question_id  Question ID.
+		 * @param  {int}         $lesson_id    Lesson ID.
+		 *
+		 * @return {string} Answer notes.
+		 */
+		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
+
+		$question_grade = Sensei()->question->get_question_grade( $question_id );
+
+		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
+
+		$grade = Sensei()->view_helper->format_question_points( $answer_grade . '/' . $question_grade );
+
+		/**
+		 * Filter the learner grade displayed.
+		 *
+		 * @hook  sensei_question_answer_message_grade
+		 * @since 3.14.0
+		 *
+		 * @param {string} $grade          Formatted grade (eg "0/3 points")
+		 * @param {int}    $lesson_id      Lesson ID.
+		 * @param {int}    $question_id    Question ID.
+		 * @param {int}    $user_id        User ID.
+		 * @param {bool}   $answer_correct Whether this is the correct answer.
+		 *
+		 * @return {string} Answer message.
+		 */
+		$grade = apply_filters( 'sensei_question_answer_message_grade', $grade, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
+
+		/**
+		 * Filter the correct answer.
+		 *
+		 * @hook  sensei_question_answer_message_correct_answer
+		 * @since 1.9.0
+		 *
+		 * @param {string} $answer_message Answer message.
+		 * @param {int}    $lesson_id      Lesson ID.
+		 * @param {int}    $question_id    Question ID.
+		 * @param {int}    $user_id        User ID.
+		 * @param {bool}   $answer_correct Whether this is the correct answer.
+		 *
+		 * @return {string} Answer message.
+		 */
+		$correct_answer   = apply_filters( 'sensei_question_answer_message_correct_answer', $correct_answer, $lesson_id, $question_id, get_current_user_id(), $answer_correct );
+		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
+
+		?>
+		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
+			<?php if ( $indicate_incorrect ) { ?>
+				<div class="sensei-lms-question__answer-feedback__header">
+					<span class="sensei-lms-question__answer-feedback__icon"></span>
+					<span
+						class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+					<?php if ( $grade ) { ?>
+						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
+					<?php } ?>
+				</div>
+			<?php } ?>
+			<?php if ( $has_answer_notes || $correct_answer ) { ?>
+				<div class="sensei-lms-question__answer-feedback__content">
+					<?php if ( $correct_answer ) { ?>
+						<div class="sensei-lms-question__answer-feedback__correct-answer">
+							<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
+							<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
+						</div>
+					<?php } ?>
+					<?php if ( $has_answer_notes ) { ?>
+						<div class="sensei-lms-question__answer-feedback__answer-notes">
+							<?php echo wp_kses_post( $answer_notes ); ?>
+						</div>
+					<?php } ?>
+				</div>
+			<?php } ?>
+		</div>
+		<?php if ( $grade ) { ?>
+			<style> .question-title .grade { display: none; } </style>
+		<?php } ?>
+		<?php
+	}
+
+	/**
+	 * Answer feedback.
+	 *
+	 * @deprecated 3.14.0 Renamed to the_answer_feedback
+	 *
+	 * @param int $question_id Question ID.
+	 */
+	public static function answer_feedback_notes( $question_id ) {
+		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
+		self::the_answer_feedback( $question_id );
+	}
 
 	/**
 	 * This function has to be run inside the quiz question loop on the single quiz page.
@@ -754,8 +1047,12 @@ class Sensei_Question {
 	 * Pseudo code for logic:  https://github.com/Automattic/sensei/issues/1422#issuecomment-214494263
 	 *
 	 * @since 1.9.0
+	 * @deprecated 3.14.0 Moved into the_answer_feedback
 	 */
 	public static function the_answer_result_indication() {
+
+		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
+
 		global $sensei_question_loop;
 
 		$quiz_id            = $sensei_question_loop['quiz_id'];
@@ -764,7 +1061,7 @@ class Sensei_Question {
 		$user_lesson_status = Sensei_Utils::user_lesson_status( $lesson_id, get_current_user_id() );
 		$quiz_graded        = isset( $user_lesson_status->comment_approved ) && ! in_array( $user_lesson_status->comment_approved, array( 'in-progress', 'ungraded' ) );
 
-		if ( ! Sensei_Utils::user_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
+		if ( ! Sensei_Utils::has_started_course( Sensei()->lesson->get_course_id( $lesson_id ), get_current_user_id() ) ) {
 			return;
 		}
 
@@ -781,7 +1078,11 @@ class Sensei_Question {
 			$show_answers = true;
 		}
 
-		// This filter is documented in self::answer_feedback_notes()
+		if ( ! $user_passed && ! Sensei_Quiz::get_option( $lesson_id, 'failed_indicate_incorrect', true ) ) {
+			$show_answers = false;
+		}
+
+		/** This filter is documented in self::the_answer_feedback */
 		$show_answers = apply_filters( 'sensei_question_show_answers', $show_answers, $question_item->ID, $quiz_id, $lesson_id, get_current_user_id() );
 
 		if ( $show_answers ) {
@@ -792,17 +1093,24 @@ class Sensei_Question {
 
 	/**
 	 * @since 1.9.5
+	 * @deprecated 3.14.0 Moved into the_answer_feedback
 	 *
 	 * @param integer $lesson_id
 	 * @param integer $question_id
 	 */
 	public static function output_result_indication( $lesson_id, $question_id ) {
 
+		_deprecated_function( __METHOD__, '3.14.0', 'Sensei_Question::the_answer_feedback' );
+
 		$question_grade      = Sensei()->question->get_question_grade( $question_id );
 		$user_question_grade = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
 
 		// Defaults
 		$answer_message = __( 'Incorrect - Right Answer:', 'sensei-lms' ) . ' ' . self::get_correct_answer( $question_id );
+
+		if ( ! Sensei_Quiz::get_option( $lesson_id, 'failed_show_correct_answers', true ) ) {
+			$answer_message = __( 'Incorrect', 'sensei-lms' );
+		}
 
 		// For zero grade mark as 'correct' but add no classes
 		if ( 0 == $question_grade ) {
@@ -825,29 +1133,21 @@ class Sensei_Question {
 			$answer_message_class .= ' has_notes';
 		}
 
-		/**
-		 * Filter what the final answer message CSS classes will be
-		 *
-		 * @param string $answer_message_class The Answer message css classes, space separated.
-		 * @param int    $lesson_id The Lesson ID.
-		 * @param int    $question_id The question ID.
-		 * @param int    $user_id The user ID.
-		 * @param bool   $user_correct Is this a correct answer?.
-		 *
-		 * @return string A space separated string of css class names.
-		 */
+		/** This filter is documented in self::the_answer_feedback */
 		$final_css_classes = apply_filters( 'sensei_question_answer_message_css_class', $answer_message_class, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 
 		/**
-		 * Filter what the final answer text will look like.
+		 * Filter the answer message.
 		 *
-		 * @param string $answer_message The Answer message.
-		 * @param int    $lesson_id The Lesson ID.
-		 * @param int    $question_id The question ID.
-		 * @param int    $user_id The user ID.
-		 * @param bool   $user_correct Is this a correct answer?.
+		 * @hook sensei_question_answer_message_text
+		 * @deprecated
 		 *
-		 * @return string
+		 * @param {string} $answer_message Answer message.
+		 * @param {int}    $lesson_id      Lesson ID.
+		 * @param {int}    $question_id    Question ID.
+		 * @param {int}    $user_id        User ID.
+		 * @param {bool}   $user_correct   Whether this is the correct answer.
+		 * @return {string} Answer message.
 		 */
 		$final_message = apply_filters( 'sensei_question_answer_message_text', $answer_message, $lesson_id, $question_id, get_current_user_id(), $user_correct );
 		?>
@@ -871,18 +1171,12 @@ class Sensei_Question {
 	public static function get_template_data( $question_id, $quiz_id ) {
 
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
+		$user_id   = get_current_user_id();
 
 		$reset_allowed = get_post_meta( $quiz_id, '_enable_quiz_reset', true );
 		// backwards compatibility
-		if ( 'on' == $reset_allowed ) {
+		if ( 'on' === $reset_allowed ) {
 			$reset_allowed = 1;
-		}
-
-		// Check again that the lesson is complete
-		$user_lesson_end      = Sensei_Utils::user_completed_lesson( Sensei()->quiz->get_lesson_id( $quiz_id ), get_current_user_id() );
-		$user_lesson_complete = false;
-		if ( $user_lesson_end ) {
-			$user_lesson_complete = true;
 		}
 
 		// setup the question data
@@ -894,53 +1188,54 @@ class Sensei_Question {
 		$data['lesson_id']              = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$data['type']                   = Sensei()->question->get_question_type( $question_id );
 		$data['question_grade']         = Sensei()->question->get_question_grade( $question_id );
-		$data['user_question_grade']    = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, get_current_user_id() );
+		$data['user_question_grade']    = Sensei()->quiz->get_user_question_grade( $lesson_id, $question_id, $user_id );
 		$data['question_right_answer']  = get_post_meta( $question_id, '_question_right_answer', true );
 		$data['question_wrong_answers'] = get_post_meta( $question_id, '_question_wrong_answers', true );
-		$data['user_answer_entry']      = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, get_current_user_id() );
-		$data['lesson_completed']       = Sensei_Utils::user_completed_course( $lesson_id, get_current_user_id() );
+		$data['user_answer_entry']      = Sensei()->quiz->get_user_question_answer( $lesson_id, $question_id, $user_id );
+		$data['lesson_completed']       = Sensei_Utils::user_completed_lesson( $lesson_id, $user_id );
 		$data['quiz_grade_type']        = get_post_meta( $quiz_id, '_quiz_grade_type', true );
 		$data['reset_quiz_allowed']     = $reset_allowed;
-		$data['lesson_complete']        = $user_lesson_complete;
+		$data['quiz_is_completed']      = Sensei_Quiz::is_quiz_completed( $quiz_id, $user_id );
+		$data['lesson_complete']        = $data['lesson_completed'];
 
 		/**
-		 * Filter the question template data. This filter fires  in
-		 * the get_template_data function
-		 *
-		 * @hooked self::boolean_load_question_data
+		 * Filter the question template data. This filter fires in
+		 * the get_template_data function.
 		 *
 		 * @since 1.9.0
+		 * @hook sensei_get_question_template_data
 		 *
-		 * @param array $data
-		 * @param string $question_id
-		 * @param string $quiz_id
+		 * @param {array} $data        Question data.
+		 * @param {int}   $question_id Question ID.
+		 * @param {int}   $quiz_id     Quiz ID.
+		 * @return {array} Question data.
 		 */
 		return apply_filters( 'sensei_get_question_template_data', $data, $question_id, $quiz_id );
 
 	}
 
 	/**
-	 * Load multiple choice question data on the sensei_get_question_template_data
-	 * filter.
+	 * Load multiple choice question data on the sensei_get_question_template_data filter.
 	 *
 	 * @since 1.9.0
 	 *
-	 * @param $question_data
-	 * @param $question_id
-	 * @param $quiz_id
+	 * @param array  $question_data
+	 * @param string $question_id
+	 * @param string $quiz_id
 	 *
 	 * @return array()
 	 */
 	public static function file_upload_load_question_data( $question_data, $question_id, $quiz_id ) {
 
-		if ( 'file-upload' == Sensei()->question->get_question_type( $question_id ) ) {
+		if ( 'file-upload' === Sensei()->question->get_question_type( $question_id ) ) {
 
-			// Get uploaded file
-			$attachment_id    = $question_data['user_answer_entry'];
-			$answer_media_url = $answer_media_filename = '';
+			// Get uploaded file.
+			$attachment_id         = $question_data['user_answer_entry'];
+			$answer_media_url      = '';
+			$answer_media_filename = '';
 
 			$question_helptext = '';
-			if ( isset( $question_data['question_wrong_answers'][0] ) ) {
+			if ( is_array( $question_data['question_wrong_answers'] ) && isset( $question_data['question_wrong_answers'][0] ) ) {
 
 				$question_helptext = $question_data['question_wrong_answers'][0];
 
@@ -949,42 +1244,31 @@ class Sensei_Question {
 			if ( 0 < intval( $attachment_id ) ) {
 
 				$answer_media_url      = wp_get_attachment_url( $attachment_id );
-				$answer_media_filename = basename( $answer_media_url );
+				$filename_raw          = basename( $answer_media_url );
+				$answer_media_filename = Sensei_Grading_User_Quiz::remove_hash_prefix( $filename_raw );
 
 			}
 
-			// Get max upload file size, formatted for display
-			// Code copied from wp-admin/includes/media.php:1515
-			$upload_size_unit = $max_upload_size = wp_max_upload_size();
-			$sizes            = array( 'KB', 'MB', 'GB' );
-			for ( $u = -1; $upload_size_unit > 1024 && $u < count( $sizes ) - 1; $u++ ) {
-				$upload_size_unit /= 1024;
+			$upload_size = wp_max_upload_size();
+			if ( ! $upload_size ) {
+				$upload_size = 0;
 			}
-			if ( $u < 0 ) {
 
-				$upload_size_unit = 0;
-				$u                = 0;
+			// translators: Placeholder are the upload size and the measurement (e.g. 5 MB).
+			$max_upload_size = sprintf( __( 'Maximum upload file size: %s', 'sensei-lms' ), esc_html( size_format( $upload_size ) ) );
 
-			} else {
-
-				$upload_size_unit = (int) $upload_size_unit;
-
-			}
-			// translators: Placeholders are the upload size and the measurement (e.g. 5 MB)
-			$max_upload_size = sprintf( __( 'Maximum upload file size: %1$d%2$s', 'sensei-lms' ), esc_html( $upload_size_unit ), esc_html( $sizes[ $u ] ) );
-
-			// Assemble all the data needed by the file upload template
+			// Assemble all the data needed by the file upload template.
 			$question_data['answer_media_url']      = $answer_media_url;
 			$question_data['answer_media_filename'] = $answer_media_filename;
 			$question_data['max_upload_size']       = $max_upload_size;
 
 			$question_data['question_helptext'] = $question_helptext;
 
-		}// end if is file upload type
+		}
 
 		return $question_data;
 
-	}//end file_upload_load_question_data()
+	}
 
 	/**
 	 * Load multiple choice question data on the sensei_get_question_template_data
@@ -1010,6 +1294,9 @@ class Sensei_Question {
 			}
 
 			// Merge right and wrong answers
+			if ( ! is_array( $question_data['question_wrong_answers'] ) ) {
+				$question_data['question_wrong_answers'] = [];
+			}
 			if ( is_array( $question_data['question_right_answer'] ) ) {
 
 				$merged_options = array_merge( $question_data['question_wrong_answers'], $question_data['question_right_answer'] );
@@ -1029,16 +1316,16 @@ class Sensei_Question {
 
 				$count++;
 				$question_option = array();
+				$is_quiz_graded  = isset( $question_data['user_quiz_grade'] );
 
-				if ( ( $question_data['lesson_completed'] && $question_data['user_quiz_grade'] != '' )
-					|| ( $question_data['lesson_completed'] && ! $question_data['reset_quiz_allowed'] && $question_data['user_quiz_grade'] != '' )
-					|| ( 'auto' == $question_data['quiz_grade_type'] && ! $question_data['reset_quiz_allowed'] && ! empty( $question_data['user_quiz_grade'] ) ) ) {
+				if ( ( $question_data['lesson_completed'] && $is_quiz_graded )
+					|| ( $question_data['lesson_completed'] && ! $question_data['reset_quiz_allowed'] && $is_quiz_graded )
+					|| ( 'auto' === $question_data['quiz_grade_type'] && ! $question_data['reset_quiz_allowed'] && $is_quiz_graded ) ) {
 
 					$user_correct = false;
 
 					// For zero grade mark as 'correct' but add no classes
 					if ( 0 == $question_data['question_grade'] ) {
-
 						$user_correct = true;
 
 					} elseif ( $question_data['user_question_grade'] > 0 ) {
@@ -1083,7 +1370,7 @@ class Sensei_Question {
 						$checked = checked( $answer, $question_data['user_answer_entry'], false );
 
 					}
-				} // End If Statement
+				}
 
 				// Load the answer option data
 				$question_option['ID']           = Sensei()->lesson->get_answer_id( $answer );
@@ -1096,7 +1383,7 @@ class Sensei_Question {
 				// add the speci  fic option to the list of options for this question
 				$question_answers_options[ $question_option['ID'] ] = $question_option;
 
-			} // end for each option
+			}
 
 			// Shuffle the array depending on the settings
 			$answer_options_sorted = array();
@@ -1141,8 +1428,8 @@ class Sensei_Question {
 
 					$answer_options_sorted = $question_answers_options;
 
-				} // end if $answer_order_string
-			} // end if random order
+				}
+			}
 
 			// assemble and setup the data for the templates data array
 			$question_data['answer_options'] = $answer_options_sorted;
@@ -1151,7 +1438,7 @@ class Sensei_Question {
 
 		return $question_data;
 
-	}//end multiple_choice_load_question_data()
+	}
 
 	/**
 	 * Load the gap fill question data on the sensei_get_question_template_data
@@ -1178,7 +1465,7 @@ class Sensei_Question {
 
 		return $question_data;
 
-	}//end gap_fill_load_question_data()
+	}
 
 
 	/**
@@ -1200,21 +1487,21 @@ class Sensei_Question {
 		} elseif ( 'multiple-choice' == $type ) {
 
 			$right_answer = (array) $right_answer;
-			$right_answer = implode( ', ', $right_answer );
+			$right_answer = esc_html( implode( ', ', $right_answer ) );
 
 		} elseif ( 'gap-fill' == $type ) {
 
 			$right_answer_array = explode( '||', $right_answer );
 			if ( isset( $right_answer_array[0] ) ) {
-				$gapfill_pre = $right_answer_array[0];
+				$gapfill_pre = esc_html( $right_answer_array[0] );
 			} else {
 				$gapfill_pre = ''; }
 			if ( isset( $right_answer_array[1] ) ) {
-				$gapfill_gap = $right_answer_array[1];
+				$gapfill_gap = esc_html( $right_answer_array[1] );
 			} else {
 				$gapfill_gap = ''; }
 			if ( isset( $right_answer_array[2] ) ) {
-				$gapfill_post = $right_answer_array[2];
+				$gapfill_post = esc_html( $right_answer_array[2] );
 			} else {
 				$gapfill_post = ''; }
 
@@ -1228,18 +1515,67 @@ class Sensei_Question {
 		}
 
 		/**
-		 * Filters the correct answer response.
+		 * Filter the correct answer response.
 		 *
 		 * Can be used for text filters.
 		 *
 		 * @since 1.9.7
+		 * @hook sensei_questions_get_correct_answer
 		 *
-		 * @param string $right_answer Correct answer.
-		 * @param int    $question_id  Question ID
+		 * @param {string} $right_answer Correct answer.
+		 * @param {int}    $question_id  Question ID.
+		 * @return {string} Correct answer.
 		 */
 		return apply_filters( 'sensei_questions_get_correct_answer', $right_answer, $question_id );
+	}
 
-	} // get_correct_answer
+	/**
+	 * Get answers by ID keys.
+	 *
+	 * @param string[] $answers Answers string.
+	 *
+	 * @return string[] Answers with the correct ID keys.
+	 */
+	public function get_answers_by_id( $answers = [] ) {
+		$answers_by_id = [];
+
+		foreach ( $answers as $answer ) {
+			$answers_by_id[ Sensei()->lesson->get_answer_id( $answer ) ] = $answer;
+		}
+
+		return $answers_by_id;
+	}
+
+	/**
+	 * Get answers sorted.
+	 *
+	 * @param string[]        $answers      Answers string by ID.
+	 * @param string[]|string $answer_order Sorted answers IDs.
+	 *
+	 * @return string[] The sorted answers.
+	 */
+	public function get_answers_sorted( $answers, $answer_order ) {
+		$answers_sorted = [];
+
+		if ( is_string( $answer_order ) ) {
+			$answer_order = explode( ',', $answer_order );
+		}
+
+		foreach ( $answer_order as $answer_id ) {
+			if ( isset( $answers[ $answer_id ] ) ) {
+				$answers_sorted[ $answer_id ] = $answers[ $answer_id ];
+				unset( $answers[ $answer_id ] );
+			}
+		}
+
+		if ( count( $answers ) > 0 ) {
+			foreach ( $answers as $id => $answer ) {
+				$answers_sorted[ $id ] = $answer;
+			}
+		}
+
+		return $answers_sorted;
+	}
 
 	/**
 	 * Log an event when a question is initially published.
@@ -1268,7 +1604,68 @@ class Sensei_Question {
 		sensei_log_event( 'question_add', $event_properties );
 	}
 
-} // End Class
+	/**
+	 * Check if a question can change to a new author. For normal questions, this is only possible if it
+	 * doesn't belong to any other quiz that has a different author.
+	 *
+	 * @param int $question_id   The question post ID.
+	 * @param int $new_author_id The new author ID.
+	 *
+	 * @return bool
+	 */
+	private function can_question_change_author( int $question_id, int $new_author_id ) {
+		$question = get_post( $question_id );
+
+		if ( ! $question || ! in_array( $question->post_type, [ 'question', 'multiple_question' ], true ) ) {
+			return false;
+		}
+
+		if ( 'multiple_question' === $question->post_type ) {
+			// These stick to the quiz. However, we don't attempt to change the questions in the category.
+			return true;
+		}
+
+		$can_question_change_author = true;
+		$quiz_ids                   = array_filter( get_post_meta( $question->ID, '_quiz_id' ) );
+		foreach ( $quiz_ids as $quiz_id ) {
+			$quiz = get_post( $quiz_id );
+			if (
+				$quiz
+				&& 'quiz' === $quiz->post_type
+				&& $new_author_id !== (int) $quiz->post_author
+			) {
+				$can_question_change_author = false;
+				break;
+			}
+		}
+
+		return $can_question_change_author;
+	}
+
+	/**
+	 * Update the question author if possible.
+	 *
+	 * @param int $question_id   Question post ID.
+	 * @param int $new_author_id New author.
+	 *
+	 * @return bool Whether the question author could be changed.
+	 */
+	public function maybe_update_question_author( int $question_id, int $new_author_id ) {
+		if ( ! $question_id || ! $this->can_question_change_author( $question_id, $new_author_id ) ) {
+			return false;
+		}
+
+		wp_update_post(
+			[
+				'ID'          => $question_id,
+				'post_author' => $new_author_id,
+			]
+		);
+
+		return true;
+	}
+
+}
 
 /**
  * Class WooThemes_Sensei_Question

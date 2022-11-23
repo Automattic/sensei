@@ -29,4 +29,4 @@ interface Sensei_Shortcode_Interface {
 	 */
 	public function render();
 
-}//end interface
+}

@@ -1,0 +1,27 @@
+{
+  "name": "sensei-lms/conditional-content",
+  "title": "Conditional Content",
+  "description": "Content inside this block will be shown to the selected subgroup of users.",
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "keywords": [
+    "enrolled",
+    "content",
+    "locked",
+    "private",
+    "completed",
+    "not enrolled",
+    "restrict",
+    "access"
+  ],
+  "supports": {
+    "html": false,
+    "align": [ "wide", "full" ]
+  },
+  "attributes": {
+    "condition": {
+      "type": "string",
+      "default": "enrolled"
+    }
+  }
+}

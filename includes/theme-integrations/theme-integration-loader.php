@@ -53,7 +53,7 @@ class Sensei_Theme_Integration_Loader {
 			'storefront',
 		);
 
-	}//end setup_themes()
+	}
 
 	/**
 	 * Get names of all themes supported by default.
@@ -122,4 +122,4 @@ class Sensei_Theme_Integration_Loader {
 		}
 	}
 
-} /// end class
+}

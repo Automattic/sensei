@@ -1,0 +1,25 @@
+.sensei-home-task-progress {
+	display: flex;
+	align-items: center;
+	margin-bottom: 32px;
+
+	&__number {
+		margin-right: 8px;
+		font-size: 12px;
+		font-weight: 700;
+	}
+
+	&__bar {
+		width: 120px;
+		height: 5px;
+		border-radius: 4px;
+		overflow: hidden;
+		background-color: $gray-5;
+	}
+
+	&__bar-filled {
+		height: 100%;
+		border-radius: 4px;
+		background-color: #43af99;
+	}
+}

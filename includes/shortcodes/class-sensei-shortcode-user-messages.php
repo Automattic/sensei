@@ -106,6 +106,6 @@ class Sensei_Shortcode_User_Messages implements Sensei_Shortcode_Interface {
 
 		return $messages_html;
 
-	}//end render()
+	}
 
-}//end class
+}

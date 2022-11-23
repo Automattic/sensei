@@ -1,0 +1,90 @@
+{
+  "name": "sensei-lms/course-outline-module",
+  "title": "Module",
+  "description": "Group related lessons together.",
+  "category": "sensei-lms",
+  "textdomain": "sensei-lms",
+  "keywords": [
+    "module",
+    "course module",
+    "group",
+    "lessons"
+  ],
+  "parent": [
+    "sensei-lms/course-outline"
+  ],
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "id": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "teacher": {
+      "type": "string",
+      "default": ""
+    },
+    "teacherId": {
+      "type": "string",
+      "default": ""
+    },
+    "lastTitle": {
+      "type": "string",
+      "default": ""
+    },
+    "slug": {
+      "type": "string",
+      "default": ""
+    },
+    "mainColor": {
+      "type": "string"
+    },
+    "customMainColor": {
+      "type": "string"
+    },
+    "defaultMainColor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "customTextColor": {
+      "type": "string"
+    },
+    "defaultTextColor": {
+      "type": "string"
+    },
+    "borderColor": {
+      "type": "string"
+    },
+    "customBorderColor": {
+      "type": "string"
+    },
+    "borderColorValue": {
+      "type": "string"
+    },
+    "defaultBorderColor": {
+      "type": "string"
+    },
+    "defaultBorderColorValue": {
+      "type": "string"
+    },
+    "className": {
+      "type": "string"
+    },
+    "customClassName": {
+      "type": "string"
+    },
+    "borderedSelected": {
+      "type": "boolean"
+    }
+  }
+}
