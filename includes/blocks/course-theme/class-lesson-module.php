@@ -18,13 +18,17 @@ use \Sensei_Blocks;
  * Display the title of the current module for the current lesson.
  */
 class Lesson_Module {
+	/**
+	 * Block JSON file.
+	 */
+	const BLOCK_JSON_FILE = '/lesson-blocks/course-theme-lesson-module.block.json';
 
 	/**
 	 * Allowed HTML wrapper tag names for this block.
 	 *
 	 * @var array
 	 */
-	const ALLOWED_HTML_TAG_NAMES = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span' ];
+	const ALLOWED_HTML_TAG_NAMES = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span' );
 
 	/**
 	 * The default HTML tag name.
@@ -37,11 +41,14 @@ class Lesson_Module {
 	 * Lesson_Module constructor.
 	 */
 	public function __construct() {
+		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/course-theme-lesson-module',
 			[
 				'render_callback' => [ $this, 'render' ],
-			]
+				'style'           => 'sensei-theme-blocks',
+			],
+			$block_json_path
 		);
 	}
 
@@ -54,7 +61,7 @@ class Lesson_Module {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [] ): string {
+	public function render( array $attributes = array() ): string {
 		$lesson_id = \Sensei_Utils::get_current_lesson();
 		if ( ! $lesson_id ) {
 			return '';
@@ -82,6 +89,12 @@ class Lesson_Module {
 			$class = sanitize_html_class( $attributes['className'], $class );
 		}
 
-		return "<{$tag_name} class='{$class}'>{$title}</{$tag_name}>";
+		$wrapper_attr = get_block_wrapper_attributes(
+			[
+				'class' => $class,
+			]
+		);
+
+		return sprintf( '<%1$s %2$s>%3$s</%1$s>', $tag_name, $wrapper_attr, $title );
 	}
 }

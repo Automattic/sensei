@@ -63,6 +63,7 @@ class Sensei_Autoloader {
 
 		$this->autoloader_bundles = array(
 			new Sensei_Autoloader_Bundle( 'rest-api' ),
+			new Sensei_Autoloader_Bundle( 'rest-api/mappers' ),
 			new Sensei_Autoloader_Bundle( '' ),
 			new Sensei_Autoloader_Bundle( 'background-jobs' ),
 			new Sensei_Autoloader_Bundle( 'enrolment' ),
@@ -79,6 +80,13 @@ class Sensei_Autoloader {
 			new Sensei_Autoloader_Bundle( 'reports/overview/data-provider' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/list-table' ),
 			new Sensei_Autoloader_Bundle( 'reports/overview/services' ),
+			new Sensei_Autoloader_Bundle( 'admin/home' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/notices' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/quick-links' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/help' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/promo-banner' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/tasks' ),
+			new Sensei_Autoloader_Bundle( 'admin/home/tasks/task' ),
 		);
 
 		// Add Sensei custom auto loader.
@@ -120,6 +128,7 @@ class Sensei_Autoloader {
 			'Sensei_Learner_Management'                    => 'admin/class-sensei-learner-management.php',
 			'Sensei_Extensions'                            => 'admin/class-sensei-extensions.php',
 			'Sensei_Exit_Survey'                           => 'admin/class-sensei-exit-survey.php',
+			'Sensei_Home'                                  => 'admin/class-sensei-home.php',
 			'Sensei_Learners_Admin_Bulk_Actions_Controller' => 'admin/class-sensei-learners-admin-bulk-actions-controller.php',
 			'Sensei_Learners_Admin_Bulk_Actions_View'      => 'admin/class-sensei-learners-admin-bulk-actions-view.php',
 			'Sensei_Learners_Main'                         => 'admin/class-sensei-learners-main.php',
@@ -236,14 +245,48 @@ class Sensei_Autoloader {
 			'Sensei\Blocks\Course_Theme\Quiz_Content'      => 'blocks/course-theme/class-quiz-content.php',
 			'Sensei\Blocks\Course_Theme\Post_Title'        => 'blocks/course-theme/class-post-title.php',
 			'Sensei\Blocks\Course_Theme\Lesson_Module'     => 'blocks/course-theme/class-lesson-module.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Properties' => 'blocks/course-theme/class-lesson-properties.php',
 			'Sensei\Blocks\Course_Theme\Sidebar_Toggle_Button' => 'blocks/course-theme/class-sidebar-toggle-button.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Graded'       => 'blocks/course-theme/class-quiz-graded.php',
 			'Sensei\Blocks\Course_Theme\Quiz_Actions'      => 'blocks/course-theme/class-quiz-actions.php',
 			'Sensei\Blocks\Course_Theme\Page_Actions'      => 'blocks/course-theme/class-page-actions.php',
+			'Sensei\Blocks\Course_Theme\Ui'                => 'blocks/course-theme/class-ui.php',
+			'Sensei\Blocks\Course_Theme\Template_Style'    => 'blocks/course-theme/class-template-style.php',
+			'Sensei\Blocks\Course_Theme\Lesson_Video'      => 'blocks/course-theme/class-lesson-video.php',
+
+			/**
+			 * Student Progress
+			 */
+			\Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress::class => 'internal/student-progress/course-progress/models/class-course-progress.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress::class => 'internal/student-progress/lesson-progress/models/class-lesson-progress.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress::class => 'internal/student-progress/quiz-progress/models/class-quiz-progress.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface::class => 'internal/student-progress/course-progress/repositories/class-course-progress-repository-interface.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Comments_Based_Course_Progress_Repository::class => 'internal/student-progress/course-progress/repositories/class-comments-based-course-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory::class => 'internal/student-progress/course-progress/repositories/class-course-progress-repository-factory.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface::class => 'internal/student-progress/lesson-progress/repositories/class-lesson-progress-repository-interface.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Comments_Based_Lesson_Progress_Repository::class => 'internal/student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory::class => 'internal/student-progress/lesson-progress/repositories/class-lesson-progress-repository-factory.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-interface.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Comments_Based_Quiz_Progress_Repository::class => 'internal/student-progress/quiz-progress/repositories/class-comments-based-quiz-progress-repository.php',
+			\Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory::class => 'internal/student-progress/quiz-progress/repositories/class-quiz-progress-repository-factory.php',
+
+			/**
+			 * Quiz Submission
+			 */
+			\Sensei\Internal\Quiz_Submission\Answer\Models\Answer::class => 'internal/quiz-submission/answer/models/class-answer.php',
+			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository::class => 'internal/quiz-submission/answer/repositories/class-comments-based-answer-repository.php',
+			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory::class => 'internal/quiz-submission/answer/repositories/class-answer-repository-factory.php',
+			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface::class => 'internal/quiz-submission/answer/repositories/class-answer-repository-interface.php',
+			\Sensei\Internal\Quiz_Submission\Grade\Models\Grade::class => 'internal/quiz-submission/grade/models/class-grade.php',
+			\Sensei\Internal\Quiz_Submission\Grade\Repositories\Comments_Based_Grade_Repository::class => 'internal/quiz-submission/grade/repositories/class-comments-based-grade-repository.php',
+			\Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory::class => 'internal/quiz-submission/grade/repositories/class-grade-repository-factory.php',
+			\Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface::class => 'internal/quiz-submission/grade/repositories/class-grade-repository-interface.php',
+			\Sensei\Internal\Quiz_Submission\Submission\Models\Submission::class => 'internal/quiz-submission/submission/models/class-submission.php',
+			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Comments_Based_Submission_Repository::class => 'internal/quiz-submission/submission/repositories/class-comments-based-submission-repository.php',
+			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory::class => 'internal/quiz-submission/submission/repositories/class-submission-repository-factory.php',
+			\Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface::class => 'internal/quiz-submission/submission/repositories/class-submission-repository-interface.php',
 		);
 	}
-
-
 
 	/**
 	 * Autoload all sensei files as the class names are used.

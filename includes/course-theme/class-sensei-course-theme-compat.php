@@ -101,11 +101,7 @@ class Sensei_Course_Theme_Compat {
 	 * @return string
 	 */
 	private function load_block_template( $template ) {
-
-		$template_path = Sensei_Course_Theme::instance()->get_course_theme_root() . '/templates/' . $template . '.html';
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-		$template_content = file_get_contents( $template_path );
-
+		$template_content = Sensei_Course_Theme_Templates::instance()->get_template_content( $template );
 		return $this->get_the_block_template_html( $template_content );
 	}
 
@@ -155,5 +151,3 @@ class Sensei_Course_Theme_Compat {
 
 	}
 }
-
-

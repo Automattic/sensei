@@ -188,9 +188,8 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				array(
 					'page'      => $this->page_slug,
 					'course_id' => $item->ID,
-					'post_type' => $this->post_type,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 
 			$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . $course_title . '</a></strong>';

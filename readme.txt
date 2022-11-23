@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, alexsanford1, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, guzluis, imranh920, jakeom, lavagolem, luchad0res, merkushin, m1r0, nurguly, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 5.8
-Tested up to: 6.0
+Requires at least: 5.9
+Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.6.4
+Stable tag: 4.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,27 +17,22 @@ Create beautiful and engaging online courses, lessons, and quizzes.
 
 [Sensei LMS](https://senseilms.com) is a teaching and learning management plugin built by Automattic, the company behind WordPress.com, WooCommerce, and Jetpack. In fact, Sensei LMS is used to power all of Automattic’s employee training and courses too.
 
-[Check out our Sensei Demo Course here](https://senseilms.com/lesson/overview/).
-
 Your knowledge is worth teaching - teach freely with Sensei LMS!
 
-### Works With Your Existing Theme ###
-Sensei LMS integrates seamlessly with your WordPress site, and courses look great with any theme.
+### Powerful LMS Features ###
 
-Add blocks for course and student information to any page or post.
-
-Customize the look and feel to match your branding and site style.
-
-### Learning Mode ###
-Enable the optional Learning Mode for a distraction free and immersive learning experience. Learning Mode is Full Site Editing ready for additional personalization and customization.
-
-https://videopress.com/v/WLDfZydJ
+- Integrates seamlessly with your WordPress site, and courses look great with any theme.
+- Track student progress and performance with detailed reports.
+- Craft engaging lessons with no code required.
+- Embed videos from YouTube, Vimeo, and VideoPress for video-based courses.
+- Add the Course List block to any page or post to display available courses.
+- Customize the look and feel to match your branding and site style.
+- Enable the optional Learning Mode for a distraction free and immersive learning experience.
 
 ### Quizzes That Reinforce ###
 Leverage the power of quizzes to strengthen your students’ understanding of key concepts and evaluate their progress.
 
 Choose from many question types and quiz settings, including multiple-choice, fill-in-the-blank, true/false, free response, file uploads, and more.
-
 
 ### Get More with Sensei Pro ###
 
@@ -47,11 +42,17 @@ Do more and sell courses with Sensei Pro, which includes:
 
 **Content Drip:** For each lesson in a course, you can specify when students will be able to access the lesson content, either at a fixed interval after the date they start the course or on a specific date.
 
-**Interactive Blocks:** Flashcards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post.
+**Interactive Blocks:** Videos, flashcards, image hotspots, and tasklists can be added to any lesson, and any WordPress page or post.
 
-**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz. 
+https://videopress.com/v/tLYw7R27
 
-**Course Expiration:** Select an end date or a specific amount of time that courses will remain accessible to students.
+**Advanced Quiz Features:** Enable a quiz timer and add an ordering quiz question type. With Pro, you can add individual quiz questions to any WordPress content, not just in a quiz.
+
+**Groups & Cohorts:** Organize students into groups and cohorts to manage access and customize learning experiences.
+
+**Course Access Periods:** Select a start date, end date, or a specific amount of time that courses will remain accessible to students.
+
+**Conditional Content:** Hide and show lessons and content in lessons based on groups, enrollment status, and date.
 
 **Priority Support:** Our team of expert and friendly engineers are standing by and ready to help!
 
@@ -115,55 +116,33 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022-09-26 - version 4.6.4
-* Add: Show Course Categories preview [#5513](https://github.com/Automattic/sensei/pull/5513)
-* Add: Learning Mode - Add a prerequisite notice to the quiz page. [#5476](https://github.com/Automattic/sensei/pull/5476)
-* Add: Add course list filter block [#5567](https://github.com/Automattic/sensei/pull/5567)
-* Add: Course list icon [#5595](https://github.com/Automattic/sensei/pull/5595)
-* Add: Border setting to Course List block [#5576](https://github.com/Automattic/sensei/pull/5576)
-* Add: Make course list filter single block and implement student course filter [#5578](https://github.com/Automattic/sensei/pull/5578)
-* Add: Course list filter block to patterns [#5612](https://github.com/Automattic/sensei/pull/5612)
-* Add: Show featured course label on course list block [#5571](https://github.com/Automattic/sensei/pull/5571)
-* Add: Support to render html tags incoming from legacy questions [#5737](https://github.com/Automattic/sensei/pull/5737)
-* Fix: Fatal error in Jetpack REST API endpoint [#5548](https://github.com/Automattic/sensei/pull/5548)
-* Fix: Remove block align to avoid error message have different width [#5546](https://github.com/Automattic/sensei/pull/5546)
-* Fix: Hide"List view" and "Grid view" toolbar options [#5558](https://github.com/Automattic/sensei/pull/5558com/Automattic/sensei/pull/5558)
-* Fix: Simplify Course List block patterns and ensure they look good on Divi [#5556](https://github.com/Automattic/sensei/pull/5556)
-* Fix: Align buttons to bottom of column in Course List block grid pattern [#5566](https://github.com/Automattic/sensei/pull/5566)
-* Fix: Ignore negative numbers for `show_questions` option. [#5579](https://github.com/Automattic/sensei/pull/5579)
-* Fix: Update students report to work in environments that don't support users table relationship [#5565](https://github.com/Automattic/sensei/pull/5565)
-* Fix: Jetpack video initialization in the editor [#5577](https://github.com/Automattic/sensei/pull/5577)
-* Fix: Fatal error when printing notices on redirect [#5568](https://github.com/Automattic/sensei/pull/5568)
-* Fix: Add color fallback to course categories block [#5557](https://github.com/Automattic/sensei/pull/5557)
-* Fix: Course List block UI improvements for Astra [#5604](https://github.com/Automattic/sensei/pull/5604)
-* Fix: Issues for when course list filter is added to non course list blocks [#5617](https://github.com/Automattic/sensei/pull/5617)
-* Fix: Remove featured label hook for course categories for older wp version [#5635](https://github.com/Automattic/sensei/pull/5635)
-* Fix: Remove unneeded icon font formats [#5655](https://github.com/Automattic/sensei/pull/5655)
-* Fix: Spacings, alignments and sizes for course list patterns [#5710](https://github.com/Automattic/sensei/pull/5710)
-* Tweak: Remove "Beta" label from Course List block [#5593](https://github.com/Automattic/sensei/pull/5593)
+2022-11-10 - version 4.8.1
+* New: Course Overview block for the Course List block [#5996](https://github.com/Automattic/sensei/pull/5996)
+* Add: Message for users without JavaScript enabled on Sensei Home [#6059](https://github.com/Automattic/sensei/pull/6059)
+* Fix: Course start date reset on lesson completion [#6079](https://github.com/Automattic/sensei/pull/6079)
+* Fix: Contact Teacher block not working [#6058](https://github.com/Automattic/sensei/pull/6058)
+* Fix: Random questions change for answered quizzes [#6088](https://github.com/Automattic/sensei/pull/6088)
+* Fix: Issue with enrolling students in the course view in a course with no students [#5583](https://github.com/Automattic/sensei/pull/5583)
+* Fix: Disable broken sorting under Reports [#6094](https://github.com/Automattic/sensei/pull/6094)
+* Fix: Course List buttons extending outside container [#6010](https://github.com/Automattic/sensei/pull/6010)
+* Fix: Checks for modules when adding author name to module name [#6034](https://github.com/Automattic/sensei/pull/6034)
+* Fix: PHP notice on course category archive view [#6069](https://github.com/Automattic/sensei/pull/6069)
+* Fix: Error when activating Sensei LMS + Sensei Pro (WC Paid Courses) [#6080](https://github.com/Automattic/sensei/pull/6080)
+* Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083)
 
-2022-08-24 - version 4.6.3
-* New: Course List block (beta)
-    * Add the Course List block [#5419](https://github.com/Automattic/sensei/pull/5419)
-    * Add the Course Categories block [#5455](https://github.com/Automattic/sensei/pull/5455)
-    * Add new patterns for Course List [#5433](https://github.com/Automattic/sensei/pull/5433)
-    * Add Course Actions block [#5430](https://github.com/Automattic/sensei/pull/5430)
-    * Make Continue button take user to the lesson they were working on [#5496](https://github.com/Automattic/sensei/pull/5496)
-    * Make the Course List block with inner blocks globally available [#5473](https://github.com/Automattic/sensei/pull/5473)
-    * Add notice to show invalid usage when blocks are used out of course context [#5489](https://github.com/Automattic/sensei/pull/5489)
-* Add: Support for passing a custom footer to the Modal component [#5503](https://github.com/Automattic/sensei/pull/5503)
-* Fix: Template selection logic when learning mode is active [#5514](https://github.com/Automattic/sensei/pull/5514)
-* Fix: Course Outline - Show private lessons only for those who can view them. [#5468](https://github.com/Automattic/sensei/pull/5468)
-* Tweak: Combine PHP and JS strings in POT generation command [#5486](https://github.com/Automattic/sensei/pull/5486)
-* Tweak: Remove 'new' badge for learning mode [#5474](https://github.com/Automattic/sensei/pull/5474)
-* Tweak: Modify title for course theme lesson actions block to avoid confusion [#5470](https://github.com/Automattic/sensei/pull/5470)
+2022-10-27 - version 4.8.0
+* New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
+* New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
 
-2022-08-17 - version 4.6.2
-* Fix: Learning Mode - Do not filter templates for query slugs if it is indexing. [#5460](https://github.com/Automattic/sensei/pull/5460)
-* Fix: Do not save -1 values on quiz meta [#5461](https://github.com/Automattic/sensei/pull/5461)
-* Fix: Revert "Change className prop to not use classnames" [#5464](https://github.com/Automattic/sensei/pull/5464)
-* Fix: Fix timeupdate event on the youtube adapter [#5452](https://github.com/Automattic/sensei/pull/5452)
-* Fix: Fix interactive video when no video is set [#5442](https://github.com/Automattic/sensei/pull/5442)
-* Add: Add className prop to Sensei modal [#5462](https://github.com/Automattic/sensei/pull/5462)
-* Add: Change confirm dialog styles [#5454](https://github.com/Automattic/sensei/pull/5454)
-* Add: Fix set current time to keep the same behavior for all players [#5416](https://github.com/Automattic/sensei/pull/5416)
+2022-10-24 - version 4.7.2
+* Fix: Change admin bar visibility only in lesson pages [#5909](https://github.com/Automattic/sensei/pull/5909)
+* Fix container sizing in Video Template [#5926](https://github.com/Automattic/sensei/pull/5926)
+* Fix: Prevent course enrollment if user did not complete prerequisites or if course requires a password [#5957](https://github.com/Automattic/sensei/pull/5957)
+* Fix broken Quiz and Question blocks [#5905](https://github.com/Automattic/sensei/pull/5905)
+* Fix lesson video not showing  [#5956](https://github.com/Automattic/sensei/pull/5956)
+* Fix styling for older Learning Mode templates [#5969](https://github.com/Automattic/sensei/pull/5969)
+* Fix lesson action buttons not showing when a quiz block is added [#5970](https://github.com/Automattic/sensei/pull/5970)
+* Fix: Validate colors when saving email template options. [#5959](https://github.com/Automattic/sensei/pull/5959)
+
+2022-10-11 - version 4.7.1
+* Fix: Prevent Learning Mode styles from overriding global styles. [#5903](https://github.com/Automattic/sensei/pull/5903)

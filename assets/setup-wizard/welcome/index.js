@@ -1,92 +1,89 @@
 /**
  * WordPress dependencies
  */
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { Button, Card, CardBody } from '@wordpress/components';
-import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import { UsageModal } from './usage-modal';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { H } from '../../shared/components/section';
+import { HOME_PATH } from '../constants';
 
 /**
  * Welcome step for Setup Wizard.
  */
-export const Welcome = () => {
-	const [ usageModalActive, toggleUsageModal ] = useState( false );
-
+const Welcome = () => {
 	const { goTo } = useQueryStringRouter();
 
-	const {
-		stepData,
-		submitStep,
-		isSubmitting,
-		errorNotice,
-	} = useSetupWizardStep( 'welcome' );
+	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
+		'welcome'
+	);
 
 	const onSubmitSuccess = () => {
-		toggleUsageModal( false );
 		goTo( 'purpose' );
 	};
 
-	const submitPage = ( allowUsageTracking ) => {
-		submitStep(
-			{ usage_tracking: allowUsageTracking },
-			{ onSuccess: onSubmitSuccess }
-		);
+	const submitPage = () => {
+		submitStep( {}, { onSuccess: onSubmitSuccess } );
 	};
 
+	/**
+	 * Filters the title from the Welcome step in the Setup Wizard.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @param {string} title Title text.
+	 *
+	 * @return {string} Filtered title text.
+	 */
+	const title = applyFilters(
+		'sensei.setupWizard.welcomeTitle',
+		__( 'Welcome to Sensei LMS', 'sensei-lms' )
+	);
+
+	/**
+	 * Filters the paragraph from the Welcome step in the Setup Wizard.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @param {string} paragraph Paragraph text.
+	 *
+	 * @return {string} Filtered paragraph text.
+	 */
+	const paragraph = applyFilters(
+		'sensei.setupWizard.welcomeParagraph',
+		__(
+			'Let’s set up your site to launch your first course.',
+			'sensei-lms'
+		)
+	);
+
 	return (
-		<>
-			<div className="sensei-setup-wizard__title">
-				<H> { __( 'Welcome to Sensei LMS!', 'sensei-lms' ) } </H>
-			</div>
-			<Card className="sensei-setup-wizard__card" elevation={ 2 }>
-				<CardBody>
-					<p>
-						{ __(
-							'Thank you for choosing Sensei LMS!',
-							'sensei-lms'
-						) }
-					</p>
-					<p>
-						{ __(
-							'This setup wizard will help you get started creating online courses more quickly. It is optional and should take only a few minutes.',
-							'sensei-lms'
-						) }
-					</p>
-					<Button
-						isPrimary
-						className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
-						onClick={ () => toggleUsageModal( true ) }
-					>
-						{ __( 'Continue', 'sensei-lms' ) }
-					</Button>
-				</CardBody>
-			</Card>
-			<div className="sensei-setup-wizard__bottom-actions">
-				<a
-					href="edit.php?post_type=course"
-					type="wp-admin"
-					className="link__color-secondary"
-				>
-					{ __( 'Not right now', 'sensei-lms' ) }
-				</a>
-			</div>
-			{ usageModalActive && (
-				<UsageModal
-					tracking={ stepData.usage_tracking }
-					isSubmitting={ isSubmitting }
-					onClose={ () => toggleUsageModal( false ) }
-					onContinue={ submitPage }
-				>
+		<div className="sensei-setup-wizard__full-centered-step">
+			<div className="sensei-setup-wizard__full-centered-content">
+				<H className="sensei-setup-wizard__step-title">{ title }</H>
+				<p>{ paragraph }</p>
+				<div className="sensei-setup-wizard__actions">
 					{ errorNotice }
-				</UsageModal>
-			) }
-		</>
+					<button
+						disabled={ isSubmitting }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+						onClick={ submitPage }
+					>
+						{ __( 'Get started', 'sensei-lms' ) }
+					</button>
+					<div className="sensei-setup-wizard__action-skip">
+						<a href={ HOME_PATH }>
+							{ __( 'Skip onboarding', 'sensei-lms' ) }
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 };
+
+export default Welcome;
