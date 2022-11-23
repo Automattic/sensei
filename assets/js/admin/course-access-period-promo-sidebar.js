@@ -11,7 +11,7 @@ const CourseAccessPeriodPromoSidebar = () => {
 	return (
 		<PanelBody
 			title={ __( 'Access Period', 'sensei-lms' ) }
-			initialOpen={ false }
+			initialOpen={ true }
 		>
 			<div className="sensei-course-access-period-promo">
 				<p>

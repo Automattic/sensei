@@ -10,6 +10,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { dispatch, useSelect } from '@wordpress/data';
 import { Slot } from '@wordpress/components';
+import domReady from '@wordpress/dom-ready';
 
 /**
  * Internal dependencies
@@ -74,6 +75,7 @@ export const SenseiSettingsDocumentSidebar = () => {
 		<PluginDocumentSettingPanel
 			name={ pluginDocumentHandle }
 			title={ __( 'Sensei Settings', 'sensei-lms' ) }
+			className="sensei-plugin-document-setting-panel"
 		></PluginDocumentSettingPanel>
 	);
 };
