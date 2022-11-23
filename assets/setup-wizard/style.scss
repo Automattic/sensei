@@ -1,8 +1,13 @@
+$small-header-height: 80px;
+$big-header-height: 88px;
+
 $small-screen-break: 600px;
 $small-vertical-padding: 20px;
 $small-horizontal-padding: 20px;
 $big-vertical-padding: 60px;
 $big-horizontal-padding: 80px;
+
+$page-background: #b7c9be;
 
 @import '../css/font-recoleta';
 @import 'fullscreen';
@@ -16,13 +21,11 @@ $big-horizontal-padding: 80px;
 
 .sensei-setup-wizard-page {
 	overflow-x: hidden;
-	background-color: #b7c9be;
+	background-color: $page-background;
 }
 
 .sensei-setup-wizard {
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
+	min-height: 100vh;
 	color: #000;
 	font-size: 16px;
 
@@ -41,15 +44,37 @@ $big-horizontal-padding: 80px;
 		color: #000;
 	}
 
-	&__sensei-logo {
+	&__header {
 		display: flex;
-		margin: $small-horizontal-padding;
+		flex-direction: column;
+		width: 100%;
+		height: $small-header-height;
+		position: fixed;
+		z-index: 1;
+		background-color: $page-background;
+
+		@media (min-width: $small-screen-break) {
+			height: $big-header-height;
+		}
+
+		@at-root {
+			.sensei-setup-wizard-page--features &,
+			.sensei-setup-wizard-page--welcome & {
+				background-color: transparent;
+			}
+		}
+	}
+
+	&__sensei-logo {
+		flex: 1;
+		display: flex;
+		margin: 0 $small-horizontal-padding;
 		align-items: center;
 		font-family: $recoleta-font-family;
 		font-size: 18px;
 
 		@media (min-width: $small-screen-break) {
-			margin: 24px;
+			margin: 0 24px;
 		}
 
 		> svg {
@@ -74,13 +99,13 @@ $big-horizontal-padding: 80px;
 	// Container.
 	&__container {
 		flex: 1;
-		padding: $small-vertical-padding $small-horizontal-padding;
+		padding: ( $small-vertical-padding + $small-header-height ) $small-horizontal-padding $small-vertical-padding;
 
 		display: flex;
 		flex-direction: column;
 
 		@media (min-width: $small-screen-break) {
-			padding: $big-vertical-padding $big-horizontal-padding;
+			padding: ( $big-vertical-padding + $big-header-height ) $big-horizontal-padding $big-vertical-padding;
 		}
 	}
 
