@@ -1,6 +1,7 @@
 {
   "name": "sensei-lms/course-theme-lesson-module",
   "category": "theme",
+  "apiVersion": 2,
   "supports": {
     "align": true,
     "color": {
@@ -11,6 +12,19 @@
       "margin": true,
       "padding": true,
       "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontWeight": true,
+      "__experimentalFontStyle": true,
+      "__experimentalTextTransform": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
     }
   }
 }
