@@ -866,9 +866,9 @@ class Sensei_Teacher {
 		// get the course and determine if the current teacher is the owner
 		// if not remove it from the list of comments to be returned
 		foreach ( $comments as $key => $comment ) {
-			$lesson           = get_post( $comment->comment_post_ID );
-			$course_id        = Sensei()->lesson->get_course_id( $lesson->ID );
-			$course           = get_post( $course_id );
+			$lesson    = get_post( $comment->comment_post_ID );
+			$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
+			$course    = get_post( $course_id );
 			/**
 			 * Allows to change the list of teacher IDs with grading access allowed for a given course ID.
 			 *
