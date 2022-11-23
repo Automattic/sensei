@@ -19,6 +19,7 @@ import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
 import QuizProgressBarEdit from './quiz-progress-bar-edit';
+import { applyFilters } from '@wordpress/hooks';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/quiz-question',
@@ -55,12 +56,14 @@ const QuizEdit = ( props ) => {
 
 	/* Temporary solution. See https://github.com/WordPress/gutenberg/pull/29911 */
 	const AppenderComponent = useCallback(
-		() => (
-			<QuizAppender
-				clientId={ clientId }
-				openModal={ () => setExistingQuestionsModalOpen( true ) }
-			/>
-		),
+		() =>
+			applyFilters(
+				'sensei-lms.Quiz.appender',
+				<QuizAppender
+					clientId={ clientId }
+					openModal={ () => setExistingQuestionsModalOpen( true ) }
+				/>
+			),
 		[ clientId ]
 	);
 	const pagination = props?.attributes?.options?.pagination;
