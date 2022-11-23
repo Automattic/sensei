@@ -18,6 +18,21 @@ class Sensei_Home_Tasks_Provider {
 	const COMPLETED_TASKS_OPTION_KEY = 'sensei_home_tasks_list_is_completed';
 
 	/**
+	 * Tells if the WP hooks were attached or not.
+	 *
+	 * @var bool
+	 */
+	private static $attached_hooks = false;
+
+	/**
+	 * The option name that wp-calypso automatically fetches to use
+	 * as a reference for Launchpad tasks' complete statuses.
+	 *
+	 * @var string
+	 */
+	const CALYPSO_LAUNCHPAD_STATUSES_NAME = 'launchpad_checklist_tasks_statuses';
+
+	/**
 	 * Class constructor.
 	 */
 	public function __construct() {
@@ -155,21 +170,6 @@ class Sensei_Home_Tasks_Provider {
 	public function mark_as_completed( $completed = true ) {
 		update_option( self::COMPLETED_TASKS_OPTION_KEY, $completed, false );
 	}
-
-	/**
-	 * Tells if the WP hooks were attached or not.
-	 *
-	 * @var bool
-	 */
-	private static $attached_hooks = false;
-
-	/**
-	 * The option name that wp-calypso automatically fetches to use
-	 * as a reference for Launchpad tasks' complete statuses.
-	 *
-	 * @var string
-	 */
-	const CALYPSO_LAUNCHPAD_STATUSES_NAME = 'launchpad_checklist_tasks_statuses';
 
 	/**
 	 * Attaches required hooks.
