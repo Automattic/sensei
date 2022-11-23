@@ -27,8 +27,10 @@
 				<directory suffix=".php">./includes/3rd-party/</directory>
 				<directory suffix=".php">./includes/admin/tools/views/</directory>
 				<directory suffix=".php">./includes/admin/views/</directory>
+				<directory suffix=".php">./includes/block-patterns/</directory>
 				<file>./includes/data-port/class-sensei-import-job-cli.php</file>
 				<file>./includes/email-signup/template.php</file>
+
 			</exclude>
         </whitelist>
     </filter>

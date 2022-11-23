@@ -10,6 +10,9 @@
 	background-repeat: no-repeat;
 	transition: 0.5s background-position;
 
+	// Crop first course box shadow.
+	overflow: hidden;
+
 	&--ready {
 		@media ( min-width: 1120px ) {
 			background-position: 0 0, 100% 100%;

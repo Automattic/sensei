@@ -105,7 +105,7 @@ class Sensei_Question {
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
 				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=question' ) ); ?>"><?php esc_html_e( 'All Questions', 'sensei-lms' ); ?></a>
-				<a class="sensei-custom-navigation__tab <?php echo 'question-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=question-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Question Categories', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'question-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) ); ?>"><?php esc_html_e( 'Question Categories', 'sensei-lms' ); ?></a>
 			</div>
 		</div>
 		<?php

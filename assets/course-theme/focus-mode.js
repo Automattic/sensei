@@ -61,7 +61,7 @@ window.addEventListener( 'DOMContentLoaded', () => {
 
 	document
 		.querySelector( '.sensei-course-theme__sidebar' )
-		.addEventListener( 'transitionend', ( e ) => {
+		?.addEventListener( 'transitionend', ( e ) => {
 			if (
 				'left' === e.propertyName &&
 				document.body.classList.contains( FOCUS_MODE_CLASS )
