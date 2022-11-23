@@ -21,7 +21,7 @@
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
 		&__video-container {
-			--sidebar-width: 300px;
+			--sensei-lm-sidebar-width: 300px;
 			display: flex;
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);
@@ -35,14 +35,14 @@
 		}
 
 		&__video-container::after {
-			flex: 0 0 var(--sidebar-width);
+			flex: 0 0 var(--sensei-lm-sidebar-width);
 			content: '';
 		}
 
 		&__video-container &__sidebar {
 
 			position: absolute;
-			width: var(--sidebar-width);
+			width: var(--sensei-lm-sidebar-width);
 			top: 20px;
 			bottom: 20px;
 			right: 20px;
@@ -104,7 +104,7 @@
 			& ~ * .sensei-course-theme__secondary-sidebar {
 				position: relative;
 				top: calc(80vh + 48px);
-				width: var(--sidebar-width);
+				width: var(--sensei-lm-sidebar-width);
 				left: var(--wp--style--block-gap, 2em);
 			}
 

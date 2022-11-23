@@ -1,9 +1,9 @@
 $breakpoint: 783px;
 
 :root {
-	--header-height: var( --lm-header-height, 65px);
+	--header-height: var( --sensei-lm-header-height, 65px);
 	--header-progress-bar-height: 4px;
-	--sidebar-width: 300px;
+	--sensei-lm-sidebar-width: 300px;
 	--content-padding: 32px;
 }
 
@@ -60,7 +60,7 @@ body.sensei-course-theme {
 	}
 
 	&__columns {
-		--max-content-size: calc(100vw - var(--sidebar-width) - 2 * var(--content-padding));
+		--max-content-size: calc(100vw - var(--sensei-lm-sidebar-width) - 2 * var(--content-padding));
 
 		&__main-content ~ &__sidebar {
 			left: unset;
@@ -73,7 +73,7 @@ body.sensei-course-theme {
 		&__main-content {
 			position: relative;
 			padding: 32px 0;
-			margin-right: var(--sidebar-width) !important;
+			margin-right: var(--sensei-lm-sidebar-width) !important;
 
 			// A Divi fix since it doesn't load Gutenberg block library styles.
 			@at-root {
@@ -85,7 +85,7 @@ body.sensei-course-theme {
 
 		&__sidebar ~ &__main-content {
 			margin-right: unset ! important;
-			margin-left: var(--sidebar-width) !important;
+			margin-left: var(--sensei-lm-sidebar-width) !important;
 		}
 	}
 }

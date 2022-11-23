@@ -1,7 +1,7 @@
 :root {
 	--header-height: 65px;
 	--header-progress-bar-height: 4px;
-	--sidebar-width: 300px;
+	--sensei-lm-sidebar-width: 300px;
 	--content-padding: 32px;
 }
 
@@ -115,7 +115,7 @@ body.sensei-course-theme {
 
 	&__main-content {
 		padding: 32px var(--content-padding);
-		margin-right: var(--sidebar-width) !important;
+		margin-right: var(--sensei-lm-sidebar-width) !important;
 
 		// A Divi fix since it doesn't load Gutenberg block library styles.
 		@at-root {
@@ -127,7 +127,7 @@ body.sensei-course-theme {
 
 	&__sidebar ~ &__main-content {
 		margin-right: unset ! important;
-		margin-left: var(--sidebar-width) !important;
+		margin-left: var(--sensei-lm-sidebar-width) !important;
 	}
 
 	&__header {
