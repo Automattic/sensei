@@ -50,7 +50,7 @@ class Sensei_Lesson {
 
 		$this->question_order = '';
 
-		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
+		$this->allowed_html = array_merge( Sensei_Wp_Kses::get_default_wp_kses_allowed_html(), wp_kses_allowed_html( 'post' ) );
 
 		$this->legacy_quiz_message = '<p><em>' .
 			sprintf(
