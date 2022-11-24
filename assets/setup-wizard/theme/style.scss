@@ -26,4 +26,25 @@
 		display: block;
 		width: 100%;
 	}
+
+	&__mobile-images {
+		display: grid;
+		grid-template:
+			"onboarding-mobile-1 onboarding-mobile-2 onboarding-mobile-5"
+			"onboarding-mobile-3 onboarding-mobile-4 onboarding-mobile-5";
+		grid-gap: 2rem;
+		margin: 0;
+		padding: 0;
+
+		> li {
+			margin: 0;
+			padding: 0;
+
+			@for $i from 1 through 5 {
+				&:nth-child(#{$i}) {
+					grid-area: onboarding-mobile-#{$i};
+				}
+			}
+		}
+	}
 }
