@@ -85,7 +85,7 @@ const CourseGeneralSidebar = () => {
 	 *
 	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
 	 */
-	const teacherSettingAfter = applyFilters(
+	const AfterTeachersSection = applyFilters(
 		'senseiCourseSettingsTeachersAfter',
 		null
 	);
@@ -122,7 +122,7 @@ const CourseGeneralSidebar = () => {
 				</div>
 			) }
 
-			{ teacherSettingAfter }
+			<AfterTeachersSection courseAuthorId={ author } />
 
 			<HorizontalRule />
 
