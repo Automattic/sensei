@@ -95,7 +95,6 @@ const CourseGeneralSidebar = () => {
 			<h3>{ __( 'Teacher', 'sensei-lms' ) }</h3>
 			{ teachers.length ? (
 				<SelectControl
-					id="sensei-course-teacher-author"
 					value={ author }
 					options={ teachers }
 					onChange={ ( new_author ) => {
