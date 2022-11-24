@@ -98,6 +98,7 @@ const CourseGeneralSidebar = () => {
 					value={ author }
 					options={ teachers }
 					onChange={ ( new_author ) => {
+						new_author = parseInt( new_author );
 						setAuthor( new_author );
 						dispatch( 'core' ).editEntityRecord(
 							'postType',
