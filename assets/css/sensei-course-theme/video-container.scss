@@ -1,8 +1,6 @@
-
 :root {
 
 }
-
 
 // Mobile
 @media screen and (max-width: ($breakpoint - 1)) {
@@ -13,7 +11,6 @@
 			display: contents;
 		}
 	}
-
 }
 
 .sensei-course-theme {
@@ -34,6 +31,7 @@
 			.wp-block-sensei-lms-course-theme-lesson-video {
 				flex: 1;
 			}
+
 			&:not(.has-background) {
 				border: 1px solid currentColor;
 			}
@@ -45,7 +43,6 @@
 		}
 
 		&__video-container &__sidebar {
-
 			position: absolute;
 			width: var(--sidebar-width);
 			top: 20px;
@@ -69,7 +66,6 @@
 				border-radius: 20px;
 				border: transparent;
 			}
-
 		}
 
 		/**
@@ -80,9 +76,9 @@
 			border: none;
 			height: 0;
 			overflow: visible;
-			padding: 0!important;
-			margin-top: 0!important;
-			margin-bottom: -32px!important;
+			padding: 0 !important;
+			margin-top: 0 !important;
+			margin-bottom: -32px !important;
 			transition: none;
 
 			&:after {
@@ -112,7 +108,6 @@
 				width: var(--sidebar-width);
 				left: var(--wp--style--block-gap, 2em);
 			}
-
 		}
 	}
 }

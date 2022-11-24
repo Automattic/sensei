@@ -13,7 +13,6 @@ body.sensei-course-theme {
 }
 
 .sensei-course-theme__frame {
-
 	.sensei-block-wrapper {
 		margin: 0;
 	}
@@ -29,7 +28,6 @@ body.sensei-course-theme {
 }
 
 .sensei-course-theme {
-
 	&__header {
 		margin: 0;
 		position: fixed;
@@ -41,6 +39,7 @@ body.sensei-course-theme {
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
+
 		& > :first-child {
 			flex: 1;
 		}

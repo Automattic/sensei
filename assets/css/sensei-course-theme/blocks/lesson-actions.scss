@@ -10,7 +10,6 @@
 }
 
 .sensei-course-theme__post-pagination {
-
 	display: flex;
 	align-items: flex-start;
 	flex-wrap: wrap;
@@ -22,9 +21,9 @@
 		font-weight: 700;
 		text-decoration: none;
 		border-radius: 2px;
+
 		&.current {
 			opacity: 0.5;
 		}
 	}
-
 }
