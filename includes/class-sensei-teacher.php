@@ -298,47 +298,6 @@ class Sensei_Teacher {
 		</select>
 
 		<?php
-
-		/**
-		 * Filters the Co-Teachers upgrade link toggle.
-		 *
-		 * @hook   sensei_course_coteachers_hide
-		 * @since  $$next-version$$
-		 *
-		 * @param  {bool} $hide_co_teachers_upgrade_link Whether to hide the Co-Teachers upgrade link.
-		 * @return {bool} Whether to hide the Co-Teachers upgrade link.
-		 */
-		if ( ! apply_filters( 'sensei_course_coteachers_hide', false ) ) {
-			?>
-			<div class="sensei-course-coteachers-wrapper">
-				<?php
-				echo wp_kses(
-					sprintf(
-					// translators: The href tag contains the url to the Sensei Pro landing page.
-						__( 'Multiple teachers? <a href="%s" target="_blank">Upgrade to Pro!</a>', 'sensei-lms' ),
-						'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers'
-					),
-					[
-						'a' => [
-							'href'   => [],
-							'target' => [],
-						],
-					]
-				);
-				?>
-			</div>
-			<?php
-		}
-
-		/**
-		 * Adds additional content to the end of the Teacher meta box.
-		 *
-		 * @hook   sensei_teacher_meta_box_after
-		 * @since  $$next-version$$
-		 *
-		 * @param  {WP_Post} $post The current post.
-		 */
-		do_action( 'sensei_teacher_meta_box_after', $post );
 	}
 
 	/**
