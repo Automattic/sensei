@@ -85,6 +85,7 @@ class Sensei_Block_Patterns {
 		if ( 'course' === $post_type ) {
 			$block_patterns = [
 				'course-default',
+				'course-landing-page',
 				'video-hero',
 				'long-sales-page',
 				'life-coach',
