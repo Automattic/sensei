@@ -9,6 +9,10 @@ import { render } from '@testing-library/react';
  */
 import ProgressBar from './index';
 
+jest.mock( '@wordpress/block-editor', () => ( {
+	useBlockProps: jest.fn(),
+} ) );
+
 describe( '<ProgressBar />', () => {
 	it( 'Should render the numbers and progress bar correctly', () => {
 		const { queryByRole, container } = render(

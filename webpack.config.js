@@ -100,6 +100,7 @@ const files = [
 	'css/meta-box-quiz-editor.scss',
 	'css/learning-mode.4-0-2.scss',
 	'css/learning-mode.scss',
+	'css/learning-mode-compat.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
