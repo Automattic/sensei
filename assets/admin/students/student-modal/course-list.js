@@ -112,6 +112,7 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 			const query = {
 				per_page: 100,
 				search: searchQuery,
+				filter: 'teacher',
 			};
 
 			return {
