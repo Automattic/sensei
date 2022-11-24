@@ -642,7 +642,8 @@ class Sensei_Lesson {
 	public function meta_box_save( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ 'woo_' . $this->token . '_nonce' ] ), 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		}
 		// Get the post type object.
