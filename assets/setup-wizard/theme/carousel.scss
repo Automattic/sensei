@@ -5,6 +5,7 @@
 
 	&__slider {
 		display: flex;
+		transition: 0.5s transform;
 
 		> li {
 			flex: 0 0 100%;
