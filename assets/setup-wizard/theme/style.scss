@@ -1,3 +1,15 @@
+@import "./carousel.scss";
+
+@mixin full-width {
+	margin-left: -$small-horizontal-padding;
+	margin-right: -$small-horizontal-padding;
+
+	@media (min-width: $small-screen-break) {
+		margin-left: -$big-horizontal-padding;
+		margin-right: -$big-horizontal-padding;
+	}
+}
+
 .sensei-setup-wizard {
 	&__theme-actions {
 		> * {
@@ -51,22 +63,20 @@
 			}
 		}
 	}
+
+	&__learning-mode-carousel {
+		@include full-width;
+	}
 }
 
 .sensei-setup-wizard-theme-testimonial {
 	display: flex;
 	justify-content: center;
 	align-items: flex-end;
-	margin-left: -$small-horizontal-padding;
-	margin-right: -$small-horizontal-padding;
 	padding: 128px 0;
 	background-color: #00594f;
 	color: #FFF;
-
-	@media (min-width: $small-screen-break) {
-		margin-left: -$big-horizontal-padding;
-		margin-right: -$big-horizontal-padding;
-	}
+	@include full-width;
 
 	&__image {
 		width: 25%;

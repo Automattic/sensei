@@ -18,6 +18,7 @@ import quoteAuthorImage from '../../images/onboarding-theme-quote-author.webp';
 import learningModeImage1 from '../../images/onboarding-theme-learning-mode-1.webp';
 import learningModeImage2 from '../../images/onboarding-theme-learning-mode-2.webp';
 import learningModeImage3 from '../../images/onboarding-theme-learning-mode-3.webp';
+import Carousel from './carousel';
 
 /**
  * Theme step for Setup Wizard.
@@ -206,53 +207,55 @@ const Theme = () => {
 						) }
 					</H>
 
-					<ul>
-						<li>
-							<div className="sensei-setup-wizard-theme__image-wrapper">
-								<img
-									src={
-										window.sensei.pluginUrl +
-										learningModeImage1
-									}
-									alt={ __(
-										'Sensei theme illustration',
-										'sensei-lms'
-									) }
-									className="sensei-setup-wizard-theme__image"
-								/>
-							</div>
-						</li>
-						<li>
-							<div className="sensei-setup-wizard-theme__image-wrapper">
-								<img
-									src={
-										window.sensei.pluginUrl +
-										learningModeImage2
-									}
-									alt={ __(
-										'Sensei theme illustration',
-										'sensei-lms'
-									) }
-									className="sensei-setup-wizard-theme__image"
-								/>
-							</div>
-						</li>
-						<li>
-							<div className="sensei-setup-wizard-theme__image-wrapper">
-								<img
-									src={
-										window.sensei.pluginUrl +
-										learningModeImage3
-									}
-									alt={ __(
-										'Sensei theme illustration',
-										'sensei-lms'
-									) }
-									className="sensei-setup-wizard-theme__image"
-								/>
-							</div>
-						</li>
-					</ul>
+					<div className="sensei-setup-wizard-theme__learning-mode-carousel">
+						<Carousel>
+							<Carousel.Item>
+								<div className="sensei-setup-wizard-theme__image-wrapper">
+									<img
+										src={
+											window.sensei.pluginUrl +
+											learningModeImage1
+										}
+										alt={ __(
+											'Sensei theme illustration',
+											'sensei-lms'
+										) }
+										className="sensei-setup-wizard-theme__image"
+									/>
+								</div>
+							</Carousel.Item>
+							<Carousel.Item>
+								<div className="sensei-setup-wizard-theme__image-wrapper">
+									<img
+										src={
+											window.sensei.pluginUrl +
+											learningModeImage2
+										}
+										alt={ __(
+											'Sensei theme illustration',
+											'sensei-lms'
+										) }
+										className="sensei-setup-wizard-theme__image"
+									/>
+								</div>
+							</Carousel.Item>
+							<Carousel.Item>
+								<div className="sensei-setup-wizard-theme__image-wrapper">
+									<img
+										src={
+											window.sensei.pluginUrl +
+											learningModeImage3
+										}
+										alt={ __(
+											'Sensei theme illustration',
+											'sensei-lms'
+										) }
+										className="sensei-setup-wizard-theme__image"
+									/>
+								</div>
+							</Carousel.Item>
+						</Carousel>
+					</div>
 				</Section>
 			</div>
 		</>

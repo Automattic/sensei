@@ -1,0 +1,16 @@
+.sensei-carousel {
+	width: 80%;
+	margin: 0 auto;
+	overflow: visible;
+
+	&__slider {
+		display: flex;
+
+		> li {
+			flex: 0 0 100%;
+			width: 100%;
+			padding: 0 20px;
+			box-sizing: border-box;
+		}
+	}
+}
