@@ -11,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -85,9 +85,9 @@ const CourseGeneralSidebar = () => {
 	 *
 	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
 	 */
-	const AfterTeachersSection = applyFilters(
-		'senseiCourseSettingsTeachersAfter',
-		null
+	const AfterTeachersSection = useMemo(
+		() => applyFilters( 'senseiCourseSettingsTeachersAfter', null ),
+		[]
 	);
 
 	return (
