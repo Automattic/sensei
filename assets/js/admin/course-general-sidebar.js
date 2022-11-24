@@ -86,7 +86,7 @@ const CourseGeneralSidebar = () => {
 	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
 	 */
 	const AfterTeachersSection = useMemo(
-		() => applyFilters( 'senseiCourseSettingsTeachersAfter', null ),
+		() => applyFilters( 'senseiCourseSettingsTeachersAfter', () => null ),
 		[]
 	);
 
