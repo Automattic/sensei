@@ -54,12 +54,51 @@
 }
 
 .sensei-setup-wizard-theme-testimonial {
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
 	margin-left: -$small-horizontal-padding;
 	margin-right: -$small-horizontal-padding;
+	padding: 128px 0;
 	background-color: #00594f;
+	color: #FFF;
 
 	@media (min-width: $small-screen-break) {
 		margin-left: -$big-horizontal-padding;
 		margin-right: -$big-horizontal-padding;
+	}
+
+	&__image {
+		width: 25%;
+		min-width: 250px;
+		margin-right: 64px;
+	}
+
+	&__content {
+		width: 30%;
+	}
+
+	& &__quote {
+		margin: 0;
+		font-family: $recoleta-font-family;
+
+		> p {
+			font-size: 32px;
+
+			&::before {
+				content: '“';
+				position: absolute;
+				margin-left: -15px;
+			}
+
+			&::after {
+				content: '”';
+			}
+		}
+	}
+
+	&__author {
+		display: block;
+		margin-bottom: 10px;
 	}
 }

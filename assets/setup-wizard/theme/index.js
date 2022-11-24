@@ -174,23 +174,27 @@ const Theme = () => {
 								'Sensei theme illustration',
 								'sensei-lms'
 							) }
-							className="sensei-setup-wizard-theme__image"
+							className="sensei-setup-wizard-theme-testimonial__image"
 						/>
-						<blockquote>
-							<p>
+						<div className="sensei-setup-wizard-theme-testimonial__content">
+							<blockquote className="sensei-setup-wizard-theme-testimonial__quote">
+								<p>
+									{ __(
+										'I always wanted to write, and thanks to Cours, I got it right. My writing is clearer, and I can finally get my message across.',
+										'sensei-lms'
+									) }
+								</p>
+							</blockquote>
+							<figcaption>
+								<strong className="sensei-setup-wizard-theme-testimonial__author">
+									Cristopher Brown
+								</strong>
 								{ __(
-									'I always wanted to write, and thanks to Cours, I got it right. My writing is clearer, and I can finally get my message across.',
+									'Founder at BeautifulWriting.com',
 									'sensei-lms'
 								) }
-							</p>
-						</blockquote>
-						<figcaption>
-							<strong>Cristopher Brown</strong>
-							{ __(
-								'Founder at BeautifulWriting.com',
-								'sensei-lms'
-							) }
-						</figcaption>
+							</figcaption>
+						</div>
 					</figure>
 				</Section>
 
