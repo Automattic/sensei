@@ -16,6 +16,10 @@
 .sensei-setup-wizard-theme {
 	padding-top: 64px;
 
+	&__section {
+		padding-top: 128px;
+	}
+
 	&__image-wrapper {
 		padding: 16px;
 		border-radius: 16px;
@@ -46,5 +50,16 @@
 				}
 			}
 		}
+	}
+}
+
+.sensei-setup-wizard-theme-testimonial {
+	margin-left: -$small-horizontal-padding;
+	margin-right: -$small-horizontal-padding;
+	background-color: #00594f;
+
+	@media (min-width: $small-screen-break) {
+		margin-left: -$big-horizontal-padding;
+		margin-right: -$big-horizontal-padding;
 	}
 }

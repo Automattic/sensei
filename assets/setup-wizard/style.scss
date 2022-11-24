@@ -84,16 +84,26 @@ $page-background: #b7c9be;
 		}
 	}
 
-	&__step-title {
+	&__step-title,
+	&__subsection-title {
 		font-family: $recoleta-font-family;
 		font-size: 28px;
 		font-weight: 400;
 		line-height: 1.1;
-		margin: 0 0 12px;
 
 		@media (min-width: $small-screen-break) {
 			font-size: 44px;
 		}
+	}
+
+	&__step-title {
+		margin: 0 0 12px;
+	}
+
+	&__subsection-title {
+		width: 724px;
+		margin: 0 auto 64px;
+		text-align: center;
 	}
 
 	// Container.

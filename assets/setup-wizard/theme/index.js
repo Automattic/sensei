@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { useQueryStringRouter } from '../../shared/query-string-router';
-import { H } from '../../shared/components/section';
+import { H, Section } from '../../shared/components/section';
 import mainImage from '../../images/onboarding-theme-main.webp';
 import mobileImage1 from '../../images/onboarding-theme-mobile-1.webp';
 import mobileImage2 from '../../images/onboarding-theme-mobile-2.webp';
@@ -84,150 +84,172 @@ const Theme = () => {
 					/>
 				</div>
 
-				<H className="sensei-setup-wizard__step-title">
-					{ __(
-						'Mobile optimized so it looks great on any screen size',
-						'sensei-lms'
-					) }
-				</H>
-
-				<ul className="sensei-setup-wizard-theme__mobile-images">
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={ window.sensei.pluginUrl + mobileImage1 }
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={ window.sensei.pluginUrl + mobileImage2 }
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={ window.sensei.pluginUrl + mobileImage3 }
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={ window.sensei.pluginUrl + mobileImage4 }
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={ window.sensei.pluginUrl + mobileImage5 }
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-				</ul>
-
-				<figure>
-					<img
-						src={ window.sensei.pluginUrl + quoteAuthorImage }
-						alt={ __( 'Sensei theme illustration', 'sensei-lms' ) }
-						className="sensei-setup-wizard-theme__image"
-					/>
-					<blockquote>
-						<p>
-							{ __(
-								'I always wanted to write, and thanks to Cours, I got it right. My writing is clearer, and I can finally get my message across.',
-								'sensei-lms'
-							) }
-						</p>
-					</blockquote>
-					<figcaption>
-						<strong>Cristopher Brown</strong>
+				<Section className="sensei-setup-wizard-theme__section">
+					<H className="sensei-setup-wizard__subsection-title">
 						{ __(
-							'Founder at BeautifulWriting.com',
+							'Mobile optimized so it looks great on any screen size',
 							'sensei-lms'
 						) }
-					</figcaption>
-				</figure>
+					</H>
 
-				<H className="sensei-setup-wizard__step-title">
-					{ __(
-						'All new and improved Learning Mode to help keep your students focused',
-						'sensei-lms'
-					) }
-				</H>
+					<ul className="sensei-setup-wizard-theme__mobile-images">
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl + mobileImage1
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl + mobileImage2
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl + mobileImage3
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl + mobileImage4
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl + mobileImage5
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+					</ul>
+				</Section>
 
-				<ul>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={
-									window.sensei.pluginUrl + learningModeImage1
-								}
-								alt={ __(
-									'Sensei theme illustration',
+				<Section className="sensei-setup-wizard-theme__section">
+					<figure className="sensei-setup-wizard-theme-testimonial">
+						<img
+							src={ window.sensei.pluginUrl + quoteAuthorImage }
+							alt={ __(
+								'Sensei theme illustration',
+								'sensei-lms'
+							) }
+							className="sensei-setup-wizard-theme__image"
+						/>
+						<blockquote>
+							<p>
+								{ __(
+									'I always wanted to write, and thanks to Cours, I got it right. My writing is clearer, and I can finally get my message across.',
 									'sensei-lms'
 								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={
-									window.sensei.pluginUrl + learningModeImage2
-								}
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-					<li>
-						<div className="sensei-setup-wizard-theme__image-wrapper">
-							<img
-								src={
-									window.sensei.pluginUrl + learningModeImage3
-								}
-								alt={ __(
-									'Sensei theme illustration',
-									'sensei-lms'
-								) }
-								className="sensei-setup-wizard-theme__image"
-							/>
-						</div>
-					</li>
-				</ul>
+							</p>
+						</blockquote>
+						<figcaption>
+							<strong>Cristopher Brown</strong>
+							{ __(
+								'Founder at BeautifulWriting.com',
+								'sensei-lms'
+							) }
+						</figcaption>
+					</figure>
+				</Section>
+
+				<Section className="sensei-setup-wizard-theme__section">
+					<H className="sensei-setup-wizard__subsection-title">
+						{ __(
+							'All new and improved Learning Mode to help keep your students focused',
+							'sensei-lms'
+						) }
+					</H>
+
+					<ul>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl +
+										learningModeImage1
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl +
+										learningModeImage2
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+						<li>
+							<div className="sensei-setup-wizard-theme__image-wrapper">
+								<img
+									src={
+										window.sensei.pluginUrl +
+										learningModeImage3
+									}
+									alt={ __(
+										'Sensei theme illustration',
+										'sensei-lms'
+									) }
+									className="sensei-setup-wizard-theme__image"
+								/>
+							</div>
+						</li>
+					</ul>
+				</Section>
 			</div>
 		</>
 	);
