@@ -17,7 +17,7 @@ import { useState, useEffect, useMemo } from '@wordpress/element';
  * Internal dependencies
  */
 import editorLifecycle from '../../shared/helpers/editor-lifecycle';
-import { applyFilters, doAction } from '@wordpress/hooks';
+import { applyFilters } from '@wordpress/hooks';
 
 const CourseGeneralSidebar = () => {
 	const course = useSelect( ( select ) => {
