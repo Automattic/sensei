@@ -2,7 +2,9 @@
  * WordPress dependencies
  */
 import { useCallback, useEffect } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch, select as dataSelect } from '@wordpress/data';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -16,20 +18,21 @@ import { isQuestionEmpty } from '../data';
  */
 export const useUpdateQuizHasQuestionsMeta = ( clientId ) => {
 	const META_KEY = '_quiz_has_questions';
-	const questionBlocks = useSelect( ( select ) =>
-		select( 'core/block-editor' )
-			.getBlocks( clientId )
-			.filter( ( block ) => ! isQuestionEmpty( block.attributes ) )
-	);
+
+	// It doesn't use the `useSelect` to get the blocks from the main registry.
+	// It avoids getting the blocks from the preview thumbnails.
+	const questionBlocks = dataSelect( blockEditorStore )
+		.getBlocks( clientId )
+		.filter( ( block ) => ! isQuestionEmpty( block.attributes ) );
 
 	const { editedValue: quizHasQuestionsMeta } = useSelect( ( select ) => {
-		const editor = select( 'core/editor' );
+		const editor = select( editorStore );
 		return {
 			editedValue: editor.getEditedPostAttribute( 'meta' )[ META_KEY ],
 		};
 	} );
 
-	const { editPost } = useDispatch( 'core/editor' );
+	const { editPost } = useDispatch( editorStore );
 	const setQuizHasQuestionsMeta = useCallback(
 		( enable ) => {
 			return editPost( {
