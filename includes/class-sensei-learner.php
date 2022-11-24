@@ -222,8 +222,13 @@ class Sensei_Learner {
 	 */
 	public function filter_rest_course_query( $args, $request ) {
 		$filter = $request->get_param( 'filter' );
-		if ( 'teacher' === $filter && ! current_user_can( 'manage_sensei' ) ) {
-			$args['author'] = get_current_user_id();
+		if (
+			'teacher' === $filter
+			&& ! current_user_can( 'manage_sensei' )
+			&& current_user_can( 'manage_sensei_grades' )
+		) {
+			$args['context'] = 'teacher-filter';
+			$args['author']  = get_current_user_id();
 		}
 
 		return $args;
