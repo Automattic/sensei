@@ -122,7 +122,10 @@ const CourseGeneralSidebar = () => {
 				</div>
 			) }
 
-			<AfterTeachersSection courseAuthorId={ author } />
+			<AfterTeachersSection
+				courseAuthorId={ author }
+				courseId={ course.id }
+			/>
 
 			<HorizontalRule />
 
