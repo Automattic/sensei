@@ -83,7 +83,7 @@ const CourseGeneralSidebar = () => {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
+	 * @param {Function} The existing component hooked into the filter.
 	 */
 	const AfterTeachersSection = useMemo(
 		() => applyFilters( 'senseiCourseSettingsTeachersAfter', () => null ),
