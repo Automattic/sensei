@@ -10,7 +10,6 @@ import {
 import { __ } from '@wordpress/i18n';
 import { dispatch, useSelect } from '@wordpress/data';
 import { Slot } from '@wordpress/components';
-import domReady from '@wordpress/dom-ready';
 
 /**
  * Internal dependencies
@@ -27,7 +26,7 @@ export const pluginDocumentHandle = 'sensei-lms-document-settings-sidebar';
 
 export const CourseSidebar = () => {
 	/**
-	 * Filter to show or hide course pricing upsell component.
+	 * Filter to show or hide course pricing component.
 	 *
 	 * @since $$next-version$$
 	 *
@@ -37,7 +36,7 @@ export const CourseSidebar = () => {
 	const hideCoursePricing = applyFilters( 'senseiCoursePricingHide', false );
 
 	/**
-	 * Filter to show or hide course expiration upsell component.
+	 * Filter to show or hide course expiration component.
 	 *
 	 * @since $$next-version$$
 	 *

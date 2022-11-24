@@ -109,9 +109,9 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 				if ( $course_name ) {
 					return new WP_REST_Response(
 						[
-							'status' => 'module in use by different course and teacher',
+							'message' => 'Update Teacher Failed: Module in use by different course and teacher.',
 						],
-						WP_HTTP::OK
+						WP_HTTP::BAD_REQUEST
 					);
 				}
 			}

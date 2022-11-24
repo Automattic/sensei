@@ -70,6 +70,16 @@ const CourseGeneralSidebar = () => {
 							teacher: author,
 							custom_slugs: JSON.stringify( moduleSlugs ),
 						},
+					} ).catch( ( response ) => {
+						if ( response.message ) {
+							dispatch( 'core/notices' ).createNotice(
+								'warning',
+								response.message,
+								{
+									isDismissible: true,
+								}
+							);
+						}
 					} );
 				}
 			},
