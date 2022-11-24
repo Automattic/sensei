@@ -153,12 +153,9 @@ $block: '.wp-block-sensei-lms-course-list';
 	.wp-block-post-title {
 		font-size: var( --wp--preset--font-size--x-large, 3rem );
 	}
-	.sensei-pattern-heading {
-		font-size: var( --wp--preset--font-size--medium, 1.75rem );
-	}
 
 	.sensei-course-list-all-courses-link {
-		font-size: var( --wp--preset--font-size--small, 1.125rem );
+		font-size: var( --wp--preset--font-size--x-small, 1.125rem );
 		font-family: var(--wp--preset--font-family--system);
 	}
 
@@ -180,7 +177,7 @@ $block: '.wp-block-sensei-lms-course-list';
 	}
 
 	.wp-block-post-author__name {
-		font-family: var(--wp--preset--font-family--system);
+		font-family: var( --wp--preset--font-family--system );
 		font-size: var( --wp--preset--font-size--small, 1.125rem );
 	}
 
