@@ -6,6 +6,7 @@
 	&__slider {
 		display: flex;
 		transition: 0.5s transform;
+		cursor: grab;
 
 		> li {
 			flex: 0 0 100%;
@@ -13,5 +14,13 @@
 			padding: 0 20px;
 			box-sizing: border-box;
 		}
+
+		img {
+			pointer-events: none;
+		}
+	}
+
+	&--is-dragging &__slider {
+		transition: none;
 	}
 }
