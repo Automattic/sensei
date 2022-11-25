@@ -33,7 +33,7 @@ jobs:
               run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
 
             - name: Install PHP dependencies
-              run: composer self-update --1 && composer install --no-ansi --no-interaction --prefer-dist --no-progress
+              run: composer self-update && composer install --no-ansi --no-interaction --prefer-dist --no-progress
 
             - name: Check for new issues
               run: ./scripts/linter-ci
