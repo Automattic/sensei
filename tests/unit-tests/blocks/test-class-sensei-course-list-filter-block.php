@@ -100,9 +100,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->category->name, $result );
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->category->name, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithNonCategoryFilterParam_ShowsAllCourses() {
@@ -116,8 +116,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithCategoryFilterParam_ShowsOnlyFilteredCourses() {
@@ -131,8 +131,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithFeaturedFilterParam_ShowsOnlyFeaturedCourses() {
@@ -147,8 +147,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithFeaturedFilterParamSetAll_ShowsAllCourses() {
@@ -163,8 +163,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledFeaturedAndCategoryFilterTogether_ShowsFilteredCoursesProperly() {
@@ -180,8 +180,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledFeaturedAndCategoryFilterTogether_ShowsNoCoursesWhenApplicable() {
@@ -197,8 +197,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertNotContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringNotContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenRenderingStudentCourseBlock_DoesNotRenderIfNotLoggedIn() {
@@ -210,7 +210,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertNotContains( 'Completed', $result );
+		$this->assertStringNotContainsString( 'Completed', $result );
 	}
 
 	public function testCourseFilterBlock_WhenRenderingStudentCourseBlock_RendersWhenLoggedIn() {
@@ -224,7 +224,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( 'Completed', $result );
+		$this->assertStringContainsString( 'Completed', $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForActiveCourses_RendersTheActiveCoursesOnly() {
@@ -241,8 +241,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForCompletedCourses_RendersTheCompletedCoursesOnly() {
@@ -261,8 +261,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course2->post_title, $result );
-		$this->assertNotContains( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
+		$this->assertStringNotContainsString( $this->course1->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForCompletedFeaturedAndCategory_RendersProperly() {
@@ -290,8 +290,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForCompletedFeaturedAndCategory_RendersEmptyWhenApplicable() {
@@ -319,7 +319,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertNotContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringNotContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 }

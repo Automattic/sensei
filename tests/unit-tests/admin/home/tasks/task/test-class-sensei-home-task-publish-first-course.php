@@ -281,7 +281,7 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 		$url = $this->task->get_url();
 
 		// Assert
-		$this->assertContains( 'post-new.php', $url );
+		$this->assertStringContainsString( 'post-new.php', $url );
 	}
 
 	/***
@@ -297,7 +297,7 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 		$url = $this->task->get_url();
 
 		// Assert
-		$this->assertContains( 'post-new.php', $url );
+		$this->assertStringContainsString( 'post-new.php', $url );
 	}
 
 	/***
@@ -321,8 +321,8 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 		$url = $this->task->get_url();
 
 		// Assert
-		$this->assertContains( 'post.php', $url );
-		$this->assertContains( 'action=edit', $url );
+		$this->assertStringContainsString( 'post.php', $url );
+		$this->assertStringContainsString( 'action=edit', $url );
 	}
 
 	/**
@@ -344,6 +344,6 @@ class Sensei_Home_Task_Publish_First_Course_Test  extends WP_UnitTestCase {
 		$url = $this->task->get_url();
 
 		// Assert
-		$this->assertContains( 'post-new.php', $url );
+		$this->assertStringContainsString( 'post-new.php', $url );
 	}
 }

@@ -52,9 +52,9 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( 'All', $result );
-		$this->assertContains( 'Active', $result );
-		$this->assertContains( 'Completed', $result );
+		$this->assertStringContainsString( 'All', $result );
+		$this->assertStringContainsString( 'Active', $result );
+		$this->assertStringContainsString( 'Completed', $result );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], '' );
 
-		$this->assertContains( $course->post_title, $result );
+		$this->assertStringContainsString( $course->post_title, $result );
 
 	}
 

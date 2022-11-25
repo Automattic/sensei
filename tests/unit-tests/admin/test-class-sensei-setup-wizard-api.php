@@ -217,8 +217,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
-		$this->assertNotContains( [ 'invalid_data' ], $data['purpose']['selected'] );
-		$this->assertNotContains( [ 'invalid_data' ], $data['features']['selected'] );
+		$this->assertEmpty( $data['purpose']['selected'] );
+		$this->assertEmpty( $data['features']['selected'] );
 	}
 
 

@@ -55,7 +55,7 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 		$block = new Quiz_Back_To_Lesson();
 		$html  = $block->render();
 
-		$this->assertContains( get_permalink( $lesson_id ), $html );
+		$this->assertStringContainsString( get_permalink( $lesson_id ), $html );
 	}
 
 	/**

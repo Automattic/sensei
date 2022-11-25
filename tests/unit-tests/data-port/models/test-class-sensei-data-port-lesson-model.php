@@ -9,12 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 /**
  * Tests for Sensei_Import_Lesson_Model class.
  *
  * @group data-port
  */
 class Sensei_Import_Lesson_Model_Test extends WP_UnitTestCase {
+	use ArraySubsetAsserts;
 	use Sensei_Data_Port_Test_Helpers;
 
 	/**

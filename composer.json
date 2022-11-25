@@ -5,6 +5,7 @@
 		"php": "^7.2.5 || ^8",
 		"bamarni/composer-bin-plugin": "1.8.2",
 		"dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
+		"dms/phpunit-arraysubset-asserts": "^0.4.0",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
 		"sirbrillig/phpcs-variable-analysis": "2.11.9",

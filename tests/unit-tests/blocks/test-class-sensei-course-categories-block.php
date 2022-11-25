@@ -80,8 +80,8 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( self::CONTENT );
 
 		/* Assert */
-		$this->assertContains( $this->category->name, $result );
-		$this->assertContains( $this->category->slug, $result );
+		$this->assertStringContainsString( $this->category->name, $result );
+		$this->assertStringContainsString( $this->category->slug, $result );
 	}
 
 	/**
@@ -95,8 +95,8 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$result                  = do_blocks( $content_with_attributes );
 
 		/* Assert */
-		$this->assertContains( 'class="some-class"', $result );
-		$this->assertContains( 'style="some-style"', $result );
+		$this->assertStringContainsString( 'class="some-class"', $result );
+		$this->assertStringContainsString( 'style="some-style"', $result );
 	}
 
 	/**

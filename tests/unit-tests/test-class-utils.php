@@ -246,8 +246,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert. */
-		$this->assertContains( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
+		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
 	}
 
 	/**
