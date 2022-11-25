@@ -30,4 +30,33 @@
 	&--is-dragging &__slider {
 		transition: none;
 	}
+
+	&__controls {
+		margin-top: 40px;
+		display: flex;
+		justify-content: center;
+		gap: 24px;
+	}
+
+	&__control {
+		display: block;
+		width: 42px;
+		height: 42px;
+		background-color: #FFF;
+		border: none;
+		border-radius: 50%;
+		cursor: pointer;
+		color: #1E1E1E;
+		transition: 0.3s opacity;
+
+		&[disabled] {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+
+		> svg {
+			width: 24px;
+			height: 24px;
+		}
+	}
 }

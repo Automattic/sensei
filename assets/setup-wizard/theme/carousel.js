@@ -7,11 +7,14 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { useState, useEffect, Children } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { useDragging } from '../../react-hooks';
+import ChevronLeft from '../../icons/chevron-left.svg';
+import ChevronRight from '../../icons/chevron-right.svg';
 
 /**
  * Carousel component.
@@ -133,14 +136,18 @@ const Carousel = ( { children } ) => {
 				<button
 					className="sensei-carousel__control sensei-carousel__control--prev"
 					onClick={ goToPrev }
+					title={ __( 'Previous', 'sensei-lms' ) }
+					disabled={ activeIndex === 0 }
 				>
-					Prev
+					<ChevronLeft />
 				</button>
 				<button
 					className="sensei-carousel__control sensei-carousel__control--next"
 					onClick={ goToNext }
+					title={ __( 'Next', 'sensei-lms' ) }
+					disabled={ activeIndex === count - 1 }
 				>
-					Next
+					<ChevronRight />
 				</button>
 			</div>
 		</div>
