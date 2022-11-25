@@ -75,6 +75,11 @@
 	color: #FFF;
 	@include full-width;
 
+	&__image {
+		width: 100%;
+		margin-bottom: 24px;
+	}
+
 	@media (min-width: $small-screen-break) {
 		display: flex;
 		justify-content: center;
@@ -85,17 +90,12 @@
 		&__image {
 			width: 25%;
 			min-width: 250px;
-			margin-right: 64px;
+			margin: 0 64px 0 0;
 		}
 
 		&__content {
 			width: 30%;
 		}
-	}
-
-	&__image {
-		width: 100%;
-		margin-bottom: 24px;
 	}
 
 	& &__quote {
