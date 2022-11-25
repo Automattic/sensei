@@ -1,242 +1,155 @@
 /**
- * External dependencies
- */
-import { uniq } from 'lodash';
-
-/**
  * WordPress dependencies
  */
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
+import { Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Card, CardBody } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
-import { INSTALLED_STATUS } from './feature-status';
-import { logEvent } from '../../shared/helpers/log-event';
-import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
-import {
-	getWccomProductId,
-	getWoocommerceComPurchaseUrl,
-} from '../../shared/helpers/woocommerce-com';
-import ConfirmationModal from './confirmation-modal';
-import InstallationFeedback from './installation-feedback';
-import FeaturesSelection from './features-selection';
-import { H } from '../../shared/components/section';
+import useActionsNavigator, {
+	actionMinimumTimer,
+} from './use-actions-navigator';
+import { HOME_PATH } from '../constants';
+
+const featureLabels = {
+	woocommerce: __( 'Installing WooCommerce', 'sensei-lms' ),
+	'sensei-certificates': __( 'Installing Certificates', 'sensei-lms' ),
+};
 
 /**
- * @typedef  {Object} Feature
- * @property {string} slug Feature slug.
- */
-/**
- * Filter installed features to don't select them.
+ * Get actions for the features to be installed.
  *
- * @param {string[]}  submittedSlugs Submitted slugs.
- * @param {Feature[]} features       Features list.
+ * @param {Object}   stepData          The features step data.
+ * @param {string[]} stepData.selected Selected features to be installed.
+ * @param {Object[]} stepData.options  Features available to install.
+ *
+ * @return {Object} Actions to install the selected features.
  */
-const filterInstalledFeatures = ( submittedSlugs, features ) =>
-	submittedSlugs.filter( ( slug ) => {
-		const feature = features.find( ( f ) => f.slug === slug );
+const getFeatureActions = ( { selected, options } ) => {
+	// Filter not activated features.
+	const featuresToInstall = selected.filter( ( slug ) =>
+		options.some(
+			( option ) => option.product_slug === slug && ! option.is_activated
+		)
+	);
 
-		if ( ! feature ) {
-			return false;
-		}
-
-		return INSTALLED_STATUS !== feature.status;
-	} );
-
-const wcSlug = 'woocommerce';
+	return featuresToInstall.map( ( slug ) => ( {
+		label: featureLabels[ slug ],
+		action: () =>
+			apiFetch( {
+				path: '/sensei-internal/v1/sensei-extensions/install',
+				method: 'POST',
+				data: {
+					plugin: slug,
+				},
+			} ),
+	} ) );
+};
 
 /**
- * Features step for setup wizard.
+ * Features step for Setup Wizard.
  */
 const Features = () => {
-	const [ confirmationActive, toggleConfirmation ] = useState( false );
-	const [ feedbackActive, toggleFeedback ] = useState( false );
-	const [ selectedSlugs, setSelectedSlugs ] = useState( [] );
-	const { goTo } = useQueryStringRouter();
+	const { stepData, submitStep, error: submitError } = useSetupWizardStep(
+		'features'
+	);
 
-	// Features data.
+	// Create list of actions.
+	const actions = useMemo(
+		() => [
+			{
+				label: __( 'Applying your choices', 'sensei-lms' ),
+			},
+			...getFeatureActions( stepData ),
+			{
+				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
+				action: () => {
+					let timeoutId;
+
+					const action = new Promise( ( resolve ) => {
+						timeoutId = setTimeout( () => {
+							submitStep(
+								{},
+								{
+									onSuccess: () => {
+										window.location.href = HOME_PATH;
+										resolve();
+									},
+								}
+							);
+						}, actionMinimumTimer );
+					} );
+
+					action.clearAction = () => clearTimeout( timeoutId );
+
+					return action;
+				},
+			},
+		],
+		[ stepData, submitStep ]
+	);
+
 	const {
-		stepData,
-		submitStep,
-		isSubmitting,
-		errorNotice,
-	} = useSetupWizardStep( 'features' );
-	const features = stepData.options;
-	const submittedSlugs = stepData.selected;
+		percentage,
+		label,
+		error: actionError,
+		errorActions,
+	} = useActionsNavigator( actions );
 
-	// Features installation data.
-	const { submitStep: submitInstallation } = useSetupWizardStep(
-		'features-installation'
-	);
-
-	// Mark as selected also the already submitted slugs (Except the installed ones).
-	useEffect( () => {
-		setSelectedSlugs( ( prev ) =>
-			uniq( [
-				...prev,
-				...filterInstalledFeatures( submittedSlugs, features ),
-			] )
-		);
-	}, [ submittedSlugs, features ] );
-
-	// Get selected features based on the selectedSlugs.
-	const getSelectedFeatures = useCallback(
-		() =>
-			features.filter( ( feature ) =>
-				selectedSlugs.includes( feature.slug )
-			),
-		[ features, selectedSlugs ]
-	);
-
-	const isWooCommerceInstalled = useCallback( () => {
-		const wooCommerceFeature = features.find( ( f ) => wcSlug === f.slug );
-		return (
-			wooCommerceFeature && INSTALLED_STATUS === wooCommerceFeature.status
-		);
-	}, [ features ] );
-
-	// Add or remove WooCommerce to the selected slugs.
-	useEffect( () => {
-		const selectedFeatures = getSelectedFeatures();
-		const isWooCommerceSelected = selectedFeatures.some(
-			( feature ) => feature.slug === wcSlug
-		);
-		const needWooCommerce = selectedFeatures.some( getWccomProductId );
-
-		if ( ! needWooCommerce && isWooCommerceSelected ) {
-			setSelectedSlugs( ( prev ) =>
-				prev.filter( ( slug ) => slug !== wcSlug )
-			);
-			return;
-		}
-
-		if (
-			needWooCommerce &&
-			! isWooCommerceSelected &&
-			! isWooCommerceInstalled()
-		) {
-			setSelectedSlugs( ( prev ) => [ ...prev, wcSlug ] );
-		}
-	}, [ getSelectedFeatures, isWooCommerceInstalled ] );
-
-	// Finish and submit features selection.
-	const finishSelection = () => {
-		submitStep(
-			{ selected: selectedSlugs },
-			{
-				onSuccess: () => {
-					toggleConfirmation( true );
-					if ( 0 === selectedSlugs.length ) {
-						goToNextStep();
-					}
-				},
-			}
-		);
-	};
-
-	// Start features installation.
-	const startInstallation = () => {
-		logEvent( 'setup_wizard_features_install', {
-			slug: selectedSlugs.join( ',' ),
-		} );
-
-		installFromWpOrg();
-		installFromWooCommerce();
-	};
-
-	const installFromWpOrg = () => {
-		submitInstallation(
-			{ selected: selectedSlugs },
-			{
-				onSuccess: () => {
-					toggleConfirmation( false );
-					toggleFeedback( true );
-				},
-			}
-		);
-	};
-
-	const installFromWooCommerce = () => {
-		const pendingWcFeatures = getSelectedFeatures().filter(
-			( feature ) =>
-				getWccomProductId( feature ) &&
-				INSTALLED_STATUS !== feature.status
-		);
-		if ( ! pendingWcFeatures.length ) return;
-		const wcPurchaseUrl = getWoocommerceComPurchaseUrl(
-			pendingWcFeatures,
-			stepData.wccom
-		);
-		window.open( wcPurchaseUrl );
-	};
-
-	// Retry features installation.
-	const retryInstallation = ( selected ) => {
-		submitInstallation( { selected } );
-
-		logEvent( 'setup_wizard_features_install_retry', {
-			slug: selected.join( ',' ),
-		} );
-	};
-
-	// Go to the next step.
-	const goToNextStep = ( skip = false ) => {
-		goTo( 'ready' );
-
-		const eventName =
-			true === skip
-				? 'setup_wizard_features_install_cancel'
-				: 'setup_wizard_features_continue';
-
-		logEvent( eventName, {
-			slug: selectedSlugs.join( ',' ),
-		} );
-	};
+	const error = actionError || submitError;
 
 	return (
-		<>
-			<div className="sensei-setup-wizard__title">
-				<H>
-					{ __(
-						'Enhance your online courses with these optional features.',
-						'sensei-lms'
-					) }
-				</H>
-			</div>
-			<Card className="sensei-setup-wizard__card" isElevated={ true }>
-				<CardBody>
-					{ feedbackActive ? (
-						<InstallationFeedback
-							onContinue={ goToNextStep }
-							onRetry={ retryInstallation }
-						/>
-					) : (
-						<FeaturesSelection
-							features={ features }
-							isSubmitting={ isSubmitting }
-							errorNotice={ errorNotice }
-							selectedSlugs={ selectedSlugs }
-							onChange={ setSelectedSlugs }
-							onContinue={ finishSelection }
-						/>
-					) }
-				</CardBody>
-			</Card>
+		<div className="sensei-setup-wizard__full-centered-step">
+			<div className="sensei-setup-wizard__full-centered-content">
+				<div
+					className="sensei-setup-wizard__features-status"
+					role="status"
+					aria-live="polite"
+				>
+					<div className="sensei-setup-wizard__fade-in" key={ label }>
+						{ label }
+					</div>
+				</div>
 
-			{ confirmationActive && (
-				<ConfirmationModal
-					features={ getSelectedFeatures() }
-					isSubmitting={ isSubmitting }
-					errorNotice={ errorNotice }
-					onInstall={ startInstallation }
-					onSkip={ () => goToNextStep( true ) }
-				/>
-			) }
-		</>
+				{ error && (
+					<Notice
+						status="error"
+						className="sensei-setup-wizard__error-notice"
+						isDismissible={ false }
+						actions={
+							errorActions || [
+								{
+									label: __(
+										'Go to Sensei Home',
+										'sensei-lms'
+									),
+									url: HOME_PATH,
+								},
+							]
+						}
+					>
+						{ error.message }
+					</Notice>
+				) }
+
+				<div className="sensei-setup-wizard__features-progress-bar">
+					<div
+						role="progressbar"
+						aria-label={ __(
+							'Sensei Onboarding Progress',
+							'sensei-lms'
+						) }
+						aria-valuenow={ percentage }
+						className="sensei-setup-wizard__features-progress-bar-filled"
+						style={ { width: `${ percentage }%` } }
+					/>
+				</div>
+			</div>
+		</div>
 	);
 };
 

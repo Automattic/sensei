@@ -99,6 +99,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-module.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-message.php';
 		require_once dirname( __FILE__ ) . '/class-wp-unittest-factory-for-question-category.php';
+		require_once dirname( __FILE__ ) . '/class-sensei-unittest-factory-for-course-category.php';
 
 		$this->course            = new WP_UnitTest_Factory_For_Course( $this );
 		$this->lesson            = new WP_UnitTest_Factory_For_Lesson( $this );
@@ -108,6 +109,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		$this->module            = new WP_UnitTest_Factory_For_Module( $this );
 		$this->message           = new WP_UnitTest_Factory_For_Message( $this );
 		$this->question_category = new WP_UnitTest_Factory_For_Question_Category( $this );
+		$this->course_category   = new Sensei_UnitTest_Factory_For_Course_Category( $this );
 	}
 
 	/**
@@ -175,6 +177,15 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	}
 
 	/**
+	 * Generate multiple courses.
+	 *
+	 * @param int $number
+	 */
+	public function generate_many_courses( $number = 1 ) {
+		$this->basic_test_course_ids = $this->course->create_many( $number );
+	}
+
+	/**
 	 * Generic course, lesson, quiz generator.
 	 *
 	 * @param array $args
@@ -219,6 +230,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 				wp_set_object_terms( $lesson_id, $module_id, 'module' );
 				add_post_meta( $lesson_id, '_order_module_' . $module_id, 0 );
+				Sensei_Core_Modules::update_module_teacher_meta( $module_id, wp_get_current_user()->ID );
 			}
 			$question_count = $args['question_count'];
 			if ( is_array( $question_count ) ) {

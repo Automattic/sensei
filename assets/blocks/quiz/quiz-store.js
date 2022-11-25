@@ -42,6 +42,10 @@ export function useQuizStructure( { clientId } ) {
 	useEffect( () => {
 		setBlock( clientId );
 		loadStructure();
+
+		return () => {
+			setBlock( null );
+		};
 	}, [ setBlock, loadStructure, clientId ] );
 }
 
@@ -89,6 +93,16 @@ registerStructureStore( {
 	},
 
 	/**
+	 * Checks if quiz block exists.
+	 */
+	blockExists() {
+		const clientId = select( QUIZ_STORE ).getBlock();
+		const block = select( 'core/block-editor' ).getBlock( clientId );
+
+		return !! block;
+	},
+
+	/**
 	 * Parse question blocks and quiz settings from Quiz block.
 	 *
 	 * @throws {Object} Quiz structure.
@@ -111,29 +125,38 @@ registerStructureStore( {
 			snakeCase
 		);
 
+		const lesson = select( 'core/editor' ).getCurrentPost();
+		const serverStructure = select( QUIZ_STORE ).getServerStructure();
+
 		const questionBlocks = select( 'core/block-editor' ).getBlocks(
 			clientId
 		);
 
-		const questionBlockAttributes = parseQuestionBlocks( questionBlocks );
+		let questions = [];
 
-		const serverQuestionsById = keyBy(
-			select( QUIZ_STORE ).getServerStructure().questions,
-			'id'
-		);
+		if ( 0 < questionBlocks.length && serverStructure ) {
+			const questionBlockAttributes = parseQuestionBlocks(
+				questionBlocks
+			);
 
-		const lesson = select( 'core/editor' ).getCurrentPost();
+			const serverQuestionsById = keyBy(
+				serverStructure.questions,
+				'id'
+			);
+
+			questions = questionBlockAttributes.map( ( question ) =>
+				// Avoid overriding non-editable question.
+				false === question.editable
+					? serverQuestionsById[ question.id ]
+					: omit( question, READ_ONLY_ATTRIBUTES )
+			);
+		}
 
 		return {
 			lesson_status: lesson?.status,
 			lesson_title: lesson?.title,
 			options,
-			questions: questionBlockAttributes.map( ( question ) =>
-				// Avoid overriding non-editable question.
-				false === question.editable
-					? serverQuestionsById[ question.id ]
-					: omit( question, READ_ONLY_ATTRIBUTES )
-			),
+			questions,
 		};
 	},
 

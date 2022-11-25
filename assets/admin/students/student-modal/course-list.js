@@ -2,19 +2,15 @@
  * WordPress dependencies
  */
 import { CheckboxControl, Spinner } from '@wordpress/components';
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
-
-/**
- * External dependencies
- */
-import { debounce } from 'lodash';
+import { store as coreDataStore } from '@wordpress/core-data';
 
 /**
  * Internal dependencies
  */
-import httpClient from '../../lib/http-client';
+import useSelectWithDebounce from '../../../react-hooks/use-select-with-debounce';
 
 /**
  * Callback for select or unselect courseItem
@@ -50,12 +46,16 @@ const EmptyCourseList = () => (
  * @param {boolean}       props.checked  Checkbox state
  * @param {onChangeEvent} props.onChange Event triggered when the a course is select/unselected
  */
-const CourseItem = ( { course, checked, onChange } ) => {
+const CourseItem = ( { course, checked = false, onChange } ) => {
 	const courseId = course?.id;
 	const title = decodeEntities( course?.title?.rendered );
+	const [ isChecked, setIsChecked ] = useState( checked );
 
 	const onSelectCourse = useCallback(
-		( isSelected ) => onChange( { isSelected, course } ),
+		( isSelected ) => {
+			setIsChecked( isSelected );
+			onChange( { isSelected, course } );
+		},
 		[ course, onChange ]
 	);
 
@@ -67,7 +67,7 @@ const CourseItem = ( { course, checked, onChange } ) => {
 			<CheckboxControl
 				id={ `course-${ courseId }` }
 				title={ title }
-				checked={ checked }
+				checked={ isChecked }
 				onChange={ onSelectCourse }
 			/>
 			<label htmlFor={ `course-${ courseId }` } title={ title }>
@@ -92,8 +92,6 @@ const CourseItem = ( { course, checked, onChange } ) => {
  * @param {onCourseSelectionChange} props.onChange    Event triggered when a course is selected or unselected
  */
 export const CourseList = ( { searchQuery, onChange } ) => {
-	const [ isFetching, setIsFetching ] = useState( true );
-	const [ courses, setCourses ] = useState( [] );
 	const selectedCourses = useRef( [] );
 
 	const selectCourse = useCallback(
@@ -107,33 +105,28 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 		[ onChange ]
 	);
 
-	// Fetch the courses.
-	const fetchCourses = useCallback(
-		debounce( ( query ) => {
-			setIsFetching( true );
+	const { courses, isFetching } = useSelectWithDebounce(
+		( select ) => {
+			const store = select( coreDataStore );
 
-			httpClient( {
-				path:
-					'/wp/v2/courses?per_page=100' +
-					( query ? `&search=${ query }` : '' ),
-				method: 'GET',
-			} )
-				.then( ( result ) => {
-					setCourses( result );
-				} )
-				.catch( () => {
-					setIsFetching( false );
-				} )
-				.finally( () => {
-					setIsFetching( false );
-				} );
-		}, 400 ),
-		[]
-	); // eslint-disable-line react-hooks/exhaustive-deps
+			const query = {
+				per_page: 100,
+				search: searchQuery,
+			};
 
-	useEffect( () => {
-		fetchCourses( searchQuery );
-	}, [ fetchCourses, searchQuery ] );
+			return {
+				courses:
+					store.getEntityRecords( 'postType', 'course', query ) || [],
+				isFetching: ! store.hasFinishedResolution( 'getEntityRecords', [
+					'postType',
+					'course',
+					query,
+				] ),
+			};
+		},
+		[ searchQuery ],
+		500
+	);
 
 	return (
 		<>
@@ -152,9 +145,12 @@ export const CourseList = ( { searchQuery, onChange } ) => {
 							key={ course.id }
 							course={ course }
 							onChange={ selectCourse }
-							checked={ selectedCourses.current.find(
-								( { id } ) => id === course.id
-							) }
+							checked={
+								selectedCourses.current.length > 0 &&
+								selectedCourses.current.find(
+									( { id } ) => id === course.id
+								)
+							}
 						/>
 					) ) }
 			</ul>

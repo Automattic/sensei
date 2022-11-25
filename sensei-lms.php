@@ -1,21 +1,21 @@
 <?php
 /**
  * Plugin Name: Sensei LMS
- * Plugin URI: https://woocommerce.com/products/sensei/
+ * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.4.0
+ * Version: 4.8.1
  * Author: Automattic
  * Author URI: https://automattic.com
  * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 5.7
- * Tested up to: 5.9
- * Requires PHP: 7.0
+ * Requires at least: 5.9
+ * Tested up to: 6.1
+ * Requires PHP: 7.2
  * Text Domain: sensei-lms
  * Domain path: /lang/
  */
 
 /**
- * Copyright 2013-2020 Automattic
+ * Copyright 2013-2022 Automattic
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -33,6 +33,14 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
+}
+
+if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
+	define( 'SENSEI_LMS_VERSION', '4.8.1' ); // WRCS: DEFINED_VERSION.
+}
+
+if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 }
 
 if ( class_exists( 'Sensei_Main' ) ) {
@@ -72,9 +80,14 @@ if ( class_exists( 'Sensei_Main' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
-if ( ! Sensei_Dependency_Checker::check_php() ) {
-	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_notice' ) );
+if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
 	return;
+}
+
+
+if ( ! Sensei_Dependency_Checker::check_future_php_requirement() ) {
+	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_future_php_version_notice' ) );
 }
 
 if ( ! Sensei_Dependency_Checker::check_assets() ) {
@@ -94,7 +107,7 @@ if ( ! function_exists( 'Sensei' ) ) {
 	 */
 	function Sensei() {
 		// phpcs:enable
-		return Sensei_Main::instance( array( 'version' => '4.4.0' ) );
+		return Sensei_Main::instance( array( 'version' => SENSEI_LMS_VERSION ) );
 	}
 }
 
@@ -107,7 +120,7 @@ $woothemes_sensei = Sensei();
  *
  * @since 1.8.0
  */
-register_activation_hook( __FILE__, 'activate_sensei' );
+register_activation_hook( SENSEI_LMS_PLUGIN_FILE, 'activate_sensei' );
 
 if ( ! function_exists( 'activate_sensei' ) ) {
 	/**

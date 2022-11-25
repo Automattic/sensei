@@ -8,7 +8,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Constructor function
@@ -64,6 +64,57 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		// test if the global sensei quiz class is loaded
 		$this->assertTrue( isset( Sensei()->teacher ), 'Sensei Modules class is not loaded' );
 
+	}
+
+	/**
+	 * Test if the module order is updated after the teacher has changed.
+	 */
+	public function testUpdateCourseModules_TeacherUpdated_UpdatesTheModuleOrder() {
+		/* Arrange. */
+		$user_id   = $this->factory->user->create();
+		$course_id = $this->factory->course->create();
+
+		$structure_source = [
+			[
+				'type'    => 'module',
+				'title'   => 'Module A',
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson A',
+					],
+				],
+			],
+			[
+				'type'    => 'module',
+				'title'   => 'Module B',
+				'lessons' => [
+					[
+						'type'  => 'lesson',
+						'title' => 'Lesson B',
+					],
+				],
+			],
+		];
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+		$course_structure->save( $structure_source );
+
+		/* Act. */
+		Sensei_Teacher::update_course_modules_author( $course_id, $user_id );
+
+		/* Assert. */
+		$new_module_order = Sensei()->modules->get_course_module_order( $course_id );
+		$new_structure    = $course_structure->get( 'edit' );
+
+		$expected_module_order = [];
+		foreach ( $new_structure as $item ) {
+			if ( 'module' === $item['type'] ) {
+				$expected_module_order[] = $item['id'];
+			}
+		}
+
+		$this->assertEquals( $expected_module_order, $new_module_order );
 	}
 
 	/**
@@ -407,4 +458,25 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		}
 	}
 
+	public function testModuleSaving_ifCustomSlugAdded_savesExistingTeacherIdFromSlugToMeta() {
+		// Arrange.
+		$this->login_as_teacher();
+		$current_user_id = wp_get_current_user()->ID;
+
+		$new_term = wp_insert_term(
+			'Test module',
+			'module',
+			array(
+				'description' => 'A yummy apple.',
+				'slug'        => $current_user_id . '-test-module',
+			)
+		);
+
+		// Act.
+		wp_update_term( $new_term['term_id'], 'module', [ 'slug' => 'custom-slug' ] );
+
+		// Assert.
+		$term_meta = get_term_meta( $new_term['term_id'], 'module_author', true );
+		$this->assertEquals( $current_user_id, $term_meta );
+	}
 }

@@ -67,7 +67,7 @@ class Sensei_Grading {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				__( 'Grading', 'sensei-lms' ),
 				__( 'Grading', 'sensei-lms' ) . $indicator_html,
 				'manage_sensei_grades',
@@ -217,16 +217,17 @@ class Sensei_Grading {
 		$this->grading_default_nav();
 		do_action( 'sensei_grading_after_headers' );
 
+		$sensei_grading_overview->views();
 		?>
-		<div id="poststuff" class="sensei-grading-wrap">
-			<div class="sensei-grading-main">
-				<?php $sensei_grading_overview->display(); ?>
-			</div>
-			<div class="sensei-grading-extra">
-				<?php do_action( 'sensei_grading_extra' ); ?>
-			</div>
-		</div>
+		<form id="grading-filters" method="get">
+			<?php
+			Sensei_Utils::output_query_params_as_inputs( [ 'course_id', 'lesson_id', 's' ] );
+			$sensei_grading_overview->table_search_form();
+			$sensei_grading_overview->display();
+			?>
+		</form>
 		<?php
+		do_action( 'sensei_grading_extra' );
 		do_action( 'grading_wrapper_container', 'bottom' );
 		do_action( 'grading_after_container' );
 	}
@@ -353,21 +354,19 @@ class Sensei_Grading {
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			$url       = add_query_arg(
 				array(
-					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
 
 			$url    = add_query_arg(
 				array(
-					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'lesson_id' => $lesson_id,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
 		}
@@ -631,13 +630,13 @@ class Sensei_Grading {
 	 */
 	public function admin_process_grading_submission() {
 
-		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry
+		// NEEDS REFACTOR/OPTIMISING, such as combining the various meta data stored against the sensei_user_answer entry.
 		if ( ! isset( $_POST['sensei_manual_grade'] )
 			|| ! wp_verify_nonce( $_POST['_wp_sensei_manual_grading_nonce'], 'sensei_manual_grading' )
 			|| ! isset( $_GET['quiz_id'] )
 			|| $_GET['quiz_id'] != $_POST['sensei_manual_grade'] ) {
 
-			return false; // exit and do not grade
+			return false; // exit and do not grade.
 
 		}
 
@@ -647,14 +646,12 @@ class Sensei_Grading {
 		$questions            = Sensei_Utils::sensei_get_quiz_questions( $quiz_id );
 		$quiz_lesson_id       = Sensei()->quiz->get_lesson_id( $quiz_id );
 		$quiz_grade           = 0;
-		$count                = 0;
 		$quiz_grade_total     = $_POST['quiz_grade_total'];
 		$all_question_grades  = array();
 		$all_answers_feedback = array();
 
 		foreach ( $questions as $question ) {
 
-			++$count;
 			$question_id = $question->ID;
 
 			if ( isset( $_POST[ 'question_' . $question_id . '_grade' ] ) ) {
@@ -686,55 +683,67 @@ class Sensei_Grading {
 		// store the feedback from grading
 		Sensei()->quiz->save_user_answers_feedback( $all_answers_feedback, $quiz_lesson_id, $user_id );
 
+		$quiz_progress = Sensei()->quiz_progress_repository->get( $quiz_id, $user_id );
+		if ( ! $quiz_progress ) {
+			return false;
+		}
+
+		$lesson_status   = 'ungraded';
+		$lesson_metadata = [];
+		$quiz_progress->ungrade();
+
 		// $_POST['all_questions_graded'] is set when all questions have been graded
 		// in the class sensei grading user quiz -> display()
 		if ( $_POST['all_questions_graded'] == 'yes' ) {
 
-			// set the users total quiz grade
+			// Set the users total quiz grade.
 			$grade = Sensei_Utils::quotient_as_absolute_rounded_percentage( $quiz_grade, $quiz_grade_total, 2 );
 			Sensei_Utils::sensei_grade_quiz( $quiz_id, $grade, $user_id );
 
-			// Duplicating what Frontend->sensei_complete_quiz() does
-			$pass_required   = get_post_meta( $quiz_id, '_pass_required', true );
-			$quiz_passmark   = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
-			$lesson_metadata = array();
+			// Duplicating what Frontend->sensei_complete_quiz() does.
+			$pass_required = get_post_meta( $quiz_id, '_pass_required', true );
+			$quiz_passmark = Sensei_Utils::as_absolute_rounded_number( get_post_meta( $quiz_id, '_quiz_passmark', true ), 2 );
+
 			if ( $pass_required ) {
-				// Student has reached the pass mark and lesson is complete
+				// Student has reached the pass mark and lesson is complete.
 				if ( $quiz_passmark <= $grade ) {
 					$lesson_status = 'passed';
+					$quiz_progress->pass();
 				} else {
 					$lesson_status = 'failed';
+					$quiz_progress->fail();
 				}
 			}
-			// Student only has to partake the quiz
+
+			// Student only has to partake the quiz.
 			else {
 				$lesson_status = 'graded';
+				$quiz_progress->grade();
 			}
-			$lesson_metadata['grade'] = $grade; // Technically already set as part of "Sensei_Utils::sensei_grade_quiz()" above
-
-			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, $lesson_status, $lesson_metadata );
-
-			if ( in_array( $lesson_status, array( 'passed', 'graded' ) ) ) {
-
-				/**
-				 * Summary.
-				 *
-				 * Description.
-				 *
-				 * @since 1.7.0
-				 *
-				 * @param int  $user_id
-				 * @param int $quiz_lesson_id
-				 */
-				do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
-
-			}
-		} else {
-			// Set to ungraded status if only a partial grading was saved.
-			Sensei_Utils::update_lesson_status( $user_id, $quiz_lesson_id, 'ungraded' );
-
 		}
 
+		Sensei()->quiz_progress_repository->save( $quiz_progress );
+		if ( count( $lesson_metadata ) ) {
+			foreach ( $lesson_metadata as $key => $value ) {
+				update_comment_meta( $quiz_progress->get_id(), $key, $value );
+			}
+		}
+
+		if ( in_array( $lesson_status, [ 'passed', 'graded' ], true ) ) {
+
+			/**
+			 * Summary.
+			 *
+			 * Description.
+			 *
+			 * @since 1.7.0
+			 *
+			 * @param int  $user_id
+			 * @param int $quiz_lesson_id
+			 */
+			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
+
+		}
 		if ( isset( $_POST['sensei_grade_next_learner'] ) && strlen( $_POST['sensei_grade_next_learner'] ) > 0 ) {
 
 			$load_url = add_query_arg( array( 'message' => 'graded' ) );
@@ -780,13 +789,12 @@ class Sensei_Grading {
 					'sensei_ajax_redirect_url',
 					add_query_arg(
 						array(
-							'post_type' => 'course',
 							'page'      => $this->page_slug,
 							'lesson_id' => $lesson_id,
 							'course_id' => $course_id,
 							'view'      => $grading_view,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				)
 			);
@@ -817,13 +825,12 @@ class Sensei_Grading {
 					'sensei_ajax_redirect_url',
 					add_query_arg(
 						array(
-							'post_type' => 'course',
 							'page'      => $this->page_slug,
 							'lesson_id' => $lesson_id,
 							'course_id' => $course_id,
 							'view'      => $grading_view,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				)
 			);
@@ -1238,6 +1245,7 @@ class Sensei_Grading {
 	 * Get the average grade of all courses.
 	 *
 	 * @since 4.2.0
+	 * @access public
 	 *
 	 * @return double Average grade of all courses.
 	 */

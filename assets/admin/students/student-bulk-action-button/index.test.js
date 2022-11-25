@@ -2,11 +2,18 @@
  * External dependencies
  */
 import { render, screen } from '@testing-library/react';
+
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
 import { StudentBulkActionButton } from './index';
-import nock from 'nock';
+
+jest.mock( '@wordpress/data' );
 
 /**
  *  Create a custom screen selector that ignores text inside html tags like hello <strong> world</strong>
@@ -32,7 +39,6 @@ const courses = [
 		title: { rendered: 'My Course' },
 	},
 ];
-const NOCK_HOST_URL = 'http://localhost';
 
 // Create a bulk action selector with enrol student option selected.
 beforeAll( () => {
@@ -45,11 +51,7 @@ describe( '<StudentBulkActionButton />', () => {
 		} );
 
 	beforeAll( () => {
-		nock( NOCK_HOST_URL )
-			.persist()
-			.get( '/wp-json/wp/v2/courses' )
-			.query( { per_page: 100 } )
-			.reply( 200, courses );
+		useSelect.mockReturnValue( { courses, isFetching: false } );
 	} );
 
 	it( 'Should be disabled by default on render', () => {

@@ -59,6 +59,9 @@ registerStructureStore( {
 			false
 		);
 	},
+	blockExists() {
+		return !! getEditorOutlineBlock();
+	},
 	readBlock: getEditorOutlineStructure,
 	*saveError( error ) {
 		const errorMessage = sprintf(

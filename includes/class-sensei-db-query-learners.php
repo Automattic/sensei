@@ -45,7 +45,28 @@ class Sensei_Db_Query_Learners {
 			$user_query_args['number'] = -1;
 
 			$user_query        = new WP_User_Query( $user_query_args );
-			$matching_user_ids = array_map( 'absint', $user_query->get_results() );
+			$matching_user_ids = $user_query->get_results();
+		}
+
+		if ( ! empty( $this->filter_by_course_id ) ) {
+			$eq = ( 'inc' === $this->filter_type ) ? '=' : '!=';
+
+			$sql = "
+				SELECT
+					`cf`.`user_id`
+				FROM `{$wpdb->comments}` AS `cf`
+					WHERE `cf`.`comment_type` = 'sensei_course_status'
+					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
+					AND `cf`.comment_approved IS NOT NULL";
+
+			$results  = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$user_ids = wp_list_pluck( $results, 'user_id' );
+
+			if ( ! empty( $matching_user_ids ) ) {
+				$matching_user_ids = array_intersect( $user_ids, $matching_user_ids );
+			} else {
+				$matching_user_ids = $user_ids;
+			}
 		}
 
 		/*
@@ -58,31 +79,15 @@ class Sensei_Db_Query_Learners {
 				`u`.`user_login`,
 				`u`.`user_email`,
 				'' AS 'course_statuses',
-				0 AS 'course_count', (
-					SELECT MAX(cm.comment_date_gmt)
-					FROM {$wpdb->comments} cm
-					WHERE cm.user_id = u.ID
-					AND cm.comment_approved IN ('complete', 'passed', 'graded')
-					AND cm.comment_type = 'sensei_lesson_status'
-				) AS last_activity_date
+				0 AS 'course_count'
 			FROM `{$wpdb->users}` AS `u`";
-
-		if ( ! empty( $this->filter_by_course_id ) ) {
-			$eq = ( 'inc' === $this->filter_type ) ? '=' : '!=';
-
-			$sql .= "
-				INNER JOIN `{$wpdb->comments}` AS `cf`
-					ON `u`.`ID` = `cf`.`user_id`
-					AND `cf`.`comment_type` = 'sensei_course_status'
-					AND `cf`.comment_post_ID {$eq} {$this->filter_by_course_id}
-					AND `cf`.comment_approved IS NOT NULL";
-		}
 
 		$sql .= ' WHERE 1=1';
 
 		if ( null !== $matching_user_ids ) {
-			$user_id_in = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
-			$sql       .= " AND u.ID IN ({$user_id_in})";
+			$matching_user_ids = array_map( 'absint', $matching_user_ids );
+			$user_id_in        = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
+			$sql              .= " AND u.ID IN ({$user_id_in})";
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
@@ -106,6 +111,46 @@ class Sensei_Db_Query_Learners {
 	}
 
 	/**
+	 * Get last activity date by users.
+	 *
+	 * @param int[] $user_ids User IDs to get the last activity date.
+	 *
+	 * @return array Last activity date array.
+	 */
+	private function get_last_activity_date_by_users( $user_ids ) {
+		global $wpdb;
+
+		if ( empty( $user_ids ) ) {
+			return [];
+		}
+
+		$in_placeholders = implode( ', ', array_fill( 0, count( $user_ids ), '%s' ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$results = $wpdb->get_results(
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders created dinamically.
+			$wpdb->prepare(
+				"
+				SELECT cm.user_id, MAX(cm.comment_date_gmt) AS last_activity_date
+				FROM {$wpdb->comments} cm
+				WHERE cm.user_id IN ( {$in_placeholders} )
+				AND cm.comment_approved IN ('complete', 'passed', 'graded')
+				AND cm.comment_type = 'sensei_lesson_status'
+				GROUP BY user_id", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders created dinamically.
+				$user_ids
+			),
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			OBJECT_K
+		);
+
+		if ( ! $results ) {
+			return [];
+		}
+
+		return $results;
+	}
+
+	/**
 	 * Get the results of the query.
 	 *
 	 * @return array
@@ -114,8 +159,24 @@ class Sensei_Db_Query_Learners {
 		global $wpdb;
 		$sql = $this->build_query();
 
-		$results           = $wpdb->get_results( $sql );
-		$this->total_items = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) );
+		$results                     = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery -- Created inside the build_query method.
+		$this->total_items           = intval( $wpdb->get_var( 'SELECT FOUND_ROWS()' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$user_ids                    = wp_list_pluck( $results, 'user_id' );
+		$last_activity_date_by_users = $this->get_last_activity_date_by_users( $user_ids );
+
+		$results = array_map(
+			function( $row ) use ( $last_activity_date_by_users ) {
+				$user_id = $row->user_id;
+
+				$row->last_activity_date = ! empty( $last_activity_date_by_users[ $user_id ] )
+					? $last_activity_date_by_users[ $user_id ]->last_activity_date
+					: null;
+
+				return $row;
+			},
+			$results
+		);
+
 		return $results;
 	}
 }

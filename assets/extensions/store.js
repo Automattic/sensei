@@ -6,7 +6,13 @@ import { keyBy, merge, isEqual } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { registerStore, select, dispatch } from '@wordpress/data';
+import {
+	createReduxStore,
+	register,
+	select,
+	dispatch,
+	createRegistrySelector,
+} from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -26,11 +32,6 @@ const STATUS = {
 };
 
 /**
- * Store name.
- */
-export const EXTENSIONS_STORE = 'sensei/extensions';
-
-/**
  * Default store state.
  */
 const DEFAULT_STATE = {
@@ -46,7 +47,6 @@ const DEFAULT_STATE = {
 	connected: false,
 	layout: [],
 	queue: [],
-	wccom: {},
 	error: null,
 };
 
@@ -85,18 +85,6 @@ const actions = {
 		return {
 			type: 'SET_ENTITIES',
 			entities,
-		};
-	},
-
-	/**
-	 * Sets the WC.com connection status.
-	 *
-	 * @param {Object} connected Whether the site is connected to WC.com.
-	 */
-	setConnectionStatus( connected ) {
-		return {
-			type: 'SET_CONNECTION_STATUS',
-			connected,
 		};
 	},
 
@@ -232,18 +220,6 @@ const actions = {
 	},
 
 	/**
-	 * Set WooCommerce.com data.
-	 *
-	 * @param {Object} wccom WooCommerce.com data.
-	 */
-	setWccom( wccom ) {
-		return {
-			type: 'SET_WCCOM',
-			wccom,
-		};
-	},
-
-	/**
 	 * Add process (update/install) to queue.
 	 *
 	 * @param {Object}   process            The process.
@@ -296,11 +272,15 @@ const selectors = {
 		selectors
 			.getExtensions( args )
 			.filter( ( extension ) => status === extension.status ),
+	getSenseiProExtension: createRegistrySelector( ( selectStore ) => () =>
+		selectStore( EXTENSIONS_STORE )
+			.getExtensions()
+			.find( ( extension ) => extension.product_slug === 'sensei-pro' )
+	),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getConnectionStatus: ( { connected } ) => connected,
 	getLayout: ( { layout } ) => layout,
 	getNextProcess: ( { queue } ) => queue[ 0 ] || null,
-	getWccomData: ( { wccom } ) => wccom,
 	getError: ( { error } ) => error,
 };
 
@@ -317,14 +297,12 @@ const resolvers = {
 		} );
 
 		yield actions.setLayout( response.layout );
-		yield actions.setWccom( response.wccom );
 		yield actions.setEntities( {
 			extensions: keyBy( response.extensions, 'product_slug' ),
 		} );
 		yield actions.setExtensions(
 			response.extensions.map( ( extension ) => extension.product_slug )
 		);
-		yield actions.setConnectionStatus( response.wccom_connected );
 	},
 };
 
@@ -366,10 +344,6 @@ const reducer = {
 		...state,
 		entities: merge( {}, state.entities, entities ),
 	} ),
-	SET_WCCOM: ( { wccom }, state ) => ( {
-		...state,
-		wccom,
-	} ),
 	ADD_TO_QUEUE: ( { process }, state ) => ( {
 		...state,
 		queue: [ ...state.queue, process ],
@@ -385,10 +359,12 @@ const reducer = {
 	DEFAULT: ( action, state ) => state,
 };
 
-registerStore( EXTENSIONS_STORE, {
+export const EXTENSIONS_STORE = createReduxStore( 'sensei/extensions', {
 	reducer: createReducerFromActionMap( reducer, DEFAULT_STATE ),
 	actions,
 	selectors,
 	resolvers,
 	controls,
 } );
+
+register( EXTENSIONS_STORE );

@@ -42,7 +42,7 @@ a.view-results-link,
 a.sensei-certificate-link {
   display: inline-block;
   padding: .236em .857em;
-  background: $border_main;
+  background: $info;
   float: right;
   margin-left: .236em;
   padding: .382em 1em;
@@ -61,7 +61,7 @@ a.sensei-certificate-link {
 }
 
 /* Courses */
-.course,
+.course:not(body),
 .course-container,
 .course-container .course {
   @include clearfix();
@@ -929,30 +929,7 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
 /* 1. Info Boxes */
 /*-------------------------------------------------------------------------------------------*/
 .sensei, .course-container, .course, .lesson, .quiz, .learner-info  {
-    p.sensei-message, div.sensei-message {
-    clear: both;
-    margin-top: 1.387em;
-    margin-bottom: 1.618em;
-    padding: 1em 1.618em;
-    border:none!important;
-    @include border_radius(5px);
-    &:after {
-      content: '';
-      clear: both;
-      display: block;
-    }
-    &:before  {
-      @include iconbefore();
-      font-size: 1.387em;
-      position: relative;
-      top: .1em;
-    }
-    a  {
-      text-decoration: underline;
-      &:hover  {
-        text-decoration: none;
-      }
-    }
+  p.sensei-message, div.sensei-message {
     &.alert {
       background:#ffd9c8;
       &:before  {
@@ -990,16 +967,6 @@ section.entry span.course-lesson-progress { margin-left: 10px; }
       padding: 1em;
     }
     &.info {
-      background:#eee;
-      &:before  {
-        content: '\f05a';
-      }
-      a  {
-        color: darken($color_body, 10%);;
-        &:hover  {
-          color: darken($color_body, 15%);
-        }
-      }
       &.info-special {
         background:#dbf1ff;
         &.answer-feedback {

@@ -3,9 +3,8 @@
  */
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { escapeHTML } from '@wordpress/escape-html';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink, PanelBody } from '@wordpress/components';
 
 /**
  * Course Pricing Promo Sidebar component.
@@ -29,15 +28,12 @@ const CoursePricingPromoSidebar = () => {
 	);
 
 	return (
-		<PluginDocumentSettingPanel
-			name="sensei-course-pricing-promo"
-			title={ __( 'Pricing ', 'sensei-lms' ) }
-		>
+		<PanelBody title={ __( 'Pricing', 'sensei-lms' ) } initialOpen={ true }>
 			<p> { escapeHTML( description ) } </p>
 			<p>
 				<ExternalLink
 					href={
-						'https://senseilms.com/pricing/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing'
+						'https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=course_pricing'
 					}
 				>
 					{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
@@ -63,7 +59,7 @@ const CoursePricingPromoSidebar = () => {
 					{ __( 'Create a product', 'sensei-lms' ) }
 				</Button>
 			</div>
-		</PluginDocumentSettingPanel>
+		</PanelBody>
 	);
 };
 

@@ -45,13 +45,40 @@ class Sensei_Course_Theme_Lesson {
 	 * Initializes the class.
 	 */
 	public function init() {
-		if ( 'lesson' !== get_post_type() ) {
+		$post_type = get_post_type();
+		if ( 'lesson' === $post_type || 'quiz' === $post_type ) {
+			$this->maybe_add_lesson_prerequisite_notice();
+		} elseif ( 'lesson' !== get_post_type() ) {
 			return;
 		}
 
 		$this->maybe_add_quiz_results_notice();
-		$this->maybe_add_lesson_prerequisite_notice();
 		$this->maybe_add_not_enrolled_notice();
+	}
+
+	/**
+	 * Intercepts the notices and prints them out later via 'sensei-lms/course-theme-notices' block.
+	 *
+	 * @param array $notice The notice to intercept.
+	 */
+	public static function intercept_notice( array $notice ) {
+		// Do nothing if it is not lesson or quiz post.
+		$post_type = get_post_type();
+		if ( ! in_array( $post_type, [ 'lesson', 'quiz' ], true ) ) {
+			return $notice;
+		}
+
+		// Do nothing if learning mode is not used.
+		$course_id = \Sensei_Utils::get_current_course();
+		if ( ! $course_id || ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			return $notice;
+		}
+
+		// Add the notice to lesson notices.
+		$notices = \Sensei_Context_Notices::instance( 'course_theme_lesson_regular' );
+		$notices->add_notice( $notice['content'], $notice['content'], null, [], $notice['type'] );
+
+		return null;
 	}
 
 	/**
@@ -191,7 +218,7 @@ class Sensei_Course_Theme_Lesson {
 			$prerequisite_lesson_link = '<a href="'
 				. esc_url( get_permalink( $lesson_prerequisite ) )
 				. '" title="'
-				// translators: Placeholder is the lesson prerequisite title.
+				// translators: Placeholder is the item title.
 				. sprintf( esc_attr__( 'You must first complete: %1$s', 'sensei-lms' ), get_the_title( $lesson_prerequisite ) )
 				. '">'
 				. esc_html__( 'prerequisites', 'sensei-lms' )
@@ -250,7 +277,7 @@ class Sensei_Course_Theme_Lesson {
 			$actions = [
 				[
 					'label' => __( 'Take course', 'sensei-lms' ),
-					'url'   => get_permalink( $course_id ),
+					'url'   => Sensei()->lesson->get_take_course_url( $course_id ),
 					'style' => 'primary',
 				],
 				[

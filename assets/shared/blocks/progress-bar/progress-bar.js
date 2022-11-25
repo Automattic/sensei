@@ -7,6 +7,7 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import { sprintf, __ } from '@wordpress/i18n';
+import { useBlockProps } from '@wordpress/block-editor';
 
 /**
  * Progress bar component.
@@ -38,8 +39,10 @@ const ProgressBar = ( {
 	const completePercentage =
 		Math.round( ( completedCount / totalCount ) * 100 ) || 0;
 	const barPercentage = Math.max( hideDefault ? 0 : 3, completePercentage );
+	const blockProps = useBlockProps( wrapperAttributes );
+
 	return (
-		<div { ...wrapperAttributes }>
+		<div { ...blockProps }>
 			<section
 				className={ classnames(
 					'sensei-progress-bar__heading',

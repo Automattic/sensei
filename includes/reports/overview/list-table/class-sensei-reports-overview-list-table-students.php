@@ -15,24 +15,25 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.3.0
  */
 class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overview_List_Table_Abstract {
+
 	/**
-	 * Sensei grading related services.
+	 * Sensei reports courses service.
 	 *
-	 * @var Sensei_Grading
+	 * @var Sensei_Reports_Overview_Service_Students
 	 */
-	private $grading;
+	private $reports_overview_service_students;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Sensei_Grading                                  $grading Sensei grading related services.
 	 * @param Sensei_Reports_Overview_Data_Provider_Interface $data_provider Report data provider.
+	 * @param Sensei_Reports_Overview_Service_Students        $reports_overview_service_students reports students service.
 	 */
-	public function __construct( Sensei_Grading $grading, Sensei_Reports_Overview_Data_Provider_Interface $data_provider ) {
+	public function __construct( Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Students $reports_overview_service_students ) {
 		// Load Parent token into constructor.
 		parent::__construct( 'users', $data_provider );
 
-		$this->grading = $grading;
+		$this->reports_overview_service_students = $reports_overview_service_students;
 	}
 
 	/**
@@ -41,39 +42,51 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 	 * @return array The array of columns to use with the table
 	 */
 	public function get_columns() {
+
 		if ( $this->columns ) {
 			return $this->columns;
 		}
 
-		// Get total value for Courses Completed column in users table.
-		$course_args_completed   = array(
-			'type'   => 'sensei_course_status',
-			'status' => 'complete',
-		);
-		$total_completed_courses = Sensei_Utils::sensei_check_for_activity( $course_args_completed );
+		$total_completed_courses = 0;
+		$total_courses_started   = 0;
+		$total_average_grade     = 0;
 
-		// Get the number of the courses that users have started.
-		$course_args_started   = array(
-			'type'   => 'sensei_course_status',
-			'status' => 'any',
-		);
-		$total_courses_started = Sensei_Utils::sensei_check_for_activity( $course_args_started );
+		$user_ids = $this->get_all_item_ids();
+		if ( $user_ids ) {
+			// Get total value for Courses Completed column in users table.
+			$total_completed_courses = Sensei_Utils::sensei_check_for_activity(
+				[
+					'user_id' => $user_ids,
+					'type'    => 'sensei_course_status',
+					'status'  => 'complete',
+				]
+			);
 
-		// Get total average students grade.
-		$total_average_grade = $this->grading->get_graded_lessons_average_grade();
+			// Get the number of the courses that users have started.
+			$total_courses_started = Sensei_Utils::sensei_check_for_activity(
+				[
+					'user_id' => $user_ids,
+					'type'    => 'sensei_course_status',
+					'status'  => 'any',
+				]
+			);
+
+			// Get total average students grade.
+			$total_average_grade = $this->reports_overview_service_students->get_graded_lessons_average_grade( $user_ids );
+		}
 
 		$columns = array(
 			// translators: Placeholder value is total count of students.
-			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), esc_html( $this->total_items ) ),
+			'title'             => sprintf( __( 'Student (%d)', 'sensei-lms' ), count( $user_ids ) ),
 			'email'             => __( 'Email', 'sensei-lms' ),
 			'date_registered'   => __( 'Date Registered', 'sensei-lms' ),
 			'last_activity'     => __( 'Last Activity', 'sensei-lms' ),
 			// translators: Placeholder value is all active courses.
-			'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), esc_html( $total_courses_started - $total_completed_courses ) ),
+			'active_courses'    => sprintf( __( 'Active Courses (%d)', 'sensei-lms' ), $total_courses_started - $total_completed_courses ),
 			// translators: Placeholder value is all completed courses.
-			'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), esc_html( $total_completed_courses ) ),
+			'completed_courses' => sprintf( __( 'Completed Courses (%d)', 'sensei-lms' ), $total_completed_courses ),
 			// translators: Placeholder value is graded average value.
-			'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), esc_html( $total_average_grade ) ),
+			'average_grade'     => sprintf( __( 'Average Grade (%d%%)', 'sensei-lms' ), $total_average_grade ),
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
@@ -149,29 +162,20 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$user_email = $item->user_email;
 
 		// Output the users data.
-		if ( $this->csv_output ) {
-			$user_name = Sensei_Learner::get_full_name( $item->ID );
-		} else {
-			$url                 = add_query_arg(
-				array(
-					'page'      => $this->page_slug,
-					'user_id'   => $item->ID,
-					'post_type' => $this->post_type,
-				),
-				admin_url( 'edit.php' )
-			);
-			$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
+		if ( ! $this->csv_output ) {
 			$user_average_grade .= '%';
 		}
 
 		$last_activity_date = __( 'N/A', 'sensei-lms' );
-		if ( $item->last_activity_date ) {
+
+		if ( ! empty( $item->last_activity_date ) ) {
 			$last_activity_date = $this->csv_output ? $item->last_activity_date : Sensei_Utils::format_last_activity_date( $item->last_activity_date );
 		}
+
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
-				'title'             => $user_name,
+				'title'             => $this->format_user_name( $item->ID, $this->csv_output ),
 				'email'             => $user_email,
 				'date_registered'   => $this->format_date_registered( $item->user_registered ),
 				'last_activity'     => $last_activity_date,
@@ -225,5 +229,32 @@ class Sensei_Reports_Overview_List_Table_Students extends Sensei_Reports_Overvie
 		$date     = new DateTime( $date, $timezone );
 
 		return wp_date( get_option( 'date_format' ), $date->getTimestamp(), $timezone );
+	}
+
+	/**
+	 * Format user name wrapping or not with a link.
+	 *
+	 * @param int  $user_id user's id.
+	 * @param bool $use_raw_name Indicate if it should return the wrap the name with the student link.
+	 *
+	 * @return string Return the student full name (first_name+last_name) optionally wrapped by a link
+	 */
+	private function format_user_name( $user_id, $use_raw_name ) {
+
+		$user_name = Sensei_Learner::get_full_name( $user_id );
+
+		if ( $use_raw_name ) {
+			return $user_name;
+		}
+
+		$url = add_query_arg(
+			array(
+				'page'    => $this->page_slug,
+				'user_id' => $user_id,
+			),
+			admin_url( 'admin.php' )
+		);
+
+		return '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $user_name ) . '</a></strong>';
 	}
 }

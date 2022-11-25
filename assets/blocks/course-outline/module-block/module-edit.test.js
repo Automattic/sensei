@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 
 /**
  * WordPress dependencies
@@ -12,9 +12,9 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Internal dependencies
  */
 import { ModuleEdit } from './module-edit';
+jest.mock( '@wordpress/data' );
 
 jest.mock( '@wordpress/block-editor', () => ( {
-	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: () => null,
 	InnerBlocks: () => null,
 	RichText: ( { placeholder, onChange } ) => (
@@ -25,8 +25,16 @@ jest.mock( '@wordpress/block-editor', () => ( {
 			} }
 		/>
 	),
+	withColors: () => ( Component ) => Component,
 } ) );
-jest.mock( '@wordpress/data' );
+
+jest.mock( '../../../shared/blocks/single-line-input', () => ( props ) => (
+	<input
+		{ ...props }
+		onChange={ ( event ) => props.onChange( event.currentTarget.value ) }
+	/>
+) );
+
 jest.mock( '../use-block-creator', () => jest.fn() );
 jest.mock( '../../../shared/blocks/use-auto-inserter' );
 jest.mock( '../outline-block/outline-edit', () => jest.fn() );
@@ -39,7 +47,7 @@ jest.mock( '@wordpress/element', () => ( {
 } ) );
 
 describe( '<ModuleEdit />', () => {
-	beforeAll( () => {
+	beforeEach( () => {
 		useSelect.mockReturnValue( [ 'first-lesson', 'second-lesson' ] );
 		useDispatch.mockReturnValue( { setModuleStatus: jest.fn() } );
 	} );
@@ -76,5 +84,51 @@ describe( '<ModuleEdit />', () => {
 		} );
 
 		expect( setAttributesMock ).toBeCalledWith( { description: 'Test' } );
+	} );
+
+	it( 'Should not display the teacher name section if no or empty name is provided', () => {
+		render(
+			<ModuleEdit
+				className={ '' }
+				attributes={ { title: '', description: '', lessons: [] } }
+			/>
+		);
+
+		expect( screen.queryByText( '(', { exact: false } ) ).toBeFalsy();
+	} );
+
+	it( 'Should display the teacher name section in parentheses if name is provided', () => {
+		render(
+			<ModuleEdit
+				className={ '' }
+				attributes={ {
+					title: '',
+					description: '',
+					lessons: [],
+					teacher: 'teacher1',
+				} }
+			/>
+		);
+
+		expect( screen.getByText( '(', { exact: false } ).textContent ).toEqual(
+			'(teacher1)'
+		);
+	} );
+	it( 'Should show custom slug in header', () => {
+		render(
+			<ModuleEdit
+				className={ '' }
+				attributes={ {
+					title: '',
+					description: '',
+					lessons: [],
+					slug: 'custom-slug',
+				} }
+			/>
+		);
+
+		expect( screen.getByText( '(', { exact: false } ).textContent ).toEqual(
+			'(custom-slug)'
+		);
 	} );
 } );

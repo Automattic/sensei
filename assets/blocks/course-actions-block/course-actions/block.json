@@ -1,0 +1,19 @@
+{
+	"name": "sensei-lms/course-actions",
+	"title": "Course Actions",
+	"description": "Enable a student to perform specific actions for a course.",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"actions",
+		"buttons",
+		"start course",
+		"continue",
+		"visit results"
+	],
+	"supports": {
+		"html": false
+	},
+	"usesContext": [ "postType" ]
+}

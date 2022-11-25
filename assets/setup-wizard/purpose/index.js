@@ -1,14 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
-import {
-	Card,
-	CardBody,
-	Button,
-	CheckboxControl,
-	TextControl,
-} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 /**
@@ -17,66 +11,60 @@ import { useState, useEffect } from '@wordpress/element';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { H } from '../../shared/components/section';
+import PurposeItem from './purpose-item';
 
 const purposes = [
 	{
-		id: 'share_knowledge',
-		title: __( 'Share your knowledge', 'sensei-lms' ),
-		description: __(
-			'You are a hobbyist interested in sharing your knowledge.',
-			'sensei-lms'
-		),
-	},
-	{
-		id: 'generate_income',
-		title: __( 'Generate income', 'sensei-lms' ),
-		description: __(
-			'You would like to generate additional income for yourself or your business.',
-			'sensei-lms'
-		),
-	},
-	{
-		id: 'promote_business',
-		title: __( 'Promote your business', 'sensei-lms' ),
-		description: __(
-			'You own a business and would like to use online courses to promote it.',
-			'sensei-lms'
-		),
+		id: 'sell_courses',
+		label: __( 'Sell courses and generate income', 'sensei-lms' ),
+		feature: 'woocommerce',
 	},
 	{
 		id: 'provide_certification',
-		title: __( 'Provide certification training', 'sensei-lms' ),
-		description: __(
-			'You want to help people become certified professionals.',
-			'sensei-lms'
-		),
-	},
-	{
-		id: 'train_employees',
-		title: __( 'Train employees', 'sensei-lms' ),
-		description: __(
-			'You work at a company that regularly trains new or existing employees.',
-			'sensei-lms'
-		),
+		label: __( 'Provide certification', 'sensei-lms' ),
+		feature: 'sensei-certificates',
 	},
 	{
 		id: 'educate_students',
-		title: __( 'Educate students', 'sensei-lms' ),
-		description: __(
-			'You are an educator who would like to create an online classroom.',
-			'sensei-lms'
-		),
+		label: __( 'Educate students', 'sensei-lms' ),
 	},
 	{
-		id: 'other',
-		title: __( 'Other', 'sensei-lms' ),
+		id: 'train_employees',
+		label: __( 'Train employees', 'sensei-lms' ),
 	},
 ];
 
 /**
+ * Get a description of a feature that will be installed or activated.
+ *
+ * @param {string} slug     Slug of the feature to check.
+ * @param {Array}  features Features list.
+ *
+ * @return {string|null} Install description or `null` if it won't install anything.
+ */
+const getInstallDescription = ( slug, features ) => {
+	const feature = features.find( ( i ) => i.product_slug === slug );
+
+	if ( ! feature.is_activated ) {
+		const action = feature.is_installed
+			? __( 'activated', 'sensei-lms' )
+			: __( 'installed for free', 'sensei-lms' );
+
+		return sprintf(
+			// translators: %1$s Plugin name, %2$s Action that will be done.
+			__( '%1$s will be %2$s.', 'sensei-lms' ),
+			feature.title,
+			action
+		);
+	}
+
+	return null;
+};
+
+/**
  * Purpose step for Setup Wizard.
  */
-export const Purpose = () => {
+const Purpose = () => {
 	const { goTo } = useQueryStringRouter();
 
 	const {
@@ -85,6 +73,8 @@ export const Purpose = () => {
 		isSubmitting,
 		errorNotice,
 	} = useSetupWizardStep( 'purpose' );
+
+	const { stepData: featuresData } = useSetupWizardStep( 'features' );
 
 	const [ { selected, other }, setFormState ] = useState( {
 		selected: [],
@@ -104,67 +94,89 @@ export const Purpose = () => {
 		} ) );
 	};
 
-	const onSubmitSuccess = () => {
-		goTo( 'features' );
+	const goToNextStep = () => {
+		goTo( 'tracking' );
 	};
 
 	const submitPage = () => {
-		submitStep( { selected, other }, { onSuccess: onSubmitSuccess } );
+		const features = purposes
+			.filter( ( i ) => i.feature && selected.includes( i.id ) )
+			.map( ( i ) => i.feature );
+
+		submitStep(
+			{ purpose: { selected, other }, features: { selected: features } },
+			{ onSuccess: goToNextStep }
+		);
 	};
 
 	return (
-		<>
+		<div className="sensei-setup-wizard__content">
 			<div className="sensei-setup-wizard__title">
-				<H>
+				<H className="sensei-setup-wizard__step-title">
+					{ __( 'Choose the purpose of your site', 'sensei-lms' ) }
+				</H>
+				<p>
 					{ __(
-						'What is your primary purpose for offering online courses?',
+						'Select your goals for offering courses, and we will help you set everything up.',
 						'sensei-lms'
 					) }
-				</H>
-				<p> { __( 'Choose any that apply', 'sensei-lms' ) } </p>
+				</p>
 			</div>
-			<Card className="sensei-setup-wizard__card" isElevated={ true }>
-				<CardBody>
-					<div className="sensei-setup-wizard__checkbox-list">
-						{ purposes.map( ( { id, title, description } ) => (
-							<CheckboxControl
-								key={ id }
-								label={ title }
-								help={ description }
-								onChange={ () => toggleItem( id ) }
-								checked={ selected.includes( id ) }
-								className="sensei-setup-wizard__checkbox"
-							/>
-						) ) }
-						{ selected.includes( 'other' ) && (
-							<TextControl
-								className="sensei-setup-wizard__textcontrol-other"
-								value={ other }
-								placeholder={ __(
-									'Description',
-									'sensei-lms'
-								) }
-								onChange={ ( value ) =>
-									setFormState( ( formState ) => ( {
-										...formState,
-										other: value,
-									} ) )
-								}
-							/>
-						) }
-					</div>
-					{ errorNotice }
-					<Button
-						isPrimary
-						isBusy={ isSubmitting }
-						disabled={ isSubmitting || isEmpty }
-						className="sensei-setup-wizard__button sensei-setup-wizard__button-card"
-						onClick={ submitPage }
+			<ul className="sensei-setup-wizard__purpose-list">
+				{ purposes.map( ( { id, label, feature } ) => (
+					<PurposeItem
+						key={ id }
+						label={ label }
+						checked={ selected.includes( id ) }
+						onToggle={ () => toggleItem( id ) }
 					>
-						{ __( 'Continue', 'sensei-lms' ) }
-					</Button>
-				</CardBody>
-			</Card>
-		</>
+						{ feature &&
+							getInstallDescription(
+								feature,
+								featuresData.options
+							) }
+					</PurposeItem>
+				) ) }
+
+				<PurposeItem
+					label={ __( 'Other', 'sensei-lms' ) }
+					checked={ selected.includes( 'other' ) }
+					onToggle={ () => toggleItem( 'other' ) }
+				>
+					<TextControl
+						className="sensei-setup-wizard__text-control"
+						value={ other }
+						placeholder={ __( 'Description', 'sensei-lms' ) }
+						onChange={ ( value ) =>
+							setFormState( ( formState ) => ( {
+								...formState,
+								other: value,
+							} ) )
+						}
+					/>
+				</PurposeItem>
+			</ul>
+			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+				{ errorNotice }
+				<button
+					disabled={ isSubmitting || isEmpty }
+					className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+					onClick={ submitPage }
+				>
+					{ __( 'Continue', 'sensei-lms' ) }
+				</button>
+				<div className="sensei-setup-wizard__action-skip">
+					<button
+						disabled={ isSubmitting }
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
+						onClick={ goToNextStep }
+					>
+						{ __( 'Skip customization', 'sensei-lms' ) }
+					</button>
+				</div>
+			</div>
+		</div>
 	);
 };
+
+export default Purpose;

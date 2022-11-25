@@ -18,13 +18,6 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	public $page_slug;
 
 	/**
-	 * The post type under which is the page registered.
-	 *
-	 * @var string
-	 */
-	private $post_type = 'course';
-
-	/**
 	 * Constructor
 	 *
 	 * @param string $type Report type.
@@ -87,7 +80,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 					'days_to_completion' => sprintf(
 						// translators: Placeholder value is average days to completion.
 						__( 'Days to Completion (%d)', 'sensei-lms' ),
-						ceil( Sensei()->course->get_days_to_completion_total() )
+						ceil( Sensei()->course->get_average_days_to_completion() )
 					),
 				);
 				break;
@@ -429,9 +422,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'course_id' => $item->ID,
-							'post_type' => $this->post_type,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					);
 
 					$course_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
@@ -481,9 +473,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 						array(
 							'page'      => $this->page_slug,
 							'lesson_id' => $item->ID,
-							'post_type' => $this->post_type,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					);
 					$lesson_title = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . apply_filters( 'the_title', $item->post_title, $item->ID ) . '</a></strong>';
 
@@ -545,11 +536,10 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				} else {
 					$url                 = add_query_arg(
 						array(
-							'page'      => $this->page_slug,
-							'user_id'   => $item->ID,
-							'post_type' => $this->post_type,
+							'page'    => $this->page_slug,
+							'user_id' => $item->ID,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					);
 					$user_name           = '<strong><a class="row-title" href="' . esc_url( $url ) . '">' . esc_html( $item->display_name ) . '</a></strong>';
 					$user_average_grade .= '%';
@@ -680,7 +670,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 */
 	private function get_courses( $args ) {
 		$course_args = array(
-			'post_type'        => $this->post_type,
+			'post_type'        => 'course',
 			'post_status'      => array( 'publish', 'private' ),
 			'posts_per_page'   => $args['number'],
 			'offset'           => $args['offset'],
@@ -974,8 +964,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$menu = array();
 
 		$query_args     = array(
-			'page'      => $this->page_slug,
-			'post_type' => $this->post_type,
+			'page' => $this->page_slug,
 		);
 		$learners_class = $courses_class = $lessons_class = '';
 		switch ( $this->type ) {
@@ -996,9 +985,9 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 		$lesson_args['view']  = 'lessons';
 		$courses_args['view'] = 'courses';
 
-		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
-		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
-		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'edit.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
+		$menu['learners'] = '<a class="' . esc_attr( $learners_class ) . '" href="' . esc_url( add_query_arg( $learner_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Students', 'sensei-lms' ) . '</a>';
+		$menu['courses']  = '<a class="' . esc_attr( $courses_class ) . '" href="' . esc_url( add_query_arg( $courses_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Courses', 'sensei-lms' ) . '</a>';
+		$menu['lessons']  = '<a class="' . esc_attr( $lessons_class ) . '" href="' . esc_url( add_query_arg( $lesson_args, admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Lessons', 'sensei-lms' ) . '</a>';
 
 		$menu = apply_filters( 'sensei_analysis_overview_sub_menu', $menu );
 		if ( ! empty( $menu ) ) {
@@ -1038,12 +1027,11 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 				'page'                   => $this->page_slug,
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
-				'post_type'              => $this->post_type,
 				'course_filter'          => $this->get_course_filter_value(),
 				'start_date'             => $this->get_start_date_filter_value(),
 				'end_date'               => $this->get_end_date_filter_value(),
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( $url, 'sensei_csv_download', '_sdl_nonce' ) ) . '">' . esc_html__( 'Export all rows (CSV)', 'sensei-lms' ) . '</a>';
@@ -1178,13 +1166,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @param WP_User_Query $query The user query.
 	 */
 	public function add_orderby_custom_field_to_query( WP_User_Query $query ) {
-		global $wpdb;
-
-		$query->query_orderby = $wpdb->prepare(
-			'ORDER BY %1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
-			$query->query_vars['orderby'],
-			$query->query_vars['order']
-		);
+		$query->query_orderby = 'ORDER BY ' . $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
@@ -1197,13 +1179,7 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 	 * @param object $query Query.
 	 */
 	public function add_orderby_custom_field_to_non_user_query( $args, $query ) {
-		global $wpdb;
-
-		return $wpdb->prepare(
-			'%1s %1s', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder -- not needed.
-			$query->query_vars['orderby'],
-			$query->query_vars['order']
-		);
+		return $query->query_vars['orderby'] . ' ' . $query->query_vars['order'];
 	}
 
 	/**
@@ -1374,9 +1350,8 @@ class Sensei_Analysis_Overview_List_Table extends Sensei_List_Table {
 			, SUM(IF(lesson_students.`comment_approved` IN ('graded','passed','complete','failed', 'ungraded' ), ABS( DATEDIFF( STR_TO_DATE( lesson_start.meta_value, %s ), lesson_students.comment_date ) ) + 1, 0)) days_to_complete_sum
 			FROM $wpdb->comments lesson_students
 			LEFT JOIN $wpdb->commentmeta lesson_start ON lesson_start.comment_id = lesson_students.comment_id
-			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN (%1s)", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder
-				'%Y-%m-%d %H:%i:%s',
-				$lesson_ids
+			WHERE lesson_start.meta_key = 'start' AND lesson_students.comment_post_id IN ( $lesson_ids )", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				'%Y-%m-%d %H:%i:%s'
 			)
 		);
 		$lesson_completion_info->lesson_count        = $lesson_count;

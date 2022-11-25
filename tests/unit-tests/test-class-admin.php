@@ -52,6 +52,14 @@ class Sensei_Class_Admin_Test extends WP_UnitTestCase {
 		$course_id   = $duplication['course_id'];
 		$lessons_ids = $duplication['lessons_ids'];
 
+		// Make one of the lessons draft, it should also get duplicated.
+		wp_update_post(
+			[
+				'ID'          => $lessons_ids[0],
+				'post_status' => 'draft',
+			]
+		);
+
 		// Runs the duplication
 		Sensei()->admin->duplicate_course_with_lessons_action();
 

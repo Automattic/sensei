@@ -57,6 +57,8 @@ class Sensei_Learner {
 	 * @since 3.0.0
 	 */
 	public function init() {
+		add_action( 'wp_ajax_get_course_list', array( $this, 'get_course_list' ) );
+
 		// Delete user activity and enrolment terms when user is deleted.
 		add_action( 'deleted_user', array( $this, 'delete_all_user_activity' ) );
 
@@ -125,22 +127,20 @@ class Sensei_Learner {
 
 		$manage_url = add_query_arg(
 			[
-				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'view'      => 'learners',
 				'course_id' => $course_id,
 			],
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		$grade_url = add_query_arg(
 			[
-				'post_type' => 'course',
 				'page'      => 'sensei_grading',
 				'view'      => 'all',
 				'course_id' => $course_id,
 			],
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		?>
@@ -278,6 +278,28 @@ class Sensei_Learner {
 	}
 
 	/**
+	 * Returns the count of courses enrolled for a user.
+	 *
+	 * @param int   $user_id The User ID.
+	 * @param array $base_query_args The base query arguments - default is empty.
+	 *
+	 * @return int Post count.
+	 */
+	public function get_enrolled_courses_count_query( $user_id, array $base_query_args = [] ): int {
+		$base_query_args = [
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+		];
+		$this->before_enrolled_courses_query( $user_id );
+		$query_args = $this->get_enrolled_courses_query_args( $user_id, $base_query_args );
+		$posts      = new WP_Query( $query_args );
+		if ( $posts->post_count > 0 ) {
+			return $posts->post_count;
+		}
+		return 0;
+	}
+
+	/**
 	 * Query the courses a user is enrolled in.
 	 *
 	 * @param int   $user_id         User ID.
@@ -373,10 +395,12 @@ class Sensei_Learner {
 		}
 
 		$default_args = [
-			'post_status' => 'publish',
-			'order'       => $order,
-			'orderby'     => $orderby,
-			'tax_query'   => [], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Just empty to set array.
+			'post_status'         => 'publish',
+			'order'               => $order,
+			'orderby'             => $orderby,
+			'tax_query'           => [], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Just empty to set array.
+			'lazy_load_term_meta' => false,
+			'cache_results'       => false,
 		];
 
 		$query_args   = array_merge( $default_args, $base_query_args );
@@ -583,7 +607,7 @@ class Sensei_Learner {
 	/**
 	 * Get all users.
 	 *
-	 * @param array $args
+	 * @param array $args Arguments.
 	 *
 	 * @deprecated 3.0.0
 	 *
@@ -682,5 +706,42 @@ class Sensei_Learner {
 		}
 
 		return get_user_by( 'login', $query_var );
+	}
+	/**
+	 * Returns course list for AJAX "more" call on Students page.
+	 *
+	 * @return void
+	 */
+	public function get_course_list() {
+		if ( empty( $_POST['nonce'] ) ) {
+			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
+		}
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't modify the nonce.
+		if ( ! isset( $_POST['user_id'] ) || ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), 'get_course_list' ) ) {
+			wp_send_json_error( array( 'error' => esc_html__( 'Insufficient Permissions.', 'sensei-lms' ) ) );
+		}
+
+		$user_id         = isset( $_POST['user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['user_id'] ) ) : '';
+		$learner_manager = self::instance();
+		$controller      = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), $learner_manager );
+		$base_query_args = [ 'posts_per_page' => -1 ];
+		$posts           = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args )->posts;
+		$courses         = 0;
+		if ( $posts ) {
+			// We only want to show courses after the third one in the UI.
+			$courses = array_slice( $posts, 3 );
+		}
+
+		$html_items = [];
+		if ( count( $courses ) > 0 ) {
+			foreach ( $courses as $course ) {
+				$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
+								'" class="sensei-students__enrolled-course" data-course-id="' . esc_attr( $course->ID ) . '">' .
+								esc_html( $course->post_title ) .
+								'</a>';
+			}
+		}
+		wp_send_json_success( $html_items );
+		exit();
 	}
 }

@@ -19,7 +19,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Setup function.
@@ -118,17 +118,20 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	public function testDaysSinceReleaseToday() {
 		$today = new DateTimeImmutable( 'now', new DateTimeZone( 'UTC' ) );
 
-		Sensei()->version = '3.9.0';
+		$current_version  = Sensei()->version;
+		$test_version     = '3.9.0';
+		Sensei()->version = $test_version;
 		$updates          = $this->getUpdateMockWithChangelog( [ '3.7.0', false, true ], $this->getChangelog( '3.9.0', $today ) );
 		$updates->run_updates();
 		$this->runAllScheduledEvents( 'sensei_log_update' );
+		Sensei()->version = $current_version;
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_plugin_update' );
 
 		$this->assertTrue( isset( $events[0]['url_args']['days_since_release'] ) );
 		$this->assertEquals( '0', $events[0]['url_args']['days_since_release'] );
 		$this->assertEquals( '3.7.0', $events[0]['url_args']['from_version'] );
-		$this->assertEquals( Sensei()->version, $events[0]['url_args']['to_version'] );
+		$this->assertEquals( $test_version, $events[0]['url_args']['to_version'] );
 	}
 
 	/**
@@ -137,17 +140,20 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	public function testDaysSinceReleaseYesterday() {
 		$yesterday = new DateTimeImmutable( 'yesterday', new DateTimeZone( 'UTC' ) );
 
-		Sensei()->version = '3.9.0';
+		$current_version  = Sensei()->version;
+		$test_version     = '3.9.0';
+		Sensei()->version = $test_version;
 		$updates          = $this->getUpdateMockWithChangelog( [ '3.7.0', false, true ], $this->getChangelog( '3.9.0', $yesterday ) );
 		$updates->run_updates();
 		$this->runAllScheduledEvents( 'sensei_log_update' );
+		Sensei()->version = $current_version;
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_plugin_update' );
 
 		$this->assertTrue( isset( $events[0]['url_args']['days_since_release'] ) );
 		$this->assertEquals( '1', $events[0]['url_args']['days_since_release'] );
 		$this->assertEquals( '3.7.0', $events[0]['url_args']['from_version'] );
-		$this->assertEquals( Sensei()->version, $events[0]['url_args']['to_version'] );
+		$this->assertEquals( $test_version, $events[0]['url_args']['to_version'] );
 	}
 
 	/**

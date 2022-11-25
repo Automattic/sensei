@@ -4,6 +4,11 @@
 import { render, fireEvent } from '@testing-library/react';
 
 /**
+ * WordPress dependencies
+ */
+import { useSelect, useDispatch } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import QuizSettings from './quiz-settings';
@@ -21,26 +26,21 @@ const defaultOptions = {
 	pagination: {},
 };
 
+jest.mock( '../data', () => jest.fn() );
+
+// jest.mock( 'useOpenQuizSettings' );
+
 jest.mock( '@wordpress/block-editor', () => ( {
-	...jest.requireActual( '@wordpress/block-editor' ),
 	InspectorControls: ( { children } ) => children,
 	BlockControls: ( { children } ) => children,
 	PanelColorSettings: () => null,
 } ) );
 
-jest.mock( '@wordpress/data', () => {
-	const module = jest.requireActual( '@wordpress/data' );
+jest.mock( '@wordpress/data' );
 
-	return {
-		combineReducers: module.combineReducers,
-		registerStore: module.registerStore,
-		useDispatch: () => {
-			return {
-				openGeneralSidebar: mockOpenGeneralSidebar,
-				selectBlock: jest.fn(),
-			};
-		},
-		useSelect: () => [
+describe( '<QuizSettings />', () => {
+	beforeEach( () => {
+		useSelect.mockImplementation( () => [
 			{
 				attributes: {
 					title: 'Question 1',
@@ -69,11 +69,14 @@ jest.mock( '@wordpress/data', () => {
 					},
 				},
 			},
-		],
-	};
-} );
+		] );
 
-describe.skip( '<QuizSettings />', () => {
+		useDispatch.mockImplementation( () => ( {
+			openGeneralSidebar: mockOpenGeneralSidebar,
+			selectBlock: jest.fn(),
+		} ) );
+	} );
+
 	it( 'Should render the settings with the defined values', () => {
 		const { queryByLabelText, queryAllByLabelText } = render(
 			<QuizSettings

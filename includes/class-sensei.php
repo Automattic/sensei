@@ -1,4 +1,18 @@
 <?php
+
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
+use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -31,6 +45,15 @@ class Sensei_Main {
 	 * Main reference to the plugins current version
 	 */
 	public $version;
+
+	/**
+	 * Main reference to the plugin's version when it was installed.
+	 * Or false if the install version is not available.
+	 *
+	 * @since 4.7.0
+	 * @var string|false
+	 */
+	public $install_version;
 
 	/**
 	 * Public token, referencing for the text domain.
@@ -222,6 +245,55 @@ class Sensei_Main {
 	public $blocks;
 
 	/**
+	 * Admin notices.
+	 *
+	 * @var Sensei_Admin_Notices
+	 */
+	public $admin_notices;
+
+	/**
+	 * Course progress repository.
+	 *
+	 * @var Course_Progress_Repository_Interface
+	 */
+	public $course_progress_repository;
+
+	/**
+	 * Lesson progress repository.
+	 *
+	 * @var Lesson_Progress_Repository_Interface
+	 */
+	public $lesson_progress_repository;
+
+	/**
+	 * Quiz progress repository.
+	 *
+	 * @var Quiz_Progress_Repository_Interface
+	 */
+	public $quiz_progress_repository;
+
+	/**
+	 * Quiz submission repository.
+	 *
+	 * @var Submission_Repository_Interface
+	 */
+	public $quiz_submission_repository;
+
+	/**
+	 * Quiz answer repository.
+	 *
+	 * @var Answer_Repository_Interface
+	 */
+	public $quiz_answer_repository;
+
+	/**
+	 * Quiz grade repository.
+	 *
+	 * @var Grade_Repository_Interface
+	 */
+	public $quiz_grade_repository;
+
+	/**
 	 * Constructor method.
 	 *
 	 * @param  string $file The base file of the plugin.
@@ -235,6 +307,7 @@ class Sensei_Main {
 		$this->plugin_path           = trailingslashit( dirname( $this->main_plugin_file_name ) );
 		$this->template_url          = apply_filters( 'sensei_template_url', 'sensei/' );
 		$this->version               = isset( $args['version'] ) ? $args['version'] : null;
+		$this->install_version       = get_option( 'sensei-install-version' );
 
 		// Initialize the core Sensei functionality
 		$this->init();
@@ -275,6 +348,7 @@ class Sensei_Main {
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
+		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
 		$this->initialize_cli();
 	}
@@ -293,8 +367,8 @@ class Sensei_Main {
 
 		if ( is_null( self::$_instance ) ) {
 
-			// Sensei requires a reference to the main Sensei plugin file
-			$sensei_main_plugin_file = dirname( dirname( __FILE__ ) ) . '/sensei-lms.php';
+			// Sensei requires a reference to the main Sensei plugin file.
+			$sensei_main_plugin_file = SENSEI_LMS_PLUGIN_FILE;
 
 			self::$_instance = new self( $sensei_main_plugin_file, $args );
 
@@ -338,6 +412,15 @@ class Sensei_Main {
 	 */
 	public function __wakeup() {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'sensei-lms' ), '1.8' );
+	}
+
+	/**
+	 * Initialize the cache groups used in Sensei
+	 *
+	 * @since 4.6.0
+	 */
+	protected function initialize_cache_groups() {
+		wp_cache_add_non_persistent_groups( 'sensei/temporary' );
 	}
 
 	/**
@@ -415,20 +498,33 @@ class Sensei_Main {
 		// Setup Wizard.
 		$this->setup_wizard = Sensei_Setup_Wizard::instance();
 
+		// Sensei Home.
+		Sensei_Home::instance()->init();
+
 		Sensei_Scheduler::init();
+
+		// Block patterns.
+		Sensei_Block_Patterns::instance()->init();
+
+		// Editor Wizard.
+		Sensei_Editor_Wizard::instance()->init();
+
+		// Load Analysis Reports.
+		$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
+
+		// Admin notices.
+		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
 
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
-			// Load Admin Class
+			// Load Admin Class.
 			$this->admin = new Sensei_Admin();
-
-			// Load Analysis Reports
-			$this->analysis = new Sensei_Analysis( $this->main_plugin_file_name );
 
 			new Sensei_Import();
 			new Sensei_Export();
 			new Sensei_Exit_Survey();
-			new Sensei_Admin_Notices();
+
+			Sensei_No_Users_Table_Relationship::instance()->init();
 		} else {
 
 			// Load Frontend Class
@@ -456,6 +552,16 @@ class Sensei_Main {
 		$this->Sensei_WPML = new Sensei_WPML();
 
 		$this->rest_api_internal = new Sensei_REST_API_Internal();
+
+		// Student progress repositories.
+		$this->course_progress_repository = ( new Course_Progress_Repository_Factory() )->create();
+		$this->lesson_progress_repository = ( new Lesson_Progress_Repository_Factory() )->create();
+		$this->quiz_progress_repository   = ( new Quiz_Progress_Repository_Factory() )->create();
+
+		// Quiz submission repositories.
+		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
+		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
 	}
 
 	/**
@@ -641,7 +747,7 @@ class Sensei_Main {
 
 		// Make sure the current version is up-to-date.
 		if ( ! $current_version || $is_upgrade ) {
-			$this->register_plugin_version();
+			$this->register_plugin_version( $is_new_install );
 		}
 
 		$this->updates = new Sensei_Updates( $current_version, $is_new_install, $is_upgrade );
@@ -728,13 +834,17 @@ class Sensei_Main {
 	 *
 	 * @access public
 	 * @since  1.0.0
+	 * @param boolean $is_new_install Is this a new install.
 	 * @return void
 	 */
-	private function register_plugin_version() {
+	private function register_plugin_version( $is_new_install ) {
 		if ( isset( $this->version ) ) {
 
 			update_option( 'sensei-version', $this->version );
 
+			if ( $is_new_install ) {
+				update_option( 'sensei-install-version', $this->version );
+			}
 		}
 	}
 

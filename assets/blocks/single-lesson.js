@@ -1,9 +1,4 @@
 /**
- * WordPress dependencies
- */
-import { subscribe, select, dispatch } from '@wordpress/data';
-
-/**
  * Internal dependencies
  */
 import registerSenseiBlocks from './register-sensei-blocks';
@@ -15,6 +10,7 @@ import {
 	ViewQuizBlock,
 } from './lesson-actions';
 import LessonPropertiesBlock from './lesson-properties';
+import FeaturedVideoBlock from './featured-video';
 
 registerSenseiBlocks( [
 	LessonActionsBlock,
@@ -23,24 +19,5 @@ registerSenseiBlocks( [
 	NextLessonBlock,
 	ResetLessonBlock,
 	ViewQuizBlock,
+	FeaturedVideoBlock,
 ] );
-
-let needsTemplate;
-
-const unsubscribe = subscribe( () => {
-	needsTemplate = select( 'core/editor' ).getEditedPostAttribute( 'meta' )
-		?._needs_template; // eslint-disable-line camelcase
-
-	if ( true !== needsTemplate ) {
-		return;
-	}
-
-	// Add default lesson template to the editor.
-	setTimeout( dispatch( 'core/block-editor' ).synchronizeTemplate, 1 );
-
-	dispatch( 'core/editor' ).editPost( {
-		meta: { _needs_template: false },
-	} );
-
-	unsubscribe();
-} );

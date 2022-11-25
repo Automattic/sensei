@@ -6,7 +6,6 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { Notice } from '@wordpress/components';
 import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
@@ -68,18 +67,7 @@ const LessonActionsEdit = ( props ) => {
 		: 'not-allowed';
 
 	if ( courseThemeEnabled ) {
-		return (
-			<Notice
-				status="warning"
-				isDismissible={ false }
-				className="wp-block-sensei-lms-lesson-actions__notice"
-			>
-				{ __(
-					'Lesson Actions block is not displayed when Learning Mode is enabled.',
-					'sensei-lms'
-				) }
-			</Notice>
-		);
+		return null;
 	}
 
 	// Filter inner blocks based on the settings.

@@ -6,6 +6,8 @@
  * @covers Sensei_Analysis
  */
 class Sensei_Analysis_Test extends WP_UnitTestCase {
+	use Sensei_Test_Login_Helpers;
+
 	private static $initial_hook_suffix;
 
 	public static function setUpBeforeClass() {
@@ -40,6 +42,7 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 				'Overview',
 				'courses',
 				'Sensei_Reports_Overview_List_Table_Courses',
+				'Sensei_Reports_Overview_Service_Courses',
 			],
 			'user profile'     => [
 				'User_Profile',
@@ -57,5 +60,21 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 				'Sensei_Analysis_Lesson_List_Table',
 			],
 		];
+	}
+
+	public function testAnalysisUserCourseNav_WhenCalled_GeneratesProperHtml() {
+		/* Arrange */
+		$this->login_as_admin();
+		$analysis        = new Sensei_Analysis( 'a' );
+		$_GET['user_id'] = 1;
+
+		/* Act */
+		ob_start();
+		$analysis->analysis_user_course_nav();
+		$actual = trim( ob_get_clean() );
+
+		/* Assert */
+		$expected = '<h1><a href="http://example.org/wp-admin/admin.php?page=sensei_reports">Reports</a>&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="http://example.org/wp-admin/admin.php?page=sensei_reports&#038;user_id=1">admin</a></span></h1>';
+		$this->assertEquals( $expected, $actual );
 	}
 }

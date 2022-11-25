@@ -211,7 +211,10 @@ class Sensei_Course_Enrolment {
 	private function has_stored_enrolment( $user_id ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 
-		return has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $this->course_id );
+		// We are retrieving the associated object_ids from the term and not the other way around (has_term) for performance reasons.
+		$object_ids = get_objects_in_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME );
+
+		return in_array( (string) $this->course_id, $object_ids, true );
 	}
 
 	/**
@@ -226,7 +229,7 @@ class Sensei_Course_Enrolment {
 	public function save_enrolment( $user_id, $is_enrolled ) {
 		$term = Sensei_Learner::get_learner_term( $user_id );
 
-		$is_enrolled_current = has_term( $term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, $this->course_id );
+		$is_enrolled_current = $this->has_stored_enrolment( $user_id );
 
 		// Nothing has changed.
 		if ( $is_enrolled_current === $is_enrolled ) {
@@ -380,7 +383,7 @@ class Sensei_Course_Enrolment {
 	 * Get a enrolment provider's state for a user.
 	 *
 	 * @param Sensei_Course_Enrolment_Provider_Interface $provider Provider object.
-	 * @param int                                        $user_id User ID.
+	 * @param int                                        $user_id  User ID.
 	 *
 	 * @return Sensei_Enrolment_Provider_State
 	 * @throws Exception When learner term could not be created.

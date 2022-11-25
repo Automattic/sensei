@@ -1,0 +1,26 @@
+codecov:
+    require_ci_to_pass: yes
+
+coverage:
+    precision: 2
+    round: down
+    range: '70...100'
+    status:
+        patch: 
+            target: auto
+            threshold: 2%
+            only_pulls: true
+            paths: 
+                - 'assets'
+                - '!assets/dist'
+                - '!assets/vendor'
+                - '!assets/test-helper'
+                - 'includes'
+
+comment:
+    layout: 'reach,diff,flags,files,footer'
+    behavior: default
+    require_changes: no
+
+github_checks:
+    annotations: false

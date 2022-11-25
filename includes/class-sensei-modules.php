@@ -107,11 +107,100 @@ class Sensei_Core_Modules {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
+
+		// Update module teacher meta when added to course.
+		add_action( 'added_term_relationship', [ $this, 'add_teacher_id_in_module_meta_when_added_to_course' ], 10, 3 );
+
+		// Remove module teacher meta when removed from course.
+		add_action( 'delete_term_relationships', [ $this, 'remove_teacher_id_from_module_meta_when_removed_from_course' ], 10, 3 );
+
+		// Update module teacher meta on course teacher update.
+		add_action( 'post_updated', [ $this, 'update_module_teacher_id_meta_on_post_teacher_update' ], 10, 3 );
+	}
+
+	/**
+	 * Add teacher id as term meta when a module is added to a course.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param int     $post_ID      Post ID.
+	 * @param WP_Post $post_after   Post object following the update.
+	 * @param WP_Post $post_before  Post object before the update.
+	 */
+	public function update_module_teacher_id_meta_on_post_teacher_update( int $post_ID, WP_Post $post_after, WP_Post $post_before ) {
+		if ( 'course' !== get_post( $post_ID )->post_type ) {
+			return;
+		}
+
+		if ( $post_after->post_author !== $post_before->post_author ) {
+			$modules = Sensei()->modules->get_course_modules( $post_ID );
+			foreach ( $modules as $module ) {
+				self::update_module_teacher_meta( $module->term_id, $post_after->post_author );
+			}
+		}
+	}
+
+	/**
+	 * Add teacher id as term meta when a module is added to a course.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param int    $tt_id     Term taxonomy ID.
+	 * @param string $taxonomy  Taxonomy slug.
+	 */
+	public function add_teacher_id_in_module_meta_when_added_to_course( int $object_id, int $tt_id, string $taxonomy ) {
+		if ( 'module' !== $taxonomy ) {
+			return;
+		}
+
+		$course = get_post( $object_id );
+
+		self::update_module_teacher_meta( $tt_id, $course->post_author );
+	}
+
+	/**
+	 * Remove teacher id from term meta when a module is added to a course.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param array  $tt_ids    An array of term taxonomy IDs.
+	 * @param string $taxonomy  Taxonomy slug.
+	 */
+	public function remove_teacher_id_from_module_meta_when_removed_from_course( int $object_id, array $tt_ids, string $taxonomy ) {
+		if ( 'module' !== $taxonomy ) {
+			return;
+		}
+
+		foreach ( $tt_ids as $tt_id ) {
+			$args    = array(
+				'post_type'      => 'course',
+				'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
+				'posts_per_page' => -1,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => $this->taxonomy,
+						'field'    => 'id',
+						'terms'    => $tt_id,
+					),
+				),
+			);
+			$courses = get_posts( $args );
+			// Don't remove teacher id if this module is still being used in other courses.
+			if ( count( $courses ) < 2 ) {
+				delete_term_meta( $tt_id, 'module_author' );
+			}
+		}
 	}
 
 	/**
 	 * Highlight the menu item for the modules pages.
+	 *
+	 * @deprecated 4.8.0
 	 *
 	 * @since 4.0.0
 	 * @access private
@@ -121,9 +210,11 @@ class Sensei_Core_Modules {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$screen = get_current_screen();
 		if ( $screen && in_array( $screen->id, [ 'edit-module', 'course_page_module-order' ], true ) ) {
-			$submenu_file = 'edit-tags.php?taxonomy=module';
+			$submenu_file = 'edit-tags.php?taxonomy=module&post_type=course';
 		}
 
 		return $submenu_file;
@@ -160,7 +251,7 @@ class Sensei_Core_Modules {
 					<h1><?php esc_html_e( 'Modules', 'sensei-lms' ); ?></h1>
 				</div>
 				<div class="sensei-custom-navigation__links">
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=module-order' ) ); ?>"><?php esc_html_e( 'Order Modules', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 		</div>
@@ -1127,7 +1218,7 @@ class Sensei_Core_Modules {
 		_deprecated_function( __METHOD__, '4.0.0' );
 
 		// add the modules link under the Course main menu
-		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module', '' );
+		add_submenu_page( 'edit.php?post_type=course', __( 'Modules', 'sensei-lms' ), __( 'Modules', 'sensei-lms' ), 'manage_categories', 'edit-tags.php?taxonomy=module&post_type=course', '' );
 
 		// Register new admin page for module ordering.
 		add_submenu_page( 'edit.php?post_type=course', __( 'Order Modules', 'sensei-lms' ), __( 'Order Modules', 'sensei-lms' ), 'edit_lessons', $this->order_page_slug, array( $this, 'module_order_screen' ) );
@@ -1166,12 +1257,11 @@ class Sensei_Core_Modules {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $_POST['course_id'],
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1202,7 +1292,7 @@ class Sensei_Core_Modules {
 
 			$courses = Sensei()->course->get_all_courses();
 
-			$html .= '<form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '<form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
 			$html .= '<input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '<input type="hidden" name="page" value="' . esc_attr( $this->order_page_slug ) . '" />' . "\n";
 			$html .= '<select id="module-order-course" name="course_id">' . "\n";
@@ -1385,11 +1475,10 @@ class Sensei_Core_Modules {
 				esc_url(
 					add_query_arg(
 						[
-							'post_type' => 'course',
 							'page'      => 'module-order',
 							'course_id' => $course_id,
 						],
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				),
 				esc_html__( 'Order Modules', 'sensei-lms' )
@@ -1407,7 +1496,9 @@ class Sensei_Core_Modules {
 	 * @return array          Modified columns.
 	 */
 	public function add_lesson_columns( $columns = array() ) {
-		$columns['module'] = __( 'Module', 'sensei-lms' );
+		// The lesson module column id should not be equal to "module".
+		// @see https://core.trac.wordpress.org/ticket/56185.
+		$columns['modules'] = __( 'Module', 'sensei-lms' );
 
 		return $columns;
 	}
@@ -1422,7 +1513,7 @@ class Sensei_Core_Modules {
 	 * @param  integer $lesson_id The lesson ID.
 	 */
 	public function add_lesson_column_content( $column = '', $lesson_id = 0 ) {
-		if ( 'module' === $column ) {
+		if ( 'modules' === $column ) {
 			$modules = wp_get_post_terms( $lesson_id, $this->taxonomy );
 			$module  = $modules && is_array( $modules ) ? $modules[0] : null;
 
@@ -1796,7 +1887,7 @@ class Sensei_Core_Modules {
 		 */
 		$script_on_pages_white_list = apply_filters(
 			'sensei_module_admin_script_page_white_lists',
-			array( 'course_page_module-order' )
+			array( 'admin_page_module-order' )
 		);
 
 		// Only load module scripts when adding, editing or ordering modules or editing course/lesson.
@@ -2193,11 +2284,21 @@ class Sensei_Core_Modules {
 			return $term_owner;
 
 		}
+		$term = get_term_by( 'slug', $slug, 'module' );
 
+		if ( $term ) {
+			$author_meta = get_term_meta( $term->term_id, 'module_author', true );
+			if ( $author_meta ) {
+				return get_user_by( 'id', $author_meta );
+			}
+		}
 		// look for the author in the slug
 		$slug_parts = explode( '-', $slug );
 
-		if ( count( $slug_parts ) > 1 ) {
+		if (
+			count( $slug_parts ) > 1
+			&& is_numeric( $slug_parts[0] )
+		) {
 
 			// get the user data
 			$possible_user_id = $slug_parts[0];
@@ -2531,6 +2632,11 @@ class Sensei_Core_Modules {
 				continue;
 			}
 
+			if ( 'module' !== $term->taxonomy ) {
+				$users_terms[] = $term;
+				continue;
+			}
+
 			$author = self::get_term_author( $term->slug );
 
 			if ( ! user_can( $author, 'manage_options' ) && isset( $term->name ) ) {
@@ -2627,4 +2733,23 @@ class Sensei_Core_Modules {
 		wp_reset_query();
 	}
 
+	/**
+	 * Set teacher meta for module.
+	 *
+	 * @since 4.6.0
+	 *
+	 * @param int $module_id  Term ID.
+	 * @param int $teacher_id ID of module teacher.
+	 */
+	public static function update_module_teacher_meta( $module_id, $teacher_id ) {
+		if ( user_can( $teacher_id, 'manage_options' ) ) {
+			delete_term_meta( $module_id, 'module_author' );
+		} else {
+			update_term_meta(
+				$module_id,
+				'module_author',
+				$teacher_id
+			);
+		}
+	}
 }

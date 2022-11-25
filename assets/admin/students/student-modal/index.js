@@ -2,38 +2,42 @@
  * WordPress dependencies
  */
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
-import {
-	useCallback,
-	useRef,
-	useState,
-	useEffect,
-	RawHTML,
-} from '@wordpress/element';
+import { useCallback, useState, RawHTML } from '@wordpress/element';
 import { search } from '@wordpress/icons';
 import { __, _n, sprintf } from '@wordpress/i18n';
-
-/**
- * External dependencies
- */
-import { escape } from 'lodash';
+import { escapeHTML } from '@wordpress/escape-html';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 import CourseList from './course-list';
 import InputControl from '../../../blocks/editor-components/input-control';
-import httpClient from '../../lib/http-client';
+import useAbortController from '../hooks/use-abort-controller';
 
-const getAction = ( action, studentCount ) => {
+const getAction = ( action, studentCount, studentDisplayName ) => {
+	const safeStudentDisplayName = escapeHTML( studentDisplayName );
+
 	const possibleActions = {
 		add: {
-			// Translators: placeholder is the number of selected students for plural, student's name for singular.
-			description: _n(
-				'Select the course(s) you would like to add <strong>%1$s</strong> to:',
-				'Select the course(s) you would like to add <strong>%1$d students</strong> to:',
-				studentCount,
-				'sensei-lms'
-			),
+			description:
+				studentCount > 1
+					? sprintf(
+							// Translators: placeholder is the number of selected students.
+							__(
+								'Select the course(s) you would like to add <strong>%d students</strong> to:',
+								'sensei-lms'
+							),
+							studentCount
+					  )
+					: sprintf(
+							// Translators: placeholder is the student's name.
+							__(
+								'Select the course(s) you would like to add <strong>%s</strong> to:',
+								'sensei-lms'
+							),
+							safeStudentDisplayName
+					  ),
 			buttonLabel: __( 'Add to Course', 'sensei-lms' ),
 			errorMessage: ( students ) =>
 				_n(
@@ -42,22 +46,34 @@ const getAction = ( action, studentCount ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses ) =>
-				httpClient( {
-					restRoute: '/sensei-internal/v1/course-students/batch',
+			sendAction: ( students, courses, { signal } ) =>
+				apiFetch( {
+					path: '/sensei-internal/v1/course-students/batch',
 					method: 'POST',
 					data: { student_ids: students, course_ids: courses },
+					signal,
 				} ),
 			isDestructive: false,
 		},
 		remove: {
-			// Translators: placeholder is the number of selected students for plural, student's name for singular.
-			description: _n(
-				'Select the course(s) you would like to remove <strong>%1$s</strong> from:',
-				'Select the course(s) you would like to remove <strong>%1$d students</strong> from:',
-				studentCount,
-				'sensei-lms'
-			),
+			description:
+				studentCount > 1
+					? sprintf(
+							// Translators: placeholder is the number of selected students.
+							__(
+								'Select the course(s) you would like to remove <strong>%d students</strong> from:',
+								'sensei-lms'
+							),
+							studentCount
+					  )
+					: sprintf(
+							// Translators: placeholder is the student's name.
+							__(
+								'Select the course(s) you would like to remove <strong>%s</strong> from:',
+								'sensei-lms'
+							),
+							safeStudentDisplayName
+					  ),
 			buttonLabel: __( 'Remove from Course', 'sensei-lms' ),
 			errorMessage: ( students ) =>
 				_n(
@@ -66,22 +82,35 @@ const getAction = ( action, studentCount ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses ) =>
-				httpClient( {
-					restRoute: '/sensei-internal/v1/course-students/batch',
+			sendAction: ( students, courses, { signal } ) =>
+				apiFetch( {
+					path: '/sensei-internal/v1/course-students/batch',
 					method: 'DELETE',
 					data: { student_ids: students, course_ids: courses },
+					signal,
 				} ),
 			isDestructive: true,
 		},
 		'reset-progress': {
 			// Translators: placeholder is the number of selected students for plural, student's name for singular.
-			description: _n(
-				'Select the course(s) you would like to reset or remove progress from for <strong>%1$s</strong>:',
-				'Select the course(s) you would like to reset or remove progress from for <strong>%1$d students</strong>:',
-				studentCount,
-				'sensei-lms'
-			),
+			description:
+				studentCount > 1
+					? sprintf(
+							// Translators: placeholder is the number of selected students.
+							__(
+								'Select the course(s) you would like to reset or remove progress from for <strong>%d students</strong>:',
+								'sensei-lms'
+							),
+							studentCount
+					  )
+					: sprintf(
+							// Translators: placeholder is the student's name.
+							__(
+								'Select the course(s) you would like to reset or remove progress from for <strong>%s</strong>:',
+								'sensei-lms'
+							),
+							safeStudentDisplayName
+					  ),
 			buttonLabel: __( 'Reset or Remove Progress', 'sensei-lms' ),
 			errorMessage: ( students ) =>
 				_n(
@@ -90,11 +119,12 @@ const getAction = ( action, studentCount ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses ) =>
-				httpClient( {
-					restRoute: '/sensei-internal/v1/course-progress/batch',
+			sendAction: ( students, courses, { signal } ) =>
+				apiFetch( {
+					path: '/sensei-internal/v1/course-progress/batch',
 					method: 'DELETE',
 					data: { student_ids: students, course_ids: courses },
+					signal,
 				} ),
 
 			isDestructive: true,
@@ -124,19 +154,12 @@ export const StudentModal = ( {
 		errorMessage,
 		isDestructive,
 		sendAction,
-	} = getAction( action, students.length );
+	} = getAction( action, students.length, studentDisplayName );
 	const [ selectedCourses, setCourses ] = useState( [] );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ error, setError ] = useState( false );
-	const isMounted = useRef( true );
-	const replacementString =
-		students.length === 1 ? escape( studentDisplayName ) : students.length;
-	const replacedDescription = sprintf( description, replacementString );
-
-	useEffect( () => {
-		return () => ( isMounted.current = false );
-	}, [ isMounted ] );
+	const { getSignal } = useAbortController();
 
 	const send = useCallback( async () => {
 		setIsSending( true );
@@ -144,16 +167,17 @@ export const StudentModal = ( {
 		try {
 			await sendAction(
 				students,
-				selectedCourses.map( ( course ) => course.id )
+				selectedCourses.map( ( course ) => course.id ),
+				{ signal: getSignal() }
 			);
 			onClose( true );
 		} catch ( e ) {
-			if ( isMounted.current ) {
+			if ( ! getSignal().aborted ) {
 				setError( true );
 				setIsSending( false );
 			}
 		}
-	}, [ sendAction, students, selectedCourses, onClose ] );
+	}, [ sendAction, students, selectedCourses, onClose, getSignal ] );
 
 	const searchCourses = ( value ) => setSearchQuery( value );
 
@@ -163,7 +187,7 @@ export const StudentModal = ( {
 			title={ __( 'Choose Course', 'sensei-lms' ) }
 			onRequestClose={ () => onClose() }
 		>
-			<RawHTML>{ replacedDescription }</RawHTML>
+			<RawHTML>{ description }</RawHTML>
 
 			<InputControl
 				iconRight={ search }

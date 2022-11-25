@@ -29,8 +29,6 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	 *
 	 * @param Sensei_Background_Job_Interface $job  Job object.
 	 * @param int|null                        $time Time when the job should run. Defaults to now.
-	 *
-	 * @return mixed
 	 */
 	public function schedule_job( Sensei_Background_Job_Interface $job, $time = null ) {
 		if ( null === $time ) {
@@ -59,16 +57,21 @@ class Sensei_Scheduler_Action_Scheduler implements Sensei_Scheduler_Interface {
 	public function run( Sensei_Background_Job_Interface $job, $completion_callback = null ) {
 		$this->current_job = $job;
 
-		$this->schedule_job( $job );
+		// Schedule action 60 seconds in the future as fallback.
+		$this->schedule_job( $job, time() + 60 );
 
 		$job->run();
 
-		if ( $job->is_complete() ) {
-			$this->cancel_scheduled_job( $job );
+		// Clean scheduled jobs (remove fallback).
+		$this->cancel_scheduled_job( $job );
 
+		if ( $job->is_complete() ) {
 			if ( is_callable( $completion_callback ) ) {
 				call_user_func( $completion_callback );
 			}
+		} else {
+			// Re-schedule immediately.
+			$this->schedule_job( $job );
 		}
 
 		$this->current_job = null;

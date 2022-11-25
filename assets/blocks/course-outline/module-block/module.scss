@@ -29,6 +29,13 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 		font-weight: bold;
 		display: flex;
 		align-items: center;
+		.teacher-name {
+			padding-left: 1em;
+			font-size: 0.8em;
+		}
+		.custom-slug {
+			font-size: 0.7em;
+		}
 	}
 
 	#{$block}__title {
@@ -53,6 +60,11 @@ $block: '.wp-block-sensei-lms-course-outline-module';
 
 	#{$block}__description {
 		padding: $spacing;
+	}
+
+	#{$block}__slug {
+		padding: $spacing 0 0 $spacing;
+		font-size: 0.9em;
 	}
 
 	#{$block}__lessons-title {

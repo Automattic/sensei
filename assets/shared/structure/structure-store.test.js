@@ -21,11 +21,26 @@ describe( 'Structure store', () => {
 			getEndpoint: jest.fn(),
 			updateBlock: jest.fn(),
 			readBlock: jest.fn(),
+			blockExists: jest.fn().mockReturnValue( true ),
 		};
-
 		( { unsubscribe } = registerStructureStore( store ) );
-		registerStore( 'core/editor', mockEditorStore );
-
+		const storesForRegister = {
+			'core/editor': mockEditorStore,
+			'core/edit-post': {
+				reducer: () => {},
+				selectors: {
+					isSavingMetaBoxes: jest
+						.fn()
+						.mockReturnValueOnce( true )
+						.mockReturnValueOnce( true )
+						.mockReturnValueOnce( true )
+						.mockReturnValueOnce( false ),
+				},
+			},
+		};
+		for ( const key in storesForRegister ) {
+			registerStore( key, storesForRegister[ key ] );
+		}
 		apiFetch.mockClear();
 		store.getEndpoint.mockImplementation( function* () {
 			return 'test-api/1';
@@ -83,5 +98,13 @@ describe( 'Structure store', () => {
 
 		expect( savePost ).toHaveBeenCalledTimes( 2 );
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'Skips when block does not exist', () => {
+		const startPostSave = jest.spyOn( dispatch( STORE ), 'startPostSave' );
+		store.blockExists.mockReturnValue( false );
+		dispatch( 'core/editor' ).savePost();
+
+		expect( startPostSave ).not.toHaveBeenCalled();
 	} );
 } );

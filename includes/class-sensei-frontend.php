@@ -42,6 +42,8 @@ class Sensei_Frontend {
 	 */
 	public $allowed_html;
 
+	const VIDEO_EMBED_CLASS = 'sensei-video-embed';
+
 	/**
 	 * Constructor.
 	 *
@@ -721,6 +723,9 @@ class Sensei_Frontend {
 		$url = Sensei_Course::get_course_completed_page_url( $course_id );
 
 		if ( $url ) {
+
+			do_action( 'sensei_user_course_end', $user_id, $course_id );
+
 			wp_safe_redirect( esc_url_raw( $url ) );
 			exit;
 		}
@@ -739,39 +744,34 @@ class Sensei_Frontend {
 			// Handle submit data.
 			switch ( $sanitized_submit ) {
 				case __( 'Mark as Complete', 'sensei-lms' ):
-					// Add user to course.
-					$course_metadata = array(
-						'start'    => current_time( 'mysql' ),
-						'percent'  => 0, // No completed lessons yet.
-						'complete' => 0,
-					);
-					$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'in-progress', $course_metadata );
-
-					if ( $activity_logged ) {
-						// Get all course lessons.
-						$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
-						// Mark all quiz user meta lessons as complete.
-						foreach ( $course_lesson_ids as $lesson_item_id ) {
-							// Mark lesson as complete.
-							$activity_logged = Sensei_Utils::sensei_start_lesson( $lesson_item_id, $current_user->ID, true );
-						}
-
-						// Update with final stats.
-						$course_metadata = array(
-							'percent'  => 100,
-							'complete' => count( $course_lesson_ids ),
-						);
-						$activity_logged = Sensei_Utils::update_course_status( $current_user->ID, $sanitized_course_id, 'complete', $course_metadata );
-
-						do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
-
-						// Success message.
-						$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
-							// translators: Placeholder is the Course title.
-							. sprintf( __( '%1$s marked as complete.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
-							. '</div></header>';
+					$course_progress = Sensei()->course_progress_repository->get( $sanitized_course_id, $current_user->ID );
+					if ( null === $course_progress ) {
+						$course_progress = Sensei()->course_progress_repository->create( $sanitized_course_id, $current_user->ID );
 					}
 
+					$course_lesson_ids = Sensei()->course->course_lessons( $sanitized_course_id, 'any', 'ids' );
+					foreach ( $course_lesson_ids as $lesson_id ) {
+						Sensei_Utils::sensei_start_lesson( $lesson_id, $current_user->ID, true );
+					}
+
+					$course_progress->complete();
+					Sensei()->course_progress_repository->save( $course_progress );
+
+					$course_metadata = [
+						'percent'  => 100,
+						'complete' => count( $course_lesson_ids ),
+					];
+					foreach ( $course_metadata as $key => $value ) {
+						update_comment_meta( $course_progress->get_id(), $key, $value );
+					}
+
+					do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
+
+					// Success message.
+					$this->messages = '<header class="archive-header"><div class="sensei-message tick">'
+						// translators: Placeholder is the Course title.
+						. sprintf( __( '%1$s marked as complete.', 'sensei-lms' ), get_the_title( $sanitized_course_id ) )
+						. '</div></header>';
 					break;
 
 				default:
@@ -832,17 +832,11 @@ class Sensei_Frontend {
 	public function sensei_lesson_video( $post_id = 0 ) {
 		if ( 0 < intval( $post_id ) && sensei_can_user_view_lesson( $post_id ) ) {
 			$lesson_video_embed = get_post_meta( $post_id, '_lesson_video_embed', true );
-			if ( 'http' == substr( $lesson_video_embed, 0, 4 ) ) {
-				// V2 - make width and height a setting for video embed.
-				$lesson_video_embed = wp_oembed_get( esc_url( $lesson_video_embed ) );
-			}
-
-			$lesson_video_embed = do_shortcode( html_entity_decode( $lesson_video_embed ) );
-			$lesson_video_embed = Sensei_Wp_Kses::maybe_sanitize( $lesson_video_embed, $this->allowed_html );
+			$lesson_video_embed = Sensei_Utils::render_video_embed( $lesson_video_embed );
 
 			if ( '' != $lesson_video_embed ) {
 				?>
-				<div class="video"><?php echo wp_kses( $lesson_video_embed, $this->allowed_html ); ?></div>
+				<div class="video <?php echo esc_attr( self::VIDEO_EMBED_CLASS ); ?>"><?php echo wp_kses( $lesson_video_embed, $this->allowed_html ); ?></div>
 				<?php
 			}
 		}
@@ -1175,6 +1169,8 @@ class Sensei_Frontend {
 			&& isset( $_POST['course_start'] )
 			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
 			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
+			&& Sensei_Course::is_prerequisite_complete( $post->ID )
+			&& ! post_password_required( $post->ID )
 		) {
 
 			/**
@@ -1214,6 +1210,10 @@ class Sensei_Frontend {
 				 */
 				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
+				if ( 'publish' !== get_post_status( $post ) ) {
+					wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
+					exit();
+				}
 				if ( false !== $redirect_url ) {
 					?>
 
@@ -1312,7 +1312,7 @@ class Sensei_Frontend {
 		 // if there's a valid referrer, and it's not the default log-in screen.
 		if ( ! empty( $referrer ) && ! strstr( $referrer, 'wp-login' ) && ! strstr( $referrer, 'wp-admin' ) ) {
 			// let's append some information (login=failed) to the URL for the theme to use.
-			wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
+			wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 			exit;
 		}
 	}
@@ -1358,7 +1358,7 @@ class Sensei_Frontend {
 					if ( ! $user ) {
 
 						// the email doesnt exist.
-						wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
+						wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 						exit;
 
 					}
@@ -1382,7 +1382,7 @@ class Sensei_Frontend {
 				$user          = wp_signon( $creds, $secure_cookie );
 
 				if ( is_wp_error( $user ) ) { // on login failure.
-					wp_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
+					wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'failed', $referrer ) ) );
 					exit;
 				} else { // on login success.
 					$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : remove_query_arg( 'login', $referrer );
@@ -1393,7 +1393,7 @@ class Sensei_Frontend {
 					 * @since 1.6.1
 					 * @deprecated 3.15.0 Use `sensei_login_success_redirect_url` instead.
 					 *
-					 * @param string $referrer the page where the current url wheresensei login form was posted from.
+					 * @param string $referrer the page where the current url where sensei login form was posted from.
 					 */
 					$success_redirect_url = apply_filters_deprecated( 'sesei_login_success_redirect_url', [ $redirect_to ], 'sensei_login_success_redirect_url', 'Use `sensei_login_success_redirect_url` instead' );
 
@@ -1405,17 +1405,17 @@ class Sensei_Frontend {
 					 *
 					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
 					 *
-					 * @return {string} The redirect URL if login is successful.
+					 * The redirect URL if login is successful. Note that if this URL points to an external domain, it may need to be whitelisted using the `allowed_redirect_hosts` filter.
 					 */
 					$success_redirect_url = apply_filters( 'sensei_login_success_redirect_url', $success_redirect_url );
 
-					wp_redirect( esc_url_raw( $success_redirect_url ) );
+					wp_safe_redirect( esc_url_raw( $success_redirect_url ) );
 					exit;
 
 				}
 			} else { // if username or password is empty.
 
-				wp_redirect( esc_url_raw( add_query_arg( 'login', 'emptyfields', $referrer ) ) );
+				wp_safe_redirect( esc_url_raw( add_query_arg( 'login', 'emptyfields', $referrer ) ) );
 				exit;
 
 			}
@@ -1525,7 +1525,7 @@ class Sensei_Frontend {
 
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : $redirect;
 
-		wp_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
+		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
 		exit;
 
 	}

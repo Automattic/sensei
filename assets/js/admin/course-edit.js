@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { select, subscribe } from '@wordpress/data';
-import { applyFilters } from '@wordpress/hooks';
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
 
@@ -10,21 +9,48 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies
  */
 import { startBlocksTogglingControl } from './blocks-toggling-control';
-import CourseTheme from './course-theme';
-import CourseVideoSidebar from './course-video-sidebar';
-import CoursePricingPromoSidebar from './course-pricing-promo-sidebar';
-import CourseAccessPeriodPromoSidebar from './course-access-period-promo-sidebar';
+import {
+	extractStructure,
+	getFirstBlockByName,
+} from '../../blocks/course-outline/data';
+import {
+	CourseSidebar,
+	SenseiSettingsDocumentSidebar,
+	pluginSidebarHandle,
+	pluginDocumentHandle,
+} from './course-settings-plugin-sidebar';
 
 ( () => {
 	const editPostSelector = select( 'core/edit-post' );
+	const coreEditor = select( 'core/editor' );
 	const teacherIdSelect = document.getElementsByName(
 		'sensei-course-teacher-author'
 	);
-
+	const slugBearer = document.getElementsByName(
+		'course_module_custom_slugs'
+	);
 	if ( editPostSelector && teacherIdSelect.length ) {
 		let isSavingMetaboxes = false;
 
 		subscribe( () => {
+			const isSavingPost =
+				coreEditor.isSavingPost() && ! coreEditor.isAutosavingPost();
+			if (
+				isSavingPost &&
+				! editPostSelector.isSavingMetaBoxes() &&
+				slugBearer
+			) {
+				const outlineBlock = getFirstBlockByName(
+					'sensei-lms/course-outline',
+					select( 'core/block-editor' ).getBlocks()
+				);
+				const moduleSlugs =
+					outlineBlock &&
+					extractStructure( outlineBlock.innerBlocks )
+						.filter( ( block ) => block.slug )
+						.map( ( block ) => block.slug );
+				slugBearer[ 0 ].value = JSON.stringify( moduleSlugs );
+			}
 			if ( editPostSelector.isSavingMetaBoxes() !== isSavingMetaboxes ) {
 				isSavingMetaboxes = editPostSelector.isSavingMetaBoxes();
 
@@ -82,44 +108,11 @@ domReady( () => {
  * Plugins
  */
 
-/**
- * Filters the course pricing sidebar toggle.
- *
- * @since 4.1.0
- *
- * @hook  senseiCoursePricingHide     Hook used to hide course pricing promo sidebar.
- *
- * @param {boolean} hideCoursePricing Boolean value that defines if the course pricing promo sidebar should be hidden.
- * @return {boolean}                  Returns a boolean value that defines if the course pricing promo sidebar should be hidden.
- */
-if ( ! applyFilters( 'senseiCoursePricingHide', false ) ) {
-	registerPlugin( 'sensei-course-pricing-promo-sidebar', {
-		render: CoursePricingPromoSidebar,
-		icon: null,
-	} );
-}
-
-/**
- * Filters the course access period display.
- *
- * @since 4.1.0
- *
- * @param {boolean} hideCourseAccessPeriod Whether to hide the access period.
- * @return {boolean} Whether to hide the access period.
- */
-if ( ! applyFilters( 'senseiCourseAccessPeriodHide', false ) ) {
-	registerPlugin( 'sensei-course-access-period-promo-plugin', {
-		render: CourseAccessPeriodPromoSidebar,
-		icon: null,
-	} );
-}
-
-registerPlugin( 'sensei-course-theme-plugin', {
-	render: CourseTheme,
-	icon: null,
+registerPlugin( pluginSidebarHandle, {
+	render: CourseSidebar,
 } );
 
-registerPlugin( 'sensei-course-video-progression-plugin', {
-	render: CourseVideoSidebar,
+registerPlugin( pluginDocumentHandle, {
+	render: SenseiSettingsDocumentSidebar,
 	icon: null,
 } );

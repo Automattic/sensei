@@ -5,14 +5,14 @@ on: pull_request
 jobs:
     build:
         name: Plugin Build
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
             - name: Get npm cache directory
               id: npm-cache
               run: |
-                  echo "::set-output name=dir::$(npm config get cache)"
-            - uses: actions/cache@v2
+                  echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v3
               with:
                   path: ${{ steps.npm-cache.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
@@ -25,8 +25,12 @@ jobs:
                   coverage: none
             - name: Get composer cache directory
               id: composer-cache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-            - uses: actions/cache@v2
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            - name: Updates the npm version
+              run: npm install -g npm@^8
+
+            - uses: actions/cache@v3
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -41,7 +45,7 @@ jobs:
             - name: Decompress plugin
               run: unzip sensei-lms.zip -d sensei-lms
             - name: Store Artifact
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/

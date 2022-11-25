@@ -52,14 +52,14 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Return post content as a question block.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_Error|WP_Post|WP_REST_Response
 	 */
 	public function get_item( $request ) {
 		$response = parent::get_item( $request );
 
-		if ( 'edit' !== $request['context'] || ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+		if ( 'edit' !== $request['context'] ) {
 			return $response;
 		}
 
@@ -77,7 +77,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Render question as block.
 	 *
-	 * @param WP_Post $question
+	 * @param WP_Post $question Question post object.
 	 *
 	 * @return string
 	 */
@@ -114,7 +114,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Update question block from post content.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_Error|WP_Post|WP_REST_Response
 	 */
@@ -155,7 +155,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Parse and return question block if it's the first block in the content.
 	 *
-	 * @param string $post_content
+	 * @param string $post_content Question content.
 	 *
 	 * @return array|null Question block.
 	 */
@@ -244,4 +244,36 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 		return true;
 	}
 
+	/**
+	 * Checks if the logged-in user should have access to a specific question.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param WP_REST_Request $request Full details about the request.
+	 *
+	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+	 */
+	public function get_item_permissions_check( $request ) {
+		if ( current_user_can( 'manage_sensei' ) || current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		$check_result = parent::get_item_permissions_check( $request );
+
+		if ( true !== $check_result ) {
+			return $check_result;
+		}
+
+		$question = get_post( $request['id'] );
+
+		if ( get_current_user_id() === (int) $question->post_author ) {
+			return true;
+		}
+
+		return new WP_Error(
+			'rest_forbidden_context',
+			__( 'Sorry, you are not allowed to view this item.', 'sensei-lms' ),
+			array( 'status' => rest_authorization_required_code() )
+		);
+	}
 }

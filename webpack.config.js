@@ -47,9 +47,10 @@ const files = [
 	'js/stop-double-submission.js',
 	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
-	'extensions/index.js',
-	'extensions/extensions.scss',
+	'home/index.js',
+	'home/home.scss',
 	'shared/styles/wp-components.scss',
+	'shared/components/modal/style.scss',
 	'data-port/import.js',
 	'data-port/export.js',
 	'data-port/style.scss',
@@ -61,7 +62,11 @@ const files = [
 	'blocks/single-course-style.scss',
 	'blocks/single-course-style-editor.scss',
 	'blocks/single-lesson.js',
+	'blocks/global-blocks.js',
+	'blocks/global-blocks-style.scss',
+	'blocks/global-blocks-style-editor.scss',
 	'blocks/single-lesson-style-editor.scss',
+	'blocks/course-list-filter-block/course-list-filter.js',
 	'blocks/quiz/index.js',
 	'blocks/quiz/ordering-promo/index.js',
 	'blocks/quiz/quiz.editor.scss',
@@ -69,16 +74,20 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
+	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
+	'admin/editor-wizard/index.js',
+	'admin/editor-wizard/style.scss',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'admin/students/student-action-menu/index.js',
 	'admin/students/student-bulk-action-button/index.js',
 	'admin/students/student-modal/student-modal.scss',
+	'css/block-patterns.scss',
 	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',
 	'css/admin-custom.scss',
-	'css/extensions.scss',
+	'css/home.scss',
 	'css/global.scss',
 	'css/jquery-ui.css',
 	'css/modules-admin.css',
@@ -89,13 +98,19 @@ const files = [
 	'css/ranges.css',
 	'css/settings.scss',
 	'css/meta-box-quiz-editor.scss',
+	'css/learning-mode.4-0-2.scss',
 	'css/learning-mode.scss',
+	'css/learning-mode-compat.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
+	'css/sensei-course-theme/sidebar-mobile-menu.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
-	'course-theme/blocks/blocks.js',
+	'course-theme/blocks/index.js',
+	'course-theme/themes/default-theme.scss',
+	'course-theme/learning-mode-templates/index.js',
+	'course-theme/learning-mode-templates/styles.scss',
 ];
 
 function getName( filename ) {
@@ -115,18 +130,76 @@ const baseDist = 'assets/dist/';
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
-	webpackConfig.module.rules[ 3 ].generator.publicPath = '../';
+	const styleSheetFiles = /\.(sc|sa|c)ss$/i;
+	const scriptFiles = /\.[jt]sx?$/i;
 
-	// Handle SVG images only in CSS files.
-	webpackConfig.module.rules[ 3 ].test = /\.(?:gif|jpg|jpeg|png)$/i;
-	webpackConfig.module.rules = [
-		...webpackConfig.module.rules,
+	const isProduction = process.env.NODE_ENV === 'production';
+
+	webpackConfig.module.rules = webpackConfig.module.rules.map( ( rule ) => {
+		if ( rule.test.test( 'test.scss' ) ) {
+			const use = rule.use.slice();
+			// Find where the sass-loader is installed.
+			const sassRuleIndex = use.findIndex(
+				( useRule ) =>
+					require.resolve( 'sass-loader' ) === useRule.loader
+			);
+			const computeSourceMap =
+				use[ sassRuleIndex ].options.sourceMap ?? ! isProduction;
+
+			use[ sassRuleIndex ] = {
+				...use[ sassRuleIndex ],
+				options: {
+					...use[ sassRuleIndex ].options,
+					// Always enable Source Maps, because resolve-url-loader will
+					// need these source maps to work correctly.
+					sourceMap: true,
+				},
+			};
+
+			// Insert resolve-url-loader just before the sass-loader.
+			use.splice( sassRuleIndex, 0, {
+				loader: require.resolve( 'resolve-url-loader' ),
+				options: {
+					sourceMap: computeSourceMap,
+				},
+			} );
+			return {
+				...rule,
+				use,
+			};
+		}
+		if ( rule.test.test( 'image.svg' ) ) {
+			// Handle SVG images only in CSS files.
+			return {
+				...rule,
+				test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf|svg)$/i,
+				issuer: styleSheetFiles,
+				generator: {
+					...rule.generator,
+					publicPath: '../',
+				},
+			};
+		}
+		return rule;
+	} );
+
+	// Handle only images in JS files
+	webpackConfig.module.rules.push(
 		{
-			...webpackConfig.module.rules[ 3 ],
-			issuer: /\.(sc|sa|c)ss$/,
-			test: /\.svg$/,
+			test: /\.(?:gif|jpg|jpeg|png)$/i,
+			issuer: scriptFiles,
+			type: 'asset/resource',
+			generator: {
+				filename: '[path][name]-[contenthash][ext]',
+				publicPath: 'assets/dist/',
+			},
 		},
-	];
+		{
+			test: /\.svg$/,
+			issuer: scriptFiles,
+			use: [ '@svgr/webpack' ],
+		}
+	);
 
 	return {
 		...webpackConfig,
@@ -150,24 +223,6 @@ function getWebpackConfig( env, argv ) {
 		devtool:
 			process.env.SOURCEMAP ||
 			( isDevelopment ? 'eval-source-map' : false ),
-		module: {
-			rules: [
-				...webpackConfig.module.rules,
-				{
-					test: /\.(?:gif|jpg|jpeg|png|woff|woff2|eot|ttf|otf)$/i,
-					type: 'asset/resource',
-					generator: {
-						filename: '[path][name]-[contenthash][ext]',
-						publicPath: '../',
-					},
-				},
-				{
-					test: /\.svg$/,
-					issuer: /\.[jt]sx?$/,
-					use: [ '@svgr/webpack' ],
-				},
-			],
-		},
 		plugins: [
 			...webpackConfig.plugins,
 			new GenerateChunksMapPlugin( {

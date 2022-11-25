@@ -1,0 +1,9 @@
+{
+  "name": "sensei-lms/course-theme-course-progress-bar",
+  "apiVersion": 2,
+  "category": "theme",
+  "supports": {
+    "align": true,
+    "color": true
+  }
+}

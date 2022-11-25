@@ -9,16 +9,9 @@ jQuery( function ( $ ) {
 
 		// get the selected post ids that are being edited
 		var postIds = new Array();
-		$bulk_row
-			.find( '#bulk-titles' )
-			.children()
-			.each( function () {
-				postIds.push(
-					$( this )
-						.attr( 'id' )
-						.replace( /^(ttle)/i, '' )
-				);
-			} );
+		$bulk_row.find( '#bulk-titles-list button' ).each( function () {
+			postIds.push( $( this ).attr( 'id' ).replace( /^(_)/i, '' ) );
+		} );
 
 		// get the data:
 
@@ -52,6 +45,21 @@ jQuery( function ( $ ) {
 			.find( '#sensei-edit-enable-quiz-reset' )
 			.val();
 
+		// Quiz number of questions to show
+		var newShowQuestions = $bulk_row
+			.find( '#sensei-edit-show-questions' )
+			.val();
+
+		// Quiz Random Question Order
+		var newRandomQuestionOrder = $bulk_row
+			.find( '#sensei-edit-random-question-order' )
+			.val();
+
+		// Quiz Grade Type
+		var newQuizGradeType = $bulk_row
+			.find( '#sensei-edit-quiz-grade-type' )
+			.val();
+
 		// save the data
 		$.ajax( {
 			url: ajaxurl, // this is a variable that WordPress has already defined for us
@@ -68,6 +76,9 @@ jQuery( function ( $ ) {
 				sensei_edit_pass_required: newPassRequired,
 				sensei_edit_pass_percentage: newPassPercentage,
 				sensei_edit_enable_quiz_reset: newEnableQuizReset,
+				sensei_edit_show_questions: newShowQuestions,
+				sensei_edit_random_question_order: newRandomQuestionOrder,
+				sensei_edit_quiz_grade_type: newQuizGradeType,
 
 				// post ids to apply the changes to
 				post_ids: postIds,

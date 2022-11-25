@@ -12,8 +12,12 @@ module.exports = {
 		'<rootDir>/build/',
 		'<rootDir>/assets/dist/',
 		'<rootDir>/tests/e2e/',
+		'<rootDir>/tests/e2e-playwright/',
 	],
+	testEnvironment: 'jsdom',
 	moduleNameMapper: {
 		'\\.svg$': '<rootDir>/tests/__mocks__/svg.js',
+		'\\.(gif|jpg|jpeg|png)$': '<rootDir>/tests/__mocks__/image.js',
 	},
+	coverageReporters: [ 'clover' ],
 };

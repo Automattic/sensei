@@ -20,25 +20,21 @@
 			var editRow = $( '#edit-' + postId );
 			var senseiFieldValues = window[ 'sensei_quick_edit_' + postId ];
 
-			//load the relod function on the save button click
-			editRow.find( 'a.save' ).on( 'click', function () {
-				location.reload();
+			//on the save button click, set senseiFieldValues to the values user entered in the form fields
+			editRow.find( '.save' ).on( 'click', function () {
+				const $inputs = $( '.sensei-quiz-settings :input', editRow );
+
+				$inputs.each( function () {
+					const inputName = $( this ).attr( 'name' );
+					const inputValue = $( this ).val();
+
+					senseiFieldValues[ inputName ] = inputValue;
+				} );
 			} );
 
 			// populate the data
 			//data is localized in sensei_quick_edit object
-			$(
-				':input[name="lesson_course"] option[value="' +
-					senseiFieldValues.lesson_course +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
-			$(
-				':input[name="lesson_complexity"] option[value="' +
-					senseiFieldValues.lesson_complexity +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
+
 			if (
 				'on' == senseiFieldValues.pass_required ||
 				'1' == senseiFieldValues.pass_required
@@ -47,15 +43,6 @@
 			} else {
 				senseiFieldValues.pass_required = 0;
 			}
-			$(
-				':input[name="pass_required"] option[value="' +
-					senseiFieldValues.pass_required +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
-			$( ':input[name="quiz_passmark"]', editRow ).val(
-				senseiFieldValues.quiz_passmark
-			);
 
 			if (
 				'on' == senseiFieldValues.enable_quiz_reset ||
@@ -65,12 +52,42 @@
 			} else {
 				senseiFieldValues.enable_quiz_reset = 0;
 			}
-			$(
-				':input[name="enable_quiz_reset"] option[value="' +
-					senseiFieldValues.enable_quiz_reset +
-					'"] ',
-				editRow
-			).attr( 'selected', true );
+
+			if (
+				'auto' === senseiFieldValues.quiz_grade_type ||
+				'1' === senseiFieldValues.quiz_grade_type
+			) {
+				senseiFieldValues.quiz_grade_type = 1;
+			} else {
+				senseiFieldValues.quiz_grade_type = 0;
+			}
+
+			if (
+				'yes' == senseiFieldValues.random_question_order ||
+				'1' == senseiFieldValues.random_question_order
+			) {
+				senseiFieldValues.random_question_order = 1;
+			} else {
+				senseiFieldValues.random_question_order = 0;
+			}
+
+			for ( const [ key, value ] of Object.entries(
+				senseiFieldValues
+			) ) {
+				var elem = $( ':input[name="' + key + '"]', editRow );
+				if ( elem.prop( 'nodeName' ) == 'INPUT' ) {
+					elem.val( parseInt( value ) );
+				} else {
+					$(
+						':input[name="' +
+							key +
+							'"] option[value="' +
+							value +
+							'"] ',
+						editRow
+					).attr( 'selected', true );
+				}
+			}
 		}
 	};
 } )( jQuery );
