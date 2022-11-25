@@ -11,7 +11,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		if ( ! isset( Sensei()->admin ) ) {

@@ -37,7 +37,7 @@ class Sensei_REST_API_Question_Options_Controller_Tests extends WP_Test_REST_Tes
 	/**
 	 * Test specific setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		global $wp_rest_server;

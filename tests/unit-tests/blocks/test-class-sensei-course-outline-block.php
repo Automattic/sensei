@@ -10,14 +10,14 @@ class Sensei_Course_Outline_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Initialize the blocks once.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		Sensei()->blocks->course->initialize_blocks();
 	}
 
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 

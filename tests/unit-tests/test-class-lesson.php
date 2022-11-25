@@ -70,8 +70,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
@@ -88,7 +88,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$this->initial_notices  = Sensei()->notices;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 

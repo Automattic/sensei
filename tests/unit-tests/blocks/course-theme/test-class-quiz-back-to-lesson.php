@@ -20,8 +20,8 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -31,7 +31,7 @@ class Quiz_Back_To_Lesson_Test extends WP_UnitTestCase {
 		];
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		WP_Block_Supports::$block_to_render = null;
 	}

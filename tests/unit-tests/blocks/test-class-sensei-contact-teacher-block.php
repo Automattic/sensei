@@ -10,7 +10,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$GLOBALS['post']        = (object) [
@@ -22,7 +22,7 @@ class Sensei_Block_Contact_Teacher_Test extends WP_UnitTestCase {
 		$this->login_as_student();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-contact-teacher' );
 	}

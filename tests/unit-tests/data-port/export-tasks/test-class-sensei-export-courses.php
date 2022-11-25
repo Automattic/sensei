@@ -28,7 +28,7 @@ class Sensei_Export_Courses_Tests extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		if ( ! isset( Sensei()->admin ) ) {

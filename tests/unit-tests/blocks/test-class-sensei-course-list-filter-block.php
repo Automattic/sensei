@@ -62,7 +62,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		global $wp_version;
 
 		$version = str_replace( '-src', '', $wp_version );
@@ -82,12 +82,12 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->factory->course_category->add_post_terms( $this->course1->ID, [ $this->category->term_id ], 'course-category' );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-list-filter' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}

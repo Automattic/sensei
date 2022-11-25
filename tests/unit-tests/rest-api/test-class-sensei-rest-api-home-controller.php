@@ -71,7 +71,7 @@ class Sensei_REST_API_Home_Controller_Test extends WP_UnitTestCase {
 	private $controller;
 
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->quick_links_provider_mock = $this->createMock( Sensei_Home_Quick_Links_Provider::class );

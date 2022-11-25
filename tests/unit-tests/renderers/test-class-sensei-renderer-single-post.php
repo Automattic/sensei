@@ -7,7 +7,7 @@ class Sensei_Renderer_Single_Post_Test extends WP_UnitTestCase {
 	 */
 	private $post_id;
 
-	public function setUp() {
+	public function setUp(): void {
 		global $post, $page, $wp_query, $wp_the_query;
 
 		parent::setUp();

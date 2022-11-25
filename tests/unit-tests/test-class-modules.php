@@ -16,7 +16,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -25,7 +25,7 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 	/**
 	 * tearDown function
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
