@@ -2681,6 +2681,13 @@ class Sensei_Utils {
 	public static function get_featured_video_thumbnail_url( $post_id ) {
 		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
 	}
+
+	/**
+	 * Tells if the website is hosted on the wp.com atomic site.
+	 */
+	public static function is_atomic_platform(): bool {
+		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
+	}
 }
 
 /**
