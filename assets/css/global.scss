@@ -14,8 +14,10 @@
 
 /* Sensei LMS menu */
 body #toplevel_page_sensei {
-	.wp-menu-image {
-		padding: 3px 0;
+	@media ( max-width: 782px ) {
+		.wp-menu-image {
+			padding: 3px 0;
+		}
 	}
 	ul li a {
 		&[href="admin.php?page=sensei_learners"],
