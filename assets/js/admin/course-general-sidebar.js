@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useSelect, dispatch } from '@wordpress/data';
+import { useSelect, dispatch, select } from '@wordpress/data';
 import {
 	PanelBody,
 	CheckboxControl,
@@ -14,6 +14,10 @@ import apiFetch from '@wordpress/api-fetch';
 import { useState, useEffect } from '@wordpress/element';
 
 import editorLifecycle from '../../shared/helpers/editor-lifecycle';
+import {
+	extractStructure,
+	getFirstBlockByName,
+} from '../../blocks/course-outline/data';
 
 const CourseGeneralSidebar = () => {
 	const course = useSelect( ( select ) => {
@@ -47,6 +51,15 @@ const CourseGeneralSidebar = () => {
 		editorLifecycle( {
 			onSaveStart: () => {
 				if ( author !== course.author ) {
+					const outlineBlock = getFirstBlockByName(
+						'sensei-lms/course-outline',
+						select( 'core/block-editor' ).getBlocks()
+					);
+					const moduleSlugs =
+						outlineBlock &&
+						extractStructure( outlineBlock.innerBlocks )
+							.filter( ( block ) => block.slug )
+							.map( ( block ) => block.slug );
 					apiFetch( {
 						path: '/sensei-internal/v1/course-utils/update-teacher',
 						method: 'PUT',
@@ -55,7 +68,18 @@ const CourseGeneralSidebar = () => {
 								window.sensei.courseSettingsSidebar.nonce_value,
 							post_id: course.id,
 							teacher: author,
+							custom_slugs: JSON.stringify( moduleSlugs ),
 						},
+					} ).catch( ( response ) => {
+						if ( response.message ) {
+							dispatch( 'core/notices' ).createNotice(
+								'warning',
+								response.message,
+								{
+									isDismissible: true,
+								}
+							);
+						}
 					} );
 				}
 			},
