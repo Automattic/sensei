@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<!-- wp:post-title {"textAlign":"left","style":{"typography":{"textTransform":"uppercase","lineHeight":"0.9"},"spacing":{"margin":{"bottom":"2.5rem"}}},"textColor":"background","fontSize":"xx-large"} /-->
 
 					<!-- wp:sensei-lms/button-take-course {"buttonClassName":[],"className":"is-style-secondary","backgroundColor":"tertiary","textColor":"primary"} -->
-					<div class="wp-block-sensei-lms-button-take-course is-style-secondary wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background">Take Course</button></div>
+					<div class="wp-block-sensei-lms-button-take-course is-style-secondary wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background"><?php echo esc_html__( 'Take Course', 'sensei-lms' ); ?></button></div>
 					<!-- /wp:sensei-lms/button-take-course -->
 				</div>
 				<!-- /wp:group -->
@@ -74,8 +74,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- wp:quote {"align":"left","className":"is-style-quote-no-spacing is-style-default"} -->
 			<blockquote class="wp-block-quote has-text-align-left is-style-quote-no-spacing is-style-default">
 				<!-- wp:paragraph {"align":"left"} -->
-				<p class="has-text-align-left">Blog managed by Prof Jean M. Bichè, Chair of Professor of Creative Writing
-					at Université Sacré-Cœur Paris.</p>
+				<p class="has-text-align-left"><?php echo esc_html__( 'Blog managed by Prof Jean M. Bichè, Chair of Professor of Creative Writing at Université Sacré-Cœur Paris.', 'sensei-lms' ); ?></p>
 				<!-- /wp:paragraph --><cite>The Author</cite>
 			</blockquote>
 			<!-- /wp:quote -->
@@ -91,13 +90,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- wp:group {"layout":{"type":"constrained","contentSize":"720px"}} -->
 	<div class="wp-block-group">
 		<!-- wp:heading {"textColor":"white","fontSize":"x-large"} -->
-		<h2 class="has-white-color has-text-color has-x-large-font-size">What you will learn</h2>
+		<h2 class="has-white-color has-text-color has-x-large-font-size"><?php echo esc_html__( 'What you will learn', 'sensei-lms' ); ?></h2>
 		<!-- /wp:heading -->
 
 		<!-- wp:group {"style":{"border":{"bottom":{"width":"1px"}},"spacing":{"padding":{"bottom":"1.21rem"},"blockGap":"var:preset|spacing|30"}},"textColor":"tertiary","layout":{"type":"default"}} -->
 		<div class="wp-block-group has-tertiary-color has-text-color" style="border-bottom-width:1px;padding-bottom:1.21rem">
 			<!-- wp:heading {"textAlign":"left","level":4,"style":{"spacing":{"margin":{"top":"0","right":"0","left":"0","bottom":"1.25rem"}},"typography":{"fontStyle":"normal","fontWeight":"600","letterSpacing":"-1px","fontSize":"1.5rem"}},"fontFamily":"system"} -->
-			<h4 class="has-text-align-left has-system-font-family" style="margin-top:0;margin-right:0;margin-bottom:1.25rem;margin-left:0;font-size:1.5rem;font-style:normal;font-weight:600;letter-spacing:-1px">How to Write</h4>
+			<h4 class="has-text-align-left has-system-font-family" style="margin-top:0;margin-right:0;margin-bottom:1.25rem;margin-left:0;font-size:1.5rem;font-style:normal;font-weight:600;letter-spacing:-1px"><?php echo esc_html__( 'How to Write', 'sensei-lms' ); ?></h4>
 			<!-- /wp:heading -->
 
 			<!-- wp:paragraph {"fontFamily":"body"} -->
@@ -191,7 +190,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<!-- wp:group {"style":{"spacing":{"margin":{"top":"1.95rem"}}},"layout":{"type":"constrained"}} -->
 				<div class="wp-block-group" style="margin-top:1.95rem">
 					<!-- wp:sensei-lms/button-contact-teacher {"className":"is-style-default"} -->
-					<div class="wp-block-sensei-lms-button-contact-teacher is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">Contact Teacher</a></div>
+					<div class="wp-block-sensei-lms-button-contact-teacher is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link"><?php echo esc_html__( 'Contact Teacher', 'sensei-lms' ); ?></a></div>
 					<!-- /wp:sensei-lms/button-contact-teacher -->
 				</div>
 				<!-- /wp:group -->
@@ -226,15 +225,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="wp-block-group" style="margin-top:1.94rem">
 						<!-- wp:sensei-lms/course-actions -->
 						<!-- wp:sensei-lms/button-take-course {"backgroundColor":"tertiary","textColor":"primary"} -->
-						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background">Start Course</button></div>
+						<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background"><?php echo esc_html__( 'Start Course', 'sensei-lms' ); ?></button></div>
 						<!-- /wp:sensei-lms/button-take-course -->
 
 						<!-- wp:sensei-lms/button-continue-course {"backgroundColor":"tertiary","textColor":"primary"} -->
-						<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background">Continue</a></div>
+						<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background"><?php echo esc_html__( 'Continue', 'sensei-lms' ); ?></a></div>
 						<!-- /wp:sensei-lms/button-continue-course -->
 
 						<!-- wp:sensei-lms/button-view-results {"className":"is-style-default","backgroundColor":"tertiary","textColor":"primary"} -->
-						<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background">Visit Results</a></div>
+						<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background"><?php echo esc_html__( 'Visit Results', 'sensei-lms' ); ?></a></div>
 						<!-- /wp:sensei-lms/button-view-results -->
 						<!-- /wp:sensei-lms/course-actions -->
 					</div>
@@ -289,7 +288,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:group {"style":{"spacing":{"blockGap":"2.5rem"}},"layout":{"type":"constrained","contentSize":"660px"}} -->
 		<div class="wp-block-group">
 			<!-- wp:heading {"style":{"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"18px"},"margin":{"top":"0","right":"0","bottom":"0","left":"0"}}},"textColor":"background"} -->
-			<h2 class="has-background-color has-text-color" style="margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:18px">COURSE LESSONS</h2>
+			<h2 class="has-background-color has-text-color" style="margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:18px"><?php echo esc_html__( 'COURSE LESSONS', 'sensei-lms' ); ?></h2>
 			<!-- /wp:heading -->
 
 			<!-- wp:sensei-lms/course-outline {"className":"is-style-default"} -->
@@ -307,7 +306,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- wp:group {"style":{"spacing":{"padding":{"left":"var:preset|spacing|40"}}},"layout":{"type":"constrained","justifyContent":"left"}} -->
 			<div class="wp-block-group" style="padding-left:var(--wp--preset--spacing--40)">
 				<!-- wp:sensei-lms/button-take-course {"className":"is-style-secondary","backgroundColor":"tertiary","textColor":"primary"} -->
-				<div class="wp-block-sensei-lms-button-take-course is-style-secondary wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background">Take Course</button></div>
+				<div class="wp-block-sensei-lms-button-take-course is-style-secondary wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-primary-color has-tertiary-background-color has-text-color has-background"><?php echo esc_html__( 'Take Course', 'sensei-lms' ); ?></button></div>
 				<!-- /wp:sensei-lms/button-take-course -->
 			</div>
 			<!-- /wp:group -->
