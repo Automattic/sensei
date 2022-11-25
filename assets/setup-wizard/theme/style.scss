@@ -70,22 +70,32 @@
 }
 
 .sensei-setup-wizard-theme-testimonial {
-	display: flex;
-	justify-content: center;
-	align-items: flex-end;
-	padding: 128px 0;
+	padding: 40px $small-horizontal-padding;
 	background-color: #00594f;
 	color: #FFF;
 	@include full-width;
 
-	&__image {
-		width: 25%;
-		min-width: 250px;
-		margin-right: 64px;
+	@media (min-width: $small-screen-break) {
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+		padding-top: 128px;
+		padding-bottom: 128px;
+
+		&__image {
+			width: 25%;
+			min-width: 250px;
+			margin-right: 64px;
+		}
+
+		&__content {
+			width: 30%;
+		}
 	}
 
-	&__content {
-		width: 30%;
+	&__image {
+		width: 100%;
+		margin-bottom: 24px;
 	}
 
 	& &__quote {
