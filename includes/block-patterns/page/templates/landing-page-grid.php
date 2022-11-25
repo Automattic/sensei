@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Default Landing Page - Grid pattern content.
  *
@@ -38,11 +37,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- wp:group {"style":{"border":{"left":{"color":"var:preset|color|background","width":"1px"}},"spacing":{"padding":{"left":"20px"},"margin":{"bottom":"40px"}}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between"}} -->
 	<div class="wp-block-group" style="border-left-color:var(--wp--preset--color--background);border-left-width:1px;margin-bottom:40px;padding-left:20px">
 		<!-- wp:heading {"level":5,"style":{"typography":{"textTransform":"uppercase","lineHeight":"1"},"spacing":{"padding":{"top":"0px"}}},"textColor":"background","className":"sensei-pattern-heading"} -->
-		<h5 class="sensei-pattern-heading has-background-color has-text-color" style="padding-top:0px;line-height:1;text-transform:uppercase"><strong><?php echo __( 'Course list', 'sensei-lms' ); ?></strong></h5>
+		<h5 class="sensei-pattern-heading has-background-color has-text-color" style="padding-top:0px;line-height:1;text-transform:uppercase"><strong><?php echo esc_html__( 'Course list', 'sensei-lms' ); ?></strong></h5>
 		<!-- /wp:heading -->
 
 		<!-- wp:paragraph {"style":{"elements":{"link":{"color":{"text":"var:preset|color|background"}}}},"textColor":"background","className":"sensei-course-list-all-courses-link"} -->
-		<p class="sensei-course-list-all-courses-link has-background-color has-text-color has-link-color"><a href="<?php echo esc_url( Sensei_Course::get_courses_page_url() ); ?>" target="_blank" rel="noreferrer noopener"><?php echo __( 'Explore all courses', 'sensei-lms' ); ?></a></p>
+		<p class="sensei-course-list-all-courses-link has-background-color has-text-color has-link-color"><a href="<?php echo esc_url( Sensei_Course::get_courses_page_url() ); ?>" target="_blank" rel="noreferrer noopener"><?php echo esc_html__( 'Explore all courses', 'sensei-lms' ); ?></a></p>
 		<!-- /wp:paragraph -->
 	</div>
 	<!-- /wp:group -->
@@ -66,15 +65,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 			<!-- wp:sensei-lms/course-actions {"lock":{"move":false,"remove":false}} -->
 			<!-- wp:sensei-lms/button-take-course {"align":"full","borderRadius":8,"backgroundColor":"background","textColor":"primary"} -->
-			<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><button class="wp-block-button__link has-primary-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo __( 'Start', 'sensei-lms' ); ?></button></div>
+			<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><button class="wp-block-button__link has-primary-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo esc_html__( 'Start', 'sensei-lms' ); ?></button></div>
 			<!-- /wp:sensei-lms/button-take-course -->
 
 			<!-- wp:sensei-lms/button-continue-course {"align":"full","borderRadius":8,"backgroundColor":"background","textColor":"primary"} -->
-			<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-primary-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo __( 'Continue', 'sensei-lms' ); ?></a></div>
+			<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-primary-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo esc_html__( 'Continue', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:sensei-lms/button-continue-course -->
 
 			<!-- wp:sensei-lms/button-view-results {"align":"full","borderRadius":8,"className":"is-style-default","backgroundColor":"background","textColor":"primary"} -->
-			<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-primary-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo __( 'Results', 'sensei-lms' ); ?></a></div>
+			<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link has-primary-color has-background-background-color has-text-color has-background" style="border-radius:8px"><?php echo esc_html__( 'Results', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:sensei-lms/button-view-results -->
 			<!-- /wp:sensei-lms/course-actions -->
 		</div>
@@ -136,20 +135,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:heading {"textAlign":"left","style":{"typography":{"lineHeight":"1","textTransform":"uppercase"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontFamily":"secondary"} -->
 		<h2 class="has-text-align-left has-secondary-font-family" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase">
 		<?php
-																																														echo wp_kses(
-																																															__( 'Keep track of the latest<br>news and lessons.<br>Every week in your inbox.', 'sensei-lms' ),
-																																															[
-																																																'br' => [],
-																																															]
-																																														);
-																																														?>
-																																														</h2>
+			echo wp_kses(
+				__( 'Keep track of the latest<br>news and lessons.<br>Every week in your inbox.', 'sensei-lms' ),
+				[
+					'br' => [],
+				]
+			);
+			?>
+		</h2>
 		<!-- /wp:heading -->
 
 		<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"right","verticalAlignment":"center"}} -->
 		<div class="wp-block-buttons">
 			<!-- wp:button {"backgroundColor":"foreground","textColor":"background","style":{"border":{"radius":"8px"}}} -->
-			<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background wp-element-button" style="border-radius:8px"><?php echo __( 'Join Our Mailing List', 'sensei-lms' ); ?></a></div>
+			<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-foreground-background-color has-text-color has-background wp-element-button" style="border-radius:8px"><?php echo esc_html__( 'Join Our Mailing List', 'sensei-lms' ); ?></a></div>
 			<!-- /wp:button -->
 		</div>
 		<!-- /wp:buttons -->
@@ -166,7 +165,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- wp:group {"style":{"spacing":{"padding":{"left":"20px","bottom":"0px"}},"border":{"top":{"width":"0px","style":"none"},"right":{"width":"0px","style":"none"},"bottom":{"width":"0px","style":"none"},"left":{"color":"var:preset|color|tertiary","width":"1px"}}},"layout":{"type":"flex","flexWrap":"nowrap"}} -->
 	<div class="wp-block-group" style="border-top-style:none;border-top-width:0px;border-right-style:none;border-right-width:0px;border-bottom-style:none;border-bottom-width:0px;border-left-color:var(--wp--preset--color--tertiary);border-left-width:1px;padding-bottom:0px;padding-left:20px">
 		<!-- wp:heading {"level":5,"style":{"typography":{"textTransform":"uppercase","lineHeight":"1","letterSpacing":"0.01em"},"spacing":{"padding":{"top":"0px"}}},"className":"sensei-pattern-heading","fontFamily":"secondary"} -->
-		<h5 class="sensei-pattern-heading has-secondary-font-family" style="padding-top:0px;letter-spacing:0.01em;line-height:1;text-transform:uppercase"><?php echo __( 'What students say', 'sensei-lms' ); ?></h5>
+		<h5 class="sensei-pattern-heading has-secondary-font-family" style="padding-top:0px;letter-spacing:0.01em;line-height:1;text-transform:uppercase"><?php echo esc_html__( 'What students say', 'sensei-lms' ); ?></h5>
 		<!-- /wp:heading -->
 	</div>
 	<!-- /wp:group -->
@@ -184,7 +183,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- wp:column {"verticalAlignment":"bottom"} -->
 		<div class="wp-block-column is-vertically-aligned-bottom">
 			<!-- wp:heading {"style":{"spacing":{"margin":{"bottom":"40px"}},"typography":{"lineHeight":"1","textTransform":"uppercase"}},"textColor":"background","fontFamily":"secondary"} -->
-			<h2 class="has-background-color has-text-color has-secondary-font-family" style="margin-bottom:40px;line-height:1;text-transform:uppercase"><?php echo __( '“I always wanted to write, and thanks to Course, I got it right. My writing is clearer, and I can finally get my message across.”', 'sensei-lms' ); ?></h2>
+			<h2 class="has-background-color has-text-color has-secondary-font-family" style="margin-bottom:40px;line-height:1;text-transform:uppercase"><?php echo esc_html__( '“I always wanted to write, and thanks to Course, I got it right. My writing is clearer, and I can finally get my message across.”', 'sensei-lms' ); ?></h2>
 			<!-- /wp:heading -->
 
 			<!-- wp:paragraph {"style":{"typography":{"fontStyle":"normal","fontWeight":"700","lineHeight":"1","letterSpacing":"0.02em"}}} -->
@@ -192,7 +191,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- /wp:paragraph -->
 
 			<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1","letterSpacing":"0.02em"},"spacing":{"padding":{"top":"10px"}}}} -->
-			<p style="padding-top:10px;letter-spacing:0.02em;line-height:1"><?php echo __( 'Founder at BeautifulWriting.com', 'sensei-lms' ); ?></p>
+			<p style="padding-top:10px;letter-spacing:0.02em;line-height:1"><?php echo esc_html__( 'Founder at BeautifulWriting.com', 'sensei-lms' ); ?></p>
 			<!-- /wp:paragraph -->
 		</div>
 		<!-- /wp:column -->
