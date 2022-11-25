@@ -1,7 +1,12 @@
 .sensei-carousel {
-	width: 80%;
-	margin: 0 auto;
-	overflow: visible;
+	width: 100%;
+	overflow: hidden;
+
+	&__viewport {
+		width: 80%;
+		margin: 0 auto;
+		overflow: visible;
+	}
 
 	&__slider {
 		display: flex;
