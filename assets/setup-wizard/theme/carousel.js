@@ -123,11 +123,11 @@ const Carousel = ( { children } ) => {
 				'sensei-carousel--is-dragging': isDragging,
 			} ) }
 		>
-			<ul { ...draggableProps } className="sensei-carousel__viewport">
-				<div className="sensei-carousel__slider" style={ style }>
+			<div { ...draggableProps } className="sensei-carousel__viewport">
+				<ul className="sensei-carousel__slider" style={ style }>
 					{ children }
-				</div>
-			</ul>
+				</ul>
+			</div>
 
 			<div className="sensei-carousel__controls">
 				<button
