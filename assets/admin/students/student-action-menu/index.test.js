@@ -1,12 +1,17 @@
 /**
  * External dependencies
  */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+	act,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from '@testing-library/react';
 
 /**
  * WordPress dependencies
  */
-import { DOWN } from '@wordpress/keycodes';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -18,6 +23,15 @@ jest.mock( '@wordpress/data' );
 
 const studentName = 'johndoe';
 const studentDisplayName = 'John Doe';
+
+// Needed by `@wordpress/compose' >=5.7.0
+if ( ! global.ResizeObserver ) {
+	global.ResizeObserver = class ResizeObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	};
+}
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
@@ -31,7 +45,7 @@ describe( '<StudentActionMenu />', () => {
 
 		button.focus();
 		fireEvent.keyDown( button, {
-			keyCode: DOWN,
+			code: 'ArrowDown',
 			preventDefault: () => {},
 		} );
 
@@ -42,7 +56,9 @@ describe( '<StudentActionMenu />', () => {
 			fireEvent.click( menuItem );
 		} );
 
-		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+		await waitFor( () => {
+			expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+		} );
 	} );
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
@@ -56,7 +72,7 @@ describe( '<StudentActionMenu />', () => {
 
 		button.focus();
 		fireEvent.keyDown( button, {
-			keyCode: DOWN,
+			code: 'ArrowDown',
 			preventDefault: () => {},
 		} );
 
@@ -67,7 +83,9 @@ describe( '<StudentActionMenu />', () => {
 			fireEvent.click( menuItem );
 		} );
 
-		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+		await waitFor( () => {
+			expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+		} );
 	} );
 
 	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
@@ -81,7 +99,7 @@ describe( '<StudentActionMenu />', () => {
 
 		button.focus();
 		fireEvent.keyDown( button, {
-			keyCode: DOWN,
+			code: 'ArrowDown',
 			preventDefault: () => {},
 		} );
 
@@ -92,10 +110,12 @@ describe( '<StudentActionMenu />', () => {
 			fireEvent.click( menuItem );
 		} );
 
-		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+		await waitFor( () => {
+			expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+		} );
 	} );
 
-	it( "Should display student's ungraded quizzes when Grading menu item is selected", () => {
+	it( "Should display student's ungraded quizzes when Grading menu item is selected", async () => {
 		render(
 			<StudentActionMenu
 				studentName={ studentName }
@@ -108,7 +128,7 @@ describe( '<StudentActionMenu />', () => {
 
 		button.focus();
 		fireEvent.keyDown( button, {
-			keyCode: DOWN,
+			code: 'ArrowDown',
 			preventDefault: () => {},
 		} );
 
@@ -119,10 +139,12 @@ describe( '<StudentActionMenu />', () => {
 		windowSpy.mockImplementation( () => null );
 		fireEvent.click( menuItem );
 
-		expect( windowSpy ).toBeCalledWith(
-			`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
-			'_self'
-		);
+		await waitFor( () => {
+			expect( windowSpy ).toBeCalledWith(
+				`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
+				'_self'
+			);
+		} );
 
 		windowSpy.mockRestore();
 	} );
