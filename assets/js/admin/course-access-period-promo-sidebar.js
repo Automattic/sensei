@@ -1,8 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
-import { ExternalLink, SelectControl } from '@wordpress/components';
+import { ExternalLink, SelectControl, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -10,9 +9,9 @@ import { __ } from '@wordpress/i18n';
  */
 const CourseAccessPeriodPromoSidebar = () => {
 	return (
-		<PluginDocumentSettingPanel
-			name="sensei-course-access-period-promo"
+		<PanelBody
 			title={ __( 'Access Period', 'sensei-lms' ) }
+			initialOpen={ true }
 		>
 			<div className="sensei-course-access-period-promo">
 				<p>
@@ -38,7 +37,7 @@ const CourseAccessPeriodPromoSidebar = () => {
 					/>
 				</div>
 			</div>
-		</PluginDocumentSettingPanel>
+		</PanelBody>
 	);
 };
 
