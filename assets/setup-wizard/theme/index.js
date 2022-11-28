@@ -1,6 +1,11 @@
 /**
  * WordPress dependencies
  */
+import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
 import { useLayoutEffect, useState, useRef } from '@wordpress/element';
 
@@ -18,21 +23,32 @@ import SmallScreen from './small-screen';
 const Theme = () => {
 	const { goTo } = useQueryStringRouter();
 	const [ isBigScreen, setIsBigScreen ] = useState( false );
-	const responsiveAreaRef = useRef();
+	const [ isScrolled, setIsScrolled ] = useState( false );
+	const themeContentRef = useRef();
 
 	useLayoutEffect( () => {
+		const { defaultView } = themeContentRef.current.ownerDocument;
+
 		const screenSizeCheck = () => {
 			setIsBigScreen( window.innerWidth >= 600 );
 		};
 
-		// Check screen size on load.
-		screenSizeCheck();
+		const scrollCheck = () => {
+			setIsScrolled(
+				themeContentRef.current.getBoundingClientRect().y < 0
+			);
+		};
 
-		const { defaultView } = responsiveAreaRef.current.ownerDocument;
+		// Checks on load.
+		screenSizeCheck();
+		scrollCheck();
+
 		defaultView.addEventListener( 'resize', screenSizeCheck );
+		defaultView.addEventListener( 'scroll', scrollCheck );
 
 		return () => {
 			defaultView.removeEventListener( 'resize', screenSizeCheck );
+			defaultView.removeEventListener( 'scroll', scrollCheck );
 		};
 	}, [] );
 
@@ -42,7 +58,16 @@ const Theme = () => {
 
 	return (
 		<>
-			<div className="sensei-setup-wizard__content sensei-setup-wizard__content--large">
+			<div
+				className={ classnames(
+					'sensei-setup-wizard__content sensei-setup-wizard__content--large',
+					{
+						'sensei-setup-wizard__content--sticky': isBigScreen,
+						'sensei-setup-wizard__content--hidden':
+							isBigScreen && isScrolled,
+					}
+				) }
+			>
 				<div className="sensei-setup-wizard__title">
 					<H className="sensei-setup-wizard__step-title">
 						{ __( 'Get new Sensei theme', 'sensei-lms' ) }
@@ -86,7 +111,7 @@ const Theme = () => {
 				</div>
 			</div>
 
-			<div ref={ responsiveAreaRef }>
+			<div ref={ themeContentRef }>
 				{ isBigScreen ? <BigScreen /> : <SmallScreen /> }
 			</div>
 		</>

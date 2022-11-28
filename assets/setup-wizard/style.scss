@@ -258,6 +258,20 @@ $page-background: #b7c9be;
 				max-width: 538px;
 			}
 		}
+
+		&--sticky {
+			position: sticky;
+			top: $small-vertical-padding + $small-header-height;
+
+			@media (min-width: $small-screen-break) {
+				top: $big-vertical-padding + $big-header-height;
+			}
+		}
+
+		&--hidden {
+			visibility: hidden;
+			pointer-events: none;
+		}
 	}
 
 	&__illustration {

@@ -26,6 +26,7 @@
 }
 
 .sensei-setup-wizard-theme {
+	position: relative; /* To get over the main title when scrolling */
 	padding-top: 64px;
 
 	&__section {
