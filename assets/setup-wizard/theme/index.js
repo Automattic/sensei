@@ -25,17 +25,20 @@ const Theme = () => {
 	const [ isBigScreen, setIsBigScreen ] = useState( false );
 	const [ isScrolled, setIsScrolled ] = useState( false );
 	const themeContentRef = useRef();
+	const scrollOffset = 70;
 
 	useLayoutEffect( () => {
-		const { defaultView } = themeContentRef.current.ownerDocument;
+		const w = themeContentRef.current?.ownerDocument.defaultView;
 
+		// Check if it's a big screen.
 		const screenSizeCheck = () => {
 			setIsBigScreen( window.innerWidth >= 600 );
 		};
 
+		// Checks if it was scrolled until the theme content.
 		const scrollCheck = () => {
 			setIsScrolled(
-				themeContentRef.current.getBoundingClientRect().y < 0
+				themeContentRef.current.getBoundingClientRect().y < scrollOffset
 			);
 		};
 
@@ -43,14 +46,23 @@ const Theme = () => {
 		screenSizeCheck();
 		scrollCheck();
 
-		defaultView.addEventListener( 'resize', screenSizeCheck );
-		defaultView.addEventListener( 'scroll', scrollCheck );
+		w.addEventListener( 'resize', screenSizeCheck );
+		w.addEventListener( 'scroll', scrollCheck );
 
 		return () => {
-			defaultView.removeEventListener( 'resize', screenSizeCheck );
-			defaultView.removeEventListener( 'scroll', scrollCheck );
+			w.removeEventListener( 'resize', screenSizeCheck );
+			w.removeEventListener( 'scroll', scrollCheck );
 		};
 	}, [] );
+
+	const scrollToThemeContent = () => {
+		const w = themeContentRef.current?.ownerDocument.defaultView;
+
+		w.scrollBy( {
+			top: themeContentRef.current.offsetTop - scrollOffset,
+			behavior: 'smooth',
+		} );
+	};
 
 	const goToNextStep = () => {
 		goTo( 'tracking' );
@@ -58,6 +70,24 @@ const Theme = () => {
 
 	return (
 		<>
+			{ isBigScreen && isScrolled && (
+				<div className="sensei-setup-wizard-theme-top-actions sensei-setup-wizard-theme-top-actions--enter-animation">
+					<button
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
+						onClick={ goToNextStep }
+					>
+						{ __( 'Skip', 'sensei-lms' ) }
+					</button>
+
+					<button
+						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
+						onClick={ goToNextStep }
+					>
+						{ __( 'Install the new Sensei theme', 'sensei-lms' ) }
+					</button>
+				</div>
+			) }
+
 			<div
 				className={ classnames(
 					'sensei-setup-wizard__content sensei-setup-wizard__content--large',
@@ -94,7 +124,7 @@ const Theme = () => {
 
 						<button
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--secondary sensei-setup-wizard__button--only-medium"
-							onClick={ goToNextStep }
+							onClick={ scrollToThemeContent }
 						>
 							{ __( 'Explore the theme', 'sensei-lms' ) }
 						</button>

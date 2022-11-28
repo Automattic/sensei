@@ -27,7 +27,7 @@
 
 .sensei-setup-wizard-theme {
 	position: relative; /* To get over the main title when scrolling */
-	padding-top: 64px;
+	margin-top: 64px;
 
 	&__section {
 		padding-top: 128px;
@@ -67,6 +67,29 @@
 
 	&__learning-mode-carousel {
 		@include full-width;
+	}
+}
+
+.sensei-setup-wizard-theme-top-actions {
+	position: fixed;
+	gap: 24px;
+	top: 0;
+	right: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 80px;
+	padding: 8px 20px 0;
+
+	@media (min-width: $small-screen-break) {
+		height: 88px;
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	&--enter-animation {
+		animation: slideDown 0.5s;
 	}
 }
 
