@@ -83,6 +83,7 @@ const files = [
 	'admin/students/student-bulk-action-button/index.js',
 	'admin/students/student-modal/student-modal.scss',
 	'css/block-patterns.scss',
+	'css/page-block-patterns.scss',
 	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',

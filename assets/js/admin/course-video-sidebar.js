@@ -24,7 +24,7 @@ const CourseVideoSidebar = () => {
 	);
 
 	return (
-		<PanelBody title={ __( 'Video', 'sensei-lms' ) } initialOpen={ false }>
+		<PanelBody title={ __( 'Video', 'sensei-lms' ) } initialOpen={ true }>
 			<ToggleControl
 				label={ __( 'Autocomplete Lesson', 'sensei-lms' ) }
 				checked={ autocomplete }
