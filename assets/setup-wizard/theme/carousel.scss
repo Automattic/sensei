@@ -3,9 +3,13 @@
 	overflow: hidden;
 
 	&__viewport {
-		width: 80%;
+		width: 95%;
 		margin: 0 auto;
 		overflow: visible;
+
+		@media (min-width: $small-screen-break) {
+			width: 80%;
+		}
 	}
 
 	&__slider {
@@ -17,9 +21,13 @@
 		> li {
 			flex: 0 0 100%;
 			width: 100%;
-			padding: 0 20px;
+			padding: 0 5px;
 			margin: 0;
 			box-sizing: border-box;
+
+			@media (min-width: $small-screen-break) {
+				padding: 0 20px;
+			}
 		}
 
 		img {
