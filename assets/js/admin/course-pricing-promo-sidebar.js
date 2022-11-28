@@ -28,10 +28,7 @@ const CoursePricingPromoSidebar = () => {
 	);
 
 	return (
-		<PanelBody
-			title={ __( 'Pricing', 'sensei-lms' ) }
-			initialOpen={ false }
-		>
+		<PanelBody title={ __( 'Pricing', 'sensei-lms' ) } initialOpen={ true }>
 			<p> { escapeHTML( description ) } </p>
 			<p>
 				<ExternalLink

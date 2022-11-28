@@ -606,7 +606,7 @@ class Sensei_Teacher {
 		}
 
 		// Get a list of course lessons.
-		$lessons = Sensei()->course->course_lessons( $course_id, null );
+		$lessons = Sensei()->course->course_lessons( $course_id, 'any' );
 
 		if ( empty( $lessons ) || ! is_array( $lessons ) ) {
 			return false;

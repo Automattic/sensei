@@ -25,7 +25,24 @@ export const pluginSidebarHandle = 'sensei-lms-course-settings-sidebar';
 export const pluginDocumentHandle = 'sensei-lms-document-settings-sidebar';
 
 export const CourseSidebar = () => {
+	/**
+	 * Filter to show or hide course pricing component.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @hook  senseiCoursePricingHide This hook allows to pass a boolean value for hiding course pricing upsell.
+	 * @return {boolean} 			  Hide the component.
+	 */
 	const hideCoursePricing = applyFilters( 'senseiCoursePricingHide', false );
+
+	/**
+	 * Filter to show or hide course expiration component.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @hook  senseiCourseAccessPeriodHide This hook allows to pass a boolean value for hiding course expiration (access period) upsell.
+	 * @return {boolean} 				   Hide the component.
+	 */
 	const hideAccessPeriod = applyFilters(
 		'senseiCourseAccessPeriodHide',
 		false
@@ -74,6 +91,7 @@ export const SenseiSettingsDocumentSidebar = () => {
 		<PluginDocumentSettingPanel
 			name={ pluginDocumentHandle }
 			title={ __( 'Sensei Settings', 'sensei-lms' ) }
+			className="sensei-plugin-document-setting-panel"
 		></PluginDocumentSettingPanel>
 	);
 };
