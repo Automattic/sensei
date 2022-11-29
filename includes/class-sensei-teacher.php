@@ -1587,6 +1587,10 @@ class Sensei_Teacher {
 	 * @return void
 	 */
 	public function teacher_login_redirect( $user_login, $user ) {
+		// If Jetpack's redirection cookie is set, let Jetpack handle redirection.
+		if ( ! empty( $_COOKIE['jetpack_sso_redirect_to'] ) ) {
+			return;
+		}
 
 		if ( user_can( $user, 'edit_courses' ) ) {
 
