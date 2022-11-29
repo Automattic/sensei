@@ -108,6 +108,7 @@ class Sensei_Block_Patterns {
 			$block_patterns = [
 				'landing-page-list',
 				'landing-page-grid',
+				'landing-page-with-image',
 			];
 		}
 
