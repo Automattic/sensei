@@ -29,5 +29,8 @@
 		& > * {
 			clear: both;
 		}
+		.wp-block-post-title {
+			font-size: var(--wp--preset--font-size--large, 3rem);
+		}
 	}
 }
