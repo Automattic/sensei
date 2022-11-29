@@ -22,7 +22,7 @@ jobs:
               uses: actions/checkout@v3
 
             - name: Updates the npm version
-              run: npm install -g npm@8.9.0
+              run: npm install -g npm@^8
 
             - name: Install dependencies
               run: npm ci
@@ -36,11 +36,14 @@ jobs:
             - name: Start wp-env
               run: npm run wp-env start
 
-            - name: Run Playwright tests
-              run: CI=true npm run test:e2e
+            - name: Run Playwright tests with @setup annotation
+              run: CI=true npm run test:e2e -- --grep @setup
+
+            - name: Run Playwright tests without the @setup annotation
+              run: CI=true npm run test:e2e -- --grep-invert @setup
 
             - name: Archive report
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               if: failure()
               with:
                   name: playwright-report

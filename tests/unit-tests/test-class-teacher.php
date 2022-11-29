@@ -8,7 +8,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Constructor function
@@ -478,5 +478,27 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		// Assert.
 		$term_meta = get_term_meta( $new_term['term_id'], 'module_author', true );
 		$this->assertEquals( $current_user_id, $term_meta );
+	}
+
+	/**
+	 * Test to make sure that author for all lessons is updated including drafts.
+	 */
+	public function testUpdateCourseLessonsAuthor_WhenLessonsAreInDraftStatus_GetAuthorUpdatedToTheNewValue() {
+		$this->login_as_teacher_b();
+		$new_teacher_id = get_current_user_id();
+		$this->login_as_teacher();
+
+		$course = $this->factory->get_course_with_lessons(
+			[
+				'multiple_question_count' => 1,
+				'lesson_count'            => 3,
+				'lesson_args'             => [ 'post_status' => 'draft' ],
+			]
+		);
+
+		$this->login_as_admin();
+		Sensei()->teacher->update_course_lessons_author( $course['course_id'], $new_teacher_id );
+
+		$this->assertPostAuthor( $new_teacher_id, $course['lesson_ids'], 'All lessons must be from teacher B now' );
 	}
 }

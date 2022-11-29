@@ -1,0 +1,63 @@
+
+// Theme compatibilty fixes
+
+.wp-block-site-logo {
+	.custom-logo-link {
+		margin: 0;
+	}
+}
+
+// Blockbase
+.wp-site-blocks {
+	display: block;
+}
+
+.sensei-course-theme {
+
+	// Twenty twenty one
+
+	.wp-block-group::before, .wp-block-group::after {
+		content: none;
+	}
+	--responsive--aligndefault-width: 1200px;
+}
+
+.sensei-course-theme__frame {
+
+	// Twenty twenty
+
+	.wp-block-group.wp-block-group.wp-block-group.wp-block-group {
+		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+			margin: unset;
+		}
+	}
+
+	.is-content-justification-space-between > * {
+		margin: unset !important;
+		max-width: none;
+	}
+}
+
+// Twenty twenty
+
+.entry-content > :not(.alignwide):not(.alignfull):not(.alignleft):not(.alignright):not(.is-style-wide)
+{
+	width: auto;
+}
+[class*='__inner-container'] {
+	> *, > .wp-block-group, > .wp-block-cover {
+		&:not(.alignfull):not(.alignwide):not(.alignleft):not(.alignright):not(.is-style-wide) {
+			max-width: unset;
+			margin: unset;
+		}
+	}
+}
+
+// Astra
+.wp-block:not(.has-text-color) {
+	color: unset;
+}
+
+.wp-block:not(.has-background) {
+	background-color: unset;
+}

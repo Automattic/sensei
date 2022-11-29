@@ -87,6 +87,10 @@ class Sensei_Data_Cleaner {
 		'sensei_dismiss_wcpc_prompt',
 		'sensei-cancelled-wccom-connect-dismissed',
 		'sensei_course_theme_query_var_flushed',
+		'sensei_settings_sections_visited',
+		'sensei_home_tasks_list_is_completed',
+		'sensei_home_tasks_dismissed',
+		'sensei_home_task_visited_woocommerce',
 	);
 
 	/**
@@ -225,6 +229,7 @@ class Sensei_Data_Cleaner {
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
 		'sensei_background_job_.*',
+		'sensei_home_.*',
 	);
 
 	/**

@@ -105,7 +105,7 @@ class Sensei_Tools {
 		$title = esc_html__( 'Tools', 'sensei-lms' );
 
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			$title,
 			$title,
 			'manage_sensei',
@@ -113,7 +113,7 @@ class Sensei_Tools {
 			[ $this, 'output' ]
 		);
 
-		add_action( 'load-course_page_sensei-tools', [ $this, 'process' ] );
+		add_action( 'load-sensei-lms_page_sensei-tools', [ $this, 'process' ] );
 	}
 
 	/**
@@ -229,7 +229,7 @@ class Sensei_Tools {
 	 * @return string
 	 */
 	public function get_tools_url() {
-		return admin_url( 'edit.php?post_type=course&page=sensei-tools' );
+		return admin_url( 'admin.php?page=sensei-tools' );
 	}
 
 	/**

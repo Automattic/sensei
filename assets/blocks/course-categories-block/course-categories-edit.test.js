@@ -12,7 +12,7 @@ const message =
 	'The Course Categories block can only be used inside the Course List block.';
 
 jest.mock( '@wordpress/block-editor', () => ( {
-	useBlockProps: jest.fn(),
+	useBlockProps: jest.fn( ( params ) => params ),
 	InspectorControls: ( { children } ) => <>{ children }</>,
 	ContrastChecker: () => <h2>Contrast Checker</h2>,
 	PanelColorSettings: ( props ) => (
@@ -22,6 +22,8 @@ jest.mock( '@wordpress/block-editor', () => ( {
 	),
 	Warning: () => <div>{ message }</div>,
 	withColors: () => ( Component ) => Component,
+	BlockControls: () => null,
+	AlignmentToolbar: () => null,
 } ) );
 
 jest.mock( './hooks/use-course-categories' );
@@ -48,6 +50,15 @@ const categories = [
 	},
 ];
 
+const defaultProps = {
+	clientId: 'some-client-id',
+	attributes,
+	context,
+	setAttributes: jest.fn(),
+	setBackgroundColor: jest.fn(),
+	setTextColor: jest.fn(),
+};
+
 describe( 'CourseCategoryEdit', () => {
 	it( 'should render the categories', () => {
 		useCourseCategories.mockReturnValue( {
@@ -57,22 +68,17 @@ describe( 'CourseCategoryEdit', () => {
 		} );
 
 		const { getByText } = render(
-			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
-				context={ context }
-			/>
+			<CourseCategoryEdit { ...defaultProps } />
 		);
 		categories.forEach( ( category ) =>
 			expect( getByText( category.name ) ).toBeInTheDocument()
 		);
 	} );
 
-	it( 'should render an error', () => {
+	it( 'should render an error when the block is not using the correct post type', () => {
 		const { getByText } = render(
 			<CourseCategoryEdit
-				clientId="some-client-id"
-				attributes={ attributes }
+				{ ...defaultProps }
 				context={ {
 					postId: 'some-post-id',
 					postType: 'page',
@@ -81,5 +87,38 @@ describe( 'CourseCategoryEdit', () => {
 		);
 
 		expect( getByText( message ) ).toBeInTheDocument();
+	} );
+
+	it( 'should update the color attributes during the component loading', () => {
+		const setBackgroundColor = jest.fn();
+		const setTextColor = jest.fn();
+
+		const attributesWithOptions = {
+			...attributes,
+			options: {
+				backgroundColor: 'some-background-color',
+				textColor: 'some-text-color',
+			},
+		};
+
+		useCourseCategories.mockReturnValue( {
+			isLoading: false,
+			hasPostTerms: true,
+			postTerms: categories,
+		} );
+
+		render(
+			<CourseCategoryEdit
+				{ ...defaultProps }
+				attributes={ attributesWithOptions }
+				setBackgroundColor={ setBackgroundColor }
+				setTextColor={ setTextColor }
+			/>
+		);
+		expect( setBackgroundColor ).toHaveBeenCalledWith(
+			'some-background-color'
+		);
+
+		expect( setTextColor ).toHaveBeenCalledWith( 'some-text-color' );
 	} );
 } );

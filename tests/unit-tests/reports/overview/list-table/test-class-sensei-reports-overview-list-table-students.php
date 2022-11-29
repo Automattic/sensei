@@ -12,7 +12,7 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 	 *
 	 * @var Sensei_Factory
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 * Set up before each test.
@@ -86,6 +86,23 @@ class Sensei_Reports_Overview_List_Table_Students_Test extends WP_UnitTestCase {
 			'last_activity'   => [ 'last_activity_date', false ],
 		];
 		self::assertSame( $expected, $actual );
+	}
+
+	public function testGetSortableColumns_NoUsersRelationship_ReturnsNoLastActivityDateColumn() {
+		/* Arrange. */
+		tests_add_filter( 'sensei_can_use_users_relationship', '__return_false' );
+		Sensei_No_Users_Table_Relationship::instance()->init();
+
+		$list_table = new Sensei_Reports_Overview_List_Table_Students(
+			$this->createMock( Sensei_Reports_Overview_Data_Provider_Interface::class ),
+			$this->createMock( Sensei_Reports_Overview_Service_Students::class )
+		);
+
+		/* Act. */
+		$actual = $list_table->get_sortable_columns();
+
+		/* Assert. */
+		$this->assertFalse( isset( $actual['last_activity'] ) );
 	}
 
 	public function testSearchButton_WhenCalled_ReturnsMatchingString() {

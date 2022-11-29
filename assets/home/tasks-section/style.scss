@@ -1,0 +1,51 @@
+@import 'progress';
+@import 'tasks';
+@import 'first-course';
+@import 'ready';
+
+.sensei-home-tasks-section {
+	position: relative;
+	background-image: url("../../images/home-top-left-illustration.png"), url("../../images/home-bottom-right-illustration.png");
+	background-position: -197px 0, calc( 100% + 197px ) 100%;
+	background-repeat: no-repeat;
+	transition: 0.5s background-position;
+
+	// Crop first course box shadow.
+	overflow: hidden;
+
+	&--ready {
+		@media ( min-width: 1120px ) {
+			background-position: 0 0, 100% 100%;
+		}
+	}
+
+	&__inside{
+		@media ( min-width: $break-large ) {
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+
+	&__content {
+		padding-top: 8px;
+		padding-bottom: 32px;
+
+		@media ( min-width: $break-large ) {
+			padding: 52px;
+			max-width: 337px;
+		}
+	}
+
+	&__first-course {
+		margin-right: -12px;
+		margin-bottom: -11px;
+
+		@media ( min-width: $break-large ) {
+			flex: 1;
+			max-width: 615px;
+			display: flex;
+			align-items: stretch;
+			margin-top: 29px;
+		}
+	}
+}

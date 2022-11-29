@@ -134,7 +134,7 @@ add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'output
 add_action( 'sensei_single_quiz_questions_before', array( 'Sensei_Quiz', 'the_quiz_progress_bar' ), 20 );
 
 // @since 1.9.0
-// hook in the question title, description and quesiton media
+// hook in the question title, description and question media
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_title' ), 10 );
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_description' ), 20 );
 add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the_question_media' ), 30 );
@@ -144,7 +144,7 @@ add_action( 'sensei_quiz_question_inside_before', array( 'Sensei_Question', 'the
 add_action( 'sensei_quiz_question_inside_after', array( 'Sensei_Question', 'the_answer_feedback' ) );
 
 // @since 1.9.0
-// add extra question data for different quesiton types when get_question_template_data_is_called.
+// add extra question data for different question types when get_question_template_data_is_called.
 add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question', 'multiple_choice_load_question_data' ), 10, 3 );
 add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question', 'gap_fill_load_question_data' ), 10, 3 );
 add_filter( 'sensei_get_question_template_data', array( 'Sensei_Question', 'file_upload_load_question_data' ), 10, 3 );
@@ -318,4 +318,4 @@ add_action( 'sensei_teacher_archive_course_loop_before', array( 'Sensei_Teacher'
  *
  * Frontend notices may display on any post, page or custom post type (used in Sensei blocks).
  */
-add_action( 'init', array( $sensei->notices, 'maybe_print_notices' ) );
+add_action( 'wp_body_open', array( $sensei->notices, 'maybe_print_notices' ) );

@@ -71,7 +71,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
-	public function testPrepareItems_DefaultDateStartedFilterSet_SetsMatchingItems() {
+	public function testPrepareItems_DefaultDateFilterSet_SetsMatchingItems() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
 
@@ -103,6 +103,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = [
+			$user1_id,
 			$user2_id,
 			$user3_id,
 			$user4_id,
@@ -149,7 +150,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = sprintf(
-			'<a class="button button-primary" href="http://example.org/wp-admin/edit.php?page=sensei_reports&#038;course_id=%d&#038;view=lesson&#038;sensei_report_download=%s-%s-lessons-overview&#038;post_type=course&#038;start_date=2022-03-01&#038;end_date=2022-03-02&#038;s=course&#038;user_id=%d&#038;_sdl_nonce=%s">Export all rows (CSV)</a>',
+			'<a class="button button-primary" href="http://example.org/wp-admin/admin.php?page=sensei_reports&#038;course_id=%d&#038;view=lesson&#038;sensei_report_download=%s-%s-lessons-overview&#038;start_date=2022-03-01&#038;end_date=2022-03-02&#038;s=course&#038;user_id=%d&#038;_sdl_nonce=%s">Export all rows (CSV)</a>',
 			$course->ID,
 			$user->user_nicename,
 			$course->post_name,

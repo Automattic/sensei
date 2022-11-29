@@ -1,0 +1,168 @@
+:root {
+	--sensei-lm-header-height: 65px;
+	--header-progress-bar-height: 4px;
+	--sensei-lm-sidebar-width: 300px;
+	--content-padding: 32px;
+}
+
+body.sensei-course-theme {
+	background: var(--sensei-background-color);
+	--top-offset: var(--sensei-wpadminbar-offset, 0px);
+	padding: 0!important;
+	margin: 0!important;
+}
+
+.wp-site-blocks {
+	padding: 0!important;
+	margin: 0!important;
+	// This var needs to be in another level because we update the `--sensei-lm-header-height` in the body.
+	--full-header-height: calc(var(--sensei-lm-header-height) + var(--top-offset));
+}
+
+.sensei-course-theme__frame {
+
+	.wp-block-group__inner-container {
+		display: inherit;
+		flex: 1;
+		align-items: inherit;
+		justify-content: inherit;
+		flex-wrap: inherit;
+		flex-direction: inherit;
+		gap: inherit;
+		max-width: unset !important;
+		> * {
+			max-width: unset !important;
+			margin: 0 !important;
+		}
+	}
+	.wp-block-columns .wp-block-column > * {
+		margin: 0;
+	}
+
+	.sensei-block-wrapper {
+		margin: 0;
+	}
+
+	section {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+}
+
+.sensei-course-theme {
+	background-color: var(--sensei-background-color);
+
+	&__columns, &__header {
+		margin: 0 !important;
+
+	}
+
+	&__header {
+		margin: 0;
+		position: fixed;
+		left: 0;
+		right: 0;
+		top: var(--top-offset);
+		background-color: var(--sensei-background-color);
+		z-index: 100;
+	}
+
+	&__columns {
+		margin-top: var(--sensei-lm-header-height) !important;
+	}
+
+	&__sidebar {
+		top: var(--full-header-height);
+
+		@media screen and (min-width: $breakpoint ) {
+			&--hidden {
+				.sensei-course-theme__sidebar__footer,
+				.sensei-course-theme__sidebar__content .wp-block-group__inner-container > *:not(.sensei-course-theme__focus-mode-toggle) {
+					visibility: hidden;
+				}
+			}
+		}
+
+		&__content, &__footer {
+			margin: 0 !important;
+			padding: 12px;
+			padding-bottom: 12px;
+		}
+
+		&__content {
+			flex: 1;
+		}
+		&__footer {
+			gap: 12px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding: 12px;
+			> *, > .wp-block-group__inner-container > * {
+				width: unset!important;
+			}
+
+		}
+	}
+
+	&__main-content ~ &__sidebar {
+		left: unset;
+		right: 0;
+		border-right: unset;
+		border-left: 1px solid var(--border-color);
+
+	}
+
+	&__main-content {
+		padding: 32px var(--content-padding);
+		margin-right: var(--sensei-lm-sidebar-width) !important;
+
+		// A Divi fix since it doesn't load Gutenberg block library styles.
+		@at-root {
+			.et_pb_pagebuilder_layout & {
+				flex: 1;
+			}
+		}
+	}
+
+	&__sidebar ~ &__main-content {
+		margin-right: unset ! important;
+		margin-left: var(--sensei-lm-sidebar-width) !important;
+	}
+
+	&__header {
+		&__container {
+			display: flex;
+			align-items: center !important;
+			justify-content: space-between;
+			flex-wrap: nowrap;
+			padding: 0 24px;
+			margin: 0 !important;
+			gap: 24px!important;
+			height: calc(var(--sensei-lm-header-height) - var(--header-progress-bar-height));
+		}
+
+		&__left {
+			display: flex;
+			align-items: center;
+			gap: 24px;
+			flex: 1 1 auto !important;
+		}
+
+		&__navigation {
+			display: flex;
+			align-items: center;
+			gap: 24px;
+
+			// Override style from block-library.
+			&.wp-block-column:not(:only-child) {
+				flex: 0 0 auto !important;
+			}
+		}
+	}
+
+	&__actions {
+		flex: 0 0 auto !important;
+	}
+
+}

@@ -1,8 +1,230 @@
-.wp-block-sensei-lms-course-list {
-	.wp-block-post-title {
-		text-align: left;
+$block: '.wp-block-sensei-lms-course-list';
+
+@mixin featured-label {
+	background-color: var(--wp--preset--color--background, #1d2327);
+	border-radius: 2px;
+	color: var(--wp--preset--color--foreground, #ffffff);
+	font-size: 11px;
+	line-height: 16px;
+	padding: 3px 6px;
+	text-decoration: none;
+	white-space: nowrap;
+	z-index: 1000;
+}
+
+/* Match styles applied to block on single course page. */
+#{$block} {
+	.wp-block-post {
+		border: 0;
+		margin: 0 0 1.618em;
+		padding: 0 0 25px;
 	}
-	.hide-url-underline > a  {
+
+	select {
+		background-position-y: center;
+	}
+
+	.wp-block-post-template {
+		.wp-block-post-featured-image {
+			margin: 0 auto 1.618em;
+		}
+	}
+
+	/* Featured label overlaid on image. */
+	.sensei-lms-course-list-featured-label__image-wrapper {
+		position: relative;
+
+		.sensei-lms-course-list-featured-label__text {
+			@include featured-label;
+
+			display: block;
+			position: absolute;
+			top: 18px;
+			left: 18px;
+		}
+	}
+
+	/* Featured label beside course categories. */
+	.sensei-lms-course-list-featured-label__meta-wrapper {
+		display: flex;
+		flex-direction: row;
+
+		.sensei-lms-course-list-featured-label__text {
+			@include featured-label;
+
+			display: block;
+			height: max-content;
+			margin-right: 10px;
+		}
+	}
+
+	&--is-grid-view {
+		.wp-block-sensei-lms-course-list-filter {
+			max-width: none;
+		}
+
+		.wp-block-post {
+			display: flex;
+
+			& > .wp-block {
+				width: 100%;
+			}
+
+			.wp-block-group {
+				&, .wp-block-group__inner-container {
+					display: flex;
+					flex-direction: column;
+					width: 100%;
+					gap: 18px;
+
+					& > * {
+						margin-block-start: 0;
+						margin-block-end: 0;
+					}
+
+					.wp-block-post-title {
+						line-height: 41px;
+						text-align: left;
+					}
+
+					.wp-block-sensei-lms-course-overview {
+						flex: 1;
+					}
+
+					figure,
+					.wp-block,
+					.sensei-lms-course-list-featured-label__text,
+					.wp-block-post-featured-image,
+					.wp-block-sensei-lms-course-progress{
+						margin: 0;
+					}
+
+					.sensei-lms-course-list-featured-label__text {
+						margin-right: 10px;
+					}
+
+					.sensei-cta > * {
+						margin: 0;
+					}
+				}
+				.wp-block-group__inner-container {
+					height: 100%;
+				}
+			}
+
+			.sensei-block-wrapper {
+				padding: 5px 0;
+			}
+		}
+
+		@media ( max-width: 599px ) {
+			.wp-block-post-template.is-flex-container li.course {
+				width: 100%;
+			}
+		}
+	}
+
+	@media ( min-width: 782px ) {
+		&--is-list-view {
+			.wp-block-sensei-lms-button-take-course,
+			.wp-block-sensei-lms-button-continue-course,
+			.wp-block-sensei-lms-button-view-results {
+				text-align: right;
+			}
+		}
+	}
+}
+
+/* Divi overrides */
+#left-area #{$block} {
+	.wp-block-post-template {
+		list-style: none;
+		margin-left: 0;
+		padding: 1.25em;
+	}
+}
+
+/* Hide featured label when not inside Course List. */
+.sensei-lms-course-list-featured-label__text {
+	display: none;
+}
+
+.sensei-course-theme-course-list-pattern {
+	.wp-block-post-title {
+		font-size: var( --wp--preset--font-size--x-large, 3rem );
+	}
+
+	.sensei-course-list-all-courses-link {
+		font-size: var( --wp--preset--font-size--x-small, 1.125rem );
+		font-family: var(--wp--preset--font-family--system);
+	}
+
+	.sensei-course-list-title-no-underline a {
 		text-decoration: none;
+	}
+
+	.sensei-post-excerpt-no-margin > p {
+		margin: 0px;
+	}
+
+	.wp-block-post-excerpt {
+		flex: 1;
+		font-size: var( --wp--custom--typography--font-sizes--normal );
+	}
+
+	.sensei-cta a {
+		text-decoration: none;
+	}
+
+	.wp-block-post-author__name {
+		font-family: var( --wp--preset--font-family--system );
+		font-size: var( --wp--preset--font-size--small, 1.125rem );
+	}
+
+	& #{$block} .sensei-lms-course-list-featured-label__text {
+		background-color: var( --wp--preset--color--foreground );
+		color: var( --wp--preset--color--background );
+	}
+
+	& #{$block} .wp-block-post {
+		margin-bottom: 0px;
+		padding-bottom: 0px;
+	}
+
+	& #{$block} .wp-block-post-featured-image {
+		margin: 0px;
+	}
+
+	#{$block}--is-list-view {
+		.wp-block-columns {
+			margin-bottom: 0px;
+		}
+
+		.wp-block-post-template {
+			li:not(:last-child) {
+				margin-bottom: 40px;
+			}
+		}
+	}
+
+	.wp-block-post-author {
+		align-items: center;
+	}
+
+	.wp-block-post-author__avatar {
+		line-height: 1;
+		font-size: 0px;
+	}
+
+	.wp-block-post-author__avatar {
+		margin-right: 20px;
+	}
+
+	.wp-block-post-excerpt__excerpt {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 4;
 	}
 }

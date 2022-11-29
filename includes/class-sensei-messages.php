@@ -125,7 +125,7 @@ class Sensei_Messages {
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				__( 'Messages', 'sensei-lms' ),
 				__( 'Messages', 'sensei-lms' ),
 				'edit_courses',
@@ -654,13 +654,13 @@ class Sensei_Messages {
 		if ( is_single() && is_singular( $this->post_type )
 			|| is_post_type_archive( $this->post_type ) ) {
 
-			if ( isset( $my_courses_url ) ) {
+			$permalink = get_permalink();
 
-				wp_redirect( $my_courses_url, 303 );
+			if ( isset( $my_courses_url ) ) {
+				wp_safe_redirect( add_query_arg( 'redirect_to', $permalink, $my_courses_url ), 303 );
 				exit;
 			} else {
-
-				wp_redirect( home_url( '/wp-login.php' ), 303 );
+				wp_safe_redirect( home_url( '/wp-login.php' ), 303 );
 				exit;
 			}
 		}

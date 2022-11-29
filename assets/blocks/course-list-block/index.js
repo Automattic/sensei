@@ -3,10 +3,23 @@
  */
 import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
-import { list } from '@wordpress/icons';
 import { select, subscribe } from '@wordpress/data';
+
+/**
+ * Internal dependencies
+ */
+import './hooks';
+
+/**
+ * Internal dependencies
+ */
+import icon from '../../icons/course-list.svg';
+
+/**
+ * Internal dependencies
+ */
+import FeaturedLabel from './featured-label';
 import { addFilter } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -28,9 +41,9 @@ export const registerCourseListBlock = () => {
 
 	registerBlockVariation( 'core/query', {
 		name: 'sensei-lms/course-list',
-		title: __( 'Course List (Beta)', 'sensei-lms' ),
+		title: __( 'Course List', 'sensei-lms' ),
 		description: __( 'Show a list of courses.', 'sensei-lms' ),
-		icon: list,
+		icon,
 		category: 'sensei-lms',
 		keywords: [
 			__( 'Course', 'sensei-lms' ),
@@ -71,10 +84,15 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 	// eslint-disable-next-line no-undef
 	const observer = new MutationObserver( () => {
 		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+
+		if ( 'core/query' !== selectedBlock?.name ) {
+			return;
+		}
+
 		if (
-			'core/query' === selectedBlock?.name &&
-			'wp-block-sensei-lms-course-list' ===
-				selectedBlock?.attributes?.className
+			selectedBlock?.attributes?.className?.includes(
+				'wp-block-sensei-lms-course-list'
+			)
 		) {
 			hideUnnecessarySettingsForCourseList();
 		}
@@ -119,75 +137,89 @@ const hideUnnecessarySettingsForCourseList = () => {
 	} );
 };
 
-let isCourseListBlockSelected = false;
+/**
+ * Add a HOC to a featured image block.
+ *
+ * @param {Object} settings Block settings.
+ * @param {string} name     Block name.
+ */
+export function addWrapperAroundFeaturedImageBlock( settings, name ) {
+	if ( 'core/post-featured-image' !== name ) {
+		return settings;
+	}
 
-const withQueryLoopPatternsHiddenForCourseList = ( BlockEdit ) => {
-	return ( props ) => {
-		const isQueryLoopBlock = 'core/query' === props.name;
-		const isCourseListBlock =
-			isQueryLoopBlock &&
-			'wp-block-sensei-lms-course-list' === props.attributes.className;
+	const BlockEdit = settings.edit;
 
-		if ( isCourseListBlock && props.isSelected ) {
-			isCourseListBlockSelected = true;
-		} else if ( props.isSelected ) {
-			isCourseListBlockSelected = false;
-		}
+	settings = {
+		...settings,
+		edit: ( props ) => {
+			const shouldWrap =
+				props.context?.postType === 'course' &&
+				!! props.context?.queryId;
 
-		if (
-			isCourseListBlockSelected &&
-			isQueryLoopBlock &&
-			! isCourseListBlock &&
-			! isBlockAlreadyAddedInEditor( props.clientId )
-		) {
-			hideCourseListPatternsCarouselViewControl();
-			hideNonCourseListBlockPatternContainers();
-			return <Fragment />;
-		}
-		return <BlockEdit { ...props } />;
+			if ( ! shouldWrap ) {
+				return <BlockEdit { ...props } />;
+			}
+
+			return (
+				<FeaturedLabel
+					postId={ props.context.postId }
+					isFeaturedImage={ true }
+				>
+					<BlockEdit { ...props } />
+				</FeaturedLabel>
+			);
+		},
 	};
-};
+	return settings;
+}
 
 addFilter(
-	'editor.BlockEdit',
+	'blocks.registerBlockType',
 	'sensei-lms/course-list-block',
-	withQueryLoopPatternsHiddenForCourseList
+	addWrapperAroundFeaturedImageBlock
 );
 
-// Hide patterns control so only Grid view can be selected.
-const hideCourseListPatternsCarouselViewControl = () => {
-	const patternsControlClass =
-		'.block-editor-block-pattern-setup__display-controls';
-	// Hide a carousel control button and switch to grid view.
-	const controls = document.querySelectorAll( `${ patternsControlClass }` );
-	controls.forEach( ( control ) => {
-		const controlButtons = control.querySelectorAll( 'button' );
-		// Select Grid view.
-		controlButtons[ 1 ].click();
+/**
+ * Add a HOC to a featured course categories block.
+ *
+ * @param {Object} settings Block settings.
+ * @param {string} name     Block name.
+ */
+export function addWrapperAroundCourseCategoriesBlock( settings, name ) {
+	if ( 'sensei-lms/course-categories' !== name ) {
+		return settings;
+	}
 
-		// Hide all control buttons.
-		controlButtons.forEach( ( button ) => {
-			button.style.display = 'none';
-		} );
-	} );
-};
+	const BlockEdit = settings.edit;
+	settings.attributes.align = false;
 
-const isBlockAlreadyAddedInEditor = ( clientId ) => {
-	return !! document.getElementById( 'block-' + clientId );
-};
+	settings = {
+		...settings,
+		edit: ( props ) => {
+			const shouldWrap =
+				props.context?.postType === 'course' &&
+				!! props.context?.queryId;
 
-// Hide non course list patterns.
-const hideNonCourseListBlockPatternContainers = () => {
-	const patternsClass = '.block-editor-block-pattern-setup-list__list-item';
-	const customPatternDescription = 'course-list-element';
+			if ( ! shouldWrap ) {
+				return <BlockEdit { ...props } />;
+			}
 
-	const patterns = document.querySelectorAll( `${ patternsClass }` );
-	patterns.forEach( ( pattern ) => {
-		const isCourseListPattern = [
-			...pattern.querySelectorAll( 'div' ),
-		].find( ( e ) => e.innerText === customPatternDescription );
-		if ( ! isCourseListPattern ) {
-			pattern.style.display = 'none';
-		}
-	} );
-};
+			return (
+				<FeaturedLabel
+					postId={ props.context.postId }
+					isFeaturedImage={ false }
+				>
+					<BlockEdit { ...props } />
+				</FeaturedLabel>
+			);
+		},
+	};
+	return settings;
+}
+
+addFilter(
+	'blocks.registerBlockType',
+	'sensei-lms/course-categories',
+	addWrapperAroundCourseCategoriesBlock
+);

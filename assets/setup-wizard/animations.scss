@@ -1,0 +1,31 @@
+@keyframes slideInFromBottom {
+	0% {
+		transform: translateY(500px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 100%;
+	}
+}
+
+@keyframes slideDown {
+	0% {
+		opacity: 0;
+		max-height: 0;
+	}
+	100% {
+		transform: scaleY(1);
+		max-height: 100px;
+	}
+}
+
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 100%;
+	}
+}

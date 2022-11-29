@@ -128,11 +128,8 @@ class Sensei_REST_API_Lessons_Controller extends WP_REST_Posts_Controller {
 	 * @return array Modified data object with additional fields.
 	 */
 	protected function add_additional_fields_to_object( $prepared, $request ) {
-		global $pagenow;
 
-		if ( ! Sensei()->quiz->is_block_based_editor_enabled() || 'post-new.php' === $pagenow ) {
-			return $prepared;
-		}
+		$prepared = parent::add_additional_fields_to_object( $prepared, $request );
 
 		$context = ! empty( $request['context'] ) ? $request['context'] : 'view';
 		if ( 'edit' === $context && isset( $prepared['content']['raw'] ) ) {

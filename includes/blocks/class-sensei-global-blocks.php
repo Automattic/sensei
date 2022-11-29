@@ -27,8 +27,10 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Block_Take_Course();
 		new Sensei_Block_View_Results();
 		new Sensei_Continue_Course_Block();
-		new Sensei_Course_Progress_Block();
 		new Sensei_Course_Categories_Block();
+		new Sensei_Course_List_Filter_Block();
+		new Sensei_Course_Progress_Block();
+		new Sensei_Course_Overview_Block();
 	}
 
 	/**
@@ -41,6 +43,14 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 			'sensei-global-blocks-style',
 			'blocks/global-blocks-style.css'
 		);
+		if ( ! is_admin() ) {
+			Sensei()->assets->enqueue(
+				'sensei-course-list-filter',
+				'blocks/course-list-filter-block/course-list-filter.js',
+				[],
+				true
+			);
+		}
 	}
 
 	/**

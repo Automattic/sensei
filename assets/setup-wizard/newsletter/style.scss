@@ -1,0 +1,22 @@
+.sensei-setup-wizard {
+	&__newsletter-illustration {
+		margin: 0 calc(-15% - $small-horizontal-padding) (-$small-vertical-padding);
+
+		@media (min-width: $small-screen-break) {
+			margin: 0 calc(-15% - $big-horizontal-padding) (-$big-vertical-padding);
+		}
+	}
+}
+
+.sensei-signup-form {
+	text-align: left;
+
+	&__button {
+		width: 100%;
+		margin-top: 18px;
+
+		@media (min-width: $small-screen-break) {
+			margin-top: 8px;
+		}
+	}
+}

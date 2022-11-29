@@ -1,0 +1,92 @@
+$breakpoint: 783px;
+
+:root {
+	--sensei-lm-header-height: var( --sensei-lm-header-height, 65px);
+	--header-progress-bar-height: 4px;
+	--sensei-lm-sidebar-width: 300px;
+	--content-padding: 32px;
+}
+
+body.sensei-course-theme {
+	--top-offset: var(--sensei-wpadminbar-offset, 0px);
+	--full-header-height: calc(var(--sensei-lm-header-height) + var(--top-offset));
+}
+
+.sensei-course-theme__frame {
+
+	.sensei-block-wrapper {
+		margin: 0;
+	}
+
+	section {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+}
+
+.wp-block-sensei-lms-ui {
+	box-sizing: border-box;
+}
+
+.sensei-course-theme {
+
+	&__header {
+		margin: 0;
+		position: fixed;
+		left: 0;
+		right: 0;
+		height: var(--sensei-lm-header-height);
+		top: var(--top-offset);
+		background-color: var(--sensei-background-color);
+		z-index: 100;
+		display: flex;
+		flex-direction: column;
+		& > :first-child {
+			flex: 1;
+		}
+
+		img {
+			max-height: var(--sensei-lm-header-height);
+		}
+	}
+
+	&__header + * {
+		margin-top: var(--sensei-lm-header-height) !important;
+		display: flow-root;
+	}
+
+	&__spacer-flex {
+		flex: 1;
+	}
+
+	&__columns {
+		--max-content-size: calc(100vw - var(--sensei-lm-sidebar-width) - 2 * var(--content-padding));
+
+		&__main-content ~ &__sidebar {
+			left: unset;
+			right: 0;
+			border-right: unset;
+			border-left: 1px solid var(--border-color);
+
+		}
+
+		&__main-content {
+			position: relative;
+			padding: 32px 0;
+			margin-right: var(--sensei-lm-sidebar-width) !important;
+
+			// A Divi fix since it doesn't load Gutenberg block library styles.
+			@at-root {
+				.et_pb_pagebuilder_layout & {
+					flex: 1;
+				}
+			}
+		}
+
+		&__sidebar ~ &__main-content {
+			margin-right: unset ! important;
+			margin-left: var(--sensei-lm-sidebar-width) !important;
+		}
+	}
+}
+

@@ -82,7 +82,7 @@ export const getCurrentTime = ( player ) =>
  */
 export const setCurrentTime = ( player, seconds ) =>
 	new Promise( ( resolve ) => {
-		if ( player.i.dataset.hasPlayed ) {
+		if ( player.getIframe().dataset.hasPlayed ) {
 			player.seekTo( seconds );
 			resolve();
 		} else {

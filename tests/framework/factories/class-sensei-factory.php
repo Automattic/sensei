@@ -177,6 +177,15 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	}
 
 	/**
+	 * Generate multiple courses.
+	 *
+	 * @param int $number
+	 */
+	public function generate_many_courses( $number = 1 ) {
+		$this->basic_test_course_ids = $this->course->create_many( $number );
+	}
+
+	/**
 	 * Generic course, lesson, quiz generator.
 	 *
 	 * @param array $args

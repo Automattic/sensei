@@ -289,6 +289,8 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		<input type="hidden" name="timezone">
 
 		<?php
+		ob_start();
+
 		/**
 		 * Fires before the top filter inputs on the reports overview screen.
 		 *
@@ -307,7 +309,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 			<?php $this->output_course_select_input(); ?>
 		<?php endif ?>
 
-		<?php if ( in_array( $this->type, [ 'courses', 'users' ], true ) ) : ?>
+		<?php if ( 'courses' === $this->type || ( 'users' === $this->type && $this->data_provider->get_is_last_activity_filter_enabled() ) ) : ?>
 			<label for="sensei-start-date-filter">
 				<?php esc_html_e( 'Last Activity', 'sensei-lms' ); ?>:
 			</label>
@@ -342,10 +344,15 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		 * @param {string} $report_type The report type.
 		 */
 		do_action( 'sensei_reports_overview_after_top_filters', $this->type );
-		?>
 
-		<?php
-		submit_button( __( 'Filter', 'sensei-lms' ), '', '', false );
+		$filters_content = ob_get_clean();
+
+		if ( ! empty( trim( $filters_content ) ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content already escaped.
+			echo $filters_content;
+
+			submit_button( __( 'Filter', 'sensei-lms' ), '', '', false );
+		}
 	}
 
 	/**
@@ -399,7 +406,6 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'page'                   => $this->page_slug,
 				'view'                   => $this->type,
 				'sensei_report_download' => $report,
-				'post_type'              => $this->post_type,
 				'orderby'                => $this->get_orderby_value(),
 				'order'                  => $this->get_order_value(),
 				'course_filter'          => $this->get_course_filter_value(),
@@ -408,7 +414,7 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				'timezone'               => rawurlencode( $this->get_timezone() ),
 				's'                      => $this->get_search_value(),
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 
 		/**

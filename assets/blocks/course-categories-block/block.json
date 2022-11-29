@@ -2,37 +2,27 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
 	"name": "sensei-lms/course-categories",
+	"title": "Course Categories",
+	"description": "Show the course categories",
 	"category": "sensei-lms",
 	"textdomain": "sensei-lms",
+	"keywords": [
+		"course",
+		"lessons",
+		"categories"
+	],
 	"attributes": {
-		"align": {
-			"type": "string",
-			"default": "left"
+		"previewCategories": {
+		    "type": "array"
 		},
-		"textColor": {
+		"textAlign": {
 			"type": "string"
 		},
-		"backgroundColor": {
-			"type": "string"
-		},
-		"customBackgroundColor": {
-			"type": "string"
-		},
-		"customTextColor": {
-			"type": "string"
-		},
-        "defaultBackgroundColor": {
-			"type": "string"
-		},
-		"defaultTextColor": {
-			"type": "string"
-		},
-		"fontSize": {
-			"type": "string",
-			"default": "small"
-		}
+        "options": {
+            "type": "object"
+        }
 	},
-	"usesContext": [ "postId", "postType" ],
+	"usesContext": [ "postId", "postType", "queryId" ],
 	"supports": {
 		"html": false,
 		"spacing": {
@@ -40,12 +30,13 @@
 			"padding": true,
 			"blockGap": true
 		},
-		"textAlign": true,
-		"align": true,
-		"alignWide": true,
+		"align": false,
+		"alignWide": false,
+		"className": true,
 		"typography": {
 			"lineHeight": true,
 			"fontSize": true,
+			"__experimentalFontFamily": true,
 			"__experimentalFontStyle": true,
 			"__experimentalFontWeight": true,
 			"__experimentalLetterSpacing": true,

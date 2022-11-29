@@ -82,6 +82,15 @@ class Sensei_Blocks {
 
 		Sensei()->assets->register( 'sensei-blocks-frontend', 'blocks/frontend.js', [], true );
 		Sensei()->assets->register( 'sensei-theme-blocks', 'css/sensei-theme-blocks.css' );
+		Sensei()->assets->register( 'sensei-learning-mode-compat', 'css/learning-mode-compat.css' );
+
+		if ( ! current_theme_supports( 'sensei-learning-mode' ) ) {
+			Sensei()->assets->register( 'sensei-learning-mode', 'css/learning-mode.css', [ 'sensei-theme-blocks', 'sensei-learning-mode-compat' ] );
+		} else {
+			Sensei()->assets->register( 'sensei-learning-mode', 'css/learning-mode.css', [ 'sensei-theme-blocks' ] );
+		}
+
+		Sensei()->assets->register( 'sensei-learning-mode-editor', 'css/learning-mode.editor.css', [ 'sensei-learning-mode', 'sensei-theme-blocks' ] );
 
 		wp_register_script( 'sensei-youtube-iframe-api', 'https://www.youtube.com/iframe_api', [], 'unversioned', false );
 		wp_register_script( 'sensei-vimeo-iframe-api', 'https://player.vimeo.com/api/player.js', [], 'unversioned', false );
