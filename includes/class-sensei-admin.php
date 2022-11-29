@@ -2083,7 +2083,14 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course', 'lesson', Sensei_Home::SCREEN_ID ], true ) ) {
+		$screens = [
+			'course',
+			'lesson',
+			Sensei_Home::SCREEN_ID,
+			'admin_page_' . Sensei_Setup_Wizard::instance()->page_slug,
+		];
+
+		if ( in_array( $screen->id, $screens, true ) ) {
 			?>
 			<script>
 				window.sensei = window.sensei || {};
