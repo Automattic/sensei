@@ -1,7 +1,7 @@
 :root {
-	--header-height: 65px;
+	--sensei-lm-header-height: 65px;
 	--header-progress-bar-height: 4px;
-	--sidebar-width: 300px;
+	--sensei-lm-sidebar-width: 300px;
 	--content-padding: 32px;
 }
 
@@ -14,8 +14,8 @@ body.sensei-course-theme {
 .wp-site-blocks {
 	padding: 0!important;
 	margin: 0!important;
-	// This var needs to be in another level because we update the `--header-height` in the body.
-	--full-header-height: calc(var(--header-height) + var(--top-offset));
+	// This var needs to be in another level because we update the `--sensei-lm-header-height` in the body.
+	--full-header-height: calc(var(--sensei-lm-header-height) + var(--top-offset));
 }
 
 .sensei-course-theme__frame {
