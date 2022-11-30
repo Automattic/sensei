@@ -3,7 +3,7 @@
  */
 import { Button, createSlotFill } from '@wordpress/components';
 import { store as editorStore } from '@wordpress/editor';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -25,16 +25,27 @@ const { Fill, Slot } = createSlotFill( 'Patterns Upsell' );
  * @param {Function} props.onCompletion On completion callback.
  */
 const PatternsStep = ( { title, replaces, onCompletion } ) => {
-	const { resetEditorBlocks } = useDispatch( editorStore );
+	const { resetEditorBlocks, editPost } = useDispatch( editorStore );
 	const logEvent = useLogEvent();
+	const editorSettings = useSelect( ( select ) =>
+		select( editorStore ).getEditorSettings()
+	);
+	const availableTemplates = editorSettings.availableTemplates;
 
-	const onChoose = ( blocks, name ) => {
+	const onChoose = ( blocks, name, template ) => {
 		const newBlocks = replaces
 			? replacePlaceholders( blocks, replaces )
 			: blocks;
 
 		resetEditorBlocks( newBlocks );
 		onCompletion();
+
+		const templateSlug =
+			template && Object.keys( availableTemplates ).includes( template )
+				? template
+				: '';
+
+		editPost( { template: templateSlug } );
 
 		logEvent( 'editor_wizard_choose_pattern', { name } );
 	};
