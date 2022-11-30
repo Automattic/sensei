@@ -542,7 +542,7 @@ class Sensei_Lesson {
 					$lesson_status
 				);
 
-				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->get_posts() );
+				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->posts );
 			}
 
 			$lessons = array_merge( $in_module_lessons, $lessons );
