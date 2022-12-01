@@ -32,7 +32,7 @@ class Sensei_Quiz {
 	/**
 	 * The main plugin filename.
 	 *
-	 * @deprecated $$next-version$$ This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
+	 * @deprecated 4.9.0 This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
 	 * @var string
 	 */
 	public $file;

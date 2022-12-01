@@ -93,7 +93,7 @@ const CourseGeneralSidebar = () => {
 	/**
 	 * Allows to show or hide the multiple teachers upgrade.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
 	 */
@@ -105,7 +105,7 @@ const CourseGeneralSidebar = () => {
 	/**
 	 * Returns the component to render after the teacher course setting.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @param {Function} The existing component hooked into the filter.
 	 */

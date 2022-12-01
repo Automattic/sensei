@@ -121,7 +121,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int     $post_ID      Post ID.
@@ -144,7 +144,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
@@ -164,7 +164,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Remove teacher id from term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
@@ -2595,7 +2595,7 @@ class Sensei_Core_Modules {
 		 * Filters the module terms when ownership is being checked for them.
 		 *
 		 * @hook   sensei_filter_module_terms_by_owner
-		 * @since  $$next-version$$
+		 * @since  4.9.0
 		 *
 		 * @param  {WP_Term[]} $user_terms The terms after applying the filter by owner.
 		 * @param  {WP_Term[]|int[]} $terms The original terms before the filtering was applied.
