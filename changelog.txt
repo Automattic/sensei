@@ -20,6 +20,7 @@
     * Address testing feedback for course settings sidebar [#6161](https://github.com/Automattic/sensei/pull/6161)
     * Course Settings Sidebar [#6156](https://github.com/Automattic/sensei/pull/6156)
     * Create new course general sidebar [#6077](https://github.com/Automattic/sensei/pull/6077)
+    * Rename Course Settings sidebar, show arrow [#6197](https://github.com/Automattic/sensei/pull/6197) 
 * Add: Add/sensei contact link atomic [#6177](https://github.com/Automattic/sensei/pull/6177)
 * Add: Switch icon to SVG for Calypso compatibility [#6160](https://github.com/Automattic/sensei/pull/6160)
 * Add: Sensei on Dotcom - Connect Sensei Home tasks statuses with Calypso Launchpad tasks statuses [#6124](https://github.com/Automattic/sensei/pull/6124)
