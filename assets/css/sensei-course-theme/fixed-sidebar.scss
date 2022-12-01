@@ -29,7 +29,7 @@ $breakpoint: 783px;
 		}
 
 		&__header ~ &__columns &__sidebar {
-			top: var(--full-header-height, 0) !important;
+			top: var(--full-header-height) !important;
 		}
 
 		&__columns &__main-content ~ &__sidebar {
