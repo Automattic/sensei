@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import classnames from 'classnames';
 
@@ -12,6 +12,7 @@ import { useLayoutEffect, useState, useRef } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { H } from '../../shared/components/section';
 import BigScreen from './big-screen';
@@ -26,6 +27,10 @@ const Theme = () => {
 	const [ isScrolled, setIsScrolled ] = useState( false );
 	const themeContentRef = useRef();
 	const scrollOffset = 70;
+
+	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
+		'theme'
+	);
 
 	useLayoutEffect( () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
@@ -68,11 +73,16 @@ const Theme = () => {
 		goTo( 'tracking' );
 	};
 
+	const submitPage = () => {
+		submitStep( { installSenseiTheme: true }, { onSuccess: goToNextStep } );
+	};
+
 	return (
 		<>
 			{ isBigScreen && isScrolled && (
 				<div className="sensei-setup-wizard-theme-top-actions sensei-setup-wizard-theme-top-actions--enter-animation">
 					<button
+						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
 						onClick={ goToNextStep }
 					>
@@ -80,8 +90,9 @@ const Theme = () => {
 					</button>
 
 					<button
+						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-						onClick={ goToNextStep }
+						onClick={ submitPage }
 					>
 						{ __( 'Install the new Sensei theme', 'sensei-lms' ) }
 					</button>
@@ -111,10 +122,12 @@ const Theme = () => {
 				</div>
 
 				<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+					{ errorNotice }
 					<div className="sensei-setup-wizard__theme-actions">
 						<button
+							disabled={ isSubmitting }
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-							onClick={ goToNextStep }
+							onClick={ submitPage }
 						>
 							{ __(
 								'Install the new Sensei theme',
@@ -132,6 +145,7 @@ const Theme = () => {
 
 					<div className="sensei-setup-wizard__action-skip">
 						<button
+							disabled={ isSubmitting }
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
 							onClick={ goToNextStep }
 						>
