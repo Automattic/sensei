@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-12-01T16:32:01+00:00\n"
+"POT-Creation-Date: 2022-12-02T14:08:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: sensei-lms\n"
@@ -132,7 +132,7 @@ msgstr ""
 #: assets/dist/blocks/single-lesson.js:360
 #: assets/dist/course-theme/blocks/index.js:212
 #: assets/dist/js/admin/course-edit.js:58
-#: assets/js/admin/course-general-sidebar.js:39
+#: assets/js/admin/course-general-sidebar.js:40
 msgid "None"
 msgstr ""
 
@@ -923,8 +923,10 @@ msgstr ""
 #: assets/dist/blocks/quiz/index.js:864
 #: assets/dist/blocks/quiz/ordering-promo/index.js:63
 #: assets/dist/js/admin/course-edit.js:49
+#: assets/dist/js/admin/course-edit.js:73
 #: assets/dist/js/admin/course-edit.js:91
 #: assets/js/admin/course-access-period-promo-sidebar.js:19
+#: assets/js/admin/course-general-sidebar.js:142
 #: assets/js/admin/course-pricing-promo-sidebar.js:39
 msgid "Upgrade to Sensei Pro"
 msgstr ""
@@ -1221,7 +1223,7 @@ msgstr ""
 #: includes/admin/tools/views/html-enrolment-debug.php:67
 #: includes/class-sensei-course.php:896
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:211
+#: assets/js/admin/course-general-sidebar.js:208
 msgid "Manage Students"
 msgstr ""
 
@@ -2576,13 +2578,13 @@ msgstr ""
 
 #: includes/class-sensei-course.php:465
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:157
+#: assets/js/admin/course-general-sidebar.js:154
 msgid "Course Prerequisite"
 msgstr ""
 
 #: includes/class-sensei-course.php:478
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:178
+#: assets/js/admin/course-general-sidebar.js:175
 msgid "Featured Course"
 msgstr ""
 
@@ -2592,19 +2594,19 @@ msgstr ""
 
 #: includes/class-sensei-course.php:495
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:206
+#: assets/js/admin/course-general-sidebar.js:203
 msgid "Course Management"
 msgstr ""
 
 #: includes/class-sensei-course.php:511
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:192
+#: assets/js/admin/course-general-sidebar.js:189
 msgid "Course Notifications"
 msgstr ""
 
 #: includes/class-sensei-course.php:569
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:160
+#: assets/js/admin/course-general-sidebar.js:157
 msgid "No courses exist yet. Please add some first."
 msgstr ""
 
@@ -2653,7 +2655,7 @@ msgstr ""
 
 #: includes/class-sensei-course.php:897
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:218
+#: assets/js/admin/course-general-sidebar.js:215
 msgid "Manage Grading"
 msgstr ""
 
@@ -2771,7 +2773,7 @@ msgstr[1] ""
 
 #: includes/class-sensei-course.php:2330
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:194
+#: assets/js/admin/course-general-sidebar.js:191
 msgid "Disable notifications on this course?"
 msgstr ""
 
@@ -4640,7 +4642,7 @@ msgstr ""
 
 #: includes/class-sensei-settings.php:146
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:118
+#: assets/js/admin/course-general-sidebar.js:119
 msgid "General"
 msgstr ""
 
@@ -5160,7 +5162,7 @@ msgstr ""
 #: includes/class-sensei-teacher.php:248
 #: includes/class-sensei-teacher.php:1263
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:119
+#: assets/js/admin/course-general-sidebar.js:120
 msgid "Teacher"
 msgstr ""
 
@@ -8769,17 +8771,12 @@ msgid "Expires after"
 msgstr ""
 
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:139
+#: assets/js/admin/course-general-sidebar.js:140
 msgid "Multiple teachers?"
 msgstr ""
 
 #: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:145
-msgid "Upgrade to Pro!"
-msgstr ""
-
-#: assets/dist/js/admin/course-edit.js:73
-#: assets/js/admin/course-general-sidebar.js:180
+#: assets/js/admin/course-general-sidebar.js:177
 msgid "Feature this course."
 msgstr ""
 
