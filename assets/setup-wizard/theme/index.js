@@ -97,7 +97,7 @@ const Theme = () => {
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
 						onClick={ submitPage( true ) }
 					>
-						{ __( 'Install the new Sensei theme', 'sensei-lms' ) }
+						{ __( 'Get the Course theme', 'sensei-lms' ) }
 					</button>
 				</div>
 			) }
@@ -114,11 +114,11 @@ const Theme = () => {
 			>
 				<div className="sensei-setup-wizard__title">
 					<H className="sensei-setup-wizard__step-title">
-						{ __( 'Get new Sensei theme', 'sensei-lms' ) }
+						{ __( 'Install our default theme', 'sensei-lms' ) }
 					</H>
 					<p>
 						{ __(
-							"The new Sensei theme it's build from ground up with Learning Mode in mind to optimize your full site so that everything works smootly together.",
+							"'Course' is a free WordPress theme built to work perfectly with Sensei and courses. You can use any WordPress theme with Sensei, or active 'Course'.",
 							'sensei-lms'
 						) }
 					</p>
@@ -132,10 +132,7 @@ const Theme = () => {
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
 							onClick={ submitPage( true ) }
 						>
-							{ __(
-								'Install the new Sensei theme',
-								'sensei-lms'
-							) }
+							{ __( 'Get the Course theme', 'sensei-lms' ) }
 						</button>
 
 						<button
