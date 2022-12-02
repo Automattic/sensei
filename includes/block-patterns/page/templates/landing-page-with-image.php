@@ -11,25 +11,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"right":"20px","left":"20px","top":"62px","bottom":"97px"},"blockGap":"2.5rem","margin":{"top":"0","bottom":"0"}}},"className":"sensei-landing-pattern-header","layout":{"type":"constrained","contentSize":"1000px"}} -->
-<div class="wp-block-group alignfull sensei-landing-pattern-header" style="margin-top:0;margin-bottom:0;padding-top:62px;padding-right:20px;padding-bottom:97px;padding-left:20px"><!-- wp:columns {"verticalAlignment":null,"style":{"spacing":{"blockGap":{"top":"20px","left":"20px"}}}} -->
-	<div class="wp-block-columns"><!-- wp:column {"verticalAlignment":"center","width":"50%"} -->
+<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"right":"0px","left":"0px","top":"0px","bottom":"60px"},"blockGap":"2.5rem","margin":{"top":"0","bottom":"0"}}},"className":"sensei-landing-pattern-with-image-heading","layout":{"type":"constrained","contentSize":"1000px"}} -->
+<div class="wp-block-group alignfull sensei-landing-pattern-with-image-heading" style="margin-top:0;margin-bottom:0;padding-top:0px;padding-right:0px;padding-bottom:60px;padding-left:0px"><!-- wp:columns {"style":{"spacing":{"blockGap":{"top":"20px","left":"20px"}}}} -->
+	<div class="wp-block-columns"><!-- wp:column {"verticalAlignment":"center","width":"50%","layout":{"type":"default"}} -->
 		<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:50%"><!-- wp:group {"style":{"spacing":{"blockGap":"40px"}},"layout":{"type":"constrained"}} -->
 			<div class="wp-block-group"><!-- wp:heading {"textAlign":"left","level":1,"style":{"typography":{"textTransform":"uppercase","lineHeight":"0.9"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"textColor":"primary"} -->
 				<h1 class="has-text-align-left has-primary-color has-text-color" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:0.9;text-transform:uppercase"><?php echo esc_html__( 'grow your writing skills with course', 'sensei-lms' ); ?></h1>
 				<!-- /wp:heading -->
 
-				<!-- wp:group {"style":{"spacing":{"blockGap":"40px"}},"layout":{"type":"constrained","contentSize":"403px","justifyContent":"left"}} -->
-				<div class="wp-block-group"><!-- wp:paragraph {"align":"left","style":{"typography":{"letterSpacing":"-1%","lineHeight":"1.3"}},"textColor":"primary"} -->
-					<p class="has-text-align-left has-primary-color has-text-color" style="letter-spacing:-1%;line-height:1.3"><?php echo esc_html__( 'Writing is powerful! Allows you to articulate and explain yourself to others. When done well, it allows you to tell stories that could fascinate millions.', 'sensei-lms' ); ?></p>
-					<!-- /wp:paragraph -->
+				<!-- wp:group {"layout":{"type":"constrained","contentSize":"420px","justifyContent":"left"}} -->
+				<div class="wp-block-group"><!-- wp:paragraph {"align":"left","style":{"typography":{"lineHeight":"1.3"}},"textColor":"primary"} -->
+					<p class="has-text-align-left has-primary-color has-text-color" style="line-height:1.3"><?php echo esc_html__( 'Writing is powerful! Allows you to articulate and explain yourself to others. When done well, it allows you to tell stories that could fascinate millions.', 'sensei-lms' ); ?></p>
+					<!-- /wp:paragraph --></div>
+				<!-- /wp:group -->
 
-					<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"left"}} -->
-					<div class="wp-block-buttons"><!-- wp:button {"backgroundColor":"primary","textColor":"background","style":{"border":{"radius":"8px"}}} -->
-						<div class="wp-block-button"><a class="wp-block-button__link has-background-color has-primary-background-color has-text-color has-background wp-element-button" style="border-radius:8px"><?php echo esc_html__( 'START LEARNING NOW', 'sensei-lms' ); ?></a></div>
-						<!-- /wp:button --></div>
-					<!-- /wp:buttons --></div>
-				<!-- /wp:group --></div>
+				<!-- wp:columns -->
+				<div class="wp-block-columns"><!-- wp:column {"width":"70%","style":{"spacing":{}}} -->
+					<div class="wp-block-column" style="flex-basis:70%"><!-- wp:buttons {"align":"full","layout":{"type":"flex","flexWrap":"nowrap"}} -->
+						<div class="wp-block-buttons alignfull"><!-- wp:button {"backgroundColor":"primary","textColor":"background","width":100,"style":{"border":{"radius":"8px"}}} -->
+							<div class="wp-block-button has-custom-width wp-block-button__width-100"><a class="wp-block-button__link has-background-color has-primary-background-color has-text-color has-background wp-element-button" style="border-radius:8px"><?php echo esc_html__( 'START LEARNING NOW', 'sensei-lms' ); ?></a></div>
+							<!-- /wp:button --></div>
+						<!-- /wp:buttons --></div>
+					<!-- /wp:column -->
+
+					<!-- wp:column {"width":"50%"} -->
+					<div class="wp-block-column" style="flex-basis:50%"></div>
+					<!-- /wp:column --></div>
+				<!-- /wp:columns --></div>
 			<!-- /wp:group --></div>
 		<!-- /wp:column -->
 
