@@ -142,16 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- wp:group {"style":{"spacing":{"padding":{"left":"38px","top":"20px","bottom":"20px"}},"border":{"top":{"width":"0px","style":"none"},"right":{"width":"0px","style":"none"},"bottom":{"width":"0px","style":"none"},"left":{"color":"var:preset|color|foreground"}}},"className":"is-style-group-left-border","layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between"}} -->
 	<div class="wp-block-group is-style-group-left-border" style="border-top-style:none;border-top-width:0px;border-right-style:none;border-right-width:0px;border-bottom-style:none;border-bottom-width:0px;border-left-color:var(--wp--preset--color--foreground);padding-top:20px;padding-bottom:20px;padding-left:38px">
 		<!-- wp:heading {"textAlign":"left","style":{"typography":{"lineHeight":"1","textTransform":"uppercase"},"spacing":{"padding":{"top":"0px","right":"0px","bottom":"0px","left":"0px"}}},"fontFamily":"secondary"} -->
-		<h2 class="has-text-align-left has-secondary-font-family" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase">
-		<?php
-			echo wp_kses(
-				esc_html__( 'Keep track of the latest<br>news and lessons.<br>Every week in your inbox.', 'sensei-lms' ),
-				[
-					'br' => [],
-				]
-			);
-			?>
-			</h2>
+		<h2 class="has-text-align-left has-secondary-font-family" style="padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;line-height:1;text-transform:uppercase"><?php echo wp_kses( __( 'Keep track of the latest<br>news and lessons.<br>Every week in your inbox.', 'sensei-lms' ), [ 'br' => [] ] ); ?></h2>
 		<!-- /wp:heading -->
 
 		<!-- wp:buttons {"layout":{"type":"flex","justifyContent":"right","verticalAlignment":"center"}} -->
