@@ -23,11 +23,11 @@ const featureLabels = {
 /**
  * Get actions for the features to be installed.
  *
- * @param {Object}   stepData          The features step data.
- * @param {string[]} stepData.selected Selected features to be installed.
- * @param {Object[]} stepData.options  Features available to install.
+ * @param {Object}   featuresData          The features step data.
+ * @param {string[]} featuresData.selected Selected features to be installed.
+ * @param {Object[]} featuresData.options  Features available to install.
  *
- * @return {Object} Actions to install the selected features.
+ * @return {Array} Actions to install the selected features.
  */
 const getFeatureActions = ( { selected, options } ) => {
 	// Filter not activated features.
@@ -51,12 +51,31 @@ const getFeatureActions = ( { selected, options } ) => {
 };
 
 /**
+ * Get the action for the theme installation.
+ *
+ * @return {Object} Action to install the Sensei theme.
+ */
+const getThemeAction = () => ( {
+	label: __( 'Installing the Course theme', 'sensei-lms' ),
+	action: () => Promise.resolve(),
+} );
+
+/**
  * Features step for Setup Wizard.
  */
 const Features = () => {
-	const { stepData, submitStep, error: submitError } = useSetupWizardStep(
-		'features'
-	);
+	const {
+		stepData: featuresData,
+		submitStep,
+		error: submitError,
+	} = useSetupWizardStep( 'features' );
+	const { stepData: themeData } = useSetupWizardStep( 'theme' );
+
+	const installActions = getFeatureActions( featuresData );
+
+	if ( themeData.install_sensei_theme ) {
+		installActions.push( getThemeAction() );
+	}
 
 	// Create list of actions.
 	const actions = useMemo(
@@ -64,7 +83,7 @@ const Features = () => {
 			{
 				label: __( 'Applying your choices', 'sensei-lms' ),
 			},
-			...getFeatureActions( stepData ),
+			...installActions,
 			{
 				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
 				action: () => {
@@ -90,7 +109,7 @@ const Features = () => {
 				},
 			},
 		],
-		[ stepData, submitStep ]
+		[ featuresData, submitStep ]
 	);
 
 	const {
