@@ -10,12 +10,14 @@
     * Fix some issues with the teacher's Students view  [#6167](https://github.com/Automattic/sensei/pull/6167)
     * Prepare grading to support co-teachers. [#6157](https://github.com/Automattic/sensei/pull/6157)
     * Ensure quiz author is set correctly when the quiz is initially created [#6129](https://github.com/Automattic/sensei/pull/6129)
+    * Make upgrade CTA for co-teachers consistent with other CTAs [#6212](https://github.com/Automattic/sensei/pull/6212)
 * New: Course Theme
     * Update Featured label and course categories block styles [#6084](https://github.com/Automattic/sensei/pull/6084)
     * Add landing page patterns [#6169](https://github.com/Automattic/sensei/pull/6169)
     * Enable Learning Mode blocks to be configured by theme.json [#6067](https://github.com/Automattic/sensei/pull/6067)
     * Skip opinionated styles when the active theme declares support for it [#6066](https://github.com/Automattic/sensei/pull/6066)
     * Enable customization of the lesson status icons [#6070](https://github.com/Automattic/sensei/pull/6070)
+    * Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
 * New: Course Settings
     * Address testing feedback for course settings sidebar [#6161](https://github.com/Automattic/sensei/pull/6161)
     * Course Settings Sidebar [#6156](https://github.com/Automattic/sensei/pull/6156)
