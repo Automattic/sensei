@@ -8,6 +8,7 @@ import {
 	CheckboxControl,
 	SelectControl,
 	HorizontalRule,
+	ExternalLink,
 } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import apiFetch from '@wordpress/api-fetch';
@@ -137,13 +138,9 @@ const CourseGeneralSidebar = () => {
 			{ ! hideCoteachersUpgrade && (
 				<div className="sensei-course-coteachers-wrapper">
 					{ __( 'Multiple teachers?', 'sensei-lms' ) }{ ' ' }
-					<a
-						href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Upgrade to Pro!', 'sensei-lms' ) }
-					</a>
+					<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers">
+						{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
+					</ExternalLink>
 				</div>
 			) }
 
