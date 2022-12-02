@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Landing Page with Image.
  *
  * @package sensei-lms
