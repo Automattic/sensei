@@ -35,11 +35,14 @@ class Sensei_Setup_Wizard {
 		'features'  => [
 			'selected' => [],
 		],
+		'theme'     => [
+			'install_sensei_theme' => false,
+		],
 		'purpose'   => [
 			'selected' => [],
 			'other'    => '',
 		],
-		'__version' => '2',
+		'__version' => '3',
 	];
 
 	/**

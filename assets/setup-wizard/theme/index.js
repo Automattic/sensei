@@ -73,8 +73,11 @@ const Theme = () => {
 		goTo( 'tracking' );
 	};
 
-	const submitPage = () => {
-		submitStep( { installSenseiTheme: true }, { onSuccess: goToNextStep } );
+	const submitPage = ( installSenseiTheme ) => () => {
+		submitStep(
+			{ theme: { install_sensei_theme: installSenseiTheme } },
+			{ onSuccess: goToNextStep }
+		);
 	};
 
 	return (
@@ -84,7 +87,7 @@ const Theme = () => {
 					<button
 						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-						onClick={ goToNextStep }
+						onClick={ submitPage( false ) }
 					>
 						{ __( 'Skip', 'sensei-lms' ) }
 					</button>
@@ -92,7 +95,7 @@ const Theme = () => {
 					<button
 						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-						onClick={ submitPage }
+						onClick={ submitPage( true ) }
 					>
 						{ __( 'Install the new Sensei theme', 'sensei-lms' ) }
 					</button>
@@ -127,7 +130,7 @@ const Theme = () => {
 						<button
 							disabled={ isSubmitting }
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-							onClick={ submitPage }
+							onClick={ submitPage( true ) }
 						>
 							{ __(
 								'Install the new Sensei theme',
@@ -147,7 +150,7 @@ const Theme = () => {
 						<button
 							disabled={ isSubmitting }
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-							onClick={ goToNextStep }
+							onClick={ submitPage( false ) }
 						>
 							{ __( 'Skip theme selection', 'sensei-lms' ) }
 						</button>
