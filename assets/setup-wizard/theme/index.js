@@ -63,7 +63,7 @@ const Theme = () => {
 	const scrollToThemeContent = () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
 
-		w.scrollBy( {
+		w.scroll( {
 			top: themeContentRef.current.offsetTop - scrollOffset,
 			behavior: 'smooth',
 		} );
