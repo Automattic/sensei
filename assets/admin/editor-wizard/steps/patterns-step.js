@@ -40,12 +40,13 @@ const PatternsStep = ( { title, replaces, onCompletion } ) => {
 		resetEditorBlocks( newBlocks );
 		onCompletion();
 
-		const templateSlug =
-			template && Object.keys( availableTemplates ).includes( template )
-				? template
-				: '';
-
-		editPost( { template: templateSlug } );
+		//Auto select a template if the pattern specifies an available one.
+		if (
+			template &&
+			Object.keys( availableTemplates ).includes( template )
+		) {
+			editPost( { template } );
+		}
 
 		logEvent( 'editor_wizard_choose_pattern', { name } );
 	};
