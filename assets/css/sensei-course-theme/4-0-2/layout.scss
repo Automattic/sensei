@@ -8,19 +8,18 @@
 body.sensei-course-theme {
 	background: var(--sensei-background-color);
 	--top-offset: var(--sensei-wpadminbar-offset, 0px);
-	padding: 0!important;
-	margin: 0!important;
+	padding: 0 !important;
+	margin: 0 !important;
 }
 
 .wp-site-blocks {
-	padding: 0!important;
-	margin: 0!important;
+	padding: 0 !important;
+	margin: 0 !important;
 	// This var needs to be in another level because we update the `--sensei-lm-header-height` in the body.
 	--full-header-height: calc(var(--sensei-lm-header-height) + var(--top-offset));
 }
 
 .sensei-course-theme__frame {
-
 	.wp-block-group__inner-container {
 		display: inherit;
 		flex: 1;
@@ -30,11 +29,13 @@ body.sensei-course-theme {
 		flex-direction: inherit;
 		gap: inherit;
 		max-width: unset !important;
+
 		> * {
 			max-width: unset !important;
 			margin: 0 !important;
 		}
 	}
+
 	.wp-block-columns .wp-block-column > * {
 		margin: 0;
 	}
@@ -74,7 +75,7 @@ body.sensei-course-theme {
 	&__sidebar {
 		top: var(--full-header-height);
 
-		@media screen and (min-width: $breakpoint ) {
+		@media screen and (min-width: $breakpoint) {
 			&--hidden {
 				.sensei-course-theme__sidebar__footer,
 				.sensei-course-theme__sidebar__content .wp-block-group__inner-container > *:not(.sensei-course-theme__focus-mode-toggle) {
@@ -86,20 +87,21 @@ body.sensei-course-theme {
 		&__content, &__footer {
 			margin: 0 !important;
 			padding: 12px;
-			padding-bottom: 12px;
 		}
 
 		&__content {
 			flex: 1;
 		}
+
 		&__footer {
 			gap: 12px;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			padding: 12px;
+
 			> *, > .wp-block-group__inner-container > * {
-				width: unset!important;
+				width: unset !important;
 			}
 
 		}
@@ -126,7 +128,7 @@ body.sensei-course-theme {
 	}
 
 	&__sidebar ~ &__main-content {
-		margin-right: unset ! important;
+		margin-right: unset !important;
 		margin-left: var(--sensei-lm-sidebar-width) !important;
 	}
 
@@ -138,7 +140,7 @@ body.sensei-course-theme {
 			flex-wrap: nowrap;
 			padding: 0 24px;
 			margin: 0 !important;
-			gap: 24px!important;
+			gap: 24px !important;
 			height: calc(var(--sensei-lm-header-height) - var(--header-progress-bar-height));
 		}
 
@@ -164,5 +166,4 @@ body.sensei-course-theme {
 	&__actions {
 		flex: 0 0 auto !important;
 	}
-
 }

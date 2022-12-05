@@ -485,14 +485,6 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			$json['purpose']['other'] = '';
 		}
 
-		sensei_log_event(
-			'setup_wizard_purpose_continue',
-			[
-				'purpose'         => join( ',', $json['purpose']['selected'] ),
-				'purpose_details' => $json['purpose']['other'],
-			]
-		);
-
 		return $this->setup_wizard->update_wizard_user_data( $json );
 	}
 
@@ -519,6 +511,17 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	public function submit_tracking( $data ) {
 		Sensei()->usage_tracking->set_tracking_enabled( (bool) $data['tracking']['usage_tracking'] );
 		Sensei()->usage_tracking->send_usage_data();
+
+		$setup_purpose_data = $this->setup_wizard->get_wizard_user_data( 'purpose' );
+		if ( $setup_purpose_data ) {
+			sensei_log_event(
+				'setup_wizard_purpose_continue',
+				[
+					'purpose'         => join( ',', $setup_purpose_data['selected'] ?? [] ),
+					'purpose_details' => $setup_purpose_data['other'] ?? '',
+				]
+			);
+		}
 
 		return true;
 	}

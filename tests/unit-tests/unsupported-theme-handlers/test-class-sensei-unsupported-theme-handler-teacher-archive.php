@@ -14,7 +14,7 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive_Test extends WP_UnitTestC
 	 */
 	private $teacher_user;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		Sensei()->teacher->create_role();
 
@@ -26,7 +26,7 @@ class Sensei_Unsupported_Theme_Handler_Teacher_Archive_Test extends WP_UnitTestC
 		$this->handler = new Sensei_Unsupported_Theme_Handler_Teacher_Archive();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->handler = null;
 
 		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::delete_page_template();

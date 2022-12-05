@@ -14,7 +14,7 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 	 */
 	private $term;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -25,7 +25,7 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive_Test extends WP_UnitTe
 		$this->handler = new Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->handler = null;
 
 		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::delete_page_template();

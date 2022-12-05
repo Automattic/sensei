@@ -24,7 +24,7 @@ class Sensei_Update_Fix_Question_Author_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory   = new Sensei_Factory();
 		$this->quiz_mock = Sensei()->quiz = $this->getMockBuilder( Sensei_Quiz::class )->setMethods( [ 'update_quiz_author' ] )->getMock();

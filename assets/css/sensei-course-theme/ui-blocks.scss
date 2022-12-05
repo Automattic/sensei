@@ -1,7 +1,7 @@
 $breakpoint: 783px;
 
 :root {
-	--sensei-lm-header-height: var( --sensei-lm-header-height, 65px);
+	--sensei-lm-header-height: 65px;
 	--header-progress-bar-height: 4px;
 	--sensei-lm-sidebar-width: 300px;
 	--content-padding: 32px;
@@ -13,7 +13,6 @@ body.sensei-course-theme {
 }
 
 .sensei-course-theme__frame {
-
 	.sensei-block-wrapper {
 		margin: 0;
 	}
@@ -29,7 +28,6 @@ body.sensei-course-theme {
 }
 
 .sensei-course-theme {
-
 	&__header {
 		margin: 0;
 		position: fixed;
@@ -41,6 +39,7 @@ body.sensei-course-theme {
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
+
 		& > :first-child {
 			flex: 1;
 		}

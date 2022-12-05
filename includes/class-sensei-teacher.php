@@ -230,7 +230,7 @@ class Sensei_Teacher {
 	/**
 	 * Sensei_Teacher::teacher_meta_box
 	 *
-	 * Add the teacher metabox to the course post type edit screen
+	 * Add the teacher meta_box to the course post type edit screen
 	 *
 	 * @since 1.8.0
 	 * @access public
@@ -298,7 +298,6 @@ class Sensei_Teacher {
 		</select>
 
 		<?php
-
 	}
 
 	/**
@@ -829,7 +828,17 @@ class Sensei_Teacher {
 			$lesson    = get_post( $comment->comment_post_ID );
 			$course_id = Sensei()->lesson->get_course_id( $lesson->ID );
 			$course    = get_post( $course_id );
-			if ( ! isset( $course->post_author ) || intval( $course->post_author ) != intval( get_current_user_id() ) ) {
+			/**
+			 * Allows to change the list of teacher IDs with grading access allowed for a given course ID.
+			 *
+			 * @hook   sensei_grading_allowed_user_ids
+			 * @since  $$next-version$$
+			 *
+			 * @param int[] The list of user IDs with access granted. By default the course author.
+			 * @param int The course ID.
+			 */
+			$allowed_user_ids = apply_filters( 'sensei_grading_allowed_user_ids', [ intval( $course->post_author ) ], $course_id );
+			if ( ! isset( $course->post_author ) || ! in_array( intval( get_current_user_id() ), $allowed_user_ids, true ) ) {
 				// remove this as the teacher should see this.
 				unset( $comments[ $key ] );
 			}
@@ -1587,6 +1596,10 @@ class Sensei_Teacher {
 	 * @return void
 	 */
 	public function teacher_login_redirect( $user_login, $user ) {
+		// If Jetpack's redirection cookie is set, let Jetpack handle redirection.
+		if ( ! empty( $_COOKIE['jetpack_sso_redirect_to'] ) ) {
+			return;
+		}
 
 		if ( user_can( $user, 'edit_courses' ) ) {
 

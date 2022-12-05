@@ -103,7 +103,7 @@ class Sensei_Export_Courses
 			);
 
 			$lessons_query   = new WP_Query( $args );
-			$ordered_lessons = array_merge( $ordered_lessons, $lessons_query->get_posts() );
+			$ordered_lessons = array_merge( $ordered_lessons, $lessons_query->posts );
 		}
 
 		// We cannot use $no_module_lessons directly since it's unordered. Instead we intersect it with $all_lessons which is ordered.

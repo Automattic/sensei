@@ -21,13 +21,13 @@ class Sensei_Data_Port_Manager_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Sensei_Test_Events::reset();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->set_data_port_jobs( [] );

@@ -11,8 +11,12 @@ import {
 } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
+/**
+ * Internal dependencies
+ */
 import editorLifecycle from '../../shared/helpers/editor-lifecycle';
 import {
 	extractStructure,
@@ -86,6 +90,30 @@ const CourseGeneralSidebar = () => {
 		} )
 	);
 
+	/**
+	 * Allows to show or hide the multiple teachers upgrade.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
+	 */
+	const hideCoteachersUpgrade = applyFilters(
+		'senseiCourseSettingsMultipleTeachersUpgradeHide',
+		false
+	);
+
+	/**
+	 * Returns the component to render after the teacher course setting.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {Function} The existing component hooked into the filter.
+	 */
+	const AfterTeachersSection = useMemo(
+		() => applyFilters( 'senseiCourseSettingsTeachersAfter', () => null ),
+		[]
+	);
+
 	return (
 		<PanelBody title={ __( 'General', 'sensei-lms' ) } initialOpen={ true }>
 			<h3>{ __( 'Teacher', 'sensei-lms' ) }</h3>
@@ -94,6 +122,7 @@ const CourseGeneralSidebar = () => {
 					value={ author }
 					options={ teachers }
 					onChange={ ( new_author ) => {
+						new_author = parseInt( new_author );
 						setAuthor( new_author );
 						dispatch( 'core' ).editEntityRecord(
 							'postType',
@@ -104,6 +133,24 @@ const CourseGeneralSidebar = () => {
 					} }
 				/>
 			) : null }
+
+			{ ! hideCoteachersUpgrade && (
+				<div className="sensei-course-coteachers-wrapper">
+					{ __( 'Multiple teachers?', 'sensei-lms' ) }{ ' ' }
+					<a
+						href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Upgrade to Pro!', 'sensei-lms' ) }
+					</a>
+				</div>
+			) }
+
+			<AfterTeachersSection
+				courseAuthorId={ author }
+				courseId={ course.id }
+			/>
 
 			<HorizontalRule />
 
