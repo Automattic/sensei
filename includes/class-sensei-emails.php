@@ -239,6 +239,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $user_id, $quiz_id, $grade, $passmark );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		}
 	}
 
@@ -268,6 +270,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $user_id, $course_id );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		}
 	}
 
@@ -297,6 +301,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $learner_id, $course_id );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		}
 	}
 
@@ -322,6 +328,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $learner_id, $course_id );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		}
 	}
 
@@ -350,6 +358,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $learner_id, $lesson_id );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		}
 	}
 
@@ -380,6 +390,8 @@ class Sensei_Emails {
 			if ( $send ) {
 				$email = $this->emails[ $email_type ];
 				$email->trigger( $learner_id, $quiz_id );
+
+				sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 			}
 		}
 	}
@@ -406,6 +418,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $message_id );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		} else {
 			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
 			exit;
@@ -434,6 +448,8 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails[ $email_type ];
 			$email->trigger( $comment, $message );
+
+			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
 		}
 	}
 
