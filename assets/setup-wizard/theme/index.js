@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import classnames from 'classnames';
 
@@ -12,6 +12,7 @@ import { useLayoutEffect, useState, useRef } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import { useSetupWizardStep } from '../data/use-setup-wizard-step';
 import { useQueryStringRouter } from '../../shared/query-string-router';
 import { H } from '../../shared/components/section';
 import BigScreen from './big-screen';
@@ -26,6 +27,10 @@ const Theme = () => {
 	const [ isScrolled, setIsScrolled ] = useState( false );
 	const themeContentRef = useRef();
 	const scrollOffset = 70;
+
+	const { submitStep, isSubmitting, errorNotice } = useSetupWizardStep(
+		'theme'
+	);
 
 	useLayoutEffect( () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
@@ -58,7 +63,7 @@ const Theme = () => {
 	const scrollToThemeContent = () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
 
-		w.scrollBy( {
+		w.scroll( {
 			top: themeContentRef.current.offsetTop - scrollOffset,
 			behavior: 'smooth',
 		} );
@@ -68,22 +73,31 @@ const Theme = () => {
 		goTo( 'tracking' );
 	};
 
+	const submitPage = ( installSenseiTheme ) => () => {
+		submitStep(
+			{ theme: { install_sensei_theme: installSenseiTheme } },
+			{ onSuccess: goToNextStep }
+		);
+	};
+
 	return (
 		<>
 			{ isBigScreen && isScrolled && (
 				<div className="sensei-setup-wizard-theme-top-actions sensei-setup-wizard-theme-top-actions--enter-animation">
 					<button
+						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-						onClick={ goToNextStep }
+						onClick={ submitPage( false ) }
 					>
 						{ __( 'Skip', 'sensei-lms' ) }
 					</button>
 
 					<button
+						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-						onClick={ goToNextStep }
+						onClick={ submitPage( true ) }
 					>
-						{ __( 'Install the new Sensei theme', 'sensei-lms' ) }
+						{ __( 'Get the Course theme', 'sensei-lms' ) }
 					</button>
 				</div>
 			) }
@@ -100,26 +114,25 @@ const Theme = () => {
 			>
 				<div className="sensei-setup-wizard__title">
 					<H className="sensei-setup-wizard__step-title">
-						{ __( 'Get new Sensei theme', 'sensei-lms' ) }
+						{ __( 'Install our default theme', 'sensei-lms' ) }
 					</H>
 					<p>
 						{ __(
-							"The new Sensei theme it's build from ground up with Learning Mode in mind to optimize your full site so that everything works smootly together.",
+							"'Course' is a free WordPress theme built to work perfectly with Sensei and courses. You can use any WordPress theme with Sensei, or active 'Course'.",
 							'sensei-lms'
 						) }
 					</p>
 				</div>
 
 				<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+					{ errorNotice }
 					<div className="sensei-setup-wizard__theme-actions">
 						<button
+							disabled={ isSubmitting }
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--primary"
-							onClick={ goToNextStep }
+							onClick={ submitPage( true ) }
 						>
-							{ __(
-								'Install the new Sensei theme',
-								'sensei-lms'
-							) }
+							{ __( 'Get the Course theme', 'sensei-lms' ) }
 						</button>
 
 						<button
@@ -132,8 +145,9 @@ const Theme = () => {
 
 					<div className="sensei-setup-wizard__action-skip">
 						<button
+							disabled={ isSubmitting }
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-							onClick={ goToNextStep }
+							onClick={ submitPage( false ) }
 						>
 							{ __( 'Skip theme selection', 'sensei-lms' ) }
 						</button>
