@@ -70,14 +70,20 @@ const Features = () => {
 		error: submitError,
 	} = useSetupWizardStep( 'features' );
 	const { stepData: themeData } = useSetupWizardStep( 'theme' );
+	const { install_sensei_theme: installSenseiTheme } = themeData;
 
-	const installActions = getFeatureActions( featuresData );
+	// Create list of actions to install.
+	const installActions = useMemo( () => {
+		const list = getFeatureActions( featuresData );
 
-	if ( themeData.install_sensei_theme ) {
-		installActions.push( getThemeAction() );
-	}
+		if ( installSenseiTheme ) {
+			list.push( getThemeAction() );
+		}
 
-	// Create list of actions.
+		return list;
+	}, [ featuresData, installSenseiTheme ] );
+
+	// Create final list of actions.
 	const actions = useMemo(
 		() => [
 			{
@@ -109,7 +115,7 @@ const Features = () => {
 				},
 			},
 		],
-		[ featuresData, submitStep ]
+		[ installActions, submitStep ]
 	);
 
 	const {
