@@ -1,5 +1,4 @@
 .sensei-course-theme-lesson-video {
-
 	.wp-block-embed, .wp-block-video, .ast-oembed-container, .wp-block-embed__wrapper {
 		margin: 0 !important;
 		padding: 0 !important;
@@ -18,8 +17,6 @@
 	}
 
 	@media screen and (max-width: (782px)) {
-
 		margin: 0 calc(-1 * var(--content-padding));
 	}
-
 }
