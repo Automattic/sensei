@@ -11,7 +11,7 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		self::resetEnrolmentStateStores();
@@ -20,7 +20,7 @@ class Sensei_Enrolment_Provider_State_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentStateStores();
 	}

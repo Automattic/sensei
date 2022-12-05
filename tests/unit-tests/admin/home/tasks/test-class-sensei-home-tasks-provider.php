@@ -32,13 +32,13 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->provider = new Sensei_Home_Tasks_Provider();
 		$this->factory  = new Sensei_Factory();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		remove_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
 		remove_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomImage' ] );
 		parent::tearDown();

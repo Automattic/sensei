@@ -14,7 +14,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -26,7 +26,7 @@ class Sensei_Enrolment_Provider_Journal_Store_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 
 		self::resetEnrolmentJournalStores();

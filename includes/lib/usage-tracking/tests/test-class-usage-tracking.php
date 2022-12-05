@@ -1,5 +1,7 @@
 <?php
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 require_once dirname( __FILE__ ) . '/support/class-usage-tracking-test-subclass.php';
 require_once dirname( __FILE__ ) . '/support/wp-die-exception.php';
 
@@ -13,10 +15,12 @@ Usage_Tracking_Test_Subclass::get_instance();
  * @group usage-tracking
  */
 class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
+	use ArraySubsetAsserts;
+
 	private $event_counts       = array();
 	private $track_http_request = array();
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		// Update the class name here to match the Usage Tracking class.
 		$this->usage_tracking = Usage_Tracking_Test_Subclass::get_instance();
@@ -89,23 +93,20 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 		$query = array();
 		parse_str( $parsed_url['query'], $query );
 
-		// Older versions (for PHP 5.2) of PHPUnit do not have this method
-		if ( method_exists( $this, 'assertArraySubset' ) ) {
-			$this->assertArraySubset(
-				array(
-					'button_clicked' => 'my_button',
-					'admin_email'    => 'admin@example.org',
-					'_ut'            => $this->usage_tracking->get_prefix() . ':site_url',
-					'_ui'            => 'example.org',
-					'_ul'            => '',
-					'_en'            => $this->usage_tracking->get_prefix() . '_my_event',
-					'_ts'            => '1234000',
-					'_'              => '_',
-				),
-				$query,
-				'Query parameters'
-			);
-		}
+		$this->assertArraySubset(
+			array(
+				'button_clicked' => 'my_button',
+				'admin_email'    => 'admin@example.org',
+				'_ut'            => $this->usage_tracking->get_prefix() . ':site_url',
+				'_ui'            => 'example.org',
+				'_ul'            => '',
+				'_en'            => $this->usage_tracking->get_prefix() . '_my_event',
+				'_ts'            => '1234000',
+				'_'              => '_',
+			),
+			$query,
+			'Query parameters'
+		);
 	}
 
 	/**
@@ -166,7 +167,7 @@ class Sensei_Base_Usage_Tracking_Test extends WP_UnitTestCase {
 
 		$system_data = $this->usage_tracking->get_system_data();
 
-		$this->assertInternalType( 'array', $system_data, 'System data must be returned as an array' );
+		$this->assertIsArray( $system_data, 'System data must be returned as an array' );
 
 		$this->assertArrayHasKey( 'wp_version', $system_data, '`wp_version` key must exist in system data' );
 		$this->assertEquals( $wp_version, $system_data['wp_version'], '`wp_version` does not match expected value' );

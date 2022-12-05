@@ -24,7 +24,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Set up before the class.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		// Mock WooCommerce plugin information.
 		set_transient(
 			Sensei_Utils::WC_INFORMATION_TRANSIENT,
@@ -44,7 +44,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Test specific setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		self::resetEnrolmentProviders();
@@ -66,7 +66,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	/**
 	 * Test specific teardown.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		global $wp_rest_server;
@@ -76,7 +76,7 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		Sensei()->usage_tracking->set_tracking_enabled( true );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -217,8 +217,8 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 
 		$data = Sensei()->setup_wizard->get_wizard_user_data();
 
-		$this->assertNotContains( [ 'invalid_data' ], $data['purpose']['selected'] );
-		$this->assertNotContains( [ 'invalid_data' ], $data['features']['selected'] );
+		$this->assertEmpty( $data['purpose']['selected'] );
+		$this->assertEmpty( $data['features']['selected'] );
 	}
 
 

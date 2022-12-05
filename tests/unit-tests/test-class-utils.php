@@ -8,8 +8,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizzes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -18,7 +18,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -246,8 +246,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert. */
-		$this->assertContains( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
+		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
 	}
 
 	/**

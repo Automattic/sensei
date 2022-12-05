@@ -12,14 +12,14 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	/**
 	 * Sets up the factory.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		self::resetCourseEnrolmentManager();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}

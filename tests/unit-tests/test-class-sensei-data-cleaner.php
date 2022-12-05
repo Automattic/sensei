@@ -27,7 +27,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	private $regular_user_id;
 	private $teacher_user_id;
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$GLOBALS['wp_roles']->for_site();
@@ -248,7 +248,7 @@ class Sensei_Data_Cleaner_Test extends WP_UnitTestCase {
 	/**
 	 * Set up for tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->setupPosts();
