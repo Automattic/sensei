@@ -141,11 +141,8 @@ body.sensei-course-theme {
 			flex-wrap: nowrap;
 			padding: 0 24px;
 			margin: 0 !important;
-		< < < < < < < HEAD gap:24 px !important;
-			height: calc(var(--header-height) - var(--header-progress-bar-height));
-		== == == = gap:24 px !important;
+			gap: 24px !important;
 			height: calc(var(--sensei-lm-header-height) - var(--header-progress-bar-height));
-		> > > > > > > trunk
 		}
 
 		&__left {
