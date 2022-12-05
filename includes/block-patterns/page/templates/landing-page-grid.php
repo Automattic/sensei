@@ -190,8 +190,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<p style="font-style:normal;font-weight:700;letter-spacing:0.02em;line-height:1">Christopher Brown</p>
 			<!-- /wp:paragraph -->
 
-			<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1","letterSpacing":"0.02em"},"spacing":{"padding":{"top":"10px"}}}} -->
-			<p style="padding-top:10px;letter-spacing:0.02em;line-height:1"><?php echo esc_html__( 'Founder at BeautifulWriting.com', 'sensei-lms' ); ?></p>
+			<!-- wp:paragraph {"style":{"typography":{"lineHeight":"1","letterSpacing":"0.02em"},"spacing":{"padding":{"top":"10px"},"margin":{"top":"0px"}}}} -->
+			<p style="margin-top:0;padding-top:10px;letter-spacing:0.02em;line-height:1"><?php echo esc_html__( 'Founder at BeautifulWriting.com', 'sensei-lms' ); ?></p>
 			<!-- /wp:paragraph -->
 		</div>
 		<!-- /wp:column -->
