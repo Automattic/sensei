@@ -87,7 +87,6 @@ body.sensei-course-theme {
 		&__content, &__footer {
 			margin: 0 !important;
 			padding: 12px;
-			padding-bottom: 12px;
 		}
 
 		&__content {
@@ -129,7 +128,7 @@ body.sensei-course-theme {
 	}
 
 	&__sidebar ~ &__main-content {
-		margin-right: unset ! important;
+		margin-right: unset !important;
 		margin-left: var(--sensei-lm-sidebar-width) !important;
 	}
 
