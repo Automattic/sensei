@@ -274,19 +274,6 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	 */
 	public function testSubmitTrackingUpdatesUsageTrackingSetting() {
 
-		Sensei()->usage_tracking->set_tracking_enabled( false );
-		$this->request( 'POST', 'tracking', [ 'tracking' => [ 'usage_tracking' => true ] ] );
-
-		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
-	}
-
-	/**
-	 * Tests that submitting to features endpoint validates input against whitelist
-	 *
-	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_purpose
-	 */
-	public function testSubmitPurposeLogged() {
-
 		$this->request(
 			'POST',
 			'purpose',
@@ -297,6 +284,11 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 				],
 			]
 		);
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$this->request( 'POST', 'tracking', [ 'tracking' => [ 'usage_tracking' => true ] ] );
+
+		$this->assertEquals( true, Sensei()->usage_tracking->get_tracking_enabled() );
 
 		$events = Sensei_Test_Events::get_logged_events( 'sensei_setup_wizard_purpose_continue' );
 		$this->assertCount( 1, $events );

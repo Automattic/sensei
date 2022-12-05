@@ -1,16 +1,16 @@
 @media screen and (max-width: ($breakpoint - 1)) {
 	body {
-		--sidebar-width: 0px;
+		--sensei-lm-sidebar-width: 0px;
 	}
 
 	.sensei-course-theme {
 		&--sidebar-open {
-			--header-height: 90px;
+			--sensei-lm-header-height: 90px;
 			overflow: hidden;
 
 			.sensei-course-theme__header__container {
 				padding-bottom: var(--header-open-height);
-				height: var(--header-height);
+				height: var(--sensei-lm-header-height);
 			}
 
 			.sensei-course-theme-course-progress-bar {
@@ -21,13 +21,13 @@
 				display: block;
 				position: absolute;
 				left: 24px;
-				top: calc(var(--header-height) - 36px);
+				top: calc(var(--sensei-lm-header-height) - 36px);
 			}
 
 			.sensei-course-theme-course-progress-bar {
 				height: 8px;
 				position: absolute;
-				top: calc(var(--header-height) - 12px);
+				top: calc(var(--sensei-lm-header-height) - 12px);
 				margin: 0;
 				left: 24px;
 				right: 24px;

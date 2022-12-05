@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { useSelect, dispatch } from '@wordpress/data';
+import { useSelect, dispatch, select } from '@wordpress/data';
 import {
 	PanelBody,
 	CheckboxControl,
@@ -11,9 +11,17 @@ import {
 } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import apiFetch from '@wordpress/api-fetch';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
+/**
+ * Internal dependencies
+ */
 import editorLifecycle from '../../shared/helpers/editor-lifecycle';
+import {
+	extractStructure,
+	getFirstBlockByName,
+} from '../../blocks/course-outline/data';
 
 const CourseGeneralSidebar = () => {
 	const course = useSelect( ( select ) => {
@@ -47,6 +55,15 @@ const CourseGeneralSidebar = () => {
 		editorLifecycle( {
 			onSaveStart: () => {
 				if ( author !== course.author ) {
+					const outlineBlock = getFirstBlockByName(
+						'sensei-lms/course-outline',
+						select( 'core/block-editor' ).getBlocks()
+					);
+					const moduleSlugs =
+						outlineBlock &&
+						extractStructure( outlineBlock.innerBlocks )
+							.filter( ( block ) => block.slug )
+							.map( ( block ) => block.slug );
 					apiFetch( {
 						path: '/sensei-internal/v1/course-utils/update-teacher',
 						method: 'PUT',
@@ -55,11 +72,46 @@ const CourseGeneralSidebar = () => {
 								window.sensei.courseSettingsSidebar.nonce_value,
 							post_id: course.id,
 							teacher: author,
+							custom_slugs: JSON.stringify( moduleSlugs ),
 						},
+					} ).catch( ( response ) => {
+						if ( response.message ) {
+							dispatch( 'core/notices' ).createNotice(
+								'warning',
+								response.message,
+								{
+									isDismissible: true,
+								}
+							);
+						}
 					} );
 				}
 			},
 		} )
+	);
+
+	/**
+	 * Allows to show or hide the multiple teachers upgrade.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
+	 */
+	const hideCoteachersUpgrade = applyFilters(
+		'senseiCourseSettingsMultipleTeachersUpgradeHide',
+		false
+	);
+
+	/**
+	 * Returns the component to render after the teacher course setting.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {Function} The existing component hooked into the filter.
+	 */
+	const AfterTeachersSection = useMemo(
+		() => applyFilters( 'senseiCourseSettingsTeachersAfter', () => null ),
+		[]
 	);
 
 	return (
@@ -70,6 +122,7 @@ const CourseGeneralSidebar = () => {
 					value={ author }
 					options={ teachers }
 					onChange={ ( new_author ) => {
+						new_author = parseInt( new_author );
 						setAuthor( new_author );
 						dispatch( 'core' ).editEntityRecord(
 							'postType',
@@ -80,6 +133,24 @@ const CourseGeneralSidebar = () => {
 					} }
 				/>
 			) : null }
+
+			{ ! hideCoteachersUpgrade && (
+				<div className="sensei-course-coteachers-wrapper">
+					{ __( 'Multiple teachers?', 'sensei-lms' ) }{ ' ' }
+					<a
+						href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Upgrade to Pro!', 'sensei-lms' ) }
+					</a>
+				</div>
+			) }
+
+			<AfterTeachersSection
+				courseAuthorId={ author }
+				courseId={ course.id }
+			/>
 
 			<HorizontalRule />
 

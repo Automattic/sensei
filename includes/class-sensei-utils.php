@@ -117,8 +117,8 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// A user ID of 0 is in valid, so shortcut this
-		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
+		// A user ID of 0 is invalid, so shortcut this.
+		if ( isset( $args['user_id'] ) && 0 === intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
@@ -2680,6 +2680,13 @@ class Sensei_Utils {
 	 */
 	public static function get_featured_video_thumbnail_url( $post_id ) {
 		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
+	}
+
+	/**
+	 * Tells if the website is hosted on the wp.com atomic site.
+	 */
+	public static function is_atomic_platform(): bool {
+		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
 	}
 }
 

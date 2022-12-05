@@ -1,7 +1,7 @@
 :root {
-	--header-height: 65px;
+	--sensei-lm-header-height: 65px;
 	--header-progress-bar-height: 4px;
-	--sidebar-width: 300px;
+	--sensei-lm-sidebar-width: 300px;
 	--content-padding: 32px;
 }
 
@@ -15,8 +15,8 @@ body.sensei-course-theme {
 .wp-site-blocks {
 	padding: 0 !important;
 	margin: 0 !important;
-	// This var needs to be in another level because we update the `--header-height` in the body.
-	--full-header-height: calc(var(--header-height) + var(--top-offset));
+	// This var needs to be in another level because we update the `--sensei-lm-header-height` in the body.
+	--full-header-height: calc(var(--sensei-lm-header-height) + var(--top-offset));
 }
 
 .sensei-course-theme__frame {
@@ -69,7 +69,7 @@ body.sensei-course-theme {
 	}
 
 	&__columns {
-		margin-top: var(--header-height) !important;
+		margin-top: var(--sensei-lm-header-height) !important;
 	}
 
 	&__sidebar {
@@ -118,7 +118,7 @@ body.sensei-course-theme {
 
 	&__main-content {
 		padding: 32px var(--content-padding);
-		margin-right: var(--sidebar-width) !important;
+		margin-right: var(--sensei-lm-sidebar-width) !important;
 
 		// A Divi fix since it doesn't load Gutenberg block library styles.
 		@at-root {
@@ -130,7 +130,7 @@ body.sensei-course-theme {
 
 	&__sidebar ~ &__main-content {
 		margin-right: unset ! important;
-		margin-left: var(--sidebar-width) !important;
+		margin-left: var(--sensei-lm-sidebar-width) !important;
 	}
 
 	&__header {
@@ -141,8 +141,11 @@ body.sensei-course-theme {
 			flex-wrap: nowrap;
 			padding: 0 24px;
 			margin: 0 !important;
-			gap: 24px !important;
+		< < < < < < < HEAD gap:24 px !important;
 			height: calc(var(--header-height) - var(--header-progress-bar-height));
+		== == == = gap:24 px !important;
+			height: calc(var(--sensei-lm-header-height) - var(--header-progress-bar-height));
+		> > > > > > > trunk
 		}
 
 		&__left {
