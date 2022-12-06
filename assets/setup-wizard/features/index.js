@@ -59,8 +59,11 @@ const getThemeAction = () => ( {
 	label: __( 'Installing the Course theme', 'sensei-lms' ),
 	action: () =>
 		apiFetch( {
-			path: '/sensei-internal/v1/course-theme/install',
+			path: '/sensei-internal/v1/themes/install',
 			method: 'POST',
+			data: {
+				theme: 'course',
+			},
 		} ),
 } );
 

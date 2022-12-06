@@ -1,6 +1,6 @@
 <?php
 /**
- * Sensei REST API: Sensei_REST_API_Course_Theme_Controller class.
+ * Sensei REST API: Sensei_REST_API_Theme_Controller class.
  *
  * @package sensei-lms
  * @since   $$next-version$$
@@ -11,13 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 } // Exit if accessed directly.
 
 /**
- * A REST controller for installing the Course theme.
+ * A REST controller for installing themes.
  *
  * @since $$next-version$$
  *
  * @see   WP_REST_Controller
  */
-class Sensei_REST_API_Course_Theme_Controller extends WP_REST_Controller {
+class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 	/**
 	 * Routes namespace.
 	 *
@@ -30,7 +30,7 @@ class Sensei_REST_API_Course_Theme_Controller extends WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $rest_base = 'course-theme';
+	protected $rest_base = 'themes';
 
 	/**
 	 * Sensei_REST_API_Course_Theme_Controller constructor.
@@ -53,6 +53,12 @@ class Sensei_REST_API_Course_Theme_Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => [ $this, 'install_course_theme' ],
 					'permission_callback' => [ $this, 'can_user_manage_themes' ],
+					'args'                => [
+						'theme' => [
+							'required' => true,
+							'type'     => 'string',
+						],
+					],
 				],
 			]
 		);
@@ -90,41 +96,13 @@ class Sensei_REST_API_Course_Theme_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function install_course_theme( WP_REST_Request $request ) {
-		// $json_params = $request->get_json_params();
-		// $plugin_slug = $json_params['plugin'];
+		$json_params = $request->get_json_params();
+		$theme_slug = $json_params['theme'];
 
-		// $plugin_to_install = array_values(
-		// 	array_filter(
-		// 		Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
-		// 		function( $plugin ) use ( $plugin_slug ) {
-		// 			return $plugin->product_slug === $plugin_slug;
-		// 		}
-		// 	)
-		// )[0];
+		$themes = Sensei_Extensions::instance()->get_extensions( 'theme' );
 
-		// try {
-		// 	if ( ! $plugin_to_install->is_installed ) {
-		// 		Sensei_Plugins_Installation::instance()->install_plugin( $plugin_slug );
-		// 	}
-		// 	wp_clean_plugins_cache();
-		// 	Sensei_Plugins_Installation::instance()->activate_plugin( $plugin_slug, $plugin_to_install->plugin_file );
-		// } catch ( Exception $e ) {
-		// 	return new WP_Error(
-		// 		'sensei_extensions_install_error',
-		// 		$e->getMessage()
-		// 	);
-		// }
-
-		// $installed_plugins = array_filter(
-		// 	Sensei_Extensions::instance()->get_extensions_and_woocommerce( 'plugin' ),
-		// 	function( $plugin ) use ( $plugin_slug ) {
-		// 		return $plugin->product_slug === $plugin_slug;
-		// 	}
-		// );
-
-		// return $this->create_extensions_response( $installed_plugins, 'completed' );
-
-		error_log( 'Hello!' );
+		error_log( 'Got themes:' );
+		error_log( print_r( $themes, true ) );
 
 		return new WP_REST_Response( 'ok' );
 	}
