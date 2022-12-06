@@ -155,7 +155,7 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 					sprintf(
 						// translators: Placeholder is the theme slug.
 						__( 'The requested theme `%s` could not be installed.', 'sensei-lms' ),
-						$theme
+						$theme_slug
 					),
 					500
 				);
