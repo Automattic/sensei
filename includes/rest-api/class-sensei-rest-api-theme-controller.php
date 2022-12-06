@@ -51,7 +51,7 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 			[
 				[
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => [ $this, 'install_course_theme' ],
+					'callback'            => [ $this, 'install_theme' ],
 					'permission_callback' => [ $this, 'can_user_manage_themes' ],
 					'args'                => [
 						'theme' => [
@@ -95,14 +95,75 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 	 *
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function install_course_theme( WP_REST_Request $request ) {
-		$json_params = $request->get_json_params();
-		$theme_slug = $json_params['theme'];
+	public function install_theme( WP_REST_Request $request ) {
+		$json_params    = $request->get_json_params();
+		$theme_slug     = $json_params['theme'];
+		$allowed_themes = Sensei_Extensions::instance()->get_extensions( 'theme' );
 
-		$themes = Sensei_Extensions::instance()->get_extensions( 'theme' );
+		// Get the info for the theme to install.
+		$theme_to_install = array_values(
+			array_filter(
+				$allowed_themes,
+				function( $theme ) use ( $theme_slug ) {
+					return $theme->product_slug === $theme_slug;
+				}
+			)
+		)[0];
 
-		error_log( 'Got themes:' );
-		error_log( print_r( $themes, true ) );
+		if ( empty( $theme_to_install ) ) {
+			return new WP_Error(
+				'sensei_theme_invalid',
+				// translators: Placeholder is the theme slug.
+				sprintf( __( 'Invalid theme `%s`.', 'sensei-lms' ), $theme_slug ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// If the theme is not already installed, install it.
+		if ( ! $theme_to_install->is_installed ) {
+			include_once ABSPATH . '/wp-admin/includes/admin.php';
+			include_once ABSPATH . '/wp-admin/includes/theme-install.php';
+			include_once ABSPATH . '/wp-admin/includes/theme.php';
+			include_once ABSPATH . '/wp-admin/includes/class-wp-upgrader.php';
+			include_once ABSPATH . '/wp-admin/includes/class-theme-upgrader.php';
+
+			$api = themes_api(
+				'theme_information',
+				[
+					'slug'   => $theme_slug,
+					'fields' => [
+						'sections' => false,
+					],
+				]
+			);
+
+			if ( is_wp_error( $api ) ) {
+				return new WP_Error(
+					'sensei_theme_api_error',
+					// translators: Placeholder is the theme slug.
+					sprintf( __( 'The requested theme `%s` could not be installed. Theme API call failed.', 'sensei-lms' ), $theme_slug ),
+					[ 'status' => 400 ]
+				);
+			}
+
+			$upgrader = new \Theme_Upgrader( new \Automatic_Upgrader_Skin() );
+			$result   = $upgrader->install( $api->download_link );
+
+			if ( is_wp_error( $result ) || is_null( $result ) ) {
+				return new \WP_Error(
+					'sensei_theme_install_error',
+					sprintf(
+						// translators: Placeholder is the theme slug.
+						__( 'The requested theme `%s` could not be installed.', 'sensei-lms' ),
+						$theme
+					),
+					500
+				);
+			}
+		}
+
+		// Switch to the theme.
+		switch_theme( $theme_slug );
 
 		return new WP_REST_Response( 'ok' );
 	}
