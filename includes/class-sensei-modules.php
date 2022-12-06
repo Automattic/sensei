@@ -645,7 +645,7 @@ class Sensei_Core_Modules {
 		// Remove module from existing courses
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
-				wp_remove_object_terms( $course->ID, $module_id, $this->taxonomy );
+				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
 			}
 		}
 
