@@ -32,6 +32,11 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
+	/**
+	 * The original theme.
+	 */
+	protected $original_theme;
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->provider = new Sensei_Home_Tasks_Provider();

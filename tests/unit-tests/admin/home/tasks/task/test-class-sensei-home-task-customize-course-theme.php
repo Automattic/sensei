@@ -23,13 +23,20 @@ class Sensei_Home_Task_Customize_Course_Theme_Test extends WP_UnitTestCase {
 	 */
 	private $task;
 
+	/**
+	 * The original theme.
+	 */
+	protected $original_theme;
+
 	public function setUp(): void {
 		parent::setUp();
-		$this->task = new Sensei_Home_Task_Customize_Course_Theme();
+		$this->task           = new Sensei_Home_Task_Customize_Course_Theme();
+		$this->original_theme = get_stylesheet();
 	}
 
 	public function tearDown(): void {
 		delete_option( Sensei_Home_Task_Customize_Course_Theme::CUSTOMIZED_COURSE_THEME_OPTION_KEY );
+		switch_theme( $this->original_theme );
 		parent::tearDown();
 	}
 
