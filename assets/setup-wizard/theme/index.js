@@ -114,7 +114,7 @@ const Theme = () => {
 			>
 				<div className="sensei-setup-wizard__title">
 					<H className="sensei-setup-wizard__step-title">
-						{ __( 'Install our default theme', 'sensei-lms' ) }
+						{ __( 'Use our default theme', 'sensei-lms' ) }
 					</H>
 					<p>
 						{ __(
@@ -149,7 +149,7 @@ const Theme = () => {
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
 							onClick={ submitPage( false ) }
 						>
-							{ __( 'Skip theme selection', 'sensei-lms' ) }
+							{ __( 'Keep my current theme', 'sensei-lms' ) }
 						</button>
 					</div>
 				</div>
