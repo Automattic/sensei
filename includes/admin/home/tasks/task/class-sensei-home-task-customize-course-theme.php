@@ -38,7 +38,7 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_title(): string {
-		return __( 'Customize the Course theme', 'sensei-lms' );
+		return __( 'Customize your theme', 'sensei-lms' );
 	}
 
 	/**
