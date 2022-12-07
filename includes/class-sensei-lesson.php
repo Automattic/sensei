@@ -68,7 +68,7 @@ class Sensei_Lesson {
 		if ( is_admin() ) {
 
 			// Metabox functions
-			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'add_meta_boxes_' . $this->token, array( $this, 'add_video_meta_box' ), 10, 1 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
@@ -542,7 +542,7 @@ class Sensei_Lesson {
 					$lesson_status
 				);
 
-				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->get_posts() );
+				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->posts );
 			}
 
 			$lessons = array_merge( $in_module_lessons, $lessons );
@@ -642,7 +642,8 @@ class Sensei_Lesson {
 	public function meta_box_save( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ 'woo_' . $this->token . '_nonce' ] ), 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		}
 		// Get the post type object.
@@ -2579,7 +2580,7 @@ class Sensei_Lesson {
 		 * @param {array} $allowed_post_types Allowed post types.
 		 * @return {array} Allowed post types.
 		 */
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson' ) );
 
 		/**
 		 * Only load lesson scripts for particular post type pages.

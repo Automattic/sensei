@@ -38,7 +38,7 @@ body {
 	}
 
 	&__header ~ &__columns {
-		height: calc(100% - var(--header-height));
+		height: calc(100% - var(--sensei-lm-header-height));
 	}
 
 	&__header + * {
@@ -68,15 +68,3 @@ input, textarea {
 	}
 }
 
-/**
- *  Theme fixes.
- */
-
-// Astra
-.wp-block:not(.has-text-color) {
-	color: unset;
-}
-
-.wp-block:not(.has-background) {
-	background-color: unset;
-}

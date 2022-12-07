@@ -57,6 +57,7 @@ class Sensei_Quiz {
 			'show_questions',
 			'random_question_order',
 		);
+		add_filter( 'wp_insert_post_data', [ $this, 'set_quiz_author_on_create' ], 10, 4 );
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
 		// Redirect if the lesson is protected.
@@ -95,13 +96,11 @@ class Sensei_Quiz {
 	 * @return bool
 	 */
 	public function is_block_based_editor_enabled() {
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
 
-		// If custom question types have been registered, or the Classic Editor plugin is activated,
-		// disable the block based quiz editor for now.
-		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && ! is_plugin_active( 'classic-editor/classic-editor.php' );
+		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+		// Disable block editor functions if custom question types have been registered, or we are not in the block editor.
+		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && ( ! $current_screen || $current_screen->is_block_editor() );
 
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
@@ -116,6 +115,43 @@ class Sensei_Quiz {
 		 * @return {bool}
 		 */
 		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_based_editor_enabled );
+	}
+
+	/**
+	 * Hooks into `wp_insert_post_data` and updates the quiz author to the lesson author on create.
+	 *
+	 * @param mixed     $data                The data to be saved.
+	 * @param mixed     $postarr             The post data.
+	 * @param mixed     $unsanitized_postarr Unsanitized post data.
+	 * @param bool|null $update              Whether the action is for an existing post being updated or not.
+	 * @return mixed
+	 */
+	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update = null ) {
+		// Compatibility for WP < 6.0.
+		if ( null === $update ) {
+			$update = ! empty( $postarr['ID'] );
+		}
+
+		// Only handle new posts.
+		if ( $update ) {
+			return $data;
+		}
+
+		// Only handle quizzes.
+		if ( 'quiz' !== $data['post_type'] ) {
+			return $data;
+		}
+
+		// Set author to lesson author.
+		$lesson_id = $postarr['post_parent'] ?? null;
+		if ( $lesson_id ) {
+			$lesson = get_post( $lesson_id );
+			if ( $lesson ) {
+				$data['post_author'] = $lesson->post_author;
+			}
+		}
+
+		return $data;
 	}
 
 	/**

@@ -201,6 +201,7 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		$query->query_fields .= ", (
 			SELECT MAX({$wpdb->comments}.comment_date_gmt)
 			FROM {$wpdb->comments}
+			USE INDEX (sensei_comment_type_user_id)
 			WHERE {$wpdb->comments}.user_id = {$wpdb->users}.ID
 			AND {$wpdb->comments}.comment_approved IN ('complete', 'passed', 'graded')
 			AND {$wpdb->comments}.comment_type = 'sensei_lesson_status'

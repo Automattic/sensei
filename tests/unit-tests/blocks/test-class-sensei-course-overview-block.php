@@ -18,14 +18,14 @@ class Sensei_Course_Overview_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 		$this->block   = new Sensei_Course_Overview_Block();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-overview' );
 	}

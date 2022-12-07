@@ -2,7 +2,7 @@
 
 class Sensei_Functions_Test extends WP_UnitTestCase {
 
-	public function tearDown() {
+	public function tearDown(): void {
 		// Ensure explicit theme support is removed.
 		remove_theme_support( 'sensei' );
 

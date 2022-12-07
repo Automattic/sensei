@@ -5,7 +5,11 @@
 	width: 100%;
 
 	&-inner {
-		height: 100%;
+		height: var(--header-progress-bar-height, 4px);
 		background-color: var(--sensei-primary-color);
+	}
+
+	&.wp-block:not(.has-background) {
+		background-color: var(--border-color);
 	}
 }

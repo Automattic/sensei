@@ -105,7 +105,7 @@ class Sensei_Question {
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
 				<a class="sensei-custom-navigation__tab <?php echo '' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit.php?post_type=question' ) ); ?>"><?php esc_html_e( 'All Questions', 'sensei-lms' ); ?></a>
-				<a class="sensei-custom-navigation__tab <?php echo 'question-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=question-category&post_type=course' ) ); ?>"><?php esc_html_e( 'Question Categories', 'sensei-lms' ); ?></a>
+				<a class="sensei-custom-navigation__tab <?php echo 'question-category' === $screen->taxonomy ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=question-category&post_type=question' ) ); ?>"><?php esc_html_e( 'Question Categories', 'sensei-lms' ); ?></a>
 			</div>
 		</div>
 		<?php
@@ -228,8 +228,23 @@ class Sensei_Question {
 			if ( ! Sensei()->quiz->is_block_based_editor_enabled() ) {
 				add_meta_box( 'multiple-question-lessons-panel', __( 'Quizzes', 'sensei-lms' ), array( $this, 'question_lessons_panel' ), 'multiple_question', 'side', 'default' );
 				add_meta_box( 'question-edit-panel', $metabox_title, array( $this, 'question_edit_panel' ), 'question', 'normal', 'high' );
+				add_filter( 'sensei_scripts_allowed_post_types', [ $this, 'load_lesson_edit_script' ] );
 			}
 		}
+	}
+
+	/**
+	 * Also load the lesson metabox scripts for the question post type when using the legacy editor.
+	 *
+	 * @access private
+	 *
+	 * @param array $post_types Post types.
+	 *
+	 * @return array
+	 */
+	public function load_lesson_edit_script( $post_types ) {
+		$post_types[] = 'question';
+		return $post_types;
 	}
 
 	public function question_edit_panel() {
