@@ -118,7 +118,7 @@ const Theme = () => {
 					</H>
 					<p>
 						{ __(
-							"'Course' is a free WordPress theme built to work perfectly with Sensei and courses. You can use any WordPress theme with Sensei, or active 'Course'.",
+							"'Course' is a free WordPress theme built to work perfectly with Sensei and courses. You can use any WordPress theme with Sensei, or activate 'Course'.",
 							'sensei-lms'
 						) }
 					</p>
