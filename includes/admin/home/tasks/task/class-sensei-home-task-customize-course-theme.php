@@ -47,9 +47,7 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return string
 	 */
 	public function get_url(): ?string {
-		// TODO
-		return '';
-		// return admin_url( 'admin.php?page=wc-admin' );
+		return admin_url( 'site-editor.php' );
 	}
 
 	/**
@@ -76,12 +74,6 @@ class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	 * @return bool Whether the task should be active or not.
 	 */
 	public static function is_active() {
-		// TODO: return true if Course Theme is active.
-		return true;
-		// if ( ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
-		// 	return false;
-		// }
-		// $features = Sensei_Setup_Wizard::instance()->get_wizard_user_data( 'features' );
-		// return in_array( 'woocommerce', $features['selected'], true );
+		return 'course' === wp_get_theme()->get_template();
 	}
 }
