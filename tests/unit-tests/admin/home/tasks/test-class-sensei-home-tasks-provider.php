@@ -39,8 +39,8 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
-		$this->provider = new Sensei_Home_Tasks_Provider();
-		$this->factory  = new Sensei_Factory();
+		$this->provider       = new Sensei_Home_Tasks_Provider();
+		$this->factory        = new Sensei_Factory();
 		$this->original_theme = get_stylesheet();
 	}
 
