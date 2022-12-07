@@ -115,7 +115,7 @@ const BigScreen = () => (
 					<blockquote className="sensei-setup-wizard-theme-testimonial__quote">
 						<p>
 							{ __(
-								'I always wanted to write, and thanks to Cours, I got it right. My writing is clearer, and I can finally get my message across.',
+								'I always wanted to write, and thanks to Course, I got it right. My writing is clearer, and I can finally get my message across.',
 								'sensei-lms'
 							) }
 						</p>
