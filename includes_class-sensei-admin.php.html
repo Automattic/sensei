@@ -56,6 +56,13 @@ class Sensei_Admin {
 	private $lesson_order_page_slug;
 
 	/**
+	 * Sensei SVG Icon
+	 *
+	 * @var string The menu icon for Sensei LMS.
+	 */
+	private $sensei_icon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04LjkwOCAxNy4xN2MuNDI4LS4zMzUuMjU0LS42OTIuODU2LS44MjMtLjAyNy4yODUuMjA5LjU3My4zNTkuODI0LS4xNTYtLjUzNy0uMDAzLS43ODMuMTEzLTEuMDUzLjQ5Ny0xLjE0Ny0uOTQ1LTEuODktMS45MjgtMi4wNzEuMzM2LS4yNDEuNTctLjQ3OS45OTItLjUyYTMuMzMyIDMuMzMyIDAgMCAwLTEuNTEyLjMzN2MtMS41ODguNzc2LTIuODQ2LS43NjYtMi4wMTQtMi4xNjMuNDQ0LS43NDcuOTUtLjc2IDEuNDA0LTEuMjY1LjEwOS4yNi4xNDYuNTQ0LjEwNi44MjQuMTQyLS4zMDguMTY2LS42NTIuMDctLjk3LS4xNDgtLjQ5MS0uNTcyLS40OTUtLjY1MS0xLjItLjAxNy0uMTQ4LS4xNS4wODItLjM3Ni0uMTEzLS4wNTMtLjA0Ny0uMTYyLS4xMy0uMjMyLS4wOTMtLjEyMy4wNjQtLjI1OC4wMTItLjMzMi4wNDktLjEyLjA2LS4xNTYtLjA2Ni0uMjg2LjAyNC0uMjMuMTU2LS4yNTQtLjAyLS40NzQuMDA4LS4yNzYuMDMzLS40NTguMzgxLS42MTUuMjA5LS4xNDQtLjE1Ny0uMjkzLjExLS4zOTguMTEtLjA3MyAwLS40NDYuNDY0LS42MS4wNDEtLjEyMy0uMzE2LS40LjMwMS0uNTQ2LjA5Mi0uMDQ3LS4wNjctLjE3NS4xNTgtLjI1Ny0uMDY0LS4wMi0uMDUxLjAwMS0uMTE0LS4xNTQtLjA0LS4zMDcuMTQ1LS4xOTgtLjA4OC0uMjk2LS4yMS0uMTE5LS4xNS0uMTYxLS4xNS0uMDk3LS4zOTUuMDUtLjE5My0uMDI3LS40ODIuMjg1LS41MzEuMDgtLjAxMy4xNTQtLjAwOC4yNjMtLjIxNy4xMzctLjI2Mi4zMzEtLjEzNi4yOTYtLjI1NS0uMDUtLjE3NC4yMDUtLjQxLjMyMy0uNTIuMTU3LS4xNS4zNjQtLjM2OC40MzctLjU3OEEuOTIxLjkyMSAwIDAgMSAzLjc4IDYuNGMuMTE2LS4xMjIuMTUtLjAwNC4zMjUtLjA2NC4xMjUtLjA0NS4wMjcuMDc2LjE1MS0uMTAyLjA0LS4wNTcuMTQ5LS4wMDQuMjctLjA1OC4zNy0uMTY0LjQwNS0uMTYxLjQ5Ny0uNTQzLjAxNy0uMDcyLjAzNS0uMTI4LjExMy0uMTIuMTU3LjAxNC4xOTItLjA3Ni4yODgtLjA3NC4wODYuMDAyLjExNy0uMDQ0LjE2My0uMDk5LjI1Ni0uMzE3LjM5Ni0uMDguNTEtLjEwNS4wODctLjAxOS4wMzItLjIwOS4yNjMtLjE1LjMzLjA4NC4yMjItLjA3NC40MzMtLjAyMi4yNDkuMDYuMjY2LjI3Ny40MzcuMzI5LjIwNS4wNjIuMzAyLjI5LjQzOC4yODcuNDgyLS4wMDcuMzM2LjMzNi42NC40NzEtLjIyOC0uMjM1LjAxNy0uNjE0LS41MDItLjY2NC0uMTE2LS4wMS0uMTU3LS4xODUtLjMyOS0uMjY3LS4yMDgtLjA5OS0uMTg3LS4zMDgtLjU2Mi0uMzk0LjA5Ni0uMDYxLjEyNi4wMDYuMTg1LS4xMDguMDgzLS4xNi4xMy0uMDY3LjE2Mi0uMTY2LjAzLS4wOTEuMDA4LS4xNDMuMjM1LS4yMjYuMjM2LS4wODYuNDY0LS4yODUuNjc0LS4yNzQuMTg2LjAwOS4yNjQtLjExOC4yNTMtLjI3Ny0uMDExLS4xNjUtLjA0Ny0uMzkxLjMxOC0uMzIyLjIxOC4wNDIuMjE0LjAwNC4yMTMtLjE0Ni0uMDAyLS4xNS4wNTctLjI0Mi4yNDktLjIzNS4xNC4wMDQuMjc4LS4wMDMuMzMtLjE3MS4wNDItLjEzMy4yOTYtLjE2Ny40MzItLjIxNy40NTMtLjE2Ni41MTYuMDczLjYzOS0uMTM3LjEtLjE3Mi4yNzktLjQ2NS40OC0uMjU2LjA0LjA0Mi4wNzguMDczLjIxNC0uMDgzLjExNC0uMTI4LjM4Ni0uMjkyLjQ4My0uMDcuMDM4LjA4OC4xMjMuMTc4LjE5Ni4wNjVhLjExNC4xMTQgMCAwIDEgLjA3Ni0uMDU3Yy4wNzMtLjAxNi4xMTItLjAzNS4xNS0uMDUzLjMxLS4xNDguNDQ3LS4xMzguMzA0LjE4My0uMjA0LjQ2MiAxLjEzLS4yODEuNzYuMjItLjEzNy4xODQuNzY3LjI4OS44OTkuMzcyLjA3Mi4wNDYuMDcuMDg2LjIwNi4xMTIuMzg4LjA3Mi4zODIuMDM4LjQwNS4zNTUuMDEuMTQzLjE1NC4wNjMuMTU0LjI0NiAwIC43ODIuNjczLjM4OC43ODMuNTgzLjAxOC4wMzIuMDQ2LjA2MS4xMTQuMDYxLjIxMiAwIC4yMjQtLjA0Mi4zMi4xMy4wMzkuMDcuMDcuMTA1LjE4MS4xNC4xNy4wNTUuMTYuMDc0LjA5Ny4yMDItLjA3Ny4xNTIuMDQzLjE1LjE5OC4xNjQuMTQyLjAxNC4yMS4wOTEuMzA4LjIwMi4xNTguMTc4LjQwNS4yMjkuNjE0LjMzMi4xMi4wNTguMDAyLjIwMy4yMDQuMzU1LjE0OS4xMTIuMjI0LjA5Ni4wMjQuMjQtLjg0NC42MTIuMzEzLjQ0Ni42MzcgMS4wMTUuMDcyLjEyNy4xNjkuMjg2LjMwOC40MzIuMzIyLjMzNS4xNDIuNDI4LjMxNi42MzguMS4xMjEuMDIxLjA5Mi4xODYuMi4zODcuMjU3LS4xNS40MjctLjQ1Ni4zMS0uMTM5LS4wNTItLjIzNy0uMTI0LS4yMS0uMDM3LjAyMi4wNzItLjAxNS4xMjItLjA3NC4xNzYtLjE3OS4xNjQuMTc1LjEuMjU5LjA4OC4yNTgtLjAzNy45NDctLjExMi45NDIuMTM2LS4wMDcuMzIyLjE5NS4zOTQuMzU4LjQxNS4yNjQuMDM2LjMzOS4wODMuNDg0LjMzLjEzMi4yMjIuMjA5LjEwMy40MTIuMy4xNC4xMzUuMzEuMzc2LjAyOS40MTItLjA2OC4wMDgtLjE0MSAwLS4xNzMuMDI0YS41OC41OCAwIDAgMS0uMTk5LjA5N2MtLjQyMi4xMzIuMi4xOTkuMzUyLjE2NS4xMzMtLjAyOC4yOTgtLjA3Mi40MjctLjAzOC4wODIuMDIxLjA5LjExNi4zNS4xNTYuMDg2LjAxNC4wNS4xNDMuMDA4LjIzNC0uMTQ5LjMxMi4yNzQuMTQ2LjIzLjM4My0uMDI1LjEzNy4xNTUuMzU4LS4wOTcuMzYzLS4wODEuMDAyLS4xNjYtLjAyMi0uMTY0LjA0OS4wMDUuMTU0LS4yMzYtLjA0My0uNDUzLjE3LS4wOC4wNzgtLjI3MS4xMzMtLjM5LS4wMTQtLjA0NC0uMDU2LS4wOTktLjEtLjMxLS4wMzQtLjIwNi4wNjctLjM0Ni4yOTgtLjQzNy0uMDU5LS4wMjQtLjA5My0uMDcyLS4wOTUtLjIwMy0uMTQtLjE3OS0uMDY0LS4xNjMtLjM3OC0uNDI0LS4xNzZhLjMzNi4zMzYgMCAwIDEtLjMwNi4wNTZjLS4yMDYtLjA1My0uNDMzLjAxOC0uNDUyLS4xNGEuNTEuNTEgMCAwIDAtLjU0LS40MzNjLS4yMS4wMTItLjM5Ni4wNS0uNTA3LS4yLjA4My4yODYuMjk2LjMwNC41NDYuMzA0LjIwNiAwIC4zMjguMTEuMzY1LjMzLjA2NC4zODYuMjkxLjE0My41OC4zMjVhLjc0NS43NDUgMCAwIDEgLjMuMzk5Yy4wNi4xNzIuNTMtLjAzNS40MDMuMzc3LS4wNTQuMTc4LS4xNTMuMjQ1LS4zNDYuMzg5LS41NzMuNDI5LS43MTUuMDA1LS44ODQuMzQ4LS4wODcuMTc4LS4wOS4wNDYtLjI4LjEzMy0uMzE0LjE0My0uNTE0LS4xODgtLjc0NS0uMDY2LS4yNi4xMzctLjI0LS4xMTgtLjUwMy4wNTQtLjIxNy4xNDEtLjQ0LS4xMDgtLjU0NC4yOC0uMDg5LjMzMi0uNDU4LjM0LS42MjcuMTYxLS4yNy0uMjgzLS4xODkuMzM0LS41MTguMDgtLjE3NS0uMTM0LS4zMDQuMDYyLS41Ni4wNjYtLjQ3MS4wMDYtLjY5Ny0uNDEyLS45MjctLjE1OC0uMjc1LjMwMi0uNDc0LS4wNDYtLjQ3OC0uMzU0LS4wMDUtLjMxNC0xLjExLS4yMS0xLjY5Mi0uMzczLS4zMjItLjA5LTEuMzMzLjAyLTEuMDA0LS41MTItLjUzLjU3LjY1Mi41MzYuOTc0LjY2NS4xOTQuMDc3LjM1LjE0LjUzOS4xNjcuMTg2LjQzMi4zMDYuOS4zMjQgMS40NzIuMDYyLS4zMTQuMDc2LS42MzMuMDQtLjk0OS0uMDYtLjU2LjM0Ni4yNzguMzk1LjM5OC4yNjIuNjU5LS4wMzIgMS44NjctLjY5NyAyLjIzYTQuMzQ3IDQuMzQ3IDAgMCAwLS44MDQtMS40NDZjLjM2Ni41NzIuODgxIDEuNzQxLjQ2OCAyLjQxYTEuNDczIDEuNDczIDAgMCAxLS43ODUtLjcwNWMuMTEuNDg3LjU5IDEuMDI2IDEuMTY4Ljg0OCAxLjAxLS4zMTEgMS4wMDUuMzQgMi4zNDQuNDQ4Ljk3NC4xNjMgMi4zNjMgMCAzLjAyNi4wNTUuMzYyLjAyOSAxLjg4NS4yODcgMS44NzguNjc4LS4wMjcgMS42MTYtLjYyNiAxLjcwMS0yLjE5OCAxLjg1NC0uOTE0LjA4OS0xLjYyLjEyNC0yLjYwNC4xNjJhOTMuOTU1IDkzLjk1NSAwIDAgMS02Ljk1NS0uMDAzYy0xLjAzNC0uMDQzLTEuNTMyLS4wNS0yLjYzLS4xOTgtMS4wOTgtLjE0OC0xLjctLjUzMS0xLjY4My0xLjczNi4wMDctLjQ0NCAxLjI5My0uODY4IDEuNzEzLS45MTcuNDk3LS4wNTcgMS4yODkuMDA4IDIuMDEtLjE3Ljc1MS0uMTg1IDEuMDY2LS4zMDcgMS42Mi0uNzQyWm03LjYzNy04Ljg0NGMtLjIzOC0uMDYyLS4wNzItLjIwMi0uNDgzLS4wMi0uMjQzLjEwNi0uMjc3LS4xOS0uNTIyLS4xMzgtLjI0Ni4wNTMtLjM0Ni0uMTgzLS43MTMtLjI0My0uNDU0LS4wNzQtLjEyNi0uMTk0LS44NDYtLjA0Ni0uMTM4LjAyNy0uMjU1LS4xMzItLjY4Ny0uMDc2LS41MDYuMDY3LS4zMjkuMTIyLS42MzUtLjE2OC0uMzg5LS4zNjgtLjY5Ny0uMTIxLTEuMDk2LS4yNy4zMDguMjQzLjUyNS4wMjguODg5LjMyNC0uMzQ2LjItLjc0OCAxLjE3Mi0xLjM3NSAxLjIzMy42ODIuMTU2IDEuMDEzLjUxNyAxLjY0LjYwNC43Mi4wOTggMS4yNi4xNzEgMS42NDUuNzc2LjQzLjY3Ni42MjcuMjg2IDEuMjQ5LjI0NS4zOTItLjAyNS40MDItLjI3LjQ2Ny0uNTMuMDktLjM1Ny4xOC0uMzc0LjQ0NC0uNDIxLjMwNC0uMDU1LjIzMi0uMTM2LjE1Mi0uMjI4LS4yMTQtLjI1MS4wMjctLjMwMi4yMDktLjM1Ni4zMTctLjA5NS4wNi0uMTEuMDYtLjI0NC0uMzk3LS4xMy0uMDktLjMxNi4xMy0uMzk4LjI0Mi4xNTIuMzQ3LjEyNy40NTQuMTA3LjE1NS0uMDMyLjI2LjA0My4zOS0uMDQyLS4xOTMuMDItLjIzMy0uMDU0LS4zOTYtLjAzLS4wNzQuMDEtLjE2MS4wMTYtLjMxNC0uMDc3LS4yNTYtLjE1OC0uMzg2LjA2OS0uNjYyLS4wMDJabS0zLjI1NiAyLjM5Ni0xLjU1OS0uNzk2Yy0xLjg3OS0uOTYtMi43MzQuNDU3LTMuMzM4IDIuMDFsLTEuMDk0IDEuMDY4Yy43ODQtLjQ5NCAxLjQyNC0xLjA0NCAyLjI0OS0xLjAzOS4xMzEgMCAyLjE2NS43MDkgMS44MzgtLjEzMy0uMDU5LS4xNTIuMTI3LS4wNzcuMTc4LS4yOTQuMDU3LS4yNS4wNzgtLjIwNy4yNzktLjA0OC4xMjYuMS4zMDEuMTY1LjI0OC0uMDctLjAyNC0uMTA2LS4wNTctLjIuNC0uMDA2LjIxNS4wOS4xMzUtLjA5NC40MzMtLjEzLjQxNC0uMDUyLjMyNS0uNDU1LjUyLS41MTEuMTA4LS4wMzIuMjE3LjA4My40MjEtLjExMy4wNy0uMDY4LjE1Ny0uMTMuMzMyLS4wODQtLjIwNC0uMTA2LS4zMTQtLjAyLS40MTguMDQ0LS4yMDkuMTMtLjI5LS4wNTMtLjQ5LjEwMlptLTMuMTg2LTIuODFjLjIyOS0uMDMuNDU3LS4wNTMuNjg4LS4wNjhhLjE4Ni4xODYgMCAwIDAgLjEwNi0uMDg2LjE2Ni4xNjYgMCAwIDAgLjAxLS4xMzEuMzkyLjM5MiAwIDAgMSAuMjEtLjMwM2wtLjAwMi0uMDA0Yy0uMzY5LjAwMS0uNjY2LjE0NS0xLjA0My4zMDgtLjA3NS4wMzMtLjAzNS4xNjMtLjE2OS4zMTFhLjM3OC4zNzggMCAwIDEtLjI4OC4zNDQuMTkzLjE5MyAwIDAgMC0uMTI4LjA2Ny4xNjcuMTY3IDAgMCAwLS4wMzcuMTM0LjM1NC4zNTQgMCAwIDEtLjM5Ni4wOWMtLjI4NS0uMTEzLS40OTgtLjA5NS0uNjQuMDUzYS41NS41NSAwIDAgMSAuNTcuMDIuNDU0LjQ1NCAwIDAgMCAuNTU3LS4xMi4xOS4xOSAwIDAgMSAuMTc5LS4xNDRjLjIwMi0uMDc3LjMzLS4yMzUuMzgzLS40NzFaIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=';
+
+	/**
 	 * Constructor.
 	 *
 	 * @since  1.0.0
@@ -72,9 +79,11 @@ class Sensei_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_scripts' ) );
 		add_action( 'admin_menu', array( $this, 'add_course_order' ) );
 		add_action( 'admin_menu', array( $this, 'add_lesson_order' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ), 9 );
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_print_scripts', array( $this, 'sensei_set_plugin_url' ) );
 
 		// Duplicate lesson &amp; courses
@@ -112,7 +121,6 @@ class Sensei_Admin {
 		// Add AJAX endpoint for event logging.
 		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
 
-		Sensei_Extensions::instance()->init();
 		Sensei_Tools::instance()->init();
 		Sensei_Status::instance()->init();
 
@@ -121,32 +129,30 @@ class Sensei_Admin {
 	/**
 	 * Add items to admin menu
 	 *
-	 * @since  1.4.0
-	 * @deprecated 4.0.0
+	 * @since 1.4.0
+	 * @since 4.8.0 Reactivate method since we have a new home page.
 	 *
 	 * @return void
 	 */
 	public function admin_menu() {
-		_deprecated_function( __METHOD__, '4.0.0' );
+		add_menu_page( 'Sensei LMS', 'Sensei LMS', self::get_top_menu_capability(), 'sensei', '', $this->sensei_icon, '50' );
+	}
 
-		global $menu;
-		$menu_cap = '';
-		if ( current_user_can( 'manage_sensei' ) ) {
-			$menu_cap = 'manage_sensei';
-		} else {
-			if ( current_user_can( 'manage_sensei_grades' ) ) {
-				$menu_cap = 'manage_sensei_grades';
-			}
+	/**
+	 * Get the top menu minimum capability.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @return string
+	 */
+	public static function get_top_menu_capability() {
+		$menu_cap = 'manage_sensei';
+
+		if ( ! current_user_can( 'manage_sensei' ) &amp;&amp; current_user_can( 'manage_sensei_grades' ) ) {
+			$menu_cap = 'manage_sensei_grades';
 		}
 
-		if ( $menu_cap ) {
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to add separator above our menu group.
-			$menu[] = array( '', 'read', 'separator-sensei', '', 'wp-menu-separator sensei' );
-			add_menu_page( 'Sensei LMS', 'Sensei LMS', $menu_cap, 'sensei', array( Sensei()->analysis, 'analysis_page' ), '', '50' );
-		}
-
-		add_submenu_page( 'edit.php?post_type=course', __( 'Order Courses', 'sensei-lms' ), __( 'Order Courses', 'sensei-lms' ), 'manage_sensei', $this->course_order_page_slug, array( $this, 'course_order_screen' ) );
-		add_submenu_page( 'edit.php?post_type=lesson', __( 'Order Lessons', 'sensei-lms' ), __( 'Order Lessons', 'sensei-lms' ), 'edit_published_lessons', $this->lesson_order_page_slug, array( $this, 'lesson_order_screen' ) );
+		return $menu_cap;
 	}
 
 	/**
@@ -219,10 +225,12 @@ class Sensei_Admin {
 	 * Handle highlighting of admin menu items
 	 *
 	 * @since 1.4.0
+	 * @since 4.8.0 General review after adding the new Sensei Home page.
+	 *
 	 * @return void
 	 */
 	public function admin_menu_highlight() {
-		global $parent_file, $submenu_file, $post_type, $taxonomy;
+		global $parent_file, $submenu_file, $taxonomy, $_wp_real_parent_file;
 
 		$screen = get_current_screen();
 
@@ -231,24 +239,39 @@ class Sensei_Admin {
 		}
 
 		// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited -- Only way to highlight our special pages in menu.
-		if ( $screen->base == 'post' &amp;&amp; $post_type == 'course' ) {
-
-			$parent_file = 'edit.php?post_type=course';
-
-		} elseif ( $screen->base == 'edit-tags' &amp;&amp; $taxonomy == 'course-category' ) {
-
-			$submenu_file = 'edit-tags.php?taxonomy=course-category&amp;amp;post_type=course';
-			$parent_file  = 'edit.php?post_type=course';
-
-		} elseif ( $screen->base == 'edit-tags' &amp;&amp; $taxonomy == 'module' ) {
-
-			$submenu_file = 'edit-tags.php?taxonomy=module&amp;post_type=course';
-			$parent_file  = 'edit.php?post_type=course';
-
-		} elseif ( in_array( $screen->id, array( 'sensei_message', 'edit-sensei_message' ) ) ) {
-
-			$submenu_file = 'edit.php?post_type=sensei_message';
+		if ( 'edit-tags' === $screen->base &amp;&amp; 'module' === $taxonomy ) {
 			$parent_file  = 'sensei';
+			$submenu_file = 'edit-tags.php?taxonomy=module&amp;post_type=course';
+
+		} elseif ( in_array( $screen->id, [ 'edit-module', 'admin_page_module-order' ], true ) ) {
+			// Module pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit-tags.php?taxonomy=module&amp;post_type=course';
+
+		} elseif ( in_array( $screen->id, [ 'course', 'edit-course-category', 'admin_page_course-order' ], true ) ) {
+			// Course pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=course';
+
+		} elseif ( in_array( $screen->id, [ 'lesson', 'edit-lesson-tag', 'admin_page_lesson-order' ], true ) ) {
+			// Lesson pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=lesson';
+
+		} elseif ( in_array( $screen->id, [ 'question', 'edit-question-category' ], true ) ) {
+			// Question pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=question';
+
+		} elseif ( in_array( $screen->id, [ 'sensei_message' ], true ) ) {
+			// Message pages.
+			$parent_file              = 'sensei';
+			$_wp_real_parent_file[''] = 'sensei';
+			$submenu_file             = 'edit.php?post_type=sensei_message';
 
 		}
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -395,15 +418,20 @@ class Sensei_Admin {
 		Sensei()->assets->register(
 			'sensei-learners-admin-bulk-actions-js',
 			'js/learners-bulk-actions.js',
-			[ 'jquery', 'sensei-core-select2', 'jquery-modal' ],
+			[ 'jquery', 'sensei-core-select2', 'jquery-modal', 'wp-i18n' ],
 			true
 		);
+
+		$ajax_object = array(
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+		);
+		wp_localize_script( 'sensei-learners-admin-bulk-actions-js', 'ajax_object', $ajax_object );
 
 		Sensei()->assets->register( 'sensei-chosen', '../vendor/chosen/chosen.jquery.min.js', [ 'jquery' ], true );
 		Sensei()->assets->register( 'sensei-chosen-ajax', '../vendor/chosen/ajax-chosen.jquery.min.js', [ 'jquery', 'sensei-chosen' ], true );
 
 		// Load ordering script on Order Courses and Order Lessons pages.
-		if ( in_array( $screen->id, [ 'course_page_course-order', 'course_page_lesson-order' ], true ) ) {
+		if ( in_array( $screen->id, [ 'admin_page_course-order', 'admin_page_lesson-order' ], true ) ) {
 			Sensei()->assets->enqueue( 'sensei-ordering', 'js/admin/ordering.js', [ 'jquery', 'jquery-ui-sortable', 'sensei-core-select2' ], true );
 		}
 
@@ -439,8 +467,8 @@ class Sensei_Admin {
 			'edit-lesson-tag',
 			'edit-question',
 			'edit-question-category',
-			'course_page_' . Sensei_Analysis::PAGE_SLUG,
-			'course_page_sensei_learners',
+			'sensei-lms_page_' . Sensei_Analysis::PAGE_SLUG,
+			'sensei-lms_page_sensei_learners',
 		];
 		/**
 		 * Allows modifying the list of screens where the scripts for custom
@@ -1345,11 +1373,10 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
-						'page'      => $this->course_order_page_slug,
-						'ordered'   => $ordered,
+						'page'    => $this->course_order_page_slug,
+						'ordered' => $ordered,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1531,12 +1558,11 @@ class Sensei_Admin {
 			esc_url_raw(
 				add_query_arg(
 					array(
-						'post_type' => 'course',
 						'page'      => $this->lesson_order_page_slug,
 						'ordered'   => $ordered,
 						'course_id' => $course_id,
 					),
-					admin_url( 'edit.php' )
+					admin_url( 'admin.php' )
 				)
 			)
 		);
@@ -1579,7 +1605,7 @@ class Sensei_Admin {
 
 			$courses = get_posts( $args );
 
-			$html .= '&lt;form action="' . esc_url( admin_url( 'edit.php' ) ) . '" method="get">' . "\n";
+			$html .= '&lt;form action="' . esc_url( admin_url( 'admin.php' ) ) . '" method="get">' . "\n";
 			$html .= '&lt;input type="hidden" name="post_type" value="course" />' . "\n";
 			$html .= '&lt;input type="hidden" name="page" value="lesson-order" />' . "\n";
 			$html .= '&lt;select id="lesson-order-course" name="course_id">' . "\n";
@@ -1843,6 +1869,21 @@ class Sensei_Admin {
 		return $course_structure;
 	}
 
+	/**
+	 * Registers the hook to call mark_completed when the wc-admin page on WooCommerce is visited.
+	 *
+	 * @access private
+	 * @return void
+	 */
+	public function admin_init() {
+		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
+			$hook = get_plugin_page_hook( 'wc-admin', 'woocommerce' );
+			if ( null !== $hook ) {
+				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
+			}
+		}
+	}
+
 	function sensei_add_custom_menu_items() {
 		global $pagenow;
 
@@ -2075,7 +2116,7 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course', 'lesson' ], true ) ) {
+		if ( in_array( $screen->id, [ 'course', 'lesson', Sensei_Home::SCREEN_ID ], true ) ) {
 			?>
 			&lt;script>
 				window.sensei = window.sensei || {};
@@ -2112,7 +2153,7 @@ class WooThemes_Sensei_Admin extends Sensei_Admin{ }
 </div>
 
 <nav>
-	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_reports_overview_after_top_filters.html">sensei_reports_overview_after_top_filters</a></li><li><a href="sensei_reports_overview_before_top_filters.html">sensei_reports_overview_before_top_filters</a></li><li><a href="sensei_reports_overview_students_data_provider_pre_user_query.html">sensei_reports_overview_students_data_provider_pre_user_query</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_can_use_users_relationship.html">sensei_can_use_users_relationship</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_reports_overview_export_button_url.html">sensei_reports_overview_export_button_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_student_groups_hide.html">sensei_student_groups_hide</a></li><li><a href="sensei_students_report_last_activity_filter_enabled.html">sensei_students_report_last_activity_filter_enabled</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li></ul>
+	<h2><a href="index.html">Home</a></h2><h3>Actions</h3><ul><li><a href="sensei_course_learning_mode_load_override_styles.html">sensei_course_learning_mode_load_override_styles</a></li><li><a href="sensei_course_learning_mode_load_theme.html">sensei_course_learning_mode_load_theme</a></li><li><a href="sensei_course_learning_mode_override_theme.html">sensei_course_learning_mode_override_theme</a></li><li><a href="sensei_data_port_complete.html">sensei_data_port_complete</a></li><li><a href="sensei_grading_allowed_user_ids.html">sensei_grading_allowed_user_ids</a></li><li><a href="sensei_loaded.html">sensei_loaded</a></li><li><a href="sensei_login_success_redirect_url.html">sensei_login_success_redirect_url</a></li><li><a href="sensei_reports_overview_after_top_filters.html">sensei_reports_overview_after_top_filters</a></li><li><a href="sensei_reports_overview_before_top_filters.html">sensei_reports_overview_before_top_filters</a></li><li><a href="sensei_reports_overview_students_data_provider_pre_user_query.html">sensei_reports_overview_students_data_provider_pre_user_query</a></li><li><a href="sensei_rest_api_category_question_saved.html">sensei_rest_api_category_question_saved</a></li><li><a href="sensei_rest_api_lesson_quiz_update.html">sensei_rest_api_lesson_quiz_update</a></li><li><a href="sensei_rest_api_question_saved.html">sensei_rest_api_question_saved</a></li><li><a href="sensei_tools_listing_after_%257B$tool_id%257D.html">sensei_tools_listing_after_{$tool_id}</a></li></ul><h3>Filters</h3><ul><li><a href="sensei_add_comment_indexes.html">sensei_add_comment_indexes</a></li><li><a href="sensei_admin_notices.html">sensei_admin_notices</a></li><li><a href="sensei_analysis_nav_title.html">sensei_analysis_nav_title</a></li><li><a href="sensei_analysis_sub_menu.html">sensei_analysis_sub_menu</a></li><li><a href="sensei_block_type_args.html">sensei_block_type_args</a></li><li><a href="sensei_can_access_course_content.html">sensei_can_access_course_content</a></li><li><a href="sensei_can_use_users_relationship.html">sensei_can_use_users_relationship</a></li><li><a href="sensei_context_notices.html">sensei_context_notices</a></li><li><a href="sensei_course_block_template.html">sensei_course_block_template</a></li><li><a href="sensei_course_completed_page_template.html">sensei_course_completed_page_template</a></li><li><a href="sensei_course_completed_page_url.html">sensei_course_completed_page_url</a></li><li><a href="sensei_course_learning_mode_enabled.html">sensei_course_learning_mode_enabled</a></li><li><a href="sensei_course_learning_mode_theme_override_enabled.html">sensei_course_learning_mode_theme_override_enabled</a></li><li><a href="sensei_course_loop_content_class.html">sensei_course_loop_content_class</a></li><li><a href="sensei_custom_navigation_allowed_screens.html">sensei_custom_navigation_allowed_screens</a></li><li><a href="sensei_default_feature_flag_settings.html">sensei_default_feature_flag_settings</a></li><li><a href="sensei_duplicate_post_args.html">sensei_duplicate_post_args</a></li><li><a href="sensei_duplicate_post_ignore_meta.html">sensei_duplicate_post_ignore_meta</a></li><li><a href="sensei_existing_questions_query_results.html">sensei_existing_questions_query_results</a></li><li><a href="sensei_file_upload_file_prefix.html">sensei_file_upload_file_prefix</a></li><li><a href="sensei_filter_category_questions_by_author.html">sensei_filter_category_questions_by_author</a></li><li><a href="sensei_filter_module_terms_by_owner.html">sensei_filter_module_terms_by_owner</a></li><li><a href="sensei_get_question_grade.html">sensei_get_question_grade</a></li><li><a href="sensei_get_question_template_data.html">sensei_get_question_template_data</a></li><li><a href="sensei_grading_display_quiz_question.html">sensei_grading_display_quiz_question</a></li><li><a href="sensei_home_is_plugin_licensed_%257B$plugin_slug%257D.html">sensei_home_is_plugin_licensed_{$plugin_slug}</a></li><li><a href="sensei_home_promo_banner_show.html">sensei_home_promo_banner_show</a></li><li><a href="sensei_home_remote_data_other_plugins.html">sensei_home_remote_data_other_plugins</a></li><li><a href="sensei_home_remote_data_primary_plugin_slug.html">sensei_home_remote_data_primary_plugin_slug</a></li><li><a href="sensei_home_remote_data_retry_error.html">sensei_home_remote_data_retry_error</a></li><li><a href="sensei_home_support_ticket_creation_upsell_show.html">sensei_home_support_ticket_creation_upsell_show</a></li><li><a href="sensei_icon_href.html">sensei_icon_href</a></li><li><a href="sensei_import_csv_delimiter.html">sensei_import_csv_delimiter</a></li><li><a href="sensei_import_csv_delimiter_options.html">sensei_import_csv_delimiter_options</a></li><li><a href="sensei_is_login_required.html">sensei_is_login_required</a></li><li><a href="sensei_learner_courses_page_template.html">sensei_learner_courses_page_template</a></li><li><a href="sensei_learner_enrolled_courses_args.html">sensei_learner_enrolled_courses_args</a></li><li><a href="sensei_learning_mode_block_templates.html">sensei_learning_mode_block_templates</a></li><li><a href="sensei_lesson_archive_title.html">sensei_lesson_archive_title</a></li><li><a href="sensei_lesson_block_template.html">sensei_lesson_block_template</a></li><li><a href="sensei_lesson_content_drip_hide.html">sensei_lesson_content_drip_hide</a></li><li><a href="sensei_lesson_count.html">sensei_lesson_count</a></li><li><a href="sensei_lesson_course_signup_notice_level.html">sensei_lesson_course_signup_notice_level</a></li><li><a href="sensei_lesson_course_signup_notice_message.html">sensei_lesson_course_signup_notice_message</a></li><li><a href="sensei_lesson_excerpt.html">sensei_lesson_excerpt</a></li><li><a href="sensei_lesson_placeholder_image_url.html">sensei_lesson_placeholder_image_url</a></li><li><a href="sensei_lesson_prerequisite.html">sensei_lesson_prerequisite</a></li><li><a href="sensei_lesson_quiz_questions.html">sensei_lesson_quiz_questions</a></li><li><a href="sensei_lesson_show_course_signup_notice.html">sensei_lesson_show_course_signup_notice</a></li><li><a href="sensei_lesson_take_course_url.html">sensei_lesson_take_course_url</a></li><li><a href="sensei_login_url.html">sensei_login_url</a></li><li><a href="sensei_module_course_column_max_links_count.html">sensei_module_course_column_max_links_count</a></li><li><a href="sensei_notice.html">sensei_notice</a></li><li><a href="sensei_question_answer_message_correct_answer.html">sensei_question_answer_message_correct_answer</a></li><li><a href="sensei_question_answer_message_css_class.html">sensei_question_answer_message_css_class</a></li><li><a href="sensei_question_answer_message_grade.html">sensei_question_answer_message_grade</a></li><li><a href="sensei_question_answer_message_text.html">sensei_question_answer_message_text</a></li><li><a href="sensei_question_answer_notes.html">sensei_question_answer_notes</a></li><li><a href="sensei_question_image_size.html">sensei_question_image_size</a></li><li><a href="sensei_question_show_answers.html">sensei_question_show_answers</a></li><li><a href="sensei_question_title.html">sensei_question_title</a></li><li><a href="sensei_question_type_specific_properties.html">sensei_question_type_specific_properties</a></li><li><a href="sensei_question_types.html">sensei_question_types</a></li><li><a href="sensei_questions_get_correct_answer.html">sensei_questions_get_correct_answer</a></li><li><a href="sensei_quiz_answer_file_upload_types.html">sensei_quiz_answer_file_upload_types</a></li><li><a href="sensei_quiz_enable_block_based_editor.html">sensei_quiz_enable_block_based_editor</a></li><li><a href="sensei_quiz_ordering_question_type_hide.html">sensei_quiz_ordering_question_type_hide</a></li><li><a href="sensei_quiz_pagination_args.html">sensei_quiz_pagination_args</a></li><li><a href="sensei_quiz_panel_add.html">sensei_quiz_panel_add</a></li><li><a href="sensei_quiz_settings.html">sensei_quiz_settings</a></li><li><a href="sensei_registration_url.html">sensei_registration_url</a></li><li><a href="sensei_reports_overview_export_button_url.html">sensei_reports_overview_export_button_url</a></li><li><a href="sensei_rest_api_lesson_quiz_response.html">sensei_rest_api_lesson_quiz_response</a></li><li><a href="sensei_rest_api_schema_question_type.html">sensei_rest_api_schema_question_type</a></li><li><a href="sensei_rest_api_schema_single_question.html">sensei_rest_api_schema_single_question</a></li><li><a href="sensei_scripts_allowed_pages.html">sensei_scripts_allowed_pages</a></li><li><a href="sensei_scripts_allowed_post_type_pages.html">sensei_scripts_allowed_post_type_pages</a></li><li><a href="sensei_scripts_allowed_post_types.html">sensei_scripts_allowed_post_types</a></li><li><a href="sensei_show_admin_notices_%257B$screen_id%257D.html">sensei_show_admin_notices_{$screen_id}</a></li><li><a href="sensei_show_enrolment_debug_button.html">sensei_show_enrolment_debug_button</a></li><li><a href="sensei_show_lesson_numbers.html">sensei_show_lesson_numbers</a></li><li><a href="sensei_student_groups_hide.html">sensei_student_groups_hide</a></li><li><a href="sensei_students_report_last_activity_filter_enabled.html">sensei_students_report_last_activity_filter_enabled</a></li><li><a href="sensei_the_question_number.html">sensei_the_question_number</a></li><li><a href="sensei_tools.html">sensei_tools</a></li><li><a href="sensei_user_courses_filter_options.html">sensei_user_courses_filter_options</a></li><li><a href="sensei_user_courses_query.html">sensei_user_courses_query</a></li></ul>
 </nav>
 
 <br class="clear">
