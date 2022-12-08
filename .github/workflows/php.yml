@@ -1,11 +1,17 @@
 name: PHP Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+        branches:
+            - feature/*
+    workflow_call:
 
 jobs:
     lint:
         name: PHP Linting
         runs-on: ubuntu-latest
+
+
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
@@ -31,6 +37,7 @@ jobs:
 
             - name: Set up branches
               run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
+              if: github.ref != 'refs/heads/trunk'
 
             - name: Install PHP dependencies
               run: composer self-update && composer install --no-ansi --no-interaction --prefer-dist --no-progress
