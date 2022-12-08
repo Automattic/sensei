@@ -1,5 +1,4 @@
 <?php
-// Temporary change
 /**
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
