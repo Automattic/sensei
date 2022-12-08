@@ -523,6 +523,16 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 			);
 		}
 
+		$theme_data = $this->setup_wizard->get_wizard_user_data( 'theme' );
+		if ( $theme_data['install_sensei_theme'] ) {
+			sensei_log_event(
+				'setup_wizard_install_theme',
+				[
+					'theme' => 'course',
+				]
+			);
+		}
+
 		return true;
 	}
 
