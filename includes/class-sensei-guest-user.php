@@ -39,8 +39,35 @@ class Sensei_Guest_User {
 	 */
 	public function __construct() {
 		add_action( 'wp', array( $this, 'sensei_create_guest_user_and_login_for_open_course' ), 9 );
+		add_action( 'sensei_is_enrolled', [ self::class, 'open_course_always_enrolled' ], 10, 3 );
+		add_action( 'sensei_can_access_course_content', [ self::class, 'open_course_enable_course_access' ], 10, 2 );
 
 		$this->create_guest_student_role_if_not_exists();
+	}
+
+	/**
+	 * Filter enrolment check to always return true if the course is open access.
+	 *
+	 * @param bool $is_enrolled Initial value.
+	 * @param int  $user_id     User ID. Unused.
+	 * @param int  $course_id   Course ID.
+	 *
+	 * @return bool
+	 */
+	public static function open_course_always_enrolled( $is_enrolled, $user_id, $course_id ) {
+		return Sensei_Course::is_open_access( $course_id ) ? true : $is_enrolled;
+	}
+
+	/**
+	 * Filter course access check to always return true if the course is open access.
+	 *
+	 * @param bool $can_view_course_content Initial value.
+	 * @param int  $course_id               Course ID.
+	 *
+	 * @return bool
+	 */
+	public static function open_course_enable_course_access( $can_view_course_content, $course_id ) {
+		return Sensei_Course::is_open_access( $course_id ) ? true : $can_view_course_content;
 	}
 
 	/**
