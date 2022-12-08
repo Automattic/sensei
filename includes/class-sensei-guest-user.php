@@ -59,7 +59,7 @@ class Sensei_Guest_User {
 	public function sensei_create_guest_user_for_open_course() {
 		global $post;
 
-		// Conditionally create guest user for open course.
+		// Conditionally create Guest Student user and set role for open course.
 		if (
 			is_singular( 'course' )
 			&& isset( $_POST['course_start'] )
@@ -69,12 +69,17 @@ class Sensei_Guest_User {
 			&& ! is_user_logged_in()
 			&& get_post_meta( $post->ID, 'open_access', true )
 		) {
-			$user_name = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . get_user_count();
-			$user_id   = wp_create_user( $user_name, wp_generate_password(), $user_name . '@senseiguest.senseiguest' );
-
-			// Set the role of the Guest Student.
-			$user = new WP_User( $user_id );
-			$user->set_role( $this->guest_student_role );
+			$user_count = get_user_count();
+			$user_name  = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
+			$user_id    = wp_insert_user(
+				[
+					'user_pass'    => wp_generate_password(),
+					'user_login'   => $user_name,
+					'user_email'   => $user_name . '@senseiguest.senseiguest',
+					'display_name' => 'Guest Student ' . $user_count,
+					'role'         => $this->guest_student_role,
+				]
+			);
 
 			// Log the newly created user in.
 			wp_set_current_user( $user_id );
