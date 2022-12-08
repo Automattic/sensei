@@ -4608,12 +4608,8 @@ class Sensei_Lesson {
 	 */
 	public static function is_prerequisite_complete( $lesson_id, $user_id ) {
 
-		if ( empty( $lesson_id ) || empty( $user_id )
-		|| 'lesson' != get_post_type( $lesson_id )
-		|| ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
-
+		if ( empty( $lesson_id ) || ( 'lesson' !== get_post_type( $lesson_id ) ) ) {
 			return false;
-
 		}
 
 		$pre_requisite_id = (string) self::get_lesson_prerequisite_id( $lesson_id );
@@ -4624,6 +4620,10 @@ class Sensei_Lesson {
 
 			return true;
 
+		}
+
+		if ( empty( $user_id ) || ! is_a( get_user_by( 'id', $user_id ), 'WP_User' ) ) {
+			return false;
 		}
 
 		return Sensei_Utils::user_completed_lesson( $pre_requisite_id, $user_id );

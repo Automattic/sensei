@@ -152,6 +152,17 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Is the course accessible to logged-out users.
+	 *
+	 * @param int $course_id
+	 *
+	 * @return bool
+	 */
+	public static function is_open_access( $course_id ) {
+		return ! empty( $course_id ) && get_post_meta( $course_id, 'open_access', true );
+	}
+
+	/**
 	 * Highlight the menu item for the course pages.
 	 *
 	 * @deprecated 4.8.0
