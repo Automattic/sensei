@@ -442,6 +442,18 @@ class Sensei_Course {
 				},
 			]
 		);
+		register_post_meta(
+			'course',
+			'open_access',
+			[
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
+					return current_user_can( 'edit_post', $post_id );
+				},
+			]
+		);
 		/**
 		 * Sets up the meta fields saved on course save in WP admin.
 		 *
