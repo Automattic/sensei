@@ -832,7 +832,7 @@ class Sensei_Teacher {
 			 * Allows to change the list of teacher IDs with grading access allowed for a given course ID.
 			 *
 			 * @hook   sensei_grading_allowed_user_ids
-			 * @since  $$next-version$$
+			 * @since  4.9.0
 			 *
 			 * @param int[] The list of user IDs with access granted. By default the course author.
 			 * @param int The course ID.
