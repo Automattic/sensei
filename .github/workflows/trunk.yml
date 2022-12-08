@@ -3,15 +3,15 @@ on:
     push:
         branches:
             - trunk
+            - add/run-e2e-tests-on-trunk
 
 jobs:
-    unit:
+    unit-js:
         uses: ./.github/workflows/js.yml 
     unit-php:
         uses: ./.github/workflows/php.yml 
     e2e:
-        needs: [unit, unit-php]
         uses: ./.github/workflows/e2e.yml 
     docs:
-        needs: [e2e]
+        needs: [ unit-js, unit-php, e2e]
         uses: ./.github/workflows/build-docs.yml 
