@@ -101,16 +101,16 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 		$allowed_themes = Sensei_Extensions::instance()->get_extensions( 'theme' );
 
 		// Get the info for the theme to install.
-		$theme_to_install = array_values(
+		$filtered_themes = array_values(
 			array_filter(
 				$allowed_themes,
 				function( $theme ) use ( $theme_slug ) {
 					return $theme->product_slug === $theme_slug;
 				}
 			)
-		)[0];
+		);
 
-		if ( empty( $theme_to_install ) ) {
+		if ( empty( $filtered_themes ) ) {
 			return new WP_Error(
 				'sensei_theme_invalid',
 				// translators: Placeholder is the theme slug.
@@ -118,6 +118,8 @@ class Sensei_REST_API_Theme_Controller extends WP_REST_Controller {
 				[ 'status' => 400 ]
 			);
 		}
+
+		$theme_to_install = $filtered_themes[0];
 
 		// If the theme is not already installed, install it.
 		if ( ! $theme_to_install->is_installed ) {
