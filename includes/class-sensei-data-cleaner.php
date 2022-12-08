@@ -91,6 +91,7 @@ class Sensei_Data_Cleaner {
 		'sensei_home_tasks_list_is_completed',
 		'sensei_home_tasks_dismissed',
 		'sensei_home_task_visited_woocommerce',
+		'sensei_home_task_visited_course_theme_customizer',
 	);
 
 	/**
