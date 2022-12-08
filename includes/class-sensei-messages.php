@@ -373,11 +373,7 @@ class Sensei_Messages {
 			? ''
 			: sanitize_text_field( wp_unslash( $_POST['contact_message'] ) );
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
-
-		if ( $message_id ) {
-			do_action( 'sensei_new_private_message', $message_id );
-		}
+		$this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -522,6 +518,16 @@ class Sensei_Messages {
 				$post = get_post( $post_id );
 				add_post_meta( $message_id, '_posttype', $post->post_type );
 				add_post_meta( $message_id, '_post', $post->ID );
+
+				/**
+				 * Fires when a new private message is sent.
+				 *
+				 * @since 1.8.0
+				 * @hook  sensei_new_private_message
+				 *
+				 * @param {int} $message_id The message ID.
+				 */
+				do_action( 'sensei_new_private_message', $message_id );
 
 			} else {
 

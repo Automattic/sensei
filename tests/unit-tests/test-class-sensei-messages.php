@@ -100,4 +100,21 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->login_as_admin();
 		$this->assertEquals( [ 'read' => true ], $instance->user_messages_cap_check( [], [ 'read' ], [ 'read_post', get_current_user_id(), $message_id ] ), 'Admins should still have access' );
 	}
+
+	public function testSaveNewMessagePost_WhenSuccessful_TriggersHook() {
+		/* Arrange. */
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->course->create();
+		$instance   = new Sensei_Messages();
+
+		// Remove the hooks to avoid side effects.
+		remove_all_actions( 'sensei_new_private_message' );
+
+		/* Act. */
+		$instance->save_new_message_post( $student_id, $teacher_id, 'message', $course_id );
+
+		/* Assert. */
+		$this->assertEquals( 1, did_action( 'sensei_new_private_message' ) );
+	}
 }
