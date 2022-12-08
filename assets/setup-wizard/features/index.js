@@ -57,7 +57,14 @@ const getFeatureActions = ( { selected, options } ) => {
  */
 const getThemeAction = () => ( {
 	label: __( 'Installing the Course theme', 'sensei-lms' ),
-	action: () => Promise.resolve(),
+	action: () =>
+		apiFetch( {
+			path: '/sensei-internal/v1/themes/install',
+			method: 'POST',
+			data: {
+				theme: 'course',
+			},
+		} ),
 } );
 
 /**
