@@ -13,5 +13,8 @@ jobs:
     e2e:
         uses: ./.github/workflows/e2e.yml 
     docs:
-        needs: [ unit-js, unit-php, e2e]
+        needs: [ unit-js, unit-php, e2e ]
         uses: ./.github/workflows/build-docs.yml 
+    build:
+        needs: [ unit-js, unit-php, e2e ]
+        uses: ./.github/workflows/build.yml
