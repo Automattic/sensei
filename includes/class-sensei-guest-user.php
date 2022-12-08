@@ -38,7 +38,17 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
+		add_action( 'wp', array( $this, 'sensei_create_guest_user_for_open_course' ), 9 );
 
+		$this->create_guest_student_role_if_not_exists();
+	}
+
+	/**
+	 * Create the Guest Student role if it does not exist.
+	 *
+	 * @since  $$next-version$$
+	 */
+	private function create_guest_student_role_if_not_exists() {
 		// Check if the Guest Student role exists.
 		$guest_role = get_role( $this->guest_student_role );
 
@@ -47,8 +57,6 @@ class Sensei_Guest_User {
 			// Create the role.
 			add_role( $this->guest_student_role, __( 'Guest Student', 'sensei-lms' ) );
 		}
-
-		add_action( 'wp', array( $this, 'sensei_create_guest_user_for_open_course' ), 9 );
 	}
 
 	/**
