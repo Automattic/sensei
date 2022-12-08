@@ -1,7 +1,7 @@
 name: Build Hook Docs
 
 on:
- workflow_call:
+    workflow_call:
 
 jobs:
     hookdocs:
