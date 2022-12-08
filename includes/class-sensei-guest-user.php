@@ -70,7 +70,7 @@ class Sensei_Guest_User {
 			&& get_post_meta( $post->ID, 'open_access', true )
 		) {
 			$user_name = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . get_user_count();
-			$user_id   = wp_create_user( $user_name, $user_name, $user_name . '@senseiguest.senseiguest' );
+			$user_id   = wp_create_user( $user_name, wp_generate_password(), $user_name . '@senseiguest.senseiguest' );
 
 			// Set the role of the Guest Student.
 			$user = new WP_User( $user_id );
