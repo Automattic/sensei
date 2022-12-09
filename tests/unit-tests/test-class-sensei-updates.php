@@ -24,7 +24,7 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		Sensei_Test_Events::reset();
@@ -37,10 +37,10 @@ class Sensei_Updates_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::resetScheduler();
 
-		return parent::tearDownAfterClass();
+		parent::tearDownAfterClass();
 	}
 
 	/**

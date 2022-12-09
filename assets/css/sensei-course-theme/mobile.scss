@@ -1,5 +1,4 @@
 @media screen and (max-width: ($breakpoint - 1)) {
-
 	.sensei-course-theme__focus-mode-toggle {
 		display: none;
 	}
@@ -7,7 +6,6 @@
 	.sensei-course-theme-lesson-completion-notice {
 		left: 0;
 	}
-
 
 	@media screen and (max-width: ($breakpoint - 1)) {
 
@@ -30,6 +28,7 @@
 				> *:first-child {
 					flex: 1;
 				}
+
 				* {
 					gap: 12px !important;
 				}

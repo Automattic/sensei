@@ -5,106 +5,66 @@
 /*
 *  Course page grid
 */
-.course-container{
+.course-container {
+	.first {
+		clear: left;
+	}
 
-  .first{
+	.last {
+		padding: 0;
+	}
 
-    clear: left;
-
-  }
-
-  .last {
-
-    padding: 0px;
-
-  }
-
-  li.course{
-
-    padding: 12px;
-    float: left;
-
-  }
-
+	li.course {
+		padding: 12px;
+		float: left;
+	}
 }
 
-.columns-1{
-
-  li.course{
-
-    width: 100%;
-    padding-right: 0px;
-
-  }
-
+.columns-1 {
+	li.course {
+		width: 100%;
+		padding-right: 0;
+	}
 }
 
-.columns-2{
-
-  li.course{
-
-    width: 50%;
-
-  }
-
+.columns-2 {
+	li.course {
+		width: 50%;
+	}
 }
 
-.columns-3{
-
-  li.course{
-
-    width: 33.33%;
-
-  }
-
+.columns-3 {
+	li.course {
+		width: 33.33%;
+	}
 }
 
-.columns-4{
-
-  li.course{
-
-    width: 25%;
-
-  }
-
+.columns-4 {
+	li.course {
+		width: 25%;
+	}
 }
 
-.columns-5{
-
-  li.course{
-
-    width: 20%;
-
-  }
-
+.columns-5 {
+	li.course {
+		width: 20%;
+	}
 }
 
-.columns-6{
-
-  li.course{
-
-    width: 16.66%;
-
-  }
-
+.columns-6 {
+	li.course {
+		width: 16.66%;
+	}
 }
 
-.columns-7{
-
-  li.course{
-
-    width: 13.7%;
-
-  }
-
+.columns-7 {
+	li.course {
+		width: 13.7%;
+	}
 }
 
-.columns-8{
-
-  li.course{
-
-    width: 11.7%;
-
-  }
-
+.columns-8 {
+	li.course {
+		width: 11.7%;
+	}
 }

@@ -74,8 +74,8 @@ class Sensei_Block_Take_Course {
 		} elseif ( ! is_user_logged_in() ) {
 			$html = $this->render_with_login( $content );
 		}
-
-		return ! empty( $html ) ? '<div class="sensei-block-wrapper sensei-cta">' . $html . '</div>' : '';
+		$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'sensei-block-wrapper sensei-cta' ) );
+		return ! empty( $html ) ? '<div ' . $wrapper_attributes . '>' . $html . '</div>' : '';
 	}
 
 	/**
@@ -109,8 +109,8 @@ class Sensei_Block_Take_Course {
 
 		if ( preg_match( '/<button(.*)class="(.*)"/', $button ) ) {
 			return preg_replace(
-				'/<button(.*)class="(.*)"/',
-				'<button $1 class="sensei-stop-double-submission $2"',
+				'/<button(.*) class="(.*)"/',
+				'<button$1 class="sensei-stop-double-submission $2"',
 				$button,
 				1
 			);

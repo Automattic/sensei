@@ -31,7 +31,7 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 	/**
 	 * Test specific setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		global $wp_rest_server;
@@ -49,7 +49,7 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 	/**
 	 * Test specific teardown.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		global $wp_rest_server;

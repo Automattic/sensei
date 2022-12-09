@@ -10,7 +10,7 @@ const { devices } = require( '@playwright/test' );
  */
 const config = {
 	testDir: './tests/e2e-playwright/specs/',
-	testMatch: '**/*.spec.js',
+	testMatch: /.*\.spec\.(js|ts)$/,
 	/* Maximum time one test can run for. */
 	timeout: 30 * 1000, // 30 seconds.
 	globalSetup: require.resolve(

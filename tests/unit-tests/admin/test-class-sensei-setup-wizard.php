@@ -14,7 +14,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before the class.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		// Mock WooCommerce plugin information.
 		set_transient(
 			Sensei_Utils::WC_INFORMATION_TRANSIENT,
@@ -33,8 +33,8 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before each test.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		// Save original current screen.
 		global $current_screen;
@@ -46,7 +46,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		// Restore current screen.

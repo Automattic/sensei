@@ -6,7 +6,6 @@ $tablet-breakpoint: 768px;
 @import '../../shared/blocks/progress-bar/progress-bar';
 
 .sensei-course-theme__quiz {
-
 	&__main-content {
 		padding: 32px;
 		margin-bottom: 100px !important;
@@ -84,11 +83,12 @@ $tablet-breakpoint: 768px;
 		.sensei-quiz-pagination {
 			flex: 1;
 			margin: 0;
+
 			&__list {
 				margin-right: auto;
 			}
 
-			.sensei-quiz-pagination__list ul.page-numbers{
+			.sensei-quiz-pagination__list ul.page-numbers {
 				gap: 1rem;
 			}
 		}
@@ -101,7 +101,7 @@ $tablet-breakpoint: 768px;
 	}
 }
 
-@media only screen and (min-width: $tablet-breakpoint ) {
+@media only screen and (min-width: $tablet-breakpoint) {
 	.sensei-course-theme__quiz {
 		&__footer {
 			&__wrapper {
@@ -111,16 +111,18 @@ $tablet-breakpoint: 768px;
 				right: 0;
 				z-index: 100;
 				background-color: var(--sensei-background-color);
-				box-shadow: 2px 10px 30px 5px rgba(0,0,0, 0.1);
+				box-shadow: 2px 10px 30px 5px rgba(0, 0, 0, 0.1);
 			}
 
 			.sensei-quiz-actions {
 				width: auto;
 				flex-direction: row-reverse;
+
 				.sensei-quiz-action {
 					flex: unset;
 				}
 			}
+
 			.sensei-quiz-pagination {
 				.sensei-quiz-actions {
 					flex-direction: row;

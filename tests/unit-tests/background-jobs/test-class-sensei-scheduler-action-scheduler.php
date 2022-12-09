@@ -17,7 +17,7 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down the test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		_as_reset();
@@ -26,21 +26,21 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before all tests.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		self::createMocks();
 		self::resetScheduler();
 		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_action_scheduler' ] );
 
-		return parent::setUpBeforeClass();
+		parent::setUpBeforeClass();
 	}
 
 	/**
 	 * Tear down after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::restoreShimScheduler();
 
-		return parent::tearDownAfterClass();
+		parent::tearDownAfterClass();
 	}
 
 	/**

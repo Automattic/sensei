@@ -11,7 +11,8 @@
 			list-style: none;
 			margin: 0;
 		}
-		padding-left: 0px;
+
+		padding-left: 0;
 		margin: 0;
 	}
 
@@ -30,7 +31,7 @@
 		margin: 12px 0;
 		padding: 0;
 		border: unset;
-		background: unset!important;
+		background: unset !important;
 		color: inherit !important;
 
 		&:hover {
@@ -61,7 +62,7 @@
 	&__button {
 		color: inherit;
 		text-transform: inherit;
-		background: none!important;
+		background: none !important;
 	}
 
 	&__summary {
@@ -79,7 +80,6 @@
 		visibility: visible;
 		max-height: 50px;
 	}
-
 }
 
 .sensei-lms-course-navigation-lesson {

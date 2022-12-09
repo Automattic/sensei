@@ -32,7 +32,7 @@ class Sensei_Quiz {
 	/**
 	 * The main plugin filename.
 	 *
-	 * @deprecated $$next-version$$ This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
+	 * @deprecated 4.9.0 This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
 	 * @var string
 	 */
 	public $file;
@@ -57,6 +57,7 @@ class Sensei_Quiz {
 			'show_questions',
 			'random_question_order',
 		);
+		add_filter( 'wp_insert_post_data', [ $this, 'set_quiz_author_on_create' ], 10, 4 );
 		add_action( 'save_post', array( $this, 'update_after_lesson_change' ) );
 
 		// Redirect if the lesson is protected.
@@ -114,6 +115,43 @@ class Sensei_Quiz {
 		 * @return {bool}
 		 */
 		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_based_editor_enabled );
+	}
+
+	/**
+	 * Hooks into `wp_insert_post_data` and updates the quiz author to the lesson author on create.
+	 *
+	 * @param mixed     $data                The data to be saved.
+	 * @param mixed     $postarr             The post data.
+	 * @param mixed     $unsanitized_postarr Unsanitized post data.
+	 * @param bool|null $update              Whether the action is for an existing post being updated or not.
+	 * @return mixed
+	 */
+	public function set_quiz_author_on_create( $data, $postarr, $unsanitized_postarr, $update = null ) {
+		// Compatibility for WP < 6.0.
+		if ( null === $update ) {
+			$update = ! empty( $postarr['ID'] );
+		}
+
+		// Only handle new posts.
+		if ( $update ) {
+			return $data;
+		}
+
+		// Only handle quizzes.
+		if ( 'quiz' !== $data['post_type'] ) {
+			return $data;
+		}
+
+		// Set author to lesson author.
+		$lesson_id = $postarr['post_parent'] ?? null;
+		if ( $lesson_id ) {
+			$lesson = get_post( $lesson_id );
+			if ( $lesson ) {
+				$data['post_author'] = $lesson->post_author;
+			}
+		}
+
+		return $data;
 	}
 
 	/**

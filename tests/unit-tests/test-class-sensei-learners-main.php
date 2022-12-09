@@ -18,7 +18,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 
 	private $course_id;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 		$this->login_as_teacher();
@@ -28,7 +28,7 @@ class Sensei_Learners_Main_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
