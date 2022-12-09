@@ -832,10 +832,10 @@ class Sensei_Teacher {
 			 * Allows to change the list of teacher IDs with grading access allowed for a given course ID.
 			 *
 			 * @hook   sensei_grading_allowed_user_ids
-			 * @since  $$next-version$$
+			 * @since  4.9.0
 			 *
-			 * @param int[] The list of user IDs with access granted. By default the course author.
-			 * @param int The course ID.
+			 * @param {int[]} $user_ids The list of user IDs with access granted. By default the course author.
+			 * @param {int} $course_id The course ID.
 			 */
 			$allowed_user_ids = apply_filters( 'sensei_grading_allowed_user_ids', [ intval( $course->post_author ) ], $course_id );
 			if ( ! isset( $course->post_author ) || ! in_array( intval( get_current_user_id() ), $allowed_user_ids, true ) ) {

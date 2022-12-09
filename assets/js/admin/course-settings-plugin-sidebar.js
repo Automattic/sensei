@@ -28,7 +28,7 @@ export const CourseSidebar = () => {
 	/**
 	 * Filter to show or hide course pricing component.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @hook  senseiCoursePricingHide This hook allows to pass a boolean value for hiding course pricing upsell.
 	 * @return {boolean} 			  Hide the component.
@@ -38,7 +38,7 @@ export const CourseSidebar = () => {
 	/**
 	 * Filter to show or hide course expiration component.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @hook  senseiCourseAccessPeriodHide This hook allows to pass a boolean value for hiding course expiration (access period) upsell.
 	 * @return {boolean} 				   Hide the component.
