@@ -4888,7 +4888,7 @@ class Sensei_Lesson {
 		<footer>
 
 			<?php
-			if ( $show_actions && $quiz_id && Sensei()->access_settings() ) {
+			if ( $show_actions && $quiz_id ) {
 
 				if ( self::lesson_quiz_has_questions( $lesson_id ) ) {
 					?>
@@ -4936,8 +4936,10 @@ class Sensei_Lesson {
 	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ) : bool {
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-		if ( 0 === $user_id ) {
-			return false;
+		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
+
+		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
+			return '';
 		}
 
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
