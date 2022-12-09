@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.9.0
+Stable tag: 4.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2022-12-09 - version 4.9.1
+* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
+* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
+
 2022-12-06 - version 4.9.0
 * New: Co-teacher
     * Add/coteachers metabox hook [#6115](https://github.com/Automattic/sensei/pull/6115)
@@ -176,8 +180,4 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Checks for modules when adding author name to module name [#6034](https://github.com/Automattic/sensei/pull/6034)
 * Fix: PHP notice on course category archive view [#6069](https://github.com/Automattic/sensei/pull/6069)
 * Fix: Error when activating Sensei LMS + Sensei Pro (WC Paid Courses) [#6080](https://github.com/Automattic/sensei/pull/6080)
-* Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083)
-
-2022-10-27 - version 4.8.0
-* New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
-* New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.
+* Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083).
