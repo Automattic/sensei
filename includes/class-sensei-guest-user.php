@@ -57,7 +57,8 @@ class Sensei_Guest_User {
 	 * @return bool
 	 */
 	public function open_course_always_enrolled( $is_enrolled, $user_id, $course_id ) {
-		return $this->is_course_open_access( $course_id ) ? true : $is_enrolled;
+		$in_course_content = is_singular( [ 'lesson', 'quiz' ] );
+		return ( $in_course_content && $this->is_course_open_access( $course_id ) ) ? true : $is_enrolled;
 	}
 
 	/**
