@@ -525,7 +525,7 @@ class Sensei_Course {
 	 *
 	 * Hooked into `rest_api_init`.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 */
 	public function add_author_support() {
