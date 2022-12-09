@@ -43,7 +43,8 @@ const Theme = () => {
 		// Checks if it was scrolled until the theme content.
 		const scrollCheck = () => {
 			setIsScrolled(
-				themeContentRef.current.getBoundingClientRect().y < scrollOffset
+				themeContentRef.current.getBoundingClientRect().y <=
+					scrollOffset + 10
 			);
 		};
 
@@ -64,7 +65,9 @@ const Theme = () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
 
 		w.scroll( {
-			top: themeContentRef.current.offsetTop - scrollOffset,
+			top:
+				themeContentRef.current.getBoundingClientRect().y -
+				scrollOffset,
 			behavior: 'smooth',
 		} );
 	};
@@ -106,7 +109,6 @@ const Theme = () => {
 				className={ classnames(
 					'sensei-setup-wizard__content sensei-setup-wizard__content--large',
 					{
-						'sensei-setup-wizard__content--sticky': isBigScreen,
 						'sensei-setup-wizard__content--hidden':
 							isBigScreen && isScrolled,
 					}
