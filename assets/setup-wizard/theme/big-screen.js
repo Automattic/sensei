@@ -24,12 +24,14 @@ import Carousel from './carousel';
  */
 const BigScreen = () => (
 	<div className="sensei-setup-wizard-theme">
-		<div className="sensei-setup-wizard-theme__image-wrapper">
-			<img
-				src={ window.sensei.pluginUrl + mainImage }
-				alt={ __( 'Sensei theme illustration', 'sensei-lms' ) }
-				className="sensei-setup-wizard-theme__image"
-			/>
+		<div className="sensei-setup-wizard-theme__main-image">
+			<div className="sensei-setup-wizard-theme__image-wrapper">
+				<img
+					src={ window.sensei.pluginUrl + mainImage }
+					alt={ __( 'Sensei theme illustration', 'sensei-lms' ) }
+					className="sensei-setup-wizard-theme__image"
+				/>
+			</div>
 		</div>
 
 		<Section className="sensei-setup-wizard-theme__section">
