@@ -5,6 +5,7 @@ const PostType = require( '../post-type' );
 
 class WizardModal {
 	private readonly wizard: Locator;
+	private readonly form: Locator;
 	public readonly input: Locator;
 	public readonly textArea: Locator;
 	public readonly continueButton: Locator;
