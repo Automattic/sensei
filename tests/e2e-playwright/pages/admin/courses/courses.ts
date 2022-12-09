@@ -1,6 +1,16 @@
-const PostType = require('../post-type');
+/**
+ * Internal dependencies
+ */
+const PostType = require( '../post-type' );
 
 class WizardModal {
+	private readonly wizard: Locator;
+	public readonly input: Locator;
+	public readonly textArea: Locator;
+	public readonly continueButton: Locator;
+	public readonly continueWithFreeButton: Locator;
+	public readonly startWithDefaultLayoutButton: Locator;
+
 	constructor( locator: Locator ) {
 		this.wizard = locator;
 		this.form = this.wizard.locator( '.sensei-editor-wizard-step__form' );
@@ -13,18 +23,24 @@ class WizardModal {
 }
 
 class CoursesPage extends PostType {
-  constructor( page: Page ) {
-	super( page, 'course' );
+	public readonly wizardModal: WizardModal;
+	public readonly createCourseButton: Locator;
+	public readonly publishButton: Locator;
+	public readonly confirmPublishButton: Locator;
+	public readonly viewPreviewLink: Locator;
 
-	const wizardLocator = page.locator( '.sensei-editor-wizard' );
-	this.wizardModal = new WizardModal( wizardLocator );
+	constructor( page: Page ) {
+		super( page, 'course' );
 
-	this.createCourseButton = page.locator( 'a.page-title-action[href$="post-new.php?post_type=course"]:has-text("New Course")' );
+		const wizardLocator = page.locator( '.sensei-editor-wizard' );
+		this.wizardModal = new WizardModal( wizardLocator );
 
-	this.publishButton = page.locator( '[aria-label="Editor top bar"] >> text=Publish' );
-	this.confirmPublishButton = page.locator( '[aria-label="Editor publish"] >> text=Publish' ).first();
-	this.viewPreviewLink = page.locator( 'a:has-text("View Preview")' ).first();
-  }
+		this.createCourseButton = page.locator( 'a.page-title-action[href$="post-new.php?post_type=course"]:has-text("New Course")' );
+
+		this.publishButton = page.locator( '[aria-label="Editor top bar"] >> text=Publish' );
+		this.confirmPublishButton = page.locator( '[aria-label="Editor publish"] >> text=Publish' ).first();
+		this.viewPreviewLink = page.locator( 'a:has-text("View Preview")' ).first();
+	}
 }
 
 module.exports = CoursesPage;

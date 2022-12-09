@@ -2,6 +2,9 @@ const PATH = '/wp-admin/';
 
 class DashboardPage {
 	private readonly page: Page;
+	public readonly mainMenu: Locator;
+	public readonly senseiMenuItem: Locator;
+	public readonly coursesMenuItem: Locator;
 
 	constructor( page: Page ) {
 		this.page = page;
