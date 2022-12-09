@@ -141,7 +141,7 @@ class Lesson_Actions {
 		$actions = [];
 		$class   = [ 'sensei-course-theme-lesson-actions' ];
 
-		if ( empty( $lesson_id ) || empty( $user_id ) ) {
+		if ( empty( $lesson_id ) ) {
 			return '';
 		}
 
