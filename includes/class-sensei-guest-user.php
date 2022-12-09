@@ -80,13 +80,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 */
 	private function recreate_nonces() {
-		$nonce_field = wp_nonce_field( 'woothemes_sensei_start_course_noonce', 'woothemes_sensei_start_course_noonce', false, false );
-		$pattern     = '/value="([^"]*)"/';
-
-		preg_match( $pattern, $nonce_field, $matches );
-		$_POST['woothemes_sensei_start_course_noonce'] = $matches[1];
-
-		unset( $matches );
+		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
 	}
 
 	/**
