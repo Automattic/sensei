@@ -40,7 +40,7 @@ class Sensei_View_Quiz_Block {
 	public function render( array $attributes, string $content ) : string {
 		$lesson_id = get_the_ID();
 
-		if ( empty( $lesson_id ) || ! Sensei_Lesson::should_show_lesson_actions( $lesson_id ) ) {
+		if ( empty( $lesson_id ) || ! sensei_can_user_view_lesson( $lesson_id ) ) {
 			return '';
 		}
 

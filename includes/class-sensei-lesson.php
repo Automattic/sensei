@@ -4936,12 +4936,6 @@ class Sensei_Lesson {
 	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ) : bool {
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
-
-		if ( ! Sensei_Course::is_user_enrolled( $course_id ) ) {
-			return '';
-		}
-
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
 
 		if ( $lesson_prerequisite > 0 ) {
