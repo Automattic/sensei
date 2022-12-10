@@ -121,7 +121,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$notices = $notices->add_review_notice( [] );
 
 		// Assert.
-		$this->assertArrayHasKey( 'sensei_home_sensei_review', $notices );
+		$this->assertArrayHasKey( $notice_id, $notices );
 		$this->assertStringContainsString( 'Are you enjoying', $notices[ $notice_id ]['message'] );
 		$this->assertEquals( 'Yes', $notices[ $notice_id ]['actions'][0]['label'] );
 		$this->assertEquals( 'No', $notices[ $notice_id ]['actions'][1]['label'] );
@@ -144,7 +144,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$notices = $notices->add_review_notice( [] );
 
 		// Assert.
-		$this->assertArrayHasKey( 'sensei_home_sensei_review', $notices );
+		$this->assertArrayHasKey( $notice_id, $notices );
 		$this->assertStringContainsString( 'Great to hear', $notices[ $notice_id ]['message'] );
 		$this->assertStringContainsString( 'https://review_url', $notices[ $notice_id ]['message'] );
 		$this->assertEmpty( $notices[ $notice_id ]['actions'] );
@@ -168,7 +168,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$notices = $notices->add_review_notice( [] );
 
 		// Assert.
-		$this->assertArrayHasKey( 'sensei_home_sensei_review', $notices );
+		$this->assertArrayHasKey( $notice_id, $notices );
 		$this->assertStringContainsString( 'Oh no, sorry to hear that', $notices[ $notice_id ]['message'] );
 		$this->assertStringContainsString( 'https://feedback_url', $notices[ $notice_id ]['message'] );
 		$this->assertEmpty( $notices[ $notice_id ]['actions'] );
@@ -309,7 +309,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 	/**
 	 * The remote data API mock builder.
 	 *
-	 * @param mixed $response Resonse from remote data API.
+	 * @param mixed $response Response from remote data API.
 	 *
 	 * @return Sensei_Home_Remote_Data_API
 	 */
