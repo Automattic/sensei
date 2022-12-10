@@ -54,6 +54,123 @@ class Sensei_Home_Notices {
 	public function init() {
 		add_filter( 'sensei_show_admin_notices_' . $this->screen_id, '__return_false' );
 		add_filter( 'sensei_admin_notices', [ $this, 'add_update_notices' ], 10, 2 );
+		add_filter( 'sensei_admin_notices', [ $this, 'add_review_notice' ], 10, 2 );
+	}
+
+	/**
+	 * Return the answer the user given to the review.
+	 *
+	 * @param string $nonce The nonce to consider while checking the nonce value.
+	 * @return string An empty string, or '0', or '1'.
+	 */
+	private function get_review_answer( $nonce ) {
+		$review_answer = '';
+
+		if ( ! current_user_can( 'install_plugins' ) ||
+			! array_key_exists( '_wpnonce', $_GET ) ||
+			! array_key_exists( 'review_answer', $_GET ) ||
+			! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), $nonce )
+		) {
+			return $review_answer;
+		}
+
+		$review_answer = sanitize_key( $_GET['review_answer'] );
+		if ( ! in_array( $review_answer, [ '0', '1' ], true ) ) {
+			$review_answer = '';
+		}
+
+		return $review_answer;
+	}
+
+	/**
+	 * Add the notice asking the user for review.
+	 *
+	 * @access private
+	 *
+	 * @param array    $notices The notices to add the review notices to.
+	 * @param int|null $max_age The max age (seconds) of the source data.
+	 *
+	 * @return array
+	 */
+	public function add_review_notice( $notices, $max_age = null ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return $notices;
+		}
+
+		$data = $this->remote_data_api->fetch( $max_age );
+
+		if ( $data instanceof \WP_Error || empty( $data['reviews'] ) ) {
+			return $notices;
+		}
+
+		$notice_id     = self::HOME_NOTICE_KEY_PREFIX . 'sensei_review';
+		$review_answer = $this->get_review_answer( $notice_id );
+		$notice        = [
+			'level'       => 'info',
+			'type'        => 'user',
+			'conditions'  => [
+				[
+					'type'    => 'screens',
+					'screens' => [ $this->screen_id ],
+				],
+				[
+					'type'            => 'installed_since',
+					'installed_since' => $data['reviews']['show_after'],
+				],
+			],
+			'dismissible' => true,
+			'actions'     => [],
+		];
+		$url           = false;
+		switch ( $review_answer ) {
+			case '':
+				$notice['message'] = __( 'Are you enjoying Sensei LMS?', 'sensei-lms' );
+				$notice['actions'] = [
+					[
+						'label' => __( 'Yes', 'sensei-lms' ),
+						'url'   => add_query_arg(
+							[
+								'_wpnonce'      => wp_create_nonce( $notice_id ),
+								'review_answer' => '1',
+							]
+						),
+					],
+					[
+						'primary' => false,
+						'label'   => __( 'No', 'sensei-lms' ),
+						'url'     => add_query_arg(
+							[
+								'_wpnonce'      => wp_create_nonce( $notice_id ),
+								'review_answer' => '0',
+							]
+						),
+					],
+				];
+				break;
+			case '0':
+				$url = $data['reviews']['feedback_url'];
+				// translators: Placeholder is the URL to the contact form on SenseiLMS.com.
+				$notice['message'] = __( 'Oh no, sorry to hear that. <a href="%1$s" target="_blank">Please share why with our team here</a>. We are always happy to help.', 'sensei-lms' );
+				break;
+			case '1':
+				$url = $data['reviews']['review_url'];
+				// translators: Placeholder is the URL to the review page on WordPress.org.
+				$notice['message'] = __( 'Great to hear! Would you be able to help us by <a href="%1$s" target="_blank">leaving a review on WordPress.org</a>?', 'sensei-lms' );
+				break;
+		}
+
+		$allowed_tags = [];
+		if ( $url ) {
+			$allowed_tags['a'] = [
+				'href'   => true,
+				'target' => [ '_blank' ],
+			];
+			$notice['message'] = sprintf( $notice['message'], $url );
+		}
+		$notice['message']     = wp_kses( $notice['message'], $allowed_tags );
+		$notices[ $notice_id ] = $notice;
+
+		return $notices;
 	}
 
 	/**
@@ -173,7 +290,7 @@ class Sensei_Home_Notices {
 			];
 		}
 
-		// We only want this to be dismissible if Sensei LMS is active and available because it can hande the dismiss requests.
+		// We only want this to be dismissible if Sensei LMS is active and available because it can handle the dismiss requests.
 		$is_dismissible = class_exists( 'Sensei_Admin_Notices' );
 
 		return [
