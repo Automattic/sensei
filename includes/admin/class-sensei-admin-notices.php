@@ -397,6 +397,17 @@ class Sensei_Admin_Notices {
 						break 2;
 					}
 					break;
+
+				case 'installed_since':
+					if ( ! isset( $condition['installed_since'] ) ) {
+						break;
+					}
+
+					if ( ! $this->condition_installed_since( $condition['installed_since'] ) ) {
+						$can_see_notice = false;
+						break 2;
+					}
+					break;
 			}
 		}
 
@@ -475,6 +486,24 @@ class Sensei_Admin_Notices {
 		}
 
 		return $condition_pass;
+	}
+
+	/**
+	 * Check an "installed since" condition
+	 *
+	 * @param int|string $installed_since Time to check the installation time for.
+	 *
+	 * @return bool
+	 */
+	private function condition_installed_since( $installed_since ) : bool {
+		$installed_at = get_option( 'sensei_installed_at' );
+		if ( $installed_since && is_string( $installed_since ) ) {
+			$installed_since = strtotime( '-' . $installed_since );
+		}
+		if ( ! $installed_at || ! $installed_since ) {
+			return false;
+		}
+		return $installed_at <= $installed_since;
 	}
 
 	/**
