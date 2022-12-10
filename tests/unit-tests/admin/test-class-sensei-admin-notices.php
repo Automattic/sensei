@@ -303,9 +303,9 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 	/**
 	 * Test the `installed_since` condition.
 	 */
-	public function testConditionInstalledSince() {
+	public function testGetNoticesToDisplay_GivenInstalledSince_ValidatesStrings() {
+		// Arrange.
 		$this->login_as_admin();
-
 		update_option( 'sensei_installed_at', 10 );
 		$all_notices = [
 			'hide-since-9'  => [
@@ -337,9 +337,11 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 			],
 		];
 
+		// Act.
 		$instance = $this->getMockInstance( [ 'notices' => $all_notices ] );
 		$notices  = $instance->get_notices_to_display();
 
+		// Assert.
 		$this->assertArrayNotHasKey( 'hide-since-9', $notices );
 		$this->assertArrayHasKey( 'show-since-10', $notices );
 		$this->assertArrayHasKey( 'show-since-11', $notices );
@@ -349,9 +351,9 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 	/**
 	 * Test the `installed_since` condition with relative times.
 	 */
-	public function testConditionInstalledSinceString() {
+	public function testGetNoticesToDisplay_GivenInstalledSinceString_ValidatesStrings() {
+		// Arrange.
 		$this->login_as_admin();
-
 		update_option( 'sensei_installed_at', time() - 10 );
 		$all_notices = [
 			'show-since-9'  => [
@@ -383,9 +385,11 @@ class Sensei_Admin_Notices_Test extends WP_UnitTestCase {
 			],
 		];
 
+		// Act.
 		$instance = $this->getMockInstance( [ 'notices' => $all_notices ] );
 		$notices  = $instance->get_notices_to_display();
 
+		// Assert.
 		$this->assertArrayHasKey( 'show-since-9', $notices );
 		$this->assertArrayHasKey( 'show-since-10', $notices );
 		$this->assertArrayNotHasKey( 'hide-since-11', $notices );
