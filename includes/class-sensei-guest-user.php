@@ -78,7 +78,7 @@ class Sensei_Guest_User {
 	/**
 	 * Create a guest user for open access courses if no user is logged in.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 */
 	public function sensei_create_guest_user_and_login_for_open_course() {
 		global $post;
@@ -91,18 +91,28 @@ class Sensei_Guest_User {
 		) {
 			$user_id = $this->create_guest_student_user();
 			$this->login_user( $user_id );
+			$this->recreate_nonces();
 		}
 	}
 
 	/**
 	 * Check if the course is open access.
 	 *
-	 * @param int $course_id ID of the course.
+	 * @param  int $course_id ID of the course.
 	 * @since  $$next-version$$
 	 * @return boolean|mixed
 	 */
 	private function is_course_open_access( $course_id ) {
 		return get_post_meta( $course_id, 'open_access', true );
+	}
+
+	/**
+	 * Recreate nonce after logging in user invalidates existing one.
+	 *
+	 * @since $$next-version$$
+	 */
+	private function recreate_nonces() {
+		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
 	}
 
 	/**
@@ -129,7 +139,7 @@ class Sensei_Guest_User {
 	 * Log a user in.
 	 *
 	 * @param int $user_id ID of the user.
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 */
 	private function login_user( $user_id ) {
 		wp_set_current_user( $user_id );
@@ -155,7 +165,7 @@ class Sensei_Guest_User {
 	/**
 	 * Create the Guest Student role if it does not exist.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 */
 	private function create_guest_student_role_if_not_exists() {
 		// Check if the Guest Student role exists.
