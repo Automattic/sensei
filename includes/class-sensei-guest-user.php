@@ -33,12 +33,44 @@ class Sensei_Guest_User {
 	protected $guest_student_role = 'guest_student';
 
 	/**
+	 * List of actions to create a guest user for if the course is open access.
+	 *
+	 * @var array[] {
+	 *  @type string $field Form field.
+	 *  @type string $nonce Nonce field.
+	 *  @type bool $enrol Whether to enrol the guest user before this action.
+	 * }
+	 */
+	protected $supported_actions = [
+		[
+			'field' => 'course_start',
+			'nonce' => 'woothemes_sensei_start_course_noonce',
+			'enrol' => false,
+		],
+		[
+			'field' => 'quiz_action',
+			'nonce' => 'woothemes_sensei_complete_lesson_noonce',
+			'enrol' => true,
+		],
+		[
+			'field' => 'course_start',
+			'nonce' => 'woothemes_sensei_complete_quiz_nonce',
+			'enrol' => true,
+		],
+		[
+			'field' => 'course_start',
+			'nonce' => 'woothemes_sensei_save_quiz_nonce',
+			'enrol' => true,
+		],
+	];
+
+	/**
 	 * Sensei_Guest_User constructor.
 	 *
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
-		add_action( 'wp', array( $this, 'sensei_create_guest_user_and_login_for_open_course' ), 9 );
+		add_action( 'wp', array( $this, 'create_guest_user_and_login_for_open_course' ), 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 
@@ -80,25 +112,35 @@ class Sensei_Guest_User {
 	 *
 	 * @since $$next-version$$
 	 */
-	public function sensei_create_guest_user_and_login_for_open_course() {
+	public function create_guest_user_and_login_for_open_course() {
+
 		global $post;
+		$course_id = Sensei_Utils::get_current_course();
+
+		if ( empty( $course_id ) || is_user_logged_in() || ! $this->is_course_open_access( $course_id ) || post_password_required( $post->ID ) ) {
+			return;
+		}
+
+		$current_action = $this->get_current_action();
 
 		// Conditionally create Guest Student user and set role for open course.
-		if (
-			$this->is_take_course_action()
-			&& ! is_user_logged_in()
-			&& $this->is_course_open_access( $post->ID )
-		) {
-			$user_id = $this->create_guest_student_user();
+		if ( $current_action ) {
+			$user_id = $this->create_guest_user();
 			$this->login_user( $user_id );
-			$this->recreate_nonces();
+			$this->recreate_nonce( $current_action );
+
+			if ( $current_action['enrol'] ) {
+				$this->enrol_user( $user_id, $course_id );
+			}
 		}
+
 	}
 
 	/**
 	 * Check if the course is open access.
 	 *
-	 * @param  int $course_id ID of the course.
+	 * @param int $course_id ID of the course.
+	 *
 	 * @since  $$next-version$$
 	 * @return boolean|mixed
 	 */
@@ -110,9 +152,12 @@ class Sensei_Guest_User {
 	 * Recreate nonce after logging in user invalidates existing one.
 	 *
 	 * @since $$next-version$$
+	 *
+	 * @param array $action Action to recreate nonce for.
 	 */
-	private function recreate_nonces() {
-		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
+	private function recreate_nonce( $action ) {
+		$nonce           = $action['nonce'];
+		$_POST[ $nonce ] = wp_create_nonce( $nonce );
 	}
 
 	/**
@@ -121,7 +166,7 @@ class Sensei_Guest_User {
 	 * @since  $$next-version$$
 	 * @return int
 	 */
-	private function create_guest_student_user() {
+	private function create_guest_user() {
 		$user_count = get_user_count();
 		$user_name  = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
 		return wp_insert_user(
@@ -139,6 +184,7 @@ class Sensei_Guest_User {
 	 * Log a user in.
 	 *
 	 * @param int $user_id ID of the user.
+	 *
 	 * @since $$next-version$$
 	 */
 	private function login_user( $user_id ) {
@@ -147,19 +193,21 @@ class Sensei_Guest_User {
 	}
 
 	/**
-	 * Determines if the request is for taking course and the course is not protected.
+	 * Manually enrol the new user in the course.
 	 *
-	 * @since  $$next-version$$
-	 * @return boolean
+	 * @since $$next-version$$
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course ID.
 	 */
-	private function is_take_course_action() {
-		global $post;
+	private function enrol_user( $user_id, $course_id ) {
+		if ( ! Sensei_Course::can_current_user_manually_enrol( $course_id )
+			|| ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
+			return; // Error message?
+		}
 
-		return is_singular( 'course' )
-			&& isset( $_POST['course_start'] )
-			&& isset( $_POST['woothemes_sensei_start_course_noonce'] )
-			&& wp_verify_nonce( wp_unslash( $_POST['woothemes_sensei_start_course_noonce'] ), 'woothemes_sensei_start_course_noonce' ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't modify the nonce.
-			&& ! post_password_required( $post->ID );
+		$course_enrolment = Sensei_Course_Enrolment::get_course_instance( $course_id );
+		$course_enrolment->enrol( $user_id );
 	}
 
 	/**
@@ -176,5 +224,39 @@ class Sensei_Guest_User {
 			// Create the role.
 			add_role( $this->guest_student_role, __( 'Guest Student', 'sensei-lms' ) );
 		}
+	}
+
+	/**
+	 * Determine if the current requests is for a supported action.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return string[]|null
+	 */
+	private function get_current_action() {
+
+		foreach ( $this->supported_actions as $action ) {
+			if ( $this->is_action( $action['field'], $action['nonce'] ) ) {
+				return $action;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Determines if the request is for an action submitting the given form field and nonce.
+	 *
+	 * @since  $$next-version$$
+	 *
+	 * @param string $field Form field name for the action.
+	 * @param string $nonce Nonce name for the action.
+	 *
+	 * @return boolean
+	 */
+	private function is_action( $field, $nonce ) {
+		return isset( $_POST[ $field ] )
+			&& isset( $_POST[ $nonce ] )
+			&& wp_verify_nonce( wp_unslash( $_POST[ $nonce ] ), $nonce ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification
 	}
 }
