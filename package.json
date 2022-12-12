@@ -1,14 +1,14 @@
 {
   "name": "sensei-lms",
   "title": "Sensei LMS",
-  "version": "4.9.0",
+  "version": "4.9.1",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
   "keywords": [
     "wordpress-plugin"
   ],
-  "homepage": "https://woocommerce.com/products/sensei/",
+  "homepage": "https://senseilms.com/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Automattic/sensei.git"
@@ -72,7 +72,9 @@
     "@testing-library/react": "11.2.6",
     "@testing-library/react-hooks": "5.1.1",
     "@testing-library/user-event": "12.8.3",
-    "@woocommerce/e2e-environment": "0.1.5",
+    "@types/jest": "29.2.2",
+    "@types/node": "18.11.9",
+    "@types/testing-library__jest-dom": "5.14.5",
     "@wordpress/babel-preset-default": "wp-5.9",
     "@wordpress/e2e-test-utils": "wp-5.9",
     "@wordpress/env": "wp-6.0",
@@ -104,6 +106,7 @@
     "react-dom": "17.0.2",
     "resolve-url-loader": "5.0.0",
     "svg-spritemap-webpack-plugin": "4.4.0",
+    "typescript": "4.4.4",
     "webpack": "5.64.4",
     "wp-hookdoc": "0.2.0"
   },
@@ -119,7 +122,8 @@
     "format": "wp-scripts format",
     "lint-css": "wp-scripts lint-style **/*.scss",
     "lint-css:fix": "npm run lint-css -- --fix",
-    "lint-js": "wp-scripts lint-js --ext js,jsx assets",
+    "lint-js": "wp-scripts lint-js --ext js,jsx,ts,tsx assets", 
+    "lint-types": "tsc --project tsconfig.json",
     "lint-js:fix": "npm run lint-js -- --fix",
     "lint-pkg-json": "wp-scripts lint-pkg-json",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
@@ -131,10 +135,6 @@
     "test-php": "./vendor/bin/phpunit",
     "test-php:coverage-html": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
     "test-php:coverage-clover": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml",
-    "legacy:e2e-docker:up": "npm explore @woocommerce/e2e-environment -- npm run docker:up",
-    "legacy:e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
-    "legacy:test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
-    "legacy:test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
     "test:e2e": "playwright test",
     "test:e2e:debug": "playwright test --headed",
     "prepare": "husky install",

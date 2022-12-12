@@ -48,6 +48,19 @@ export const createStudent = async ( context, name ) => {
 	} );
 };
 
+export const createTeacher = async ( context, name ) => {
+	const api = await createApiContext( context );
+
+	return api.post( `/wp-json/wp/v2/users`, {
+		username: name,
+		password: 'password',
+		email: `${ name }@example.com`,
+		roles: [ 'teacher' ],
+		meta: { context: 'view' },
+		slug: name,
+	} );
+};
+
 export const createCourse = async ( context, courseDefinition ) => {
 	const { title, slug, excerpt = '', categoryIds, lessons } = courseDefinition;
 	const api = await createApiContext( context );
