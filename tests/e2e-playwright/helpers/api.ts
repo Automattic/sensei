@@ -68,7 +68,7 @@ export type CourseDefinition = {
 	lessons: Array<Record<string, unknown>>;
 	slug?: string;
 	excerpt?: string;
-	categoryIds?: Array<string>;
+	categoryIds?: Array<string | number>;
 };
 
 export const createCourse = async (context: APIRequestContext, courseDefinition: CourseDefinition): Promise<CourseDefinition> => {
@@ -122,10 +122,13 @@ const addLessonContent = async ( api, { id, content = lessonSimple(), ...lesson 
 };
 
 type Category = {
-	 name: string; description: string; slug: string
+	id?: number
+	name: string;
+	description: string;
+	slug: string
 };
 
-export const createCourseCategory = async (context: APIRequestContext, category: Category): Promise<unknown> => {
+export const createCourseCategory = async (context: APIRequestContext, category: Category): Promise<Category> => {
 	const { name, description, slug } = category;
 	const api = await createApiContext(context);
 	return api.post(`/wp-json/wp/v2/course-category`, {
