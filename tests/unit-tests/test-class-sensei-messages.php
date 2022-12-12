@@ -118,22 +118,11 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1, did_action( 'sensei_new_private_message' ) );
 	}
 
-	public function testShowSuccessNotice_WhenNotRestRequest_Redirects() {
+	public function testShowSuccessNotice_WhenNotRestRequest_DoesRedirect() {
 		/* Arrange. */
 		$instance = new Sensei_Messages();
 
-		// Prevent the redirect so it can be tested.
-		$halt_redirect = function( $location, $status ) {
-			throw new \RuntimeException(
-				wp_json_encode(
-					[
-						'location' => $location,
-						'status'   => $status,
-					]
-				)
-			);
-		};
-		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
+		$this->haltRedirects();
 
 		/* Act. */
 		try {
@@ -144,6 +133,44 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertSame( 302, $redirect['status'] );
-		$this->assertContains( 'send=complete', $redirect['location'] );
+		$this->assertStringContainsString( 'send=complete', $redirect['location'] );
+	}
+
+	public function testShowSuccessNotice_WhenRestRequest_DoesNotRedirect() {
+		/* Arrange. */
+		$instance = new Sensei_Messages();
+
+		define( 'REST_REQUEST', true );
+
+		$this->haltRedirects();
+
+		/* Act. */
+		try {
+			$instance->show_success_notice();
+		} catch ( \RuntimeException $e ) {
+			$redirect = json_decode( $e->getMessage(), true );
+		}
+
+		/* Assert. */
+		$this->assertTrue( empty( $redirect ) );
+	}
+
+	/**
+	 * Prevent redirects so they can be tested.
+	 * Throws a RuntimeException instead.
+	 */
+	private function haltRedirects(): void {
+		$halt_redirect = function( $location, $status ) {
+			throw new \RuntimeException(
+				wp_json_encode(
+					[
+						'location' => $location,
+						'status'   => $status,
+					]
+				)
+			);
+		};
+
+		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
 	}
 }
