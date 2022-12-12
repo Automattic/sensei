@@ -149,7 +149,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		// Assert.
 		$this->assertArrayHasKey( $notice_id, $notices );
 		$this->assertStringContainsString( 'Great to hear', $notices[ $notice_id ]['message'] );
-		$this->assertStringContainsString( 'https://review_url', $notices[ $notice_id ]['message'] );
+		$this->assertEquals( 'https://review_url', $notices[ $notice_id ]['info_link']['url'] );
 		$this->assertEmpty( $notices[ $notice_id ]['actions'] );
 	}
 
@@ -173,8 +173,8 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 
 		// Assert.
 		$this->assertArrayHasKey( $notice_id, $notices );
-		$this->assertStringContainsString( 'Oh no, sorry to hear that', $notices[ $notice_id ]['message'] );
-		$this->assertStringContainsString( 'https://feedback_url', $notices[ $notice_id ]['message'] );
+		$this->assertStringContainsString( 'Let us know how we can improve your experience', $notices[ $notice_id ]['message'] );
+		$this->assertEquals( 'https://feedback_url', $notices[ $notice_id ]['info_link']['url'] );
 		$this->assertEmpty( $notices[ $notice_id ]['actions'] );
 	}
 
