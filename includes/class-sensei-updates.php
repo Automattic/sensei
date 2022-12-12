@@ -102,7 +102,7 @@ class Sensei_Updates {
 	 * Set new option to save when Sensei was installed/updated.
 	 */
 	private function v4_10_update_install_time() {
-		update_option( 'sensei_installed_at', time() );
+		add_option( 'sensei_installed_at', time() );
 	}
 
 	/**
