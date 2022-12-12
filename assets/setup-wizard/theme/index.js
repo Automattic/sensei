@@ -43,7 +43,8 @@ const Theme = () => {
 		// Checks if it was scrolled until the theme content.
 		const scrollCheck = () => {
 			setIsScrolled(
-				themeContentRef.current.getBoundingClientRect().y < scrollOffset
+				themeContentRef.current.getBoundingClientRect().y <=
+					scrollOffset + 10
 			);
 		};
 
@@ -64,7 +65,9 @@ const Theme = () => {
 		const w = themeContentRef.current?.ownerDocument.defaultView;
 
 		w.scroll( {
-			top: themeContentRef.current.offsetTop - scrollOffset,
+			top:
+				themeContentRef.current.getBoundingClientRect().y -
+				scrollOffset,
 			behavior: 'smooth',
 		} );
 	};
@@ -106,7 +109,6 @@ const Theme = () => {
 				className={ classnames(
 					'sensei-setup-wizard__content sensei-setup-wizard__content--large',
 					{
-						'sensei-setup-wizard__content--sticky': isBigScreen,
 						'sensei-setup-wizard__content--hidden':
 							isBigScreen && isScrolled,
 					}
@@ -114,11 +116,11 @@ const Theme = () => {
 			>
 				<div className="sensei-setup-wizard__title">
 					<H className="sensei-setup-wizard__step-title">
-						{ __( 'Install our default theme', 'sensei-lms' ) }
+						{ __( 'Use our default theme', 'sensei-lms' ) }
 					</H>
 					<p>
 						{ __(
-							"'Course' is a free WordPress theme built to work perfectly with Sensei and courses. You can use any WordPress theme with Sensei, or active 'Course'.",
+							"'Course' is a free WordPress theme built to work perfectly with Sensei and courses. You can use any WordPress theme with Sensei, or activate 'Course'.",
 							'sensei-lms'
 						) }
 					</p>
@@ -149,7 +151,7 @@ const Theme = () => {
 							className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
 							onClick={ submitPage( false ) }
 						>
-							{ __( 'Skip theme selection', 'sensei-lms' ) }
+							{ __( 'Keep my current theme', 'sensei-lms' ) }
 						</button>
 					</div>
 				</div>

@@ -24,12 +24,14 @@ import Carousel from './carousel';
  */
 const BigScreen = () => (
 	<div className="sensei-setup-wizard-theme">
-		<div className="sensei-setup-wizard-theme__image-wrapper">
-			<img
-				src={ window.sensei.pluginUrl + mainImage }
-				alt={ __( 'Sensei theme illustration', 'sensei-lms' ) }
-				className="sensei-setup-wizard-theme__image"
-			/>
+		<div className="sensei-setup-wizard-theme__main-image">
+			<div className="sensei-setup-wizard-theme__image-wrapper">
+				<img
+					src={ window.sensei.pluginUrl + mainImage }
+					alt={ __( 'Sensei theme illustration', 'sensei-lms' ) }
+					className="sensei-setup-wizard-theme__image"
+				/>
+			</div>
 		</div>
 
 		<Section className="sensei-setup-wizard-theme__section">
@@ -115,7 +117,7 @@ const BigScreen = () => (
 					<blockquote className="sensei-setup-wizard-theme-testimonial__quote">
 						<p>
 							{ __(
-								'I always wanted to write, and thanks to Cours, I got it right. My writing is clearer, and I can finally get my message across.',
+								'I always wanted to write, and thanks to Course, I got it right. My writing is clearer, and I can finally get my message across.',
 								'sensei-lms'
 							) }
 						</p>
