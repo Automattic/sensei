@@ -127,8 +127,9 @@ class Sensei_Home_Notices {
 				$notice['message'] = __( 'Are you enjoying Sensei LMS?', 'sensei-lms' );
 				$notice['actions'] = [
 					[
-						'label' => __( 'Yes', 'sensei-lms' ),
-						'url'   => add_query_arg(
+						'primary' => false,
+						'label'   => __( 'Yes', 'sensei-lms' ),
+						'url'     => add_query_arg(
 							[
 								'_wpnonce'      => wp_create_nonce( $notice_id ),
 								'review_answer' => '1',
