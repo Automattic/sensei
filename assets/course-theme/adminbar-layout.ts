@@ -30,6 +30,9 @@ const trackAdminbarOffset = () => {
 	window.addEventListener( 'resize', debounce( updateAdminbarOffset, 500 ) );
 
 	function updateAdminbarOffset() {
+		if ( ! adminbar ) {
+			return;
+		}
 		const { top, height } = adminbar.getBoundingClientRect();
 		const offset = Math.max( 0, height + top );
 		document.documentElement.style.setProperty(
