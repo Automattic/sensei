@@ -53,12 +53,12 @@ class Sensei_Guest_User {
 			'enrol' => true,
 		],
 		[
-			'field' => 'course_start',
+			'field' => 'quiz_complete',
 			'nonce' => 'woothemes_sensei_complete_quiz_nonce',
 			'enrol' => true,
 		],
 		[
-			'field' => 'course_start',
+			'field' => 'quiz_save',
 			'nonce' => 'woothemes_sensei_save_quiz_nonce',
 			'enrol' => true,
 		],
