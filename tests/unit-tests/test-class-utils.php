@@ -292,6 +292,25 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
 	}
 
+	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_rest_request );
+	}
+
+	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_rest_request );
+	}
+
 	/**
 	 * Returns an associative array with parameters needed to run lesson completion test.
 	 *
