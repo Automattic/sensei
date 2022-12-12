@@ -3,8 +3,6 @@ on:
     push:
         branches:
             - trunk
-            - add/run-e2e-tests-on-trunk
-
 jobs:
     unit-js:
         uses: ./.github/workflows/js.yml 
