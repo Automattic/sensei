@@ -117,4 +117,33 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertEquals( 1, did_action( 'sensei_new_private_message' ) );
 	}
+
+	public function testShowSuccessNotice_WhenNotRestRequest_Redirects() {
+		/* Arrange. */
+		$instance = new Sensei_Messages();
+
+		// Prevent the redirect so it can be tested.
+		$halt_redirect = function( $location, $status ) {
+			throw new \RuntimeException(
+				wp_json_encode(
+					[
+						'location' => $location,
+						'status'   => $status,
+					]
+				)
+			);
+		};
+		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
+
+		/* Act. */
+		try {
+			$instance->show_success_notice();
+		} catch ( \RuntimeException $e ) {
+			$redirect = json_decode( $e->getMessage(), true );
+		}
+
+		/* Assert. */
+		$this->assertSame( 302, $redirect['status'] );
+		$this->assertContains( 'send=complete', $redirect['location'] );
+	}
 }

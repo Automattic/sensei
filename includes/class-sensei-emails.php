@@ -400,12 +400,6 @@ class Sensei_Emails {
 			$email = $this->emails['teacher-new-message'];
 			$email->trigger( $message_id );
 		}
-
-		// Redirect to a URL that will handle showing a confirmation message.
-		if ( ! Sensei_Utils::is_rest_request() ) {
-			wp_safe_redirect( esc_url_raw( add_query_arg( [ 'send' => 'complete' ] ) ) );
-			exit;
-		}
 	}
 
 	/**

@@ -76,6 +76,9 @@ class Sensei_Messages {
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
 		add_action( 'comment_form', [ $this, 'add_nonce_to_comment_form' ] );
+
+		// Redirect and show a success notice.
+		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -999,6 +1002,20 @@ class Sensei_Messages {
 				</a>
 			</p>
 			<?php
+		}
+	}
+
+	/**
+	 * Redirect to a URL that will handle showing a success notice.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function show_success_notice(): void {
+		if ( ! Sensei_Utils::is_rest_request() ) {
+			wp_safe_redirect( esc_url_raw( add_query_arg( [ 'send' => 'complete' ] ) ) );
+			exit;
 		}
 	}
 
