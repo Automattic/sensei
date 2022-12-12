@@ -2,14 +2,14 @@
 # This file is distributed under the GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sensei LMS 4.9.0\n"
+"Project-Id-Version: Sensei LMS 4.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sensei-lms\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-12-06T13:10:02+00:00\n"
+"POT-Creation-Date: 2022-12-09T10:31:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: sensei-lms\n"
@@ -3184,18 +3184,18 @@ msgstr ""
 msgid "This quiz is not able to be automatically graded."
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:33
-#: includes/class-sensei-groups-landing-page.php:37
-#: includes/class-sensei-groups-landing-page.php:62
+#: includes/class-sensei-groups-landing-page.php:31
+#: includes/class-sensei-groups-landing-page.php:35
+#: includes/class-sensei-groups-landing-page.php:63
 msgid "Groups"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:34
+#: includes/class-sensei-groups-landing-page.php:32
 msgid "Pro"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:68
-#: includes/class-sensei-groups-landing-page.php:100
+#: includes/class-sensei-groups-landing-page.php:69
+#: includes/class-sensei-groups-landing-page.php:101
 #: includes/class-sensei-settings-api.php:94
 #: includes/class-sensei-settings-api.php:111
 #: assets/admin/editor-wizard/steps/course-upgrade-step.js:125
@@ -3205,31 +3205,31 @@ msgstr ""
 msgid "Get Sensei Pro"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:71
+#: includes/class-sensei-groups-landing-page.php:72
 msgid "Unlock Groups by upgrading to Sensei Pro and get features like:"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:76
+#: includes/class-sensei-groups-landing-page.php:77
 msgid "Assign students per group"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:80
+#: includes/class-sensei-groups-landing-page.php:81
 msgid "Automatically enroll groups to defined courses"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:84
+#: includes/class-sensei-groups-landing-page.php:85
 msgid "Set Access Period for courses in a group"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:88
+#: includes/class-sensei-groups-landing-page.php:89
 msgid "All the Sensei Pro features"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:92
+#: includes/class-sensei-groups-landing-page.php:93
 msgid "$149.00 USD / year (1 site)"
 msgstr ""
 
-#: includes/class-sensei-groups-landing-page.php:106
+#: includes/class-sensei-groups-landing-page.php:107
 msgid "See all Sensei Pro Features"
 msgstr ""
 
