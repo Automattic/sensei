@@ -9,6 +9,8 @@
  * Class for testing Sensei_Messages class.
  *
  * @group messages
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
 class Sensei_Messages_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
@@ -136,6 +138,10 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'send=complete', $redirect['location'] );
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
 	public function testShowSuccessNotice_WhenRestRequest_DoesNotRedirect() {
 		/* Arrange. */
 		$instance = new Sensei_Messages();
@@ -152,7 +158,7 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 		}
 
 		/* Assert. */
-		$this->assertTrue( empty( $redirect ) );
+		$this->assertFalse( isset( $redirect ) );
 	}
 
 	/**

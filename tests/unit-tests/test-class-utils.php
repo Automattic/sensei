@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class for testing Sensei_Utils class.
+ *
+ * @group utils
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
+ */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
@@ -300,6 +307,10 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertFalse( $is_rest_request );
 	}
 
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
 	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
 		/* Arrange. */
 		define( 'REST_REQUEST', true );
