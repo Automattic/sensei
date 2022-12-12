@@ -399,8 +399,11 @@ class Sensei_Emails {
 		if ( $send ) {
 			$email = $this->emails['teacher-new-message'];
 			$email->trigger( $message_id );
-		} else {
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
+		}
+
+		// Redirect to a URL that will handle showing a confirmation message.
+		if ( ! Sensei_Utils::is_rest_request() ) {
+			wp_safe_redirect( esc_url_raw( add_query_arg( [ 'send' => 'complete' ] ) ) );
 			exit;
 		}
 	}
