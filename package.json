@@ -8,7 +8,7 @@
   "keywords": [
     "wordpress-plugin"
   ],
-  "homepage": "https://woocommerce.com/products/sensei/",
+  "homepage": "https://senseilms.com/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Automattic/sensei.git"
@@ -75,7 +75,6 @@
     "@types/jest": "29.2.2",
     "@types/node": "18.11.9",
     "@types/testing-library__jest-dom": "5.14.5",
-    "@woocommerce/e2e-environment": "0.1.5",
     "@wordpress/babel-preset-default": "wp-5.9",
     "@wordpress/e2e-test-utils": "wp-5.9",
     "@wordpress/env": "wp-6.0",
@@ -136,10 +135,6 @@
     "test-php": "./vendor/bin/phpunit",
     "test-php:coverage-html": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
     "test-php:coverage-clover": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml",
-    "legacy:e2e-docker:up": "npm explore @woocommerce/e2e-environment -- npm run docker:up",
-    "legacy:e2e-docker:down": "npm explore @woocommerce/e2e-environment -- npm run docker:down",
-    "legacy:test:e2e": "npm explore @woocommerce/e2e-environment -- npm run test:e2e",
-    "legacy:test:e2e-dev": "npm explore @woocommerce/e2e-environment -- npm run test:e2e-dev",
     "test:e2e": "playwright test",
     "test:e2e:debug": "playwright test --headed",
     "prepare": "husky install",
