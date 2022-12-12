@@ -2,8 +2,6 @@ name: JS Linting and Tests
 
 on:
     pull_request:
-        branches:
-            - feature/*
     workflow_call:
 
 jobs:
