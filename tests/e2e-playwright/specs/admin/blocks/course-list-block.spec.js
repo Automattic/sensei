@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const { test, expect } = require( '@playwright/test' );
+import { test, expect } from '@playwright/test';
 /**
  * Internal dependencies
  */
-const { createCourse, createCourseCategory } = require( '../../../helpers/api' );
-const { getContextByRole } = require( '../../../helpers/context' );
-const PostType = require( '../../../pages/admin/post-type' );
+import { createCourse, createCourseCategory } from '../../../helpers/api';
+import { getContextByRole } from '../../../helpers/context';
+import PostType from '../../../pages/admin/post-type';
 
 const { describe, use, beforeAll } = test;
 

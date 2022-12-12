@@ -1,11 +1,10 @@
-const { expect } = require( '@playwright/test' );
+import type { Locator, Page } from '@playwright/test';
+import { expect } from "@playwright/test";
 
 class PluginsPage {
-	constructor( page ) {
-		this.page = page;
-	}
+	constructor(private page: Page ) {}
 
-	async goTo( url ) {
+	async goTo( url: string ) {
 		const baseUrl = process.env.WP_BASE_URL;
 		const adminUrl = [ baseUrl, 'wp-admin', url ].join( '/' );
 		return this.page.goto( adminUrl );
@@ -15,11 +14,11 @@ class PluginsPage {
 		return this.goTo( 'plugins.php' );
 	}
 
-	async isPluginActive( slug ) {
+	async isPluginActive( slug: string ) {
 		return !! ( await this.findPluginAction( slug, 'deactivate' ) );
 	}
 
-	async findPluginAction( slug, action ) {
+	async findPluginAction( slug: string, action: string ) {
 		return this.page.locator( `tr[data-slug="${ slug }"] .${ action } a` );
 	}
 
@@ -27,7 +26,7 @@ class PluginsPage {
 		return this.page.waitForSelector( `#sensei-exit-survey-modal button:not(:disabled)` );
 	}
 
-	async stepIsComplete( page, label ) {
+	async stepIsComplete(page: Page, label: string) {
 		return expect( page.locator( '.sensei-stepper__step.is-complete' ).locator( `text=${ label }` ) ).toHaveCount( 1 );
 	}
 
@@ -49,18 +48,18 @@ class PluginsPage {
 		return this.page.locator( 'label' ).locator( 'text=Sensei LMS Certificates' ).click();
 	}
 
-	async stepIsActive( page, label ) {
+	async stepIsActive( page: Page, label: string ) {
 		return expect( page.locator( '.sensei-stepper__step.is-active' ).locator( `text=${ label }` ) ).toHaveCount( 1 );
 	}
 
-	async goToPluginsAndGetDeactivationLink( slug ) {
+	async goToPluginsAndGetDeactivationLink( slug: string ) {
 		await this.goToPlugins();
 
 		const deactivateUrl = await this.findPluginAction( slug, 'deactivate' );
 		return deactivateUrl;
 	}
 
-	async deactivatePluginByLink( deactivateLink ) {
+	async deactivatePluginByLink( deactivateLink: Locator ) {
 		if ( deactivateLink ) {
 			await deactivateLink.click();
 			const exitSurvey = await this.findExitSurvey();
@@ -70,7 +69,7 @@ class PluginsPage {
 		}
 	}
 
-	async activatePlugin( slug, forceReactivate = false ) {
+	async activatePlugin( slug: string, forceReactivate = false ) {
 		const deactivateLink = await this.goToPluginsAndGetDeactivationLink( slug );
 
 		if ( deactivateLink ) {

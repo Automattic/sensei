@@ -4,6 +4,7 @@
     https://github.com/WordPress/gutenberg/blob/1b21f86cb6518d0f3fab240a777f4fb5c29c9c2d/tsconfig.base.json
     */ 
     "compilerOptions": {
+        "skipLibCheck": true,
         "allowJs": true,
         "checkJs": false, /** We require a @tscheck annotation to force checking a .js file */
         "allowSyntheticDefaultImports": true,

@@ -2,19 +2,17 @@
  * External dependencies
  */
 import { test as base } from '@playwright/test';
-
 /**
  * Internal dependencies
  */
-import { createCourse } from '../../helpers/api';
+import { CourseDefinition, createCourse } from '../../helpers/api';
 import { asAdmin } from '../../helpers/context';
 
-import { lessonNoLessonActions, lessonSimple } from '../../helpers/lesson-templates';
+import { lessonSimple } from '../../helpers/lesson-templates';
 
 export enum CourseMode {
-	blocks = 'Blocks Mode',
-	learningMode = 'Learning Mode',
-	templates = 'Templates Mode',
+	LEARNING_MODE = 'Learning Mode',
+	DEFAULT_MODE = 'Default Mode',
 }
 
 export type Course = {
@@ -25,6 +23,7 @@ export type Course = {
 	link: string;
 };
 
+
 export type Lesson = {
 	title: { raw: string; rendered: string };
 	content: { raw: string; rendered: string };
@@ -33,37 +32,38 @@ export type Lesson = {
 };
 
 export const test = base.extend< { course: Course; courseMode: CourseMode } >( {
-	courseMode: [ CourseMode.blocks, { option: true } ],
-	course: async ( { browser, courseMode }, use ) => {
+	courseMode: [ CourseMode.DEFAULT_MODE, { option: true } ],
+	course: async ({ browser, courseMode }, use) => {
 		const course = await asAdmin( { browser }, async ( { context } ) => {
 			return createCourse( context.request, createCourseDef( courseMode ) );
-		} );
+		} ) as Course;
 
 		await use( course );
 
 		return course;
 	},
-} );
+});
 
-export const createCourseDef = ( courseMode ) => {
-	const lessonContent = CourseMode.templates === courseMode ? lessonNoLessonActions() : lessonSimple();
-	const meta: any = {};
+const LEARNING_MODE_META = {
+	_course_theme: 'sensei-theme',
+};
 
-	if ( CourseMode.learningMode === courseMode ) {
-		meta._course_theme = 'sensei-theme';
-	}
+export const createCourseDef = (courseMode: CourseMode): CourseDefinition => {
+	const useLearningMode = courseMode === CourseMode.LEARNING_MODE;
 
 	return {
-		title: `E2E Course ${ courseMode }`,
-		meta,
+		title: `E2E Course ${courseMode}`,
+		meta: {
+			...(useLearningMode ? LEARNING_MODE_META : {}),
+		},
 		lessons: [
 			{
-				title: `E2E Lesson ${ courseMode } 101`,
-				content: lessonContent,
+				title: `E2E Lesson ${courseMode} 101`,
+				content: lessonSimple(),
 			},
 			{
-				title: `E2E Lesson ${ courseMode } 102`,
-				content: lessonContent,
+				title: `E2E Lesson ${courseMode} 102`,
+				content: lessonSimple(),
 			},
 		],
 	};

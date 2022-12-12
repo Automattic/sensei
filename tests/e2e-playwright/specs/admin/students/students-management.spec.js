@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-const { test, expect } = require( '@playwright/test' );
+import { test, expect } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-const StudentsPage = require( '../../../pages/admin/students/students' );
-const { getContextByRole } = require( '../../../helpers/context' );
-const { createStudent, createCourse } = require( '../../../helpers/api' );
+import StudentsPage from '../../../pages/admin/students/students';
+import { getContextByRole } from '../../../helpers/context';
+import { createStudent, createCourse } from '../../../helpers/api';
 
 test.describe.serial( 'Students Management', () => {
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
