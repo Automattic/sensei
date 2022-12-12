@@ -12,6 +12,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// Only works when added outside of class.
+// TODO Check the reason later.
+add_action( 'init', 'sensei_start_session' );
+
+/**
+ * Starts the session if already not started.
+ *
+ * @since $$next-version$$
+ * @access private
+ */
+function sensei_start_session() {
+	if ( ! session_id() ) {
+		session_start();
+	}
+}
+
 /**
  * Sensei Guest User Class.
  *
