@@ -21,7 +21,7 @@ export default class PostType {
 	queryLoopPatternSelection: Locator;
 	previewURL: string | null;
 
-	constructor(page: Page, postType = 'page') {
+	constructor( page: Page, postType = 'page' ) {
 		this.page = page;
 		this.postType = postType;
 
@@ -42,7 +42,7 @@ export default class PostType {
 		return null;
 	}
 
-	async addBlock(blockName: string): Promise<QueryLoop> {
+	async addBlock( blockName: string ): Promise<QueryLoop> {
 		await this.addBlockButton.click();
 		await this.searchBlock.fill(blockName);
 		await this.page
