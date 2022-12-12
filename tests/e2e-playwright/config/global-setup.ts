@@ -8,7 +8,7 @@ import { chromium } from '@playwright/test';
  * Internal dependencies
  */
 import { cleanAll as cleanDatabase, configureSite } from '../helpers/database';
-import { createStudent } from '../helpers/api';
+import { createTeacher, createStudent } from '../helpers/api';
 import { getContextByRole } from '../helpers/context';
 
 export default async () => {
@@ -27,6 +27,7 @@ const createUserContexts = async () => {
 	const page = await browser.newPage();
 
 	await createAdminBrowserContext( page );
+	await createTeacherBrowserContext( page );
 	await createStudentBrowserContext( page );
 
 	await browser.close();
@@ -45,6 +46,15 @@ const createAdminBrowserContext = async ( page ) => {
 
 	// it saves the request context
 	await page.request.storageState( { path: getContextByRole( 'admin' ) } );
+};
+
+const createTeacherBrowserContext = async ( page ) => {
+	await login( page, { user: 'admin', pwd: 'password' } );
+	await createTeacher( page.request, 'teacher1' );
+	await login( page, { user: 'teacher1', pwd: 'password' } );
+
+	// Save the request context.
+	await page.request.storageState( { path: getContextByRole( 'teacher' ) } );
 };
 
 const createStudentBrowserContext = async ( page ) => {

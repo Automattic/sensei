@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { Locator, Page } from '@playwright/test';
+
+/**
  * Internal dependencies
  */
 const { QueryLoop } = require( './blocks/query-loop' );
@@ -8,7 +13,15 @@ const { QueryLoop } = require( './blocks/query-loop' );
  * /wp-admin/post-new.php?post_type=[post type]
  */
 class PostType {
-	constructor( page, postType = 'page' ) {
+	page: Page;
+	postType: String;
+	dialogCloseButton: Locator;
+	addBlockButton: Locator;
+	searchBlock: Locator;
+	queryLoopPatternSelection: Locator;
+	previewURL: string | null;
+
+	constructor( page: Page, postType: String = 'page' ) {
 		this.page = page;
 		this.postType = postType;
 
@@ -16,19 +29,30 @@ class PostType {
 		this.dialogCloseButton = page.locator( '[aria-label="Close dialog"]' );
 		this.addBlockButton = page.locator( '[aria-label="Add block"]' );
 		this.searchBlock = page.locator( '[placeholder="Search"]' );
-		this.queryLoopPatternSelection = page.locator( '[aria-label="Block: Query Loop"]' );
+		this.queryLoopPatternSelection = page.locator(
+			'[aria-label="Block: Query Loop"]'
+		);
 		this.previewURL = null;
 	}
 
 	async goToPostTypeCreationPage() {
-		this.page.goto( `/wp-admin/post-new.php?post_type=${ this.postType }` );
-		return this.dialogCloseButton.click();
+		await this.page.goto(
+			`/wp-admin/post-new.php?post_type=${ this.postType }`
+		);
+		await this.page.waitForLoadState( 'networkidle' );
+		if ( ( await this.dialogCloseButton.count() ) > 0 ) {
+			return this.dialogCloseButton.click();
+		}
 	}
 
 	async addBlock( blockName ) {
 		await this.addBlockButton.click();
 		await this.searchBlock.fill( blockName );
-		await this.page.locator( 'button[role="option"]', { has: this.page.locator( `text="${ blockName }"` ) } ).click();
+		await this.page
+			.locator( 'button[role="option"]', {
+				has: this.page.locator( `text="${ blockName }"` ),
+			} )
+			.click();
 
 		return new QueryLoop( this.queryLoopPatternSelection, this.page );
 	}
@@ -40,10 +64,21 @@ class PostType {
 	}
 
 	async publish() {
-		await this.page.locator( '[aria-label="Editor top bar"] >> text=Publish' ).click();
-		await this.page.locator( '[aria-label="Editor publish"] >> text=Publish' ).first().click();
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.click();
+		await this.page
+			.locator( '[aria-label="Editor publish"] >> text=Publish' )
+			.first()
+			.click();
 
 		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
+	}
+
+	async goToPostTypeListingPage() {
+		return this.page.goto(
+			`/wp-admin/edit.php?post_type=${ this.postType }`
+		);
 	}
 
 	async gotToPreviewPage() {
