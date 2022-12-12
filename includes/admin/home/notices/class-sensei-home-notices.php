@@ -121,7 +121,7 @@ class Sensei_Home_Notices {
 			'dismissible' => true,
 			'actions'     => [],
 		];
-		$url           = false;
+
 		switch ( $review_answer ) {
 			case '':
 				$notice['message'] = __( 'Are you enjoying Sensei LMS?', 'sensei-lms' );
@@ -148,26 +148,21 @@ class Sensei_Home_Notices {
 				];
 				break;
 			case '0':
-				$url = $data['reviews']['feedback_url'];
-				// translators: Placeholder is the URL to the contact form on SenseiLMS.com.
-				$notice['message'] = __( 'Oh no, sorry to hear that. <a href="%1$s" target="_blank">Please share why with our team here</a>. We are always happy to help.', 'sensei-lms' );
+				$notice['message']   = __( "Let us know how we can improve your experience. We're always happy to help.", 'sensei-lms' );
+				$notice['info_link'] = [
+					'label' => __( 'Share with us how can we help', 'sensei-lms' ),
+					'url'   => $data['reviews']['feedback_url'],
+				];
 				break;
 			case '1':
-				$url = $data['reviews']['review_url'];
-				// translators: Placeholder is the URL to the review page on WordPress.org.
-				$notice['message'] = __( 'Great to hear! Would you be able to help us by <a href="%1$s" target="_blank">leaving a review on WordPress.org</a>?', 'sensei-lms' );
+				$notice['message']   = __( 'Great to hear! Would you be able to help us by leaving a review on WordPress.org?', 'sensei-lms' );
+				$notice['info_link'] = [
+					'label' => __( 'Write a review for us', 'sensei-lms' ),
+					'url'   => $data['reviews']['review_url'],
+				];
 				break;
 		}
 
-		$allowed_tags = [];
-		if ( $url ) {
-			$allowed_tags['a'] = [
-				'href'   => true,
-				'target' => [ '_blank' ],
-			];
-			$notice['message'] = sprintf( $notice['message'], $url );
-		}
-		$notice['message']     = wp_kses( $notice['message'], $allowed_tags );
 		$notices[ $notice_id ] = $notice;
 
 		return $notices;
