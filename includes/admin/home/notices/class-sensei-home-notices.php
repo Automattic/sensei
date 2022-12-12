@@ -106,7 +106,7 @@ class Sensei_Home_Notices {
 		$notice_id     = self::HOME_NOTICE_KEY_PREFIX . 'sensei_review';
 		$review_answer = $this->get_review_answer( $notice_id );
 		$notice        = [
-			'level'       => 'info',
+			'level'       => 'success',
 			'type'        => 'user',
 			'conditions'  => [
 				[
