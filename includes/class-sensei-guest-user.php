@@ -125,28 +125,7 @@ class Sensei_Guest_User {
 			return false;
 		}
 
-		return $this->is_course_open_access( $this->get_course_id_for_course_related_pages() );
-	}
-
-	/**
-	 * Finds out the course id for open course, lesson and quiz pages.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 * @return int
-	 */
-	private function get_course_id_for_course_related_pages() {
-		global $post;
-
-		$course_id = $post->ID;
-
-		if ( is_singular( [ 'lesson' ] ) ) {
-			$course_id = get_post_meta( $post->ID, '_lesson_course', true );
-		} elseif ( is_singular( [ 'quiz' ] ) ) {
-			$lesson_id = get_post_meta( $post->ID, '_quiz_lesson', true );
-			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
-		}
-		return $course_id;
+		return $this->is_course_open_access( Sensei_Utils::get_current_course() );
 	}
 
 	/**
