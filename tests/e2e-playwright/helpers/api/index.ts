@@ -5,7 +5,9 @@ import type { APIRequestContext } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { lessonSimple } from './lesson-templates';
+import { lessonSimple } from '../lesson-templates';
+
+export * from './users';
 
 /**
  * Wrap the context, adding a post helper that sends a nonce.
@@ -13,7 +15,7 @@ import { lessonSimple } from './lesson-templates';
  * @param {APIRequestContext} context
  * @return {Promise<*&{post: (function(*, *): Promise<*>)}>} response
  */
-const createApiContext = async ( context: APIRequestContext ) => {
+export const createApiContext = async ( context: APIRequestContext ) => {
 	const baseUrl = 'http://localhost:8889';
 	const nonce = await getNonce( context );
 	return {
@@ -29,34 +31,6 @@ const createApiContext = async ( context: APIRequestContext ) => {
 				} )
 			 )?.json(),
 	};
-};
-
-export type UserResponse = {
-	username: string;
-	name: string;
-	email: string;
-};
-
-export type User = {
-	username: string;
-	password?: string;
-	email?: string;
-	roles?: string[];
-	meta?: Record< string, unknown >;
-	slug?: string;
-};
-
-export const createUser = async (
-	context: APIRequestContext,
-	user: User
-): Promise< UserResponse > => {
-	const api = await createApiContext( context );
-
-	return api.post( `/wp-json/wp/v2/users`, {
-		email: `${ user.username }@example.com`,
-		meta: { context: 'view' },
-		...user,
-	} );
 };
 
 export type CourseDefinition = {
