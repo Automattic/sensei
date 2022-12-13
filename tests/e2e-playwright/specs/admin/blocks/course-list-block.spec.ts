@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { Course, createCourse, createCourseCategory } from '@e2e/helpers/api';
+import { createCourse, createCourseCategory } from '@e2e/helpers/api';
 import { getContextByRole } from '@e2e/helpers/context';
 import PostType from '@e2e/pages/admin/post-type';
 

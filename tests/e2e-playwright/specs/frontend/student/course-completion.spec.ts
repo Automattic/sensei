@@ -9,7 +9,8 @@ import { expect } from '@playwright/test';
 import { LessonPage } from '@e2e/pages/frontend/lesson';
 import { CoursePage } from '@e2e/pages/frontend/course';
 import { studentRole } from '@e2e/helpers/context';
-import { CourseMode, test } from '../course-fixtures';
+import { test } from '../course-fixtures';
+import { CourseMode } from '@e2e/fixtures/courses';
 
 const { describe, use } = test;
 
