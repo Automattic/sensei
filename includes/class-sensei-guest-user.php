@@ -80,7 +80,8 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
-		add_action( 'wp', array( $this, 'create_guest_user_and_login_for_open_course' ), 9 );
+		add_action( 'wp', [ $this, 'sensei_set_current_user_to_none_if_not_open_course_related_action' ], 8 );
+		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
 
@@ -121,6 +122,7 @@ class Sensei_Guest_User {
 	 * Create a guest user for open access courses if no user is logged in.
 	 *
 	 * @since $$next-version$$
+	 * @access private
 	 */
 	public function create_guest_user_and_login_for_open_course() {
 
@@ -147,6 +149,37 @@ class Sensei_Guest_User {
 	}
 
 	/**
+	 * Sets current guest user to none if out of open course context.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 */
+	public function sensei_set_current_user_to_none_if_not_open_course_related_action() {
+		if (
+			is_user_logged_in() &&
+			$this->is_current_user_guest() &&
+			! $this->is_open_course_related_action()
+		) {
+			wp_set_current_user( 0 );
+		}
+	}
+
+	/**
+	 * Checks if the action is related to an open course or a lesson or a quiz that belongs to an open course.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 * @return boolean
+	 */
+	private function is_open_course_related_action() {
+		if ( ! is_singular( [ 'course', 'lesson', 'quiz' ] ) ) {
+			return false;
+		}
+
+		return $this->is_course_open_access( Sensei_Utils::get_current_course() );
+	}
+
+	/**
 	 * Check if the course is open access.
 	 *
 	 * @param int $course_id ID of the course.
@@ -158,6 +191,16 @@ class Sensei_Guest_User {
 		return get_post_meta( $course_id, 'open_access', true );
 	}
 
+	/**
+	 * Checks if the current user is a guest.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 */
+	private function is_current_user_guest() {
+		$user = wp_get_current_user();
+		return in_array( $this->guest_student_role, (array) $user->roles, true );
+	}
 	/**
 	 * Recreate nonce after logging in user invalidates existing one.
 	 *
