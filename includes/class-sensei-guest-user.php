@@ -12,22 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// Only works when added outside of class.
-// TODO Check the reason later.
-add_action( 'init', 'sensei_start_session' );
-
-/**
- * Starts the session if already not started.
- *
- * @since $$next-version$$
- * @access private
- */
-function sensei_start_session() {
-	if ( ! session_id() ) {
-		session_start();
-	}
-}
-
 /**
  * Sensei Guest User Class.
  *
@@ -54,8 +38,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
-		add_action( 'wp', [ $this, 'sensei_log_guest_user_out_if_not_open_course_related_action' ], 9 );
-		add_action( 'wp', [ $this, 'sensei_auto_log_guest_in_if_already_enrolled' ], 9 );
+		add_action( 'wp', [ $this, 'sensei_set_current_user_to_none_if_not_open_course_related_action' ], 8 );
 		add_action( 'wp', [ $this, 'sensei_create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
@@ -108,43 +91,25 @@ class Sensei_Guest_User {
 			&& ! is_user_logged_in()
 			&& $this->is_course_open_access( $post->ID )
 		) {
-			$user_id = $this->create_new_or_retrieve_existing_guest_student();
+			$user_id = $this->create_guest_student();
 			$this->login_user( $user_id );
 			$this->recreate_nonces();
 		}
 	}
 
 	/**
-	 * Logs guest user out if out of open course context.
+	 * Sets current guest user to none if out of open course context.
 	 *
 	 * @since $$next-version$$
 	 * @access private
 	 */
-	public function sensei_log_guest_user_out_if_not_open_course_related_action() {
+	public function sensei_set_current_user_to_none_if_not_open_course_related_action() {
 		if (
 			is_user_logged_in() &&
 			$this->is_current_user_guest() &&
 			! $this->is_open_course_related_action()
 		) {
-			wp_logout();
-		}
-	}
-
-	/**
-	 * Automatically logs guest user in if user already enrolled in that course as guest user.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 */
-	public function sensei_auto_log_guest_in_if_already_enrolled() {
-		if (
-			! is_user_logged_in() &&
-			$this->is_open_course_related_action() &&
-			$this->is_guest_student_exists() &&
-			Sensei_Course::is_user_enrolled( $this->get_course_id_for_course_related_pages(), $this->get_guest_student_id() )
-		) {
-			$this->login_user( $this->get_guest_student_id() );
-			$this->recreate_nonces();
+			wp_set_current_user( 0 );
 		}
 	}
 
@@ -202,26 +167,9 @@ class Sensei_Guest_User {
 	 * @access private
 	 * @return int
 	 */
-	private function create_new_or_retrieve_existing_guest_student() {
-		if ( $this->is_guest_student_exists() ) {
-			return $this->get_guest_student_id();
-		} else {
-			$user_id = $this->create_guest_student_user();
-			$this->set_guest_student_session( $user_id );
-			return $user_id;
-		}
-	}
-
-	/**
-	 * Checks if there was a guest user already created and if that user still exists in database.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 * @return boolean
-	 */
-	private function is_guest_student_exists() {
-		return $this->is_guest_student_already_created() &&
-		! ! get_userdata( $this->get_guest_student_id() );
+	private function create_guest_student() {
+		$user_id = $this->create_guest_student_user();
+		return $user_id;
 	}
 
 	/**
@@ -304,40 +252,5 @@ class Sensei_Guest_User {
 			// Create the role.
 			add_role( $this->guest_student_role, __( 'Guest Student', 'sensei-lms' ) );
 		}
-	}
-
-	/**
-	 * Checks if a guest user was already created in the session.
-	 * Does not guarantee that the user is still in the database.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 * @return boolean
-	 */
-	private function is_guest_student_already_created() {
-		return isset( $_SESSION['guest-student'] );
-	}
-
-	/**
-	 * Gets the student id from the session.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 * @return int
-	 */
-	private function get_guest_student_id() {
-		return $_SESSION['guest-student'];
-	}
-
-	/**
-	 * Sets the session with the guest student ID.
-	 *
-	 * @param  int $user_id ID of the user.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 */
-	private function set_guest_student_session( $user_id ) {
-		$_SESSION['guest-student'] = $user_id;
 	}
 }
