@@ -13,7 +13,7 @@ export class LessonPage {
 	get completeLessonButton(): Locator {
 		return this.page.locator( `button >> "Complete Lesson"` ).first();
 	}
-	async clickCompleteLesson(): Promise<unknown> {
+	async clickCompleteLesson(): Promise< unknown > {
 		// Workaround on misclicking? in Learning mode.
 		await this.completeLessonButton.focus();
 		await this.page.keyboard.press( 'Enter' );

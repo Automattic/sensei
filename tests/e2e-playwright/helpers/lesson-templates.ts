@@ -55,7 +55,7 @@ export const lessonNoLessonActions = (): string => `
 	${ paragraph }
 `;
 
-export const lessonWithQuiz = (): string =>  `
+export const lessonWithQuiz = (): string => `
 	${ paragraph }
 	${ lessonActionsBlock }
 	${ quizBlock }

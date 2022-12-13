@@ -37,13 +37,13 @@ describe( 'Courses List Block', () => {
 			const category = await createCourseCategory( request, {
 				name: course.category,
 				description: '',
-				slug: ''
+				slug: '',
 			} );
 
 			await createCourse( request, {
 				...course,
 				categoryIds: [ category.id ],
-				lessons: []
+				lessons: [],
 			} );
 		}
 	} );
@@ -59,14 +59,25 @@ describe( 'Courses List Block', () => {
 		await postTypePage.gotToPreviewPage();
 
 		for ( const course of courses ) {
-			await expect( page.locator( `role=heading[name=${ course.title }]` ) ).toBeVisible();
-			await expect( page.locator( `text='${ course.excerpt }'` ) ).toBeVisible();
-			await expect( page.locator( `role=link[name='${ course.category }']` ) ).toBeVisible();
+			await expect(
+				page.locator( `role=heading[name=${ course.title }]` )
+			).toBeVisible();
+			await expect(
+				page.locator( `text='${ course.excerpt }'` )
+			).toBeVisible();
+			await expect(
+				page.locator( `role=link[name='${ course.category }']` )
+			).toBeVisible();
 		}
 
 		// It is possible to have more courses created by other test.
-		const buttonsCount = await page.locator( `text='Start Course'` ).count();
+		const buttonsCount = await page
+			.locator( `text='Start Course'` )
+			.count();
 
-		await expect( buttonsCount >= courses.length, 'renders a start button by course' ).toEqual( true );
+		await expect(
+			buttonsCount >= courses.length,
+			'renders a start button by course'
+		).toEqual( true );
 	} );
 } );

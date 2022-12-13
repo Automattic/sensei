@@ -8,11 +8,14 @@ import type { Page } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { cleanAll as cleanDatabase, configureSite } from '@e2e/helpers/database';
+import {
+	cleanAll as cleanDatabase,
+	configureSite,
+} from '@e2e/helpers/database';
 import { createTeacher, createStudent } from '@e2e/helpers/api';
 import { getContextByRole } from '@e2e/helpers/context';
 
-export default async (): Promise<void> => {
+export default async (): Promise< void > => {
 	cleanDatabase();
 	configureSite();
 
@@ -38,11 +41,11 @@ type Credentials = {
 	user: string;
 	pwd: string;
 };
-async function login(page: Page, { user, pwd }: Credentials) {
-	await page.goto('http://localhost:8889/wp-login.php');
-	await page.locator('input[name="log"]').fill(user);
-	await page.locator('input[name="pwd"]').fill(pwd);
-	await page.locator('text=Log In').click();
+async function login( page: Page, { user, pwd }: Credentials ) {
+	await page.goto( 'http://localhost:8889/wp-login.php' );
+	await page.locator( 'input[name="log"]' ).fill( user );
+	await page.locator( 'input[name="pwd"]' ).fill( pwd );
+	await page.locator( 'text=Log In' ).click();
 	await page.waitForNavigation();
 }
 

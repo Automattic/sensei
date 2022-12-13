@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { Locator, Page } from '@playwright/test';
-import PostType from '@e2e/pages/admin/post-type'
+import PostType from '@e2e/pages/admin/post-type';
 
 class WizardModal {
 	private readonly wizard: Locator;

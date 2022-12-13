@@ -22,15 +22,15 @@ export default class DashboardPage {
 		);
 	}
 
-	async goTo(): Promise<void> {
+	async goTo(): Promise< void > {
 		await this.page.goto( PATH );
 	}
 
-	async getSenseiMenuItem(): Promise<Locator> {
+	async getSenseiMenuItem(): Promise< Locator > {
 		return this.senseiMenuItem;
 	}
 
-	async getCoursesMenuItem(): Promise<Locator> {
+	async getCoursesMenuItem(): Promise< Locator > {
 		return this.coursesMenuItem;
 	}
 }

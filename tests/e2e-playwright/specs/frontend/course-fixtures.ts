@@ -23,7 +23,6 @@ export type Course = {
 	link: string;
 };
 
-
 export type Lesson = {
 	title: { raw: string; rendered: string };
 	content: { raw: string; rendered: string };
@@ -33,36 +32,39 @@ export type Lesson = {
 
 export const test = base.extend< { course: Course; courseMode: CourseMode } >( {
 	courseMode: [ CourseMode.DEFAULT_MODE, { option: true } ],
-	course: async ({ browser, courseMode }, use) => {
-		const course = await asAdmin( { browser }, async ( { context } ) => {
-			return createCourse( context.request, createCourseDef( courseMode ) );
-		} ) as Course;
+	course: async ( { browser, courseMode }, use ) => {
+		const course = ( await asAdmin( { browser }, async ( { context } ) => {
+			return createCourse(
+				context.request,
+				createCourseDef( courseMode )
+			);
+		} ) ) as Course;
 
 		await use( course );
 
 		return course;
 	},
-});
+} );
 
 const LEARNING_MODE_META = {
 	_course_theme: 'sensei-theme',
 };
 
-export const createCourseDef = (courseMode: CourseMode): CourseDefinition => {
+export const createCourseDef = ( courseMode: CourseMode ): CourseDefinition => {
 	const useLearningMode = courseMode === CourseMode.LEARNING_MODE;
 
 	return {
-		title: `E2E Course ${courseMode}`,
+		title: `E2E Course ${ courseMode }`,
 		meta: {
-			...(useLearningMode ? LEARNING_MODE_META : {}),
+			...( useLearningMode ? LEARNING_MODE_META : {} ),
 		},
 		lessons: [
 			{
-				title: `E2E Lesson ${courseMode} 101`,
+				title: `E2E Lesson ${ courseMode } 101`,
 				content: lessonSimple(),
 			},
 			{
-				title: `E2E Lesson ${courseMode} 102`,
+				title: `E2E Lesson ${ courseMode } 102`,
 				content: lessonSimple(),
 			},
 		],

@@ -8,7 +8,8 @@ import { execSync } from 'child_process';
  *
  * @param {string} command
  */
-export const cli = ( command: string ): Buffer => execSync( `npm run wp-env run tests-cli "${ command }"` );
+export const cli = ( command: string ): Buffer =>
+	execSync( `npm run wp-env run tests-cli "${ command }"` );
 
 /**
  * Clean database.
@@ -29,10 +30,9 @@ export const configureSite = (): void => {
  * Change a Sensei setting via WP CLI.
  *
  * @todo Not working correctly, option is cached somewhere?
- *
  * @param {string} name
  * @param {string} value
  */
-export const updateSenseiSetting = ( name: string, value: string ):void => {
+export const updateSenseiSetting = ( name: string, value: string ): void => {
 	cli( `wp eval \\"Sensei()->settings->set('${ name }', '${ value }');"` );
 };

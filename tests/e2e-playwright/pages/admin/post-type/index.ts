@@ -26,53 +26,64 @@ export default class PostType {
 		this.postType = postType;
 
 		// MAPPING THE INTERFACE
-		this.dialogCloseButton = page.locator('[aria-label="Close dialog"]');
-		this.addBlockButton = page.locator('[aria-label="Add block"]');
-		this.searchBlock = page.locator('[placeholder="Search"]');
-		this.queryLoopPatternSelection = page.locator('[aria-label="Block: Query Loop"]');
+		this.dialogCloseButton = page.locator( '[aria-label="Close dialog"]' );
+		this.addBlockButton = page.locator( '[aria-label="Add block"]' );
+		this.searchBlock = page.locator( '[placeholder="Search"]' );
+		this.queryLoopPatternSelection = page.locator(
+			'[aria-label="Block: Query Loop"]'
+		);
 		this.previewURL = null;
 	}
 
-	async goToPostTypeCreationPage(): Promise<void | null> {
-		await this.page.goto(`/wp-admin/post-new.php?post_type=${this.postType}`);
-		await this.page.waitForLoadState('networkidle');
-		if ((await this.dialogCloseButton.count()) > 0) {
+	async goToPostTypeCreationPage(): Promise< void | null > {
+		await this.page.goto(
+			`/wp-admin/post-new.php?post_type=${ this.postType }`
+		);
+		await this.page.waitForLoadState( 'networkidle' );
+		if ( ( await this.dialogCloseButton.count() ) > 0 ) {
 			return this.dialogCloseButton.click();
 		}
 		return null;
 	}
 
-	async addBlock( blockName: string ): Promise<QueryLoop> {
+	async addBlock( blockName: string ): Promise< QueryLoop > {
 		await this.addBlockButton.click();
-		await this.searchBlock.fill(blockName);
+		await this.searchBlock.fill( blockName );
 		await this.page
-			.locator('button[role="option"]', {
-				has: this.page.locator(`text="${blockName}"`),
-			})
+			.locator( 'button[role="option"]', {
+				has: this.page.locator( `text="${ blockName }"` ),
+			} )
 			.click();
 
-		return new QueryLoop(this.queryLoopPatternSelection, this.page);
+		return new QueryLoop( this.queryLoopPatternSelection, this.page );
 	}
 
-	async getPreviewURL(): Promise<string> {
-		const params = new URL(await this.page.url()).searchParams;
+	async getPreviewURL(): Promise< string > {
+		const params = new URL( await this.page.url() ).searchParams;
 
-		return `/?page_id=${params.get('post')}`;
+		return `/?page_id=${ params.get( 'post' ) }`;
 	}
 
-	async publish(): Promise<Response> {
-		await this.page.locator('[aria-label="Editor top bar"] >> text=Publish').click();
-		await this.page.locator('[aria-label="Editor publish"] >> text=Publish').first().click();
+	async publish(): Promise< Response > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.click();
+		await this.page
+			.locator( '[aria-label="Editor publish"] >> text=Publish' )
+			.first()
+			.click();
 
-		return this.page.waitForNavigation({ url: '**/post.php?post=**' });
+		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
 	}
 
-	async goToPostTypeListingPage(): Promise<Response> {
-		return this.page.goto(`/wp-admin/edit.php?post_type=${this.postType}`);
+	async goToPostTypeListingPage(): Promise< Response > {
+		return this.page.goto(
+			`/wp-admin/edit.php?post_type=${ this.postType }`
+		);
 	}
 
-	async gotToPreviewPage(): Promise<Response> {
-		return this.page.goto(await this.getPreviewURL());
+	async gotToPreviewPage(): Promise< Response > {
+		return this.page.goto( await this.getPreviewURL() );
 	}
 }
 
