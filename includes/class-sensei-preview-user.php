@@ -57,10 +57,11 @@ class Sensei_Preview_User {
 	 * @access private
 	 */
 	public function override_user() {
+
 		$preview_user = $this->get_preview_user( get_current_user_id() );
 		$course_id    = Sensei_Utils::get_current_course();
 
-		if ( ! $course_id || ! $preview_user ) {
+		if ( ! $course_id || ! $preview_user || ! $this->is_preview_user( $preview_user ) ) {
 			return;
 		}
 
@@ -175,7 +176,7 @@ class Sensei_Preview_User {
 	 */
 	private function is_action( $action ) {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification
-		return isset( $_REQUEST[ $action ] ) && wp_verify_nonce( wp_unslash( $_REQUEST[ $action ] ), $action );
+		return isset( $_GET[ $action ] ) && wp_verify_nonce( wp_unslash( $_GET[ $action ] ), $action );
 	}
 
 
@@ -272,6 +273,23 @@ class Sensei_Preview_User {
 	 */
 	private function is_preview_user_active() {
 		$user = wp_get_current_user();
+		return $this->is_preview_user( $user );
+	}
+
+	/**
+	 * Check if the given user is a preview user.
+	 *
+	 * @param WP_User|int $user User object or ID.
+	 *
+	 * @return bool
+	 */
+	private function is_preview_user( $user ): bool {
+		if ( is_numeric( $user ) ) {
+			$user = get_user_by( 'ID', $user );
+		}
+		if ( ! is_a( $user, 'WP_User' ) ) {
+			return false;
+		}
 		return in_array( self::ROLE, (array) $user->roles, true );
 	}
 
