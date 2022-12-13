@@ -37,6 +37,7 @@ const createUserContexts = async () => {
 			username: 'teacher',
 			email: 'teacher@teacher.com',
 			password: 'password',
+			roles: [ 'teacher' ],
 		},
 		{
 			username: 'student',

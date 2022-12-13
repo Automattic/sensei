@@ -11,6 +11,13 @@ export type CourseDefinition = {
 	categoryIds?: Array< string | number >;
 };
 
+type Category = {
+	id?: number;
+	name: string;
+	description: string;
+	slug: string;
+};
+
 export const createCourse = async (
 	context: APIRequestContext,
 	courseDefinition: CourseDefinition
