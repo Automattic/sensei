@@ -6,9 +6,9 @@ import { expect, test } from '@playwright/test';
 /**
  * Internal dependencies
  */
-const { getContextByRole } = require( '../../../helpers/context' );
-const CoursesPage = require( '../../../pages/admin/courses/courses' );
-const Dashboard = require( '../../../pages/admin/dashboard/dashboard' );
+import { getContextByRole } from '@e2e/helpers/context';
+import CoursesPage from '@e2e/pages/admin/courses/courses';
+import Dashboard from '@e2e/pages/admin/dashboard/dashboard';
 
 const { describe, use } = test;
 

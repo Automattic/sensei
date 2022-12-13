@@ -1,38 +1,28 @@
 /**
  * External dependencies
  */
-import { expect, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-import { LessonPage } from '../../../pages/frontend/lesson';
-import { CoursePage } from '../../../pages/frontend/course';
-import { asAdmin, studentRole } from '../../../helpers/context';
+import { LessonPage } from '@e2e/pages/frontend/lesson';
+import { CoursePage } from '@e2e/pages/frontend/course';
+import { studentRole } from '@e2e/helpers/context';
 import { CourseMode, test } from '../course-fixtures';
-import { disableGlobalLearningMode } from '../../../helpers/api';
-import { text as lessonTextContent } from '../../../helpers/lesson-templates';
 
-const { describe, use, beforeAll } = test;
+const { describe, use } = test;
 
 const testCourseWithMode = ( courseMode: CourseMode ) =>
-	describe( `Course Completion in ${ courseMode }`, () => {
+	describe.parallel( `Course Completion in ${ courseMode }`, () => {
 		use( { courseMode } );
-		use( studentRole() );
-
-		beforeAll( async ( { browser } ) => {
-			await asAdmin( { browser }, async ( { context } ) => {
-				await disableGlobalLearningMode( context );
-			} );
-		} );
+		use(studentRole());
 
 		test( 'Student enrolls in course and completes all lessons.', async ( { page, course } ) => {
 			const coursePage = new CoursePage( page );
 			await page.goto( course.link );
 
-			await coursePage.takeCourse.click( { force: true } );
-
-			await expect( coursePage.takeCourse ).toBeHidden();
+			await coursePage.takeCourse.click();
 
 			// Can access first lesson content.
 			const [ lesson, lesson2 ] = course.lessons;
@@ -40,7 +30,6 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 			const lessonPage = new LessonPage( page );
 
 			await expect( lessonPage.title ).toHaveText( lesson.title.raw );
-			await expect( page.locator( '.entry-content p' ).first() ).toHaveText( lessonTextContent );
 
 			// Completes first lesson.
 			await lessonPage.clickCompleteLesson();
@@ -58,6 +47,6 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 		} );
 	} );
 
-for ( const mode of [ CourseMode.learningMode, CourseMode.templates, CourseMode.blocks ] ) {
+for ( const mode of [ CourseMode.LEARNING_MODE, CourseMode.DEFAULT_MODE ] ) {
 	testCourseWithMode( mode );
 }

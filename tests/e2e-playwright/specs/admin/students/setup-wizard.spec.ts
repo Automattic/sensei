@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const { test, expect } = require( '@playwright/test' );
+import { test, expect } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-const { getContextByRole } = require( '../../../helpers/context' );
-const PluginsPage = require( '../../../pages/admin/plugins/plugins' );
+import { getContextByRole } from '@e2e/helpers/context';
+import PluginsPage from '@e2e/pages/admin/plugins/plugins';
 
 /**
  * This test suit is installing and installing the plugin to test some scenarios and
