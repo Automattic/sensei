@@ -192,18 +192,6 @@ class Sensei_Guest_User {
 	}
 
 	/**
-	 * Creates a new guest user if there isn't a guest user already created by the end user that exists.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 * @return int
-	 */
-	private function create_guest_student() {
-		$user_id = $this->create_guest_student_user();
-		return $user_id;
-	}
-
-	/**
 	 * Checks if the current user is a guest.
 	 *
 	 * @since $$next-version$$
