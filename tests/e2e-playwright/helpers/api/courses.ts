@@ -1,83 +1,90 @@
+import { CourseContent } from '@e2e/fixtures/courses';
 import { APIRequestContext } from '@playwright/test';
 import { lessonSimple } from '../lesson-templates';
 import { createApiContext } from './index';
 
-export type CourseDefinition = {
+export type Course = {
 	title: string;
 	meta?: Record< string, string >;
-	lessons: Array< Record< string, unknown > >;
+	lessons: Lesson[];
 	slug?: string;
 	excerpt?: string;
 	categoryIds?: Array< string | number >;
+	content?: string;
+	status?: string;
 };
 
-type Category = {
+type CourseCategory = {
 	id?: number;
 	name: string;
 	description: string;
 	slug: string;
 };
 
+type ValueWithRaw = {
+	raw: string;
+	rendered: string;
+};
+
+export type LessonResponse = {
+	title: ValueWithRaw;
+	content: ValueWithRaw;
+	id: number;
+	link: string;
+};
+
+export type CourseResponse = {
+	title: ValueWithRaw;
+	content: ValueWithRaw;
+	lessons: LessonResponse[];
+	id: number;
+	link: string;
+};
+
+export type Lesson = {
+	title: string;
+	content: string;
+};
+
+const toStructure = ( lesson: Lesson ) => ( {
+	...lesson,
+	type: 'lesson',
+	draft: false,
+} );
+
 export const createCourse = async (
 	context: APIRequestContext,
-	courseDefinition: CourseDefinition
-): Promise< CourseDefinition > => {
-	const {
-		title,
-		slug,
-		excerpt = '',
-		categoryIds,
-		lessons,
-	} = courseDefinition;
+	course: Course
+): Promise< CourseResponse > => {
 	const api = await createApiContext( context );
 
-	const categories = categoryIds ? { 'course-category': categoryIds } : {};
-	const course = await api.post( `/wp-json/wp/v2/courses`, {
+	const created = await api.post( `/wp-json/wp/v2/courses`, {
 		status: 'publish',
-		slug,
-		title,
-		content:
-			'<!-- wp:sensei-lms/button-take-course -->\n<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>\n<!-- /wp:sensei-lms/button-take-course -->\n\n<!-- wp:sensei-lms/button-contact-teacher -->\n<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">Contact Teacher</a></div>\n<!-- /wp:sensei-lms/button-contact-teacher -->\n\n<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->\n\n<!-- wp:sensei-lms/course-outline /-->',
-		excerpt,
-		...categories,
+		content: CourseContent.SIMPLE,
+		excerpt: '',
+		'course-category': course.categoryIds || [],
+		...course,
 	} );
 
-	if ( lessons ) {
-		course.lessons = [];
+	const structure = ( course.lessons || [] ).map( toStructure );
 
-		const structure = lessons.map(
-			( lesson: Record< string, string > ) => ( {
-				...lesson,
-				type: 'lesson',
-				draft: false,
-			} )
-		);
-
-		const newLessons = await api.post(
-			`/wp-json/sensei-internal/v1/course-structure/${ course.id }`,
-			{
-				structure,
-			}
-		);
-
-		for ( const lesson of newLessons.flatMap(
-			( item: { lessons: Array< Record< string, string > > } ) =>
-				item.lessons ?? item
-		) ) {
-			const lessonData = lessons.find(
-				( { title } ) => title === lesson.title
-			);
-			const lessonResult = await addLessonContent( api, {
-				...lessonData,
-				...lesson,
-			} );
-			course.lessons.push( lessonResult );
+	const newLessons = await api.post(
+		`/wp-json/sensei-internal/v1/course-structure/${ created.id }`,
+		{
+			structure,
 		}
-	}
+	);
 
-	return course;
+	const createdLessons = await Promise.all(
+		newLessons.map( ( lesson ) => updateLesson( api, lesson ) )
+	);
+
+	return {
+		...created,
+		lessons: createdLessons,
+	};
 };
-const addLessonContent = async (
+const updateLesson = async (
 	api,
 	{ id, content = lessonSimple(), ...lesson }
 ) => {
@@ -88,19 +95,14 @@ const addLessonContent = async (
 		content,
 	} );
 };
-type Category = {
-	id?: number;
-	name: string;
-	description: string;
-	slug: string;
-};
 
 export const createCourseCategory = async (
 	context: APIRequestContext,
-	category: Category
-): Promise< Category > => {
+	category: CourseCategory
+): Promise< CourseCategory > => {
 	const { name, description, slug } = category;
 	const api = await createApiContext( context );
+
 	return api.post( `/wp-json/wp/v2/course-category`, {
 		name,
 		description: description || `Some description for ${ name }`,
