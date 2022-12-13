@@ -20,7 +20,7 @@ test.describe.serial( 'Students Management', () => {
 
 	test.beforeAll( async ( { request } ) => {
 		student = await createStudent( request, STUDENT_NAME );
-		course = await createCourse( request, { title: COURSE_NAME } );
+		course = await createCourse( request, { title: COURSE_NAME, lessons: [] } );
 	} );
 
 	test( 'it should add a student to a course', async ( { page } ) => {
