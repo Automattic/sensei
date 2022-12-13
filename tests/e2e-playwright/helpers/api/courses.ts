@@ -1,0 +1,102 @@
+import { APIRequestContext } from '@playwright/test';
+import { lessonSimple } from '../lesson-templates';
+import { createApiContext } from './index';
+
+export type CourseDefinition = {
+	title: string;
+	meta?: Record< string, string >;
+	lessons: Array< Record< string, unknown > >;
+	slug?: string;
+	excerpt?: string;
+	categoryIds?: Array< string | number >;
+};
+
+export const createCourse = async (
+	context: APIRequestContext,
+	courseDefinition: CourseDefinition
+): Promise< CourseDefinition > => {
+	const {
+		title,
+		slug,
+		excerpt = '',
+		categoryIds,
+		lessons,
+	} = courseDefinition;
+	const api = await createApiContext( context );
+
+	const categories = categoryIds ? { 'course-category': categoryIds } : {};
+	const course = await api.post( `/wp-json/wp/v2/courses`, {
+		status: 'publish',
+		slug,
+		title,
+		content:
+			'<!-- wp:sensei-lms/button-take-course -->\n<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link">Take Course</button></div>\n<!-- /wp:sensei-lms/button-take-course -->\n\n<!-- wp:sensei-lms/button-contact-teacher -->\n<div class="wp-block-sensei-lms-button-contact-teacher is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><a class="wp-block-button__link">Contact Teacher</a></div>\n<!-- /wp:sensei-lms/button-contact-teacher -->\n\n<!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /-->\n\n<!-- wp:sensei-lms/course-outline /-->',
+		excerpt,
+		...categories,
+	} );
+
+	if ( lessons ) {
+		course.lessons = [];
+
+		const structure = lessons.map(
+			( lesson: Record< string, string > ) => ( {
+				...lesson,
+				type: 'lesson',
+				draft: false,
+			} )
+		);
+
+		const newLessons = await api.post(
+			`/wp-json/sensei-internal/v1/course-structure/${ course.id }`,
+			{
+				structure,
+			}
+		);
+
+		for ( const lesson of newLessons.flatMap(
+			( item: { lessons: Array< Record< string, string > > } ) =>
+				item.lessons ?? item
+		) ) {
+			const lessonData = lessons.find(
+				( { title } ) => title === lesson.title
+			);
+			const lessonResult = await addLessonContent( api, {
+				...lessonData,
+				...lesson,
+			} );
+			course.lessons.push( lessonResult );
+		}
+	}
+
+	return course;
+};
+const addLessonContent = async (
+	api,
+	{ id, content = lessonSimple(), ...lesson }
+) => {
+	return api.post( `/wp-json/wp/v2/lessons/${ id }`, {
+		...lesson,
+		status: 'publish',
+		id,
+		content,
+	} );
+};
+type Category = {
+	id?: number;
+	name: string;
+	description: string;
+	slug: string;
+};
+
+export const createCourseCategory = async (
+	context: APIRequestContext,
+	category: Category
+): Promise< Category > => {
+	const { name, description, slug } = category;
+	const api = await createApiContext( context );
+	return api.post( `/wp-json/wp/v2/course-category`, {
+		name,
+		description: description || `Some description for ${ name }`,
+		slug,
+	} );
+};
