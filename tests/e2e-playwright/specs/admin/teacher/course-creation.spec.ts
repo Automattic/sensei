@@ -3,17 +3,14 @@
  */
 import { expect, test } from '@playwright/test';
 
-/**
- * Internal dependencies
- */
-import { getContextByRole } from '@e2e/helpers/context';
 import CoursesPage from '@e2e/pages/admin/courses/courses';
 import Dashboard from '@e2e/pages/admin/dashboard/dashboard';
+import { teacherRole } from '@e2e/helpers/context';
 
 const { describe, use } = test;
 
 describe( 'Create Courses', () => {
-	use( { storageState: getContextByRole( 'teacher' ) } );
+	use( teacherRole() );
 
 	test( 'it has a Courses menu item in the main menu', async ( { page } ) => {
 		const dashboard = new Dashboard( page );

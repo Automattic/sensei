@@ -7,9 +7,9 @@ import { test, expect } from '@playwright/test';
  * Internal dependencies
  */
 import StudentsPage from '@e2e/pages/admin/students/students';
-import { getContextByRole } from '@e2e/helpers/context';
 import { createCourse, createUser } from '@e2e/helpers/api';
 import type { User } from '@e2e/helpers/api';
+import { adminRole } from '@e2e/helpers/context';
 
 test.describe.serial( 'Students Management', () => {
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
@@ -22,7 +22,7 @@ test.describe.serial( 'Students Management', () => {
 	let student, course;
 
 	// it is ensuring the browser is using a admin session.
-	test.use( { storageState: getContextByRole( 'admin' ) } );
+	test.use( adminRole() );
 
 	test.beforeAll( async ( { request } ) => {
 		student = await createUser( request, STUDENT );

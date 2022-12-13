@@ -2,12 +2,7 @@
  * External dependencies
  */
 import path from 'path';
-import type {
-	APIRequestContext,
-	Browser,
-	BrowserContext,
-	Page,
-} from '@playwright/test';
+import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { User } from './api';
 import { ADMIN } from '@e2e/fixtures/users';
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
@@ -25,7 +20,11 @@ export const getContextByRole = ( userRole: string ): string =>
 
 export const studentRole = (): Record< string, string > => ( {
 	storageState: getContextByRole( 'student' ),
-});
+} );
+
+export const teacherRole = (): Record< string, string > => ( {
+	storageState: getContextByRole( 'teacher' ),
+} );
 
 export const adminRole = (): Record< string, string > => ( {
 	storageState: getContextByRole( 'admin' ),

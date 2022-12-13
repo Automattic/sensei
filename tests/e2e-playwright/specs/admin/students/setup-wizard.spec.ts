@@ -3,11 +3,8 @@
  */
 import { test, expect } from '@playwright/test';
 
-/**
- * Internal dependencies
- */
-import { getContextByRole } from '@e2e/helpers/context';
 import PluginsPage from '@e2e/pages/admin/plugins/plugins';
+import { adminRole } from '@e2e/helpers/context';
 
 /**
  * This test suit is installing and installing the plugin to test some scenarios and
@@ -16,7 +13,7 @@ import PluginsPage from '@e2e/pages/admin/plugins/plugins';
  *
  */
 test.describe.serial( 'Setup Wizard @setup', () => {
-	test.use( { storageState: getContextByRole( 'admin' ) } );
+	test.use( adminRole() );
 	let pluginsPage;
 	let page;
 	test.beforeAll( async ( { browser } ) => {
