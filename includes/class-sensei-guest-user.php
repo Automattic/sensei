@@ -42,24 +42,34 @@ class Sensei_Guest_User {
 	 * }
 	 */
 	protected $supported_actions = [
+		// Take course.
 		[
 			'field' => 'course_start',
 			'nonce' => 'woothemes_sensei_start_course_noonce',
 			'enrol' => false,
 		],
+		// Lesson complete.
 		[
 			'field' => 'quiz_action',
 			'nonce' => 'woothemes_sensei_complete_lesson_noonce',
 			'enrol' => true,
 		],
+		// Quiz complete.
 		[
 			'field' => 'quiz_complete',
 			'nonce' => 'woothemes_sensei_complete_quiz_nonce',
 			'enrol' => true,
 		],
+		// Quiz save.
 		[
 			'field' => 'quiz_save',
 			'nonce' => 'woothemes_sensei_save_quiz_nonce',
+			'enrol' => true,
+		],
+		// Quiz pagination. (Saves answers on the page).
+		[
+			'field' => 'quiz_target_page',
+			'nonce' => 'sensei_quiz_page_change_nonce',
 			'enrol' => true,
 		],
 	];

@@ -56,13 +56,15 @@ class Quiz_Actions {
 		$pagination_enabled = $sensei_question_loop && $sensei_question_loop['total_pages'] > 1;
 
 		$lesson_id = \Sensei_Utils::get_current_lesson();
-		$status    = \Sensei_Utils::user_lesson_status( $lesson_id );
+
+		$sensei_is_quiz_available = Sensei_Quiz::is_quiz_available();
+		$sensei_is_quiz_completed = Sensei_Quiz::is_quiz_completed();
 
 		// Get quiz actions. Either actions with pagination
 		// or only action if pagination is not enabled.
 		// Also, don't paginate if quiz has been completed.
 		ob_start();
-		if ( $pagination_enabled && $status && 'in-progress' === $status->comment_approved ) {
+		if ( $pagination_enabled && $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) {
 			Sensei_Quiz::the_quiz_pagination();
 			Sensei_Quiz::output_quiz_hidden_fields();
 		} else {
