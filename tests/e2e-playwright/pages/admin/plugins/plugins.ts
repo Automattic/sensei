@@ -1,65 +1,64 @@
-import type { Locator, Page } from '@playwright/test';
-import { expect } from "@playwright/test";
+import type {  Locator, Page, Response } from '@playwright/test';
 
-class PluginsPage {
+export default class PluginsPage {
 	constructor(private page: Page ) {}
 
-	async goTo( url: string ) {
+	async goTo( url: string ): Promise<Response> {
 		const baseUrl = process.env.WP_BASE_URL;
 		const adminUrl = [ baseUrl, 'wp-admin', url ].join( '/' );
 		return this.page.goto( adminUrl );
 	}
 
-	async goToPlugins() {
+	async goToPlugins(): Promise<Response> {
 		return this.goTo( 'plugins.php' );
 	}
 
-	async isPluginActive( slug: string ) {
+	async isPluginActive( slug: string ) : Promise<boolean> {
 		return !! ( await this.findPluginAction( slug, 'deactivate' ) );
 	}
 
-	async findPluginAction( slug: string, action: string ) {
+	async findPluginAction( slug: string, action: string ): Promise<Locator> {
 		return this.page.locator( `tr[data-slug="${ slug }"] .${ action } a` );
 	}
 
-	async findExitSurvey() {
-		return this.page.waitForSelector( `#sensei-exit-survey-modal button:not(:disabled)` );
+	async findExitSurvey():Promise<Locator> {
+		return this.page.locator( `#sensei-exit-survey-modal button:not(:disabled)` );
 	}
 
-	async stepIsComplete(page: Page, label: string) {
-		return expect( page.locator( '.sensei-stepper__step.is-complete' ).locator( `text=${ label }` ) ).toHaveCount( 1 );
+	async stepIsComplete(page: Page, label: string):Promise<boolean> {
+		return (await page.locator( '.sensei-stepper__step.is-complete' ).locator( `text=${ label }` ).count()) > 1
 	}
 
-	async closeUserTrackingModal() {
-		await this.page.locator( '.sensei-setup-wizard__usage-modal button' ).locator( 'text=Continue' ).click();
+	async closeUserTrackingModal(): Promise<unknown> {
+		return this.page.locator( '.sensei-setup-wizard__usage-modal button' ).locator( 'text=Continue' ).click();
 	}
 
-	async fillOutPurposeForm() {
+	async fillOutPurposeForm(): Promise<void> {
 		await this.page.locator( 'label' ).locator( 'text=Sell courses and generate income' ).click();
 		await this.page.locator( 'label' ).locator( 'text=Other' ).click();
 		await this.page.fill( '.sensei-setup-wizard__text-control input', 'Other' );
 	}
 
-	async goToReadyStep() {
-		await this.page.locator( '.sensei-stepper__step' ).locator( 'text=Ready' ).click();
+	async goToReadyStep():Promise<unknown> {
+		return this.page.locator( '.sensei-stepper__step' ).locator( 'text=Ready' ).click();
 	}
 
-	async fillOutFeaturesForm() {
+	async fillOutFeaturesForm():Promise<unknown> {
 		return this.page.locator( 'label' ).locator( 'text=Sensei LMS Certificates' ).click();
 	}
 
-	async stepIsActive( page: Page, label: string ) {
-		return expect( page.locator( '.sensei-stepper__step.is-active' ).locator( `text=${ label }` ) ).toHaveCount( 1 );
+	async stepIsActive( page: Page, label: string ):Promise<unknown> {
+		return  (await page.locator( '.sensei-stepper__step.is-active' ).locator( `text=${ label }`).count()) > 1
 	}
 
-	async goToPluginsAndGetDeactivationLink( slug: string ) {
+	async goToPluginsAndGetDeactivationLink( slug: string ): Promise<Locator> {
 		await this.goToPlugins();
 
 		const deactivateUrl = await this.findPluginAction( slug, 'deactivate' );
 		return deactivateUrl;
 	}
 
-	async deactivatePluginByLink( deactivateLink: Locator ) {
+	async deactivatePluginByLink( deactivateLink: Locator ): Promise<void> {
 		if ( deactivateLink ) {
 			await deactivateLink.click();
 			const exitSurvey = await this.findExitSurvey();
@@ -67,9 +66,10 @@ class PluginsPage {
 				await exitSurvey.click();
 			}
 		}
+		return;
 	}
 
-	async activatePlugin( slug: string, forceReactivate = false ) {
+	async activatePlugin( slug: string, forceReactivate = false ): Promise<void> {
 		const deactivateLink = await this.goToPluginsAndGetDeactivationLink( slug );
 
 		if ( deactivateLink ) {
@@ -84,5 +84,3 @@ class PluginsPage {
 		await activate.click();
 	}
 }
-
-module.exports = PluginsPage;

@@ -137,7 +137,7 @@
     "test-php": "./vendor/bin/phpunit",
     "test-php:coverage-html": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html=coverage",
     "test-php:coverage-clover": "php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover=coverage.xml",
-    "pretest:e2e": "eslint -c ./tests/e2e-playwright/.eslintrc.js ./tests/e2e-playwright/ --fix",
+    "pretest:e2e": "eslint -c ./tests/e2e-playwright/.eslintrc.js ./tests/e2e-playwright/",
     "test:e2e": "playwright test",
     "test:e2e:debug": "playwright test --headed",
     "prepare": "husky install",

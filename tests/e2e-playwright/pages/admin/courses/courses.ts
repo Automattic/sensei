@@ -53,6 +53,7 @@ export default class CoursesPage extends PostType {
 		this.confirmPublishButton = page
 			.locator( '[aria-label="Editor publish"] >> text=Publish' )
 			.first();
+
 		this.viewPreviewLink = page
 			.locator( 'a:has-text("View Preview")' )
 			.first();
