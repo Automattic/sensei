@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect, test } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-const { getContextByRole } = require( '../../../helpers/context' );
-const CoursesPage = require( '../../../pages/admin/courses/courses' );
-const Dashboard = require( '../../../pages/admin/dashboard/dashboard' );
+import { getContextByRole } from '../../../helpers/context';
+import CoursesPage from '../../../pages/admin/courses';
+import Dashboard from '../../../pages/admin/dashboard';
 
 const { describe, use } = test;
 
@@ -24,9 +25,7 @@ describe( 'Create Courses', () => {
 		const coursesMenuItem = await dashboard.getCoursesMenuItem();
 		await coursesMenuItem.click();
 
-		await expect(
-			page.locator( '.sensei-custom-navigation__title h1' )
-		).toHaveText( 'Courses' );
+		await expect( page.locator( '.sensei-custom-navigation__title h1' ) ).toHaveText( 'Courses' );
 	} );
 
 	test( 'it should create a course', async ( { page } ) => {
@@ -50,17 +49,25 @@ describe( 'Create Courses', () => {
 		// Click "Start with default layout" button.
 		await wizardModal.startWithDefaultLayoutButton.click();
 
+		const courseOutline = coursesPage.courseOutlineBlock;
+		await courseOutline.click();
+		await courseOutline.addModuleOrLessonButton.click();
+		await courseOutline.addModuleButton.click();
+
+		const moduleBlock = courseOutline.moduleBlock;
+		await moduleBlock.title.fill( 'Module 1' );
+		await moduleBlock.addLessonField.fill( 'Lesson 1 in Module 1' );
+		await page.pause();
+
 		// Publish the course (publish method doesn't work as there is no redirect at this point).
 		await coursesPage.publishButton.click();
 		await coursesPage.confirmPublishButton.click();
 
 		await coursesPage.viewPreviewLink.click();
 
-		await expect(
-			page.locator( 'h1:has-text("Test Create Course")' )
-		).toBeVisible();
-		await expect(
-			page.locator( 'button:has-text("Take Course")' )
-		).toBeVisible();
+		await expect( page.locator( 'h1:has-text("Test Create Course")' ) ).toBeVisible();
+		await expect( page.locator( 'text="Module 1"' ) ).toBeVisible();
+		await expect( page.locator( 'text="Lesson 1 in Module 1"' ) ).toBeVisible();
+		await expect( page.locator( 'button:has-text("Take Course")' ) ).toBeVisible();
 	} );
 } );
