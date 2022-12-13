@@ -31,39 +31,31 @@ const createApiContext = async ( context: APIRequestContext ) => {
 	};
 };
 
-/**
- *
- * @param {APIRequestContext} apiContext
- * @param {string} name
- */
-export const createStudent = async (
-	apiContext: APIRequestContext,
-	name: string
-): Promise< unknown > => {
-	const api = await createApiContext( apiContext );
-
-	return api.post( `/wp-json/wp/v2/users`, {
-		username: name,
-		password: 'password',
-		email: `${ name }@example.com`,
-		meta: { context: 'view' },
-		slug: name,
-	} );
+export type UserResponse = {
+	username: string;
+	name: string;
+	email: string;
 };
 
-export const createTeacher = async (
+export type User = {
+	username: string;
+	password?: string;
+	email?: string;
+	roles?: string[];
+	meta?: Record< string, unknown >;
+	slug?: string;
+};
+
+export const createUser = async (
 	context: APIRequestContext,
-	name: string
-): Promise< unknown > => {
+	user: User
+): Promise< UserResponse > => {
 	const api = await createApiContext( context );
 
 	return api.post( `/wp-json/wp/v2/users`, {
-		username: name,
-		password: 'password',
-		email: `${ name }@example.com`,
-		roles: [ 'teacher' ],
+		email: `${ user.username }@example.com`,
 		meta: { context: 'view' },
-		slug: name,
+		...user,
 	} );
 };
 

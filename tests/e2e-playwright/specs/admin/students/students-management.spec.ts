@@ -8,18 +8,24 @@ import { test, expect } from '@playwright/test';
  */
 import StudentsPage from '@e2e/pages/admin/students/students';
 import { getContextByRole } from '@e2e/helpers/context';
-import { createStudent, createCourse } from '@e2e/helpers/api';
+import { createCourse, createUser } from '@e2e/helpers/api';
+import type { User } from '@e2e/helpers/api';
 
 test.describe.serial( 'Students Management', () => {
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
-	const STUDENT_NAME = `student${ Math.ceil( Math.random() * 100 ) }`;
+
+	const STUDENT: User = {
+		username: `student${ Math.ceil( Math.random() * 100 ) }`,
+		password: 'password',
+	};
+
 	let student, course;
 
 	// it is ensuring the browser is using a admin session.
 	test.use( { storageState: getContextByRole( 'admin' ) } );
 
 	test.beforeAll( async ( { request } ) => {
-		student = await createStudent( request, STUDENT_NAME );
+		student = await createUser( request, STUDENT );
 		course = await createCourse( request, {
 			title: COURSE_NAME,
 			lessons: [],

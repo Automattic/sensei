@@ -2,8 +2,8 @@
  * External dependencies
  */
 import { retry } from '@lifeomic/attempt';
-import { chromium } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { Browser, chromium } from '@playwright/test';
+import type { Page, APIRequestContext } from '@playwright/test';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import {
 	cleanAll as cleanDatabase,
 	configureSite,
 } from '@e2e/helpers/database';
-import { createTeacher, createStudent } from '@e2e/helpers/api';
+import { createUser, User, UserResponse } from '@e2e/helpers/api';
 import { getContextByRole } from '@e2e/helpers/context';
 
 export default async (): Promise< void > => {
@@ -31,8 +31,24 @@ const createUserContexts = async () => {
 	const page = await browser.newPage();
 
 	await createAdminBrowserContext( page );
-	await createTeacherBrowserContext( page );
-	await createStudentBrowserContext( page );
+
+	const users: User[] = [
+		{
+			username: 'teacher',
+			email: 'teacher@teacher.com',
+			password: 'password',
+		},
+		{
+			username: 'student',
+			email: 'student@student.com',
+			password: 'password',
+		},
+	];
+	await createUsers( browser, users );
+
+	await Promise.all(
+		users.map( ( user ) => createBrowserContext( browser, user ) )
+	);
 
 	await browser.close();
 };
@@ -56,20 +72,32 @@ const createAdminBrowserContext = async ( page: Page ) => {
 	await page.request.storageState( { path: getContextByRole( 'admin' ) } );
 };
 
-const createTeacherBrowserContext = async ( page: Page ) => {
-	await login( page, { user: 'admin', pwd: 'password' } );
-	await createTeacher( page.request, 'teacher1' );
-	await login( page, { user: 'teacher1', pwd: 'password' } );
-
-	// Save the request context.
-	await page.request.storageState( { path: getContextByRole( 'teacher' ) } );
+const useAdminContext = async (
+	browser: Browser
+): Promise< APIRequestContext > => {
+	const browserContext = await browser.newContext( {
+		storageState: getContextByRole( 'admin' ),
+	} );
+	return browserContext.request;
 };
 
-const createStudentBrowserContext = async ( page: Page ) => {
-	await login( page, { user: 'admin', pwd: 'password' } );
-	await createStudent( page.request, 'student1' );
-	await login( page, { user: 'student1', pwd: 'password' } );
+const createUsers = async (
+	browser: Browser,
+	users: User[]
+): Promise< UserResponse[] > => {
+	const adminContext = await useAdminContext( browser );
 
-	// Saves the request context.
-	await page.request.storageState( { path: getContextByRole( 'student' ) } );
+	return Promise.all(
+		users.map( ( user ) => createUser( adminContext, user ) )
+	);
+};
+
+const createBrowserContext = async ( browser: Browser, user: User ) => {
+	const userPage = await browser.newPage();
+	await login( userPage, { user: user.username, pwd: user.password } );
+
+	await userPage.request.storageState( {
+		path: getContextByRole( user.username ),
+	} );
+	return userPage.close();
 };

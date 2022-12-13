@@ -11,6 +11,7 @@ module.exports = {
 		'no-useless-constructor': 'off',
 		'no-duplicate-imports': 'off',
 		'import/no-unresolved': 'off',
+		'react-hooks/rules-of-hooks': 'off',
 	},
 	parserOptions: {
 		ecmaVersion: 'latest',
