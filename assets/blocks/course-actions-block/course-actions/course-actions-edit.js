@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks } from '@wordpress/block-editor';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
@@ -44,15 +45,25 @@ const CourseActionsEdit = ( { className, context: { postType } } ) => {
 		);
 	}
 
+	const allowed = applyFilters(
+		'sensei-lms.Course.courseActionsAllowedBlocks',
+		[
+			'sensei-lms/button-take-course',
+			'sensei-lms/button-continue-course',
+			'sensei-lms/button-view-results',
+		]
+	);
+
+	const template = applyFilters(
+		'sensei-lms.Course.courseActionsTemplate',
+		innerBlocksTemplate
+	);
+
 	return (
 		<div className={ className }>
 			<InnerBlocks
-				allowedBlocks={ [
-					'sensei-lms/button-take-course',
-					'sensei-lms/button-continue-course',
-					'sensei-lms/button-view-results',
-				] }
-				template={ innerBlocksTemplate }
+				allowedBlocks={ allowed }
+				template={ template }
 				templateLock="all"
 			/>
 		</div>
