@@ -5,10 +5,10 @@ import { test as base } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { CourseDefinition, createCourse } from '../../helpers/api';
-import { asAdmin } from '../../helpers/context';
+import { CourseDefinition, createCourse } from '@e2e/helpers/api';
+import { asAdmin } from '@e2e/helpers/context';
 
-import { lessonSimple } from '../../helpers/lesson-templates';
+import { lessonSimple } from '@e2e/helpers/lesson-templates';
 
 export enum CourseMode {
 	LEARNING_MODE = 'Learning Mode',

@@ -6,9 +6,9 @@ import { expect } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { LessonPage } from '../../../pages/frontend/lesson';
-import { CoursePage } from '../../../pages/frontend/course';
-import { studentRole } from '../../../helpers/context';
+import { LessonPage } from '@e2e/pages/frontend/lesson';
+import { CoursePage } from '@e2e/pages/frontend/course';
+import { studentRole } from '@e2e/helpers/context';
 import { CourseMode, test } from '../course-fixtures';
 
 const { describe, use } = test;

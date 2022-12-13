@@ -8,9 +8,9 @@ import type { Page } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { cleanAll as cleanDatabase, configureSite } from '../helpers/database';
-import { createTeacher, createStudent } from '../helpers/api';
-import { getContextByRole } from '../helpers/context';
+import { cleanAll as cleanDatabase, configureSite } from '@e2e/helpers/database';
+import { createTeacher, createStudent } from '@e2e/helpers/api';
+import { getContextByRole } from '@e2e/helpers/context';
 
 export default async (): Promise<void> => {
 	cleanDatabase();

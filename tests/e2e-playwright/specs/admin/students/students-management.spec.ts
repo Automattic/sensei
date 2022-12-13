@@ -6,9 +6,9 @@ import { test, expect } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import StudentsPage from '../../../pages/admin/students/students';
-import { getContextByRole } from '../../../helpers/context';
-import { createStudent, createCourse } from '../../../helpers/api';
+import StudentsPage from '@e2e/pages/admin/students/students';
+import { getContextByRole } from '@e2e/helpers/context';
+import { createStudent, createCourse } from '@e2e/helpers/api';
 
 test.describe.serial( 'Students Management', () => {
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
