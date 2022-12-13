@@ -3,7 +3,6 @@
  */
 import { retry } from '@lifeomic/attempt';
 import { Browser, chromium } from '@playwright/test';
-import type { Page, APIRequestContext } from '@playwright/test';
 
 /**
  * Internal dependencies
@@ -13,7 +12,12 @@ import {
 	configureSite,
 } from '@e2e/helpers/database';
 import { createUser, User, UserResponse } from '@e2e/helpers/api';
-import { getContextByRole } from '@e2e/helpers/context';
+import {
+	createAdminBrowserContext,
+	createBrowserContext,
+	useAdminContext,
+} from '@e2e/helpers/context';
+import { GLOBAL_USERS } from '@e2e/fixtures/users';
 
 export default async (): Promise< void > => {
 	cleanDatabase();
@@ -31,58 +35,16 @@ const createUserContexts = async () => {
 	const page = await browser.newPage();
 
 	await createAdminBrowserContext( page );
-
-	const users: User[] = [
-		{
-			username: 'teacher',
-			email: 'teacher@teacher.com',
-			password: 'password',
-			roles: [ 'teacher' ],
-		},
-		{
-			username: 'student',
-			email: 'student@student.com',
-			password: 'password',
-		},
-	];
-	await createUsers( browser, users );
+	await createGlobalUsers( browser, GLOBAL_USERS );
 
 	await Promise.all(
-		users.map( ( user ) => createBrowserContext( browser, user ) )
+		GLOBAL_USERS.map( ( user ) => createBrowserContext( browser, user ) )
 	);
 
 	await browser.close();
 };
 
-type Credentials = {
-	user: string;
-	pwd: string;
-};
-async function login( page: Page, { user, pwd }: Credentials ) {
-	await page.goto( 'http://localhost:8889/wp-login.php' );
-	await page.locator( 'input[name="log"]' ).fill( user );
-	await page.locator( 'input[name="pwd"]' ).fill( pwd );
-	await page.locator( 'text=Log In' ).click();
-	await page.waitForNavigation();
-}
-
-const createAdminBrowserContext = async ( page: Page ) => {
-	await login( page, { user: 'admin', pwd: 'password' } );
-
-	// it saves the request context
-	await page.request.storageState( { path: getContextByRole( 'admin' ) } );
-};
-
-const useAdminContext = async (
-	browser: Browser
-): Promise< APIRequestContext > => {
-	const browserContext = await browser.newContext( {
-		storageState: getContextByRole( 'admin' ),
-	} );
-	return browserContext.request;
-};
-
-const createUsers = async (
+const createGlobalUsers = async (
 	browser: Browser,
 	users: User[]
 ): Promise< UserResponse[] > => {
@@ -91,14 +53,4 @@ const createUsers = async (
 	return Promise.all(
 		users.map( ( user ) => createUser( adminContext, user ) )
 	);
-};
-
-const createBrowserContext = async ( browser: Browser, user: User ) => {
-	const userPage = await browser.newPage();
-	await login( userPage, { user: user.username, pwd: user.password } );
-
-	await userPage.request.storageState( {
-		path: getContextByRole( user.username ),
-	} );
-	return userPage.close();
 };
