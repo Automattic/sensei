@@ -2212,7 +2212,7 @@ class Sensei_Utils {
 				break;
 		}
 
-		return $course_id ? $course_id : null;
+		return $course_id ? absint( $course_id ) : null;
 	}
 
 
