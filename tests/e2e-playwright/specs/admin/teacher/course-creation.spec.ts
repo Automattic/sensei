@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect, test } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
 import { getContextByRole } from '@e2e/helpers/context';
-import CoursesPage from '@e2e/pages/admin/courses/courses';
-import Dashboard from '@e2e/pages/admin/dashboard/dashboard';
+import CoursesPage from '@e2e/pages/admin/courses';
+import Dashboard from '@e2e/pages/admin/dashboard';
 
 const { describe, use } = test;
 
@@ -24,9 +25,7 @@ describe( 'Create Courses', () => {
 		const coursesMenuItem = await dashboard.getCoursesMenuItem();
 		await coursesMenuItem.click();
 
-		await expect(
-			page.locator( '.sensei-custom-navigation__title h1' )
-		).toHaveText( 'Courses' );
+		await expect( page.locator( '.sensei-custom-navigation__title h1' ) ).toHaveText( 'Courses' );
 	} );
 
 	test( 'it should create a course', async ( { page } ) => {
@@ -50,17 +49,17 @@ describe( 'Create Courses', () => {
 		// Click "Start with default layout" button.
 		await wizardModal.startWithDefaultLayoutButton.click();
 
+		await coursesPage.addModuleWithLesson( 'Module 1', 'Lesson 1 in Module 1' );
+
 		// Publish the course (publish method doesn't work as there is no redirect at this point).
 		await coursesPage.publishButton.click();
 		await coursesPage.confirmPublishButton.click();
 
 		await coursesPage.viewPreviewLink.click();
 
-		await expect(
-			page.locator( 'h1:has-text("Test Create Course")' )
-		).toBeVisible();
-		await expect(
-			page.locator( 'button:has-text("Take Course")' )
-		).toBeVisible();
+		await expect( page.locator( 'h1:has-text("Test Create Course")' ) ).toBeVisible();
+		await expect( page.locator( 'text="Module 1"' ) ).toBeVisible();
+		await expect( page.locator( 'text="Lesson 1 in Module 1"' ) ).toBeVisible();
+		await expect( page.locator( 'button:has-text("Take Course")' ) ).toBeVisible();
 	} );
 } );
