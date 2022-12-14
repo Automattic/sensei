@@ -123,16 +123,6 @@ $block: '.wp-block-sensei-lms-course-list';
 			}
 		}
 	}
-
-	@media ( min-width: 782px ) {
-		&--is-list-view {
-			.wp-block-sensei-lms-button-take-course,
-			.wp-block-sensei-lms-button-continue-course,
-			.wp-block-sensei-lms-button-view-results {
-				text-align: right;
-			}
-		}
-	}
 }
 
 /* Divi overrides */
