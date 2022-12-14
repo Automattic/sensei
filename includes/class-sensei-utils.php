@@ -2700,7 +2700,7 @@ class Sensei_Utils {
 			get_users(
 				[
 					'fields' => 'ID',
-					'role' => $role,
+					'role'   => $role,
 				]
 			)
 		);
