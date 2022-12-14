@@ -17,7 +17,7 @@ import {
 	createBrowserContext,
 	useAdminContext,
 } from '@e2e/helpers/context';
-import { GLOBAL_USERS } from '@e2e/fixtures/users';
+import { GLOBAL_USERS } from '@e2e/factories/users';
 
 export default async (): Promise< void > => {
 	cleanDatabase();

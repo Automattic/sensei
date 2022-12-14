@@ -10,7 +10,7 @@ import { LessonPage } from '@e2e/pages/frontend/lesson';
 import { CoursePage } from '@e2e/pages/frontend/course';
 import { studentRole } from '@e2e/helpers/context';
 import { test } from '../course-fixtures';
-import { CourseMode } from '@e2e/fixtures/courses';
+import { CourseMode } from '@e2e/factories/courses';
 
 const { describe, use } = test;
 

@@ -4,7 +4,7 @@
 import path from 'path';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { User } from './api';
-import { ADMIN } from '@e2e/fixtures/users';
+import { ADMIN } from '@e2e/factories/users';
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 
 /**

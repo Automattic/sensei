@@ -8,7 +8,7 @@ import { test as base } from '@playwright/test';
 import { createCourse } from '@e2e/helpers/api';
 import type { CourseResponse } from '@e2e/helpers/api';
 import { useAdminContext } from '@e2e/helpers/context';
-import { buildCourse, CourseMode } from '@e2e/fixtures/courses';
+import { buildCourse, CourseMode } from '@e2e/factories/courses';
 
 export const test = base.extend< {
 	course: CourseResponse;

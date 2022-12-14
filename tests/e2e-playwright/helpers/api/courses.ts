@@ -1,6 +1,6 @@
-import { CourseContent } from '@e2e/fixtures/courses';
+import { CourseContent } from '@e2e/factories/courses';
 import { APIRequestContext } from '@playwright/test';
-import { lessonSimple } from '../../fixtures/lesson';
+import { lessonSimple } from '../../factories/lesson';
 import { createApiContext } from './index';
 
 export type Course = {
