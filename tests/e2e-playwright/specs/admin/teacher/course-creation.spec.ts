@@ -8,7 +8,7 @@ import { expect, test } from '@playwright/test';
  * Internal dependencies
  */
 import { getContextByRole } from '../../../helpers/context';
-import CoursesPage from '../../../pages/admin/courses';
+import CoursesPage from '@e2e/pages/admin/courses';
 import Dashboard from '../../../pages/admin/dashboard';
 
 const { describe, use } = test;
