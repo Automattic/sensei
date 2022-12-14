@@ -2696,7 +2696,14 @@ class Sensei_Utils {
 	 * @return int    Count of users having the provided role.
 	 */
 	public static function get_user_count_for_role( $role ) {
-		return count( get_users( array( 'fields' => array( 'ID' ), 'role' => $role ) ) );
+		return count(
+			get_users(
+				[
+					'fields' => 'ID',
+					'role' => $role,
+				]
+			)
+		);
 	}
 }
 
