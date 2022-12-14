@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
  */
 import { getContextByRole } from '@e2e/helpers/context';
 import CoursesPage from '@e2e/pages/admin/courses';
-import Dashboard from '../../../pages/admin/dashboard';
+import Dashboard from '@e2e/pages/admin/dashboard';
 
 const { describe, use } = test;
 

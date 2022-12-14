@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-const { test, expect } = require( '@playwright/test' );
+import { test, expect } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-const StudentsPage = require( '../../../pages/admin/students/students' );
-const { getContextByRole } = require( '../../../helpers/context' );
-const { createStudent, createCourse } = require( '../../../helpers/api' );
+import StudentsPage from '@e2e/pages/admin/students/students';
+import { getContextByRole } from '@e2e/helpers/context';
+import { createStudent, createCourse } from '@e2e/helpers/api';
 
 test.describe.serial( 'Students Management', () => {
 	const COURSE_NAME = `Course #${ Math.ceil( Math.random() * 100 ) }`;
@@ -20,7 +20,7 @@ test.describe.serial( 'Students Management', () => {
 
 	test.beforeAll( async ( { request } ) => {
 		student = await createStudent( request, STUDENT_NAME );
-		course = await createCourse( request, { title: COURSE_NAME } );
+		course = await createCourse( request, { title: COURSE_NAME, lessons: [] } );
 	} );
 
 	test( 'it should add a student to a course', async ( { page } ) => {

@@ -1,6 +1,8 @@
 name: JS Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+    workflow_call:
 
 jobs:
     lint:
@@ -24,6 +26,8 @@ jobs:
               run: npm ci
             - name: Lint JS
               run: npm run lint-js
+            - name: Lint TS e2e
+              run: npm run lint-e2e
 
     type-check:
         name: TypeScript Checking

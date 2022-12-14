@@ -58,7 +58,7 @@ class CourseOutline {
 	}
 }
 
-class CoursesPage extends PostType {
+export default class CoursesPage extends PostType {
 	public readonly wizardModal: WizardModal;
 	public readonly createCourseButton: Locator;
 	public readonly publishButton: Locator;
@@ -79,7 +79,7 @@ class CoursesPage extends PostType {
 		this.viewPreviewLink = page.locator( 'a:has-text("View Preview")' ).first();
 	}
 
-	async addModuleWithLesson( title: string, lessonTitle: string ) {
+	async addModuleWithLesson( title: string, lessonTitle: string ): Promise<ModuleBlock> {
 		const courseOutline = this.courseOutlineBlock;
 		await courseOutline.click();
 		await courseOutline.addModuleOrLessonButton.click();
@@ -88,7 +88,8 @@ class CoursesPage extends PostType {
 		const moduleBlock = courseOutline.moduleBlock;
 		await moduleBlock.title.fill( title );
 		await moduleBlock.addLessonField.fill( lessonTitle );
+
+		return moduleBlock;
 	}
 }
 
-export default CoursesPage;

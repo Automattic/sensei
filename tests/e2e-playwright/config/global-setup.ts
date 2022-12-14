@@ -3,19 +3,20 @@
  */
 import { retry } from '@lifeomic/attempt';
 import { chromium } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-import { cleanAll as cleanDatabase, configureSite } from '../helpers/database';
-import { createTeacher, createStudent } from '../helpers/api';
-import { getContextByRole } from '../helpers/context';
+import { cleanAll as cleanDatabase, configureSite } from '@e2e/helpers/database';
+import { createTeacher, createStudent } from '@e2e/helpers/api';
+import { getContextByRole } from '@e2e/helpers/context';
 
-export default async () => {
+export default async (): Promise<void> => {
 	cleanDatabase();
 	configureSite();
 
-	await retry( createUserContexts, {
+	return retry( createUserContexts, {
 		delay: 200,
 		factor: 2,
 		maxAttempts: 4,
@@ -33,22 +34,26 @@ const createUserContexts = async () => {
 	await browser.close();
 };
 
-async function login( page, { user, pwd } ) {
-	await page.goto( 'http://localhost:8889/wp-login.php' );
-	await page.locator( 'input[name="log"]' ).fill( user );
-	await page.locator( 'input[name="pwd"]' ).fill( pwd );
-	await page.locator( 'text=Log In' ).click();
+type Credentials = {
+	user: string;
+	pwd: string;
+};
+async function login(page: Page, { user, pwd }: Credentials) {
+	await page.goto('http://localhost:8889/wp-login.php');
+	await page.locator('input[name="log"]').fill(user);
+	await page.locator('input[name="pwd"]').fill(pwd);
+	await page.locator('text=Log In').click();
 	await page.waitForNavigation();
 }
 
-const createAdminBrowserContext = async ( page ) => {
+const createAdminBrowserContext = async ( page: Page ) => {
 	await login( page, { user: 'admin', pwd: 'password' } );
 
 	// it saves the request context
 	await page.request.storageState( { path: getContextByRole( 'admin' ) } );
 };
 
-const createTeacherBrowserContext = async ( page ) => {
+const createTeacherBrowserContext = async ( page: Page ) => {
 	await login( page, { user: 'admin', pwd: 'password' } );
 	await createTeacher( page.request, 'teacher1' );
 	await login( page, { user: 'teacher1', pwd: 'password' } );
@@ -57,7 +62,7 @@ const createTeacherBrowserContext = async ( page ) => {
 	await page.request.storageState( { path: getContextByRole( 'teacher' ) } );
 };
 
-const createStudentBrowserContext = async ( page ) => {
+const createStudentBrowserContext = async ( page: Page ) => {
 	await login( page, { user: 'admin', pwd: 'password' } );
 	await createStudent( page.request, 'student1' );
 	await login( page, { user: 'student1', pwd: 'password' } );
