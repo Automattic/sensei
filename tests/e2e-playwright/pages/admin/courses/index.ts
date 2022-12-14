@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 /**
  * Internal dependencies
