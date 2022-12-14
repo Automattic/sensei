@@ -6,7 +6,7 @@ import type { Locator, Page } from '@playwright/test';
 /**
  * Internal dependencies
  */
-const PostType = require( '../post-type' );
+import PostType from '@e2e/pages/admin/post-type';
 
 class WizardModal {
 	private readonly wizard: Locator;
