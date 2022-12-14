@@ -75,16 +75,16 @@ class Sensei_Course_List_Block_Patterns {
 											<!-- wp:column {"width":"33.33%"} -->
 												<div class="wp-block-column" style="flex-basis:33.33%">
 													<!-- wp:sensei-lms/course-actions -->
-														<!-- wp:sensei-lms/button-take-course {"align":"right"} -->
-															<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link">Start Course</button></div>
+														<!-- wp:sensei-lms/button-take-course {"align":"full"} -->
+															<div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><button class="wp-block-button__link">Start Course</button></div>
 														<!-- /wp:sensei-lms/button-take-course -->
 
-														<!-- wp:sensei-lms/button-continue-course {"align":"right"} -->
-															<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><a class="wp-block-button__link">Continue</a></div>
+														<!-- wp:sensei-lms/button-continue-course {"align":"full"} -->
+															<div class="wp-block-sensei-lms-button-continue-course is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link">Continue</a></div>
 														<!-- /wp:sensei-lms/button-continue-course -->
 
-														<!-- wp:sensei-lms/button-view-results {"align":"right","className":"is-style-default"} -->
-															<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><a class="wp-block-button__link">Visit Results</a></div>
+														<!-- wp:sensei-lms/button-view-results {"align":"full","className":"is-style-default"} -->
+															<div class="wp-block-sensei-lms-button-view-results is-style-default wp-block-sensei-button wp-block-button has-text-align-full"><a class="wp-block-button__link">Visit Results</a></div>
 														<!-- /wp:sensei-lms/button-view-results -->
 													<!-- /wp:sensei-lms/course-actions -->
 												</div>
