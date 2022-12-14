@@ -78,6 +78,17 @@ class CoursesPage extends PostType {
 		this.confirmPublishButton = page.locator( 'button:has-text("Submit for Review")' ).first();
 		this.viewPreviewLink = page.locator( 'a:has-text("View Preview")' ).first();
 	}
+
+	async addModuleWithLesson( title: string, lessonTitle: string ) {
+		const courseOutline = this.courseOutlineBlock;
+		await courseOutline.click();
+		await courseOutline.addModuleOrLessonButton.click();
+		await courseOutline.addModuleButton.click();
+
+		const moduleBlock = courseOutline.moduleBlock;
+		await moduleBlock.title.fill( title );
+		await moduleBlock.addLessonField.fill( lessonTitle );
+	}
 }
 
 export default CoursesPage;

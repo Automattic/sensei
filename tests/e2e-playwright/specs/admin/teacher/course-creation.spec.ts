@@ -49,15 +49,7 @@ describe( 'Create Courses', () => {
 		// Click "Start with default layout" button.
 		await wizardModal.startWithDefaultLayoutButton.click();
 
-		const courseOutline = coursesPage.courseOutlineBlock;
-		await courseOutline.click();
-		await courseOutline.addModuleOrLessonButton.click();
-		await courseOutline.addModuleButton.click();
-
-		const moduleBlock = courseOutline.moduleBlock;
-		await moduleBlock.title.fill( 'Module 1' );
-		await moduleBlock.addLessonField.fill( 'Lesson 1 in Module 1' );
-		await page.pause();
+		await coursesPage.addModuleWithLesson( 'Module 1', 'Lesson 1 in Module 1' );
 
 		// Publish the course (publish method doesn't work as there is no redirect at this point).
 		await coursesPage.publishButton.click();
