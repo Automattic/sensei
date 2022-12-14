@@ -2688,6 +2688,23 @@ class Sensei_Utils {
 	public static function is_atomic_platform(): bool {
 		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
 	}
+
+	/**
+	 * Get count of users for a provided role.
+	 *
+	 * @param  string $role Slug of the Role.
+	 * @return int    Count of users having the provided role.
+	 */
+	public static function get_user_count_for_role( $role ) {
+		return count(
+			get_users(
+				[
+					'fields' => 'ID',
+					'role'   => $role,
+				]
+			)
+		);
+	}
 }
 
 /**
