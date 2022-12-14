@@ -11,6 +11,10 @@
 				margin-bottom: 0;
 			}
 
+			&--is-hidden {
+				display: none;
+			}
+
 			&__icon {
 				margin-top: 0;
 				align-self: center;
