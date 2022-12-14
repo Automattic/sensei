@@ -34,7 +34,7 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	/**
 	 * Clean up after the test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		remove_filter( 'wp_redirect', [ $this, 'go_to' ] );
 	}
