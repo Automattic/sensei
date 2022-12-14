@@ -28,13 +28,21 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->factory      = new Sensei_Factory();
 		$this->preview_user = new Sensei_Preview_User();
+		add_filter( 'wp_redirect', [ $this, 'go_to' ] );
+	}
+
+	/**
+	 * Clean up after the test.
+	 */
+	public function tearDown() {
+		parent::tearDown();
+		remove_filter( 'wp_redirect', [ $this, 'go_to' ] );
 	}
 
 	/**
 	 * Switch to preview user, then switch back.
 	 */
 	public function testSwitchToPreviewUser() {
-		add_filter( 'wp_redirect', [ $this, 'go_to' ] );
 
 		$course_id   = $this->factory->course->create();
 		$course_link = get_permalink( $course_id );
@@ -62,7 +70,6 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	 * Courses should have independent preview users.
 	 */
 	public function testPreviewUserPerCourse() {
-		add_filter( 'wp_redirect', [ $this, 'go_to' ] );
 
 		$course_1 = $this->factory->course->create();
 		$course_2 = $this->factory->course->create();
