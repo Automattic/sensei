@@ -14,6 +14,44 @@ import classnames from 'classnames';
 import SenseiCircleLogo from '../images/sensei-circle-logo.svg';
 import Link from './link';
 
+const hiddenClassName = 'sensei-notice--is-hidden';
+
+/**
+ * Returns an event listener that processes a series of specified tasks.
+ *
+ * @param {Object} action       The action to return the event listener for.
+ * @param {Array}  action.tasks The tasks to run.
+ * @return {Function} The event listener that runs the specified tas.s
+ */
+const useTasksCallback = ( action ) => {
+	return ( e ) => {
+		if ( ! action.tasks ) {
+			return;
+		}
+		for ( const task of action.tasks ) {
+			const noticeDom =
+				task.target_notice_id &&
+				document.querySelector(
+					`.sensei-notice[data-sensei-notice-id="${ task.target_notice_id }"]`
+				);
+			switch ( task.type ) {
+				case 'preventDefault':
+					e.preventDefault();
+					break;
+				case 'show':
+					noticeDom?.classList.remove( hiddenClassName );
+					break;
+				case 'hide':
+					noticeDom?.classList.add( hiddenClassName );
+					break;
+				case 'dismiss':
+					noticeDom?.querySelector( '.notice-dismiss' )?.click();
+					break;
+			}
+		}
+	};
+};
+
 /**
  * Component to render an action of a given notice.
  *
@@ -21,7 +59,9 @@ import Link from './link';
  * @param {Object} props.action The action to render.
  */
 const NoticeAction = ( { action } ) => {
-	if ( ! action || ! action.label || ! action.url ) {
+	const onClick = useTasksCallback( action );
+
+	if ( ! action || ! action.label ) {
 		return null;
 	}
 
@@ -34,6 +74,7 @@ const NoticeAction = ( { action } ) => {
 			target={ action.target ?? '_self' }
 			rel="noopener noreferrer"
 			className={ classnames( 'button', buttonClass ) }
+			onClick={ onClick }
 		>
 			{ action.label }
 		</a>
@@ -66,10 +107,17 @@ const NoticeActions = ( { actions } ) => {
  * @param {Object} props.infoLink The info link to render, if any.
  */
 const NoticeInfoLink = ( { infoLink } ) => {
+	const onClick = useTasksCallback( infoLink );
 	if ( ! infoLink ) {
 		return null;
 	}
-	return <Link label={ infoLink.label } url={ infoLink.url } />;
+	return (
+		<Link
+			label={ infoLink.label }
+			url={ infoLink.url }
+			onClick={ onClick }
+		/>
+	);
 };
 
 /**
@@ -87,16 +135,19 @@ const Notice = ( { noticeId, notice, dismissNonce } ) => {
 	}
 
 	const isDismissible = notice.dismissible && dismissNonce;
+	const { parent_id: parentId } = notice;
 
 	const containerProps = {
 		className: classnames( 'notice', 'sensei-notice', noticeClass, {
 			'is-dismissible': isDismissible,
+			[ hiddenClassName ]: !! parentId,
 		} ),
+		'data-sensei-notice-id': noticeId,
 	};
 
 	if ( isDismissible ) {
 		containerProps[ 'data-dismiss-action' ] = 'sensei_dismiss_notice';
-		containerProps[ 'data-dismiss-notice' ] = noticeId;
+		containerProps[ 'data-dismiss-notice' ] = parentId ?? noticeId;
 		containerProps[ 'data-dismiss-nonce' ] = dismissNonce;
 	}
 
