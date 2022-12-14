@@ -7,7 +7,7 @@ import { expect, test } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { getContextByRole } from '../../../helpers/context';
+import { getContextByRole } from '@e2e/helpers/context';
 import CoursesPage from '@e2e/pages/admin/courses';
 import Dashboard from '../../../pages/admin/dashboard';
 
