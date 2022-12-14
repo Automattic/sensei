@@ -20,7 +20,7 @@ const Link = ( { label, url, onClick } ) => {
 	const isExternal = isUrlExternal( url );
 	const linkProps = {
 		href: addUtms( url ),
-		target: onClick || ! isExternal ? undefined : '_blank',
+		target: ! isExternal ? undefined : '_blank',
 		rel: isExternal ? 'noreferrer' : undefined,
 		onClick,
 	};
