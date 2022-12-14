@@ -45,6 +45,11 @@ const CourseActionsEdit = ( { className, context: { postType } } ) => {
 		);
 	}
 
+	/**
+	 * Filter the allowed blocks for the course actions block.
+	 *
+	 * @param {string[]} allowedBlocks Allowed blocks.
+	 */
 	const allowed = applyFilters(
 		'sensei-lms.Course.courseActionsAllowedBlocks',
 		[
@@ -54,6 +59,11 @@ const CourseActionsEdit = ( { className, context: { postType } } ) => {
 		]
 	);
 
+	/**
+	 * Filter the template for the course actions block.
+	 *
+	 * @param {Array} template Template.
+	 */
 	const template = applyFilters(
 		'sensei-lms.Course.courseActionsTemplate',
 		innerBlocksTemplate
