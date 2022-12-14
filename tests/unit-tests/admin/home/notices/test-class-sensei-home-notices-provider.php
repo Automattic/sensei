@@ -104,6 +104,7 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 				'info_link'   => false,
 				'actions'     => [],
 				'dismissible' => false,
+				'parent_id'   => null,
 			],
 		];
 	}
@@ -120,6 +121,7 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 				'info_link'   => false,
 				'actions'     => [],
 				'dismissible' => false,
+				'parent_id'   => null,
 			],
 			Sensei_Home_Notices::HOME_NOTICE_KEY_PREFIX . 'test-notice-2' => [
 				'level'       => 'info',
@@ -128,6 +130,7 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 				'info_link'   => false,
 				'actions'     => [],
 				'dismissible' => false,
+				'parent_id'   => null,
 			],
 			'a-foreign-notice' => [
 				'level'       => 'info',
@@ -136,6 +139,7 @@ class Sensei_Home_Notices_Provider_Test extends WP_UnitTestCase {
 				'info_link'   => false,
 				'actions'     => [],
 				'dismissible' => false,
+				'parent_id'   => null,
 			],
 		];
 	}
