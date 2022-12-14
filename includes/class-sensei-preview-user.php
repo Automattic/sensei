@@ -192,16 +192,15 @@ class Sensei_Preview_User {
 	 * @return int
 	 */
 	private function create_preview_user( $course_id ) {
-		$teacher    = wp_get_current_user();
-		$user_count = get_user_count();
-		$user_name  = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
+		$teacher   = wp_get_current_user();
+		$user_name = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
 
 		return wp_insert_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
 				'user_email'   => $user_name . '@senseipreview.senseipreview',
-				'display_name' => 'Preview Student ' . $user_count . ' (' . $teacher->display_name . ')',
+				'display_name' => 'Preview Student ' . $course_id . $teacher->ID . ' (' . $teacher->display_name . ')',
 				'role'         => self::ROLE,
 				'meta_input'   => [
 					self::META => self::meta_value( $teacher->ID, $course_id ),
