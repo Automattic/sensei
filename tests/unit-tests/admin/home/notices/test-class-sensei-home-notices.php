@@ -131,17 +131,13 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 
 	public function testAddReviewNotice_GivenAdministratorYesResponse_ReturnsReviewAnswer() {
 		// Arrange.
-		$notice_id = 'sensei_home_sensei_review';
+		$notice_id = 'sensei_home_sensei_review_yes';
 		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
 		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
 		$notices          = $this->getNoticesMock( $remote_data_mock );
 		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
 		grant_super_admin( $user->ID );
 		wp_set_current_user( $user->ID );
-		$_GET = [
-			'_wpnonce'      => wp_create_nonce( $notice_id ),
-			'review_answer' => '1',
-		];
 
 		// Act.
 		$notices = $notices->add_review_notice( [] );
@@ -150,23 +146,19 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( $notice_id, $notices );
 		$this->assertStringContainsString( 'Great to hear', $notices[ $notice_id ]['message'] );
 		$this->assertEquals( 'https://review_url', $notices[ $notice_id ]['info_link']['url'] );
-		$this->assertEmpty( $notices[ $notice_id ]['actions'] );
+		$this->assertEquals( 'sensei_home_sensei_review', $notices[ $notice_id ]['parent_id'] );
 	}
 
 
 	public function testAddReviewNotice_GivenAdministratorNoResponse_ReturnsFeedbackAnswer() {
 		// Arrange.
-		$notice_id = 'sensei_home_sensei_review';
+		$notice_id = 'sensei_home_sensei_review_no';
 		update_option( 'sensei_installed_at', strtotime( '-1 year' ) );
 		$remote_data_mock = $this->getRemoteDataMock( $this->getStandardResponse() );
 		$notices          = $this->getNoticesMock( $remote_data_mock );
 		$user             = $this->factory->user->create_and_get( [ 'role' => 'administrator' ] );
 		grant_super_admin( $user->ID );
 		wp_set_current_user( $user->ID );
-		$_GET = [
-			'_wpnonce'      => wp_create_nonce( $notice_id ),
-			'review_answer' => '0',
-		];
 
 		// Act.
 		$notices = $notices->add_review_notice( [] );
@@ -175,7 +167,7 @@ class Sensei_Home_Notices_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( $notice_id, $notices );
 		$this->assertStringContainsString( 'Let us know how we can improve your experience', $notices[ $notice_id ]['message'] );
 		$this->assertEquals( 'https://feedback_url', $notices[ $notice_id ]['info_link']['url'] );
-		$this->assertEmpty( $notices[ $notice_id ]['actions'] );
+		$this->assertEquals( 'sensei_home_sensei_review', $notices[ $notice_id ]['parent_id'] );
 	}
 
 	public function testAddUpdateNotices_GivenUnderprivUser_ReturnsEmptyArray() {
