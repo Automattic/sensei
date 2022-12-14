@@ -58,31 +58,6 @@ class Sensei_Home_Notices {
 	}
 
 	/**
-	 * Return the answer the user given to the review.
-	 *
-	 * @param string $nonce The nonce to consider while checking the nonce value.
-	 * @return string An empty string, or '0', or '1'.
-	 */
-	private function get_review_answer( $nonce ) {
-		$review_answer = '';
-
-		if ( ! current_user_can( 'install_plugins' ) ||
-			! array_key_exists( '_wpnonce', $_GET ) ||
-			! array_key_exists( 'review_answer', $_GET ) ||
-			! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), $nonce )
-		) {
-			return $review_answer;
-		}
-
-		$review_answer = sanitize_key( $_GET['review_answer'] );
-		if ( ! in_array( $review_answer, [ '0', '1' ], true ) ) {
-			$review_answer = '';
-		}
-
-		return $review_answer;
-	}
-
-	/**
 	 * Add the notice asking the user for review.
 	 *
 	 * @access private
@@ -103,9 +78,13 @@ class Sensei_Home_Notices {
 			return $notices;
 		}
 
+		$data['reviews']['show_after'] = '1 second';
+
 		$notice_id     = self::HOME_NOTICE_KEY_PREFIX . 'sensei_review';
-		$review_answer = $this->get_review_answer( $notice_id );
-		$notice        = [
+		$yes_notice_id = $notice_id . '_yes';
+		$no_notice_id  = $notice_id . '_no';
+
+		$base_notice = [
 			'level'       => 'success',
 			'type'        => 'user',
 			'conditions'  => [
@@ -119,13 +98,13 @@ class Sensei_Home_Notices {
 				],
 			],
 			'dismissible' => true,
-			'actions'     => [],
 		];
 
-		switch ( $review_answer ) {
-			case '':
-				$notice['message'] = __( 'Are you enjoying Sensei LMS?', 'sensei-lms' );
-				$notice['actions'] = [
+		$notices[ $notice_id ] = array_merge(
+			$base_notice,
+			[
+				'message' => __( 'Are you enjoying Sensei LMS?', 'sensei-lms' ),
+				'actions' => [
 					[
 						'primary' => false,
 						'label'   => __( 'Yes', 'sensei-lms' ),
@@ -135,36 +114,76 @@ class Sensei_Home_Notices {
 								'review_answer' => '1',
 							]
 						),
+						'tasks'   => [
+							[
+								'type' => 'preventDefault',
+							],
+							[
+								'type'             => 'hide',
+								'target_notice_id' => $notice_id,
+							],
+							[
+								'type'             => 'show',
+								'target_notice_id' => $yes_notice_id,
+							],
+						],
 					],
 					[
 						'primary' => false,
 						'label'   => __( 'No', 'sensei-lms' ),
-						'url'     => add_query_arg(
+						'tasks'   => [
 							[
-								'_wpnonce'      => wp_create_nonce( $notice_id ),
-								'review_answer' => '0',
-							]
-						),
+								'type' => 'preventDefault',
+							],
+							[
+								'type'             => 'hide',
+								'target_notice_id' => $notice_id,
+							],
+							[
+								'type'             => 'show',
+								'target_notice_id' => $no_notice_id,
+							],
+						],
 					],
-				];
-				break;
-			case '0':
-				$notice['message']   = __( "Let us know how we can improve your experience. We're always happy to help.", 'sensei-lms' );
-				$notice['info_link'] = [
+				],
+			]
+		);
+
+		$notices[ $no_notice_id ] = array_merge(
+			$base_notice,
+			[
+				'parent_id' => $notice_id,
+				'message'   => __( "Let us know how we can improve your experience. We're always happy to help.", 'sensei-lms' ),
+				'info_link' => [
 					'label' => __( 'Share with us how can we help', 'sensei-lms' ),
 					'url'   => $data['reviews']['feedback_url'],
-				];
-				break;
-			case '1':
-				$notice['message']   = __( 'Great to hear! Would you be able to help us by leaving a review on WordPress.org?', 'sensei-lms' );
-				$notice['info_link'] = [
+					'tasks' => [
+						[
+							'type'             => 'dismiss',
+							'target_notice_id' => $no_notice_id,
+						],
+					],
+				],
+			]
+		);
+
+		$notices[ $yes_notice_id ] = array_merge(
+			$base_notice,
+			[
+				'parent_id' => $notice_id,
+				'message'   => __( 'Great to hear! Would you be able to help us by leaving a review on WordPress.org?', 'sensei-lms' ),
+				'info_link' => [
 					'label' => __( 'Write a review for us', 'sensei-lms' ),
 					'url'   => $data['reviews']['review_url'],
-				];
-				break;
-		}
-
-		$notices[ $notice_id ] = $notice;
+					'tasks' => [
+						[
+							'type'             => 'dismiss',
+							'target_notice_id' => $yes_notice_id,
+						],
+					],
+				],
+			]
+		);
 
 		return $notices;
 	}
