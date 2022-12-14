@@ -58,10 +58,14 @@ class Sensei_Preview_User {
 	 */
 	public function override_user() {
 
-		$course_id    = Sensei_Utils::get_current_course();
+		$course_id = Sensei_Utils::get_current_course();
+		if ( ! $course_id ) {
+			return;
+		}
+
 		$preview_user = $this->get_preview_user( get_current_user_id(), $course_id );
 
-		if ( ! $course_id || ! $preview_user || ! $this->is_preview_user( $preview_user ) ) {
+		if ( ! $preview_user || ! $this->is_preview_user( $preview_user ) ) {
 			return;
 		}
 
@@ -257,6 +261,9 @@ class Sensei_Preview_User {
 	 */
 	private function get_preview_user( $user_id, $course_id ) {
 		$preview_users = get_user_meta( $user_id, self::META, false );
+		if ( empty( $preview_users ) || ! $course_id ) {
+			return false;
+		}
 		foreach ( $preview_users as $preview_user ) {
 			if ( $preview_user['course'] === $course_id ) {
 				return $preview_user['user'];
@@ -323,8 +330,8 @@ class Sensei_Preview_User {
 	 */
 	private static function meta_value( $user_id, $course_id ) {
 		return [
-			'user'   => $user_id,
-			'course' => $course_id,
+			'user'   => absint( $user_id ),
+			'course' => absint( $course_id ),
 		];
 	}
 

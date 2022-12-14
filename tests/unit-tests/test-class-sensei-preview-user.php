@@ -103,6 +103,26 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 	}
 
+
+	/**
+	 * Switch to preview user, then switch back.
+	 */
+	public function testPreviewUserForLessons() {
+
+		list( 'course_id' => $course_id, 'lesson_ids' => list( $lesson_id ) ) = $this->factory->get_course_with_lessons();
+		$admin_id = $this->get_user_by_role( 'administrator' );
+		$this->login_as( $admin_id );
+
+		// Switch to preview user.
+
+		$this->go_to( add_query_arg( [ 'sensei-preview-as-student' => wp_create_nonce( 'sensei-preview-as-student' ) ], get_permalink( $course_id ) ) );
+
+		$this->go_to( get_permalink( $lesson_id ) );
+
+		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Preview user is not used for the lesson.' );
+
+	}
+
 	/**
 	 * Reset user ID when navigating to a new page.
 	 *
