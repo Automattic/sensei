@@ -220,14 +220,14 @@ class Sensei_Guest_User {
 	 * @return int
 	 */
 	private function create_guest_user() {
-		$user_count = get_user_count();
+		$user_count = Sensei_Utils::get_user_count_for_role( $this->guest_student_role ) + 1;
 		$user_name  = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
 		return wp_insert_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
 				'user_email'   => $user_name . '@senseiguest.senseiguest',
-				'display_name' => 'Guest Student ' . $user_count,
+				'display_name' => 'Guest Student ' . str_pad( $user_count, 3, '0', STR_PAD_LEFT ),
 				'role'         => $this->guest_student_role,
 			]
 		);
