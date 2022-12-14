@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const { test, expect } = require( '@playwright/test' );
+import { test, expect } from '@playwright/test';
 /**
  * Internal dependencies
  */
-const { createCourse, createCourseCategory } = require( '../../../helpers/api' );
-const { getContextByRole } = require( '../../../helpers/context' );
-const PostType = require( '../../../pages/admin/post-type' );
+import { createCourse, createCourseCategory } from '@e2e/helpers/api';
+import { getContextByRole } from '@e2e/helpers/context';
+import PostType from '@e2e/pages/admin/post-type';
 
 const { describe, use, beforeAll } = test;
 
@@ -36,11 +36,14 @@ describe( 'Courses List Block', () => {
 		for ( const course of courses ) {
 			const category = await createCourseCategory( request, {
 				name: course.category,
+				description: '',
+				slug: ''
 			} );
 
 			await createCourse( request, {
 				...course,
 				categoryIds: [ category.id ],
+				lessons: []
 			} );
 		}
 	} );
