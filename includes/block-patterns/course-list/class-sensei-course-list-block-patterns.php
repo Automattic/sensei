@@ -263,6 +263,15 @@ class Sensei_Course_List_Block_Patterns {
 				],
 		];
 
+		/**
+		 * Filter the Sensei Course List block patterns.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param array $patterns The patterns.
+		 */
+		$patterns = apply_filters( 'sensei_course_list_block_patterns', $patterns );
+
 		foreach ( $patterns as $key => $pattern ) {
 			register_block_pattern(
 				$key,
