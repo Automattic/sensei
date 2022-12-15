@@ -57,8 +57,17 @@ describe.parallel( 'Create Courses', () => {
 		// await page.waitForEvent('requestfinished')
 		// await page.waitForResponse('**/post.php*');
 
-		await page.locator( 'button:has-text("Preview")' ).click();
-		const previewPage = await page.waitForEvent( 'popup' );
+		await page.locator( 'button:has-text("Preview")' ).first().click();
+
+		const [ previewPage ] = await Promise.all( [
+			// It is important to call waitForEvent before click to set up waiting.
+			page.waitForEvent( 'popup' ),
+			// Opens popup.
+			page.locator( 'text=Preview in new tab' ).click(),
+		] );
+
+		await previewPage.waitForLoadState();
+
 		// // Click text=Preview in new tab
 		// const [ page1 ] = await Promise.all( [
 		// ,
@@ -68,7 +77,7 @@ describe.parallel( 'Create Courses', () => {
 		// await coursesPage.viewPreviewLink.click();
 		// await coursesPage.gotToPreviewPage();
 		await expect(
-			previewPage.locator( 'h1:has-text("Test Create Course")' ).first()
+			previewPage.locator( 'h1:has-text("Test Create Course")' )
 		).toBeVisible();
 		await expect( previewPage.locator( 'text="Module 1"' ) ).toBeVisible();
 		await expect(
