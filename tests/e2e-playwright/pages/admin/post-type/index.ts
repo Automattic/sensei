@@ -66,8 +66,8 @@ export default class PostType {
 	 * Go to the preview page, returning a page instance.
 	 *
 	 * @example
-	 * // const previewPage = await myPage.goToPreview();
-	 * // await previewPage.locator('text="My Post"').isVisible();
+	 * const previewPage = await myPage.goToPreview();
+	 * await previewPage.locator('text="My Post"').isVisible();
 	 */
 	async goToPreview(): Promise< Page > {
 		await this.page.locator( 'button:has-text("Preview")' ).first().click();
@@ -76,6 +76,7 @@ export default class PostType {
 			this.page.waitForEvent( 'popup' ),
 			this.page.locator( 'text=Preview in new tab' ).click(),
 		] );
+		await previewPage.waitForLoadState();
 		return previewPage;
 	}
 
