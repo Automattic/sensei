@@ -58,10 +58,14 @@ class Sensei_Preview_User {
 	 */
 	public function override_user() {
 
-		$preview_user = $this->get_preview_user( get_current_user_id() );
-		$course_id    = Sensei_Utils::get_current_course();
+		$course_id = Sensei_Utils::get_current_course();
+		if ( ! $course_id ) {
+			return;
+		}
 
-		if ( ! $course_id || ! $preview_user || ! $this->is_preview_user( $preview_user ) ) {
+		$preview_user = $this->get_preview_user( get_current_user_id(), $course_id );
+
+		if ( ! $preview_user || ! $this->is_preview_user( $preview_user ) ) {
 			return;
 		}
 
@@ -82,7 +86,7 @@ class Sensei_Preview_User {
 			return;
 		}
 
-		$preview_user_id = $this->create_preview_user();
+		$preview_user_id = $this->create_preview_user( $course_id );
 		$this->set_preview_user( $preview_user_id );
 
 		wp_safe_redirect( remove_query_arg( self::SWITCH_ON_ACTION ) );
@@ -101,7 +105,7 @@ class Sensei_Preview_User {
 			return;
 		}
 
-		$this->delete_preview_user();
+		$this->delete_preview_user( get_current_user_id() );
 
 		wp_safe_redirect( remove_query_arg( self::SWITCH_OFF_ACTION ) );
 
@@ -183,22 +187,25 @@ class Sensei_Preview_User {
 	/**
 	 * Create a preview user for the current teacher.
 	 *
+	 * @param int $course_id Course ID.
+	 *
 	 * @return int
 	 */
-	private function create_preview_user() {
-		$teacher    = wp_get_current_user();
-		$user_count = get_user_count();
-		$user_name  = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
+	private function create_preview_user( $course_id ) {
+		$teacher      = wp_get_current_user();
+		$user_name    = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
+		$display_name = 'Preview Student ' . $course_id . $teacher->ID . ' (' . $teacher->display_name . ')';
 
 		return wp_insert_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
 				'user_email'   => $user_name . '@senseipreview.senseipreview',
-				'display_name' => 'Preview Student ' . $user_count . ' (' . $teacher->display_name . ')',
+				'display_name' => $display_name,
+				'last_name'    => $display_name,
 				'role'         => self::ROLE,
 				'meta_input'   => [
-					self::META => $teacher->ID,
+					self::META => self::meta_value( $teacher->ID, $course_id ),
 				],
 			]
 		);
@@ -206,31 +213,36 @@ class Sensei_Preview_User {
 
 	/**
 	 * Delete preview user, including their course progress data.
+	 *
+	 * @param int $user_id User ID for the preview user.
 	 */
-	private function delete_preview_user() {
+	private function delete_preview_user( $user_id ) {
 
-		$preview_user = get_current_user_id();
-		$teacher      = $this->get_preview_user( get_current_user_id() );
-
-		// Swap the user IDs if the active user is the teacher.
-		if ( ! $this->is_preview_user_active() ) {
-			list( $preview_user, $teacher ) = [ $teacher, $preview_user ];
-		}
-
-		if ( ! $preview_user ) {
+		if ( ! $user_id || ! $this->is_preview_user( $user_id ) ) {
 			return;
 		}
 
-		delete_user_meta( $teacher, self::META );
+		list( 'user' => $teacher, 'course' => $course_id ) = get_user_meta( $user_id, self::META, true );
 
-		$course_id = Sensei_Utils::get_current_course();
-		Sensei_Utils::sensei_remove_user_from_course( $course_id, $preview_user );
+		delete_user_meta(
+			$teacher,
+			self::META,
+			self::meta_value( $user_id, $course_id )
+		);
 
-		if ( ! function_exists( 'wp_delete_user' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/user.php';
+		Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+
+		if ( is_multisite() ) {
+			if ( ! function_exists( 'wpmu_delete_user' ) ) {
+				require_once ABSPATH . '/wp-admin/includes/ms.php';
+			}
+			wpmu_delete_user( $user_id );
+		} else {
+			if ( ! function_exists( 'wp_delete_user' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/user.php';
+			}
+			wp_delete_user( $user_id );
 		}
-		wp_delete_user( $preview_user );
-
 	}
 
 	/**
@@ -247,14 +259,24 @@ class Sensei_Preview_User {
 	}
 
 	/**
-	 * Get preview user meta for the teacher if one is active.
+	 * Get preview user for the teacher and course if one is active.
 	 *
-	 * @param int $user_id Teacher user ID.
+	 * @param int $user_id   Teacher user ID.
+	 * @param int $course_id Course ID.
 	 *
 	 * @return false|int
 	 */
-	private function get_preview_user( $user_id = null ) {
-		return get_user_meta( $user_id, self::META, true );
+	private function get_preview_user( $user_id, $course_id ) {
+		$preview_users = get_user_meta( $user_id, self::META, false );
+		if ( empty( $preview_users ) || ! $course_id ) {
+			return false;
+		}
+		foreach ( $preview_users as $preview_user ) {
+			if ( $preview_user['course'] === $course_id ) {
+				return $preview_user['user'];
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -263,7 +285,19 @@ class Sensei_Preview_User {
 	 * @param int $preview_user_id Preview user ID.
 	 */
 	private function set_preview_user( $preview_user_id ) {
-		add_user_meta( get_current_user_id(), self::META, $preview_user_id );
+		list( 'course' => $course_id ) = get_user_meta( $preview_user_id, self::META, true );
+		$user_id                       = get_current_user_id();
+		$existing_preview_user         = $this->get_preview_user( $user_id, $course_id );
+
+		if ( $existing_preview_user ) {
+			$this->delete_preview_user( $existing_preview_user );
+		}
+
+		add_user_meta(
+			get_current_user_id(),
+			self::META,
+			self::meta_value( $preview_user_id, $course_id )
+		);
 	}
 
 	/**
@@ -291,6 +325,21 @@ class Sensei_Preview_User {
 			return false;
 		}
 		return in_array( self::ROLE, (array) $user->roles, true );
+	}
+
+	/**
+	 * Format meta value.
+	 *
+	 * @param int $user_id   User ID.
+	 * @param int $course_id Course ID.
+	 *
+	 * @return array
+	 */
+	private static function meta_value( $user_id, $course_id ) {
+		return [
+			'user'   => absint( $user_id ),
+			'course' => absint( $course_id ),
+		];
 	}
 
 }
