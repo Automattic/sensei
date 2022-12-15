@@ -12,13 +12,11 @@ import {
 	configureSite,
 } from '@e2e/helpers/database';
 import { createUser, User } from '@e2e/helpers/api';
-import {
-	createAdminContext,
-} from '@e2e/helpers/context';
+import { createAdminContext } from '@e2e/helpers/context';
 import {
 	createUserPreference,
-	setDefaultPreferences
-} from "@e2e/helpers/preferences";
+	setDefaultPreferences,
+} from '@e2e/helpers/preferences';
 import { GLOBAL_USERS } from '@e2e/factories/users';
 
 export default async (): Promise< void > => {
