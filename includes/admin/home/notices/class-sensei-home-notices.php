@@ -119,12 +119,12 @@ class Sensei_Home_Notices {
 								'type' => 'preventDefault',
 							],
 							[
-								'type'             => 'hide',
-								'target_notice_id' => $notice_id,
+								'type'      => 'hide',
+								'notice_id' => $notice_id,
 							],
 							[
-								'type'             => 'show',
-								'target_notice_id' => $yes_notice_id,
+								'type'      => 'show',
+								'notice_id' => $yes_notice_id,
 							],
 						],
 					],
@@ -136,12 +136,12 @@ class Sensei_Home_Notices {
 								'type' => 'preventDefault',
 							],
 							[
-								'type'             => 'hide',
-								'target_notice_id' => $notice_id,
+								'type'      => 'hide',
+								'notice_id' => $notice_id,
 							],
 							[
-								'type'             => 'show',
-								'target_notice_id' => $no_notice_id,
+								'type'      => 'show',
+								'notice_id' => $no_notice_id,
 							],
 						],
 					],
@@ -159,8 +159,8 @@ class Sensei_Home_Notices {
 					'url'   => $data['reviews']['feedback_url'],
 					'tasks' => [
 						[
-							'type'             => 'dismiss',
-							'target_notice_id' => $no_notice_id,
+							'type'      => 'dismiss',
+							'notice_id' => $no_notice_id,
 						],
 					],
 				],
@@ -177,8 +177,8 @@ class Sensei_Home_Notices {
 					'url'   => $data['reviews']['review_url'],
 					'tasks' => [
 						[
-							'type'             => 'dismiss',
-							'target_notice_id' => $yes_notice_id,
+							'type'      => 'dismiss',
+							'notice_id' => $yes_notice_id,
 						],
 					],
 				],
