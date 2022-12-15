@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
 let lastScrollTop = 0;
 
 /**
- * Detect if a scroll movement is upward or downward.
+ * Calculates the scroll delta.
  */
 const getScrollDelta = () => {
 	const { scrollTop } = document.documentElement;
@@ -45,14 +45,35 @@ let sidebarMarginTop = 0;
 let sidebar = null;
 
 /**
+ * The header DOM element.
+ *
+ * @member {HTMLElement}
+ */
+let header = null;
+
+/**
  * The clone of the sidebar DOM element.
  *
  * @member {HTMLElement}
  */
 let sidebarClone = null;
 
-function prepareSidebarClone() {
+/**
+ * The featured video DOM element.
+ *
+ * @member {HTMLElement}
+ */
+let featuredVideo = null;
+
+const queryDomElements = () => {
 	sidebar = document.querySelector( '.sensei-course-theme__sidebar' );
+	header = document.querySelector( '.sensei-course-theme__header' );
+	featuredVideo = document.querySelector(
+		'.sensei-course-theme-lesson-video'
+	);
+};
+
+function prepareSidebarClone() {
 	const sidebarRect = sidebar.getBoundingClientRect();
 	sidebarMarginTop = sidebar.style.marginTop
 		? parseInt( sidebar.style.marginTop, 10 )
@@ -91,7 +112,7 @@ function updateSidebarPosition( initialPosition = false ) {
 	if ( ! sidebar || ! sidebarClone ) {
 		return;
 	}
-	const header = document.querySelector( '.sensei-course-theme__header' );
+
 	const headerRect = header.getBoundingClientRect();
 	const sidebarRect = sidebar.getBoundingClientRect();
 	const sidebarCloneRect = sidebarClone.getBoundingClientRect();
@@ -131,6 +152,29 @@ function updateSidebarPosition( initialPosition = false ) {
 	sidebarClone.style.top = `${ sidebarCloneNewTop - sidebarMarginTop }px`;
 }
 
+const reinitializeSidebar = debounce( () => {
+	prepareSidebarClone();
+	updateSidebarPosition( true );
+}, 500 );
+
+function syncSidebarSizeWithVideo() {
+	if ( featuredVideo && sidebar ) {
+		new window.ResizeObserver( () => {
+			const videoHeight = featuredVideo.offsetHeight;
+			const sidebarHeight = sidebar.offsetHeight;
+			if (
+				! videoHeight ||
+				! sidebarHeight ||
+				sidebarHeight >= videoHeight
+			) {
+				return;
+			}
+			sidebar.style.height = `${ videoHeight }px`;
+			reinitializeSidebar();
+		} ).observe( featuredVideo );
+	}
+}
+
 /**
  * Makes the sidebar sticky for relevant LM templates.
  */
@@ -139,21 +183,22 @@ function stickySidebar() {
 		return;
 	}
 
-	prepareSidebarClone();
-	updateSidebarPosition( true );
+	queryDomElements();
 
 	document.defaultView.addEventListener( 'scroll', () =>
 		updateSidebarPosition()
 	);
 
 	// eslint-disable-next-line @wordpress/no-global-event-listener
-	window.addEventListener(
-		'resize',
-		debounce( () => {
-			prepareSidebarClone();
-			updateSidebarPosition( true );
-		}, 500 )
-	);
+	window.addEventListener( 'resize', reinitializeSidebar );
+
+	// Make sure sidebar height is not shorter than the video height
+	// for `moderm` lm template.
+	if ( document.body.classList.contains( 'learning-mode--modern' ) ) {
+		syncSidebarSizeWithVideo();
+	}
+
+	reinitializeSidebar();
 }
 
 // eslint-disable-next-line @wordpress/no-global-event-listener
