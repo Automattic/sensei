@@ -82,8 +82,7 @@ class Sensei_Home_Notices_Provider {
 	public function get_badge_count(): int {
 		add_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 		$notices                 = $this->get( DAY_IN_SECONDS );
-		$notices_with_parent_ids = array_column( $notices, 'parent_id' );
-		$notices_with_parent_ids = array_filter( $notices_with_parent_ids );
+		$notices_with_parent_ids = array_filter( array_column( $notices, 'parent_id' ) );
 
 		remove_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 
