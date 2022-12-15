@@ -4,7 +4,6 @@
 	}
 
 	.sensei-course-theme {
-
 		&--sidebar-open {
 			--sensei-lm-header-height: 90px;
 			overflow: hidden;
@@ -36,7 +35,6 @@
 		}
 
 		&__header {
-
 			&__container {
 				align-items: flex-start !important;
 				padding-top: 12px;
@@ -60,7 +58,6 @@
 				gap: 12px;
 				height: 30px;
 			}
-
 		}
 
 		&__sidebar__content {
@@ -125,6 +122,4 @@
 	body {
 		padding-bottom: 140px;
 	}
-
-
 }

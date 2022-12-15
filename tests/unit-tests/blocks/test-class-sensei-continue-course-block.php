@@ -27,7 +27,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
@@ -39,12 +39,12 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $this->course;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-continue-course' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}

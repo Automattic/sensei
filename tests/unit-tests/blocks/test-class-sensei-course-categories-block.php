@@ -36,7 +36,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory  = new Sensei_Factory();
 		$this->block    = new Sensei_Course_Categories_Block();
@@ -47,7 +47,7 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $course;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-categories' );
 	}
@@ -80,8 +80,8 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( self::CONTENT );
 
 		/* Assert */
-		$this->assertContains( $this->category->name, $result );
-		$this->assertContains( $this->category->slug, $result );
+		$this->assertStringContainsString( $this->category->name, $result );
+		$this->assertStringContainsString( $this->category->slug, $result );
 	}
 
 	/**
@@ -95,8 +95,8 @@ class Sensei_Course_Categories_Block_Test extends WP_UnitTestCase {
 		$result                  = do_blocks( $content_with_attributes );
 
 		/* Assert */
-		$this->assertContains( 'class="some-class"', $result );
-		$this->assertContains( 'style="some-style"', $result );
+		$this->assertStringContainsString( 'class="some-class"', $result );
+		$this->assertStringContainsString( 'style="some-style"', $result );
 	}
 
 	/**

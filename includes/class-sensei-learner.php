@@ -57,6 +57,7 @@ class Sensei_Learner {
 	 * @since 3.0.0
 	 */
 	public function init() {
+		add_filter( 'rest_course_query', array( $this, 'filter_rest_course_query' ), 10, 2 );
 		add_action( 'wp_ajax_get_course_list', array( $this, 'get_course_list' ) );
 
 		// Delete user activity and enrolment terms when user is deleted.
@@ -209,6 +210,28 @@ class Sensei_Learner {
 		}
 
 		return $dataset_changes;
+	}
+
+	/**
+	 * Filter the courses returned by the REST API to just ones that can be managed.
+	 *
+	 * @param array           $args    Array of arguments for WP_Query.
+	 * @param WP_REST_Request $request The REST API request.
+	 *
+	 * @return array
+	 */
+	public function filter_rest_course_query( $args, $request ) {
+		$filter = $request->get_param( 'filter' );
+		if (
+			'teacher' === $filter
+			&& ! current_user_can( 'manage_sensei' )
+			&& current_user_can( 'manage_sensei_grades' )
+		) {
+			$args['context'] = 'teacher-filter';
+			$args['author']  = get_current_user_id();
+		}
+
+		return $args;
 	}
 
 	/**

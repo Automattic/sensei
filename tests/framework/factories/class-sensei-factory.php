@@ -147,7 +147,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	/**
 	 * Teardown data that the factory creates.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		if ( empty( $this->basic_test_course_ids ) ) {
 			return;
 		}
