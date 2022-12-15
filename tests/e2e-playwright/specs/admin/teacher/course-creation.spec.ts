@@ -55,17 +55,27 @@ describe.parallel( 'Create Courses', () => {
 		await coursesPage.confirmPublishButton.click();
 
 		// await page.waitForEvent('requestfinished')
-		await page.waitForResponse( '**/post.php*' );
-		await coursesPage.viewPreviewLink.click();
+		// await page.waitForResponse('**/post.php*');
+
+		await page.locator( 'button:has-text("Preview")' ).click();
+		const previewPage = await page.waitForEvent( 'popup' );
+		// // Click text=Preview in new tab
+		// const [ page1 ] = await Promise.all( [
+		// ,
+		// 	page.locator( 'text=Preview in new tab' ).click(),
+		// ] );
+
+		// await coursesPage.viewPreviewLink.click();
+		// await coursesPage.gotToPreviewPage();
 		await expect(
-			page.locator( 'h1:has-text("Test Create Course")' )
+			previewPage.locator( 'h1:has-text("Test Create Course")' ).first()
 		).toBeVisible();
-		await expect( page.locator( 'text="Module 1"' ) ).toBeVisible();
+		await expect( previewPage.locator( 'text="Module 1"' ) ).toBeVisible();
 		await expect(
-			page.locator( 'text="Lesson 1 in Module 1"' )
+			previewPage.locator( 'text="Lesson 1 in Module 1"' )
 		).toBeVisible();
 		await expect(
-			page.locator( 'button:has-text("Take Course")' )
+			previewPage.locator( 'button:has-text("Take Course")' )
 		).toBeVisible();
 	} );
 } );
