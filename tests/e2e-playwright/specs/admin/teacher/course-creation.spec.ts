@@ -54,8 +54,9 @@ describe.parallel( 'Create Courses', () => {
 		await coursesPage.publishButton.click();
 		await coursesPage.confirmPublishButton.click();
 
+		// await page.waitForEvent('requestfinished')
+		await page.waitForResponse( '**/post.php*' );
 		await coursesPage.viewPreviewLink.click();
-
 		await expect(
 			page.locator( 'h1:has-text("Test Create Course")' )
 		).toBeVisible();
