@@ -56,17 +56,17 @@ describe( 'Courses List Block', () => {
 		await courseList.choosePattern( 'Courses displayed in a grid' );
 
 		await postTypePage.publish();
-		await postTypePage.gotToPreviewPage();
+		const preview = await postTypePage.goToPreview();
 
 		for ( const course of courses ) {
 			await expect(
-				page.locator( `role=heading[name=${ course.title }]` )
+				preview.locator( `role=heading[name=${ course.title }]` )
 			).toBeVisible();
 			await expect(
-				page.locator( `text='${ course.excerpt }'` )
+				preview.locator( `text='${ course.excerpt }'` )
 			).toBeVisible();
 			await expect(
-				page.locator( `role=link[name='${ course.category }']` )
+				preview.locator( `role=link[name='${ course.category }']` )
 			).toBeVisible();
 		}
 

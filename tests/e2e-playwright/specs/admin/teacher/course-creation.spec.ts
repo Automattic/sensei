@@ -50,21 +50,19 @@ describe.parallel( 'Create Courses', () => {
 			'Lesson 1 in Module 1'
 		);
 
-		// Publish the course (publish method doesn't work as there is no redirect at this point).
-		await coursesPage.publishButton.click();
-		await coursesPage.confirmPublishButton.click();
+		await coursesPage.submitForPreview();
 
-		await coursesPage.viewPreviewLink.click();
+		const previewPage = await coursesPage.goToPreview();
 
 		await expect(
-			page.locator( 'h1:has-text("Test Create Course")' )
+			previewPage.locator( 'h1:has-text("Test Create Course")' )
 		).toBeVisible();
-		await expect( page.locator( 'text="Module 1"' ) ).toBeVisible();
+		await expect( previewPage.locator( 'text="Module 1"' ) ).toBeVisible();
 		await expect(
-			page.locator( 'text="Lesson 1 in Module 1"' )
+			previewPage.locator( 'text="Lesson 1 in Module 1"' )
 		).toBeVisible();
 		await expect(
-			page.locator( 'button:has-text("Take Course")' )
+			previewPage.locator( 'button:has-text("Take Course")' )
 		).toBeVisible();
 	} );
 } );

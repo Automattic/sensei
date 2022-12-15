@@ -61,26 +61,45 @@ export default class PostType {
 		return `/?page_id=${ params.get( 'post' ) }`;
 	}
 
-	async publish(): Promise< Response > {
+	async goToPreview(): Promise< Page > {
+		await this.page.locator( 'button:has-text("Preview")' ).first().click();
+
+		const [ previewPage ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			this.page.locator( 'text=Preview in new tab' ).click(),
+		] );
+		await previewPage.waitForLoadState();
+		return previewPage;
+	}
+
+	async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
 			.click();
-		await this.page
+
+		return this.page
 			.locator( '[aria-label="Editor publish"] >> text=Publish' )
 			.first()
 			.click();
+	}
 
-		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
+	async submitForPreview(): Promise< void > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.click();
+
+		return this.page
+			.locator(
+				'[aria-label="Editor publish"] >> text=Submit For Review'
+			)
+			.first()
+			.click();
 	}
 
 	async goToPostTypeListingPage(): Promise< Response > {
 		return this.page.goto(
 			`/wp-admin/edit.php?post_type=${ this.postType }`
 		);
-	}
-
-	async gotToPreviewPage(): Promise< Response > {
-		return this.page.goto( await this.getPreviewURL() );
 	}
 }
 
