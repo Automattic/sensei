@@ -7,12 +7,12 @@ import { test, expect } from '@playwright/test';
  */
 import { createCourse, createCourseCategory } from '@e2e/helpers/api';
 import PostType from '@e2e/pages/admin/post-type';
-import { adminRole } from '@e2e/helpers/context';
+import { editorRole } from '@e2e/helpers/context';
 
 const { describe, use, beforeAll } = test;
 
 describe( 'Courses List Block', () => {
-	use( adminRole() );
+	use( editorRole() );
 
 	const courses = [
 		{

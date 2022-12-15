@@ -2,12 +2,14 @@ import { APIRequestContext } from '@playwright/test';
 import { createApiContext } from './index';
 
 export type UserResponse = {
+	id: number;
 	username: string;
 	name: string;
 	email: string;
 };
 
 export type User = {
+	id?: number;
 	username: string;
 	password?: string;
 	email?: string;

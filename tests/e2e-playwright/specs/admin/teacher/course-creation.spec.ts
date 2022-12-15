@@ -10,7 +10,7 @@ import { teacherRole } from '@e2e/helpers/context';
 
 const { describe, use } = test;
 
-describe( 'Create Courses', () => {
+describe.parallel( 'Create Courses', () => {
 	use( teacherRole() );
 
 	test( 'it has a Courses menu item in the main menu', async ( { page } ) => {
@@ -32,9 +32,6 @@ describe( 'Create Courses', () => {
 		coursesPage.goToPostTypeListingPage();
 
 		await coursesPage.createCourseButton.click();
-
-		// Close Welcome to the block editor dialog.
-		await coursesPage.dialogCloseButton.click();
 
 		// Fill in the course title and description.
 		const wizardModal = coursesPage.wizardModal;
