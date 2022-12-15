@@ -78,8 +78,6 @@ class Sensei_Home_Notices {
 			return $notices;
 		}
 
-		$data['reviews']['show_after'] = '1 second';
-
 		$notice_id     = self::HOME_NOTICE_KEY_PREFIX . 'sensei_review';
 		$yes_notice_id = $notice_id . '_yes';
 		$no_notice_id  = $notice_id . '_no';
