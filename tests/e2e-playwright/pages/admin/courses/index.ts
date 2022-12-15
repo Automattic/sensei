@@ -22,9 +22,15 @@ class WizardModal {
 		this.form = this.wizard.locator( '.sensei-editor-wizard-step__form' );
 		this.input = this.form.locator( 'input' ).first();
 		this.textArea = this.form.locator( 'textarea' ).first();
-		this.continueButton = this.wizard.locator( 'button:has-text("Continue")' );
-		this.continueWithFreeButton = this.wizard.locator( 'button:has-text("Continue with Sensei Free")' );
-		this.startWithDefaultLayoutButton = this.wizard.locator( 'button:has-text("Start with default layout")' );
+		this.continueButton = this.wizard.locator(
+			'button:has-text("Continue")'
+		);
+		this.continueWithFreeButton = this.wizard.locator(
+			'button:has-text("Continue with Sensei Free")'
+		);
+		this.startWithDefaultLayoutButton = this.wizard.locator(
+			'button:has-text("Start with default layout")'
+		);
 	}
 }
 
@@ -36,7 +42,9 @@ class ModuleBlock {
 	constructor( locator: Locator ) {
 		this.module = locator;
 		this.title = this.module.locator( 'header textarea' );
-		this.addLessonField = this.module.locator( '[aria-label="Block\\: Lesson"] textarea' ).last();
+		this.addLessonField = this.module
+			.locator( '[aria-label="Block\\: Lesson"] textarea' )
+			.last();
 	}
 }
 
@@ -47,10 +55,18 @@ class CourseOutline {
 	public readonly moduleBlock: ModuleBlock;
 
 	constructor( page: Page ) {
-		this.outline = page.locator( '[aria-label="Block: Course Outline"]' ).first();
-		this.addModuleOrLessonButton = this.outline.locator( '[aria-label="Add Module or Lesson"]' );
-		this.addModuleButton = page.locator( 'button[role="menuitem"]:has-text("Module")' );
-		this.moduleBlock = new ModuleBlock( this.outline.locator( '[aria-label="Block: Module"]' ).first() );
+		this.outline = page
+			.locator( '[aria-label="Block: Course Outline"]' )
+			.first();
+		this.addModuleOrLessonButton = this.outline.locator(
+			'[aria-label="Add Module or Lesson"]'
+		);
+		this.addModuleButton = page.locator(
+			'button[role="menuitem"]:has-text("Module")'
+		);
+		this.moduleBlock = new ModuleBlock(
+			this.outline.locator( '[aria-label="Block: Module"]' ).first()
+		);
 	}
 
 	async click() {
@@ -71,15 +87,26 @@ export default class CoursesPage extends PostType {
 
 		const wizardLocator = page.locator( '.sensei-editor-wizard' );
 		this.wizardModal = new WizardModal( wizardLocator );
-		this.createCourseButton = page.locator( 'a.page-title-action[href$="post-new.php?post_type=course"]:has-text("New Course")' );
+		this.createCourseButton = page.locator(
+			'a.page-title-action[href$="post-new.php?post_type=course"]:has-text("New Course")'
+		);
 		this.courseOutlineBlock = new CourseOutline( page );
 
-		this.publishButton = page.locator( '[aria-label="Editor top bar"] >> text=Publish' );
-		this.confirmPublishButton = page.locator( 'button:has-text("Submit for Review")' ).first();
-		this.viewPreviewLink = page.locator( 'a:has-text("View Preview")' ).first();
+		this.publishButton = page.locator(
+			'[aria-label="Editor top bar"] >> text=Publish'
+		);
+		this.confirmPublishButton = page
+			.locator( 'button:has-text("Submit for Review")' )
+			.first();
+		this.viewPreviewLink = page
+			.locator( 'a:has-text("View Preview")' )
+			.first();
 	}
 
-	async addModuleWithLesson( title: string, lessonTitle: string ): Promise<ModuleBlock> {
+	async addModuleWithLesson(
+		title: string,
+		lessonTitle: string
+	): Promise< ModuleBlock > {
 		const courseOutline = this.courseOutlineBlock;
 		await courseOutline.click();
 		await courseOutline.addModuleOrLessonButton.click();
@@ -92,4 +119,3 @@ export default class CoursesPage extends PostType {
 		return moduleBlock;
 	}
 }
-
