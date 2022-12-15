@@ -42,9 +42,6 @@ const setupDefaultUsers = async (): Promise< void > => {
 	const adminContext = await createAdminContext( adminPage );
 	const createdUsers = await createGlobalUsers( adminContext, GLOBAL_USERS );
 
-	// eslint-disable-next-line no-console
-	// console.log( { createdUsers } );
-
 	await Promise.all(
 		createdUsers.map( async ( user ) => {
 			const userPreference = await createUserPreference( browser, user );
