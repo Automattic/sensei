@@ -70,7 +70,7 @@ class Sensei_Course_Theme_Templates {
 		add_filter( 'pre_get_block_file_template', [ $this, 'get_single_block_template' ], 10, 3 );
 		add_filter( 'theme_lesson_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
 		add_filter( 'theme_quiz_templates', [ $this, 'add_learning_mode_template' ], 10, 4 );
-
+		add_filter( 'body_class', [ $this, 'add_body_class' ], 10, 2 );
 	}
 
 
@@ -499,5 +499,16 @@ class Sensei_Course_Theme_Templates {
 		return false;
 	}
 
+	/**
+	 * Adds the active template class to body tag.
+	 *
+	 * @param array $classes The list of body class names.
+	 * @param array $class   The list of additional class names added to the body.
+	 */
+	public function add_body_class( array $classes, array $class ): array {
+		$active_template_name = Sensei_Course_Theme_Template_Selection::get_active_template_name();
+		$classes[]            = "learning-mode--{$active_template_name}";
+		return $classes;
+	}
 
 }

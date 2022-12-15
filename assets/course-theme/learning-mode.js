@@ -4,6 +4,7 @@
 import './scroll-direction';
 import './adminbar-layout';
 import './featured-video-size';
+import './sidebar';
 import { toggleFocusMode } from './focus-mode';
 import { submitContactTeacher } from './contact-teacher';
 import { initCompleteLessonTransition } from './complete-lesson-button';
