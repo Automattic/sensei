@@ -273,12 +273,17 @@ class Sensei_Admin_Notices {
 			if ( ! empty( $notice['actions'] ) ) {
 				echo '<div class="sensei-notice__actions">';
 				foreach ( $notice['actions'] as $action ) {
-					if ( ! isset( $action['label'], $action['url'] ) ) {
+					if ( ! isset( $action['label'] ) || ( ! isset( $action['url'] ) && ! isset( $action['tasks'] ) ) ) {
 						continue;
 					}
 
 					$button_class = ! isset( $action['primary'] ) || $action['primary'] ? 'button-primary' : 'button-secondary';
-					echo '<a href="' . esc_url( $action['url'] ) . '" target="' . esc_attr( $action['target'] ?? '_self' ) . '" rel="noopener noreferrer" class="button ' . esc_attr( $button_class ) . '">';
+					$extra_attrs  = '';
+					if ( isset( $action['tasks'] ) ) {
+						wp_enqueue_script( 'sensei-dismiss-notices' );
+						$extra_attrs = ' data-sensei-notice-tasks="' . esc_attr( wp_json_encode( $action['tasks'] ) ) . '"';
+					}
+					echo '<a href="' . esc_url( $action['url'] ) . '" target="' . esc_attr( $action['target'] ?? '_self' ) . '" rel="noopener noreferrer" class="button ' . esc_attr( $button_class ) . '"' . $extra_attrs . '>';
 					echo esc_html( $action['label'] );
 					echo '</a>';
 				}
