@@ -61,6 +61,24 @@ export default class PostType {
 		return `/?page_id=${ params.get( 'post' ) }`;
 	}
 
+	/**
+	 *
+	 * Go to the preview page, returning a page instance.
+	 *
+	 * @example
+	 * // const previewPage = await myPage.goToPreview();
+	 * // await previewPage.locator('text="My Post"').isVisible();
+	 */
+	async goToPreview(): Promise< Page > {
+		await this.page.locator( 'button:has-text("Preview")' ).first().click();
+
+		const [ previewPage ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			this.page.locator( 'text=Preview in new tab' ).click(),
+		] );
+		return previewPage;
+	}
+
 	async publish(): Promise< Response > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
