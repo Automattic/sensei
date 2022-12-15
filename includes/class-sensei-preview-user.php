@@ -44,10 +44,26 @@ class Sensei_Preview_User {
 		add_action( 'wp', [ $this, 'switch_to_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'switch_off_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'override_user' ], 8 );
+		add_action( 'wp', [ $this, 'add_preview_user_filters' ], 10 );
 		add_action( 'show_admin_bar', [ $this, 'show_admin_bar_to_preview_user' ], 90 );
 		add_action( 'admin_bar_menu', [ $this, 'add_user_switch_to_admin_bar' ], 90 );
+		add_filter( 'sensei_is_enrolled', [ $this, 'preview_user_always_enrolled' ], 90, 3 );
 
 		$this->create_role();
+	}
+
+	/**
+	 * Activate filters used when a preview user is active.
+	 *
+	 * @access private
+	 */
+	public function add_preview_user_filters() {
+		if ( $this->is_preview_user_active() ) {
+			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
+			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
+			add_filter( 'sensei_notice', [ $this, 'hide_notices' ], 10, 1 );
+		}
+
 	}
 
 	/**
@@ -82,12 +98,13 @@ class Sensei_Preview_User {
 
 		$course_id = Sensei_Utils::get_current_course();
 
-		if ( ! $course_id || ! $this->is_action( self::SWITCH_ON_ACTION ) ) {
+		if ( ! $course_id || ! $this->is_action( self::SWITCH_ON_ACTION ) || ! $this->can_switch_to_preview_user( $course_id ) ) {
 			return;
 		}
 
 		$preview_user_id = $this->create_preview_user( $course_id );
 		$this->set_preview_user( $preview_user_id );
+		Sensei()->frontend->manually_enrol_learner( $preview_user_id, $course_id );
 
 		wp_safe_redirect( remove_query_arg( self::SWITCH_ON_ACTION ) );
 
@@ -121,11 +138,12 @@ class Sensei_Preview_User {
 	 */
 	public function add_user_switch_to_admin_bar( $wp_admin_bar ) {
 
-		if ( ! Sensei_Utils::get_current_course() ) {
+		$course_id = Sensei_Utils::get_current_course();
+		if ( ! $course_id ) {
 			return;
 		}
 
-		if ( ! $this->is_preview_user_active() ) {
+		if ( $this->can_switch_to_preview_user( $course_id ) && ! $this->is_preview_user_active() ) {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::SWITCH_ON_ACTION,
@@ -137,7 +155,9 @@ class Sensei_Preview_User {
 					],
 				]
 			);
-		} else {
+		}
+
+		if ( $this->is_preview_user_active() ) {
 			$wp_admin_bar->add_node(
 				[
 					'id'     => self::SWITCH_OFF_ACTION,
@@ -172,6 +192,17 @@ class Sensei_Preview_User {
 	}
 
 	/**
+	 * Check if the current user can switch to a preview student for the course.
+	 *
+	 * @param int $course_id Course ID.
+	 *
+	 * @return bool
+	 */
+	private function can_switch_to_preview_user( $course_id ) {
+		return Sensei_Course::can_current_user_edit_course( $course_id );
+	}
+
+	/**
 	 * Check if the request is for the given action.
 	 *
 	 * @param string $action Action field and nonce name.
@@ -182,7 +213,6 @@ class Sensei_Preview_User {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification
 		return isset( $_GET[ $action ] ) && wp_verify_nonce( wp_unslash( $_GET[ $action ] ), $action );
 	}
-
 
 	/**
 	 * Create a preview user for the current teacher.
@@ -210,6 +240,7 @@ class Sensei_Preview_User {
 			]
 		);
 	}
+
 
 	/**
 	 * Delete preview user, including their course progress data.
@@ -256,6 +287,97 @@ class Sensei_Preview_User {
 		if ( ! is_a( $role, 'WP_Role' ) ) {
 			add_role( self::ROLE, __( 'Preview Student', 'sensei-lms' ) );
 		}
+	}
+
+	/**
+	 * Allow preview user to view draft posts.
+	 *
+	 * This effectively allows them the 'edit_post' and 'read_private_posts' caps, but this filter will only run on course frontend pages.
+	 *
+	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
+	 *
+	 * @access private
+	 *
+	 * @param array  $caps    Capabilities.
+	 * @param string $cap     Capability.
+	 * @param int    $user_id User ID.
+	 * @param array  $args    Arguments.
+	 *
+	 * @return array
+	 */
+	public function allow_post_preview( $caps, $cap, $user_id, $args ) {
+
+		if ( get_current_user_id() !== $user_id ) {
+			return $caps;
+		}
+
+		if ( in_array( $cap, [ 'edit_post', 'read_private_posts' ], true ) ) {
+			return [];
+		}
+
+		return $caps;
+	}
+
+	/**
+	 * Hide draft course notices.
+	 *
+	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
+	 *
+	 * @access private
+	 *
+	 * @param array $notice Notice.
+	 *
+	 * @return array|false
+	 */
+	public function hide_notices( $notice ) {
+
+		if ( in_array( $notice['key'], [ 'sensei-course-outline-drafts' ], true ) ) {
+			return false;
+		}
+		return $notice;
+	}
+
+	/**
+	 * Change lesson queries to include unpublished lessons.
+	 *
+	 * Needed for course progress calculation (Sensei_Course::get_progress_stats).
+	 *
+	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
+	 *
+	 * @since  $$next-version$$
+	 * @access private
+	 *
+	 * @param WP_Query $query Lesson query.
+	 *
+	 * @return void
+	 */
+	public function count_unpublished_lessons( WP_Query $query ) {
+		if ( $query->get( 'post_type' ) === 'lesson' ) {
+			$query->set( 'post_status', [ 'any' ] );
+		}
+	}
+
+	/**
+	 * Always treat preview user as enrolled in the course.
+	 *
+	 * @access private
+	 *
+	 * @param bool $is_enrolled Initial state.
+	 * @param int  $user_id     User ID.
+	 * @param int  $course_id   Course ID.
+	 *
+	 * @return bool
+	 */
+	public function preview_user_always_enrolled( $is_enrolled, $user_id, $course_id ) {
+
+		if ( ! $this->is_preview_user( $user_id ) ) {
+			return $is_enrolled;
+		}
+		list( 'course' => $preview_course_id ) = get_user_meta( $user_id, self::META, true );
+		if ( (int) $course_id === $preview_course_id ) {
+			return true;
+		}
+		return $is_enrolled;
 	}
 
 	/**
