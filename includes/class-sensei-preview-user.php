@@ -104,7 +104,6 @@ class Sensei_Preview_User {
 
 		$preview_user_id = $this->create_preview_user( $course_id );
 		$this->set_preview_user( $preview_user_id );
-		Sensei()->frontend->manually_enrol_learner( $preview_user_id, $course_id );
 
 		wp_safe_redirect( remove_query_arg( self::SWITCH_ON_ACTION ) );
 
