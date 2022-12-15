@@ -97,10 +97,6 @@ export default class PostType {
 			`/wp-admin/edit.php?post_type=${ this.postType }`
 		);
 	}
-
-	async gotToPreviewPage(): Promise< Response > {
-		return this.page.goto( await this.getPreviewURL() );
-	}
 }
 
 module.exports = PostType;
