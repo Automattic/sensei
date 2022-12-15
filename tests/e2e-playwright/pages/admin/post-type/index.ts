@@ -39,10 +39,7 @@ export default class PostType {
 		await this.page.goto(
 			`/wp-admin/post-new.php?post_type=${ this.postType }`
 		);
-		await this.page.waitForLoadState( 'networkidle' );
-		if ( ( await this.dialogCloseButton.count() ) > 0 ) {
-			return this.dialogCloseButton.click();
-		}
+
 		return null;
 	}
 
