@@ -1,10 +1,16 @@
 module.exports = {
 	root: true,
-	extends: [ 'plugin:playwright/playwright-test', 'plugin:@typescript-eslint/recommended' ],
+	extends: [
+		'plugin:playwright/playwright-test',
+		'plugin:@typescript-eslint/recommended',
+		'plugin:@wordpress/eslint-plugin/recommended',
+	],
 	rules: {
 		'no-shadow': 'off',
 		'jest/valid-expect': 'off',
 		'no-useless-constructor': 'off',
+		'no-duplicate-imports': 'off',
+		'import/no-unresolved': 'off',
 	},
 	parserOptions: {
 		ecmaVersion: 'latest',

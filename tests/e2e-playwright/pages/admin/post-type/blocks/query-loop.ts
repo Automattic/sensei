@@ -16,7 +16,7 @@ export default class QueryLoop {
 		this.choosePatternModal = page.locator( 'role=dialog' );
 	}
 
-	async isPatternActive( patternName: string ): Promise<boolean> {
+	async isPatternActive( patternName: string ): Promise< boolean > {
 		return (
 			await this.choosePatternModal
 				.locator( `[aria-label="${ patternName }"]` )
@@ -24,7 +24,7 @@ export default class QueryLoop {
 		 )?.includes( 'active-slide' );
 	}
 
-	async choosePattern( patternName: string ): Promise<void> {
+	async choosePattern( patternName: string ): Promise< void > {
 		await this.choosePatternButton.click();
 
 		return await this.page

@@ -25,7 +25,9 @@ describe( 'Create Courses', () => {
 		const coursesMenuItem = await dashboard.getCoursesMenuItem();
 		await coursesMenuItem.click();
 
-		await expect( page.locator( '.sensei-custom-navigation__title h1' ) ).toHaveText( 'Courses' );
+		await expect(
+			page.locator( '.sensei-custom-navigation__title h1' )
+		).toHaveText( 'Courses' );
 	} );
 
 	test( 'it should create a course', async ( { page } ) => {
@@ -49,7 +51,10 @@ describe( 'Create Courses', () => {
 		// Click "Start with default layout" button.
 		await wizardModal.startWithDefaultLayoutButton.click();
 
-		await coursesPage.addModuleWithLesson( 'Module 1', 'Lesson 1 in Module 1' );
+		await coursesPage.addModuleWithLesson(
+			'Module 1',
+			'Lesson 1 in Module 1'
+		);
 
 		// Publish the course (publish method doesn't work as there is no redirect at this point).
 		await coursesPage.publishButton.click();
@@ -57,9 +62,15 @@ describe( 'Create Courses', () => {
 
 		await coursesPage.viewPreviewLink.click();
 
-		await expect( page.locator( 'h1:has-text("Test Create Course")' ) ).toBeVisible();
+		await expect(
+			page.locator( 'h1:has-text("Test Create Course")' )
+		).toBeVisible();
 		await expect( page.locator( 'text="Module 1"' ) ).toBeVisible();
-		await expect( page.locator( 'text="Lesson 1 in Module 1"' ) ).toBeVisible();
-		await expect( page.locator( 'button:has-text("Take Course")' ) ).toBeVisible();
+		await expect(
+			page.locator( 'text="Lesson 1 in Module 1"' )
+		).toBeVisible();
+		await expect(
+			page.locator( 'button:has-text("Take Course")' )
+		).toBeVisible();
 	} );
 } );

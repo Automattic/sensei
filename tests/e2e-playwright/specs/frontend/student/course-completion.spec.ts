@@ -16,9 +16,12 @@ const { describe, use } = test;
 const testCourseWithMode = ( courseMode: CourseMode ) =>
 	describe.parallel( `Course Completion in ${ courseMode }`, () => {
 		use( { courseMode } );
-		use(studentRole());
+		use( studentRole() );
 
-		test( 'Student enrolls in course and completes all lessons.', async ( { page, course } ) => {
+		test( 'Student enrolls in course and completes all lessons.', async ( {
+			page,
+			course,
+		} ) => {
 			const coursePage = new CoursePage( page );
 			await page.goto( course.link );
 
@@ -43,7 +46,9 @@ const testCourseWithMode = ( courseMode: CourseMode ) =>
 
 			// Course page indicates all lessons are completed.
 			await page.goto( course.link );
-			await expect( page.locator( 'text=2 of 2 lessons completed (100%)' ) ).toBeVisible();
+			await expect(
+				page.locator( 'text=2 of 2 lessons completed (100%)' )
+			).toBeVisible();
 		} );
 	} );
 

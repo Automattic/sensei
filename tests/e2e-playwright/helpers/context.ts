@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import path from "path";
-import type { Browser, BrowserContext } from "@playwright/test";
+import path from 'path';
+import type { Browser, BrowserContext } from '@playwright/test';
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 
 /**
@@ -17,9 +17,9 @@ export const getContextByRole = ( userRole: string ): string =>
 	path.resolve( CONTEXT_DIR, `${ userRole }.json` );
 
 type Params = {
-	context: BrowserContext
-}
-type Callback = (param: Params) => unknown
+	context: BrowserContext;
+};
+type Callback = ( param: Params ) => unknown;
 
 /**
  * Execute the function as an admin.
@@ -28,14 +28,17 @@ type Callback = (param: Params) => unknown
  * @param {Function} fn      Callback.
  * @return {Promise<*>} Callback return value.
  */
-export const asAdmin = async ({ browser }: { browser: Browser }, fn: Callback): Promise<unknown> => {
-	const context = await browser.newContext(adminRole());
-	return fn({ context });
+export const asAdmin = async (
+	{ browser }: { browser: Browser },
+	fn: Callback
+): Promise< unknown > => {
+	const context = await browser.newContext( adminRole() );
+	return fn( { context } );
 };
 
-export const studentRole = (): Record<string, string> => ( {
+export const studentRole = (): Record< string, string > => ( {
 	storageState: getContextByRole( 'student' ),
 } );
-export const adminRole = (): Record<string, string> => ({
-	storageState: getContextByRole('admin'),
-});
+export const adminRole = (): Record< string, string > => ( {
+	storageState: getContextByRole( 'admin' ),
+} );
