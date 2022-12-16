@@ -91,4 +91,37 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 
 	}
 
+	public function testRolesList_WhenFetched_DoesNotContainGuestStudentRole() {
+		/* Arrange */
+		$this->factory->user->create( [ 'role' => 'guest_student' ] );
+
+		$all_roles = get_editable_roles();
+
+		Sensei_Guest_User::init_guest_user_admin();
+
+		/* Act */
+		$all_roles_except_guest = get_editable_roles();
+
+		/* Assert */
+		$this->assertArrayHasKey( 'guest_student', $all_roles );
+		$this->assertArrayNotHasKey( 'guest_student', $all_roles_except_guest );
+	}
+
+	public function testUserList_WhenFetched_DoesNotContainGuestUsers() {
+		/* Arrange */
+		$user_args = [
+			'fields' => 'ID',
+		];
+		$result1   = ( new WP_User_Query( $user_args ) )->get_results();
+
+		$this->factory->user->create_many( 2, [ 'role' => 'guest_student' ] );
+		Sensei_Guest_User::init_guest_user_admin();
+
+		/* Act */
+		$result2 = ( new WP_User_Query( $user_args ) )->get_results();
+
+		/* Assert */
+		$this->assertEquals( count( $result1 ), count( $result2 ) );
+	}
+
 }
