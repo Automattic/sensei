@@ -52,12 +52,11 @@ let sidebar = null;
 let header = null;
 
 /**
- * The clone of the sidebar DOM element. This is the sidebar element
- * that user sees and interacts with.
+ * A placeholder for the sidebar.
  *
  * @member {HTMLElement}
  */
-let stickySidebar = null;
+let sidebarPlaceholder = null;
 
 /**
  * The featured video DOM element.
@@ -78,34 +77,26 @@ const queryDomElements = () => {
 };
 
 /**
- * Creates an exact copy of the sidebar DOM element
- * and sets it's position to fixed. The original sidebar
- * element is hidden by seting it's opacity to 0. The clone, "stickySidebar"
- * is used to keep the sidebar sticky. We still need the original sidebar
- * element because we use it's original position to calculate and decide
- * where the stickySideber should be position at any given time.
- *
- * This can be called multiple times and if it detects an existing stickySidebar
- * present in the DOM it will remove it and insert the new one.
+ * Sets 'position: fixed' for the sidebar and puts a placeholder in it's original
+ * place so the original layout is preserved. We also use the placeholder for sticky
+ * sidebar position calculation to determine where to put it in any given time.
  */
 function preparestickySidebar() {
-	const sidebarRect = sidebar.getBoundingClientRect();
+	if ( ! sidebarPlaceholder ) {
+		sidebarPlaceholder = sidebar.cloneNode();
+		sidebarPlaceholder.style.visibility = 'hidden';
+		sidebarPlaceholder.setAttribute( 'aria-hidden', 'true' );
+		sidebar.style.transition = 'none';
+		sidebar.style.position = 'fixed';
+		sidebar.parentElement.append( sidebarPlaceholder );
+	}
 	sidebarMarginTop = sidebar.style.marginTop
 		? parseInt( sidebar.style.marginTop, 10 )
 		: 0;
-	if ( stickySidebar?.remove ) {
-		stickySidebar.remove();
-	}
-	stickySidebar = sidebar.cloneNode( true );
-	stickySidebar.style.position = 'fixed';
-	stickySidebar.style.opacity = 1;
-	stickySidebar.style.zIndex = 2;
-	stickySidebar.style.top = `${ sidebarRect.top }px`;
-	stickySidebar.style.left = `${ sidebarRect.left }px`;
-	stickySidebar.style.width = `${ sidebarRect.right - sidebarRect.left }px`;
-	stickySidebar.style.transition = 'none';
-	sidebar.parentElement.append( stickySidebar );
-	sidebar.style.opacity = 0;
+	const sidebarRect = sidebarPlaceholder.getBoundingClientRect();
+	sidebar.style.top = `${ sidebarRect.top }px`;
+	sidebar.style.left = `${ sidebarRect.left }px`;
+	sidebar.style.width = `${ sidebarRect.right - sidebarRect.left }px`;
 }
 
 /**
@@ -126,67 +117,64 @@ const SIDEBAR_BOTTOM_MARGIN = 32;
  *                                  the page and the page is scrolled into the middle.
  */
 function updateSidebarPosition( initialPosition = false ) {
-	if ( ! sidebar || ! stickySidebar ) {
+	if ( ! sidebar ) {
 		return;
 	}
 
 	// Get the current dimensions of the elements.
 	const headerRect = header.getBoundingClientRect();
+	const sidebarPlaceholderRect = sidebarPlaceholder.getBoundingClientRect();
 	const sidebarRect = sidebar.getBoundingClientRect();
-	const stickySidebarRect = stickySidebar.getBoundingClientRect();
 
 	// Calculate required values.
 	const delta = getScrollDelta();
-	const stickySidebarHeight =
-		stickySidebarRect.bottom - stickySidebarRect.top;
-	const stickySidebarIsTallerThanViewport =
-		stickySidebarHeight >
+	const sidebarHeight = sidebarRect.bottom - sidebarRect.top;
+	const sidebarIsTallerThanViewport =
+		sidebarHeight >
 		window.innerHeight -
 			( headerRect.bottom + sidebarMarginTop + SIDEBAR_BOTTOM_MARGIN );
-	let stickySidebarNewTop = sidebarRect.top;
+	let sidebarNewTop = sidebarPlaceholderRect.top;
 
 	// If the sidebar is very tall and does not fit into the viewport vertically
 	// we scroll the sticky sidebar up until the bottom is reached. Or we scroll
 	// the sticky sidebar down until the top of the sidebar is reached.
-	if ( stickySidebarIsTallerThanViewport && ! initialPosition ) {
-		stickySidebarNewTop = stickySidebarRect.top - delta;
-		const stickySidebarNewBottom = stickySidebarRect.bottom - delta;
-		const stickySidebarMinTop = sidebarRect.top;
-		const stickySidebarMinBottom =
-			window.innerHeight - SIDEBAR_BOTTOM_MARGIN;
+	if ( sidebarIsTallerThanViewport && ! initialPosition ) {
+		sidebarNewTop = sidebarRect.top - delta;
+		const sidebarNewBottom = sidebarRect.bottom - delta;
+		const sidebarMinTop = sidebarPlaceholderRect.top;
+		const sidebarMinBottom = window.innerHeight - SIDEBAR_BOTTOM_MARGIN;
 
 		// The sidebar is moving upwards.
 		if ( delta >= 0 ) {
-			if ( stickySidebarNewBottom < stickySidebarMinBottom ) {
-				stickySidebarNewTop =
-					stickySidebarMinBottom - stickySidebarHeight;
+			if ( sidebarNewBottom < sidebarMinBottom ) {
+				sidebarNewTop = sidebarMinBottom - sidebarHeight;
 			}
 
 			// The sidebar is moving downwards.
 		} else {
-			if ( stickySidebarNewTop > headerRect.bottom ) {
-				stickySidebarNewTop = headerRect.bottom;
+			if ( sidebarNewTop > headerRect.bottom ) {
+				sidebarNewTop = headerRect.bottom;
 			}
-			if ( stickySidebarNewTop < stickySidebarMinTop ) {
-				stickySidebarNewTop = stickySidebarMinTop;
+			if ( sidebarNewTop < sidebarMinTop ) {
+				sidebarNewTop = sidebarMinTop;
 			}
 		}
 
 		// If the sidebar fits into the viewport vertically
 		// then we simply stick it below the header when user
 		// scrolls it up above the header.
-	} else if ( sidebarRect.top <= headerRect.bottom ) {
-		stickySidebarNewTop = headerRect.bottom;
+	} else if ( sidebarPlaceholderRect.top <= headerRect.bottom ) {
+		sidebarNewTop = headerRect.bottom;
 
 		// By default we position the sticky sidebar on top
 		// of the original sidebar.
 	} else {
-		stickySidebarNewTop = sidebarRect.top;
+		sidebarNewTop = sidebarPlaceholderRect.top;
 	}
 
 	// Need to subtract the sidebar top margin because fixed positioned elements
 	// are pushed down by css top margin.
-	stickySidebar.style.top = `${ stickySidebarNewTop - sidebarMarginTop }px`;
+	sidebar.style.top = `${ sidebarNewTop - sidebarMarginTop }px`;
 }
 
 /**
