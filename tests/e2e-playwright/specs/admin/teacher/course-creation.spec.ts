@@ -10,7 +10,7 @@ import { teacherRole } from '@e2e/helpers/context';
 
 const { describe, use } = test;
 
-describe( 'Create Courses', () => {
+describe.parallel( 'Create Courses', () => {
 	use( teacherRole() );
 
 	test( 'it has a Courses menu item in the main menu', async ( { page } ) => {
@@ -33,9 +33,6 @@ describe( 'Create Courses', () => {
 
 		await coursesPage.createCourseButton.click();
 
-		// Close Welcome to the block editor dialog.
-		await coursesPage.dialogCloseButton.click();
-
 		// Fill in the course title and description.
 		const wizardModal = coursesPage.wizardModal;
 		await wizardModal.input.fill( 'Test Create Course' );
@@ -53,21 +50,19 @@ describe( 'Create Courses', () => {
 			'Lesson 1 in Module 1'
 		);
 
-		// Publish the course (publish method doesn't work as there is no redirect at this point).
-		await coursesPage.publishButton.click();
-		await coursesPage.confirmPublishButton.click();
+		await coursesPage.submitForPreview();
 
-		await coursesPage.viewPreviewLink.click();
+		const previewPage = await coursesPage.goToPreview();
 
 		await expect(
-			page.locator( 'h1:has-text("Test Create Course")' )
+			previewPage.locator( 'h1:has-text("Test Create Course")' )
 		).toBeVisible();
-		await expect( page.locator( 'text="Module 1"' ) ).toBeVisible();
+		await expect( previewPage.locator( 'text="Module 1"' ) ).toBeVisible();
 		await expect(
-			page.locator( 'text="Lesson 1 in Module 1"' )
+			previewPage.locator( 'text="Lesson 1 in Module 1"' )
 		).toBeVisible();
 		await expect(
-			page.locator( 'button:has-text("Take Course")' )
+			previewPage.locator( 'button:has-text("Take Course")' )
 		).toBeVisible();
 	} );
 } );

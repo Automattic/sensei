@@ -7,12 +7,12 @@ import { test, expect } from '@playwright/test';
  */
 import { createCourse, createCourseCategory } from '@e2e/helpers/api';
 import PostType from '@e2e/pages/admin/post-type';
-import { adminRole } from '@e2e/helpers/context';
+import { editorRole } from '@e2e/helpers/context';
 
 const { describe, use, beforeAll } = test;
 
 describe( 'Courses List Block', () => {
-	use( adminRole() );
+	use( editorRole() );
 
 	const courses = [
 		{
@@ -56,17 +56,17 @@ describe( 'Courses List Block', () => {
 		await courseList.choosePattern( 'Courses displayed in a grid' );
 
 		await postTypePage.publish();
-		await postTypePage.gotToPreviewPage();
+		const published = await postTypePage.viewPage();
 
 		for ( const course of courses ) {
 			await expect(
-				page.locator( `role=heading[name=${ course.title }]` )
+				published.locator( `role=heading[name=${ course.title }]` )
 			).toBeVisible();
 			await expect(
-				page.locator( `text='${ course.excerpt }'` )
+				published.locator( `text='${ course.excerpt }'` )
 			).toBeVisible();
 			await expect(
-				page.locator( `role=link[name='${ course.category }']` )
+				published.locator( `role=link[name='${ course.category }']` )
 			).toBeVisible();
 		}
 

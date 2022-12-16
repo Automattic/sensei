@@ -17,4 +17,10 @@ export const GLOBAL_USERS: User[] = [
 		email: 'student@student.com',
 		password: 'password',
 	},
+	{
+		username: 'editor',
+		email: 'editor@student.com',
+		password: 'password',
+		roles: [ 'editor' ],
+	},
 ];

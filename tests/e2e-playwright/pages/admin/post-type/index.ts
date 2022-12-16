@@ -39,10 +39,7 @@ export default class PostType {
 		await this.page.goto(
 			`/wp-admin/post-new.php?post_type=${ this.postType }`
 		);
-		await this.page.waitForLoadState( 'networkidle' );
-		if ( ( await this.dialogCloseButton.count() ) > 0 ) {
-			return this.dialogCloseButton.click();
-		}
+
 		return null;
 	}
 
@@ -58,32 +55,53 @@ export default class PostType {
 		return new QueryLoop( this.queryLoopPatternSelection, this.page );
 	}
 
-	async getPreviewURL(): Promise< string > {
-		const params = new URL( await this.page.url() ).searchParams;
+	async goToPreview(): Promise< Page > {
+		await this.page.locator( 'button:has-text("Preview")' ).first().click();
 
-		return `/?page_id=${ params.get( 'post' ) }`;
+		const [ previewPage ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			this.page.locator( 'text=Preview in new tab' ).click(),
+		] );
+		await previewPage.waitForLoadState();
+		return previewPage;
 	}
 
-	async publish(): Promise< Response > {
+	async viewPage(): Promise< Page > {
+		await this.page
+			.locator( '[aria-label="Editor publish"]' )
+			.locator( 'text=View Page' )
+			.click();
+		return this.page;
+	}
+
+	async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
 			.click();
-		await this.page
+
+		return this.page
 			.locator( '[aria-label="Editor publish"] >> text=Publish' )
 			.first()
 			.click();
+	}
 
-		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
+	async submitForPreview(): Promise< void > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.click();
+
+		return this.page
+			.locator(
+				'[aria-label="Editor publish"] >> text=Submit For Review'
+			)
+			.first()
+			.click();
 	}
 
 	async goToPostTypeListingPage(): Promise< Response > {
 		return this.page.goto(
 			`/wp-admin/edit.php?post_type=${ this.postType }`
 		);
-	}
-
-	async gotToPreviewPage(): Promise< Response > {
-		return this.page.goto( await this.getPreviewURL() );
 	}
 }
 
