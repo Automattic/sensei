@@ -26,9 +26,8 @@ const getScrollDelta = () => {
  * @return {boolean} True if it is sticky. False otherwise.
  */
 const isStickySidebar = () =>
-	[ 'modern', 'video-full' ].some( ( templateName ) =>
-		document.body.classList.contains( `learning-mode--${ templateName }` )
-	);
+	!! document.querySelectorAll( '.sensei-course-theme__sidebar--is-sticky' )
+		.length;
 
 /**
  * The sidebar DOM element.
