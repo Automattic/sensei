@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import { Locator, Page } from '@playwright/test';
+import type { Locator, Page, Response } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
-const { QueryLoop } = require( './blocks/query-loop' );
+import QueryLoop from './blocks/query-loop';
 
 /**
  * Page Object Model from the Wordpress Admin creation/editing post types. Example posts, courses, etc...
  * /wp-admin/post-new.php?post_type=[post type]
  */
-class PostType {
+export default class PostType {
 	page: Page;
-	postType: String;
+	postType: string;
 	dialogCloseButton: Locator;
 	addBlockButton: Locator;
 	searchBlock: Locator;
 	queryLoopPatternSelection: Locator;
 	previewURL: string | null;
 
-	constructor( page: Page, postType: String = 'page' ) {
+	constructor( page: Page, postType = 'page' ) {
 		this.page = page;
 		this.postType = postType;
 
@@ -35,17 +35,15 @@ class PostType {
 		this.previewURL = null;
 	}
 
-	async goToPostTypeCreationPage() {
+	async goToPostTypeCreationPage(): Promise< void | null > {
 		await this.page.goto(
 			`/wp-admin/post-new.php?post_type=${ this.postType }`
 		);
-		await this.page.waitForLoadState( 'networkidle' );
-		if ( ( await this.dialogCloseButton.count() ) > 0 ) {
-			return this.dialogCloseButton.click();
-		}
+
+		return null;
 	}
 
-	async addBlock( blockName ) {
+	async addBlock( blockName: string ): Promise< QueryLoop > {
 		await this.addBlockButton.click();
 		await this.searchBlock.fill( blockName );
 		await this.page
@@ -57,32 +55,53 @@ class PostType {
 		return new QueryLoop( this.queryLoopPatternSelection, this.page );
 	}
 
-	async getPreviewURL() {
-		const params = new URL( await this.page.url() ).searchParams;
+	async goToPreview(): Promise< Page > {
+		await this.page.locator( 'button:has-text("Preview")' ).first().click();
 
-		return `/?page_id=${ params.get( 'post' ) }`;
+		const [ previewPage ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			this.page.locator( 'text=Preview in new tab' ).click(),
+		] );
+		await previewPage.waitForLoadState();
+		return previewPage;
 	}
 
-	async publish() {
+	async viewPage(): Promise< Page > {
+		await this.page
+			.locator( '[aria-label="Editor publish"]' )
+			.locator( 'text=View Page' )
+			.click();
+		return this.page;
+	}
+
+	async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
 			.click();
-		await this.page
+
+		return this.page
 			.locator( '[aria-label="Editor publish"] >> text=Publish' )
 			.first()
 			.click();
-
-		return this.page.waitForNavigation( { url: '**/post.php?post=**' } );
 	}
 
-	async goToPostTypeListingPage() {
+	async submitForPreview(): Promise< void > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.click();
+
+		return this.page
+			.locator(
+				'[aria-label="Editor publish"] >> text=Submit For Review'
+			)
+			.first()
+			.click();
+	}
+
+	async goToPostTypeListingPage(): Promise< Response > {
 		return this.page.goto(
 			`/wp-admin/edit.php?post_type=${ this.postType }`
 		);
-	}
-
-	async gotToPreviewPage() {
-		return this.page.goto( await this.getPreviewURL() );
 	}
 }
 
