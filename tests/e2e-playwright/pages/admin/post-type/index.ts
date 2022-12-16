@@ -55,12 +55,6 @@ export default class PostType {
 		return new QueryLoop( this.queryLoopPatternSelection, this.page );
 	}
 
-	async getPreviewURL(): Promise< string > {
-		const params = new URL( await this.page.url() ).searchParams;
-
-		return `/?page_id=${ params.get( 'post' ) }`;
-	}
-
 	async goToPreview(): Promise< Page > {
 		await this.page.locator( 'button:has-text("Preview")' ).first().click();
 
@@ -70,6 +64,14 @@ export default class PostType {
 		] );
 		await previewPage.waitForLoadState();
 		return previewPage;
+	}
+
+	async viewPage(): Promise< Page > {
+		await this.page
+			.locator( '[aria-label="Editor publish"]' )
+			.locator( 'text=View Page' )
+			.click();
+		return this.page;
 	}
 
 	async publish(): Promise< void > {
