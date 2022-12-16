@@ -128,6 +128,7 @@ class Sensei_Course_List_Block_Patterns {
 										<!-- wp:post-excerpt {"textAlign":"left","lock":{"move": true}} /-->
 
 										<!-- wp:sensei-lms/course-overview /-->
+										<!-- wp:sensei-certificates/view-certificate-link /-->
 
 										<!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
 
