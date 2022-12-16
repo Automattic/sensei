@@ -31,13 +31,6 @@ const isStickySidebar = () =>
 	);
 
 /**
- * Sidebar margin top.
- *
- * @member {number}
- */
-let sidebarMarginTop = 0;
-
-/**
  * The sidebar DOM element.
  *
  * @member {HTMLElement}
@@ -89,10 +82,8 @@ function preparestickySidebar() {
 		sidebar.style.transition = 'none';
 		sidebar.style.position = 'fixed';
 		sidebar.parentElement.append( sidebarPlaceholder );
+		sidebar.style.marginTop = '0';
 	}
-	sidebarMarginTop = sidebar.style.marginTop
-		? parseInt( sidebar.style.marginTop, 10 )
-		: 0;
 	const sidebarRect = sidebarPlaceholder.getBoundingClientRect();
 	sidebar.style.top = `${ sidebarRect.top }px`;
 	sidebar.style.left = `${ sidebarRect.left }px`;
@@ -131,8 +122,7 @@ function updateSidebarPosition( initialPosition = false ) {
 	const sidebarHeight = sidebarRect.bottom - sidebarRect.top;
 	const sidebarIsTallerThanViewport =
 		sidebarHeight >
-		window.innerHeight -
-			( headerRect.bottom + sidebarMarginTop + SIDEBAR_BOTTOM_MARGIN );
+		window.innerHeight - ( headerRect.bottom + SIDEBAR_BOTTOM_MARGIN );
 	let sidebarNewTop = sidebarPlaceholderRect.top;
 
 	// If the sidebar is very tall and does not fit into the viewport vertically
@@ -174,7 +164,7 @@ function updateSidebarPosition( initialPosition = false ) {
 
 	// Need to subtract the sidebar top margin because fixed positioned elements
 	// are pushed down by css top margin.
-	sidebar.style.top = `${ sidebarNewTop - sidebarMarginTop }px`;
+	sidebar.style.top = `${ sidebarNewTop }px`;
 }
 
 /**
