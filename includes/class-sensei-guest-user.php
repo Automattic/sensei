@@ -84,7 +84,6 @@ class Sensei_Guest_User {
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
-
 		$this->create_guest_student_role_if_not_exists();
 	}
 
@@ -162,6 +161,51 @@ class Sensei_Guest_User {
 		) {
 			wp_set_current_user( 0 );
 		}
+	}
+
+	/**
+	 * Initializes the backend and admin actions for Guest users.
+	 *
+	 * @since $$next-version$$
+	 */
+	public static function init_guest_user_admin() {
+		add_filter( 'editable_roles', [ static::class, 'remove_guest_student_role' ], 11 );
+
+		add_action( 'pre_user_query', [ static::class, 'remove_guest_users' ], 11 );
+	}
+
+	/**
+	 * Remove Guest Student role from showing up Settings.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 *  @param array $roles List of roles.
+	 */
+	public static function remove_guest_student_role( $roles ) {
+		unset( $roles['guest_student'] );
+		return $roles;
+	}
+
+	/**
+	 * Remove guest users from user queries.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 *  @param WP_User_Query $query The user query.
+	 */
+	public static function remove_guest_users( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_where = str_replace(
+			'WHERE 1=1',
+			"WHERE 1=1 AND {$wpdb->users}.ID IN (
+              SELECT {$wpdb->usermeta}.user_id FROM $wpdb->usermeta
+              WHERE {$wpdb->usermeta}.meta_key = '{$wpdb->prefix}capabilities'
+              AND {$wpdb->usermeta}.meta_value NOT LIKE '%guest_student%' )",
+			$query->query_where
+		);
 	}
 
 	/**
