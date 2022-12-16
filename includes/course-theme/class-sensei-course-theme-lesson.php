@@ -93,6 +93,10 @@ class Sensei_Course_Theme_Lesson {
 		}
 
 		$quiz_permalink = Sensei()->lesson->get_quiz_permalink( $lesson_id );
+		// Don't show notice if this is the quiz page.
+		if ( get_permalink() === $quiz_permalink ) {
+			return;
+		}
 
 		if ( empty( $quiz_permalink ) ) {
 			return;
