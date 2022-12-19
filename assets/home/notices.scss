@@ -5,10 +5,19 @@
 
 		.sensei-notice {
 			margin: 0 0 12px;
-			padding: 10px 16px;
+			padding: 18px 24px;
 
 			&:last-child {
 				margin-bottom: 0;
+			}
+
+			&--is-hidden {
+				display: none;
+			}
+
+			&__icon {
+				margin-top: 0;
+				align-self: center;
 			}
 
 			&__wrapper {
@@ -27,6 +36,19 @@
 					height: 100%;
 					white-space: nowrap;
 				}
+			}
+
+			.button-secondary {
+				color: #155E65;
+				border-color: #43AF99;
+			}
+
+			.button {
+				margin-left: 20px;
+			}
+
+			.notice-dismiss {
+				margin-left: 18px;
 			}
 		}
 	}

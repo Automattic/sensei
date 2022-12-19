@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class for testing Sensei_Utils class.
+ *
+ * @group utils
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
+ */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
@@ -290,6 +297,29 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
+	}
+
+	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_rest_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_rest_request );
 	}
 
 	/**

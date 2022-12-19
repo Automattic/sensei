@@ -420,9 +420,6 @@ class Sensei_Emails {
 			$email->trigger( $message_id );
 
 			sensei_log_event( 'email_send', [ 'type' => $email_type ] );
-		} else {
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'send' => 'complete' ) ) ) );
-			exit;
 		}
 	}
 
