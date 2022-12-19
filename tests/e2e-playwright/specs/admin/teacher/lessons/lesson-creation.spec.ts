@@ -7,7 +7,10 @@ import { expect } from '@playwright/test';
 import LessonList from '@e2e/pages/admin/lessons';
 import { test } from './fixture';
 import { CoursePage as FrontEndCoursePage } from '@e2e/pages/frontend/course';
-import { getContextByRole } from '@e2e/helpers/context';
+import {
+	getContextByRole,
+	studentRole as studentContext,
+} from '@e2e/helpers/context';
 
 const { describe } = test;
 
@@ -32,16 +35,15 @@ describe.serial( 'Create Default Lesson', () => {
 		await lessonEdit.setLessonCourse( course.title.rendered );
 
 		await lessonEdit.publish();
-
-		const coursePage = new FrontEndCoursePage(
-			await browser.newPage( {
-				storageState: getContextByRole( 'student' ),
-			} ),
-			course.link
-		);
+		const coursePage = new FrontEndCoursePage( page, course.link );
 		await coursePage.goTo();
 		await coursePage.takeCourse.click();
-		await expect( page.getByText( 'Test Lesson One' ) ).toBeVisible();
+
+		await expect(
+			page
+				.locator( '.sensei-course-theme__main-content' )
+				.getByText( 'Test Lesson One' )
+		).toBeVisible();
 		await expect( page.getByText( 'Test Lesson Content' ) ).toBeVisible();
 	} );
 } );
