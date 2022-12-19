@@ -60,11 +60,17 @@ export class LessonEdit extends PostType {
 	}
 
 	async addLessonContent( content: string ): Promise< LessonEdit > {
-		this.page
+		await this.page
 			.locator(
 				'[aria-label="Empty block; start writing or type forward slash to choose a block"]'
 			)
 			.fill( content );
+
+		return this;
+	}
+
+	async clickSaveDraft(): Promise< LessonEdit > {
+		await this.page.locator( 'text=Save draft' ).click();
 
 		return this;
 	}

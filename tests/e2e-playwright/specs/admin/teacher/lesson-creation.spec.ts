@@ -5,7 +5,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import LessonList from '@e2e/pages/admin/lessons';
+import LessonList, { LessonEdit } from '@e2e/pages/admin/lessons';
 import { adminRole } from '@e2e/helpers/context';
 import { createCourse } from '@e2e/helpers/api';
 
@@ -14,12 +14,12 @@ const { describe, use, beforeAll } = test;
 describe( 'Create Lessons', () => {
 	use( adminRole() );
 
-	// setup: create a coures using API
 	beforeAll( async ( { request } ) => {
-		await createCourse( request, {
+		const courseContent = {
 			title: 'Test Course One',
 			lessons: [],
-		} );
+		};
+		await createCourse( request, courseContent );
 	} );
 
 	test( 'creates a lesson for a course', async ( {
@@ -33,18 +33,31 @@ describe( 'Create Lessons', () => {
 		const lessonEdit = await lessonList.clickNewLesson();
 
 		// close welcome for the first time
+		page.waitForSelector( '[aria-label="Close dialog"]' );
 		await page.locator( '[aria-label="Close dialog"]' ).click();
+
 
 		const wizardModal = await lessonEdit.wizardModal;
 		await wizardModal.input.fill( 'Test Lesson One' );
 		await wizardModal.continueButton.click();
 		await wizardModal.startWithDefaultLayoutButton.click();
 
+		await page.pause();
+
 		await lessonEdit.addLessonContent( 'Test Lesson Content' );
 
-		// close welcome dialog for the second time
-		await page.locator( '[aria-label="Close dialog"]' ).click();
+		// const selectCourseMetabox = page.locator( '#lesson-course' );
+		await page.getByRole('region', { name: 'Editor settings' }).getByRole('button', { name: 'Lesson' }).click();
+		await page.getByRole('textbox', { name: 'None' }).click();
+		await page.getByRole('option', { name: 'Test Course One' }).click();
 
+
+		await page.pause();
+
+		// close welcome dialog for the second time
+		// await page.locator( '[aria-label="Close dialog"]' ).click();
+
+		await lessonEdit.clickSaveDraft()
 		await lessonEdit.clickPublish();
 
 		const previewPage = await lessonEdit.clickViewLesson();
