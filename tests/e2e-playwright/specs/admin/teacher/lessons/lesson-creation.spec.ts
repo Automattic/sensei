@@ -6,10 +6,11 @@ import { expect } from '@playwright/test';
 
 import LessonList from '@e2e/pages/admin/lessons';
 import { test } from './fixture';
+import { CoursePage as FrontEndCoursePage } from '@e2e/pages/frontend/course';
 
 const { describe } = test;
 
-describe( 'Create Lessons', () => {
+describe.serial( 'Create Default Lesson', () => {
 	test( 'creates a lesson for a course', async ( {
 		page,
 		approvedCourse: course,
@@ -28,9 +29,13 @@ describe( 'Create Lessons', () => {
 		await lessonEdit.addLessonContent( 'Test Lesson Content' );
 		await lessonEdit.setLessonCourse( course.title.rendered );
 
-		await lessonEdit.clickPublish();
+		await lessonEdit.publish();
 
-		await page.goto( course.link );
+		const coursePage = new FrontEndCoursePage( page, course.link );
+		await coursePage.goTo();
+		await coursePage.takeCourse.click();
+
 		await expect( page.getByText( 'Test Lesson One' ) ).toBeVisible();
+		await expect( page.getByText( 'Test Lesson Content' ) ).toBeVisible();
 	} );
 } );

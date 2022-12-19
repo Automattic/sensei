@@ -78,7 +78,6 @@ export class LessonEdit extends PostType {
 			.getByRole( 'region', { name: 'Editor settings' } )
 			.getByRole( 'button', { name: 'Lesson' } )
 			.click();
-		await this.page.pause();
 		await this.page.getByRole( 'textbox', { name: 'None' } ).click();
 		await this.page.getByRole( 'option', { name: courseTitle } ).click();
 
@@ -91,16 +90,15 @@ export class LessonEdit extends PostType {
 		return this;
 	}
 
-	async clickPublish(): Promise< LessonEdit > {
+	 async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
 			.click();
+
 		await this.page
 			.locator( '[aria-label="Editor publish"] >> text=Publish' )
 			.first()
 			.click();
-
-		return this;
 	}
 
 	async clickViewLesson(): Promise< Page > {
