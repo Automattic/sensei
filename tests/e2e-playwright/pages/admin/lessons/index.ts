@@ -8,11 +8,11 @@ import type { Locator, Page } from '@playwright/test';
  */
 import PostType from '@e2e/pages/admin/post-type';
 
-export default class LessonList extends PostType {
+export default class LessonList {
 	private readonly newLesson: Locator;
+	postType = 'lesson';
 
-	constructor( page: Page ) {
-		super( page, 'lesson' );
+	constructor( private page: Page ) {
 		this.newLesson = page.locator( 'text=New Lesson' );
 	}
 
@@ -21,13 +21,18 @@ export default class LessonList extends PostType {
 
 		return new LessonEdit( this.page );
 	}
+
+	async goTo(): Promise< void > {
+		await this.page.goto(
+			`/wp-admin/edit.php?post_type=${ this.postType }`
+		);
+	}
 }
 
 class WizardModal {
 	private readonly wizard: Locator;
 	private readonly form: Locator;
-	public readonly input: Locator;
-	public readonly textArea: Locator;
+	public readonly lessonTitle: Locator;
 	public readonly continueButton: Locator;
 	public readonly continueWithFreeButton: Locator;
 	public readonly startWithDefaultLayoutButton: Locator;
@@ -35,8 +40,7 @@ class WizardModal {
 	constructor( locator: Locator ) {
 		this.wizard = locator;
 		this.form = this.wizard.locator( '.sensei-editor-wizard-step__form' );
-		this.input = this.form.locator( 'input' ).first();
-		this.textArea = this.form.locator( 'textarea' ).first();
+		this.lessonTitle = this.form.locator( 'input' ).first();
 		this.continueButton = this.wizard.locator(
 			'button:has-text("Continue")'
 		);
@@ -74,8 +78,10 @@ export class LessonEdit extends PostType {
 			.getByRole( 'region', { name: 'Editor settings' } )
 			.getByRole( 'button', { name: 'Lesson' } )
 			.click();
+		await this.page.pause();
 		await this.page.getByRole( 'textbox', { name: 'None' } ).click();
 		await this.page.getByRole( 'option', { name: courseTitle } ).click();
+
 		return this;
 	}
 

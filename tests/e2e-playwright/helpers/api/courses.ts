@@ -12,6 +12,7 @@ export type Course = {
 	categoryIds?: Array< string | number >;
 	content?: string;
 	status?: string;
+	author?: number;
 };
 
 type CourseCategory = {
@@ -95,6 +96,17 @@ export const createCourse = async (
 		lessons: createdLessons,
 	};
 };
+
+export const approveCourse = async (
+	context: APIRequestContext,
+	courseId: number
+): Promise< void > => {
+	const api = await createApiContext( context );
+	await api.patch( `/wp-json/wp/v2/courses/${ courseId }`, {
+		status: 'publish',
+	} );
+};
+
 const updateLesson = async (
 	context: APIRequestContext,
 	lesson: Lesson
