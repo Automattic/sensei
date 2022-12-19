@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
-import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -30,13 +29,19 @@ const innerBlocksTemplate = [
  * Edit course actions block component.
  *
  * @param {Object} props
- * @param {Object} props.className        Block className.
- * @param {Object} props.context          Block context.
- * @param {Object} props.context.postType Post type.
+ * @param {Object} props.className               Block className.
+ * @param {Object} props.context                 Block context.
+ * @param {Object} props.context.postType        Post type.
+ * @param {Object} props.attributes              Block attributes.
+ * @param {string} props.attributes.courseStatus The course status for the preview.
+ * @param {Object} props.setAttributes           Block setAttributes function.
  */
-const CourseActionsEdit = ( { className, context: { postType } } ) => {
-	const [ courseStatus, setCourseStatus ] = useState( null );
-
+const CourseActionsEdit = ( {
+	className,
+	context: { postType },
+	attributes: { courseStatus },
+	setAttributes,
+} ) => {
 	if ( 'course' !== postType ) {
 		return (
 			<InvalidUsageError
@@ -47,6 +52,10 @@ const CourseActionsEdit = ( { className, context: { postType } } ) => {
 			/>
 		);
 	}
+
+	const setCourseStatus = ( newCourseStatus ) => {
+		setAttributes( { courseStatus: newCourseStatus } );
+	};
 
 	return (
 		<>

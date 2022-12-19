@@ -2,11 +2,15 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { BlockControls } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import { createButtonBlockType } from '../button';
+import CourseStatusToolbar, {
+	useSetCourseStatusOnCourseActionsBlock,
+} from '../course-actions-block/course-status-toolbar';
 
 /**
  * Take course button block.
@@ -33,6 +37,7 @@ export default createButtonBlockType( {
 				default: __( 'Take Course', 'sensei-lms' ),
 			},
 		},
+		usesContext: [ 'postType', 'sensei-lms/course-actions-course-status' ],
 	},
 	invalidUsage: {
 		message: __(
@@ -40,5 +45,31 @@ export default createButtonBlockType( {
 			'sensei-lms'
 		),
 		validPostTypes: [ 'course' ],
+	},
+	EditWrapper: ( { children, context, clientId } ) => {
+		const setCourseStatus = useSetCourseStatusOnCourseActionsBlock(
+			clientId
+		);
+
+		const hasCourseActionsCourseStatus =
+			'sensei-lms/course-actions-course-status' in context;
+
+		return (
+			<>
+				{ hasCourseActionsCourseStatus && (
+					<BlockControls>
+						<CourseStatusToolbar
+							courseStatus={
+								context[
+									'sensei-lms/course-actions-course-status'
+								]
+							}
+							setCourseStatus={ setCourseStatus }
+						/>
+					</BlockControls>
+				) }
+				{ children }
+			</>
+		);
 	},
 } );

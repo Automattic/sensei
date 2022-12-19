@@ -15,5 +15,13 @@
 	"supports": {
 		"html": false
 	},
-	"usesContext": [ "postType" ]
+    "attributes": {
+        "courseStatus": {
+            "type": "string"
+        }
+    },
+	"usesContext": [ "postType" ],
+    "providesContext": {
+        "sensei-lms/course-actions-course-status": "courseStatus"
+    }
 }
