@@ -69,6 +69,16 @@ export class LessonEdit extends PostType {
 		return this;
 	}
 
+	async setLessonCourse( courseTitle: string ): Promise< LessonEdit > {
+		await this.page
+			.getByRole( 'region', { name: 'Editor settings' } )
+			.getByRole( 'button', { name: 'Lesson' } )
+			.click();
+		await this.page.getByRole( 'textbox', { name: 'None' } ).click();
+		await this.page.getByRole( 'option', { name: courseTitle } ).click();
+		return this;
+	}
+
 	async clickSaveDraft(): Promise< LessonEdit > {
 		await this.page.locator( 'text=Save draft' ).click();
 
