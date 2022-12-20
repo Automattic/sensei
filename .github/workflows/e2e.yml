@@ -37,7 +37,7 @@ jobs:
               run: npm run wp-env start 
 
             - name: Store wp-env logs
-              run: npm run wp-env logs tests --watch > log.txt 
+              run: npm run wp-env logs tests --watch > log.txt &
 
             - name: Run Playwright tests with @setup annotation
               run: CI=true npm run test:e2e -- --grep @setup
