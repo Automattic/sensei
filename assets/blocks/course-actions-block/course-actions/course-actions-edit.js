@@ -9,6 +9,12 @@ import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
  */
 import InvalidUsageError from '../../../shared/components/invalid-usage';
 import CourseStatusToolbar from '../course-status-toolbar';
+import CourseStatusOptions from '../course-status-options';
+
+/**
+ * External dependencies
+ */
+import classnames from 'classnames';
 
 const innerBlocksTemplate = [
 	[
@@ -56,6 +62,13 @@ const CourseActionsEdit = ( {
 	const setCourseStatus = ( newCourseStatus ) => {
 		setAttributes( { courseStatus: newCourseStatus } );
 	};
+
+	// Set the default course status.
+	if ( ! courseStatus ) {
+		setCourseStatus( CourseStatusOptions[ 0 ].value );
+	}
+
+	className = classnames( className, `is-status-${ courseStatus }` );
 
 	return (
 		<>

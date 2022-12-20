@@ -2,29 +2,14 @@
  * WordPress dependencies
  */
 import { Toolbar } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
+import CourseStatusOptions from './course-status-options';
 import ToolbarDropdown from '../editor-components/toolbar-dropdown';
 import { useCallback } from 'react';
-
-const toolbarOptions = [
-	{
-		label: __( 'Enrolled', 'sensei-lms' ),
-		value: 'enrolled',
-	},
-	{
-		label: __( 'In Progress', 'sensei-lms' ),
-		value: 'in-progress',
-	},
-	{
-		label: __( 'Completed', 'sensei-lms' ),
-		value: 'completed',
-	},
-];
 
 /**
  * A hook for child blocks to set the parent Course Actions block's course status.
@@ -61,14 +46,10 @@ export const useSetCourseStatusOnCourseActionsBlock = ( clientId ) => {
  * @param {Function} props.setCourseStatus Function to set the course status.
  */
 const CourseStatusToolbar = ( { courseStatus, setCourseStatus } ) => {
-	if ( ! courseStatus ) {
-		courseStatus = toolbarOptions[ 0 ].value;
-	}
-
 	return (
 		<Toolbar>
 			<ToolbarDropdown
-				options={ toolbarOptions }
+				options={ CourseStatusOptions }
 				optionsLabel="Course Status"
 				value={ courseStatus }
 				onChange={ setCourseStatus }
