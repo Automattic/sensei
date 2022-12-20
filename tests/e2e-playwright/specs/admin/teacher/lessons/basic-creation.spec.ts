@@ -32,6 +32,8 @@ describe.serial( 'Create Default Lesson', () => {
 		await lessonEdit.publish();
 		const coursePage = new FrontEndCoursePage( page, course.link );
 		await coursePage.goTo();
+
+		await page.waitForSelector( 'text="Take Course"' );
 		await coursePage.takeCourse.click();
 
 		await expect(
