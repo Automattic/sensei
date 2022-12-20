@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import InvalidUsageError from '../../../shared/components/invalid-usage';
 import CourseStatusToolbar from '../course-status-toolbar';
 import CourseStatusOptions from '../course-status-options';
+import CourseStatusContext from '../course-status-context';
 
 /**
  * External dependencies
@@ -35,19 +37,15 @@ const innerBlocksTemplate = [
  * Edit course actions block component.
  *
  * @param {Object} props
- * @param {Object} props.className               Block className.
- * @param {Object} props.context                 Block context.
- * @param {Object} props.context.postType        Post type.
- * @param {Object} props.attributes              Block attributes.
- * @param {string} props.attributes.courseStatus The course status for the preview.
- * @param {Object} props.setAttributes           Block setAttributes function.
+ * @param {Object} props.className        Block className.
+ * @param {Object} props.context          Block context.
+ * @param {Object} props.context.postType Post type.
  */
-const CourseActionsEdit = ( {
-	className,
-	context: { postType },
-	attributes: { courseStatus },
-	setAttributes,
-} ) => {
+const CourseActionsEdit = ( { className, context: { postType } } ) => {
+	const [ courseStatus, setCourseStatus ] = useState(
+		CourseStatusOptions[ 0 ].value
+	);
+
 	if ( 'course' !== postType ) {
 		return (
 			<InvalidUsageError
@@ -59,19 +57,13 @@ const CourseActionsEdit = ( {
 		);
 	}
 
-	const setCourseStatus = ( newCourseStatus ) => {
-		setAttributes( { courseStatus: newCourseStatus } );
-	};
-
-	// Set the default course status.
-	if ( ! courseStatus ) {
-		setCourseStatus( CourseStatusOptions[ 0 ].value );
-	}
-
+	// Set class name for course status.
 	className = classnames( className, `is-status-${ courseStatus }` );
 
 	return (
-		<>
+		<CourseStatusContext.Provider
+			value={ { courseStatus, setCourseStatus } }
+		>
 			<div className={ className }>
 				<InnerBlocks
 					allowedBlocks={ [
@@ -89,7 +81,7 @@ const CourseActionsEdit = ( {
 					setCourseStatus={ setCourseStatus }
 				/>
 			</BlockControls>
-		</>
+		</CourseStatusContext.Provider>
 	);
 };
 

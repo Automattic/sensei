@@ -3,14 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 import { BlockControls } from '@wordpress/block-editor';
+import { useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { createButtonBlockType } from '../button';
-import CourseStatusToolbar, {
-	useSetCourseStatusOnCourseActionsBlock,
-} from '../course-actions-block/course-status-toolbar';
+import CourseStatusToolbar from '../course-actions-block/course-status-toolbar';
+import CourseStatusContext from '../course-actions-block/course-status-context';
 
 /**
  * Take course button block.
@@ -37,7 +37,6 @@ export default createButtonBlockType( {
 				default: __( 'Take Course', 'sensei-lms' ),
 			},
 		},
-		usesContext: [ 'postType', 'sensei-lms/course-actions-course-status' ],
 	},
 	invalidUsage: {
 		message: __(
@@ -46,24 +45,17 @@ export default createButtonBlockType( {
 		),
 		validPostTypes: [ 'course' ],
 	},
-	EditWrapper: ( { children, context, clientId } ) => {
-		const setCourseStatus = useSetCourseStatusOnCourseActionsBlock(
-			clientId
+	EditWrapper: ( { children } ) => {
+		const { courseStatus, setCourseStatus } = useContext(
+			CourseStatusContext
 		);
-
-		const hasCourseActionsCourseStatus =
-			'sensei-lms/course-actions-course-status' in context;
 
 		return (
 			<>
-				{ hasCourseActionsCourseStatus && (
+				{ !! courseStatus && (
 					<BlockControls>
 						<CourseStatusToolbar
-							courseStatus={
-								context[
-									'sensei-lms/course-actions-course-status'
-								]
-							}
+							courseStatus={ courseStatus }
 							setCourseStatus={ setCourseStatus }
 						/>
 					</BlockControls>
