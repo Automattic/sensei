@@ -46,17 +46,15 @@ export default createButtonBlockType( {
 		validPostTypes: [ 'course' ],
 	},
 	EditWrapper: ( { children } ) => {
-		const { courseStatus, setCourseStatus } = useContext(
-			CourseStatusContext
-		);
+		const context = useContext( CourseStatusContext );
 
 		return (
 			<>
-				{ !! courseStatus && (
+				{ context?.courseStatus && (
 					<BlockControls>
 						<CourseStatusToolbar
-							courseStatus={ courseStatus }
-							setCourseStatus={ setCourseStatus }
+							courseStatus={ context.courseStatus }
+							setCourseStatus={ context.setCourseStatus }
 						/>
 					</BlockControls>
 				) }
