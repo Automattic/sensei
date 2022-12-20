@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, useContext } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
  */
 import SingleLineInput from '../../../shared/blocks/single-line-input';
 import { OptionToggle } from './option-toggle';
+import { QuestionContext } from '../question-block/question-context';
 
 /**
  * Answer option in a multiple choice type question block.
@@ -34,6 +35,8 @@ const MultipleChoiceAnswerOption = ( props ) => {
 		isCheckbox,
 		...inputProps
 	} = props;
+	const questionContext = useContext( QuestionContext );
+	const { grade } = questionContext.options;
 
 	const ref = useRef( null );
 
@@ -59,7 +62,7 @@ const MultipleChoiceAnswerOption = ( props ) => {
 				value={ label }
 				{ ...inputProps }
 			/>
-			{ hasSelected && (
+			{ hasSelected && grade > 0 && (
 				<div className="sensei-lms-question-block__answer--multiple-choice__toggle__wrapper">
 					<Button
 						isPrimary

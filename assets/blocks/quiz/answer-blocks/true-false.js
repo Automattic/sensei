@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { OptionToggle } from './option-toggle';
+import { useContext } from '@wordpress/element';
+import { QuestionContext } from '../question-block/question-context';
 
 /**
  * Answer component for question blocks with true/false type.
@@ -27,6 +29,8 @@ const TrueFalseAnswer = ( {
 		{ label: __( 'True', 'sensei-lms' ), value: true },
 		{ label: __( 'False', 'sensei-lms' ), value: false },
 	];
+	const questionContext = useContext( QuestionContext );
+	const { grade } = questionContext.options;
 	return (
 		<ul className="sensei-lms-question-block__answer sensei-lms-question-block__answer--true-false">
 			{ options.map( ( { label, value } ) => (
@@ -37,7 +41,7 @@ const TrueFalseAnswer = ( {
 					<OptionToggle isChecked={ correct === value }>
 						<span>{ label }</span>
 					</OptionToggle>
-					{ hasSelected && (
+					{ hasSelected && grade > 0 && (
 						<div className="sensei-lms-question-block__answer--multiple-choice__toggle__wrapper">
 							<Button
 								isPrimary
