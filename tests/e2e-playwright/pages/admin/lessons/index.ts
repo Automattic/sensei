@@ -35,7 +35,10 @@ export class LessonEdit extends PostType {
 			.getByRole( 'button', { name: 'Lesson' } )
 			.click();
 		await this.page.getByRole( 'textbox', { name: 'None' } ).click();
-		await this.page.getByRole( 'option', { name: courseTitle } ).click();
+		await this.page
+			.getByRole( 'option', { name: courseTitle } )
+			.first()
+			.click();
 
 		return this;
 	}

@@ -7,7 +7,7 @@ import { expect } from '@playwright/test';
 import { LessonEdit } from '@e2e/pages/admin/lessons';
 import { test } from './fixture';
 import { CoursePage as FrontEndCoursePage } from '@e2e/pages/frontend/course';
-import { Question } from '@e2e/pages/admin/lessons/fragments/layouts/quiz';
+import { Question } from '@e2e/pages/admin/lessons/blocks/quiz';
 import QuizLayout from '@e2e/pages/admin/lessons/blocks/quiz';
 
 const { describe } = test;

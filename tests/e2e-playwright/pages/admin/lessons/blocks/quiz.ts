@@ -26,7 +26,6 @@ export default class QuizLayout {
 				.fill( answer.title );
 		}
 
-
 		// await block.getByRole('document', { name: 'Block: Description' }).getByRole('document', { name: 'Empty block; start writing or type forward slash to choose a block' }).click();
 
 		// await block

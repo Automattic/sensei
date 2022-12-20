@@ -1,8 +1,5 @@
 import { Locator } from '@playwright/test';
-import {
-	getFragmentByLayoutName,
-	LessonLayoutOptions,
-} from './blocks';
+// import { getFragmentByLayoutName, LessonLayoutOptions } from './blocks';
 
 export class WizardModal {
 	private readonly wizard: Locator;

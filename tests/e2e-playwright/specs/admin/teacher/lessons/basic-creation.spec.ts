@@ -4,7 +4,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from '@playwright/test';
 
-import LessonList from "@e2e/pages/admin/LessonList";
+import LessonList from '@e2e/pages/admin/lessons/list';
 import { test } from './fixture';
 import { CoursePage as FrontEndCoursePage } from '@e2e/pages/frontend/course';
 
