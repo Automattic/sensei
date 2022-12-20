@@ -23,7 +23,11 @@ export const cleanAll = (): Buffer => {
  * - Set permalink structure.
  */
 export const configureSite = (): void => {
-	[ `wp rewrite structure /%postname%/`, `wp rewrite flush` ].forEach( cli );
+	[
+		`wp rewrite structure /%postname%/`,
+		`wp rewrite flush`,
+		`wp theme activate course`,
+	].forEach( cli );
 };
 
 /**
