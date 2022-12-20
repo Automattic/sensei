@@ -50,7 +50,7 @@ export class LessonEdit extends PostType {
 	}
 
 	async publish(): Promise< void > {
-		await this.page.waitForSelector( 
+		await this.page.waitForSelector(
 			'[aria-label="Editor top bar"] >> text=Publish'
 		);
 		await this.page
