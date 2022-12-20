@@ -535,4 +535,29 @@ class Sensei_Data_Port_Utilities {
 
 		return $module;
 	}
+
+	/**
+	 * Get the ID of the imported demo course.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return int|null
+	 */
+	public static function get_demo_course_id(): ?int {
+		$query = new WP_Query(
+			[
+				'posts_per_page' => 1,
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+				'name'           => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+			]
+		);
+
+		if ( ! $query->found_posts ) {
+			return null;
+		}
+
+		return $query->get_posts()[0];
+	}
 }
