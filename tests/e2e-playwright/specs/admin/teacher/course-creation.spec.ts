@@ -54,9 +54,7 @@ describe.parallel( 'Create Courses', () => {
 
 		const previewPage = await coursesPage.goToPreview();
 
-		await expect(
-			previewPage.locator( 'h1:has-text("Test Create Course")' )
-		).toBeVisible();
+		await page.waitForSelector( 'h1:has-text("Test Create Course")' );
 		await expect( previewPage.locator( 'text="Module 1"' ) ).toBeVisible();
 		await expect(
 			previewPage.locator( 'text="Lesson 1 in Module 1"' )
