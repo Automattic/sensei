@@ -1,7 +1,7 @@
-name: E2E Playwright
-
-on: pull_request
-
+name: E2E
+on:
+    pull_request:
+    workflow_call:
 env:
     CI: true
 

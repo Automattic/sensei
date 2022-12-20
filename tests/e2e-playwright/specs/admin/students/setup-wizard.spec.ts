@@ -1,22 +1,19 @@
 /**
  * External dependencies
  */
-const { test, expect } = require( '@playwright/test' );
+import { test, expect } from '@playwright/test';
 
-/**
- * Internal dependencies
- */
-const { getContextByRole } = require( '../../../helpers/context' );
-const PluginsPage = require( '../../../pages/admin/plugins/plugins' );
+import PluginsPage from '@e2e/pages/admin/plugins/plugins';
+import { adminRole } from '@e2e/helpers/context';
 
 /**
  * This test suit is installing and installing the plugin to test some scenarios and
  * it is causing flacky tests when other tests are try to use resources while the plugin
  * is still not installed again. The solution is add the @setup annotation and run them in separately on your CI.
  *
- **/
+ */
 test.describe.serial( 'Setup Wizard @setup', () => {
-	test.use( { storageState: getContextByRole( 'admin' ) } );
+	test.use( adminRole() );
 	let pluginsPage;
 	let page;
 	test.beforeAll( async ( { browser } ) => {
@@ -27,23 +24,31 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 
 	test( 'opens when first activating the Sensei LMS plugin', async () => {
 		await pluginsPage.activatePlugin( 'sensei-lms', true );
-		await expect( page.url() ).toMatch( 'admin.php?page=sensei_setup_wizard' );
+		await expect( page.url() ).toMatch(
+			'admin.php?page=sensei_setup_wizard'
+		);
 	} );
 
 	test( 'shows a notice to run the Setup Wizard', async () => {
 		await pluginsPage.goToPlugins();
 		await page.locator( `text=Run the Setup Wizard` ).click();
-		await expect( page.url() ).toMatch( 'admin.php?page=sensei_setup_wizard' );
+		await expect( page.url() ).toMatch(
+			'admin.php?page=sensei_setup_wizard'
+		);
 	} );
 
 	test.describe.serial( 'Welcome step', () => {
 		test( 'opens on first launch', async () => {
-			await expect( page.locator( 'text=Welcome to Sensei LMS' ) ).toHaveCount( 1 );
+			await expect(
+				page.locator( 'text=Welcome to Sensei LMS' )
+			).toHaveCount( 1 );
 		} );
 
 		test( 'marks welcome step done and goes to purpose step', async () => {
 			await page.locator( `text=Get started` ).click();
-			await expect( page.locator( 'text=Choose the purpose of your site' ) ).toHaveCount( 1 );
+			await expect(
+				page.locator( 'text=Choose the purpose of your site' )
+			).toHaveCount( 1 );
 		} );
 	} );
 
@@ -56,7 +61,9 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 		} );
 
 		test( 'marks purpose step done and goes to features step', async () => {
-			await expect( page.locator( 'text=Use our default theme' ) ).toHaveCount( 1 );
+			await expect(
+				page.locator( 'text=Use our default theme' )
+			).toHaveCount( 1 );
 		} );
 	} );
 

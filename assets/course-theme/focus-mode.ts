@@ -23,7 +23,7 @@ const restoreFocusModeState = () => {
 	const savedState = window.sessionStorage.getItem( FOCUS_MODE_CLASS );
 	if ( ! savedState ) return;
 	try {
-		const wasActive = JSON.parse( savedState );
+		const wasActive: unknown = JSON.parse( savedState );
 		if ( 'boolean' === typeof wasActive ) {
 			toggleFocusMode( wasActive, true );
 		}
@@ -36,7 +36,7 @@ const restoreFocusModeState = () => {
  * @param {boolean?} on
  * @param {boolean?} restore Whether restoring.
  */
-const toggleFocusMode = ( on, restore ) => {
+const toggleFocusMode = ( on?: boolean, restore?: boolean ): void => {
 	const { classList } = document.body;
 
 	const courseNavigation = document.querySelector(
@@ -46,9 +46,9 @@ const toggleFocusMode = ( on, restore ) => {
 	const next = 'undefined' === typeof on ? ! isActive : on;
 
 	if ( ! next ) {
-		courseNavigation.classList.remove( HIDDEN_CLASS_NAME );
+		courseNavigation?.classList.remove( HIDDEN_CLASS_NAME );
 	} else if ( restore ) {
-		courseNavigation.classList.add( HIDDEN_CLASS_NAME );
+		courseNavigation?.classList.add( HIDDEN_CLASS_NAME );
 	}
 
 	classList.toggle( FOCUS_MODE_CLASS, next );
@@ -63,12 +63,12 @@ window.addEventListener( 'DOMContentLoaded', () => {
 		.querySelector( '.sensei-course-theme__sidebar' )
 		?.addEventListener( 'transitionend', ( e ) => {
 			if (
-				'left' === e.propertyName &&
+				'left' === ( e as TransitionEvent ).propertyName &&
 				document.body.classList.contains( FOCUS_MODE_CLASS )
 			) {
 				document
 					.querySelector( '.sensei-course-theme__sidebar' )
-					.classList.add( HIDDEN_CLASS_NAME );
+					?.classList.add( HIDDEN_CLASS_NAME );
 			}
 		} );
 } );

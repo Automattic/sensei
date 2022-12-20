@@ -76,6 +76,9 @@ class Sensei_Messages {
 		add_filter( 'user_has_cap', [ $this, 'user_messages_cap_check' ], 10, 3 );
 		add_action( 'load-edit-comments.php', [ $this, 'check_permissions_edit_comments' ] );
 		add_action( 'comment_form', [ $this, 'add_nonce_to_comment_form' ] );
+
+		// Redirect and show a success notice.
+		add_action( 'sensei_new_private_message', [ $this, 'show_success_notice' ], 999 );
 	}
 
 	public function only_show_messages_to_owner( $query ) {
@@ -373,11 +376,7 @@ class Sensei_Messages {
 			? ''
 			: sanitize_text_field( wp_unslash( $_POST['contact_message'] ) );
 
-		$message_id = $this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
-
-		if ( $message_id ) {
-			do_action( 'sensei_new_private_message', $message_id );
-		}
+		$this->save_new_message_post( $current_user->ID, $post->post_author, $message, $post->ID );
 	}
 
 	public function message_reply_received( $comment_id = 0 ) {
@@ -522,6 +521,16 @@ class Sensei_Messages {
 				$post = get_post( $post_id );
 				add_post_meta( $message_id, '_posttype', $post->post_type );
 				add_post_meta( $message_id, '_post', $post->ID );
+
+				/**
+				 * Fires when a new private message is sent.
+				 *
+				 * @since 1.8.0
+				 * @hook  sensei_new_private_message
+				 *
+				 * @param {int} $message_id The message ID.
+				 */
+				do_action( 'sensei_new_private_message', $message_id );
 
 			} else {
 
@@ -993,6 +1002,20 @@ class Sensei_Messages {
 				</a>
 			</p>
 			<?php
+		}
+	}
+
+	/**
+	 * Redirect to a URL that will handle showing a success notice.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 */
+	public function show_success_notice(): void {
+		if ( ! Sensei_Utils::is_rest_request() ) {
+			wp_safe_redirect( esc_url_raw( add_query_arg( [ 'send' => 'complete' ] ) ) );
+			exit;
 		}
 	}
 
