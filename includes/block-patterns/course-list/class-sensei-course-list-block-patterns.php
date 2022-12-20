@@ -33,6 +33,25 @@ class Sensei_Course_List_Block_Patterns {
 				<!-- wp:query-pagination-next {"fontSize":"small"} /-->
 			<!-- /wp:query-pagination -->';
 
+		// Get extra links for Course List patterns.
+		$patterns_with_extra_links = [ 'course-list', 'course-grid' ];
+		$course_list_extra_links   = [];
+		foreach ( $patterns_with_extra_links as $pattern ) {
+
+			/**
+			 * Filter to add extra links to a Course List pattern. The added
+			 * links must be a valid rendered block.
+			 *
+			 * @since $$next-version$$
+			 *
+			 * @param array  $course_list_extra_links The extra links.
+			 * @param string $pattern                 The pattern name.
+			 *
+			 * @return array The extra links.
+			 */
+			$course_list_extra_links[ $pattern ] = apply_filters( 'sensei_course_list_block_patterns_extra_links', [], $pattern );
+		}
+
 		$patterns = [
 			'course-list'                 =>
 			[
@@ -67,6 +86,8 @@ class Sensei_Course_List_Block_Patterns {
 													<!-- wp:post-excerpt {"textAlign":"left"} /-->
 
 													<!-- wp:sensei-lms/course-overview /-->
+
+													' . implode( "\n", $course_list_extra_links['course-list'] ) . '
 
 													<!-- wp:sensei-lms/course-progress /-->
 												</div>
@@ -128,6 +149,8 @@ class Sensei_Course_List_Block_Patterns {
 										<!-- wp:post-excerpt {"textAlign":"left","lock":{"move": true}} /-->
 
 										<!-- wp:sensei-lms/course-overview /-->
+
+										' . implode( "\n", $course_list_extra_links['course-list'] ) . '
 
 										<!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
 
@@ -262,15 +285,6 @@ class Sensei_Course_List_Block_Patterns {
 						<!-- /wp:group -->',
 				],
 		];
-
-		/**
-		 * Filter the Sensei Course List block patterns.
-		 *
-		 * @since $$next-version$$
-		 *
-		 * @param array $patterns The patterns.
-		 */
-		$patterns = apply_filters( 'sensei_course_list_block_patterns', $patterns );
 
 		foreach ( $patterns as $key => $pattern ) {
 			register_block_pattern(
