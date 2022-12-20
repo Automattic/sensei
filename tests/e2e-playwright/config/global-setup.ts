@@ -24,7 +24,7 @@ export default async (): Promise< void > => {
 	configureSite();
 
 	return retry( setupDefaultUsers, {
-		delay: 200,
+		delay: 500,
 		factor: 2,
 		maxAttempts: 4,
 	} );
