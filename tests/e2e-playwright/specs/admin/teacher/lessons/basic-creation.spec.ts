@@ -4,20 +4,15 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from '@playwright/test';
 
-import LessonList from '@e2e/pages/admin/lessons';
+import LessonList from "@e2e/pages/admin/LessonList";
 import { test } from './fixture';
 import { CoursePage as FrontEndCoursePage } from '@e2e/pages/frontend/course';
-import {
-	getContextByRole,
-	studentRole as studentContext,
-} from '@e2e/helpers/context';
 
 const { describe } = test;
 
 describe.serial( 'Create Default Lesson', () => {
 	test( 'creates a lesson for a course', async ( {
 		page,
-		browser,
 		approvedCourse: course,
 	} ) => {
 		const lessonList = new LessonList( page );

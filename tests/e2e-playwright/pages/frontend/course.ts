@@ -17,4 +17,8 @@ export class CoursePage {
 	get takeCourse(): Locator {
 		return this.page.locator( `button >> "Take Course"` ).first();
 	}
+
+	get takeQuiz(): Locator {
+		return this.page.getByRole( 'button', { name: 'Take Quiz' } ).nth( 1 );
+	}
 }

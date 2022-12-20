@@ -1,57 +1,13 @@
 /**
  * External dependencies
  */
-import type { Locator, Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
 import PostType from '@e2e/pages/admin/post-type';
-
-export default class LessonList {
-	private readonly newLesson: Locator;
-	postType = 'lesson';
-
-	constructor( private page: Page ) {
-		this.newLesson = page.locator( 'text=New Lesson' );
-	}
-
-	async clickNewLesson(): Promise< LessonEdit > {
-		this.newLesson.click();
-
-		return new LessonEdit( this.page );
-	}
-
-	async goTo(): Promise< void > {
-		await this.page.goto(
-			`/wp-admin/edit.php?post_type=${ this.postType }`
-		);
-	}
-}
-
-class WizardModal {
-	private readonly wizard: Locator;
-	private readonly form: Locator;
-	public readonly lessonTitle: Locator;
-	public readonly continueButton: Locator;
-	public readonly continueWithFreeButton: Locator;
-	public readonly startWithDefaultLayoutButton: Locator;
-
-	constructor( locator: Locator ) {
-		this.wizard = locator;
-		this.form = this.wizard.locator( '.sensei-editor-wizard-step__form' );
-		this.lessonTitle = this.form.locator( 'input' ).first();
-		this.continueButton = this.wizard.locator(
-			'button:has-text("Continue")'
-		);
-		this.continueWithFreeButton = this.wizard.locator(
-			'button:has-text("Continue with Sensei Free")'
-		);
-		this.startWithDefaultLayoutButton = this.wizard.locator(
-			'button:has-text("Start with default layout")'
-		);
-	}
-}
+import { WizardModal } from './wizard';
 
 export class LessonEdit extends PostType {
 	public readonly wizardModal: WizardModal;
@@ -90,7 +46,7 @@ export class LessonEdit extends PostType {
 		return this;
 	}
 
-	 async publish(): Promise< void > {
+	async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
 			.click();

@@ -103,6 +103,10 @@ export default class PostType {
 			`/wp-admin/edit.php?post_type=${ this.postType }`
 		);
 	}
+
+	async getBlock( blockName: string ): Promise< Locator > {
+		return this.page.locator( `div[data-type="${ blockName }"]` );
+	}
 }
 
 module.exports = PostType;
