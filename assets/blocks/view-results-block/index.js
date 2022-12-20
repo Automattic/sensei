@@ -2,11 +2,15 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useContext } from '@wordpress/element';
+import { BlockControls } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import { BlockStyles, createButtonBlockType } from '../button';
+import CourseStatusToolbar from '../course-actions-block/course-status-toolbar';
+import CourseStatusContext from '../course-actions-block/course-status-context';
 
 /**
  * View results button block.
@@ -37,5 +41,24 @@ export default createButtonBlockType( {
 			'sensei-lms'
 		),
 		validPostTypes: [ 'course' ],
+	},
+	EditWrapper: ( { children } ) => {
+		const { courseStatus, setCourseStatus } = useContext(
+			CourseStatusContext
+		);
+
+		return (
+			<>
+				{ !! courseStatus && (
+					<BlockControls>
+						<CourseStatusToolbar
+							courseStatus={ courseStatus }
+							setCourseStatus={ setCourseStatus }
+						/>
+					</BlockControls>
+				) }
+				{ children }
+			</>
+		);
 	},
 } );

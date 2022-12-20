@@ -2,11 +2,15 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { useContext } from '@wordpress/element';
+import { BlockControls } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import { BlockStyles, createButtonBlockType } from '../../button';
+import CourseStatusToolbar from '../course-status-toolbar';
+import CourseStatusContext from '../course-status-context';
 
 /**
  * Continue Course block.
@@ -36,5 +40,24 @@ export default createButtonBlockType( {
 			BlockStyles.Outline,
 			BlockStyles.Link,
 		],
+	},
+	EditWrapper: ( { children } ) => {
+		const { courseStatus, setCourseStatus } = useContext(
+			CourseStatusContext
+		);
+
+		return (
+			<>
+				{ !! courseStatus && (
+					<BlockControls>
+						<CourseStatusToolbar
+							courseStatus={ courseStatus }
+							setCourseStatus={ setCourseStatus }
+						/>
+					</BlockControls>
+				) }
+				{ children }
+			</>
+		);
 	},
 } );
