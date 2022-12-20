@@ -10,7 +10,6 @@ import { chromium } from '@playwright/test';
  */
 import {
 	cleanAll as cleanDatabase,
-	cli,
 	cliAsync,
 	configureSite,
 } from '@e2e/helpers/database';
@@ -50,32 +49,33 @@ const setupDefaultUsers = async (): Promise< void > => {
 };
 
 const createGlobalUsers = async ( users: User[] ): Promise< User[] > => {
-	return Promise.all(
-		users.map( async ( user ) => {
-			const command = [
-				'wp user create',
-				user.username,
-				user.email,
-				user.roles?.length ? `--role=${ user.roles.join( ',' ) }` : '',
-				`--user_pass=${ user.password }`,
-				'--porcelain',
-			].join( ' ' );
-
-			await cliAsync( command );
-			const response = await cliAsync(
-				`wp user get ${ user.username } --format=json`
-			);
-
-			const userDetails = JSON.parse(
-				response
-					.toString()
-					.match( /\{(.*?)\}/ )
-					.at( 0 )
-			);
-			return {
-				...user,
-				id: userDetails.ID,
-			};
-		} )
-	);
+	return Promise.all( users.map( ( user ) => setupUser( user ) ) );
 };
+
+async function setupUser( user: User ) {
+	const command = [
+		'wp user create',
+		user.username,
+		user.email,
+		user.roles?.length ? `--role=${ user.roles.join( ',' ) }` : '',
+		`--user_pass=${ user.password }`,
+		'--porcelain',
+	].join( ' ' );
+
+	await cliAsync( command );
+
+	const response = await cliAsync(
+		`wp user get ${ user.username } --format=json`
+	);
+
+	const userDetails = JSON.parse(
+		response
+			.toString()
+			.match( /\{(.*?)\}/ )
+			.at( 0 )
+	);
+	return {
+		id: userDetails.ID,
+		...user,
+	};
+}
