@@ -1,33 +1,32 @@
+/* eslint-disable no-console */
 /**
  * External dependencies
  */
 import { retry } from '@lifeomic/attempt';
-import { APIRequestContext, chromium } from '@playwright/test';
+import { chromium } from '@playwright/test';
 
 /**
  * Internal dependencies
  */
 import {
 	cleanAll as cleanDatabase,
+	cli,
+	cliAsync,
 	configureSite,
 } from '@e2e/helpers/database';
-import { createUser, User } from '@e2e/helpers/api';
-import { createAdminContext } from '@e2e/helpers/context';
+import { User } from '@e2e/helpers/api';
 import {
 	createUserPreference,
 	setDefaultPreferences,
 } from '@e2e/helpers/preferences';
 import { GLOBAL_USERS } from '@e2e/factories/users';
+import { createAdminContext } from '@e2e/helpers/context';
 
 export default async (): Promise< void > => {
 	cleanDatabase();
 	configureSite();
 
-	return retry( setupDefaultUsers, {
-		delay: 500,
-		factor: 2,
-		maxAttempts: 4,
-	} );
+	await setupDefaultUsers();
 };
 
 const setupDefaultUsers = async (): Promise< void > => {
@@ -37,8 +36,8 @@ const setupDefaultUsers = async (): Promise< void > => {
 	const browser = await chromium.launch();
 	const adminPage = await browser.newPage();
 
-	const adminContext = await createAdminContext( adminPage );
-	const createdUsers = await createGlobalUsers( adminContext, GLOBAL_USERS );
+	await createAdminContext( adminPage );
+	const createdUsers = await createGlobalUsers( GLOBAL_USERS );
 
 	await Promise.all(
 		createdUsers.map( async ( user ) => {
@@ -50,16 +49,32 @@ const setupDefaultUsers = async (): Promise< void > => {
 	return browser.close();
 };
 
-const createGlobalUsers = async (
-	adminContext: APIRequestContext,
-	users: User[]
-): Promise< User[] > => {
+const createGlobalUsers = async ( users: User[] ): Promise< User[] > => {
 	return Promise.all(
 		users.map( async ( user ) => {
-			const created = await createUser( adminContext, user );
+			const command = [
+				'wp user create',
+				user.username,
+				user.email,
+				user.roles?.length ? `--role=${ user.roles.join( ',' ) }` : '',
+				`--user_pass=${ user.password }`,
+				'--porcelain',
+			].join( ' ' );
+
+			await cliAsync( command );
+			const response = await cliAsync(
+				`wp user get ${ user.username } --format=json`
+			);
+
+			const userDetails = JSON.parse(
+				response
+					.toString()
+					.match( /\{(.*?)\}/ )
+					.at( 0 )
+			);
 			return {
 				...user,
-				id: created.id,
+				id: userDetails.ID,
 			};
 		} )
 	);
