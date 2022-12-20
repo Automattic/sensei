@@ -11,10 +11,7 @@ import { CoursePage as FrontEndCoursePage } from '@e2e/pages/frontend/course';
 const { describe } = test;
 
 describe.serial( 'Create Default Lesson', () => {
-	test( 'creates a lesson for a course', async ( {
-		page,
-		approvedCourse: course,
-	} ) => {
+	test( 'creates a lesson for a course', async ( { page, approvedCourse: course } ) => {
 		const lessonList = new LessonList( page );
 		lessonList.goTo();
 
@@ -36,11 +33,8 @@ describe.serial( 'Create Default Lesson', () => {
 		await page.waitForSelector( 'text="Take Course"' );
 		await coursePage.takeCourse.click();
 
-		await expect(
-			page
-				.locator( '.sensei-course-theme__main-content' )
-				.getByText( 'Test Lesson One' )
-		).toBeVisible();
+		await page.pause();
+		await expect( page.getByText( 'Test Lesson One' ).first() ).toBeVisible();
 		await expect( page.getByText( 'Test Lesson Content' ) ).toBeVisible();
 	} );
 } );
