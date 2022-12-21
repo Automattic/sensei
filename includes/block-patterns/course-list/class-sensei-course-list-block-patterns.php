@@ -150,7 +150,7 @@ class Sensei_Course_List_Block_Patterns {
 
 										<!-- wp:sensei-lms/course-overview /-->
 
-										' . implode( "\n", $course_list_extra_links['course-list'] ) . '
+										' . implode( "\n", $course_list_extra_links['course-grid'] ) . '
 
 										<!-- wp:sensei-lms/course-progress {"lock":{"move": true}} /-->
 
