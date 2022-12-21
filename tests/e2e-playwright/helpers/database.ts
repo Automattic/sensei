@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import { execSync } from 'child_process';
+import { execSync, exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify( exec );
 
 /**
  * Run a WP CLI command.
@@ -11,6 +14,12 @@ import { execSync } from 'child_process';
 export const cli = ( command: string ): Buffer =>
 	execSync( `npm run wp-env run tests-cli "${ command }"` );
 
+export const cliAsync = async ( command: string ): Promise< string > => {
+	const response = await execAsync(
+		`npm run wp-env run tests-cli "${ command }"`
+	);
+	return response.stdout;
+};
 /**
  * Clean database.
  */
