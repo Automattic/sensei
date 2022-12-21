@@ -117,9 +117,6 @@ const CourseActionsEdit = ( {
 		);
 	}
 
-	// Set class name for course status.
-	className = classnames( className, `is-status-${ courseStatus }` );
-
 	return (
 		<CourseStatusContext.Provider
 			value={ {
@@ -127,7 +124,12 @@ const CourseActionsEdit = ( {
 				setCourseStatus: setCourseStatusAndSelectChildBlock,
 			} }
 		>
-			<div className={ className }>
+			<div
+				className={ classnames(
+					className,
+					`is-status-${ courseStatus }`
+				) }
+			>
 				<InnerBlocks
 					allowedBlocks={ [
 						'sensei-lms/button-take-course',
