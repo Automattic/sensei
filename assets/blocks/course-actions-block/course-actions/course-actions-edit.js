@@ -2,7 +2,11 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { InnerBlocks, BlockControls } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	BlockControls,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
 import { useCallback, useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 
@@ -41,21 +45,26 @@ const innerBlocksTemplate = [
  * @return {Function} Function to select a child block by block name.
  */
 const useSelectChildBlock = ( clientId ) => {
-	const select = useSelect( 'core/block-editor' );
-	const dispatch = useDispatch( 'core/block-editor' );
+	const childBlocks = useSelect(
+		( select ) => {
+			return select( blockEditorStore ).getBlock( clientId ).innerBlocks;
+		},
+		[ clientId ]
+	);
+
+	const selectBlock = useDispatch( blockEditorStore ).selectBlock;
 
 	return useCallback(
 		( blockName ) => {
-			const childBlocks = select.getBlock( clientId ).innerBlocks;
-			const toSelect = childBlocks.find(
+			const blockToSelect = childBlocks.find(
 				( block ) => block.name === blockName
 			);
 
-			if ( toSelect ) {
-				dispatch.selectBlock( toSelect.clientId );
+			if ( blockToSelect ) {
+				selectBlock( blockToSelect.clientId );
 			}
 		},
-		[ clientId, select, dispatch ]
+		[ childBlocks, selectBlock ]
 	);
 };
 
