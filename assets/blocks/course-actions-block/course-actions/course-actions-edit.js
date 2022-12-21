@@ -7,7 +7,7 @@ import {
 	BlockControls,
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
-import { useCallback, useState } from '@wordpress/element';
+import { useCallback, useMemo, useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
@@ -106,6 +106,14 @@ const CourseActionsEdit = ( {
 		[ setCourseStatus, selectChildBlock ]
 	);
 
+	// Set up the value to provide in the context.
+	const contextValue = useMemo( () => {
+		return {
+			courseStatus,
+			setCourseStatus: setCourseStatusAndSelectChildBlock,
+		};
+	}, [ courseStatus, setCourseStatusAndSelectChildBlock ] );
+
 	if ( 'course' !== postType ) {
 		return (
 			<InvalidUsageError
@@ -118,12 +126,7 @@ const CourseActionsEdit = ( {
 	}
 
 	return (
-		<CourseStatusContext.Provider
-			value={ {
-				courseStatus,
-				setCourseStatus: setCourseStatusAndSelectChildBlock,
-			} }
-		>
+		<CourseStatusContext.Provider value={ contextValue }>
 			<div
 				className={ classnames(
 					className,
