@@ -539,6 +539,8 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Get the ID of the imported demo course.
 	 *
+	 * @internal
+	 *
 	 * @since $$next-version$$
 	 *
 	 * @return int|null
