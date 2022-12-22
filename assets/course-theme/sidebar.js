@@ -80,13 +80,14 @@ function preparestickySidebar() {
 		sidebarPlaceholder.setAttribute( 'aria-hidden', 'true' );
 		sidebar.style.transition = 'none';
 		sidebar.style.position = 'fixed';
-		sidebar.parentElement.append( sidebarPlaceholder );
 		sidebar.style.marginTop = '0';
+		sidebar.parentElement.prepend( sidebarPlaceholder );
 	}
 	const sidebarRect = sidebarPlaceholder.getBoundingClientRect();
-	sidebar.style.top = `${ sidebarRect.top }px`;
+	sidebar.style.top = `0`;
 	sidebar.style.left = `${ sidebarRect.left }px`;
 	sidebar.style.width = `${ sidebarRect.right - sidebarRect.left }px`;
+	sidebar.style.transform = `translateY(${ sidebarRect.top }px)`;
 }
 
 /**
@@ -163,7 +164,8 @@ function updateSidebarPosition( initialPosition = false ) {
 
 	// Need to subtract the sidebar top margin because fixed positioned elements
 	// are pushed down by css top margin.
-	sidebar.style.top = `${ sidebarNewTop }px`;
+
+	sidebar.style.transform = `translateY(${ sidebarNewTop }px)`;
 }
 
 /**
