@@ -187,7 +187,7 @@ function getWebpackConfig( env, argv ) {
 	// Handle only images in JS files
 	webpackConfig.module.rules.push(
 		{
-			test: /\.(?:gif|jpg|jpeg|png)$/i,
+			test: /\.(?:gif|jpg|jpeg|png|webp)$/i,
 			issuer: scriptFiles,
 			type: 'asset/resource',
 			generator: {
