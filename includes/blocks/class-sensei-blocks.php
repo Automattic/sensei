@@ -172,9 +172,9 @@ class Sensei_Blocks {
 		$block_args = apply_filters( 'sensei_block_type_args', $block_args, $block_name );
 
 		if ( null === $file_or_folder ) {
-			register_block_type( $block_name, $block_args );
+			return register_block_type( $block_name, $block_args );
 		} else {
-			register_block_type_from_metadata( $file_or_folder, $block_args );
+			return register_block_type_from_metadata( $file_or_folder, $block_args );
 		}
 	}
 

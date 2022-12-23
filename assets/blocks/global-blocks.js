@@ -10,6 +10,11 @@ import CourseOverviewBlock from './course-overview-block';
 import CourseProgressBlock from './course-progress-block';
 import TakeCourseBlock from './take-course-block';
 import ViewResultsBlock from './view-results-block';
+import Accordion, {
+	ContentBlock,
+	DetailsBlock,
+	SummaryBlock,
+} from './accordion';
 
 registerCourseListBlock();
 
@@ -22,4 +27,8 @@ registerSenseiBlocks( [
 	CourseProgressBlock,
 	TakeCourseBlock,
 	ViewResultsBlock,
+	SummaryBlock,
+	DetailsBlock,
+	ContentBlock,
+	Accordion,
 ] );

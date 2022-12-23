@@ -1,0 +1,18 @@
+.wp-block-sensei-lms-accordion-summary {
+	cursor: pointer;
+
+	& > * {
+		cursor: text;
+		display: inline;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.wp-block-sensei-lms-accordion-content {
+	& > * {
+		margin: 0;
+		padding: 0;
+	}
+}
+

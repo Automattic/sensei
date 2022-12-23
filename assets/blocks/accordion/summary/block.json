@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "sensei-lms/accordion-summary",
+	"title": "Title",
+    "parent": [ "sensei-lms/accordion-details" ],
+	"description": "Accordion section title.",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [
+	],
+    "attributes": {
+        "summary": {
+            "type": "string"
+        },
+        "lock": {
+            "type": "object",
+            "default": {
+                "remove": true,
+                "move": true
+            }
+        }
+    },
+	"supports": {
+        "lock": false,
+		"html": false,
+        "color": {
+            "background": true,
+            "enableContrastChecker": true,
+            "gradients": true,
+            "text": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true
+        },
+        "blockGap": [ "horizontal", "vertical" ],
+        "__experimentalBorder": true,
+        "alignWide": true,
+        "typography": {
+            "__experimentalFontFamily": true
+        }
+	},
+    "editorStyle": "file:../../../dist/blocks/accordion/summary/summary-edit.css"
+}

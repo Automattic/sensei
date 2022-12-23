@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "sensei-lms/accordion-section",
+	"parent": ["sensei-lms/accordion"],
+	"title": "Section",
+	"description": "Individual expandable block with title and content.",
+	"category": "sensei-lms",
+	"textdomain": "sensei-lms",
+	"keywords": [],
+	"usesContext": ["selected", "setSelection"],
+	"attributes": {
+		"isOpen": {
+			"type": "boolean",
+			"default": "false"
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"background": true,
+			"enableContrastChecker": true,
+			"gradients": true,
+			"text": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		},
+		"blockGap": ["horizontal", "vertical"],
+		"__experimentalBorder": true,
+		"alignWide": true
+	},
+    "editorStyle": "file:../../../dist/blocks/accordion/section/section-edit.css"
+}
