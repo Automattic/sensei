@@ -175,6 +175,7 @@
 .sensei-editor-wizard-step {
 	&__title,
 	&__sticky-title {
+		padding-right: 30px; // Keep out of the close space.
 		line-height: 1.1;
 		color: inherit;
 	}
