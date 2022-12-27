@@ -11,7 +11,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { CourseList } from './course-list';
+import { ItemList } from './item-list';
 
 const courses = [
 	{
@@ -30,13 +30,13 @@ const courses = [
 
 jest.mock( '@wordpress/data' );
 
-describe( '<CourseList />', () => {
+describe( '<ItemList />', () => {
 	beforeAll( () => {
-		useSelect.mockReturnValue( { courses, isFetching: false } );
+		useSelect.mockReturnValue( { items: courses, isFetching: false } );
 	} );
 
 	it( 'Should display courses in the list', async () => {
-		render( <CourseList /> );
+		render( <ItemList /> );
 
 		expect(
 			await screen.findByLabelText( courses.at( 0 ).title.rendered )
@@ -46,7 +46,7 @@ describe( '<CourseList />', () => {
 	it( 'Should call onChange with the selected courses when a course is selected', async () => {
 		const onChange = jest.fn();
 
-		render( <CourseList onChange={ onChange } /> );
+		render( <ItemList onChange={ onChange } /> );
 
 		fireEvent.click(
 			await screen.findByLabelText( courses.at( 0 ).title.rendered )
@@ -64,7 +64,7 @@ describe( '<CourseList />', () => {
 	it( 'Should remove unselected items when a course is selected and deselected', async () => {
 		const onChange = jest.fn();
 
-		render( <CourseList onChange={ onChange } /> );
+		render( <ItemList onChange={ onChange } /> );
 
 		fireEvent.click(
 			await screen.findByLabelText( courses.at( 0 ).title.rendered )
@@ -82,11 +82,11 @@ describe( '<CourseList />', () => {
 
 	describe( 'When there is no course', () => {
 		beforeEach( () => {
-			useSelect.mockReturnValue( { courses: [], isFetching: false } );
+			useSelect.mockReturnValue( { items: [], isFetching: false } );
 		} );
 
 		it( 'Should show a message when there are no courses', async () => {
-			render( <CourseList /> );
+			render( <ItemList /> );
 
 			expect(
 				await screen.findByText( 'No courses found.' )
@@ -97,7 +97,7 @@ describe( '<CourseList />', () => {
 	describe( 'When there are HTML-Entities in course titles', () => {
 		beforeEach( () => {
 			useSelect.mockReturnValue( {
-				courses: [
+				items: [
 					{
 						id: 1,
 						title: { rendered: 'Course&#8217;s' },
@@ -108,7 +108,7 @@ describe( '<CourseList />', () => {
 		} );
 
 		it( 'Should show the course title without HTML-Entities', async () => {
-			render( <CourseList /> );
+			render( <ItemList /> );
 
 			expect( await screen.findByText( 'Course’s' ) ).toBeTruthy();
 		} );

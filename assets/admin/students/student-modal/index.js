@@ -3,6 +3,7 @@
  */
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { useCallback, useState, RawHTML } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { search } from '@wordpress/icons';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { escapeHTML } from '@wordpress/escape-html';
@@ -11,11 +12,11 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import CourseList from './course-list';
+import ItemList from './item-list';
 import InputControl from '../../../blocks/editor-components/input-control';
 import useAbortController from '../hooks/use-abort-controller';
 
-const getAction = ( action, studentCount, studentDisplayName ) => {
+const getPossibleActions = ( studentCount, studentDisplayName ) => {
 	const safeStudentDisplayName = escapeHTML( studentDisplayName );
 
 	const possibleActions = {
@@ -46,11 +47,11 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses, { signal } ) =>
+			sendAction: ( students, items, { signal } ) =>
 				apiFetch( {
 					path: '/sensei-internal/v1/course-students/batch',
 					method: 'POST',
-					data: { student_ids: students, course_ids: courses },
+					data: { student_ids: students, course_ids: items },
 					signal,
 				} ),
 			isDestructive: false,
@@ -82,11 +83,11 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses, { signal } ) =>
+			sendAction: ( students, items, { signal } ) =>
 				apiFetch( {
 					path: '/sensei-internal/v1/course-students/batch',
 					method: 'DELETE',
-					data: { student_ids: students, course_ids: courses },
+					data: { student_ids: students, course_ids: items },
 					signal,
 				} ),
 			isDestructive: true,
@@ -119,17 +120,36 @@ const getAction = ( action, studentCount, studentDisplayName ) => {
 					students.length,
 					'sensei-lms'
 				),
-			sendAction: ( students, courses, { signal } ) =>
+			sendAction: ( students, items, { signal } ) =>
 				apiFetch( {
 					path: '/sensei-internal/v1/course-progress/batch',
 					method: 'DELETE',
-					data: { student_ids: students, course_ids: courses },
+					data: { student_ids: students, course_ids: items },
 					signal,
 				} ),
 
 			isDestructive: true,
 		},
 	};
+
+	/**
+	 * Filters possible actions in the Student Modal.
+	 *
+	 * @since 4.8.0
+	 *
+	 * @param {Object} possibleActions Dictionary with possible actions.
+	 *
+	 * @return {Object} Filtered possible actions.
+	 */
+	return applyFilters( 'senseiStudentModalPossibleActions', possibleActions );
+};
+
+const getAction = ( action, studentCount, studentDisplayName ) => {
+	const possibleActions = getPossibleActions(
+		studentCount,
+		studentDisplayName
+	);
+
 	return possibleActions[ action ];
 };
 
@@ -155,7 +175,7 @@ export const StudentModal = ( {
 		isDestructive,
 		sendAction,
 	} = getAction( action, students.length, studentDisplayName );
-	const [ selectedCourses, setCourses ] = useState( [] );
+	const [ selectedItems, setItems ] = useState( [] );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ isSending, setIsSending ] = useState( false );
 	const [ error, setError ] = useState( false );
@@ -167,7 +187,7 @@ export const StudentModal = ( {
 		try {
 			await sendAction(
 				students,
-				selectedCourses.map( ( course ) => course.id ),
+				selectedItems.map( ( item ) => item.id ),
 				{ signal: getSignal() }
 			);
 			onClose( true );
@@ -177,7 +197,7 @@ export const StudentModal = ( {
 				setIsSending( false );
 			}
 		}
-	}, [ sendAction, students, selectedCourses, onClose, getSignal ] );
+	}, [ sendAction, students, selectedItems, onClose, getSignal ] );
 
 	const searchCourses = ( value ) => setSearchQuery( value );
 
@@ -196,11 +216,12 @@ export const StudentModal = ( {
 				value={ searchQuery }
 			/>
 
-			<CourseList
+			<ItemList
 				searchQuery={ searchQuery }
-				onChange={ ( courses ) => {
-					setCourses( courses );
+				onChange={ ( items ) => {
+					setItems( items );
 				} }
+				action={ action }
 			/>
 
 			{ error && (
@@ -218,7 +239,7 @@ export const StudentModal = ( {
 					className={ `sensei-student-modal__action` }
 					variant={ isDestructive ? '' : 'primary' }
 					onClick={ () => send() }
-					disabled={ isSending || selectedCourses.length === 0 }
+					disabled={ isSending || selectedItems.length === 0 }
 					isDestructive={ isDestructive }
 				>
 					{ isSending && <Spinner /> }

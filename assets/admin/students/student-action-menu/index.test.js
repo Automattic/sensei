@@ -21,7 +21,7 @@ const studentDisplayName = 'John Doe';
 
 describe( '<StudentActionMenu />', () => {
 	it( 'Should display modal when "Add to Course" is selected', async () => {
-		useSelect.mockReturnValue( { courses: [], isFetching: false } );
+		useSelect.mockReturnValue( { items: [], isFetching: false } );
 		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
 		);
@@ -46,7 +46,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Remove from Course" is selected', async () => {
-		useSelect.mockReturnValue( { courses: [], isFetching: false } );
+		useSelect.mockReturnValue( { items: [], isFetching: false } );
 		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
 		);
@@ -71,7 +71,7 @@ describe( '<StudentActionMenu />', () => {
 	} );
 
 	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
-		useSelect.mockReturnValue( { courses: [], isFetching: false } );
+		useSelect.mockReturnValue( { items: [], isFetching: false } );
 		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
 		);

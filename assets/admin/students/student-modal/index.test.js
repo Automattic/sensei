@@ -51,7 +51,7 @@ describe( '<StudentModal />', () => {
 		findByRole( 'button', { name: label } );
 
 	beforeAll( () => {
-		useSelect.mockReturnValue( { courses, isFetching: false } );
+		useSelect.mockReturnValue( { items: courses, isFetching: false } );
 	} );
 
 	it( 'Should display a list of courses', async () => {

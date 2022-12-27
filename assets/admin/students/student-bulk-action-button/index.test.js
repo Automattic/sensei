@@ -51,7 +51,7 @@ describe( '<StudentBulkActionButton />', () => {
 		} );
 
 	beforeAll( () => {
-		useSelect.mockReturnValue( { courses, isFetching: false } );
+		useSelect.mockReturnValue( { items: courses, isFetching: false } );
 	} );
 
 	it( 'Should be disabled by default on render', () => {
