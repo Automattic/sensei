@@ -37,6 +37,16 @@ const LoadingItemList = () => (
  * @param {Object} props.action Student Modal action.
  */
 const EmptyItemList = ( { action } ) => {
+	/**
+	 * Filters the empty list message in the Item List for Student Modal.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {string} emptyListMessage The emptyListMessage to filter.
+	 * @param {string} action           Current action for the Student Modal.
+	 *
+	 * @return {string} Filtered empty list message.
+	 */
 	const emptyListMessage = applyFilters(
 		'senseiStudentModalItemListEmpty',
 		__( 'No courses found.', 'sensei-lms' ),
