@@ -137,11 +137,18 @@ const getPossibleActions = ( studentCount, studentDisplayName ) => {
 	 *
 	 * @since 4.8.0
 	 *
-	 * @param {Object} possibleActions Dictionary with possible actions.
+	 * @param {Object} possibleActions        Dictionary with possible actions.
+	 * @param {number} studentCount           Number of selected students.
+	 * @param {string} safeStudentDisplayName Student name.
 	 *
 	 * @return {Object} Filtered possible actions.
 	 */
-	return applyFilters( 'senseiStudentModalPossibleActions', possibleActions );
+	return applyFilters(
+		'senseiStudentModalPossibleActions',
+		possibleActions,
+		studentCount,
+		safeStudentDisplayName
+	);
 };
 
 const getAction = ( action, studentCount, studentDisplayName ) => {
