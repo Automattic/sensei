@@ -321,7 +321,7 @@ class Sensei_Grading_User_Quiz {
 						foreach ( $user_answer_content as $_user_answer ) {
 
 							if ( 'multi-line' === Sensei()->question->get_question_type( $question->ID ) ) {
-								$is_plaintext = sanitize_text_field( $_user_answer ) == $_user_answer;
+								$is_plaintext = sanitize_textarea_field( $_user_answer ) === $_user_answer;
 								if ( $is_plaintext ) {
 									$_user_answer = nl2br( $_user_answer );
 								}
