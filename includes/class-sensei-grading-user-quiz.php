@@ -329,7 +329,11 @@ class Sensei_Grading_User_Quiz {
 								$_user_answer = htmlspecialchars_decode( $_user_answer );
 							}
 
-							echo wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) ) . '<br>';
+							$html = wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) );
+							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
+							?>
+							<iframe srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="" height="auto" style="display: block; max-height: 200px; width: 100%;"></iframe>
+							<?php
 						}
 						?>
 						</p>
