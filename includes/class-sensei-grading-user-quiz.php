@@ -316,7 +316,6 @@ class Sensei_Grading_User_Quiz {
 						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped before core filter applied.
 						echo Sensei_Question::get_the_question_description( $question_id );
 						?>
-						<p class="user-answer">
 						<?php
 						foreach ( $user_answer_content as $_user_answer ) {
 
@@ -332,11 +331,10 @@ class Sensei_Grading_User_Quiz {
 							$html = wp_kses_post( apply_filters( 'sensei_answer_text', $_user_answer ) );
 							$html = '<html><head><title></title></head><body>' . $html . '</body></html>';
 							?>
-							<iframe srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="" height="auto" style="display: block; max-height: 200px; width: 100%;"></iframe>
+							<iframe class="user-answer" srcdoc="<?php echo esc_attr( $html ); ?>" sandbox="" height="auto"></iframe>
 							<?php
 						}
 						?>
-						</p>
 						<div class="right-answer">
 							<h5><?php esc_html_e( 'Correct answer', 'sensei-lms' ); ?></h5>
 							<span class="correct-answer">
