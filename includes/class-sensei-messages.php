@@ -492,6 +492,14 @@ class Sensei_Messages {
 
 			$title = wp_trim_words( $message, 8, '...' );
 
+			// Prevent shortcodes.
+			$bracket_replaces = [
+				'[' => '&#91;',
+				']' => '&#93;',
+			];
+			$message          = strtr( $message, $bracket_replaces );
+			$title            = strtr( $title, $bracket_replaces );
+
 			// Set up post data for message
 			$message_data = array(
 				'post_type'      => $this->post_type,
