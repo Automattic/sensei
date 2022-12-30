@@ -740,17 +740,17 @@ class Sensei_Messages {
 	 */
 	public function message_title( $title = '', $post_id = null ) {
 
-		if ( get_post_type( $post_id ) === $this->post_type ) {
-			$title = strip_shortcodes( $title );
+		if ( get_post_type( $post_id ) !== $this->post_type ) {
+			return $title;
 		}
 
 		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
-				$title = __( 'You are not allowed to view this message.', 'sensei-lms' );
+				return __( 'You are not allowed to view this message.', 'sensei-lms' );
 			}
 		}
 
-		return $title;
+		return strip_shortcodes( $title );
 	}
 
 	/**
@@ -762,17 +762,17 @@ class Sensei_Messages {
 	public function message_content( $content ) {
 		global $post;
 
-		if ( get_post_type( $post->ID ) === $this->post_type ) {
-			$content = strip_shortcodes( $content );
+		if ( get_post_type( $post->ID ) !== $this->post_type ) {
+			return $content;
 		}
 
 		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
-				$content = __( 'Please log in to view your messages.', 'sensei-lms' );
+				return __( 'Please log in to view your messages.', 'sensei-lms' );
 			}
 		}
 
-		return $content;
+		return strip_shortcodes( $content );
 	}
 
 	/**
