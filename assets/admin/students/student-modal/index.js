@@ -135,7 +135,7 @@ const getPossibleActions = ( studentCount, studentDisplayName ) => {
 	/**
 	 * Filters possible actions in the Student Modal.
 	 *
-	 * @since 4.8.0
+	 * @since $$next-version$$
 	 *
 	 * @param {Object} possibleActions        Dictionary with possible actions.
 	 * @param {number} studentCount           Number of selected students.
@@ -208,10 +208,42 @@ export const StudentModal = ( {
 
 	const searchCourses = ( value ) => setSearchQuery( value );
 
+	/**
+	 * Filters Student Modal title.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {string} title  Modal title for filtering.
+	 * @param {string} action Action name.
+	 *
+	 * @return {string} Filtered title.
+	 */
+	const modalTitle = applyFilters(
+		'senseiStudentModalTitle',
+		__( 'Choose Course', 'sensei-lms' ),
+		action
+	);
+
+	/**
+	 * Filters possible actions in the Student Modal.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param {string} placeholder Search items placeholder for filtering.
+	 * @param {string} action      Action name.
+	 *
+	 * @return {string} Filtered search input placeholder.
+	 */
+	const searchItemsPlaceholder = applyFilters(
+		'senseiStudentModalSearchItemsPlaceholder',
+		__( 'Search courses', 'sensei-lms' ),
+		action
+	);
+
 	return (
 		<Modal
 			className="sensei-student-modal"
-			title={ __( 'Choose Course', 'sensei-lms' ) }
+			title={ modalTitle }
 			onRequestClose={ () => onClose() }
 		>
 			<RawHTML>{ description }</RawHTML>
@@ -219,7 +251,7 @@ export const StudentModal = ( {
 			<InputControl
 				iconRight={ search }
 				onChange={ searchCourses }
-				placeholder={ __( 'Search courses', 'sensei-lms' ) }
+				placeholder={ searchItemsPlaceholder }
 				value={ searchQuery }
 			/>
 
