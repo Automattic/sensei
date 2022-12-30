@@ -3,6 +3,7 @@
  */
 import { Button } from '@wordpress/components';
 import { render, useEffect, useState } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -29,18 +30,37 @@ export const StudentBulkActionButton = ( { isDisabled = true } ) => {
 		setIsModalOpen( false );
 	};
 	const setActionValue = ( selectedValue ) => {
+		let buttonAction = 'add';
 		switch ( selectedValue ) {
 			case 'enrol_restore_enrolment':
-				setAction( 'add' );
+				buttonAction = 'add';
 				break;
 			case 'remove_enrolment':
-				setAction( 'remove' );
+				buttonAction = 'remove';
 				break;
 			case 'remove_progress':
-				setAction( 'reset-progress' );
+				buttonAction = 'reset-progress';
 				break;
 			default:
 		}
+
+		/**
+		 * Filters the action of the bulk action button.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {string} buttonAction  Current button action.
+		 * @param {string} selectedValue The value received from the select.
+		 *
+		 * @return {string} Filtered action.
+		 */
+		buttonAction = applyFilters(
+			'senseiStudentBulkActionButtonAction',
+			buttonAction,
+			selectedValue
+		);
+
+		setAction( buttonAction );
 	};
 	const buttonEnableDisableEventHandler = ( args ) => {
 		setButtonDisabled( ! ( args.detail && args.detail.enable ) );

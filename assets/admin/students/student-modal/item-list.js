@@ -140,15 +140,17 @@ export const ItemList = ( { searchQuery, onChange, action } ) => {
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @param {Object} query  The query to get the item list, course list by default.
-			 * @param {string} action Current action for the Student Modal.
+			 * @param {Object} query       The query to get the item list, course list by default.
+			 * @param {string} action      Current action for the Student Modal.
+			 * @param {string} searchQuery The search query.
 			 *
 			 * @return {Object} Filtered query to get the item list.
 			 */
 			const query = applyFilters(
 				'senseiStudentModalItemListQuery',
 				defaultQuery,
-				action
+				action,
+				searchQuery
 			);
 
 			/**
@@ -186,13 +188,15 @@ export const ItemList = ( { searchQuery, onChange, action } ) => {
 	 *
 	 * @since 4.8.0
 	 *
-	 * @param {string} title Title text.
+	 * @param {string} title  Title text.
+	 * @param {string} action Current action for the Student Modal.
 	 *
 	 * @return {string} Filtered title text.
 	 */
 	const title = applyFilters(
 		'senseiStudentModalItemListTitle',
-		__( 'Your Courses', 'sensei-lms' )
+		__( 'Your Courses', 'sensei-lms' ),
+		action
 	);
 
 	return (
