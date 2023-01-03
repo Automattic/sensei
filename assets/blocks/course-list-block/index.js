@@ -4,22 +4,16 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockVariation } from '@wordpress/blocks';
 import { select, subscribe } from '@wordpress/data';
+import { addFilter } from '@wordpress/hooks';
+import { InspectorControls } from '@wordpress/block-editor';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import './hooks';
-
-/**
- * Internal dependencies
- */
 import icon from '../../icons/course-list.svg';
-
-/**
- * Internal dependencies
- */
 import FeaturedLabel from './featured-label';
-import { addFilter } from '@wordpress/hooks';
 
 export const registerCourseListBlock = () => {
 	const DEFAULT_ATTRIBUTES = {
@@ -222,4 +216,74 @@ addFilter(
 	'blocks.registerBlockType',
 	'sensei-lms/course-categories',
 	addWrapperAroundCourseCategoriesBlock
+);
+
+/**
+ * Add a HOC to add more settings to Course List block.
+ *
+ * @param {Object} settings Block settings.
+ * @param {string} name     Block name.
+ */
+export function addSettingsInCourseListBlock( settings, name ) {
+	if ( 'core/query' !== name ) {
+		return settings;
+	}
+
+	const BlockEdit = settings.edit;
+
+	settings = {
+		...settings,
+		attributes: {
+			...settings.attributes,
+			showLoginForm: {
+				type: 'boolean',
+				default: false,
+			},
+		},
+		edit: ( props ) => {
+			const isCourseListBlock =
+				props.attributes?.query?.postType === 'course' &&
+				props?.attributes?.className?.includes(
+					'wp-block-sensei-lms-course-list'
+				);
+
+			const { attributes, setAttributes } = props;
+
+			return (
+				<>
+					<BlockEdit { ...props } />
+					{ isCourseListBlock && (
+						<InspectorControls>
+							<PanelBody>
+								<ToggleControl
+									key="show-login-form"
+									label={ __(
+										'Show login form',
+										'sensei-lms'
+									) }
+									help={ __(
+										'Show the login form instead when not logged in',
+										'sensei-lms'
+									) }
+									checked={ attributes.showLoginForm }
+									onChange={ () =>
+										setAttributes( {
+											showLoginForm: ! attributes.showLoginForm,
+										} )
+									}
+								/>
+							</PanelBody>
+						</InspectorControls>
+					) }
+				</>
+			);
+		},
+	};
+	return settings;
+}
+
+addFilter(
+	'blocks.registerBlockType',
+	'sensei-lms/course-list-block',
+	addSettingsInCourseListBlock
 );
