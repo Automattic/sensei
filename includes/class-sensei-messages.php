@@ -744,7 +744,7 @@ class Sensei_Messages {
 			return $title;
 		}
 
-		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() && get_post_type( $post_id ) == $this->post_type ) {
+		if ( is_single() && is_singular() && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post_id ) ) {
 				return __( 'You are not allowed to view this message.', 'sensei-lms' );
 			}
@@ -766,7 +766,7 @@ class Sensei_Messages {
 			return $content;
 		}
 
-		if ( is_single() && is_singular( $this->post_type ) && in_the_loop() ) {
+		if ( is_single() && is_singular() && in_the_loop() ) {
 			if ( ! is_user_logged_in() || ! $this->view_message( $post->ID ) ) {
 				return __( 'Please log in to view your messages.', 'sensei-lms' );
 			}
