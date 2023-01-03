@@ -437,7 +437,7 @@ class Sensei_PostTypes {
 		$args = array(
 			'labels'                => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
 			'public'                => false,
-			'publicly_queryable'    => true,
+			'publicly_queryable'    => false,
 			'show_ui'               => true,
 			'show_in_menu'          => false,
 			'show_in_admin_bar'     => true,
