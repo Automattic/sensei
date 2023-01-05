@@ -9,6 +9,8 @@
  * Class for testing Sensei_Messages class.
  *
  * @group messages
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
  */
 class Sensei_Messages_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
@@ -23,7 +25,7 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -99,5 +101,82 @@ class Sensei_Messages_Test extends WP_UnitTestCase {
 
 		$this->login_as_admin();
 		$this->assertEquals( [ 'read' => true ], $instance->user_messages_cap_check( [], [ 'read' ], [ 'read_post', get_current_user_id(), $message_id ] ), 'Admins should still have access' );
+	}
+
+	public function testSaveNewMessagePost_WhenSuccessful_TriggersHook() {
+		/* Arrange. */
+		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
+		$student_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$course_id  = $this->factory->course->create();
+		$instance   = new Sensei_Messages();
+
+		// Remove the hooks to avoid side effects.
+		remove_all_actions( 'sensei_new_private_message' );
+
+		/* Act. */
+		$instance->save_new_message_post( $student_id, $teacher_id, 'message', $course_id );
+
+		/* Assert. */
+		$this->assertEquals( 1, did_action( 'sensei_new_private_message' ) );
+	}
+
+	public function testShowSuccessNotice_WhenNotRestRequest_DoesRedirect() {
+		/* Arrange. */
+		$instance = new Sensei_Messages();
+
+		$this->haltRedirects();
+
+		/* Act. */
+		try {
+			$instance->show_success_notice();
+		} catch ( \RuntimeException $e ) {
+			$redirect = json_decode( $e->getMessage(), true );
+		}
+
+		/* Assert. */
+		$this->assertSame( 302, $redirect['status'] );
+		$this->assertStringContainsString( 'send=complete', $redirect['location'] );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testShowSuccessNotice_WhenRestRequest_DoesNotRedirect() {
+		/* Arrange. */
+		$instance = new Sensei_Messages();
+
+		define( 'REST_REQUEST', true );
+
+		$this->haltRedirects();
+
+		/* Act. */
+		try {
+			$instance->show_success_notice();
+		} catch ( \RuntimeException $e ) {
+			$redirect = json_decode( $e->getMessage(), true );
+		}
+
+		/* Assert. */
+		$this->assertFalse( isset( $redirect ) );
+	}
+
+	/**
+	 * Prevent redirects so they can be tested.
+	 * Throws a RuntimeException instead.
+	 */
+	private function haltRedirects(): void {
+		$halt_redirect = function( $location, $status ) {
+			throw new \RuntimeException(
+				wp_json_encode(
+					[
+						'location' => $location,
+						'status'   => $status,
+					]
+				)
+			);
+		};
+
+		add_filter( 'wp_redirect', $halt_redirect, 1, 2 );
 	}
 }

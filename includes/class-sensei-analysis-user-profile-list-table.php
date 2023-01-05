@@ -63,11 +63,7 @@ class Sensei_Analysis_User_Profile_List_Table extends Sensei_List_Table {
 	 */
 	function get_sortable_columns() {
 		$columns = array(
-			'title'     => array( 'title', false ),
-			'started'   => array( 'started', false ),
-			'completed' => array( 'completed', false ),
-			'status'    => array( 'status', false ),
-			'percent'   => array( 'percent', false ),
+			'completed' => array( 'comment_date', false ),
 		);
 		$columns = apply_filters( 'sensei_analysis_user_profile_columns_sortable', $columns );
 		return $columns;

@@ -9,6 +9,7 @@
  * Tests for Sensei_Scheduler_Action_Scheduler class.
  *
  * @group background-jobs
+ * @covers Sensei_Scheduler_Action_Scheduler
  */
 class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	use Sensei_Scheduler_Test_Helpers;
@@ -16,7 +17,7 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	/**
 	 * Tear down the test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		_as_reset();
@@ -25,21 +26,21 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before all tests.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		self::createMocks();
 		self::resetScheduler();
 		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_action_scheduler' ] );
 
-		return parent::setUpBeforeClass();
+		parent::setUpBeforeClass();
 	}
 
 	/**
 	 * Tear down after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::restoreShimScheduler();
 
-		return parent::tearDownAfterClass();
+		parent::tearDownAfterClass();
 	}
 
 	/**
@@ -83,6 +84,31 @@ class Sensei_Scheduler_Action_Scheduler_Test extends WP_UnitTestCase {
 
 		$result = _as_get_scheduled_actions( $job->get_name(), [ $job->get_args() ], null );
 		$this->assertEquals( 0, count( $result ), 'The job should no longer be queued' );
+	}
+
+	/**
+	 * Tests to make sure an action is enqueued before running the job run() method to have as fallback.
+	 */
+	public function testRunEnqueuesDelayedActionInCaseOfFailure() {
+		$job       = new Sensei_Background_Job_Stub();
+		$scheduler = Sensei_Scheduler::instance();
+
+		// Setup job for failure.
+		$expected_exception = new Exception();
+		$job->run_callback  = function() use ( $expected_exception ) {
+			throw $expected_exception;
+		};
+
+		// Schedule and run
+		$scheduler->schedule_job( $job );
+		try {
+			$scheduler->run( $job );
+		} catch ( Exception $exception ) {
+			$this->assertSame( $expected_exception, $exception );
+		}
+
+		$result = _as_get_scheduled_actions( $job->get_name(), [ $job->get_args() ], null );
+		$this->assertEquals( 1, count( $result ), 'The job should still have an enqueued action even if it failed' );
 	}
 
 	/**

@@ -83,6 +83,7 @@ const files = [
 	'admin/students/student-bulk-action-button/index.js',
 	'admin/students/student-modal/student-modal.scss',
 	'css/block-patterns.scss',
+	'css/page-block-patterns.scss',
 	'css/tools.scss',
 	'css/enrolment-debug.scss',
 	'css/frontend.scss',
@@ -100,6 +101,7 @@ const files = [
 	'css/meta-box-quiz-editor.scss',
 	'css/learning-mode.4-0-2.scss',
 	'css/learning-mode.scss',
+	'css/learning-mode-compat.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
 	'css/sensei-theme-blocks.scss',
@@ -185,7 +187,7 @@ function getWebpackConfig( env, argv ) {
 	// Handle only images in JS files
 	webpackConfig.module.rules.push(
 		{
-			test: /\.(?:gif|jpg|jpeg|png)$/i,
+			test: /\.(?:gif|jpg|jpeg|png|webp)$/i,
 			issuer: scriptFiles,
 			type: 'asset/resource',
 			generator: {

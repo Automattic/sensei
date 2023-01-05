@@ -1,9 +1,8 @@
 /**
  * WordPress dependencies
  */
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __ } from '@wordpress/i18n';
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl, PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -25,10 +24,7 @@ const CourseVideoSidebar = () => {
 	);
 
 	return (
-		<PluginDocumentSettingPanel
-			name="sensei-course-video"
-			title={ __( 'Video', 'sensei-lms' ) }
-		>
+		<PanelBody title={ __( 'Video', 'sensei-lms' ) } initialOpen={ true }>
 			<ToggleControl
 				label={ __( 'Autocomplete Lesson', 'sensei-lms' ) }
 				checked={ autocomplete }
@@ -53,7 +49,7 @@ const CourseVideoSidebar = () => {
 					'sensei-lms'
 				) }
 			/>
-		</PluginDocumentSettingPanel>
+		</PanelBody>
 	);
 };
 

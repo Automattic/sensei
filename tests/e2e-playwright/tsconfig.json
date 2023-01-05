@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"target": "esnext",
+		"module": "system",
+		"baseUrl": "./",
+		"moduleResolution": "node",
+		"paths": {
+			"@e2e/*": ["./*"]
+		}
+	}
+}

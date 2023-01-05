@@ -56,7 +56,7 @@ class Template_Style {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes = [], string $content ): string {
+	public function render( array $attributes, string $content ): string {
 		return $content;
 	}
 

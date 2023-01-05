@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\Framework\MockObject\MockObject;
+
 /**
  * Sensei Analysis Unit Tests
  *
@@ -10,13 +12,30 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 
 	private static $initial_hook_suffix;
 
-	public static function setUpBeforeClass() {
+	/**
+	 * Setup method.
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		Sensei_Test_Events::reset();
+
+		// Disable `wp_die`.
+		add_filter(
+			'wp_die_handler',
+			function() {
+				return '__return_false';
+			}
+		);
+	}
+
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
@@ -76,5 +95,182 @@ class Sensei_Analysis_Test extends WP_UnitTestCase {
 		/* Assert */
 		$expected = '<h1><a href="http://example.org/wp-admin/admin.php?page=sensei_reports">Reports</a>&nbsp;&nbsp;<span class="user-title">&gt;&nbsp;&nbsp;<a href="http://example.org/wp-admin/admin.php?page=sensei_reports&#038;user_id=1">admin</a></span></h1>';
 		$this->assertEquals( $expected, $actual );
+	}
+
+	public function testAnalysisPage_WhenNoView_LogsUsersEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'users', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenUsersView_LogsUsersEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'view' => 'students',
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'users', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenCoursesView_LogsCoursesEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'view' => 'courses',
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'courses', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenLessonsViewWithNoCourseSelected_DoesntLogEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'view' => 'lessons',
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertEmpty( $events );
+	}
+
+	public function testAnalysisPage_WhenLessonsViewWithCourseSelected_LogsLessonsEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'view'          => 'lessons',
+			'course_filter' => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'lessons', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenCourseLessonUsersView_LogsCourseLessonUsersEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'lesson_id' => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'course-lesson-users', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenCourseUsersView_LogsCourseUsersEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'view'      => 'user',
+			'course_id' => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'course-users', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenUserCourseLessonsView_LogsUserCourseLessonsEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'course_id' => 1,
+			'user_id'   => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'user-course-lessons', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenCourseLessonsView_LogsCourseLessonsEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'course_id' => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'course-lessons', $events[0]['url_args']['view'] );
+	}
+
+	public function testAnalysisPage_WhenUserCoursesView_LogsUserCoursesEvent() {
+		/* Arrange */
+		$analysis_mock = $this->createMockWithExcludedMethod( Sensei_Analysis::class, 'analysis_page' );
+
+		$_GET = [
+			'user_id' => 1,
+		];
+
+		/* Act */
+		$analysis_mock->analysis_page();
+		$events = Sensei_Test_Events::get_logged_events( 'sensei_analysis_view' );
+
+		/* Assert */
+		$this->assertSame( 'user-courses', $events[0]['url_args']['view'] );
+	}
+
+	/**
+	 * Returns a partial mock object for the specified class
+	 * with all of its methods mocked but one.
+	 *
+	 * @param string $class_name The class to mock.
+	 * @param string $method The method to skip.
+	 *
+	 * @return MockObject
+	 */
+	private function createMockWithExcludedMethod( string $class_name, string $method ): MockObject {
+		$class_methods = get_class_methods( $class_name );
+
+		return $this->createPartialMock(
+			$class_name,
+			array_diff( $class_methods, [ $method ] )
+		);
 	}
 }

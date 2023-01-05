@@ -52,14 +52,14 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Return post content as a question block.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_Error|WP_Post|WP_REST_Response
 	 */
 	public function get_item( $request ) {
 		$response = parent::get_item( $request );
 
-		if ( 'edit' !== $request['context'] || ! Sensei()->quiz->is_block_based_editor_enabled() ) {
+		if ( 'edit' !== $request['context'] ) {
 			return $response;
 		}
 
@@ -77,7 +77,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Render question as block.
 	 *
-	 * @param WP_Post $question
+	 * @param WP_Post $question Question post object.
 	 *
 	 * @return string
 	 */
@@ -114,7 +114,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Update question block from post content.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return WP_Error|WP_Post|WP_REST_Response
 	 */
@@ -155,7 +155,7 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 	/**
 	 * Parse and return question block if it's the first block in the content.
 	 *
-	 * @param string $post_content
+	 * @param string $post_content Question content.
 	 *
 	 * @return array|null Question block.
 	 */

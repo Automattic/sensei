@@ -12,6 +12,7 @@
 	font-weight: 700;
 	font-size: 14px;
 	border-radius: 2px;
+
 	&:hover {
 		color: var(--sensei-primary-color);
 		background-color: transparent;
@@ -33,39 +34,39 @@
 	}
 }
 
-	.sensei-contact-teacher-success {
-		font-family: inherit;
-		position: absolute;
-		top: -5px;
-		right: -5px;
-		bottom: -5px;
-		left: -5px;
-		padding-top: 30px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-		z-index: -1;
-		opacity: 0;
-		transition: opacity 100ms ease-out;
-		background: var(--sensei-background-color);
+.sensei-contact-teacher-success {
+	font-family: inherit;
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	bottom: -5px;
+	left: -5px;
+	padding-top: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	z-index: -1;
+	opacity: 0;
+	transition: opacity 100ms ease-out;
+	background: var(--sensei-background-color);
 
-		svg {
-			width: 42px;
-			height: 42px;
-			margin-bottom: 20px;
-			color: var(--sensei-primary-color);
-		}
-
-		p {
-			font-weight: 500;
-			font-size: 24px;
-			line-height: 32px;
-			width: 235px;
-			max-width: 100%;
-			text-align: center;
-		}
+	svg {
+		width: 42px;
+		height: 42px;
+		margin-bottom: 20px;
+		color: var(--sensei-primary-color);
 	}
+
+	p {
+		font-weight: 500;
+		font-size: 24px;
+		line-height: 32px;
+		width: 235px;
+		max-width: 100%;
+		text-align: center;
+	}
+}
 
 .sensei-contact-teacher-wrapper {
 	display: flex;
@@ -74,12 +75,13 @@
 .sensei-contact-teacher-form {
 	textarea {
 		font-family: inherit;
-		}
-		&.is-success {
-			.sensei-contact-teacher-success {
-				z-index: 1;
-				opacity: 1;
-				display: flex;
+	}
+
+	&.is-success {
+		.sensei-contact-teacher-success {
+			z-index: 1;
+			opacity: 1;
+			display: flex;
 
 		}
 	}

@@ -1,6 +1,6 @@
-$positive_bg: rgba( 151, 195, 78, 0.5 );
-$negative_bg: rgba( 195, 150, 137, 0.74 );
-$neutral_bg: rgba( 0, 0, 0, 0.1 );
+$positive_bg: rgba(151, 195, 78, 0.5);
+$negative_bg: rgba(195, 150, 137, 0.74);
+$neutral_bg: rgba(0, 0, 0, 0.1);
 
 .sensei-lms-tool-info {
 	.info {
@@ -40,7 +40,7 @@ $neutral_bg: rgba( 0, 0, 0, 0.1 );
 				display: inline;
 				float: right;
 				border-radius: 5px;
-				background-color: rgba( 255, 255, 255, .5 );
+				background-color: rgba(255, 255, 255, .5);
 				padding: .5em;
 				margin: -.5em 0;
 			}
@@ -71,8 +71,9 @@ $neutral_bg: rgba( 0, 0, 0, 0.1 );
 				display: block;
 				padding: .4em;
 			}
+
 			.message:nth-child(even) {
-				background-color: rgba( 0, 0, 0, .05 );
+				background-color: rgba(0, 0, 0, .05);
 			}
 		}
 
@@ -86,12 +87,12 @@ $neutral_bg: rgba( 0, 0, 0, 0.1 );
 			}
 
 			.message:nth-child(even) {
-				background-color: rgba( 0, 0, 0, .05 );
+				background-color: rgba(0, 0, 0, .05);
 			}
 
 			.time {
 				border-radius: 5px;
-				background-color: rgba( 255, 255, 255, .5 );
+				background-color: rgba(255, 255, 255, .5);
 				padding: .25em;
 				text-align: center;
 				flex: 2;

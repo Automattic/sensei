@@ -1,4 +1,3 @@
-
 body {
 	--wp--custom--form--color--background: var(--sensei-background-color);
 	--wp--custom--form--border--width: 1.5px;
@@ -34,8 +33,8 @@ body {
 }
 
 .wp-block-post-title {
-	margin-top: 20px!important;
-	margin-bottom: 20px!important;
+	margin-top: 20px !important;
+	margin-bottom: 20px !important;
 }
 
 .wp-site-blocks {
@@ -53,6 +52,7 @@ body {
 		margin-right: auto;
 	}
 }
+
 /**
  * Latest template version.
  */
@@ -68,7 +68,7 @@ body {
 	}
 
 	&__main-content__container > .wp-block-group__inner-container {
-		max-width: unset!important;
+		max-width: unset !important;
 	}
 
 	.wp-block-post-content {
@@ -82,7 +82,7 @@ body {
 		&, & > & {
 			max-width: unset !important;
 			width: unset !important;
-			padding: 0!important;
+			padding: 0 !important;
 		}
 
 		.alignfull {

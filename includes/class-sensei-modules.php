@@ -107,6 +107,94 @@ class Sensei_Core_Modules {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
+
+		// Update module teacher meta when added to course.
+		add_action( 'added_term_relationship', [ $this, 'add_teacher_id_in_module_meta_when_added_to_course' ], 10, 3 );
+
+		// Remove module teacher meta when removed from course.
+		add_action( 'delete_term_relationships', [ $this, 'remove_teacher_id_from_module_meta_when_removed_from_course' ], 10, 3 );
+
+		// Update module teacher meta on course teacher update.
+		add_action( 'post_updated', [ $this, 'update_module_teacher_id_meta_on_post_teacher_update' ], 10, 3 );
+	}
+
+	/**
+	 * Add teacher id as term meta when a module is added to a course.
+	 *
+	 * @since 4.9.0
+	 * @access private
+	 *
+	 * @param int     $post_ID      Post ID.
+	 * @param WP_Post $post_after   Post object following the update.
+	 * @param WP_Post $post_before  Post object before the update.
+	 */
+	public function update_module_teacher_id_meta_on_post_teacher_update( int $post_ID, WP_Post $post_after, WP_Post $post_before ) {
+		if ( 'course' !== get_post( $post_ID )->post_type ) {
+			return;
+		}
+
+		if ( $post_after->post_author !== $post_before->post_author ) {
+			$modules = Sensei()->modules->get_course_modules( $post_ID );
+			foreach ( $modules as $module ) {
+				self::update_module_teacher_meta( $module->term_id, $post_after->post_author );
+			}
+		}
+	}
+
+	/**
+	 * Add teacher id as term meta when a module is added to a course.
+	 *
+	 * @since 4.9.0
+	 * @access private
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param int    $tt_id     Term taxonomy ID.
+	 * @param string $taxonomy  Taxonomy slug.
+	 */
+	public function add_teacher_id_in_module_meta_when_added_to_course( int $object_id, int $tt_id, string $taxonomy ) {
+		if ( 'module' !== $taxonomy ) {
+			return;
+		}
+
+		$course = get_post( $object_id );
+
+		self::update_module_teacher_meta( $tt_id, $course->post_author );
+	}
+
+	/**
+	 * Remove teacher id from term meta when a module is added to a course.
+	 *
+	 * @since 4.9.0
+	 * @access private
+	 *
+	 * @param int    $object_id Object ID.
+	 * @param array  $tt_ids    An array of term taxonomy IDs.
+	 * @param string $taxonomy  Taxonomy slug.
+	 */
+	public function remove_teacher_id_from_module_meta_when_removed_from_course( int $object_id, array $tt_ids, string $taxonomy ) {
+		if ( 'module' !== $taxonomy ) {
+			return;
+		}
+
+		foreach ( $tt_ids as $tt_id ) {
+			$args    = array(
+				'post_type'      => 'course',
+				'post_status'    => array( 'publish', 'draft', 'future', 'private' ),
+				'posts_per_page' => -1,
+				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+					array(
+						'taxonomy' => $this->taxonomy,
+						'field'    => 'id',
+						'terms'    => $tt_id,
+					),
+				),
+			);
+			$courses = get_posts( $args );
+			// Don't remove teacher id if this module is still being used in other courses.
+			if ( count( $courses ) < 2 ) {
+				delete_term_meta( $tt_id, 'module_author' );
+			}
+		}
 	}
 
 	/**
@@ -557,7 +645,7 @@ class Sensei_Core_Modules {
 		// Remove module from existing courses
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
-				wp_remove_object_terms( $course->ID, $module_id, $this->taxonomy );
+				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
 			}
 		}
 
@@ -2503,8 +2591,18 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		return $users_terms;
-
+		/**
+		 * Filters the module terms when ownership is being checked for them.
+		 *
+		 * @hook   sensei_filter_module_terms_by_owner
+		 * @since  4.9.0
+		 *
+		 * @param  {WP_Term[]} $user_terms The terms after applying the filter by owner.
+		 * @param  {WP_Term[]|int[]} $terms The original terms before the filtering was applied.
+		 * @param  {int} $user_id The user ID to check for ownership.
+		 * @return {WP_Term[]} The final list of terms that must be considered as owner by the given user ID.
+		 */
+		return apply_filters( 'sensei_filter_module_terms_by_owner', $users_terms, $terms, $user_id );
 	}
 
 	/**

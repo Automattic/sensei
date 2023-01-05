@@ -22,7 +22,7 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		$this->global_blocks = new Sensei_Global_Blocks();
 		$this->blocks        = [
 			'sensei-lms/button-take-course',

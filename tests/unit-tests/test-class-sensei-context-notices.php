@@ -33,10 +33,10 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 
 		$html = $notices->get_notices_html( self::TEMPLATE );
 
-		$this->assertContains( 'Text', $html );
-		$this->assertContains( 'Title', $html );
-		$this->assertContains( 'Action label', $html );
-		$this->assertContains( 'Custom action', $html );
+		$this->assertStringContainsString( 'Text', $html );
+		$this->assertStringContainsString( 'Title', $html );
+		$this->assertStringContainsString( 'Action label', $html );
+		$this->assertStringContainsString( 'Custom action', $html );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 
 		$html = $notices->get_notices_html( self::TEMPLATE );
 
-		$this->assertNotContains( 'Text', $html );
+		$this->assertStringNotContainsString( 'Text', $html );
 	}
 
 	/**
@@ -67,9 +67,9 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 
 		$html = $notices->get_notices_html( self::TEMPLATE );
 
-		$this->assertNotContains( 'X', $html );
-		$this->assertContains( 'Y', $html );
-		$this->assertContains( 'Z', $html );
+		$this->assertStringNotContainsString( 'X', $html );
+		$this->assertStringContainsString( 'Y', $html );
+		$this->assertStringContainsString( 'Z', $html );
 	}
 
 	/**
@@ -85,10 +85,10 @@ class Sensei_Context_Notices_Test extends WP_UnitTestCase {
 		$html_x = $notices_x->get_notices_html( self::TEMPLATE );
 		$html_y = $notices_y->get_notices_html( self::TEMPLATE );
 
-		$this->assertContains( 'X', $html_x );
-		$this->assertNotContains( 'Y', $html_x );
+		$this->assertStringContainsString( 'X', $html_x );
+		$this->assertStringNotContainsString( 'Y', $html_x );
 
-		$this->assertContains( 'Y', $html_y );
-		$this->assertNotContains( 'X', $html_y );
+		$this->assertStringContainsString( 'Y', $html_y );
+		$this->assertStringNotContainsString( 'X', $html_y );
 	}
 }
