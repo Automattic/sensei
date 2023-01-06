@@ -107,7 +107,7 @@ jobs:
               uses: fjorgemota/github-action-wordpress-dependencies-report@v0
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  old-assets-folder: ./dist-trunk
+                  old-assets-folder: ${{ github.workspace }}/dist-trunk
                   old-assets-branch: trunk
-                  new-assets-folder: ./assets/dist
+                  new-assets-folder: ${{ github.workspace }}/assets/dist
                   
