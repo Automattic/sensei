@@ -94,7 +94,7 @@ jobs:
             - name: Build Combined Assets
               run: npm run build:combine-assets
             - name: Download assets (trunk)
-              uses: fjorgemota/action-download-artifact@v2
+              uses: fjorgemota/github-action-download-artifact@v2
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   workflow: trunk.yml
