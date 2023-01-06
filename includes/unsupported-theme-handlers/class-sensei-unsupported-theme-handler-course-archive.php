@@ -69,14 +69,42 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 	 * @return string
 	 */
 	private function render_page() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		// For a valid post that doesn't have any of the old short codes set the archive the same
+		// as the page URI.
+		if (
+			is_a( $sensei_settings_course_page, 'WP_Post' ) &&
+			! Sensei()->post_types->has_old_shortcodes( $sensei_settings_course_page->post_content ) &&
+			! empty( $sensei_settings_course_page->post_content ) &&
+			has_block( 'core/query', $sensei_settings_course_page->post_content )
+		) {
+			return wp_kses(
+				do_blocks( $sensei_settings_course_page->post_content ),
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					[
+						'option' => [
+							'selected' => [],
+							'value'    => [],
+						],
+						'select' => [
+							'class'          => [],
+							'id'             => [],
+							'name'           => [],
+							'data-param-key' => [],
+						],
+					]
+				)
+			);
+		}
+
 		ob_start();
 		add_filter( 'sensei_show_main_header', '__return_false' );
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 		Sensei_Templates::get_template( 'archive-course.php' );
 		do_action( 'sensei_pagination' );
-		$content = ob_get_clean();
-
-		return $content;
+		return ob_get_clean();
 	}
 
 	/**
