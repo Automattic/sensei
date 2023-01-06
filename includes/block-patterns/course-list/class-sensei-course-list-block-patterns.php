@@ -42,7 +42,7 @@ class Sensei_Course_List_Block_Patterns {
 			 * Filter to add extra links to a Course List pattern. The added
 			 * links must be a valid rendered block.
 			 *
-			 * @since $$next-version$$
+			 * @since 4.10.0
 			 *
 			 * @param {array}  $course_list_extra_links The extra links.
 			 * @param {string} $pattern                 The pattern name.

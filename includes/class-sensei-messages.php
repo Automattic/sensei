@@ -1010,7 +1010,7 @@ class Sensei_Messages {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.10.0
 	 */
 	public function show_success_notice(): void {
 		if ( ! Sensei_Utils::is_rest_request() ) {
