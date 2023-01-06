@@ -131,7 +131,7 @@
     "lint-pkg-json": "wp-scripts lint-pkg-json",
     "lint-e2e": "eslint -c ./tests/e2e-playwright/.eslintrc.js ./tests/e2e-playwright/ && tsc --noEmit --project tests/e2e-playwright/tsconfig.json",
     "run-phpcs": "./vendor/bin/phpcs --encoding=utf-8",
-    "start": "NODE_ENV=development calypso-build --watch",
+    "start": "cross-env NODE_ENV=development calypso-build --watch",
     "test": "npm run test-php && npm run test-js",
     "test-js": "wp-scripts test-unit-js",
     "test-js:watch": "wp-scripts test-unit-js --watch",
