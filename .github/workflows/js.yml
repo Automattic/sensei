@@ -103,6 +103,10 @@ jobs:
                   name: combined-assets
                   path: ${{ github.workspace }}/dist-trunk
                   if_no_artifact_found: ignore
+            - name: Current directory
+              run: pwd
+            - name: List dist
+              run: ls assets/dist
             - name: Analyze dependencies and publish report
               uses: fjorgemota/github-action-wordpress-dependencies-report@v0
               with:
