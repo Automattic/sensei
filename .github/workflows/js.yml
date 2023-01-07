@@ -101,7 +101,7 @@ jobs:
                   workflow_conclusion: completed
                   branch: trunk
                   name: combined-assets
-                  path: ./dist-trunk
+                  path: ${{ github.workspace }}/dist-trunk
                   if_no_artifact_found: ignore
             - name: Analyze dependencies and publish report
               uses: fjorgemota/github-action-wordpress-dependencies-report@v0
