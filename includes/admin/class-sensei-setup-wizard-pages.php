@@ -173,7 +173,6 @@ class Sensei_Setup_Wizard_Pages {
 								'type' => 'list',
 							],
 							'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list\u002d\u002dis-list-view',
-							'showLoginForm' => true,
 						],
 					],
 				]

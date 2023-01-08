@@ -71,7 +71,7 @@ class Sensei_Course_List_Filter_Block {
 
 		foreach ( $this->filters as $filter ) {
 			if ( in_array( $filter->get_filter_name(), $attributes['types'], true ) ) {
-				$content .= $filter->get_content( $block->context['queryId'] );
+				$content .= $filter->get_content( $block->context['queryId'], $attributes );
 			}
 		}
 

@@ -28,9 +28,10 @@ abstract class Sensei_Course_List_Filter_Abstract {
 	/**
 	 * Get the content to be rendered inside the filter block.
 	 *
-	 * @param int $query_id The id of the Query block this filter is rendering inside.
+	 * @param int   $query_id The id of the Query block this filter is rendering inside.
+	 * @param Array $attributes The block's attributes.
 	 */
-	abstract public function get_content( int $query_id ): string;
+	abstract public function get_content( int $query_id, array $attributes ): string;
 
 	/**
 	 * Get a list of course Ids to be excluded from the course list block.
