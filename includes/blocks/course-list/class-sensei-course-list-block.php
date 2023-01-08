@@ -34,24 +34,25 @@ class Sensei_Course_List_Block {
 			return $block_content;
 		}
 
+		global $post;
+
 		$is_course_list_block = array_key_exists( 'query', $block['attrs'] ) &&
 			'course' === $block['attrs']['query']['postType'] &&
 			array_key_exists( 'className', $block['attrs'] ) &&
-			str_contains( $block['attrs']['className'], 'wp-block-sensei-lms-course-list' );
+			false !== strpos( $block['attrs']['className'], 'wp-block-sensei-lms-course-list' );
 
-		$is_show_login_form = array_key_exists( 'showLoginForm', $block['attrs'] ) &&
-			$block['attrs']['showLoginForm'];
+		$is_my_courses_page = isset( $post ) && is_page() && intval( Sensei()->settings->get( 'my_course_page' ) ) === $post->ID;
 
 		if (
-			! $is_course_list_block ||
-			! $is_show_login_form ||
-			is_user_logged_in()
+			$is_course_list_block &&
+			$is_my_courses_page &&
+			! is_user_logged_in()
 		) {
-			return $block_content;
+			ob_start();
+			Sensei()->frontend->sensei_login_form();
+			return ob_get_clean();
 		}
 
-		ob_start();
-		Sensei()->frontend->sensei_login_form();
-		return ob_get_clean();
+		return $block_content;
 	}
 }
