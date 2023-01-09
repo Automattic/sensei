@@ -30,16 +30,17 @@ class Sensei_Guest_User_Cleaner_Test extends WP_UnitTestCase {
 	}
 
 	private function setup_course() {
+		global $post, $wp_query;
+
 		$course_data = $this->factory->get_course_with_lessons();
 		$course_id   = $course_data['course_id'];
 		update_post_meta( $course_id, 'open_access', true );
 
-		global $post, $wp_query;
 		$post                  = get_post( $course_id );
 		$wp_query->post        = $post;
-		$wp_query->is_singular   = true;
+		$wp_query->is_singular = true;
 		$wp_query->in_the_loop = false;
-		echo is_singular( 'course' );
+
 		return $course_data;
 	}
 
@@ -48,13 +49,13 @@ class Sensei_Guest_User_Cleaner_Test extends WP_UnitTestCase {
 		/* Arrange */
 		[ 'course_id' => $course_id ] = $this->setup_course();
 
-		$_POST['course_start']                           = 1;
-		$_POST[ 'woothemes_sensei_start_course_noonce' ] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
+		$_POST['course_start']                         = 1;
+		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
 		do_action( 'wp' );
 		$this->logout();
 
-		$_POST['course_start']                           = 1;
-		$_POST[ 'woothemes_sensei_start_course_noonce' ] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
+		$_POST['course_start']                         = 1;
+		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
 		do_action( 'wp' );
 
 		$user_count_before = Sensei_Utils::get_user_count_for_role( 'guest_student' );
@@ -66,7 +67,7 @@ class Sensei_Guest_User_Cleaner_Test extends WP_UnitTestCase {
 			'user_id' => get_current_user_id(),
 			'type_in' => [ 'sensei_lesson_status', 'sensei_course_status' ],
 			'status'  => 'any',
-			'fields'  => 'ids'
+			'fields'  => 'ids',
 		];
 
 		$activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
@@ -77,7 +78,6 @@ class Sensei_Guest_User_Cleaner_Test extends WP_UnitTestCase {
 				'comment_date' => '2022-01-02 00:00:01',
 			]
 		);
-
 
 		/* Act */
 		do_action( 'sensei_remove_inactive_guest_users' );
