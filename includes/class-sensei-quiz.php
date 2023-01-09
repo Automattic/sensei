@@ -99,8 +99,15 @@ class Sensei_Quiz {
 
 		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
+		$is_block_editor = (
+			! $current_screen || $current_screen->is_block_editor()
+		) || (
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
+			isset( $_GET['meta-box-loader-nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['meta-box-loader-nonce'] ), 'meta-box-loader' )
+		);
+
 		// Disable block editor functions if custom question types have been registered, or we are not in the block editor.
-		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && ( ! $current_screen || $current_screen->is_block_editor() );
+		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && $is_block_editor;
 
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
