@@ -116,7 +116,7 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
-2022-01-12 - version 4.10.0
+2023-01-12 - version 4.10.0
 * New: Course theme installation through the onboarding wizard
 	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
 	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
