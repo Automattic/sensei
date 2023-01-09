@@ -23,15 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Temporary_User {
 
 	/**
-	 * Sensei_Temporary_User constructor.
-	 *
-	 * @since $$next-version$$
-	 */
-	public function __construct() {
-
-	}
-
-	/**
 	 * Create a user without triggering user registration hooks.
 	 *
 	 * @param mixed $userdata wp_insert_user options.
@@ -39,7 +30,17 @@ class Sensei_Temporary_User {
 	 * @return int|WP_Error
 	 */
 	public static function create_user( $userdata ) {
+
 		remove_all_filters( 'user_register' );
+
+		/*
+		 * Workaround for MailPoet. If its default 'WordPress Users' list is active, all users will show up as subscribers,
+		 * but at least with this the temporary users will start as 'Unsubscribed' instead of 'Unconfirmed', not counting
+		 * towards the subscriber count of the plan. The subscribers will disappear when the temporary users are deleted.
+		 *
+		 */
+		$_POST['mailpoet'] = [ 'subscribe_on_register_active' => true ];
+
 		return wp_insert_user( $userdata );
 	}
 
