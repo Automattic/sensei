@@ -81,7 +81,13 @@ class Sensei_Preview_User {
 
 		$preview_user = $this->get_preview_user( get_current_user_id(), $course_id );
 
-		if ( ! $preview_user || ! $this->is_preview_user( $preview_user ) ) {
+		if ( ! $preview_user ) {
+			return;
+		}
+
+		// Clear out meta for the teacher if the preview user doesn't exist.
+		if ( ! $this->is_preview_user( $preview_user ) ) {
+			$this->delete_meta( get_current_user_id(), $preview_user, $course_id );
 			return;
 		}
 
@@ -254,13 +260,7 @@ class Sensei_Preview_User {
 
 		list( 'user' => $teacher, 'course' => $course_id ) = get_user_meta( $user_id, self::META, true );
 
-		delete_user_meta(
-			$teacher,
-			self::META,
-			self::meta_value( $user_id, $course_id )
-		);
-
-		Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+		$this->delete_meta( $teacher, $user_id, $course_id );
 
 		if ( is_multisite() ) {
 			if ( ! function_exists( 'wpmu_delete_user' ) ) {
@@ -414,11 +414,7 @@ class Sensei_Preview_User {
 			$this->delete_preview_user( $existing_preview_user );
 		}
 
-		add_user_meta(
-			get_current_user_id(),
-			self::META,
-			self::meta_value( $preview_user_id, $course_id )
-		);
+		$this->add_meta( $user_id, $preview_user_id, $course_id );
 	}
 
 	/**
@@ -429,6 +425,42 @@ class Sensei_Preview_User {
 	private function is_preview_user_active() {
 		$user = wp_get_current_user();
 		return $this->is_preview_user( $user );
+	}
+
+	/**
+	 * Set preview user meta for the teacher.
+	 *
+	 * @param int $teacher_user_id Teacher user ID.
+	 * @param int $preview_user_id Preview user ID.
+	 * @param int $course_id       Course ID.
+	 *
+	 * @return false|int
+	 */
+	private function add_meta( $teacher_user_id, $preview_user_id, $course_id ) {
+		return add_user_meta(
+			$teacher_user_id,
+			self::META,
+			self::meta_value( $preview_user_id, $course_id )
+		);
+	}
+
+	/**
+	 * Delete preview user meta for the teacher.
+	 *
+	 * @param int $teacher_user_id Teacher user ID.
+	 * @param int $preview_user_id Preview user ID.
+	 * @param int $course_id       Course ID.
+	 *
+	 * @return void
+	 */
+	private function delete_meta( $teacher_user_id, int $preview_user_id, $course_id ): void {
+		delete_user_meta(
+			$teacher_user_id,
+			self::META,
+			self::meta_value( $preview_user_id, $course_id )
+		);
+
+		Sensei_Utils::sensei_remove_user_from_course( $course_id, $preview_user_id );
 	}
 
 	/**
