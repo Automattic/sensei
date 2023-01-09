@@ -233,7 +233,7 @@ class Sensei_Preview_User {
 		$user_name    = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
 		$display_name = 'Preview Student ' . $course_id . $teacher->ID . ' (' . $teacher->display_name . ')';
 
-		return wp_insert_user(
+		return Sensei_Temporary_User::create_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
@@ -264,17 +264,7 @@ class Sensei_Preview_User {
 
 		$this->delete_meta( $teacher, $user_id, $course_id );
 
-		if ( is_multisite() ) {
-			if ( ! function_exists( 'wpmu_delete_user' ) ) {
-				require_once ABSPATH . '/wp-admin/includes/ms.php';
-			}
-			wpmu_delete_user( $user_id );
-		} else {
-			if ( ! function_exists( 'wp_delete_user' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/user.php';
-			}
-			wp_delete_user( $user_id );
-		}
+		Sensei_Temporary_User::delete_user( $user_id );
 	}
 
 	/**

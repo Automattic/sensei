@@ -287,7 +287,7 @@ class Sensei_Guest_User {
 	private function create_guest_user() {
 		$user_count = Sensei_Utils::get_user_count_for_role( self::ROLE ) + 1;
 		$user_name  = self::LOGIN_PREFIX . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
-		return wp_insert_user(
+		return Sensei_Temporary_User::create_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
