@@ -170,9 +170,23 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 */
 	public static function init_guest_user_admin() {
-		add_filter( 'editable_roles', [ static::class, 'remove_guest_student_role' ], 11 );
+		add_filter( 'editable_roles', [ static::class, 'filter_out_guest_student_role' ], 11 );
+		add_filter( 'views_users', [ static::class, 'filter_out_guest_user_tab_from_users_list' ] );
 
 		add_action( 'pre_user_query', [ static::class, 'filter_out_guest_users' ], 11 );
+	}
+
+	/**
+	 * Filter out Guest Student role tab from Users page in Settings.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 *  @param array $views List of tabs.
+	 */
+	public static function filter_out_guest_user_tab_from_users_list( $views ) {
+		unset( $views['guest_student'] );
+		return $views;
 	}
 
 	/**
@@ -183,7 +197,7 @@ class Sensei_Guest_User {
 	 *
 	 *  @param array $roles List of roles.
 	 */
-	public static function remove_guest_student_role( $roles ) {
+	public static function filter_out_guest_student_role( $roles ) {
 		unset( $roles['guest_student'] );
 		return $roles;
 	}
