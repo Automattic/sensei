@@ -94,7 +94,7 @@ jobs:
             - name: Build Combined Assets
               run: npm run build:combine-assets
             - name: Download assets (trunk)
-              uses: fjorgemota/github-action-download-artifact@v2
+              uses: Automattic/github-action-download-artifact@v2
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   workflow: trunk.yml
@@ -104,7 +104,7 @@ jobs:
                   path: ${{ github.workspace }}/dist-trunk
                   if_no_artifact_found: ignore
             - name: Analyze dependencies and publish report
-              uses: fjorgemota/github-action-wordpress-dependencies-report@v0
+              uses: Automattic/github-action-wordpress-dependencies-report@v0
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
                   old-assets-folder: ${{ github.workspace }}/dist-trunk
