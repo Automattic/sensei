@@ -84,6 +84,7 @@ class Sensei_Guest_User {
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
+
 		$this->create_guest_student_role_if_not_exists();
 	}
 
@@ -171,7 +172,7 @@ class Sensei_Guest_User {
 	public static function init_guest_user_admin() {
 		add_filter( 'editable_roles', [ static::class, 'remove_guest_student_role' ], 11 );
 
-		add_action( 'pre_user_query', [ static::class, 'remove_guest_users' ], 11 );
+		add_action( 'pre_user_query', [ static::class, 'filter_out_guest_users' ], 11 );
 	}
 
 	/**
@@ -195,15 +196,12 @@ class Sensei_Guest_User {
 	 *
 	 *  @param WP_User_Query $query The user query.
 	 */
-	public static function remove_guest_users( WP_User_Query $query ) {
+	public static function filter_out_guest_users( WP_User_Query $query ) {
 		global $wpdb;
 
 		$query->query_where = str_replace(
 			'WHERE 1=1',
-			"WHERE 1=1 AND {$wpdb->users}.ID IN (
-              SELECT {$wpdb->usermeta}.user_id FROM $wpdb->usermeta
-              WHERE {$wpdb->usermeta}.meta_key = '{$wpdb->prefix}capabilities'
-              AND {$wpdb->usermeta}.meta_value NOT LIKE '%guest_student%' )",
+			"WHERE 1=1 AND {$wpdb->users}.user_login NOT LIKE 'sensei_guest_%'",
 			$query->query_where
 		);
 	}
@@ -265,7 +263,7 @@ class Sensei_Guest_User {
 	 */
 	private function create_guest_user() {
 		$user_count = Sensei_Utils::get_user_count_for_role( $this->guest_student_role ) + 1;
-		$user_name  = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
+		$user_name  = 'sensei_guest_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
 		return wp_insert_user(
 			[
 				'user_pass'    => wp_generate_password(),
