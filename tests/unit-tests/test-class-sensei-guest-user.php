@@ -93,7 +93,7 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 
 	public function testRolesList_WhenFetched_DoesNotContainGuestStudentRole() {
 		/* Arrange */
-		$this->factory->user->create( [ 'role' => 'guest_student' ] );
+		$this->factory->user->create( [ 'role' => Sensei_Guest_User::ROLE ] );
 
 		$all_roles = get_editable_roles();
 
@@ -103,8 +103,8 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 		$all_roles_except_guest = get_editable_roles();
 
 		/* Assert */
-		$this->assertArrayHasKey( 'guest_student', $all_roles );
-		$this->assertArrayNotHasKey( 'guest_student', $all_roles_except_guest );
+		$this->assertArrayHasKey( Sensei_Guest_User::ROLE, $all_roles );
+		$this->assertArrayNotHasKey( Sensei_Guest_User::ROLE, $all_roles_except_guest );
 	}
 
 	public function testUserList_WhenFetched_DoesNotContainGuestUsers() {
@@ -117,8 +117,8 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 		$this->factory->user->create_many(
 			2,
 			[
-				'user_login' => 'sensei_guest_user',
-				'role'       => 'guest_student',
+				'user_login' => Sensei_Guest_User::LOGIN_PREFIX . 'user',
+				'role'       => Sensei_Guest_User::ROLE,
 			]
 		);
 		Sensei_Guest_User::init_guest_user_admin();
