@@ -119,7 +119,7 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 			[
 				'user_login' => 'sensei_guest_user',
 				'role'       => 'guest_student',
-			],
+			]
 		);
 		Sensei_Guest_User::init_guest_user_admin();
 
