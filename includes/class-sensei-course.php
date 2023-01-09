@@ -152,6 +152,17 @@ class Sensei_Course {
 	}
 
 	/**
+	 * Check user permission for editing a course.
+	 *
+	 * @param int $course_id Course post ID.
+	 *
+	 * @return bool Whether the user can edit the course.
+	 */
+	public static function can_current_user_edit_course( $course_id ) {
+		return current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
+	}
+
+	/**
 	 * Highlight the menu item for the course pages.
 	 *
 	 * @deprecated 4.8.0

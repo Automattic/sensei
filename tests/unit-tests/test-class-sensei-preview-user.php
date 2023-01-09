@@ -103,7 +103,6 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 	}
 
-
 	/**
 	 * Switch to preview user, then switch back.
 	 */
@@ -133,6 +132,37 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	public function go_to( $url ) {
 		wp_set_current_user( $this->get_user_by_role( 'administrator' ) );
 		parent::go_to( $url );
+	}
+
+
+	/**
+	 * Preview user can see unpublished course and its lessons. Regular student cannot.
+	 */
+	public function testPreviewUnpublishedCourse() {
+
+		list( 'course_id' => $course_id, 'lesson_ids' => list( $lesson_id ) ) = $this->factory->get_course_with_lessons(
+			[
+				'lesson_args' => [
+					'post_status' => 'draft',
+				],
+				'course_args' => [
+					'post_status' => 'draft',
+				],
+			]
+		);
+
+		$lesson_link    = get_preview_post_link( $lesson_id, [], get_permalink( $lesson_id ) );
+		$lesson_content = get_the_content( null, false, $lesson_id );
+
+		$this->login_as_student();
+		parent::go_to( $lesson_link );
+		$this->assertEmpty( get_the_content(), 'Regular student user should not see unpublished lesson content.' );
+
+		$this->login_as_admin();
+		$this->go_to( add_query_arg( [ 'sensei-preview-as-student' => wp_create_nonce( 'sensei-preview-as-student' ) ], $lesson_link ) );
+		parent::go_to( $lesson_link );
+
+		$this->assertEquals( $lesson_content, get_the_content(), 'Preview user should see unpublished lesson content.' );
 	}
 
 }
