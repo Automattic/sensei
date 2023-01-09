@@ -92,6 +92,7 @@ class Sensei_Guest_User {
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
+		add_action( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
 
 		$this->create_guest_student_role_if_not_exists();
 	}
@@ -375,5 +376,20 @@ class Sensei_Guest_User {
 		return isset( $_POST[ $field ] )
 			&& isset( $_POST[ $nonce ] )
 			&& wp_verify_nonce( wp_unslash( $_POST[ $nonce ] ), $nonce ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verification
+	}
+
+	/**
+	 * Prevent Sensei emails related to guest user actions.
+	 *
+	 * @access private
+	 * @since  $$next-version$$
+	 *
+	 * @param boolean $send_email Whether to send the email.
+	 *
+	 * @return boolean Whether to send the email.
+	 */
+	public function skip_sensei_email( $send_email ) {
+		return $this->is_current_user_guest() ? false : $send_email;
+
 	}
 }
