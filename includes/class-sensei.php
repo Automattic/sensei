@@ -525,6 +525,8 @@ class Sensei_Main {
 			new Sensei_Exit_Survey();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
+
+			Sensei_Guest_User::init_guest_user_admin();
 		} else {
 
 			// Load Frontend Class

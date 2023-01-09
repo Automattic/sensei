@@ -60,7 +60,7 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( is_user_logged_in(), $open_access );
 		if ( $open_access ) {
-			$this->assertRegexp( '/^guest_user_.*$/', wp_get_current_user()->user_login );
+			$this->assertRegexp( '/^sensei_guest_.*$/', wp_get_current_user()->user_login );
 			$this->assertRegexp( '/^Guest Student 00.*$/', wp_get_current_user()->display_name );
 		}
 
@@ -89,6 +89,45 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 		// The 'complete lesson' action is also executed.
 		$this->assertTrue( Sensei_Utils::user_completed_lesson( $lesson_id, get_current_user_id() ), 'Lesson was not completed' );
 
+	}
+
+	public function testRolesList_WhenFetched_DoesNotContainGuestStudentRole() {
+		/* Arrange */
+		$this->factory->user->create( [ 'role' => Sensei_Guest_User::ROLE ] );
+
+		$all_roles = get_editable_roles();
+
+		Sensei_Guest_User::init_guest_user_admin();
+
+		/* Act */
+		$all_roles_except_guest = get_editable_roles();
+
+		/* Assert */
+		$this->assertArrayHasKey( Sensei_Guest_User::ROLE, $all_roles );
+		$this->assertArrayNotHasKey( Sensei_Guest_User::ROLE, $all_roles_except_guest );
+	}
+
+	public function testUserList_WhenFetched_DoesNotContainGuestUsers() {
+		/* Arrange */
+		$user_args = [
+			'fields' => 'ID',
+		];
+		$result1   = ( new WP_User_Query( $user_args ) )->get_results();
+
+		$this->factory->user->create_many(
+			2,
+			[
+				'user_login' => Sensei_Guest_User::LOGIN_PREFIX . 'user',
+				'role'       => Sensei_Guest_User::ROLE,
+			]
+		);
+		Sensei_Guest_User::init_guest_user_admin();
+
+		/* Act */
+		$result2 = ( new WP_User_Query( $user_args ) )->get_results();
+
+		/* Assert */
+		$this->assertEquals( count( $result1 ), count( $result2 ) );
 	}
 
 }

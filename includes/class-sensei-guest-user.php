@@ -23,14 +23,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sensei_Guest_User {
 
 	/**
-	 * Keeps a reference to the Guest Student role object
+	 * Name of the Role for Guest Users.
 	 *
-	 * @access protected
 	 * @since $$next-version$$
 	 *
 	 * @var string
 	 */
-	protected $guest_student_role = 'guest_student';
+	const ROLE = 'guest_student';
+
+	/**
+	 * Guest user login name prefix.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const LOGIN_PREFIX = 'sensei_guest_';
 
 	/**
 	 * List of actions to create a guest user for if the course is open access.
@@ -165,6 +173,62 @@ class Sensei_Guest_User {
 	}
 
 	/**
+	 * Initializes the backend and admin actions for Guest users.
+	 *
+	 * @since $$next-version$$
+	 */
+	public static function init_guest_user_admin() {
+		add_filter( 'editable_roles', [ static::class, 'filter_out_guest_student_role' ], 11 );
+		add_filter( 'views_users', [ static::class, 'filter_out_guest_user_tab_from_users_list' ] );
+
+		add_action( 'pre_user_query', [ static::class, 'filter_out_guest_users' ], 11 );
+	}
+
+	/**
+	 * Filter out Guest Student role tab from Users page in Settings.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 *  @param array $views List of tabs.
+	 */
+	public static function filter_out_guest_user_tab_from_users_list( $views ) {
+		unset( $views[ self::ROLE ] );
+		return $views;
+	}
+
+	/**
+	 * Remove Guest Student role from showing up Settings.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 *  @param array $roles List of roles.
+	 */
+	public static function filter_out_guest_student_role( $roles ) {
+		unset( $roles[ self::ROLE ] );
+		return $roles;
+	}
+
+	/**
+	 * Remove guest users from user queries.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 *  @param WP_User_Query $query The user query.
+	 */
+	public static function filter_out_guest_users( WP_User_Query $query ) {
+		global $wpdb;
+
+		$query->query_where = str_replace(
+			'WHERE 1=1',
+			"WHERE 1=1 AND {$wpdb->users}.user_login NOT LIKE '" . self::LOGIN_PREFIX . "%'",
+			$query->query_where
+		);
+	}
+
+	/**
 	 * Checks if the action is related to an open course or a lesson or a quiz that belongs to an open course.
 	 *
 	 * @since $$next-version$$
@@ -199,7 +263,7 @@ class Sensei_Guest_User {
 	 */
 	private function is_current_user_guest() {
 		$user = wp_get_current_user();
-		return in_array( $this->guest_student_role, (array) $user->roles, true );
+		return in_array( self::ROLE, (array) $user->roles, true );
 	}
 	/**
 	 * Recreate nonce after logging in user invalidates existing one.
@@ -220,15 +284,15 @@ class Sensei_Guest_User {
 	 * @return int
 	 */
 	private function create_guest_user() {
-		$user_count = Sensei_Utils::get_user_count_for_role( $this->guest_student_role ) + 1;
-		$user_name  = 'guest_user_' . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
+		$user_count = Sensei_Utils::get_user_count_for_role( self::ROLE ) + 1;
+		$user_name  = self::LOGIN_PREFIX . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
 		return wp_insert_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
 				'user_email'   => $user_name . '@senseiguest.senseiguest',
 				'display_name' => 'Guest Student ' . str_pad( $user_count, 3, '0', STR_PAD_LEFT ),
-				'role'         => $this->guest_student_role,
+				'role'         => self::ROLE,
 			]
 		);
 	}
@@ -270,12 +334,12 @@ class Sensei_Guest_User {
 	 */
 	private function create_guest_student_role_if_not_exists() {
 		// Check if the Guest Student role exists.
-		$guest_role = get_role( $this->guest_student_role );
+		$guest_role = get_role( self::ROLE );
 
 		// If Guest Student is not a valid WordPress role create it.
 		if ( ! is_a( $guest_role, 'WP_Role' ) ) {
 			// Create the role.
-			add_role( $this->guest_student_role, __( 'Guest Student', 'sensei-lms' ) );
+			add_role( self::ROLE, __( 'Guest Student', 'sensei-lms' ) );
 		}
 	}
 
