@@ -87,8 +87,8 @@ class Sensei_Guest_User_Cleaner {
 			$course_ids = Sensei_Learner::instance()->get_enrolled_courses_query(
 				$user_id,
 				[
-					'posts_per_page'   => -1,
-					'fields' => 'ids',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
 				]
 			)->posts;
 
@@ -121,9 +121,9 @@ class Sensei_Guest_User_Cleaner {
 			'status'     => 'any',
 			'date_query' => [
 				[
-					'after' => '1 week ago'
-				]
-			]
+					'after' => '1 week ago',
+				],
+			],
 		];
 
 		$last_week_activities = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
