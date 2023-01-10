@@ -86,6 +86,7 @@ class Sensei_Quiz {
 		add_filter( 'body_class', [ $this, 'add_quiz_blocks_class' ] );
 		add_filter( 'post_class', [ $this, 'add_quiz_blocks_class' ] );
 
+		add_filter( 'sensei_quiz_enable_block_based_editor', [ $this, 'disable_block_editor_functions_when_question_types_are_registered' ], 2 ); // It has 2 as priority for better backward compabilitiby, since originally it was inside the method `is_block_based_editor_enabled`.
 	}
 
 	/**
@@ -106,9 +107,6 @@ class Sensei_Quiz {
 			isset( $_GET['meta-box-loader-nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['meta-box-loader-nonce'] ), 'meta-box-loader' )
 		);
 
-		// Disable block editor functions if custom question types have been registered, or we are not in the block editor.
-		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && $is_block_editor;
-
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
 		 * metabox based editor. This is to allow sites to migrate over to the block based
@@ -121,7 +119,20 @@ class Sensei_Quiz {
 		 *
 		 * @return {bool}
 		 */
-		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_based_editor_enabled );
+		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_editor );
+	}
+
+	/**
+	 * Disable block based editor when custom question types have been registered.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param bool $is_block_based_editor_enabled Whether the block based editor is enabled.
+	 *
+	 * @return bool Whether block based editor should be enabled.
+	 */
+	public function disable_block_editor_functions_when_question_types_are_registered( $is_block_based_editor_enabled ) {
+		return ! has_filter( 'sensei_question_types' ) && $is_block_based_editor_enabled;
 	}
 
 	/**
