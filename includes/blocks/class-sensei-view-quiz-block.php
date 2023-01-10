@@ -72,7 +72,7 @@ class Sensei_View_Quiz_Block {
 	}
 
 	/**
-	 * Update the URL of a button block.
+	 * Convert query params from an URL to input fields HTML.
 	 *
 	 * @param string $quiz_permalink The url for the quiz.
 	 *
