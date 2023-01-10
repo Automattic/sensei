@@ -70,7 +70,7 @@ describe( '<StudentActionMenu />', () => {
 		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
 	} );
 
-	it( 'Should display modal when "Reset or Remove progress" is selected', async () => {
+	it( 'Should display modal when "Reset progress" is selected', async () => {
 		useSelect.mockReturnValue( { courses: [], isFetching: false } );
 		render(
 			<StudentActionMenu studentDisplayName={ studentDisplayName } />
@@ -85,8 +85,8 @@ describe( '<StudentActionMenu />', () => {
 			preventDefault: () => {},
 		} );
 
-		// Click the "Reset or Remove Progress" menu item.
-		const menuItem = screen.getByText( 'Reset or Remove Progress' );
+		// Click the "Reset Progress" menu item.
+		const menuItem = screen.getByText( 'Reset Progress' );
 
 		await act( async () => {
 			fireEvent.click( menuItem );
