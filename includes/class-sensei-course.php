@@ -277,6 +277,9 @@ class Sensei_Course {
 			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
 			'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
 			'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
+			'features'    => [
+				'open_access' => apply_filters( 'sensei_feature_open_access_courses', true ),
+			],
 			'courses'     => get_posts(
 				[
 					'post_type'        => 'course',
