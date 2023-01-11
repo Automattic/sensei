@@ -92,6 +92,18 @@ jobs:
             - name: Updates the npm version
               run: npm install -g npm@^8
               if: steps.dist-cache.outputs.cache-hit != 'true'
+            - name: Get npm cache directory
+              id: npm-cache
+              if: steps.dist-cache.outputs.cache-hit != 'true'
+              run: |
+                  echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v3
+              if: steps.dist-cache.outputs.cache-hit != 'true'
+              with:
+                  path: ${{ steps.npm-cache.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
             - name: Install JS dependencies
               run: npm ci
               if: steps.dist-cache.outputs.cache-hit != 'true'
