@@ -87,7 +87,7 @@ jobs:
             - uses: actions/cache@v3
               id: dist-cache
               with:
-                  path: ${{ github.workplace }}/assets/dist
+                  path: ${{ github.workspace }}/assets/dist
                   key: ${{ runner.os }}-dist-${{ steps.trunk-commit.outputs.commit }}
             - name: Updates the npm version
               run: npm install -g npm@^8
