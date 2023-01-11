@@ -27,7 +27,7 @@
 * Fix: Fix editor wizard header style [#6335](https://github.com/Automattic/sensei/pull/6335)
 * Fix: Update question post type to not be publicly queryable [#6347](https://github.com/Automattic/sensei/pull/6347)
 * Fix: Fix conflict by disabling Yoast initialization on Divi preview [#6342](https://github.com/Automattic/sensei/pull/6342)
-* Fix: Security fixes
+* Fix: Security fixes 👏 foobar7
 * Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
 * Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
 * Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
@@ -54,13 +54,13 @@
     * Skip opinionated styles when the active theme declares support for it [#6066](https://github.com/Automattic/sensei/pull/6066)
     * Enable customization of the lesson status icons [#6070](https://github.com/Automattic/sensei/pull/6070)
     * Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
-    * Update section headings in Landing Page and Course List patterns [#6217](https://github.com/Automattic/sensei/pull/6217) 
+    * Update section headings in Landing Page and Course List patterns [#6217](https://github.com/Automattic/sensei/pull/6217)
     * Fix mail list br tag escape in landing page [#6214](https://github.com/Automattic/sensei/pull/6214)
 * New: Course Settings
     * Address testing feedback for course settings sidebar [#6161](https://github.com/Automattic/sensei/pull/6161)
     * Course Settings Sidebar [#6156](https://github.com/Automattic/sensei/pull/6156)
     * Create new course general sidebar [#6077](https://github.com/Automattic/sensei/pull/6077)
-    * Rename Course Settings sidebar, show arrow [#6197](https://github.com/Automattic/sensei/pull/6197) 
+    * Rename Course Settings sidebar, show arrow [#6197](https://github.com/Automattic/sensei/pull/6197)
 * Add: Add/sensei contact link atomic [#6177](https://github.com/Automattic/sensei/pull/6177)
 * Add: Switch icon to SVG for Calypso compatibility [#6160](https://github.com/Automattic/sensei/pull/6160)
 * Add: Sensei on Dotcom - Connect Sensei Home tasks statuses with Calypso Launchpad tasks statuses [#6124](https://github.com/Automattic/sensei/pull/6124)
