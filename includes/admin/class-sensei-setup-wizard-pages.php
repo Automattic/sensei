@@ -110,8 +110,8 @@ class Sensei_Setup_Wizard_Pages {
 
 <!-- wp:columns -->
 <div class="wp-block-columns"><!-- wp:column {"width":"66.66%"} -->
-<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:sensei-lms/course-categories {"options":{},"style":{"spacing":{"padding":{"bottom":"var:preset|spacing|20"}}}} -->
-<div style="padding-bottom:var(--wp--preset--spacing--20)" class="wp-block-sensei-lms-course-categories"></div>
+<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:sensei-lms/course-categories {"textAlign":"left","options":{},"style":{"spacing":{"padding":{"bottom":"var:preset|spacing|20"}}}} -->
+<div style="padding-bottom:var(--wp--preset--spacing--20)" class="wp-block-sensei-lms-course-categories has-text-align-left"></div>
 <!-- /wp:sensei-lms/course-categories -->
 
 <!-- wp:post-title {"textAlign":"left","isLink":true,"style":{"spacing":{"padding":{"top":"0","right":"0","bottom":"0","left":"0"},"margin":{"top":"0","right":"0","bottom":"0","left":"0"}}}} /-->
