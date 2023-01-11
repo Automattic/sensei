@@ -96,7 +96,7 @@ class Sensei_Guest_User_Cleaner {
 				Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
 			}
 
-			$this->delete_user( $user_id );
+			Sensei_Temporary_User::delete_user( $user_id );
 		}
 	}
 
@@ -135,26 +135,5 @@ class Sensei_Guest_User_Cleaner {
 		}
 
 		return array_values( array_diff( $guest_user_ids, array_column( $last_week_activities, 'user_id' ) ) );
-	}
-
-	/**
-	 * Delete a user for both single and multisite.
-	 *
-	 * @access private
-	 *
-	 * @param int $user_id ID of the user to be removed.
-	 */
-	private function delete_user( $user_id ) {
-		if ( is_multisite() ) {
-			if ( ! function_exists( 'wpmu_delete_user' ) ) {
-				require_once ABSPATH . '/wp-admin/includes/ms.php';
-			}
-			wpmu_delete_user( $user_id );
-		} else {
-			if ( ! function_exists( 'wp_delete_user' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/user.php';
-			}
-			wp_delete_user( $user_id );
-		}
 	}
 }
