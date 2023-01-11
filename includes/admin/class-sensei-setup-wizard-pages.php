@@ -100,19 +100,21 @@ class Sensei_Setup_Wizard_Pages {
 					[
 						'blockName'    => 'core/query',
 						'innerContent' => [
-							'<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view"><!-- wp:sensei-lms/course-list-filter {"types":["student_course"],"lock":{"move":true}} /-->
+							'<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view"><!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"0"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:0"><!-- wp:sensei-lms/course-list-filter {"types":["student_course"],"defaultOptions":{"student_course":"active"},"lock":{"move":true}} /--></div>
+<!-- /wp:group -->
 
-<!-- wp:post-template -->
-<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"layout":{"inherit":false}} -->
-<div class="wp-block-group alignfull has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px"><!-- wp:post-featured-image {"isLink":true,"height":"324px"} /-->
+<!-- wp:post-template {"align":"center"} -->
+<!-- wp:group {"align":"center","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"className":"aligncenter","layout":{"inherit":false}} -->
+<div class="wp-block-group aligncenter has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px"><!-- wp:post-featured-image {"isLink":true,"height":"324px","align":"center"} /-->
 
 <!-- wp:columns -->
 <div class="wp-block-columns"><!-- wp:column {"width":"66.66%"} -->
-<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:sensei-lms/course-categories {"options":{}} -->
-<div class="wp-block-sensei-lms-course-categories"></div>
+<div class="wp-block-column" style="flex-basis:66.66%"><!-- wp:sensei-lms/course-categories {"options":{},"style":{"spacing":{"padding":{"bottom":"var:preset|spacing|20"}}}} -->
+<div style="padding-bottom:var(--wp--preset--spacing--20)" class="wp-block-sensei-lms-course-categories"></div>
 <!-- /wp:sensei-lms/course-categories -->
 
-<!-- wp:post-title {"textAlign":"left","isLink":true} /-->
+<!-- wp:post-title {"textAlign":"left","isLink":true,"style":{"spacing":{"padding":{"top":"0","right":"0","bottom":"0","left":"0"},"margin":{"top":"0","right":"0","bottom":"0","left":"0"}}}} /-->
 
 <!-- wp:post-author {"textAlign":"left"} /-->
 
@@ -123,8 +125,8 @@ class Sensei_Setup_Wizard_Pages {
 <!-- wp:sensei-lms/course-progress {"defaultBarColor":"primary"} /--></div>
 <!-- /wp:column -->
 
-<!-- wp:column {"width":"33.33%"} -->
-<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:sensei-lms/course-actions -->
+<!-- wp:column {"width":"33.33%","style":{"spacing":{"padding":{"top":"0"}}}} -->
+<div class="wp-block-column" style="padding-top:0;flex-basis:33.33%"><!-- wp:sensei-lms/course-actions -->
 <!-- wp:sensei-lms/button-take-course {"align":"right"} -->
 <div class="wp-block-sensei-lms-button-take-course is-style-default wp-block-sensei-button wp-block-button has-text-align-right"><button class="wp-block-button__link">' . __( 'Start Course', 'sensei-lms' ) . '</button></div>
 <!-- /wp:sensei-lms/button-take-course -->
@@ -142,11 +144,11 @@ class Sensei_Setup_Wizard_Pages {
 <!-- /wp:group -->
 <!-- /wp:post-template -->
 
-<!-- wp:separator {"opacity":"css","className":"alignwide is-style-wide"} -->
-<hr class="wp-block-separator has-css-opacity alignwide is-style-wide"/>
+<!-- wp:separator {"opacity":"css","align":"center","className":"alignwide is-style-wide"} -->
+<hr class="wp-block-separator aligncenter has-css-opacity alignwide is-style-wide"/>
 <!-- /wp:separator -->
 
-<!-- wp:query-pagination {"paginationArrow":"arrow","align":"wide","layout":{"type":"flex","justifyContent":"space-between"}} -->
+<!-- wp:query-pagination {"paginationArrow":"arrow","align":"center","layout":{"type":"flex","justifyContent":"space-between"}} -->
 <!-- wp:query-pagination-previous {"fontSize":"small"} /-->
 
 <!-- wp:query-pagination-numbers /-->
