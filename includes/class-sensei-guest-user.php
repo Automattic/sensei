@@ -117,6 +117,7 @@ class Sensei_Guest_User {
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
+		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
 
 		$this->create_guest_student_role_if_not_exists();
 
@@ -136,6 +137,22 @@ class Sensei_Guest_User {
 	public function open_course_always_enrolled( $is_enrolled, $user_id, $course_id ) {
 		$in_course_content = is_singular( [ 'lesson', 'quiz' ] );
 		return ( $in_course_content && $this->is_course_open_access( $course_id ) ) ? true : $is_enrolled;
+	}
+
+	/**
+	 * Filter manual enrolment check to always allow users to manually enrol if the course is open access.
+	 *
+	 * @since  $$next-version$$
+	 *
+	 * @param bool $can_enroll Initial value.
+	 * @param int  $course_id   Course ID.
+	 *
+	 * @return bool
+	 */
+	public function open_course_user_can_manualy_enroll( $can_enroll, $course_id ) {
+
+		$is_user_enrolled = is_user_logged_in() && Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() );
+		return $this->is_course_open_access( $course_id ) ? ! $is_user_enrolled : $can_enroll;
 	}
 
 	/**
