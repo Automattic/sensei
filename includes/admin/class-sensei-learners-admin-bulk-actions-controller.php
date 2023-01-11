@@ -124,7 +124,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->known_bulk_actions = [
 			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
 			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
-			self::REMOVE_PROGRESS         => __( 'Reset or Remove Progress', 'sensei-lms' ),
+			self::REMOVE_PROGRESS         => __( 'Reset Progress', 'sensei-lms' ),
 		];
 
 		if ( is_admin() ) {
