@@ -81,6 +81,7 @@ const files = [
 	'admin/exit-survey/exit-survey.scss',
 	'admin/students/student-action-menu/index.js',
 	'admin/students/student-bulk-action-button/index.js',
+	'admin/students/student-bulk-action-button/student-bulk-action-button.scss',
 	'admin/students/student-modal/student-modal.scss',
 	'css/block-patterns.scss',
 	'css/page-block-patterns.scss',
