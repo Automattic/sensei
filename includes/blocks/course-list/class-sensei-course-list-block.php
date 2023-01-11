@@ -41,7 +41,7 @@ class Sensei_Course_List_Block {
 			array_key_exists( 'className', $block['attrs'] ) &&
 			false !== strpos( $block['attrs']['className'], 'wp-block-sensei-lms-course-list' );
 
-		$is_my_courses_page = isset( $post ) && is_page() && intval( Sensei()->settings->get( 'my_course_page' ) ) === $post->ID;
+		$is_my_courses_page = get_the_ID() === (int) Sensei()->settings->get( 'my_course_page' );
 
 		if (
 			$is_course_list_block &&
