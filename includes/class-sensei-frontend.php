@@ -148,7 +148,7 @@ class Sensei_Frontend {
 			Sensei()->assets->register( 'sensei-quiz-progress', 'blocks/progress-bar.js' );
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
-
+			Sensei()->assets->enqueue( 'sensei-course-list-filter', 'blocks/course-list-filter-block/course-list-filter.js', [], true );
 			// Allow additional scripts to be loaded.
 			do_action( 'sensei_additional_scripts' );
 

@@ -43,14 +43,6 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 			'sensei-global-blocks-style',
 			'blocks/global-blocks-style.css'
 		);
-		if ( ! is_admin() ) {
-			Sensei()->assets->enqueue(
-				'sensei-course-list-filter',
-				'blocks/course-list-filter-block/course-list-filter.js',
-				[],
-				true
-			);
-		}
 	}
 
 	/**

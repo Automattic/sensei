@@ -64,7 +64,6 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 		$this->global_blocks->enqueue_block_assets();
 
 		/* Assert */
-		$this->assertTrue( wp_script_is( 'sensei-course-list-filter' ) );
 		$this->assertTrue( wp_style_is( 'sensei-global-blocks-style' ) );
 	}
 
