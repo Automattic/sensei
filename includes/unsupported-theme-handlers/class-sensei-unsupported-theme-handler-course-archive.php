@@ -94,6 +94,15 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 							'name'           => [],
 							'data-param-key' => [],
 						],
+						'form'   => [
+							'action' => [],
+							'method' => [],
+						],
+						'input'  => [
+							'type'  => [],
+							'name'  => [],
+							'value' => [],
+						],
 					]
 				)
 			);
