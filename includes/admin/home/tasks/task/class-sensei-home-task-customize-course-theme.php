@@ -3,13 +3,13 @@
  * File containing the Sensei_Home_Task_Customize_Course_Theme class.
  *
  * @package sensei-lms
- * @since $$next-version$$
+ * @since 4.10.0
  */
 
 /**
  * Sensei_Home_Task_Customize_Course_Theme class.
  *
- * @since $$next-version$$
+ * @since 4.10.0
  */
 class Sensei_Home_Task_Customize_Course_Theme implements Sensei_Home_Task {
 	const CUSTOMIZED_COURSE_THEME_OPTION_KEY = 'sensei_home_task_visited_course_theme_customizer';
