@@ -46,10 +46,12 @@ class Sensei_Course_List_Featured_Filter extends Sensei_Course_List_Filter_Abstr
 	/**
 	 * Get the content to be be rendered inside the filtered block.
 	 *
-	 * @param int $query_id The id of the Query block this filter is rendering inside.
+	 * @param WP_Block $block The block instance.
 	 */
-	public function get_content( $query_id ) : string {
-		$filter_param_key = $this->param_key . $query_id;
+	public function get_content( $block ) : string {
+		$query_id         = $block->context['queryId'];
+		$is_inherited     = $block->context['query']['inherit'] ?? false;
+		$filter_param_key = $is_inherited ? 'course_filter' : ( $this->param_key . $query_id );
 		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ) : 'all'; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 
 		return '<select data-param-key="' . esc_attr( $filter_param_key ) . '">' .
