@@ -213,8 +213,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$block           = new Lesson_Actions();
 
 		// Check for disabled button.
-		$this->assertStringContainsString( ' disabled', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
-		$this->assertStringContainsString( 'aria-disabled="true"', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
+		$this->assertStringContainsString( 'sensei_disable_link', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
 	}
 
 	/**
