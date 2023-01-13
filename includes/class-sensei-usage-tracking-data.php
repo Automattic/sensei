@@ -67,7 +67,7 @@ class Sensei_Usage_Tracking_Data {
 		/**
 		 * Filter the usage tracking data.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.10.0
 		 * @hook sensei_usage_tracking_data
 		 *
 		 * @param {array} $usage_data The usage tracking data.

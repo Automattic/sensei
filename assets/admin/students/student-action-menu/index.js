@@ -44,7 +44,7 @@ export const StudentActionMenu = ( {
 			onClick: () => removeFromCourse(),
 		},
 		{
-			title: __( 'Reset or Remove Progress', 'sensei-lms' ),
+			title: __( 'Reset Progress', 'sensei-lms' ),
 			onClick: () => resetProgress(),
 		},
 		{
