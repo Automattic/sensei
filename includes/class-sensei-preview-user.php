@@ -36,15 +36,41 @@ class Sensei_Preview_User {
 	const META = 'sensei_previewing_user';
 
 	/**
-	 * Set up preview user hooks.
+	 * Preview user class constructor.
 	 *
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
+
+		add_action( 'wp', [ $this, 'init' ], 1 );
+
+	}
+
+	/**
+	 * Initialize preview user feature.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function init() {
+
+		/**
+		 * Enable or disable 'preview as student' feature.
+		 *
+		 * @hook sensei_feature_preview_students
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $enable Enable feature. Default true.
+		 *
+		 * @return {bool} Wether to enable feature.
+		 */
+		if ( ! apply_filters( 'sensei_feature_preview_students', true ) ) {
+			return;
+		}
+
 		add_action( 'wp', [ $this, 'switch_to_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'switch_off_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'override_user' ], 8 );
-		add_action( 'wp', [ $this, 'add_preview_user_filters' ], 10 );
+		add_action( 'wp', [ $this, 'add_preview_user_filters' ], 9 );
 		add_action( 'show_admin_bar', [ $this, 'show_admin_bar_to_preview_user' ], 90 );
 		add_action( 'admin_bar_menu', [ $this, 'add_user_switch_to_admin_bar' ], 90 );
 		add_filter( 'sensei_is_enrolled', [ $this, 'preview_user_always_enrolled' ], 90, 3 );
@@ -62,6 +88,8 @@ class Sensei_Preview_User {
 			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
 			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
 			add_filter( 'sensei_notice', [ $this, 'hide_notices' ], 10, 1 );
+			add_action( 'sensei_send_emails', '__return_false' );
+
 		}
 
 	}
@@ -69,7 +97,7 @@ class Sensei_Preview_User {
 	/**
 	 * Change the current user to the preview user if its set for the teacher.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 */
 	public function override_user() {
@@ -97,7 +125,7 @@ class Sensei_Preview_User {
 	/**
 	 * Create and switch to a preview user.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 */
 	public function switch_to_preview_user() {
@@ -118,7 +146,7 @@ class Sensei_Preview_User {
 	/**
 	 * Switch back to original user and delete preview user.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 */
 	public function switch_off_preview_user() {
@@ -136,7 +164,7 @@ class Sensei_Preview_User {
 	/**
 	 * Add switch to user link to admin bar.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
@@ -181,7 +209,7 @@ class Sensei_Preview_User {
 	/**
 	 * Enable admin bar for preview user.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param bool $show Initial state.
@@ -231,7 +259,7 @@ class Sensei_Preview_User {
 		$user_name    = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
 		$display_name = 'Preview Student ' . $course_id . $teacher->ID . ' (' . $teacher->display_name . ')';
 
-		return wp_insert_user(
+		return Sensei_Temporary_User::create_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
@@ -262,17 +290,7 @@ class Sensei_Preview_User {
 
 		$this->delete_meta( $teacher, $user_id, $course_id );
 
-		if ( is_multisite() ) {
-			if ( ! function_exists( 'wpmu_delete_user' ) ) {
-				require_once ABSPATH . '/wp-admin/includes/ms.php';
-			}
-			wpmu_delete_user( $user_id );
-		} else {
-			if ( ! function_exists( 'wp_delete_user' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/user.php';
-			}
-			wp_delete_user( $user_id );
-		}
+		Sensei_Temporary_User::delete_user( $user_id );
 	}
 
 	/**
@@ -343,7 +361,7 @@ class Sensei_Preview_User {
 	 *
 	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param WP_Query $query Lesson query.

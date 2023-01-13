@@ -130,4 +130,51 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 		$this->assertEquals( count( $result1 ), count( $result2 ) );
 	}
 
+
+
+	/**
+	 * Feature can be disabled with a filter.
+	 */
+	public function testFeatureDisabled() {
+
+		add_filter( 'sensei_feature_open_access_courses', '__return_false' );
+
+		$this->setup_course( true );
+		$this->logout();
+
+		$_POST['course_start']                         = 1;
+		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
+
+		do_action( 'wp' );
+
+		$this->assertEquals( false, is_user_logged_in(), 'Logged out user should not be able to start course when feature is disabled.' );
+
+	}
+
+	/**
+	 * Feature can be disabled for a single course with a filter.
+	 */
+	public function testOpenAccessDisabledForCourse() {
+
+		[ 'course_id' => $course_id ] = $this->setup_course( true );
+		$this->logout();
+
+		add_filter(
+			'sensei_course_open_access',
+			function( $is_open_access, $filtered_course_id ) use ( $course_id ) {
+				return ( $course_id === $filtered_course_id ) ? false : $is_open_access;
+			},
+			10,
+			2
+		);
+
+		$_POST['course_start']                         = 1;
+		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
+
+		do_action( 'wp' );
+
+		$this->assertEquals( false, is_user_logged_in(), 'Logged out user should not be able to start course when open access is disabled for the course.' );
+
+	}
+
 }

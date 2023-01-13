@@ -277,6 +277,9 @@ class Sensei_Course {
 			'nonce_value' => wp_create_nonce( Sensei()->teacher::NONCE_ACTION_NAME ),
 			'nonce_name'  => Sensei()->teacher::NONCE_FIELD_NAME,
 			'teachers'    => Sensei()->teacher->get_teachers_and_authors_with_fields( [ 'ID', 'display_name' ] ),
+			'features'    => [
+				'open_access' => apply_filters( 'sensei_feature_open_access_courses', true ),
+			],
 			'courses'     => get_posts(
 				[
 					'post_type'        => 'course',
@@ -3369,14 +3372,11 @@ class Sensei_Course {
 	 * @return bool
 	 */
 	public static function can_current_user_manually_enrol( $course_id ) {
-		if ( ! is_user_logged_in() ) {
-			return false;
-		}
 
 		// Check if the user is already enrolled through any provider.
 		$is_user_enrolled = self::is_user_enrolled( $course_id, get_current_user_id() );
 
-		$default_can_user_manually_enrol = ! $is_user_enrolled;
+		$default_can_user_manually_enrol = is_user_logged_in() && ! $is_user_enrolled;
 
 		$can_user_manually_enrol = apply_filters_deprecated(
 			'sensei_display_start_course_form',
@@ -3414,15 +3414,12 @@ class Sensei_Course {
 			'3.0.0',
 			null
 		);
+		if ( is_user_logged_in() && $is_course_content_restricted ) {
+			self::add_course_access_permission_message( '' );
+		}
 
-		if ( is_user_logged_in() ) {
-			$should_display_start_course_form = self::can_current_user_manually_enrol( $post->ID );
-			if ( $is_course_content_restricted && false == $should_display_start_course_form ) {
-				self::add_course_access_permission_message( '' );
-			}
-			if ( $should_display_start_course_form ) {
+		if ( self::can_current_user_manually_enrol( $post->ID ) ) {
 				sensei_start_course_form( $post->ID );
-			}
 		} else {
 			if ( get_option( 'users_can_register' ) ) {
 

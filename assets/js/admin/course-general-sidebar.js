@@ -171,20 +171,24 @@ const CourseGeneralSidebar = () => {
 				/>
 			) : null }
 
-			<HorizontalRule />
+			{ window.sensei.courseSettingsSidebar.features?.open_access && (
+				<>
+					<HorizontalRule />
 
-			<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
-			<CheckboxControl
-				label={ __( 'Open Access', 'sensei-lms' ) }
-				checked={ openAccess }
-				onChange={ ( checked ) =>
-					setMeta( { ...meta, open_access: checked } )
-				}
-				help={ __(
-					'Visitors can take this course without signing up.',
-					'sensei-lms'
-				) }
-			/>
+					<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
+					<CheckboxControl
+						label={ __( 'Open Access', 'sensei-lms' ) }
+						checked={ openAccess }
+						onChange={ ( checked ) =>
+							setMeta( { ...meta, open_access: checked } )
+						}
+						help={ __(
+							'Visitors can take this course without signing up. Not available for paid courses.',
+							'sensei-lms'
+						) }
+					/>
+				</>
+			) }
 
 			<HorizontalRule />
 
