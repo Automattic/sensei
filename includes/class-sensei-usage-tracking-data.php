@@ -81,7 +81,7 @@ class Sensei_Usage_Tracking_Data {
 				'posts_per_page' => -1,
 				'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Only used for usage stats, not always called.
 					array(
-						'key'   => 'open_access',
+						'key'   => Sensei_Guest_User::COURSE_OPEN_ACCESS_META,
 						'value' => true,
 					),
 				),

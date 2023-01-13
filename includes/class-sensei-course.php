@@ -458,7 +458,7 @@ class Sensei_Course {
 		);
 		register_post_meta(
 			'course',
-			'open_access',
+			Sensei_Guest_User::COURSE_OPEN_ACCESS_META,
 			[
 				'show_in_rest'  => true,
 				'single'        => true,

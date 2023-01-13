@@ -41,6 +41,15 @@ class Sensei_Guest_User {
 	const LOGIN_PREFIX = 'sensei_guest_';
 
 	/**
+	 * Meta key for course open access setting.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const COURSE_OPEN_ACCESS_META = '_open_access';
+
+	/**
 	 * List of actions to create a guest user for if the course is open access.
 	 *
 	 * @var array[] {
@@ -296,7 +305,7 @@ class Sensei_Guest_User {
 	 * @return boolean|mixed
 	 */
 	private function is_course_open_access( $course_id ) {
-		$is_open_access = get_post_meta( $course_id, 'open_access', true );
+		$is_open_access = get_post_meta( $course_id, self::COURSE_OPEN_ACCESS_META, true );
 
 		/**
 		 * Filter if the given course has open access turned on.

@@ -34,7 +34,7 @@ class Sensei_Guest_User_Cleaner_Test extends WP_UnitTestCase {
 
 		$course_data = $this->factory->get_course_with_lessons();
 		$course_id   = $course_data['course_id'];
-		update_post_meta( $course_id, 'open_access', true );
+		update_post_meta( $course_id, '_open_access', true );
 
 		$post                  = get_post( $course_id );
 		$wp_query->post        = $post;
