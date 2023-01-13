@@ -68,7 +68,7 @@ class Sensei_View_Quiz_Block {
 			1
 		);
 
-		return '<form class="lesson_button_form" data-id="complete-lesson-form" method="GET" action="' . $quiz_permalink . '">' . $query_inputs . $content . '</form>';
+		return '<a href="' . esc_url( $quiz_permalink ) . '" >' . $content . '</a>';
 	}
 
 	/**

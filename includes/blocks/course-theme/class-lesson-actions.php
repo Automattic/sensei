@@ -112,16 +112,16 @@ class Lesson_Actions {
 	 * @return string The take quiz button.
 	 */
 	private function render_take_quiz( string $quiz_permalink, bool $is_disabled ): string {
-		$disabled       = $is_disabled ? 'aria-disabled="true"' : '';
+		$disabled       = $is_disabled ? 'sensei_disable_link' : '';
 		$quiz_permalink = esc_url( $quiz_permalink );
 		$text           = esc_html__( 'Take Quiz', 'sensei-lms' );
 
 		return ( '
-			<form method="GET" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
-				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme-lesson-actions__take-quiz sensei-course-theme__button is-primary" ' . $disabled . '>
+			<a href="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form ' . $disabled . '">
+				<button data-id="complete-lesson-button" class="sensei-course-theme-lesson-actions__take-quiz sensei-course-theme__button is-primary">
 					' . $text . '
 			</button>
-			</form>
+			</a>
 		' );
 	}
 

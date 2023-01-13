@@ -7,6 +7,11 @@
 		padding: 0;
 		margin: 0;
 	}
+	a.sensei_disable_link {
+		pointer-events: none;
+		cursor: default;
+		opacity: 0.5;
+	}
 }
 
 .sensei-course-theme__post-pagination {
