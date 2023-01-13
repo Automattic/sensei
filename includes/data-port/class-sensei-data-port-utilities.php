@@ -541,7 +541,7 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.10.0
 	 *
 	 * @return int|null
 	 */

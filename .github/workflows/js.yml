@@ -71,3 +71,43 @@ jobs:
               run: npm ci
             - name: Test JS
               run: npm run test-js
+
+    dependencies-report:
+        name: WordPress Dependencies Report
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Get npm cache directory
+              id: npm-cache
+              run: |
+                  echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+            - uses: actions/cache@v3
+              with:
+                  path: ${{ steps.npm-cache.outputs.dir }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-node-
+            - name: Updates the npm version
+              run: npm install -g npm@^8
+            - name: Install JS dependencies
+              run: npm ci
+            - name: Build Combined Assets
+              run: npm run build:combine-assets
+            - name: Download assets (trunk)
+              uses: Automattic/github-action-download-artifact@v2
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  workflow: trunk.yml
+                  workflow_conclusion: completed
+                  branch: trunk
+                  name: combined-assets
+                  path: ${{ github.workspace }}/dist-trunk
+                  if_no_artifact_found: ignore
+            - name: Analyze dependencies and publish report
+              uses: Automattic/github-action-wordpress-dependencies-report@v0
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  old-assets-folder: ${{ github.workspace }}/dist-trunk
+                  old-assets-branch: trunk
+                  new-assets-folder: ${{ github.workspace }}/assets/dist
+                  
