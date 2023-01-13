@@ -44,7 +44,7 @@ class Sensei_Preview_User {
 		add_action( 'wp', [ $this, 'switch_to_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'switch_off_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'override_user' ], 8 );
-		add_action( 'wp', [ $this, 'add_preview_user_filters' ], 10 );
+		add_action( 'wp', [ $this, 'add_preview_user_filters' ], 9 );
 		add_action( 'show_admin_bar', [ $this, 'show_admin_bar_to_preview_user' ], 90 );
 		add_action( 'admin_bar_menu', [ $this, 'add_user_switch_to_admin_bar' ], 90 );
 		add_filter( 'sensei_is_enrolled', [ $this, 'preview_user_always_enrolled' ], 90, 3 );
@@ -62,6 +62,8 @@ class Sensei_Preview_User {
 			add_filter( 'map_meta_cap', [ $this, 'allow_post_preview' ], 10, 4 );
 			add_filter( 'pre_get_posts', [ $this, 'count_unpublished_lessons' ], 10 );
 			add_filter( 'sensei_notice', [ $this, 'hide_notices' ], 10, 1 );
+			add_action( 'sensei_send_emails', '__return_false' );
+
 		}
 
 	}
@@ -231,7 +233,7 @@ class Sensei_Preview_User {
 		$user_name    = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
 		$display_name = 'Preview Student ' . $course_id . $teacher->ID . ' (' . $teacher->display_name . ')';
 
-		return wp_insert_user(
+		return Sensei_Temporary_User::create_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
@@ -262,17 +264,7 @@ class Sensei_Preview_User {
 
 		$this->delete_meta( $teacher, $user_id, $course_id );
 
-		if ( is_multisite() ) {
-			if ( ! function_exists( 'wpmu_delete_user' ) ) {
-				require_once ABSPATH . '/wp-admin/includes/ms.php';
-			}
-			wpmu_delete_user( $user_id );
-		} else {
-			if ( ! function_exists( 'wp_delete_user' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/user.php';
-			}
-			wp_delete_user( $user_id );
-		}
+		Sensei_Temporary_User::delete_user( $user_id );
 	}
 
 	/**
