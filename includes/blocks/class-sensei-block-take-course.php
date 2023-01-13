@@ -71,8 +71,6 @@ class Sensei_Block_Take_Course {
 				}
 				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
-		} elseif ( ! is_user_logged_in() && get_post_meta( $course_id, 'open_access', true ) ) {
-			$html = $this->render_with_start_course_form( $course_id, $content );
 		} elseif ( ! is_user_logged_in() ) {
 			$html = $this->render_with_login( $content );
 		}

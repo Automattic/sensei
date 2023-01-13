@@ -53,10 +53,10 @@ class Sensei_Guest_User {
 	 * List of actions to create a guest user for if the course is open access.
 	 *
 	 * @var array[] {
-	 *  @type string $field Form field.
-	 *  @type string $nonce Nonce field.
-	 *  @type bool $enrol Whether to enrol the guest user before this action.
-	 * }
+	 * @type string $field Form field.
+	 * @type string $nonce Nonce field.
+	 * @type bool   $enrol Whether to enrol the guest user before this action.
+	 *                     }
 	 */
 	protected $supported_actions = [
 		// Take course.
@@ -98,13 +98,40 @@ class Sensei_Guest_User {
 	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'log_guest_user_out_before_all_actions' ], 8 );
+
+		add_action( 'wp', [ $this, 'init' ], 1 );
+
+	}
+
+	/**
+	 * Initialize guest user feature.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function init() {
+		/**
+		 * Enable or disable 'open access course' feature.
+		 *
+		 * @hook  sensei_feature_open_access_courses
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $enable Enable feature. Default true.
+		 *
+		 * @return {bool} Wether to enable feature.
+		 */
+		if ( ! apply_filters( 'sensei_feature_open_access_courses', true ) ) {
+			return;
+		}
+
 		add_action( 'wp', [ $this, 'sensei_log_existing_guest_user_in_if_open_course_related_action' ], 8 );
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
+		add_action( 'sensei_can_user_manually_enrol', [ $this, 'open_course_user_can_manualy_enroll' ], 10, 2 );
 		add_action( 'sensei_send_emails', [ $this, 'skip_sensei_email' ] );
 
 		$this->create_guest_student_role_if_not_exists();
+
 	}
 
 	/**
@@ -129,8 +156,8 @@ class Sensei_Guest_User {
 	 * @since  $$next-version$$
 	 *
 	 * @param bool $is_enrolled Initial value.
-	 * @param int  $user_id     User ID. Unused.
-	 * @param int  $course_id   Course ID.
+	 * @param int  $user_id User ID. Unused.
+	 * @param int  $course_id Course ID.
 	 *
 	 * @return bool
 	 */
@@ -140,12 +167,28 @@ class Sensei_Guest_User {
 	}
 
 	/**
+	 * Filter manual enrolment check to always allow users to manually enrol if the course is open access.
+	 *
+	 * @since  $$next-version$$
+	 *
+	 * @param bool $can_enroll Initial value.
+	 * @param int  $course_id   Course ID.
+	 *
+	 * @return bool
+	 */
+	public function open_course_user_can_manualy_enroll( $can_enroll, $course_id ) {
+
+		$is_user_enrolled = is_user_logged_in() && Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() );
+		return $this->is_course_open_access( $course_id ) ? ! $is_user_enrolled : $can_enroll;
+	}
+
+	/**
 	 * Filter course access check to always return true if the course is open access.
 	 *
 	 * @since  $$next-version$$
 	 *
 	 * @param bool $can_view_course_content Initial value.
-	 * @param int  $course_id               Course ID.
+	 * @param int  $course_id Course ID.
 	 *
 	 * @return bool
 	 */
@@ -217,7 +260,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 * @access private
 	 *
-	 *  @param array $views List of tabs.
+	 * @param array $views List of tabs.
 	 */
 	public static function filter_out_guest_user_tab_from_users_list( $views ) {
 		unset( $views[ self::ROLE ] );
@@ -230,7 +273,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 * @access private
 	 *
-	 *  @param array $roles List of roles.
+	 * @param array $roles List of roles.
 	 */
 	public static function filter_out_guest_student_role( $roles ) {
 		unset( $roles[ self::ROLE ] );
@@ -243,7 +286,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 * @access private
 	 *
-	 *  @param WP_User_Query $query The user query.
+	 * @param WP_User_Query $query The user query.
 	 */
 	public static function filter_out_guest_users( WP_User_Query $query ) {
 		global $wpdb;
@@ -279,7 +322,20 @@ class Sensei_Guest_User {
 	 * @return boolean|mixed
 	 */
 	private function is_course_open_access( $course_id ) {
-		return get_post_meta( $course_id, 'open_access', true );
+		$is_open_access = get_post_meta( $course_id, 'open_access', true );
+
+		/**
+		 * Filter if the given course has open access turned on.
+		 *
+		 * @hook  sensei_course_open_access
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $is_open_access Open access setting value.
+		 * @param {int} $course_id Course ID.
+		 *
+		 * @return {bool} Open access setting value.
+		 */
+		return apply_filters( 'sensei_course_open_access', $is_open_access, $course_id );
 	}
 
 	/**
@@ -292,6 +348,7 @@ class Sensei_Guest_User {
 		$user = wp_get_current_user();
 		return in_array( self::ROLE, (array) $user->roles, true );
 	}
+
 	/**
 	 * Recreate nonce after logging in user invalidates existing one.
 	 *
@@ -341,7 +398,7 @@ class Sensei_Guest_User {
 	 *
 	 * @since $$next-version$$
 	 *
-	 * @param int $user_id   User ID.
+	 * @param int $user_id User ID.
 	 * @param int $course_id Course ID.
 	 */
 	private function enrol_user( $user_id, $course_id ) {

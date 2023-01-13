@@ -53,9 +53,9 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->go_to( add_query_arg( [ 'sensei-preview-as-student' => wp_create_nonce( 'sensei-preview-as-student' ) ], $course_link ) );
 
-		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Current user not changed.' );
+		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Current user should be changed.' );
 		$preview_user = wp_get_current_user();
-		$this->assertRegexp( '/^Preview Student.*$/', $preview_user->display_name, 'Current user is not a preview student.' );
+		$this->assertRegexp( '/^Preview Student.*$/', $preview_user->display_name, 'Current user should be a preview student.' );
 
 		// Switch off preview user.
 
@@ -118,7 +118,7 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->go_to( get_permalink( $lesson_id ) );
 
-		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Preview user is not used for the lesson.' );
+		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Preview user should be used for the lesson.' );
 
 	}
 
@@ -163,6 +163,23 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 		parent::go_to( $lesson_link );
 
 		$this->assertEquals( $lesson_content, get_the_content(), 'Preview user should see unpublished lesson content.' );
+	}
+
+	/**
+	 * Feature can be disabled with a filter.
+	 */
+	public function testFeatureDisabled() {
+
+		add_filter( 'sensei_feature_preview_students', '__return_false' );
+
+		$course_id = $this->factory->course->create();
+		$admin_id  = $this->get_user_by_role( 'administrator' );
+		$this->login_as( $admin_id );
+
+		$this->go_to( add_query_arg( [ 'sensei-preview-as-student' => wp_create_nonce( 'sensei-preview-as-student' ) ], get_permalink( $course_id ) ) );
+
+		$this->assertEquals( $admin_id, get_current_user_id(), 'Preview user should not be used when feature is disabled.' );
+
 	}
 
 }

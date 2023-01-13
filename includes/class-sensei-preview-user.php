@@ -36,11 +36,37 @@ class Sensei_Preview_User {
 	const META = 'sensei_previewing_user';
 
 	/**
-	 * Set up preview user hooks.
+	 * Preview user class constructor.
 	 *
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
+
+		add_action( 'wp', [ $this, 'init' ], 1 );
+
+	}
+
+	/**
+	 * Initialize preview user feature.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function init() {
+
+		/**
+		 * Enable or disable 'preview as student' feature.
+		 *
+		 * @hook sensei_feature_preview_students
+		 * @since $$next-version$$
+		 *
+		 * @param {bool} $enable Enable feature. Default true.
+		 *
+		 * @return {bool} Wether to enable feature.
+		 */
+		if ( ! apply_filters( 'sensei_feature_preview_students', true ) ) {
+			return;
+		}
+
 		add_action( 'wp', [ $this, 'switch_to_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'switch_off_preview_user' ], 9 );
 		add_action( 'wp', [ $this, 'override_user' ], 8 );
@@ -71,7 +97,7 @@ class Sensei_Preview_User {
 	/**
 	 * Change the current user to the preview user if its set for the teacher.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 */
 	public function override_user() {
@@ -99,7 +125,7 @@ class Sensei_Preview_User {
 	/**
 	 * Create and switch to a preview user.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 */
 	public function switch_to_preview_user() {
@@ -120,7 +146,7 @@ class Sensei_Preview_User {
 	/**
 	 * Switch back to original user and delete preview user.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 */
 	public function switch_off_preview_user() {
@@ -138,7 +164,7 @@ class Sensei_Preview_User {
 	/**
 	 * Add switch to user link to admin bar.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar The WordPress Admin Bar object.
@@ -183,7 +209,7 @@ class Sensei_Preview_User {
 	/**
 	 * Enable admin bar for preview user.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param bool $show Initial state.
@@ -335,7 +361,7 @@ class Sensei_Preview_User {
 	 *
 	 * @note This hook should only run when the preview user is active, it does not do checks on its own.
 	 *
-	 * @since  $$next-version$$
+	 * @since $$next-version$$
 	 * @access private
 	 *
 	 * @param WP_Query $query Lesson query.
