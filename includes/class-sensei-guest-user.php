@@ -41,6 +41,15 @@ class Sensei_Guest_User {
 	const LOGIN_PREFIX = 'sensei_guest_';
 
 	/**
+	 * Guest user id.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var int
+	 */
+	private $guest_user_id = 0;
+
+	/**
 	 * List of actions to create a guest user for if the course is open access.
 	 *
 	 * @var array[] {
@@ -88,6 +97,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 */
 	public function __construct() {
+		add_action( 'init', [ $this, 'log_guest_user_out_before_all_actions' ], 8 );
 
 		add_action( 'wp', [ $this, 'init' ], 1 );
 
@@ -113,7 +123,7 @@ class Sensei_Guest_User {
 			return;
 		}
 
-		add_action( 'wp', [ $this, 'sensei_set_current_user_to_none_if_not_open_course_related_action' ], 8 );
+		add_action( 'wp', [ $this, 'sensei_log_existing_guest_user_in_if_open_course_related_action' ], 8 );
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
@@ -122,6 +132,22 @@ class Sensei_Guest_User {
 
 		$this->create_guest_student_role_if_not_exists();
 
+	}
+
+	/**
+	 * Log out the guest user before any action, some actions like Log in Form does not work if guest user is logged in
+	 * even after setting current user to 0 by 'wp' hook.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function log_guest_user_out_before_all_actions() {
+		if (
+			is_user_logged_in() &&
+			$this->is_current_user_guest()
+		) {
+			$this->guest_user_id = get_current_user_id();
+			wp_set_current_user( 0 );
+		}
 	}
 
 	/**
@@ -206,13 +232,13 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 * @access private
 	 */
-	public function sensei_set_current_user_to_none_if_not_open_course_related_action() {
+	public function sensei_log_existing_guest_user_in_if_open_course_related_action() {
 		if (
-			is_user_logged_in() &&
-			$this->is_current_user_guest() &&
-			! $this->is_open_course_related_action()
+			! is_user_logged_in() &&
+			$this->is_open_course_related_action() &&
+			$this->guest_user_id > 0
 		) {
-			wp_set_current_user( 0 );
+			wp_set_current_user( $this->guest_user_id );
 		}
 	}
 
