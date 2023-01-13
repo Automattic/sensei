@@ -59,8 +59,6 @@ class Sensei_View_Quiz_Block {
 			);
 		}
 
-		$query_inputs = $this->get_input_fields_from_url( $quiz_permalink );
-
 		$content = preg_replace(
 			'/<(button|a)/',
 			'<$1 data-id="complete-lesson-button"',
@@ -69,24 +67,5 @@ class Sensei_View_Quiz_Block {
 		);
 
 		return '<a href="' . esc_url( $quiz_permalink ) . '" >' . $content . '</a>';
-	}
-
-	/**
-	 * Convert query params from an URL to input fields HTML.
-	 *
-	 * @param string $quiz_permalink The url for the quiz.
-	 *
-	 * @return string Hidden input fields HTML.
-	 */
-	private function get_input_fields_from_url( $quiz_permalink ) {
-		$parts  = wp_parse_url( $quiz_permalink );
-		$inputs = '';
-		if ( isset( $parts['query'] ) ) {
-			parse_str( $parts['query'], $query );
-			foreach ( $query as $name => $value ) {
-				$inputs .= '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" />';
-			}
-		}
-		return $inputs;
 	}
 }
