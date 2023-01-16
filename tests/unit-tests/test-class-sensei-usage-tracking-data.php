@@ -1692,7 +1692,7 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 	public function testGetCourseOpenAccessCount_WhenCalled_ReturnsCorrectNumberOfCourses() {
 		/* Arrange */
 		$course_ids = $this->factory->course->create_many( 2 );
-		update_post_meta( $course_ids[0], 'open_access', 1 );
+		update_post_meta( $course_ids[0], '_open_access', 1 );
 
 		/* Act */
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
