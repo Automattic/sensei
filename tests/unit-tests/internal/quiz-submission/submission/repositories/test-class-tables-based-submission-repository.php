@@ -22,7 +22,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 		$this->factory = new \Sensei_Factory();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
