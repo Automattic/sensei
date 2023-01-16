@@ -953,7 +953,8 @@ class Sensei_Question {
 		 */
 		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
 
-		$question_grade = Sensei()->question->get_question_grade( $question_id );
+		$question_grade       = Sensei()->question->get_question_grade( $question_id );
+		$hide_answer_feedback = get_post_meta( $question_id, '_hide_answer_feedback', true );
 
 		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
 
@@ -993,7 +994,7 @@ class Sensei_Question {
 		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
 
 		?>
-		<?php if ( $question_grade > 0 ) { ?>
+		<?php if ( ! $hide_answer_feedback ) { ?>
 			<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
 				<?php if ( $indicate_incorrect ) { ?>
 					<div class="sensei-lms-question__answer-feedback__header">
