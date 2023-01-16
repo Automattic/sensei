@@ -17,7 +17,7 @@ class Tables_Based_Submission_Repository_Test extends \WP_UnitTestCase {
 
 	protected $factory;
 
-	public function setup(): void {
+	public function setUp(): void {
 		parent::setup();
 		$this->factory = new \Sensei_Factory();
 	}
