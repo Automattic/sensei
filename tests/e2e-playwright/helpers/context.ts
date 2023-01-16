@@ -60,7 +60,6 @@ export const login = async ( page: Page, user: User ): Promise< Page > => {
 	await page.locator( 'input[name="log"]' ).fill( user.username );
 	await page.locator( 'input[name="pwd"]' ).fill( user.password );
 	await page.locator( 'text=Log In' ).click();
-	await page.waitForNavigation();
 
 	return page;
 };

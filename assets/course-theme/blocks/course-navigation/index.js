@@ -13,7 +13,7 @@ import CheckCircleIcon from '../../../icons/check-filled-circle.svg';
 import LockIcon from '../../../icons/lock.svg';
 import EyeIcon from '../../../icons/eye.svg';
 import meta from './course-navigation.block.json';
-import SenseiIcon from '../../../icons/sensei.svg';
+import LogoTreeIcon from '../../../icons/logo-tree.svg';
 import { useBlockProps } from '@wordpress/block-editor';
 
 const ICONS = {
@@ -134,7 +134,7 @@ const Lesson = ( { title, quiz, status } ) => {
 export default {
 	...meta,
 	icon: {
-		src: <SenseiIcon width="20" height="20" />,
+		src: <LogoTreeIcon width="20" height="20" />,
 		foreground: '#43AF99',
 	},
 	attributes: {},

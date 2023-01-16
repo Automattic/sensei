@@ -16,6 +16,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->factory = new Sensei_Factory();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+
+		$this->factory->tearDown();
+	}
 
 	public function testUserIsCreatedIfDoesNotExist() {
 		$user_id = Sensei_Data_Port_Utilities::create_user( 'testuser', 'testemail@test.com' )->ID;
@@ -486,5 +497,24 @@ class Sensei_Data_Port_Utilities_Test extends WP_UnitTestCase {
 		$serialized = Sensei_Data_Port_Utilities::serialize_id_field( $ids );
 
 		$this->assertEquals( $expected, $serialized );
+	}
+
+	public function testGetDemoCourseId_WhenHasDemoCourse_ReturnsCourseId() {
+		/* Arrange. */
+		$this->factory->course->create( [ 'post_name' => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG ] );
+
+		/* Act. */
+		$demo_course_id = Sensei_Data_Port_Utilities::get_demo_course_id();
+
+		/* Assert. */
+		$this->assertNotNull( $demo_course_id );
+	}
+
+	public function testGetDemoCourseId_WhenNoDemoCourse_ReturnsNull() {
+		/* Act. */
+		$demo_course_id = Sensei_Data_Port_Utilities::get_demo_course_id();
+
+		/* Assert. */
+		$this->assertNull( $demo_course_id );
 	}
 }

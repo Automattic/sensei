@@ -9,7 +9,7 @@ export type UserResponse = {
 };
 
 export type User = {
-	id?: number;
+	id?: string;
 	username: string;
 	password?: string;
 	email?: string;
