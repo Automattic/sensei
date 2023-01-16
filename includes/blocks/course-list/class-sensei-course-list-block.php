@@ -34,8 +34,6 @@ class Sensei_Course_List_Block {
 			return $block_content;
 		}
 
-		global $post;
-
 		$is_course_list_block = array_key_exists( 'query', $block['attrs'] ) &&
 			'course' === $block['attrs']['query']['postType'] &&
 			array_key_exists( 'className', $block['attrs'] ) &&
