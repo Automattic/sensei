@@ -2307,6 +2307,17 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Check if this is a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_request(): bool {
+		return defined( 'REST_REQUEST' ) && REST_REQUEST;
+	}
+
+	/**
 	 * Add user to course.
 	 *
 	 * @param int $user_id The user ID.

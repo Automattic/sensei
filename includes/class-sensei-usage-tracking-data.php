@@ -67,7 +67,7 @@ class Sensei_Usage_Tracking_Data {
 		/**
 		 * Filter the usage tracking data.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.10.0
 		 * @hook sensei_usage_tracking_data
 		 *
 		 * @param {array} $usage_data The usage tracking data.
@@ -90,13 +90,6 @@ class Sensei_Usage_Tracking_Data {
 			'courses'  => post_type_exists( 'course' ) ? wp_count_posts( 'course' )->publish : 0,
 			'learners' => self::get_learner_count(),
 		];
-
-		/**
-		 * Filter the event logging source.
-		 *
-		 * @param string The source (defaults to "unknown").
-		 */
-		$base_fields['source'] = apply_filters( 'sensei_event_logging_source', 'unknown' );
 
 		/**
 		 * Filter the fields that should be sent with every event that is logged.

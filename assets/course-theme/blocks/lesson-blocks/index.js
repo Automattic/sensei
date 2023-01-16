@@ -11,7 +11,7 @@ import ChevronLeft from '../../../icons/chevron-left.svg';
 import ChevronRight from '../../../icons/chevron-right.svg';
 import DoubleChevronRight from '../../../icons/double-chevron-right.svg';
 import MenuIcon from '../../../icons/menu.svg';
-import SenseiIcon from '../../../icons/sensei.svg';
+import LogoTreeIcon from '../../../icons/logo-tree.svg';
 import lessonPropertiesBlock from '../../../blocks/lesson-properties';
 import courseContentMeta from './course-content.block.json';
 import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
@@ -33,7 +33,7 @@ const meta = {
 	category: 'theme',
 	attributes: {},
 	icon: {
-		src: <SenseiIcon width="20" height="20" />,
+		src: <LogoTreeIcon width="20" height="20" />,
 		foreground: '#43AF99',
 	},
 };

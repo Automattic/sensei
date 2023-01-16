@@ -1837,16 +1837,27 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Registers the hook to call mark_completed when the wc-admin page on WooCommerce is visited.
+	 * Registers the hook to call mark_completed on tasks that have been
+	 * completed.
 	 *
 	 * @access private
 	 * @return void
 	 */
 	public function admin_init() {
+		global $pagenow;
+
 		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
 			$hook = get_plugin_page_hook( 'wc-admin', 'woocommerce' );
 			if ( null !== $hook ) {
 				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
+			}
+		}
+
+		// Mark the Course Theme Customization as completed if we are visiting
+		// the site editor or the customizer with the Course theme installed.
+		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
+			if ( in_array( $pagenow, [ 'site-editor.php', 'customize.php' ], true ) ) {
+				Sensei_Home_Task_Customize_Course_Theme::mark_completed();
 			}
 		}
 	}
@@ -2083,7 +2094,14 @@ class Sensei_Admin {
 			return;
 		}
 
-		if ( in_array( $screen->id, [ 'course', 'lesson', Sensei_Home::SCREEN_ID ], true ) ) {
+		$screens = [
+			'course',
+			'lesson',
+			Sensei_Home::SCREEN_ID,
+			'admin_page_' . Sensei_Setup_Wizard::instance()->page_slug,
+		];
+
+		if ( in_array( $screen->id, $screens, true ) ) {
 			?>
 			<script>
 				window.sensei = window.sensei || {};
