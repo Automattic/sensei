@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.7.2
  */
 class Course_Progress {
 	/**
@@ -124,7 +124,7 @@ class Course_Progress {
 	 * @param DateTimeInterface|null $started_at Course start date.
 	 */
 	public function start( DateTimeInterface $started_at = null ): void {
-		$this->status     = 'in-progress';
+		$this->status     = self::STATUS_IN_PROGRESS;
 		$this->started_at = $started_at ?? current_datetime();
 	}
 
@@ -136,7 +136,7 @@ class Course_Progress {
 	 * @param DateTimeInterface|null $completed_at Course completion date.
 	 */
 	public function complete( DateTimeInterface $completed_at = null ): void {
-		$this->status       = 'complete';
+		$this->status       = self::STATUS_COMPLETE;
 		$this->completed_at = $completed_at ?? current_datetime();
 	}
 

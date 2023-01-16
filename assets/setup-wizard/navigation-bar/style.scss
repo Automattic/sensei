@@ -1,0 +1,13 @@
+.sensei-setup-wizard {
+	&__navigation-bar {
+		height: 8px;
+		min-height: 8px; // Fixes issue that navigation bar disappears with scroll.
+		background-color: #ffffff;
+	}
+
+	&__navigation-bar-filled {
+		background-color: #000000;
+		height: 100%;
+		transition: 0.5s width;
+	}
+}

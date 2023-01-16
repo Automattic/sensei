@@ -18,6 +18,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 */
 	public function __construct() {
 		parent::__construct( [ 'lesson' ] );
+
+		add_action( 'template_redirect', [ $this, 'remove_block_related_content' ] );
 	}
 
 	/**
@@ -105,24 +107,23 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Reset_Lesson_Block();
 		new Sensei_View_Quiz_Block();
 		new Sensei_Featured_Video_Block();
-
-		if ( Sensei()->lesson->has_sensei_blocks() ) {
-			$this->remove_block_related_content();
-
-			// This constructor has some sideeffects so only initialize it when the lesson has Sensei blocks.
-			new Sensei_Block_Contact_Teacher();
-		}
-
+		new Sensei_Block_Contact_Teacher();
 	}
 
 	/**
-	 * Helper method to remove functionality which is provided by blocks.
+	 * Remove functionality which is provided by blocks.
+	 *
+	 * @access private
 	 */
-	private function remove_block_related_content() {
-		// Remove contact teacher button.
-		remove_action( 'sensei_single_lesson_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 30 );
+	public function remove_block_related_content() {
 
-		// Remove footer buttons.
-		remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
+		if ( has_block( 'sensei-lms/lesson-actions' ) ) {
+			remove_action( 'sensei_single_lesson_content_inside_after', [ 'Sensei_Lesson', 'footer_quiz_call_to_action' ] );
+		}
+
+		if ( Sensei()->lesson->has_sensei_blocks() ) {
+			remove_action( 'sensei_single_lesson_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 30 );
+		}
+
 	}
 }

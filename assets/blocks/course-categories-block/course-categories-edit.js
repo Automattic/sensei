@@ -39,11 +39,7 @@ export function CourseCategoryEdit( props ) {
 
 	const { textAlign, previewCategories, options } = attributes;
 	const { postId, postType } = context;
-	const {
-		postTerms: categories,
-		hasPostTerms: hasCategories,
-		isLoading,
-	} = useCourseCategories( postId );
+	const { postTerms: categories, isLoading } = useCourseCategories( postId );
 
 	const { __unstableMarkNextChangeAsNotPersistent = noop } = useDispatch(
 		blockEditorStore
@@ -85,7 +81,7 @@ export function CourseCategoryEdit( props ) {
 				href={ category.link }
 				onClick={ ( event ) => event.preventDefault() }
 			>
-				<span>{ unescape( category.name ) }</span>
+				{ unescape( category.name ) }
 			</a>
 		) );
 	};
@@ -119,9 +115,6 @@ export function CourseCategoryEdit( props ) {
 			<div { ...blockProps }>
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && getCategories( categories ) }
-				{ ! isLoading && ! hasCategories && (
-					<p>{ __( 'No course category', 'sensei-lms' ) }</p>
-				) }
 			</div>
 		</>
 	);

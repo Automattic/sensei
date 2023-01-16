@@ -1,0 +1,62 @@
+.sensei-home-tasks {
+	&__title {
+		margin: 0 0 12px;
+		font-family: $recoleta-font-family;
+		font-size: 28px;
+		font-weight: 400;
+		line-height: 1.2;
+
+		@media ( min-width: $break-large ) {
+			font-size: 32px;
+		}
+	}
+
+	&__description {
+		margin: 0 0 32px;
+		font-size: 14px;
+		color: $gray-70;
+	}
+
+	&__list {
+		margin: 0;
+		font-size: 13px;
+	}
+
+	&__item {
+		padding: 16px 0;
+		margin: 0;
+		border-top: 1px solid #dcdcde;
+		color: #000000;
+
+		&:first-child {
+			border-top: none;
+		}
+
+		&--done {
+			color: $gray-50;
+		}
+	}
+
+	&__link {
+		display: flex;
+		align-items: center;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&__item-title {
+		flex: 1;
+	}
+
+	&__check-icon {
+		width: 17px;
+		height: 17px;
+		margin-right: 10px;
+	}
+
+	&__link-chevron {
+		width: 25px;
+		height: 25px;
+		justify-self: end;
+	}
+}

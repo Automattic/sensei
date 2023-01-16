@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.7.2
  */
 class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repository_Interface {
 

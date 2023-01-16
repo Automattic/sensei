@@ -55,6 +55,7 @@ class Sensei_Data_Cleaner {
 	 */
 	private static $options = array(
 		'sensei_installed',
+		'sensei_installed_at',
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages', // deprecated 3.1.0.
@@ -87,6 +88,11 @@ class Sensei_Data_Cleaner {
 		'sensei_dismiss_wcpc_prompt',
 		'sensei-cancelled-wccom-connect-dismissed',
 		'sensei_course_theme_query_var_flushed',
+		'sensei_settings_sections_visited',
+		'sensei_home_tasks_list_is_completed',
+		'sensei_home_tasks_dismissed',
+		'sensei_home_task_visited_woocommerce',
+		'sensei_home_task_visited_course_theme_customizer',
 	);
 
 	/**
@@ -225,6 +231,7 @@ class Sensei_Data_Cleaner {
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
 		'sensei_background_job_.*',
+		'sensei_home_.*',
 	);
 
 	/**

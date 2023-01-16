@@ -117,8 +117,8 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// A user ID of 0 is in valid, so shortcut this
-		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
+		// A user ID of 0 is invalid, so shortcut this.
+		if ( isset( $args['user_id'] ) && 0 === intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
@@ -1373,7 +1373,9 @@ class Sensei_Utils {
 		if ( ! $course_progress ) {
 			$course_progress = Sensei()->course_progress_repository->create( $course_id, $user_id );
 		}
-		$course_progress->start();
+		if ( ! $course_progress->get_started_at() ) {
+			$course_progress->start();
+		}
 
 		$course_completion  = Sensei()->settings->settings['course_completion'];
 		$lessons_completed  = 0;
@@ -2325,6 +2327,17 @@ class Sensei_Utils {
 	}
 
 	/**
+	 * Check if this is a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_request(): bool {
+		return defined( 'REST_REQUEST' ) && REST_REQUEST;
+	}
+
+	/**
 	 * Add user to course.
 	 *
 	 * @param int $user_id The user ID.
@@ -2404,58 +2417,60 @@ class Sensei_Utils {
 	public static function get_woocommerce_plugin_information() {
 		$wc_information = get_transient( self::WC_INFORMATION_TRANSIENT );
 
-		if ( false !== $wc_information ) {
-			return $wc_information;
+		if ( false === $wc_information ) {
+			if ( ! function_exists( 'plugins_api' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+			}
+
+			$wc_slug            = 'woocommerce';
+			$plugin_information = plugins_api(
+				'plugin_information',
+				[
+					'slug'   => $wc_slug,
+					'fields' => [
+						'short_description' => true,
+						'description'       => false,
+						'sections'          => false,
+						'tested'            => false,
+						'requires'          => false,
+						'requires_php'      => false,
+						'rating'            => false,
+						'ratings'           => false,
+						'downloaded'        => false,
+						'downloadlink'      => false,
+						'last_updated'      => false,
+						'added'             => false,
+						'tags'              => false,
+						'compatibility'     => false,
+						'homepage'          => false,
+						'versions'          => false,
+						'donate_link'       => false,
+						'reviews'           => false,
+						'banners'           => false,
+						'icons'             => false,
+						'active_installs'   => false,
+						'group'             => false,
+						'contributors'      => false,
+					],
+				]
+			);
+
+			$wc_information = (object) [
+				'product_slug' => $wc_slug,
+				'title'        => $plugin_information->name,
+				'excerpt'      => $plugin_information->short_description,
+				'plugin_file'  => 'woocommerce/woocommerce.php',
+				'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
+				'unselectable' => true,
+				'version'      => $plugin_information->version,
+			];
+
+			set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
 		}
 
-		if ( ! function_exists( 'plugins_api' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		}
-
-		$wc_slug            = 'woocommerce';
-		$plugin_information = plugins_api(
-			'plugin_information',
-			[
-				'slug'   => $wc_slug,
-				'fields' => [
-					'short_description' => true,
-					'description'       => false,
-					'sections'          => false,
-					'tested'            => false,
-					'requires'          => false,
-					'requires_php'      => false,
-					'rating'            => false,
-					'ratings'           => false,
-					'downloaded'        => false,
-					'downloadlink'      => false,
-					'last_updated'      => false,
-					'added'             => false,
-					'tags'              => false,
-					'compatibility'     => false,
-					'homepage'          => false,
-					'versions'          => false,
-					'donate_link'       => false,
-					'reviews'           => false,
-					'banners'           => false,
-					'icons'             => false,
-					'active_installs'   => false,
-					'group'             => false,
-					'contributors'      => false,
-				],
-			]
-		);
-
-		$wc_information = (object) [
-			'product_slug' => $wc_slug,
-			'title'        => $plugin_information->name,
-			'excerpt'      => $plugin_information->short_description,
-			'plugin_file'  => 'woocommerce/woocommerce.php',
-			'link'         => 'https://wordpress.org/plugins/' . $wc_slug,
-			'unselectable' => true,
-			'version'      => $plugin_information->version,
-		];
-
-		set_transient( self::WC_INFORMATION_TRANSIENT, $wc_information, DAY_IN_SECONDS );
+		// Add installed properties to the object.
+		$wc_information = Sensei_Extensions::instance()->add_installed_extensions_properties( [ $wc_information ] );
+		$wc_information = $wc_information[0];
 
 		return $wc_information;
 	}
@@ -2463,9 +2478,13 @@ class Sensei_Utils {
 	/**
 	 * Get data used for WooCommerce.com purchase redirect.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @return array The data.
 	 */
 	public static function get_woocommerce_connect_data() {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$wc_params                = [];
 		$is_woocommerce_installed = self::is_woocommerce_active( '3.7.0' ) && class_exists( 'WC_Admin_Addons' );
 
@@ -2692,6 +2711,13 @@ class Sensei_Utils {
 	 */
 	public static function get_featured_video_thumbnail_url( $post_id ) {
 		return get_post_meta( $post_id, '_featured_video_thumbnail', true );
+	}
+
+	/**
+	 * Tells if the website is hosted on the wp.com atomic site.
+	 */
+	public static function is_atomic_platform(): bool {
+		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
 	}
 }
 

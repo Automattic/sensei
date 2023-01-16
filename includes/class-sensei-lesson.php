@@ -68,7 +68,7 @@ class Sensei_Lesson {
 		if ( is_admin() ) {
 
 			// Metabox functions
-			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'add_meta_boxes_' . $this->token, array( $this, 'add_video_meta_box' ), 10, 1 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_action( 'save_post', array( $this, 'quiz_update' ) );
@@ -148,7 +148,6 @@ class Sensei_Lesson {
 
 		// Add custom navigation.
 		add_action( 'in_admin_header', [ $this, 'add_custom_navigation' ] );
-		add_filter( 'submenu_file', [ $this, 'highlight_menu_item' ] );
 
 		// Log event on the initial publish for a lesson.
 		add_action( 'sensei_lesson_initial_publish', [ $this, 'log_initial_publish_event' ] );
@@ -175,6 +174,8 @@ class Sensei_Lesson {
 	/**
 	 * Highlight the menu item for the lessons pages.
 	 *
+	 * @deprecated 4.8.0
+	 *
 	 * @since 4.0.0
 	 * @access private
 	 *
@@ -183,6 +184,8 @@ class Sensei_Lesson {
 	 * @return string
 	 */
 	public function highlight_menu_item( $submenu_file ) {
+		_deprecated_function( __METHOD__, '4.8.0' );
+
 		$screen = get_current_screen();
 
 		if ( $screen && in_array( $screen->id, [ 'edit-lesson', 'edit-lesson-tag', 'course_page_lesson-order' ], true ) ) {
@@ -207,8 +210,8 @@ class Sensei_Lesson {
 				</div>
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=lesson' ) ); ?>"><?php esc_html_e( 'New Lesson', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=course&page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=lesson-order' ) ); ?>"><?php esc_html_e( 'Order Lessons', 'sensei-lms' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=sensei-settings#lesson-settings' ) ); ?>"><?php esc_html_e( 'Lesson Settings', 'sensei-lms' ); ?></a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -539,7 +542,7 @@ class Sensei_Lesson {
 					$lesson_status
 				);
 
-				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->get_posts() );
+				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->posts );
 			}
 
 			$lessons = array_merge( $in_module_lessons, $lessons );
@@ -639,7 +642,8 @@ class Sensei_Lesson {
 	public function meta_box_save( $post_id ) {
 
 		// Verify the nonce before proceeding.
-		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( $_POST[ 'woo_' . $this->token . '_nonce' ], 'sensei-save-post-meta' ) ) {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Do not change the nonce.
+		if ( ( get_post_type( $post_id ) !== $this->token ) || ! isset( $_POST[ 'woo_' . $this->token . '_nonce' ] ) || ! wp_verify_nonce( wp_unslash( $_POST[ 'woo_' . $this->token . '_nonce' ] ), 'sensei-save-post-meta' ) ) {
 			return $post_id;
 		}
 		// Get the post type object.
@@ -802,34 +806,48 @@ class Sensei_Lesson {
 	 * @param int $post_id The post id.
 	 * @return string|null The URL string or null if the post does not have one.
 	 */
-	private function get_featured_video_media_from_blocks( $post_id ) {
+	private function get_featured_video_media_from_blocks( int $post_id ): ?string {
 		$post   = get_post( $post_id );
 		$blocks = parse_blocks( $post->post_content );
-		foreach ( $blocks as $block ) {
-			if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-				if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
-					$block = $block['innerBlocks'][0];
-				}
-				if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
-					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) {
-						return $block['attrs']['poster'];
-					} else {
-						return wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
-					}
-				}
-				if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
-					$url = $block['innerBlocks'][0]['attrs']['url'];
-					if ( 'youtube' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_youtube_thumbnail( $url );
-					} elseif ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_vimeo_thumbnail( $url );
-					} elseif ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_videopress_thumbnail( $url );
-					}
-				}
-			}
+
+		if ( 0 === count( $blocks ) || 'sensei-lms/featured-video' !== $blocks[0]['blockName'] ) {
 			return null;
 		}
+
+		$block = $blocks[0];
+
+		if ( ! empty( $block['innerBlocks'][0]['blockName'] ) && 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+			$block = $block['innerBlocks'][0];
+		}
+
+		if ( empty( $block['innerBlocks'][0]['blockName'] ) ) {
+			return null;
+		}
+
+		if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
+			if ( ! empty( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) ) {
+				return $block['attrs']['poster'];
+			}
+
+			return empty( $block['innerBlocks'][0]['attrs']['id'] ) ? null : wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
+		}
+
+		if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
+			$url = $block['innerBlocks'][0]['attrs']['url'];
+
+			switch ( $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+				case 'youtube':
+					return $this->get_youtube_thumbnail( $url );
+				case 'vimeo':
+					return $this->get_vimeo_thumbnail( $url );
+				case 'videopress':
+					return $this->get_videopress_thumbnail( $url );
+				default:
+					return null;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -2576,7 +2594,7 @@ class Sensei_Lesson {
 		 * @param {array} $allowed_post_types Allowed post types.
 		 * @return {array} Allowed post types.
 		 */
-		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'question' ) );
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson' ) );
 
 		/**
 		 * Only load lesson scripts for particular post type pages.
@@ -3661,7 +3679,7 @@ class Sensei_Lesson {
 				// Include only single questions in the return array.
 				$questions_loop  = $questions_array;
 				$questions_array = [];
-				foreach ( $questions_loop as $k => $question ) {
+				foreach ( $questions_loop as $question ) {
 
 					// If this is a single question then include it.
 					if ( 'question' === $question->post_type ) {
@@ -5233,7 +5251,23 @@ class Sensei_Lesson {
 		$lesson = get_post( $lesson );
 		$post   = $lesson->post_content ?? null;
 
-		return ! empty( $post ) && has_blocks( $post ) && ( false !== strpos( $post, '<!-- wp:sensei-lms/' ) );
+		if ( empty( $post ) || ! has_blocks( $post ) ) {
+			return false;
+		}
+
+		$lesson_blocks = [
+			'sensei-lms/lesson-actions',
+			'sensei-lms/lesson-properties',
+			'sensei-lms/button-contact-teacher',
+		];
+
+		foreach ( $lesson_blocks as $block ) {
+			if ( has_block( $block, $lesson ) ) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 

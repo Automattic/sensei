@@ -22,13 +22,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	private $page_slug;
 
 	/**
-	 * Post type that the Student Management menu is associated with.
-	 *
-	 * @var string $menu_post_type
-	 */
-	private $menu_post_type;
-
-	/**
 	 * The page name.
 	 *
 	 * @var string
@@ -76,7 +69,6 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		$this->learner            = $learner;
 		$this->name               = $controller->get_name();
 		$this->page_slug          = $controller->get_page_slug();
-		$this->menu_post_type     = 'course';
 		$this->query_args         = $this->parse_query_args();
 		$this->page_slug          = 'sensei_learner_admin';
 
@@ -159,8 +151,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$columns = array(
-			'learner'            => array( 'learner', false ),
-			'last_activity_date' => array( 'last_activity_date', false ),
+			'learner' => array( 'learner', false ),
 		);
 		return apply_filters( 'sensei_learner_admin_default_columns_sortable', $columns, $this );
 	}
@@ -247,6 +238,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 						'a'     => array(
 							'class'          => true,
 							'data-course-id' => true,
+							'data-user-id'   => true,
+							'data-nonce'     => true,
 							'href'           => true,
 							'title'          => true,
 						),
@@ -316,14 +309,13 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$text = __( 'No students found.', 'sensei-lms' );
 		} else {
 			$add_students_args = [
-				'post_type' => 'course',
 				'page'      => 'sensei_learners',
 				'course_id' => $course_id,
 				'view'      => 'learners',
 			];
 
 			$message = __( 'This course doesn\'t have any students yet, you can add them below.', 'sensei-lms' );
-			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'edit.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
+			$button  = '<a class="button button-primary" href="' . esc_url( add_query_arg( $add_students_args, admin_url( 'admin.php' ) ) ) . '">' . __( 'Add Students', 'sensei-lms' ) . '</a>';
 			$text    = '<div class="sensei-students__call-to-action"><div>' . $message . '</div><div>' . $button . '</div></div>';
 		}
 
@@ -446,14 +438,14 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 	 * @return string The HTML for the column.
 	 */
 	private function get_learner_courses_html( $user_id ) {
-		$query   = $this->learner->get_enrolled_courses_query( $user_id );
-		$courses = $query->get_posts();
+		$base_query_args = [ 'posts_per_page' => 3 ];
+		$query           = $this->learner->get_enrolled_courses_query( $user_id, $base_query_args );
+		$courses         = $query->posts;
 
 		if ( empty( $courses ) ) {
 			return __( 'N/A', 'sensei-lms' );
 		}
-
-		$courses_total = $query->post_count;
+		$courses_total = $this->learner->get_enrolled_courses_count_query( $user_id );
 		$visible_count = 3;
 		$html_items    = [];
 		$more_button   = '';
@@ -466,7 +458,7 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 
 		if ( $courses_total > $visible_count ) {
-			$more_button = '<a href="#" class="sensei-students__enrolled-courses-more-link">' .
+			$more_button = '<a href="#" data-nonce="' . wp_create_nonce( 'get_course_list' ) . '" data-user-id="' . esc_attr( $user_id ) . '" class="sensei-students__enrolled-courses-more-link">' .
 				sprintf(
 					/* translators: %d: the number of links to be displayed */
 					esc_html__( '+%d more', 'sensei-lms' ),
@@ -476,9 +468,8 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 		}
 
 		$visible_courses = implode( '', array_slice( $html_items, 0, $visible_count ) );
-		$hidden_courses  = implode( '', array_slice( $html_items, $visible_count ) );
 
-		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail hidden">' . $hidden_courses . '</div>' . $more_button;
+		return $visible_courses . '<div class="sensei-students__enrolled-courses-detail"></div>' . $more_button;
 	}
 
 	/**
@@ -566,10 +557,9 @@ class Sensei_Learners_Admin_Bulk_Actions_View extends Sensei_List_Table {
 			$filter_type_input = sanitize_text_field( wp_unslash( $_GET['filter_type'] ) );
 			$filter_type       = in_array( $filter_type_input, array( 'inc', 'exc' ), true ) ? $filter_type_input : 'inc';
 		}
-		$page      = $this->page_slug;
-		$post_type = $this->menu_post_type;
-		$view      = $this->controller->get_view();
-		$args      = compact( 'page', 'post_type', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
+		$page = $this->page_slug;
+		$view = $this->controller->get_view();
+		$args = compact( 'page', 'view', 'per_page', 'offset', 'orderby', 'order', 'search', 'filter_by_course_id', 'filter_type' );
 
 		return $args;
 	}

@@ -26,14 +26,12 @@ class Sensei_Groups_Landing_Page {
 	 * @since 4.5.2
 	 */
 	public function add_groups_landing_page_menu_item() {
-		// Enqueue styles.
-		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 		// Add new menu item.
 		$menu_item_title = __( 'Groups', 'sensei-lms' );
 		$badge_text      = __( 'Pro', 'sensei-lms' );
 		add_submenu_page(
-			'edit.php?post_type=course',
+			'sensei',
 			__( 'Groups', 'sensei-lms' ),
 			// Translators: first placeholder value is menu item title, second is badge text.
 			sprintf( '%s <span class="awaiting-mod sensei-promo-groups__badge">%s</span>', $menu_item_title, $badge_text ),
@@ -50,6 +48,9 @@ class Sensei_Groups_Landing_Page {
 	 * @since 4.5.2
 	 */
 	public function display_student_groups_landing_page() {
+
+		// Enqueue styles.
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 		$this->wrapper_container( 'top' );
 

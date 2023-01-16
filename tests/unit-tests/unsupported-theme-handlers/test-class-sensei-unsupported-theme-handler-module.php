@@ -19,7 +19,7 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 	 */
 	private $modules;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->setupModulePage();
@@ -29,7 +29,7 @@ class Sensei_Unsupported_Theme_Handler_Module_Test extends WP_UnitTestCase {
 		$this->handler = new Sensei_Unsupported_Theme_Handler_Module();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->handler = null;
 
 		Sensei_Unsupported_Theme_Handler_Page_Imitator_Test::delete_page_template();

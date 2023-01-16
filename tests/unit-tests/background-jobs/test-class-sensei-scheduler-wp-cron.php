@@ -18,24 +18,24 @@ class Sensei_Scheduler_WP_Cron_Test extends WP_UnitTestCase {
 	/**
 	 * Set up before all tests.
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		self::resetScheduler();
 		add_filter( 'sensei_scheduler_class', [ __CLASS__, 'scheduler_use_wp_cron' ] );
 
 		self::$original_cron = get_option( 'cron' );
 
-		return parent::setUpBeforeClass();
+		parent::setUpBeforeClass();
 	}
 
 	/**
 	 * Tear down after all tests.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::restoreShimScheduler();
 
 		update_option( 'cron', self::$original_cron );
 
-		return parent::tearDownAfterClass();
+		parent::tearDownAfterClass();
 	}
 
 	/**

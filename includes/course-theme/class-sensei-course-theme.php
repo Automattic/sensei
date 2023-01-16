@@ -359,14 +359,23 @@ class Sensei_Course_Theme {
 	 */
 	public function enqueue_styles() {
 
-		$version  = $this->get_template_version();
-		$css_file = 'css/learning-mode.' . $version . '.css';
+		$version         = $this->get_template_version();
+		$css_file        = 'css/learning-mode.' . $version . '.css';
+		$compat_css_file = 'css/learning-mode-compat.' . $version . '.css';
 
 		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $css_file ) ) ) {
 			$css_file = 'css/learning-mode.css';
 		}
 
+		if ( ! $version || ! file_exists( Sensei()->assets->dist_path( $compat_css_file ) ) ) {
+			$compat_css_file = 'css/learning-mode-compat.css';
+		}
+
 		Sensei()->assets->enqueue( self::THEME_NAME . '-style', $css_file );
+
+		if ( ! current_theme_supports( 'sensei-learning-mode' ) ) {
+			Sensei()->assets->enqueue( self::THEME_NAME . 'compatibility-style', $compat_css_file );
+		}
 
 		Sensei()->assets->enqueue( self::THEME_NAME . '-script', 'course-theme/learning-mode.js' );
 		Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
@@ -432,43 +441,57 @@ class Sensei_Course_Theme {
 	/**
 	 * Returns the url for sensei theme customization.
 	 *
-	 * @param bool        $use_customizer True to use the customizer, false to use the site editor.
 	 * @param string|null $post_type The post type to customize.
 	 *
 	 * @return The customization url
 	 */
-	public static function get_sensei_theme_customize_url( bool $use_customizer = true, string $post_type = null ) : string {
-		if ( $use_customizer ) {
-			// Get the last modified lesson.
-			$result = get_posts(
-				[
-					'posts_per_page' => 1,
-					'post_type'      => 'lesson',
-					'orderby'        => 'modified',
-					'meta'           => [
-						'key'     => '_lesson_course',
-						'compare' => 'EXISTS',
-					],
-				]
-			);
-			if ( empty( $result ) ) {
-				return '';
-			}
-
-			$lesson      = $result[0];
-			$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
-			$preview_url = '/?p=' . $lesson->ID;
-
-			if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
-				$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
-			}
-
-			return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
+	public static function get_learning_mode_fse_url( string $post_type = null ) : string {
+		// Get the post type manually if not provided.
+		if ( ! $post_type ) {
+			$post_type = get_post_type();
 		}
 
-		$post_type = $post_type ?? 'lesson';
+		// Fallback the post type to lesson if not determined.
+		if ( ! $post_type ) {
+			$post_type = 'lesson';
+		}
 
 		return admin_url( 'site-editor.php?postType=wp_template&postId=' . self::THEME_NAME . '//' . $post_type );
+	}
+
+	/**
+	 * Returnds the url for customizing Learning Mode template colors.
+	 */
+	public static function get_learning_mode_customizer_url(): string {
+			// Get the last modified lesson.
+		$result = get_posts(
+			[
+				'posts_per_page' => 1,
+				'post_type'      => 'lesson',
+				'orderby'        => 'modified',
+				'meta'           => [
+					'key'     => '_lesson_course',
+					'compare' => 'EXISTS',
+				],
+			]
+		);
+		if ( empty( $result ) ) {
+			return '';
+		}
+
+		$lesson      = $result[0];
+		$course_id   = get_post_meta( $lesson->ID, '_lesson_course', true );
+		$preview_url = '/?p=' . $lesson->ID;
+
+		if ( ! $course_id ) {
+			return '';
+		}
+
+		if ( ! Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id ) ) {
+			$preview_url .= '&' . self::PREVIEW_QUERY_VAR . '=' . $course_id;
+		}
+
+		return '/wp-admin/customize.php?autofocus[section]=sensei-course-theme&url=' . rawurlencode( $preview_url );
 	}
 
 	/**
@@ -506,7 +529,7 @@ class Sensei_Course_Theme {
 			array(
 				'id'    => 'site-editor',
 				'title' => __( 'Edit Site', 'sensei-lms' ),
-				'href'  => self::get_sensei_theme_customize_url( false, get_post_type() ),
+				'href'  => self::get_learning_mode_fse_url( get_post_type() ),
 			)
 		);
 	}

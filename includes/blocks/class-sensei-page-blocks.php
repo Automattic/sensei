@@ -30,7 +30,7 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 	}
 
 	/**
-	 * Function to add a Featured Course badge to block.
+	 * Add featured label to the featured image block.
 	 *
 	 * @access private
 	 * @since 4.6.4
@@ -45,16 +45,21 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 		if ( ! isset( $instance->context['postId'] ) ) {
 			return $block_content;
 		}
-		// Add featured course badge to a featured image block.
+
 		if ( empty( $block_content ) || 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
 			return $block_content;
 		}
 
-		return '<div class="featured-image-wrapper"><div class="sensei-lms-featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
+		return '<div class="sensei-lms-course-list-featured-label__image-wrapper">' .
+			'<span class="sensei-lms-course-list-featured-label__text">' .
+				__( 'Featured', 'sensei-lms' ) .
+			'</span>' .
+			$block_content .
+		'</div>';
 	}
 
 	/**
-	 * A function to add a course Featured course badge to the course categories block.
+	 * Add featured label to the course categories block.
 	 *
 	 * @access private
 	 * @since 4.6.4
@@ -75,7 +80,6 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			return $block_content;
 		}
 
-		// Add featured course badge to a featured image block.
 		if ( 'featured' !== get_post_meta( $instance->context['postId'], '_course_featured', true ) ) {
 			return $block_content;
 		}
@@ -84,7 +88,12 @@ class Sensei_Page_Blocks extends Sensei_Blocks_Initializer {
 			return $block_content;
 		}
 
-		return '<div class="featured-category-wrapper"><div class="sensei-lms-featured-badge">' . __( 'Featured', 'sensei-lms' ) . '</div>' . $block_content . '</div>';
+		return '<div class="sensei-lms-course-list-featured-label__meta-wrapper">' .
+			'<span class="sensei-lms-course-list-featured-label__text">' .
+				__( 'Featured', 'sensei-lms' ) .
+			'</span>' .
+			$block_content .
+		'</div>';
 	}
 
 	/**

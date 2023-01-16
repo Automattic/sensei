@@ -43,14 +43,14 @@ export const StudentActionMenu = ( {
 			onClick: () => removeFromCourse(),
 		},
 		{
-			title: __( 'Reset or Remove Progress', 'sensei-lms' ),
+			title: __( 'Reset Progress', 'sensei-lms' ),
 			onClick: () => resetProgress(),
 		},
 		{
 			title: __( 'Grading', 'sensei-lms' ),
 			onClick: () =>
 				window.open(
-					`edit.php?post_type=course&page=sensei_grading&view=ungraded&s=${ studentName }`,
+					`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
 					'_self'
 				),
 		},

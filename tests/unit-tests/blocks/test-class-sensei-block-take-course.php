@@ -29,7 +29,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
@@ -42,12 +42,12 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/button-take-course' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -56,14 +56,14 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 	 * The take course block is registered and renders content.
 	 */
 	public function testBlockRegistered() {
-		$post_content = '<!-- wp:sensei-lms/button-take-course {"style":{"color":{"text":"#d03f3f"}},"className":"is-style-outline"} -->
-<div class="wp-block-sensei-lms-button-take-course wp-block-sensei-button has-text-align-full is-style-outline"><button class="wp-block-button__link has-text-color" style="color:#d03f3f">Take Course</button></div>
+		$post_content = '<!-- wp:sensei-lms/button-take-course {"style":{"color":{"text":"#d03f3f"}},"className":"has-text-align-full is-style-outline"} -->
+<div class="wp-block-sensei-lms-button-take-course has-text-align-full is-style-outline wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link has-text-color" style="color:#d03f3f">Take Course</button></div>
 <!-- /wp:sensei-lms/button-take-course -->';
 
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( '<form', $result );
-		$this->assertContains( 'Take Course</button>', $result );
+		$this->assertStringContainsString( '<form', $result );
+		$this->assertStringContainsString( 'Take Course</button>', $result );
 	}
 
 	/**
@@ -73,16 +73,16 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$this->login_as_student();
 
-		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
+		$result = do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 
 		$form   = '/^\s*<form method="POST" action=".*\/\?course=take-block-course">.+<\/form>$/ms';
 		$nonce  = '/<input type="hidden" id="woothemes_sensei_start_course_noonce" name="woothemes_sensei_start_course_noonce" value=".+" \/>/';
 		$action = '<input type="hidden" name="course_start" value="1" />';
 
 		$this->assertRegExp( $form, $result, 'Should be wrapped in a form tag' );
-		$this->assertContains( $action, $result, 'Should have course_start action input field' );
+		$this->assertStringContainsString( $action, $result, 'Should have course_start action input field' );
 		$this->assertRegExp( $nonce, $result, 'Should have nonce input field' );
-		$this->assertContains( '<button class="sensei-stop-double-submission" >Take Course</button>', $result, 'Should contain block content' );
+		$this->assertStringContainsString( '<button class="sensei-stop-double-submission sensei-stop-double-submission wp-block-button__link">Take Course</button>', $result, 'Should contain block content' );
 
 	}
 
@@ -103,12 +103,12 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$this->logout();
 
-		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
+		$result = do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 
 		$form = '/^\s*<form method="GET" action=".*page_id=' . $my_courses_page_id . '">.+<\/form>\s*$/ms';
 
 		$this->assertRegExp( $form, $result, 'Should be wrapped in a form tag' );
-		$this->assertContains( '<button>Take Course</button>', $result, 'Should contain block content' );
+		$this->assertStringContainsString( '<button class="sensei-stop-double-submission wp-block-button__link">Take Course</button>', $result, 'Should contain block content' );
 	}
 
 	/**
@@ -124,9 +124,9 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$this->login_as_student();
 
-		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
+		$result = do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 
-		$this->assertContains( '<button disabled="disabled">Take Course</button>', $result, 'Button should be disabled' );
+		$this->assertStringContainsString( '<button disabled="disabled" class="sensei-stop-double-submission wp-block-button__link">Take Course</button>', $result, 'Button should be disabled' );
 
 		ob_start();
 		Sensei()->notices->maybe_print_notices();
@@ -147,7 +147,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 
 		$this->login_as( $student );
 
-		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
+		$result = do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 
 		$this->assertEmpty( $result );
 	}
@@ -163,7 +163,7 @@ class Sensei_Block_Take_Course_Test extends WP_UnitTestCase {
 			'post_type' => 'page',
 		];
 
-		$result = $this->block->render_take_course_block( [], '<button>Take Course</button>' );
+		$result = do_blocks( '<!-- wp:sensei-lms/button-take-course {"align":"right"} --><button class="sensei-stop-double-submission wp-block-button__link">Take Course</button><!-- /wp:sensei-lms/button-take-course -->' );
 
 		$this->assertEmpty( $result );
 	}

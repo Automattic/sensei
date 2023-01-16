@@ -35,13 +35,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	private $page_slug;
 
 	/**
-	 * Post type that the Student Management menu is associated with.
-	 *
-	 * @var string $menu_post_type
-	 */
-	private $menu_post_type;
-
-	/**
 	 * The page view.
 	 *
 	 * @var string
@@ -126,13 +119,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$this->learner            = $learner;
 		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
-		$this->menu_post_type     = 'course';
 		$this->view               = 'sensei_learner_admin';
 
 		$this->known_bulk_actions = [
 			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
 			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
-			self::REMOVE_PROGRESS         => __( 'Reset or Remove Progress', 'sensei-lms' ),
+			self::REMOVE_PROGRESS         => __( 'Reset Progress', 'sensei-lms' ),
 		];
 
 		if ( is_admin() ) {
@@ -150,12 +142,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function redirect_to_learner_admin_index( $result ) {
 		$url = add_query_arg(
 			array(
-				'post_type' => $this->menu_post_type,
-				'page'      => $this->get_page_slug(),
-				'view'      => $this->get_view(),
-				'message'   => $result,
+				'page'    => $this->get_page_slug(),
+				'view'    => $this->get_view(),
+				'message' => $result,
 			),
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 		wp_safe_redirect( $url );
 		exit;
@@ -169,11 +160,10 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function get_url() {
 		return add_query_arg(
 			[
-				'post_type' => $this->menu_post_type,
-				'page'      => $this->get_page_slug(),
-				'view'      => $this->get_view(),
+				'page' => $this->get_page_slug(),
+				'view' => $this->get_view(),
 			],
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 	}
 
@@ -186,12 +176,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function get_learner_management_course_url( $course_id ) {
 		return add_query_arg(
 			[
-				'post_type' => $this->menu_post_type,
 				'page'      => 'sensei_learners',
 				'course_id' => absint( $course_id ),
 				'view'      => 'learners',
 			],
-			admin_url( 'edit.php' )
+			admin_url( 'admin.php' )
 		);
 	}
 

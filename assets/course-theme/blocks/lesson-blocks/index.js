@@ -11,7 +11,7 @@ import ChevronLeft from '../../../icons/chevron-left.svg';
 import ChevronRight from '../../../icons/chevron-right.svg';
 import DoubleChevronRight from '../../../icons/double-chevron-right.svg';
 import MenuIcon from '../../../icons/menu.svg';
-import SenseiIcon from '../../../icons/sensei.svg';
+import LogoTreeIcon from '../../../icons/logo-tree.svg';
 import lessonPropertiesBlock from '../../../blocks/lesson-properties';
 import courseContentMeta from './course-content.block.json';
 import courseThemeCourseProgressBarMeta from './course-theme-course-progress-bar.block.json';
@@ -33,7 +33,7 @@ const meta = {
 	category: 'theme',
 	attributes: {},
 	icon: {
-		src: <SenseiIcon width="20" height="20" />,
+		src: <LogoTreeIcon width="20" height="20" />,
 		foreground: '#43AF99',
 	},
 };
@@ -47,8 +47,13 @@ export default [
 			'Display title of the course the current lesson or quiz belongs to.',
 			'sensei-lms'
 		),
-		edit() {
-			return <>{ __( 'Course Title', 'sensei-lms' ) }</>;
+		edit: function CourseTitleEdit() {
+			const blockProps = useBlockProps();
+			return (
+				<span { ...blockProps }>
+					{ __( 'Course Title', 'sensei-lms' ) }
+				</span>
+			);
 		},
 	},
 	{
@@ -59,9 +64,12 @@ export default [
 			'Display number of completed and total lessons in the course.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function ProgressCounterEdit() {
+			const blockProps = useBlockProps( {
+				className: 'sensei-course-theme-course-progress',
+			} );
 			return (
-				<div className="sensei-course-theme-course-progress">
+				<div { ...blockProps }>
 					{ __( '2 of 10 lessons complete (20%)', 'sensei-lms' ) }
 				</div>
 			);
@@ -130,9 +138,12 @@ export default [
 		...meta,
 		title: __( 'Course Progress Bar', 'sensei-lms' ),
 		description: __( 'Display course progress.', 'sensei-lms' ),
-		edit() {
+		edit: function ProgressBardEdit() {
+			const blockProps = useBlockProps( {
+				className: 'sensei-course-theme-course-progress-bar',
+			} );
 			return (
-				<div className="sensei-course-theme-course-progress-bar">
+				<div { ...blockProps }>
 					<div
 						className="sensei-course-theme-course-progress-bar-inner"
 						style={ { width: '20%' } }
@@ -165,9 +176,12 @@ export default [
 			'Exit Learning Mode and return to the course page.',
 			'sensei-lms'
 		),
-		edit() {
+		edit: function ExitCourseEdit() {
+			const blockProps = useBlockProps( {
+				className: 'sensei-lms-href',
+			} );
 			return (
-				<span className="sensei-lms-href">
+				<span { ...blockProps }>
 					{ __( 'Exit Course', 'sensei-lms' ) }
 				</span>
 			);
@@ -181,8 +195,12 @@ export default [
 			'Display title of the module the current lesson belongs to.',
 			'sensei-lms'
 		),
-		edit() {
-			return <em>{ __( 'MODULE', 'sensei-lms' ) }</em>;
+		edit: function ModuleTitleEdit() {
+			const blockProps = useBlockProps();
+
+			return (
+				<span { ...blockProps }>{ __( 'MODULE', 'sensei-lms' ) }</span>
+			);
 		},
 	},
 	{
@@ -294,12 +312,11 @@ export default [
 			'sensei-lms'
 		),
 		edit: function EditLearningModeLessonProperties() {
+			const blockProps = useBlockProps( {
+				className: 'wp-block-sensei-lms-lesson-properties',
+			} );
 			return (
-				<div
-					{ ...useBlockProps( {
-						className: 'wp-block-sensei-lms-lesson-properties',
-					} ) }
-				>
+				<div { ...blockProps }>
 					<span className="wp-block-sensei-lms-lesson-properties__difficulty">
 						{ __(
 							'The Learning Mode Lesson Properties block will display the lesson complexity and length. To set these properties, you need to add a Lesson Properties block to each individual lesson.',

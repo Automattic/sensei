@@ -1,9 +1,3 @@
-
-:root {
-
-}
-
-
 // Mobile
 @media screen and (max-width: ($breakpoint - 1)) {
 	.sensei-course-theme {
@@ -13,7 +7,6 @@
 			display: contents;
 		}
 	}
-
 }
 
 .sensei-course-theme {
@@ -26,7 +19,7 @@
 @media screen and (min-width: ($breakpoint)) {
 	.sensei-course-theme {
 		&__video-container {
-			--sidebar-width: 300px;
+			--sensei-lm-sidebar-width: 300px;
 			display: flex;
 			position: relative;
 			gap: var(--wp--style--block-gap, 2em);
@@ -34,20 +27,20 @@
 			.wp-block-sensei-lms-course-theme-lesson-video {
 				flex: 1;
 			}
+
 			&:not(.has-background) {
 				border: 1px solid currentColor;
 			}
 		}
 
 		&__video-container::after {
-			flex: 0 0 var(--sidebar-width);
+			flex: 0 0 var(--sensei-lm-sidebar-width);
 			content: '';
 		}
 
 		&__video-container &__sidebar {
-
 			position: absolute;
-			width: var(--sidebar-width);
+			width: var(--sensei-lm-sidebar-width);
 			top: 20px;
 			bottom: 20px;
 			right: 20px;
@@ -69,7 +62,6 @@
 				border-radius: 20px;
 				border: transparent;
 			}
-
 		}
 
 		/**
@@ -80,9 +72,9 @@
 			border: none;
 			height: 0;
 			overflow: visible;
-			padding: 0!important;
-			margin-top: 0!important;
-			margin-bottom: -32px!important;
+			padding: 0 !important;
+			margin-top: 0 !important;
+			margin-bottom: -32px !important;
 			transition: none;
 
 			&:after {
@@ -109,10 +101,9 @@
 			& ~ * .sensei-course-theme__secondary-sidebar {
 				position: relative;
 				top: calc(80vh + 48px);
-				width: var(--sidebar-width);
+				width: var(--sensei-lm-sidebar-width);
 				left: var(--wp--style--block-gap, 2em);
 			}
-
 		}
 	}
 }

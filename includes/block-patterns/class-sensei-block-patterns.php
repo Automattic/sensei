@@ -104,6 +104,11 @@ class Sensei_Block_Patterns {
 			) {
 				$block_patterns[] = 'discussion-question';
 			}
+		} elseif ( 'page' === $post_type ) {
+			$block_patterns = [
+				'landing-page-list',
+				'landing-page-grid',
+			];
 		}
 
 		foreach ( $block_patterns as $block_pattern ) {
@@ -162,6 +167,10 @@ class Sensei_Block_Patterns {
 
 		if ( in_array( $post_type, $post_types, true ) ) {
 			Sensei()->assets->enqueue( 'sensei-block-patterns-style', 'css/block-patterns.css' );
+		}
+
+		if ( 'page' === $post_type ) {
+			Sensei()->assets->enqueue( 'sensei-page-block-patterns-style', 'css/page-block-patterns.css' );
 		}
 	}
 

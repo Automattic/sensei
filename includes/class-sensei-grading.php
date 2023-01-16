@@ -67,7 +67,7 @@ class Sensei_Grading {
 
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			add_submenu_page(
-				'edit.php?post_type=course',
+				'sensei',
 				__( 'Grading', 'sensei-lms' ),
 				__( 'Grading', 'sensei-lms' ) . $indicator_html,
 				'manage_sensei_grades',
@@ -354,21 +354,19 @@ class Sensei_Grading {
 			$course_id = get_post_meta( $lesson_id, '_lesson_course', true );
 			$url       = add_query_arg(
 				array(
-					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'course_id' => $course_id,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 			$title    .= sprintf( '&nbsp;&nbsp;<span class="course-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $course_id ) ) );
 
 			$url    = add_query_arg(
 				array(
-					'post_type' => 'course',
 					'page'      => $this->page_slug,
 					'lesson_id' => $lesson_id,
 				),
-				admin_url( 'edit.php' )
+				admin_url( 'admin.php' )
 			);
 			$title .= sprintf( '&nbsp;&nbsp;<span class="lesson-title">&gt;&nbsp;&nbsp;<a href="%s">%s</a></span>', esc_url( $url ), esc_html( get_the_title( $lesson_id ) ) );
 		}
@@ -428,7 +426,7 @@ class Sensei_Grading {
 		/**
 		 * Filter fires inside Sensei_Grading::count_statuses
 		 *
-		 * Alter the the post_in array to determine which posts the
+		 * Alter the post_in array to determine which posts the
 		 * comment query should be limited to.
 		 *
 		 * @since 1.8.0
@@ -436,22 +434,23 @@ class Sensei_Grading {
 		 */
 		$args = apply_filters( 'sensei_count_statuses_args', $args );
 
-		if ( 'course' == $args['type'] ) {
+		if ( 'course' === $args['type'] ) {
 			$type = 'sensei_course_status';
 		} else {
 			$type = 'sensei_lesson_status';
 		}
-		$cache_key = 'sensei-' . $args['type'] . '-statuses';
+
+		$cache_key = 'sensei-statuses-' . md5( wp_json_encode( $args ) );
 
 		$query = "SELECT comment_approved, COUNT( * ) AS total FROM {$wpdb->comments} WHERE comment_type = %s ";
 
-		// Restrict to specific posts
+		// Restrict to specific posts.
 		if ( isset( $args['post__in'] ) && ! empty( $args['post__in'] ) && is_array( $args['post__in'] ) ) {
 			$query .= ' AND comment_post_ID IN (' . implode( ',', array_map( 'absint', $args['post__in'] ) ) . ')';
 		} elseif ( ! empty( $args['post_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND comment_post_ID = %d', $args['post_id'] );
 		}
-		// Restrict to specific users
+		// Restrict to specific users.
 		if ( isset( $args['user_id'] ) && is_array( $args['user_id'] ) ) {
 			$query .= ' AND user_id IN (' . implode( ',', array_map( 'absint', $args['user_id'] ) ) . ')';
 		} elseif ( ! empty( $args['user_id'] ) ) {
@@ -791,13 +790,12 @@ class Sensei_Grading {
 					'sensei_ajax_redirect_url',
 					add_query_arg(
 						array(
-							'post_type' => 'course',
 							'page'      => $this->page_slug,
 							'lesson_id' => $lesson_id,
 							'course_id' => $course_id,
 							'view'      => $grading_view,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				)
 			);
@@ -828,13 +826,12 @@ class Sensei_Grading {
 					'sensei_ajax_redirect_url',
 					add_query_arg(
 						array(
-							'post_type' => 'course',
 							'page'      => $this->page_slug,
 							'lesson_id' => $lesson_id,
 							'course_id' => $course_id,
 							'view'      => $grading_view,
 						),
-						admin_url( 'edit.php' )
+						admin_url( 'admin.php' )
 					)
 				)
 			);

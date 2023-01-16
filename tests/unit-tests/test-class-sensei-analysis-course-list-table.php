@@ -15,13 +15,13 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
 		self::$initial_hook_suffix = $GLOBALS['hook_suffix'] ?? null;
 		$GLOBALS['hook_suffix']    = null;
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		$GLOBALS['hook_suffix'] = self::$initial_hook_suffix;
 	}
@@ -29,7 +29,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
@@ -150,7 +150,7 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$expected = sprintf(
-			'<a class="button button-primary" href="http://example.org/wp-admin/edit.php?page=sensei_reports&#038;course_id=%d&#038;view=lesson&#038;sensei_report_download=%s-%s-lessons-overview&#038;post_type=course&#038;start_date=2022-03-01&#038;end_date=2022-03-02&#038;s=course&#038;user_id=%d&#038;_sdl_nonce=%s">Export all rows (CSV)</a>',
+			'<a class="button button-primary" href="http://example.org/wp-admin/admin.php?page=sensei_reports&#038;course_id=%d&#038;view=lesson&#038;sensei_report_download=%s-%s-lessons-overview&#038;start_date=2022-03-01&#038;end_date=2022-03-02&#038;s=course&#038;user_id=%d&#038;_sdl_nonce=%s">Export all rows (CSV)</a>',
 			$course->ID,
 			$user->user_nicename,
 			$course->post_name,

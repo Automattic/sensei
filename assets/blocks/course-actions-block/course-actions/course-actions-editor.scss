@@ -1,6 +1,19 @@
 .wp-block-sensei-lms-course-actions {
+	.wp-block-sensei-lms-button-take-course,
 	.wp-block-sensei-lms-button-continue-course,
 	.wp-block-sensei-lms-button-view-results {
 		display: none;
+	}
+
+	&.is-status-not-started .wp-block-sensei-lms-button-take-course {
+		display: block;
+	}
+
+	&.is-status-in-progress .wp-block-sensei-lms-button-continue-course {
+		display: block;
+	}
+
+	&.is-status-completed .wp-block-sensei-lms-button-view-results {
+		display: block;
 	}
 }

@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next-version$$
+ * @since 4.7.2
  */
 class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	/**

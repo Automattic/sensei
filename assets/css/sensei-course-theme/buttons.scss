@@ -3,6 +3,7 @@
 		&:focus {
 			outline: none;
 		}
+
 		&:focus-visible {
 			transition: none;
 			outline: dashed 1px var(--sensei-primary-color);
@@ -10,9 +11,7 @@
 	}
 }
 
-
 .sensei-course-theme__button, .sensei-course-theme .wp-block-button, .sensei-course-theme__button[type=submit], .sensei-course-theme__button[type=button] {
-
 	.wp-block-button__link {
 		font-family: inherit;
 		font-weight: inherit;
@@ -20,12 +19,14 @@
 		background-color: inherit !important;
 		color: inherit !important;
 		text-transform: unset;
+
 		&:hover {
 			background-color: inherit !important;
 			color: inherit !important;
 			text-decoration: none !important;
 		}
 	}
+
 	font-family: 'Inter', sans-serif;
 	font-weight: 400;
 	line-height: 1.5;
@@ -60,9 +61,11 @@
 
 	&.wp-block-button {
 		padding: 0;
+
 		.wp-block-button__link {
 			padding: 8px 11px;
 			display: block;
+
 			&:focus {
 				outline: dashed 1px var(--sensei-primary-color);
 				margin: -1px;
@@ -77,6 +80,7 @@
 			background-color: var(--sensei-primary-color) !important;
 			color: var(--sensei-primary-contrast-color);
 		}
+
 		&:hover {
 			color: var(--sensei-primary-color);
 			background: none;
@@ -87,15 +91,16 @@
 	&.wp-block-button.is-style-outline {
 		color: var(--sensei-primary-color);
 		--wp--custom--button--border--color: var(--sensei-primary-color);
+
 		&:hover {
 			background-color: var(--sensei-primary-color) !important;
 			color: var(--sensei-primary-contrast-color);
+
 			.wp-block-button__link {
 				border-color: var(--sensei-primary-color);
 			}
 		}
 	}
-
 
 
 	&.is-link {
@@ -115,28 +120,31 @@
 		pointer-events: none;
 		cursor: not-allowed;
 	}
+
 	&.is-completed.is-primary {
 		opacity: 0.8;
-		color: var(--bg-color)!important;
-		background: var(--text-color)!important;
-		border-color: var(--text-color)!important;
+		color: var(--bg-color) !important;
+		background: var(--text-color) !important;
+		border-color: var(--text-color) !important;
 	}
+
 	&.is-completed.is-secondary {
 		opacity: 0.8;
-		color: var(--text-color)!important;
-
-		border-color: var(--text-color)!important;
+		color: var(--text-color) !important;
+		border-color: var(--text-color) !important;
 	}
+
 	&.is-busy {
 		background-image: linear-gradient(
-			-45deg,
-			rgba(255, 255, 255, 0.5) 28%,
-			rgba(255, 255, 255, 0.1) 28%,
-			rgba(255, 255, 255, 0.1) 72%,
-			rgba(255, 255, 255, 0.5) 72%
+				-45deg,
+				rgba(255, 255, 255, 0.5) 28%,
+				rgba(255, 255, 255, 0.1) 28%,
+				rgba(255, 255, 255, 0.1) 72%,
+				rgba(255, 255, 255, 0.5) 72%
 		);
 		animation: components-button__busy-animation 25000ms infinite linear;
-		&:disabled{
+
+		&:disabled {
 			cursor: not-allowed;
 		}
 	}
