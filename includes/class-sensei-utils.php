@@ -2309,7 +2309,7 @@ class Sensei_Utils {
 	/**
 	 * Check if this is a REST API request.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.10.0
 	 *
 	 * @return bool
 	 */

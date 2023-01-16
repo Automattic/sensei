@@ -164,7 +164,7 @@ final class Sensei_Extensions {
 	/**
 	 * Map the themes array, adding the installed properties.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.10.0
 	 *
 	 * @access private
 	 *
