@@ -46,13 +46,15 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 	/**
 	 * Get the content to be rendered inside the filtered block.
 	 *
-	 * @param int   $query_id   The id of the Query block this filter is rendering inside.
-	 * @param Array $attributes The block's attributes.
+	 * @param WP_Block $block The block instance.
 	 */
-	public function get_content( int $query_id, array $attributes = [] ) : string {
+	public function get_content( WP_Block $block ) : string {
 		if ( empty( get_current_user_id() ) ) {
 			return '';
 		}
+
+		$attributes       = $block->attributes;
+		$query_id         = $block->context['queryId'];
 		$filter_param_key = self::PARAM_KEY . $query_id;
 		$default_option   = $attributes['defaultOptions']['student_course'] ?? 'all';
 		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ) : $default_option; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
