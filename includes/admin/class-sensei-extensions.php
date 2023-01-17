@@ -100,6 +100,10 @@ final class Sensei_Extensions {
 			return $this->add_installed_extensions_properties( $extensions );
 		}
 
+		if ( 'theme' === $type ) {
+			return $this->add_installed_themes_properties( $extensions );
+		}
+
 		return $extensions;
 	}
 
@@ -155,6 +159,38 @@ final class Sensei_Extensions {
 		);
 
 		return $extensions;
+	}
+
+	/**
+	 * Map the themes array, adding the installed properties.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @access private
+	 *
+	 * @param array $themes Themes from the REST API.
+	 *
+	 * @return array Themes with installed properties.
+	 */
+	public function add_installed_themes_properties( $themes ) {
+		// Includes installed version.
+		$themes = array_map(
+			function( $theme ) {
+				$theme_slug          = $theme->product_slug;
+				$theme_object        = wp_get_theme( $theme_slug );
+				$theme->is_installed = $theme_object->exists();
+				$theme->is_activated = wp_get_theme()->get_stylesheet() === $theme_slug;
+
+				if ( $theme->is_installed ) {
+					$theme->installed_version = $theme_object->get( 'Version' );
+				}
+
+				return $theme;
+			},
+			$themes
+		);
+
+		return $themes;
 	}
 
 	/**

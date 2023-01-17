@@ -56,24 +56,12 @@ class Sensei_Home_Quick_Links_Provider {
 	 * @return array The magical link to create a demo course or the link to edit the demo course.
 	 */
 	private function create_demo_link() {
-		global $wpdb;
-		$cache_key   = 'home/metadata/demo-course';
-		$cache_group = 'sensei/temporary';
-		$result      = wp_cache_get( $cache_key, $cache_group );
-		if ( false === $result ) {
-			$prefix = $wpdb->esc_like( Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Safe-ish and rare query.
-			$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='course' AND post_status IN ('publish', 'draft') AND post_name LIKE %s ORDER BY post_status='published' DESC, ID ASC LIMIT 1", "{$prefix}%" ) );
-			if ( null === $post_id ) {
-				$result = null;
-			} else {
-				$result = $post_id;
-				wp_cache_set( $cache_key, $result, $cache_group, 60 );
-			}
+		$demo_course_id = Sensei_Data_Port_Utilities::get_demo_course_id();
+
+		if ( $demo_course_id ) {
+			return $this->create_item( __( 'Edit demo course', 'sensei-lms' ), get_edit_post_link( $demo_course_id, '&' ) );
 		}
-		if ( null !== $result ) {
-			return $this->create_item( __( 'Edit demo course', 'sensei-lms' ), get_edit_post_link( $result, '&' ) );
-		}
+
 		return $this->create_item( __( 'Install a demo course', 'sensei-lms' ), self::ACTION_INSTALL_DEMO_COURSE );
 	}
 

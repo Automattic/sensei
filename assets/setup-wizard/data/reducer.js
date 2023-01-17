@@ -26,6 +26,9 @@ const DEFAULT_STATE = {
 			selected: [],
 			other: '',
 		},
+		theme: {
+			install_sensei_theme: false,
+		},
 		tracking: {
 			usage_tracking: false,
 		},
