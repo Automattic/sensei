@@ -70,7 +70,7 @@ class Sensei_Course_List_Filter_Block {
 		$content = '';
 
 		foreach ( $this->filters as $filter ) {
-			if ( in_array( $filter->get_filter_name(), $attributes['types'], true ) ) {
+			if ( in_array( $filter::FILTER_NAME, $attributes['types'], true ) ) {
 				$content .= $filter->get_content( $block->context['queryId'], $attributes );
 			}
 		}
@@ -104,6 +104,8 @@ class Sensei_Course_List_Filter_Block {
 			$parsed_block['attrs']['query']['exclude'] = [];
 		}
 
+		$default_options = $this->recursively_get_default_option_value_from_inner_blocks( $parsed_block['innerBlocks'] ) ?? [];
+
 		// All the filtered course ids that need to be excluded are merged here.
 		// We are changing updating the attribute of the parent Query Loop block here
 		// Which will be provided to all the children using context. So no need update each child's (pagination, next page etc.) context
@@ -111,12 +113,41 @@ class Sensei_Course_List_Filter_Block {
 		$parsed_block['attrs']['query']['exclude'] = array_merge(
 			$parsed_block['attrs']['query']['exclude'],
 			...array_map(
-				function ( $filter ) use ( $parsed_block ) {
+				function ( $filter ) use ( $parsed_block, $default_options ) {
+					$filter->set_default_option_as_filter_query_param( $parsed_block['attrs']['queryId'], $default_options );
 					return $filter->get_course_ids_to_be_excluded( $parsed_block['attrs']['queryId'] );
 				},
 				$this->filters
 			)
 		);
 		return $parsed_block;
+	}
+
+	/**
+	 * Get the defaultOptions value from inner blocks.
+	 *
+	 * @param mixed $inner_blocks The inner blocks of the parsed block.
+	 *
+	 * @return array|null The default options.
+	 */
+	private function recursively_get_default_option_value_from_inner_blocks( $inner_blocks ) {
+		$default_options = null;
+
+		if ( ! is_array( $inner_blocks ) ) {
+			return $default_options;
+		}
+
+		foreach ( $inner_blocks as $inner_block ) {
+			if ( 'sensei-lms/course-list-filter' === $inner_block['blockName'] ) {
+				$default_options = $inner_block['attrs']['defaultOptions'] ?? [];
+			} else {
+				$default_options = $this->recursively_get_default_option_value_from_inner_blocks( $inner_block['innerBlocks'] );
+			}
+
+			if ( null !== $default_options ) {
+				break;
+			}
+		}
+		return $default_options;
 	}
 }
