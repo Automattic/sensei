@@ -567,7 +567,7 @@ class Sensei_Main {
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
 
 		// Cron for periodically cleaning guest user related data.
-		Sensei_Guest_User_Cleaner::instance()->init();
+		Sensei_Temporary_User_Cleaner::instance()->init();
 	}
 
 	/**

@@ -1,8 +1,8 @@
 <?php
 /**
- * Guest User Cleaner
+ * Temporary User Cleaner
  *
- * Handles cleaning of guest users who are not active.
+ * Handles cleaning of guest and preview users who are not active.
  *
  * @package sensei-lms
  *
@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Guest User Cleaner Class.
+ * Sensei Temporary User Cleaner Class.
  *
  * @author Automattic
  *
  * @since $$next-version$$
  * @package Core
  */
-class Sensei_Guest_User_Cleaner {
+class Sensei_Temporary_User_Cleaner {
 
 	/**
 	 * Instance of singleton.
@@ -47,12 +47,12 @@ class Sensei_Guest_User_Cleaner {
 	}
 
 	/**
-	 * Sensei_Guest_User_Cleaner constructor. Private so it can only be initialized internally.
+	 * Sensei_Temporary_User_Cleaner constructor. Private so it can only be initialized internally.
 	 */
 	private function __construct() {}
 
 	/**
-	 * Sensei_Guest_User_Cleaner constructor.
+	 * Add hooks to schedule cleaning job..
 	 *
 	 * @since $$next-version$$
 	 */
@@ -63,7 +63,7 @@ class Sensei_Guest_User_Cleaner {
 
 
 	/**
-	 * Attaches guest user cleaning job to cron.
+	 * Attach cleaning job to cron.
 	 *
 	 * @since $$next-version$$
 	 * @access private
@@ -75,7 +75,7 @@ class Sensei_Guest_User_Cleaner {
 	}
 
 	/**
-	 * Remove guest users who have not been active within last week.
+	 * Remove guest and preview users who have not been active within last week.
 	 *
 	 * @since $$next-version$$
 	 * @access private
@@ -90,7 +90,7 @@ class Sensei_Guest_User_Cleaner {
 	}
 
 	/**
-	 * Get a list of guest users who have not been active within last week.
+	 * Get a list of temporary users who have not been active within last week.
 	 *
 	 * @access private
 	 *

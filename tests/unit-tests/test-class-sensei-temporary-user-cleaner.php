@@ -1,16 +1,16 @@
 <?php
 /**
- * File with class for testing Sensei Guest User Cleaner.
+ * File with class for testing Sensei_Temporary_User_Cleaner.
  *
  * @package sensei-tests
  */
 
 /**
- * Class for testing Sensei_Guest_User_Cleaner class.
+ * Class for testing Sensei_Temporary_User_Cleaner_Test class.
  *
  * @group Guest User
  */
-class Sensei_Guest_User_Cleaner_Test extends WP_UnitTestCase {
+class Sensei_Temporary_User_Cleaner_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
 	/**
