@@ -84,19 +84,8 @@ class Sensei_Guest_User_Cleaner {
 		$user_ids_to_be_deleted = $this->get_inactive_users();
 
 		foreach ( $user_ids_to_be_deleted as $user_id ) {
-			$course_ids = Sensei_Learner::instance()->get_enrolled_courses_query(
-				$user_id,
-				[
-					'posts_per_page' => -1,
-					'fields'         => 'ids',
-				]
-			)->posts;
-
-			foreach ( $course_ids as $course_id ) {
-				Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
-			}
-
-			Sensei_Temporary_User::delete_user( $user_id );
+			Sensei_Guest_User::delete_guest_user( $user_id );
+			Sensei_Preview_User::delete_preview_user( $user_id );
 		}
 	}
 
@@ -108,12 +97,17 @@ class Sensei_Guest_User_Cleaner {
 	 * @return array List of user IDs.
 	 */
 	private function get_inactive_users() {
+
 		$guest_user_ids = get_users(
 			[
-				'fields' => 'ID',
-				'role'   => 'guest_student',
+				'fields'   => 'ID',
+				'role__in' => [ Sensei_Guest_User::ROLE, Sensei_Preview_User::ROLE ],
 			]
 		);
+
+		if ( empty( $guest_user_ids ) ) {
+			return [];
+		}
 
 		$activity_args = [
 			'user_id'    => $guest_user_ids,
@@ -126,6 +120,7 @@ class Sensei_Guest_User_Cleaner {
 			],
 		];
 
+		remove_filter( 'sensei_check_for_activity', [ Sensei_Temporary_User::class, 'filter_sensei_activity' ], 10, 2 );
 		$last_week_activities = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		if ( $last_week_activities && is_a( $last_week_activities, 'WP_Comment' ) ) {
@@ -136,4 +131,5 @@ class Sensei_Guest_User_Cleaner {
 
 		return array_values( array_diff( $guest_user_ids, array_column( $last_week_activities, 'user_id' ) ) );
 	}
+
 }
