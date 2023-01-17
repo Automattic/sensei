@@ -567,7 +567,7 @@ class Sensei_Main {
 
 		// Quiz submission repositories.
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory( $use_tables ) )->create();
-		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
+		$this->quiz_answer_repository     = ( new Answer_Repository_Factory( $use_tables ) )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
 
 		// Init student progress handlers.
