@@ -960,7 +960,7 @@ class Sensei_Question {
 		 */
 		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
 
-		$question_grade       = Sensei()->question->get_question_grade( $question_id );
+		$question_grade = Sensei()->question->get_question_grade( $question_id );
 
 		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
 
