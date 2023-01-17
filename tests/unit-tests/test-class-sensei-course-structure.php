@@ -11,7 +11,7 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		if ( ! isset( Sensei()->admin ) ) {
@@ -1705,11 +1705,11 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 
 		//For edit mode.
 		$this->assertEquals( 'teacher1', $edit_output[0]['teacher'] );
-		$this->assertNotContains( 'teacher1', $edit_output[0]['title'] );
+		$this->assertStringNotContainsString( 'teacher1', $edit_output[0]['title'] );
 
 		//For view mode.
 		$this->assertEquals( 'teacher1', $view_output[0]['teacher'] );
-		$this->assertContains( 'teacher1', $view_output[0]['title'] );
+		$this->assertStringContainsString( 'teacher1', $view_output[0]['title'] );
 
 		// Reset $current_screen. This is needed for WordPress <= 5.8.
 		// @see https://core.trac.wordpress.org/ticket/53431

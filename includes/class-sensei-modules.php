@@ -121,7 +121,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int     $post_ID      Post ID.
@@ -144,7 +144,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Add teacher id as term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
@@ -164,7 +164,7 @@ class Sensei_Core_Modules {
 	/**
 	 * Remove teacher id from term meta when a module is added to a course.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 * @access private
 	 *
 	 * @param int    $object_id Object ID.
@@ -645,7 +645,7 @@ class Sensei_Core_Modules {
 		// Remove module from existing courses
 		if ( isset( $courses ) && is_array( $courses ) ) {
 			foreach ( $courses as $course ) {
-				wp_remove_object_terms( $course->ID, $module_id, $this->taxonomy );
+				wp_remove_object_terms( $course->ID, (int) $module_id, $this->taxonomy );
 			}
 		}
 
@@ -2591,8 +2591,18 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		return $users_terms;
-
+		/**
+		 * Filters the module terms when ownership is being checked for them.
+		 *
+		 * @hook   sensei_filter_module_terms_by_owner
+		 * @since  4.9.0
+		 *
+		 * @param  {WP_Term[]} $user_terms The terms after applying the filter by owner.
+		 * @param  {WP_Term[]|int[]} $terms The original terms before the filtering was applied.
+		 * @param  {int} $user_id The user ID to check for ownership.
+		 * @return {WP_Term[]} The final list of terms that must be considered as owner by the given user ID.
+		 */
+		return apply_filters( 'sensei_filter_module_terms_by_owner', $users_terms, $terms, $user_id );
 	}
 
 	/**

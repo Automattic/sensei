@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class for testing Sensei_Utils class.
+ *
+ * @group utils
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
+ */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
@@ -8,8 +15,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 	 * This function sets up the lessons, quizzes and their questions. This function runs before
 	 * every single test in this class
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
 
@@ -18,7 +25,7 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
 	}
@@ -246,8 +253,8 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$output = ob_get_clean();
 
 		/* Assert. */
-		$this->assertContains( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
-		$this->assertNotContains( 'param_2', $output, 'Output should not contain the excluded query param input.' );
+		$this->assertStringContainsString( '<input type="hidden" name="param_1" value="value_1">', $output, 'Output should contain the query param input with the correct value.' );
+		$this->assertStringNotContainsString( 'param_2', $output, 'Output should not contain the excluded query param input.' );
 	}
 
 	/**
@@ -290,6 +297,29 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
+	}
+
+	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_rest_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_rest_request );
 	}
 
 	/**

@@ -20,7 +20,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
@@ -32,12 +32,12 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $this->course;
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/learner-courses' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -52,9 +52,9 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		$result = do_blocks( $post_content );
 
-		$this->assertContains( 'All', $result );
-		$this->assertContains( 'Active', $result );
-		$this->assertContains( 'Completed', $result );
+		$this->assertStringContainsString( 'All', $result );
+		$this->assertStringContainsString( 'Active', $result );
+		$this->assertStringContainsString( 'Completed', $result );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], '' );
 
-		$this->assertContains( $course->post_title, $result );
+		$this->assertStringContainsString( $course->post_title, $result );
 
 	}
 

@@ -15,13 +15,13 @@ require_once SENSEI_TEST_FRAMEWORK_DIR . '/trait-sensei-course-enrolment-test-he
 class Sensei_Status_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		self::resetEnrolmentProviders();
 		$this->prepareEnrolmentManager();
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}

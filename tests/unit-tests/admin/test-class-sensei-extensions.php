@@ -11,7 +11,7 @@
 class Sensei_Extensions_Test extends WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		global $submenu;

@@ -28,7 +28,7 @@ export const CourseSidebar = () => {
 	/**
 	 * Filter to show or hide course pricing component.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @hook  senseiCoursePricingHide This hook allows to pass a boolean value for hiding course pricing upsell.
 	 * @return {boolean} 			  Hide the component.
@@ -38,7 +38,7 @@ export const CourseSidebar = () => {
 	/**
 	 * Filter to show or hide course expiration component.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @hook  senseiCourseAccessPeriodHide This hook allows to pass a boolean value for hiding course expiration (access period) upsell.
 	 * @return {boolean} 				   Hide the component.
@@ -53,11 +53,11 @@ export const CourseSidebar = () => {
 				target={ pluginSidebarHandle }
 				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
 			>
-				{ __( 'Sensei Settings', 'sensei-lms' ) }
+				{ __( 'Course Settings', 'sensei-lms' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
 				name={ pluginSidebarHandle }
-				title={ __( 'Sensei Settings', 'sensei-lms' ) }
+				title={ __( 'Course Settings', 'sensei-lms' ) }
 				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
 			>
 				{ ! hideCoursePricing && <CoursePricingPromoSidebar /> }
@@ -78,7 +78,7 @@ export const SenseiSettingsDocumentSidebar = () => {
 		);
 	} );
 	if ( isSenseiEditorPanelOpen ) {
-		// when 'Sensei Settings' is clicked, isSenseiEditorPanelOpen returns true, so we open the 'Sensei Settings'
+		// when 'Course Settings' is clicked, isSenseiEditorPanelOpen returns true, so we open the 'Course Settings'
 		// plugin sidebar and then close the 'Sensei Settings' panel which sets isSenseiEditorPanelOpen back to false.
 		dispatch( 'core/edit-post' ).openGeneralSidebar(
 			`${ pluginSidebarHandle }/${ pluginSidebarHandle }`
@@ -90,7 +90,7 @@ export const SenseiSettingsDocumentSidebar = () => {
 	return (
 		<PluginDocumentSettingPanel
 			name={ pluginDocumentHandle }
-			title={ __( 'Sensei Settings', 'sensei-lms' ) }
+			title={ __( 'Course Settings', 'sensei-lms' ) }
 			className="sensei-plugin-document-setting-panel"
 		></PluginDocumentSettingPanel>
 	);

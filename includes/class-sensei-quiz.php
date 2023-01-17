@@ -32,7 +32,7 @@ class Sensei_Quiz {
 	/**
 	 * The main plugin filename.
 	 *
-	 * @deprecated $$next-version$$ This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
+	 * @deprecated 4.9.0 This attribute was never meant to be used. Added by mistake in `1f529be` and later made useless in `4f25fe5`.
 	 * @var string
 	 */
 	public $file;
@@ -86,6 +86,7 @@ class Sensei_Quiz {
 		add_filter( 'body_class', [ $this, 'add_quiz_blocks_class' ] );
 		add_filter( 'post_class', [ $this, 'add_quiz_blocks_class' ] );
 
+		add_filter( 'sensei_quiz_enable_block_based_editor', [ $this, 'disable_block_editor_functions_when_question_types_are_registered' ], 2 ); // It has 2 as priority for better backward compabilitiby, since originally it was inside the method `is_block_based_editor_enabled`.
 	}
 
 	/**
@@ -99,8 +100,12 @@ class Sensei_Quiz {
 
 		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
-		// Disable block editor functions if custom question types have been registered, or we are not in the block editor.
-		$is_block_based_editor_enabled = ! has_filter( 'sensei_question_types' ) && ( ! $current_screen || $current_screen->is_block_editor() );
+		$is_block_editor = (
+			! $current_screen || $current_screen->is_block_editor()
+		) || (
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Don't touch the nonce.
+			isset( $_GET['meta-box-loader-nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['meta-box-loader-nonce'] ), 'meta-box-loader' )
+		);
 
 		/**
 		 * Filter to change whether the block based editor should be used instead of the legacy
@@ -114,7 +119,20 @@ class Sensei_Quiz {
 		 *
 		 * @return {bool}
 		 */
-		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_based_editor_enabled );
+		return apply_filters( 'sensei_quiz_enable_block_based_editor', $is_block_editor );
+	}
+
+	/**
+	 * Disable block based editor when custom question types have been registered.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param bool $is_block_based_editor_enabled Whether the block based editor is enabled.
+	 *
+	 * @return bool Whether block based editor should be enabled.
+	 */
+	public function disable_block_editor_functions_when_question_types_are_registered( $is_block_based_editor_enabled ) {
+		return ! has_filter( 'sensei_question_types' ) && $is_block_based_editor_enabled;
 	}
 
 	/**

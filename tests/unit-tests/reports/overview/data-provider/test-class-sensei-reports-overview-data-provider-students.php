@@ -18,7 +18,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	/**
 	 * Set up before each test.
 	 */
-	public function setup() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->resetCourseEnrolmentManager();
 
@@ -30,7 +30,7 @@ class Sensei_Reports_Overview_Data_Provider_Students_Test extends WP_UnitTestCas
 	/**
 	 * Tear down after each test.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		$this->factory->tearDown();

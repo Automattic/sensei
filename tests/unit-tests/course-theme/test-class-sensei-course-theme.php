@@ -37,8 +37,8 @@ class Sensei_Course_Theme_Test extends WP_UnitTestCase {
 	/**
 	 * Setup method. Run first on every test execution.
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp(): void {
+		parent::setUp();
 		$this->factory  = new Sensei_Factory();
 		$this->instance = Sensei_Course_Theme::instance();
 		$this->prepareEnrolmentManager();

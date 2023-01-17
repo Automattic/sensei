@@ -542,7 +542,7 @@ class Sensei_Lesson {
 					$lesson_status
 				);
 
-				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->get_posts() );
+				$in_module_lessons = array_merge( $in_module_lessons, $module_lessons_query->posts );
 			}
 
 			$lessons = array_merge( $in_module_lessons, $lessons );
@@ -806,34 +806,48 @@ class Sensei_Lesson {
 	 * @param int $post_id The post id.
 	 * @return string|null The URL string or null if the post does not have one.
 	 */
-	private function get_featured_video_media_from_blocks( $post_id ) {
+	private function get_featured_video_media_from_blocks( int $post_id ): ?string {
 		$post   = get_post( $post_id );
 		$blocks = parse_blocks( $post->post_content );
-		foreach ( $blocks as $block ) {
-			if ( 'sensei-lms/featured-video' === $block['blockName'] ) {
-				if ( 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
-					$block = $block['innerBlocks'][0];
-				}
-				if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
-					if ( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) {
-						return $block['attrs']['poster'];
-					} else {
-						return wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
-					}
-				}
-				if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
-					$url = $block['innerBlocks'][0]['attrs']['url'];
-					if ( 'youtube' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_youtube_thumbnail( $url );
-					} elseif ( 'vimeo' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_vimeo_thumbnail( $url );
-					} elseif ( 'videopress' === $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
-						return $this->get_videopress_thumbnail( $url );
-					}
-				}
-			}
+
+		if ( 0 === count( $blocks ) || 'sensei-lms/featured-video' !== $blocks[0]['blockName'] ) {
 			return null;
 		}
+
+		$block = $blocks[0];
+
+		if ( ! empty( $block['innerBlocks'][0]['blockName'] ) && 'sensei-pro/interactive-video' === $block['innerBlocks'][0]['blockName'] ) {
+			$block = $block['innerBlocks'][0];
+		}
+
+		if ( empty( $block['innerBlocks'][0]['blockName'] ) ) {
+			return null;
+		}
+
+		if ( 'core/video' === $block['innerBlocks'][0]['blockName'] ) {
+			if ( ! empty( $block['innerBlocks'][0]['attrs']['videoPressClassNames'] ) ) {
+				return $block['attrs']['poster'];
+			}
+
+			return empty( $block['innerBlocks'][0]['attrs']['id'] ) ? null : wp_get_attachment_url( get_post_thumbnail_id( $block['innerBlocks'][0]['attrs']['id'] ) );
+		}
+
+		if ( 'core/embed' === $block['innerBlocks'][0]['blockName'] ) {
+			$url = $block['innerBlocks'][0]['attrs']['url'];
+
+			switch ( $block['innerBlocks'][0]['attrs']['providerNameSlug'] ) {
+				case 'youtube':
+					return $this->get_youtube_thumbnail( $url );
+				case 'vimeo':
+					return $this->get_vimeo_thumbnail( $url );
+				case 'videopress':
+					return $this->get_videopress_thumbnail( $url );
+				default:
+					return null;
+			}
+		}
+
+		return null;
 	}
 
 	/**

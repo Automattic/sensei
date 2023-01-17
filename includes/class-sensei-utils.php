@@ -117,8 +117,8 @@ class Sensei_Utils {
 			$args['count'] = true;
 		}
 
-		// A user ID of 0 is in valid, so shortcut this
-		if ( isset( $args['user_id'] ) && 0 == intval( $args['user_id'] ) ) {
+		// A user ID of 0 is invalid, so shortcut this.
+		if ( isset( $args['user_id'] ) && 0 === intval( $args['user_id'] ) ) {
 			_deprecated_argument( __FUNCTION__, '1.0', esc_html__( 'At no point should user_id be equal to 0.', 'sensei-lms' ) );
 			return false;
 		}
@@ -2304,6 +2304,17 @@ class Sensei_Utils {
 			case 'frontend':
 				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
 		}
+	}
+
+	/**
+	 * Check if this is a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_rest_request(): bool {
+		return defined( 'REST_REQUEST' ) && REST_REQUEST;
 	}
 
 	/**
