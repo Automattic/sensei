@@ -651,7 +651,9 @@ class Sensei_Question {
 
 		$title_html  = '<span class="question question-title">';
 		$title_html .= esc_html( $title );
-		$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
+		if ( $question_grade > 0 ) {
+			$title_html .= Sensei()->view_helper->format_question_points( $question_grade );
+		}
 		$title_html .= '</span>';
 
 		return $title_html;
@@ -863,6 +865,11 @@ class Sensei_Question {
 	 */
 	public static function the_answer_feedback( $question_id ) {
 
+		$hide_answer_feedback = get_post_meta( $question_id, '_hide_answer_feedback', true );
+		if ( $hide_answer_feedback ) {
+			return;
+		}
+
 		$quiz_id   = get_the_ID();
 		$lesson_id = Sensei()->quiz->get_lesson_id( $quiz_id );
 
@@ -954,7 +961,6 @@ class Sensei_Question {
 		$answer_notes = apply_filters( 'sensei_question_answer_notes', $answer_notes, $question_id, $lesson_id );
 
 		$question_grade       = Sensei()->question->get_question_grade( $question_id );
-		$hide_answer_feedback = get_post_meta( $question_id, '_hide_answer_feedback', true );
 
 		$correct_answer = $show_correct_answers && ! $answer_correct ? self::get_correct_answer( $question_id ) : false;
 
@@ -994,35 +1000,33 @@ class Sensei_Question {
 		$has_answer_notes = $answer_notes && wp_strip_all_tags( $answer_notes );
 
 		?>
-		<?php if ( ! $hide_answer_feedback ) { ?>
-			<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
-				<?php if ( $indicate_incorrect ) { ?>
-					<div class="sensei-lms-question__answer-feedback__header">
-						<span class="sensei-lms-question__answer-feedback__icon"></span>
-						<span
-								class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
-						<?php if ( $grade ) { ?>
-							<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
-						<?php } ?>
-					</div>
-				<?php } ?>
-				<?php if ( $has_answer_notes || $correct_answer ) { ?>
-					<div class="sensei-lms-question__answer-feedback__content">
-						<?php if ( $correct_answer ) { ?>
-							<div class="sensei-lms-question__answer-feedback__correct-answer">
-								<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
-								<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
-							</div>
-						<?php } ?>
-						<?php if ( $has_answer_notes ) { ?>
-							<div class="sensei-lms-question__answer-feedback__answer-notes">
-								<?php echo wp_kses_post( $answer_notes ); ?>
-							</div>
-						<?php } ?>
-					</div>
-				<?php } ?>
-			</div>
-		<?php } ?>
+		<div class="sensei-lms-question__answer-feedback <?php echo esc_attr( implode( ' ', $answer_notes_classnames ) ); ?>">
+			<?php if ( $indicate_incorrect ) { ?>
+				<div class="sensei-lms-question__answer-feedback__header">
+					<span class="sensei-lms-question__answer-feedback__icon"></span>
+					<span
+							class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+					<?php if ( $grade ) { ?>
+						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
+					<?php } ?>
+				</div>
+			<?php } ?>
+			<?php if ( $has_answer_notes || $correct_answer ) { ?>
+				<div class="sensei-lms-question__answer-feedback__content">
+					<?php if ( $correct_answer ) { ?>
+						<div class="sensei-lms-question__answer-feedback__correct-answer">
+							<?php echo wp_kses_post( __( 'Right Answer:', 'sensei-lms' ) ); ?>
+							<strong><?php echo wp_kses_post( $correct_answer ); ?></strong>
+						</div>
+					<?php } ?>
+					<?php if ( $has_answer_notes ) { ?>
+						<div class="sensei-lms-question__answer-feedback__answer-notes">
+							<?php echo wp_kses_post( $answer_notes ); ?>
+						</div>
+					<?php } ?>
+				</div>
+			<?php } ?>
+		</div>
 		<?php if ( $grade ) { ?>
 			<style> .question-title .grade { display: none; } </style>
 		<?php } ?>
