@@ -322,4 +322,41 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( $this->course1->post_title, $result );
 		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
+
+	public function testCourseFilterBlock_WhenFilteredForFeaturedByDefault_ShowsOnlyTheFeaturedCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		$modified_content = str_replace( '"student_course"]', '"student_course"],"defaultOptions":{"featured":"featured"}', $this->content );
+
+		/* ACT */
+		$result = do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForActiveByDefault_ShowsOnlyTheFeaturedCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+
+		$modified_content = str_replace( '"student_course"]', '"student_course"],"defaultOptions":{"student_course":"active"}', $this->content );
+
+		/* ACT */
+		$result = do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
+	}
 }
