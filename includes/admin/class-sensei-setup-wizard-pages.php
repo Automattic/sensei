@@ -160,7 +160,7 @@ class Sensei_Setup_Wizard_Pages {
 							'queryId'       => 0,
 							'query'         => [
 								'postType' => 'course',
-								'perPage'  => 3,
+								'perPage'  => 10,
 								'offset'   => 0,
 								'inherit'  => false,
 								'sticky'   => '',
