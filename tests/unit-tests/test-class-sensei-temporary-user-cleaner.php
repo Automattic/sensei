@@ -49,30 +49,24 @@ class Sensei_Temporary_User_Cleaner_Test extends WP_UnitTestCase {
 		remove_filter( 'pre_user_query', [ Sensei_Temporary_User::class, 'filter_out_temporary_users' ], 11 );
 		remove_filter( 'sensei_check_for_activity', [ Sensei_Temporary_User::class, 'filter_sensei_activity' ], 10, 2 );
 
-
 		/* Arrange */
 		[ 'course_id' => $course_id ] = $this->setup_course();
 
-		$_POST['course_start']                         = 1;
-		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
-		do_action( 'wp' );
-		$this->logout();
+		$user1 = Sensei_Guest_User::create_guest_user();
+		Sensei_Utils::update_course_status( $user1, $course_id, 'complete' );
 
-		$_POST['course_start']                         = 1;
-		$_POST['woothemes_sensei_start_course_noonce'] = wp_create_nonce( 'woothemes_sensei_start_course_noonce' );
-		do_action( 'wp' );
-
-		$user_count_before = Sensei_Utils::get_user_count_for_role( 'guest_student' );
-
-		$comment_id = Sensei_Utils::update_course_status( get_current_user_id(), $course_id, 'complete' );
+		$user2      = Sensei_Guest_User::create_guest_user();
+		$comment_id = Sensei_Utils::update_course_status( $user2, $course_id, 'complete' );
 		update_comment_meta( $comment_id, 'start', '2022-01-01 00:00:01' );
 
 		$activity_args = [
-			'user_id' => get_current_user_id(),
+			'user_id' => $user2,
 			'type_in' => [ 'sensei_lesson_status', 'sensei_course_status' ],
 			'status'  => 'any',
 			'fields'  => 'ids',
 		];
+
+		$user_count_before = Sensei_Utils::get_user_count_for_role( 'guest_student' );
 
 		$activity = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
