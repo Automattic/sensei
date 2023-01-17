@@ -291,6 +291,7 @@ class Sensei_Autoloader {
 			 * Quiz Submission
 			 */
 			\Sensei\Internal\Quiz_Submission\Answer\Models\Answer::class => 'internal/quiz-submission/answer/models/class-answer.php',
+			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Aggregate_Answer_Repository::class => 'internal/quiz-submission/answer/repositories/class-aggregate-answer-repository.php',
 			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Comments_Based_Answer_Repository::class => 'internal/quiz-submission/answer/repositories/class-comments-based-answer-repository.php',
 			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository::class => 'internal/quiz-submission/answer/repositories/class-tables-based-answer-repository.php',
 			\Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory::class => 'internal/quiz-submission/answer/repositories/class-answer-repository-factory.php',
