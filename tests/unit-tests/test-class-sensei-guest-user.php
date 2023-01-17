@@ -33,7 +33,7 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 	private function setup_course( $open_access ) {
 		$course_data = $this->factory->get_course_with_lessons();
 		$course_id   = $course_data['course_id'];
-		update_post_meta( $course_id, 'open_access', $open_access );
+		update_post_meta( $course_id, '_open_access', $open_access );
 		global $post;
 		$post = get_post( $course_id );
 
