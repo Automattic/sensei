@@ -29,10 +29,11 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	/**
 	 * Get the content to be be rendered inside the filtered block.
 	 *
-	 * @param int   $query_id   The id of the Query block this filter is rendering inside.
-	 * @param Array $attributes The block's attributes.
+	 * @param WP_Block $block The block instance.
 	 */
-	public function get_content( int $query_id, array $attributes ) : string {
+	public function get_content( WP_Block $block ) : string {
+		$attributes        = $block->attributes;
+		$query_id          = $block->context['queryId'];
 		$filter_param_key  = self::PARAM_KEY . $query_id;
 		$default_option    = $attributes['defaultOptions']['categories'] ?? -1;
 		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
