@@ -18,7 +18,7 @@ class Sensei_Course_List_Block {
 	 * Sensei_Course_List_Block constructor.
 	 */
 	public function __construct() {
-		add_filter( 'render_block', [ $this, 'render_login_form_if_applicable' ], 10, 2 );
+		add_filter( 'render_block', [ $this, 'maybe_render_login_form' ], 10, 2 );
 	}
 
 	/**
@@ -27,9 +27,10 @@ class Sensei_Course_List_Block {
 	 * @param string $block_content The block content to be rendered.
 	 * @param array  $block          The block to be rendered.
 	 *
+	 * @access private
 	 * @return string
 	 */
-	public function render_login_form_if_applicable( $block_content, $block ) {
+	public function maybe_render_login_form( $block_content, $block ) {
 		if ( 'core/query' !== $block['blockName'] ) {
 			return $block_content;
 		}
