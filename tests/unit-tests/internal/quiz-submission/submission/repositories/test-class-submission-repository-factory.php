@@ -2,7 +2,7 @@
 
 namespace SenseiTest\Internal\Quiz_Submission\Submission\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Repositories\Aggregate_Submission_Repository;
 use Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Factory;
 
 /**
@@ -25,7 +25,7 @@ class Submission_Repository_Factory_Test extends \WP_UnitTestCase {
 		$actual = $factory->create();
 
 		/* Assert. */
-		self::assertInstanceOf( Submission_Repository_Interface::class, $actual );
+		self::assertInstanceOf( Aggregate_Submission_Repository::class, $actual );
 	}
 
 	public function providerCreate_WhenCalled_ReturnsSubmissionRepository(): array {
