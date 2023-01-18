@@ -4059,6 +4059,49 @@ class Sensei_Course {
 			has_block( 'core/query', $sensei_settings_course_page->post_content );
 	}
 
+	/**
+	 * Render course archive page content.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function archive_page_content() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		if (
+			$this->is_course_archive_page_has_content()
+		) {
+			echo wp_kses(
+				do_blocks( $sensei_settings_course_page->post_content ),
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					[
+						'option' => [
+							'selected' => [],
+							'value'    => [],
+						],
+						'select' => [
+							'class'          => [],
+							'id'             => [],
+							'name'           => [],
+							'data-param-key' => [],
+						],
+						'form'   => [
+							'action' => [],
+							'method' => [],
+						],
+						'input'  => [
+							'type'  => [],
+							'name'  => [],
+							'value' => [],
+						],
+					]
+				)
+			);
+			remove_all_actions( 'sensei_pagination' );
+		}
+	}
+}
+
 /**
  * Class WooThemes_Sensei_Course
  *

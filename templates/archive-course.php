@@ -33,45 +33,12 @@
 
 	<?php
 
-	$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
-
-	if (
-		is_a( $sensei_settings_course_page, 'WP_Post' ) &&
-		! Sensei()->post_types->has_old_shortcodes( $sensei_settings_course_page->post_content ) &&
-		! empty( $sensei_settings_course_page->post_content ) &&
-		has_block( 'core/query', $sensei_settings_course_page->post_content )
-	) {
-		echo wp_kses(
-			do_blocks( $sensei_settings_course_page->post_content ),
-			array_merge(
-				wp_kses_allowed_html( 'post' ),
-				[
-					'option' => [
-						'selected' => [],
-						'value'    => [],
-					],
-					'select' => [
-						'class'          => [],
-						'id'             => [],
-						'name'           => [],
-						'data-param-key' => [],
-					],
-					'form'   => [
-						'action' => [],
-						'method' => [],
-					],
-					'input'  => [
-						'type'  => [],
-						'name'  => [],
-						'value' => [],
-					],
-				]
-			)
-		);
-
-		remove_all_actions( 'sensei_pagination' );
-	} elseif ( have_posts() ) {
-		sensei_load_template( 'loop-course.php' );
+	if ( have_posts() ) {
+		if ( Sensei()->course->is_course_archive_page_has_content() ) {
+			Sensei()->course->archive_page_content();
+		} else {
+			sensei_load_template( 'loop-course.php' );
+		}
 	} else {
 		?>
 
