@@ -55,3 +55,8 @@
 .wp-block:not(.has-background) {
 	background-color: unset;
 }
+
+// Twenty Fifteen
+.sensei-course-theme::before {
+	width: 0px;
+}

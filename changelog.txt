@@ -1,5 +1,37 @@
 *** Changelog ***
 
+2023-01-12 - version 4.10.0
+
+* New: Course theme installation through the onboarding wizard
+	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
+	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
+	* Install Course theme [#6231](https://github.com/Automattic/sensei/pull/6231)
+	* Add usage tracking for Setup Wizard Course Theme step [#6252](https://github.com/Automattic/sensei/pull/6252)
+	* Add Sensei Home task to customize the Course theme [#6250](https://github.com/Automattic/sensei/pull/6250)
+* Add: Add `sensei_usage_tracking_data` filter hook [#6262](https://github.com/Automattic/sensei/pull/6262)
+* Add: Log sent emails [#6228](https://github.com/Automattic/sensei/pull/6228)
+* Add: Notice asking user for reviews/feedback [#6274](https://github.com/Automattic/sensei/pull/6274)
+* Add: Log when reports are run [#6319](https://github.com/Automattic/sensei/pull/6319)
+* Add: Add  `Sensei_Data_Port_Utilities::get_demo_course_id()` helper method [#6328](https://github.com/Automattic/sensei/pull/6328)
+* Add: Add filters for course actions buttons [#6296](https://github.com/Automattic/sensei/pull/6296)
+* Add: Course list button editing [#6324](https://github.com/Automattic/sensei/pull/6324)
+* Fix: Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
+* Fix: Fix testimonial margin for block patterns [#6216](https://github.com/Automattic/sensei/pull/6216)
+* Fix: Ensure passing an integer module id [#6229](https://github.com/Automattic/sensei/pull/6229)
+* Fix: Ensure `is_plugin_active` call doesn't give an error [#6249](https://github.com/Automattic/sensei/pull/6249)
+* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
+* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
+* Fix: Add empty checks to avoid warnings [#6270](https://github.com/Automattic/sensei/pull/6270)
+* Fix: Fix private message emails not being sent [#6257](https://github.com/Automattic/sensei/pull/6257)
+* Fix: Ensure all strings in block pattern templates are translated and escaped [#6322](https://github.com/Automattic/sensei/pull/6322)
+* Fix: Fix editor wizard header style [#6335](https://github.com/Automattic/sensei/pull/6335)
+* Fix: Update question post type to not be publicly queryable [#6347](https://github.com/Automattic/sensei/pull/6347)
+* Fix: Fix conflict by disabling Yoast initialization on Divi preview [#6342](https://github.com/Automattic/sensei/pull/6342)
+* Fix: Security fixes 👏 foobar7
+* Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
+* Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
+* Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
+
 2022-12-09 - version 4.9.1
 * Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
 * Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
@@ -22,13 +54,13 @@
     * Skip opinionated styles when the active theme declares support for it [#6066](https://github.com/Automattic/sensei/pull/6066)
     * Enable customization of the lesson status icons [#6070](https://github.com/Automattic/sensei/pull/6070)
     * Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
-    * Update section headings in Landing Page and Course List patterns [#6217](https://github.com/Automattic/sensei/pull/6217) 
+    * Update section headings in Landing Page and Course List patterns [#6217](https://github.com/Automattic/sensei/pull/6217)
     * Fix mail list br tag escape in landing page [#6214](https://github.com/Automattic/sensei/pull/6214)
 * New: Course Settings
     * Address testing feedback for course settings sidebar [#6161](https://github.com/Automattic/sensei/pull/6161)
     * Course Settings Sidebar [#6156](https://github.com/Automattic/sensei/pull/6156)
     * Create new course general sidebar [#6077](https://github.com/Automattic/sensei/pull/6077)
-    * Rename Course Settings sidebar, show arrow [#6197](https://github.com/Automattic/sensei/pull/6197) 
+    * Rename Course Settings sidebar, show arrow [#6197](https://github.com/Automattic/sensei/pull/6197)
 * Add: Add/sensei contact link atomic [#6177](https://github.com/Automattic/sensei/pull/6177)
 * Add: Switch icon to SVG for Calypso compatibility [#6160](https://github.com/Automattic/sensei/pull/6160)
 * Add: Sensei on Dotcom - Connect Sensei Home tasks statuses with Calypso Launchpad tasks statuses [#6124](https://github.com/Automattic/sensei/pull/6124)

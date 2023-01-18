@@ -68,6 +68,7 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 		$this->register_get_data_route();
 		$this->register_submit_welcome_route();
 		$this->register_submit_purpose_route();
+		$this->register_submit_theme_route();
 		$this->register_submit_tracking_route();
 		$this->register_submit_features_route();
 		$this->register_complete_wizard_route();
@@ -148,6 +149,34 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 										'type' => 'string',
 										'enum' => self::FEATURES,
 									],
+								],
+							],
+						],
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Register /theme endpoint.
+	 */
+	public function register_submit_theme_route() {
+		register_rest_route(
+			$this->namespace,
+			$this->rest_base . '/theme',
+			[
+				[
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => [ $this, 'submit_theme' ],
+					'permission_callback' => [ $this, 'can_user_access_rest_api' ],
+					'args'                => [
+						'theme' => [
+							'type'       => 'object',
+							'properties' => [
+								'install_sensei_theme' => [
+									'required' => true,
+									'type'     => 'boolean',
 								],
 							],
 						],
@@ -304,6 +333,9 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				'selected' => $user_data['purpose']['selected'],
 				'other'    => $user_data['purpose']['other'],
 			],
+			'theme'      => [
+				'install_sensei_theme' => $user_data['theme']['install_sensei_theme'],
+			],
 			'tracking'   => [
 				'usage_tracking' => Sensei()->usage_tracking->get_tracking_enabled(),
 			],
@@ -402,6 +434,15 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 						],
 					],
 				],
+				'theme'    => [
+					'type'       => 'object',
+					'properties' => [
+						'install_sensei_theme' => [
+							'description' => __( 'Whether user wants to install Sensei theme.', 'sensei-lms' ),
+							'type'        => 'boolean',
+						],
+					],
+				],
 				'tracking' => [
 					'type'       => 'object',
 					'properties' => [
@@ -448,6 +489,19 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Submit form on theme step.
+	 *
+	 * @param array $form Form data.
+	 *
+	 * @return bool Success.
+	 */
+	public function submit_theme( $form ) {
+		$json = $form->get_json_params();
+
+		return $this->setup_wizard->update_wizard_user_data( $json );
+	}
+
+	/**
 	 * Submit form on tracking step.
 	 *
 	 * @param array $data Form data.
@@ -465,6 +519,16 @@ class Sensei_REST_API_Setup_Wizard_Controller extends \WP_REST_Controller {
 				[
 					'purpose'         => join( ',', $setup_purpose_data['selected'] ?? [] ),
 					'purpose_details' => $setup_purpose_data['other'] ?? '',
+				]
+			);
+		}
+
+		$theme_data = $this->setup_wizard->get_wizard_user_data( 'theme' );
+		if ( $theme_data['install_sensei_theme'] ) {
+			sensei_log_event(
+				'setup_wizard_install_theme',
+				[
+					'theme' => 'course',
 				]
 			);
 		}

@@ -54,13 +54,15 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 
 	test.describe.serial( 'Purpose step', () => {
 		test.beforeAll( async () => {
+			await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
+			await page.locator( `text=Get started` ).click();
 			await pluginsPage.fillOutPurposeForm();
 			await page.locator( 'text=Continue' ).click();
 		} );
 
 		test( 'marks purpose step done and goes to features step', async () => {
 			await expect(
-				page.locator( 'text=Help us improve your Sensei experience' )
+				page.locator( 'text=Use our default theme' )
 			).toHaveCount( 1 );
 		} );
 	} );
