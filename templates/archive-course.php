@@ -89,4 +89,4 @@
 	do_action( 'sensei_archive_after_course_loop' );
 
 	get_sensei_footer();
-?>
+	?>
