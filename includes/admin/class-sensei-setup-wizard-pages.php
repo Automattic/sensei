@@ -100,7 +100,10 @@ class Sensei_Setup_Wizard_Pages {
 					[
 						'blockName'    => 'core/query',
 						'innerContent' => [
-							'<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view">
+							'<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view"><!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"0"}}},"layout":{"type":"constrained"}} -->
+<div class="wp-block-group" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:0"><!-- wp:sensei-lms/course-list-filter {"types":["student_course"],"defaultOptions":{"student_course":"active"},"lock":{"move":true}} /--></div>
+<!-- /wp:group -->
+
 <!-- wp:post-template {"align":"center"} -->
 <!-- wp:group {"align":"center","style":{"spacing":{"padding":{"top":"10px","right":"10px","bottom":"10px","left":"10px"}},"border":{"width":"1px","color":"#c7c3c34f"}},"className":"aligncenter","layout":{"inherit":false}} -->
 <div class="wp-block-group aligncenter has-border-color" style="border-color:#c7c3c34f;border-width:1px;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px"><!-- wp:post-featured-image {"isLink":true,"height":"324px","align":"center"} /-->
