@@ -4043,7 +4043,21 @@ class Sensei_Course {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		return (float) $wpdb->get_var( $query );
 	}
-}
+
+	/**
+	 * Determines if course archive page has content.
+	 *
+	 * @since $$next-version$$
+	 * @return bool
+	 */
+	public function is_course_archive_page_has_content() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		return is_a( $sensei_settings_course_page, 'WP_Post' ) &&
+			! Sensei()->post_types->has_old_shortcodes( $sensei_settings_course_page->post_content ) &&
+			! empty( $sensei_settings_course_page->post_content ) &&
+			has_block( 'core/query', $sensei_settings_course_page->post_content );
+	}
 
 /**
  * Class WooThemes_Sensei_Course
