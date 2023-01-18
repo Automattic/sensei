@@ -225,6 +225,8 @@ class Sensei_Setup_Wizard_Pages {
 
 <!-- wp:post-excerpt {"textAlign":"left"} /-->
 
+<!-- wp:sensei-lms/course-overview {"className":"has-text-align-left"} /-->
+
 <!-- wp:sensei-lms/course-progress {"defaultBarColor":"foreground","className":"has-text-align-left"} /--></div>
 <!-- /wp:column -->
 
