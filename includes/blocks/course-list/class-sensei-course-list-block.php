@@ -35,10 +35,8 @@ class Sensei_Course_List_Block {
 			return $block_content;
 		}
 
-		$is_course_list_block = array_key_exists( 'query', $block['attrs'] ) &&
-			'course' === $block['attrs']['query']['postType'] &&
-			array_key_exists( 'className', $block['attrs'] ) &&
-			false !== strpos( $block['attrs']['className'], 'wp-block-sensei-lms-course-list' );
+		$is_course_list_block = 'course' === ( $block['attrs']['query']['postType'] ?? '' ) &&
+			false !== strpos( ( $block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' );
 
 		$is_my_courses_page = get_the_ID() === (int) Sensei()->settings->get( 'my_course_page' );
 
