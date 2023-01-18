@@ -125,7 +125,7 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 		$this->assertStringNotContainsString( 'wp-block-sensei-lms-course-list', $post->post_content );
 	}
 
-	public function testCourseArchivePage_WhenRendered_DoesNotRenderQueryListBlockIfPageContentAvailable() {
+	public function testCourseArchivePage_WhenRendered_RendersQueryListBlockIfPageContentAvailable() {
 		/* ARRANGE */
 		Sensei_Setup_Wizard::instance()->pages->create_pages();
 
