@@ -22,7 +22,7 @@ class Sensei_Course_List_Block {
 	}
 
 	/**
-	 * Replaces content of Course List block when Show Login Form is set and user is logged out.
+	 * Replaces content of Course List block with the login form when user is logged out and is on My Courses page.
 	 *
 	 * @param string $block_content The block content to be rendered.
 	 * @param array  $block          The block to be rendered.
