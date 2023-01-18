@@ -261,21 +261,13 @@ class Sensei_Setup_Wizard_Pages {
 							'queryId'       => 0,
 							'query'         => [
 								'postType' => 'course',
-								'perPage'  => 3,
 								'offset'   => 0,
 								'inherit'  => true,
-								'sticky'   => '',
-								'pages'    => 0,
-								'order'    => 'desc',
-								'orderBy'  => 'date',
-								'author'   => '',
-								'search'   => '',
-								'exclude'  => [],
 							],
 							'displayLayout' => [
 								'type' => 'list',
 							],
-							'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list\u002d\u002dis-list-view',
+							'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view',
 						],
 					],
 				]
