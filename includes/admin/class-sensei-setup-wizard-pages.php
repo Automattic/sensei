@@ -203,7 +203,7 @@ class Sensei_Setup_Wizard_Pages {
 			 * @return {array} Blocks array.
 			 */
 			apply_filters(
-				'sensei_courses_page_template',
+				'sensei_course_archive_page_template',
 				[
 					[
 						'blockName'    => 'core/query',
