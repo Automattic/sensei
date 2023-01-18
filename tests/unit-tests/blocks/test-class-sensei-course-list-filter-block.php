@@ -340,7 +340,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
-	public function testCourseFilterBlock_WhenFilteredForActiveByDefault_ShowsOnlyTheFeaturedCourses() {
+	public function testCourseFilterBlock_WhenFilteredForActiveByDefault_ShowsOnlyTheActiveCourses() {
 		if ( $this->skip_tests ) {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		}

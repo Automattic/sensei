@@ -171,7 +171,7 @@ class Sensei_Setup_Wizard_Pages {
 							'displayLayout' => [
 								'type' => 'list',
 							],
-							'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list\u002d\u002dis-list-view',
+							'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view',
 						],
 					],
 				]
