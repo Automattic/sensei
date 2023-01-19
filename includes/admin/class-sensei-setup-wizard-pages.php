@@ -77,30 +77,16 @@ class Sensei_Setup_Wizard_Pages {
 	 * @return string
 	 */
 	private function get_learner_courses_page_template() {
-		$blocks = serialize_blocks(
-			/**
-			 * Filter the learner courses page template when auto-creating it
-			 * through setup wizard.
-			 *
-			 * @hook  sensei_learner_courses_page_template
-			 * @since 3.13.1
-			 *
-			 * @param {array} $blocks Blocks array.
-			 *
-			 * @return {array} Blocks array.
-			 */
-			apply_filters(
-				'sensei_learner_courses_page_template',
-				[
-					[
-						'blockName'    => 'sensei-lms/button-learner-messages',
-						'innerContent' => [],
-						'attrs'        => [],
-					],
-					[
-						'blockName'    => 'core/query',
-						'innerContent' => [
-							'<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view"><!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"0"}}},"layout":{"type":"constrained"}} -->
+		$blocks = [
+			[
+				'blockName'    => 'sensei-lms/button-learner-messages',
+				'innerContent' => [],
+				'attrs'        => [],
+			],
+			[
+				'blockName'    => 'core/query',
+				'innerContent' => [
+					'<div class="wp-block-query wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view"><!-- wp:group {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"0"}}},"layout":{"type":"constrained"}} -->
 <div class="wp-block-group" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:0"><!-- wp:sensei-lms/course-list-filter {"types":["student_course"],"defaultOptions":{"student_course":"active"},"lock":{"move":true}} /--></div>
 <!-- /wp:group -->
 
@@ -155,33 +141,62 @@ class Sensei_Setup_Wizard_Pages {
 
 <!-- wp:query-pagination-next {"fontSize":"small"} /-->
 <!-- /wp:query-pagination --></div>',
-						],
-						'attrs'        => [
-							'queryId'       => 0,
-							'query'         => [
-								'postType' => 'course',
-								'perPage'  => 10,
-								'offset'   => 0,
-								'inherit'  => false,
-								'sticky'   => '',
-								'pages'    => 0,
-								'order'    => 'desc',
-								'orderBy'  => 'date',
-								'author'   => '',
-								'search'   => '',
-								'exclude'  => [],
-							],
-							'displayLayout' => [
-								'type' => 'list',
-							],
-							'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view',
-						],
+				],
+				'attrs'        => [
+					'queryId'       => 0,
+					'query'         => [
+						'postType' => 'course',
+						'perPage'  => 10,
+						'offset'   => 0,
+						'inherit'  => false,
+						'sticky'   => '',
+						'pages'    => 0,
+						'order'    => 'desc',
+						'orderBy'  => 'date',
+						'author'   => '',
+						'search'   => '',
+						'exclude'  => [],
 					],
-				]
+					'displayLayout' => [
+						'type' => 'list',
+					],
+					'className'     => 'wp-block-sensei-lms-course-list wp-block-sensei-lms-course-list--is-list-view',
+				],
+			],
+		];
+
+		/**
+		 * Filter the learner courses page template when auto-creating it
+		 * through setup wizard.
+		 *
+		 * @hook  sensei_learner_courses_page_template
+		 * @since 3.13.1
+		 *
+		 * @deprecated $$next_version$$
+		 *
+		 * @param {array} $blocks Blocks array.
+		 *
+		 * @return {array} Blocks array.
+		 */
+		$blocks = apply_filters( 'sensei_learner_courses_page_template', $blocks );
+
+		return serialize_blocks(
+			/**
+			 * Filter the My Courses page template when auto-creating it
+			 * through setup wizard.
+			 *
+			 * @hook  sensei_my_courses_page_template
+			 * @since $$next-version$$
+			 *
+			 * @param {array} $blocks Blocks array.
+			 *
+			 * @return {array} Blocks array.
+			 */
+			apply_filters(
+				'sensei_my_courses_page_template',
+				$blocks
 			)
 		);
-
-		return $blocks;
 	}
 
 	/**
