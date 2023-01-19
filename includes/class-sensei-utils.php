@@ -2699,6 +2699,16 @@ class Sensei_Utils {
 	public static function is_atomic_platform(): bool {
 		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
 	}
+
+	/**
+	 * Tells if the current site is hosted in wordpress.com and the
+	 * plan includes an active woothemes-sensei paid plan.
+	 */
+	public static function has_wpcom_subscription(): bool {
+		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
+
+		return isset( $subscriptions['woothemes-sensei'] );
+	}
 }
 
 /**
