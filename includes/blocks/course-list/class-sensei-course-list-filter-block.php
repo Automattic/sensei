@@ -96,7 +96,11 @@ class Sensei_Course_List_Filter_Block {
 	 * @return array
 	 */
 	public function filter_course_list( $parsed_block ) {
-		if ( 'core/query' !== $parsed_block['blockName'] || 'course' !== ( $parsed_block['attrs']['query']['postType'] ?? '' ) ) {
+		if (
+			'core/query' !== $parsed_block['blockName'] ||
+			'course' !== ( $parsed_block['attrs']['query']['postType'] ?? '' ) ||
+			! isset( $parsed_block['attrs']['queryId'] )
+		) {
 			return $parsed_block;
 		}
 
