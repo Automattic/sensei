@@ -34,7 +34,7 @@
 	<?php
 
 	if ( have_posts() ) {
-		if ( Sensei()->course->is_course_archive_page_has_content() ) {
+		if ( Sensei()->course->course_archive_page_has_query_block() ) {
 			Sensei()->course->archive_page_content();
 		} else {
 			sensei_load_template( 'loop-course.php' );

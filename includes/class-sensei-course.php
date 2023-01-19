@@ -4050,7 +4050,7 @@ class Sensei_Course {
 	 * @since $$next-version$$
 	 * @return bool
 	 */
-	public function is_course_archive_page_has_content() {
+	public function course_archive_page_has_query_block() {
 		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
 
 		return is_a( $sensei_settings_course_page, 'WP_Post' ) &&
@@ -4068,7 +4068,7 @@ class Sensei_Course {
 		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
 
 		if (
-			$this->is_course_archive_page_has_content()
+			$this->course_archive_page_has_query_block()
 		) {
 			echo wp_kses(
 				do_blocks( $sensei_settings_course_page->post_content ),
