@@ -87,7 +87,7 @@ class Sensei_Db_Query_Learners {
 		if ( null !== $matching_user_ids ) {
 			$matching_user_ids = array_map( 'absint', $matching_user_ids );
 			$user_id_in        = empty( $matching_user_ids ) ? 'false' : implode( ',', $matching_user_ids );
-			$sql               .= " AND u.ID IN ({$user_id_in})";
+			$sql              .= " AND u.ID IN ({$user_id_in})";
 		}
 
 		$sql .= ' GROUP BY `u`.`ID`';
