@@ -395,6 +395,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 				$report = 'lessons-overview';
 				break;
 
+			case 'questions':
+				$report = 'questions-overview';
+				break;
+
 			case 'users':
 			default:
 				$report = 'user-overview';
