@@ -33,7 +33,7 @@ class Sensei_Reports_Overview_List_Table_Questions extends Sensei_Reports_Overvi
 	public function __construct(Sensei_Reports_Overview_Data_Provider_Interface $data_provider, Sensei_Reports_Overview_Service_Questions $reports_overview_service_students)
 	{
 		// Load Parent token into constructor.
-		parent::__construct('users', $data_provider);
+		parent::__construct('questions', $data_provider);
 
 		$this->reports_overview_service_students = $reports_overview_service_students;
 	}
