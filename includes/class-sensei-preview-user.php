@@ -396,7 +396,7 @@ class Sensei_Preview_User {
 	 */
 	public function preview_user_always_enrolled( $is_enrolled, $user_id, $course_id ) {
 
-		if ( ! Sensei_Preview_User::is_preview_user( $user_id ) ) {
+		if ( ! self::is_preview_user( $user_id ) ) {
 			return $is_enrolled;
 		}
 		list( 'course' => $preview_course_id ) = get_user_meta( $user_id, self::META, true );
@@ -438,7 +438,7 @@ class Sensei_Preview_User {
 		$existing_preview_user         = $this->get_preview_user( $user_id, $course_id );
 
 		if ( $existing_preview_user ) {
-			Sensei_Preview_User::delete_preview_user( $existing_preview_user );
+			self::delete_preview_user( $existing_preview_user );
 		}
 
 		$this->add_meta( $user_id, $preview_user_id, $course_id );
@@ -451,7 +451,7 @@ class Sensei_Preview_User {
 	 */
 	private function is_preview_user_active() {
 		$user = wp_get_current_user();
-		return Sensei_Preview_User::is_preview_user( $user );
+		return self::is_preview_user( $user );
 	}
 
 	/**
