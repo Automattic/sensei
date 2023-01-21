@@ -359,4 +359,21 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->assertStringContainsString( $this->course1->post_title, $result );
 		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
+
+	public function testCourseFilterBlock_WhenRenderedInInheritedContext_DoesNotRender() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$inherited_content = str_replace( '"sticky":""', '"inherit":true,"sticky":""', $this->content );
+
+		/* ACT */
+		$default_result   = do_blocks( $this->content );
+		$inherited_result = do_blocks( $inherited_content );
+
+		/* ASSERT */
+		$this->assertStringContainsString( 'wp-block-sensei-lms-course-list-filter', $default_result );
+		$this->assertStringNotContainsString( 'wp-block-sensei-lms-course-list-filter', $inherited_result );
+	}
 }
