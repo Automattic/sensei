@@ -63,7 +63,8 @@ class Sensei_Course_List_Filter_Block {
 			! isset( $attributes['types'] ) ||
 			! is_array( $attributes['types'] ) ||
 			! isset( $block->context['queryId'] ) ||
-			'course' !== ( $block->context['query']['postType'] ?? '' )
+			'course' !== ( $block->context['query']['postType'] ?? '' ) ||
+			( $block->context['query']['inherit'] ?? false )
 		) {
 			return '';
 		}
