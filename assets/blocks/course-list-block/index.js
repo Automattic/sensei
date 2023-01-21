@@ -100,11 +100,10 @@ const observeAndRemoveSettingsFromPanel = ( blockSettingsPanel ) => {
 // Hide the settings which are inherited from the Query Loop block
 // but not applicable to our Course List block.
 const hideUnnecessarySettingsForCourseList = () => {
-	const postTypeContainerQuery = '.components-input-control__label',
-		inheritContextContainerQuery = '.components-toggle-control__label';
+	const postTypeContainerQuery = '.components-input-control__label';
 
 	const toBeHiddenSettingContainers = document.querySelectorAll(
-		`${ postTypeContainerQuery },${ inheritContextContainerQuery }`
+		postTypeContainerQuery
 	);
 
 	if (
@@ -119,8 +118,6 @@ const hideUnnecessarySettingsForCourseList = () => {
 			[
 				/* eslint-disable-next-line @wordpress/i18n-text-domain */
 				__( 'Post type' ).toLowerCase(),
-				/* eslint-disable-next-line @wordpress/i18n-text-domain */
-				__( 'Inherit query from template' ).toLowerCase(),
 			].includes( element.textContent.toLowerCase() )
 		) {
 			element.closest( '.components-base-control' ).style.display =
