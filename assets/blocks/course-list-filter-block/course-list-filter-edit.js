@@ -123,6 +123,10 @@ function CourseListFilter( {
 		);
 	}
 
+	if ( query?.inherit ) {
+		return <> </>;
+	}
+
 	return (
 		<div { ...blockProps }>
 			<InspectorControls>
