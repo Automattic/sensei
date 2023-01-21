@@ -91,4 +91,18 @@ describe( 'CourseListFilterBlockEdit', () => {
 
 		expect( getByText( message ) ).toBeInTheDocument();
 	} );
+
+	it( 'should not render in inherited context', () => {
+		useSelect.mockReturnValue( categories );
+		const { queryByText } = render(
+			<CourseListFilter
+				clientId="some-client-id"
+				attributes={ { types: [ 'categories' ] } }
+				context={ { query: { ...context.query, inherit: true } } }
+			/>
+		);
+		categories.forEach( ( category ) =>
+			expect( queryByText( category.name ) ).toBeFalsy()
+		);
+	} );
 } );
