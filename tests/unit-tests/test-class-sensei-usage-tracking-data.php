@@ -16,7 +16,9 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory = new Sensei_Factory();
+
 		self::resetCourseEnrolmentManager();
+		self::resetLearnerTerms();
 	}
 
 	public function tearDown(): void {
@@ -1687,6 +1689,24 @@ class Sensei_Usage_Tracking_Data_Test extends WP_UnitTestCase {
 		$usage_data = Sensei_Usage_Tracking_Data::get_usage_data();
 
 		$this->assertArrayHasKey( 'learning_mode_template_version', $usage_data, 'Key' );
+	}
+
+	public function testGetUsageData_WhenCalled_TriggersHook() {
+		if ( ! version_compare( get_bloginfo( 'version' ), '6.1.0', '>=' ) ) {
+			$this->markTestSkipped( 'Requires `did_filter()` which was introduced in WordPress 6.1.0.' );
+		}
+
+		/* Arrange. */
+		global $wp_filters;
+
+		// Manually reset the filter counter. See https://core.trac.wordpress.org/ticket/57236.
+		$wp_filters['sensei_usage_tracking_data'] = 0;
+
+		/* Act. */
+		Sensei_Usage_Tracking_Data::get_usage_data();
+
+		/* Assert. */
+		$this->assertSame( 1, did_filter( 'sensei_usage_tracking_data' ) );
 	}
 
 	public function testGetCourseOpenAccessCount_WhenCalled_ReturnsCorrectNumberOfCourses() {

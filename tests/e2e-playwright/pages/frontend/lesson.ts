@@ -2,21 +2,21 @@
  * External dependencies
  */
 import { Page } from '@playwright/test';
-
+import type { Locator } from '@playwright/test';
 export class LessonPage {
 	constructor( private page: Page ) {}
 
-	get title() {
+	get title(): Locator {
 		return this.page.locator( `h1` ).first();
 	}
 
-	get completeLessonButton() {
+	get completeLessonButton(): Locator {
 		return this.page.locator( `button >> "Complete Lesson"` ).first();
 	}
-	async clickCompleteLesson() {
+	async clickCompleteLesson(): Promise< unknown > {
 		// Workaround on misclicking? in Learning mode.
 		await this.completeLessonButton.focus();
 		await this.page.keyboard.press( 'Enter' );
-		await this.page.waitForNavigation();
+		return this.page.waitForNavigation();
 	}
 }

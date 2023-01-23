@@ -21,7 +21,15 @@
 		"types": {
 			"type": "array",
 			"default": [ "categories", "featured", "student_course" ]
-		}
+		},
+        "defaultOptions": {
+            "type": "object",
+            "default": {
+                "categories": -1,
+                "featured": "all",
+                "student_course": "all"
+            }
+        }
 	},
 	"usesContext": [ "queryId", "query" ],
 	"supports": {

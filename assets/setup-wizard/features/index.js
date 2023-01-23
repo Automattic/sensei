@@ -23,11 +23,11 @@ const featureLabels = {
 /**
  * Get actions for the features to be installed.
  *
- * @param {Object}   stepData          The features step data.
- * @param {string[]} stepData.selected Selected features to be installed.
- * @param {Object[]} stepData.options  Features available to install.
+ * @param {Object}   featuresData          The features step data.
+ * @param {string[]} featuresData.selected Selected features to be installed.
+ * @param {Object[]} featuresData.options  Features available to install.
  *
- * @return {Object} Actions to install the selected features.
+ * @return {Array} Actions to install the selected features.
  */
 const getFeatureActions = ( { selected, options } ) => {
 	// Filter not activated features.
@@ -51,20 +51,52 @@ const getFeatureActions = ( { selected, options } ) => {
 };
 
 /**
+ * Get the action for the theme installation.
+ *
+ * @return {Object} Action to install the Sensei theme.
+ */
+const getThemeAction = () => ( {
+	label: __( 'Installing the Course theme', 'sensei-lms' ),
+	action: () =>
+		apiFetch( {
+			path: '/sensei-internal/v1/themes/install',
+			method: 'POST',
+			data: {
+				theme: 'course',
+			},
+		} ),
+} );
+
+/**
  * Features step for Setup Wizard.
  */
 const Features = () => {
-	const { stepData, submitStep, error: submitError } = useSetupWizardStep(
-		'features'
-	);
+	const {
+		stepData: featuresData,
+		submitStep,
+		error: submitError,
+	} = useSetupWizardStep( 'features' );
+	const { stepData: themeData } = useSetupWizardStep( 'theme' );
+	const { install_sensei_theme: installSenseiTheme } = themeData;
 
-	// Create list of actions.
+	// Create list of actions to install.
+	const installActions = useMemo( () => {
+		const list = getFeatureActions( featuresData );
+
+		if ( installSenseiTheme ) {
+			list.push( getThemeAction() );
+		}
+
+		return list;
+	}, [ featuresData, installSenseiTheme ] );
+
+	// Create final list of actions.
 	const actions = useMemo(
 		() => [
 			{
 				label: __( 'Applying your choices', 'sensei-lms' ),
 			},
-			...getFeatureActions( stepData ),
+			...installActions,
 			{
 				label: __( 'Setting up your new Sensei Home', 'sensei-lms' ),
 				action: () => {
@@ -90,7 +122,7 @@ const Features = () => {
 				},
 			},
 		],
-		[ stepData, submitStep ]
+		[ installActions, submitStep ]
 	);
 
 	const {
