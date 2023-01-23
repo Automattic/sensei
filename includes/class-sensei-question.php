@@ -1005,7 +1005,7 @@ class Sensei_Question {
 				<div class="sensei-lms-question__answer-feedback__header">
 					<span class="sensei-lms-question__answer-feedback__icon"></span>
 					<span
-							class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
+						class="sensei-lms-question__answer-feedback__title"><?php echo wp_kses_post( $answer_feedback_title ); ?></span>
 					<?php if ( $grade ) { ?>
 						<span class="sensei-lms-question__answer-feedback__points"><?php echo wp_kses_post( $grade ); ?></span>
 					<?php } ?>
