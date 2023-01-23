@@ -28,12 +28,29 @@ class Sensei_Course_List_Filter_Block {
 		$this->register_block();
 
 		add_filter( 'render_block_data', [ $this, 'filter_course_list' ] );
+		add_filter( 'sensei_archive_course_filter_by_options', [ $this, 'maybe_remove_extra_filters_from_archive_page' ], 11 );
 
 		$this->filters = [
 			new Sensei_Course_List_Categories_Filter(),
 			new Sensei_Course_List_Featured_Filter(),
 			new Sensei_Course_List_Student_Course_Filter(),
 		];
+	}
+
+	/**
+	 * Remove extra filters from archive page if the Course List block is being used.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array $filter_links The incoming filter links.
+	 *
+	 * @return array The filtered filter links.
+	 */
+	public function maybe_remove_extra_filters_from_archive_page( array $filter_links ) : array {
+		if ( Sensei()->course->course_archive_page_has_query_block() ) {
+			return [];
+		}
+		return $filter_links;
 	}
 
 	/**
