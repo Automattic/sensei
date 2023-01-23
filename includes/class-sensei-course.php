@@ -4043,6 +4043,63 @@ class Sensei_Course {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		return (float) $wpdb->get_var( $query );
 	}
+
+	/**
+	 * Determines if course archive page has content.
+	 *
+	 * @since $$next-version$$
+	 * @return bool
+	 */
+	public function course_archive_page_has_query_block() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		return is_a( $sensei_settings_course_page, 'WP_Post' ) &&
+			! Sensei()->post_types->has_old_shortcodes( $sensei_settings_course_page->post_content ) &&
+			! empty( $sensei_settings_course_page->post_content ) &&
+			has_block( 'core/query', $sensei_settings_course_page->post_content );
+	}
+
+	/**
+	 * Render course archive page content.
+	 *
+	 * @since $$next-version$$
+	 */
+	public function archive_page_content() {
+		$sensei_settings_course_page = get_post( Sensei()->settings->get( 'course_page' ) );
+
+		if (
+			$this->course_archive_page_has_query_block()
+		) {
+			echo wp_kses(
+				do_blocks( $sensei_settings_course_page->post_content ),
+				array_merge(
+					wp_kses_allowed_html( 'post' ),
+					[
+						'option' => [
+							'selected' => [],
+							'value'    => [],
+						],
+						'select' => [
+							'class'          => [],
+							'id'             => [],
+							'name'           => [],
+							'data-param-key' => [],
+						],
+						'form'   => [
+							'action' => [],
+							'method' => [],
+						],
+						'input'  => [
+							'type'  => [],
+							'name'  => [],
+							'value' => [],
+						],
+					]
+				)
+			);
+			remove_all_actions( 'sensei_pagination' );
+		}
+	}
 }
 
 /**

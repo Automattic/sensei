@@ -73,7 +73,11 @@ abstract class Sensei_Blocks_Initializer {
 
 		$this->initialize_blocks();
 
-		if ( is_admin() || Sensei()->blocks->has_sensei_blocks() ) {
+		if (
+			is_admin() ||
+			Sensei()->blocks->has_sensei_blocks() ||
+			( is_post_type_archive( 'course' ) && Sensei()->course->course_archive_page_has_query_block() )
+		) {
 			add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 		}
 
