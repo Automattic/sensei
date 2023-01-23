@@ -1,6 +1,10 @@
 module.exports = {
 	root: true,
-	extends: [ 'plugin:playwright/playwright-test', 'plugin:@typescript-eslint/recommended', 'plugin:@wordpress/eslint-plugin/recommended' ],
+	extends: [
+		'plugin:playwright/playwright-test',
+		'plugin:@typescript-eslint/recommended',
+		'plugin:@wordpress/eslint-plugin/recommended',
+	],
 	rules: {
 		'no-shadow': 'off',
 		'jest/valid-expect': 'off',

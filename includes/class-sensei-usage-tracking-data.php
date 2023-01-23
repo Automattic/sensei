@@ -35,7 +35,7 @@ class Sensei_Usage_Tracking_Data {
 				'course_videos'                  => self::get_course_videos_count(),
 				'course_no_notifications'        => self::get_course_no_notifications_count(),
 				'course_open_access'             => self::get_course_open_access_count(),
-			'course_prereqs'                 => self::get_course_prereqs_count(),
+				'course_prereqs'                 => self::get_course_prereqs_count(),
 				'course_featured'                => self::get_course_featured_count(),
 				'enrolments'                     => self::get_course_enrolments(),
 				'enrolment_first'                => self::get_first_course_enrolment(),
