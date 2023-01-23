@@ -67,7 +67,7 @@ class Sensei_Course_List_Block {
 			'course' === ( $parsed_block['attrs']['query']['postType'] ?? '' ) &&
 			false !== strpos( ( $parsed_block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' ) &&
 			Sensei()->course->course_archive_page_has_query_block() &&
-			is_post_type_archive( 'course' )
+			( is_post_type_archive( 'course' ) || is_tax( 'course-category' ) )
 		) {
 			$parsed_block['attrs']['query']['inherit'] = true;
 		}
