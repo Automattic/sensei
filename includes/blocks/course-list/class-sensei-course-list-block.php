@@ -19,6 +19,7 @@ class Sensei_Course_List_Block {
 	 */
 	public function __construct() {
 		add_filter( 'render_block', [ $this, 'maybe_render_login_form' ], 10, 2 );
+		add_filter( 'render_block_data', [ $this, 'maybe_change_inherited_to_true' ], 1 );
 	}
 
 	/**
@@ -51,5 +52,25 @@ class Sensei_Course_List_Block {
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * If course list block is being rendered in Archive page, set inherited to true.
+	 *
+	 * @param array $parsed_block The block to be rendered.
+	 *
+	 * @return array
+	 */
+	public function maybe_change_inherited_to_true( $parsed_block ) {
+		if (
+			'core/query' === $parsed_block['blockName'] &&
+			'course' === ( $parsed_block['attrs']['query']['postType'] ?? '' ) &&
+			false !== strpos( ( $parsed_block['attrs']['className'] ?? '' ), 'wp-block-sensei-lms-course-list' ) &&
+			Sensei()->course->course_archive_page_has_query_block() &&
+			is_post_type_archive( 'course' )
+		) {
+			$parsed_block['attrs']['query']['inherit'] = true;
+		}
+		return $parsed_block;
 	}
 }
