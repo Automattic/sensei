@@ -28,7 +28,7 @@ class Sensei_Course_List_Filter_Block {
 		$this->register_block();
 
 		add_filter( 'render_block_data', [ $this, 'filter_course_list' ] );
-		add_filter( 'sensei_archive_course_filter_by_options', [ $this, 'maybe_remove_extra_filters_from_archive_page' ], 11 );
+		add_action( 'sensei_archive_before_course_loop', [ $this, 'maybe_remove_extra_filters_and_sorting_from_archive_page' ], 9 );
 
 		$this->filters = [
 			new Sensei_Course_List_Categories_Filter(),
@@ -38,19 +38,19 @@ class Sensei_Course_List_Filter_Block {
 	}
 
 	/**
-	 * Remove extra filters from archive page if the Course List block is being used.
+	 * Remove extra filters and sorting from archive page if the Course List block is being used.
 	 *
 	 * @since $$next-version$$
+	 * @access private
+	 * @hooked sensei_archive_before_course_loop
 	 *
-	 * @param array $filter_links The incoming filter links.
-	 *
-	 * @return array The filtered filter links.
+	 * @return void
 	 */
-	public function maybe_remove_extra_filters_from_archive_page( array $filter_links ) : array {
+	public function maybe_remove_extra_filters_and_sorting_from_archive_page(): void {
 		if ( Sensei()->course->course_archive_page_has_query_block() ) {
-			return [];
+			remove_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_sorting' ] );
+			remove_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_filters' ] );
 		}
-		return $filter_links;
 	}
 
 	/**
