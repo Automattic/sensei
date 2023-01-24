@@ -2707,7 +2707,24 @@ class Sensei_Utils {
 	public static function has_wpcom_subscription(): bool {
 		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
 
-		return isset( $subscriptions['woothemes-sensei'] );
+		/**
+		 * Filter to allow adding slugs to check for on WPCOM active subscriptions.
+		 *
+		 * @hook sensei_wpcom_product_slugs
+		 * @since $$next-version$$
+		 *
+		 * @param array $products Array of slugs to check for on WPCOM active subscriptions.
+		 *
+		 * @return {array}
+		 */
+		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
+		foreach ($product_slugs as $product_slug) {
+			if ( array_key_exists( $product_slug, $subscriptions ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 
