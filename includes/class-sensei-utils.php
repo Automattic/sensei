@@ -2703,6 +2703,9 @@ class Sensei_Utils {
 	/**
 	 * Tells if the current site is hosted in wordpress.com and the
 	 * plan includes an active woothemes-sensei paid plan.
+	 *
+	 * @return bool {bool} If there is an active WPCOM subscription or not.
+	 * @since $$next-version$$
 	 */
 	public static function has_wpcom_subscription(): bool {
 		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
