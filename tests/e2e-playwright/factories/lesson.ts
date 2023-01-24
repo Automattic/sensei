@@ -46,16 +46,16 @@ export const paragraph = `<!-- wp:paragraph {"placeholder":"Write lesson content
 <p>${ text }</p>
 <!-- /wp:paragraph -->`;
 
-export const lessonSimple = () => `
+export const lessonSimple = (): string => `
 	${ paragraph }
 	${ lessonActionsBlock }
 `;
 
-export const lessonNoLessonActions = () => `
+export const lessonNoLessonActions = (): string => `
 	${ paragraph }
 `;
 
-export const lessonWithQuiz = () => `
+export const lessonWithQuiz = (): string => `
 	${ paragraph }
 	${ lessonActionsBlock }
 	${ quizBlock }

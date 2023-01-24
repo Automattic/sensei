@@ -80,7 +80,7 @@ describe( '<StudentBulkActionButton />', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'Should render the `Reset or Remove Progress` modal', () => {
+	it( 'Should render the `Reset Progress` modal', () => {
 		setupSelector( [
 			{ value: 'enrol_restore_enrolment' },
 			{ value: 'remove_progress', selected: true },
@@ -93,7 +93,7 @@ describe( '<StudentBulkActionButton />', () => {
 		expect(
 			screen.getByText(
 				ignoreInlineTags(
-					'Select the course(s) you would like to reset or remove progress from for 3 students:'
+					'Select the course(s) you would like to reset progress from for 3 students:'
 				)
 			)
 		).toBeInTheDocument();

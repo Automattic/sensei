@@ -1,6 +1,8 @@
 name: PHP Linting and Tests
 
-on: pull_request
+on:
+    pull_request:
+    workflow_call:
 
 jobs:
     lint:
@@ -31,6 +33,7 @@ jobs:
 
             - name: Set up branches
               run: git checkout -b trunk refs/remotes/origin/trunk && git checkout -
+              if: github.ref != 'refs/heads/trunk'
 
             - name: Install PHP dependencies
               run: composer self-update && composer install --no-ansi --no-interaction --prefer-dist --no-progress

@@ -26,8 +26,6 @@ class Sensei_Groups_Landing_Page {
 	 * @since 4.5.2
 	 */
 	public function add_groups_landing_page_menu_item() {
-		// Enqueue styles.
-		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 		// Add new menu item.
 		$menu_item_title = __( 'Groups', 'sensei-lms' );
@@ -50,6 +48,9 @@ class Sensei_Groups_Landing_Page {
 	 * @since 4.5.2
 	 */
 	public function display_student_groups_landing_page() {
+
+		// Enqueue styles.
+		Sensei()->assets->enqueue( 'sensei-settings-api', 'css/settings.css' );
 
 		$this->wrapper_container( 'top' );
 

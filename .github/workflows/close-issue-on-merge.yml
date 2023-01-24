@@ -9,6 +9,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Closes issues related to a merged pull request.
-              uses: docker://ghcr.io/fjorgemota/gha-mjolnir
+              uses: docker://ghcr.io/automattic/gha-mjolnir
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

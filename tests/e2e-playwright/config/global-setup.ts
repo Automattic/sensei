@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * External dependencies
  */
@@ -7,51 +8,74 @@ import { chromium } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { cleanAll as cleanDatabase, configureSite } from '../helpers/database';
-import { createStudent } from '../helpers/api';
-import { getContextByRole } from '../helpers/context';
+import {
+	cleanAll as cleanDatabase,
+	cliAsync,
+	configureSite,
+} from '@e2e/helpers/database';
+import { User } from '@e2e/helpers/api';
+import {
+	createUserPreference,
+	setDefaultPreferences,
+} from '@e2e/helpers/preferences';
+import { GLOBAL_USERS } from '@e2e/factories/users';
+import { createAdminContext } from '@e2e/helpers/context';
 
-export default async () => {
+export default async (): Promise< void > => {
 	cleanDatabase();
 	configureSite();
 
-	await retry( createUserContexts, {
-		delay: 200,
-		factor: 2,
-		maxAttempts: 4,
-	} );
+	await setupDefaultUsers();
 };
 
-const createUserContexts = async () => {
+const setupDefaultUsers = async (): Promise< void > => {
+	// eslint-disable-next-line no-console
+	console.log( 'Setting the users...' );
+
 	const browser = await chromium.launch();
-	const page = await browser.newPage();
+	const adminPage = await browser.newPage();
 
-	await createAdminBrowserContext( page );
-	await createStudentBrowserContext( page );
+	await createAdminContext( adminPage );
+	const createdUsers = await createGlobalUsers( GLOBAL_USERS );
 
-	await browser.close();
+	await Promise.all(
+		createdUsers.map( async ( user ) => {
+			const userPreference = await createUserPreference( browser, user );
+			return setDefaultPreferences( userPreference );
+		} )
+	);
+
+	return browser.close();
 };
 
-async function login( page, { user, pwd } ) {
-	await page.goto( 'http://localhost:8889/wp-login.php' );
-	await page.locator( 'input[name="log"]' ).fill( user );
-	await page.locator( 'input[name="pwd"]' ).fill( pwd );
-	await page.locator( 'text=Log In' ).click();
-	await page.waitForNavigation();
+const createGlobalUsers = async ( users: User[] ): Promise< User[] > => {
+	return Promise.all( users.map( ( user ) => setupUser( user ) ) );
+};
+
+async function setupUser( user: User ) {
+	const command = [
+		'wp user create',
+		user.username,
+		user.email,
+		user.roles?.length ? `--role=${ user.roles.join( ',' ) }` : '',
+		`--user_pass=${ user.password }`,
+		'--porcelain',
+	].join( ' ' );
+
+	await cliAsync( command );
+
+	const response = await cliAsync(
+		`wp user get ${ user.username } --format=json`
+	);
+
+	const userDetails = JSON.parse(
+		response
+			.toString()
+			.match( /\{(.*?)\}/ )
+			.at( 0 )
+	);
+	return {
+		id: userDetails.ID,
+		...user,
+	};
 }
-
-const createAdminBrowserContext = async ( page ) => {
-	await login( page, { user: 'admin', pwd: 'password' } );
-
-	// it saves the request context
-	await page.request.storageState( { path: getContextByRole( 'admin' ) } );
-};
-
-const createStudentBrowserContext = async ( page ) => {
-	await login( page, { user: 'admin', pwd: 'password' } );
-	await createStudent( page.request, 'student1' );
-	await login( page, { user: 'student1', pwd: 'password' } );
-
-	// Saves the request context.
-	await page.request.storageState( { path: getContextByRole( 'student' ) } );
-};
