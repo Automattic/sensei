@@ -2718,7 +2718,7 @@ class Sensei_Utils {
 		 * @return {array}
 		 */
 		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
-		foreach ($product_slugs as $product_slug) {
+		foreach ( $product_slugs as $product_slug ) {
 			if ( array_key_exists( $product_slug, $subscriptions ) ) {
 				return true;
 			}
