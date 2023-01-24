@@ -2716,7 +2716,7 @@ class Sensei_Utils {
 		 * @hook sensei_wpcom_product_slugs
 		 * @since $$next-version$$
 		 *
-		 * @param array $products Array of products slugs to check if it has an active WPCOM subscription.
+		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
 		 *
 		 * @return {array}
 		 */
