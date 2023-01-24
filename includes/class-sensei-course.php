@@ -124,14 +124,14 @@ class Sensei_Course {
 		// attach the filter links to the course archive
 		add_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_filters' ] );
 
-		// filter the course query when featured filter is applied
-		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ], 10, 1 );
+		// Filter the course query when featured filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ] );
 
 		// Filter by course category when category filter is applied.
-		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_category_filter' ], 10, 1 );
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_category_filter' ] );
 
 		// Filter by student course state when student course filter is applied.
-		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_student_course_state_filter' ], 10, 1 );
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_student_course_state_filter' ] );
 
 		// Handle the ordering for the courses archive page.
 		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_set_order_by' ], 10, 1 );
