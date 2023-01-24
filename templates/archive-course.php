@@ -33,12 +33,14 @@
 
 	<?php
 
-	if ( have_posts() ) {
-		if ( Sensei()->course->course_archive_page_has_query_block() ) {
-			Sensei()->course->archive_page_content();
-		} else {
-			sensei_load_template( 'loop-course.php' );
-		}
+	if ( Sensei()->course->course_archive_page_has_query_block() ) {
+
+		Sensei()->course->archive_page_content();
+
+	} elseif ( have_posts() ) {
+
+		sensei_load_template( 'loop-course.php' );
+
 	} else {
 		?>
 

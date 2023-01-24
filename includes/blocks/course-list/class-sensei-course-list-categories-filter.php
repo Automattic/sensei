@@ -32,11 +32,17 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 * @param WP_Block $block The block instance.
 	 */
 	public function get_content( WP_Block $block ) : string {
-		$attributes        = $block->attributes;
-		$query_id          = $block->context['queryId'];
-		$filter_param_key  = self::PARAM_KEY . $query_id;
-		$default_option    = $attributes['defaultOptions']['categories'] ?? -1;
-		$category_id       = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+		$attributes       = $block->attributes;
+		$query_id         = $block->context['queryId'];
+		$is_inherited     = $block->context['query']['inherit'] ?? false;
+		$filter_param_key = $is_inherited ? 'course_category_filter' : self::PARAM_KEY . $query_id;
+		$default_option   = $attributes['defaultOptions']['categories'] ?? -1;
+		$category_id      = isset( $_GET[ $filter_param_key ] ) ? intval( $_GET[ $filter_param_key ] ) : -1; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
+
+		if ( $is_inherited && is_tax( 'course-category' ) ) {
+			return '';
+		}
+
 		$course_categories = get_terms(
 			[
 				'taxonomy'   => 'course-category',

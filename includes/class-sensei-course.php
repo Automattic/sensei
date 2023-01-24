@@ -124,8 +124,14 @@ class Sensei_Course {
 		// attach the filter links to the course archive
 		add_action( 'sensei_archive_before_course_loop', [ 'Sensei_Course', 'course_archive_filters' ] );
 
-		// filter the course query when featured filter is applied
-		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ], 10, 1 );
+		// Filter the course query when featured filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_featured_filter' ] );
+
+		// Filter by course category when category filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_category_filter' ] );
+
+		// Filter by student course state when student course filter is applied.
+		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_student_course_state_filter' ] );
 
 		// Handle the ordering for the courses archive page.
 		add_filter( 'pre_get_posts', [ __CLASS__, 'course_archive_set_order_by' ], 10, 1 );
@@ -2854,12 +2860,81 @@ class Sensei_Course {
 	 * @return WP_Query $query
 	 */
 	public static function course_archive_featured_filter( $query ) {
-
 		if ( isset( $_GET['course_filter'] ) && 'featured' == $_GET['course_filter'] && $query->is_main_query() ) {
 			// setup meta query for featured courses
 			$query->set( 'meta_value', 'featured' );
 			$query->set( 'meta_key', '_course_featured' );
 			$query->set( 'meta_compare', '=' );
+		}
+
+		return $query;
+	}
+
+	/**
+	 * If the category filter is used on the course archive page
+	 * filter the courses returned to only show those in that category.
+	 *
+	 * Hooked into pre_get_posts
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Query $query Incoming WP_Query object.
+	 *
+	 * @return WP_Query $query
+	 */
+	public static function course_archive_category_filter( $query ) {
+		if ( isset( $_GET['course_category_filter'] ) && intval( $_GET['course_category_filter'] ) > 0 && $query->is_main_query() ) {
+			$query->set(
+				'tax_query',
+				[
+					[
+						'taxonomy' => 'course-category',
+						'field'    => 'id',
+						'terms'    => intval( $_GET['course_category_filter'] ),
+					],
+				]
+			);
+		}
+
+		return $query;
+	}
+
+	/**
+	 * If the student course filter is used on the course archive page
+	 * filter the courses returned to only show those in that student course state.
+	 *
+	 * Hooked into pre_get_posts
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param WP_Query $query Incoming WP_Query object.
+	 *
+	 * @return WP_Query $query
+	 */
+	public static function course_archive_student_course_state_filter( $query ) {
+		if ( isset( $_GET['student_course_filter'] ) && $query->is_main_query() && is_user_logged_in() ) {
+			$learner_manager = Sensei_Learner::instance();
+			$user_id         = get_current_user_id();
+			$selected_option = sanitize_text_field( wp_unslash( $_GET['student_course_filter'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			$args            = [
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			];
+
+			switch ( $selected_option ) {
+				case 'active':
+					$courses_query = $learner_manager->get_enrolled_active_courses_query( $user_id, $args );
+					$course_ids    = $courses_query->posts;
+					break;
+				case 'completed':
+					$courses_query = $learner_manager->get_enrolled_completed_courses_query( $user_id, $args );
+					$course_ids    = $courses_query->posts;
+					break;
+				default:
+					return $query;
+			}
+
+			$query->set( 'post__in', $course_ids );
 		}
 
 		return $query;
