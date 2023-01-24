@@ -127,17 +127,17 @@ class Sensei_Utils {
 			$args['status'] = 'any';
 		}
 
-		// Get the comments
 		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
 		 * It runs while getting the comments for the given request.
 		 *
 		 * @param int|array $comments
+		 * @param array $args Search arguments.
 		 */
-		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ) );
+		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
 
-		// Return comments
+		// Return comments.
 		if ( $return_comments ) {
 			// Could check for array of 1 and just return the 1 item?
 			if ( is_array( $comments ) && 1 == count( $comments ) ) {
@@ -146,8 +146,8 @@ class Sensei_Utils {
 
 			return $comments;
 		}
-		// Count comments
-		return intval( $comments ); // This is the count, check the return from WP_Comment_Query
+		// Count comments.
+		return intval( $comments ); // This is the count, check the return from WP_Comment_Query.
 	}
 
 
@@ -1732,6 +1732,7 @@ class Sensei_Utils {
 		if ( ! empty( $status ) ) {
 			$args = array(
 				'user_id'   => $user_id,
+				'username'  => get_userdata( $user_id )->user_login ?? null,
 				'post_id'   => $lesson_id,
 				'status'    => $status,
 				'type'      => 'sensei_lesson_status', /* FIELD SIZE 20 */
@@ -1769,11 +1770,12 @@ class Sensei_Utils {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
-				'user_id' => $user_id,
-				'post_id' => $course_id,
-				'status'  => $status,
-				'type'    => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'  => 'update', // Update the existing status...
+				'user_id'  => $user_id,
+				'username' => get_userdata( $user_id )->user_login ?? null,
+				'post_id'  => $course_id,
+				'status'   => $status,
+				'type'     => 'sensei_course_status', /* FIELD SIZE 20 */
+				'action'   => 'update', // Update the existing status...
 			);
 
 			$comment_id = self::sensei_log_activity( $args );
@@ -2708,7 +2710,7 @@ class Sensei_Utils {
 	 */
 	public static function get_user_count_for_role( $role ) {
 		return count(
-			get_users(
+			Sensei_Temporary_User::get_all_users(
 				[
 					'fields' => 'ID',
 					'role'   => $role,

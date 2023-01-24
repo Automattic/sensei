@@ -36,6 +36,15 @@ class Sensei_Preview_User {
 	const META = 'sensei_previewing_user';
 
 	/**
+	 * Preview user login name prefix.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @var string
+	 */
+	const LOGIN_PREFIX = 'sensei_preview_';
+
+	/**
 	 * Preview user class constructor.
 	 *
 	 * @since $$next-version$$
@@ -114,8 +123,8 @@ class Sensei_Preview_User {
 		}
 
 		// Clear out meta for the teacher if the preview user doesn't exist.
-		if ( ! $this->is_preview_user( $preview_user ) ) {
-			$this->delete_meta( get_current_user_id(), $preview_user, $course_id );
+		if ( ! self::is_preview_user( $preview_user ) ) {
+			self::delete_meta( get_current_user_id(), $preview_user, $course_id );
 			return;
 		}
 
@@ -155,7 +164,7 @@ class Sensei_Preview_User {
 			return;
 		}
 
-		$this->delete_preview_user( get_current_user_id() );
+		self::delete_preview_user( get_current_user_id() );
 
 		wp_safe_redirect( remove_query_arg( self::SWITCH_OFF_ACTION ) );
 
@@ -256,14 +265,14 @@ class Sensei_Preview_User {
 	 */
 	private function create_preview_user( $course_id ) {
 		$teacher      = wp_get_current_user();
-		$user_name    = 'preview_user_' . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
-		$display_name = 'Preview Student ' . $course_id . $teacher->ID . ' (' . $teacher->display_name . ')';
+		$user_name    = self::LOGIN_PREFIX . wp_rand( 10000000, 99999999 ) . '_' . $teacher->ID . '_' . $course_id;
+		$display_name = 'Preview Student ' . $course_id . '-' . $teacher->ID . ' (' . $teacher->display_name . ')';
 
 		return Sensei_Temporary_User::create_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
-				'user_email'   => $user_name . '@senseipreview.senseipreview',
+				'user_email'   => $user_name . '@preview.senseilms',
 				'display_name' => $display_name,
 				'last_name'    => $display_name,
 				'role'         => self::ROLE,
@@ -280,15 +289,15 @@ class Sensei_Preview_User {
 	 *
 	 * @param int $user_id User ID for the preview user.
 	 */
-	private function delete_preview_user( $user_id ) {
+	public static function delete_preview_user( $user_id ) {
 
-		if ( ! $user_id || ! $this->is_preview_user( $user_id ) ) {
+		if ( ! $user_id || ! self::is_preview_user( $user_id ) ) {
 			return;
 		}
 
 		list( 'user' => $teacher, 'course' => $course_id ) = get_user_meta( $user_id, self::META, true );
 
-		$this->delete_meta( $teacher, $user_id, $course_id );
+		self::delete_meta( $teacher, $user_id, $course_id );
 
 		Sensei_Temporary_User::delete_user( $user_id );
 	}
@@ -387,7 +396,7 @@ class Sensei_Preview_User {
 	 */
 	public function preview_user_always_enrolled( $is_enrolled, $user_id, $course_id ) {
 
-		if ( ! $this->is_preview_user( $user_id ) ) {
+		if ( ! self::is_preview_user( $user_id ) ) {
 			return $is_enrolled;
 		}
 		list( 'course' => $preview_course_id ) = get_user_meta( $user_id, self::META, true );
@@ -429,7 +438,7 @@ class Sensei_Preview_User {
 		$existing_preview_user         = $this->get_preview_user( $user_id, $course_id );
 
 		if ( $existing_preview_user ) {
-			$this->delete_preview_user( $existing_preview_user );
+			self::delete_preview_user( $existing_preview_user );
 		}
 
 		$this->add_meta( $user_id, $preview_user_id, $course_id );
@@ -442,7 +451,7 @@ class Sensei_Preview_User {
 	 */
 	private function is_preview_user_active() {
 		$user = wp_get_current_user();
-		return $this->is_preview_user( $user );
+		return self::is_preview_user( $user );
 	}
 
 	/**
@@ -467,11 +476,11 @@ class Sensei_Preview_User {
 	 *
 	 * @param int $teacher_user_id Teacher user ID.
 	 * @param int $preview_user_id Preview user ID.
-	 * @param int $course_id       Course ID.
+	 * @param int $course_id Course ID.
 	 *
 	 * @return void
 	 */
-	private function delete_meta( $teacher_user_id, int $preview_user_id, $course_id ): void {
+	private static function delete_meta( $teacher_user_id, int $preview_user_id, $course_id ): void {
 		delete_user_meta(
 			$teacher_user_id,
 			self::META,
@@ -488,7 +497,7 @@ class Sensei_Preview_User {
 	 *
 	 * @return bool
 	 */
-	private function is_preview_user( $user ): bool {
+	private static function is_preview_user( $user ): bool {
 		if ( is_numeric( $user ) ) {
 			$user = get_user_by( 'ID', $user );
 		}

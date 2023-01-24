@@ -132,7 +132,7 @@ class Sensei_Guest_User {
 			return;
 		}
 
-		add_action( 'wp', [ $this, 'sensei_log_existing_guest_user_in_if_open_course_related_action' ], 8 );
+		add_action( 'wp', [ $this, 'log_in_guest_user_if_in_open_course' ], 8 );
 		add_action( 'wp', [ $this, 'create_guest_user_and_login_for_open_course' ], 9 );
 		add_action( 'sensei_is_enrolled', [ $this, 'open_course_always_enrolled' ], 10, 3 );
 		add_action( 'sensei_can_access_course_content', [ $this, 'open_course_enable_course_access' ], 10, 2 );
@@ -181,7 +181,7 @@ class Sensei_Guest_User {
 	 * @since  $$next-version$$
 	 *
 	 * @param bool $can_enroll Initial value.
-	 * @param int  $course_id   Course ID.
+	 * @param int  $course_id Course ID.
 	 *
 	 * @return bool
 	 */
@@ -224,7 +224,7 @@ class Sensei_Guest_User {
 
 		// Conditionally create Guest Student user and set role for open course.
 		if ( $current_action ) {
-			$user_id = $this->create_guest_user();
+			$user_id = self::create_guest_user();
 			$this->login_user( $user_id );
 			$this->recreate_nonce( $current_action );
 
@@ -241,7 +241,7 @@ class Sensei_Guest_User {
 	 * @since $$next-version$$
 	 * @access private
 	 */
-	public function sensei_log_existing_guest_user_in_if_open_course_related_action() {
+	public function log_in_guest_user_if_in_open_course() {
 		if (
 			! is_user_logged_in() &&
 			$this->is_open_course_related_action() &&
@@ -249,62 +249,6 @@ class Sensei_Guest_User {
 		) {
 			wp_set_current_user( $this->guest_user_id );
 		}
-	}
-
-	/**
-	 * Initializes the backend and admin actions for Guest users.
-	 *
-	 * @since $$next-version$$
-	 */
-	public static function init_guest_user_admin() {
-		add_filter( 'editable_roles', [ static::class, 'filter_out_guest_student_role' ], 11 );
-		add_filter( 'views_users', [ static::class, 'filter_out_guest_user_tab_from_users_list' ] );
-
-		add_action( 'pre_user_query', [ static::class, 'filter_out_guest_users' ], 11 );
-	}
-
-	/**
-	 * Filter out Guest Student role tab from Users page in Settings.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 *
-	 * @param array $views List of tabs.
-	 */
-	public static function filter_out_guest_user_tab_from_users_list( $views ) {
-		unset( $views[ self::ROLE ] );
-		return $views;
-	}
-
-	/**
-	 * Remove Guest Student role from showing up Settings.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 *
-	 * @param array $roles List of roles.
-	 */
-	public static function filter_out_guest_student_role( $roles ) {
-		unset( $roles[ self::ROLE ] );
-		return $roles;
-	}
-
-	/**
-	 * Remove guest users from user queries.
-	 *
-	 * @since $$next-version$$
-	 * @access private
-	 *
-	 * @param WP_User_Query $query The user query.
-	 */
-	public static function filter_out_guest_users( WP_User_Query $query ) {
-		global $wpdb;
-
-		$query->query_where = str_replace(
-			'WHERE 1=1',
-			"WHERE 1=1 AND {$wpdb->users}.user_login NOT LIKE '" . self::LOGIN_PREFIX . "%'",
-			$query->query_where
-		);
 	}
 
 	/**
@@ -355,7 +299,7 @@ class Sensei_Guest_User {
 	 */
 	private function is_current_user_guest() {
 		$user = wp_get_current_user();
-		return in_array( self::ROLE, (array) $user->roles, true );
+		return self::is_guest_user( $user );
 	}
 
 	/**
@@ -376,18 +320,46 @@ class Sensei_Guest_User {
 	 * @since  $$next-version$$
 	 * @return int
 	 */
-	private function create_guest_user() {
+	public static function create_guest_user() {
 		$user_count = Sensei_Utils::get_user_count_for_role( self::ROLE ) + 1;
 		$user_name  = self::LOGIN_PREFIX . wp_rand( 10000000, 99999999 ) . '_' . $user_count;
 		return Sensei_Temporary_User::create_user(
 			[
 				'user_pass'    => wp_generate_password(),
 				'user_login'   => $user_name,
-				'user_email'   => $user_name . '@senseiguest.senseiguest',
+				'user_email'   => $user_name . '@guest.senseilms',
 				'display_name' => 'Guest Student ' . str_pad( $user_count, 3, '0', STR_PAD_LEFT ),
 				'role'         => self::ROLE,
 			]
 		);
+	}
+
+	/**
+	 * Delete a guest user and remove their course progress.
+	 *
+	 * @param int $user_id User ID.
+	 *
+	 * @return void
+	 */
+	public static function delete_guest_user( $user_id ): void {
+
+		if ( ! $user_id || ! self::is_guest_user( $user_id ) ) {
+			return;
+		}
+
+		$course_ids = Sensei_Learner::instance()->get_enrolled_courses_query(
+			$user_id,
+			[
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			]
+		)->posts;
+
+		foreach ( $course_ids as $course_id ) {
+			Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
+		}
+
+		Sensei_Temporary_User::delete_user( $user_id );
 	}
 
 	/**
@@ -483,5 +455,19 @@ class Sensei_Guest_User {
 	public function skip_sensei_email( $send_email ) {
 		return $this->is_current_user_guest() ? false : $send_email;
 
+	}
+
+	/**
+	 * Check if the given user is a guest user.
+	 *
+	 * @param WP_User|int $user User object or ID.
+	 *
+	 * @return bool
+	 */
+	private static function is_guest_user( $user ): bool {
+		if ( is_numeric( $user ) ) {
+			$user = get_user_by( 'ID', $user );
+		}
+		return in_array( self::ROLE, (array) $user->roles, true );
 	}
 }

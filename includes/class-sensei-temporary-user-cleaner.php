@@ -1,8 +1,8 @@
 <?php
 /**
- * Guest User Cleaner
+ * Temporary User Cleaner
  *
- * Handles cleaning of guest users who are not active.
+ * Handles cleaning of guest and preview users who are not active.
  *
  * @package sensei-lms
  *
@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sensei Guest User Cleaner Class.
+ * Sensei Temporary User Cleaner Class.
  *
  * @author Automattic
  *
  * @since $$next-version$$
  * @package Core
  */
-class Sensei_Guest_User_Cleaner {
+class Sensei_Temporary_User_Cleaner {
 
 	/**
 	 * Instance of singleton.
@@ -47,12 +47,12 @@ class Sensei_Guest_User_Cleaner {
 	}
 
 	/**
-	 * Sensei_Guest_User_Cleaner constructor. Private so it can only be initialized internally.
+	 * Sensei_Temporary_User_Cleaner constructor. Private so it can only be initialized internally.
 	 */
 	private function __construct() {}
 
 	/**
-	 * Sensei_Guest_User_Cleaner constructor.
+	 * Add hooks to schedule cleaning job..
 	 *
 	 * @since $$next-version$$
 	 */
@@ -63,7 +63,7 @@ class Sensei_Guest_User_Cleaner {
 
 
 	/**
-	 * Attaches guest user cleaning job to cron.
+	 * Attach cleaning job to cron.
 	 *
 	 * @since $$next-version$$
 	 * @access private
@@ -75,7 +75,7 @@ class Sensei_Guest_User_Cleaner {
 	}
 
 	/**
-	 * Remove guest users who have not been active within last week.
+	 * Remove guest and preview users who have not been active within last week.
 	 *
 	 * @since $$next-version$$
 	 * @access private
@@ -84,36 +84,30 @@ class Sensei_Guest_User_Cleaner {
 		$user_ids_to_be_deleted = $this->get_inactive_users();
 
 		foreach ( $user_ids_to_be_deleted as $user_id ) {
-			$course_ids = Sensei_Learner::instance()->get_enrolled_courses_query(
-				$user_id,
-				[
-					'posts_per_page' => -1,
-					'fields'         => 'ids',
-				]
-			)->posts;
-
-			foreach ( $course_ids as $course_id ) {
-				Sensei_Utils::sensei_remove_user_from_course( $course_id, $user_id );
-			}
-
-			Sensei_Temporary_User::delete_user( $user_id );
+			Sensei_Guest_User::delete_guest_user( $user_id );
+			Sensei_Preview_User::delete_preview_user( $user_id );
 		}
 	}
 
 	/**
-	 * Get a list of guest users who have not been active within last week.
+	 * Get a list of temporary users who have not been active within last week.
 	 *
 	 * @access private
 	 *
 	 * @return array List of user IDs.
 	 */
 	private function get_inactive_users() {
-		$guest_user_ids = get_users(
+
+		$guest_user_ids = Sensei_Temporary_User::get_all_users(
 			[
-				'fields' => 'ID',
-				'role'   => 'guest_student',
+				'fields'   => 'ID',
+				'role__in' => [ Sensei_Guest_User::ROLE, Sensei_Preview_User::ROLE ],
 			]
 		);
+
+		if ( empty( $guest_user_ids ) ) {
+			return [];
+		}
 
 		$activity_args = [
 			'user_id'    => $guest_user_ids,
@@ -126,6 +120,7 @@ class Sensei_Guest_User_Cleaner {
 			],
 		];
 
+		remove_filter( 'sensei_check_for_activity', [ Sensei_Temporary_User::class, 'filter_sensei_activity' ], 10, 2 );
 		$last_week_activities = Sensei_Utils::sensei_check_for_activity( $activity_args, true );
 
 		if ( $last_week_activities && is_a( $last_week_activities, 'WP_Comment' ) ) {
@@ -136,4 +131,5 @@ class Sensei_Guest_User_Cleaner {
 
 		return array_values( array_diff( $guest_user_ids, array_column( $last_week_activities, 'user_id' ) ) );
 	}
+
 }
