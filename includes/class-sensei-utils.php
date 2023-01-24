@@ -2699,7 +2699,7 @@ class Sensei_Utils {
 	 */
 	public static function get_user_count_for_role( $role ) {
 		return count(
-			get_users(
+			Sensei_Temporary_User::get_all_users(
 				[
 					'fields' => 'ID',
 					'role'   => $role,

@@ -46,7 +46,6 @@ class Sensei_Temporary_User_Cleaner_Test extends WP_UnitTestCase {
 
 	public function testIfAGuestUserIsInactive_WhenCronEventIsFired_OnlyTheInactiveUserGetsRemoved() {
 
-		remove_filter( 'pre_user_query', [ Sensei_Temporary_User::class, 'filter_out_temporary_users' ], 11 );
 		remove_filter( 'sensei_check_for_activity', [ Sensei_Temporary_User::class, 'filter_sensei_activity' ], 10, 2 );
 
 		/* Arrange */

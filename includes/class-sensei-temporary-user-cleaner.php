@@ -98,7 +98,7 @@ class Sensei_Temporary_User_Cleaner {
 	 */
 	private function get_inactive_users() {
 
-		$guest_user_ids = get_users(
+		$guest_user_ids = Sensei_Temporary_User::get_all_users(
 			[
 				'fields'   => 'ID',
 				'role__in' => [ Sensei_Guest_User::ROLE, Sensei_Preview_User::ROLE ],

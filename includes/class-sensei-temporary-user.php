@@ -195,6 +195,23 @@ class Sensei_Temporary_User {
 	}
 
 	/**
+	 * Retrieve list of users without filtering out temporary users.
+	 *
+	 * @see get_users
+	 *
+	 * @param array $args Get users parameters.
+	 *
+	 * @return array List of users.
+	 */
+	public static function get_all_users( $args = array() ) {
+		remove_filter( 'pre_user_query', [ static::class, 'filter_out_temporary_users' ], 11 );
+		$users = get_users( $args );
+		add_filter( 'pre_user_query', [ static::class, 'filter_out_temporary_users' ], 11 );
+
+		return $users;
+	}
+
+	/**
 	 * Check if a user is a temporary user.
 	 *
 	 * @param int $user_id User ID.
