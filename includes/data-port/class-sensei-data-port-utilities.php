@@ -429,7 +429,7 @@ class Sensei_Data_Port_Utilities {
 	 * Serialize a list of terms into comma-separated list.
 	 * Adds quotes if name contains commas.
 	 *
-	 * @param WP_Term[] $terms
+	 * @param WP_Term[] $terms The terms array.
 	 *
 	 * @return string
 	 */
@@ -441,7 +441,7 @@ class Sensei_Data_Port_Utilities {
 	/**
 	 * Return term name and hierarchy representation, in the format of 'Parent > Child'.
 	 *
-	 * @param WP_Term $term
+	 * @param WP_Term $term The term object.
 	 *
 	 * @return string
 	 */
@@ -462,7 +462,7 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @deprecated 3.5.2
 	 *
-	 * @param string[] $values
+	 * @param string[] $values The values array.
 	 *
 	 * @return string
 	 */
@@ -478,7 +478,7 @@ class Sensei_Data_Port_Utilities {
 	 * Wrap value in quotes if it contains a comma.
 	 * Escape quotes if wrapped.
 	 *
-	 * @param string $value
+	 * @param string $value The value.
 	 *
 	 * @return string
 	 */
@@ -534,5 +534,32 @@ class Sensei_Data_Port_Utilities {
 		}
 
 		return $module;
+	}
+
+	/**
+	 * Get the ID of the imported demo course.
+	 *
+	 * @internal
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return int|null
+	 */
+	public static function get_demo_course_id(): ?int {
+		$query = new WP_Query(
+			[
+				'posts_per_page' => 1,
+				'post_type'      => 'course',
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+				'name'           => Sensei_Data_Port_Manager::SAMPLE_COURSE_SLUG,
+			]
+		);
+
+		if ( ! $query->found_posts ) {
+			return null;
+		}
+
+		return $query->get_posts()[0];
 	}
 }

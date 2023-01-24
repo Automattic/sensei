@@ -81,10 +81,12 @@ class Sensei_Home_Notices_Provider {
 	 */
 	public function get_badge_count(): int {
 		add_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
-		$notices = $this->get( DAY_IN_SECONDS );
+		$notices                 = $this->get( DAY_IN_SECONDS );
+		$notices_with_parent_ids = array_filter( array_column( $notices, 'parent_id' ) );
+
 		remove_filter( 'sensei_home_remote_data_retry_error', '__return_false' );
 
-		return count( $notices );
+		return count( $notices ) - count( $notices_with_parent_ids );
 	}
 
 	/**
@@ -109,6 +111,7 @@ class Sensei_Home_Notices_Provider {
 			// If we have Sensei_Admin_Notices, we consider it as being, by default, dismissible, given that
 			// this is the default on Sensei_Admin_Notices.
 			'dismissible' => $notice['dismissible'] ?? class_exists( 'Sensei_Admin_Notices' ),
+			'parent_id'   => $notice['parent_id'] ?? null,
 		];
 	}
 }

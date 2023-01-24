@@ -55,6 +55,7 @@ class Sensei_Data_Cleaner {
 	 */
 	private static $options = array(
 		'sensei_installed',
+		'sensei_installed_at',
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages', // deprecated 3.1.0.
@@ -91,6 +92,7 @@ class Sensei_Data_Cleaner {
 		'sensei_home_tasks_list_is_completed',
 		'sensei_home_tasks_dismissed',
 		'sensei_home_task_visited_woocommerce',
+		'sensei_home_task_visited_course_theme_customizer',
 	);
 
 	/**

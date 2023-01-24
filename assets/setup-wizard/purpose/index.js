@@ -95,7 +95,7 @@ const Purpose = () => {
 	};
 
 	const goToNextStep = () => {
-		goTo( 'tracking' );
+		goTo( 'theme' );
 	};
 
 	const submitPage = () => {

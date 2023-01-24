@@ -10,6 +10,11 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 /**
+ * WordPress dependencies
+ */
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+
+/**
  * I18n methods that should not be mangled by the compiler process
  */
 const I18N_METHODS = [ '__', '_n', '_nx', '_x' ];
@@ -81,6 +86,7 @@ const files = [
 	'admin/exit-survey/exit-survey.scss',
 	'admin/students/student-action-menu/index.js',
 	'admin/students/student-bulk-action-button/index.js',
+	'admin/students/student-bulk-action-button/student-bulk-action-button.scss',
 	'admin/students/student-modal/student-modal.scss',
 	'css/block-patterns.scss',
 	'css/page-block-patterns.scss',
@@ -135,6 +141,7 @@ function getWebpackConfig( env, argv ) {
 	const scriptFiles = /\.[jt]sx?$/i;
 
 	const isProduction = process.env.NODE_ENV === 'production';
+	const COMBINE_ASSETS = 'true' === process.env.COMBINE_ASSETS;
 
 	webpackConfig.module.rules = webpackConfig.module.rules.map( ( rule ) => {
 		if ( rule.test.test( 'test.scss' ) ) {
@@ -187,7 +194,7 @@ function getWebpackConfig( env, argv ) {
 	// Handle only images in JS files
 	webpackConfig.module.rules.push(
 		{
-			test: /\.(?:gif|jpg|jpeg|png)$/i,
+			test: /\.(?:gif|jpg|jpeg|png|webp)$/i,
 			issuer: scriptFiles,
 			type: 'asset/resource',
 			generator: {
@@ -200,6 +207,13 @@ function getWebpackConfig( env, argv ) {
 			issuer: scriptFiles,
 			use: [ '@svgr/webpack' ],
 		}
+	);
+
+	// We remove the DependencyExtractionWebpackPlugin from the list of plugins because we will
+	// add some custom parameters later.
+	const plugins = webpackConfig.plugins.filter(
+		( plugin ) =>
+			plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 	);
 
 	return {
@@ -225,7 +239,12 @@ function getWebpackConfig( env, argv ) {
 			process.env.SOURCEMAP ||
 			( isDevelopment ? 'eval-source-map' : false ),
 		plugins: [
-			...webpackConfig.plugins,
+			...plugins,
+			new DependencyExtractionWebpackPlugin( {
+				injectPolyfill: true,
+				combineAssets: COMBINE_ASSETS,
+				outputFormat: COMBINE_ASSETS ? 'json' : 'php',
+			} ),
 			new GenerateChunksMapPlugin( {
 				output: path.resolve(
 					'./node_modules/.cache/sensei-lms/chunks-map.json'

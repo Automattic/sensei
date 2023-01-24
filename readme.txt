@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 7.2
-Stable tag: 4.9.0
+Stable tag: 4.10.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,41 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 
 == Changelog ==
 
+2023-01-12 - version 4.10.0
+* New: Course theme installation through the onboarding wizard
+	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
+	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
+	* Install Course theme [#6231](https://github.com/Automattic/sensei/pull/6231)
+	* Add usage tracking for Setup Wizard Course Theme step [#6252](https://github.com/Automattic/sensei/pull/6252)
+	* Add Sensei Home task to customize the Course theme [#6250](https://github.com/Automattic/sensei/pull/6250)
+* Add: Add `sensei_usage_tracking_data` filter hook [#6262](https://github.com/Automattic/sensei/pull/6262)
+* Add: Log sent emails [#6228](https://github.com/Automattic/sensei/pull/6228)
+* Add: Notice asking user for reviews/feedback [#6274](https://github.com/Automattic/sensei/pull/6274)
+* Add: Log when reports are run [#6319](https://github.com/Automattic/sensei/pull/6319)
+* Add: Add  `Sensei_Data_Port_Utilities::get_demo_course_id()` helper method [#6328](https://github.com/Automattic/sensei/pull/6328)
+* Add: Add filters for course actions buttons [#6296](https://github.com/Automattic/sensei/pull/6296)
+* Add: Course list button editing [#6324](https://github.com/Automattic/sensei/pull/6324)
+* Fix: Fix sidebar position for learning mode [#6210](https://github.com/Automattic/sensei/pull/6210)
+* Fix: Fix testimonial margin for block patterns [#6216](https://github.com/Automattic/sensei/pull/6216)
+* Fix: Ensure passing an integer module id [#6229](https://github.com/Automattic/sensei/pull/6229)
+* Fix: Ensure `is_plugin_active` call doesn't give an error [#6249](https://github.com/Automattic/sensei/pull/6249)
+* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
+* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
+* Fix: Add empty checks to avoid warnings [#6270](https://github.com/Automattic/sensei/pull/6270)
+* Fix: Fix private message emails not being sent [#6257](https://github.com/Automattic/sensei/pull/6257)
+* Fix: Ensure all strings in block pattern templates are translated and escaped [#6322](https://github.com/Automattic/sensei/pull/6322)
+* Fix: Fix editor wizard header style [#6335](https://github.com/Automattic/sensei/pull/6335)
+* Fix: Update question post type to not be publicly queryable [#6347](https://github.com/Automattic/sensei/pull/6347)
+* Fix: Fix conflict by disabling Yoast initialization on Divi preview [#6342](https://github.com/Automattic/sensei/pull/6342)
+* Fix: Security fixes
+* Tweak: Remove the "source" property from events data [#6310](https://github.com/Automattic/sensei/pull/6310)
+* Tweak: Update Sensei logo [#6336](https://github.com/Automattic/sensei/pull/6336)
+* Tweak: Display warning in the editor when adding the lesson properties block if Learning Mode is enabled [#6078](https://github.com/Automattic/sensei/pull/6078)
+
+2022-12-09 - version 4.9.1
+* Fix: Always initialize question blocks in frontend [#6258](https://github.com/Automattic/sensei/pull/6258)
+* Fix: Fix global admin styles for Groups badge and landing page [#6260](https://github.com/Automattic/sensei/pull/6260)
+
 2022-12-06 - version 4.9.0
 * New: Co-teacher
     * Add/coteachers metabox hook [#6115](https://github.com/Automattic/sensei/pull/6115)
@@ -163,21 +198,3 @@ Please visit the [Sensei Blog](https://senseilms.com/blog/) or sign up for our [
 * Fix: Fix home styles [#6139](https://github.com/Automattic/sensei/pull/6139)
 * Fix: Add compatibility for WP < 6.0 on quiz author fix [#6153](https://github.com/Automattic/sensei/pull/6153)
 * Fix: Fix double query when calling `WP_Query::get_posts` [#6168](https://github.com/Automattic/sensei/pull/6168)
-
-2022-11-10 - version 4.8.1
-* New: Course Overview block for the Course List block [#5996](https://github.com/Automattic/sensei/pull/5996)
-* Add: Message for users without JavaScript enabled on Sensei Home [#6059](https://github.com/Automattic/sensei/pull/6059)
-* Fix: Course start date reset on lesson completion [#6079](https://github.com/Automattic/sensei/pull/6079)
-* Fix: Contact Teacher block not working [#6058](https://github.com/Automattic/sensei/pull/6058)
-* Fix: Random questions change for answered quizzes [#6088](https://github.com/Automattic/sensei/pull/6088)
-* Fix: Issue with enrolling students in the course view in a course with no students [#5583](https://github.com/Automattic/sensei/pull/5583)
-* Fix: Disable broken sorting under Reports [#6094](https://github.com/Automattic/sensei/pull/6094)
-* Fix: Course List buttons extending outside container [#6010](https://github.com/Automattic/sensei/pull/6010)
-* Fix: Checks for modules when adding author name to module name [#6034](https://github.com/Automattic/sensei/pull/6034)
-* Fix: PHP notice on course category archive view [#6069](https://github.com/Automattic/sensei/pull/6069)
-* Fix: Error when activating Sensei LMS + Sensei Pro (WC Paid Courses) [#6080](https://github.com/Automattic/sensei/pull/6080)
-* Fix: Minor cosmetic changes to task list in Sensei Home [#6083](https://github.com/Automattic/sensei/pull/6083)
-
-2022-10-27 - version 4.8.0
-* New: Onboarding Wizard - replaces the older onboarding with a modern flow to help new users get started.
-* New: Sensei Home - replaces the older 'Extensions' menu item with links to support, documentation, and a checklist for new users.

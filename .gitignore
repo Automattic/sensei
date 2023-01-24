@@ -16,4 +16,5 @@ tests/e2e/screenshots
 /coverage/
 coverage.xml
 tests/e2e-playwright/contexts/*
+*.tsbuildinfo
 playwright-report/
