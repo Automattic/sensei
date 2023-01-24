@@ -108,7 +108,7 @@ class Sensei_Usage_Tracking extends Sensei_Usage_Tracking_Base {
 			'woocommerce',
 			'woocommerce-follow-up-emails',
 			'woocommerce-memberships',
-			'woocommerce-subscriptions'
+			'woocommerce-subscriptions',
 		);
 
 		if ( in_array( $plugin_slug, $third_party_plugins, true ) ) {
