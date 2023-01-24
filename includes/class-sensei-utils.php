@@ -2708,12 +2708,12 @@ class Sensei_Utils {
 		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
 
 		/**
-		 * Filter to allow adding slugs to check for on WPCOM active subscriptions.
+		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
 		 *
 		 * @hook sensei_wpcom_product_slugs
 		 * @since $$next-version$$
 		 *
-		 * @param array $products Array of slugs to check for on WPCOM active subscriptions.
+		 * @param array $products Array of products slugs to check if it has an active WPCOM subscription.
 		 *
 		 * @return {array}
 		 */
