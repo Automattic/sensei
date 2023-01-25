@@ -515,6 +515,8 @@ class Sensei_Main {
 		// Admin notices.
 		$this->admin_notices = Sensei_Admin_Notices::instance()->init();
 
+		Sensei_Temporary_User::init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class.
@@ -525,6 +527,7 @@ class Sensei_Main {
 			new Sensei_Exit_Survey();
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
+
 		} else {
 
 			// Load Frontend Class
@@ -562,6 +565,9 @@ class Sensei_Main {
 		$this->quiz_submission_repository = ( new Submission_Repository_Factory() )->create();
 		$this->quiz_answer_repository     = ( new Answer_Repository_Factory() )->create();
 		$this->quiz_grade_repository      = ( new Grade_Repository_Factory() )->create();
+
+		// Cron for periodically cleaning guest user related data.
+		Sensei_Temporary_User_Cleaner::instance()->init();
 	}
 
 	/**

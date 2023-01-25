@@ -456,6 +456,10 @@ class Sensei_Grading {
 		} elseif ( ! empty( $args['user_id'] ) ) {
 			$query .= $wpdb->prepare( ' AND user_id = %d', $args['user_id'] );
 		}
+		// Restrict to specific users.
+		if ( isset( $args['query'] ) ) {
+			$query .= $args['query'];
+		}
 		$query .= ' GROUP BY comment_approved';
 
 		$counts = wp_cache_get( $cache_key, 'counts' );
