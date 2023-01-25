@@ -2717,6 +2717,35 @@ class Sensei_Utils {
 				]
 			)
 		);
+
+	/**
+   * Tells if the current site is hosted in wordpress.com and the
+	 * plan includes an active subscription for a paid Sensei product.
+	 *
+	 * @return bool {bool} If there is an active WPCOM subscription or not.
+	 * @since $$next-version$$
+	 */
+	public static function has_wpcom_subscription(): bool {
+		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
+
+		/**
+		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @hook sensei_wpcom_product_slugs
+		 * @since $$next-version$$
+		 *
+		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @return {array}
+		 */
+		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
+		foreach ( $product_slugs as $product_slug ) {
+			if ( array_key_exists( $product_slug, $subscriptions ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 
