@@ -2717,9 +2717,10 @@ class Sensei_Utils {
 				]
 			)
 		);
+	}
 
 	/**
-   * Tells if the current site is hosted in wordpress.com and the
+	 * Tells if the current site is hosted in wordpress.com and the
 	 * plan includes an active subscription for a paid Sensei product.
 	 *
 	 * @return bool {bool} If there is an active WPCOM subscription or not.
