@@ -2724,7 +2724,7 @@ class Sensei_Utils {
 	 * plan includes an active subscription for a paid Sensei product.
 	 *
 	 * @return bool {bool} If there is an active WPCOM subscription or not.
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 */
 	public static function has_wpcom_subscription(): bool {
 		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
@@ -2733,7 +2733,7 @@ class Sensei_Utils {
 		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
 		 *
 		 * @hook sensei_wpcom_product_slugs
-		 * @since $$next-version$$
+		 * @since 4.11.0
 		 *
 		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
 		 *
