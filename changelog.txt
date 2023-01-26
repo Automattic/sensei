@@ -1,7 +1,39 @@
 *** Changelog ***
 
-2023-01-12 - version 4.10.0
+2023-02-02 - version 4.11.0
+* New: Guest users and teachers preview [#6421](https://github.com/Automattic/sensei/pull/6421)
+	* Add meta checkbox for course open access [#6253](https://github.com/Automattic/sensei/pull/6253)
+	* Create guest user for open access courses and login [#6259](https://github.com/Automattic/sensei/pull/6259)
+	* Show lesson and quiz as if enrolled for open access lessons [#6264](https://github.com/Automattic/sensei/pull/6264)
+	* Enrol guest users in course after creation [#6269](https://github.com/Automattic/sensei/pull/6269)
+	* Create user and enrol on lesson and quiz actions [#6279](https://github.com/Automattic/sensei/pull/6279)
+	* Confine guest user to open course only and persist lesson and quiz progress states [#6280](https://github.com/Automattic/sensei/pull/6280)
+	* Allow switching to a preview student user  [#6288](https://github.com/Automattic/sensei/pull/6288)
+	* Use incremental guest user count in guest display name [#6298](https://github.com/Automattic/sensei/pull/6298)
+	* Change preview users to be per course [#6290](https://github.com/Automattic/sensei/pull/6290)
+	* Allow preview users to take unpublished course [#6311](https://github.com/Automattic/sensei/pull/6311)
+	* Add scheduled cleaner for inactive guest user [#6307](https://github.com/Automattic/sensei/pull/6307)
+	* Stop guest users and guest role from appearing [#6318](https://github.com/Automattic/sensei/pull/6318)
+	* Add course open access count in data usage [#6373](https://github.com/Automattic/sensei/pull/6373)
+	* Don't send emails to or about guest/preview users [#6358](https://github.com/Automattic/sensei/pull/6358)
+	* Add hooks to disable open access and student previews [#6364](https://github.com/Automattic/sensei/pull/6364)
+	* Fix login not working after guest user creation [#6375](https://github.com/Automattic/sensei/pull/6375)
+	* Change open access meta to private [#6383](https://github.com/Automattic/sensei/pull/6383)
+	* Add filters to hide users, move some common code to Temporary users class [#6395](https://github.com/Automattic/sensei/pull/6395)
+	* Fix View Quiz for draft lessons [#6417](https://github.com/Automattic/sensei/pull/6417)
+* Add: Add Course List block to My Courses and course archive on page creation [#6343](https://github.com/Automattic/sensei/pull/6343) [#6354](https://github.com/Automattic/sensei/pull/6354) [#6414](https://github.com/Automattic/sensei/pull/6416)
+* Add: Curate list of installed plugins that are logged [#6424](https://github.com/Automattic/sensei/pull/6424)
+* Add: Add filter for the student bulk action modal [#6366](https://github.com/Automattic/sensei/pull/6366)
+* Fix: Redirect to correct contact form if the user has a WPCOM subscription [#6407](https://github.com/Automattic/sensei/pull/6407)
+* Fix: Fix archive page going on infinite loop in Astra theme [#6431](https://github.com/Automattic/sensei/pull/6431)
+* Fix: Do not show quiz notice if it is the quiz page [#6313](https://github.com/Automattic/sensei/pull/6313)
+* Fix: Fix error when calling `the_content` filter with no post context [#6406](https://github.com/Automattic/sensei/pull/6406)
+* Fix: Fix issue where Quiz Timer options would appear only when the Random Question Order is enabled [#6377](https://github.com/Automattic/sensei/pull/6377)
+* Fix: Fix block editor check [#6359](https://github.com/Automattic/sensei/pull/6359)
+* Fix: Fix Twenty Fifteen and Learning Mode layout issue [#6360](https://github.com/Automattic/sensei/pull/6360)
+* Tweak: Change reset progress copy by [#6371](https://github.com/Automattic/sensei/pull/6371)
 
+2023-01-12 - version 4.10.0
 * New: Course theme installation through the onboarding wizard
 	* Add onboarding theme step [#6182](https://github.com/Automattic/sensei/pull/6182), [#6251](https://github.com/Automattic/sensei/pull/6251), [#6273](https://github.com/Automattic/sensei/pull/6273)
 	* Add onboarding theme step backend [#6211](https://github.com/Automattic/sensei/pull/6211)
