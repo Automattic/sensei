@@ -762,7 +762,7 @@ class Sensei_Messages {
 	public function message_content( $content ) {
 		global $post;
 
-		if ( get_post_type( $post->ID ) !== $this->post_type ) {
+		if ( ! $post || get_post_type( $post->ID ) !== $this->post_type ) {
 			return $content;
 		}
 

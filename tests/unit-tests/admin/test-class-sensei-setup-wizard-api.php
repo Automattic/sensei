@@ -133,6 +133,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$this->assertNotNull( $course_completed_page, 'Course completed page' );
 	}
 
+	public function testMyCoursesPage_WhenCreated_ContainsQueryListBlock() {
+
+		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
+
+		$my_courses_page = get_page_by_path( 'my-courses' );
+
+		$this->assertStringContainsString( 'wp:query', $my_courses_page->post_content );
+	}
+
 	/**
 	 * Tests that submitting to purpose endpoint saves submitted data
 	 *
@@ -371,5 +380,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		}
 
 		return $this->server->dispatch( $request )->get_data();
+	}
+
+	public function testCourseArchivePage_WhenCreated_ContainsQueryListBlock() {
+
+		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
+
+		$my_courses_page = get_page_by_path( 'courses-overview' );
+
+		$this->assertEquals( 'courses-overview', $my_courses_page->post_name );
+		$this->assertStringContainsString( 'wp:query', $my_courses_page->post_content );
 	}
 }

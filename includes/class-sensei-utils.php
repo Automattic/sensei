@@ -127,17 +127,17 @@ class Sensei_Utils {
 			$args['status'] = 'any';
 		}
 
-		// Get the comments
 		/**
 		 * This filter runs inside Sensei_Utils::sensei_check_for_activity
 		 *
 		 * It runs while getting the comments for the given request.
 		 *
 		 * @param int|array $comments
+		 * @param array $args Search arguments.
 		 */
-		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ) );
+		$comments = apply_filters( 'sensei_check_for_activity', get_comments( $args ), $args );
 
-		// Return comments
+		// Return comments.
 		if ( $return_comments ) {
 			// Could check for array of 1 and just return the 1 item?
 			if ( is_array( $comments ) && 1 == count( $comments ) ) {
@@ -146,8 +146,8 @@ class Sensei_Utils {
 
 			return $comments;
 		}
-		// Count comments
-		return intval( $comments ); // This is the count, check the return from WP_Comment_Query
+		// Count comments.
+		return intval( $comments ); // This is the count, check the return from WP_Comment_Query.
 	}
 
 
@@ -1732,6 +1732,7 @@ class Sensei_Utils {
 		if ( ! empty( $status ) ) {
 			$args = array(
 				'user_id'   => $user_id,
+				'username'  => get_userdata( $user_id )->user_login ?? null,
 				'post_id'   => $lesson_id,
 				'status'    => $status,
 				'type'      => 'sensei_lesson_status', /* FIELD SIZE 20 */
@@ -1769,11 +1770,12 @@ class Sensei_Utils {
 		$comment_id = false;
 		if ( ! empty( $status ) ) {
 			$args = array(
-				'user_id' => $user_id,
-				'post_id' => $course_id,
-				'status'  => $status,
-				'type'    => 'sensei_course_status', /* FIELD SIZE 20 */
-				'action'  => 'update', // Update the existing status...
+				'user_id'  => $user_id,
+				'username' => get_userdata( $user_id )->user_login ?? null,
+				'post_id'  => $course_id,
+				'status'   => $status,
+				'type'     => 'sensei_course_status', /* FIELD SIZE 20 */
+				'action'   => 'update', // Update the existing status...
 			);
 
 			$comment_id = self::sensei_log_activity( $args );
@@ -2212,7 +2214,7 @@ class Sensei_Utils {
 				break;
 		}
 
-		return $course_id ? $course_id : null;
+		return $course_id ? absint( $course_id ) : null;
 	}
 
 
@@ -2698,6 +2700,53 @@ class Sensei_Utils {
 	 */
 	public static function is_atomic_platform(): bool {
 		return defined( 'ATOMIC_SITE_ID' ) && ATOMIC_SITE_ID && defined( 'ATOMIC_CLIENT_ID' ) && ATOMIC_CLIENT_ID;
+	}
+
+	/**
+	 * Get count of users for a provided role.
+	 *
+	 * @param  string $role Slug of the Role.
+	 * @return int    Count of users having the provided role.
+	 */
+	public static function get_user_count_for_role( $role ) {
+		return count(
+			Sensei_Temporary_User::get_all_users(
+				[
+					'fields' => 'ID',
+					'role'   => $role,
+				]
+			)
+		);
+	}
+
+	/**
+	 * Tells if the current site is hosted in wordpress.com and the
+	 * plan includes an active subscription for a paid Sensei product.
+	 *
+	 * @return bool {bool} If there is an active WPCOM subscription or not.
+	 * @since $$next-version$$
+	 */
+	public static function has_wpcom_subscription(): bool {
+		$subscriptions = get_option( 'wpcom_active_subscriptions', [] );
+
+		/**
+		 * Filter to allow adding products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @hook sensei_wpcom_product_slugs
+		 * @since $$next-version$$
+		 *
+		 * @param {Array} $products Array of products slugs to check if it has an active WPCOM subscription.
+		 *
+		 * @return {array}
+		 */
+		$product_slugs = apply_filters( 'sensei_wpcom_product_slugs', [] );
+		foreach ( $product_slugs as $product_slug ) {
+			if ( array_key_exists( $product_slug, $subscriptions ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 
