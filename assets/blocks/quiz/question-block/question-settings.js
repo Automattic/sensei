@@ -50,7 +50,7 @@ const QuestionSettings = ( {
 						setOptions( { hideAnswerFeedback: value ? 'yes' : '' } )
 					}
 					help={ __(
-						'Hide feedback for this question on the frontend.',
+						'Do not show any feedback when the student answers this question.',
 						'sensei-lms'
 					) }
 				/>
