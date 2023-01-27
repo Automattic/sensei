@@ -125,7 +125,7 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$course_title = $this->course->post_name;
-		$this->assertRegExp( '|<a href="http://example.org/\?course=' . $course_title . '".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?course=' . $course_title . '" method="get".*>|', $result );
 	}
 
 	public function testRender_WhenTheStudentDoesntHaveStartedALesson_ReturnsLinkToFirstLesson() {
@@ -143,6 +143,6 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$lesson_title = get_post( $course_lesson_ids[1] )->post_name;
-		$this->assertRegExp( '|<a href="http://example.org/\?lesson=' . $lesson_title . '".*>Continue</a>|', $result );
+		$this->assertRegExp( '|<form action="http://example.org/\?lesson=' . $lesson_title . '" method="get".*>|', $result );
 	}
 }
