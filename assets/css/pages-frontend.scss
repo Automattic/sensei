@@ -26,7 +26,7 @@
 	margin-top: 1.387em;
 	margin-bottom: 1.618em;
 	padding: 1em 1.618em;
-	border:none!important;
+	border: none !important;
 	@include border_radius(5px);
 
 	a {
@@ -43,7 +43,7 @@
 		display: block;
 	}
 
-	&:before  {
+	&:before {
 		@include iconbefore();
 		font-size: 1.387em;
 		position: relative;
@@ -51,7 +51,7 @@
 	}
 
 	&.info {
-		background:#eee;
+		background: #eee;
 
 		&:before {
 			content: '\f05a';

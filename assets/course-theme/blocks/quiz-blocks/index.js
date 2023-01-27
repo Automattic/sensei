@@ -7,7 +7,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
-import SenseiIcon from '../../../icons/sensei.svg';
+import LogoTreeIcon from '../../../icons/logo-tree.svg';
 import quizActionsMeta from './quiz-actions.block.json';
 import quizBackToLessonMeta from './quiz-back-to-lesson.block.json';
 import quizProgressMeta from './quiz-progress.block.json';
@@ -15,7 +15,7 @@ import quizProgressMeta from './quiz-progress.block.json';
 const meta = {
 	attributes: {},
 	icon: {
-		src: <SenseiIcon width="20" height="20" />,
+		src: <LogoTreeIcon width="20" height="20" />,
 		foreground: '#43AF99',
 	},
 };

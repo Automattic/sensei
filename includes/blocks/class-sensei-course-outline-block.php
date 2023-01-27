@@ -109,7 +109,7 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Extract attributes from module block.
 	 *
-	 * @param array $attributes
+	 * @param array $attributes Block attributes.
 	 *
 	 * @access private
 	 * @return string
@@ -125,7 +125,7 @@ class Sensei_Course_Outline_Block {
 	/**
 	 * Extract attributes from module block.
 	 *
-	 * @param array $attributes
+	 * @param array $attributes Block attributes.
 	 *
 	 * @access private
 	 * @return string
@@ -166,7 +166,7 @@ class Sensei_Course_Outline_Block {
 
 		$context    = 'view';
 		$attributes = $this->block_attributes['course'];
-		$is_preview = is_preview() && $this->can_current_user_edit_course( $post->ID );
+		$is_preview = is_preview() && Sensei_Course::can_current_user_edit_course( $post->ID );
 
 		if ( $is_preview ) {
 			$context = 'edit';
@@ -214,17 +214,6 @@ class Sensei_Course_Outline_Block {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Check user permission for editing a course.
-	 *
-	 * @param int $course_id Course post ID.
-	 *
-	 * @return bool Whether the user can edit the course.
-	 */
-	private function can_current_user_edit_course( $course_id ) {
-		return current_user_can( get_post_type_object( 'course' )->cap->edit_post, $course_id );
 	}
 
 	/**

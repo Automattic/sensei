@@ -18,6 +18,28 @@ class Sensei_Home_Tasks_Provider {
 	const COMPLETED_TASKS_OPTION_KEY = 'sensei_home_tasks_list_is_completed';
 
 	/**
+	 * Tells if the WP hooks were attached or not.
+	 *
+	 * @var bool
+	 */
+	private static $attached_hooks = false;
+
+	/**
+	 * The option name that wp-calypso automatically fetches to use
+	 * as a reference for Launchpad tasks' complete statuses.
+	 *
+	 * @var string
+	 */
+	const CALYPSO_LAUNCHPAD_STATUSES_NAME = 'launchpad_checklist_tasks_statuses';
+
+	/**
+	 * Class constructor.
+	 */
+	public function __construct() {
+		$this->attach_tasks_statuses_hooks();
+	}
+
+	/**
 	 * Returns the Tasks.
 	 *
 	 * @return array
@@ -47,6 +69,10 @@ class Sensei_Home_Tasks_Provider {
 
 		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
 			$core_tasks[] = new Sensei_Home_Task_Sell_Course_With_WooCommerce();
+		}
+
+		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
+			$core_tasks[] = new Sensei_Home_Task_Customize_Course_Theme();
 		}
 
 		$tasks = [];
@@ -147,5 +173,43 @@ class Sensei_Home_Tasks_Provider {
 	 */
 	public function mark_as_completed( $completed = true ) {
 		update_option( self::COMPLETED_TASKS_OPTION_KEY, $completed, false );
+	}
+
+	/**
+	 * Attaches required hooks.
+	 */
+	private function attach_tasks_statuses_hooks() {
+		// Attach the hooks only once.
+		if ( self::$attached_hooks ) {
+			return;
+		}
+		self::$attached_hooks = true;
+
+		// Attach the hooks only on atomic sites.
+		if ( ! Sensei_Utils::is_atomic_platform() ) {
+			return;
+		}
+
+		// Attach the update_tasks_statuses method to filters and actions
+		// that can affect the status of the Sensei Home tasks.
+		add_filter( 'save_post_course', [ $this, 'update_tasks_statuses' ] );
+		add_action( 'wp_ajax_sensei_settings_section_visited', [ $this, 'update_tasks_statuses' ] );
+	}
+
+	/**
+	 * Updates the tasks_statuses in wp options
+	 */
+	public function update_tasks_statuses() {
+		$tasks_statuses = [];
+
+		foreach ( $this->get_tasks() as $task ) {
+			// Convert the names of the tasks into snake case.
+			$task_name                    = str_replace( '-', '_', $task['id'] );
+			$tasks_statuses[ $task_name ] = $task['done'];
+		}
+
+		// Overwrite the existing values with the new ones before updating.
+		$tasks_statuses = array_merge( get_option( self::CALYPSO_LAUNCHPAD_STATUSES_NAME, [] ), $tasks_statuses );
+		update_option( self::CALYPSO_LAUNCHPAD_STATUSES_NAME, $tasks_statuses );
 	}
 }

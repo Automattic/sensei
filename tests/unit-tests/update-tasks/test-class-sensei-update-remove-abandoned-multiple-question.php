@@ -18,7 +18,7 @@ class Sensei_Update_Remove_Abandoned_Multiple_Question_Test extends WP_UnitTestC
 	/**
 	 * Set up the tests.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->factory = new Sensei_Factory();
 	}

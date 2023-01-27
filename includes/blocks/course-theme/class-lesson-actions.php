@@ -117,7 +117,7 @@ class Lesson_Actions {
 		$text           = esc_html__( 'Take Quiz', 'sensei-lms' );
 
 		return ( '
-			<form method="GET" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
+			<form method="POST" action="' . $quiz_permalink . '" class="sensei-course-theme-lesson-actions__take-quiz-form">
 				<button type="submit" data-id="complete-lesson-button" class="sensei-course-theme-lesson-actions__take-quiz sensei-course-theme__button is-primary" ' . $disabled . '>
 					' . $text . '
 			</button>
@@ -141,7 +141,7 @@ class Lesson_Actions {
 		$actions = [];
 		$class   = [ 'sensei-course-theme-lesson-actions' ];
 
-		if ( empty( $lesson_id ) || empty( $user_id ) ) {
+		if ( empty( $lesson_id ) ) {
 			return '';
 		}
 

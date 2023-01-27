@@ -32,15 +32,22 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 	 */
 	protected $factory;
 
-	public function setUp() {
+	/**
+	 * The original theme.
+	 */
+	protected $original_theme;
+
+	public function setUp(): void {
 		parent::setUp();
-		$this->provider = new Sensei_Home_Tasks_Provider();
-		$this->factory  = new Sensei_Factory();
+		$this->provider       = new Sensei_Home_Tasks_Provider();
+		$this->factory        = new Sensei_Factory();
+		$this->original_theme = get_stylesheet();
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		remove_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
 		remove_filter( 'wp_get_attachment_image_src', [ $this, 'overrideWithCustomImage' ] );
+		switch_theme( $this->original_theme );
 		parent::tearDown();
 	}
 
@@ -58,6 +65,19 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( Sensei_Home_Task_Create_First_Course::get_id(), $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Configure_Learning_Mode::get_id(), $items );
 		$this->assertArrayHasKey( Sensei_Home_Task_Publish_First_Course::get_id(), $items );
+	}
+
+	public function testGetTasks_WhenCalledWhileCourseThemeActive_IncludesCourseThemeCustomizationTask() {
+		// Arrange
+		switch_theme( 'course' );
+
+		// Act
+		$result = $this->provider->get();
+
+		// Assert
+		$items = $result['items'];
+		$this->assertIsArray( $items );
+		$this->assertArrayHasKey( Sensei_Home_Task_Customize_Course_Theme::get_id(), $items );
 	}
 
 	public function testGet_GivenAFilterThatOverridesTasks_ReturnSingleOverriddenResult() {

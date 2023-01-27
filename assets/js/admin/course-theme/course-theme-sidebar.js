@@ -31,7 +31,7 @@ const CourseThemeSidebar = () => {
 	return (
 		<PanelBody
 			title={ __( 'Learning Mode', 'sensei-lms' ) }
-			initialOpen={ false }
+			initialOpen={ true }
 		>
 			{ globalLearningModeEnabled ? (
 				<p>

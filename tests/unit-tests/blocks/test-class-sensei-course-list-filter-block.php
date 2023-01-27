@@ -62,7 +62,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	/**
 	 * Set up the test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		global $wp_version;
 
 		$version = str_replace( '-src', '', $wp_version );
@@ -82,12 +82,12 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->factory->course_category->add_post_terms( $this->course1->ID, [ $this->category->term_id ], 'course-category' );
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WP_Block_Type_Registry::get_instance()->unregister( 'sensei-lms/course-list-filter' );
 	}
 
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 		self::resetEnrolmentProviders();
 	}
@@ -100,9 +100,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->category->name, $result );
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->category->name, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithNonCategoryFilterParam_ShowsAllCourses() {
@@ -116,8 +116,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithCategoryFilterParam_ShowsOnlyFilteredCourses() {
@@ -131,8 +131,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithFeaturedFilterParam_ShowsOnlyFeaturedCourses() {
@@ -147,8 +147,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledWithFeaturedFilterParamSetAll_ShowsAllCourses() {
@@ -163,8 +163,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledFeaturedAndCategoryFilterTogether_ShowsFilteredCoursesProperly() {
@@ -180,8 +180,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenCalledFeaturedAndCategoryFilterTogether_ShowsNoCoursesWhenApplicable() {
@@ -197,8 +197,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertNotContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringNotContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenRenderingStudentCourseBlock_DoesNotRenderIfNotLoggedIn() {
@@ -210,7 +210,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertNotContains( 'Completed', $result );
+		$this->assertStringNotContainsString( 'Completed', $result );
 	}
 
 	public function testCourseFilterBlock_WhenRenderingStudentCourseBlock_RendersWhenLoggedIn() {
@@ -224,7 +224,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( 'Completed', $result );
+		$this->assertStringContainsString( 'Completed', $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForActiveCourses_RendersTheActiveCoursesOnly() {
@@ -241,8 +241,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForCompletedCourses_RendersTheCompletedCoursesOnly() {
@@ -261,8 +261,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course2->post_title, $result );
-		$this->assertNotContains( $this->course1->post_title, $result );
+		$this->assertStringContainsString( $this->course2->post_title, $result );
+		$this->assertStringNotContainsString( $this->course1->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForCompletedFeaturedAndCategory_RendersProperly() {
@@ -290,8 +290,8 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
 	}
 
 	public function testCourseFilterBlock_WhenFilteredForCompletedFeaturedAndCategory_RendersEmptyWhenApplicable() {
@@ -319,7 +319,144 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$result = do_blocks( $this->content );
 
 		/* ASSERT */
-		$this->assertNotContains( $this->course1->post_title, $result );
-		$this->assertNotContains( $this->course2->post_title, $result );
+		$this->assertStringNotContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForFeaturedByDefault_ShowsOnlyTheFeaturedCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		update_post_meta( $this->course1->ID, '_course_featured', 'featured' );
+
+		$modified_content = str_replace( '"student_course"]', '"student_course"],"defaultOptions":{"featured":"featured"}', $this->content );
+
+		/* ACT */
+		$result = do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
+	}
+
+	public function testCourseFilterBlock_WhenFilteredForActiveByDefault_ShowsOnlyTheActiveCourses() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+
+		$modified_content = str_replace( '"student_course"]', '"student_course"],"defaultOptions":{"student_course":"active"}', $this->content );
+
+		/* ACT */
+		$result = do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertStringContainsString( $this->course1->post_title, $result );
+		$this->assertStringNotContainsString( $this->course2->post_title, $result );
+	}
+
+	public function testFilterForArchivePage_FeaturedCourseFilterIsSelected_UpdatesQueryWithProperParams() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
+		$this->handler->handle_request();
+
+		/* ACT */
+		$this->go_to(
+			add_query_arg(
+				[ 'course_filter' => 'featured' ],
+				get_permalink( (int) Sensei()->settings->get( 'course_page' ) )
+			)
+		);
+
+		/* ASSERT */
+		global $wp_query;
+		$this->assertEquals( '_course_featured', $wp_query->query_vars['meta_key'] );
+		$this->assertEquals( 'featured', $wp_query->query_vars['meta_value'] );
+	}
+
+	public function testFilterForArchivePage_CategoryCourseFilterIsSelected_UpdatesQueryWithProperParams() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
+		$this->handler->handle_request();
+
+		/* ACT */
+		$this->go_to(
+			add_query_arg(
+				[ 'course_category_filter' => 123 ],
+				get_permalink( (int) Sensei()->settings->get( 'course_page' ) )
+			)
+		);
+
+		/* ASSERT */
+		global $wp_query;
+		$this->assertIsArray( $wp_query->query_vars['tax_query'] );
+		$this->assertEquals( 'course-category', $wp_query->query_vars['tax_query'][0]['taxonomy'] );
+		$this->assertEquals( 123, $wp_query->query_vars['tax_query'][0]['terms'] );
+	}
+
+	public function testFilterForArchivePage_StudentCourseStatusFilterIsSelected_UpdatesQueryWithProperParams() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
+		$this->handler->handle_request();
+
+		/* ACT */
+		$this->go_to(
+			add_query_arg(
+				[ 'student_course_filter' => 'active' ],
+				get_permalink( (int) Sensei()->settings->get( 'course_page' ) )
+			)
+		);
+
+		/* ASSERT */
+		global $wp_query;
+		$this->assertEquals( [ $this->course1->ID ], $wp_query->query_vars['post__in'] );
+	}
+
+	public function testCourseFilterBlock_WhenFiltersAreInherited_ChangesFilterParamKeysToGlobal() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+
+		/* ACT */
+		$old_result = do_blocks( $this->content );
+
+		$modified_content = str_replace( ',"sticky":""', ',"sticky":"","inherit":true', $this->content );
+
+		$result = do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertStringNotContainsString( 'course_filter', $old_result );
+		$this->assertStringNotContainsString( 'course_category_filter', $old_result );
+		$this->assertStringNotContainsString( 'student_course_filter', $old_result );
+		$this->assertStringContainsString( 'course_filter', $result );
+		$this->assertStringContainsString( 'course_category_filter', $result );
+		$this->assertStringContainsString( 'student_course_filter', $result );
 	}
 }

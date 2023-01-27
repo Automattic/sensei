@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @package Sensei
  * @author  Automattic
- * @since   $$next-version$$
+ * @since   4.9.0
  */
 class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 
@@ -81,6 +81,10 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 						'type'     => 'number',
 						'required' => true,
 					],
+					'custom_slugs'                    => [
+						'type'     => 'string',
+						'required' => false,
+					],
 				],
 			]
 		);
@@ -93,8 +97,25 @@ class Sensei_REST_API_Course_Utils_Controller extends \WP_REST_Controller {
 	 * @return WP_REST_Response The json response.
 	 */
 	public function update_teacher( WP_REST_Request $request ) {
-		$post_id = $request->get_param( 'post_id' );
-		$teacher = $request->get_param( 'teacher' );
+		$post_id             = $request->get_param( 'post_id' );
+		$teacher             = $request->get_param( 'teacher' );
+		$module_custom_slugs = $request->get_param( 'custom_slugs' );
+
+		// If a custom slug is of a module that belongs to another teacher from another course, don't process farther.
+		if ( isset( $module_custom_slugs ) ) {
+			$module_custom_slugs = json_decode( sanitize_text_field( wp_unslash( $module_custom_slugs ) ) );
+			foreach ( $module_custom_slugs as $module_custom_slug ) {
+				$course_name = Sensei()->teacher::is_module_in_use_by_different_course_and_teacher( $module_custom_slug, $post_id, $teacher );
+				if ( $course_name ) {
+					return new WP_REST_Response(
+						[
+							'message' => 'Update Teacher Failed: Module in use by different course and teacher.',
+						],
+						WP_HTTP::BAD_REQUEST
+					);
+				}
+			}
+		}
 
 		Sensei()->teacher->save_teacher( $post_id, $teacher );
 		return new WP_REST_Response(

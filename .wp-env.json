@@ -1,4 +1,5 @@
 {
 	"core": null,
-	"plugins": [ "." ]
+	"plugins": [ "." ],
+	"themes": ["Automattic/course#trunk"]
 }

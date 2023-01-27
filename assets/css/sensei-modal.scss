@@ -20,7 +20,7 @@
 		max-width: 96%;
 		top: 200%;
 		left: 50%;
-		transform: translate( -50%, -40% );
+		transform: translate(-50%, -40%);
 		background-color: var(--sensei-background-color, #fff);
 		border: 1px solid #ddd;
 		border-radius: 2px;
@@ -32,8 +32,9 @@
 
 [data-sensei-modal-is-open] {
 	[data-sensei-modal-overlay] {
-		top: 0%;
+		top: 0;
 		background-color: rgba(0, 0, 0, 0.5);
+
 		&:hover {
 			background-color: rgba(0, 0, 0, 0.5);
 		}
@@ -41,7 +42,7 @@
 
 	[data-sensei-modal-content] {
 		top: 50%;
-		transform: translate( -50%, -50% );
+		transform: translate(-50%, -50%);
 	}
 }
 

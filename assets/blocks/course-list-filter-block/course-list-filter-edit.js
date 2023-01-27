@@ -11,7 +11,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
  */
 import InvalidUsageError from '../../shared/components/invalid-usage';
 
-function useFilterOptions() {
+function useFilterOptions( defaultOptions ) {
 	const categories = useSelect( ( select ) => {
 		const terms = select( 'core' ).getEntityRecords(
 			'taxonomy',
@@ -39,7 +39,7 @@ function useFilterOptions() {
 				},
 				...categories,
 			],
-			defaultOption: -1,
+			defaultOption: defaultOptions?.categories ?? -1,
 		},
 		featured: {
 			label: __( 'Featured', 'sensei-lms' ),
@@ -53,7 +53,7 @@ function useFilterOptions() {
 					value: 'featured',
 				},
 			],
-			defaultOption: 'all',
+			defaultOption: defaultOptions?.featured ?? 'all',
 		},
 		student_course: {
 			label: __( 'Student Courses', 'sensei-lms' ),
@@ -71,7 +71,7 @@ function useFilterOptions() {
 					value: 'completed',
 				},
 			],
-			defaultOption: 'all',
+			defaultOption: defaultOptions?.student_course ?? 'all',
 		},
 	};
 }
@@ -101,11 +101,11 @@ function SelectedFilters( { filters, types } ) {
 }
 
 function CourseListFilter( {
-	attributes: { types },
+	attributes: { types, defaultOptions },
 	context: { query },
 	setAttributes,
 } ) {
-	const filters = useFilterOptions();
+	const filters = useFilterOptions( defaultOptions );
 	const blockProps = useBlockProps();
 
 	if ( 'course' !== query?.postType ) {

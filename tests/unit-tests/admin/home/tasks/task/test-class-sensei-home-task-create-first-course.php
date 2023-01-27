@@ -32,7 +32,7 @@ class Sensei_Home_Task_Create_First_Course_Test  extends WP_UnitTestCase {
 	/**
 	 * Setup.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->task    = new Sensei_Home_Task_Create_First_Course();
 		$this->factory = new Sensei_Factory();

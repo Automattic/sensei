@@ -55,6 +55,7 @@ class Sensei_Data_Cleaner {
 	 */
 	private static $options = array(
 		'sensei_installed',
+		'sensei_installed_at',
 		'sensei_course_enrolment_site_salt',
 		'sensei_course_order',
 		'skip_install_sensei_pages', // deprecated 3.1.0.
@@ -91,6 +92,7 @@ class Sensei_Data_Cleaner {
 		'sensei_home_tasks_list_is_completed',
 		'sensei_home_tasks_dismissed',
 		'sensei_home_task_visited_woocommerce',
+		'sensei_home_task_visited_course_theme_customizer',
 	);
 
 	/**
@@ -327,15 +329,23 @@ class Sensei_Data_Cleaner {
 			self::remove_all_sensei_caps( $role );
 		}
 
-		// Remove caps and role from users.
+		// Remove caps and teacher role from users.
 		$users = get_users( array() );
 		foreach ( $users as $user ) {
 			self::remove_all_sensei_caps( $user );
 			$user->remove_role( self::$role );
+
+			// Delete user if it's a guest or preview user.
+			Sensei_Guest_User::delete_guest_user( $user->ID );
+			Sensei_Preview_User::delete_preview_user( $user->ID );
 		}
 
-		// Remove role.
+		// Remove teacher role.
 		remove_role( self::$role );
+
+		// Remove temporary user roles.
+		remove_role( Sensei_Guest_User::ROLE );
+		remove_role( Sensei_Preview_User::ROLE );
 	}
 
 	/**
