@@ -1073,7 +1073,6 @@ class Sensei_Lesson {
 	 * @access private
 	 * @param string $post_key (default: '')
 	 * @param int    $post_id (default: 0)
-	 * @return int|bool meta id or saved status
 	 */
 	private function save_post_meta( $post_key = '', $post_id = 0 ) {
 		/*
