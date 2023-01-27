@@ -1116,13 +1116,14 @@ class Sensei_Lesson {
 			$new_meta_value = '-1';
 		}
 
+		// If course is empty, unassign from course.
+		if ( 'lesson_course' === $post_key && empty( $new_meta_value ) ) {
+			$new_meta_value = '';
+		}
+
 		// Check if the user has permission to edit the target course.
-		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) ) {
-			if ( empty( $new_meta_value ) ) {
-				$new_meta_value = '';
-			} else {
-				return;
-			}
+		if ( 'lesson_course' === $post_key && ! current_user_can( get_post_type_object( 'course' )->cap->edit_post, $new_meta_value ) && '' !== $new_meta_value ) {
+			return;
 		}
 
 		// Parse the value for `lesson_length` field as integer.
