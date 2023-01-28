@@ -98,6 +98,12 @@ class Sensei_Guest_User {
 			'nonce' => 'sensei_quiz_page_change_nonce',
 			'enrol' => true,
 		],
+		// Quiz timer.
+		[
+			'field' => 'start_quiz_timer',
+			'nonce' => 'sensei_start_quiz_timer_nonce',
+			'enrol' => true,
+		],
 	];
 
 	/**
