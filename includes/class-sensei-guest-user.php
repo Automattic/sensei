@@ -417,7 +417,19 @@ class Sensei_Guest_User {
 	 */
 	private function get_current_action() {
 
-		foreach ( $this->supported_actions as $action ) {
+		/**
+		 * Filters the list of supported actions for Guest Users.
+		 *
+		 * @hook  sensei_guest_user_supported_actions
+		 * @since $$next-version$$
+		 *
+		 * @param {array} List of supported actions for guest users.
+		 *
+		 * @return {array} List of supported actions for guest users.
+		 */
+		$supported_actions = apply_filters( 'sensei_guest_user_supported_actions', $this->supported_actions );
+
+		foreach ( $supported_actions as $action ) {
 			if ( $this->is_action( $action['field'], $action['nonce'] ) ) {
 				return $action;
 			}
