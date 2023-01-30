@@ -13,6 +13,7 @@ import { compose } from '@wordpress/compose';
 import { useContext, useState, useEffect } from '@wordpress/element';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies
@@ -183,7 +184,7 @@ export const ModuleEdit = ( props ) => {
 						<SingleLineInput
 							className="wp-block-sensei-lms-course-outline-module__title-input"
 							placeholder={ __( 'Module name', 'sensei-lms' ) }
-							value={ title }
+							value={ decodeEntities( title ) }
 							onChange={ updateName }
 						/>
 						{ slug && (
