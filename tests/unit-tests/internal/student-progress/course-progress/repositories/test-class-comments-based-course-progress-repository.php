@@ -62,13 +62,15 @@ class Comments_Based_Course_Progress_Repository_Test extends \WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_progress( $progress ) );
 	}
 
-	private function create_status_comment($user_id, $course_id, $status) {
-		$comment_id = wp_insert_comment( [
-			'comment_post_ID' => $course_id,
-			'user_id'         => $user_id,
-			'comment_type'    => 'sensei_course_status',
-			'comment_approved' => $status,
-		] );
+	private function create_status_comment( $user_id, $course_id, $status ) {
+		$comment_id = wp_insert_comment(
+			[
+				'comment_post_ID'  => $course_id,
+				'user_id'          => $user_id,
+				'comment_type'     => 'sensei_course_status',
+				'comment_approved' => $status,
+			]
+		);
 		return $comment_id;
 	}
 
