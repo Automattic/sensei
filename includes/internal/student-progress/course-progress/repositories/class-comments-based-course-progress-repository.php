@@ -8,7 +8,6 @@
 namespace Sensei\Internal\Student_Progress\Course_Progress\Repositories;
 
 use DateTime;
-use phpDocumentor\Reflection\Types\Object_;
 use Sensei\Internal\Student_Progress\Course_Progress\Models\Course_Progress;
 use Sensei_Utils;
 
