@@ -1,0 +1,155 @@
+@import "./carousel.scss";
+
+@mixin full-width {
+	margin-left: -$small-horizontal-padding;
+	margin-right: -$small-horizontal-padding;
+
+	@media (min-width: $small-screen-break) {
+		margin-left: -$big-horizontal-padding;
+		margin-right: -$big-horizontal-padding;
+	}
+}
+
+.sensei-setup-wizard {
+	&__theme-actions {
+		> * {
+			display: block;
+			width: 100%;
+
+			@media (min-width: $small-screen-break) {
+				display: revert;
+				width: auto;
+				margin: 0 8px;
+			}
+		}
+	}
+}
+
+.sensei-setup-wizard-theme {
+	position: relative; /* To get over the main title when scrolling */
+	margin-top: 64px;
+
+	&__section {
+		padding-top: 128px;
+	}
+
+	&__image-wrapper {
+		padding: 16px;
+		border-radius: 16px;
+		background: rgba(0, 0, 0, 0.05);
+	}
+
+	&__image {
+		display: block;
+		width: 100%;
+	}
+
+	&__main-image {
+		max-width: 1200px;
+		margin: auto;
+	}
+
+	&__mobile-images {
+		display: grid;
+		grid-template:
+			"onboarding-mobile-1 onboarding-mobile-2 onboarding-mobile-5"
+			"onboarding-mobile-3 onboarding-mobile-4 onboarding-mobile-5";
+		grid-gap: 2rem;
+
+		max-width: 1200px;
+		margin: auto;
+		padding: 0;
+
+		> li {
+			margin: 0;
+			padding: 0;
+
+			@for $i from 1 through 5 {
+				&:nth-child(#{$i}) {
+					grid-area: onboarding-mobile-#{$i};
+				}
+			}
+		}
+	}
+
+	&__learning-mode-carousel {
+		@include full-width;
+	}
+}
+
+.sensei-setup-wizard-theme-top-actions {
+	position: fixed;
+	gap: 24px;
+	top: 0;
+	right: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 80px;
+	padding: 8px 20px 0;
+
+	@media (min-width: $small-screen-break) {
+		height: 88px;
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	&--enter-animation {
+		animation: slideDown 0.5s;
+	}
+}
+
+.sensei-setup-wizard-theme-testimonial {
+	padding: 40px $small-horizontal-padding;
+	background-color: #00594f;
+	color: #FFF;
+	@include full-width;
+
+	&__image {
+		width: 100%;
+		margin-bottom: 24px;
+	}
+
+	@media (min-width: $small-screen-break) {
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+		padding-top: 128px;
+		padding-bottom: 128px;
+
+		&__image {
+			width: 25%;
+			min-width: 250px;
+			margin: 0 64px 0 0;
+		}
+
+		&__content {
+			width: 30%;
+		}
+	}
+
+	& &__quote {
+		margin: 0;
+		font-family: $recoleta-font-family;
+
+		> p {
+			font-size: 32px;
+
+			&::before {
+				content: '“';
+				position: absolute;
+				margin-left: -15px;
+			}
+
+			&::after {
+				content: '”';
+			}
+		}
+	}
+
+	&__author {
+		display: block;
+		margin-bottom: 10px;
+	}
+}

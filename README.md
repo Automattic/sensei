@@ -1,4 +1,4 @@
-# [Sensei LMS](https://senseilms.com)
+# [Sensei LMS](https://senseilms.com) [![Trunk Workflow](https://github.com/Automattic/sensei/actions/workflows/trunk.yml/badge.svg)](https://github.com/Automattic/sensei/actions/workflows/trunk.yml)
 **A learning management plugin for WordPress for building online courses and quizzes.**
 
 Sensei LMS is a free and open-source WordPress plugin available from https://senseilms.com. The plugin is hosted here on a public Github repository in order to better facilitate community contributions from developers and users alike. If you have a suggestion, a bug report, or a patch for an issue, feel free to submit it here (following the guidelines below). 

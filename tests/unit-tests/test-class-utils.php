@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class for testing Sensei_Utils class.
+ *
+ * @group utils
+ *
+ * phpcs:disable Generic.Commenting.DocComment.MissingShort
+ */
 class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 
 	/**
@@ -292,6 +299,29 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		$this->assertSame( 12.34, $quiz_submission->get_final_grade() );
 	}
 
+	public function testIsRestRequest_WhenNotRestRequest_ReturnsFalse() {
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertFalse( $is_rest_request );
+	}
+
+	/**
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function testIsRestRequest_WhenRestRequest_ReturnsTrue() {
+		/* Arrange. */
+		define( 'REST_REQUEST', true );
+
+		/* Act. */
+		$is_rest_request = Sensei_Utils::is_rest_request();
+
+		/* Assert. */
+		$this->assertTrue( $is_rest_request );
+	}
+
 	/**
 	 * Returns an associative array with parameters needed to run lesson completion test.
 	 *
@@ -305,5 +335,14 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 			'seconds' => [ 20, '20 seconds ago' ],
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];
+	}
+
+	public function testUserCountByRole_WhenCalled_ReturnsCorrectNumberOfStudents() {
+		$this->factory->user->create_many( 3 );
+		$this->factory->user->create_many( 2, array( 'role' => 'student' ) );
+
+		$result = Sensei_Utils::get_user_count_for_role( 'student' );
+
+		$this->assertEquals( 2, $result );
 	}
 }

@@ -133,6 +133,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		$this->assertNotNull( $course_completed_page, 'Course completed page' );
 	}
 
+	public function testMyCoursesPage_WhenCreated_ContainsQueryListBlock() {
+
+		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
+
+		$my_courses_page = get_page_by_path( 'my-courses' );
+
+		$this->assertStringContainsString( 'wp:query', $my_courses_page->post_content );
+	}
+
 	/**
 	 * Tests that submitting to purpose endpoint saves submitted data
 	 *
@@ -250,6 +259,43 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Tests that theme get endpoint returns the install sensei theme option.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
+	 */
+	public function testGetThemeReturnsUserData() {
+
+		Sensei()->setup_wizard->update_wizard_user_data(
+			[ 'theme' => [ 'install_sensei_theme' => true ] ]
+		);
+
+		$data = $this->request( 'GET', '' );
+
+		$this->assertEquals(
+			[ 'install_sensei_theme' => true ],
+			$data['theme']
+		);
+	}
+
+	/**
+	 * Tests that submitting to theme endpoint updates the install sensei theme option.
+	 *
+	 * @covers Sensei_REST_API_Setup_Wizard_Controller::submit_theme
+	 */
+	public function testSubmitThemeUpdatesInstallSenseiThemeOption() {
+
+		Sensei()->usage_tracking->set_tracking_enabled( false );
+		$this->request( 'POST', 'theme', [ 'theme' => [ 'install_sensei_theme' => true ] ] );
+
+		$data = $this->request( 'GET', '' );
+
+		$this->assertEquals(
+			[ 'install_sensei_theme' => true ],
+			$data['theme']
+		);
+	}
+
+	/**
 	 * Tests tracking endpoint returning the current usage tracking setting.
 	 *
 	 * @covers Sensei_REST_API_Setup_Wizard_Controller::get_data
@@ -334,5 +380,15 @@ class Sensei_Setup_Wizard_API_Test extends WP_Test_REST_TestCase {
 		}
 
 		return $this->server->dispatch( $request )->get_data();
+	}
+
+	public function testCourseArchivePage_WhenCreated_ContainsQueryListBlock() {
+
+		$this->request( 'POST', 'welcome', [ 'usage_tracking' => false ] );
+
+		$my_courses_page = get_page_by_path( 'courses-overview' );
+
+		$this->assertEquals( 'courses-overview', $my_courses_page->post_name );
+		$this->assertStringContainsString( 'wp:query', $my_courses_page->post_content );
 	}
 }

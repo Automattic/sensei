@@ -8,6 +8,7 @@ import {
 	CheckboxControl,
 	SelectControl,
 	HorizontalRule,
+	ExternalLink,
 } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import apiFetch from '@wordpress/api-fetch';
@@ -50,6 +51,7 @@ const CourseGeneralSidebar = () => {
 	const featured = meta._course_featured;
 	const prerequisite = meta._course_prerequisite;
 	const notification = meta.disable_notification;
+	const openAccess = meta._open_access;
 
 	useEffect( () =>
 		editorLifecycle( {
@@ -93,7 +95,7 @@ const CourseGeneralSidebar = () => {
 	/**
 	 * Allows to show or hide the multiple teachers upgrade.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @param {boolean} Whether the upgrade should be hidden or not. Default false. True will hide the upgrade.
 	 */
@@ -105,7 +107,7 @@ const CourseGeneralSidebar = () => {
 	/**
 	 * Returns the component to render after the teacher course setting.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.9.0
 	 *
 	 * @param {Function} The existing component hooked into the filter.
 	 */
@@ -137,13 +139,9 @@ const CourseGeneralSidebar = () => {
 			{ ! hideCoteachersUpgrade && (
 				<div className="sensei-course-coteachers-wrapper">
 					{ __( 'Multiple teachers?', 'sensei-lms' ) }{ ' ' }
-					<a
-						href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers"
-						target="_blank"
-						rel="noreferrer"
-					>
-						{ __( 'Upgrade to Pro!', 'sensei-lms' ) }
-					</a>
+					<ExternalLink href="https://senseilms.com/sensei-pro/?utm_source=plugin_sensei&utm_medium=upsell&utm_campaign=co-teachers">
+						{ __( 'Upgrade to Sensei Pro', 'sensei-lms' ) }
+					</ExternalLink>
 				</div>
 			) }
 
@@ -172,6 +170,25 @@ const CourseGeneralSidebar = () => {
 					}
 				/>
 			) : null }
+
+			{ window.sensei.courseSettingsSidebar.features?.open_access && (
+				<>
+					<HorizontalRule />
+
+					<h3>{ __( 'Access', 'sensei-lms' ) }</h3>
+					<CheckboxControl
+						label={ __( 'Open Access', 'sensei-lms' ) }
+						checked={ openAccess }
+						onChange={ ( checked ) =>
+							setMeta( { ...meta, _open_access: checked } )
+						}
+						help={ __(
+							'Visitors can take this course without signing up. Not available for paid courses.',
+							'sensei-lms'
+						) }
+					/>
+				</>
+			) }
 
 			<HorizontalRule />
 

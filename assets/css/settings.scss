@@ -583,6 +583,9 @@ table.wp_list_table_sensei_learner_admins {
 		.user-answer {
 			padding: 5px;
 			font-size: 1.2em;
+			display: block;
+			max-height: 200px;
+			width: 100%;
 		}
 
 		.right-answer {
@@ -1105,12 +1108,6 @@ $promo_highlight: #43af99;
 		color: white;
 		text-decoration: none;
 	}
-}
-
-#adminmenuwrap #adminmenu .sensei-promo-groups__badge {
-	background: $promo_highlight;
-	color: #2c3338;
-	font-weight: 400;
 }
 
 .sensei-settings-tab {
