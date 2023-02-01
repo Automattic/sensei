@@ -5,6 +5,7 @@ namespace SenseiTest\Internal\Quiz_Submission\Answer\Repositories;
 use DateTimeImmutable;
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Tables_Based_Answer_Repository;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 use wpdb;
 
 /**
@@ -27,6 +28,8 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testCreate_WhenCalled_InsertsToWpdb(): void {
 		/* Arrange. */
+		$submission = $this->createMock( Submission::class );
+		$submission->method( 'get_id' )->willReturn( 1 );
 		$wpdb       = $this->createMock( wpdb::class );
 		$repository = new Tables_Based_Answer_Repository( $wpdb );
 
@@ -52,17 +55,19 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 				]
 			);
 
-		$repository->create( 1, 2, 'value' );
+		$repository->create( $submission, 2, 'value' );
 	}
 
 	public function testCreate_WhenCalled_ReturnsAnswer(): void {
 		/* Arrange. */
+		$submission = $this->createMock( Submission::class );
+		$submission->method( 'get_id' )->willReturn( 1 );
 		$wpdb            = $this->createMock( wpdb::class );
 		$wpdb->insert_id = 3;
 		$repository      = new Tables_Based_Answer_Repository( $wpdb );
 
 		/* Act. */
-		$answer = $repository->create( 1, 2, 'value' );
+		$answer = $repository->create( $submission, 2, 'value' );
 
 		/* Assert. */
 		$expected = [
@@ -186,6 +191,9 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 
 	public function testDeleteAll_WhenCalled_DeletesAllFromTheDatabase(): void {
 		/* Arrange. */
+		$submission = $this->createMock( Submission::class );
+		$submission->method( 'get_id' )->willReturn( 1 );
+
 		$wpdb       = $this->createMock( wpdb::class );
 		$repository = new Tables_Based_Answer_Repository( $wpdb );
 
@@ -203,7 +211,7 @@ class Tables_Based_Answer_Repository_Test extends \WP_UnitTestCase {
 				]
 			);
 
-		$repository->delete_all( 1 );
+		$repository->delete_all( $submission );
 	}
 
 	private function export_answer( Answer $answer ): array {

@@ -402,12 +402,12 @@ class Sensei_Class_Utils_Test extends WP_UnitTestCase {
 		Sensei()->quiz_answer_repository
 			->expects( $this->once() )
 			->method( 'delete_all' )
-			->with( $submission_id );
+			->with( $submission );
 
-		Sensei()->quiz_answer_repository
+		Sensei()->quiz_grade_repository
 			->expects( $this->once() )
 			->method( 'delete_all' )
-			->with( $submission_id );
+			->with( $submission );
 
 		Sensei_Utils::sensei_delete_quiz_answers( 1, 1 );
 	}
