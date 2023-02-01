@@ -692,8 +692,8 @@ class Sensei_Utils {
 		$quiz_submission = Sensei()->quiz_submission_repository->get( $quiz_id, $user_id );
 		if ( $quiz_submission ) {
 			Sensei()->quiz_submission_repository->delete( $quiz_submission );
-			Sensei()->quiz_answer_repository->delete_all( $quiz_submission->get_id() );
-			Sensei()->quiz_grade_repository->delete_all( $quiz_submission->get_id() );
+			Sensei()->quiz_answer_repository->delete_all( $quiz_submission );
+			Sensei()->quiz_grade_repository->delete_all( $quiz_submission );
 
 			$deleted = true;
 		}

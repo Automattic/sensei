@@ -8,6 +8,7 @@
 namespace Sensei\Internal\Quiz_Submission\Answer\Repositories;
 
 use Sensei\Internal\Quiz_Submission\Answer\Models\Answer;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,13 +27,14 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int    $submission_id The submission ID.
-	 * @param int    $question_id   The question ID.
-	 * @param string $value         The answer value.
+	 * @param Submission $submission  The submission.
+	 * @param int        $question_id The question ID.
+	 * @param string     $value       The answer value.
 	 *
 	 * @return Answer The answer model.
 	 */
-	public function create( int $submission_id, int $question_id, string $value ): Answer {
+	public function create( Submission $submission, int $question_id, string $value ): Answer {
+		$submission_id               = $submission->get_id();
 		$answers_map                 = $this->get_answers_map( $submission_id );
 		$answers_map[ $question_id ] = $value;
 		$questions_asked_csv         = implode( ',', array_keys( $answers_map ) );
@@ -70,11 +72,11 @@ class Comments_Based_Answer_Repository implements Answer_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int $submission_id The submission ID.
+	 * @param Submission $submission The submission.
 	 */
-	public function delete_all( int $submission_id ): void {
-		delete_comment_meta( $submission_id, 'quiz_answers' );
-		delete_comment_meta( $submission_id, 'questions_asked' );
+	public function delete_all( Submission $submission ): void {
+		delete_comment_meta( $submission->get_id(), 'quiz_answers' );
+		delete_comment_meta( $submission->get_id(), 'questions_asked' );
 	}
 
 	/**
