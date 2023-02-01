@@ -114,6 +114,9 @@ $block: '.wp-block-sensei-lms-course-list';
 
 			.sensei-block-wrapper {
 				padding: 5px 0;
+				.wp-block-button {
+					margin: 0px;
+				}
 			}
 		}
 
