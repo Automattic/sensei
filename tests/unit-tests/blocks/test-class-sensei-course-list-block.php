@@ -59,14 +59,6 @@ class Sensei_Course_List_Block_Test extends WP_UnitTestCase {
 		$this->block_instance = $instance;
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-	}
-
-	public static function tearDownAfterClass(): void {
-		parent::tearDownAfterClass();
-	}
-
 	public function testCourseListBlock_AddsAttributeToInnerBlocks_WhenRendered() {
 		if ( $this->skip_tests ) {
 			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
