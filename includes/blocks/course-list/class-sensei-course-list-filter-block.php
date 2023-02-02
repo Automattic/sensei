@@ -40,7 +40,7 @@ class Sensei_Course_List_Filter_Block {
 	/**
 	 * Remove extra filters and sorting from archive page if the Course List block is being used.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.11.0
 	 * @access private
 	 * @hooked sensei_archive_before_course_loop
 	 *
